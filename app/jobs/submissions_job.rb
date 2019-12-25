@@ -7,12 +7,13 @@ class SubmissionsJob < ApplicationJob
   end
 
   def self.show_status(status)
-    I18n.t('poll_job.submissions_job', progress: status[:progress],
-           total: status[:total])
+    I18n.t('poll_job.submissions_job', progress: status[:progress], total: status[:total])
   end
 
-  before_enqueue do |job|
-    status.update(job_class: self.class)
+  def add_error_messages(messages)
+    msg = [status[:error_message], *messages].compact.join("\n")
+    status.update(error_message: msg)
+    Rails.logger.error msg
   end
 
   def perform(groupings, options = {})
@@ -20,7 +21,6 @@ class SubmissionsJob < ApplicationJob
 
     m_logger = MarkusLogger.instance
     assignment = groupings.first.assignment
-    time = assignment.submission_rule.calculate_collection_time.localtime
 
     progress.total = groupings.size
     groupings.each do |grouping|
@@ -28,6 +28,7 @@ class SubmissionsJob < ApplicationJob
         m_logger.log("Now collecting: #{assignment.short_identifier} for grouping: " +
                      "#{grouping.id}")
         if options[:revision_identifier].nil?
+          time = options[:collection_dates]&.fetch(grouping.id, nil) || grouping.collection_date
           new_submission = Submission.create_by_timestamp(grouping, time)
         else
           new_submission = Submission.create_by_revision_identifier(grouping, options[:revision_identifier])
@@ -45,12 +46,13 @@ class SubmissionsJob < ApplicationJob
 
         grouping.is_collected = true
         grouping.save
-      rescue => e
-        Rails.logger.error e.message
-      ensure
+        add_error_messages(grouping.errors.full_messages) unless grouping.errors.blank?
         progress.increment
+      rescue StandardError => e
+        add_error_messages([e.message])
       end
     end
+  ensure
     m_logger.log('Submission collection process done')
   end
 end

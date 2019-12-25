@@ -61,15 +61,8 @@ describe AssignmentPolicy do
             end
 
             context 'if tokens are released' do
-              context 'if the due date has passed' do
-                let(:assignment) { create(:assignment_for_student_tests, due_date: Time.current - 1.minute) }
-                it { is_expected.not_to pass :run_tests?, because_of: :before_due_date? }
-              end
-
-              context 'if the due date has not passed' do
-                let(:assignment) { create(:assignment_for_student_tests) }
-                it { is_expected.to pass :run_tests? }
-              end
+              let(:assignment) { create(:assignment_for_student_tests) }
+              it { is_expected.to pass :run_tests? }
             end
           end
         end

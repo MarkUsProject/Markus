@@ -29,7 +29,7 @@
     </span>
   </div>
 
-  <% unless @penalty.type == "NoLateSubmissionRule" %>
+  <% unless @penalty.type == "NoLateSubmissionRule" || @grouping&.extension&.apply_penalty == false %>
     <div class ='sub_block'>
       <% acc = 0 %>
       <% if @penalty.type == "GracePeriodSubmissionRule" %>

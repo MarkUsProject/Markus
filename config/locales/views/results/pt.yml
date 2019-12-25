@@ -15,13 +15,6 @@ pt:
     results_for: "Resultados para"
     set_to_incomplete: "Reverter para incompleta"
     set_to_complete: "Conjunto para completar"
-    state:
-      complete: "Completado"
-      in_progress: "Em progresso"
-      not_collected: "Não coletado"
-      released: "Liberado"
-      remark_requested: "Pedido de revisão"
-      before_due_date: "UPDATE ME"
     subtotal: "Subtotal"
     summary: "Resumo"
     total_extra_marks: "Nota extra total"

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_09_24_061752) do
+ActiveRecord::Schema.define(version: 2019_12_10_143220) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -50,8 +50,8 @@ ActiveRecord::Schema.define(version: 2019_09_24_061752) do
     t.integer "page"
     t.integer "column_start"
     t.integer "column_end"
-    t.integer "creator_id"
     t.string "creator_type"
+    t.integer "creator_id"
     t.integer "result_id"
     t.index ["creator_type", "creator_id"], name: "index_annotations_on_creator_type_and_creator_id"
     t.index ["submission_file_id"], name: "index_annotations_on_submission_file_id"
@@ -144,8 +144,8 @@ ActiveRecord::Schema.define(version: 2019_09_24_061752) do
 
   create_table "criterion_ta_associations", id: :serial, force: :cascade do |t|
     t.integer "ta_id"
-    t.integer "criterion_id"
     t.string "criterion_type"
+    t.integer "criterion_id"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer "assignment_id"
@@ -193,9 +193,9 @@ ActiveRecord::Schema.define(version: 2019_09_24_061752) do
     t.string "filename", null: false
     t.binary "file_content", null: false
     t.string "mime_type", null: false
+    t.integer "submission_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "submission_id"
     t.index ["submission_id"], name: "index_feedback_files_on_submission_id"
   end
 
@@ -365,8 +365,8 @@ ActiveRecord::Schema.define(version: 2019_09_24_061752) do
     t.integer "creator_id", null: false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer "noteable_id", null: false
     t.string "noteable_type", null: false
+    t.integer "noteable_id", null: false
     t.index ["creator_id"], name: "index_notes_on_creator_id"
   end
 
@@ -505,6 +505,7 @@ ActiveRecord::Schema.define(version: 2019_09_24_061752) do
     t.datetime "revision_timestamp"
     t.text "remark_request"
     t.datetime "remark_request_timestamp"
+    t.boolean "is_empty", default: true, null: false
     t.index ["grouping_id"], name: "index_submissions_on_grouping_id"
   end
 
@@ -641,4 +642,5 @@ ActiveRecord::Schema.define(version: 2019_09_24_061752) do
   add_foreign_key "test_runs", "submissions"
   add_foreign_key "test_runs", "test_batches"
   add_foreign_key "test_runs", "users"
+  add_foreign_key "users", "sections"
 end

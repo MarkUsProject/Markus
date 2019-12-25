@@ -33,8 +33,8 @@ class PeerReviewsManager extends React.Component {
       this.studentsTable.resetSelection();
       this.reviewersTable.resetSelection();
       this.setState({
-        reviewerGroups: res.reviewer_groups,
-        revieweeGroups: res.reviewee_groups || [],
+        reviewerGroups: res.reviewer_groups.groups,
+        revieweeGroups: res.reviewee_groups.groups || [],
         revieweeToReviewers: res.reviewee_to_reviewers_map,
         groupIdToName: res.id_to_group_names_map,
         reviewerToNumReviews: res.num_reviews_map,
@@ -203,12 +203,12 @@ class RawReviewersTable extends React.Component {
     const hashmap = this.props.reviewerToNumReviews;
     const groups_data = this.props.groups.map((group) => {
       let numReviews = 0;
-      if (hashmap.hasOwnProperty(group.id)) {
-        numReviews = hashmap[group.id];
+      if (hashmap.hasOwnProperty(group._id)) {
+        numReviews = hashmap[group._id];
       }
       return {
-        _id: group.id,
-        name: group.name,
+        _id: group._id,
+        name: group.group_name,
         groups: numReviews,
         section: group.section
       }
@@ -309,7 +309,7 @@ class RawRevieweesTable extends React.Component {
   render() {
     const groups_data = this.props.groups.map( (group) => {
       let reviewerGroups = [];
-      const reviewee_group_id = group.id;
+      const reviewee_group_id = group._id;
       const reviewer_ids = this.props.revieweeToReviewers[reviewee_group_id];
       reviewer_ids.forEach( (reviewer_group_id) => {
         const reviewer_group_name = this.props.groupIdToName[reviewer_group_id];
@@ -323,8 +323,8 @@ class RawRevieweesTable extends React.Component {
           /> {reviewer_group_name}</div>);
       });
       return {
-        _id: group.id,
-        name: group.name,
+        _id: group._id,
+        name: group.group_name,
         members: reviewerGroups,
         section: group.section,
         count: reviewer_ids.length

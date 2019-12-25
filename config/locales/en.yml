@@ -49,13 +49,19 @@ en:
     poll_job:
       working_message: "%{progress} out of %{total}"
       queued: "Queued"
+      not_enqueued: "No job was enqueued"
       completed: "Completed"
       failed: "Failed"
       split_pdf_job: "Processing page %{progress} out of %{total} for %{exam_name}"
       generate_job: "Generating copy %{progress} of %{total} for %{exam_name}"
       create_groups_job: "%{progress}/%{total} groups created"
+      create_groups_job_extra_info: "failed for group: %{group_name}, repo: %{repo_name}, members: %{members}"
       uncollect_submissions_job: "Uncollecting assignments ... "
       submissions_job: "%{progress}/%{total} Submissions collected"
+      update_repo_required_files_job: "%{progress}/%{total} Student repositories updated with new required files"
+      update_starter_code_job: "%{progress}/%{total} Student repositories updated with starter code"
+      autotest_run_job: "%{progress}/%{total} Test runs started"
+      autotest_run_job_failed_count: "%{failed} Test runs failed. See results pages for details."
     repo:
       commits:
         assignment_folder: "Create assignment folder for %{assignment}"
@@ -63,3 +69,4 @@ en:
         default: "Update files"
         required_files: "Update the list of required files for assignment %{assignment}"
         starter_code: "Update starter code files for assignment %{assignment}"
+      timeout: 'Waited %{ms} milliseconds to access this repository. Please wait a few seconds and try again.'

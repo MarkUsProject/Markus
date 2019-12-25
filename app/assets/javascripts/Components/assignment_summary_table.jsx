@@ -1,5 +1,6 @@
 import React from 'react';
 import {render} from 'react-dom';
+import {markingStateColumn} from "./Helpers/table_helpers";
 
 import ReactTable from 'react-table';
 
@@ -77,30 +78,7 @@ class AssignmentSummaryTable extends React.Component {
         }
       },
     },
-    {
-      Header: I18n.t('activerecord.attributes.result.marking_state'),
-      accessor: 'marking_state',
-      filterMethod: (filter, row) => {
-        if (filter.value === 'all') {
-          return true;
-        } else {
-          return filter.value === row[filter.id];
-        }
-      },
-      Filter: ({ filter, onChange }) =>
-        <select
-          onChange={event => onChange(event.target.value)}
-          style={{ width: '100%' }}
-          value={filter ? filter.value : 'all'}
-        >
-          <option value='all'>{I18n.t('all')}</option>
-          <option value={I18n.t('results.state.not_collected')}>{I18n.t('results.state.not_collected')}</option>
-          <option value='partial'>{I18n.t('results.state.in_progress')}</option>
-          <option value='completed'>{I18n.t('results.state.complete')}</option>
-          <option value='released'>{I18n.t('results.state.released')}</option>
-          <option value='remark'>{I18n.t('results.state.remark_requested')}</option>
-        </select>,
-    },
+    markingStateColumn(),
     {
       Header: I18n.t('activerecord.attributes.result.total_mark'),
       accessor: 'final_grade',

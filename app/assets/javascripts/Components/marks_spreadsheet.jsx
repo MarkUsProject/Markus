@@ -48,11 +48,6 @@ class RawMarksSpreadsheet extends React.Component {
     }).then(response => {
       this.props.resetSelection();
 
-      if (this.props.show_total) {
-        response.data.forEach(row => {
-          this[`total-${row.id}`] |= React.createRef();
-        });
-      }
       this.setState({
         data: response.data,
         loading: false,
@@ -88,6 +83,7 @@ class RawMarksSpreadsheet extends React.Component {
       },
       className: 'rt-hidden',
       headerClassName: 'rt-hidden',
+      resizable: false,
       width: 0,
       Filter: () => '',
     },
@@ -103,7 +99,7 @@ class RawMarksSpreadsheet extends React.Component {
       show: this.props.show_sections || false,
       minWidth: 70,
       Cell: ({ value }) => {
-        return value === null ? '' : this.state.sections[value]
+        return this.state.sections[value] || ''
       },
       filterMethod: (filter, row) => {
         if (filter.value === 'all') {
@@ -143,7 +139,7 @@ class RawMarksSpreadsheet extends React.Component {
       student_id={row.original._id}
       default_value={row.value}
       updateTotal={(gradeEntryItemId, newGrade, newTotal) =>
-                    this.updateTotal(row.index, row.original.id, gradeEntryItemId, newGrade, newTotal)}
+                    this.updateTotal(row.index, row.original._id, gradeEntryItemId, newGrade, newTotal)}
     />;
   };
 
@@ -153,7 +149,7 @@ class RawMarksSpreadsheet extends React.Component {
     minWidth: 50,
     className: 'grade-total',
     Cell: row => {
-      return <GradeEntryTotal initial_value={row.value} ref={node => this[`total-${row.original.id}`] = node} />;
+      return <GradeEntryTotal initial_value={row.value} ref={node => this[`total-${row.original._id}`] = node} />;
     },
     defaultSortDesc: true,
     sortMethod: (a, b, desc) => {
@@ -173,7 +169,7 @@ class RawMarksSpreadsheet extends React.Component {
   markingStateColumn = {
     accessor: 'released_to_student',
     Header: I18n.t('grade_entry_forms.grades.marking_state'),
-    Cell: ({ value }) => value ? I18n.t('results.state.released') : '',
+    Cell: ({ value }) => value ? I18n.t('submissions.state.released') : '',
     filterable: false,
     minWidth: 50,
   };
@@ -246,6 +242,7 @@ class RawMarksSpreadsheet extends React.Component {
     return (
       <span>
         <input
+          id='show_hidden'
           name='show_hidden'
           type='checkbox'
           checked={this.state.show_hidden}

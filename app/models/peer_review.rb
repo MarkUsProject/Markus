@@ -1,7 +1,7 @@
 require 'set'
 
 class PeerReview < ApplicationRecord
-  belongs_to :result
+  belongs_to :result, dependent: :destroy
   belongs_to :reviewer, class_name: 'Grouping'
   has_one :reviewee, class_name: 'Grouping', through: :result, source: :grouping
   validates_associated :reviewer
@@ -53,7 +53,7 @@ class PeerReview < ApplicationRecord
 
   # Deletes all peer reviewers for the reviewee groupings
   def self.delete_all_peer_reviews_for(reviewee_id)
-    self.joins(result: :submission).where(submissions: { grouping_id: reviewee_id }).delete_all
+    self.joins(result: :submission).where(submissions: { grouping_id: reviewee_id }).destroy_all
   end
 
   def self.assign(reviewer_groups, reviewee_groups)

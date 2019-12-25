@@ -395,7 +395,7 @@ class Result extends React.Component {
       url: Routes.delete_grace_period_deduction_assignment_submission_result_path(
         this.props.assignment_id, this.props.submission_id, this.props.result_id
       ),
-      method: 'POST',
+      method: 'DELETE',
       data: {deduction_id: deduction_id}
     }).then(this.fetchData)
   };

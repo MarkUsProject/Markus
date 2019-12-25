@@ -23,7 +23,6 @@ export class SubmissionFilePanel extends React.Component {
     this.modalDownload = new ModalMarkus('#download_dialog');
     if (localStorage.getItem('assignment_id') !== String(this.props.assignment_id)) {
       localStorage.removeItem('file');
-      localStorage.removeItem('file_id');
     }
     localStorage.setItem('assignment_id', this.props.assignment_id);
 
@@ -39,6 +38,8 @@ export class SubmissionFilePanel extends React.Component {
         document.getElementById('download_dialog_body')
       );
     }
+    const selectedFile = this.getFirstFile(this.props.fileData);
+    this.setState({selectedFile});
   }
 
   componentDidUpdate(prevProps) {
@@ -55,25 +56,47 @@ export class SubmissionFilePanel extends React.Component {
     }
 
     if (prevProps.loading && !this.props.loading) {
-      const selectedFile = this.getFirstFile(this.props.fileData);
+      let selectedFile = [];
+      const stored_file = localStorage.getItem('file');
+      const stored_assignment = localStorage.getItem('assignment_id');
+      if (!this.state.student_view && stored_assignment === this.props.assignment_id.toString() && stored_file) {
+        let filepath = stored_file.split('/');
+        let filename = filepath.pop();
+        selectedFile = [stored_file, this.getNamedFileId(this.props.fileData, filepath, filename)];
+      }
+      if (!selectedFile[1]) {
+        localStorage.removeItem('file');
+        selectedFile = this.getFirstFile(this.props.fileData);
+      }
       this.setState({selectedFile});
     }
   }
 
-  getFirstFile = (fileData) => {
-    if (!this.state.student_view &&
-        localStorage.getItem('assignment_id') === this.props.assignment_id.toString() &&
-        localStorage.getItem('file')) {
-      return [localStorage.getItem('file'), parseInt(localStorage.getItem('file_id'), 10)];
+  getNamedFileId = (fileData, path, filename) => {
+    if (!!path.length) {
+      let dir = path.shift();
+      if (fileData.directories.hasOwnProperty(dir)) {
+        return this.getNamedFileId(fileData.directories[dir], path, filename)
+      }
+    } else {
+      for (let file_data of fileData.files) {
+        if (file_data[0] === filename) {
+          return file_data[1];
+        }
+      }
     }
+    return null;
+  };
 
+  getFirstFile = (fileData) => {
     if (fileData.files.length > 0) {
-      return fileData.files[0];
+        return fileData.files[0];
     }
     for (let dir in fileData.directories) {
       if (fileData.directories.hasOwnProperty(dir)) {
         let f = this.getFirstFile(fileData.directories[dir]);
         if (f !== null) {
+          f[0] = `${dir}/${f[0]}`;
           return f;
         }
       }
@@ -84,7 +107,6 @@ export class SubmissionFilePanel extends React.Component {
   selectFile = (file, id, focusLine) => {
     this.setState({selectedFile: [file, id], focusLine: focusLine});
     localStorage.setItem('file', file);
-    localStorage.setItem('file_id', id)
   };
 
   // Download the currently-selected file.
@@ -238,7 +260,8 @@ export class FileSelector extends React.Component {
             e.stopPropagation();
             this.expandFileSelector(expand);
           }}
-          onMouseLeave={() => this.expandFileSelector(null)}
+          onBlur={() => this.expandFileSelector(null)}
+          tabIndex={-1}
         >
           <a>{selectorLabel}</a>
           {arrow}

@@ -2,7 +2,6 @@ fr:
   submissions:
     collect:
       apply_late_penalty: "Appliquer pénalité de retard / Déduire jetons de grâce ( Laissant cette case cochée signifie la soumission ne sera pas pénalisé , indépendamment du moment de la soumission . )"
-      collection_job_started_for_groups: "La récupération des envois pour les groupements sélectionnés pour le projet %{assignment_identifier} a débuté. Cela peut prendre du temps, mais vous avez accès aux envois dès qu'ils sont disponibles."
       could_not_collect_some_due: "Impossible de recueillir des soumissions pour certains groupements et projet %{assignment_identifier} - la date de collecte n'a pas été atteint pour ces groupes."
       could_not_collect_some_released: "Impossible de recueillir des soumissions pour certains groupements et projet %{assignment_identifier}."
       overwrite_warning: "Récupérer et noter cette révision effacera les précédentes récupération et évaluations de ce groupe sur ce projet. Êtes-vous sûr de vouloir faire cela ?"
@@ -62,3 +61,11 @@ fr:
     status: "Statut"
     successfully_changed: "Les %{changed} résultats ont été mis à jour."
     unrelease_marks: "Cacher les notes"
+
+    state:
+      not_collected: "Pas récupéré"
+      in_progress: "En cours"
+      complete: "Terminé"
+      released: "Affiché"
+      remark_requested: "Réévaluation demandée"
+      before_due_date: "Avant la date d'échéance"

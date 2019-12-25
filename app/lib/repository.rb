@@ -286,7 +286,7 @@ module Repository
     # The +namespace+ argument can be given to ensure that two resources with the same resource_id can be treated
     # as separate resources as long as the +namespace+ value is distinct. By default the +namespace+ is the relative
     # root of the current MarkUs instance.
-    def self.redis_exclusive_lock(resource_id, namespace: Rails.root.to_s, timeout: 1000, interval: 100)
+    def self.redis_exclusive_lock(resource_id, namespace: Rails.root.to_s, timeout: 5000, interval: 100)
       redis = Redis::Namespace.new(namespace)
       return yield if redis.lrange(resource_id, -1, -1).first&.to_i == Thread.current.object_id
 
@@ -308,7 +308,7 @@ module Repository
       begin
         loop do
           return yield if redis.lrange(resource_id, -1, -1).first&.to_i == Thread.current.object_id
-          raise Timeout::Error("waited #{timeout} ms to access resource: #{resource_id}") if elapsed_time >= timeout
+          raise Timeout::Error, I18n.t('repo.timeout') if elapsed_time >= timeout
 
           sleep(interval / 1000.0) # interval is in milliseconds but sleep arg is in seconds
           elapsed_time += interval
@@ -350,6 +350,8 @@ module Repository
     attr_accessor :server_timestamp
 
     def initialize(revision_identifier)
+      raise RevisionDoesNotExist if revision_identifier.nil?
+
       @revision_identifier = revision_identifier
       @revision_identifier_ui = @revision_identifier
     end

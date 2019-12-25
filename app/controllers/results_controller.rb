@@ -47,6 +47,8 @@ class ResultsController < ApplicationController
             head :forbidden
             return
           end
+        else
+          grouping = submission.grouping
         end
 
         data = {
@@ -84,7 +86,8 @@ class ResultsController < ApplicationController
 
         if assignment.enable_test
           begin
-            authorize! assignment, to: :run_tests? # TODO: Remove it when reasons will have the dependent policy details
+            authorize! assignment, to: :run_tests?
+            authorize! grouping, to: :run_tests?
             authorize! submission, to: :run_tests?
             authorized = true
           rescue ActionPolicy::Unauthorized
@@ -145,7 +148,7 @@ class ResultsController < ApplicationController
         end
 
         # Marks
-        common_fields = [:id, :name, :position, :max_mark, 'marks.mark']
+        common_fields = [:id, :name, :position, :max_mark]
         marks_map = [CheckboxCriterion, FlexibleCriterion, RubricCriterion].flat_map do |klass|
           if klass == RubricCriterion
             fields = common_fields + [
@@ -158,14 +161,18 @@ class ResultsController < ApplicationController
           else
             fields = common_fields + [:description]
           end
-          klass.left_outer_joins(:marks)
-               .where(
-                 assignment_id: assignment.id,
-                 ta_visible: !is_review,
-                 peer_visible: is_review,
-                 'marks.result_id': [nil, result.id]
-               ).pluck_to_hash(*fields)
-               .map { |h| h.merge(criterion_type: klass.name) }
+          criteria = klass.where(assignment_id: is_review ? assignment.pr_assignment.id : assignment.id,
+                                 ta_visible: !is_review,
+                                 peer_visible: is_review)
+          criteria_info = criteria.pluck_to_hash(*fields)
+          marks_info = criteria.joins(:marks)
+                               .where('marks.result_id': result.id)
+                               .pluck_to_hash(*fields, 'marks.mark')
+                               .group_by { |h| h[:id] }
+          criteria_info.map do |h|
+            info = marks_info[h[:id]]&.first || h.merge('marks.mark': nil)
+            info.merge(criterion_type: klass.name)
+          end
         end
         marks_map.sort! { |a, b| a[:position] <=> b[:position] }
 
@@ -213,13 +220,9 @@ class ResultsController < ApplicationController
         data[:old_total] = original_result&.total_mark
 
         # Tags
-        data[:current_tags] = Tag.left_outer_joins(:groupings)
-                                 .where('groupings_tags.grouping_id': submission.grouping_id)
-                                 .pluck_to_hash(:id, :name)
-        data[:available_tags] = Tag.left_outer_joins(:groupings)
-                                   .where.not('groupings_tags.grouping_id': submission.grouping_id)
-                                   .or(Tag.left_outer_joins(:groupings).where('groupings.id': nil))
-                                   .pluck_to_hash(:id, :name)
+        all_tags = Tag.pluck_to_hash(:id, :name)
+        data[:current_tags] = submission.grouping.tags.pluck_to_hash(:id, :name)
+        data[:available_tags] = all_tags - data[:current_tags]
 
         render json: data
       end
@@ -235,7 +238,8 @@ class ResultsController < ApplicationController
 
     # authorization
     begin
-      authorize! @assignment, to: :run_tests? # TODO: Remove it when reasons will have the dependent policy details
+      authorize! @assignment, to: :run_tests?
+      authorize! @grouping, to: :run_tests?
       authorize! @submission, to: :run_tests?
       @authorized = true
     rescue ActionPolicy::Unauthorized => e
@@ -269,10 +273,14 @@ class ResultsController < ApplicationController
     begin
       submission = Result.find(params[:id]).submission
       assignment = submission.assignment
-      authorize! assignment, to: :run_tests? # TODO: Remove it when reasons will have the dependent policy details
+      authorize! assignment, to: :run_tests?
+      authorize! submission.grouping, to: :run_tests?
       authorize! submission, to: :run_tests?
       test_run = submission.create_test_run!(user: current_user)
-      AutotestRunJob.perform_later(request.protocol + request.host_with_port, current_user.id, [{ id: test_run.id }])
+      @current_job = AutotestRunJob.perform_later(request.protocol + request.host_with_port,
+                                                  current_user.id,
+                                                  [{ id: test_run.id }])
+      session[:job_id] = @current_job.job_id
       flash_message(:notice, I18n.t('automated_tests.tests_running'))
     rescue StandardError => e
       message = e.is_a?(ActionPolicy::Unauthorized) ? e.result.reasons.full_messages.join(' ') : e.message
@@ -283,7 +291,8 @@ class ResultsController < ApplicationController
 
   def stop_test
     test_id = params[:test_run_id].to_i
-    AutotestCancelJob.perform_later(request.protocol + request.host_with_port, [test_id])
+    @current_job = AutotestCancelJob.perform_later(request.protocol + request.host_with_port, [test_id])
+    session[:job_id] = @current_job.job_id
     redirect_back(fallback_location: root_path)
   end
 
@@ -728,8 +737,8 @@ class ResultsController < ApplicationController
   end
 
   def delete_grace_period_deduction
-    @grouping = Grouping.find(params[:id])
-    grace_deduction = GracePeriodDeduction.find(params[:deduction_id])
+    result = Result.find(params[:id])
+    grace_deduction = result.submission.grouping.grace_period_deductions.find(params[:deduction_id])
     grace_deduction.destroy
     head :ok
   end
