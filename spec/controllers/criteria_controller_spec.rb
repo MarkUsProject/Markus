@@ -802,11 +802,11 @@ describe CriteriaController do
         expect(cr1.peer_visible).to be true
         # Since there are only 5 levels in this rubric criterion, if each of the following queries return an entity,
         # then this rubric criterion is properly sat up.
-        expect(cr1.levels.find_by(number: 0, name: 'What?', description: 'Fail', mark: 0)).not_to be_nil
-        expect(cr1.levels.find_by(number: 1, name: 'Hmm', description: 'Almost fail', mark: 1)).not_to be_nil
-        expect(cr1.levels.find_by(number: 2, name: 'Average', description: 'Not bad', mark: 2)).not_to be_nil
-        expect(cr1.levels.find_by(number: 3, name: 'Good', description: 'Alright', mark: 3)).not_to be_nil
-        expect(cr1.levels.find_by(number: 4, name: 'Excellent', description: 'Impressive', mark: 5)).not_to be_nil
+        expect(cr1.levels.find_by(name: 'What?', description: 'Fail', mark: 0)).not_to be_nil
+        expect(cr1.levels.find_by(name: 'Hmm', description: 'Almost fail', mark: 1)).not_to be_nil
+        expect(cr1.levels.find_by(name: 'Average', description: 'Not bad', mark: 2)).not_to be_nil
+        expect(cr1.levels.find_by(name: 'Good', description: 'Alright', mark: 3)).not_to be_nil
+        expect(cr1.levels.find_by(name: 'Excellent', description: 'Impressive', mark: 5)).not_to be_nil
 
         cr2 = assignment.get_criteria(:all, :rubric).find_by(name: 'cr90')
         expect(cr2.max_mark).to eq(4.6)
@@ -931,9 +931,6 @@ describe CriteriaController do
         expect(criteria.levels[3].name).to eq('Level 3')
         expect(criteria.levels[3].description).to eq('Level 3 description in one line.')
         expect(criteria.levels[3].mark).to eq(22.0)
-
-        expect(criteria.levels.find_by(number: 4)).to be_nil
-        expect(criteria.levels.find_by(number: 5)).to be_nil
 
         pending('We should report there is an invalid key in the file')
         expect(flash[:error]).not_to be_nil

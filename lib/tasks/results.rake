@@ -51,11 +51,11 @@ namespace :markus do
       rubric_criteria = [{ name: 'Uses Conditionals', max_mark: 4 }, { name: 'Code Clarity', max_mark: 8 },
                          { name: 'Code Is Documented', max_mark: 12 }, { name: 'Uses For Loop', max_mark: 4 }]
       default_levels = [
-          { name: 'Quite Poor', number: 0, description: 'This criterion was not satisfied whatsoever', mark: 0 },
-          { name: 'Satisfactory', number: 1, description: 'This criterion was satisfied', mark: 1 },
-          { name: 'Good', number: 2, description: 'This criterion was satisfied well', mark: 2 },
-          { name: 'Great', number: 3, description: 'This criterion was satisfied really well!', mark: 3 },
-          { name: 'Excellent', number: 4, description: 'This criterion was satisfied excellently', mark: 4 }
+          { name: 'Quite Poor', description: 'This criterion was not satisfied whatsoever', mark: 0 },
+          { name: 'Satisfactory', description: 'This criterion was satisfied', mark: 1 },
+          { name: 'Good', description: 'This criterion was satisfied well', mark: 2 },
+          { name: 'Great', description: 'This criterion was satisfied really well!', mark: 3 },
+          { name: 'Excellent', description: 'This criterion was satisfied excellently', mark: 4 }
       ]
       rubric_criteria.each do |rubric_criteria|
         params = { rubric: {

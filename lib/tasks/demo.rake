@@ -90,8 +90,7 @@ namespace :markus do
 
     attributes = []
     5.times do |number|
-      lvl = { name: random_words(1), number: number,
-              description: random_sentences(5), mark: number }
+      lvl = { name: random_words(1), description: random_sentences(5), mark: number }
       attributes.push(lvl)
     end
     params = { rubric: {

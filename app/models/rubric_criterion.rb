@@ -60,8 +60,9 @@ class RubricCriterion < Criterion
     ]
     default_levels.each_with_index do |level, index|
       # creates a new level and saves it to database
-      self.levels.create(name: level['name'], number: index,
-                         description: level['description'], mark: index)
+      self.levels.build(name: level['name'],
+                        description: level['description'],
+                        mark: index)
     end
   end
 
@@ -98,21 +99,20 @@ class RubricCriterion < Criterion
       criterion.position = assignment.next_criterion_position
     end
 
-    # there are 4 fields for each level
-    num_levels = working_row.length / 4
+    # there are 3 fields for each level
+    num_levels = working_row.length / 3
 
     # create/update the levels
     (0..num_levels - 1).each do
       name = working_row.shift
-      number = working_row.shift
       description = working_row.shift
       mark = working_row.shift
       # if level name exists we will update the level
       if criterion.levels.exists?(name: name)
-        criterion.levels.find_by(name: name).update(name: name, number: number, description: description, mark: mark)
+        criterion.levels.find_by(name: name).update(name: name, description: description, mark: mark)
       # Otherwise, we create a new level
       else
-        criterion.levels.create(name: name, number: number, description: description, mark: mark)
+        criterion.levels.create(name: name, description: description, mark: mark)
       end
 
       unless criterion.save
@@ -146,7 +146,6 @@ class RubricCriterion < Criterion
       if criterion_yml[1]['level_' + i.to_s]
         criterion.levels.build(rubric_criterion: criterion,
                                name: criterion_yml[1]['level_' + i.to_s]['name'],
-                               number: i,
                                description: criterion_yml[1]['level_' + i.to_s]['description'],
                                mark: criterion_yml[1]['level_' + i.to_s]['mark'])
       end
