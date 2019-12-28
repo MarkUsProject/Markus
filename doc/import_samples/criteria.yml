@@ -1,20 +1,20 @@
 Quality of Writing:
     type: rubric
     max_mark: 24.0
-    level_0:
-        name: Beginner
+    Beginner:
+        mark: 24.0
         description: The essay is very poorly organized structure and gives no new information.
-    level_1:
-        name: Capable
+    Capable:
+        mark: 20.0
         description: The essay is poorly organized but gives new information.
-    level_2:
-        name: Accomplished
+    Accomplished:
+        mark: 16.0
         description: The essay is well-structure and conveys new information clearly.
-    level_3:
-        name: level 3 criterion
+    level 3 criterion:
+        mark: 10.0
         description: level 3 description
-    level_4:
-        name: level 4 criterion
+    level 4 criterion:
+        mark: 0.0
         description: level 4 description
     ta_visible: true
     peer_visible: false
@@ -22,20 +22,20 @@ Quality of Writing:
 Grammar usage:
     type: rubric
     max_mark: 16.0
-    level_0:
-        name: Beginner
+    Beginner:
+        mark: 0.0
         description: There are more than 5 grammar mistakes in this entire essay.
-    level_1:
-        name: Intermediate
+    Intermediate:
+        mark: 4.0
         description: Intermediate.
-    level_2:
-        name: Accomplished
+    Accomplished:
+        mark: 8.0
         description: Accomplished.
-    level_3:
-        name: level 3 criterion
+    level 3 criterion:
+        mark: 12.0
         description: level 3 description
-    level_4:
-        name: level 4 criterion
+    level 4 criterion:
+        mark: 16.0
         description: level 4 description
     ta_visible: true
     peer_visible: false
