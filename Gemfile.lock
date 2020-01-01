@@ -286,7 +286,7 @@ GEM
     ruby-progressbar (1.10.1)
     ruby-rc4 (0.1.5)
     rubyzip (2.0.0)
-    rugged (0.28.3.1)
+    rugged (0.28.4.1)
     sass-rails (6.0.0)
       sassc-rails (~> 2.1, >= 2.1.1)
     sassc (2.1.0)
