@@ -6392,10 +6392,10 @@ react-jsonschema-form@^1.8.1:
     react-lifecycles-compat "^3.0.4"
     shortid "^2.2.14"
 
-react-keyed-file-browser@^1.5.3:
-  version "1.5.3"
-  resolved "https://registry.yarnpkg.com/react-keyed-file-browser/-/react-keyed-file-browser-1.5.3.tgz#357c0b8bca536dfd90c8272e412e9586189fe955"
-  integrity sha512-nzn72l6TghB482h/8Dmda+CUa42Ml7stIdjHMKrofu1fngTR9Mh4j451ATyUEymgOaTOywjOPiulWiZrcRjLCA==
+react-keyed-file-browser@^1.6.0:
+  version "1.6.0"
+  resolved "https://registry.yarnpkg.com/react-keyed-file-browser/-/react-keyed-file-browser-1.6.0.tgz#f41d2340b2ba774331938c142af18f0a29f6a670"
+  integrity sha512-wHUQcM+/RV3YyDLlTLqbZqjmlDIZHuENTQR6F8aB9rD9ZKHGFyWS2ybcAxg/RrfBsserduLffKlIttNa6mjPjg==
   dependencies:
     classnames "^2.2.3"
     moment "^2.17.0"
