@@ -102,6 +102,7 @@ group :development do
 end
 
 group :test do
+  gem 'coveralls', require: false
   gem 'factory_bot_rails'
   gem 'machinist', '< 3'
   gem 'shoulda'
