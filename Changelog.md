@@ -1,7 +1,8 @@
 # Changelog
 ## [unreleased]
-- Fixed bug where all non-empty rows in a downloaded marks spreadsheet csv file were aligned to the left.
-- Updated the Changelog format
+- Fixed bug where all non-empty rows in a downloaded marks spreadsheet csv file were aligned to the left. (#4290)
+- Updated the Changelog format. (#4292)
+- Fix displayed number of graded assignments being larger than total allocated for TAs. (#4297)
 
 ## [v1.0.0 - v1.8.1]
 ### Notes
