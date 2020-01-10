@@ -31,12 +31,14 @@ class PeerReviewsController < ApplicationController
   def populate
     @assignment = Assignment.find(params[:assignment_id])
 
-    reviewer_groups = get_groupings_table_info
-    reviewee_groups = get_groupings_table_info(@assignment.parent_assignment)
+    reviewer_groups = @assignment.all_grouping_data
+    reviewee_groups = @assignment.parent_assignment.all_grouping_data
 
     reviewee_to_reviewers_map = create_map_reviewee_to_reviewers(reviewer_groups, reviewee_groups)
     id_to_group_names_map = create_map_group_id_to_name(reviewer_groups, reviewee_groups)
-    num_reviews_map = PeerReview.group(:reviewer_id).having(reviewer_id: reviewer_groups.map { |g| g['id'] }).count
+    num_reviews_map = PeerReview.group(:reviewer_id)
+                                .having(reviewer_id: reviewer_groups[:groups].map { |g| g[:_id] })
+                                .count
 
     render json: {
       reviewer_groups: reviewer_groups,
@@ -98,11 +100,11 @@ class PeerReviewsController < ApplicationController
 
     if action_string == 'assign' || action_string == 'random_assign'
       if selected_reviewer_group_ids.empty?
-        flash_now(:error, t('peer_review.empty_list_reviewers'))
+        flash_now(:error, t('peer_reviews.errors.select_a_reviewer'))
         head 400
         return
       elsif selected_reviewee_group_ids.empty?
-        flash_now(:error, t('peer_review.empty_list_reviewees'))
+        flash_now(:error, t('peer_reviews.errors.select_a_reviewee'))
         head 400
         return
       end
@@ -114,7 +116,7 @@ class PeerReviewsController < ApplicationController
           perform_random_assignment(@assignment, num_groups_for_reviewers,
                                     selected_reviewer_group_ids, selected_reviewee_group_ids)
         rescue UnableToRandomlyAssignGroupException
-          flash_now(:error, t('peer_review.random_assign_failure'))
+          flash_now(:error, t('peer_reviews.errors.random_assign_failure'))
           head 400
           return
         end
@@ -123,19 +125,18 @@ class PeerReviewsController < ApplicationController
         reviewee_groups = Grouping.where(id: selected_reviewee_group_ids)
         begin
           PeerReview.assign(reviewer_groups, reviewee_groups)
-        rescue ActiveRecord::RecordInvalid
-          flash_now(:error, t('peer_review.problem'))
+        rescue ActiveRecord::RecordInvalid => e
+          flash_now(:error, e.message)
           head 400
           return
         rescue SubmissionsNotCollectedException
-          flash_now(:error, t('peer_review.submission_nil_failure'))
+          flash_now(:error, t('peer_reviews.errors.collect_submissions_first'))
           head 400
           return
         end
       when 'unassign'
         PeerReview.unassign(selected_reviewee_group_ids, reviewers_to_remove_from_reviewees_map)
       else
-        flash_now(:error, t('peer_review.problem'))
         head 400
         return
     end

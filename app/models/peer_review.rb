@@ -1,7 +1,7 @@
 require 'set'
 
 class PeerReview < ApplicationRecord
-  belongs_to :result
+  belongs_to :result, dependent: :destroy
   belongs_to :reviewer, class_name: 'Grouping'
   has_one :reviewee, class_name: 'Grouping', through: :result, source: :grouping
   validates_associated :reviewer
@@ -14,7 +14,7 @@ class PeerReview < ApplicationRecord
       reviewer.students.each { |student| student_id_set.add(student.id) }
       result.submission.grouping.students.each do |student|
         if student_id_set.include?(student.id)
-          errors.add(:reviewer_id, I18n.t('peer_review.cannot_allow_reviewer_to_be_reviewee'))
+          errors.add(:reviewer_id, I18n.t('peer_reviews.errors.cannot_allow_reviewer_to_be_reviewee'))
           break
         end
       end
@@ -53,7 +53,7 @@ class PeerReview < ApplicationRecord
 
   # Deletes all peer reviewers for the reviewee groupings
   def self.delete_all_peer_reviews_for(reviewee_id)
-    self.joins(result: :submission).where(submissions: { grouping_id: reviewee_id }).delete_all
+    self.joins(result: :submission).where(submissions: { grouping_id: reviewee_id }).destroy_all
   end
 
   def self.assign(reviewer_groups, reviewee_groups)

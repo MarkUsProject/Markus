@@ -1,7 +1,7 @@
 en:
   activerecord:
     models:
-      groups:
+      group:
         one: "Group"
         other: "Groups"
     attributes:

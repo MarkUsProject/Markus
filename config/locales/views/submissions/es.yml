@@ -4,9 +4,6 @@ es:
       apply_late_penalty: "Aplicar penalidad por demora/Deducir aplazamiento de gracia (Si esta opción no
                            es seleccionada, las entregas no serán penalizadas, sin importar la hora o
                            fecha de la entrega.)"
-      collection_job_started_for_groups: "La recolección de las entregas para las agrupaciones seleccionadas del
-                                          proyecto %{assignment_identifier} ha iniciado. El proceso puede demorar,
-                                          pero usted puede acceder las entregas tan pronto como se vuelvan disponibles."
       could_not_collect_some_due: "No se pudo recolectar las entregas para algunas agrupaciones del proyecto
                                %{assignment_identifier} -  la fecha de recolección para estas
                                agrupaciones no ha llegado."
@@ -114,3 +111,11 @@ es:
     status: "Estado"
     successfully_changed: "%{changed} resultados han sido actualizados exitosamente"
     unrelease_marks: "Ocultar Notas"
+
+    state:
+      complete: "Completado"
+      in_progress: "En progreso"
+      not_collected: "No ha sido recolectado"
+      released: "Publicado"
+      remark_requested: "Recalificación solicitada"
+      before_due_date: "UPDATE ME"

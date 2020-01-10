@@ -3,28 +3,41 @@ Mousetrap.bind('?', function() {
   modal_help.open();
 });
 
+function is_text_selected() {
+  return 'getSelection' in window && window.getSelection().type === 'Range';
+}
+
 // Go to the previous submission with <
 Mousetrap.bind('shift+left', function() {
-  $('.button.previous')[0].click();
+  // Don't override range selection keybindings
+  if (!is_text_selected()) {
+    $('.button.previous')[0].click();
+  }
 });
 
 // Go to next submission with >
 Mousetrap.bind('shift+right', function() {
-  $('.button.next')[0].click();
+  if (!is_text_selected()) {
+    $('.button.next')[0].click();
+  }
 });
 
 // Go to the previous criterion with shift + up
 Mousetrap.bind('shift+up', function(e) {
-  e.preventDefault();
-  prevCriterion();
-  return false;
+  if (!is_text_selected()) {
+    e.preventDefault();
+    prevCriterion();
+    return false;
+  }
 });
 
 // Go to the next criterion with shift + down
 Mousetrap.bind('shift+down', function(e) {
-  e.preventDefault();
-  nextCriterion();
-  return false;
+  if (!is_text_selected()) {
+    e.preventDefault();
+    nextCriterion();
+    return false;
+  }
 });
 
 // When on rubric criterion, use the arrow keys to hover over the next rubric

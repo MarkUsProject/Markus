@@ -33,8 +33,8 @@ class PeerReviewsManager extends React.Component {
       this.studentsTable.resetSelection();
       this.reviewersTable.resetSelection();
       this.setState({
-        reviewerGroups: res.reviewer_groups,
-        revieweeGroups: res.reviewee_groups || [],
+        reviewerGroups: res.reviewer_groups.groups,
+        revieweeGroups: res.reviewee_groups.groups || [],
         revieweeToReviewers: res.reviewee_to_reviewers_map,
         groupIdToName: res.id_to_group_names_map,
         reviewerToNumReviews: res.num_reviews_map,
@@ -176,14 +176,14 @@ class RawReviewersTable extends React.Component {
           </select>,
       },
       {
-        Header: I18n.t('peer_review.reviewer_group'),
+        Header: I18n.t('activerecord.attributes.peer_review.reviewer'),
         accessor: 'name',
         id: 'name'
       },
       {
-        Header: I18n.t('peer_review.number_of_reviews_header'),
+        Header: I18n.t('activerecord.models.group.other'),
         accessor: 'groups',
-        className: 'groups',
+        className: 'groups number',
         filterable: false
       }
     ]
@@ -203,12 +203,12 @@ class RawReviewersTable extends React.Component {
     const hashmap = this.props.reviewerToNumReviews;
     const groups_data = this.props.groups.map((group) => {
       let numReviews = 0;
-      if (hashmap.hasOwnProperty(group.id)) {
-        numReviews = hashmap[group.id];
+      if (hashmap.hasOwnProperty(group._id)) {
+        numReviews = hashmap[group._id];
       }
       return {
-        _id: group.id,
-        name: group.name,
+        _id: group._id,
+        name: group.group_name,
         groups: numReviews,
         section: group.section
       }
@@ -271,20 +271,21 @@ class RawRevieweesTable extends React.Component {
           </select>,
       },
       {
-        Header: I18n.t('peer_review.assign'),
+        Header: I18n.t('activerecord.models.group.one'),
         accessor: 'name',
         id: 'name',
         filterable: true
       },
       {
-        Header: I18n.t('peer_review.assigned_reviewers_header'),
+        Header: I18n.t('peer_reviews.assigned_reviewers_header'),
         accessor: 'members',
         id: 'members'
       },
       {
-        Header: I18n.t('peer_review.number_assigned_reviewers'),
+        Header: I18n.t('peer_reviews.number_assigned_reviewers'),
         accessor: 'count',
-        id: 'count'
+        id: 'count',
+        className: 'number'
       },
     ]
   };
@@ -308,7 +309,7 @@ class RawRevieweesTable extends React.Component {
   render() {
     const groups_data = this.props.groups.map( (group) => {
       let reviewerGroups = [];
-      const reviewee_group_id = group.id;
+      const reviewee_group_id = group._id;
       const reviewer_ids = this.props.revieweeToReviewers[reviewee_group_id];
       reviewer_ids.forEach( (reviewer_group_id) => {
         const reviewer_group_name = this.props.groupIdToName[reviewer_group_id];
@@ -322,8 +323,8 @@ class RawRevieweesTable extends React.Component {
           /> {reviewer_group_name}</div>);
       });
       return {
-        _id: group.id,
-        name: group.name,
+        _id: group._id,
+        name: group.group_name,
         members: reviewerGroups,
         section: group.section,
         count: reviewer_ids.length
@@ -362,7 +363,7 @@ class GradersActionBox extends React.Component {
     return (
       <div style={{ display: 'flex' }}>
         <div className="peer-review-amount-spinner">
-          <span>{I18n.t('peer_review.number_per_group')}</span>
+          <span>{I18n.t('peer_reviews.number_per_group')}</span>
           <input type="number" id="peer-review-spinner" min={1} defaultValue={1}
                  onChange={evt => this.props.updateNumReviewers(evt.target.value)} />
           <button
@@ -370,7 +371,7 @@ class GradersActionBox extends React.Component {
             className='assign-randomly-button'
             onClick={evt => performAction(evt.currentTarget.getAttribute('id'))}
           >
-            {I18n.t('peer_review.action.random_assign')}
+            {I18n.t('peer_reviews.action.random_assign')}
           </button>
         </div>
         <div className='rt-action-box icon'>
@@ -379,7 +380,7 @@ class GradersActionBox extends React.Component {
             className='assign-all-button'
             onClick={evt => performAction(evt.currentTarget.getAttribute('id'))}
           >
-            {I18n.t('peer_review.action.assign')}
+            {I18n.t('peer_reviews.action.assign')}
           </button>
 
           <button
@@ -387,7 +388,7 @@ class GradersActionBox extends React.Component {
             className='unassign-all-button'
             onClick={evt => performAction(evt.currentTarget.getAttribute('id'))}
           >
-            {I18n.t('peer_review.action.unassign')}
+            {I18n.t('peer_reviews.action.unassign')}
           </button>
         </div>
       </div>

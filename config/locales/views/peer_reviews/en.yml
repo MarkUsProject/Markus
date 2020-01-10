@@ -1,0 +1,25 @@
+en:
+  peer_reviews:
+    assign: "Assign Reviewers"
+    assigned_reviewers_header: "Reviewers"
+    no_assigned_reviews: "You have no submissions to review yet."
+    number_assigned_reviewers: "Reviewer count"
+    number_per_group: "Number of peer reviews per reviewer"
+    peer_review_mapping: "Peer Review Mapping"
+    review_title: "%{assignment_name} Peer Review for %{group_name} – review by %{reviewer_name}"
+    reviewers_reviews: "This reviewer's reviews: "
+    reviews_made_on_submission: "Reviews for your submission: "
+    view_ta_result: "View TA Grading"
+    your_results: "Peer Reviews of Your Submission"
+    your_results_none: "No reviews are available."
+
+    action:
+      assign: "Assign Reviewer(s)"
+      unassign: "Unassign Reviewer(s)"
+      random_assign: "Randomly Assign Reviewers"
+    errors:
+      cannot_allow_reviewer_to_be_reviewee: "A student cannot be a reviewer and reviewee"
+      collect_submissions_first: "Submissions for original assignment need to be collected before you can assign reviewers."
+      random_assign_failure: "Unable to randomly assign, too many reviews requested per selected reviewer/reviewees"
+      select_a_reviewer: "Please select at least one reviewer to assign."
+      select_a_reviewee: "Please select at least one group to be reviewed."

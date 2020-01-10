@@ -28,10 +28,6 @@ cr100:
   type: checkbox
   max_mark: 5.0
   description: I am checkbox
-cr40:
-  type: Checkbox
-  max_mark: not_a_number
-  description: My mark is not a number.
 cr70:
   type: Flexible
   max_mark: 10.0
@@ -43,10 +39,6 @@ cr80:
   max_mark: 10.0
   ta_visible: true
   peer_visible: true
-cr50:
-  type: Flexible
-  max_mark: not_a_number
-  description: My mark is not a number.
 cr60:
   type: flexible
   max_mark: 10.0

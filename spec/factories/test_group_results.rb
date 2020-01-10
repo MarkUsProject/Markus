@@ -4,6 +4,6 @@ FactoryBot.define do
     association :test_run
     marks_earned { 1 }
     marks_total { 1 }
-    time { Faker::Number.number(4) }
+    time { Faker::Number.number(digits: 4) }
   end
 end

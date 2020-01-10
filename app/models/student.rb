@@ -25,6 +25,8 @@ class Student < User
   belongs_to :section, optional: true
   accepts_nested_attributes_for :section
 
+  validates_presence_of :section, unless: -> { section_id.nil? }
+
   validates_numericality_of :grace_credits,
                             only_integer: true,
                             greater_than_or_equal_to: 0

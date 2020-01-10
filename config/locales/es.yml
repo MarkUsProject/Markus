@@ -1,41 +1,4 @@
 es:
-    # app/views/assignments/
-    assignment:
-        start_peer_review:                "Revisión de Compañeros"
-        peer_review_results:              "Resultados para la Revisión de Compañeros"
-        your_reviews:                     "Sus Revisiones"
-        review:                           "Revisión"
-    peer_review:
-        assign:                               "Asignar revisiones por pares"
-        review:                               "Revisión"
-        reviews:                              "Revisiones"
-        problem:                              "Un problema inesperado ha ocurrido"
-        submission_nil_failure:               "Las entregas del proyecto original necesitan ser recolectadas primero"
-        random_assign_failure:                "No es posible asignar al azar, demasiadas revisiones solicitadas
-                                               para los revisores/revisados seleccionados."
-        number_of_reviews_header:             "Número de revisiones"
-        assigned_reviewers_header:            "Revisores asignados"
-        reviewer_group:                       "Grupo del revisor"
-        reviews_made_on_submission:           "Revisiones realizadas a su entrega: "
-        reviewers_reviews:                    "Las revisiones de este revisor: "
-        view_ta_result:                       "Mirar el Resultado del Asistente de Cátedra"
-        empty_list_reviewers:                 "No se puede tener una lista vacía de revisores"
-        empty_list_reviewees:                 "No se puede tener una lista vacía de revisados"
-        cannot_allow_reviewer_to_be_reviewee: "Un estudiante no puede ser un revisor y un revisado a la vez"
-        number_per_group:                     "Número de Revisiones de Compañeros por grupo"
-        number_assigned_reviewers:            "Número de Revisores Asignados"
-        action:
-            assign:                           "Asignar Revisor (es) Peer"
-            unassign:                         "Desasignar Revisor (es) Peer"
-            random_assign:                    "Asignar Revisores al Azar"
-        download:
-            assigned_reviewers_header: "Descargar proyectos de Revisión de Compañeros"
-            assigned_reviewers_csv:    "CSV que vincula el grupo del revisor y el revisado."
-        upload:
-            header:      "Subir la Revisión de Compañeros en formato CSV"
-
-    peer_reviews:                "Revisiones de Compañeros"
-
     csv_upload_user_duplicate:           "Se ha detectado un nombre de usuario duplicado: %{user_name}"
 
     csv:
@@ -60,18 +23,8 @@ es:
       bad_students: "UPDATE ME: %{student_names}"
       memberships_exist: "UPDATE ME: %{student_names}"
 
-    browse_submissions:
-      review_state:                         "Estado de la Revisión"
-
-    results:
-      review_title:                    "%{assignment_name} Revisión de pares para %{group_name} –
-                                        revisado por %{reviewer_name}"
-
     #Sutdent's View (student)
     student:
-      peer_assignment:                    "%{short_identifier}: Proyecto de Revisión entre Compañeros"
-      no_peer_submission_yet:             "Usted no tiene entregas por revisar."
-      no_reviews:                         "Su proyecto no ha recibido ninguna revisión por el momento."
       submission:
         conflicts:                        "Conflictos"
         file_conflicts:                   "Sus cambios no han sido realizados. Los siguientes conflictos fueron
@@ -105,13 +58,19 @@ es:
     poll_job:
       working_message: "%{progress} fuera de %{total}"
       queued: "En cola"
+      not_enqueued: "No en cola"
       completed: "Terminado"
       failed: "Ha fallado"
       split_pdf_job: "Procesamiento página %{progress} fuera de %{total} para %{exam_name}"
       generate_job: "Generación de la copia %{progress} de %{total} para %{exam_name}"
       create_groups_job: "%{progress}/%{total} grupos creados"
+      create_groups_job_extra_info: "Ha fallado: %{group_name}, %{repo_name}, %{members}"
       uncollect_submissions_job: "Asignaciones incumplidas... "
       submissions_job: "%{progress}/%{total} Envíos recibidos"
+      update_repo_required_files_job: "%{progress}/%{total} UPDATE ME"
+      update_starter_code_job: "%{progress}/%{total} UPDATE ME"
+      autotest_run_job: "%{progress}/%{total} UPDATE ME"
+      autotest_run_job_failed_count: "%{failed} UPDATE ME"
     repo:
       commits:
         assignment_folder: "UPDATE ME %{assignment}"
@@ -119,3 +78,4 @@ es:
         default: "UPDATE ME"
         required_files: "UPDATE ME %{assignment}"
         starter_code: "UPDATE ME %{assignment}"
+      timeout: 'UPDATE ME %{ms}'

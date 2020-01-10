@@ -5,6 +5,7 @@ class SubversionRevision < Repository::AbstractRevision
   # repository
   def initialize(revision_number, repo)
     revision_number = revision_number.to_i # can be passed as string or int
+    super(revision_number)
     @repo = repo
     @revision_identifier_ui = revision_number.to_s
     begin
@@ -18,7 +19,6 @@ class SubversionRevision < Repository::AbstractRevision
       raise RevisionDoesNotExist
     end
     @server_timestamp = @timestamp
-    super(revision_number)
   end
 
   # Return all of the files in this repository at the root directory

@@ -7,7 +7,7 @@
           <% elsif !@assignment.nil? %>
             <% # Display the assignment's short identifier %>
             <%= @assignment.is_peer_review? ?
-                  @assignment.parent_assignment.short_identifier + ' ' + t('assignment.review') :
+                  @assignment.parent_assignment.short_identifier + ' ' + PeerReview.model_name.human :
                   @assignment.short_identifier %>
           <% elsif !@grade_entry_form.nil? %>
             <% # Display the grade entry form's short identifier %>
@@ -72,7 +72,7 @@
 
       <% if @assignment.has_peer_review? && !@assignment.pr_assignment.is_hidden %>
         <li class='<%= "active" if controller.controller_name == 'assignments' && controller.action_name == 'peer_review'%>'>
-          <%= link_to t('assignment.start_peer_review'),
+          <%= link_to PeerReview.model_name.human.pluralize,
                       controller: 'assignments',
                       action: 'peer_review',
                       id: @assignment.id %>

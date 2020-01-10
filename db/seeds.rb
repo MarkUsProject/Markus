@@ -1,5 +1,6 @@
 # clean up existing repos first
 FileUtils.rm_rf(Dir.glob('data/dev/repos/*'))
+
 # run tasks
 Rake::Task['db:admin'].invoke
 Rake::Task['db:tas'].invoke
@@ -14,4 +15,5 @@ Rake::Task['db:remarks'].invoke
 Rake::Task['db:peer_reviews'].invoke
 Rake::Task['db:scanned_exam'].invoke
 Rake::Task['db:marking_scheme'].invoke
-Rake::Task['db:autotest'].invoke
+
+Rake::Task['db:autotest'].invoke unless ENV['SEED_AUTOTEST'] == 'false'

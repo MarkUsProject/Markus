@@ -81,8 +81,6 @@ class ExamTemplatesController < ApplicationController
     assignment = Assignment.find(params[:assignment_id])
     exam_template = assignment.exam_templates.find(params[:id])
 
-    flash_message(:success, t('exam_templates.generate.generate_job_started',
-                              exam_name: exam_template.assignment.short_identifier))
     current_job = exam_template.generate_copies(copies, index)
     current_job.status.update(file_name: "#{exam_template.name}-#{index}-#{index + copies - 1}.pdf")
     current_job.status.update(exam_id: exam_template.id)

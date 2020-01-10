@@ -1,40 +1,4 @@
 fr:
-    # app/views/assignments/
-    assignment:
-        start_peer_review: "Examen par les pairs"
-        peer_review_results: "Examen par les pairs Résultats"
-        your_reviews: "Vos avis"
-        review: "Avis"
-    peer_review:
-        assign: "Attribuer examen par les pairs"
-        review: "Avis "
-        reviews: "Avis"
-        problem: "Un problème inattendu est survenue"
-        submission_nil_failure: "Les soumissions pour l'affectation d'origine doivent être collectées première"
-        random_assign_failure: "Impossible d'attribuer au hasard, trop de commentaires demandés par évaluateur / CONTRÔLER sélectionnés"
-        number_of_reviews_header: "Nombre d'avis"
-        assigned_reviewers_header: "Assigned examinateurs"
-        reviewer_group: "Groupe avis"
-        reviews_made_on_submission: "Avis faites sur votre soumission: "
-        reviewers_reviews: "Les avis de ce réviseur: "
-        view_ta_result: "Voir TA Résultat"
-        empty_list_reviewers: "Vous ne pouvez pas avoir une liste vide d'examinateurs"
-        empty_list_reviewees: "Vous ne pouvez pas avoir une liste vide de CONTRÔLER"
-        cannot_allow_reviewer_to_be_reviewee: "Un étudiant ne peut pas être un réviseur et pays examiné"
-        number_per_group: "Nombre d'examens par les pairs par groupe"
-        number_assigned_reviewers: "Numéro attribué examinateurs"
-        action:
-            assign: "Assigner des réviseurs"
-            unassign: "Annuler les pairs examinateurs"
-            random_assign: "Attribuer des réviseurs au hasard"
-        download:
-            assigned_reviewers_header: "Télécharger Peer Review missions"
-            assigned_reviewers_csv: "Auteur groupe groupe CSV pays examiné"
-        upload:
-            header: "Télécharger Peer Review CSV"
-
-    peer_reviews:       "Examens par le pairs"
-
     csv_upload_user_duplicate: "Nom d'utilisateur déjà inscrit (conflit) : %{user_name}"
 
     csv:
@@ -52,17 +16,8 @@ fr:
       bad_students: "UPDATE ME: %{student_names}"
       memberships_exist: "UPDATE ME: %{student_names}"
 
-    browse_submissions:
-      review_state:         "Avis Etat"
-
-    results:
-      review_title: "Avis %{assignment_name} : %{group_name}"
-
     #Sutdent's View (student)
     student:
-      peer_assignment: "%{short_identifier}: Projet d'examen par les pairs"
-      no_peer_submission_yet: "Vous avez aucune observation à révision."
-      no_reviews: "Personne ne vous a encore de commentaires."
       submission:
         conflicts: "Conflits"
         file_conflicts: "Vos changements n'ont pas été pris en compte. Les fichiers suivants sont en conflit :"
@@ -93,13 +48,19 @@ fr:
     poll_job:
       working_message: "%{progress} hors de %{total}"
       queued: "Mis en file d'attente"
+      not_enqueued: "Aucun tâches mis en file"
       completed: "Terminé"
       failed: "échoué"
       split_pdf_job: "Traitement page %{progress} sur %{total} pour %{exam_name}"
       generate_job: "Génération de la copie %{progress} de %{total} pour %{exam_name}"
       create_groups_job: "%{progress}/%{total} groupes créés"
+      create_groups_job_extra_info: "Échoué pour: groupe: %{group_name}, repo: %{repo_name}, membres: %{members}"
       uncollect_submissions_job: "Tâches de décollement... "
       submissions_job: "%{progress}/%{total} Soumissions collectées"
+      update_repo_required_files_job: "%{progress}/%{total} repos modifiés"
+      update_starter_code_job: "%{progress}/%{total} repos modifiés"
+      autotest_run_job: "%{progress}/%{total} Tests commencés"
+      autotest_run_job_failed_count: "%{failed} Tests échoués"
     repo:
       commits:
         assignment_folder: "UPDATE ME %{assignment}"
@@ -107,3 +68,4 @@ fr:
         default: "UPDATE ME"
         required_files: "UPDATE ME %{assignment}"
         starter_code: "UPDATE ME %{assignment}"
+      timeout: 'Attendu %{ms} millisecondes pour accéder à ce repo. Veuillez patienter quelques secondes et réessayer.'

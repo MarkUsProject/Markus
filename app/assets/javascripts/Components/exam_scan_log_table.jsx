@@ -84,12 +84,12 @@ class ExamScanLogTable extends React.Component {
       Header: I18n.t('split_pdf_logs.papers_found'),
       columns: [
         {
-          Header: I18n.t('results.state.complete'),
+          Header: I18n.t('submissions.state.complete'),
           accessor: 'num_groups_in_complete',
           className: 'number'
         },
         {
-          Header: I18n.t('results.state.incomplete'),
+          Header: I18n.t('submissions.state.incomplete'),
           accessor: 'num_groups_in_incomplete',
           className: 'number'
         },
@@ -155,7 +155,7 @@ class ExamScanErrorsTable extends React.Component {
       },
     },
     {
-      Header: I18n.t('activerecord.models.groups.one'),
+      Header: I18n.t('activerecord.models.group.one'),
       accessor: 'group',
       maxWidth: 150,
     },

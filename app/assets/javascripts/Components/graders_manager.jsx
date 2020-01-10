@@ -189,7 +189,7 @@ class GradersManager extends React.Component {
           <div className='mapping-table'>
             <Tabs onSelect={this.onSelectTable}>
               <TabList>
-                <Tab>{I18n.t('activerecord.models.groups.other')}</Tab>
+                <Tab>{I18n.t('activerecord.models.group.other')}</Tab>
                 <Tab>{I18n.t('activerecord.models.criterion.other')}</Tab>
               </TabList>
 
@@ -260,7 +260,7 @@ class RawGradersTable extends React.Component {
       minWidth: 170
     },
     {
-      Header: I18n.t('activerecord.models.groups.other'),
+      Header: I18n.t('activerecord.models.group.other'),
       accessor: 'groups',
       className: 'number',
       filterable: false
@@ -316,7 +316,7 @@ class RawGroupsTable extends React.Component {
         show: this.props.showSections || false,
         minWidth: 70,
         Cell: ({ value }) => {
-          return value === null ? '' : this.props.sections[value]
+          return this.props.sections[value] || '';
         },
         filterMethod: (filter, row) => {
           if (filter.value === 'all') {
@@ -337,7 +337,7 @@ class RawGroupsTable extends React.Component {
           </select>,
       },
       {
-        Header: I18n.t('activerecord.models.groups.one'),
+        Header: I18n.t('activerecord.models.group.one'),
         accessor: 'group_name',
         id: 'group_name',
         minWidth: 150,

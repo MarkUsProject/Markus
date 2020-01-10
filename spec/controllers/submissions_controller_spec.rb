@@ -323,7 +323,10 @@ describe SubmissionsController do
         it 'should collect all groupings when override is true' do
           @assignment.update!(due_date: Time.current - 1.week)
           allow(SubmissionsJob).to receive(:perform_later) { Struct.new(:job_id).new('1') }
-          expect(SubmissionsJob).to receive(:perform_later).with(array_including(@grouping, uncollected_grouping))
+          expect(SubmissionsJob).to receive(:perform_later).with(
+            array_including(@grouping, uncollected_grouping),
+            collection_dates: hash_including
+          )
           post_as @admin, :collect_submissions, params: { assignment_id: @assignment.id,
                                                           groupings: [@grouping.id, uncollected_grouping.id],
                                                           override: true }
@@ -332,7 +335,10 @@ describe SubmissionsController do
         it 'should collect the uncollected grouping only when override is false' do
           @assignment.update!(due_date: Time.current - 1.week)
           allow(SubmissionsJob).to receive(:perform_later) { Struct.new(:job_id).new('1') }
-          expect(SubmissionsJob).to receive(:perform_later).with([uncollected_grouping])
+          expect(SubmissionsJob).to receive(:perform_later).with(
+            [uncollected_grouping],
+            collection_dates: hash_including
+          )
           post_as @admin, :collect_submissions, params: { assignment_id: @assignment.id,
                                                           groupings: [@grouping.id, uncollected_grouping.id],
                                                           override: false }
@@ -381,8 +387,7 @@ describe SubmissionsController do
             @section_due_date.update!(due_date: Time.current - 1.week)
             allow(Assignment).to receive_message_chain(
               :includes, :find) { @assignment }
-            expect_any_instance_of(SubmissionsController).to receive(:flash_now).with(:success, anything)
-            expect(@assignment).to receive(:short_identifier) { 'a1' }
+            expect_any_instance_of(SubmissionsController).not_to receive(:flash_now).with(:error, anything)
             allow(SubmissionsJob).to receive(:perform_later) { Struct.new(:job_id).new('1') }
 
             post_as @admin,
@@ -418,8 +423,7 @@ describe SubmissionsController do
             @assignment.update!(due_date: Time.current - 1.week)
             allow(Assignment).to receive_message_chain(
               :includes, :find) { @assignment }
-            expect_any_instance_of(SubmissionsController).to receive(:flash_now).with(:success, anything)
-            expect(@assignment).to receive(:short_identifier) { 'a1' }
+            expect_any_instance_of(SubmissionsController).not_to receive(:flash_now).with(:error, anything)
             allow(SubmissionsJob).to receive(:perform_later) { Struct.new(:job_id).new('1') }
 
             post_as @admin,

@@ -6,9 +6,6 @@ Chart.defaults.global.elements.rectangle.borderColor = 'rgba(151,187,205,0.5)';
 Chart.defaults.bar.scales.xAxes = [{
   type: 'category',
 
-  categoryPercentage: 0.8,
-  barPercentage: 0.9,
-
   // grid line settings
   gridLines: {
     offsetGridLines: true,
@@ -26,3 +23,8 @@ Chart.defaults.bar.scales.yAxes = [{
 }];
 
 Chart.defaults.global.legend.display = false;
+
+Chart.defaults.datasets = [{
+  barPercentage: 0.9,
+  categoryPercentage: 0.8
+}];

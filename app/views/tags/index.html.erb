@@ -12,7 +12,7 @@
 <% content_for :title,
                Tag.model_name.human.pluralize + ': ' +
                  (@assignment.is_peer_review? ?
-                  @assignment.parent_assignment.short_identifier + ' ' + t('assignment.review') :
+                  @assignment.parent_assignment.short_identifier + ' ' + PeerReview.model_name.human :
                   @assignment.short_identifier) %>
 
 <% @heading_buttons = [

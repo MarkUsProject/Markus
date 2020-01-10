@@ -1,11 +1,11 @@
 describe ResultsController do
   let(:assignment) { create :assignment }
-  let(:student) { create :student }
+  let(:student) { create :student, grace_credits: 2 }
   let(:admin) { create :admin }
   let(:ta) { create :ta }
   let(:grouping) { create :grouping_with_inviter, assignment: assignment, inviter: student }
   let(:submission) { create :version_used_submission, grouping: grouping }
-  let(:incomplete_result) { create :incomplete_result, submission: submission }
+  let(:incomplete_result) { submission.current_result }
   let(:complete_result) { create :complete_result, submission: submission }
   let(:submission_file) { create :submission_file, submission: submission }
   let(:rubric_mark) { create :rubric_mark, result: incomplete_result }
@@ -246,7 +246,7 @@ describe ResultsController do
                                       id: incomplete_result.id, markable_id: rubric_mark.markable_id,
                                       markable_type: rubric_mark.markable_type,
                                       mark: 1 }, xhr: true
-        expect(JSON.parse(response.body)[:num_marked]).to be_nil
+        expect(JSON.parse(response.body)['num_marked']).to eq 0
       end
       it { expect(response).to have_http_status(:redirect) }
       context 'but cannot save the mark' do
@@ -335,7 +335,7 @@ describe ResultsController do
              add_extra_mark: :post,
              download_zip: :get,
              cancel_remark_request: :delete,
-             delete_grace_period_deduction: :post,
+             delete_grace_period_deduction: :delete,
              next_grouping: :get,
              remove_extra_mark: :post,
              set_released_to_students: :post,
@@ -480,6 +480,43 @@ describe ResultsController do
       test_assigns_not_nil :result
     end
     include_examples 'shared ta and admin tests'
+
+    describe '#delete_grace_period_deduction' do
+      it 'deletes an existing grace period deduction' do
+        expect(grouping.grace_period_deductions.exists?).to be false
+        deduction = create(:grace_period_deduction,
+                           membership: grouping.accepted_student_memberships.first,
+                           deduction: 1)
+        expect(grouping.grace_period_deductions.exists?).to be true
+        delete :delete_grace_period_deduction,
+               params: { assignment_id: assignment.id, submission_id: submission.id,
+                         id: complete_result.id, deduction_id: deduction.id }
+        expect(grouping.grace_period_deductions.exists?).to be false
+      end
+
+      it 'raises a RecordNotFound error when given a grace period deduction that does not exist' do
+        expect do
+          delete :delete_grace_period_deduction,
+                 params: { assignment_id: assignment.id, submission_id: submission.id,
+                           id: complete_result.id, deduction_id: 100 }
+        end.to raise_error(ActiveRecord::RecordNotFound)
+      end
+
+      it 'raises a RecordNotFound error when given a grace period deduction for a different grouping' do
+        student2 = create(:student, grace_credits: 2)
+        grouping2 = create(:grouping_with_inviter, assignment: assignment, inviter: student2)
+        submission2 = create(:version_used_submission, grouping: grouping2)
+        create(:complete_result, submission: submission2)
+        deduction = create(:grace_period_deduction,
+                           membership: grouping2.accepted_student_memberships.first,
+                           deduction: 1)
+        expect do
+          delete :delete_grace_period_deduction,
+                 params: { assignment_id: assignment.id, submission_id: submission.id,
+                           id: complete_result.id, deduction_id: deduction.id }
+        end.to raise_error(ActiveRecord::RecordNotFound)
+      end
+    end
   end
   context 'A TA' do
     before(:each) { sign_in ta }
@@ -494,5 +531,19 @@ describe ResultsController do
       it { expect(response).to have_http_status(:success) }
     end
     include_examples 'shared ta and admin tests'
+
+    context 'accessing update_mark' do
+      it 'should not count completed groupings that are not assigned to the TA' do
+        grouping2 = create(:grouping_with_inviter, assignment: assignment)
+        create(:version_used_submission, grouping: grouping2)
+        grouping2.current_result.update(marking_state: Result::MARKING_STATES[:complete])
+
+        patch :update_mark, params: { assignment_id: assignment.id, submission_id: submission.id,
+                                      id: incomplete_result.id, markable_id: rubric_mark.markable_id,
+                                      markable_type: rubric_mark.markable_type,
+                                      mark: 1 }, xhr: true
+        expect(JSON.parse(response.body)['num_marked']).to eq 0
+      end
+    end
   end
 end

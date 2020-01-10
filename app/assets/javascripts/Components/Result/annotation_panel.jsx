@@ -14,23 +14,32 @@ export class AnnotationPanel extends React.Component {
   }
 
   componentDidMount() {
-    const comment = this.state.overallComment;
+    this.renderOverallCommentText();
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevProps.overallComment !== this.props.overallComment) {
+      this.setState({overallComment: this.props.overallComment});
+    } else if (prevState.overallComment !== this.state.overallComment) {
+      this.renderOverallCommentText();
+    }
+  }
+
+  updateOverallComment = (event) => {
+    const comment = event.target.value;
+    this.setState({overallComment: comment, unsavedChanges: true});
+  };
+
+  renderOverallCommentText() {
     let target_id;
     if (this.props.released_to_students || this.props.remarkSubmitted) {
       target_id = 'overall_comment_text';
     } else {
       target_id = 'overall_comment_preview';
     }
-    document.getElementById(target_id).innerHTML = marked(comment, {sanitize: true});
+    document.getElementById(target_id).innerHTML = marked(this.state.overallComment, {sanitize: true});
     MathJax.Hub.Queue(['Typeset', MathJax.Hub, target_id]);
   }
-
-  updateOverallComment = (event) => {
-    const comment = event.target.value;
-    this.setState({overallComment: comment, unsavedChanges: true});
-    document.getElementById('overall_comment_preview').innerHTML = marked(comment, {sanitize: true});
-    MathJax.Hub.Queue(['Typeset', MathJax.Hub, 'overall_comment_preview']);
-  };
 
   submitOverallComment = (event) => {
     $.post({

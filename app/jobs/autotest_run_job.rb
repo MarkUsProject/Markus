@@ -1,6 +1,10 @@
 class AutotestRunJob < ApplicationJob
   queue_as MarkusConfigurator.autotest_run_queue
 
+  def self.show_status(_status)
+    I18n.t('poll_job.autotest_run_job', progress: status[:progress], total: status[:total]) if status[:total] > 1
+  end
+
   # Export group repository for testing. Students' submitted files
   # are stored in the group repository. They must be exported
   # before copying to the test server.
@@ -138,6 +142,7 @@ class AutotestRunJob < ApplicationJob
     # create and enqueue test runs
     # TestRun objects can either be created outside of this job (by passing their ids), or here
     test_batch = nil
+    progress.total = test_runs.count
     test_runs.each do |test_run|
       begin
         if test_run[:id].nil?
@@ -155,6 +160,7 @@ class AutotestRunJob < ApplicationJob
           raise ssh_auth_failure
         end
         enqueue_test_run(test_run, host_with_port, ssh)
+        progress.increment
       rescue StandardError => e
         unless test_run.nil?
           test_run.problems = e.message
@@ -164,6 +170,9 @@ class AutotestRunJob < ApplicationJob
     end
   ensure
     ssh&.close
+    failed_count = status[:total] - status[:progress]
+    if failed_count.positive?
+      status[:error_message] = I18n.t('poll_job.autotest_run_job_failed_count', failed: failed_count)
+    end
   end
-
 end

@@ -152,6 +152,7 @@ Rafael Padilha
 Rathusshan Kuganesan
 Razvan Vlaicu
 Rebecca Frailich
+Rhys Rustad-Elliott
 Robert Burke
 Ryan Spring
 Samuel Gougeon
@@ -168,6 +169,8 @@ Tanveer Gill
 Tara Clark
 Tiago Chedraoui Silva
 Tianhai Hu
+Thomas Hayes
+Tudor Brindus
 Tyler Han
 Valentin Roger
 Veronica Wong

@@ -1,8 +1,7 @@
 # Maintains group information for a given user on a specific assignment
 class Group < ApplicationRecord
 
-  after_create :set_repo_name, :check_repo_uniqueness
-  after_create_commit :build_repository
+  after_create :set_repo_name, :check_repo_uniqueness, :build_repository
 
   has_many :groupings
   has_many :submissions, through: :groupings
@@ -57,7 +56,7 @@ class Group < ApplicationRecord
     # See 'self.create' of lib/repo/subversion_repository.rb.
 
     begin
-      Repository.get_class.create(File.join(MarkusConfigurator.markus_config_repository_storage, repository_name))
+      Repository.get_class.create(repo_path)
     rescue Repository::RepositoryCollision => e
       # log the collision
       errors.add(:base, self.repo_name)
@@ -65,6 +64,7 @@ class Group < ApplicationRecord
       m_logger.log("Creating group '#{self.group_name}' caused repository collision " +
                    "(Repository name was: '#{self.repo_name}'). Error message: '#{e.message}'",
                    MarkusLogger::ERROR)
+      raise
     end
     true
   end
@@ -97,7 +97,7 @@ class Group < ApplicationRecord
   # rollback before the repo itself is actually created (in an after_create_commit callback).
   #
   # Note that this requires the repo_name to be set either explicitly or by calling set_repo_name
-  # after the group has been created. 
+  # after the group has been created.
   def check_repo_uniqueness
     return true unless Repository.get_class.repository_exists? repo_path
 

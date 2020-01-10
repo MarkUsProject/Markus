@@ -5,7 +5,7 @@
           <%= t('menu.choose') %>
         <% else %>
           <%= @assignment.is_peer_review? ?
-                @assignment.parent_assignment.short_identifier + ' ' + t('assignment.review') :
+                @assignment.parent_assignment.short_identifier + ' ' + PeerReview.model_name.human :
                 @assignment.short_identifier %>
         <% end %>
         <ul>

@@ -65,25 +65,18 @@ class AssignmentsController < ApplicationController
 
     @student = current_user
     @grouping = @student.accepted_grouping_for(@assignment.id)
-    @penalty = SubmissionRule.find_by_assignment_id(@assignment.id)
-    @enum_penalty = Period.where(submission_rule_id: @penalty.id).sort
-    @due_date = @student.due_date_for_assignment(@assignment)
-    if @student.has_pending_groupings_for?(@assignment.id)
-      @pending_grouping = @student.pending_groupings_for(@assignment.id)
-    end
+
     if @grouping.nil?
-      if @assignment.group_max == 1 && !@assignment.scanned_exam
+      if @assignment.scanned_exam
+        flash_now(:notice, t('assignments.scanned_exam.under_review'))
+      elsif @assignment.group_max == 1
         begin
           @student.create_group_for_working_alone_student(@assignment.id)
-        rescue RuntimeError => error
-          flash_message(:error, error.message)
+        rescue StandardError => e
+          flash_message(:error, e.message)
+          redirect_to controller: :assignments
         end
-        redirect_to action: 'student_interface', id: @assignment.id
-      else
-        if @assignment.scanned_exam
-          flash_now(:notice, t('assignments.scanned_exam.under_review'))
-        end
-        render :student_interface
+        @grouping = @student.accepted_grouping_for(@assignment.id)
       end
     else
       # We look for the information on this group...
@@ -96,6 +89,13 @@ class AssignmentsController < ApplicationController
 
       # Look up submission information
       set_repo_vars(@assignment, @grouping)
+    end
+
+    @penalty = SubmissionRule.find_by_assignment_id(@assignment.id)
+    @enum_penalty = Period.where(submission_rule_id: @penalty.id).sort
+    @due_date = @student.due_date_for_assignment(@assignment)
+    if @student.has_pending_groupings_for?(@assignment.id)
+      @pending_grouping = @student.pending_groupings_for(@assignment.id)
     end
   end
 
@@ -246,7 +246,8 @@ class AssignmentsController < ApplicationController
       end
       if new_required_files && !MarkusConfigurator.markus_config_repository_hooks.empty?
         # update list of required files in all repos only if there is a hook that will use that list
-        UpdateRepoRequiredFilesJob.perform_later(@assignment.id, current_user.user_name)
+        @current_job = UpdateRepoRequiredFilesJob.perform_later(@assignment.id, current_user.user_name)
+        session[:job_id] = @current_job.job_id
       end
     rescue
     end
@@ -308,7 +309,8 @@ class AssignmentsController < ApplicationController
       end
       if new_required_files && !MarkusConfigurator.markus_config_repository_hooks.empty?
         # update list of required files in all repos only if there is a hook that will use that list
-        UpdateRepoRequiredFilesJob.perform_later(@assignment.id, current_user.user_name)
+        @current_job = UpdateRepoRequiredFilesJob.perform_later(@assignment.id, current_user.user_name)
+        session[:job_id] = @current_job.job_id
       end
     end
     respond_with @assignment, location: -> { edit_assignment_path(@assignment) }
@@ -328,13 +330,15 @@ class AssignmentsController < ApplicationController
 
   def stop_test
     test_id = params[:test_run_id].to_i
-    AutotestCancelJob.perform_later(request.protocol + request.host_with_port, [test_id])
+    @current_job = AutotestCancelJob.perform_later(request.protocol + request.host_with_port, [test_id])
+    session[:job_id] = @current_job.job_id
     redirect_back(fallback_location: root_path)
   end
 
   def stop_batch_tests
     test_runs = TestRun.where(test_batch_id: params[:test_batch_id]).pluck(:id)
-    AutotestCancelJob.perform_later(request.protocol + request.host_with_port, test_runs)
+    @current_job = AutotestCancelJob.perform_later(request.protocol + request.host_with_port, test_runs)
+    session[:job_id] = @current_job.job_id
     redirect_back(fallback_location: root_path)
   end
 
@@ -523,8 +527,9 @@ class AssignmentsController < ApplicationController
 
         if should_commit && commit_success
           if new_files.present?
-            UpdateStarterCodeJob.perform_later(@assignment.id, params.fetch(:overwrite, 'false') == 'true')
-            flash_message(:success, t('assignments.starter_code.enqueued'))
+            @current_job = UpdateStarterCodeJob.perform_later(@assignment.id,
+                                                              params.fetch(:overwrite, 'false') == 'true')
+            session[:job_id] = @current_job.job_id
             redirect_back(fallback_location: root_path)
           else
             head :ok
@@ -650,14 +655,12 @@ class AssignmentsController < ApplicationController
   def process_assignment_form(assignment)
     num_files_before = assignment.assignment_files.length
     assignment.assign_attributes(assignment_params)
-    assignment.repository_folder = assignment_params[:short_identifier]
-    new_required_files = assignment.only_required_files_changed? ||
-                         assignment.is_hidden_changed? ||
-                         assignment.assignment_files.any? { |file| file.changed? }
+    assignment.repository_folder = assignment_params[:short_identifier] unless assignment.is_peer_review?
     assignment.save!
-    new_required_files = new_required_files ||
+    new_required_files = assignment.saved_change_to_only_required_files? ||
+                         assignment.saved_change_to_is_hidden? ||
+                         assignment.assignment_files.any?(&:saved_changes?) ||
                          num_files_before != assignment.assignment_files.length
-
     # if there are no section due dates, destroy the objects that were created
     if ['0', nil].include? params[:assignment][:section_due_dates_type]
       assignment.section_due_dates.each(&:destroy)

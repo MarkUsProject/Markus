@@ -1561,5 +1561,168 @@ describe Assignment do
       end
     end
   end
-end
 
+  describe '#current_submission_data' do
+    let(:assignment) { create :assignment }
+    let!(:groupings) { create_list :grouping_with_inviter, 3, assignment: assignment }
+
+    context 'a TA user' do
+      let(:ta) { create :ta }
+      let!(:ta_membership) { create :ta_membership, grouping: groupings[0], user: ta }
+
+      it 'should return results for groupings a TA is grading only' do
+        data = assignment.current_submission_data(ta)
+        expect(data.size).to eq 1
+        expect(data[0][:_id]).to be groupings[0].id
+      end
+    end
+
+    context 'a Student user' do
+      let(:student) { create :student }
+      it 'should return no results' do
+        expect(assignment.current_submission_data(student)).to eq []
+      end
+    end
+
+    context 'an Admin user' do
+      let(:admin) { create :admin }
+      let(:tags) { create_list :tag, 3, user: admin }
+      let(:groupings_with_tags) { groupings.each_with_index { |g, i| g.update(tags: [tags[i]]) && g } }
+      let(:data) { assignment.current_submission_data(admin) }
+      let(:submission) { create :version_used_submission, grouping: groupings[0] }
+      let(:released_result) { create :released_result, submission: submission }
+
+      it 'should return results for all assignment groupings' do
+        expect(data.size).to eq groupings.size
+        expect(data.map { |h| h[:_id] }).to contain_exactly(*groupings.map(&:id))
+      end
+
+      it 'should include the group name' do
+        expect(data.map { |h| h[:group_name] }).to contain_exactly(*groupings.map(&:group).map(&:group_name))
+      end
+
+      it 'should include tags' do
+        tags_names = groupings_with_tags.map { |g| g&.tags&.to_a&.map(&:name) }
+        expect(data.map { |h| h[:tags] }).to contain_exactly(*tags_names)
+      end
+
+      it 'should report the marking state as remark when a remark is requested' do
+        submission.make_remark_result
+        expect(data.map { |h| h[:marking_state] }).to contain_exactly('remark', 'before_due_date', 'before_due_date')
+      end
+
+      it 'should report the marking state as released when a result is released' do
+        released_result
+        expect(data.map { |h| h[:marking_state] }).to contain_exactly('released', 'before_due_date', 'before_due_date')
+      end
+
+      it 'should report the marking state as incomplete if collected' do
+        submission
+        expect(data.map { |h| h[:marking_state] }).to contain_exactly(Result::MARKING_STATES[:incomplete],
+                                                                      'before_due_date',
+                                                                      'before_due_date')
+      end
+
+      it 'should report the marking state as complete if collected and complete' do
+        submission.current_result.update(marking_state: Result::MARKING_STATES[:complete])
+        expect(data.map { |h| h[:marking_state] }).to contain_exactly(Result::MARKING_STATES[:complete],
+                                                                      'before_due_date',
+                                                                      'before_due_date')
+      end
+
+      it 'should report the marking state as before the due date if it is before the due date' do
+        expect(data.map { |h| h[:marking_state] }).to contain_exactly('before_due_date',
+                                                                      'before_due_date',
+                                                                      'before_due_date')
+      end
+
+      it 'should report the marking state as not collected if it is after the due date but not collected' do
+        assignment.update(due_date: Time.now - 1.day)
+        expect(data.map { |h| h[:marking_state] }).to contain_exactly('not_collected',
+                                                                      'not_collected',
+                                                                      'not_collected')
+      end
+
+      it 'should include a submission time if a non-empty submission exists' do
+        time_stamp = I18n.l(submission.revision_timestamp.in_time_zone)
+        expect(data.select { |h| h.key? :submission_time }.count).to eq 1
+        expect(data.map { |h| h[:submission_time] }).to include(time_stamp)
+      end
+
+      it 'should not include a submission time if an empty submission exists' do
+        submission.update(is_empty: true)
+        expect(data.select { |h| h.key? :submission_time }.count).to eq 0
+      end
+
+      it 'should not include the result id if a result does not exist' do
+        expect(data.select { |h| h.key? :result_id }.count).to eq 0
+      end
+
+      it 'should include the result id if a result exists' do
+        result_id = submission.current_result.id
+        expect(data.map { |h| h[:result_id] }).to include(result_id)
+        expect(data.select { |h| h.key? :result_id }.count).to eq 1
+      end
+
+      it 'should not include the total mark if a result does not exist' do
+        expect(data.select { |h| h.key? :final_grade }.count).to eq 0
+      end
+
+      it 'should include the total mark if a result exists' do
+        final_grade = submission.current_result.total_mark
+        expect(data.map { |h| h[:final_grade] }).to include(final_grade)
+        expect(data.select { |h| h.key? :final_grade }.count).to eq 1
+      end
+
+      context 'there are groups without members' do
+        let!(:empty_groupings) { create_list :grouping, 2, assignment: assignment }
+
+        it 'should not include member information for groups without members' do
+          expect(data.count).to eq 5
+          expect(data.select { |h| h.key? :members }.count).to eq 3
+        end
+
+        it 'should include member information for groups with members' do
+          members = groupings.map { |g| g.accepted_students.pluck(:user_name) }
+          expect(data.map { |h| h[:members] }.compact).to contain_exactly(*members)
+        end
+      end
+
+      context 'there are groups with members in a given section' do
+        let(:section_groupings) { create_list :grouping_with_inviter, 2, assignment: assignment }
+        let!(:sections) { section_groupings.map { |g| (s = create(:section)) && g.inviter.update(section: s) && s } }
+
+        it 'should include section information for groups in a section' do
+          section_names = sections.map(&:name)
+          expect(data.map { |h| h[:section] }.compact).to contain_exactly(*section_names)
+        end
+
+        it 'should not include section information for groups not in a section' do
+          expect(data.count).to eq 5
+          expect(data.select { |h| h.key? :section }.count).to eq 2
+        end
+      end
+
+      it 'should not include grace credit info if the submission rule is not a grace credit rule' do
+        expect(data.select { |h| h.key? :grace_credits_used }.count).to eq 0
+      end
+
+      context 'the assignment uses grace credit deductions' do
+        let(:assignment) { create :assignment, submission_rule: create(:grace_period_submission_rule) }
+        let!(:grace_period_deduction) do
+          create(:grace_period_deduction,
+                 membership: groupings[0].accepted_student_memberships.first,
+                 deduction: 1)
+        end
+
+        it 'should include grace credit deduction information for one grouping' do
+          expect(data.map { |h| h[:grace_credits_used] }.compact).to contain_exactly(1)
+        end
+
+        it 'should include null values for groupings without a penalty' do
+          expect(data.map { |h| h[:grace_credits_used] }.count(nil)).to be 2
+        end
+      end
+    end
+  end
+end

@@ -1,17 +1,17 @@
 <div id='peer_reviews'>
   <p id='peer_review_selector_label'>
-    <%= @current_user.student? ? t('peer_review.reviews_made_on_submission') : t('peer_review.reviewers_reviews') %>
+    <%= @current_user.student? ? t('peer_reviews.reviews_made_on_submission') : t('peer_reviews.reviewers_reviews') %>
   </p>
   <div id='peer_review_selector' class='dropdown'>
     <% if @current_user.student? %>
-      <a><%= t('peer_review.review') + ' ' + (prs.index(current_pr) + 1).to_s %></a>
+      <a><%= "#{PeerReview.model_name.human} #{prs.index(current_pr) + 1}" %></a>
     <% else %>
       <a><%= current_group_name %></a>
     <% end %>
     <ul>
       <% prs.each_with_index do |pr, i| %>
         <% if @current_user.student? %>
-          <li> <%= link_to(t('peer_review.review') + ' ' + (i + 1).to_s,
+          <li> <%= link_to("#{PeerReview.model_name.human} #{i + 1}",
                         view_marks_assignment_result_path(assignment.id, pr.result_id)) %> </li>
         <% else %>
             <% pr_result = pr.result %>
@@ -28,7 +28,7 @@
   </div>
 
   <% if @current_user.student? %>
-    <%= link_to t('peer_review.view_ta_result'),
+    <%= link_to t('peer_reviews.view_ta_result'),
                 view_marks_assignment_submission_result_path(assignment.id, submission.id,
                                                              submission.get_latest_result.id),
                 id: 'original_result_link' %>

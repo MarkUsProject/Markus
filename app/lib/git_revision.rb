@@ -4,13 +4,13 @@ class GitRevision < Repository::AbstractRevision
 
   # Constructor; checks if +revision_hash+ is actually present in +repo+.
   def initialize(revision_hash, repo)
+    super(revision_hash)
     @repo = repo.get_repos
     begin
       @commit = @repo.lookup(revision_hash)
     rescue Rugged::OdbError
       raise RevisionDoesNotExist
     end
-    super(revision_hash)
     @revision_identifier_ui = @revision_identifier[0..6]
     @author = @commit.author[:name]
     @timestamp = @commit.time.in_time_zone

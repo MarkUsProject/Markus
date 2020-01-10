@@ -31,18 +31,18 @@ class StudentPeerReviewsTable extends React.Component {
 
   columns = () => [
     {
-      Header: I18n.t('activerecord.models.groups.one'),
+      Header: I18n.t('activerecord.models.peer_review.one'),
       accessor: 'group_name',
       Cell: row => {
         return (
           <a href={Routes.edit_assignment_result_path(this.props.assignment_id, row.original.id)}>
-            {`${I18n.t('assignment.review')} ${row.index + 1}`}
+            {`${I18n.t('activerecord.models.peer_review.one')} ${row.index + 1}`}
           </a>
         );
       }
     },
     {
-      Header: I18n.t('browse_submissions.review_state'),
+      Header: I18n.t('submissions.status'),
       accessor: 'state',
     },
   ];
@@ -55,7 +55,7 @@ class StudentPeerReviewsTable extends React.Component {
         defaultSorted={[{id: 'name'}]}
         sortable={false}
         loading={this.state.loading}
-        noDataText={I18n.t('student.no_peer_submission_yet')}
+        noDataText={I18n.t('peer_reviews.no_assigned_reviews')}
       />
     );
   }
