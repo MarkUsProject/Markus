@@ -262,7 +262,8 @@ class AssignmentsController < ApplicationController
     if params[:scanned].present?
       @assignment.scanned_exam = true
     end
-    @clone_assignments = Assignment.where(vcs_submit: true)
+    @clone_assignments = Assignment.joins(:assignment_properties)
+                                   .where(assignment_properties: { vcs_submit: true })
                                    .order(:id)
     @sections = Section.all
     @assignment.build_submission_rule
@@ -296,7 +297,8 @@ class AssignmentsController < ApplicationController
       unless @assignment.save
         @assignments = Assignment.all
         @sections = Section.all
-        @clone_assignments = Assignment.where(vcs_submit: true)
+        @clone_assignments = Assignment.joins(:assignment_properties)
+                                       .where(assignment_properties: { vcs_submit: true })
                                        .order(:id)
         respond_with @assignment, location: -> { new_assignment_path(@assignment) }
         return

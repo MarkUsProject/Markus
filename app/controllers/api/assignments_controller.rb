@@ -34,8 +34,8 @@ module Api
           'No assignment exists with that id'}, status: 404
       else
         respond_to do |format|
-          format.xml { render xml: assignment.to_xml(only: DEFAULT_FIELDS, root: 'assignment', skip_types: 'true') }
-          format.json { render json: assignment.to_json(only: DEFAULT_FIELDS) }
+          format.xml { render xml: assignment.to_xml }
+          format.json { render json: assignment.to_json }
         end
       end
     end
@@ -169,14 +169,12 @@ module Api
       # Some attributes have to be set with default values when creating a new
       # assignment. They're based on the view's defaults.
       if request.post?
-        required_fields = { enable_test: 0,  assign_graders_to_criteria: 0,
-                            repository_folder: attributes[:short_identifier],
-                            allow_web_submits: 1, group_min: 1,
-                            display_grader_names_to_students: 0,
-                            is_hidden: 0 }
-        required_fields.each do |field_name, default_value|
-          attributes[field_name] = default_value if params[field_name].nil?
+        attributes[:assignment_properties_attributes] = {}
+        params[:assignment_properties_attributes] = {} if params[:assignment_properties_attributes].nil?
+        if params[:assignment_properties_attributes][:repository_folder].nil?
+          attributes[:assignment_properties_attributes][:repository_folder] = attributes[:short_identifier]
         end
+        attributes[:is_hidden] = 0 if params[:is_hidden].nil?
       end
 
       attributes

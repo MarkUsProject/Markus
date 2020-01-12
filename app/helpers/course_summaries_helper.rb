@@ -46,11 +46,11 @@ module CourseSummariesHelper
     if @current_user && @current_user.student?
       @gef_marks = Grade.joins(grade_entry_student: :user, grade_entry_item: :grade_entry_form,)
                      .where(grade_entry_students: { released_to_student: true })
-                     .group('grade_entry_students.user_id', 'grade_entry_items.grade_entry_form_id')
+                     .group('grade_entry_students.user_id', 'grade_entry_items.assessment_id')
                      .sum('grade')
     else
       @gef_marks = Grade.joins(grade_entry_student: :user, grade_entry_item: :grade_entry_form)
-                     .group('grade_entry_students.user_id', 'grade_entry_items.grade_entry_form_id')
+                     .group('grade_entry_students.user_id', 'grade_entry_items.assessment_id')
                      .sum('grade')
     end
   end
@@ -111,7 +111,7 @@ module CourseSummariesHelper
 
   def get_max_mark_for_grade_entry_form(gef_id)
     total = 0
-    GradeEntryItem.where(grade_entry_form_id: gef_id, bonus: false).each do |gei|
+    GradeEntryItem.where(assessment_id: gef_id, bonus: false).each do |gei|
       total += gei.out_of
     end
     total

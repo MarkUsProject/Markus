@@ -30,7 +30,7 @@ class ReplaceAssignmentsAndGradeEntryFormsWithAssessments < ActiveRecord::Migrat
       t.string :short_identifier, null: false
       t.string :type, null: false
       t.string :description, null: false
-      t.text :message, null: false
+      t.text :message
       t.datetime :due_date
       t.boolean :is_hidden, default: true, null: false
 
@@ -40,6 +40,7 @@ class ReplaceAssignmentsAndGradeEntryFormsWithAssessments < ActiveRecord::Migrat
       t.integer :checkbox_criteria_count
       t.integer :groupings_count
       t.integer :outstanding_remark_request_count
+      t.integer :notes_count, default: 0
       t.integer :parent_assessment_id
 
       t.timestamps
@@ -70,7 +71,6 @@ class ReplaceAssignmentsAndGradeEntryFormsWithAssessments < ActiveRecord::Migrat
       t.float :results_median
       t.integer :results_fails
       t.integer :results_zeros
-      t.integer :notes_count, default: 0
       t.boolean :unlimited_tokens, default: false, null: false
       t.boolean :only_required_files, default: false, null: false
       t.boolean :vcs_submit, default: false, null: false

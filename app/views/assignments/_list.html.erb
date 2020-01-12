@@ -48,17 +48,17 @@
                   <% end %>
                 </td>
                 <td>
-                  <% if !@a_id_results.empty? && !@a_id_results[assignment.id].nil? && !assignment.results_average.nil? %>
+                  <% if !@a_id_results.empty? && !@a_id_results[assignment.id].nil? && !assignment.assignment_properties.results_average.nil? %>
                     <% if assignment.max_mark > 0 %>
-                      <% average = "#{t(:class_average)}: #{number_to_percentage(assignment.results_average, precision: 1)}" %>
-                      <% median = "#{t(:class_median)}: #{number_to_percentage(assignment.results_median, precision: 1)}" %>
+                      <% average = "#{t(:class_average)}: #{number_to_percentage(assignment.assignment_properties.results_average, precision: 1)}" %>
+                      <% median = "#{t(:class_median)}: #{number_to_percentage(assignment.assignment_properties.results_median, precision: 1)}" %>
                       <p>
                         <strong>
                           <%= t('results.your_mark',
                                 mark: number_to_percentage(@a_id_results[assignment.id].total_mark * 100 / assignment.max_mark, precision: 1))
                           %>
                         </strong>
-                        <%= "(#{average}#{assignment.display_median_to_students ? ", #{median}" : ""})" %>
+                        <%= "(#{average}#{assignment.assignment_properties.display_median_to_students ? ", #{median}" : ""})" %>
                       </p>
                     <% end %>
                     <%= link_to Result.model_name.human.pluralize,

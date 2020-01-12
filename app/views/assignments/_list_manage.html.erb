@@ -111,15 +111,15 @@
                     </span>
                   <% end %>
                   <span id='class_average__<%= assignment.short_identifier %>'>
-                    <% unless assignment.results_average.nil? %>
+                    <% unless assignment.assignment_properties.results_average.nil? %>
                       <br>
-                      <%= "#{t(:class_average)}: #{number_to_percentage(assignment.results_average, precision: 1)}" %>
+                      <%= "#{t(:class_average)}: #{number_to_percentage(assignment.assignment_properties.results_average, precision: 1)}" %>
                     <% end %>
                   </span>
                   <span id='class_median__<%= assignment.short_identifier %>'>
-                    <% unless assignment.results_median.nil? %>
+                    <% unless assignment.assignment_properties.results_median.nil? %>
                       <br>
-                      <%= "#{t(:class_median)}: #{number_to_percentage(assignment.results_median, precision: 1)}" %>
+                      <%= "#{t(:class_median)}: #{number_to_percentage(assignment.assignment_properties.results_median, precision: 1)}" %>
                     <% end %>
                   </span>
                   <% if assignment.submission_rule.can_collect_all_now? %>

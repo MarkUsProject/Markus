@@ -726,7 +726,7 @@ class Assignment < Assessment
   end
 
   def is_criteria_mark?(ta_id)
-    assign_graders_to_criteria && self.criterion_ta_associations.where(ta_id: ta_id).any?
+    assignment_properties.assign_graders_to_criteria && self.criterion_ta_associations.where(ta_id: ta_id).any?
   end
 
   def get_num_assigned(ta_id = nil)
@@ -1198,6 +1198,16 @@ class Assignment < Assessment
     end
   end
 
+  def to_xml(options = {})
+    byebug
+    self.attributes.merge(self.assignment_properties.attributes).symbolize_keys.to_xml(only: DEFAULT_FIELDS, root: 'assignments', skip_types: 'true')
+  end
+
+  def to_json
+    byebug
+    self.attributes.merge(self.assignment_properties.attributes).symbolize_keys.to_json(only: DEFAULT_FIELDS)
+  end
+
   private
 
   # Returns the marking state used in the submission and course summary tables
@@ -1248,7 +1258,11 @@ class Assignment < Assessment
       map[:assignments] = assignments.map do |assignment|
         m = {}
         DEFAULT_FIELDS.each do |f|
-          m[f] = assignment.send(f)
+          if assignment.respond_to?(f)
+            m[f] = assignment.send(f)
+          else
+            m[f] = assignment.assignment_properties.send(f)
+          end
         end
         m
       end
@@ -1256,7 +1270,11 @@ class Assignment < Assessment
     when 'csv'
       MarkusCsv.generate(assignments) do |assignment|
         DEFAULT_FIELDS.map do |f|
-          assignment.send(f)
+          if assignment.respond_to?(f)
+            assignment.send(f)
+          else
+            assignment.assignment_properties.send(f)
+          end
         end
       end
     end
@@ -1266,7 +1284,8 @@ class Assignment < Assessment
     case file_format
     when 'csv'
       result = MarkusCsv.parse(assignment_data) do |row|
-        assignment = self.find_or_create_by(short_identifier: row[0],
+        assignment = self.join(:assignment_properties)
+                         .find_or_create_by(short_identifier: row[0],
                                             assignment_properties: { repository_folder: row[0] })
         attrs = Hash[DEFAULT_FIELDS.zip(row)]
         attrs.delete_if { |_, v| v.nil? }

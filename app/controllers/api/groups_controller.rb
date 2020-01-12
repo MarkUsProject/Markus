@@ -43,7 +43,7 @@ module Api
       end
 
       # Error if no group exists with that id
-      group = Group.joins(:groupings).where(id: params[:id], 'groupings.assignment_id': params[:assignment_id])
+      group = Group.joins(:groupings).where(id: params[:id], 'groupings.assignment_id': params[:assessment_id])
       unless group.exists?
         render 'shared/http_status', locals: { code: '404', message:
           'No group exists with that id for that assignment' }, status: 404
@@ -64,7 +64,7 @@ module Api
     # Include student_memberships and user info
     def include_memberships(groups)
       groups.joins(groupings: [:assignment, student_memberships: :user])
-            .where('assignments.id': params[:assignment_id])
+            .where('assignments.id': params[:assessment_id])
             .pluck_to_hash(*DEFAULT_FIELDS, :membership_status, :user_id)
             .group_by { |h| h.slice(*DEFAULT_FIELDS) }
             .map { |k, v| k.merge(members: v.map { |h| h.except(*DEFAULT_FIELDS) }) }

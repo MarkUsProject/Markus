@@ -26,7 +26,7 @@ FactoryBot.define do
   end
 
   factory :assignment_with_peer_review, parent: :assignment do
-    has_peer_review { true }
+    assignment_properties_attributes { { has_peer_review: true } }
   end
 
   # This creates an assignment and peer review assignment, and also creates the
@@ -55,11 +55,10 @@ FactoryBot.define do
   end
 
   factory :assignment_for_student_tests, parent: :assignment_for_tests do
-    enable_student_tests { true }
-    token_start_date { Time.current }
+    assignment_properties_attributes { { enable_student_tests: true, token_start_date: Time.current } }
   end
 
   factory :assignment_for_scanned_exam, parent: :assignment do
-    scanned_exam { true }
+    assignment_properties_attributes { { scanned_exam: true } }
   end
 end
