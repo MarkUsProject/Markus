@@ -1,44 +1,37 @@
-cr30:
+git log:
   type: rubric
-  max_mark: 5.0
-  level_0:
-    name: What?
-    description: Fail
-  level_1:
-    name: Hmm
-    description: Almost fail
-  level_2:
-    name: Average
-    description: Not bad
-  level_3:
-    name: Good
-    description: Alright
-  level_4:
-    name: Excellent
-    description: Impressive
+  max_mark: 8.0
+  levels:
+    Very poor:
+      description: The last ~15 commit messages don't describe the issue that the commit addresses. being addressed.
+      mark: 0.0
+    Weak:
+      description: The last ~15 commit messages are usually not clear or well-written.
+      mark: 2.0
+    Acceptable:
+      description: The last ~15 commit messages are often not clear or well-written and there are far too many commits.
+      mark: 4.0
+    Good:
+      description: The last ~15 commit log messages are sometimes not clear or well-written or there are far too many commits.
+      mark: 6.0
+    Exemplary:
+      description: The last ~15 commit messages are almost all clear and well-written.
+      mark: 8.0
+  peer_visible: true
   ta_visible: false
-  peer_visible: true
 cr20:
-  type: Flexible
+  description: "I am flexible"
   max_mark: 2.0
-  description: I am flexible
-  ta_visible: true
   peer_visible: true
+  ta_visible: true
+  type: flexible
 cr100:
-  type: checkbox
+  description: "I am checkbox"
   max_mark: 5.0
-  description: I am checkbox
+  type: checkbox
 cr70:
-  type: Flexible
+  type: flexible
   max_mark: 10.0
   description: At least one visibility option should be true
   ta_visible: false
-  peer_visible: false
-cr80:
-  type: flexible
-  max_mark: 10.0
-  ta_visible: true
   peer_visible: true
-cr60:
-  type: flexible
-  max_mark: 10.0

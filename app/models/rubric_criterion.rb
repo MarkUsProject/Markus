@@ -158,21 +158,16 @@ class RubricCriterion < Criterion
 
   # Returns a hash containing the information of a single rubric criterion.
   def to_yml
-    { self.name =>
-      { 'type' => 'rubric',
-        'max_mark' => self.max_mark.to_f,
-        'level_0' => { 'name' => self.level_0_name,
-                       'description' => self.level_0_description },
-        'level_1' => { 'name' => self.level_1_name,
-                       'description' => self.level_1_description },
-        'level_2' => { 'name' => self.level_2_name,
-                       'description' => self.level_2_description },
-        'level_3' => { 'name' => self.level_3_name,
-                       'description' => self.level_3_description },
-        'level_4' => { 'name' => self.level_4_name,
-                       'description' => self.level_4_description },
-        'ta_visible' => self.ta_visible,
-        'peer_visible' => self.peer_visible } }
+    levels_to_yml = { self.name => { 'type' => 'rubric',
+                                     'max_mark' => self.max_mark.to_f,
+                                     'levels' => {},
+                                     'ta_visible' => self.ta_visible,
+                                     'peer_visible' => self.peer_visible } }
+    self.levels.each do |level|
+      levels_to_yml[self.name]['levels'][level.name] = { 'description': level.description,
+                                                         'mark': level.mark }
+    end
+    levels_to_yml
   end
 
   def weight

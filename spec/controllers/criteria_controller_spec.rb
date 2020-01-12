@@ -950,7 +950,10 @@ describe CriteriaController do
 
           get :download, params: { assignment_id: assignment.id }
 
+          #pending "this test will pass if we create a rubric criterion's levels without giving an index number for each
+          #level"
           expect(YAML.safe_load(response.body)).to eq(YAML.safe_load(expected_download.read))
+          #expect(response.body.lines.map(&:strip)).to eq(@download_expected_output.read.lines.map(&:strip))
         end
       end
     end
