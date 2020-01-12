@@ -6,9 +6,7 @@ describe SubmissionsController do
   describe 'A student working alone' do
     before(:each) do
       @group = create(:group)
-      @assignment = create(:assignment,
-                           allow_web_submits: true,
-                           group_min: 1)
+      @assignment = create(:assignment)
       @grouping = create(:grouping,
                          group: @group,
                          assignment: @assignment)
@@ -42,7 +40,7 @@ describe SubmissionsController do
       # Check to see if the file was added
       @grouping.group.access_repo do |repo|
         revision = repo.get_latest_revision
-        files = revision.files_at_path(@assignment.repository_folder)
+        files = revision.files_at_path(@assignment.assignment_properties.repository_folder)
         expect(files['Shapes.java']).to_not be_nil
         expect(files['TestShapes.java']).to_not be_nil
       end
@@ -79,15 +77,15 @@ describe SubmissionsController do
       @grouping.group.access_repo do |repo|
         txn = repo.get_transaction('markus')
         # overwrite and commit both files
-        txn.add(File.join(@assignment.repository_folder, 'Shapes.java'),
+        txn.add(File.join(@assignment.assignment_properties.repository_folder, 'Shapes.java'),
                 'Content of Shapes.java')
-        txn.add(File.join(@assignment.repository_folder, 'TestShapes.java'),
+        txn.add(File.join(@assignment.assignment_properties.repository_folder, 'TestShapes.java'),
                 'Content of TestShapes.java')
         repo.commit(txn)
 
         # revision 2
         revision = repo.get_latest_revision
-        old_files = revision.files_at_path(@assignment.repository_folder)
+        old_files = revision.files_at_path(@assignment.assignment_properties.repository_folder)
         old_file_1 = old_files['Shapes.java']
         old_file_2 = old_files['TestShapes.java']
 
@@ -113,7 +111,7 @@ describe SubmissionsController do
 
       @grouping.group.access_repo do |repo|
         revision = repo.get_latest_revision
-        files = revision.files_at_path(@assignment.repository_folder)
+        files = revision.files_at_path(@assignment.assignment_properties.repository_folder)
         expect(files['Shapes.java']).to_not be_nil
         expect(files['TestShapes.java']).to_not be_nil
 
@@ -133,13 +131,13 @@ describe SubmissionsController do
 
       @grouping.group.access_repo do |repo|
         txn = repo.get_transaction('markus')
-        txn.add(File.join(@assignment.repository_folder, 'Shapes.java'),
+        txn.add(File.join(@assignment.assignment_properties.repository_folder, 'Shapes.java'),
                 'Content of Shapes.java')
-        txn.add(File.join(@assignment.repository_folder, 'TestShapes.java'),
+        txn.add(File.join(@assignment.assignment_properties.repository_folder, 'TestShapes.java'),
                 'Content of TestShapes.java')
         repo.commit(txn)
         revision = repo.get_latest_revision
-        old_files = revision.files_at_path(@assignment.repository_folder)
+        old_files = revision.files_at_path(@assignment.assignment_properties.repository_folder)
         old_file_1 = old_files['Shapes.java']
         old_file_2 = old_files['TestShapes.java']
 
@@ -161,7 +159,7 @@ describe SubmissionsController do
 
       @grouping.group.access_repo do |repo|
         revision = repo.get_latest_revision
-        files = revision.files_at_path(@assignment.repository_folder)
+        files = revision.files_at_path(@assignment.assignment_properties.repository_folder)
         expect(files['Shapes.java']).to be_nil
         expect(files['TestShapes.java']).to_not be_nil
       end
@@ -191,9 +189,7 @@ describe SubmissionsController do
   describe 'A TA' do
     before(:each) do
       @group = create(:group)
-      @assignment = create(:assignment,
-                           allow_web_submits: true,
-                           group_min: 1)
+      @assignment = create(:assignment)
       @grouping = create(:grouping,
                          group: @group,
                          assignment: @assignment)
@@ -206,7 +202,7 @@ describe SubmissionsController do
                           assignment: @assignment)
       @grouping1.group.access_repo do |repo|
         txn = repo.get_transaction('test')
-        path = File.join(@assignment.repository_folder, 'file1_name')
+        path = File.join(@assignment.assignment_properties.repository_folder, 'file1_name')
         txn.add(path, 'file1 content', '')
         repo.commit(txn)
 
@@ -251,9 +247,7 @@ describe SubmissionsController do
   describe 'An administrator' do
     before(:each) do
       @group = create(:group)
-      @assignment = create(:assignment,
-                           allow_web_submits: true,
-                           group_min: 1)
+      @assignment = create(:assignment)
       @grouping = create(:grouping,
                          group: @group,
                          assignment: @assignment)
@@ -293,7 +287,7 @@ describe SubmissionsController do
       before(:each) do
         @grouping.group.access_repo do |repo|
           txn = repo.get_transaction('test')
-          path = File.join(@assignment.repository_folder, 'file1_name')
+          path = File.join(@assignment.assignment_properties.repository_folder, 'file1_name')
           txn.add(path, 'file1 content', '')
           repo.commit(txn)
 
@@ -314,7 +308,7 @@ describe SubmissionsController do
         before(:each) do
           uncollected_grouping.group.access_repo do |repo|
             txn = repo.get_transaction('test')
-            path = File.join(@assignment.repository_folder, 'file1_name')
+            path = File.join(@assignment.assignment_properties.repository_folder, 'file1_name')
             txn.add(path, 'file1 content', '')
             repo.commit(txn)
           end
@@ -324,8 +318,8 @@ describe SubmissionsController do
           @assignment.update!(due_date: Time.current - 1.week)
           allow(SubmissionsJob).to receive(:perform_later) { Struct.new(:job_id).new('1') }
           expect(SubmissionsJob).to receive(:perform_later).with(
-            array_including(@grouping, uncollected_grouping),
-            collection_dates: hash_including
+              array_including(@grouping, uncollected_grouping),
+              collection_dates: hash_including
           )
           post_as @admin, :collect_submissions, params: { assignment_id: @assignment.id,
                                                           groupings: [@grouping.id, uncollected_grouping.id],
@@ -336,8 +330,8 @@ describe SubmissionsController do
           @assignment.update!(due_date: Time.current - 1.week)
           allow(SubmissionsJob).to receive(:perform_later) { Struct.new(:job_id).new('1') }
           expect(SubmissionsJob).to receive(:perform_later).with(
-            [uncollected_grouping],
-            collection_dates: hash_including
+              [uncollected_grouping],
+              collection_dates: hash_including
           )
           post_as @admin, :collect_submissions, params: { assignment_id: @assignment.id,
                                                           groupings: [@grouping.id, uncollected_grouping.id],
@@ -444,9 +438,9 @@ describe SubmissionsController do
 
       @group.access_repo do |repo|
         txn = repo.get_transaction('test')
-        path = File.join(@assignment.repository_folder, @file1_name)
+        path = File.join(@assignment.assignment_properties.repository_folder, @file1_name)
         txn.add(path, @file1_content, '')
-        path = File.join(@assignment.repository_folder, @file2_name)
+        path = File.join(@assignment.assignment_properties.repository_folder, @file2_name)
         txn.add(path, @file2_content, '')
         repo.commit(txn)
 
@@ -501,7 +495,7 @@ describe SubmissionsController do
     it 'not be able to download the revision 0' do
       @group.access_repo do |repo|
         txn = repo.get_transaction('test')
-        path = File.join(@assignment.repository_folder, 'file1_name')
+        path = File.join(@assignment.assignment_properties.repository_folder, 'file1_name')
         txn.add(path, 'file1 content', '')
         repo.commit(txn)
 
@@ -521,9 +515,7 @@ describe SubmissionsController do
 
     describe 'attempting to download groupings files' do
       before(:each) do
-        @assignment = create(:assignment,
-                             allow_web_submits: true,
-                             group_min: 1)
+        @assignment = create(:assignment)
         @grouping_ids = []
         (1..3).to_a.each do |i|
           @grouping = create(:grouping,
@@ -639,7 +631,7 @@ private
 def submit_file(assignment, grouping, filename = 'file', content = 'content')
   grouping.group.access_repo do |repo|
     txn = repo.get_transaction('test')
-    path = File.join(assignment.repository_folder, filename)
+    path = File.join(assignment.assignment_properties.repository_folder, filename)
     txn.add(path, content, '')
     repo.commit(txn)
 

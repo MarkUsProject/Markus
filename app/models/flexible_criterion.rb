@@ -11,7 +11,7 @@ class FlexibleCriterion < Criterion
 
   has_many :tas, through: :criterion_ta_associations
 
-  belongs_to :assignment, counter_cache: true
+  belongs_to :assignment, foreign_key: :assessment_id, counter_cache: true
 
   has_many :test_groups, as: :criterion
 

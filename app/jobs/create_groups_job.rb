@@ -36,7 +36,7 @@ class CreateGroupsJob < ApplicationJob
                                          .joins(:user)
                                          .where('groupings.group_id': group.id)
                                          .where(membership_status: [:inviter, :accepted])
-                                         .pluck('groupings.assignment_id', 'users.user_name')
+                                         .pluck('groupings.assessment_id', 'users.user_name')
                                          .group_by(&:first)
                                          .transform_values { |g| Set.new g.map(&:second) }
 

@@ -132,7 +132,7 @@ describe 'An Assignment' do
         expect(post: criteria_path + '/update_positions').to route_to(
           controller: criteria_ctrl,
           action: 'update_positions',
-          assignment_id: assignment.id.to_s,
+          assessment_id: assignment.id.to_s,
           locale: 'en')
       end
 
@@ -141,7 +141,7 @@ describe 'An Assignment' do
           controller: criteria_ctrl,
           action: 'show',
           id: 'update_positions',
-          assignment_id: assignment.id.to_s,
+          assessment_id: assignment.id.to_s,
           locale: 'en')
       end
 
@@ -149,7 +149,7 @@ describe 'An Assignment' do
         expect(get: criteria_path + '/download').to route_to(
           controller: criteria_ctrl,
           action: 'download',
-          assignment_id: assignment.id.to_s,
+          assessment_id: assignment.id.to_s,
           locale: 'en')
       end
 
@@ -157,7 +157,7 @@ describe 'An Assignment' do
         expect(post: criteria_path + '/upload').to route_to(
           controller: criteria_ctrl,
           action: 'upload',
-          assignment_id: assignment.id.to_s,
+          assessment_id: assignment.id.to_s,
           locale: 'en')
       end
     end
@@ -174,7 +174,7 @@ describe 'An Assignment' do
         expect(get: autom_path + '/manage').to route_to(
           controller: autom_ctrl,
           action: 'manage',
-          assignment_id: assignment.id.to_s,
+          assessment_id: assignment.id.to_s,
           locale: 'en')
       end
 
@@ -182,7 +182,7 @@ describe 'An Assignment' do
         expect(post: autom_path).to route_to(
           controller: autom_ctrl,
           action: 'create',
-          assignment_id: assignment.id.to_s,
+          assessment_id: assignment.id.to_s,
           locale: 'en')
       end
 
@@ -190,7 +190,7 @@ describe 'An Assignment' do
         expect(post: autom_path + '/update_positions').to route_to(
           controller: autom_ctrl,
           action: 'update_positions',
-          assignment_id: assignment.id.to_s,
+          assessment_id: assignment.id.to_s,
           locale: 'en')
       end
 
@@ -198,7 +198,7 @@ describe 'An Assignment' do
         expect(get: autom_path + '/update_positions').to route_to(
           controller: autom_ctrl,
           action: 'update_positions',
-          assignment_id: assignment.id.to_s,
+          assessment_id: assignment.id.to_s,
           locale: 'en')
       end
 
@@ -206,7 +206,7 @@ describe 'An Assignment' do
         expect(post: autom_path + '/upload').to route_to(
           controller: autom_ctrl,
           action: 'upload',
-          assignment_id: assignment.id.to_s,
+          assessment_id: assignment.id.to_s,
           locale: 'en')
       end
 
@@ -214,7 +214,7 @@ describe 'An Assignment' do
         expect(get: autom_path + '/download').to route_to(
           controller: autom_ctrl,
           action: 'download',
-          assignment_id: assignment.id.to_s,
+          assessment_id: assignment.id.to_s,
           locale: 'en')
       end
     end
@@ -233,7 +233,7 @@ describe 'An Assignment' do
           controller: group_ctrl,
           action: 'destroy',
           id: group.id.to_s,
-          assignment_id: assignment.id.to_s,
+          assessment_id: assignment.id.to_s,
           locale: 'en'
         )
       end
@@ -244,7 +244,7 @@ describe 'An Assignment' do
             controller: group_ctrl,
             action: 'rename_group',
             id: group.id.to_s,
-            assignment_id: assignment.id.to_s,
+            assessment_id: assignment.id.to_s,
             locale: 'en')
       end
     end
@@ -254,7 +254,7 @@ describe 'An Assignment' do
         expect(post: group_path).to route_to(
           controller: group_ctrl,
           action: 'create',
-          assignment_id: assignment.id.to_s,
+          assessment_id: assignment.id.to_s,
           locale: 'en'
         )
       end
@@ -263,7 +263,7 @@ describe 'An Assignment' do
         expect(patch: group_path + '/accept_invitation').to route_to(
           controller: group_ctrl,
           action: 'accept_invitation',
-          assignment_id: assignment.id.to_s,
+          assessment_id: assignment.id.to_s,
           locale: 'en'
         )
       end
@@ -272,7 +272,7 @@ describe 'An Assignment' do
         expect(patch: group_path + '/decline_invitation').to route_to(
           controller: group_ctrl,
           action: 'decline_invitation',
-          assignment_id: assignment.id.to_s,
+          assessment_id: assignment.id.to_s,
           locale: 'en'
         )
       end
@@ -281,7 +281,7 @@ describe 'An Assignment' do
         expect(post: group_path + '/invite_member').to route_to(
           controller: group_ctrl,
           action: 'invite_member',
-          assignment_id: assignment.id.to_s,
+          assessment_id: assignment.id.to_s,
           locale: 'en'
         )
       end
@@ -290,7 +290,7 @@ describe 'An Assignment' do
         expect(patch: group_path + '/disinvite_member').to route_to(
           controller: group_ctrl,
           action: 'disinvite_member',
-          assignment_id: assignment.id.to_s,
+          assessment_id: assignment.id.to_s,
           locale: 'en'
         )
       end
@@ -299,7 +299,7 @@ describe 'An Assignment' do
         expect(delete: group_path + '/delete_rejected').to route_to(
           controller: group_ctrl,
           action: 'delete_rejected',
-          assignment_id: assignment.id.to_s,
+          assessment_id: assignment.id.to_s,
           locale: 'en'
         )
       end
@@ -308,7 +308,7 @@ describe 'An Assignment' do
         expect(get: group_path).to route_to(
           controller: group_ctrl,
           action: 'index',
-          assignment_id: assignment.id.to_s,
+          assessment_id: assignment.id.to_s,
           locale: 'en')
       end
 
@@ -316,7 +316,7 @@ describe 'An Assignment' do
         expect(get: group_path + '/add_group').to route_to(
           controller: group_ctrl,
           action: 'add_group',
-          assignment_id: assignment.id.to_s,
+          assessment_id: assignment.id.to_s,
           locale: 'en')
       end
 
@@ -324,7 +324,7 @@ describe 'An Assignment' do
         expect(post: group_path + '/use_another_assignment_groups').to route_to(
           controller: group_ctrl,
           action: 'use_another_assignment_groups',
-          assignment_id: assignment.id.to_s,
+          assessment_id: assignment.id.to_s,
           locale: 'en')
       end
 
@@ -332,7 +332,7 @@ describe 'An Assignment' do
         expect(get: group_path + '/manage').to route_to(
           controller: group_ctrl,
           action: 'manage',
-          assignment_id: assignment.id.to_s,
+          assessment_id: assignment.id.to_s,
           locale: 'en')
       end
 
@@ -340,7 +340,7 @@ describe 'An Assignment' do
         expect(post: group_path + '/upload').to route_to(
           controller: group_ctrl,
           action: 'upload',
-          assignment_id: assignment.id.to_s,
+          assessment_id: assignment.id.to_s,
           locale: 'en')
       end
 
@@ -348,7 +348,7 @@ describe 'An Assignment' do
         expect(get: group_path + '/add_csv_group').to route_to(
           controller: group_ctrl,
           action: 'add_csv_group',
-          assignment_id: assignment.id.to_s,
+          assessment_id: assignment.id.to_s,
           locale: 'en')
       end
 
@@ -356,7 +356,7 @@ describe 'An Assignment' do
         expect(get: group_path + '/download_grouplist').to route_to(
           controller: group_ctrl,
           action: 'download_grouplist',
-          assignment_id: assignment.id.to_s,
+          assessment_id: assignment.id.to_s,
           locale: 'en')
       end
 
@@ -365,7 +365,7 @@ describe 'An Assignment' do
           .to route_to(
             controller: group_ctrl,
             action: 'create_groups_when_students_work_alone',
-            assignment_id: assignment.id.to_s,
+            assessment_id: assignment.id.to_s,
             locale: 'en')
       end
 
@@ -373,7 +373,7 @@ describe 'An Assignment' do
         expect(get: group_path + '/valid_grouping').to route_to(
           controller: group_ctrl,
           action: 'valid_grouping',
-          assignment_id: assignment.id.to_s,
+          assessment_id: assignment.id.to_s,
           locale: 'en')
       end
 
@@ -381,7 +381,7 @@ describe 'An Assignment' do
         expect(get: group_path + '/invalid_grouping').to route_to(
           controller: group_ctrl,
           action: 'invalid_grouping',
-          assignment_id: assignment.id.to_s,
+          assessment_id: assignment.id.to_s,
           locale: 'en')
       end
 
@@ -389,7 +389,7 @@ describe 'An Assignment' do
         expect(get: group_path + '/global_actions').to route_to(
           controller: group_ctrl,
           action: 'global_actions',
-          assignment_id: assignment.id.to_s,
+          assessment_id: assignment.id.to_s,
           locale: 'en')
       end
 
@@ -397,7 +397,7 @@ describe 'An Assignment' do
         expect(get: group_path + '/rename_group').to route_to(
           controller: group_ctrl,
           action: 'rename_group',
-          assignment_id: assignment.id.to_s,
+          assessment_id: assignment.id.to_s,
           locale: 'en')
       end
 
@@ -405,7 +405,7 @@ describe 'An Assignment' do
         expect(delete: group_path + '/remove_group').to route_to(
           controller: group_ctrl,
           action: 'remove_group',
-          assignment_id: assignment.id.to_s,
+          assessment_id: assignment.id.to_s,
           locale: 'en')
       end
 
@@ -413,7 +413,7 @@ describe 'An Assignment' do
         expect(post: group_path + '/add_group').to route_to(
           controller: group_ctrl,
           action: 'add_group',
-          assignment_id: assignment.id.to_s,
+          assessment_id: assignment.id.to_s,
           locale: 'en')
       end
 
@@ -421,7 +421,7 @@ describe 'An Assignment' do
         expect(post: group_path + '/global_actions').to route_to(
           controller: group_ctrl,
           action: 'global_actions',
-          assignment_id: assignment.id.to_s,
+          assessment_id: assignment.id.to_s,
           locale: 'en')
       end
     end
@@ -439,7 +439,7 @@ describe 'An Assignment' do
         expect(get: sub_path + '/file_manager').to route_to(
           controller: sub_ctrl,
           action: 'file_manager',
-          assignment_id: assignment.id.to_s,
+          assessment_id: assignment.id.to_s,
           locale: 'en')
       end
 
@@ -447,7 +447,7 @@ describe 'An Assignment' do
         expect(get: sub_path + '/browse').to route_to(
           controller: sub_ctrl,
           action: 'browse',
-          assignment_id: assignment.id.to_s,
+          assessment_id: assignment.id.to_s,
           locale: 'en')
       end
 
@@ -455,7 +455,7 @@ describe 'An Assignment' do
         expect(get: sub_path + '/populate_file_manager').to route_to(
           controller: sub_ctrl,
           action: 'populate_file_manager',
-          assignment_id: assignment.id.to_s,
+          assessment_id: assignment.id.to_s,
           locale: 'en')
       end
 
@@ -463,7 +463,7 @@ describe 'An Assignment' do
         expect(get: sub_path + '/download_repo_checkout_commands').to route_to(
           controller: sub_ctrl,
           action: 'download_repo_checkout_commands',
-          assignment_id: assignment.id.to_s,
+          assessment_id: assignment.id.to_s,
           locale: 'en')
       end
 
@@ -471,7 +471,7 @@ describe 'An Assignment' do
         expect(get: sub_path + '/download_repo_list').to route_to(
           controller: sub_ctrl,
           action: 'download_repo_list',
-          assignment_id: assignment.id.to_s,
+          assessment_id: assignment.id.to_s,
           locale: 'en')
       end
 
@@ -479,7 +479,7 @@ describe 'An Assignment' do
         expect(get: sub_path + '/populate_submissions_table').to route_to(
           controller: sub_ctrl,
           action: 'populate_submissions_table',
-          assignment_id: assignment.id.to_s,
+          assessment_id: assignment.id.to_s,
           locale: 'en')
       end
 
@@ -487,7 +487,7 @@ describe 'An Assignment' do
         expect(get: sub_path + '/populate_file_manager').to route_to(
           controller: sub_ctrl,
           action: 'populate_file_manager',
-          assignment_id: assignment.id.to_s,
+          assessment_id: assignment.id.to_s,
           locale: 'en')
       end
 
@@ -495,7 +495,7 @@ describe 'An Assignment' do
         expect(get: sub_path + '/updated_files').to route_to(
           controller: sub_ctrl,
           action: 'updated_files',
-          assignment_id: assignment.id.to_s,
+          assessment_id: assignment.id.to_s,
           locale: 'en')
       end
 
@@ -503,7 +503,7 @@ describe 'An Assignment' do
         expect(get: sub_path + '/replace_files').to route_to(
           controller: sub_ctrl,
           action: 'replace_files',
-          assignment_id: assignment.id.to_s,
+          assessment_id: assignment.id.to_s,
           locale: 'en')
       end
 
@@ -511,7 +511,7 @@ describe 'An Assignment' do
         expect(get: sub_path + '/delete_files').to route_to(
           controller: sub_ctrl,
           action: 'delete_files',
-          assignment_id: assignment.id.to_s,
+          assessment_id: assignment.id.to_s,
           locale: 'en')
       end
 
@@ -519,7 +519,7 @@ describe 'An Assignment' do
         expect(post: sub_path + '/update_files').to route_to(
           controller: sub_ctrl,
           action: 'update_files',
-          assignment_id: assignment.id.to_s,
+          assessment_id: assignment.id.to_s,
           locale: 'en')
       end
 
@@ -527,7 +527,7 @@ describe 'An Assignment' do
         expect(post: sub_path + '/update_submissions').to route_to(
           controller: sub_ctrl,
           action: 'update_submissions',
-          assignment_id: assignment.id.to_s,
+          assessment_id: assignment.id.to_s,
           locale: 'en'
         )
       end
@@ -536,7 +536,7 @@ describe 'An Assignment' do
         expect(get: sub_path + '/server_time').to route_to(
           controller: sub_ctrl,
           action: 'server_time',
-          assignment_id: assignment.id.to_s,
+          assessment_id: assignment.id.to_s,
           locale: 'en')
       end
 
@@ -544,7 +544,7 @@ describe 'An Assignment' do
         expect(get: sub_path + '/download').to route_to(
           controller: sub_ctrl,
           action: 'download',
-          assignment_id: assignment.id.to_s,
+          assessment_id: assignment.id.to_s,
           locale: 'en')
       end
     end
@@ -556,7 +556,7 @@ describe 'An Assignment' do
             controller: sub_ctrl,
             action: 'collect_and_begin_grading',
             id: submission.id.to_s,
-            assignment_id: assignment.id.to_s,
+            assessment_id: assignment.id.to_s,
             locale: 'en')
       end
 
@@ -566,7 +566,7 @@ describe 'An Assignment' do
             controller: sub_ctrl,
             action: 'manually_collect_and_begin_grading',
             id: submission.id.to_s,
-            assignment_id: assignment.id.to_s,
+            assessment_id: assignment.id.to_s,
             locale: 'en')
       end
 
@@ -576,7 +576,7 @@ describe 'An Assignment' do
             controller: sub_ctrl,
             action: 'repo_browser',
             id: submission.id.to_s,
-            assignment_id: assignment.id.to_s,
+            assessment_id: assignment.id.to_s,
             locale: 'en')
       end
     end
@@ -591,7 +591,7 @@ describe 'An Assignment' do
             controller: res_ctrl,
             action: 'update_mark',
             id: '1',
-            assignment_id: assignment.id.to_s,
+            assessment_id: assignment.id.to_s,
             submission_id: submission.id.to_s,
             locale: 'en')
         end
@@ -601,7 +601,7 @@ describe 'An Assignment' do
             controller: res_ctrl,
             action: 'show',
             id: 'expand_criteria',
-            assignment_id: assignment.id.to_s,
+            assessment_id: assignment.id.to_s,
             submission_id: submission.id.to_s,
             locale: 'en')
         end
@@ -611,7 +611,7 @@ describe 'An Assignment' do
             controller: res_ctrl,
             action: 'show',
             id: 'collapse_criteria',
-            assignment_id: assignment.id.to_s,
+            assessment_id: assignment.id.to_s,
             submission_id: submission.id.to_s,
             locale: 'en')
         end
@@ -621,7 +621,7 @@ describe 'An Assignment' do
             controller: res_ctrl,
             action: 'show',
             id: 'expand_unmarked_criteria',
-            assignment_id: assignment.id.to_s,
+            assessment_id: assignment.id.to_s,
             submission_id: submission.id.to_s,
             locale: 'en')
         end
@@ -630,7 +630,7 @@ describe 'An Assignment' do
           expect(get: res_path + '/edit').to route_to(
             controller: res_ctrl,
             action: 'edit',
-            assignment_id: assignment.id.to_s,
+            assessment_id: assignment.id.to_s,
             submission_id: submission.id.to_s,
             locale: 'en')
         end
@@ -639,7 +639,7 @@ describe 'An Assignment' do
           expect(get: res_path + '/download').to route_to(
             controller: res_ctrl,
             action: 'download',
-            assignment_id: assignment.id.to_s,
+            assessment_id: assignment.id.to_s,
             submission_id: submission.id.to_s,
             locale: 'en')
         end
@@ -651,7 +651,7 @@ describe 'An Assignment' do
             controller: res_ctrl,
             action: 'download',
             id: '1',
-            assignment_id: assignment.id.to_s,
+            assessment_id: assignment.id.to_s,
             submission_id: submission.id.to_s,
             locale: 'en')
         end
@@ -661,7 +661,7 @@ describe 'An Assignment' do
             controller: res_ctrl,
             action: 'download',
             id: '1',
-            assignment_id: assignment.id.to_s,
+            assessment_id: assignment.id.to_s,
             submission_id: submission.id.to_s,
             locale: 'en')
         end
@@ -671,7 +671,7 @@ describe 'An Assignment' do
             controller: res_ctrl,
             action: 'cancel_remark_request',
             id: '1',
-            assignment_id: assignment.id.to_s,
+            assessment_id: assignment.id.to_s,
             submission_id: submission.id.to_s,
             locale: 'en')
         end
@@ -681,7 +681,7 @@ describe 'An Assignment' do
             controller: res_ctrl,
             action: 'add_extra_mark',
             id: '1',
-            assignment_id: assignment.id.to_s,
+            assessment_id: assignment.id.to_s,
             submission_id: submission.id.to_s,
             locale: 'en')
         end
@@ -691,7 +691,7 @@ describe 'An Assignment' do
             controller: res_ctrl,
             action: 'next_grouping',
             id: '1',
-            assignment_id: assignment.id.to_s,
+            assessment_id: assignment.id.to_s,
             submission_id: submission.id.to_s,
             locale: 'en')
         end
@@ -701,7 +701,7 @@ describe 'An Assignment' do
             controller: res_ctrl,
             action: 'remove_extra_mark',
             id: '1',
-            assignment_id: assignment.id.to_s,
+            assessment_id: assignment.id.to_s,
             submission_id: submission.id.to_s,
             locale: 'en')
         end
@@ -711,7 +711,7 @@ describe 'An Assignment' do
             controller: res_ctrl,
             action: 'set_released_to_students',
             id: '1',
-            assignment_id: assignment.id.to_s,
+            assessment_id: assignment.id.to_s,
             submission_id: submission.id.to_s,
             locale: 'en')
         end
@@ -721,7 +721,7 @@ describe 'An Assignment' do
             controller: res_ctrl,
             action: 'update_overall_comment',
             id: '1',
-            assignment_id: assignment.id.to_s,
+            assessment_id: assignment.id.to_s,
             submission_id: submission.id.to_s,
             locale: 'en')
         end
@@ -731,7 +731,7 @@ describe 'An Assignment' do
             controller: res_ctrl,
             action: 'toggle_marking_state',
             id: '1',
-            assignment_id: assignment.id.to_s,
+            assessment_id: assignment.id.to_s,
             submission_id: submission.id.to_s,
             locale: 'en')
         end
@@ -741,7 +741,7 @@ describe 'An Assignment' do
             controller: res_ctrl,
             action: 'update_remark_request',
             id: '1',
-            assignment_id: assignment.id.to_s,
+            assessment_id: assignment.id.to_s,
             submission_id: submission.id.to_s,
             locale: 'en')
         end
@@ -751,7 +751,7 @@ describe 'An Assignment' do
             controller: res_ctrl,
             action: 'update_positions',
             id: '1',
-            assignment_id: assignment.id.to_s,
+            assessment_id: assignment.id.to_s,
             submission_id: submission.id.to_s,
             locale: 'en')
         end
@@ -761,7 +761,7 @@ describe 'An Assignment' do
             controller: res_ctrl,
             action: 'view_marks',
             id: '1',
-            assignment_id: assignment.id.to_s,
+            assessment_id: assignment.id.to_s,
             submission_id: submission.id.to_s,
             locale: 'en')
         end
@@ -780,7 +780,7 @@ describe 'An Assignment' do
           .to route_to(
             controller: grader_ctrl,
             action: 'upload',
-            assignment_id: assignment.id.to_s,
+            assessment_id: assignment.id.to_s,
             locale: 'en')
       end
 
@@ -789,7 +789,7 @@ describe 'An Assignment' do
           .to route_to(
             controller: grader_ctrl,
             action: 'grader_groupings_mapping',
-            assignment_id: assignment.id.to_s,
+            assessment_id: assignment.id.to_s,
             locale: 'en')
       end
 
@@ -798,7 +798,7 @@ describe 'An Assignment' do
           .to route_to(
             controller: grader_ctrl,
             action: 'grader_criteria_mapping',
-            assignment_id: assignment.id.to_s,
+            assessment_id: assignment.id.to_s,
             locale: 'en')
       end
 
@@ -806,7 +806,7 @@ describe 'An Assignment' do
         expect(get: grader_path + '/global_actions').to route_to(
           controller: grader_ctrl,
           action: 'global_actions',
-          assignment_id: assignment.id.to_s,
+          assessment_id: assignment.id.to_s,
           locale: 'en')
       end
 
@@ -814,7 +814,7 @@ describe 'An Assignment' do
         expect(post: grader_path + '/set_assign_criteria').to route_to(
           controller: grader_ctrl,
           action: 'set_assign_criteria',
-          assignment_id: assignment.id.to_s,
+          assessment_id: assignment.id.to_s,
           locale: 'en')
       end
 
@@ -822,7 +822,7 @@ describe 'An Assignment' do
         expect(post: grader_path + '/global_actions').to route_to(
           controller: grader_ctrl,
           action: 'global_actions',
-          assignment_id: assignment.id.to_s,
+          assessment_id: assignment.id.to_s,
           locale: 'en')
       end
     end
@@ -843,7 +843,7 @@ describe 'An Assignment' do
           controller: annot_ctrl,
           action: 'show',
           id: id,
-          assignment_id: assignment.id.to_s,
+          assessment_id: assignment.id.to_s,
           locale: 'en')
       end
 
@@ -852,7 +852,7 @@ describe 'An Assignment' do
           controller: annot_ctrl,
           action: 'destroy',
           id: id,
-          assignment_id: assignment.id.to_s,
+          assessment_id: assignment.id.to_s,
           locale: 'en')
       end
 
@@ -861,7 +861,7 @@ describe 'An Assignment' do
           controller: annot_ctrl,
           action: 'update',
           id: id,
-          assignment_id: assignment.id.to_s,
+          assessment_id: assignment.id.to_s,
           locale: 'en')
       end
 
@@ -870,7 +870,7 @@ describe 'An Assignment' do
           controller: annot_ctrl,
           action: 'delete_annotation_text',
           id: id,
-          assignment_id: assignment.id.to_s,
+          assessment_id: assignment.id.to_s,
           locale: 'en')
       end
 
@@ -879,7 +879,7 @@ describe 'An Assignment' do
           controller: annot_ctrl,
           action: 'add_annotation_text',
           id: id,
-          assignment_id: assignment.id.to_s,
+          assessment_id: assignment.id.to_s,
           locale: 'en')
       end
 
@@ -888,7 +888,7 @@ describe 'An Assignment' do
           controller: annot_ctrl,
           action: 'add_annotation_text',
           id: id,
-          assignment_id: assignment.id.to_s,
+          assessment_id: assignment.id.to_s,
           locale: 'en')
       end
 
@@ -897,7 +897,7 @@ describe 'An Assignment' do
           controller: annot_ctrl,
           action: 'update_annotation',
           id: id,
-          assignment_id: assignment.id.to_s,
+          assessment_id: assignment.id.to_s,
           locale: 'en')
       end
     end
@@ -907,7 +907,7 @@ describe 'An Assignment' do
         expect(get: annot_path + '/new').to route_to(
           controller: annot_ctrl,
           action: 'new',
-          assignment_id: assignment.id.to_s,
+          assessment_id: assignment.id.to_s,
           locale: 'en')
       end
 
@@ -915,7 +915,7 @@ describe 'An Assignment' do
         expect(post: annot_path).to route_to(
           controller: annot_ctrl,
           action: 'create',
-          assignment_id: assignment.id.to_s,
+          assessment_id: assignment.id.to_s,
           locale: 'en')
       end
 
@@ -923,7 +923,7 @@ describe 'An Assignment' do
         expect(get: annot_path).to route_to(
           controller: annot_ctrl,
           action: 'index',
-          assignment_id: assignment.id.to_s,
+          assessment_id: assignment.id.to_s,
           locale: 'en')
       end
 
@@ -931,7 +931,7 @@ describe 'An Assignment' do
         expect(post: annot_path + '/upload').to route_to(
           controller: annot_ctrl,
           action: 'upload',
-          assignment_id: assignment.id.to_s,
+          assessment_id: assignment.id.to_s,
           locale: 'en')
       end
 
@@ -939,7 +939,7 @@ describe 'An Assignment' do
         expect(get: annot_path + '/download').to route_to(
           controller: annot_ctrl,
           action: 'download',
-          assignment_id: assignment.id.to_s,
+          assessment_id: assignment.id.to_s,
           locale: 'en')
       end
 
@@ -947,7 +947,7 @@ describe 'An Assignment' do
         expect(get: annot_path + '/add_annotation_text').to route_to(
           controller: annot_ctrl,
           action: 'add_annotation_text',
-          assignment_id: assignment.id.to_s,
+          assessment_id: assignment.id.to_s,
           locale: 'en')
       end
 
@@ -955,7 +955,7 @@ describe 'An Assignment' do
         expect(post: annot_path + '/delete_annotation_text').to route_to(
           controller: annot_ctrl,
           action: 'delete_annotation_text',
-          assignment_id: assignment.id.to_s,
+          assessment_id: assignment.id.to_s,
           locale: 'en')
       end
 
@@ -963,7 +963,7 @@ describe 'An Assignment' do
         expect(post: annot_path + '/update_annotation').to route_to(
           controller: annot_ctrl,
           action: 'update_annotation',
-          assignment_id: assignment.id.to_s,
+          assessment_id: assignment.id.to_s,
           locale: 'en')
       end
     end

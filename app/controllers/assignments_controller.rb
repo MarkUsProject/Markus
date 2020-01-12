@@ -67,9 +67,9 @@ class AssignmentsController < ApplicationController
     @grouping = @student.accepted_grouping_for(@assignment.id)
 
     if @grouping.nil?
-      if @assignment.scanned_exam
+      if @assignment.assignment_properties.scanned_exam
         flash_now(:notice, t('assignments.scanned_exam.under_review'))
-      elsif @assignment.group_max == 1
+      elsif @assignment.assignment_properties.group_max == 1
         begin
           @student.create_group_for_working_alone_student(@assignment.id)
         rescue StandardError => e
@@ -657,7 +657,7 @@ class AssignmentsController < ApplicationController
     assignment.assign_attributes(assignment_params)
     assignment.repository_folder = assignment_params[:short_identifier] unless assignment.is_peer_review?
     assignment.save!
-    new_required_files = assignment.saved_change_to_only_required_files? ||
+    new_required_files = assignment.assignment_properties.saved_change_to_only_required_files? ||
                          assignment.saved_change_to_is_hidden? ||
                          assignment.assignment_files.any?(&:saved_changes?) ||
                          num_files_before != assignment.assignment_files.length

@@ -17,7 +17,7 @@ describe TestResult do
       @sub = create(:submission, grouping: @grouping)
       @user = create(:admin)
       @test_group = TestGroup.create(
-        assignment_id: @asst.id,
+        assessment_id: @asst.id,
         name: 'test_group'
       )
       @test_run = TestRun.create(

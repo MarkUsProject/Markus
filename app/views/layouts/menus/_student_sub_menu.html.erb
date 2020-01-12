@@ -45,8 +45,9 @@
         </li>
       <% end %>
 
-      <% if @assignment.enable_student_tests && (@assignment.unlimited_tokens ||
-        @assignment.tokens_per_period > 0) %>
+      <% if @assignment.assignment_properties.enable_student_tests &&
+              (@assignment.assignment_properties.unlimited_tokens ||
+                @assignment.assignment_properties.tokens_per_period > 0) %>
         <li class='<%= "active" if controller.controller_name == 'automated_tests' %>'>
           <%= link_to t('automated_tests.title'),
                       controller: 'automated_tests',
@@ -70,7 +71,7 @@
         </li>
       <% end %>
 
-      <% if @assignment.has_peer_review? && !@assignment.pr_assignment.is_hidden %>
+      <% if @assignment.has_peer_review_assignment? && !@assignment.pr_assignment.is_hidden %>
         <li class='<%= "active" if controller.controller_name == 'assignments' && controller.action_name == 'peer_review'%>'>
           <%= link_to PeerReview.model_name.human.pluralize,
                       controller: 'assignments',

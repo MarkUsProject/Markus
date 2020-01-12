@@ -5,7 +5,7 @@ namespace :db do
       short_identifier: 'Quiz1',
       description: 'Class Quiz on Variables',
       message: 'Class quiz on variables',
-      date: 1.minute.from_now,
+      due_date: 1.minute.from_now,
       is_hidden: false
     )
 
@@ -23,7 +23,7 @@ namespace :db do
       short_identifier: 'Quiz2',
       description: 'Class Quiz on Conditionals',
       message: 'Class quiz on conditional statements',
-      date: 2.months.from_now,
+      due_date: 2.months.from_now,
       is_hidden: true
     )
 

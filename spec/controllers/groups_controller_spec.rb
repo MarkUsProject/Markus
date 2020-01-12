@@ -153,10 +153,7 @@ describe GroupsController do
         allow(MarkusConfigurator)
           .to receive(:markus_config_repository_type).and_return('git')
 
-        @assignment = create(:assignment,
-                             allow_web_submits: true,
-                             group_max: 1,
-                             group_min: 1)
+        @assignment = create(:assignment)
 
         # Create students corresponding to the file_good
         @student_user_names = %w(c8shosta c5bennet)
@@ -204,10 +201,7 @@ describe GroupsController do
       end
 
       before :each do
-        @assignment = FactoryBot.create(:assignment,
-                                         allow_web_submits: true,
-                                         group_max: 1,
-                                         group_min: 1)
+        @assignment = FactoryBot.create(:assignment)
 
         @group = FactoryBot.create(:group)
 

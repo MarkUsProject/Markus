@@ -27,22 +27,22 @@ class Result < ApplicationRecord
   }
 
   # Returns a list of total marks for each student whose submissions are graded
-  # for the assignment specified by +assignment_id+, sorted in ascending order.
+  # for the assignment specified by +assessment_id+, sorted in ascending order.
   # This includes duplicated marks for each student in the same group (marks
   # are given for a group, so each student in the same group gets the same
   # mark).
-  def self.student_marks_by_assignment(assignment_id)
+  def self.student_marks_by_assignment(assessment_id)
     # Need to get a list of total marks of students' latest results (i.e., not
     # including old results after having remarked results). This is a typical
     # greatest-n-per-group problem and can be implemented using a subquery
     # join.
     subquery = Result.select('max(results.id) max_id')
-      .joins(submission: {grouping: {student_memberships: :user}})
-      .where(groupings: {assignment_id: assignment_id},
-             users: {hidden: false},
-             submissions: {submission_version_used: true},
-             marking_state: Result::MARKING_STATES[:complete])
-      .group('users.id')
+                     .joins(submission: { grouping: { student_memberships: :user } })
+                     .where(groupings: { assessment_id: assessment_id },
+                            users: { hidden: false },
+                            submissions: { submission_version_used: true },
+                            marking_state: Result::MARKING_STATES[:complete])
+                     .group('users.id')
     Result.joins("JOIN (#{subquery.to_sql}) s ON id = s.max_id")
       .order(:total_mark).pluck(:total_mark)
   end
@@ -124,20 +124,20 @@ class Result < ApplicationRecord
   def self.get_total_extra_marks(result_ids, max_mark: nil, user_visibility: :ta)
     result_data = Result.joins(:extra_marks, submission: [grouping: :assignment])
                         .where(id: result_ids)
-                        .pluck(:id, :extra_mark, :unit, 'assignments.id')
+                        .pluck(:id, :extra_mark, :unit, 'assessments.id')
     extra_marks_hash = Hash.new { |h,k| h[k] = 0 }
     max_mark_hash = Hash.new
-    result_data.each do |id, extra_mark, unit, assignment_id|
+    result_data.each do |id, extra_mark, unit, assessment_id|
       if unit == 'points'
         extra_marks_hash[id] += extra_mark.round(1)
       elsif unit == 'percentage'
         if max_mark
           assignment_max_mark = max_mark
         else
-          max_mark_hash[assignment_id] ||= Assignment.find(assignment_id)&.max_mark(user_visibility)
-          assignment_max_mark = max_mark_hash[assignment_id]
+          max_mark_hash[assessment_id] ||= Assignment.find(assessment_id)&.max_mark(user_visibility)
+          assignment_max_mark = max_mark_hash[assessment_id]
         end
-        max_mark = max_mark_hash[assignment_id]
+        max_mark = max_mark_hash[assessment_id]
         extra_marks_hash[id] = (extra_mark * assignment_max_mark / 100).round(1)
       end
     end

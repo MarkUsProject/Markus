@@ -15,7 +15,7 @@ class TaMembership < Membership
     if remove_existing
       Repository.get_class.update_permissions_after do
         TaMembership.joins(:grouping)
-                    .where(groupings: { assignment_id: assignment.id })
+                    .where(groupings: { assessment_id: assignment.id })
                     .delete_all
       end
     end
@@ -42,7 +42,7 @@ class TaMembership < Membership
     end
 
     # Recompute criteria associations
-    if assignment.assign_graders_to_criteria
+    if assignment.assignment_properties.assign_graders_to_criteria
       Grouping.update_criteria_coverage_counts(
         assignment,
         new_ta_memberships.map { |x| x[:grouping_id] }

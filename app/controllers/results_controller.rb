@@ -161,7 +161,7 @@ class ResultsController < ApplicationController
           else
             fields = common_fields + [:description]
           end
-          criteria = klass.where(assignment_id: is_review ? assignment.pr_assignment.id : assignment.id,
+          criteria = klass.where(assessment_id: is_review ? assignment.pr_assignment.id : assignment.id,
                                  ta_visible: !is_review,
                                  peer_visible: is_review)
           criteria_info = criteria.pluck_to_hash(*fields)
@@ -178,7 +178,7 @@ class ResultsController < ApplicationController
 
         if assignment.assign_graders_to_criteria && current_user.ta?
           assigned_criteria = current_user.criterion_ta_associations
-                                          .where(assignment_id: assignment.id)
+                                          .where(assessment_id: assignment.id)
                                           .pluck(:criterion_type, :criterion_id)
                                           .map { |t, id| "#{t}-#{id}" }
 
@@ -465,7 +465,7 @@ class ResultsController < ApplicationController
     assignment = Assignment.find(params[:assignment_id])
     grouping = Grouping.find(submission.grouping_id)
     revision_identifier = submission.revision_identifier
-    repo_folder = assignment.repository_folder
+    repo_folder = assignment.assignment_properties.repository_folder
     zip_name = "#{repo_folder}-#{grouping.group.repo_name}"
 
     zip_path = if params[:include_annotations] == 'true'
@@ -480,7 +480,7 @@ class ResultsController < ApplicationController
     Zip::File.open(zip_path, Zip::File::CREATE) do |zip_file|
       grouping.group.access_repo do |repo|
         revision = repo.get_revision(revision_identifier)
-        repo.send_tree_to_zip(assignment.repository_folder, zip_file, zip_name, revision) do |file|
+        repo.send_tree_to_zip(repo_folder, zip_file, zip_name, revision) do |file|
           submission_file = files.find_by(filename: file.name, path: file.path)
           submission_file.retrieve_file(params[:include_annotations] == 'true' && !submission_file.is_supported_image?)
         end

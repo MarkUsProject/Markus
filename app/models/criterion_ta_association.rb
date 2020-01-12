@@ -7,7 +7,7 @@ class CriterionTaAssociation < ApplicationRecord
   validates_presence_of   :criterion_type
   validates_associated    :criterion
 
-  belongs_to              :assignment
+  belongs_to              :assignment, foreign_key: :assessment_id
 
   before_validation       :add_assignment_reference, on: :create
 
@@ -41,7 +41,7 @@ class CriterionTaAssociation < ApplicationRecord
           criterion_id: criterion.id,
           criterion_type: criterion.class,
           ta_id: ta_id,
-          assignment_id: assignment.id
+          assessment_id: assignment.id
         }
       end
     end

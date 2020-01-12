@@ -44,7 +44,7 @@ describe Api::SubmissionFilesController do
       group.access_repo do |repo|
         txn = repo.get_transaction(grouping.inviter.user_name)
         file_content.each_with_index do |content, i|
-          filepath = File.join(assignment.repository_folder, file_names[i])
+          filepath = File.join(assignment.assignment_properties.repository_folder, file_names[i])
           txn.add(filepath, content)
         end
         repo.commit(txn)

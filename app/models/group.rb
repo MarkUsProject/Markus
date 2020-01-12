@@ -31,7 +31,7 @@ class Group < ApplicationRecord
   end
 
   def grouping_for_assignment(aid)
-    groupings.where(assignment_id: aid).first
+    groupings.where(assessment_id: aid).first
   end
 
   # Returns the URL for externally accessible repos

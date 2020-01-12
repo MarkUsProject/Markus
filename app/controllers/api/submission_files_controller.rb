@@ -48,7 +48,7 @@ module Api
           else
             revision = repo.get_latest_revision
           end
-          file = revision.files_at_path(File.join(assignment.repository_folder, path))[file_name]
+          file = revision.files_at_path(File.join(assignment.assignment_properties.repository_folder, path))[file_name]
           if file.nil?
             render 'shared/http_status', locals: { code: '422', message:
               HttpStatusHelper::ERROR_CODE['message']['422'] }, status: 422
@@ -77,7 +77,8 @@ module Api
             else
               revision = repo.get_latest_revision
             end
-            repo.send_tree_to_zip(assignment.repository_folder, zip_file, zip_name + group.group_name, revision)
+            repo.send_tree_to_zip(assignment.assignment_properties.repository_folder,
+                                  zip_file, zip_name + group.group_name, revision)
           end
         end
 

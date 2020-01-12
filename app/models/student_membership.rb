@@ -47,20 +47,20 @@ class StudentMembership < Membership
   private
 
   def update_repo_permissions_after_create
-    return unless grouping.assignment.read_attribute(:vcs_submit)
+    return unless grouping.assignment.assignment_properties.read_attribute(:vcs_submit)
     return if [STATUSES[:pending], STATUSES[:rejected]].include?(membership_status)
     Repository.get_class.update_permissions
   end
 
   def update_repo_permissions_after_destroy
-    return unless grouping.assignment.read_attribute(:vcs_submit)
+    return unless grouping.assignment.assignment_properties.read_attribute(:vcs_submit)
     return if [STATUSES[:pending], STATUSES[:rejected]].include?(membership_status)
     return if grouping.group.assignments.count > 1
     Repository.get_class.update_permissions
   end
 
   def update_repo_permissions_after_save
-    return unless grouping.assignment.read_attribute(:vcs_submit)
+    return unless grouping.assignment.assignment_properties.read_attribute(:vcs_submit)
     return unless saved_change_to_attribute? :membership_status
     old, new = saved_change_to_attribute :membership_status
     access = [STATUSES[:accepted], STATUSES[:inviter]]
@@ -76,7 +76,7 @@ class StudentMembership < Membership
     accepted_or_inviter = [STATUSES[:accepted], STATUSES[:inviter]]
     return true unless accepted_or_inviter.include?(new) && !accepted_or_inviter.include?(old)
     other_users = StudentMembership.joins(:grouping)
-                                   .where('groupings.assignment_id': grouping.assignment_id)
+                                   .where('groupings.assessment_id': grouping.assessment_id)
                                    .where(membership_status: [:inviter, :accepted])
                                    .where(user_id: user_id)
     unless other_users.empty?

@@ -3,7 +3,7 @@
     document.addEventListener('DOMContentLoaded', () => {
       makeRepoBrowser(document.getElementById('file_manager'),
         {
-          assignment_id: <%= @grouping.assignment_id %>,
+          assignment_id: <%= @grouping.assessment_id %>,
           late_penalty: <%= !@grouping.assignment.submission_rule.is_a? NoLateSubmissionRule %>,
           grouping_id: <%= @grouping.id %>,
           collected_revision_id: '<%= @collected_revision&.revision_identifier %>',

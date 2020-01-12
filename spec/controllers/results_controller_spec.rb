@@ -153,7 +153,7 @@ describe ResultsController do
       before :each do
         grouping.group.access_repo do |repo|
           txn = repo.get_transaction('test')
-          path = File.join(assignment.repository_folder, SAMPLE_FILE_NAME)
+          path = File.join(assignment.assignment_properties.repository_folder, SAMPLE_FILE_NAME)
           txn.add(path, SAMPLE_FILE_CONTENT, '')
           repo.commit(txn)
           @submission = Submission.generate_new_submission(grouping, repo.get_latest_revision)
@@ -174,7 +174,7 @@ describe ResultsController do
         end
         @file_path_ann = File.join 'tmp', "#{file_name_snippet}_ann.zip"
         @file_path = File.join 'tmp', "#{file_name_snippet}.zip"
-        submission_file_dir = "#{assignment.repository_folder}-#{grouping.group.repo_name}"
+        submission_file_dir = "#{assignment.assignment_properties.repository_folder}-#{grouping.group.repo_name}"
         @submission_file_path = File.join(submission_file_dir, SAMPLE_FILE_NAME)
       end
       after :each do
