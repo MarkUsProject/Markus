@@ -6,28 +6,28 @@ describe Api::SubmissionFilesController do
     end
 
     it 'should fail to authenticate a GET index request' do
-      get :index, params: { assessment_id: 1, group_id: 1 }
+      get :index, params: { assignment_id: 1, group_id: 1 }
       expect(response.status).to eq(403)
     end
 
     it 'should fail to authenticate a GET show request' do
-      get :show, params: { id: 1, assessment_id: 1, group_id: 1 }
+      get :show, params: { id: 1, assignment_id: 1, group_id: 1 }
       expect(response.status).to eq(403)
     end
 
     it 'should fail to authenticate a POST create request' do
-      post :create, params: { assessment_id: 1, group_id: 1 }
+      post :create, params: { assignment_id: 1, group_id: 1 }
 
       expect(response.status).to eq(403)
     end
 
     it 'should fail to authenticate a PUT update request' do
-      put :create, params: { id: 1, assessment_id: 1, group_id: 1 }
+      put :create, params: { id: 1, assignment_id: 1, group_id: 1 }
       expect(response.status).to eq(403)
     end
 
     it 'should fail to authenticate a DELETE destroy request' do
-      delete :destroy, params: { id: 1, assessment_id: 1, group_id: 1 }
+      delete :destroy, params: { id: 1, assignment_id: 1, group_id: 1 }
       expect(response.status).to eq(403)
     end
   end
@@ -56,7 +56,7 @@ describe Api::SubmissionFilesController do
       let(:gid) { group.id }
       let(:file_name) { nil }
       before :each do
-        get :index, params: { assessment_id: aid, group_id: gid, filename: file_name }
+        get :index, params: { assignment_id: aid, group_id: gid, filename: file_name }
       end
       context 'when no specific file is selected' do
         it 'should be successful' do

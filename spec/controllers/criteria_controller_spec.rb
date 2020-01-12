@@ -19,42 +19,42 @@ describe CriteriaController do
     describe 'An unauthenticated and unauthorized user doing a GET' do
       context '#index' do
         it 'should respond with redirect' do
-          get :index, params: { assessment_id: 1 }
+          get :index, params: { assignment_id: 1 }
           is_expected.to respond_with :redirect
         end
       end
 
       context '#new' do
         it 'should respond with redirect' do
-          get :new, params: { assessment_id: 1 }
+          get :new, params: { assignment_id: 1 }
           is_expected.to respond_with :redirect
         end
       end
 
       context '#edit' do
         it 'should respond with redirect' do
-          get :edit, params: { assessment_id: 1, id: 1 }
+          get :edit, params: { assignment_id: 1, id: 1 }
           is_expected.to respond_with :redirect
         end
       end
 
       context '#update' do
         it 'should respond with redirect' do
-          put :update, params: { assessment_id: 1, id: 1 }
+          put :update, params: { assignment_id: 1, id: 1 }
           is_expected.to respond_with :redirect
         end
       end
 
       context '#destroy' do
         it 'should respond with redirect' do
-          delete :destroy, params: { assessment_id: 1, id: 1 }
+          delete :destroy, params: { assignment_id: 1, id: 1 }
           is_expected.to respond_with :redirect
         end
       end
 
       context '#update_positions' do
         it 'should respond with redirect' do
-          get :update_positions, params: { assessment_id: 1 }
+          get :update_positions, params: { assignment_id: 1 }
           is_expected.to respond_with :redirect
         end
       end
@@ -72,7 +72,7 @@ describe CriteriaController do
 
       context '#download' do
         it 'should respond with redirect' do
-          get :download, params: { assessment_id: 1 }
+          get :download, params: { assignment_id: 1 }
           is_expected.to respond_with :redirect
         end
       end
@@ -81,35 +81,35 @@ describe CriteriaController do
     describe 'An unauthenticated and unauthorized user doing a POST' do
       context '#index' do
         it 'should respond with redirect' do
-          post :index, params: { assessment_id: 1 }
+          post :index, params: { assignment_id: 1 }
           is_expected.to respond_with :redirect
         end
       end
 
       context '#new' do
         it 'should respond with redirect' do
-          post :new, params: { assessment_id: 1 }
+          post :new, params: { assignment_id: 1 }
           is_expected.to respond_with :redirect
         end
       end
 
       context '#update' do
         it 'should respond with redirect' do
-          put :update, params: { assessment_id: 1, id: 1 }
+          put :update, params: { assignment_id: 1, id: 1 }
           is_expected.to respond_with :redirect
         end
       end
 
       context '#edit' do
         it 'should respond with redirect' do
-          post :edit, params: { assessment_id: 1, id: 1 }
+          post :edit, params: { assignment_id: 1, id: 1 }
           is_expected.to respond_with :redirect
         end
       end
 
       context '#destroy' do
         it 'should respond with redirect' do
-          delete :destroy, params: { assessment_id: 1, id: 1 }
+          delete :destroy, params: { assignment_id: 1, id: 1 }
           is_expected.to respond_with :redirect
         end
       end
@@ -379,21 +379,21 @@ describe CriteriaController do
     describe 'An unauthenticated and unauthorized user doing a GET' do
       context '#index' do
         it 'should respond with redirect' do
-          get :index, params: { assessment_id: 1 }
+          get :index, params: { assignment_id: 1 }
           is_expected.to respond_with :redirect
         end
       end
 
       context '#new' do
         it 'should respond with redirect' do
-          get :new, params: { assessment_id: 1 }
+          get :new, params: { assignment_id: 1 }
           is_expected.to respond_with :redirect
         end
       end
 
       context '#edit' do
         it 'should respond with redirect' do
-          get :edit, params: { assessment_id: 1, id: 1 }
+          get :edit, params: { assignment_id: 1, id: 1 }
           is_expected.to respond_with :redirect
         end
 
@@ -411,28 +411,28 @@ describe CriteriaController do
 
       context '#destroy' do
         it 'should respond with redirect' do
-          delete :destroy, params: { assessment_id: 1, id: 1 }
+          delete :destroy, params: { assignment_id: 1, id: 1 }
           is_expected.to respond_with :redirect
         end
       end
 
       context '#update' do
         it 'should respond with redirect' do
-          put :update, params: { assessment_id: 1, id: 1 }
+          put :update, params: { assignment_id: 1, id: 1 }
           is_expected.to respond_with :redirect
         end
       end
 
       context '#update_positions' do
         it 'should respond with redirect' do
-          get :update_positions, params: { assessment_id: 1 }
+          get :update_positions, params: { assignment_id: 1 }
           is_expected.to respond_with :redirect
         end
       end
 
       context '#download' do
         it 'should respond with redirect' do
-          get :download, params: { assessment_id: 1 }
+          get :download, params: { assignment_id: 1 }
           is_expected.to respond_with :redirect
         end
       end
@@ -441,35 +441,35 @@ describe CriteriaController do
     describe 'An unauthenticated and unauthorized user doing a POST' do
       context '#index' do
         it 'should respond with redirect' do
-          post :index, params: { assessment_id: 1 }
+          post :index, params: { assignment_id: 1 }
           is_expected.to respond_with :redirect
         end
       end
 
       context '#new' do
         it 'should respond with redirect' do
-          post :new, params: { assessment_id: 1 }
+          post :new, params: { assignment_id: 1 }
           is_expected.to respond_with :redirect
         end
       end
 
       context '#edit' do
         it 'should respond with redirect' do
-          post :edit, params: { assessment_id: 1, id: 1 }
+          post :edit, params: { assignment_id: 1, id: 1 }
           is_expected.to respond_with :redirect
         end
       end
 
       context '#update' do
         it 'should respond with redirect' do
-          put :update, params: { assessment_id: 1, id: 1 }
+          put :update, params: { assignment_id: 1, id: 1 }
           is_expected.to respond_with :redirect
         end
       end
 
       context '#destroy' do
         it 'should respond with redirect' do
-          delete :destroy, params: { assessment_id: 1, id: 1 }
+          delete :destroy, params: { assignment_id: 1, id: 1 }
           is_expected.to respond_with :redirect
         end
       end
@@ -954,7 +954,7 @@ describe CriteriaController do
   let(:assignment) { FactoryBot.create(:assignment) }
   context '#upload', pending: true do # Until criteria tables merged together, can't use Criterion.count
     include_examples 'a controller supporting upload' do
-      let(:params) { { assessment_id: assignment.id } }
+      let(:params) { { assignment_id: assignment.id } }
     end
   end
 end

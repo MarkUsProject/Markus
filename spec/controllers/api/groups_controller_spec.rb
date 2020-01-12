@@ -6,28 +6,28 @@ describe Api::GroupsController do
     end
 
     it 'should fail to authenticate a GET index request' do
-      get :index, params: { assessment_id: 1 }
+      get :index, params: { assignment_id: 1 }
       expect(response.status).to eq(403)
     end
 
     it 'should fail to authenticate a GET show request' do
-      get :show, params: { id: 1, assessment_id: 1 }
+      get :show, params: { id: 1, assignment_id: 1 }
       expect(response.status).to eq(403)
     end
 
     it 'should fail to authenticate a POST create request' do
-      post :create, params: { assessment_id: 1 }
+      post :create, params: { assignment_id: 1 }
 
       expect(response.status).to eq(403)
     end
 
     it 'should fail to authenticate a PUT update request' do
-      put :create, params: { id: 1, assessment_id: 1 }
+      put :create, params: { id: 1, assignment_id: 1 }
       expect(response.status).to eq(403)
     end
 
     it 'should fail to authenticate a DELETE destroy request' do
-      delete :destroy, params: { id: 1, assessment_id: 1 }
+      delete :destroy, params: { id: 1, assignment_id: 1 }
       expect(response.status).to eq(403)
     end
   end
@@ -46,7 +46,7 @@ describe Api::GroupsController do
         end
         context 'with a single grouping' do
           before :each do
-            get :index, params: { assessment_id: grouping.assignment.id }
+            get :index, params: { assignment_id: grouping.assignment.id }
           end
           it 'should be successful' do
             expect(response.status).to eq(200)
@@ -58,7 +58,7 @@ describe Api::GroupsController do
         context 'with multiple assignments' do
           before :each do
             5.times { create :grouping_with_inviter, assignment: assignment }
-            get :index, params: { assessment_id: assignment.id }
+            get :index, params: { assignment_id: assignment.id }
           end
           it 'should return xml content about all assignments' do
             expect(Hash.from_xml(response.body).dig('groups', 'group').length).to eq(5)
@@ -71,7 +71,7 @@ describe Api::GroupsController do
         end
         context 'with a single assignment' do
           before :each do
-            get :index, params: { assessment_id: grouping.assignment.id }
+            get :index, params: { assignment_id: grouping.assignment.id }
           end
           it 'should be successful' do
             expect(response.status).to eq(200)
@@ -84,21 +84,21 @@ describe Api::GroupsController do
           let(:groupings) { Array.new(5) { create :grouping_with_inviter, assignment: assignment } }
           it 'should return content about all groupings' do
             groupings
-            get :index, params: { assessment_id: assignment.id }
+            get :index, params: { assignment_id: assignment.id }
             expect(JSON.parse(response.body).length).to eq(5)
           end
           it 'should return only filtered content' do
             gr = groupings.first
-            get :index, params: { assessment_id: gr.assignment.id, filter: { group_name: gr.group.group_name } }
+            get :index, params: { assignment_id: gr.assignment.id, filter: { group_name: gr.group.group_name } }
             expect(JSON.parse(response.body)&.first&.dig('id')).to eq(gr.group.id)
           end
           it 'should not return groups that match the filter from another assignment' do
-            get :index, params: { assessment_id: create(:assignment).id,
+            get :index, params: { assignment_id: create(:assignment).id,
                                   filter: { group_name: groupings.last.group.group_name } }
             expect(JSON.parse(response.body)).to be_empty
           end
           it 'should reject invalid filters' do
-            get :index, params: { assessment_id: groupings.first.assignment.id, filter: { bad_filter: 'something' } }
+            get :index, params: { assignment_id: groupings.first.assignment.id, filter: { bad_filter: 'something' } }
             expect(response.status).to eq(422)
           end
         end
@@ -111,7 +111,7 @@ describe Api::GroupsController do
         end
         context 'with a single grouping' do
           before :each do
-            get :show, params: { id: grouping.group.id, assessment_id: grouping.assignment.id }
+            get :show, params: { id: grouping.group.id, assignment_id: grouping.assignment.id }
           end
           it 'should be successful' do
             expect(response.status).to eq(200)
@@ -127,7 +127,7 @@ describe Api::GroupsController do
         end
         context 'with a single assignment' do
           before :each do
-            get :show, params: { id: grouping.group.id, assessment_id: grouping.assignment.id }
+            get :show, params: { id: grouping.group.id, assignment_id: grouping.assignment.id }
           end
           it 'should be successful' do
             expect(response.status).to eq(200)
@@ -139,7 +139,7 @@ describe Api::GroupsController do
       end
       context 'requesting a non-existant assignment' do
         it 'should respond with 404' do
-          get :show, params: { id: 9999, assessment_id: assignment.id }
+          get :show, params: { id: 9999, assignment_id: assignment.id }
           expect(response.status).to eq(404)
         end
       end
@@ -149,7 +149,7 @@ describe Api::GroupsController do
         let(:student) { create :student }
         before :each do
           post :add_members, params: { id: grouping.group.id,
-                                       assessment_id: grouping.assignment.id,
+                                       assignment_id: grouping.assignment.id,
                                        members: [student.user_name] }
         end
         it 'should respond with 200' do
@@ -166,7 +166,7 @@ describe Api::GroupsController do
         let(:student) { create :student }
         before :each do
           post :add_members, params: { id: grouping.group.id,
-                                       assessment_id: grouping.assignment.id,
+                                       assignment_id: grouping.assignment.id,
                                        members: [student.user_name] }
         end
         it 'should respond with 200' do
@@ -183,7 +183,7 @@ describe Api::GroupsController do
         let(:student) { create :student }
         before :each do
           post :add_members, params: { id: grouping.group.id,
-                                       assessment_id: assignment.id,
+                                       assignment_id: assignment.id,
                                        members: [student.user_name] }
         end
         it 'should respond with 422' do
@@ -197,7 +197,7 @@ describe Api::GroupsController do
         let(:students) { create_list(:student, 3) }
         before :each do
           post :add_members, params: { id: grouping.group.id,
-                                       assessment_id: grouping.assignment.id,
+                                       assignment_id: grouping.assignment.id,
                                        members: students.map(&:user_name) }
         end
         it 'should respond with 200' do
@@ -216,7 +216,7 @@ describe Api::GroupsController do
         before :each do
           submission
           post :update_marks, params: { id: grouping.group.id,
-                                        assessment_id: grouping.assignment.id,
+                                        assignment_id: grouping.assignment.id,
                                         criterion.name => 4 }
           grouping.reload
         end
@@ -235,7 +235,7 @@ describe Api::GroupsController do
           mark.mark = 10
           mark.save!
           post :update_marks, params: { id: grouping.group.id,
-                                        assessment_id: grouping.assignment.id,
+                                        assignment_id: grouping.assignment.id,
                                         criterion.name => 4 }
           grouping.reload
           submission.reload
@@ -256,7 +256,7 @@ describe Api::GroupsController do
           mark.save!
           submission.current_result.update(marking_state: Result::MARKING_STATES[:complete])
           post :update_marks, params: { id: grouping.group.id,
-                                        assessment_id: grouping.assignment.id,
+                                        assignment_id: grouping.assignment.id,
                                         criterion.name => 4 }
           grouping.reload
           submission.reload
@@ -274,7 +274,7 @@ describe Api::GroupsController do
       context 'expecting a json response' do
         before :each do
           request.env['HTTP_ACCEPT'] = 'application/json'
-          get :group_ids_by_name, params: { assessment_id: grouping.assignment.id }
+          get :group_ids_by_name, params: { assignment_id: grouping.assignment.id }
         end
         it 'should respond with 200' do
           expect(response.status).to eq(200)
@@ -286,7 +286,7 @@ describe Api::GroupsController do
       context 'expecting a xml response' do
         before :each do
           request.env['HTTP_ACCEPT'] = 'application/xml'
-          get :group_ids_by_name, params: { assessment_id: grouping.assignment.id }
+          get :group_ids_by_name, params: { assignment_id: grouping.assignment.id }
         end
         it 'should respond with 200' do
           expect(response.status).to eq(200)
@@ -303,7 +303,7 @@ describe Api::GroupsController do
         before :each do
           submission.current_result.update(marking_state: Result::MARKING_STATES[:incomplete])
           post :update_marking_state, params: { id: grouping.group.id,
-                                                assessment_id: grouping.assignment.id,
+                                                assignment_id: grouping.assignment.id,
                                                 marking_state: Result::MARKING_STATES[:complete] }
           submission.reload
         end
@@ -318,7 +318,7 @@ describe Api::GroupsController do
         before :each do
           submission.current_result.update(marking_state: Result::MARKING_STATES[:complete])
           post :update_marking_state, params: { id: grouping.group.id,
-                                                assessment_id: grouping.assignment.id,
+                                                assignment_id: grouping.assignment.id,
                                                 marking_state: Result::MARKING_STATES[:incomplete] }
           submission.reload
         end
