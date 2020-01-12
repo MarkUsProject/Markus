@@ -1,4 +1,3 @@
----
 git log:
   type: rubric
   max_mark: 8.0
@@ -29,6 +28,6 @@ cr20:
 cr100:
   description: "I am checkbox"
   max_mark: 5.0
-  peer_visible: false
-  ta_visible: true
   type: checkbox
+  ta_visible: true
+  peer_visible: false

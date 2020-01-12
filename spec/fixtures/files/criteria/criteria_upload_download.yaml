@@ -29,9 +29,3 @@ cr100:
   description: "I am checkbox"
   max_mark: 5.0
   type: checkbox
-cr70:
-  type: flexible
-  max_mark: 10.0
-  description: At least one visibility option should be true
-  ta_visible: false
-  peer_visible: true

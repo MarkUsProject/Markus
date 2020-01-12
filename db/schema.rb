@@ -315,7 +315,6 @@ ActiveRecord::Schema.define(version: 2019_12_10_143220) do
   create_table "levels", force: :cascade do |t|
     t.bigint "rubric_criterion_id", null: false
     t.string "name", null: false
-    t.integer "number", null: false
     t.string "description", null: false
     t.float "mark", null: false
     t.datetime "created_at", precision: 6, null: false

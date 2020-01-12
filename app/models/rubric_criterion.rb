@@ -141,18 +141,16 @@ class RubricCriterion < Criterion
     criterion = RubricCriterion.new
     criterion.name = name
     criterion.max_mark = criterion_yml[1]['max_mark']
-
-    (0..RUBRIC_LEVELS - 1).each do |i|
-      if criterion_yml[1]['level_' + i.to_s]
-        criterion.levels.build(rubric_criterion: criterion,
-                               name: criterion_yml[1]['level_' + i.to_s]['name'],
-                               description: criterion_yml[1]['level_' + i.to_s]['description'],
-                               mark: criterion_yml[1]['level_' + i.to_s]['mark'])
-      end
-    end
     # Visibility options
     criterion.ta_visible = criterion_yml[1]['ta_visible'] unless criterion_yml[1]['ta_visible'].nil?
     criterion.peer_visible = criterion_yml[1]['peer_visible'] unless criterion_yml[1]['peer_visible'].nil?
+
+    criterion_yml[1]['levels'].each do |name, level_yml|
+      criterion.levels.build(rubric_criterion: criterion,
+                             name: name,
+                             description: level_yml['description'],
+                             mark: level_yml['mark'])
+    end
     criterion
   end
 
@@ -171,7 +169,7 @@ class RubricCriterion < Criterion
   end
 
   def weight
-    self.max_mark / (self.levels.length - 1)
+    self.max_mark
   end
 
   def round_max_mark

@@ -1,26 +1,22 @@
 cr30:
   type: rubric
   max_mark: 5.0
-  level_0:
-    name: What?
-    description: Fail
-    mark: 0
-  level_1:
-    name: Hmm
-    description: Almost fail
-    mark: 1
-  level_2:
-    name: Average
-    description: Not bad
-    mark: 2
-  level_3:
-    name: Good
-    description: Alright
-    mark: 3
-  level_4:
-    name: Excellent
-    description: Impressive
-    mark: 5
+  levels:
+    Beginner:
+      mark: 0.0
+      description: Fail
+    Hmm:
+      mark: 1.0
+      description: Almost fail
+    Average:
+      mark: 2.0
+      description: Not bad
+    Good:
+      mark: 3.0
+      description: Alright
+    Excellent:
+      mark: 5.0
+      description: Impressive
   ta_visible: false
   peer_visible: true
 cr20:
@@ -52,20 +48,21 @@ cr60:
 cr90:
   type: rubric
   max_mark: 4.55
-  level0:
-    name: 0
-    description: 0
-  level1:
-    name: 1
-    description: 1
-  level2:
-    name: 2
-    description: 2
-  level3:
-    name: 3
-    description: 3
-  level4:
-    name: 4
-    description: 4
+  levels:
+    Beginner:
+      mark: 0.0
+      description: The essay is very poorly organized structure and gives no new information.
+    Capable:
+      mark: 1.1
+      description: The essay is poorly organized but gives new information.
+    Accomplished:
+      mark: 2.2
+      description: The essay is well-structure and conveys new information clearly.
+    level 3 criterion:
+      mark: 4.0
+      description: level 3 description
+    level 4 criterion:
+      mark: 4.55
+      description: level 4 description
   ta_visible: true
   peer_visible: false

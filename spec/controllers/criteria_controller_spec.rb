@@ -793,7 +793,6 @@ describe CriteriaController do
 
       it 'creates rubric criteria with properly formatted entries' do
         post_as admin, :upload, params: { assignment_id: assignment.id, upload_file: mixed_file }
-
         expect(assignment.get_criteria(:all, :rubric).pluck(:name)).to contain_exactly('cr30', 'cr90')
         cr1 = assignment.get_criteria(:all, :rubric).find_by(name: 'cr30')
         expect(cr1.levels.size).to eq(5)
@@ -802,7 +801,7 @@ describe CriteriaController do
         expect(cr1.peer_visible).to be true
         # Since there are only 5 levels in this rubric criterion, if each of the following queries return an entity,
         # then this rubric criterion is properly sat up.
-        expect(cr1.levels.find_by(name: 'What?', description: 'Fail', mark: 0)).not_to be_nil
+        expect(cr1.levels.find_by(name: 'Beginner', description: 'Fail', mark: 0)).not_to be_nil
         expect(cr1.levels.find_by(name: 'Hmm', description: 'Almost fail', mark: 1)).not_to be_nil
         expect(cr1.levels.find_by(name: 'Average', description: 'Not bad', mark: 2)).not_to be_nil
         expect(cr1.levels.find_by(name: 'Good', description: 'Alright', mark: 3)).not_to be_nil
@@ -810,7 +809,7 @@ describe CriteriaController do
 
         cr2 = assignment.get_criteria(:all, :rubric).find_by(name: 'cr90')
         expect(cr2.max_mark).to eq(4.6)
-        expect(cr2.levels.size).to eq(0)
+        expect(cr2.levels.size).to eq(5)
         expect(cr2.ta_visible).to be true
         expect(cr2.peer_visible).to be false
       end
@@ -911,9 +910,9 @@ describe CriteriaController do
 
         criteria = assignment.get_criteria(:all, :rubric).first
         expect(criteria.name).to eq('Quality of Writing')
-        expect(criteria.levels.size).to eql(4)
-        (0..3).each do |i|
-          expect(criteria.levels[i].valid? == true)
+        expect(criteria.levels.size).to eq 6
+        criteria.levels.each do |level|
+          expect(level.valid?).to eq true
         end
         expect(criteria.levels[0].name).to eq('Beginner')
         expect(criteria.levels[0].description).to eq('The essay is very poorly organized'\
@@ -947,19 +946,15 @@ describe CriteriaController do
 
         it 'sends the correct information' do
           post_as admin, :upload, params: { assignment_id: assignment.id, upload_file: test_upload_download_file }
-
           get :download, params: { assignment_id: assignment.id }
 
-          #pending "this test will pass if we create a rubric criterion's levels without giving an index number for each
-          #level"
-          expect(YAML.safe_load(response.body)).to eq(YAML.safe_load(expected_download.read))
-          #expect(response.body.lines.map(&:strip)).to eq(@download_expected_output.read.lines.map(&:strip))
+          expect(YAML.safe_load(response.body, whitelist_classes=[Symbol], symbolize_names: true))
+                     .to eq(YAML.safe_load(expected_download.read, symbolize_names: true))
         end
       end
     end
   end
 
-  let(:assignment) { FactoryBot.create(:assignment) }
   context '#upload', pending: true do # Until criteria tables merged together, can't use Criterion.count
     include_examples 'a controller supporting upload' do
       let(:params) { { assignment_id: assignment.id } }
