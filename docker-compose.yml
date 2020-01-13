@@ -20,6 +20,7 @@ services:
     stdin_open: true
     tty: true
     volumes:
+      - app_data:/app/data/dev
       - .:/app:cached
       - rails_cache:/app/tmp/cache
       - bundle:/bundle
@@ -109,6 +110,7 @@ services:
       - WEBPACKER_DEV_SERVER_HOST=0.0.0.0
 
 volumes:
+  app_data:
   postgres:
   redis:
   bundle:
