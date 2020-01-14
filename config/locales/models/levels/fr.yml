@@ -1,9 +1,9 @@
-en:
+fr:
   activerecord:
     models:
       level:
-        one: "Level"
-        other: "Levels"
+        one: "Niveau"
+        other: "Niveaux"
     attributes:
       level:
         name: "Nom"
