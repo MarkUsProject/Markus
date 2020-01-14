@@ -38,6 +38,15 @@ Markus::Application.configure do
   # Set default locale.
   I18n.default_locale = :en
 
+  Rails.application.config.session_store(
+      :cookie_store,
+      key: '_markus_session',
+      secret: '650d281667d8011a3a6ad6dd4b5d4f9ddbce14a7d78b107812dbb40b24e234256ab2c5572c8196cf6cde6b85942688b6bfd337ffa0daee648d04e1674cf1fdf6',
+      path: '/',
+      expire_after: 3.weeks,
+      secure: false
+  )
+
   ###################################################################
   # MarkUs SPECIFIC CONFIGURATION
   #   - use "/" as path separator no matter what OS server is running
@@ -45,13 +54,13 @@ Markus::Application.configure do
 
   ###################################################################
   # Set the course name here
-  COURSE_NAME         = "CSC108 Fall 2009: Introduction to Computer Programming"
+  config.course_name = "CSC108 Fall 2009: Introduction to Computer Programming"
 
   ###################################################################
   # MarkUs relies on external user authentication: An external script
   # (ideally a small C program) is called with username and password
   # piped to stdin of that program (first line is username, second line
-  # is password). If VALIDATE_IP is true, markus will also pass the
+  # is password). If validate_ip is true, markus will also pass the
   # remote ip address as a third line to stdin
   #
   # If and only if it exits with a return code of 0, the username/password
@@ -60,9 +69,9 @@ Markus::Application.configure do
   #
   # That is why MarkUs does not allow usernames/passwords which contain
   # \n or \0. These are the only restrictions.
-  VALIDATE_FILE = "#{::Rails.root.to_s}/config/dummy_validate.sh"
+  config.validate_file = "#{::Rails.root}/config/dummy_validate.sh"
 
-  VALIDATE_IP = false
+  config.validate_ip = false
 
   # Normally exit status 0 means successful, 1 means no such user,
   # and 2 means wrong password.
@@ -86,8 +95,7 @@ Markus::Application.configure do
   ###################################################################
   # Set this to true/false if you want to use an external authentication scheme
   # that sets the REMOTE_USER variable.
-
-  REMOTE_USER_AUTH = false
+  config.remote_user_auth = false
 
   ###################################################################
   # This is where the logout button will redirect to when clicked.
@@ -96,24 +104,24 @@ Markus::Application.configure do
   # "DEFAULT" - MarkUs will use its default logout routine.
   # A logout link will be provided.
   #
-  # The DEFAULT option should not be used if REMOTE_USER_AUTH is set to true,
+  # The DEFAULT option should not be used if remote_user_auth is set to true,
   # as it will not result in a successful logout.
   #
   # -----------------------------------------------------------------------------
   #
   # "http://address.of.choice" - Logout will redirect to the specified URI.
   #
-  # If REMOTE_USER_AUTH is set to true, it would be possible
+  # If remote_user_auth is set to true, it would be possible
   # to specify a custom address which would log the user out of the authentication
   # scheme.
-  # Choosing this option with REMOTE_USER_AUTH is set to false will still properly
+  # Choosing this option with remote_user_auth is set to false will still properly
   # log the user out of MarkUs.
   #
   # -----------------------------------------------------------------------------
   #
   # "NONE" - Logout link will be hidden.
   #
-  # It only recommended that you use this if REMOTE_USER_AUTH is set to true
+  # It only recommended that you use this if remote_user_auth is set to true
   # and do not have a custom logout page.
   #
   # If you are using HTTP's basic authentication, you probably want to use this
@@ -126,15 +134,15 @@ Markus::Application.configure do
   ###################################################################
   # Options for Repository_type are 'svn','git' and 'mem'
   # 'mem' is by design not persistent and only used for testing MarkUs
-  REPOSITORY_TYPE = 'svn'
+  config.x.repository.type = 'git'
 
   ###################################################################
   # Directory where Repositories will be created. Make sure MarkUs is allowed
   # to write to this directory
-  REPOSITORY_STORAGE = "#{::Rails.root.to_s}/data/prod/repos"
+  config.x.repository.storage = "#{::Rails.root.to_s}/data/prod/repos"
 
   ###################################################################
-  # A hash of repository hook scripts (used only when REPOSITORY_TYPE
+  # A hash of repository hook scripts (used only when repository.type
   # is 'git'): the key is the hook id, the value is the hook script.
   # Make sure MarkUs is allowed to execute the hook scripts.
   REPOSITORY_HOOKS = {}
@@ -146,9 +154,8 @@ Markus::Application.configure do
   # is allowed to write to this directory
   KEY_STORAGE = "#{::Rails.root}/data/prod/keys"
 
-  ###################################################################
-  # Max file size for submissions in Bytes
-  MAX_FILE_SIZE = 5000000
+  # Max file size for submission files, in bytes
+  config.max_file_size = 5000000
 
   ###################################################################
   # Change this to 'REPOSITORY_EXTERNAL_SUBMITS_ONLY = true' if you
@@ -164,7 +171,7 @@ Markus::Application.configure do
   # 'REPOSITORY_EXTERNAL_SUBMITS_ONLY = true'. If you have Apache httpd
   # configured so that the repositories created by MarkUs will be available to
   # the outside world, this is the URL which internally "points" to the
-  # REPOSITORY_STORAGE directory configured earlier. Hence, Subversion
+  # config.x.repository.storage directory configured earlier. Hence, Subversion
   # repositories will be available to students for example via URL
   # http://www.example.com/markus/svn/Repository_Name. Make sure the path
   # after the hostname matches your <Location> directive in your Apache
@@ -180,7 +187,7 @@ Markus::Application.configure do
   # Second, if MarkUs is configured with REPOSITORY_EXTERNAL_SUBMITS_ONLY
   # set to 'true', you can configure as to where MarkUs should write the
   # Subversion authz file.
-  REPOSITORY_PERMISSION_FILE = REPOSITORY_STORAGE + "/svn_authz"
+  config.x.repository.permission_file = File.join(config.x.repository.storage, 'svn_authz')
 
   ###################################################################
   # This setting configures if MarkUs is reading Subversion
@@ -199,17 +206,17 @@ Markus::Application.configure do
   ###################################################################
   # Session Timeouts
   ###################################################################
-  USER_STUDENT_SESSION_TIMEOUT        = 1800 # Timeout for student users
-  USER_TA_SESSION_TIMEOUT             = 1800 # Timeout for grader users
-  USER_ADMIN_SESSION_TIMEOUT          = 1800 # Timeout for admin users
+  config.student_session_timeout        = 1800 # Timeout for student users
+  config.ta_session_timeout             = 1800 # Timeout for grader users
+  config.admin_session_timeout          = 1800 # Timeout for admin users
 
   ###################################################################
   # CSV upload order of fields (usually you don't want to change this)
   ###################################################################
   # Order of student CSV uploads
-  USER_STUDENT_CSV_UPLOAD_ORDER = [:user_name, :last_name, :first_name, :section_name, :id_number, :email]
+  config.student_csv_upload_order = [:user_name, :last_name, :first_name, :section_name, :id_number, :email]
   # Order of graders CSV uploads
-  USER_TA_CSV_UPLOAD_ORDER  = [:user_name, :last_name, :first_name, :email]
+  config.ta_csv_upload_order  = [:user_name, :last_name, :first_name, :email]
 
   ###################################################################
   # Logging Options
@@ -232,16 +239,6 @@ Markus::Application.configure do
   MARKUS_LOGGING_ERRORLOGFILE = "log/error_#{::Rails.env}.log"
   # This variable sets the number of old log files that will be kept
   MARKUS_LOGGING_OLDFILES = 10
-
-  #####################################################################
-  # Markus Session Store configuration
-  # see config/initializers/session_store.rb
-  #####################################################################
-  SESSION_COOKIE_NAME = '_markus_session'
-  SESSION_COOKIE_SECRET = '650d281667d8011a3a6ad6dd4b5d4f9ddbce14a7d78b107812dbb40b24e234256ab2c5572c8196cf6cde6b85942688b6bfd337ffa0daee648d04e1674cf1fdf6'
-  SESSION_COOKIE_EXPIRE_AFTER = 3.weeks
-  SESSION_COOKIE_HTTP_ONLY = true
-  SESSION_COOKIE_SECURE = false
 
   ###################################################################
   # Resque queues

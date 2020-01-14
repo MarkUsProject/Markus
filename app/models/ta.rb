@@ -1,7 +1,7 @@
 class Ta < User
 
-  CSV_UPLOAD_ORDER = USER_TA_CSV_UPLOAD_ORDER
-  SESSION_TIMEOUT = USER_TA_SESSION_TIMEOUT
+  CSV_UPLOAD_ORDER = Rails.configuration.ta_csv_upload_order
+  SESSION_TIMEOUT = Rails.configuration.ta_session_timeout
 
   has_many :criterion_ta_associations, dependent: :delete_all
 

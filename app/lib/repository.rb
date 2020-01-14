@@ -482,7 +482,7 @@ module Repository
 
   # Gets the configured repository implementation
   def self.get_class
-    repo_type = MarkusConfigurator.markus_config_repository_type
+    repo_type = Rails.configuration.x.repository.type
     case repo_type
     when 'git'
       return GitRepository

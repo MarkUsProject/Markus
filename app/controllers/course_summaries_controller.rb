@@ -112,10 +112,9 @@ class CourseSummariesController < ApplicationController
   end
 
   def name_grades_report_file(csv_string)
-    course_name = "#{COURSE_NAME}"
-    course_name_underscore = course_name.squish.downcase.tr(' ', '_')
+    course_name = Rails.configuration.course_name.squish.downcase.tr(' ', '_')
     send_data csv_string,
               disposition: 'attachment',
-              filename: "#{course_name_underscore}_grades_report.csv"
+              filename: "#{course_name}_grades_report.csv"
   end
 end

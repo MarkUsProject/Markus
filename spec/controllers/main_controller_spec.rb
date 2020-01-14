@@ -72,7 +72,7 @@ describe MainController do
       end
       context 'while switching roles' do
         before :each do
-          allow_any_instance_of(MarkusConfigurator).to receive(:markus_config_remote_user_auth).and_return(false)
+          allow(Rails.configuration).to receive(:remote_user_auth).and_return(false)
         end
         it 'should not switch roles when switching to themself' do
           post :login_as, params: { effective_user_login: '', user_login: admin.user_name, admin_password: 'a' }
@@ -132,7 +132,7 @@ describe MainController do
     end
     context 'after logging in without remote user auth' do
       before(:each) do
-        allow_any_instance_of(MarkusConfigurator).to receive(:markus_config_remote_user_auth).and_return(false)
+        allow(Rails.configuration).to receive(:remote_user_auth).and_return(false)
         sign_in admin
       end
       include_examples 'admin tests'
@@ -144,7 +144,7 @@ describe MainController do
     end
     context 'after logging in with remote user auth' do
       before :each do
-        allow_any_instance_of(MarkusConfigurator).to receive(:markus_config_remote_user_auth).and_return(true)
+        allow(Rails.configuration).to receive(:remote_user_auth).and_return(true)
         env_hash = { 'HTTP_X_FORWARDED_USER': admin.user_name }
         request.headers.merge! env_hash
         sign_in admin
@@ -216,14 +216,14 @@ describe MainController do
     end
     context 'after logging in without remote user auth' do
       before(:each) do
-        allow_any_instance_of(MarkusConfigurator).to receive(:markus_config_remote_user_auth).and_return(false)
+        allow(Rails.configuration).to receive(:remote_user_auth).and_return(false)
         sign_in student
       end
       include_examples 'student tests'
     end
     context 'after logging in with remote user auth' do
       before :each do
-        allow_any_instance_of(MarkusConfigurator).to receive(:markus_config_remote_user_auth).and_return(true)
+        allow(Rails.configuration).to receive(:remote_user_auth).and_return(true)
         env_hash = { 'HTTP_X_FORWARDED_USER': student.user_name }
         request.headers.merge! env_hash
         sign_in student
@@ -268,14 +268,14 @@ describe MainController do
     end
     context 'after logging in without remote user auth' do
       before(:each) do
-        allow_any_instance_of(MarkusConfigurator).to receive(:markus_config_remote_user_auth).and_return(false)
+        allow(Rails.configuration).to receive(:remote_user_auth).and_return(false)
         sign_in ta
       end
       include_examples 'ta tests'
     end
     context 'after logging in with remote user auth' do
       before :each do
-        allow_any_instance_of(MarkusConfigurator).to receive(:markus_config_remote_user_auth).and_return(true)
+        allow(Rails.configuration).to receive(:remote_user_auth).and_return(true)
         env_hash = { 'HTTP_X_FORWARDED_USER': ta.user_name }
         request.headers.merge! env_hash
         sign_in ta

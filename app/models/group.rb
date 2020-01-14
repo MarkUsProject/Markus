@@ -70,7 +70,7 @@ class Group < ApplicationRecord
   end
 
   def repo_path
-    File.join(MarkusConfigurator.markus_config_repository_storage, self.repository_name)
+    File.join(Rails.configuration.x.repository.storage, self.repository_name)
   end
 
   #Yields a repository object, if possible, and closes it after it is finished
