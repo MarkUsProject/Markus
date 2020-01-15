@@ -1,12 +1,17 @@
 class NotesController < ApplicationController
-  before_action :authorize_for_ta_and_admin
-  before_action :ensure_can_modify, only: [:edit, :update]
-
+  before_action do |_|
+    if params[:id].nil?
+      authorize! with: NotePolicy
+    else
+      note = Note.find(params[:id])
+      authorize! note, with: NotePolicy
+    end
+  end
   responders :flash, :collection
 
   # TODO this method needs explaining ! What is return_id ?
   def notes_dialog
-    @return_id = params[:id]
+    @return_id = params[:assignment_id]
     @cls = params[:noteable_type]
     @noteable = Kernel.const_get(@cls).find_by_id(params[:noteable_id])
     @cont = params[:controller_to]
@@ -93,10 +98,12 @@ class NotesController < ApplicationController
   end
 
   def edit
+    @note = Note.find(params[:id])
 		render 'edit', formats: [:html], handlers: [:erb]
   end
 
   def update
+    @note = Note.find(params[:id])
     if @note.update(notes_params)
       respond_with @note
     else
@@ -106,13 +113,13 @@ class NotesController < ApplicationController
 
   def destroy
     @note = Note.find(params[:id])
-    if @note.user_can_modify?(current_user)
+    begin
+      authorize! @note, to: :ensure_can_modify?
       @note.destroy
-      respond_with @note
-    else
-      flash_message(:error, I18n.t('notes.delete.error_permissions'))
-      render 'destroy', formats: [:js], handlers: [:erb]
+    rescue ActionPolicy::Unauthorized
+      flash_now(:error, t('action_policy.policy.note.ensure_can_modify?'))
     end
+    respond_with @note
   end
 
   private
@@ -128,18 +135,6 @@ class NotesController < ApplicationController
     def new_retrieve
       @assignments = Assignment.all
       retrieve_groupings(@assignments.first)
-    end
-
-    # Renders a 404 error if the current user can't modify the given note.
-    def ensure_can_modify
-      @note = Note.find(params[:id])
-
-      unless @note.user_can_modify?(current_user)
-        render 'shared/http_status', formats: [:html], status: 404,
-          layout: false, locals: {
-            code: '404', message: HttpStatusHelper::ERROR_CODE['message']['404']
-          }
-      end
     end
 
   def notes_params
