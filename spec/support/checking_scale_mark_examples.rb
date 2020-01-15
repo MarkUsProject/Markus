@@ -23,13 +23,13 @@ shared_examples 'Scale_mark' do
         expect(mark.mark).to eq(0)
       end
     end
-  it 'should update and return the new_mark' do
+    it 'should update and return the new_mark' do
     expect(mark.scale_mark(curr_max_mark, mark.markable.max_mark)).to eq(mark.mark)
   end
   end
   describe 'when update is false' do
     it 'should not update the new mark' do
-      expect(mark.scale_mark(curr_max_mark, mark.markable.max_mark,update: false)).not_to eq(mark.mark)
+      expect(mark.scale_mark(curr_max_mark, mark.markable.max_mark, update: false)).not_to eq(mark.mark)
     end
   end
 end

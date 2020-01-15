@@ -58,15 +58,15 @@ describe Mark do
   describe '#scale_mark' do
     let(:curr_max_mark) { 10 }
     describe 'when mark is a rubric mark' do
-      let(:mark) {create(:rubric_mark, mark: 3)}
+      let(:mark) { create(:rubric_mark, mark: 3) }
       it_behaves_like 'Scale_mark'
     end
     describe 'when mark is a flexible mark' do
-      let(:mark) {create(:flexible_mark, mark: 1)}
+      let(:mark) { create(:flexible_mark, mark: 1) }
       it_behaves_like 'Scale_mark'
     end
     describe 'when mark is a checkbox mark' do
-      let(:mark) {create(:checkbox_mark, mark: 1)}
+      let(:mark) { create(:checkbox_mark, mark: 1) }
       it_behaves_like 'Scale_mark'
     end
   end
