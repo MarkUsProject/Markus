@@ -119,7 +119,7 @@ class NotesController < ApplicationController
     rescue ActionPolicy::Unauthorized
       flash_now(:error, t('action_policy.policy.note.ensure_can_modify?'))
     end
-    respond_with @note
+    render 'destroy', formats: [:js], handlers: [:erb]
   end
 
   private
