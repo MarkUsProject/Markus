@@ -1,7 +1,6 @@
 pt:
   notes:
     delete:
-      error_permissions: "Você não possúi permissão para apagar a anotação."
       link_confirm: "Isso removerá a anotação permanentemente. Continuar?"
       link_title: "Apagar essa anotação"
     help: "Notes can be created for students, groups, or assignments. They are visible to admins and graders, but not students."

@@ -116,10 +116,11 @@ class NotesController < ApplicationController
     begin
       authorize! @note, to: :ensure_can_modify?
       @note.destroy
+      respond_with(@note)
     rescue ActionPolicy::Unauthorized
       flash_now(:error, t('action_policy.policy.note.ensure_can_modify?'))
+      render 'destroy', formats: [:js], handlers: [:erb]
     end
-    render 'destroy', formats: [:js], handlers: [:erb]
   end
 
   private

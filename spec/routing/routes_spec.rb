@@ -1078,6 +1078,13 @@ context 'notes' do
         action: 'new_update_groupings',
         locale: 'en')
     end
+
+    it 'routes GET notes_dialog properly' do
+      expect(get: path + '/notes_dialog').to route_to(
+                                                 controller: ctrl,
+                                                 action: 'notes_dialog',
+                                                 locale: 'en')
+    end
   end
   # end notes collection route tests
 
@@ -1087,14 +1094,6 @@ context 'notes' do
         controller: ctrl,
         action: 'show',
         id: 'student_interface',
-        locale: 'en')
-    end
-
-    it 'routes GET notes_dialog properly' do
-      expect(get: path + '/notes_dialog').to route_to(
-        controller: ctrl,
-        action: 'show',
-        id: 'notes_dialog',
         locale: 'en')
     end
 
