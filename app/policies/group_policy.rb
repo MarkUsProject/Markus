@@ -1,6 +1,7 @@
 class GroupPolicy < ApplicationPolicy
   default_rule :manage?
-  alias_rule :create?, :destroy?, :delete_rejected?, :disinvite_member?, :invite_member?, :accept_invitation?, :decline_invitation?, to: :student_manage?
+  alias_rule :create?, :destroy?, :delete_rejected?, :disinvite_member?, :invite_member?, :accept_invitation?,
+             :decline_invitation?, to: :student_manage?
   def student_manage?
     user.student?
   end
