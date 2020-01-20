@@ -581,6 +581,23 @@ class AssignmentsController < ApplicationController
     end
   end
 
+  def set_boolean_graders_options
+    unless %w[assign_graders_to_criteria
+              anonymize_groups
+              hide_unassigned_criteria].include? params[:attribute]
+      head 400
+      return
+    end
+    assignment = Assignment.find(params[:id])
+    value = params[:value] == 'true'
+    unless assignment.update(params[:attribute] => value)
+      flash_now(:error, assignment.errors.full_messages.join(' '))
+      head 400
+      return
+    end
+    head :ok
+  end
+
   private
 
     def sanitize_file_name(file_name)

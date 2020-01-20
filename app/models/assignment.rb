@@ -1158,6 +1158,8 @@ class Assignment < ApplicationRecord
       criteria: criteria,
       graders: graders,
       assign_graders_to_criteria: self.assign_graders_to_criteria,
+      anonymize_groups: self.anonymize_groups,
+      hide_unassigned_criteria: self.hide_unassigned_criteria,
       sections: Hash[Section.all.pluck(:id, :name)]
     }
   end
