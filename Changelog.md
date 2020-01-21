@@ -1,5 +1,6 @@
 # Changelog
 ## [unreleased]
+- Fixed bug where grace credits were not displayed to Graders viewing the submissions table (#4332)
 
 ## [v1.8.2]
 - Fixed bug where all non-empty rows in a downloaded marks spreadsheet csv file were aligned to the left. (#4290)
