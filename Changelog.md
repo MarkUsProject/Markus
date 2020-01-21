@@ -1,5 +1,6 @@
 # Changelog
 ## [unreleased]
+- Fixed bug where grace credits were not displayed to Graders viewing the submissions table (#4332)
 
 - Fixed filtering and sorting of grace credit column in students table. (#4327)
 
