@@ -36,7 +36,6 @@ class CriteriaController < ApplicationController
       @criterion.set_default_levels if params[:criterion_type] == 'RubricCriterion'
       flash_now(:success, t('flash.actions.create.success',
                             resource_name: criterion_class.model_name.human))
-      @criterion
     else
       @criterion.errors.full_messages.each do |message|
         flash_message(:error, message)
