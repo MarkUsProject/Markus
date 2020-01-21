@@ -1,26 +1,19 @@
 <%#
 # Erb template for display rubric criterion levels in the assignment rubric manager
 %>
-<div class="rubric_level_header">
-  <%= f.label "level_#{rubric_level_index}_name".to_sym,
-              I18n.t("rubric_criteria.level.level_index",
-                     index: rubric_level_index),
-              class: "bold_inline_label" %>
-</div>
 
-<%= criterion_form.fields_for :level, index: level.id do |level_form|%>
+<%= criterion_form.fields_for :levels do |level_form|%>
   <div>
-    <%= f.label :name, Level.human_attribute_name(:name), class: 'required' %>
-    <%= level_form.text_field :name, value: "#{level.name}" %>
+    <%= level_form.label :name, Level.human_attribute_name(:name), class: 'required' %>
+    <%= level_form.text_field :name%>
   </div>
   <div>
-    <%= f.label :mark, Level.human_attribute_name(:mark) + " (#{level.mark}/#{criterion.max_mark})",
-                class: 'required'%>
-    <%= level_form.number_field :mark, value: "#{level.mark}", step: 0.1 %>
+    <%= level_form.label :mark, class: 'required'%>
+    <%= level_form.number_field :mark%>
   </div>
   <div>
-    <%= f.label :description, Level.human_attribute_name(:description), class: 'description required' %>
-    <%= level_form.text_area :description, value: "#{level.description}" %>
+    <%= level_form.label :description, Level.human_attribute_name(:description), class: 'description required' %>
+    <%= level_form.text_area :description%>
   </div>
 <% end %>
 

@@ -74,6 +74,7 @@ class CriteriaController < ApplicationController
       return
     end
     if criterion_type == 'RubricCriterion'
+      byebug
       properly_updated = @criterion.update(rubric_criterion_params.except(:assignment_files))
       unless rubric_criterion_params[:assignment_files].nil?
         assignment_files = AssignmentFile.find(rubric_criterion_params[:assignment_files].select { |id| !id.empty? })
@@ -225,13 +226,13 @@ class CriteriaController < ApplicationController
                                              :ta_visible,
                                              :peer_visible,
                                              :max_mark,
-                                             level_attributes: [:id, :name, :mark, :description],
+                                             levels_attributes: [:id, :name, :mark, :description],
                                              assignment_files: []).to_h.deep_merge(params.require(:rubric_criterion)
                                                                            .permit(:max_mark,
                                                                                    :name,
                                                                                    :ta_visible,
                                                                                    :peer_visible,
-                                                                                   level_attributes:
+                                                                                   levels_attributes:
                                                                                      [:id, :name, :mark, :description])
                                                                                      .to_h)
   end
