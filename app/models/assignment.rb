@@ -579,11 +579,20 @@ class Assignment < ApplicationRecord
     final_data = groupings_with_results.map do |g|
       result = g.current_result
       has_remark = g.current_submission_used&.submitted_remark.present?
+      if !user.admin? && anonymize_groups
+        group_name = "group_#{g.id}"
+        section = ''
+        group_members = []
+      else
+        group_name = grouping_data[g.id][0]['groups.group_name']
+        section = grouping_data[g.id][0]['sections.name']
+        group_members = members.fetch(g.id, [])
+                               .map { |s| [s['users.user_name'], s['users.first_name'], s['users.last_name']] }
+      end
       {
-        group_name: grouping_data[g.id][0]['groups.group_name'],
-        section: grouping_data[g.id][0]['sections.name'],
-        members: members.fetch(g.id, [])
-                        .map { |s| [s['users.user_name'], s['users.first_name'], s['users.last_name']] },
+        group_name: group_name,
+        section: section,
+        members: group_members,
         graders: graders.fetch(g.id, [])
                         .map { |s| [s['users.user_name'], s['users.first_name'], s['users.last_name']] },
         marking_state: marking_state(has_remark,
@@ -1208,15 +1217,18 @@ class Assignment < ApplicationRecord
                                  'results.released_to_students')
                   .group_by { |h| h['groupings.id'] }
 
-    member_data = groupings
-                  .joins(:accepted_students)
-                  .pluck_to_hash('groupings.id', 'users.user_name')
-                  .group_by { |h| h['groupings.id'] }
+    if !current_user.admin? && anonymize_groups
+      member_data = {}
+      section_data = {}
+    else
+      member_data = groupings.joins(:accepted_students)
+                             .pluck_to_hash('groupings.id', 'users.user_name')
+                             .group_by { |h| h['groupings.id'] }
 
-    section_data = groupings
-                   .joins(inviter: :section)
-                   .pluck('groupings.id', 'sections.name')
-                   .to_h
+      section_data = groupings.joins(inviter: :section)
+                              .pluck('groupings.id', 'sections.name')
+                              .to_h
+    end
 
     collection_dates = all_grouping_collection_dates
 
@@ -1230,7 +1242,7 @@ class Assignment < ApplicationRecord
 
       base = {
         _id: grouping_id, # Needed for checkbox version of react-table
-        group_name: group_name,
+        group_name: !current_user.admin? && anonymize_groups ? "group_#{grouping_id}" : group_name,
         tags: (tag_info.nil? ? [] : tag_info.map { |h| h['tags.name'] }),
         marking_state: marking_state(has_remark,
                                      result_info['results.marking_state'],

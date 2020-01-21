@@ -139,7 +139,11 @@ class ResultsController < ApplicationController
           data[:notes_count] = submission.grouping.notes.count
           data[:num_marked] = assignment.get_num_marked(current_user.admin? ? nil : current_user.id)
           data[:num_assigned] = assignment.get_num_assigned(current_user.admin? ? nil : current_user.id)
-          data[:group_name] = submission.grouping.get_group_name
+          if current_user.ta? && assignment.anonymize_groups
+            data[:group_name] = "group_#{submission.grouping.id}"
+          else
+            data[:group_name] = submission.grouping.get_group_name
+          end
         elsif is_reviewer
           reviewer_group = current_user.grouping_for(assignment.pr_assignment.id)
           data[:num_marked] = PeerReview.get_num_marked(reviewer_group)
@@ -181,9 +185,12 @@ class ResultsController < ApplicationController
                                           .where(assignment_id: assignment.id)
                                           .pluck(:criterion_type, :criterion_id)
                                           .map { |t, id| "#{t}-#{id}" }
-
-          marks_map = marks_map.partition { |m| assigned_criteria.include? "#{m[:criterion_type]}-#{m[:id]}" }
-                               .flatten
+          if assignment.hide_unassigned_criteria
+            marks_map = marks_map.select { |m| assigned_criteria.include? "#{m[:criterion_type]}-#{m[:id]}" }
+          else
+            marks_map = marks_map.partition { |m| assigned_criteria.include? "#{m[:criterion_type]}-#{m[:id]}" }
+                                 .flatten
+          end
         else
           assigned_criteria = nil
         end
@@ -205,6 +212,12 @@ class ResultsController < ApplicationController
         # Grace token deductions
         if is_reviewer
           data[:grace_token_deductions] = []
+        elsif !current_user.admin? && assignment.anonymize_groups
+          data[:grace_token_deductions] = submission.grouping
+                                                    .grace_period_deductions
+                                                    .pluck_to_hash(:id, :deduction)
+                                                    .first(1)
+
         else
           data[:grace_token_deductions] =
             submission.grouping
