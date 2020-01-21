@@ -190,6 +190,21 @@ class GradersManager extends React.Component {
     }).then(() => this.setState({hide_unassigned_criteria: assign}));
   };
 
+  renderHideUnassignedCriteria = () => {
+    if (this.state.assign_graders_to_criteria) {
+      return <div style={{marginBottom: '1em'}}>
+        <label>
+          <input type="checkbox"
+                 checked={this.state.hide_unassigned_criteria}
+                 onChange={this.toggleHideUnassignedCriteria}
+                 style={{marginRight: '5px'}}
+          />
+          {I18n.t('graders.hide_unassigned_criteria')}
+        </label>
+      </div>
+    }
+  };
+
   onSelectTable = (index) => {
     if (index === 0) {
       this.setState({tableName: 'groups_table'});
@@ -264,16 +279,7 @@ class GradersManager extends React.Component {
                     {I18n.t('graders.assign_to_criteria')}
                   </label>
                 </div>
-                <div style={{marginBottom: '1em'}}>
-                  <label>
-                    <input type="checkbox"
-                           checked={this.state.hide_unassigned_criteria}
-                           onChange={this.toggleHideUnassignedCriteria}
-                           style={{marginRight: '5px'}}
-                    />
-                    {I18n.t('graders.hide_unassigned_criteria')}
-                  </label>
-                </div>
+                { this.renderHideUnassignedCriteria() }
                 <CriteriaTable
                   display={this.state.assign_graders_to_criteria}
                   ref={(r) => this.criteriaTable = r}
