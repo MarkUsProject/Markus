@@ -60,7 +60,7 @@ class RubricCriterion < Criterion
     ]
     default_levels.each_with_index do |level, index|
       # creates a new level and saves it to database
-      self.levels.build(name: level['name'],
+      self.levels.create!(name: level['name'],
                         description: level['description'],
                         mark: index)
     end

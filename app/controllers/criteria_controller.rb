@@ -36,6 +36,7 @@ class CriteriaController < ApplicationController
       @criterion.set_default_levels if params[:criterion_type] == 'RubricCriterion'
       flash_now(:success, t('flash.actions.create.success',
                             resource_name: criterion_class.model_name.human))
+      @criterion
     else
       @criterion.errors.full_messages.each do |message|
         flash_message(:error, message)
@@ -224,8 +225,16 @@ class CriteriaController < ApplicationController
                                              :position,
                                              :ta_visible,
                                              :peer_visible,
+                                             :max_mark,
+                                             level_attributes: [:id, :name, :mark, :description],
                                              assignment_files: []).to_h.deep_merge(params.require(:rubric_criterion)
-                                                                           .permit(:max_mark).to_h)
+                                                                           .permit(:max_mark,
+                                                                                   :name,
+                                                                                   :ta_visible,
+                                                                                   :peer_visible,
+                                                                                   level_attributes:
+                                                                                     [:id, :name, :mark, :description])
+                                                                                     .to_h)
   end
 
   def checkbox_criterion_params

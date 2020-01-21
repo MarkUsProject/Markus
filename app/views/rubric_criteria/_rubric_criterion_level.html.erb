@@ -7,19 +7,22 @@
                      index: rubric_level_index),
               class: "bold_inline_label" %>
 </div>
-<div>
-  <%= f.label :name, Level.human_attribute_name(:name), class: 'required' %>
-  <%= f.text_field :name, value: "#{level.name}"%>
-</div>
-<div>
-  <%= f.label :mark, Level.human_attribute_name(:mark) + " (#{level.mark}/#{criterion.max_mark})",
-              class: 'required' %>
-  <%= f.number_field :mark, value: "#{level.mark}", step: 0.1%>
-</div>
-<div>
-  <%= f.label :description, Level.human_attribute_name(:description), class: 'description required' %>
-  <%= f.text_area :description, value: "#{level.description}"%>
-</div>
+
+<%= criterion_form.fields_for :level, index: level.id do |level_form|%>
+  <div>
+    <%= f.label :name, Level.human_attribute_name(:name), class: 'required' %>
+    <%= level_form.text_field :name, value: "#{level.name}" %>
+  </div>
+  <div>
+    <%= f.label :mark, Level.human_attribute_name(:mark) + " (#{level.mark}/#{criterion.max_mark})",
+                class: 'required'%>
+    <%= level_form.number_field :mark, value: "#{level.mark}", step: 0.1 %>
+  </div>
+  <div>
+    <%= f.label :description, Level.human_attribute_name(:description), class: 'description required' %>
+    <%= level_form.text_area :description, value: "#{level.description}" %>
+  </div>
+<% end %>
 
 <br>
 <br>
