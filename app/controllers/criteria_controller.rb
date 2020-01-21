@@ -74,7 +74,6 @@ class CriteriaController < ApplicationController
       return
     end
     if criterion_type == 'RubricCriterion'
-      byebug
       properly_updated = @criterion.update(rubric_criterion_params.except(:assignment_files))
       unless rubric_criterion_params[:assignment_files].nil?
         assignment_files = AssignmentFile.find(rubric_criterion_params[:assignment_files].select { |id| !id.empty? })

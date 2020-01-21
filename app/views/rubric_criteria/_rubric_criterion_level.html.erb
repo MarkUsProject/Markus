@@ -1,15 +1,19 @@
 <%#
 # Erb template for display rubric criterion levels in the assignment rubric manager
 %>
-
+<% i=0 %>
 <%= criterion_form.fields_for :levels do |level_form|%>
+  <div class="rubric_level_header bold_inline_label">
+    Level <%=i%>
+    <%i+=1%>
+  </div>
   <div>
     <%= level_form.label :name, Level.human_attribute_name(:name), class: 'required' %>
     <%= level_form.text_field :name%>
   </div>
   <div>
     <%= level_form.label :mark, class: 'required'%>
-    <%= level_form.number_field :mark%>
+    <%= level_form.number_field :mark, step: 0.1%>
   </div>
   <div>
     <%= level_form.label :description, Level.human_attribute_name(:description), class: 'description required' %>
