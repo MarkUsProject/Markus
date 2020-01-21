@@ -200,7 +200,7 @@ export class SummaryPanel extends React.Component {
       return '';
     } else if (this.props.graceTokenDeductions[0]['users.user_name'] === undefined) {
       rows = [
-        <tr>
+        <tr key={this.props.graceTokenDeductions[0]['id'] + '-deduction'}>
           <td>
             {I18n.t('grace_period_submission_rules.credit',
               {count: this.props.graceTokenDeductions[0].deduction})}

@@ -215,6 +215,7 @@ class ResultsController < ApplicationController
         elsif !current_user.admin? && assignment.anonymize_groups
           data[:grace_token_deductions] = submission.grouping
                                                     .grace_period_deductions
+                                                    .reorder(deduction: :desc)
                                                     .pluck_to_hash(:id, :deduction)
                                                     .first(1)
 
