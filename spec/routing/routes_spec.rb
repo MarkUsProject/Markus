@@ -112,7 +112,7 @@ describe 'An Assignment' do
     end
 
     it 'routes POST set_boolean_graders_options properly' do
-      expect(get: path + '/' + assignment.id.to_s + '/set_boolean_graders_options')
+      expect(post: path + '/' + assignment.id.to_s + '/set_boolean_graders_options')
         .to route_to(controller: ctrl,
                      action: 'set_boolean_graders_options',
                      id: assignment.id.to_s,
