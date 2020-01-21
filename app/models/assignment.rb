@@ -580,7 +580,7 @@ class Assignment < ApplicationRecord
       result = g.current_result
       has_remark = g.current_submission_used&.submitted_remark.present?
       if !user.admin? && anonymize_groups
-        group_name = "group_#{g.id}"
+        group_name = "Group #{g.id}"
         section = ''
         group_members = []
       else
@@ -1242,7 +1242,7 @@ class Assignment < ApplicationRecord
 
       base = {
         _id: grouping_id, # Needed for checkbox version of react-table
-        group_name: !current_user.admin? && anonymize_groups ? "group_#{grouping_id}" : group_name,
+        group_name: !current_user.admin? && anonymize_groups ? "Group #{grouping_id}" : group_name,
         tags: (tag_info.nil? ? [] : tag_info.map { |h| h['tags.name'] }),
         marking_state: marking_state(has_remark,
                                      result_info['results.marking_state'],

@@ -15,7 +15,7 @@
 
 <% content_for :title do %>
   <% if !@current_user.admin? && @grouping.assignment.anonymize_groups %>
-    <%= t('submissions.repo_browser.repository_name', repository: "group_#{@grouping.id}") %>
+    <%= t('submissions.repo_browser.repository_name', repository: "Group #{@grouping.id}") %>
   <% else %>
     <%= t('submissions.repo_browser.repository_name', repository: @grouping.group.repository_name) %>
     (<%= @grouping.get_all_students_in_group %>)
