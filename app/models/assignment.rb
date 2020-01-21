@@ -607,15 +607,19 @@ class Assignment < ApplicationRecord
       }
     end
 
+    hide_unassigned = !user.admin? && hide_unassigned_criteria
+
     criteria_columns = self.get_criteria(:ta).map do |crit|
       unassigned = !assigned_criteria.nil? && !assigned_criteria.include?("#{crit.class}-#{crit.id}")
+      next if hide_unassigned && unassigned
+
       {
         Header: crit.name,
         accessor: "criteria.criterion_#{crit.class}_#{crit.id}",
         className: 'number ' + (unassigned ? 'unassigned' : ''),
         headerClassName: unassigned ? 'unassigned' : ''
       }
-    end
+    end.compact
 
     { data: final_data, criteriaColumns: criteria_columns }
   end
