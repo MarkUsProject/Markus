@@ -188,9 +188,9 @@ class ResultsController < ApplicationController
 
         if assignment.assign_graders_to_criteria && current_user.ta?
           assigned_crit = current_user.criterion_ta_associations
-                                          .where(assignment_id: assignment.id)
-                                          .pluck(:criterion_type, :criterion_id)
-                                          .map { |t, id| "criterion_#{t}_#{id}" }
+                                      .where(assignment_id: assignment.id)
+                                      .pluck(:criterion_type, :criterion_id)
+                                      .map { |t, id| "criterion_#{t}_#{id}" }
           if assignment.hide_unassigned_criteria
             marks_map = marks_map.select { |m| assigned_crit.include? "criterion_#{m[:criterion_type]}_#{m[:id]}" }
             old_marks = old_marks.select { |m| assigned_crit.include? m }
