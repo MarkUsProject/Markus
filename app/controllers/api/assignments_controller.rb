@@ -18,8 +18,10 @@ module Api
       assignments = get_collection(Assignment) || return
 
       respond_to do |format|
+        json_response = '[' + assignments.map { |assignment| assignment.to_json(only: DEFAULT_FIELDS) }.join(",") + ']'
+
         format.xml { render xml: assignments.to_xml(only: DEFAULT_FIELDS, root: 'assignments', skip_types: 'true') }
-        format.json { render json: assignments.to_json(only: DEFAULT_FIELDS) }
+        format.json { render json: json_response }
       end
     end
 
@@ -34,8 +36,8 @@ module Api
           'No assignment exists with that id'}, status: 404
       else
         respond_to do |format|
-          format.xml { render xml: assignment.to_xml }
-          format.json { render json: assignment.to_json }
+          format.xml { render xml: assignment.to_xml(only: DEFAULT_FIELDS, root: 'assignment', skip_types: 'true') }
+          format.json { render json: assignment.to_json(only: DEFAULT_FIELDS) }
         end
       end
     end

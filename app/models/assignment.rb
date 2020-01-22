@@ -89,7 +89,7 @@ class Assignment < Assessment
   BLANK_MARK = ''
   STARTER_CODE_REPO_NAME = "starter-code"
 
-  # Copy of API::AssignmentController without the id and order changed
+  # Copy of API::AssignmentController without selected attributes and order changed
   # to put first the 4 required fields
   DEFAULT_FIELDS = [:short_identifier, :description,
                     :due_date, :message, :group_min, :group_max, :tokens_per_period,
@@ -1199,13 +1199,12 @@ class Assignment < Assessment
   end
 
   def to_xml(options = {})
-    byebug
-    self.attributes.merge(self.assignment_properties.attributes).symbolize_keys.to_xml(only: DEFAULT_FIELDS, root: 'assignments', skip_types: 'true')
+    attributes_hash = self.assignment_properties.attributes.merge(self.attributes).symbolize_keys
+    attributes_hash.select { |key, _| Api::AssignmentsController::DEFAULT_FIELDS.include? key }.to_xml(options)
   end
 
-  def to_json
-    byebug
-    self.attributes.merge(self.assignment_properties.attributes).symbolize_keys.to_json(only: DEFAULT_FIELDS)
+  def to_json(options = {})
+    self.assignment_properties.attributes.merge(self.attributes).symbolize_keys.to_json(options)
   end
 
   private
@@ -1284,16 +1283,16 @@ class Assignment < Assessment
     case file_format
     when 'csv'
       result = MarkusCsv.parse(assignment_data) do |row|
-        assignment = self.join(:assignment_properties)
-                         .find_or_create_by(short_identifier: row[0],
-                                            assignment_properties: { repository_folder: row[0] })
+        assignment = self.find_or_create_by(short_identifier: row[0])
         attrs = Hash[DEFAULT_FIELDS.zip(row)]
         attrs.delete_if { |_, v| v.nil? }
         if assignment.new_record?
+          assignment.assignment_properties = AssignmentProperties.new
           assignment.submission_rule = NoLateSubmissionRule.new
           assignment.assignment_stat = AssignmentStat.new
           assignment.assignment_properties.token_period = 1
           assignment.assignment_properties.unlimited_tokens = false
+          assignment.assignment_properties.repository_folder = row[0]
         end
         assignment.update(attrs)
         raise CsvInvalidLineError unless assignment.valid?
@@ -1303,13 +1302,14 @@ class Assignment < Assessment
       begin
         map = assignment_data.deep_symbolize_keys
         map[:assignments].map do |row|
-          assignment = self.find_or_create_by(short_identifier: row[:short_identifier],
-                                              assignment_properties: { repository_folder: row[:short_identifier] })
+          assignment = self.find_or_create_by(short_identifier: row[:short_identifier])
           if assignment.new_record?
+            row[:assignment_properties] = AssignmentProperties.new
             row[:submission_rule] = NoLateSubmissionRule.new
             row[:assignment_stat] = AssignmentStat.new
-            row[:token_period] = 1
-            row[:unlimited_tokens] = false
+            row[:assignment_properties][:repository_folder] = row[:short_identifier]
+            row[:assignment_properties][:token_period] = 1
+            row[:assignment_properties][:unlimited_tokens] = false
           end
           assignment.update(row)
           unless assignment.id

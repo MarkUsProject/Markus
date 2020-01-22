@@ -53,7 +53,6 @@ describe Api::AssignmentsController do
             expect(response.status).to eq(200)
           end
           it 'should return xml content' do
-            byebug
             expect(Hash.from_xml(response.body).dig('assignments', 'assignment', 'id')).to eq(assignment.id.to_s)
           end
           it 'should return all default fields' do

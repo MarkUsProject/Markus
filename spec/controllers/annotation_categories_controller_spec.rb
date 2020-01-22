@@ -151,7 +151,7 @@ describe AnnotationCategoriesController do
     it 'should render an annotation context, where first part of its content matches given string' do
       string = 'This is an'
 
-      get :find_annotation_text, params: { assignment_id: annotation_category.assignment_id, string: string }
+      get :find_annotation_text, params: { assignment_id: annotation_category.assessment_id, string: string }
       expect(response.body).to eq(@annotation_text_one.content)
     end
 
