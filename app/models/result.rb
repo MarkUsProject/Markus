@@ -19,7 +19,7 @@ class Result < ApplicationRecord
   validates_numericality_of :total_mark, greater_than_or_equal_to: 0
 
   before_update :unrelease_partial_results
-  before_save :check_for_nil_marks
+  before_save :check_for_nil_marks, :check_for_released
 
   scope :submitted_remarks_and_all_non_remarks, lambda {
     results = Result.arel_table
@@ -218,6 +218,15 @@ class Result < ApplicationRecord
       if marking_state != MARKING_STATES[:complete]
         self.released_to_students = false
       end
+    end
+    true
+  end
+
+  # Do not allow the marking state to be changed to incomplete if the result is released
+  def check_for_released
+    if released_to_students && marking_state_changed?(to: Result::MARKING_STATES[:incomplete])
+      errors.add(:base, I18n.t('results.marks_released'))
+      throw(:abort)
     end
     true
   end

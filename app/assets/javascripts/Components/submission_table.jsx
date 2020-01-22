@@ -192,6 +192,16 @@ class RawSubmissionTable extends React.Component {
     });
   };
 
+  setMarkingStates = (marking_state) => {
+    $.post({
+      url: Routes.set_result_marking_state_assignment_submissions_path(this.props.assignment_id),
+      data: {
+        groupings: this.props.selection,
+        marking_state: marking_state
+      }
+    }).then(this.fetchData);
+  };
+
   downloadGroupingFiles = (event) => {
     if (!window.confirm(I18n.t('submissions.marking_incomplete_warning'))) {
       event.preventDefault();
@@ -236,6 +246,8 @@ class RawSubmissionTable extends React.Component {
           runTests={this.runTests}
           releaseMarks={() => this.toggleRelease(true)}
           unreleaseMarks={() => this.toggleRelease(false)}
+          completeResults={() => this.setMarkingStates('complete')}
+          incompleteResults={() => this.setMarkingStates('incomplete')}
           authenticity_token={this.props.authenticity_token}
         />
         <CheckboxTable
@@ -282,8 +294,26 @@ class SubmissionsActionBox extends React.Component {
   }
 
   render = () => {
-    let collectButton, runTestsButton, releaseMarksButton, unreleaseMarksButton;
+    let completeButton, incompleteButton, collectButton, runTestsButton, releaseMarksButton, unreleaseMarksButton;
     if (this.props.is_admin) {
+      completeButton = (
+        <button
+          onClick={this.props.completeResults}
+          disabled={this.props.disabled}
+        >
+          {I18n.t('results.set_to_complete')}
+        </button>
+      );
+
+      incompleteButton = (
+        <button
+          onClick={this.props.incompleteResults}
+          disabled={this.props.disabled}
+        >
+          {I18n.t('results.set_to_incomplete')}
+        </button>
+      );
+
       collectButton = (
         <button
           onClick={this.props.collectSubmissions}
@@ -337,6 +367,8 @@ class SubmissionsActionBox extends React.Component {
 
     return (
       <div className='rt-action-box'>
+        {completeButton}
+        {incompleteButton}
         {collectButton}
         {downloadGroupingFilesButton}
         {runTestsButton}
