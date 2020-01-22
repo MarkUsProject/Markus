@@ -45,6 +45,7 @@ export class SummaryPanel extends React.Component {
   ];
 
   renderTotalMark = () => {
+    const assignment_total = Math.round(this.props.assignment_max_mark * 100) / 100;
     let oldTotal = '';
     if (this.props.remark_submitted) {
       oldTotal = (
@@ -55,7 +56,7 @@ export class SummaryPanel extends React.Component {
           <span className='final_mark'>
             <span>{this.props.old_total}</span>
             &nbsp;/&nbsp;
-            {this.props.assignment_max_mark}
+            {assignment_total}
           </span>
         </div>
       );
@@ -68,7 +69,7 @@ export class SummaryPanel extends React.Component {
         <span className='final_mark'>
           <span>{this.props.total}</span>
           &nbsp;/&nbsp;
-          {+(this.props.assignment_max_mark)}
+          {assignment_total}
         </span>
       </div>
     );

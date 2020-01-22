@@ -82,7 +82,14 @@ class AssignmentSummaryTable extends React.Component {
     {
       Header: I18n.t('activerecord.attributes.result.total_mark'),
       accessor: 'final_grade',
-      Cell: ({value}) => value ? value + ' / ' + this.props.max_mark : '',
+      Cell: row => {
+        if (row.original.final_grade) {
+          const max_mark = Math.round(row.original.max_mark * 100) / 100;
+          return row.original.final_grade + ' / ' + max_mark
+        } else {
+          return ''
+        }
+      },
       className: 'number',
       filterable: false,
       defaultSortDesc: true,

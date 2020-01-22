@@ -180,29 +180,31 @@ class ResultsController < ApplicationController
         end
         marks_map.sort! { |a, b| a[:position] <=> b[:position] }
 
-        if assignment.assign_graders_to_criteria && current_user.ta?
-          assigned_criteria = current_user.criterion_ta_associations
-                                          .where(assignment_id: assignment.id)
-                                          .pluck(:criterion_type, :criterion_id)
-                                          .map { |t, id| "#{t}-#{id}" }
-          if assignment.hide_unassigned_criteria
-            marks_map = marks_map.select { |m| assigned_criteria.include? "#{m[:criterion_type]}-#{m[:id]}" }
-          else
-            marks_map = marks_map.partition { |m| assigned_criteria.include? "#{m[:criterion_type]}-#{m[:id]}" }
-                                 .flatten
-          end
-        else
-          assigned_criteria = nil
-        end
-
-        data[:assigned_criteria] = assigned_criteria
-        data[:marks] = marks_map
-
         if original_result.nil?
           old_marks = {}
         else
           old_marks = original_result.mark_hash
         end
+
+        if assignment.assign_graders_to_criteria && current_user.ta?
+          assigned_crit = current_user.criterion_ta_associations
+                                          .where(assignment_id: assignment.id)
+                                          .pluck(:criterion_type, :criterion_id)
+                                          .map { |t, id| "criterion_#{t}_#{id}" }
+          if assignment.hide_unassigned_criteria
+            marks_map = marks_map.select { |m| assigned_crit.include? "criterion_#{m[:criterion_type]}_#{m[:id]}" }
+            old_marks = old_marks.select { |m| assigned_crit.include? m }
+          else
+            marks_map = marks_map.partition { |m| assigned_crit.include? "criterion_#{m[:criterion_type]}_#{m[:id]}" }
+                                 .flatten
+          end
+        else
+          assigned_crit = nil
+        end
+
+        data[:assigned_criteria] = assigned_crit
+        data[:marks] = marks_map
+
         data[:old_marks] = old_marks
 
         # Extra marks
@@ -229,9 +231,9 @@ class ResultsController < ApplicationController
 
         # Totals
         data[:assignment_max_mark] =
-          result.is_a_review? ? assignment.pr_assignment.max_mark(:peer) : assignment.max_mark(:ta)
-        data[:total] = result.total_mark
-        data[:old_total] = original_result&.total_mark
+          result.is_a_review? ? assignment.pr_assignment.max_mark(:peer) : marks_map.map { |h| h['max_mark'] }.sum
+        data[:total] = marks_map.map { |h| h['mark'] }
+        data[:old_total] = old_marks.values.sum
 
         # Tags
         all_tags = Tag.pluck_to_hash(:id, :name)
