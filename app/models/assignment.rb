@@ -1296,7 +1296,7 @@ class Assignment < ApplicationRecord
 
       if result_info['results.id'].present?
         base[:result_id] = result_info['results.id']
-        base[:final_grade] = total_marks[result_info['results.id']]
+        base[:final_grade] = total_marks[result_info['results.id']] || 0.0
       end
 
       base[:members] = member_info.map { |h| h['users.user_name'] } unless member_info.nil?

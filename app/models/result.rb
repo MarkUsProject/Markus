@@ -18,8 +18,8 @@ class Result < ApplicationRecord
 
   validates_numericality_of :total_mark, greater_than_or_equal_to: 0
 
-  before_update :unrelease_partial_results
-  before_save :check_for_nil_marks, :check_for_released
+  before_update :unrelease_partial_results, :check_for_released
+  before_save :check_for_nil_marks
 
   scope :submitted_remarks_and_all_non_remarks, lambda {
     results = Result.arel_table
