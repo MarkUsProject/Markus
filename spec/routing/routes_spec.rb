@@ -540,6 +540,15 @@ describe 'An Assignment' do
         )
       end
 
+      it 'routes POST set_result_marking_state properly' do
+        expect(post: sub_path + '/set_result_marking_state').to route_to(
+          controller: sub_ctrl,
+          action: 'set_result_marking_state',
+          assignment_id: assignment.id.to_s,
+          locale: 'en'
+        )
+      end
+
       it 'routes GET server_time properly' do
         expect(get: sub_path + '/server_time').to route_to(
           controller: sub_ctrl,
