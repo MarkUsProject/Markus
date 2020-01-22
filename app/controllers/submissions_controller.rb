@@ -16,6 +16,7 @@ class SubmissionsController < ApplicationController
                          :download_groupings_files,
                          :manually_collect_and_begin_grading,
                          :repo_browser,
+                         :set_result_marking_state,
                          :update_submissions,
                          :populate_submissions_table,
                          :populate_peer_submissions_table]
@@ -609,6 +610,27 @@ class SubmissionsController < ApplicationController
   # This action is called periodically from file_manager.
   def server_time
     render plain: l(Time.zone.now)
+  end
+
+  def set_result_marking_state
+    if !params.key?(:groupings) || params[:groupings].empty?
+      flash_now(:error, t('groups.select_a_group'))
+      head 400
+      return
+    end
+    results = Result.where(id: Grouping.joins(:current_result).where(id: params[:groupings]).select('results.id'))
+    Result.transaction do
+      results.each do |result|
+        result.marking_state = params[:marking_state]
+        unless result.save
+          raise result.errors.full_messages.first
+        end
+      end
+    end
+    head :ok
+  rescue StandardError => e
+    flash_now(:error, e.message)
+    head :ok
   end
 
   private
