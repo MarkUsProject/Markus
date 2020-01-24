@@ -64,64 +64,65 @@ namespace :db do
     ['A0', 'A1', 'A2'].each do |n|
       Assignment.find_by('short_identifier' => n).groupings.each do |grouping|
         @text = AnnotationText.find(AnnotationText.all.pluck(:id).to_a.sample).id
-        submission_file = SubmissionFile.find(grouping.current_submission_used.submission_files.find_by('filename' => 'deferred-process.jpg').id)
+        submission_file = SubmissionFile.find(grouping.current_submission_used.
+            submission_files.find_by('filename' => 'deferred-process.jpg').id)
         submission = submission_file.submission
         base_attributes = {
-            submission_file_id: submission_file.id,
-            is_remark: submission.has_remark?,
-            annotation_text_id: @text,
-            annotation_number: submission.annotations.count + 1,
-            creator_id: Admin.first.id,
-            creator_type: 'Admin',
-            result_id: submission.current_result.id
+          submission_file_id: submission_file.id,
+          is_remark: submission.has_remark?,
+          annotation_text_id: @text,
+          annotation_number: submission.annotations.count + 1,
+          creator_id: Admin.first.id,
+          creator_type: 'Admin',
+          result_id: submission.current_result.id
         }
         @annotation = ImageAnnotation.create(
-            x1: 132,
-            y1: 199,
-            x2: 346,
-            y2: 370,
-            **base_attributes
+          x1: 132,
+          y1: 199,
+          x2: 346,
+          y2: 370,
+          **base_attributes
         )
         @text = AnnotationText.find(AnnotationText.all.pluck(:id).to_a.sample).id
-        submission_file = SubmissionFile.find(grouping.current_submission_used.submission_files.find_by('filename' => 'pdf.pdf').id)
+        submission_file = SubmissionFile.find(grouping.current_submission_used.
+            submission_files.find_by('filename' => 'pdf.pdf').id)
         submission = submission_file.submission
         base_attributes = {
-            submission_file_id: submission_file.id,
-            is_remark: submission.has_remark?,
-            annotation_text_id: @text,
-            annotation_number: submission.annotations.count + 1,
-            creator_id: Admin.first.id,
-            creator_type: 'Admin',
-            result_id: submission.current_result.id
+          submission_file_id: submission_file.id,
+          is_remark: submission.has_remark?,
+          annotation_text_id: @text,
+          annotation_number: submission.annotations.count + 1,
+          creator_id: Admin.first.id,
+          creator_type: 'Admin',
+          result_id: submission.current_result.id
         }
-
         @annotation = PdfAnnotation.create!(
-            x1: 132,
-            y1: 199,
-            x2: 346,
-            y2: 370,
-            page: 1,
-            **base_attributes
+          x1: 27740,
+          y1: 58244,
+          x2: 4977,
+          y2: 29748,
+          page: 1,
+          **base_attributes
         )
-
         @text = AnnotationText.find(AnnotationText.all.pluck(:id).to_a.sample).id
-        submission_file = SubmissionFile.find(grouping.current_submission_used.submission_files.find_by('filename' => 'hello.py').id)
+        submission_file = SubmissionFile.find(grouping.current_submission_used.
+            submission_files.find_by('filename' => 'hello.py').id)
         submission = submission_file.submission
         base_attributes = {
-            submission_file_id: submission_file.id,
-            is_remark: submission.has_remark?,
-            annotation_text_id: @text,
-            annotation_number: submission.annotations.count + 1,
-            creator_id: Admin.first.id,
-            creator_type: 'Admin',
-            result_id: submission.current_result.id
+          submission_file_id: submission_file.id,
+          is_remark: submission.has_remark?,
+          annotation_text_id: @text,
+          annotation_number: submission.annotations.count + 1,
+          creator_id: Admin.first.id,
+          creator_type: 'Admin',
+          result_id: submission.current_result.id
         }
         @annotation = TextAnnotation.create(
-            line_start: 7,
-            line_end: 9,
-            column_start: 6,
-            column_end: 15,
-            **base_attributes
+          line_start: 7,
+          line_end: 9,
+          column_start: 6,
+          column_end: 15,
+          **base_attributes
         )
       end
     end
