@@ -80,16 +80,16 @@ Markus::Application.configure do
   # represents a failure to log in, but says so with a custom string.
   # It is commented out by default because there is no additional custom
   # exit status by default.
-  #VALIDATE_CUSTOM_EXIT_STATUS = 38
-  #VALIDATE_CUSTOM_STATUS_DISPLAY = 'You are a squid.  Only vertebrates may use MarkUs.'
+  config.validate_custom_exit_status = nil
+  config.validate_custom_status_message = nil
 
   # Custom messages for "user not allowed" and "login incorrect",
   # overriding the default "login failed" message.  By default,
   # MarkUs does not distinguish these cases for security reasons.
-  # If these variables are not defined (commented out), it uses the
+  # If these variables are nil, it uses the
   # standard "login failed" message for both situations.
-  #VALIDATE_USER_NOT_ALLOWED_DISPLAY = 'That is your correct University of Foo user name and password, but you have not been added to this particular MarkUs database.  Please contact your instructor or check your course web page.'
-  #VALIDATE_LOGIN_INCORRECT_DISPLAY = 'Login incorrect.  You can check your Foo U user name or reset your password at https://www.foo.example.edu/passwords.'
+  config.validate_user_not_allowed_message = nil
+  config.incorrect_login_message = nil
 
   ###################################################################
   # Authentication Settings
@@ -128,7 +128,7 @@ Markus::Application.configure do
   # If you are using HTTP's basic authentication, you probably want to use this
   # option.
 
-  LOGOUT_REDIRECT = "DEFAULT"
+  config.logout_redirect = "DEFAULT"
 
   ###################################################################
   # File storage (Repository) settings
@@ -146,30 +146,27 @@ Markus::Application.configure do
   # A hash of repository hook scripts (used only when repository.type
   # is 'git'): the key is the hook id, the value is the hook script.
   # Make sure MarkUs is allowed to execute the hook scripts.
-  REPOSITORY_HOOKS = {}
+  config.x.repository.hooks = {}
   # Path to the MarkUs client-side hooks (copied to all group repos).
-  REPOSITORY_CLIENT_HOOKS = ''
+  config.x.repository.client_hooks = ''
 
   ###################################################################
   # Directory where authentication keys will be uploaded.
   # Make sure MarkUs is allowed to write to this directory
-  KEY_STORAGE = "#{::Rails.root}/data/test/keys"
+  config.key_storage = "#{::Rails.root}/data/test/keys"
 
   # Max file size for submission files, in bytes
   config.max_file_size = 5000000
 
   ###################################################################
-  # Change this to 'REPOSITORY_EXTERNAL_SUBMITS_ONLY = true' if you
-  # are using Subversion as a storage backend and the instructor wants his/her
-  # students to submit to the repositories Subversion clients only. Set this
-  # to true if you intend to force students to submit via Subversion
-  # clients only. The MarkUs Web interface for submissions will be read-only
-  # in that case.
-  REPOSITORY_EXTERNAL_SUBMITS_ONLY = false
+  # Change this to true if you are using version control as a storage backend and the instructor wants their
+  # students to submit to the repositories using version control only. The MarkUs Web interface for submissions
+  # will be read-only in that case.
+  config.x.repository.external_submits_only = false
 
   ###################################################################
   # This config setting only makes sense, if you are using
-  # 'REPOSITORY_EXTERNAL_SUBMITS_ONLY = true'. If you have Apache httpd
+  # 'config.x.repository.external_submits_only = true'. If you have Apache httpd
   # configured so that the repositories created by MarkUs will be available to
   # the outside world, this is the URL which internally "points" to the
   # config.x.repository.storage directory configured earlier. Hence, Subversion
@@ -177,7 +174,7 @@ Markus::Application.configure do
   # http://www.example.com/markus/svn/Repository_Name. Make sure the path
   # after the hostname matches your <Location> directive in your Apache
   # httpd configuration
-  REPOSITORY_EXTERNAL_BASE_URL = "http://www.example.com/markus/svn"
+  config.x.repository.url = "http://www.example.com/markus/svn"
 
   ###################################################################
   # This setting is important for two scenarios:
@@ -185,7 +182,7 @@ Markus::Application.configure do
   # third party, point it to the place where it will find the Subversion
   # authz file. In that case, MarkUs would need at least read access to
   # that file.
-  # Second, if MarkUs is configured with REPOSITORY_EXTERNAL_SUBMITS_ONLY
+  # Second, if MarkUs is configured with config.x.repository.external_submits_only
   # set to 'true', you can configure as to where MarkUs should write the
   # Subversion authz file.
   config.x.repository.permission_file = File.join(config.x.repository.storage, 'dummy')
@@ -196,13 +193,13 @@ Markus::Application.configure do
   # repositories. In the latter case, it will write to
   # REPOSITORY_SVN_AUTHZ_FILE, otherwise it doesn't. Change this to
   # 'false' if repositories are created by a third party.
-  IS_REPOSITORY_ADMIN = true
+  config.x.repository.is_repository_admin = true
 
   ###################################################################
   # Starter code settings
   ###################################################################
   # Global flag to enable/disable starter code feature.
-  STARTER_CODE_ON = true
+  config.starter_code_on = true
 
   ###################################################################
   # Session Timeouts
@@ -224,66 +221,65 @@ Markus::Application.configure do
   ###################################################################
   # If set to true then the MarkusLogger will be enabled
   # MarkusLogger-related tests will fail if set to false
-  MARKUS_LOGGING_ENABLED = true
+  config.x.logging.enabled = true
   # If set to true then the rotation of the logfiles will be defined
-  # by MARKUS_LOGGING_ROTATE_INTERVAL instead of the size of the file
-  MARKUS_LOGGING_ROTATE_BY_INTERVAL = false
-  # Set the maximum size file that the logfiles will have before rotating
-  MARKUS_LOGGING_SIZE_THRESHOLD = 1024000000
+  # by config.x.logging.rotate_interval instead of the size of the file
+  config.x.logging.rotate_by_interval = false
   # Sets the interval which rotations will occur if
-  # MARKUS_LOGGING_ROTATE_BY_INTERVAL is set to true,
+  # config.x.logging.rotate_by_interval is set to true,
   # possible values are: 'daily', 'weekly', 'monthly'
-  MARKUS_LOGGING_ROTATE_INTERVAL = 'daily'
+  config.x.logging.rotate_interval = 'daily'
+  # Set the maximum size file that the logfiles will have before rotating
+  config.x.logging.size_threshold = 1_024_000_000
   # Name of the logfile that will carry information, debugging and
   # warning messages
-  MARKUS_LOGGING_LOGFILE = "log/info_#{::Rails.env}.log"
+  config.x.logging.log_file = "log/info_#{::Rails.env}.log"
   # Name of the logfile that will carry error and fatal messages
-  MARKUS_LOGGING_ERRORLOGFILE = "log/error_#{::Rails.env}.log"
+  config.x.logging.error_file = "log/error_#{::Rails.env}.log"
   # This variable sets the number of old log files that will be kept
-  MARKUS_LOGGING_OLDFILES = 10
+  config.x.logging.old_files = 10
 
   ###################################################################
   # Resque queues
   ###################################################################
 
   # The name of the queue where jobs to create groups wait to be executed.
-  JOB_CREATE_GROUPS_QUEUE_NAME = 'CSC108'
+  config.x.queues.create_groups = 'CSC108'
   # The name of the queue where jobs to collect submissions wait to be executed.
-  JOB_COLLECT_SUBMISSIONS_QUEUE_NAME = 'CSC108'
+  config.x.queues.collect_submissions = 'CSC108'
   # The name of the queue where jobs to uncollect submissions wait to be executed.
-  JOB_UNCOLLECT_SUBMISSIONS_QUEUE_NAME = 'CSC108'
+  config.x.queues.uncollect_submissions = 'CSC108'
   # The name of the queue where jobs to update repos with the list of required files wait to be executed.
-  JOB_UPDATE_REPO_REQUIRED_FILES_QUEUE_NAME = 'CSC108'
-  JOB_GENERATE_QUEUE_NAME = 'CSC108'
-  JOB_SPLIT_PDF_QUEUE_NAME = 'CSC108'
+  config.x.queues.repo_required_files = 'CSC108'
+  config.x.queues.exam_generate = 'CSC108'
+  config.x.queues.split_pdf = 'CSC108'
   # The name of the queue where jobs to update starter code files to student repos wait to be executed.
-  JOB_UPDATE_STARTER_CODE_QUEUE = 'CSC108'
+  config.x.queues.update_starter_code = 'CSC108'
 
   ###################################################################
   # Automated Testing Engine settings
   ###################################################################
 
   # Look at https://github.com/MarkUsProject/markus-autotesting for the documentation
-  AUTOTEST_ON = true
-  AUTOTEST_STUDENT_TESTS_ON = true
-  AUTOTEST_STUDENT_TESTS_BUFFER_TIME = 1.hour
-  AUTOTEST_CLIENT_DIR = "#{::Rails.root}/data/test/autotest"
-  AUTOTEST_SERVER_HOST = 'localhost'
-  AUTOTEST_SERVER_USERNAME = nil
-  AUTOTEST_SERVER_DIR = "#{::Rails.root}/../markus-autotesting/server/workspace"
-  AUTOTEST_SERVER_COMMAND = 'autotest_enqueuer'
-  AUTOTEST_RUN_QUEUE = 'CSC108'
-  AUTOTEST_CANCEL_QUEUE = 'CSC108'
-  AUTOTEST_SPECS_QUEUE = 'CSC108'
-  AUTOTEST_TESTERS_QUEUE = 'CSC108'
+  config.x.autotest.enable = true
+  config.x.autotest.student_test_buffer = 1.hour
+  config.x.autotest.client_dir = "#{::Rails.root}/data/test/autotest"
+  config.x.autotest.server_host = 'localhost'
+  config.x.autotest.server_username = nil
+  config.x.autotest.server_dir = "#{::Rails.root}/../markus-autotesting/server/workspace"
+  config.x.autotest.server_command = 'autotest_enqueuer'
+  config.x.queues.autotest_run = 'CSC108'
+  config.x.queues.autotest_cancel = 'CSC108'
+  config.x.queues.autotest_specs = 'CSC108'
+  config.x.queues.autotest_testers = 'CSC108'
 
   ###################################################################
   # Exam Plugin settings
   ###################################################################
   # Global flag to enable/disable all exam plugin features.
-  EXPERIMENTAL_EXAM_PLUGIN_ON = true
-  EXAM_TEMPLATE_DIR = "#{::Rails.root}/data/test/exam_templates"
-  EXAM_PYTHON_EXE = "#{::Rails.root}/lib/scanner/venv/bin/python"
+  config.x.scanned_exams.enable = true
+  config.x.scanned_exams.path = "#{::Rails.root}/data/test/exam_templates"
+  config.x.scanned_exams.python = "#{::Rails.root}/lib/scanner/venv/bin/python"
 
   ###################################################################
   # END OF MarkUs SPECIFIC CONFIGURATION

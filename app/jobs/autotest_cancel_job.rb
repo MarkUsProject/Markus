@@ -1,5 +1,5 @@
 class AutotestCancelJob < ApplicationJob
-  queue_as MarkusConfigurator.autotest_cancel_queue
+  queue_as Rails.configuration.x.queues.autotest_cancel
 
   def self.on_complete_js(_status)
     'window.BatchTestRunTable.fetchData'
@@ -13,8 +13,8 @@ class AutotestCancelJob < ApplicationJob
     else
       markus_address = host_with_port + Rails.application.config.action_controller.relative_url_root
     end
-    server_username = MarkusConfigurator.autotest_server_username
-    server_command = MarkusConfigurator.autotest_server_command
+    server_username = Rails.configuration.x.autotest.server_username
+    server_command = Rails.configuration.x.autotest.server_command
     server_params = { markus_address: markus_address, run_ids: test_run_ids }
 
     if server_username.nil?
@@ -26,7 +26,7 @@ class AutotestCancelJob < ApplicationJob
       end
     else
       # local or remote cancellation with authentication
-      server_host = MarkusConfigurator.autotest_server_host
+      server_host = Rails.configuration.x.autotest.server_host
       Net::SSH.start(server_host, server_username, auth_methods: ['publickey']) do |ssh|
         cancel_command = "#{server_command} cancel -j '#{JSON.generate(server_params)}'"
         output = ssh.exec!(cancel_command)

@@ -944,7 +944,7 @@ class Assignment < ApplicationRecord
   ### REPO ###
 
   def build_starter_code_repo
-    return unless MarkusConfigurator.markus_config_repository_admin? && MarkusConfigurator.markus_starter_code_on
+    return unless Rails.configuration.x.repository.is_repository_admin && Rails.configuration.starter_code_on
     begin
       unless Repository.get_class.repository_exists?(starter_code_repo_path)
         Repository.get_class.create(starter_code_repo_path, with_hooks: false)
