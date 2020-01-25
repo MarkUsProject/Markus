@@ -78,7 +78,7 @@ class SubversionRepositoryTest < ActiveSupport::TestCase
       FileUtils.mkdir_p(TEST_EXPORT_REPO_2)
       # configure and create repositories
       conf_admin = Hash.new
-      conf_admin["IS_REPOSITORY_ADMIN"] = true
+      conf_admin['is_repository_admin'] = true
       conf_admin["REPOSITORY_PERMISSION_FILE"] = SVN_AUTHZ_FILE
       # create repository first
       SubversionRepository.create(TEST_REPO)
@@ -392,14 +392,14 @@ class SubversionRepositoryTest < ActiveSupport::TestCase
       repo1 = SVN_TEST_REPOS_DIR + "/Testrepo1"
       repo2 = SVN_TEST_REPOS_DIR + "/Repository2"
       conf_admin = Hash.new
-      conf_admin["IS_REPOSITORY_ADMIN"] = true
+      conf_admin['is_repository_admin'] = true
       conf_admin["REPOSITORY_PERMISSION_FILE"] = SVN_AUTHZ_FILE
       SubversionRepository.create(repo1)
       SubversionRepository.create(repo2)
       SubversionRepository.create(TEST_REPO)
       # open the repository
       conf_non_admin = Hash.new
-      conf_non_admin["IS_REPOSITORY_ADMIN"] = false
+      conf_non_admin['is_repository_admin'] = false
       conf_non_admin["REPOSITORY_PERMISSION_FILE"] = SVN_AUTHZ_FILE
 
       @repo1 = SubversionRepository.open(repo1) # non-admin repository
@@ -620,7 +620,7 @@ class SubversionRepositoryTest < ActiveSupport::TestCase
 
       repositories = []
       conf_admin = Hash.new
-      conf_admin["IS_REPOSITORY_ADMIN"] = true
+      conf_admin['is_repository_admin'] = true
       conf_admin["REPOSITORY_PERMISSION_FILE"] = SVN_AUTHZ_FILE
       repository_names.each do |repo_name|
         SubversionRepository.create(repo_name)
@@ -667,7 +667,7 @@ class SubversionRepositoryTest < ActiveSupport::TestCase
       # use a different svn_authz file for this test
       new_svn_authz = SVN_TEST_REPOS_DIR + "/svn_authz_bulk_stuff2"
       @conf_admin = Hash.new
-      @conf_admin["IS_REPOSITORY_ADMIN"] = true
+      @conf_admin['is_repository_admin'] = true
       @conf_admin["REPOSITORY_PERMISSION_FILE"] = new_svn_authz
 
       # create some repositories, add some users

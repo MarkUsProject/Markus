@@ -27,7 +27,7 @@
                   logout_main_index_path,
                   id: 'logout_link',
                   method: :post) unless
-                  MarkusConfigurator.markus_config_logout_redirect == 'NONE' %>
+            Rails.configuration.logout_redirect == 'NONE' %>
 
       <% if Rails.configuration.remote_user_auth &&
             !session[:real_uid].nil? %>

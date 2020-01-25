@@ -459,7 +459,7 @@ class Grouping < ApplicationRecord
   # When a Grouping is created, automatically create the folder for the
   # assignment in the repository, if it doesn't already exist.
   def create_grouping_repository_folder
-    return unless MarkusConfigurator.markus_config_repository_admin? # create folder only if we are repo admin
+    return unless Rails.configuration.x.repository.is_repository_admin # create folder only if we are repo admin
     result = true
     self.group.access_repo do |group_repo|
       assignment_folder = self.assignment.repository_folder
@@ -754,7 +754,7 @@ class Grouping < ApplicationRecord
   # Checks whether a student test using tokens is currently being enqueued for execution
   # (with buffer time in case of unhandled errors that prevented test results to be stored)
   def student_test_run_in_progress?
-    buffer_time = MarkusConfigurator.autotest_student_tests_buffer_time
+    buffer_time = Rails.configuration.x.autotest.student_test_buffer
     last_student_run = test_runs_students_simple.first
     if last_student_run.nil? || # first test
       (last_student_run.created_at + buffer_time) < Time.current || # buffer time expired (for unhandled problems)
