@@ -82,7 +82,7 @@ class GitRepositoryTest < ActiveSupport::TestCase
       FileUtils.mkdir_p(TEST_EXPORT_REPO_2)
       # configure and create repositories
       conf_admin = Hash.new
-      conf_admin["IS_REPOSITORY_ADMIN"] = true
+      conf_admin['is_repository_admin'] = true
       conf_admin["REPOSITORY_PERMISSION_FILE"] = GIT_TEST_REPOS_DIR + "/git_auth/"
 
       # create repository first
@@ -429,7 +429,7 @@ class GitRepositoryTest < ActiveSupport::TestCase
       repo1 = GIT_TEST_REPOS_DIR + "/Testrepo1"
       repo2 = GIT_TEST_REPOS_DIR + "/Repository2"
       conf_admin = Hash.new
-      conf_admin["IS_REPOSITORY_ADMIN"] = true
+      conf_admin['is_repository_admin'] = true
       conf_admin["REPOSITORY_PERMISSION_FILE"] = GIT_AUTH_FOLDER
 
       GitRepository.create(repo1)
@@ -437,7 +437,7 @@ class GitRepositoryTest < ActiveSupport::TestCase
       GitRepository.create(TEST_REPO)
       # open the repository
       conf_non_admin = Hash.new
-      conf_non_admin["IS_REPOSITORY_ADMIN"] = false
+      conf_non_admin['is_repository_admin'] = false
       conf_non_admin["REPOSITORY_PERMISSION_FILE"] = GIT_AUTH_FOLDER
 
       @repo1 = GitRepository.open(repo1) # non-admin repository
@@ -663,7 +663,7 @@ class GitRepositoryTest < ActiveSupport::TestCase
 
       repositories = []
       conf_admin = Hash.new
-      conf_admin["IS_REPOSITORY_ADMIN"] = true
+      conf_admin['is_repository_admin'] = true
       conf_admin["REPOSITORY_PERMISSION_FILE"] = new_git_auth
 
       repository_names.each do |repo_name|
@@ -716,7 +716,7 @@ class GitRepositoryTest < ActiveSupport::TestCase
       end
 
       @conf_admin = Hash.new
-      @conf_admin["IS_REPOSITORY_ADMIN"] = true
+      @conf_admin['is_repository_admin'] = true
       @conf_admin["REPOSITORY_PERMISSION_FILE"] = new_git_auth
       # create some repositories, add some users
       repo_base_name = "Group_"

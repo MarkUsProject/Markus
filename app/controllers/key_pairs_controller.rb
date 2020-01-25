@@ -9,7 +9,7 @@ class KeyPairsController < ApplicationController
 
     @key_pairs.each do |keypair|
       # Read the key
-      key = File.open(File.join(KEY_STORAGE, keypair.file_name))
+      key = File.open(File.join(Rails.configuration.key_storage, keypair.file_name))
       @key_strings.push(key.read)
     end
 
@@ -51,26 +51,26 @@ class KeyPairsController < ApplicationController
   # association to the user_name given.
   # If a String is supplied as the first argument then it's content
   # is used to create the public key
-  # Creates the KEY_STORAGE directory if it does not yet exist
+  # Creates the Rails.configuration.key_storage directory if it does not yet exist
   def upload_key_file(file_content, time_stamp)
     create_key_directory
 
     write_key(file_content, time_stamp)
 
-    add_key(File.join(KEY_STORAGE, @current_user.user_name +
-                                   "@#{time_stamp}.pub"))
+    add_key(File.join(Rails.configuration.key_storage,
+                      "#{@current_user.user_name}@#{time_stamp}.pub"))
   end
 
   def write_key(file_content, time_stamp)
-    File.open(Rails.root.join(KEY_STORAGE, @current_user.user_name +
-                                           "@#{time_stamp}.pub"), 'wb') do |f|
+    File.open(Rails.root.join(Rails.configuration.key_storage,
+                              "#{@current_user.user_name}@#{time_stamp}.pub"), 'wb') do |f|
       f.write(file_content)
     end
   end
 
-  # Creates the KEY_STORAGE directory if required
+  # Creates the Rails.configuration.key_storage directory if required
   def create_key_directory
-    Dir.mkdir(KEY_STORAGE) unless File.exists?(KEY_STORAGE)
+    Dir.mkdir(Rails.configuration.key_storage) unless File.exist?(Rails.configuration.key_storage)
   end
 
   # Adds a specific public key to a specific user.
@@ -173,7 +173,7 @@ class KeyPairsController < ApplicationController
   def destroy
     @key_pair = KeyPair.find(params[:id])
 
-    remove_key(File.join(KEY_STORAGE, @key_pair.file_name))
+    remove_key(File.join(Rails.configuration.key_storage, @key_pair.file_name))
 
     @key_pair.destroy
 

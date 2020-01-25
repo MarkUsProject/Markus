@@ -78,10 +78,11 @@ class User < ApplicationRecord
       #  3 is used for other error exits
       pipe = IO.popen("'#{Rails.configuration.validate_file}'", 'w+') # quotes to avoid choking on spaces
       to_stdin = [login, password, ip].reject(&:nil?).join("\n")
-      pipe.puts(to_stdin) # write to stdin of markus_config_validate
+      pipe.puts(to_stdin) # write to stdin of Rails.configuration.validate_file
       pipe.close
       m_logger = MarkusLogger.instance
-      if (defined? VALIDATE_CUSTOM_EXIT_STATUS) && $?.exitstatus == VALIDATE_CUSTOM_EXIT_STATUS
+      if !Rails.configuration.validate_custom_exit_status.nil? &&
+          $?.exitstatus == Rails.configuration.validate_custom_exit_status
         m_logger.log("Login failed. Reason: Custom exit status.", MarkusLogger::ERROR)
         return AUTHENTICATE_CUSTOM_MESSAGE
       end
