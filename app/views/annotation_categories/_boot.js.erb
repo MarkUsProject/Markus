@@ -49,7 +49,6 @@
             url:  '<%= update_positions_assignment_annotation_categories_path(@assignment) %>',
             type: 'POST',
             data: $('.sortable ul').sortable('serialize'),
-            dataType: 'script',
             success: function(response) {
               ajaxRequest = undefined;
               bindSortable();

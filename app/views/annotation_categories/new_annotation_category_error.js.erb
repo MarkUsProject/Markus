@@ -1,4 +1,0 @@
-var error = $('#new_annotation_category_error');
-error.append("<%= escape_javascript(render partial: 'annotation_category_errors_list',
-                                           locals: { annotation_category: @annotation_category }).html_safe %>");
-error.show();
