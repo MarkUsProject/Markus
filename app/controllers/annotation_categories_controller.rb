@@ -108,8 +108,8 @@ class AnnotationCategoriesController < ApplicationController
   def find_annotation_text
     @assignment = Assignment.find(params[:assignment_id])
     string = params[:string]
-    texts_for_current_assignment = AnnotationText.joins(annotation_category: :assignment).
-        where(assessments: {id: @assignment.id})
+    texts_for_current_assignment = AnnotationText.joins(annotation_category: :assignment)
+                                                 .where(assessments: { id: @assignment.id })
     annotation_texts = texts_for_current_assignment.where("content LIKE ?", "#{string}%")
     if annotation_texts.size == 1
       render json: "#{annotation_texts.first.content}".html_safe

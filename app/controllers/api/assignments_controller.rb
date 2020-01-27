@@ -18,7 +18,7 @@ module Api
       assignments = get_collection(Assignment) || return
 
       respond_to do |format|
-        json_response = '[' + assignments.map { |assignment| assignment.to_json(only: DEFAULT_FIELDS) }.join(",") + ']'
+        json_response = '[' + assignments.map { |assignment| assignment.to_json(only: DEFAULT_FIELDS) }.join(',') + ']'
 
         format.xml { render xml: assignments.to_xml(only: DEFAULT_FIELDS, root: 'assignments', skip_types: 'true') }
         format.json { render json: json_response }
