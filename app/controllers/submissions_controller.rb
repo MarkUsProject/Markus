@@ -650,7 +650,7 @@ class SubmissionsController < ApplicationController
     full_path = File.join(grouping.assignment.repository_folder, path)
     return [] unless revision.path_exists?(full_path)
 
-    anonymize = !current_user.admin? && grouping.assignment.anonymize_groups
+    anonymize = current_user.ta? && grouping.assignment.anonymize_groups
 
     entries = revision.tree_at_path(full_path).sort do |a, b|
       a[0].count(File::SEPARATOR) <=> b[0].count(File::SEPARATOR) # less nested first

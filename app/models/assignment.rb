@@ -577,7 +577,7 @@ class Assignment < ApplicationRecord
     result_ids = groupings_with_results.pluck('results.id').uniq.compact
     extra_marks_hash = Result.get_total_extra_marks(result_ids, max_mark: max_mark)
 
-    hide_unassigned = !user.admin? && hide_unassigned_criteria
+    hide_unassigned = user.ta? && hide_unassigned_criteria
 
     criteria_shown = Set.new
     max_mark = 0
@@ -601,7 +601,7 @@ class Assignment < ApplicationRecord
     final_data = groupings_with_results.map do |g|
       result = g.current_result
       has_remark = g.current_submission_used&.submitted_remark.present?
-      if !user.admin? && anonymize_groups
+      if user.ta? && anonymize_groups
         group_name = "#{Group.model_name.human} #{g.id}"
         section = ''
         group_members = []
@@ -1232,7 +1232,7 @@ class Assignment < ApplicationRecord
                                  'results.released_to_students')
                   .group_by { |h| h['groupings.id'] }
 
-    if !current_user.admin? && anonymize_groups
+    if current_user.ta? && anonymize_groups
       member_data = {}
       section_data = {}
     else
@@ -1245,7 +1245,7 @@ class Assignment < ApplicationRecord
                               .to_h
     end
 
-    if !current_user.admin? && hide_unassigned_criteria
+    if current_user.ta? && hide_unassigned_criteria
       assigned_criteria = current_user.criterion_ta_associations
                                       .where(assignment_id: self.id)
                                       .pluck(:criterion_type, :criterion_id)
@@ -1281,7 +1281,7 @@ class Assignment < ApplicationRecord
       base = {
         _id: grouping_id, # Needed for checkbox version of react-table
         max_mark: max_mark,
-        group_name: !current_user.admin? && anonymize_groups ? "#{Group.model_name.human} #{grouping_id}" : group_name,
+        group_name: current_user.ta? && anonymize_groups ? "#{Group.model_name.human} #{grouping_id}" : group_name,
         tags: (tag_info.nil? ? [] : tag_info.map { |h| h['tags.name'] }),
         marking_state: marking_state(has_remark,
                                      result_info['results.marking_state'],
