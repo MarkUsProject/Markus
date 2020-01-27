@@ -3,7 +3,6 @@ describe AssignmentProperties do
     it { is_expected.to validate_presence_of(:repository_folder) }
     it { is_expected.to validate_presence_of(:group_min) }
     it { is_expected.to validate_presence_of(:group_max) }
-    it { is_expected.to validate_presence_of(:notes_count) }
 
     it do
       is_expected.to validate_numericality_of(:group_min).is_greater_than(0)

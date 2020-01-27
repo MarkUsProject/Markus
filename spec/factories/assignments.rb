@@ -45,8 +45,14 @@ FactoryBot.define do
   end
 
   factory :assignment_for_tests, parent: :assignment do
-    enable_test { true }
-    after(:build) do |assignment| # called by both create and build
+    after(:build) do |assignment, evaluator| # called by both create and build
+      properties = { enable_test: true }
+      if evaluator.assignment_properties_attributes
+        evaluator.assignment_properties_attributes = properties.merge(evaluator.assignment_properties_attributes)
+      else
+        evaluator.assignment_properties_attributes = properties
+      end
+
       create(:test_group, assignment: assignment)
     end
     after(:stub) do |assignment| # called by build_stubbed
@@ -54,8 +60,20 @@ FactoryBot.define do
     end
   end
 
-  factory :assignment_for_student_tests, parent: :assignment_for_tests do
-    assignment_properties_attributes { { enable_student_tests: true, token_start_date: Time.current } }
+  factory :assignment_for_student_tests, parent: :assignment do
+    after(:build) do |assignment, evaluator| # called by both create and build
+      properties = { enable_test: true, enable_student_tests: true, token_start_date: Time.current }
+      if evaluator.assignment_properties_attributes
+        evaluator.assignment_properties_attributes = properties.merge(evaluator.assignment_properties_attributes)
+      else
+        evaluator.assignment_properties_attributes = properties
+      end
+
+      create(:test_group, assignment: assignment)
+    end
+    after(:stub) do |assignment| # called by build_stubbed
+      build_stubbed(:test_group, assignment: assignment)
+    end
   end
 
   factory :assignment_for_scanned_exam, parent: :assignment do

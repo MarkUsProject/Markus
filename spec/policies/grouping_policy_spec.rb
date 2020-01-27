@@ -18,7 +18,7 @@ describe GroupingPolicy do
       let(:user) { build(:student) }
 
       context 'if the assignment policy passes' do
-        let(:assignment) { create(:assignment_for_student_tests, unlimited_tokens: false) }
+        let(:assignment) { create(:assignment_for_student_tests) }
         let(:grouping) { create(:grouping, assignment: assignment, test_tokens: 0) }
 
         context 'if the student is not a member of the group' do
@@ -50,7 +50,9 @@ describe GroupingPolicy do
               end
 
               context 'if the assignment has unlimited tokens' do
-                let(:assignment) { create(:assignment_for_student_tests, unlimited_tokens: true) }
+                let(:assignment) {
+                  create(:assignment_for_student_tests, assignment_properties_attributes: { unlimited_tokens: true })
+                }
                 it { is_expected.to pass :run_tests? }
               end
             end
