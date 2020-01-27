@@ -5,8 +5,7 @@ describe NotePolicy do
     let(:user) { build(:admin) }
     context 'Admin can manage, edit and update the notes' do
       it { is_expected.to pass :manage? }
-      it { is_expected.to pass :edit? }
-      it { is_expected.to pass :update? }
+      it { is_expected.to pass :modify? }
     end
   end
   describe 'When the user is TA' do
@@ -17,13 +16,11 @@ describe NotePolicy do
       it { is_expected.to pass :manage? }
     end
     context 'When TA is editing or updating others note' do
-      it { is_expected.not_to pass :edit?, because_of: :ensure_can_modify? }
-      it { is_expected.not_to pass :update?, because_of: :ensure_can_modify? }
+      it { is_expected.not_to pass :modify? }
     end
     context 'When TA is editing or updating their own notes' do
       let(:note) { build(:note, user: user) }
-      it { is_expected.to pass :edit? }
-      it { is_expected.to pass :update? }
+      it { is_expected.to pass :modify? }
     end
   end
 end

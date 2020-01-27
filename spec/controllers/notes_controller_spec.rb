@@ -250,7 +250,7 @@ describe NotesController do
         @note = create(:note)
         delete_as @ta, :destroy, params: { id: @note.id }
         expect(assigns :note).not_to be_nil
-        i18t_string = [I18n.t('action_policy.policy.note.ensure_can_modify?')].map { |f| extract_text f }
+        i18t_string = [I18n.t('action_policy.policy.note.modify?')].map { |f| extract_text f }
         expect(flash[:error].map { |f| extract_text f }).to eq(i18t_string)
       end
     end

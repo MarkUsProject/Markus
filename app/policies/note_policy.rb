@@ -1,19 +1,12 @@
 class NotePolicy < ApplicationPolicy
   default_rule :manage?
+  alias_rule :edit?, :update?, to: :modify?
 
   def manage?
     user.ta? || user.admin?
   end
 
-  def ensure_can_modify?
+  def modify?
     user.admin? || user.id == record.creator_id
-  end
-
-  def edit?
-    check?(:ensure_can_modify?)
-  end
-
-  def update?
-    check?(:ensure_can_modify?)
   end
 end

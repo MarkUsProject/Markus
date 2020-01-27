@@ -1,7 +1,7 @@
 class NotesController < ApplicationController
-  before_action do |_|
+  before_action do
     if params[:id].nil?
-      authorize! with: NotePolicy
+      authorize!
     else
       note = Note.find(params[:id])
       authorize! note, with: NotePolicy
@@ -114,11 +114,12 @@ class NotesController < ApplicationController
   def destroy
     @note = Note.find(params[:id])
     begin
-      authorize! @note, to: :ensure_can_modify?
+      authorize! @note, to: :modify?
       @note.destroy
       respond_with(@note)
-    rescue ActionPolicy::Unauthorized
-      flash_now(:error, t('action_policy.policy.note.ensure_can_modify?'))
+    rescue ActionPolicy::Unauthorized => e
+      flash_message(:error,
+                    e.result.message)
       render 'destroy', formats: [:js], handlers: [:erb]
     end
   end
