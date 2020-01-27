@@ -4,7 +4,8 @@
 <% i = 0 %>
 <%= criterion_form.fields_for :levels do |level_form| %>
   <div class="rubric_level_header">
-    Level <%= i %>
+    <%= I18n.t("rubric_criteria.level.name")%>
+    <%= i %>
     <% i += 1 %>
   </div>
   <div>

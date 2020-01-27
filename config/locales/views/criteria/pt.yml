@@ -45,6 +45,7 @@ pt:
 
   rubric_criteria:
     level:
+      name: "Nível"
       level_index: "Nível %{index}"
     defaults:
       level_0: "Insuficiente"
