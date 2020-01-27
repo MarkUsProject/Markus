@@ -85,9 +85,9 @@ class AssignmentSummaryTable extends React.Component {
       Cell: row => {
         if (row.original.final_grade) {
           const max_mark = Math.round(row.original.max_mark * 100) / 100;
-          return row.original.final_grade + ' / ' + max_mark
+          return row.original.final_grade + ' / ' + max_mark;
         } else {
-          return ''
+          return '';
         }
       },
       className: 'number',

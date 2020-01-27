@@ -187,22 +187,22 @@ class ResultsController < ApplicationController
         end
 
         if assignment.assign_graders_to_criteria && current_user.ta?
-          assigned_crit = current_user.criterion_ta_associations
-                                      .where(assignment_id: assignment.id)
-                                      .pluck(:criterion_type, :criterion_id)
-                                      .map { |t, id| "#{t}-#{id}" }
+          assigned_criteria = current_user.criterion_ta_associations
+                                          .where(assignment_id: assignment.id)
+                                          .pluck(:criterion_type, :criterion_id)
+                                          .map { |t, id| "#{t}-#{id}" }
           if assignment.hide_unassigned_criteria
-            marks_map = marks_map.select { |m| assigned_crit.include? "#{m[:criterion_type]}-#{m[:id]}" }
-            old_marks = old_marks.select { |m| assigned_crit.include? m }
+            marks_map = marks_map.select { |m| assigned_criteria.include? "#{m[:criterion_type]}-#{m[:id]}" }
+            old_marks = old_marks.select { |m| assigned_criteria.include? m }
           else
-            marks_map = marks_map.partition { |m| assigned_crit.include? "#{m[:criterion_type]}-#{m[:id]}" }
+            marks_map = marks_map.partition { |m| assigned_criteria.include? "#{m[:criterion_type]}-#{m[:id]}" }
                                  .flatten
           end
         else
-          assigned_crit = nil
+          assigned_criteria = nil
         end
 
-        data[:assigned_criteria] = assigned_crit
+        data[:assigned_criteria] = assigned_criteria
         data[:marks] = marks_map
 
         data[:old_marks] = old_marks

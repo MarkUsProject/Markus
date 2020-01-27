@@ -198,7 +198,7 @@ class GradersManager extends React.Component {
           />
           {I18n.t('graders.hide_unassigned_criteria')}
         </label>
-      </div>
+      </div>;
     }
   };
 
