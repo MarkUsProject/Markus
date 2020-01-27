@@ -125,9 +125,19 @@ class RawStudentTable extends React.Component {
             {
               Header: I18n.t('activerecord.attributes.user.grace_credits'),
               id: 'grace_credits',
+              accessor: 'remaining_grace_credits',
               className: 'number',
-              Cell: row => `${row.original.remaining_grace_credits} / ${row.original.grace_credits}`,
-              minWidth: 90
+              Cell: row => `${row.value} / ${row.original.grace_credits}`,
+              minWidth: 90,
+              Filter: ({ filter, onChange }) =>
+                <input
+                  onChange={event => onChange(event.target.valueAsNumber)}
+                  type='number'
+                  min={0}
+                  value={filter ? filter.value : ''} />,
+              filterMethod: (filter, row) => {
+                return isNaN(filter.value) || filter.value === row._original.remaining_grace_credits;
+              }
             },
             {
               Header: I18n.t('students.active') + '?',

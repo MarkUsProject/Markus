@@ -49,7 +49,7 @@ class ApplicationController < ActionController::Base
   def set_remote_user
     if request.env['HTTP_X_FORWARDED_USER'].present?
       @markus_auth_remote_user = request.env['HTTP_X_FORWARDED_USER']
-    elsif MarkusConfigurator.markus_config_remote_user_auth && !Rails.env.production?
+    elsif Rails.configuration.remote_user_auth && !Rails.env.production?
       # This is only used in non-production modes to test Markus behaviours specific to
       # external authentication. This should not be used in the place of any real
       # authentication (basic or otherwise)!

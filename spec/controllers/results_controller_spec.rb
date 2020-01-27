@@ -5,7 +5,7 @@ describe ResultsController do
   let(:ta) { create :ta }
   let(:grouping) { create :grouping_with_inviter, assignment: assignment, inviter: student }
   let(:submission) { create :version_used_submission, grouping: grouping }
-  let(:incomplete_result) { create :incomplete_result, submission: submission }
+  let(:incomplete_result) { submission.current_result }
   let(:complete_result) { create :complete_result, submission: submission }
   let(:submission_file) { create :submission_file, submission: submission }
   let(:rubric_mark) { create :rubric_mark, result: incomplete_result }
@@ -246,7 +246,7 @@ describe ResultsController do
                                       id: incomplete_result.id, markable_id: rubric_mark.markable_id,
                                       markable_type: rubric_mark.markable_type,
                                       mark: 1 }, xhr: true
-        expect(JSON.parse(response.body)[:num_marked]).to be_nil
+        expect(JSON.parse(response.body)['num_marked']).to eq 0
       end
       it { expect(response).to have_http_status(:redirect) }
       context 'but cannot save the mark' do
@@ -531,5 +531,19 @@ describe ResultsController do
       it { expect(response).to have_http_status(:success) }
     end
     include_examples 'shared ta and admin tests'
+
+    context 'accessing update_mark' do
+      it 'should not count completed groupings that are not assigned to the TA' do
+        grouping2 = create(:grouping_with_inviter, assignment: assignment)
+        create(:version_used_submission, grouping: grouping2)
+        grouping2.current_result.update(marking_state: Result::MARKING_STATES[:complete])
+
+        patch :update_mark, params: { assignment_id: assignment.id, submission_id: submission.id,
+                                      id: incomplete_result.id, markable_id: rubric_mark.markable_id,
+                                      markable_type: rubric_mark.markable_type,
+                                      mark: 1 }, xhr: true
+        expect(JSON.parse(response.body)['num_marked']).to eq 0
+      end
+    end
   end
 end

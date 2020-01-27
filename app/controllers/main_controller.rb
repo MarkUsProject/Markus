@@ -26,7 +26,7 @@ class MainController < ApplicationController
     session[:job_id] = nil
 
     # external auth has been done, skip markus authorization
-    if MarkusConfigurator.markus_config_remote_user_auth
+    if Rails.configuration.remote_user_auth
       if @markus_auth_remote_user.nil?
         render 'shared/http_status', formats: [:html], locals: { code: '403', message: HttpStatusHelper::ERROR_CODE['message']['403'] }, status: 403, layout: false
         return
@@ -190,7 +190,7 @@ class MainController < ApplicationController
   def login_as
     real_user = (session[:real_uid] && User.find_by_id(session[:real_uid])) ||
         current_user
-    if MarkusConfigurator.markus_config_remote_user_auth
+    if Rails.configuration.remote_user_auth
       validation_result = validate_user(params[:effective_user_login], real_user.user_name, nil, login: false)
     else
       validation_result = validate_user(params[:effective_user_login], real_user.user_name, params[:admin_password],
@@ -365,7 +365,7 @@ private
 
     if login
       # Two stage user verification: authentication and authorization
-      ip = MarkusConfigurator.markus_config_validate_ip? ? request.remote_ip : nil
+      ip = Rails.configuration.validate_ip ? request.remote_ip : nil
       authenticate_response = User.authenticate(real_user,
                                                 password,
                                                 ip: ip)

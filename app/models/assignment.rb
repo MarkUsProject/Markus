@@ -962,7 +962,7 @@ class Assignment < ApplicationRecord
   end
 
   def starter_code_repo_path
-    File.join(MarkusConfigurator.markus_config_repository_storage, STARTER_CODE_REPO_NAME)
+    File.join(Rails.configuration.x.repository.storage, STARTER_CODE_REPO_NAME)
   end
 
   #Yields a repository object, if possible, and closes it after it is finished
@@ -1168,7 +1168,9 @@ class Assignment < ApplicationRecord
     if current_user.admin?
       groupings = self.groupings
     elsif current_user.ta?
-      groupings = self.groupings.joins(:ta_memberships).where('memberships.user_id': current_user.id)
+      groupings = self.groupings.where(id: self.groupings.joins(:ta_memberships)
+                                                         .where('memberships.user_id': current_user.id)
+                                                         .select(:'groupings.id'))
     else
       return []
     end

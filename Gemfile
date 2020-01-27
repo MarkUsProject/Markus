@@ -10,7 +10,7 @@ source 'https://rubygems.org'
 
 # Bundler requires these gems in all environments
 gem 'puma'
-gem 'rails', '~> 6.0.1'
+gem 'rails', '~> 6.0.2'
 gem 'sprockets'
 
 # Models and database interactions
@@ -102,9 +102,9 @@ group :development do
 end
 
 group :test do
+  gem 'coveralls', require: false
   gem 'factory_bot_rails'
   gem 'machinist', '< 3'
-  gem 'mocha', require: false
   gem 'shoulda'
   gem 'simplecov', require: false
   gem 'time-warp'

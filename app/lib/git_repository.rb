@@ -15,10 +15,10 @@ class GitRepository < Repository::AbstractRepository
     if MarkusConfigurator.markus_config_repository_admin?.nil?
       raise ConfigurationError.new("Required config 'IS_REPOSITORY_ADMIN' not set")
     end
-    if MarkusConfigurator.markus_config_repository_storage.nil?
+    if Rails.configuration.x.repository.storage.nil?
       raise ConfigurationError.new("Required config 'REPOSITORY_STORAGE' not set")
     end
-    if MarkusConfigurator.markus_config_repository_permission_file.nil?
+    if Rails.configuration.x.repository.permission_file.nil?
       raise ConfigurationError.new("Required config 'REPOSITORY_PERMISSION_FILE' not set")
     end
     begin
@@ -445,7 +445,7 @@ class GitRepository < Repository::AbstractRepository
       raise ConfigurationError.new(
         "Required config 'IS_REPOSITORY_ADMIN' not set")
     end
-    if MarkusConfigurator.markus_config_repository_permission_file.nil?
+    if Rails.configuration.x.repository.permission_file.nil?
       raise ConfigurationError.new(
         "Required config 'REPOSITORY_PERMISSION_FILE' not set")
     end
@@ -457,7 +457,7 @@ class GitRepository < Repository::AbstractRepository
 
     # Create auth csv file
     sorted_permissions = permissions.sort.to_h
-    CSV.open(MarkusConfigurator.markus_config_repository_permission_file, 'wb') do |csv|
+    CSV.open(Rails.configuration.x.repository.permission_file, 'wb') do |csv|
       csv.flock(File::LOCK_EX)
       csv << ['*'] + full_access_users
       sorted_permissions.each do |repo_name, users|

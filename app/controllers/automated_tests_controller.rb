@@ -152,9 +152,10 @@ class AutomatedTestsController < ApplicationController
       FileUtils.rm_rf(folder_path)
     end
     new_files.each do |f|
-      if f.size > MarkusConfigurator.markus_config_max_file_size
-        flash_now(:error, t('student.submission.file_too_large', file_name: f.original_filename,
-                                max_size: (MarkusConfigurator.markus_config_max_file_size / 1_000_000.00).round(2)))
+      if f.size > Rails.configuration.max_file_size
+        flash_now(:error, t('student.submission.file_too_large',
+                            file_name: f.original_filename,
+                            max_size: (Rails.configuration.max_file_size / 1_000_000.00).round(2)))
         next
       elsif f.size == 0
         flash_now(:warning, t('student.submission.empty_file_warning', file_name: f.original_filename))

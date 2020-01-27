@@ -16,7 +16,7 @@ class SubversionRepository < Repository::AbstractRepository
       raise ConfigurationError.new('Init: Required config ' \
                                    "'IS_REPOSITORY_ADMIN' not set")
     end
-    if MarkusConfigurator.markus_config_repository_permission_file.nil?
+    if Rails.configuration.x.repository.permission_file.nil?
       raise ConfigurationError.new('Required config ' \
                                    "'REPOSITORY_PERMISSION_FILE' not set")
     end
@@ -24,8 +24,7 @@ class SubversionRepository < Repository::AbstractRepository
       super(connect_string) # dummy call to super
     rescue NotImplementedError; end
     @repos_path = connect_string
-    @repos_auth_file = MarkusConfigurator
-                       .markus_config_repository_permission_file ||
+    @repos_auth_file = Rails.configuration.x.repository.permission_file ||
                        File.dirname(connect_string) + '/svn_authz'
     @repos_admin = MarkusConfigurator.markus_config_repository_admin?
     if (SubversionRepository.repository_exists?(@repos_path))
@@ -293,20 +292,17 @@ class SubversionRepository < Repository::AbstractRepository
       raise NotAuthorityError.new('Unable to read authsz file: ' \
                                   'Not in authoritative mode!')
     end
-    if MarkusConfigurator.markus_config_repository_permission_file.nil?
+    if Rails.configuration.x.repository.permission_file.nil?
       raise ConfigurationError.new('Required config ' \
                                    "'REPOSITORY_PERMISSION_FILE' not set")
     end
-    unless File.exist?(MarkusConfigurator
-                       .markus_config_repository_permission_file)
+    unless File.exist?(Rails.configuration.x.repository.permission_file)
       # create file if it doesn't exist
-      File.open(MarkusConfigurator
-                  .markus_config_repository_permission_file, 'w').close
+      File.open(Rails.configuration.x.repository.permission_file, 'w').close
     end
     # Load up the Permissions:
     file_content = ""
-    File.open(MarkusConfigurator.markus_config_repository_permission_file,
-              'r+') do |auth_file|
+    File.open(Rails.configuration.x.repository.permission_file, 'r+') do |auth_file|
       auth_file.flock(File::LOCK_EX)
       file_content = auth_file.read()
       auth_file.flock(File::LOCK_UN) # release lock
@@ -322,20 +318,17 @@ class SubversionRepository < Repository::AbstractRepository
         'Unable to write authsz file: Not in authoritative mode!')
     end
 
-    if MarkusConfigurator.markus_config_repository_permission_file.nil?
+    if Rails.configuration.x.repository.permission_file.nil?
       raise ConfigurationError.new('Required config ' \
                                    "'REPOSITORY_PERMISSION_FILE' not set")
     end
 
-    unless File.exist?(MarkusConfigurator
-                       .markus_config_repository_permission_file)
+    unless File.exist?(Rails.configuration.x.repository.permission_file)
       # create file if not existent
-      File.open(MarkusConfigurator.markus_config_repository_permission_file,
-                'w').close
+      File.open(Rails.configuration.x.repository.permission_file, 'w').close
     end
     result = false
-    File.open(MarkusConfigurator.markus_config_repository_permission_file,
-              'w+') do |auth_file|
+    File.open(Rails.configuration.x.repository.permission_file, 'w+') do |auth_file|
       auth_file.flock(File::LOCK_EX)
       # Blast out the string to the file
       result = (auth_file.write(authz_file_contents) == authz_file_contents.length)
