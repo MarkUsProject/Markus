@@ -215,11 +215,7 @@ class ResultsController < ApplicationController
         if is_reviewer
           data[:grace_token_deductions] = []
         elsif !current_user.admin? && assignment.anonymize_groups
-          data[:grace_token_deductions] = submission.grouping
-                                                    .grace_period_deductions
-                                                    .reorder(deduction: :desc)
-                                                    .pluck_to_hash(:id, :deduction)
-                                                    .first(1)
+          data[:grace_token_deductions] = []
 
         else
           data[:grace_token_deductions] =

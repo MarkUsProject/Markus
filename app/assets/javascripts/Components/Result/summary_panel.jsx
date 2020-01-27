@@ -196,20 +196,10 @@ export class SummaryPanel extends React.Component {
   };
 
   renderGraceTokenDeductions = () => {
-    let rows;
     if (this.props.is_reviewer || this.props.graceTokenDeductions.length === 0) {
       return '';
-    } else if (this.props.graceTokenDeductions[0]['users.user_name'] === undefined) {
-      rows = [
-        <tr key={this.props.graceTokenDeductions[0]['id'] + '-deduction'}>
-          <td>
-            {I18n.t('grace_period_submission_rules.credit',
-              {count: this.props.graceTokenDeductions[0].deduction})}
-          </td>
-        </tr>
-      ];
     } else {
-      rows = this.props.graceTokenDeductions.flatMap(d => {
+      let rows = this.props.graceTokenDeductions.flatMap(d => {
         return [
           <tr key={d['users.user_name']}>
             <th colSpan={2}>
@@ -219,32 +209,33 @@ export class SummaryPanel extends React.Component {
           <tr key={d['users.user_name'] + '-deduction'}>
             <td>
               {I18n.t('grace_period_submission_rules.credit',
-                      {count: d.deduction})}
+                {count: d.deduction})}
             </td>
             <td>
               {!this.props.released_to_students &&
-               <button
-                 className='inline-button'
-                 onClick={() => this.props.deleteGraceTokenDeduction(d.id)}
-               >
-                 {I18n.t('delete')}
-               </button>
+              <button
+                className='inline-button'
+                onClick={() => this.props.deleteGraceTokenDeduction(d.id)}
+              >
+                {I18n.t('delete')}
+              </button>
               }
             </td>
           </tr>
         ]
       });
+
+      return (
+        <div>
+          <h3>{I18n.t('activerecord.models.grace_period_deduction.other')}</h3>
+          <table>
+            <tbody>
+            {rows}
+            </tbody>
+          </table>
+        </div>
+      );
     }
-    return (
-      <div>
-        <h3>{I18n.t('activerecord.models.grace_period_deduction.other')}</h3>
-        <table>
-          <tbody>
-          {rows}
-          </tbody>
-        </table>
-      </div>
-    );
   };
 
   render() {
