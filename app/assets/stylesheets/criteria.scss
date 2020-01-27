@@ -84,6 +84,9 @@
 
     .rubric_level_header {
       margin-bottom: 0.5em;
+      display: inline-block;
+      font-weight: 600;
+      min-width: 8em;
     }
 
     input[type='number'] {

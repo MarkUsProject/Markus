@@ -49,6 +49,7 @@ fr:
 
   rubric_criteria:
     level:
+      name: "Niveau"
       level_index: "Niveau %{index}"
     defaults:
       level_0: "Très insuffisant"
