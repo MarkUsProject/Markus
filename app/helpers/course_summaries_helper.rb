@@ -45,13 +45,13 @@ module CourseSummariesHelper
 
     if @current_user && @current_user.student?
       @gef_marks = Grade.joins(grade_entry_student: :user, grade_entry_item: :grade_entry_form,)
-                     .where(grade_entry_students: { released_to_student: true })
-                     .group('grade_entry_students.user_id', 'grade_entry_items.assessment_id')
-                     .sum('grade')
+                        .where(grade_entry_students: { released_to_student: true })
+                        .group('grade_entry_students.user_id', 'grade_entry_items.assessment_id')
+                        .sum('grade')
     else
       @gef_marks = Grade.joins(grade_entry_student: :user, grade_entry_item: :grade_entry_form)
-                     .group('grade_entry_students.user_id', 'grade_entry_items.assessment_id')
-                     .sum('grade')
+                        .group('grade_entry_students.user_id', 'grade_entry_items.assessment_id')
+                        .sum('grade')
     end
   end
 

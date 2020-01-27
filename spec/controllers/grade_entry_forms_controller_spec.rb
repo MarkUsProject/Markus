@@ -262,7 +262,7 @@ describe GradeEntryFormsController do
     it 'updates date field' do
       expect(grade_entry_form.due_date).to_not be_nil
       patch :update, params: { id: grade_entry_form.id, grade_entry_form: { due_date: '2019-11-14' } }
-      expect(grade_entry_form.reload.due_date.to_date).to eq DateTime.new(2019, 11, 14)
+      expect(grade_entry_form.reload.due_date.to_date).to eq Date.new(2019, 11, 14)
     end
   end
 
@@ -276,7 +276,7 @@ describe GradeEntryFormsController do
     it 'updates date field' do
       expect(grade_entry_form.due_date).to_not be_nil
       patch :update, params: { id: grade_entry_form.id, grade_entry_form: { due_date: '2019-11-14' } }
-      expect(grade_entry_form.reload.due_date.to_date).to eq DateTime.new(2019, 11, 14)
+      expect(grade_entry_form.reload.due_date.to_date).to eq Date.new(2019, 11, 14)
     end
   end
 end

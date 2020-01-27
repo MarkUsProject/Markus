@@ -50,9 +50,9 @@ describe GroupingPolicy do
               end
 
               context 'if the assignment has unlimited tokens' do
-                let(:assignment) {
+                let(:assignment) do
                   create(:assignment_for_student_tests, assignment_properties_attributes: { unlimited_tokens: true })
-                }
+                end
                 it { is_expected.to pass :run_tests? }
               end
             end

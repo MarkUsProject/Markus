@@ -42,9 +42,9 @@ describe AssignmentPolicy do
 
       context 'if enable_test is true' do
         context 'if enable_student_tests is false' do
-          let(:assignment) {
+          let(:assignment) do
             build(:assignment, assignment_properties_attributes: { enable_test: true, enable_student_tests: false })
-          }
+          end
           it { is_expected.not_to pass :run_tests?, because_of: :enabled? }
         end
 
@@ -60,10 +60,10 @@ describe AssignmentPolicy do
 
           context 'if a test group is configured' do
             context 'if tokens are not released yet' do
-              let(:assignment) {
+              let(:assignment) do
                 create(:assignment_for_student_tests,
                        assignment_properties_attributes: { token_start_date: Time.current + 1.minute })
-              }
+              end
               it { is_expected.not_to pass :run_tests?, because_of: :tokens_released? }
             end
 
