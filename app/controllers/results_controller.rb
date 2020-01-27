@@ -140,7 +140,7 @@ class ResultsController < ApplicationController
           data[:num_marked] = assignment.get_num_marked(current_user.admin? ? nil : current_user.id)
           data[:num_assigned] = assignment.get_num_assigned(current_user.admin? ? nil : current_user.id)
           if current_user.ta? && assignment.anonymize_groups
-            data[:group_name] = "Group #{submission.grouping.id}"
+            data[:group_name] = "#{Group.model_name.human} #{submission.grouping.id}"
           else
             data[:group_name] = submission.grouping.get_group_name
           end
