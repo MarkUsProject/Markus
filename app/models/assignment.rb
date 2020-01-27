@@ -588,7 +588,7 @@ class Assignment < ApplicationRecord
       next if hide_unassigned && unassigned
 
       max_mark += crit.max_mark
-      accessor = "criterion_#{crit.class}_#{crit.id}"
+      accessor = "#{crit.class}-#{crit.id}"
       criteria_shown << accessor
       {
         Header: crit.name,
@@ -678,7 +678,7 @@ class Assignment < ApplicationRecord
             row += Array.new(2 + criteria.length, nil)
           else
             row << result.total_mark
-            row += criteria.map { |crit| marks["criterion_#{crit.class.name}_#{crit.id}"] }
+            row += criteria.map { |crit| marks["#{crit.class.name}-#{crit.id}"] }
             row << extra_marks_hash[result&.id]
           end
           csv << row

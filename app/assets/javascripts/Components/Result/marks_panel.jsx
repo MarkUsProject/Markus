@@ -32,7 +32,7 @@ export class MarksPanel extends React.Component {
     //   2) A mark has not yet been given, and the current user can give the mark.
     let expanded = new Set();
     this.props.marks.forEach(data => {
-      const key = `criterion_${data.criterion_type}_${data.id}`;
+      const key = `${data.criterion_type}-${data.id}`;
       if ((data.mark === null || data.mark === undefined) &&
           (this.props.assigned_criteria === null || this.props.assigned_criteria.includes(key))) {
         expanded.add(key);
@@ -44,7 +44,7 @@ export class MarksPanel extends React.Component {
     let expanded = new Set();
     this.props.marks.forEach(markData => {
       if (!onlyUnmarked || markData.mark === null || markData.mark === undefined) {
-        expanded.add(`criterion_${markData.criterion_type}_${markData.id}`);
+        expanded.add(`${markData.criterion_type}-${markData.id}`);
       }
     });
     this.setState({ expanded });
@@ -67,7 +67,7 @@ export class MarksPanel extends React.Component {
     let result = this.props.updateMark(criterion_type, criterion_id, mark);
     if (result !== undefined) {
       result.then(() => {
-        this.state.expanded.delete(`criterion_${criterion_type}_${criterion_id}`);
+        this.state.expanded.delete(`${criterion_type}-${criterion_id}`);
         this.setState({ expanded: this.state.expanded });
       })
     }
@@ -79,7 +79,7 @@ export class MarksPanel extends React.Component {
   };
 
   renderMarkComponent = (markData) => {
-    const key = `criterion_${markData.criterion_type}_${markData.id}`;
+    const key = `${markData.criterion_type}-${markData.id}`;
     const unassigned = this.props.assigned_criteria !== null && !this.props.assigned_criteria.includes(key);
 
     const props = {
@@ -89,7 +89,7 @@ export class MarksPanel extends React.Component {
       updateMark: this.updateMark,
       destroyMark: this.destroyMark,
       expanded: this.state.expanded.has(key),
-      oldMark: this.props.old_marks[`criterion_${markData.criterion_type}_${markData.id}`],
+      oldMark: this.props.old_marks[`${markData.criterion_type}-${markData.id}`],
       toggleExpanded: () => this.toggleExpanded(key),
       ... markData
     };

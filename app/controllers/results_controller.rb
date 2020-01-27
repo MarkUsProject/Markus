@@ -190,12 +190,12 @@ class ResultsController < ApplicationController
           assigned_crit = current_user.criterion_ta_associations
                                       .where(assignment_id: assignment.id)
                                       .pluck(:criterion_type, :criterion_id)
-                                      .map { |t, id| "criterion_#{t}_#{id}" }
+                                      .map { |t, id| "#{t}-#{id}" }
           if assignment.hide_unassigned_criteria
-            marks_map = marks_map.select { |m| assigned_crit.include? "criterion_#{m[:criterion_type]}_#{m[:id]}" }
+            marks_map = marks_map.select { |m| assigned_crit.include? "#{m[:criterion_type]}-#{m[:id]}" }
             old_marks = old_marks.select { |m| assigned_crit.include? m }
           else
-            marks_map = marks_map.partition { |m| assigned_crit.include? "criterion_#{m[:criterion_type]}_#{m[:id]}" }
+            marks_map = marks_map.partition { |m| assigned_crit.include? "#{m[:criterion_type]}-#{m[:id]}" }
                                  .flatten
           end
         else

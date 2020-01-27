@@ -104,7 +104,7 @@ class Result extends React.Component {
       criterionSummaryData.push({
         criterion: data.name,
         mark: data.mark,
-        old_mark: result_data.old_marks[`criterion_${data.criterion_type}_${data.id}`],
+        old_mark: result_data.old_marks[`${data.criterion_type}-${data.id}`],
         max_mark: data.max_mark
       });
       subtotal += data.mark || 0;
