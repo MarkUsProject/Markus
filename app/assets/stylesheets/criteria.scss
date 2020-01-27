@@ -47,12 +47,6 @@
   padding: 1em;
   width: 100%;
 
-  .bold_inline_label {
-    display: inline-block;
-    font-weight: 600;
-    min-width: 8em;
-  }
-
   h2 {
     margin-bottom: 0.5em;
   }
@@ -90,6 +84,9 @@
 
     .rubric_level_header {
       margin-bottom: 0.5em;
+      display: inline-block;
+      font-weight: 600;
+      min-width: 8em;
     }
 
     input[type='number'] {
