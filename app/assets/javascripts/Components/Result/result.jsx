@@ -419,7 +419,7 @@ class Result extends React.Component {
   newNote = () => {
     $.ajax({
       url: Routes.notes_dialog_note_path({
-        id: this.props.assignment_id,
+        assignment_id: this.props.assignment_id,
       }),
       data: {
         noteable_id: this.props.grouping_id,

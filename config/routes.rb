@@ -331,11 +331,11 @@ Rails.application.routes.draw do
         post 'noteable_object_selector'
         get 'new_update_groupings'
         post 'new_update_groupings'
+        get 'notes_dialog'
       end
 
       member do
         get 'student_interface'
-        get 'notes_dialog'
         post 'grades'
       end
     end
