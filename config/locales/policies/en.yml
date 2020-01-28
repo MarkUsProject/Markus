@@ -28,4 +28,7 @@ en:
       group:
         student_manage?: "You are not allowed to create or manage groups"
         manage?: "You are not allowed to manage groups"
+      note:
+        manage?: "You cannot add or modify the notes because students are not allowed to."
+        modify?: "You do not have permissions to edit or delete the notes which is created by others."
 

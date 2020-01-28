@@ -1,6 +1,6 @@
 class SubmissionsJob < ApplicationJob
 
-  queue_as MarkusConfigurator.markus_job_collect_submissions_queue_name
+  queue_as Rails.configuration.x.queues.collect_submissions
 
   def self.on_complete_js(status)
     'window.submissionTable.wrapped.fetchData'

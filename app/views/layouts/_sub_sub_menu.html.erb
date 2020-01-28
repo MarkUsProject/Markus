@@ -32,7 +32,7 @@
             <%= link_to Annotation.model_name.human.pluralize,
                         assignment_annotation_categories_path(@assignment) %>
           </li>
-          <% if MarkusConfigurator.autotest_on? && !@assignment.is_peer_review? && !@assignment.scanned_exam %>
+          <% if Rails.configuration.x.autotest.enable && !@assignment.is_peer_review? && !@assignment.scanned_exam %>
             <li class='<%= "active" if controller.controller_name == 'automated_tests' %>'>
               <%= link_to t('automated_tests.title'),
                           manage_assignment_automated_tests_path(@assignment) %>

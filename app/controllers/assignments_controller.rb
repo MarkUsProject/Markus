@@ -244,7 +244,7 @@ class AssignmentsController < ApplicationController
         @assignment, new_required_files = process_assignment_form(@assignment)
         @assignment.save!
       end
-      if new_required_files && !MarkusConfigurator.markus_config_repository_hooks.empty?
+      if new_required_files && !Rails.configuration.x.repository.hooks.empty?
         # update list of required files in all repos only if there is a hook that will use that list
         @current_job = UpdateRepoRequiredFilesJob.perform_later(@assignment.id, current_user.user_name)
         session[:job_id] = @current_job.job_id
@@ -274,8 +274,7 @@ class AssignmentsController < ApplicationController
                                     .sort_by { |s| s.section.name }
 
     # set default value if web submits are allowed
-    @assignment.allow_web_submits =
-        !MarkusConfigurator.markus_config_repository_external_submits_only?
+    @assignment.allow_web_submits = Rails.configuration.x.repository.external_submits_only
     render :new
   end
 
@@ -307,7 +306,7 @@ class AssignmentsController < ApplicationController
           clone_warnings.each { |w| flash_message(:warning, w) }
         end
       end
-      if new_required_files && !MarkusConfigurator.markus_config_repository_hooks.empty?
+      if new_required_files && !Rails.configuration.x.repository.hooks.empty?
         # update list of required files in all repos only if there is a hook that will use that list
         @current_job = UpdateRepoRequiredFilesJob.perform_later(@assignment.id, current_user.user_name)
         session[:job_id] = @current_job.job_id
@@ -464,7 +463,7 @@ class AssignmentsController < ApplicationController
   end
 
   def upload_starter_code
-    unless MarkusConfigurator.markus_starter_code_on
+    unless Rails.configuration.starter_code_on
       raise t('student.submission.external_submit_only') #TODO: Update this
     end
 

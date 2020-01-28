@@ -14,7 +14,7 @@
               { controller: 'assignments',
                 action: 'new' },
               class: 'button' %>
-  <% if MarkusConfigurator.markus_experimental_scanned_exam_on? %>
+  <% if Rails.configuration.x.scanned_exams.enable %>
         <%= link_to t('helpers.submit.create', model: t('activerecord.models.scanned_assignment.one')),
                     { controller: 'assignments',
                       scanned: true,

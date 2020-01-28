@@ -275,20 +275,14 @@ Rails.application.routes.draw do
       end
 
       resources :annotation_categories do
-        member do
-          delete 'delete_annotation_text'
-          get 'add_annotation_text'
-          post 'add_annotation_text'
-          put 'update_annotation'
-        end
-
         collection do
           post 'update_positions'
           post 'upload'
           get 'download'
-          get 'add_annotation_text'
-          post 'delete_annotation_text'
-          post 'update_annotation'
+          get 'new_annotation_text'
+          post 'create_annotation_text'
+          delete 'destroy_annotation_text'
+          put 'update_annotation_text'
           get 'find_annotation_text'
         end
       end
@@ -331,11 +325,11 @@ Rails.application.routes.draw do
         post 'noteable_object_selector'
         get 'new_update_groupings'
         post 'new_update_groupings'
+        get 'notes_dialog'
       end
 
       member do
         get 'student_interface'
-        get 'notes_dialog'
         post 'grades'
       end
     end

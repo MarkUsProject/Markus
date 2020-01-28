@@ -1,5 +1,4 @@
 describe Mark do
-
   it { is_expected.to validate_presence_of(:markable_type) }
 
   it { is_expected.to belong_to(:markable) }
@@ -56,6 +55,21 @@ describe Mark do
     end
   end
 
+  describe '#scale_mark' do
+    let(:curr_max_mark) { 10 }
+    describe 'when mark is a rubric mark' do
+      let(:mark) { create(:rubric_mark, mark: 3) }
+      it_behaves_like 'Scale_mark'
+    end
+    describe 'when mark is a flexible mark' do
+      let(:mark) { create(:flexible_mark, mark: 1) }
+      it_behaves_like 'Scale_mark'
+    end
+    describe 'when mark is a checkbox mark' do
+      let(:mark) { create(:checkbox_mark, mark: 1) }
+      it_behaves_like 'Scale_mark'
+    end
+  end
   # private methods
   describe '#ensure_not_released_to_students'
   describe '#update_grouping_mark'

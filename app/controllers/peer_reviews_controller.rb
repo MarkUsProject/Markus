@@ -1,6 +1,5 @@
 class PeerReviewsController < ApplicationController
   include GroupsHelper
-  include PeerReviewHelper
   include RandomAssignHelper
 
   before_action :set_peer_review, only: [:show, :edit, :update, :destroy]
@@ -29,23 +28,28 @@ class PeerReviewsController < ApplicationController
   end
 
   def populate
-    @assignment = Assignment.find(params[:assignment_id])
+    assignment = Assignment.find(params[:assignment_id])
+    peer_reviews = assignment.pr_peer_reviews.except(:order)
 
-    reviewer_groups = @assignment.all_grouping_data
-    reviewee_groups = @assignment.parent_assignment.all_grouping_data
+    # A map of reviewee_id => [reviewer_ids].
+    reviewee_to_reviewers_map = peer_reviews.joins(:reviewee)
+                                            .pluck('groupings.id', :reviewer_id)
+                                            .group_by { |reviewee_id, _| reviewee_id }
+    reviewee_to_reviewers_map.transform_values! { |rows| rows.map { |row| row[1] } }
 
-    reviewee_to_reviewers_map = create_map_reviewee_to_reviewers(reviewer_groups, reviewee_groups)
-    id_to_group_names_map = create_map_group_id_to_name(reviewer_groups, reviewee_groups)
-    num_reviews_map = PeerReview.group(:reviewer_id)
-                                .having(reviewer_id: reviewer_groups[:groups].map { |g| g[:_id] })
-                                .count
+    # A map of grouping_id => group_name (both assignment and parent assignment groupings).
+    id_to_group_names_map = Hash[
+      assignment.groupings.or(assignment.parent_assignment.groupings)
+                .joins(:group)
+                .pluck('groupings.id', 'groups.group_name')
+    ]
 
     render json: {
-      reviewer_groups: reviewer_groups,
-      reviewee_groups: reviewee_groups,
+      reviewer_groups: assignment.all_grouping_data,
+      reviewee_groups: assignment.parent_assignment.all_grouping_data,
       reviewee_to_reviewers_map: reviewee_to_reviewers_map,
       id_to_group_names_map: id_to_group_names_map,
-      num_reviews_map: num_reviews_map,
+      num_reviews_map: peer_reviews.group(:reviewer_id).count,
       sections: Hash[Section.all.pluck(:id, :name)]
     }
   end
@@ -187,4 +191,7 @@ class PeerReviewsController < ApplicationController
   def peer_review_params
     params.require(:peer_review).permit(:reviewer_id, :result_id)
   end
+end
+
+class SubmissionsNotCollectedException < RuntimeError
 end
