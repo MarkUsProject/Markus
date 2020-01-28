@@ -3,7 +3,7 @@
 class GroupsController < ApplicationController
   include GroupsHelper
   # Administrator
-  before_action { authorize! with: GroupPolicy }
+  before_action { authorize! }
   layout 'assignment_content'
 
   # Group administration functions -----------------------------------------
