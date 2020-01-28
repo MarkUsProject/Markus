@@ -8,6 +8,10 @@
     <%= i %>
     <% i += 1 %>
   </div>
+  <div class="destroy_checkbox">
+    <%= level_form.check_box :_destroy%>
+    <%= level_form.label :delete %>
+  </div>
   <div>
     <%= level_form.label :name, Level.human_attribute_name(:name), class: 'required' %>
     <%= level_form.text_field :name %>
