@@ -1,16 +1,13 @@
 <%#
 # Erb template for display rubric criterion levels in the assignment rubric manager
 %>
-<% i = 0 %>
 <%= criterion_form.fields_for :levels do |level_form| %>
   <div class="rubric_level_header">
-    <%= I18n.t("rubric_criteria.level.name")%>
-    <%= i %>
-    <% i += 1 %>
+    <%= I18n.t("rubric_criteria.level.name") + " " + level_form.index.to_s %>
   </div>
   <div class="destroy_checkbox">
     <%= level_form.check_box :_destroy%>
-    <%= level_form.label :delete %>
+    <%= level_form.label :_destroy, "Destroy Level " + i.to_s %>
   </div>
   <div>
     <%= level_form.label :name, Level.human_attribute_name(:name), class: 'required' %>
