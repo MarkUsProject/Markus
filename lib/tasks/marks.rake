@@ -59,13 +59,12 @@ namespace :db do
     Mark.joins(result: [submission: [grouping: :assignment]]).where(assignments: {short_identifier: ['A0', 'A1', 'A2']}).destroy_all
     Mark.import marks
 
-
     # adding annotations can only happen between feedback file creation and mark release
     ['A0', 'A1', 'A2'].each do |n|
       Assignment.find_by('short_identifier' => n).groupings.each do |grouping|
         @text = AnnotationText.find(AnnotationText.all.pluck(:id).to_a.sample).id
-        submission_file = SubmissionFile.find(grouping.current_submission_used.
-            submission_files.find_by('filename' => 'deferred-process.jpg').id)
+        submission_file = SubmissionFile.find(grouping.current_submission_used
+                                              .submission_files.find_by('filename' => 'deferred-process.jpg').id)
         submission = submission_file.submission
         base_attributes = {
           submission_file_id: submission_file.id,
@@ -84,8 +83,8 @@ namespace :db do
           **base_attributes
         )
         @text = AnnotationText.find(AnnotationText.all.pluck(:id).to_a.sample).id
-        submission_file = SubmissionFile.find(grouping.current_submission_used.
-            submission_files.find_by('filename' => 'pdf.pdf').id)
+        submission_file = SubmissionFile.find(grouping.current_submission_used
+                                              .submission_files.find_by('filename' => 'pdf.pdf').id)
         submission = submission_file.submission
         base_attributes = {
           submission_file_id: submission_file.id,
@@ -105,8 +104,8 @@ namespace :db do
           **base_attributes
         )
         @text = AnnotationText.find(AnnotationText.all.pluck(:id).to_a.sample).id
-        submission_file = SubmissionFile.find(grouping.current_submission_used.
-            submission_files.find_by('filename' => 'hello.py').id)
+        submission_file = SubmissionFile.find(grouping.current_submission_used
+                                              .submission_files.find_by('filename' => 'hello.py').id)
         submission = submission_file.submission
         base_attributes = {
           submission_file_id: submission_file.id,
