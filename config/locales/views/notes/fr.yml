@@ -1,7 +1,6 @@
 fr:
   notes:
     delete:
-      error_permissions: "Vous n'avez pas les permissions suffisantes pour supprimer cette remarque."
       link_confirm: "Cela supprimera définitivement la remarque. Êtes-vous sûr de vouloir continuer ?"
       link_title: "Supprimer la remarque"
     help: "Notes can be created for students, groups, or assignments. They are visible to admins and graders, but not students."
