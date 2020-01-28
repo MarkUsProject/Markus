@@ -190,7 +190,7 @@ describe AssignmentsController do
       let(:value) { !assignment[attribute] }
 
       before :each do
-        post_as user, :set_boolean_graders_options, params: { id: assignment.id, attribute: attribute, value: value }
+        post_as user, :set_boolean_graders_options, params: { id: assignment.id, attribute: { attribute => value } }
         assignment.reload
       end
 
