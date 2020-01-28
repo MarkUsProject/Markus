@@ -532,6 +532,27 @@ describe ResultsController do
     end
     include_examples 'shared ta and admin tests'
 
+    context 'when groups information is anonymized' do
+      let!(:grace_period_deduction) do
+        create(:grace_period_deduction, membership: grouping.accepted_student_memberships.first)
+      end
+      before :each do
+        assignment.update(anonymize_groups: true)
+        get :show, params: { assignment_id: assignment.id, submission_id: submission.id,
+                             id: incomplete_result.id }, xhr: true
+      end
+
+      it 'should anonymize the group names' do
+        data = JSON.parse(response.body)
+        expect(data['group_name']).to eq "#{Group.model_name.human} #{data['grouping_id']}"
+      end
+
+      it 'should not report any grace token deductions' do
+        data = JSON.parse(response.body)
+        expect(data['grace_token_deductions']).to eq []
+      end
+    end
+
     context 'accessing update_mark' do
       it 'should not count completed groupings that are not assigned to the TA' do
         grouping2 = create(:grouping_with_inviter, assignment: assignment)
