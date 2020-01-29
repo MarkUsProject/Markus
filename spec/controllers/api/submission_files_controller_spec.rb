@@ -51,6 +51,24 @@ describe Api::SubmissionFilesController do
         Submission.generate_new_submission(grouping, repo.get_latest_revision)
       end
     end
+    context 'POST create' do
+      before :each do
+        post :create, params: { assignment_id: assignment.id, group_id: group.id, filename: 'v1/x/y/test.txt',
+                                mime_type: 'text', file_content: 'This is a test file' }
+      end
+      it 'should be successful' do
+        expect(response.status).to eq(201)
+      end
+      it 'should create a file in the corresponding directory' do
+        path = Pathname.new('v1/x/y')
+        success, _messages = group.access_repo do |repo|
+          file_path = Pathname.new(assignment.repository_folder).join path
+          files = repo.get_latest_revision.files_at_path(file_path.to_s)
+          files.keys.include? 'test.txt'
+        end
+        expect(success).to be_truthy
+      end
+    end
     context 'GET index' do
       let(:aid) { assignment.id }
       let(:gid) { group.id }
