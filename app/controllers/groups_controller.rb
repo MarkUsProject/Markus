@@ -3,24 +3,7 @@
 class GroupsController < ApplicationController
   include GroupsHelper
   # Administrator
-  before_action      :authorize_only_for_admin,
-                     except: [:create,
-                              :destroy,
-                              :delete_rejected,
-                              :disinvite_member,
-                              :invite_member,
-                              :accept_invitation,
-                              :decline_invitation]
-
-  before_action      :authorize_for_student,
-                     only: [:create,
-                            :destroy,
-                            :delete_rejected,
-                            :disinvite_member,
-                            :invite_member,
-                            :accept_invitation,
-                            :decline_invitation]
-
+  before_action { authorize! }
   layout 'assignment_content'
 
   # Group administration functions -----------------------------------------
