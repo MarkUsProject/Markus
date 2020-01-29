@@ -25,6 +25,9 @@ en:
         before_release?: "You cannot run tests because the marks have been released."
         not_a_student?: "You cannot run tests because students are not allowed to."
         manage_subdirectories?: "You are not allowed to create, delete or change subdirectories."
+      group:
+        student_manage?: "You are not allowed to create or manage groups"
+        manage?: "You are not allowed to manage groups"
       note:
         manage?: "You cannot add or modify the notes because students are not allowed to."
         modify?: "You do not have permissions to edit or delete the notes which is created by others."
