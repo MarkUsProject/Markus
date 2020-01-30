@@ -574,7 +574,7 @@ describe ResultsController do
 
         it 'should only include marks for the assigned criteria' do
           expected = [[rubric_criterion.class.to_s, rubric_criterion.id]]
-          expect(data['marks'].map { |m| [ m['criterion_type'], m['id']] }).to eq expected
+          expect(data['marks'].map { |m| [m['criterion_type'], m['id']] }).to eq expected
         end
 
         context 'when a remark request exists' do
