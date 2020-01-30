@@ -8,8 +8,10 @@ describe ResultsController do
   let(:incomplete_result) { submission.current_result }
   let(:complete_result) { create :complete_result, submission: submission }
   let(:submission_file) { create :submission_file, submission: submission }
-  let(:rubric_mark) { create :rubric_mark, result: incomplete_result }
-  let(:flexible_mark) { create :flexible_mark, result: incomplete_result }
+  let(:rubric_criterion) { create(:rubric_criterion, assignment: assignment) }
+  let(:rubric_mark) { create :rubric_mark, result: incomplete_result, markable: rubric_criterion }
+  let(:flexible_criterion) { create(:flexible_criterion, assignment: assignment) }
+  let(:flexible_mark) { create :flexible_mark, result: incomplete_result, markable: flexible_criterion }
 
   SAMPLE_FILE_CONTENT = 'sample file content'.freeze
   SAMPLE_ERROR_MESSAGE = 'sample error message'.freeze
@@ -533,6 +535,7 @@ describe ResultsController do
     include_examples 'shared ta and admin tests'
 
     context 'when groups information is anonymized' do
+      let(:data) { JSON.parse(response.body) }
       let!(:grace_period_deduction) do
         create(:grace_period_deduction, membership: grouping.accepted_student_memberships.first)
       end
@@ -543,13 +546,49 @@ describe ResultsController do
       end
 
       it 'should anonymize the group names' do
-        data = JSON.parse(response.body)
         expect(data['group_name']).to eq "#{Group.model_name.human} #{data['grouping_id']}"
       end
 
       it 'should not report any grace token deductions' do
-        data = JSON.parse(response.body)
         expect(data['grace_token_deductions']).to eq []
+      end
+    end
+
+    context 'when criteria are assigned to this grader' do
+      let(:data) { JSON.parse(response.body) }
+      let(:params) { { assignment_id: assignment.id, submission_id: submission.id, id: incomplete_result.id } }
+      before :each do
+        assignment.update(assign_graders_to_criteria: true)
+        create(:criterion_ta_association, criterion: rubric_mark.markable, ta: ta)
+        get :show, params: params, xhr: true
+      end
+
+      it 'should include assigned criteria list' do
+        expect(data['assigned_criteria']).to eq ["#{rubric_criterion.class}-#{rubric_criterion.id}"]
+      end
+
+      context 'when unassigned criteria are hidden from the grader' do
+        before :each do
+          assignment.update(hide_unassigned_criteria: true)
+        end
+
+        it 'should only include marks for the assigned criteria' do
+          expected = [[rubric_criterion.class.to_s, rubric_criterion.id]]
+          expect(data['marks'].map { |m| [ m['criterion_type'], m['id']] }).to eq expected
+        end
+
+        context 'when a remark request exists' do
+          let(:remarked) do
+            submission.make_remark_result
+            submission.update(remark_request_timestamp: Time.zone.now)
+            submission
+          end
+          let(:params) { { assignment_id: assignment.id, submission_id: remarked.id, id: incomplete_result.id } }
+
+          it 'should only include marks for assigned criteria in the remark result' do
+            expect(data['old_marks'].keys).to eq ["#{rubric_criterion.class}-#{rubric_criterion.id}"]
+          end
+        end
       end
     end
 
