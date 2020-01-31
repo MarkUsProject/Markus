@@ -313,9 +313,9 @@ describe SubmissionsController do
       context '#set_result_marking_state' do
         let(:current_result) { @grouping.submissions.first.get_latest_result }
         before :each do
-          post_as @admin, :set_result_marking_state, params: {assignment_id: @assignment.id,
-                                                              groupings: [@grouping.id],
-                                                              marking_state: marking_state}
+          post_as @admin, :set_result_marking_state, params: { assignment_id: @assignment.id,
+                                                               groupings: [@grouping.id],
+                                                               marking_state: marking_state }
         end
         context 'when the marking state is complete' do
           let(:marking_state) { Result::MARKING_STATES[:incomplete] }
