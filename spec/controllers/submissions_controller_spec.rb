@@ -290,6 +290,7 @@ describe SubmissionsController do
     end
 
     describe 'attempting to collect submissions' do
+      let(:marking_state) { Result::MARKING_STATES[:complete] }
       before(:each) do
         @grouping.group.access_repo do |repo|
           txn = repo.get_transaction('test')
@@ -302,11 +303,41 @@ describe SubmissionsController do
               Submission.generate_new_submission(@grouping,
                                                  repo.get_latest_revision)
           result = submission.get_latest_result
-          result.marking_state = Result::MARKING_STATES[:complete]
+          result.marking_state = marking_state
           result.save
           submission.save
         end
         @grouping.update! is_collected: true
+      end
+
+      context '#set_result_marking_state' do
+        let(:current_result) { @grouping.submissions.first.get_latest_result }
+        before :each do
+          post_as @admin, :set_result_marking_state, params: {assignment_id: @assignment.id,
+                                                              groupings: [@grouping.id],
+                                                              marking_state: marking_state}
+        end
+        context 'when the marking state is complete' do
+          let(:marking_state) { Result::MARKING_STATES[:incomplete] }
+
+          it 'should be able to bulk set the marking state to incomplete' do
+            expect(current_result.marking_state).to eq marking_state
+          end
+
+          it 'should be successful' do
+            expect(response).to have_http_status(:success)
+          end
+        end
+
+        context 'when the marking state is incomplete' do
+          it 'should be able to bulk set the marking state to complete' do
+            expect(current_result.marking_state).to eq marking_state
+          end
+
+          it 'should be successful' do
+            expect(response).to have_http_status(:success)
+          end
+        end
       end
 
       context 'where a grouping does not have a previously collected submission' do
