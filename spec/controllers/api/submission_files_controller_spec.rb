@@ -51,6 +51,22 @@ describe Api::SubmissionFilesController do
         Submission.generate_new_submission(grouping, repo.get_latest_revision)
       end
     end
+    context 'POST create_folders' do
+      before :each do
+        post :create_folders, params: { assignment_id: assignment.id, group_id: group.id, folder_path: 'a/b/c' }
+      end
+      it 'should be successful' do
+        expect(response.status).to eq(201)
+      end
+      it 'should create folders in the corresponding directory' do
+        path = Pathname.new('a/b/c')
+        success, _messages = group.access_repo do |repo|
+          file_path = Pathname.new(assignment.repository_folder).join path
+          repo.get_latest_revision.path_exists?(file_path.to_s)
+        end
+        expect(success).to be_truthy
+      end
+    end
     context 'GET index' do
       let(:aid) { assignment.id }
       let(:gid) { group.id }

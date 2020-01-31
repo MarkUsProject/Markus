@@ -28,6 +28,7 @@ Rails.application.routes.draw do
           resources :submission_files, except: [:new, :edit] do
             collection do
               delete 'remove_file'
+              post 'create_folders'
             end
           end
           resources :feedback_files, except: [:new, :edit]
