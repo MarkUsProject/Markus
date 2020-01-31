@@ -18,7 +18,7 @@ class Result < ApplicationRecord
 
   validates_numericality_of :total_mark, greater_than_or_equal_to: 0
 
-  before_update :unrelease_partial_results, :check_for_released
+  before_update :check_for_released
   before_save :check_for_nil_marks
 
   scope :submitted_remarks_and_all_non_remarks, lambda {
@@ -211,16 +211,6 @@ class Result < ApplicationRecord
   end
 
   private
-  # If this record is marked as "partial", ensure that its
-  # "released_to_students" value is set to false.
-  def unrelease_partial_results
-    unless is_a_review?
-      if marking_state != MARKING_STATES[:complete]
-        self.released_to_students = false
-      end
-    end
-    true
-  end
 
   # Do not allow the marking state to be changed to incomplete if the result is released
   def check_for_released
