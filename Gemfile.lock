@@ -362,7 +362,7 @@ GEM
       kgio (~> 2.6)
       raindrops (~> 0.7)
     uniform_notifier (1.13.0)
-    upsert (2.2.1)
+    upsert (2.9.10)
     vegas (0.1.11)
       rack (>= 1.0.0)
     webpacker (4.2.2)
