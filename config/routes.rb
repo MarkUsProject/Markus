@@ -179,6 +179,7 @@ Rails.application.routes.draw do
           get 'download_svn_export_list'
           get 'download_repo_checkout_commands'
           get 'download_repo_list'
+          post 'set_result_marking_state'
           post 'update_submissions'
           get 'updated_files'
           get 'replace_files'
