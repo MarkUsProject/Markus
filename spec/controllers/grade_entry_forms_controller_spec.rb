@@ -165,10 +165,16 @@ describe GradeEntryFormsController do
     end
 
     it 'expects a call to send_data' do
+      grade_entry_item = grade_entry_form_with_data.grade_entry_items[0]
+      student_grade = grade_entry_form_with_data.grade_entry_students
+                                                .find_by(user: @user)
+                                                .grades
+                                                .find_by(grade_entry_item: grade_entry_item)
+                                                .grade
       csv_array = [
-        ['', grade_entry_form_with_data.grade_entry_items[0].name],
-        [GradeEntryItem.human_attribute_name(:out_of), String(grade_entry_form_with_data.grade_entry_items[0].out_of)],
-        [@user.user_name, '']
+        ['', grade_entry_item.name],
+        [GradeEntryItem.human_attribute_name(:out_of), grade_entry_item.out_of],
+        [@user.user_name, student_grade]
       ]
       csv_data = MarkusCsv.generate(csv_array) do |data|
         data
