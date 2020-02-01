@@ -93,7 +93,7 @@ class AutomatedTestsController < ApplicationController
 
   def populate_autotest_manager
     assignment = Assignment.find(params[:assignment_id])
-    testers_schema_path = File.join(MarkusConfigurator.autotest_client_dir, 'testers.json')
+    testers_schema_path = File.join(Rails.configuration.x.autotest.client_dir, 'testers.json')
     files_dir = Pathname.new assignment.autotest_files_dir
     file_keys = []
     files_data = assignment.autotest_files.map do |file|

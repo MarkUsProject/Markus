@@ -5,16 +5,16 @@ namespace :markus do
   end
 
   def check_config
-    check_in_readable_dir(MarkusConfigurator.markus_config_logging_logfile, 'MARKUS_LOGGING_LOGFILE')
-    check_in_writable_dir(MarkusConfigurator.markus_config_logging_logfile, 'MARKUS_LOGGING_LOGFILE')
-    check_in_executable_dir(MarkusConfigurator.markus_config_logging_logfile, 'MARKUS_LOGGING_LOGFILE')
-    check_in_readable_dir(MarkusConfigurator.markus_config_logging_errorlogfile, 'MARKUS_LOGGING_ERRORLOGFILE')
-    check_in_writable_dir(MarkusConfigurator.markus_config_logging_errorlogfile, 'MARKUS_LOGGING_ERRORLOGFILE')
-    check_in_executable_dir(MarkusConfigurator.markus_config_logging_errorlogfile, 'MARKUS_LOGGING_ERRORLOGFILE')
+    check_in_readable_dir(Rails.configuration.x.logging.log_file, 'MarkUs log file')
+    check_in_writable_dir(Rails.configuration.x.logging.log_file, 'MarkUs log file')
+    check_in_executable_dir(Rails.configuration.x.logging.log_file, 'MarkUs log file')
+    check_in_readable_dir(Rails.configuration.x.logging.error_file, 'MarkUs error log file')
+    check_in_writable_dir(Rails.configuration.x.logging.error_file, 'MarkUs error log file')
+    check_in_executable_dir(Rails.configuration.x.logging.error_file, 'MarkUs error log file')
     check_writable(Rails.configuration.x.repository.storage, 'REPOSITORY_STORAGE')
     check_readable(Rails.configuration.x.repository.storage, 'REPOSITORY_STORAGE')
     check_executable(Rails.configuration.x.repository.storage, 'REPOSITORY_STORAGE')
-    check_in_writable_dir(MarkusConfigurator.autotest_client_dir, 'autotest_REPOSITORY')
+    check_in_writable_dir(Rails.configuration.x.autotest.client_dir, 'autotest.client_dir')
     ensure_logout_redirect_link_valid
   end
 
@@ -64,12 +64,12 @@ namespace :markus do
   end
 
   def ensure_logout_redirect_link_valid
-    logout_redirect = MarkusConfigurator.markus_config_logout_redirect
+    logout_redirect = Rails.configuration.logout_redirect
     if %w[DEFAULT NONE].include?(logout_redirect)
       return
       # We got a URI, ensure its of proper format <>
     elsif logout_redirect.match('^http://|^https://').nil?
-      raise "LOGOUT_REDIRECT value #{logout_redirect} is invalid. Only 'DEFAULT', "\
+      raise "Rails.configuration.logout_redirect value #{logout_redirect} is invalid. Only 'DEFAULT', "\
           "'NONE' or addresses beginning with http:// or https:// are valid values. "\
           "Please double check configuration in config/environments/#{Rails.env}.rb"
     end

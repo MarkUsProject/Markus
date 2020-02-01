@@ -873,42 +873,6 @@ describe 'An Assignment' do
           assignment_id: assignment.id.to_s,
           locale: 'en')
       end
-
-      it 'routes DELETE delete_annotation_text properly' do
-        expect(delete: annot_path + "/#{id}/delete_annotation_text").to route_to(
-          controller: annot_ctrl,
-          action: 'delete_annotation_text',
-          id: id,
-          assignment_id: assignment.id.to_s,
-          locale: 'en')
-      end
-
-      it 'routes GET add_annotation_text properly' do
-        expect(get: annot_path + "/#{id}/add_annotation_text").to route_to(
-          controller: annot_ctrl,
-          action: 'add_annotation_text',
-          id: id,
-          assignment_id: assignment.id.to_s,
-          locale: 'en')
-      end
-
-      it 'routes POST add_annotation_text properly' do
-        expect(post: annot_path + "/#{id}/add_annotation_text").to route_to(
-          controller: annot_ctrl,
-          action: 'add_annotation_text',
-          id: id,
-          assignment_id: assignment.id.to_s,
-          locale: 'en')
-      end
-
-      it 'routes PUT update_annotation properly' do
-        expect(put: annot_path + "/#{id}/update_annotation").to route_to(
-          controller: annot_ctrl,
-          action: 'update_annotation',
-          id: id,
-          assignment_id: assignment.id.to_s,
-          locale: 'en')
-      end
     end
 
     context 'collection' do
@@ -952,26 +916,26 @@ describe 'An Assignment' do
           locale: 'en')
       end
 
-      it 'routes GET add_annotation_text properly' do
-        expect(get: annot_path + '/add_annotation_text').to route_to(
+      it 'routes POST create_annotation_text properly' do
+        expect(post: annot_path + '/create_annotation_text').to route_to(
           controller: annot_ctrl,
-          action: 'add_annotation_text',
+          action: 'create_annotation_text',
           assignment_id: assignment.id.to_s,
           locale: 'en')
       end
 
-      it 'routes POST delete_annotation_text properly' do
-        expect(post: annot_path + '/delete_annotation_text').to route_to(
+      it 'routes DELETE destroy_annotation_text properly' do
+        expect(delete: annot_path + '/destroy_annotation_text').to route_to(
           controller: annot_ctrl,
-          action: 'delete_annotation_text',
+          action: 'destroy_annotation_text',
           assignment_id: assignment.id.to_s,
           locale: 'en')
       end
 
-      it 'routes POST update_annotation properly' do
-        expect(post: annot_path + '/update_annotation').to route_to(
+      it 'routes PUT update_annotation_text properly' do
+        expect(put: annot_path + '/update_annotation_text').to route_to(
           controller: annot_ctrl,
-          action: 'update_annotation',
+          action: 'update_annotation_text',
           assignment_id: assignment.id.to_s,
           locale: 'en')
       end
@@ -1087,6 +1051,13 @@ context 'notes' do
         action: 'new_update_groupings',
         locale: 'en')
     end
+
+    it 'routes GET notes_dialog properly' do
+      expect(get: path + '/notes_dialog').to route_to(
+        controller: ctrl,
+        action: 'notes_dialog',
+        locale: 'en' )
+    end
   end
   # end notes collection route tests
 
@@ -1096,14 +1067,6 @@ context 'notes' do
         controller: ctrl,
         action: 'show',
         id: 'student_interface',
-        locale: 'en')
-    end
-
-    it 'routes GET notes_dialog properly' do
-      expect(get: path + '/notes_dialog').to route_to(
-        controller: ctrl,
-        action: 'show',
-        id: 'notes_dialog',
         locale: 'en')
     end
 

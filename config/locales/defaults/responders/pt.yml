@@ -12,6 +12,11 @@ pt:
       destroy:
         success: "%{resource_name} suprimido com sucesso."
         error: "Falha ao atualizar suprimido %{resource_name}."
+    annotation_categories:
+      create:
+        error: "%{resource_name} UPDATE ME: %{errors}."
+      update:
+        error: "%{resource_name} UPDATE ME: %{errors}."
     criteria:
       destroy:
         success: "Criterion suprimido com sucesso."

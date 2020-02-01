@@ -2,8 +2,6 @@
   <%= form_for :annotation_category,
                url: { action: 'create' },
                remote: true do |f| %>
-    <div class='error' style='display:none;' id='new_annotation_category_error'></div>
-
     <%= f.label :annotation_category_name, AnnotationCategory.human_attribute_name(:annotation_category_name) %>
     <%= f.text_field :annotation_category_name,
                      size: 20 %>

@@ -1,6 +1,6 @@
 class AutotestSpecsJob < ApplicationJob
   include AutomatedTestsHelper
-  queue_as MarkusConfigurator.autotest_specs_queue
+  queue_as Rails.configuration.x.queues.autotest_specs
 
   def self.show_status(_status); end
 
@@ -11,14 +11,14 @@ class AutotestSpecsJob < ApplicationJob
     else
       markus_address = host_with_port + Rails.application.config.action_controller.relative_url_root
     end
-    server_path = MarkusConfigurator.autotest_server_dir
-    server_username = MarkusConfigurator.autotest_server_username
-    server_command = MarkusConfigurator.autotest_server_command
+    server_path = Rails.configuration.x.autotest.server_dir
+    server_username = Rails.configuration.x.autotest.server_username
+    server_command = Rails.configuration.x.autotest.server_command
     test_specs_path = assignment.autotest_settings_file
     test_specs = JSON.parse(File.read(test_specs_path))
     server_params = { markus_address: markus_address, assignment_id: assignment.id, test_specs: test_specs }
 
-    schema_file = File.join(MarkusConfigurator.autotest_client_dir, 'testers.json')
+    schema_file = File.join(Rails.configuration.x.autotest.client_dir, 'testers.json')
     if File.exist? schema_file
       schema_data = JSON.parse(File.open(schema_file, &:read))
       fill_in_schema_data!(schema_data, assignment.autotest_files, assignment)
@@ -38,7 +38,7 @@ class AutotestSpecsJob < ApplicationJob
         end
       else
         # tests executed locally or remotely with authentication
-        server_host = MarkusConfigurator.autotest_server_host
+        server_host = Rails.configuration.x.autotest.server_host
         Net::SSH.start(server_host, server_username, auth_methods: ['publickey']) do |ssh|
           mkdir_command = "mktemp -d --tmpdir='#{server_path}'"
           server_path = ssh.exec!(mkdir_command).strip # create temp subfolder

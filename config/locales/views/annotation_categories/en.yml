@@ -2,7 +2,7 @@ en:
   annotation_categories:
     create:
       success: "This annotation category was successfully created."
-    delete_annotation_text:
+    destroy_annotation_text:
       confirm: "Deleting this annotation will remove the text from any files it may be attached to.  Are you sure you want to do this?"
       success: "Deleted annotation"
     destroy:
