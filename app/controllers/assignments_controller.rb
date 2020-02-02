@@ -580,6 +580,19 @@ class AssignmentsController < ApplicationController
     end
   end
 
+  def set_boolean_graders_options
+    assignment = Assignment.find(params[:id])
+    attributes = graders_options_params.transform_values { |v| v == 'true' }
+    return head 400 if attributes.empty?
+
+    unless assignment.update(attributes)
+      flash_now(:error, assignment.errors.full_messages.join(' '))
+      head 422
+      return
+    end
+    head :ok
+  end
+
   private
 
     def sanitize_file_name(file_name)
@@ -768,6 +781,13 @@ class AssignmentsController < ApplicationController
     end
 
     return assignment, new_required_files
+  end
+
+  def graders_options_params
+    params.require(:attribute)
+          .permit(:assign_graders_to_criteria,
+                  :anonymize_groups,
+                  :hide_unassigned_criteria)
   end
 
   def assignment_params

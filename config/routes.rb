@@ -74,6 +74,7 @@ Rails.application.routes.draw do
         get 'summary'
         get 'csv_summary'
         get 'batch_runs'
+        post 'set_boolean_graders_options'
         get 'stop_test'
         get 'stop_batch_tests'
         get 'switch_assignment'
@@ -269,7 +270,6 @@ Rails.application.routes.draw do
           get 'grader_groupings_mapping'
           get 'grader_criteria_mapping'
           get 'global_actions'
-          post 'set_assign_criteria'
           post 'global_actions'
           get 'grader_summary'
         end
