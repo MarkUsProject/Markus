@@ -11,7 +11,7 @@
         </tr>
         </thead>
         <tbody>
-        <% @assignments.where(parent_assignment_id: nil).each do |assignment| -%>
+        <% @assignments.where(parent_assessment_id: nil).each do |assignment| -%>
           <tr>
             <td>
               <% if assignment.is_hidden %>
@@ -28,7 +28,7 @@
                             class: (assignment.id == @current_assignment.id ? "link_disabled" : "") %>
               <% end %>
 
-              <% if assignment.has_peer_review? %>
+              <% if assignment.assignment_properties.has_peer_review? %>
                 <% if assignment.pr_assignment.is_hidden %>
                   <%= link_to truncate(t('assignments.hidden',
                                          assignment_text:
@@ -52,7 +52,7 @@
                 <%= l(assignment.due_date) %>
               </div>
 
-              <% if assignment.has_peer_review? %>
+              <% if assignment.assignment_properties.has_peer_review? %>
                 <div class="<%= due_date_color(assignment.pr_assignment) %> pr_date">
                   <%= l(assignment.pr_assignment.due_date) %>
                 </div>

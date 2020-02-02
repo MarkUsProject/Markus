@@ -51,7 +51,7 @@
                                   class: 'assignment_list' %>
                     <% end %>
                   <% end %>
-                  <% if assignment.has_peer_review? %>
+                  <% if assignment.assignment_properties.has_peer_review? %>
                       <!--temporary conditional until submissions_controller.browse() is updated to handle pr_assignments-->
                       <% if @current_user.admin? %>
                         <% if assignment.pr_assignment.is_hidden %>
@@ -90,7 +90,7 @@
                     <%= l(assignment.due_date) %>
                   </div>
 
-                  <% if assignment.has_peer_review? %>
+                  <% if assignment.assignment_properties.has_peer_review? %>
                     <div class="pr_date">
                       <%= l(assignment.pr_assignment.due_date) %>
                     </div>
