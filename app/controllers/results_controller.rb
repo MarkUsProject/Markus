@@ -244,7 +244,7 @@ class ResultsController < ApplicationController
       @authorized = true
     rescue ActionPolicy::Unauthorized => e
       @authorized = false
-      if @assignment.enable_test
+      if @assignment.assignment_properties.enable_test
         flash_now(:notice, e.result.reasons.full_messages.join(' '))
       end
     end
@@ -526,7 +526,7 @@ class ResultsController < ApplicationController
                    "assignment #{assignment.short_identifier} for " +
                    "group #{group.group_name}.",
                    MarkusLogger::INFO)
-      if assignment.assign_graders_to_criteria && @current_user.ta?
+      if assignment.assignment_properties.assign_graders_to_criteria && @current_user.ta?
         num_marked = assignment.get_num_marked(@current_user.id)
       else
         num_marked = assignment.get_num_marked(nil)

@@ -42,7 +42,7 @@ Metrics/AbcSize:
 Metrics/BlockLength:
   ExcludedMethods: ['describe', 'context', 'shared_examples', 'shared_context']
 
-Metrics/LineLength:
+Layout/LineLength:
   Max: 120
 
 Metrics/MethodLength:

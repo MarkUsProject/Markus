@@ -305,7 +305,7 @@ describe GroupsController do
       allow(controller).to receive(:current_user).and_return(build(:student))
 
       @student = create(:student, user_name: 'c9test1')
-      @assignment = create(:assignment, student_form_groups: true)
+      @assignment = create(:assignment, assignment_properties_attributes: { student_form_groups: true })
     end
 
     describe 'POST #create' do

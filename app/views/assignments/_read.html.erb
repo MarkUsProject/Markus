@@ -103,7 +103,7 @@
     <% end %>
   <% end %>
 
-  <% if @assignment.display_grader_names_to_students %>
+  <% if @assignment.assignment_properties.display_grader_names_to_students %>
     <div class='sub_block'>
       <span class='prop_label'><%= t('graders.assigned_graders') %></span>
       <% if !@grouping.nil?%>

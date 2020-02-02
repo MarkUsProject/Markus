@@ -2,7 +2,7 @@ describe GroupsHelper do
   include ApplicationHelper
   include GroupsHelper
 
-  let(:assignment) { create :assignment, group_min: 1, group_max: 2 }
+  let(:assignment) { create :assignment, assignment_properties_attributes: { group_min: 1, group_max: 2 } }
   let(:students) { create_list :student, 3 }
 
   context '#validate_csv_upload_file' do

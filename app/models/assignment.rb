@@ -5,6 +5,7 @@ class Assignment < Assessment
 
   MIN_PEER_REVIEWS_PER_GROUP = 1
 
+  validates_presence_of :due_date
   has_one :assignment_properties, dependent: :destroy, inverse_of: :assignment, foreign_key: :assessment_id
   accepts_nested_attributes_for :assignment_properties
   validates_presence_of :assignment_properties
@@ -89,7 +90,7 @@ class Assignment < Assessment
   BLANK_MARK = ''
   STARTER_CODE_REPO_NAME = "starter-code"
 
-  # Copy of API::AssignmentController without the id and order changed
+  # Copy of API::AssignmentController without selected attributes and order changed
   # to put first the 4 required fields
   DEFAULT_FIELDS = [:short_identifier, :description,
                     :due_date, :message, :group_min, :group_max, :tokens_per_period,
@@ -726,7 +727,7 @@ class Assignment < Assessment
   end
 
   def is_criteria_mark?(ta_id)
-    assign_graders_to_criteria && self.criterion_ta_associations.where(ta_id: ta_id).any?
+    assignment_properties.assign_graders_to_criteria && self.criterion_ta_associations.where(ta_id: ta_id).any?
   end
 
   def get_num_assigned(ta_id = nil)
@@ -1198,6 +1199,15 @@ class Assignment < Assessment
     end
   end
 
+  def to_xml(options = {})
+    attributes_hash = self.assignment_properties.attributes.merge(self.attributes).symbolize_keys
+    attributes_hash.select { |key, _| Api::AssignmentsController::DEFAULT_FIELDS.include? key }.to_xml(options)
+  end
+
+  def to_json(options = {})
+    self.assignment_properties.attributes.merge(self.attributes).symbolize_keys.to_json(options)
+  end
+
   private
 
   # Returns the marking state used in the submission and course summary tables
@@ -1248,7 +1258,11 @@ class Assignment < Assessment
       map[:assignments] = assignments.map do |assignment|
         m = {}
         DEFAULT_FIELDS.each do |f|
-          m[f] = assignment.send(f)
+          if assignment.respond_to?(f)
+            m[f] = assignment.send(f)
+          else
+            m[f] = assignment.assignment_properties.send(f)
+          end
         end
         m
       end
@@ -1256,7 +1270,11 @@ class Assignment < Assessment
     when 'csv'
       MarkusCsv.generate(assignments) do |assignment|
         DEFAULT_FIELDS.map do |f|
-          assignment.send(f)
+          if assignment.respond_to?(f)
+            assignment.send(f)
+          else
+            assignment.assignment_properties.send(f)
+          end
         end
       end
     end
@@ -1266,15 +1284,15 @@ class Assignment < Assessment
     case file_format
     when 'csv'
       result = MarkusCsv.parse(assignment_data) do |row|
-        assignment = self.find_or_create_by(short_identifier: row[0],
-                                            assignment_properties: { repository_folder: row[0] })
+        assignment = self.find_or_create_by(short_identifier: row[0])
         attrs = Hash[DEFAULT_FIELDS.zip(row)]
         attrs.delete_if { |_, v| v.nil? }
         if assignment.new_record?
+          assignment.assignment_properties = AssignmentProperties.new(repository_folder: row[0],
+                                                                      token_period: 1,
+                                                                      unlimited_tokens: false)
           assignment.submission_rule = NoLateSubmissionRule.new
           assignment.assignment_stat = AssignmentStat.new
-          assignment.assignment_properties.token_period = 1
-          assignment.assignment_properties.unlimited_tokens = false
         end
         assignment.update(attrs)
         raise CsvInvalidLineError unless assignment.valid?
@@ -1284,13 +1302,13 @@ class Assignment < Assessment
       begin
         map = assignment_data.deep_symbolize_keys
         map[:assignments].map do |row|
-          assignment = self.find_or_create_by(short_identifier: row[:short_identifier],
-                                              assignment_properties: { repository_folder: row[:short_identifier] })
+          assignment = self.find_or_create_by(short_identifier: row[:short_identifier])
           if assignment.new_record?
+            row[:assignment_properties] = AssignmentProperties.new(repository_folder: row[:short_identifier],
+                                                                   token_period: 1,
+                                                                   unlimited_tokens: false)
             row[:submission_rule] = NoLateSubmissionRule.new
             row[:assignment_stat] = AssignmentStat.new
-            row[:token_period] = 1
-            row[:unlimited_tokens] = false
           end
           assignment.update(row)
           unless assignment.id

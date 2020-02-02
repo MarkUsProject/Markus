@@ -60,14 +60,14 @@ describe GradersController do
         post_as @admin, :set_assign_criteria, params: { assignment_id: @assignment.id, value: 'true' }
         expect(response.status).to eq(200)
         @assignment.reload
-        expect(@assignment.assign_graders_to_criteria).to be_truthy
+        expect(@assignment.assignment_properties.assign_graders_to_criteria).to be_truthy
       end
 
       it 'and value is nil' do
         post_as @admin, :set_assign_criteria, params: { assignment_id: @assignment.id }
         expect(response.status).to eq(200)
         @assignment.reload
-        expect(@assignment.assign_graders_to_criteria).to be_falsey
+        expect(@assignment.assignment_properties.assign_graders_to_criteria).to be_falsey
       end
     end
 

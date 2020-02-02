@@ -1,6 +1,6 @@
 <div class='title_bar'>
   <h1><%=
-    if @assignment.scanned_exam
+    if @assignment.assignment_properties.scanned_exam
       t('helpers.submit.create', model: t('activerecord.models.scanned_assignment.one'))
     else
       t('helpers.submit.create', model: Assignment.model_name.human)

@@ -28,7 +28,7 @@
 <% content_for :additional_headings do %>
     <% # Allow cloning groups forward only if its vcs submits are allowed
        # for this assignment.
-       if @assignment.vcs_submit %>
+       if @assignment.assignment_properties.vcs_submit %>
       <%= link_to t('groups.another_assignment_group'),
                   'javascript:void(0);',
                   onclick:'modalAssignmentGroupReUse.open();' %>
@@ -37,7 +37,7 @@
     <%= link_to t('download'), '#', id: 'downloadModal' %>
     <span class='menu_bar'></span>
     <%= link_to t('upload'), '#', id: 'uploadModal' %>
-    <% if @assignment.scanned_exam %>
+    <% if @assignment.assignment_properties.scanned_exam %>
         <span class='menu_bar'></span>
         <%= link_to t('exam_templates.assign_scans.title'), :assign_scans_assignment_groups %>
     <% end %>

@@ -18,7 +18,7 @@ class GroupingPolicy < ApplicationPolicy
   end
 
   def tokens_available?
-    record.test_tokens > 0 || record.assignment.unlimited_tokens
+    record.test_tokens > 0 || record.assignment.assignment_properties.unlimited_tokens
   end
 
   # Policies for group invitations.

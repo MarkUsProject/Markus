@@ -17,9 +17,9 @@ class GradersController < ApplicationController
   def set_assign_criteria
     @assignment = Assignment.find(params[:assignment_id])
     if params[:value] == 'true'
-      @assignment.assign_graders_to_criteria = true
+      @assignment.assignment_properties.assign_graders_to_criteria = true
     else
-      @assignment.assign_graders_to_criteria = false
+      @assignment.assignment_properties.assign_graders_to_criteria = false
     end
     @assignment.save
     head :ok

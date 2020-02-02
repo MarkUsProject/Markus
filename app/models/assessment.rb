@@ -13,8 +13,8 @@ class Assessment < ApplicationRecord
   validates_presence_of :short_identifier
   validate :short_identifier_unchanged, on: :update
   validates_presence_of :description
-  validates_presence_of :due_date
   validates_inclusion_of :is_hidden, in: [true, false]
+  validates_presence_of :notes_count
 
   def self.type
     %w[Assignment GradeEntryForm]

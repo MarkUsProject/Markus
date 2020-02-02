@@ -34,7 +34,7 @@ module GradeEntryFormsHelper
     attributes.require(:grade_entry_form)
               .permit(:description,
                       :message,
-                      :date,
+                      :due_date,
                       :show_total,
                       :short_identifier,
                       :is_hidden,

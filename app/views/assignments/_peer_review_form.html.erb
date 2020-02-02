@@ -70,7 +70,7 @@
           </div>
 
           <div id='section_due_dates_information'
-               style='<%= 'display: none' unless @assignment.section_due_dates_type %>'>
+               style='<%= 'display: none' unless @assignment.assignment_properties.section_due_dates_type %>'>
             <p class='information'>
               <%= t('assignments.form.section_due_dates_info_html') %>
             </p>
@@ -139,8 +139,8 @@
       <% end %>
       <p id='is_group_assignment_style'>
         <%= check_box_tag :is_group_assignment, true,
-                          @assignment.student_form_groups ||
-                              @assignment.invalid_override,
+                          @assignment.assignment_properties.student_form_groups ||
+                              @assignment.assignment_properties.invalid_override,
                           onchange: 'set_onbeforeunload(true);' %>
         <%= label_tag :is_group_assignment,
                       Assignment.human_attribute_name(:student_form_groups) %>

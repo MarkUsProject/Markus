@@ -10,7 +10,6 @@ class AssignmentProperties < ApplicationRecord
   validate :repository_folder_unchanged, on: :update
   validates_presence_of :group_min
   validates_presence_of :group_max
-  validates_presence_of :notes_count
 
   # "validates_presence_of" for boolean values.
   validates_inclusion_of :allow_web_submits, in: [true, false]

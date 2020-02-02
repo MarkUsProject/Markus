@@ -108,7 +108,11 @@ describe AssignmentsController do
       # generate the expected csv string
       csv_data = []
       DEFAULT_FIELDS.map do |f|
-        csv_data << assignment.send(f.to_s)
+        if assignment.respond_to?(f)
+          csv_data << assignment.send(f)
+        else
+          csv_data << assignment.assignment_properties.send(f)
+        end
       end
       new_data = csv_data.join(',') + "\n"
       expect(@controller).to receive(:send_data).with(new_data, csv_options) {
@@ -157,7 +161,11 @@ describe AssignmentsController do
       map[:assignments] = assignments.map do |assignment|
         m = {}
         DEFAULT_FIELDS.each do |f|
-          m[f] = assignment.send(f)
+          if assignment.respond_to?(f)
+            m[f] = assignment.send(f)
+          else
+            m[f] = assignment.assignment_properties.send(f)
+          end
         end
         m
       end

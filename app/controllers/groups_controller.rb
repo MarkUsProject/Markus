@@ -116,7 +116,8 @@ class GroupsController < ApplicationController
 
   def index
     @assignment = Assignment.find(params[:assignment_id])
-    @clone_assignments = Assignment.where(vcs_submit: true)
+    @clone_assignments = Assignment.joins(:assignment_properties)
+                                   .where(assignment_properties: { vcs_submit: true })
                                    .where.not(id: @assignment.id)
                                    .order(:id)
 
