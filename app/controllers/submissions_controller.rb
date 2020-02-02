@@ -650,6 +650,8 @@ class SubmissionsController < ApplicationController
     full_path = File.join(grouping.assignment.repository_folder, path)
     return [] unless revision.path_exists?(full_path)
 
+    anonymize = current_user.ta? && grouping.assignment.anonymize_groups
+
     entries = revision.tree_at_path(full_path).sort do |a, b|
       a[0].count(File::SEPARATOR) <=> b[0].count(File::SEPARATOR) # less nested first
     end
@@ -662,6 +664,7 @@ class SubmissionsController < ApplicationController
         next if data.nil?
         data[:key] = file_name
         data[:modified] = data[:last_revised_date]
+        data[:revision_by] = '' if anonymize
         data
       else
         { key: "#{file_name}/" }

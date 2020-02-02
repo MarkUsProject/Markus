@@ -89,7 +89,7 @@ export class MarksPanel extends React.Component {
       updateMark: this.updateMark,
       destroyMark: this.destroyMark,
       expanded: this.state.expanded.has(key),
-      oldMark: this.props.old_marks[`criterion_${markData.criterion_type}_${markData.id}`],
+      oldMark: this.props.old_marks[`${markData.criterion_type}-${markData.id}`],
       toggleExpanded: () => this.toggleExpanded(key),
       ... markData
     };

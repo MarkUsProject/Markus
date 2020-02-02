@@ -182,4 +182,49 @@ describe AssignmentsController do
       expect(filename).to eq 'assignments.yml'
     end
   end
+
+  context '#set_boolean_graders_options' do
+    let!(:assignment) { create(:assignment) }
+    context 'an admin' do
+      let(:user) { create :admin }
+      let(:value) { !assignment[attribute] }
+
+      before :each do
+        post_as user, :set_boolean_graders_options, params: { id: assignment.id, attribute: { attribute => value } }
+        assignment.reload
+      end
+
+      shared_examples 'successful tests' do
+        it 'should respond with 200' do
+          expect(response.status).to eq(200)
+        end
+        it 'should update the attribute' do
+          expect(assignment[attribute]).to eq(value)
+        end
+      end
+
+      context 'with a valid attribute field' do
+        context 'is assign_graders_to_criteria' do
+          let(:attribute) { :assign_graders_to_criteria }
+          it_behaves_like 'successful tests'
+        end
+        context 'is anonymize_groups' do
+          let(:attribute) { :anonymize_groups }
+          it_behaves_like 'successful tests'
+        end
+        context 'is hide_unassigned_criteria' do
+          let(:attribute) { :hide_unassigned_criteria }
+          it_behaves_like 'successful tests'
+        end
+      end
+
+      context 'with an invalid attribute field' do
+        let(:attribute) { :this_is_not_a_real_attribute }
+        let(:value) { true }
+        it 'should respond with 400' do
+          expect(response.status).to eq(400)
+        end
+      end
+    end
+  end
 end
