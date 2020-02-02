@@ -545,7 +545,7 @@ ActiveRecord::Schema.define(version: 2019_12_10_143220) do
 
   create_table "test_results", id: :serial, force: :cascade do |t|
     t.text "name", null: false
-    t.text "status", null: falsel
+    t.text "status", null: false
     t.float "marks_earned", default: 0.0, null: false
     t.text "output", default: "", null: false
     t.datetime "created_at"

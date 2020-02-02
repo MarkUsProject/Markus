@@ -30,7 +30,7 @@ class ReplaceAssignmentsAndGradeEntryFormsWithAssessments < ActiveRecord::Migrat
       t.string :short_identifier, null: false
       t.string :type, null: false
       t.string :description, null: false
-      t.text :message
+      t.text :message, default: "", null: false
       t.datetime :due_date
       t.boolean :is_hidden, default: true, null: false
 

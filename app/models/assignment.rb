@@ -5,6 +5,8 @@ class Assignment < Assessment
 
   MIN_PEER_REVIEWS_PER_GROUP = 1
 
+  validates_presence_of :due_date
+  
   has_one :assignment_properties, dependent: :destroy, inverse_of: :assignment, foreign_key: :assessment_id
   accepts_nested_attributes_for :assignment_properties
   validates_presence_of :assignment_properties
@@ -1287,12 +1289,11 @@ class Assignment < Assessment
         attrs = Hash[DEFAULT_FIELDS.zip(row)]
         attrs.delete_if { |_, v| v.nil? }
         if assignment.new_record?
-          assignment.assignment_properties = AssignmentProperties.new
+          assignment.assignment_properties = AssignmentProperties.new(repository_folder: row[0],
+                                                                      token_period: 1,
+                                                                      unlimited_tokens: false)
           assignment.submission_rule = NoLateSubmissionRule.new
           assignment.assignment_stat = AssignmentStat.new
-          assignment.assignment_properties.token_period = 1
-          assignment.assignment_properties.unlimited_tokens = false
-          assignment.assignment_properties.repository_folder = row[0]
         end
         assignment.update(attrs)
         raise CsvInvalidLineError unless assignment.valid?
@@ -1304,12 +1305,11 @@ class Assignment < Assessment
         map[:assignments].map do |row|
           assignment = self.find_or_create_by(short_identifier: row[:short_identifier])
           if assignment.new_record?
-            row[:assignment_properties] = AssignmentProperties.new
+            row[:assignment_properties] = AssignmentProperties.new(repository_folder: row[:short_identifier],
+                                                                   token_period: 1,
+                                                                   unlimited_tokens: false)
             row[:submission_rule] = NoLateSubmissionRule.new
             row[:assignment_stat] = AssignmentStat.new
-            row[:assignment_properties][:repository_folder] = row[:short_identifier]
-            row[:assignment_properties][:token_period] = 1
-            row[:assignment_properties][:unlimited_tokens] = false
           end
           assignment.update(row)
           unless assignment.id
