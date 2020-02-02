@@ -5,8 +5,7 @@ class Assignment < Assessment
 
   MIN_PEER_REVIEWS_PER_GROUP = 1
 
-  validates_presence_of :due_date
-  
+  validates_presence_of :due_date  
   has_one :assignment_properties, dependent: :destroy, inverse_of: :assignment, foreign_key: :assessment_id
   accepts_nested_attributes_for :assignment_properties
   validates_presence_of :assignment_properties
