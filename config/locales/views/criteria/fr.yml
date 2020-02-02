@@ -2,6 +2,8 @@ fr:
   criteria:
     new:
       button: "Ajouter Critère"
+    delete:
+      checkbox: "Supprimer Niveau"
 
     # Short type names
     checkbox: "Checkbox"
