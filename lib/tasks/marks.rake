@@ -70,7 +70,7 @@ namespace :db do
         creator_type: 'Admin',
         result_id: submission.current_result.id
       }
-      @annotation = PdfAnnotation.create!(
+      @annotation = PdfAnnotation.create(
         x1: 27740,
         y1: 58244,
         x2: 4977,
