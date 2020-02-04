@@ -47,6 +47,7 @@ pt:
     level:
       name: "Nível"
       level_index: "Nível %{index}"
+      add: "Adicionar Nível"
     defaults:
       level_0: "Insuficiente"
       level_1: "Fraco"

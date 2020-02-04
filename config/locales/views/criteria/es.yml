@@ -11,21 +11,25 @@ es:
     # Help panel
     editing_criteria: "Editando los criterios de calificación"
     ordering_criteria: "Ordenando los criterios de calificación"
-    help_editing_criteria_message: "Seleccione un criterio de calificación en la izquierda para editarlo.
+    help_editing_criteria_message:
+      "Seleccione un criterio de calificación en la izquierda para editarlo.
       Cambios para los diferentes criterios de calificación pueden ser realizados de la siguiente manera:"
-    help_editing_rubric_criteria_message: "Los nombres de los criterios de calificación, encabezados de nivel,
+    help_editing_rubric_criteria_message:
+      "Los nombres de los criterios de calificación, encabezados de nivel,
       descripciones y visibilidad pueden ser modificados. El peso vinculado
       a la nota máxima mostrada para cada criterio de calificación también puede
       ser cambiado. Para cambiar el peso de un número fraccionario simplemente
       escriba un número decimal en la caja de texto. Note que el número de
       niveles no puede ser cambiado. Sin embargo, si una descripción no es
       ingresada para un nivel, ese nivel no será usado."
-    help_ordering_criteria_message: "Los evaluadores verán los criterios de calificación en el orden en que son
+    help_ordering_criteria_message:
+      "Los evaluadores verán los criterios de calificación en el orden en que son
       mostrados en la izquierda. Para cambiar el orden, arrastre el criterio de
       calificación al lugar deseado en la lista."
     help_ta_visibility_message: "Los asistentes de cátedra podrán ver el criterio de calificación."
     help_peer_visibility_message: "Los revisores de compañeros podrán ver el criterio de calificación."
-    help_editing_flexible_criteria_message: "Los nombres de los criterios de calificación, las descripciones, los
+    help_editing_flexible_criteria_message:
+      "Los nombres de los criterios de calificación, las descripciones, los
       valores máximos y la visibilidad pueden ser modificados."
     visibility: "Visibilidad"
     modifying_visibility: "Modificando la visibilidad"
@@ -48,6 +52,7 @@ es:
     level:
       name: "Nivel"
       level_index: "Nivel %{index}"
+      add: "Agregar Nivel"
     defaults:
       level_0: "Insuficiente"
       level_1: "Malo"

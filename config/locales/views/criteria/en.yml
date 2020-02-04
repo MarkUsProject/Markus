@@ -48,6 +48,7 @@ en:
     level:
       name: "Level"
       level_index: "Level %{index}"
+      add: "Add Level"
     defaults:
       level_0: "Very Poor"
       level_1: "Weak"
