@@ -53,6 +53,7 @@ fr:
     level:
       name: "Niveau"
       level_index: "Niveau %{index}"
+      add: "Ajouter un Niveau"
     defaults:
       level_0: "Très insuffisant"
       level_1: "Insuffisant"
