@@ -1,8 +1,4 @@
-<% content_for :head do %>
-  <%= render partial: 'boot',
-             formats: [:js],
-             handlers: [:erb] %>
-<% end %>
+
 
 <div class='float_right'>
   <%= button_to t(:delete),
@@ -67,12 +63,6 @@
     <br>
     <br>
     <%= f.submit t(:save), data: { disable_with: t('working') } %>
-    <div id="add_level">
-      <%= link_to t('rubric_criteria.level.add'),
-                  '#',
-                  onclick: 'add_level();' +
-                    'return false;' %>
-    </div>
   </div>
 
   <div class='rubric_criteria_levels'>
