@@ -71,7 +71,7 @@
         </li>
       <% end %>
 
-      <% if @assignment.assignment_properties.has_peer_review_assignment? && !@assignment.pr_assignment.is_hidden %>
+      <% if @assignment.has_peer_review_assignment? && !@assignment.pr_assignment.is_hidden %>
         <li class='<%= "active" if controller.controller_name == 'assignments' && controller.action_name == 'peer_review'%>'>
           <%= link_to PeerReview.model_name.human.pluralize,
                       controller: 'assignments',
