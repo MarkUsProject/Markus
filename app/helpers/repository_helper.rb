@@ -90,7 +90,7 @@ module RepositoryHelper
   # nil, the boolean indicates whether any errors were encountered which mean the caller should not
   # commit the transaction. The array contains any error or warning messages as arrays of arguments
   # (each of which can be passed directly to flash_message from a controller).
-  def remove_files(files, user, repo, path: '/', txn: nil)
+  def remove_files(files, user, repo, path: '/', txn: nil, option: 'File')
     messages = []
 
     if txn.nil?
@@ -109,7 +109,7 @@ module RepositoryHelper
       basename = sanitize_file_name(basename)
       file_path = current_path.join(subdir_path).join(basename)
       file_path = file_path.to_s
-      txn.remove(file_path, current_revision)
+      txn.remove(file_path, current_revision, option)
     end
 
     if commit_txn
@@ -158,7 +158,7 @@ module RepositoryHelper
 
     current_revision = repo.get_latest_revision.revision_identifier
 
-    dirs = {}
+    dirs = []
     files = []
     folders.each do |folder_path|
       folder_path = current_path.join(folder_path).to_s
@@ -169,19 +169,19 @@ module RepositoryHelper
         if obj.is_a? Repository::RevisionFile
           files << path
         else
-          dirs[path] = current_revision
+          dirs << path
         end
       end
-      dirs[folder_path] = current_revision
+      dirs << folder_path
     end
-    success, file_messages = remove_files(files, user, repo, path: '', txn: txn)
+    success, file_messages = remove_files(files.reverse, user, repo, path: '', txn: txn, option: 'Folder')
 
     return [success, file_messages] unless success
 
     # folders are removed in git if their contents are removed
-    unless repo.is_a? GitRepository
-      dirs.each do |dir, revision|
-        txn.remove(dir, revision)
+    if repo.is_a? GitRepository
+      dirs.each do |dir|
+        txn.remove_directory(dir, current_revision)
       end
     end
 

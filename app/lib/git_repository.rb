@@ -395,7 +395,13 @@ class GitRepository < Repository::AbstractRepository
         end
       when :remove
         begin
-          remove_file(job[:path], job[:expected_revision_identifier])
+          remove_file(job[:path], job[:expected_revision_identifier], job[:option])
+        rescue Repository::Conflict => e
+          transaction.add_conflict(e)
+        end
+      when :remove_directory
+        begin
+          remove_directory(job[:path], job[:expected_revision_identifier])
         rescue Repository::Conflict => e
           transaction.add_conflict(e)
         end
@@ -469,15 +475,51 @@ class GitRepository < Repository::AbstractRepository
   end
 
   # Removes a file from the repository.
-  def remove_file(path, expected_revision_identifier)
+  def remove_file(path, expected_revision_identifier, option)
     if @repos.last_commit.oid != expected_revision_identifier
       raise Repository::FileOutOfSyncConflict.new(path)
     end
     unless get_latest_revision.path_exists?(path)
       raise Repository::FileDoesNotExist.new(path)
     end
+
     File.unlink(File.join(@repos_path, path))
     @repos.index.remove(path)
+    a = Pathname.new(File.join(@repos_path, path))
+    b = Pathname.new(path)
+    c = Pathname.new(b.dirname)
+    d = Pathname.new(File.join(@repos_path, c))
+    return if File.exist?(File.join(a.dirname, DUMMY_FILE_NAME))
+    if b.basename.to_s.start_with? '.'
+      unless File.exist?(File.join(d.dirname, DUMMY_FILE_NAME))
+        gitkeep_filename = File.join(c.dirname, DUMMY_FILE_NAME)
+        add_file(gitkeep_filename, '')
+      end
+    elsif File.extname(b.basename).to_s.start_with? '.'
+      if option == 'File'
+        unless File.exist?(File.join(a.dirname, DUMMY_FILE_NAME))
+          gitkeep_filename = File.join(b.dirname, DUMMY_FILE_NAME)
+          add_file(gitkeep_filename, '')
+        end
+      elsif option == 'Folder'
+        unless File.exist?(File.join(d.dirname, DUMMY_FILE_NAME))
+          gitkeep_filename = File.join(c.dirname, DUMMY_FILE_NAME)
+          add_file(gitkeep_filename, '')
+        end
+      end
+    end
+  end
+
+  def remove_directory(path, expected_revision_identifier)
+    if @repos.last_commit.oid != expected_revision_identifier
+      raise Repository::FileOutOfSyncConflict.new(path)
+    end
+    unless get_latest_revision.path_exists?(path)
+      raise Repository::FileDoesNotExist.new(path)
+    end
+
+    a = Pathname.new(File.join(@repos_path, path))
+    FileUtils.remove_dir(a, force = true)
   end
 
   # Replaces a file in the repository with new content.
