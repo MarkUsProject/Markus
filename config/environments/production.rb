@@ -275,7 +275,7 @@ Markus::Application.configure do
   # Exam Plugin settings
   ###################################################################
   # Global flag to enable/disable all exam plugin features.
-  config.x.scanned_exams.enable = false
+  config.x.scanned_exams.enable = true
   config.x.scanned_exams.path = "#{::Rails.root}/data/prod/exam_templates"
   config.x.scanned_exams.python = "#{::Rails.root}/lib/scanner/venv/bin/python"
 
