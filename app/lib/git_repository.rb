@@ -482,31 +482,18 @@ class GitRepository < Repository::AbstractRepository
     unless get_latest_revision.path_exists?(path)
       raise Repository::FileDoesNotExist.new(path)
     end
-
-    File.unlink(File.join(@repos_path, path))
-    @repos.index.remove(path)
     a = Pathname.new(File.join(@repos_path, path))
     b = Pathname.new(path)
-    c = Pathname.new(b.dirname)
-    d = Pathname.new(File.join(@repos_path, c))
-    return if File.exist?(File.join(a.dirname, DUMMY_FILE_NAME))
-    if b.basename.to_s.start_with? '.'
-      unless File.exist?(File.join(d.dirname, DUMMY_FILE_NAME))
-        gitkeep_filename = File.join(c.dirname, DUMMY_FILE_NAME)
+    if option == 'File'
+      File.unlink(File.join(@repos_path, path))
+      @repos.index.remove(path)
+      unless File.exist?(File.join(a.dirname, DUMMY_FILE_NAME))
+        gitkeep_filename = File.join(b.dirname, DUMMY_FILE_NAME)
         add_file(gitkeep_filename, '')
       end
-    elsif File.extname(b.basename).to_s.start_with? '.'
-      if option == 'File'
-        unless File.exist?(File.join(a.dirname, DUMMY_FILE_NAME))
-          gitkeep_filename = File.join(b.dirname, DUMMY_FILE_NAME)
-          add_file(gitkeep_filename, '')
-        end
-      elsif option == 'Folder'
-        unless File.exist?(File.join(d.dirname, DUMMY_FILE_NAME))
-          gitkeep_filename = File.join(c.dirname, DUMMY_FILE_NAME)
-          add_file(gitkeep_filename, '')
-        end
-      end
+    elsif option == 'Folder'
+      File.unlink(File.join(@repos_path, path))
+      @repos.index.remove(path)
     end
   end
 
@@ -517,9 +504,12 @@ class GitRepository < Repository::AbstractRepository
     unless get_latest_revision.path_exists?(path)
       raise Repository::FileDoesNotExist.new(path)
     end
-
     a = Pathname.new(File.join(@repos_path, path))
+    b = Pathname.new(path)
     FileUtils.remove_dir(a, force = true)
+    return if File.exist?(File.join(a.dirname, DUMMY_FILE_NAME))
+    gitkeep_filename = File.join(b.dirname, DUMMY_FILE_NAME)
+    add_file(gitkeep_filename, '')
   end
 
   # Replaces a file in the repository with new content.

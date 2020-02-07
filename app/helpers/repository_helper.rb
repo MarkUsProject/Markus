@@ -168,8 +168,6 @@ module RepositoryHelper
         path = File.join obj.path, obj.name
         if obj.is_a? Repository::RevisionFile
           files << path
-        else
-          dirs << path
         end
       end
       dirs << folder_path
@@ -179,10 +177,8 @@ module RepositoryHelper
     return [success, file_messages] unless success
 
     # folders are removed in git if their contents are removed
-    if repo.is_a? GitRepository
-      dirs.each do |dir|
-        txn.remove_directory(dir, current_revision)
-      end
+    dirs.each do |dir|
+      txn.remove_directory(dir, current_revision)
     end
 
     if commit_txn
