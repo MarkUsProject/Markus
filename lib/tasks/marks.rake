@@ -30,67 +30,60 @@ namespace :db do
 
       # add a human written feedback file
       feedbackfiles << FeedbackFile.new(
-          submission: new_submission, filename: 'humanfb', mime_type: 'text', file_content: hcont
+        submission: new_submission, filename: 'humanfb', mime_type: 'text', file_content: hcont
       )
 
       # add an machine-generated feedback file
       feedbackfiles << FeedbackFile.new(
-          submission: new_submission, filename: 'machinefb', mime_type: 'text', file_content: mcont
+        submission: new_submission, filename: 'machinefb', mime_type: 'text', file_content: mcont
       )
 
-      @text = AnnotationText.find(AnnotationText.all.pluck(:id).to_a.sample).id
-      submission_file = SubmissionFile.find(new_submission.submission_files
-                                            .find_by('filename' => 'deferred-process.jpg').id)
-      submission = submission_file.submission
+      submission_file = new_submission.submission_files.find_by(filename: 'deferred-process.jpg')
       base_attributes = {
         submission_file_id: submission_file.id,
-        is_remark: submission.has_remark?,
-        annotation_text_id: @text,
-        annotation_number: submission.annotations.count + 1,
+        is_remark: new_submission.has_remark?,
+        annotation_text_id: AnnotationText.all.pluck(:id).to_a.sample,
+        annotation_number: new_submission.annotations.count + 1,
         creator_id: Admin.first.id,
         creator_type: 'Admin',
-        result_id: submission.current_result.id
+        result_id: new_submission.current_result.id
       }
-      @annotation = ImageAnnotation.create(
+      ImageAnnotation.create(
         x1: 132,
         y1: 199,
         x2: 346,
         y2: 370,
         **base_attributes
       )
-      @text = AnnotationText.find(AnnotationText.all.pluck(:id).to_a.sample).id
-      submission_file = SubmissionFile.find(new_submission.submission_files.find_by('filename' => 'pdf.pdf').id)
-      submission = submission_file.submission
+      submission_file = new_submission.submission_files.find_by(filename: 'pdf.pdf')
       base_attributes = {
         submission_file_id: submission_file.id,
-        is_remark: submission.has_remark?,
-        annotation_text_id: @text,
-        annotation_number: submission.annotations.count + 1,
+        is_remark: new_submission.has_remark?,
+        annotation_text_id: AnnotationText.all.pluck(:id).to_a.sample,
+        annotation_number: new_submission.annotations.count + 1,
         creator_id: Admin.first.id,
         creator_type: 'Admin',
-        result_id: submission.current_result.id
+        result_id: new_submission.current_result.id
       }
-      @annotation = PdfAnnotation.create(
-        x1: 27740,
-        y1: 58244,
+      PdfAnnotation.create(
+        x1: 27_740,
+        y1: 58_244,
         x2: 4977,
-        y2: 29748,
+        y2: 29_748,
         page: 1,
         **base_attributes
       )
-      @text = AnnotationText.find(AnnotationText.all.pluck(:id).to_a.sample).id
-      submission_file = SubmissionFile.find(new_submission.submission_files.find_by('filename' => 'hello.py').id)
-      submission = submission_file.submission
+      submission_file = new_submission.submission_files.find_by(filename: 'hello.py')
       base_attributes = {
         submission_file_id: submission_file.id,
-        is_remark: submission.has_remark?,
-        annotation_text_id: @text,
-        annotation_number: submission.annotations.count + 1,
+        is_remark: new_submission.has_remark?,
+        annotation_text_id: AnnotationText.all.pluck(:id).to_a.sample,
+        annotation_number: new_submission.annotations.count + 1,
         creator_id: Admin.first.id,
         creator_type: 'Admin',
-        result_id: submission.current_result.id
+        result_id: new_submission.current_result.id
       }
-      @annotation = TextAnnotation.create(
+      TextAnnotation.create(
         line_start: 7,
         line_end: 9,
         column_start: 6,
@@ -108,10 +101,11 @@ namespace :db do
           random_mark = rand(0..1)
         end
         marks << Mark.new(
-            result_id: result.id,
-            markable_id: criterion.id,
-            markable_type: criterion.class.to_s,
-            mark: random_mark)
+          result_id: result.id,
+          markable_id: criterion.id,
+          markable_type: criterion.class.to_s,
+          mark: random_mark
+        )
       end
     end
     FeedbackFile.import feedbackfiles
