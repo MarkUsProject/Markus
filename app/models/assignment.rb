@@ -1264,7 +1264,7 @@ class Assignment < ApplicationRecord
     total_marks = Mark.where(markable: criteria, result_id: result_ids)
                       .pluck(:result_id, :mark)
                       .group_by(&:first)
-                      .transform_values { |arr| arr.map(&:second).sum }
+                      .transform_values { |arr| arr.map(&:second).compact.sum }
 
     max_mark = criteria.map(&:max_mark).compact.sum
 
