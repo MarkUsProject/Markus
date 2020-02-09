@@ -33,18 +33,16 @@
     var last_level = $('#' + id + " .level").first();
     var new_level = last_level.clone();
 
+    // use regular expressions to update level numbers
     var regex = new RegExp(/\d+/);
     var level_num = $('#' + id + " .level").length;
-
+    // replace the new level names with the new level number
     var new_name = $(new_level)[0].childNodes[1];
     $(new_name).text(new_name.textContent.replace(regex, level_num));
-
     var display_name = new_level.find('label')[0];
     $(display_name).text(display_name.textContent.replace(regex, level_num));
 
-
-    // $(new_level + " .rubric_level_header").val('wooohooo');
-
+    // clear the inputs and text areas and create unique ids and names
     new_level.find('input').each(function () {
       if ($(this).attr('id')) {
         $(this).attr('id', $(this).attr('id').replace(regex, level_num));
@@ -56,15 +54,16 @@
       $(this).val('');
     });
     new_level.find('textarea').each(function () {
+      if ($(this).attr('id')) {
+        $(this).attr('id', $(this).attr('id').replace(regex, level_num));
+      }
+      if ($(this).attr('name')) {
+        $(this).attr('name',
+                          $(this).attr('name').replace(regex, level_num));
+      }
       $(this).val('');
     });
-
-    new_level.find('textarea').each(function () {
-      $(this).val('');
-    });
-
+    
     rubric_form.prepend(new_level);
-  
-    // rubric_form.refresh();
   }
 </script>
