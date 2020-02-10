@@ -493,7 +493,7 @@ class GitRepository < Repository::AbstractRepository
       end
     end
   end
-  
+
   def remove_directory(path, expected_revision_identifier)
     if @repos.last_commit.oid != expected_revision_identifier
       raise Repository::FileOutOfSyncConflict.new(path)
@@ -537,5 +537,4 @@ class GitRepository < Repository::AbstractRepository
     end
     @repos.index.add(path)
   end
-
 end
