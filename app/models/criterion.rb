@@ -128,7 +128,9 @@ class Criterion < ApplicationRecord
                      .map do |h|
         { **h.symbolize_keys, assigned_groups_count: counts[[h['id'], klass.to_s]] || 0 }
       end
-      klass.upsert_all(records)
+      unless records.empty?
+        klass.upsert_all(records)
+      end
     end
   end
 

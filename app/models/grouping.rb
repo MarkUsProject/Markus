@@ -172,7 +172,7 @@ class Grouping < ApplicationRecord
              .count
 
     grouping_data = Grouping.where(id: grouping_ids).pluck_to_hash.map do |h|
-      { **h.symbolize_keys, criteria_coverage_count: counts[h['id'].to_i] }
+      { **h.symbolize_keys, criteria_coverage_count: counts[h['id'].to_i] || 0 }
     end
     Grouping.upsert_all(grouping_data)
   end
