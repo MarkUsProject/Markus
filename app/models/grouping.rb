@@ -155,6 +155,8 @@ class Grouping < ApplicationRecord
     if grouping_ids.nil?
       grouping_ids = assignment.groupings.pluck(:id)
     end
+    return if grouping_ids.empty?
+
     counts = CriterionTaAssociation
              .from(
                # subquery
@@ -169,11 +171,10 @@ class Grouping < ApplicationRecord
              .group('subquery.id')
              .count
 
-    Upsert.batch(Grouping.connection, Grouping.table_name) do |upsert|
-      grouping_ids.each do |gid|
-        upsert.row({ id: gid }, criteria_coverage_count: counts[gid.to_i] || 0)
-      end
+    grouping_data = Grouping.where(id: grouping_ids).pluck_to_hash.map do |h|
+      { **h.symbolize_keys, criteria_coverage_count: counts[h['id'].to_i] }
     end
+    Grouping.upsert_all(grouping_data)
   end
 
   def get_all_students_in_group
