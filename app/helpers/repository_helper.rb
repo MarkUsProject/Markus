@@ -90,7 +90,7 @@ module RepositoryHelper
   # nil, the boolean indicates whether any errors were encountered which mean the caller should not
   # commit the transaction. The array contains any error or warning messages as arrays of arguments
   # (each of which can be passed directly to flash_message from a controller).
-  def remove_files(files, user, repo, path: '/', txn: nil, option: 'File')
+  def remove_files(files, user, repo, path: '/', txn: nil, keep_folder: true)
     messages = []
 
     if txn.nil?
@@ -109,7 +109,7 @@ module RepositoryHelper
       basename = sanitize_file_name(basename)
       file_path = current_path.join(subdir_path).join(basename)
       file_path = file_path.to_s
-      txn.remove(file_path, current_revision, option)
+      txn.remove(file_path, current_revision, keep_folder)
     end
 
     if commit_txn
@@ -172,7 +172,7 @@ module RepositoryHelper
       end
       dirs << folder_path
     end
-    success, file_messages = remove_files(files.reverse, user, repo, path: '', txn: txn, option: 'Folder')
+    success, file_messages = remove_files(files, user, repo, path: '', txn: txn, keep_folder: false)
 
     return [success, file_messages] unless success
 

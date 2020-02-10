@@ -186,9 +186,9 @@ module Api
         return
       end
       success, messages = grouping.group.access_repo do |repo|
-        folders = params[:folder_path]
+        folder = params[:folder_path]
         path = Pathname.new(grouping.assignment.repository_folder)
-        remove_folders([folders], @current_user, repo, path: path)
+        remove_folders([folder], @current_user, repo, path: path)
       end
       message_string = messages.map { |type, *msg| "#{type}: #{msg}" }.join("\n")
       if success

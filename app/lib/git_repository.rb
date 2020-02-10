@@ -395,7 +395,7 @@ class GitRepository < Repository::AbstractRepository
         end
       when :remove
         begin
-          remove_file(job[:path], job[:expected_revision_identifier], job[:option])
+          remove_file(job[:path], job[:expected_revision_identifier], keep_folder: job[:keep_folder])
         rescue Repository::Conflict => e
           transaction.add_conflict(e)
         end
@@ -475,28 +475,25 @@ class GitRepository < Repository::AbstractRepository
   end
 
   # Removes a file from the repository.
-  def remove_file(path, expected_revision_identifier, option)
+  def remove_file(path, expected_revision_identifier, keep_folder: true)
     if @repos.last_commit.oid != expected_revision_identifier
       raise Repository::FileOutOfSyncConflict.new(path)
     end
     unless get_latest_revision.path_exists?(path)
       raise Repository::FileDoesNotExist.new(path)
     end
-    a = Pathname.new(File.join(@repos_path, path))
-    b = Pathname.new(path)
-    if option == 'File'
-      File.unlink(File.join(@repos_path, path))
-      @repos.index.remove(path)
-      unless File.exist?(File.join(a.dirname, DUMMY_FILE_NAME))
-        gitkeep_filename = File.join(b.dirname, DUMMY_FILE_NAME)
+    absolute_path = Pathname.new(File.join(@repos_path, path))
+    relative_path = Pathname.new(path)
+    File.unlink(File.join(@repos_path, path))
+    @repos.index.remove(path)
+    if keep_folder
+      unless File.exist?(File.join(absolute_path.dirname, DUMMY_FILE_NAME))
+        gitkeep_filename = File.join(relative_path.dirname, DUMMY_FILE_NAME)
         add_file(gitkeep_filename, '')
       end
-    elsif option == 'Folder'
-      File.unlink(File.join(@repos_path, path))
-      @repos.index.remove(path)
     end
   end
-
+  
   def remove_directory(path, expected_revision_identifier)
     if @repos.last_commit.oid != expected_revision_identifier
       raise Repository::FileOutOfSyncConflict.new(path)
@@ -504,11 +501,11 @@ class GitRepository < Repository::AbstractRepository
     unless get_latest_revision.path_exists?(path)
       raise Repository::FileDoesNotExist.new(path)
     end
-    a = Pathname.new(File.join(@repos_path, path))
-    b = Pathname.new(path)
-    FileUtils.remove_dir(a, force = true)
-    return if File.exist?(File.join(a.dirname, DUMMY_FILE_NAME))
-    gitkeep_filename = File.join(b.dirname, DUMMY_FILE_NAME)
+    absolute_path = Pathname.new(File.join(@repos_path, path))
+    relative_path = Pathname.new(path)
+    FileUtils.remove_dir(absolute_path)
+    return if File.exist?(File.join(absolute_path.dirname, DUMMY_FILE_NAME))
+    gitkeep_filename = File.join(relative_path.dirname, DUMMY_FILE_NAME)
     add_file(gitkeep_filename, '')
   end
 

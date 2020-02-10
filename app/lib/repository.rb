@@ -456,8 +456,8 @@ module Repository
       @jobs.push(action: :add, path: path, file_data: file_data, mime_type: mime_type)
     end
 
-    def remove(path, expected_revision_identifier, option)
-      @jobs.push(action: :remove, path: path, expected_revision_identifier: expected_revision_identifier, option: option)
+    def remove(path, expected_revision_identifier, keep_folder)
+      @jobs.push(action: :remove, path: path, expected_revision_identifier: expected_revision_identifier, keep_folder: keep_folder)
     end
 
     def remove_directory(path, expected_revision_identifier)
