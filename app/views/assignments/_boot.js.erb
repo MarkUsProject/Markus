@@ -129,7 +129,7 @@
       penalty_decay_periods.refresh();
       penalty_periods.refresh();
 
-      toggle_remark_requests(<%= @assignment.allow_remarks? %>);
+      toggle_remark_requests(<%= @assignment.assignment_properties.allow_remarks? %>);
     }
 
     // Handle required fields
