@@ -138,7 +138,7 @@ class Criterion < ApplicationRecord
     max_mark_was = previous_changes[:max_mark].first
     # results with specific assignment
     results = Result.includes(submission: :grouping)
-                    .where(groupings: {assignment_id: assignment_id})
+                    .where(groupings: { assignment_id: assignment_id })
     all_marks = marks.where.not(mark: nil).where(result_id: results.ids)
     # all associated marks should have their mark value scaled to the change.
     Upsert.batch(Mark.connection, Mark.table_name) do |upsert|
