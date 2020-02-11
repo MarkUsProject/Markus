@@ -34,17 +34,17 @@ describe CheckboxCriterion do
 
     it 'raises en error message on an empty row' do
       expect { CheckboxCriterion.create_or_update_from_csv_row([], @assignment) }
-          .to raise_error(CsvInvalidLineError, I18n.t('upload_errors.invalid_csv_row_format'))
+        .to raise_error(CsvInvalidLineError, I18n.t('upload_errors.invalid_csv_row_format'))
     end
 
     it 'raises an error message on a 1 element row' do
-      expect { CheckboxCriterion.create_or_update_from_csv_row(%w(name), @assignment) }
-          .to raise_error(CsvInvalidLineError, I18n.t('upload_errors.invalid_csv_row_format'))
+      expect { CheckboxCriterion.create_or_update_from_csv_row(%w[name], @assignment) }
+        .to raise_error(CsvInvalidLineError, I18n.t('upload_errors.invalid_csv_row_format'))
     end
 
     it 'raises an error message on an invalid maximum value' do
-      expect { CheckboxCriterion.create_or_update_from_csv_row(%w(name max_value), @assignment) }
-          .to raise_error(CsvInvalidLineError)
+      expect { CheckboxCriterion.create_or_update_from_csv_row(%w[name max_value], @assignment) }
+        .to raise_error(CsvInvalidLineError)
     end
   end
 
