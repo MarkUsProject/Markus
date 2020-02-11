@@ -66,6 +66,14 @@ describe Api::SubmissionFilesController do
         end
         expect(success).to be_truthy
       end
+      context 'when the folder is already exist' do
+        before :each do
+          post :create_folders, params: { assignment_id: assignment.id, group_id: group.id, folder_path: 'a/b/c' }
+        end
+        it 'should not modify' do
+          expect(response.status).to eq(304)
+        end
+      end
     end
     context 'GET index' do
       let(:aid) { assignment.id }
