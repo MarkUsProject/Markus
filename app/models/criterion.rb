@@ -135,6 +135,7 @@ class Criterion < ApplicationRecord
   def scale_marks
     return unless max_mark_previously_changed? && !previous_changes[:max_mark].first.nil? # if max_mark was not updated
 
+    max_mark_was = previous_changes[:max_mark].first
     # results with specific assignment
     results = Result.includes(submission: :grouping)
                     .where(groupings: {assignment_id: assignment_id})
@@ -142,7 +143,7 @@ class Criterion < ApplicationRecord
     # all associated marks should have their mark value scaled to the change.
     Upsert.batch(Mark.connection, Mark.table_name) do |upsert|
       all_marks.each do |m|
-        upsert.row({ id: m.id }, mark: m.scale_mark(max_mark, max_mark_was, update: false) )
+        upsert.row({ id: m.id }, mark: m.scale_mark(max_mark, max_mark_was, update: false))
       end
     end
     a = Assignment.find(assignment_id)
