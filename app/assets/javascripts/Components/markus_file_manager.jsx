@@ -13,11 +13,11 @@ class RawFileManager extends RawFileBrowser {
   handleActionBarAddFileClick = (event, selected) => {
     event.preventDefault();
     let uploadTarget = '';
-    if (selected) {
-      if (selected.relativeKey.endsWith('/')) {
-        uploadTarget = selected.relativeKey;
+    if (selected.length === 1) { // treat multiple selections as an invalid target (default to root folder as target)
+      if (selected[0].relativeKey.endsWith('/')) {
+        uploadTarget = selected[0].relativeKey;
       } else {
-        uploadTarget = selected.relativeKey.substring(0, selected.relativeKey.lastIndexOf(selected.name));
+        uploadTarget = selected[0].relativeKey.substring(0, selected.relativeKey.lastIndexOf(selected.name));
       }
     }
     this.props.onActionBarAddFileClick(uploadTarget);
@@ -30,17 +30,19 @@ class RawFileManager extends RawFileBrowser {
   };
 
   folderTarget = (selectedItem) => {
-    const selectionIsFolder = selectedItem && selectedItem.relativeKey.endsWith('/');
+    // treat multiple selections as not targeting a folder
+    const selectionIsFolder = selectedItem.length === 1 && selectedItem[0].relativeKey.endsWith('/');
     if (selectionIsFolder) {
-      return selectedItem.relativeKey;
+      return selectedItem[0].relativeKey;
     } else  {
-      const key = selectedItem ? selectedItem.relativeKey : '';
+      const key = selectedItem.length === 1 ? selectedItem[0].relativeKey : '';
       return key.substring(0, key.lastIndexOf("/") + 1)
     }
   };
 
   renderActionBar(selectedItem) {
-    const selectionIsFolder = selectedItem && selectedItem.relativeKey.endsWith('/');
+    // treat multiple selections the same as not targeting
+    const selectionIsFolder = selectedItem.length === 1 && selectedItem[0].relativeKey.endsWith('/');
     let filter;
     if (this.props.canFilter) {
       filter = (
