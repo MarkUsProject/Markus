@@ -114,8 +114,7 @@ module Api
                                                       filename: params[:filename],
                                                       type: params[:mime_type])
         success, messages = grouping.group.access_repo do |repo|
-          file_path = File.dirname(params[:filename]).gsub(%r{^/}, '')
-          path = Pathname.new(grouping.assignment.repository_folder).join(file_path)
+          path = Pathname.new(grouping.assignment.repository_folder)
           add_files([file], @current_user, repo, path: path)
         end
       ensure

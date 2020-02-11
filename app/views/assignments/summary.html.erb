@@ -5,8 +5,7 @@
         document.getElementById('assignment_summary_table'),
         {
           assignment_id: <%= @assignment.id %>,
-          is_admin: <%= @current_user.admin? %>,
-          max_mark: <%= @assignment.max_mark %>,
+          is_admin: <%= @current_user.admin? %>
         }
       );
     });

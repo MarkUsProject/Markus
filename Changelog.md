@@ -1,8 +1,12 @@
 # Changelog
 ## [unreleased]
 - Fixed bug where grace credits were not displayed to Graders viewing the submissions table (#4332)
-
+- Added option to anonymize group membership when viewed by graders (#4331)
+- Added option to only display assigned criteria to graders as opposed to showing unassigned criteria but making them
+  ungradeable (#4331)
 - Fixed filtering and sorting of grace credit column in students table. (#4327)
+- Added feature to set multiple submissions to in/complete from the submissions table (#4336)
+- Update pdfjs version and integrate with webpacker. (#4362)
 
 ## [v1.8.2]
 - Fixed bug where all non-empty rows in a downloaded marks spreadsheet csv file were aligned to the left. (#4290)
