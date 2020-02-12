@@ -29,7 +29,7 @@ describe StudentsController do
 
     it 'does not create users when validation errors occur' do
       post :upload, params: {
-          upload_file: fixture_file_upload('files/students/form_invalid_record.csv', 'text/csv')
+        upload_file: fixture_file_upload('files/students/form_invalid_record.csv', 'text/csv')
       }
       expect(Student.all.count).to be 0
     end
