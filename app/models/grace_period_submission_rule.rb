@@ -28,12 +28,12 @@ class GracePeriodSubmissionRule < SubmissionRule
     section = submission.grouping.inviter.section
     due_date = assignment.section_due_date(section)
     # If we aren't overtime, we don't need to apply a rule
+    return submission if submission.revision_timestamp.nil?
     return submission if submission.revision_timestamp <= due_date
 
     # So we're overtime.  How far are we overtime?
     collection_time = submission.revision_timestamp
     grouping = submission.grouping
-
     overtime_hours = calculate_overtime_hours_from(collection_time, grouping)
     # Now we need to figure out how many Grace Credits to deduct
     deduction_amount = calculate_deduction_amount(overtime_hours)

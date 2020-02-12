@@ -5,6 +5,29 @@ describe GracePeriodSubmissionRule do
     expect(rule.save).to be_truthy
   end
 
+  context 'When the student did not submit any assignment files' do
+    describe '#apply_submission_rule' do
+      before :each do
+        @group = create(:group)
+        @grouping = create(:grouping, group: @group)
+        @membership = create(:student_membership,
+                             grouping: @grouping,
+                             membership_status: StudentMembership::STATUSES[:inviter])
+        @assignment = @grouping.assignment
+        @rule = GracePeriodSubmissionRule.new
+        @assignment.replace_submission_rule(@rule)
+        GracePeriodDeduction.destroy_all
+
+        @rule.save
+      end
+      it 'should not apply any submission rule' do
+        submission = Submission.create_by_timestamp(@grouping, @rule.calculate_collection_time)
+        new_submission = @rule.apply_submission_rule(submission)
+        expect(new_submission).to eq(submission)
+      end
+    end
+  end
+
   context 'When an assignment has two grace periods of 24 hours each after due date' do
     before :each do
       @group = create(:group)

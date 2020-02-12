@@ -5,7 +5,24 @@ describe PenaltyDecayPeriodSubmissionRule do
     rule.assignment = create(:assignment)
     expect(rule.save).to be_truthy
   end
-
+  context 'when the student did not submit any assignment files' do
+    before :each do
+      @group = create(:group)
+      @grouping = create(:grouping, group: @group)
+      @membership = create(:student_membership,
+                           grouping: @grouping, membership_status: StudentMembership::STATUSES[:inviter])
+      @assignment = @grouping.assignment
+      @rule = PenaltyDecayPeriodSubmissionRule.new
+      @assignment.replace_submission_rule(@rule)
+      PenaltyDecayPeriodSubmissionRule.destroy_all
+      @rule.save
+    end
+    it 'should not apply penalty_decay_period_submission rules' do
+      submission = Submission.create_by_timestamp(@grouping, @rule.calculate_collection_time)
+      new_submission = @rule.apply_submission_rule(submission)
+      expect(new_submission).to eq(submission)
+    end
+  end
   context 'A section with penalty_decay_period_submission rules.' do
 
     before :each do

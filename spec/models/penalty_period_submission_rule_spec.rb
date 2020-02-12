@@ -1,5 +1,25 @@
 describe PenaltyPeriodSubmissionRule do
   # Replace this with your real tests.
+  #
+  context 'when the student did not submit any assignment files' do
+    before :each do
+      @group = create(:group)
+      @grouping = create(:grouping, group: @group)
+      @membership = create(:student_membership,
+                           grouping: @grouping, membership_status: StudentMembership::STATUSES[:inviter])
+      @assignment = @grouping.assignment
+      @rule = PenaltyPeriodSubmissionRule.new
+      @assignment.replace_submission_rule(@rule)
+      PenaltyPeriodSubmissionRule.destroy_all
+      @rule.save
+    end
+    it 'should not apply penalty_period_submission rules' do
+      submission = Submission.create_by_timestamp(@grouping, @rule.calculate_collection_time)
+      new_submission = @rule.apply_submission_rule(submission)
+      expect(new_submission).to eq(submission)
+    end
+  end
+
   context 'Assignment has a single grace period of 24 hours after due date' do
     before :each do
       @assignment = create(:assignment)
