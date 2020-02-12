@@ -1,4 +1,5 @@
 shared_examples 'a criterion' do
+  it { is_expected.to callback(:scale_marks).after(:update) }
   describe 'assigning and unassigning TAs' do
     let(:assignment) { FactoryBot.create(:assignment) }
     let(:criteria) do
@@ -274,6 +275,45 @@ shared_examples 'a criterion' do
         another_criterion.reload
         expect(criterion.assigned_groups_count).to eq 2
         expect(another_criterion.assigned_groups_count).to eq 2
+      end
+    end
+  end
+
+  describe 'update max_mark' do
+    let(:assignment) { create :assignment }
+    let(:grouping) { create :grouping_with_inviter, assignment: assignment }
+    let(:submission) { create :version_used_submission, grouping: grouping }
+    let(:result) { create :incomplete_result, submission: submission }
+    let(:mark) do
+      mark = result.marks.first
+      mark.update!(mark: 1)
+      mark.reload
+    end
+    describe 'when max_mark not updated' do
+      let!(:criterion) { create(criterion_factory_name, assignment: assignment, max_mark: 10) }
+      it 'should not scale existing marks' do
+        prev_mark = mark.mark
+        criterion.max_mark = 10
+        criterion.save!
+        mark.reload
+        expect(mark.mark).to eq prev_mark
+      end
+    end
+    describe 'when max_mark is updated' do
+      let!(:criterion) { create(criterion_factory_name, assignment: assignment, max_mark: 10) }
+      it 'should change existing marks' do
+        prev_mark = mark.mark
+        criterion.max_mark = 100
+        criterion.save!
+        mark.reload
+        expect(mark.mark).not_to eq prev_mark
+      end
+      it 'should scale existing marks' do
+        prev_mark = mark.mark
+        criterion.max_mark *= 10
+        criterion.save!
+        mark.reload
+        expect(mark.mark).to eq prev_mark * 10
       end
     end
   end
