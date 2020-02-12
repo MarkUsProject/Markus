@@ -133,25 +133,26 @@ class Criterion < ApplicationRecord
 
   # When max_mark of criterion is changed, all associated marks should have their mark value scaled to the change.
   def scale_marks
-    if max_mark_changed? && !max_mark_was.nil?  # if max_mark is updated
-      # results with specific assignment
-      results = Result.includes(submission: :grouping)
-                      .where(groupings: {assignment_id: assignment_id})
-      all_marks = marks.where.not(mark: nil).where(result_id: results.ids)
-      # all associated marks should have their mark value scaled to the change.
-      Upsert.batch(Mark.connection, Mark.table_name) do |upsert|
-        all_marks.each do |m|
-          upsert.row({ id: m.id }, mark: m.scale_mark(max_mark, max_mark_was, update: false) )
-        end
+    return unless max_mark_previously_changed? && !previous_changes[:max_mark].first.nil? # if max_mark was not updated
+
+    max_mark_was = previous_changes[:max_mark].first
+    # results with specific assignment
+    results = Result.includes(submission: :grouping)
+                    .where(groupings: { assignment_id: assignment_id })
+    all_marks = marks.where.not(mark: nil).where(result_id: results.ids)
+    # all associated marks should have their mark value scaled to the change.
+    Upsert.batch(Mark.connection, Mark.table_name) do |upsert|
+      all_marks.each do |m|
+        upsert.row({ id: m.id }, mark: m.scale_mark(max_mark, max_mark_was, update: false))
       end
-      a = Assignment.find(assignment_id)
-      Upsert.batch(Result.connection, Result.table_name) do |upsert|
-        results.each do |r|
-          upsert.row({ id: r.id }, total_mark: r.get_total_mark(assignment: a))
-        end
-      end
-      a.assignment_stat.refresh_grade_distribution
     end
+    a = Assignment.find(assignment_id)
+    Upsert.batch(Result.connection, Result.table_name) do |upsert|
+      results.each do |r|
+        upsert.row({ id: r.id }, total_mark: r.get_total_mark(assignment: a))
+      end
+    end
+    a.assignment_stat.refresh_grade_distribution
   end
 
   private
