@@ -144,8 +144,9 @@ class Criterion < ApplicationRecord
                     .where(groupings: { assignment_id: assignment_id })
     all_marks = marks.where.not(mark: nil).where(result_id: results.ids)
     # all associated marks should have their mark value scaled to the change.
-    updated_marks = all_marks.map do |mark|
-      { mark.id => mark.scale_mark(max_mark, max_mark_was, update: false) }
+    updated_marks = {}
+    all_marks.each do |mark|
+      updated_marks[mark.id] = mark.scale_mark(max_mark, max_mark_was, update: false)
     end
     unless updated_marks.empty?
       Mark.upsert_all(all_marks.pluck_to_hash.map { |h| { **h.symbolize_keys, mark: updated_marks[h['id'].to_i] } })
