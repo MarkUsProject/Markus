@@ -7,6 +7,7 @@
 - Fixed filtering and sorting of grace credit column in students table. (#4327)
 - Added feature to set multiple submissions to in/complete from the submissions table (#4336)
 - Update pdfjs version and integrate with webpacker. (#4362)
+- Fixed bug where tags could not be uploaded from a csv file (#4368)
 - Fixed bug where marks were not being scaled properly after an update to a criterion's max_mark (#4369)
 
 ## [v1.8.2]
