@@ -197,12 +197,25 @@ class User < ApplicationRecord
       parsed[:valid_lines] = '' # reset the value from MarkusCsv#parse, use import's return instead
     end
 
+    existing_user_ids = user_class.all.pluck(:id)
+    imported = nil
+    parsed[:invalid_records] = ''
     begin
-      imported = nil
       User.transaction do
         imported = user_class.import user_columns, users, on_duplicate_key_update: {
           conflict_target: [:user_name], columns: [:last_name, :first_name, :section_id, :email, :id_number]
         }
+        User.where(id: imported.ids).each do |user|
+          user.validate!
+        rescue ActiveRecord::RecordInvalid
+          error_message = user.errors
+                              .messages
+                              .map { |k, v| "#{k} #{v.flatten.join ','}" }.flatten.join MarkusCsv::INVALID_LINE_SEP
+          parsed[:invalid_records] += "#{user.user_name}: #{error_message}"
+        end
+        unless parsed[:invalid_records].empty?
+          raise ActiveRecord::Rollback
+        end
       end
       unless imported.failed_instances.empty?
         if parsed[:invalid_lines].blank?
@@ -213,14 +226,18 @@ class User < ApplicationRecord
         parsed[:invalid_lines] +=
           imported.failed_instances.map { |f| f[:user_name].to_s }.join(MarkusCsv::INVALID_LINE_SEP)
       end
-      unless imported.ids.empty?
+      if !imported.ids.empty? && parsed[:invalid_records].empty?
         parsed[:valid_lines] = I18n.t('upload_success', count: imported.ids.size)
       end
     rescue ActiveRecord::RecordNotUnique => e
       # can trigger on uniqueness constraint validation for :user_name, will invalidate the entire import
       parsed[:invalid_lines] = I18n.t('csv_upload_user_duplicate', user_name: e.message)
     end
-
+    if user_class == Student
+      new_user_ids = (imported&.ids || []) - existing_user_ids
+      # call create callbacks to make sure grade_entry_students get created
+      user_class.where(id: new_user_ids).each(&:create_all_grade_entry_students)
+    end
     parsed
   end
 
