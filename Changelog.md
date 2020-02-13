@@ -1,5 +1,6 @@
 # Changelog
-## [unreleased]
+
+## [v1.8.3]
 - Fixed bug where grace credits were not displayed to Graders viewing the submissions table (#4332)
 - Fixed filtering and sorting of grace credit column in students table. (#4327)
 - Added feature to set multiple submissions to in/complete from the submissions table (#4336)
