@@ -17,13 +17,12 @@ describe GracePeriodSubmissionRule do
         @rule = GracePeriodSubmissionRule.new
         @assignment.replace_submission_rule(@rule)
         GracePeriodDeduction.destroy_all
-
+        @submission = create(:submission, revision_timestamp: nil)
         @rule.save
       end
       it 'should not apply any submission rule' do
-        submission = Submission.create_by_timestamp(@grouping, @rule.calculate_collection_time)
-        new_submission = @rule.apply_submission_rule(submission)
-        expect(new_submission).to eq(submission)
+        new_submission = @rule.apply_submission_rule(@submission)
+        expect(new_submission).to eq(@submission)
       end
     end
   end

@@ -15,12 +15,12 @@ describe PenaltyDecayPeriodSubmissionRule do
       @rule = PenaltyDecayPeriodSubmissionRule.new
       @assignment.replace_submission_rule(@rule)
       PenaltyDecayPeriodSubmissionRule.destroy_all
+      @submission = create(:submission, revision_timestamp: nil)
       @rule.save
     end
     it 'should not apply penalty_decay_period_submission rules' do
-      submission = Submission.create_by_timestamp(@grouping, @rule.calculate_collection_time)
-      new_submission = @rule.apply_submission_rule(submission)
-      expect(new_submission).to eq(submission)
+      new_submission = @rule.apply_submission_rule(@submission)
+      expect(new_submission).to eq(@submission)
     end
   end
   context 'A section with penalty_decay_period_submission rules.' do
