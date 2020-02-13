@@ -1575,6 +1575,19 @@ describe Assignment do
         expect(data.size).to eq 1
         expect(data[0][:_id]).to be groupings[0].id
       end
+
+      context 'when a grace period deduction has been applied' do
+        let(:assignment) { create :assignment, submission_rule: create(:grace_period_submission_rule) }
+        let!(:grace_period_deduction) do
+          create(:grace_period_deduction,
+                 membership: groupings[0].accepted_student_memberships.first,
+                 deduction: 1)
+        end
+        it 'should include grace credit deductions' do
+          data = assignment.current_submission_data(ta)
+          expect(data.map { |h| h[:grace_credits_used] }.compact).to contain_exactly(1)
+        end
+      end
     end
 
     context 'a Student user' do

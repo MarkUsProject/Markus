@@ -133,6 +133,7 @@ class StudentsController < ApplicationController
         result = User.upload_user_list(Student, params[:upload_file].read, params[:encoding])
         flash_message(:error, result[:invalid_lines]) unless result[:invalid_lines].empty?
         flash_message(:success, result[:valid_lines]) unless result[:valid_lines].empty?
+        flash_message(:error, result[:invalid_records]) unless result[:invalid_records].empty?
       end
     end
     redirect_to action: 'index'

@@ -78,7 +78,8 @@ class AssignmentsController < ApplicationController
         end
         @grouping = @student.accepted_grouping_for(@assignment.id)
       end
-    else
+    end
+    unless @grouping.nil?
       # We look for the information on this group...
       # The members
       @studentmemberships = @grouping.student_memberships

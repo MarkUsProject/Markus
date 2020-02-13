@@ -1,14 +1,16 @@
 {
   "dependencies": {
-    "@rails/webpacker": "4.0",
     "@babel/preset-react": "^7.7.4",
+    "@rails/webpacker": "4.2",
     "chart.js": "^2.9.3",
     "i18n-js": "^3.5.0",
     "jcrop": "^0.0.1",
     "jquery": "^3.4.1",
     "marked": "^0.6.3",
     "moment": "^2.24.0",
-    "mousetrap": "^1.6.3",
+    "mousetrap": "^1.6.5",
+    "pdfjs-dist": "^2.2.228",
+    "postcss-preset-env": "^6.7.0",
     "prop-types": "^15.7.2",
     "rails-erb-loader": "^5.5.2",
     "rails-ujs": "^5.2.4",
