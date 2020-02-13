@@ -16,7 +16,6 @@ gem 'sprockets'
 # Models and database interactions
 gem 'activerecord-import'
 gem 'pluck_to_hash'
-gem 'upsert'
 
 # CSS and JavaScript
 gem 'autoprefixer-rails'

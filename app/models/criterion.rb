@@ -123,10 +123,13 @@ class Criterion < ApplicationRecord
              .count
 
     [RubricCriterion, FlexibleCriterion, CheckboxCriterion].each do |klass|
-      Upsert.batch(klass.connection, klass.table_name) do |upsert|
-        klass.where(assignment_id: assignment.id).find_each do |crit|
-          upsert.row({ id: crit.id }, assigned_groups_count: counts[[crit.id, klass.to_s]] || 0)
-        end
+      records = klass.where(assignment_id: assignment.id)
+                     .pluck_to_hash
+                     .map do |h|
+        { **h.symbolize_keys, assigned_groups_count: counts[[h['id'], klass.to_s]] || 0 }
+      end
+      unless records.empty?
+        klass.upsert_all(records)
       end
     end
   end
@@ -141,16 +144,21 @@ class Criterion < ApplicationRecord
                     .where(groupings: { assignment_id: assignment_id })
     all_marks = marks.where.not(mark: nil).where(result_id: results.ids)
     # all associated marks should have their mark value scaled to the change.
-    Upsert.batch(Mark.connection, Mark.table_name) do |upsert|
-      all_marks.each do |m|
-        upsert.row({ id: m.id }, mark: m.scale_mark(max_mark, max_mark_was, update: false))
-      end
+    updated_marks = {}
+    all_marks.each do |mark|
+      updated_marks[mark.id] = mark.scale_mark(max_mark, max_mark_was, update: false)
+    end
+    unless updated_marks.empty?
+      Mark.upsert_all(all_marks.pluck_to_hash.map { |h| { **h.symbolize_keys, mark: updated_marks[h['id'].to_i] } })
     end
     a = Assignment.find(assignment_id)
-    Upsert.batch(Result.connection, Result.table_name) do |upsert|
-      results.each do |r|
-        upsert.row({ id: r.id }, total_mark: r.get_total_mark(assignment: a))
-      end
+    updated_results = results.map do |result|
+      { result.id => result.get_total_mark(assignment: a) }
+    end
+    unless updated_results.empty?
+      Result.upsert_all(
+        results.pluck_to_hash.map { |h| { **h.symbolize_keys, total_mark: updated_results[h['id'].to_i] } }
+      )
     end
     a.assignment_stat.refresh_grade_distribution
   end
