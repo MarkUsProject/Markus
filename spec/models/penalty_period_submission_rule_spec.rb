@@ -2,7 +2,7 @@ describe PenaltyPeriodSubmissionRule do
   # Replace this with your real tests.
   #
   context 'when the student did not submit any assignment files' do
-    let(:submission) { create(:submission, revision_timestamp: nil) }
+    let(:submission) { create(:submission, is_empty: true) }
     let(:rule) { create(:penalty_period_submission_rule) }
     let(:assignment) { create(:assignment) }
     let(:result) { create(:incomplete_result, marking_state: 'incomplete') }

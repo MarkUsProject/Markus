@@ -9,7 +9,7 @@ describe GracePeriodSubmissionRule do
     describe '#apply_submission_rule' do
       let(:student) { create(:student, grace_credits: 7) }
       let(:grouping) { create(:grouping_with_inviter) }
-      let(:submission) { create(:submission, revision_timestamp: nil) }
+      let(:submission) { create(:submission, is_empty: true) }
       let(:rule) { create(:grace_period_submission_rule) }
       let(:assignment) { create(:assignment) }
       it 'should not apply any submission rule' do
