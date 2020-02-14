@@ -7,22 +7,21 @@ describe GracePeriodSubmissionRule do
 
   context 'When the student did not submit any assignment files' do
     describe '#apply_submission_rule' do
-      before :each do
-        @group = create(:group)
-        @grouping = create(:grouping, group: @group)
-        @membership = create(:student_membership,
-                             grouping: @grouping,
-                             membership_status: StudentMembership::STATUSES[:inviter])
-        @assignment = @grouping.assignment
-        @rule = GracePeriodSubmissionRule.new
-        @assignment.replace_submission_rule(@rule)
-        GracePeriodDeduction.destroy_all
-        @submission = create(:submission, revision_timestamp: nil)
-        @rule.save
-      end
+      let(:student) { create(:student, grace_credits: 7) }
+      let(:grouping) { create(:grouping_with_inviter) }
+      let(:submission) { create(:submission, revision_timestamp: nil) }
+      let(:rule) { create(:grace_period_submission_rule) }
+      let(:assignment) { create(:assignment) }
       it 'should not apply any submission rule' do
-        new_submission = @rule.apply_submission_rule(@submission)
-        expect(new_submission).to eq(@submission)
+        assignment.replace_submission_rule(rule)
+        new_submission = rule.apply_submission_rule(submission)
+        expect(new_submission).to eq(submission)
+      end
+      let(:membership) { create(:student_membership, grouping: grouping) }
+      it 'should not deduct grace token' do
+        assignment.replace_submission_rule(rule)
+        rule.apply_submission_rule(submission)
+        expect(student.grace_credits).to eq(7)
       end
     end
   end

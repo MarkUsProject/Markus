@@ -6,21 +6,22 @@ describe PenaltyDecayPeriodSubmissionRule do
     expect(rule.save).to be_truthy
   end
   context 'when the student did not submit any assignment files' do
-    before :each do
-      @group = create(:group)
-      @grouping = create(:grouping, group: @group)
-      @membership = create(:student_membership,
-                           grouping: @grouping, membership_status: StudentMembership::STATUSES[:inviter])
-      @assignment = @grouping.assignment
-      @rule = PenaltyDecayPeriodSubmissionRule.new
-      @assignment.replace_submission_rule(@rule)
-      PenaltyDecayPeriodSubmissionRule.destroy_all
-      @submission = create(:submission, revision_timestamp: nil)
-      @rule.save
-    end
+    let(:submission) { create(:submission, revision_timestamp: nil) }
+    let(:rule) { create(:penalty_decay_period_submission_rule) }
+    let(:assignment) { create(:assignment) }
+    let(:result) { create(:incomplete_result, marking_state: 'incomplete') }
     it 'should not apply penalty_decay_period_submission rules' do
-      new_submission = @rule.apply_submission_rule(@submission)
-      expect(new_submission).to eq(@submission)
+      assignment.replace_submission_rule(rule)
+      new_submission = rule.apply_submission_rule(submission)
+      expect(new_submission).to eq(submission)
+    end
+    let(:mark) { create(:rubric_mark, mark: 4) }
+    let(:extra_mark) { create(:extra_mark, extra_mark: 0, result: result) }
+    it 'should not change the mark and should not add any extra mark' do
+      assignment.replace_submission_rule(rule)
+      rule.apply_submission_rule(submission)
+      expect(extra_mark.extra_mark).to eq(0)
+      expect(mark.mark).to eq(4)
     end
   end
   context 'A section with penalty_decay_period_submission rules.' do
