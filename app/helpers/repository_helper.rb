@@ -109,7 +109,7 @@ module RepositoryHelper
       basename = sanitize_file_name(basename)
       file_path = current_path.join(subdir_path).join(basename)
       file_path = file_path.to_s
-      txn.remove(file_path, current_revision, keep_folder)
+      txn.remove(file_path, current_revision, keep_folder: keep_folder)
     end
 
     if commit_txn

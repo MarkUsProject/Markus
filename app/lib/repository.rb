@@ -50,6 +50,18 @@ module Repository
     end
   end
 
+  class FolderDoesNotExistConflict < Conflict
+    def to_s
+      return "#{@path} could not be removed - it is not exist"
+    end
+  end
+
+  class FolderIsNotEmptyConflict < Conflict
+    def to_s
+      return "#{@path} could not be removed - it is not empty"
+    end
+  end
+
   class FileOutOfSyncConflict < Conflict
     def to_s
       return "#{@path} has been updated since you last saw it, and could not be changed"
@@ -456,7 +468,7 @@ module Repository
       @jobs.push(action: :add, path: path, file_data: file_data, mime_type: mime_type)
     end
 
-    def remove(path, expected_revision_identifier, keep_folder)
+    def remove(path, expected_revision_identifier, keep_folder: true)
       @jobs.push(action: :remove, path: path, expected_revision_identifier: expected_revision_identifier,
                  keep_folder: keep_folder)
     end

@@ -126,6 +126,12 @@ class MemoryRepository < Repository::AbstractRepository
         rescue Repository::Conflict => e
           transaction.add_conflict(e)
         end
+      when :remove_directory
+        begin
+          new_rev = remove_file(new_rev, job[:path], job[:expected_revision_identifier])
+        rescue Repository::Conflict => e
+          transaction.add_conflict(e)
+        end
       when :replace
         begin
           new_rev = replace_file_content(new_rev, job[:path], job[:file_data], job[:mime_type], job[:expected_revision_identifier])

@@ -495,16 +495,16 @@ class GitRepository < Repository::AbstractRepository
   end
 
   def remove_directory(path, expected_revision_identifier)
-    if @repos.last_commit.oid != expected_revision_identifier
-      raise Repository::FileOutOfSyncConflict.new(path)
-    end
     unless get_latest_revision.path_exists?(path)
-      raise Repository::FileDoesNotExist.new(path)
+      raise Repository::FolderDoesNotExistConflict.new(path)
     end
     absolute_path = Pathname.new(File.join(@repos_path, path))
     relative_path = Pathname.new(path)
+    unless Dir.empty?(absolute_path)
+      raise Repository::FolderIsNotEmptyConflict.new(path)
+    end
     FileUtils.remove_dir(absolute_path)
-    return if File.exist?(File.join(absolute_path.dirname, DUMMY_FILE_NAME))
+    return if get_latest_revision.path_exists?(File.join(relative_path.dirname, DUMMY_FILE_NAME))
     gitkeep_filename = File.join(relative_path.dirname, DUMMY_FILE_NAME)
     add_file(gitkeep_filename, '')
   end

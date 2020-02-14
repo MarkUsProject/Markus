@@ -253,6 +253,12 @@ class SubversionRepository < Repository::AbstractRepository
         rescue Repository::Conflict => e
           transaction.add_conflict(e)
         end
+      when :remove_directory
+        begin
+          txn = remove_file(txn, job[:path], job[:expected_revision_identifier])
+        rescue Repository::Conflict => e
+          transaction.add_conflict(e)
+        end
       when :replace
         begin
           txn = replace_file(txn, job[:path], job[:file_data], job[:mime_type], job[:expected_revision_identifier])
