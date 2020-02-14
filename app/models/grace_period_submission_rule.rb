@@ -25,7 +25,7 @@ class GracePeriodSubmissionRule < SubmissionRule
   end
 
   def apply_submission_rule(submission)
-    return submission if submission.revision_timestamp.nil?
+    return submission if submission.is_empty
     section = submission.grouping.inviter.section
     due_date = assignment.section_due_date(section)
     # If we aren't overtime, we don't need to apply a rule
