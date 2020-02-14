@@ -1,8 +1,19 @@
 # Changelog
 ## [unreleased]
-- Fixed bug where grace credits were not displayed to Graders viewing the submissions table (#4332)
+- Added option to anonymize group membership when viewed by graders (#4331)
+- Added option to only display assigned criteria to graders as opposed to showing unassigned criteria but making them
+  ungradeable (#4331)
+- Fixed bug where test output was not being properly hidden from students (#4379)
 
+## [v1.8.3]
+- Fixed bug where grace credits were not displayed to Graders viewing the submissions table (#4332)
 - Fixed filtering and sorting of grace credit column in students table. (#4327)
+- Added feature to set multiple submissions to in/complete from the submissions table (#4336)
+- Update pdfjs version and integrate with webpacker. (#4362)
+- Fixed bug where tags could not be uploaded from a csv file (#4368)
+- Fixed bug where marks were not being scaled properly after an update to a criterion's max_mark (#4369)
+- Fixed bug where grade entry students were not being created if new students were created by csv upload (#4371)
+- Fixed bug where the student interface page wasn't rendered if creating a single student grouping at the same time (#4372)
 
 ## [v1.8.2]
 - Fixed bug where all non-empty rows in a downloaded marks spreadsheet csv file were aligned to the left. (#4290)

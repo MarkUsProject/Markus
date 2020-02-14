@@ -108,7 +108,7 @@
    * @return {{page: {int}, $control: {jQuery}}}
    */
   PdfAnnotationManager.prototype.getSelectionBox = function($page) {
-    var pageNumber = parseInt($page.attr("id").replace("pageContainer", ""), 10);
+    let pageNumber = $page.data('page-number');
 
     if (this.selectionBox.page === pageNumber) {
       return this.selectionBox;
@@ -233,7 +233,6 @@
           return;
         }
       }
-
       self.setSelectionBox($(ev.delegateTarget), {
         x: point.x,
         y: point.y,
@@ -336,7 +335,7 @@
    * @return {jQuery} The jQuery object of pages.
    */
   PdfAnnotationManager.prototype.getPages = function() {
-    return $("#" + this.pageParentId + " .page");
+    return $('.page');
   }
 
   /**
@@ -349,7 +348,7 @@
   }
 
   PdfAnnotationManager.prototype.getPageContainer = function(pageNum) {
-    return $("#" + this.pageParentId + " #pageContainer" + pageNum);
+    return $(`.page[data-page-number=${pageNum}]`);
   }
 
   /**

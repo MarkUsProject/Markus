@@ -576,35 +576,59 @@ class Assignment < ApplicationRecord
     groupings_with_results = groupings.includes(current_result: :marks)
     result_ids = groupings_with_results.pluck('results.id').uniq.compact
     extra_marks_hash = Result.get_total_extra_marks(result_ids, max_mark: max_mark)
+
+    hide_unassigned = user.ta? && hide_unassigned_criteria
+
+    criteria_shown = Set.new
+    max_mark = 0
+
+    visibility = user.admin? ? :all : :ta
+    criteria_columns = self.get_criteria(visibility).map do |crit|
+      unassigned = !assigned_criteria.nil? && !assigned_criteria.include?("#{crit.class}-#{crit.id}")
+      next if hide_unassigned && unassigned
+
+      max_mark += crit.max_mark
+      accessor = "#{crit.class}-#{crit.id}"
+      criteria_shown << accessor
+      {
+        Header: crit.name,
+        accessor: "criteria.#{accessor}",
+        className: 'number ' + (unassigned ? 'unassigned' : ''),
+        headerClassName: unassigned ? 'unassigned' : ''
+      }
+    end.compact
+
     final_data = groupings_with_results.map do |g|
       result = g.current_result
       has_remark = g.current_submission_used&.submitted_remark.present?
+      if user.ta? && anonymize_groups
+        group_name = "#{Group.model_name.human} #{g.id}"
+        section = ''
+        group_members = []
+      else
+        group_name = grouping_data[g.id][0]['groups.group_name']
+        section = grouping_data[g.id][0]['sections.name']
+        group_members = members.fetch(g.id, [])
+                               .map { |s| [s['users.user_name'], s['users.first_name'], s['users.last_name']] }
+      end
+
+      criteria = result.nil? ? {} : result.mark_hash.select { |key, _| criteria_shown.include?(key) }
       {
-        group_name: grouping_data[g.id][0]['groups.group_name'],
-        section: grouping_data[g.id][0]['sections.name'],
-        members: members.fetch(g.id, [])
-                        .map { |s| [s['users.user_name'], s['users.first_name'], s['users.last_name']] },
+        group_name: group_name,
+        section: section,
+        members: group_members,
         graders: graders.fetch(g.id, [])
                         .map { |s| [s['users.user_name'], s['users.first_name'], s['users.last_name']] },
         marking_state: marking_state(has_remark,
                                      result&.marking_state,
                                      result&.released_to_students,
                                      g.collection_date),
-        final_grade: result&.total_mark,
-        criteria: result.nil? ? {} : result.mark_hash,
+        final_grade: criteria.values.sum,
+        criteria: criteria,
+        max_mark: max_mark,
         result_id: result&.id,
         submission_id: result&.submission_id,
         total_extra_marks: extra_marks_hash[result&.id]
-      }
-    end
-
-    criteria_columns = self.get_criteria(:ta).map do |crit|
-      unassigned = !assigned_criteria.nil? && !assigned_criteria.include?("#{crit.class}-#{crit.id}")
-      {
-        Header: crit.name,
-        accessor: "criteria.criterion_#{crit.class}_#{crit.id}",
-        className: 'number ' + (unassigned ? 'unassigned' : ''),
-        headerClassName: unassigned ? 'unassigned' : ''
       }
     end
 
@@ -654,7 +678,7 @@ class Assignment < ApplicationRecord
             row += Array.new(2 + criteria.length, nil)
           else
             row << result.total_mark
-            row += criteria.map { |crit| marks["criterion_#{crit.class.name}_#{crit.id}"] }
+            row += criteria.map { |crit| marks["#{crit.class.name}-#{crit.id}"] }
             row << extra_marks_hash[result&.id]
           end
           csv << row
@@ -1158,6 +1182,8 @@ class Assignment < ApplicationRecord
       criteria: criteria,
       graders: graders,
       assign_graders_to_criteria: self.assign_graders_to_criteria,
+      anonymize_groups: self.anonymize_groups,
+      hide_unassigned_criteria: self.hide_unassigned_criteria,
       sections: Hash[Section.all.pluck(:id, :name)]
     }
   end
@@ -1206,15 +1232,41 @@ class Assignment < ApplicationRecord
                                  'results.released_to_students')
                   .group_by { |h| h['groupings.id'] }
 
-    member_data = groupings
-                  .joins(:accepted_students)
-                  .pluck_to_hash('groupings.id', 'users.user_name')
-                  .group_by { |h| h['groupings.id'] }
+    if current_user.ta? && anonymize_groups
+      member_data = {}
+      section_data = {}
+    else
+      member_data = groupings.joins(:accepted_students)
+                             .pluck_to_hash('groupings.id', 'users.user_name')
+                             .group_by { |h| h['groupings.id'] }
 
-    section_data = groupings
-                   .joins(inviter: :section)
-                   .pluck('groupings.id', 'sections.name')
-                   .to_h
+      section_data = groupings.joins(inviter: :section)
+                              .pluck('groupings.id', 'sections.name')
+                              .to_h
+    end
+
+    if current_user.ta? && hide_unassigned_criteria
+      assigned_criteria = current_user.criterion_ta_associations
+                                      .where(assignment_id: self.id)
+                                      .pluck(:criterion_type, :criterion_id)
+                                      .map { |t, id| "#{t}-#{id}" }
+    else
+      assigned_criteria = nil
+    end
+
+    visibility = current_user.admin? ? :all : :ta
+    criteria = self.get_criteria(visibility).reject do |crit|
+      !assigned_criteria.nil? && !assigned_criteria.include?("#{crit.class}-#{crit.id}")
+    end
+
+    result_ids = result_data.values.map { |arr| arr.map { |h| h['results.id'] } }.flatten
+
+    total_marks = Mark.where(markable: criteria, result_id: result_ids)
+                      .pluck(:result_id, :mark)
+                      .group_by(&:first)
+                      .transform_values { |arr| arr.map(&:second).compact.sum }
+
+    max_mark = criteria.map(&:max_mark).compact.sum
 
     collection_dates = all_grouping_collection_dates
 
@@ -1228,7 +1280,8 @@ class Assignment < ApplicationRecord
 
       base = {
         _id: grouping_id, # Needed for checkbox version of react-table
-        group_name: group_name,
+        max_mark: max_mark,
+        group_name: current_user.ta? && anonymize_groups ? "#{Group.model_name.human} #{grouping_id}" : group_name,
         tags: (tag_info.nil? ? [] : tag_info.map { |h| h['tags.name'] }),
         marking_state: marking_state(has_remark,
                                      result_info['results.marking_state'],
@@ -1243,7 +1296,7 @@ class Assignment < ApplicationRecord
 
       if result_info['results.id'].present?
         base[:result_id] = result_info['results.id']
-        base[:final_grade] = result_info['results.total_mark']
+        base[:final_grade] = total_marks[result_info['results.id']] || 0.0
       end
 
       base[:members] = member_info.map { |h| h['users.user_name'] } unless member_info.nil?

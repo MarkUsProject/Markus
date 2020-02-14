@@ -111,6 +111,14 @@ describe 'An Assignment' do
           locale: 'en')
     end
 
+    it 'routes POST set_boolean_graders_options properly' do
+      expect(post: path + '/' + assignment.id.to_s + '/set_boolean_graders_options')
+        .to route_to(controller: ctrl,
+                     action: 'set_boolean_graders_options',
+                     id: assignment.id.to_s,
+                     locale: 'en')
+    end
+
     it 'routes GET student_interface properly' do
       expect(get: path + '/' + assignment.id.to_s + '/student_interface')
         .to route_to(
@@ -532,6 +540,15 @@ describe 'An Assignment' do
         )
       end
 
+      it 'routes POST set_result_marking_state properly' do
+        expect(post: sub_path + '/set_result_marking_state').to route_to(
+          controller: sub_ctrl,
+          action: 'set_result_marking_state',
+          assignment_id: assignment.id.to_s,
+          locale: 'en'
+        )
+      end
+
       it 'routes GET server_time properly' do
         expect(get: sub_path + '/server_time').to route_to(
           controller: sub_ctrl,
@@ -806,14 +823,6 @@ describe 'An Assignment' do
         expect(get: grader_path + '/global_actions').to route_to(
           controller: grader_ctrl,
           action: 'global_actions',
-          assignment_id: assignment.id.to_s,
-          locale: 'en')
-      end
-
-      it 'routes POST set_assign_criteria properly' do
-        expect(post: grader_path + '/set_assign_criteria').to route_to(
-          controller: grader_ctrl,
-          action: 'set_assign_criteria',
           assignment_id: assignment.id.to_s,
           locale: 'en')
       end
