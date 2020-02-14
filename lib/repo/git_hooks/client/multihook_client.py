@@ -27,4 +27,4 @@ if __name__ == '__main__':
             if hook.returncode != 0:
                 exit(hook.returncode)
 
-        print("[MarkUs] Commit looks good! Don't forget to push")
+        print("[MarkUs] Commit looks good! Don't forget to push your work to the MarkUs server.")
