@@ -56,9 +56,7 @@ describe Api::SubmissionFilesController do
         post :create, params: { assignment_id: assignment.id, group_id: group.id, filename: 'v1/x/y/test.txt',
                                 mime_type: 'text', file_content: 'This is a test file' }
       end
-      it 'should be successful' do
-        expect(response.status).to eq(201)
-      end
+
       it 'should create a file in the corresponding directory' do
         path = Pathname.new('v1/x/y')
         success, _messages = group.access_repo do |repo|
@@ -83,6 +81,31 @@ describe Api::SubmissionFilesController do
           end
           content = 'This is an updated test file'
           expect(content).to eq(file_contents)
+        end
+      end
+    end
+
+    context 'POST create_folders' do
+      before :each do
+        post :create_folders, params: { assignment_id: assignment.id, group_id: group.id, folder_path: 'a/b/c' }
+      end
+      it 'should be successful' do
+        expect(response.status).to eq(201)
+      end
+      it 'should create folders in the corresponding directory' do
+        path = Pathname.new('a/b/c')
+        success, _messages = group.access_repo do |repo|
+          file_path = Pathname.new(assignment.repository_folder).join path
+          repo.get_latest_revision.path_exists?(file_path.to_s)
+        end
+        expect(success).to be_truthy
+      end
+      context 'when the folder is already exist' do
+        before :each do
+          post :create_folders, params: { assignment_id: assignment.id, group_id: group.id, folder_path: 'a/b/c' }
+        end
+        it 'should not modify' do
+          expect(response.status).to eq(304)
         end
       end
     end
