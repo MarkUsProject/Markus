@@ -13,8 +13,7 @@ es:
     # Help panel
     editing_criteria: "Editando los criterios de calificación"
     ordering_criteria: "Ordenando los criterios de calificación"
-    help_editing_criteria_message:
-      "Seleccione un criterio de calificación en la izquierda para editarlo.
+    help_editing_criteria_message: "Seleccione un criterio de calificación en la izquierda para editarlo.
       Cambios para los diferentes criterios de calificación pueden ser realizados de la siguiente manera:"
     help_editing_rubric_criteria_message:
       "Los nombres de los criterios de calificación, encabezados de nivel,

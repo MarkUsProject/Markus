@@ -28,18 +28,19 @@
       });
     }
   });
+
   function add_level(id) {
-    var rubric_form = $('#' + id);
-    var last_level = $('#' + id + " .level").first();
-    var new_level = last_level.clone();
+    let rubric_form = $('#' + id);
+    let last_level = $('#' + id + " .level").first();
+    let new_level = last_level.clone();
 
     // use regular expressions to update level numbers
-    var regex = new RegExp(/\d+/);
-    var level_num = $('#' + id + " .level").length;
+    let regex = new RegExp(/\d+/);
+    let level_num = $('#' + id + " .level").length;
     // replace the new level names with the new level number
-    var new_name = $(new_level)[0].childNodes[1];
+    let new_name = $(new_level)[0].childNodes[1];
     $(new_name).text(new_name.textContent.replace(regex, level_num));
-    var display_name = new_level.find('label')[0];
+    let display_name = new_level.find('label')[0];
     $(display_name).text(display_name.textContent.replace(regex, level_num));
 
     // clear the inputs and text areas and create unique ids and names
@@ -48,8 +49,7 @@
         $(this).attr('id', $(this).attr('id').replace(regex, level_num));
       }
       if ($(this).attr('name')) {
-        $(this).attr('name',
-                          $(this).attr('name').replace(regex, level_num));
+        $(this).attr('name', $(this).attr('name').replace(regex, level_num));
       }
       $(this).val('');
     });
@@ -58,8 +58,7 @@
         $(this).attr('id', $(this).attr('id').replace(regex, level_num));
       }
       if ($(this).attr('name')) {
-        $(this).attr('name',
-                          $(this).attr('name').replace(regex, level_num));
+        $(this).attr('name', $(this).attr('name').replace(regex, level_num));
       }
       $(this).val('');
     });

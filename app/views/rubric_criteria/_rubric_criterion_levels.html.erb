@@ -1,15 +1,9 @@
-<% content_for :head do %>
-  <%= render partial: 'boot',
-             formats: [:js],
-             handlers: [:erb] %>
-<% end %>
 
 <div id='rubric_levels_top'></div>
 <div id="add_level">
   <%= link_to t('rubric_criteria.level.add'),
               '#',
-              onclick: 'add_level("rubric_form");' +
-                'return false;' %>
+              onclick: 'add_level("rubric_form");' + 'return false;' %>
 </div>
 <div id="rubric_form">
   <%= form_for criterion, url: assignment_criterion_path(id: criterion.id,
@@ -21,5 +15,3 @@
                         f: f} %>
   <% end %>
 </div>
-
-
