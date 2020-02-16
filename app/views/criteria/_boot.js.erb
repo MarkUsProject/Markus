@@ -39,9 +39,9 @@
     let level_num = $('#' + id + " .level").length;
     // replace the new level names with the new level number
     let new_name = $(new_level)[0].childNodes[1];
-    $(new_name).text(new_name.textContent.replace(regex, level_num));
+    $(new_name).text(I18.t("rubric_criteria.level.name"));
     let display_name = new_level.find('label')[0];
-    $(display_name).text(display_name.textContent.replace(regex, level_num));
+    $(display_name).text('Delete New Level');
 
     // clear the inputs and text areas and create unique ids and names
     new_level.find('input').each(function () {

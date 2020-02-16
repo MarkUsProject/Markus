@@ -3,7 +3,7 @@ fr:
     new:
       button: "Ajouter Critère"
     delete:
-      checkbox: "Supprimer Niveau"
+      checkbox: "Supprimer Niveau "
 
     # Short type names
     checkbox: "Checkbox"

@@ -3,7 +3,7 @@ es:
     new:
       button: "Añadir criterio de calificación"
     delete:
-      checkbox: "Eliminar Nivel"
+      checkbox: "Eliminar Nivel "
 
     # Short type names
     checkbox: "Caja de Selección"

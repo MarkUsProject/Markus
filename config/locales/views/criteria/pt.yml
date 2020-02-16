@@ -3,7 +3,7 @@ pt:
     new:
       button: "Adicionar Critério"
     delete:
-      checkbox: "Excluir Nível"
+      checkbox: "Excluir Nível "
 
     # Short type names
     checkbox: "Caixa de seleção"
