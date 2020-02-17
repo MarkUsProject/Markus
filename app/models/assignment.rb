@@ -623,7 +623,7 @@ class Assignment < ApplicationRecord
                                      result&.marking_state,
                                      result&.released_to_students,
                                      g.collection_date),
-        final_grade: criteria.values.sum,
+        final_grade: criteria.values.compact.sum,
         criteria: criteria,
         max_mark: max_mark,
         result_id: result&.id,
