@@ -39,6 +39,7 @@ class Grouping < ApplicationRecord
           -> { where submission_version_used: true },
           class_name: 'Submission'
   has_one :current_result, through: :current_submission_used
+  has_one :submitted_remark, through: :current_submission_used
 
   has_and_belongs_to_many :tags
 

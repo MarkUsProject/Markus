@@ -573,7 +573,7 @@ class Assignment < ApplicationRecord
     members = groupings.joins(:accepted_students)
                        .pluck_to_hash(:id, 'users.user_name', 'users.first_name', 'users.last_name')
                        .group_by { |x| x[:id] }
-    groupings_with_results = groupings.includes(current_result: :marks)
+    groupings_with_results = groupings.includes(:submitted_remark, :extension, current_result: :marks)
     result_ids = groupings_with_results.pluck('results.id').uniq.compact
     extra_marks_hash = Result.get_total_extra_marks(result_ids, max_mark: max_mark)
 
