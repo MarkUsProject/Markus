@@ -26,18 +26,21 @@ export class MarksPanel extends React.Component {
         }
       });
     }
+  }
 
-    // Expand by default if:
-    //   1) The result has been released, or
-    //   2) A mark has not yet been given, and the current user can give the mark.
-    let expanded = new Set();
-    this.props.marks.forEach(data => {
-      const key = `${data.criterion_type}-${data.id}`;
-      if ((data.mark === null || data.mark === undefined) &&
-          (this.props.assigned_criteria === null || this.props.assigned_criteria.includes(key))) {
-        expanded.add(key);
-      }
-    });
+  componentDidUpdate(prevProps) {
+    if (prevProps.marks.length !== this.props.marks.length) {
+      // Expand by default if a mark has not yet been given, and the current user can give the mark.
+      let expanded = new Set();
+      this.props.marks.forEach(data => {
+        const key = `${data.criterion_type}-${data.id}`;
+        if ((data.mark === null || data.mark === undefined) &&
+            (this.props.assigned_criteria === null || this.props.assigned_criteria.includes(key))) {
+          expanded.add(key);
+        }
+      });
+      this.setState({ expanded });
+    }
   }
 
   expandAll = (onlyUnmarked) => {
