@@ -1098,4 +1098,106 @@ describe Grouping do
       end
     end
   end
+
+  shared_examples 'test run data' do |return_data, show_output, show_extra|
+    if return_data
+      it 'should return data for the test run' do
+        expect(data.length).to eq 1
+        expect(data[0]['test_runs.id']).to eq test_run.id
+      end
+
+      it 'should return data for the test result' do
+        test_result_data = data[0]['test_data']
+        expect(test_result_data.length).to eq 1
+        expect(test_result_data[0]['test_runs.id']).to eq test_run.id
+      end
+
+      if show_extra
+        it 'should show extra info' do
+          expect(data[0]['test_data'][0]['test_group_results.extra_info']).not_to be_nil
+        end
+      else
+        it 'should not show extra info' do
+          expect(data[0]['test_data'][0]['test_group_results.extra_info']).to be_nil
+        end
+      end
+
+      if show_output
+        it 'should show output data' do
+          expect(data[0]['test_data'][0]['test_results.output']).not_to be_nil
+        end
+      else
+        it 'should not show output data' do
+          expect(data[0]['test_data'][0]['test_results.output']).to be_nil
+        end
+      end
+    else
+      it 'should not return data' do
+        expect(data).to be_empty
+      end
+    end
+  end
+
+  context 'getting test run data' do
+    let(:grouping) { create :grouping_with_inviter }
+    let(:test_run) { create :test_run, grouping: grouping, user: test_runner, submission: submission }
+    let(:display_output) { 'instructors' }
+    let(:test_group) { create :test_group, assignment: grouping.assignment, display_output: display_output }
+    let(:test_group_result) { create :test_group_result, test_run: test_run, test_group: test_group, extra_info: 'AAA' }
+    let!(:test_result) { create :test_result, test_group_result: test_group_result }
+
+    context 'tests run by instructors' do
+      let(:test_runner) { create :admin }
+      let(:submission) { create :version_used_submission }
+      describe '#test_runs_instructors' do
+        let(:data) { grouping.test_runs_instructors(submission) }
+        it_behaves_like 'test run data', true, true, true
+      end
+      describe '#test_runs_instructors_released' do
+        let(:data) { grouping.test_runs_instructors_released(submission) }
+        context 'when display_output is instructors' do
+          it_behaves_like 'test run data', true, false
+        end
+        context 'when display_output is instructors_and_student_tests' do
+          let(:display_output) { 'instructors_and_student_tests' }
+          it_behaves_like 'test run data', true, false
+        end
+        context 'when display_output is instructors_and_students' do
+          let(:display_output) { 'instructors_and_students' }
+          it_behaves_like 'test run data', true, true
+        end
+      end
+      describe '#test_runs_students' do
+        let(:data) { grouping.test_runs_students }
+        it_behaves_like 'test run data', false
+      end
+    end
+
+    context 'tests run by students' do
+      let(:submission) { nil }
+      let(:test_runner) { grouping.inviter }
+      describe '#test_runs_instructors' do
+        let(:data) { grouping.test_runs_instructors(submission) }
+        it_behaves_like 'test run data', false
+      end
+      describe '#test_runs_instructors_released' do
+        let(:data) { grouping.test_runs_instructors_released(submission) }
+        it_behaves_like 'test run data', false
+      end
+      describe '#test_runs_students' do
+        let(:data) { grouping.test_runs_students }
+        context 'when display_output is instructors' do
+          it_behaves_like 'test run data', true, false
+        end
+        context 'when display_output is instructors_and_student_tests' do
+          let(:display_output) { 'instructors_and_student_tests' }
+          it_behaves_like 'test run data', true, true
+        end
+        context 'when display_output is instructors_and_students' do
+          let(:display_output) { 'instructors_and_students' }
+          it_behaves_like 'test run data', true, true
+        end
+      end
+    end
+  end
 end
