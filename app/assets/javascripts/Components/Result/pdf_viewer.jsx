@@ -11,7 +11,7 @@ export class PDFViewer extends React.Component {
     if (this.props.url) {
       this.pdfViewer = new pdfjsViewer.PDFViewer({
         container: this.pdfContainer.current,
-        renderer: 'svg',
+        // renderer: 'svg',  TODO: investigate why some fonts don't render with SVG
       });
       this.loadPDFFile();
       window.pdfViewer = this.pdfViewer;  // For fixing display when pane width changes
