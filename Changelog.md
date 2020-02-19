@@ -3,8 +3,11 @@
 - Added option to anonymize group membership when viewed by graders (#4331)
 - Added option to only display assigned criteria to graders as opposed to showing unassigned criteria but making them
   ungradeable (#4331)
-- Fixed bug where test output was not being properly hidden from students (#4379)
 - Fixed bug where criteria were not expanded for grading (to both Admins and TAs) (#4380)
+
+## [v1.8.4]
+- Fixed bug where test output was not being properly hidden from students (#4379)
+- Fixed bug where certain fonts were not rendered properly using pdfjs (#4382)
 
 ## [v1.8.3]
 - Fixed bug where grace credits were not displayed to Graders viewing the submissions table (#4332)
