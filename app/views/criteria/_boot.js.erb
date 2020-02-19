@@ -33,16 +33,12 @@
     let rubric_form = $('#' + id);
     let last_level = $('#' + id + " .level").first();
     let new_level = last_level.clone();
+    new_level.find('#display_name').first().text(I18n.t("rubric_criteria.level.new"));
+    new_level.find('label').first().text(I18n.t("rubric_criteria.level.delete.new"));
 
     // use regular expressions to update level numbers
     let regex = new RegExp(/\d+/);
     let level_num = $('#' + id + " .level").length;
-    // replace the new level names with the new level number
-    let new_name = $(new_level)[0].childNodes[1];
-    $(new_name).text(I18n.t("rubric_criteria.level.new"));
-    let display_name = new_level.find('label')[0];
-    $(display_name).text(I18n.t("rubric_criteria.level.delete.new"));
-
     // clear the inputs and text areas and create unique ids and names
     new_level.find('input').each(function () {
       if ($(this).attr('id')) {

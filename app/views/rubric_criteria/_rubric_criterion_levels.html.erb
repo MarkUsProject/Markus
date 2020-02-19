@@ -10,8 +10,6 @@
                                                          criterion_type: criterion.class.to_s),
                method: :patch, remote: true do |criterion_form| %>
     <%= render partial: 'rubric_criteria/rubric_criterion_level',
-               locals: {criterion: criterion,
-                        criterion_form: criterion_form,
-                        f: f} %>
+               locals: { criterion_form: criterion_form } %>
   <% end %>
 </div>
