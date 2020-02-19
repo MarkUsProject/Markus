@@ -4,11 +4,11 @@
 <%= criterion_form.fields_for :levels do |level_form| %>
   <div class='level'>
     <div id = "display_name" class="rubric_level_header">
-      <%= I18n.t("rubric_criteria.level.name") + " " + level_form.index.to_s %>
+      <%= I18n.t("rubric_criteria.level.level_index", index: level_form.index.to_s) %>
     </div>
     <div class="destroy_checkbox">
       <%= level_form.check_box :_destroy %>
-      <%= level_form.label :_destroy, I18n.t("criteria.delete.checkbox") + level_form.index.to_s %>
+      <%= level_form.label :_destroy, I18n.t("rubric_criteria.level.delete.checkbox", index: level_form.index.to_s) %>
     </div>
     <div class="level_name">
       <%= level_form.label :name, Level.human_attribute_name(:name), class: 'required' %>
