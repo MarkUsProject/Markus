@@ -2,8 +2,6 @@ es:
   criteria:
     new:
       button: "Añadir criterio de calificación"
-    delete:
-      checkbox: "Eliminar Nivel "
 
     # Short type names
     checkbox: "Caja de Selección"
@@ -15,8 +13,7 @@ es:
     ordering_criteria: "Ordenando los criterios de calificación"
     help_editing_criteria_message: "Seleccione un criterio de calificación en la izquierda para editarlo.
       Cambios para los diferentes criterios de calificación pueden ser realizados de la siguiente manera:"
-    help_editing_rubric_criteria_message:
-      "Los nombres de los criterios de calificación, encabezados de nivel,
+    help_editing_rubric_criteria_message: "Los nombres de los criterios de calificación, encabezados de nivel,
       descripciones y visibilidad pueden ser modificados. El peso vinculado
       a la nota máxima mostrada para cada criterio de calificación también puede
       ser cambiado. Para cambiar el peso de un número fraccionario simplemente
@@ -51,9 +48,12 @@ es:
 
   rubric_criteria:
     level:
-      name: "Nivel"
       level_index: "Nivel %{index}"
+      new: "Nuevo Nivel"
       add: "Agregar Nivel"
+      delete:
+        new: "Eliminar Nuevo Nivel"
+        checkbox: "Eliminar Nivel %{index}"
     defaults:
       level_0: "Insuficiente"
       level_1: "Malo"

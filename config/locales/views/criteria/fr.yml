@@ -2,8 +2,6 @@ fr:
   criteria:
     new:
       button: "Ajouter Critère"
-    delete:
-      checkbox: "Supprimer Niveau "
 
     # Short type names
     checkbox: "Checkbox"
@@ -51,9 +49,12 @@ fr:
 
   rubric_criteria:
     level:
-      name: "Niveau"
       level_index: "Niveau %{index}"
+      new: "Nouveau Niveau"
       add: "Ajouter un Niveau"
+      delete:
+        new: Supprimer un Nouveau Niveau
+        checkbox: "Supprimer Niveau"
     defaults:
       level_0: "Très insuffisant"
       level_1: "Insuffisant"
