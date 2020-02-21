@@ -2,8 +2,6 @@ pt:
   criteria:
     new:
       button: "Adicionar Critério"
-    delete:
-      checkbox: "Excluir Nível"
 
     # Short type names
     checkbox: "Caixa de seleção"
@@ -47,8 +45,12 @@ pt:
 
   rubric_criteria:
     level:
-      name: "Nível"
       level_index: "Nível %{index}"
+      new: "Novo Nível"
+      add: "Adicionar Nível"
+      delete:
+        new: "Excluir Novo Nível"
+        checkbox: "Excluir Nível %{index}"
     defaults:
       level_0: "Insuficiente"
       level_1: "Fraco"

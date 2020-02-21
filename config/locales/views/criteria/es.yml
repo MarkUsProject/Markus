@@ -2,8 +2,6 @@ es:
   criteria:
     new:
       button: "Añadir criterio de calificación"
-    delete:
-      checkbox: "Eliminar Nivel"
 
     # Short type names
     checkbox: "Caja de Selección"
@@ -48,8 +46,12 @@ es:
 
   rubric_criteria:
     level:
-      name: "Nivel"
       level_index: "Nivel %{index}"
+      new: "Nuevo Nivel"
+      add: "Agregar Nivel"
+      delete:
+        new: "Eliminar Nuevo Nivel"
+        checkbox: "Eliminar Nivel %{index}"
     defaults:
       level_0: "Insuficiente"
       level_1: "Malo"
