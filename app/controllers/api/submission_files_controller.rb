@@ -226,7 +226,10 @@ module Api
         remove_folders([folder], @current_user, repo, path: path)
       end
       message_string = messages.map { |type, *msg| "#{type}: #{msg}" }.join("\n")
-      if success
+      if success && messages[0] == :not_exist
+        render 'shared/http_status', locals: { code: '404', message:
+            'No folder exists at that path.' }, status: 404
+      elsif success
         # It worked, render success
         message = "#{HttpStatusHelper::ERROR_CODE['message']['200']}\n\n#{message_string}"
         render 'shared/http_status', locals: { code: '200', message: message }, status: 200

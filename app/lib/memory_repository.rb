@@ -128,7 +128,7 @@ class MemoryRepository < Repository::AbstractRepository
         end
       when :remove_directory
         begin
-          new_rev = remove_file(new_rev, job[:path], job[:expected_revision_identifier])
+          new_rev = remove_directory(new_rev, job[:path], job[:expected_revision_identifier])
         rescue Repository::Conflict => e
           transaction.add_conflict(e)
         end
@@ -250,7 +250,7 @@ class MemoryRepository < Repository::AbstractRepository
   # Adds a file into the provided revision
   def add_file(rev, full_path, content, mime_type="text/plain")
     if file_exists?(rev, full_path)
-      raise FileExistsConflict.new(full_path)
+      raise Repository::FileExistsConflict.new(full_path)
     end
     # file does not exist, so add it
     creation_time = Time.now
@@ -298,6 +298,16 @@ class MemoryRepository < Repository::AbstractRepository
     return rev
   end
 
+  def remove_directory(rev, full_path, expected_revision_int)
+    unless get_latest_revision.path_exists?(full_path)
+      raise Repository::FolderDoesNotExistConflict.new(full_path)
+    end
+    directory_name = File.basename(full_path)
+    path = File.dirname(full_path)
+    directory_set = rev.directories_at_path(path)
+    rev.files.delete_at(rev.files.index(directory_set[directory_name]))
+    return rev
+  end
   # Creates a deep copy of the provided revision, all files will have their changed property
   # set to false; does not create a deep copy the contents of files
   def copy_revision(original)

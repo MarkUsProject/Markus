@@ -109,7 +109,7 @@ module RepositoryHelper
       basename = sanitize_file_name(basename)
       file_path = current_path.join(subdir_path).join(basename)
       file_path = file_path.to_s
-      txn.remove(file_path, current_revision, keep_folder: keep_folder)
+      txn.remove(file_path, current_revision.to_s, keep_folder: keep_folder)
     end
 
     if commit_txn
@@ -161,6 +161,10 @@ module RepositoryHelper
     end
 
     current_path = Pathname.new path
+    relative_path = Pathname.new(folders[0])
+    abs_path = File.join(current_path, relative_path)
+
+    return [true, [:not_exist]] unless repo.get_latest_revision.path_exists?(abs_path)
 
     current_revision = repo.get_latest_revision.revision_identifier
 
@@ -170,21 +174,37 @@ module RepositoryHelper
       folder_path = current_path.join(folder_path).to_s
       next if dirs.include? folder_path
 
-      repo.get_revision(current_revision).tree_at_path(folder_path, with_attrs: false).each do |_, obj|
+      repo.get_revision(current_revision.to_s).tree_at_path(folder_path, with_attrs: false).each do |_, obj|
         path = File.join obj.path, obj.name
         if obj.is_a? Repository::RevisionFile
           files << path
+        else
+          dirs << path
         end
       end
       dirs << folder_path
     end
-    success, file_messages = remove_files(files, user, repo, path: '', txn: txn, keep_folder: false)
 
-    return [success, file_messages] unless success
+    if files.length > 0
+      success, file_messages = remove_files(files, user, repo, path: '', txn: txn, keep_folder: false)
+      return [success, file_messages] unless success
+    end
 
     # folders are removed in git if their contents are removed
     dirs.each do |dir|
-      txn.remove_directory(dir, current_revision)
+      txn.remove_directory(dir, current_revision.to_s)
+    end
+
+    if repo.is_a? GitRepository
+      if relative_path.dirname == Pathname.new('.')
+        unless repo.get_latest_revision.path_exists?(File.join(current_path, '.gitkeep'))
+          gitkeep_filename = File.join(current_path, '.gitkeep')
+          txn.add(gitkeep_filename, '')
+        end
+      elsif repo.get_latest_revision.path_exists?(File.join(relative_path.dirname, '.gitkeep'))
+        gitkeep_filename = File.join(relative_path.dirname, '.gitkeep')
+        txn.add(gitkeep_filename, '')
+      end
     end
 
     if commit_txn
@@ -229,6 +249,8 @@ module RepositoryHelper
         flash_message(:error, partial: 'submissions/file_conflicts_list', locals: { conflicts: other_info })
       when :exist
         flash_message(:warning, I18n.t('student.submission.exist'))
+      when :not_exist
+        flash_message(:warning, I18n.t('student.submission.not_exist'))
       end
     end
   end

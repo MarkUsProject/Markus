@@ -109,7 +109,36 @@ describe Api::SubmissionFilesController do
         end
       end
     end
-    context 'GET index' do
+
+    context 'DELETE remove_folders' do
+      before :each do
+        post :create_folders, params: { assignment_id: assignment.id, group_id: group.id, folder_path: 'a/b/c' }
+      end
+      describe 'when the folder is exist' do
+        before :each do
+          delete :remove_folder, params: { assignment_id: assignment.id, group_id: group.id, folder_path: 'a/b/c' }
+        end
+        it 'should remove the folders and its content' do
+          path = Pathname.new('a/b/c')
+          success, _messages = group.access_repo do |repo|
+            folder_path = Pathname.new(assignment.repository_folder).join path
+            repo.get_latest_revision.path_exists?(folder_path.to_s)
+          end
+          expect(success).to be_falsey
+          expect(response.status).to eq(200)
+        end
+      end
+      describe 'when the folder is not exist' do
+        before :each do
+          delete :remove_folder, params: { assignment_id: assignment.id, group_id: group.id, folder_path: 'a/b/x' }
+        end
+        it 'should return 404 error' do
+          expect(response.status).to eq(404)
+        end
+      end
+    end
+
+      context 'GET index' do
       let(:aid) { assignment.id }
       let(:gid) { group.id }
       let(:file_name) { nil }

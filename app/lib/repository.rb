@@ -397,7 +397,8 @@ module Repository
   # Exceptions for Files
   class FileOutOfDate < StandardError; end
   class FileDoesNotExist < StandardError; end
-
+  # Exceptions for Folders
+  class FolderDoesNotExist < StandardError; end
   # Exceptions for repo user management
   class UserNotFound < StandardError; end
   class UserAlreadyExistent < StandardError; end
