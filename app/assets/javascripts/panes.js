@@ -25,7 +25,7 @@ function resize_col() {
   }
 
   if (window.pdfViewer) {
-    window.pdfViewer.currentScaleValue = 'page-fit';
+    window.pdfViewer.refresh_annotations();
   }
 }
 
@@ -101,6 +101,6 @@ function fix_panes(){
 
   // Fix pdfViewer, if it exists.
   if (window.pdfViewer) {
-    window.pdfViewer.currentScaleValue = 'page-fit';
+    window.pdfViewer.refresh_annotations();
   }
 }

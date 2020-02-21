@@ -12,7 +12,7 @@ export class PDFViewer extends React.Component {
       container: this.pdfContainer.current,
       // renderer: 'svg',  TODO: investigate why some fonts don't render with SVG
     });
-    window.pdfViewer = this.pdfViewer;  // For fixing display when pane width changes
+    window.pdfViewer = this;  // For fixing display when pane width changes
 
     document.addEventListener('pagesinit', this.ready_annotations);
     document.addEventListener('pagesloaded', this.refresh_annotations);
@@ -39,7 +39,7 @@ export class PDFViewer extends React.Component {
   ready_annotations = () => {
     annotation_type = ANNOTATION_TYPES.PDF;
 
-    this.pdfViewer.currentScaleValue = 'page-fit';
+    this.pdfViewer.currentScaleValue = 'page-width';
     window.annotation_manager = new PdfAnnotationManager(this.pdfViewer, 'viewer',
                                                          !this.props.released_to_students);
     window.annotation_manager.resetAngle();
@@ -54,10 +54,12 @@ export class PDFViewer extends React.Component {
     }
     document.removeEventListener('pagesinit', this.ready_annotations);
     document.removeEventListener('pagesloaded', this.refresh_annotations);
+    window.pdfViewer = undefined;
   }
 
   refresh_annotations = () => {
     $('.annotation_holder').remove();
+    this.pdfViewer.currentScaleValue = 'page-width';
     this.props.annotations.forEach(this.display_annotation);
   };
 
