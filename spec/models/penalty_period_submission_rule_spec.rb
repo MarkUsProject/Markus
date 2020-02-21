@@ -11,13 +11,10 @@ describe PenaltyPeriodSubmissionRule do
       new_submission = rule.apply_submission_rule(submission)
       expect(new_submission).to eq(submission)
     end
-    let(:mark) { create(:flexible_mark, mark: 1) }
-    let(:extra_mark) { create(:extra_mark, extra_mark: 0, result: result) }
-    it 'should not change the mark and should not add any extra mark' do
+    it 'should not add any extra mark' do
       assignment.replace_submission_rule(rule)
       rule.apply_submission_rule(submission)
-      expect(extra_mark.extra_mark).to eq(0)
-      expect(mark.mark).to eq(1)
+      expect(result.extra_marks).to be_empty
     end
   end
 
