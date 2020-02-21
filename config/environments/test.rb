@@ -264,9 +264,11 @@ Markus::Application.configure do
   config.x.autotest.enable = true
   config.x.autotest.student_test_buffer = 1.hour
   config.x.autotest.client_dir = "#{::Rails.root}/data/test/autotest"
-  config.x.autotest.server_host = 'localhost'
-  config.x.autotest.server_username = nil
-  config.x.autotest.server_dir = "#{::Rails.root}/../markus-autotesting/server/workspace"
+  config.x.autotest.server_host = ENV.fetch('AUTOTEST_SERVER_HOST') { 'localhost' }
+  config.x.autotest.server_username =  ENV.fetch('AUTOTEST_SERVER_USERNAME') { nil }
+  config.x.autotest.server_dir = ENV.fetch('AUTOTEST_SERVER_DIR') {
+    "#{::Rails.root}/../markus-autotesting/server/workspace"
+  }
   config.x.autotest.server_command = 'autotest_enqueuer'
   config.x.queues.autotest_run = 'CSC108'
   config.x.queues.autotest_cancel = 'CSC108'

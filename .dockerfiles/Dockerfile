@@ -38,6 +38,7 @@ RUN apt-get update -qq && DEBIAN_FRONTEND=noninteractive apt-get -yq dist-upgrad
     swig \
     graphviz \
     yarn \
+    rsync \
     python3 \
     python3-pip && \
     apt-get clean && \
@@ -53,6 +54,11 @@ ENV BUNDLE_PATH $GEM_HOME
 ENV BUNDLE_APP_CONFIG=$BUNDLE_PATH \
     BUNDLE_BIN=$BUNDLE_PATH/bin
 ENV PATH /app/bin:$BUNDLE_BIN:$PATH
+
+# Create key for ssh-ing to the autotester
+RUN ssh-keygen -q -N "" -f /root/.ssh/id_rsa && \
+    mkdir /ssh_pub_key && \
+    cp /root/.ssh/id_rsa.pub /ssh_pub_key/authorized_keys
 
 # Create a directory for the app code (keep the name generic)
 RUN mkdir -p /app
