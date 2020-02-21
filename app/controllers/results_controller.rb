@@ -151,13 +151,14 @@ class ResultsController < ApplicationController
         common_fields = [:id, :name, :position, :max_mark]
         marks_map = [CheckboxCriterion, FlexibleCriterion, RubricCriterion].flat_map do |klass|
           if klass == RubricCriterion
-            fields = common_fields + [
-              # :level_0_name, :level_0_description,
-              # :level_1_name, :level_1_description,
-              # :level_2_name, :level_2_description,
-              # :level_3_name, :level_3_description,
-              # :level_4_name, :level_4_description
-            ]
+            # fields = common_fields + [
+            #   :level_0_name, :level_0_description,
+            #   :level_1_name, :level_1_description,
+            #   :level_2_name, :level_2_description,
+            #   :level_3_name, :level_3_description,
+            #   :level_4_name, :level_4_description
+            # ]
+            fields = common_fields
           end
           if klass != RubricCriterion
             fields = common_fields + [:description]
@@ -168,16 +169,26 @@ class ResultsController < ApplicationController
          
           criteria_info = criteria.pluck_to_hash(*fields)
           
-          if klass == RubricCriterion
-            criteria_info.each do |cr|
-              cr[:levels] = Level.where(rubric_criterion_id: cr[:id]).pluck_to_hash(:name, :description, :mark);
-            end
-          end
+          # if klass == RubricCriterion
+          #   criteria_info.each do |cr|
+          #     cr[:levels] = Level.where(rubric_criterion_id: cr[:id]).pluck_to_hash(:name, :description, :mark);
+          #   end
+          # end
 
+          # if klass == RubricCriterion
+          #   marks_info = criteria.joins(:marks)
+          #                      .where('marks.result_id': result.id)
+          #                      .pluck_to_hash(*fields, 'marks.mark')
+          #                      .group_by { |h| h[:id] }
+          #   levels_info = criteria.joins(:levels)
+          #                      .pluck_to_hash('levels.name', 'levels.description', 'levels.mark')
+          #                      .group_by { |h| h[:id] }
+          # else
           marks_info = criteria.joins(:marks)
-                               .where('marks.result_id': result.id)
-                               .pluck_to_hash(*fields, 'marks.mark')
-                               .group_by { |h| h[:id] }
+                              .where('marks.result_id': result.id)
+                              .pluck_to_hash(*fields, 'marks.mark')
+                              .group_by { |h| h[:id] }
+          # end
           criteria_info.map do |h|
             info = marks_info[h[:id]]&.first || h.merge('marks.mark': nil)
             info.merge(criterion_type: klass.name)
