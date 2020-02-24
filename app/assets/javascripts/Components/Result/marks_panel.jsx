@@ -322,12 +322,12 @@ class RubricCriterionInput extends React.Component {
   // The parameter `level` is the level number selected.
   handleChange = (level) => {
     this.props.updateMark(
-      this.props.criterion_type, this.props.id, level * this.props.max_mark / 4
+      this.props.criterion_type, this.props.id, this.props.levels[level].mark
     );
   };
 
   renderRubricLevel = (i) => {
-    const levelMark = (i * this.props.max_mark / 4).toFixed(2);
+    const levelMark = this.props.levels[i].mark.toFixed(2);
     let selectedClass = '';
     let oldMarkClass = '';
     if (this.props.mark !== undefined &&
@@ -348,11 +348,11 @@ class RubricCriterionInput extends React.Component {
         className={`rubric-level ${selectedClass} ${oldMarkClass}`}
       >
         <td className='level-description'>
-          <strong>{this.props[`level_${i}_name`]}</strong>&nbsp;
-          {this.props[`level_${i}_description`]}
+          <strong>{this.props.levels[i].name}</strong>&nbsp;
+          {this.props.levels[i].description}
         </td>
         <td className={'mark'}>
-          {(i * this.props.max_mark / 4).toFixed(2)}
+          {levelMark}
           &nbsp;/&nbsp;
           {this.props.max_mark}
         </td>
@@ -361,7 +361,11 @@ class RubricCriterionInput extends React.Component {
   };
 
   render() {
-    const levels = [0, 1, 2, 3, 4].map(this.renderRubricLevel);
+    const level_marks = [];
+    for (let i = 0; i < this.props.levels.length; i++) {
+      level_marks.push(this.props.levels[i].mark);
+    }
+    const levels = level_marks.map(this.renderRubricLevel);
     const expandedClass = this.props.expanded ? 'expanded' : 'collapsed';
     const unassignedClass = this.props.unassigned ? 'unassigned' : '';
     return (
