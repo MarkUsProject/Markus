@@ -151,13 +151,6 @@ class ResultsController < ApplicationController
         common_fields = [:id, :name, :position, :max_mark]
         marks_map = [CheckboxCriterion, FlexibleCriterion, RubricCriterion].flat_map do |klass|
           if klass == RubricCriterion
-            # fields = common_fields + [
-            #   :level_0_name, :level_0_description,
-            #   :level_1_name, :level_1_description,
-            #   :level_2_name, :level_2_description,
-            #   :level_3_name, :level_3_description,
-            #   :level_4_name, :level_4_description
-            # ]
             fields = common_fields
           end
           if klass != RubricCriterion
@@ -169,29 +162,10 @@ class ResultsController < ApplicationController
          
           criteria_info = criteria.pluck_to_hash(*fields)
           
-          # if klass == RubricCriterion
-          #   criteria_info.each do |cr|
-          #     cr[:levels] = Level.where(rubric_criterion_id: cr[:id]).pluck_to_hash(:name, :description, :mark);
-          #   end
-          # end
-
-          # if klass == RubricCriterion
-          #   marks_info = criteria.joins(:marks)
-          #                      .where('marks.result_id': result.id)
-          #                      .pluck_to_hash(*fields, 'marks.mark')
-          #                      .group_by { |h| h[:id] }
-          #   levels_info = criteria.joins(:levels)
-          #                      .pluck_to_hash('levels.name', 'levels.description', 'levels.mark')
-          #                      .group_by { |h| h[:id] }
-          # else
-          
-          # we need to combine marks_info with the hash information of criteria_info
           marks_info = criteria.joins(:marks)
                               .where('marks.result_id': result.id)
                               .pluck_to_hash(*fields, 'marks.mark')
                               .group_by { |h| h[:id] }
-          # I want to try and merge each levels array into the respective marks, matching the rubric criterion id
-          # try merging stuff here!!!!
           levels_info = []
           if klass == RubricCriterion
             criteria_info.map do |cr|
@@ -200,12 +174,8 @@ class ResultsController < ApplicationController
               rubric_marks.merge!(levels: levels_info)
             end
           end
-          # try and merge rubric marks with levels:level info, try with a simpler string first
-          # end
           criteria_info.map do |cr|
-            # this line sets info to the first marks with the same id as the current criteria, cr
             infor = marks_info[cr[:id]]&.first || cr.merge('marks.mark': nil)
-            # adds a criterion type to infor
             infor.merge(criterion_type: klass.name)
           end
         end
