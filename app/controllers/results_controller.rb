@@ -175,8 +175,8 @@ class ResultsController < ApplicationController
           end
           # adds a criterion type to each of the marks info hashes
           criteria_info.map do |cr|
-            infor = marks_info[cr[:id]]&.first || cr.merge('marks.mark': nil)
-            infor.merge(criterion_type: klass.name)
+            info = marks_info[cr[:id]]&.first || cr.merge('marks.mark': nil)
+            info.merge(criterion_type: klass.name)
           end
         end
         marks_map.sort! { |a, b| a[:position] <=> b[:position] }
