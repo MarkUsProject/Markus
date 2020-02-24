@@ -190,7 +190,6 @@ module RepositoryHelper
       return [success, file_messages] unless success
     end
 
-    # folders are removed in git if their contents are removed
     dirs.each do |dir|
       txn.remove_directory(dir, current_revision.to_s)
     end

@@ -138,7 +138,7 @@ describe Api::SubmissionFilesController do
       end
     end
 
-      context 'GET index' do
+    context 'GET index' do
       let(:aid) { assignment.id }
       let(:gid) { group.id }
       let(:file_name) { nil }

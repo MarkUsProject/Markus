@@ -37,6 +37,8 @@ es:
         missing_file:                     "No se pudo descargar %{file_name}. Puede que el archivo no haya
                                            sido encontrado."
         empty_file_warning: "UPDATE ME"
+        exist: "UPDATE ME"
+        not_exist: "UPDATE ME"
 
     submission_file:
       error:
