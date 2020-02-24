@@ -10,15 +10,31 @@ describe PenaltyDecayPeriodSubmissionRule do
     let(:rule) { create(:penalty_decay_period_submission_rule) }
     let(:assignment) { create(:assignment) }
     let(:result) { create(:incomplete_result, marking_state: 'incomplete') }
-    it 'should not apply penalty_decay_period_submission rules' do
+    before :each do
       assignment.replace_submission_rule(rule)
-      new_submission = rule.apply_submission_rule(submission)
-      expect(new_submission).to eq(submission)
+      assignment.due_date = Time.now + 2.days
+      add_period_helper(assignment.submission_rule, 24, 10, 12)
+      add_period_helper(assignment.submission_rule, 24, 10, 12)
     end
-    it 'should not add any extra mark' do
-      assignment.replace_submission_rule(rule)
-      rule.apply_submission_rule(submission)
-      expect(result.extra_marks).to be_empty
+    # Before the due_date and before collection_time
+    it 'should not apply submission rule before the due date' do
+      pretend_now_is(Time.now + 1.days) do
+        expect(Time.now).to be < assignment.due_date
+        expect(Time.now).to be < assignment.submission_rule.calculate_collection_time
+        new_submission = rule.apply_submission_rule(submission)
+        expect(new_submission).to eq(submission)
+        expect(result.extra_marks).to be_empty
+      end
+    end
+    # After the due_date and before collection_time
+    it 'should not apply submission rule after the due date' do
+      pretend_now_is(Time.now + 2.days + 1.hour) do
+        expect(Time.now).to be > assignment.due_date
+        expect(Time.now).to be < assignment.submission_rule.calculate_collection_time
+        new_submission = rule.apply_submission_rule(submission)
+        expect(new_submission).to eq(submission)
+        expect(result.extra_marks).to be_empty
+      end
     end
   end
   context 'A section with penalty_decay_period_submission rules.' do
