@@ -168,7 +168,7 @@ class ResultsController < ApplicationController
           if klass == RubricCriterion
             criteria_info.map do |cr|
               levels_info = Level.where(rubric_criterion_id: cr[:id])
-                                  .pluck_to_hash(:name, :description, :mark)
+                                .pluck_to_hash(:name, :description, :mark)
               rubric_marks = marks_info[cr[:id]]&.first
               rubric_marks.merge!(levels: levels_info)
             end
