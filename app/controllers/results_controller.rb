@@ -184,14 +184,29 @@ class ResultsController < ApplicationController
           #                      .pluck_to_hash('levels.name', 'levels.description', 'levels.mark')
           #                      .group_by { |h| h[:id] }
           # else
+          
+          # we need to combine marks_info with the hash information of criteria_info
           marks_info = criteria.joins(:marks)
                               .where('marks.result_id': result.id)
                               .pluck_to_hash(*fields, 'marks.mark')
                               .group_by { |h| h[:id] }
+          # I want to try and merge each levels array into the respective marks, matching the rubric criterion id
+          # try merging stuff here!!!!
+          levels_info = []
+          if klass == RubricCriterion
+            criteria_info.map do |cr|
+              levels_info = Level.where(rubric_criterion_id: cr[:id]).pluck_to_hash(:rubric_criterion_id, :name, :description, :mark)
+              rubric_marks = marks_info[cr[:id]]&.first
+              rubric_marks.merge!(levels: levels_info)
+            end
+          end
+          # try and merge rubric marks with levels:level info, try with a simpler string first
           # end
-          criteria_info.map do |h|
-            info = marks_info[h[:id]]&.first || h.merge('marks.mark': nil)
-            info.merge(criterion_type: klass.name)
+          criteria_info.map do |cr|
+            # this line sets info to the first marks with the same id as the current criteria, cr
+            infor = marks_info[cr[:id]]&.first || cr.merge('marks.mark': nil)
+            # adds a criterion type to infor
+            infor.merge(criterion_type: klass.name)
           end
         end
         marks_map.sort! { |a, b| a[:position] <=> b[:position] }
