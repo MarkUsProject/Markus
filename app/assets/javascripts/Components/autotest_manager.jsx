@@ -68,13 +68,13 @@ class AutotestManager extends React.Component {
       .then(this.onSubmit); // uploading files will send changes to the autotester without requiring an explicit save
   };
 
-  handleDeleteFile = (fileKey) => {
-    if (!this.state.files.some(f => f.key === fileKey)) {
+  handleDeleteFile = (fileKeys) => {
+    if (!this.state.files.some(f => fileKeys.includes(f.key))) {
       return;
     }
     $.post({
       url: Routes.upload_files_assignment_automated_tests_path(this.props.assignment_id),
-      data: {delete_files: [fileKey]}
+      data: {delete_files: fileKeys}
     }).then(this.fetchFileDataOnly)
       .then(this.onSubmit) // deleting files will send changes to the autotester without requiring an explicit save
       .then(this.endAction);

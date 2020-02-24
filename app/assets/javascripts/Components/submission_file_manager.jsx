@@ -71,20 +71,15 @@ class SubmissionFileManager extends React.Component {
       .then(this.endAction);
   };
 
-  handleDeleteFile = (fileKey) => {
-    let deleteFiles = [];
-    this.state.files.map((file) => {
-      if (file.key === fileKey) {
-        deleteFiles.push(file)
-      }
-    });
-    if (!deleteFiles) {
+  handleDeleteFile = (fileKeys) => {
+    if (!this.state.files.some(f => fileKeys.includes(f.key))) {
       return;
     }
+
     $.post({
       url: Routes.update_files_assignment_submissions_path(this.props.assignment_id),
       data: {
-        delete_files: [deleteFiles[0].key],
+        delete_files: fileKeys,
         grouping_id: this.props.grouping_id
       }
     }).then(typeof this.props.onChange === 'function' ? this.props.onChange : this.fetchData)
