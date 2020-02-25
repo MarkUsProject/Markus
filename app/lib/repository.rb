@@ -49,13 +49,13 @@ module Repository
       return "#{@path} could not be changed - it was deleted since you last saw it"
     end
   end
-  #Exception for folders
+  # Exception for folders
   class FolderDoesNotExistConflict < Conflict
     def to_s
       "#{@path} could not be removed - it is not exist"
     end
   end
-  #Exception for folders
+  # Exception for folders
   class FolderIsNotEmptyConflict < Conflict
     def to_s
       "#{@path} could not be removed - it is not empty"
