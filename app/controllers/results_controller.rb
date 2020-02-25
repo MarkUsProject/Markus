@@ -160,21 +160,18 @@ class ResultsController < ApplicationController
                                  peer_visible: is_review)
           criteria_info = criteria.pluck_to_hash(*fields)
           marks_info = criteria.joins(:marks)
-                              .where('marks.result_id': result.id)
-                              .pluck_to_hash(*fields, 'marks.mark')
-                              .group_by { |h| h[:id] }
-          # adds an extra levels field to the marks info hash with the same rubric criterion id
-          levels_info = []
-          if klass == RubricCriterion
-            criteria_info.map do |cr|
-              levels_info = Level.where(rubric_criterion_id: cr[:id])
-                                  .pluck_to_hash(:name, :description, :mark)
-              rubric_marks = marks_info[cr[:id]]&.first
-              rubric_marks.merge!(levels: levels_info)
-            end
-          end
+                                 .where('marks.result_id': result.id)
+                                 .pluck_to_hash(*fields, 'marks.mark')
+                                 .group_by { |h| h[:id] }
           # adds a criterion type to each of the marks info hashes
           criteria_info.map do |cr|
+            # adds an extra levels field to the marks info hash with the same rubric criterion id
+            if klass == RubricCriterion
+              levels_info = []
+              levels_info = Level.where(rubric_criterion_id: cr[:id])
+                                .pluck_to_hash(:name, :description, :mark)
+              rubric_marks = marks_info[cr[:id]]&.first&.merge!(levels: levels_info)
+            end
             info = marks_info[cr[:id]]&.first || cr.merge('marks.mark': nil)
             info.merge(criterion_type: klass.name)
           end
