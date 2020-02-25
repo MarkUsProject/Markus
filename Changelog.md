@@ -6,6 +6,7 @@
 - Fixed bug where criteria were not expanded for grading (to both Admins and TAs) (#4380)
 - Fixed bug where annotations were not removed when switching between PDF submission files (#4387)
 - Fixed bug where annotations disappeared on window resize (#4387)
+- Removed automatic saving of changes on the Autotesting Framework page and warn when redirecting instead (#4394)
 - Added progress message when uploading changes on Automated Testing tab (#4395) 
 
 ## [v1.8.4]
