@@ -487,21 +487,20 @@ class GitRepository < Repository::AbstractRepository
     relative_path = Pathname.new(path)
     File.unlink(File.join(@repos_path, path))
     @repos.index.remove(path)
-    if keep_folder
-      unless File.exist?(File.join(absolute_path.dirname, DUMMY_FILE_NAME))
-        gitkeep_filename = File.join(relative_path.dirname, DUMMY_FILE_NAME)
-        add_file(gitkeep_filename, '')
-      end
+    return unless keep_folder
+    unless File.exist?(File.join(absolute_path.dirname, DUMMY_FILE_NAME))
+      gitkeep_filename = File.join(relative_path.dirname, DUMMY_FILE_NAME)
+      add_file(gitkeep_filename, '')
     end
   end
 
-  def remove_directory(path, expected_revision_identifier)
+  def remove_directory(path, _expected_revision_identifier)
     unless get_latest_revision.path_exists?(path)
-      raise Repository::FolderDoesNotExistConflict.new(path)
+      raise Repository::FolderDoesNotExistConflict, path
     end
     absolute_path = Pathname.new(File.join(@repos_path, path))
     unless Dir.empty?(absolute_path)
-      raise Repository::FolderIsNotEmptyConflict.new(path)
+      raise Repository::FolderIsNotEmptyConflict, path
     end
     FileUtils.remove_dir(absolute_path)
   end

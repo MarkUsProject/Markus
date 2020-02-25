@@ -182,10 +182,10 @@ module RepositoryHelper
           dirs << path
         end
       end
+      dirs = dirs.reverse
       dirs << folder_path
     end
-
-    if files.length > 0
+    unless files.empty?
       success, file_messages = remove_files(files, user, repo, path: '', txn: txn, keep_folder: false)
       return [success, file_messages] unless success
     end
