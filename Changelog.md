@@ -6,6 +6,7 @@
 - Fixed bug where criteria were not expanded for grading (to both Admins and TAs) (#4380)
 - Fixed bug where annotations were not removed when switching between PDF submission files (#4387)
 - Fixed bug where annotations disappeared on window resize (#4387)
+- Added progress message when uploading changes on Automated Testing tab (#4395) 
 
 ## [v1.8.4]
 - Fixed bug where test output was not being properly hidden from students (#4379)
