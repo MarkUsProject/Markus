@@ -263,6 +263,13 @@ class FileManagerFile extends FileRenderers.RawTableFile {
     }
   };
 
+  handleItemClick = (event) => {
+    // This disables the option to select multiple rows in the file manager
+    // To re-enable multiple selection, remove this method entirely.
+    event.stopPropagation();
+    this.props.browserProps.select(this.props.fileKey, 'file')
+  };
+
   render() {
     let icon;
     if (this.getFileType() === 'Image') {
