@@ -1,39 +1,10 @@
 describe PenaltyPeriodSubmissionRule do
   # Replace this with your real tests.
-  #
-  context 'when the student did not submit any assignment files' do
-    let(:submission) { create(:submission, is_empty: true) }
-    let(:rule) { create(:penalty_period_submission_rule) }
-    let(:assignment) { create(:assignment) }
-    let(:result) { create(:incomplete_result, marking_state: 'incomplete') }
-    before :each do
-      assignment.replace_submission_rule(rule)
-      assignment.due_date = Time.now + 2.days
-      add_period_helper(assignment.submission_rule, 24, 10)
-      add_period_helper(assignment.submission_rule, 24, 10)
-    end
-    # Before the due_date and before collection_time
-    it 'should not apply submission rule before the due date' do
-      pretend_now_is(Time.now + 1.days) do
-        expect(Time.now).to be < assignment.due_date
-        expect(Time.now).to be < assignment.submission_rule.calculate_collection_time
-        new_submission = rule.apply_submission_rule(submission)
-        expect(new_submission).to eq(submission)
-        expect(result.extra_marks).to be_empty
-      end
-    end
-    # After the due_date and before collection_time
-    it 'should not apply submission rule after the due date' do
-      pretend_now_is(Time.now + 2.days + 1.hour) do
-        expect(Time.now).to be > assignment.due_date
-        expect(Time.now).to be < assignment.submission_rule.calculate_collection_time
-        new_submission = rule.apply_submission_rule(submission)
-        expect(new_submission).to eq(submission)
-        expect(result.extra_marks).to be_empty
-      end
-    end
+  it 'be able to create PenaltyPeriodSubmissionRule' do
+    rule = PenaltyPeriodSubmissionRule.new
+    rule.assignment = create(:assignment)
+    expect(rule.save).to be_truthy
   end
-
   context 'Assignment has a single grace period of 24 hours after due date' do
     before :each do
       @assignment = create(:assignment)
@@ -69,7 +40,63 @@ describe PenaltyPeriodSubmissionRule do
     teardown do
       destroy_repos
     end
-
+    context 'when the student did not submit any files' do
+      # Before the due_date and before collection_time
+      describe 'when assignment is collected before the due date' do
+        before :each do
+          @submission = create(:submission, grouping: @grouping, is_empty: true)
+        end
+        it 'should not apply submission rule' do
+          pretend_now_is(Time.parse('July 20 2009 5:00PM')) do
+            expect(Time.now).to be < @assignment.due_date
+            expect(Time.now).to be < @assignment.submission_rule.calculate_collection_time
+            result = @submission.get_latest_result
+            expect(result).not_to be_nil
+            expect(result.extra_marks).to be_empty
+            expect(result.get_total_extra_percentage).to eq 0
+          end
+        end
+      end
+      # After the due_date and before collection_time
+      describe 'when assignment is collected after the due date' do
+        before :each do
+          @group = create(:group)
+          @grouping = create(:grouping, group: @group)
+          @assignment = @grouping.assignment
+          @rule = PenaltyPeriodSubmissionRule.new
+          @assignment.replace_submission_rule(@rule)
+          PenaltyPeriodSubmissionRule.destroy_all
+          @rule.save
+          @submission = create(:submission, grouping: @grouping, is_empty: true)
+          # On July 1 at 1PM, the instructor sets up the course...
+          pretend_now_is(Time.parse('July 1 2009 1:00PM')) do
+            # Due date is July 23 @ 5PM
+            @assignment.due_date = Time.parse('July 23 2009 5:00PM')
+            # Add two 24 hour grace periods
+            # Overtime begins at July 23 @ 5PM
+            add_period_helper(@assignment.submission_rule, 24, 10)
+            add_period_helper(@assignment.submission_rule, 24, 10)
+            # Collect date is now after July 25 @ 5PM
+            @assignment.save
+          end
+          # On July 15, the Student logs in, triggering repository folder
+          # creation
+          pretend_now_is(Time.parse('July 24 2009 5:00PM')) do
+            @grouping.create_grouping_repository_folder
+          end
+        end
+        it 'should not apply submission rule' do
+          pretend_now_is(Time.parse('July 25 2009 4:00PM')) do
+            expect(Time.now).to be > @assignment.due_date
+            expect(Time.now).to be < @assignment.submission_rule.calculate_collection_time
+            result = @submission.get_latest_result
+            expect(result).not_to be_nil
+            expect(result.extra_marks).to be_empty
+            expect(result.get_total_extra_percentage).to eq 0
+          end
+        end
+      end
+    end
     it 'not add any penalty to the submission result' do
       pretend_now_is(Time.parse('July 20 2009 5:00PM')) do
         expect(Time.now).to be < @assignment.due_date

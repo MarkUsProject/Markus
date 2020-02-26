@@ -5,38 +5,6 @@ describe PenaltyDecayPeriodSubmissionRule do
     rule.assignment = create(:assignment)
     expect(rule.save).to be_truthy
   end
-  context 'when the student did not submit any assignment files' do
-    let(:submission) { create(:submission, is_empty: true) }
-    let(:rule) { create(:penalty_decay_period_submission_rule) }
-    let(:assignment) { create(:assignment) }
-    let(:result) { create(:incomplete_result, marking_state: 'incomplete') }
-    before :each do
-      assignment.replace_submission_rule(rule)
-      assignment.due_date = Time.now + 2.days
-      add_period_helper(assignment.submission_rule, 24, 10, 12)
-      add_period_helper(assignment.submission_rule, 24, 10, 12)
-    end
-    # Before the due_date and before collection_time
-    it 'should not apply submission rule before the due date' do
-      pretend_now_is(Time.now + 1.days) do
-        expect(Time.now).to be < assignment.due_date
-        expect(Time.now).to be < assignment.submission_rule.calculate_collection_time
-        new_submission = rule.apply_submission_rule(submission)
-        expect(new_submission).to eq(submission)
-        expect(result.extra_marks).to be_empty
-      end
-    end
-    # After the due_date and before collection_time
-    it 'should not apply submission rule after the due date' do
-      pretend_now_is(Time.now + 2.days + 1.hour) do
-        expect(Time.now).to be > assignment.due_date
-        expect(Time.now).to be < assignment.submission_rule.calculate_collection_time
-        new_submission = rule.apply_submission_rule(submission)
-        expect(new_submission).to eq(submission)
-        expect(result.extra_marks).to be_empty
-      end
-    end
-  end
   context 'A section with penalty_decay_period_submission rules.' do
 
     before :each do
@@ -65,7 +33,56 @@ describe PenaltyDecayPeriodSubmissionRule do
     teardown do
       destroy_repos
     end
-
+    context 'when the student did not submit any files' do
+      # Before the due_date and before collection_time
+      describe 'when the assignment is collected before the due date' do
+        before :each do
+          @submission = create(:submission, grouping: @grouping, is_empty: true)
+        end
+        it 'should not apply submission rule' do
+          pretend_now_is(Time.now + 1.days) do
+            expect(Time.now).to be < @assignment.due_date
+            expect(Time.now).to be < @assignment.submission_rule.calculate_collection_time
+            result = @submission.get_latest_result
+            expect(result).not_to be_nil
+            expect(result.extra_marks).to be_empty
+            expect(result.get_total_extra_percentage).to eq 0
+          end
+        end
+      end
+      # After the due_date and before collection_time
+      describe 'when the assignment is collected after the due date' do
+        before :each do
+          @group = create(:group)
+          @grouping = create(:grouping, group: @group)
+          @assignment = @grouping.assignment
+          @rule = PenaltyDecayPeriodSubmissionRule.new
+          @assignment.replace_submission_rule(@rule)
+          PenaltyDecayPeriodSubmissionRule.destroy_all
+          @rule.save
+          @submission = create(:submission, grouping: @grouping, is_empty: true)
+          # The instructor sets up the course...
+          @assignment.due_date = Time.now + 2.days
+          # Add two 24 hour penalty decay periods
+          # Overtime begins in two days.
+          add_period_helper(@assignment.submission_rule, 24, 10, 12)
+          add_period_helper(@assignment.submission_rule, 24, 10, 12)
+          # Collection date is in 4 days.
+          @assignment.save
+          @grouping.create_grouping_repository_folder
+        end
+        it 'should not apply submission rule' do
+          pretend_now_is(Time.now + 3.days) do
+            expect(Time.now).to be > @assignment.due_date
+            expect(Time.now).to be < @assignment.submission_rule.calculate_collection_time
+            result = @submission.get_latest_result
+            expect(result).not_to be_nil
+            expect(result.extra_marks).to be_empty
+            expect(result.get_total_extra_percentage).to eq 0
+          end
+        end
+      end
+    end
     it 'be able to calculate collection time' do
       expect(Time.now).to be < @assignment.submission_rule.calculate_collection_time
     end
