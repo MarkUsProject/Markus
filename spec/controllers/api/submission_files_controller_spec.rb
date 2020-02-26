@@ -114,7 +114,7 @@ describe Api::SubmissionFilesController do
       before :each do
         post :create_folders, params: { assignment_id: assignment.id, group_id: group.id, folder_path: 'a/b/c' }
       end
-      describe 'when the folder is exist' do
+      describe 'when the folder exists' do
         before :each do
           delete :remove_folder, params: { assignment_id: assignment.id, group_id: group.id, folder_path: 'a/b/c' }
         end
@@ -128,7 +128,7 @@ describe Api::SubmissionFilesController do
           expect(response.status).to eq(200)
         end
       end
-      describe 'when the folder is not exist' do
+      describe 'when the folder does not exist' do
         before :each do
           delete :remove_folder, params: { assignment_id: assignment.id, group_id: group.id, folder_path: 'a/b/x' }
         end
