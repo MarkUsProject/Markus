@@ -50,12 +50,9 @@ describe PenaltyPeriodSubmissionRule do
           pretend_now_is(Time.parse('July 20 2009 5:00PM')) do
             expect(Time.now).to be < @assignment.due_date
             expect(Time.now).to be < @assignment.submission_rule.calculate_collection_time
-            result = @submission.get_latest_result
-            expect(result).not_to be_nil
-            expect(result.extra_marks).to be_empty
-            expect(result.get_total_extra_percentage).to eq 0
           end
         end
+        it_behaves_like 'No penalty'
       end
       # After the due_date and before collection_time
       describe 'when assignment is collected after the due date' do
@@ -89,12 +86,9 @@ describe PenaltyPeriodSubmissionRule do
           pretend_now_is(Time.parse('July 25 2009 4:00PM')) do
             expect(Time.now).to be > @assignment.due_date
             expect(Time.now).to be < @assignment.submission_rule.calculate_collection_time
-            result = @submission.get_latest_result
-            expect(result).not_to be_nil
-            expect(result.extra_marks).to be_empty
-            expect(result.get_total_extra_percentage).to eq 0
           end
         end
+        it_behaves_like 'No penalty'
       end
     end
     it 'not add any penalty to the submission result' do

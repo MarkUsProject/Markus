@@ -43,12 +43,9 @@ describe PenaltyDecayPeriodSubmissionRule do
           pretend_now_is(Time.now + 1.days) do
             expect(Time.now).to be < @assignment.due_date
             expect(Time.now).to be < @assignment.submission_rule.calculate_collection_time
-            result = @submission.get_latest_result
-            expect(result).not_to be_nil
-            expect(result.extra_marks).to be_empty
-            expect(result.get_total_extra_percentage).to eq 0
           end
         end
+        it_behaves_like 'No penalty'
       end
       # After the due_date and before collection_time
       describe 'when the assignment is collected after the due date' do
@@ -75,12 +72,9 @@ describe PenaltyDecayPeriodSubmissionRule do
           pretend_now_is(Time.now + 3.days) do
             expect(Time.now).to be > @assignment.due_date
             expect(Time.now).to be < @assignment.submission_rule.calculate_collection_time
-            result = @submission.get_latest_result
-            expect(result).not_to be_nil
-            expect(result.extra_marks).to be_empty
-            expect(result.get_total_extra_percentage).to eq 0
           end
         end
+        it_behaves_like 'No penalty'
       end
     end
     it 'be able to calculate collection time' do
