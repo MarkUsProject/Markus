@@ -6,9 +6,10 @@ services:
       context: .
       dockerfile: ./.dockerfiles/Dockerfile
       args:
-        RUBY_VERSION: '2.5.3'
+        UBUNTU_VERSION: bionic
+        RUBY_VERSION: '2.5'
         PG_MAJOR: '10'
-        NODE_MAJOR: '11'
+        NODE_MAJOR: '12'
         YARN_VERSION: '1.13.0'
         BUNDLER_VERSION: '1.17.3'
     image: markus-dev:1.0.0
