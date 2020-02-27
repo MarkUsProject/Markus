@@ -15,9 +15,9 @@ describe PenaltyPeriodSubmissionRule do
       create(:student_membership,
              grouping: @grouping,
              membership_status: StudentMembership::STATUSES[:inviter])
-      penalty_period_submission_rule = PenaltyPeriodSubmissionRule.new
-      @assignment.replace_submission_rule(penalty_period_submission_rule)
-      penalty_period_submission_rule.save
+      @rule = PenaltyPeriodSubmissionRule.new
+      @assignment.replace_submission_rule(@rule)
+      @rule.save
 
       # On July 1 at 1PM, the instructor sets up the course...
       pretend_now_is(Time.parse('July 1 2009 1:00PM')) do
