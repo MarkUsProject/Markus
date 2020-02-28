@@ -40,6 +40,60 @@ describe GracePeriodSubmissionRule do
       destroy_repos
     end
 
+    context 'when the student did not submit any files' do
+      # Before the due_date and before collection_time
+      describe 'when assignment is collected before the due date' do
+        before :each do
+          @submission = create(:submission, grouping: @grouping, is_empty: true)
+        end
+        it 'should not apply submission rule' do
+          pretend_now_is(Time.parse('July 20 2009 5:00PM')) do
+            expect(Time.now).to be < @assignment.due_date
+            expect(Time.now).to be < @assignment.submission_rule.calculate_collection_time
+          end
+        end
+        it_behaves_like 'No submission file'
+      end
+      # After the due_date and before collection_time
+      describe 'when assignment is collected after the due date' do
+        before :each do
+          @group = create(:group)
+          @grouping = create(:grouping, group: @group)
+          @membership = create(:student_membership,
+                               grouping: @grouping,
+                               membership_status: StudentMembership::STATUSES[:inviter])
+          @assignment = @grouping.assignment
+          @rule = GracePeriodSubmissionRule.new
+          @assignment.replace_submission_rule(@rule)
+          GracePeriodDeduction.destroy_all
+          @rule.save
+          @submission = create(:submission, grouping: @grouping, is_empty: true)
+          # On July 1 at 1PM, the instructor sets up the course...
+          pretend_now_is(Time.parse('July 1 2009 1:00PM')) do
+            # Due date is July 23 @ 5PM
+            @assignment.due_date = Time.parse('July 23 2009 5:00PM')
+            # Add two 24 hour grace periods
+            # Overtime begins at July 23 @ 5PM
+            add_period_helper(@assignment.submission_rule, 24)
+            add_period_helper(@assignment.submission_rule, 24)
+            # Collect date is now after July 25 @ 5PM
+            @assignment.save
+          end
+          # On July 15, the Student logs in, triggering repository folder
+          # creation
+          pretend_now_is(Time.parse('July 24 2009 5:00PM')) do
+            @grouping.create_grouping_repository_folder
+          end
+        end
+        it 'should not apply submission rule' do
+          pretend_now_is(Time.parse('July 25 2009 4:00PM')) do
+            expect(Time.now).to be > @assignment.due_date
+            expect(Time.now).to be < @assignment.submission_rule.calculate_collection_time
+          end
+        end
+        it_behaves_like 'No submission file'
+      end
+    end
     describe '#apply_submission_rule' do
       before :each do
         # The Student submits their files before the due date
