@@ -1,4 +1,4 @@
-function getFile(filename) {
+function getFile(filename, pdfViewer) {
   if (!filename) {
     $('#panes-content').remove();
     return;
@@ -16,7 +16,9 @@ function getFile(filename) {
     <%= @exam_template.id %>,
     { file_name: filename, show_in_browser: true }
   );
-  webViewerLoad(path);
+  pdfjs.getDocument({url: path}).promise.then(function (pdfDocument) {
+    pdfViewer.setDocument(pdfDocument);
+  });
   $('#copy_number').focus();
 }
 
@@ -48,8 +50,17 @@ function getErrorPages(value) {
 }
 
 $(document).ready(function () {
+  var container = document.getElementById('pdfContainer');
+  var pdfViewer = new pdfjsViewer.PDFViewer({
+    container: container,
+    renderer: 'svg'
+  });
+  document.addEventListener('pagesinit', function () {
+    pdfViewer.currentScaleValue = 'page-fit';
+  });
+
   $('#upside_down').click(function () {
-    PDFView.rotatePages(180);
+    pdfViewer.pagesRotation = (pdfViewer.pagesRotation + 180) % 360;
   });
 
   $('#copy_number').on('keyup', function () {
@@ -59,15 +70,15 @@ $(document).ready(function () {
   $('#info_form').on('ajax:success', function (event) {
     let filename = event.detail[0];
     if (filename) {
-      getFile(filename);
+      getFile(filename, pdfViewer);
     } else {
       window.location = '<%= view_logs_assignment_exam_templates_path(assignment_id: @assignment.id) %>';
     }
   });
 
   <% if @next_error.nil? %>
-    getFile('');
+    getFile('', pdfViewer);
   <% else %>
-    getFile('<%= "#{@next_error.id}.pdf" -%>');
+    getFile('<%= "#{@next_error.id}.pdf" -%>', pdfViewer);
   <% end %>
 });

@@ -39,6 +39,7 @@ class Grouping < ApplicationRecord
           -> { where submission_version_used: true },
           class_name: 'Submission'
   has_one :current_result, through: :current_submission_used
+  has_one :submitted_remark, through: :current_submission_used
 
   has_and_belongs_to_many :tags
 
@@ -155,6 +156,8 @@ class Grouping < ApplicationRecord
     if grouping_ids.nil?
       grouping_ids = assignment.groupings.pluck(:id)
     end
+    return if grouping_ids.empty?
+
     counts = CriterionTaAssociation
              .from(
                # subquery
@@ -169,11 +172,10 @@ class Grouping < ApplicationRecord
              .group('subquery.id')
              .count
 
-    Upsert.batch(Grouping.connection, Grouping.table_name) do |upsert|
-      grouping_ids.each do |gid|
-        upsert.row({ id: gid }, criteria_coverage_count: counts[gid.to_i] || 0)
-      end
+    grouping_data = Grouping.where(id: grouping_ids).pluck_to_hash.map do |h|
+      { **h.symbolize_keys, criteria_coverage_count: counts[h['id'].to_i] || 0 }
     end
+    Grouping.upsert_all(grouping_data)
   end
 
   def get_all_students_in_group
@@ -715,8 +717,8 @@ class Grouping < ApplicationRecord
     filtered = filter_test_runs(filters: { 'users.type': 'Admin', 'test_runs.submission': submission })
     plucked = Grouping.pluck_test_runs(filtered)
     plucked.map! do |data|
-      if data['test_groups.display_output'] == 'instructors_and_student_tests' ||
-         data['test_groups.display_output'] == 'instructors'
+      if data['test_groups.display_output'] == TestGroup.display_outputs[:instructors_and_student_tests] ||
+         data['test_groups.display_output'] == TestGroup.display_outputs[:instructors]
         data.delete('test_results.output')
       end
       data.delete('test_group_results.extra_info')
@@ -729,7 +731,7 @@ class Grouping < ApplicationRecord
     filtered = filter_test_runs(filters: { 'test_runs.user': self.accepted_students })
     plucked = Grouping.pluck_test_runs(filtered)
     plucked.map! do |data|
-      if data['test_groups.display_output'] == 'instructors'
+      if data['test_groups.display_output'] == TestGroup.display_outputs[:instructors]
         data.delete('test_results.output')
       end
       data.delete('test_group_results.extra_info')

@@ -65,18 +65,19 @@ class AutotestManager extends React.Component {
       processData: false, // tell jQuery not to process the data
       contentType: false  // tell jQuery not to set contentType
     }).then(this.fetchFileDataOnly)
-      .then(this.onSubmit); // uploading files will send changes to the autotester without requiring an explicit save
+      .then(() => set_onbeforeunload(true))
+      .then(this.endAction);
   };
 
-  handleDeleteFile = (fileKey) => {
-    if (!this.state.files.some(f => f.key === fileKey)) {
+  handleDeleteFile = (fileKeys) => {
+    if (!this.state.files.some(f => fileKeys.includes(f.key))) {
       return;
     }
     $.post({
       url: Routes.upload_files_assignment_automated_tests_path(this.props.assignment_id),
-      data: {delete_files: [fileKey]}
+      data: {delete_files: fileKeys}
     }).then(this.fetchFileDataOnly)
-      .then(this.onSubmit) // deleting files will send changes to the autotester without requiring an explicit save
+      .then(() => set_onbeforeunload(true))
       .then(this.endAction);
   };
 
@@ -85,7 +86,7 @@ class AutotestManager extends React.Component {
       url: Routes.upload_files_assignment_automated_tests_path(this.props.assignment_id),
       data: {new_folders: [folderKey]}
     }).then(this.fetchFileDataOnly)
-      .then(this.onSubmit) // creating folders will send changes to the autotester without requiring an explicit save
+      .then(() => set_onbeforeunload(true))
       .then(this.endAction);
   };
 
@@ -94,7 +95,7 @@ class AutotestManager extends React.Component {
       url: Routes.upload_files_assignment_automated_tests_path(this.props.assignment_id),
       data: {delete_folders: [folderKey]}
     }).then(this.fetchFileDataOnly)
-      .then(this.onSubmit) // deleting folders will send changes to the autotester without requiring an explicit save
+      .then(() => set_onbeforeunload(true))
       .then(this.endAction);
   };
 
@@ -103,35 +104,35 @@ class AutotestManager extends React.Component {
   };
 
   handleFormChange = (data) => {
-    this.setState({formData: data.formData});
+    this.setState({formData: data.formData}, () => set_onbeforeunload(true));
   };
 
   toggleEnableTest = () => {
-    this.setState({enable_test: !this.state.enable_test})
+    this.setState({enable_test: !this.state.enable_test}, () => set_onbeforeunload(true))
   };
 
   toggleEnableStudentTest = () => {
-    this.setState({enable_student_tests: !this.state.enable_student_tests})
+    this.setState({enable_student_tests: !this.state.enable_student_tests}, () => set_onbeforeunload(true))
   };
 
   toggleNonRegeneratingTokens = () => {
-    this.setState({non_regenerating_tokens: !this.state.non_regenerating_tokens})
+    this.setState({non_regenerating_tokens: !this.state.non_regenerating_tokens}, () => set_onbeforeunload(true))
   };
 
   toggleUnlimitedTokens = () => {
-    this.setState({unlimited_tokens: !this.state.unlimited_tokens})
+    this.setState({unlimited_tokens: !this.state.unlimited_tokens}, () => set_onbeforeunload(true))
   };
 
   handleTokenStartDateChange = (date) => {
-    this.setState({token_start_date: date})
+    this.setState({token_start_date: date}, () => set_onbeforeunload(true))
   };
 
   handleTokensPerPeriodChange = (event) => {
-    this.setState({tokens_per_period: event.target.value})
+    this.setState({tokens_per_period: event.target.value}, () => set_onbeforeunload(true))
   };
 
   handleTokenPeriodChange = (event) => {
-    this.setState({token_period: event.target.value})
+    this.setState({token_period: event.target.value}, () => set_onbeforeunload(true))
   };
 
   onSubmit = () => {
@@ -152,7 +153,10 @@ class AutotestManager extends React.Component {
       data: JSON.stringify(data),
       processData: false,
       contentType: 'application/json'
-    }).then(() => { window.location.reload() });
+    }).then(() => {
+      set_onbeforeunload(false);
+      window.location.reload();
+    });
   };
 
   studentTestsField = () => {
