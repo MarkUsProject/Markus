@@ -23,6 +23,10 @@ function resize_col() {
     $drag.draggable('option', 'revert', true);
     offset = (offset < limit) ? limit : (1 - limit);
   }
+
+  if (window.pdfViewer) {
+    window.pdfViewer.refresh_annotations();
+  }
 }
 
 /* Makes the bar draggable only along x-axis, containing to the panes box,
@@ -94,4 +98,9 @@ function fix_panes(){
   // Make sure the drag bar stays in the right place
   $drag.css('left', (panes_offset.left + offset * panes_width) + 'px');
   $drag.css('position', 'inherit');
+
+  // Fix pdfViewer, if it exists.
+  if (window.pdfViewer) {
+    window.pdfViewer.refresh_annotations();
+  }
 }

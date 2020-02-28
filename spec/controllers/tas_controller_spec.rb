@@ -11,6 +11,20 @@ describe TasController do
       let(:params) { {} }
     end
 
+    it 'reports validation errors' do
+      post :upload, params: {
+        upload_file: fixture_file_upload('files/tas/form_invalid_record.csv', 'text/csv')
+      }
+      expect(flash[:error]).not_to be_nil
+    end
+
+    it 'does not create users when validation errors occur' do
+      post :upload, params: {
+        upload_file: fixture_file_upload('files/tas/form_invalid_record.csv', 'text/csv')
+      }
+      expect(Ta.all.count).to eq 0
+    end
+
     it 'accepts a valid file' do
       post :upload, params: {
         upload_file: fixture_file_upload('files/tas/form_good.csv', 'text/csv')

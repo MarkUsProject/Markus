@@ -38,6 +38,59 @@ namespace :db do
         submission: new_submission, filename: 'machinefb', mime_type: 'text', file_content: mcont
       )
 
+      submission_file = new_submission.submission_files.find_by(filename: 'deferred-process.jpg')
+      base_attributes = {
+        submission_file_id: submission_file.id,
+        is_remark: new_submission.has_remark?,
+        annotation_text_id: AnnotationText.all.pluck(:id).to_a.sample,
+        annotation_number: new_submission.annotations.count + 1,
+        creator_id: Admin.first.id,
+        creator_type: 'Admin',
+        result_id: new_submission.current_result.id
+      }
+      ImageAnnotation.create(
+        x1: 132,
+        y1: 199,
+        x2: 346,
+        y2: 370,
+        **base_attributes
+      )
+      submission_file = new_submission.submission_files.find_by(filename: 'pdf.pdf')
+      base_attributes = {
+        submission_file_id: submission_file.id,
+        is_remark: new_submission.has_remark?,
+        annotation_text_id: AnnotationText.all.pluck(:id).to_a.sample,
+        annotation_number: new_submission.annotations.count + 1,
+        creator_id: Admin.first.id,
+        creator_type: 'Admin',
+        result_id: new_submission.current_result.id
+      }
+      PdfAnnotation.create(
+        x1: 27_740,
+        y1: 58_244,
+        x2: 4977,
+        y2: 29_748,
+        page: 1,
+        **base_attributes
+      )
+      submission_file = new_submission.submission_files.find_by(filename: 'hello.py')
+      base_attributes = {
+        submission_file_id: submission_file.id,
+        is_remark: new_submission.has_remark?,
+        annotation_text_id: AnnotationText.all.pluck(:id).to_a.sample,
+        annotation_number: new_submission.annotations.count + 1,
+        creator_id: Admin.first.id,
+        creator_type: 'Admin',
+        result_id: new_submission.current_result.id
+      }
+      TextAnnotation.create(
+        line_start: 7,
+        line_end: 9,
+        column_start: 6,
+        column_end: 15,
+        **base_attributes
+      )
+
       #Automate marks for assignment using appropriate criteria
       grouping.assignment.get_criteria(:all, :all, includes: :marks).each do |criterion|
         if criterion.class == RubricCriterion
@@ -48,10 +101,11 @@ namespace :db do
           random_mark = rand(0..1)
         end
         marks << Mark.new(
-                  result_id:     result.id,
-                  markable_id:   criterion.id,
-                  markable_type: criterion.class.to_s,
-                  mark: random_mark)
+          result_id: result.id,
+          markable_id: criterion.id,
+          markable_type: criterion.class.to_s,
+          mark: random_mark
+        )
       end
     end
     FeedbackFile.import feedbackfiles

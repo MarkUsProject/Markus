@@ -16,6 +16,7 @@ class SubmissionsController < ApplicationController
                          :download_groupings_files,
                          :manually_collect_and_begin_grading,
                          :repo_browser,
+                         :set_result_marking_state,
                          :update_submissions,
                          :populate_submissions_table,
                          :populate_peer_submissions_table]
@@ -611,6 +612,27 @@ class SubmissionsController < ApplicationController
     render plain: l(Time.zone.now)
   end
 
+  def set_result_marking_state
+    if !params.key?(:groupings) || params[:groupings].empty?
+      flash_now(:error, t('groups.select_a_group'))
+      head 400
+      return
+    end
+    results = Result.where(id: Grouping.joins(:current_result).where(id: params[:groupings]).select('results.id'))
+    Result.transaction do
+      results.each do |result|
+        result.marking_state = params[:marking_state]
+        unless result.save
+          raise result.errors.full_messages.first
+        end
+      end
+    end
+    head :ok
+  rescue StandardError => e
+    flash_now(:error, e.message)
+    head :ok
+  end
+
   private
 
   # Used in update_files and file_manager actions
@@ -628,6 +650,8 @@ class SubmissionsController < ApplicationController
     full_path = File.join(grouping.assignment.repository_folder, path)
     return [] unless revision.path_exists?(full_path)
 
+    anonymize = current_user.ta? && grouping.assignment.anonymize_groups
+
     entries = revision.tree_at_path(full_path).sort do |a, b|
       a[0].count(File::SEPARATOR) <=> b[0].count(File::SEPARATOR) # less nested first
     end
@@ -640,6 +664,7 @@ class SubmissionsController < ApplicationController
         next if data.nil?
         data[:key] = file_name
         data[:modified] = data[:last_revised_date]
+        data[:revision_by] = '' if anonymize
         data
       else
         { key: "#{file_name}/" }
