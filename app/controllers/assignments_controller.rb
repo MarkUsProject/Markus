@@ -259,6 +259,8 @@ class AssignmentsController < ApplicationController
   def new
     @assignments = Assignment.all
     @assignment = Assignment.new
+    @assignment_properties = AssignmentProperties.new
+    @assignment.assignment_properties = @assignment_properties
     if params[:scanned].present?
       @assignment.assignment_properties.scanned_exam = true
     end
@@ -275,7 +277,7 @@ class AssignmentsController < ApplicationController
                                     .sort_by { |s| s.section.name }
 
     # set default value if web submits are allowed
-    @assignment.allow_web_submits =
+    @assignment.assignment_properties.allow_web_submits =
         !MarkusConfigurator.markus_config_repository_external_submits_only?
     render :new
   end
@@ -664,7 +666,7 @@ class AssignmentsController < ApplicationController
                          assignment.assignment_files.any?(&:saved_changes?) ||
                          num_files_before != assignment.assignment_files.length
     # if there are no section due dates, destroy the objects that were created
-    if ['0', nil].include? params[:assignment][:section_due_dates_type]
+    if ['0', nil].include? params[:assignment][:assignment_properties_attributes][:section_due_dates_type]
       assignment.section_due_dates.each(&:destroy)
       assignment.assignment_properties.section_due_dates_type = false
       assignment.assignment_properties.section_groups_only = false
@@ -675,7 +677,7 @@ class AssignmentsController < ApplicationController
 
     if params[:is_group_assignment] == 'true'
       # Is the instructor forming groups?
-      if assignment_params[:student_form_groups] == '0'
+      if assignment_params[:assignment_properties_attributes][:student_form_groups] == '0'
         assignment.assignment_properties.invalid_override = true
         # Increase group_max so that create_all_groups button is not displayed
         # in the groups view.
