@@ -319,7 +319,7 @@ class RubricCriterionInput extends React.Component {
     super(props);
   }
 
-  // The parameter '`level' is the level object selected
+  // The parameter `level` is the level object selected
   handleChange = (level) => {
     this.props.updateMark(
       this.props.criterion_type, this.props.id, level.mark
