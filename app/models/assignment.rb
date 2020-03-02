@@ -10,6 +10,9 @@ class Assignment < Assessment
   accepts_nested_attributes_for :assignment_properties
   validates_presence_of :assignment_properties
 
+  # Add assignment_properties to default scope because we almost always want to load an assignment with its properties
+  default_scope { includes(:assignment_properties) }
+
   has_many :rubric_criteria,
            -> { order(:position) },
            class_name: 'RubricCriterion',
@@ -194,7 +197,7 @@ class Assignment < Assessment
   end
 
   def past_all_collection_dates?
-    if section_due_dates_type && Section.any?
+    if assignment_properties.section_due_dates_type && Section.any?
       Section.all.all? do |s|
         past_collection_date? s
       end

@@ -36,8 +36,8 @@
 
               </td>
               <td>
-                <% unless grade_entry_form.date.nil? %>
-                  <%= l(grade_entry_form.date, format: :long) %>
+                <% unless grade_entry_form.due_date.nil? %>
+                  <%= l(grade_entry_form.due_date, format: :long) %>
                 <% end %>
               </td>
             </tr>
