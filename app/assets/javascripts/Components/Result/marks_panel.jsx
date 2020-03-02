@@ -319,17 +319,16 @@ class RubricCriterionInput extends React.Component {
     super(props);
   }
 
-  // The parameter `i` is the level index selected.
-  handleChange = (i) => {
+  // The parameter '`level' is the level object selected
+  handleChange = (level) => {
     this.props.updateMark(
-      this.props.criterion_type, this.props.id, this.props.levels[i].mark
+      this.props.criterion_type, this.props.id, level.mark
     );
   };
 
   // The parameter `level` is the level object selected
   renderRubricLevel = (level) => {
     const levelMark = level.mark.toFixed(2);
-    const levelIndex = this.props.levels.findIndex( (currLevel) => level.mark == currLevel.mark );
     let selectedClass = '';
     let oldMarkClass = '';
     if (this.props.mark !== undefined &&
@@ -345,7 +344,7 @@ class RubricCriterionInput extends React.Component {
 
     return (
       <tr
-        onClick={() => this.handleChange(levelIndex)}
+        onClick={() => this.handleChange(level)}
         key={`${this.props.id}-${levelMark}`}
         className={`rubric-level ${selectedClass} ${oldMarkClass}`}
       >
