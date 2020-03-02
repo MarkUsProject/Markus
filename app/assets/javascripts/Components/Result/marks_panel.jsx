@@ -319,7 +319,7 @@ class RubricCriterionInput extends React.Component {
     super(props);
   }
 
-  // The parameter `i` is the level number selected.
+  // The parameter `i` is the level index selected.
   handleChange = (i) => {
     this.props.updateMark(
       this.props.criterion_type, this.props.id, this.props.levels[i].mark
@@ -345,7 +345,7 @@ class RubricCriterionInput extends React.Component {
 
     return (
       <tr
-        data-level-index={levelIndex} onClick={() => this.handleChange(levelIndex)}
+        onClick={() => this.handleChange(levelIndex)}
         key={`${this.props.id}-${levelMark}`}
         className={`rubric-level ${selectedClass} ${oldMarkClass}`}
       >
