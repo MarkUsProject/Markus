@@ -173,7 +173,7 @@ class SubmissionsController < ApplicationController
 
     submission = @grouping.reload.current_submission_used
     redirect_to edit_assignment_submission_result_path(
-      assignment_id: @grouping.assignment_id,
+      assignment_id: @grouping.assessment_id,
       submission_id: submission.id,
       id: submission.get_latest_result.id)
   end

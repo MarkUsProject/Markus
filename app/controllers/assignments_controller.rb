@@ -128,7 +128,7 @@ class AssignmentsController < ApplicationController
     if @assignment.past_all_collection_dates?
       flash_now(:notice, t('submissions.grading_can_begin'))
     else
-      if @assignment.section_due_dates_type
+      if @assignment.assignment_properties.section_due_dates_type
         section_due_dates = Hash.new
         now = Time.zone.now
         Section.all.each do |section|
@@ -290,8 +290,8 @@ class AssignmentsController < ApplicationController
     @assignment.transaction do
       begin
         @assignment, new_required_files = process_assignment_form(@assignment)
-        @assignment.token_start_date = @assignment.due_date
-        @assignment.token_period = 1
+        @assignment.assignment_properties.token_start_date = @assignment.due_date
+        @assignment.assignment_properties.token_period = 1
       rescue Exception, RuntimeError => e
         @assignment.errors.add(:base, e.message)
         new_required_files = false
@@ -355,7 +355,7 @@ class AssignmentsController < ApplicationController
         user_ids = current_user.admin? ? Admin.pluck(:id) : current_user.id
         test_runs = TestRun.left_outer_joins(:test_batch, grouping: [:group, :current_result])
                            .where(test_runs: {user_id: user_ids},
-                                  'groupings.assignment_id': @assignment.id)
+                                  'groupings.assessment_id': @assignment.id)
                            .pluck_to_hash(:id,
                                           :test_batch_id,
                                           :time_to_service,
