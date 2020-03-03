@@ -6,11 +6,8 @@ FactoryBot.define do
     ta_visible { true }
     peer_visible { false }
     sequence(:position)
-  end
-
-  factory :rubric_criteria_with_levels do
-    after(:create) do
-      5.times.each { |i| create(:level, rubric_criteria: rubric_criteria, mark: i) }
+    after(:create) do |criterion|
+      5.times.each { |i| create(:level, rubric_criteria: criterion, mark: i) }
     end
   end
 end
