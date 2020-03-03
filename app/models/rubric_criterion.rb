@@ -39,12 +39,13 @@ class RubricCriterion < Criterion
   end
 
   def scale_marks_if_max_mark_changed
-    max_level = self.levels.max_by(&:mark)
-    if max_level.mark != self.criterion.max_mark
-      scale = max_level.mark / self.criterion.max_mark
-      self.levels.each { |level| 
+    max_level_mark = self.levels.max_by(&:mark).mark
+    new_max = self.max_mark
+    if max_level_mark != new_max
+      scale =  new_max / max_level_mark
+      self.levels.each do |level| 
         level.mark = level.mark * scale
-      }
+      end
     end
   end
 
