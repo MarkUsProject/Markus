@@ -171,10 +171,10 @@ class GroupsController < ApplicationController
 
   def get_names
     names = Student
-              .select(:id, :id_number, :user_name, "CONCAT(first_name,' ',last_name) AS label, CONCAT(first_name,' ',last_name) AS value")
-              .where('(lower(first_name) like ? OR lower(last_name) like ? OR lower(user_name) like ? OR id_number like ?) AND users.id NOT IN (?)',
-                     "#{params[:term].downcase}%", "#{params[:term].downcase}%", "#{params[:term].downcase}%", "#{params[:term]}%",
-                     Membership.select(:user_id).joins(:grouping).where('groupings.assessment_id = ?', params[:assignment]))
+            .select(:id, :id_number, :user_name, "CONCAT(first_name,' ',last_name) AS label, CONCAT(first_name,' ',last_name) AS value")
+            .where('(lower(first_name) like ? OR lower(last_name) like ? OR lower(user_name) like ? OR id_number like ?) AND users.id NOT IN (?)',
+                   "#{params[:term].downcase}%", "#{params[:term].downcase}%", "#{params[:term].downcase}%", "#{params[:term]}%",
+                   Membership.select(:user_id).joins(:grouping).where('groupings.assessment_id = ?', params[:assignment]))
     render json: names
   end
 

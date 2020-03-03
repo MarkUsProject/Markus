@@ -128,20 +128,19 @@ class AssignmentsController < ApplicationController
     if @assignment.past_all_collection_dates?
       flash_now(:notice, t('submissions.grading_can_begin'))
     elsif @assignment.assignment_properties.section_due_dates_type
-      section_due_dates = Hash.new
+      section_due_dates = {}
       now = Time.zone.now
       Section.all.each do |section|
-        collection_time = @assignment.submission_rule
-                              .calculate_collection_time(section)
+        collection_time = @assignment.submission_rule.calculate_collection_time(section)
         collection_time = now if now >= collection_time
         if section_due_dates[collection_time].nil?
-          section_due_dates[collection_time] = Array.new
+          section_due_dates[collection_time] = []
         end
         section_due_dates[collection_time].push(section.name)
       end
       section_due_dates.each do |collection_time, sections|
         sections = sections.join(', ')
-        if(collection_time == now)
+        if collection_time == now
           flash_now(:notice, t('submissions.grading_can_begin_for_sections',
                                sections: sections))
         else
