@@ -172,9 +172,9 @@ class GroupsController < ApplicationController
   def get_names
     names = Student
               .select(:id, :id_number, :user_name, "CONCAT(first_name,' ',last_name) AS label, CONCAT(first_name,' ',last_name) AS value")
-              .where("(lower(first_name) like ? OR lower(last_name) like ? OR lower(user_name) like ? OR id_number like ?) AND users.id NOT IN (?)",
+              .where('(lower(first_name) like ? OR lower(last_name) like ? OR lower(user_name) like ? OR id_number like ?) AND users.id NOT IN (?)',
                      "#{params[:term].downcase}%", "#{params[:term].downcase}%", "#{params[:term].downcase}%", "#{params[:term]}%",
-                     Membership.select(:user_id).joins(:grouping).where("groupings.assessment_id = ?", params[:assignment]));
+                     Membership.select(:user_id).joins(:grouping).where('groupings.assessment_id = ?', params[:assignment]))
     render json: names
   end
 
@@ -569,11 +569,11 @@ class GroupsController < ApplicationController
     # the maximum size of a group
     students_in_group = grouping.student_membership_number
     group_name = grouping.group.group_name
-    if assignment.assignment_properties.student_form_groups
-      if students_in_group > assignment.assignment_properties.group_max
-        raise I18n.t('groups.assign_over_limit', group: group_name)
-      end
-    end
+
+    return unless assignment.assignment_properties.student_form_groups
+    return unless students_in_group > assignment.assignment_properties.group_max
+
+    raise I18n.t('groups.assign_over_limit', group: group_name)
   end
 
   # Adds the student given in student_id to the grouping given in grouping
