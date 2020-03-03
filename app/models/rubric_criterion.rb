@@ -45,7 +45,7 @@ class RubricCriterion < Criterion
 
     scale = new_max / max_level_mark
     self.levels.each do |level|
-      level.mark = level.mark * scale
+      level.mark = (level.mark * scale).round(1)
     end
   end
 
