@@ -9,7 +9,7 @@ FactoryBot.define do
   end
 
   factory :rubric_criteria_with_levels do
-    after(:create) do |criteria|
+    after(:create) do
       5.times.each { |i| create(:level, rubric_criteria: rubric_criteria, mark: i) }
     end
   end
