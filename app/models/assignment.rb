@@ -1107,7 +1107,7 @@ class Assignment < Assessment
       groups: groups,
       criteria: criteria,
       graders: graders,
-      assign_graders_to_criteria: self.assign_graders_to_criteria,
+      assign_graders_to_criteria: self.assignment_properties.assign_graders_to_criteria,
       sections: Hash[Section.all.pluck(:id, :name)]
     }
   end
