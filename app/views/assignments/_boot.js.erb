@@ -129,7 +129,7 @@
       penalty_decay_periods.refresh();
       penalty_periods.refresh();
 
-      toggle_remark_requests(<%= @assignment.allow_remarks? %>);
+      toggle_remark_requests(<%= @assignment.assignment_properties.allow_remarks? %>);
     }
 
     // Handle required fields
@@ -171,7 +171,7 @@
       onClose:          check_due_date,
     });
 
-    $('#assignment_remark_due_date').datetimepicker({
+    $('#assignment_assignment_properties_attributes_remark_due_date').datetimepicker({
       onClose:          check_due_date,
     });
   });

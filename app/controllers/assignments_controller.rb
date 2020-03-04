@@ -91,7 +91,7 @@ class AssignmentsController < ApplicationController
       set_repo_vars(@assignment, @grouping)
     end
 
-    @penalty = SubmissionRule.find_by_assignment_id(@assignment.id)
+    @penalty = SubmissionRule.find_by_assessment_id(@assignment.id)
     @enum_penalty = Period.where(submission_rule_id: @penalty.id).sort
     @due_date = @student.due_date_for_assignment(@assignment)
     if @student.has_pending_groupings_for?(@assignment.id)
@@ -127,35 +127,32 @@ class AssignmentsController < ApplicationController
 
     if @assignment.past_all_collection_dates?
       flash_now(:notice, t('submissions.grading_can_begin'))
-    else
-      if @assignment.section_due_dates_type
-        section_due_dates = Hash.new
-        now = Time.zone.now
-        Section.all.each do |section|
-          collection_time = @assignment.submission_rule
-                                .calculate_collection_time(section)
-          collection_time = now if now >= collection_time
-          if section_due_dates[collection_time].nil?
-            section_due_dates[collection_time] = Array.new
-          end
-          section_due_dates[collection_time].push(section.name)
+    elsif @assignment.assignment_properties.section_due_dates_type
+      section_due_dates = {}
+      now = Time.zone.now
+      Section.all.each do |section|
+        collection_time = @assignment.submission_rule.calculate_collection_time(section)
+        collection_time = now if now >= collection_time
+        if section_due_dates[collection_time].nil?
+          section_due_dates[collection_time] = []
         end
-        section_due_dates.each do |collection_time, sections|
-          sections = sections.join(', ')
-          if(collection_time == now)
-            flash_now(:notice, t('submissions.grading_can_begin_for_sections',
-                                 sections: sections))
-          else
-            flash_now(:notice, t('submissions.grading_can_begin_after_for_sections',
-                                 time: l(collection_time),
-                                 sections: sections))
-          end
-        end
-      else
-        collection_time = @assignment.submission_rule.calculate_collection_time
-        flash_now(:notice, t('submissions.grading_can_begin_after',
-                             time: l(collection_time)))
+        section_due_dates[collection_time].push(section.name)
       end
+      section_due_dates.each do |collection_time, sections|
+        sections = sections.join(', ')
+        if collection_time == now
+          flash_now(:notice, t('submissions.grading_can_begin_for_sections',
+                               sections: sections))
+        else
+          flash_now(:notice, t('submissions.grading_can_begin_after_for_sections',
+                               time: l(collection_time),
+                               sections: sections))
+        end
+      end
+    else
+      collection_time = @assignment.submission_rule.calculate_collection_time
+      flash_now(:notice, t('submissions.grading_can_begin_after',
+                           time: l(collection_time)))
     end
   end
 
@@ -214,7 +211,7 @@ class AssignmentsController < ApplicationController
     @assignments = Assignment.all
     @sections = Section.all
 
-    unless @assignment.scanned_exam
+    unless @assignment.assignment_properties.scanned_exam
       if @assignment.past_collection_date?
         flash_now(:notice, t('assignments.due_date.final_due_date_passed'))
       elsif !past_date.blank?
@@ -224,7 +221,7 @@ class AssignmentsController < ApplicationController
 
     # build section_due_dates for each section that doesn't already have a due date
     Section.all.each do |s|
-      unless SectionDueDate.find_by_assignment_id_and_section_id(@assignment.id, s.id)
+      unless SectionDueDate.find_by_assessment_id_and_section_id(@assignment.id, s.id)
         @assignment.section_due_dates.build(section: s)
       end
     end
@@ -259,8 +256,10 @@ class AssignmentsController < ApplicationController
   def new
     @assignments = Assignment.all
     @assignment = Assignment.new
+    @assignment_properties = AssignmentProperties.new
+    @assignment.assignment_properties = @assignment_properties
     if params[:scanned].present?
-      @assignment.scanned_exam = true
+      @assignment.assignment_properties.scanned_exam = true
     end
     @clone_assignments = Assignment.joins(:assignment_properties)
                                    .where(assignment_properties: { vcs_submit: true })
@@ -275,7 +274,7 @@ class AssignmentsController < ApplicationController
                                     .sort_by { |s| s.section.name }
 
     # set default value if web submits are allowed
-    @assignment.allow_web_submits =
+    @assignment.assignment_properties.allow_web_submits =
         !MarkusConfigurator.markus_config_repository_external_submits_only?
     render :new
   end
@@ -288,8 +287,8 @@ class AssignmentsController < ApplicationController
     @assignment.transaction do
       begin
         @assignment, new_required_files = process_assignment_form(@assignment)
-        @assignment.token_start_date = @assignment.due_date
-        @assignment.token_period = 1
+        @assignment.assignment_properties.token_start_date = @assignment.due_date
+        @assignment.assignment_properties.token_period = 1
       rescue Exception, RuntimeError => e
         @assignment.errors.add(:base, e.message)
         new_required_files = false
@@ -353,7 +352,7 @@ class AssignmentsController < ApplicationController
         user_ids = current_user.admin? ? Admin.pluck(:id) : current_user.id
         test_runs = TestRun.left_outer_joins(:test_batch, grouping: [:group, :current_result])
                            .where(test_runs: {user_id: user_ids},
-                                  'groupings.assignment_id': @assignment.id)
+                                  'groupings.assessment_id': @assignment.id)
                            .pluck_to_hash(:id,
                                           :test_batch_id,
                                           :time_to_service,
@@ -473,7 +472,7 @@ class AssignmentsController < ApplicationController
     @assignment = Assignment.find(params[:id])
 
     path = params[:path] || '/'
-    path = Pathname.new(@assignment.repository_folder).join(path.gsub(%r{^/}, ''))
+    path = Pathname.new(@assignment.assignment_properties.repository_folder).join(path.gsub(%r{^/}, ''))
 
     # The files that will be deleted
     delete_files = params[:delete_files] || []
@@ -557,7 +556,7 @@ class AssignmentsController < ApplicationController
       end
 
       begin
-        file = revision.files_at_path(File.join(assignment.repository_folder,
+        file = revision.files_at_path(File.join(assignment.assignment_properties.repository_folder,
                                                 path))[params[:file_name]]
         file_contents = repo.download_as_string(file)
       rescue Exception => e
@@ -595,9 +594,9 @@ class AssignmentsController < ApplicationController
 
   def set_repo_vars(assignment, grouping)
     grouping.group.access_repo do |repo|
-      @revision = repo.get_revision_by_timestamp(Time.current, assignment.repository_folder)
+      @revision = repo.get_revision_by_timestamp(Time.current, assignment.assignment_properties.repository_folder)
       @last_modified_date = @revision&.server_timestamp
-      files = @revision.tree_at_path(assignment.repository_folder, with_attrs: false)
+      files = @revision.tree_at_path(assignment.assignment_properties.repository_folder, with_attrs: false)
                        .select do |_, obj|
                          obj.is_a?(Repository::RevisionFile) &&
                            !Repository.get_class.internal_file_names.include?(obj.name)
@@ -611,7 +610,7 @@ class AssignmentsController < ApplicationController
   # Recursively return data for all starter code files.
   # TODO: remove code duplication with the equivalent SubmissionsController method.
   def get_all_file_data(revision, assignment, path)
-    full_path = File.join(assignment.repository_folder, path)
+    full_path = File.join(assignment.assignment_properties.repository_folder, path)
     return [] unless revision.path_exists?(full_path)
 
     entries = revision.tree_at_path(full_path).sort do |a, b|
@@ -656,40 +655,41 @@ class AssignmentsController < ApplicationController
 
   def process_assignment_form(assignment)
     num_files_before = assignment.assignment_files.length
+    short_identifier = assignment_params[:short_identifier]
     assignment.assign_attributes(assignment_params)
-    assignment.repository_folder = assignment_params[:short_identifier] unless assignment.is_peer_review?
-    assignment.save!
+    assignment.assignment_properties.repository_folder = short_identifier unless assignment.is_peer_review?
+    assignment.assignment_properties.save!
     new_required_files = assignment.assignment_properties.saved_change_to_only_required_files? ||
                          assignment.saved_change_to_is_hidden? ||
                          assignment.assignment_files.any?(&:saved_changes?) ||
                          num_files_before != assignment.assignment_files.length
     # if there are no section due dates, destroy the objects that were created
-    if ['0', nil].include? params[:assignment][:section_due_dates_type]
+    if ['0', nil].include? params[:assignment][:assignment_properties_attributes][:section_due_dates_type]
       assignment.section_due_dates.each(&:destroy)
-      assignment.section_due_dates_type = false
-      assignment.section_groups_only = false
+      assignment.assignment_properties.section_due_dates_type = false
+      assignment.assignment_properties.section_groups_only = false
     else
-      assignment.section_due_dates_type = true
-      assignment.section_groups_only = true
+      assignment.assignment_properties.section_due_dates_type = true
+      assignment.assignment_properties.section_groups_only = true
     end
 
     if params[:is_group_assignment] == 'true'
       # Is the instructor forming groups?
-      if assignment_params[:student_form_groups] == '0'
-        assignment.invalid_override = true
+      if assignment_params[:assignment_properties_attributes][:student_form_groups] == '0'
+        assignment.assignment_properties.invalid_override = true
         # Increase group_max so that create_all_groups button is not displayed
         # in the groups view.
-        assignment.group_max = 2
+        assignment.assignment_properties.group_max = 2
       else
-        assignment.student_form_groups = true
-        assignment.invalid_override = false
-        assignment.group_name_autogenerated = true
+        assignment.assignment_properties.student_form_groups = true
+        assignment.assignment_properties.invalid_override = false
+        assignment.assignment_properties.group_name_autogenerated = true
       end
     else
-      assignment.student_form_groups = false
-      assignment.invalid_override = false
-      assignment.group_min = 1
-      assignment.group_max = 1
+      assignment.assignment_properties.student_form_groups = false
+      assignment.assignment_properties.invalid_override = false
+      assignment.assignment_properties.group_min = 1
+      assignment.assignment_properties.group_max = 1
     end
 
     # Due to some funkiness, we need to handle submission rules separately
@@ -775,15 +775,17 @@ class AssignmentsController < ApplicationController
 
   def assignment_params
     params.require(:assignment).permit(
-        :short_identifier,
-        :description,
-        :message,
-        :due_date,
+      :short_identifier,
+      :description,
+      :message,
+      :due_date,
+      :is_hidden,
+      assignment_properties_attributes: [
+        :id,
         :allow_web_submits,
         :vcs_submit,
         :display_median_to_students,
         :display_grader_names_to_students,
-        :is_hidden,
         :group_min,
         :group_max,
         :student_form_groups,
@@ -800,14 +802,32 @@ class AssignmentsController < ApplicationController
         :invalid_override,
         :section_groups_only,
         :only_required_files,
-        :scanned_exam,
-        section_due_dates_attributes: [:_destroy,
-                                       :id,
-                                       :section_id,
-                                       :due_date],
-        assignment_files_attributes:  [:_destroy,
-                                       :id,
-                                       :filename]
+        :section_due_dates_type,
+        :scanned_exam
+      ],
+      section_due_dates_attributes: [
+        :_destroy,
+        :id,
+        :section_id,
+        :due_date
+      ],
+      assignment_files_attributes:  [
+        :_destroy,
+        :id,
+        :filename
+      ],
+      submission_rule_attributes: [
+        :_destroy,
+        :id,
+        :type,
+        { periods_attributes: [
+          :id,
+          :deduction,
+          :interval,
+          :hours,
+          :_destroy
+        ] }
+      ]
     )
   end
 

@@ -173,7 +173,7 @@ class SubmissionsController < ApplicationController
 
     submission = @grouping.reload.current_submission_used
     redirect_to edit_assignment_submission_result_path(
-      assignment_id: @grouping.assignment_id,
+      assignment_id: @grouping.assessment_id,
       submission_id: submission.id,
       id: submission.get_latest_result.id)
   end
@@ -275,14 +275,14 @@ class SubmissionsController < ApplicationController
     self.class.layout 'assignment_content'
 
     return if current_user.ta?
-    return if @assignment.scanned_exam
+    return if @assignment.assignment_properties.scanned_exam
 
     if @assignment.past_all_collection_dates?
       flash_now(:success, t('submissions.grading_can_begin'))
       return
     end
 
-    if @assignment.section_due_dates_type
+    if @assignment.assignment_properties.section_due_dates_type
       section_due_dates = Hash.new
       now = Time.zone.now
       Section.find_each do |section|

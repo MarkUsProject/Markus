@@ -12,7 +12,7 @@ class MarksGradersController < ApplicationController
 
         # Grader information
         counts = Ta.joins(:grade_entry_students)
-                   .where('grade_entry_students.grade_entry_form_id': gef.id)
+                   .where('grade_entry_students.assessment_id': gef.id)
                    .group('users.id')
                    .count
 

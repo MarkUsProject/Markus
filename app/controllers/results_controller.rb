@@ -59,12 +59,12 @@ class ResultsController < ApplicationController
             @current_user.admin? || @current_user.ta? || is_reviewer,
           revision_identifier: submission.revision_identifier,
           instructor_run: true,
-          allow_remarks: assignment.allow_remarks,
+          allow_remarks: assignment.assignment_properties.allow_remarks,
           remark_submitted: remark_submitted,
           remark_request_text: submission.remark_request,
           remark_request_timestamp: submission.remark_request_timestamp,
-          assignment_remark_message: assignment.remark_message,
-          remark_due_date: assignment.remark_due_date,
+          assignment_remark_message: assignment.assignment_properties.remark_message,
+          remark_due_date: assignment.assignment_properties.remark_due_date,
           past_remark_due_date: assignment.past_remark_due_date?,
           is_reviewer: is_reviewer,
           student_view: @current_user.student? && !is_reviewer
@@ -84,7 +84,7 @@ class ResultsController < ApplicationController
           end
         end
 
-        if assignment.enable_test
+        if assignment.assignment_properties.enable_test
           begin
             authorize! assignment, to: :run_tests?
             authorize! grouping, to: :run_tests?
@@ -176,7 +176,7 @@ class ResultsController < ApplicationController
         end
         marks_map.sort! { |a, b| a[:position] <=> b[:position] }
 
-        if assignment.assign_graders_to_criteria && current_user.ta?
+        if assignment.assignment_properties.assign_graders_to_criteria && current_user.ta?
           assigned_criteria = current_user.criterion_ta_associations
                                           .where(assessment_id: assignment.id)
                                           .pluck(:criterion_type, :criterion_id)

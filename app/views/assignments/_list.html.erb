@@ -16,7 +16,7 @@
             <% # makes sure assignment ID of peer review action is the
                # original assignment ID
                original_aid = assignment.id
-               if assignment.has_peer_review?
+               if assignment.assignment_properties.has_peer_review?
                 peer_review_aid = assignment.pr_assignment.id
                end %>
             <% unless assignment.is_peer_review? %>
@@ -28,7 +28,7 @@
                     controller: controller,
                     action: action,
                     id: original_aid %>
-                  <% if assignment.has_peer_review? && !assignment.pr_assignment.is_hidden %>
+                  <% if assignment.assignment_properties.has_peer_review? && !assignment.pr_assignment.is_hidden %>
                       <%=
                         # assignment name
                         link_to "#{assignment.short_identifier} #{PeerReview.model_name.human}",
@@ -42,7 +42,7 @@
                   <%= render partial: 'assignments/assignment_date',
                              locals: { assignment: assignment} %>
 
-                  <% if assignment.has_peer_review? && !assignment.pr_assignment.is_hidden %>
+                  <% if assignment.assignment_properties.has_peer_review? && !assignment.pr_assignment.is_hidden %>
                     <%= render partial: 'assignments/assignment_date',
                                locals: { assignment: assignment.pr_assignment } %>
                   <% end %>

@@ -90,14 +90,14 @@ module CourseSummariesHelper
       # this method is used in the MarkingScheme model, which does not define
       # current_user.
       if (!defined? current_user) || current_user.admin?
-        marks[g.assignment_id] = sub ? sub.get_latest_result.total_mark : 0
+        marks[g.assessment_id] = sub ? sub.get_latest_result.total_mark : 0
       else
         if sub && sub.has_remark? && sub.remark_result.released_to_students
-          marks[g.assignment_id] = sub.remark_result.total_mark
+          marks[g.assessment_id] = sub.remark_result.total_mark
         elsif sub && sub.has_result? && sub.get_original_result.released_to_students
-          marks[g.assignment_id] = sub.get_original_result.total_mark
+          marks[g.assessment_id] = sub.get_original_result.total_mark
         else
-          marks[g.assignment_id] = 0
+          marks[g.assessment_id] = 0
         end
       end
     end
