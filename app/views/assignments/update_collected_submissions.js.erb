@@ -2,8 +2,7 @@
   <% if assignment.submission_rule.can_collect_all_now? %>
     $("#collected_submissions_<%= assignment.short_identifier %>").html(
            " | <%= link_to(t('submissions.collect.progress',
-                              count: assignment.groupings
-                                               .where(is_collected: true).size,
+                              count: assignment.current_submissions_used.size,
                               size: assignment.groupings.size),
                            controller: :submissions,
                            action: :browse,
