@@ -31,6 +31,10 @@ describe GradeEntryFormsController do
         fixture_file_upload('files/grade_entry_forms/good_overwrite.csv',
                             'text/csv')
 
+      @file_total_included =
+          fixture_file_upload('files/grade_entry_forms/total_column_included.csv',
+                              'text/csv')
+
       @student = grade_entry_form_with_data.grade_entry_students.joins(:user).find_by('users.user_name': 'c8shosta')
       @original_item = grade_entry_form_with_data.grade_entry_items.first
       @student.grades.find_or_create_by(grade_entry_item: @original_item).update(
@@ -144,6 +148,19 @@ describe GradeEntryFormsController do
 
       # Check that the original column's total has been updated.
       expect(grade_entry_form_with_data.grade_entry_items.first.out_of).to eq 101
+    end
+
+    it 'ignores the total column if given in the csv file' do
+      post :upload, params: { id: grade_entry_form_with_data.id, upload_file: @file_total_included, overwrite: true }
+      expect(response.status).to eq(302)
+      expect(flash[:error]).to be_nil
+      expect(response).to redirect_to(
+                              grades_grade_entry_form_path(grade_entry_form_with_data, locale: 'en')
+                          )
+
+      # Check that the total column is the actual total and not the incorrect total given in the file
+      expect(@student.grades.first.grade).to eq 22
+      expect(@student.reload.total_grade).to eq 22
     end
   end
 

@@ -193,6 +193,24 @@ class GradeEntryStudent < ApplicationRecord
     grades_without_nils.blank?
   end
 
+  def self.refresh_total_grades(grade_entry_student_ids)
+    grades = Grade.where(grade_entry_student_id: grade_entry_student_ids)
+                  .pluck(:grade_entry_student_id, :grade)
+                  .group_by(&:first)
+                  .map { |k, v| {id: k, total_grade: v.map(&:last)} }
+    total_grades = grades.map do |h|
+      if h[:total_grade].all?(&:nil?)
+        h[:total_grade] = nil
+      else
+        h[:total_grade] = h[:total_grade].sum
+      end
+      h
+    end
+    unless total_grades.empty?
+      GradeEntryStudent.upsert_all total_grades
+    end
+  end
+
   private
 
   # Calculate and set the total grade
