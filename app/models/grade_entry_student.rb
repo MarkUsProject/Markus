@@ -197,7 +197,7 @@ class GradeEntryStudent < ApplicationRecord
     grades = Grade.where(grade_entry_student_id: grade_entry_student_ids)
                   .pluck(:grade_entry_student_id, :grade)
                   .group_by(&:first)
-                  .map { |k, v| {id: k, total_grade: v.map(&:last)} }
+                  .map { |k, v| { id: k, total_grade: v.map(&:last) } }
     total_grades = grades.map do |h|
       if h[:total_grade].all?(&:nil?)
         h[:total_grade] = nil
@@ -206,9 +206,9 @@ class GradeEntryStudent < ApplicationRecord
       end
       h
     end
-    unless total_grades.empty?
-      GradeEntryStudent.upsert_all total_grades
-    end
+    return if total_grades.empty?
+
+    GradeEntryStudent.upsert_all total_grades
   end
 
   private
