@@ -10,6 +10,7 @@
 - Added progress message when uploading changes on Automated Testing tab (#4395) 
 - Fixed bug where the error message is appearing when the instructor is trying to collect the submission of the student 
   who hasn't submitted anything (#4373)
+- Added git hook to limit the maximum file size committed and/or pushed to a git repository (#4421)
 
 ## [v1.8.4]
 - Fixed bug where test output was not being properly hidden from students (#4379)
