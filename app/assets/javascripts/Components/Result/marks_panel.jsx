@@ -364,7 +364,11 @@ class RubricCriterionInput extends React.Component {
   };
 
   render() {
-    const levels = [0, 1, 2, 3, 4].map(this.renderRubricLevel);
+    const levels = [0, 1, 2, 3, 4].map( (i) => {
+      if (!!this.props[`level_${i}_name`]) {
+        return this.renderRubricLevel(i);
+      }
+    });
     const expandedClass = this.props.expanded ? 'expanded' : 'collapsed';
     const unassignedClass = this.props.unassigned ? 'unassigned' : '';
     return (
