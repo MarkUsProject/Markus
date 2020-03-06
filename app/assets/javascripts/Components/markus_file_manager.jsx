@@ -13,7 +13,7 @@ class RawFileManager extends RawFileBrowser {
   handleActionBarAddFileClick = (event, selected) => {
     event.preventDefault();
     let uploadTarget = '';
-    if (selected.length === 1) { // treat multiple selections as an invalid target (default to root folder as target)
+    if (!!selected && selected.length === 1) { // treat multiple selections as an invalid target
       if (selected[0].relativeKey.endsWith('/')) {
         uploadTarget = selected[0].relativeKey;
       } else {
@@ -40,9 +40,10 @@ class RawFileManager extends RawFileBrowser {
     }
   };
 
-  renderActionBar(selectedItem) {
+  renderActionBar(selectedItems) {
     // treat multiple selections the same as not targeting
-    const selectionIsFolder = selectedItem.length === 1 && selectedItem[0].relativeKey.endsWith('/');
+    const selectionIsFolder = selectedItems.length === 1 && selectedItems[0].relativeKey.endsWith('/');
+    let selectedItem = selectedItems.length === 1 ? selectedItems[0] : null;
     let filter;
     if (this.props.canFilter) {
       filter = (
@@ -260,6 +261,13 @@ class FileManagerFile extends FileRenderers.RawTableFile {
     if (event) {
       event.preventDefault();
     }
+  };
+
+  handleItemClick = (event) => {
+    // This disables the option to select multiple rows in the file manager
+    // To re-enable multiple selection, remove this method entirely.
+    event.stopPropagation();
+    this.props.browserProps.select(this.props.fileKey, 'file')
   };
 
   render() {
