@@ -17,4 +17,4 @@ if __name__ == '__main__':
             sys.stdout.write(hook.stdout)
             sys.stderr.write(hook.stderr)
             if hook.returncode != 0:
-                exit(hook.returncode)
+                sys.exit(hook.returncode)
