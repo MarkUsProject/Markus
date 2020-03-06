@@ -44,6 +44,9 @@ RUN apt-get update -qq && DEBIAN_FRONTEND=noninteractive apt-get -yq dist-upgrad
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && \
     truncate -s 0 /var/log/*log
 
+# Enable reading of PDF files with imagemagick
+RUN sed -ri 's/(rights=")none("\s+pattern="PDF")/\1read\2/' /etc/ImageMagick-6/policy.xml
+
 # Configure bundler and PATH
 ENV LANG=C.UTF-8 \
     GEM_HOME=/bundle \
