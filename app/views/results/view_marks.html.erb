@@ -1,14 +1,12 @@
 <% content_for :head do %>
-  <%= stylesheet_link_tag('common/SyntaxHighlighter') %>
-  <%= stylesheet_link_tag('grader') %>
-  <%= stylesheet_link_tag('pdfjs/viewer') %>
-  <%= javascript_include_tag 'panes.js' %>
-  <%= javascript_include_tag 'pdfjs' %>
-  <%= javascript_tag do -%>
-    PDFJS.workerSrc = "<%= @host %>/assets/pdfjs_lib/pdf.worker.js";
-  <% end -%>
+  <%= stylesheet_link_tag 'result_main' %>
+  <%= stylesheet_pack_tag 'result' %>
+  <%= javascript_include_tag 'mathjax' %>
   <%= javascript_pack_tag 'result' %>
+  <%= javascript_include_tag 'Results/main' %>
   <script>
+    pdfjs.GlobalWorkerOptions.workerSrc = '<%= asset_pack_path('pdf.js') %>';
+
     document.addEventListener('DOMContentLoaded', () => {
       window.resultComponent = makeResult(document.getElementById('result-main'),
         {
@@ -29,11 +27,6 @@
 <%= render partial: 'layouts/mathjax_config' %>
 <%= javascript_include_tag 'MathJax_lib/MathJax.js?config=TeX-AMS-MML_HTMLorMML' %>
 <%= javascript_include_tag 'MathJax/mathjax_helpers' %>
-
-<% # SourceCodeGlower, ImageAnnotations, and SyntaxHighlighter brushes %>
-<%= render partial: 'results/common/syntax_highlighter_brushes',
-           formats: [:html],
-           handlers: [:erb] %>
 
 <%= render partial: 'results/common/annotations',
            formats: [:js],

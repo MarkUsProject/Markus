@@ -36,12 +36,12 @@ class Group < ApplicationRecord
 
   # Returns the URL for externally accessible repos
   def repository_external_access_url
-    MarkusConfigurator.markus_config_repository_external_base_url + '/' + repository_name
+    Rails.configuration.x.repository.url + '/' + repository_name
   end
 
   def build_repository
     # create repositories if and only if we are admin
-    return true unless MarkusConfigurator.markus_config_repository_admin?
+    return true unless Rails.configuration.x.repository.is_repository_admin
 
     # This might cause repository collision errors, because when the group
     # maximum for an assignment is set to be one, the student's username
@@ -70,7 +70,7 @@ class Group < ApplicationRecord
   end
 
   def repo_path
-    File.join(MarkusConfigurator.markus_config_repository_storage, self.repository_name)
+    File.join(Rails.configuration.x.repository.storage, self.repository_name)
   end
 
   #Yields a repository object, if possible, and closes it after it is finished

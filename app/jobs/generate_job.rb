@@ -1,6 +1,6 @@
 class GenerateJob < ApplicationJob
 
-  queue_as MarkusConfigurator.markus_job_generate_queue_name
+  queue_as Rails.configuration.x.queues.exam_generate
 
   def self.on_complete_js(status)
     path = Rails.application.routes.url_helpers.download_generate_assignment_exam_template_path(

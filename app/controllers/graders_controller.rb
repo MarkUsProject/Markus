@@ -14,17 +14,6 @@ class GradersController < ApplicationController
 
   layout 'assignment_content'
 
-  def set_assign_criteria
-    @assignment = Assignment.find(params[:assignment_id])
-    if params[:value] == 'true'
-      @assignment.assignment_properties.assign_graders_to_criteria = true
-    else
-      @assignment.assignment_properties.assign_graders_to_criteria = false
-    end
-    @assignment.save
-    head :ok
-  end
-
   def index
     @assignment = Assignment.find(params[:assignment_id])
 

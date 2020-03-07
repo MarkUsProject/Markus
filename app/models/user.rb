@@ -50,7 +50,7 @@ class User < ApplicationRecord
   end
 
   # Authenticates login against its password
-  # through a script specified by config VALIDATE_FILE
+  # through a script specified by Rails.configuration.validate_file
   def self.authenticate(login, password, ip: nil)
     # Do not allow the following characters in usernames/passwords
     # Right now, this is \n and \0 only, since username and password
@@ -62,7 +62,7 @@ class User < ApplicationRecord
                        'illegal characters', MarkusLogger::ERROR)
       AUTHENTICATE_BAD_CHAR
     else
-      # Open a pipe and write to stdin of the program specified by config VALIDATE_FILE.
+      # Open a pipe and write to stdin of the program specified by Rails.configuration.validate_file.
       # We could read something from the programs stdout, but there is no need
       # for that at the moment (you would do it by e.g. pipe.readlines)
 
@@ -76,12 +76,13 @@ class User < ApplicationRecord
       #  1 means no such user
       #  2 means bad password
       #  3 is used for other error exits
-      pipe = IO.popen("'#{MarkusConfigurator.markus_config_validate_file}'", 'w+') # quotes to avoid choking on spaces
+      pipe = IO.popen("'#{Rails.configuration.validate_file}'", 'w+') # quotes to avoid choking on spaces
       to_stdin = [login, password, ip].reject(&:nil?).join("\n")
-      pipe.puts(to_stdin) # write to stdin of markus_config_validate
+      pipe.puts(to_stdin) # write to stdin of Rails.configuration.validate_file
       pipe.close
       m_logger = MarkusLogger.instance
-      if (defined? VALIDATE_CUSTOM_EXIT_STATUS) && $?.exitstatus == VALIDATE_CUSTOM_EXIT_STATUS
+      if !Rails.configuration.validate_custom_exit_status.nil? &&
+          $?.exitstatus == Rails.configuration.validate_custom_exit_status
         m_logger.log("Login failed. Reason: Custom exit status.", MarkusLogger::ERROR)
         return AUTHENTICATE_CUSTOM_MESSAGE
       end
@@ -197,12 +198,25 @@ class User < ApplicationRecord
       parsed[:valid_lines] = '' # reset the value from MarkusCsv#parse, use import's return instead
     end
 
+    existing_user_ids = user_class.all.pluck(:id)
+    imported = nil
+    parsed[:invalid_records] = ''
     begin
-      imported = nil
       User.transaction do
         imported = user_class.import user_columns, users, on_duplicate_key_update: {
           conflict_target: [:user_name], columns: [:last_name, :first_name, :section_id, :email, :id_number]
         }
+        User.where(id: imported.ids).each do |user|
+          user.validate!
+        rescue ActiveRecord::RecordInvalid
+          error_message = user.errors
+                              .messages
+                              .map { |k, v| "#{k} #{v.flatten.join ','}" }.flatten.join MarkusCsv::INVALID_LINE_SEP
+          parsed[:invalid_records] += "#{user.user_name}: #{error_message}"
+        end
+        unless parsed[:invalid_records].empty?
+          raise ActiveRecord::Rollback
+        end
       end
       unless imported.failed_instances.empty?
         if parsed[:invalid_lines].blank?
@@ -213,14 +227,18 @@ class User < ApplicationRecord
         parsed[:invalid_lines] +=
           imported.failed_instances.map { |f| f[:user_name].to_s }.join(MarkusCsv::INVALID_LINE_SEP)
       end
-      unless imported.ids.empty?
+      if !imported.ids.empty? && parsed[:invalid_records].empty?
         parsed[:valid_lines] = I18n.t('upload_success', count: imported.ids.size)
       end
     rescue ActiveRecord::RecordNotUnique => e
       # can trigger on uniqueness constraint validation for :user_name, will invalidate the entire import
       parsed[:invalid_lines] = I18n.t('csv_upload_user_duplicate', user_name: e.message)
     end
-
+    if user_class == Student
+      new_user_ids = (imported&.ids || []) - existing_user_ids
+      # call create callbacks to make sure grade_entry_students get created
+      user_class.where(id: new_user_ids).each(&:create_all_grade_entry_students)
+    end
     parsed
   end
 

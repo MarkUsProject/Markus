@@ -5,11 +5,6 @@ describe GradersController do
       @student = create(:student)
     end
 
-    it 'GET on :set_assign_criteria' do
-      get_as @student, :set_assign_criteria, params: { assignment_id: 1 }
-      expect(response.status).to eq(404)
-    end
-
     it 'GET on :index' do
       get_as @student, :index, params: { assignment_id: 1 }
       expect(response.status).to eq(404)
@@ -22,11 +17,6 @@ describe GradersController do
 
     it 'GET on :global_actions' do
       get_as @student, :global_actions, params: { assignment_id: 1 }
-      expect(response.status).to eq(404)
-    end
-
-    it 'POST on :set_assign_criteria' do
-      post_as @student, :set_assign_criteria, params: { assignment_id: 1 }
       expect(response.status).to eq(404)
     end
 
@@ -53,23 +43,6 @@ describe GradersController do
       expect(response.status).to eq(200)
       expect(assigns :assignment).not_to be_nil
     end #manage
-
-    context 'doing a POST on :set_assign_criteria' do
-
-      it 'and value is true' do
-        post_as @admin, :set_assign_criteria, params: { assignment_id: @assignment.id, value: 'true' }
-        expect(response.status).to eq(200)
-        @assignment.reload
-        expect(@assignment.assignment_properties.assign_graders_to_criteria).to be_truthy
-      end
-
-      it 'and value is nil' do
-        post_as @admin, :set_assign_criteria, params: { assignment_id: @assignment.id }
-        expect(response.status).to eq(200)
-        @assignment.reload
-        expect(@assignment.assignment_properties.assign_graders_to_criteria).to be_falsey
-      end
-    end
 
     context 'doing a POST on :upload' do
       include_examples 'a controller supporting upload' do

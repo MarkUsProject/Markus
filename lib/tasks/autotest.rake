@@ -14,7 +14,7 @@ end
 
 class AutotestSetup
   def initialize(root_dir)
-    testers_schema_path = File.join(MarkusConfigurator.autotest_client_dir, 'testers.json')
+    testers_schema_path = File.join(Rails.configuration.x.autotest.client_dir, 'testers.json')
 
     # setup instance variables (mostly paths to directories)
     @assg_short_id = "autotest_#{File.basename(root_dir)}"

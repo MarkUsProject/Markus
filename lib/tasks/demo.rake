@@ -180,7 +180,7 @@ namespace :markus do
     end
 
     puts 'Server User'
-    TestServer.create(user_name: MarkusConfigurator::autotest_server_host,
+    TestServer.create(user_name: Rails.configuration.x.autotest.server_host,
                       first_name: 'Test', last_name: 'Server', hidden: true)
 
     puts 'CREATE ASSIGNMENTS'

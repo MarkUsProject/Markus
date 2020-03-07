@@ -1,5 +1,9 @@
 # clean up existing repos first
-FileUtils.rm_rf(Dir.glob('data/dev/repos/*'))
+if Dir.exists?(Rails.configuration.x.repository.storage)
+  FileUtils.rm_rf(Dir.glob(File.join(Rails.configuration.x.repository.storage, '*')))
+else
+  FileUtils.mkdir_p(Rails.configuration.x.repository.storage)
+end
 
 # run tasks
 Rake::Task['db:admin'].invoke

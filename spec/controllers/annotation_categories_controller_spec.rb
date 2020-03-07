@@ -9,6 +9,140 @@ describe AnnotationCategoriesController do
   let(:annotation_category) { FactoryBot.create(:annotation_category) }
   let(:assignment) { FactoryBot.create(:assignment) }
 
+  describe '#create' do
+    it 'successfully creates a new annotation category when given a unique name' do
+      post :create,
+           params: {
+             assignment_id: assignment.id,
+             annotation_category: { annotation_category_name: 'New Category' },
+             format: :js
+           }
+
+      expect(assignment.annotation_categories.count).to eq 1
+      expect(assignment.annotation_categories.first.annotation_category_name).to eq 'New Category'
+    end
+
+    it 'fails when the annotation category name is already used' do
+      category = create(:annotation_category, assignment: assignment)
+
+      post :create,
+           params: {
+             assignment_id: assignment.id,
+             annotation_category: { annotation_category_name: category.annotation_category_name }
+           }
+
+      expect(assignment.annotation_categories.count).to eq 1
+    end
+  end
+
+  describe '#update' do
+    it 'successfully updates an annotation category name' do
+      assignment = annotation_category.assignment
+
+      patch :update,
+            params: {
+              assignment_id: assignment.id,
+              id: annotation_category.id,
+              annotation_category: { annotation_category_name: 'Updated category' },
+              format: :js
+            }
+
+      expect(annotation_category.reload.annotation_category_name).to eq 'Updated category'
+    end
+
+    it 'fails when the annotation category name is already used' do
+      assignment = annotation_category.assignment
+      original_name = annotation_category.annotation_category_name
+      category2 = create(:annotation_category, assignment: assignment)
+
+      patch :update,
+            params: {
+              assignment_id: assignment.id,
+              id: annotation_category.id,
+              annotation_category: { annotation_category_name: category2.annotation_category_name }
+            }
+
+      expect(annotation_category.reload.annotation_category_name).to eq original_name
+    end
+  end
+
+  describe '#update_positions' do
+    it 'successfully updates annotation category positions' do
+      cat1 = create(:annotation_category, assignment: assignment)
+      cat2 = create(:annotation_category, assignment: assignment)
+      cat3 = create(:annotation_category, assignment: assignment)
+
+      post :update_positions,
+           params: {
+             assignment_id: assignment.id,
+             annotation_category: [cat3.id, cat1.id, cat2.id]
+           }
+
+      expect(cat3.reload.position).to eq 0
+      expect(cat1.reload.position).to eq 1
+      expect(cat2.reload.position).to eq 2
+    end
+  end
+
+  describe '#destroy' do
+    it 'successfully deletes an annotation category' do
+      assignment = annotation_category.assignment
+
+      delete :destroy, format: :js,
+             params: {
+               assignment_id: assignment.id,
+               id: annotation_category.id
+             }
+
+      expect(assignment.annotation_categories.count).to eq 0
+    end
+  end
+
+  describe '#create_annotation_text' do
+    it 'successfully creates an annotation text associated with an annotation category' do
+      post :create_annotation_text,
+           params: {
+             assignment_id: annotation_category.assignment_id,
+             annotation_text: { content: 'New content', annotation_category_id: annotation_category.id },
+             format: :js
+           }
+
+      expect(annotation_category.annotation_texts.count).to eq 1
+      expect(annotation_category.annotation_texts.first.content).to eq 'New content'
+    end
+  end
+
+  describe '#destroy_annotation_text' do
+    it 'successfully destroys an annotation text associated with an annotation category' do
+      text = create(:annotation_text)
+      category = text.annotation_category
+      delete :destroy_annotation_text,
+             params: {
+               assignment_id: category.assignment_id,
+               id: text.id,
+               format: :js
+             }
+
+      expect(category.annotation_texts.count).to eq 0
+    end
+  end
+
+  describe '#update_annotation_text' do
+    it 'successfully updates an annotation text associated with an annotation category' do
+      text = create(:annotation_text)
+      category = text.annotation_category
+      put :update_annotation_text,
+          params: {
+            assignment_id: category.assignment_id,
+            id: text.id,
+            annotation_text: { content: 'updated content' },
+            format: :js
+          }
+
+      expect(text.reload.content).to eq 'updated content'
+    end
+  end
+
   context '#upload' do
     include_examples 'a controller supporting upload' do
       let(:params) { { assignment_id: assignment.id } }

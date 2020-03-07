@@ -18,9 +18,33 @@ FactoryBot.define do
       if evaluator.assignment_properties_attributes
         assignment.assignment_properties ||= build(:assignment_properties,
                                                    assignment: assignment,
+                                                   repository_folder: assignment.short_identifier,
                                                    attributes: evaluator.assignment_properties_attributes)
       else
-        assignment.assignment_properties ||= build(:assignment_properties, assignment: assignment)
+        assignment.assignment_properties ||= build(:assignment_properties,
+                                                   assignment: assignment,
+                                                   repository_folder: assignment.short_identifier)
+      end
+    end
+  end
+
+  factory :assignment_with_criteria, parent: :assignment do
+    after(:create) do |a|
+      3.times { create(:rubric_criterion, assignment: a) }
+    end
+  end
+
+  factory :assignment_with_criteria_and_results, parent: :assignment do
+    after(:create) do |a|
+      3.times { create(:flexible_criterion, assignment: a) }
+      3.times { create(:grouping_with_inviter_and_submission, assignment: a) }
+      a.groupings.each do |grouping|
+        result = grouping.current_result
+        a.get_criteria(:ta).each do |criterion|
+          result.marks.create(markable: criterion, mark: Random.rand(criterion.max_mark + 1))
+        end
+        result.update_total_mark
+        result.update(marking_state: Result::MARKING_STATES[:complete])
       end
     end
   end

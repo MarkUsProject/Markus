@@ -1,0 +1,4 @@
+$('#annotation_list').prepend(
+  "<%= escape_javascript("#{render partial: 'new_annotation_text',
+                                   locals: { annotation_category: @annotation_category }}").html_safe %>");
+$('#annotation_text_content').select();

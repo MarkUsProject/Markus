@@ -448,7 +448,7 @@
 <% end %>
 
 <%# Starter Code %>
-<% if MarkusConfigurator.markus_starter_code_on && @assignment.id %>
+<% if Rails.configuration.starter_code_on && @assignment.id %>
   <fieldset>
     <legend>
       <span><%= t('upload_the', item: t('assignments.starter_code.title')) %></span>

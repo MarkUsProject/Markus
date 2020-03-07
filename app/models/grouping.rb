@@ -39,6 +39,7 @@ class Grouping < ApplicationRecord
           -> { where submission_version_used: true },
           class_name: 'Submission'
   has_one :current_result, through: :current_submission_used
+  has_one :submitted_remark, through: :current_submission_used
 
   has_and_belongs_to_many :tags
 
@@ -155,6 +156,8 @@ class Grouping < ApplicationRecord
     if grouping_ids.nil?
       grouping_ids = assignment.groupings.pluck(:id)
     end
+    return if grouping_ids.empty?
+
     counts = CriterionTaAssociation
              .from(
                # subquery
@@ -169,11 +172,10 @@ class Grouping < ApplicationRecord
              .group('subquery.id')
              .count
 
-    Upsert.batch(Grouping.connection, Grouping.table_name) do |upsert|
-      grouping_ids.each do |gid|
-        upsert.row({ id: gid }, criteria_coverage_count: counts[gid.to_i] || 0)
-      end
+    grouping_data = Grouping.where(id: grouping_ids).pluck_to_hash.map do |h|
+      { **h.symbolize_keys, criteria_coverage_count: counts[h['id'].to_i] || 0 }
     end
+    Grouping.upsert_all(grouping_data)
   end
 
   def get_all_students_in_group
@@ -460,7 +462,7 @@ class Grouping < ApplicationRecord
   # When a Grouping is created, automatically create the folder for the
   # assignment in the repository, if it doesn't already exist.
   def create_grouping_repository_folder
-    return unless MarkusConfigurator.markus_config_repository_admin? # create folder only if we are repo admin
+    return unless Rails.configuration.x.repository.is_repository_admin # create folder only if we are repo admin
     result = true
     self.group.access_repo do |group_repo|
       assignment_folder = self.assignment.assignment_properties.repository_folder
@@ -717,8 +719,8 @@ class Grouping < ApplicationRecord
     filtered = filter_test_runs(filters: { 'users.type': 'Admin', 'test_runs.submission': submission })
     plucked = Grouping.pluck_test_runs(filtered)
     plucked.map! do |data|
-      if data['test_groups.display_output'] == 'instructors_and_student_tests' ||
-         data['test_groups.display_output'] == 'instructors'
+      if data['test_groups.display_output'] == TestGroup.display_outputs[:instructors_and_student_tests] ||
+         data['test_groups.display_output'] == TestGroup.display_outputs[:instructors]
         data.delete('test_results.output')
       end
       data.delete('test_group_results.extra_info')
@@ -731,7 +733,7 @@ class Grouping < ApplicationRecord
     filtered = filter_test_runs(filters: { 'test_runs.user': self.accepted_students })
     plucked = Grouping.pluck_test_runs(filtered)
     plucked.map! do |data|
-      if data['test_groups.display_output'] == 'instructors'
+      if data['test_groups.display_output'] == TestGroup.display_outputs[:instructors]
         data.delete('test_results.output')
       end
       data.delete('test_group_results.extra_info')
@@ -756,7 +758,7 @@ class Grouping < ApplicationRecord
   # Checks whether a student test using tokens is currently being enqueued for execution
   # (with buffer time in case of unhandled errors that prevented test results to be stored)
   def student_test_run_in_progress?
-    buffer_time = MarkusConfigurator.autotest_student_tests_buffer_time
+    buffer_time = Rails.configuration.x.autotest.student_test_buffer
     last_student_run = test_runs_students_simple.first
     if last_student_run.nil? || # first test
       (last_student_run.created_at + buffer_time) < Time.current || # buffer time expired (for unhandled problems)

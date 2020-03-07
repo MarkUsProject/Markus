@@ -1,5 +1,11 @@
 # This file is copied to spec/ when you run 'rails generate rspec:install'
 require 'simplecov'
+require 'coveralls'
+
+SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter.new([
+  SimpleCov::Formatter::HTMLFormatter,
+  Coveralls::SimpleCov::Formatter
+])
 SimpleCov.start
 
 ENV['RAILS_ENV'] ||= 'test'
@@ -80,4 +86,9 @@ RSpec.configure do |config|
   # Get fixture_file_upload to work with RSPEC. See http://bit.ly/1yQfoS5
   config.include ActionDispatch::TestProcess
   config.fixture_path = "#{::Rails.root}/spec/fixtures"
+
+  # Automatically decode CSV response bodies.
+  ActionDispatch::IntegrationTest.register_encoder :csv,
+                                                   param_encoder: ->(params) { params },
+                                                   response_parser: ->(body) { CSV.parse(body) }
 end

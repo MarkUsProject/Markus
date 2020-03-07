@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_12_10_143220) do
+ActiveRecord::Schema.define(version: 2020_01_17_171430) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -61,7 +61,7 @@ ActiveRecord::Schema.define(version: 2019_12_10_143220) do
     t.string "short_identifier", null: false
     t.string "type", null: false
     t.string "description", null: false
-    t.text "message"
+    t.text "message", default: "", null: false
     t.datetime "due_date"
     t.boolean "is_hidden", default: true, null: false
     t.boolean "show_total", default: false, null: false
@@ -121,6 +121,8 @@ ActiveRecord::Schema.define(version: 2019_12_10_143220) do
     t.boolean "display_median_to_students", default: false, null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.boolean "anonymize_groups", default: false, null: false
+    t.boolean "hide_unassigned_criteria", default: false, null: false
     t.index ["assessment_id"], name: "index_assignment_properties_on_assessment_id", unique: true
   end
 

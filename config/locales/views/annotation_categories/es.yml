@@ -2,7 +2,7 @@ es:
   annotation_categories:
     create:
       success: "Esta categoría de anotación fue actualizada satisfactoriamente"
-    delete_annotation_text:
+    destroy_annotation_text:
       confirm: "Eliminar esta anotación removerá el texto de cualquier archivo que lo contenga. ¿Está seguro/a de realizar esto?"
       success: "Eliminar la categoría de anotación"
     destroy:

@@ -1,5 +1,5 @@
 class AutotestRunJob < ApplicationJob
-  queue_as MarkusConfigurator.autotest_run_queue
+  queue_as Rails.configuration.x.queues.autotest_run
 
   def self.show_status(_status)
     I18n.t('poll_job.autotest_run_job', progress: status[:progress], total: status[:total]) if status[:total] > 1
@@ -46,7 +46,7 @@ class AutotestRunJob < ApplicationJob
   end
 
   def get_server_api_key
-    server_host = MarkusConfigurator.autotest_server_host
+    server_host = Rails.configuration.x.autotest.server_host
     server_user = TestServer.find_or_create_by(user_name: server_host) do |user|
       user.first_name = 'Autotest'
       user.last_name = 'Server'
@@ -82,9 +82,9 @@ class AutotestRunJob < ApplicationJob
     else
       markus_address = host_with_port + Rails.application.config.action_controller.relative_url_root
     end
-    server_host = MarkusConfigurator.autotest_server_host
-    server_path = MarkusConfigurator.autotest_server_dir
-    server_command = MarkusConfigurator.autotest_server_command
+    server_host = Rails.configuration.x.autotest.server_host
+    server_path = Rails.configuration.x.autotest.server_dir
+    server_command = Rails.configuration.x.autotest.server_command
     server_api_key = get_server_api_key
     server_params = { user_type: test_run.user.type, markus_address: markus_address, server_api_key: server_api_key,
                       test_categories: test_run.test_categories, assignment_id: assignment.id, group_id: group.id,
@@ -108,8 +108,8 @@ class AutotestRunJob < ApplicationJob
       mkdir_command = "mktemp -d --tmpdir='#{server_path}'"
       server_path = ssh.exec!(mkdir_command).strip # create temp subfolder
       # copy all files using rsync
-      server_host = MarkusConfigurator.autotest_server_host
-      server_username = MarkusConfigurator.autotest_server_username
+      server_host = Rails.configuration.x.autotest.server_host
+      server_username = Rails.configuration.x.autotest.server_username
       rsync_command = ['rsync', '-a',
                        "#{submission_path}/.", "#{server_username}@#{server_host}:#{server_path}"]
       Open3.capture3(*rsync_command)
@@ -129,8 +129,8 @@ class AutotestRunJob < ApplicationJob
     ssh = nil
     ssh_auth_failure = nil
     # set up SSH channel if needed
-    server_host = MarkusConfigurator.autotest_server_host
-    server_username = MarkusConfigurator.autotest_server_username
+    server_host = Rails.configuration.x.autotest.server_host
+    server_username = Rails.configuration.x.autotest.server_username
     unless server_username.nil?
       begin
         ssh = Net::SSH.start(server_host, server_username, auth_methods: ['publickey'], keepalive: true,

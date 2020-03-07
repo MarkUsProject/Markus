@@ -1,12 +1,9 @@
 <li id='add_annotation_text'>
-  <%= form_for :annotation_text,
-               url: { action: 'add_annotation_text',
-                      id: annotation_category_id },
+  <%= form_with model: annotation_category.annotation_texts.build,
+               url: { action: 'create_annotation_text' },
                remote: true do |f| %>
-    <%= f.text_area(:content, rows: '2') %>
-
-    <div class='error' style='display:none;' id='new_annotation_text_error'></div>
-
+    <%= f.hidden_field :annotation_category_id %>
+    <%= f.text_area :content, cols: 50, rows: 5 %>
     <%= f.submit t(:save), data: { disable_with: t('working') } %>
   <% end %>
 </li>

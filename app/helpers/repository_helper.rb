@@ -16,7 +16,7 @@ module RepositoryHelper
   # nil, the boolean indicates whether any errors were encountered which mean the caller should not
   # commit the transaction. The array contains any error or warning messages as arrays of arguments.
   #
-  # If +check_size+ is true then check if the file size is greater than MarkusConfigurator.markus_config_max_file_size
+  # If +check_size+ is true then check if the file size is greater than Rails.configuration.max_file_size
   # or less than 0 bytes. If +required_files+ is an array of file names, and some of the uploaded files are not
   # in that array, a messages will be returned indicating that non-required files were uploaded.
   def add_files(files, user, repo, path: '/', txn: nil, check_size: true, required_files: nil)
@@ -34,7 +34,7 @@ module RepositoryHelper
     new_files = []
     files.each do |f|
       if check_size
-        if f.size > MarkusConfigurator.markus_config_max_file_size
+        if f.size > Rails.configuration.max_file_size
           messages << [:too_large, f.original_filename]
         elsif f.size == 0
           messages << [:too_small, f.original_filename]
@@ -130,10 +130,16 @@ module RepositoryHelper
       commit_txn = false
     end
 
-    current_path = Pathname.new path
+    repo_path = Pathname.new path
+    relative_path = Pathname.new(new_folders[0])
+    current_path = File.join(repo_path, relative_path)
+
+    if repo.get_latest_revision.path_exists?(current_path)
+      return [true, [:exist]]
+    end
 
     new_folders.each do |folder_path|
-      txn.add_path(current_path.join(folder_path))
+      txn.add_path(repo_path.join(folder_path))
     end
 
     if commit_txn
@@ -211,7 +217,7 @@ module RepositoryHelper
       next if suppress[msg]
       case msg
       when :too_large
-        max_size = (MarkusConfigurator.markus_config_max_file_size / 1_000_000.00).round(2)
+        max_size = (Rails.configuration.max_file_size / 1_000_000.00).round(2)
         flash_message(:error, I18n.t('student.submission.file_too_large',
                                      file_name: other_info,
                                      max_size: max_size))
@@ -225,6 +231,8 @@ module RepositoryHelper
         flash_message(:warning, I18n.t('student.submission.no_action_detected'))
       when :txn_conflicts
         flash_message(:error, partial: 'submissions/file_conflicts_list', locals: { conflicts: other_info })
+      when :exist
+        flash_message(:warning, I18n.t('student.submission.exist'))
       end
     end
   end

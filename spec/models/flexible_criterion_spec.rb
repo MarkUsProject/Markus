@@ -1,6 +1,7 @@
 describe FlexibleCriterion do
   let(:criterion_factory_name) { :flexible_criterion }
 
+  it_behaves_like 'a criterion'
   context 'A good FlexibleCriterion model' do
     before :each do
       @criterion = create(:flexible_criterion)

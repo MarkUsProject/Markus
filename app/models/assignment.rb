@@ -7,7 +7,7 @@ class Assignment < Assessment
 
   validates_presence_of :due_date
   has_one :assignment_properties, dependent: :destroy, inverse_of: :assignment, foreign_key: :assessment_id
-  accepts_nested_attributes_for :assignment_properties
+  accepts_nested_attributes_for :assignment_properties, update_only: true
   validates_presence_of :assignment_properties
 
   # Add assignment_properties to default scope because we almost always want to load an assignment with its properties
@@ -69,7 +69,7 @@ class Assignment < Assessment
   has_many :section_due_dates, inverse_of: :assignment, foreign_key: :assessment_id
   accepts_nested_attributes_for :section_due_dates
 
-  has_many :exam_templates, dependent: :destroy
+  has_many :exam_templates, dependent: :destroy, inverse_of: :assignment, foreign_key: :assessment_id
 
   after_create :build_starter_code_repo
 
@@ -516,38 +516,62 @@ class Assignment < Assessment
     members = groupings.joins(:accepted_students)
                        .pluck_to_hash(:id, 'users.user_name', 'users.first_name', 'users.last_name')
                        .group_by { |x| x[:id] }
-    groupings_with_results = groupings.includes(current_result: :marks)
+    groupings_with_results = groupings.includes(:submitted_remark, :extension, current_result: :marks)
     result_ids = groupings_with_results.pluck('results.id').uniq.compact
     extra_marks_hash = Result.get_total_extra_marks(result_ids, max_mark: max_mark)
+
+    hide_unassigned = user.ta? && assignment_properties.hide_unassigned_criteria
+
+    criteria_shown = Set.new
+    max_mark = 0
+
+    visibility = user.admin? ? :all : :ta
+    criteria_columns = self.get_criteria(visibility).map do |crit|
+      unassigned = !assigned_criteria.nil? && !assigned_criteria.include?("#{crit.class}-#{crit.id}")
+      next if hide_unassigned && unassigned
+
+      max_mark += crit.max_mark
+      accessor = "#{crit.class}-#{crit.id}"
+      criteria_shown << accessor
+      {
+        Header: crit.name,
+        accessor: "criteria.#{accessor}",
+        className: 'number ' + (unassigned ? 'unassigned' : ''),
+        headerClassName: unassigned ? 'unassigned' : ''
+      }
+    end.compact
+
     final_data = groupings_with_results.map do |g|
       result = g.current_result
       has_remark = g.current_submission_used&.submitted_remark.present?
+      if user.ta? && assignment_properties.anonymize_groups
+        group_name = "#{Group.model_name.human} #{g.id}"
+        section = ''
+        group_members = []
+      else
+        group_name = grouping_data[g.id][0]['groups.group_name']
+        section = grouping_data[g.id][0]['sections.name']
+        group_members = members.fetch(g.id, [])
+                               .map { |s| [s['users.user_name'], s['users.first_name'], s['users.last_name']] }
+      end
+
+      criteria = result.nil? ? {} : result.mark_hash.select { |key, _| criteria_shown.include?(key) }
       {
-        group_name: grouping_data[g.id][0]['groups.group_name'],
-        section: grouping_data[g.id][0]['sections.name'],
-        members: members.fetch(g.id, [])
-                        .map { |s| [s['users.user_name'], s['users.first_name'], s['users.last_name']] },
+        group_name: group_name,
+        section: section,
+        members: group_members,
         graders: graders.fetch(g.id, [])
                         .map { |s| [s['users.user_name'], s['users.first_name'], s['users.last_name']] },
         marking_state: marking_state(has_remark,
                                      result&.marking_state,
                                      result&.released_to_students,
                                      g.collection_date),
-        final_grade: result&.total_mark,
-        criteria: result.nil? ? {} : result.mark_hash,
+        final_grade: criteria.values.compact.sum,
+        criteria: criteria,
+        max_mark: max_mark,
         result_id: result&.id,
         submission_id: result&.submission_id,
         total_extra_marks: extra_marks_hash[result&.id]
-      }
-    end
-
-    criteria_columns = self.get_criteria(:ta).map do |crit|
-      unassigned = !assigned_criteria.nil? && !assigned_criteria.include?("#{crit.class}-#{crit.id}")
-      {
-        Header: crit.name,
-        accessor: "criteria.criterion_#{crit.class}_#{crit.id}",
-        className: 'number ' + (unassigned ? 'unassigned' : ''),
-        headerClassName: unassigned ? 'unassigned' : ''
       }
     end
 
@@ -597,7 +621,7 @@ class Assignment < Assessment
             row += Array.new(2 + criteria.length, nil)
           else
             row << result.total_mark
-            row += criteria.map { |crit| marks["criterion_#{crit.class.name}_#{crit.id}"] }
+            row += criteria.map { |crit| marks["#{crit.class.name}-#{crit.id}"] }
             row << extra_marks_hash[result&.id]
           end
           csv << row
@@ -892,7 +916,7 @@ class Assignment < Assessment
   ### REPO ###
 
   def build_starter_code_repo
-    return unless MarkusConfigurator.markus_config_repository_admin? && MarkusConfigurator.markus_starter_code_on
+    return unless Rails.configuration.x.repository.is_repository_admin && Rails.configuration.starter_code_on
     begin
       unless Repository.get_class.repository_exists?(starter_code_repo_path)
         Repository.get_class.create(starter_code_repo_path, with_hooks: false)
@@ -910,7 +934,7 @@ class Assignment < Assessment
   end
 
   def starter_code_repo_path
-    File.join(MarkusConfigurator.markus_config_repository_storage, STARTER_CODE_REPO_NAME)
+    File.join(Rails.configuration.x.repository.storage, STARTER_CODE_REPO_NAME)
   end
 
   #Yields a repository object, if possible, and closes it after it is finished
@@ -1108,6 +1132,8 @@ class Assignment < Assessment
       criteria: criteria,
       graders: graders,
       assign_graders_to_criteria: self.assignment_properties.assign_graders_to_criteria,
+      anonymize_groups: self.assignment_properties.anonymize_groups,
+      hide_unassigned_criteria: self.assignment_properties.hide_unassigned_criteria,
       sections: Hash[Section.all.pluck(:id, :name)]
     }
   end
@@ -1118,7 +1144,9 @@ class Assignment < Assessment
     if current_user.admin?
       groupings = self.groupings
     elsif current_user.ta?
-      groupings = self.groupings.joins(:ta_memberships).where('memberships.user_id': current_user.id)
+      groupings = self.groupings.where(id: self.groupings.joins(:ta_memberships)
+                                                         .where('memberships.user_id': current_user.id)
+                                                         .select(:'groupings.id'))
     else
       return []
     end
@@ -1154,15 +1182,41 @@ class Assignment < Assessment
                                  'results.released_to_students')
                   .group_by { |h| h['groupings.id'] }
 
-    member_data = groupings
-                  .joins(:accepted_students)
-                  .pluck_to_hash('groupings.id', 'users.user_name')
-                  .group_by { |h| h['groupings.id'] }
+    if current_user.ta? && assignment_properties.anonymize_groups
+      member_data = {}
+      section_data = {}
+    else
+      member_data = groupings.joins(:accepted_students)
+                             .pluck_to_hash('groupings.id', 'users.user_name')
+                             .group_by { |h| h['groupings.id'] }
 
-    section_data = groupings
-                   .joins(inviter: :section)
-                   .pluck('groupings.id', 'sections.name')
-                   .to_h
+      section_data = groupings.joins(inviter: :section)
+                              .pluck('groupings.id', 'sections.name')
+                              .to_h
+    end
+
+    if current_user.ta? && assignment_properties.hide_unassigned_criteria
+      assigned_criteria = current_user.criterion_ta_associations
+                                      .where(assignment_id: self.id)
+                                      .pluck(:criterion_type, :criterion_id)
+                                      .map { |t, id| "#{t}-#{id}" }
+    else
+      assigned_criteria = nil
+    end
+
+    visibility = current_user.admin? ? :all : :ta
+    criteria = self.get_criteria(visibility).reject do |crit|
+      !assigned_criteria.nil? && !assigned_criteria.include?("#{crit.class}-#{crit.id}")
+    end
+
+    result_ids = result_data.values.map { |arr| arr.map { |h| h['results.id'] } }.flatten
+
+    total_marks = Mark.where(markable: criteria, result_id: result_ids)
+                      .pluck(:result_id, :mark)
+                      .group_by(&:first)
+                      .transform_values { |arr| arr.map(&:second).compact.sum }
+
+    max_mark = criteria.map(&:max_mark).compact.sum
 
     collection_dates = all_grouping_collection_dates
 
@@ -1176,7 +1230,8 @@ class Assignment < Assessment
 
       base = {
         _id: grouping_id, # Needed for checkbox version of react-table
-        group_name: group_name,
+        max_mark: max_mark,
+        group_name: current_user.ta? && assignment_properties.anonymize_groups ? "#{Group.model_name.human} #{grouping_id}" : group_name,
         tags: (tag_info.nil? ? [] : tag_info.map { |h| h['tags.name'] }),
         marking_state: marking_state(has_remark,
                                      result_info['results.marking_state'],
@@ -1191,7 +1246,7 @@ class Assignment < Assessment
 
       if result_info['results.id'].present?
         base[:result_id] = result_info['results.id']
-        base[:final_grade] = result_info['results.total_mark']
+        base[:final_grade] = total_marks[result_info['results.id']] || 0.0
       end
 
       base[:members] = member_info.map { |h| h['users.user_name'] } unless member_info.nil?

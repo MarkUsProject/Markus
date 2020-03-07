@@ -1,7 +1,6 @@
 es:
   notes:
     delete:
-      error_permissions: "Usted no tiene permiso para eliminar esta nota."
       link_confirm: "Esto removerá la nota permanentemente. ¿Desea continuar?"
       link_title: "Eliminar esta nota"
     help: "Las notas pueden ser creadas para estudiantes, grupos, o proyectos. Estas son visibles para

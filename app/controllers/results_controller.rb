@@ -139,7 +139,11 @@ class ResultsController < ApplicationController
           data[:notes_count] = submission.grouping.notes.count
           data[:num_marked] = assignment.get_num_marked(current_user.admin? ? nil : current_user.id)
           data[:num_assigned] = assignment.get_num_assigned(current_user.admin? ? nil : current_user.id)
-          data[:group_name] = submission.grouping.get_group_name
+          if current_user.ta? && assignment.assignment_properties.anonymize_groups
+            data[:group_name] = "#{Group.model_name.human} #{submission.grouping.id}"
+          else
+            data[:group_name] = submission.grouping.get_group_name
+          end
         elsif is_reviewer
           reviewer_group = current_user.grouping_for(assignment.pr_assignment.id)
           data[:num_marked] = PeerReview.get_num_marked(reviewer_group)
@@ -176,14 +180,24 @@ class ResultsController < ApplicationController
         end
         marks_map.sort! { |a, b| a[:position] <=> b[:position] }
 
+        if original_result.nil?
+          old_marks = {}
+        else
+          old_marks = original_result.mark_hash
+        end
+
         if assignment.assignment_properties.assign_graders_to_criteria && current_user.ta?
           assigned_criteria = current_user.criterion_ta_associations
                                           .where(assessment_id: assignment.id)
                                           .pluck(:criterion_type, :criterion_id)
                                           .map { |t, id| "#{t}-#{id}" }
-
-          marks_map = marks_map.partition { |m| assigned_criteria.include? "#{m[:criterion_type]}-#{m[:id]}" }
-                               .flatten
+          if assignment.assignment_properties.hide_unassigned_criteria
+            marks_map = marks_map.select { |m| assigned_criteria.include? "#{m[:criterion_type]}-#{m[:id]}" }
+            old_marks = old_marks.select { |m| assigned_criteria.include? m }
+          else
+            marks_map = marks_map.partition { |m| assigned_criteria.include? "#{m[:criterion_type]}-#{m[:id]}" }
+                                 .flatten
+          end
         else
           assigned_criteria = nil
         end
@@ -191,11 +205,6 @@ class ResultsController < ApplicationController
         data[:assigned_criteria] = assigned_criteria
         data[:marks] = marks_map
 
-        if original_result.nil?
-          old_marks = {}
-        else
-          old_marks = original_result.mark_hash
-        end
         data[:old_marks] = old_marks
 
         # Extra marks
@@ -205,6 +214,9 @@ class ResultsController < ApplicationController
         # Grace token deductions
         if is_reviewer
           data[:grace_token_deductions] = []
+        elsif current_user.ta? && assignment.assignment_proprties.anonymize_groups
+          data[:grace_token_deductions] = []
+
         else
           data[:grace_token_deductions] =
             submission.grouping
@@ -215,9 +227,9 @@ class ResultsController < ApplicationController
 
         # Totals
         data[:assignment_max_mark] =
-          result.is_a_review? ? assignment.pr_assignment.max_mark(:peer) : assignment.max_mark(:ta)
-        data[:total] = result.total_mark
-        data[:old_total] = original_result&.total_mark
+          result.is_a_review? ? assignment.pr_assignment.max_mark(:peer) : marks_map.map { |h| h['max_mark'] }.sum
+        data[:total] = marks_map.map { |h| h['mark'] }
+        data[:old_total] = old_marks.values.sum
 
         # Tags
         all_tags = Tag.pluck_to_hash(:id, :name)
@@ -526,7 +538,7 @@ class ResultsController < ApplicationController
                    "assignment #{assignment.short_identifier} for " +
                    "group #{group.group_name}.",
                    MarkusLogger::INFO)
-      if assignment.assignment_properties.assign_graders_to_criteria && @current_user.ta?
+      if @current_user.ta?
         num_marked = assignment.get_num_marked(@current_user.id)
       else
         num_marked = assignment.get_num_marked(nil)
