@@ -39,9 +39,9 @@ class RubricCriterion < Criterion
   end
 
   def scale_marks_if_max_mark_changed
-    return if !self.changed.include?("max_mark")
-    old_max = self.changes["max_mark"][0]
-    new_max = self.changes["max_mark"][1]
+    return if !self.changed.include?('max_mark')
+    old_max = self.changes['max_mark'][0]
+    new_max = self.changes['max_mark'][1]
 
     scale = new_max / old_max
     self.levels.each do |level|
