@@ -251,10 +251,10 @@ describe RubricCriterion do
     context 'can scale levels' do
       it 'not raise error' do
         levels = @criterion.levels
-        expect(levels[1].mark)to eq(1.0)
-        expect(@criterion.max_mark)to eq(4.0)
+        expect(levels[1].mark).to eq(1.0)
+        expect(@criterion.max_mark).to eq(4.0)
         @criterion.max_mark = 8.0
-        expect(levels[1].mark)to eq(2.0)
+        expect(levels[1].mark).to eq(2.0)
       end
     end
   end
