@@ -519,6 +519,26 @@ describe ResultsController do
         end.to raise_error(ActiveRecord::RecordNotFound)
       end
     end
+    describe '#add_tag' do
+      it 'adds a tag to a grouping' do
+        tag = create(:tag)
+        post :add_tag,
+             params: { assignment_id: assignment.id, submission_id: submission.id,
+                       id: complete_result.id, tag_id: tag.id }
+        expect(complete_result.submission.grouping.tags.to_a).to eq [tag]
+      end
+    end
+
+    describe '#remove_tag' do
+      it 'removes a tag from a grouping' do
+        tag = create(:tag)
+        submission.grouping.tags << tag
+        post :remove_tag,
+             params: { assignment_id: assignment.id, submission_id: submission.id,
+                       id: complete_result.id, tag_id: tag.id }
+        expect(complete_result.submission.grouping.tags.size).to eq 0
+      end
+    end
   end
   context 'A TA' do
     before(:each) { sign_in ta }
