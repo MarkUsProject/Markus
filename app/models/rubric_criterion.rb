@@ -14,7 +14,7 @@ class RubricCriterion < Criterion
 
   has_many :levels, -> { order(:mark) }, inverse_of: :rubric_criterion, dependent: :destroy
   accepts_nested_attributes_for :levels, allow_destroy: true
-  after_save :scale_marks_if_max_mark_changed
+  before_save :scale_marks_if_max_mark_changed
 
   belongs_to :assignment, counter_cache: true
 
@@ -39,13 +39,13 @@ class RubricCriterion < Criterion
   end
 
   def scale_marks_if_max_mark_changed
-    max_level_mark = self.levels.max_by(&:mark).mark
-    new_max = self.max_mark
-    return if max_level_mark == new_max
+    return if !self.changed.include?("max_mark")
+    old_max = self.changes["max_mark"][0]
+    new_max = self.changes["max_mark"][1]
 
-    scale = new_max / max_level_mark
+    scale = new_max / old_max
     self.levels.each do |level|
-      level.mark = (level.mark * scale).round(1)
+      level.update(mark: (level.mark * scale).round(2))
     end
   end
 
