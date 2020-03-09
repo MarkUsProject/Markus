@@ -193,6 +193,11 @@ class GradeEntryStudent < ApplicationRecord
     grades_without_nils.blank?
   end
 
+  # Calculate and set the total grade for all grade entry students with
+  # an id in +grade_entry_student_ids+.
+  # This should be run whenever grade entry students are created/updated
+  # as an upsert/import operation since refresh_total_grade will not
+  # be run as an after_save callback in that case.
   def self.refresh_total_grades(grade_entry_student_ids)
     grades = Grade.where(grade_entry_student_id: grade_entry_student_ids)
                   .pluck(:grade_entry_student_id, :grade)

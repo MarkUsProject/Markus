@@ -101,4 +101,35 @@ describe GradeEntryStudent do
       end
     end
   end
+  context 'self.refresh_total_grades' do
+    let(:form) { create(:grade_entry_form) }
+    let(:grade_entry_item) { create(:grade_entry_item, grade_entry_form: form) }
+    let!(:students) { create_list :student, 3 }
+    let(:grade_entry_student_ids) { form.grade_entry_students.map(&:id) }
+    let(:grades) do
+      form.grade_entry_students.map do |ges|
+        create :grade, grade_entry_item: grade_entry_item, grade_entry_student: ges, grade: grade
+      end
+    end
+    describe 'when the grade is not nil' do
+      let(:grade) { 1 }
+      it 'updates the total_grade' do
+        grades
+        GradeEntryStudent.refresh_total_grades(grade_entry_student_ids)
+        form.grade_entry_students.each do |ges|
+          expect(ges.reload.total_grade).to eq 1
+        end
+      end
+    end
+    describe 'when the grade is nil' do
+      let(:grade) { nil }
+      it 'updates the total_grade to nil' do
+        grades
+        GradeEntryStudent.refresh_total_grades(grade_entry_student_ids)
+        form.grade_entry_students.each do |ges|
+          expect(ges.reload.total_grade).to be_nil
+        end
+      end
+    end
+  end
 end
