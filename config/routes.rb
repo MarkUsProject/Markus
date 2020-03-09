@@ -30,7 +30,6 @@ Rails.application.routes.draw do
               delete 'remove_file'
               delete 'remove_folder'
               post 'create_folders'
-
             end
           end
           resources :feedback_files, except: [:new, :edit]

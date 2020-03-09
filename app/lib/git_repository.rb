@@ -476,6 +476,9 @@ class GitRepository < Repository::AbstractRepository
   end
 
   # Removes a file from the repository.
+  # If +keep_folder+ is true, the files will be deleted and .gitkeep file will be added to its parent folder if it
+  # is not exists in order to keep the folder.
+  # If +keep_folder+ is false, all the files will be deleted and .gitkeep file will not be added.
   def remove_file(path, expected_revision_identifier, keep_folder: true)
     if @repos.last_commit.oid != expected_revision_identifier
       raise Repository::FileOutOfSyncConflict.new(path)

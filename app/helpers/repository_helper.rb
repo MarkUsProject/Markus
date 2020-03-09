@@ -85,6 +85,10 @@ module RepositoryHelper
   # argument is not nil, the transaction will be commited before returning, otherwise the transaction
   # object will not be commited and so should be commited later on by the caller.
   #
+  # If +keep_folder+ is true, the files will be deleted and .gitkeep file will be added to its parent folder if it
+  # is not exists in order to keep the folder.
+  # If +keep_folder+ is false, all the files will be deleted and .gitkeep file will not be added.
+  #
   # Returns a tuple containing a boolean and an array. If the +txn+ argument was nil, the boolean
   # indicates whether the transaction was completed without errors. If the +txn+ argument was not
   # nil, the boolean indicates whether any errors were encountered which mean the caller should not
@@ -197,11 +201,11 @@ module RepositoryHelper
     if repo.is_a? GitRepository
       if relative_path.dirname == Pathname.new('.')
         unless repo.get_latest_revision.path_exists?(File.join(current_path, '.gitkeep'))
-          gitkeep_filename = File.join(current_path, '.gitkeep')
+          gitkeep_filename = File.join(current_path, GitRepository.internal_file_names[0])
           txn.add(gitkeep_filename, '')
         end
       elsif repo.get_latest_revision.path_exists?(File.join(relative_path.dirname, '.gitkeep'))
-        gitkeep_filename = File.join(relative_path.dirname, '.gitkeep')
+        gitkeep_filename = File.join(relative_path.dirname, GitRepository.internal_file_names[0])
         txn.add(gitkeep_filename, '')
       end
     end
