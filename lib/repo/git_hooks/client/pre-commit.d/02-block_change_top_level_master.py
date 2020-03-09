@@ -23,4 +23,4 @@ if __name__ == '__main__':
         if first_component not in top_level:
             print('[MarkUs] Error: Top-level change detected for "{}". (You should unstage this change.)'.format(first_component))
             reject = 1
-    exit(reject)
+    sys.exit(reject)

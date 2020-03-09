@@ -12,7 +12,7 @@ if __name__ == '__main__':
                             universal_newlines=True)
     # Only check master branch
     if branch.stdout.strip() != 'master':
-        exit(0)
+        sys.exit(0)
 
     requirements = subprocess.run(['git', 'show', 'HEAD:.required.json'], stdout=subprocess.PIPE,
                                   universal_newlines=True)
@@ -47,7 +47,7 @@ if __name__ == '__main__':
                     file_path, assignment, ', '.join(req['required']))
                 if req['required_only']:
                     print('[MarkUs] Error: {}!'.format(msg))
-                    exit(1)
+                    sys.exit(1)
                 else:
                     print('[MarkUs] Warning: {}.'.format(msg))
         elif status == 'D' and file_path in req['required']:

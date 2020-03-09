@@ -4,6 +4,7 @@
 - Added option to only display assigned criteria to graders as opposed to showing unassigned criteria but making them
   ungradeable (#4331)
 - Fixed bug where criteria were not expanded for grading (to both Admins and TAs) (#4380)
+- Updated development docker image to connect to the development autotester docker image (#4389)
 - Fixed bug where annotations were not removed when switching between PDF submission files (#4387)
 - Fixed bug where annotations disappeared on window resize (#4387)
 - Removed automatic saving of changes on the Autotesting Framework page and warn when redirecting instead (#4394)
@@ -12,6 +13,7 @@
   who hasn't submitted anything (#4373)
 - Ignore the "Total" column when uploading a csv file to a grade entry form. This makes the upload and download format
   for the csv file consistent (#4425)
+- Added git hook to limit the maximum file size committed and/or pushed to a git repository (#4421)
 
 ## [v1.8.4]
 - Fixed bug where test output was not being properly hidden from students (#4379)

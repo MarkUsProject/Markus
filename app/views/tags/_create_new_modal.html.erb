@@ -4,11 +4,9 @@
 
     <%= javascript_include_tag 'Tags/text_updater.js',
                                id: 'text_script' %>
-    <%= Tag.human_attribute_name(:name) %>
-    <%= form_for :create_new,
-                 url: assignment_tags_path(@assignment),
-                 html: { multipart: true, size: 1 } do |f| %>
+    <%= form_with scope: :tag, url: assignment_tags_path(@assignment) do |f| %>
         <div>
+          <p><%= f.label :name, Tag.human_attribute_name(:name) %></p>
           <p>
             <%= f.text_field :name,
                              placeholder: Tag.human_attribute_name(:name),
@@ -16,9 +14,11 @@
           </p>
         </div>
         <div>
-          <p class="alignleft"><%= Tag.human_attribute_name(:description) %></p>
-          <p id='descript_amount' class='alignright'>0/120</p>
-          <p class="clear-alignment">
+          <p>
+            <%= f.label :description, Tag.human_attribute_name(:description) %>
+            (<span id='descript_amount'>0/120</span>)
+          </p>
+          <p>
             <%= f.text_area :description,
                             id: 'description',
                             cols: 30,

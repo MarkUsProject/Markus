@@ -28,6 +28,7 @@ services:
       - packs:/app/public/packs
       - packs:/app/public/packs-test
       - .dockerfiles/.psqlrc:/root/.psqlrc:ro
+      - ssh_pub_key:/ssh_pub_key
     environment:
       - NODE_ENV=development
       - RAILS_ENV=${RAILS_ENV:-development}
@@ -40,7 +41,13 @@ services:
       - PSQL_HISTFILE=/app/log/.psql_history
       - EDITOR=vi
       - RAILS_RELATIVE_URL_ROOT=/csc108
-      - SEED_AUTOTEST=false
+      - SEED_AUTOTEST=true
+      - AUTOTEST_SERVER_DIR=/home/docker/.markus-autotesting/
+      - AUTOTEST_SERVER_HOST=autotest
+      - AUTOTEST_SERVER_USERNAME=docker
+    networks:
+      - default
+      - markus_dev
     depends_on:
       - postgres
       - redis
@@ -118,4 +125,10 @@ volumes:
   node_modules:
   rails_cache:
   packs:
+  ssh_pub_key:
+    name: ssh_pub_key
+
+networks:
+  markus_dev:
+    name: markus_dev
 
