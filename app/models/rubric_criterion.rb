@@ -40,6 +40,8 @@ class RubricCriterion < Criterion
 
   def scale_marks_if_max_mark_changed
     return unless self.changed.include?('max_mark')
+    return if self.changes['max_mark'][0].nil?
+    
     old_max = self.changes['max_mark'][0]
     new_max = self.changes['max_mark'][1]
 
