@@ -275,4 +275,16 @@ describe RubricCriterion do
       end
     end
   end
+  context 'A rubric criteria with levels' do
+    before(:each) do
+      @criterion = create(:rubric_criterion)
+      @levels = @criterion.levels
+    end
+
+    it 'can add levels' do
+      expect(@levels.length).to eq(5)
+      @levels.create(name: 'New level', description: 'Description for level', mark: '0.5');
+      expect(@levels.length).to eq(6)
+    end
+  end
 end
