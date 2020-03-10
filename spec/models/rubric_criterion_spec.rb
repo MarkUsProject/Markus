@@ -304,11 +304,11 @@ describe RubricCriterion do
     end
 
     it 'can edit levels' do
-      @levels[0].update(name: "Custom Level", description: "Custom Description", mark: 10.0)
+      @levels[0].update(name: 'Custom Level', description: 'Custom Description', mark: 10.0)
       @levels.reload
       expect(@levels[@levels.length - 1].mark).to eq(10)
-      expect(@levels[@levels.length - 1].name).to eq("Custom Level")
-      expect(@levels[@levels.length - 1].description).to eq("Custom Description")
+      expect(@levels[@levels.length - 1].name).to eq('Custom Level')
+      expect(@levels[@levels.length - 1].description).to eq('Custom Description')
     end
   end
 end
