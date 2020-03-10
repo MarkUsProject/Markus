@@ -275,6 +275,7 @@ describe RubricCriterion do
       end
     end
   end
+  
   context 'A rubric criteria with levels' do
     before(:each) do
       @criterion = create(:rubric_criterion)
@@ -283,8 +284,15 @@ describe RubricCriterion do
 
     it 'can add levels' do
       expect(@levels.length).to eq(5)
-      @levels.create(name: 'New level', description: 'Description for level', mark: '0.5');
+      @levels.create(name: 'New level', description: 'Description for level', mark: '5')
       expect(@levels.length).to eq(6)
+    end
+
+    it 'can delete levels' do
+      expect(@levels.length).to eq(5)
+      @levels.destroy_by(mark: 0)
+      @levels.reload
+      expect(@levels.length).to eq(4)
     end
   end
 end
