@@ -1411,6 +1411,79 @@ describe Assignment do
     end
   end
 
+  describe '#past_all_collection_dates?' do
+    context 'when before due with no submission rule' do
+      before :each do
+        @assignment = create(:assignment, due_date: 2.days.from_now)
+      end
+
+      it 'returns false' do
+        expect(@assignment.past_all_collection_dates?).not_to be
+      end
+    end
+
+    context 'when past due with no late submission rule' do
+      context 'without sections' do
+        before :each do
+          @assignment = create(:assignment, due_date: 2.days.ago)
+        end
+
+        it 'returns true' do
+          expect(@assignment.past_all_collection_dates?).to be
+        end
+      end
+
+      context 'with a section' do
+        before :each do
+          @assignment = create(:assignment,
+                               due_date: 2.days.ago,
+                               assignment_properties_attributes: { section_due_dates_type: true })
+          @section_1 = create(:section, name: 'section_1')
+          @section_2 = create(:section, name: 'section_2')
+          SectionDueDate.create(section: @section_1, assignment: @assignment, due_date: 1.day.ago)
+          student = create(:student, section: @section_1)
+          @grouping_1 = create(:grouping, assignment: @assignment)
+          create(:accepted_student_membership,
+                 grouping: @grouping_1,
+                 user: student,
+                 membership_status: StudentMembership::STATUSES[:inviter])
+        end
+
+        context 'when both sections past due' do
+          before :each do
+            SectionDueDate.create(section: @section_2, assignment: @assignment, due_date: 1.day.ago)
+            student = create(:student, section: @section_2)
+            @grouping_2 = create(:grouping, assignment: @assignment)
+            create(:accepted_student_membership,
+                   grouping: @grouping_2,
+                   user: student,
+                   membership_status: StudentMembership::STATUSES[:inviter])
+          end
+
+          it 'returns true' do
+            expect(@assignment.past_all_collection_dates?).to be
+          end
+        end
+
+        context 'when one section due' do
+          before :each do
+            SectionDueDate.create(section: @section_2, assignment: @assignment, due_date: 1.day.from_now)
+            student = create(:student, section: @section_2)
+            @grouping_2 = create(:grouping, assignment: @assignment)
+            create(:accepted_student_membership,
+                   grouping: @grouping_2,
+                   user: student,
+                   membership_status: StudentMembership::STATUSES[:inviter])
+          end
+
+          it 'returns false' do
+            expect(@assignment.past_all_collection_dates?).not_to be
+          end
+        end
+      end
+    end
+  end
+
   describe '#update_results_stats' do
     let(:assignment) { create :assignment }
 
@@ -1733,6 +1806,65 @@ describe Assignment do
           expect(data.map { |h| h[:grace_credits_used] }.count(nil)).to be 2
         end
       end
+    end
+  end
+
+  describe '#summary_json' do
+    context 'a Student user' do
+      let(:assignment) { create :assignment }
+      let(:student) { create :student }
+
+      it 'should return {}' do
+        expect(assignment.summary_json(student)).to be_empty
+      end
+    end
+
+    context 'a TA user' do
+      let(:ta) { create :ta}
+
+      before :each do
+        @assignment = create(:assignment)
+
+        @student = create(:student)
+        @student_2 = create(:student)
+        @grouping = create(:grouping, assignment: @assignment, inviter: @student)
+        @submission = create(:version_used_submission, grouping: @grouping)
+        @membership = create(:accepted_student_membership, user: @student_2, grouping: @grouping)
+
+        @other_student = create(:student)
+        @other_grouping = create(:grouping, assignment: @assignment, inviter: @other_student)
+        # @other_membership = create(:accepted_student_membership, user: @other_student, grouping: @other_grouping)
+        @other_submission = create(:version_used_submission, grouping: @other_grouping)
+
+        Grouping.assign_all_tas([@grouping.id, @other_grouping.id], ta.id, @assignment)
+
+        @result = @submission.current_result
+        @result.marking_state = Result::MARKING_STATES[:complete]
+        @result.save
+
+      end
+
+      context 'with a criteria' do
+        before :each do
+          @rubric_criteria = create(:rubric_criterion, assignment: @assignment)
+        end
+
+        it 'has criteria columns' do
+          expect(@assignment.summary_json(ta)[:criteriaColumns]).not_to be_empty
+        end
+
+        it 'has correct criteria information' do
+          expect(@assignment.summary_json(ta)[:criteriaColumns]).not_to be []
+        end
+      end
+
+      it 'idk' do
+        puts @assignment.summary_json(ta)
+      end
+    end
+
+    context 'an Admin user' do
+
     end
   end
 end
