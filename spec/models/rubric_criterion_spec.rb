@@ -297,6 +297,12 @@ describe RubricCriterion do
       expect(@levels.length).to eq(3)
     end
 
+    it 'deleting a rubric criterion deletes all levels' do
+      @criterion.destroy
+      expect(@criterion.destroyed?).to eq true
+      expect(@levels).to be_empty
+    end
+
     it 'can edit levels' do
       @levels[0].update(name: "Custom Level", description: "Custom Description", mark: 10.0)
       @levels.reload
