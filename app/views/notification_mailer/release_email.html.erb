@@ -1,12 +1,12 @@
-<div class="emailbkgd">
-  <div>
+<div class="emailbkgd dark-scheme">
+  <div class="top_section dark-scheme">
     <%= image_tag attachments['markus_logo_big.png'].url, :class => "logo_header" %>
   </div>
   <hr class="divider">
-  <p class="to_text">
+  <p class="to_text dark-scheme">
     Hello <%= @user.first_name %> <%= @user.last_name %>,
   </p>
-  <p class="body_text">
+  <p class="body_text dark-scheme">
     Your marks for <%= @grouping.assignment.short_identifier %>
     have now been released on Markus and can be viewed.
   </p>
@@ -18,7 +18,7 @@
                 :style => 'color:#FFFFFF;',
                 :class => "redirectbutton" %>
   </div>
-  <p class="alert_text">
+  <p class="alert_text dark-scheme">
     This is an automated email. Please do not reply.
   </p>
 </div>
