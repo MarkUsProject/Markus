@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_12_10_143220) do
+ActiveRecord::Schema.define(version: 2020_02_25_050808) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -409,16 +409,6 @@ ActiveRecord::Schema.define(version: 2019_12_10_143220) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer "position"
-    t.text "level_0_name"
-    t.text "level_0_description"
-    t.text "level_1_name"
-    t.text "level_1_description"
-    t.text "level_2_name"
-    t.text "level_2_description"
-    t.text "level_3_name"
-    t.text "level_3_description"
-    t.text "level_4_name"
-    t.text "level_4_description"
     t.decimal "max_mark", precision: 10, scale: 1, null: false
     t.integer "assigned_groups_count", default: 0
     t.boolean "ta_visible", default: true, null: false
