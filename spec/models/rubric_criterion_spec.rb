@@ -285,14 +285,24 @@ describe RubricCriterion do
     it 'can add levels' do
       expect(@levels.length).to eq(5)
       @levels.create(name: 'New level', description: 'Description for level', mark: '5')
-      expect(@levels.length).to eq(6)
+      @levels.create(name: 'New level 2', description: 'Description for level 2', mark: '6')
+      expect(@levels.length).to eq(7)
     end
 
     it 'can delete levels' do
       expect(@levels.length).to eq(5)
       @levels.destroy_by(mark: 0)
+      @levels.destroy_by(mark: 1)
       @levels.reload
-      expect(@levels.length).to eq(4)
+      expect(@levels.length).to eq(3)
+    end
+
+    it 'can edit levels' do
+      @levels[0].update(name: "Custom Level", description: "Custom Description", mark: 10.0)
+      @levels.reload
+      expect(@levels[@levels.length - 1].mark).to eq(10)
+      expect(@levels[@levels.length - 1].name).to eq("Custom Level")
+      expect(@levels[@levels.length - 1].description).to eq("Custom Description")
     end
   end
 end
