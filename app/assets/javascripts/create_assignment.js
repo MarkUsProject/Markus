@@ -35,6 +35,8 @@ $(document).ready(function () {
     toggle_remark_requests(this.checked);
   });
 
+  toggle_remark_requests(false);
+
   $('#submission_rule_fields input[type=radio]').change(
     change_submission_rule);
 
