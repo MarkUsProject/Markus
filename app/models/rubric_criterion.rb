@@ -45,7 +45,10 @@ class RubricCriterion < Criterion
     new_max = self.changes['max_mark'][1]
     scale = new_max / old_max
     self.levels.each do |level|
-      level.update(mark: (level.mark * scale).round(2))
+      # don't scale levels that the user has manually changed
+      unless level.changed.include? 'mark'
+        level.update(mark: (level.mark * scale).round(2))
+      end
     end
   end
 
