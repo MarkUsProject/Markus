@@ -242,27 +242,26 @@ describe RubricCriterion do
     end
   end
 
-  context 'a rubric criteria with levels' do
+  context 'A rubric criteria with levels' do
     before(:each) do
       @criterion = create(:rubric_criterion)
+      @levels = @criterion.levels
     end
 
     context 'when scaling' do
       describe 'can scale levels up' do
         it 'not raise error' do
-          levels = @criterion.levels
-          expect(levels[1].mark).to eq(1.0)
+          expect(@levels[1].mark).to eq(1.0)
           @criterion.update(max_mark: 8.0)
-          expect(levels[1].mark).to eq(2.0)
+          expect(@levels[1].mark).to eq(2.0)
         end
       end
 
       describe 'can scale levels down' do
         it 'not raise error' do
-          levels = @criterion.levels
-          expect(levels[1].mark).to eq(1.0)
+          expect(@levels[1].mark).to eq(1.0)
           @criterion.update(max_mark: 2.0)
-          expect(levels[1].mark).to eq(0.5)
+          expect(@levels[1].mark).to eq(0.5)
         end
       end
     end
