@@ -95,7 +95,7 @@ describe Api::SubmissionFilesController do
       it 'should create folders in the corresponding directory' do
         path = Pathname.new('a/b/c')
         success, _messages = group.access_repo do |repo|
-          file_path = Pathname.new(assignment.repository_folder).join path
+          file_path = Pathname.new(assignment.assignment_properties.repository_folder).join path
           repo.get_latest_revision.path_exists?(file_path.to_s)
         end
         expect(success).to be_truthy

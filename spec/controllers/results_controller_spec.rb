@@ -558,7 +558,7 @@ describe ResultsController do
       let(:data) { JSON.parse(response.body) }
       let(:params) { { assignment_id: assignment.id, submission_id: submission.id, id: incomplete_result.id } }
       before :each do
-        assignment.update(assign_graders_to_criteria: true)
+        assignment.assignment_properties.update(assign_graders_to_criteria: true)
         create(:criterion_ta_association, criterion: rubric_mark.markable, ta: ta)
         get :show, params: params, xhr: true
       end

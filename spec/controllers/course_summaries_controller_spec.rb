@@ -103,7 +103,7 @@ describe CourseSummariesController do
             ]
           }
           student.accepted_groupings.each do |g|
-            expected[:assignment_marks][g.assignment_id.to_s.to_sym] = g.current_result.total_mark
+            expected[:assignment_marks][g.assessment_id.to_s.to_sym] = g.current_result.total_mark
           end
           expect(@data).to include expected
         end

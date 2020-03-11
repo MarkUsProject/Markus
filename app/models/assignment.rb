@@ -7,6 +7,7 @@ class Assignment < Assessment
 
   validates_presence_of :due_date
   has_one :assignment_properties, dependent: :destroy, inverse_of: :assignment, foreign_key: :assessment_id
+  delegate (AssignmentProperties.new.attributes.keys - Assignment.new.attributes.keys), to: :assignment_properties
   accepts_nested_attributes_for :assignment_properties, update_only: true
   validates_presence_of :assignment_properties
 

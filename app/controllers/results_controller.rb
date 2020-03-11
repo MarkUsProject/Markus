@@ -214,7 +214,7 @@ class ResultsController < ApplicationController
         # Grace token deductions
         if is_reviewer
           data[:grace_token_deductions] = []
-        elsif current_user.ta? && assignment.assignment_proprties.anonymize_groups
+        elsif current_user.ta? && assignment.assignment_properties.anonymize_groups
           data[:grace_token_deductions] = []
 
         else

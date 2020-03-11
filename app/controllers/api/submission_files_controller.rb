@@ -87,7 +87,7 @@ module Api
     end
 
     def create
-      grouping = Grouping.find_by_group_id_and_assignment_id(params[:group_id], params[:assignment_id])
+      grouping = Grouping.find_by_group_id_and_assessment_id(params[:group_id], params[:assignment_id])
       if grouping.nil?
         render 'shared/http_status', locals: { code: '404', message:
           'No group with that id exists for the given assignment' }, status: 404
@@ -115,7 +115,7 @@ module Api
                                                       filename: params[:filename],
                                                       type: params[:mime_type])
         success, messages = grouping.group.access_repo do |repo|
-          path = Pathname.new(grouping.assignment.repository_folder)
+          path = Pathname.new(grouping.assignment.assignment_properties.repository_folder)
           add_files([file], @current_user, repo, path: path)
         end
       ensure
@@ -134,7 +134,7 @@ module Api
     end
 
     def create_folders
-      grouping = Grouping.find_by_group_id_and_assignment_id(params[:group_id], params[:assignment_id])
+      grouping = Grouping.find_by_group_id_and_assessment_id(params[:group_id], params[:assessment_id])
       if grouping.nil?
         render 'shared/http_status', locals: { code: '404', message:
             'No group with that id exists for the given assignment' }, status: 404
@@ -169,7 +169,7 @@ module Api
     end
 
     def remove_file
-      grouping = Grouping.find_by_group_id_and_assignment_id(params[:group_id], params[:assignment_id])
+      grouping = Grouping.find_by_group_id_and_assessment_id(params[:group_id], params[:assignment_id])
       if grouping.nil?
         render 'shared/http_status', locals: { code: '404', message:
           'No group with that id exists for the given assignment' }, status: 404
