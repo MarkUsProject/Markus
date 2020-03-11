@@ -17,7 +17,6 @@ describe Api::SubmissionFilesController do
 
     it 'should fail to authenticate a POST create request' do
       post :create, params: { assignment_id: 1, group_id: 1 }
-
       expect(response.status).to eq(403)
     end
 
@@ -60,7 +59,7 @@ describe Api::SubmissionFilesController do
       it 'should create a file in the corresponding directory' do
         path = Pathname.new('v1/x/y')
         success, _messages = group.access_repo do |repo|
-          file_path = Pathname.new(assignment.repository_folder).join path
+          file_path = Pathname.new(assignment.assignment_properties.repository_folder).join path
           files = repo.get_latest_revision.files_at_path(file_path.to_s)
           files.keys.include? 'test.txt'
         end
@@ -75,7 +74,7 @@ describe Api::SubmissionFilesController do
           path = Pathname.new('v1/x/y')
           file_contents = ''
           group.access_repo do |repo|
-            file_path = Pathname.new(assignment.repository_folder).join path
+            file_path = Pathname.new(assignment.assignment_properties.repository_folder).join path
             file = repo.get_latest_revision.files_at_path(file_path.to_s)['test.txt']
             file_contents = repo.download_as_string(file)
           end

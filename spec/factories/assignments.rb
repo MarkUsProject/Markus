@@ -9,6 +9,7 @@ FactoryBot.define do
     due_date { 1.minute.from_now }
     submission_rule { NoLateSubmissionRule.new }
     assignment_stat { AssignmentStat.new }
+    is_hidden { false }
 
     transient do
       assignment_properties_attributes { nil }
