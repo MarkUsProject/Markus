@@ -401,7 +401,7 @@ class GitRepository < Repository::AbstractRepository
         end
       when :remove_directory
         begin
-          remove_directory(job[:path], job[:expected_revision_identifier])
+          remove_directory(job[:path], job[:expected_revision_identifier], keep_parent_dir: job[:keep_parent_dir])
         rescue Repository::Conflict => e
           transaction.add_conflict(e)
         end
@@ -496,15 +496,20 @@ class GitRepository < Repository::AbstractRepository
     add_file(gitkeep_filename, '')
   end
 
-  def remove_directory(path, _expected_revision_identifier)
+  def remove_directory(path, _expected_revision_identifier, keep_parent_dir: false)
     unless get_latest_revision.path_exists?(path)
       raise Repository::FolderDoesNotExistConflict, path
     end
     absolute_path = Pathname.new(File.join(@repos_path, path))
+    relative_path = Pathname.new(path)
     unless Dir.empty?(absolute_path)
       raise Repository::FolderIsNotEmptyConflict, path
     end
     FileUtils.remove_dir(absolute_path)
+    return unless keep_parent_dir
+    return if File.exist?(File.join(absolute_path.dirname, DUMMY_FILE_NAME))
+    gitkeep_filename = File.join(relative_path.dirname, DUMMY_FILE_NAME)
+    add_file(gitkeep_filename, '')
   end
 
   # Replaces a file in the repository with new content.

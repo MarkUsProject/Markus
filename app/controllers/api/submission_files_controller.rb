@@ -183,10 +183,7 @@ module Api
       end
 
       begin
-        success, messages = grouping.group.access_repo do |repo|
-          path = Pathname.new(grouping.assignment.repository_folder)
-          remove_files([params[:filename]], @current_user, repo, path: path)
-        end
+        success, messages = grouping.remove_files([params[:filename]], @current_user)
       rescue Repository::FileDoesNotExist
         render 'shared/http_status', locals: { code: '404', message:
           'No file exists at that path.' }, status: 404

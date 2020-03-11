@@ -195,21 +195,12 @@ module RepositoryHelper
     end
 
     dirs.each do |dir|
-      txn.remove_directory(dir, current_revision.to_s)
-    end
-
-    if repo.is_a? GitRepository
-      if relative_path.dirname == Pathname.new('.')
-        unless repo.get_latest_revision.path_exists?(File.join(current_path, '.gitkeep'))
-          gitkeep_filename = File.join(current_path, GitRepository.internal_file_names[0])
-          txn.add(gitkeep_filename, '')
-        end
-      elsif repo.get_latest_revision.path_exists?(File.join(relative_path.dirname, '.gitkeep'))
-        gitkeep_filename = File.join(relative_path.dirname, GitRepository.internal_file_names[0])
-        txn.add(gitkeep_filename, '')
+      if dir == dirs[-1]
+        txn.remove_directory(dir, current_revision.to_s, keep_parent_dir: true)
+      else
+        txn.remove_directory(dir, current_revision.to_s)
       end
     end
-
     if commit_txn
       success, txn_messages = commit_transaction repo, txn
       [success, messages + txn_messages]
