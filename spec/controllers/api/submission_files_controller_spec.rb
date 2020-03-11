@@ -110,6 +110,35 @@ describe Api::SubmissionFilesController do
       end
     end
 
+    context 'DELETE remove_file' do
+      before :each do
+        post :create, params: { assignment_id: assignment.id, group_id: group.id, filename: 'v1/x/y/test.txt',
+                                mime_type: 'text', file_content: 'This is a test file' }
+      end
+      describe 'when the file exists' do
+        before :each do
+          delete :remove_file, params: { assignment_id: assignment.id, group_id: group.id, filename: 'v1/x/y/test.txt' }
+        end
+        it 'should remove the file' do
+          path = Pathname.new('v1/x/y/test.txt')
+          success, _messages = group.access_repo do |repo|
+            folder_path = Pathname.new(assignment.repository_folder).join path
+            repo.get_latest_revision.path_exists?(folder_path.to_s)
+          end
+          expect(success).to be_falsey
+          expect(response.status).to eq(200)
+        end
+      end
+      describe 'when the file does not exist' do
+        before :each do
+          delete :remove_file, params: { assignment_id: assignment.id, group_id: group.id, filename: 'v1/x/y/task.txt' }
+        end
+        it 'should return 404 error' do
+          expect(response.status).to eq(404)
+        end
+      end
+    end
+
     context 'DELETE remove_folders' do
       before :each do
         post :create_folders, params: { assignment_id: assignment.id, group_id: group.id, folder_path: 'a/b/c' }

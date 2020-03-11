@@ -30,6 +30,7 @@ en:
         file_too_large: "The size of the uploaded file %{file_name} exceeds the maximum of %{max_size} MB."
         exist: "The folder already exists"
         not_exist: "The folder does not exist"
+        file_not_exist: "The file does not exist"
 
     submission_file:
       error:

@@ -29,6 +29,7 @@ pt:
         empty_file_warning: "UPDATE ME"
         exist: "UPDATE ME"
         not_exist: "UPDATE ME"
+        file_not_exist: "UPDATE ME"
 
     submission_file:
       error:

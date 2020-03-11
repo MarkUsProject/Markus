@@ -178,20 +178,16 @@ module Api
         return
       end
 
-      begin
-        success, messages = grouping.group.access_repo do |repo|
-          path = Pathname.new(grouping.assignment.repository_folder)
-          remove_files([params[:filename]], @current_user, repo, path: path)
-        end
-      rescue Repository::FileDoesNotExist
-        render 'shared/http_status', locals: { code: '404', message:
-          'No file exists at that path.' }, status: 404
-        return
+      success, messages = grouping.group.access_repo do |repo|
+        path = Pathname.new(grouping.assignment.repository_folder)
+        remove_files([params[:filename]], @current_user, repo, path: path)
       end
 
       message_string = messages.map { |type, *msg| "#{type}: #{msg}" }.join("\n")
-
-      if success
+      if success && messages[0] == :file_not_exist
+        render 'shared/http_status', locals: { code: '404', message:
+            'No file exists at that path.' }, status: 404
+      elsif success
         # It worked, render success
         message = "#{HttpStatusHelper::ERROR_CODE['message']['200']}\n\n#{message_string}"
         render 'shared/http_status', locals: { code: '200', message: message }, status: 200

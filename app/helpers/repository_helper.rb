@@ -105,6 +105,10 @@ module RepositoryHelper
     end
 
     current_path = Pathname.new path
+    relative_path = Pathname.new(files[0])
+    abs_path = File.join(current_path, relative_path)
+
+    return [true, [:file_not_exist]] unless repo.get_latest_revision.path_exists?(abs_path)
 
     current_revision = repo.get_latest_revision.revision_identifier
 
@@ -237,6 +241,8 @@ module RepositoryHelper
         flash_message(:warning, I18n.t('student.submission.exist'))
       when :not_exist
         flash_message(:warning, I18n.t('student.submission.not_exist'))
+      when :file_not_exist
+        flash_message(:warning, I18n.t('student.submission.file_not_exist'))
       end
     end
   end
