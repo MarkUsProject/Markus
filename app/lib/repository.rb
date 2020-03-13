@@ -49,6 +49,18 @@ module Repository
       return "#{@path} could not be changed - it was deleted since you last saw it"
     end
   end
+  # Exception for folders
+  class FolderDoesNotExistConflict < Conflict
+    def to_s
+      "#{@path} could not be removed - it is not exist"
+    end
+  end
+  # Exception for folders
+  class FolderIsNotEmptyConflict < Conflict
+    def to_s
+      "#{@path} could not be removed - it is not empty"
+    end
+  end
 
   class FileOutOfSyncConflict < Conflict
     def to_s
@@ -385,7 +397,8 @@ module Repository
   # Exceptions for Files
   class FileOutOfDate < StandardError; end
   class FileDoesNotExist < StandardError; end
-
+  # Exceptions for Folders
+  class FolderDoesNotExist < StandardError; end
   # Exceptions for repo user management
   class UserNotFound < StandardError; end
   class UserAlreadyExistent < StandardError; end
@@ -456,8 +469,14 @@ module Repository
       @jobs.push(action: :add, path: path, file_data: file_data, mime_type: mime_type)
     end
 
-    def remove(path, expected_revision_identifier)
-      @jobs.push(action: :remove, path: path, expected_revision_identifier: expected_revision_identifier)
+    def remove(path, expected_revision_identifier, keep_folder: true)
+      @jobs.push(action: :remove, path: path, expected_revision_identifier: expected_revision_identifier,
+                 keep_folder: keep_folder)
+    end
+
+    def remove_directory(path, expected_revision_identifier, keep_parent_dir: false)
+      @jobs.push(action: :remove_directory, path: path, expected_revision_identifier: expected_revision_identifier,
+                 keep_parent_dir: keep_parent_dir)
     end
 
     def replace(path, file_data, mime_type, expected_revision_identifier)
