@@ -38,7 +38,6 @@ module SubmissionsHelper
       Result.where(id: groupings.joins(:current_result).pluck('results.id'))
             .update_all(released_to_students: release)
     end
-
     if(release)
       groupings.each do |grouping|
         grouping.students.each do |student|
