@@ -50,6 +50,7 @@ class GradeEntryFormsController < ApplicationController
 
     @grade_entry_form.update(new_params)
     respond_with(@grade_entry_form, location: -> { edit_grade_entry_form_path @grade_entry_form })
+    GradeEntryStudent.refresh_total_grades(@grade_entry_form.grade_entry_students.ids)
   end
 
   # View/modify the grades for this grade entry form

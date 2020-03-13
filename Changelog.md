@@ -11,6 +11,8 @@
 - Added progress message when uploading changes on Automated Testing tab (#4395) 
 - Fixed bug where the error message is appearing when the instructor is trying to collect the submission of the student 
   who hasn't submitted anything (#4373)
+- Ignore the "Total" column when uploading a csv file to a grade entry form. This makes the upload and download format
+  for the csv file consistent (#4425)
 - Added git hook to limit the maximum file size committed and/or pushed to a git repository (#4421)
 
 ## [v1.8.4]
