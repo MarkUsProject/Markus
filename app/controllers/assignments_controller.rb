@@ -1,6 +1,3 @@
-require 'base64'
-
-
 class AssignmentsController < ApplicationController
   include RepositoryHelper
   responders :flash
@@ -9,7 +6,6 @@ class AssignmentsController < ApplicationController
                      except: [:index,
                               :student_interface,
                               :update_collected_submissions,
-                              :render_feedback_file,
                               :peer_review,
                               :summary,
                               :switch_assignment]
@@ -22,31 +18,9 @@ class AssignmentsController < ApplicationController
                             :peer_review]
 
   before_action      :authorize_for_user,
-                     only: [:index, :render_feedback_file, :switch_assignment]
+                     only: [:index, :switch_assignment]
 
   # Publicly accessible actions ---------------------------------------
-
-  def render_feedback_file
-    @feedback_file = FeedbackFile.find(params[:feedback_file_id])
-
-    # Students can use this action only, when marks have been released
-    if current_user.student? &&
-        (@feedback_file.submission.grouping.membership_status(current_user).nil? ||
-         !@feedback_file.submission.get_latest_result.released_to_students)
-      flash_message(:error, t('feedback_file.error.no_access',
-                              feedback_file_id: @feedback_file.id))
-      head :forbidden
-      return
-    end
-
-    if @feedback_file.mime_type.start_with? 'image'
-      content = Base64.encode64(@feedback_file.file_content)
-    else
-      content = @feedback_file.file_content
-    end
-
-    render plain: content
-  end
 
   def student_interface
     assignment = Assignment.find(params[:id])

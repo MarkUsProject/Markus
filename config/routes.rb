@@ -66,7 +66,6 @@ Rails.application.routes.draw do
       member do
         get 'refresh_graph'
         get 'student_interface'
-        get 'render_feedback_file'
         get 'view_summary'
         get 'populate_file_manager'
         post 'upload_starter_code'
@@ -200,6 +199,7 @@ Rails.application.routes.draw do
           post 'repo_browser'
           get 'downloads'
           get 'get_file'
+          get 'get_feedback_file'
         end
 
         resources :results do
