@@ -57,7 +57,6 @@ Rails.application.routes.draw do
 
       collection do
         get 'delete_rejected'
-        post 'update_collected_submissions'
         get 'download'
         post 'upload'
         get 'batch_runs'

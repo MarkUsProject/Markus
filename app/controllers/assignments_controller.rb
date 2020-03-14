@@ -5,7 +5,6 @@ class AssignmentsController < ApplicationController
   before_action      :authorize_only_for_admin,
                      except: [:index,
                               :show,
-                              :update_collected_submissions,
                               :peer_review,
                               :summary,
                               :switch_assignment]
@@ -114,17 +113,11 @@ class AssignmentsController < ApplicationController
     end
   end
 
-  # Displays "Manage Assignments" page for creating and editing
-  # assignment information
+  # Displays "Manage Assignments" page for creating and editing assignment information.
+  # Acts as dashboard for students and TAs.
   def index
     if current_user.student?
-      @grade_entry_forms = GradeEntryForm.where(is_hidden: false).order(:id)
-      @assignments = Assignment.where(is_hidden: false).order(:id)
-      @marking_schemes = MarkingScheme.none
-      #get the section of current user
-      @section = current_user.section
-      # get results for assignments for the current user
-      @a_id_results = Hash.new()
+      @a_id_results = {}
       accepted_groupings = current_user.accepted_groupings.includes(:assignment, { current_submission_used: :results })
       accepted_groupings.each do |grouping|
         if !grouping.assignment.is_hidden && grouping.has_submission?
@@ -137,28 +130,16 @@ class AssignmentsController < ApplicationController
         end
       end
 
-      # Get the grades for grade entry forms for the current user
-      @g_id_entries = Hash.new()
-      @grade_entry_forms.each do |g|
-        grade_entry_student = g.grade_entry_students.find_by_user_id(
-                                    current_user.id )
-        if !grade_entry_student.nil? &&
-             grade_entry_student.released_to_student
-          @g_id_entries[g.id] = grade_entry_student
+      @g_id_entries = {}
+      current_user.grade_entry_students.where(released_to_student: true).includes(:grade_entry_form).each do |g|
+        unless g.grade_entry_form.is_hidden
+          @g_id_entries[g.grade_entry_form_id] = g
         end
       end
 
       render :student_assignment_list, layout: 'assignment_content'
-    elsif current_user.ta?
-      @grade_entry_forms = GradeEntryForm.order(:id)
-      @assignments = Assignment.includes(:submission_rule).order(:id)
-      render :grader_index, layout: 'assignment_content'
-      @marking_schemes = MarkingScheme.all
     else
-      @grade_entry_forms = GradeEntryForm.order(:id)
-      @assignments = Assignment.includes(:submission_rule).order(:id)
       render :index, layout: 'assignment_content'
-      @marking_schemes = MarkingScheme.all
     end
   end
 
@@ -334,12 +315,6 @@ class AssignmentsController < ApplicationController
         render json: test_runs
       end
     end
-  end
-
-  # Methods for the student interface
-
-  def update_collected_submissions
-    @assignments = Assignment.all
   end
 
   # Refreshes the grade distribution graph

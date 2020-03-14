@@ -90,13 +90,6 @@ describe 'An Assignment' do
         action: 'delete_rejected',
         locale: 'en')
     end
-
-    it 'routes POST update_collected_submissions' do
-      expect(post: path + '/update_collected_submissions').to route_to(
-        controller: ctrl,
-        action: 'update_collected_submissions',
-        locale: 'en')
-    end
   end
   # end Assignment collection route tests
 

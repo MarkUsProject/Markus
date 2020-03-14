@@ -1,42 +1,38 @@
 <% content_for :title, t('assignments.manage_course_work') %>
 
-<% @heading_buttons = [
-  { link_text: t('download'),
-    link_path: '#',
-    html_options: { id: 'downloadModal' } },
-  { link_text: t('upload'),
-    link_path: '#',
-    html_options: { id: 'uploadModal' } }
-] %>
+<% if @current_user.admin? %>
+  <% @heading_buttons = [
+    { link_text: t('download'),
+      link_path: '#',
+      html_options: { id: 'downloadModal' } },
+    { link_text: t('upload'),
+      link_path: '#',
+      html_options: { id: 'uploadModal' } }
+  ] %>
 
-<% content_for :wrap_left_content do %>
+  <!-- Modals -->
+  <%= render partial: 'assignment_download_modal', layout: 'layouts/modal_dialog'  %>
+  <%= render partial: 'assignment_upload_modal', layout: 'layouts/modal_dialog'  %>
+
   <%= link_to t('helpers.submit.create', model: Assignment.model_name.human),
-              { controller: 'assignments',
-                action: 'new' },
+              new_assignment_path,
               class: 'button' %>
   <% if Rails.configuration.x.scanned_exams.enable %>
-        <%= link_to t('helpers.submit.create', model: t('activerecord.models.scanned_assignment.one')),
-                    { controller: 'assignments',
-                      scanned: true,
-                      action: 'new' },
-                    class: 'button' %>
+    <%= link_to t('helpers.submit.create', model: t('activerecord.models.scanned_assignment.one')),
+                new_assignment_path(scanned: true),
+                class: 'button' %>
   <% end %>
   <%= link_to t('helpers.submit.create', model: GradeEntryForm.model_name.human),
-              { controller: 'grade_entry_forms',
-                action: 'new' },
+              new_grade_entry_form_path,
               class: 'button' %>
-
-  <%= render partial: 'assignments/list_manage',
-             locals: { controller: 'assignments',
-                       action: 'edit' } -%>
-
-  <% # For now, only allow instructors to manage grade entry forms %>
-  <% if @current_user.admin? %>
-    <%= render partial: 'grade_entry_forms/list_manage',
-               locals: { action: 'edit' } %>
-  <% end %>
 <% end %>
 
-<!-- Modals -->
-<%= render partial: 'assignment_download_modal', layout: 'layouts/modal_dialog'  %>
-<%= render partial: 'assignment_upload_modal', layout: 'layouts/modal_dialog'  %>
+<div class='section'>
+  <h3><%= Assignment.model_name.human.pluralize %></h3>
+  <%= render partial: 'assignments/list_manage' %>
+</div>
+
+<div class='section'>
+  <h3><%= GradeEntryForm.model_name.human.pluralize %></h3>
+  <%= render partial: 'grade_entry_forms/list_manage' %>
+</div>

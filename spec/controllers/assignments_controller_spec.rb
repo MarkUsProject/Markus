@@ -197,6 +197,97 @@ describe AssignmentsController do
     end
   end
 
+  describe '#index' do
+    context 'an admin' do
+      let(:user) { create(:admin) }
+
+      context 'when there are no assessments' do
+        it 'responds with a success' do
+          get_as user, :index
+          assert_response :success
+        end
+      end
+
+      context 'where there are some assessments' do
+        before :each do
+          3.times { create(:assignment_with_criteria_and_results) }
+          2.times { create(:grade_entry_form_with_data) }
+        end
+
+        it 'responds with a success' do
+          get_as user, :index
+          assert_response :success
+        end
+      end
+    end
+
+    context 'a TA' do
+      let(:user) { create(:ta) }
+
+      context 'when there are no assessments' do
+        it 'responds with a success' do
+          get_as user, :index
+          assert_response :success
+        end
+      end
+
+      context 'where there are some assessments' do
+        before :each do
+          3.times { create(:assignment_with_criteria_and_results) }
+          2.times { create(:grade_entry_form_with_data) }
+        end
+
+        it 'responds with a success' do
+          get_as user, :index
+          assert_response :success
+        end
+      end
+    end
+
+    context 'a student' do
+      let(:user) { create(:student) }
+
+      context 'when there are no assessments' do
+        it 'responds with a success' do
+          get_as user, :index
+          assert_response :success
+        end
+      end
+
+      context 'where there are some assessments' do
+        before :each do
+          3.times do
+            assignment = create(:assignment_with_criteria_and_results)
+            create(:accepted_student_membership, user: user, grouping: assignment.groupings.first)
+          end
+          2.times { create(:grade_entry_form_with_data) }
+        end
+
+        it 'responds with a success' do
+          get_as user, :index
+          assert_response :success
+        end
+      end
+
+      context 'where there are some assessments, including hidden assessments' do
+        before :each do
+          3.times do
+            assignment = create(:assignment_with_criteria_and_results)
+            create(:accepted_student_membership, user: user, grouping: assignment.groupings.first)
+          end
+          2.times { create(:grade_entry_form_with_data) }
+          Assignment.first.update(is_hidden: true)
+          GradeEntryForm.first.update(is_hidden: true)
+        end
+
+        it 'responds with a success' do
+          get_as user, :index
+          assert_response :success
+        end
+      end
+    end
+  end
+
   context '#set_boolean_graders_options' do
     let!(:assignment) { create(:assignment) }
     context 'an admin' do
