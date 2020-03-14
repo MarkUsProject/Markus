@@ -65,7 +65,6 @@ Rails.application.routes.draw do
 
       member do
         get 'refresh_graph'
-        get 'student_interface'
         get 'view_summary'
         get 'populate_file_manager'
         post 'upload_starter_code'

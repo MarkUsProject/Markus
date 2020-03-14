@@ -12,8 +12,7 @@
 </div>
 
 <%= render partial: 'assignments/list',
-           locals: { controller: 'assignments',
-                     action: 'student_interface' } %>
+           locals: { controller: 'assignments', action: 'show' } %>
 
 <div class='title_bar'>
   <h1><%= GradeEntryForm.model_name.human.pluralize %></h1>

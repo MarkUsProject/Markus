@@ -4,7 +4,7 @@ class AssignmentsController < ApplicationController
 
   before_action      :authorize_only_for_admin,
                      except: [:index,
-                              :student_interface,
+                              :show,
                               :update_collected_submissions,
                               :peer_review,
                               :summary,
@@ -14,7 +14,7 @@ class AssignmentsController < ApplicationController
                      only: [:summary]
 
   before_action      :authorize_for_student,
-                     only: [:student_interface,
+                     only: [:show,
                             :peer_review]
 
   before_action      :authorize_for_user,
@@ -22,7 +22,7 @@ class AssignmentsController < ApplicationController
 
   # Publicly accessible actions ---------------------------------------
 
-  def student_interface
+  def show
     assignment = Assignment.find(params[:id])
     @assignment = assignment.is_peer_review? ? assignment.parent_assignment : assignment
     if @assignment.is_hidden
@@ -37,40 +37,23 @@ class AssignmentsController < ApplicationController
       return
     end
 
-    @student = current_user
-    @grouping = @student.accepted_grouping_for(@assignment.id)
+    @grouping = current_user.accepted_grouping_for(@assignment.id)
 
     if @grouping.nil?
       if @assignment.scanned_exam
         flash_now(:notice, t('assignments.scanned_exam.under_review'))
       elsif @assignment.group_max == 1
         begin
-          @student.create_group_for_working_alone_student(@assignment.id)
+          current_user.create_group_for_working_alone_student(@assignment.id)
         rescue StandardError => e
           flash_message(:error, e.message)
           redirect_to controller: :assignments
         end
-        @grouping = @student.accepted_grouping_for(@assignment.id)
+        @grouping = @current_user.accepted_grouping_for(@assignment.id)
       end
     end
     unless @grouping.nil?
-      # We look for the information on this group...
-      # The members
-      @studentmemberships = @grouping.student_memberships
-      # The group name
-      @group = @grouping.group
-      # The inviter
-      @inviter = @grouping.inviter
-
-      # Look up submission information
       set_repo_vars(@assignment, @grouping)
-    end
-
-    @penalty = SubmissionRule.find_by_assignment_id(@assignment.id)
-    @enum_penalty = Period.where(submission_rule_id: @penalty.id).sort
-    @due_date = @student.due_date_for_assignment(@assignment)
-    if @student.has_pending_groupings_for?(@assignment.id)
-      @pending_grouping = @student.pending_groupings_for(@assignment.id)
     end
   end
 
@@ -90,11 +73,8 @@ class AssignmentsController < ApplicationController
     end
 
     @student = current_user
-    @grouping = @student.accepted_grouping_for(@assignment.id)
-    @penalty = @assignment.submission_rule
-    @enum_penalty = Period.where(submission_rule_id: @penalty.id).sort
-    @due_date = @student.due_date_for_assignment(@assignment)
-    @prs = @student.grouping_for(@assignment.parent_assignment.id)&.
+    @grouping = current_user.accepted_grouping_for(@assignment.id)
+    @prs = current_user.grouping_for(@assignment.parent_assignment.id)&.
         peer_reviews&.where(results: { released_to_students: true })
     if @prs.nil?
       @prs = []
@@ -550,8 +530,8 @@ class AssignmentsController < ApplicationController
       redirect_to edit_assignment_path(params[:id])
     elsif current_user.ta?
       redirect_to summary_assignment_path(params[:id])
-    else # curret_user.student?
-      redirect_to student_interface_assignment_path
+    else # current_user.student?
+      redirect_to assignment_path(params[:id])
     end
   end
 
