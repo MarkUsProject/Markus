@@ -273,12 +273,16 @@ class AssignmentsController < ApplicationController
   def summary
     @assignment = Assignment.find(params[:id])
     respond_to do |format|
-      format.html {
-        render layout: 'assignment_content'
-      }
-      format.json {
-        render json: @assignment.summary_json(@current_user)
-      }
+      format.html { render layout: 'assignment_content' }
+      format.json { render json: @assignment.summary_json(@current_user) }
+      format.csv do
+        data = @assignment.summary_csv(@current_user)
+        filename = "#{@assignment.short_identifier}_summary.csv"
+        send_data data,
+                  disposition: 'attachment',
+                  type: 'text/csv',
+                  filename: filename
+      end
     end
   end
 
@@ -330,16 +334,6 @@ class AssignmentsController < ApplicationController
         render json: test_runs
       end
     end
-  end
-
-  def csv_summary
-    assignment = Assignment.find(params[:id])
-    data = assignment.summary_csv(@current_user)
-    filename = "#{assignment.short_identifier}_summary.csv"
-    send_data data,
-              disposition: 'attachment',
-              type: 'text/csv',
-              filename: filename
   end
 
   # Methods for the student interface

@@ -283,4 +283,42 @@ describe AssignmentsController do
       end
     end
   end
+
+  describe '#summary' do
+    let!(:assignment) { create(:assignment) }
+
+    context 'when an admin' do
+      let!(:user) { create(:admin) }
+      context 'requests an HTML response' do
+        it 'responds with a success' do
+          post_as user, :summary, params: { id: assignment.id }, format: 'html'
+          assert_response :success
+        end
+      end
+
+      context 'requests a JSON response' do
+        before do
+          post_as user, :summary, params: { id: assignment.id }, format: 'json'
+        end
+        it 'responds with a success' do
+          assert_response :success
+        end
+
+        it 'responds with the correct keys' do
+          expect(response.parsed_body.keys.to_set).to eq Set[
+            'data', 'criteriaColumns', 'numAssigned', 'numMarked'
+          ]
+        end
+      end
+
+      context 'requests a CSV response' do
+        before do
+          post_as user, :summary, params: { id: assignment.id }, format: 'csv'
+        end
+        it 'responds with a success' do
+          assert_response :success
+        end
+      end
+    end
+  end
 end
