@@ -11,6 +11,7 @@ class SubmissionsController < ApplicationController
                          :file_manager,
                          :update_files,
                          :get_file,
+                         :get_feedback_file,
                          :download,
                          :downloads,
                          :download_groupings_files,
@@ -31,7 +32,8 @@ class SubmissionsController < ApplicationController
   before_action :authorize_for_student,
                 only: [:file_manager]
   before_action :authorize_for_user,
-                only: [:download, :downloads, :get_file, :populate_file_manager, :update_files]
+                only: [:download, :downloads, :get_feedback_file, :get_file,
+                       :populate_file_manager, :update_files]
 
   def index
     respond_to do |format|
@@ -433,6 +435,21 @@ class SubmissionsController < ApplicationController
         end
       end
     end
+  end
+
+  def get_feedback_file
+    assignment = Assignment.find(params[:assignment_id])
+    submission = assignment.submissions.find(params[:id])
+    authorize! submission
+
+    feedback_file = submission.feedback_files.find(params[:feedback_file_id])
+    if feedback_file.mime_type.start_with? 'image'
+      content = Base64.encode64(feedback_file.file_content)
+    else
+      content = feedback_file.file_content
+    end
+
+    render plain: content
   end
 
   def download

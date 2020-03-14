@@ -19,7 +19,8 @@ export class FeedbackFilePanel extends React.Component {
 
   fetchFeedbackFile = () => {
     $.get({
-      url: Routes.render_feedback_file_assignment_path(this.props.assignment_id),
+      url: Routes.get_feedback_file_assignment_submission_path(
+        this.props.assignment_id, this.props.submission_id),
       data: {feedback_file_id: this.state.selectedFile}
     }).then((data, status, request) => {
       this.setState({
