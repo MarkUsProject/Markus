@@ -72,7 +72,6 @@ Rails.application.routes.draw do
         get 'download_starter_code'
         get 'peer_review'
         get 'summary'
-        get 'csv_summary'
         get 'batch_runs'
         post 'set_boolean_graders_options'
         get 'stop_test'
