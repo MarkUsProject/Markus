@@ -119,11 +119,11 @@ describe 'An Assignment' do
                      locale: 'en')
     end
 
-    it 'routes GET student_interface properly' do
-      expect(get: path + '/' + assignment.id.to_s + '/student_interface')
+    it 'routes GET show properly' do
+      expect(get: path + '/' + assignment.id.to_s)
         .to route_to(
           controller: ctrl,
-          action: 'student_interface',
+          action: 'show',
           id: assignment.id.to_s,
           locale: 'en')
     end

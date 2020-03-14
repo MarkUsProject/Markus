@@ -563,9 +563,7 @@ class ResultsController < ApplicationController
     if current_user.student?
       @grouping = current_user.accepted_grouping_for(@assignment.id)
       if @grouping.nil?
-        redirect_to controller: 'assignments',
-                    action: 'student_interface',
-                    id: params[:id]
+        redirect_to assignment_path(params[:id])
         return
       end
       unless is_review || @grouping.has_submission?
@@ -594,9 +592,7 @@ class ResultsController < ApplicationController
 
     # TODO Review the various code flows, the duplicate checks are a temporary stop-gap
     if @grouping.nil?
-      redirect_to controller: 'assignments',
-                  action: 'student_interface',
-                  id: params[:id]
+      redirect_to assignment_path(params[:id])
       return
     end
     unless is_review || @grouping.has_submission?
