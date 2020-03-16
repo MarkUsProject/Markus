@@ -6,7 +6,7 @@ namespace :db do
     Faker::Config.random = Random.new(42) # seeds the random number generator so Faker output is deterministic
     students = Student.all
     Assignment.all.each do |assignment|
-      num_groups = (assignment.short_identifier == 'A1' || assignment.short_identifier == 'A3') ? 10 : 15
+      num_groups = (assignment.short_identifier == 'A1' || assignment.short_identifier == 'A3') ? students.length : 15
       num_groups.times do |time|
         student = students[time]
         # if this is an individual assignment
@@ -36,14 +36,14 @@ namespace :db do
             note = Faker::Movies::PrincessBride.quote
             Extension.create(grouping: grouping, time_delta: 1.week, note: note)
         end
-        # group.access_repo do |repo|
-        #   # add files to the root folder of the repo (e.g. "A1")
-        #   # recursively copying contents(files & directories) inside the file_dir
-        #   txn = repo.get_transaction(group.grouping_for_assignment(assignment.id).inviter.user_name)
-        #   file_dir  = File.join(File.dirname(__FILE__), '/../../db/data/submission_files')
-        #   copy_dir(file_dir, txn, assignment.repository_folder)
-        #   repo.commit(txn)
-        # end
+        group.access_repo do |repo|
+          # add files to the root folder of the repo (e.g. "A1")
+          # recursively copying contents(files & directories) inside the file_dir
+          txn = repo.get_transaction(group.grouping_for_assignment(assignment.id).inviter.user_name)
+          file_dir  = File.join(File.dirname(__FILE__), '/../../db/data/submission_files')
+          copy_dir(file_dir, txn, assignment.repository_folder)
+          repo.commit(txn)
+        end
       end
     end
     Repository.get_class.update_permissions
