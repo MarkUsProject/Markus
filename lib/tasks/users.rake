@@ -48,9 +48,6 @@ namespace :db do
       i += rand(10 ** 7)
       student.update_attribute(:id_number, sprintf('%010d', i))
       student.update_attribute(:grace_credits, 5)
-      if student.id == 10
-        student.update_attribute(:email, 'ignaspan@gmail.com')
-      end
     end
   end
 end

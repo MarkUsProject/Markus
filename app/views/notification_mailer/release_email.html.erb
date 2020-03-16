@@ -4,22 +4,20 @@
   </div>
   <hr class="divider">
   <p class="to_text dark-scheme">
-    Hello <%= @user.first_name %> <%= @user.last_name %>,
+    <%= t('greeting', first_name: @user.first_name, last_name: @user.last_name) %>
   </p>
   <p class="body_text dark-scheme">
-    Your marks for <%= @grouping.assignment.short_identifier %>
-    have now been released on Markus and can be viewed.
+    <%= t('text_body', assignment: @grouping.assignment.short_identifier) %>
   </p>
   <div class="button_enclosure">
-    <%= link_to 'View Assignment Results',
+    <%= link_to t('button_text'),
                 view_marks_assignment_submission_result_url(assignment_id: @grouping.assignment.id,
                                                             submission_id: @grouping.current_submission_used.id,
                                                             id: @grouping.current_result.id),
-                :style => 'color:#FFFFFF;',
-                :class => "redirectbutton" %>
+                class: 'redirectbutton' %>
   </div>
   <p class="alert_text dark-scheme">
-    This is an automated email. Please do not reply.
+    <%= t('disclaimer') %>
   </p>
 </div>
 
