@@ -185,7 +185,7 @@ class MemoryRepository < Repository::AbstractRepository
     (@revision_history + [@current_revision]).reverse_each do |revision|
       return nil if !later_than.nil? && revision.server_timestamp <= later_than
       return revision if revision.server_timestamp <= at_or_earlier_than &&
-                         (path.nil? || revision.revision_at_path(path))
+                         (path.nil? || revision.changes_at_path?(path))
     end
     nil
   end
