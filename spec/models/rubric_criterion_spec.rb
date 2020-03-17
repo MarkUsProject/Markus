@@ -233,6 +233,7 @@ describe RubricCriterion do
         context 'allow a criterion with the same name to add levels' do
           it 'not raise error' do
             RubricCriterion.create_or_update_from_csv_row(@csv_base_row, @assignment)
+            @criterion.reload
             levels = @criterion.levels
             expect(levels[0].mark).to eq(0.0)
             expect(levels.length).to eq(10)
