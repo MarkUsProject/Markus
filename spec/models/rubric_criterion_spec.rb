@@ -248,7 +248,7 @@ describe RubricCriterion do
       @levels = @criterion.levels
     end
 
-    context 'when scaling' do
+    context 'when scaling max mark' do
       describe 'can scale levels up' do
         it 'not raise error' do
           expect(@levels[1].mark).to eq(1.0)
@@ -262,6 +262,15 @@ describe RubricCriterion do
           expect(@levels[1].mark).to eq(1.0)
           @criterion.update(max_mark: 2.0)
           expect(@levels[1].mark).to eq(0.5)
+        end
+      end 
+
+      describe 'manually changed levels won\'t be affected' do
+        it 'not raise error' do
+          expect(@levels[1].mark).to eq(1.0)
+          @levels[1].mark = 3
+          @criterion.update(max_mark: 8.0)
+          expect(@levels[1].mark).to eq(3.0)
         end
       end
     end
