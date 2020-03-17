@@ -275,7 +275,7 @@ describe RubricCriterion do
       end
     end
   end
-  
+
   context 'A rubric criteria with levels' do
     before(:each) do
       @criterion = create(:rubric_criterion)
