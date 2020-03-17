@@ -14,14 +14,14 @@
   <tr>
     <td><%= t(:average) %></td>
     <td>
-      <%= number_to_percentage(assignment.assignment_properties.results_average || 0, precision: 1) %>
+      <%= number_to_percentage(assignment.results_average || 0, precision: 1) %>
     </td>
   </tr>
 
   <tr>
     <td><%= t(:median) %></td>
     <td>
-      <%= number_to_percentage(assignment.assignment_properties.results_median || 0, precision: 1) %>
+      <%= number_to_percentage(assignment.results_median || 0, precision: 1) %>
     </td>
   </tr>
 
@@ -43,14 +43,14 @@
   <tr>
     <td><%= t(:num_failed) %></td>
     <td>
-      <%= "#{assignment.assignment_properties.results_fails || 0}" %>
+      <%= "#{assignment.results_fails || 0}" %>
     </td>
   </tr>
 
   <tr>
     <td><%= t(:num_zeros) %></td>
     <td>
-      <%= "#{assignment.assignment_properties.results_zeros || 0}" %>
+      <%= "#{assignment.results_zeros || 0}" %>
     </td>
   </tr>
 </table>

@@ -16,7 +16,7 @@
             <% # makes sure assignment ID of peer review action is the
                # original assignment ID
                original_aid = assignment.id
-               if assignment.assignment_properties.has_peer_review?
+               if assignment.has_peer_review?
                 peer_review_aid = assignment.pr_assignment.id
                end %>
             <% unless assignment.is_peer_review? %>

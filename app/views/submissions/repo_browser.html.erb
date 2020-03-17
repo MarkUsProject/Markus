@@ -14,7 +14,7 @@
 <% end %>
 
 <% content_for :title do %>
-  <% if !@current_user.admin? && @grouping.assignment.assignment_properties.anonymize_groups %>
+  <% if !@current_user.admin? && @grouping.assignment.anonymize_groups %>
     <%= t('submissions.repo_browser.repository_name', repository: "#{Group.model_name.human} #{@grouping.id}") %>
   <% else %>
     <%= t('submissions.repo_browser.repository_name', repository: @grouping.group.repository_name) %>

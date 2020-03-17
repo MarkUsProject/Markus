@@ -59,12 +59,12 @@ class ResultsController < ApplicationController
             @current_user.admin? || @current_user.ta? || is_reviewer,
           revision_identifier: submission.revision_identifier,
           instructor_run: true,
-          allow_remarks: assignment.assignment_properties.allow_remarks,
+          allow_remarks: assignment.allow_remarks,
           remark_submitted: remark_submitted,
           remark_request_text: submission.remark_request,
           remark_request_timestamp: submission.remark_request_timestamp,
-          assignment_remark_message: assignment.assignment_properties.remark_message,
-          remark_due_date: assignment.assignment_properties.remark_due_date,
+          assignment_remark_message: assignment.remark_message,
+          remark_due_date: assignment.remark_due_date,
           past_remark_due_date: assignment.past_remark_due_date?,
           is_reviewer: is_reviewer,
           student_view: @current_user.student? && !is_reviewer
@@ -84,7 +84,7 @@ class ResultsController < ApplicationController
           end
         end
 
-        if assignment.assignment_properties.enable_test
+        if assignment.enable_test
           begin
             authorize! assignment, to: :run_tests?
             authorize! grouping, to: :run_tests?
@@ -139,7 +139,7 @@ class ResultsController < ApplicationController
           data[:notes_count] = submission.grouping.notes.count
           data[:num_marked] = assignment.get_num_marked(current_user.admin? ? nil : current_user.id)
           data[:num_assigned] = assignment.get_num_assigned(current_user.admin? ? nil : current_user.id)
-          if current_user.ta? && assignment.assignment_properties.anonymize_groups
+          if current_user.ta? && assignment.anonymize_groups
             data[:group_name] = "#{Group.model_name.human} #{submission.grouping.id}"
           else
             data[:group_name] = submission.grouping.get_group_name
@@ -186,12 +186,12 @@ class ResultsController < ApplicationController
           old_marks = original_result.mark_hash
         end
 
-        if assignment.assignment_properties.assign_graders_to_criteria && current_user.ta?
+        if assignment.assign_graders_to_criteria && current_user.ta?
           assigned_criteria = current_user.criterion_ta_associations
                                           .where(assessment_id: assignment.id)
                                           .pluck(:criterion_type, :criterion_id)
                                           .map { |t, id| "#{t}-#{id}" }
-          if assignment.assignment_properties.hide_unassigned_criteria
+          if assignment.hide_unassigned_criteria
             marks_map = marks_map.select { |m| assigned_criteria.include? "#{m[:criterion_type]}-#{m[:id]}" }
             old_marks = old_marks.select { |m| assigned_criteria.include? m }
           else
@@ -214,7 +214,7 @@ class ResultsController < ApplicationController
         # Grace token deductions
         if is_reviewer
           data[:grace_token_deductions] = []
-        elsif current_user.ta? && assignment.assignment_properties.anonymize_groups
+        elsif current_user.ta? && assignment.anonymize_groups
           data[:grace_token_deductions] = []
 
         else
@@ -256,7 +256,7 @@ class ResultsController < ApplicationController
       @authorized = true
     rescue ActionPolicy::Unauthorized => e
       @authorized = false
-      if @assignment.assignment_properties.enable_test
+      if @assignment.enable_test
         flash_now(:notice, e.result.reasons.full_messages.join(' '))
       end
     end
@@ -477,7 +477,7 @@ class ResultsController < ApplicationController
     assignment = Assignment.find(params[:assignment_id])
     grouping = Grouping.find(submission.grouping_id)
     revision_identifier = submission.revision_identifier
-    repo_folder = assignment.assignment_properties.repository_folder
+    repo_folder = assignment.repository_folder
     zip_name = "#{repo_folder}-#{grouping.group.repo_name}"
 
     zip_path = if params[:include_annotations] == 'true'

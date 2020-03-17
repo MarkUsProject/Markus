@@ -43,7 +43,7 @@ describe Api::SubmissionFilesController do
       group.access_repo do |repo|
         txn = repo.get_transaction(grouping.inviter.user_name)
         file_content.each_with_index do |content, i|
-          filepath = File.join(assignment.assignment_properties.repository_folder, file_names[i])
+          filepath = File.join(assignment.repository_folder, file_names[i])
           txn.add(filepath, content)
         end
         repo.commit(txn)
@@ -59,7 +59,7 @@ describe Api::SubmissionFilesController do
       it 'should create a file in the corresponding directory' do
         path = Pathname.new('v1/x/y')
         success, _messages = group.access_repo do |repo|
-          file_path = Pathname.new(assignment.assignment_properties.repository_folder).join path
+          file_path = Pathname.new(assignment.repository_folder).join path
           files = repo.get_latest_revision.files_at_path(file_path.to_s)
           files.keys.include? 'test.txt'
         end
@@ -74,7 +74,7 @@ describe Api::SubmissionFilesController do
           path = Pathname.new('v1/x/y')
           file_contents = ''
           group.access_repo do |repo|
-            file_path = Pathname.new(assignment.assignment_properties.repository_folder).join path
+            file_path = Pathname.new(assignment.repository_folder).join path
             file = repo.get_latest_revision.files_at_path(file_path.to_s)['test.txt']
             file_contents = repo.download_as_string(file)
           end
@@ -94,7 +94,7 @@ describe Api::SubmissionFilesController do
       it 'should create folders in the corresponding directory' do
         path = Pathname.new('a/b/c')
         success, _messages = group.access_repo do |repo|
-          file_path = Pathname.new(assignment.assignment_properties.repository_folder).join path
+          file_path = Pathname.new(assignment.repository_folder).join path
           repo.get_latest_revision.path_exists?(file_path.to_s)
         end
         expect(success).to be_truthy

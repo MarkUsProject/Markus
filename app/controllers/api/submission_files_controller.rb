@@ -48,7 +48,7 @@ module Api
           else
             revision = repo.get_latest_revision
           end
-          file = revision.files_at_path(File.join(assignment.assignment_properties.repository_folder, path))[file_name]
+          file = revision.files_at_path(File.join(assignment.repository_folder, path))[file_name]
           if file.nil?
             render 'shared/http_status', locals: { code: '422', message:
               HttpStatusHelper::ERROR_CODE['message']['422'] }, status: 422
@@ -77,7 +77,7 @@ module Api
             else
               revision = repo.get_latest_revision
             end
-            repo.send_tree_to_zip(assignment.assignment_properties.repository_folder,
+            repo.send_tree_to_zip(assignment.repository_folder,
                                   zip_file, zip_name + group.group_name, revision)
           end
         end
@@ -115,7 +115,7 @@ module Api
                                                       filename: params[:filename],
                                                       type: params[:mime_type])
         success, messages = grouping.group.access_repo do |repo|
-          path = Pathname.new(grouping.assignment.assignment_properties.repository_folder)
+          path = Pathname.new(grouping.assignment.repository_folder)
           add_files([file], @current_user, repo, path: path)
         end
       ensure
@@ -149,7 +149,7 @@ module Api
       end
       success, messages = grouping.group.access_repo do |repo|
         new_folders = Pathname.new(params[:folder_path])
-        path = Pathname.new(grouping.assignment.assignment_properties.repository_folder)
+        path = Pathname.new(grouping.assignment.repository_folder)
         add_folders([new_folders], @current_user, repo, path: path)
       end
       message_string = messages.map { |type, *msg| "#{type}: #{msg}" }.join("\n")

@@ -54,7 +54,7 @@ class SubmissionsController < ApplicationController
       collected_submission = @grouping.current_submission_used
 
       # generate a history of relevant revisions (i.e. only related to the assignment) with date and identifier
-      assignment_path = @grouping.assignment.assignment_properties.repository_folder
+      assignment_path = @grouping.assignment.repository_folder
       assignment_revisions = []
       all_revisions = repo.get_all_revisions
       all_revisions.each do |revision|
@@ -138,7 +138,7 @@ class SubmissionsController < ApplicationController
                     locals: {missing_assignment_files: @missing_assignment_files})
     end
 
-    if @assignment.assignment_properties.allow_web_submits && @assignment.assignment_properties.vcs_submit
+    if @assignment.allow_web_submits && @assignment.vcs_submit
       flash_message(:notice, t('submissions.student.version_control_warning'))
     end
     render 'file_manager', layout: 'assignment_content', locals: {}
@@ -276,14 +276,14 @@ class SubmissionsController < ApplicationController
     self.class.layout 'assignment_content'
 
     return if current_user.ta?
-    return if @assignment.assignment_properties.scanned_exam
+    return if @assignment.scanned_exam
 
     if @assignment.past_all_collection_dates?
       flash_now(:success, t('submissions.grading_can_begin'))
       return
     end
 
-    if @assignment.assignment_properties.section_due_dates_type
+    if @assignment.section_due_dates_type
       section_due_dates = Hash.new
       now = Time.zone.now
       Section.find_each do |section|
@@ -317,7 +317,7 @@ class SubmissionsController < ApplicationController
   def update_files
     assignment_id = params[:assignment_id]
     @assignment = Assignment.find(assignment_id)
-    if current_user.student? && !@assignment.assignment_properties.allow_web_submits
+    if current_user.student? && !@assignment.allow_web_submits
       raise t('student.submission.external_submit_only')
     end
 
@@ -357,8 +357,8 @@ class SubmissionsController < ApplicationController
         # Create transaction, setting the author.  Timestamp is implicit.
         txn = repo.get_transaction(current_user.user_name)
         should_commit = true
-        path = Pathname.new(@grouping.assignment.assignment_properties.repository_folder).join(@path.gsub(%r{^/}, ''))
-        only_required = @grouping.assignment.assignment_properties.only_required_files
+        path = Pathname.new(@grouping.assignment.repository_folder).join(@path.gsub(%r{^/}, ''))
+        only_required = @grouping.assignment.only_required_files
         required_files = only_required ? @grouping.assignment.assignment_files.pluck(:filename) : nil
         if delete_files.present?
           success, msgs = remove_files(delete_files, current_user, repo, path: path, txn: txn)
@@ -494,7 +494,7 @@ class SubmissionsController < ApplicationController
         group_name = grouping.group.repo_name
         grouping.group.access_repo do |repo|
           revision = repo.get_revision(revision_id)
-          repo.send_tree_to_zip(assignment.assignment_properties.repository_folder,
+          repo.send_tree_to_zip(assignment.repository_folder,
                                 zip_file, zip_name + group_name, revision)
         rescue Repository::RevisionDoesNotExist
           next
@@ -530,7 +530,7 @@ class SubmissionsController < ApplicationController
         end
       end
 
-      files = revision.files_at_path(assignment.assignment_properties.repository_folder)
+      files = revision.files_at_path(assignment.repository_folder)
       if files.count == 0
         flash_message(:error, t('submissions.no_files_available'))
         redirect_back(fallback_location: root_path)
@@ -541,7 +541,7 @@ class SubmissionsController < ApplicationController
                  "#{revision.revision_identifier}.zip"
       # Open Zip file and fill it with all the files in the repo_folder
       Zip::File.open(zip_path, Zip::File::CREATE) do |zip_file|
-        repo.send_tree_to_zip(assignment.assignment_properties.repository_folder, zip_file, zip_name, revision)
+        repo.send_tree_to_zip(assignment.repository_folder, zip_file, zip_name, revision)
       end
 
       send_file zip_path, filename: zip_name + '.zip'
@@ -642,7 +642,7 @@ class SubmissionsController < ApplicationController
   def set_filebrowser_vars(grouping)
     grouping.group.access_repo do |repo|
       @revision = repo.get_latest_revision
-      @files = @revision.files_at_path(File.join(grouping.assignment.assignment_properties.repository_folder, @path))
+      @files = @revision.files_at_path(File.join(grouping.assignment.repository_folder, @path))
       @missing_assignment_files = grouping.missing_assignment_files(@revision)
     end
   end
@@ -650,10 +650,10 @@ class SubmissionsController < ApplicationController
   # Recursively return data for all files in a submission.
   # Based on Submission#populate_with_submission_files.
   def get_all_file_data(revision, grouping, path)
-    full_path = File.join(grouping.assignment.assignment_properties.repository_folder, path)
+    full_path = File.join(grouping.assignment.repository_folder, path)
     return [] unless revision.path_exists?(full_path)
 
-    anonymize = current_user.ta? && grouping.assignment.assignment_properties.anonymize_groups
+    anonymize = current_user.ta? && grouping.assignment.anonymize_groups
 
     entries = revision.tree_at_path(full_path).sort do |a, b|
       a[0].count(File::SEPARATOR) <=> b[0].count(File::SEPARATOR) # less nested first

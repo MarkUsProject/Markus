@@ -15,7 +15,7 @@
 <%= form_for @assignment do |f| %>
   <%= f.fields_for :assignment_properties do |ap_f| %>
 
-    <input type="hidden" name="assignment.assignment_properties[scanned_exam]" value="<%= @assignment.assignment_properties.scanned_exam %>">
+    <input type="hidden" name="assignment.assignment_properties[scanned_exam]" value="<%= @assignment.scanned_exam %>">
 
     <label class='required'><%= t('required_fields') %></label>
 
@@ -72,7 +72,7 @@
         </div>
 
         <div id='section_due_dates_information'
-             style='<%= 'display: none' unless @assignment.assignment_properties.section_due_dates_type %>'>
+             style='<%= 'display: none' unless @assignment.section_due_dates_type %>'>
           <p class='information'>
             <%= t('assignments.form.section_due_dates_info_html') %>
           </p>
@@ -111,7 +111,7 @@
                          placeholder: t('time.format_string.placeholder') %>
       </div>
 
-      <% unless @assignment.assignment_properties.scanned_exam %>
+      <% unless @assignment.scanned_exam %>
       <div>
         <%= ap_f.check_box :allow_web_submits,
                            onclick: 'set_onbeforeunload(true);' %>
@@ -154,7 +154,7 @@
       </div>
     </fieldset>
 
-    <% if !@assignment.assignment_properties.scanned_exam %>
+    <% if !@assignment.scanned_exam %>
     <%# Required files %>
     <fieldset>
       <legend>
@@ -213,8 +213,8 @@
       <% end %>
       <p id='is_group_assignment_style'>
         <%= check_box_tag :is_group_assignment, true,
-                          @assignment.assignment_properties.student_form_groups ||
-                          @assignment.assignment_properties.invalid_override,
+                          @assignment.student_form_groups ||
+                          @assignment.invalid_override,
                           onchange: 'set_onbeforeunload(true);' %>
         <%= label_tag :is_group_assignment,
                       Assignment.human_attribute_name(:allow_groups) %>
@@ -426,8 +426,8 @@
           <%= ap_f.label :remark_due_date, Assignment.human_attribute_name(:remark_due_date) %>
           <%= ap_f.text_field :remark_due_date,
                               onchange: 'set_onbeforeunload(true);',
-                              value: @assignment.assignment_properties.remark_due_date.nil? ? '' :
-                                     @assignment.assignment_properties.remark_due_date.strftime(
+                              value: @assignment.remark_due_date.nil? ? '' :
+                                     @assignment.remark_due_date.strftime(
                                        '%Y-%m-%d %l:%M %p'),
                               size: 35 %>
         </p>

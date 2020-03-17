@@ -98,7 +98,7 @@ module SessionHandler
       assignment = Assignment.find(aid)
     end
     unless authorized?(Admin) || authorized?(Ta) ||
-        (authorized?(Student) && assignment.assignment_properties.has_peer_review &&
+        (authorized?(Student) && assignment.has_peer_review &&
             current_user.is_reviewer_for?(assignment.pr_assignment, result))
       render 'shared/http_status', formats: [:html],
              locals:

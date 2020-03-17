@@ -160,7 +160,7 @@ class ExamTemplate < ApplicationRecord
         # add assignment files based on template divisions
         group.access_repo do |repo|
           revision = repo.get_latest_revision
-          assignment_folder = self.assignment.assignment_properties.repository_folder
+          assignment_folder = self.assignment.repository_folder
           txn = repo.get_transaction(Admin.first.user_name)
           self.template_divisions.each do |template_division|
             next unless template_division.start <= page_num.to_i && page_num.to_i <= template_division.end

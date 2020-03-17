@@ -250,7 +250,7 @@ class GroupsController < ApplicationController
 
   def create_groups_when_students_work_alone
     @assignment = Assignment.find(params[:assignment_id])
-    if @assignment.assignment_properties.group_max == 1
+    if @assignment.group_max == 1
       # data is a list of lists containing: [[group_name, repo_name, group_member], ...]
       data = Student.where(hidden: false).pluck(:user_name).map { |user_name| [user_name] * 3 }
       @current_job = CreateGroupsJob.perform_later @assignment, data
@@ -553,8 +553,8 @@ class GroupsController < ApplicationController
     students_in_group = grouping.student_membership_number
     group_name = grouping.group.group_name
 
-    return unless assignment.assignment_properties.student_form_groups
-    return unless students_in_group > assignment.assignment_properties.group_max
+    return unless assignment.student_form_groups
+    return unless students_in_group > assignment.group_max
 
     raise I18n.t('groups.assign_over_limit', group: group_name)
   end

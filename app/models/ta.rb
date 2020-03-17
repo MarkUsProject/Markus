@@ -11,7 +11,7 @@ class Ta < User
   BLANK_MARK = ''
 
   def get_criterion_associations_by_assignment(assignment)
-    if assignment.assignment_properties.assign_graders_to_criteria
+    if assignment.assign_graders_to_criteria
       criterion_ta_associations.includes(:assignment, :criterion).select do |association|
         association.assignment == assignment
       end

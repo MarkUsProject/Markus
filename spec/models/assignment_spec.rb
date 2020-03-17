@@ -98,7 +98,7 @@ describe Assignment do
     end
     it 'should not allow the repository_folder to be updated' do
       assignment = create(:assignment)
-      assignment.assignment_properties.repository_folder = assignment.assignment_properties.repository_folder + 'something'
+      assignment.repository_folder = assignment.repository_folder + 'something'
       expect(assignment).not_to be_valid
     end
   end
@@ -646,8 +646,8 @@ describe Assignment do
         number = StudentMembership.all.size + TaMembership.all.size
         clone.clone_groupings_from(@assignment.id)
         clone.groupings.reload  # clone.groupings needs to be "reloaded" to obtain the updated value (5 groups created)
-        expect(@assignment.assignment_properties.group_min).to eql(clone.assignment_properties.group_min)
-        expect(@assignment.assignment_properties.group_max).to eql(clone.assignment_properties.group_max)
+        expect(@assignment.group_min).to eql(clone.group_min)
+        expect(@assignment.group_max).to eql(clone.group_max)
         expect(@assignment.groupings.size).to eql(clone.groupings.size)
         # Since we clear between each test, there should be twice as much as previously
         expect(2 * number).to eql(StudentMembership.all.size + TaMembership.all.size)
@@ -1508,19 +1508,19 @@ describe Assignment do
       end
 
       it 'updates results_zeros' do
-        expect(assignment.assignment_properties.results_zeros).to eq 1
+        expect(assignment.results_zeros).to eq 1
       end
 
       it 'updates results_fails' do
-        expect(assignment.assignment_properties.results_fails).to eq 3
+        expect(assignment.results_fails).to eq 3
       end
 
       it 'updates results_average' do
-        expect(assignment.assignment_properties.results_average).to eq 30
+        expect(assignment.results_average).to eq 30
       end
 
       it 'updates results_median to the average of the two middle marks' do
-        expect(assignment.assignment_properties.results_median).to eq 25
+        expect(assignment.results_median).to eq 25
       end
 
       context 'when max_mark is 0' do
@@ -1530,11 +1530,11 @@ describe Assignment do
         end
 
         it 'updates results_average to 0' do
-          expect(assignment.assignment_properties.results_average).to eq 0
+          expect(assignment.results_average).to eq 0
         end
 
         it 'updates results_median to 0' do
-          expect(assignment.assignment_properties.results_median).to eq 0
+          expect(assignment.results_median).to eq 0
         end
       end
     end
@@ -1546,7 +1546,7 @@ describe Assignment do
       end
 
       it 'updates results_median to the middle mark' do
-        expect(assignment.assignment_properties.results_median).to eq 40
+        expect(assignment.results_median).to eq 40
       end
     end
   end

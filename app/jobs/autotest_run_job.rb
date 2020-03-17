@@ -27,7 +27,7 @@ class AutotestRunJob < ApplicationJob
     end
     # export the repo files
     required_files = nil
-    if assignment.assignment_properties.only_required_files
+    if assignment.only_required_files
       required_files = assignment.assignment_files.map { |af| File.join(assignment_path, af.filename) }.to_set
     end
     group.access_repo do |repo|
