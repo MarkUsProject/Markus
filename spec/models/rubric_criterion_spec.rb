@@ -305,4 +305,10 @@ describe RubricCriterion do
       end
     end
   end
+
+  context 'from an assignment without criteria' do
+    before(:each) do
+      @rubric = create(:rubric_criterion)
+      @levels = create(:levels)
+    end
 end
