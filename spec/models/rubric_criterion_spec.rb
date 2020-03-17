@@ -35,6 +35,7 @@ describe RubricCriterion do
     it 'sets default levels' do
       assignment = create(:assignment)
       rubric = create(:rubric_criterion, assignment: assignment)
+      rubric.levels.delete_all
       rubric.set_default_levels
       levels = rubric.levels
       expect(levels[0].name).to eq(I18n.t('rubric_criteria.defaults.level_0'))
@@ -183,10 +184,9 @@ describe RubricCriterion do
         # order is name, number, description, mark
         (0..rubric_levels - 1).each do |i|
           row << 'name' + i.to_s
-          row << i
           # ...containing commas and quotes in the descriptions
           row << 'description' + i.to_s + ' with comma (,) and ""quotes""'
-          row << i
+          row << i + 5
         end
         @csv_base_row = row
       end
@@ -194,6 +194,7 @@ describe RubricCriterion do
       context 'and there is an existing rubric criterion with the same name' do
         before(:each) do
           @criterion = create(:rubric_criterion, assignment: @assignment)
+          @criterion.levels.delete_all
           @criterion.set_default_levels
           # 'criterion 5' is the name used in the criterion held
           # in @csv_base_row - but they use different level names/descriptions.
@@ -213,7 +214,6 @@ describe RubricCriterion do
             # order is name, number, description, mark
             (0..@criterion.levels.length - 1).each do |i|
               row << names[i]
-              row << i
               # ...containing commas and quotes in the descriptions
               row << 'new description number ' + i.to_s
               row << i
