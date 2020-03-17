@@ -306,9 +306,14 @@ describe RubricCriterion do
     end
   end
 
-  context 'from an assignment without criteria' do
+  context 'A rubric criteria with levels' do
     before(:each) do
-      @rubric = create(:rubric_criterion)
-      @levels = create(:levels)
+      @criterion = create(:rubric_criterion)
+      @levels = @criterion.levels
     end
+
+    it 'cannot have two levels with the same mark' do
+      expect(@levels[0].update(mark: 1)).to be false
+    end
+  end
 end
