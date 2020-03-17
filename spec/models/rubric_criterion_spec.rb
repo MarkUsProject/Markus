@@ -241,6 +241,10 @@ describe RubricCriterion do
         end
       end
     end
+
+    it 'cannot have max mark greater than the highest level mark' do
+      expect(@criterion.update(max_mark: 10)).to be false
+    end
   end
 
   context 'A rubric criteria with levels' do
