@@ -38,11 +38,11 @@ module SubmissionsHelper
       Result.where(id: groupings.joins(:current_result).pluck('results.id'))
             .update_all(released_to_students: release)
     end
-    return if(not release)
-      groupings.each do |grouping|
-        grouping.accepted_students.each do |student|
-          NotificationMailer.with(user: student, grouping: grouping).release_email.deliver_now
-        end
+    return unless release
+
+    groupings.each do |grouping|
+      grouping.accepted_students.each do |student|
+        NotificationMailer.with(user: student, grouping: grouping).release_email.deliver_now
       end
     end
   end

@@ -1,13 +1,12 @@
-require 'rails_helper'
 RSpec.describe NotificationMailer, type: :mailer do
   describe 'release_email' do
-    let(:user) { mock_model User, first_name: 'Ignas', last_name: 'Panero Armoska', email: 'ignaspan@gmail.com' }
-    let(:fake_assignment) { mock_model Assignment, short_identifier: 'A2'}
-    let(:grouping) { mock_model Grouping, assignment: fake_assignment}
+    let(:user) { create(:user) }
+    let(:fake_assignment) { create(:user) }
+    let(:grouping) { create(:grouping, assignment: fake_assignment) }
     let(:mail) { described_class.with(user: user, grouping: grouping).release_email.deliver_now }
 
     it 'renders the subject' do
-      expect(mail.subject).to eq('MarkUs Notification NOT SURE FOR COURSE Your marks for A2 have released!')
+      expect(mail.subject).to eq('MarkUs Notification (' + Rails.configuration.course_name + ') Your marks for A2 have released!')
     end
 
     it 'renders the receiver email' do
@@ -18,14 +17,19 @@ RSpec.describe NotificationMailer, type: :mailer do
       expect(mail.from).to eq(['noreply@markus.com'])
     end
 
+    puts mail.body.to_s
+
     # not sure what these do
-    it 'assigns @name' do
-      expect(mail.body.encoded).to match(user.name)
+    it 'renders the student name in the body of the email.' do
+      expect(email.body.to_s).to match(/"#{user.first_name} #{user.last_name}"/)
     end
 
-    it 'assigns @confirmation_url' do
-      expect(mail.body.encoded)
-          .to match("http://aplication_url/#{user.id}/confirmation")
+    it 'renders the disclaimer in the body of the email.' do
+      expect(email.body.to_s).to match(/This is an automated email. Please do not reply./)
+    end
+
+    it 'renders the assignment in the body of the email.' do
+      expect(email.body.to_s).to match("#{fake_assignment.short_identifier}")
     end
   end
 end
