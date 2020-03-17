@@ -263,7 +263,7 @@ describe RubricCriterion do
           @criterion.update(max_mark: 2.0)
           expect(@levels[1].mark).to eq(0.5)
         end
-      end 
+      end
 
       describe 'manually changed levels won\'t be affected' do
         it 'not raise error' do
