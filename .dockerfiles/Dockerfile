@@ -47,6 +47,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install -yq --no-install-recommends \
     libmagickwand-dev \
     cmake \
     libssh2-1-dev \
+    openssh-client \
     libaprutil1-dev \
     libssl-dev \
     swig \
