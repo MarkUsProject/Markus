@@ -3,32 +3,25 @@ module ApplicationHelper
 
   # A more robust flash method. Easier to add multiple messages of each type:
   # :error, :success, :warning and :notice
-  def flash_message(type, text = '', **kwargs)
+  def flash_message(type, text = '', flash_type = flash, **kwargs)
     available_types = [:error, :success, :warning, :notice]
     # If type isn't one of the four above, we display it as :notice.
     # We don't want to suppress the message, which is why we pick a
     # type, and :notice is the most neutral of the four
     type = :notice unless available_types.include?(type)
     # If a flash with that type doesn't exist, create a new array
-    flash[type] ||= []
-    content = kwargs.empty? ? "<p>#{ text.to_s }</p>" : "#{ render_to_string(**kwargs) }".split("\n").join
+    flash_type[type] ||= []
+    content = kwargs.empty? ? "<p>#{ text.to_s.gsub(/\n/, '<br/>') }</p>" : "#{ render_to_string(**kwargs) }".split("\n").join
     # If the message doesn't already exist, add it
-    unless flash[type].include?(content)
-      flash[type].push(content)
+    unless flash_type[type].include?(content)
+      flash_type[type].push(content)
     end
   end
 
   # A version of flash_message using flash.now instead. This makes the flash
   # available only for the current action.
-  def flash_now(type, text)
-    available_types = [:error, :success, :warning, :notice]
-    type = :notice unless available_types.include?(type)
-
-    flash.now[type] ||= []
-    text = text.to_s
-    unless flash.now[type].include?(text)
-      flash.now[type].push(text)
-    end
+  def flash_now(type, text = '', **kwargs)
+    flash_message(type, text, flash.now, **kwargs)
   end
 
   def markdown(text)
