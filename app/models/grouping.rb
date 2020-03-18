@@ -193,8 +193,8 @@ class Grouping < ApplicationRecord
   end
 
   def get_group_name
-    return group.group_name if assignment.assignment_properties.group_max == 1 &&
-                               !assignment.assignment_properties.scanned_exam
+    return group.group_name if assignment.group_max == 1 &&
+                               !assignment.scanned_exam
 
     name = group.group_name
     student_names = accepted_students.map &:user_name
@@ -299,9 +299,9 @@ class Grouping < ApplicationRecord
       raise I18n.t('groups.invite_member.errors.inviting_self')
     elsif !extension.nil?
       raise I18n.t('groups.invite_member.errors.extension_exists')
-    elsif self.student_membership_number >= self.assignment.assignment_properties.group_max
+    elsif self.student_membership_number >= self.assignment.group_max
       raise I18n.t('groups.invite_member.errors.group_max_reached', user_name: user.user_name)
-    elsif self.assignment.assignment_properties.section_groups_only && user.section != self.inviter.section
+    elsif self.assignment.section_groups_only && user.section != self.inviter.section
       raise I18n.t('groups.invite_member.errors.not_same_section', user_name: user.user_name)
     elsif user.has_accepted_grouping_for?(self.assignment.id)
       raise I18n.t('groups.invite_member.errors.already_grouped', user_name: user.user_name)
@@ -326,7 +326,7 @@ class Grouping < ApplicationRecord
   # Returns true if either this Grouping has met the assignment group
   # size minimum, OR has been approved by an instructor
   def is_valid?
-    admin_approved || (non_rejected_student_memberships.size >= assignment.assignment_properties.group_min)
+    admin_approved || (non_rejected_student_memberships.size >= assignment.group_min)
   end
 
   # Validates a group
@@ -465,7 +465,7 @@ class Grouping < ApplicationRecord
     return unless Rails.configuration.x.repository.is_repository_admin # create folder only if we are repo admin
     result = true
     self.group.access_repo do |group_repo|
-      assignment_folder = self.assignment.assignment_properties.repository_folder
+      assignment_folder = self.assignment.repository_folder
       unless group_repo.get_latest_revision.path_exists?(assignment_folder)
         txn = group_repo.get_transaction('Markus', I18n.t('repo.commits.assignment_folder',
                                                           assignment: self.assignment.short_identifier))
@@ -489,7 +489,7 @@ class Grouping < ApplicationRecord
   end
 
   def assigned_tas_for_criterion(criterion)
-    if assignment.assignment_properties.assign_graders_to_criteria
+    if assignment.assign_graders_to_criteria
       tas.select do |ta|
         ta.criterion_ta_associations
           .where(criterion_id: criterion.id)
@@ -502,7 +502,7 @@ class Grouping < ApplicationRecord
 
   def all_assigned_criteria(ta_array)
     result = []
-    if assignment.assignment_properties.assign_graders_to_criteria
+    if assignment.assign_graders_to_criteria
       ta_array.each do |ta|
         result = result.concat(ta.get_criterion_associations_by_assignment(assignment))
       end
@@ -525,7 +525,7 @@ class Grouping < ApplicationRecord
   def missing_assignment_files(revision = nil)
     get_missing_assignment_files = lambda do |open_revision|
       assignment.assignment_files.reject do |assignment_file|
-        open_revision.path_exists?(File.join(assignment.assignment_properties.repository_folder, assignment_file.filename))
+        open_revision.path_exists?(File.join(assignment.repository_folder, assignment_file.filename))
       end
     end
     if revision.nil?
@@ -559,7 +559,7 @@ class Grouping < ApplicationRecord
       # get the last revision that changed the assignment repo folder after the due date; some repos may not be able to
       # optimize by due_date (returning nil), so a check with revision.server_timestamp is always necessary
       revision = repo.get_revision_by_timestamp(Time.current,
-                                                assignment.assignment_properties.repository_folder,
+                                                assignment.repository_folder,
                                                 grouping_due_date)
     end
     if revision.nil? || revision.server_timestamp <= grouping_due_date
@@ -637,24 +637,24 @@ class Grouping < ApplicationRecord
 
   def refresh_test_tokens
     assignment = self.assignment
-    if assignment.assignment_properties.unlimited_tokens || Time.current < assignment.assignment_properties.token_start_date
+    if assignment.unlimited_tokens || Time.current < assignment.token_start_date
       self.test_tokens = 0
     else
       last_student_run = test_runs_students_simple.first
       if last_student_run.nil?
-        self.test_tokens = assignment.assignment_properties.tokens_per_period
+        self.test_tokens = assignment.tokens_per_period
       else
         # divide time into chunks of token_period hours
         # recharge tokens only the first time they are used during the current chunk
-        hours_from_start = (Time.current - assignment.assignment_properties.token_start_date) / 3600
-        if assignment.assignment_properties.non_regenerating_tokens
-          last_period_begin = assignment.assignment_properties.token_start_date
+        hours_from_start = (Time.current - assignment.token_start_date) / 3600
+        if assignment.non_regenerating_tokens
+          last_period_begin = assignment.token_start_date
         else
-          periods_from_start = (hours_from_start / assignment.assignment_properties.token_period).floor
-          last_period_begin = assignment.assignment_properties.token_start_date + (periods_from_start * assignment.assignment_properties.token_period).hours
+          periods_from_start = (hours_from_start / assignment.token_period).floor
+          last_period_begin = assignment.token_start_date + (periods_from_start * assignment.token_period).hours
         end
         if last_student_run.created_at < last_period_begin
-          self.test_tokens = assignment.assignment_properties.tokens_per_period
+          self.test_tokens = assignment.tokens_per_period
         end
       end
     end
@@ -662,7 +662,7 @@ class Grouping < ApplicationRecord
   end
 
   def decrease_test_tokens
-    return unless !self.assignment.assignment_properties.unlimited_tokens && self.test_tokens > 0
+    return unless !self.assignment.unlimited_tokens && self.test_tokens > 0
     self.test_tokens -= 1
     save
   end
@@ -772,7 +772,7 @@ class Grouping < ApplicationRecord
   private
 
   def use_section_due_date?
-    assignment.assignment_properties.section_due_dates_type &&
+    assignment.section_due_dates_type &&
       inviter.present? &&
       inviter.section.present? &&
       assignment.section_due_dates.present?

@@ -268,7 +268,7 @@ describe PenaltyPeriodSubmissionRule do
   private
 
   def add_file_helper(txn, file_name, file_contents)
-    path = File.join(@assignment.assignment_properties.repository_folder, file_name)
+    path = File.join(@assignment.repository_folder, file_name)
     txn.add(path, file_contents, '')
     txn
   end

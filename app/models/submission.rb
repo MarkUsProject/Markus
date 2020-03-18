@@ -35,7 +35,7 @@ class Submission < ApplicationRecord
        raise 'Expected a timestamp of type Time'
      end
      submission = grouping.group.access_repo do |repo|
-       path = grouping.assignment.assignment_properties.repository_folder
+       path = grouping.assignment.repository_folder
        revision = repo.get_revision_by_timestamp(timestamp, path)
        generate_new_submission(grouping, revision)
      end
@@ -256,7 +256,7 @@ class Submission < ApplicationRecord
     # Remember that assignments have folders within repositories - these
     # will be "spoofed" as root...
     if path == '/'
-      path = assignment.assignment_properties.repository_folder
+      path = assignment.repository_folder
     end
 
     files_added = false

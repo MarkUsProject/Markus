@@ -18,7 +18,7 @@ class GroupingPolicy < ApplicationPolicy
   end
 
   def tokens_available?
-    record.test_tokens > 0 || record.assignment.assignment_properties.unlimited_tokens
+    record.test_tokens > 0 || record.assignment.unlimited_tokens
   end
 
   # Policies for group invitations.
@@ -29,7 +29,7 @@ class GroupingPolicy < ApplicationPolicy
   end
 
   def students_form_groups?
-    !record.assignment.assignment_properties.invalid_override
+    !record.assignment.invalid_override
   end
 
   def before_due_date?

@@ -42,7 +42,7 @@ class TaMembership < Membership
     end
 
     # Recompute criteria associations
-    if assignment.assignment_properties.assign_graders_to_criteria
+    if assignment.assign_graders_to_criteria
       Grouping.update_criteria_coverage_counts(
         assignment,
         new_ta_memberships.map { |x| x[:grouping_id] }

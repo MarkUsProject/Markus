@@ -444,19 +444,19 @@ describe Grouping do
       end
 
       it 'updates token count properly when it is being increased' do
-        @assignment.assignment_properties.tokens_per_period = 9
+        @assignment.tokens_per_period = 9
         @assignment.save
         expect(@grouping.test_tokens).to eq(8)
       end
 
       it 'updates token count properly when it is being decreased' do
-        @assignment.assignment_properties.tokens_per_period = 3
+        @assignment.tokens_per_period = 3
         @assignment.save
         expect(@grouping.test_tokens).to eq(2)
       end
 
       it 'does not allow token count to go below 0' do
-        @assignment.assignment_properties.tokens_per_period = 0
+        @assignment.tokens_per_period = 0
         @assignment.save
         expect(@grouping.test_tokens).to eq(0)
       end
@@ -583,7 +583,7 @@ describe Grouping do
         @grouping = create(:grouping, assignment: @assignment)
         @grouping.group.access_repo do |repo|
           txn = repo.get_transaction('markus')
-          assignment_folder = File.join(@assignment.assignment_properties.repository_folder, File::SEPARATOR)
+          assignment_folder = File.join(@assignment.repository_folder, File::SEPARATOR)
           begin
             txn.add(File.join(assignment_folder, 'Shapes.java'), 'shapes content', 'text/plain')
             unless repo.commit(txn)
@@ -621,7 +621,7 @@ describe Grouping do
         @grouping.group.access_repo do |repo|
           txn = repo.get_transaction('markus')
           begin
-            txn.add(File.join(@assignment.assignment_properties.repository_folder, @file.filename),
+            txn.add(File.join(@assignment.repository_folder, @file.filename),
                     'ShapesTest content',
                     'text/plain')
             unless repo.commit(txn)
@@ -1042,7 +1042,7 @@ describe Grouping do
 
       context 'with sections before due date' do
         before :each do
-          @assignment.assignment_properties.section_due_dates_type = true
+          @assignment.section_due_dates_type = true
           @assignment.save
           @section = create(:section)
           create(:inviter_student_membership,
@@ -1081,7 +1081,7 @@ describe Grouping do
 
       context 'with sections after due date' do
         before :each do
-          @assignment.assignment_properties.section_due_dates_type = true
+          @assignment.section_due_dates_type = true
           @assignment.save
           @section = create(:section)
           create(:inviter_student_membership,
