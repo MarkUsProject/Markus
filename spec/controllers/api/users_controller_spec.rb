@@ -61,7 +61,7 @@ describe Api::UsersController do
         it 'should return all information in the default fields' do
           get :index
           info = Hash.from_xml(response.body).dig('users', 'user')[0]
-          expect(Set.new info.keys.map(&:to_sym)).to eq Set.new(Api::UsersController::DEFAULT_FIELDS)
+          expect(Set.new(info.keys.map(&:to_sym))).to eq Set.new(Api::UsersController::DEFAULT_FIELDS)
         end
       end
       context 'expecting an json response' do
@@ -84,7 +84,7 @@ describe Api::UsersController do
         it 'should return all information in the default fields' do
           get :index
           info = JSON.parse(response.body)[0]
-          expect(Set.new info.keys.map(&:to_sym)).to eq Set.new(Api::UsersController::DEFAULT_FIELDS)
+          expect(Set.new(info.keys.map(&:to_sym))).to eq Set.new(Api::UsersController::DEFAULT_FIELDS)
         end
       end
     end
@@ -105,7 +105,7 @@ describe Api::UsersController do
         it 'should return all information in the default fields' do
           get :show, params: { id: students[0].id }
           info = Hash.from_xml(response.body).dig('user')
-          expect(Set.new info.keys.map(&:to_sym)).to eq Set.new(Api::UsersController::DEFAULT_FIELDS)
+          expect(Set.new(info.keys.map(&:to_sym))).to eq Set.new(Api::UsersController::DEFAULT_FIELDS)
         end
       end
       context 'expecting an json response' do
@@ -123,7 +123,7 @@ describe Api::UsersController do
         it 'should return all information in the default fields' do
           get :show, params: { id: students[0].id }
           info = JSON.parse(response.body)
-          expect(Set.new info.keys.map(&:to_sym)).to eq Set.new(Api::UsersController::DEFAULT_FIELDS)
+          expect(Set.new(info.keys.map(&:to_sym))).to eq Set.new(Api::UsersController::DEFAULT_FIELDS)
         end
       end
     end
