@@ -153,8 +153,8 @@ class Criterion < ApplicationRecord
     end
     a = Assignment.find(assessment_id)
     updated_results = results.map do |result|
-      { result.id => result.get_total_mark(assignment: a) }
-    end
+      [result.id, result.get_total_mark(assignment: a)]
+    end.to_h
     unless updated_results.empty?
       Result.upsert_all(
         results.pluck_to_hash.map { |h| { **h.symbolize_keys, total_mark: updated_results[h['id'].to_i] } }

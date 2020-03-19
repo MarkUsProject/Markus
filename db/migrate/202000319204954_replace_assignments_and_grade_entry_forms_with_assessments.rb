@@ -81,6 +81,8 @@ class ReplaceAssignmentsAndGradeEntryFormsWithAssessments < ActiveRecord::Migrat
       t.boolean :non_regenerating_tokens, default: false, null: false
       t.boolean :scanned_exam, default: false, null: false
       t.boolean :display_median_to_students, default: false, null: false
+      t.boolean :anonymize_groups, default: false, null: false
+      t.boolean :hide_unassigned_criteria, default: false, null: false
 
       t.timestamps
     end
@@ -176,6 +178,8 @@ class ReplaceAssignmentsAndGradeEntryFormsWithAssessments < ActiveRecord::Migrat
       t.boolean :non_regenerating_tokens, default: false, null: false
       t.boolean :scanned_exam, default: false, null: false
       t.boolean :display_median_to_students, default: false, null: false
+      t.boolean :anonymize_groups, default: false, null: false
+      t.boolean :hide_unassigned_criteria, default: false, null: false
 
       t.timestamps
     end

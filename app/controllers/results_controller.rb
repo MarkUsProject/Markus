@@ -1,5 +1,4 @@
 class ResultsController < ApplicationController
-  include TagsHelper
   before_action :authorize_only_for_admin,
                 except: [:show, :edit, :update_mark, :view_marks,
                          :create, :add_extra_mark, :next_grouping,
@@ -311,16 +310,15 @@ class ResultsController < ApplicationController
   ##  Tag Methods  ##
   def add_tag
     result = Result.find(params[:id])
-    create_grouping_tag_association_from_existing_tag(result.submission.grouping_id,
-                                                      params[:tag_id])
+    tag = Tag.find(params[:tag_id])
+    result.submission.grouping.tags << tag
     head :ok
   end
 
   def remove_tag
     result = Result.find(params[:id])
-    grouping = result.submission.grouping
-    delete_grouping_tag_association(params[:tag_id],
-                                    grouping)
+    tag = Tag.find(params[:tag_id])
+    result.submission.grouping.tags.destroy(tag)
     head :ok
   end
 
@@ -565,9 +563,7 @@ class ResultsController < ApplicationController
     if current_user.student?
       @grouping = current_user.accepted_grouping_for(@assignment.id)
       if @grouping.nil?
-        redirect_to controller: 'assignments',
-                    action: 'student_interface',
-                    id: params[:id]
+        redirect_to assignment_path(params[:id])
         return
       end
       unless is_review || @grouping.has_submission?
@@ -596,9 +592,7 @@ class ResultsController < ApplicationController
 
     # TODO Review the various code flows, the duplicate checks are a temporary stop-gap
     if @grouping.nil?
-      redirect_to controller: 'assignments',
-                  action: 'student_interface',
-                  id: params[:id]
+      redirect_to assignment_path(params[:id])
       return
     end
     unless is_review || @grouping.has_submission?

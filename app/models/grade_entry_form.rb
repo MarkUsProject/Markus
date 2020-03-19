@@ -199,7 +199,11 @@ class GradeEntryForm < Assessment
         next
       elsif totals.empty?
         totals = row.drop(1)
-        self.update_grade_entry_items(names, totals, overwrite)
+        if self.show_total && names.last == GradeEntryForm.human_attribute_name(:total)
+          self.update_grade_entry_items(names[0...-1], totals[0...-1], overwrite)
+        else
+          self.update_grade_entry_items(names, totals, overwrite)
+        end
         updated_columns = self.grade_entry_items.reload.pluck(:id)
         next
       end
@@ -225,6 +229,7 @@ class GradeEntryForm < Assessment
     Grade.import updated_grades,
                  on_duplicate_key_update: { conflict_target: [:grade_entry_item_id, :grade_entry_student_id],
                                             columns: [:grade] }
+    GradeEntryStudent.refresh_total_grades(updated_grades.map { |h| h[:grade_entry_student_id] })
     result
   end
 

@@ -1,26 +1,22 @@
 <div id="edit">
   <h2><%= t('helpers.submit.update', model: Tag.model_name.human) %></h2>
 
-  <%= form_for :update_tag,
-               url: assignment_tag_path(@assignment, @tag),
-               method: 'PUT',
-               html: { multipart: true, size: 1 } do |f| %>
+  <%= form_with model: [@assignment, @tag], method: 'PUT' do |f| %>
     <div>
-      <p><%= Tag.human_attribute_name(:name) %></p>
-      <p><%= f.text_field :name,
-                          id: 'name',
-                          value: @tag[:name] %></p>
+      <p><%= f.label :name, Tag.human_attribute_name(:name) %></p>
+      <p><%= f.text_field :name %></p>
     </div>
     <div>
-      <p class="alignleft"><%= Tag.human_attribute_name(:description) %></p>
-      <p id='descript_amount' class='alignright'>0/120</p>
-      <p class="clear-alignment"><%= f.text_area :description,
-                                      id: 'description',
-                                      cols: 30,
-                                      rows: 3,
-                                      maxlength: 120,
-                                      onKeyDown: 'updateCharCount()',
-                                      value: @tag[:description] %></p>
+      <p>
+        <%= f.label :description, Tag.human_attribute_name(:description) %>
+        (<span id='descript_amount'>0/120</span>)
+      </p>
+      <p><%= f.text_area :description,
+             id: 'description',
+             cols: 30,
+             rows: 3,
+             maxlength: 120,
+             onKeyDown: 'updateCharCount()' %></p>
     </div>
     <section class='dialog-actions'>
       <%= f.submit t(:save),

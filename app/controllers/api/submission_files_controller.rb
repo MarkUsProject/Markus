@@ -203,5 +203,39 @@ module Api
         render 'shared/http_status', locals: { code: '500', message: message }, status: 500
       end
     end
+
+    def remove_folder
+      grouping = Grouping.find_by(group_id: params[:group_id], assessment_id: params[:assignment_id])
+      if grouping.nil?
+        render 'shared/http_status', locals: { code: '404', message:
+            'No group with that id exists for the given assignment' }, status: 404
+        return
+      end
+
+      if has_missing_params?([:folder_path])
+        # incomplete/invalid HTTP params
+        render 'shared/http_status', locals: { code: '422', message:
+            HttpStatusHelper::ERROR_CODE['message']['422'] }, status: 422
+        return
+      end
+      success, messages = grouping.group.access_repo do |repo|
+        folder = params[:folder_path]
+        path = Pathname.new(grouping.assignment.repository_folder)
+        remove_folders([folder], @current_user, repo, path: path)
+      end
+      message_string = messages.map { |type, *msg| "#{type}: #{msg}" }.join("\n")
+      if success && messages[0] == :not_exist
+        render 'shared/http_status', locals: { code: '404', message:
+            'No folder exists at that path.' }, status: 404
+      elsif success
+        # It worked, render success
+        message = "#{HttpStatusHelper::ERROR_CODE['message']['200']}\n\n#{message_string}"
+        render 'shared/http_status', locals: { code: '200', message: message }, status: 200
+      else
+        # Some other error occurred
+        message = "#{HttpStatusHelper::ERROR_CODE['message']['500']}\n\n#{message_string}"
+        render 'shared/http_status', locals: { code: '500', message: message }, status: 500
+      end
+    end
   end
 end

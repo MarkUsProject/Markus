@@ -116,6 +116,7 @@ export class LeftPane extends React.Component {
             <FeedbackFilePanel
               assignment_id={this.props.assignment_id}
               feedbackFiles={this.props.feedback_files}
+              submission_id={this.props.submission_id}
             />
           </div>
         </TabPanel>

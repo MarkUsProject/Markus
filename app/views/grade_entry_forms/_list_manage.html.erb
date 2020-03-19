@@ -1,49 +1,34 @@
-<%# Display a list of the current grade entry forms %>
+<% grade_entry_forms = GradeEntryForm.order(:id) %>
+<% action = @current_user.admin? ? 'edit' : 'grades' %>
 
-<div class='section'>
-  <h3><%= GradeEntryForm.model_name.human.pluralize %></h3>
-
-  <% if @grade_entry_forms.empty? %>
-    <p><%= t('grade_entry_forms.none') %></p>
-  <% else %>
-    <div class='table'>
-      <table>
-        <thead>
+<% if grade_entry_forms.empty? %>
+  <p><%= t('grade_entry_forms.none') %></p>
+<% else %>
+  <div class='table'>
+    <table>
+      <thead>
+        <tr>
+          <th><%= GradeEntryForm.model_name.human %></th>
+          <th><%= GradeEntryForm.human_attribute_name(:date) %></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% grade_entry_forms.each do |grade_entry_form| %>
+          <% route = { controller: 'grade_entry_forms', action: action, id: grade_entry_form.id } %>
+          <% text = "#{h(grade_entry_form.short_identifier)}: #{h(grade_entry_form.description)}" %>
+          <% text = t('assignments.hidden', assignment_text: text) if grade_entry_form.is_hidden %>
           <tr>
-            <th><%= GradeEntryForm.model_name.human %></th>
-            <th><%= GradeEntryForm.human_attribute_name(:date) %></th>
+            <td>
+              <%= link_to text, route %>
+            </td>
+            <td>
+              <% unless grade_entry_form.due_date.nil? %>
+                <%= l(grade_entry_form.due_date, format: :long) %>
+              <% end %>
+            </td>
           </tr>
-        </thead>
-        <tbody>
-          <% @grade_entry_forms.each do |grade_entry_form| %>
-            <tr>
-              <td>
-                <% if grade_entry_form.is_hidden %>
-                    <%= link_to t('assignments.hidden',
-                                  assignment_text:
-                                          "#{h(grade_entry_form.short_identifier)}: #{h(grade_entry_form.description)}" ),
-                                { controller: 'grade_entry_forms',
-                                  action: action,
-                                  id: grade_entry_form },
-                                class: 'assignment_list' %>
-                <% else %>
-                    <%= link_to grade_entry_form.short_identifier + ': ' + grade_entry_form.description,
-                                { controller: 'grade_entry_forms',
-                                  action: action,
-                                  id: grade_entry_form },
-                                class: 'assignment_list' %>
-                <% end %>
-
-              </td>
-              <td>
-                <% unless grade_entry_form.due_date.nil? %>
-                  <%= l(grade_entry_form.due_date, format: :long) %>
-                <% end %>
-              </td>
-            </tr>
-          <% end %>
-        </tbody>
-      </table>
-    </div>
-  <% end %>
-</div>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% end %>

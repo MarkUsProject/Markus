@@ -1,15 +1,10 @@
-require 'base64'
-
-
 class AssignmentsController < ApplicationController
   include RepositoryHelper
   responders :flash
 
   before_action      :authorize_only_for_admin,
                      except: [:index,
-                              :student_interface,
-                              :update_collected_submissions,
-                              :render_feedback_file,
+                              :show,
                               :peer_review,
                               :summary,
                               :switch_assignment]
@@ -18,37 +13,15 @@ class AssignmentsController < ApplicationController
                      only: [:summary]
 
   before_action      :authorize_for_student,
-                     only: [:student_interface,
+                     only: [:show,
                             :peer_review]
 
   before_action      :authorize_for_user,
-                     only: [:index, :render_feedback_file, :switch_assignment]
+                     only: [:index, :switch_assignment]
 
   # Publicly accessible actions ---------------------------------------
 
-  def render_feedback_file
-    @feedback_file = FeedbackFile.find(params[:feedback_file_id])
-
-    # Students can use this action only, when marks have been released
-    if current_user.student? &&
-        (@feedback_file.submission.grouping.membership_status(current_user).nil? ||
-         !@feedback_file.submission.get_latest_result.released_to_students)
-      flash_message(:error, t('feedback_file.error.no_access',
-                              feedback_file_id: @feedback_file.id))
-      head :forbidden
-      return
-    end
-
-    if @feedback_file.mime_type.start_with? 'image'
-      content = Base64.encode64(@feedback_file.file_content)
-    else
-      content = @feedback_file.file_content
-    end
-
-    render plain: content
-  end
-
-  def student_interface
+  def show
     assignment = Assignment.find(params[:id])
     @assignment = assignment.is_peer_review? ? assignment.parent_assignment : assignment
     if @assignment.is_hidden
@@ -63,40 +36,23 @@ class AssignmentsController < ApplicationController
       return
     end
 
-    @student = current_user
-    @grouping = @student.accepted_grouping_for(@assignment.id)
+    @grouping = current_user.accepted_grouping_for(@assignment.id)
 
     if @grouping.nil?
       if @assignment.scanned_exam
         flash_now(:notice, t('assignments.scanned_exam.under_review'))
       elsif @assignment.group_max == 1
         begin
-          @student.create_group_for_working_alone_student(@assignment.id)
+          current_user.create_group_for_working_alone_student(@assignment.id)
         rescue StandardError => e
           flash_message(:error, e.message)
           redirect_to controller: :assignments
         end
-        @grouping = @student.accepted_grouping_for(@assignment.id)
+        @grouping = @current_user.accepted_grouping_for(@assignment.id)
       end
     end
     unless @grouping.nil?
-      # We look for the information on this group...
-      # The members
-      @studentmemberships = @grouping.student_memberships
-      # The group name
-      @group = @grouping.group
-      # The inviter
-      @inviter = @grouping.inviter
-
-      # Look up submission information
       set_repo_vars(@assignment, @grouping)
-    end
-
-    @penalty = SubmissionRule.find_by_assessment_id(@assignment.id)
-    @enum_penalty = Period.where(submission_rule_id: @penalty.id).sort
-    @due_date = @student.due_date_for_assignment(@assignment)
-    if @student.has_pending_groupings_for?(@assignment.id)
-      @pending_grouping = @student.pending_groupings_for(@assignment.id)
     end
   end
 
@@ -116,11 +72,8 @@ class AssignmentsController < ApplicationController
     end
 
     @student = current_user
-    @grouping = @student.accepted_grouping_for(@assignment.id)
-    @penalty = @assignment.submission_rule
-    @enum_penalty = Period.where(submission_rule_id: @penalty.id).sort
-    @due_date = @student.due_date_for_assignment(@assignment)
-    @prs = @student.grouping_for(@assignment.parent_assignment.id)&.
+    @grouping = current_user.accepted_grouping_for(@assignment.id)
+    @prs = current_user.grouping_for(@assignment.parent_assignment.id)&.
         peer_reviews&.where(results: { released_to_students: true })
     if @prs.nil?
       @prs = []
@@ -157,17 +110,11 @@ class AssignmentsController < ApplicationController
     end
   end
 
-  # Displays "Manage Assignments" page for creating and editing
-  # assignment information
+  # Displays "Manage Assignments" page for creating and editing assignment information.
+  # Acts as dashboard for students and TAs.
   def index
     if current_user.student?
-      @grade_entry_forms = GradeEntryForm.where(is_hidden: false).order(:id)
-      @assignments = Assignment.where(is_hidden: false).order(:id)
-      @marking_schemes = MarkingScheme.none
-      #get the section of current user
-      @section = current_user.section
-      # get results for assignments for the current user
-      @a_id_results = Hash.new()
+      @a_id_results = {}
       accepted_groupings = current_user.accepted_groupings.includes(:assignment, { current_submission_used: :results })
       accepted_groupings.each do |grouping|
         if !grouping.assignment.is_hidden && grouping.has_submission?
@@ -180,28 +127,16 @@ class AssignmentsController < ApplicationController
         end
       end
 
-      # Get the grades for grade entry forms for the current user
-      @g_id_entries = Hash.new()
-      @grade_entry_forms.each do |g|
-        grade_entry_student = g.grade_entry_students.find_by_user_id(
-                                    current_user.id )
-        if !grade_entry_student.nil? &&
-             grade_entry_student.released_to_student
-          @g_id_entries[g.id] = grade_entry_student
+      @g_id_entries = {}
+      current_user.grade_entry_students.where(released_to_student: true).includes(:grade_entry_form).each do |g|
+        unless g.grade_entry_form.is_hidden
+          @g_id_entries[g.grade_entry_form_id] = g
         end
       end
 
       render :student_assignment_list, layout: 'assignment_content'
-    elsif current_user.ta?
-      @grade_entry_forms = GradeEntryForm.order(:id)
-      @assignments = Assignment.includes(:submission_rule).order(:id)
-      render :grader_index, layout: 'assignment_content'
-      @marking_schemes = MarkingScheme.all
     else
-      @grade_entry_forms = GradeEntryForm.order(:id)
-      @assignments = Assignment.includes(:submission_rule).order(:id)
       render :index, layout: 'assignment_content'
-      @marking_schemes = MarkingScheme.all
     end
   end
 
@@ -320,12 +255,16 @@ class AssignmentsController < ApplicationController
   def summary
     @assignment = Assignment.find(params[:id])
     respond_to do |format|
-      format.html {
-        render layout: 'assignment_content'
-      }
-      format.json {
-        render json: @assignment.summary_json(@current_user)
-      }
+      format.html { render layout: 'assignment_content' }
+      format.json { render json: @assignment.summary_json(@current_user) }
+      format.csv do
+        data = @assignment.summary_csv(@current_user)
+        filename = "#{@assignment.short_identifier}_summary.csv"
+        send_data data,
+                  disposition: 'attachment',
+                  type: 'text/csv',
+                  filename: filename
+      end
     end
   end
 
@@ -377,22 +316,6 @@ class AssignmentsController < ApplicationController
         render json: test_runs
       end
     end
-  end
-
-  def csv_summary
-    assignment = Assignment.find(params[:id])
-    data = assignment.summary_csv(@current_user)
-    filename = "#{assignment.short_identifier}_summary.csv"
-    send_data data,
-              disposition: 'attachment',
-              type: 'text/csv',
-              filename: filename
-  end
-
-  # Methods for the student interface
-
-  def update_collected_submissions
-    @assignments = Assignment.all
   end
 
   # Refreshes the grade distribution graph
@@ -577,8 +500,8 @@ class AssignmentsController < ApplicationController
       redirect_to edit_assignment_path(params[:id])
     elsif current_user.ta?
       redirect_to summary_assignment_path(params[:id])
-    else # curret_user.student?
-      redirect_to student_interface_assignment_path
+    else # current_user.student?
+      redirect_to assignment_path(params[:id])
     end
   end
 

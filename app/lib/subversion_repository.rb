@@ -247,7 +247,7 @@ class SubversionRepository < Repository::AbstractRepository
         rescue Repository::Conflict => e
           transaction.add_conflict(e)
         end
-      when :remove
+      when :remove, :remove_directory
         begin
           txn = remove_file(txn, job[:path], job[:expected_revision_identifier])
         rescue Repository::Conflict => e

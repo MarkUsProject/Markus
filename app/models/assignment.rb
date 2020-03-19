@@ -576,7 +576,10 @@ class Assignment < Assessment
       }
     end
 
-    { data: final_data, criteriaColumns: criteria_columns }
+    { data: final_data,
+      criteriaColumns: criteria_columns,
+      numAssigned: self.get_num_assigned(user.admin? ? nil : user.id),
+      numMarked: self.get_num_marked(user.admin? ? nil : user.id) }
   end
 
   # Generate CSV summary of grades for this assignment

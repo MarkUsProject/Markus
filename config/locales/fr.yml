@@ -27,14 +27,12 @@ fr:
         invalid_file_name: "Le nom du fichier envoyé est invalide"
         missing_file: "%{file_name} n'a pas pu être téléchargé. Le fichier est sans doute manquant."
         empty_file_warning: "UPDATE ME"
+        exist: "UPDATE ME"
+        not_exist: "UPDATE ME"
 
     submission_file:
       error:
         no_access: "Pas d'acces au fichier envoye avec l'id #%{submission_file_id}." #Problème d'accents à cause de l'appel JS"
-
-    feedback_file:
-      error:
-        no_access: "No access to feedback file with id #%{feedback_file_id}."
 
     #app/views/job_messages/_job_poller.js.erb
     job_poller:
