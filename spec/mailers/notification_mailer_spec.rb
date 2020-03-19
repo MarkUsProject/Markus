@@ -1,11 +1,16 @@
 RSpec.describe NotificationMailer, type: :mailer do
   describe 'release_email' do
-    let(:user) { create(:user) }
-    let(:fake_assignment) { create(:user) }
-    let(:grouping) { create(:grouping, assignment: fake_assignment) }
-    let(:mail) { described_class.with(user: user, grouping: grouping).release_email.deliver_now }
+    before(:all) do
+      @user = create(:user)
+      @fake_assignment = create(:user)
+      @grouping = create(:grouping, assignment: fake_assignment)
+      byebug
+      @mail = described_class.with(user: user, grouping: grouping).release_email.deliver_now
+      byebug
+    end
 
     it 'renders the subject' do
+      byebug
       subject_line = 'MarkUs Notification (' + Rails.configuration.course_name + ') Your marks for A2 have released!'
       expect(mail.subject).to eq(subject_line)
     end
