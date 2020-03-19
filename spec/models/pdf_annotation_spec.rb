@@ -1,5 +1,4 @@
 describe PdfAnnotation do
-
   it { is_expected.to validate_presence_of(:x1) }
   it { is_expected.to validate_presence_of(:y1) }
   it { is_expected.to validate_presence_of(:x2) }
@@ -49,7 +48,7 @@ describe PdfAnnotation do
                                    x2: 3,
                                    y1: -2,
                                    y2: 5,
-                                   page: basic_annot.page}
+                                   page: basic_annot.page }
 
         expect(negative_annot.extract_coords).to eq(expected_negative_hash)
       end
@@ -61,7 +60,7 @@ describe PdfAnnotation do
                                  x2: 3,
                                  y1: 5,
                                  y2: 123,
-                                 page: basic_annot.page}
+                                 page: basic_annot.page }
 
         expect(spaces_annot.extract_coords).to eq(expected_spaces_hash)
       end
