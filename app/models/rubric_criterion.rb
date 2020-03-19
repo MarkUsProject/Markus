@@ -14,6 +14,7 @@ class RubricCriterion < Criterion
 
   has_many :levels, -> { order(:mark) }, inverse_of: :rubric_criterion, dependent: :destroy
   accepts_nested_attributes_for :levels, allow_destroy: true
+  before_save :scale_marks_if_max_mark_changed
 
   belongs_to :assignment, counter_cache: true
 
@@ -35,6 +36,20 @@ class RubricCriterion < Criterion
       result = result.concat(cta.ta.get_groupings_by_assignment(assignment))
     end
     self.assigned_groups_count = result.uniq.length
+  end
+
+  def scale_marks_if_max_mark_changed
+    return unless self.changed.include?('max_mark')
+    return if self.changes['max_mark'][0].nil?
+    old_max = self.changes['max_mark'][0]
+    new_max = self.changes['max_mark'][1]
+    scale = new_max / old_max
+    self.levels.each do |level|
+      # don't scale levels that the user has manually changed
+      unless level.changed.include? 'mark'
+        level.update(mark: (level.mark * scale).round(2))
+      end
+    end
   end
 
   RUBRIC_LEVELS = 5
