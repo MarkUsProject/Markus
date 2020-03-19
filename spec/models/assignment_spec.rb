@@ -1438,24 +1438,24 @@ describe Assignment do
           @assignment = create(:assignment,
                                due_date: 2.days.ago,
                                assignment_properties_attributes: { section_due_dates_type: true })
-          @section_1 = create(:section, name: 'section_1')
-          @section_2 = create(:section, name: 'section_2')
-          SectionDueDate.create(section: @section_1, assignment: @assignment, due_date: 1.day.ago)
-          student = create(:student, section: @section_1)
-          @grouping_1 = create(:grouping, assignment: @assignment)
+          @section1 = create(:section, name: 'section_1')
+          @section2 = create(:section, name: 'section_2')
+          SectionDueDate.create(section: @section1, assignment: @assignment, due_date: 1.day.ago)
+          student = create(:student, section: @section1)
+          @grouping1 = create(:grouping, assignment: @assignment)
           create(:accepted_student_membership,
-                 grouping: @grouping_1,
+                 grouping: @grouping1,
                  user: student,
                  membership_status: StudentMembership::STATUSES[:inviter])
         end
 
         context 'when both sections past due' do
           before :each do
-            SectionDueDate.create(section: @section_2, assignment: @assignment, due_date: 1.day.ago)
-            student = create(:student, section: @section_2)
-            @grouping_2 = create(:grouping, assignment: @assignment)
+            SectionDueDate.create(section: @section2, assignment: @assignment, due_date: 1.day.ago)
+            student = create(:student, section: @section2)
+            @grouping2 = create(:grouping, assignment: @assignment)
             create(:accepted_student_membership,
-                   grouping: @grouping_2,
+                   grouping: @grouping2,
                    user: student,
                    membership_status: StudentMembership::STATUSES[:inviter])
           end
@@ -1467,11 +1467,11 @@ describe Assignment do
 
         context 'when one section due' do
           before :each do
-            SectionDueDate.create(section: @section_2, assignment: @assignment, due_date: 1.day.from_now)
-            student = create(:student, section: @section_2)
-            @grouping_2 = create(:grouping, assignment: @assignment)
+            SectionDueDate.create(section: @section2, assignment: @assignment, due_date: 1.day.from_now)
+            student = create(:student, section: @section2)
+            @grouping2 = create(:grouping, assignment: @assignment)
             create(:accepted_student_membership,
-                   grouping: @grouping_2,
+                   grouping: @grouping2,
                    user: student,
                    membership_status: StudentMembership::STATUSES[:inviter])
           end

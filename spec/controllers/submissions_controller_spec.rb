@@ -369,8 +369,8 @@ describe SubmissionsController do
           @assignment.update!(due_date: Time.current - 1.week)
           allow(SubmissionsJob).to receive(:perform_later) { Struct.new(:job_id).new('1') }
           expect(SubmissionsJob).to receive(:perform_later).with(
-              array_including(@grouping, uncollected_grouping),
-              collection_dates: hash_including
+            array_including(@grouping, uncollected_grouping),
+            collection_dates: hash_including
           )
           post_as @admin, :collect_submissions, params: { assignment_id: @assignment.id,
                                                           groupings: [@grouping.id, uncollected_grouping.id],
@@ -381,8 +381,8 @@ describe SubmissionsController do
           @assignment.update!(due_date: Time.current - 1.week)
           allow(SubmissionsJob).to receive(:perform_later) { Struct.new(:job_id).new('1') }
           expect(SubmissionsJob).to receive(:perform_later).with(
-              [uncollected_grouping],
-              collection_dates: hash_including
+            [uncollected_grouping],
+            collection_dates: hash_including
           )
           post_as @admin, :collect_submissions, params: { assignment_id: @assignment.id,
                                                           groupings: [@grouping.id, uncollected_grouping.id],
