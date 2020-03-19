@@ -240,14 +240,14 @@
 
           <% if @assignment.student_form_groups &&
                 !@assignment.invalid_override &&
-                @assignment.assignment_properties.group_max > 1 %>
+                @assignment.group_max > 1 %>
             <li><%= Assignment.human_attribute_name(:student_form_groups) %>.</li>
             <li>
               <%= t('groups.student_interface.group_size_html',
-                    group_min: @assignment.assignment_properties.group_min,
-                    group_max: @assignment.assignment_properties.group_max) %>
+                    group_min: @assignment.group_min,
+                    group_max: @assignment.group_max) %>
             </li>
-          <% elsif @assignment.assignment_properties.invalid_override %>
+          <% elsif @assignment.invalid_override %>
             <li><%= Assignment.human_attribute_name(:invalid_override) %>.</li>
           <% else %>
             <li><%= t('groups.student_interface.students_work_alone') %></li>
@@ -259,7 +259,7 @@
 </div>
 
 <% # HTML for the invite dialog
-   if !@grouping.nil? && @grouping.inviter == @current_user && !@assignment.assignment_properties.invalid_override %>
+   if !@grouping.nil? && @grouping.inviter == @current_user && !@assignment.invalid_override %>
   <aside class='dialog' id='invite_dialog'>
     <%= form_tag(invite_member_assignment_groups_path(assignment_id: @assignment.id, grouping_id: @grouping.id),
                  { onsubmit: "document.getElementById('working').style.display = '';" }) do %>
