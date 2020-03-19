@@ -16,5 +16,20 @@ FactoryBot.define do
       y1 { 1 }
       y2 { 2 }
     end
+
+    factory :text_annotation, class: TextAnnotation do
+      line_start { 1 }
+      line_end { 2 }
+      column_start { 1 }
+      column_end { 2 }
+    end
+
+    factory :pdf_annotation, class: PdfAnnotation do
+      x1 { 1 }
+      x2 { 2 }
+      y1 { 1 }
+      y2 { 2 }
+      page { 1 }
+    end
   end
 end
