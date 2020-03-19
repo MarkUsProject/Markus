@@ -266,6 +266,7 @@ class RawSubmissionTable extends React.Component {
           ]}
           filterable
           defaultFilterMethod={stringFilter}
+          defaultFiltered={this.props.defaultFiltered}
           loading={loading}
 
           getTrProps={this.getTrProps}
