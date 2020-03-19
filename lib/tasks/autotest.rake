@@ -113,7 +113,7 @@ class AutotestSetup
       @student_files.each do |file_path|
         File.open(file_path, 'r') do |file|
           file_rel_path = Pathname.new(file_path).relative_path_from Pathname.new(@student_dir)
-          repo_path = File.join(@assignment.assignment_properties.repository_folder, file_rel_path)
+          repo_path = File.join(@assignment.repository_folder, file_rel_path)
           transaction.add(repo_path, file.read, '')
         end
       end
