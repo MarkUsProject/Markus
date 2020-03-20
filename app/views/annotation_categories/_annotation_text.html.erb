@@ -17,19 +17,19 @@
     </div>
     <div class='annotation_text_details'>
       <p><%= Annotation.human_attribute_name(:creator) %>
-        <% if annotation_text.get_creator.nil? %>
+        <% if annotation_text.creator.nil? %>
           <%= 'N/A' %>
         <% else %>
-          <%= annotation_text.get_creator.user_name %>
+          <%= annotation_text.creator.user_name %>
         <% end %>
       </p>
     </div>
     <div class='annotation_text_details'>
       <p><%= t('annotations.last_edited_by') %>
-        <% if annotation_text.get_last_editor.nil? %>
+        <% if annotation_text.last_editor.nil? %>
           <%= 'N/A' %>
         <% else %>
-          <%= annotation_text.get_last_editor.user_name %>
+          <%= annotation_text.last_editor.user_name %>
         <% end %>
       </p>
     </div>
