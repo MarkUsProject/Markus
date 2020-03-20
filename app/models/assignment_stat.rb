@@ -16,7 +16,7 @@ class AssignmentStat < ApplicationRecord
       grade_distribution_percentage.parse_csv.map(&:to_i)
     else
       # Default, empty distribution
-      '[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]'
+      Array.new(20) { 0 }
     end
   end
 end
