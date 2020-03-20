@@ -38,17 +38,17 @@ class RubricCriterion < Criterion
     end
   end
 
-  def update_max_mark
-    max = 0
-    self.levels.each do |level|
-      if level.changed.include? 'mark'
-        max = level.mark if level.mark > max
-      end
-    end
-    # max mark does not need to be updated if it is larger than maximum level mark
-    return if max < self.max_mark
-    self.max_mark = max
-  end
+  # def update_max_mark
+  #   max = 0
+  #   self.levels.each do |level|
+  #     if level.changed.include? 'mark'
+  #       max = level.mark if level.mark > max
+  #     end
+  #   end
+  #   # max mark does not need to be updated if it is larger than maximum level mark
+  #   return if max < self.max_mark
+  #   self.max_mark = max
+  # end
 
   def update_assigned_groups_count
     result = []
