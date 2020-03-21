@@ -241,9 +241,16 @@ describe RubricCriterion do
         end
       end
     end
+  end
 
-    it 'cannot have max mark greater than the highest level mark' do
-      expect(@criterion.update(max_mark: 10)).to be false
+  context 'A rubric criteria with levels' do
+    before(:each) do
+      @criterion = create(:rubric_criterion)
+      @levels = @criterion.levels
+    end
+
+    it 'cannot have two levels with the same mark' do
+      expect(@levels[0].update(mark: 1)).to be false
     end
   end
 
