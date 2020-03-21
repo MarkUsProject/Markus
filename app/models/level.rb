@@ -8,4 +8,13 @@ class Level < ApplicationRecord
 
   validates_uniqueness_of :mark, scope: :rubric_criterion_id
   validates_numericality_of :mark, greater_than_or_equal_to: 0
+
+  before_update :update_results
+
+  def update_results
+    byebug
+    puts 'hi'
+  end
+
+
 end
