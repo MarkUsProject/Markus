@@ -35,6 +35,7 @@ describe RubricCriterion do
     it 'sets default levels' do
       assignment = create(:assignment)
       rubric = create(:rubric_criterion, assignment: assignment)
+      rubric.levels.delete_all
       rubric.set_default_levels
       levels = rubric.levels
       expect(levels[0].name).to eq(I18n.t('rubric_criteria.defaults.level_0'))
@@ -183,10 +184,9 @@ describe RubricCriterion do
         # order is name, number, description, mark
         (0..rubric_levels - 1).each do |i|
           row << 'name' + i.to_s
-          row << i
           # ...containing commas and quotes in the descriptions
           row << 'description' + i.to_s + ' with comma (,) and ""quotes""'
-          row << i
+          row << i + 5
         end
         @csv_base_row = row
       end
@@ -194,6 +194,7 @@ describe RubricCriterion do
       context 'and there is an existing rubric criterion with the same name' do
         before(:each) do
           @criterion = create(:rubric_criterion, assignment: @assignment)
+          @criterion.levels.delete_all
           @criterion.set_default_levels
           # 'criterion 5' is the name used in the criterion held
           # in @csv_base_row - but they use different level names/descriptions.
@@ -213,7 +214,6 @@ describe RubricCriterion do
             # order is name, number, description, mark
             (0..@criterion.levels.length - 1).each do |i|
               row << names[i]
-              row << i
               # ...containing commas and quotes in the descriptions
               row << 'new description number ' + i.to_s
               row << i
@@ -233,6 +233,7 @@ describe RubricCriterion do
         context 'allow a criterion with the same name to add levels' do
           it 'not raise error' do
             RubricCriterion.create_or_update_from_csv_row(@csv_base_row, @assignment)
+            @criterion.reload
             levels = @criterion.levels
             expect(levels[0].mark).to eq(0.0)
             expect(levels.length).to eq(10)
@@ -246,6 +247,35 @@ describe RubricCriterion do
     before(:each) do
       @criterion = create(:rubric_criterion)
       @levels = @criterion.levels
+    end
+
+    it 'can add levels' do
+      expect(@levels.length).to eq(5)
+      @levels.create(name: 'New level', description: 'Description for level', mark: '5')
+      @levels.create(name: 'New level 2', description: 'Description for level 2', mark: '6')
+      expect(@levels.length).to eq(7)
+    end
+
+    it 'can delete levels' do
+      expect(@levels.length).to eq(5)
+      @levels.destroy_by(mark: 0)
+      @levels.destroy_by(mark: 1)
+      @levels.reload
+      expect(@levels.length).to eq(3)
+    end
+
+    it 'can edit levels' do
+      @levels[0].update(name: 'Custom Level', description: 'Custom Description', mark: 10.0)
+      @levels.reload
+      expect(@levels[@levels.length - 1].mark).to eq(10)
+      expect(@levels[@levels.length - 1].name).to eq('Custom Level')
+      expect(@levels[@levels.length - 1].description).to eq('Custom Description')
+    end
+
+    it 'deleting a rubric criterion deletes all levels' do
+      @criterion.destroy
+      expect(@criterion.destroyed?).to eq true
+      expect(@levels).to be_empty
     end
 
     context 'when scaling max mark' do
