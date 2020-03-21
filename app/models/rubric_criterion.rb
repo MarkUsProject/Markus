@@ -14,6 +14,7 @@ class RubricCriterion < Criterion
 
   has_many :levels, -> { order(:mark) }, inverse_of: :rubric_criterion, dependent: :destroy
   accepts_nested_attributes_for :levels, allow_destroy: true
+  before_save :scale_marks_if_max_mark_changed
   validate :validate_max_mark
 
   belongs_to :assignment, counter_cache: true
