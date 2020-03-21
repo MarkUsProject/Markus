@@ -61,7 +61,7 @@ namespace :db do
           group_max: 3,
           student_form_groups: true,
           repository_folder: 'A2',
-          token_start_date: Time.now,
+          token_start_date: Time.current,
           token_period: 1
         },
         submission_rule: rule,
@@ -99,7 +99,7 @@ namespace :db do
           group_max: 3,
           student_form_groups: true,
           repository_folder: 'A4',
-          token_start_date: Time.now,
+          token_start_date: Time.current,
           token_period: 1,
           section_due_dates_type: true
         },

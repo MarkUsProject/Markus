@@ -106,7 +106,7 @@ class Criterion < ApplicationRecord
   end
 
   # Updates the +assigned_groups_count+ field of all criteria that belong to
-  # an assignment with ID +assessment_id+.
+  # an assignment with ID +assignment_id+.
   def self.update_assigned_groups_counts(assignment)
     counts = CriterionTaAssociation
              .from(

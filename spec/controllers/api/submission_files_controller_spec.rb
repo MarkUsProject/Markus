@@ -17,6 +17,7 @@ describe Api::SubmissionFilesController do
 
     it 'should fail to authenticate a POST create request' do
       post :create, params: { assignment_id: 1, group_id: 1 }
+
       expect(response.status).to eq(403)
     end
 

@@ -279,14 +279,14 @@ class Submission < ApplicationRecord
     files_added
   end
 
-  def self.get_submission_by_group_id_and_assessment_id(group_id, assessment_id)
+  def self.get_submission_by_group_id_and_assignment_id(group_id, assignment_id)
     group = Group.find(group_id)
-    grouping = group.grouping_for_assignment(assessment_id)
+    grouping = group.grouping_for_assignment(assignment_id)
     grouping.current_submission_used
   end
 
-  def self.get_submission_by_grouping_id_and_assessment_id(grouping_id, assessment_id)
-    assignment = Assignment.find(assessment_id)
+  def self.get_submission_by_grouping_id_and_assignment_id(grouping_id, assignment_id)
+    assignment = Assignment.find(assignment_id)
     grouping = assignment.groupings.find(grouping_id)
     grouping.current_submission_used
   end

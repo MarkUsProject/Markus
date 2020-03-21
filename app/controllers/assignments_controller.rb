@@ -81,32 +81,34 @@ class AssignmentsController < ApplicationController
 
     if @assignment.past_all_collection_dates?
       flash_now(:notice, t('submissions.grading_can_begin'))
-    elsif @assignment.section_due_dates_type
-      section_due_dates = {}
-      now = Time.zone.now
-      Section.all.each do |section|
-        collection_time = @assignment.submission_rule.calculate_collection_time(section)
-        collection_time = now if now >= collection_time
-        if section_due_dates[collection_time].nil?
-          section_due_dates[collection_time] = []
-        end
-        section_due_dates[collection_time].push(section.name)
-      end
-      section_due_dates.each do |collection_time, sections|
-        sections = sections.join(', ')
-        if collection_time == now
-          flash_now(:notice, t('submissions.grading_can_begin_for_sections',
-                               sections: sections))
-        else
-          flash_now(:notice, t('submissions.grading_can_begin_after_for_sections',
-                               time: l(collection_time),
-                               sections: sections))
-        end
-      end
     else
-      collection_time = @assignment.submission_rule.calculate_collection_time
-      flash_now(:notice, t('submissions.grading_can_begin_after',
+      if @assignment.section_due_dates_type
+        section_due_dates = Hash.new
+        now = Time.zone.now
+        Section.all.each do |section|
+          collection_time = @assignment.submission_rule.calculate_collection_time(section)
+          collection_time = now if now >= collection_time
+          if section_due_dates[collection_time].nil?
+            section_due_dates[collection_time] = Array.new
+          end
+          section_due_dates[collection_time].push(section.name)
+        end
+        section_due_dates.each do |collection_time, sections|
+          sections = sections.join(', ')
+          if collection_time == now
+            flash_now(:notice, t('submissions.grading_can_begin_for_sections',
+                                 sections: sections))
+          else
+            flash_now(:notice, t('submissions.grading_can_begin_after_for_sections',
+                                 time: l(collection_time),
+                                 sections: sections))
+          end
+        end
+      else
+        collection_time = @assignment.submission_rule.calculate_collection_time
+        flash_now(:notice, t('submissions.grading_can_begin_after',
                            time: l(collection_time)))
+      end
     end
   end
 
@@ -157,7 +159,7 @@ class AssignmentsController < ApplicationController
 
     # build section_due_dates for each section that doesn't already have a due date
     Section.all.each do |s|
-      unless SectionDueDate.find_by_assessment_id_and_section_id(@assignment.id, s.id)
+      unless SectionDueDate.find_by(assessment_id: @assignment.id, section_id: s.id)
         @assignment.section_due_dates.build(section: s)
       end
     end
@@ -192,8 +194,7 @@ class AssignmentsController < ApplicationController
   def new
     @assignments = Assignment.all
     @assignment = Assignment.new
-    @assignment_properties = AssignmentProperties.new
-    @assignment.assignment_properties = @assignment_properties
+    @assignment.assignment_properties = AssignmentProperties.new
     if params[:scanned].present?
       @assignment.scanned_exam = true
     end
@@ -507,7 +508,7 @@ class AssignmentsController < ApplicationController
 
   def set_boolean_graders_options
     assignment = Assignment.find(params[:id])
-    attributes = graders_options_params
+    attributes = graders_options_params.transform_values { |v| v == 'true' }
     return head 400 if attributes.empty? || attributes[:assignment_properties_attributes].empty?
     unless assignment.update(attributes)
       flash_now(:error, assignment.errors.full_messages.join(' '))
@@ -711,10 +712,10 @@ class AssignmentsController < ApplicationController
   def graders_options_params
     params.require(:attribute)
           .permit(assignment_properties_attributes: [
-            :assign_graders_to_criteria,
-            :anonymize_groups,
-            :hide_unassigned_criteria
-          ])
+                    :assign_graders_to_criteria,
+                    :anonymize_groups,
+                    :hide_unassigned_criteria
+                  ])
   end
 
   def assignment_params

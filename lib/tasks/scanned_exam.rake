@@ -16,7 +16,7 @@ namespace :db do
         repository_folder: 'midterm',
         allow_remarks: true,
         remark_due_date: 7.days.from_now,
-        token_start_date: Time.now,
+        token_start_date: Time.current,
         token_period: 1,
         scanned_exam: true
       },

@@ -317,9 +317,7 @@ class SubmissionsController < ApplicationController
   def update_files
     assignment_id = params[:assignment_id]
     @assignment = Assignment.find(assignment_id)
-    if current_user.student? && !@assignment.allow_web_submits
-      raise t('student.submission.external_submit_only')
-    end
+    raise t('student.submission.external_submit_only') if current_user.student? && !@assignment.allow_web_submits
 
     @path = params[:path].blank? ? '/' : params[:path]
 
@@ -509,8 +507,7 @@ class SubmissionsController < ApplicationController
         group_name = grouping.group.repo_name
         grouping.group.access_repo do |repo|
           revision = repo.get_revision(revision_id)
-          repo.send_tree_to_zip(assignment.repository_folder,
-                                zip_file, zip_name + group_name, revision)
+          repo.send_tree_to_zip(assignment.repository_folder, zip_file, zip_name + group_name, revision)
         rescue Repository::RevisionDoesNotExist
           next
         end

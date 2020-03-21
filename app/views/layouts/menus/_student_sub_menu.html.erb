@@ -43,9 +43,8 @@
         </li>
       <% end %>
 
-      <% if @assignment.enable_student_tests &&
-              (@assignment.unlimited_tokens ||
-                @assignment.tokens_per_period > 0) %>
+      <% if @assignment.enable_student_tests && (@assignment.unlimited_tokens ||
+        @assignment.tokens_per_period > 0) %>
         <li class='<%= "active" if controller.controller_name == 'automated_tests' %>'>
           <%= link_to t('automated_tests.title'),
                       controller: 'automated_tests',

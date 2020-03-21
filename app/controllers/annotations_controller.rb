@@ -1,7 +1,7 @@
 class AnnotationsController < ApplicationController
 
   before_action(except: :add_existing_annotation) do |c|
-    c.authorize_for_ta_admin_and_reviewer(params[:assessment_id], params[:result_id])
+    c.authorize_for_ta_admin_and_reviewer(params[:assignment_id], params[:result_id])
   end
 
   before_action :authorize_for_ta_and_admin, only: :add_existing_annotation

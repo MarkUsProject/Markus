@@ -41,6 +41,7 @@
                 <div class="pr_date"><%= l(assignment.pr_assignment.due_date) %></div>
               <% end %>
             </td>
+
             <td>
               <% if @current_user.admin? && assignment.submission_rule.can_collect_all_now? %>
                 <span>

@@ -182,7 +182,7 @@ describe PeerReviewsController do
            params: { actionString: 'assign',
                      selectedReviewerGroupIds: @selected_reviewer_group_ids,
                      selectedRevieweeGroupIds: @selected_reviewee_group_ids,
-                     assignment_id: @pr_id
+                     assignment_id: @pr_id,
            }
     end
 
@@ -211,7 +211,7 @@ describe PeerReviewsController do
            params: { actionString: 'assign',
                      selectedReviewerGroupIds: @selected_reviewer_group_ids,
                      selectedRevieweeGroupIds: @selected_reviewee_group_ids,
-                     assignment_id: @pr_id
+                     assignment_id: @pr_id,
            }
       @num_peer_reviews = @assignment_with_pr.peer_reviews.count
     end
@@ -221,7 +221,7 @@ describe PeerReviewsController do
         post :assign_groups,
              params: { actionString: 'unassign',
                        selectedRevieweeGroupIds: @selected_reviewee_group_ids[0],
-                       assignment_id: @pr_id
+                       assignment_id: @pr_id,
              }
       end
       it 'deletes the correct number of peer reviews' do
@@ -240,7 +240,7 @@ describe PeerReviewsController do
         post :assign_groups,
              params: { actionString: 'unassign',
                        selectedReviewerInRevieweeGroups: selected,
-                       assignment_id: @pr_id
+                       assignment_id: @pr_id,
              }
       end
 

@@ -30,7 +30,8 @@
       </div>
 
       <div>
-        <%= f.label :description, GradeEntryForm.human_attribute_name(:description) %>
+        <%= f.label :description, GradeEntryForm.human_attribute_name(:description),
+                    class: 'required' %>
         <%= f.text_field :description %>
       </div>
 

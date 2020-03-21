@@ -552,11 +552,11 @@ class GroupsController < ApplicationController
     # the maximum size of a group
     students_in_group = grouping.student_membership_number
     group_name = grouping.group.group_name
-
-    return unless assignment.student_form_groups
-    return unless students_in_group > assignment.group_max
-
-    raise I18n.t('groups.assign_over_limit', group: group_name)
+    if assignment.student_form_groups
+      if students_in_group > assignment.group_max
+        raise I18n.t('groups.assign_over_limit', group: group_name)
+      end
+    end
   end
 
   # Adds the student given in student_id to the grouping given in grouping

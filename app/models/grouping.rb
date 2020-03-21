@@ -193,8 +193,7 @@ class Grouping < ApplicationRecord
   end
 
   def get_group_name
-    return group.group_name if assignment.group_max == 1 &&
-                               !assignment.scanned_exam
+    return group.group_name if assignment.group_max == 1 && !assignment.scanned_exam
 
     name = group.group_name
     student_names = accepted_students.map &:user_name
@@ -558,9 +557,7 @@ class Grouping < ApplicationRecord
     group.access_repo do |repo|
       # get the last revision that changed the assignment repo folder after the due date; some repos may not be able to
       # optimize by due_date (returning nil), so a check with revision.server_timestamp is always necessary
-      revision = repo.get_revision_by_timestamp(Time.current,
-                                                assignment.repository_folder,
-                                                grouping_due_date)
+      revision = repo.get_revision_by_timestamp(Time.current, assignment.repository_folder, grouping_due_date)
     end
     if revision.nil? || revision.server_timestamp <= grouping_due_date
       false
@@ -662,9 +659,10 @@ class Grouping < ApplicationRecord
   end
 
   def decrease_test_tokens
-    return unless !self.assignment.unlimited_tokens && self.test_tokens > 0
-    self.test_tokens -= 1
-    save
+    if !self.assignment.unlimited_tokens && self.test_tokens > 0
+      self.test_tokens -= 1
+      save
+    end
   end
 
   # TODO: Refactor into more flexible code from here to the end:

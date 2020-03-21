@@ -621,9 +621,7 @@ describe Grouping do
         @grouping.group.access_repo do |repo|
           txn = repo.get_transaction('markus')
           begin
-            txn.add(File.join(@assignment.repository_folder, @file.filename),
-                    'ShapesTest content',
-                    'text/plain')
+            txn.add(File.join(@assignment.repository_folder, @file.filename), 'ShapesTest content', 'text/plain')
             unless repo.commit(txn)
               raise 'Commit failed!'
             end
@@ -764,7 +762,7 @@ describe Grouping do
         @student_cannot_invite = create(:student)
 
         assignment = create(:assignment,
-                            due_date: Time.now + 2.days,
+                            due_date: 2.days.from_now,
                             assignment_properties_attributes: { group_max: 2, section_groups_only: true })
         @grouping = create(:grouping, assignment: assignment)
         create(:inviter_student_membership,
