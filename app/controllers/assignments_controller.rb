@@ -107,7 +107,7 @@ class AssignmentsController < ApplicationController
       else
         collection_time = @assignment.submission_rule.calculate_collection_time
         flash_now(:notice, t('submissions.grading_can_begin_after',
-                           time: l(collection_time)))
+                             time: l(collection_time)))
       end
     end
   end
@@ -508,8 +508,9 @@ class AssignmentsController < ApplicationController
 
   def set_boolean_graders_options
     assignment = Assignment.find(params[:id])
-    attributes = graders_options_params.transform_values { |v| v == 'true' }
+    attributes = graders_options_params
     return head 400 if attributes.empty? || attributes[:assignment_properties_attributes].empty?
+
     unless assignment.update(attributes)
       flash_now(:error, assignment.errors.full_messages.join(' '))
       head 422
