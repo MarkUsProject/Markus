@@ -11,7 +11,7 @@ RSpec.describe NotificationMailer, type: :mailer do
 
     it 'renders the subject' do
       subject_line = 'MarkUs Notification (' + Rails.configuration.course_name + ') Your marks for ' +
-          @fake_assignment.short_identifier + ' have released!'
+          @fake_assignment.short_identifier + ' have been released!'
       expect(@mail.subject).to eq(subject_line)
     end
 
@@ -32,7 +32,7 @@ RSpec.describe NotificationMailer, type: :mailer do
     end
 
     it 'renders the assignment in the body of the email.' do
-      expect(@mail.body.to_s).to match("#{@fake_assignment.short_identifier}")
+      expect(@mail.body.to_s).to match(@fake_assignment.short_identifier.to_s)
     end
   end
 end

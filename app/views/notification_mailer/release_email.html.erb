@@ -10,7 +10,7 @@
     <%= t('.text_body', assignment: @grouping.assignment.short_identifier) %>
   </p>
   <div class="button_enclosure">
-    <%= link_to t('button_text'),
+    <%= link_to t('.button_text'),
                 view_marks_assignment_submission_result_url(assignment_id: @grouping.assignment.id,
                                                             submission_id: @grouping.current_submission_used.id,
                                                             id: @grouping.current_result.id),
