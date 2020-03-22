@@ -6,7 +6,6 @@ RSpec.describe NotificationMailer, type: :mailer do
       @grouping = create(:grouping, assignment: @fake_assignment)
       @submission = create(:submission, submission_version_used: true, grouping: @grouping)
       @grouping.reload
-
       @mail = described_class.with(user: @user, grouping: @grouping).release_email.deliver_now
     end
 
@@ -24,7 +23,6 @@ RSpec.describe NotificationMailer, type: :mailer do
       expect(@mail.from).to eq(['noreply@markus.com'])
     end
 
-    # not sure what these do
     it 'renders the student name in the body of the email.' do
       expect(@mail.body.to_s).to match("#{@user.first_name} #{@user.last_name}")
     end
