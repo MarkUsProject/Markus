@@ -28,7 +28,7 @@ RSpec.describe NotificationMailer, type: :mailer do
     end
 
     it 'renders the disclaimer in the body of the email.' do
-      expect(@mail.body.to_s).to match("This is an automated email. Please do not reply.")
+      expect(@mail.body.to_s).to match('This is an automated email. Please do not reply.')
     end
 
     it 'renders the assignment in the body of the email.' do
