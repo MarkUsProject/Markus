@@ -396,12 +396,31 @@ describe SubmissionsController do
         end
       end
 
-      it 'should be able to release submissions' do
-        allow(Assignment).to receive(:find) { @assignment }
-        post_as @admin,
-                :update_submissions,
-                params: { assignment_id: 1, groupings: ([] << @assignment.groupings).flatten, release_results: 'true' }
-        is_expected.to respond_with(:success)
+      context 'when updating students on submission results' do
+        it 'should be able to release submissions' do
+          allow(Assignment).to receive(:find) { @assignment }
+          post_as @admin,
+                  :update_submissions,
+                  params: { assignment_id: 1,
+                            groupings: ([] << @assignment.groupings).flatten,
+                            release_results: 'true' }
+          is_expected.to respond_with(:success)
+        end
+
+        it 'should send an email to every student whose submission was released' do
+          allow(Assignment).to receive(:find) { @assignment }
+          total_students = 0
+          @assignment.groupings.each do |grouping|
+            total_students += grouping.accepted_students.size
+          end
+          expect do
+            post_as @admin,
+                    :update_submissions,
+                    params: { assignment_id: 1,
+                             groupings: ([] << @assignment.groupings).flatten,
+                             release_results: 'true' }
+          end.to change { ActionMailer::Base.deliveries.count }.by(total_students)
+        end
       end
 
       context 'of selected groupings' do

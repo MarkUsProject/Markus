@@ -240,6 +240,14 @@ Markus::Application.configure do
   config.x.logging.old_files = 10
 
   ###################################################################
+  # Email Notifications
+  ###################################################################
+  config.action_mailer.delivery_method = :test
+  config.action_mailer.asset_host = 'http://localhost:3000'
+  config.action_mailer.default_url_options = {host: 'localhost:3000'}
+
+
+  ###################################################################
   # Resque queues
   ###################################################################
 
