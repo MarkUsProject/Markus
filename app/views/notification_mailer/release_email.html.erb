@@ -4,10 +4,10 @@
   </div>
   <hr class="divider">
   <p class="to_text dark-scheme">
-    <%= t('greeting', first_name: @user.first_name, last_name: @user.last_name) %>
+    <%= t('.greeting', first_name: @user.first_name, last_name: @user.last_name) %>
   </p>
   <p class="body_text dark-scheme">
-    <%= t('text_body', assignment: @grouping.assignment.short_identifier) %>
+    <%= t('.text_body', assignment: @grouping.assignment.short_identifier) %>
   </p>
   <div class="button_enclosure">
     <%= link_to t('button_text'),
@@ -17,6 +17,6 @@
                 class: 'redirectbutton' %>
   </div>
   <p class="alert_text dark-scheme">
-    <%= t('disclaimer') %>
+    <%= t('.disclaimer') %>
   </p>
 </div>
