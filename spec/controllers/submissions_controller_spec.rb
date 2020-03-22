@@ -401,7 +401,9 @@ describe SubmissionsController do
           allow(Assignment).to receive(:find) { @assignment }
           post_as @admin,
                   :update_submissions,
-                  params: { assignment_id: 1, groupings: ([] << @assignment.groupings).flatten, release_results: 'true' }
+                  params: { assignment_id: 1,
+                            groupings: ([] << @assignment.groupings).flatten,
+                            release_results: 'true' }
           is_expected.to respond_with(:success)
         end
 
@@ -411,12 +413,12 @@ describe SubmissionsController do
           @assignment.groupings.each do |grouping|
             total_students += grouping.accepted_students.size
           end
-          puts "TOTAL STUDENTS = " + total_students.to_s
-          expect { post_as @admin,
-                  :update_submissions,
-                  params: { assignment_id: 1, groupings: ([] << @assignment.groupings).flatten,
-                            release_results: 'true' } }.to change { ActionMailer::Base.deliveries.count }
-                                                               .by(total_students)
+          expect post_as @admin,
+                         :update_submissions,
+                         params: { assignment_id: 1,
+                                   groupings: ([] << @assignment.groupings).flatten,
+                                   release_results: 'true' }.to
+          change { ActionMailer::Base.deliveries.count }.by(total_students)
         end
       end
 

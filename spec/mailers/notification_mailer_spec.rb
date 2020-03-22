@@ -2,7 +2,7 @@ RSpec.describe NotificationMailer, type: :mailer do
   describe 'release_email' do
     before(:each) do
       @user = create(:student)
-      @fake_assignment= create(:assignment)
+      @fake_assignment = create(:assignment)
       @grouping = create(:grouping, assignment: @fake_assignment)
       @submission = create(:submission, submission_version_used: true, grouping: @grouping)
       @grouping.reload

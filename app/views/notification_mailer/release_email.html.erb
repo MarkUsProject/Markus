@@ -17,6 +17,12 @@
                 class: 'redirectbutton' %>
   </div>
   <p class="alert_text dark-scheme">
+    <%= t('.explicit_link',
+          link: view_marks_assignment_submission_result_url(assignment_id: @grouping.assignment.id,
+                                                            submission_id: @grouping.current_submission_used.id,
+                                                            id: @grouping.current_result.id)) %>
+  </p>
+  <p class="alert_text dark-scheme">
     <%= t('.disclaimer') %>
   </p>
 </div>
