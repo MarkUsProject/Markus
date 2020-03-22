@@ -6,5 +6,6 @@ class Level < ApplicationRecord
   validates :description, presence: true
   validates :mark, presence: true
 
+  validates_uniqueness_of :mark, scope: :rubric_criterion_id
   validates_numericality_of :mark, greater_than_or_equal_to: 0
 end
