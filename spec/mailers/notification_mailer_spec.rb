@@ -26,11 +26,11 @@ RSpec.describe NotificationMailer, type: :mailer do
 
     # not sure what these do
     it 'renders the student name in the body of the email.' do
-      expect(@mail.body.to_s).to match(/"#{@user.first_name} #{@user.last_name}"/)
+      expect(@mail.body.to_s).to match("#{@user.first_name} #{@user.last_name}")
     end
 
     it 'renders the disclaimer in the body of the email.' do
-      expect(@mail.body.to_s).to match(/"This is an automated email. Please do not reply."/)
+      expect(@mail.body.to_s).to match("This is an automated email. Please do not reply.")
     end
 
     it 'renders the assignment in the body of the email.' do
