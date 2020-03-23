@@ -168,7 +168,7 @@ describe ResultsController do
                                              submission_file_id: file.id,
                                              is_remark: false,
                                              annotation_number: @submission.annotations.count + 1,
-                                             annotation_text: create(:annotation_text, user: admin),
+                                             annotation_text: create(:annotation_text, creator: admin),
                                              result: complete_result,
                                              creator: admin
         file_name_snippet = grouping.group.access_repo do |repo|

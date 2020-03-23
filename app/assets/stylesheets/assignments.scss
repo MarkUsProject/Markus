@@ -293,3 +293,11 @@ input#assignment_short_identifier[readonly] {
   margin-top: 0 !important;
   margin-bottom: 0 !important;
 }
+
+// Summary
+
+.progress meter {
+  margin: 0 8px;
+  vertical-align: baseline;
+  width: 100px;
+}

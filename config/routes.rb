@@ -57,7 +57,6 @@ Rails.application.routes.draw do
 
       collection do
         get 'delete_rejected'
-        post 'update_collected_submissions'
         get 'download'
         post 'upload'
         get 'batch_runs'
@@ -65,8 +64,6 @@ Rails.application.routes.draw do
 
       member do
         get 'refresh_graph'
-        get 'student_interface'
-        get 'render_feedback_file'
         get 'view_summary'
         get 'populate_file_manager'
         post 'upload_starter_code'
@@ -74,7 +71,6 @@ Rails.application.routes.draw do
         get 'download_starter_code'
         get 'peer_review'
         get 'summary'
-        get 'csv_summary'
         get 'batch_runs'
         post 'set_boolean_graders_options'
         get 'stop_test'
@@ -200,6 +196,7 @@ Rails.application.routes.draw do
           post 'repo_browser'
           get 'downloads'
           get 'get_file'
+          get 'get_feedback_file'
         end
 
         resources :results do

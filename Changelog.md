@@ -15,6 +15,7 @@
   for the csv file consistent (#4425)
 - Added git hook to limit the maximum file size committed and/or pushed to a git repository (#4421)
 - Display newlines properly in flash messages (#4443)
+- Api calls will now return the 'hidden' status of users when accessing user data (#4445)
 
 ## [v1.8.4]
 - Fixed bug where test output was not being properly hidden from students (#4379)
