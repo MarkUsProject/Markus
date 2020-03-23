@@ -13,11 +13,11 @@ describe MainController do
     end
     it 'should not be able to login with a blank username' do
       post :login, params: { user_login: '', user_password: 'a' }
-      expect(ActionController::Base.helpers.strip_tags flash[:error][0]).to eq(I18n.t('main.username_not_blank'))
+      expect(ActionController::Base.helpers.strip_tags(flash[:error][0])).to eq(I18n.t('main.username_not_blank'))
     end
     it 'should not be able to login with a blank password' do
       post :login, params: { user_login: 'a', user_password: '' }
-      expect(ActionController::Base.helpers.strip_tags flash[:error][0]).to eq(I18n.t('main.password_not_blank'))
+      expect(ActionController::Base.helpers.strip_tags(flash[:error][0])).to eq(I18n.t('main.password_not_blank'))
     end
   end
   context 'An Admin' do
@@ -159,7 +159,7 @@ describe MainController do
     context 'after logging in with a bad username' do
       it 'should not be able to login with an incorrect username' do
         post :login, params: { user_login: admin.user_name+'BAD', user_password: 'a' }
-        expect(ActionController::Base.helpers.strip_tags flash[:error][0]).to eq(I18n.t('main.login_failed'))
+        expect(ActionController::Base.helpers.strip_tags(flash[:error][0])).to eq(I18n.t('main.login_failed'))
       end
     end
     context 'after logging out' do
