@@ -105,14 +105,12 @@ module RepositoryHelper
     end
 
     current_path = Pathname.new path
-    files.each do |file_name|
-      relative_path = Pathname.new(file_name)
-      abs_path = File.join(current_path, relative_path)
-      return [true, [:file_not_exist]] unless repo.get_latest_revision.path_exists?(abs_path)
-    end
     current_revision = repo.get_latest_revision.revision_identifier
 
     files.each do |file_path|
+      relative_path = Pathname.new(file_path)
+      abs_path = File.join(current_path, relative_path)
+      return [false, [:file_not_exist]] unless repo.get_latest_revision.path_exists?(abs_path)
       subdir_path, basename = File.split(file_path)
       basename = sanitize_file_name(basename)
       file_path = current_path.join(subdir_path).join(basename)

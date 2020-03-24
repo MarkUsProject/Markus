@@ -184,7 +184,7 @@ module Api
       end
 
       message_string = messages.map { |type, *msg| "#{type}: #{msg}" }.join("\n")
-      if success && messages[0] == :file_not_exist
+      if !success && messages[0] == :file_not_exist
         render 'shared/http_status', locals: { code: '404', message:
             'No file exists at that path.' }, status: 404
       elsif success
