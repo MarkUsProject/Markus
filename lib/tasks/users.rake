@@ -48,7 +48,9 @@ namespace :db do
       i += rand(10 ** 7)
       student.update_attribute(:id_number, sprintf('%010d', i))
       student.update_attribute(:grace_credits, 5)
-      student.update_attribute(:email, "#{student.first_name.downcase}.#{student.last_name.downcase}@example.com")
+      first_name = student.first_name.downcase.gsub(/\s+/, '')
+      last_name = student.last_name.downcase.gsub(/\s+/, '')
+      student.update_attribute(:email, "#{first_name}.#{last_name}@example.com")
     end
   end
 end
