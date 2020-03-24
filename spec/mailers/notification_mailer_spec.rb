@@ -39,9 +39,10 @@ RSpec.describe NotificationMailer, type: :mailer do
   describe 'release_spreadsheet_email' do
     before(:each) do
       @user = create(:student)
-      @grade_entry_student = create(:grade_entry_student, user: @user)
       @grade_entry_form = create(:grade_entry_form_with_data)
-      @mail = described_class.with(student: @grade_entry_student, form: @grade_entry_form).release_email.deliver_now
+      @grade_entry_student = @grade_entry_form.grade_entry_students.find_or_create_by(user: @user)
+      @mail = described_class.with(student: @grade_entry_student, form: @grade_entry_form)
+                  .release_spreadsheet_email.deliver_now
     end
 
     it 'renders the subject' do
@@ -66,7 +67,7 @@ RSpec.describe NotificationMailer, type: :mailer do
       expect(@mail.body.to_s).to match('This is an automated email. Please do not reply.')
     end
 
-    it 'renders the assignment in the body of the email.' do
+    it 'renders the spreadsheet name in the body of the email.' do
       expect(@mail.body.to_s).to match(@grade_entry_form.short_identifier.to_s)
     end
   end
