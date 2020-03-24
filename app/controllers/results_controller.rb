@@ -164,7 +164,7 @@ class ResultsController < ApplicationController
           else
             fields = common_fields + [:description]
           end
-          criteria = klass.where(assignment_id: is_review ? assignment.pr_assignment.id : assignment.id,
+          criteria = klass.where(assessment_id: is_review ? assignment.pr_assignment.id : assignment.id,
                                  ta_visible: !is_review,
                                  peer_visible: is_review)
           criteria_info = criteria.pluck_to_hash(*fields)
@@ -187,7 +187,7 @@ class ResultsController < ApplicationController
 
         if assignment.assign_graders_to_criteria && current_user.ta?
           assigned_criteria = current_user.criterion_ta_associations
-                                          .where(assignment_id: assignment.id)
+                                          .where(assessment_id: assignment.id)
                                           .pluck(:criterion_type, :criterion_id)
                                           .map { |t, id| "#{t}-#{id}" }
           if assignment.hide_unassigned_criteria

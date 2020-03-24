@@ -8,8 +8,8 @@ describe SectionDueDate do
     context 'when an assignment has SectionDueDates disabled' do
       before :each do
         @assignment = create(:assignment,
-                             section_due_dates_type: false,
-                             due_date: 2.days.from_now)
+                             due_date: 2.days.from_now,
+                             assignment_properties_attributes: { section_due_dates_type: false })
       end
 
       it 'returns the due date of the assignment' do
@@ -21,8 +21,8 @@ describe SectionDueDate do
     context 'when an assignment has SectionDueDates enabled' do
       before :each do
         @assignment = create(:assignment,
-                             section_due_dates_type: true,
-                             due_date: 2.days.from_now)
+                             due_date: 2.days.from_now,
+                             assignment_properties_attributes: { section_due_dates_type: true })
       end
 
       context 'and the section does not have a due date set' do

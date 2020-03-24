@@ -86,7 +86,7 @@ module Api
     end
 
     def create
-      grouping = Grouping.find_by_group_id_and_assignment_id(params[:group_id], params[:assignment_id])
+      grouping = Grouping.find_by(group_id: params[:group_id], assessment_id: params[:assignment_id])
       if grouping.nil?
         render 'shared/http_status', locals: { code: '404', message:
           'No group with that id exists for the given assignment' }, status: 404
@@ -133,7 +133,7 @@ module Api
     end
 
     def create_folders
-      grouping = Grouping.find_by_group_id_and_assignment_id(params[:group_id], params[:assignment_id])
+      grouping = Grouping.find_by(group_id: params[:group_id], assessment_id: params[:assignment_id])
       if grouping.nil?
         render 'shared/http_status', locals: { code: '404', message:
             'No group with that id exists for the given assignment' }, status: 404
@@ -168,7 +168,7 @@ module Api
     end
 
     def remove_file
-      grouping = Grouping.find_by_group_id_and_assignment_id(params[:group_id], params[:assignment_id])
+      grouping = Grouping.find_by(group_id: params[:group_id], assessment_id: params[:assignment_id])
       if grouping.nil?
         render 'shared/http_status', locals: { code: '404', message:
           'No group with that id exists for the given assignment' }, status: 404
@@ -204,7 +204,7 @@ module Api
     end
 
     def remove_folder
-      grouping = Grouping.find_by_group_id_and_assignment_id(params[:group_id], params[:assignment_id])
+      grouping = Grouping.find_by(group_id: params[:group_id], assessment_id: params[:assignment_id])
       if grouping.nil?
         render 'shared/http_status', locals: { code: '404', message:
             'No group with that id exists for the given assignment' }, status: 404

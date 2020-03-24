@@ -12,7 +12,7 @@ describe FlexibleCriterion do
     it { is_expected.to validate_presence_of(:max_mark) }
 
     it do
-      is_expected.to validate_uniqueness_of(:name).scoped_to(:assignment_id)
+      is_expected.to validate_uniqueness_of(:name).scoped_to(:assessment_id)
     end
 
     it do

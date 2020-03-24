@@ -162,7 +162,7 @@ class GradersManager extends React.Component {
     $.post({
       url: Routes.set_boolean_graders_options_assignment_path(this.props.assignment_id),
       data: {
-        attribute: {assign_graders_to_criteria: assign}
+        attribute: {assignment_properties_attributes: {assign_graders_to_criteria: assign}}
       },
     }).then(() => this.setState({assign_graders_to_criteria: assign}));
   };
@@ -172,7 +172,7 @@ class GradersManager extends React.Component {
     $.post({
       url: Routes.set_boolean_graders_options_assignment_path(this.props.assignment_id),
       data: {
-        attribute: {anonymize_groups: assign}
+        attribute: {assignment_properties_attributes: {anonymize_groups: assign}}
       },
     }).then(() => this.setState({anonymize_groups: assign}));
   };
@@ -182,7 +182,7 @@ class GradersManager extends React.Component {
     $.post({
       url: Routes.set_boolean_graders_options_assignment_path(this.props.assignment_id),
       data: {
-        attribute: {hide_unassigned_criteria: assign}
+        attribute: {assignment_properties_attributes: {hide_unassigned_criteria: assign}}
       },
     }).then(() => this.setState({hide_unassigned_criteria: assign}));
   };

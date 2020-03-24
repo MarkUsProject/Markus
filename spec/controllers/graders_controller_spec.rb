@@ -164,7 +164,7 @@ describe GradersController do
 
       context 'with rubric criteria' do
         before :each do
-          @assignment = create(:assignment, assign_graders_to_criteria: true)
+          @assignment = create(:assignment, assignment_properties_attributes: { assign_graders_to_criteria: true })
         end
 
         it 'and all graders and criteria are valid' do
@@ -229,7 +229,7 @@ describe GradersController do
 
       context 'with flexible criteria' do
         before :each do
-          @assignemnt = create(:assignment, assign_graders_to_criteria: true)
+          @assignemnt = create(:assignment, assignment_properties_attributes: { assign_graders_to_criteria: true })
         end
 
         it 'and all graders and criteria are valid' do

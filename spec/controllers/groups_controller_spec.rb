@@ -152,10 +152,7 @@ describe GroupsController do
         # Setup for Git Repository
         allow(Rails.configuration.x.repository).to receive(:type).and_return('git')
 
-        @assignment = create(:assignment,
-                             allow_web_submits: true,
-                             group_max: 1,
-                             group_min: 1)
+        @assignment = create(:assignment)
 
         # Create students corresponding to the file_good
         @student_user_names = %w(c8shosta c5bennet)
@@ -203,10 +200,7 @@ describe GroupsController do
       end
 
       before :each do
-        @assignment = FactoryBot.create(:assignment,
-                                         allow_web_submits: true,
-                                         group_max: 1,
-                                         group_min: 1)
+        @assignment = FactoryBot.create(:assignment)
 
         @group = FactoryBot.create(:group)
 
@@ -310,7 +304,7 @@ describe GroupsController do
       allow(controller).to receive(:current_user).and_return(build(:student))
 
       @student = create(:student, user_name: 'c9test1')
-      @assignment = create(:assignment, student_form_groups: true)
+      @assignment = create(:assignment, assignment_properties_attributes: { student_form_groups: true })
     end
 
     describe 'POST #create' do

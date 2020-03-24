@@ -74,7 +74,7 @@ class GroupsController < ApplicationController
       params[:groupexist_id] = groupexist_id
       params[:assignment_id] = @assignment.id
 
-      if Grouping.where(assignment_id: @assignment.id, group_id: groupexist_id).exists?
+      if Grouping.where(assessment_id: @assignment.id, group_id: groupexist_id).exists?
         flash[:error] = I18n.t('groups.group_name_already_in_use')
       else
         @grouping.update_attribute(:group_id, groupexist_id)
@@ -99,7 +99,8 @@ class GroupsController < ApplicationController
 
   def index
     @assignment = Assignment.find(params[:assignment_id])
-    @clone_assignments = Assignment.where(vcs_submit: true)
+    @clone_assignments = Assignment.joins(:assignment_properties)
+                                   .where(assignment_properties: { vcs_submit: true })
                                    .where.not(id: @assignment.id)
                                    .order(:id)
 
@@ -153,10 +154,10 @@ class GroupsController < ApplicationController
 
   def get_names
     names = Student
-              .select(:id, :id_number, :user_name, "CONCAT(first_name,' ',last_name) AS label, CONCAT(first_name,' ',last_name) AS value")
-              .where("(lower(first_name) like ? OR lower(last_name) like ? OR lower(user_name) like ? OR id_number like ?) AND users.id NOT IN (?)",
-                     "#{params[:term].downcase}%", "#{params[:term].downcase}%", "#{params[:term].downcase}%", "#{params[:term]}%",
-                     Membership.select(:user_id).joins(:grouping).where("groupings.assignment_id = ?", params[:assignment]));
+            .select(:id, :id_number, :user_name, "CONCAT(first_name,' ',last_name) AS label, CONCAT(first_name,' ',last_name) AS value")
+            .where('(lower(first_name) like ? OR lower(last_name) like ? OR lower(user_name) like ? OR id_number like ?) AND users.id NOT IN (?)',
+                   "#{params[:term].downcase}%", "#{params[:term].downcase}%", "#{params[:term].downcase}%", "#{params[:term]}%",
+                   Membership.select(:user_id).joins(:grouping).where('groupings.assessment_id = ?', params[:assignment]))
     render json: names
   end
 

@@ -5,7 +5,7 @@ describe CriterionTaAssociation do
     it { is_expected.to belong_to :criterion }
     it { is_expected.to validate_presence_of :criterion_type }
     it { is_expected.to belong_to :assignment }
-    it { is_expected.to allow_values(subject.criterion.assignment.id).for :assignment_id }
+    it { is_expected.to allow_values(subject.criterion.assignment.id).for :assessment_id }
   end
 
   describe '#self.from_csv' do

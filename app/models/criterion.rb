@@ -4,7 +4,7 @@ class Criterion < ApplicationRecord
   after_update :scale_marks
 
   validates_presence_of :name
-  validates_uniqueness_of :name, scope: :assignment_id
+  validates_uniqueness_of :name, scope: :assessment_id
 
   validates_presence_of :max_mark
   validates_numericality_of :max_mark, greater_than: 0
@@ -74,9 +74,9 @@ class Criterion < ApplicationRecord
     new_values = yield(criteria.map(&:id), criteria.map { |c| "#{c.class}" }, ta_ids)
     values = new_values - existing_values
 
-    # Add assignment_id column common to all rows. It is not included above so
+    # Add assessment_id column common to all rows. It is not included above so
     # that the set operation is faster.
-    columns << :assignment_id
+    columns << :assessment_id
     values.map { |value| value << assignment.id }
     # TODO replace CriterionTaAssociation.import with
     # CriterionTaAssociation.create when the PG driver supports bulk create,
@@ -113,7 +113,7 @@ class Criterion < ApplicationRecord
                # subquery
                assignment.criterion_ta_associations
                          .joins(ta: :groupings)
-                         .where('groupings.assignment_id': assignment.id)
+                         .where('groupings.assessment_id': assignment.id)
                          .select('criterion_ta_associations.criterion_id',
                                  'criterion_ta_associations.criterion_type',
                                  'groupings.id')
@@ -123,7 +123,7 @@ class Criterion < ApplicationRecord
              .count
 
     [RubricCriterion, FlexibleCriterion, CheckboxCriterion].each do |klass|
-      records = klass.where(assignment_id: assignment.id)
+      records = klass.where(assessment_id: assignment.id)
                      .pluck_to_hash
                      .map do |h|
         { **h.symbolize_keys, assigned_groups_count: counts[[h['id'], klass.to_s]] || 0 }
@@ -141,7 +141,7 @@ class Criterion < ApplicationRecord
     max_mark_was = previous_changes[:max_mark].first
     # results with specific assignment
     results = Result.includes(submission: :grouping)
-                    .where(groupings: { assignment_id: assignment_id })
+                    .where(groupings: { assessment_id: assessment_id })
     all_marks = marks.where.not(mark: nil).where(result_id: results.ids)
     # all associated marks should have their mark value scaled to the change.
     updated_marks = {}
@@ -151,7 +151,7 @@ class Criterion < ApplicationRecord
     unless updated_marks.empty?
       Mark.upsert_all(all_marks.pluck_to_hash.map { |h| { **h.symbolize_keys, mark: updated_marks[h['id'].to_i] } })
     end
-    a = Assignment.find(assignment_id)
+    a = Assignment.find(assessment_id)
     updated_results = results.map do |result|
       [result.id, result.get_total_mark(assignment: a)]
     end.to_h

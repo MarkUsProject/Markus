@@ -560,7 +560,7 @@ describe ResultsController do
         create(:grace_period_deduction, membership: grouping.accepted_student_memberships.first)
       end
       before :each do
-        assignment.update(anonymize_groups: true)
+        assignment.assignment_properties.update(anonymize_groups: true)
         get :show, params: { assignment_id: assignment.id, submission_id: submission.id,
                              id: incomplete_result.id }, xhr: true
       end
@@ -578,7 +578,7 @@ describe ResultsController do
       let(:data) { JSON.parse(response.body) }
       let(:params) { { assignment_id: assignment.id, submission_id: submission.id, id: incomplete_result.id } }
       before :each do
-        assignment.update(assign_graders_to_criteria: true)
+        assignment.assignment_properties.update(assign_graders_to_criteria: true)
         create(:criterion_ta_association, criterion: rubric_mark.markable, ta: ta)
         get :show, params: params, xhr: true
       end
@@ -589,7 +589,7 @@ describe ResultsController do
 
       context 'when unassigned criteria are hidden from the grader' do
         before :each do
-          assignment.update(hide_unassigned_criteria: true)
+          assignment.assignment_properties.update(hide_unassigned_criteria: true)
         end
 
         it 'should only include marks for the assigned criteria' do

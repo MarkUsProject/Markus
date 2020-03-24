@@ -160,7 +160,7 @@ describe NotesController do
     end
 
     it 'be able to update new groupings' do
-      get_as @ta, :new_update_groupings, params: { assignment_id: @assignment.id }
+      get_as @ta, :new_update_groupings, params: { assessment_id: @assignment.id }
       expect(response.status).to eq 200
       expect(response).to render_template('notes/new_update_groupings')
     end
@@ -383,7 +383,7 @@ describe NotesController do
       end
 
       it 'GET on :new_update_groupings' do
-        get_as @admin, :new_update_groupings, params: { assignment_id: @assignment.id }
+        get_as @admin, :new_update_groupings, params: { assessment_id: @assignment.id }
         expect(response.status).to eq 200
         expect(response).to render_template('notes/new_update_groupings')
       end

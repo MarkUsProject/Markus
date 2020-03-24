@@ -174,7 +174,7 @@ class SubmissionsController < ApplicationController
 
     submission = @grouping.reload.current_submission_used
     redirect_to edit_assignment_submission_result_path(
-      assignment_id: @grouping.assignment_id,
+      assignment_id: @grouping.assessment_id,
       submission_id: submission.id,
       id: submission.get_latest_result.id)
   end
@@ -204,7 +204,7 @@ class SubmissionsController < ApplicationController
                             .where(id: groupings)
                             .pluck(:id).to_set
     collection_dates = assignment.all_grouping_collection_dates
-    is_scanned_exam = assignment.scanned_exam
+    is_scanned_exam = assignment.scanned_exam?
     groupings.each do |grouping|
       unless is_scanned_exam
         collect_now = collection_dates[grouping.id] <= Time.current

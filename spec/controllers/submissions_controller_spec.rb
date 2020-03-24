@@ -6,9 +6,7 @@ describe SubmissionsController do
   describe 'A student working alone' do
     before(:each) do
       @group = create(:group)
-      @assignment = create(:assignment,
-                           allow_web_submits: true,
-                           group_min: 1)
+      @assignment = create(:assignment)
       @grouping = create(:grouping,
                          group: @group,
                          assignment: @assignment)
@@ -191,9 +189,7 @@ describe SubmissionsController do
   describe 'A TA' do
     before(:each) do
       @group = create(:group)
-      @assignment = create(:assignment,
-                           allow_web_submits: true,
-                           group_min: 1)
+      @assignment = create(:assignment)
       @grouping = create(:grouping,
                          group: @group,
                          assignment: @assignment)
@@ -251,9 +247,7 @@ describe SubmissionsController do
   describe 'An administrator' do
     before(:each) do
       @group = create(:group)
-      @assignment = create(:assignment,
-                           allow_web_submits: true,
-                           group_min: 1)
+      @assignment = create(:assignment)
       @grouping = create(:grouping,
                          group: @group,
                          assignment: @assignment)
@@ -591,9 +585,7 @@ describe SubmissionsController do
 
     describe 'attempting to download groupings files' do
       before(:each) do
-        @assignment = create(:assignment,
-                             allow_web_submits: true,
-                             group_min: 1)
+        @assignment = create(:assignment)
         @grouping_ids = []
         (1..3).to_a.each do |i|
           @grouping = create(:grouping,

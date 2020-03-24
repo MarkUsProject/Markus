@@ -30,7 +30,8 @@
       </div>
 
       <div>
-        <%= f.label :description, GradeEntryForm.human_attribute_name(:description) %>
+        <%= f.label :description, GradeEntryForm.human_attribute_name(:description),
+                    class: 'required' %>
         <%= f.text_field :description %>
       </div>
 
@@ -44,8 +45,8 @@
       </div>
 
       <div>
-        <%= f.label :date, GradeEntryForm.human_attribute_name(:date) %>
-        <%= f.text_field :date,
+        <%= f.label :due_date, GradeEntryForm.human_attribute_name(:date) %>
+        <%= f.text_field :due_date,
                          class: 'datepicker',
                          size: 30,
                          placeholder: t('date.format_string.placeholder') %>

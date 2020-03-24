@@ -102,7 +102,7 @@ describe AnnotationCategoriesController do
     it 'successfully creates an annotation text associated with an annotation category' do
       post :create_annotation_text,
            params: {
-             assignment_id: annotation_category.assignment_id,
+             assignment_id: annotation_category.assessment_id,
              annotation_text: { content: 'New content', annotation_category_id: annotation_category.id },
              format: :js
            }
@@ -118,7 +118,7 @@ describe AnnotationCategoriesController do
       category = text.annotation_category
       delete :destroy_annotation_text,
              params: {
-               assignment_id: category.assignment_id,
+               assignment_id: category.assessment_id,
                id: text.id,
                format: :js
              }
@@ -133,7 +133,7 @@ describe AnnotationCategoriesController do
       category = text.annotation_category
       put :update_annotation_text,
           params: {
-            assignment_id: category.assignment_id,
+            assignment_id: category.assessment_id,
             id: text.id,
             annotation_text: { content: 'updated content' },
             format: :js
@@ -285,7 +285,7 @@ describe AnnotationCategoriesController do
     it 'should render an annotation context, where first part of its content matches given string' do
       string = 'This is an'
 
-      get :find_annotation_text, params: { assignment_id: annotation_category.assignment_id, string: string }
+      get :find_annotation_text, params: { assignment_id: annotation_category.assessment_id, string: string }
       expect(response.body).to eq(@annotation_text_one.content)
     end
 

@@ -13,437 +13,438 @@
 <%= render 'shared/flash_message' %>
 
 <%= form_for @assignment do |f| %>
+  <%= f.fields_for :assignment_properties do |ap_f| %>
 
-  <input type="hidden" name="assignment[scanned_exam]" value="<%= @assignment.scanned_exam %>">
+    <input type="hidden" name="assignment.assignment_properties[scanned_exam]" value="<%= @assignment.scanned_exam %>">
 
-  <label class='required'><%= t('required_fields') %></label>
+    <label class='required'><%= t('required_fields') %></label>
 
-  <%# Assignment properties %>
-  <fieldset>
-    <legend>
-      <span><%= t('menu.properties') %></span>
-    </legend>
+    <%# Assignment properties %>
+    <fieldset>
+      <legend>
+        <span><%= t('menu.properties') %></span>
+      </legend>
 
-    <div class='help assignment_properties_help'>
-      <p class='help-message-box assignment_properties_help'>
-        <%= t('assignments.help.edit.properties_html') %>
-      </p>
-    </div>
-
-    <div>
-      <%= f.label :short_identifier,
-                  Assignment.human_attribute_name(:short_identifier),
-                  class: 'required' %>
-      <%= f.text_field :short_identifier,
-                       onchange: 'set_onbeforeunload(true);',
-                       size: 35,
-                       maxlength: 30,
-                       required: true,
-                       readonly: !@assignment.new_record? %>
-    </div>
-
-    <div>
-      <%= f.label :description,
-                  Assignment.human_attribute_name(:description),
-                  class: 'required' %>
-      <%= f.text_field :description,
-                       onchange: 'set_onbeforeunload(true);',
-                       size: 35,
-                       required: true %>
-    </div>
-
-    <div>
-      <%= f.label :message %>
-      <%= f.text_area :message,
-                      cols: 65,
-                      rows: 8,
-                      onchange: 'set_onbeforeunload(true);' %>
-    </div>
-
-    <% unless @sections.empty? %>
-      <div class='information'>
-        <%= t('assignments.form.section_due_dates_option') %>
+      <div class='help assignment_properties_help'>
+        <p class='help-message-box assignment_properties_help'>
+          <%= t('assignments.help.edit.properties_html') %>
+        </p>
       </div>
 
       <div>
-        <%= f.label :section_due_dates_type, Assignment.human_attribute_name(:section_due_dates_type) %>
-        <%= f.check_box :section_due_dates_type,
-                        onclick: 'set_onbeforeunload(true);' %>
+        <%= f.label :short_identifier,
+                    Assignment.human_attribute_name(:short_identifier),
+                    class: 'required' %>
+        <%= f.text_field :short_identifier,
+                         onchange: 'set_onbeforeunload(true);',
+                         size: 35,
+                         maxlength: 30,
+                         required: true,
+                         readonly: !@assignment.new_record? %>
       </div>
 
-      <div id='section_due_dates_information'
-           style='<%= 'display: none' unless @assignment.section_due_dates_type %>'>
-        <p class='information'>
-          <%= t('assignments.form.section_due_dates_info_html') %>
-        </p>
-        <div class='section_due_date_form'>
-          <%= f.fields_for :section_due_dates,
-                           @section_due_dates do |due_date_f| %>
-            <% obj = due_date_f.object %>
-            <p>
-              <%= due_date_f.label :section, Section.model_name.human %>
-              <%= obj.section.name %>
-              <%= due_date_f.text_field :section_id, class: 'hidden' %>
-              <%= due_date_f.label :due_date, Assignment.human_attribute_name(:due_date),
-                                   class: 'section_due_date_label' %>
-              <%= due_date_f.text_field :due_date,
-                                        class: 'section_due_date_input',
-                                        value: obj.due_date.nil? ? '' :
-                                               obj.due_date.strftime(
-                                                 '%Y-%m-%d %l:%M %p') %>
-            </p>
-          <% end %>
+      <div>
+        <%= f.label :description,
+                    Assignment.human_attribute_name(:description),
+                    class: 'required' %>
+        <%= f.text_field :description,
+                         onchange: 'set_onbeforeunload(true);',
+                         size: 35,
+                         required: true %>
+      </div>
+
+      <div>
+        <%= f.label :message %>
+        <%= f.text_area :message,
+                        cols: 65,
+                        rows: 8,
+                        onchange: 'set_onbeforeunload(true);' %>
+      </div>
+
+      <% unless @sections.empty? %>
+        <div class='information'>
+          <%= t('assignments.form.section_due_dates_option') %>
         </div>
-      </div>
-    <% end %>
 
-    <div>
-      <%= f.label :due_date,
-                  Assignment.human_attribute_name(:due_date),
-                  class: 'required' %>
-      <%= f.text_field :due_date,
-                       onchange: 'set_onbeforeunload(true);',
-                       value: @assignment.due_date.nil? ? '' :
-                              @assignment.due_date.strftime(
-                                '%Y-%m-%d %l:%M %p'),
-                       size: 35,
-                       required: true,
-                       placeholder: t('time.format_string.placeholder') %>
-    </div>
+        <div>
+          <%= ap_f.label :section_due_dates_type, Assignment.human_attribute_name(:section_due_dates_type) %>
+          <%= ap_f.check_box :section_due_dates_type, onclick: 'set_onbeforeunload(true);' %>
+        </div>
+
+        <div id='section_due_dates_information'
+             style='<%= 'display: none' unless @assignment.section_due_dates_type %>'>
+          <p class='information'>
+            <%= t('assignments.form.section_due_dates_info_html') %>
+          </p>
+          <div class='section_due_date_form'>
+            <%= f.fields_for :section_due_dates,
+                             @section_due_dates do |due_date_f| %>
+              <% obj = due_date_f.object %>
+              <p>
+                <%= due_date_f.label :section, Section.model_name.human %>
+                <%= obj.section.name %>
+                <%= due_date_f.text_field :section_id, class: 'hidden' %>
+                <%= due_date_f.label :due_date, Assignment.human_attribute_name(:due_date),
+                                     class: 'section_due_date_label' %>
+                <%= due_date_f.text_field :due_date,
+                                          class: 'section_due_date_input',
+                                          value: obj.due_date.nil? ? '' :
+                                                 obj.due_date.strftime(
+                                                   '%Y-%m-%d %l:%M %p') %>
+              </p>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+
+      <div>
+        <%= f.label :due_date,
+                    Assignment.human_attribute_name(:due_date),
+                    class: 'required' %>
+        <%= f.text_field :due_date,
+                         onchange: 'set_onbeforeunload(true);',
+                         value: @assignment.due_date.nil? ? '' :
+                                @assignment.due_date.strftime(
+                                  '%Y-%m-%d %l:%M %p'),
+                         size: 35,
+                         required: true,
+                         placeholder: t('time.format_string.placeholder') %>
+      </div>
+
+      <% unless @assignment.scanned_exam %>
+      <div>
+        <%= ap_f.check_box :allow_web_submits,
+                           onclick: 'set_onbeforeunload(true);' %>
+        <%= ap_f.label :allow_web_submits,
+                       Assignment.human_attribute_name(:allow_web_submits) %>
+      </div>
+
+      <div>
+        <%= ap_f.check_box :vcs_submit,
+                           onclick: 'set_onbeforeunload(true);' %>
+        <%= ap_f.label :vcs_submit,
+                       Assignment.human_attribute_name(:vcs_submit) %>
+      </div>
+      <% end %>
+
+      <div>
+        <%= ap_f.check_box :display_median_to_students,
+                           onclick: 'set_onbeforeunload(true);' %>
+        <%= ap_f.label :display_median_to_students,
+                       Assignment.human_attribute_name(:display_median_to_students) %>
+      </div>
+
+      <div>
+        <%= ap_f.check_box :display_grader_names_to_students,
+                           onclick: 'set_onbeforeunload(true);' %>
+        <%= ap_f.label :display_grader_names_to_students,
+                       Assignment.human_attribute_name(:display_grader_names_to_students) %>
+      </div>
+
+      <div>
+        <%= f.check_box :is_hidden,
+                        onclick: 'set_onbeforeunload(true);' %>
+        <%= f.label :is_hidden, Assignment.human_attribute_name(:is_hidden) %>
+      </div>
+      <div>
+        <%= ap_f.check_box :has_peer_review,
+                        onclick: 'set_onbeforeunload(true);' %>
+        <%= ap_f.label :has_peer_review,
+                       Assignment.human_attribute_name(:has_peer_review) %>
+      </div>
+    </fieldset>
 
     <% if !@assignment.scanned_exam %>
-    <div>
-      <%= f.check_box :allow_web_submits,
-                      onclick: 'set_onbeforeunload(true);' %>
-      <%= f.label :allow_web_submits,
-                  Assignment.human_attribute_name(:allow_web_submits) %>
-    </div>
+    <%# Required files %>
+    <fieldset>
+      <legend>
+        <span><%= Assignment.human_attribute_name(:assignment_files) %></span>
+      </legend>
 
-    <div>
-      <%= f.check_box :vcs_submit,
-                      onclick: 'set_onbeforeunload(true);' %>
-      <%= f.label :vcs_submit,
-                  Assignment.human_attribute_name(:vcs_submit) %>
-    </div>
-    <% end %>
+      <div class='help assignment_required_files_help'>
+        <p class='help-message-box assignment_required_files_help'>
+          <%= t('assignments.help.edit.required_files') %>
+        </p>
+      </div>
 
-    <div>
-      <%= f.check_box :display_median_to_students,
-                      onclick: 'set_onbeforeunload(true);' %>
-      <%= f.label :display_median_to_students,
-                  Assignment.human_attribute_name(:display_median_to_students) %>
-    </div>
-
-    <div>
-      <%= f.check_box :display_grader_names_to_students,
-                      onclick: 'set_onbeforeunload(true);' %>
-      <%= f.label :display_grader_names_to_students,
-                  Assignment.human_attribute_name(:display_grader_names_to_students) %>
-    </div>
-
-    <div>
-      <%= f.check_box :is_hidden,
-                      onclick: 'set_onbeforeunload(true);' %>
-      <%= f.label :is_hidden, Assignment.human_attribute_name(:is_hidden) %>
-    </div>
-    <div>
-      <%= f.check_box :has_peer_review,
-                      onclick: 'set_onbeforeunload(true);' %>
-      <%= f.label :has_peer_review,
-                  Assignment.human_attribute_name(:has_peer_review) %>
-    </div>
-  </fieldset>
-
-  <% if !@assignment.scanned_exam %>
-  <%# Required files %>
-  <fieldset>
-    <legend>
-      <span><%= Assignment.human_attribute_name(:assignment_files) %></span>
-    </legend>
-
-    <div class='help assignment_required_files_help'>
-      <p class='help-message-box assignment_required_files_help'>
-        <%= t('assignments.help.edit.required_files') %>
+      <h4><%= t('assignments.form.required_files_by_student') %></h4>
+      <div id='assignment_files'>
+        <%= f.fields_for :assignment_files do |assignment_file_form| %>
+          <%= render partial: 'assignment_file',
+                     locals: { assignment_file: assignment_file_form.object,
+                               form: f } %>
+        <% end %>
+      </div>
+      <p id='assignment_file_add_link'>
+        <%= link_to t('assignments.form.add_required_file'),
+                    '#',
+                    onclick: 'add_assignment_file(); return false;' %>
       </p>
-    </div>
+      <p id='only_required_files_option'
+         <% if @assignment.assignment_files.empty? %>
+           class='disable'
+         <% end %>>
+        <%= ap_f.check_box :only_required_files,
+                           onclick: 'set_onbeforeunload(true);' %>
+        <%= ap_f.label :only_required_files, Assignment.human_attribute_name(:only_required_files) %>
+      </p>
+    </fieldset>
 
-    <h4><%= t('assignments.form.required_files_by_student') %></h4>
-    <div id='assignment_files'>
-      <%= f.fields_for :assignment_files do |assignment_file_form| %>
-        <%= render partial: 'assignment_file',
-                   locals: { assignment_file: assignment_file_form.object,
-                             form: f } %>
+    <%# Group properties %>
+    <fieldset>
+      <legend>
+        <span><%= t('assignments.form.group_properties') %></span>
+      </legend>
+
+      <div class='help assignment_assignment_type_help'>
+        <p class='help-message-box assignment_assignment_type_help'>
+          <%= t('assignments.help.edit.assignment_type_html') %>
+        </p>
+      </div>
+
+      <% if @assignment.new_record? && @clone_assignments.size > 0 %>
+        <p id='persist_groups_assignment_style'>
+          <%= check_box_tag :persist_groups, onclick: 'set_onbeforeunload(true);' %>
+          <%= label_tag :persist_groups, t('assignments.form.persist_groups_from') %>
+          <%= select_tag :persist_groups_assignment,
+                         options_for_select(@clone_assignments.map { |a| [a.short_identifier, a.id] }),
+                         disabled: true %>
+        </p>
       <% end %>
-    </div>
-    <p id='assignment_file_add_link'>
-      <%= link_to t('assignments.form.add_required_file'),
-                  '#',
-                  onclick: 'add_assignment_file(); return false;' %>
-    </p>
-    <p id='only_required_files_option'
-       <% if @assignment.assignment_files.empty? %>
-         class='disable'
-       <% end %>>
-      <%= f.check_box :only_required_files,
-                      onclick: 'set_onbeforeunload(true);' %>
-      <%= f.label :only_required_files, Assignment.human_attribute_name(:only_required_files) %>
-    </p>
-  </fieldset>
-
-  <%# Group properties %>
-  <fieldset>
-    <legend>
-      <span><%= t('assignments.form.group_properties') %></span>
-    </legend>
-
-    <div class='help assignment_assignment_type_help'>
-      <p class='help-message-box assignment_assignment_type_help'>
-        <%= t('assignments.help.edit.assignment_type_html') %>
-      </p>
-    </div>
-
-    <% if @assignment.new_record? && @clone_assignments.size > 0 %>
-      <p id='persist_groups_assignment_style'>
-        <%= check_box_tag :persist_groups, onclick: 'set_onbeforeunload(true);' %>
-        <%= label_tag :persist_groups, t('assignments.form.persist_groups_from') %>
-        <%= select_tag :persist_groups_assignment,
-                       options_for_select(@clone_assignments.map { |a| [a.short_identifier, a.id] }),
-                       disabled: true %>
-      </p>
-    <% end %>
-    <p id='is_group_assignment_style'>
-      <%= check_box_tag :is_group_assignment, true,
-                        @assignment.student_form_groups ||
-                        @assignment.invalid_override,
-                        onchange: 'set_onbeforeunload(true);' %>
-      <%= label_tag :is_group_assignment,
-                    Assignment.human_attribute_name(:allow_groups) %>
-    </p>
-    <fieldset class='group_properties'>
-      <div id='group_properties'>
-        <p id='student_form_groups_style'>
-          <%= f.check_box :student_form_groups,
+      <p id='is_group_assignment_style'>
+        <%= check_box_tag :is_group_assignment, true,
+                          @assignment.student_form_groups ||
+                          @assignment.invalid_override,
                           onchange: 'set_onbeforeunload(true);' %>
-          <%= f.label :student_form_groups,
-                      Assignment.human_attribute_name(:student_form_groups) %>
+        <%= label_tag :is_group_assignment,
+                      Assignment.human_attribute_name(:allow_groups) %>
+      </p>
+      <fieldset class='group_properties'>
+        <div id='group_properties'>
+          <p id='student_form_groups_style'>
+            <%= ap_f.check_box :student_form_groups,
+                               onchange: 'set_onbeforeunload(true);' %>
+            <%= ap_f.label :student_form_groups,
+                           Assignment.human_attribute_name(:student_form_groups) %>
+          </p>
+
+          <p id='group_limit_style'>
+            <%= ap_f.label :group_min,
+                           Assignment.human_attribute_name(:group_min) %>
+            <%= ap_f.number_field :group_min,
+                                  min: 1,
+                                  max: 999,
+                                  onchange: 'set_onbeforeunload(true);' %>
+            <br>
+            <%= ap_f.label :group_max,
+                           Assignment.human_attribute_name(:group_max) %>
+            <%= ap_f.number_field :group_max,
+                                  min: 1,
+                                  max: 999,
+                                  onchange: 'set_onbeforeunload(true);' %>
+          </p>
+
+          <p id='group_name_autogenerated_style'>
+            <%= ap_f.check_box :group_name_autogenerated %>
+            <%= ap_f.label :group_name_autogenerated,
+                           Assignment.human_attribute_name(:group_name_autogenerated),
+                           onchange: 'set_onbeforeunload(true);' %>
+
+          </p>
+        </div>
+      </fieldset>
+    </fieldset>
+
+    <%# Submission rules %>
+    <fieldset id='submission_rule_fields'>
+      <legend>
+        <span><%= SubmissionRule.model_name.human %></span>
+      </legend>
+
+      <div class='help assignment_submission_rules_help'>
+        <p class='help-message-box assignment_submission_rules_help'>
+          <%= t('assignments.help.edit.submission_rules') %>
         </p>
+      </div>
 
-        <p id='group_limit_style'>
-          <%= f.label :group_min,
-                      Assignment.human_attribute_name(:group_min) %>
-          <%= f.number_field :group_min,
-                             min: 1,
-                             max: 999,
-                             onchange: 'set_onbeforeunload(true);' %>
-          <br>
-          <%= f.label :group_max,
-                      Assignment.human_attribute_name(:group_max) %>
-          <%= f.number_field :group_max,
-                             min: 1,
-                             max: 999,
-                             onchange: 'set_onbeforeunload(true);' %>
+      <%= f.fields_for :submission_rule do |rule| %>
+        <%= rule.radio_button :type,
+                              'NoLateSubmissionRule',
+                              checked: true,
+                              id: 'no_late_submission_rule' %>
+        <%= label_tag 'no_late_submission_rule',
+                      NoLateSubmissionRule.human_attribute_name(:form_description) %>
+        <br>
+        <%= rule.radio_button :type,
+                              'GracePeriodSubmissionRule',
+                              id: 'grace_period_submission_rule' %>
+        <%= label_tag 'grace_period_submission_rule',
+                      GracePeriodSubmissionRule.human_attribute_name(:form_description) %>
+        <div id='grace_periods'>
+          <table id='grace_periods_table'>
+            <thead>
+            <tr>
+              <th><%= t('submission_rules.after').capitalize %></th>
+              <th><%= t('submission_rules.from').capitalize %></th>
+              <th><%= t('submission_rules.to').capitalize %></th>
+              <th><%= t(:delete) %></th>
+            </tr>
+            </thead>
+            <tbody>
+              <% if rule.object.type.to_s == 'GracePeriodSubmissionRule' && !rule.object.periods.empty? %>
+                  <%= rule.fields_for :periods do |period_form| %>
+                      <%
+                        # The below conditional is meant to filter out periods that do not match
+                        # the currently selected submission rule. This only happens when we fail to
+                        # save a new submission rule.
+                        if rule.object.type.to_s == rule.object.class.to_s || period_form.object.id.nil? %>
+                          <%= render partial: 'grace_period',
+                                     locals: { grace_period: period_form.object,
+                                               pf: rule } %>
+                      <% end %>
+                  <% end %>
+              <% else %>
+                  <%= render partial: 'grace_period',
+                             locals: { pf: rule, grace_period: Period.new } %>
+              <% end %>
+            </tbody>
+          </table>
+          <%= link_to t('submission_rules.add_period'),
+                      '#',
+                      onclick: 'add_period("grace_periods", grace_periods);' +
+                          'return false;' %>
+        </div>
+
+        <br>
+        <%= rule.radio_button :type,
+                              'PenaltyDecayPeriodSubmissionRule',
+                              id: 'penalty_decay_period_submission_rule' %>
+        <%= label_tag 'penalty_decay_period_submission_rule',
+                      PenaltyDecayPeriodSubmissionRule.human_attribute_name(:form_description) %>
+        <br>
+        <div id='penalty_decay_periods'>
+          <table id='penalty_decay_periods_table'>
+            <thead>
+            <tr>
+              <th><%= t('submission_rules.deduct').capitalize %></th>
+              <th><%= t('submission_rules.every').capitalize %></th>
+              <th><%= t('submission_rules.for').capitalize %></th>
+              <th><%= t('submission_rules.from').capitalize %></th>
+              <th><%= t('submission_rules.to').capitalize %></th>
+              <th><%= t(:delete) %></th>
+            </tr>
+            </thead>
+            <tbody>
+              <% if rule.object.type.to_s == 'PenaltyDecayPeriodSubmissionRule' %>
+                  <%= rule.fields_for :periods do |period_form| %>
+                      <%
+                        # The below conditional is meant to filter out periods that do not match
+                        # the currently selected submission rule. This only happens when we fail to
+                        # save a new submission rule.
+                        if rule.object.type.to_s == rule.object.class.to_s || period_form.object.id.nil? %>
+                          <%= render partial: 'penalty_decay_period',
+                                     locals: { penalty_decay_period: period_form.object,
+                                               pf: rule } %>
+                      <% end %>
+                  <% end %>
+              <% else %>
+                  <%= render partial: 'penalty_decay_period',
+                             locals: { pf: rule, penalty_decay_period: Period.new } %>
+              <% end %>
+            </tbody>
+          </table>
+          <%= link_to t('submission_rules.add_period'),
+                      '#',
+                      onclick: 'add_period("penalty_decay_periods", ' +
+                               'penalty_decay_periods); return false;' %>
+        </div>
+
+        <%= rule.radio_button :type,
+                              'PenaltyPeriodSubmissionRule',
+                              id: 'penalty_period_submission_rule' %>
+        <%= label_tag 'penalty_period_submission_rule',
+                      PenaltyPeriodSubmissionRule.human_attribute_name(:form_description) %>
+        <div id='penalty_periods'>
+          <table id='penalty_periods_table'>
+            <thead>
+            <tr>
+              <th><%= t('submission_rules.after').capitalize %></th>
+              <th><%= t('submission_rules.deduct').capitalize %></th>
+              <th><%= t('submission_rules.from').capitalize %></th>
+              <th><%= t('submission_rules.to').capitalize %></th>
+              <th><%= t(:delete) %></th>
+            </tr>
+            </thead>
+            <tbody>
+              <% if rule.object.type.to_s == 'PenaltyPeriodSubmissionRule' %>
+                  <%= rule.fields_for :periods do |period_form| %>
+                      <%
+                        # The below conditional is meant to filter out periods that do not match
+                        # the currently selected submission rule. This only happens when we fail to
+                        # save a new submission rule.
+                        if rule.object.type.to_s == rule.object.class.to_s || period_form.object.id.nil? %>
+                          <%= render partial: 'penalty_period',
+                                     locals: { penalty_period: period_form.object,
+                                               pf: rule } %>
+                      <% end %>
+                  <% end %>
+              <% else %>
+                  <%= render partial: 'penalty_period',
+                             locals: { pf: rule, penalty_period: Period.new } %>
+              <% end %>
+            </tbody>
+          </table>
+          <%= link_to t('submission_rules.add_period'),
+                      '#',
+                      onclick: 'add_period("penalty_periods",penalty_periods);' +
+                          ' return false;' %>
+        </div>
+      <% end %>
+    </fieldset>
+    <% end %>
+
+    <%# Remark request rules %>
+    <fieldset>
+      <legend>
+        <span><%= t('assignments.form.remarks')%></span>
+      </legend>
+
+      <div class='help assignment_remark_request_rules_help'>
+        <p class='help-message-box assignment_remark_request_rules_help'>
+          <%= t('assignments.help.edit.remark_request_rules') %>
         </p>
+      </div>
 
-        <p id='group_name_autogenerated_style'>
-          <%= f.check_box :group_name_autogenerated %>
-          <%= f.label :group_name_autogenerated,
-                      Assignment.human_attribute_name(:group_name_autogenerated),
-                      onchange: 'set_onbeforeunload(true);' %>
+      <p id='allow_remark_requests'>
+        <%= ap_f.check_box :allow_remarks,
+                           onchange: 'set_onbeforeunload(true);' %>
+        <%= ap_f.label :allow_remarks, Assignment.human_attribute_name(:allow_remarks) %>
+      </p>
 
+      <div id='remark_properties'>
+        <p>
+          <%= ap_f.label :remark_due_date, Assignment.human_attribute_name(:remark_due_date) %>
+          <%= ap_f.text_field :remark_due_date,
+                              onchange: 'set_onbeforeunload(true);',
+                              value: @assignment.remark_due_date.nil? ? '' :
+                                     @assignment.remark_due_date.strftime(
+                                       '%Y-%m-%d %l:%M %p'),
+                              size: 35 %>
+        </p>
+        <p>
+          <%= ap_f.label :remark_message, Assignment.human_attribute_name(:remark_message) %>
+          <%= ap_f.text_area :remark_message,
+                             rows: 8,
+                             cols: 65,
+                             onchange: 'set_onbeforeunload(true);' %>
         </p>
       </div>
     </fieldset>
-  </fieldset>
 
-  <%# Submission rules %>
-  <fieldset id='submission_rule_fields'>
-    <legend>
-      <span><%= SubmissionRule.model_name.human %></span>
-    </legend>
-
-    <div class='help assignment_submission_rules_help'>
-      <p class='help-message-box assignment_submission_rules_help'>
-        <%= t('assignments.help.edit.submission_rules') %>
-      </p>
-    </div>
-
-    <%= f.fields_for :submission_rule do |rule| %>
-      <%= rule.radio_button :type,
-                            'NoLateSubmissionRule',
-                            checked: true,
-                            id: 'no_late_submission_rule' %>
-      <%= label_tag 'no_late_submission_rule',
-                    NoLateSubmissionRule.human_attribute_name(:form_description) %>
-      <br>
-      <%= rule.radio_button :type,
-                            'GracePeriodSubmissionRule',
-                            id: 'grace_period_submission_rule' %>
-      <%= label_tag 'grace_period_submission_rule',
-                    GracePeriodSubmissionRule.human_attribute_name(:form_description) %>
-      <div id='grace_periods'>
-        <table id='grace_periods_table'>
-          <thead>
-          <tr>
-            <th><%= t('submission_rules.after').capitalize %></th>
-            <th><%= t('submission_rules.from').capitalize %></th>
-            <th><%= t('submission_rules.to').capitalize %></th>
-            <th><%= t(:delete) %></th>
-          </tr>
-          </thead>
-          <tbody>
-            <% if rule.object.type.to_s == 'GracePeriodSubmissionRule' && !rule.object.periods.empty? %>
-                <%= rule.fields_for :periods do |period_form| %>
-                    <%
-                      # The below conditional is meant to filter out periods that do not match
-                      # the currently selected submission rule. This only happens when we fail to
-                      # save a new submission rule.
-                      if rule.object.type.to_s == rule.object.class.to_s || period_form.object.id.nil? %>
-                        <%= render partial: 'grace_period',
-                                   locals: { grace_period: period_form.object,
-                                             pf: rule } %>
-                    <% end %>
-                <% end %>
-            <% else %>
-                <%= render partial: 'grace_period',
-                           locals: { pf: rule, grace_period: Period.new } %>
-            <% end %>
-          </tbody>
-        </table>
-        <%= link_to t('submission_rules.add_period'),
-                    '#',
-                    onclick: 'add_period("grace_periods", grace_periods);' +
-                        'return false;' %>
-      </div>
-
-      <br>
-      <%= rule.radio_button :type,
-                            'PenaltyDecayPeriodSubmissionRule',
-                            id: 'penalty_decay_period_submission_rule' %>
-      <%= label_tag 'penalty_decay_period_submission_rule',
-                    PenaltyDecayPeriodSubmissionRule.human_attribute_name(:form_description) %>
-      <br>
-      <div id='penalty_decay_periods'>
-        <table id='penalty_decay_periods_table'>
-          <thead>
-          <tr>
-            <th><%= t('submission_rules.deduct').capitalize %></th>
-            <th><%= t('submission_rules.every').capitalize %></th>
-            <th><%= t('submission_rules.for').capitalize %></th>
-            <th><%= t('submission_rules.from').capitalize %></th>
-            <th><%= t('submission_rules.to').capitalize %></th>
-            <th><%= t(:delete) %></th>
-          </tr>
-          </thead>
-          <tbody>
-            <% if rule.object.type.to_s == 'PenaltyDecayPeriodSubmissionRule' %>
-                <%= rule.fields_for :periods do |period_form| %>
-                    <%
-                      # The below conditional is meant to filter out periods that do not match
-                      # the currently selected submission rule. This only happens when we fail to
-                      # save a new submission rule.
-                      if rule.object.type.to_s == rule.object.class.to_s || period_form.object.id.nil? %>
-                        <%= render partial: 'penalty_decay_period',
-                                   locals: { penalty_decay_period: period_form.object,
-                                             pf: rule } %>
-                    <% end %>
-                <% end %>
-            <% else %>
-                <%= render partial: 'penalty_decay_period',
-                           locals: { pf: rule, penalty_decay_period: Period.new } %>
-            <% end %>
-          </tbody>
-        </table>
-        <%= link_to t('submission_rules.add_period'),
-                    '#',
-                    onclick: 'add_period("penalty_decay_periods", ' +
-                             'penalty_decay_periods); return false;' %>
-      </div>
-
-      <%= rule.radio_button :type,
-                            'PenaltyPeriodSubmissionRule',
-                            id: 'penalty_period_submission_rule' %>
-      <%= label_tag 'penalty_period_submission_rule',
-                    PenaltyPeriodSubmissionRule.human_attribute_name(:form_description) %>
-      <div id='penalty_periods'>
-        <table id='penalty_periods_table'>
-          <thead>
-          <tr>
-            <th><%= t('submission_rules.after').capitalize %></th>
-            <th><%= t('submission_rules.deduct').capitalize %></th>
-            <th><%= t('submission_rules.from').capitalize %></th>
-            <th><%= t('submission_rules.to').capitalize %></th>
-            <th><%= t(:delete) %></th>
-          </tr>
-          </thead>
-          <tbody>
-            <% if rule.object.type.to_s == 'PenaltyPeriodSubmissionRule' %>
-                <%= rule.fields_for :periods do |period_form| %>
-                    <%
-                      # The below conditional is meant to filter out periods that do not match
-                      # the currently selected submission rule. This only happens when we fail to
-                      # save a new submission rule.
-                      if rule.object.type.to_s == rule.object.class.to_s || period_form.object.id.nil? %>
-                        <%= render partial: 'penalty_period',
-                                   locals: { penalty_period: period_form.object,
-                                             pf: rule } %>
-                    <% end %>
-                <% end %>
-            <% else %>
-                <%= render partial: 'penalty_period',
-                           locals: { pf: rule, penalty_period: Period.new } %>
-            <% end %>
-          </tbody>
-        </table>
-        <%= link_to t('submission_rules.add_period'),
-                    '#',
-                    onclick: 'add_period("penalty_periods",penalty_periods);' +
-                        ' return false;' %>
-      </div>
+    <%= f.submit t(:save),
+                 data: { disable_with: t('working') },
+                 onclick: 'set_onbeforeunload(false);' %>
     <% end %>
-  </fieldset>
-  <% end %>
-
-  <%# Remark request rules %>
-  <fieldset>
-    <legend>
-      <span><%= t('assignments.form.remarks')%></span>
-    </legend>
-
-    <div class='help assignment_remark_request_rules_help'>
-      <p class='help-message-box assignment_remark_request_rules_help'>
-        <%= t('assignments.help.edit.remark_request_rules') %>
-      </p>
-    </div>
-
-    <p id='allow_remark_requests'>
-      <%= f.check_box :allow_remarks,
-                      onchange: 'set_onbeforeunload(true);' %>
-      <%= f.label :allow_remarks, Assignment.human_attribute_name(:allow_remarks) %>
-    </p>
-
-    <div id='remark_properties'>
-      <p>
-        <%= f.label :remark_due_date, Assignment.human_attribute_name(:remark_due_date) %>
-        <%= f.text_field :remark_due_date,
-                         onchange: 'set_onbeforeunload(true);',
-                         value: @assignment.remark_due_date.nil? ? '' :
-                                @assignment.remark_due_date.strftime(
-                                  '%Y-%m-%d %l:%M %p'),
-                         size: 35 %>
-      </p>
-      <p>
-        <%= f.label :remark_message, Assignment.human_attribute_name(:remark_message) %>
-        <%= f.text_area :remark_message,
-                        rows: 8,
-                        cols: 65,
-                        onchange: 'set_onbeforeunload(true);' %>
-      </p>
-    </div>
-  </fieldset>
-
-  <%= f.submit t(:save),
-               data: { disable_with: t('working') },
-               onclick: 'set_onbeforeunload(false);' %>
 <% end %>
 
 <%# Starter Code %>

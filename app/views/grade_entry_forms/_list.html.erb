@@ -21,8 +21,8 @@
               <%= link_to gef_text, route %>
             </td>
             <td>
-              <% unless grade_entry_form.date.nil? %>
-                <%= l(grade_entry_form.date, format: :long) %>
+              <% unless grade_entry_form.due_date.nil? %>
+                <%= l(grade_entry_form.due_date, format: :long) %>
               <% end %>
             </td>
             <td>
@@ -43,8 +43,8 @@
                 <% else %>
                   <%= t('grade_entry_forms.students.detailed_marks_message') %>
                 <% end %>
-              <% elsif grade_entry_form.date.nil? ||
-                       grade_entry_form.date < Time.zone.now.to_date %>
+              <% elsif grade_entry_form.due_date.nil? ||
+                       grade_entry_form.due_date < Time.zone.now.to_date %>
                 <%= t('grade_entry_forms.students.no_results') %>
               <% end %>
             </td>

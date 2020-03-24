@@ -115,7 +115,7 @@ describe AssignmentsController do
       # generate the expected csv string
       csv_data = []
       DEFAULT_FIELDS.map do |f|
-        csv_data << assignment.send(f.to_s)
+        csv_data << assignment.send(f)
       end
       new_data = csv_data.join(',') + "\n"
       expect(@controller).to receive(:send_data).with(new_data, csv_options) {
@@ -292,10 +292,12 @@ describe AssignmentsController do
     let!(:assignment) { create(:assignment) }
     context 'an admin' do
       let(:user) { create :admin }
-      let(:value) { !assignment[attribute] }
+      let(:value) { !assignment.assignment_properties[attribute] }
 
       before :each do
-        post_as user, :set_boolean_graders_options, params: { id: assignment.id, attribute: { attribute => value } }
+        post_as user, :set_boolean_graders_options,
+                params: { id: assignment.id,
+                          attribute: { assignment_properties_attributes: { attribute => value } } }
         assignment.reload
       end
 
@@ -304,7 +306,7 @@ describe AssignmentsController do
           expect(response.status).to eq(200)
         end
         it 'should update the attribute' do
-          expect(assignment[attribute]).to eq(value)
+          expect(assignment.assignment_properties[attribute]).to eq(value)
         end
       end
 

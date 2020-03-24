@@ -1,6 +1,6 @@
 class AssignmentStat < ApplicationRecord
 
-  belongs_to :assignment
+  belongs_to :assignment, inverse_of: :assignment_stat, foreign_key: :assessment_id
 
   # Update the cached grade distribution
   def refresh_grade_distribution

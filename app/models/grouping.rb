@@ -68,7 +68,7 @@ class Grouping < ApplicationRecord
   validates_numericality_of :criteria_coverage_count, greater_than_or_equal_to: 0
 
   # user association/validation
-  belongs_to :assignment, counter_cache: true
+  belongs_to :assignment, foreign_key: :assessment_id, counter_cache: true
   validates_associated :assignment, on: :create
 
   belongs_to :group
@@ -271,7 +271,7 @@ class Grouping < ApplicationRecord
 
   # Add a new member to base
   def add_member(user, set_membership_status = StudentMembership::STATUSES[:accepted])
-    if user.has_accepted_grouping_for?(self.assignment_id) || user.hidden
+    if user.has_accepted_grouping_for?(self.assessment_id) || user.hidden
       nil
     else
       member = StudentMembership.new(user: user, membership_status:

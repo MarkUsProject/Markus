@@ -28,19 +28,19 @@ module CourseSummariesHelper
 
     assignment_grades = students.joins(accepted_groupings: :current_result)
                                 .where('results.released_to_students': released)
-                                .pluck('users.id', 'groupings.assignment_id', 'results.total_mark')
-    assignment_grades.each do |student_id, assignment_id, mark|
-      student_data[student_id][:assignment_marks][assignment_id] = mark
+                                .pluck('users.id', 'groupings.assessment_id', 'results.total_mark')
+    assignment_grades.each do |student_id, assessment_id, mark|
+      student_data[student_id][:assignment_marks][assessment_id] = mark
     end
 
     gef_grades = students.joins(:grade_entry_students)
                          .where('grade_entry_students.released_to_student': released)
                          .pluck('users.id',
-                                'grade_entry_students.grade_entry_form_id',
+                                'grade_entry_students.assessment_id',
                                 'grade_entry_students.total_grade')
 
-    gef_grades.each do |student_id, gef_id, mark|
-      student_data[student_id][:grade_entry_form_marks][gef_id] = mark
+    gef_grades.each do |student_id, assessment_id, mark|
+      student_data[student_id][:grade_entry_form_marks][assessment_id] = mark
     end
 
     unless current_user.student?
@@ -50,9 +50,9 @@ module CourseSummariesHelper
   end
 
   def course_information
-    rubric_max = RubricCriterion.group(:assignment_id).sum(:max_mark)
-    flexible_max = FlexibleCriterion.group(:assignment_id).sum(:max_mark)
-    checkbox_max = CheckboxCriterion.group(:assignment_id).sum(:max_mark)
+    rubric_max = RubricCriterion.group(:assessment_id).sum(:max_mark)
+    flexible_max = FlexibleCriterion.group(:assessment_id).sum(:max_mark)
+    checkbox_max = CheckboxCriterion.group(:assessment_id).sum(:max_mark)
     @max_marks = Hash[Assignment.all.map do |a|
       [a.id, rubric_max.fetch(a.id, 0) + flexible_max.fetch(a.id, 0) + checkbox_max.fetch(a.id, 0)]
     end
@@ -61,7 +61,7 @@ module CourseSummariesHelper
     @gef_max_marks = GradeEntryForm.unscoped
                                    .joins(:grade_entry_items)
                                    .where(grade_entry_items: { bonus: false })
-                                   .group('grade_entry_forms.id')
+                                   .group('assessment_id')
                                    .sum('grade_entry_items.out_of')
   end
 

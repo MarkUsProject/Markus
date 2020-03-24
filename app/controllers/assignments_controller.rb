@@ -86,8 +86,7 @@ class AssignmentsController < ApplicationController
         section_due_dates = Hash.new
         now = Time.zone.now
         Section.all.each do |section|
-          collection_time = @assignment.submission_rule
-                                .calculate_collection_time(section)
+          collection_time = @assignment.submission_rule.calculate_collection_time(section)
           collection_time = now if now >= collection_time
           if section_due_dates[collection_time].nil?
             section_due_dates[collection_time] = Array.new
@@ -96,7 +95,7 @@ class AssignmentsController < ApplicationController
         end
         section_due_dates.each do |collection_time, sections|
           sections = sections.join(', ')
-          if(collection_time == now)
+          if collection_time == now
             flash_now(:notice, t('submissions.grading_can_begin_for_sections',
                                  sections: sections))
           else
@@ -160,7 +159,7 @@ class AssignmentsController < ApplicationController
 
     # build section_due_dates for each section that doesn't already have a due date
     Section.all.each do |s|
-      unless SectionDueDate.find_by_assignment_id_and_section_id(@assignment.id, s.id)
+      unless SectionDueDate.find_by(assessment_id: @assignment.id, section_id: s.id)
         @assignment.section_due_dates.build(section: s)
       end
     end
@@ -195,10 +194,12 @@ class AssignmentsController < ApplicationController
   def new
     @assignments = Assignment.all
     @assignment = Assignment.new
+    @assignment.assignment_properties = AssignmentProperties.new
     if params[:scanned].present?
       @assignment.scanned_exam = true
     end
-    @clone_assignments = Assignment.where(vcs_submit: true)
+    @clone_assignments = Assignment.joins(:assignment_properties)
+                                   .where(assignment_properties: { vcs_submit: true })
                                    .order(:id)
     @sections = Section.all
     @assignment.build_submission_rule
@@ -210,7 +211,7 @@ class AssignmentsController < ApplicationController
                                     .sort_by { |s| s.section.name }
 
     # set default value if web submits are allowed
-    @assignment.allow_web_submits = Rails.configuration.x.repository.external_submits_only
+    @assignment.allow_web_submits = !Rails.configuration.x.repository.external_submits_only
     render :new
   end
 
@@ -231,7 +232,8 @@ class AssignmentsController < ApplicationController
       unless @assignment.save
         @assignments = Assignment.all
         @sections = Section.all
-        @clone_assignments = Assignment.where(vcs_submit: true)
+        @clone_assignments = Assignment.joins(:assignment_properties)
+                                       .where(assignment_properties: { vcs_submit: true })
                                        .order(:id)
         respond_with @assignment, location: -> { new_assignment_path(@assignment) }
         return
@@ -290,7 +292,7 @@ class AssignmentsController < ApplicationController
         user_ids = current_user.admin? ? Admin.pluck(:id) : current_user.id
         test_runs = TestRun.left_outer_joins(:test_batch, grouping: [:group, :current_result])
                            .where(test_runs: {user_id: user_ids},
-                                  'groupings.assignment_id': @assignment.id)
+                                  'groupings.assessment_id': @assignment.id)
                            .pluck_to_hash(:id,
                                           :test_batch_id,
                                           :time_to_service,
@@ -506,8 +508,8 @@ class AssignmentsController < ApplicationController
 
   def set_boolean_graders_options
     assignment = Assignment.find(params[:id])
-    attributes = graders_options_params.transform_values { |v| v == 'true' }
-    return head 400 if attributes.empty?
+    attributes = graders_options_params
+    return head 400 if attributes.empty? || attributes[:assignment_properties_attributes].empty?
 
     unless assignment.update(attributes)
       flash_now(:error, assignment.errors.full_messages.join(' '))
@@ -590,15 +592,16 @@ class AssignmentsController < ApplicationController
 
   def process_assignment_form(assignment)
     num_files_before = assignment.assignment_files.length
+    short_identifier = assignment_params[:short_identifier]
     assignment.assign_attributes(assignment_params)
-    assignment.repository_folder = assignment_params[:short_identifier] unless assignment.is_peer_review?
+    assignment.repository_folder = short_identifier unless assignment.is_peer_review?
     assignment.save!
     new_required_files = assignment.saved_change_to_only_required_files? ||
                          assignment.saved_change_to_is_hidden? ||
                          assignment.assignment_files.any?(&:saved_changes?) ||
                          num_files_before != assignment.assignment_files.length
     # if there are no section due dates, destroy the objects that were created
-    if ['0', nil].include? params[:assignment][:section_due_dates_type]
+    if ['0', nil].include? params[:assignment][:assignment_properties_attributes][:section_due_dates_type]
       assignment.section_due_dates.each(&:destroy)
       assignment.section_due_dates_type = false
       assignment.section_groups_only = false
@@ -609,7 +612,7 @@ class AssignmentsController < ApplicationController
 
     if params[:is_group_assignment] == 'true'
       # Is the instructor forming groups?
-      if assignment_params[:student_form_groups] == '0'
+      if assignment_params[:assignment_properties_attributes][:student_form_groups] == '0'
         assignment.invalid_override = true
         # Increase group_max so that create_all_groups button is not displayed
         # in the groups view.
@@ -709,22 +712,26 @@ class AssignmentsController < ApplicationController
 
   def graders_options_params
     params.require(:attribute)
-          .permit(:assign_graders_to_criteria,
-                  :anonymize_groups,
-                  :hide_unassigned_criteria)
+          .permit(assignment_properties_attributes: [
+                    :assign_graders_to_criteria,
+                    :anonymize_groups,
+                    :hide_unassigned_criteria
+                  ])
   end
 
   def assignment_params
     params.require(:assignment).permit(
-        :short_identifier,
-        :description,
-        :message,
-        :due_date,
+      :short_identifier,
+      :description,
+      :message,
+      :due_date,
+      :is_hidden,
+      assignment_properties_attributes: [
+        :id,
         :allow_web_submits,
         :vcs_submit,
         :display_median_to_students,
         :display_grader_names_to_students,
-        :is_hidden,
         :group_min,
         :group_max,
         :student_form_groups,
@@ -741,14 +748,32 @@ class AssignmentsController < ApplicationController
         :invalid_override,
         :section_groups_only,
         :only_required_files,
-        :scanned_exam,
-        section_due_dates_attributes: [:_destroy,
-                                       :id,
-                                       :section_id,
-                                       :due_date],
-        assignment_files_attributes:  [:_destroy,
-                                       :id,
-                                       :filename]
+        :section_due_dates_type,
+        :scanned_exam
+      ],
+      section_due_dates_attributes: [
+        :_destroy,
+        :id,
+        :section_id,
+        :due_date
+      ],
+      assignment_files_attributes:  [
+        :_destroy,
+        :id,
+        :filename
+      ],
+      submission_rule_attributes: [
+        :_destroy,
+        :id,
+        :type,
+        { periods_attributes: [
+          :id,
+          :deduction,
+          :interval,
+          :hours,
+          :_destroy
+        ] }
+      ]
     )
   end
 
