@@ -65,6 +65,7 @@ es:
       create_groups_job_extra_info: "Ha fallado: %{group_name}, %{repo_name}, %{members}"
       uncollect_submissions_job: "Asignaciones incumplidas... "
       submissions_job: "%{progress}/%{total} Envíos recibidos"
+      download_submissions_job: "%{progress}/%{total} UPDATE ME"
       update_repo_required_files_job: "%{progress}/%{total} UPDATE ME"
       update_starter_code_job: "%{progress}/%{total} UPDATE ME"
       autotest_run_job: "%{progress}/%{total} UPDATE ME"

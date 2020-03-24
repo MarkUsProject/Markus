@@ -55,6 +55,7 @@ fr:
       create_groups_job_extra_info: "Échoué pour: groupe: %{group_name}, repo: %{repo_name}, membres: %{members}"
       uncollect_submissions_job: "Tâches de décollement... "
       submissions_job: "%{progress}/%{total} Soumissions collectées"
+      download_submissions_job: "%{progress}/%{total} Soumissions préparées pour téléchargement"
       update_repo_required_files_job: "%{progress}/%{total} repos modifiés"
       update_starter_code_job: "%{progress}/%{total} repos modifiés"
       autotest_run_job: "%{progress}/%{total} Tests commencés"

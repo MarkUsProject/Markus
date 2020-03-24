@@ -50,6 +50,7 @@ pt:
       create_groups_job_extra_info: "Falhou: %{group_name}, %{repo_name}, %{members}"
       uncollect_submissions_job: "Tarefas não coletadas ... "
       submissions_job: "%{progress}/%{total} Submissões coletadas"
+      download_submissions_job: "%{progress}/%{total} UPDATE ME"
       update_repo_required_files_job: "%{progress}/%{total} UPDATE ME"
       update_starter_code_job: "%{progress}/%{total} UPDATE ME"
       autotest_run_job: "%{progress}/%{total} UPDATE ME"

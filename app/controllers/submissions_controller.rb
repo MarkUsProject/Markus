@@ -489,11 +489,7 @@ class SubmissionsController < ApplicationController
     ## create the zip name with the user name to have less chance to delete
     ## a currently downloading file
     short_id = assignment.short_identifier
-    zip_name = Pathname.new(short_id + '_' + current_user.user_name + '.zip')
-    zip_path = Pathname.new('tmp') + zip_name
-
-    ## delete the old file if it exists
-    File.delete(zip_path) if File.exist?(zip_path)
+    zip_path = Pathname.new('tmp') + Pathname.new( short_id + '_' + current_user.user_name + '.zip')
 
     groupings = Grouping.includes(:group, :current_submission_used).where(id: params[:groupings]&.map(&:to_i))
 
@@ -501,18 +497,7 @@ class SubmissionsController < ApplicationController
       groupings = groupings.joins(:ta_memberships).where('memberships.user_id': current_user.id)
     end
 
-    Zip::File.open(zip_path, Zip::File::CREATE) do |zip_file|
-      groupings.each do |grouping|
-        revision_id = grouping.current_submission_used&.revision_identifier
-        group_name = grouping.group.repo_name
-        grouping.group.access_repo do |repo|
-          revision = repo.get_revision(revision_id)
-          repo.send_tree_to_zip(assignment.repository_folder, zip_file, zip_name + group_name, revision)
-        rescue Repository::RevisionDoesNotExist
-          next
-        end
-      end
-    end
+    DownloadSubmissionsJob.perform_later(groupings, zip_path)
 
     ## Send the Zip file
     send_file zip_path, disposition: 'inline', filename: zip_name.to_s
