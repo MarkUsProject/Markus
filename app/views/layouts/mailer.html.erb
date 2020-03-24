@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta content='text/html; charset=UTF-8' http-equiv='Content-Type'/>
+  <style>
+    @media (prefers-color-scheme: dark) {
+      .emailbkgd.dark-scheme { background-image: linear-gradient(#2e2e2e, #2e2e2e); background-color: #2e2e2e; }
+      .body_text.dark-scheme { color: #788482; }
+      .to_text.dark-scheme { color: #788482; }
+      .alert_text.dark-scheme { color: #788482; }
+    }
+
+    .redirectbutton {
+      background-color: #3a6ab3;
+      border-radius: 8px;
+      text-align: center;
+      padding: 15px 30px;
+      color: white;
+      text-decoration-color: white;
+      margin-left: auto;
+      text-decoration: none;
+      width: 50vw;
+    }
+
+    .emailbkgd {
+      background-color: #e8f4f2;
+      width: 90%;
+      height: auto;
+      margin: auto;
+      border-radius: 8px;
+    }
+
+    .logo_header {
+      width: 25%;
+      margin: 20px;
+      padding-left: 10px;
+      height: auto;
+    }
+
+    .divider {
+      border: 1px solid white;
+      margin: 0;
+    }
+
+    .to_text {
+      color: #3a6ab3;
+      padding: 0px 20px;
+    }
+
+    .body_text {
+      text-align: center;
+      padding: 0px 20px 20px 20px;
+      color: #3a6ab3;
+      margin: 0;
+    }
+
+    .button_enclosure {
+      text-align: center;
+      margin: 15px;
+    }
+
+    .alert_text {
+      text-align: center;
+      padding: 20px;
+      color: #3a6ab3;
+    }
+  </style>
+</head>
+<body>
+<%= yield %>
+</body>
+</html>
