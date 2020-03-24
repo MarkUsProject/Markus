@@ -199,7 +199,7 @@ class GradeEntryFormsController < ApplicationController
       end
       params[:students].each do |student|
         NotificationMailer.with(student: GradeEntryStudent.find_by(id: student), form: grade_entry_form)
-            .release_spreadsheet_email.deliver_now
+                          .release_spreadsheet_email.deliver_now
       end
     end
   end
