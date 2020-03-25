@@ -66,6 +66,7 @@ es:
       uncollect_submissions_job: "Asignaciones incumplidas... "
       submissions_job: "%{progress}/%{total} Envíos recibidos"
       download_submissions_job: "%{progress}/%{total} UPDATE ME"
+      download_submissions_complete: "UPDATE ME"
       update_repo_required_files_job: "%{progress}/%{total} UPDATE ME"
       update_starter_code_job: "%{progress}/%{total} UPDATE ME"
       autotest_run_job: "%{progress}/%{total} UPDATE ME"

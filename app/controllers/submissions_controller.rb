@@ -14,7 +14,8 @@ class SubmissionsController < ApplicationController
                          :get_feedback_file,
                          :download,
                          :downloads,
-                         :download_groupings_files,
+                         :zip_groupings_files,
+                         :download_zipped_file,
                          :manually_collect_and_begin_grading,
                          :repo_browser,
                          :set_result_marking_state,
@@ -27,7 +28,8 @@ class SubmissionsController < ApplicationController
                        :manually_collect_and_begin_grading,
                        :revisions,
                        :repo_browser,
-                       :download_groupings_files,
+                       :zip_groupings_files,
+                       :download_zipped_file,
                        :update_submissions]
   before_action :authorize_for_student,
                 only: [:file_manager]
@@ -481,26 +483,31 @@ class SubmissionsController < ApplicationController
   end
 
   ##
-  # Download all files from groupings with id in +params[:groupings]+ in a .zip file.
+  # Prepare all files from groupings with id in +params[:groupings]+ to be downloaded in a .zip file.
   ##
-  def download_groupings_files
+  def zip_groupings_files
     assignment = Assignment.find(params[:assignment_id])
 
-    ## create the zip name with the user name to have less chance to delete
-    ## a currently downloading file
-    short_id = assignment.short_identifier
-    zip_path = Pathname.new('tmp') + Pathname.new( short_id + '_' + current_user.user_name + '.zip')
-
     groupings = Grouping.includes(:group, :current_submission_used).where(id: params[:groupings]&.map(&:to_i))
+
+    zip_path = zipped_grouping_file_name(assignment)
 
     if current_user.ta?
       groupings = groupings.joins(:ta_memberships).where('memberships.user_id': current_user.id)
     end
 
-    DownloadSubmissionsJob.perform_later(groupings, zip_path)
+    @current_job = DownloadSubmissionsJob.perform_later(groupings.ids, zip_path.to_s, assignment.id)
+    session[:job_id] = @current_job.job_id
 
-    ## Send the Zip file
-    send_file zip_path, disposition: 'inline', filename: zip_name.to_s
+    render 'shared/_poll_job.js.erb'
+  end
+
+  # download a zip file previously prepared by calling the
+  # zip_groupings_files method
+  def download_zipped_file
+    assignment = Assignment.find(params[:assignment_id])
+    zip_path = zipped_grouping_file_name(assignment)
+    send_file zip_path, disposition: 'inline', filename: File.basename(zip_path)
   end
 
   ##
@@ -634,6 +641,14 @@ class SubmissionsController < ApplicationController
   end
 
   private
+
+  # Return a relative path to a temporary zip file (which may or may not exists).
+  # The name of this file is unique by the +assignment+ and current user.
+  def zipped_grouping_file_name(assignment)
+    # create the zip name with the user name so that we avoid downloading files created by another user
+    short_id = assignment.short_identifier
+    Pathname.new('tmp') + Pathname.new(short_id + '_' + current_user.user_name + '.zip')
+  end
 
   # Used in update_files and file_manager actions
   def set_filebrowser_vars(grouping)
