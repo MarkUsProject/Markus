@@ -54,8 +54,7 @@ module Helpers
       repo.commit(txn)
 
       # Generate submission
-      Submission.generate_new_submission(
-          grouping, repo.get_latest_revision)
+      Submission.generate_new_submission(grouping, repo.get_latest_revision)
     end
   end
 end

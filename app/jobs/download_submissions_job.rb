@@ -1,3 +1,5 @@
+# Prepares submission files from a list of groupings for download
+# by zipping them up into a single zipfile
 class DownloadSubmissionsJob < ApplicationJob
   queue_as Rails.configuration.x.queues.download_submissions
 
@@ -10,7 +12,7 @@ class DownloadSubmissionsJob < ApplicationJob
   end
 
   def self.completed_message(status)
-    {partial: 'submissions/download_zip_file', locals: {assignment_id: status[:assignment_id]}}
+    { partial: 'submissions/download_zip_file', locals: { assignment_id: status[:assignment_id] } }
   end
 
   before_enqueue do |job|
