@@ -594,6 +594,7 @@ describe SubmissionsController do
       let(:unassigned_ta) { create :ta }
       let(:assigned_ta) do
         ta = create :ta
+        grouping_ids # make sure groupings are created
         assignment.groupings.each do |grouping|
           create(:ta_membership, user: ta, grouping: grouping)
         end
@@ -630,8 +631,8 @@ describe SubmissionsController do
         end
 
         it 'should - as Ta - be able to download all groups\' submissions when assigned' do
-          expect(DownloadSubmissionsJob).to receive(:perform_later) do |grouping_ids, _zip_file, _assignment_id|
-            expect(grouping_ids).to contain_exactly(*grouping_ids)
+          expect(DownloadSubmissionsJob).to receive(:perform_later) do |gids, _zip_file, _assignment_id|
+            expect(gids).to contain_exactly(*grouping_ids)
             DownloadSubmissionsJob.new
           end
           post_as assigned_ta, :zip_groupings_files, params: { assignment_id: assignment.id, groupings: grouping_ids }
