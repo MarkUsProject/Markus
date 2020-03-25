@@ -57,6 +57,7 @@ en:
       uncollect_submissions_job: "Uncollecting assignments ... "
       submissions_job: "%{progress}/%{total} Submissions collected"
       download_submissions_job: "%{progress}/%{total} Submissions prepared for download"
+      download_submissions_finalizing: "Finalizing submissions for download"
       download_submissions_complete: "Submissions are ready. Click here to complete the download."
       update_repo_required_files_job: "%{progress}/%{total} Student repositories updated with new required files"
       update_starter_code_job: "%{progress}/%{total} Student repositories updated with starter code"

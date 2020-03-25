@@ -56,6 +56,7 @@ fr:
       uncollect_submissions_job: "Tâches de décollement... "
       submissions_job: "%{progress}/%{total} Soumissions collectées"
       download_submissions_job: "%{progress}/%{total} Soumissions préparées pour téléchargement"
+      download_submissions_finalizing: "Finaliser les soumissions à télécharger"
       download_submissions_complete: "Les soumissions sont prêtes. Cliquez ici pour finaliser le téléchargement."
       update_repo_required_files_job: "%{progress}/%{total} repos modifiés"
       update_starter_code_job: "%{progress}/%{total} repos modifiés"

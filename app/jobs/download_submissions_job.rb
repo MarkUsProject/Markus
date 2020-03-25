@@ -2,7 +2,11 @@ class DownloadSubmissionsJob < ApplicationJob
   queue_as Rails.configuration.x.queues.download_submissions
 
   def self.show_status(status)
-    I18n.t('poll_job.download_submissions_job', progress: status[:progress], total: status[:total])
+    if status[:progress] == status[:total]
+      I18n.t('poll_job.download_submissions_finalizing')
+    else
+      I18n.t('poll_job.download_submissions_job', progress: status[:progress], total: status[:total])
+    end
   end
 
   def self.completed_message(status)

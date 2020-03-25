@@ -51,6 +51,7 @@ pt:
       uncollect_submissions_job: "Tarefas não coletadas ... "
       submissions_job: "%{progress}/%{total} Submissões coletadas"
       download_submissions_job: "%{progress}/%{total} UPDATE ME"
+      download_submissions_finalizing: "UPDATE ME"
       download_submissions_complete: "UPDATE ME"
       update_repo_required_files_job: "%{progress}/%{total} UPDATE ME"
       update_starter_code_job: "%{progress}/%{total} UPDATE ME"
