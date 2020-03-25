@@ -16,16 +16,15 @@ class DownloadSubmissionsJob < ApplicationJob
   def perform(grouping_ids, zip_path, _assignment_id)
     ## delete the old file if it exists
     File.delete(zip_path) if File.exist?(zip_path)
-    zip_name = File.basename zip_path
 
     progress.total = grouping_ids.length
     Zip::File.open(zip_path, Zip::File::CREATE) do |zip_file|
       Grouping.where(id: grouping_ids).each do |grouping|
         revision_id = grouping.current_submission_used&.revision_identifier
-        group_name = grouping.group.repo_name
+        group_name = grouping.group.group_name
         grouping.group.access_repo do |repo|
           revision = repo.get_revision(revision_id)
-          repo.send_tree_to_zip(grouping.assignment.repository_folder, zip_file, zip_name + group_name, revision)
+          repo.send_tree_to_zip(grouping.assignment.repository_folder, zip_file, group_name, revision)
         rescue Repository::RevisionDoesNotExist
           next
         ensure
