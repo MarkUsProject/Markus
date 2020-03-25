@@ -45,4 +45,17 @@ module Helpers
     period.hours = hours
     period.save
   end
+
+  def submit_file(assignment, grouping, filename = 'file', content = 'content')
+    grouping.group.access_repo do |repo|
+      txn = repo.get_transaction('test')
+      path = File.join(assignment.repository_folder, filename)
+      txn.add(path, content, '')
+      repo.commit(txn)
+
+      # Generate submission
+      Submission.generate_new_submission(
+          grouping, repo.get_latest_revision)
+    end
+  end
 end
