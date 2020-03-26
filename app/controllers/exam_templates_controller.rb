@@ -23,10 +23,10 @@ class ExamTemplatesController < ApplicationController
     else
       filename = new_uploaded_io.original_filename
       exam_template = ExamTemplate.create_with_file(new_uploaded_io.read,
-                                                    assignment_id: assignment.id,
+                                                    assessment_id: assignment.id,
                                                     filename: filename,
                                                     name: name)
-      if exam_template.valid?
+      if exam_template&.valid?
         flash_message(:success, t('exam_templates.create.success'))
       else
         flash_message(:error, t('exam_templates.create.failure'))
@@ -144,7 +144,7 @@ class ExamTemplatesController < ApplicationController
   def split
     assignment = Assignment.find(params[:assignment_id])
     exam_template = assignment.exam_templates.find(params[:id])
-    split_exam = params[:exam_template][:pdf_to_split]
+    split_exam = params[:exam_template]&.fetch(:pdf_to_split) { nil }
     unless split_exam.nil?
       if split_exam.content_type != 'application/pdf'
         flash_message(:error, t('exam_templates.split.invalid'))
@@ -178,7 +178,7 @@ class ExamTemplatesController < ApplicationController
       format.html
       format.json do
         split_pdf_logs = SplitPdfLog.joins(exam_template: :assignment)
-                           .where(assignments: {id: @assignment.id})
+                           .where(assessments: {id: @assignment.id})
                            .includes(:exam_template)
                            .includes(:user)
                            .includes(split_pages: :group)
