@@ -178,10 +178,10 @@ class ExamTemplatesController < ApplicationController
       format.html
       format.json do
         split_pdf_logs = SplitPdfLog.joins(exam_template: :assignment)
-                           .where(assessments: {id: @assignment.id})
-                           .includes(:exam_template)
-                           .includes(:user)
-                           .includes(split_pages: :group)
+                                    .where(assessments: { id: @assignment.id })
+                                    .includes(:exam_template)
+                                    .includes(:user)
+                                    .includes(split_pages: :group)
 
         data = split_pdf_logs.map do |log|
           pages = log.split_pages.select do |p|
