@@ -19,7 +19,11 @@ shared_examples 'cancel test job' do
     end
     it 'should not update time to service' do
       test_runs.each { |tr| tr.update(time_to_service: 10) }
-      subject rescue RuntimeError
+      begin
+        subject
+      rescue RuntimeError
+        # do nothing
+      end
       expect(test_runs.each(&:reload).map(&:time_to_service)).not_to eq [-1, -1, -1]
     end
   end

@@ -9,7 +9,7 @@ shared_examples 'background job' do
 
   let(:job) { described_class.perform_later(*job_args) }
 
-  it "enqueues a job" do
+  it 'enqueues a job' do
     expect { job }.to have_enqueued_job
   end
 
@@ -27,7 +27,7 @@ end
 def fake_exit_status(exit_code)
   fork { exit exit_code }
   Process.wait
-  $?
+  $CHILD_STATUS
 end
 
 shared_context 'autotest jobs' do

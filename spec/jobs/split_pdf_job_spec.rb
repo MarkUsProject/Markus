@@ -31,14 +31,12 @@ describe SplitPdfJob do
 
   context 'when running as a background job' do
     let(:job_args) do
-      split_pdf_log = exam_template.split_pdf_logs.create(
-          filename: 'midterm_scan_1-20.pdf',
-          original_num_pages: 6,
-          num_groups_in_complete: 0,
-          num_groups_in_incomplete: 0,
-          num_pages_qr_scan_error: 0,
-          user: admin
-      )
+      split_pdf_log = exam_template.split_pdf_logs.create(filename: 'midterm_scan_1-20.pdf',
+                                                          original_num_pages: 6,
+                                                          num_groups_in_complete: 0,
+                                                          num_groups_in_incomplete: 0,
+                                                          num_pages_qr_scan_error: 0,
+                                                          user: admin)
       [exam_template, '', split_pdf_log, 'midterm_scan_100.pdf', admin]
     end
     include_examples 'background job'
