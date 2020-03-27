@@ -171,10 +171,6 @@ module RepositoryHelper
     dirs = []
     files = []
     folders.each do |folder_path|
-      relative_path = Pathname.new(folder_path)
-      abs_path = File.join(current_path, relative_path)
-      return [false, [:not_exist]] unless repo.get_latest_revision.path_exists?(abs_path)
-
       folder_path = current_path.join(folder_path).to_s
       next if dirs.include? folder_path
 
