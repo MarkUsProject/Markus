@@ -133,8 +133,8 @@ describe Api::SubmissionFilesController do
         before :each do
           delete :remove_file, params: { assignment_id: assignment.id, group_id: group.id, filename: 'v1/x/y/task.txt' }
         end
-        it 'should return 404 error' do
-          expect(response.status).to eq(404)
+        it 'should return 500 error' do
+          expect(response.status).to eq(500)
         end
       end
     end
