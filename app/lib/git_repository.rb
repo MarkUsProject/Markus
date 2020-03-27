@@ -486,7 +486,7 @@ class GitRepository < Repository::AbstractRepository
       raise Repository::FileOutOfSyncConflict.new(path)
     end
     unless get_latest_revision.path_exists?(path)
-      raise Repository::FileDoesNotExistConflict.new(path)
+      raise Repository::FileDoesNotExistConflict, path
     end
     absolute_path = Pathname.new(File.join(@repos_path, path))
     relative_path = Pathname.new(path)
