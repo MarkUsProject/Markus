@@ -231,7 +231,7 @@ class MemoryRepository < Repository::AbstractRepository
   # Creates a directory as part of the provided revision
   def make_directory(rev, full_path)
     if rev.path_exists?(full_path)
-      raise FileExistsConflict # raise conflict if path exists
+      raise Repository::FolderExistsConflict, full_path # raise conflict if path exists
     end
     creation_time = Time.now
     dir = Repository::RevisionDirectory.new(rev.revision_identifier, {

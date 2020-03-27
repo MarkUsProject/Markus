@@ -134,16 +134,12 @@ module RepositoryHelper
       commit_txn = false
     end
 
-    repo_path = Pathname.new path
-    relative_path = Pathname.new(new_folders[0])
-    current_path = File.join(repo_path, relative_path)
-
-    if repo.get_latest_revision.path_exists?(current_path)
-      return [true, [:exist]]
-    end
+    current_path = Pathname.new path
 
     new_folders.each do |folder_path|
-      txn.add_path(repo_path.join(folder_path))
+      folder_path = current_path.join(folder_path)
+      folder_path = folder_path.to_s
+      txn.add_path(folder_path)
     end
 
     if commit_txn
