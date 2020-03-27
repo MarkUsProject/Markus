@@ -1,0 +1,6 @@
+describe AutotestSpecsJob do
+  context 'when running as a background job' do
+    let(:job_args) { ['http://localhost', create(:assignment)] }
+    include_examples 'background job'
+  end
+end

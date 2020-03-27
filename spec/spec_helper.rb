@@ -12,6 +12,7 @@ ENV['RAILS_ENV'] ||= 'test'
 require File.expand_path('../../config/environment', __FILE__)
 require 'rspec/rails'
 require 'action_policy/rspec'
+require 'net/ssh/test'
 # Loads lib repo stuff.
 require 'time-warp'
 
@@ -43,6 +44,9 @@ RSpec.configure do |config|
   # Include generic helpers.
   config.include Helpers
   config.include AuthenticationHelper
+
+  # Include helpers for testing ssh interactions
+  config.include Net::SSH::Test
 
   # If you're not using ActiveRecord, or you'd prefer not to run each of your
   # examples within a transaction, remove the following line or assign false
