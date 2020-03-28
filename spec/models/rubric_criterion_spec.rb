@@ -258,17 +258,15 @@ describe RubricCriterion do
           expect(@levels.length).to eq(7)
         end
       end
-  
       describe 'can delete levels' do
         it 'not raise error' do
-            expect(@levels.length).to eq(5)
-            @levels.destroy_by(mark: 0)
-            @levels.destroy_by(mark: 1)
-            @levels.reload
-            expect(@levels.length).to eq(3)
+          expect(@levels.length).to eq(5)
+          @levels.destroy_by(mark: 0)
+          @levels.destroy_by(mark: 1)
+          @levels.reload
+          expect(@levels.length).to eq(3)
         end
       end
-  
       describe 'can edit levels' do
         it 'not raise error' do
           @levels[0].update(name: 'Custom Level', description: 'Custom Description', mark: 10.0)
@@ -278,7 +276,6 @@ describe RubricCriterion do
           expect(@levels[@levels.length - 1].description).to eq('Custom Description')
         end
       end
-  
       describe 'deleting a rubric criterion deletes all levels' do
         it 'not raise error' do
           @criterion.destroy
