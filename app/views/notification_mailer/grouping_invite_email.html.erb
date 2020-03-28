@@ -1,0 +1,27 @@
+<div class="emailbkgd dark-scheme">
+  <div class="top_section dark-scheme">
+    <%= image_tag('markus_logo_big.png', class: 'logo_header')%>
+  </div>
+  <hr class="divider">
+  <p class="to_text dark-scheme">
+    <%= t('.greeting', first_name: @invited.user.first_name, last_name: @invited.user.last_name) %>
+  </p>
+  <p class="body_text dark-scheme">
+    <%= t('.text_body',
+          first_name: @inviter.user.first_name,
+          last_name: @inviter.user.last_name,
+          assignment: @grouping.assignment.short_identifier) %>
+  </p>
+  <div class="button_enclosure">
+    <%= link_to t('.button_text'),
+                summary_assignment_url(id: @grouping.assignment.id),
+                class: 'redirectbutton' %>
+  </div>
+  <p class="alert_text dark-scheme">
+    <%= t('.explicit_link',
+          link: student_interface_grade_entry_form_url(id: @form.id)) %>
+  </p>
+  <p class="alert_text dark-scheme">
+    <%= t('.disclaimer') %>
+  </p>
+</div>

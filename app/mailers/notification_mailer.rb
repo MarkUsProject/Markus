@@ -14,4 +14,11 @@ class NotificationMailer < ApplicationMailer
     mail(to: @student.user.email, subject: default_i18n_subject(course: Rails.configuration.course_name,
                                                                 form: @form.short_identifier))
   end
+
+  def grouping_invite_email
+    @inviter = params[:inviter]
+    @invited = params[:invited]
+    @grouping = params[:grouping]
+    mail(to: @invited.user.email, subject: default_i18n_subject(course: Rails.configuration.course_name))
+  end
 end
