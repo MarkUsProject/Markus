@@ -249,33 +249,43 @@ describe RubricCriterion do
       @levels = @criterion.levels
     end
 
-    it 'can add levels' do
-      expect(@levels.length).to eq(5)
-      @levels.create(name: 'New level', description: 'Description for level', mark: '5')
-      @levels.create(name: 'New level 2', description: 'Description for level 2', mark: '6')
-      expect(@levels.length).to eq(7)
-    end
-
-    it 'can delete levels' do
-      expect(@levels.length).to eq(5)
-      @levels.destroy_by(mark: 0)
-      @levels.destroy_by(mark: 1)
-      @levels.reload
-      expect(@levels.length).to eq(3)
-    end
-
-    it 'can edit levels' do
-      @levels[0].update(name: 'Custom Level', description: 'Custom Description', mark: 10.0)
-      @levels.reload
-      expect(@levels[@levels.length - 1].mark).to eq(10)
-      expect(@levels[@levels.length - 1].name).to eq('Custom Level')
-      expect(@levels[@levels.length - 1].description).to eq('Custom Description')
-    end
-
-    it 'deleting a rubric criterion deletes all levels' do
-      @criterion.destroy
-      expect(@criterion.destroyed?).to eq true
-      expect(@levels).to be_empty
+    context 'has basic levels functionality' do
+      describe 'can add levels' do
+        it 'not raise error' do
+          expect(@levels.length).to eq(5)
+          @levels.create(name: 'New level', description: 'Description for level', mark: '5')
+          @levels.create(name: 'New level 2', description: 'Description for level 2', mark: '6')
+          expect(@levels.length).to eq(7)
+        end
+      end
+  
+      it 'can delete levels' do
+        it 'not raise error' do
+            expect(@levels.length).to eq(5)
+            @levels.destroy_by(mark: 0)
+            @levels.destroy_by(mark: 1)
+            @levels.reload
+            expect(@levels.length).to eq(3)
+        end
+      end
+  
+      it 'can edit levels' do
+        it 'not raise error' do
+          @levels[0].update(name: 'Custom Level', description: 'Custom Description', mark: 10.0)
+          @levels.reload
+          expect(@levels[@levels.length - 1].mark).to eq(10)
+          expect(@levels[@levels.length - 1].name).to eq('Custom Level')
+          expect(@levels[@levels.length - 1].description).to eq('Custom Description')
+        end
+      end
+  
+      it 'deleting a rubric criterion deletes all levels' do
+        it 'not raise error' do
+          @criterion.destroy
+          expect(@criterion.destroyed?).to eq true
+          expect(@levels).to be_empty
+        end
+      end
     end
 
     context 'when scaling max mark' do
@@ -304,16 +314,13 @@ describe RubricCriterion do
         end
       end
     end
-  end
 
-  context 'A rubric criteria with levels' do
-    before(:each) do
-      @criterion = create(:rubric_criterion)
-      @levels = @criterion.levels
-    end
-
-    it 'cannot have two levels with the same mark' do
-      expect(@levels[0].update(mark: 1)).to be false
+    context 'validations work correctly' do
+      describe 'cannot have two levels with the same mark' do
+        it 'not raise error' do
+          expect(@levels[0].update(mark: 1)).to be false
+        end
+      end
     end
   end
 end
