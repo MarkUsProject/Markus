@@ -241,16 +241,22 @@ describe RubricCriterion do
         end
       end
     end
-  end
 
-  context 'A rubric criteria with levels' do
-    before(:each) do
-      @criterion = create(:rubric_criterion)
-      @levels = @criterion.levels
-    end
-
-    it 'cannot have two levels with the same mark' do
-      expect(@levels[0].update(mark: 1)).to be false
+    context 'validations work properly' do
+      describe 'validates max mark can\' be greater than maximum level mark' do
+        it 'not raise error' do
+          expect(@levels.last.mark).to eq(4.0)
+          expect(@criterion.max_mark).to eq(4.0)
+          @criterion.update(max_mark: 5.0)
+          # @criterion.levels.last.update(mark: 3.5)
+          expect(@levels.last.mark).to eq(3.0)
+        end
+      end
+      describe 'cannot have two levels with the same mark' do
+        it 'not raise error' do
+          expect(@levels[0].update(mark: 1)).to be false
+        end
+      end
     end
   end
 
