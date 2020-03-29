@@ -265,9 +265,6 @@ describe RubricCriterion do
       describe 'deleting level deletes respective mark' do
         it 'not raise error' do
           @levels[0].destroy
-          byebug
-          @marks.reload
-          byebug
           expect(@marks.length).to eq(2)
         end
       end
