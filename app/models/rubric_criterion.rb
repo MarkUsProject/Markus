@@ -32,7 +32,6 @@ class RubricCriterion < Criterion
   end
 
   def validate_max_mark
-    byebug
     return if self.levels.empty?
     self.levels.order(mark: :desc)
     return if self.max_mark <= self.levels.last.mark
