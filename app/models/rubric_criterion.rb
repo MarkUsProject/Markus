@@ -16,9 +16,6 @@ class RubricCriterion < Criterion
   accepts_nested_attributes_for :levels, allow_destroy: true
   before_save :scale_marks_if_max_mark_changed
 
-  after_save :update_result_marks
-  # after_save :delete_result_marks
-
   belongs_to :assignment, counter_cache: true
 
   validates_presence_of :assigned_groups_count
@@ -39,9 +36,6 @@ class RubricCriterion < Criterion
       result = result.concat(cta.ta.get_groupings_by_assignment(assignment))
     end
     self.assigned_groups_count = result.uniq.length
-  end
-
-  def update_result_marks
   end
 
   def scale_marks_if_max_mark_changed

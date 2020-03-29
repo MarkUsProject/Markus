@@ -9,11 +9,33 @@ class Level < ApplicationRecord
   validates_uniqueness_of :mark, scope: :rubric_criterion_id
   validates_numericality_of :mark, greater_than_or_equal_to: 0
 
-  before_update :update_results
+  before_destroy :destroy_associated_marks
+  before_update :update_associated_marks
 
-  def update_results
+  def destroy_associated_marks
     byebug
-    puts 'hi'
+    marks = self.rubric_criterion.marks
+    a = 0
+    marks.each do |mark|
+      if (mark.mark == self.mark)
+        a = a + 1
+        mark.destroy
+      end
+    end
+    byebug
+    mark
+  end
+
+  def update_associated_marks
+    return unless self.changed.include?('mark')
+    marks = self.rubric_criterion.marks
+    before = self.changes['mark'][0]
+    after = self.changes['mark'][1]
+    marks.each do |mark|
+      if (mark.mark == before)
+        mark.update(mark: after)
+      end
+    end
   end
 
 

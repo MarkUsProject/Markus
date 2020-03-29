@@ -249,6 +249,30 @@ describe RubricCriterion do
       @levels = @criterion.levels
     end
 
+    context 'editing levels edits marks' do
+      before(:each) do
+        @marks = @criterion.marks
+        @marks.create(mark: 0, markable_type: "RubricCriterion")
+        @marks.create(mark: 1, markable_type: "RubricCriterion")
+        @marks.create(mark: 2, markable_type: "RubricCriterion")
+      end
+      describe 'updating level updates respective mark' do
+        it 'not raise error' do
+          @levels[0].update(mark: 10.0)
+          expect(@marks[0].mark).to eq(10)
+        end
+      end
+      describe 'deleting level deletes respective mark' do
+        it 'not raise error' do
+          @levels[0].destroy
+          byebug
+          @marks.reload
+          byebug
+          expect(@marks.length).to eq(2)
+        end
+      end
+    end
+
     context 'has basic levels functionality' do
       describe 'can add levels' do
         it 'not raise error' do
