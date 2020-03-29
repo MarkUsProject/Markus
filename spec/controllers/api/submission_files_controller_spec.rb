@@ -104,8 +104,8 @@ describe Api::SubmissionFilesController do
         before :each do
           post :create_folders, params: { assignment_id: assignment.id, group_id: group.id, folder_path: 'a/b/c' }
         end
-        it 'should not modify' do
-          expect(response.status).to eq(304)
+        it 'should return 500 error' do
+          expect(response.status).to eq(500)
         end
       end
     end

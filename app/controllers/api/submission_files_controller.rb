@@ -152,11 +152,7 @@ module Api
         add_folders([new_folders], @current_user, repo, path: path)
       end
       message_string = messages.map { |type, *msg| "#{type}: #{msg}" }.join("\n")
-      if success && messages[0] == :exist
-        # Folder already exist
-        message = "#{HttpStatusHelper::ERROR_CODE['message']['304']}\n\n#{message_string}"
-        render 'shared/http_status', locals: { code: '304', message: message }, status: 304
-      elsif success
+      if success
         # It worked, render success
         message = "#{HttpStatusHelper::ERROR_CODE['message']['201']}\n\n#{message_string}"
         render 'shared/http_status', locals: { code: '201', message: message }, status: 201
