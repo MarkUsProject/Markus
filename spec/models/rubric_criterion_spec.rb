@@ -241,24 +241,6 @@ describe RubricCriterion do
         end
       end
     end
-
-    context 'validations work properly' do
-      describe 'validates max mark can\' be greater than maximum level mark' do
-        it 'raises an error' do
-          expect(@levels.last.mark).to eq(4.0)
-          expect(@criterion.max_mark).to eq(4.0)
-          @criterion.update(max_mark: 5.0)
-          @criterion.levels.last.update(mark: 3.5)
-          @criterion.save
-          expect(@criterion.errors[:max_mark].size).to eq(1)
-        end
-      end
-      describe 'cannot have two levels with the same mark' do
-        it 'not raise error' do
-          expect(@levels[0].update(mark: 1)).to be false
-        end
-      end
-    end
   end
 
   context 'A rubric criteria with levels' do
@@ -311,7 +293,6 @@ describe RubricCriterion do
           expect(@levels[1].mark).to eq(2.0)
         end
       end
-
       describe 'can scale levels down' do
         it 'not raise error' do
           expect(@levels[1].mark).to eq(1.0)
@@ -319,7 +300,6 @@ describe RubricCriterion do
           expect(@levels[1].mark).to eq(0.5)
         end
       end
-
       describe 'manually changed levels won\'t be affected' do
         it 'not raise error' do
           expect(@levels[1].mark).to eq(1.0)
@@ -330,7 +310,17 @@ describe RubricCriterion do
       end
     end
 
-    context 'validations work correctly' do
+    context 'validations work properly' do
+      describe 'validates max mark can\' be greater than maximum level mark' do
+        it 'raises an error' do
+          expect(@levels.last.mark).to eq(4.0)
+          expect(@criterion.max_mark).to eq(4.0)
+          @criterion.update(max_mark: 5.0)
+          @criterion.levels.last.update(mark: 3.5)
+          @criterion.save
+          expect(@criterion.errors[:max_mark].size).to eq(1)
+        end
+      end
       describe 'cannot have two levels with the same mark' do
         it 'not raise error' do
           expect(@levels[0].update(mark: 1)).to be false
