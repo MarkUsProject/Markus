@@ -13,12 +13,7 @@ class Level < ApplicationRecord
   before_update :update_associated_marks
 
   def destroy_associated_marks
-    marks = self.rubric_criterion.marks
-    marks.each do |mark|
-      if (mark.mark == self.mark)
-        mark.destroy
-      end
-    end
+    self.rubric_criterion.marks.where(mark: self.mark).destroy_all
   end
 
   def update_associated_marks
