@@ -132,8 +132,8 @@ describe Api::SubmissionFilesController do
         before :each do
           delete :remove_folder, params: { assignment_id: assignment.id, group_id: group.id, folder_path: 'a/b/x' }
         end
-        it 'should return 404 error' do
-          expect(response.status).to eq(404)
+        it 'should return 500 error' do
+          expect(response.status).to eq(500)
         end
       end
     end

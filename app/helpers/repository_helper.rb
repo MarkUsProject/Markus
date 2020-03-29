@@ -161,10 +161,6 @@ module RepositoryHelper
     end
 
     current_path = Pathname.new path
-    relative_path = Pathname.new(folders[0])
-    abs_path = File.join(current_path, relative_path)
-
-    return [true, [:not_exist]] unless repo.get_latest_revision.path_exists?(abs_path)
 
     current_revision = repo.get_latest_revision.revision_identifier
 
