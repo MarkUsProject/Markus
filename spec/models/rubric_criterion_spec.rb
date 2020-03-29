@@ -255,6 +255,7 @@ describe RubricCriterion do
         @marks.create(mark: 0, markable_type: "RubricCriterion")
         @marks.create(mark: 1, markable_type: "RubricCriterion")
         @marks.create(mark: 2, markable_type: "RubricCriterion")
+        @marks.reload
       end
       describe 'updating level updates respective mark' do
         it 'not raise error' do
@@ -264,6 +265,7 @@ describe RubricCriterion do
       end
       describe 'deleting level deletes respective mark' do
         it 'not raise error' do
+          byebug
           @levels[0].destroy
           @levels.reload
           expect(@marks.length).to eq(2)
