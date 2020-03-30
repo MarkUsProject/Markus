@@ -28,9 +28,6 @@ en:
         missing_file: "Could not download %{file_name}.  File may be missing."
         empty_file_warning: "%{file_name} is empty"
         file_too_large: "The size of the uploaded file %{file_name} exceeds the maximum of %{max_size} MB."
-        exist: "The folder already exists"
-        not_exist: "The folder does not exist"
-        file_not_exist: "The file does not exist"
 
     submission_file:
       error:

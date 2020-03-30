@@ -232,12 +232,6 @@ module RepositoryHelper
         flash_message(:warning, I18n.t('student.submission.no_action_detected'))
       when :txn_conflicts
         flash_message(:error, partial: 'submissions/file_conflicts_list', locals: { conflicts: other_info })
-      when :exist
-        flash_message(:warning, I18n.t('student.submission.exist'))
-      when :not_exist
-        flash_message(:warning, I18n.t('student.submission.not_exist'))
-      when :file_not_exist
-        flash_message(:warning, I18n.t('student.submission.file_not_exist'))
       end
     end
   end
