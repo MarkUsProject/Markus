@@ -42,8 +42,38 @@ shared_context 'autotest jobs' do
       allow(Open3).to receive(:capture2e).and_return([data, fake_exit_status(exit_code)])
     else
       allow(Rails.configuration.x.autotest).to receive(:server_username).and_return('autotst')
-      allow(Net::SSH).to receive(:start).and_return(nil)
-      allow(Net::SSH).to receive(:exec!).and_return(Net::SSH::Connection::StringWithExitstatus.new(data, exit_code))
+      status = Net::SSH::Connection::Session::StringWithExitstatus.new(data, exit_code)
+      dummy_connection = instance_double('Net::SSH::Connection::Session')
+      allow(dummy_connection).to receive(:exec!).and_return(status)
+      allow(Net::SSH).to receive(:start) do |_, &block|
+        block.call(dummy_connection)
+      end
+    end
+  end
+end
+
+shared_examples 'shared autotest job tests' do |autotest_job_tests|
+  include_context 'autotest jobs'
+  context 'using a local autotesting server' do
+    let(:server_type) { 'local' }
+    context 'with a relative url root' do
+      let(:relative_url_root) { '/csc108' }
+      it_behaves_like autotest_job_tests
+    end
+    context 'without a relative url root' do
+      let(:relative_url_root) { nil }
+      it_behaves_like autotest_job_tests
+    end
+  end
+  context 'using a remote autotesting server' do
+    let(:server_type) { 'remote' }
+    context 'with a relative url root' do
+      let(:relative_url_root) { '/csc108' }
+      it_behaves_like autotest_job_tests
+    end
+    context 'without a relative url root' do
+      let(:relative_url_root) { nil }
+      it_behaves_like autotest_job_tests
     end
   end
 end
