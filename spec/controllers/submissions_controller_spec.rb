@@ -583,101 +583,80 @@ describe SubmissionsController do
       is_expected.to respond_with(:redirect)
     end
 
-    describe 'attempting to download groupings files' do
-      before(:each) do
-        @assignment = create(:assignment)
-        @grouping_ids = []
-        (1..3).to_a.each do |i|
-          @grouping = create(:grouping,
-                             assignment: @assignment)
-          @grouping_ids << @grouping.id
-          @student = create(:student)
+    describe 'prepare and download a zip file' do
+      let(:assignment) { create :assignment }
+      let(:grouping_ids) do
+        create_list(:grouping_with_inviter, 3, assignment: assignment).map.with_index do |grouping, i|
+          submit_file(grouping.assignment, grouping, "file#{i}", "file#{i}'s content\n")
+          grouping.id
+        end
+      end
+      let(:unassigned_ta) { create :ta }
+      let(:assigned_ta) do
+        ta = create :ta
+        grouping_ids # make sure groupings are created
+        assignment.groupings.each do |grouping|
+          create(:ta_membership, user: ta, grouping: grouping)
+        end
+        ta
+      end
 
-          instance_variable_set(:"@student#{i}", @student)
-          instance_variable_set(:"@grouping#{i}",
-                                @grouping)
-          @membership = create(:student_membership,
-                               user: instance_variable_get(:"@student#{i}"),
-                               membership_status: 'inviter',
-                               grouping: instance_variable_get(
-                                 :"@grouping#{i}"
-                               ))
-          submit_file(@assignment, instance_variable_get(:"@grouping#{i}"),
-                      "file#{i}", "file#{i}'s content\n")
+      describe '#zip_groupings_files' do
+        it 'should be able to download all groups\' submissions' do
+          expect(DownloadSubmissionsJob).to receive(:perform_later) do |grouping_ids, _zip_file, _assignment_id|
+            expect(grouping_ids).to contain_exactly(*grouping_ids)
+            DownloadSubmissionsJob.new
+          end
+          post_as @admin, :zip_groupings_files, params: { assignment_id: assignment.id, groupings: grouping_ids }
+          is_expected.to respond_with(:success)
+        end
+
+        it 'should be able to download a subset of the submissions' do
+          subset = grouping_ids[0...2]
+          expect(DownloadSubmissionsJob).to receive(:perform_later) do |grouping_ids, _zip_file, _assignment_id|
+            expect(grouping_ids).to contain_exactly(*subset)
+            DownloadSubmissionsJob.new
+          end
+          post_as @admin, :zip_groupings_files, params: { assignment_id: assignment.id, groupings: subset }
+          is_expected.to respond_with(:success)
+        end
+
+        it 'should - as Ta - be not able to download all groups\' submissions when unassigned' do
+          expect(DownloadSubmissionsJob).to receive(:perform_later) do |grouping_ids, _zip_file, _assignment_id|
+            expect(grouping_ids).to be_empty
+            DownloadSubmissionsJob.new
+          end
+          post_as unassigned_ta, :zip_groupings_files, params: { assignment_id: assignment.id, groupings: grouping_ids }
+          is_expected.to respond_with(:success)
+        end
+
+        it 'should - as Ta - be able to download all groups\' submissions when assigned' do
+          expect(DownloadSubmissionsJob).to receive(:perform_later) do |gids, _zip_file, _assignment_id|
+            expect(gids).to contain_exactly(*grouping_ids)
+            DownloadSubmissionsJob.new
+          end
+          post_as assigned_ta, :zip_groupings_files, params: { assignment_id: assignment.id, groupings: grouping_ids }
+          is_expected.to respond_with(:success)
+        end
+
+        it 'should create a zip file named after the current user and the assignment' do
+          expect(DownloadSubmissionsJob).to receive(:perform_later) do |_grouping_ids, zip_file, _assignment_id|
+            expect(zip_file).to include(assignment.short_identifier)
+            expect(zip_file).to include(@admin.user_name)
+            DownloadSubmissionsJob.new
+          end
+          post_as @admin, :zip_groupings_files, params: { assignment_id: assignment.id, groupings: grouping_ids }
+          is_expected.to respond_with(:success)
         end
       end
 
-      it 'should be able to download all groups\' submissions' do
-        post_as @admin, :download_groupings_files, params: { assignment_id: @assignment.id, groupings: @grouping_ids }
-        is_expected.to respond_with(:success)
-        zip_subpath = Pathname.new("#{@assignment.short_identifier}_#{@admin.user_name}.zip")
-        zip_path = Pathname.new('tmp') + zip_subpath
-        Zip::File.open(zip_path) do |zip_file|
-          (1..3).to_a.each do |i|
-            instance_variable_set(
-              :"@file#{i}_path",
-              zip_subpath + instance_variable_get(:"@grouping#{i}").group.repo_name.to_s + "file#{i}"
-            )
-            expect(zip_file.find_entry(
-                     instance_variable_get(:"@file#{i}_path"))).to_not be_nil
-            expect("file#{i}'s content\n").to eq(
-              zip_file.read(instance_variable_get(:"@file#{i}_path")))
+      describe '#download_zipped_file' do
+        it 'should download a file name after the current user and the assignment' do
+          expect(controller).to receive(:send_file) do |zip_file|
+            expect(zip_file.to_s).to include(assignment.short_identifier)
+            expect(zip_file.to_s).to include(@admin.user_name)
           end
-        end
-      end
-
-      it 'should be able to download a subset of the submissions' do
-        grouping_ids = @grouping_ids[0...2]
-        post_as @admin, :download_groupings_files, params: { assignment_id: @assignment.id, groupings: grouping_ids }
-        is_expected.to respond_with(:success)
-        zip_subpath = Pathname.new("#{@assignment.short_identifier}_#{@admin.user_name}.zip")
-        zip_path = Pathname.new('tmp') + zip_subpath
-        Zip::File.open(zip_path) do |zip_file|
-          (1..2).to_a.each do |i|
-            instance_variable_set(
-              :"@file#{i}_path",
-              zip_subpath + instance_variable_get(:"@grouping#{i}").group.repo_name.to_s + "file#{i}"
-            )
-            expect(zip_file.find_entry(instance_variable_get(:"@file#{i}_path"))).to_not be_nil
-            expect("file#{i}'s content\n").to eq(zip_file.read(instance_variable_get(:"@file#{i}_path")))
-          end
-        end
-      end
-
-      it 'should - as Ta - be not able to download all groups\' submissions when unassigned' do
-        @ta = create(:ta)
-        post_as @ta, :download_groupings_files, params: { assignment_id: @assignment.id, groupings: @grouping_ids }
-        is_expected.to respond_with(:success)
-        zip_subpath = Pathname.new("#{@assignment.short_identifier}_#{@ta.user_name}.zip")
-        zip_path = Pathname.new('tmp') + zip_subpath
-        Zip::File.open(zip_path) do |zip_file|
-          (1..3).to_a.each do |i|
-            instance_variable_set(
-              :"@file#{i}_path",
-              zip_subpath + instance_variable_get(:"@grouping#{i}").group.repo_name.to_s + "file#{i}"
-            )
-            expect(zip_file.find_entry(instance_variable_get(:"@file#{i}_path"))).to be_nil
-          end
-        end
-      end
-      it 'should - as Ta - be able to download all groups\' submissions when assigned' do
-        @ta = create(:ta)
-        @assignment.groupings.each do |grouping|
-          create(:ta_membership, user: @ta, grouping: grouping)
-        end
-        post_as @ta, :download_groupings_files, params: { assignment_id: @assignment.id, groupings: @grouping_ids }
-        is_expected.to respond_with(:success)
-        zip_subpath = Pathname.new("#{@assignment.short_identifier}_#{@ta.user_name}.zip")
-        zip_path = Pathname.new('tmp') + zip_subpath
-        Zip::File.open(zip_path) do |zip_file|
-          (1..3).to_a.each do |i|
-            instance_variable_set(
-              :"@file#{i}_path",
-              zip_subpath + instance_variable_get(:"@grouping#{i}").group.repo_name.to_s + "file#{i}"
-            )
-            expect(zip_file.find_entry(instance_variable_get(:"@file#{i}_path"))).to_not be_nil
-            expect("file#{i}'s content\n").to eq(zip_file.read(instance_variable_get(:"@file#{i}_path")))
-          end
+          post_as @admin, :download_zipped_file, params: { assignment_id: assignment.id }
         end
       end
     end
@@ -696,17 +675,3 @@ describe SubmissionsController do
   end
 end
 
-private
-
-def submit_file(assignment, grouping, filename = 'file', content = 'content')
-  grouping.group.access_repo do |repo|
-    txn = repo.get_transaction('test')
-    path = File.join(assignment.repository_folder, filename)
-    txn.add(path, content, '')
-    repo.commit(txn)
-
-    # Generate submission
-    Submission.generate_new_submission(
-      grouping, repo.get_latest_revision)
-  end
-end
