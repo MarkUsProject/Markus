@@ -470,7 +470,9 @@ class GitRepository < Repository::AbstractRepository
   # Creates an empty directory into the repository.
   # The dummy file is required so the directory gets committed.
   def add_directory(path)
-    return if Dir.exist?(File.join(@repos_path, path))
+    if get_latest_revision.path_exists?(path)
+      raise Repository::FolderExistsConflict, path
+    end
     gitkeep_filename = File.join(path, DUMMY_FILE_NAME)
     add_file(gitkeep_filename, '')
   end

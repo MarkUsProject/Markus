@@ -7,3 +7,11 @@ en:
       button_text: 'View Results'
       explicit_link: "If the above button doesn't work, copy-and-paste this link into your web browser: %{link}"
       disclaimer: 'This is an automated email. Please do not reply.'
+
+    release_spreadsheet_email:
+      subject: 'MarkUs Notification (%{course}) Your marks for %{form} have been released!'
+      greeting: 'Hello %{first_name} %{last_name},'
+      text_body: 'Your marks for %{form} have now been released on MarkUs and can be viewed.'
+      button_text: 'View Results'
+      explicit_link: "If the above button doesn't work, copy-and-paste this link into your web browser: %{link}"
+      disclaimer: 'This is an automated email. Please do not reply.'
