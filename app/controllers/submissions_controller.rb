@@ -488,7 +488,7 @@ class SubmissionsController < ApplicationController
   def zip_groupings_files
     assignment = Assignment.find(params[:assignment_id])
 
-    groupings = Grouping.includes(:group, :current_submission_used).where(id: params[:groupings]&.map(&:to_i))
+    groupings = assignment.groupings.where(id: params[:groupings]&.map(&:to_i))
 
     zip_path = zipped_grouping_file_name(assignment)
 
@@ -507,7 +507,13 @@ class SubmissionsController < ApplicationController
   def download_zipped_file
     assignment = Assignment.find(params[:assignment_id])
     zip_path = zipped_grouping_file_name(assignment)
-    send_file zip_path, disposition: 'inline', filename: File.basename(zip_path)
+    zip_file = File.basename(zip_path)
+    begin
+      send_file zip_path, disposition: 'inline', filename: zip_file
+    rescue ActionController::MissingFile
+      flash_message(:error, I18n.t('submissions.download_zipped_file.file_missing', zip_file: zip_file))
+      redirect_back(fallback_location: root_path)
+    end
   end
 
   ##

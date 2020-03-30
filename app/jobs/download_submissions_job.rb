@@ -25,7 +25,7 @@ class DownloadSubmissionsJob < ApplicationJob
 
     progress.total = grouping_ids.length
     Zip::File.open(zip_path, Zip::File::CREATE) do |zip_file|
-      Grouping.where(id: grouping_ids).each do |grouping|
+      Grouping.includes(:group, :current_submission_used).where(id: grouping_ids).each do |grouping|
         revision_id = grouping.current_submission_used&.revision_identifier
         group_name = grouping.group.group_name
         grouping.group.access_repo do |repo|
