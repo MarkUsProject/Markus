@@ -73,4 +73,44 @@ RSpec.describe NotificationMailer, type: :mailer do
       expect(@mail.body.to_s).to include(@grade_entry_form.short_identifier.to_s)
     end
   end
+
+  describe 'grouping_invite_email' do
+    before(:each) do
+      @inviter = create(:student)
+      @invited = create(:student)
+      @fake_assignment = create(:assignment)
+      @grouping = create(:grouping, assignment: @fake_assignment)
+      @mail = described_class.with(invited: @invited, inviter: @inviter, grouping: @grouping)
+                  .grouping_invite_email.deliver_now
+    end
+
+    it 'renders the subject' do
+      subject_line = 'MarkUs Notification (' + Rails.configuration.course_name + ') You have been invited to a group!'
+      expect(@mail.subject).to eq(subject_line)
+    end
+
+    it 'renders the receiver email' do
+      expect(@mail.to).to eq([@invited.email])
+    end
+
+    it 'renders the sender email' do
+      expect(@mail.from).to eq(['noreply@markus.com'])
+    end
+
+    it 'renders the inviter name in the body of the email.' do
+      first_name = @inviter.first_name
+      last_name = @inviter.last_name
+      expect(@mail.body.to_s).to include("#{first_name} #{last_name}")
+    end
+
+    it 'renders the invitee name in the body of the email.' do
+      first_name = @invited.first_name
+      last_name = @invited.last_name
+      expect(@mail.body.to_s).to include("#{first_name} #{last_name}")
+    end
+
+    it 'renders the disclaimer in the body of the email.' do
+      expect(@mail.body.to_s).to include('This is an automated email. Please do not reply.')
+    end
+  end
 end
