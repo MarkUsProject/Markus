@@ -105,7 +105,6 @@ module RepositoryHelper
     end
 
     current_path = Pathname.new path
-
     current_revision = repo.get_latest_revision.revision_identifier
 
     files.each do |file_path|
@@ -233,10 +232,6 @@ module RepositoryHelper
         flash_message(:warning, I18n.t('student.submission.no_action_detected'))
       when :txn_conflicts
         flash_message(:error, partial: 'submissions/file_conflicts_list', locals: { conflicts: other_info })
-      when :exist
-        flash_message(:warning, I18n.t('student.submission.exist'))
-      when :not_exist
-        flash_message(:warning, I18n.t('student.submission.not_exist'))
       end
     end
   end

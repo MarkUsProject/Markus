@@ -178,16 +178,12 @@ module Api
         return
       end
 
-      begin
-        success, messages = grouping.remove_files([params[:filename]], @current_user)
-      rescue Repository::FileDoesNotExist
-        render 'shared/http_status', locals: { code: '404', message:
-          'No file exists at that path.' }, status: 404
-        return
+      success, messages = grouping.group.access_repo do |repo|
+        path = Pathname.new(grouping.assignment.repository_folder)
+        remove_files([params[:filename]], @current_user, repo, path: path)
       end
 
       message_string = messages.map { |type, *msg| "#{type}: #{msg}" }.join("\n")
-
       if success
         # It worked, render success
         message = "#{HttpStatusHelper::ERROR_CODE['message']['200']}\n\n#{message_string}"
