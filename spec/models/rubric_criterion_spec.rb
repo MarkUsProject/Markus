@@ -264,12 +264,10 @@ describe RubricCriterion do
           expect(@marks[0].mark).to eq(10)
         end
       end
-      describe 'deleting level deletes respective mark' do
+      describe 'deleting level sets respective mark\'s mark value to nil' do
         it 'not raise error' do
-          byebug
           @levels[0].destroy
-          @levels.reload
-          expect(@marks.length).to eq(2)
+          expect(@marks[0].mark).to be_nil
         end
       end
     end
