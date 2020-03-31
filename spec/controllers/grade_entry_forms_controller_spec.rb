@@ -298,4 +298,19 @@ describe GradeEntryFormsController do
       expect(grade_entry_form.reload.due_date.to_date).to eq Date.new(2019, 11, 14)
     end
   end
+
+  describe 'update_grade_entry_students' do
+    before :each do
+      @student = grade_entry_form_with_data.grade_entry_students.joins(:user).find_by('users.user_name': 'c8shosta')
+      @this_form = grade_entry_form_with_data
+    end
+    it 'sends an email to each student who can now view their marks for this grade entry form' do
+      expect do
+        post :update_grade_entry_students,
+             params: { id: @this_form.id,
+                       students: [@student.id],
+                       release_results: 'true' }
+      end.to change { ActionMailer::Base.deliveries.count }.by(1)
+    end
+  end
 end

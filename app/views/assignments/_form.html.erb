@@ -15,7 +15,7 @@
 <%= form_for @assignment do |f| %>
   <%= f.fields_for :assignment_properties do |ap_f| %>
 
-    <input type="hidden" name="assignment.assignment_properties[scanned_exam]" value="<%= @assignment.scanned_exam %>">
+    <%= ap_f.hidden_field :scanned_exam, value: @assignment.scanned_exam  %>
 
     <label class='required'><%= t('required_fields') %></label>
 

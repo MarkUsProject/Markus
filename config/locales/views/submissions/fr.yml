@@ -43,6 +43,9 @@ fr:
       version_control_warning: "Envoi de fichiers ici annule les modifications apportées à l'aide de contrôle de version.
                                 Assurez-vous que vous avez travaillé sur les fichiers les plus récents avant de soumettre."
 
+    download_zipped_file:
+      file_missing: "Aucun fichier nommé %{zip_file} trouvé. Veuillez essayer de préparer à nouveau ce fichier pour le télécharger."
+
     # Miscellaneous
     cannot_display: "Fichier binaire : utiliser le bouton Télécharger pour voir."
     commit_date: "Date d'envoi (commit)"

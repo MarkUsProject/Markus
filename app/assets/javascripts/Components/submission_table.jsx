@@ -206,9 +206,14 @@ class RawSubmissionTable extends React.Component {
     }).then(this.fetchData);
   };
 
-  downloadGroupingFiles = (event) => {
-    if (!window.confirm(I18n.t('submissions.marking_incomplete_warning'))) {
-      event.preventDefault();
+  prepareGroupingFiles = () => {
+    if (window.confirm(I18n.t('submissions.marking_incomplete_warning'))) {
+      $.post({
+        url: Routes.zip_groupings_files_assignment_submissions_url(this.props.assignment_id),
+        data: {
+          groupings: this.props.selection
+        }
+      })
     }
   };
 
@@ -245,7 +250,7 @@ class RawSubmissionTable extends React.Component {
           can_run_tests={this.props.can_run_tests}
 
           collectSubmissions={() => {this.setState({showModal: true})}}
-          downloadGroupingFiles={this.downloadGroupingFiles}
+          downloadGroupingFiles={this.prepareGroupingFiles}
           selection={this.props.selection}
           runTests={this.runTests}
           releaseMarks={() => this.toggleRelease(true)}
@@ -266,6 +271,7 @@ class RawSubmissionTable extends React.Component {
           ]}
           filterable
           defaultFilterMethod={stringFilter}
+          defaultFiltered={this.props.defaultFiltered}
           loading={loading}
 
           getTrProps={this.getTrProps}
@@ -353,20 +359,11 @@ class SubmissionsActionBox extends React.Component {
     }
 
     let downloadGroupingFilesButton = (
-      <form action={Routes.download_groupings_files_assignment_submissions_url(this.props.assignment_id)}
-            onSubmit={this.props.downloadGroupingFiles}
-            method="post"
+      <button onClick={this.props.downloadGroupingFiles}
+              disabled={this.props.disabled}
       >
-        {this.props.selection.map(selection => {
-          return (
-            <input type="number" name="groupings[]" defaultValue={selection} key={selection} hidden={true}/>
-          )
-        })}
-        <input type="hidden" name="authenticity_token" value={this.props.authenticity_token} />
-        <button type={'submit'} disabled={this.props.disabled}>
-          {I18n.t('download_the', {item: I18n.t('activerecord.models.submission.other')})}
-        </button>
-      </form>
+        {I18n.t('download_the', {item: I18n.t('activerecord.models.submission.other')})}
+      </button>
     );
 
     return (

@@ -105,7 +105,6 @@ module RepositoryHelper
     end
 
     current_path = Pathname.new path
-
     current_revision = repo.get_latest_revision.revision_identifier
 
     files.each do |file_path|
@@ -134,16 +133,12 @@ module RepositoryHelper
       commit_txn = false
     end
 
-    repo_path = Pathname.new path
-    relative_path = Pathname.new(new_folders[0])
-    current_path = File.join(repo_path, relative_path)
-
-    if repo.get_latest_revision.path_exists?(current_path)
-      return [true, [:exist]]
-    end
+    current_path = Pathname.new path
 
     new_folders.each do |folder_path|
-      txn.add_path(repo_path.join(folder_path))
+      folder_path = current_path.join(folder_path)
+      folder_path = folder_path.to_s
+      txn.add_path(folder_path)
     end
 
     if commit_txn
@@ -165,10 +160,6 @@ module RepositoryHelper
     end
 
     current_path = Pathname.new path
-    relative_path = Pathname.new(folders[0])
-    abs_path = File.join(current_path, relative_path)
-
-    return [true, [:not_exist]] unless repo.get_latest_revision.path_exists?(abs_path)
 
     current_revision = repo.get_latest_revision.revision_identifier
 
@@ -241,10 +232,6 @@ module RepositoryHelper
         flash_message(:warning, I18n.t('student.submission.no_action_detected'))
       when :txn_conflicts
         flash_message(:error, partial: 'submissions/file_conflicts_list', locals: { conflicts: other_info })
-      when :exist
-        flash_message(:warning, I18n.t('student.submission.exist'))
-      when :not_exist
-        flash_message(:warning, I18n.t('student.submission.not_exist'))
       end
     end
   end

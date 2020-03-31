@@ -8,7 +8,7 @@ class JobMessagesController < ApplicationController
       session[:job_id] = nil
     elsif status.completed?
       status[:progress] = status[:total]
-      flash_message(:success, t('poll_job.completed'))
+      flash_message(:success, status[:job_class].completed_message(status))
       session[:job_id] = nil
     elsif status.read.empty?
       flash_message(:error, t('poll_job.failed'))

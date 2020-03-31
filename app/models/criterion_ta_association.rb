@@ -11,10 +11,6 @@ class CriterionTaAssociation < ApplicationRecord
 
   before_validation       :add_assignment_reference, on: :create
 
-  def add_assignment_reference
-    self.assignment = criterion.assignment
-  end
-
   def self.from_csv(assignment, csv_data, remove_existing)
     criteria = assignment.get_criteria(:ta, :all, includes: [:criterion_ta_associations])
     if remove_existing
@@ -52,5 +48,11 @@ class CriterionTaAssociation < ApplicationRecord
     Criterion.update_assigned_groups_counts(assignment)
 
     result
+  end
+
+  private
+
+  def add_assignment_reference
+    self.assignment = criterion.assignment
   end
 end

@@ -28,8 +28,6 @@ en:
         missing_file: "Could not download %{file_name}.  File may be missing."
         empty_file_warning: "%{file_name} is empty"
         file_too_large: "The size of the uploaded file %{file_name} exceeds the maximum of %{max_size} MB."
-        exist: "The folder already exists"
-        not_exist: "The folder does not exist"
 
     submission_file:
       error:
@@ -56,6 +54,9 @@ en:
       create_groups_job_extra_info: "failed for group: %{group_name}, repo: %{repo_name}, members: %{members}"
       uncollect_submissions_job: "Uncollecting assignments ... "
       submissions_job: "%{progress}/%{total} Submissions collected"
+      download_submissions_job: "%{progress}/%{total} Submissions prepared for download"
+      download_submissions_finalizing: "Finalizing submissions for download"
+      download_submissions_complete: "Submissions are ready for download. Click here to complete the download."
       update_repo_required_files_job: "%{progress}/%{total} Student repositories updated with new required files"
       update_starter_code_job: "%{progress}/%{total} Student repositories updated with starter code"
       autotest_run_job: "%{progress}/%{total} Test runs started"

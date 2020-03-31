@@ -1376,5 +1376,4 @@ class Assignment < Assessment
   def create_assignment_properties
     AssignmentProperties.create(assessment_id: self.id, repository_folder: self.short_identifier)
   end
-
 end

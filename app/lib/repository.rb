@@ -50,6 +50,12 @@ module Repository
     end
   end
   # Exception for folders
+  class FolderExistsConflict < Conflict
+    def to_s
+      "#{@path} could not be added - it already exists"
+    end
+  end
+
   class FolderDoesNotExistConflict < Conflict
     def to_s
       "#{@path} could not be removed - it is not exist"

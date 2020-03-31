@@ -231,7 +231,7 @@ class MemoryRepository < Repository::AbstractRepository
   # Creates a directory as part of the provided revision
   def make_directory(rev, full_path)
     if rev.path_exists?(full_path)
-      raise FileExistsConflict # raise conflict if path exists
+      raise Repository::FolderExistsConflict, full_path # raise conflict if path exists
     end
     creation_time = Time.now
     dir = Repository::RevisionDirectory.new(rev.revision_identifier, {
@@ -285,7 +285,7 @@ class MemoryRepository < Repository::AbstractRepository
   # Removes a file from the provided revision
   def remove_file(rev, full_path, expected_revision_int)
     if !file_exists?(rev, full_path)
-      raise Repostiory::FileDoesNotExistConflict.new(full_path)
+      raise Repository::FileDoesNotExistConflict, full_path
     end
     act_rev = get_latest_revision()
     if (act_rev.revision_identifier != expected_revision_int.to_i)
