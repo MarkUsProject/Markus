@@ -40,6 +40,7 @@ shared_context 'autotest jobs' do
     if server_type == 'local'
       allow(Rails.configuration.x.autotest).to receive(:server_username).and_return(nil)
       allow(Open3).to receive(:capture2e).and_return([data, fake_exit_status(exit_code)])
+      allow(Open3).to receive(:capture3).and_return(['', data, fake_exit_status(exit_code)])
     else
       allow(Rails.configuration.x.autotest).to receive(:server_username).and_return('autotst')
       status = Net::SSH::Connection::Session::StringWithExitstatus.new(data, exit_code)
