@@ -1,0 +1,24 @@
+<div class="emailbkgd dark-scheme">
+  <div class="top_section dark-scheme">
+    <%= image_tag('markus_logo_big.png', class: 'logo_header')%>
+  </div>
+  <hr class="divider">
+  <p class="to_text dark-scheme">
+    <%= t('.greeting', first_name: @student.user.first_name, last_name: @student.user.last_name) %>
+  </p>
+  <p class="body_text dark-scheme">
+    <%= t('.text_body', form: @form.short_identifier) %>
+  </p>
+  <div class="button_enclosure">
+    <%= link_to t('.button_text'),
+                student_interface_grade_entry_form_url(id: @form.id),
+                class: 'redirectbutton' %>
+  </div>
+  <p class="alert_text dark-scheme">
+    <%= t('.explicit_link',
+          link: student_interface_grade_entry_form_url(id: @form.id)) %>
+  </p>
+  <p class="alert_text dark-scheme">
+    <%= t('.disclaimer') %>
+  </p>
+</div>

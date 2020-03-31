@@ -12,7 +12,12 @@ class ExamTemplate < ApplicationRecord
 
   has_many :split_pdf_logs, dependent: :destroy
   has_many :template_divisions, dependent: :destroy
-  accepts_nested_attributes_for :template_divisions, allow_destroy: true, update_only: true, reject_if: :exam_been_uploaded?
+  accepts_nested_attributes_for :template_divisions,
+                                allow_destroy: true,
+                                update_only: true,
+                                reject_if: :exam_been_uploaded?
+
+  before_save :undo_mark_for_destruction
 
   # Create an ExamTemplate with the correct file
   def self.create_with_file(blob, attributes={})
@@ -260,6 +265,11 @@ class ExamTemplate < ApplicationRecord
     imglist.first.write(File.join(self.base_path, 'cover.jpg'))
   end
 
+  # any changes to template divisions should be rejected once exams have been uploaded
+  def exam_been_uploaded?
+    self.split_pdf_logs.exists?
+  end
+
   private
 
   # name and filename shouldn't include whitespace
@@ -294,8 +304,8 @@ class ExamTemplate < ApplicationRecord
     end
   end
 
-  # any changes to template divisions should be rejected once exams have been uploaded
-  def exam_been_uploaded?
-    self.split_pdf_logs.any?
+  # any attempts to delete template divisions should be rejected once exams have been uploaded
+  def undo_mark_for_destruction
+    template_divisions.each { |div| div.reload if div.marked_for_destruction? } if exam_been_uploaded?
   end
 end

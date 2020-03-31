@@ -7,12 +7,15 @@
   </header>
 
   <ul class="template-division-section-<%= exam_template.id %>">
+      <% disabled = exam_template.exam_been_uploaded? %>
       <%= render partial: 'exam_templates/template_division',
-                 locals: { f: f } %>
-      <li class="add_template">
-        <%= link_to t('exam_templates.create.add_division'),
-                      '#',
-                      onClick: "add_template_division(#{exam_template.id.to_s}); return false;"%>
-      </li>
+                 locals: { f: f, disabled: disabled } %>
+      <% unless disabled %>
+        <li class="add_template">
+          <%= link_to t('exam_templates.create.add_division'),
+                        '#',
+                        onClick: "add_template_division(#{exam_template.id.to_s}); return false;"%>
+        </li>
+      <% end %>
   </ul>
 </div>

@@ -132,7 +132,7 @@ class AssignmentsController < ApplicationController
       @g_id_entries = {}
       current_user.grade_entry_students.where(released_to_student: true).includes(:grade_entry_form).each do |g|
         unless g.grade_entry_form.is_hidden
-          @g_id_entries[g.grade_entry_form_id] = g
+          @g_id_entries[g.assessment_id] = g
         end
       end
 

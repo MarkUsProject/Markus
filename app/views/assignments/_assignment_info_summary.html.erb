@@ -6,7 +6,7 @@
   <p>
     <%= link_to t(:outstanding_remark_request,
                   count: assignment.outstanding_remark_request_count),
-        browse_assignment_submissions_path(assignment, sort_by: 'marking_state') %>
+        browse_assignment_submissions_path(assignment, filter_by: 'marking_state', filter_value: 'remark') %>
   </p>
 <% end %>
 

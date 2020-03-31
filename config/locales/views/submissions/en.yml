@@ -32,6 +32,8 @@ en:
       submitted_at:  "Submitted At"
       viewing_revision: "Viewing Revision:"
       server_time: "push:"
+    download_zipped_file:
+      file_missing: "No file named %{zip_file} found. Please try preparing this file for download again."
 
     student:
       file_manager: "%{short_identifier}: File Manager"

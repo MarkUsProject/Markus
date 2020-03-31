@@ -186,7 +186,8 @@ Rails.application.routes.draw do
           post 'update_files'
           get 'server_time'
           get 'download'
-          post 'download_groupings_files'
+          post 'zip_groupings_files'
+          get 'download_zipped_file'
         end
 
         member do
