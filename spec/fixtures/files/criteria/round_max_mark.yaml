@@ -3,7 +3,7 @@ cr90:
   type: Rubric
   levels:
     level_0:
-      desription: B-
+      description: B-
       mark: 0
     level_1:
       description: B

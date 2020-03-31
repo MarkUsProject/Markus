@@ -879,8 +879,6 @@ describe CriteriaController do
       it 'creates criteria with rounded (up to first digit after decimal point) maximum mark' do
         post_as admin, :upload, params: { assignment_id: assignment.id,
                                           upload_file: round_max_mark_file }
-        # TODO: Fix this
-        pending('should be successfully uploaded and it should not create a rubric criterion with default setting')
         expect(assignment.get_criteria(:all, :rubric).first.name).to eq('cr90')
 
         expect(assignment.get_criteria(:all, :rubric).first.max_mark).to eq(4.6)

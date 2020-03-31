@@ -171,13 +171,20 @@ class RubricCriterion < Criterion
     # Visibility options
     criterion.ta_visible = criterion_yml[1]['ta_visible'] unless criterion_yml[1]['ta_visible'].nil?
     criterion.peer_visible = criterion_yml[1]['peer_visible'] unless criterion_yml[1]['peer_visible'].nil?
+    levels = []
     criterion_yml[1]['levels'].each do |name, level_yml|
-      criterion.levels.create(rubric_criterion: criterion,
-                             name: name,
-                             description: level_yml['description'],
-                             mark: level_yml['mark'])
+      level = Level.new
+      level.rubric_criterion = criterion
+      level.name = name
+      level.description = level_yml['description']
+      level.mark = level_yml['mark']
+      levels.append(level)
+      # levels.append(Level.create(rubric_criterion: criterion,
+      #                              name: name,
+      #                              description: level_yml['description'],
+      #                              mark: level_yml['mark']))
     end
-    criterion
+    [criterion, levels]
   end
 
   # Returns a hash containing the information of a single rubric criterion.

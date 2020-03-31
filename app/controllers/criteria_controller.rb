@@ -160,7 +160,9 @@ class CriteriaController < ApplicationController
             type = criterion_yml[1]['type']
             begin
               if type.casecmp('rubric') == 0
-                criterion = RubricCriterion.load_from_yml(criterion_yml)
+                data = RubricCriterion.load_from_yml(criterion_yml)
+                criterion = data[0]
+                levels = data[1]
               elsif type.casecmp('flexible') == 0
                 criterion = FlexibleCriterion.load_from_yml(criterion_yml)
               elsif type.casecmp('checkbox') == 0
@@ -172,6 +174,10 @@ class CriteriaController < ApplicationController
               criterion.assignment_id = assignment.id
               criterion.position = pos
               criterion.save!
+              if defined? levels
+                criterion.levels = levels
+                criterion.save!
+              end
               pos += 1
               successes += 1
             rescue ActiveRecord::RecordInvalid # E.g., both visibility options are false.
