@@ -15,7 +15,7 @@ class Level < ApplicationRecord
   def destroy_associated_marks
     marks = self.rubric_criterion.marks
     marks.each do |mark|
-      if (mark.mark == self.mark)
+      if mark.mark == self.mark
         mark.update(mark: nil)
       end
     end
@@ -27,11 +27,9 @@ class Level < ApplicationRecord
     before = self.changes['mark'][0]
     after = self.changes['mark'][1]
     marks.each do |mark|
-      if (mark.mark == before)
+      if mark.mark == before
         mark.update(mark: after)
       end
     end
   end
-
-
 end

@@ -286,7 +286,6 @@ describe RubricCriterion do
             expect(@marks[2].mark).to be_nil
           end
         end
-        
       end
     end
 
