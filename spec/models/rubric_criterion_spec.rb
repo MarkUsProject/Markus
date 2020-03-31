@@ -252,10 +252,11 @@ describe RubricCriterion do
     context 'editing levels edits marks' do
       before(:each) do
         @marks = @criterion.marks
-        @marks.create(mark: 0, markable_type: "RubricCriterion")
-        @marks.create(mark: 1, markable_type: "RubricCriterion")
-        @marks.create(mark: 2, markable_type: "RubricCriterion")
-        @marks.reload
+        @result = create(:result, marking_state: Result::MARKING_STATES[:incomplete])
+        @marks.create(mark: 0, result: @result)
+        @marks.create(mark: 1, result: @result)
+        @marks.create(mark: 2, result: @result)
+        @result.marks = @marks
       end
       describe 'updating level updates respective mark' do
         it 'not raise error' do
