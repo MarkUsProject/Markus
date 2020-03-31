@@ -179,10 +179,6 @@ class RubricCriterion < Criterion
       level.description = level_yml['description']
       level.mark = level_yml['mark']
       levels.append(level)
-      # levels.append(Level.create(rubric_criterion: criterion,
-      #                              name: name,
-      #                              description: level_yml['description'],
-      #                              mark: level_yml['mark']))
     end
     [criterion, levels]
   end
