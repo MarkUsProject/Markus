@@ -15,7 +15,7 @@ class Assignment < Assessment
   delegate_missing_to :assignment_properties
   accepts_nested_attributes_for :assignment_properties, update_only: true
   validates_presence_of :assignment_properties
-  after_create :create_assignment_properties
+  after_initialize :create_assignment_properties
 
   # Add assignment_properties to default scope because we almost always want to load an assignment with its properties
   default_scope { includes(:assignment_properties) }
@@ -1374,6 +1374,9 @@ class Assignment < Assessment
   end
 
   def create_assignment_properties
-    AssignmentProperties.create(assessment_id: self.id, repository_folder: self.short_identifier)
+    return unless self.new_record?
+
+    self.assignment_properties ||= AssignmentProperties.new
+    self.assignment_properties.repository_folder ||= self.short_identifier
   end
 end
