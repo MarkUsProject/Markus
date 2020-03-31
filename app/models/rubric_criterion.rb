@@ -14,7 +14,8 @@ class RubricCriterion < Criterion
 
   has_many :levels, -> { order(:mark) }, inverse_of: :rubric_criterion, dependent: :destroy
   accepts_nested_attributes_for :levels, allow_destroy: true
-  before_save :scale_marks_if_max_mark_changed
+  before_validation :scale_marks_if_max_mark_changed
+  validate :validate_max_mark
 
   belongs_to :assignment, counter_cache: true
 
@@ -28,6 +29,13 @@ class RubricCriterion < Criterion
 
   def self.symbol
     :rubric
+  end
+
+  def validate_max_mark
+    return if self.levels.empty?
+    self.levels.order(mark: :desc)
+    return if self.max_mark <= self.levels.last.mark
+    errors.add(:max_mark, 'Max mark of rubric criterion should not be greater than max level mark')
   end
 
   def update_assigned_groups_count
