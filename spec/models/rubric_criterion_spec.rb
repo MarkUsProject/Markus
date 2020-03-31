@@ -256,7 +256,6 @@ describe RubricCriterion do
         @marks.create(mark: 0, result: @result)
         @marks.create(mark: 1, result: @result)
         @marks.create(mark: 2, result: @result)
-        @result.marks = @marks
       end
       describe 'updating level updates respective mark' do
         it 'not raise error' do
