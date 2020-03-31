@@ -174,7 +174,7 @@ class CriteriaController < ApplicationController
               criterion.assignment_id = assignment.id
               criterion.position = pos
               criterion.save!
-              if defined? levels
+              if type.casecmp('rubric') == 0
                 criterion.levels = levels
                 criterion.save!
               end
