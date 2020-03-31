@@ -6,10 +6,16 @@ class Assignment < Assessment
   MIN_PEER_REVIEWS_PER_GROUP = 1
 
   validates_presence_of :due_date
-  has_one :assignment_properties, dependent: :destroy, inverse_of: :assignment, foreign_key: :assessment_id
+
+  has_one :assignment_properties,
+          dependent: :destroy,
+          inverse_of: :assignment,
+          foreign_key: :assessment_id,
+          autosave: true
   delegate_missing_to :assignment_properties
   accepts_nested_attributes_for :assignment_properties, update_only: true
   validates_presence_of :assignment_properties
+  after_initialize :create_assignment_properties
 
   # Add assignment_properties to default scope because we almost always want to load an assignment with its properties
   default_scope { includes(:assignment_properties) }
@@ -1367,4 +1373,10 @@ class Assignment < Assessment
     end
   end
 
+  def create_assignment_properties
+    return unless self.new_record?
+
+    self.assignment_properties ||= AssignmentProperties.new
+    self.assignment_properties.repository_folder ||= self.short_identifier
+  end
 end
