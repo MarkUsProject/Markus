@@ -255,19 +255,38 @@ describe RubricCriterion do
         @result = create(:result, marking_state: Result::MARKING_STATES[:incomplete])
         @marks.create(mark: 0, result: @result)
         @marks.create(mark: 1, result: @result)
-        @marks.create(mark: 2, result: @result)
+        @marks.create(mark: 1, result: @result)
       end
       describe 'updating level updates respective mark' do
-        it 'not raise error' do
-          @levels[0].update(mark: 10.0)
-          expect(@marks[0].mark).to eq(10)
+        describe 'updates a single mark' do
+          it 'not raise error' do
+            @levels[0].update(mark: 10.0)
+            expect(@marks[0].mark).to eq(10)
+          end
+        end
+        describe 'updates multiple marks' do
+          it 'not raise error' do
+            @levels[1].update(mark: 10.0)
+            expect(@marks[1].mark).to eq(10)
+            expect(@marks[2].mark).to eq(10)
+          end
         end
       end
       describe 'deleting level sets respective mark\'s mark value to nil' do
-        it 'not raise error' do
-          @levels[0].destroy
-          expect(@marks[0].mark).to be_nil
+        describe 'updates a single mark' do
+          it 'not raise error' do
+            @levels[0].destroy
+            expect(@marks[0].mark).to be_nil
+          end
         end
+        describe 'updates multiple marks' do
+          it 'not raise error' do
+            @levels[1].destroy
+            expect(@marks[1].mark).to be_nil
+            expect(@marks[2].mark).to be_nil
+          end
+        end
+        
       end
     end
 
