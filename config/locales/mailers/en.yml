@@ -19,7 +19,8 @@ en:
     grouping_invite_email:
       subject: 'MarkUs Notification (%{course}) You have been invited to a group!'
       greeting: 'Hello %{first_name} %{last_name},'
-      text_body: '%{first_name} %{last_name} has invited you to join a group for %{assignment}.'
+      text_body: '%{first_name} %{last_name} has invited you to join a group for %{assignment}. If you wish
+      to accept this invitation, you need to do so <i>before</i> the assignment due date.'
       button_text: 'See Invitation'
       explicit_link: "If the above button doesn't work, copy-and-paste this link into your web browser: %{link}"
       disclaimer: 'This is an automated email. Please do not reply.'

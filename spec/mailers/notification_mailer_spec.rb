@@ -81,7 +81,7 @@ RSpec.describe NotificationMailer, type: :mailer do
       @fake_assignment = create(:assignment)
       @grouping = create(:grouping, assignment: @fake_assignment)
       @mail = described_class.with(invited: @invited, inviter: @inviter, grouping: @grouping)
-                  .grouping_invite_email.deliver_now
+                             .grouping_invite_email.deliver_now
     end
 
     it 'renders the subject' do
