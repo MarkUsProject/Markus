@@ -9,7 +9,7 @@
     "marked": "^0.6.3",
     "moment": "^2.24.0",
     "mousetrap": "^1.6.5",
-    "pdfjs-dist": "^2.2.228",
+    "pdfjs-dist": "^2.3.200",
     "postcss-preset-env": "^6.7.0",
     "prop-types": "^15.7.2",
     "rails-erb-loader": "^5.5.2",
