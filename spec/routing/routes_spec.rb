@@ -218,6 +218,41 @@ describe 'An Assignment' do
           assignment_id: assignment.id.to_s,
           locale: 'en')
       end
+
+      it 'routes GET get_test_runs_students properly' do
+        expect(get: autom_path + '/get_test_runs_students').to route_to(controller: autom_ctrl,
+                                                                        action: 'get_test_runs_students',
+                                                                        assignment_id: assignment.id.to_s,
+                                                                        locale: 'en')
+      end
+
+      it 'routes GET populate_autotest_manager properly' do
+        expect(get: autom_path + '/populate_autotest_manager').to route_to(controller: autom_ctrl,
+                                                                           action: 'populate_autotest_manager',
+                                                                           assignment_id: assignment.id.to_s,
+                                                                           locale: 'en')
+      end
+
+      it 'routes GET download_file properly' do
+        expect(get: autom_path + '/download_file').to route_to(controller: autom_ctrl,
+                                                               action: 'download_file',
+                                                               assignment_id: assignment.id.to_s,
+                                                               locale: 'en')
+      end
+
+      it 'routes GET download_files properly' do
+        expect(get: autom_path + '/download_files').to route_to(controller: autom_ctrl,
+                                                                action: 'download_files',
+                                                                assignment_id: assignment.id.to_s,
+                                                                locale: 'en')
+      end
+
+      it 'routes POST upload_files properly' do
+        expect(post: autom_path + '/upload_files').to route_to(controller: autom_ctrl,
+                                                              action: 'upload_files',
+                                                              assignment_id: assignment.id.to_s,
+                                                              locale: 'en')
+      end
     end
   end
   # end assignment automated_tests resource route tests
