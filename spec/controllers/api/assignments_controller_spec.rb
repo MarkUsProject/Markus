@@ -264,8 +264,8 @@ describe Api::AssignmentsController do
         expect(response.status).to eq(404)
       end
     end
-    context 'GET get_test_files' do
-      subject { get :get_test_files, params: { id: assignment.id } }
+    context 'GET test_files' do
+      subject { get :test_files, params: { id: assignment.id } }
       let(:content) { response.body }
       it_behaves_like 'zip file download'
       it 'should be successful' do

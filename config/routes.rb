@@ -45,7 +45,7 @@ Rails.application.routes.draw do
           end
         end
         member do
-          get 'get_test_files'
+          get 'test_files'
           get 'grades_summary'
         end
       end

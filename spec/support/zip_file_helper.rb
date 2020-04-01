@@ -18,7 +18,7 @@ shared_examples 'zip file download' do
     end
   end
   context 'when there is a single test file' do
-    let(:files) { {'test.txt': 'test_content'} }
+    let(:files) { { 'test.txt': 'test_content' } }
     it 'should return a zip containing one file' do
       check_zip_file_count(content, 1, 0)
     end
@@ -34,7 +34,7 @@ shared_examples 'zip file download' do
   end
   context 'when there is a file in a subdirectory' do
     let(:dirs) { ['test_dir'] }
-    let(:files) { {'test_dir/test.txt': 'test_content'} }
+    let(:files) { { 'test_dir/test.txt': 'test_content' } }
     it 'should return a zip containing one file and one directory' do
       check_zip_file_count(content, 1, 1)
     end

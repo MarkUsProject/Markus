@@ -220,7 +220,7 @@ module Api
       render 'shared/http_status', locals: { code: '404', message: e }, status: 404
     end
 
-    def get_test_files
+    def test_files
       assignment = Assignment.find(params[:id])
       zip_path = assignment.zip_automated_test_files(current_user)
       send_file zip_path, filename: File.basename(zip_path)

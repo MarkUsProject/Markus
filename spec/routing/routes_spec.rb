@@ -249,9 +249,9 @@ describe 'An Assignment' do
 
       it 'routes POST upload_files properly' do
         expect(post: autom_path + '/upload_files').to route_to(controller: autom_ctrl,
-                                                              action: 'upload_files',
-                                                              assignment_id: assignment.id.to_s,
-                                                              locale: 'en')
+                                                               action: 'upload_files',
+                                                               assignment_id: assignment.id.to_s,
+                                                               locale: 'en')
       end
     end
   end
