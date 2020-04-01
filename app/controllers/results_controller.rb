@@ -7,11 +7,13 @@ class ResultsController < ApplicationController
                          :toggle_marking_state,
                          :download, :download_zip,
                          :update_remark_request, :cancel_remark_request,
-                         :get_test_runs_instructors, :get_test_runs_instructors_released
+                         :get_test_runs_instructors, :get_test_runs_instructors_released,
+                         :add_tag, :remove_tag
                 ]
   before_action :authorize_for_ta_and_admin,
                 only: [:create, :add_extra_mark,
-                       :remove_extra_mark, :get_test_runs_instructors]
+                       :remove_extra_mark, :get_test_runs_instructors,
+                       :add_tag, :remove_tag]
   before_action :authorize_for_user,
                 only: [:show, :download, :download_zip,
                        :view_marks, :get_annotations, :show]
