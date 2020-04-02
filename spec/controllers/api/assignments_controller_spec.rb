@@ -279,6 +279,7 @@ describe Api::AssignmentsController do
         context 'when a spec file exists' do
           let(:content) { '{"a":1}' }
           before :each do
+            FileUtils.mkdir_p assignment.autotest_path
             File.write(assignment.autotest_settings_file, content)
             set_env
             get :test_specs, params: { id: assignment.id }

@@ -194,15 +194,18 @@ class AutomatedTestsController < ApplicationController
 
   def upload_specs
     assignment = Assignment.find(params[:assignment_id])
-    unless params[:specs_file].nil?
+    if params[:specs_file].respond_to? :read
       file_content = params[:specs_file].read
       begin
         JSON.parse file_content
       rescue JSON::ParserError
         flash_now(:error, I18n.t('automated_tests.invalid_specs_file'))
+        head :unprocessable_entity
       else
         File.write(assignment.autotest_settings_file, file_content, mode: 'wb')
       end
+    else
+      head :unprocessable_entity
     end
   end
 
