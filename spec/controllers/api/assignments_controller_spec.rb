@@ -274,53 +274,73 @@ describe Api::AssignmentsController do
       end
     end
     context 'GET test_specs' do
-      context 'expecting a json response' do
-        let(:set_env) { request.env['HTTP_ACCEPT'] = 'application/json' }
-        context 'when a spec file exists' do
-          let(:content) { '{"a":1}' }
-          before :each do
-            FileUtils.mkdir_p assignment.autotest_path
-            File.write(assignment.autotest_settings_file, content)
-            set_env
-            get :test_specs, params: { id: assignment.id }
-          end
-          context 'expecting a json response' do
-            it 'should get the content of the test spec file' do
-              expect(response.body).to eq content
-            end
-            it('should be successful') { expect(response.status).to eq 200 }
-          end
-          context 'expectign an xml response' do
-            let(:set_env) { request.env['HTTP_ACCEPT'] = 'application/xml' }
-            it 'should get the content of the test spec file' do
-              expect(Hash.from_xml(response.body).dig('markus_test_specs')).to eq JSON.parse(content)
-            end
-            it('should be successful') { expect(response.status).to eq 200 }
-          end
+      let(:set_env) { request.env['HTTP_ACCEPT'] = 'application/json' }
+      context 'when a spec file exists' do
+        let(:content) { '{"a":1}' }
+        before :each do
+          FileUtils.mkdir_p assignment.autotest_path
+          File.write(assignment.autotest_settings_file, content)
+          set_env
+          get :test_specs, params: { id: assignment.id }
         end
-        context 'when a spec file does not exists' do
-          before :each do
-            FileUtils.rm_f(assignment.autotest_settings_file)
-            set_env
-            get :test_specs, params: { id: assignment.id }
-          end
-          context 'expecting a json response' do
-            it 'should return an empty hash' do
-              expect(response.body).to eq '{}'
-            end
-            it('should be successful') { expect(response.status).to eq 200 }
-          end
-          context 'expectign an xml response' do
-            let(:set_env) { request.env['HTTP_ACCEPT'] = 'application/xml' }
-            it 'should get the content of the test spec file' do
-              expect(Hash.from_xml(response.body).dig('markus_test_specs').strip).to eq ''
-            end
-            it('should be successful') { expect(response.status).to eq 200 }
-          end
+        it 'should get the content of the test spec file' do
+          expect(response.body).to eq content
         end
+        it('should be successful') { expect(response.status).to eq 200 }
+      end
+      context 'when a spec file does not exists' do
+        before :each do
+          FileUtils.rm_f(assignment.autotest_settings_file)
+          set_env
+          get :test_specs, params: { id: assignment.id }
+        end
+        it 'should return an empty hash' do
+          expect(response.body).to eq '{}'
+        end
+        it('should be successful') { expect(response.status).to eq 200 }
       end
       it 'should fail if the assignment does not exist' do
         get :test_specs, params: { id: 1 }
+        expect(response.status).to eq 404
+      end
+    end
+    context 'POST update_test_specs' do
+      before :each do
+        FileUtils.mkdir_p assignment.autotest_path
+        File.write(assignment.autotest_settings_file, '')
+      end
+      context 'when the content is nested parameters' do
+        let(:content) { {a: {tester: 'python'}.stringify_keys}.stringify_keys }
+        before :each do
+          post :update_test_specs, params: { id: assignment.id, specs: content }
+        end
+        it 'should write the content to the specs file' do
+          expect(JSON.parse(File.read(assignment.autotest_settings_file))).to eq content
+        end
+        it('should be successful') { expect(response.status).to eq 204 }
+      end
+      context 'when the content is a json string' do
+        let(:content) { {a: {tester: 'python'}.stringify_keys}.stringify_keys }
+        before :each do
+          post :update_test_specs, params: { id: assignment.id, specs: JSON.dump(content) }
+        end
+        it 'should write the content to the specs file' do
+          expect(JSON.parse(File.read(assignment.autotest_settings_file))).to eq content
+        end
+        it('should be successful') { expect(response.status).to eq 204 }
+      end
+      context 'when the content is not a json string' do
+        let(:content) { 'abcd' }
+        before :each do
+          post :update_test_specs, params: { id: assignment.id, specs: content }
+        end
+        it 'should write the content to the specs file' do
+          expect(File.read(assignment.autotest_settings_file)).to eq ''
+        end
+        it('should not be successful') { expect(response.status).to eq 422 }
+      end
+      it 'should fail if the assignment does not exist' do
+        post :update_test_specs, params: { id: 1, specs: '123' }
         expect(response.status).to eq 404
       end
     end

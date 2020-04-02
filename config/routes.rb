@@ -48,6 +48,7 @@ Rails.application.routes.draw do
           get 'test_files'
           get 'grades_summary'
           get 'test_specs'
+          post 'update_test_specs'
         end
       end
       resources :main_api
