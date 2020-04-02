@@ -182,6 +182,30 @@ class AutomatedTestsController < ApplicationController
     render partial: 'update_files'
   end
 
+  def download_specs
+    assignment = Assignment.find(params[:assignment_id])
+    file_path = assignment.autotest_settings_file
+    if File.exist?(file_path)
+      send_file file_path, filename: params[:file_name]
+    else
+      send_data '{}', filename: file_path
+    end
+  end
+
+  def upload_specs
+    assignment = Assignment.find(params[:assignment_id])
+    unless params[:specs_file].nil?
+      file_content = params[:specs_file].read
+      begin
+        JSON.parse file_content
+      rescue JSON::ParserError
+        flash_now(:error, I18n.t('automated_tests.invalid_specs_file'))
+      else
+        File.write(assignment.autotest_settings_file, file_content, mode: 'wb')
+      end
+    end
+  end
+
   private
 
   def required_params

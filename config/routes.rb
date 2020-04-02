@@ -47,6 +47,7 @@ Rails.application.routes.draw do
         member do
           get 'test_files'
           get 'grades_summary'
+          get 'test_specs'
         end
       end
       resources :main_api
@@ -111,6 +112,8 @@ Rails.application.routes.draw do
           get 'download_file'
           get 'download_files'
           post 'upload_files'
+          get 'download_specs'
+          post 'upload_specs'
         end
       end
 
