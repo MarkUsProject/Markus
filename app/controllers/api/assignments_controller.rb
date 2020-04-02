@@ -205,6 +205,7 @@ module Api
           content = JSON.parse params[:specs]
         rescue JSON::ParserError => e
           render 'shared/http_status', locals: { code: '422', message: e.message }, status: 422
+          return
         end
       end
       if content.nil?
