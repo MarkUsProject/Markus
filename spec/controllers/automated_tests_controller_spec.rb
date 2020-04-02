@@ -15,6 +15,7 @@ describe AutomatedTestsController do
     context 'when the file exists' do
       let(:content) { '{"a":1}' }
       before :each do
+        FileUtils.mkdir_p assignment.autotest_path
         File.write(assignment.autotest_settings_file, content)
         get_as admin, :download_specs, params: { assignment_id: assignment.id }
       end
