@@ -11,4 +11,10 @@ describe AutomatedTestsController do
       expect(response.status).to eq(200)
     end
   end
+  context 'GET download_specs' do
+
+  end
+  context 'POST upload_specs' do
+
+  end
 end

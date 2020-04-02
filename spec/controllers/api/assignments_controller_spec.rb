@@ -273,5 +273,55 @@ describe Api::AssignmentsController do
         expect(response.status).to eq(200)
       end
     end
+    context 'GET test_specs' do
+      context 'expecting a json response' do
+        let(:set_env) { request.env['HTTP_ACCEPT'] = 'application/json' }
+        context 'when a spec file exists' do
+          let(:content) { '{"a":1}' }
+          before :each do
+            File.write(assignment.autotest_settings_file, content)
+            set_env
+            get :test_specs, params: { id: assignment.id }
+          end
+          context 'expecting a json response' do
+            it 'should get the content of the test spec file' do
+              expect(response.body).to eq content
+            end
+            it('should be successful') { expect(response.status).to eq 200 }
+          end
+          context 'expectign an xml response' do
+            let(:set_env) { request.env['HTTP_ACCEPT'] = 'application/xml' }
+            it 'should get the content of the test spec file' do
+              expect(Hash.from_xml(response.body).dig('markus_test_specs')).to eq JSON.parse(content)
+            end
+            it('should be successful') { expect(response.status).to eq 200 }
+          end
+        end
+        context 'when a spec file does not exists' do
+          before :each do
+            FileUtils.rm_f(assignment.autotest_settings_file)
+            set_env
+            get :test_specs, params: { id: assignment.id }
+          end
+          context 'expecting a json response' do
+            it 'should return an empty hash' do
+              expect(response.body).to eq '{}'
+            end
+            it('should be successful') { expect(response.status).to eq 200 }
+          end
+          context 'expectign an xml response' do
+            let(:set_env) { request.env['HTTP_ACCEPT'] = 'application/xml' }
+            it 'should get the content of the test spec file' do
+              expect(Hash.from_xml(response.body).dig('markus_test_specs').strip).to eq ''
+            end
+            it('should be successful') { expect(response.status).to eq 200 }
+          end
+        end
+      end
+      it 'should fail if the assignment does not exist' do
+        get :test_specs, params: { id: 1 }
+        expect(response.status).to eq 404
+      end
+    end
   end
 end
