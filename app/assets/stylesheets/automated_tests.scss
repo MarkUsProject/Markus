@@ -159,18 +159,18 @@ div#autotest-manager {
   }
 }
 
-div.upload-download {
-  text-align: right;
+.upload-download {
   padding: 10px;
+  text-align: right;
 
-  span.menu-bar {
+  .menu-bar {
     background: none;
-    border: none;
+    border: 0;
     font-size: 1rem;
     font-weight: normal;
 
     &::before {
-      content: "|";
+      content: '|';
     }
   }
 }

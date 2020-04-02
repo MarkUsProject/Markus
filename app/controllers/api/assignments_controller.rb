@@ -203,14 +203,14 @@ module Api
       elsif params[:specs].is_a? String
         begin
           content = JSON.parse params[:specs]
-        rescue JSON::ParserError
-          # do nothing
+        rescue JSON::ParserError => e
+          render 'shared/http_status', locals: { code: '422', message: e.message }, status: 422
         end
       end
       if content.nil?
         render 'shared/http_status',
-               locals: {code: '422',
-                        message: HttpStatusHelper::ERROR_CODE['message']['422']},
+               locals: { code: '422',
+                         message: HttpStatusHelper::ERROR_CODE['message']['422'] },
                status: 422
       else
         File.write(assignment.autotest_settings_file, JSON.dump(content), mode: 'wb')

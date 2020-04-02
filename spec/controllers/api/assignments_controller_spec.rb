@@ -310,7 +310,7 @@ describe Api::AssignmentsController do
         File.write(assignment.autotest_settings_file, '')
       end
       context 'when the content is nested parameters' do
-        let(:content) { {a: {tester: 'python'}.stringify_keys}.stringify_keys }
+        let(:content) { { a: { tester: 'python' }.stringify_keys }.stringify_keys }
         before :each do
           post :update_test_specs, params: { id: assignment.id, specs: content }
         end
@@ -320,7 +320,7 @@ describe Api::AssignmentsController do
         it('should be successful') { expect(response.status).to eq 204 }
       end
       context 'when the content is a json string' do
-        let(:content) { {a: {tester: 'python'}.stringify_keys}.stringify_keys }
+        let(:content) { { a: { tester: 'python' }.stringify_keys }.stringify_keys }
         before :each do
           post :update_test_specs, params: { id: assignment.id, specs: JSON.dump(content) }
         end
