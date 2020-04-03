@@ -161,6 +161,46 @@ module Api
         HttpStatusHelper::ERROR_CODE['message']['200'] }, status: 200
     end
 
+    def update_extra_marks
+      assignment = Assignment.find(params[:assignment_id])
+      if assignment.nil?
+        render 'shared/http_status', locals: { code: '404', message:
+            'No assignment exists with that id' }, status: 404
+        return
+      end
+
+      group = Group.find(params[:id])
+      if group.nil?
+        render 'shared/http_status', locals: { code: '404', message:
+            'No group exists with that id' }, status: 404
+        return
+      end
+      if group.grouping_for_assignment(params[:assignment_id])
+              .has_submission?
+        result = group.grouping_for_assignment(params[:assignment_id])
+                      .current_submission_used
+                      .get_latest_result
+      else
+        render 'shared/http_status', locals: { code: '404', message:
+            'No submissions exist for that group' }, status: 404
+        return
+      end
+      extra_mark = ExtraMark.new
+      extra_mark.result_id = result.id
+      extra_mark.extra_mark = params[:extra_marks]
+      extra_mark.description = params[:description]
+      extra_mark.unit = ExtraMark::POINTS
+      unless extra_mark.save
+        # Some error occurred
+        render 'shared/http_status', locals: { code: '500', message:
+        extra_mark.errors.full_messages.first }, status: 500
+        return
+      end
+      extra_mark.save
+      render 'shared/http_status', locals: { code: '200', message:
+          HttpStatusHelper::ERROR_CODE['message']['200'] }, status: 200
+    end
+
     def annotations
       if params[:id]
         grouping_relation = Grouping.where(group_id: params[:id])

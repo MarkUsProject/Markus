@@ -41,6 +41,7 @@ Rails.application.routes.draw do
             post 'add_annotations'
             post 'add_members'
             put 'update_marks'
+            put 'update_extra_marks'
             put 'update_marking_state'
           end
         end
