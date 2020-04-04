@@ -47,7 +47,7 @@ cr60:
   max_mark: 10.0
 cr90:
   type: rubric
-  max_mark: 4.55
+  max_mark: 4.5
   levels:
     Beginner:
       mark: 0.0
@@ -62,7 +62,7 @@ cr90:
       mark: 4.0
       description: level 3 description
     level 4 criterion:
-      mark: 4.55
+      mark: 4.5
       description: level 4 description
   ta_visible: true
   peer_visible: false
