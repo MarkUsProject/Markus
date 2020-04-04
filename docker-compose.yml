@@ -22,12 +22,13 @@ services:
     tty: true
     volumes:
       - app_data:/app/data/dev
-      - .:/app:cached
-      - rails_cache:/app/tmp/cache
+      - log:/app/log
+      - tmp:/app/tmp
       - bundle:/bundle
       - node_modules:/app/node_modules
       - packs:/app/public/packs
       - packs:/app/public/packs-test
+      - .:/app:cached
       - .dockerfiles/.psqlrc:/root/.psqlrc:ro
       - ssh_pub_key:/ssh_pub_key
     environment:
@@ -107,11 +108,12 @@ services:
     ports:
       - '3035:3035'
     volumes:
-      - .:/app:cached
       - bundle:/bundle
       - node_modules:/app/node_modules
       - packs:/app/public/packs
       - packs:/app/public/packs-test
+      - tmp:/app/tmp
+      - .:/app:cached
     environment:
       - NODE_ENV=${NODE_ENV:-development}
       - RAILS_ENV=${RAILS_ENV:-development}
@@ -123,8 +125,9 @@ volumes:
   redis:
   bundle:
   node_modules:
-  rails_cache:
   packs:
+  log:
+  tmp:
   ssh_pub_key:
     name: ssh_pub_key
 
