@@ -5,6 +5,9 @@ else
   FileUtils.mkdir_p(Rails.configuration.x.repository.storage)
 end
 
+FileUtils.mkdir_p('tmp')
+
+
 # run tasks
 Rake::Task['db:admin'].invoke
 Rake::Task['db:tas'].invoke
