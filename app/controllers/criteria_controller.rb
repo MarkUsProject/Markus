@@ -161,8 +161,7 @@ class CriteriaController < ApplicationController
             begin
               if type.casecmp('rubric') == 0
                 data = RubricCriterion.load_from_yml(criterion_yml)
-                criterion = data[0]
-                levels = data[1]
+                criterion, levels = data[0], data[1]
               elsif type.casecmp('flexible') == 0
                 criterion = FlexibleCriterion.load_from_yml(criterion_yml)
               elsif type.casecmp('checkbox') == 0
