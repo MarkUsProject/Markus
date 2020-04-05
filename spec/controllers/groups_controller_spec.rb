@@ -212,13 +212,6 @@ describe GroupsController do
 
         grouping.add_member(@student1, StudentMembership::STATUSES[:inviter])
         grouping.add_member(@student2, StudentMembership::STATUSES[:accepted])
-
-        @ta_name = 'c8shacd'
-        @ta = create(:ta, user_name: @ta_name)
-        # For each grouping for Assignment 1, assign 2 TAs
-        @assignment.groupings.each do |grouping|
-          grouping.add_tas([@ta])
-        end
       end
 
       it 'responds with appropriate status' do

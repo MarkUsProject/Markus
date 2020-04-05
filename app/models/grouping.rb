@@ -223,14 +223,6 @@ class Grouping < ApplicationRecord
     is_collected
   end
 
-  # Returns an array of the user_names for any TA's assigned to mark
-  # this Grouping
-  def get_ta_names
-    ta_memberships.collect do |membership|
-      membership.user.user_name
-    end
-  end
-
   # Returns true if this user has a pending status for this group;
   # false otherwise, or if user is not in this group.
   def pending?(user)
@@ -438,25 +430,6 @@ class Grouping < ApplicationRecord
                           !assignment.past_collection_date?(self.inviter.section))
   end
 
-  def add_tas(tas)
-    Grouping.assign_all_tas(id, Array(tas).map(&:id), assignment)
-  end
-
-  def remove_tas(ta_id_array)
-    #if no tas to remove, return.
-    return if ta_id_array == []
-    ta_memberships_to_remove = ta_memberships.includes(:user)
-                                             .references(:user)
-                                             .where(user_id: ta_id_array)
-    ta_memberships_to_remove.each do |ta_membership|
-      ta_membership.destroy
-      ta_memberships.delete(ta_membership)
-    end
-    criteria = self.all_assigned_criteria(self.tas - ta_memberships_to_remove.collect{|mem| mem.user})
-    self.criteria_coverage_count = criteria.length
-    self.save
-  end
-
   # When a Grouping is created, automatically create the folder for the
   # assignment in the repository, if it doesn't already exist.
   def create_grouping_repository_folder
@@ -484,28 +457,6 @@ class Grouping < ApplicationRecord
     end
 
     result
-  end
-
-  def assigned_tas_for_criterion(criterion)
-    if assignment.assign_graders_to_criteria
-      tas.select do |ta|
-        ta.criterion_ta_associations
-          .where(criterion_id: criterion.id)
-          .first
-      end
-    else
-      []
-    end
-  end
-
-  def all_assigned_criteria(ta_array)
-    result = []
-    if assignment.assign_graders_to_criteria
-      ta_array.each do |ta|
-        result = result.concat(ta.get_criterion_associations_by_assignment(assignment))
-      end
-    end
-    result.map{|a| a.criterion}.uniq
   end
 
   # Get the section for this group. If assignment restricts member of a groupe
