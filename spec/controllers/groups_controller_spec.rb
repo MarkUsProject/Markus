@@ -331,8 +331,7 @@ describe GroupsController do
 
     describe 'POST #invite_member' do
       before :each do
-        @grouping = create(:grouping_with_inviter, assignment: @assignment, inviter: @current_student)
-        @grouping.reload
+        create(:grouping_with_inviter, assignment: @assignment, inviter: @current_student)
       end
       it 'should send an email to every student invited to a grouping' do
         expect do
