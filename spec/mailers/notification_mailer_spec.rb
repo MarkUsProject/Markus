@@ -1,4 +1,14 @@
 RSpec.describe NotificationMailer, type: :mailer do
+  shared_examples_for "an email" do |mail|
+    it 'render the disclaimer in the body of the email.' do
+      expect(mail.body.to_s).to include('This is an automated email. Please do not reply.')
+    end
+
+    it 'render the sender email' do
+      expect(mail.from).to eq(['noreply@markus.com'])
+    end
+  end
+
   describe 'release_email' do
     before(:each) do
       @user = create(:student)
@@ -19,21 +29,15 @@ RSpec.describe NotificationMailer, type: :mailer do
       expect(@mail.to).to eq([@user.email])
     end
 
-    it 'renders the sender email' do
-      expect(@mail.from).to eq(['noreply@markus.com'])
-    end
-
     it 'renders the student name in the body of the email.' do
       expect(@mail.body.to_s).to include("#{@user.first_name} #{@user.last_name}")
-    end
-
-    it 'renders the disclaimer in the body of the email.' do
-      expect(@mail.body.to_s).to include('This is an automated email. Please do not reply.')
     end
 
     it 'renders the assignment in the body of the email.' do
       expect(@mail.body.to_s).to include(@fake_assignment.short_identifier.to_s)
     end
+
+    it_should_behave_like "an email", @mail
   end
 
   describe 'release_spreadsheet_email' do
@@ -55,22 +59,16 @@ RSpec.describe NotificationMailer, type: :mailer do
       expect(@mail.to).to eq([@grade_entry_student.user.email])
     end
 
-    it 'renders the sender email' do
-      expect(@mail.from).to eq(['noreply@markus.com'])
-    end
-
     it 'renders the student name in the body of the email.' do
       first_name = @grade_entry_student.user.first_name
       last_name = @grade_entry_student.user.last_name
       expect(@mail.body.to_s).to include("#{first_name} #{last_name}")
     end
 
-    it 'renders the disclaimer in the body of the email.' do
-      expect(@mail.body.to_s).to include('This is an automated email. Please do not reply.')
-    end
-
     it 'renders the spreadsheet name in the body of the email.' do
       expect(@mail.body.to_s).to include(@grade_entry_form.short_identifier.to_s)
     end
+
+    it_should_behave_like "an email", @mail
   end
 end
