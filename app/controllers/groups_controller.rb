@@ -411,6 +411,13 @@ class GroupsController < ApplicationController
       to_invite = params[:invite_member].split(',')
       errors = @grouping.invite(to_invite)
       if errors.blank?
+        to_invite.each do |i|
+          i = i.strip
+          invited_user = Student.where(hidden: false).find_by(user_name: i)
+          NotificationMailer.with(inviter: current_user,
+                                  invited: invited_user,
+                                  grouping: @grouping).grouping_invite_email.deliver_now
+        end
         flash_message(:success, I18n.t('groups.invite_member.success'))
       else
         flash_message(:error, errors.join(' '))
