@@ -150,7 +150,7 @@ namespace :markus do
             grouping.save!
             grouping.create_grouping_repository_folder
             grouping.save!
-            grouping.add_tas([ta])
+            Grouping.assign_all_tas(grouping.id, [ta.id], assignment)
 
             assignment.groupings << grouping
             assignment.save!
