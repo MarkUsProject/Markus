@@ -339,6 +339,11 @@ describe RubricCriterion do
             expect(@levels[0].update(mark: 1.5)).to be false
           end
         end
+        describe 'rubric criteria can\'t be updated' do
+          it 'not raise error' do
+            expect(@criterion.update(max_mark: 10)).to be false
+          end
+        end
       end
     end
   end
