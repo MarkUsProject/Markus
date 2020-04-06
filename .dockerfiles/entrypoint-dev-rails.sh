@@ -14,5 +14,7 @@ until psql "${DATABASE_URL}" -lqt &>/dev/null; do
 done
 psql "${DATABASE_URL}" -lqt 2> /dev/null | cut -d \| -f 1 | grep -wq "markus_${RAILS_ENV}" || rails db:setup
 
+rm ./tmp/pids/server.pid
+
 # Then exec the container's main process (what's set as CMD in the Dockerfile or docker-compose.yml).
 exec "$@"
