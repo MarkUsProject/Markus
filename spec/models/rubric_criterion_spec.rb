@@ -249,46 +249,6 @@ describe RubricCriterion do
       @levels = @criterion.levels
     end
 
-    context 'editing levels edits marks' do
-      before(:each) do
-        @marks = @criterion.marks
-        @result = create(:result, marking_state: Result::MARKING_STATES[:incomplete])
-        @marks.create(mark: 0, result: @result)
-        @marks.create(mark: 1, result: @result)
-        @marks.create(mark: 1, result: @result)
-      end
-      describe 'updating level updates respective mark' do
-        describe 'updates a single mark' do
-          it 'not raise error' do
-            @levels[0].update(mark: 10.0)
-            expect(@marks[0].mark).to eq(10)
-          end
-        end
-        describe 'updates multiple marks' do
-          it 'not raise error' do
-            @levels[1].update(mark: 10.0)
-            expect(@marks[1].mark).to eq(10)
-            expect(@marks[2].mark).to eq(10)
-          end
-        end
-      end
-      describe 'deleting level sets respective mark\'s mark value to nil' do
-        describe 'updates a single mark' do
-          it 'not raise error' do
-            @levels[0].destroy
-            expect(@marks[0].mark).to be_nil
-          end
-        end
-        describe 'updates multiple marks' do
-          it 'not raise error' do
-            @levels[1].destroy
-            expect(@marks[1].mark).to be_nil
-            expect(@marks[2].mark).to be_nil
-          end
-        end
-      end
-    end
-
     context 'has basic levels functionality' do
       describe 'can add levels' do
         it 'not raise error' do
@@ -348,6 +308,46 @@ describe RubricCriterion do
           @levels[1].mark = 3
           @criterion.update(max_mark: 8.0)
           expect(@levels[1].mark).to eq(3.0)
+        end
+      end
+    end
+
+    context 'editing levels edits marks' do
+      before(:each) do
+        @marks = @criterion.marks
+        @result = create(:result, marking_state: Result::MARKING_STATES[:incomplete])
+        @marks.create(mark: 0, result: @result)
+        @marks.create(mark: 1, result: @result)
+        @marks.create(mark: 1, result: @result)
+      end
+      describe 'updating level updates respective mark' do
+        describe 'updates a single mark' do
+          it 'not raise error' do
+            @levels[0].update(mark: 10.0)
+            expect(@marks[0].mark).to eq(10)
+          end
+        end
+        describe 'updates multiple marks' do
+          it 'not raise error' do
+            @levels[1].update(mark: 10.0)
+            expect(@marks[1].mark).to eq(10)
+            expect(@marks[2].mark).to eq(10)
+          end
+        end
+      end
+      describe 'deleting level updates mark to nil' do
+        describe 'updates a single mark' do
+          it 'not raise error' do
+            @levels[0].destroy
+            expect(@marks[0].mark).to be_nil
+          end
+        end
+        describe 'deleting level updates multiple marks to nil' do
+          it 'not raise error' do
+            @levels[1].destroy
+            expect(@marks[1].mark).to be_nil
+            expect(@marks[2].mark).to be_nil
+          end
         end
       end
     end
