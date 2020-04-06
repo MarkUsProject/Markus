@@ -2,9 +2,9 @@ class AutomatedTestsController < ApplicationController
   include AutomatedTestsHelper
 
   before_action      :authorize_only_for_admin,
-                     only: [:manage, :update,
-                            :download_file, :download_files,
-                            :upload_files]
+                     except: [:student_interface,
+                              :get_test_runs_students]
+
   before_action      :authorize_for_student,
                      only: [:student_interface,
                             :get_test_runs_students]
