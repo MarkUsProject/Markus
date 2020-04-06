@@ -18,6 +18,7 @@
 - Api calls will now return the 'hidden' status of users when accessing user data (#4445)
 - Make bulk submission file downloads a background job (#4463)
 - Added syntax highlighting support for .tex files (#4505)
+- Fixed annotation Markdown and MathJax rendering bug (#4506) 
 
 ## [v1.8.4]
 - Fixed bug where test output was not being properly hidden from students (#4379)
