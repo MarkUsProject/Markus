@@ -25,6 +25,7 @@ class RubricCriterion < Criterion
 
   has_many :test_groups, as: :criterion
 
+  validate :only_update_if_results_unreleased
   validate :visible?
 
   def self.symbol
@@ -36,6 +37,13 @@ class RubricCriterion < Criterion
     self.levels.order(mark: :desc)
     return if self.max_mark <= self.levels.last.mark
     errors.add(:max_mark, 'Max mark of rubric criterion should not be greater than max level mark')
+  end
+
+  def only_update_if_results_unreleased
+    return if self.marks.empty?
+    if (self.rubric_criterion.marks[0].result.released_to_students)
+      errors.add(:level_id, 'Cannot update level once results are released.')
+    end
   end
 
   def update_assigned_groups_count
