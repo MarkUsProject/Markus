@@ -328,10 +328,18 @@ describe RubricCriterion do
       end
       context 'when a result is released' do
         before do
+          @marks = @criterion.marks
           @result = create(:complete_result)
+          # @result = create(:result, marking_state: Result::MARKING_STATES[:incomplete])
+          @marks.create(mark: 0, result: @result)
+          @marks.create(mark: 1, result: @result)
+          @marks.create(mark: 1, result: @result)
         end
         describe 'levels can\'t be updated' do
-
+          it 'not raise error' do
+            byebug
+            expect(@levels[0].update(mark: 1)).to be false
+          end
         end
       end
     end
