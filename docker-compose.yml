@@ -53,10 +53,6 @@ services:
       - postgres
       - redis
 
-  runner:
-    <<: *backend
-    command: /bin/bash
-
   rails:
     <<: *backend
     entrypoint: .dockerfiles/entrypoint-dev-rails.sh
