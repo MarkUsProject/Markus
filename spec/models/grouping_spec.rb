@@ -210,38 +210,14 @@ describe Grouping do
       end
     end
 
-    describe '#add_tas' do
-      it 'is able to assign tas' do
-        grouping.add_tas(tas)
-        expect(grouping.ta_memberships.count).to eq(2)
-      end
-
-      it 'is not able to assign same TAs twice' do
-        grouping.add_tas(tas)
-        expect(grouping.ta_memberships.count).to eq(2)
-        grouping.add_tas(tas)
-        expect(grouping.ta_memberships.count).to eq(2)
-      end
-    end
-
     describe '#has_ta_for_marking?' do
-      it 'has a ta for marking' do
-        grouping.add_tas(tas)
+      it 'returns false when there are no assigned tas' do
+        expect(grouping.has_ta_for_marking?).to be false
+      end
+
+      it 'returns true when there is an assigned ta' do
+        create(:ta_membership, user: tas[0], grouping: grouping)
         expect(grouping.has_ta_for_marking?).to be true
-      end
-    end
-
-    describe '#get_ta_names' do
-      it 'gets ta names' do
-        grouping.add_tas(tas)
-        expect(grouping.get_ta_names).to match_array(tas.map(&:user_name))
-      end
-    end
-
-    describe '#remove_tas' do
-      it 'is able to remove tas' do
-        grouping.remove_tas(tas)
-        expect(grouping.ta_memberships.count).to eq(0)
       end
     end
   end
@@ -293,7 +269,9 @@ describe Grouping do
           end
 
           context 'when only one is assigned a TA' do
-            before(:each) { criteria[0].add_tas(tas[0]) }
+            before(:each) do
+              create(:criterion_ta_association, criterion: criteria[0], ta: tas[0])
+            end
 
             it 'updates criteria coverage count to 1' do
               expect_updated_criteria_coverage_count_eq 1
@@ -301,7 +279,11 @@ describe Grouping do
           end
 
           context 'when only one is assigned multiple TAs' do
-            before(:each) { criteria[0].add_tas(tas) }
+            before(:each) do
+              tas.each do |ta|
+                create(:criterion_ta_association, criterion: criteria[0], ta: ta)
+              end
+            end
 
             it 'updates criteria coverage count to 1' do
               expect_updated_criteria_coverage_count_eq 1
@@ -310,7 +292,9 @@ describe Grouping do
 
           context 'when `tas.size` are assigned unique TAs' do
             before :each do
-              tas.size.times { |i| criteria[i].add_tas(tas[i]) }
+              tas.size.times do |i|
+                create(:criterion_ta_association, criterion: criteria[i], ta: tas[i])
+              end
             end
 
             it 'updates criteria coverage count to `tas.size`' do
@@ -319,7 +303,13 @@ describe Grouping do
           end
 
           context 'when `tas.size` are assigned non-unique TAs' do
-            before(:each) { tas.size.times { |i| criteria[i].add_tas(tas) } }
+            before(:each) do
+              criteria.take(tas.size).each do |criterion|
+                tas.each do |ta|
+                  create(:criterion_ta_association, criterion: criterion, ta: ta)
+                end
+              end
+            end
 
             it 'updates criteria coverage count to `tas.size`' do
               expect_updated_criteria_coverage_count_eq tas.size
@@ -331,7 +321,9 @@ describe Grouping do
                 grouping = create(:grouping)
                 criterion = create(:rubric_criterion,
                                    assignment: grouping.assignment)
-                criterion.add_tas(tas)
+                tas.each do |ta|
+                  create(:criterion_ta_association, criterion: criterion, ta: ta)
+                end
                 create_ta_memberships(grouping, tas)
               end
 
@@ -348,14 +340,13 @@ describe Grouping do
       let(:another_grouping) { create(:grouping, assignment: assignment) }
       let(:ta) { create(:ta) }
       let(:criterion) { create(:rubric_criterion, assignment: assignment) }
-      let(:another_criterion) do
-        create(:rubric_criterion, assignment: assignment)
-      end
+      let(:criterion2) { create(:rubric_criterion, assignment: assignment) }
 
       before :each do
         create_ta_memberships([grouping, another_grouping], ta)
-        criterion.add_tas(ta)
-        another_criterion.add_tas(ta)
+        create(:criterion_ta_association, criterion: criterion, ta: ta)
+        create(:criterion_ta_association, criterion: criterion2, ta: ta)
+
         # Update only `grouping` not `another_grouping`.
         Grouping.update_criteria_coverage_counts(assignment, [grouping.id])
       end

@@ -36,33 +36,6 @@ class CheckboxCriterion < Criterion
     result.uniq
   end
 
-  def add_tas(ta_array)
-    ta_array = Array(ta_array)
-    associations = criterion_ta_associations.where(ta_id: ta_array)
-    ta_array.each do |ta|
-      if (ta.criterion_ta_associations & associations).size < 1
-        criterion_ta_associations.create(ta: ta, criterion: self, assignment: self.assignment)
-      end
-    end
-  end
-
-  def remove_tas(ta_array)
-    ta_array = Array(ta_array)
-    associations_for_criteria = criterion_ta_associations.where(ta_id: ta_array)
-    ta_array.each do |ta|
-      # & is the mathematical set intersection operator between two arrays
-      assoc_to_remove = (ta.criterion_ta_associations & associations_for_criteria)
-      if assoc_to_remove.size > 0
-        criterion_ta_associations.delete(assoc_to_remove)
-        assoc_to_remove.first.destroy
-      end
-    end
-  end
-
-  def get_ta_names
-    criterion_ta_associations.collect {|association| association.ta.user_name}
-  end
-
   def has_associated_ta?(ta)
     return false unless ta.ta?
     !(criterion_ta_associations.where(ta_id: ta.id).first == nil)

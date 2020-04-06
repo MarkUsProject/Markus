@@ -25,10 +25,12 @@ class RawFileManager extends RawFileBrowser {
   folderTarget = (selectedItem) => {
     // treat multiple selections as not targeting a folder
     const selectionIsFolder = !!selectedItem && selectedItem.relativeKey.endsWith('/');
-    if (selectionIsFolder) {
+    if (selectedItem === null) {
+      return null;
+    } else if (selectionIsFolder) {
       return selectedItem.relativeKey;
-    } else  {
-      return selectedItem.relativeKey.substring(0, key.lastIndexOf("/") + 1)
+    } else {
+      return selectedItem.relativeKey.substring(0, selectedItem.relativeKey.lastIndexOf('/') + 1);
     }
   };
 
