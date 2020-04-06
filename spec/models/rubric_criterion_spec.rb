@@ -311,7 +311,7 @@ describe RubricCriterion do
     end
 
     context 'validations work properly' do
-      describe 'validates max mark can\' be greater than maximum level mark' do
+      describe 'validates max mark can\'t be greater than maximum level mark' do
         it 'raises an error' do
           expect(@levels.last.mark).to eq(4.0)
           expect(@criterion.max_mark).to eq(4.0)
@@ -324,6 +324,14 @@ describe RubricCriterion do
       describe 'cannot have two levels with the same mark' do
         it 'not raise error' do
           expect(@levels[0].update(mark: 1)).to be false
+        end
+      end
+      context 'when a result is released' do
+        before do
+          @result = create(:complete_result)
+        end
+        describe 'levels can\'t be updated' do
+
         end
       end
     end
