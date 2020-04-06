@@ -41,9 +41,8 @@ class RubricCriterion < Criterion
 
   def only_update_if_results_unreleased
     return if self.marks.empty?
-    if (self.marks[0].result.released_to_students)
-      errors.add(:rubric_criterion_id, 'Cannot update level once results are released.')
-    end
+    return unless self.marks[0].result.released_to_students
+    errors.add(:rubric_criterion_id, 'Cannot update level once results are released.')
   end
 
   def update_assigned_groups_count
