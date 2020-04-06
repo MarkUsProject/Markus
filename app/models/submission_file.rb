@@ -39,6 +39,8 @@ class SubmissionFile < ApplicationRecord
       'haskell'
     when '.scm', '.ss', '.rkt'
       'scheme'
+    when '.tex', '.latex'
+      'tex'
     else
       'unknown'
     end

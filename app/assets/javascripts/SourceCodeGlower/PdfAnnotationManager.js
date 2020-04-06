@@ -452,17 +452,17 @@
     var $textSpan = null;
 
     function createTextNode() {
-      var text = annotation.getContent();
+      var text = marked(annotation.getContent(), {sanitize: true});
 
       return $('<div />').addClass('annotation_text_display')
-                         .append($('<p />', {html: text}));
+                         .html(text);
     }
 
     $control.mousemove(function(ev) {
       if($textSpan == null) {
         $textSpan = createTextNode();
         $page.append($textSpan);
-        reloadDOM();
+        MathJax.Hub.Queue(['Typeset', MathJax.Hub, $textSpan[0]]);
       }
 
       var point = getRelativePointForMouseEvent(ev, $page, -1);
