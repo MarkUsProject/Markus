@@ -153,11 +153,15 @@ class RubricCriterion < Criterion
   #                 in the following format:
   #                 criterion_name:
   #                   max_mark: #
-  #                   level_0:
-  #                     name: level_name
-  #                     description: level_description
-  #                   level_1:
-  #                     [...]
+  #                   type: Rubric
+  #                   levels:
+  #                     <level_name>:
+  #                       mark: level_mark
+  #                       description: level_description
+  #                     <level_name>:
+  #                       [...]
+  #                   ta_visible: true/false
+  #                   peer_visible: true/false
   def self.load_from_yml(criterion_yml)
     name = criterion_yml[0]
     # Create a new RubricCriterion
@@ -167,14 +171,14 @@ class RubricCriterion < Criterion
     # Visibility options
     criterion.ta_visible = criterion_yml[1]['ta_visible'] unless criterion_yml[1]['ta_visible'].nil?
     criterion.peer_visible = criterion_yml[1]['peer_visible'] unless criterion_yml[1]['peer_visible'].nil?
-
+    levels = []
     criterion_yml[1]['levels'].each do |name, level_yml|
-      criterion.levels.build(rubric_criterion: criterion,
-                             name: name,
-                             description: level_yml['description'],
-                             mark: level_yml['mark'])
+      levels << criterion.levels.build(rubric_criterion: criterion,
+                                       name: name,
+                                       description: level_yml['description'],
+                                       mark: level_yml['mark'])
     end
-    criterion
+    [criterion, levels]
   end
 
   # Returns a hash containing the information of a single rubric criterion.
