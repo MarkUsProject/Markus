@@ -44,10 +44,11 @@ RSpec.describe NotificationMailer, type: :mailer do
     let(:user) { create(:student) }
     let(:grade_entry_form) { create(:grade_entry_form_with_data) }
     let(:grade_entry_student) { grade_entry_form.grade_entry_students.find_or_create_by(user: user) }
-    let(:mail)
+    let(:mail) do
       described_class.with(student: grade_entry_student, form: grade_entry_form)
                      .release_spreadsheet_email
                      .deliver_now
+    end
 
     it 'renders the subject' do
       subject_line = 'MarkUs Notification (' + Rails.configuration.course_name + ') Your marks for ' +
@@ -77,10 +78,11 @@ RSpec.describe NotificationMailer, type: :mailer do
     let(:invited) { create(:student) }
     let(:fake_assignment) { create(:assignment) }
     let(:grouping) { create(:grouping, assignment: fake_assignment) }
-    let(:mail)
+    let(:mail) do
       described_class.with(invited: invited, inviter: inviter, grouping: grouping)
                      .grouping_invite_email
                      .deliver_now
+    end
 
     it 'renders the subject' do
       subject_line = 'MarkUs Notification (' + Rails.configuration.course_name + ') You have been invited to a group!'
