@@ -257,9 +257,9 @@ describe SubmissionsController do
       @student = @membership.user
       @admin = create(:admin)
       @csv_options = {
-          type: 'text/csv',
-          disposition: 'attachment',
-          filename: "#{@assignment.short_identifier}_simple_report.csv"
+        type: 'text/csv',
+        disposition: 'attachment',
+        filename: "#{@assignment.short_identifier}_simple_report.csv"
       }
     end
 
@@ -369,8 +369,8 @@ describe SubmissionsController do
           @assignment.update!(due_date: Time.current - 1.week)
           allow(SubmissionsJob).to receive(:perform_later) { Struct.new(:job_id).new('1') }
           expect(SubmissionsJob).to receive(:perform_later).with(
-              array_including(@grouping, uncollected_grouping),
-              collection_dates: hash_including
+            array_including(@grouping, uncollected_grouping),
+            collection_dates: hash_including
           )
           post_as @admin, :collect_submissions, params: { assignment_id: @assignment.id,
                                                           groupings: [@grouping.id, uncollected_grouping.id],
@@ -381,8 +381,8 @@ describe SubmissionsController do
           @assignment.update!(due_date: Time.current - 1.week)
           allow(SubmissionsJob).to receive(:perform_later) { Struct.new(:job_id).new('1') }
           expect(SubmissionsJob).to receive(:perform_later).with(
-              [uncollected_grouping],
-              collection_dates: hash_including
+            [uncollected_grouping],
+            collection_dates: hash_including
           )
           post_as @admin, :collect_submissions, params: { assignment_id: @assignment.id,
                                                           groupings: [@grouping.id, uncollected_grouping.id],
@@ -411,8 +411,8 @@ describe SubmissionsController do
             post_as @admin,
                     :update_submissions,
                     params: { assignment_id: 1,
-                              groupings: ([] << @assignment.groupings).flatten,
-                              release_results: 'true' }
+                             groupings: ([] << @assignment.groupings).flatten,
+                             release_results: 'true' }
           end.to change { ActionMailer::Base.deliveries.count }.by(total_students)
         end
       end
@@ -435,7 +435,7 @@ describe SubmissionsController do
           it 'should get an error if it is before the section due date' do
             @section_due_date.update!(due_date: Time.current + 1.week)
             allow(Assignment).to receive_message_chain(
-                                     :includes, :find) { @assignment }
+              :includes, :find) { @assignment }
             expect_any_instance_of(SubmissionsController).to receive(:flash_now).with(:error, anything)
             expect(@assignment).to receive(:short_identifier) { 'a1' }
             allow(SubmissionsJob).to receive(:perform_later) { Struct.new(:job_id).new('1') }
@@ -450,7 +450,7 @@ describe SubmissionsController do
           it 'should succeed if it is after the section due date' do
             @section_due_date.update!(due_date: Time.current - 1.week)
             allow(Assignment).to receive_message_chain(
-                                     :includes, :find) { @assignment }
+              :includes, :find) { @assignment }
             expect_any_instance_of(SubmissionsController).not_to receive(:flash_now).with(:error, anything)
             allow(SubmissionsJob).to receive(:perform_later) { Struct.new(:job_id).new('1') }
 
@@ -471,7 +471,7 @@ describe SubmissionsController do
           it 'should get an error if it is before the global due date' do
             @assignment.update!(due_date: Time.current + 1.week)
             allow(Assignment).to receive_message_chain(
-                                     :includes, :find) { @assignment }
+              :includes, :find) { @assignment }
             expect(@assignment).to receive(:short_identifier) { 'a1' }
             expect_any_instance_of(SubmissionsController).to receive(:flash_now).with(:error, anything)
             allow(SubmissionsJob).to receive(:perform_later) { Struct.new(:job_id).new('1') }
@@ -486,7 +486,7 @@ describe SubmissionsController do
           it 'should succeed if it is after the global due date' do
             @assignment.update!(due_date: Time.current - 1.week)
             allow(Assignment).to receive_message_chain(
-                                     :includes, :find) { @assignment }
+              :includes, :find) { @assignment }
             expect_any_instance_of(SubmissionsController).not_to receive(:flash_now).with(:error, anything)
             allow(SubmissionsJob).to receive(:perform_later) { Struct.new(:job_id).new('1') }
 
@@ -516,8 +516,8 @@ describe SubmissionsController do
 
         # Generate submission
         @submission = Submission.generate_new_submission(
-            @grouping,
-            repo.get_latest_revision)
+          @grouping,
+          repo.get_latest_revision)
       end
       get_as @admin,
              :downloads,
@@ -527,7 +527,7 @@ describe SubmissionsController do
       is_expected.to respond_with(:success)
       revision_identifier = @grouping.group.access_repo { |repo| repo.get_latest_revision.revision_identifier }
       zip_path = "tmp/#{@assignment.short_identifier}_" +
-          "#{@grouping.group.group_name}_#{revision_identifier}.zip"
+                 "#{@grouping.group.group_name}_#{revision_identifier}.zip"
       Zip::File.open(zip_path) do |zip_file|
         file1_path = File.join("#{@assignment.short_identifier}-" +
                                    "#{@grouping.group.group_name}",
@@ -550,8 +550,8 @@ describe SubmissionsController do
 
         # Generate submission
         @submission = Submission.generate_new_submission(
-            @grouping,
-            repo.get_latest_revision)
+          @grouping,
+          repo.get_latest_revision)
       end
 
       request.env['HTTP_REFERER'] = 'back'
@@ -571,8 +571,8 @@ describe SubmissionsController do
 
         # Generate submission
         @submission = Submission.generate_new_submission(
-            @grouping,
-            repo.get_latest_revision)
+          @grouping,
+          repo.get_latest_revision)
       end
       request.env['HTTP_REFERER'] = 'back'
       get_as @admin,
@@ -674,3 +674,4 @@ describe SubmissionsController do
     end
   end
 end
+

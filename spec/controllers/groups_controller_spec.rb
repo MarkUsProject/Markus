@@ -295,16 +295,9 @@ describe GroupsController do
     end
 
     describe '#invalidate_groupings' do
-      let(:grouping) { create :grouping_with_inviter }
+      let(:grouping) { create :grouping_with_inviter, admin_approved: true }
 
       it 'should invalidate groupings' do
-        post :global_actions, params: {
-            assignment_id: grouping.assignment.id,
-            groupings: [grouping.id],
-            global_actions: 'valid'
-        }
-        expect(grouping.reload.admin_approved).to be true
-
         post :global_actions, params: {
             assignment_id: grouping.assignment.id,
             groupings: [grouping.id],
@@ -316,15 +309,13 @@ describe GroupsController do
     end
 
     describe '#delete_groupings' do
-      before :each do
-        @grouping = create :grouping_with_inviter
-        @grouping_with_submission = create :grouping_with_inviter_and_submission
-      end
+      let(:grouping) { create :grouping_with_inviter }
+      let(:grouping_with_submission) { create :grouping_with_inviter_and_submission }
 
       it 'should delete groupings without submissions' do
         post :global_actions, params: {
-            assignment_id: @grouping.assignment.id,
-            groupings: [@grouping.id],
+            assignment_id: grouping.assignment.id,
+            groupings: [grouping.id],
             global_actions: 'delete'
         }
 
@@ -333,8 +324,8 @@ describe GroupsController do
 
       it 'should not delete groupings with submissions' do
         post :global_actions, params: {
-            assignment_id: @grouping_with_submission.assignment.id,
-            groupings: [@grouping_with_submission.id],
+            assignment_id: grouping_with_submission.assignment.id,
+            groupings: [grouping_with_submission.id],
             global_actions: 'delete'
         }
 

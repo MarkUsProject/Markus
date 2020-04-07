@@ -1839,9 +1839,7 @@ describe Assignment do
         it 'has correct criteria information' do
           criteria_info = @assignment.summary_json(ta)[:criteriaColumns][0]
           expect(criteria_info).is_a? Hash
-          expect(criteria_info.key? :Header)
-          expect(criteria_info.key? :accessor)
-          expect(criteria_info.key? :className)
+          expect(criteria_info.keys).to include(:Header, :accessor, :className)
         end
       end
     end
@@ -1861,25 +1859,28 @@ describe Assignment do
         it 'has correct criteria information' do
           criteria_info = @assignment.summary_json(admin)[:criteriaColumns][0]
           expect(criteria_info).is_a? Hash
-          expect(criteria_info.key? :Header)
-          expect(criteria_info.key? :accessor)
-          expect(criteria_info.key? :className)
+          expect(criteria_info.keys).to include(:Header, :accessor, :className)
         end
 
         it 'has group data' do
           data = @assignment.summary_json(admin)[:data]
+          expected_keys = [
+              :group_name,
+              :section,
+              :members,
+              :marking_state,
+              :final_grade,
+              :criteria,
+              :max_mark,
+              :result_id,
+              :submission_id,
+              :total_extra_marks,
+              :graders
+          ]
+
           expect(data).not_to be_empty
           expect(data[0]).is_a? Hash
-          expect(data[0].key? :group_name)
-          expect(data[0].key? :section)
-          expect(data[0].key? :members)
-          expect(data[0].key? :marking_state)
-          expect(data[0].key? :final_grade)
-          expect(data[0].key? :criteria)
-          expect(data[0].key? :max_mark)
-          expect(data[0].key? :result_id)
-          expect(data[0].key? :submission_id)
-          expect(data[0].key? :total_extra_marks)
+          expect(data[0].keys).to match_array expected_keys
         end
 
         it 'has group with members' do
@@ -1923,11 +1924,8 @@ describe Assignment do
           summary = CSV.parse(summary_string)
 
           expect(summary).to_not be_empty
-          expect(summary.length()).to be > 1
           expect(summary[0]).to_not be_empty
-          expect(summary[0].include? 'User name')
-          expect(summary[0].include? 'Group')
-          expect(summary[0].include? 'Final grade')
+          expect(summary[0]).to include('User name', 'Group', 'Final grade')
         end
       end
     end
