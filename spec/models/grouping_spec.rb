@@ -8,36 +8,44 @@ describe Grouping do
   end
 
   describe 'a default grouping' do
-    before :each do
-      @grouping = create(:grouping)
-    end
+    let(:grouping) { create :grouping }
 
     it 'does not have any ta for marking' do
-      expect(@grouping.has_ta_for_marking?).to be false
+      expect(grouping.has_ta_for_marking?).to be false
     end
 
     it 'does not have submissions' do
-      expect(@grouping.has_submission?).to be false
+      expect(grouping.has_submission?).to be false
     end
 
     context 'hidden students' do
-      before :each do
-        @hidden = create(:student, hidden: true)
-      end
+      let(:hidden) { create(:student, hidden: true) }
 
       it 'cannot be invited' do
-        @grouping.invite(@hidden.user_name)
-        expect(@grouping.memberships.count).to eq(0)
+        grouping.invite(hidden.user_name)
+        expect(grouping.memberships.count).to eq(0)
       end
 
       it 'cannot be added' do
-        @grouping.add_member(@hidden)
-        expect(@grouping.memberships.count).to eq(0)
+        grouping.add_member(hidden)
+        expect(grouping.memberships.count).to eq(0)
       end
     end
 
     it 'displays Empty Group since no students in the group' do
-      expect(@grouping.get_all_students_in_group).to eq('Empty Group')
+      expect(grouping.get_all_students_in_group).to eq('Empty Group')
+    end
+
+    it 'creates a subdirectory in the repo for the grouping\'s assignment' do
+      grouping.group.access_repo do |repo|
+        a_dir = grouping.assignment.repository_folder
+        expect(repo.get_latest_revision.directories_at_path('/').values.map(&:name)).to include a_dir
+      end
+    end
+
+    it 'fails to create the grouping if it cannot create the repository folder' do
+      allow_any_instance_of(MemoryRepository).to receive(:commit).and_return(false)
+      expect { grouping }.to raise_error RuntimeError
     end
   end
 

@@ -20,6 +20,7 @@
 - Added option to download all test script files in the UI and through the API (#4494)
 - Added syntax highlighting support for .tex files (#4505)
 - Fixed annotation Markdown and MathJax rendering bug (#4506) 
+- Fixed bug where a grouping could be created even when the assignment subdirectory failed to be created (#4516)
 
 ## [v1.8.4]
 - Fixed bug where test output was not being properly hidden from students (#4379)
