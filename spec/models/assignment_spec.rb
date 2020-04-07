@@ -1806,6 +1806,11 @@ describe Assignment do
           expect(data.map { |h| h[:grace_credits_used] }.count(nil)).to be 2
         end
       end
+      context '#zip_automated_test_files' do
+        let(:content) { File.read assignment.zip_automated_test_files(admin) }
+        subject { content }
+        it_behaves_like 'zip file download'
+      end
     end
   end
 

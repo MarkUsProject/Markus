@@ -178,7 +178,7 @@ shared_examples 'a criterion' do
         let!(:tas) { Array.new(2) { create(:ta) } }
 
         before :each do
-          criterion.add_tas(tas)
+          Criterion.assign_all_tas([[criterion.id, criterion.class.to_s]], tas.map(&:id), criterion.assignment)
         end
 
         context 'with no assigned groups' do
@@ -242,7 +242,7 @@ shared_examples 'a criterion' do
                 # Creating a new criterion also creates a new assignment.
                 criterion = create(criterion_factory_name)
                 grouping = create(:grouping, assignment: criterion.assignment)
-                criterion.add_tas(tas)
+                Criterion.assign_all_tas([[criterion.id, criterion.class.to_s]], tas.map(&:id), criterion.assignment)
                 create_ta_memberships(grouping, tas)
               end
 
@@ -256,7 +256,7 @@ shared_examples 'a criterion' do
     end
 
     context 'with specified criterion IDs' do
-      let(:another_criterion) do
+      let(:criterion2) do
         create(criterion_factory_name, assignment: assignment)
       end
       let(:ta) { create(:ta) }
@@ -264,17 +264,17 @@ shared_examples 'a criterion' do
       let(:another_grouping) { create(:grouping, assignment: assignment) }
 
       before :each do
-        criterion.add_tas(ta)
-        another_criterion.add_tas(ta)
+        Criterion.assign_all_tas([[criterion.id, criterion.class.to_s], [criterion2.id, criterion2.class.to_s]],
+                                 [ta.id], assignment)
         create_ta_memberships([grouping, another_grouping], ta)
         Criterion.update_assigned_groups_counts(assignment)
       end
 
       it 'updates the count for both criteria' do
         criterion.reload
-        another_criterion.reload
+        criterion2.reload
         expect(criterion.assigned_groups_count).to eq 2
-        expect(another_criterion.assigned_groups_count).to eq 2
+        expect(criterion2.assigned_groups_count).to eq 2
       end
     end
   end

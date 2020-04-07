@@ -12,6 +12,12 @@ Markus::Application.configure do
   # Show full error reports.
   config.consider_all_requests_local = true
 
+  # This is required if developing in Docker or Vagrant
+  # WARNING: do not enable this for production!
+  if Rails.env.development? && defined? BetterErrors
+    BetterErrors::Middleware.allow_ip! '0.0.0.0/0'
+  end
+
   # Set high verbosity of logger.
   config.log_level = :debug
 

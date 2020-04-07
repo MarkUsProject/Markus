@@ -212,13 +212,6 @@ describe GroupsController do
 
         grouping.add_member(@student1, StudentMembership::STATUSES[:inviter])
         grouping.add_member(@student2, StudentMembership::STATUSES[:accepted])
-
-        @ta_name = 'c8shacd'
-        @ta = create(:ta, user_name: @ta_name)
-        # For each grouping for Assignment 1, assign 2 TAs
-        @assignment.groupings.each do |grouping|
-          grouping.add_tas([@ta])
-        end
       end
 
       it 'responds with appropriate status' do
@@ -400,12 +393,14 @@ describe GroupsController do
   describe 'student access' do
     before :each do
       # Authenticate user is not timed out, and has administrator rights.
+      @current_student = create(:student, user_name: 'c9test2')
       allow(controller).to receive(:session_expired?).and_return(false)
       allow(controller).to receive(:logged_in?).and_return(true)
-      allow(controller).to receive(:current_user).and_return(build(:student))
-
+      allow(controller).to receive(:current_user).and_return(@current_student)
       @student = create(:student, user_name: 'c9test1')
-      @assignment = create(:assignment, assignment_properties_attributes: { student_form_groups: true })
+      @assignment = create(:assignment,
+                           due_date: 1.day.from_now,
+                           assignment_properties_attributes: { student_form_groups: true, group_max: 3 })
     end
 
     describe 'POST #create' do
@@ -425,6 +420,19 @@ describe GroupsController do
 
       it 'should respond with success' do
         is_expected.to respond_with(:redirect)
+      end
+    end
+
+    describe 'POST #invite_member' do
+      before :each do
+        create(:grouping_with_inviter, assignment: @assignment, inviter: @current_student)
+      end
+      it 'should send an email to every student invited to a grouping' do
+        expect do
+          post :invite_member,
+               params: { invite_member: @student.user_name,
+                         assignment_id: @assignment.id }
+        end.to change { ActionMailer::Base.deliveries.count }.by(1)
       end
     end
   end

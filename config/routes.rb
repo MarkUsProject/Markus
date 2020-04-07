@@ -45,6 +45,7 @@ Rails.application.routes.draw do
           end
         end
         member do
+          get 'test_files'
           get 'grades_summary'
         end
       end
@@ -108,6 +109,7 @@ Rails.application.routes.draw do
           get 'get_test_runs_students'
           get 'populate_autotest_manager'
           get 'download_file'
+          get 'download_files'
           post 'upload_files'
         end
       end

@@ -33,18 +33,16 @@ AnnotationTextDisplayer.prototype.displayCollection = function(collection, x, y)
   if (collection.length == 0) { return; }
 
   // Now, compile all the annotations in this collection into a single
-  // string to display.  Each text will be contained in a <p> tag
+  // string to display.
   var final_string = '';
 
-  // Each element is an AnnotationText object
   collection.forEach(function(element, index, array) {
-    // Assumes element's content is already sanitized.
-    final_string += marked(element.getContent());
+    final_string += element.getContent() + '\n\n';
   });
 
   // Update the Display node (a div, in this case) to be in the right
   // position, and to have the right contents
-  this.updateDisplayNode(final_string, x, y);
+  this.updateDisplayNode(marked(final_string, {sanitize: true}), x, y);
 
   // Show the Displayer
   this.show();
@@ -72,7 +70,7 @@ AnnotationTextDisplayer.prototype.hide = function() {
 // Show the displayer
 AnnotationTextDisplayer.prototype.show = function() {
   this.display_node.style.display = 'block';
-  reloadDOM();
+  MathJax.Hub.Queue(['Typeset', MathJax.Hub, this.display_node]);
 }
 
 // Returns whether or not the Displayer is showing
