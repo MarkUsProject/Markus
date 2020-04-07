@@ -27,7 +27,6 @@ RSpec.describe NotificationMailer, type: :mailer do
       described_class.with(user: recipient, grouping: submission.grouping).release_email.deliver_now
     end
 
-
     it 'renders the subject' do
       subject_line = 'MarkUs Notification (' + Rails.configuration.course_name + ') Your marks for ' +
           submission.assignment.short_identifier + ' have been released!'
