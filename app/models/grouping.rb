@@ -456,10 +456,7 @@ class Grouping < ApplicationRecord
       end
     end
 
-    unless result
-      msg = I18n.t('repo.assignment_dir_creation_error', short_identifier: assignment.short_identifier)
-      raise RuntimeError, msg
-    end
+    raise I18n.t('repo.assignment_dir_creation_error', short_identifier: assignment.short_identifier) unless result
   end
 
   # Get the section for this group. If assignment restricts member of a groupe
