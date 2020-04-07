@@ -1902,7 +1902,7 @@ describe Assignment do
     end
 
     context 'a TA user' do
-      let(:ta) { create :ta}
+      let(:ta) { create :ta }
       let(:assignment) { create :assignment }
 
       it 'should return ""' do
@@ -1918,7 +1918,6 @@ describe Assignment do
       end
 
       context 'with assigned students' do
-
         it 'has student data' do
           summary_string = @assignment.summary_csv(admin)
           summary = CSV.parse(summary_string)
