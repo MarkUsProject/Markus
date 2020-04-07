@@ -1825,7 +1825,7 @@ describe Assignment do
     end
 
     context 'a TA user' do
-      let(:ta) { create :ta}
+      let(:ta) { create :ta }
 
       before :each do
         @assignment = create(:assignment_with_criteria_and_results)
@@ -1865,17 +1865,17 @@ describe Assignment do
         it 'has group data' do
           data = @assignment.summary_json(admin)[:data]
           expected_keys = [
-              :group_name,
-              :section,
-              :members,
-              :marking_state,
-              :final_grade,
-              :criteria,
-              :max_mark,
-              :result_id,
-              :submission_id,
-              :total_extra_marks,
-              :graders
+            :group_name,
+            :section,
+            :members,
+            :marking_state,
+            :final_grade,
+            :criteria,
+            :max_mark,
+            :result_id,
+            :submission_id,
+            :total_extra_marks,
+            :graders
           ]
 
           expect(data).not_to be_empty
