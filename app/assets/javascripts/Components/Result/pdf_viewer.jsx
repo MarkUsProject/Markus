@@ -68,7 +68,7 @@ export class PDFViewer extends React.Component {
       return;
     }
 
-    add_annotation_text(annotation.annotation_text_id, marked(annotation.content, {sanitize: true}));
+    add_annotation_text(annotation.annotation_text_id, annotation.content);
     annotation_manager.addAnnotation(
       annotation.annotation_text_id,
       marked(annotation.content, {sanitize: true}),

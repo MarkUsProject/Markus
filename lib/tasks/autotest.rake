@@ -2,9 +2,12 @@ namespace :db do
   desc 'Sets up environment to test the autotester'
   task autotest: :environment do
     include AutomatedTestsHelper
-    Rake::Task['markus:setup_autotest'].invoke
+    FileUtils.mkdir_p Rails.configuration.x.autotest.client_dir
     puts 'Set up testing environment for autotest'
-    AutotestTestersJob.perform_now
+    Rake::Task['markus:setup_autotest'].invoke
+
+    User.add_user(Student, %w[aaaautotest Test Otto]) # Create dummy student for autotest submissions.
+
     autotest_files_dirs = Dir.glob(File.join('db', 'data', 'autotest_files', '*'))
     autotest_files_dirs.each do |dir_path|
       AutotestSetup.new dir_path
@@ -27,7 +30,6 @@ class AutotestSetup
     @student_files = Dir.glob(File.join(@student_dir, '*'))
 
     @assignment = create_new_assignment
-
     @schema_data = JSON.parse(File.open(testers_schema_path, &:read))
     fill_in_schema_data!(@schema_data, @test_scripts, @assignment)
 
@@ -37,11 +39,12 @@ class AutotestSetup
     # setup other elements required for autotesting
     create_marking_scheme
     create_criteria
-    create_student
+    create_submission
     process_schema_data
   end
 
   def create_new_assignment
+    puts "Creating sample autotesting assignment #{@assg_short_id}"
     rule = NoLateSubmissionRule.new
     assignment_stat = AssignmentStat.new
     Assignment.create(
@@ -61,7 +64,6 @@ class AutotestSetup
       submission_rule: rule,
       assignment_stat: assignment_stat
     )
-    Assignment.find_by_short_identifier(@assg_short_id)
   end
 
   def clear_old_files
@@ -95,7 +97,7 @@ class AutotestSetup
 
   def create_criteria
     FlexibleCriterion.find_or_create_by(
-      name: 'criteria',
+      name: 'criterion',
       assessment_id: @assignment.id,
       position: 1,
       max_mark: 5,
@@ -103,8 +105,8 @@ class AutotestSetup
     )
   end
 
-  def create_student
-    student = User.add_user(Student, %w[aaaautotest Test Otto])
+  def create_submission
+    student = Student.find_by(user_name: 'aaaautotest')
     student.create_group_for_working_alone_student(@assignment.id)
     group = Group.find_by group_name: student.user_name
 

@@ -10,40 +10,34 @@ import { RawFileBrowser, Headers, FileRenderers, BaseFileConnectors } from 'reac
 
 
 class RawFileManager extends RawFileBrowser {
-  handleActionBarAddFileClick = (event, selected) => {
+  handleActionBarAddFileClick = (event, selectedItem) => {
     event.preventDefault();
-    let uploadTarget = '';
-    if (!!selected && selected.length === 1) { // treat multiple selections as an invalid target
-      if (selected[0].relativeKey.endsWith('/')) {
-        uploadTarget = selected[0].relativeKey;
-      } else {
-        uploadTarget = selected[0].relativeKey.substring(0, selected.relativeKey.lastIndexOf(selected.name));
-      }
-    }
-    this.props.onActionBarAddFileClick(uploadTarget);
+    this.props.onActionBarAddFileClick(this.folderTarget(selectedItem));
   };
 
-  handleActionBarAddFolderClickSetSelection = (event, target) => {
+  handleActionBarAddFolderClickSetSelection = (event, selectedItem) => {
     event.persist();
+    const target = this.folderTarget(selectedItem);
     this.select(target, "folder");
     this.handleActionBarAddFolderClick(event)
   };
 
   folderTarget = (selectedItem) => {
     // treat multiple selections as not targeting a folder
-    const selectionIsFolder = selectedItem.length === 1 && selectedItem[0].relativeKey.endsWith('/');
-    if (selectionIsFolder) {
-      return selectedItem[0].relativeKey;
-    } else  {
-      const key = selectedItem.length === 1 ? selectedItem[0].relativeKey : '';
-      return key.substring(0, key.lastIndexOf("/") + 1)
+    const selectionIsFolder = !!selectedItem && selectedItem.relativeKey.endsWith('/');
+    if (selectedItem === null) {
+      return null;
+    } else if (selectionIsFolder) {
+      return selectedItem.relativeKey;
+    } else {
+      return selectedItem.relativeKey.substring(0, selectedItem.relativeKey.lastIndexOf('/') + 1);
     }
   };
 
   renderActionBar(selectedItems) {
     // treat multiple selections the same as not targeting
-    const selectionIsFolder = selectedItems.length === 1 && selectedItems[0].relativeKey.endsWith('/');
     let selectedItem = selectedItems.length === 1 ? selectedItems[0] : null;
+    const selectionIsFolder = !!selectedItem && selectedItem.relativeKey.endsWith('/');
     let filter;
     if (this.props.canFilter) {
       filter = (
@@ -89,11 +83,10 @@ class RawFileManager extends RawFileBrowser {
           typeof this.props.onCreateFolder === 'function' &&
           !this.state.nameFilter
         ) {
-          let target = this.folderTarget(selectedItem);
           actions.push(
             <li key="action-add-folder">
               <a
-                onClick={(event) => this.handleActionBarAddFolderClickSetSelection(event, target)}
+                onClick={(event) => this.handleActionBarAddFolderClickSetSelection(event, selectedItem)}
                 href="#"
                 role="button"
               >

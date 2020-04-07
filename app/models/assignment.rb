@@ -1269,6 +1269,27 @@ class Assignment < Assessment
     self.assignment_properties.attributes.merge(self.attributes).symbolize_keys.to_json(options)
   end
 
+  # zip all files in the folder at +self.autotest_files_dir+ and return the
+  # path to the zip file
+  def zip_automated_test_files(user)
+    zip_name = "#{self.short_identifier}-testfiles-#{user.user_name}"
+    zip_path = File.join('tmp', zip_name + '.zip')
+    FileUtils.rm_rf zip_path
+    files_dir = Pathname.new self.autotest_files_dir
+    Zip::File.open(zip_path, Zip::File::CREATE) do |zip_file|
+      self.autotest_files.map do |file|
+        path = File.join zip_name, file
+        abs_path = files_dir.join(file)
+        if abs_path.directory?
+          zip_file.mkdir(path)
+        else
+          zip_file.get_output_stream(path) { |f| f.puts abs_path.read }
+        end
+      end
+    end
+    zip_path
+  end
+
   private
 
   # Returns the marking state used in the submission and course summary tables
