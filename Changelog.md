@@ -1,8 +1,39 @@
 # Changelog
 ## [unreleased]
-- Fixed bug where grace credits were not displayed to Graders viewing the submissions table (#4332)
+- Added option to anonymize group membership when viewed by graders (#4331)
+- Added option to only display assigned criteria to graders as opposed to showing unassigned criteria but making them
+  ungradeable (#4331)
+- Fixed bug where criteria were not expanded for grading (to both Admins and TAs) (#4380)
+- Updated development docker image to connect to the development autotester docker image (#4389)
+- Fixed bug where annotations were not removed when switching between PDF submission files (#4387)
+- Fixed bug where annotations disappeared on window resize (#4387)
+- Removed automatic saving of changes on the Autotesting Framework page and warn when redirecting instead (#4394)
+- Added progress message when uploading changes on Automated Testing tab (#4395) 
+- Fixed bug where the error message is appearing when the instructor is trying to collect the submission of the student 
+  who hasn't submitted anything (#4373)
+- Ignore the "Total" column when uploading a csv file to a grade entry form. This makes the upload and download format
+  for the csv file consistent (#4425)
+- Added git hook to limit the maximum file size committed and/or pushed to a git repository (#4421)
+- Display newlines properly in flash messages (#4443)
+- Api calls will now return the 'hidden' status of users when accessing user data (#4445)
+- Make bulk submission file downloads a background job (#4463)
+- Added option to download all test script files in the UI and through the API (#4494)
+- Added syntax highlighting support for .tex files (#4505)
+- Fixed annotation Markdown and MathJax rendering bug (#4506) 
 
+## [v1.8.4]
+- Fixed bug where test output was not being properly hidden from students (#4379)
+- Fixed bug where certain fonts were not rendered properly using pdfjs (#4382)
+
+## [v1.8.3]
+- Fixed bug where grace credits were not displayed to Graders viewing the submissions table (#4332)
 - Fixed filtering and sorting of grace credit column in students table. (#4327)
+- Added feature to set multiple submissions to in/complete from the submissions table (#4336)
+- Update pdfjs version and integrate with webpacker. (#4362)
+- Fixed bug where tags could not be uploaded from a csv file (#4368)
+- Fixed bug where marks were not being scaled properly after an update to a criterion's max_mark (#4369)
+- Fixed bug where grade entry students were not being created if new students were created by csv upload (#4371)
+- Fixed bug where the student interface page wasn't rendered if creating a single student grouping at the same time (#4372)
 
 ## [v1.8.2]
 - Fixed bug where all non-empty rows in a downloaded marks spreadsheet csv file were aligned to the left. (#4290)

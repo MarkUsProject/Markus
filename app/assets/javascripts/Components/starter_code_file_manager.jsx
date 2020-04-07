@@ -43,21 +43,15 @@ class StarterCodeFileManager extends React.Component {
     }).then(typeof this.props.onChange === 'function' ? this.props.onChange : this.fetchData);
   };
 
-  handleDeleteFile = (fileKey) => {
-    let deleteFiles = [];
-    this.state.files.map((file) => {
-      if (file.key === fileKey) {
-        deleteFiles.push(file)
-      }
-    });
-    if (!deleteFiles) {
+  handleDeleteFile = (fileKeys) => {
+    if (!this.state.files.some(f => fileKeys.includes(f.key))) {
       return;
     }
 
     $.post({
       url: Routes.upload_starter_code_assignment_path(this.props.assignment_id),
       data: {
-        delete_files: [deleteFiles[0].key],
+        delete_files: fileKeys,
       }
     }).then(typeof this.props.onChange === 'function' ? this.props.onChange : this.fetchData)
       .then(this.endAction);

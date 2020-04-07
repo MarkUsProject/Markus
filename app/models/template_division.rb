@@ -28,7 +28,7 @@ class TemplateDivision < ApplicationRecord
     if assignment_file.nil?
       assignment_file_object = AssignmentFile.find_or_initialize_by(
         filename: filename,
-        assignment_id: exam_template.assignment.id
+        assessment_id: exam_template.assignment.id
       )
       self.update(assignment_file: assignment_file_object)
     else

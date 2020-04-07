@@ -17,7 +17,7 @@ class RubricCriterion < Criterion
   before_validation :scale_marks_if_max_mark_changed
   validate :validate_max_mark
 
-  belongs_to :assignment, counter_cache: true
+  belongs_to :assignment, foreign_key: :assessment_id, counter_cache: true
 
   validates_presence_of :assigned_groups_count
   validates_numericality_of :assigned_groups_count
@@ -212,35 +212,6 @@ class RubricCriterion < Criterion
       result = result.concat(ta.get_groupings_by_assignment(assignment))
     end
     result.uniq
-  end
-
-  def add_tas(ta_array)
-    ta_array = Array(ta_array)
-    associations = criterion_ta_associations.where(ta_id: ta_array).to_a
-    ta_array.each do |ta|
-      # & is the mathematical set intersection operator between two arrays
-      if (ta.criterion_ta_associations & associations).size < 1
-        criterion_ta_associations.create(ta: ta, criterion: self, assignment: self.assignment)
-      end
-    end
-  end
-
-  def remove_tas(ta_array)
-    ta_array = Array(ta_array)
-    associations_for_criteria = criterion_ta_associations.where(
-      ta_id: ta_array).to_a
-    ta_array.each do |ta|
-      # & is the mathematical set intersection operator between two arrays
-      assoc_to_remove = (ta.criterion_ta_associations & associations_for_criteria)
-      unless assoc_to_remove.empty?
-        criterion_ta_associations.delete(assoc_to_remove)
-        assoc_to_remove.first.destroy
-      end
-    end
-  end
-
-  def get_ta_names
-    criterion_ta_associations.collect { |association| association.ta.user_name }
   end
 
   def has_associated_ta?(ta)

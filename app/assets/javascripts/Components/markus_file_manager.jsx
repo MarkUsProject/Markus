@@ -10,37 +10,34 @@ import { RawFileBrowser, Headers, FileRenderers, BaseFileConnectors } from 'reac
 
 
 class RawFileManager extends RawFileBrowser {
-  handleActionBarAddFileClick = (event, selected) => {
+  handleActionBarAddFileClick = (event, selectedItem) => {
     event.preventDefault();
-    let uploadTarget = '';
-    if (selected) {
-      if (selected.relativeKey.endsWith('/')) {
-        uploadTarget = selected.relativeKey;
-      } else {
-        uploadTarget = selected.relativeKey.substring(0, selected.relativeKey.lastIndexOf(selected.name));
-      }
-    }
-    this.props.onActionBarAddFileClick(uploadTarget);
+    this.props.onActionBarAddFileClick(this.folderTarget(selectedItem));
   };
 
-  handleActionBarAddFolderClickSetSelection = (event, target) => {
+  handleActionBarAddFolderClickSetSelection = (event, selectedItem) => {
     event.persist();
+    const target = this.folderTarget(selectedItem);
     this.select(target, "folder");
     this.handleActionBarAddFolderClick(event)
   };
 
   folderTarget = (selectedItem) => {
-    const selectionIsFolder = selectedItem && selectedItem.relativeKey.endsWith('/');
-    if (selectionIsFolder) {
+    // treat multiple selections as not targeting a folder
+    const selectionIsFolder = !!selectedItem && selectedItem.relativeKey.endsWith('/');
+    if (selectedItem === null) {
+      return null;
+    } else if (selectionIsFolder) {
       return selectedItem.relativeKey;
-    } else  {
-      const key = selectedItem ? selectedItem.relativeKey : '';
-      return key.substring(0, key.lastIndexOf("/") + 1)
+    } else {
+      return selectedItem.relativeKey.substring(0, selectedItem.relativeKey.lastIndexOf('/') + 1);
     }
   };
 
-  renderActionBar(selectedItem) {
-    const selectionIsFolder = selectedItem && selectedItem.relativeKey.endsWith('/');
+  renderActionBar(selectedItems) {
+    // treat multiple selections the same as not targeting
+    let selectedItem = selectedItems.length === 1 ? selectedItems[0] : null;
+    const selectionIsFolder = !!selectedItem && selectedItem.relativeKey.endsWith('/');
     let filter;
     if (this.props.canFilter) {
       filter = (
@@ -86,11 +83,10 @@ class RawFileManager extends RawFileBrowser {
           typeof this.props.onCreateFolder === 'function' &&
           !this.state.nameFilter
         ) {
-          let target = this.folderTarget(selectedItem);
           actions.push(
             <li key="action-add-folder">
               <a
-                onClick={(event) => this.handleActionBarAddFolderClickSetSelection(event, target)}
+                onClick={(event) => this.handleActionBarAddFolderClickSetSelection(event, selectedItem)}
                 href="#"
                 role="button"
               >
@@ -258,6 +254,13 @@ class FileManagerFile extends FileRenderers.RawTableFile {
     if (event) {
       event.preventDefault();
     }
+  };
+
+  handleItemClick = (event) => {
+    // This disables the option to select multiple rows in the file manager
+    // To re-enable multiple selection, remove this method entirely.
+    event.stopPropagation();
+    this.props.browserProps.select(this.props.fileKey, 'file')
   };
 
   render() {

@@ -25,7 +25,7 @@ namespace :db do
                                        annotation_category_name: random_words(3))
 
         (rand(10) + 3).times do
-          AnnotationText.create(annotation_category: ac, content: random_sentences(3), user: Admin.first)
+          AnnotationText.create(annotation_category: ac, content: random_sentences(3), creator: Admin.first)
         end
       end
 
@@ -37,7 +37,7 @@ namespace :db do
         end
 
         params = { rubric: {
-          name: random_sentences(1), assignment_id: assignment.id,
+          name: random_sentences(1), assessment_id: assignment.id,
           position: index + 1, max_mark: 4, levels_attributes: attributes
         } }
 
@@ -47,7 +47,7 @@ namespace :db do
       3.times do |index|
         FlexibleCriterion.create(
             name:                    random_sentences(1),
-            assignment_id:           assignment.id,
+            assessment_id:           assignment.id,
             description:             random_sentences(5),
             position:                index + 4,
             max_mark:                pos_rand(3),
@@ -60,7 +60,7 @@ namespace :db do
       3.times do |index|
         CheckboxCriterion.create(
             name:                    random_sentences(1),
-            assignment_id:           assignment.id,
+            assessment_id:           assignment.id,
             description:             random_sentences(5),
             position:                index + 7,
             max_mark:                1,

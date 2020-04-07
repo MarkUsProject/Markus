@@ -21,7 +21,7 @@ describe AnnotationsController do
     end
 
     it 'on :update_annotation' do
-      get :update_annotation, params: { id: 1 }
+      put :update_annotation, params: { id: 1 }
       expect(response).to be_redirect
     end
 
@@ -48,7 +48,7 @@ describe AnnotationsController do
     end
 
     it 'on :update_annotation' do
-      post :update_annotation, params: { id: 1 }
+      put :update_annotation, params: { id: 1 }
       expect(response).to be_redirect
     end
 

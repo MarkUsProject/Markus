@@ -108,7 +108,7 @@
    * @return {{page: {int}, $control: {jQuery}}}
    */
   PdfAnnotationManager.prototype.getSelectionBox = function($page) {
-    var pageNumber = parseInt($page.attr("id").replace("pageContainer", ""), 10);
+    let pageNumber = $page.data('page-number');
 
     if (this.selectionBox.page === pageNumber) {
       return this.selectionBox;
@@ -233,7 +233,6 @@
           return;
         }
       }
-
       self.setSelectionBox($(ev.delegateTarget), {
         x: point.x,
         y: point.y,
@@ -336,7 +335,7 @@
    * @return {jQuery} The jQuery object of pages.
    */
   PdfAnnotationManager.prototype.getPages = function() {
-    return $("#" + this.pageParentId + " .page");
+    return $('.page');
   }
 
   /**
@@ -349,7 +348,7 @@
   }
 
   PdfAnnotationManager.prototype.getPageContainer = function(pageNum) {
-    return $("#" + this.pageParentId + " #pageContainer" + pageNum);
+    return $(`.page[data-page-number=${pageNum}]`);
   }
 
   /**
@@ -453,17 +452,17 @@
     var $textSpan = null;
 
     function createTextNode() {
-      var text = annotation.getContent();
+      var text = marked(annotation.getContent(), {sanitize: true});
 
       return $('<div />').addClass('annotation_text_display')
-                         .append($('<p />', {html: text}));
+                         .html(text);
     }
 
     $control.mousemove(function(ev) {
       if($textSpan == null) {
         $textSpan = createTextNode();
         $page.append($textSpan);
-        reloadDOM();
+        MathJax.Hub.Queue(['Typeset', MathJax.Hub, $textSpan[0]]);
       }
 
       var point = getRelativePointForMouseEvent(ev, $page, -1);

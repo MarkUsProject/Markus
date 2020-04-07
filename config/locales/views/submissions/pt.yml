@@ -48,6 +48,9 @@ pt:
       version_control_warning: "Submetendo arquivos aqui substitui todas as mudanças feitas usando o controle de versão.
                                 Certifique-se de que você trabalhou nos arquivos mais recentes antes de enviar."
 
+    download_zipped_file:
+      file_missing: "%{zip_file} UPDATE ME"
+
     # Miscellaneous
     cannot_display: "Conteudo binário: Use o botao de download para ver o arquivo!"
     commit_date: "Data de envio"

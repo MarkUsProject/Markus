@@ -2,7 +2,7 @@ import React from 'react';
 import {render} from 'react-dom';
 
 import ReactTable from 'react-table';
-import {stringFilter} from './Helpers/table_helpers';
+import {dateSort, stringFilter} from './Helpers/table_helpers';
 
 
 class ExamScanLogTable extends React.Component {
@@ -38,6 +38,7 @@ class ExamScanLogTable extends React.Component {
         {
           Header: I18n.t('attributes.date'),
           accessor: 'date',
+          sortMethod: dateSort,
           minWidth: 250
         },
         {

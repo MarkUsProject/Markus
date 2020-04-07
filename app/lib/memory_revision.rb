@@ -3,7 +3,7 @@
 class MemoryRevision < Repository::AbstractRevision
 
   # getter/setters for instance variables
-  attr_accessor :files, :changed_files, :files_content, :user_id, :comment, :timestamp
+  attr_accessor :files, :changed_files, :files_content, :user_id, :comment, :timestamp, :server_timestamp
 
   # Constructor
   def initialize(revision_number)
@@ -12,6 +12,9 @@ class MemoryRevision < Repository::AbstractRevision
     @files_content = {}   # hash: keys => RevisionFile object, value => content
     @user_id = "dummy_user_id"     # user_id, who created this revision
     @comment = "commit_message" # commit-message for this revision
+    timestamp = Time.current
+    @timestamp = timestamp
+    @server_timestamp = timestamp
   end
 
   # Returns true if and only if path exists in files and path is a directory

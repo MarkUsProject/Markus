@@ -75,6 +75,17 @@ describe SubmissionFile do
     end
   end
 
+  context 'A .tex Submission file' do
+    before(:each) do
+      @submission_file = SubmissionFile.create(filename: 'filename.tex',
+                                               path:     'path',
+                                               submission_id: 1)
+    end
+    it 'return tex' do
+      expect(@submission_file.get_file_type).to eq('tex')
+    end
+  end
+
   context 'A no extension Submission file' do
     before(:each) do
       @submission_file = SubmissionFile.create(filename: 'filename',

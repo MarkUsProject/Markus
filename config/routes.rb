@@ -28,6 +28,8 @@ Rails.application.routes.draw do
           resources :submission_files, except: [:new, :edit] do
             collection do
               delete 'remove_file'
+              delete 'remove_folder'
+              post 'create_folders'
             end
           end
           resources :feedback_files, except: [:new, :edit]
@@ -43,6 +45,7 @@ Rails.application.routes.draw do
           end
         end
         member do
+          get 'test_files'
           get 'grades_summary'
         end
       end
@@ -55,7 +58,6 @@ Rails.application.routes.draw do
 
       collection do
         get 'delete_rejected'
-        post 'update_collected_submissions'
         get 'download'
         post 'upload'
         get 'batch_runs'
@@ -63,8 +65,6 @@ Rails.application.routes.draw do
 
       member do
         get 'refresh_graph'
-        get 'student_interface'
-        get 'render_feedback_file'
         get 'view_summary'
         get 'populate_file_manager'
         post 'upload_starter_code'
@@ -72,8 +72,8 @@ Rails.application.routes.draw do
         get 'download_starter_code'
         get 'peer_review'
         get 'summary'
-        get 'csv_summary'
         get 'batch_runs'
+        post 'set_boolean_graders_options'
         get 'stop_test'
         get 'stop_batch_tests'
         get 'switch_assignment'
@@ -109,6 +109,7 @@ Rails.application.routes.draw do
           get 'get_test_runs_students'
           get 'populate_autotest_manager'
           get 'download_file'
+          get 'download_files'
           post 'upload_files'
         end
       end
@@ -179,6 +180,7 @@ Rails.application.routes.draw do
           get 'download_svn_export_list'
           get 'download_repo_checkout_commands'
           get 'download_repo_list'
+          post 'set_result_marking_state'
           post 'update_submissions'
           get 'updated_files'
           get 'replace_files'
@@ -186,7 +188,8 @@ Rails.application.routes.draw do
           post 'update_files'
           get 'server_time'
           get 'download'
-          post 'download_groupings_files'
+          post 'zip_groupings_files'
+          get 'download_zipped_file'
         end
 
         member do
@@ -196,6 +199,7 @@ Rails.application.routes.draw do
           post 'repo_browser'
           get 'downloads'
           get 'get_file'
+          get 'get_feedback_file'
         end
 
         resources :results do
@@ -268,27 +272,20 @@ Rails.application.routes.draw do
           get 'grader_groupings_mapping'
           get 'grader_criteria_mapping'
           get 'global_actions'
-          post 'set_assign_criteria'
           post 'global_actions'
           get 'grader_summary'
         end
       end
 
       resources :annotation_categories do
-        member do
-          delete 'delete_annotation_text'
-          get 'add_annotation_text'
-          post 'add_annotation_text'
-          put 'update_annotation'
-        end
-
         collection do
           post 'update_positions'
           post 'upload'
           get 'download'
-          get 'add_annotation_text'
-          post 'delete_annotation_text'
-          post 'update_annotation'
+          get 'new_annotation_text'
+          post 'create_annotation_text'
+          delete 'destroy_annotation_text'
+          put 'update_annotation_text'
           get 'find_annotation_text'
         end
       end
@@ -331,11 +328,11 @@ Rails.application.routes.draw do
         post 'noteable_object_selector'
         get 'new_update_groupings'
         post 'new_update_groupings'
+        get 'notes_dialog'
       end
 
       member do
         get 'student_interface'
-        get 'notes_dialog'
         post 'grades'
       end
     end
