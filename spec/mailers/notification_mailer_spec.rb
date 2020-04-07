@@ -11,7 +11,7 @@ RSpec.describe NotificationMailer, type: :mailer do
     it 'renders the recipient greeting in the body of the email.' do
       first_name = recipient.first_name
       last_name = recipient.last_name
-      expect(mail.body.to_s.gsub("&#39;", "'")).to include("Hello #{first_name} #{last_name},")
+      expect(mail.body.to_s.gsub('&#39;', "'")).to include("Hello #{first_name} #{last_name},")
     end
 
     it 'renders the recipient email' do
@@ -20,24 +20,22 @@ RSpec.describe NotificationMailer, type: :mailer do
   end
 
   describe 'release_email' do
-    let(:recipient) { create(:student, first_name: "Ilya", last_name: "O'Lenna") }
-    let(:fake_assignment) { create(:assignment) }
-    let(:grouping) { create(:grouping, assignment: fake_assignment) }
+    let(:recipient) { create(:student) }
+    let(:submission) { create(:version_used_submission) }
     let(:mail) do
-      create(:submission, submission_version_used: true, grouping: grouping)
-      grouping.reload
-      described_class.with(user: recipient, grouping: grouping).release_email.deliver_now
+      submission.grouping.reload
+      described_class.with(user: recipient, grouping: submission.grouping).release_email.deliver_now
     end
+
 
     it 'renders the subject' do
       subject_line = 'MarkUs Notification (' + Rails.configuration.course_name + ') Your marks for ' +
-          fake_assignment.short_identifier + ' have been released!'
+          submission.assignment.short_identifier + ' have been released!'
       expect(mail.subject).to eq(subject_line)
     end
 
     it 'renders the assignment in the body of the email.' do
-      puts mail.body.to_s
-      expect(mail.body.to_s).to include(fake_assignment.short_identifier.to_s)
+      expect(mail.body.to_s).to include(submission.assignment.short_identifier.to_s)
     end
 
     include_examples 'an email'
@@ -46,9 +44,9 @@ RSpec.describe NotificationMailer, type: :mailer do
   describe 'release_spreadsheet_email' do
     let(:recipient) { create(:student) }
     let(:grade_entry_form) { create(:grade_entry_form_with_data) }
-    let(:grade_entry_student) { grade_entry_form.grade_entry_students.find_or_create_by(user: recipient) }
     let(:mail) do
-      described_class.with(student: grade_entry_student, form: grade_entry_form)
+      described_class.with(student: grade_entry_form.grade_entry_students.find_or_create_by(user: recipient),
+                           form: grade_entry_form)
                      .release_spreadsheet_email
                      .deliver_now
     end
@@ -69,8 +67,7 @@ RSpec.describe NotificationMailer, type: :mailer do
   describe 'grouping_invite_email' do
     let(:inviter) { create(:student) }
     let(:recipient) { create(:student) }
-    let(:fake_assignment) { create(:assignment) }
-    let(:grouping) { create(:grouping, assignment: fake_assignment) }
+    let(:grouping) { create(:grouping) }
     let(:mail) do
       described_class.with(invited: recipient, inviter: inviter, grouping: grouping)
                      .grouping_invite_email
@@ -85,7 +82,7 @@ RSpec.describe NotificationMailer, type: :mailer do
     it 'renders the inviter name in the body of the email.' do
       first_name = inviter.first_name
       last_name = inviter.last_name
-      expect(mail.body.to_s.gsub("&#39;", "'")).to include("#{first_name} #{last_name}")
+      expect(mail.body.to_s.gsub('&#39;', "'")).to include("#{first_name} #{last_name}")
     end
 
     include_examples 'an email'
