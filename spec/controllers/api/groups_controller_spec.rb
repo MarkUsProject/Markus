@@ -270,6 +270,64 @@ describe Api::GroupsController do
         end
       end
     end
+    context 'POST add_extra_marks' do
+      let(:submission) { create(:version_used_submission, grouping: grouping) }
+      context 'add extra_mark' do
+        before :each do
+          submission
+          @old_mark = submission.get_latest_result.total_mark
+          post :create_extra_marks, params: { assignment_id: grouping.assignment.id,
+                                              id: grouping.group.id,
+                                              extra_marks: 10.0,
+                                              description: 'sample' }
+          grouping.reload
+        end
+        it 'should add new extra mark' do
+          result = submission.get_latest_result
+          added_extra_mark = result.extra_marks.last
+          expect(added_extra_mark.extra_mark).to eq(10.0)
+        end
+        it 'should update total_mark' do
+          result = submission.get_latest_result
+          new_total_mark = result.total_mark
+          expect(@old_mark + 10.0).to eq(new_total_mark)
+        end
+        it 'should respond with 200' do
+          expect(response.status).to eq(200)
+        end
+      end
+    end
+    context 'DELETE remove_extra_marks' do
+      let(:submission) { create(:version_used_submission, grouping: grouping) }
+      before :each do
+        submission
+        @old_mark = submission.get_latest_result.total_mark
+        post :create_extra_marks, params: { assignment_id: grouping.assignment.id,
+                                            id: grouping.group.id,
+                                            extra_marks: 10.0,
+                                            description: 'sample' }
+        grouping.reload
+      end
+      context 'remove_extra_marks' do
+        before :each do
+          submission
+          @old_mark = submission.get_latest_result.total_mark
+          delete :remove_extra_marks, params: { assignment_id: grouping.assignment.id,
+                                                id: grouping.group.id,
+                                                extra_marks: 10.0,
+                                                description: 'sample' }
+          grouping.reload
+        end
+        it 'should update total mark' do
+          result = submission.get_latest_result
+          new_total_mark = result.total_mark
+          expect(@old_mark - 10.0).to eq(new_total_mark)
+        end
+        it 'should respond with 200' do
+          expect(response.status).to eq(200)
+        end
+      end
+    end
     context 'GET group_ids_by_name' do
       context 'expecting a json response' do
         before :each do

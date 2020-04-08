@@ -40,7 +40,7 @@ Rails.application.routes.draw do
             get 'annotations'
             post 'add_annotations'
             post 'add_members'
-            post 'add_extra_marks'
+            post 'create_extra_marks'
             put 'update_marks'
             put 'update_marking_state'
             delete 'remove_extra_marks'

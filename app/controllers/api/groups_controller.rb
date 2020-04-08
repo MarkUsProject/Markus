@@ -161,14 +161,13 @@ module Api
         HttpStatusHelper::ERROR_CODE['message']['200'] }, status: 200
     end
 
-    def add_extra_marks
+    def create_extra_marks
       assignment = Assignment.find(params[:assignment_id])
       if assignment.nil?
         render 'shared/http_status', locals: { code: '404', message:
             'No assignment exists with that id' }, status: 404
         return
       end
-
       group = Group.find(params[:id])
       if group.nil?
         render 'shared/http_status', locals: { code: '404', message:
@@ -185,17 +184,17 @@ module Api
             'No submissions exist for that group' }, status: 404
         return
       end
-      extra_mark = ExtraMark.new(result_id: result.id, extra_mark: params[:extra_marks],
-                                 description: params[:description], unit: ExtraMark::POINTS)
-      unless extra_mark.save
+      begin
+        ExtraMark.create(result_id: result.id, extra_mark: params[:extra_marks],
+                         description: params[:description], unit: ExtraMark::POINTS)
+        result.update_total_mark
+        render 'shared/http_status', locals: { code: '200', message:
+            HttpStatusHelper::ERROR_CODE['message']['200'] }, status: 200
+      rescue
         # Some error occurred
         render 'shared/http_status', locals: { code: '500', message:
-        extra_mark.errors.full_messages.first }, status: 500
-        return
+            extra_mark.errors.full_messages.first }, status: 500
       end
-      extra_mark.save
-      render 'shared/http_status', locals: { code: '200', message:
-          HttpStatusHelper::ERROR_CODE['message']['200'] }, status: 200
     end
 
     def remove_extra_marks
@@ -228,16 +227,17 @@ module Api
       if extra_mark.nil?
         render 'shared/http_status', locals: { code: '404', message:
             'No such Extra Mark exist for that result' }, status: 404
-      elsif extra_mark.destroy
+      end
+      begin
+        extra_mark.destroy
         result.update_total_mark
-        result.save
         # Successfully deleted the Extra Mark; render success
         render 'shared/http_status', locals: { code: '200', message:
             HttpStatusHelper::ERROR_CODE['message']['200'] }, status: 200
-      else
+      rescue ActiveRecord::RecordNotDestroyed
         # Some other error occurred
         render 'shared/http_status', locals: { code: '500', message:
-            HttpStatusHelper::ERROR_CODE['message']['500'] }, status: 500
+          HttpStatusHelper::ERROR_CODE['message']['500'] }, status: 500
       end
     end
 
