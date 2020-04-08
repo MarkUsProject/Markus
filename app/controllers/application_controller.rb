@@ -95,11 +95,11 @@ class ApplicationController < ActionController::Base
   def hide_flash(key)
     return unless request.xhr?
 
-    discard_header = response.headers["X-Message-Discard"]
+    discard_header = response.headers['X-Message-Discard']
     if discard_header.nil?
-      response.headers["X-Message-Discard"] = key.to_s
+      response.headers['X-Message-Discard'] = key.to_s
     else
-      response.headers["X-Message-Discard"] = "#{key.to_s};#{discard_header}"
+      response.headers['X-Message-Discard'] = "#{key};#{discard_header}"
     end
   end
 
