@@ -258,6 +258,7 @@ describe RubricCriterion do
           expect(@levels.length).to eq(7)
         end
       end
+
       describe 'can delete levels' do
         it 'not raise error' do
           expect(@levels.length).to eq(5)
@@ -267,6 +268,7 @@ describe RubricCriterion do
           expect(@levels.length).to eq(3)
         end
       end
+
       describe 'can edit levels' do
         it 'not raise error' do
           @levels[0].update(name: 'Custom Level', description: 'Custom Description', mark: 10.0)
@@ -276,6 +278,7 @@ describe RubricCriterion do
           expect(@levels[@levels.length - 1].description).to eq('Custom Description')
         end
       end
+
       describe 'deleting a rubric criterion deletes all levels' do
         it 'not raise error' do
           @criterion.destroy
@@ -293,6 +296,7 @@ describe RubricCriterion do
           expect(@levels[1].mark).to eq(2.0)
         end
       end
+
       describe 'can scale levels down' do
         it 'not raise error' do
           expect(@levels[1].mark).to eq(1.0)
@@ -300,6 +304,7 @@ describe RubricCriterion do
           expect(@levels[1].mark).to eq(0.5)
         end
       end
+
       describe 'manually changed levels won\'t be affected' do
         it 'not raise error' do
           expect(@levels[1].mark).to eq(1.0)
@@ -328,6 +333,7 @@ describe RubricCriterion do
             expect(@marks[0].mark).to eq(0.5)
           end
         end
+
         describe 'updates multiple marks' do
           it 'not raise error' do
             @levels[1].update(mark: 0.5)
@@ -336,6 +342,7 @@ describe RubricCriterion do
           end
         end
       end
+      
       describe 'deleting level updates mark to nil' do
         describe 'updates a single mark' do
           it 'not raise error' do
@@ -343,6 +350,7 @@ describe RubricCriterion do
             expect(@marks[0].mark).to be_nil
           end
         end
+
         describe 'deleting level updates multiple marks to nil' do
           it 'not raise error' do
             @levels[1].destroy
