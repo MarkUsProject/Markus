@@ -315,10 +315,12 @@ describe RubricCriterion do
     context 'editing levels edits marks' do
       before(:each) do
         @marks = @criterion.marks
-        @result = create(:result, marking_state: Result::MARKING_STATES[:incomplete])
-        @marks.create(mark: 0, result: @result)
-        @marks.create(mark: 1, result: @result)
-        @marks.create(mark: 1, result: @result)
+        result1 = create(:result, marking_state: Result::MARKING_STATES[:incomplete])
+        result2 = create(:result, marking_state: Result::MARKING_STATES[:incomplete])
+        result3 = create(:result, marking_state: Result::MARKING_STATES[:incomplete])
+        @marks.create(mark: 0, result: result1)
+        @marks.create(mark: 1, result: result2)
+        @marks.create(mark: 1, result: result3)
       end
       describe 'updating level updates respective mark' do
         describe 'updates a single mark' do
