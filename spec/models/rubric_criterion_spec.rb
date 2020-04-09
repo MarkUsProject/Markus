@@ -326,6 +326,7 @@ describe RubricCriterion do
         describe 'updates a single mark' do
           it 'not raise error' do
             @levels[0].update(mark: 10.0)
+            @marks.reload
             expect(@marks[0].mark).to eq(10)
           end
         end

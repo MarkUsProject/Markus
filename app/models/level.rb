@@ -18,13 +18,15 @@ class Level < ApplicationRecord
 
   def update_associated_marks
     return unless self.changed.include?('mark')
-    marks = self.rubric_criterion.marks
-    before = self.changes['mark'][0]
-    after = self.changes['mark'][1]
-    marks.each do |mark|
-      if mark.mark == before
-        mark.update(mark: after)
-      end
-    end
+    # marks = self.rubric_criterion.marks
+    # before = self.changes['mark'][0]
+    # after = self.changes['mark'][1]
+    # marks.each do |mark|
+    #   if mark.mark == before
+    #     mark.update(mark: after)
+    #   end
+    # end
+    mark_changes = self.changes['mark']
+    self.rubric_criterion.marks.where(mark: mark_changes[0]).update(mark: mark_changes[1])
   end
 end
