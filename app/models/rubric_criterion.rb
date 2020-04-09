@@ -25,7 +25,7 @@ class RubricCriterion < Criterion
 
   has_many :test_groups, as: :criterion
 
-  validate :result_released?
+  validate :results_released?
   validate :visible?
 
   def self.symbol

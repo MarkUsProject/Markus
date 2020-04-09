@@ -329,10 +329,12 @@ describe RubricCriterion do
       context 'when a result is released' do
         before do
           @marks = @criterion.marks
-          @result = create(:complete_result, released_to_students: true)
-          @marks.create(mark: 0, result: @result)
-          @marks.create(mark: 1, result: @result)
-          @marks.create(mark: 1, result: @result)
+          result1 = create(:complete_result, released_to_students: true)
+          result2 = create(:complete_result, released_to_students: true)
+          result3 = create(:complete_result, released_to_students: true)
+          @marks.create(mark: 0, result: result1)
+          @marks.create(mark: 1, result: result2)
+          @marks.create(mark: 1, result: result3)
         end
         describe 'levels can\'t be updated' do
           it 'not raise error' do
