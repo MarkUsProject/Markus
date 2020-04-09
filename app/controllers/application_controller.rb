@@ -3,6 +3,7 @@
 class ApplicationController < ActionController::Base
   include ApplicationHelper, SessionHandler
   include UploadHelper
+  include DownloadHelper
 
   rescue_from ActionPolicy::Unauthorized, with: :user_not_authorized
 

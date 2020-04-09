@@ -107,7 +107,7 @@ services:
       - bundle:/bundle
       - node_modules:/app/node_modules
       - packs:/app/public/packs
-      - packs:/app/public/packs-test
+      - packs_test:/app/public/packs-test
       - tmp:/app/tmp
       - .:/app:cached
     environment:
@@ -122,6 +122,7 @@ volumes:
   bundle:
   node_modules:
   packs:
+  packs_test:
   log:
   tmp:
   ssh_pub_key:
