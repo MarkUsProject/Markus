@@ -267,7 +267,7 @@ class GroupsController < ApplicationController
     file_contents = file.retrieve_file
 
     filename = file.filename
-    send_data file_contents, filename: filename
+    send_data_download file_contents, filename: filename
   end
 
   def download_grouplist

@@ -489,9 +489,7 @@ class AssignmentsController < ApplicationController
         return
       end
 
-      send_data file_contents,
-                disposition: 'attachment',
-                filename: params[:file_name]
+      send_data_download file_contents, filename: params[:file_name]
     end
   end
 
