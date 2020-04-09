@@ -10,7 +10,7 @@ module DownloadHelper
   # plain text which avoids a ActionController::InvalidCrossOriginRequest, which is raised
   # whenever +send_file+ is asked to download a javascript file.
   def send_file_download(path, options = {})
-    send_file path, { **options, type: get_converted_mime_type(path), disposition: 'attachment' }
+    send_file path, **options, type: get_converted_mime_type(path), disposition: 'attachment'
   end
 
   # Wrapper around +send_data+ which converts the +type+ optional argument according
@@ -22,7 +22,7 @@ module DownloadHelper
   # whenever +send_file+ is asked to download a javascript file.
   def send_data_download(data, options = {})
     options = { **options, type: get_converted_mime_type(options[:filename]) } if options.key?(:filename)
-    send_data data, { **options, disposition: 'attachment' }
+    send_data data, **options, disposition: 'attachment'
   end
 
   private
