@@ -325,6 +325,7 @@ describe RubricCriterion do
         @marks.create(mark: 1, result: result2)
         @marks.create(mark: 1, result: result3)
       end
+
       describe 'updating level updates respective mark' do
         describe 'updates a single mark' do
           it 'not raise error' do
@@ -342,7 +343,7 @@ describe RubricCriterion do
           end
         end
       end
-      
+
       describe 'deleting level updates mark to nil' do
         describe 'updates a single mark' do
           it 'not raise error' do
