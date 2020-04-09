@@ -449,7 +449,7 @@ class ResultsController < ApplicationController
       send_data file_contents, type: 'image', disposition: 'inline',
         filename: filename
     else
-      send_data file_contents, filename: filename, disposition: 'attachment'
+      send_data_download file_contents, filename: filename
     end
   end
 

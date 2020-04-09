@@ -132,7 +132,7 @@ class AutomatedTestsController < ApplicationController
     assignment = Assignment.find(params[:assignment_id])
     file_path = File.join(assignment.autotest_files_dir, params[:file_name])
     if File.exist?(file_path)
-      send_file file_path, filename: params[:file_name]
+      send_file_download file_path, filename: params[:file_name]
     else
       render plain: t('student.submission.missing_file', file_name: params[:file_name])
     end
