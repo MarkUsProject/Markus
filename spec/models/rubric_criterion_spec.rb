@@ -326,7 +326,6 @@ describe RubricCriterion do
           expect(@levels[0].update(mark: 1)).to be false
         end
       end
-      
       context 'when a result is released' do
         before do
           @marks = @criterion.marks
