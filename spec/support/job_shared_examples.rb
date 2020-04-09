@@ -1,7 +1,4 @@
 shared_examples 'background job' do
-  include ActiveJob::TestHelper
-  ActiveJob::Base.queue_adapter = :test
-
   after :each do
     clear_enqueued_jobs
     clear_performed_jobs
