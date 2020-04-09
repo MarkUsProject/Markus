@@ -293,7 +293,6 @@ describe RubricCriterion do
           expect(@levels[1].mark).to eq(2.0)
         end
       end
-
       describe 'can scale levels down' do
         it 'not raise error' do
           expect(@levels[1].mark).to eq(1.0)
@@ -301,7 +300,6 @@ describe RubricCriterion do
           expect(@levels[1].mark).to eq(0.5)
         end
       end
-
       describe 'manually changed levels won\'t be affected' do
         it 'not raise error' do
           expect(@levels[1].mark).to eq(1.0)
@@ -325,16 +323,16 @@ describe RubricCriterion do
       describe 'updating level updates respective mark' do
         describe 'updates a single mark' do
           it 'not raise error' do
-            @levels[0].update(mark: 10.0)
+            @levels[0].update(mark: 0.5)
             @marks.reload
-            expect(@marks[0].mark).to eq(10)
+            expect(@marks[0].mark).to eq(0.5)
           end
         end
         describe 'updates multiple marks' do
           it 'not raise error' do
-            @levels[1].update(mark: 10.0)
-            expect(@marks[1].mark).to eq(10)
-            expect(@marks[2].mark).to eq(10)
+            @levels[1].update(mark: 0.5)
+            expect(@marks[1].mark).to eq(0.5)
+            expect(@marks[2].mark).to eq(0.5)
           end
         end
       end

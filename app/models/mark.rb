@@ -10,7 +10,8 @@ class Mark < ApplicationRecord
 
   validates_numericality_of :mark,
                             allow_nil: true,
-                            greater_than_or_equal_to: 0
+                            greater_than_or_equal_to: 0,
+                            less_than_or_equal_to: ->(m) { m.markable.max_mark }
 
   belongs_to :markable, polymorphic: true
 
