@@ -2,14 +2,14 @@
   <% grouping = @current_user.accepted_grouping_for(assignment.id) %>
   <% due_date = grouping&.due_date %>
   <% if grouping.nil? %>
-    <%= I18n.l(assignment.due_date) %>
-    <% due_date = assignment.section_due_date(@section) %>
+    <%= l(assignment.due_date) %>
+    <% due_date = assignment.section_due_date(@current_user.section) %>
   <% elsif grouping.extension.nil? %>
-    <%= I18n.l(due_date) %>
+    <%= l(due_date) %>
   <% else %>
     <%= I18n.t('assignments.deadline_with_extension',
-               deadline: I18n.l(assignment.section_due_date(@section)),
-               extension_deadline: I18n.l(due_date)) %>
+               deadline: I18n.l(assignment.section_due_date(@current_user.section)),
+               extension_deadline: l(due_date)) %>
   <% end %>
   <% if due_date > Time.zone.now %>
     <p class='time_left'>

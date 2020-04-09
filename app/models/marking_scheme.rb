@@ -6,23 +6,16 @@ class MarkingScheme < ApplicationRecord
   default_scope { order('id ASC') }
 
   # Returns an array of all students' weighted grades that are not nil
-  def students_weighted_grades_array
+  def students_weighted_grades_array(current_user)
     return @grades_array unless @grades_array.nil?
 
-    course_information
-    all_students = Student.includes(:memberships,
-                                    groupings: { current_submission_used: [:submitted_remark, :non_pr_results] },
-                                    grade_entry_students: :grades)
-    student_list = all_students.all.map do |student|
-      get_student_information(student)
-    end
-
-    @grades_array = student_list.map { |s| s[:weighted_marks][self.id] }  # Note: this also returns the assigned value
+    all_grades = get_table_json_data(current_user)
+    @grades_array = all_grades.map { |s| s[:weighted_marks][self.id] } # Note: this also returns the assigned value
   end
 
   # Returns a weighted grade distribution for all students' total weighted grades
-  def students_weighted_grade_distribution_array(intervals = 20)
-    data = students_weighted_grades_array
+  def students_weighted_grade_distribution_array(current_user, intervals = 20)
+    data = students_weighted_grades_array(current_user)
     data.extend(Histogram)
     histogram = data.histogram(intervals, min: 1, max: 100, bin_boundary: :min, bin_width: 100 / intervals)
     distribution = histogram.fetch(1)

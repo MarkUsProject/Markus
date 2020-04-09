@@ -1,25 +1,21 @@
 cr90:
-  max_mark: 4.55
+  max_mark: 4.6
   type: Rubric
-  level_0:
-    name: 0
-    desription:
-    mark: 0
-  level_1:
-    name: 1
-    description:
-    mark:1
-  level_2:
-    name: 2
-    description: A-
-    mark:3
-  level_3:
-    name: 3
-    description: A
-    mark:4
-  level_4:
-    name: 4
-    description: A+
-    mark:4.6
+  levels:
+    level_0:
+      description: B-
+      mark: 0
+    level_1:
+      description: B
+      mark: 1
+    level_2:
+      description: A-
+      mark: 3
+    level_3:
+      description: A
+      mark: 4
+    level_4:
+      description: A+
+      mark: 4.6
   ta_visible: true
   peer_visible: false

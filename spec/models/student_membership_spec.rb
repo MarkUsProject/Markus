@@ -1,6 +1,6 @@
 shared_examples 'vcs_submit=false' do |class_type|
   context 'when vcs_submit is false' do
-    let!(:assignment) { create :assignment, vcs_submit: false }
+    let!(:assignment) { create :assignment, assignment_properties_attributes: { vcs_submit: false } }
     let!(:grouping) { create :grouping, assignment: assignment }
     let(:membership) { create class_type, grouping: grouping }
     it 'should not update permission file when created' do
@@ -30,7 +30,7 @@ end
 
 shared_examples 'vcs_submit=true' do |class_type, update_hash|
 
-  let!(:assignment) { create :assignment, vcs_submit: true }
+  let!(:assignment) { create :assignment, assignment_properties_attributes: { vcs_submit: true } }
   let!(:grouping) { create :grouping, assignment: assignment }
   let(:membership) { create class_type, grouping: grouping }
 

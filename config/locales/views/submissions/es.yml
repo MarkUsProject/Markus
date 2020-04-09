@@ -62,6 +62,9 @@ es:
                   que le han sido asignadas no han sido recolectadas todavía, usted puede dar click en
                   el nombre del grupo para recolectarlas. <strong>Precaución</strong>: La recolección
                   eliminará cualquier anotación o nota previa."
+    download_zipped_file:
+      file_missing: "%{zip_file} UPDATE ME"
+
     repo_browser:
       client_time: "commit:"
       collected: "recolectada"

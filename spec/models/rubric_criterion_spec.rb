@@ -46,63 +46,6 @@ describe RubricCriterion do
     end
   end
 
-  context 'A rubric criterion assigning a TA' do
-    before(:each) do
-      @criterion = create(:rubric_criterion)
-      @ta = create(:ta)
-    end
-
-    it 'not assign the same TA multiple times' do
-      expect(@criterion.criterion_ta_associations.count).to eq(0), 'Got unexpected TA membership count'
-      @criterion.add_tas(@ta)
-      @ta.reload
-      @criterion.add_tas(@ta)
-      expect(@criterion.criterion_ta_associations.count).to eq(1), 'Got unexpected TA membership count'
-    end
-
-    it 'unassign a TA by id' do
-      expect(@criterion.criterion_ta_associations.count).to eq(0), 'Got unexpected TA membership count'
-      @criterion.add_tas(@ta)
-      expect(@criterion.criterion_ta_associations.count).to eq(1), 'Got unexpected TA membership count'
-      @ta.reload
-      @criterion.remove_tas(@ta)
-      expect(@criterion.criterion_ta_associations.count).to eq(0), 'Got unexpected TA membership count'
-    end
-
-    it 'assign multiple TAs' do
-      ta1 = create(:ta)
-      ta2 = create(:ta)
-      ta3 = create(:ta)
-      expect(@criterion.criterion_ta_associations.count).to eq(0), 'Got unexpected TA membership count'
-      @criterion.add_tas([ta1, ta2, ta3])
-      expect(@criterion.criterion_ta_associations.count).to eq(3), 'Got unexpected TA membership count'
-    end
-
-    it 'remove multiple TAs' do
-      ta1 = create(:ta)
-      ta2 = create(:ta)
-      ta3 = create(:ta)
-      expect(@criterion.criterion_ta_associations.count).to eq(0)
-      @criterion.add_tas([ta1, ta2, ta3])
-      expect(@criterion.criterion_ta_associations.count).to eq(3)
-      ta1.reload
-      ta2.reload
-      ta3.reload
-      @criterion.remove_tas([ta1, ta3])
-      expect(@criterion.criterion_ta_associations.count).to eq(1)
-      @criterion.reload
-      expect(ta2.id).to be == @criterion.tas[0].id
-    end
-
-    it 'get the names of TAs assigned to it' do
-      ta1 = create(:ta)
-      ta2 = create(:ta)
-      @criterion.add_tas(ta1)
-      @criterion.add_tas(ta2)
-      expect(@criterion.get_ta_names).to contain_exactly(ta1.user_name, ta2.user_name)
-    end
-  end
-
   context 'from an assignment without criteria' do
     before(:each) do
       @assignment = create(:assignment)
@@ -296,7 +239,6 @@ describe RubricCriterion do
           expect(@levels[1].mark).to eq(2.0)
         end
       end
-
       describe 'can scale levels down' do
         it 'not raise error' do
           expect(@levels[1].mark).to eq(1.0)
@@ -304,7 +246,6 @@ describe RubricCriterion do
           expect(@levels[1].mark).to eq(0.5)
         end
       end
-
       describe 'manually changed levels won\'t be affected' do
         it 'not raise error' do
           expect(@levels[1].mark).to eq(1.0)
@@ -362,7 +303,18 @@ describe RubricCriterion do
       end
     end
 
-    context 'validations work correctly' do
+    context 'validations work properly' do
+      describe 'validates max mark can\' be greater than maximum level mark' do
+        it 'raises an error' do
+          expect(@levels.last.mark).to eq(4.0)
+          expect(@criterion.max_mark).to eq(4.0)
+          @criterion.update(max_mark: 5.0)
+          @criterion.levels.last.update(mark: 3.5)
+          @criterion.save
+          expect(@criterion.errors[:max_mark].size).to eq(1)
+        end
+      end
+
       describe 'cannot have two levels with the same mark' do
         it 'not raise error' do
           expect(@levels[0].update(mark: 1)).to be false

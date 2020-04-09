@@ -4,61 +4,62 @@ describe NotesController do
   context 'An authenticated and authorized student doing a ' do
     before :each do
       @student = create(:student)
+      @note = create(:note)
     end
 
     it 'get on notes_dialog' do
-      get_as @student, :notes_dialog, params: { id: 1 }
-      expect(response.status).to eq 404
+      get_as @student, :notes_dialog, params: { id: @note.id }
+      expect(response.status).to eq 403
     end
 
     it ' on notes_dialog' do
-      post_as @student, :notes_dialog, params: { id: 1 }
-      expect(response.status).to eq 404
+      post_as @student, :notes_dialog, params: { id: @note.id }
+      expect(response.status).to eq 403
     end
 
     it 'GET on :add_note' do
       get_as @student, :add_note
-      expect(response.status).to eq 404
+      expect(response.status).to eq 403
     end
 
     it 'POST on :add_note' do
       post_as @student, :add_note
-      expect(response.status).to eq 404
+      expect(response.status).to eq 403
     end
 
     it 'GET on :index' do
       get_as @student, :index
-      expect(response.status).to eq 404
+      expect(response.status).to eq 403
     end
 
     it 'GET on :new' do
       get_as @student, :new
-      expect(response.status).to eq 404
+      expect(response.status).to eq 403
     end
 
     it 'POST on :create' do
       post_as @student, :create
-      expect(response.status).to eq 404
+      expect(response.status).to eq 403
     end
 
     it 'GET on :new_update_groupings' do
       get_as @student, :new_update_groupings
-      expect(response.status).to eq 404
+      expect(response.status).to eq 403
     end
 
     it 'GET on :edit' do
-      get_as @student, :edit, params: { id: 1 }
-      expect(response.status).to eq 404
+      get_as @student, :edit, params: { id: @note.id }
+      expect(response.status).to eq 403
     end
 
     it 'POST on :update' do
-      put_as @student, :update, params: { id: 1 }
-      expect(response.status).to eq 404
+      put_as @student, :update, params: { id: @note.id }
+      expect(response.status).to eq 403
     end
 
     it 'DELETE on :destroy' do
-      delete_as @student, :destroy, params: { id: 1 }
-      expect(response.status).to eq 404
+      delete_as @student, :destroy, params: { id: @note.id }
+      expect(response.status).to eq 403
     end
   end # student context
 
@@ -75,7 +76,7 @@ describe NotesController do
     it 'be able to get :notes_dialog' do
       get_as @ta,
              :notes_dialog,
-             params: { id: @assignment.id, noteable_type: 'Grouping', noteable_id: @grouping.id,
+             params: { assignment_id: @assignment.id, noteable_type: 'Grouping', noteable_id: @grouping.id,
                        controller_to: @controller_to, action_to: @action_to }
       expect(response.status).to eq 200
     end
@@ -159,7 +160,7 @@ describe NotesController do
     end
 
     it 'be able to update new groupings' do
-      get_as @ta, :new_update_groupings, params: { assignment_id: @assignment.id }
+      get_as @ta, :new_update_groupings, params: { assessment_id: @assignment.id }
       expect(response.status).to eq 200
       expect(response).to render_template('notes/new_update_groupings')
     end
@@ -199,7 +200,7 @@ describe NotesController do
       it 'for a note belonging to someone else (get as TA)' do
         @note = create(:note)
         get_as @ta, :edit, params: { id: @note.id }
-        expect(response.status).to eq 404
+        expect(response.status).to eq 403
       end
     end
 
@@ -233,7 +234,7 @@ describe NotesController do
         post_as @ta,
                 :update,
                 params: { id: @note.id, note: { notes_message: @new_message } }
-        expect(response.status).to eq 404
+        expect(response.status).to eq 403
       end
     end
 
@@ -249,7 +250,7 @@ describe NotesController do
         @note = create(:note)
         delete_as @ta, :destroy, params: { id: @note.id }
         expect(assigns :note).not_to be_nil
-        i18t_string = [I18n.t('notes.delete.error_permissions')].map { |f| extract_text f }
+        i18t_string = [I18n.t('action_policy.policy.note.modify?')].map { |f| extract_text f }
         expect(flash[:error].map { |f| extract_text f }).to eq(i18t_string)
       end
     end
@@ -314,7 +315,7 @@ describe NotesController do
       it 'GET on :notes_dialog' do
         get_as @admin,
                :notes_dialog,
-               params: { id: @assignment.id, noteable_type: 'Grouping', noteable_id: @grouping.id,
+               params: { assignment_id: @assignment.id, noteable_type: 'Grouping', noteable_id: @grouping.id,
                          controller_to: @controller_to, action_to: @action_to }
         expect(response.status).to eq 200
       end
@@ -382,7 +383,7 @@ describe NotesController do
       end
 
       it 'GET on :new_update_groupings' do
-        get_as @admin, :new_update_groupings, params: { assignment_id: @assignment.id }
+        get_as @admin, :new_update_groupings, params: { assessment_id: @assignment.id }
         expect(response.status).to eq 200
         expect(response).to render_template('notes/new_update_groupings')
       end

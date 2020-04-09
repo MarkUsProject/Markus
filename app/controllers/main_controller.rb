@@ -106,7 +106,7 @@ class MainController < ApplicationController
 
   # Clear the sesssion for current user and redirect to login page
   def logout
-    logout_redirect = MarkusConfigurator.markus_config_logout_redirect
+    logout_redirect = Rails.configuration.logout_redirect
     if logout_redirect == 'NONE'
       page_not_found
       return
@@ -321,7 +321,7 @@ private
       # not a good idea to report this to the outside world. It makes it
       # easier for attempted break-ins
       # if one can distinguish between existent and non-existent users.
-      error_message = MarkusConfigurator.markus_config_validate_user_message || I18n.t('main.login_failed')
+      error_message = Rails.configuration.validate_user_not_allowed_message || I18n.t('main.login_failed')
       return false, error_message
     end
 
@@ -374,9 +374,9 @@ private
         return validation_result
       end
 
-      if (defined? VALIDATE_CUSTOM_STATUS_DISPLAY) &&
-        authenticate_response == User::AUTHENTICATE_CUSTOM_MESSAGE
-        validation_result[:error] = VALIDATE_CUSTOM_STATUS_DISPLAY
+      if !Rails.configuration.validate_custom_status_message.nil? &&
+          authenticate_response == User::AUTHENTICATE_CUSTOM_MESSAGE
+        validation_result[:error] = Rails.configuration.validate_custom_status_message
         return validation_result
       end
     end
@@ -394,12 +394,12 @@ private
         # not a good idea to report this to the outside world. It makes it
         # easier for attempted break-ins
         # if one can distinguish between existent and non-existent users.
-        validation_result[:error] = MarkusConfigurator.markus_config_validate_user_message ||
+        validation_result[:error] = Rails.configuration.validate_user_not_allowed_message ||
                                     I18n.t('main.login_failed')
         return validation_result
       end
     else
-      validation_result[:error] = MarkusConfigurator.markus_config_validate_login_message || I18n.t('main.login_failed')
+      validation_result[:error] = Rails.configuration.incorrect_login_message || I18n.t('main.login_failed')
       return validation_result
     end
 

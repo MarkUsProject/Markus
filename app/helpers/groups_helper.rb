@@ -97,7 +97,7 @@ module GroupsHelper
     group_name, _, *memberships = data.shift
     valid_statuses = [StudentMembership::STATUSES[:accepted], StudentMembership::STATUSES[:inviter]]
     query_update = Group.joins(groupings: [student_memberships: :user])
-                        .where('groupings.assignment_id': assignment_id)
+                        .where('groupings.assessment_id': assignment_id)
                         .where('memberships.membership_status': valid_statuses)
                         .where('users.user_name': memberships)
                         .where.not(group_name: group_name)

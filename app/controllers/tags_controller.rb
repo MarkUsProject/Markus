@@ -1,6 +1,4 @@
 class TagsController < ApplicationController
-  include TagsHelper
-
   before_action :authorize_only_for_admin
   responders :flash
 
@@ -20,7 +18,7 @@ class TagsController < ApplicationController
             name: tag.name,
             description: tag.description,
             creator: "#{tag.user.first_name} #{tag.user.last_name}",
-            use: get_num_groupings_for_tag(tag)
+            use: tag.groupings.size
           }
         end
 
@@ -36,29 +34,22 @@ class TagsController < ApplicationController
 
   # Creates a new instance of the tag.
   def create
-    new_tag = Tag.new(
-      name: params[:create_new][:name],
-      description: params[:create_new][:description],
-      user: @current_user)
+    tag_params = params.require(:tag).permit(:name, :description)
+    new_tag = Tag.new(tag_params.merge(user: @current_user))
 
     if new_tag.save
       if params[:grouping_id]
-        create_grouping_tag_association(params[:grouping_id], new_tag)
+        grouping = Grouping.find(params[:grouping_id])
+        grouping.tags << new_tag
       end
     end
 
     respond_with new_tag, location: -> { request.headers['Referer'] || root_path }
   end
 
-  def get_all_tags
-    Tag.all
-  end
-
   def update
     tag = Tag.find(params[:id])
-    tag.name = params[:update_tag][:name]
-    tag.description = params[:update_tag][:description]
-    tag.save
+    tag.update(params.require(:tag).permit(:name, :description))
 
     respond_with tag, location: -> { request.headers['Referer'] || root_path }
   end

@@ -16,7 +16,7 @@
             {
               label: "Weighted Total Grades <%= marking_scheme.id %>",
               backgroundColor: colours[<%= index %>],
-              data: <%= marking_scheme.students_weighted_grade_distribution_array(20) %>
+              data: <%= marking_scheme.students_weighted_grade_distribution_array(@current_user) %>
             }
           <% end %>
         ]
@@ -52,7 +52,7 @@
   <div class='course_summary'>
     <%= render partial: 'course_summaries/course_summary_info_summary',
                locals: { marking_scheme: marking_scheme,
-                         grades: marking_scheme.students_weighted_grades_array } %>
+                         grades: marking_scheme.students_weighted_grades_array(@current_user) } %>
   </div>
   <% end %>
 <% end %>

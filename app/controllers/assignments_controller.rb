@@ -1,15 +1,10 @@
-require 'base64'
-
-
 class AssignmentsController < ApplicationController
   include RepositoryHelper
   responders :flash
 
   before_action      :authorize_only_for_admin,
                      except: [:index,
-                              :student_interface,
-                              :update_collected_submissions,
-                              :render_feedback_file,
+                              :show,
                               :peer_review,
                               :summary,
                               :switch_assignment]
@@ -18,37 +13,15 @@ class AssignmentsController < ApplicationController
                      only: [:summary]
 
   before_action      :authorize_for_student,
-                     only: [:student_interface,
+                     only: [:show,
                             :peer_review]
 
   before_action      :authorize_for_user,
-                     only: [:index, :render_feedback_file, :switch_assignment]
+                     only: [:index, :switch_assignment]
 
   # Publicly accessible actions ---------------------------------------
 
-  def render_feedback_file
-    @feedback_file = FeedbackFile.find(params[:feedback_file_id])
-
-    # Students can use this action only, when marks have been released
-    if current_user.student? &&
-        (@feedback_file.submission.grouping.membership_status(current_user).nil? ||
-         !@feedback_file.submission.get_latest_result.released_to_students)
-      flash_message(:error, t('feedback_file.error.no_access',
-                              feedback_file_id: @feedback_file.id))
-      head :forbidden
-      return
-    end
-
-    if @feedback_file.mime_type.start_with? 'image'
-      content = Base64.encode64(@feedback_file.file_content)
-    else
-      content = @feedback_file.file_content
-    end
-
-    render plain: content
-  end
-
-  def student_interface
+  def show
     assignment = Assignment.find(params[:id])
     @assignment = assignment.is_peer_review? ? assignment.parent_assignment : assignment
     if @assignment.is_hidden
@@ -63,39 +36,23 @@ class AssignmentsController < ApplicationController
       return
     end
 
-    @student = current_user
-    @grouping = @student.accepted_grouping_for(@assignment.id)
+    @grouping = current_user.accepted_grouping_for(@assignment.id)
 
     if @grouping.nil?
       if @assignment.scanned_exam
         flash_now(:notice, t('assignments.scanned_exam.under_review'))
       elsif @assignment.group_max == 1
         begin
-          @student.create_group_for_working_alone_student(@assignment.id)
+          current_user.create_group_for_working_alone_student(@assignment.id)
         rescue StandardError => e
           flash_message(:error, e.message)
           redirect_to controller: :assignments
         end
-        @grouping = @student.accepted_grouping_for(@assignment.id)
+        @grouping = @current_user.accepted_grouping_for(@assignment.id)
       end
-    else
-      # We look for the information on this group...
-      # The members
-      @studentmemberships = @grouping.student_memberships
-      # The group name
-      @group = @grouping.group
-      # The inviter
-      @inviter = @grouping.inviter
-
-      # Look up submission information
-      set_repo_vars(@assignment, @grouping)
     end
-
-    @penalty = SubmissionRule.find_by_assignment_id(@assignment.id)
-    @enum_penalty = Period.where(submission_rule_id: @penalty.id).sort
-    @due_date = @student.due_date_for_assignment(@assignment)
-    if @student.has_pending_groupings_for?(@assignment.id)
-      @pending_grouping = @student.pending_groupings_for(@assignment.id)
+    unless @grouping.nil?
+      set_repo_vars(@assignment, @grouping)
     end
   end
 
@@ -115,11 +72,8 @@ class AssignmentsController < ApplicationController
     end
 
     @student = current_user
-    @grouping = @student.accepted_grouping_for(@assignment.id)
-    @penalty = @assignment.submission_rule
-    @enum_penalty = Period.where(submission_rule_id: @penalty.id).sort
-    @due_date = @student.due_date_for_assignment(@assignment)
-    @prs = @student.grouping_for(@assignment.parent_assignment.id)&.
+    @grouping = current_user.accepted_grouping_for(@assignment.id)
+    @prs = current_user.grouping_for(@assignment.parent_assignment.id)&.
         peer_reviews&.where(results: { released_to_students: true })
     if @prs.nil?
       @prs = []
@@ -132,8 +86,7 @@ class AssignmentsController < ApplicationController
         section_due_dates = Hash.new
         now = Time.zone.now
         Section.all.each do |section|
-          collection_time = @assignment.submission_rule
-                                .calculate_collection_time(section)
+          collection_time = @assignment.submission_rule.calculate_collection_time(section)
           collection_time = now if now >= collection_time
           if section_due_dates[collection_time].nil?
             section_due_dates[collection_time] = Array.new
@@ -142,7 +95,7 @@ class AssignmentsController < ApplicationController
         end
         section_due_dates.each do |collection_time, sections|
           sections = sections.join(', ')
-          if(collection_time == now)
+          if collection_time == now
             flash_now(:notice, t('submissions.grading_can_begin_for_sections',
                                  sections: sections))
           else
@@ -159,17 +112,11 @@ class AssignmentsController < ApplicationController
     end
   end
 
-  # Displays "Manage Assignments" page for creating and editing
-  # assignment information
+  # Displays "Manage Assignments" page for creating and editing assignment information.
+  # Acts as dashboard for students and TAs.
   def index
     if current_user.student?
-      @grade_entry_forms = GradeEntryForm.where(is_hidden: false).order(:id)
-      @assignments = Assignment.where(is_hidden: false).order(:id)
-      @marking_schemes = MarkingScheme.none
-      #get the section of current user
-      @section = current_user.section
-      # get results for assignments for the current user
-      @a_id_results = Hash.new()
+      @a_id_results = {}
       accepted_groupings = current_user.accepted_groupings.includes(:assignment, { current_submission_used: :results })
       accepted_groupings.each do |grouping|
         if !grouping.assignment.is_hidden && grouping.has_submission?
@@ -182,28 +129,16 @@ class AssignmentsController < ApplicationController
         end
       end
 
-      # Get the grades for grade entry forms for the current user
-      @g_id_entries = Hash.new()
-      @grade_entry_forms.each do |g|
-        grade_entry_student = g.grade_entry_students.find_by_user_id(
-                                    current_user.id )
-        if !grade_entry_student.nil? &&
-             grade_entry_student.released_to_student
-          @g_id_entries[g.id] = grade_entry_student
+      @g_id_entries = {}
+      current_user.grade_entry_students.where(released_to_student: true).includes(:grade_entry_form).each do |g|
+        unless g.grade_entry_form.is_hidden
+          @g_id_entries[g.assessment_id] = g
         end
       end
 
       render :student_assignment_list, layout: 'assignment_content'
-    elsif current_user.ta?
-      @grade_entry_forms = GradeEntryForm.order(:id)
-      @assignments = Assignment.includes(:submission_rule).order(:id)
-      render :grader_index, layout: 'assignment_content'
-      @marking_schemes = MarkingScheme.all
     else
-      @grade_entry_forms = GradeEntryForm.order(:id)
-      @assignments = Assignment.includes(:submission_rule).order(:id)
       render :index, layout: 'assignment_content'
-      @marking_schemes = MarkingScheme.all
     end
   end
 
@@ -224,7 +159,7 @@ class AssignmentsController < ApplicationController
 
     # build section_due_dates for each section that doesn't already have a due date
     Section.all.each do |s|
-      unless SectionDueDate.find_by_assignment_id_and_section_id(@assignment.id, s.id)
+      unless SectionDueDate.find_by(assessment_id: @assignment.id, section_id: s.id)
         @assignment.section_due_dates.build(section: s)
       end
     end
@@ -244,7 +179,7 @@ class AssignmentsController < ApplicationController
         @assignment, new_required_files = process_assignment_form(@assignment)
         @assignment.save!
       end
-      if new_required_files && !MarkusConfigurator.markus_config_repository_hooks.empty?
+      if new_required_files && !Rails.configuration.x.repository.hooks.empty?
         # update list of required files in all repos only if there is a hook that will use that list
         @current_job = UpdateRepoRequiredFilesJob.perform_later(@assignment.id, current_user.user_name)
         session[:job_id] = @current_job.job_id
@@ -259,10 +194,12 @@ class AssignmentsController < ApplicationController
   def new
     @assignments = Assignment.all
     @assignment = Assignment.new
+    @assignment.assignment_properties = AssignmentProperties.new
     if params[:scanned].present?
       @assignment.scanned_exam = true
     end
-    @clone_assignments = Assignment.where(vcs_submit: true)
+    @clone_assignments = Assignment.joins(:assignment_properties)
+                                   .where(assignment_properties: { vcs_submit: true })
                                    .order(:id)
     @sections = Section.all
     @assignment.build_submission_rule
@@ -274,8 +211,7 @@ class AssignmentsController < ApplicationController
                                     .sort_by { |s| s.section.name }
 
     # set default value if web submits are allowed
-    @assignment.allow_web_submits =
-        !MarkusConfigurator.markus_config_repository_external_submits_only?
+    @assignment.allow_web_submits = !Rails.configuration.x.repository.external_submits_only
     render :new
   end
 
@@ -296,7 +232,8 @@ class AssignmentsController < ApplicationController
       unless @assignment.save
         @assignments = Assignment.all
         @sections = Section.all
-        @clone_assignments = Assignment.where(vcs_submit: true)
+        @clone_assignments = Assignment.joins(:assignment_properties)
+                                       .where(assignment_properties: { vcs_submit: true })
                                        .order(:id)
         respond_with @assignment, location: -> { new_assignment_path(@assignment) }
         return
@@ -307,7 +244,7 @@ class AssignmentsController < ApplicationController
           clone_warnings.each { |w| flash_message(:warning, w) }
         end
       end
-      if new_required_files && !MarkusConfigurator.markus_config_repository_hooks.empty?
+      if new_required_files && !Rails.configuration.x.repository.hooks.empty?
         # update list of required files in all repos only if there is a hook that will use that list
         @current_job = UpdateRepoRequiredFilesJob.perform_later(@assignment.id, current_user.user_name)
         session[:job_id] = @current_job.job_id
@@ -319,12 +256,16 @@ class AssignmentsController < ApplicationController
   def summary
     @assignment = Assignment.find(params[:id])
     respond_to do |format|
-      format.html {
-        render layout: 'assignment_content'
-      }
-      format.json {
-        render json: @assignment.summary_json(@current_user)
-      }
+      format.html { render layout: 'assignment_content' }
+      format.json { render json: @assignment.summary_json(@current_user) }
+      format.csv do
+        data = @assignment.summary_csv(@current_user)
+        filename = "#{@assignment.short_identifier}_summary.csv"
+        send_data data,
+                  disposition: 'attachment',
+                  type: 'text/csv',
+                  filename: filename
+      end
     end
   end
 
@@ -351,7 +292,7 @@ class AssignmentsController < ApplicationController
         user_ids = current_user.admin? ? Admin.pluck(:id) : current_user.id
         test_runs = TestRun.left_outer_joins(:test_batch, grouping: [:group, :current_result])
                            .where(test_runs: {user_id: user_ids},
-                                  'groupings.assignment_id': @assignment.id)
+                                  'groupings.assessment_id': @assignment.id)
                            .pluck_to_hash(:id,
                                           :test_batch_id,
                                           :time_to_service,
@@ -376,22 +317,6 @@ class AssignmentsController < ApplicationController
         render json: test_runs
       end
     end
-  end
-
-  def csv_summary
-    assignment = Assignment.find(params[:id])
-    data = assignment.summary_csv(@current_user)
-    filename = "#{assignment.short_identifier}_summary.csv"
-    send_data data,
-              disposition: 'attachment',
-              type: 'text/csv',
-              filename: filename
-  end
-
-  # Methods for the student interface
-
-  def update_collected_submissions
-    @assignments = Assignment.all
   end
 
   # Refreshes the grade distribution graph
@@ -464,7 +389,7 @@ class AssignmentsController < ApplicationController
   end
 
   def upload_starter_code
-    unless MarkusConfigurator.markus_starter_code_on
+    unless Rails.configuration.starter_code_on
       raise t('student.submission.external_submit_only') #TODO: Update this
     end
 
@@ -576,9 +501,22 @@ class AssignmentsController < ApplicationController
       redirect_to edit_assignment_path(params[:id])
     elsif current_user.ta?
       redirect_to summary_assignment_path(params[:id])
-    else # curret_user.student?
-      redirect_to student_interface_assignment_path
+    else # current_user.student?
+      redirect_to assignment_path(params[:id])
     end
+  end
+
+  def set_boolean_graders_options
+    assignment = Assignment.find(params[:id])
+    attributes = graders_options_params
+    return head 400 if attributes.empty? || attributes[:assignment_properties_attributes].empty?
+
+    unless assignment.update(attributes)
+      flash_now(:error, assignment.errors.full_messages.join(' '))
+      head 422
+      return
+    end
+    head :ok
   end
 
   private
@@ -654,15 +592,16 @@ class AssignmentsController < ApplicationController
 
   def process_assignment_form(assignment)
     num_files_before = assignment.assignment_files.length
+    short_identifier = assignment_params[:short_identifier]
     assignment.assign_attributes(assignment_params)
-    assignment.repository_folder = assignment_params[:short_identifier] unless assignment.is_peer_review?
+    assignment.repository_folder = short_identifier unless assignment.is_peer_review?
     assignment.save!
     new_required_files = assignment.saved_change_to_only_required_files? ||
                          assignment.saved_change_to_is_hidden? ||
                          assignment.assignment_files.any?(&:saved_changes?) ||
                          num_files_before != assignment.assignment_files.length
     # if there are no section due dates, destroy the objects that were created
-    if ['0', nil].include? params[:assignment][:section_due_dates_type]
+    if ['0', nil].include? params[:assignment][:assignment_properties_attributes][:section_due_dates_type]
       assignment.section_due_dates.each(&:destroy)
       assignment.section_due_dates_type = false
       assignment.section_groups_only = false
@@ -673,7 +612,7 @@ class AssignmentsController < ApplicationController
 
     if params[:is_group_assignment] == 'true'
       # Is the instructor forming groups?
-      if assignment_params[:student_form_groups] == '0'
+      if assignment_params[:assignment_properties_attributes][:student_form_groups] == '0'
         assignment.invalid_override = true
         # Increase group_max so that create_all_groups button is not displayed
         # in the groups view.
@@ -771,17 +710,28 @@ class AssignmentsController < ApplicationController
     return assignment, new_required_files
   end
 
+  def graders_options_params
+    params.require(:attribute)
+          .permit(assignment_properties_attributes: [
+                    :assign_graders_to_criteria,
+                    :anonymize_groups,
+                    :hide_unassigned_criteria
+                  ])
+  end
+
   def assignment_params
     params.require(:assignment).permit(
-        :short_identifier,
-        :description,
-        :message,
-        :due_date,
+      :short_identifier,
+      :description,
+      :message,
+      :due_date,
+      :is_hidden,
+      assignment_properties_attributes: [
+        :id,
         :allow_web_submits,
         :vcs_submit,
         :display_median_to_students,
         :display_grader_names_to_students,
-        :is_hidden,
         :group_min,
         :group_max,
         :student_form_groups,
@@ -798,14 +748,32 @@ class AssignmentsController < ApplicationController
         :invalid_override,
         :section_groups_only,
         :only_required_files,
-        :scanned_exam,
-        section_due_dates_attributes: [:_destroy,
-                                       :id,
-                                       :section_id,
-                                       :due_date],
-        assignment_files_attributes:  [:_destroy,
-                                       :id,
-                                       :filename]
+        :section_due_dates_type,
+        :scanned_exam
+      ],
+      section_due_dates_attributes: [
+        :_destroy,
+        :id,
+        :section_id,
+        :due_date
+      ],
+      assignment_files_attributes:  [
+        :_destroy,
+        :id,
+        :filename
+      ],
+      submission_rule_attributes: [
+        :_destroy,
+        :id,
+        :type,
+        { periods_attributes: [
+          :id,
+          :deduction,
+          :interval,
+          :hours,
+          :_destroy
+        ] }
+      ]
     )
   end
 

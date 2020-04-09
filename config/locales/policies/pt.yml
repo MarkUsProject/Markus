@@ -21,5 +21,6 @@ pt:
         tokens_available?: "Nenhum token foi encontrado para esse estudante e para esse projeto."
       submission:
         before_release?: "UPDATE ME."
+        get_feedback_file?: "Não há accesso para resultado do teste."
         not_a_student?: "UPDATE ME."
         manage_subdirectories?: "UPDATE ME."

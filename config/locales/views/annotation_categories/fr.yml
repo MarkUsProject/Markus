@@ -2,7 +2,7 @@ fr:
   annotation_categories:
     create:
       success: "La catégorie d'annotations a bien été créée ou mise à jour."
-    delete_annotation_text:
+    destroy_annotation_text:
       confirm: "Supprimer cette annotation va supprimer les commentaires attachés à tous les fichiers auquels elle pourrait être rattachée. Êtes-vous sûr de vouloir faire cela ?"
       success: "Supprimer la catégorie d'annotations"
     destroy:

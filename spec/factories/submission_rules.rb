@@ -10,4 +10,6 @@ FactoryBot.define do
   factory :grace_period_submission_rule, parent: :submission_rule, class: GracePeriodSubmissionRule do
   end
 
+  factory :penalty_decay_period_submission_rule, parent: :submission_rule, class: PenaltyDecayPeriodSubmissionRule do
+  end
 end

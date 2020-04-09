@@ -10,8 +10,7 @@ describe AnnotationCategory do
     it { is_expected.to belong_to(:assignment) }
 
     it do
-      is_expected.to validate_uniqueness_of(:annotation_category_name)
-                          .scoped_to(:assignment_id)
+      is_expected.to validate_uniqueness_of(:annotation_category_name).scoped_to(:assessment_id)
     end
   end
 

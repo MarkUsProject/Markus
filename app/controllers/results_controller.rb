@@ -1,5 +1,4 @@
 class ResultsController < ApplicationController
-  include TagsHelper
   before_action :authorize_only_for_admin,
                 except: [:show, :edit, :update_mark, :view_marks,
                          :create, :add_extra_mark, :next_grouping,
@@ -8,11 +7,13 @@ class ResultsController < ApplicationController
                          :toggle_marking_state,
                          :download, :download_zip,
                          :update_remark_request, :cancel_remark_request,
-                         :get_test_runs_instructors, :get_test_runs_instructors_released
+                         :get_test_runs_instructors, :get_test_runs_instructors_released,
+                         :add_tag, :remove_tag
                 ]
   before_action :authorize_for_ta_and_admin,
                 only: [:create, :add_extra_mark,
-                       :remove_extra_mark, :get_test_runs_instructors]
+                       :remove_extra_mark, :get_test_runs_instructors,
+                       :add_tag, :remove_tag]
   before_action :authorize_for_user,
                 only: [:show, :download, :download_zip,
                        :view_marks, :get_annotations, :show]
@@ -139,7 +140,11 @@ class ResultsController < ApplicationController
           data[:notes_count] = submission.grouping.notes.count
           data[:num_marked] = assignment.get_num_marked(current_user.admin? ? nil : current_user.id)
           data[:num_assigned] = assignment.get_num_assigned(current_user.admin? ? nil : current_user.id)
-          data[:group_name] = submission.grouping.get_group_name
+          if current_user.ta? && assignment.anonymize_groups
+            data[:group_name] = "#{Group.model_name.human} #{submission.grouping.id}"
+          else
+            data[:group_name] = submission.grouping.get_group_name
+          end
         elsif is_reviewer
           reviewer_group = current_user.grouping_for(assignment.pr_assignment.id)
           data[:num_marked] = PeerReview.get_num_marked(reviewer_group)
@@ -155,7 +160,7 @@ class ResultsController < ApplicationController
           else
             fields = common_fields + [:description]
           end
-          criteria = klass.where(assignment_id: is_review ? assignment.pr_assignment.id : assignment.id,
+          criteria = klass.where(assessment_id: is_review ? assignment.pr_assignment.id : assignment.id,
                                  ta_visible: !is_review,
                                  peer_visible: is_review)
           criteria_info = criteria.pluck_to_hash(*fields)
@@ -177,14 +182,24 @@ class ResultsController < ApplicationController
         end
         marks_map.sort! { |a, b| a[:position] <=> b[:position] }
 
+        if original_result.nil?
+          old_marks = {}
+        else
+          old_marks = original_result.mark_hash
+        end
+
         if assignment.assign_graders_to_criteria && current_user.ta?
           assigned_criteria = current_user.criterion_ta_associations
-                                          .where(assignment_id: assignment.id)
+                                          .where(assessment_id: assignment.id)
                                           .pluck(:criterion_type, :criterion_id)
                                           .map { |t, id| "#{t}-#{id}" }
-
-          marks_map = marks_map.partition { |m| assigned_criteria.include? "#{m[:criterion_type]}-#{m[:id]}" }
-                               .flatten
+          if assignment.hide_unassigned_criteria
+            marks_map = marks_map.select { |m| assigned_criteria.include? "#{m[:criterion_type]}-#{m[:id]}" }
+            old_marks = old_marks.select { |m| assigned_criteria.include? m }
+          else
+            marks_map = marks_map.partition { |m| assigned_criteria.include? "#{m[:criterion_type]}-#{m[:id]}" }
+                                 .flatten
+          end
         else
           assigned_criteria = nil
         end
@@ -192,11 +207,6 @@ class ResultsController < ApplicationController
         data[:assigned_criteria] = assigned_criteria
         data[:marks] = marks_map
 
-        if original_result.nil?
-          old_marks = {}
-        else
-          old_marks = original_result.mark_hash
-        end
         data[:old_marks] = old_marks
 
         # Extra marks
@@ -206,6 +216,9 @@ class ResultsController < ApplicationController
         # Grace token deductions
         if is_reviewer
           data[:grace_token_deductions] = []
+        elsif current_user.ta? && assignment.anonymize_groups
+          data[:grace_token_deductions] = []
+
         else
           data[:grace_token_deductions] =
             submission.grouping
@@ -216,9 +229,9 @@ class ResultsController < ApplicationController
 
         # Totals
         data[:assignment_max_mark] =
-          result.is_a_review? ? assignment.pr_assignment.max_mark(:peer) : assignment.max_mark(:ta)
-        data[:total] = result.total_mark
-        data[:old_total] = original_result&.total_mark
+          result.is_a_review? ? assignment.pr_assignment.max_mark(:peer) : marks_map.map { |h| h['max_mark'] }.sum
+        data[:total] = marks_map.map { |h| h['mark'] }
+        data[:old_total] = old_marks.values.sum
 
         # Tags
         all_tags = Tag.pluck_to_hash(:id, :name)
@@ -300,16 +313,15 @@ class ResultsController < ApplicationController
   ##  Tag Methods  ##
   def add_tag
     result = Result.find(params[:id])
-    create_grouping_tag_association_from_existing_tag(result.submission.grouping_id,
-                                                      params[:tag_id])
+    tag = Tag.find(params[:tag_id])
+    result.submission.grouping.tags << tag
     head :ok
   end
 
   def remove_tag
     result = Result.find(params[:id])
-    grouping = result.submission.grouping
-    delete_grouping_tag_association(params[:tag_id],
-                                    grouping)
+    tag = Tag.find(params[:tag_id])
+    result.submission.grouping.tags.destroy(tag)
     head :ok
   end
 
@@ -554,9 +566,7 @@ class ResultsController < ApplicationController
     if current_user.student?
       @grouping = current_user.accepted_grouping_for(@assignment.id)
       if @grouping.nil?
-        redirect_to controller: 'assignments',
-                    action: 'student_interface',
-                    id: params[:id]
+        redirect_to assignment_path(params[:id])
         return
       end
       unless is_review || @grouping.has_submission?
@@ -585,9 +595,7 @@ class ResultsController < ApplicationController
 
     # TODO Review the various code flows, the duplicate checks are a temporary stop-gap
     if @grouping.nil?
-      redirect_to controller: 'assignments',
-                  action: 'student_interface',
-                  id: params[:id]
+      redirect_to assignment_path(params[:id])
       return
     end
     unless is_review || @grouping.has_submission?
