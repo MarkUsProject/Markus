@@ -18,6 +18,8 @@ Markus::Application.configure do
     BetterErrors::Middleware.allow_ip! '0.0.0.0/0'
   end
 
+  config.hosts << "host.docker.internal"
+
   # Set high verbosity of logger.
   config.log_level = :debug
 
