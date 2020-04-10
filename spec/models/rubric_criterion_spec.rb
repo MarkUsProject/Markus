@@ -201,6 +201,7 @@ describe RubricCriterion do
           expect(@levels.length).to eq(7)
         end
       end
+
       describe 'can delete levels' do
         it 'not raise error' do
           expect(@levels.length).to eq(5)
@@ -210,6 +211,7 @@ describe RubricCriterion do
           expect(@levels.length).to eq(3)
         end
       end
+
       describe 'can edit levels' do
         it 'not raise error' do
           @levels[0].update(name: 'Custom Level', description: 'Custom Description', mark: 10.0)
@@ -219,6 +221,7 @@ describe RubricCriterion do
           expect(@levels[@levels.length - 1].description).to eq('Custom Description')
         end
       end
+
       describe 'deleting a rubric criterion deletes all levels' do
         it 'not raise error' do
           @criterion.destroy
@@ -253,6 +256,53 @@ describe RubricCriterion do
       end
     end
 
+    context 'editing levels edits marks' do
+      before(:each) do
+        @marks = @criterion.marks
+        result1 = create(:result, marking_state: Result::MARKING_STATES[:incomplete])
+        result2 = create(:result, marking_state: Result::MARKING_STATES[:incomplete])
+        result3 = create(:result, marking_state: Result::MARKING_STATES[:incomplete])
+        @marks.create(mark: 0, result: result1)
+        @marks.create(mark: 1, result: result2)
+        @marks.create(mark: 1, result: result3)
+      end
+
+      context 'updating level updates respective mark' do
+        describe 'updates a single mark' do
+          it 'not raise error' do
+            @levels[0].update(mark: 0.5)
+            @marks.reload
+            expect(@marks[0].mark).to eq(0.5)
+          end
+        end
+
+        describe 'updates multiple marks' do
+          it 'not raise error' do
+            @levels[1].update(mark: 0.5)
+            expect(@marks[1].mark).to eq(0.5)
+            expect(@marks[2].mark).to eq(0.5)
+          end
+        end
+      end
+
+      context 'deleting level updates mark to nil' do
+        describe 'updates a single mark' do
+          it 'not raise error' do
+            @levels[0].destroy
+            expect(@marks[0].mark).to be_nil
+          end
+        end
+
+        describe 'deleting level updates multiple marks to nil' do
+          it 'not raise error' do
+            @levels[1].destroy
+            expect(@marks[1].mark).to be_nil
+            expect(@marks[2].mark).to be_nil
+          end
+        end
+      end
+    end
+
     context 'validations work properly' do
       describe 'validates max mark can\' be greater than maximum level mark' do
         it 'raises an error' do
@@ -264,6 +314,7 @@ describe RubricCriterion do
           expect(@criterion.errors[:max_mark].size).to eq(1)
         end
       end
+
       describe 'cannot have two levels with the same mark' do
         it 'not raise error' do
           expect(@levels[0].update(mark: 1)).to be false
