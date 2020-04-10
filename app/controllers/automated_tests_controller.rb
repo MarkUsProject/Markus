@@ -29,12 +29,6 @@ class AutomatedTestsController < ApplicationController
   # Manage is called when the Automated Test UI is loaded
   def manage
     @assignment = Assignment.find(params[:assignment_id])
-    unless File.exist? @assignment.autotest_path
-      FileUtils.mkdir_p @assignment.autotest_path
-    end
-    unless File.exist? @assignment.autotest_files_dir
-      FileUtils.mkdir_p @assignment.autotest_files_dir
-    end
     @assignment.test_groups.build
   end
 

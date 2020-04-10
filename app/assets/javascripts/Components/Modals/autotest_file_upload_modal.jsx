@@ -18,14 +18,14 @@ class AutotestFileUploadModal extends React.Component {
     event.preventDefault();
     if (!!this.state.newFiles) {
       this.props.onSubmit(this.state.newFiles);
-      this.setState({newFiles: []})
+      this.setState({newFiles: []});
     } else {
-      this.props.onRequestClose()
+      this.props.onRequestClose();
     }
   };
 
   handleFileUpload = (event) => {
-    this.setState({newFiles: event.target.files})
+    this.setState({newFiles: event.target.files});
   };
 
   render() {

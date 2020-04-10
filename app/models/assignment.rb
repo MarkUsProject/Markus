@@ -73,6 +73,7 @@ class Assignment < Assessment
   has_many :exam_templates, dependent: :destroy, inverse_of: :assignment, foreign_key: :assessment_id
 
   after_create :build_starter_code_repo
+  after_create :create_autotest_dirs
 
   before_save :reset_collection_time
   after_save :update_permissions_if_vcs_changed
@@ -1287,6 +1288,11 @@ class Assignment < Assessment
   end
 
   private
+
+  def create_autotest_dirs
+    FileUtils.mkdir_p self.autotest_path
+    FileUtils.mkdir_p self.autotest_files_dir
+  end
 
   # Returns the marking state used in the submission and course summary tables
   # for the result(s) for single submission.
