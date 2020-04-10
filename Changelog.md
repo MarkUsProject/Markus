@@ -21,6 +21,7 @@
 - Added syntax highlighting support for .tex files (#4505)
 - Fixed annotation Markdown and MathJax rendering bug (#4506) 
 - Fixed bug where a grouping could be created even when the assignment subdirectory failed to be created (#4516)
+- Progress messages for background jobs now are hidden once the job is completed (#4519)
 - Fixed bug where a javascript submission/test/starter code file can't be downloaded (#4520) 
 
 ## [v1.8.4]
