@@ -265,17 +265,5 @@ module Api
     rescue ActiveRecord::RecordNotFound => e
       render 'shared/http_status', locals: { code: '404', message: e }, status: 404
     end
-
-    def test_specs
-      assignment = Assignment.find(params[:id])
-      settings_file = assignment.autotest_settings_file
-      content = File.exist?(settings_file) ? JSON.parse(File.open(settings_file, &:read)) : {}
-      respond_to do |format|
-        format.xml { render xml: content.to_xml(root: :markus_test_specs) }
-        format.json { render json: content }
-      end
-    rescue ActiveRecord::RecordNotFound => e
-      render 'shared/http_status', locals: { code: '404', message: e }, status: 404
-    end
   end # end AssignmentsController
 end
