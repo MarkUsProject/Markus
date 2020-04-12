@@ -20,11 +20,18 @@ RSpec.describe NotificationMailer, type: :mailer do
     it 'renders the recipient email' do
       expect(mail.to).to eq([recipient.email])
     end
+
+    it 'renders the relevant link correctly' do
+      expect(mail.body.to_s).to include(relevant_link)
+    end
   end
 
   describe 'release_email' do
     let(:recipient) { create(:student) }
     let(:submission) { create(:version_used_submission) }
+    let(:relevant_link) { view_marks_assignment_submission_result_url(assignment_id: submission.grouping.assignment.id,
+                                                                      submission_id: submission.id,
+                                                                      id: submission.grouping.current_result.id) }
     let(:mail) do
       submission.grouping.reload
       described_class.with(user: recipient, grouping: submission.grouping).release_email.deliver_now
@@ -46,12 +53,14 @@ RSpec.describe NotificationMailer, type: :mailer do
   describe 'release_spreadsheet_email' do
     let(:recipient) { create(:student) }
     let(:grade_entry_form) { create(:grade_entry_form_with_data) }
+    let(:relevant_link) { student_interface_grade_entry_form_url(id: grade_entry_form.id) }
     let(:mail) do
       described_class.with(student: grade_entry_form.grade_entry_students.find_or_create_by(user: recipient),
                            form: grade_entry_form)
                      .release_spreadsheet_email
                      .deliver_now
     end
+
 
     it 'renders the subject' do
       subject_line = 'MarkUs Notification (' + Rails.configuration.course_name + ') Your marks for ' +
@@ -70,6 +79,7 @@ RSpec.describe NotificationMailer, type: :mailer do
     let(:inviter) { create(:student) }
     let(:recipient) { create(:student) }
     let(:grouping) { create(:grouping) }
+    let(:relevant_link) { assignment_url(id: grouping.assignment.id) }
     let(:mail) do
       described_class.with(invited: recipient, inviter: inviter, grouping: grouping)
                      .grouping_invite_email
