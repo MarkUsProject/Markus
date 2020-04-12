@@ -1,7 +1,7 @@
-require "erb"
-include ERB::Util
+require 'erb'
 
 RSpec.describe NotificationMailer, type: :mailer do
+  include ERB::Util
   RSpec.shared_examples 'an email' do
     it 'renders the disclaimer in the body of the email.' do
       expect(mail.body.to_s).to include('This is an automated email. Please do not reply.')
