@@ -306,7 +306,7 @@ describe GroupsController do
       @student = create(:student, user_name: 'c9test1')
       @assignment = create(:assignment,
                            due_date: 1.day.from_now,
-                           assignment_properties_attributes: { student_form_groups: true, group_max: 3 })
+                           assignment_properties_attributes: { student_form_groups: true, group_max: 4 })
     end
 
     describe 'POST #create' do
@@ -333,12 +333,21 @@ describe GroupsController do
       before :each do
         create(:grouping_with_inviter, assignment: @assignment, inviter: @current_student)
       end
-      it 'should send an email to every student invited to a grouping' do
+      it 'should send an email to a single student if invited to a grouping' do
         expect do
           post :invite_member,
                params: { invite_member: @student.user_name,
                          assignment_id: @assignment.id }
         end.to change { ActionMailer::Base.deliveries.count }.by(1)
+      end
+
+      it 'should send an email to every student invited to a grouping if more than one are' do
+        @another_student =  create(:student, user_name: 'c9test3')
+        expect do
+          post :invite_member,
+               params: { invite_member: "#{@student.user_name},#{@another_student.user_name}",
+                         assignment_id: @assignment.id }
+        end.to change { ActionMailer::Base.deliveries.count }.by(2)
       end
     end
   end

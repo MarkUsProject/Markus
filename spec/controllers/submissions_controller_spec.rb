@@ -403,10 +403,12 @@ describe SubmissionsController do
 
         it 'should send an email to every student whose submission was released' do
           allow(Assignment).to receive(:find) { @assignment }
+          create(:grouping_with_inviter, group: @group, assignment: @assignment)
           total_students = 0
           @assignment.groupings.each do |grouping|
             total_students += grouping.accepted_students.size
           end
+          puts total_students
           expect do
             post_as @admin,
                     :update_submissions,

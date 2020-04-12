@@ -29,9 +29,11 @@ RSpec.describe NotificationMailer, type: :mailer do
   describe 'release_email' do
     let(:recipient) { create(:student) }
     let(:submission) { create(:version_used_submission) }
-    let(:relevant_link) { view_marks_assignment_submission_result_url(assignment_id: submission.grouping.assignment.id,
+    let(:relevant_link) do
+      view_marks_assignment_submission_result_url(assignment_id: submission.grouping.assignment.id,
                                                                       submission_id: submission.id,
-                                                                      id: submission.grouping.current_result.id) }
+                                                                      id: submission.grouping.current_result.id)
+    end
     let(:mail) do
       submission.grouping.reload
       described_class.with(user: recipient, grouping: submission.grouping).release_email.deliver_now
@@ -60,7 +62,6 @@ RSpec.describe NotificationMailer, type: :mailer do
                      .release_spreadsheet_email
                      .deliver_now
     end
-
 
     it 'renders the subject' do
       subject_line = 'MarkUs Notification (' + Rails.configuration.course_name + ') Your marks for ' +
