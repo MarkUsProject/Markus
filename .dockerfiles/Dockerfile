@@ -72,7 +72,7 @@ ENV PATH="$GEM_HOME/bin:$GEM_HOME/gems/bin:$PATH"
 
 # Create key for ssh-ing to the autotester
 RUN ssh-keygen -q -N "" -f /root/.ssh/id_rsa && \
-    mkdir /ssh_pub_key && \
+    mkdir -p /ssh_pub_key && \
     cp /root/.ssh/id_rsa.pub /ssh_pub_key/authorized_keys
 
 # Create a directory for the app code (keep the name generic)
