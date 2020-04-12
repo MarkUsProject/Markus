@@ -167,10 +167,12 @@ class Criterion < ApplicationRecord
   end
 
   public
+
   def results_released?
     return if self.marks.empty?
     released = self.marks.joins(:result).where('results.released_to_students' => true)
     return if released.empty?
-    errors.add(:id, 'Cannot update level once results are released.')
+    errors.add(:name, 'Cannot update level once results are released.')
+    false
   end
 end
