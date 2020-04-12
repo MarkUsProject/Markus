@@ -330,7 +330,7 @@ describe RubricCriterion do
         before do
           @marks = @criterion.marks
           results = []
-          for i in 0..3
+          3.times do
             results << create(:complete_result, released_to_students: false)
           end
           @marks.create(mark: 0, result: results[0])
