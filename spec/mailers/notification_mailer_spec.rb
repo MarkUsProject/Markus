@@ -1,3 +1,6 @@
+require "erb"
+include ERB::Util
+
 RSpec.describe NotificationMailer, type: :mailer do
   RSpec.shared_examples 'an email' do
     it 'renders the disclaimer in the body of the email.' do
@@ -11,7 +14,7 @@ RSpec.describe NotificationMailer, type: :mailer do
     it 'renders the recipient greeting in the body of the email.' do
       first_name = recipient.first_name
       last_name = recipient.last_name
-      expect(mail.body.to_s.gsub('&#39;', "'")).to include("Hello #{first_name} #{last_name},")
+      expect(mail.body.to_s).to include(h("Hello #{first_name} #{last_name},"))
     end
 
     it 'renders the recipient email' do
@@ -81,7 +84,7 @@ RSpec.describe NotificationMailer, type: :mailer do
     it 'renders the inviter name in the body of the email.' do
       first_name = inviter.first_name
       last_name = inviter.last_name
-      expect(mail.body.to_s.gsub('&#39;', "'")).to include("#{first_name} #{last_name}")
+      expect(mail.body.to_s).to include(h("#{first_name} #{last_name}"))
     end
 
     include_examples 'an email'
