@@ -15,8 +15,5 @@ class Level < ApplicationRecord
     self.rubric_criterion.results_released?
     return unless self.rubric_criterion.errors.size > 0
     errors.add(:name, 'Cannot update level once results are released.')
-    # return if self.rubric_criterion.marks.empty?
-    # return unless self.rubric_criterion.marks[0].result.released_to_students
-    # errors.add(:level_id, 'Cannot update level once results are released.')
   end
 end
