@@ -80,6 +80,8 @@ es:
       cancel_invitation_confirm: "¿Está seguro/a de querer cancelar esta invitación?"
       decline: "Declinar invitación"
       decline_invitation_confirm: "¿Está seguro/a de querer rechazar esta invitación?"
+      errors:
+        not_found: "UPDATE ME"
       invitations: "Invitaciones"
       invite: "Invite student(s)"
       invite_instructions: "Separe múltiples nombres de usuarios con comas."

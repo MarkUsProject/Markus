@@ -14,6 +14,7 @@ fr:
         before_due_date?: "La date de retour pour ce devoir est passée."
         deletable_by?: "Vous ne pouvez pas supprimer ce groupe."
         delete_rejected?: "Seul(e) celui (celle) qui a invité un(e) autre étudiant(e) peut supprimer une invitation déclinée."
+        disinvite_member?: "UPDATE ME."
         member?: "Votre groupe n'éxiste pas, où il n'est pas valide."
         no_extension?: "Vous ne pouvez pas modifier un groupe avec une extension à la date d'échéance."
         no_submission?: "Vous avez déjà envoyé un fichier. Vous ne pouvez pas supprimer votre groupe."
