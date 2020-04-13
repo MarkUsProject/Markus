@@ -1,44 +1,60 @@
+ARG UBUNTU_VERSION
+
+FROM ubuntu:$UBUNTU_VERSION
+
 ARG RUBY_VERSION
-
-FROM ruby:$RUBY_VERSION
-
 ARG PG_MAJOR
 ARG NODE_MAJOR
 ARG BUNDLER_VERSION
 ARG YARN_VERSION
 
-# Add PostgreSQL to sources list
-RUN APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 \
-  curl -sSL https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - \
-  && echo 'deb http://apt.postgresql.org/pub/repos/apt/ stretch-pgdg main' $PG_MAJOR > /etc/apt/sources.list.d/pgdg.list
+RUN apt-get update -qq && DEBIAN_FRONTEND=noninteractive apt-get -yq dist-upgrade && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -yq --no-install-recommends curl \
+                                                                               ca-certificates \
+                                                                               gnupg2 \
+                                                                               software-properties-common
 
 # Add NodeJS to sources list
-RUN curl -sL https://deb.nodesource.com/setup_$NODE_MAJOR.x | bash -
+RUN APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 \
+    curl -vsL https://deb.nodesource.com/setup_$NODE_MAJOR.x | bash -
+
+# Remove cmdtest which come pre-installed and has a package called yarn. This prevents us from installing
+# the yarn package we want otherwise.
+RUN DEBIAN_FRONTEND=noninteractive apt-get remove -yq cmdtest
 
 # Add Yarn to the sources list
 RUN APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 \
-  curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - \
-  && echo 'deb http://dl.yarnpkg.com/debian/ stable main' > /etc/apt/sources.list.d/yarn.list
+  curl -vsL https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - \
+  && echo 'deb https://dl.yarnpkg.com/debian/ stable main' > /etc/apt/sources.list.d/yarn.list
+
+# Add ppa so that we can select different ruby versions
+RUN DEBIAN_FRONTEND=noninteractive apt-add-repository -y ppa:brightbox/ruby-ng
 
 # install packages
-RUN apt-get update -qq && DEBIAN_FRONTEND=noninteractive apt-get -yq dist-upgrade && \
-  DEBIAN_FRONTEND=noninteractive apt-get install -yq --no-install-recommends \
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -yq --no-install-recommends \
     build-essential \
     postgresql-client-$PG_MAJOR \
+    tzdata \
+    libpq-dev \
     nodejs \
     yarn \
     libv8-dev \
+    ruby$RUBY_VERSION \
+    ruby${RUBY_VERSION}-dev \
     ruby-svn \
     ghostscript \
     imagemagick \
     libmagickwand-dev \
     cmake \
     libssh2-1-dev \
+    openssh-client \
     libaprutil1-dev \
+    libssl-dev \
     swig \
     graphviz \
     yarn \
     rsync \
+    git \
     python3 \
     python3-pip && \
     apt-get clean && \
@@ -48,19 +64,15 @@ RUN apt-get update -qq && DEBIAN_FRONTEND=noninteractive apt-get -yq dist-upgrad
 # Enable reading of PDF files with imagemagick
 RUN sed -ri 's/(rights=")none("\s+pattern="PDF")/\1read\2/' /etc/ImageMagick-6/policy.xml
 
-# Configure bundler and PATH
-ENV LANG=C.UTF-8 \
-    GEM_HOME=/bundle \
-    BUNDLE_JOBS=4 \
-    BUNDLE_RETRY=3
-ENV BUNDLE_PATH $GEM_HOME
-ENV BUNDLE_APP_CONFIG=$BUNDLE_PATH \
-    BUNDLE_BIN=$BUNDLE_PATH/bin
-ENV PATH /app/bin:$BUNDLE_BIN:$PATH
+# install bundler
+RUN gem$RUBY_VERSION install bundler -v $BUNDLER_VERSION
+
+ENV GEM_HOME="/bundle"
+ENV PATH="$GEM_HOME/bin:$GEM_HOME/gems/bin:$PATH"
 
 # Create key for ssh-ing to the autotester
 RUN ssh-keygen -q -N "" -f /root/.ssh/id_rsa && \
-    mkdir /ssh_pub_key && \
+    mkdir -p /ssh_pub_key && \
     cp /root/.ssh/id_rsa.pub /ssh_pub_key/authorized_keys
 
 # Create a directory for the app code (keep the name generic)

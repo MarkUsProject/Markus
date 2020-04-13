@@ -155,31 +155,6 @@ class GradeEntryStudent < ApplicationRecord
     grade_entry_student.total_grade
   end
 
-  def add_tas(tas)
-    return unless self.valid?
-    grade_entry_student_tas = self.tas
-    tas = Array(tas)
-    tas.each do |ta|
-      if !grade_entry_student_tas.include? ta
-        self.tas << ta
-        grade_entry_student_tas += [ta]
-      end
-    end
-    self.save
-  end
-
-  def remove_tas(ta_id_array)
-    #if no tas to remove, return.
-    return if ta_id_array == []
-    grade_entry_student_tas = self.tas
-
-    tas_to_remove = grade_entry_student_tas.where(id: ta_id_array)
-    tas_to_remove.each do |ta_to_remove|
-      self.tas.delete(ta_to_remove)
-    end
-    self.save
-  end
-
   # Return whether or not the given student's grades are all blank
   # (Needed because ActiveRecord's "sum" method returns 0 even if
   #  all the grade.grade values are nil and we need to distinguish

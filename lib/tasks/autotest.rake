@@ -143,5 +143,7 @@ class AutotestSetup
     AutotestSpecsJob.perform_now('http://localhost:3000', @assignment)
     AutotestSpecsJob.perform_now('http://127.0.0.1:3000', @assignment)
     AutotestSpecsJob.perform_now('http://0.0.0.0:3000', @assignment)
+    AutotestSpecsJob.perform_now('http://host.docker.internal:3000', @assignment)
+    AutotestSpecsJob.perform_now('http://docker.for.mac.localhost:3000', @assignment)
   end
 end

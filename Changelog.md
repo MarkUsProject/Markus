@@ -17,7 +17,12 @@
 - Display newlines properly in flash messages (#4443)
 - Api calls will now return the 'hidden' status of users when accessing user data (#4445)
 - Make bulk submission file downloads a background job (#4463)
+- Added option to download all test script files in the UI and through the API (#4494)
 - Added syntax highlighting support for .tex files (#4505)
+- Fixed annotation Markdown and MathJax rendering bug (#4506) 
+- Fixed bug where a grouping could be created even when the assignment subdirectory failed to be created (#4516)
+- Progress messages for background jobs now are hidden once the job is completed (#4519)
+- Fixed bug where a javascript submission/test/starter code file can't be downloaded (#4520) 
 
 ## [v1.8.4]
 - Fixed bug where test output was not being properly hidden from students (#4379)

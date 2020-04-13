@@ -159,6 +159,10 @@ class AutotestManager extends React.Component {
     });
   };
 
+  getDownloadAllURL = () => {
+    return Routes.download_files_assignment_automated_tests_path(this.props.assignment_id);
+  };
+
   studentTestsField = () => {
     return (
       <fieldset>
@@ -270,11 +274,11 @@ class AutotestManager extends React.Component {
             noFilesMessage={I18n.t('submissions.no_files_available')}
             readOnly={!this.state.enable_test}
             onDeleteFile={this.handleDeleteFile}
-            onCreateFile={this.handleCreateFiles}
             onCreateFolder={this.handleCreateFolder}
             onRenameFolder={typeof this.handleCreateFolder === 'function' ? () => {} : undefined}
             onDeleteFolder={this.handleDeleteFolder}
             onActionBarAddFileClick={this.openUploadModal}
+            downloadAllURL={this.getDownloadAllURL()}
             disableActions={{rename: true}}
           />
         </fieldset>

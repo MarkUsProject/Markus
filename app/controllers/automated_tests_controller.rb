@@ -2,7 +2,9 @@ class AutomatedTestsController < ApplicationController
   include AutomatedTestsHelper
 
   before_action      :authorize_only_for_admin,
-                     only: [:manage, :update]
+                     except: [:student_interface,
+                              :get_test_runs_students]
+
   before_action      :authorize_for_student,
                      only: [:student_interface,
                             :get_test_runs_students]
@@ -130,10 +132,19 @@ class AutomatedTestsController < ApplicationController
     assignment = Assignment.find(params[:assignment_id])
     file_path = File.join(assignment.autotest_files_dir, params[:file_name])
     if File.exist?(file_path)
-      send_file file_path, filename: params[:file_name]
+      send_file_download file_path, filename: params[:file_name]
     else
       render plain: t('student.submission.missing_file', file_name: params[:file_name])
     end
+  end
+
+  ##
+  # Download all files from the assignment.autotest_files_dir directory as a zip file
+  ##
+  def download_files
+    assignment = Assignment.find(params[:assignment_id])
+    zip_path = assignment.zip_automated_test_files(current_user)
+    send_file zip_path, filename: File.basename(zip_path)
   end
 
   def upload_files
