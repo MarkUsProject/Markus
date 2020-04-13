@@ -311,22 +311,38 @@ class GroupsController < ApplicationController
 
   def accept_invitation
     @assignment = Assignment.find(params[:assignment_id])
-    @grouping = Grouping.find(params[:grouping_id])
-    @user = Student.find(session[:uid])
-    @user.join(@grouping.id)
-    m_logger = MarkusLogger.instance
-    m_logger.log("Student '#{@user.user_name}' joined group '#{@grouping.group.group_name}'(accepted invitation).")
-    redirect_to assignment_path(params[:assignment_id])
+    @grouping = @assignment.groupings.find(params[:grouping_id])
+    begin
+      current_user.join(@grouping)
+    rescue ActiveRecord::RecordInvalid => e
+      flash_message(:error, e.message)
+      status = :unprocessable_entity
+    rescue RuntimeError => e
+      flash_message(:error, e.message)
+      status = :unprocessable_entity
+    else
+      m_logger = MarkusLogger.instance
+      m_logger.log("Student '#{current_user.user_name}' joined group "\
+                   "'#{@grouping.group.group_name}'(accepted invitation).")
+      status = :found
+    end
+    redirect_to assignment_path(params[:assignment_id]), status: status
   end
 
   def decline_invitation
     @assignment = Assignment.find(params[:assignment_id])
-    @grouping = Grouping.find(params[:grouping_id])
-    @user = Student.find(session[:uid])
-    @grouping.decline_invitation(@user)
-    m_logger = MarkusLogger.instance
-    m_logger.log("Student '#{@user.user_name}' declined invitation for group '#{@grouping.group.group_name}'.")
-    redirect_to assignment_path(params[:assignment_id])
+    @grouping = @assignment.groupings.find(params[:grouping_id])
+    begin
+      @grouping.decline_invitation(current_user)
+    rescue RuntimeError => e
+      flash_message(:error, e.message)
+      status = :unprocessable_entity
+    else
+      m_logger = MarkusLogger.instance
+      m_logger.log("Student '#{current_user.user_name}' declined invitation for group '#{@grouping.group.group_name}'.")
+      status = :found
+    end
+    redirect_to assignment_path(params[:assignment_id]), status: status
   end
 
   def create
@@ -429,28 +445,39 @@ class GroupsController < ApplicationController
   # Deletes pending invitations
   def disinvite_member
     assignment = Assignment.find(params[:assignment_id])
-    membership = StudentMembership.find(params[:membership])
-    disinvited_student = membership.user
-    membership.destroy
-    m_logger = MarkusLogger.instance
-    m_logger.log("Student '#{current_user.user_name}' cancelled invitation for '#{disinvited_student.user_name}'.")
-    flash_message(:success, I18n.t('groups.members.member_disinvited'))
-    redirect_to assignment_path(assignment.id)
+    membership = assignment.student_memberships.find(params[:membership])
+    begin
+      authorize! membership.grouping, to: :disinvite_member?, context: { membership: membership }
+    rescue ActionPolicy::Unauthorized => e
+      flash_message(:error, e.result.message)
+      status = :forbidden
+    else
+      disinvited_student = membership.user
+      membership.destroy
+      m_logger = MarkusLogger.instance
+      m_logger.log("Student '#{current_user.user_name}' cancelled invitation for '#{disinvited_student.user_name}'.")
+      flash_message(:success, I18n.t('groups.members.member_disinvited'))
+      status = :found
+    end
+
+    redirect_to assignment_path(assignment.id), status: status
   end
 
   # Deletes memberships which have been declined by students
   def delete_rejected
     @assignment = Assignment.find(params[:assignment_id])
-    membership = StudentMembership.find(params[:membership])
+    membership = @assignment.student_memberships.find(params[:membership])
     grouping = membership.grouping
     begin
-      authorize! grouping, to: :delete_rejected?
+      authorize! grouping, to: :delete_rejected?, context: { membership: membership }
     rescue ActionPolicy::Unauthorized => e
       flash_message(:error, e.result.message)
+      status = :forbidden
     else
       membership.destroy
+      status = :found
     end
-    redirect_to assignment_path(params[:assignment_id])
+    redirect_to assignment_path(params[:assignment_id]), status: status
   end
 
   # These actions act on all currently selected students & groups

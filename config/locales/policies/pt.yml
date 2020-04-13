@@ -14,6 +14,7 @@ pt:
         before_due_date?: "A data de entrega para este projeto já passou."
         deletable_by?: "Você não tem permissão para deletar este grupo."
         delete_rejected?: "Apenas o anfitrião pode excluir um convite recusado."
+        disinvite_member?: "UPDATE ME."
         member?: "UPDATE ME."
         no_extension?: "UPDATE ME."
         no_submission?: "Você já enviou algo. Não pode deletar seu grupo."

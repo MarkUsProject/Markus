@@ -1,4 +1,5 @@
 class GroupingPolicy < ApplicationPolicy
+  authorize :membership, optional: true
 
   def run_tests?
     !user.student? || (
@@ -36,8 +37,12 @@ class GroupingPolicy < ApplicationPolicy
     !record.past_collection_date?
   end
 
+  def disinvite_member?
+    user.user_name == record.inviter.user_name && membership.membership_status == StudentMembership::STATUSES[:pending]
+  end
+
   def delete_rejected?
-    user.user_name == record.inviter.user_name
+    user.user_name == record.inviter.user_name && membership.membership_status == StudentMembership::STATUSES[:rejected]
   end
 
   def destroy?

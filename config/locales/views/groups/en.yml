@@ -72,6 +72,8 @@ en:
       cancel_invitation_confirm: "Are you sure you want to cancel this invitation?"
       decline: "Decline Invitation"
       decline_invitation_confirm: "Are you sure you want to decline this invitation?"
+      errors:
+        not_found: "No available membership found for this student and group."
       invitations: "Group invitations"
       invite: "Invite student(s)"
       invite_instructions: "Enter one or more student user names, separated by commas."

@@ -16,6 +16,7 @@ en:
         before_due_date?: "The due date for this assignment has passed."
         deletable_by?: "You are not allowed to delete the group."
         delete_rejected?: "Only the inviter can delete a declined invitation."
+        disinvite_member?: "Only the inviter can cancel a pending invitation."
         member?: "You cannot run tests because you do not have a group yet, or your group is not valid."
         no_extension?: "This group has an extension. You cannot update the group membership."
         no_submission?: "You already submitted something. You cannot delete your group."
