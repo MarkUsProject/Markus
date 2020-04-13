@@ -14,6 +14,6 @@ class Level < ApplicationRecord
   def only_update_if_results_unreleased
     self.rubric_criterion.results_released?
     return unless self.rubric_criterion.errors.size > 0
-    errors.add(:name, 'Cannot update level once results are released.')
+    errors.add(:base, 'Cannot update level once results are released.')
   end
 end
