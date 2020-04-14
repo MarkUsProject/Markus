@@ -1,5 +1,6 @@
 # Changelog
-## [unreleased]
+
+## [1.9.0]
 - Added option to anonymize group membership when viewed by graders (#4331)
 - Added option to only display assigned criteria to graders as opposed to showing unassigned criteria but making them
   ungradeable (#4331)
