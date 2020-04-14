@@ -16,6 +16,8 @@ class Criterion < ApplicationRecord
            through: :criteria_assignment_files_joins
   accepts_nested_attributes_for :criteria_assignment_files_joins, allow_destroy: true
 
+  validate :results_unreleased?
+
   self.abstract_class = true
 
   # Assigns a random TA from a list of TAs specified by +ta_ids+ to each

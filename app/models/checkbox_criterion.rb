@@ -9,7 +9,6 @@ class CheckboxCriterion < Criterion
   has_many :test_groups, as: :criterion
 
   validate :visible?
-  validate :results_unreleased?
 
   DEFAULT_MAX_MARK = 1
 
