@@ -4,7 +4,7 @@ class Criterion < ApplicationRecord
   after_update :scale_marks
 
   validates_presence_of :name
-  validates_uniqueness_of :name, scope: :assignment_id
+  validates_uniqueness_of :name, scope: :assessment_id
 
   validates_presence_of :max_mark
   validates_numericality_of :max_mark, greater_than: 0
@@ -76,9 +76,9 @@ class Criterion < ApplicationRecord
     new_values = yield(criteria.map(&:id), criteria.map { |c| "#{c.class}" }, ta_ids)
     values = new_values - existing_values
 
-    # Add assignment_id column common to all rows. It is not included above so
+    # Add assessment_id column common to all rows. It is not included above so
     # that the set operation is faster.
-    columns << :assignment_id
+    columns << :assessment_id
     values.map { |value| value << assignment.id }
     # TODO replace CriterionTaAssociation.import with
     # CriterionTaAssociation.create when the PG driver supports bulk create,
@@ -115,7 +115,7 @@ class Criterion < ApplicationRecord
                # subquery
                assignment.criterion_ta_associations
                          .joins(ta: :groupings)
-                         .where('groupings.assignment_id': assignment.id)
+                         .where('groupings.assessment_id': assignment.id)
                          .select('criterion_ta_associations.criterion_id',
                                  'criterion_ta_associations.criterion_type',
                                  'groupings.id')
@@ -125,35 +125,44 @@ class Criterion < ApplicationRecord
              .count
 
     [RubricCriterion, FlexibleCriterion, CheckboxCriterion].each do |klass|
-      Upsert.batch(klass.connection, klass.table_name) do |upsert|
-        klass.where(assignment_id: assignment.id).find_each do |crit|
-          upsert.row({ id: crit.id }, assigned_groups_count: counts[[crit.id, klass.to_s]] || 0)
-        end
+      records = klass.where(assessment_id: assignment.id)
+                     .pluck_to_hash
+                     .map do |h|
+        { **h.symbolize_keys, assigned_groups_count: counts[[h['id'], klass.to_s]] || 0 }
+      end
+      unless records.empty?
+        klass.upsert_all(records)
       end
     end
   end
 
   # When max_mark of criterion is changed, all associated marks should have their mark value scaled to the change.
   def scale_marks
-    if max_mark_changed? && !max_mark_was.nil?  # if max_mark is updated
-      # results with specific assignment
-      results = Result.includes(submission: :grouping)
-                      .where(groupings: {assignment_id: assignment_id})
-      all_marks = marks.where.not(mark: nil).where(result_id: results.ids)
-      # all associated marks should have their mark value scaled to the change.
-      Upsert.batch(Mark.connection, Mark.table_name) do |upsert|
-        all_marks.each do |m|
-          upsert.row({ id: m.id }, mark: m.scale_mark(max_mark, max_mark_was, update: false) )
-        end
-      end
-      a = Assignment.find(assignment_id)
-      Upsert.batch(Result.connection, Result.table_name) do |upsert|
-        results.each do |r|
-          upsert.row({ id: r.id }, total_mark: r.get_total_mark(assignment: a))
-        end
-      end
-      a.assignment_stat.refresh_grade_distribution
+    return unless max_mark_previously_changed? && !previous_changes[:max_mark].first.nil? # if max_mark was not updated
+
+    max_mark_was = previous_changes[:max_mark].first
+    # results with specific assignment
+    results = Result.includes(submission: :grouping)
+                    .where(groupings: { assessment_id: assessment_id })
+    all_marks = marks.where.not(mark: nil).where(result_id: results.ids)
+    # all associated marks should have their mark value scaled to the change.
+    updated_marks = {}
+    all_marks.each do |mark|
+      updated_marks[mark.id] = mark.scale_mark(max_mark, max_mark_was, update: false)
     end
+    unless updated_marks.empty?
+      Mark.upsert_all(all_marks.pluck_to_hash.map { |h| { **h.symbolize_keys, mark: updated_marks[h['id'].to_i] } })
+    end
+    a = Assignment.find(assessment_id)
+    updated_results = results.map do |result|
+      [result.id, result.get_total_mark(assignment: a)]
+    end.to_h
+    unless updated_results.empty?
+      Result.upsert_all(
+        results.pluck_to_hash.map { |h| { **h.symbolize_keys, total_mark: updated_results[h['id'].to_i] } }
+      )
+    end
+    a.assignment_stat.refresh_grade_distribution
   end
 
   def results_unreleased?

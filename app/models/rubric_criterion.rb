@@ -17,7 +17,7 @@ class RubricCriterion < Criterion
   before_validation :scale_marks_if_max_mark_changed
   validate :validate_max_mark
 
-  belongs_to :assignment, counter_cache: true
+  belongs_to :assignment, foreign_key: :assessment_id, counter_cache: true
 
   validates_presence_of :assigned_groups_count
   validates_numericality_of :assigned_groups_count
@@ -153,11 +153,15 @@ class RubricCriterion < Criterion
   #                 in the following format:
   #                 criterion_name:
   #                   max_mark: #
-  #                   level_0:
-  #                     name: level_name
-  #                     description: level_description
-  #                   level_1:
-  #                     [...]
+  #                   type: Rubric
+  #                   levels:
+  #                     <level_name>:
+  #                       mark: level_mark
+  #                       description: level_description
+  #                     <level_name>:
+  #                       [...]
+  #                   ta_visible: true/false
+  #                   peer_visible: true/false
   def self.load_from_yml(criterion_yml)
     name = criterion_yml[0]
     # Create a new RubricCriterion
@@ -167,14 +171,14 @@ class RubricCriterion < Criterion
     # Visibility options
     criterion.ta_visible = criterion_yml[1]['ta_visible'] unless criterion_yml[1]['ta_visible'].nil?
     criterion.peer_visible = criterion_yml[1]['peer_visible'] unless criterion_yml[1]['peer_visible'].nil?
-
+    levels = []
     criterion_yml[1]['levels'].each do |name, level_yml|
-      criterion.levels.build(rubric_criterion: criterion,
-                             name: name,
-                             description: level_yml['description'],
-                             mark: level_yml['mark'])
+      levels << criterion.levels.build(rubric_criterion: criterion,
+                                       name: name,
+                                       description: level_yml['description'],
+                                       mark: level_yml['mark'])
     end
-    criterion
+    [criterion, levels]
   end
 
   # Returns a hash containing the information of a single rubric criterion.
@@ -208,35 +212,6 @@ class RubricCriterion < Criterion
       result = result.concat(ta.get_groupings_by_assignment(assignment))
     end
     result.uniq
-  end
-
-  def add_tas(ta_array)
-    ta_array = Array(ta_array)
-    associations = criterion_ta_associations.where(ta_id: ta_array).to_a
-    ta_array.each do |ta|
-      # & is the mathematical set intersection operator between two arrays
-      if (ta.criterion_ta_associations & associations).size < 1
-        criterion_ta_associations.create(ta: ta, criterion: self, assignment: self.assignment)
-      end
-    end
-  end
-
-  def remove_tas(ta_array)
-    ta_array = Array(ta_array)
-    associations_for_criteria = criterion_ta_associations.where(
-      ta_id: ta_array).to_a
-    ta_array.each do |ta|
-      # & is the mathematical set intersection operator between two arrays
-      assoc_to_remove = (ta.criterion_ta_associations & associations_for_criteria)
-      unless assoc_to_remove.empty?
-        criterion_ta_associations.delete(assoc_to_remove)
-        assoc_to_remove.first.destroy
-      end
-    end
-  end
-
-  def get_ta_names
-    criterion_ta_associations.collect { |association| association.ta.user_name }
   end
 
   def has_associated_ta?(ta)

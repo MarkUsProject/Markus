@@ -210,38 +210,14 @@ describe Grouping do
       end
     end
 
-    describe '#add_tas' do
-      it 'is able to assign tas' do
-        grouping.add_tas(tas)
-        expect(grouping.ta_memberships.count).to eq(2)
-      end
-
-      it 'is not able to assign same TAs twice' do
-        grouping.add_tas(tas)
-        expect(grouping.ta_memberships.count).to eq(2)
-        grouping.add_tas(tas)
-        expect(grouping.ta_memberships.count).to eq(2)
-      end
-    end
-
     describe '#has_ta_for_marking?' do
-      it 'has a ta for marking' do
-        grouping.add_tas(tas)
+      it 'returns false when there are no assigned tas' do
+        expect(grouping.has_ta_for_marking?).to be false
+      end
+
+      it 'returns true when there is an assigned ta' do
+        create(:ta_membership, user: tas[0], grouping: grouping)
         expect(grouping.has_ta_for_marking?).to be true
-      end
-    end
-
-    describe '#get_ta_names' do
-      it 'gets ta names' do
-        grouping.add_tas(tas)
-        expect(grouping.get_ta_names).to match_array(tas.map(&:user_name))
-      end
-    end
-
-    describe '#remove_tas' do
-      it 'is able to remove tas' do
-        grouping.remove_tas(tas)
-        expect(grouping.ta_memberships.count).to eq(0)
       end
     end
   end
@@ -293,7 +269,9 @@ describe Grouping do
           end
 
           context 'when only one is assigned a TA' do
-            before(:each) { criteria[0].add_tas(tas[0]) }
+            before(:each) do
+              create(:criterion_ta_association, criterion: criteria[0], ta: tas[0])
+            end
 
             it 'updates criteria coverage count to 1' do
               expect_updated_criteria_coverage_count_eq 1
@@ -301,7 +279,11 @@ describe Grouping do
           end
 
           context 'when only one is assigned multiple TAs' do
-            before(:each) { criteria[0].add_tas(tas) }
+            before(:each) do
+              tas.each do |ta|
+                create(:criterion_ta_association, criterion: criteria[0], ta: ta)
+              end
+            end
 
             it 'updates criteria coverage count to 1' do
               expect_updated_criteria_coverage_count_eq 1
@@ -310,7 +292,9 @@ describe Grouping do
 
           context 'when `tas.size` are assigned unique TAs' do
             before :each do
-              tas.size.times { |i| criteria[i].add_tas(tas[i]) }
+              tas.size.times do |i|
+                create(:criterion_ta_association, criterion: criteria[i], ta: tas[i])
+              end
             end
 
             it 'updates criteria coverage count to `tas.size`' do
@@ -319,7 +303,13 @@ describe Grouping do
           end
 
           context 'when `tas.size` are assigned non-unique TAs' do
-            before(:each) { tas.size.times { |i| criteria[i].add_tas(tas) } }
+            before(:each) do
+              criteria.take(tas.size).each do |criterion|
+                tas.each do |ta|
+                  create(:criterion_ta_association, criterion: criterion, ta: ta)
+                end
+              end
+            end
 
             it 'updates criteria coverage count to `tas.size`' do
               expect_updated_criteria_coverage_count_eq tas.size
@@ -331,7 +321,9 @@ describe Grouping do
                 grouping = create(:grouping)
                 criterion = create(:rubric_criterion,
                                    assignment: grouping.assignment)
-                criterion.add_tas(tas)
+                tas.each do |ta|
+                  create(:criterion_ta_association, criterion: criterion, ta: ta)
+                end
                 create_ta_memberships(grouping, tas)
               end
 
@@ -348,14 +340,13 @@ describe Grouping do
       let(:another_grouping) { create(:grouping, assignment: assignment) }
       let(:ta) { create(:ta) }
       let(:criterion) { create(:rubric_criterion, assignment: assignment) }
-      let(:another_criterion) do
-        create(:rubric_criterion, assignment: assignment)
-      end
+      let(:criterion2) { create(:rubric_criterion, assignment: assignment) }
 
       before :each do
         create_ta_memberships([grouping, another_grouping], ta)
-        criterion.add_tas(ta)
-        another_criterion.add_tas(ta)
+        create(:criterion_ta_association, criterion: criterion, ta: ta)
+        create(:criterion_ta_association, criterion: criterion2, ta: ta)
+
         # Update only `grouping` not `another_grouping`.
         Grouping.update_criteria_coverage_counts(assignment, [grouping.id])
       end
@@ -411,7 +402,8 @@ describe Grouping do
     describe '#refresh_test_tokens' do
       context 'if assignment.tokens is not nil' do
         before do
-          @assignment = FactoryBot.create(:assignment, token_start_date: 1.day.ago, tokens_per_period: 10)
+          @assignment = FactoryBot.create(:assignment, assignment_properties_attributes: { token_start_date: 1.day.ago,
+                                                                                           tokens_per_period: 10 })
           @group = FactoryBot.create(:group)
           @grouping = Grouping.create(group: @group, assignment: @assignment)
           @student1 = FactoryBot.create(:student)
@@ -435,7 +427,8 @@ describe Grouping do
 
     describe '#update_assigned_tokens' do
       before :each do
-        @assignment = FactoryBot.create(:assignment, token_start_date: 1.day.ago, tokens_per_period: 6)
+        @assignment = FactoryBot.create(:assignment, assignment_properties_attributes: { token_start_date: 1.day.ago,
+                                                                                         tokens_per_period: 6 })
         @group = FactoryBot.create(:group)
         @grouping = Grouping.create(group: @group, assignment: @assignment, test_tokens: 5)
         @assignment.groupings << @grouping # TODO: why the bidirectional association is not automatically created?
@@ -735,7 +728,7 @@ describe Grouping do
 
     context 'without students (ie created by an admin) for a assignment with section restriction' do
       before :each do
-        @assignment = create(:assignment, section_due_dates_type: true)
+        @assignment = create(:assignment, assignment_properties_attributes: { section_groups_only: true })
         @grouping = create(:grouping, assignment: @assignment)
         section01 = create(:section)
         section02 = create(:section)
@@ -759,7 +752,9 @@ describe Grouping do
         @student_can_invite = create(:student, section: @section)
         @student_cannot_invite = create(:student)
 
-        assignment = create(:assignment, group_max: 2, section_groups_only: true, due_date: Time.now + 2.days)
+        assignment = create(:assignment,
+                            due_date: 2.days.from_now,
+                            assignment_properties_attributes: { group_max: 2, section_groups_only: true })
         @grouping = create(:grouping, assignment: assignment)
         create(:inviter_student_membership,
                user: student,
@@ -975,7 +970,7 @@ describe Grouping do
 
         context 'and section_due_dates_type is false' do
           before :each do
-            assignment.update!(section_due_dates_type: false)
+            assignment.assignment_properties.update!(section_due_dates_type: false)
           end
 
           it 'should return the assignment due date' do
@@ -993,7 +988,7 @@ describe Grouping do
         end
         context 'and section_due_dates_type is true' do
           before :each do
-            assignment.update!(section_due_dates_type: true)
+            assignment.assignment_properties.update!(section_due_dates_type: true)
           end
 
           it 'should return the section due date' do
@@ -1094,6 +1089,108 @@ describe Grouping do
           SectionDueDate.create(section: @section, assignment: @assignment, due_date: Time.parse('July 20 2009 5:00PM'))
           submit_file_at_time(@assignment, @group, 'test', 'July 28 2009 1:00PM', 'my_file', 'Hello, World!')
           expect(@grouping.past_due_date?).to be true
+        end
+      end
+    end
+  end
+
+  shared_examples 'test run data' do |return_data, show_output, show_extra|
+    if return_data
+      it 'should return data for the test run' do
+        expect(data.length).to eq 1
+        expect(data[0]['test_runs.id']).to eq test_run.id
+      end
+
+      it 'should return data for the test result' do
+        test_result_data = data[0]['test_data']
+        expect(test_result_data.length).to eq 1
+        expect(test_result_data[0]['test_runs.id']).to eq test_run.id
+      end
+
+      if show_extra
+        it 'should show extra info' do
+          expect(data[0]['test_data'][0]['test_group_results.extra_info']).not_to be_nil
+        end
+      else
+        it 'should not show extra info' do
+          expect(data[0]['test_data'][0]['test_group_results.extra_info']).to be_nil
+        end
+      end
+
+      if show_output
+        it 'should show output data' do
+          expect(data[0]['test_data'][0]['test_results.output']).not_to be_nil
+        end
+      else
+        it 'should not show output data' do
+          expect(data[0]['test_data'][0]['test_results.output']).to be_nil
+        end
+      end
+    else
+      it 'should not return data' do
+        expect(data).to be_empty
+      end
+    end
+  end
+
+  context 'getting test run data' do
+    let(:grouping) { create :grouping_with_inviter }
+    let(:test_run) { create :test_run, grouping: grouping, user: test_runner, submission: submission }
+    let(:display_output) { 'instructors' }
+    let(:test_group) { create :test_group, assignment: grouping.assignment, display_output: display_output }
+    let(:test_group_result) { create :test_group_result, test_run: test_run, test_group: test_group, extra_info: 'AAA' }
+    let!(:test_result) { create :test_result, test_group_result: test_group_result }
+
+    context 'tests run by instructors' do
+      let(:test_runner) { create :admin }
+      let(:submission) { create :version_used_submission }
+      describe '#test_runs_instructors' do
+        let(:data) { grouping.test_runs_instructors(submission) }
+        it_behaves_like 'test run data', true, true, true
+      end
+      describe '#test_runs_instructors_released' do
+        let(:data) { grouping.test_runs_instructors_released(submission) }
+        context 'when display_output is instructors' do
+          it_behaves_like 'test run data', true, false
+        end
+        context 'when display_output is instructors_and_student_tests' do
+          let(:display_output) { 'instructors_and_student_tests' }
+          it_behaves_like 'test run data', true, false
+        end
+        context 'when display_output is instructors_and_students' do
+          let(:display_output) { 'instructors_and_students' }
+          it_behaves_like 'test run data', true, true
+        end
+      end
+      describe '#test_runs_students' do
+        let(:data) { grouping.test_runs_students }
+        it_behaves_like 'test run data', false
+      end
+    end
+
+    context 'tests run by students' do
+      let(:submission) { nil }
+      let(:test_runner) { grouping.inviter }
+      describe '#test_runs_instructors' do
+        let(:data) { grouping.test_runs_instructors(submission) }
+        it_behaves_like 'test run data', false
+      end
+      describe '#test_runs_instructors_released' do
+        let(:data) { grouping.test_runs_instructors_released(submission) }
+        it_behaves_like 'test run data', false
+      end
+      describe '#test_runs_students' do
+        let(:data) { grouping.test_runs_students }
+        context 'when display_output is instructors' do
+          it_behaves_like 'test run data', true, false
+        end
+        context 'when display_output is instructors_and_student_tests' do
+          let(:display_output) { 'instructors_and_student_tests' }
+          it_behaves_like 'test run data', true, true
+        end
+        context 'when display_output is instructors_and_students' do
+          let(:display_output) { 'instructors_and_students' }
+          it_behaves_like 'test run data', true, true
         end
       end
     end

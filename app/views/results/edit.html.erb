@@ -1,11 +1,11 @@
 <% content_for :head do %>
   <%= stylesheet_link_tag 'result_main' %>
+  <%= stylesheet_pack_tag 'result' %>
   <%= javascript_include_tag 'mathjax' %>
   <%= javascript_pack_tag 'result' %>
   <%= javascript_include_tag 'Results/main' %>
   <script>
-    let PDFJS_PATH = '<%= asset_path("pdfjs.js") %>';
-    let PDFJS_WORKER_PATH = '<%= asset_path("pdfjs_lib/pdf.worker.js") %>';
+    pdfjs.GlobalWorkerOptions.workerSrc = '<%= asset_pack_path('pdf.js') %>';
 
     document.addEventListener('DOMContentLoaded', () => {
       window.resultComponent = makeResult(document.getElementById('result-main'),
@@ -13,7 +13,7 @@
           result_id: <%= @result.id %>,
           submission_id: <%= @result.submission_id %>,
           grouping_id: <%= @result.submission.grouping_id %>,
-          assignment_id: <%= @result.submission.grouping.assignment_id %>,
+          assignment_id: <%= @result.submission.grouping.assessment_id %>,
           role: '<%= @current_user.class.name %>',
         }
       );

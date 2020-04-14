@@ -86,7 +86,7 @@ module Api
     end
 
     def create
-      grouping = Grouping.find_by_group_id_and_assignment_id(params[:group_id], params[:assignment_id])
+      grouping = Grouping.find_by(group_id: params[:group_id], assessment_id: params[:assignment_id])
       if grouping.nil?
         render 'shared/http_status', locals: { code: '404', message:
           'No group with that id exists for the given assignment' }, status: 404
@@ -114,8 +114,7 @@ module Api
                                                       filename: params[:filename],
                                                       type: params[:mime_type])
         success, messages = grouping.group.access_repo do |repo|
-          file_path = File.dirname(params[:filename]).gsub(%r{^/}, '')
-          path = Pathname.new(grouping.assignment.repository_folder).join(file_path)
+          path = Pathname.new(grouping.assignment.repository_folder)
           add_files([file], @current_user, repo, path: path)
         end
       ensure
@@ -133,8 +132,39 @@ module Api
       end
     end
 
+    def create_folders
+      grouping = Grouping.find_by(group_id: params[:group_id], assessment_id: params[:assignment_id])
+      if grouping.nil?
+        render 'shared/http_status', locals: { code: '404', message:
+            'No group with that id exists for the given assignment' }, status: 404
+        return
+      end
+
+      if has_missing_params?([:folder_path])
+        # incomplete/invalid HTTP params
+        render 'shared/http_status', locals: { code: '422', message:
+            HttpStatusHelper::ERROR_CODE['message']['422'] }, status: 422
+        return
+      end
+      success, messages = grouping.group.access_repo do |repo|
+        new_folders = Pathname.new(params[:folder_path])
+        path = Pathname.new(grouping.assignment.repository_folder)
+        add_folders([new_folders], @current_user, repo, path: path)
+      end
+      message_string = messages.map { |type, *msg| "#{type}: #{msg}" }.join("\n")
+      if success
+        # It worked, render success
+        message = "#{HttpStatusHelper::ERROR_CODE['message']['201']}\n\n#{message_string}"
+        render 'shared/http_status', locals: { code: '201', message: message }, status: 201
+      else
+        # Some other error occurred
+        message = "#{HttpStatusHelper::ERROR_CODE['message']['500']}\n\n#{message_string}"
+        render 'shared/http_status', locals: { code: '500', message: message }, status: 500
+      end
+    end
+
     def remove_file
-      grouping = Grouping.find_by_group_id_and_assignment_id(params[:group_id], params[:assignment_id])
+      grouping = Grouping.find_by(group_id: params[:group_id], assessment_id: params[:assignment_id])
       if grouping.nil?
         render 'shared/http_status', locals: { code: '404', message:
           'No group with that id exists for the given assignment' }, status: 404
@@ -148,16 +178,43 @@ module Api
         return
       end
 
-      begin
-        success, messages = grouping.remove_files([params[:filename]], @current_user)
-      rescue Repository::FileDoesNotExist
-        render 'shared/http_status', locals: { code: '404', message:
-          'No file exists at that path.' }, status: 404
-        return
+      success, messages = grouping.group.access_repo do |repo|
+        path = Pathname.new(grouping.assignment.repository_folder)
+        remove_files([params[:filename]], @current_user, repo, path: path)
       end
 
       message_string = messages.map { |type, *msg| "#{type}: #{msg}" }.join("\n")
+      if success
+        # It worked, render success
+        message = "#{HttpStatusHelper::ERROR_CODE['message']['200']}\n\n#{message_string}"
+        render 'shared/http_status', locals: { code: '200', message: message }, status: 200
+      else
+        # Some other error occurred
+        message = "#{HttpStatusHelper::ERROR_CODE['message']['500']}\n\n#{message_string}"
+        render 'shared/http_status', locals: { code: '500', message: message }, status: 500
+      end
+    end
 
+    def remove_folder
+      grouping = Grouping.find_by(group_id: params[:group_id], assessment_id: params[:assignment_id])
+      if grouping.nil?
+        render 'shared/http_status', locals: { code: '404', message:
+            'No group with that id exists for the given assignment' }, status: 404
+        return
+      end
+
+      if has_missing_params?([:folder_path])
+        # incomplete/invalid HTTP params
+        render 'shared/http_status', locals: { code: '422', message:
+            HttpStatusHelper::ERROR_CODE['message']['422'] }, status: 422
+        return
+      end
+      success, messages = grouping.group.access_repo do |repo|
+        folder = params[:folder_path]
+        path = Pathname.new(grouping.assignment.repository_folder)
+        remove_folders([folder], @current_user, repo, path: path)
+      end
+      message_string = messages.map { |type, *msg| "#{type}: #{msg}" }.join("\n")
       if success
         # It worked, render success
         message = "#{HttpStatusHelper::ERROR_CODE['message']['200']}\n\n#{message_string}"

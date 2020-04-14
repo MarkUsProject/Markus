@@ -1,6 +1,7 @@
 describe FlexibleCriterion do
   let(:criterion_factory_name) { :flexible_criterion }
 
+  it_behaves_like 'a criterion'
   context 'A good Flexible Criterion model' do
     before :each do
       @criterion = create(:flexible_criterion)
@@ -11,7 +12,7 @@ describe FlexibleCriterion do
     it { is_expected.to validate_presence_of(:max_mark) }
 
     it do
-      is_expected.to validate_uniqueness_of(:name).scoped_to(:assignment_id)
+      is_expected.to validate_uniqueness_of(:name).scoped_to(:assessment_id)
     end
 
     it do

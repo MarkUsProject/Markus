@@ -1,6 +1,6 @@
 class SplitPdfJob < ApplicationJob
 
-  queue_as MarkusConfigurator.markus_job_split_pdf_queue_name
+  queue_as Rails.configuration.x.queues.split_pdf
 
   def self.on_complete_js(status)
     'window.location.reload.bind(window.location)'
@@ -255,7 +255,7 @@ class SplitPdfJob < ApplicationJob
         student_info_file = File.join(raw_dir, "#{grouping.id}_info.jpg")
         student_info.write(student_info_file)
 
-        python_exe = MarkusConfigurator.markus_exam_python_executable
+        python_exe = Rails.configuration.x.scanned_exams.python
         read_chars_py_file = File.join(::Rails.root, 'lib', 'scanner', 'read_chars.py')
         stdout, _status = Open3.capture2(python_exe, read_chars_py_file, student_info_file)
         tokens = stdout.split("\n")

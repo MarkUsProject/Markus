@@ -1,6 +1,6 @@
 class UpdateStarterCodeJob < ApplicationJob
 
-  queue_as MarkusConfigurator.markus_job_update_starter_code_queue
+  queue_as Rails.configuration.x.queues.update_starter_code
 
   def self.show_status(status)
     I18n.t('poll_job.update_starter_code_job', progress: status[:progress], total: status[:total])

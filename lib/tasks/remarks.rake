@@ -4,9 +4,9 @@ namespace :db do
     puts 'Create remark requests'
 
     # Create remark requests for assignments that allow them
-    Assignment.where(allow_remarks: true).each do |assignment|
+    Assignment.joins(:assignment_properties).where(assignment_properties: { allow_remarks: true }).each do |assignment|
       # Create remark request for first two groups in each assignment
-      Grouping.where(assignment_id: assignment.id).first(2).each do |grouping|
+      Grouping.where(assessment_id: assignment.id).first(2).each do |grouping|
         submission = Submission.find_by_grouping_id(grouping.id)
 
         original_result = Result.find_by_submission_id(submission.id)
@@ -30,7 +30,6 @@ namespace :db do
     end
 
     # Remark one of the remark requests and release it to students
-
     remark_submission = Result.where.not(remark_request_submitted_at: nil).first.submission
     remark_group = Grouping.find_by_group_id(remark_submission.grouping_id)
     result = remark_submission.results.first

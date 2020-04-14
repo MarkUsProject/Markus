@@ -17,7 +17,7 @@ module SubmissionsHelper
 
   # Release or unrelease the submissions of a set of groupings.
   def set_release_on_results(groupings, release)
-    Result.transaction do
+    result = Result.transaction do
       without_submissions = groupings.where.not(id: groupings.joins(:current_submission_used))
 
       if without_submissions.present?
@@ -38,6 +38,16 @@ module SubmissionsHelper
       Result.where(id: groupings.joins(:current_result).pluck('results.id'))
             .update_all(released_to_students: release)
     end
+
+    if release
+      groupings.each do |grouping|
+        grouping.accepted_students.each do |student|
+          NotificationMailer.with(user: student, grouping: grouping).release_email.deliver_now
+        end
+      end
+    end
+
+    result
   end
 
   # If the grouping is collected or has an error,

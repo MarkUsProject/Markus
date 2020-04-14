@@ -32,9 +32,7 @@
       @current_user.has_accepted_grouping_for?(@assignment) %>
       <li class='<%= "active" if controller.controller_name == 'assignments' && controller.action_name != 'peer_review' %>'>
         <%= link_to Assignment.model_name.human.pluralize,
-                    controller: 'assignments',
-                    action: 'student_interface',
-                    id: @assignment.id %>
+                    assignment_path(@assignment.id) %>
       </li>
 
 
@@ -70,7 +68,7 @@
         </li>
       <% end %>
 
-      <% if @assignment.has_peer_review? && !@assignment.pr_assignment.is_hidden %>
+      <% if @assignment.has_peer_review_assignment? && !@assignment.pr_assignment.is_hidden %>
         <li class='<%= "active" if controller.controller_name == 'assignments' && controller.action_name == 'peer_review'%>'>
           <%= link_to PeerReview.model_name.human.pluralize,
                       controller: 'assignments',

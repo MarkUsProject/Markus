@@ -3,7 +3,7 @@ require 'fileutils'
 class ExamTemplate < ApplicationRecord
   before_validation :set_defaults_for_name, :set_formats_for_name_and_filename
   after_update :rename_exam_template_directory
-  belongs_to :assignment
+  belongs_to :assignment, foreign_key: :assessment_id
   validates :filename, :num_pages, :name, presence: true
   validates_uniqueness_of :name,
                           scope: :assignment
@@ -12,18 +12,23 @@ class ExamTemplate < ApplicationRecord
 
   has_many :split_pdf_logs, dependent: :destroy
   has_many :template_divisions, dependent: :destroy
-  accepts_nested_attributes_for :template_divisions, allow_destroy: true, update_only: true, reject_if: :exam_been_uploaded?
+  accepts_nested_attributes_for :template_divisions,
+                                allow_destroy: true,
+                                update_only: true,
+                                reject_if: :exam_been_uploaded?
+
+  before_save :undo_mark_for_destruction
 
   # Create an ExamTemplate with the correct file
   def self.create_with_file(blob, attributes={})
-    return unless attributes.has_key? :assignment_id
-    assignment = Assignment.find(attributes[:assignment_id])
+    return unless attributes.key? :assessment_id
+    assignment = Assignment.find(attributes[:assessment_id])
     assignment_name = assignment.short_identifier
     filename = attributes[:filename].tr(' ', '_')
     name_input = attributes[:name]
     exam_template_name = name_input.blank? ? File.basename(attributes[:filename].tr(' ', '_'), '.pdf') : name_input
     template_path = File.join(
-      MarkusConfigurator.markus_exam_template_dir,
+      Rails.configuration.x.scanned_exams.path,
       assignment_name,
       exam_template_name
     )
@@ -38,13 +43,13 @@ class ExamTemplate < ApplicationRecord
         name: name_input,
         filename: filename,
         num_pages: num_pages,
-        assignment: assignment
+        assessment_id: assignment.id
       )
     else
       new_template = ExamTemplate.new(
         filename: filename,
         num_pages: num_pages,
-        assignment: assignment
+        assessment_id: assignment.id
       )
     end
     saved = new_template.save
@@ -56,10 +61,10 @@ class ExamTemplate < ApplicationRecord
 
   # Replace an ExamTemplate with the correct file
   def replace_with_file(blob, attributes={})
-    return unless attributes.has_key? :assignment_id
-    assignment_name = Assignment.find(attributes[:assignment_id]).short_identifier
+    return unless attributes.key? :assessment_id
+    assignment_name = Assignment.find(attributes[:assessment_id]).short_identifier
     template_path = File.join(
-      MarkusConfigurator.markus_exam_template_dir,
+      Rails.configuration.x.scanned_exams.path,
       assignment_name,
       self.name
     )
@@ -154,7 +159,7 @@ class ExamTemplate < ApplicationRecord
         # when a new group is entered.
         Grouping.find_or_create_by(
           group_id: group.id,
-          assignment_id: self.assignment_id
+          assessment_id: self.assessment_id
         )
 
         # add assignment files based on template divisions
@@ -231,7 +236,7 @@ class ExamTemplate < ApplicationRecord
   end
 
   def base_path
-    File.join MarkusConfigurator.markus_exam_template_dir,
+    File.join Rails.configuration.x.scanned_exams.path,
               assignment.short_identifier, self.name
   end
 
@@ -260,6 +265,11 @@ class ExamTemplate < ApplicationRecord
     imglist.first.write(File.join(self.base_path, 'cover.jpg'))
   end
 
+  # any changes to template divisions should be rejected once exams have been uploaded
+  def exam_been_uploaded?
+    self.split_pdf_logs.exists?
+  end
+
   private
 
   # name and filename shouldn't include whitespace
@@ -281,12 +291,12 @@ class ExamTemplate < ApplicationRecord
     if self.name_changed?
       assignment_name = self.assignment.short_identifier
       old_directory_name = File.join(
-        MarkusConfigurator.markus_exam_template_dir,
+        Rails.configuration.x.scanned_exams.path,
         assignment_name,
         name_was
       )
       new_directory_name = File.join(
-        MarkusConfigurator.markus_exam_template_dir,
+        Rails.configuration.x.scanned_exams.path,
         assignment_name,
         name
       )
@@ -294,8 +304,8 @@ class ExamTemplate < ApplicationRecord
     end
   end
 
-  # any changes to template divisions should be rejected once exams have been uploaded
-  def exam_been_uploaded?
-    self.split_pdf_logs.any?
+  # any attempts to delete template divisions should be rejected once exams have been uploaded
+  def undo_mark_for_destruction
+    template_divisions.each { |div| div.reload if div.marked_for_destruction? } if exam_been_uploaded?
   end
 end

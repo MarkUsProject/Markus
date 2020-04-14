@@ -9,6 +9,12 @@ describe ImageAnnotation do
   it { is_expected.to validate_numericality_of(:x2) }
   it { is_expected.to validate_numericality_of(:y2) }
 
+  describe '#get_data' do
+    let(:annotation) { create :image_annotation }
+    let(:extra_keys) { Set[:x_range, :y_range] }
+    it_behaves_like 'gets annotation data'
+  end
+
   describe '#extract_coords' do
     context 'testing extract coords' do
       let(:basic_annot) do

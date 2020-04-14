@@ -4,7 +4,7 @@ class GradeEntryStudent < ApplicationRecord
   belongs_to :user
   validates_associated :user, on: :create
 
-  belongs_to :grade_entry_form
+  belongs_to :grade_entry_form, foreign_key: :assessment_id
   validates_associated :grade_entry_form, on: :create
 
   has_many :grades, dependent: :destroy
@@ -25,10 +25,9 @@ class GradeEntryStudent < ApplicationRecord
     student_ids = Student.where(id: Array(student_ids)).pluck(:id)
     form_ids = GradeEntryForm.where(id: Array(form_ids)).pluck(:id)
 
-    columns = [:user_id, :grade_entry_form_id]
-    existing_values = GradeEntryStudent
-      .where(user_id: student_ids, grade_entry_form_id: form_ids)
-      .pluck(:user_id, :grade_entry_form_id)
+    columns = [:user_id, :assessment_id]
+    existing_values = GradeEntryStudent.where(user_id: student_ids, assessment_id: form_ids)
+                                       .pluck(:user_id, :assessment_id)
     # Delegate the generation of records to the caller-specified block and
     # remove values that already exist in the database.
     values = yield(student_ids, form_ids) - existing_values
@@ -90,7 +89,7 @@ class GradeEntryStudent < ApplicationRecord
     GradeEntryStudentTa.joins(:grade_entry_student)
                        .where('grade_entry_students.user_id': student_ids,
                               'grade_entry_students_tas.ta_id': grader_ids,
-                              'grade_entry_students.grade_entry_form_id': form.id)
+                              'grade_entry_students.assessment_id': form.id)
                        .delete_all
   end
 
@@ -156,31 +155,6 @@ class GradeEntryStudent < ApplicationRecord
     grade_entry_student.total_grade
   end
 
-  def add_tas(tas)
-    return unless self.valid?
-    grade_entry_student_tas = self.tas
-    tas = Array(tas)
-    tas.each do |ta|
-      if !grade_entry_student_tas.include? ta
-        self.tas << ta
-        grade_entry_student_tas += [ta]
-      end
-    end
-    self.save
-  end
-
-  def remove_tas(ta_id_array)
-    #if no tas to remove, return.
-    return if ta_id_array == []
-    grade_entry_student_tas = self.tas
-
-    tas_to_remove = grade_entry_student_tas.where(id: ta_id_array)
-    tas_to_remove.each do |ta_to_remove|
-      self.tas.delete(ta_to_remove)
-    end
-    self.save
-  end
-
   # Return whether or not the given student's grades are all blank
   # (Needed because ActiveRecord's "sum" method returns 0 even if
   #  all the grade.grade values are nil and we need to distinguish
@@ -191,6 +165,29 @@ class GradeEntryStudent < ApplicationRecord
       !grade.grade.nil?
     end
     grades_without_nils.blank?
+  end
+
+  # Calculate and set the total grade for all grade entry students with
+  # an id in +grade_entry_student_ids+.
+  # This should be run whenever grade entry students are created/updated
+  # as an upsert/import operation since refresh_total_grade will not
+  # be run as an after_save callback in that case.
+  def self.refresh_total_grades(grade_entry_student_ids)
+    grades = Grade.where(grade_entry_student_id: grade_entry_student_ids)
+                  .pluck(:grade_entry_student_id, :grade)
+                  .group_by(&:first)
+                  .map { |k, v| { id: k, total_grade: v.map(&:last) } }
+    total_grades = grades.map do |h|
+      if h[:total_grade].all?(&:nil?)
+        h[:total_grade] = nil
+      else
+        h[:total_grade] = h[:total_grade].sum
+      end
+      h
+    end
+    return if total_grades.empty?
+
+    GradeEntryStudent.upsert_all total_grades
   end
 
   private

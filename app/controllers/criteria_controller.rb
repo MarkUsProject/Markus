@@ -30,9 +30,9 @@ class CriteriaController < ApplicationController
     @criterion = criterion_class.new
 
     if @criterion.update(name: params[:new_criterion_prompt],
-                             assignment_id: @assignment.id,
-                             max_mark: params[:max_mark_prompt],
-                             position: @assignment.next_criterion_position)
+                         assignment: @assignment,
+                         max_mark: params[:max_mark_prompt],
+                         position: @assignment.next_criterion_position)
       @criterion.set_default_levels if params[:criterion_type] == 'RubricCriterion'
       flash_now(:success, t('flash.actions.create.success',
                             resource_name: criterion_class.model_name.human))
@@ -160,7 +160,7 @@ class CriteriaController < ApplicationController
             type = criterion_yml[1]['type']
             begin
               if type.casecmp('rubric') == 0
-                criterion = RubricCriterion.load_from_yml(criterion_yml)
+                criterion, levels = RubricCriterion.load_from_yml(criterion_yml)
               elsif type.casecmp('flexible') == 0
                 criterion = FlexibleCriterion.load_from_yml(criterion_yml)
               elsif type.casecmp('checkbox') == 0
@@ -169,9 +169,13 @@ class CriteriaController < ApplicationController
                 raise RuntimeError
               end
 
-              criterion.assignment_id = assignment.id
+              criterion.assessment_id = assignment.id
               criterion.position = pos
               criterion.save!
+              if type.casecmp('rubric') == 0
+                criterion.levels = levels
+                criterion.save!
+              end
               pos += 1
               successes += 1
             rescue ActiveRecord::RecordInvalid # E.g., both visibility options are false.
@@ -197,11 +201,10 @@ class CriteriaController < ApplicationController
 
   private
 
-  # Resets the total mark for all results for the
-  # given assignment with id +assignment_id+
-  def reset_results_total_mark(assignment_id)
+  # Resets the total mark for all results for the given assignment with id +assessment_id+.
+  def reset_results_total_mark(assessment_id)
     Result.joins(submission: :grouping)
-          .where('submissions.submission_version_used': true, 'groupings.assignment_id': assignment_id)
+          .where('submissions.submission_version_used': true, 'groupings.assessment_id': assessment_id)
           .each do |result|
       result.update(marking_state: Result::MARKING_STATES[:incomplete])
       result.update_total_mark

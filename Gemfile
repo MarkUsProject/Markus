@@ -16,7 +16,6 @@ gem 'sprockets'
 # Models and database interactions
 gem 'activerecord-import'
 gem 'pluck_to_hash'
-gem 'upsert'
 
 # CSS and JavaScript
 gem 'autoprefixer-rails'
@@ -117,7 +116,7 @@ end
 group :development, :test do
   gem 'byebug'
   gem 'i18n-tasks'
-  gem 'rspec-rails', '~> 4.0.0.beta3'
+  gem 'rspec-rails', '~> 4.0.0'
 end
 
 # Gems needed (wanted) for development, test and production_test

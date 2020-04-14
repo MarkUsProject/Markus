@@ -28,7 +28,7 @@ namespace :db do
             StudentMembership::STATUSES[:inviter],
             invoked_by_admin: true)
           grouping.invite(
-            [students[time + 15].user_name],
+            [students[time + num_groups].user_name],
             StudentMembership::STATUSES[:accepted],
             invoked_by_admin: true)
         end

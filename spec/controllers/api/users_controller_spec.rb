@@ -58,6 +58,11 @@ describe Api::UsersController do
           user_names = Hash.from_xml(response.body).dig('users', 'user')['user_name']
           expect(user_names).to eq(students[0].user_name)
         end
+        it 'should return all information in the default fields' do
+          get :index
+          info = Hash.from_xml(response.body).dig('users', 'user')[0]
+          expect(Set.new(info.keys.map(&:to_sym))).to eq Set.new(Api::UsersController::DEFAULT_FIELDS)
+        end
       end
       context 'expecting an json response' do
         before :each do
@@ -76,6 +81,11 @@ describe Api::UsersController do
           get :index, params: { filter: { user_name: students[0].user_name } }
           expect(JSON.parse(response.body).map { |h| h['user_name'] }).to eq([students[0].user_name])
         end
+        it 'should return all information in the default fields' do
+          get :index
+          info = JSON.parse(response.body)[0]
+          expect(Set.new(info.keys.map(&:to_sym))).to eq Set.new(Api::UsersController::DEFAULT_FIELDS)
+        end
       end
     end
     context 'GET show' do
@@ -92,6 +102,11 @@ describe Api::UsersController do
           get :show, params: { id: students[0].id }
           expect(Hash.from_xml(response.body).dig('user')['user_name']).to eq(students[0].user_name)
         end
+        it 'should return all information in the default fields' do
+          get :show, params: { id: students[0].id }
+          info = Hash.from_xml(response.body).dig('user')
+          expect(Set.new(info.keys.map(&:to_sym))).to eq Set.new(Api::UsersController::DEFAULT_FIELDS)
+        end
       end
       context 'expecting an json response' do
         before :each do
@@ -104,6 +119,11 @@ describe Api::UsersController do
         it 'should return info about the user' do
           get :show, params: { id: students[0].id }
           expect(JSON.parse(response.body)['user_name']).to eq(students[0].user_name)
+        end
+        it 'should return all information in the default fields' do
+          get :show, params: { id: students[0].id }
+          info = JSON.parse(response.body)
+          expect(Set.new(info.keys.map(&:to_sym))).to eq Set.new(Api::UsersController::DEFAULT_FIELDS)
         end
       end
     end

@@ -32,10 +32,6 @@ fr:
       error:
         no_access: "Pas d'acces au fichier envoye avec l'id #%{submission_file_id}." #Problème d'accents à cause de l'appel JS"
 
-    feedback_file:
-      error:
-        no_access: "No access to feedback file with id #%{feedback_file_id}."
-
     #app/views/job_messages/_job_poller.js.erb
     job_poller:
       processing_message: "Processus en cours d`éxécution:"
@@ -57,10 +53,14 @@ fr:
       create_groups_job_extra_info: "Échoué pour: groupe: %{group_name}, repo: %{repo_name}, membres: %{members}"
       uncollect_submissions_job: "Tâches de décollement... "
       submissions_job: "%{progress}/%{total} Soumissions collectées"
+      download_submissions_job: "%{progress}/%{total} Soumissions préparées pour téléchargement"
+      download_submissions_finalizing: "Finaliser les soumissions à télécharger"
+      download_submissions_complete: "Les soumissions sont prêtes. Cliquez ici pour finaliser le téléchargement."
       update_repo_required_files_job: "%{progress}/%{total} repos modifiés"
       update_starter_code_job: "%{progress}/%{total} repos modifiés"
       autotest_run_job: "%{progress}/%{total} Tests commencés"
       autotest_run_job_failed_count: "%{failed} Tests échoués"
+      autotest_specs_job: "Configuration de tests automatisés"
     repo:
       commits:
         assignment_folder: "UPDATE ME %{assignment}"

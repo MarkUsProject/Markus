@@ -42,22 +42,21 @@ class MarkusLogger
   # The variables that the loggers will use are defined in the
   # environment.rb file
   #===Exceptions
-  # If the configuration variables MARKUS_LOGGING_ROTATE_INTERVAL,
-  # MARKUS_LOGGING_ERRORLOGFILE, MARKUS_LOGGING_LOGFILE
-  # or MARKUS_LOGGING_SIZE_THRESHOLD are not valid an exception of type
+  # If the configuration variables configuration.x.logging.rotate_interval,
+  # config.x.logging.error_file, configuration.x.logging.log_file
+  # or configuration.x.logging.size_threshold are not valid an exception of type
   # MarkusLoggerConfigurationError is raised.
   def initialize
     my_pid = Process.pid
-    rotate_by_time = MarkusConfigurator.markus_config_logging_rotate_by_interval
-    size = MarkusConfigurator.markus_config_logging_size_threshold
-    error_log_file = "#{MarkusConfigurator.markus_config_logging_errorlogfile}.#{my_pid}"
-    log_file = "#{MarkusConfigurator.markus_config_logging_logfile}.#{my_pid}"
-    interval = MarkusConfigurator.markus_config_logging_rotate_interval
-    old_files = MarkusConfigurator.markus_config_logging_num_oldfiles
+    size = Rails.configuration.x.logging.size_threshold
+    error_log_file = "#{Rails.configuration.x.logging.error_file}.#{my_pid}"
+    log_file = "#{Rails.configuration.x.logging.log_file}.#{my_pid}"
+    interval = Rails.configuration.x.logging.rotate_interval
+    old_files = Rails.configuration.x.logging.old_files
     if !(valid_file?(error_log_file) && valid_file?(log_file))
       raise MarkusLoggerConfigurationError.new('The log files are not valid')
     end
-    if rotate_by_time
+    if Rails.configuration.x.logging.rotate_by_interval
       if !['daily', 'weekly', 'monthly'].include?(interval)
         raise MarkusLoggerConfigurationError.new('The rotation interval is not valid')
       end
@@ -94,21 +93,21 @@ class MarkusLogger
   #=== Exceptions
   # When the log level is not known then an exception of type ArgumentError is raised
   def log(msg, level=INFO)
-    if MarkusConfigurator.markus_config_logging_enabled?
-      case level
-      when INFO
-        @__logger__.info(msg)
-      when DEBUG
-        @__logger__.debug(msg)
-      when WARN
-        @__logger__.warn(msg)
-      when ERROR
-        @__errorLogger__.error(msg)
-      when FATAL
-        @__errorLogger__.fatal(msg)
-      else
-        raise ArgumentError,('Logger: Unknown loglevel')
-      end
+    return unless Rails.configuration.x.logging.enabled
+
+    case level
+    when INFO
+      @__logger__.info(msg)
+    when DEBUG
+      @__logger__.debug(msg)
+    when WARN
+      @__logger__.warn(msg)
+    when ERROR
+      @__errorLogger__.error(msg)
+    when FATAL
+      @__errorLogger__.fatal(msg)
+    else
+      raise ArgumentError, 'Logger: Unknown loglevel'
     end
   end
 
