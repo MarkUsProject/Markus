@@ -327,7 +327,7 @@ describe RubricCriterion do
         end
       end
       context 'when a result is released' do
-        before do
+        before(:each) do
           @marks = @criterion.marks
           results = []
           3.times do

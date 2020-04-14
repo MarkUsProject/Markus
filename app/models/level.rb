@@ -12,7 +12,7 @@ class Level < ApplicationRecord
   validate :only_update_if_results_unreleased
 
   def only_update_if_results_unreleased
-    self.rubric_criterion.results_released?
+    self.rubric_criterion.results_unreleased?
     return if self.rubric_criterion.errors.empty?
     errors.add(:base, 'Cannot update level once results are released.')
   end
