@@ -17,6 +17,7 @@ class Criterion < ApplicationRecord
   accepts_nested_attributes_for :criteria_assignment_files_joins, allow_destroy: true
 
   validate :results_unreleased?
+  validate :visible?
 
   self.abstract_class = true
 
