@@ -18,6 +18,7 @@ class Level < ApplicationRecord
     self.rubric_criterion.results_unreleased?
     return if self.rubric_criterion.errors.empty?
     errors.add(:base, 'Cannot update level once results are released.')
+  end
 
   def destroy_associated_marks
     self.rubric_criterion.marks.where(mark: self.mark).update(mark: nil)
