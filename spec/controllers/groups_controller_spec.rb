@@ -280,13 +280,99 @@ describe GroupsController do
         end
       end
     end
-    describe '#invalidate_groupings'
-    describe '#validate_groupings'
-    describe '#delete_groupings'
-    describe '#add_members'
-    describe '#add_member'
-    describe '#remove_members'
-    describe '#remove_member'
+
+    describe '#validate_groupings' do
+      let(:grouping) { create :grouping_with_inviter }
+
+      it 'should validate groupings' do
+        post :global_actions, params: {
+          assignment_id: grouping.assignment.id,
+          groupings: [grouping.id],
+          global_actions: 'valid'
+        }
+        expect(grouping.reload.admin_approved).to be true
+      end
+    end
+
+    describe '#invalidate_groupings' do
+      let(:grouping) { create :grouping_with_inviter, admin_approved: true }
+
+      it 'should invalidate groupings' do
+        post :global_actions, params: {
+          assignment_id: grouping.assignment.id,
+          groupings: [grouping.id],
+          global_actions: 'invalid'
+        }
+
+        expect(grouping.reload.admin_approved).to be false
+      end
+    end
+
+    describe '#delete_groupings' do
+      let!(:grouping) { create :grouping_with_inviter }
+      let!(:grouping_with_submission) { create :grouping_with_inviter_and_submission }
+
+      it 'should delete groupings without submissions' do
+        post :global_actions, params: {
+          assignment_id: grouping.assignment.id,
+          groupings: [grouping.id],
+          global_actions: 'delete'
+        }
+
+        expect(Grouping.all.size).to eq 1
+      end
+
+      it 'should not delete groupings with submissions' do
+        post :global_actions, params: {
+          assignment_id: grouping_with_submission.assignment.id,
+          groupings: [grouping_with_submission.id],
+          global_actions: 'delete'
+        }
+
+        expect(Grouping.all.size).to eq 2
+      end
+    end
+
+    describe '#add_members' do
+      let(:grouping) { create :grouping_with_inviter }
+      let(:student1) { create :student }
+      let(:student2) { create :student }
+
+      it 'adds multiple students to group' do
+        post :global_actions, params: {
+          assignment_id: grouping.assignment.id,
+          groupings: [grouping],
+          students: [student1.id, student2.id],
+          global_actions: 'assign'
+        }
+
+        expect(grouping.students.size).to eq 3
+      end
+    end
+
+    describe '#remove_members' do
+      let(:grouping) { create :grouping_with_inviter }
+      let(:student1) { create :student }
+      let(:student2) { create :student }
+
+      it 'should remove multiple students from group' do
+        post :global_actions, params: {
+          assignment_id: grouping.assignment.id,
+          groupings: [grouping],
+          students: [student1.id, student2.id],
+          global_actions: 'assign'
+        }
+
+        post :global_actions, params: {
+          assignment_id: grouping.assignment.id,
+          groupings: [grouping],
+          students_to_remove: [student1.user_name, student2.user_name],
+          global_actions: 'unassign'
+        }
+
+        expect(grouping.students.size).to eq 1
+      end
+    end
   end
 
   describe 'student access' do

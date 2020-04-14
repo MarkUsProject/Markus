@@ -1813,4 +1813,120 @@ describe Assignment do
       end
     end
   end
+
+  describe '#summary_json' do
+    context 'a Student user' do
+      let(:assignment) { create :assignment }
+      let(:student) { create :student }
+
+      it 'should return {}' do
+        expect(assignment.summary_json(student)).to be_empty
+      end
+    end
+
+    context 'a TA user' do
+      let(:ta) { create :ta }
+
+      before :each do
+        @assignment = create(:assignment_with_criteria_and_results)
+      end
+
+      context 'with no assigned students' do
+        it 'has criteria columns' do
+          expect(@assignment.summary_json(ta)[:criteriaColumns]).not_to be_empty
+        end
+
+        it 'has correct criteria information' do
+          criteria_info = @assignment.summary_json(ta)[:criteriaColumns][0]
+          expect(criteria_info).is_a? Hash
+          expect(criteria_info.keys).to include(:Header, :accessor, :className)
+        end
+      end
+    end
+
+    context 'an Admin user' do
+      let(:admin) { create :admin }
+
+      before :each do
+        @assignment = create(:assignment_with_criteria_and_results)
+      end
+
+      context 'with assigned students' do
+        it 'has criteria columns' do
+          expect(@assignment.summary_json(admin)[:criteriaColumns]).not_to be_empty
+        end
+
+        it 'has correct criteria information' do
+          criteria_info = @assignment.summary_json(admin)[:criteriaColumns][0]
+          expect(criteria_info).is_a? Hash
+          expect(criteria_info.keys).to include(:Header, :accessor, :className)
+        end
+
+        it 'has group data' do
+          data = @assignment.summary_json(admin)[:data]
+          expected_keys = [
+            :group_name,
+            :section,
+            :members,
+            :marking_state,
+            :final_grade,
+            :criteria,
+            :max_mark,
+            :result_id,
+            :submission_id,
+            :total_extra_marks,
+            :graders
+          ]
+
+          expect(data).not_to be_empty
+          expect(data[0]).is_a? Hash
+          expect(data[0].keys).to match_array expected_keys
+        end
+
+        it 'has group with members' do
+          data = @assignment.summary_json(admin)[:data]
+          expect(data[0][:members]).not_to be_empty
+        end
+      end
+    end
+  end
+
+  describe '#summary_csv' do
+    context 'a Student user' do
+      let(:assignment) { create :assignment }
+      let(:student) { create :student }
+
+      it 'should return ""' do
+        expect(assignment.summary_csv(student)).to be_empty
+      end
+    end
+
+    context 'a TA user' do
+      let(:ta) { create :ta }
+      let(:assignment) { create :assignment }
+
+      it 'should return ""' do
+        expect(assignment.summary_csv(ta)).to be_empty
+      end
+    end
+
+    context 'an Admin user' do
+      let(:admin) { create :admin }
+
+      before :each do
+        @assignment = create(:assignment_with_criteria_and_results)
+      end
+
+      context 'with assigned students' do
+        it 'has student data' do
+          summary_string = @assignment.summary_csv(admin)
+          summary = CSV.parse(summary_string)
+
+          expect(summary).to_not be_empty
+          expect(summary[0]).to_not be_empty
+          expect(summary[0]).to include('User name', 'Group', 'Final grade')
+        end
+      end
+    end
+  end
 end
