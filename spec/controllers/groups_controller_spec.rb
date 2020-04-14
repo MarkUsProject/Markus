@@ -335,7 +335,7 @@ describe GroupsController do
       end
 
       it 'should send an email to every student invited to a grouping if more than one are' do
-        @another_student =  create(:student, user_name: 'c9test3')
+        @another_student = create(:student, user_name: 'c9test3')
         expect do
           post :invite_member,
                params: { invite_member: "#{@student.user_name},#{@another_student.user_name}",

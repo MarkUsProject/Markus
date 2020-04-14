@@ -31,8 +31,8 @@ RSpec.describe NotificationMailer, type: :mailer do
     let(:submission) { create(:version_used_submission) }
     let(:relevant_link) do
       view_marks_assignment_submission_result_url(assignment_id: submission.grouping.assignment.id,
-                                                                      submission_id: submission.id,
-                                                                      id: submission.grouping.current_result.id)
+                                                  submission_id: submission.id,
+                                                  id: submission.grouping.current_result.id)
     end
     let(:mail) do
       submission.grouping.reload

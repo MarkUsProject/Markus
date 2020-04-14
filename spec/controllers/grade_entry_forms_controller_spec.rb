@@ -306,7 +306,15 @@ describe GradeEntryFormsController do
       @another = grade_entry_form_with_data.grade_entry_students.joins(:user).find_by('users.user_name': 'paneroar')
       @this_form = grade_entry_form_with_data
     end
-    it 'sends an email to each student who can now view their marks for this grade entry form' do
+    it 'sends an email to a student who has grades for this form if only one exists' do
+      expect do
+        post :update_grade_entry_students,
+             params: { id: @this_form.id,
+                       students: [@student.id],
+                       release_results: 'true' }
+      end.to change { ActionMailer::Base.deliveries.count }.by(1)
+    end
+    it 'sends an email to every student who has grades for this form if more than one do' do
       expect do
         post :update_grade_entry_students,
              params: { id: @this_form.id,
