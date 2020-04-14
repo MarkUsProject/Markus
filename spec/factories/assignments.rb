@@ -18,13 +18,13 @@ FactoryBot.define do
     after(:build) do |assignment, evaluator|
       if evaluator.assignment_properties_attributes
         assignment.assignment_properties = build(:assignment_properties,
-                                                   assignment: assignment,
-                                                   repository_folder: assignment.short_identifier,
-                                                   attributes: evaluator.assignment_properties_attributes)
+                                                 assignment: assignment,
+                                                 repository_folder: assignment.short_identifier,
+                                                 attributes: evaluator.assignment_properties_attributes)
       else
         assignment.assignment_properties = build(:assignment_properties,
-                                                   assignment: assignment,
-                                                   repository_folder: assignment.short_identifier)
+                                                 assignment: assignment,
+                                                 repository_folder: assignment.short_identifier)
       end
     end
   end

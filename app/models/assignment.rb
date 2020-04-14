@@ -899,10 +899,10 @@ class Assignment < Assessment
     peerreview_assignment.parent_assignment = self
     peerreview_assignment.submission_rule = NoLateSubmissionRule.new
     peerreview_assignment.assignment_stat = AssignmentStat.new
-    peerreview_assignment.assignment_properties.token_period = 1
-    peerreview_assignment.assignment_properties.non_regenerating_tokens = false
-    peerreview_assignment.assignment_properties.unlimited_tokens = false
-    peerreview_assignment.assignment_properties.repository_folder = repository_folder
+    peerreview_assignment.token_period = 1
+    peerreview_assignment.non_regenerating_tokens = false
+    peerreview_assignment.unlimited_tokens = false
+    peerreview_assignment.repository_folder = repository_folder
     peerreview_assignment.short_identifier = short_identifier + '_pr'
     peerreview_assignment.description = description
     peerreview_assignment.due_date = due_date
