@@ -6,10 +6,16 @@ class Assignment < Assessment
   MIN_PEER_REVIEWS_PER_GROUP = 1
 
   validates_presence_of :due_date
-  has_one :assignment_properties, dependent: :destroy, inverse_of: :assignment, foreign_key: :assessment_id
+
+  has_one :assignment_properties,
+          dependent: :destroy,
+          inverse_of: :assignment,
+          foreign_key: :assessment_id,
+          autosave: true
   delegate_missing_to :assignment_properties
   accepts_nested_attributes_for :assignment_properties, update_only: true
   validates_presence_of :assignment_properties
+  after_initialize :create_assignment_properties
 
   # Add assignment_properties to default scope because we almost always want to load an assignment with its properties
   default_scope { includes(:assignment_properties) }
@@ -890,16 +896,14 @@ class Assignment < Assessment
 
   def create_peer_review_assignment_if_not_exist
     return unless has_peer_review && Assignment.where(parent_assessment_id: id).empty?
-    peerreview_assignment_properties = AssignmentProperties.new
-    peerreview_assignment_properties.token_period = 1
-    peerreview_assignment_properties.non_regenerating_tokens = false
-    peerreview_assignment_properties.unlimited_tokens = false
-    peerreview_assignment_properties.repository_folder = repository_folder
     peerreview_assignment = Assignment.new
     peerreview_assignment.parent_assignment = self
     peerreview_assignment.submission_rule = NoLateSubmissionRule.new
     peerreview_assignment.assignment_stat = AssignmentStat.new
-    peerreview_assignment.assignment_properties = peerreview_assignment_properties
+    peerreview_assignment.token_period = 1
+    peerreview_assignment.non_regenerating_tokens = false
+    peerreview_assignment.unlimited_tokens = false
+    peerreview_assignment.repository_folder = repository_folder
     peerreview_assignment.short_identifier = short_identifier + '_pr'
     peerreview_assignment.description = description
     peerreview_assignment.due_date = due_date
@@ -1360,9 +1364,9 @@ class Assignment < Assessment
         attrs = Hash[DEFAULT_FIELDS.zip(row)]
         attrs.delete_if { |_, v| v.nil? }
         if assignment.new_record?
-          assignment.assignment_properties = AssignmentProperties.new(repository_folder: row[0],
-                                                                      token_period: 1,
-                                                                      unlimited_tokens: false)
+          assignment.assignment_properties.repository_folder = row[0]
+          assignment.assignment_properties.token_period = 1
+          assignment.assignment_properties.unlimited_tokens = false
           assignment.submission_rule = NoLateSubmissionRule.new
           assignment.assignment_stat = AssignmentStat.new
         end
@@ -1376,9 +1380,10 @@ class Assignment < Assessment
         map[:assignments].map do |row|
           assignment = self.find_or_create_by(short_identifier: row[:short_identifier])
           if assignment.new_record?
-            row[:assignment_properties] = AssignmentProperties.new(repository_folder: row[:short_identifier],
-                                                                   token_period: 1,
-                                                                   unlimited_tokens: false)
+            row[:assignment_properties_attributes] = {}
+            row[:assignment_properties_attributes][:repository_folder] = row[:short_identifier]
+            row[:assignment_properties_attributes][:token_period] = 1
+            row[:assignment_properties_attributes][:unlimited_tokens] = false
             row[:submission_rule] = NoLateSubmissionRule.new
             row[:assignment_stat] = AssignmentStat.new
           end
@@ -1394,4 +1399,8 @@ class Assignment < Assessment
     end
   end
 
+  def create_assignment_properties
+    return unless self.new_record?
+    self.assignment_properties ||= AssignmentProperties.new
+  end
 end
