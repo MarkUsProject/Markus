@@ -146,6 +146,10 @@ class StudentsController < ApplicationController
     @grace_period_deductions = student.grace_period_deductions
   end
 
+  def mailer_settings
+    @student = @current_user
+  end
+
   private
 
   def user_params

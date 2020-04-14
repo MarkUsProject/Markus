@@ -375,6 +375,7 @@ Rails.application.routes.draw do
 
       member do
         delete 'delete_grace_period_deduction'
+        get 'mailer_settings'
       end
     end
 
