@@ -312,6 +312,7 @@ describe Api::AssignmentsController do
       context 'when the content is nested parameters' do
         let(:content) { { a: { tester: 'python' }.stringify_keys }.stringify_keys }
         before :each do
+          allow_any_instance_of(AutotestSpecsJob).to receive(:perform_now)
           post :update_test_specs, params: { id: assignment.id, specs: content }
         end
         it 'should write the content to the specs file' do
@@ -322,6 +323,7 @@ describe Api::AssignmentsController do
       context 'when the content is a json string' do
         let(:content) { { a: { tester: 'python' }.stringify_keys }.stringify_keys }
         before :each do
+          allow_any_instance_of(AutotestSpecsJob).to receive(:perform_now)
           post :update_test_specs, params: { id: assignment.id, specs: JSON.dump(content) }
         end
         it 'should write the content to the specs file' do

@@ -53,7 +53,7 @@ describe AutomatedTestsController do
         expect(File.read(assignment.autotest_settings_file)).to eq file.read
       end
       it 'should return a success http status' do
-        expect(response.status).to eq 204
+        expect(response.status).to eq 200
       end
     end
     context 'an invalid json file' do
