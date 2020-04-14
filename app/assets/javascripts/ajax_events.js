@@ -9,25 +9,38 @@ export function setUpCallbacks(elem) {
 
 /*
  * Display flash messages sent in response to an AJAX request.
+ * If a message key is in the X-Message-Discard header, hide
+ * it instead.
  */
 export function renderFlash(event, request) {
   // For rails-ujs, request is stored in event.
   if (request === undefined) {
     request = event.detail[0];
   }
+  let discard = [];
+  const discardMessage = request.getResponseHeader('X-Message-Discard');
+  if (discardMessage) {
+    discard = discardMessage.split(';');
+  }
   FLASH_KEYS.forEach((key) => {
-    const flashMessage = request.getResponseHeader(`X-Message-${key}`);
     const flashDiv = document.getElementsByClassName(key)[0];
-    if (!flashMessage || flashDiv === undefined) {
+    if (flashDiv === undefined) {
       return;
     }
-    const messages = flashMessage.split(';');
-    const contents = flashDiv.getElementsByClassName('flash-content')[0] || flashDiv;
-    contents.innerHTML = '';
-    messages.forEach(message => {
-      contents.insertAdjacentHTML('beforeend', message);
-    });
-    flashDiv.style.display = '';
+    if (discard.includes(key)) {
+      flashDiv.style.display = 'none';
+    } else {
+      const flashMessage = request.getResponseHeader(`X-Message-${key}`);
+      if (flashMessage) {
+        const messages = flashMessage.split(';');
+        const contents = flashDiv.getElementsByClassName('flash-content')[0] || flashDiv;
+        contents.innerHTML = '';
+        messages.forEach(message => {
+          contents.insertAdjacentHTML('beforeend', message);
+        });
+        flashDiv.style.display = '';
+      }
+    }
   });
 }
 

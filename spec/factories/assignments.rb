@@ -5,15 +5,53 @@ FactoryBot.define do
     sequence(:short_identifier) { |i| "A#{i}" }
     description { Faker::Lorem.sentence }
     message { Faker::Lorem.sentence }
-    repository_folder { Faker::Lorem.word }
+
     due_date { 1.minute.from_now }
     submission_rule { NoLateSubmissionRule.new }
     assignment_stat { AssignmentStat.new }
-    token_period { 1 }
+    is_hidden { false }
+
+    transient do
+      assignment_properties_attributes { nil }
+    end
+
+    after(:build) do |assignment, evaluator|
+      if evaluator.assignment_properties_attributes
+        assignment.assignment_properties ||= build(:assignment_properties,
+                                                   assignment: assignment,
+                                                   repository_folder: assignment.short_identifier,
+                                                   attributes: evaluator.assignment_properties_attributes)
+      else
+        assignment.assignment_properties ||= build(:assignment_properties,
+                                                   assignment: assignment,
+                                                   repository_folder: assignment.short_identifier)
+      end
+    end
+  end
+
+  factory :assignment_with_criteria, parent: :assignment do
+    after(:create) do |a|
+      3.times { create(:rubric_criterion, assignment: a) }
+    end
+  end
+
+  factory :assignment_with_criteria_and_results, parent: :assignment do
+    after(:create) do |a|
+      3.times { create(:flexible_criterion, assignment: a) }
+      3.times { create(:grouping_with_inviter_and_submission, assignment: a) }
+      a.groupings.each do |grouping|
+        result = grouping.current_result
+        a.get_criteria(:ta).each do |criterion|
+          result.marks.create(markable: criterion, mark: Random.rand(criterion.max_mark + 1))
+        end
+        result.update_total_mark
+        result.update(marking_state: Result::MARKING_STATES[:complete])
+      end
+    end
   end
 
   factory :assignment_with_peer_review, parent: :assignment do
-    has_peer_review { true }
+    assignment_properties_attributes { { has_peer_review: true } }
   end
 
   # This creates an assignment and peer review assignment, and also creates the
@@ -32,8 +70,14 @@ FactoryBot.define do
   end
 
   factory :assignment_for_tests, parent: :assignment do
-    enable_test { true }
-    after(:build) do |assignment| # called by both create and build
+    after(:build) do |assignment, evaluator| # called by both create and build
+      properties = { enable_test: true }
+      if evaluator.assignment_properties_attributes
+        evaluator.assignment_properties_attributes = properties.merge(evaluator.assignment_properties_attributes)
+      else
+        evaluator.assignment_properties_attributes = properties
+      end
+
       create(:test_group, assignment: assignment)
     end
     after(:stub) do |assignment| # called by build_stubbed
@@ -41,12 +85,23 @@ FactoryBot.define do
     end
   end
 
-  factory :assignment_for_student_tests, parent: :assignment_for_tests do
-    enable_student_tests { true }
-    token_start_date { Time.current }
+  factory :assignment_for_student_tests, parent: :assignment do
+    after(:build) do |assignment, evaluator| # called by both create and build
+      properties = { enable_test: true, enable_student_tests: true, token_start_date: Time.current }
+      if evaluator.assignment_properties_attributes
+        evaluator.assignment_properties_attributes = properties.merge(evaluator.assignment_properties_attributes)
+      else
+        evaluator.assignment_properties_attributes = properties
+      end
+
+      create(:test_group, assignment: assignment)
+    end
+    after(:stub) do |assignment| # called by build_stubbed
+      build_stubbed(:test_group, assignment: assignment)
+    end
   end
 
   factory :assignment_for_scanned_exam, parent: :assignment do
-    scanned_exam { true }
+    assignment_properties_attributes { { scanned_exam: true } }
   end
 end

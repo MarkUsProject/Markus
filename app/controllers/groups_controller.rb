@@ -3,24 +3,7 @@
 class GroupsController < ApplicationController
   include GroupsHelper
   # Administrator
-  before_action      :authorize_only_for_admin,
-                     except: [:create,
-                              :destroy,
-                              :delete_rejected,
-                              :disinvite_member,
-                              :invite_member,
-                              :accept_invitation,
-                              :decline_invitation]
-
-  before_action      :authorize_for_student,
-                     only: [:create,
-                            :destroy,
-                            :delete_rejected,
-                            :disinvite_member,
-                            :invite_member,
-                            :accept_invitation,
-                            :decline_invitation]
-
+  before_action { authorize! }
   layout 'assignment_content'
 
   # Group administration functions -----------------------------------------
@@ -91,7 +74,7 @@ class GroupsController < ApplicationController
       params[:groupexist_id] = groupexist_id
       params[:assignment_id] = @assignment.id
 
-      if Grouping.where(assignment_id: @assignment.id, group_id: groupexist_id).exists?
+      if Grouping.where(assessment_id: @assignment.id, group_id: groupexist_id).exists?
         flash[:error] = I18n.t('groups.group_name_already_in_use')
       else
         @grouping.update_attribute(:group_id, groupexist_id)
@@ -116,7 +99,8 @@ class GroupsController < ApplicationController
 
   def index
     @assignment = Assignment.find(params[:assignment_id])
-    @clone_assignments = Assignment.where(vcs_submit: true)
+    @clone_assignments = Assignment.joins(:assignment_properties)
+                                   .where(assignment_properties: { vcs_submit: true })
                                    .where.not(id: @assignment.id)
                                    .order(:id)
 
@@ -170,10 +154,10 @@ class GroupsController < ApplicationController
 
   def get_names
     names = Student
-              .select(:id, :id_number, :user_name, "CONCAT(first_name,' ',last_name) AS label, CONCAT(first_name,' ',last_name) AS value")
-              .where("(lower(first_name) like ? OR lower(last_name) like ? OR lower(user_name) like ? OR id_number like ?) AND users.id NOT IN (?)",
-                     "#{params[:term].downcase}%", "#{params[:term].downcase}%", "#{params[:term].downcase}%", "#{params[:term]}%",
-                     Membership.select(:user_id).joins(:grouping).where("groupings.assignment_id = ?", params[:assignment]));
+            .select(:id, :id_number, :user_name, "CONCAT(first_name,' ',last_name) AS label, CONCAT(first_name,' ',last_name) AS value")
+            .where('(lower(first_name) like ? OR lower(last_name) like ? OR lower(user_name) like ? OR id_number like ?) AND users.id NOT IN (?)',
+                   "#{params[:term].downcase}%", "#{params[:term].downcase}%", "#{params[:term].downcase}%", "#{params[:term]}%",
+                   Membership.select(:user_id).joins(:grouping).where('groupings.assessment_id = ?', params[:assignment]))
     render json: names
   end
 
@@ -283,7 +267,7 @@ class GroupsController < ApplicationController
     file_contents = file.retrieve_file
 
     filename = file.filename
-    send_data file_contents, filename: filename
+    send_data_download file_contents, filename: filename
   end
 
   def download_grouplist
@@ -327,22 +311,38 @@ class GroupsController < ApplicationController
 
   def accept_invitation
     @assignment = Assignment.find(params[:assignment_id])
-    @grouping = Grouping.find(params[:grouping_id])
-    @user = Student.find(session[:uid])
-    @user.join(@grouping.id)
-    m_logger = MarkusLogger.instance
-    m_logger.log("Student '#{@user.user_name}' joined group '#{@grouping.group.group_name}'(accepted invitation).")
-    redirect_to student_interface_assignment_path(params[:assignment_id])
+    @grouping = @assignment.groupings.find(params[:grouping_id])
+    begin
+      current_user.join(@grouping)
+    rescue ActiveRecord::RecordInvalid => e
+      flash_message(:error, e.message)
+      status = :unprocessable_entity
+    rescue RuntimeError => e
+      flash_message(:error, e.message)
+      status = :unprocessable_entity
+    else
+      m_logger = MarkusLogger.instance
+      m_logger.log("Student '#{current_user.user_name}' joined group "\
+                   "'#{@grouping.group.group_name}'(accepted invitation).")
+      status = :found
+    end
+    redirect_to assignment_path(params[:assignment_id]), status: status
   end
 
   def decline_invitation
     @assignment = Assignment.find(params[:assignment_id])
-    @grouping = Grouping.find(params[:grouping_id])
-    @user = Student.find(session[:uid])
-    @grouping.decline_invitation(@user)
-    m_logger = MarkusLogger.instance
-    m_logger.log("Student '#{@user.user_name}' declined invitation for group '#{@grouping.group.group_name}'.")
-    redirect_to student_interface_assignment_path(params[:assignment_id])
+    @grouping = @assignment.groupings.find(params[:grouping_id])
+    begin
+      @grouping.decline_invitation(current_user)
+    rescue RuntimeError => e
+      flash_message(:error, e.message)
+      status = :unprocessable_entity
+    else
+      m_logger = MarkusLogger.instance
+      m_logger.log("Student '#{current_user.user_name}' declined invitation for group '#{@grouping.group.group_name}'.")
+      status = :found
+    end
+    redirect_to assignment_path(params[:assignment_id]), status: status
   end
 
   def create
@@ -372,7 +372,7 @@ class GroupsController < ApplicationController
       flash_message(:error, e.message)
       m_logger.log("Failed to create group. User: '#{@student.user_name}', Error: '#{e.message}'.", MarkusLogger::ERROR)
     end
-    redirect_to student_interface_assignment_path(@assignment.id)
+    redirect_to assignment_path(@assignment.id)
   end
 
   def destroy
@@ -383,7 +383,7 @@ class GroupsController < ApplicationController
       m_logger.log('Failed to delete group, since no accepted group for this user existed.'\
             "User: '#{current_user.user_name}'.", MarkusLogger::ERROR)
       flash_message(:error, I18n.t('groups.destroy.errors.do_not_have_a_group'))
-      redirect_to student_interface_assignment_path(params[:assignment_id])
+      redirect_to assignment_path(params[:assignment_id])
       return
     end
     begin
@@ -405,7 +405,7 @@ class GroupsController < ApplicationController
       m_logger.log("Failed to delete group '#{@grouping.group.group_name}'. User: '"\
                      "#{current_user.user_name}', Error: '#{e.message}'.", MarkusLogger::ERROR)
     end
-    redirect_to student_interface_assignment_path(params[:assignment_id])
+    redirect_to assignment_path(params[:assignment_id])
   end
 
   def invite_member
@@ -415,7 +415,7 @@ class GroupsController < ApplicationController
     if @grouping.nil?
       flash_message(:error,
                     I18n.t('groups.invite_member.errors.need_to_create_group'))
-      redirect_to student_interface_assignment_path(@assignment.id)
+      redirect_to assignment_path(@assignment.id)
       return
     end
     begin
@@ -427,39 +427,57 @@ class GroupsController < ApplicationController
       to_invite = params[:invite_member].split(',')
       errors = @grouping.invite(to_invite)
       if errors.blank?
+        to_invite.each do |i|
+          i = i.strip
+          invited_user = Student.where(hidden: false).find_by(user_name: i)
+          NotificationMailer.with(inviter: current_user,
+                                  invited: invited_user,
+                                  grouping: @grouping).grouping_invite_email.deliver_now
+        end
         flash_message(:success, I18n.t('groups.invite_member.success'))
       else
         flash_message(:error, errors.join(' '))
       end
     end
-    redirect_to student_interface_assignment_path(@assignment.id)
+    redirect_to assignment_path(@assignment.id)
   end
 
   # Deletes pending invitations
   def disinvite_member
     assignment = Assignment.find(params[:assignment_id])
-    membership = StudentMembership.find(params[:membership])
-    disinvited_student = membership.user
-    membership.destroy
-    m_logger = MarkusLogger.instance
-    m_logger.log("Student '#{current_user.user_name}' cancelled invitation for '#{disinvited_student.user_name}'.")
-    flash_message(:success, I18n.t('groups.members.member_disinvited'))
-    redirect_to student_interface_assignment_path(assignment.id)
+    membership = assignment.student_memberships.find(params[:membership])
+    begin
+      authorize! membership.grouping, to: :disinvite_member?, context: { membership: membership }
+    rescue ActionPolicy::Unauthorized => e
+      flash_message(:error, e.result.message)
+      status = :forbidden
+    else
+      disinvited_student = membership.user
+      membership.destroy
+      m_logger = MarkusLogger.instance
+      m_logger.log("Student '#{current_user.user_name}' cancelled invitation for '#{disinvited_student.user_name}'.")
+      flash_message(:success, I18n.t('groups.members.member_disinvited'))
+      status = :found
+    end
+
+    redirect_to assignment_path(assignment.id), status: status
   end
 
   # Deletes memberships which have been declined by students
   def delete_rejected
     @assignment = Assignment.find(params[:assignment_id])
-    membership = StudentMembership.find(params[:membership])
+    membership = @assignment.student_memberships.find(params[:membership])
     grouping = membership.grouping
     begin
-      authorize! grouping, to: :delete_rejected?
+      authorize! grouping, to: :delete_rejected?, context: { membership: membership }
     rescue ActionPolicy::Unauthorized => e
       flash_message(:error, e.result.message)
+      status = :forbidden
     else
       membership.destroy
+      status = :found
     end
-    redirect_to student_interface_assignment_path(params[:assignment_id])
+    redirect_to assignment_path(params[:assignment_id]), status: status
   end
 
   # These actions act on all currently selected students & groups

@@ -2,7 +2,7 @@
 
   <div id='annotation_category_controls'>
     <div class='float_right'>
-      <%= form_tag assignment_annotation_category_path(@assignment, annotation_category),
+      <%= form_tag assignment_annotation_category_path(annotation_category.assignment, annotation_category),
                    method: 'delete',
                    id: 'delete_annotation_category',
                    remote: true do |f| %>
@@ -15,7 +15,7 @@
     <h2><%= annotation_category.annotation_category_name %></h2>
 
     <fieldset>
-       <%= form_for [@assignment, annotation_category],
+       <%= form_for [annotation_category.assignment, annotation_category],
                     remote: true do |f| %>
        <span id='annotation_category_inputs'>
          <%= f.label :annotation_category_name,

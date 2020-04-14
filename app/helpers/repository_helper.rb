@@ -16,7 +16,7 @@ module RepositoryHelper
   # nil, the boolean indicates whether any errors were encountered which mean the caller should not
   # commit the transaction. The array contains any error or warning messages as arrays of arguments.
   #
-  # If +check_size+ is true then check if the file size is greater than MarkusConfigurator.markus_config_max_file_size
+  # If +check_size+ is true then check if the file size is greater than Rails.configuration.max_file_size
   # or less than 0 bytes. If +required_files+ is an array of file names, and some of the uploaded files are not
   # in that array, a messages will be returned indicating that non-required files were uploaded.
   def add_files(files, user, repo, path: '/', txn: nil, check_size: true, required_files: nil)
@@ -34,7 +34,7 @@ module RepositoryHelper
     new_files = []
     files.each do |f|
       if check_size
-        if f.size > MarkusConfigurator.markus_config_max_file_size
+        if f.size > Rails.configuration.max_file_size
           messages << [:too_large, f.original_filename]
         elsif f.size == 0
           messages << [:too_small, f.original_filename]
@@ -85,12 +85,16 @@ module RepositoryHelper
   # argument is not nil, the transaction will be commited before returning, otherwise the transaction
   # object will not be commited and so should be commited later on by the caller.
   #
+  # If +keep_folder+ is true, the files will be deleted and .gitkeep file will be added to its parent folder if it
+  # is not exists in order to keep the folder.
+  # If +keep_folder+ is false, all the files will be deleted and .gitkeep file will not be added.
+  #
   # Returns a tuple containing a boolean and an array. If the +txn+ argument was nil, the boolean
   # indicates whether the transaction was completed without errors. If the +txn+ argument was not
   # nil, the boolean indicates whether any errors were encountered which mean the caller should not
   # commit the transaction. The array contains any error or warning messages as arrays of arguments
   # (each of which can be passed directly to flash_message from a controller).
-  def remove_files(files, user, repo, path: '/', txn: nil)
+  def remove_files(files, user, repo, path: '/', txn: nil, keep_folder: true)
     messages = []
 
     if txn.nil?
@@ -101,7 +105,6 @@ module RepositoryHelper
     end
 
     current_path = Pathname.new path
-
     current_revision = repo.get_latest_revision.revision_identifier
 
     files.each do |file_path|
@@ -109,7 +112,7 @@ module RepositoryHelper
       basename = sanitize_file_name(basename)
       file_path = current_path.join(subdir_path).join(basename)
       file_path = file_path.to_s
-      txn.remove(file_path, current_revision)
+      txn.remove(file_path, current_revision.to_s, keep_folder: keep_folder)
     end
 
     if commit_txn
@@ -133,7 +136,9 @@ module RepositoryHelper
     current_path = Pathname.new path
 
     new_folders.each do |folder_path|
-      txn.add_path(current_path.join(folder_path))
+      folder_path = current_path.join(folder_path)
+      folder_path = folder_path.to_s
+      txn.add_path(folder_path)
     end
 
     if commit_txn
@@ -158,33 +163,35 @@ module RepositoryHelper
 
     current_revision = repo.get_latest_revision.revision_identifier
 
-    dirs = {}
+    dirs = []
     files = []
     folders.each do |folder_path|
       folder_path = current_path.join(folder_path).to_s
       next if dirs.include? folder_path
 
-      repo.get_revision(current_revision).tree_at_path(folder_path, with_attrs: false).each do |_, obj|
+      repo.get_revision(current_revision.to_s).tree_at_path(folder_path, with_attrs: false).each do |_, obj|
         path = File.join obj.path, obj.name
         if obj.is_a? Repository::RevisionFile
           files << path
         else
-          dirs[path] = current_revision
+          dirs << path
         end
       end
-      dirs[folder_path] = current_revision
+      dirs = dirs.reverse
+      dirs << folder_path
     end
-    success, file_messages = remove_files(files, user, repo, path: '', txn: txn)
+    unless files.empty?
+      success, file_messages = remove_files(files, user, repo, path: '', txn: txn, keep_folder: false)
+      return [success, file_messages] unless success
+    end
 
-    return [success, file_messages] unless success
-
-    # folders are removed in git if their contents are removed
-    unless repo.is_a? GitRepository
-      dirs.each do |dir, revision|
-        txn.remove(dir, revision)
+    dirs.each do |dir|
+      if dir == dirs[-1]
+        txn.remove_directory(dir, current_revision.to_s, keep_parent_dir: true)
+      else
+        txn.remove_directory(dir, current_revision.to_s)
       end
     end
-
     if commit_txn
       success, txn_messages = commit_transaction repo, txn
       [success, messages + txn_messages]
@@ -211,7 +218,7 @@ module RepositoryHelper
       next if suppress[msg]
       case msg
       when :too_large
-        max_size = (MarkusConfigurator.markus_config_max_file_size / 1_000_000.00).round(2)
+        max_size = (Rails.configuration.max_file_size / 1_000_000.00).round(2)
         flash_message(:error, I18n.t('student.submission.file_too_large',
                                      file_name: other_info,
                                      max_size: max_size))

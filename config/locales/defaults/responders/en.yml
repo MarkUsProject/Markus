@@ -12,6 +12,11 @@ en:
       destroy:
         success: "%{resource_name} was successfully deleted."
         error: "%{resource_name} could not be deleted."
+    annotation_categories:
+      create:
+        error: "%{resource_name} could not be created due to the following error(s): %{errors}."
+      update:
+        error: "%{resource_name} could not be updated due to the following error(s): %{errors}."
     assignments:
       create:
         error: "%{resource_name} could not be created due to the following error(s): %{errors}."

@@ -2,26 +2,19 @@
 # A grade entry form has many columns which represent the questions and their total
 # marks (i.e. GradeEntryItems) and many rows which represent students and their
 # marks on each question (i.e. GradeEntryStudents).
-class GradeEntryForm < ApplicationRecord
+class GradeEntryForm < Assessment
   has_many                  :grade_entry_items,
                             -> { order(:position) },
                             dependent: :destroy,
-                            inverse_of: :grade_entry_form
+                            inverse_of: :grade_entry_form,
+                            foreign_key: :assessment_id
 
   has_many                  :grade_entry_students,
-                            dependent: :destroy
+                            dependent: :destroy,
+                            foreign_key: :assessment_id
 
   has_many                  :grades, through: :grade_entry_items
 
-  # Call custom validator in order to validate the date attribute
-  # date: true maps to DateValidator (custom_name: true maps to CustomNameValidator)
-  # Look in lib/validators/* for more info
-  validates                 :date, date: true
-
-  validates_presence_of     :short_identifier
-  validates_uniqueness_of   :short_identifier, case_sensitive: true
-
-  validates                 :is_hidden, inclusion: { in: [true, false] }
   accepts_nested_attributes_for :grade_entry_items, allow_destroy: true
 
   after_create :create_all_grade_entry_students
@@ -136,7 +129,7 @@ class GradeEntryForm < ApplicationRecord
 
   # Create grade_entry_student for each student in the course
   def create_all_grade_entry_students
-    columns = [:user_id, :grade_entry_form_id, :released_to_student]
+    columns = [:user_id, :assessment_id, :released_to_student]
 
     values = Student.all.map do |student|
       # grade_entry_students.build(user_id: student.id, released_to_student: false)
@@ -147,7 +140,7 @@ class GradeEntryForm < ApplicationRecord
 
   def export_as_csv
     students = Student.left_outer_joins(:grade_entry_students)
-                      .where(hidden: false, 'grade_entry_students.grade_entry_form_id': self.id)
+                      .where(hidden: false, 'grade_entry_students.assessment_id': self.id)
                       .order(:user_name)
                       .pluck(:user_name, 'grade_entry_students.total_grade')
     headers = []
@@ -206,7 +199,11 @@ class GradeEntryForm < ApplicationRecord
         next
       elsif totals.empty?
         totals = row.drop(1)
-        self.update_grade_entry_items(names, totals, overwrite)
+        if self.show_total && names.last == GradeEntryForm.human_attribute_name(:total)
+          self.update_grade_entry_items(names[0...-1], totals[0...-1], overwrite)
+        else
+          self.update_grade_entry_items(names, totals, overwrite)
+        end
         updated_columns = self.grade_entry_items.reload.pluck(:id)
         next
       end
@@ -232,6 +229,7 @@ class GradeEntryForm < ApplicationRecord
     Grade.import updated_grades,
                  on_duplicate_key_update: { conflict_target: [:grade_entry_item_id, :grade_entry_student_id],
                                             columns: [:grade] }
+    GradeEntryStudent.refresh_total_grades(updated_grades.map { |h| h[:grade_entry_student_id] })
     result
   end
 
@@ -246,7 +244,7 @@ class GradeEntryForm < ApplicationRecord
         name: names[i],
         out_of: totals[i],
         position: i + 1,
-        grade_entry_form_id: self.id
+        assessment_id: self.id
       }
     end
 
@@ -261,14 +259,14 @@ class GradeEntryForm < ApplicationRecord
           name: item.name,
           out_of: item.out_of,
           position: i + 1,
-          grade_entry_form_id: item.grade_entry_form_id
+          assessment_id: item.assessment_id
         }
         i += 1
       end
     end
 
     GradeEntryItem.import updated_items,
-                          on_duplicate_key_update: { conflict_target: [:name, :grade_entry_form_id],
+                          on_duplicate_key_update: { conflict_target: [:name, :assessment_id],
                                                      columns: [:out_of, :position] }
     self.grade_entry_items.reload
   end

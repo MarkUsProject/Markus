@@ -1,7 +1,7 @@
 class Ta < User
 
-  CSV_UPLOAD_ORDER = USER_TA_CSV_UPLOAD_ORDER
-  SESSION_TIMEOUT = USER_TA_SESSION_TIMEOUT
+  CSV_UPLOAD_ORDER = Rails.configuration.ta_csv_upload_order
+  SESSION_TIMEOUT = Rails.configuration.ta_session_timeout
 
   has_many :criterion_ta_associations, dependent: :delete_all
 
@@ -10,37 +10,9 @@ class Ta < User
 
   BLANK_MARK = ''
 
-  def get_criterion_associations_by_assignment(assignment)
-    if assignment.assign_graders_to_criteria
-      criterion_ta_associations.includes(:assignment, :criterion).select do |association|
-        association.assignment == assignment
-      end
-    else
-      []
-    end
-  end
-
-  def get_criterion_associations_count_by_assignment(assignment)
-    assignment.criterion_ta_associations
-              .where(ta_id: id)
-              .count
-  end
-
-  def get_membership_count_by_assignment(assignment)
-    memberships.where(groupings: { assignment_id: assignment.id })
-               .includes(:grouping)
-               .count
-  end
-
   def get_groupings_by_assignment(assignment)
-    groupings.where(assignment_id: assignment.id)
+    groupings.where(assessment_id: assignment.id)
              .includes(:students, :tas, :group, :assignment)
-  end
-
-  def get_membership_count_by_grade_entry_form(grade_entry_form)
-    grade_entry_students.where('grade_entry_form_id = ?', grade_entry_form.id)
-                        .includes(:grade_entry_form)
-                        .count
   end
 
   # Determine the total mark for a particular student, as a percentage

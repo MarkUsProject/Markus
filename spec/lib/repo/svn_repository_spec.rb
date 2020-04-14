@@ -9,16 +9,16 @@ describe 'Subversion Repository' do
         @repo_name = 'mock_repo'
         @students = [:student1, :student2]
         RSpec::Mocks.with_temporary_scope do
-          allow(MarkusConfigurator).to receive(:markus_config_repository_type).and_return('svn')
+          allow(Rails.configuration.x.repository).to receive(:type).and_return('svn')
           Repository.get_class.send :__update_permissions, {@repo_name => @students}, ['admin1']
         end
       end
 
       after :all do
-        FileUtils.rm MarkusConfigurator.markus_config_repository_permission_file
+        FileUtils.rm Rails.configuration.x.repository.permission_file
       end
 
-      let(:file_contents) { File.read(MarkusConfigurator.markus_config_repository_permission_file) }
+      let(:file_contents) { File.read(Rails.configuration.x.repository.permission_file) }
 
 
       it 'give admins access to all repos' do

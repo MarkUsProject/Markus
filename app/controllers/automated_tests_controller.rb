@@ -2,7 +2,9 @@ class AutomatedTestsController < ApplicationController
   include AutomatedTestsHelper
 
   before_action      :authorize_only_for_admin,
-                     only: [:manage, :update]
+                     except: [:student_interface,
+                              :get_test_runs_students]
+
   before_action      :authorize_for_student,
                      only: [:student_interface,
                             :get_test_runs_students]
@@ -15,7 +17,6 @@ class AutomatedTestsController < ApplicationController
       update_test_groups_from_specs(assignment, test_specs)
       @current_job = AutotestSpecsJob.perform_later(request.protocol + request.host_with_port, assignment)
       session[:job_id] = @current_job.job_id
-      flash_message(:success, t('flash.actions.update.success', resource_name: Assignment.model_name.human))
     rescue StandardError => e
       flash_message(:error, e.message)
       raise ActiveRecord::Rollback
@@ -27,12 +28,6 @@ class AutomatedTestsController < ApplicationController
   # Manage is called when the Automated Test UI is loaded
   def manage
     @assignment = Assignment.find(params[:assignment_id])
-    unless File.exist? @assignment.autotest_path
-      FileUtils.mkdir_p @assignment.autotest_path
-    end
-    unless File.exist? @assignment.autotest_files_dir
-      FileUtils.mkdir_p @assignment.autotest_files_dir
-    end
     @assignment.test_groups.build
   end
 
@@ -93,7 +88,7 @@ class AutomatedTestsController < ApplicationController
 
   def populate_autotest_manager
     assignment = Assignment.find(params[:assignment_id])
-    testers_schema_path = File.join(MarkusConfigurator.autotest_client_dir, 'testers.json')
+    testers_schema_path = File.join(Rails.configuration.x.autotest.client_dir, 'testers.json')
     files_dir = Pathname.new assignment.autotest_files_dir
     file_keys = []
     files_data = assignment.autotest_files.map do |file|
@@ -130,10 +125,19 @@ class AutomatedTestsController < ApplicationController
     assignment = Assignment.find(params[:assignment_id])
     file_path = File.join(assignment.autotest_files_dir, params[:file_name])
     if File.exist?(file_path)
-      send_file file_path, filename: params[:file_name]
+      send_file_download file_path, filename: params[:file_name]
     else
       render plain: t('student.submission.missing_file', file_name: params[:file_name])
     end
+  end
+
+  ##
+  # Download all files from the assignment.autotest_files_dir directory as a zip file
+  ##
+  def download_files
+    assignment = Assignment.find(params[:assignment_id])
+    zip_path = assignment.zip_automated_test_files(current_user)
+    send_file zip_path, filename: File.basename(zip_path)
   end
 
   def upload_files
@@ -152,9 +156,10 @@ class AutomatedTestsController < ApplicationController
       FileUtils.rm_rf(folder_path)
     end
     new_files.each do |f|
-      if f.size > MarkusConfigurator.markus_config_max_file_size
-        flash_now(:error, t('student.submission.file_too_large', file_name: f.original_filename,
-                                max_size: (MarkusConfigurator.markus_config_max_file_size / 1_000_000.00).round(2)))
+      if f.size > Rails.configuration.max_file_size
+        flash_now(:error, t('student.submission.file_too_large',
+                            file_name: f.original_filename,
+                            max_size: (Rails.configuration.max_file_size / 1_000_000.00).round(2)))
         next
       elsif f.size == 0
         flash_now(:warning, t('student.submission.empty_file_warning', file_name: f.original_filename))
@@ -168,6 +173,36 @@ class AutomatedTestsController < ApplicationController
       File.delete(file_path)
     end
     render partial: 'update_files'
+  end
+
+  def download_specs
+    assignment = Assignment.find(params[:assignment_id])
+    file_path = assignment.autotest_settings_file
+    if File.exist?(file_path)
+      send_file file_path, filename: params[:file_name]
+    else
+      send_data '{}', filename: file_path
+    end
+  end
+
+  def upload_specs
+    assignment = Assignment.find(params[:assignment_id])
+    if params[:specs_file].respond_to? :read
+      file_content = params[:specs_file].read
+      begin
+        JSON.parse file_content
+      rescue JSON::ParserError
+        flash_now(:error, I18n.t('automated_tests.invalid_specs_file'))
+        head :unprocessable_entity
+      else
+        File.write(assignment.autotest_settings_file, file_content, mode: 'wb')
+        @current_job = AutotestSpecsJob.perform_later(request.protocol + request.host_with_port, assignment)
+        session[:job_id] = @current_job.job_id
+        render 'shared/_poll_job.js.erb'
+      end
+    else
+      head :unprocessable_entity
+    end
   end
 
   private

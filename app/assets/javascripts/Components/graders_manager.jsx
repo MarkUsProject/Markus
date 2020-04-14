@@ -16,6 +16,8 @@ class GradersManager extends React.Component {
       loading: true,
       tableName: 'groups_table', // The first tab
       skip_empty_submissions: false,
+      anonymize_groups: false,
+      hide_unassigned_criteria: false,
       sections: {}
     }
   }
@@ -40,6 +42,8 @@ class GradersManager extends React.Component {
         assign_graders_to_criteria: res.assign_graders_to_criteria,
         loading: false,
         sections: res.sections,
+        anonymize_groups: res.anonymize_groups,
+        hide_unassigned_criteria: res.hide_unassigned_criteria
       });
     });
   };
@@ -156,9 +160,46 @@ class GradersManager extends React.Component {
   toggleAssignGradersToCriteria = () => {
     const assign = !this.state.assign_graders_to_criteria;
     $.post({
-      url: Routes.set_assign_criteria_assignment_graders_path(this.props.assignment_id),
-      data: {value: assign},
+      url: Routes.set_boolean_graders_options_assignment_path(this.props.assignment_id),
+      data: {
+        attribute: {assignment_properties_attributes: {assign_graders_to_criteria: assign}}
+      },
     }).then(() => this.setState({assign_graders_to_criteria: assign}));
+  };
+
+  toggleAnonymizeGroups = () => {
+    const assign = !this.state.anonymize_groups;
+    $.post({
+      url: Routes.set_boolean_graders_options_assignment_path(this.props.assignment_id),
+      data: {
+        attribute: {assignment_properties_attributes: {anonymize_groups: assign}}
+      },
+    }).then(() => this.setState({anonymize_groups: assign}));
+  };
+
+  toggleHideUnassignedCriteria = () => {
+    const assign = !this.state.hide_unassigned_criteria;
+    $.post({
+      url: Routes.set_boolean_graders_options_assignment_path(this.props.assignment_id),
+      data: {
+        attribute: {assignment_properties_attributes: {hide_unassigned_criteria: assign}}
+      },
+    }).then(() => this.setState({hide_unassigned_criteria: assign}));
+  };
+
+  renderHideUnassignedCriteria = () => {
+    if (this.state.assign_graders_to_criteria) {
+      return <div style={{marginBottom: '1em'}}>
+        <label>
+          <input type="checkbox"
+                 checked={this.state.hide_unassigned_criteria}
+                 onChange={this.toggleHideUnassignedCriteria}
+                 style={{marginRight: '5px'}}
+          />
+          {I18n.t('graders.hide_unassigned_criteria')}
+        </label>
+      </div>;
+    }
   };
 
   onSelectTable = (index) => {
@@ -204,6 +245,16 @@ class GradersManager extends React.Component {
                     {I18n.t('graders.skip_empty_submissions')}
                   </label>
                 </div>
+                <div style={{marginBottom: '1em'}}>
+                  <label>
+                    <input type="checkbox"
+                           checked={this.state.anonymize_groups}
+                           onChange={this.toggleAnonymizeGroups}
+                           style={{marginRight: '5px'}}
+                    />
+                    {I18n.t('graders.anonymize_groups')}
+                  </label>
+                </div>
                 <GroupsTable
                   ref={(r) => this.groupsTable = r}
                   groups={this.state.groups} loading={this.state.loading}
@@ -225,6 +276,7 @@ class GradersManager extends React.Component {
                     {I18n.t('graders.assign_to_criteria')}
                   </label>
                 </div>
+                { this.renderHideUnassignedCriteria() }
                 <CriteriaTable
                   display={this.state.assign_graders_to_criteria}
                   ref={(r) => this.criteriaTable = r}

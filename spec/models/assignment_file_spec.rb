@@ -4,7 +4,7 @@ describe AssignmentFile do
   it { is_expected.to validate_presence_of(:filename) }
   describe 'uniqueness validation' do
     subject { create :assignment_file }
-    it { is_expected.to validate_uniqueness_of(:filename).scoped_to(:assignment_id) }
+    it { is_expected.to validate_uniqueness_of(:filename).scoped_to(:assessment_id) }
   end
 
   it { is_expected.to allow_value('est.java').for(:filename) }

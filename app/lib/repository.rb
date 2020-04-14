@@ -49,6 +49,24 @@ module Repository
       return "#{@path} could not be changed - it was deleted since you last saw it"
     end
   end
+  # Exception for folders
+  class FolderExistsConflict < Conflict
+    def to_s
+      "#{@path} could not be added - it already exists"
+    end
+  end
+
+  class FolderDoesNotExistConflict < Conflict
+    def to_s
+      "#{@path} could not be removed - it is not exist"
+    end
+  end
+  # Exception for folders
+  class FolderIsNotEmptyConflict < Conflict
+    def to_s
+      "#{@path} could not be removed - it is not empty"
+    end
+  end
 
   class FileOutOfSyncConflict < Conflict
     def to_s
@@ -156,8 +174,7 @@ module Repository
     # Gets a list of users with permission to access the repo.
     # All permissions are rw for the time being
     def get_users
-
-      unless MarkusConfigurator.markus_config_repository_admin? # are we admin?
+      unless Rails.configuration.x.repository.is_repository_admin # are we admin?
         raise NotAuthorityError.new('Unable to get permissions: Not in authoritative mode!')
       end
       repo_name = get_repo_name
@@ -167,8 +184,7 @@ module Repository
 
     # TODO All permissions are rw for the time being
     def get_permissions(user_name)
-
-      unless MarkusConfigurator.markus_config_repository_admin? # are we admin?
+      unless Rails.configuration.x.repository.is_repository_admin # are we admin?
         raise NotAuthorityError.new('Unable to get permissions: Not in authoritative mode!')
       end
       unless get_users.include?(user_name)
@@ -191,7 +207,7 @@ module Repository
     # makes some update to the database and calls self.get_all_permissions
     # while this thread is still processing self.get_all_permissions
     def self.update_permissions
-      return unless MarkusConfigurator.markus_config_repository_admin?
+      return unless Rails.configuration.x.repository.is_repository_admin
       Thread.current[:requested?] = true
       unless Thread.current[:permissions_lock].nil?
         # abort if this is being called in a block passed to
@@ -387,7 +403,8 @@ module Repository
   # Exceptions for Files
   class FileOutOfDate < StandardError; end
   class FileDoesNotExist < StandardError; end
-
+  # Exceptions for Folders
+  class FolderDoesNotExist < StandardError; end
   # Exceptions for repo user management
   class UserNotFound < StandardError; end
   class UserAlreadyExistent < StandardError; end
@@ -458,8 +475,14 @@ module Repository
       @jobs.push(action: :add, path: path, file_data: file_data, mime_type: mime_type)
     end
 
-    def remove(path, expected_revision_identifier)
-      @jobs.push(action: :remove, path: path, expected_revision_identifier: expected_revision_identifier)
+    def remove(path, expected_revision_identifier, keep_folder: true)
+      @jobs.push(action: :remove, path: path, expected_revision_identifier: expected_revision_identifier,
+                 keep_folder: keep_folder)
+    end
+
+    def remove_directory(path, expected_revision_identifier, keep_parent_dir: false)
+      @jobs.push(action: :remove_directory, path: path, expected_revision_identifier: expected_revision_identifier,
+                 keep_parent_dir: keep_parent_dir)
     end
 
     def replace(path, file_data, mime_type, expected_revision_identifier)
@@ -482,7 +505,7 @@ module Repository
 
   # Gets the configured repository implementation
   def self.get_class
-    repo_type = MarkusConfigurator.markus_config_repository_type
+    repo_type = Rails.configuration.x.repository.type
     case repo_type
     when 'git'
       return GitRepository

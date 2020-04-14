@@ -2,7 +2,6 @@ require 'set'
 
 # Represents a collection of students working together on an assignment in a group
 class Grouping < ApplicationRecord
-  include ActiveRecordCreator
   include SubmissionsHelper
 
   after_create :create_grouping_repository_folder
@@ -39,6 +38,7 @@ class Grouping < ApplicationRecord
           -> { where submission_version_used: true },
           class_name: 'Submission'
   has_one :current_result, through: :current_submission_used
+  has_one :submitted_remark, through: :current_submission_used
 
   has_and_belongs_to_many :tags
 
@@ -68,7 +68,7 @@ class Grouping < ApplicationRecord
   validates_numericality_of :criteria_coverage_count, greater_than_or_equal_to: 0
 
   # user association/validation
-  belongs_to :assignment, counter_cache: true
+  belongs_to :assignment, foreign_key: :assessment_id, counter_cache: true
   validates_associated :assignment, on: :create
 
   belongs_to :group
@@ -155,6 +155,8 @@ class Grouping < ApplicationRecord
     if grouping_ids.nil?
       grouping_ids = assignment.groupings.pluck(:id)
     end
+    return if grouping_ids.empty?
+
     counts = CriterionTaAssociation
              .from(
                # subquery
@@ -169,11 +171,10 @@ class Grouping < ApplicationRecord
              .group('subquery.id')
              .count
 
-    Upsert.batch(Grouping.connection, Grouping.table_name) do |upsert|
-      grouping_ids.each do |gid|
-        upsert.row({ id: gid }, criteria_coverage_count: counts[gid.to_i] || 0)
-      end
+    grouping_data = Grouping.where(id: grouping_ids).pluck_to_hash.map do |h|
+      { **h.symbolize_keys, criteria_coverage_count: counts[h['id'].to_i] || 0 }
     end
+    Grouping.upsert_all(grouping_data)
   end
 
   def get_all_students_in_group
@@ -222,14 +223,6 @@ class Grouping < ApplicationRecord
     is_collected
   end
 
-  # Returns an array of the user_names for any TA's assigned to mark
-  # this Grouping
-  def get_ta_names
-    ta_memberships.collect do |membership|
-      membership.user.user_name
-    end
-  end
-
   # Returns true if this user has a pending status for this group;
   # false otherwise, or if user is not in this group.
   def pending?(user)
@@ -270,7 +263,7 @@ class Grouping < ApplicationRecord
 
   # Add a new member to base
   def add_member(user, set_membership_status = StudentMembership::STATUSES[:accepted])
-    if user.has_accepted_grouping_for?(self.assignment_id) || user.hidden
+    if user.has_accepted_grouping_for?(self.assessment_id) || user.hidden
       nil
     else
       member = StudentMembership.new(user: user, membership_status:
@@ -420,9 +413,9 @@ class Grouping < ApplicationRecord
   end
 
   def decline_invitation(student)
-    membership = student.memberships.where(grouping_id: id).first
-    membership.membership_status = StudentMembership::STATUSES[:rejected]
-    membership.save
+    membership = self.pending_student_memberships.find_by(user_id: student.id)
+    raise I18n.t('groups.members.errors.not_found') if membership.nil?
+    membership.update!(membership_status: StudentMembership::STATUSES[:rejected])
   end
 
   # If a group is invalid OR valid and the user is the inviter of the group and
@@ -437,29 +430,10 @@ class Grouping < ApplicationRecord
                           !assignment.past_collection_date?(self.inviter.section))
   end
 
-  def add_tas(tas)
-    Grouping.assign_all_tas(id, Array(tas).map(&:id), assignment)
-  end
-
-  def remove_tas(ta_id_array)
-    #if no tas to remove, return.
-    return if ta_id_array == []
-    ta_memberships_to_remove = ta_memberships.includes(:user)
-                                             .references(:user)
-                                             .where(user_id: ta_id_array)
-    ta_memberships_to_remove.each do |ta_membership|
-      ta_membership.destroy
-      ta_memberships.delete(ta_membership)
-    end
-    criteria = self.all_assigned_criteria(self.tas - ta_memberships_to_remove.collect{|mem| mem.user})
-    self.criteria_coverage_count = criteria.length
-    self.save
-  end
-
   # When a Grouping is created, automatically create the folder for the
   # assignment in the repository, if it doesn't already exist.
   def create_grouping_repository_folder
-    return unless MarkusConfigurator.markus_config_repository_admin? # create folder only if we are repo admin
+    return unless Rails.configuration.x.repository.is_repository_admin # create folder only if we are repo admin
     result = true
     self.group.access_repo do |group_repo|
       assignment_folder = self.assignment.repository_folder
@@ -482,29 +456,7 @@ class Grouping < ApplicationRecord
       end
     end
 
-    result
-  end
-
-  def assigned_tas_for_criterion(criterion)
-    if assignment.assign_graders_to_criteria
-      tas.select do |ta|
-        ta.criterion_ta_associations
-          .where(criterion_id: criterion.id)
-          .first
-      end
-    else
-      []
-    end
-  end
-
-  def all_assigned_criteria(ta_array)
-    result = []
-    if assignment.assign_graders_to_criteria
-      ta_array.each do |ta|
-        result = result.concat(ta.get_criterion_associations_by_assignment(assignment))
-      end
-    end
-    result.map{|a| a.criterion}.uniq
+    raise I18n.t('repo.assignment_dir_creation_error', short_identifier: assignment.short_identifier) unless result
   end
 
   # Get the section for this group. If assignment restricts member of a groupe
@@ -745,16 +697,16 @@ class Grouping < ApplicationRecord
   # Create a test run for this grouping, using the latest repo revision.
   def create_test_run!(**attrs)
     self.test_runs.create!(
-      user_id: get_id_for!(:user, attrs),
+      user_id: attrs[:user]&.id || attrs.fetch(:user_id) { raise ArgumentError(':user or :user_id is required') },
       revision_identifier: self.group.access_repo { |repo| repo.get_latest_revision.revision_identifier },
-      test_batch_id: get_id_for(:test_batch, attrs)
+      test_batch_id: attrs[:test_batch]&.id || attrs[:test_batch_id]
     )
   end
 
   # Checks whether a student test using tokens is currently being enqueued for execution
   # (with buffer time in case of unhandled errors that prevented test results to be stored)
   def student_test_run_in_progress?
-    buffer_time = MarkusConfigurator.autotest_student_tests_buffer_time
+    buffer_time = Rails.configuration.x.autotest.student_test_buffer
     last_student_run = test_runs_students_simple.first
     if last_student_run.nil? || # first test
       (last_student_run.created_at + buffer_time) < Time.current || # buffer time expired (for unhandled problems)

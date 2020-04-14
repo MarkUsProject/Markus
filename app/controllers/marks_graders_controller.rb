@@ -12,7 +12,7 @@ class MarksGradersController < ApplicationController
 
         # Grader information
         counts = Ta.joins(:grade_entry_students)
-                   .where('grade_entry_students.grade_entry_form_id': gef.id)
+                   .where('grade_entry_students.assessment_id': gef.id)
                    .group('users.id')
                    .count
 
@@ -88,7 +88,7 @@ class MarksGradersController < ApplicationController
     grade_entry_form = GradeEntryForm.find(params[:grade_entry_form_id])
 
     students = Student.left_outer_joins(grade_entry_students: :tas)
-                      .where('grade_entry_students.grade_entry_form_id': grade_entry_form.id)
+                      .where('grade_entry_students.assessment_id': grade_entry_form.id)
                       .order('users.user_name', 'tas_grade_entry_students.user_name')
                       .pluck('users.user_name', 'tas_grade_entry_students.user_name')
                       .group_by { |x| x[0] }

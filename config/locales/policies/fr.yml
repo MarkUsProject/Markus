@@ -14,6 +14,7 @@ fr:
         before_due_date?: "La date de retour pour ce devoir est passée."
         deletable_by?: "Vous ne pouvez pas supprimer ce groupe."
         delete_rejected?: "Seul(e) celui (celle) qui a invité un(e) autre étudiant(e) peut supprimer une invitation déclinée."
+        disinvite_member?: "UPDATE ME."
         member?: "Votre groupe n'éxiste pas, où il n'est pas valide."
         no_extension?: "Vous ne pouvez pas modifier un groupe avec une extension à la date d'échéance."
         no_submission?: "Vous avez déjà envoyé un fichier. Vous ne pouvez pas supprimer votre groupe."
@@ -21,5 +22,6 @@ fr:
         tokens_available?: "Aucun jeton trouvé pour cet(te) étudiant(e) où pour ce projet."
       submission:
         before_release?: "Les notes pour ce test sont déjà montré aux étudiants."
+        get_feedback_file?: "UPDATE ME."
         not_a_student?: "UPDATE ME."
         manage_subdirectories?: "Vous n'êtes pas autorisé à créer, supprimer ou modifier des dossiers."

@@ -7,13 +7,9 @@ class CriterionTaAssociation < ApplicationRecord
   validates_presence_of   :criterion_type
   validates_associated    :criterion
 
-  belongs_to              :assignment
+  belongs_to              :assignment, foreign_key: :assessment_id
 
   before_validation       :add_assignment_reference, on: :create
-
-  def add_assignment_reference
-    self.assignment = criterion.assignment
-  end
 
   def self.from_csv(assignment, csv_data, remove_existing)
     criteria = assignment.get_criteria(:ta, :all, includes: [:criterion_ta_associations])
@@ -41,7 +37,7 @@ class CriterionTaAssociation < ApplicationRecord
           criterion_id: criterion.id,
           criterion_type: criterion.class,
           ta_id: ta_id,
-          assignment_id: assignment.id
+          assessment_id: assignment.id
         }
       end
     end
@@ -52,5 +48,11 @@ class CriterionTaAssociation < ApplicationRecord
     Criterion.update_assigned_groups_counts(assignment)
 
     result
+  end
+
+  private
+
+  def add_assignment_reference
+    self.assignment = criterion.assignment
   end
 end

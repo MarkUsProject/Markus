@@ -8,7 +8,61 @@ describe TagsController do
 
   let(:assignment) { FactoryBot.create(:assignment) }
 
-  context '#upload' do
+  describe '#index' do
+    it 'returns correct JSON data' do
+      tag = create(:tag)
+      get :index, params: { assignment_id: assignment.id, format: :json }
+      expected = [{
+        'id' => tag.id,
+        'name' => tag.name,
+        'description' => tag.description,
+        'creator' => "#{tag.user.first_name} #{tag.user.last_name}",
+        'use' => tag.groupings.size
+      }]
+      expect(response.parsed_body).to eq expected
+    end
+  end
+
+  describe '#create' do
+    let(:grouping) { create(:grouping, assignment: assignment) }
+
+    it 'creates a new tag' do
+      post :create, params: { tag: { name: 'tag', description: 'tag description' },
+                              assignment_id: assignment.id }
+      expect(Tag.find_by(name: 'tag', description: 'tag description')).to_not be_nil
+    end
+
+    it 'associates the new tag with a grouping when passed grouping_id' do
+      post :create, params: { tag: { name: 'tag', description: 'tag description' },
+                              grouping_id: grouping.id, assignment_id: assignment.id }
+      tags = grouping.tags
+      expect(tags.size).to eq 1
+      expect(tags.first.name).to eq 'tag'
+      expect(tags.first.description).to eq 'tag description'
+    end
+  end
+
+  describe '#update' do
+    let(:tag) { create(:tag, name: 'tag', description: 'description') }
+
+    it 'updates tag name and description' do
+      post :update, params: { id: tag.id, tag: { name: 'new name', description: 'new description' },
+                              assignment_id: assignment.id }
+      tag.reload
+      expect(tag.name).to eq 'new name'
+      expect(tag.description).to eq 'new description'
+    end
+  end
+
+  describe '#destroy' do
+    it 'destroys an existing tag' do
+      tag = create(:tag)
+      delete :destroy, params: { id: tag.id, assignment_id: assignment.id }
+      expect(Tag.count).to eq 0
+    end
+  end
+
+  describe '#upload' do
     include_examples 'a controller supporting upload' do
       let(:params) { { assignment_id: assignment.id } }
     end

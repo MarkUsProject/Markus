@@ -59,6 +59,51 @@ describe PeerReviewsController do
     end
   end
 
+  describe '#populate' do
+    before :each do
+      PeerReview.create(reviewer_id: @selected_reviewer_group_ids[0],
+                        result_id: Grouping.find(@selected_reviewee_group_ids[1]).current_result.id)
+      PeerReview.create(reviewer_id: @selected_reviewer_group_ids[1],
+                        result_id: Grouping.find(@selected_reviewee_group_ids[2]).current_result.id)
+      PeerReview.create(reviewer_id: @selected_reviewer_group_ids[2],
+                        result_id: Grouping.find(@selected_reviewee_group_ids[0]).current_result.id)
+      @num_peer_reviews = @assignment_with_pr.peer_reviews.count
+
+      # Remember who was assigned to who before comparing
+      @pr_expected_lines = Set.new
+      @assignment_with_pr.peer_reviews.each do |pr|
+        @pr_expected_lines.add("#{pr.reviewee.group.group_name},#{pr.reviewer.group.group_name}")
+      end
+
+      get :populate, params: { assignment_id: @pr_id }
+      @response = JSON.parse(response.body)
+    end
+
+    it 'returns the correct reviewee_to_reviewers_map' do
+      expected = {
+        @selected_reviewee_group_ids[0].to_s => [@selected_reviewer_group_ids[2]],
+        @selected_reviewee_group_ids[1].to_s => [@selected_reviewer_group_ids[0]],
+        @selected_reviewee_group_ids[2].to_s => [@selected_reviewer_group_ids[1]]
+      }
+      expect(@response['reviewee_to_reviewers_map']).to eq(expected)
+    end
+    it 'returns the correct id_to_group_names_map' do
+      expected = {}
+      @assignment_with_pr.groupings.or(@assignment_with_pr.pr_assignment.groupings).includes(:group).each do |grouping|
+        expected[grouping.id.to_s] = grouping.group.group_name
+      end
+      expect(@response['id_to_group_names_map']).to eq(expected)
+    end
+    it 'returns the correct num_reviews_map' do
+      expected = {
+        @selected_reviewer_group_ids[0].to_s => 1,
+        @selected_reviewer_group_ids[1].to_s => 1,
+        @selected_reviewer_group_ids[2].to_s => 1
+      }
+      expect(@response['num_reviews_map']).to eq(expected)
+    end
+  end
+
   describe '#upload' do
     include_examples 'a controller supporting upload' do
       let(:params) { { assignment_id: @pr_id, model: PeerReview } }
@@ -89,13 +134,12 @@ describe PeerReviewsController do
         post :upload, params: { assignment_id: @pr_id, upload_file: csv_upload, encoding: 'UTF-8' }
       end
 
-      it 'has the correct number of peer reviews' do
-        expect(@assignment_with_pr.peer_reviews.count).to eq 3
+      after :each do
+        File.delete(@path)
       end
 
-      it 'temporary file is deleted' do
-        File.delete(@path)
-        expect(File.exist?(@path)).to be_falsey
+      it 'has the correct number of peer reviews' do
+        expect(@assignment_with_pr.peer_reviews.count).to eq 3
       end
     end
   end

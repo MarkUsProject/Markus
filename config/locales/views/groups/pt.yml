@@ -70,6 +70,8 @@ pt:
       cancel_invitation_confirm: "Você tem certeza que deseja cancelar o convite?"
       decline: "Recusar"
       decline_invitation_confirm: "Você tem certeza que quer recusar este convite?"
+      errors:
+        not_found: "UPDATE ME"
       invitations: "Convites"
       invite: "Convite"
       invite_instructions:  "Sepere nomes de usuários com vírgulas"

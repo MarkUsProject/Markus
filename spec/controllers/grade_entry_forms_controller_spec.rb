@@ -31,6 +31,8 @@ describe GradeEntryFormsController do
         fixture_file_upload('files/grade_entry_forms/good_overwrite.csv',
                             'text/csv')
 
+      @file_total_included = fixture_file_upload('files/grade_entry_forms/total_column_included.csv', 'text/csv')
+
       @student = grade_entry_form_with_data.grade_entry_students.joins(:user).find_by('users.user_name': 'c8shosta')
       @original_item = grade_entry_form_with_data.grade_entry_items.first
       @student.grades.find_or_create_by(grade_entry_item: @original_item).update(
@@ -145,6 +147,17 @@ describe GradeEntryFormsController do
       # Check that the original column's total has been updated.
       expect(grade_entry_form_with_data.grade_entry_items.first.out_of).to eq 101
     end
+
+    it 'ignores the total column if given in the csv file' do
+      post :upload, params: { id: grade_entry_form_with_data.id, upload_file: @file_total_included, overwrite: true }
+      expect(response.status).to eq(302)
+      expect(flash[:error]).to be_nil
+      expect(response).to redirect_to(grades_grade_entry_form_path(grade_entry_form_with_data, locale: 'en'))
+
+      # Check that the total column is the actual total and not the incorrect total given in the file
+      expect(@student.grades.first.grade).to eq 22
+      expect(@student.reload.total_grade).to eq 22
+    end
   end
 
   describe '#download' do
@@ -165,10 +178,16 @@ describe GradeEntryFormsController do
     end
 
     it 'expects a call to send_data' do
+      grade_entry_item = grade_entry_form_with_data.grade_entry_items[0]
+      student_grade = grade_entry_form_with_data.grade_entry_students
+                                                .find_by(user: @user)
+                                                .grades
+                                                .find_by(grade_entry_item: grade_entry_item)
+                                                .grade
       csv_array = [
-        ['', grade_entry_form_with_data.grade_entry_items[0].name],
-        [GradeEntryItem.human_attribute_name(:out_of), String(grade_entry_form_with_data.grade_entry_items[0].out_of)],
-        [@user.user_name, '']
+        ['', grade_entry_item.name],
+        [GradeEntryItem.human_attribute_name(:out_of), grade_entry_item.out_of],
+        [@user.user_name, student_grade]
       ]
       csv_data = MarkusCsv.generate(csv_array) do |data|
         data
@@ -254,15 +273,54 @@ describe GradeEntryFormsController do
 
   describe '#update' do
     it 'clears date if blank' do
-      expect(grade_entry_form.date).to_not be_nil
-      patch :update, params: { id: grade_entry_form, grade_entry_form: { date: nil } }
-      expect(grade_entry_form.reload.date).to be_nil
+      expect(grade_entry_form.due_date).to_not be_nil
+      patch :update, params: { id: grade_entry_form, grade_entry_form: { due_date: nil } }
+      expect(grade_entry_form.reload.due_date).to be_nil
     end
 
     it 'updates date field' do
-      expect(grade_entry_form.date).to_not be_nil
-      patch :update, params: { id: grade_entry_form.id, grade_entry_form: { date: '2019-11-14' } }
-      expect(grade_entry_form.reload.date).to eq Date.new(2019, 11, 14)
+      expect(grade_entry_form.due_date).to_not be_nil
+      patch :update, params: { id: grade_entry_form.id, grade_entry_form: { due_date: '2019-11-14' } }
+      expect(grade_entry_form.reload.due_date.to_date).to eq Date.new(2019, 11, 14)
+    end
+  end
+
+  describe '#update' do
+    it 'clears date if blank' do
+      expect(grade_entry_form.due_date).to_not be_nil
+      patch :update, params: { id: grade_entry_form, grade_entry_form: { due_date: nil } }
+      expect(grade_entry_form.reload.due_date).to be_nil
+    end
+
+    it 'updates date field' do
+      expect(grade_entry_form.due_date).to_not be_nil
+      patch :update, params: { id: grade_entry_form.id, grade_entry_form: { due_date: '2019-11-14' } }
+      expect(grade_entry_form.reload.due_date.to_date).to eq Date.new(2019, 11, 14)
+    end
+  end
+
+  describe 'update_grade_entry_students' do
+    before :each do
+      create(:student, user_name: 'paneroar')
+      @student = grade_entry_form_with_data.grade_entry_students.joins(:user).find_by('users.user_name': 'c8shosta')
+      @another = grade_entry_form_with_data.grade_entry_students.joins(:user).find_by('users.user_name': 'paneroar')
+      @this_form = grade_entry_form_with_data
+    end
+    it 'sends an email to a student who has grades for this form if only one exists' do
+      expect do
+        post :update_grade_entry_students,
+             params: { id: @this_form.id,
+                       students: [@student.id],
+                       release_results: 'true' }
+      end.to change { ActionMailer::Base.deliveries.count }.by(1)
+    end
+    it 'sends an email to every student who has grades for this form if more than one do' do
+      expect do
+        post :update_grade_entry_students,
+             params: { id: @this_form.id,
+                       students: [@student.id, @another.id],
+                       release_results: 'true' }
+      end.to change { ActionMailer::Base.deliveries.count }.by(2)
     end
   end
 end

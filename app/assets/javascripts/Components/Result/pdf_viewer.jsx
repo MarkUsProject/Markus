@@ -8,13 +8,17 @@ export class PDFViewer extends React.Component {
   }
 
   componentDidMount() {
+    this.pdfViewer = new pdfjsViewer.PDFViewer({
+      container: this.pdfContainer.current,
+      // renderer: 'svg',  TODO: investigate why some fonts don't render with SVG
+    });
+    window.pdfViewer = this;  // For fixing display when pane width changes
+
+    document.addEventListener('pagesinit', this.ready_annotations);
+    document.addEventListener('pagesloaded', this.refresh_annotations);
+
     if (this.props.url) {
-      this.pdfViewer = new pdfjsViewer.PDFViewer({
-        container: this.pdfContainer.current,
-        // renderer: 'svg',  TODO: investigate why some fonts don't render with SVG
-      });
       this.loadPDFFile();
-      window.pdfViewer = this.pdfViewer;  // For fixing display when pane width changes
     }
   }
 
@@ -22,30 +26,22 @@ export class PDFViewer extends React.Component {
     if (this.props.url && this.props.url !== prevProps.url) {
       this.loadPDFFile();
     } else {
-      $('.annotation_holder').remove();
-      this.props.annotations.forEach(this.display_annotation);
+      this.refresh_annotations();
     }
   }
 
   loadPDFFile = () => {
     pdfjs.getDocument(this.props.url).promise.then((pdfDocument) => {
       this.pdfViewer.setDocument(pdfDocument);
-
-      document.addEventListener('pagesinit', () => {
-        this.pdfViewer.currentScaleValue = 'page-fit';
-        this.ready_annotations(this.pdfViewer, 'viewer');
-      });
-
-      document.addEventListener('pagesloaded', () => {
-        this.props.annotations.forEach(this.display_annotation);
-      });
     });
   };
 
-  ready_annotations = (pdfView, pdfViewerId) => {
+  ready_annotations = () => {
     annotation_type = ANNOTATION_TYPES.PDF;
 
-    window.annotation_manager = new PdfAnnotationManager(pdfView, pdfViewerId, !this.props.released_to_students);
+    this.pdfViewer.currentScaleValue = 'page-width';
+    window.annotation_manager = new PdfAnnotationManager(this.pdfViewer, 'viewer',
+                                                         !this.props.released_to_students);
     window.annotation_manager.resetAngle();
   };
 
@@ -56,14 +52,23 @@ export class PDFViewer extends React.Component {
       box.style.width   = '0';
       box.style.height  = '0';
     }
+    document.removeEventListener('pagesinit', this.ready_annotations);
+    document.removeEventListener('pagesloaded', this.refresh_annotations);
+    window.pdfViewer = undefined;
   }
+
+  refresh_annotations = () => {
+    $('.annotation_holder').remove();
+    this.pdfViewer.currentScaleValue = 'page-width';
+    this.props.annotations.forEach(this.display_annotation);
+  };
 
   display_annotation = (annotation) => {
     if (annotation.x_range === undefined || annotation.y_range === undefined) {
       return;
     }
 
-    add_annotation_text(annotation.annotation_text_id, marked(annotation.content, {sanitize: true}));
+    add_annotation_text(annotation.annotation_text_id, annotation.content);
     annotation_manager.addAnnotation(
       annotation.annotation_text_id,
       marked(annotation.content, {sanitize: true}),
