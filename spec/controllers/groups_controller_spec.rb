@@ -309,8 +309,8 @@ describe GroupsController do
     end
 
     describe '#delete_groupings' do
-      let(:grouping) { create :grouping_with_inviter }
-      let(:grouping_with_submission) { create :grouping_with_inviter_and_submission }
+      let!(:grouping) { create :grouping_with_inviter }
+      let!(:grouping_with_submission) { create :grouping_with_inviter_and_submission }
 
       it 'should delete groupings without submissions' do
         post :global_actions, params: {
