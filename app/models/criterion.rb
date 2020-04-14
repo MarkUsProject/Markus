@@ -154,6 +154,17 @@ class Criterion < ApplicationRecord
     end
   end
 
+  def results_unreleased?
+    return if self.marks.empty?
+    released = self.marks.joins(:result).where('results.released_to_students' => true)
+    if released.empty?
+      true
+    else
+      errors.add(:base, 'Cannot update criterion once results are released.')
+      false
+    end
+  end
+
   private
 
   # Checks if the criterion is visible to either the ta or the peer reviewer.
@@ -162,19 +173,6 @@ class Criterion < ApplicationRecord
       true
     else
       errors.add(:base, I18n.t('activerecord.errors.models.criterion.visibility_error'))
-      false
-    end
-  end
-
-  public
-
-  def results_unreleased?
-    return if self.marks.empty?
-    released = self.marks.joins(:result).where('results.released_to_students' => true)
-    if released.empty?
-      true
-    else
-      errors.add(:base, 'Cannot update criterion once results are released.')
       false
     end
   end
