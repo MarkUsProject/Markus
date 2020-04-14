@@ -41,7 +41,7 @@ export class PDFViewer extends React.Component {
 
     this.pdfViewer.currentScaleValue = 'page-width';
     window.annotation_manager = new PdfAnnotationManager(this.pdfViewer, 'viewer',
-      !this.props.released_to_students);
+                                                         !this.props.released_to_students);
     window.annotation_manager.resetAngle();
   };
 
