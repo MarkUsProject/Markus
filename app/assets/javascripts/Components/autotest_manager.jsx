@@ -4,6 +4,7 @@ import FileManager from './markus_file_manager';
 import Form from 'react-jsonschema-form';
 import Datepicker from './date_picker'
 import AutotestFileUploadModal from './Modals/autotest_file_upload_modal'
+import AutotestSpecsUploadModal from "./Modals/autotest_specs_upload_modal";
 
 class AutotestManager extends React.Component {
   constructor(props) {
@@ -32,8 +33,10 @@ class AutotestManager extends React.Component {
       non_regenerating_tokens: false,
       unlimited_tokens: false,
       loading: true,
-      showModal: false,
-      uploadTarget: undefined
+      showFileUploadModal: false,
+      showSpecUploadModal: false,
+      uploadTarget: undefined,
+      form_changed: false
     };
   };
 
@@ -53,9 +56,13 @@ class AutotestManager extends React.Component {
       .then(data => this.setState({files: data.files, schema: data.schema, loading: false}))
   };
 
+  toggleFormChanged = (value) => {
+    this.setState({form_changed: value}, () => set_onbeforeunload(this.state.form_changed));
+  };
+
   handleCreateFiles = (files) => {
     const prefix = this.state.uploadTarget || '';
-    this.setState({showModal: false, uploadTarget: undefined});
+    this.setState({showFileUploadModal: false, uploadTarget: undefined});
     let data = new FormData();
     Array.from(files).forEach(f => data.append('new_files[]', f, f.name));
     data.append('path', prefix);
@@ -65,18 +72,19 @@ class AutotestManager extends React.Component {
       processData: false, // tell jQuery not to process the data
       contentType: false  // tell jQuery not to set contentType
     }).then(this.fetchFileDataOnly)
-      .then(this.onSubmit); // uploading files will send changes to the autotester without requiring an explicit save
+      .then(() => this.toggleFormChanged(true))
+      .then(this.endAction);
   };
 
-  handleDeleteFile = (fileKey) => {
-    if (!this.state.files.some(f => f.key === fileKey)) {
+  handleDeleteFile = (fileKeys) => {
+    if (!this.state.files.some(f => fileKeys.includes(f.key))) {
       return;
     }
     $.post({
       url: Routes.upload_files_assignment_automated_tests_path(this.props.assignment_id),
-      data: {delete_files: [fileKey]}
+      data: {delete_files: fileKeys}
     }).then(this.fetchFileDataOnly)
-      .then(this.onSubmit) // deleting files will send changes to the autotester without requiring an explicit save
+      .then(() => this.toggleFormChanged(true))
       .then(this.endAction);
   };
 
@@ -85,7 +93,7 @@ class AutotestManager extends React.Component {
       url: Routes.upload_files_assignment_automated_tests_path(this.props.assignment_id),
       data: {new_folders: [folderKey]}
     }).then(this.fetchFileDataOnly)
-      .then(this.onSubmit) // creating folders will send changes to the autotester without requiring an explicit save
+      .then(() => this.toggleFormChanged(true))
       .then(this.endAction);
   };
 
@@ -94,44 +102,44 @@ class AutotestManager extends React.Component {
       url: Routes.upload_files_assignment_automated_tests_path(this.props.assignment_id),
       data: {delete_folders: [folderKey]}
     }).then(this.fetchFileDataOnly)
-      .then(this.onSubmit) // deleting folders will send changes to the autotester without requiring an explicit save
+      .then(() => this.toggleFormChanged(true))
       .then(this.endAction);
   };
 
   openUploadModal = (uploadTarget) => {
-    this.setState({showModal: true, uploadTarget: uploadTarget})
+    this.setState({showFileUploadModal: true, uploadTarget: uploadTarget})
   };
 
   handleFormChange = (data) => {
-    this.setState({formData: data.formData});
+    this.setState({formData: data.formData}, () => this.toggleFormChanged(true));
   };
 
   toggleEnableTest = () => {
-    this.setState({enable_test: !this.state.enable_test})
+    this.setState({enable_test: !this.state.enable_test}, () => this.toggleFormChanged(true));
   };
 
   toggleEnableStudentTest = () => {
-    this.setState({enable_student_tests: !this.state.enable_student_tests})
+    this.setState({enable_student_tests: !this.state.enable_student_tests}, () => this.toggleFormChanged(true));
   };
 
   toggleNonRegeneratingTokens = () => {
-    this.setState({non_regenerating_tokens: !this.state.non_regenerating_tokens})
+    this.setState({non_regenerating_tokens: !this.state.non_regenerating_tokens}, () => this.toggleFormChanged(true));
   };
 
   toggleUnlimitedTokens = () => {
-    this.setState({unlimited_tokens: !this.state.unlimited_tokens})
+    this.setState({unlimited_tokens: !this.state.unlimited_tokens}, () => this.toggleFormChanged(true));
   };
 
   handleTokenStartDateChange = (date) => {
-    this.setState({token_start_date: date})
+    this.setState({token_start_date: date}, () => this.toggleFormChanged(true));
   };
 
   handleTokensPerPeriodChange = (event) => {
-    this.setState({tokens_per_period: event.target.value})
+    this.setState({tokens_per_period: event.target.value}, () => this.toggleFormChanged(true));
   };
 
   handleTokenPeriodChange = (event) => {
-    this.setState({token_period: event.target.value})
+    this.setState({token_period: event.target.value}, () => this.toggleFormChanged(true));
   };
 
   onSubmit = () => {
@@ -152,7 +160,36 @@ class AutotestManager extends React.Component {
       data: JSON.stringify(data),
       processData: false,
       contentType: 'application/json'
-    }).then(() => { window.location.reload() });
+    }).then(() => {
+      this.toggleFormChanged(false);
+      window.location.reload();
+    });
+  };
+
+  getDownloadAllURL = () => {
+    return Routes.download_files_assignment_automated_tests_path(this.props.assignment_id);
+  };
+
+  specsDownloadURL = () => {
+    return Routes.download_specs_assignment_automated_tests_path(this.props.assignment_id)
+  };
+
+  onSpecUploadModal = () => {
+    this.setState({showSpecUploadModal: true})
+  };
+
+  handleUploadSpecFile = (file) => {
+    this.setState({showSpecUploadModal: false});
+    let data = new FormData();
+    data.append('specs_file', file);
+    $.post({
+      url: Routes.upload_specs_assignment_automated_tests_path(this.props.assignment_id),
+      data: data,
+      processData: false, // tell jQuery not to process the data
+      contentType: false  // tell jQuery not to set contentType
+    }).then(this.fetchData())
+      .then(() => this.toggleFormChanged(false))
+      .then(this.endAction);
   };
 
   studentTestsField = () => {
@@ -266,16 +303,21 @@ class AutotestManager extends React.Component {
             noFilesMessage={I18n.t('submissions.no_files_available')}
             readOnly={!this.state.enable_test}
             onDeleteFile={this.handleDeleteFile}
-            onCreateFile={this.handleCreateFiles}
             onCreateFolder={this.handleCreateFolder}
             onRenameFolder={typeof this.handleCreateFolder === 'function' ? () => {} : undefined}
             onDeleteFolder={this.handleDeleteFolder}
             onActionBarAddFileClick={this.openUploadModal}
+            downloadAllURL={this.getDownloadAllURL()}
             disableActions={{rename: true}}
           />
         </fieldset>
         <fieldset>
           <legend><span>{'Testers'}</span></legend>
+          <div className={'upload-download'}>
+            <a href={this.specsDownloadURL()}>{I18n.t('download')}</a>
+            <span className={'menu-bar'}/>
+            <a onClick={this.onSpecUploadModal}>{I18n.t('upload')}</a>
+          </div>
           <Form
             disabled={!this.state.enable_test}
             schema={this.state.schema}
@@ -291,12 +333,18 @@ class AutotestManager extends React.Component {
         <input type='submit'
                value={I18n.t('save')}
                onClick={this.onSubmit}
+               disabled={!this.state.form_changed}
         >
         </input>
         <AutotestFileUploadModal
-          isOpen={this.state.showModal}
-          onRequestClose={() => this.setState({showModal: false, uploadTarget: undefined})}
+          isOpen={this.state.showFileUploadModal}
+          onRequestClose={() => this.setState({showFileUploadModal: false, uploadTarget: undefined})}
           onSubmit={this.handleCreateFiles}
+        />
+        <AutotestSpecsUploadModal
+          isOpen={this.state.showSpecUploadModal}
+          onRequestClose={() => this.setState({showSpecUploadModal: false})}
+          onSubmit={this.handleUploadSpecFile}
         />
       </div>
     )

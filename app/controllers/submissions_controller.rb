@@ -11,9 +11,11 @@ class SubmissionsController < ApplicationController
                          :file_manager,
                          :update_files,
                          :get_file,
+                         :get_feedback_file,
                          :download,
                          :downloads,
-                         :download_groupings_files,
+                         :zip_groupings_files,
+                         :download_zipped_file,
                          :manually_collect_and_begin_grading,
                          :repo_browser,
                          :set_result_marking_state,
@@ -26,12 +28,14 @@ class SubmissionsController < ApplicationController
                        :manually_collect_and_begin_grading,
                        :revisions,
                        :repo_browser,
-                       :download_groupings_files,
+                       :zip_groupings_files,
+                       :download_zipped_file,
                        :update_submissions]
   before_action :authorize_for_student,
                 only: [:file_manager]
   before_action :authorize_for_user,
-                only: [:download, :downloads, :get_file, :populate_file_manager, :update_files]
+                only: [:download, :downloads, :get_feedback_file, :get_file,
+                       :populate_file_manager, :update_files]
 
   def index
     respond_to do |format|
@@ -110,9 +114,7 @@ class SubmissionsController < ApplicationController
     @assignment = Assignment.find(params[:assignment_id])
     @grouping = current_user.accepted_grouping_for(@assignment.id)
     if @grouping.nil? || @assignment.scanned_exam? || @assignment.is_peer_review?
-      redirect_to controller: 'assignments',
-                  action: 'student_interface',
-                  id: params[:assignment_id]
+      redirect_to assignment_path(params[:assignment_id])
       return
     end
 
@@ -174,7 +176,7 @@ class SubmissionsController < ApplicationController
 
     submission = @grouping.reload.current_submission_used
     redirect_to edit_assignment_submission_result_path(
-      assignment_id: @grouping.assignment_id,
+      assignment_id: @grouping.assessment_id,
       submission_id: submission.id,
       id: submission.get_latest_result.id)
   end
@@ -204,7 +206,7 @@ class SubmissionsController < ApplicationController
                             .where(id: groupings)
                             .pluck(:id).to_set
     collection_dates = assignment.all_grouping_collection_dates
-    is_scanned_exam = assignment.scanned_exam
+    is_scanned_exam = assignment.scanned_exam?
     groupings.each do |grouping|
       unless is_scanned_exam
         collect_now = collection_dates[grouping.id] <= Time.current
@@ -435,6 +437,21 @@ class SubmissionsController < ApplicationController
     end
   end
 
+  def get_feedback_file
+    assignment = Assignment.find(params[:assignment_id])
+    submission = assignment.submissions.find(params[:id])
+    authorize! submission
+
+    feedback_file = submission.feedback_files.find(params[:feedback_file_id])
+    if feedback_file.mime_type.start_with? 'image'
+      content = Base64.encode64(feedback_file.file_content)
+    else
+      content = feedback_file.file_content
+    end
+
+    render plain: content
+  end
+
   def download
     @assignment = Assignment.find(params[:id])
     # find_appropriate_grouping can be found in SubmissionsHelper
@@ -459,48 +476,42 @@ class SubmissionsController < ApplicationController
         return
       end
 
-      send_data file_contents,
-                disposition: 'attachment',
-                filename: params[:file_name]
+      send_data_download file_contents, filename: params[:file_name]
     end
   end
 
   ##
-  # Download all files from groupings with id in +params[:groupings]+ in a .zip file.
+  # Prepare all files from groupings with id in +params[:groupings]+ to be downloaded in a .zip file.
   ##
-  def download_groupings_files
+  def zip_groupings_files
     assignment = Assignment.find(params[:assignment_id])
 
-    ## create the zip name with the user name to have less chance to delete
-    ## a currently downloading file
-    short_id = assignment.short_identifier
-    zip_name = Pathname.new(short_id + '_' + current_user.user_name + '.zip')
-    zip_path = Pathname.new('tmp') + zip_name
+    groupings = assignment.groupings.where(id: params[:groupings]&.map(&:to_i))
 
-    ## delete the old file if it exists
-    File.delete(zip_path) if File.exist?(zip_path)
-
-    groupings = Grouping.includes(:group, :current_submission_used).where(id: params[:groupings]&.map(&:to_i))
+    zip_path = zipped_grouping_file_name(assignment)
 
     if current_user.ta?
       groupings = groupings.joins(:ta_memberships).where('memberships.user_id': current_user.id)
     end
 
-    Zip::File.open(zip_path, Zip::File::CREATE) do |zip_file|
-      groupings.each do |grouping|
-        revision_id = grouping.current_submission_used&.revision_identifier
-        group_name = grouping.group.repo_name
-        grouping.group.access_repo do |repo|
-          revision = repo.get_revision(revision_id)
-          repo.send_tree_to_zip(assignment.repository_folder, zip_file, zip_name + group_name, revision)
-        rescue Repository::RevisionDoesNotExist
-          next
-        end
-      end
-    end
+    @current_job = DownloadSubmissionsJob.perform_later(groupings.ids, zip_path.to_s, assignment.id)
+    session[:job_id] = @current_job.job_id
 
-    ## Send the Zip file
-    send_file zip_path, disposition: 'inline', filename: zip_name.to_s
+    render 'shared/_poll_job.js.erb'
+  end
+
+  # download a zip file previously prepared by calling the
+  # zip_groupings_files method
+  def download_zipped_file
+    assignment = Assignment.find(params[:assignment_id])
+    zip_path = zipped_grouping_file_name(assignment)
+    zip_file = File.basename(zip_path)
+    begin
+      send_file zip_path, disposition: 'inline', filename: zip_file
+    rescue ActionController::MissingFile
+      flash_message(:error, I18n.t('submissions.download_zipped_file.file_missing', zip_file: zip_file))
+      redirect_back(fallback_location: root_path)
+    end
   end
 
   ##
@@ -594,7 +605,7 @@ class SubmissionsController < ApplicationController
     svn_commands = assignment.get_repo_checkout_commands
     send_data svn_commands.join("\n"),
               disposition: 'attachment',
-              type: 'application/vnd.ms-excel',
+              type: 'text/plain',
               filename: "#{assignment.short_identifier}_repo_checkouts"
   end
 
@@ -635,6 +646,14 @@ class SubmissionsController < ApplicationController
 
   private
 
+  # Return a relative path to a temporary zip file (which may or may not exists).
+  # The name of this file is unique by the +assignment+ and current user.
+  def zipped_grouping_file_name(assignment)
+    # create the zip name with the user name so that we avoid downloading files created by another user
+    short_id = assignment.short_identifier
+    Pathname.new('tmp') + Pathname.new(short_id + '_' + current_user.user_name + '.zip')
+  end
+
   # Used in update_files and file_manager actions
   def set_filebrowser_vars(grouping)
     grouping.group.access_repo do |repo|
@@ -650,6 +669,8 @@ class SubmissionsController < ApplicationController
     full_path = File.join(grouping.assignment.repository_folder, path)
     return [] unless revision.path_exists?(full_path)
 
+    anonymize = current_user.ta? && grouping.assignment.anonymize_groups
+
     entries = revision.tree_at_path(full_path).sort do |a, b|
       a[0].count(File::SEPARATOR) <=> b[0].count(File::SEPARATOR) # less nested first
     end
@@ -662,6 +683,7 @@ class SubmissionsController < ApplicationController
         next if data.nil?
         data[:key] = file_name
         data[:modified] = data[:last_revised_date]
+        data[:revision_by] = '' if anonymize
         data
       else
         { key: "#{file_name}/" }

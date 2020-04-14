@@ -6,10 +6,12 @@ class AnnotationCategoriesController < ApplicationController
 
   layout 'assignment_content'
 
+  responders :flash
+
   def index
     @assignment = Assignment.find(params[:assignment_id])
-    @annotation_categories = @assignment.annotation_categories.order(:position).includes(:annotation_texts)
-
+    @annotation_categories = @assignment.annotation_categories.order(:position)
+                                        .includes(:assignment, :annotation_texts)
     respond_to do |format|
       format.html
       format.json {
@@ -36,13 +38,14 @@ class AnnotationCategoriesController < ApplicationController
 
   def create
     @assignment = Assignment.find(params[:assignment_id])
-    @annotation_category = @assignment.annotation_categories
-                                      .new(annotation_category_params)
+    @annotation_category = @assignment.annotation_categories.new(annotation_category_params)
     if @annotation_category.save
       flash_message(:success, t('.success'))
-      render :insert_new_annotation_category
+      respond_to do |format|
+        format.js { render :insert_new_annotation_category }
+      end
     else
-      render :new_annotation_category_error
+      respond_with @annotation_category, render: { body: nil, status: :bad_request }
     end
   end
 
@@ -52,7 +55,9 @@ class AnnotationCategoriesController < ApplicationController
   end
 
   def destroy
-    @annotation_category = AnnotationCategory.find(params[:id])
+    @assignment = Assignment.find(params[:assignment_id])
+    @annotation_category = @assignment.annotation_categories.find(params[:id])
+
     if @annotation_category.destroy
       flash_message(:success, t('.success'))
     end
@@ -60,56 +65,56 @@ class AnnotationCategoriesController < ApplicationController
 
   def update
     @assignment = Assignment.find(params[:assignment_id])
-    @annotation_category = AnnotationCategory.find(params[:id])
+    @annotation_category = @assignment.annotation_categories.find(params[:id])
 
     if @annotation_category.update(annotation_category_params)
       flash_message(:success, t('.success'))
     else
-      flash_message(:error, @annotation_category.errors.full_messages)
+      respond_with @annotation_category, render: { body: nil, status: :bad_request }
     end
   end
 
-  def update_annotation
-    @annotation_text = AnnotationText.find(params[:id])
-    @annotation_text.update(annotation_text_params)
-    @annotation_text.last_editor_id = current_user.id
+  def new_annotation_text
+    @assignment = Assignment.find(params[:assignment_id])
+    @annotation_category = @assignment.annotation_categories.find(params[:annotation_category_id])
+  end
+
+  def create_annotation_text
+    @annotation_text = AnnotationText.new(
+      **annotation_text_params.to_h.symbolize_keys,
+      creator_id: current_user.id,
+      last_editor_id: current_user.id
+    )
+
     if @annotation_text.save
       flash_now(:success, t('annotation_categories.update.success'))
-    end
-  end
-
-  def add_annotation_text
-    @annotation_category = AnnotationCategory.find(params[:id])
-    if request.post?
-      # Attempt to add Annotation Text
-      @annotation_text = AnnotationText.new
-      @annotation_text.update(annotation_text_params)
-      @annotation_text.annotation_category = @annotation_category
-      @annotation_text.creator_id = current_user.id
-      @annotation_text.last_editor_id = current_user.id
-      unless @annotation_text.save
-        render :new_annotation_text_error
-        return
-      end
-      flash_now(:success, t('annotation_categories.update.success'))
       @assignment = Assignment.find(params[:assignment_id])
+      @annotation_category = @annotation_text.annotation_category
       render :insert_new_annotation_text
+    else
+      respond_with @annotation_text, render: { body: nil, status: :bad_request }
     end
   end
 
-  def delete_annotation_text
-    @assignment = Assignment.find(params[:assignment_id])
+  def destroy_annotation_text
     @annotation_text = AnnotationText.find(params[:id])
     if @annotation_text.destroy
       flash_now(:success, t('.success'))
     end
   end
 
+  def update_annotation_text
+    @annotation_text = AnnotationText.find(params[:id])
+    if @annotation_text.update(**annotation_text_params.to_h.symbolize_keys, last_editor_id: current_user.id)
+      flash_now(:success, t('annotation_categories.update.success'))
+    end
+  end
+
   def find_annotation_text
     @assignment = Assignment.find(params[:assignment_id])
     string = params[:string]
-    texts_for_current_assignment = AnnotationText.joins(annotation_category: :assignment).
-        where(assignments: {id: @assignment.id})
+    texts_for_current_assignment = AnnotationText.joins(annotation_category: :assignment)
+                                                 .where(assessments: { id: @assignment.id })
     annotation_texts = texts_for_current_assignment.where("content LIKE ?", "#{string}%")
     if annotation_texts.size == 1
       render json: "#{annotation_texts.first.content}".html_safe
@@ -118,23 +123,21 @@ class AnnotationCategoriesController < ApplicationController
     end
   end
 
-  # This method handles the drag/drop Annotations sorting
+  # This method handles the drag/drop Annotations sorting.
+  # It currently ignores annotation categories that are not associated with the passed assignment.
   def update_positions
-    unless request.post?
-      head :ok
-      return
-    end
-
-    @assignment = Assignment.find(params[:assignment_id])
-    @annotation_categories = @assignment.annotation_categories
+    assignment = Assignment.find(params[:assignment_id])
     position = 0
 
-    params[:annotation_category].each do |id|
-      if id != ''
-        position += 1
-        AnnotationCategory.update(id, position: position)
-      end
+    params[:annotation_category].compact.each do |id|
+      annotation_category = assignment.annotation_categories.find_by(id: id)
+      next if annotation_category.nil?
+
+      annotation_category.update(position: position)
+      position += 1
     end
+
+    head :ok
   end
 
   def download
@@ -202,12 +205,15 @@ class AnnotationCategoriesController < ApplicationController
   private
 
   def annotation_category_params
-    # we do not want to allow :position to be given directly
     params.require(:annotation_category)
-          .permit(:annotation_category_name, :assignment_id)
+          .permit(:annotation_category_name)
   end
 
   def annotation_text_params
-    params.require(:annotation_text).permit(:content)
+    params.require(:annotation_text).permit(:content, :annotation_category_id)
+  end
+
+  def flash_interpolation_options
+    { errors: @annotation_category.errors.full_messages.join('; ') }
   end
 end

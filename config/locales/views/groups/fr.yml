@@ -70,6 +70,8 @@ fr:
       cancel_invitation_confirm: "Êtes-vous sûr de vouloir annuler l'invitation ?"
       decline: "Refuser"
       decline_invitation_confirm: "Êtes-vous sûr de vouloir refuser cette invitation ?"
+      errors:
+        not_found: "UPDATE ME"
       invitations: "Invitations"
       invite: "Inviter"
       invite_instructions: "Séparer les noms d'utilisateur par des virgules."

@@ -17,6 +17,7 @@
 !/data/test/exam_templates/.gitkeep
 !/data/test/repos/.gitkeep
 /log/
+/tmp/
 /doc/app/
 /.bundle/
 /vendor/bundle
@@ -70,9 +71,9 @@ dump.rdb
 /public/packs-test
 /public/javascripts
 /node_modules
-/node_modules
 yarn-debug.log*
 .yarn-integrity
+yarn-error.log
 
 # simplecov gem
 coverage/

@@ -12,6 +12,11 @@ fr:
       destroy:
         success: "Supprimé avec succès %{resource_name}."
         error: "Impossible de supprimer %{resource_name}."
+    annotation_categories:
+      create:
+        error: "%{resource_name} ne peut pas être créé à cause de: %{errors}."
+      update:
+        error: "%{resource_name} ne peut pas être modifié à cause de: %{errors}."
     criteria:
       destroy:
         success: "Criterion supprimé avec succès"

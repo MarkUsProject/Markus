@@ -12,15 +12,6 @@ class GitRepository < Repository::AbstractRepository
   def initialize(connect_string)
 
     # Check if configuration is in order
-    if MarkusConfigurator.markus_config_repository_admin?.nil?
-      raise ConfigurationError.new("Required config 'IS_REPOSITORY_ADMIN' not set")
-    end
-    if MarkusConfigurator.markus_config_repository_storage.nil?
-      raise ConfigurationError.new("Required config 'REPOSITORY_STORAGE' not set")
-    end
-    if MarkusConfigurator.markus_config_repository_permission_file.nil?
-      raise ConfigurationError.new("Required config 'REPOSITORY_PERMISSION_FILE' not set")
-    end
     begin
       super(connect_string) # dummy call to super
     rescue NotImplementedError; end
@@ -116,8 +107,8 @@ class GitRepository < Repository::AbstractRepository
     repo.index.add('.required.json')
 
     # Add client-side hooks
-    if with_hooks && !MarkusConfigurator.markus_config_repository_client_hooks.empty?
-      client_hooks_path = MarkusConfigurator.markus_config_repository_client_hooks
+    if with_hooks && !Rails.configuration.x.repository.client_hooks.empty?
+      client_hooks_path = Rails.configuration.x.repository.client_hooks
       FileUtils.copy_entry client_hooks_path, File.join(connect_string, 'markus-hooks')
       FileUtils.chmod 0755, File.join(connect_string, 'markus-hooks', 'pre-commit')
       repo.index.add_all('markus-hooks')
@@ -127,7 +118,7 @@ class GitRepository < Repository::AbstractRepository
 
     # Set up server-side hooks
     if with_hooks
-      MarkusConfigurator.markus_config_repository_hooks.each do |hook_symbol, hook_script|
+      Rails.configuration.x.repository.hooks.each do |hook_symbol, hook_script|
         FileUtils.ln_s(hook_script, File.join(bare_path, 'hooks', hook_symbol.to_s))
       end
     end
@@ -404,7 +395,13 @@ class GitRepository < Repository::AbstractRepository
         end
       when :remove
         begin
-          remove_file(job[:path], job[:expected_revision_identifier])
+          remove_file(job[:path], job[:expected_revision_identifier], keep_folder: job[:keep_folder])
+        rescue Repository::Conflict => e
+          transaction.add_conflict(e)
+        end
+      when :remove_directory
+        begin
+          remove_directory(job[:path], job[:expected_revision_identifier], keep_parent_dir: job[:keep_parent_dir])
         rescue Repository::Conflict => e
           transaction.add_conflict(e)
         end
@@ -440,24 +437,15 @@ class GitRepository < Repository::AbstractRepository
   # a substantial performance improvement by writing the auth file only once in the SVN case.
   def self.__update_permissions(permissions, full_access_users)
 
-    # Check if configuration is in order
-    if MarkusConfigurator.markus_config_repository_admin?.nil?
-      raise ConfigurationError.new(
-        "Required config 'IS_REPOSITORY_ADMIN' not set")
-    end
-    if MarkusConfigurator.markus_config_repository_permission_file.nil?
-      raise ConfigurationError.new(
-        "Required config 'REPOSITORY_PERMISSION_FILE' not set")
-    end
     # If we're not in authoritative mode, bail out
-    unless MarkusConfigurator.markus_config_repository_admin? # Are we admin?
+    unless Rails.configuration.x.repository.is_repository_admin
       raise NotAuthorityError.new(
         'Unable to set bulk permissions: Not in authoritative mode!')
     end
 
     # Create auth csv file
     sorted_permissions = permissions.sort.to_h
-    CSV.open(MarkusConfigurator.markus_config_repository_permission_file, 'wb') do |csv|
+    CSV.open(Rails.configuration.x.repository.permission_file, 'wb') do |csv|
       csv.flock(File::LOCK_EX)
       csv << ['*'] + full_access_users
       sorted_permissions.each do |repo_name, users|
@@ -482,20 +470,48 @@ class GitRepository < Repository::AbstractRepository
   # Creates an empty directory into the repository.
   # The dummy file is required so the directory gets committed.
   def add_directory(path)
+    if get_latest_revision.path_exists?(path)
+      raise Repository::FolderExistsConflict, path
+    end
     gitkeep_filename = File.join(path, DUMMY_FILE_NAME)
     add_file(gitkeep_filename, '')
   end
 
   # Removes a file from the repository.
-  def remove_file(path, expected_revision_identifier)
+  # If +keep_folder+ is true, the files will be deleted and .gitkeep file will be added to its parent folder if it
+  # is not exists in order to keep the folder.
+  # If +keep_folder+ is false, all the files will be deleted and .gitkeep file will not be added.
+  def remove_file(path, expected_revision_identifier, keep_folder: true)
     if @repos.last_commit.oid != expected_revision_identifier
       raise Repository::FileOutOfSyncConflict.new(path)
     end
     unless get_latest_revision.path_exists?(path)
-      raise Repository::FileDoesNotExist.new(path)
+      raise Repository::FileDoesNotExistConflict, path
     end
+    absolute_path = Pathname.new(File.join(@repos_path, path))
+    relative_path = Pathname.new(path)
     File.unlink(File.join(@repos_path, path))
     @repos.index.remove(path)
+    return unless keep_folder
+    return if File.exist?(File.join(absolute_path.dirname, DUMMY_FILE_NAME))
+    gitkeep_filename = File.join(relative_path.dirname, DUMMY_FILE_NAME)
+    add_file(gitkeep_filename, '')
+  end
+
+  def remove_directory(path, _expected_revision_identifier, keep_parent_dir: false)
+    unless get_latest_revision.path_exists?(path)
+      raise Repository::FolderDoesNotExistConflict, path
+    end
+    absolute_path = Pathname.new(File.join(@repos_path, path))
+    relative_path = Pathname.new(path)
+    unless Dir.empty?(absolute_path)
+      raise Repository::FolderIsNotEmptyConflict, path
+    end
+    FileUtils.remove_dir(absolute_path)
+    return unless keep_parent_dir
+    return if File.exist?(File.join(absolute_path.dirname, DUMMY_FILE_NAME))
+    gitkeep_filename = File.join(relative_path.dirname, DUMMY_FILE_NAME)
+    add_file(gitkeep_filename, '')
   end
 
   # Replaces a file in the repository with new content.
@@ -526,5 +542,4 @@ class GitRepository < Repository::AbstractRepository
     end
     @repos.index.add(path)
   end
-
 end

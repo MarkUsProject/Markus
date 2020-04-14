@@ -5,11 +5,13 @@ describe ResultsController do
   let(:ta) { create :ta }
   let(:grouping) { create :grouping_with_inviter, assignment: assignment, inviter: student }
   let(:submission) { create :version_used_submission, grouping: grouping }
-  let(:incomplete_result) { create :incomplete_result, submission: submission }
+  let(:incomplete_result) { submission.current_result }
   let(:complete_result) { create :complete_result, submission: submission }
   let(:submission_file) { create :submission_file, submission: submission }
-  let(:rubric_mark) { create :rubric_mark, result: incomplete_result }
-  let(:flexible_mark) { create :flexible_mark, result: incomplete_result }
+  let(:rubric_criterion) { create(:rubric_criterion, assignment: assignment) }
+  let(:rubric_mark) { create :rubric_mark, result: incomplete_result, markable: rubric_criterion }
+  let(:flexible_criterion) { create(:flexible_criterion, assignment: assignment) }
+  let(:flexible_mark) { create :flexible_mark, result: incomplete_result, markable: flexible_criterion }
 
   SAMPLE_FILE_CONTENT = 'sample file content'.freeze
   SAMPLE_ERROR_MESSAGE = 'sample error message'.freeze
@@ -166,7 +168,7 @@ describe ResultsController do
                                              submission_file_id: file.id,
                                              is_remark: false,
                                              annotation_number: @submission.annotations.count + 1,
-                                             annotation_text: create(:annotation_text, user: admin),
+                                             annotation_text: create(:annotation_text, creator: admin),
                                              result: complete_result,
                                              creator: admin
         file_name_snippet = grouping.group.access_repo do |repo|
@@ -246,7 +248,7 @@ describe ResultsController do
                                       id: incomplete_result.id, markable_id: rubric_mark.markable_id,
                                       markable_type: rubric_mark.markable_type,
                                       mark: 1 }, xhr: true
-        expect(JSON.parse(response.body)[:num_marked]).to be_nil
+        expect(JSON.parse(response.body)['num_marked']).to eq 0
       end
       it { expect(response).to have_http_status(:redirect) }
       context 'but cannot save the mark' do
@@ -517,6 +519,26 @@ describe ResultsController do
         end.to raise_error(ActiveRecord::RecordNotFound)
       end
     end
+    describe '#add_tag' do
+      it 'adds a tag to a grouping' do
+        tag = create(:tag)
+        post :add_tag,
+             params: { assignment_id: assignment.id, submission_id: submission.id,
+                       id: complete_result.id, tag_id: tag.id }
+        expect(complete_result.submission.grouping.tags.to_a).to eq [tag]
+      end
+    end
+
+    describe '#remove_tag' do
+      it 'removes a tag from a grouping' do
+        tag = create(:tag)
+        submission.grouping.tags << tag
+        post :remove_tag,
+             params: { assignment_id: assignment.id, submission_id: submission.id,
+                       id: complete_result.id, tag_id: tag.id }
+        expect(complete_result.submission.grouping.tags.size).to eq 0
+      end
+    end
   end
   context 'A TA' do
     before(:each) { sign_in ta }
@@ -531,5 +553,97 @@ describe ResultsController do
       it { expect(response).to have_http_status(:success) }
     end
     include_examples 'shared ta and admin tests'
+
+    context 'when groups information is anonymized' do
+      let(:data) { JSON.parse(response.body) }
+      let!(:grace_period_deduction) do
+        create(:grace_period_deduction, membership: grouping.accepted_student_memberships.first)
+      end
+      before :each do
+        assignment.assignment_properties.update(anonymize_groups: true)
+        get :show, params: { assignment_id: assignment.id, submission_id: submission.id,
+                             id: incomplete_result.id }, xhr: true
+      end
+
+      it 'should anonymize the group names' do
+        expect(data['group_name']).to eq "#{Group.model_name.human} #{data['grouping_id']}"
+      end
+
+      it 'should not report any grace token deductions' do
+        expect(data['grace_token_deductions']).to eq []
+      end
+    end
+
+    context 'when criteria are assigned to this grader' do
+      let(:data) { JSON.parse(response.body) }
+      let(:params) { { assignment_id: assignment.id, submission_id: submission.id, id: incomplete_result.id } }
+      before :each do
+        assignment.assignment_properties.update(assign_graders_to_criteria: true)
+        create(:criterion_ta_association, criterion: rubric_mark.markable, ta: ta)
+        get :show, params: params, xhr: true
+      end
+
+      it 'should include assigned criteria list' do
+        expect(data['assigned_criteria']).to eq ["#{rubric_criterion.class}-#{rubric_criterion.id}"]
+      end
+
+      context 'when unassigned criteria are hidden from the grader' do
+        before :each do
+          assignment.assignment_properties.update(hide_unassigned_criteria: true)
+        end
+
+        it 'should only include marks for the assigned criteria' do
+          expected = [[rubric_criterion.class.to_s, rubric_criterion.id]]
+          expect(data['marks'].map { |m| [m['criterion_type'], m['id']] }).to eq expected
+        end
+
+        context 'when a remark request exists' do
+          let(:remarked) do
+            submission.make_remark_result
+            submission.update(remark_request_timestamp: Time.zone.now)
+            submission
+          end
+          let(:params) { { assignment_id: assignment.id, submission_id: remarked.id, id: incomplete_result.id } }
+
+          it 'should only include marks for assigned criteria in the remark result' do
+            expect(data['old_marks'].keys).to eq ["#{rubric_criterion.class}-#{rubric_criterion.id}"]
+          end
+        end
+      end
+    end
+
+    context 'accessing update_mark' do
+      it 'should not count completed groupings that are not assigned to the TA' do
+        grouping2 = create(:grouping_with_inviter, assignment: assignment)
+        create(:version_used_submission, grouping: grouping2)
+        grouping2.current_result.update(marking_state: Result::MARKING_STATES[:complete])
+
+        patch :update_mark, params: { assignment_id: assignment.id, submission_id: submission.id,
+                                      id: incomplete_result.id, markable_id: rubric_mark.markable_id,
+                                      markable_type: rubric_mark.markable_type,
+                                      mark: 1 }, xhr: true
+        expect(JSON.parse(response.body)['num_marked']).to eq 0
+      end
+    end
+    describe '#add_tag' do
+      it 'adds a tag to a grouping' do
+        tag = create(:tag)
+        post :add_tag,
+             params: { assignment_id: assignment.id, submission_id: submission.id,
+                       id: complete_result.id, tag_id: tag.id }
+        expect(complete_result.submission.grouping.tags.to_a).to eq [tag]
+      end
+    end
+
+    describe '#remove_tag' do
+      it 'removes a tag from a grouping' do
+        tag = create(:tag)
+        submission.grouping.tags << tag
+        post :remove_tag,
+             params: { assignment_id: assignment.id, submission_id: submission.id,
+                       id: complete_result.id, tag_id: tag.id }
+        expect(complete_result.submission.grouping.tags.size).to eq 0
+      end
+    end
   end
 end

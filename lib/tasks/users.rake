@@ -27,7 +27,7 @@ namespace :db do
   # this task depends on :environment and :seed
   task(:test_servers => :environment) do
     puts 'Populate database with TestServers'
-    [[MarkusConfigurator::autotest_server_host, 'Test', 'Server1']]
+    [[Rails.configuration.x.autotest.server_host, 'Test', 'Server1']]
         .each do |server|
       TestServer.create(user_name: server[0], first_name: server[1], last_name: server[2], hidden: true)
     end
@@ -48,6 +48,9 @@ namespace :db do
       i += rand(10 ** 7)
       student.update_attribute(:id_number, sprintf('%010d', i))
       student.update_attribute(:grace_credits, 5)
+      first_name = student.first_name.downcase.gsub(/\s+/, '')
+      last_name = student.last_name.downcase.gsub(/\s+/, '')
+      student.update_attribute(:email, "#{first_name}.#{last_name}@example.com")
     end
   end
 end

@@ -9,6 +9,10 @@ class ApplicationJob < ActiveJob::Base
     I18n.t('poll_job.working_message', progress: status[:progress], total: status[:total])
   end
 
+  def self.completed_message(_status)
+    I18n.t('poll_job.completed')
+  end
+
   before_enqueue do |job|
     self.status.update(job_class: job.class)
   end

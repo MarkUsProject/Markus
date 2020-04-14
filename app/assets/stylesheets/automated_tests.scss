@@ -158,3 +158,19 @@ div#autotest-manager {
     }
   }
 }
+
+.upload-download {
+  padding: 10px;
+  text-align: right;
+
+  .menu-bar {
+    background: none;
+    border: 0;
+    font-size: 1rem;
+    font-weight: normal;
+
+    &::before {
+      content: '|';
+    }
+  }
+}

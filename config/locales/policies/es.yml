@@ -14,6 +14,7 @@ es:
         before_due_date?: "El último plazo para este proyecto ha pasado y."
         deletable_by?: "Usted no tiene permiso para eliminar el grupo."
         delete_rejected?: "Sólo el invitador puede declinar una invitación."
+        disinvite_member?: "UPDATE ME."
         member?: "UPDATE ME."
         no_extension?: "UPDATE ME."
         no_submission?: "Usted ya ha enviado su entrega. Usted no puede eliminar el grupo."
@@ -21,5 +22,6 @@ es:
         tokens_available?: "No se encontraron fichas para este estudiante y para este proyecto."
       submission:
         before_release?: "UPDATE ME."
+        get_feedback_file?: "No existe acceso al archivo de retroalimentación."
         not_a_student?: "UPDATE ME."
         manage_subdirectories?: "UPDATE ME."

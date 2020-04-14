@@ -44,8 +44,8 @@ describe Section do
         it 'return the section due date for an assignment' do
           section_5 = Section.create!(name: "Shrek")
           assignment = create(:assignment,
-                               section_due_dates_type: false,
-                               due_date: 2.days.from_now)
+                              due_date: 2.days.from_now,
+                              assignment_properties_attributes: { section_due_dates_type: false })
           section_due_date = SectionDueDate.create!(section: section_5, assignment: assignment)
 
           expect(section_due_date).to eq(section_5.section_due_date_for(assignment))

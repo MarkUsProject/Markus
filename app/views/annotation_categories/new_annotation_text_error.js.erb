@@ -1,4 +1,0 @@
-var error = $('#new_annotation_text_error');
-error.append("<%= escape_javascript(render partial: 'annotation_text_errors_list',
-                                           locals: { annotation_text: @annotation_text }).html_safe %>")
-error.show();

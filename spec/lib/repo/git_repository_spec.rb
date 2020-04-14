@@ -6,10 +6,10 @@ describe GitRepository do
     end
 
     after :all do
-      FileUtils.rm MarkusConfigurator.markus_config_repository_permission_file
+      FileUtils.rm Rails.configuration.x.repository.permission_file
     end
 
-    let(:file_contents) { File.read(MarkusConfigurator.markus_config_repository_permission_file).lines.map(&:chomp) }
+    let(:file_contents) { File.read(Rails.configuration.x.repository.permission_file).lines.map(&:chomp) }
 
     it 'give admins access to all repos' do
       expect(file_contents[0].split(',')[0]).to eq('*')

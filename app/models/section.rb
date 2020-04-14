@@ -14,6 +14,6 @@ class Section < ApplicationRecord
   end
 
   def section_due_date_for(aid)
-    SectionDueDate.where(assignment_id: aid, section_id: id).first
+    SectionDueDate.where(assessment_id: aid, section_id: id).first
   end
 end

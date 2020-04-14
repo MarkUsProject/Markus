@@ -20,6 +20,8 @@ es:
       problems: "UPDATE ME"
     title: "Pruebas Automatizadas"
     display_output_title: "UPDATE ME"
+    invalid_specs_file: "UPDATE ME"
+    specs_file_upload_message: "UPDATE ME"
     display_output:
       instructors: "No mostrar"
       instructors_and_students: "Mostrar después de realizar la entrega"

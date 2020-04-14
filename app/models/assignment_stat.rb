@@ -1,6 +1,6 @@
 class AssignmentStat < ApplicationRecord
 
-  belongs_to :assignment
+  belongs_to :assignment, inverse_of: :assignment_stat, foreign_key: :assessment_id
 
   # Update the cached grade distribution
   def refresh_grade_distribution
@@ -16,7 +16,7 @@ class AssignmentStat < ApplicationRecord
       grade_distribution_percentage.parse_csv.map(&:to_i)
     else
       # Default, empty distribution
-      '[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]'
+      Array.new(20) { 0 }
     end
   end
 end

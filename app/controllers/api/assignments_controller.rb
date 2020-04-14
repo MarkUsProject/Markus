@@ -18,8 +18,10 @@ module Api
       assignments = get_collection(Assignment) || return
 
       respond_to do |format|
+        json_response = '[' + assignments.map { |assignment| assignment.to_json(only: DEFAULT_FIELDS) }.join(',') + ']'
+
         format.xml { render xml: assignments.to_xml(only: DEFAULT_FIELDS, root: 'assignments', skip_types: 'true') }
-        format.json { render json: assignments.to_json(only: DEFAULT_FIELDS) }
+        format.json { render json: json_response }
       end
     end
 
@@ -169,17 +171,56 @@ module Api
       # Some attributes have to be set with default values when creating a new
       # assignment. They're based on the view's defaults.
       if request.post?
-        required_fields = { enable_test: 0,  assign_graders_to_criteria: 0,
-                            repository_folder: attributes[:short_identifier],
-                            allow_web_submits: 1, group_min: 1,
-                            display_grader_names_to_students: 0,
-                            is_hidden: 0 }
-        required_fields.each do |field_name, default_value|
-          attributes[field_name] = default_value if params[field_name].nil?
+        attributes[:assignment_properties_attributes] = {}
+        params[:assignment_properties_attributes] = {} if params[:assignment_properties_attributes].nil?
+        if params[:assignment_properties_attributes][:repository_folder].nil?
+          attributes[:assignment_properties_attributes][:repository_folder] = attributes[:short_identifier]
         end
+        attributes[:is_hidden] = 0 if params[:is_hidden].nil?
       end
 
       attributes
+    end
+
+    # Get test specs file content
+    def test_specs
+      assignment = Assignment.find(params[:id])
+      settings_file = assignment.autotest_settings_file
+      content = File.exist?(settings_file) ? JSON.parse(File.open(settings_file, &:read)) : {}
+      respond_to do |format|
+        format.any { render json: content }
+      end
+    rescue ActiveRecord::RecordNotFound => e
+      render 'shared/http_status', locals: { code: '404', message: e }, status: 404
+    end
+
+    # Upload test specs file content in a json format
+    def update_test_specs
+      assignment = Assignment.find(params[:id])
+      content = nil
+      if params[:specs].is_a? ActionController::Parameters
+        content = params[:specs].permit!.to_h
+      elsif params[:specs].is_a? String
+        begin
+          content = JSON.parse params[:specs]
+        rescue JSON::ParserError => e
+          render 'shared/http_status', locals: { code: '422', message: e.message }, status: 422
+          return
+        end
+      end
+      if content.nil?
+        render 'shared/http_status',
+               locals: { code: '422',
+                         message: HttpStatusHelper::ERROR_CODE['message']['422'] },
+               status: 422
+      else
+        File.write(assignment.autotest_settings_file, JSON.dump(content), mode: 'wb')
+        AutotestSpecsJob.perform_now(request.protocol + request.host_with_port, assignment)
+      end
+    rescue ActiveRecord::RecordNotFound => e
+      render 'shared/http_status', locals: { code: '404', message: e }, status: 404
+    rescue StandardError => e
+      render 'shared/http_status', locals: { code: '500', message: e }, status: 500
     end
 
     # Gets the submission rule for POST/PUT requests based on the supplied params
@@ -216,6 +257,14 @@ module Api
                 type: 'text/csv',
                 filename: "#{assignment.short_identifier}_grades_summary.csv",
                 disposition: 'inline'
+    rescue ActiveRecord::RecordNotFound => e
+      render 'shared/http_status', locals: { code: '404', message: e }, status: 404
+    end
+
+    def test_files
+      assignment = Assignment.find(params[:id])
+      zip_path = assignment.zip_automated_test_files(current_user)
+      send_file zip_path, filename: File.basename(zip_path)
     rescue ActiveRecord::RecordNotFound => e
       render 'shared/http_status', locals: { code: '404', message: e }, status: 404
     end

@@ -33,10 +33,6 @@ en:
       error:
         no_access: "No access to submission file with id #%{submission_file_id}."
 
-    feedback_file:
-      error:
-        no_access: "No access to feedback file with id #%{feedback_file_id}."
-
     #app/views/job_messages/_job_poller.js.erb
     job_poller:
       processing_message: "Processing:"
@@ -58,10 +54,14 @@ en:
       create_groups_job_extra_info: "failed for group: %{group_name}, repo: %{repo_name}, members: %{members}"
       uncollect_submissions_job: "Uncollecting assignments ... "
       submissions_job: "%{progress}/%{total} Submissions collected"
+      download_submissions_job: "%{progress}/%{total} Submissions prepared for download"
+      download_submissions_finalizing: "Finalizing submissions for download"
+      download_submissions_complete: "Submissions are ready for download. Click here to complete the download."
       update_repo_required_files_job: "%{progress}/%{total} Student repositories updated with new required files"
       update_starter_code_job: "%{progress}/%{total} Student repositories updated with starter code"
       autotest_run_job: "%{progress}/%{total} Test runs started"
       autotest_run_job_failed_count: "%{failed} Test runs failed. See results pages for details."
+      autotest_specs_job: "Setting up automated tests."
     repo:
       commits:
         assignment_folder: "Create assignment folder for %{assignment}"
@@ -70,3 +70,4 @@ en:
         required_files: "Update the list of required files for assignment %{assignment}"
         starter_code: "Update starter code files for assignment %{assignment}"
       timeout: 'Waited %{ms} milliseconds to access this repository. Please wait a few seconds and try again.'
+      assignment_dir_creation_error: 'Unable to create a directory for %{short_identifier}. Please retry this action.'

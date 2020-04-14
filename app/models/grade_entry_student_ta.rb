@@ -32,7 +32,7 @@ class GradeEntryStudentTa < ApplicationRecord
   def self.from_csv(grade_entry_form, csv_data, remove_existing)
     if remove_existing
       self.joins(:grade_entry_student)
-          .where('grade_entry_students.grade_entry_form_id': grade_entry_form.id)
+          .where('grade_entry_students.assessment_id': grade_entry_form.id)
           .delete_all
     end
 

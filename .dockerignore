@@ -1,0 +1,72 @@
+# Ignore unnecessary mac files
+**/.DS_Store
+
+# git dir
+.git/
+
+config/database.yml
+config/local_environment_override.rb
+
+# Files created by sass
+.sass-cache
+
+# Files created by rcov/simplecov
+test/coverage
+test/coverage.data
+
+# Files created by tests
+lib/repo/test/svn_repos/svn_authz
+
+# Patch
+*.diff
+*.patch
+
+# Sqlite databases
+*.db
+*.sqlite3
+
+# Vim swap files
+*.swp
+
+# Temporary and backup files
+*~
+
+# MarkUs Review poster tool credentials file
+.markusdev-creds
+
+# Eclipse generated project file
+.project
+
+# Ignore dummy file used to tell .rvmrc to use specific ruby instead of project
+# wide default
+.use-ruby-*
+
+# RubyMine generated project folder
+.idea
+
+# Ignore files for Vagrant instance
+.vagrant
+
+# Ignore redis dump file
+.dump.rdb
+dump.rdb
+
+# Yarn-related files
+public/packs
+public/packs-test
+public/javascripts
+node_modules
+node_modules
+yarn-debug.log*
+.yarn-integrity
+yarn-error.log
+
+# simplecov gem
+coverage/
+
+# byebug gem
+.byebug_history
+
+# scanned exam python files
+**/venv/
+**/__pycache__/

@@ -13,26 +13,26 @@ module AuthenticationHelper
     @controller = real_controller
   end
 
-  def get_as(user, action, params: {}, format: nil)
+  def get_as(user, action, params: {}, format: nil, session: {})
     sign_in user
-    get action, xhr: true, params: params, format: format
+    get action, xhr: true, params: params, format: format, session: session
   end
 
   # Performs POST request as the supplied user for authentication
-  def post_as(user, action, params: {}, format: nil)
+  def post_as(user, action, params: {}, format: nil, session: {})
     sign_in user
-    post action, xhr: true, params: params, format: format
+    post action, xhr: true, params: params, format: format, session: session
   end
 
   # Performs PUT request as the supplied user for authentication
-  def put_as(user, action, params: {}, format: nil)
+  def put_as(user, action, params: {}, format: nil, session: {})
     sign_in user
-    put action, xhr: true, params: params, format: format
+    put action, xhr: true, params: params, format: format, session: session
   end
 
   # Performs DELETE request as the supplied user for authentication
-  def delete_as(user, action, params: {}, format: nil)
+  def delete_as(user, action, params: {}, format: nil, session: {})
     sign_in user
-    delete action, xhr: true, params: params, format: format
+    delete action, xhr: true, params: params, format: format, session: session
   end
 end

@@ -47,7 +47,7 @@ export class TextViewer extends React.Component {
   };
 
   display_annotation = (annotation) => {
-    add_annotation_text(annotation.annotation_text_id, marked(annotation.content, {sanitize: true}));
+    add_annotation_text(annotation.annotation_text_id, annotation.content);
     annotation_manager.annotateRange(
       annotation.id,
       {

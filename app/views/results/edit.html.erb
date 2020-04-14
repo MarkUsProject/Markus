@@ -13,7 +13,7 @@
           result_id: <%= @result.id %>,
           submission_id: <%= @result.submission_id %>,
           grouping_id: <%= @result.submission.grouping_id %>,
-          assignment_id: <%= @result.submission.grouping.assignment_id %>,
+          assignment_id: <%= @result.submission.grouping.assessment_id %>,
           role: '<%= @current_user.class.name %>',
         }
       );

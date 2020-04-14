@@ -12,7 +12,7 @@ if __name__ == '__main__':
     if branch.stdout.strip() != 'master':
         print('[MarkUs] Skipping checks because you aren\'t on the master branch.')
         print('[MarkUs] But please remember that only files on your master branch will be graded!')
-        exit(0)
+        sys.exit(0)
 
     hook_type = 'pre-commit'
     hooks_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), '{}.d'.format(hook_type))
@@ -25,6 +25,6 @@ if __name__ == '__main__':
             sys.stdout.write(hook.stdout)
             sys.stderr.write(hook.stderr)
             if hook.returncode != 0:
-                exit(hook.returncode)
+                sys.exit(hook.returncode)
 
-        print('[MarkUs] Commit looks good!')
+        print("[MarkUs] Commit looks good! Don't forget to push your work to the MarkUs server.")

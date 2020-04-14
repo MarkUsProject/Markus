@@ -98,7 +98,7 @@ module SessionHandler
       assignment = Assignment.find(aid)
     end
     unless authorized?(Admin) || authorized?(Ta) ||
-        (authorized?(Student) && assignment.has_peer_review_assignment? &&
+        (authorized?(Student) && assignment.has_peer_review &&
             current_user.is_reviewer_for?(assignment.pr_assignment, result))
       render 'shared/http_status', formats: [:html],
              locals:
@@ -163,7 +163,7 @@ module SessionHandler
   # Check if this current user's session has not yet expired.
   def session_expired?
     return true if session[:timeout].nil?
-    if MarkusConfigurator.markus_config_remote_user_auth
+    if Rails.configuration.remote_user_auth
       # expire session if there is not REMOTE_USER anymore.
       return true if @markus_auth_remote_user.nil?
       # If somebody switched role this state should be recorded

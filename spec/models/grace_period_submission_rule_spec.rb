@@ -40,6 +40,60 @@ describe GracePeriodSubmissionRule do
       destroy_repos
     end
 
+    context 'when the student did not submit any files' do
+      # Before the due_date and before collection_time
+      describe 'when assignment is collected before the due date' do
+        before :each do
+          @submission = create(:submission, grouping: @grouping, is_empty: true)
+        end
+        it 'should not apply submission rule' do
+          pretend_now_is(Time.parse('July 20 2009 5:00PM')) do
+            expect(Time.now).to be < @assignment.due_date
+            expect(Time.now).to be < @assignment.submission_rule.calculate_collection_time
+          end
+        end
+        it_behaves_like 'No submission file'
+      end
+      # After the due_date and before collection_time
+      describe 'when assignment is collected after the due date' do
+        before :each do
+          @group = create(:group)
+          @grouping = create(:grouping, group: @group)
+          @membership = create(:student_membership,
+                               grouping: @grouping,
+                               membership_status: StudentMembership::STATUSES[:inviter])
+          @assignment = @grouping.assignment
+          @rule = GracePeriodSubmissionRule.new
+          @assignment.replace_submission_rule(@rule)
+          GracePeriodDeduction.destroy_all
+          @rule.save
+          @submission = create(:submission, grouping: @grouping, is_empty: true)
+          # On July 1 at 1PM, the instructor sets up the course...
+          pretend_now_is(Time.parse('July 1 2009 1:00PM')) do
+            # Due date is July 23 @ 5PM
+            @assignment.due_date = Time.parse('July 23 2009 5:00PM')
+            # Add two 24 hour grace periods
+            # Overtime begins at July 23 @ 5PM
+            add_period_helper(@assignment.submission_rule, 24)
+            add_period_helper(@assignment.submission_rule, 24)
+            # Collect date is now after July 25 @ 5PM
+            @assignment.save
+          end
+          # On July 15, the Student logs in, triggering repository folder
+          # creation
+          pretend_now_is(Time.parse('July 24 2009 5:00PM')) do
+            @grouping.create_grouping_repository_folder
+          end
+        end
+        it 'should not apply submission rule' do
+          pretend_now_is(Time.parse('July 25 2009 4:00PM')) do
+            expect(Time.now).to be > @assignment.due_date
+            expect(Time.now).to be < @assignment.submission_rule.calculate_collection_time
+          end
+        end
+        it_behaves_like 'No submission file'
+      end
+    end
     describe '#apply_submission_rule' do
       before :each do
         # The Student submits their files before the due date
@@ -375,20 +429,23 @@ describe GracePeriodSubmissionRule do
           submit_file_at_time(@assignment2, @group, 'test1', 'July 23 2009 9:00PM', 'NotIncluded.java',
                               'Not Included in Asssignment 1')
 
+          # Save original grace tokens remaining
+          members = {}
+          @grouping.accepted_student_memberships.each do |student_membership|
+            members[student_membership.id] = student_membership.user.remaining_grace_credits
+          end
+
           # An Instructor or Grader decides to begin grading
           pretend_now_is(Time.parse('July 31 2009 1:00PM')) do
-            members = {}
-            @grouping.accepted_student_memberships.each do |student_membership|
-              members[student_membership.user.id] = student_membership.user.remaining_grace_credits
-            end
             submission = Submission.create_by_timestamp(@grouping, @rule.calculate_collection_time)
             @rule.apply_submission_rule(submission)
+          end
 
-            # Assert that each accepted member of this grouping did not get a GracePeriodDeduction
-            @grouping.reload
-            @grouping.accepted_student_memberships.each do |student_membership|
-              expect(student_membership.user.remaining_grace_credits).to eq(members[student_membership.user.id])
-            end
+          # Assert that each accepted member of this grouping did not get a GracePeriodDeduction
+          @grouping.reload
+          @grouping.accepted_student_memberships.each do |student_membership|
+            expect(student_membership.user.reload.remaining_grace_credits)
+              .to eq(members[student_membership.id])
           end
         end
 
@@ -413,20 +470,23 @@ describe GracePeriodSubmissionRule do
           submit_file_at_time(@assignment2, @group, 'test1', 'July 24 2009 9:00PM', 'NotIncluded.java',
                               'Not Included in Asssignment 1')
 
+          # Save original grace tokens remaining
+          members = {}
+          @grouping.accepted_student_memberships.each do |student_membership|
+            members[student_membership.id] = student_membership.user.remaining_grace_credits
+          end
+
           # An Instructor or Grader decides to begin grading
           pretend_now_is(Time.parse('July 31 2009 1:00PM')) do
-            members = {}
-            @grouping.accepted_student_memberships.each do |student_membership|
-              members[student_membership.user.id] = student_membership.user.remaining_grace_credits
-            end
             submission = Submission.create_by_timestamp(@grouping, @rule.calculate_collection_time)
             @rule.apply_submission_rule(submission)
+          end
 
-            # Assert that each accepted member of this grouping did not get a GracePeriodDeduction
-            @grouping.reload
-            @grouping.accepted_student_memberships.each do |student_membership|
-              expect(student_membership.user.remaining_grace_credits).to eq(members[student_membership.user.id] - 1)
-            end
+          # Assert that each accepted member of this grouping received a GracePeriodDeduction
+          @grouping.reload
+          @grouping.accepted_student_memberships.each do |student_membership|
+            expect(student_membership.user.reload.remaining_grace_credits)
+              .to eq(members[student_membership.id] - 1)
           end
         end
       end

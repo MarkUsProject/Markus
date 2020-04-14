@@ -1,58 +1,60 @@
 require 'csv'
 
-class Assignment < ApplicationRecord
+# Represents an assignment where students submit work to be graded
+class Assignment < Assessment
 
   MIN_PEER_REVIEWS_PER_GROUP = 1
+
+  validates_presence_of :due_date
+  has_one :assignment_properties, dependent: :destroy, inverse_of: :assignment, foreign_key: :assessment_id
+  delegate_missing_to :assignment_properties
+  accepts_nested_attributes_for :assignment_properties, update_only: true
+  validates_presence_of :assignment_properties
+
+  # Add assignment_properties to default scope because we almost always want to load an assignment with its properties
+  default_scope { includes(:assignment_properties) }
 
   has_many :rubric_criteria,
            -> { order(:position) },
            class_name: 'RubricCriterion',
-		   dependent: :destroy
+           dependent: :destroy,
+           foreign_key: :assessment_id
 
   has_many :flexible_criteria,
            -> { order(:position) },
            class_name: 'FlexibleCriterion',
-       dependent: :destroy
+           dependent: :destroy,
+           foreign_key: :assessment_id
 
   has_many :checkbox_criteria,
            -> { order(:position) },
            class_name: 'CheckboxCriterion',
-       dependent: :destroy
+           dependent: :destroy,
+           foreign_key: :assessment_id
 
-  has_many :test_groups, dependent: :destroy
+  has_many :test_groups, dependent: :destroy, foreign_key: :assessment_id
   accepts_nested_attributes_for :test_groups, allow_destroy: true, reject_if: ->(attrs) { attrs[:name].blank? }
 
   has_many :annotation_categories,
            -> { order(:position) },
            class_name: 'AnnotationCategory',
-           dependent: :destroy
+           dependent: :destroy, foreign_key: :assessment_id
 
-  has_many :criterion_ta_associations,
-		   dependent: :destroy
+  has_many :criterion_ta_associations, dependent: :destroy, foreign_key: :assessment_id
 
-  has_many :assignment_files,
-		   dependent: :destroy
+  has_many :assignment_files, dependent: :destroy, foreign_key: :assessment_id
   accepts_nested_attributes_for :assignment_files, allow_destroy: true
   validates_associated :assignment_files
 
-  has_one :assignment_stat, dependent: :destroy
-  accepts_nested_attributes_for :assignment_stat, allow_destroy: true
-  validates_associated :assignment_stat
-  # Because of app/views/main/_grade_distribution_graph.html.erb:25
-  validates_presence_of :assignment_stat
-
-  has_many :groupings # this has to be before :peer_reviews or it throws a HasManyThroughOrderError
+  # this has to be before :peer_reviews or it throws a HasManyThroughOrderError
+  has_many :groupings, foreign_key: :assessment_id
   # Assignments can now refer to themselves, where this is null if there
   # is no parent (the same holds for the child peer reviews)
-  belongs_to :parent_assignment, class_name: 'Assignment', optional: true, inverse_of: :pr_assignment
-  has_one :pr_assignment, class_name: 'Assignment', foreign_key: :parent_assignment_id, inverse_of: :parent_assignment
+  belongs_to :parent_assignment,
+             class_name: 'Assignment', optional: true, inverse_of: :pr_assignment, foreign_key: :parent_assessment_id
+  has_one :pr_assignment, class_name: 'Assignment', foreign_key: :parent_assessment_id, inverse_of: :parent_assignment
   has_many :peer_reviews, through: :groupings
   has_many :pr_peer_reviews, through: :parent_assignment, source: :peer_reviews
-
-  has_many :annotation_categories,
-           -> { order(:position) },
-           class_name: 'AnnotationCategory',
-		   dependent: :destroy
 
   has_many :current_submissions_used, through: :groupings,
            source: :current_submission_used
@@ -65,87 +67,35 @@ class Assignment < ApplicationRecord
 
   has_many :notes, as: :noteable, dependent: :destroy
 
-  has_many :section_due_dates
+  has_many :section_due_dates, inverse_of: :assignment, foreign_key: :assessment_id
   accepts_nested_attributes_for :section_due_dates
 
-  has_many :exam_templates, dependent: :destroy
-
-  validates_uniqueness_of :short_identifier, case_sensitive: true
-  validates_numericality_of :group_min, only_integer: true, greater_than: 0
-  validates_numericality_of :group_max, only_integer: true, greater_than: 0
-
-  has_one :submission_rule, dependent: :destroy, inverse_of: :assignment
-  accepts_nested_attributes_for :submission_rule, allow_destroy: true
-  validates_associated :submission_rule
-  validates_presence_of :submission_rule
-
-  validates_presence_of :short_identifier
-  validate :short_identifier_unchanged, on: :update
-  validates_presence_of :description
-  validates :repository_folder, presence: true, exclusion: { in: Repository.get_class.reserved_locations }
-  validate :repository_folder_unchanged, on: :update
-  validates_presence_of :due_date
-  validates_presence_of :group_min
-  validates_presence_of :group_max
-  validates_presence_of :notes_count
-  validates_presence_of :assignment_stat
-  # "validates_presence_of" for boolean values.
-  validates_inclusion_of :allow_web_submits, in: [true, false]
-  validates_inclusion_of :vcs_submit, in: [true, false]
-  validates_inclusion_of :display_grader_names_to_students, in: [true, false]
-  validates_inclusion_of :display_median_to_students, in: [true, false]
-  validates_inclusion_of :is_hidden, in: [true, false]
-  validates_inclusion_of :has_peer_review, in: [true, false]
-  validates_inclusion_of :assign_graders_to_criteria, in: [true, false]
-  validates_inclusion_of :student_form_groups, in: [true, false]
-  validates_inclusion_of :group_name_autogenerated, in: [true, false]
-  validates_inclusion_of :group_name_displayed, in: [true, false]
-  validates_inclusion_of :invalid_override, in: [true, false]
-  validates_inclusion_of :section_groups_only, in: [true, false]
-  validates_inclusion_of :only_required_files, in: [true, false]
-  validates_inclusion_of :allow_web_submits, in: [true, false]
-  validates_inclusion_of :section_due_dates_type, in: [true, false]
-  validates_inclusion_of :assign_graders_to_criteria, in: [true, false]
-  validates_inclusion_of :unlimited_tokens, in: [true, false]
-  validates_inclusion_of :non_regenerating_tokens, in: [true, false]
-
-  validates_inclusion_of :enable_test, in: [true, false]
-  validates_inclusion_of :enable_student_tests, in: [true, false], if: :enable_test
-  validates_inclusion_of :non_regenerating_tokens, in: [true, false], if: :enable_student_tests
-  validates_inclusion_of :unlimited_tokens, in: [true, false], if: :enable_student_tests
-  validates_presence_of :token_start_date, if: :enable_student_tests
-  with_options if: ->{ :enable_student_tests && !:unlimited_tokens } do |assignment|
-    assignment.validates :tokens_per_period,
-                         presence: true,
-                         numericality: { only_integer: true,
-                                         greater_than_or_equal_to: 0 }
-  end
-  with_options if: ->{ !:non_regenerating_tokens && :enable_student_tests && !:unlimited_tokens} do |assignment|
-    assignment.validates :token_period,
-                         presence: true,
-                         numericality: { greater_than: 0 }
-  end
-
-  validates_inclusion_of :scanned_exam, in: [true, false]
-
-  validate :minimum_number_of_groups
+  has_many :exam_templates, dependent: :destroy, inverse_of: :assignment, foreign_key: :assessment_id
 
   after_create :build_starter_code_repo
+  after_create :create_autotest_dirs
 
   before_save :reset_collection_time
   after_save :update_permissions_if_vcs_changed
 
-  # Call custom validator in order to validate the :due_date attribute
-  # date: true maps to DateValidator (custom_name: true maps to CustomNameValidator)
-  # Look in lib/validators/* for more info
-  validates :due_date, date: true
   after_save :update_assigned_tokens
   after_save :create_peer_review_assignment_if_not_exist
+
+  has_one :submission_rule, dependent: :destroy, inverse_of: :assignment, foreign_key: :assessment_id
+  accepts_nested_attributes_for :submission_rule, allow_destroy: true
+  validates_associated :submission_rule
+  validates_presence_of :submission_rule
+
+  has_one :assignment_stat, dependent: :destroy, inverse_of: :assignment, foreign_key: :assessment_id
+  accepts_nested_attributes_for :assignment_stat, allow_destroy: true
+  validates_associated :assignment_stat
+  # Because of app/views/main/_grade_distribution_graph.html.erb:25
+  validates_presence_of :assignment_stat
 
   BLANK_MARK = ''
   STARTER_CODE_REPO_NAME = "starter-code"
 
-  # Copy of API::AssignmentController without the id and order changed
+  # Copy of API::AssignmentController without selected attributes and order changed
   # to put first the 4 required fields
   DEFAULT_FIELDS = [:short_identifier, :description,
                     :due_date, :message, :group_min, :group_max, :tokens_per_period,
@@ -156,15 +106,8 @@ class Assignment < ApplicationRecord
                     :display_median_to_students, :group_name_autogenerated,
                     :is_hidden, :vcs_submit, :has_peer_review]
 
-  # Set the default order of assignments: in ascending order of due_date
+  # Set the default order of assignments: in ascending order of date (due_date)
   default_scope { order(:due_date, :id) }
-
-  def minimum_number_of_groups
-    if (group_max && group_min) && group_max < group_min
-      errors.add(:group_max, 'must be greater than the minimum number of groups')
-      false
-    end
-  end
 
   # Are we past all due_dates and section due_dates for this assignment?
   # This does not take extensions into consideration.
@@ -233,7 +176,7 @@ class Assignment < ApplicationRecord
   # Return due date for all groupings as a hash mapping grouping_id to due date.
   def all_grouping_due_dates
     section_due_dates = groupings.joins(inviter: [section: :section_due_dates])
-                                 .where('section_due_dates.assignment_id': id)
+                                 .where('section_due_dates.assessment_id': id)
                                  .pluck('groupings.id', 'section_due_dates.due_date')
 
     grouping_extensions = groupings.joins(:extension)
@@ -314,7 +257,7 @@ class Assignment < ApplicationRecord
   # submissions are considered.
   def marking_started?
     Result.joins(:marks, submission: :grouping)
-          .where(groupings: { assignment_id: id },
+          .where(groupings: { assessment_id: id },
                  submissions: { submission_version_used: true })
           .where.not(marks: { mark: nil })
           .any?
@@ -440,12 +383,12 @@ class Assignment < ApplicationRecord
     Grouping.create(group: group, assignment: self)
   end
 
-  # Clones the Groupings from the assignment with id assignment_id
+  # Clones the Groupings from the assignment with id assessment_id
   # into self.  Destroys any previously existing Groupings associated
   # with this Assignment
-  def clone_groupings_from(assignment_id)
+  def clone_groupings_from(assessment_id)
     warnings = []
-    original_assignment = Assignment.find(assignment_id)
+    original_assignment = Assignment.find(assessment_id)
     self.transaction do
       self.group_min = original_assignment.group_min
       self.group_max = original_assignment.group_max
@@ -453,6 +396,7 @@ class Assignment < ApplicationRecord
       self.group_name_autogenerated = original_assignment.group_name_autogenerated
       self.group_name_displayed = original_assignment.group_name_displayed
       self.groupings.destroy_all
+      self.assignment_properties.save
       self.save
       self.reload
       original_assignment.groupings.each do |g|
@@ -464,7 +408,7 @@ class Assignment < ApplicationRecord
         active_ta_memberships = g.ta_memberships.select { |m| !m.user.hidden }
         grouping = Grouping.new
         grouping.group_id = g.group_id
-        grouping.assignment_id = self.id
+        grouping.assessment_id = self.id
         grouping.admin_approved = g.admin_approved
         unless grouping.save
           warnings << I18n.t('groups.clone_warning.other',
@@ -558,7 +502,7 @@ class Assignment < ApplicationRecord
       graders = {}
       if self.assign_graders_to_criteria
         assigned_criteria = user.criterion_ta_associations
-                                .where(assignment_id: self.id)
+                                .where(assessment_id: self.id)
                                 .pluck(:criterion_type, :criterion_id)
                                 .map { |t, id| "#{t}-#{id}" }
       else
@@ -573,42 +517,69 @@ class Assignment < ApplicationRecord
     members = groupings.joins(:accepted_students)
                        .pluck_to_hash(:id, 'users.user_name', 'users.first_name', 'users.last_name')
                        .group_by { |x| x[:id] }
-    groupings_with_results = groupings.includes(current_result: :marks)
+    groupings_with_results = groupings.includes(:submitted_remark, :extension, current_result: :marks)
     result_ids = groupings_with_results.pluck('results.id').uniq.compact
     extra_marks_hash = Result.get_total_extra_marks(result_ids, max_mark: max_mark)
+
+    hide_unassigned = user.ta? && hide_unassigned_criteria
+
+    criteria_shown = Set.new
+    max_mark = 0
+
+    visibility = user.admin? ? :all : :ta
+    criteria_columns = self.get_criteria(visibility).map do |crit|
+      unassigned = !assigned_criteria.nil? && !assigned_criteria.include?("#{crit.class}-#{crit.id}")
+      next if hide_unassigned && unassigned
+
+      max_mark += crit.max_mark
+      accessor = "#{crit.class}-#{crit.id}"
+      criteria_shown << accessor
+      {
+        Header: crit.name,
+        accessor: "criteria.#{accessor}",
+        className: 'number ' + (unassigned ? 'unassigned' : ''),
+        headerClassName: unassigned ? 'unassigned' : ''
+      }
+    end.compact
+
     final_data = groupings_with_results.map do |g|
       result = g.current_result
       has_remark = g.current_submission_used&.submitted_remark.present?
+      if user.ta? && anonymize_groups
+        group_name = "#{Group.model_name.human} #{g.id}"
+        section = ''
+        group_members = []
+      else
+        group_name = grouping_data[g.id][0]['groups.group_name']
+        section = grouping_data[g.id][0]['sections.name']
+        group_members = members.fetch(g.id, [])
+                               .map { |s| [s['users.user_name'], s['users.first_name'], s['users.last_name']] }
+      end
+
+      criteria = result.nil? ? {} : result.mark_hash.select { |key, _| criteria_shown.include?(key) }
       {
-        group_name: grouping_data[g.id][0]['groups.group_name'],
-        section: grouping_data[g.id][0]['sections.name'],
-        members: members.fetch(g.id, [])
-                        .map { |s| [s['users.user_name'], s['users.first_name'], s['users.last_name']] },
+        group_name: group_name,
+        section: section,
+        members: group_members,
         graders: graders.fetch(g.id, [])
                         .map { |s| [s['users.user_name'], s['users.first_name'], s['users.last_name']] },
         marking_state: marking_state(has_remark,
                                      result&.marking_state,
                                      result&.released_to_students,
                                      g.collection_date),
-        final_grade: result&.total_mark,
-        criteria: result.nil? ? {} : result.mark_hash,
+        final_grade: criteria.values.compact.sum,
+        criteria: criteria,
+        max_mark: max_mark,
         result_id: result&.id,
         submission_id: result&.submission_id,
         total_extra_marks: extra_marks_hash[result&.id]
       }
     end
 
-    criteria_columns = self.get_criteria(:ta).map do |crit|
-      unassigned = !assigned_criteria.nil? && !assigned_criteria.include?("#{crit.class}-#{crit.id}")
-      {
-        Header: crit.name,
-        accessor: "criteria.criterion_#{crit.class}_#{crit.id}",
-        className: 'number ' + (unassigned ? 'unassigned' : ''),
-        headerClassName: unassigned ? 'unassigned' : ''
-      }
-    end
-
-    { data: final_data, criteriaColumns: criteria_columns }
+    { data: final_data,
+      criteriaColumns: criteria_columns,
+      numAssigned: self.get_num_assigned(user.admin? ? nil : user.id),
+      numMarked: self.get_num_marked(user.admin? ? nil : user.id) }
   end
 
   # Generate CSV summary of grades for this assignment
@@ -654,7 +625,7 @@ class Assignment < ApplicationRecord
             row += Array.new(2 + criteria.length, nil)
           else
             row << result.total_mark
-            row += criteria.map { |crit| marks["criterion_#{crit.class.name}_#{crit.id}"] }
+            row += criteria.map { |crit| marks["#{crit.class.name}-#{crit.id}"] }
             row << extra_marks_hash[result&.id]
           end
           csv << row
@@ -818,7 +789,7 @@ class Assignment < ApplicationRecord
         num_assigned_criteria = ta.criterion_ta_associations.where(assignment: self).count
         marked = ta.criterion_ta_associations
                    .joins('INNER JOIN marks m ON criterion_id = m.markable_id AND criterion_type = m.markable_type')
-                   .where('m.mark IS NOT NULL AND assignment_id = ?', self.id)
+                   .where('m.mark IS NOT NULL AND assessment_id = ?', self.id)
                    .group('m.result_id')
                    .count
         ta_memberships.includes(grouping: :current_result).where(user_id: ta_id).find_each do |t_mem|
@@ -848,10 +819,10 @@ class Assignment < ApplicationRecord
     else
       # uniq is required since entries are doubled if there is a remark request
       Submission.joins(:annotations, :current_result, grouping: :ta_memberships)
-                .where(submissions: {submission_version_used: true},
-                       memberships: {user_id: ta_id},
-                       results: {marking_state: Result::MARKING_STATES[:complete]},
-                       groupings: {assignment_id: self.id})
+                .where(submissions: { submission_version_used: true },
+                       memberships: { user_id: ta_id },
+                       results: { marking_state: Result::MARKING_STATES[:complete] },
+                       groupings: { assessment_id: self.id })
                 .select('annotations.id').uniq.size
     end
   end
@@ -860,7 +831,7 @@ class Assignment < ApplicationRecord
     groupings = Grouping.arel_table
     submissions = Submission.arel_table
     subs = Submission.joins(:grouping)
-                     .where(groupings[:assignment_id].eq(id)
+                     .where(groupings[:assessment_id].eq(id)
                      .and(submissions[:submission_version_used].eq(true)))
 
     res = Result.submitted_remarks_and_all_non_remarks
@@ -908,7 +879,7 @@ class Assignment < ApplicationRecord
   # Returns true if this is a peer review, meaning it has a parent assignment,
   # false otherwise.
   def is_peer_review?
-    not parent_assignment_id.nil?
+    !parent_assessment_id.nil?
   end
 
   # Returns true if this is a parent assignment that has a child peer review
@@ -918,33 +889,34 @@ class Assignment < ApplicationRecord
   end
 
   def create_peer_review_assignment_if_not_exist
-    if has_peer_review and Assignment.where(parent_assignment_id: id).empty?
-      peerreview_assignment = Assignment.new
-      peerreview_assignment.parent_assignment = self
-      peerreview_assignment.submission_rule = NoLateSubmissionRule.new
-      peerreview_assignment.assignment_stat = AssignmentStat.new
-      peerreview_assignment.token_period = 1
-      peerreview_assignment.non_regenerating_tokens = false
-      peerreview_assignment.unlimited_tokens = false
-      peerreview_assignment.short_identifier = short_identifier + '_pr'
-      peerreview_assignment.description = description
-      peerreview_assignment.repository_folder = repository_folder
-      peerreview_assignment.due_date = due_date
-      peerreview_assignment.is_hidden = true
+    return unless has_peer_review && Assignment.where(parent_assessment_id: id).empty?
+    peerreview_assignment_properties = AssignmentProperties.new
+    peerreview_assignment_properties.token_period = 1
+    peerreview_assignment_properties.non_regenerating_tokens = false
+    peerreview_assignment_properties.unlimited_tokens = false
+    peerreview_assignment_properties.repository_folder = repository_folder
+    peerreview_assignment = Assignment.new
+    peerreview_assignment.parent_assignment = self
+    peerreview_assignment.submission_rule = NoLateSubmissionRule.new
+    peerreview_assignment.assignment_stat = AssignmentStat.new
+    peerreview_assignment.assignment_properties = peerreview_assignment_properties
+    peerreview_assignment.short_identifier = short_identifier + '_pr'
+    peerreview_assignment.description = description
+    peerreview_assignment.due_date = due_date
+    peerreview_assignment.is_hidden = true
+    peerreview_assignment.message = message
 
-      # We do not want to have the database in an inconsistent state, so we
-      # need to have the database rollback the 'has_peer_review' column to
-      # be false
-      if not peerreview_assignment.save
-        raise ActiveRecord::Rollback
-      end
-    end
+    # We do not want to have the database in an inconsistent state, so we
+    # need to have the database rollback the 'has_peer_review' column to
+    # be false
+    return if peerreview_assignment.save
+    raise ActiveRecord::Rollback
   end
 
   ### REPO ###
 
   def build_starter_code_repo
-    return unless MarkusConfigurator.markus_config_repository_admin? && MarkusConfigurator.markus_starter_code_on
+    return unless Rails.configuration.x.repository.is_repository_admin && Rails.configuration.starter_code_on
     begin
       unless Repository.get_class.repository_exists?(starter_code_repo_path)
         Repository.get_class.create(starter_code_repo_path, with_hooks: false)
@@ -962,7 +934,7 @@ class Assignment < ApplicationRecord
   end
 
   def starter_code_repo_path
-    File.join(MarkusConfigurator.markus_config_repository_storage, STARTER_CODE_REPO_NAME)
+    File.join(Rails.configuration.x.repository.storage, STARTER_CODE_REPO_NAME)
   end
 
   #Yields a repository object, if possible, and closes it after it is finished
@@ -1040,15 +1012,17 @@ class Assignment < ApplicationRecord
   # (Basically, it's nice for a group to share a repo among assignments, but at a certain point during the course
   # we may want to add or [more frequently] remove some students from it)
   def self.get_repo_auth_records
-    Assignment.includes(groupings: [:group, { accepted_student_memberships: :user }])
-              .where(vcs_submit: true)
+    Assignment.joins(:assignment_properties)
+              .includes(groupings: [:group, { accepted_student_memberships: :user }])
+              .where(assignment_properties: { vcs_submit: true })
               .order(due_date: :desc)
   end
 
   ### /REPO ###
 
   def self.get_required_files
-    assignments = Assignment.includes(:assignment_files).where(scanned_exam: false, is_hidden: false)
+    assignments = Assignment.includes(:assignment_files, :assignment_properties)
+                            .where(assignment_properties: { scanned_exam: false }, is_hidden: false)
     required = {}
     assignments.each do |assignment|
       files = assignment.assignment_files.map(&:filename)
@@ -1158,6 +1132,8 @@ class Assignment < ApplicationRecord
       criteria: criteria,
       graders: graders,
       assign_graders_to_criteria: self.assign_graders_to_criteria,
+      anonymize_groups: self.anonymize_groups,
+      hide_unassigned_criteria: self.hide_unassigned_criteria,
       sections: Hash[Section.all.pluck(:id, :name)]
     }
   end
@@ -1206,15 +1182,41 @@ class Assignment < ApplicationRecord
                                  'results.released_to_students')
                   .group_by { |h| h['groupings.id'] }
 
-    member_data = groupings
-                  .joins(:accepted_students)
-                  .pluck_to_hash('groupings.id', 'users.user_name')
-                  .group_by { |h| h['groupings.id'] }
+    if current_user.ta? && anonymize_groups
+      member_data = {}
+      section_data = {}
+    else
+      member_data = groupings.joins(:accepted_students)
+                             .pluck_to_hash('groupings.id', 'users.user_name')
+                             .group_by { |h| h['groupings.id'] }
 
-    section_data = groupings
-                   .joins(inviter: :section)
-                   .pluck('groupings.id', 'sections.name')
-                   .to_h
+      section_data = groupings.joins(inviter: :section)
+                              .pluck('groupings.id', 'sections.name')
+                              .to_h
+    end
+
+    if current_user.ta? && hide_unassigned_criteria
+      assigned_criteria = current_user.criterion_ta_associations
+                                      .where(assignment_id: self.id)
+                                      .pluck(:criterion_type, :criterion_id)
+                                      .map { |t, id| "#{t}-#{id}" }
+    else
+      assigned_criteria = nil
+    end
+
+    visibility = current_user.admin? ? :all : :ta
+    criteria = self.get_criteria(visibility).reject do |crit|
+      !assigned_criteria.nil? && !assigned_criteria.include?("#{crit.class}-#{crit.id}")
+    end
+
+    result_ids = result_data.values.map { |arr| arr.map { |h| h['results.id'] } }.flatten
+
+    total_marks = Mark.where(markable: criteria, result_id: result_ids)
+                      .pluck(:result_id, :mark)
+                      .group_by(&:first)
+                      .transform_values { |arr| arr.map(&:second).compact.sum }
+
+    max_mark = criteria.map(&:max_mark).compact.sum
 
     collection_dates = all_grouping_collection_dates
 
@@ -1228,7 +1230,8 @@ class Assignment < ApplicationRecord
 
       base = {
         _id: grouping_id, # Needed for checkbox version of react-table
-        group_name: group_name,
+        max_mark: max_mark,
+        group_name: current_user.ta? && anonymize_groups ? "#{Group.model_name.human} #{grouping_id}" : group_name,
         tags: (tag_info.nil? ? [] : tag_info.map { |h| h['tags.name'] }),
         marking_state: marking_state(has_remark,
                                      result_info['results.marking_state'],
@@ -1243,7 +1246,7 @@ class Assignment < ApplicationRecord
 
       if result_info['results.id'].present?
         base[:result_id] = result_info['results.id']
-        base[:final_grade] = result_info['results.total_mark']
+        base[:final_grade] = total_marks[result_info['results.id']] || 0.0
       end
 
       base[:members] = member_info.map { |h| h['users.user_name'] } unless member_info.nil?
@@ -1254,7 +1257,42 @@ class Assignment < ApplicationRecord
     end
   end
 
+  def to_xml(options = {})
+    attributes_hash = self.assignment_properties.attributes.merge(self.attributes).symbolize_keys
+    attributes_hash.select { |key, _| Api::AssignmentsController::DEFAULT_FIELDS.include? key }.to_xml(options)
+  end
+
+  def to_json(options = {})
+    self.assignment_properties.attributes.merge(self.attributes).symbolize_keys.to_json(options)
+  end
+
+  # zip all files in the folder at +self.autotest_files_dir+ and return the
+  # path to the zip file
+  def zip_automated_test_files(user)
+    zip_name = "#{self.short_identifier}-testfiles-#{user.user_name}"
+    zip_path = File.join('tmp', zip_name + '.zip')
+    FileUtils.rm_rf zip_path
+    files_dir = Pathname.new self.autotest_files_dir
+    Zip::File.open(zip_path, Zip::File::CREATE) do |zip_file|
+      self.autotest_files.map do |file|
+        path = File.join zip_name, file
+        abs_path = files_dir.join(file)
+        if abs_path.directory?
+          zip_file.mkdir(path)
+        else
+          zip_file.get_output_stream(path) { |f| f.puts abs_path.read }
+        end
+      end
+    end
+    zip_path
+  end
+
   private
+
+  def create_autotest_dirs
+    FileUtils.mkdir_p self.autotest_path
+    FileUtils.mkdir_p self.autotest_files_dir
+  end
 
   # Returns the marking state used in the submission and course summary tables
   # for the result(s) for single submission.
@@ -1275,18 +1313,13 @@ class Assignment < ApplicationRecord
     'before_due_date'
   end
 
-  def update_permissions_if_vcs_changed
-    if saved_change_to_vcs_submit?
-      Repository.get_class.update_permissions
-    end
-  end
-
   def reset_collection_time
     submission_rule.reset_collection_time
   end
 
   def update_assigned_tokens
-    difference = tokens_per_period - tokens_per_period_before_last_save
+    difference = assignment_properties.tokens_per_period -
+        (assignment_properties.tokens_per_period_before_last_save || 0)
     if difference == 0
       return
     end
@@ -1323,14 +1356,15 @@ class Assignment < ApplicationRecord
     case file_format
     when 'csv'
       result = MarkusCsv.parse(assignment_data) do |row|
-        assignment = self.find_or_create_by(short_identifier: row[0], repository_folder: row[0])
+        assignment = self.find_or_create_by(short_identifier: row[0])
         attrs = Hash[DEFAULT_FIELDS.zip(row)]
         attrs.delete_if { |_, v| v.nil? }
         if assignment.new_record?
+          assignment.assignment_properties = AssignmentProperties.new(repository_folder: row[0],
+                                                                      token_period: 1,
+                                                                      unlimited_tokens: false)
           assignment.submission_rule = NoLateSubmissionRule.new
           assignment.assignment_stat = AssignmentStat.new
-          assignment.token_period = 1
-          assignment.unlimited_tokens = false
         end
         assignment.update(attrs)
         raise CsvInvalidLineError unless assignment.valid?
@@ -1340,13 +1374,13 @@ class Assignment < ApplicationRecord
       begin
         map = assignment_data.deep_symbolize_keys
         map[:assignments].map do |row|
-          assignment = self.find_or_create_by(short_identifier: row[:short_identifier],
-                                              repository_folder: row[:short_identifier])
+          assignment = self.find_or_create_by(short_identifier: row[:short_identifier])
           if assignment.new_record?
+            row[:assignment_properties] = AssignmentProperties.new(repository_folder: row[:short_identifier],
+                                                                   token_period: 1,
+                                                                   unlimited_tokens: false)
             row[:submission_rule] = NoLateSubmissionRule.new
             row[:assignment_stat] = AssignmentStat.new
-            row[:token_period] = 1
-            row[:unlimited_tokens] = false
           end
           assignment.update(row)
           unless assignment.id
@@ -1360,17 +1394,4 @@ class Assignment < ApplicationRecord
     end
   end
 
-  def short_identifier_unchanged
-    if short_identifier_changed?
-      errors.add(:short_id_change, 'short identifier should not be changed once an assignment has been created')
-      false
-    end
-  end
-
-  def repository_folder_unchanged
-    if repository_folder_changed?
-      errors.add(:repo_folder_change, 'repository folder should not be changed once an assignment has been created')
-      false
-    end
-  end
 end
