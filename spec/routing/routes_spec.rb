@@ -247,9 +247,23 @@ describe 'An Assignment' do
                                                                 locale: 'en')
       end
 
+      it 'routes GET download_specs properly' do
+        expect(get: autom_path + '/download_specs').to route_to(controller: autom_ctrl,
+                                                                action: 'download_specs',
+                                                                assignment_id: assignment.id.to_s,
+                                                                locale: 'en')
+      end
+
       it 'routes POST upload_files properly' do
         expect(post: autom_path + '/upload_files').to route_to(controller: autom_ctrl,
                                                                action: 'upload_files',
+                                                               assignment_id: assignment.id.to_s,
+                                                               locale: 'en')
+      end
+
+      it 'routes POST upload_specs properly' do
+        expect(post: autom_path + '/upload_specs').to route_to(controller: autom_ctrl,
+                                                               action: 'upload_specs',
                                                                assignment_id: assignment.id.to_s,
                                                                locale: 'en')
       end
