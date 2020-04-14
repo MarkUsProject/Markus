@@ -1,5 +1,17 @@
 describe CheckboxCriterion do
-  let(:criterion_factory_name) { :flexible_criterion }
+  let(:criterion_factory_name) { :checkbox_criterion }
+
+  context 'A good Checkbox Criterion model' do
+    before :each do
+      @criterion = create(:checkbox_criterion)
+    end
+
+    it { is_expected.to belong_to(:assignment) }
+    it { is_expected.to validate_presence_of(:name) }
+    it { is_expected.to validate_presence_of(:max_mark) }
+    it { is_expected.to validate_uniqueness_of(:name).scoped_to(:assignment_id) }
+    it { is_expected.to validate_numericality_of(:max_mark) }
+  end
 
   context 'validations work properly' do
     before(:each) do
