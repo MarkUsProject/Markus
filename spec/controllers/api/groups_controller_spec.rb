@@ -273,9 +273,9 @@ describe Api::GroupsController do
     context 'POST add_extra_marks' do
       let(:submission) { create(:version_used_submission, grouping: grouping) }
       context 'add extra_mark' do
+        let(:old_mark) { submission.get_latest_result.total_mark }
         before :each do
-          submission
-          @old_mark = submission.get_latest_result.total_mark
+          old_mark
           post :create_extra_marks, params: { assignment_id: grouping.assignment.id,
                                               id: grouping.group.id,
                                               extra_marks: 10.0,
@@ -290,7 +290,7 @@ describe Api::GroupsController do
         it 'should update total_mark' do
           result = submission.get_latest_result
           new_total_mark = result.total_mark
-          expect(@old_mark + 10.0).to eq(new_total_mark)
+          expect(old_mark + 10.0).to eq(new_total_mark)
         end
         it 'should respond with 200' do
           expect(response.status).to eq(200)
@@ -301,7 +301,6 @@ describe Api::GroupsController do
       let(:submission) { create(:version_used_submission, grouping: grouping) }
       before :each do
         submission
-        @old_mark = submission.get_latest_result.total_mark
         post :create_extra_marks, params: { assignment_id: grouping.assignment.id,
                                             id: grouping.group.id,
                                             extra_marks: 10.0,
@@ -309,9 +308,9 @@ describe Api::GroupsController do
         grouping.reload
       end
       context 'remove_extra_marks' do
+        let(:old_mark) { submission.get_latest_result.total_mark }
         before :each do
-          submission
-          @old_mark = submission.get_latest_result.total_mark
+          old_mark
           delete :remove_extra_marks, params: { assignment_id: grouping.assignment.id,
                                                 id: grouping.group.id,
                                                 extra_marks: 10.0,
@@ -321,7 +320,7 @@ describe Api::GroupsController do
         it 'should update total mark' do
           result = submission.get_latest_result
           new_total_mark = result.total_mark
-          expect(@old_mark - 10.0).to eq(new_total_mark)
+          expect(old_mark - 10.0).to eq(new_total_mark)
         end
         it 'should respond with 200' do
           expect(response.status).to eq(200)

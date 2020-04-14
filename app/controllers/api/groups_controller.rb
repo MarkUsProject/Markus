@@ -185,16 +185,17 @@ module Api
         return
       end
       begin
-        ExtraMark.create(result_id: result.id, extra_mark: params[:extra_marks],
+        ExtraMark.create!(result_id: result.id, extra_mark: params[:extra_marks],
                          description: params[:description], unit: ExtraMark::POINTS)
-        result.update_total_mark
-        render 'shared/http_status', locals: { code: '200', message:
-            HttpStatusHelper::ERROR_CODE['message']['200'] }, status: 200
-      rescue
+      rescue ActiveRecord::RecordInvalid => e
         # Some error occurred
         render 'shared/http_status', locals: { code: '500', message:
-            extra_mark.errors.full_messages.first }, status: 500
+            e.message }, status: 500
+        return
       end
+      result.update_total_mark
+      render 'shared/http_status', locals: { code: '200', message:
+          'Extra mark created successfully' }, status: 200
     end
 
     def remove_extra_marks
@@ -227,18 +228,20 @@ module Api
       if extra_mark.nil?
         render 'shared/http_status', locals: { code: '404', message:
             'No such Extra Mark exist for that result' }, status: 404
+        return
       end
       begin
         extra_mark.destroy
-        result.update_total_mark
-        # Successfully deleted the Extra Mark; render success
-        render 'shared/http_status', locals: { code: '200', message:
-            HttpStatusHelper::ERROR_CODE['message']['200'] }, status: 200
-      rescue ActiveRecord::RecordNotDestroyed
+      rescue ActiveRecord::RecordNotDestroyed => e
         # Some other error occurred
         render 'shared/http_status', locals: { code: '500', message:
-          HttpStatusHelper::ERROR_CODE['message']['500'] }, status: 500
+            e.message }, status: 500
+        return
       end
+      result.update_total_mark
+      # Successfully deleted the Extra Mark; render success
+      render 'shared/http_status', locals: { code: '200', message:
+          'Extra mark removed successfully' }, status: 200
     end
 
     def annotations
