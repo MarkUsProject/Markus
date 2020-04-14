@@ -215,9 +215,12 @@ module Api
                status: 422
       else
         File.write(assignment.autotest_settings_file, JSON.dump(content), mode: 'wb')
+        AutotestSpecsJob.perform_now(request.protocol + request.host_with_port, assignment)
       end
     rescue ActiveRecord::RecordNotFound => e
       render 'shared/http_status', locals: { code: '404', message: e }, status: 404
+    rescue StandardError => e
+      render 'shared/http_status', locals: { code: '500', message: e }, status: 500
     end
 
     # Gets the submission rule for POST/PUT requests based on the supplied params

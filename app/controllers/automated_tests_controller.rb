@@ -17,7 +17,6 @@ class AutomatedTestsController < ApplicationController
       update_test_groups_from_specs(assignment, test_specs)
       @current_job = AutotestSpecsJob.perform_later(request.protocol + request.host_with_port, assignment)
       session[:job_id] = @current_job.job_id
-      flash_message(:success, t('flash.actions.update.success', resource_name: Assignment.model_name.human))
     rescue StandardError => e
       flash_message(:error, e.message)
       raise ActiveRecord::Rollback
@@ -197,6 +196,9 @@ class AutomatedTestsController < ApplicationController
         head :unprocessable_entity
       else
         File.write(assignment.autotest_settings_file, file_content, mode: 'wb')
+        @current_job = AutotestSpecsJob.perform_later(request.protocol + request.host_with_port, assignment)
+        session[:job_id] = @current_job.job_id
+        render 'shared/_poll_job.js.erb'
       end
     else
       head :unprocessable_entity

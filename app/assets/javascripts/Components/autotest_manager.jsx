@@ -35,7 +35,8 @@ class AutotestManager extends React.Component {
       loading: true,
       showFileUploadModal: false,
       showSpecUploadModal: false,
-      uploadTarget: undefined
+      uploadTarget: undefined,
+      form_changed: false
     };
   };
 
@@ -55,6 +56,10 @@ class AutotestManager extends React.Component {
       .then(data => this.setState({files: data.files, schema: data.schema, loading: false}))
   };
 
+  toggleFormChanged = (value) => {
+    this.setState({form_changed: value}, () => set_onbeforeunload(this.state.form_changed));
+  };
+
   handleCreateFiles = (files) => {
     const prefix = this.state.uploadTarget || '';
     this.setState({showFileUploadModal: false, uploadTarget: undefined});
@@ -67,7 +72,7 @@ class AutotestManager extends React.Component {
       processData: false, // tell jQuery not to process the data
       contentType: false  // tell jQuery not to set contentType
     }).then(this.fetchFileDataOnly)
-      .then(() => set_onbeforeunload(true))
+      .then(() => this.toggleFormChanged(true))
       .then(this.endAction);
   };
 
@@ -79,7 +84,7 @@ class AutotestManager extends React.Component {
       url: Routes.upload_files_assignment_automated_tests_path(this.props.assignment_id),
       data: {delete_files: fileKeys}
     }).then(this.fetchFileDataOnly)
-      .then(() => set_onbeforeunload(true))
+      .then(() => this.toggleFormChanged(true))
       .then(this.endAction);
   };
 
@@ -88,7 +93,7 @@ class AutotestManager extends React.Component {
       url: Routes.upload_files_assignment_automated_tests_path(this.props.assignment_id),
       data: {new_folders: [folderKey]}
     }).then(this.fetchFileDataOnly)
-      .then(() => set_onbeforeunload(true))
+      .then(() => this.toggleFormChanged(true))
       .then(this.endAction);
   };
 
@@ -97,7 +102,7 @@ class AutotestManager extends React.Component {
       url: Routes.upload_files_assignment_automated_tests_path(this.props.assignment_id),
       data: {delete_folders: [folderKey]}
     }).then(this.fetchFileDataOnly)
-      .then(() => set_onbeforeunload(true))
+      .then(() => this.toggleFormChanged(true))
       .then(this.endAction);
   };
 
@@ -106,35 +111,35 @@ class AutotestManager extends React.Component {
   };
 
   handleFormChange = (data) => {
-    this.setState({formData: data.formData}, () => set_onbeforeunload(true));
+    this.setState({formData: data.formData}, () => this.toggleFormChanged(true));
   };
 
   toggleEnableTest = () => {
-    this.setState({enable_test: !this.state.enable_test}, () => set_onbeforeunload(true))
+    this.setState({enable_test: !this.state.enable_test}, () => this.toggleFormChanged(true));
   };
 
   toggleEnableStudentTest = () => {
-    this.setState({enable_student_tests: !this.state.enable_student_tests}, () => set_onbeforeunload(true))
+    this.setState({enable_student_tests: !this.state.enable_student_tests}, () => this.toggleFormChanged(true));
   };
 
   toggleNonRegeneratingTokens = () => {
-    this.setState({non_regenerating_tokens: !this.state.non_regenerating_tokens}, () => set_onbeforeunload(true))
+    this.setState({non_regenerating_tokens: !this.state.non_regenerating_tokens}, () => this.toggleFormChanged(true));
   };
 
   toggleUnlimitedTokens = () => {
-    this.setState({unlimited_tokens: !this.state.unlimited_tokens}, () => set_onbeforeunload(true))
+    this.setState({unlimited_tokens: !this.state.unlimited_tokens}, () => this.toggleFormChanged(true));
   };
 
   handleTokenStartDateChange = (date) => {
-    this.setState({token_start_date: date}, () => set_onbeforeunload(true))
+    this.setState({token_start_date: date}, () => this.toggleFormChanged(true));
   };
 
   handleTokensPerPeriodChange = (event) => {
-    this.setState({tokens_per_period: event.target.value}, () => set_onbeforeunload(true))
+    this.setState({tokens_per_period: event.target.value}, () => this.toggleFormChanged(true));
   };
 
   handleTokenPeriodChange = (event) => {
-    this.setState({token_period: event.target.value}, () => set_onbeforeunload(true))
+    this.setState({token_period: event.target.value}, () => this.toggleFormChanged(true));
   };
 
   onSubmit = () => {
@@ -156,7 +161,7 @@ class AutotestManager extends React.Component {
       processData: false,
       contentType: 'application/json'
     }).then(() => {
-      set_onbeforeunload(false);
+      this.toggleFormChanged(false);
       window.location.reload();
     });
   };
@@ -183,7 +188,7 @@ class AutotestManager extends React.Component {
       processData: false, // tell jQuery not to process the data
       contentType: false  // tell jQuery not to set contentType
     }).then(this.fetchData())
-      .then(() => set_onbeforeunload(true))
+      .then(() => this.toggleFormChanged(false))
       .then(this.endAction);
   };
 
@@ -328,6 +333,7 @@ class AutotestManager extends React.Component {
         <input type='submit'
                value={I18n.t('save')}
                onClick={this.onSubmit}
+               disabled={!this.state.form_changed}
         >
         </input>
         <AutotestFileUploadModal
