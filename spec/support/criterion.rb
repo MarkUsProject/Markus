@@ -16,7 +16,7 @@ shared_examples 'a criterion' do
       criterion_ids_by_type = {}
       %w(RubricCriterion FlexibleCriterion CheckboxCriterion).each do |type|
         criterion_ids_by_type[type] =
-          criterion_ids_types.select { |id_type| id_type[1] == type }.map { |c| c[0] }
+            criterion_ids_types.select { |id_type| id_type[1] == type }.map { |c| c[0] }
       end
       criterion_ids_by_type
     end
@@ -61,7 +61,7 @@ shared_examples 'a criterion' do
 
       it 'updates criteria coverage counts after randomly bulk assign TAs' do
         expect(Grouping).to receive(:update_criteria_coverage_counts)
-          .with(assignment)
+                                .with(assignment)
         Criterion.randomly_assign_tas(criterion_ids_types, ta_ids, assignment)
       end
 
@@ -111,7 +111,7 @@ shared_examples 'a criterion' do
 
       it 'updates criteria coverage counts after bulk assign all TAs' do
         expect(Grouping).to receive(:update_criteria_coverage_counts)
-          .with(assignment)
+                                .with(assignment)
         Criterion.assign_all_tas(criterion_ids_types, ta_ids, assignment)
       end
 
@@ -131,8 +131,8 @@ shared_examples 'a criterion' do
         criteria.each { |criterion| criterion.reload }
 
         criterion_ta_ids = criteria
-          .map { |criterion| criterion.criterion_ta_associations.pluck(:id) }
-          .reduce(:+)
+                               .map { |criterion| criterion.criterion_ta_associations.pluck(:id) }
+                               .reduce(:+)
 
         Criterion.unassign_tas(criterion_ta_ids, criterion_ids_types, assignment)
 
@@ -144,7 +144,7 @@ shared_examples 'a criterion' do
 
       it 'updates criteria coverage counts after bulk unassign TAs' do
         expect(Grouping).to receive(:update_criteria_coverage_counts)
-          .with(assignment)
+                                .with(assignment)
         Criterion.unassign_tas([], criterion_ids_types, assignment)
       end
 
@@ -237,7 +237,7 @@ shared_examples 'a criterion' do
             end
 
             context 'when TAs are also assigned to groups of another ' +
-                    'assignment' do
+                        'assignment' do
               before :each do
                 # Creating a new criterion also creates a new assignment.
                 criterion = create(criterion_factory_name)
@@ -275,45 +275,6 @@ shared_examples 'a criterion' do
         criterion2.reload
         expect(criterion.assigned_groups_count).to eq 2
         expect(criterion2.assigned_groups_count).to eq 2
-      end
-    end
-  end
-
-  describe 'update max_mark' do
-    let(:assignment) { create :assignment }
-    let(:grouping) { create :grouping_with_inviter, assignment: assignment }
-    let(:submission) { create :version_used_submission, grouping: grouping }
-    let(:result) { create :incomplete_result, submission: submission }
-    let(:mark) do
-      mark = result.marks.first
-      mark.update!(mark: 1)
-      mark.reload
-    end
-    describe 'when max_mark not updated' do
-      let!(:criterion) { create(criterion_factory_name, assignment: assignment, max_mark: 10) }
-      it 'should not scale existing marks' do
-        prev_mark = mark.mark
-        criterion.max_mark = 10
-        criterion.save!
-        mark.reload
-        expect(mark.mark).to eq prev_mark
-      end
-    end
-    describe 'when max_mark is updated' do
-      let!(:criterion) { create(criterion_factory_name, assignment: assignment, max_mark: 10) }
-      it 'should change existing marks' do
-        prev_mark = mark.mark
-        criterion.max_mark = 100
-        criterion.save!
-        mark.reload
-        expect(mark.mark).not_to eq prev_mark
-      end
-      it 'should scale existing marks' do
-        prev_mark = mark.mark
-        criterion.max_mark *= 10
-        criterion.save!
-        mark.reload
-        expect(mark.mark).to eq prev_mark * 10
       end
     end
   end

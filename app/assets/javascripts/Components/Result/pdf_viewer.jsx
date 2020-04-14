@@ -18,12 +18,7 @@ export class PDFViewer extends React.Component {
     document.addEventListener('pagesloaded', this.refresh_annotations);
 
     if (this.props.url) {
-      this.pdfViewer = new pdfjsViewer.PDFViewer({
-        container: this.pdfContainer.current,
-        // renderer: 'svg',  TODO: investigate why some fonts don't render with SVG
-      });
       this.loadPDFFile();
-      window.pdfViewer = this.pdfViewer;  // For fixing display when pane width changes
     }
   }
 
@@ -38,14 +33,6 @@ export class PDFViewer extends React.Component {
   loadPDFFile = () => {
     pdfjs.getDocument(this.props.url).promise.then((pdfDocument) => {
       this.pdfViewer.setDocument(pdfDocument);
-      document.addEventListener('pagesinit', () => {
-        this.pdfViewer.currentScaleValue = 'page-fit';
-        this.ready_annotations(this.pdfViewer, 'viewer');
-      });
-
-      document.addEventListener('pagesloaded', () => {
-        this.props.annotations.forEach(this.display_annotation);
-      });
     });
   };
 
@@ -54,7 +41,7 @@ export class PDFViewer extends React.Component {
 
     this.pdfViewer.currentScaleValue = 'page-width';
     window.annotation_manager = new PdfAnnotationManager(this.pdfViewer, 'viewer',
-                                                         !this.props.released_to_students);
+      !this.props.released_to_students);
     window.annotation_manager.resetAngle();
   };
 
