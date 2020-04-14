@@ -186,7 +186,7 @@ module Api
       end
       begin
         ExtraMark.create!(result_id: result.id, extra_mark: params[:extra_marks],
-                         description: params[:description], unit: ExtraMark::POINTS)
+                          description: params[:description], unit: ExtraMark::POINTS)
       rescue ActiveRecord::RecordInvalid => e
         # Some error occurred
         render 'shared/http_status', locals: { code: '500', message:
