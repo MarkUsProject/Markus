@@ -17,6 +17,7 @@ describe CheckboxCriterion do
     before(:each) do
       @criterion = create(:checkbox_criterion)
     end
+
     context 'when a result is released' do
       before(:each) do
         @marks = @criterion.marks
@@ -34,12 +35,11 @@ describe CheckboxCriterion do
         end
       end
 
-      describe 'flexible criteria can\'t be updated' do
+      describe 'checkbox criteria can\'t be updated' do
         it 'not raise error' do
           expect(@criterion.update(max_mark: 10)).to be false
         end
       end
     end
   end
-
 end
