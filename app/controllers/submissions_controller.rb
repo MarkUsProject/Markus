@@ -476,9 +476,7 @@ class SubmissionsController < ApplicationController
         return
       end
 
-      send_data file_contents,
-                disposition: 'attachment',
-                filename: params[:file_name]
+      send_data_download file_contents, filename: params[:file_name]
     end
   end
 
@@ -607,7 +605,7 @@ class SubmissionsController < ApplicationController
     svn_commands = assignment.get_repo_checkout_commands
     send_data svn_commands.join("\n"),
               disposition: 'attachment',
-              type: 'application/vnd.ms-excel',
+              type: 'text/plain',
               filename: "#{assignment.short_identifier}_repo_checkouts"
   end
 

@@ -280,13 +280,99 @@ describe GroupsController do
         end
       end
     end
-    describe '#invalidate_groupings'
-    describe '#validate_groupings'
-    describe '#delete_groupings'
-    describe '#add_members'
-    describe '#add_member'
-    describe '#remove_members'
-    describe '#remove_member'
+
+    describe '#validate_groupings' do
+      let(:grouping) { create :grouping_with_inviter }
+
+      it 'should validate groupings' do
+        post :global_actions, params: {
+          assignment_id: grouping.assignment.id,
+          groupings: [grouping.id],
+          global_actions: 'valid'
+        }
+        expect(grouping.reload.admin_approved).to be true
+      end
+    end
+
+    describe '#invalidate_groupings' do
+      let(:grouping) { create :grouping_with_inviter, admin_approved: true }
+
+      it 'should invalidate groupings' do
+        post :global_actions, params: {
+          assignment_id: grouping.assignment.id,
+          groupings: [grouping.id],
+          global_actions: 'invalid'
+        }
+
+        expect(grouping.reload.admin_approved).to be false
+      end
+    end
+
+    describe '#delete_groupings' do
+      let!(:grouping) { create :grouping_with_inviter }
+      let!(:grouping_with_submission) { create :grouping_with_inviter_and_submission }
+
+      it 'should delete groupings without submissions' do
+        post :global_actions, params: {
+          assignment_id: grouping.assignment.id,
+          groupings: [grouping.id],
+          global_actions: 'delete'
+        }
+
+        expect(Grouping.all.size).to eq 1
+      end
+
+      it 'should not delete groupings with submissions' do
+        post :global_actions, params: {
+          assignment_id: grouping_with_submission.assignment.id,
+          groupings: [grouping_with_submission.id],
+          global_actions: 'delete'
+        }
+
+        expect(Grouping.all.size).to eq 2
+      end
+    end
+
+    describe '#add_members' do
+      let(:grouping) { create :grouping_with_inviter }
+      let(:student1) { create :student }
+      let(:student2) { create :student }
+
+      it 'adds multiple students to group' do
+        post :global_actions, params: {
+          assignment_id: grouping.assignment.id,
+          groupings: [grouping],
+          students: [student1.id, student2.id],
+          global_actions: 'assign'
+        }
+
+        expect(grouping.students.size).to eq 3
+      end
+    end
+
+    describe '#remove_members' do
+      let(:grouping) { create :grouping_with_inviter }
+      let(:student1) { create :student }
+      let(:student2) { create :student }
+
+      it 'should remove multiple students from group' do
+        post :global_actions, params: {
+          assignment_id: grouping.assignment.id,
+          groupings: [grouping],
+          students: [student1.id, student2.id],
+          global_actions: 'assign'
+        }
+
+        post :global_actions, params: {
+          assignment_id: grouping.assignment.id,
+          groupings: [grouping],
+          students_to_remove: [student1.user_name, student2.user_name],
+          global_actions: 'unassign'
+        }
+
+        expect(grouping.students.size).to eq 1
+      end
+    end
   end
 
   describe 'student access' do
@@ -299,7 +385,7 @@ describe GroupsController do
       @student = create(:student, user_name: 'c9test1')
       @assignment = create(:assignment,
                            due_date: 1.day.from_now,
-                           assignment_properties_attributes: { student_form_groups: true, group_max: 3 })
+                           assignment_properties_attributes: { student_form_groups: true, group_max: 4 })
     end
 
     describe 'POST #create' do
@@ -326,12 +412,207 @@ describe GroupsController do
       before :each do
         create(:grouping_with_inviter, assignment: @assignment, inviter: @current_student)
       end
-      it 'should send an email to every student invited to a grouping' do
+      it 'should send an email to a single student if invited to a grouping' do
         expect do
           post :invite_member,
                params: { invite_member: @student.user_name,
                          assignment_id: @assignment.id }
         end.to change { ActionMailer::Base.deliveries.count }.by(1)
+      end
+
+      it 'should send an email to every student invited to a grouping if more than one are' do
+        @another_student = create(:student, user_name: 'c9test3')
+        expect do
+          post :invite_member,
+               params: { invite_member: "#{@student.user_name},#{@another_student.user_name}",
+                         assignment_id: @assignment.id }
+        end.to change { ActionMailer::Base.deliveries.count }.by(2)
+      end
+    end
+
+    describe '#accept_invitation' do
+      let!(:grouping) { create(:grouping_with_inviter) }
+      it 'accepts a pending invitation' do
+        invitation = create(:student_membership, user: @current_student, grouping: grouping)
+        post :accept_invitation,
+             params: { assignment_id: grouping.assessment_id,
+                       grouping_id: grouping.id }
+        expect(invitation.reload.membership_status).to eq StudentMembership::STATUSES[:accepted]
+      end
+
+      it 'accepts a rejected invitation' do
+        invitation = create(:rejected_student_membership, user: @current_student, grouping: grouping)
+        post :accept_invitation,
+             params: { assignment_id: grouping.assessment_id,
+                       grouping_id: grouping.id }
+        expect(invitation.reload.membership_status).to eq StudentMembership::STATUSES[:accepted]
+      end
+
+      it 'fails to accept when there is no invitation' do
+        post :accept_invitation,
+             params: { assignment_id: grouping.assessment_id,
+                       grouping_id: grouping.id }
+        assert_response :unprocessable_entity
+      end
+
+      it 'fails to accept when the invitation has already been accepted' do
+        create(:accepted_student_membership, user: @current_student, grouping: grouping)
+        post :accept_invitation,
+             params: { assignment_id: grouping.assessment_id,
+                       grouping_id: grouping.id }
+        assert_response :unprocessable_entity
+      end
+
+      it 'fails to accept when another invitation has already been accepted' do
+        grouping2 = create(:grouping_with_inviter, assignment: grouping.assignment)
+        create(:student_membership, user: @current_student, grouping: grouping)
+        create(:accepted_student_membership, user: @current_student, grouping: grouping2)
+        post :accept_invitation,
+             params: { assignment_id: grouping.assessment_id,
+                       grouping_id: grouping.id }
+        assert_response :unprocessable_entity
+      end
+
+      it 'rejects other pending invitations' do
+        create(:student_membership, user: @current_student, grouping: grouping)
+        3.times do |_|
+          new_grouping = create(:grouping_with_inviter, assignment: grouping.assignment)
+          create(:student_membership, user: @current_student, grouping: new_grouping)
+        end
+        post :accept_invitation,
+             params: { assignment_id: grouping.assessment_id,
+                       grouping_id: grouping.id }
+        expect(@current_student.student_memberships.size).to eq 4
+        @current_student.student_memberships.each do |membership|
+          if membership.grouping_id == grouping.id
+            expect(membership.membership_status).to eq StudentMembership::STATUSES[:accepted]
+          else
+            expect(membership.membership_status).to eq StudentMembership::STATUSES[:rejected]
+          end
+        end
+      end
+    end
+
+    describe '#decline_invitation' do
+      let!(:grouping) { create(:grouping_with_inviter) }
+
+      it 'rejects a pending invitation' do
+        invitation = create(:student_membership, user: @current_student, grouping: grouping)
+        post :decline_invitation,
+             params: { assignment_id: grouping.assessment_id,
+                       grouping_id: grouping.id }
+        expect(invitation.reload.membership_status).to eq StudentMembership::STATUSES[:rejected]
+      end
+
+      it 'fails to reject when the invitation has already been accepted' do
+        create(:accepted_student_membership, user: @current_student, grouping: grouping)
+        post :decline_invitation,
+             params: { assignment_id: grouping.assessment_id,
+                       grouping_id: grouping.id }
+        assert_response :unprocessable_entity
+      end
+
+      it 'fails to reject when there is no invitation' do
+        post :decline_invitation,
+             params: { assignment_id: grouping.assessment_id,
+                       grouping_id: grouping.id }
+        assert_response :unprocessable_entity
+      end
+    end
+
+    describe '#disinvite_member' do
+      context 'when the current student is the inviter' do
+        let(:grouping) { create(:grouping_with_inviter, inviter: @current_student) }
+
+        it 'cancels a pending invitation' do
+          invitation = create(:student_membership, grouping: grouping)
+          post :disinvite_member,
+               params: { assignment_id: grouping.assessment_id,
+                         membership: invitation.id }
+          expect(grouping.student_memberships.size).to eq 1
+        end
+
+        it 'fails to cancel an accepted invitation' do
+          invitation = create(:accepted_student_membership, grouping: grouping)
+          post :disinvite_member,
+               params: { assignment_id: grouping.assessment_id,
+                         membership: invitation.id }
+          assert_response :forbidden
+        end
+
+        it 'fails to cancel a pending invitation for a different grouping' do
+          grouping2 = create(:grouping_with_inviter, assignment: grouping.assignment)
+          invitation = create(:accepted_student_membership, grouping: grouping2)
+          post :disinvite_member,
+               params: { assignment_id: grouping.assessment_id,
+                         membership: invitation.id }
+          assert_response :forbidden
+        end
+      end
+
+      context 'when the current student is not the inviter' do
+        let(:grouping) { create(:grouping_with_inviter) }
+
+        it 'fails to cancel a pending invitation' do
+          create(:accepted_student_membership, grouping: grouping, user: @current_student)
+          invitation = create(:student_membership, grouping: grouping)
+          post :disinvite_member,
+               params: { assignment_id: grouping.assessment_id,
+                         membership: invitation.id }
+          assert_response :forbidden
+        end
+      end
+    end
+
+    describe '#delete_rejected' do
+      context 'when the current student is the inviter' do
+        let(:grouping) { create(:grouping_with_inviter, inviter: @current_student) }
+
+        it 'cancels a rejected invitation' do
+          invitation = create(:rejected_student_membership, grouping: grouping)
+          post :delete_rejected,
+               params: { assignment_id: grouping.assessment_id,
+                         membership: invitation.id }
+          expect(grouping.student_memberships.size).to eq 1
+        end
+
+        it 'fails to delete a pending invitation' do
+          invitation = create(:student_membership, grouping: grouping)
+          post :delete_rejected,
+               params: { assignment_id: grouping.assessment_id,
+                         membership: invitation.id }
+          assert_response :forbidden
+        end
+
+        it 'fails to delete an accepted invitation' do
+          invitation = create(:accepted_student_membership, grouping: grouping)
+          post :delete_rejected,
+               params: { assignment_id: grouping.assessment_id,
+                         membership: invitation.id }
+          assert_response :forbidden
+        end
+
+        it 'fails to cancel a rejected invitation for a different grouping' do
+          grouping2 = create(:grouping_with_inviter, assignment: grouping.assignment)
+          invitation = create(:rejected_student_membership, grouping: grouping2)
+          post :delete_rejected,
+               params: { assignment_id: grouping.assessment_id,
+                         membership: invitation.id }
+          assert_response :forbidden
+        end
+      end
+
+      context 'when the current student is not the inviter' do
+        let(:grouping) { create(:grouping_with_inviter) }
+
+        it 'fails to cancel a rejected invitation' do
+          create(:rejected_student_membership, grouping: grouping, user: @current_student)
+          invitation = create(:student_membership, grouping: grouping)
+          post :delete_rejected,
+               params: { assignment_id: grouping.assessment_id,
+                         membership: invitation.id }
+          assert_response :forbidden
+        end
       end
     end
   end

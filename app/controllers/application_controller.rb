@@ -3,6 +3,7 @@
 class ApplicationController < ActionController::Base
   include ApplicationHelper, SessionHandler
   include UploadHelper
+  include DownloadHelper
 
   rescue_from ActionPolicy::Unauthorized, with: :user_not_authorized
 
@@ -89,6 +90,18 @@ class ApplicationController < ActionController::Base
       end
     end
     flash.discard
+  end
+
+  # dynamically hide a flash message (for AJAX requests only)
+  def hide_flash(key)
+    return unless request.xhr?
+
+    discard_header = response.headers['X-Message-Discard']
+    if discard_header.nil?
+      response.headers['X-Message-Discard'] = key.to_s
+    else
+      response.headers['X-Message-Discard'] = "#{key};#{discard_header}"
+    end
   end
 
   def user_not_authorized

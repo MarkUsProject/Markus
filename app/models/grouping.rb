@@ -413,9 +413,9 @@ class Grouping < ApplicationRecord
   end
 
   def decline_invitation(student)
-    membership = student.memberships.where(grouping_id: id).first
-    membership.membership_status = StudentMembership::STATUSES[:rejected]
-    membership.save
+    membership = self.pending_student_memberships.find_by(user_id: student.id)
+    raise I18n.t('groups.members.errors.not_found') if membership.nil?
+    membership.update!(membership_status: StudentMembership::STATUSES[:rejected])
   end
 
   # If a group is invalid OR valid and the user is the inviter of the group and
@@ -456,7 +456,7 @@ class Grouping < ApplicationRecord
       end
     end
 
-    result
+    raise I18n.t('repo.assignment_dir_creation_error', short_identifier: assignment.short_identifier) unless result
   end
 
   # Get the section for this group. If assignment restricts member of a groupe

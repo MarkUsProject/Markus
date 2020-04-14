@@ -1,5 +1,7 @@
 # Changelog
 ## [unreleased]
+
+## [v1.9.0]
 - Added option to anonymize group membership when viewed by graders (#4331)
 - Added option to only display assigned criteria to graders as opposed to showing unassigned criteria but making them
   ungradeable (#4331)
@@ -20,6 +22,10 @@
 - Added option to download all test script files in the UI and through the API (#4494)
 - Added syntax highlighting support for .tex files (#4505)
 - Fixed annotation Markdown and MathJax rendering bug (#4506) 
+- Fixed bug where a grouping could be created even when the assignment subdirectory failed to be created (#4516)
+- Progress messages for background jobs now are hidden once the job is completed (#4519)
+- Fixed bug where a javascript submission/test/starter code file can't be downloaded (#4520) 
+- Add ability to upload and download autotest settings as a json file/string through the UI and API (#4498)
 
 ## [v1.8.4]
 - Fixed bug where test output was not being properly hidden from students (#4379)

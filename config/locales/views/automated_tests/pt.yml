@@ -20,6 +20,8 @@ pt:
       problems: "UPDATE ME"
     title: "UPDATE ME"
     display_output_title: "UPDATE ME"
+    invalid_specs_file: "UPDATE ME"
+    specs_file_upload_message: "UPDATE ME"
     display_output:
       instructors: "UPDATE ME"
       instructors_and_students: "UPDATE ME"

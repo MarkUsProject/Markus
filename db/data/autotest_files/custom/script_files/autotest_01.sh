@@ -1,3 +1,3 @@
 #!/bin/bash
 
-python submission.py $0
+python3 submission.py $0

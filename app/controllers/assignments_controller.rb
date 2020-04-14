@@ -194,7 +194,6 @@ class AssignmentsController < ApplicationController
   def new
     @assignments = Assignment.all
     @assignment = Assignment.new
-    @assignment.assignment_properties = AssignmentProperties.new
     if params[:scanned].present?
       @assignment.scanned_exam = true
     end
@@ -489,9 +488,7 @@ class AssignmentsController < ApplicationController
         return
       end
 
-      send_data file_contents,
-                disposition: 'attachment',
-                filename: params[:file_name]
+      send_data_download file_contents, filename: params[:file_name]
     end
   end
 

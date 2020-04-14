@@ -182,6 +182,47 @@ module Api
       attributes
     end
 
+    # Get test specs file content
+    def test_specs
+      assignment = Assignment.find(params[:id])
+      settings_file = assignment.autotest_settings_file
+      content = File.exist?(settings_file) ? JSON.parse(File.open(settings_file, &:read)) : {}
+      respond_to do |format|
+        format.any { render json: content }
+      end
+    rescue ActiveRecord::RecordNotFound => e
+      render 'shared/http_status', locals: { code: '404', message: e }, status: 404
+    end
+
+    # Upload test specs file content in a json format
+    def update_test_specs
+      assignment = Assignment.find(params[:id])
+      content = nil
+      if params[:specs].is_a? ActionController::Parameters
+        content = params[:specs].permit!.to_h
+      elsif params[:specs].is_a? String
+        begin
+          content = JSON.parse params[:specs]
+        rescue JSON::ParserError => e
+          render 'shared/http_status', locals: { code: '422', message: e.message }, status: 422
+          return
+        end
+      end
+      if content.nil?
+        render 'shared/http_status',
+               locals: { code: '422',
+                         message: HttpStatusHelper::ERROR_CODE['message']['422'] },
+               status: 422
+      else
+        File.write(assignment.autotest_settings_file, JSON.dump(content), mode: 'wb')
+        AutotestSpecsJob.perform_now(request.protocol + request.host_with_port, assignment)
+      end
+    rescue ActiveRecord::RecordNotFound => e
+      render 'shared/http_status', locals: { code: '404', message: e }, status: 404
+    rescue StandardError => e
+      render 'shared/http_status', locals: { code: '500', message: e }, status: 500
+    end
+
     # Gets the submission rule for POST/PUT requests based on the supplied params
     # Defaults to NoLateSubmissionRule
     def get_submission_rule(params)

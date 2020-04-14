@@ -13,7 +13,7 @@ class JobMessagesController < ApplicationController
     elsif status.read.empty?
       flash_message(:error, t('poll_job.failed'))
       session[:job_id] = nil
-      render 'shared/http_status', locals: { code: '404', message: t('poll_job.not_enqueued') }, status: 404
+      render json: { code: '404', message: t('poll_job.not_enqueued') }, status: 404
       return
     end
     flash_job_messages(status)
@@ -25,8 +25,10 @@ class JobMessagesController < ApplicationController
   def flash_job_messages(status)
     flash_message(:error, status[:error_message]) if status[:error_message].present?
     current_status = status[:job_class]&.show_status(status)
-    return if current_status.nil?
-
-    status.queued? ? flash_message(:notice, t('poll_job.queued')) : flash_message(:notice, current_status)
+    if current_status.nil? || session[:job_id].nil?
+      hide_flash :notice
+    else
+      status.queued? ? flash_message(:notice, t('poll_job.queued')) : flash_message(:notice, current_status)
+    end
   end
 end

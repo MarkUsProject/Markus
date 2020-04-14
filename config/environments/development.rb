@@ -12,6 +12,14 @@ Markus::Application.configure do
   # Show full error reports.
   config.consider_all_requests_local = true
 
+  # This is required if developing in Docker or Vagrant
+  # WARNING: do not enable this for production!
+  if Rails.env.development? && defined? BetterErrors
+    BetterErrors::Middleware.allow_ip! '0.0.0.0/0'
+  end
+
+  config.hosts << "host.docker.internal"
+
   # Set high verbosity of logger.
   config.log_level = :debug
 
@@ -245,18 +253,19 @@ Markus::Application.configure do
   ###################################################################
   # Email Notifications
   ###################################################################
-  config.action_mailer.delivery_method = :smtp
-  config.action_mailer.smtp_settings = {
-      address:              'smtp.gmail.com',
-      port:                 587,
-      domain:               'example.com',
-      user_name:            'example email',
-      password:             'example password',
-      authentication:       'plain',
-      enable_starttls_auto: true
-  }
+  config.action_mailer.delivery_method = :test
+  #config.action_mailer.smtp_settings = {
+  #    address:              'smtp.gmail.com',
+  #    port:                 587,
+  #    domain:               'example.com',
+  #    user_name:            'example email',
+  #    password:             'example password',
+  #    authentication:       'plain',
+  #    enable_starttls_auto: true
+  #}
   config.action_mailer.default_url_options = {host: 'localhost:3000'}
   config.action_mailer.asset_host = 'http://localhost:3000'
+  config.action_mailer.perform_deliveries = true
 
   ###################################################################
   # Resque queues

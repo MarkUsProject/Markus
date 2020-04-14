@@ -71,27 +71,6 @@ class Student < User
     user_name + ': ' + last_name + ', ' + first_name
   end
 
-  # return pending memberships for a specific assignment
-  def pending_memberships_for(aid)
-    groupings = pending_groupings_for(aid)
-    if groupings
-      groupings.map do |grouping|
-        StudentMembership.where(grouping_id: grouping.id,
-                                user_id: id)
-                         .first
-      end
-    end
-  end
-
-
-  # Returns the Membership for a Grouping for an Assignment with id 'aid' if
-  # this Student is a member with either 'accepted' or 'invitier' membership
-  # status
-  def memberships_for(aid)
-    StudentMembership.where(user_id: id)
-                     .select { |m| m.grouping.assessment_id == aid }
-  end
-
   # invites a student
   def invite(gid)
     unless self.hidden
@@ -171,21 +150,21 @@ class Student < User
     end
   end
 
-  # This method is called, when a student joins a group(ing)
-  def join(gid)
-    membership = StudentMembership.where(grouping_id: gid,
-                                         user_id: id)
-                                  .first
-    membership.membership_status = 'accepted'
-    membership.save
+  # This method is called when a student joins a grouping
+  def join(grouping)
+    membership = self.student_memberships.find_by(
+      grouping_id: grouping.id,
+      membership_status: [StudentMembership::STATUSES[:pending], StudentMembership::STATUSES[:rejected]]
+    )
+    raise I18n.t('groups.members.errors.not_found') if membership.nil?
+    membership.update!(membership_status: StudentMembership::STATUSES[:accepted])
 
-    grouping = Grouping.find(gid)
-
-    other_memberships = self.pending_memberships_for(grouping.assessment_id)
-    other_memberships.each do |m|
-      m.membership_status = 'rejected'
-      m.save
-    end
+    # Reject all other pending invitations for this assignment
+    self.student_memberships
+        .joins(:grouping)
+        .where('groupings.assessment_id': grouping.assessment_id,
+               membership_status: StudentMembership::STATUSES[:pending])
+        .update_all(membership_status: StudentMembership::STATUSES[:rejected])
   end
 
   # Hides a list of students and revokes repository

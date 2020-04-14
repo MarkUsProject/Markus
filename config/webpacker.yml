@@ -58,10 +58,8 @@ development:
   check_yarn_integrity: true
 
   # Reference: https://webpack.js.org/configuration/dev-server/
-  # For host: https://github.com/rails/webpacker/issues/1019#issuecomment-351066969.
   dev_server:
     https: false
-    host: webpacker  # <-- this is necessary if running webpack-dev-server from another container!
     port: 3035
     public: 0.0.0.0:3035
     hmr: false
@@ -76,7 +74,6 @@ development:
       'Access-Control-Allow-Origin': '*'
     watch_options:
       ignored: '**/node_modules/**'
-      poll: true
 
 
 test:
