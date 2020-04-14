@@ -8,8 +8,6 @@ class CheckboxCriterion < Criterion
   has_many :tas, through: :criterion_ta_associations
   has_many :test_groups, as: :criterion
 
-  validate :visible?
-
   DEFAULT_MAX_MARK = 1
 
   def self.symbol
