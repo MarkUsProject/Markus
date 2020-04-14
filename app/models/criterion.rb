@@ -16,6 +16,7 @@ class Criterion < ApplicationRecord
            through: :criteria_assignment_files_joins
   accepts_nested_attributes_for :criteria_assignment_files_joins, allow_destroy: true
 
+  validate :results_unreleased?
   validate :visible?
 
   self.abstract_class = true
@@ -163,6 +164,17 @@ class Criterion < ApplicationRecord
       )
     end
     a.assignment_stat.refresh_grade_distribution
+  end
+
+  def results_unreleased?
+    return if self.marks.empty?
+    released = self.marks.joins(:result).where('results.released_to_students' => true)
+    if released.empty?
+      true
+    else
+      errors.add(:base, 'Cannot update criterion once results are released.')
+      false
+    end
   end
 
   private
