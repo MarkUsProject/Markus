@@ -120,9 +120,17 @@ class TestGroupResultTable extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      show_output: props.data[0] && 'test_results.output' in props.data[0]
+      show_output: this.showOutput(props.data)
     };
   }
+
+  showOutput = (data) => {
+    if (data) {
+      return data.some((row) => 'test_results.output' in row);
+    } else {
+      return false;
+    }
+  };
 
   columns = () => [
     {
