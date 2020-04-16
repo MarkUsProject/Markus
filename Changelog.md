@@ -1,6 +1,7 @@
 # Changelog
 ## [unreleased]
 - Fixed bug where the output column was not shown in the test results table if the first row had no output (#4537)
+- Issue #3670: Added API for adding and removing extra marks (#4499)
 
 ## [v1.9.0]
 - Added option to anonymize group membership when viewed by graders (#4331)
