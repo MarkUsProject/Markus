@@ -1,5 +1,6 @@
 # Changelog
 ## [unreleased]
+- Fixed bug where the output column was not shown in the test results table if the first row had no output (#4537)
 
 ## [v1.9.0]
 - Added option to anonymize group membership when viewed by graders (#4331)
