@@ -75,4 +75,19 @@ module AutomatedTestsHelper
     # save modified specs
     File.open(test_specs_path, 'w') { |f| f.write test_specs.to_json }
   end
+
+  def get_server_api_key
+    server_host = Rails.configuration.x.autotest.server_host
+    server_user = TestServer.find_or_create_by(user_name: server_host) do |user|
+      user.first_name = 'Autotest'
+      user.last_name = 'Server'
+      user.hidden = true
+    end
+    server_user.set_api_key
+
+    server_user.api_key
+  rescue ActiveRecord::RecordNotUnique
+    # find_or_create_by is not atomic, there could be race conditions on creation: we just retry until it succeeds
+    retry
+  end
 end

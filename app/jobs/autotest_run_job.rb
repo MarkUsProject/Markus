@@ -1,4 +1,6 @@
 class AutotestRunJob < ApplicationJob
+  include AutomatedTestsHelper
+
   queue_as Rails.configuration.x.queues.autotest_run
 
   def self.show_status(_status)
@@ -43,21 +45,6 @@ class AutotestRunJob < ApplicationJob
         File.open(file_path, 'wb') { |f| f.write(repo.download_as_string(file)) }
       end
     end
-  end
-
-  def get_server_api_key
-    server_host = Rails.configuration.x.autotest.server_host
-    server_user = TestServer.find_or_create_by(user_name: server_host) do |user|
-      user.first_name = 'Autotest'
-      user.last_name = 'Server'
-      user.hidden = true
-    end
-    server_user.set_api_key
-
-    server_user.api_key
-  rescue ActiveRecord::RecordNotUnique
-    # find_or_create_by is not atomic, there could be race conditions on creation: we just retry until it succeeds
-    retry
   end
 
   def enqueue_test_run(test_run, host_with_port, ssh = nil)
