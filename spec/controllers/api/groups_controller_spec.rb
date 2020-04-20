@@ -350,9 +350,9 @@ describe Api::GroupsController do
         before :each do
           old_mark
           delete :remove_extra_marks, params: { assignment_id: grouping.assignment.id,
-                                              id: grouping.group.id,
-                                              extra_marks: 2.0,
-                                              description: 'test' }
+                                                id: grouping.group.id,
+                                                extra_marks: 2.0,
+                                                description: 'test' }
           grouping.reload
         end
         it 'should respond with 404' do
