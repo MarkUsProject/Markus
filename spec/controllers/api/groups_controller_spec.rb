@@ -296,6 +296,25 @@ describe Api::GroupsController do
           expect(response.status).to eq(200)
         end
       end
+      context 'add wrong extra_mark' do
+        let(:old_mark) { submission.get_latest_result.total_mark }
+        before :each do
+          old_mark
+          post :create_extra_marks, params: { assignment_id: grouping.assignment.id,
+                                              id: grouping.group.id,
+                                              extra_marks: 'a',
+                                              description: 'sample' }
+          grouping.reload
+        end
+        it 'should respond with 500' do
+          expect(response.status).to eq(500)
+        end
+        it 'should not update the total mark' do
+          result = submission.get_latest_result
+          new_total_mark = result.total_mark
+          expect(old_mark).to eq(new_total_mark)
+        end
+      end
     end
     context 'DELETE remove_extra_marks' do
       let(:submission) { create(:version_used_submission, grouping: grouping) }
@@ -307,7 +326,7 @@ describe Api::GroupsController do
                                             description: 'sample' }
         grouping.reload
       end
-      context 'remove_extra_marks' do
+      context 'remove extra_mark' do
         let(:old_mark) { submission.get_latest_result.total_mark }
         before :each do
           old_mark
@@ -324,6 +343,25 @@ describe Api::GroupsController do
         end
         it 'should respond with 200' do
           expect(response.status).to eq(200)
+        end
+      end
+      context 'remove extra_mark which does not exist' do
+        let(:old_mark) { submission.get_latest_result.total_mark }
+        before :each do
+          old_mark
+          delete :remove_extra_marks, params: { assignment_id: grouping.assignment.id,
+                                              id: grouping.group.id,
+                                              extra_marks: 2.0,
+                                              description: 'test' }
+          grouping.reload
+        end
+        it 'should respond with 404' do
+          expect(response.status).to eq(404)
+        end
+        it 'should not update the total mark' do
+          result = submission.get_latest_result
+          new_total_mark = result.total_mark
+          expect(old_mark).to eq(new_total_mark)
         end
       end
     end
