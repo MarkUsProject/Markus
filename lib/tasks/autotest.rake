@@ -133,17 +133,6 @@ class AutotestSetup
   def process_schema_data
     Assignment.transaction do
       update_test_groups_from_specs(@assignment, @specs_data)
-      upload_test_files
     end
-  end
-
-  def upload_test_files
-    # send files for all hostnames because the
-    # autotester uses the names as part of a hash key
-    AutotestSpecsJob.perform_now('http://localhost:3000', @assignment)
-    AutotestSpecsJob.perform_now('http://127.0.0.1:3000', @assignment)
-    AutotestSpecsJob.perform_now('http://0.0.0.0:3000', @assignment)
-    AutotestSpecsJob.perform_now('http://host.docker.internal:3000', @assignment)
-    AutotestSpecsJob.perform_now('http://docker.for.mac.localhost:3000', @assignment)
   end
 end

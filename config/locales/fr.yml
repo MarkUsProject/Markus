@@ -60,6 +60,7 @@ fr:
       update_starter_code_job: "%{progress}/%{total} repos modifiés"
       autotest_run_job: "%{progress}/%{total} Tests commencés"
       autotest_run_job_failed_count: "%{failed} Tests échoués"
+      autotest_run_job_enqueuing: "UPDATE ME"
       autotest_specs_job: "Configuration de tests automatisés"
     repo:
       commits:

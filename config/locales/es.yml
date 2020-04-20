@@ -70,6 +70,7 @@ es:
       update_starter_code_job: "%{progress}/%{total} UPDATE ME"
       autotest_run_job: "%{progress}/%{total} UPDATE ME"
       autotest_run_job_failed_count: "%{failed} UPDATE ME"
+      autotest_run_job_enqueuing: "UPDATE ME"
       autotest_specs_job: "UPDATE ME"
     repo:
       commits:

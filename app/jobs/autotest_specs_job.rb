@@ -15,9 +15,9 @@ class AutotestSpecsJob < ApplicationJob
     server_username = Rails.configuration.x.autotest.server_username
     server_command = Rails.configuration.x.autotest.server_command
     server_params =  { client_type: :markus,
-                       url: markus_address,
-                       assignment_id: assignment.id,
-                       api_key: get_server_api_key }
+                       client_data: { url: markus_address,
+                                      assignment_id: assignment.id,
+                                      api_key: get_server_api_key } }
 
     begin
       if server_username.nil?
