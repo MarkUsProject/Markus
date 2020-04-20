@@ -6,13 +6,13 @@ document.getElementById('new_criterion_prompt').focus();
 
 $(document).ready(function() {
   $('input[name=criterion_type]:radio').change(function () {
-    var current = document.getElementById('max_mark_prompt')
+    const max_mark = document.getElementById('max_mark_prompt');
     if (this.value === 'RubricCriterion') {
-      current.defaultValue = <%= RubricCriterion::DEFAULT_MAX_MARK -%>;
+      max_mark.defaultValue = <%= RubricCriterion::DEFAULT_MAX_MARK -%>;
     } else if (this.value === 'FlexibleCriterion') {
-      current.defaultValue = <%= FlexibleCriterion::DEFAULT_MAX_MARK -%>;
+      max_mark.defaultValue = <%= FlexibleCriterion::DEFAULT_MAX_MARK -%>;
     } else if (this.value === 'CheckboxCriterion') {
-      current.defaultValue = <%= CheckboxCriterion::DEFAULT_MAX_MARK -%>;
+      max_mark.defaultValue = <%= CheckboxCriterion::DEFAULT_MAX_MARK -%>;
     }
   });
 });
