@@ -2,11 +2,10 @@
 $('#annotation_dialog').empty();
 document.getElementById('annotation_dialog').innerHTML = '<%= escape_javascript(
   render partial: "annotation_modal",
-         locals: { form_url: { action: 'update_annotation',
-                               controller: 'annotations' },
+         locals: { form_url: annotation_path(id: @annotation.id),
                    form_values: params,
                    title: t('helpers.submit.update', model: Annotation.model_name.human),
-                   content: @text_annotation.content,
+                   content: @annotation.annotation_text.content,
                    new_annotation: false,
                    submit_btn_data: {
                      confirm: t('results.annotation.change_across_submissions')

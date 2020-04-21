@@ -1,7 +1,7 @@
 $('#annotation_dialog').empty();
 document.getElementById('annotation_dialog').innerHTML = '<%= escape_javascript(
   render partial: "annotation_modal",
-         locals: { form_url: { action: 'create', controller: 'annotations' },
+         locals: { form_url: annotations_path,
                    assignment: @assignment,
                    result: @result,
                    current_user: @current_user,
