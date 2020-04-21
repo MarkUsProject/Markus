@@ -946,7 +946,7 @@ describe CriteriaController do
           post_as admin, :upload, params: { assignment_id: assignment.id, upload_file: test_upload_download_file }
           get :download, params: { assignment_id: assignment.id }
 
-          expect(YAML.safe_load(response.body, whitelist_classes=[Symbol], symbolize_names: true))
+          expect(YAML.safe_load(response.body, [Symbol], symbolize_names: true))
             .to eq(YAML.safe_load(expected_download.read, symbolize_names: true))
         end
       end

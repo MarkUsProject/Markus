@@ -89,6 +89,10 @@
       min-width: 8em;
     }
 
+    .description {
+      margin-bottom: 1em;
+    }
+
     input[type='number'] {
       width: 5em;
     }
@@ -107,10 +111,6 @@
       height: 150px;
       margin-bottom: 1.5em;
       width: 100%;
-    }
-
-    .description {
-      margin-bottom: 1em;
     }
   }
 
