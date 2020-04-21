@@ -793,9 +793,8 @@ describe Assignment do
           before :each do
             2.times do
               g = create(:grouping, assignment: @assignment)
-              # StudentMembership.make({grouping: g,membership_status: StudentMembership::STATUSES[:inviter] } )
-              s = create(:submission, grouping: g)
-              r = s.get_latest_result
+              s = create(:version_used_submission, grouping: g)
+              r = s.current_result
               2.times do
                 create(:rubric_mark, result: r)  # this is create marks under rubric criterion
                 # if we create(:flexible_mark, groping: g)
@@ -840,6 +839,7 @@ describe Assignment do
               end
               g.save
             end
+            create(:version_used_submission, grouping: @assignment.groupings.first)
           end
 
           it 'be able to get_repo_checkout_commands' do
