@@ -55,9 +55,7 @@ class RubricCriterion < Criterion
     self.levels.each do |level|
       # don't scale levels that the user has manually changed
       unless (level.changed.include? 'mark') || level.mark.nil?
-        level.update_attributes(mark: (level.mark * scale).round(2))
-        # don't validate in case updating level mark overlaps another mark temporarily
-        level.save(validate: false)
+        level.update_attribute(:mark, (level.mark * scale).round(2))
       end
     end
   end
