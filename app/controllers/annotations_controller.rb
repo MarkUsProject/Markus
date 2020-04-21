@@ -108,6 +108,7 @@ class AnnotationsController < ApplicationController
 
   def edit
     @annotation = Annotation.find(params[:id])
+    @assignment = Assignment.find(params[:assignment_id])
   end
 
   def destroy
