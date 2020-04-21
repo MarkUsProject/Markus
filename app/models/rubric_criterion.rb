@@ -25,6 +25,8 @@ class RubricCriterion < Criterion
 
   has_many :test_groups, as: :criterion
 
+  DEFAULT_MAX_MARK = 4
+
   def self.symbol
     :rubric
   end
@@ -57,10 +59,6 @@ class RubricCriterion < Criterion
       end
     end
   end
-
-  RUBRIC_LEVELS = 5
-  DEFAULT_MAX_MARK = 4
-  MAX_LEVEL = RUBRIC_LEVELS - 1
 
   def mark_for(result_id)
     marks.where(result_id: result_id).first
