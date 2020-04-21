@@ -270,14 +270,16 @@ class AssignmentsController < ApplicationController
 
   def stop_test
     test_id = params[:test_run_id].to_i
-    @current_job = AutotestCancelJob.perform_later(request.protocol + request.host_with_port, [test_id])
+    assignment_id = params[:id]
+    @current_job = AutotestCancelJob.perform_later(request.protocol + request.host_with_port, assignment_id, [test_id])
     session[:job_id] = @current_job.job_id
     redirect_back(fallback_location: root_path)
   end
 
   def stop_batch_tests
     test_runs = TestRun.where(test_batch_id: params[:test_batch_id]).pluck(:id)
-    @current_job = AutotestCancelJob.perform_later(request.protocol + request.host_with_port, test_runs)
+    assignment_id = params[:id]
+    @current_job = AutotestCancelJob.perform_later(request.protocol + request.host_with_port, assignment_id, test_runs)
     session[:job_id] = @current_job.job_id
     redirect_back(fallback_location: root_path)
   end

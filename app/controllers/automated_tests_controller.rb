@@ -64,7 +64,7 @@ class AutomatedTestsController < ApplicationController
       test_run = grouping.create_test_run!(user: current_user)
       @current_job = AutotestRunJob.perform_later(request.protocol + request.host_with_port,
                                                   current_user.id,
-                                                  assignment,
+                                                  assignment.id,
                                                   [{ id: test_run.id }])
       session[:job_id] = @current_job.job_id
       flash_message(:notice, I18n.t('automated_tests.tests_running'))

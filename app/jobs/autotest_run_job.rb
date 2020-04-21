@@ -4,11 +4,7 @@ class AutotestRunJob < ApplicationJob
   queue_as Rails.configuration.x.queues.autotest_run
 
   def self.show_status(status)
-    if status[:progress] == status[:total]
-      I18n.t('poll_job.autotest_run_job_enqueuing')
-    else
-      I18n.t('poll_job.autotest_run_job', progress: status[:progress], total: status[:total])
-    end
+    I18n.t('poll_job.autotest_run_job_enqueuing')
   end
 
   def self.completed_message(status)
@@ -47,7 +43,7 @@ class AutotestRunJob < ApplicationJob
     end
   end
 
-  def perform(host_with_port, user_id, assignment, test_runs)
+  def perform(host_with_port, user_id, assignment_id, test_runs)
     # create and enqueue test runs
     # TestRun objects can either be created outside of this job (by passing their ids), or here
     test_batch = test_runs.size > 1 ? TestBatch.create : nil  # create 1 batch object if needed
@@ -58,31 +54,16 @@ class AutotestRunJob < ApplicationJob
       markus_address = host_with_port + Rails.application.config.action_controller.relative_url_root
     end
 
-    progress.total = test_runs.count
-    test_data = []
-    test_runs.each do |test_run|
-      test_run[:id] ||= create_test_run(test_run, test_batch, user_id)
-      test_run_data = TestRun.joins(:grouping, :user)
-                             .where(id: test_run[:id])
-                             .pluck_to_hash('groupings.group_id as group_id',
-                                            'test_runs.id as run_id',
-                                            'users.type as user_type')
-      test_run_data.map { |h| h[:test_categories] = [h['user_type'].downcase] }
-      test_data += test_run_data
-      progress.increment
-    end
+    test_run_ids = test_runs.map { |data| data[:id] || create_test_run(data, test_batch, user_id) }
 
-    server_params =  { client_type: :markus,
-                       client_data: { url: markus_address,
-                                      assignment_id: assignment.id,
-                                      api_key: get_server_api_key },
-                       test_data: test_data,
-                       request_high_priority: test_runs.length == 1 && User.find(user_id).student? }
+    server_kwargs = server_params(markus_address, assignment_id)
+    server_kwargs[:request_high_priority] = test_runs.length == 1 && User.find(user_id).student?
+    server_kwargs[:test_data] = test_data(test_run_ids)
+
     begin
-      enqueue_test_runs(server_params)
+      enqueue_test_runs(server_kwargs)
     rescue StandardError => e
-      test_run_ids = test_runs.map { |h| h[:id] }
-      TestRun.where(id: test_run_ids ).update_all(problems: e.message)
+      TestRun.where(id: test_run_ids).update_all(problems: e.message)
     end
   end
 end
