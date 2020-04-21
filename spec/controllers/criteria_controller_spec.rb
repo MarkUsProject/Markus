@@ -947,7 +947,7 @@ describe CriteriaController do
           get :download, params: { assignment_id: assignment.id }
 
           expect(YAML.safe_load(response.body, whitelist_classes=[Symbol], symbolize_names: true))
-                     .to eq(YAML.safe_load(expected_download.read, symbolize_names: true))
+            .to eq(YAML.safe_load(expected_download.read, symbolize_names: true))
         end
       end
     end
