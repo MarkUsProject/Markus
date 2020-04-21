@@ -31,9 +31,18 @@ class RubricCriterion < Criterion
 
   def validate_max_mark
     return if self.levels.empty?
+    ordered_levels = self.levels.sort_by {|level| level.mark}
     self.levels.order(mark: :desc)
-    return if self.max_mark == self.levels.last.mark
-    errors.add(:max_mark, 'Max mark of rubric criterion should not be greater than max level mark')
+    i = ordered_levels.length - 1
+    while i >= 0
+      if ordered_levels[i].mark.nil?
+        i -= 1
+      else
+        return if self.max_mark == ordered_levels[i].mark
+        errors.add(:max_mark, 'Max mark of rubric criterion should be equal to max level mark')
+        return
+      end
+    end
   end
 
   def update_assigned_groups_count
