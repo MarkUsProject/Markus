@@ -232,14 +232,14 @@ describe RubricCriterion do
     end
 
     context 'when scaling max mark' do
-      describe 'can scale levels up' do
+      describe 'can scale levels up to twice' do
         it 'not raise error' do
           expect(@criterion.levels[1].mark).to eq(1.0)
           @criterion.update(max_mark: 8.0)
           expect(@criterion.levels[1].mark).to eq(2.0)
         end
       end
-      describe 'can scale levels down' do
+      describe 'can scale levels down by half' do
         it 'not raise error' do
           expect(@criterion.levels[1].mark).to eq(1.0)
           @criterion.update(max_mark: 2.0)
