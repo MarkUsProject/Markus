@@ -159,7 +159,7 @@ describe RubricCriterion do
               row << names[i]
               # ...containing commas and quotes in the descriptions
               row << 'new description number ' + i.to_s
-              row << i + 10
+              row << i + 1
             end
 
             RubricCriterion.create_or_update_from_csv_row(row, @assignment)
