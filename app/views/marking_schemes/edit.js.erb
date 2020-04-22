@@ -6,7 +6,6 @@ $('.new-ms').hide();
 // scheme is being edited
 $('.edit-ms').html('');
 
-$('.edit-ms').append(`<h2>${I18n.t('helpers.submit.update', {model: I18n.t('activerecord.models.marking_scheme.one')})}</h2>`);
 $('.edit-ms').append("<%= j (render 'form') %>");
 
 // Show edit div if hidden
