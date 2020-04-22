@@ -90,7 +90,7 @@ class RubricCriterion < Criterion
   # ===Params:
   #
   # row::         An array representing one CSV file row. Should be in the following
-  #               format: [name, weight, _levels ] where the _levels part contains
+  #               format: [name, weight, _levels_ ] where the _levels_ part contains
   #               the following information about each level in the following order:
   #               name, description, mark.
   # assignment::  The assignment to which the newly created criterion should belong.
