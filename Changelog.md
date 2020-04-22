@@ -11,6 +11,8 @@
 - Fixed N+1 queries in Assignment repo list methods (#4543)
 - Fixed submission download_repo_list file extension (#4543)
 - Fixed bug preventing creation of assignments with submission rules (#4557)
+- Fixed inverse association bug with assignments (#4551)
+- Updated interface with the autotester so that files do not need to be copied when test are setup/enqueued (#4546)
 
 ## [v1.9.0]
 - Added option to anonymize group membership when viewed by graders (#4331)
