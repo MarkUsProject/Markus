@@ -33,7 +33,7 @@ class RubricCriterion < Criterion
 
   def validate_max_mark
     return if self.levels.order(mark: :desc).empty?
-    return if self.max_mark <= self.levels.last.mark
+    return if self.max_mark == self.levels.last.mark
     errors.add(:max_mark, 'Max mark of rubric criterion should not be greater than max level mark')
   end
 
