@@ -130,7 +130,7 @@ class RubricCriterion < Criterion
       else
         criterion.levels.create(name: name, description: description, mark: mark)
       end
-      
+
       unless criterion.save
         raise CsvInvalidLineError
       end
