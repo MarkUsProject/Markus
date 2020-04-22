@@ -119,7 +119,7 @@ class RubricCriterion < Criterion
     num_levels = working_row.length / 3
 
     # create/update the levels
-    (0..num_levels - 1).each do
+    (num_levels - 1).times do
       name = working_row.shift
       description = working_row.shift
       mark = working_row.shift
