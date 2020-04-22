@@ -122,7 +122,7 @@ class RubricCriterion < Criterion
     num_levels.times do
       name = working_row.shift
       description = working_row.shift
-      mark = working_row.shift
+      mark = Float(working_row.shift)
       # if level name exists we will update the level
       if criterion.levels.exists?(name: name)
         criterion.levels.find_by(name: name).update(name: name, description: description, mark: mark)
