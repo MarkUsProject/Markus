@@ -3,11 +3,11 @@ class AutotestRunJob < ApplicationJob
 
   queue_as Rails.configuration.x.queues.autotest_run
 
-  def self.show_status(status)
+  def self.show_status(_status)
     I18n.t('poll_job.autotest_run_job_enqueuing')
   end
 
-  def self.completed_message(status)
+  def self.completed_message(_status)
     I18n.t('automated_tests.tests_running')
   end
 
@@ -46,7 +46,7 @@ class AutotestRunJob < ApplicationJob
   def perform(host_with_port, user_id, assignment_id, test_runs)
     # create and enqueue test runs
     # TestRun objects can either be created outside of this job (by passing their ids), or here
-    test_batch = test_runs.size > 1 ? TestBatch.create : nil  # create 1 batch object if needed
+    test_batch = test_runs.size > 1 ? TestBatch.create : nil # create 1 batch object if needed
 
     if Rails.application.config.action_controller.relative_url_root.nil?
       markus_address = host_with_port
