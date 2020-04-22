@@ -5,6 +5,10 @@ shared_examples 'Invalid_arguments' do
                                           id: grouping.group.id,
                                           extra_marks: 10,
                                           description: 'sample' }
+      delete :remove_extra_marks, params: { assignment_id: grouping.assignment.id,
+                                            id: grouping.group.id,
+                                            extra_marks: 10.0,
+                                            description: 'sample' }
       expect(response.status).to eq(404)
     end
   end
@@ -14,6 +18,10 @@ shared_examples 'Invalid_arguments' do
                                           id: grouping.group.id,
                                           extra_marks: 10,
                                           description: 'sample' }
+      delete :remove_extra_marks, params: { assignment_id: grouping.assignment.id,
+                                            id: grouping.group.id,
+                                            extra_marks: 10.0,
+                                            description: 'sample' }
       expect(response.status).to eq(404)
     end
   end
@@ -23,6 +31,10 @@ shared_examples 'Invalid_arguments' do
                                           id: 9999,
                                           extra_marks: 10,
                                           description: 'sample' }
+      delete :remove_extra_marks, params: { assignment_id: grouping.assignment.id,
+                                            id: grouping.group.id,
+                                            extra_marks: 10.0,
+                                            description: 'sample' }
       expect(response.status).to eq(404)
     end
   end
