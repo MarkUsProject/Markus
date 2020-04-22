@@ -32,8 +32,7 @@ class RubricCriterion < Criterion
   end
 
   def validate_max_mark
-    return if self.levels.empty?
-    self.levels.order(mark: :desc)
+    return if self.levels.order(mark: :desc).empty?
     return if self.max_mark <= self.levels.last.mark
     errors.add(:max_mark, 'Max mark of rubric criterion should not be greater than max level mark')
   end
@@ -91,7 +90,7 @@ class RubricCriterion < Criterion
   # ===Params:
   #
   # row::         An array representing one CSV file row. Should be in the following
-  #               format: [name, weight, _levels_ ] where the _levels part contains
+  #               format: [name, weight, _levels ] where the _levels part contains
   #               the following information about each level in the following order:
   #               name, description, mark.
   # assignment::  The assignment to which the newly created criterion should belong.
@@ -109,8 +108,6 @@ class RubricCriterion < Criterion
     working_row = row.clone
     name = working_row.shift
 
-    # If a RubricCriterion of the same name exits, load it up.  Otherwise,
-    # create a new one.
     criterion = assignment.get_criteria(:all, :rubric).find_or_create_by(name: name)
     # Check that the weight is not a string, so that the appropriate max mark can be calculated.
     # Only set the position if this is a new record.
