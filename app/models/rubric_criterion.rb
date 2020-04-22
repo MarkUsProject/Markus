@@ -34,7 +34,7 @@ class RubricCriterion < Criterion
   def validate_max_mark
     return if self.levels.empty?
     return if self.max_mark == self.levels.order(mark: :desc).last.mark
-    errors.add(:max_mark, 'Max mark of rubric criterion should not be greater than max level mark')
+    errors.add(:max_mark, 'Max mark of rubric criterion should equal max level mark')
   end
 
   def update_assigned_groups_count
@@ -130,6 +130,7 @@ class RubricCriterion < Criterion
       else
         criterion.levels.create(name: name, description: description, mark: mark)
       end
+      
       unless criterion.save
         raise CsvInvalidLineError
       end
