@@ -51,6 +51,7 @@ RSpec.configure do |config|
 
   config.after :each do |test|
     destroy_repos unless test.metadata[:keep_memory_repos]
+    FactoryBot.rewind_sequences
   end
 
   # If true, the base class of anonymous controllers will be inferred

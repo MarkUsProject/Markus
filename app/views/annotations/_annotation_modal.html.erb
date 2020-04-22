@@ -15,20 +15,19 @@
       </p>
       <h3 id="annotation_preview_title"><%= t(:preview) %></h3>
       <div id="annotation_preview" style="word-wrap: break-word;"></div>
-      <% if new_annotation %>
-        <% if current_user.is_reviewer_for?(assignment.pr_assignment, result) %>
-          <%= hidden_field_tag 'new_annotation_category', value: t('annotation_categories.one_time_only') %>
-        <% else %>
-          <h3><%= AnnotationCategory.model_name.human %></h3>
-          <select id='new_annotation_category' name='category_id'>
-            <option value=''><%= t('annotation_categories.one_time_only') %></option>
-            <% annotation_categories.each do |annotation_category| %>
-              <option value='<%= annotation_category.id %>'>
-                <%= annotation_category.annotation_category_name %>
-              </option>
-            <% end %>
-          </select>
+      <% if @current_user.is_reviewer_for?(assignment.pr_assignment, result) %>
+        <%= hidden_field_tag 'new_annotation_category', value: t('annotation_categories.one_time_only') %>
+      <% else %>
+        <h3><%= AnnotationCategory.model_name.human %></h3>
+        <% options = [[t('annotation_categories.one_time_only'), '']] %>
+        <% assignment.annotation_categories.each do |annotation_category| %>
+          <% options << [annotation_category.annotation_category_name, annotation_category.id] %>
         <% end %>
+        <% selected = annotation&.annotation_text&.annotation_category_id %>
+        <select id='new_annotation_category' name='category_id'
+                <%= "disabled='true'" unless annotation.nil? %>>
+          <%= options_for_select(options, selected) %>
+        </select>
       <% end %>
 
       <section class='dialog-actions'>

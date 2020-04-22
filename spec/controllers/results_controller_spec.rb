@@ -83,7 +83,7 @@ describe ResultsController do
           it { expect(response).to have_http_status(:success) }
           test_no_flash
           it 'should have the correct content type' do
-            expect(response.header['Content-Type']).to eq 'application/octet-stream'
+            expect(response.header['Content-Type']).to eq 'text/plain'
           end
           it 'should show the file content in the response body' do
             expect(response.body).to eq SAMPLE_FILE_CONTENT

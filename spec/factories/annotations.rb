@@ -7,7 +7,6 @@ FactoryBot.define do
     association :creator, factory: :admin
     association :result, factory: :complete_result
     sequence(:annotation_number)
-    creator_type { 'Admin' }
     is_remark { false }
 
     factory :image_annotation, class: ImageAnnotation do

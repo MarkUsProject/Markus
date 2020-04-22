@@ -300,10 +300,9 @@ class Result extends React.Component {
 
   removeAnnotation = (annot_id) => {
     $.ajax({
-      url: Routes.annotations_path(),
+      url: Routes.annotation_path(annot_id),
       method: 'DELETE',
       data: {
-        id: annot_id,
         result_id: this.props.result_id,
         assignment_id: this.props.assignment_id
       },
