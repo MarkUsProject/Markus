@@ -1,21 +1,17 @@
 <%= fields_for :note do |f| %>
-  <p>
-    <%= label_tag 'assignment_id', Assignment.model_name.human %>
-    <%= select_tag 'assignment_id',
-                   options_from_collection_for_select(@assignments,
-                                                      :id,
-                                                      :short_identifier),
-                   onchange: "document.getElementById('working').style.display = '';
-                              $.ajax({
-                                url: '" + new_update_groupings_notes_path + "',
-                                type: 'POST',
-                                data: $(this).serialize() + '&authenticity_token=' + AUTH_TOKEN
-                              }).done(function() {
-                                document.getElementById('working').style.display = 'none';
-                              });" %>
-  </p>
-  <p>
-    <%= f.label :noteable_id, Group.model_name.human %>
-    <%= f.select :noteable_id, @groupings.collect { |p| [p.group_name_with_student_user_names,p.id] } %>
-  </p>
+  <%= label_tag 'assignment_id', Assignment.model_name.human %>
+  <%= select_tag 'assignment_id',
+                 options_from_collection_for_select(@assignments,
+                                                    :id,
+                                                    :short_identifier),
+                 onchange: "document.getElementById('working').style.display = '';
+                            $.ajax({
+                              url: '" + new_update_groupings_notes_path + "',
+                              type: 'POST',
+                              data: $(this).serialize() + '&authenticity_token=' + AUTH_TOKEN
+                            }).done(function() {
+                              document.getElementById('working').style.display = 'none';
+                            });" %>
+  <%= f.label :noteable_id, Group.model_name.human %>
+  <%= f.select :noteable_id, @groupings.collect { |p| [p.group_name_with_student_user_names,p.id] } %>
 <% end %>
