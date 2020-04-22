@@ -1,18 +1,21 @@
 <div id='annotation_list_holder'>
   <%= render partial: 'annotation_categories/annotation_category_edit',
              locals: { annotation_category: annotation_category } %>
-  <h2>
-    Annotations
-    <% path = new_annotation_text_assignment_annotation_categories_path(
-      assignment_id: annotation_category.assignment.id,
-      annotation_category_id: annotation_category.id
-    ) %>
+
+  <% path = new_annotation_text_assignment_annotation_categories_path(
+    assignment_id: annotation_category.assignment.id,
+    annotation_category_id: annotation_category.id
+  ) %>
+  <div class='float-right'>
     <%= link_to t('annotation_categories.add_annotation'),
                 'javascript:void(0);',
-                onclick: "add_annotation_prompt('#{path}')" %>
-  </h2>
+                onclick: "add_annotation_prompt('#{path}')",
+                class: 'button' %>
+  </div>
 
-  <div id='add_annotation_text_control'></div>
+  <h2>
+    <%= t('activerecord.models.annotation.other') %>
+  </h2>
 
   <ul id='annotation_list'>
     <%= render partial: 'annotation_text',

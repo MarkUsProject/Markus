@@ -1,6 +1,6 @@
 <li id='annotation_text_<%= annotation_text.id %>'>
   <div id='annotation_text_<%= annotation_text.id %>_control'>
-    <p><%= markdown(annotation_text.content) %></p>
+    <%= markdown(annotation_text.content) %>
 
     <div class='annotation_text_details'>
       <%= link_to t(:edit),
@@ -16,22 +16,20 @@
                     class: 'inline-button' %>
     </div>
     <div class='annotation_text_details'>
-      <p><%= Annotation.human_attribute_name(:creator) %>
-        <% if annotation_text.creator.nil? %>
-          <%= 'N/A' %>
-        <% else %>
-          <%= annotation_text.creator.user_name %>
-        <% end %>
-      </p>
+      <%= Annotation.human_attribute_name(:creator) %>
+      <% if annotation_text.creator.nil? %>
+        <%= 'N/A' %>
+      <% else %>
+        <%= annotation_text.creator.user_name %>
+      <% end %>
     </div>
     <div class='annotation_text_details'>
-      <p><%= t('annotations.last_edited_by') %>
-        <% if annotation_text.last_editor.nil? %>
-          <%= 'N/A' %>
-        <% else %>
-          <%= annotation_text.last_editor.user_name %>
-        <% end %>
-      </p>
+      <%= t('annotations.last_edited_by') %>
+      <% if annotation_text.last_editor.nil? %>
+        <%= 'N/A' %>
+      <% else %>
+        <%= annotation_text.last_editor.user_name %>
+      <% end %>
     </div>
   </div>
 
@@ -42,12 +40,15 @@
                  remote: true do |f| %>
       <%= f.hidden_field :annotation_category_id %>
       <%= f.text_area :content, cols: 50, rows: 5 %>
-      <%= f.submit t(:save) , data: { disable_with: t('working') } %>
 
-      <input type='reset'
-             value='<%= t(:cancel) %>'
-             onclick="$('#annotation_text_' + <%= annotation_text.id %> + '_edit').hide();
-                      $('#annotation_text_' + <%= annotation_text.id %> + '_control').show();">
+      <p>
+        <%= f.submit t(:save) , data: { disable_with: t('working') } %>
+
+        <input type='reset'
+               value='<%= t(:cancel) %>'
+               onclick="$('#annotation_text_' + <%= annotation_text.id %> + '_edit').hide();
+                        $('#annotation_text_' + <%= annotation_text.id %> + '_control').show();">
+      </p>
     <% end %>
   </div>
 </li>
