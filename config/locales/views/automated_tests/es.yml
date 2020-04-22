@@ -40,7 +40,6 @@ es:
       extra_malformed: "UPDATE ME \n%{extra}\n"
       extra_raw_output: "UPDATE ME \n%{extra}\n"
       extra_stderr: "UPDATE ME \n%{extra}\n"
-      no_source_files: "No se encontró ningún archivo para probar"
       no_tests: "UPDATE ME"
       timeout: "%{seconds} UPDATE ME"
       unknown_test: "UPDATE ME"

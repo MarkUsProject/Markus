@@ -59,7 +59,6 @@ en:
       download_submissions_complete: "Submissions are ready for download. Click here to complete the download."
       update_repo_required_files_job: "%{progress}/%{total} Student repositories updated with new required files"
       update_starter_code_job: "%{progress}/%{total} Student repositories updated with starter code"
-      autotest_run_job_failed_count: "%{failed} Test runs failed. See results pages for details."
       autotest_run_job_enqueuing: "Enqueuing tests"
       autotest_specs_job: "Setting up automated tests."
     repo:
