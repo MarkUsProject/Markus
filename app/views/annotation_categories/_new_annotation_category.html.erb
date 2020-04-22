@@ -1,10 +1,11 @@
-<li id='add_annotation_category'>
+<li id='add_annotation_category' class='new'>
   <%= form_for :annotation_category,
                url: { action: 'create' },
                remote: true do |f| %>
-    <%= f.label :annotation_category_name, AnnotationCategory.human_attribute_name(:annotation_category_name) %>
-    <%= f.text_field :annotation_category_name,
-                     size: 20 %>
-    <%= f.submit t(:save) , data: { disable_with: t('working') } %>
+    <div class='inline-labels'>
+      <%= f.label :annotation_category_name, AnnotationCategory.human_attribute_name(:annotation_category_name) %>
+      <%= f.text_field :annotation_category_name, size: 20 %>
+    </div>
+    <p><%= f.submit t(:save) , data: { disable_with: t('working') } %></p>
   <% end %>
 </li>
