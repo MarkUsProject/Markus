@@ -162,13 +162,13 @@ module Api
     end
 
     def create_extra_marks
-      assignment = Assignment.find(params[:assignment_id])
+      assignment = Assignment.find_by_id(params[:assignment_id])
       if assignment.nil?
         render 'shared/http_status', locals: { code: '404', message:
             'No assignment exists with that id' }, status: 404
         return
       end
-      group = Group.find(params[:id])
+      group = Group.find_by_id(params[:id])
       if group.nil?
         render 'shared/http_status', locals: { code: '404', message:
             'No group exists with that id' }, status: 404
@@ -199,14 +199,14 @@ module Api
     end
 
     def remove_extra_marks
-      assignment = Assignment.find(params[:assignment_id])
+      assignment = Assignment.find_by_id(params[:assignment_id])
       if assignment.nil?
         render 'shared/http_status', locals: { code: '404', message:
             'No assignment exists with that id' }, status: 404
         return
       end
 
-      group = Group.find(params[:id])
+      group = Group.find_by_id(params[:id])
       if group.nil?
         render 'shared/http_status', locals: { code: '404', message:
             'No group exists with that id' }, status: 404
