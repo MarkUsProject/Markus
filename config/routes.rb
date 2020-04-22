@@ -365,8 +365,6 @@ Rails.application.routes.draw do
     resources :annotations do
       collection do
         post 'add_existing_annotation'
-        patch 'update_annotation'
-        delete '/' => 'annotations#destroy'
       end
     end
 

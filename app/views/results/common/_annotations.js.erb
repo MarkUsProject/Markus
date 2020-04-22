@@ -211,7 +211,6 @@
     positions = get_mouse_positions();
     if (syntax_highlighter_adapter === null || !positions) return false;
     return {
-      annotation_type: 'text',
       line_start: positions.line_start,
       line_end: positions.line_end,
       column_start: positions.column_start,
@@ -240,7 +239,6 @@
         break;
     }
     return {
-      annotation_type: 'pdf',
       x1: box.x1,
       x2: box.x2,
       y1: box.y1,
@@ -253,7 +251,6 @@
     var box = get_selection_box();
     if (!box) return false;
     return {
-      annotation_type: 'image',
       x1: box.x1,
       x2: box.x2,
       y1: box.y1,
@@ -265,7 +262,6 @@
   // Used for ctrl-click as a shortcut for "Good!" annotation.
   function get_pdf_annotation_data_with_ids() {
     var data = {
-      annotation_type: 'pdf',
       result_id: <%= result_id %>,
       assignment_id: <%= assignment_id %>,
       submission_file_id: submissionFilePanel.state.selectedFile && submissionFilePanel.state.selectedFile[1]
