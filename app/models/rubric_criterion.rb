@@ -82,8 +82,8 @@ class RubricCriterion < Criterion
     default_levels.each_with_index do |level, index|
       # creates a new level and saves it to database
       self.levels.create!(name: level['name'],
-                        description: level['description'],
-                        mark: index)
+                          description: level['description'],
+                          mark: index)
     end
   end
 
@@ -170,9 +170,9 @@ class RubricCriterion < Criterion
     criterion.ta_visible = criterion_yml[1]['ta_visible'] unless criterion_yml[1]['ta_visible'].nil?
     criterion.peer_visible = criterion_yml[1]['peer_visible'] unless criterion_yml[1]['peer_visible'].nil?
     levels = []
-    criterion_yml[1]['levels'].each do |name, level_yml|
+    criterion_yml[1]['levels'].each do |level_name, level_yml|
       levels << criterion.levels.build(rubric_criterion: criterion,
-                                       name: name,
+                                       name: level_name,
                                        description: level_yml['description'],
                                        mark: level_yml['mark'])
     end
