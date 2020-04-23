@@ -6,19 +6,7 @@
   margin-top: 1.5em;
 }
 
-.disable {
-  color: $grey;
-  font-style: italic;
-}
-
 fieldset {
-  box-shadow: none;
-  margin-top: 2em;
-
-  div {
-    margin: 0.5em 0;
-  }
-
   &.period,
   &.group_properties {
     border: 1px solid $grey;
@@ -38,10 +26,12 @@ fieldset {
       margin-top: 1em;
     }
   }
+}
 
-  // Save button in assignment form
-  & + input[type='submit'] {
-    margin-top: 1.5em;
+#assignment_files {
+  input[type=text] {
+    margin-left: 10px;
+    margin-right: 10px;
   }
 }
 
@@ -80,39 +70,6 @@ fieldset {
     }
   }
 }
-
-.PeriodDeltaChain_Hours {
-  width: 42px;
-}
-
-label {
-  display: inline-block;
-  margin-top: 5px;
-  min-width: 12em;
-}
-
-.section_due_date_label {
-  margin-left: 10em;
-}
-
-input[type='number'] {
-  width: 5em;
-}
-
-input#assignment_short_identifier {
-  margin-right: 4em;
-}
-
-input#assignment_short_identifier[readonly] {
-  background-color: $disabled-grey;
-  border-color: $disabled-dark;
-  color: black;
-}
-
-.section_due_date_form {
-  margin-left: 2.5em;
-}
-
 
 /* Students view */
 

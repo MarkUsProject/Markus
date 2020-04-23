@@ -10,7 +10,7 @@ en:
       group_properties: "Group Properties"
       persist_groups_from: "Persist groups from previous assignment"
       remarks: "Remark Requests"
-      required_files_by_student:  "Add filename(s) that students are required to submit."
+      required_files_by_student:  "You may specify file(s) that students are required to submit."
       section_due_dates_option: "If the section due dates option is checked, students can only form groups within their section."
       section_due_dates_info_html: "<strong>Important</strong> The global due date needs to be filled in.
         If a section has no due date specified, the global due date will be used instead.

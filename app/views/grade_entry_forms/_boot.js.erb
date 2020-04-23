@@ -11,7 +11,7 @@
            .remove();
     var a = $('<a>' + remove_text + '</a>');
     a.click(function() { new_col.remove(); return false; });
-    new_col.find('p').append(a);
+    new_col.append(a);
 
     new_col.find('input').each(function () {
       var d = $(this).attr('id');

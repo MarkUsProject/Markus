@@ -68,12 +68,14 @@
     $('#assignment_files').append($(assignment_file));
 
     $('#only_required_files_option').removeClass('disable');
+    document.getElementById('assignment_assignment_properties_attributes_only_required_files').disabled = false;
   }
 
   function remove_assignment_file(input_id) {
     $('#' + input_id + '_holder').remove();
     if ($('.assignment_file').length === 0) {
       $('#only_required_files_option').addClass('disable');
+      document.getElementById('assignment_assignment_properties_attributes_only_required_files').disabled = true;
     }
   }
 
