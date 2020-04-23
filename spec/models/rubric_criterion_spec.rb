@@ -305,7 +305,7 @@ describe RubricCriterion do
 
     context 'validations work properly' do
       describe 'validates max mark can\'t be greater than maximum level mark' do
-        it 'raises an error' do
+        it 'expects criterion to be invalid' do
           expect(@criterion.levels.order(mark: :desc).last.mark).to eq(4.0)
           expect(@criterion.max_mark).to eq(4.0)
           @criterion.update(max_mark: 5.0)
@@ -314,7 +314,7 @@ describe RubricCriterion do
           @criterion.reload
           expect(@criterion.valid?).to be false
         end
-        it 'does not raise an error' do
+        it 'expects criterion to be valid' do
           expect(@criterion.levels.order(mark: :desc).last.mark).to eq(4.0)
           expect(@criterion.max_mark).to eq(4.0)
           @criterion.update(max_mark: 5.0)
