@@ -212,7 +212,6 @@ class RubricCriterion < Criterion
     unless ta.ta?
       return false
     end
-
     !(criterion_ta_associations.where(ta_id: ta.id).first == nil)
   end
 end
