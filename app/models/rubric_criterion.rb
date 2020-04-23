@@ -12,7 +12,7 @@ class RubricCriterion < Criterion
 
   has_many :tas, through: :criterion_ta_associations
 
-  has_many :levels, -> { order(:mark) }, inverse_of: :rubric_criterion, dependent: :destroy
+  has_many :levels, -> { order(:mark) }, dependent: :destroy
   accepts_nested_attributes_for :levels, allow_destroy: true
   before_validation :scale_marks_if_max_mark_changed
   validate :validate_max_mark
@@ -25,15 +25,17 @@ class RubricCriterion < Criterion
 
   has_many :test_groups, as: :criterion
 
+  DEFAULT_MAX_MARK = 4
+
   def self.symbol
     :rubric
   end
 
   def validate_max_mark
     return if self.levels.empty?
-    self.levels.order(mark: :desc)
-    return if self.max_mark <= self.levels.last.mark
-    errors.add(:max_mark, 'Max mark of rubric criterion should not be greater than max level mark')
+    max_level_mark = self.levels.max_by(&:mark).mark
+    return if self.max_mark == max_level_mark
+    errors.add(:max_mark, 'Max mark of rubric criterion should equal to the max level mark ' + max_level_mark.to_s)
   end
 
   def update_assigned_groups_count
@@ -57,10 +59,6 @@ class RubricCriterion < Criterion
       end
     end
   end
-
-  RUBRIC_LEVELS = 5
-  DEFAULT_MAX_MARK = 4
-  MAX_LEVEL = RUBRIC_LEVELS - 1
 
   def mark_for(result_id)
     marks.where(result_id: result_id).first
@@ -93,7 +91,7 @@ class RubricCriterion < Criterion
   # ===Params:
   #
   # row::         An array representing one CSV file row. Should be in the following
-  #               format: [name, weight, _levels_ ] where the _levels part contains
+  #               format: [name, weight, _levels_ ] where the _levels_ part contains
   #               the following information about each level in the following order:
   #               name, description, mark.
   # assignment::  The assignment to which the newly created criterion should belong.
@@ -111,8 +109,6 @@ class RubricCriterion < Criterion
     working_row = row.clone
     name = working_row.shift
 
-    # If a RubricCriterion of the same name exits, load it up.  Otherwise,
-    # create a new one.
     criterion = assignment.get_criteria(:all, :rubric).find_or_create_by(name: name)
     # Check that the weight is not a string, so that the appropriate max mark can be calculated.
     # Only set the position if this is a new record.
@@ -124,10 +120,10 @@ class RubricCriterion < Criterion
     num_levels = working_row.length / 3
 
     # create/update the levels
-    (0..num_levels - 1).each do
+    num_levels.times do
       name = working_row.shift
       description = working_row.shift
-      mark = working_row.shift
+      mark = Float(working_row.shift)
       # if level name exists we will update the level
       if criterion.levels.exists?(name: name)
         criterion.levels.find_by(name: name).update(name: name, description: description, mark: mark)

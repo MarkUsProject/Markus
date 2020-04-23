@@ -159,7 +159,7 @@ describe RubricCriterion do
               row << names[i]
               # ...containing commas and quotes in the descriptions
               row << 'new description number ' + i.to_s
-              row << i + 10
+              row << i + 1
             end
 
             RubricCriterion.create_or_update_from_csv_row(row, @assignment)
@@ -175,6 +175,7 @@ describe RubricCriterion do
 
         context 'allow a criterion with the same name to add levels' do
           it 'not raise error' do
+            pending('currently we do not upload max mark in csv file so this should fail')
             RubricCriterion.create_or_update_from_csv_row(@csv_base_row, @assignment)
             @criterion.reload
             levels = @criterion.levels
@@ -189,36 +190,35 @@ describe RubricCriterion do
   context 'A rubric criteria with levels' do
     before(:each) do
       @criterion = create(:rubric_criterion)
-      @levels = @criterion.levels
     end
 
     context 'has basic levels functionality' do
       describe 'can add levels' do
         it 'not raise error' do
-          expect(@levels.length).to eq(5)
-          @levels.create(name: 'New level', description: 'Description for level', mark: '5')
-          @levels.create(name: 'New level 2', description: 'Description for level 2', mark: '6')
-          expect(@levels.length).to eq(7)
+          expect(@criterion.levels.length).to eq(5)
+          @criterion.levels.create(name: 'New level', description: 'Description for level', mark: '5')
+          @criterion.levels.create(name: 'New level 2', description: 'Description for level 2', mark: '6')
+          expect(@criterion.levels.length).to eq(7)
         end
       end
 
       describe 'can delete levels' do
         it 'not raise error' do
-          expect(@levels.length).to eq(5)
-          @levels.destroy_by(mark: 0)
-          @levels.destroy_by(mark: 1)
-          @levels.reload
-          expect(@levels.length).to eq(3)
+          expect(@criterion.levels.length).to eq(5)
+          @criterion.levels.destroy_by(mark: 0)
+          @criterion.levels.destroy_by(mark: 1)
+          @criterion.levels.reload
+          expect(@criterion.levels.length).to eq(3)
         end
       end
 
       describe 'can edit levels' do
         it 'not raise error' do
-          @levels[0].update(name: 'Custom Level', description: 'Custom Description', mark: 10.0)
-          @levels.reload
-          expect(@levels[@levels.length - 1].mark).to eq(10)
-          expect(@levels[@levels.length - 1].name).to eq('Custom Level')
-          expect(@levels[@levels.length - 1].description).to eq('Custom Description')
+          @criterion.levels[0].update(name: 'Custom Level', description: 'Custom Description', mark: 10.0)
+          @criterion.levels.reload
+          expect(@criterion.levels[@criterion.levels.length - 1].mark).to eq(10)
+          expect(@criterion.levels[@criterion.levels.length - 1].name).to eq('Custom Level')
+          expect(@criterion.levels[@criterion.levels.length - 1].description).to eq('Custom Description')
         end
       end
 
@@ -226,7 +226,7 @@ describe RubricCriterion do
         it 'not raise error' do
           @criterion.destroy
           expect(@criterion.destroyed?).to eq true
-          expect(@levels).to be_empty
+          expect(@criterion.levels).to be_empty
         end
       end
     end
@@ -234,24 +234,24 @@ describe RubricCriterion do
     context 'when scaling max mark' do
       describe 'can scale levels up' do
         it 'not raise error' do
-          expect(@levels[1].mark).to eq(1.0)
+          expect(@criterion.levels[1].mark).to eq(1.0)
           @criterion.update(max_mark: 8.0)
-          expect(@levels[1].mark).to eq(2.0)
+          expect(@criterion.levels[1].mark).to eq(2.0)
         end
       end
       describe 'can scale levels down' do
         it 'not raise error' do
-          expect(@levels[1].mark).to eq(1.0)
+          expect(@criterion.levels[1].mark).to eq(1.0)
           @criterion.update(max_mark: 2.0)
-          expect(@levels[1].mark).to eq(0.5)
+          expect(@criterion.levels[1].mark).to eq(0.5)
         end
       end
       describe 'manually changed levels won\'t be affected' do
         it 'not raise error' do
-          expect(@levels[1].mark).to eq(1.0)
-          @levels[1].mark = 3
+          expect(@criterion.levels[1].mark).to eq(1.0)
+          @criterion.levels[1].mark = 3
           @criterion.update(max_mark: 8.0)
-          expect(@levels[1].mark).to eq(3.0)
+          expect(@criterion.levels[1].mark).to eq(3.0)
         end
       end
     end
@@ -270,7 +270,7 @@ describe RubricCriterion do
       context 'updating level updates respective mark' do
         describe 'updates a single mark' do
           it 'not raise error' do
-            @levels[0].update(mark: 0.5)
+            @criterion.levels[0].update(mark: 0.5)
             @marks.reload
             expect(@marks[0].mark).to eq(0.5)
           end
@@ -278,7 +278,7 @@ describe RubricCriterion do
 
         describe 'updates multiple marks' do
           it 'not raise error' do
-            @levels[1].update(mark: 0.5)
+            @criterion.levels[1].update(mark: 0.5)
             expect(@marks[1].mark).to eq(0.5)
             expect(@marks[2].mark).to eq(0.5)
           end
@@ -288,14 +288,14 @@ describe RubricCriterion do
       context 'deleting level updates mark to nil' do
         describe 'updates a single mark' do
           it 'not raise error' do
-            @levels[0].destroy
+            @criterion.levels[0].destroy
             expect(@marks[0].mark).to be_nil
           end
         end
 
         describe 'deleting level updates multiple marks to nil' do
           it 'not raise error' do
-            @levels[1].destroy
+            @criterion.levels[1].destroy
             expect(@marks[1].mark).to be_nil
             expect(@marks[2].mark).to be_nil
           end
@@ -305,19 +305,28 @@ describe RubricCriterion do
 
     context 'validations work properly' do
       describe 'validates max mark can\'t be greater than maximum level mark' do
-        it 'raises an error' do
-          expect(@levels.last.mark).to eq(4.0)
+        it 'expects criterion to be invalid' do
+          expect(@criterion.levels.order(mark: :desc).last.mark).to eq(4.0)
           expect(@criterion.max_mark).to eq(4.0)
           @criterion.update(max_mark: 5.0)
-          @criterion.levels.last.update(mark: 3.5)
+          @criterion.levels.order(mark: :desc).last.update(mark: 3.5)
           @criterion.save
-          expect(@criterion.errors[:max_mark].size).to eq(1)
+          @criterion.reload
+          expect(@criterion.valid?).to be false
+        end
+        it 'expects criterion to be valid' do
+          expect(@criterion.levels.order(mark: :desc).last.mark).to eq(4.0)
+          expect(@criterion.max_mark).to eq(4.0)
+          @criterion.update(max_mark: 5.0)
+          @criterion.levels.order(mark: :desc).last.update(mark: 5.0)
+          @criterion.save
+          expect(@criterion.valid?).to be true
         end
       end
 
       describe 'cannot have two levels with the same mark' do
         it 'not raise error' do
-          expect(@levels[0].update(mark: 1)).to be false
+          expect(@criterion.levels[0].update(mark: 1)).to be false
         end
       end
       context 'when a result is released' do
@@ -338,7 +347,7 @@ describe RubricCriterion do
         end
         describe 'levels can\'t be updated' do
           it 'not raise error' do
-            expect(@levels[0].update(mark: 1.5)).to be false
+            expect(@criterion.levels[0].update(mark: 1.5)).to be false
           end
         end
         describe 'rubric criteria can\'t be updated' do

@@ -1,4 +1,4 @@
-# Level represent a level within a Rubric Criterion
+# Level represents a level within a Rubric Criterion
 class Level < ApplicationRecord
   belongs_to :rubric_criterion
 
