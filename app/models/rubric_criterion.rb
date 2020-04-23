@@ -111,8 +111,6 @@ class RubricCriterion < Criterion
     working_row = row.clone
     name = working_row.shift
 
-    # If a RubricCriterion of the same name exits, load it up.  Otherwise,
-    # create a new one.
     criterion = assignment.get_criteria(:all, :rubric).find_or_create_by(name: name)
     # Check that the weight is not a string, so that the appropriate max mark can be calculated.
     # Only set the position if this is a new record.
@@ -216,7 +214,6 @@ class RubricCriterion < Criterion
     unless ta.ta?
       return false
     end
-
     !(criterion_ta_associations.where(ta_id: ta.id).first == nil)
   end
 end

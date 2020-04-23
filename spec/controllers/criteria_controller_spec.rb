@@ -813,6 +813,7 @@ describe CriteriaController do
         expect(cr2.ta_visible).to be true
         expect(cr2.peer_visible).to be false
       end
+      
       it 'creates flexible criteria with properly formatted entries' do
         post_as admin, :upload, params: { assignment_id: assignment.id, upload_file: mixed_file }
 
@@ -877,8 +878,7 @@ describe CriteriaController do
       end
 
       it 'creates criteria with rounded (up to first digit after decimal point) maximum mark' do
-        post_as admin, :upload, params: { assignment_id: assignment.id,
-                                          upload_file: round_max_mark_file }
+        post_as admin, :upload, params: { assignment_id: assignment.id, upload_file: round_max_mark_file }
         expect(assignment.get_criteria(:all, :rubric).first.name).to eq('cr90')
 
         expect(assignment.get_criteria(:all, :rubric).first.max_mark).to eq(4.6)

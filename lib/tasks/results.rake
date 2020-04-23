@@ -50,11 +50,11 @@ namespace :markus do
           { name: 'Great', description: 'This criterion was satisfied really well!', mark: 3 },
           { name: 'Excellent', description: 'This criterion was satisfied excellently', mark: 4 }
       ]
-      rubric_criteria.each do |rubric_criteria|
-        params = { rubric: {
+      rubric_criteria.each do |rubric_criterion|
+        params = {
           assignment: a1, levels_attributes: default_levels
-        } }
-        rubric_criteria.merge(params[:rubric])
+        }
+        rubric_criterion.merge(params)
         RubricCriterion.create(rubric_criterion)
       end
 
