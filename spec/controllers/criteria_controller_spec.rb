@@ -813,7 +813,7 @@ describe CriteriaController do
         expect(cr2.ta_visible).to be true
         expect(cr2.peer_visible).to be false
       end
-      
+
       it 'creates flexible criteria with properly formatted entries' do
         post_as admin, :upload, params: { assignment_id: assignment.id, upload_file: mixed_file }
 
