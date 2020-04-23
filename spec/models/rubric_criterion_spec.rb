@@ -314,6 +314,14 @@ describe RubricCriterion do
           @criterion.save
           expect(@criterion.errors[:max_mark].size).to eq(1)
         end
+        it 'does not raise an error' do
+          expect(@levels.last.mark).to eq(4.0)
+          expect(@criterion.max_mark).to eq(4.0)
+          @criterion.update(max_mark: 5.0)
+          @criterion.levels.last.update(mark: 5.0)
+          @criterion.save
+          expect(@criterion.errors[:max_mark].size).to eq(0)
+        end
       end
 
       describe 'cannot have two levels with the same mark' do
