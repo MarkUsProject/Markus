@@ -93,11 +93,11 @@ namespace :markus do
       lvl = { name: random_words(1), description: random_sentences(5), mark: number }
       attributes.push(lvl)
     end
-    params = { rubric: {
+    params = {
       name: 'Mark3', assessment_id: a.id,
       position: 2, max_mark: 4, levels_attributes: attributes
-    } }
-    RubricCriterion.create!(params[:rubric])
+    }
+    RubricCriterion.create!(params)
   end
 
   def submit_half_on_time(a)
