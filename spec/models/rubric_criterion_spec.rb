@@ -43,6 +43,11 @@ describe RubricCriterion do
       expect(levels[2].name).to eq(I18n.t('rubric_criteria.defaults.level_2'))
       expect(levels[3].name).to eq(I18n.t('rubric_criteria.defaults.level_3'))
       expect(levels[4].name).to eq(I18n.t('rubric_criteria.defaults.level_4'))
+      expect(levels[0].mark).to eq(0)
+      expect(levels[1].mark).to eq(1)
+      expect(levels[2].mark).to eq(2)
+      expect(levels[3].mark).to eq(3)
+      expect(levels[4].mark).to eq(4)
     end
   end
 
