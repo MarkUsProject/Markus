@@ -132,7 +132,7 @@ strong a {
   width: 2em;
 }
 
-/** Text field inputs */
+/** Text and number field inputs */
 
 input,
 textarea {
@@ -162,8 +162,18 @@ textarea {
     color: $disabled-dark;
   }
 
+  &[readonly] {
+    background-color: $disabled-grey;
+    border-color: $disabled-dark;
+    color: $black;
+  }
+
   &.large-text {
     padding: 1em 1.15em;
+  }
+
+  &[type='number'] {
+    width: 5em;
   }
 }
 
@@ -245,9 +255,13 @@ button,
 fieldset {
   background: $white;
   border-radius: $radius;
-  box-shadow: 0 3px 0 $grey;
+  margin-top: $dimen-vertical;
   padding: 0.25em 1.5em 1.5em;
   position: relative;
+
+  &.no-legend {
+    padding-top: 1.25em;
+  }
 
   legend {
     border: none;
@@ -263,8 +277,6 @@ fieldset {
     border: none;
     border-radius: 0;
     border-top: 1px solid $grey;
-    box-shadow: none;
-    padding: 0;
 
     legend {
       width: 100%;
@@ -279,6 +291,21 @@ fieldset {
   }
 }
 
+.inline-labels {
+  column-gap: 10px;
+  display: grid;
+  grid-template-columns: max-content max-content;
+  row-gap: 10px;
+
+  label {
+    text-align: right;
+  }
+}
+
+.disable {
+  color: $dark-grey;
+  font-style: italic;
+}
 
 /** Tables */
 
