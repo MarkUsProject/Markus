@@ -311,7 +311,8 @@ describe RubricCriterion do
           @criterion.update(max_mark: 5.0)
           @criterion.levels.order(mark: :desc).last.update(mark: 3.5)
           @criterion.save
-          expect(@criterion.valid?).to be true
+          @criterion.reload
+          expect(@criterion.valid?).to be false
         end
         it 'does not raise an error' do
           expect(@criterion.levels.order(mark: :desc).last.mark).to eq(4.0)
