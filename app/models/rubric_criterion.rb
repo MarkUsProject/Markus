@@ -67,24 +67,21 @@ class RubricCriterion < Criterion
   end
 
   def set_default_levels
-    default_levels = [
-      { 'name' => I18n.t('rubric_criteria.defaults.level_0'),
-        'description' => I18n.t('rubric_criteria.defaults.description_0') },
-      { 'name' => I18n.t('rubric_criteria.defaults.level_1'),
-        'description' => I18n.t('rubric_criteria.defaults.description_1') },
-      { 'name' => I18n.t('rubric_criteria.defaults.level_2'),
-        'description' => I18n.t('rubric_criteria.defaults.description_2') },
-      { 'name' => I18n.t('rubric_criteria.defaults.level_3'),
-        'description' => I18n.t('rubric_criteria.defaults.description_3') },
-      { 'name' => I18n.t('rubric_criteria.defaults.level_4'),
-        'description' => I18n.t('rubric_criteria.defaults.description_4') }
-    ]
-    default_levels.each_with_index do |level, index|
-      # creates a new level and saves it to database
-      self.levels.create!(name: level['name'],
-                          description: level['description'],
-                          mark: index)
-    end
+    params = { :rubric => {
+      :levels_attributes => [
+        { :name => I18n.t('rubric_criteria.defaults.level_0'),
+          :description => I18n.t('rubric_criteria.defaults.description_0'), :mark => 0 },
+        { :name => I18n.t('rubric_criteria.defaults.level_1'),
+          :description => I18n.t('rubric_criteria.defaults.description_1'), :mark => 1 },
+        { :name => I18n.t('rubric_criteria.defaults.level_2'),
+          :description => I18n.t('rubric_criteria.defaults.description_2'), :mark => 2 },
+        { :name => I18n.t('rubric_criteria.defaults.level_3'),
+          :description => I18n.t('rubric_criteria.defaults.description_3'), :mark => 3 },
+        { :name => I18n.t('rubric_criteria.defaults.level_4'),
+          :description => I18n.t('rubric_criteria.defaults.description_4'), :mark => 4 },
+        ]
+    }}
+    self.update params[:rubric]
   end
 
   # Instantiate a RubricCriterion from a CSV row and attach it to the supplied
