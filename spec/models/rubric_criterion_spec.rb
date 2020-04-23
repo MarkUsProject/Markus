@@ -248,9 +248,9 @@ describe RubricCriterion do
       end
       describe 'levels will be saved when scaling marks up' do
         it 'not raise error' do
-          expect(@levels[1].mark).to eq(1.0)
+          expect(@criterion.levels[1].mark).to eq(1.0)
           @criterion.update(max_mark: 8.0)
-          expect(@levels[1].save).to be true
+          expect(@criterion.levels[1].save).to be true
         end
       end
       describe 'manually changed levels won\'t be affected' do
