@@ -6,68 +6,13 @@
 
 // Styling of marks table
 .grade-input {
-
   > input[type="number"] {
     -moz-appearance: textfield;
     -webkit-appearance: textfield;
-    border-radius: 0;
     border-width: 0;
     height: calc(100% + 2px);
     padding-right: 0.75em;
     text-align: right;
     width: 100%;
-
-    &:invalid {
-      background-color: $light-red;
-    }
   }
-}
-
-.updated,
-.updated:focus,
-.updated:hover {
-  background-color: $light-green;
-}
-
-.grade-total {
-  line-height: 1.5em;
-  text-align: right;
-}
-
-.react-release-marks {
-  display: inline-block;
-  margin-bottom: 0.5em;
-
-  button {
-    margin: 0 0.5em;
-  }
-}
-
-
-.marks-table {
-  table {
-    margin-bottom: 10px;
-    width: 100%;
-
-    td,
-    th {
-      padding: 10;
-      text-align: left;
-    }
-
-    td:last-child,
-    th:last-child {
-      text-align: right;
-    }
-
-    thead {
-      border-bottom: 1px solid $grey;
-    }
-  }
-}
-
-.marks-message {
-  background-color: $white;
-  color: $dark-grey;
-  padding: 0 1em 1em;
 }

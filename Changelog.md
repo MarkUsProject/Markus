@@ -5,6 +5,7 @@
 - Fixed sorting in annotation table in results view (#4542)
 - Fixed N+1 queries in Assignment repo list methods (#4543)
 - Fixed submission download_repo_list file extension (#4543)
+- Fixed inverse association bug with assignments (#4551)
 
 ## [v1.9.0]
 - Added option to anonymize group membership when viewed by graders (#4331)

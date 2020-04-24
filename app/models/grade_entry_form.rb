@@ -11,6 +11,7 @@ class GradeEntryForm < Assessment
 
   has_many                  :grade_entry_students,
                             dependent: :destroy,
+                            inverse_of: :grade_entry_form,
                             foreign_key: :assessment_id
 
   has_many                  :grades, through: :grade_entry_items
