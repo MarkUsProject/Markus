@@ -67,7 +67,7 @@ class RubricCriterion < Criterion
   end
 
   def set_default_levels
-    params = { 
+    params = {
       levels_attributes: [
         { name: I18n.t('rubric_criteria.defaults.level_0'),
           description: I18n.t('rubric_criteria.defaults.description_0'), mark: 0 },

@@ -193,7 +193,7 @@ describe RubricCriterion do
         context 'allow a criterion with the same name to update some levels' do
           it 'not raise error' do
             new_csv_row = @csv_base_row[0..9]
-            new_csv_row[1] = "Very Poor"
+            new_csv_row[1] = 'Very Poor'
             RubricCriterion.create_or_update_from_csv_row(new_csv_row, @assignment)
             @criterion.reload
             levels = @criterion.levels
