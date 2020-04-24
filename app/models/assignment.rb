@@ -24,21 +24,24 @@ class Assignment < Assessment
            -> { order(:position) },
            class_name: 'RubricCriterion',
            dependent: :destroy,
+           inverse_of: :assignment,
            foreign_key: :assessment_id
 
   has_many :flexible_criteria,
            -> { order(:position) },
            class_name: 'FlexibleCriterion',
            dependent: :destroy,
+           inverse_of: :assignment,
            foreign_key: :assessment_id
 
   has_many :checkbox_criteria,
            -> { order(:position) },
            class_name: 'CheckboxCriterion',
            dependent: :destroy,
+           inverse_of: :assignment,
            foreign_key: :assessment_id
 
-  has_many :test_groups, dependent: :destroy, foreign_key: :assessment_id
+  has_many :test_groups, dependent: :destroy, inverse_of: :assignment, foreign_key: :assessment_id
   accepts_nested_attributes_for :test_groups, allow_destroy: true, reject_if: ->(attrs) { attrs[:name].blank? }
 
   has_many :annotation_categories,
@@ -48,7 +51,7 @@ class Assignment < Assessment
 
   has_many :criterion_ta_associations, dependent: :destroy, foreign_key: :assessment_id
 
-  has_many :assignment_files, dependent: :destroy, foreign_key: :assessment_id
+  has_many :assignment_files, dependent: :destroy, inverse_of: :assignment, foreign_key: :assessment_id
   accepts_nested_attributes_for :assignment_files, allow_destroy: true
   validates_associated :assignment_files
 
