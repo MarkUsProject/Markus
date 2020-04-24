@@ -109,13 +109,15 @@ class RubricCriterion < Criterion
     name = working_row.shift
 
     criterion = assignment.get_criteria(:all, :rubric).find_or_create_by(name: name)
-    # Check that the weight is not a string, so that the appropriate max mark can be calculated.
+
     # Only set the position if this is a new record.
     if criterion.new_record?
       criterion.position = assignment.next_criterion_position
     end
 
+    # attributes used to create levels using nested attributes
     attributes = []
+    # all marks used to find maximum mark between existing and uploaded levels
     all_marks = criterion.levels.pluck(:mark)
 
     # there are 3 fields for each level
