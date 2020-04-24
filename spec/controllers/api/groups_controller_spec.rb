@@ -316,25 +316,62 @@ describe Api::GroupsController do
         end
       end
       describe 'when the arguments are invalid' do
-        it_behaves_like 'Invalid_arguments'
+        context 'When the assignment has no submission' do
+          it 'should respond with 404' do
+            post :create_extra_marks,
+                 params: { assignment_id: grouping.assignment.id, id: grouping.group.id, extra_marks: 10.0,
+                           description: 'sample' }
+            expect(response.status).to eq(404)
+          end
+        end
+        context 'when the assignment doest not exist ' do
+          it 'should respond with 404' do
+            post :create_extra_marks,
+                 params: { assignment_id: 9999, id: grouping.group.id, extra_marks: 10.0, description: 'sample' }
+            expect(response.status).to eq(404)
+          end
+        end
+        context 'when the group does not exist' do
+          it 'should respond with 404' do
+            post :create_extra_marks,
+                 params: { assignment_id: grouping.assignment.id, id: 9999, extra_marks: 10.0, description: 'sample' }
+            expect(response.status).to eq(404)
+          end
+        end
       end
     end
     context 'DELETE remove_extra_marks' do
       describe 'when the arguments are invalid' do
-        it_behaves_like 'Invalid_arguments'
+        context 'When the assignment has no submission' do
+          it 'should respond with 404' do
+            delete :remove_extra_marks,
+                   params: { assignment_id: grouping.assignment.id, id: grouping.group.id, extra_marks: 10.0,
+                             description: 'sample' }
+            expect(response.status).to eq(404)
+          end
+        end
+        context 'when the assignment doest not exist ' do
+          it 'should respond with 404' do
+            delete :remove_extra_marks,
+                   params: { assignment_id: 9999, id: grouping.group.id, extra_marks: 10.0, description: 'sample' }
+            expect(response.status).to eq(404)
+          end
+        end
+        context 'when the group does not exist' do
+          it 'should respond with 404' do
+            delete :remove_extra_marks,
+                   params: { assignment_id: grouping.assignment.id, id: 9999, extra_marks: 10.0, description: 'sample' }
+            expect(response.status).to eq(404)
+          end
+        end
       end
       describe 'when the arguments are valid' do
         let(:submission) { create(:version_used_submission, grouping: grouping) }
-        before :each do
-          submission
-          post :create_extra_marks, params: { assignment_id: grouping.assignment.id,
-                                              id: grouping.group.id,
-                                              extra_marks: 10.0,
-                                              description: 'sample' }
-          grouping.reload
+        let(:extra_mark) do
+          create(:extra_mark_points, description: 'sample', extra_mark: 10.0, result: submission.get_latest_result)
         end
         context 'remove extra_mark' do
-          let(:old_mark) { submission.get_latest_result.total_mark }
+          let(:old_mark) { submission.get_latest_result.total_mark + extra_mark.extra_mark }
           before :each do
             old_mark
             delete :remove_extra_marks, params: { assignment_id: grouping.assignment.id,
