@@ -115,17 +115,19 @@ class RubricCriterion < Criterion
       criterion.position = assignment.next_criterion_position
     end
 
+    attributes = []
+    all_marks = criterion.levels.pluck(:mark)
+
     # there are 3 fields for each level
     num_levels = working_row.length / 3
-
-    attributes = []
 
     # create/update the levels
     num_levels.times do
       name = working_row.shift
       description = working_row.shift
       mark = Float(working_row.shift)
-      # if level name exists we will update the level
+      all_marks << mark
+      
       if criterion.levels.exists?(name: name)
         id = criterion.levels.find_by(name: name).id
         attributes.push({ :id => id, :name => name, :description => description, :mark => mark})
@@ -134,12 +136,12 @@ class RubricCriterion < Criterion
       end
     end
 
+    max_mark = all_marks.max
     params = {
+      :max_mark => max_mark,
       :levels_attributes => attributes
     }
-
     criterion.update params
-    criterion.update(max_mark: Float(criterion.levels.maximum('mark')))
   end
 
   # Instantiate a RubricCriterion from a YML entry
