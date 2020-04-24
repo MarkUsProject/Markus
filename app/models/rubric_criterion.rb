@@ -67,8 +67,8 @@ class RubricCriterion < Criterion
   end
 
   def set_default_levels
-    params = { :rubric => {
-      :levels_attributes => [
+    params = { rubric: {
+      levels_attributes: [
         { name: I18n.t('rubric_criteria.defaults.level_0'),
           description: I18n.t('rubric_criteria.defaults.description_0'), mark: 0 },
         { name: I18n.t('rubric_criteria.defaults.level_1'),
