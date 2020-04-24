@@ -2,48 +2,12 @@
 @import 'common/columns';
 @import 'common/assignment_dropdown';
 
-.col-left {
-  width: 40%;
-}
-
-.col-right {
-  width: 50%;
-}
-
-.col-center #icons {
-  left: 45%;
-}
-
 .peer-review-amount-spinner {
-  min-width: 600px;
-  border: solid 1px #000000;
+  background-color: $lighter-blue;
+  border: $dark-grey 1px solid;
   padding: 5px;
-  background-color: #d3d3d3;
-  margin-bottom: 8px;
 }
 
 .peer-review-amount-spinner input {
   margin-left: 5px;
-  width: 75px;
-}
-
-.white {
-  background-color: #FFFFFF;
-}
-
-.assign-all-button {
-  background: asset_url('add_arrow.png') no-repeat center left 5px,
-  -webkit-gradient(linear, left top, left bottom, from(#fff), to(#eee));
-}
-
-.assign-randomly-button {
-  background: asset_url('random_arrow.png') no-repeat center left 5px,
-  -webkit-gradient(linear, left top, left bottom, from(#fff), to(#eee));
-  padding-left: 45px;
-  margin-left: 5px;
-}
-
-.unassign-all-button {
-  background: asset_url('remove_arrow.png') no-repeat center left 5px,
-  -webkit-gradient(linear, left top, left bottom, from(#fff), to(#eee));
 }
