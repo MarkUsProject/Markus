@@ -180,7 +180,6 @@ describe RubricCriterion do
 
         context 'allow a criterion with the same name to add levels' do
           it 'not raise error' do
-            pending('currently we do not upload max mark in csv file so this should fail')
             RubricCriterion.create_or_update_from_csv_row(@csv_base_row, @assignment)
             @criterion.reload
             levels = @criterion.levels
@@ -282,17 +281,17 @@ describe RubricCriterion do
       context 'updating level updates respective mark' do
         describe 'updates a single mark' do
           it 'not raise error' do
-            @criterion.levels[0].update(mark: 0.5)
+            @criterion.levels.order(mark: :asc)[0].update(mark: 0.5)
             @marks.reload
-            expect(@marks[0].mark).to eq(0.5)
+            expect(@marks.order(mark: :asc)[0].mark).to eq(0.5)
           end
         end
 
         describe 'updates multiple marks' do
           it 'not raise error' do
             @criterion.levels[1].update(mark: 0.5)
-            expect(@marks[1].mark).to eq(0.5)
-            expect(@marks[2].mark).to eq(0.5)
+            expect(@marks.order(mark: :asc)[1].mark).to eq(0.5)
+            expect(@marks.order(mark: :asc)[2].mark).to eq(0.5)
           end
         end
       end

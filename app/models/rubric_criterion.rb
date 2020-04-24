@@ -33,6 +33,7 @@ class RubricCriterion < Criterion
 
   def validate_max_mark
     return if self.levels.empty?
+    byebug
     max_level_mark = self.levels.max_by(&:mark).mark
     return if self.max_mark == max_level_mark
     errors.add(:max_mark, 'Max mark of rubric criterion should equal to the max level mark ' + max_level_mark.to_s)
@@ -127,7 +128,7 @@ class RubricCriterion < Criterion
       description = working_row.shift
       mark = Float(working_row.shift)
       all_marks << mark
-      
+
       if criterion.levels.exists?(name: name)
         id = criterion.levels.find_by(name: name).id
         attributes.push({ :id => id, :name => name, :description => description, :mark => mark})
@@ -142,6 +143,7 @@ class RubricCriterion < Criterion
       :levels_attributes => attributes
     }
     criterion.update params
+
     unless criterion.save
       raise CsvInvalidLineError
     end
