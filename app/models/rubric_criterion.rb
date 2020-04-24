@@ -78,7 +78,7 @@ class RubricCriterion < Criterion
         { name: I18n.t('rubric_criteria.defaults.level_3'),
           description: I18n.t('rubric_criteria.defaults.description_3'), mark: 3 },
         { name: I18n.t('rubric_criteria.defaults.level_4'),
-          description: I18n.t('rubric_criteria.defaults.description_4'), mark: 4 },
+          description: I18n.t('rubric_criteria.defaults.description_4'), mark: 4 }
       ]
     } }
     self.update params[:rubric]
@@ -132,15 +132,15 @@ class RubricCriterion < Criterion
 
       if criterion.levels.exists?(name: name)
         id = criterion.levels.find_by(name: name).id
-        attributes.push( id: id, name: name, description: description, mark: mark )
+        attributes.push(id: id, name: name, description: description, mark: mark)
       else
-        attributes.push( name: name, description: description, mark: mark )
+        attributes.push(name: name, description: description, mark: mark)
       end
     end
 
     max_mark = all_marks.max
     params = {
-      max_mark: max_mark, levels_attributes: attributes 
+      max_mark: max_mark, levels_attributes: attributes
     }
     criterion.update params
 
