@@ -178,13 +178,29 @@ describe RubricCriterion do
           end
         end
 
-        context 'allow a criterion with the same name to add levels' do
+        context 'allow a criterion with the same name to add levels and destroy existing levels' do
           it 'not raise error' do
             RubricCriterion.create_or_update_from_csv_row(@csv_base_row, @assignment)
             @criterion.reload
             levels = @criterion.levels
-            expect(levels[0].mark).to eq(0.0)
-            expect(levels.length).to eq(10)
+            expect(levels.order(mark: :asc).first.mark).to eq(10)
+            expect(levels.order(mark: :asc).last.mark).to eq(14)
+            expect('name4').to eq(levels.order(mark: :asc).last.name)
+            expect(levels.length).to eq(5)
+          end
+        end
+
+        context 'allow a criterion with the same name to update some levels' do
+          it 'not raise error' do
+            new_csv_row = @csv_base_row[0..9]
+            new_csv_row[1] = "Very Poor"
+            RubricCriterion.create_or_update_from_csv_row(new_csv_row, @assignment)
+            @criterion.reload
+            levels = @criterion.levels
+            expect(levels.order(mark: :asc).first.mark).to eq(10)
+            expect(levels.order(mark: :asc).last.mark).to eq(12)
+            expect('Very Poor').to eq(levels.order(mark: :asc).first.name)
+            expect(levels.length).to eq(3)
           end
         end
       end

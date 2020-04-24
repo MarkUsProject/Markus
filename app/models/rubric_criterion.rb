@@ -134,6 +134,8 @@ class RubricCriterion < Criterion
       end
     end
 
+    byebug
+    
     # deletes all the existing levels that were not updated
     criterion.levels.destroy(criterion.levels.where.not(id: attributes.pluck(:id)))
 
