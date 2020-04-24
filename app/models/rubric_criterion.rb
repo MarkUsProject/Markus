@@ -67,7 +67,7 @@ class RubricCriterion < Criterion
   end
 
   def set_default_levels
-    params = { rubric: {
+    params = { 
       levels_attributes: [
         { name: I18n.t('rubric_criteria.defaults.level_0'),
           description: I18n.t('rubric_criteria.defaults.description_0'), mark: 0 },
@@ -80,8 +80,8 @@ class RubricCriterion < Criterion
         { name: I18n.t('rubric_criteria.defaults.level_4'),
           description: I18n.t('rubric_criteria.defaults.description_4'), mark: 4 }
       ]
-    } }
-    self.update params[:rubric]
+    }
+    self.update params
   end
 
   # Instantiate a RubricCriterion from a CSV row and attach it to the supplied
@@ -117,9 +117,6 @@ class RubricCriterion < Criterion
 
     # attributes used to create levels using nested attributes
     attributes = []
-    # all marks used to find maximum mark between existing and uploaded levels
-    all_marks = criterion.levels.pluck(:mark)
-
     # there are 3 fields for each level
     num_levels = working_row.length / 3
 
@@ -128,7 +125,6 @@ class RubricCriterion < Criterion
       name = working_row.shift
       description = working_row.shift
       mark = Float(working_row.shift)
-      all_marks << mark
 
       if criterion.levels.exists?(name: name)
         id = criterion.levels.find_by(name: name).id
@@ -138,7 +134,10 @@ class RubricCriterion < Criterion
       end
     end
 
-    max_mark = all_marks.max
+    # deletes all the existing levels that were not updated
+    criterion.levels.destroy(criterion.levels.where.not(id: attributes.pluck(:id)))
+
+    max_mark = attributes.pluck(:mark).max
     params = {
       max_mark: max_mark, levels_attributes: attributes
     }
