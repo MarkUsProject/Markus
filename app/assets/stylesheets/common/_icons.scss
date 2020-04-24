@@ -1,25 +1,25 @@
 .add-new-button::before {
   content: asset_url('icons/add.png');
   padding-right: 5px;
-  vertical-align: top;
+  vertical-align: text-top;
 }
 
 .assign-all-button::before {
   content: asset_url('add_arrow.png');
   padding-right: 5px;
-  vertical-align: top;
+  vertical-align: text-top;
 }
 
 .assign-randomly-button::before {
   content: asset_url('random_arrow.png');
   padding-right: 5px;
-  vertical-align: top;
+  vertical-align: text-top;
 }
 
 .unassign-all-button::before {
   content: asset_url('remove_arrow.png');
   padding-right: 5px;
-  vertical-align: top;
+  vertical-align: text-top;
 }
 
 .add-icon::after {
@@ -55,41 +55,41 @@
 .button.previous::before {
   content: asset_url('icons/arrow_left.png');
   padding-right: 5px;
-  vertical-align: top;
+  vertical-align: text-top;
 }
 
 .button.next::after {
   content: asset_url('icons/arrow_right.png');
   padding-left: 5px;
-  vertical-align: top;
+  vertical-align: text-top;
 }
 
 .set-complete::before {
   content: asset_url('icons/accept.png');
   padding-right: 5px;
-  vertical-align: top;
+  vertical-align: text-top;
 }
 
 .set-incomplete::before {
   content: asset_url('icons/pencil.png');
   padding-right: 5px;
-  vertical-align: top;
+  vertical-align: text-top;
 }
 
 .release::before {
   content: asset_url('icons/email_go.png');
   padding-right: 5px;
-  vertical-align: top;
+  vertical-align: text-top;
 }
 
 .fullscreen-enter::before {
   content: asset_url('icons/fullscreen_enter.png');
   padding-right: 5px;
-  vertical-align: middle;
+  vertical-align: text-top;
 }
 
 .fullscreen-exit::before {
   content: asset_url('icons/fullscreen_exit.png');
   padding-right: 5px;
-  vertical-align: middle;
+  vertical-align: text-top;
 }

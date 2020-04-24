@@ -266,9 +266,10 @@ label.required::after, th.required::after {
   button,
   .button {
     height: 3em;
+    line-height: 2.75em;
     margin-left: 1em;
     min-width: 100px;
-    padding: 0.7em;
+    padding: 0 0.7em;
   }
 }
 
