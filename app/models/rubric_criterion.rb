@@ -33,7 +33,6 @@ class RubricCriterion < Criterion
 
   def validate_max_mark
     return if self.levels.empty?
-    byebug
     max_level_mark = self.levels.max_by(&:mark).mark
     return if self.max_mark == max_level_mark
     errors.add(:max_mark, 'Max mark of rubric criterion should equal to the max level mark ' + max_level_mark.to_s)
