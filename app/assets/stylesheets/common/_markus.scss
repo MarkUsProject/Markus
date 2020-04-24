@@ -156,6 +156,10 @@ textarea {
     border-color: $blue;
   }
 
+  &:invalid {
+    background-color: $light-red;
+  }
+
   &[disabled] {
     background-color: $disabled-grey;
     border-color: $disabled-dark;
@@ -170,6 +174,12 @@ textarea {
 
   &.large-text {
     padding: 1em 1.15em;
+  }
+
+  &.updated,
+  &.updated:focus,
+  &.updated:hover {
+    background-color: $light-green;
   }
 
   &[type='number'] {
