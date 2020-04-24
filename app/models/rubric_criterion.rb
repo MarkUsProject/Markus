@@ -142,6 +142,9 @@ class RubricCriterion < Criterion
       :levels_attributes => attributes
     }
     criterion.update params
+    unless criterion.save
+      raise CsvInvalidLineError
+    end
   end
 
   # Instantiate a RubricCriterion from a YML entry
