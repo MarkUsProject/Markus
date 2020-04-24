@@ -118,6 +118,8 @@ class RubricCriterion < Criterion
     # there are 3 fields for each level
     num_levels = working_row.length / 3
 
+    attributes = []
+
     # create/update the levels
     num_levels.times do
       name = working_row.shift
@@ -125,16 +127,18 @@ class RubricCriterion < Criterion
       mark = Float(working_row.shift)
       # if level name exists we will update the level
       if criterion.levels.exists?(name: name)
-        criterion.levels.find_by(name: name).update(name: name, description: description, mark: mark)
-      # Otherwise, we create a new level
+        id = criterion.levels.find_by(name: name).id
+        attributes.push({ :id => id, :name => name, :description => description, :mark => mark})
       else
-        criterion.levels.create(name: name, description: description, mark: mark)
-      end
-
-      unless criterion.save
-        raise CsvInvalidLineError
+        attributes.push({ :name => name, :description => description, :mark => mark})
       end
     end
+
+    params = {
+      :levels_attributes => attributes
+    }
+
+    criterion.update params
     criterion.update(max_mark: Float(criterion.levels.maximum('mark')))
   end
 
