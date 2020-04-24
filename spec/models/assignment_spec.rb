@@ -103,6 +103,26 @@ describe Assignment do
     end
   end
 
+  describe 'nested attributes' do
+    it 'accepts nested attributes for required files (assignment_files)' do
+      attrs = {
+        short_identifier: 't',
+        description: 't',
+        due_date: Time.current + 1.hour,
+        assignment_files_attributes: [
+          { filename: 't.py' }
+        ]
+      }
+      a = Assignment.new(attrs)
+      a.repository_folder = 't'
+      a.build_assignment_stat
+      a.build_submission_rule
+      a.save!
+
+      expect(a.assignment_files.first.filename).to eq 't.py'
+    end
+  end
+
   describe '#clone_groupings_from' do
     it 'makes an attempt to update repository permissions when cloning groupings' do
       a1 = create(:assignment, assignment_properties_attributes: { vcs_submit: true })
