@@ -79,8 +79,8 @@ class RubricCriterion < Criterion
           description: I18n.t('rubric_criteria.defaults.description_3'), mark: 3 },
         { name: I18n.t('rubric_criteria.defaults.level_4'),
           description: I18n.t('rubric_criteria.defaults.description_4'), mark: 4 },
-        ]
-    }}
+      ]
+    } }
     self.update params[:rubric]
   end
 
