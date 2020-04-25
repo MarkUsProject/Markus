@@ -6,18 +6,6 @@
 
 @import 'common/modals';
 
-.col-left {
-  width: 45%;
-}
-
-.col-right {
-  width: 45%;
-}
-
-.col-center #icons {
-  left: 50%;
-}
-
 .floatRight {
   float: right;
 }
@@ -27,40 +15,6 @@
   line-height: 1.7em;
   padding-bottom: 0.2em;
   width: 100%;
-}
-
-.remove-icon::after {
-  content: asset_url('icons/cross.png');
-  padding-left: 5px;
-  vertical-align: text-top;
-}
-
-.add-icon::after {
-  content: asset_url('icons/add.png');
-  padding-left: 5px;
-  vertical-align: text-top;
-}
-
-.rename-link {
-  background: asset_url('icons/pencil.png') no-repeat;
-  cursor: pointer;
-  float: right;
-  height: 16px;
-  width: 16px;
-}
-
-.valid-icon {
-  background: asset_url('icons/tick.png') no-repeat;
-  cursor: pointer;
-  height: 16px;
-  width: 16px;
-}
-
-.invalid-icon {
-  background: asset_url('icons/cross.png') no-repeat;
-  cursor: pointer;
-  height: 16px;
-  width: 16px;
 }
 
 .toolbar {

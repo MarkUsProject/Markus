@@ -522,7 +522,7 @@ const CriteriaTable = withSelection(RawCriteriaTable);
 class GradersActionBox extends React.Component {
   render = () => {
     return (
-      <div className='rt-action-box icon'>
+      <div className='rt-action-box'>
         <button
           className='assign-all-button'
           onClick={this.props.assignAll}
