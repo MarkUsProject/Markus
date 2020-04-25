@@ -196,6 +196,7 @@ class AutotestManager extends React.Component {
     return (
       <fieldset>
         <legend><span>{I18n.t("automated_tests.student_tests")}</span></legend>
+        <div className='inline-labels'>
         <label className='inline_label' htmlFor='enable_student_tests'>
           {I18n.t('activerecord.attributes.assignment.enable_student_tests')}
         </label>
@@ -206,21 +207,21 @@ class AutotestManager extends React.Component {
           onChange={this.toggleEnableStudentTest}
           disabled={!this.state.enable_test}
         />
-        <div className='student_test_options'>
-          <p>
-            <label className='inline_label' htmlFor='tokens_per_period'>
-              {I18n.t('activerecord.attributes.assignment.tokens_per_period')}
-            </label>
-            <input id='tokens_per_period'
-                   type='number'
-                   min='0'
-                   value={this.state.tokens_per_period}
-                   onChange={this.handleTokensPerPeriodChange}
-                   disabled={this.state.unlimited_tokens ||
-                             !this.state.enable_test ||
-                             !this.state.enable_student_tests}
-            />
-            <span style={{margin: '0 1em'}}>
+        <label className='inline_label' htmlFor='tokens_per_period'>
+          {I18n.t('activerecord.attributes.assignment.tokens_per_period')}
+        </label>
+        <span>
+          <input id='tokens_per_period'
+                 type='number'
+                 min='0'
+                 value={this.state.tokens_per_period}
+                 onChange={this.handleTokensPerPeriodChange}
+                 disabled={this.state.unlimited_tokens ||
+                           !this.state.enable_test ||
+                           !this.state.enable_student_tests}
+                 style={{marginRight: '1em'}}
+          />
+            <span>
               (
               <label className='inline_label' style={{minWidth: 0}} htmlFor='unlimited_tokens'>
                 {I18n.t('activerecord.attributes.assignment.unlimited_tokens')}
@@ -231,71 +232,74 @@ class AutotestManager extends React.Component {
                   onChange={this.toggleUnlimitedTokens}
                   disabled={!this.state.enable_test ||
                             !this.state.enable_student_tests}
+                  style={{marginLeft: '0.5em'}}
                 />
               </label>
               )
             </span>
-          </p>
+        </span>
 
-          <p>
-            <label className='inline_label' htmlFor='token_start_date'>
-              {I18n.t('activerecord.attributes.assignment.token_start_date')}
+        <label className='inline_label' htmlFor='token_start_date'>
+          {I18n.t('activerecord.attributes.assignment.token_start_date')}
+        </label>
+        <Datepicker
+          id='token_start_date'
+          warn_before_now={true}
+          date={this.state.token_start_date}
+          onChange={this.handleTokenStartDateChange}
+          disabled={!this.state.enable_test || !this.state.enable_student_tests}
+        />
+        <label className='inline_label' htmlFor='token_period'>
+          {I18n.t('activerecord.attributes.assignment.token_period')}
+        </label>
+        <span>
+          <input id='token_period'
+                 type='number'
+                 min='0'
+                 step='0.01'
+                 value={this.state.token_period}
+                 onChange={this.handleTokenPeriodChange}
+                 disabled={this.state.unlimited_tokens ||
+                           this.state.non_regenerating_tokens ||
+                           !this.state.enable_test ||
+                           !this.state.enable_student_tests}
+                 style={{marginRight: '1em'}}
+          />
+          {I18n.t('hours')}
+          <span style={{marginLeft: '1em'}}>
+            <label className='inline_label'>
+              ({I18n.t('activerecord.attributes.assignment.non_regenerating_tokens')}
+              <input
+                id='non_regenerating_tokens'
+                type='checkbox'
+                checked={this.state.non_regenerating_tokens}
+                onChange={this.toggleNonRegeneratingTokens}
+                disabled={!this.state.enable_test ||
+                !this.state.enable_student_tests}
+                style={{marginLeft: '0.5em'}}
+              />
+              )
             </label>
-            <Datepicker
-              id='token_start_date'
-              warn_before_now={true}
-              date={this.state.token_start_date}
-              onChange={this.handleTokenStartDateChange}
-              disabled={!this.state.enable_test || !this.state.enable_student_tests}
-            />
-          </p>
-          <p>
-            <label className='inline_label' htmlFor='token_period'>
-              {I18n.t('activerecord.attributes.assignment.token_period')}
-            </label>
-            <input id='token_period'
-                   type='number'
-                   min='0'
-                   step='0.01'
-                   value={this.state.token_period}
-                   onChange={this.handleTokenPeriodChange}
-                   disabled={this.state.unlimited_tokens ||
-                             this.state.non_regenerating_tokens ||
-                             !this.state.enable_test ||
-                             !this.state.enable_student_tests}
-            />
-            {I18n.t('hours')}
-            <span style={{margin: '0 1em'}}>
-              <label className='inline_label'>
-                ({I18n.t('activerecord.attributes.assignment.non_regenerating_tokens')}
-                <input
-                  id='non_regenerating_tokens'
-                  type='checkbox'
-                  checked={this.state.non_regenerating_tokens}
-                  onChange={this.toggleNonRegeneratingTokens}
-                  disabled={!this.state.enable_test ||
-                  !this.state.enable_student_tests}
-                />
-                )
-              </label>
-            </span>
-          </p>
+          </span>
+        </span>
         </div>
-      </fieldset>
+    </fieldset>
     )
   };
 
   render() {
     return (
       <div>
-        <label>
+        <div className='inline-labels'>
           <input
             type='checkbox'
             checked={this.state.enable_test}
             onChange={this.toggleEnableTest}
           />
-          {I18n.t('activerecord.attributes.assignment.enable_test')}
-        </label>
+          <label>
+            {I18n.t('activerecord.attributes.assignment.enable_test')}
+          </label>
+        </div>
         <fieldset>
           <legend><span>{I18n.t("automated_tests.files")}</span></legend>
           <FileManager
@@ -313,10 +317,9 @@ class AutotestManager extends React.Component {
         </fieldset>
         <fieldset>
           <legend><span>{'Testers'}</span></legend>
-          <div className={'upload-download'}>
-            <a href={this.specsDownloadURL()}>{I18n.t('download')}</a>
-            <span className={'menu-bar'}/>
-            <a onClick={this.onSpecUploadModal}>{I18n.t('upload')}</a>
+          <div className={'rt-action-box upload-download'}>
+            <a href={this.specsDownloadURL()} className={'button download-button'}>{I18n.t('download')}</a>
+            <a onClick={this.onSpecUploadModal} className={'button upload-button'}>{I18n.t('upload')}</a>
           </div>
           <Form
             disabled={!this.state.enable_test}
@@ -330,12 +333,14 @@ class AutotestManager extends React.Component {
           </Form>
         </fieldset>
         {this.studentTestsField()}
-        <input type='submit'
-               value={I18n.t('save')}
-               onClick={this.onSubmit}
-               disabled={!this.state.form_changed}
-        >
-        </input>
+        <p>
+          <input type='submit'
+                 value={I18n.t('save')}
+                 onClick={this.onSubmit}
+                 disabled={!this.state.form_changed}
+          >
+          </input>
+        </p>
         <AutotestFileUploadModal
           isOpen={this.state.showFileUploadModal}
           onRequestClose={() => this.setState({showFileUploadModal: false, uploadTarget: undefined})}

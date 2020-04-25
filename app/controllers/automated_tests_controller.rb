@@ -30,6 +30,7 @@ class AutomatedTestsController < ApplicationController
   def manage
     @assignment = Assignment.find(params[:assignment_id])
     @assignment.test_groups.build
+    render layout: 'assignment_content'
   end
 
   def student_interface
