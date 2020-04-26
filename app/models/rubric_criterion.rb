@@ -67,24 +67,22 @@ class RubricCriterion < Criterion
   end
 
   def set_default_levels
-    default_levels = [
-      { 'name' => I18n.t('rubric_criteria.defaults.level_0'),
-        'description' => I18n.t('rubric_criteria.defaults.description_0') },
-      { 'name' => I18n.t('rubric_criteria.defaults.level_1'),
-        'description' => I18n.t('rubric_criteria.defaults.description_1') },
-      { 'name' => I18n.t('rubric_criteria.defaults.level_2'),
-        'description' => I18n.t('rubric_criteria.defaults.description_2') },
-      { 'name' => I18n.t('rubric_criteria.defaults.level_3'),
-        'description' => I18n.t('rubric_criteria.defaults.description_3') },
-      { 'name' => I18n.t('rubric_criteria.defaults.level_4'),
-        'description' => I18n.t('rubric_criteria.defaults.description_4') }
-    ]
-    default_levels.each_with_index do |level, index|
-      # creates a new level and saves it to database
-      self.levels.create!(name: level['name'],
-                          description: level['description'],
-                          mark: index)
-    end
+    params = {
+      max_mark: 4,
+      levels_attributes: [
+        { name: I18n.t('rubric_criteria.defaults.level_0'),
+          description: I18n.t('rubric_criteria.defaults.description_0'), mark: 0 },
+        { name: I18n.t('rubric_criteria.defaults.level_1'),
+          description: I18n.t('rubric_criteria.defaults.description_1'), mark: 1 },
+        { name: I18n.t('rubric_criteria.defaults.level_2'),
+          description: I18n.t('rubric_criteria.defaults.description_2'), mark: 2 },
+        { name: I18n.t('rubric_criteria.defaults.level_3'),
+          description: I18n.t('rubric_criteria.defaults.description_3'), mark: 3 },
+        { name: I18n.t('rubric_criteria.defaults.level_4'),
+          description: I18n.t('rubric_criteria.defaults.description_4'), mark: 4 }
+      ]
+    }
+    self.update params
   end
 
   # Instantiate a RubricCriterion from a CSV row and attach it to the supplied
@@ -112,12 +110,14 @@ class RubricCriterion < Criterion
     name = working_row.shift
 
     criterion = assignment.get_criteria(:all, :rubric).find_or_create_by(name: name)
-    # Check that the weight is not a string, so that the appropriate max mark can be calculated.
+
     # Only set the position if this is a new record.
     if criterion.new_record?
       criterion.position = assignment.next_criterion_position
     end
 
+    # attributes used to create levels using nested attributes
+    attributes = []
     # there are 3 fields for each level
     num_levels = working_row.length / 3
 
@@ -126,19 +126,27 @@ class RubricCriterion < Criterion
       name = working_row.shift
       description = working_row.shift
       mark = Float(working_row.shift)
-      # if level name exists we will update the level
-      if criterion.levels.exists?(name: name)
-        criterion.levels.find_by(name: name).update(name: name, description: description, mark: mark)
-      # Otherwise, we create a new level
-      else
-        criterion.levels.create(name: name, description: description, mark: mark)
-      end
 
-      unless criterion.save
-        raise CsvInvalidLineError
+      if criterion.levels.exists?(name: name)
+        id = criterion.levels.find_by(name: name).id
+        attributes.push(id: id, name: name, description: description, mark: mark)
+      else
+        attributes.push(name: name, description: description, mark: mark)
       end
     end
-    criterion.update(max_mark: Float(criterion.levels.maximum('mark')))
+
+    # deletes all the existing levels that were not updated
+    criterion.levels.destroy(criterion.levels.where.not(id: attributes.pluck(:id)))
+
+    max_mark = attributes.pluck(:mark).max
+    params = {
+      max_mark: max_mark, levels_attributes: attributes
+    }
+    criterion.update params
+
+    unless criterion.save
+      raise CsvInvalidLineError
+    end
   end
 
   # Instantiate a RubricCriterion from a YML entry

@@ -43,6 +43,11 @@ describe RubricCriterion do
       expect(levels[2].name).to eq(I18n.t('rubric_criteria.defaults.level_2'))
       expect(levels[3].name).to eq(I18n.t('rubric_criteria.defaults.level_3'))
       expect(levels[4].name).to eq(I18n.t('rubric_criteria.defaults.level_4'))
+      expect(levels[0].mark).to eq(0)
+      expect(levels[1].mark).to eq(1)
+      expect(levels[2].mark).to eq(2)
+      expect(levels[3].mark).to eq(3)
+      expect(levels[4].mark).to eq(4)
     end
   end
 
@@ -173,14 +178,29 @@ describe RubricCriterion do
           end
         end
 
-        context 'allow a criterion with the same name to add levels' do
+        context 'allow a criterion with the same name to add levels and destroy existing levels' do
           it 'not raise error' do
-            pending('currently we do not upload max mark in csv file so this should fail')
             RubricCriterion.create_or_update_from_csv_row(@csv_base_row, @assignment)
             @criterion.reload
             levels = @criterion.levels
-            expect(levels[0].mark).to eq(0.0)
-            expect(levels.length).to eq(10)
+            expect(levels.order(mark: :asc).first.mark).to eq(10)
+            expect(levels.order(mark: :asc).last.mark).to eq(14)
+            expect('name4').to eq(levels.order(mark: :asc).last.name)
+            expect(levels.length).to eq(5)
+          end
+        end
+
+        context 'allow a criterion with the same name to update some levels' do
+          it 'not raise error' do
+            new_csv_row = @csv_base_row[0..9]
+            new_csv_row[1] = 'Very Poor'
+            RubricCriterion.create_or_update_from_csv_row(new_csv_row, @assignment)
+            @criterion.reload
+            levels = @criterion.levels
+            expect(levels.order(mark: :asc).first.mark).to eq(10)
+            expect(levels.order(mark: :asc).last.mark).to eq(12)
+            expect('Very Poor').to eq(levels.order(mark: :asc).first.name)
+            expect(levels.length).to eq(3)
           end
         end
       end
@@ -277,17 +297,17 @@ describe RubricCriterion do
       context 'updating level updates respective mark' do
         describe 'updates a single mark' do
           it 'not raise error' do
-            @criterion.levels[0].update(mark: 0.5)
+            @criterion.levels.order(mark: :asc)[0].update(mark: 0.5)
             @marks.reload
-            expect(@marks[0].mark).to eq(0.5)
+            expect(@marks.order(mark: :asc)[0].mark).to eq(0.5)
           end
         end
 
         describe 'updates multiple marks' do
           it 'not raise error' do
             @criterion.levels[1].update(mark: 0.5)
-            expect(@marks[1].mark).to eq(0.5)
-            expect(@marks[2].mark).to eq(0.5)
+            expect(@marks.order(mark: :asc)[1].mark).to eq(0.5)
+            expect(@marks.order(mark: :asc)[2].mark).to eq(0.5)
           end
         end
       end
