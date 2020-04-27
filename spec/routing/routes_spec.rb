@@ -1135,22 +1135,6 @@ context 'annotation collection' do
       action: 'add_existing_annotation',
       locale: 'en')
   end
-
-  it 'routes PUT update_annotation properly' do
-    expect(put: path + '/update_annotation').to route_to(
-      controller: ctrl,
-      action: 'update',
-      id: 'update_annotation',
-      locale: 'en')
-  end
-
-  it 'routes DELETE destroy properly' do
-    expect(delete: path + '/destroy').to route_to(
-      controller: ctrl,
-      action: 'destroy',
-      id: 'destroy',
-      locale: 'en')
-  end
 end
 # end annotation route tests
 

@@ -1,5 +1,11 @@
 # Changelog
 ## [unreleased]
+- Fixed bug where the output column was not shown in the test results table if the first row had no output (#4537)
+- Restrict confirmation dialog for annotation editing to annotations that belong to annotation categories (#4540)
+- Fixed sorting in annotation table in results view (#4542)
+- Fixed N+1 queries in Assignment repo list methods (#4543)
+- Fixed submission download_repo_list file extension (#4543)
+- Fixed inverse association bug with assignments (#4551)
 
 ## [v1.9.0]
 - Added option to anonymize group membership when viewed by graders (#4331)

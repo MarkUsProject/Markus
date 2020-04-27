@@ -1,329 +1,316 @@
 describe AnnotationsController do
 
-  context 'An unauthenticated and unauthorized user doing a GET' do
-
-    # Since we are not authenticated and authorized, we should be redirected
-    # to the login page
-
-    it 'on :add_existing_annotation' do
-      get :add_existing_annotation, params: { submission_file_id: 1 }
-      expect(response).to be_redirect
-    end
-
-    it 'on :create' do
-      get :create, params: { id: 1 }
-      expect(response).to be_redirect
-    end
-
-    it 'on :destroy' do
-      delete :destroy, params: { id: 1 }
-      expect(response).to be_redirect
-    end
-
-    it 'on :update_annotation' do
-      put :update_annotation, params: { id: 1 }
-      expect(response).to be_redirect
-    end
-
-  end # end context unauthenticated/unauthorized user GET
-
-  context 'An unauthenticated and unauthorized user doing a POST' do
-
-    # Since we are not authenticated and authorized, we should be redirected
-    # to the login page
-
+  context 'An unauthenticated user' do
     it 'on :add_existing_annotation' do
       post :add_existing_annotation, params: { submission_file_id: 1 }
-      expect(response).to be_redirect
+      assert_response :redirect
     end
 
     it 'on :create' do
       post :create, params: { id: 1 }
-      expect(response).to be_redirect
+      assert_response :redirect
     end
 
     it 'on :destroy' do
-      post :destroy, params: { id: 1 }
-      expect(response).to be_redirect
+      delete :destroy, params: { id: 1 }
+      assert_response :redirect
     end
 
-    it 'on :update_annotation' do
-      put :update_annotation, params: { id: 1 }
-      expect(response).to be_redirect
+    it 'on :update' do
+      put :update, params: { id: 1 }
+      assert_response :redirect
     end
-
   end
 
-  context 'An authenticated and authorized admin doing a POST' do
-    before :each do
-      # Authenticate user is not timed out, and has administrator rights.
-      @a = Admin.create(user_name: 'admin',
-                         last_name: 'admin',
-                         first_name: 'admin')
+  let(:result) { create(:result, marking_state: Result::MARKING_STATES[:incomplete]) }
+  let(:submission) { result.submission }
+  let(:assignment) { submission.assignment }
+  let(:submission_file) { create(:submission_file, submission: submission) }
+  let(:image_submission_file) { create(:image_submission_file, submission: submission) }
+  let(:pdf_submission_file) { create(:pdf_submission_file, submission: submission) }
+  let(:annotation_category) { create(:annotation_category, assignment: assignment) }
+  let(:annotation_text) { create(:annotation_text, annotation_category: annotation_category) }
+
+  shared_examples 'an authenticated admin or TA' do
+    describe '#add_existing_annotation' do
+      it 'successfully creates a text annotation' do
+        post_as user,
+                :add_existing_annotation,
+                params: { annotation_text_id: annotation_text.id, submission_file_id: submission_file.id, line_start: 1,
+                          line_end: 1, column_start: 1, column_end: 1, result_id: result.id },
+                format: :js
+
+        assert_response :success
+        expect(result.annotations.reload.size).to eq 1
+      end
+
+      it 'successfully creates an image annotation' do
+        post_as user,
+                :add_existing_annotation,
+                params: { annotation_text_id: annotation_text.id, submission_file_id: image_submission_file.id,
+                          x1: 0, x2: 1, y1: 0, y2: 1, result_id: result.id },
+                format: :js
+
+        assert_response :success
+        expect(result.annotations.reload.size).to eq 1
+      end
+
+      it 'successfully creates a PDF annotation' do
+        post_as user,
+                :add_existing_annotation,
+                params: { annotation_text_id: annotation_text.id, submission_file_id: pdf_submission_file.id,
+                          x1: 0, x2: 1, y1: 0, y2: 1, page: 1, result_id: result.id },
+                format: :js
+
+        assert_response :success
+        expect(result.annotations.reload.size).to eq 1
+      end
     end
 
-    let(:annotation_category) { FactoryBot.create(:annotation_category) }
-    let(:annotation_text) { FactoryBot.create(:annotation_text) }
-    let(:assignment) { FactoryBot.create(:assignment) }
-    let(:submission) { FactoryBot.create(:submission) }
-    let(:result) { FactoryBot.create(:result, marking_state: Result::MARKING_STATES[:incomplete]) }
-    let(:submission_file) { SubmissionFile.create!(submission_id: submission.id, filename: 'test.txt')}
+    describe '#new' do
+      it 'renders the correct template' do
+        get_as user,
+               :new,
+               params: { result_id: result.id, assignment_id: assignment.id },
+               format: :js
 
-    it 'on :add_existing_annotation' do
-      post_as @a,
-              :add_existing_annotation,
-              params: { annotation_text_id: annotation_text.id, submission_file_id: submission_file.id, line_start: 1,
-                        line_end: 1, column_start: 1, column_end: 1, result_id: result.id },
-              format: :js
-      expect(response.status).to eq(200)
-      expect(assigns(:annotation)).to be_truthy
-      expect(assigns(:text)).to be_truthy
-      expect(response).to render_template('create')
-    end # End context :add_existing_annotation
-
-    it 'on :create to make a text annotation' do
-      post_as @a,
-              :create,
-              params: { content: annotation_text.content, category_id: annotation_category.id,
-                        submission_file_id: submission_file.id, line_start: 1, line_end: 1, column_start: 1,
-                        column_end: 1, annotation_type: 'text', result_id: result.id, assignment_id: assignment.id },
-              format: :js
-      expect(response.status).to eq(200)
-      expect(assigns(:submission_file)).to be_truthy
-      expect(assigns(:annotation)).to be_truthy
-      expect(assigns(:annotations)).to be_truthy
-      expect(response).to render_template('create')
-    end # End context :create text
-
-    it 'on :create to make an image annotation' do
-      post_as @a,
-              :create,
-              params: { content: annotation_text.content, category_id: annotation_category.id,
-                        submission_file_id: submission_file.id, x1: 0, x2: 1, y1: 0, y2: 1, annotation_type: 'image',
-                        result_id: result.id, assignment_id: assignment.id },
-              format: :js
-      expect(response.status).to eq(200)
-      expect(assigns(:submission_file)).to be_truthy
-      expect(assigns(:annotation)).to be_truthy
-      expect(assigns(:annotations)).to be_truthy
-      expect(response).to render_template('create')
-    end # End context :create image
-
-    it 'on :destroy' do
-      anno = TextAnnotation.create!({
-               line_start: 1, line_end: 1,
-               column_start: 1, column_end: 1,
-               annotation_text_id: annotation_text.id,
-               submission_file_id:  submission_file.id,
-               annotation_number: 1,
-               is_remark: false,
-               creator: @a,
-               result_id: result.id})
-      post_as @a,
-              :destroy,
-              params: { id: anno.id, submission_file_id: submission_file.id, assignment_id: assignment.id,
-                        result_id: result.id },
-              format: :js
-      expect(response.status).to eq(200)
-      expect(response).to render_template('destroy')
-    end # End context :destroy
-
-    it 'on :update_annotation' do
-      anno = TextAnnotation.create!({
-              line_start: 1, line_end: 1,
-              column_start: 1, column_end: 1,
-              annotation_text_id: annotation_text.id,
-              submission_file_id:  submission_file.id,
-              annotation_number: 1,
-              is_remark: false,
-              creator: @a,
-              result_id: result.id})
-      put_as @a,
-             :update_annotation,
-             params: { id: anno.id, assignment_id: assignment.id, submission_file_id: submission_file.id,
-                       result_id: result.id, content: annotation_text.content },
-             format: :js
-      expect(response.status).to eq(200)
-      expect(response).to render_template('update_annotation')
-    end # End context :update_annotation
-
-  end #End context admin POST
-
-  context 'An authenticated and authorized TA doing a POST' do
-    before :each do
-      # Authenticate user is not timed out, and has TA rights.
-      @ta = Ta.create(user_name: 'ta',
-                       last_name: 'ta',
-                       first_name: 'ta')
+        assert_response :success
+        expect(response).to render_template('new')
+      end
     end
 
-    let(:annotation_category) { FactoryBot.create(:annotation_category) }
-    let(:annotation_text) { FactoryBot.create(:annotation_text) }
-    let(:assignment) { FactoryBot.create(:assignment) }
-    let(:submission) { FactoryBot.create(:submission) }
-    let(:result) { FactoryBot.create(:result, marking_state: Result::MARKING_STATES[:incomplete]) }
-    let(:submission_file) { SubmissionFile.create!(submission_id: submission.id, filename: 'test.txt')}
+    describe '#create' do
+      it 'successfully creates a text annotation' do
+        post_as user,
+                :create,
+                params: { content: annotation_text.content, category_id: annotation_category.id,
+                          submission_file_id: submission_file.id, line_start: 1, line_end: 1, column_start: 1,
+                          column_end: 1, result_id: result.id, assignment_id: assignment.id },
+                format: :js
 
-    it 'on :add_existing_annotation' do
-      post_as @ta,
-              :add_existing_annotation,
-              params: { annotation_text_id: annotation_text.id, submission_file_id: submission_file.id, line_start: 1,
-                        line_end: 1, column_start: 1, column_end: 1, result_id: result.id },
-              format: :js
-      expect(response.status).to eq(200)
-      expect(assigns(:annotation)).to be_truthy
-      expect(assigns(:text)).to be_truthy
-      expect(response).to render_template('create')
-    end # End context :add_existing_annotation
+        assert_response :success
+        expect(result.annotations.reload.size).to eq 1
+      end
 
-    it 'on :create to make a text annotation' do
-      post_as @ta,
-              :create,
-              params: { content: annotation_text.content, category_id: annotation_category.id,
-                        submission_file_id: submission_file.id, line_start: 1, line_end: 1, column_start: 1,
-                        column_end: 1, annotation_type: 'text', result_id: result.id, assignment_id: assignment.id },
-              format: :js
-      expect(response.status).to eq(200)
-      expect(assigns(:submission_file)).to be_truthy
-      expect(assigns(:annotation)).to be_truthy
-      expect(assigns(:annotations)).to be_truthy
-      expect(response).to render_template('create')
-    end # End context :create text
+      it 'successfully creates an image annotation' do
+        post_as user,
+                :create,
+                params: { content: annotation_text.content, category_id: annotation_category.id,
+                          submission_file_id: image_submission_file.id, x1: 0, x2: 1, y1: 0, y2: 1,
+                          result_id: result.id, assignment_id: assignment.id },
+                format: :js
 
-    it 'on :create to make an image annotation' do
-      post_as @ta,
-              :create,
-              params: { content: annotation_text.content, category_id: annotation_category.id,
-                        submission_file_id: submission_file.id, x1: 0, x2: 1, y1: 0, y2: 1, annotation_type: 'image',
-                        result_id: result.id, assignment_id: assignment.id },
-              format: :js
-      expect(response.status).to eq(200)
-      expect(assigns(:submission_file)).to be_truthy
-      expect(assigns(:annotation)).to be_truthy
-      expect(assigns(:annotations)).to be_truthy
-      expect(response).to render_template('create')
-    end # End context :create image
+        expect(response.status).to eq(200)
+        expect(result.annotations.reload.size).to eq 1
+      end
 
-    it 'on :destroy' do
-      anno = TextAnnotation.create!({
-              line_start: 1, line_end: 1,
-              column_start: 1, column_end: 1,
-              annotation_text_id: annotation_text.id,
-              submission_file_id:  submission_file.id,
-              annotation_number: 1,
-              is_remark: false,
-              creator: @ta,
-              result_id: result.id})
-      post_as @ta,
-              :destroy,
-              params: { id: anno.id, submission_file_id: submission_file.id, assignment_id: assignment.id,
-                        result_id: result.id },
-              format: :js
-      expect(response.status).to eq(200)
-      expect(response).to render_template('destroy')
-    end # End context :destroy
+      it 'successfully creates a PDF annotation' do
+        post_as user,
+                :create,
+                params: { content: annotation_text.content, category_id: annotation_category.id,
+                          submission_file_id: pdf_submission_file.id, x1: 0, x2: 1, y1: 0, y2: 1, page: 1,
+                          result_id: result.id, assignment_id: assignment.id },
+                format: :js
 
-    it 'on :update_annotation' do
-      anno = TextAnnotation.create!({
-              line_start: 1, line_end: 1,
-              column_start: 1, column_end: 1,
-              annotation_text_id: annotation_text.id,
-              submission_file_id:  submission_file.id,
-              annotation_number: 1,
-              is_remark: false,
-              creator: @ta,
-              result_id: result.id})
-      put_as @ta,
-             :update_annotation,
-             params: { id: anno.id, assignment_id: assignment.id, submission_file_id: submission_file.id,
-                       result_id: result.id, content: annotation_text.content },
-             format: :js
-      expect(response.status).to eq(200)
-      expect(response).to render_template('update_annotation')
-    end # End context :update_annotation
+        expect(response.status).to eq(200)
+        expect(result.annotations.reload.size).to eq 1
+      end
+    end
 
-  end #End context TA POST
+    describe '#destroy' do
+      it 'destroys the annotation when there is only one annotation for the result' do
+        anno = create(
+          :text_annotation,
+          annotation_text: annotation_text,
+          submission_file: submission_file,
+          creator: user,
+          result: result
+        )
+        delete_as user,
+                  :destroy,
+                  params: { id: anno.id, submission_file_id: submission_file.id, assignment_id: assignment.id,
+                            result_id: result.id },
+                  format: :js
+
+        assert_response :success
+        expect(result.annotations.reload.size).to eq 0
+      end
+
+      it 'destroys an annotation when there are multiple annotations for the result' do
+        annotations = []
+        3.times do |_|
+          annotations << create(
+            :text_annotation,
+            annotation_text: annotation_text,
+            submission_file: submission_file,
+            creator: user,
+            result: result
+          )
+        end
+
+        delete_as user,
+                  :destroy,
+                  params: { id: annotations[1].id, submission_file_id: submission_file.id, assignment_id: assignment.id,
+                            result_id: result.id },
+                  format: :js
+
+        assert_response :success
+
+        # Check that there are only two annotations remaining.
+        expect(result.annotations.reload.size).to eq 2
+
+        # Check that the annotations were renumbered.
+        expect(result.annotations.pluck(:annotation_number).sort).to eq [1, 2]
+      end
+
+      it 'does not destroy the associated annotation text if the text belongs to an annotation category' do
+        anno = create(
+          :text_annotation,
+          annotation_text: annotation_text,
+          submission_file: submission_file,
+          creator: user,
+          result: result
+        )
+        delete_as user,
+                  :destroy,
+                  params: { id: anno.id, submission_file_id: submission_file.id, assignment_id: assignment.id,
+                            result_id: result.id },
+                  format: :js
+
+        expect(AnnotationText.exists?(annotation_text.id)).to be true
+      end
+
+      it 'destroys the associated annotation text if the text is one time only' do
+        new_text = create(:annotation_text, annotation_category: nil)
+        anno = create(
+          :text_annotation,
+          annotation_text: new_text,
+          submission_file: submission_file,
+          creator: user,
+          result: result
+        )
+        delete_as user,
+                  :destroy,
+                  params: { id: anno.id, submission_file_id: submission_file.id, assignment_id: assignment.id,
+                            result_id: result.id },
+                  format: :js
+
+        expect(AnnotationText.exists?(new_text.id)).to be false
+      end
+    end
+
+    describe '#edit' do
+      it 'renders the correct template' do
+        anno = create(
+          :text_annotation,
+          submission_file: submission_file,
+          creator: user,
+          result: result
+        )
+        get_as user,
+               :edit,
+               params: { id: anno.id, result_id: result.id, assignment_id: assignment.id },
+               format: :js
+
+        assert_response :success
+        expect(response).to render_template('edit')
+      end
+    end
+
+    describe '#update' do
+      it 'successfully updates annotation text' do
+        anno = create(
+          :text_annotation,
+          submission_file: submission_file,
+          creator: user,
+          result: result
+        )
+        put_as user,
+               :update,
+               params: { id: anno.id, assignment_id: assignment.id, submission_file_id: submission_file.id,
+                         result_id: result.id, content: 'new content' },
+               format: :js
+        assert_response :success
+        expect(anno.annotation_text.reload.content).to eq 'new content'
+      end
+    end
+  end
+
+  describe 'an authenticated admin' do
+    let!(:user) { create(:admin) }
+    include_examples 'an authenticated admin or TA'
+  end
+
+  describe 'an authenticated TA' do
+    let!(:user) { create(:admin) }
+    include_examples 'an authenticated admin or TA'
+  end
 
   context 'An authenticated and authorized Student doing a POST' do
-    before :each do
-      # A student should get a 404 even if they do everything right
-      @stu = Student.create(user_name: 'sta',
-                      last_name: 'ta',
-                      first_name: 'ta')
+    let(:user) { create(:student) }
+
+    describe '#add_existing_annotation' do
+      it 'returns a :not_found status code' do
+        post_as user,
+                :add_existing_annotation,
+                params: { annotation_text_id: annotation_text.id, submission_file_id: submission_file.id, line_start: 1,
+                          line_end: 1, column_start: 1, column_end: 1, result_id: result.id },
+                format: :js
+
+        assert_response :not_found
+        expect(result.annotations.reload.size).to eq 0
+      end
     end
 
-    let(:annotation_category) { FactoryBot.create(:annotation_category) }
-    let(:annotation_text) { FactoryBot.create(:annotation_text) }
-    let(:assignment) { FactoryBot.create(:assignment) }
-    let(:submission) { FactoryBot.create(:submission) }
-    let(:result) { FactoryBot.create(:result, marking_state: Result::MARKING_STATES[:incomplete]) }
-    let(:submission_file) { SubmissionFile.create!(submission_id: submission.id, filename: 'test.txt')}
+    describe '#create' do
+      it 'returns a :not_found status code' do
+        post_as user,
+                :create,
+                params: { content: annotation_text.content, category_id: annotation_category.id,
+                          submission_file_id: submission_file.id, line_start: 1, line_end: 1, column_start: 1,
+                          column_end: 1, result_id: result.id, assignment_id: assignment.id },
+                format: :js
 
-    it 'on :add_existing_annotation' do
-      post_as @stu,
-              :add_existing_annotation,
-              params: { annotation_text_id: annotation_text.id, submission_file_id: submission_file.id, line_start: 1,
-                        line_end: 1, column_start: 1, column_end: 1, result_id: result.id },
-              format: :js
-      expect(response.status).to eq(404)
-    end # End context :add_existing_annotation
+        assert_response :not_found
+        expect(result.annotations.reload.size).to eq 0
+      end
+    end
 
-    it 'on :create to make a text annotation' do
-      post_as @stu,
-              :create,
-              params: { content: annotation_text.content, category_id: annotation_category.id,
-                        submission_file_id: submission_file.id, line_start: 1, line_end: 1, column_start: 1,
-                        column_end: 1, annotation_type: 'text', result_id: result.id, assignment_id: assignment.id },
-              format: :js
-      expect(response.status).to eq(404)
-    end # End context :create text
+    describe '#destroy' do
+      it 'returns a :not_found status code' do
+        anno = create(
+          :text_annotation,
+          annotation_text: annotation_text,
+          submission_file: submission_file,
+          result: result
+        )
+        delete_as user,
+                  :destroy,
+                  params: { id: anno.id, submission_file_id: submission_file.id, assignment_id: assignment.id,
+                            result_id: result.id },
+                  format: :js
 
-    it 'on :create to make an image annotation' do
-      post_as @stu,
-              :create,
-              params: { content: annotation_text.content, category_id: annotation_category.id,
-                        submission_file_id: submission_file.id, x1: 0, x2: 1, y1: 0, y2: 1, annotation_type: 'image',
-                        result_id: result.id, assignment_id: assignment.id },
-              format: :js
-      expect(response.status).to eq(404)
-    end # End context :create image
+        assert_response :not_found
+        expect(result.annotations.reload.size).to eq 1
+      end
+    end
 
-    it 'on :destroy' do
-      anno = TextAnnotation.create!({
-                line_start: 1, line_end: 1,
-                column_start: 1, column_end: 1,
-                annotation_text_id: annotation_text.id,
-                submission_file_id:  submission_file.id,
-                annotation_number: 1,
-                is_remark: false,
-                creator: @stu,
-                result_id: result.id})
-      post_as @stu,
-              :destroy,
-              params: { id: anno.id, submission_file_id: submission_file.id, assignment_id: assignment.id,
-                        result_id: result.id },
-              format: :js
-      expect(response.status).to eq(404)
-    end # End context :destroy
-
-    it 'on :update_annotation' do
-      anno = TextAnnotation.create!({
-                line_start: 1, line_end: 1,
-                column_start: 1, column_end: 1,
-                annotation_text_id: annotation_text.id,
-                submission_file_id:  submission_file.id,
-                annotation_number: 1,
-                is_remark: false,
-                creator: @stu,
-                result_id: result.id})
-      put_as @stu,
-             :update_annotation,
-             params: { id: anno.id, assignment_id: assignment.id, submission_file_id: submission_file.id,
-                       result_id: result.id, content: annotation_text.content },
-             format: :js
-      expect(response.status).to eq(404)
-    end # End context :update_annotation
-
-  end #End context Student POST
-
+    describe '#update' do
+      it 'returns a :not_found status code' do
+        anno = create(
+          :text_annotation,
+          submission_file: submission_file,
+          creator: user,
+          result: result
+        )
+        put_as user,
+               :update,
+               params: { id: anno.id, assignment_id: assignment.id, submission_file_id: submission_file.id,
+                         result_id: result.id, content: 'new content' },
+               format: :js
+        assert_response :not_found
+        expect(anno.annotation_text.reload.content).to_not eq 'new content'
+      end
+    end
+  end
 end

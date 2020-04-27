@@ -24,21 +24,24 @@ class Assignment < Assessment
            -> { order(:position) },
            class_name: 'RubricCriterion',
            dependent: :destroy,
+           inverse_of: :assignment,
            foreign_key: :assessment_id
 
   has_many :flexible_criteria,
            -> { order(:position) },
            class_name: 'FlexibleCriterion',
            dependent: :destroy,
+           inverse_of: :assignment,
            foreign_key: :assessment_id
 
   has_many :checkbox_criteria,
            -> { order(:position) },
            class_name: 'CheckboxCriterion',
            dependent: :destroy,
+           inverse_of: :assignment,
            foreign_key: :assessment_id
 
-  has_many :test_groups, dependent: :destroy, foreign_key: :assessment_id
+  has_many :test_groups, dependent: :destroy, inverse_of: :assignment, foreign_key: :assessment_id
   accepts_nested_attributes_for :test_groups, allow_destroy: true, reject_if: ->(attrs) { attrs[:name].blank? }
 
   has_many :annotation_categories,
@@ -48,7 +51,7 @@ class Assignment < Assessment
 
   has_many :criterion_ta_associations, dependent: :destroy, foreign_key: :assessment_id
 
-  has_many :assignment_files, dependent: :destroy, foreign_key: :assessment_id
+  has_many :assignment_files, dependent: :destroy, inverse_of: :assignment, foreign_key: :assessment_id
   accepts_nested_attributes_for :assignment_files, allow_destroy: true
   validates_associated :assignment_files
 
@@ -469,23 +472,21 @@ class Assignment < Assessment
 
   # Get a list of repo checkout client commands to be used for scripting
   def get_repo_checkout_commands
-    repo_commands = []
-    self.groupings.each do |grouping|
+    self.groupings.includes(:group, :current_submission_used).map do |grouping|
       submission = grouping.current_submission_used
       next if submission&.revision_identifier.nil?
-      repo_commands << Repository.get_class.get_checkout_command(grouping.group.repository_external_access_url,
-                                                                 submission.revision_identifier,
-                                                                 grouping.group.group_name, repository_folder)
-    end
-    repo_commands
+      Repository.get_class.get_checkout_command(grouping.group.repository_external_access_url,
+                                                submission.revision_identifier,
+                                                grouping.group.group_name, repository_folder)
+    end.compact
   end
 
   # Get a list of group_name, repo-url pairs
   def get_repo_list
     CSV.generate do |csv|
-      self.groupings.each do |grouping|
+      self.groupings.includes(:group).each do |grouping|
         group = grouping.group
-        csv << [group.group_name,group.repository_external_access_url]
+        csv << [group.group_name, group.repository_external_access_url]
       end
     end
   end

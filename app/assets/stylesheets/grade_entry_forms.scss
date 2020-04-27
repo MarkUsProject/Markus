@@ -1,123 +1,18 @@
 @import 'common/core';
 
-
-fieldset {
-  box-shadow: none;
-  margin-top: 2em;
-
-  div {
-    margin: 0.5em 0;
-  }
-
-  // Save button in form
-  & + input[type='submit'] {
-    margin-top: 1.5em;
-  }
-
-  // "Specify column names and totals:"
-  h4 {
-    margin-top: 1.5em;
-  }
-
-  #grade_entry_items {
-    border-top: 1px solid $grey !important;
-    margin-top: 1em;
-
-    fieldset.grade_entry_item {
-      border-bottom: 1px solid $grey !important;
-      margin-top: 0;
-
-      legend span {
-        top: 0;
-      }
-
-      p {
-        margin-left: 0.5em;
-      }
-
-      // Delete link
-      a {
-        display: block;
-      }
-    }
-  }
-}
-
-label {
-  display: inline-block;
-  min-width: 12em;
-  margin-top: 5px;
-}
-
-// Column "Out Of" labels
-input + label {
-  min-width: 0;
+#grade_entry_items {
+  margin-top: 1em;
 }
 
 // Styling of marks table
 .grade-input {
-
   > input[type="number"] {
     -moz-appearance: textfield;
     -webkit-appearance: textfield;
-    border-radius: 0;
     border-width: 0;
     height: calc(100% + 2px);
     padding-right: 0.75em;
     text-align: right;
     width: 100%;
-
-    &:invalid {
-      background-color: $light-red;
-    }
   }
-}
-
-.updated,
-.updated:focus,
-.updated:hover {
-  background-color: $light-green;
-}
-
-.grade-total {
-  line-height: 1.5em;
-  text-align: right;
-}
-
-.react-release-marks {
-  display: inline-block;
-  margin-bottom: 0.5em;
-
-  button {
-    margin: 0 0.5em;
-  }
-}
-
-
-.marks-table {
-  table {
-    margin-bottom: 10px;
-    width: 100%;
-
-    td,
-    th {
-      padding: 10;
-      text-align: left;
-    }
-
-    td:last-child,
-    th:last-child {
-      text-align: right;
-    }
-
-    thead {
-      border-bottom: 1px solid $grey;
-    }
-  }
-}
-
-.marks-message {
-  background-color: $white;
-  color: $dark-grey;
-  padding: 0 1em 1em;
 }

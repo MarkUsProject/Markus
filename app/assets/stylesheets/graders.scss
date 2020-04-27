@@ -1,32 +1,11 @@
 @import 'common/core';
 @import 'common/columns';
 
-.assign-all-button {
-  background: asset_url('add_arrow.png') no-repeat center left 5px,
-  -webkit-gradient(linear, left top, left bottom, from(#fff), to(#eee));
-}
-
-.assign-randomly-button {
-  background: asset_url('random_arrow.png') no-repeat center left 5px,
-  -webkit-gradient(linear, left top, left bottom, from(#fff), to(#eee));
-}
-
-.unassign-all-button {
-  background: asset_url('remove_arrow.png') no-repeat center left 5px,
-  -webkit-gradient(linear, left top, left bottom, from(#fff), to(#eee));
-}
-
 .grader-row {
   display: block;
   line-height: 1.7em;
   padding-bottom: 0.2em;
   width: 100%;
-}
-
-.remove-icon::after {
-  content: asset_url('icons/cross.png');
-  padding-left: 5px;
-  vertical-align: text-top;
 }
 
 .grader-summary-graph {

@@ -103,6 +103,26 @@ describe Assignment do
     end
   end
 
+  describe 'nested attributes' do
+    it 'accepts nested attributes for required files (assignment_files)' do
+      attrs = {
+        short_identifier: 't',
+        description: 't',
+        due_date: Time.current + 1.hour,
+        assignment_files_attributes: [
+          { filename: 't.py' }
+        ]
+      }
+      a = Assignment.new(attrs)
+      a.repository_folder = 't'
+      a.build_assignment_stat
+      a.build_submission_rule
+      a.save!
+
+      expect(a.assignment_files.first.filename).to eq 't.py'
+    end
+  end
+
   describe '#clone_groupings_from' do
     it 'makes an attempt to update repository permissions when cloning groupings' do
       a1 = create(:assignment, assignment_properties_attributes: { vcs_submit: true })
@@ -793,9 +813,8 @@ describe Assignment do
           before :each do
             2.times do
               g = create(:grouping, assignment: @assignment)
-              # StudentMembership.make({grouping: g,membership_status: StudentMembership::STATUSES[:inviter] } )
-              s = create(:submission, grouping: g)
-              r = s.get_latest_result
+              s = create(:version_used_submission, grouping: g)
+              r = s.current_result
               2.times do
                 create(:rubric_mark, result: r)  # this is create marks under rubric criterion
                 # if we create(:flexible_mark, groping: g)
@@ -840,6 +859,7 @@ describe Assignment do
               end
               g.save
             end
+            create(:version_used_submission, grouping: @assignment.groupings.first)
           end
 
           it 'be able to get_repo_checkout_commands' do
