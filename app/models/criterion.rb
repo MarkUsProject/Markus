@@ -167,7 +167,7 @@ class Criterion < ApplicationRecord
   end
 
   def results_unreleased?
-    return if self.marks.empty?
+    return true if self.marks.empty?
     released = self.marks.joins(:result).where('results.released_to_students' => true)
     if released.empty?
       true

@@ -12,7 +12,7 @@ class RubricCriterion < Criterion
 
   has_many :tas, through: :criterion_ta_associations
 
-  has_many :levels, -> { order(:mark) }, dependent: :destroy
+  has_many :levels, -> { order(:mark) }, inverse_of: :rubric_criterion, dependent: :destroy
   accepts_nested_attributes_for :levels, allow_destroy: true
   before_validation :scale_marks_if_max_mark_changed
   validate :validate_max_mark
@@ -33,7 +33,7 @@ class RubricCriterion < Criterion
 
   def validate_max_mark
     return if self.levels.empty?
-    max_level_mark = self.levels.max_by(&:mark).mark
+    max_level_mark = self.levels.map(&:mark).compact.max
     return if self.max_mark == max_level_mark
     errors.add(:max_mark, 'Max mark of rubric criterion should equal to the max level mark ' + max_level_mark.to_s)
   end
@@ -167,22 +167,22 @@ class RubricCriterion < Criterion
   #                   ta_visible: true/false
   #                   peer_visible: true/false
   def self.load_from_yml(criterion_yml)
-    name = criterion_yml[0]
-    # Create a new RubricCriterion
-    criterion = RubricCriterion.new
-    criterion.name = name
-    criterion.max_mark = criterion_yml[1]['max_mark']
-    # Visibility options
-    criterion.ta_visible = criterion_yml[1]['ta_visible'] unless criterion_yml[1]['ta_visible'].nil?
-    criterion.peer_visible = criterion_yml[1]['peer_visible'] unless criterion_yml[1]['peer_visible'].nil?
-    levels = []
+    attrs = {
+      name: criterion_yml[0],
+      max_mark: criterion_yml[1]['max_mark'],
+      levels_attributes: []
+    }
+    attrs[:ta_visible] = criterion_yml[1]['ta_visible'] unless criterion_yml[1]['ta_visible'].nil?
+    attrs[:peer_visible] = criterion_yml[1]['peer_visible'] unless criterion_yml[1]['peer_visible'].nil?
     criterion_yml[1]['levels'].each do |level_name, level_yml|
-      levels << criterion.levels.build(rubric_criterion: criterion,
-                                       name: level_name,
-                                       description: level_yml['description'],
-                                       mark: level_yml['mark'])
+      attrs[:levels_attributes] << {
+        name: level_name,
+        description: level_yml['description'],
+        mark: level_yml['mark']
+      }
     end
-    [criterion, levels]
+
+    RubricCriterion.new(attrs)
   end
 
   # Returns a hash containing the information of a single rubric criterion.
@@ -193,8 +193,8 @@ class RubricCriterion < Criterion
                                      'ta_visible' => self.ta_visible,
                                      'peer_visible' => self.peer_visible } }
     self.levels.each do |level|
-      levels_to_yml[self.name]['levels'][level.name] = { 'description': level.description,
-                                                         'mark': level.mark }
+      levels_to_yml[self.name]['levels'][level.name] = { 'description' => level.description,
+                                                         'mark' => level.mark }
     end
     levels_to_yml
   end

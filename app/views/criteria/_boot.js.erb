@@ -58,6 +58,11 @@
       }
       $(this).val('');
     });
+    // Change destroy checkbox into a link.
+    let delete_link = $('<a></a>').text(I18n.t("rubric_criteria.level.delete.new"));
+    delete_link.on('click', () => new_level.remove());
+    new_level.find('.destroy_checkbox').replaceWith(delete_link);
+
     rubric_form.prepend(new_level);
   }
 </script>

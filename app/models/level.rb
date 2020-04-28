@@ -15,9 +15,10 @@ class Level < ApplicationRecord
   before_update :update_associated_marks
 
   def only_update_if_results_unreleased
-    self.rubric_criterion.results_unreleased?
-    return if self.rubric_criterion.errors.empty?
-    errors.add(:base, 'Cannot update level once results are released.')
+    return if self.rubric_criterion.nil? # When the level is first being created
+    unless self.rubric_criterion.results_unreleased?
+      errors.add(:base, 'Cannot update level once results are released.')
+    end
   end
 
   def destroy_associated_marks
@@ -26,7 +27,12 @@ class Level < ApplicationRecord
 
   def update_associated_marks
     return unless self.changed.include?('mark')
-    mark_changes = self.changes['mark']
-    self.rubric_criterion.marks.where(mark: mark_changes[0]).update(mark: mark_changes[1])
+    old_mark, new_mark = self.changes['mark']
+    if self.rubric_criterion.changes.include?('max_mark')
+      old_max_mark, new_max_mark = self.rubric_criterion.changes['max_mark']
+      # Skip update if this change is caused
+      return if old_mark * new_max_mark == new_mark * old_max_mark
+    end
+    self.rubric_criterion.marks.where(mark: old_mark).update(mark: new_mark)
   end
 end

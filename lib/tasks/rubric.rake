@@ -36,12 +36,10 @@ namespace :db do
           attributes.push(lvl)
         end
 
-        params = { rubric: {
+        RubricCriterion.create!(
           name: random_sentences(1), assessment_id: assignment.id,
           position: index + 1, max_mark: 4, levels_attributes: attributes
-        } }
-
-        RubricCriterion.create!(params[:rubric])
+        )
       end
 
       3.times do |index|
