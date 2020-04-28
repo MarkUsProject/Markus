@@ -22,8 +22,7 @@ describe PenaltyDecayPeriodSubmissionRule do
 
       # Add two 24 hour penalty decay periods
       # Overtime begins in two days.
-      add_period_helper(@assignment.submission_rule,24,10,12)
-      add_period_helper(@assignment.submission_rule,24,10,12)
+      2.times { create :period, submission_rule: @assignment.submission_rule, hours: 24, deduction: 10, interval: 12 }
       # Collection date is in 4 days.
       @assignment.save
 
@@ -62,8 +61,9 @@ describe PenaltyDecayPeriodSubmissionRule do
           @assignment.due_date = Time.now + 2.days
           # Add two 24 hour penalty decay periods
           # Overtime begins in two days.
-          add_period_helper(@assignment.submission_rule, 24, 10, 12)
-          add_period_helper(@assignment.submission_rule, 24, 10, 12)
+          2.times do
+            create :period, submission_rule: @assignment.submission_rule, hours: 24, deduction: 10, interval: 12
+          end
           # Collection date is in 4 days.
           @assignment.save
           @grouping.create_grouping_repository_folder
@@ -266,14 +266,4 @@ describe PenaltyDecayPeriodSubmissionRule do
     txn.add(path, file_contents, '')
     return txn
   end
-
-  def add_period_helper(submission_rule, hours, deduction_amount, interval)
-    period = Period.new
-    period.submission_rule = submission_rule
-    period.hours = hours
-    period.deduction = deduction_amount
-    period.interval = interval
-    period.save
-  end
-
 end

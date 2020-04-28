@@ -24,8 +24,7 @@ describe GracePeriodSubmissionRule do
         @assignment.due_date = Time.parse('July 23 2009 5:00PM')
         # Add two 24 hour grace periods
         # Overtime begins at July 23 @ 5PM
-        add_period_helper(@assignment.submission_rule, 24)
-        add_period_helper(@assignment.submission_rule, 24)
+        2.times { create :period, submission_rule: @assignment.submission_rule, hours: 24 }
         # Collect date is now after July 25 @ 5PM
         @assignment.save
       end
@@ -74,8 +73,7 @@ describe GracePeriodSubmissionRule do
             @assignment.due_date = Time.parse('July 23 2009 5:00PM')
             # Add two 24 hour grace periods
             # Overtime begins at July 23 @ 5PM
-            add_period_helper(@assignment.submission_rule, 24)
-            add_period_helper(@assignment.submission_rule, 24)
+            2.times { create :period, submission_rule: @assignment.submission_rule, hours: 24 }
             # Collect date is now after July 25 @ 5PM
             @assignment.save
           end
@@ -394,8 +392,7 @@ describe GracePeriodSubmissionRule do
           @assignment2.due_date = Time.parse('July 28 2009 5:00PM')
           # Add two 24 hour grace periods
           # Overtime begins at July 28 @ 5PM
-          add_period_helper(@assignment2.submission_rule, 24)
-          add_period_helper(@assignment2.submission_rule, 24)
+          2.times { create :period, submission_rule: @assignment.submission_rule, hours: 24 }
           # Collect date is now after July 30 @ 5PM
           @assignment2.save
         end

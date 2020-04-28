@@ -35,6 +35,11 @@ describe CreateGroupsJob do
     end
   end
 
+  context 'when running as a background job' do
+    let(:job_args) { [assignment, [['group1', 'group_0001', student1.user_name, student2.user_name]]] }
+    include_examples 'background job'
+  end
+
   context 'when creating one group from scratch' do
     before :each do
       @data = [['group1', 'group_0001', student1.user_name, student2.user_name]]
