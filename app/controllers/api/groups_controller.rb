@@ -161,6 +161,89 @@ module Api
         HttpStatusHelper::ERROR_CODE['message']['200'] }, status: 200
     end
 
+    def create_extra_marks
+      assignment = Assignment.find_by_id(params[:assignment_id])
+      if assignment.nil?
+        render 'shared/http_status', locals: { code: '404', message:
+            'No assignment exists with that id' }, status: 404
+        return
+      end
+      group = Group.find_by_id(params[:id])
+      if group.nil?
+        render 'shared/http_status', locals: { code: '404', message:
+            'No group exists with that id' }, status: 404
+        return
+      end
+      if group.grouping_for_assignment(params[:assignment_id])
+              .has_submission?
+        result = group.grouping_for_assignment(params[:assignment_id])
+                      .current_submission_used
+                      .get_latest_result
+      else
+        render 'shared/http_status', locals: { code: '404', message:
+            'No submissions exist for that group' }, status: 404
+        return
+      end
+      begin
+        ExtraMark.create!(result_id: result.id, extra_mark: params[:extra_marks],
+                          description: params[:description], unit: ExtraMark::POINTS)
+      rescue ActiveRecord::RecordInvalid => e
+        # Some error occurred
+        render 'shared/http_status', locals: { code: '500', message:
+            e.message }, status: 500
+        return
+      end
+      result.update_total_mark
+      render 'shared/http_status', locals: { code: '200', message:
+          'Extra mark created successfully' }, status: 200
+    end
+
+    def remove_extra_marks
+      assignment = Assignment.find_by_id(params[:assignment_id])
+      if assignment.nil?
+        render 'shared/http_status', locals: { code: '404', message:
+            'No assignment exists with that id' }, status: 404
+        return
+      end
+
+      group = Group.find_by_id(params[:id])
+      if group.nil?
+        render 'shared/http_status', locals: { code: '404', message:
+            'No group exists with that id' }, status: 404
+        return
+      end
+      if group.grouping_for_assignment(params[:assignment_id])
+              .has_submission?
+        result = group.grouping_for_assignment(params[:assignment_id])
+                      .current_submission_used
+                      .get_latest_result
+      else
+        render 'shared/http_status', locals: { code: '404', message:
+            'No submissions exist for that group' }, status: 404
+        return
+      end
+      extra_mark = ExtraMark.find_by(result_id: result.id,
+                                     description: params[:description],
+                                     extra_mark: params[:extra_marks])
+      if extra_mark.nil?
+        render 'shared/http_status', locals: { code: '404', message:
+            'No such Extra Mark exist for that result' }, status: 404
+        return
+      end
+      begin
+        extra_mark.destroy
+      rescue ActiveRecord::RecordNotDestroyed => e
+        # Some other error occurred
+        render 'shared/http_status', locals: { code: '500', message:
+            e.message }, status: 500
+        return
+      end
+      result.update_total_mark
+      # Successfully deleted the Extra Mark; render success
+      render 'shared/http_status', locals: { code: '200', message:
+          'Extra mark removed successfully' }, status: 200
+    end
+
     def annotations
       if params[:id]
         grouping_relation = Grouping.where(group_id: params[:id])
