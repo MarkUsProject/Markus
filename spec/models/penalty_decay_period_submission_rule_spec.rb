@@ -61,8 +61,9 @@ describe PenaltyDecayPeriodSubmissionRule do
           @assignment.due_date = Time.now + 2.days
           # Add two 24 hour penalty decay periods
           # Overtime begins in two days.
-          2.times { create :period, submission_rule: @assignment.submission_rule,
-                           hours: 24, deduction: 10, interval: 12 }
+          2.times do
+            create :period, submission_rule: @assignment.submission_rule, hours: 24, deduction: 10, interval: 12
+          end
           # Collection date is in 4 days.
           @assignment.save
           @grouping.create_grouping_repository_folder

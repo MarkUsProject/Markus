@@ -11,7 +11,7 @@ describe GenerateJob do
 
   context 'when generating pdfs' do
     before :each do
-      allow(CombinePDF).to receive(:load).and_wrap_original { |m| m.call file }
+      allow(CombinePDF).to(receive(:load).and_wrap_original { |m| m.call file })
       allow_any_instance_of(CombinePDF::PDF).to receive(:save)
     end
 

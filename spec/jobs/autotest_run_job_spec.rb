@@ -37,12 +37,10 @@ describe AutotestRunJob do
         expect { subject }.to change { TestBatch.count }.from(0).to(1)
       end
       it 'should not create a new batch if there is only one run' do
-        expect do
-          described_class.perform_now(host_with_port, user.id, test_run_info_not_created[0...1])
-        end.not_to change { TestBatch.count }
+        args = [host_with_port, user.id, test_run_info_not_created[0...1]]
+        expect { described_class.perform_now(*args) }.not_to change { TestBatch.count }
       end
     end
     it_behaves_like 'shared autotest job tests', 'run test job'
   end
 end
-
