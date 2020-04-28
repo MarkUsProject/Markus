@@ -23,8 +23,8 @@ class MemoryRevision < Repository::AbstractRevision
       return true # the root in a repository always exists
     end
     @files.each do |object|
-      object_fqpn = File.join(object.path, object.name) # fqpn is: fully qualified pathname :-)
-      if object_fqpn == path
+      object_fqpn = Pathname.new(object.path) +  object.name # fqpn is: fully qualified pathname :-)
+      if object_fqpn == Pathname.new(path)
         return true
       end
     end

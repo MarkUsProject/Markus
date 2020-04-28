@@ -39,13 +39,6 @@ module Helpers
     txn
   end
 
-  def add_period_helper(submission_rule, hours)
-    period = Period.new
-    period.submission_rule = submission_rule
-    period.hours = hours
-    period.save
-  end
-
   def submit_file(assignment, grouping, filename = 'file', content = 'content')
     grouping.group.access_repo do |repo|
       txn = repo.get_transaction('test')

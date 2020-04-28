@@ -25,8 +25,7 @@ describe PenaltyPeriodSubmissionRule do
         @assignment.due_date = Time.parse('July 23 2009 5:00PM')
         # Add two 24 hour penalty periods, each with a 10% penalty
         # Overtime begins at July 23 @ 5PM
-        add_period_helper(@assignment.submission_rule, 24, 10)
-        add_period_helper(@assignment.submission_rule, 24, 10)
+        2.times { create :period, submission_rule: @assignment.submission_rule, hours: 24, deduction: 10 }
         # Collect date is now after July 25 @ 5PM
         @assignment.save
       end
@@ -71,8 +70,7 @@ describe PenaltyPeriodSubmissionRule do
             @assignment.due_date = Time.parse('July 23 2009 5:00PM')
             # Add two 24 hour grace periods
             # Overtime begins at July 23 @ 5PM
-            add_period_helper(@assignment.submission_rule, 24, 10)
-            add_period_helper(@assignment.submission_rule, 24, 10)
+            2.times { create :period, submission_rule: @assignment.submission_rule, hours: 24, deduction: 10 }
             # Collect date is now after July 25 @ 5PM
             @assignment.save
           end
@@ -271,13 +269,5 @@ describe PenaltyPeriodSubmissionRule do
     path = File.join(@assignment.repository_folder, file_name)
     txn.add(path, file_contents, '')
     txn
-  end
-
-  def add_period_helper(submission_rule, hours, deduction_amount)
-    period = Period.new
-    period.submission_rule = submission_rule
-    period.hours = hours
-    period.deduction = deduction_amount
-    period.save
   end
 end
