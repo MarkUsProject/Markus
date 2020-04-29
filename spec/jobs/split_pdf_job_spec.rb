@@ -1,7 +1,7 @@
-xdescribe SplitPdfJob do
-  let (:admin) { create(:admin) }
-  let (:exam_template) { create(:exam_template_midterm) }
-  
+describe SplitPdfJob do
+  let(:admin) { create(:admin) }
+  let(:exam_template) { create(:exam_template_midterm) }
+
   before(:each) do
     FileUtils.mkdir_p File.join(exam_template.base_path, 'raw')
     FileUtils.mkdir_p File.join(exam_template.base_path, 'error')
@@ -27,6 +27,19 @@ xdescribe SplitPdfJob do
 
     # Ideally there would be no scan errors, but we'll use a higher tolerance here.
     expect(split_pdf_log.num_pages_qr_scan_error).to be <= 5
+  end
+
+  context 'when running as a background job' do
+    let(:job_args) do
+      split_pdf_log = exam_template.split_pdf_logs.create(filename: 'midterm_scan_1-20.pdf',
+                                                          original_num_pages: 6,
+                                                          num_groups_in_complete: 0,
+                                                          num_groups_in_incomplete: 0,
+                                                          num_pages_qr_scan_error: 0,
+                                                          user: admin)
+      [exam_template, '', split_pdf_log, 'midterm_scan_100.pdf', admin]
+    end
+    include_examples 'background job'
   end
 
   it 'correctly splits a PDF with one valid test paper with pages out of order' do
