@@ -1,4 +1,5 @@
-<!--- Provide a summary of your changes in the Pull Request Title above -->
+<!--- Provide a summary of your changes in the Pull Request Title above. -->
+<!--- If this is a work in progress (not yet ready to be merged), add the "WIP" label to this pull request. -->
 
 ## Motivation and Context
 <!--- Why is this pull request required? What problem does it solve? -->
@@ -36,15 +37,13 @@
 
 ## Checklist
 
-- [ ] My code follows the code style of this project.
-  - [ ] I have fixed any Hound bot comments (check after opening pull request).
 - [ ] I have performed a self-review of my own code.
-- [ ] All new and existing tests passed.
-  - [ ] I have checked that the TravisCI tests have passed (check after opening pull request).
-- [ ] I have added tests to cover my changes.
-  - [ ] I have reviewed the test coverage changes (check after opening pull request).
+- [ ] I have added tests for my changes, if applicable.
 - [ ] I have updated the Changelog.md file.
 - [ ] My change requires a change to the documentation (add details below).
+- [ ] I have fixed any Hound bot comments (check after opening pull request).
+- [ ] I have verified that the TravisCI tests have passed (check after opening pull request).
+- [ ] I have reviewed the test coverage changes reported on Coveralls (check after opening pull request).
 
 
 ### Required documentation changes (if applicable)
