@@ -25,12 +25,8 @@ shared_examples 'run testers job' do
       expect { subject }.to raise_error(RuntimeError, data)
     end
     it 'should not write to the testers.json file' do
-      begin
-        subject
-      rescue RuntimeError
-        # do nothing
-      end
-      expect(File.exists?(File.join(tmp_dir, 'testers.json'))).to be false
+      expect { subject }.to raise_error(RuntimeError)
+      expect(File.exist?(File.join(tmp_dir, 'testers.json'))).to be false
     end
   end
 end
