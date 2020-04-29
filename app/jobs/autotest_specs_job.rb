@@ -18,7 +18,7 @@ class AutotestSpecsJob < ApplicationJob
 
     begin
       if server_username.nil?
-        # files copied locally with no authentication
+        # tests executed locally with no authentication
         scripts_command = [server_command, 'specs', '-j', JSON.generate(server_kwargs)]
         output, status = Open3.capture2e(*scripts_command)
         if status.exitstatus != 0
@@ -35,7 +35,6 @@ class AutotestSpecsJob < ApplicationJob
           end
         end
       end
-      # TODO: Use output for something?
     end
   end
 end
