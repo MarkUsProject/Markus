@@ -254,34 +254,21 @@ describe RubricCriterion do
     end
 
     context 'when scaling max mark' do
-      describe 'can scale levels up' do
-        it 'not raise error' do
-          expect(@criterion.levels[1].mark).to eq(1.0)
-          @criterion.update(max_mark: 8.0)
-          expect(@criterion.levels[1].mark).to eq(2.0)
-        end
+      it 'can scale level marks up' do
+        expect(@criterion.levels[1].mark).to eq(1.0)
+        @criterion.update!(max_mark: 8.0)
+        expect(@criterion.levels[1].mark).to eq(2.0)
       end
-      describe 'can scale levels down' do
-        it 'not raise error' do
-          expect(@criterion.levels[1].mark).to eq(1.0)
-          @criterion.update(max_mark: 2.0)
-          expect(@criterion.levels[1].mark).to eq(0.5)
-        end
+      it 'scale level marks down' do
+        expect(@criterion.levels[1].mark).to eq(1.0)
+        @criterion.update!(max_mark: 2.0)
+        expect(@criterion.levels[1].mark).to eq(0.5)
       end
-      describe 'levels will be saved when scaling marks up' do
-        it 'not raise error' do
-          expect(@criterion.levels[1].mark).to eq(1.0)
-          @criterion.update(max_mark: 8.0)
-          expect(@criterion.levels[1].save).to be true
-        end
-      end
-      describe 'manually changed levels won\'t be affected' do
-        it 'not raise error' do
-          expect(@criterion.levels[1].mark).to eq(1.0)
-          @criterion.levels[1].mark = 3
-          @criterion.update(max_mark: 8.0)
-          expect(@criterion.levels[1].mark).to eq(3.0)
-        end
+      it 'does not scale level marks that have been manually changed' do
+        expect(@criterion.levels[1].mark).to eq(1.0)
+        @criterion.levels[1].mark = 3
+        @criterion.update!(max_mark: 8.0)
+        expect(@criterion.levels[1].mark).to eq(3.0)
       end
     end
 
