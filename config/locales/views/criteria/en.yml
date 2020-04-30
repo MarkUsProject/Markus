@@ -24,7 +24,7 @@ en:
       Graders will see the criteria in the order that they are displayed to
       left. To change the order, drag a criterion to the desired location
       in the list."
-    help_ta_visibility_message: "Teaching assistants will be able to see the criterion."
+    help_ta_visibility_message: "Graders and admins will be able to see the criterion."
     help_peer_visibility_message: "Peer reviewers will be able to see the criterion."
     help_editing_flexible_criteria_message: "
       Criteria names, descriptions, maximum values and visibility can be modified."
