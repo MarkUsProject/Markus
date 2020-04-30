@@ -8,6 +8,7 @@
 - Fixed submission download_repo_list file extension (#4543)
 - Fixed inverse association bug with assignments (#4551)
 - Enabled customization of rubric criterion level number and marks (#4535)
+- Fixed bug preventing creation of assignments with submission rules (#4557)
 
 ## [v1.9.0]
 - Added option to anonymize group membership when viewed by graders (#4331)
