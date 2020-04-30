@@ -7,6 +7,7 @@
 - Fixed N+1 queries in Assignment repo list methods (#4543)
 - Fixed submission download_repo_list file extension (#4543)
 - Fixed inverse association bug with assignments (#4551)
+- Enabled customization of rubric criterion level number and marks (#4535)
 
 ## [v1.9.0]
 - Added option to anonymize group membership when viewed by graders (#4331)

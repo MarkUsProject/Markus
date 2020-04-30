@@ -311,6 +311,16 @@ ActiveRecord::Schema.define(version: 202000319204954) do
     t.datetime "updated_at"
   end
 
+  create_table "levels", force: :cascade do |t|
+    t.bigint "rubric_criterion_id", null: false
+    t.string "name", null: false
+    t.string "description", null: false
+    t.float "mark", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["rubric_criterion_id"], name: "index_levels_on_rubric_criterion_id"
+  end
+
   create_table "marking_schemes", id: :serial, force: :cascade do |t|
     t.string "name"
     t.datetime "created_at"
@@ -397,16 +407,6 @@ ActiveRecord::Schema.define(version: 202000319204954) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer "position"
-    t.text "level_0_name"
-    t.text "level_0_description"
-    t.text "level_1_name"
-    t.text "level_1_description"
-    t.text "level_2_name"
-    t.text "level_2_description"
-    t.text "level_3_name"
-    t.text "level_3_description"
-    t.text "level_4_name"
-    t.text "level_4_description"
     t.decimal "max_mark", precision: 10, scale: 1, null: false
     t.integer "assigned_groups_count", default: 0
     t.boolean "ta_visible", default: true, null: false
@@ -608,6 +608,7 @@ ActiveRecord::Schema.define(version: 202000319204954) do
   add_foreign_key "feedback_files", "submissions"
   add_foreign_key "groupings", "assessments", name: "fk_groupings_assignments"
   add_foreign_key "groupings", "groups", name: "fk_groupings_groups"
+  add_foreign_key "levels", "rubric_criteria"
   add_foreign_key "marks", "results", name: "fk_marks_results", on_delete: :cascade
   add_foreign_key "memberships", "groupings", name: "fk_memberships_groupings"
   add_foreign_key "memberships", "users", name: "fk_memberships_users"

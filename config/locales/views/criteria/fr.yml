@@ -50,6 +50,11 @@ fr:
   rubric_criteria:
     level:
       level_index: "Niveau %{index}"
+      new: "Nouveau Niveau"
+      add: "Ajouter un Niveau"
+      delete:
+        new: Supprimer un Nouveau Niveau
+        checkbox: "Supprimer Niveau"
     defaults:
       level_0: "Très insuffisant"
       level_1: "Insuffisant"

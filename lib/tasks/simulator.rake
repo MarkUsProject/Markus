@@ -85,13 +85,19 @@ namespace :markus do
             max_mark: max_mark_3},
           {name: "Uses For Loop",
            max_mark: max_mark_4}]
-        default_levels = {level_0_name: "Quite Poor", level_0_description: "This criterion was not satisifed whatsoever", level_1_name: "Satisfactory", level_1_description: "This criterion was satisfied", level_2_name: "Good", level_2_description: "This criterion was satisfied well", level_3_name: "Great", level_3_description: "This criterion was satisfied really well!", level_4_name: "Excellent", level_4_description: "This criterion was satisfied excellently"}
+        default_levels = [
+          { name: 'Quite Poor', description: 'This criterion was not satisfied whatsoever', mark: 0 },
+          { name: 'Satisfactory', description: 'This criterion was satisfied', mark: 1 },
+          { name: 'Good', description: 'This criterion was satisfied well', mark: 2 },
+          { name: 'Great', description: 'This criterion was satisfied really well!', mark: 3 },
+          { name: 'Excellent', description: 'This criterion was satisfied excellently', mark: 4 }
+        ]
         rubric_criteria.each do |rubric_criterion|
-          rc = RubricCriterion.create
-          rc.update(rubric_criterion)
-          rc.update(default_levels)
-          rc.assignment = assignment
-          rc.save!
+          params = { rubric: {
+            assignment: assignment, levels_attributes: default_levels
+          } }
+          rubric_criterion.merge(params[:rubric])
+          RubricCriterion.create(rubric_criterion)
           assignment.get_criteria << rc
         end
         assignment.save

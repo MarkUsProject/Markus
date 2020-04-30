@@ -55,6 +55,11 @@
     float: right;
   }
 
+
+  .button_to {
+    display: inline-block;
+  }
+
   label.bold_inline_label {
     display: inline-block;
     font-weight: 600;
@@ -80,19 +85,16 @@
     border-left: 1px solid $grey;
     display: table-cell;
     padding-left: 1em;
+    width: 100%;
 
     .rubric_level_header {
       margin-bottom: 0.5em;
     }
 
-    input {
-      margin-bottom: 0.5em;
-    }
-
-    textarea {
-      height: 150px;
-      margin-bottom: 1.5em;
-      width: 100%;
+    .level {
+      border-top: 1px solid $grey;
+      margin: 0.5em 0;
+      padding: 0.5em 0;
     }
   }
 

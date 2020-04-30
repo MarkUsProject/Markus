@@ -156,13 +156,7 @@ class ResultsController < ApplicationController
         common_fields = [:id, :name, :position, :max_mark]
         marks_map = [CheckboxCriterion, FlexibleCriterion, RubricCriterion].flat_map do |klass|
           if klass == RubricCriterion
-            fields = common_fields + [
-              :level_0_name, :level_0_description,
-              :level_1_name, :level_1_description,
-              :level_2_name, :level_2_description,
-              :level_3_name, :level_3_description,
-              :level_4_name, :level_4_description
-            ]
+            fields = common_fields
           else
             fields = common_fields + [:description]
           end
@@ -174,8 +168,16 @@ class ResultsController < ApplicationController
                                .where('marks.result_id': result.id)
                                .pluck_to_hash(*fields, 'marks.mark')
                                .group_by { |h| h[:id] }
-          criteria_info.map do |h|
-            info = marks_info[h[:id]]&.first || h.merge('marks.mark': nil)
+          # adds a criterion type to each of the marks info hashes
+          criteria_info.map do |cr|
+            info = marks_info[cr[:id]]&.first || cr.merge('marks.mark': nil)
+
+            # adds a levels field to the marks info hash with the same rubric criterion id
+            if klass == RubricCriterion
+              info[:levels] = Level.where(rubric_criterion_id: cr[:id])
+                                   .order(:mark)
+                                   .pluck_to_hash(:name, :description, :mark)
+            end
             info.merge(criterion_type: klass.name)
           end
         end

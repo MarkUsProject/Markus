@@ -27,12 +27,15 @@ class CriteriaController < ApplicationController
       return
     end
     criterion_class = params[:criterion_type].constantize
-    @criterion = criterion_class.new
+    @criterion = criterion_class.new(
+      name: params[:new_criterion_prompt],
+      assignment: @assignment,
+      max_mark: params[:max_mark_prompt],
+      position: @assignment.next_criterion_position
+    )
     @criterion.set_default_levels if params[:criterion_type] == 'RubricCriterion'
-    if @criterion.update(name: params[:new_criterion_prompt],
-                         assignment: @assignment,
-                         max_mark: params[:max_mark_prompt],
-                         position: @assignment.next_criterion_position)
+
+    if @criterion.save
       flash_now(:success, t('flash.actions.create.success',
                             resource_name: criterion_class.model_name.human))
     else
@@ -220,20 +223,11 @@ class CriteriaController < ApplicationController
     params.require(:rubric_criterion).permit(:name,
                                              :assignment,
                                              :position,
-                                             :level_0_name,
-                                             :level_0_description,
-                                             :level_1_name,
-                                             :level_1_description,
-                                             :level_2_name,
-                                             :level_2_description,
-                                             :level_3_name,
-                                             :level_3_description,
-                                             :level_4_name,
-                                             :level_4_description,
                                              :ta_visible,
                                              :peer_visible,
-                                             assignment_files: []).to_h.deep_merge(params.require(:rubric_criterion)
-                                                                           .permit(:max_mark).to_h)
+                                             :max_mark,
+                                             levels_attributes: [:id, :name, :mark, :description, :_destroy],
+                                             assignment_files: [])
   end
 
   def checkbox_criterion_params

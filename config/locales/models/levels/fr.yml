@@ -1,0 +1,11 @@
+fr:
+  activerecord:
+    models:
+      level:
+        one: "Niveau"
+        other: "Niveaux"
+    attributes:
+      level:
+        name: "Nom"
+        mark: "Note"
+        description: "Description"

@@ -47,6 +47,11 @@ en:
   rubric_criteria:
     level:
       level_index: "Level %{index}"
+      new: "New Level"
+      add: "Add Level"
+      delete:
+        new: "Delete New Level"
+        checkbox: "Delete Level %{index}"
     defaults:
       level_0: "Very Poor"
       level_1: "Weak"
