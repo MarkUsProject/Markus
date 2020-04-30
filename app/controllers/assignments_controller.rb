@@ -758,18 +758,6 @@ class AssignmentsController < ApplicationController
         :_destroy,
         :id,
         :filename
-      ],
-      submission_rule_attributes: [
-        :_destroy,
-        :id,
-        :type,
-        { periods_attributes: [
-          :id,
-          :deduction,
-          :interval,
-          :hours,
-          :_destroy
-        ] }
       ]
     )
   end
