@@ -1,26 +1,25 @@
 <%#
 # Erb template for display rubric criterion levels in the assignment rubric manager
 %>
-<%= criterion_form.fields_for :levels do |level_form| %>
+<%= criterion_form.fields_for :levels, criterion_form.object.levels.order(:mark) do |level_form| %>
   <div class='level'>
-    <div id = "display_name" class="rubric_level_header">
-      <%= I18n.t("rubric_criteria.level.level_index", index: level_form.index.to_s) %>
+    <div class="rubric_level_header">
+      <span id="display_name">
+        <%= I18n.t("rubric_criteria.level.level_index", index: level_form.index.to_s) %>
+      </span>
+      <span class="float_right destroy_checkbox">
+        <%= level_form.check_box :_destroy %>
+        <%= level_form.label :_destroy, I18n.t("rubric_criteria.level.delete.checkbox", index: level_form.index.to_s) %>
+      </span>
     </div>
-    <div class="destroy_checkbox">
-      <%= level_form.check_box :_destroy %>
-      <%= level_form.label :_destroy, I18n.t("rubric_criteria.level.delete.checkbox", index: level_form.index.to_s) %>
-    </div>
-    <div class="level_name">
+    <div class="inline-labels">
       <%= level_form.label :name, Level.human_attribute_name(:name), class: 'required' %>
-      <%= level_form.text_field :name %>
-    </div>
-    <div class="level_mark">
+      <%= level_form.text_field :name, required: true %>
       <%= level_form.label :mark, class: 'required' %>
-      <%= level_form.number_field :mark, step: 0.1 %>
-    </div>
-    <div class="level_description">
-      <%= level_form.label :description, Level.human_attribute_name(:description), class: 'description required' %>
-      <%= level_form.text_area :description %>
+      <%= level_form.number_field :mark, step: 0.1, required: true %>
+      <%= level_form.label :description, Level.human_attribute_name(:description),
+                           class: 'description' %>
+      <%= level_form.text_area :description, cols: 50, rows: 5 %>
     </div>
   </div>
 <% end %>

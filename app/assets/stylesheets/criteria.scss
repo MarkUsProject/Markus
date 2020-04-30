@@ -55,6 +55,11 @@
     float: right;
   }
 
+
+  .button_to {
+    display: inline-block;
+  }
+
   label.bold_inline_label {
     display: inline-block;
     font-weight: 600;
@@ -87,30 +92,13 @@
       display: inline-block;
       font-weight: 600;
       min-width: 8em;
-    }
-
-    .description {
-      margin-bottom: 1em;
-    }
-
-    input[type='number'] {
-      width: 5em;
-    }
-
-    input {
-      margin-bottom: 0.5em;
-    }
-
-    label {
-      display: inline-block;
-      margin-top: 5px;
-      min-width: 12em;
-    }
-
-    textarea {
-      height: 150px;
-      margin-bottom: 1.5em;
       width: 100%;
+    }
+
+    .level {
+      border-top: 1px solid $grey;
+      padding: 0.5em 0;
+      margin: 0.5em 0;
     }
   }
 

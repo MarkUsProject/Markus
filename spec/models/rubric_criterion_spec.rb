@@ -11,6 +11,7 @@ describe RubricCriterion do
     it { is_expected.to validate_numericality_of(:max_mark) }
     it { is_expected.to validate_presence_of(:max_mark) }
     it { is_expected.to validate_presence_of(:name) }
+    it { is_expected.to validate_presence_of(:levels) }
 
     it 'rounds weights that have more than 1 significant digits' do
       expect(RubricCriterion.count).to be > 0
@@ -331,31 +332,6 @@ describe RubricCriterion do
     end
 
     context 'validations work properly' do
-      describe 'validates max mark can\'t be greater than maximum level mark' do
-        it 'expects criterion to be invalid' do
-          expect(@criterion.levels.order(mark: :desc).last.mark).to eq(4.0)
-          expect(@criterion.max_mark).to eq(4.0)
-          @criterion.update(max_mark: 5.0)
-          @criterion.levels.order(mark: :desc).last.update(mark: 3.5)
-          @criterion.save
-          @criterion.reload
-          expect(@criterion.valid?).to be false
-        end
-        it 'expects criterion to be valid' do
-          expect(@criterion.levels.order(mark: :desc).last.mark).to eq(4.0)
-          expect(@criterion.max_mark).to eq(4.0)
-          @criterion.update(max_mark: 5.0)
-          @criterion.levels.order(mark: :desc).last.update(mark: 5.0)
-          @criterion.save
-          expect(@criterion.valid?).to be true
-        end
-      end
-
-      describe 'cannot have two levels with the same mark' do
-        it 'not raise error' do
-          expect(@criterion.levels[0].update(mark: 1)).to be false
-        end
-      end
       context 'when a result is released' do
         before(:each) do
           @marks = @criterion.marks

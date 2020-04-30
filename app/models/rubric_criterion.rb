@@ -12,10 +12,10 @@ class RubricCriterion < Criterion
 
   has_many :tas, through: :criterion_ta_associations
 
-  has_many :levels, -> { order(:mark) }, inverse_of: :rubric_criterion, dependent: :destroy
+  has_many :levels, -> { order(:mark) }, inverse_of: :rubric_criterion, dependent: :destroy, autosave: true
   accepts_nested_attributes_for :levels, allow_destroy: true
   before_validation :scale_marks_if_max_mark_changed
-  validate :validate_max_mark
+  validates_presence_of :levels
 
   belongs_to :assignment, foreign_key: :assessment_id, counter_cache: true
 
@@ -29,13 +29,6 @@ class RubricCriterion < Criterion
 
   def self.symbol
     :rubric
-  end
-
-  def validate_max_mark
-    return if self.levels.empty?
-    max_level_mark = self.levels.map(&:mark).compact.max
-    return if self.max_mark == max_level_mark
-    errors.add(:max_mark, 'Max mark of rubric criterion should equal to the max level mark ' + max_level_mark.to_s)
   end
 
   def update_assigned_groups_count
@@ -67,22 +60,18 @@ class RubricCriterion < Criterion
   end
 
   def set_default_levels
-    params = {
-      max_mark: 4,
-      levels_attributes: [
-        { name: I18n.t('rubric_criteria.defaults.level_0'),
-          description: I18n.t('rubric_criteria.defaults.description_0'), mark: 0 },
-        { name: I18n.t('rubric_criteria.defaults.level_1'),
-          description: I18n.t('rubric_criteria.defaults.description_1'), mark: 1 },
-        { name: I18n.t('rubric_criteria.defaults.level_2'),
-          description: I18n.t('rubric_criteria.defaults.description_2'), mark: 2 },
-        { name: I18n.t('rubric_criteria.defaults.level_3'),
-          description: I18n.t('rubric_criteria.defaults.description_3'), mark: 3 },
-        { name: I18n.t('rubric_criteria.defaults.level_4'),
-          description: I18n.t('rubric_criteria.defaults.description_4'), mark: 4 }
-      ]
-    }
-    self.update params
+    self.assign_attributes(levels_attributes: [
+      { name: I18n.t('rubric_criteria.defaults.level_0'),
+        description: I18n.t('rubric_criteria.defaults.description_0'), mark: 0 },
+      { name: I18n.t('rubric_criteria.defaults.level_1'),
+        description: I18n.t('rubric_criteria.defaults.description_1'), mark: 0.25 * self.max_mark },
+      { name: I18n.t('rubric_criteria.defaults.level_2'),
+        description: I18n.t('rubric_criteria.defaults.description_2'), mark: 0.5 * self.max_mark },
+      { name: I18n.t('rubric_criteria.defaults.level_3'),
+        description: I18n.t('rubric_criteria.defaults.description_3'), mark: 0.75 * self.max_mark },
+      { name: I18n.t('rubric_criteria.defaults.level_4'),
+        description: I18n.t('rubric_criteria.defaults.description_4'), mark: self.max_mark }
+    ])
   end
 
   # Instantiate a RubricCriterion from a CSV row and attach it to the supplied

@@ -6,8 +6,10 @@ FactoryBot.define do
     ta_visible { true }
     peer_visible { false }
     sequence(:position)
-    after(:create) do |criterion|
-      5.times.each { |i| create(:level, rubric_criterion: criterion, mark: criterion.max_mark * i / 4) }
+    after(:build) do |criterion|
+      5.times.each do |i|
+        criterion.levels << build(:level, rubric_criterion: criterion, mark: criterion.max_mark * i / 4)
+      end
     end
   end
 end
