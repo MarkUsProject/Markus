@@ -6,11 +6,11 @@ class RubricCriteriaController < ApplicationController
     @assignment = Assignment.find(params[:assignment_id])
     file_out = MarkusCsv.generate(@assignment.get_criteria(:all, :rubric)) do |criterion|
       criterion_array = [criterion.name, criterion.max_mark]
-      criterion.levels.length.times do |i|
-        criterion_array.push(criterion.levels[i].name)
+      criterion.levels.each do |level|
+        criterion_array.push(level.name)
       end
-      criterion.levels.length.times do |i|
-        criterion_array.push(criterion.levels[i].description)
+      criterion.levels.each do |level|
+        criterion_array.push(level.description)
       end
       criterion_array
     end

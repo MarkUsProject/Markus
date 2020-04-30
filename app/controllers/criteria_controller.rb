@@ -170,6 +170,7 @@ class CriteriaController < ApplicationController
               else
                 raise RuntimeError
               end
+
               criterion.assessment_id = assignment.id
               criterion.position = pos
               criterion.save!

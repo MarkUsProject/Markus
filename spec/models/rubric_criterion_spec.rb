@@ -161,20 +161,21 @@ describe RubricCriterion do
             names = ['Very Poor', 'Weak', 'Passable', 'Good', 'Excellent']
             row = ['criterion 5']
             # order is name, number, description, mark
-            (0..@criterion.levels.length - 1).each do |i|
+            @criterion.levels.size.times do |i|
               row << names[i]
               # ...containing commas and quotes in the descriptions
               row << 'new description number ' + i.to_s
-              row << i + 1
+              row << i + 0.5
             end
 
             RubricCriterion.create_or_update_from_csv_row(row, @assignment)
             @criterion.reload
             levels = @criterion.levels
             expect(levels.length).to eq(5)
-            (0..levels.length - 1).each do |i|
+            levels.size.times do |i|
               expect(names[i]).to eq(levels[i].name)
               expect('new description number ' + i.to_s).to eq(levels[i].description)
+              expect(i + 0.5).to eq(levels[i].mark)
             end
           end
         end

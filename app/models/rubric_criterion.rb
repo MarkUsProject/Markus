@@ -60,18 +60,19 @@ class RubricCriterion < Criterion
   end
 
   def set_default_levels
-    self.assign_attributes(levels_attributes: [
-      { name: I18n.t('rubric_criteria.defaults.level_0'),
-        description: I18n.t('rubric_criteria.defaults.description_0'), mark: 0 },
-      { name: I18n.t('rubric_criteria.defaults.level_1'),
-        description: I18n.t('rubric_criteria.defaults.description_1'), mark: 0.25 * self.max_mark },
-      { name: I18n.t('rubric_criteria.defaults.level_2'),
-        description: I18n.t('rubric_criteria.defaults.description_2'), mark: 0.5 * self.max_mark },
-      { name: I18n.t('rubric_criteria.defaults.level_3'),
-        description: I18n.t('rubric_criteria.defaults.description_3'), mark: 0.75 * self.max_mark },
-      { name: I18n.t('rubric_criteria.defaults.level_4'),
-        description: I18n.t('rubric_criteria.defaults.description_4'), mark: self.max_mark }
-    ])
+    self.assign_attributes(levels_attributes:
+      [
+        { name: I18n.t('rubric_criteria.defaults.level_0'),
+          description: I18n.t('rubric_criteria.defaults.description_0'), mark: 0 },
+        { name: I18n.t('rubric_criteria.defaults.level_1'),
+          description: I18n.t('rubric_criteria.defaults.description_1'), mark: 0.25 * self.max_mark },
+        { name: I18n.t('rubric_criteria.defaults.level_2'),
+          description: I18n.t('rubric_criteria.defaults.description_2'), mark: 0.5 * self.max_mark },
+        { name: I18n.t('rubric_criteria.defaults.level_3'),
+          description: I18n.t('rubric_criteria.defaults.description_3'), mark: 0.75 * self.max_mark },
+        { name: I18n.t('rubric_criteria.defaults.level_4'),
+          description: I18n.t('rubric_criteria.defaults.description_4'), mark: self.max_mark }
+      ])
   end
 
   # Instantiate a RubricCriterion from a CSV row and attach it to the supplied
@@ -91,7 +92,6 @@ class RubricCriterion < Criterion
   #                      does not evaluate to a float, or if the criterion is not
   #                      successfully saved.
   def self.create_or_update_from_csv_row(row, assignment)
-    # we only require the user to upload a single entry, as blank rubric criterion can be uploaded
     if row.empty?
       raise CsvInvalidLineError, I18n.t('upload_errors.invalid_csv_row_format')
     end
@@ -105,36 +105,29 @@ class RubricCriterion < Criterion
       criterion.position = assignment.next_criterion_position
     end
 
-    # attributes used to create levels using nested attributes
-    attributes = []
-    # there are 3 fields for each level
-    num_levels = working_row.length / 3
+    levels_attributes = []
 
-    # create/update the levels
-    num_levels.times do
+    # Create/update the levels. There are three entries per level.
+    (working_row.length / 3).times do
       name = working_row.shift
       description = working_row.shift
       mark = Float(working_row.shift)
 
       if criterion.levels.exists?(name: name)
         id = criterion.levels.find_by(name: name).id
-        attributes.push(id: id, name: name, description: description, mark: mark)
+        levels_attributes.push(id: id, name: name, description: description, mark: mark)
       else
-        attributes.push(name: name, description: description, mark: mark)
+        levels_attributes.push(name: name, description: description, mark: mark)
       end
     end
 
-    # deletes all the existing levels that were not updated
-    criterion.levels.destroy(criterion.levels.where.not(id: attributes.pluck(:id)))
+    # Delete all the existing levels that were not updated
+    criterion.levels.destroy(criterion.levels.where.not(id: levels_attributes.pluck(:id)))
 
-    max_mark = attributes.pluck(:mark).max
-    params = {
-      max_mark: max_mark, levels_attributes: attributes
-    }
-    criterion.update params
+    max_mark = levels_attributes.pluck(:mark).max
 
-    unless criterion.save
-      raise CsvInvalidLineError
+    unless criterion.update(max_mark: max_mark, levels_attributes: levels_attributes)
+      raise CsvInvalidLineError, criterion.errors.full_messages
     end
   end
 
@@ -148,10 +141,10 @@ class RubricCriterion < Criterion
   #                   max_mark: #
   #                   type: Rubric
   #                   levels:
-  #                     <level_name>:
+  #                     level_name:
   #                       mark: level_mark
   #                       description: level_description
-  #                     <level_name>:
+  #                     level_name:
   #                       [...]
   #                   ta_visible: true/false
   #                   peer_visible: true/false

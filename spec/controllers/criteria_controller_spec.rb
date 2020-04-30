@@ -245,7 +245,7 @@ describe CriteriaController do
       context '#create' do
         context 'with save error' do
           before(:each) do
-            expect_any_instance_of(FlexibleCriterion).to receive(:update).and_return(false)
+            expect_any_instance_of(FlexibleCriterion).to receive(:save).and_return(false)
             expect_any_instance_of(FlexibleCriterion).to receive(:errors).and_return(ActiveModel::Errors.new(self))
             post_as admin,
                     :create,
@@ -602,11 +602,11 @@ describe CriteriaController do
       context '#create' do
         context 'with save error' do
           before(:each) do
-            expect_any_instance_of(RubricCriterion).to receive(:update).and_return(false)
+            expect_any_instance_of(RubricCriterion).to receive(:save).and_return(false)
             expect_any_instance_of(RubricCriterion).to receive(:errors).and_return(ActiveModel::Errors.new(self))
             post_as admin,
                     :create,
-                    params: { assignment_id: assignment.id, rubric_criterion: { name: 'first', max_mark: 10 },
+                    params: { assignment_id: assignment.id, max_mark_prompt: 10,
                               new_criterion_prompt: 'first', criterion_type: 'RubricCriterion' },
                     format: :js
           end
@@ -624,7 +624,7 @@ describe CriteriaController do
           before(:each) do
             post_as admin,
                     :create,
-                    params: { assignment_id: assignment.id, rubric_criterion: { name: 'first' },
+                    params: { assignment_id: assignment.id,
                               new_criterion_prompt: 'first', criterion_type: 'RubricCriterion', max_mark_prompt: 10 },
                     format: :js
           end

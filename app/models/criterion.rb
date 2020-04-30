@@ -167,14 +167,10 @@ class Criterion < ApplicationRecord
   end
 
   def results_unreleased?
-    return true if self.marks.empty?
-    released = self.marks.joins(:result).where('results.released_to_students' => true)
-    if released.empty?
-      true
-    else
-      errors.add(:base, 'Cannot update criterion once results are released.')
-      false
-    end
+    return true if self.marks.joins(:result).where('results.released_to_students' => true).empty?
+
+    errors.add(:base, 'Cannot update criterion once results are released.')
+    false
   end
 
   private
