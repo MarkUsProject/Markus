@@ -441,12 +441,12 @@ describe AssignmentsController do
             id: assignment.id
           },
           short_identifier: assignment.short_identifier,
-          description: "Test",
-          message: "",
-          due_date: Time.now.to_s,
+          description: 'Test',
+          message: '',
+          due_date: Time.now.to_s
         },
         submission_rule_attributes: {
-          type: "PenaltyDecayPeriodSubmissionRule",
+          type: 'PenaltyDecayPeriodSubmissionRule',
           periods_attributes: {
             submission_rule.id => {
               deduction: 10.0,
