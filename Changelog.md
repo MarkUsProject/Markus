@@ -1,9 +1,10 @@
 # Changelog
 
-## [unreleased]
+## [v1.9.1]
 - Fixed bug where the output column was not shown in the test results table if the first row had no output (#4537)
 - Fixed N+1 queries in Assignment repo list methods (#4543)
 - Fixed submission download_repo_list file extension (#4543)
+- Fixed bug preventing creation of assignments with submission rules (#4557)
 
 ## [v1.9.0]
 - Added option to anonymize group membership when viewed by graders (#4331)
