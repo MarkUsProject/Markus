@@ -274,29 +274,23 @@ describe RubricCriterion do
 
     context 'editing levels edits marks' do
       before(:each) do
-        @marks = @criterion.marks
-        result1 = create(:result, marking_state: Result::MARKING_STATES[:incomplete])
-        result2 = create(:result, marking_state: Result::MARKING_STATES[:incomplete])
-        result3 = create(:result, marking_state: Result::MARKING_STATES[:incomplete])
-        @marks.create(mark: 0, result: result1)
-        @marks.create(mark: 1, result: result2)
-        @marks.create(mark: 1, result: result3)
+        create(:rubric_mark, markable: @criterion, mark: 0)
+        create(:rubric_mark, markable: @criterion, mark: 1)
+        create(:rubric_mark, markable: @criterion, mark: 1)
       end
 
       context 'updating level updates respective mark' do
         describe 'updates a single mark' do
           it 'not raise error' do
-            @criterion.levels.order(mark: :asc)[0].update(mark: 0.5)
-            @marks.reload
-            expect(@marks.order(mark: :asc)[0].mark).to eq(0.5)
+            @criterion.levels.find_by(mark: 0).update(mark: 0.5)
+            expect(@criterion.marks.where(mark: 0.5).size).to eq 1
           end
         end
 
         describe 'updates multiple marks' do
           it 'not raise error' do
-            @criterion.levels[1].update(mark: 0.5)
-            expect(@marks.order(mark: :asc)[1].mark).to eq(0.5)
-            expect(@marks.order(mark: :asc)[2].mark).to eq(0.5)
+            @criterion.levels.find_by(mark: 1).update(mark: 0.5)
+            expect(@criterion.marks.where(mark: 0.5).size).to eq 2
           end
         end
       end
@@ -304,16 +298,15 @@ describe RubricCriterion do
       context 'deleting level updates mark to nil' do
         describe 'updates a single mark' do
           it 'not raise error' do
-            @criterion.levels[0].destroy
-            expect(@marks[0].mark).to be_nil
+            @criterion.levels.find_by(mark: 0).destroy
+            expect(@criterion.marks.where(mark: nil).size).to eq 1
           end
         end
 
         describe 'deleting level updates multiple marks to nil' do
           it 'not raise error' do
-            @criterion.levels[1].destroy
-            expect(@marks[1].mark).to be_nil
-            expect(@marks[2].mark).to be_nil
+            @criterion.levels.find_by(mark: 1).destroy
+            expect(@criterion.marks.where(mark: nil).size).to eq 2
           end
         end
       end
