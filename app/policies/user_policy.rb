@@ -8,4 +8,8 @@ class UserPolicy < ApplicationPolicy
   def destroy?
     false
   end
+
+  def mailer_settings?
+    user.is_a?(Student)
+  end
 end

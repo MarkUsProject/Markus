@@ -375,11 +375,11 @@ Rails.application.routes.draw do
         get 'add_new_section'
         get 'download'
         post 'upload'
+        get 'mailer_settings'
       end
 
       member do
         delete 'delete_grace_period_deduction'
-        get 'mailer_settings'
       end
     end
 
