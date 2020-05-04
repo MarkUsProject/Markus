@@ -1,4 +1,4 @@
-<div class='float_right'>
+<div class='float-right'>
   <%= button_to t(:delete),
                 assignment_criterion_path(assignment_id: criterion.assignment.id,
                                           id: criterion.id,
@@ -11,12 +11,7 @@
 </div>
 
 <h2>
-  <span id='selected_criterion_name'>
-    <%= criterion.name %>
-  </span>
-  <span id='selected_criterion_type'>
-    (<%= t('criteria.flexible') %>)
-  </span>
+  <%= criterion.name %> (<%= t('criteria.flexible') %>)
 </h2>
 
 <%= form_for criterion,
@@ -25,56 +20,41 @@
              method: :patch,
              remote: true do |f| %>
 
-  <div class='main_flexible_criteria_edit'>
-
-    <span id='<%= "criterion_inputs_#{criterion.id}" %>'>
-      <%= f.label :name, Criterion.human_attribute_name(:name), class: 'bold_inline_label' %>
-      <%= f.text_field :name %>
-    </span>
-    <br>
-    <span id='criterion_max_mark_edit_<%= criterion.id %>' class='criterion_max_mark_edit'>
-      <%= f.label :max_mark, Criterion.human_attribute_name(:max_mark), class: 'bold_inline_label' %>
-      <%= f.number_field :max_mark, step: 0.1 %>
-    </span>
-    <br>
+  <div class='inline-labels'>
+    <%= f.label :name, Criterion.human_attribute_name(:name) %>
+    <%= f.text_field :name %>
+    <%= f.label :max_mark, Criterion.human_attribute_name(:max_mark) %>
+    <%= f.number_field :max_mark, step: 0.1 %>
     <% if criterion.assignment.assignment_files.exists? %>
-      <span id="<%= "criterion_inputs_#{criterion.id}" %>">
-        <% selected_files = criterion.criteria_assignment_files_joins.map { |join| join.assignment_file } %>
-        <p><%= f.label :assignment_files, AssignmentFile.model_name.human, class: 'bold_inline_label' %></p>
-        <%= f.collection_select(:assignment_files, criterion.assignment.assignment_files, :id, :filename,
-                                { selected: selected_files.map { |file| file.id } },
-                                { multiple: true }) %>
-      </span>
+      <% selected_files = criterion.criteria_assignment_files_joins.map { |join| join.assignment_file } %>
+      <%= f.label :assignment_files, AssignmentFile.model_name.human %>
+      <%= f.collection_select(:assignment_files, criterion.assignment.assignment_files, :id, :filename,
+                              { selected: selected_files.map { |file| file.id } },
+                              { multiple: true }) %>
     <% end %>
-    <br>
-    <span id='criterion_description_edit_<%= criterion.id %>' class='criterion_description_edit'>
-      <%= f.label :description, Criterion.human_attribute_name(:description), class: 'bold_inline_label' %>
-      <%= f.text_area :description, size: '50x6' %>
-    </span>
-    <br>
-    <span><%= t('criteria.description_hint') %></span>
-    <br>
-    <br>
-    <h4><span><%= t('criteria.visibility') %></span></h4>
+    <%= f.label :description, Criterion.human_attribute_name(:description) %>
     <div>
-      <%= f.check_box :ta_visible %>
-      <%= f.label :ta_visible,
-                  Criterion.human_attribute_name(:ta_visible) %>
+      <%= f.text_area :description, rows: 6, cols: 50 %>
+      <p><%= t('criteria.description_hint') %></p>
     </div>
-    <div>
-      <%= f.check_box :peer_visible %>
-      <%= f.label :peer_visible,
-                  Criterion.human_attribute_name(:peer_visible) %>
-    </div>
-    <%= f.submit t(:save), data: { disable_with: t('working') } %>
   </div>
+
+  <h4><%= t('criteria.visibility') %></h4>
+  <div class='inline-labels'>
+    <%= f.label :ta_visible,
+                Criterion.human_attribute_name(:ta_visible) %>
+    <%= f.check_box :ta_visible %>
+    <%= f.label :peer_visible,
+                Criterion.human_attribute_name(:peer_visible) %>
+    <%= f.check_box :peer_visible %>
+  </div>
+
+  <p><%= f.submit t(:save), data: { disable_with: t('working') } %></p>
 <% end %>
 
-<% if !criterion.description.nil? && !criterion.description.empty? %>
-  <div id='flexible_criteria_preview'>
-    <h3><%= t(:preview) %></h3>
-    <div id='criterion_description_preview_<%= criterion.id %>' class='criterion_description_preview'>
-      <%= sanitize(criterion.description) %>
-    </div>
+<% unless criterion.description.blank? %>
+  <h3><%= t(:preview) %></h3>
+  <div>
+    <%= sanitize(criterion.description) %>
   </div>
 <% end %>
