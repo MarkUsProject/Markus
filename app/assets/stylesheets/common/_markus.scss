@@ -311,6 +311,10 @@ fieldset {
   label {
     text-align: right;
   }
+
+  select {
+    margin: 0;
+  }
 }
 
 .disable {
@@ -416,6 +420,29 @@ fieldset {
   background-color: #ff7a77 !important;
 }
 
+// Panes
+.pane-wrapper {
+  display: flex;
+
+  .pane {
+    border: 1px solid $grey;
+    border-radius: $radius;
+    flex: 1;
+    margin-left: 2em;
+    padding: 1em;
+  }
+
+  h2,
+  h3,
+  h4 {
+    margin-bottom: 0.5em;
+  }
+}
+
+.float-right {
+  float: right;
+}
+
 /** Sortable lists */
 
 .sortable {
@@ -469,6 +496,10 @@ fieldset {
 
       &:last-child {
         border-radius: 0 0 $radius $radius;
+      }
+
+      &.new {
+        background: none;
       }
     }
   }
