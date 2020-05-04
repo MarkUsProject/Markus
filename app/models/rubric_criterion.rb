@@ -142,8 +142,8 @@ class RubricCriterion < Criterion
   #                   type: Rubric
   #                   levels:
   #                     level_name:
-  #                       mark: level_mark
   #                       description: level_description
+  #                       mark: level_mark
   #                     level_name:
   #                       [...]
   #                   ta_visible: true/false
