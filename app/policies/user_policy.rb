@@ -12,4 +12,8 @@ class UserPolicy < ApplicationPolicy
   def mailer_settings?
     user.is_a?(Student)
   end
+
+  def update_mailer_settings?
+    user.is_a?(Student)
+  end
 end

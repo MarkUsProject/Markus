@@ -1,6 +1,5 @@
 class StudentsController < ApplicationController
   before_action do |_|
-    byebug
     authorize! with: UserPolicy
   end
 
@@ -148,6 +147,9 @@ class StudentsController < ApplicationController
   end
 
   def mailer_settings
+  end
+
+  def update_mailer_settings
   end
 
   private

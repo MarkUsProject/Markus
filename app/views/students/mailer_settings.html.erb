@@ -1,1 +1,8 @@
 <h1> <%= @current_user.first_name %>'s Settings </h1>
+<%= form_with action: 'update_mailer_settings', method: 'patch', model: @current_user do |f| %>
+  <%= f.check_box :mail_subscribed %>
+  <%= f.label :mail_subscribed, 'I would like to receive email notifications from MarkUs.' %>
+  <br><br>
+  <%= f.submit 'Update Settings' %>
+<% end %>
+
