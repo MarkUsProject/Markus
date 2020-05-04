@@ -40,13 +40,17 @@ Rails.application.routes.draw do
             get 'annotations'
             post 'add_annotations'
             post 'add_members'
+            post 'create_extra_marks'
             put 'update_marks'
             put 'update_marking_state'
+            delete 'remove_extra_marks'
           end
         end
         member do
           get 'test_files'
           get 'grades_summary'
+          get 'test_specs'
+          post 'update_test_specs'
         end
       end
       resources :main_api
@@ -111,6 +115,8 @@ Rails.application.routes.draw do
           get 'download_file'
           get 'download_files'
           post 'upload_files'
+          get 'download_specs'
+          post 'upload_specs'
         end
       end
 
@@ -359,8 +365,6 @@ Rails.application.routes.draw do
     resources :annotations do
       collection do
         post 'add_existing_annotation'
-        patch 'update_annotation'
-        delete '/' => 'annotations#destroy'
       end
     end
 

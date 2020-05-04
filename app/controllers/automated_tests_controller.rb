@@ -17,7 +17,6 @@ class AutomatedTestsController < ApplicationController
       update_test_groups_from_specs(assignment, test_specs)
       @current_job = AutotestSpecsJob.perform_later(request.protocol + request.host_with_port, assignment)
       session[:job_id] = @current_job.job_id
-      flash_message(:success, t('flash.actions.update.success', resource_name: Assignment.model_name.human))
     rescue StandardError => e
       flash_message(:error, e.message)
       raise ActiveRecord::Rollback
@@ -29,12 +28,6 @@ class AutomatedTestsController < ApplicationController
   # Manage is called when the Automated Test UI is loaded
   def manage
     @assignment = Assignment.find(params[:assignment_id])
-    unless File.exist? @assignment.autotest_path
-      FileUtils.mkdir_p @assignment.autotest_path
-    end
-    unless File.exist? @assignment.autotest_files_dir
-      FileUtils.mkdir_p @assignment.autotest_files_dir
-    end
     @assignment.test_groups.build
   end
 
@@ -180,6 +173,36 @@ class AutomatedTestsController < ApplicationController
       File.delete(file_path)
     end
     render partial: 'update_files'
+  end
+
+  def download_specs
+    assignment = Assignment.find(params[:assignment_id])
+    file_path = assignment.autotest_settings_file
+    if File.exist?(file_path)
+      send_file file_path, filename: params[:file_name]
+    else
+      send_data '{}', filename: file_path
+    end
+  end
+
+  def upload_specs
+    assignment = Assignment.find(params[:assignment_id])
+    if params[:specs_file].respond_to? :read
+      file_content = params[:specs_file].read
+      begin
+        JSON.parse file_content
+      rescue JSON::ParserError
+        flash_now(:error, I18n.t('automated_tests.invalid_specs_file'))
+        head :unprocessable_entity
+      else
+        File.write(assignment.autotest_settings_file, file_content, mode: 'wb')
+        @current_job = AutotestSpecsJob.perform_later(request.protocol + request.host_with_port, assignment)
+        session[:job_id] = @current_job.job_id
+        render 'shared/_poll_job.js.erb'
+      end
+    else
+      head :unprocessable_entity
+    end
   end
 
   private

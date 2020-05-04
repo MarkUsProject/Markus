@@ -30,21 +30,15 @@ namespace :db do
       end
 
       3.times do |index|
-        RubricCriterion.create(
-            name:                  random_sentences(1),
-            assessment_id:         assignment.id,
-            position:              index + 1,
-            max_mark:              pos_rand(3),
-            level_0_name:          random_words(5),
-            level_0_description:   random_sentences(5),
-            level_1_name:          random_words(5),
-            level_1_description:   random_sentences(5),
-            level_2_name:          random_words(5),
-            level_2_description:   random_sentences(5),
-            level_3_name:          random_words(5),
-            level_3_description:   random_sentences(5),
-            level_4_name:          random_words(5),
-            level_4_description:   random_sentences(5)
+        attributes = []
+        5.times do |number|
+          lvl = { name: random_words(1), description: random_sentences(5), mark: number }
+          attributes.push(lvl)
+        end
+
+        RubricCriterion.create!(
+          name: random_sentences(1), assessment_id: assignment.id,
+          position: index + 1, max_mark: 4, levels_attributes: attributes
         )
       end
 

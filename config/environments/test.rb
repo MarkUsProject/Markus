@@ -250,6 +250,7 @@ Markus::Application.configure do
   ###################################################################
   # Resque queues
   ###################################################################
+  config.active_job.queue_adapter = :test
 
   # The name of the queue where jobs to create groups wait to be executed.
   config.x.queues.create_groups = 'CSC108'

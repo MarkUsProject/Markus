@@ -614,8 +614,7 @@ class SubmissionsController < ApplicationController
     assignment = Assignment.find(params[:assignment_id])
     send_data assignment.get_repo_list,
               disposition: 'attachment',
-              type: 'text/plain',
-              filename: "#{assignment.short_identifier}_repo_list"
+              filename: "#{assignment.short_identifier}_repo_list.csv"
   end
 
   # This action is called periodically from file_manager.

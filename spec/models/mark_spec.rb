@@ -51,7 +51,7 @@ describe Mark do
     end
     it 'equals to mark times weight' do
       markable = RubricCriterion.find(rubric_mark.markable_id)
-      expect(rubric_mark.mark).to eq(4 * markable.weight)
+      expect(rubric_mark.mark).to eq(markable.weight)
     end
   end
 

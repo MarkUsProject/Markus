@@ -247,9 +247,23 @@ describe 'An Assignment' do
                                                                 locale: 'en')
       end
 
+      it 'routes GET download_specs properly' do
+        expect(get: autom_path + '/download_specs').to route_to(controller: autom_ctrl,
+                                                                action: 'download_specs',
+                                                                assignment_id: assignment.id.to_s,
+                                                                locale: 'en')
+      end
+
       it 'routes POST upload_files properly' do
         expect(post: autom_path + '/upload_files').to route_to(controller: autom_ctrl,
                                                                action: 'upload_files',
+                                                               assignment_id: assignment.id.to_s,
+                                                               locale: 'en')
+      end
+
+      it 'routes POST upload_specs properly' do
+        expect(post: autom_path + '/upload_specs').to route_to(controller: autom_ctrl,
+                                                               action: 'upload_specs',
                                                                assignment_id: assignment.id.to_s,
                                                                locale: 'en')
       end
@@ -1119,22 +1133,6 @@ context 'annotation collection' do
     expect(post: path + '/add_existing_annotation').to route_to(
       controller: ctrl,
       action: 'add_existing_annotation',
-      locale: 'en')
-  end
-
-  it 'routes PUT update_annotation properly' do
-    expect(put: path + '/update_annotation').to route_to(
-      controller: ctrl,
-      action: 'update',
-      id: 'update_annotation',
-      locale: 'en')
-  end
-
-  it 'routes DELETE destroy properly' do
-    expect(delete: path + '/destroy').to route_to(
-      controller: ctrl,
-      action: 'destroy',
-      id: 'destroy',
       locale: 'en')
   end
 end

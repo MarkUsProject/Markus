@@ -1,5 +1,15 @@
 # Changelog
 ## [unreleased]
+- Fixed bug where the output column was not shown in the test results table if the first row had no output (#4537)
+- Issue #3670: Added API for adding and removing extra marks (#4499)
+- Restrict confirmation dialog for annotation editing to annotations that belong to annotation categories (#4540)
+- Fixed sorting in annotation table in results view (#4542)
+- Fixed N+1 queries in Assignment repo list methods (#4543)
+- Fixed submission download_repo_list file extension (#4543)
+- Fixed inverse association bug with assignments (#4551)
+- Enabled customization of rubric criterion level number and marks (#4535)
+
+## [v1.9.0]
 - Added option to anonymize group membership when viewed by graders (#4331)
 - Added option to only display assigned criteria to graders as opposed to showing unassigned criteria but making them
   ungradeable (#4331)
@@ -23,6 +33,7 @@
 - Fixed bug where a grouping could be created even when the assignment subdirectory failed to be created (#4516)
 - Progress messages for background jobs now are hidden once the job is completed (#4519)
 - Fixed bug where a javascript submission/test/starter code file can't be downloaded (#4520) 
+- Add ability to upload and download autotest settings as a json file/string through the UI and API (#4498)
 
 ## [v1.8.4]
 - Fixed bug where test output was not being properly hidden from students (#4379)

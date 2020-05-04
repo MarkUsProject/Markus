@@ -41,14 +41,21 @@ namespace :markus do
       end
 
       # create rubric criteria for a1
-      rubric_criteria = [{name: "Uses Conditionals", max_mark: 4}, {name: "Code Clarity", max_mark: 8}, {name: "Code Is Documented", max_mark: 12}, {name: "Uses For Loop", max_mark: 4}]
-      default_levels = {level_0_name: "Quite Poor", level_0_description: "This criterion was not satisifed whatsoever", level_1_name: "Satisfactory", level_1_description: "This criterion was satisfied", level_2_name: "Good", level_2_description: "This criterion was satisfied well", level_3_name: "Great", level_3_description: "This criterion was satisfied really well!", level_4_name: "Excellent", level_4_description: "This criterion was satisfied excellently"}
-      rubric_criteria.each do |rubric_criteria|
-        rc = RubricCriterion.new
-        rc.update(rubric_criteria)
-        rc.update(default_levels)
-        rc.assignment = a1
-        rc.save
+      rubric_criteria = [{ name: 'Uses Conditionals', max_mark: 4 }, { name: 'Code Clarity', max_mark: 8 },
+                         { name: 'Code Is Documented', max_mark: 12 }, { name: 'Uses For Loop', max_mark: 4 }]
+      default_levels = [
+        { name: 'Quite Poor', description: 'This criterion was not satisfied whatsoever', mark: 0 },
+        { name: 'Satisfactory', description: 'This criterion was satisfied', mark: 1 },
+        { name: 'Good', description: 'This criterion was satisfied well', mark: 2 },
+        { name: 'Great', description: 'This criterion was satisfied really well!', mark: 3 },
+        { name: 'Excellent', description: 'This criterion was satisfied excellently', mark: 4 }
+      ]
+      rubric_criteria.each do |rubric_criterion|
+        params = {
+          assignment: a1, levels_attributes: default_levels
+        }
+        rubric_criterion.merge(params)
+        RubricCriterion.create(rubric_criterion)
       end
 
       # create submissions

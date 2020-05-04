@@ -12,6 +12,11 @@ class RubricCriterion < Criterion
 
   has_many :tas, through: :criterion_ta_associations
 
+  has_many :levels, -> { order(:mark) }, inverse_of: :rubric_criterion, dependent: :destroy, autosave: true
+  accepts_nested_attributes_for :levels, allow_destroy: true
+  before_validation :scale_marks_if_max_mark_changed
+  validates_presence_of :levels
+
   belongs_to :assignment, foreign_key: :assessment_id, counter_cache: true
 
   validates_presence_of :assigned_groups_count
@@ -20,7 +25,7 @@ class RubricCriterion < Criterion
 
   has_many :test_groups, as: :criterion
 
-  validate :visible?
+  DEFAULT_MAX_MARK = 4
 
   def self.symbol
     :rubric
@@ -34,32 +39,40 @@ class RubricCriterion < Criterion
     self.assigned_groups_count = result.uniq.length
   end
 
-  # Just a small effort here to remove magic numbers...
-  RUBRIC_LEVELS = 5
-  DEFAULT_MAX_MARK = 4
-  MAX_LEVEL = RUBRIC_LEVELS - 1
-  DEFAULT_LEVELS = [
-    {'name' => I18n.t('rubric_criteria.defaults.level_0'),
-     'description' => I18n.t('rubric_criteria.defaults.description_0')},
-    {'name' => I18n.t('rubric_criteria.defaults.level_1'),
-     'description' => I18n.t('rubric_criteria.defaults.description_1')},
-    {'name' => I18n.t('rubric_criteria.defaults.level_2'),
-     'description' => I18n.t('rubric_criteria.defaults.description_2')},
-    {'name' => I18n.t('rubric_criteria.defaults.level_3'),
-     'description' => I18n.t('rubric_criteria.defaults.description_3')},
-    {'name' => I18n.t('rubric_criteria.defaults.level_4'),
-     'description' => I18n.t('rubric_criteria.defaults.description_4')}
-  ]
+  def scale_marks_if_max_mark_changed
+    return unless self.changed.include?('max_mark')
+    return if self.changes['max_mark'][0].nil?
+    old_max = self.changes['max_mark'][0]
+    new_max = self.changes['max_mark'][1]
+    scale = new_max / old_max
+    self.levels.each do |level|
+      # don't scale levels that the user has manually changed
+      unless (level.changed.include? 'mark') || level.mark.nil?
+        # use update_attribute to skip validatation in case updating level mark
+        # overlaps another mark temporarily
+        level.update_attribute(:mark, (level.mark * scale).round(2))
+      end
+    end
+  end
 
   def mark_for(result_id)
     marks.where(result_id: result_id).first
   end
 
   def set_default_levels
-    DEFAULT_LEVELS.each_with_index do |level, index|
-      self['level_' + index.to_s + '_name'] = level['name']
-      self['level_' + index.to_s + '_description'] = level['description']
-    end
+    self.assign_attributes(levels_attributes:
+      [
+        { name: I18n.t('rubric_criteria.defaults.level_0'),
+          description: I18n.t('rubric_criteria.defaults.description_0'), mark: 0 },
+        { name: I18n.t('rubric_criteria.defaults.level_1'),
+          description: I18n.t('rubric_criteria.defaults.description_1'), mark: 0.25 * self.max_mark },
+        { name: I18n.t('rubric_criteria.defaults.level_2'),
+          description: I18n.t('rubric_criteria.defaults.description_2'), mark: 0.5 * self.max_mark },
+        { name: I18n.t('rubric_criteria.defaults.level_3'),
+          description: I18n.t('rubric_criteria.defaults.description_3'), mark: 0.75 * self.max_mark },
+        { name: I18n.t('rubric_criteria.defaults.level_4'),
+          description: I18n.t('rubric_criteria.defaults.description_4'), mark: self.max_mark }
+      ])
   end
 
   # Instantiate a RubricCriterion from a CSV row and attach it to the supplied
@@ -68,10 +81,9 @@ class RubricCriterion < Criterion
   # ===Params:
   #
   # row::         An array representing one CSV file row. Should be in the following
-  #               format: [name, weight, _names_, _descriptions_] where the _names_ part
-  #               must contain RUBRIC_LEVELS elements representing the name of each
-  #               level and the _descriptions_ part (optional) can contain up to
-  #               RUBRIC_LEVELS description (one for each level).
+  #               format: [name, weight, _levels_ ] where the _levels_ part contains
+  #               the following information about each level in the following order:
+  #               name, description, mark.
   # assignment::  The assignment to which the newly created criterion should belong.
   #
   # ===Raises:
@@ -80,36 +92,43 @@ class RubricCriterion < Criterion
   #                      does not evaluate to a float, or if the criterion is not
   #                      successfully saved.
   def self.create_or_update_from_csv_row(row, assignment)
-    if row.length < RUBRIC_LEVELS + 2
+    if row.empty?
       raise CsvInvalidLineError, I18n.t('upload_errors.invalid_csv_row_format')
     end
     working_row = row.clone
     name = working_row.shift
-    # If a RubricCriterion of the same name exits, load it up.  Otherwise,
-    # create a new one.
+
     criterion = assignment.get_criteria(:all, :rubric).find_or_create_by(name: name)
-    # Check that the weight is not a string, so that the appropriate max mark can be calculated.
-    begin
-      criterion.max_mark = Float(working_row.shift) * MAX_LEVEL
-    rescue ArgumentError
-      raise CsvInvalidLineError, I18n.t('upload_errors.invalid_csv_row_format')
-    end
+
     # Only set the position if this is a new record.
     if criterion.new_record?
       criterion.position = assignment.next_criterion_position
     end
-    # next comes the level names.
-    (0..RUBRIC_LEVELS-1).each do |i|
-      criterion['level_' + i.to_s + '_name'] = working_row.shift
+
+    levels_attributes = []
+
+    # Create/update the levels. There are three entries per level.
+    (working_row.length / 3).times do
+      name = working_row.shift
+      description = working_row.shift
+      mark = Float(working_row.shift)
+
+      if criterion.levels.exists?(name: name)
+        id = criterion.levels.find_by(name: name).id
+        levels_attributes.push(id: id, name: name, description: description, mark: mark)
+      else
+        levels_attributes.push(name: name, description: description, mark: mark)
+      end
     end
-    # the rest of the values are level descriptions.
-    (0..RUBRIC_LEVELS-1).each do |i|
-      criterion['level_' + i.to_s + '_description'] = working_row.shift
+
+    # Delete all the existing levels that were not updated
+    criterion.levels.destroy(criterion.levels.where.not(id: levels_attributes.pluck(:id)))
+
+    max_mark = levels_attributes.pluck(:mark).max
+
+    unless criterion.update(max_mark: max_mark, levels_attributes: levels_attributes)
+      raise CsvInvalidLineError, criterion.errors.full_messages
     end
-    unless criterion.save
-      raise CsvInvalidLineError
-    end
-    criterion
   end
 
   # Instantiate a RubricCriterion from a YML entry
@@ -120,55 +139,50 @@ class RubricCriterion < Criterion
   #                 in the following format:
   #                 criterion_name:
   #                   max_mark: #
-  #                   level_0:
-  #                     name: level_name
-  #                     description: level_description
-  #                   level_1:
-  #                     [...]
+  #                   type: Rubric
+  #                   levels:
+  #                     level_name:
+  #                       mark: level_mark
+  #                       description: level_description
+  #                     level_name:
+  #                       [...]
+  #                   ta_visible: true/false
+  #                   peer_visible: true/false
   def self.load_from_yml(criterion_yml)
-    name = criterion_yml[0]
-    # Create a new RubricCriterion
-    criterion = RubricCriterion.new
-    criterion.name = name
-    criterion.max_mark = criterion_yml[1]['max_mark']
-
-    # Next comes the level names.
-    (0..RUBRIC_LEVELS-1).each do |i|
-      if criterion_yml[1]['level_' + i.to_s]
-        criterion['level_' + i.to_s + '_name'] =
-          criterion_yml[1]['level_' + i.to_s]['name']
-        criterion['level_' + i.to_s + '_description'] =
-          criterion_yml[1]['level_' + i.to_s]['description']
-      end
+    attrs = {
+      name: criterion_yml[0],
+      max_mark: criterion_yml[1]['max_mark'],
+      levels_attributes: []
+    }
+    attrs[:ta_visible] = criterion_yml[1]['ta_visible'] unless criterion_yml[1]['ta_visible'].nil?
+    attrs[:peer_visible] = criterion_yml[1]['peer_visible'] unless criterion_yml[1]['peer_visible'].nil?
+    criterion_yml[1]['levels'].each do |level_name, level_yml|
+      attrs[:levels_attributes] << {
+        name: level_name,
+        description: level_yml['description'],
+        mark: level_yml['mark']
+      }
     end
-    # Visibility options
-    criterion.ta_visible = criterion_yml[1]['ta_visible'] unless criterion_yml[1]['ta_visible'].nil?
-    criterion.peer_visible = criterion_yml[1]['peer_visible'] unless criterion_yml[1]['peer_visible'].nil?
-    criterion
+
+    RubricCriterion.new(attrs)
   end
 
   # Returns a hash containing the information of a single rubric criterion.
   def to_yml
-    { self.name =>
-      { 'type'         => 'rubric',
-        'max_mark'     => self.max_mark.to_f,
-        'level_0'      => { 'name'        => self.level_0_name,
-                            'description' => self.level_0_description },
-        'level_1'      => { 'name'        => self.level_1_name,
-                            'description' => self.level_1_description },
-        'level_2'      => { 'name'        => self.level_2_name,
-                            'description' => self.level_2_description },
-        'level_3'      => { 'name'        => self.level_3_name,
-                            'description' => self.level_3_description },
-        'level_4'      => { 'name'        => self.level_4_name,
-                            'description' => self.level_4_description },
-        'ta_visible'   => self.ta_visible,
-        'peer_visible' => self.peer_visible }
-    }
+    levels_to_yml = { self.name => { 'type' => 'rubric',
+                                     'max_mark' => self.max_mark.to_f,
+                                     'levels' => {},
+                                     'ta_visible' => self.ta_visible,
+                                     'peer_visible' => self.peer_visible } }
+    self.levels.each do |level|
+      levels_to_yml[self.name]['levels'][level.name] = { 'description' => level.description,
+                                                         'mark' => level.mark }
+    end
+    levels_to_yml
   end
 
   def weight
-    max_mark / MAX_LEVEL
+    self.max_mark
   end
 
   def round_max_mark

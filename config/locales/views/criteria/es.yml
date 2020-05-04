@@ -47,6 +47,11 @@ es:
   rubric_criteria:
     level:
       level_index: "Nivel %{index}"
+      new: "Nuevo Nivel"
+      add: "Agregar Nivel"
+      delete:
+        new: "Eliminar Nuevo Nivel"
+        checkbox: "Eliminar Nivel %{index}"
     defaults:
       level_0: "Insuficiente"
       level_1: "Malo"

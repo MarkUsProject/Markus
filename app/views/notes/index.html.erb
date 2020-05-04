@@ -15,9 +15,11 @@
 
   <%# If there are no noteables,we can't add notes, so do not show Add New link. %>
   <% if @noteables_available %>
-    <%= link_to t('helpers.submit.create', model: Note.model_name.human),
-                { action: 'new' },
-                class: 'button' %>
+    <div class="rt-action-box">
+      <%= link_to t('helpers.submit.create', model: Note.model_name.human),
+                  { action: 'new' },
+                  class: 'button' %>
+    </div>
   <% else %>
     <p><%= t('notes.new.no_noteables') %></p>
   <% end %>
@@ -38,7 +40,7 @@
                   user_name: note.user.user_name,
                   display_for: note.noteable.display_for_note) %>
             <br>
-            <small><%= note.format_date %></small>
+            <%= note.format_date %>
           </td>
           <td><%= note.notes_message %></td>
           <td>

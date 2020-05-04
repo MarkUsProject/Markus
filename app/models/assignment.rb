@@ -6,10 +6,16 @@ class Assignment < Assessment
   MIN_PEER_REVIEWS_PER_GROUP = 1
 
   validates_presence_of :due_date
-  has_one :assignment_properties, dependent: :destroy, inverse_of: :assignment, foreign_key: :assessment_id
+
+  has_one :assignment_properties,
+          dependent: :destroy,
+          inverse_of: :assignment,
+          foreign_key: :assessment_id,
+          autosave: true
   delegate_missing_to :assignment_properties
   accepts_nested_attributes_for :assignment_properties, update_only: true
   validates_presence_of :assignment_properties
+  after_initialize :create_assignment_properties
 
   # Add assignment_properties to default scope because we almost always want to load an assignment with its properties
   default_scope { includes(:assignment_properties) }
@@ -18,21 +24,24 @@ class Assignment < Assessment
            -> { order(:position) },
            class_name: 'RubricCriterion',
            dependent: :destroy,
+           inverse_of: :assignment,
            foreign_key: :assessment_id
 
   has_many :flexible_criteria,
            -> { order(:position) },
            class_name: 'FlexibleCriterion',
            dependent: :destroy,
+           inverse_of: :assignment,
            foreign_key: :assessment_id
 
   has_many :checkbox_criteria,
            -> { order(:position) },
            class_name: 'CheckboxCriterion',
            dependent: :destroy,
+           inverse_of: :assignment,
            foreign_key: :assessment_id
 
-  has_many :test_groups, dependent: :destroy, foreign_key: :assessment_id
+  has_many :test_groups, dependent: :destroy, inverse_of: :assignment, foreign_key: :assessment_id
   accepts_nested_attributes_for :test_groups, allow_destroy: true, reject_if: ->(attrs) { attrs[:name].blank? }
 
   has_many :annotation_categories,
@@ -42,7 +51,7 @@ class Assignment < Assessment
 
   has_many :criterion_ta_associations, dependent: :destroy, foreign_key: :assessment_id
 
-  has_many :assignment_files, dependent: :destroy, foreign_key: :assessment_id
+  has_many :assignment_files, dependent: :destroy, inverse_of: :assignment, foreign_key: :assessment_id
   accepts_nested_attributes_for :assignment_files, allow_destroy: true
   validates_associated :assignment_files
 
@@ -73,6 +82,7 @@ class Assignment < Assessment
   has_many :exam_templates, dependent: :destroy, inverse_of: :assignment, foreign_key: :assessment_id
 
   after_create :build_starter_code_repo
+  after_create :create_autotest_dirs
 
   before_save :reset_collection_time
   after_save :update_permissions_if_vcs_changed
@@ -462,23 +472,21 @@ class Assignment < Assessment
 
   # Get a list of repo checkout client commands to be used for scripting
   def get_repo_checkout_commands
-    repo_commands = []
-    self.groupings.each do |grouping|
+    self.groupings.includes(:group, :current_submission_used).map do |grouping|
       submission = grouping.current_submission_used
       next if submission&.revision_identifier.nil?
-      repo_commands << Repository.get_class.get_checkout_command(grouping.group.repository_external_access_url,
-                                                                 submission.revision_identifier,
-                                                                 grouping.group.group_name, repository_folder)
-    end
-    repo_commands
+      Repository.get_class.get_checkout_command(grouping.group.repository_external_access_url,
+                                                submission.revision_identifier,
+                                                grouping.group.group_name, repository_folder)
+    end.compact
   end
 
   # Get a list of group_name, repo-url pairs
   def get_repo_list
     CSV.generate do |csv|
-      self.groupings.each do |grouping|
+      self.groupings.includes(:group).each do |grouping|
         group = grouping.group
-        csv << [group.group_name,group.repository_external_access_url]
+        csv << [group.group_name, group.repository_external_access_url]
       end
     end
   end
@@ -889,16 +897,14 @@ class Assignment < Assessment
 
   def create_peer_review_assignment_if_not_exist
     return unless has_peer_review && Assignment.where(parent_assessment_id: id).empty?
-    peerreview_assignment_properties = AssignmentProperties.new
-    peerreview_assignment_properties.token_period = 1
-    peerreview_assignment_properties.non_regenerating_tokens = false
-    peerreview_assignment_properties.unlimited_tokens = false
-    peerreview_assignment_properties.repository_folder = repository_folder
     peerreview_assignment = Assignment.new
     peerreview_assignment.parent_assignment = self
     peerreview_assignment.submission_rule = NoLateSubmissionRule.new
     peerreview_assignment.assignment_stat = AssignmentStat.new
-    peerreview_assignment.assignment_properties = peerreview_assignment_properties
+    peerreview_assignment.token_period = 1
+    peerreview_assignment.non_regenerating_tokens = false
+    peerreview_assignment.unlimited_tokens = false
+    peerreview_assignment.repository_folder = repository_folder
     peerreview_assignment.short_identifier = short_identifier + '_pr'
     peerreview_assignment.description = description
     peerreview_assignment.due_date = due_date
@@ -1288,6 +1294,11 @@ class Assignment < Assessment
 
   private
 
+  def create_autotest_dirs
+    FileUtils.mkdir_p self.autotest_path
+    FileUtils.mkdir_p self.autotest_files_dir
+  end
+
   # Returns the marking state used in the submission and course summary tables
   # for the result(s) for single submission.
   #
@@ -1354,9 +1365,9 @@ class Assignment < Assessment
         attrs = Hash[DEFAULT_FIELDS.zip(row)]
         attrs.delete_if { |_, v| v.nil? }
         if assignment.new_record?
-          assignment.assignment_properties = AssignmentProperties.new(repository_folder: row[0],
-                                                                      token_period: 1,
-                                                                      unlimited_tokens: false)
+          assignment.assignment_properties.repository_folder = row[0]
+          assignment.assignment_properties.token_period = 1
+          assignment.assignment_properties.unlimited_tokens = false
           assignment.submission_rule = NoLateSubmissionRule.new
           assignment.assignment_stat = AssignmentStat.new
         end
@@ -1370,9 +1381,10 @@ class Assignment < Assessment
         map[:assignments].map do |row|
           assignment = self.find_or_create_by(short_identifier: row[:short_identifier])
           if assignment.new_record?
-            row[:assignment_properties] = AssignmentProperties.new(repository_folder: row[:short_identifier],
-                                                                   token_period: 1,
-                                                                   unlimited_tokens: false)
+            row[:assignment_properties_attributes] = {}
+            row[:assignment_properties_attributes][:repository_folder] = row[:short_identifier]
+            row[:assignment_properties_attributes][:token_period] = 1
+            row[:assignment_properties_attributes][:unlimited_tokens] = false
             row[:submission_rule] = NoLateSubmissionRule.new
             row[:assignment_stat] = AssignmentStat.new
           end
@@ -1388,4 +1400,8 @@ class Assignment < Assessment
     end
   end
 
+  def create_assignment_properties
+    return unless self.new_record?
+    self.assignment_properties ||= AssignmentProperties.new
+  end
 end

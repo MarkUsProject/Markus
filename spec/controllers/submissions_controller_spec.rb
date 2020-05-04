@@ -401,19 +401,51 @@ describe SubmissionsController do
           is_expected.to respond_with(:success)
         end
 
-        it 'should send an email to every student whose submission was released' do
+        it 'should send an email to one grouping if only one is selected' do
           allow(Assignment).to receive(:find) { @assignment }
-          total_students = 0
-          @assignment.groupings.each do |grouping|
-            total_students += grouping.accepted_students.size
-          end
           expect do
             post_as @admin,
                     :update_submissions,
                     params: { assignment_id: 1,
                              groupings: ([] << @assignment.groupings).flatten,
                              release_results: 'true' }
-          end.to change { ActionMailer::Base.deliveries.count }.by(total_students)
+          end.to change { ActionMailer::Base.deliveries.count }.by(1)
+        end
+        it 'should send emails for every grouping selected if more than one are selected' do
+          allow(Assignment).to receive(:find) { @assignment }
+          @other_grouping = create(:grouping, assignment: @assignment)
+          @other_membership = create(:student_membership, membership_status: 'inviter', grouping: @other_grouping)
+          @other_grouping.group.access_repo do |repo|
+            txn = repo.get_transaction('test')
+            path = File.join(@assignment.repository_folder, 'file1_name')
+            txn.add(path, 'file1 content', '')
+            repo.commit(txn)
+            # Generate submission
+            submission = Submission.generate_new_submission(@other_grouping, repo.get_latest_revision)
+            result = submission.get_latest_result
+            result.marking_state = Result::MARKING_STATES[:complete]
+            result.save
+            submission.save
+          end
+          @other_grouping.update! is_collected: true
+          expect do
+            post_as @admin,
+                    :update_submissions,
+                    params: { assignment_id: 1,
+                              groupings: ([] << @assignment.groupings).flatten,
+                              release_results: 'true' }
+          end.to change { ActionMailer::Base.deliveries.count }.by(2)
+        end
+        it 'should send an email to every student in a grouping if groupings have multiple students' do
+          allow(Assignment).to receive(:find) { @assignment }
+          @another_membership = create(:student_membership, membership_status: 'inviter', grouping: @grouping)
+          expect do
+            post_as @admin,
+                    :update_submissions,
+                    params: { assignment_id: 1,
+                              groupings: ([] << @assignment.groupings).flatten,
+                              release_results: 'true' }
+          end.to change { ActionMailer::Base.deliveries.count }.by(2)
         end
       end
 

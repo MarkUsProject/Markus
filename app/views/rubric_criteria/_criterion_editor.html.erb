@@ -1,5 +1,10 @@
 <div class='float_right'>
-  <%= button_to t(:delete),
+  <%= link_to t('rubric_criteria.level.add'),
+              '#',
+              class: 'button',
+              onclick: 'add_level("rubric_form");' + 'return false;' %>
+
+  <%= button_to "#{t(:delete)} #{Criterion.model_name.human}",
                 assignment_criterion_path(assignment_id: criterion.assignment.id,
                                           id: criterion.id,
                                           criterion_type: criterion.class.to_s),

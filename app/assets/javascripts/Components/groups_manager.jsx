@@ -237,11 +237,13 @@ class RawGroupsTable extends React.Component {
       Cell: row => {
         return (
           <span>
-            <span
-              className="rename-link"
-              onClick={() => this.props.renameGroup(row.original._id)}
-            />
             <span>{row.value}</span>
+            <a
+              href="#"
+              className="edit-icon"
+              onClick={() => this.props.renameGroup(row.original._id)}
+              title={I18n.t('groups.rename_group')}
+            />
           </span>
         );
       }
@@ -293,14 +295,16 @@ class RawGroupsTable extends React.Component {
         let isValid = row.original.admin_approved || row.original.members.length >= this.props.groupMin;
         if (isValid) {
           return (
-            <div className="valid-icon"
-                 title={I18n.t('groups.is_valid')}
-                 onClick={() => this.props.invalidate(row.original._id)}
+            <a href="#"
+               className="valid-icon"
+               title={I18n.t('groups.is_valid')}
+               onClick={() => this.props.invalidate(row.original._id)}
             />
           );
         } else {
           return (
-            <div className="invalid-icon"
+            <a href="#"
+               className="invalid-icon"
                title={I18n.t('groups.is_not_valid')}
                onClick={() => this.props.validate(row.original._id)}
             />
