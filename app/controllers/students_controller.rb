@@ -150,6 +150,13 @@ class StudentsController < ApplicationController
   end
 
   def update_mailer_settings
+    student = current_user
+    new_settings = params[:student]
+    student.receives_results_emails = new_settings[:receives_results_emails]
+    student.receives_invite_emails = new_settings[:receives_invite_emails]
+    student.save
+    flash_message(:notice, 'Your settings have been updated!')
+    redirect_to action: 'mailer_settings'
   end
 
   private
