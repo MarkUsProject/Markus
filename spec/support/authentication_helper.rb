@@ -30,6 +30,12 @@ module AuthenticationHelper
     put action, xhr: true, params: params, format: format, session: session
   end
 
+  # Performs PATCH request as the supplied user for authentication
+  def patch_as(user, action, params: {}, format: nil, session: {})
+    sign_in user
+    patch action, xhr: true, params: params, format: format, session: session
+  end
+
   # Performs DELETE request as the supplied user for authentication
   def delete_as(user, action, params: {}, format: nil, session: {})
     sign_in user

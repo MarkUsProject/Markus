@@ -6,6 +6,7 @@ export class AnnotationTable extends React.Component {
   columns = [
     {
       Header: '#',
+      accessor: 'number',
       id: 'number',
       maxWidth: 50,
       resizeable: false,
@@ -31,6 +32,7 @@ export class AnnotationTable extends React.Component {
     },
     {
       Header: I18n.t('attributes.filename'),
+      accessor: 'filename',
       id: 'filename',
       Cell: row => {
         let full_path = row.original.path ? row.original.path + '/' + row.original.filename : row.original.filename;
