@@ -26,6 +26,10 @@ es:
     not_successfully_added_message_4: "Cada campo está separado por una coma (no espacios)."
     not_successfully_added_message_5: "Cada línea tiene los campos requeridos especificados cerca de la forma
       para subir archivos."
+    toggle_invite_notifications: 'UPDATE ME'
+    toggle_results_notifications: 'UPDATE ME'
+    update_settings: 'UPDATE ME'
+    verify_settings_update: 'UPDATE ME'
 
   tas:
     edit: "Editar la información del evaluador"

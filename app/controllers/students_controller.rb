@@ -155,7 +155,7 @@ class StudentsController < ApplicationController
     student.receives_results_emails = new_settings[:receives_results_emails]
     student.receives_invite_emails = new_settings[:receives_invite_emails]
     student.save
-    flash_message(:notice, 'Your settings have been updated!')
+    flash_message(:notice, t('students.verify_settings_update'))
     redirect_to action: 'mailer_settings'
   end
 

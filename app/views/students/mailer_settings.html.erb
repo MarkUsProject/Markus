@@ -1,13 +1,12 @@
 <h1> <%= @current_user.first_name %>'s Settings </h1>
-<%= form_with url: 'update_mailer_settings', method: 'patch', model: @current_user do |f| %>
+<br>
+<%= form_with url: 'update_mailer_settings', method: 'patch', model: @current_user, local: true do |f| %>
   <%= f.check_box :receives_results_emails %>
-  <%= f.label :receives_results_emails,
-              'I would like to receive email notifications from MarkUs when results are released.' %>
+  <%= f.label :receives_results_emails, t('students.toggle_results_notifications')%>
   <br><br>
   <%= f.check_box :receives_invite_emails %>
-  <%= f.label :receives_invite_emails,
-              'I would like to receive email notifications from MarkUs when I am invited to a group.' %>
+  <%= f.label :receives_invite_emails, t('students.toggle_invite_notifications') %>
   <br><br>
-  <%= f.submit 'Update Settings' %>
+  <%= f.submit t('students.update_settings') %>
 <% end %>
 

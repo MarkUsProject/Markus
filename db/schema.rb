@@ -589,7 +589,8 @@ ActiveRecord::Schema.define(version: 202000319204954) do
     t.integer "notes_count", default: 0
     t.string "email"
     t.string "id_number"
-    t.boolean "mail_subscribed", default: true
+    t.boolean "receives_results_emails", default: true
+    t.boolean "receives_invite_emails", default: true
     t.index ["api_key"], name: "index_users_on_api_key", unique: true
     t.index ["user_name"], name: "index_users_on_user_name", unique: true
   end
