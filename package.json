@@ -8,7 +8,7 @@
     "jcrop": "^0.0.1",
     "jquery": "^3.4.1",
     "marked": "^0.6.3",
-    "moment": "^2.24.0",
+    "moment": "^2.25.3",
     "mousetrap": "^1.6.5",
     "pdfjs-dist": "^2.3.200",
     "postcss-preset-env": "^6.7.0",
