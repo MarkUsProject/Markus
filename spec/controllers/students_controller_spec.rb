@@ -111,9 +111,8 @@ describe StudentsController do
         @student[setting] = false
         @student.save
         post_as @student,
-              'update_mailer_settings',
-              params: {'student': {setting: '1', other_setting: '1'}
-              }
+                'update_mailer_settings',
+                params: { 'student': { setting: '1', other_setting: '1' } }
         expect(@student[setting]).to eq(true)
       end
 
@@ -122,8 +121,7 @@ describe StudentsController do
         @student.save
         post_as @student,
                 'update_mailer_settings',
-              params: {'student': {setting: '0', other_setting: '1'}
-              }
+              params: { 'student': { setting: '0', other_setting: '1' } }
         expect(@student[setting]).to eq(false)
       end
     end
