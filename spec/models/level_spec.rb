@@ -9,7 +9,7 @@ describe Level do
 
   describe 'uniqueness validations' do
     subject { create(:level, mark: 0.5) }
-    it { is_expected.to validate_uniqueness_of(:mark).scoped_to(:rubric_criterion_id) }
-    it { is_expected.to validate_uniqueness_of(:name).scoped_to(:rubric_criterion_id) }
+    it { is_expected.to validate_uniqueness_of(:mark).scoped_to(:criterion_id) }
+    it { is_expected.to validate_uniqueness_of(:name).scoped_to(:criterion_id) }
   end
 end

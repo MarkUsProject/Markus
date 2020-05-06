@@ -1,10 +1,6 @@
 class CheckboxCriterion < Criterion
-  self.table_name = 'checkbox_criteria'
-
-  belongs_to :assignment, foreign_key: :assessment_id, counter_cache: true
+  belongs_to :assignment, foreign_key: :assessment_id
   has_many :criterion_ta_associations, as: :criterion, dependent: :destroy
-  has_many :marks, as: :markable, dependent: :destroy
-  accepts_nested_attributes_for :marks
   has_many :tas, through: :criterion_ta_associations
   has_many :test_groups, as: :criterion
 

@@ -85,8 +85,8 @@ class Result < ApplicationRecord
       else
         user_visibility = :ta
       end
-      criteria = assignment.get_criteria(user_visibility).map { |c| [c.class.to_s, c.id] }
-      marks_array = (marks.to_a.select { |m| criteria.member? [m.markable_type, m.markable_id] }).map &:mark
+      criteria = assignment.get_criteria(user_visibility).map(&:id)
+      marks_array = (marks.to_a.select { |m| criteria.member? m.criterion_id }).map &:mark
       # TODO: sum method does not work with empty arrays or with arrays containing nil values.
       #       Consider updating/replacing gem:
       #       see: https://github.com/thirtysixthspan/descriptive_statistics/issues/44
@@ -231,11 +231,11 @@ class Result < ApplicationRecord
     # want the peer-visible criteria
     visibility = is_a_review? ? :peer : user_visibility
 
-    criteria = submission.assignment.get_criteria(visibility).map { |c| [c.class.to_s, c.id] }
+    criteria = submission.assignment.get_criteria(visibility).map(&:id)
     nil_marks = false
     num_marks = 0
     marks.each do |mark|
-      if criteria.member? [mark.markable_type, mark.markable_id]
+      if criteria.member? mark.criterion_id
         num_marks += 1
         if mark.mark.nil?
           nil_marks = true

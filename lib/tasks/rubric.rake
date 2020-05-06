@@ -49,9 +49,6 @@ namespace :db do
             description:             random_sentences(5),
             position:                index + 4,
             max_mark:                pos_rand(3),
-            created_at:              nil,
-            updated_at:              nil,
-            assigned_groups_count:   nil
         )
       end
 
@@ -62,9 +59,6 @@ namespace :db do
             description:             random_sentences(5),
             position:                index + 7,
             max_mark:                1,
-            created_at:              nil,
-            updated_at:              nil,
-            assigned_groups_count:   nil
         )
       end
     end

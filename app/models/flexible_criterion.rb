@@ -1,17 +1,12 @@
 # Represents a flexible criterion used to mark an assignment.
 class FlexibleCriterion < Criterion
-  self.table_name = 'flexible_criteria' # set table name correctly
-
-  has_many :marks, as: :markable, dependent: :destroy
-  accepts_nested_attributes_for :marks
-
   has_many :criterion_ta_associations,
            as: :criterion,
            dependent: :destroy
 
   has_many :tas, through: :criterion_ta_associations
 
-  belongs_to :assignment, foreign_key: :assessment_id, counter_cache: true
+  belongs_to :assignment, foreign_key: :assessment_id
 
   has_many :test_groups, as: :criterion
 

@@ -3,6 +3,9 @@
 class Criterion < ApplicationRecord
   after_update :scale_marks
 
+  has_many :marks, dependent: :destroy
+  accepts_nested_attributes_for :marks
+
   validates_presence_of :name
   validates_uniqueness_of :name, scope: :assessment_id
 
@@ -19,7 +22,8 @@ class Criterion < ApplicationRecord
   validate :results_unreleased?
   validate :visible?
 
-  self.abstract_class = true
+  has_many :levels, -> { order(:mark) }, inverse_of: :criterion, dependent: :destroy, autosave: true
+  accepts_nested_attributes_for :levels, allow_destroy: true
 
   # Assigns a random TA from a list of TAs specified by +ta_ids+ to each
   # criterion in a list of criteria specified by +criterion_ids_types+. The criteria

@@ -43,9 +43,8 @@ namespace :db do
       else
         random_mark = rand(0..1)
       end
-      mark = Mark.find_by(result_id:     remark_submission.remark_result.id,
-                          markable_id:   criterion.id,
-                          markable_type: criterion.class.to_s)
+      mark = Mark.find_by(result_id: remark_submission.remark_result.id,
+                          criterion_id: criterion.id)
       mark.update_attribute(:mark, random_mark)
       result.save
     end

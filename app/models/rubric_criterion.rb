@@ -1,10 +1,5 @@
 class RubricCriterion < Criterion
-  self.table_name = 'rubric_criteria' # set table name correctly
-
   before_save :round_max_mark
-
-  has_many :marks, as: :markable, dependent: :destroy
-  accepts_nested_attributes_for :marks
 
   has_many :criterion_ta_associations,
            as: :criterion,
@@ -12,12 +7,10 @@ class RubricCriterion < Criterion
 
   has_many :tas, through: :criterion_ta_associations
 
-  has_many :levels, -> { order(:mark) }, inverse_of: :rubric_criterion, dependent: :destroy, autosave: true
-  accepts_nested_attributes_for :levels, allow_destroy: true
   before_validation :scale_marks_if_max_mark_changed
   validates_presence_of :levels
 
-  belongs_to :assignment, foreign_key: :assessment_id, counter_cache: true
+  belongs_to :assignment, foreign_key: :assessment_id
 
   validates_presence_of :assigned_groups_count
   validates_numericality_of :assigned_groups_count

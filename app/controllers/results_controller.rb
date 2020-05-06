@@ -174,7 +174,7 @@ class ResultsController < ApplicationController
 
             # adds a levels field to the marks info hash with the same rubric criterion id
             if klass == RubricCriterion
-              info[:levels] = Level.where(rubric_criterion_id: cr[:id])
+              info[:levels] = Level.where(criterion_id: cr[:id])
                                    .order(:mark)
                                    .pluck_to_hash(:name, :description, :mark)
             end

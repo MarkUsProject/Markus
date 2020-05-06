@@ -102,8 +102,7 @@ namespace :db do
         end
         marks << Mark.new(
           result_id: result.id,
-          markable_id: criterion.id,
-          markable_type: criterion.class.to_s,
+          criterion_id: criterion.id,
           mark: random_mark
         )
       end
