@@ -148,7 +148,7 @@ describe StudentsController do
       it 'redirects back to settings' do
         patch_as student,
                  'update_mailer_settings',
-                 params: { 'student' => { 'receives_invite_emails' => false, 'receives_results_emails' => true } }
+                 params: { 'student': { 'receives_invite_emails': false, 'receives_results_emails': true } }
         expect(response).to redirect_to(mailer_settings_students_path)
       end
     end
