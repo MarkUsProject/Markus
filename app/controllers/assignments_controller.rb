@@ -591,7 +591,7 @@ class AssignmentsController < ApplicationController
     num_files_before = assignment.assignment_files.length
     short_identifier = assignment_params[:short_identifier]
     # remove potentially invalid periods before updating
-    periods = submission_rule_params["submission_rule_attributes"]["periods_attributes"].to_h.values.map { |h| h[:id] }
+    periods = submission_rule_params['submission_rule_attributes']['periods_attributes'].to_h.values.map { |h| h[:id] }
     assignment.submission_rule.periods.where.not(id: periods).each(&:destroy)
     assignment.assign_attributes(assignment_params)
     assignment.repository_folder = short_identifier unless assignment.is_peer_review?
@@ -686,11 +686,11 @@ class AssignmentsController < ApplicationController
         :id,
         :type,
         { periods_attributes: [
-            :id,
-            :deduction,
-            :interval,
-            :hours,
-            :_destroy
+          :id,
+          :deduction,
+          :interval,
+          :hours,
+          :_destroy
         ] }
       ]
     )
