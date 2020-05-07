@@ -198,8 +198,11 @@ class GradeEntryFormsController < ApplicationController
         raise ActiveRecord::Rollback
       end
       params[:students].each do |student|
-        NotificationMailer.with(student: GradeEntryStudent.find_by(id: student), form: grade_entry_form)
-                          .release_spreadsheet_email.deliver_now
+        current_student = GradeEntryStudent.find_by(id: student)
+        if current_student.user.receives_results_emails?
+          NotificationMailer.with(student: current_student, form: grade_entry_form)
+                            .release_spreadsheet_email.deliver_now
+        end
       end
     end
   end
