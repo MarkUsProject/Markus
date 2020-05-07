@@ -108,42 +108,40 @@ describe StudentsController do
     include ERB::Util
     RSpec.shared_examples 'a student can' do
       it 'can be enabled in settings' do
-        @student[setting] = false
-        @student.save
-        post_as @student,
-                'update_mailer_settings',
-                params: { 'student': { setting: '1', other_setting: '1' } }
-        expect(@student[setting]).to eq(true)
+        student[setting] = false
+        student.save
+        patch_as student,
+                 'update_mailer_settings',
+                 params: { 'student'=> { setting => true, other_setting => true } }
+        student.reload
+        expect(student[setting]).to eq(true)
       end
 
       it 'can be disabled in settings' do
-        @student[setting] = true
-        @student.save
-        post_as @student,
-                'update_mailer_settings',
-              params: { 'student': { setting: '0', other_setting: '1' } }
-        expect(@student[setting]).to eq(false)
+        student[setting] = true
+        student.save
+        patch_as student,
+                 'update_mailer_settings',
+                 params: { 'student'=> { setting => false, other_setting => true } }
+        student.reload
+        expect(student[setting]).to eq(false)
       end
-    end
-
-    before :each do
-      allow(controller).to receive(:session_expired?).and_return(false)
-      allow(controller).to receive(:logged_in?).and_return(true)
-      @student = create(:student, user_name: 'Tomathen Fairgrieviouson')
-    end
-
-    describe 'group invite notifications' do
-      # Authenticate user is not timed out, and is a student.
-      let(:setting) { 'receives_results_emails' }
-      let(:other_setting) { 'receives_invite_emails' }
-
-      include_examples 'a student can'
     end
 
     describe 'results released notifications' do
       # Authenticate user is not timed out, and is a student.
+      let(:setting) { 'receives_results_emails' }
+      let(:other_setting) { 'receives_invite_emails' }
+      let(:student) { create(:student, user_name: 'Tomathen Fairgrieviouson') }
+
+      include_examples 'a student can'
+    end
+
+    describe 'group invite notifications' do
+      # Authenticate user is not timed out, and is a student.
       let(:setting) { 'receives_invite_emails' }
       let(:other_setting) { 'receives_results_emails' }
+      let(:student) { create(:student, user_name: 'Tomathen Fairgrieviouson') }
 
       include_examples 'a student can'
     end
