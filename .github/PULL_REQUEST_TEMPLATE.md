@@ -1,5 +1,5 @@
 <!--- Provide a summary of your changes in the Pull Request Title above. -->
-<!--- If this is a work in progress (not yet ready to be merged), add the "WIP" label to this pull request. -->
+<!--- If this is a work in progress (not yet ready to be merged), make this a draft pull request -->
 
 ## Motivation and Context
 <!--- Why is this pull request required? What problem does it solve? -->
