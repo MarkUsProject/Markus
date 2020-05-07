@@ -37,8 +37,7 @@ describe StudentsController do
 
       it 'accepts a valid file' do
         post :upload, params: {
-          upload_file: fixture_file_upload(
-            'files/students/form_good.csv', 'text/csv')
+          upload_file: fixture_file_upload('files/students/form_good.csv', 'text/csv')
         }
 
         expect(response.status).to eq(302)
@@ -55,8 +54,7 @@ describe StudentsController do
 
       it 'does not accept files with invalid columns' do
         post :upload, params: {
-          upload_file: fixture_file_upload(
-            'files/students/form_invalid_column.csv', 'text/csv')
+          upload_file: fixture_file_upload('files/students/form_invalid_column.csv', 'text/csv')
         }
 
         expect(response.status).to eq(302)
@@ -112,7 +110,7 @@ describe StudentsController do
         student.save
         patch_as student,
                  'update_mailer_settings',
-                 params: { 'student'=> { setting => true, other_setting => true } }
+                 params: { 'student' => { setting => true, other_setting => true } }
         student.reload
         expect(student[setting]).to eq(true)
       end
@@ -122,7 +120,7 @@ describe StudentsController do
         student.save
         patch_as student,
                  'update_mailer_settings',
-                 params: { 'student'=> { setting => false, other_setting => true } }
+                 params: { 'student' => { setting => false, other_setting => true } }
         student.reload
         expect(student[setting]).to eq(false)
       end
@@ -132,7 +130,7 @@ describe StudentsController do
       # Authenticate user is not timed out, and is a student.
       let(:setting) { 'receives_results_emails' }
       let(:other_setting) { 'receives_invite_emails' }
-      let(:student) { create(:student, user_name: 'Tomathen Fairgrieviouson') }
+      let(:student) { create(:student, user_name: 'c6stenha') }
 
       include_examples 'a student can'
     end
@@ -141,9 +139,18 @@ describe StudentsController do
       # Authenticate user is not timed out, and is a student.
       let(:setting) { 'receives_invite_emails' }
       let(:other_setting) { 'receives_results_emails' }
-      let(:student) { create(:student, user_name: 'Tomathen Fairgrieviouson') }
+      let(:student) { create(:student, user_name: 'c6stenha') }
 
       include_examples 'a student can'
+    end
+    describe 'changing any setting' do
+      let(:student) { create(:student, user_name: 'c6stenha') }
+      it 'redirects back to settings' do
+        patch_as student,
+                 'update_mailer_settings',
+                 params: { 'student' => { 'receives_invite_emails' => false, 'receives_results_emails' => true } }
+        expect(response).to redirect_to(mailer_settings_students_path)
+      end
     end
   end
 end
