@@ -326,7 +326,7 @@
             </tr>
             </thead>
             <tbody>
-              <% if rule.object.type.to_s == 'PenaltyDecayPeriodSubmissionRule' %>
+              <% if rule.object.type.to_s == 'PenaltyDecayPeriodSubmissionRule' && !rule.object.periods.empty? %>
                   <%= rule.fields_for :periods do |period_form| %>
                       <%
                         # The below conditional is meant to filter out periods that do not match
@@ -369,7 +369,7 @@
             </tr>
             </thead>
             <tbody>
-              <% if rule.object.type.to_s == 'PenaltyPeriodSubmissionRule' %>
+              <% if rule.object.type.to_s == 'PenaltyPeriodSubmissionRule' && !rule.object.periods.empty? %>
                   <%= rule.fields_for :periods do |period_form| %>
                       <%
                         # The below conditional is meant to filter out periods that do not match
