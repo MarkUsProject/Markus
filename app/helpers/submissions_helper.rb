@@ -42,7 +42,9 @@ module SubmissionsHelper
     if release
       groupings.each do |grouping|
         grouping.accepted_students.each do |student|
-          NotificationMailer.with(user: student, grouping: grouping).release_email.deliver_now
+          if student.receives_results_emails?
+            NotificationMailer.with(user: student, grouping: grouping).release_email.deliver_now
+          end
         end
       end
     end
