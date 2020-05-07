@@ -7,8 +7,9 @@ class SubmissionRule < ApplicationRecord
   end
 
   belongs_to :assignment, inverse_of: :submission_rule, foreign_key: :assessment_id
-  has_many :periods, -> { order('id') }, dependent: :destroy
+  has_many :periods, -> { order('id') }, dependent: :destroy, inverse_of: :submission_rule
   accepts_nested_attributes_for :periods, allow_destroy: true
+  validates_associated :periods
 
   def self.descendants
     [NoLateSubmissionRule,
