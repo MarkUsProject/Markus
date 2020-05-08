@@ -106,8 +106,7 @@ describe StudentsController do
     include ERB::Util
     RSpec.shared_examples 'a student can' do
       it 'can be enabled in settings' do
-        student[setting] = false
-        student.save
+        student.update!(setting => false)
         patch_as student,
                  'update_mailer_settings',
                  params: { 'student' => { setting => true, other_setting => true } }
@@ -116,8 +115,7 @@ describe StudentsController do
       end
 
       it 'can be disabled in settings' do
-        student[setting] = true
-        student.save
+        student.update!(setting => true)
         patch_as student,
                  'update_mailer_settings',
                  params: { 'student' => { setting => false, other_setting => true } }

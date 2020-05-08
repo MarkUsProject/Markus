@@ -323,10 +323,8 @@ describe GradeEntryFormsController do
       end.to change { ActionMailer::Base.deliveries.count }.by(2)
     end
     it 'does not send emails if all the students have results notifications turned off' do
-      @student.user.receives_results_emails = false
-      @student.user.save
-      @another.user.receives_results_emails = false
-      @another.user.save
+      @student.user.update!(receives_results_emails: false)
+      @another.user.update!(receives_results_emails: false)
       expect do
         post :update_grade_entry_students,
              params: { id: @this_form.id,
@@ -335,8 +333,7 @@ describe GradeEntryFormsController do
       end.to change { ActionMailer::Base.deliveries.count }.by(0)
     end
     it 'sends emails to students that have have results notifications enabled if only some do' do
-      @student.user.receives_results_emails = false
-      @student.user.save
+      @student.user.update!(receives_results_emails: false)
       expect do
         post :update_grade_entry_students,
              params: { id: @this_form.id,
