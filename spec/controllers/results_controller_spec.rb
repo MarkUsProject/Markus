@@ -28,12 +28,6 @@ describe ResultsController do
     end
   end
 
-  def self.test_assigns_nil(key)
-    it "should not assign #{key}" do
-      expect(assigns(key)).to be_nil
-    end
-  end
-
   def self.test_redirect_no_login(route_name)
     it "should be redirected from #{route_name}" do
       method(ROUTES[route_name]).call(route_name, params: { assignment_id: 1, submission_id: 1, id: 1 })
@@ -444,35 +438,7 @@ describe ResultsController do
   end
   context 'An admin' do
     before(:each) { sign_in admin }
-    context 'accessing edit' do
-      context 'with one grouping with a released result and two others with incomplete results' do
-        let :released_result do
-          submissions = Array.new(3) do
-            create :version_used_submission, grouping: (create :grouping_with_inviter, assignment: assignment)
-          end
-          create :released_result, submission: submissions.second
-        end
-        let(:groupings) do
-          released_result
-          assignment.groupings.order(:id)
-        end
-        let(:submissions) { groupings.map(&:current_submission_used) }
-        let(:results) { submissions.map(&:get_latest_result) }
-        xcontext 'and a remark request result' do # TODO: move this to a view spec
-          render_views
-          before :each do
-            released_result.submission.make_remark_result
-            released_result.submission.update(remark_request_timestamp: Time.zone.now)
-            get :edit, params: { assignment_id: assignment.id, submission_id: released_result.submission.id,
-                                 id: released_result.submission.remark_result.id }
-          end
-          it 'should have an edit form with fields for an overall comment' do
-            path = "/en/assignments/#{assignment.id}/submissions/#{released_result.submission.id}/results/#{released_result.id}/update_overall_comment"
-            assert_select '.overall-comment textarea'
-          end
-        end
-      end
-    end
+
     context 'accessing set_released_to_students' do
       before :each do
         get :set_released_to_students, params: { assignment_id: assignment.id, submission_id: submission.id,

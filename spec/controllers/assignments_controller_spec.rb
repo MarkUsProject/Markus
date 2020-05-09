@@ -335,11 +335,11 @@ describe AssignmentsController do
     end
   end
 
-  xdescribe '#show' do
+  describe '#show' do
     let!(:assignment) { create(:assignment) }
     let!(:user) { create(:student) }
 
-    context 'when the assignment is an individual assignment' do
+    xcontext 'when the assignment is an individual assignment' do
       it 'responds with a success and creates a new grouping' do
         assignment.update!(group_min: 1, group_max: 1)
         post_as user, :show, params: { id: assignment.id }
@@ -349,7 +349,7 @@ describe AssignmentsController do
       end
     end
 
-    context 'when the assignment is a group assignment and the student belongs to a group' do
+    xcontext 'when the assignment is a group assignment and the student belongs to a group' do
       it 'responds with a success' do
         assignment.update!(group_min: 1, group_max: 3)
         grouping = create(:grouping_with_inviter, assignment: assignment)

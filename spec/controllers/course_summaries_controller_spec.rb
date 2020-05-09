@@ -10,6 +10,7 @@ describe CourseSummariesController do
     describe '#download_csv_grades_report' do
       before :each do
         3.times { create(:assignment_with_criteria_and_results) }
+        create(:grouping_with_inviter, assignment: Assignment.first)
       end
 
       it 'be able to get a csv grade report' do

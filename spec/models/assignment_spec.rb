@@ -545,29 +545,28 @@ describe Assignment do
                              due_date: 2.days.ago,
                              assignment_properties_attributes: { section_due_dates_type: true })
         @section = create(:section, name: 'section_name')
-        create(:section_due_date, section: @section, assignment: @assignment, due_date: 1.day.ago)
-        student = create(:student, section: @section)
-        @grouping = create(:grouping, assignment: @assignment)
-        create(:student_membership,
-               grouping: @grouping,
-               user: student,
-               membership_status: StudentMembership::STATUSES[:inviter])
+        create(:section_due_date, section: @section, assignment: @assignment, due_date: 1.day.from_now)
       end
 
-      it 'return the normal due date for section due date' do
-        expect @assignment.section_due_date(@section)
+      it 'returns the correct due date for the section' do
+        expect(@assignment.section_due_date(@section)).to eq(
+          @section.section_due_dates.find_by(assessment_id: @assignment.id).due_date
+        )
       end
 
-      context 'another' do
+      context 'and with another section' do
         before(:each) do
-          @section = create(:section, name: 'section_name2')
-          create(:section_due_date, section: @section, assignment: @assignment, due_date: 1.day.ago)
-          student = create(:Student, section: @section)
-          @grouping = create(:grouping, assignment: @assignment)
-          create(:StudentMembership,
-                 grouping: @grouping,
-                 user: student,
-                 membership_status: StudentMembership::STATUSES[:inviter])
+          @section2 = create(:section, name: 'section_name2')
+          create(:section_due_date, section: @section2, assignment: @assignment, due_date: 2.days.from_now)
+        end
+
+        it 'returns the correct due date for each section' do
+          expect(@assignment.section_due_date(@section)).to eq(
+            @section.section_due_dates.find_by(assessment_id: @assignment.id).due_date
+          )
+          expect(@assignment.section_due_date(@section2)).to eq(
+            @section2.section_due_dates.find_by(assessment_id: @assignment.id).due_date
+          )
         end
       end
     end
@@ -763,7 +762,7 @@ describe Assignment do
           end
         end
         it 'destroy all previous groupings if cloning was successful' do
-          old_groupings = @target.groupings
+          old_groupings = @target.groupings.to_a
           @target.clone_groupings_from(@source.id)
           old_groupings.each do |old_grouping|
             expect(@target.groupings.include?(old_grouping)).to be_falsey
