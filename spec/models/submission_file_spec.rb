@@ -239,8 +239,4 @@ describe SubmissionFile do
       expect(SubmissionFile.is_binary?('Non binary content')).to be false
     end
   end
-
-  def teardown
-    destroy_repos
-  end
 end

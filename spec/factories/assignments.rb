@@ -29,12 +29,6 @@ FactoryBot.define do
     end
   end
 
-  factory :assignment_with_criteria, parent: :assignment do
-    after(:create) do |a|
-      3.times { create(:rubric_criterion, assignment: a) }
-    end
-  end
-
   factory :assignment_with_criteria_and_results, parent: :assignment do
     after(:create) do |a|
       3.times { create(:flexible_criterion, assignment: a) }
@@ -80,9 +74,6 @@ FactoryBot.define do
 
       create(:test_group, assignment: assignment)
     end
-    after(:stub) do |assignment| # called by build_stubbed
-      build_stubbed(:test_group, assignment: assignment)
-    end
   end
 
   factory :assignment_for_student_tests, parent: :assignment do
@@ -95,9 +86,6 @@ FactoryBot.define do
       end
 
       create(:test_group, assignment: assignment)
-    end
-    after(:stub) do |assignment| # called by build_stubbed
-      build_stubbed(:test_group, assignment: assignment)
     end
   end
 

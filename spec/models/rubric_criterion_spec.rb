@@ -62,8 +62,7 @@ describe RubricCriterion do
         it 'raises' do
           expect do
             RubricCriterion.create_or_update_from_csv_row([], @assignment)
-                           .to raise_error CsvInvalidLineError
-          end
+          end.to raise_error CsvInvalidLineError
         end
       end
     end
@@ -73,8 +72,7 @@ describe RubricCriterion do
         it 'raises' do
           expect do
             RubricCriterion.create_or_update_from_csv_row(%w[name], @assignment)
-                           .to raise_error CsvInvalidLineError
-          end
+          end.to raise_error CsvInvalidLineError
         end
       end
     end
@@ -84,8 +82,7 @@ describe RubricCriterion do
         it 'raises' do
           expect do
             RubricCriterion.create_or_update_from_csv_row(%w[name 1.0], @assignment)
-                           .to raise_error CsvInvalidLineError
-          end
+          end.to raise_error CsvInvalidLineError
         end
       end
     end
@@ -99,8 +96,7 @@ describe RubricCriterion do
           it 'raises' do
             expect do
               RubricCriterion.create_or_update_from_csv_row(row, @assignment)
-                             .to raise_error CsvInvalidLineError
-            end
+            end.to raise_error ArgumentError
           end
         end
       end
@@ -112,8 +108,7 @@ describe RubricCriterion do
         it 'raises' do
           expect do
             RubricCriterion.create_or_update_from_csv_row(row, @assignment)
-                           .to raise_error CsvInvalidLineError
-          end
+          end.to raise_error ArgumentError
         end
       end
     end

@@ -585,9 +585,7 @@ describe Grouping do
           assignment_folder = File.join(@assignment.repository_folder, File::SEPARATOR)
           begin
             txn.add(File.join(assignment_folder, 'Shapes.java'), 'shapes content', 'text/plain')
-            unless repo.commit(txn)
-              raise 'Unable to setup test!'
-            end
+            repo.commit(txn)
           end
         end
       end
@@ -619,14 +617,9 @@ describe Grouping do
         # submit another file so that we have all required files submitted
         @grouping.group.access_repo do |repo|
           txn = repo.get_transaction('markus')
-          begin
-            txn.add(File.join(@assignment.repository_folder, @file.filename), 'ShapesTest content', 'text/plain')
-            unless repo.commit(txn)
-              raise 'Commit failed!'
-            end
-          rescue Exception => e
-            raise 'Submitting file failed: ' + e.message
-          end
+          txn.add(File.join(@assignment.repository_folder, @file.filename), 'ShapesTest content', 'text/plain')
+          repo.commit(txn)
+
           # check again; there shouldn't be any missing files anymore
           missing_files = @grouping.missing_assignment_files
           expect(missing_files.length).to eq(0)

@@ -6,21 +6,13 @@ shared_examples 'a criterion' do
       Array.new(2) { create(criterion_factory_name, assignment: assignment) }
     end
     let(:tas) { Array.new(2) { create(:ta) } }
+    let(:ta_ids) { tas.map(&:id) }
     let(:criterion_ids_types) do
       criteria.map { |criterion| [criterion.id, criterion.class.to_s] }
     end
     let(:criterion_ids_types_one) do
       [[criteria[0].id, criteria[1].class.to_s]]
     end
-    let(:criterion_ids_types_match) do
-      criterion_ids_by_type = {}
-      %w(RubricCriterion FlexibleCriterion CheckboxCriterion).each do |type|
-        criterion_ids_by_type[type] =
-          criterion_ids_types.select { |id_type| id_type[1] == type }.map { |c| c[0] }
-      end
-      criterion_ids_by_type
-    end
-    let(:ta_ids) { tas.map(&:id) }
 
     describe '.randomly_assign_tas' do
       it 'can randomly bulk assign no TAs to no criteria' do
