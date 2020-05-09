@@ -440,22 +440,22 @@ describe AssignmentsController do
             allow_remarks: 0,
             id: assignment.id
           },
+          submission_rule_attributes: {
+            type: 'PenaltyDecayPeriodSubmissionRule',
+            periods_attributes: {
+              submission_rule.id => {
+                  deduction: 10.0,
+                  interval: 1.0,
+                  hours: 10.0,
+                  _destroy: 0,
+                  id: nil
+              }
+            }
+          },
           short_identifier: assignment.short_identifier,
           description: 'Test',
           message: '',
           due_date: Time.now.to_s
-        },
-        submission_rule_attributes: {
-          type: 'PenaltyDecayPeriodSubmissionRule',
-          periods_attributes: {
-            submission_rule.id => {
-              deduction: 10.0,
-              interval: 1.0,
-              hours: 10.0,
-              _destroy: 0,
-              id: submission_rule.id
-            }
-          }
         }
       }
     end

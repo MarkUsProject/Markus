@@ -18,16 +18,12 @@ class PenaltyDecayPeriodSubmissionRule < SubmissionRule
     result = submission.get_original_result
     overtime_hours = calculate_overtime_hours_from(submission.revision_timestamp, submission.grouping)
     penalty_amount = calculate_penalty(overtime_hours)
-    if penalty_amount > 0
-      penalty = ExtraMark.new
-      penalty.result = result
-      penalty.extra_mark = -penalty_amount
-      penalty.unit = ExtraMark::PERCENTAGE
-
-      penalty.description =
-        I18n.t 'penalty_decay_period_submission_rules.extramark_description',
-               overtime_hours: overtime_hours.round(2), penalty_amount: penalty_amount
-      penalty.save
+    if penalty_amount.positive?
+      ExtraMark.create(result: result,
+                       extra_mark: -penalty_amount,
+                       unit: ExtraMark::PERCENTAGE,
+                       description: I18n.t('penalty_decay_period_submission_rules.extramark_description',
+                                           overtime_hours: overtime_hours.round(2), penalty_amount: penalty_amount))
     end
 
     submission
