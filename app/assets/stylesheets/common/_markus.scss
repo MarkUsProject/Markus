@@ -22,6 +22,16 @@ body {
   background-color: $blue;
 }
 
+// Flexbox display
+.flex-row {
+  display: flex;
+  flex-direction: row;
+}
+
+.flex-row-expand {
+  flex-grow: 1;
+}
+
 
 /** Code */
 pre,
@@ -71,6 +81,11 @@ a {
   cursor: pointer;
   text-decoration: none;
   transition: color $time-quick;
+
+  &.inactive {
+    color: $black;
+    pointer-events: none;
+  }
 
   &:hover {
     color: $blue;
@@ -428,8 +443,20 @@ fieldset {
     border: 1px solid $grey;
     border-radius: $radius;
     flex: 1;
-    margin-left: 2em;
+    min-height: 1px;
     padding: 1em;
+
+    &.no-border {
+      border: 0;
+    }
+
+    &.highlight {
+      background-color: $lighter-green;
+    }
+  }
+
+  * + .pane {
+    margin-left: 2em;
   }
 
   h2,
@@ -772,3 +799,9 @@ nav {
     }
   }
 }
+
+// Login
+.cookies-eu-ok {
+  background-color: $blue;
+}
+

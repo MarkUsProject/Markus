@@ -1,10 +1,10 @@
 <% unless grade_entry_forms.nil? && assignments.nil? %>
   <div class='assignment_summary'>
-    <h2 class='title'>
+    <h2>
       <%= link_to t('course_summary.title'), course_summaries_path %>
     </h2>
 
-    <div id='weighted_course_summary_graph' class='ta_grade_distribution'>
+    <div id='weighted_course_summary_graph'>
       <%= render partial: 'weighted_course_summary_graph', locals: { grade_entry_forms: grade_entry_forms,
                                                                      assignments: assignments,
                                                                      marking_schemes: marking_schemes } %>

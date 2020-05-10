@@ -3,6 +3,7 @@ fr:
     add_column: "Ajouter une colonne"
     csv:
       overwrite: "Remplacer les notes existantes?"
+    grade_entry_item_distribution: "UPDATE ME"
     grades:
       marking_state: "Affichage de la note aux étudiants"
       no_mark: "NC"

@@ -147,7 +147,7 @@ class MainController < ApplicationController
     @current_ta = @current_assignment.tas.first unless @current_assignment.nil?
     @tas = @current_assignment.tas unless @current_assignment.nil?
 
-    render :index, layout: 'content'
+    render :index, layout: 'assignment_content'
   end
 
   def about

@@ -1,7 +1,8 @@
 <% unless @marking_schemes.nil? %>
   <% @marking_schemes.each_with_index do |marking_scheme, index| %>
+  <div class='flex-row'>
 
-  <canvas id='<%= "weighted_summary_graph_#{marking_scheme.id}" %>' width='400' height='350'></canvas>
+  <div><canvas id='<%= "weighted_summary_graph_#{marking_scheme.id}" %>' width='500' height='450'></canvas></div>
 
   <script>
     $(document).ready(function () {
@@ -49,10 +50,11 @@
     });
   </script>
 
-  <div class='course_summary'>
+  <div class='course_summary flex-row-expand'>
     <%= render partial: 'course_summaries/course_summary_info_summary',
                locals: { marking_scheme: marking_scheme,
                          grades: marking_scheme.students_weighted_grades_array(@current_user) } %>
+  </div>
   </div>
   <% end %>
 <% end %>
