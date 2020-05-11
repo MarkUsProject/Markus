@@ -1,7 +1,8 @@
 describe GracePeriodSubmissionRule do
   let(:rule_type) { :grace_period_submission_rule }
 
-  shared_examples 'on_time' do
+  context 'when the group submitted on time' do
+    include_context 'submission_rule_on_time'
     context 'when the student submitted some files' do
       it 'does not deduct credits' do
         expect { apply_rule }.not_to(change { grouping.inviter.grace_period_deductions.count })
@@ -19,7 +20,8 @@ describe GracePeriodSubmissionRule do
     end
   end
 
-  shared_examples 'during_first' do
+  context 'when the group submitted during the first penalty period' do
+    include_context 'submission_rule_during_first'
     context 'when the student did not submit any files' do
       before :each do
         pretend_now_is(collection_time) { grouping.create_grouping_repository_folder }
@@ -101,7 +103,8 @@ describe GracePeriodSubmissionRule do
     end
   end
 
-  shared_examples 'during_second' do
+  context 'when the group submitted during the second penalty period' do
+    include_context 'submission_rule_during_second'
     it 'should create a new deduction' do
       expect { apply_rule }.to(change { grouping.inviter.grace_period_deductions.count }.by(1))
     end
@@ -135,6 +138,4 @@ describe GracePeriodSubmissionRule do
       end
     end
   end
-
-  include_examples '#apply_submission_rule'
 end

@@ -2,7 +2,8 @@ describe PenaltyPeriodSubmissionRule do
   let(:rule_type) { :penalty_period_submission_rule }
   let(:result) { submission.get_latest_result }
 
-  shared_examples 'on_time' do
+  context 'when the group submitted on time' do
+    include_context 'submission_rule_on_time'
     context 'when the student did not submit any files' do
       before :each do
         pretend_now_is(collection_time) { grouping.create_grouping_repository_folder }
@@ -20,7 +21,8 @@ describe PenaltyPeriodSubmissionRule do
     end
   end
 
-  shared_examples 'during_first' do
+  context 'when the group submitted during the first penalty period' do
+    include_context 'submission_rule_during_first'
     it 'should add a 1% penalty' do
       apply_rule
       expect(result.get_total_extra_percentage).to eq -1
@@ -34,7 +36,8 @@ describe PenaltyPeriodSubmissionRule do
     end
   end
 
-  shared_examples 'during_second' do
+  context 'when the group submitted during the second penalty period' do
+    include_context 'submission_rule_during_second'
     it 'should add a 2% penalty' do
       apply_rule
       expect(result.get_total_extra_percentage).to eq -2
@@ -47,5 +50,4 @@ describe PenaltyPeriodSubmissionRule do
       expect(result.extra_marks.first.unit).to eq ExtraMark::PERCENTAGE
     end
   end
-  include_examples '#apply_submission_rule'
 end
