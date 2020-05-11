@@ -104,7 +104,7 @@ describe StudentsController do
 
   describe 'User is a Student' do
     include ERB::Util
-    RSpec.shared_examples 'preferences for this mailer can be changed' do
+    RSpec.shared_examples 'changing particular mailer settings' do
       it 'can be enabled in settings' do
         student.update!(setting => false)
         patch_as student,
@@ -130,7 +130,7 @@ describe StudentsController do
       let(:other_setting) { 'receives_invite_emails' }
       let(:student) { create(:student, user_name: 'c6stenha') }
 
-      include_examples 'preferences for this mailer can be changed'
+      include_examples 'changing particular mailer settings'
     end
 
     describe 'group invite notifications' do
@@ -139,7 +139,7 @@ describe StudentsController do
       let(:other_setting) { 'receives_results_emails' }
       let(:student) { create(:student, user_name: 'c6stenha') }
 
-      include_examples 'preferences for this mailer can be changed'
+      include_examples 'changing particular mailer settings'
     end
     describe 'changing any setting' do
       let(:student) { create(:student, user_name: 'c6stenha') }

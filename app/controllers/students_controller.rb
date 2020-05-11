@@ -151,8 +151,8 @@ class StudentsController < ApplicationController
   def update_mailer_settings
     student = current_user
     new_settings = params[:student]
-    student.update!(receives_results_emails: new_settings[:receives_results_emails])
-    student.update!(receives_invite_emails: new_settings[:receives_invite_emails])
+    student.update!(receives_results_emails: new_settings[:receives_results_emails],
+                    receives_invite_emails: new_settings[:receives_invite_emails])
     flash_message(:success, t('students.verify_settings_update'))
     redirect_to action: 'mailer_settings'
   end
