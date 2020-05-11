@@ -16,7 +16,7 @@ en:
       memberships_not_unique: "The student already belongs to a different group for the current assignment"
       member_does_not_exist: "Error: Group %{group_name} cannot be created since a student with username '%{student_user_name}' does not exist"
 
-    #Sutdent's View (student)
+    #Student's View (student)
     student:
       submission:
         conflicts: "Conflicts"

@@ -5,6 +5,7 @@
 - Fixed sorting in annotation table in results view (#4542)
 - Fixed inverse association bug with assignments (#4551)
 - Enabled customization of rubric criterion level number and marks (#4535)
+- Introduces student email settings (#4578)
 
 ## [v1.9.1]
 - Fixed bug where the output column was not shown in the test results table if the first row had no output (#4537)

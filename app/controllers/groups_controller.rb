@@ -430,9 +430,11 @@ class GroupsController < ApplicationController
         to_invite.each do |i|
           i = i.strip
           invited_user = Student.where(hidden: false).find_by(user_name: i)
-          NotificationMailer.with(inviter: current_user,
-                                  invited: invited_user,
-                                  grouping: @grouping).grouping_invite_email.deliver_now
+          if invited_user.receives_invite_emails?
+            NotificationMailer.with(inviter: current_user,
+                                    invited: invited_user,
+                                    grouping: @grouping).grouping_invite_email.deliver_now
+          end
         end
         flash_message(:success, I18n.t('groups.invite_member.success'))
       else

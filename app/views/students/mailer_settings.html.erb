@@ -1,0 +1,13 @@
+<% content_for :title, t('students.account_settings') %>
+<%= form_with url: 'update_mailer_settings', method: 'patch', model: @current_user, local: true do |f| %>
+  <p>
+    <%= f.check_box :receives_results_emails %>
+    <%= f.label :receives_results_emails, t('students.toggle_results_notifications') %>
+  </p>
+  <p>
+    <%= f.check_box :receives_invite_emails %>
+    <%= f.label :receives_invite_emails, t('students.toggle_invite_notifications') %>
+  </p>
+  <%= f.submit t('students.update_settings') %>
+<% end %>
+

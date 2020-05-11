@@ -16,7 +16,7 @@ fr:
       bad_students: "UPDATE ME: %{student_names}"
       memberships_exist: "UPDATE ME: %{student_names}"
 
-    #Sutdent's View (student)
+    #Student's View (student)
     student:
       submission:
         conflicts: "Conflits"

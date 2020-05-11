@@ -27,6 +27,10 @@ class Student < User
 
   validates_presence_of :section, unless: -> { section_id.nil? }
 
+  validates_inclusion_of :receives_invite_emails, in: [true, false]
+
+  validates_inclusion_of :receives_results_emails, in: [true, false]
+
   validates_numericality_of :grace_credits,
                             only_integer: true,
                             greater_than_or_equal_to: 0
