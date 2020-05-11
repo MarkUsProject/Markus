@@ -28,7 +28,6 @@ en:
         missing_file: "Could not download %{file_name}.  File may be missing."
         empty_file_warning: "%{file_name} is empty"
         file_too_large: "The size of the uploaded file %{file_name} exceeds the maximum of %{max_size} MB."
-      account_settings: "Account Settings"
 
     submission_file:
       error:

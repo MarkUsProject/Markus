@@ -48,7 +48,7 @@
         <% end %>>
       <%= link_to t('menu.home'), controller: 'assignments' %>
     </li>
-    <li <% if controller.controller_name == 'students'%>
+    <li <% if controller.controller_name == 'students' %>
         class='active'
         <% end %>>
       <%= link_to t('menu.settings'), controller: 'students', action: 'mailer_settings' %>

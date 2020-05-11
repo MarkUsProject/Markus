@@ -37,7 +37,6 @@ es:
         missing_file:                     "No se pudo descargar %{file_name}. Puede que el archivo no haya
                                            sido encontrado."
         empty_file_warning: "UPDATE ME"
-      account_settings: 'UPDATE ME'
 
     submission_file:
       error:

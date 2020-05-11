@@ -27,7 +27,6 @@ pt:
         invalid_file_name: "Nome inválido para o arquivo enviado."
         missing_file: "Não foi possível baixar %{file_name}.  O arquivo pode estar faltando."
         empty_file_warning: "UPDATE ME"
-      account_settings: 'UPDATE ME'
 
     submission_file:
       error:

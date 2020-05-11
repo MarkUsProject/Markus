@@ -411,7 +411,7 @@ describe SubmissionsController do
             end.to change { ActionMailer::Base.deliveries.count }.by(1)
           end
           it 'sends an email to every student in a grouping if it has multiple students' do
-            @another_membership = create(:student_membership, membership_status: 'inviter', grouping: @grouping)
+            create(:student_membership, membership_status: 'inviter', grouping: @grouping)
             expect do
               post_as @admin,
                       :update_submissions,
@@ -421,8 +421,8 @@ describe SubmissionsController do
             end.to change { ActionMailer::Base.deliveries.count }.by(2)
           end
           it 'does not send an email to some students in a grouping if some have emails disabled' do
-            @another_membership = create(:student_membership, membership_status: 'inviter', grouping: @grouping)
-            @another_membership.user.update!(receives_results_emails: false)
+            another_membership = create(:student_membership, membership_status: 'inviter', grouping: @grouping)
+            another_membership.user.update!(receives_results_emails: false)
             expect do
               post_as @admin,
                       :update_submissions,
@@ -434,21 +434,21 @@ describe SubmissionsController do
         end
         context 'with several groupings selected' do
           it 'sends emails to students in every grouping selected if more than one grouping is selected' do
-            @other_grouping = create(:grouping, assignment: @assignment)
-            @other_membership = create(:student_membership, membership_status: 'inviter', grouping: @other_grouping)
-            @other_grouping.group.access_repo do |repo|
+            other_grouping = create(:grouping, assignment: @assignment)
+            create(:student_membership, membership_status: 'inviter', grouping: other_grouping)
+            other_grouping.group.access_repo do |repo|
               txn = repo.get_transaction('test')
               path = File.join(@assignment.repository_folder, 'file1_name')
               txn.add(path, 'file1 content', '')
               repo.commit(txn)
               # Generate submission
-              submission = Submission.generate_new_submission(@other_grouping, repo.get_latest_revision)
+              submission = Submission.generate_new_submission(other_grouping, repo.get_latest_revision)
               result = submission.get_latest_result
               result.marking_state = Result::MARKING_STATES[:complete]
               result.save
               submission.save
             end
-            @other_grouping.update! is_collected: true
+            other_grouping.update! is_collected: true
             expect do
               post_as @admin,
                       :update_submissions,
@@ -458,22 +458,22 @@ describe SubmissionsController do
             end.to change { ActionMailer::Base.deliveries.count }.by(2)
           end
           it 'does not email some students in some groupings if those students have them disabled' do
-            @other_grouping = create(:grouping, assignment: @assignment)
-            @other_membership = create(:student_membership, membership_status: 'inviter', grouping: @other_grouping)
-            @other_membership.user.update!(receives_results_emails: false)
-            @other_grouping.group.access_repo do |repo|
+            other_grouping = create(:grouping, assignment: @assignment)
+            other_membership = create(:student_membership, membership_status: 'inviter', grouping: other_grouping)
+            other_membership.user.update!(receives_results_emails: false)
+            other_grouping.group.access_repo do |repo|
               txn = repo.get_transaction('test')
               path = File.join(@assignment.repository_folder, 'file1_name')
               txn.add(path, 'file1 content', '')
               repo.commit(txn)
               # Generate submission
-              submission = Submission.generate_new_submission(@other_grouping, repo.get_latest_revision)
+              submission = Submission.generate_new_submission(other_grouping, repo.get_latest_revision)
               result = submission.get_latest_result
               result.marking_state = Result::MARKING_STATES[:complete]
               result.save
               submission.save
             end
-            @other_grouping.update! is_collected: true
+            other_grouping.update! is_collected: true
             expect do
               post_as @admin,
                       :update_submissions,

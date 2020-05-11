@@ -43,6 +43,18 @@ describe Student do
     it 'will have some number of grace credits' do
       is_expected.to validate_numericality_of :grace_credits
     end
+
+    it 'has a preference for receives_invite_emails' do
+      should allow_value(true).for(:receives_invite_emails)
+      should allow_value(false).for(:receives_invite_emails)
+      should_not allow_value(nil).for(:receives_invite_emails)
+    end
+
+    it 'has a preference for receives_results_emails' do
+      should allow_value(true).for(:receives_results_emails)
+      should allow_value(false).for(:receives_results_emails)
+      should_not allow_value(nil).for(:receives_results_emails)
+    end
   end
 
   context 'A pair of students in the same group' do

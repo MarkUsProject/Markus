@@ -30,6 +30,7 @@ es:
     toggle_results_notifications: 'UPDATE ME'
     update_settings: 'UPDATE ME'
     verify_settings_update: 'UPDATE ME'
+    account_settings: "UPDATE ME"
 
   tas:
     edit: "Editar la información del evaluador"
