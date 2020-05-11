@@ -444,11 +444,11 @@ describe AssignmentsController do
             type: 'PenaltyDecayPeriodSubmissionRule',
             periods_attributes: {
               submission_rule.id => {
-                  deduction: 10.0,
-                  interval: 1.0,
-                  hours: 10.0,
-                  _destroy: 0,
-                  id: nil
+                deduction: 10.0,
+                interval: 1.0,
+                hours: 10.0,
+                _destroy: 0,
+                id: nil
               }
             }
           },

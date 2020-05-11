@@ -25,7 +25,7 @@ describe PenaltyPeriodSubmissionRule do
     include_context 'submission_rule_during_first'
     it 'should add a 1% penalty' do
       apply_rule
-      expect(result.get_total_extra_percentage).to eq -1
+      expect(result.get_total_extra_percentage).to eq(-1)
     end
     it 'should create an extra mark' do
       expect { apply_rule }.to(change { result.extra_marks.count }.by(1))
@@ -40,7 +40,7 @@ describe PenaltyPeriodSubmissionRule do
     include_context 'submission_rule_during_second'
     it 'should add a 2% penalty' do
       apply_rule
-      expect(result.get_total_extra_percentage).to eq -2
+      expect(result.get_total_extra_percentage).to eq(-2)
     end
     it 'should create an extra mark' do
       expect { apply_rule }.to(change { result.extra_marks.count }.by(1))
