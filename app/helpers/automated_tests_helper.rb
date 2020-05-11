@@ -92,6 +92,39 @@ module AutomatedTestsHelper
            .each { |h| h[:test_categories] = [h['user_type'].downcase] }
   end
 
+  def get_markus_address(host_with_port)
+    if Rails.application.config.action_controller.relative_url_root.nil?
+      host_with_port
+    else
+      host_with_port + Rails.application.config.action_controller.relative_url_root
+    end
+  end
+
+  def run_autotester_command(command, server_kwargs)
+    server_username = Rails.configuration.x.autotest.server_username
+    server_command = Rails.configuration.x.autotest.server_command
+    output = ''
+    if server_username.nil?
+      # local cancellation with no authentication
+      args = [server_command, command, '-j', JSON.generate(server_kwargs)]
+      output, status = Open3.capture2e(*args)
+      if status.exitstatus != 0
+        raise output
+      end
+    else
+      # local or remote cancellation with authentication
+      server_host = Rails.configuration.x.autotest.server_host
+      Net::SSH.start(server_host, server_username, auth_methods: ['publickey']) do |ssh|
+        args = "#{server_command} #{command} -j '#{JSON.generate(server_kwargs)}'"
+        output = ssh.exec!(args)
+        if output.exitstatus != 0
+          raise output
+        end
+      end
+    end
+    output
+  end
+
   private
 
   def server_api_key

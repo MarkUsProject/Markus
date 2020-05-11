@@ -7,34 +7,6 @@ class AutotestSpecsJob < ApplicationJob
   end
 
   def perform(host_with_port, assignment)
-    if Rails.application.config.action_controller.relative_url_root.nil?
-      markus_address = host_with_port
-    else
-      markus_address = host_with_port + Rails.application.config.action_controller.relative_url_root
-    end
-    server_username = Rails.configuration.x.autotest.server_username
-    server_command = Rails.configuration.x.autotest.server_command
-    server_kwargs =  server_params(markus_address, assignment.id)
-
-    begin
-      if server_username.nil?
-        # tests executed locally with no authentication
-        scripts_command = [server_command, 'specs', '-j', JSON.generate(server_kwargs)]
-        output, status = Open3.capture2e(*scripts_command)
-        if status.exitstatus != 0
-          raise output
-        end
-      else
-        # tests executed locally or remotely with authentication
-        server_host = Rails.configuration.x.autotest.server_host
-        Net::SSH.start(server_host, server_username, auth_methods: ['publickey']) do |ssh|
-          scripts_command = "#{server_command} specs -j '#{JSON.generate(server_kwargs)}'"
-          output = ssh.exec!(scripts_command)
-          if output.exitstatus != 0
-            raise output
-          end
-        end
-      end
-    end
+    run_autotester_command('specs', server_params(get_markus_address(host_with_port), assignment.id))
   end
 end
