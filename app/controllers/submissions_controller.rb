@@ -166,19 +166,25 @@ class SubmissionsController < ApplicationController
   end
 
   def manually_collect_and_begin_grading
-    @grouping = Grouping.find(params[:id])
-    @revision_identifier = params[:current_revision_identifier]
-    apply_late_penalty = params[:apply_late_penalty].nil? ?
-                         false : params[:apply_late_penalty]
-    SubmissionsJob.perform_now([@grouping],
-                               apply_late_penalty: apply_late_penalty,
-                               revision_identifier: @revision_identifier)
+    begin
+      authorize!
+      @grouping = Grouping.find(params[:id])
+      @revision_identifier = params[:current_revision_identifier]
+      apply_late_penalty = params[:apply_late_penalty].nil? ?
+                               false : params[:apply_late_penalty]
+      SubmissionsJob.perform_now([@grouping],
+                                 apply_late_penalty: apply_late_penalty,
+                                 revision_identifier: @revision_identifier)
 
-    submission = @grouping.reload.current_submission_used
-    redirect_to edit_assignment_submission_result_path(
-      assignment_id: @grouping.assessment_id,
-      submission_id: submission.id,
-      id: submission.get_latest_result.id)
+      submission = @grouping.reload.current_submission_used
+      redirect_to edit_assignment_submission_result_path(
+                      assignment_id: @grouping.assessment_id,
+                      submission_id: submission.id,
+                      id: submission.get_latest_result.id)
+    rescue ActionPolicy::Unauthorized => e
+      flash_message(:error, e.message)
+    end
+
   end
 
   def uncollect_all_submissions

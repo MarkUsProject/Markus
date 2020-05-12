@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 202000319204954) do
+ActiveRecord::Schema.define(version: 2020_05_11_182910) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -257,6 +257,16 @@ ActiveRecord::Schema.define(version: 202000319204954) do
   create_table "grade_entry_students_tas", id: :serial, force: :cascade do |t|
     t.integer "grade_entry_student_id"
     t.integer "ta_id"
+  end
+
+  create_table "grader_permission", force: :cascade do |t|
+    t.integer "user_id"
+    t.boolean "delete_grace_period_deduction"
+    t.boolean "create_notes"
+    t.boolean "create_delete_annotations"
+    t.boolean "manually_collect_and_begin_grading"
+    t.boolean "update_grade_entry_students"
+    t.boolean "manage_grade_entry_forms"
   end
 
   create_table "grades", id: :serial, force: :cascade do |t|
@@ -606,6 +616,7 @@ ActiveRecord::Schema.define(version: 202000319204954) do
   add_foreign_key "extensions", "groupings"
   add_foreign_key "extra_marks", "results", name: "fk_extra_marks_results", on_delete: :cascade
   add_foreign_key "feedback_files", "submissions"
+  add_foreign_key "grader_permission", "users"
   add_foreign_key "groupings", "assessments", name: "fk_groupings_assignments"
   add_foreign_key "groupings", "groups", name: "fk_groupings_groups"
   add_foreign_key "levels", "rubric_criteria"
