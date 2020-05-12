@@ -254,6 +254,7 @@ class SubmissionsController < ApplicationController
         authorize! assignment, to: :run_tests?
         @current_job = AutotestRunJob.perform_later(request.protocol + request.host_with_port,
                                                     current_user.id,
+                                                    assignment.id,
                                                     test_runs)
         session[:job_id] = @current_job.job_id
         success = I18n.t('automated_tests.tests_running', assignment_identifier: assignment.short_identifier)

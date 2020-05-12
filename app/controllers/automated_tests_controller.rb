@@ -3,7 +3,8 @@ class AutomatedTestsController < ApplicationController
 
   before_action      :authorize_only_for_admin,
                      except: [:student_interface,
-                              :get_test_runs_students]
+                              :get_test_runs_students,
+                              :execute_test_run]
 
   before_action      :authorize_for_student,
                      only: [:student_interface,
@@ -63,6 +64,7 @@ class AutomatedTestsController < ApplicationController
       test_run = grouping.create_test_run!(user: current_user)
       @current_job = AutotestRunJob.perform_later(request.protocol + request.host_with_port,
                                                   current_user.id,
+                                                  assignment.id,
                                                   [{ id: test_run.id }])
       session[:job_id] = @current_job.job_id
       flash_message(:notice, I18n.t('automated_tests.tests_running'))
