@@ -122,7 +122,6 @@ class Criterion < ApplicationRecord
                          .joins(ta: :groupings)
                          .where('groupings.assessment_id': assignment.id)
                          .select('criterion_ta_associations.criterion_id',
-                                 'criterion_ta_associations.criterion_type',
                                  'groupings.id')
                          .distinct
              )

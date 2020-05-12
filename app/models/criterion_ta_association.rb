@@ -3,8 +3,7 @@ class CriterionTaAssociation < ApplicationRecord
   belongs_to              :ta
   validates_associated    :ta
 
-  belongs_to              :criterion, polymorphic: true
-  validates_presence_of   :criterion_type
+  belongs_to              :criterion
   validates_associated    :criterion
 
   belongs_to              :assignment, foreign_key: :assessment_id
