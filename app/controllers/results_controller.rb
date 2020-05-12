@@ -8,7 +8,8 @@ class ResultsController < ApplicationController
                          :download, :download_zip,
                          :update_remark_request, :cancel_remark_request,
                          :get_test_runs_instructors, :get_test_runs_instructors_released,
-                         :add_tag, :remove_tag, :revert_to_automatic_deductions
+                         :add_tag, :remove_tag, :revert_to_automatic_deductions,
+                         :delete_grace_period_deduction, :run_tests
                 ]
   before_action :authorize_for_ta_and_admin,
                 only: [:create, :add_extra_mark,
@@ -756,9 +757,15 @@ class ResultsController < ApplicationController
 
   def delete_grace_period_deduction
     result = Result.find(params[:id])
-    grace_deduction = result.submission.grouping.grace_period_deductions.find(params[:deduction_id])
-    grace_deduction.destroy
-    head :ok
+    begin
+      authorize! result, with: ResultsPolicy
+      grace_deduction = result.submission.grouping.grace_period_deductions.find(params[:deduction_id])
+      grace_deduction.destroy
+      head :ok
+    rescue ActionPolicy::Unauthorized => e
+      flash_message(:error, e.message)
+      head :bad_request
+    end
   end
 
   def get_test_runs_instructors
