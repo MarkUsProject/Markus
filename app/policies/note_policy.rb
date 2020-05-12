@@ -9,4 +9,8 @@ class NotePolicy < ApplicationPolicy
   def modify?
     user.admin? || user.id == record.creator_id
   end
+
+  def create?
+    user.admin? || (user.ta? && GraderPermission.find_by(user_id: user.id).create_notes)
+  end
 end

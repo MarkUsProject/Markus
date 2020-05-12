@@ -27,4 +27,8 @@ class SubmissionPolicy < ApplicationPolicy
   def before_release?
     !record.current_result.released_to_students
   end
+
+  def manually_collect_and_begin_grading?
+    user.admin? || (user.ta? && GraderPermission.find_by(user_id: user.id).manually_collect_and_begin_grading)
+  end
 end
