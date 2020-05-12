@@ -265,7 +265,6 @@ describe RubricCriterion do
         expect(@criterion.levels[1].mark).to eq(0.5)
       end
       it 'does not scale level marks that have been manually changed' do
-        byebug
         expect(@criterion.levels[1].mark).to eq(1.0)
         @criterion.levels[1].mark = 3
         @criterion.update!(max_mark: 8.0)
