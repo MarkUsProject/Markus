@@ -5,6 +5,9 @@
 - Fixed sorting in annotation table in results view (#4542)
 - Fixed inverse association bug with assignments (#4551)
 - Enabled customization of rubric criterion level number and marks (#4535)
+- Introduces automated email sending for submissions releases (#4432)
+- Introduces automated email sending for spreadsheet releases (#4460)
+- Introduces automated email sending for grouping invitations (#4470)
 - Introduces student email settings (#4578)
 
 ## [v1.9.1]
