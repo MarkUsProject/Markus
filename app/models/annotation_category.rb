@@ -6,7 +6,9 @@ class AnnotationCategory < ApplicationRecord
 
   belongs_to :assignment, foreign_key: :assessment_id
 
-  belongs_to :flexible_criterion
+  belongs_to :flexible_criterion, required: false
+
+  after_update :update_annotation_text_deductions
 
   # Takes an array of comma separated values, and tries to assemble an
   # Annotation Category, and associated Annotation Texts
@@ -26,6 +28,23 @@ class AnnotationCategory < ApplicationRecord
       )
       unless annotation_text.save
         raise CsvInvalidLineError
+      end
+    end
+  end
+
+  def update_annotation_text_deductions
+    return unless flexible_criterion_id_changed?
+    prev_criterion = previous_changes["flexible_criterion_id"].first
+    new_criterion = previous_changes["flexible_criterion_id"].second
+    if prev_criterion != new_criterion
+      if new_criterion.nil?
+        self.annotation_texts.each do |text|
+          text.update!(deduction: nil)
+        end
+      else
+        self.annotation_texts.each do |text|
+          text.update!(deduction: 0)
+        end
       end
     end
   end

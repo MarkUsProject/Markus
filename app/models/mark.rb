@@ -21,13 +21,17 @@ class Mark < ApplicationRecord
   validates_inclusion_of :override, in: [true, false]
 
   def calculate_deduction
-    return 0 if mark.markable_type != 'FlexibleCriterion'
+    return 0 if self.markable_type != 'FlexibleCriterion' || !self.override?
     total_deduction = 0
     applied_annotations = mark.result.annotations
     applied_annotations.each do |annotation|
       total_deduction += annotation.annotation_text.deduction ? annotation.annotation_text.deduction : 0
     end
     total_deduction
+  end
+
+  def update_deduction
+    self.mark = mark - calculate_deduction
   end
 
   def scale_mark(curr_max_mark, prev_max_mark, update: true)
