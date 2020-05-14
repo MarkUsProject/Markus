@@ -6,6 +6,8 @@ class AnnotationCategory < ApplicationRecord
 
   belongs_to :assignment, foreign_key: :assessment_id
 
+  belongs_to :flexible_criterion
+
   # Takes an array of comma separated values, and tries to assemble an
   # Annotation Category, and associated Annotation Texts
   # Format:  annotation_category,annotation_text,annotation_text,...

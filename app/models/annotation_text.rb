@@ -10,6 +10,10 @@ class AnnotationText < ApplicationRecord
   belongs_to :annotation_category, optional: true, counter_cache: true
   validates_associated :annotation_category, on: :create
 
+  validates_numericality_of :deduction,
+                            greater_than_or_equal_to: 0,
+                            less_than_or_equal_to: ->(a) { a.annotation_category.flexible_criterion.max_mark }
+
   def escape_content
     content.gsub('\\', '\\\\\\') # Replaces '\\' with '\\\\'
            .gsub(/\r?\n/, '\\n')

@@ -18,6 +18,8 @@ class Mark < ApplicationRecord
   validates_uniqueness_of :markable_id,
                           scope: [:result_id, :markable_type]
 
+  validates_inclusion_of :override, in: [true, false]
+
   def scale_mark(curr_max_mark, prev_max_mark, update: true)
     return if mark.nil?
     return 0 if prev_max_mark == 0 || mark == 0 # no scaling occurs if prev_max_mark is 0 or mark is 0
