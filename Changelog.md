@@ -9,6 +9,7 @@
 - Introduces automated email sending for spreadsheet releases (#4460)
 - Introduces automated email sending for grouping invitations (#4470)
 - Introduces student email settings (#4578)
+- Fixed bug preventing all git hooks from being run in production (#4594)
 
 ## [v1.9.1]
 - Fixed bug where the output column was not shown in the test results table if the first row had no output (#4537)
