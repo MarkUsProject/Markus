@@ -1,4 +1,15 @@
 # Changelog
+## [unreleased]
+- Issue #3670: Added API for adding and removing extra marks (#4499)
+- Restrict confirmation dialog for annotation editing to annotations that belong to annotation categories (#4540)
+- Fixed sorting in annotation table in results view (#4542)
+- Fixed inverse association bug with assignments (#4551)
+- Enabled customization of rubric criterion level number and marks (#4535)
+- Introduces automated email sending for submissions releases (#4432)
+- Introduces automated email sending for spreadsheet releases (#4460)
+- Introduces automated email sending for grouping invitations (#4470)
+- Introduces student email settings (#4578)
+- Fixed bug preventing all git hooks from being run in production (#4594)
 
 ## [v1.9.1]
 - Fixed bug where the output column was not shown in the test results table if the first row had no output (#4537)
