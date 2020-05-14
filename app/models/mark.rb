@@ -20,13 +20,23 @@ class Mark < ApplicationRecord
 
   validates_inclusion_of :override, in: [true, false]
 
+  def calculate_deduction
+    return 0 if mark.markable_type != 'FlexibleCriterion'
+    total_deduction = 0
+    applied_annotations = mark.result.annotations
+    applied_annotations.each do |annotation|
+      total_deduction += annotation.annotation_text.deduction ? annotation.annotation_text.deduction : 0
+    end
+    total_deduction
+  end
+
   def scale_mark(curr_max_mark, prev_max_mark, update: true)
     return if mark.nil?
     return 0 if prev_max_mark == 0 || mark == 0 # no scaling occurs if prev_max_mark is 0 or mark is 0
     if markable.is_a? RubricCriterion
       new_mark = (mark * (curr_max_mark / prev_max_mark)).round(1)
     elsif markable.is_a? FlexibleCriterion
-      new_mark = (mark * (curr_max_mark.to_f / prev_max_mark)).round(2)
+      new_mark = (mark * (curr_max_mark.to_f / prev_max_mark)).round(2) - :calculate_deduction
     else # if it is CheckboxCriterion
       new_mark = ((mark / prev_max_mark) * curr_max_mark).round(0)
     end
