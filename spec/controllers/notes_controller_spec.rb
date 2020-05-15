@@ -104,13 +104,24 @@ describe NotesController do
       expect(response).to render_template('notes/index')
     end
 
-    it 'get :new' do
+    it 'when TA is allowed to get :new' do
+      GraderPermission.create(user_id: @ta.id, create_notes: true)
       get_as @ta, :new
       expect(response.status).to eq 200
       expect(response).to render_template('notes/new')
     end
 
+    it 'when TA is not allowed to get :new' do
+      GraderPermission.create(user_id: @ta.id, create_notes: false)
+      get_as @ta, :new
+      expect(response.status).to eq 403
+      assert_response :forbidden
+    end
+
     context 'POST on :create' do
+      before :each do
+        GraderPermission.create(user_id: @ta.id, create_notes: true)
+      end
       it 'be able to create with empty note' do
         post_as @ta,
                 :create,
