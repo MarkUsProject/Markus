@@ -22,8 +22,13 @@ class Mark < ApplicationRecord
 
   def calculate_deduction
     return 0 if self.markable_type != 'FlexibleCriterion' || !self.override?
-    total_deduction = self.result.annotations.sum { |a| a.annotation_text.deduction.to_f }
-    total_deduction ||= 0
+    deductive_annotations = self.result
+                                .annotations
+                                .to_a
+                                .select do |x|
+        x.annotation_text.annotation_category.flexible_criterion_id == self.markable_id
+      end
+    total_deduction = deductive_annotations.map{ |x| x.to_f }.sum
     total_deduction
   end
 
