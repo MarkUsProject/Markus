@@ -1,18 +1,12 @@
 class GradeEntryFormPolicy < ApplicationPolicy
   default_rule :manage?
-  alias_rule [:edit?, :update?, :view_summary?], to: :modify?
-  alias_rule [:new?, :create?], to: :new_form?
-
+  alias_rule [:new, :create, :edit?, :update?], to: :manage_grade_entry_form?
 
   def manage?
     user.admin? || user.ta?
   end
 
-  def modify?
-    user.admin?
-  end
-
-  def new_form?
+  def manage_grade_entry_form?
     user.admin? || (user.ta? && GraderPermission.find_by(user_id: user.id).manage_grade_entry_forms)
   end
 
@@ -21,6 +15,6 @@ class GradeEntryFormPolicy < ApplicationPolicy
   end
 
   def update_grade_entry_students?
-    user.admin? || (user.ta? && GraderPermission.find_by(user_id: user.id).manage_grade_entry_forms)
+    user.admin? || (user.ta? && GraderPermission.find_by(user_id: user.id).update_grade_entry_students)
   end
 end
