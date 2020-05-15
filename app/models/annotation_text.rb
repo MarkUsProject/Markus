@@ -11,15 +11,18 @@ class AnnotationText < ApplicationRecord
 
   belongs_to :annotation_category, optional: true, counter_cache: true
   validates_associated :annotation_category, on: :create
-  byebug
+
   validates_numericality_of :deduction,
                             if: :should_have_deduction?,
                             greater_than_or_equal_to: 0,
-                            less_than_or_equal_to: annotation_category.flexible_criterion.max_mark
+                            less_than_or_equal_to: :within_max_mark?
 
   def should_have_deduction?
-    byebug
-    !((AnnotationCategory.find_by(self.annotation_category_id).flexible_criterion_id).nil?)
+    not self.annotation_category.flexible_criterion_id.nil?
+  end
+
+  def within_max_mark?
+    self.annotation_category.flexible_criterion.max_mark
   end
 
   def escape_content
