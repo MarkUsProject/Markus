@@ -157,7 +157,7 @@ class Criterion < ApplicationRecord
 
     AnnotationCategory.where(flexible_criterion_id: self.id).each do |category|
       category.annotation_texts.each do |text|
-          text.scale_deduction(max_mark.to_f / max_mark_was)
+        text.scale_deduction(max_mark.to_f / max_mark_was)
       end
     end
 

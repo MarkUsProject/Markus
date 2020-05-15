@@ -18,7 +18,9 @@ class AnnotationText < ApplicationRecord
                             less_than_or_equal_to: :within_max_mark?
 
   def should_have_deduction?
-    not self.annotation_category.flexible_criterion_id.nil?
+    return false if self.annotation_category.nil?
+
+    !self.annotation_category.flexible_criterion_id.nil?
   end
 
   def within_max_mark?
@@ -32,6 +34,7 @@ class AnnotationText < ApplicationRecord
 
   def update_mark_deductions
     return unless deduction_changed?
+
     self.annotations.each do |annotation|
       annotation.result.marks
                 .find_by(markable_id: self.annotation_category.flexible_criterion_id,
