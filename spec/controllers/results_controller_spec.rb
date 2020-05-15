@@ -681,6 +681,33 @@ describe ResultsController do
     end
     include_examples 'shared ta and admin tests'
 
+    describe '#delete_grace_period_deduction' do
+      let(:deduction) do
+        create :grace_period_deduction, membership: grouping.accepted_student_memberships.first, deduction: 1
+      end
+      context 'When TA is allowed to delete_grace_period_deduction' do
+        before do
+          GraderPermission.create(user_id: ta.id, delete_grace_period_deduction: true)
+        end
+        it 'should delete grace period deduction' do
+          delete :delete_grace_period_deduction,
+                 params: { assignment_id: assignment.id, submission_id: submission.id,
+                           id: complete_result.id, deduction_id: deduction.id }
+          expect(grouping.grace_period_deductions.exists?).to be false
+        end
+      end
+      context 'When TA is not allowed to delete_grace_period_deduction' do
+        before do
+          GraderPermission.create(user_id: ta.id, delete_grace_period_deduction: false)
+        end
+        it 'should not delete grace period deduction' do
+          delete :delete_grace_period_deduction,
+                 params: { assignment_id: assignment.id, submission_id: submission.id,
+                           id: complete_result.id, deduction_id: deduction.id }
+          expect(grouping.grace_period_deductions.exists?).to be true
+        end
+      end
+    end
     context 'when groups information is anonymized' do
       let(:data) { JSON.parse(response.body) }
       let!(:grace_period_deduction) do
