@@ -14,7 +14,8 @@ class AnnotationText < ApplicationRecord
 
   validates_numericality_of :deduction,
                             greater_than_or_equal_to: 0,
-                            less_than_or_equal_to: ->(a) { a.annotation_category.flexible_criterion.max_mark }
+                            less_than_or_equal_to: ->(a) { a.annotation_category.flexible_criterion.max_mark },
+                            if: ->(a) { a.annotation_category.flexible_criterion_id? }
 
   def escape_content
     content.gsub('\\', '\\\\\\') # Replaces '\\' with '\\\\'
@@ -28,5 +29,9 @@ class AnnotationText < ApplicationRecord
                 .find_by(markable_id: self.annotation_category.flexible_criterion_id,
                          markable_type: 'FlexibleCriteria').update_deduction
     end
+  end
+
+  def scale_deduction(scalar)
+    update_attributes!(deduction: (self.deduction * scalar).round(2))
   end
 end

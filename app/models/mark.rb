@@ -22,11 +22,8 @@ class Mark < ApplicationRecord
 
   def calculate_deduction
     return 0 if self.markable_type != 'FlexibleCriterion' || !self.override?
-    total_deduction = 0
-    applied_annotations = mark.result.annotations
-    applied_annotations.each do |annotation|
-      total_deduction += annotation.annotation_text.deduction ? annotation.annotation_text.deduction : 0
-    end
+    total_deduction = self.result.annotations.sum { |a| a.annotation_text.deduction.to_f }
+    total_deduction ||= 0
     total_deduction
   end
 
@@ -40,7 +37,7 @@ class Mark < ApplicationRecord
     if markable.is_a? RubricCriterion
       new_mark = (mark * (curr_max_mark / prev_max_mark)).round(1)
     elsif markable.is_a? FlexibleCriterion
-      new_mark = (mark * (curr_max_mark.to_f / prev_max_mark)).round(2) - :calculate_deduction
+      new_mark = (mark * (curr_max_mark.to_f / prev_max_mark)).round(2)
     else # if it is CheckboxCriterion
       new_mark = ((mark / prev_max_mark) * curr_max_mark).round(0)
     end

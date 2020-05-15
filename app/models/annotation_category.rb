@@ -34,17 +34,16 @@ class AnnotationCategory < ApplicationRecord
 
   def update_annotation_text_deductions
     return unless flexible_criterion_id_changed?
-    prev_criterion = previous_changes["flexible_criterion_id"].first
-    new_criterion = previous_changes["flexible_criterion_id"].second
-    if prev_criterion != new_criterion
-      if new_criterion.nil?
-        self.annotation_texts.each do |text|
-          text.update!(deduction: nil)
-        end
-      else
-        self.annotation_texts.each do |text|
-          text.update!(deduction: 0)
-        end
+    prev_criterion = FlexibleCriterion.find_by_id(previous_changes['flexible_criterion_id'].first)
+    new_criterion = FlexibleCriterion.find_by_id(previous_changes['flexible_criterion_id'].second)
+    return unless prev_criterion != new_criterion
+    if new_criterion.nil?
+      self.annotation_texts.each do |text|
+        text.update!(deduction: nil)
+      end
+    else
+      self.annotation_texts.each do |text|
+        text.scale_deduction(new_criterion.max_mark.to_f / prev_criterion.max_mark.to_f)
       end
     end
   end

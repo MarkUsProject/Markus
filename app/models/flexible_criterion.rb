@@ -15,6 +15,8 @@ class FlexibleCriterion < Criterion
 
   has_many :test_groups, as: :criterion
 
+  has_many :annotation_categories
+
   DEFAULT_MAX_MARK = 1
 
   def self.symbol
