@@ -11,11 +11,16 @@ class AnnotationText < ApplicationRecord
 
   belongs_to :annotation_category, optional: true, counter_cache: true
   validates_associated :annotation_category, on: :create
-
+  byebug
   validates_numericality_of :deduction,
+                            if: :should_have_deduction?,
                             greater_than_or_equal_to: 0,
-                            less_than_or_equal_to: ->(a) { a.annotation_category.flexible_criterion.max_mark },
-                            if: ->(a) { a.annotation_category.flexible_criterion_id? }
+                            less_than_or_equal_to: annotation_category.flexible_criterion.max_mark
+
+  def should_have_deduction?
+    byebug
+    !((AnnotationCategory.find_by(self.annotation_category_id).flexible_criterion_id).nil?)
+  end
 
   def escape_content
     content.gsub('\\', '\\\\\\') # Replaces '\\' with '\\\\'
@@ -32,6 +37,7 @@ class AnnotationText < ApplicationRecord
   end
 
   def scale_deduction(scalar)
+    return if self.deduction.nil?
     update_attributes!(deduction: (self.deduction * scalar).round(2))
   end
 end

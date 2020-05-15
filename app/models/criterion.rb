@@ -155,8 +155,10 @@ class Criterion < ApplicationRecord
       Mark.upsert_all(all_marks.pluck_to_hash.map { |h| { **h.symbolize_keys, mark: updated_marks[h['id'].to_i] } })
     end
 
-    AnnotationCategory.find_by(flexible_criterion_id: self.id).annotation_texts.each do |text|
-      text.scale_deduction(max_mark.to_f / max_mark_was)
+    AnnotationCategory.where(flexible_criterion_id: self.id).each do |category|
+      category.annotation_texts.each do |text|
+          text.scale_deduction(max_mark.to_f / max_mark_was)
+      end
     end
 
     a = Assignment.find(assessment_id)

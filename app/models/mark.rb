@@ -28,11 +28,12 @@ class Mark < ApplicationRecord
                                 .select do |x|
         x.annotation_text.annotation_category.flexible_criterion_id == self.markable_id
       end
-    total_deduction = deductive_annotations.map{ |x| x.to_f }.sum
+    total_deduction = deductive_annotations.map(&:to_f).sum
     total_deduction
   end
 
   def update_deduction
+    # this might need to be update_attributes()
     self.mark = mark - calculate_deduction
   end
 

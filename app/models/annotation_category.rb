@@ -41,6 +41,8 @@ class AnnotationCategory < ApplicationRecord
       self.annotation_texts.each do |text|
         text.update!(deduction: nil)
       end
+    elsif prev_criterion.nil?
+      text.update!(deduction: 0)
     else
       self.annotation_texts.each do |text|
         text.scale_deduction(new_criterion.max_mark.to_f / prev_criterion.max_mark.to_f)

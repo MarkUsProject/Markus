@@ -8,6 +8,9 @@ describe Mark do
   it { is_expected.to allow_value('FlexibleCriterion').for(:markable_type) }
   it { is_expected.to_not allow_value('').for(:markable_type) }
   it { is_expected.to_not allow_value(nil).for(:markable_type) }
+  it { is_expected.to allow_value(false).for(:override) }
+  it { is_expected.to allow_value(true).for(:override) }
+  it { is_expected.to_not allow_value(nil).for(:override) }
 
   describe 'when markable type is rubric and the max mark is exceeded' do
     let(:rubric_mark) do
