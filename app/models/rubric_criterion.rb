@@ -1,20 +1,10 @@
 class RubricCriterion < Criterion
   before_save :round_max_mark
 
-  has_many :criterion_ta_associations,
-           as: :criterion,
-           dependent: :destroy
-
-  has_many :tas, through: :criterion_ta_associations
-
   before_validation :scale_marks_if_max_mark_changed
   validates_presence_of :levels
 
   belongs_to :assignment, foreign_key: :assessment_id
-
-  validates_presence_of :assigned_groups_count
-  validates_numericality_of :assigned_groups_count
-  before_validation :update_assigned_groups_count
 
   has_many :test_groups, as: :criterion
 
@@ -22,14 +12,6 @@ class RubricCriterion < Criterion
 
   def self.symbol
     :rubric
-  end
-
-  def update_assigned_groups_count
-    result = []
-    criterion_ta_associations.each do |cta|
-      result = result.concat(cta.ta.get_groupings_by_assignment(assignment))
-    end
-    self.assigned_groups_count = result.uniq.length
   end
 
   def scale_marks_if_max_mark_changed

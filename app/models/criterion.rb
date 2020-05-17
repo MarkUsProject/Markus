@@ -6,6 +6,16 @@ class Criterion < ApplicationRecord
   has_many :marks, dependent: :destroy
   accepts_nested_attributes_for :marks
 
+  has_many :criterion_ta_associations,
+           as: :criterion,
+           dependent: :destroy
+
+  validates_presence_of :assigned_groups_count
+  validates_numericality_of :assigned_groups_count
+  before_validation :update_assigned_groups_count
+
+  has_many :tas, through: :criterion_ta_associations
+
   validates_presence_of :name
   validates_uniqueness_of :name, scope: :assessment_id
 
@@ -24,6 +34,15 @@ class Criterion < ApplicationRecord
 
   has_many :levels, -> { order(:mark) }, inverse_of: :criterion, dependent: :destroy, autosave: true
   accepts_nested_attributes_for :levels, allow_destroy: true
+
+  
+  def update_assigned_groups_count
+    result = []
+    criterion_ta_associations.each do |cta|
+      result = result.concat(cta.ta.get_groupings_by_assignment(assignment))
+    end
+    self.assigned_groups_count = result.uniq.length
+  end
 
   # Assigns a random TA from a list of TAs specified by +ta_ids+ to each
   # criterion in a list of criteria specified by +criterion_ids_types+. The criteria
