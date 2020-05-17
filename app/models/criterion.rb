@@ -22,8 +22,8 @@ class Criterion < ApplicationRecord
   validates_numericality_of :max_mark, greater_than: 0
 
   has_many :criteria_assignment_files_joins,
-           as: :criterion,
            dependent: :destroy
+
   has_many :assignment_files,
            through: :criteria_assignment_files_joins
   accepts_nested_attributes_for :criteria_assignment_files_joins, allow_destroy: true
