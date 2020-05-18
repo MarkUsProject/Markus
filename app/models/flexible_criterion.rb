@@ -17,7 +17,15 @@ class FlexibleCriterion < Criterion
 
   has_many :annotation_categories
 
+  before_destroy :reassign_annotation_category
+
   DEFAULT_MAX_MARK = 1
+
+  def reassign_annotation_category
+    self.annotation_categories.each do |category|
+      category.update!(flexible_criterion_id: nil)
+    end
+  end
 
   def self.symbol
     :flexible
