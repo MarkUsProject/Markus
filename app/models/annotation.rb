@@ -1,7 +1,7 @@
 class Annotation < ApplicationRecord
 
   belongs_to                :submission_file
-  belongs_to                :annotation_text, touch: true
+  belongs_to                :annotation_text
   belongs_to                :creator, polymorphic: true
   belongs_to                :result
 
@@ -18,6 +18,21 @@ class Annotation < ApplicationRecord
 
   validates_format_of :type,
                       with: /\AImageAnnotation|TextAnnotation|PdfAnnotation\z/
+
+  after_create :affect_mark
+  after_destroy :unaffect_mark
+
+  def affect_mark
+    criterion_id = self.annotation_text.annotation_category.flexible_criterion_id
+    return if criterion_id.nil?
+    self.result.marks.find_by(markable_id: criterion_id).update_deduction
+  end
+
+  def unaffect_mark
+    criterion_id = self.annotation_text.annotation_category.flexible_criterion_id
+    return if criterion_id.nil?
+    self.result.marks.find_by(markable_id: criterion_id).update_deduction
+  end
 
   def get_data(include_creator=false)
     data = {

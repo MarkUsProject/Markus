@@ -8,6 +8,9 @@ class AnnotationCategory < ApplicationRecord
 
   belongs_to :flexible_criterion, required: false
 
+  before_update :check_if_released_deductions
+  before_destroy :check_if_deductions_exist
+
   after_update :update_annotation_text_deductions
 
   # Takes an array of comma separated values, and tries to assemble an
@@ -32,8 +35,27 @@ class AnnotationCategory < ApplicationRecord
     end
   end
 
+  def check_if_released_deductions
+    return unless 'flexible_criterion_id'.in(changes_to_save)
+
+    return if check_release
+    errors.add(:base, 'Cannot update annotation category flexible criterion once results are released.')
+    throw(:abort)
+  end
+
+  def check_release
+    self.flexible_criterion.marks.joins(:result).where('results.released_to_students' => true).empty?
+  end
+
+  def check_if_deductions_exist
+    return if check_release || self.annotation_texts.joins(:annotations).where.not(deduction: nil).empty?
+    errors.add(:base, 'Cannot delete annotation category once deductions have been applied')
+    throw(:abort)
+  end
+
   def update_annotation_text_deductions
     return unless flexible_criterion_id_changed?
+
     prev_criterion = FlexibleCriterion.find_by_id(previous_changes['flexible_criterion_id'].first)
     new_criterion = FlexibleCriterion.find_by_id(previous_changes['flexible_criterion_id'].second)
     return unless prev_criterion != new_criterion

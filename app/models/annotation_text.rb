@@ -4,6 +4,7 @@ class AnnotationText < ApplicationRecord
   belongs_to :last_editor, class_name: 'User', foreign_key: :last_editor_id, optional: true
 
   after_update :update_mark_deductions
+  before_update :check_if_released
 
   # An AnnotationText has many Annotations that are destroyed when an
   # AnnotationText is destroyed.
@@ -30,6 +31,14 @@ class AnnotationText < ApplicationRecord
   def escape_content
     content.gsub('\\', '\\\\\\') # Replaces '\\' with '\\\\'
            .gsub(/\r?\n/, '\\n')
+  end
+
+  def check_if_released
+    return unless deduction_changed?
+
+    return if self.annotations.joins(:result).where('results.released_to_students' => true).empty?
+    errors.add(:base, 'Cannot update annotation text deduction once results are released.')
+    throw(:abort)
   end
 
   def update_mark_deductions
