@@ -74,12 +74,17 @@ describe Mark do
     end
   end
 
-  describe 'when mark is takes into account deductive annotations' do
-    let(:flexible_mark) { create(:flexible_mark, mark: 10) }
+  describe '#calculate_deduction' do
+    let(:assignment) { create(:assignment_with_deductive_annotations) }
 
+    it 'calculates the correct deduction when one annotation is applied' do
+      deducted = assignment.groupings.first.current_result.marks.first.calculate_deduction
+      expect(deducted).to eq(1.0)
+    end
 
-    it 'should not be valid' do
-      expect(flexible_mark).to_not be_valid
+    it 'calculates the correct deduction when multiple annotations are applied' do
+      pending("Needs to be written")
+      fail
     end
   end
   # private methods
