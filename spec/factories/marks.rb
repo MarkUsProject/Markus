@@ -16,5 +16,10 @@ FactoryBot.define do
       association :markable, factory: :checkbox_criterion
       markable_type { 'CheckboxCriterion' }
     end
+
+    factory :mark_with_deductions do
+      association :markable, factory: :flexible_criterion_with_annotation_category
+      markable_type { 'FlexibleCriterion' }
+    end
   end
 end

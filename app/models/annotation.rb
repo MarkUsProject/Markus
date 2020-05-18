@@ -1,7 +1,7 @@
 class Annotation < ApplicationRecord
 
   belongs_to                :submission_file
-  belongs_to                :annotation_text
+  belongs_to                :annotation_text, touch: true
   belongs_to                :creator, polymorphic: true
   belongs_to                :result
 

@@ -73,6 +73,15 @@ describe Mark do
       it_behaves_like 'Scale_mark'
     end
   end
+
+  describe 'when mark is takes into account deductive annotations' do
+    let(:flexible_mark) { create(:flexible_mark, mark: 10) }
+
+
+    it 'should not be valid' do
+      expect(flexible_mark).to_not be_valid
+    end
+  end
   # private methods
   describe '#ensure_not_released_to_students'
   describe '#update_grouping_mark'

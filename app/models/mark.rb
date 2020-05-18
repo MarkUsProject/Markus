@@ -27,8 +27,8 @@ class Mark < ApplicationRecord
     deductive_annotations = self.result
                                 .annotations
                                 .joins(annotation_text: [{ annotation_category: :flexible_criterion }])
-                                .where(:annotation_text => { :annotation_category =>
-                                                                 { :flexible_criterion => { id: self.markable_id } } })
+                                .where(annotation_text: { annotation_category:
+                                                              { flexible_criterion: { id: self.markable_id } } })
                                 .pluck('annotation_text.deduction')
 
     total_deduction = deductive_annotations.map(&:to_f).sum

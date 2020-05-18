@@ -44,6 +44,21 @@ FactoryBot.define do
     end
   end
 
+  factory :assignment_with_deductive_annotations, parent: :assignment do
+    after(:create) do |a|
+      c = create(:flexible_criterion_with_annotation_category, assignment: a)
+      3.times { create(:grouping_with_inviter_and_submission, assignment: a) }
+      a.groupings.each do |grouping|
+        result = grouping.current_result
+        a.get_criteria(:all).each do |criterion|
+          result.marks.create(markable: criterion, mark: criterion.max_mark)
+        end
+        result.annotations << create(:annotation, annotation_text: c.annotation_categories.first.annotation_texts.first)
+        result.update_total_mark
+      end
+    end
+  end
+
   factory :assignment_with_peer_review, parent: :assignment do
     assignment_properties_attributes { { has_peer_review: true } }
   end
