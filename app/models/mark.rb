@@ -22,12 +22,13 @@ class Mark < ApplicationRecord
 
   def calculate_deduction
     return 0 if self.markable_type != 'FlexibleCriterion' || !self.override?
+    # use joins to fix this statement to be query
     deductive_annotations = self.result
                                 .annotations
-                                .to_a
-                                .select do |x|
-        x.annotation_text.annotation_category.flexible_criterion_id == self.markable_id
-      end
+                                .joins(annotation_text: [{annotation_category: :flexible_criterion}])
+                                .where(:annotation_text => {:annotation_category => {:flexible_criterion => {id: self.markable_id}}})
+                                .pluck('annotation_text.deduction')
+
     total_deduction = deductive_annotations.map(&:to_f).sum
     total_deduction
   end
