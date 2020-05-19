@@ -273,6 +273,7 @@ ActiveRecord::Schema.define(version: 2020_06_08_190551) do
     t.boolean "manually_collect_and_begin_grading"
     t.boolean "update_grade_entry_students"
     t.boolean "manage_grade_entry_forms"
+    t.boolean "create_assignments"
   end
 
   create_table "grades", id: :serial, force: :cascade do |t|
