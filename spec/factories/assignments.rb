@@ -35,9 +35,6 @@ FactoryBot.define do
       3.times { create(:grouping_with_inviter_and_submission, assignment: a) }
       a.groupings.each do |grouping|
         result = grouping.current_result
-        a.get_criteria(:ta).each do |criterion|
-          result.marks.create(markable: criterion, mark: Random.rand(criterion.max_mark + 1))
-        end
         result.update_total_mark
         result.update(marking_state: Result::MARKING_STATES[:complete])
       end
@@ -46,14 +43,13 @@ FactoryBot.define do
 
   factory :assignment_with_deductive_annotations, parent: :assignment do
     after(:create) do |a|
-      c = create(:flexible_criterion_with_annotation_category, assignment: a)
+      create(:flexible_criterion_with_annotation_category, assignment: a)
       3.times { create(:grouping_with_inviter_and_submission, assignment: a) }
       a.groupings.each do |grouping|
         result = grouping.current_result
-        a.get_criteria(:all).each do |criterion|
-          result.marks.create(markable: criterion, mark: criterion.max_mark)
-        end
-        result.annotations << create(:annotation, annotation_text: c.annotation_categories.first.annotation_texts.first)
+        create(:text_annotation,
+               annotation_text: a.annotation_categories.first.annotation_texts.first,
+               result: result)
         result.update_total_mark
       end
     end

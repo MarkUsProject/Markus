@@ -36,7 +36,7 @@ class AnnotationCategory < ApplicationRecord
   end
 
   def check_if_released_deductions
-    return unless 'flexible_criterion_id'.in(changes_to_save)
+    return unless changes_to_save.key?('flexible_criterion_id')
 
     return if check_release
     errors.add(:base, 'Cannot update annotation category flexible criterion once results are released.')

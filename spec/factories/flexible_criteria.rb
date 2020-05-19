@@ -10,8 +10,9 @@ FactoryBot.define do
 
   factory :flexible_criterion_with_annotation_category, parent: :flexible_criterion do
     after(:create) do |flexible_criterion|
-      flexible_criterion.annotation_categories
-                        .create(:annotation_category, flexible_criterion_id: flexible_criterion.id)
+      flexible_criterion.annotation_categories << create(:annotation_category,
+                                                         flexible_criterion_id: flexible_criterion.id,
+                                                         assignment: flexible_criterion.assignment)
       flexible_criterion.annotation_categories.first.annotation_texts << create(:annotation_text_with_deduction)
     end
   end
