@@ -3,9 +3,7 @@
 class GradeEntryFormsController < ApplicationController
   include GradeEntryFormsHelper
   before_action { authorize! with: GradeEntryFormPolicy }
-  rescue_from ActionPolicy::Unauthorized do |e|
-    flash_message(:error, e.message)
-  end
+  rescue_from ActionPolicy::Unauthorized, with: :not_authorized
   layout 'assignment_content'
 
   responders :flash
@@ -225,5 +223,10 @@ class GradeEntryFormsController < ApplicationController
       end
     end
     redirect_to action: 'grades', id: @grade_entry_form.id
+  end
+
+  def not_authorized
+    flash_message(:error, "Not Authorized")
+    redirect_back(fallback_location: root_path)
   end
 end
