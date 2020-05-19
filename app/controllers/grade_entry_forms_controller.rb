@@ -2,13 +2,9 @@
 
 class GradeEntryFormsController < ApplicationController
   include GradeEntryFormsHelper
-  before_action do
-    if params[:id].nil?
-      authorize!
-    else
-      @grade_entry_form = GradeEntryForm.find(params[:id])
-      authorize! @grade_entry_form, with: GradeEntryFormPolicy
-    end
+  before_action { authorize! with: GradeEntryFormPolicy }
+  rescue_from ActionPolicy::Unauthorized do |e|
+    flash_message(:error, e.message)
   end
   layout 'assignment_content'
 

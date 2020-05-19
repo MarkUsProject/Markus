@@ -31,4 +31,8 @@ class SubmissionPolicy < ApplicationPolicy
   def manually_collect_and_begin_grading?
     user.admin? || (user.ta? && GraderPermission.find_by(user_id: user.id).manually_collect_and_begin_grading)
   end
+
+  def collect_submissions?
+    user.admin? || (user.ta? && GraderPermission.find_by(user_id: user.id).manually_collect_and_begin_grading)
+  end
 end
