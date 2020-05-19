@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_05_11_182910) do
+ActiveRecord::Schema.define(version: 2020_05_19_153303) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -267,6 +267,7 @@ ActiveRecord::Schema.define(version: 2020_05_11_182910) do
     t.boolean "manually_collect_and_begin_grading"
     t.boolean "update_grade_entry_students"
     t.boolean "manage_grade_entry_forms"
+    t.boolean "create_assignments"
   end
 
   create_table "grades", id: :serial, force: :cascade do |t|
