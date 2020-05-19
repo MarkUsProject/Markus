@@ -7,8 +7,8 @@ FactoryBot.define do
     message { Faker::Lorem.sentence }
 
     due_date { 1.minute.from_now }
-    submission_rule { NoLateSubmissionRule.new }
-    assignment_stat { AssignmentStat.new }
+    # submission_rule { NoLateSubmissionRule.new }
+    # assignment_stat { AssignmentStat.new }
     is_hidden { false }
 
     transient do
