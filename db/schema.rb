@@ -313,7 +313,7 @@ ActiveRecord::Schema.define(version: 2020_06_08_190551) do
   create_table "key_pairs", id: :serial, force: :cascade do |t|
     t.integer "user_id"
     t.string "user_name"
-    t.string "file_name"
+    t.string "public_key"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

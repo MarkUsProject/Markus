@@ -4,31 +4,9 @@ class KeyPairsController < ApplicationController
   def index
     # Grab the own user's keys only
     @key_pairs = KeyPair.where(user_id: @current_user.id)
-
-    @key_strings = Array.new
-
-    @key_pairs.each do |keypair|
-      # Read the key
-      key = File.open(File.join(Rails.configuration.key_storage, keypair.file_name))
-      @key_strings.push(key.read)
-    end
-
-    @key_pairs = @key_pairs.zip(@key_strings)
-
     respond_to do |format|
       format.html # index.html.erb
       format.json { render json: { key_pairs: @key_pairs } }
-    end
-  end
-
-  # GET /key_pairs/1
-  # GET /key_pairs/1.json
-  def show
-    @key_pair = KeyPair.find(params[:id])
-
-    respond_to do |format|
-      format.html # show.html.erb
-      format.json { render json: @key_pair }
     end
   end
 
@@ -42,57 +20,9 @@ class KeyPairsController < ApplicationController
     end
   end
 
-  # GET /key_pairs/1/edit
-  def edit
-    @key_pair = KeyPair.find(params[:id])
-  end
-
-  # Given a File object to upload, save it on the file system with
-  # association to the user_name given.
-  # If a String is supplied as the first argument then it's content
-  # is used to create the public key
-  # Creates the Rails.configuration.key_storage directory if it does not yet exist
-  def upload_key_file(file_content, time_stamp)
-    create_key_directory
-
-    write_key(file_content, time_stamp)
-
-    add_key(File.join(Rails.configuration.key_storage,
-                      "#{@current_user.user_name}@#{time_stamp}.pub"))
-  end
-
-  def write_key(file_content, time_stamp)
-    File.open(Rails.root.join(Rails.configuration.key_storage,
-                              "#{@current_user.user_name}@#{time_stamp}.pub"), 'wb') do |f|
-      f.write(file_content)
-    end
-  end
-
-  # Creates the Rails.configuration.key_storage directory if required
-  def create_key_directory
-    Dir.mkdir(Rails.configuration.key_storage) unless File.exist?(Rails.configuration.key_storage)
-  end
-
-  # Adds a specific public key to a specific user.
-  def add_key(_path)
-    # TODO: Think of a generic mechanism
-  end
-
-  # Deletes a specific public key from a specific user.
-  def remove_key(_path)
-    # TODO: Think of a generic mechanism
-    # Delete key file
-    if File.exist?(_path)
-      File.delete(_path)
-    end
-  end
-
   # POST /key_pairs
   # POST /key_pairs.json
   def create
-    # Used to uniquely identify key
-    time_stamp = Time.now.to_i.to_s
-
     public_key_content = ''
     # If user uploads the public key as a file then that takes precedence over
     # the key_string
@@ -108,14 +38,10 @@ class KeyPairsController < ApplicationController
     # key has the format "type blob label" and cannot have a nil type or blob.
     type, blob, _label = public_key_content.split
     if !type.nil? && !blob.nil?
-      # Upload the file
-      upload_key_file(public_key_content, time_stamp)
-
       # Save the record
       @key_pair = KeyPair.new(user_name: @current_user.user_name,
                               user_id:   @current_user.id,
-                              file_name: @current_user.user_name +
-                                           "@#{time_stamp}.pub")
+                              public_key: public_key_content.strip)
 
       respond_to do |format|
         if @key_pair.save
@@ -146,34 +72,10 @@ class KeyPairsController < ApplicationController
     end
   end
 
-  # PATCH/PUT /key_pairs/1
-  # PATCH/PUT /key_pairs/1.json
-  def update
-    @key_pair = KeyPair.find(params[:id])
-
-    respond_to do |format|
-      if @key_pair.update(key_pair_params)
-        flash_message(:success, t('key_pairs.update.success'))
-        format.html do
-          redirect_to @key_pair
-        end
-        format.json { head :no_content }
-      else
-        format.html { render action: 'edit' }
-        format.json do
-          render json: @key_pair.errors,
-                 status: :unprocessable_entity
-        end
-      end
-    end
-  end
-
   # DELETE /key_pairs/1
   # DELETE /key_pairs/1.json
   def destroy
     @key_pair = KeyPair.find(params[:id])
-
-    remove_key(File.join(Rails.configuration.key_storage, @key_pair.file_name))
 
     @key_pair.destroy
 
