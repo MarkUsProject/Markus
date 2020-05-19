@@ -257,12 +257,12 @@ shared_examples 'a criterion' do
     # end
 
     context 'with specified criterion IDs' do
-      let(:criterion2) do
+      let!(:criterion2) do
         create(criterion_factory_name, assignment: assignment)
       end
-      let(:ta) { create(:ta) }
-      let(:grouping) { create(:grouping, assignment: assignment) }
-      let(:another_grouping) { create(:grouping, assignment: assignment) }
+      let!(:ta) { create(:ta) }
+      let!(:grouping) { create(:grouping, assignment: assignment) }
+      let!(:another_grouping) { create(:grouping, assignment: assignment) }
 
       before :each do
         Criterion.assign_all_tas([[criterion.id, criterion.type], [criterion2.id, criterion2.type]],
