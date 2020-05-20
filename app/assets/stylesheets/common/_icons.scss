@@ -22,6 +22,18 @@
   vertical-align: text-top;
 }
 
+.download-button::before {
+  content: asset_url('icons/disk.png');
+  padding-right: 5px;
+  vertical-align: middle;
+}
+
+.upload-button::before {
+  content: asset_url('icons/page_white_add.png');
+  padding-right: 5px;
+  vertical-align: middle;
+}
+
 .add-icon::after {
   content: asset_url('icons/add.png');
   padding-left: 5px;
@@ -99,4 +111,22 @@
 .flexible-criteria-icon {
   font-size: 11.3pt;
   font-weight: bolder;
+}
+
+
+// Icons for react-json-schema-forms
+.btn-danger::after {
+  content: asset-url('icons/cross.png');
+}
+
+.btn-add::after {
+  content: asset-url('icons/add.png');
+}
+
+.array-item-move-up::after {
+  content: asset-url('icons/arrow_up.png');
+}
+
+.array-item-move-down::after {
+  content: asset-url('icons/arrow_down.png');
 }
