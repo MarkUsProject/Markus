@@ -138,4 +138,15 @@ class FlexibleCriterion < Criterion
     return false unless ta.ta?
     !(criterion_ta_associations.where(ta_id: ta.id).first == nil)
   end
+
+  def scale_marks
+    super
+    return if self.try(:annotation_categories).nil?
+    annotation_categories = self.annotation_categories.includes(:annotation_texts)
+    annotation_categories.each do |category|
+      category.annotation_texts.each do |text|
+        text.scale_deduction(max_mark.to_f / max_mark_was)
+      end
+    end
+  end
 end
