@@ -93,6 +93,7 @@ describe SubmissionsJob do
     before :each do
       groupings.each do |g|
         submit_file_at_time(g.assignment, g.group, 'test', (g.due_date + 1.hour).to_s, 'test.txt', 'aaa')
+        g.reload
       end
     end
     context 'for a grace period deduction' do

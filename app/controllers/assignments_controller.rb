@@ -592,6 +592,9 @@ class AssignmentsController < ApplicationController
   def process_assignment_form(assignment)
     num_files_before = assignment.assignment_files.length
     short_identifier = assignment_params[:short_identifier]
+    # remove potentially invalid periods before updating
+    periods = submission_rule_params['submission_rule_attributes']['periods_attributes'].to_h.values.map { |h| h[:id] }
+    assignment.submission_rule.periods.where.not(id: periods).each(&:destroy)
     assignment.assign_attributes(assignment_params)
     assignment.repository_folder = short_identifier unless assignment.is_peer_review?
     assignment.save!
@@ -623,84 +626,6 @@ class AssignmentsController < ApplicationController
       assignment.invalid_override = false
       assignment.group_min = 1
       assignment.group_max = 1
-    end
-
-    # Due to some funkiness, we need to handle submission rules separately
-    # from the main attribute update
-    # First, figure out what kind of rule has been requested
-    rule_attributes = params[:assignment][:submission_rule_attributes]
-    if rule_attributes.nil?
-      rule_name = assignment.submission_rule.class.to_s
-    else
-      rule_name = rule_attributes[:type]
-    end
-
-    [NoLateSubmissionRule, GracePeriodSubmissionRule,
-     PenaltyPeriodSubmissionRule, PenaltyDecayPeriodSubmissionRule]
-    if SubmissionRule.const_defined?(rule_name)
-      potential_rule = SubmissionRule.const_get(rule_name)
-    else
-      raise SubmissionRule::InvalidRuleType, rule_name
-    end
-
-    # If the submission rule was changed, we need to do a more complicated
-    # dance with the database in order to get things updated.
-    if assignment.submission_rule.class != potential_rule
-
-      # In this case, the easiest thing to do is nuke the old rule along
-      # with all the periods and a new submission rule...this may cause
-      # issues with foreign keys in the future, but not with the current
-      # schema
-      assignment.submission_rule.delete
-      assignment.submission_rule = potential_rule.create!(assignment: assignment)
-
-      # this part of the update is particularly hacky, because the incoming
-      # data will include some mix of the old periods and new periods; in
-      # the case of purely new periods the input is only an array, but in
-      # the case of a mixture the input is a hash, and if there are no
-      # periods at all then the periods_attributes will be nil
-      periods = submission_rule_params[:submission_rule_attributes][:periods_attributes]
-      begin
-        periods = periods.to_h
-      rescue
-      end
-      periods = case periods
-                when Hash
-                  # in this case, we do not care about the keys, because
-                  # the new periods will have nonsense values for the key
-                  # and the old periods are being discarded
-                  periods.map { |_, p| p }.reject { |p| p.has_key?(:id) }
-                when Array
-                  periods
-                else
-                  []
-                end
-      # now that we know what periods we want to keep, we can create them
-      periods.each do |p|
-        new_period = assignment.submission_rule.periods.build(p)
-        new_period.submission_rule = assignment.submission_rule
-        new_period.save!
-      end
-    elsif !submission_rule_params.blank? # TODO: do this in a more Rails way
-      periods = submission_rule_params[:submission_rule_attributes][:periods_attributes]
-      begin
-        periods = periods.to_h
-      rescue
-      end
-      periods = case periods
-                when Hash
-                  periods.map { |_, p| p }.select { |p| p.key?(:hours) }
-                when Array
-                  periods
-                else
-                  []
-                end
-      assignment.submission_rule.periods_attributes = periods
-      assignment.submission_rule.periods.each do |period|
-        period.submission_rule = assignment.submission_rule
-        period.save
-      end
-      assignment.submission_rule.save
     end
 
     return assignment, new_required_files
@@ -757,6 +682,18 @@ class AssignmentsController < ApplicationController
         :_destroy,
         :id,
         :filename
+      ],
+      submission_rule_attributes: [
+        :_destroy,
+        :id,
+        :type,
+        { periods_attributes: [
+          :id,
+          :deduction,
+          :interval,
+          :hours,
+          :_destroy
+        ] }
       ]
     )
   end

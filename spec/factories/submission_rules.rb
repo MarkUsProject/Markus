@@ -12,4 +12,7 @@ FactoryBot.define do
 
   factory :penalty_decay_period_submission_rule, parent: :submission_rule, class: PenaltyDecayPeriodSubmissionRule do
   end
+
+  factory :no_late_submission_rule, parent: :submission_rule, class: NoLateSubmissionRule do
+  end
 end
