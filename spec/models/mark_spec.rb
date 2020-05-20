@@ -90,6 +90,40 @@ describe Mark do
       expect(deducted).to eq(2.0)
     end
   end
+
+  describe '#update_deduction' do
+    let(:assignment) { create(:assignment_with_deductive_annotations) }
+
+    it 'changes the mark correctly to reflect deductions' do
+      create(:text_annotation,
+             annotation_text: assignment.annotation_categories.first.annotation_texts.first,
+             result: assignment.groupings.first.current_result)
+      assignment.reload
+      expect(assignment.groupings.first.current_result.marks.first.mark).to eq(1.0)
+    end
+
+    it 'does not change the mark if override is enabled' do
+      result = assignment.groupings.first.current_result
+      result.marks.first.update!(mark: 3.0)
+      result.marks.first.update!(override: true)
+      create(:text_annotation,
+             annotation_text: assignment.annotation_categories.first.annotation_texts.first,
+             result: assignment.groupings.first.current_result)
+      assignment.reload
+      expect(result.marks.first.mark).to eq(3.0)
+    end
+
+    it 'does not allow deductions to reduce the mark past 0' do
+      result = assignment.groupings.first.current_result
+      3.times do
+        create(:text_annotation,
+               annotation_text: assignment.annotation_categories.first.annotation_texts.first,
+               result: assignment.groupings.first.current_result)
+      end
+      result.reload
+      expect(result.marks.first.mark).to eq(0.0)
+    end
+  end
   # private methods
   describe '#ensure_not_released_to_students'
   describe '#update_grouping_mark'

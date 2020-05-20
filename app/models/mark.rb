@@ -31,8 +31,9 @@ class Mark < ApplicationRecord
   end
 
   def update_deduction
-    # this might need to be update_attributes()
-    self.update!(mark: self.markable.max_mark - calculate_deduction)
+    return if self.override?
+    deduction = calculate_deduction
+    self.update!(mark: deduction > self.markable.max_mark ? 0.0 : self.markable.max_mark - deduction)
   end
 
   def scale_mark(curr_max_mark, prev_max_mark, update: true)
