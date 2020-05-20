@@ -39,12 +39,13 @@ class AnnotationCategory < ApplicationRecord
     return unless changes_to_save.key?('flexible_criterion_id')
 
     return if marks_not_released?
+    byebug
     errors.add(:base, 'Cannot update annotation category flexible criterion once results are released.')
     throw(:abort)
   end
 
   def marks_not_released?
-    return false if self.flexible_criterion.nil?
+    return true if self.flexible_criterion.nil?
     self.flexible_criterion.marks.joins(:result).where('results.released_to_students' => true).empty?
   end
 
@@ -56,7 +57,7 @@ class AnnotationCategory < ApplicationRecord
 
   def update_annotation_text_deductions
     return unless flexible_criterion_id_changed?
-
+    byebug
     prev_criterion = FlexibleCriterion.find_by_id(previous_changes['flexible_criterion_id'].first)
     new_criterion = FlexibleCriterion.find_by_id(previous_changes['flexible_criterion_id'].second)
     return unless prev_criterion != new_criterion

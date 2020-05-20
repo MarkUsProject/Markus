@@ -36,13 +36,13 @@ class AnnotationText < ApplicationRecord
   end
 
   def update_mark_deductions
-    return unless deduction_changed?
+    return unless previous_changes.key?('deduction')
 
-    @annotations = self.annotations.includes(:result)
-    @annotations.each do |annotation|
+    annotations = self.annotations.includes(:result)
+    annotations.each do |annotation|
       annotation.result.marks
                 .find_by(markable_id: self.annotation_category.flexible_criterion_id,
-                         markable_type: 'FlexibleCriteria').update_deduction
+                         markable_type: 'FlexibleCriterion').update_deduction
     end
   end
 
