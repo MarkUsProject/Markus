@@ -8,7 +8,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update -qq && \
     apt-get -yq dist-upgrade && \
-    apt-get install -yq --no-install-recommends openssh-server git && \
+    apt-get install -yq --no-install-recommends openssh-server git sudo vim && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && \
     truncate -s 0 /var/log/*log
@@ -23,7 +23,8 @@ COPY ./entrypoint-ssh.sh entrypoint-ssh.sh
 
 COPY ./markus-git-shell.sh /usr/local/bin/markus-git-shell.sh
 RUN chown "$SSH_USER:$SSH_USER" /usr/local/bin/markus-git-shell.sh && \
-    chmod 700 /usr/local/bin/markus-git-shell.sh
+    chmod 700 /usr/local/bin/markus-git-shell.sh && \
+    echo "${SSH_USER} ALL=(root) NOPASSWD:/usr/bin/git-shell" | sudo EDITOR="tee -a" visudo
 
 # Disable root login
 RUN sed -i "s@#*PermitRootLogin.*@PermitRootLogin no@g" /etc/ssh/sshd_config

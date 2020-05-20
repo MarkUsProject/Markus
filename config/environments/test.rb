@@ -138,13 +138,13 @@ Markus::Application.configure do
   # 'mem' is by design not persistent and only used for testing MarkUs
   config.x.repository.type = 'mem'
 
-  data_dir = ENV.fetch('MARKUS_DATA_DIR') { "#{::Rails.root.to_s}/data/test" }
+  config.data_dir = ENV.fetch('MARKUS_DATA_DIR') { "#{::Rails.root.to_s}/data/test" }
   config.x.repository.git_shell = ENV.fetch('MARKUS_REPOSITORY_GIT_SHELL') { '/usr/bin/git-shell' }
 
   ###################################################################
   # Directory where Repositories will be created. Make sure MarkUs is allowed
   # to write to this directory
-  config.x.repository.storage = "#{data_dir}/repos"
+  config.x.repository.storage = "#{config.data_dir}/repos"
 
   ###################################################################
   # A hash of repository hook scripts (used only when repository.type
@@ -157,7 +157,7 @@ Markus::Application.configure do
   ###################################################################
   # Directory where authentication keys will be uploaded.
   # Make sure MarkUs is allowed to write to this directory
-  config.key_storage = "#{data_dir}/keys"
+  config.key_storage = "#{config.data_dir}/keys"
   config.x.queues.update_keys = "CSC108"
 
   # Max file size for submission files, in bytes
@@ -190,7 +190,9 @@ Markus::Application.configure do
   # Second, if MarkUs is configured with config.x.repository.external_submits_only
   # set to 'true', you can configure as to where MarkUs should write the
   # Subversion authz file.
-  config.x.repository.permission_file = File.join(config.x.repository.storage, 'dummy')
+  config.x.repository.permission_file = ENV.fetch('MARKUS_REPOSITORY_PERMISSION_FILE') {
+    File.join(config.x.repository.storage, 'dummy')
+  }
 
   ###################################################################
   # This setting configures if MarkUs is reading Subversion
@@ -279,7 +281,7 @@ Markus::Application.configure do
   # Look at https://github.com/MarkUsProject/markus-autotesting for the documentation
   config.x.autotest.enable = true
   config.x.autotest.student_test_buffer = 1.hour
-  config.x.autotest.client_dir = "#{data_dir}/autotest"
+  config.x.autotest.client_dir = "#{config.data_dir}/autotest"
   config.x.autotest.server_host = ENV.fetch('AUTOTEST_SERVER_HOST') { 'localhost' }
   config.x.autotest.server_username =  ENV.fetch('AUTOTEST_SERVER_USERNAME') { nil }
   config.x.autotest.server_command = 'autotest_enqueuer'
@@ -293,7 +295,7 @@ Markus::Application.configure do
   ###################################################################
   # Global flag to enable/disable all exam plugin features.
   config.x.scanned_exams.enable = true
-  config.x.scanned_exams.path = "#{data_dir}/exam_templates"
+  config.x.scanned_exams.path = "#{config.data_dir}/exam_templates"
   config.x.scanned_exams.python = "#{::Rails.root}/lib/scanner/venv/bin/python"
 
   ###################################################################
