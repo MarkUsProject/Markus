@@ -38,17 +38,18 @@ class AnnotationCategory < ApplicationRecord
   def check_if_released_deductions
     return unless changes_to_save.key?('flexible_criterion_id')
 
-    return if check_release
+    return if marks_not_released?
     errors.add(:base, 'Cannot update annotation category flexible criterion once results are released.')
     throw(:abort)
   end
 
-  def check_release
+  def marks_not_released?
+    return false if self.flexible_criterion.nil?
     self.flexible_criterion.marks.joins(:result).where('results.released_to_students' => true).empty?
   end
 
   def check_if_deductions_exist
-    return if check_release || self.annotation_texts.joins(:annotations).where.not(deduction: nil).empty?
+    return if marks_not_released? || self.annotation_texts.joins(:annotations).where.not(deduction: nil).empty?
     errors.add(:base, 'Cannot delete annotation category once deductions have been applied')
     throw(:abort)
   end
@@ -67,7 +68,7 @@ class AnnotationCategory < ApplicationRecord
       text.update!(deduction: 0)
     else
       self.annotation_texts.each do |text|
-        text.scale_deduction(new_criterion.max_mark.to_f / prev_criterion.max_mark.to_f)
+        text.scale_deduction(new_criterion.max_mark / prev_criterion.max_mark)
       end
     end
   end

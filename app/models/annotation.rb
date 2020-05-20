@@ -19,18 +19,12 @@ class Annotation < ApplicationRecord
   validates_format_of :type,
                       with: /\AImageAnnotation|TextAnnotation|PdfAnnotation\z/
 
-  after_create :affect_mark
-  after_destroy :unaffect_mark
+  after_create :modify_mark_with_deduction
+  after_destroy :modify_mark_with_deduction
 
-  def affect_mark
-    criterion_id = self.annotation_text.annotation_category.flexible_criterion_id
-    return if criterion_id.nil?
-    self.result.marks.find_by(markable_id: criterion_id).update_deduction
-  end
-
-  def unaffect_mark
-    criterion_id = self.annotation_text.annotation_category.flexible_criterion_id
-    return if criterion_id.nil?
+  def modify_mark_with_deduction
+    criterion_id = self.annotation_text.try(:annotation_category).try(:flexible_criterion)
+    return if criterion_id.nil? || self.annotation_text.deduction.nil?
     self.result.marks.find_by(markable_id: criterion_id).update_deduction
   end
 

@@ -16,16 +16,10 @@ class AnnotationText < ApplicationRecord
   validates_numericality_of :deduction,
                             if: :should_have_deduction?,
                             greater_than_or_equal_to: 0,
-                            less_than_or_equal_to: :within_max_mark?
+                            less_than_or_equal_to: ->(t) { t.annotation_category.flexible_criterion.max_mark }
 
   def should_have_deduction?
-    return false if self.annotation_category.nil?
-
-    !self.annotation_category.flexible_criterion_id.nil?
-  end
-
-  def within_max_mark?
-    self.annotation_category.flexible_criterion.max_mark
+    !self.try(:annotation_category).try(:flexible_criterion_id).nil?
   end
 
   def escape_content
@@ -44,7 +38,8 @@ class AnnotationText < ApplicationRecord
   def update_mark_deductions
     return unless deduction_changed?
 
-    self.annotations.each do |annotation|
+    @annotations = self.annotations.includes(:result)
+    @annotations.each do |annotation|
       annotation.result.marks
                 .find_by(markable_id: self.annotation_category.flexible_criterion_id,
                          markable_type: 'FlexibleCriteria').update_deduction

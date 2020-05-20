@@ -23,20 +23,16 @@ class Mark < ApplicationRecord
   def calculate_deduction
     return 0 if self.markable_type != 'FlexibleCriterion' || self.override?
 
-    # use joins to fix this statement to be query
-    deductive_annotations = self.result
-                                .annotations
-                                .includes(annotation_text: [{ annotation_category: :flexible_criterion }])
-                                .where(annotation_texts: { annotation_categories:
-                                                              { flexible_criteria: { id: self.markable_id } } })
-                                .sum(:deduction)
-
-    deductive_annotations
+    self.result
+        .annotations
+        .joins(annotation_text: [{ annotation_category: :flexible_criterion }])
+        .where('flexible_criteria.id': self.markable_id)
+        .sum(:deduction)
   end
 
   def update_deduction
     # this might need to be update_attributes()
-    self.mark = self.markable.max_mark - calculate_deduction
+    self.update!(mark: self.markable.max_mark - calculate_deduction)
   end
 
   def scale_mark(curr_max_mark, prev_max_mark, update: true)
