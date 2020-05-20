@@ -23,7 +23,7 @@ class Annotation < ApplicationRecord
   after_destroy :modify_mark_with_deduction
 
   def modify_mark_with_deduction
-    criterion_id = self.annotation_text.try(:annotation_category).try(:flexible_criterion)
+    criterion_id = self.annotation_text&.annotation_category&.flexible_criterion
     return if criterion_id.nil? || self.annotation_text.deduction.nil?
     self.result.marks.find_by(markable_id: criterion_id).update_deduction
   end

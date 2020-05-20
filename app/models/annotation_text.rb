@@ -19,7 +19,7 @@ class AnnotationText < ApplicationRecord
                             less_than_or_equal_to: ->(t) { t.annotation_category.flexible_criterion.max_mark }
 
   def should_have_deduction?
-    !self.try(:annotation_category).try(:flexible_criterion_id).nil?
+    !self&.annotation_category&.flexible_criterion_id.nil?
   end
 
   def escape_content

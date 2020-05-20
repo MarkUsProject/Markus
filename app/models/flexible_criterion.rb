@@ -141,7 +141,7 @@ class FlexibleCriterion < Criterion
 
   def scale_marks
     super
-    return if self.try(:annotation_categories).nil?
+    return if self&.annotation_categories.nil?
     annotation_categories = self.annotation_categories.includes(:annotation_texts)
     annotation_categories.each do |category|
       category.annotation_texts.each do |text|
