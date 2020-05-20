@@ -8,8 +8,6 @@ FactoryBot.define do
   end
 
   factory :annotation_text_with_deduction, parent: :annotation_text do
-    after(:create) do |annotation_text|
-      annotation_text.deduction = 1.0
-    end
+    deduction { 1.0 }
   end
 end

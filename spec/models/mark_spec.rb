@@ -83,8 +83,11 @@ describe Mark do
     end
 
     it 'calculates the correct deduction when multiple annotations are applied' do
-      pending("Needs to be written")
-      fail
+      create(:text_annotation,
+             annotation_text: assignment.annotation_categories.first.annotation_texts.first,
+             result: assignment.groupings.first.current_result)
+      deducted = assignment.groupings.first.current_result.marks.first.calculate_deduction
+      expect(deducted).to eq(2.0)
     end
   end
   # private methods
