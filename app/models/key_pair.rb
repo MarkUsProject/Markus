@@ -3,7 +3,7 @@ class KeyPair < ApplicationRecord
   after_destroy :update_authorized_keys
 
   AUTHORIZED_KEYS_FILE = 'authorized_keys'.freeze
-  AUTHORIZED_KEY_ARGS = "no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty".freeze
+  AUTHORIZED_KEY_ARGS = 'no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty'.freeze
 
   def self.full_key_string(user_name, public_key)
     markus_shell = Rails.configuration.x.repository.git_shell
