@@ -1,4 +1,6 @@
 class KeyPairsController < ApplicationController
+  before_action { authorize! }
+
   # GET /key_pairs
   # GET /key_pairs.json
   def index
