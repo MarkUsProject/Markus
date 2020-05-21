@@ -8,10 +8,8 @@ class AnnotationCategory < ApplicationRecord
 
   belongs_to :flexible_criterion, required: false
 
-  before_update :check_if_released_deductions
+  before_update :update_annotation_text_deductions
   before_destroy :check_if_deductions_exist
-
-  after_update :update_annotation_text_deductions
 
   # Takes an array of comma separated values, and tries to assemble an
   # Annotation Category, and associated Annotation Texts
@@ -35,15 +33,6 @@ class AnnotationCategory < ApplicationRecord
     end
   end
 
-  def check_if_released_deductions
-    return unless changes_to_save.key?('flexible_criterion_id')
-
-    return if marks_not_released?
-    byebug
-    errors.add(:base, 'Cannot update annotation category flexible criterion once results are released.')
-    throw(:abort)
-  end
-
   def marks_not_released?
     return true if self.flexible_criterion.nil?
     self.flexible_criterion.marks.joins(:result).where('results.released_to_students' => true).empty?
@@ -56,14 +45,22 @@ class AnnotationCategory < ApplicationRecord
   end
 
   def update_annotation_text_deductions
-    return unless flexible_criterion_id_changed?
-    byebug
-    prev_criterion = FlexibleCriterion.find_by_id(previous_changes['flexible_criterion_id'].first)
-    new_criterion = FlexibleCriterion.find_by_id(previous_changes['flexible_criterion_id'].second)
+    return unless changes_to_save.key?('flexible_criterion_id')
+
+    unless marks_not_released?
+      errors.add(:base, 'Cannot update annotation category flexible criterion once results are released.')
+      throw(:abort)
+    end
+
+    prev_criterion = FlexibleCriterion.find_by_id(changes_to_save['flexible_criterion_id'].first)
+    new_criterion = FlexibleCriterion.find_by_id(changes_to_save['flexible_criterion_id'].second)
     return unless prev_criterion != new_criterion
     if new_criterion.nil?
       self.annotation_texts.each do |text|
         text.update!(deduction: nil)
+        prev_criterion.marks.each do |mark|
+          unless mark.override then mark.update!(mark: nil) end
+        end
       end
     elsif prev_criterion.nil?
       text.update!(deduction: 0)

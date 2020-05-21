@@ -145,7 +145,7 @@ class FlexibleCriterion < Criterion
     annotation_categories = self.annotation_categories.includes(:annotation_texts)
     annotation_categories.each do |category|
       category.annotation_texts.each do |text|
-        text.scale_deduction(max_mark.to_f / max_mark_was)
+        text.scale_deduction(previous_changes['max_mark'][1] / previous_changes['max_mark'][0])
       end
     end
   end

@@ -28,9 +28,8 @@ class AnnotationText < ApplicationRecord
   end
 
   def check_if_released
-    return unless deduction_changed?
-
-    return if self.annotations.joins(:result).where('results.released_to_students' => true).empty?
+    return if self.annotations.joins(:result).where('results.released_to_students' => true).empty? ||
+        self.deduction.nil?
     errors.add(:base, 'Cannot update annotation text deduction once results are released.')
     throw(:abort)
   end
@@ -38,7 +37,11 @@ class AnnotationText < ApplicationRecord
   def update_mark_deductions
     return unless previous_changes.key?('deduction')
 
+    #depending on category to change marks if deduction becomes nil
+    return if self.deduction == nil
+
     annotations = self.annotations.includes(:result)
+    
     annotations.each do |annotation|
       annotation.result.marks
                 .find_by(markable_id: self.annotation_category.flexible_criterion_id,
@@ -48,6 +51,7 @@ class AnnotationText < ApplicationRecord
 
   def scale_deduction(scalar)
     return if self.deduction.nil?
-    update_attributes!(deduction: (self.deduction * scalar).round(2))
+    prev_deduction = self.deduction
+    self.update!(deduction: (prev_deduction * scalar).round(2))
   end
 end

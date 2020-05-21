@@ -75,4 +75,17 @@ describe AnnotationCategory do
       end
     end
   end
+
+  describe '#update_annotation_text' do
+
+    it 'updates marks to nil if its annotation_category has its flexible_criterion disassociated from it' do
+      assignment.annotation_categories.first.update!(flexible_criterion_id: nil)
+      assignment.reload
+      marks = []
+      marks << assignment.groupings[0].current_result.marks.first.mark
+      marks << assignment.groupings[1].current_result.marks.first.mark
+      marks << assignment.groupings[2].current_result.marks.first.mark
+      expect(marks).to eq([nil, nil, nil])
+    end
+  end
 end
