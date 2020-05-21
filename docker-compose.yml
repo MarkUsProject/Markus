@@ -45,6 +45,7 @@ services:
       - MARKUS_DATA_DIR=/app/data/dev
       - MARKUS_REPOSITORY_GIT_SHELL=/usr/local/bin/markus-git-shell.sh
       - MARKUS_REPOSITORY_PERMISSION_FILE=/app/data/dev/keys/.access
+      - MARKUS_REPOSITORY_SSH_URL=git@localhost:2222/~/csc108
       - TZ=America/Toronto
     networks:
       - default

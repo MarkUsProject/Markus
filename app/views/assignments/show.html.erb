@@ -144,9 +144,13 @@
         <% # Display the URL of this group's repository if applicable
            if @assignment.vcs_submit && !@grouping.start_time.nil? %>
           <h3><%= t('groups.student_interface.url_group_repository') %></h3>
-          <p>
-            <%= @grouping.group.repository_external_access_url %>
-          </p>
+          <div class='sub_block'>
+            HTTPS: <a href='#'><%= @grouping.group.repository_external_access_url %></a>
+            <% if allowed_to?(:git_enabled?, KeyPair) %>
+              <br/>
+              SSH: <a href='#'><%= @grouping.group.repository_ssh_access_url %></a>
+            <% end %>
+          </div>
         <% end %>
       <% end %>
 

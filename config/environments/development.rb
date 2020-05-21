@@ -193,6 +193,7 @@ Markus::Application.configure do
   # after the hostname matches your <Location> directive in your Apache
   # httpd configuration
   config.x.repository.url = 'http://www.example.com/markus/svn'
+  config.x.repository.ssh_url = ENV.fetch('MARKUS_REPOSITORY_SSH_URL') { 'git@example.com/csc108' }
 
   ###################################################################
   # This setting is important for two scenarios:
