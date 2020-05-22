@@ -80,17 +80,19 @@ describe Mark do
       assignment.annotation_categories.where.not(flexible_criterion_id: nil).first
     end
     let(:result) { assignment.groupings.first.current_result }
+    let(:annotation_text) { annotation_category_with_criteria.annotation_texts.first }
+    let(:mark) { result.marks.first }
 
     it 'calculates the correct deduction when one annotation is applied' do
-      deducted = result.marks.first.calculate_deduction
+      deducted = mark.calculate_deduction
       expect(deducted).to eq(1.0)
     end
 
     it 'calculates the correct deduction when multiple annotations are applied' do
       create(:text_annotation,
-             annotation_text: annotation_category_with_criteria.annotation_texts.first,
+             annotation_text: annotation_text,
              result: result)
-      deducted = result.marks.first.calculate_deduction
+      deducted = mark.calculate_deduction
       expect(deducted).to eq(2.0)
     end
   end
@@ -101,34 +103,72 @@ describe Mark do
       assignment.annotation_categories.where.not(flexible_criterion_id: nil).first
     end
     let(:result) { assignment.groupings.first.current_result }
+    let(:annotation_text) { annotation_category_with_criteria.annotation_texts.first }
+    let(:mark) { result.marks.first }
 
-    it 'changes the mark correctly to reflect deductions' do
+    it 'changes the mark correctly to reflect deductions when there are deductions with the same values' do
       create(:text_annotation,
-             annotation_text: annotation_category_with_criteria.annotation_texts.first,
+             annotation_text: annotation_text,
              result: result)
       result.reload
-      expect(result.marks.first.mark).to eq(1.0)
+      expect(mark.mark).to eq(1.0)
+    end
+
+    it 'changes the mark correctly to reflect deductions when there are deductions with different values' do
+      new_text = create(:annotation_text_with_deduction,
+                        deduction: 1.5,
+                        annotation_category: annotation_category_with_criteria)
+      create(:text_annotation,
+             annotation_text: new_text,
+             result: result)
+      result.reload
+      expect(mark.mark).to eq(0.5)
     end
 
     it 'does not change the mark if override is enabled' do
-      result.marks.first.update!(mark: 3.0)
-      result.marks.first.update!(override: true)
+      mark.update!(mark: 3.0)
+      mark.update!(override: true)
       create(:text_annotation,
-             annotation_text: annotation_category_with_criteria.annotation_texts.first,
+             annotation_text: annotation_text,
              result: result)
       result.reload
-      expect(result.marks.first.mark).to eq(3.0)
+      expect(mark.mark).to eq(3.0)
     end
 
     it 'does not allow deductions to reduce the mark past 0' do
-      result = assignment.groupings.first.current_result
       3.times do
         create(:text_annotation,
-               annotation_text: annotation_category_with_criteria.annotation_texts.first,
+               annotation_text: annotation_text,
                result: result)
       end
       result.reload
-      expect(result.marks.first.mark).to eq(0.0)
+      expect(mark.mark).to eq(0.0)
+    end
+
+    it 'does not change the mark when there are no deductions' do
+      assignment_without_deductions = create(:assignment_with_criteria_and_results)
+      grouping_with_result = assignment_without_deductions.groupings.where.not(current_result: nil).first
+      mark_without_deductions = grouping_with_result.current_result.marks.first
+      mark_without_deductions.update_deduction
+      mark_without_deductions.reload
+      expect(mark_without_deductions.mark).to eq(1.0)
+    end
+
+    it 'does not take into account deductions related to other criteria' do
+      new_criterion = create(:flexible_criterion_with_annotation_category,
+                             assignment: assignment)
+      create(:mark,
+             markable_id: new_criterion.id,
+             markable_type: 'FlexibleCriterion',
+             result: result)
+      new_annotation_text = create(:annotation_text_with_deduction,
+                                   annotation_category: new_criterion.annotation_categories.first)
+      create(:text_annotation,
+             annotation_text: new_annotation_text,
+             result: result)
+      mark.update_deduction
+      mark.reload
+      expect(mark.mark).to eq(2.0)
     end
   end
   # private methods

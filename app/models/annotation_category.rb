@@ -39,6 +39,7 @@ class AnnotationCategory < ApplicationRecord
   end
 
   def check_if_deductions_exist
+    byebug
     return if marks_not_released? || self.annotation_texts.joins(:annotations).where.not(deduction: nil).empty?
     errors.add(:base, 'Cannot delete annotation category once deductions have been applied')
     throw(:abort)
@@ -52,6 +53,7 @@ class AnnotationCategory < ApplicationRecord
       throw(:abort)
     end
 
+    return if self.annotation_texts.nil?
     prev_criterion = FlexibleCriterion.find_by_id(changes_to_save['flexible_criterion_id'].first)
     new_criterion = FlexibleCriterion.find_by_id(changes_to_save['flexible_criterion_id'].second)
     return unless prev_criterion != new_criterion
@@ -60,7 +62,9 @@ class AnnotationCategory < ApplicationRecord
         text.update!(deduction: nil)
       end
     elsif prev_criterion.nil?
-      text.update!(deduction: 0)
+      self.annotation_texts.each do |text|
+        text.update!(deduction: 0.0)
+      end
     else
       self.annotation_texts.each do |text|
         text.scale_deduction(new_criterion.max_mark / prev_criterion.max_mark)

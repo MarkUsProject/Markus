@@ -100,5 +100,33 @@ describe AnnotationCategory do
       annotation_category_with_criteria.reload
       expect(annotation_category_with_criteria.annotation_texts.first.deduction).to eq(nil)
     end
+
+    it 'updates deductions to 0.0 if it becomes associated with a flexible_criterion after previously not being so' do
+      new_assignment = create(:assignment_with_criteria_and_results)
+      flex_criterion = new_assignment.flexible_criteria.first
+      annotation_category = create(:annotation_category, assignment: new_assignment)
+      create(:annotation_text, annotation_category: annotation_category)
+      create(:annotation_text, annotation_category: annotation_category)
+      annotation_category.update!(flexible_criterion_id: flex_criterion.id)
+      annotation_text_deductions = []
+      annotation_category.annotation_texts.each do |text|
+        annotation_text_deductions << text.deduction
+      end
+      expect(annotation_text_deductions).to all( eq(0.0) )
+    end
+  end
+
+  describe 'callbacks' do
+    let(:assignment) { create(:assignment_with_deductive_annotations) }
+
+    it 'prevent deletion of an annotation_category if results were released' do
+      assignment.groupings.first.current_result.update!(released_to_students: true)
+      expect { assignment.annotation_categories.destroy_all }.to raise_error ActiveRecord::RecordNotSaved
+    end
+
+    it 'prevent deletion of an annotation_category if deductions have been applied' do
+      # Not working
+      expect { assignment.annotation_categories.destroy_all }.to raise_error ActiveRecord::RecordNotSaved
+    end
   end
 end
