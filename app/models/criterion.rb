@@ -34,7 +34,7 @@ class Criterion < ApplicationRecord
   has_many :levels, -> { order(:mark) }, inverse_of: :criterion, dependent: :destroy, autosave: true
   accepts_nested_attributes_for :levels, allow_destroy: true
 
-  
+
   def update_assigned_groups_count
     result = []
     criterion_ta_associations.each do |cta|
@@ -88,11 +88,10 @@ class Criterion < ApplicationRecord
     columns = [:criterion_id, :ta_id]
     # Get all existing criterion-TA associations to avoid violating the unique
     # constraint.
-    # existing_values = CriterionTaAssociation
-    #                   .where(criterion_id: criteria.map(&:id),
-    #                          ta_id: ta_ids)
-    #                   .pluck(:criterion_id, :criterion_type, :ta_id)
-    existing_values = CriterionTaAssociation.where(criterion_id: criteria.map(&:id), ta_id: ta_ids).pluck(:criterion_id, :ta_id)
+    existing_values = CriterionTaAssociation
+                      .where(criterion_id: criteria.map(&:id),
+                             ta_id: ta_ids)
+                      .pluck(:criterion_id, :ta_id)
 
     # Delegate the assign function to the caller-specified block and remove
     # values that already exist in the database.

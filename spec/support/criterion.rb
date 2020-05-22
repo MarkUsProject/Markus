@@ -158,7 +158,7 @@ shared_examples 'a criterion' do
   describe '.update_assigned_groups_counts' do
     let(:assignment) { FactoryBot.create(:assignment) }
     let(:criterion) { create(criterion_factory_name, assignment: assignment) }
-    
+
 
     # context 'when no criterion IDs are specified' do
     #   # Verifies the assigned groups count of +criterion+ is equal to
@@ -265,7 +265,7 @@ shared_examples 'a criterion' do
       let!(:another_grouping) { create(:grouping, assignment: assignment) }
 
       before :each do
-        Criterion.assign_all_tas([[criterion.id, criterion.type], [criterion2.id, criterion2.type]],
+        Criterion.assign_all_tas([criterion.id, criterion2.id],
                                  [ta.id], assignment)
         create_ta_memberships([grouping, another_grouping], ta)
         Criterion.update_assigned_groups_counts(assignment)
