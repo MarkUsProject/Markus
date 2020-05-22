@@ -58,9 +58,6 @@ class AnnotationCategory < ApplicationRecord
     if new_criterion.nil?
       self.annotation_texts.each do |text|
         text.update!(deduction: nil)
-        prev_criterion.marks.each do |mark|
-          unless mark.override then mark.update!(mark: nil) end
-        end
       end
     elsif prev_criterion.nil?
       text.update!(deduction: 0)
