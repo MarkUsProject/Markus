@@ -76,6 +76,9 @@ describe Mark do
 
   describe '#calculate_deduction' do
     let(:assignment) { create(:assignment_with_deductive_annotations) }
+    let(:annotation_category_with_criteria) do
+      assignment.annotation_categories.where.not(flexible_criterion_id: nil).first
+    end
 
     it 'calculates the correct deduction when one annotation is applied' do
       deducted = assignment.groupings.first.current_result.marks.first.calculate_deduction
@@ -84,7 +87,7 @@ describe Mark do
 
     it 'calculates the correct deduction when multiple annotations are applied' do
       create(:text_annotation,
-             annotation_text: assignment.annotation_categories.first.annotation_texts.first,
+             annotation_text: annotation_category_with_criteria.annotation_texts.first,
              result: assignment.groupings.first.current_result)
       deducted = assignment.groupings.first.current_result.marks.first.calculate_deduction
       expect(deducted).to eq(2.0)
@@ -93,10 +96,13 @@ describe Mark do
 
   describe '#update_deduction' do
     let(:assignment) { create(:assignment_with_deductive_annotations) }
+    let(:annotation_category_with_criteria) do
+      assignment.annotation_categories.where.not(flexible_criterion_id: nil).first
+    end
 
     it 'changes the mark correctly to reflect deductions' do
       create(:text_annotation,
-             annotation_text: assignment.annotation_categories.first.annotation_texts.first,
+             annotation_text: annotation_category_with_criteria.annotation_texts.first,
              result: assignment.groupings.first.current_result)
       assignment.reload
       expect(assignment.groupings.first.current_result.marks.first.mark).to eq(1.0)
@@ -107,8 +113,8 @@ describe Mark do
       result.marks.first.update!(mark: 3.0)
       result.marks.first.update!(override: true)
       create(:text_annotation,
-             annotation_text: assignment.annotation_categories.first.annotation_texts.first,
-             result: assignment.groupings.first.current_result)
+             annotation_text: annotation_category_with_criteria.annotation_texts.first,
+             result: result)
       assignment.reload
       expect(result.marks.first.mark).to eq(3.0)
     end
@@ -117,8 +123,8 @@ describe Mark do
       result = assignment.groupings.first.current_result
       3.times do
         create(:text_annotation,
-               annotation_text: assignment.annotation_categories.first.annotation_texts.first,
-               result: assignment.groupings.first.current_result)
+               annotation_text: annotation_category_with_criteria.annotation_texts.first,
+               result: result)
       end
       result.reload
       expect(result.marks.first.mark).to eq(0.0)
