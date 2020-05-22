@@ -43,7 +43,6 @@ class AnnotationText < ApplicationRecord
     return if self.deduction == nil
 
     annotations = self.annotations.includes(:result)
-
     annotations.each do |annotation|
       annotation.result.marks
                 .find_by(markable_id: self.annotation_category.flexible_criterion_id,

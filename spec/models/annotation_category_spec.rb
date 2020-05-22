@@ -76,16 +76,29 @@ describe AnnotationCategory do
     end
   end
 
-  describe '#update_annotation_text' do
+  describe '#update_annotation_text_deductions' do
+    let(:assignment) { create(:assignment_with_deductive_annotations) }
+    let(:annotation_category_with_criteria) do
+      assignment.annotation_categories.where.not(flexible_criterion_id: nil).first
+    end
 
-    it 'updates marks to nil if its annotation_category has its flexible_criterion disassociated from it' do
-      assignment.annotation_categories.first.update!(flexible_criterion_id: nil)
-      assignment.reload
-      marks = []
-      marks << assignment.groupings[0].current_result.marks.first.mark
-      marks << assignment.groupings[1].current_result.marks.first.mark
-      marks << assignment.groupings[2].current_result.marks.first.mark
-      expect(marks).to eq([nil, nil, nil])
+    it 'correctly scales annotation text deductions when called due to flexible_criterion_id update' do
+      new_criterion = create(:flexible_criterion, assignment: assignment)
+      assignment.groupings.includes(:current_result).each do |grouping|
+        create(:mark,
+               markable_id: new_criterion.id,
+               markable_type: 'FlexibleCriterion',
+               result: grouping.current_result)
+      end
+      annotation_category_with_criteria.update!(flexible_criterion_id: new_criterion.id)
+      annotation_category_with_criteria.reload
+      expect(annotation_category_with_criteria.annotation_texts.first.deduction).to eq(0.33)
+    end
+
+    it 'updates deductions to nil if it has its flexible_criterion disassociated from it' do
+      annotation_category_with_criteria.update!(flexible_criterion_id: nil)
+      annotation_category_with_criteria.reload
+      expect(annotation_category_with_criteria.annotation_texts.first.deduction).to eq(nil)
     end
   end
 end

@@ -128,26 +128,29 @@ describe AnnotationText do
     it 'correctly scales deduction when called from flexible criteria' do
       assignment.flexible_criteria.first.update!(max_mark: 5)
       assignment.reload
-      expect(assignment.annotation_categories.first.annotation_texts.first.deduction).to eq(1.67)
-    end
-
-    it 'correctly scales deduction when called from annotation category' do
-      new_criterion = create(:flexible_criterion, assignment: assignment)
-      assignment.annotation_categories.first.update!(flexible_criterion_id: new_criterion.id)
-      assignment.reload
-      expect(assignment.annotation_categories.first.annotation_texts.first.deduction).to eq(0.33)
+      expect(deductive_text.deduction).to eq(1.67)
     end
 
     it 'does not affect the deduction when deduction is nil' do
-
+      text_without_deduction.scale_deduction(2.0)
+      expect(text_without_deduction.deduction).to eq(nil)
     end
 
     it 'triggers update_mark_deductions to be called after it successfully executes' do
-
+      deductive_text.scale_deduction(2.0)
+      assignment.reload
+      marks = []
+      assignment.groupings.includes(:current_result).each do |grouping|
+        marks << grouping.current_result
+                     .marks
+                     .find_by(markable_id: annotation_category_with_criteria.flexible_criterion_id).mark
+      end
+      expect(marks).to eq([1.0, 1.0, 1.0])
     end
 
-    it 'does not affect the deduction when results have released' do
-
-    end
+    # it 'does not affect the deduction when results have released' do
+    #   assignment.groupings.first.current_result.update!(released_to_students: true)
+    #   expect(deductive_text.scale_deduction(2.0))
+    # end
   end
 end

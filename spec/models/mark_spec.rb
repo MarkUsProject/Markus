@@ -79,17 +79,18 @@ describe Mark do
     let(:annotation_category_with_criteria) do
       assignment.annotation_categories.where.not(flexible_criterion_id: nil).first
     end
+    let(:result) { assignment.groupings.first.current_result }
 
     it 'calculates the correct deduction when one annotation is applied' do
-      deducted = assignment.groupings.first.current_result.marks.first.calculate_deduction
+      deducted = result.marks.first.calculate_deduction
       expect(deducted).to eq(1.0)
     end
 
     it 'calculates the correct deduction when multiple annotations are applied' do
       create(:text_annotation,
              annotation_text: annotation_category_with_criteria.annotation_texts.first,
-             result: assignment.groupings.first.current_result)
-      deducted = assignment.groupings.first.current_result.marks.first.calculate_deduction
+             result: result)
+      deducted = result.marks.first.calculate_deduction
       expect(deducted).to eq(2.0)
     end
   end
@@ -99,23 +100,23 @@ describe Mark do
     let(:annotation_category_with_criteria) do
       assignment.annotation_categories.where.not(flexible_criterion_id: nil).first
     end
+    let(:result) { assignment.groupings.first.current_result }
 
     it 'changes the mark correctly to reflect deductions' do
       create(:text_annotation,
              annotation_text: annotation_category_with_criteria.annotation_texts.first,
-             result: assignment.groupings.first.current_result)
-      assignment.reload
-      expect(assignment.groupings.first.current_result.marks.first.mark).to eq(1.0)
+             result: result)
+      result.reload
+      expect(result.marks.first.mark).to eq(1.0)
     end
 
     it 'does not change the mark if override is enabled' do
-      result = assignment.groupings.first.current_result
       result.marks.first.update!(mark: 3.0)
       result.marks.first.update!(override: true)
       create(:text_annotation,
              annotation_text: annotation_category_with_criteria.annotation_texts.first,
              result: result)
-      assignment.reload
+      result.reload
       expect(result.marks.first.mark).to eq(3.0)
     end
 
