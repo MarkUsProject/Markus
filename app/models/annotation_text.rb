@@ -18,7 +18,7 @@ class AnnotationText < ApplicationRecord
                             greater_than_or_equal_to: 0,
                             less_than_or_equal_to: ->(t) { t.annotation_category.flexible_criterion.max_mark }
 
-  # validates_absence_of :deduction, unless: :should_have_deduction?
+  validates_absence_of :deduction, unless: :should_have_deduction?
 
   def should_have_deduction?
     !self&.annotation_category&.flexible_criterion_id.nil?
