@@ -1,9 +1,23 @@
 class KeyPair < ApplicationRecord
+  belongs_to :user
+
   after_create :update_authorized_keys
   after_destroy :update_authorized_keys
+  validates_presence_of :public_key
+  validates_presence_of :user
+  before_validation(on: :create) { self.public_key.strip }
+  validate :public_key_format
 
   AUTHORIZED_KEYS_FILE = 'authorized_keys'.freeze
   AUTHORIZED_KEY_ARGS = 'no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty'.freeze
+  KEY_TYPES = %w[sk-ecdsa-sha2-nistp256@openssh.com
+                 ecdsa-sha2-nistp256
+                 ecdsa-sha2-nistp384
+                 ecdsa-sha2-nistp521
+                 sk-ssh-ed25519@openssh.com
+                 ssh-ed25519
+                 ssh-dss
+                 ssh-rsa]
 
   def self.full_key_string(user_name, public_key)
     markus_shell = Rails.configuration.x.repository.git_shell
@@ -16,5 +30,12 @@ class KeyPair < ApplicationRecord
 
   def update_authorized_keys
     UpdateKeysJob.perform_later
+  end
+
+  def public_key_format
+    single_line = self.public_key.lines.map(&:strip).select(&:present?).length == 1
+    key_type, key, _comment = self.public_key.split
+    valid_key_type = KEY_TYPES.include? key_type
+    errors.add(:public_key, I18n.t('key_pairs.create.invalid_key')) unless single_line && valid_key_type && !key.nil?
   end
 end

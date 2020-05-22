@@ -25,51 +25,20 @@ class KeyPairsController < ApplicationController
   # POST /key_pairs
   # POST /key_pairs.json
   def create
-    public_key_content = ''
-    # If user uploads the public key as a file then that takes precedence over
-    # the key_string
-    if !key_pair_params[:file]
-      # Get key from key_string param
-      public_key_content = key_pair_params[:key_string]
-    else
-      # Get key from file contents
-      public_key_content = key_pair_params[:file].read
-    end
-
-    # Check to see if the public_key_content is a valid ssh key: an ssh
-    # key has the format "type blob label" and cannot have a nil type or blob.
-    type, blob, _label = public_key_content.split
-    if !type.nil? && !blob.nil?
-      # Save the record
-      @key_pair = KeyPair.new(user_name: @current_user.user_name,
-                              user_id:   @current_user.id,
-                              public_key: public_key_content.strip)
-
-      respond_to do |format|
-        if @key_pair.save
-          flash_message(:success, t('key_pairs.create.success'))
-          format.html do
-            redirect_to key_pairs_path
-          end
-          format.json do
-            render json: @key_pair,
-                   status: :created,
-                   location: @key_pair
-          end
-        else
-          format.html { render action: 'new' }
-          format.json do
-            render json: @key_pair.errors,
-                   status: :unprocessable_entity
-          end
+    # If user uploads the public key as a file then that takes precedence over the key_string
+    public_key_content = key_pair_params[:file]&.read || key_pair_params[:key_string]
+    @key_pair = KeyPair.new(user_id: @current_user.id, public_key: public_key_content.strip)
+    respond_to do |format|
+      if @key_pair.save
+        flash_message(:success, t('key_pairs.create.success'))
+        format.html { redirect_to key_pairs_path }
+        format.json { render json: @key_pair, status: :created, location: @key_pair }
+      else
+        @key_pair.errors.full_messages.each do |message|
+          flash_message(:error, message)
         end
-      end
-    else # if type and/or blob are nil
-      flash_message(:error, t('key_pairs.create.invalid_key'))
-      respond_to do |format|
-        format.html do
-          redirect_back(fallback_location: root_path)
-        end
+        format.html { render action: 'new' }
+        format.json { render json: @key_pair.errors, status: :unprocessable_entity }
       end
     end
   end

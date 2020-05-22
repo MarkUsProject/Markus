@@ -10,7 +10,7 @@ class UpdateKeysJob < ApplicationJob
     File.open(auth_keys_file, 'r+') do |f|
       f.flock(File::LOCK_EX)
       f.truncate(0)
-      KeyPair.pluck(:user_name, :public_key).each do |name, key|
+      KeyPair.joins(:user).pluck('users.user_name', :public_key).each do |name, key|
         f.write(KeyPair.full_key_string(name, key) + "\n")
       end
       f.flock(File::LOCK_UN)
