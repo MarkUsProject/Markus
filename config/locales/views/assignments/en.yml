@@ -32,10 +32,9 @@ en:
     # Miscellaneous
     average_annotations: "%{average_annotations} annotations per marked submission"
     hidden: "%{assignment_text} (hidden)"
-    information: "Assignment Information"
     manage_course_work: "Manage Course Work"
     marking_scheme: "Marking Scheme: %{identifier}"
     no_required_files: "There are no required files for this assignment."
     none: "There are currently no assignments."
     upload_file_requirement: "The list of uploaded files does not match the required files for this assignment."
-    deadline_with_extension: "%{deadline} (you have an extension until %{extension_deadline})"
+    deadline_with_extension: "You have an extension until %{extension_deadline}."

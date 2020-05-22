@@ -33,10 +33,9 @@ fr:
     # Miscellaneous
     average_annotations: "%{average_annotations} annotations par soumission marquée"
     hidden: "%{assignment_text} (masqué)"
-    information: "Règles du projet"
     manage_course_work: "Gestion du cours"
     marking_scheme: "Barème: %{identifier}"
     no_required_files: "Aucun fichier n'est requis pour ce projet."
     none: "Aucun devoir pour le moment."
     upload_file_requirement: "La liste des fichiers téléchargés ne correspond pas aux fichiers d'affectation nécessaire"
-    deadline_with_extension: "%{deadline} (vous avez une extension jusqu'au %{extension_deadline})"
+    deadline_with_extension: "Vous avez une extension jusqu'au %{extension_deadline}."
