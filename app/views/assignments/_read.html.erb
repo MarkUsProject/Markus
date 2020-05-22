@@ -1,45 +1,46 @@
-<h2 class='legend'><%= t('assignments.information') %></h2>
+<% short_identifier = @assignment.is_peer_review? ?
+     "#{@assignment.parent_assignment.short_identifier} #{PeerReview.model_name.human}" :
+     @assignment.short_identifier %>
 
-<div class='block_content'>
-  <div class='sub_block'>
-    <span class='prop_label'><%= Assignment.human_attribute_name(:short_identifier) %></span>
-    <span class="prop_paragraph">
-      <%= @assignment.is_peer_review? ?
-            "#{@assignment.parent_assignment.short_identifier} #{PeerReview.model_name.human}" :
-            @assignment.short_identifier %></span>
-  </div>
-  <div class='sub_block'>
-    <span class='prop_label'><%= Assignment.human_attribute_name(:description) %></span>
-    <span class="prop_paragraph"><%= @assignment.description %></span>
-  </div>
-  <div class='sub_block'>
-    <span class='prop_label'><%= Assignment.human_attribute_name(:message) %></span>
-    <span class="prop_paragraph"><%= @assignment.message %><br></span>
-  </div>
-  <div class='sub_block'>
-    <span class='prop_label'><%= Assignment.human_attribute_name(:due_date) %></span>
-    <span class="prop_paragraph">
-      <% if @grouping&.extension.nil? %>
-        <%= I18n.l(@grouping&.due_date || @assignment.section_due_date(@current_user.try(:section))) %>
-      <% else %>
-        <%= I18n.t('assignments.deadline_with_extension',
-                   deadline: I18n.l(@assignment.section_due_date(@grouping&.inviter&.section)),
-                   extension_deadline: I18n.l(@grouping&.due_date)) %>
-      <% end %>
-    </span>
-  </div>
+<h2><%= "#{short_identifier}: #{@assignment.description}" %></h2>
+
+<div class='block-content'>
+  <% if @assignment.message %>
+    <p><%= @assignment.message %></p>
+  <% end %>
+  <p>
+    <strong><%= Assignment.human_attribute_name(:due_date) %></strong>:
+    <%= I18n.l(@assignment.section_due_date(@current_user.try(:section))) %>
+  </p>
+  <% unless @grouping&.extension.nil? %>
+    <p>
+      <%= I18n.t('assignments.deadline_with_extension',
+                 extension_deadline: I18n.l(@grouping&.due_date)) %>
+    </p>
+  <% end %>
+
+  <% if @assignment.display_grader_names_to_students && !@grouping.nil? %>
+    <p><%= t('graders.assigned_graders') %>:
+      <% if @grouping.ta_memberships.exists? %>
+        <% @grouping.ta_memberships.each do |ta| %>
+          <%= ta.user.last_name %>
+        <% end -%>
+      <% else -%>
+        <%= t('graders.no_grader_assigned') %>
+      <% end -%>
+    </p>
+  <% end %>
 
   <% unless @assignment.submission_rule.type == "NoLateSubmissionRule" || @grouping&.extension&.apply_penalty == false %>
-    <div class ='sub_block'>
-      <% acc = 0 %>
-      <% if @assignment.submission_rule.type == "GracePeriodSubmissionRule" %>
-        <%# Relative remaining grace credits for the grouping %>
-        <span class='prop_label'>
-          <%= t('grace_period_submission_rules.deadline_html') %>
-        </span>
-        <% if @grouping.nil? %>
-          <%= t('grace_period_submission_rules.no_group_yet') %>
-        <% else %>
+    <h3><%= SubmissionRule.model_name.human.capitalize %></h3>
+    <p><%= @assignment.submission_rule.class.human_attribute_name(:description) %></p>
+
+    <ul>
+      <% if @grouping.nil? %>
+        <li><%= t('grace_period_submission_rules.no_group_yet') %></li>
+      <% else %>
+        <% acc = 0 %>
+        <% if @assignment.submission_rule.type == "GracePeriodSubmissionRule" %>
           <% remaining_credits = @grouping.available_grace_credits %>
           <% @assignment.submission_rule.periods.order(:id).each do |p| %>
             <% unless remaining_credits <= 0 %>
@@ -47,37 +48,38 @@
               <% remaining_credits -= 1 %>
             <% end %>
           <% end %>
-          <%= I18n.l(@grouping.due_date + acc.hours) %>
-        <% end %>
-      <% else %>
-        <span class='prop_label'>
-          <%= t('penalty_period_submission_rules.deadline_html') %>
-        </span>
-        <% @assignment.submission_rule.periods.order(:id).each { |p| acc += p.hours } %>
-        <% if @grouping.nil? %>
-          <%= I18n.l(@assignment.section_due_date(@current_user.try(:section)) + acc.hours) %>
+          <%# Relative remaining grace credits for the grouping %>
+          <li>
+            <strong>
+              <%= t('grace_period_submission_rules.deadline_html') %>:
+            </strong>
+            <%= I18n.l(@grouping.due_date + acc.hours) %>
+          </li>
         <% else %>
-          <%= I18n.l(@grouping.due_date + acc.hours) %>
+          <li>
+            <strong>
+              <%= t('penalty_period_submission_rules.deadline_html') %>:
+            </strong>
+            <% @assignment.submission_rule.periods.order(:id).each { |p| acc += p.hours } %>
+            <% if @grouping.nil? %>
+              <%= I18n.l(@assignment.section_due_date(@current_user.try(:section)) + acc.hours) %>
+            <% else %>
+              <%= I18n.l(@grouping.due_date + acc.hours) %>
+            <% end %>
+          </li>
         <% end %>
       <% end %>
-    </div>
 
-    <div class='sub_block'>
-      <span class='prop_label'><%= SubmissionRule.model_name.human.capitalize %></span>
-      <%= @assignment.submission_rule.class.human_attribute_name(:description) %>
-    </div>
-
-    <%#Cannot assign Grace Period without first assigning a group.%>
-    <% unless @grouping.nil? && @assignment.submission_rule.type == "GracePeriodSubmissionRule" %>
-      <div class='sub_block'>
+      <%# Cannot assign Grace Period without first assigning a group. %>
+      <% unless @grouping.nil? && @assignment.submission_rule.type == "GracePeriodSubmissionRule" %>
         <% if @assignment.submission_rule.type == "GracePeriodSubmissionRule" %>
-          <span class='prop_label'><%= User.human_attribute_name(:grace_credits) %></span>
           <% unless @grouping.nil? %>
-            <%= t('grace_period_submission_rules.group_credits_html',
-                  available_grace_credits: @grouping.available_grace_credits) %>
+            <li>
+              <%= t('grace_period_submission_rules.group_credits_html',
+                    available_grace_credits: @grouping.available_grace_credits) %>
+            </li>
           <% end %>
         <% elsif @assignment.submission_rule.type == "PenaltyDecayPeriodSubmissionRule" %>
-          <ul>
           <% @assignment.submission_rule.periods.order(:id).each do |p| %>
             <% if p == @assignment.submission_rule.periods.order(:id).first %>
               <li><%= t('penalty_decay_period_submission_rules.details_message_first',
@@ -87,9 +89,7 @@
                         deduction: p.deduction, interval: p.interval, hours: p.hours) %> </li>
             <% end %>
           <% end %>
-          </ul>
         <% elsif @assignment.submission_rule.type == "PenaltyPeriodSubmissionRule" %>
-          <br><ul>
           <% deduction = hours = 0 %>
           <% @assignment.submission_rule.periods.order(:id).each do |p| %>
             <% deduction += p.deduction %>
@@ -97,38 +97,49 @@
             <li><%= t('penalty_period_submission_rules.details_message',
                       hours: hours, deduction: deduction) %> </li>
           <% end %>
-          </ul>
         <% end %>
-      </div>
-    <% end %>
-  <% end %>
-
-  <% if @assignment.display_grader_names_to_students %>
-    <div class='sub_block'>
-      <span class='prop_label'><%= t('graders.assigned_graders') %></span>
-      <% if !@grouping.nil?%>
-        <% @grouping.ta_memberships.each do |ta| %>
-          <%= ta.user.last_name%>
-        <% end -%>
-        <% if @grouping.ta_memberships.size == 0%>
-          <%= t('graders.no_grader_assigned') %>
-        <% end -%>
-      <% else -%>
-        <%= t('graders.no_grader_assigned') %>
-      <% end -%>
-    </div>
+      <% end %>
+    </ul>
   <% end %>
 
   <% unless peer_review %>
+    <h3><%= Submission.model_name.human.pluralize %></h3>
+    <% if @grouping.nil? %>
+      <p><%= t('submissions.student.no_submission') %></p>
+    <% else %>
+      <% unless @grouping.is_valid? %>
+        <p class='warning'>
+          <%= t('submissions.student.invalid_group_cannot_submit') %>
+        </p>
+      <% end %>
+      <ul>
+        <% if @num_submitted_files > 0 %>
+          <li>
+            <%= t('submissions.student.last_revision_date') %>
+            <%= l(@last_modified_date) %>
+          </li>
+        <% end %>
+        <li><%= t('submissions.student.files_submitted', count: @num_submitted_files) %></li>
+      </ul>
+    <% end %>
+
     <h3><%= Assignment.human_attribute_name(:assignment_files) %></h3>
     <% if @assignment.assignment_files.length == 0 %>
-      <p class='notice'> <%= t('assignments.no_required_files') %> </p>
+      <p><%= t('assignments.no_required_files') %></p>
     <% else %>
       <ul>
         <% @assignment.assignment_files.each do |assignment_file| %>
           <li><%= assignment_file.filename %></li>
         <% end %>
       </ul>
+      <p>
+        <% text = t('submissions.student.missing_required_files', count: @num_missing_assignment_files) %>
+        <% if @num_missing_assignment_files > 0 %>
+          <strong><%= text %></strong>
+        <% else %>
+          <%= text %>
+        <% end %>
+      </p>
     <% end %>
   <% end %>
 </div>

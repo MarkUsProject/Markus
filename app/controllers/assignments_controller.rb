@@ -54,6 +54,7 @@ class AssignmentsController < ApplicationController
     unless @grouping.nil?
       set_repo_vars(@assignment, @grouping)
     end
+    render layout: 'assignment_content'
   end
 
   def peer_review

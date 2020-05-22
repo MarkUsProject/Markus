@@ -32,7 +32,6 @@ pt:
     # Miscellaneous
     average_annotations: "%{average_annotations} anotaciones por presentación marcada"
     hidden: "%{assignment_text} (oculto)"
-    information: "Regras do projeto"
     manage_course_work: "Gerenciar trabalho do curso"
     marking_scheme: "Esquema de avalição: %{identifier}"
     no_required_files: "Não há arquivos exigidos para esse projeto."

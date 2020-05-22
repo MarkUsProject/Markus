@@ -17,8 +17,8 @@ en:
     credit:
       one: "%{count} credit"
       other: "%{count} credits"
-    deadline_html: "Deadline using all <br> remaining grace <br> credits"
-    group_credits_html: "Your group has <strong>%{available_grace_credits}</strong> available grace credit(s)."
+    deadline_html: "Due date using <em>all</em> available grace credits"
+    group_credits_html: "Your group has <strong>%{available_grace_credits}</strong> available grace credit(s)"
     no_group_yet: "Form a group to determine how many grace credits you have available for this assignment."
     overtime_message_with_credits_left: "The due date for this assignment has passed. However, you have %{grace_credits_remaining} grace credit(s) left. If you submit files during this period, you will be spending %{grace_credits_to_use} of those credits."
     overtime_message_without_credits_left: "The due date for this assignment has passed, and you do not have enough grace credits to submit new work."
@@ -30,7 +30,7 @@ en:
     overtime_message: "The due date for this assignment has passed and you are now in a penalty period. You can make changes to your submission, but will have %{potential_penalty}% deducted from the final mark on this assignment."
 
   penalty_period_submission_rules:
-    deadline_html: "Deadline including <br> maximum late <br> penalty"
+    deadline_html: "Due date including <em>maximum</em> late penalty"
     details_message: "Up to %{hours} hours after the due date, your grade will be reduced by %{deduction}%"
     extramark_description: "Late submission (%{overtime_hours} hour(s)) resulted in automatic %{penalty_amount}% deduction."
     overtime_message: "The due date for this assignment has passed and you are now in a penalty period. You can make changes to your submission, but will have %{potential_penalty}% deducted from the final mark on this assignment."
