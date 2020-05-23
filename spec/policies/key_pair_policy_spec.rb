@@ -5,13 +5,13 @@ describe KeyPairPolicy do
   let(:user) { create :admin }
 
   shared_examples 'vcs_submit_variation' do |force_pass: false, force_fail: false|
-    let(:to_func) { (force_pass || (!force_fail && should_pass)) ? :to : :not_to }
+    let(:to_func) { force_pass || (!force_fail && should_pass) ? :to : :not_to }
     context 'no assignment' do
       let(:should_pass) { false }
       it { is_expected.send(to_func, pass(policy)) }
     end
     context 'assignment exists' do
-      let!(:assignment) { create :assignment, **attrs}
+      let!(:assignment) { create :assignment, **attrs }
       context 'vcs_submit is true' do
         context 'is_hidden is true' do
           let(:attrs) { { assignment_properties_attributes: { vcs_submit: true }, is_hidden: true } }
@@ -60,13 +60,13 @@ describe KeyPairPolicy do
       before :each do
         allow(Rails.configuration.x.repository).to receive(:type).and_return('git')
       end
-      include_examples 'user_variation', opts: {pass_admin: true, pass_grader: true}
+      include_examples 'user_variation', opts: { pass_admin: true, pass_grader: true }
     end
     context 'with svn enabled' do
       before :each do
         allow(Rails.configuration.x.repository).to receive(:type).and_return('svn')
       end
-      include_examples 'user_variation', opts: {fail_admin: true, fail_grader: true, fail_student: true}
+      include_examples 'user_variation', opts: { fail_admin: true, fail_grader: true, fail_student: true }
     end
   end
 

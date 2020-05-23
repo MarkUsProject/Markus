@@ -17,7 +17,7 @@ class KeyPair < ApplicationRecord
                  sk-ssh-ed25519@openssh.com
                  ssh-ed25519
                  ssh-dss
-                 ssh-rsa]
+                 ssh-rsa].freeze
 
   def self.full_key_string(user_name, public_key)
     markus_shell = Rails.configuration.x.repository.git_shell

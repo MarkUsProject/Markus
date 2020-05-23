@@ -66,7 +66,7 @@ describe KeyPairsController do
   end
 
   describe 'DELETE destroy', :keep_memory_repos do
-    before { delete_as admin, :destroy, params: { id: key_pair_id }  }
+    before { delete_as admin, :destroy, params: { id: key_pair_id } }
     context 'a key_pair exists' do
       context 'owned by the current user' do
         let(:key_pair_id) { create(:key_pair, user: admin).id }

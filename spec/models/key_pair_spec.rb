@@ -7,10 +7,10 @@ describe KeyPair do
       expect(build(:key_pair, public_key: "ssh-rsa\nabcd").validate).to be false
     end
     it 'should not validate an invalid key type' do
-      expect(build(:key_pair, public_key: "aaaaaa abcd").validate).to be false
+      expect(build(:key_pair, public_key: 'aaaaaa abcd').validate).to be false
     end
     it 'should not validate an empty key' do
-      expect(build(:key_pair, public_key: "ssh-rsa").validate).to be false
+      expect(build(:key_pair, public_key: 'ssh-rsa').validate).to be false
     end
     it 'should validate a valid key' do
       expect(build(:key_pair).validate).to be true

@@ -11,11 +11,11 @@ describe UpdateKeysJob do
     end
     it 'should create a key storage directory if it does not exist' do
       UpdateKeysJob.perform_now
-      expect(File.exists? Rails.configuration.key_storage).to be true
+      expect(File.exist?(Rails.configuration.key_storage)).to be true
     end
     it 'should create an authorized_key file if it does not exist' do
       UpdateKeysJob.perform_now
-      expect(File.exists? file).to be true
+      expect(File.exist?(file)).to be true
     end
     it 'should clear the old file content' do
       FileUtils.mkdir_p(Rails.configuration.key_storage)
