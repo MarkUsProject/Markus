@@ -115,8 +115,6 @@ describe Assignment do
       }
       a = Assignment.new(attrs)
       a.repository_folder = 't'
-      a.build_assignment_stat
-      a.build_submission_rule
       a.save!
 
       expect(a.assignment_files.first.filename).to eq 't.py'
