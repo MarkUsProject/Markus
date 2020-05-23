@@ -774,169 +774,89 @@ describe Grouping do
       end
     end
 
-    context 'with an assignment that has a grace period of 24 hours after due date' do
-      before :each do
-        @assignment = create(:assignment)
-        @group = create(:group)
-        grace_period_submission_rule = GracePeriodSubmissionRule.new
-        @assignment.replace_submission_rule(grace_period_submission_rule)
-        GracePeriodDeduction.destroy_all
-        grace_period_submission_rule.save
-
-        # On July 1 at 1PM, the instructor sets up the course...
-        pretend_now_is(Time.parse('July 1 2009 1:00PM')) do
-          # Due date is July 23 @ 5PM
-          @assignment.due_date = Time.parse('July 23 2009 5:00PM')
-          # Overtime begins at July 23 @ 5PM
-          # Add a 24 hour grace period
-          period = Period.new
-          period.submission_rule = @assignment.submission_rule
-          period.hours = 24
-          period.save
-          # Collect date is now after July 24 @ 5PM
-          @assignment.save
-        end
-      end
-
-      teardown do
-        destroy_repos
-      end
-
-      context 'with one student submitting an assignment' do
-        before :each do
-          # grouping of only one student
-          @grouping = create(:grouping, assignment: @assignment, group: @group)
-          @inviter_membership = create(:inviter_student_membership,
-                                       user: create(:student, user_name: 'student1'),
-                                       grouping: @grouping,
-                                       membership_status: StudentMembership::STATUSES[:inviter])
-          @inviter = @inviter_membership.user
-
-          # On July 15, the Student logs in, triggering repository folder creation
-          pretend_now_is(Time.parse('July 15 2009 6:00PM')) do
-            @grouping.create_grouping_repository_folder
-          end
-        end
-
+    context do
+      let(:rule_type) { :grace_period_submission_rule }
+      context 'when the group submitted on time' do
+        include_context 'submission_rule_on_time'
         describe '#student_membership_number' do
           it 'returns 1' do
-            expect(@grouping.student_membership_number).to eq(1)
+            expect(grouping.student_membership_number).to eq(1)
           end
         end
 
         describe '#available_grace_credits' do
           it 'returns more than 1 grace credit remaining' do
-            expect(@grouping.available_grace_credits).to be >= 1
+            apply_rule
+            expect(grouping.available_grace_credits).to be >= 1
           end
         end
 
         describe '#grace_period_deduction_single' do
           it 'shows no grace credit deduction because submission is on time' do
-            submit_file_at_time(@assignment, @group, 'test', 'July 20 2009 5:00PM', 'TestFile.java',
-                                'Some contents for TestFile.java')
-            submit_file_at_time(@assignment, @group, 'test', 'July 20 2009 5:00PM', 'Test.java',
-                                'Some contents for Test.java')
-            submit_file_at_time(@assignment, @group, 'test', 'July 20 2009 5:00PM', 'Driver.java',
-                                'Some contents for Driver.java')
+            apply_rule
+            expect(grouping.grace_period_deduction_single).to eq(0)
+          end
+        end
 
-            # An Instructor or Grader decides to begin grading
-            pretend_now_is(Time.parse('July 28 2009 1:00PM')) do
-              submission = Submission.create_by_timestamp(@grouping,
-                                                          @assignment.submission_rule.calculate_collection_time)
-              @assignment.submission_rule.apply_submission_rule(submission)
-
-              @grouping.reload
-              # Should be no deduction because submitting on time
-              expect(@grouping.grace_period_deduction_single).to eq(0)
+        context 'with two students submitting an assignment' do
+          let!(:accepted_membership) { create :accepted_student_membership, grouping: grouping }
+          describe '#student_membership_number' do
+            it 'returns 2' do
+              expect(grouping.student_membership_number).to eq(2)
             end
           end
 
-          it 'shows one grace credition deduction because submission was late' do
-            submit_file_at_time(@assignment, @group, 'test', 'July 24 2009 9:00AM', 'LateSubmission.java',
-                                'Some overtime contents')
+          describe '#available_grace_credits' do
+            it 'returns more than 1 grace credit remaining' do
+              apply_rule
+              expect(grouping.available_grace_credits).to be >= 1
+            end
+          end
 
-            # An Instructor or Grader decides to begin grading
-            pretend_now_is(Time.parse('July 28 2009 1:00PM')) do
-              submission = Submission.create_by_timestamp(@grouping,
-                                                          @assignment.submission_rule.calculate_collection_time)
-              @assignment.submission_rule.apply_submission_rule(submission)
-
-              @grouping.reload
-              # Should display 1 credit deduction because of one-day late submission
-              expect(@grouping.grace_period_deduction_single).to eq(1)
+          describe '#grace_period_deduction_single' do
+            it 'shows no grace credit deduction because submission is on time' do
+              apply_rule
+              expect(grouping.grace_period_deduction_single).to eq(0)
             end
           end
         end
       end
 
-      context 'with two students submitting an assignment' do
-        before :each do
-          # grouping of two students
-          @grouping = create(:grouping, assignment: @assignment, group: @group)
-          # should consist of inviter and another student
-          @membership = create(:accepted_student_membership,
-                               user: create(:student, user_name: 'student1'),
-                               grouping: @grouping,
-                               membership_status: StudentMembership::STATUSES[:accepted])
-
-          @inviter_membership = create(:inviter_student_membership,
-                                       user: create(:student, user_name: 'student2'),
-                                       grouping: @grouping,
-                                       membership_status: StudentMembership::STATUSES[:inviter])
-          @inviter = @inviter_membership.user
-
-          # On July 15, the Student logs in, triggering repository folder creation
-          pretend_now_is(Time.parse('July 15 2009 6:00PM')) do
-            @grouping.create_grouping_repository_folder
-          end
-        end
-
-        describe '#student_membership_number' do
-          it 'returns 2' do
-            expect(@grouping.student_membership_number).to eq(2)
-          end
-        end
-
-        describe '#available_grace_credits' do
-          it 'returns more than 1 grace credit remaining' do
-            expect(@grouping.available_grace_credits).to be >= 1
-          end
-        end
-
+      context 'when the group submitted during the first penalty period' do
+        include_context 'submission_rule_during_first'
         describe '#grace_period_deduction_single' do
-          it 'shows no grace credit deductions because submission is on time' do
-            submit_file_at_time(@assignment, @group, 'test', 'July 20 2009 5:00PM', 'TestFile.java',
-                                'Some contents for TestFile.java')
-            submit_file_at_time(@assignment, @group, 'test', 'July 20 2009 5:00PM', 'Test.java',
-                                'Some contents for Test.java')
-            submit_file_at_time(@assignment, @group, 'test', 'July 20 2009 5:00PM', 'Driver.java',
-                                'Some contents for Driver.java')
+          it 'shows one grace credit deduction because submission is late' do
+            apply_rule
+            expect(grouping.grace_period_deduction_single).to eq(1)
+          end
+        end
 
-            # An Instructor or Grader decides to begin grading
-            pretend_now_is(Time.parse('July 28 2009 1:00PM')) do
-              submission = Submission.create_by_timestamp(@grouping,
-                                                          @assignment.submission_rule.calculate_collection_time)
-              @assignment.submission_rule.apply_submission_rule(submission)
-
-              @grouping.reload
-              # Should be no deduction because submitting on time
-              expect(@grouping.grace_period_deduction_single).to eq(0)
+        context 'with two students submitting an assignment' do
+          let!(:accepted_membership) { create :accepted_student_membership, grouping: grouping }
+          describe '#grace_period_deduction_single' do
+            it 'shows one grace credit deduction because submission is late' do
+              apply_rule
+              expect(grouping.grace_period_deduction_single).to eq(1)
             end
           end
+        end
+      end
 
-          it 'shows one grace credit deduction because submission is late' do
-            submit_file_at_time(@assignment, @group, 'test', 'July 24 2009 9:00AM', 'LateSubmission.java',
-                                'Some overtime contents')
+      describe 'when the group submitted during the second penalty period' do
+        include_context 'submission_rule_during_second'
+        describe '#grace_period_deduction_single' do
+          it 'shows two grace credit deduction because submission was submitted in second grace period' do
+            apply_rule
+            expect(grouping.grace_period_deduction_single).to eq(2)
+          end
+        end
 
-            # An Instructor or Grader decides to begin grading
-            pretend_now_is(Time.parse('July 28 2009 1:00PM')) do
-              submission = Submission.create_by_timestamp(@grouping,
-                                                          @assignment.submission_rule.calculate_collection_time)
-              @assignment.submission_rule.apply_submission_rule(submission)
-
-              @grouping.reload
-              # Should display 1 credit deduction because of one-day late submission
-              expect(@grouping.grace_period_deduction_single).to eq(1)
+        context 'with two students submitting an assignment' do
+          let!(:accepted_membership) { create :accepted_student_membership, grouping: grouping }
+          describe '#grace_period_deduction_single' do
+            it 'shows two grace credit deduction because submission was submitted in second grace period' do
+              apply_rule
+              expect(grouping.grace_period_deduction_single).to eq(2)
             end
           end
         end

@@ -4,6 +4,7 @@
 @import 'constants';
 @import 'mixins';
 @import 'icons';
+@import 'react_json_schema_form';
 
 /** Main */
 
@@ -329,6 +330,15 @@ fieldset {
 
   select {
     margin: 0;
+  }
+
+  label,
+  label + span {
+    line-height: 1.8em;
+  }
+
+  > input[type=checkbox] {
+    margin-top: 0.2em;
   }
 }
 

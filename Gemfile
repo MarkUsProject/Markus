@@ -103,6 +103,7 @@ end
 group :test do
   gem 'coveralls', require: false
   gem 'factory_bot_rails'
+  gem 'fuubar'
   gem 'machinist', '< 3'
   gem 'shoulda'
   gem 'simplecov', require: false

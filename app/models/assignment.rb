@@ -650,17 +650,6 @@ class Assignment < Assessment
     end
   end
 
-  def replace_submission_rule(new_submission_rule)
-    if self.submission_rule.nil?
-      self.submission_rule = new_submission_rule
-      self.save
-    else
-      self.submission_rule.destroy
-      self.submission_rule = new_submission_rule
-      self.save
-    end
-  end
-
   def next_criterion_position
     # We're using count here because this fires off a DB query, thus
     # grabbing the most up-to-date count of the criteria.
