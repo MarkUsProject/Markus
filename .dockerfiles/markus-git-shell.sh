@@ -13,7 +13,6 @@ failure() {
 trap 'failure "$BASH_COMMAND"' ERR
 
 [[ -z ${LOGIN_USER} ]] && write_log 'ERROR: LOGIN_USER not set' && exit 1
-[[ -z ${RELATIVE_URL_ROOT} ]] && write_log 'ERROR: RELATIVE_URL_ROOT not set' && exit 1
 
 GIT_ACCESS_FILE="${HOME}/.ssh/${RELATIVE_URL_ROOT}/.access"
 
