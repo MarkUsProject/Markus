@@ -76,15 +76,14 @@ class Criterion < ApplicationRecord
   #   end
   #
   # The criteria must belong to the given assignment +assignment+.
-  def self.assign_tas(criterion_ids_types, ta_ids, assignment)
+  def self.assign_tas(criterion_ids, ta_ids, assignment)
     # gets ids within criterion_ids_types
-    criterion_ids_in = criterion_ids_types.map { |id_type| id_type[0] }
     ta_ids = Array(ta_ids)
 
     # Only use IDs that identify existing model instances.
     ta_ids = Ta.where(id: ta_ids).pluck(:id)
     criteria = assignment.get_criteria(:ta)
-                         .select { |crit| criterion_ids_types.include? [crit.id, crit.class.to_s] }
+                         .select { |crit| criterion_ids.include? [crit.id, crit.class.to_s] }
     columns = [:criterion_id, :ta_id]
     # Get all existing criterion-TA associations to avoid violating the unique
     # constraint.
@@ -106,14 +105,7 @@ class Criterion < ApplicationRecord
     # CriterionTaAssociation.create when the PG driver supports bulk create,
     # then remove the activerecord-import gem.
     CriterionTaAssociation.import(columns, values, validate: false)
-
     Grouping.update_criteria_coverage_counts(assignment)
-    criterion_ids_by_type = {}
-    %w(RubricCriterion FlexibleCriterion CheckboxCriterion).each do |type|
-      criterion_ids_by_type[type] =
-        criterion_ids_in.select { |_, crit_type| crit_type == type}
-                        .map { |crit_id, _| crit_id }
-    end
     update_assigned_groups_counts(assignment)
   end
 
@@ -121,7 +113,7 @@ class Criterion < ApplicationRecord
   # membership IDs that specifies the unassignment to be done. +criterion_ids+
   # is a list of grouping IDs involved in the unassignment. The memberships
   # and groupings must belong to the given assignment +assignment+.
-  def self.unassign_tas(criterion_ta_ids, criterion_ids_by_type, assignment)
+  def self.unassign_tas(criterion_ta_ids, assignment)
     CriterionTaAssociation.where(id: criterion_ta_ids).delete_all
 
     Grouping.update_criteria_coverage_counts(assignment)
@@ -132,6 +124,7 @@ class Criterion < ApplicationRecord
   # an assignment with ID +assignment_id+.
   def self.update_assigned_groups_counts(assignment)
     counts = CriterionTaAssociation.from(assignment.criterion_ta_associations.joins(ta: :groupings).where('groupings.assessment_id': assignment.id).select('criterion_ta_associations.criterion_id','groupings.id').distinct).group('subquery.criterion_id').count
+    # finds all of 
     # counts = CriterionTaAssociation
     #          .from(
     #            # subquery
