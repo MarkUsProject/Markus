@@ -3,6 +3,7 @@ describe User do
   it { is_expected.to have_many(:groupings).through(:memberships) }
   it { is_expected.to have_many(:notes).dependent(:destroy) }
   it { is_expected.to have_many :accepted_memberships }
+  it { is_expected.to have_many(:key_pairs).dependent(:destroy)}
   it { is_expected.to validate_presence_of :user_name }
   it { is_expected.to validate_presence_of :last_name }
   it { is_expected.to validate_presence_of :first_name }
