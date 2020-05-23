@@ -1,3 +1,5 @@
+# updates authorized_key file by rewriting the entire file
+# according to the current state of the database
 class UpdateKeysJob < ApplicationJob
   queue_as Rails.configuration.x.queues.update_keys
 

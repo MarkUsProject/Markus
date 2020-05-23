@@ -1,3 +1,4 @@
+# Policy for managing KeyPairs
 class KeyPairPolicy < ApplicationPolicy
   default_rule :manage?
 

@@ -19,6 +19,9 @@ class KeyPair < ApplicationRecord
                  ssh-dss
                  ssh-rsa].freeze
 
+  # Return a single line to add to the authorized_key file that contains the +public_key+,
+  # all +AUTHORIZED_KEY_ARGS+ and the command to call +Rails.configuration.x.repository.git_shell+
+  # with environment variables indicating the +user_name+ and this instance's relative url root
   def self.full_key_string(user_name, public_key)
     markus_shell = Rails.configuration.x.repository.git_shell
     relative_url_root = Rails.configuration.action_controller.relative_url_root
@@ -28,10 +31,12 @@ class KeyPair < ApplicationRecord
 
   private
 
+  # Update the authorized_key file
   def update_authorized_keys
     UpdateKeysJob.perform_later
   end
 
+  # Check if +self.public_key+ is formatted correctly
   def public_key_format
     single_line = self.public_key.lines.map(&:strip).select(&:present?).length == 1
     key_type, key, _comment = self.public_key.split

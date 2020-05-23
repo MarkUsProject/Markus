@@ -30,6 +30,7 @@ class KeyPairsController < ApplicationController
 
   # DELETE /key_pairs/1
   def destroy
+    # only allowed to destroy your own key_pairs
     @key_pair = KeyPair.where(user_id: @current_user.id, id: params[:id]).first
 
     flash_message(:success, t('key_pairs.delete.success')) if @key_pair&.destroy
