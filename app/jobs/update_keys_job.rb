@@ -9,11 +9,14 @@ class UpdateKeysJob < ApplicationJob
     FileUtils.touch(auth_keys_file) unless File.exist? auth_keys_file
     File.open(auth_keys_file, 'r+') do |f|
       f.flock(File::LOCK_EX)
-      f.truncate(0)
-      KeyPair.joins(:user).pluck('users.user_name', :public_key).each do |name, key|
-        f.write(KeyPair.full_key_string(name, key) + "\n")
+      begin
+        f.truncate(0)
+        KeyPair.joins(:user).pluck('users.user_name', :public_key).each do |name, key|
+          f.write(KeyPair.full_key_string(name, key) + "\n")
+        end
+      ensure
+        f.flock(File::LOCK_UN)
       end
-      f.flock(File::LOCK_UN)
     end
   end
 end

@@ -5,8 +5,8 @@ class KeyPair < ApplicationRecord
   after_destroy :update_authorized_keys
   validates_presence_of :public_key
   validates_presence_of :user
-  before_validation(on: :create) { self.public_key.strip }
-  validate :public_key_format
+  before_validation(on: :create) { self.public_key&.strip! }
+  validate :public_key_format, if: -> { self.public_key }
 
   AUTHORIZED_KEYS_FILE = 'authorized_keys'.freeze
   AUTHORIZED_KEY_ARGS = 'no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty'.freeze

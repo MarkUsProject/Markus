@@ -2,7 +2,7 @@ class KeyPairPolicy < ApplicationPolicy
   default_rule :manage?
 
   def manage?
-    git_enabled? && (! user.student? || any_vcs_submit?)
+    git_enabled? && (user.admin? || user.ta? || any_vcs_submit?)
   end
 
   def git_enabled?
