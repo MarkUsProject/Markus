@@ -46,8 +46,8 @@ class Criterion < ApplicationRecord
   # Assigns a random TA from a list of TAs specified by +ta_ids+ to each
   # criterion in a list of criteria specified by +criterion_ids_types+. The criteria
   # must belong to the given assignment +assignment+.
-  def self.randomly_assign_tas(criterion_ids_types, ta_ids, assignment)
-    assign_tas(criterion_ids_types, ta_ids, assignment) do |criterion_ids, criterion_types, ta_ids|
+  def self.randomly_assign_tas(criterion_ids, ta_ids, assignment)
+    assign_tas(criterion_ids, ta_ids, assignment) do |criterion_ids, ta_ids|
       # Assign TAs in a round-robin fashion to a list of random criteria.
       shuffled_criterion_ids = criterion_ids.shuffle
       shuffled_criterion_ids.zip(ta_ids.cycle).map &:flatten
@@ -57,8 +57,8 @@ class Criterion < ApplicationRecord
   # Assigns all TAs in a list of TAs specified by +ta_ids+ to each criterion in
   # a list of criteria specified by +criterion_ids_types+. The criteria must belong
   # to the given assignment +assignment+.
-  def self.assign_all_tas(criterion_ids_types, ta_ids, assignment)
-    assign_tas(criterion_ids_types, ta_ids, assignment) do |criterion_ids, ta_ids|
+  def self.assign_all_tas(criterion_ids, ta_ids, assignment)
+    assign_tas(criterion_ids, ta_ids, assignment) do |criterion_ids, ta_ids|
       # Need to call Array#flatten because after the second product each element has
       # the form [[id, type], ta_id].
       criterion_ids.product(ta_ids).map &:flatten
@@ -82,19 +82,20 @@ class Criterion < ApplicationRecord
 
     # Only use IDs that identify existing model instances.
     ta_ids = Ta.where(id: ta_ids).pluck(:id)
-    criteria = assignment.get_criteria(:ta)
-                         .select { |crit| criterion_ids.include? [crit.id, crit.class.to_s] }
+    # criteria = assignment.get_criteria(:ta)
+    #                      .select { |crit| criterion_ids.include? [crit.id, crit.class.to_s] }
     columns = [:criterion_id, :ta_id]
     # Get all existing criterion-TA associations to avoid violating the unique
     # constraint.
     existing_values = CriterionTaAssociation
-                      .where(criterion_id: criteria.map(&:id),
+                      .where(criterion_id: criterion_ids,
                              ta_id: ta_ids)
                       .pluck(:criterion_id, :ta_id)
+    # existing_values = CriterionTaAssociation.where(criterion_id: criteria.map(&:id),ta_id: ta_ids).pluck(:criterion_id, :ta_id)
 
     # Delegate the assign function to the caller-specified block and remove
     # values that already exist in the database.
-    new_values = yield(criteria.map(&:id), ta_ids)
+    new_values = yield(criterion_ids, ta_ids)
     values = new_values - existing_values
 
     # Add assessment_id column common to all rows. It is not included above so
@@ -124,7 +125,6 @@ class Criterion < ApplicationRecord
   # an assignment with ID +assignment_id+.
   def self.update_assigned_groups_counts(assignment)
     counts = CriterionTaAssociation.from(assignment.criterion_ta_associations.joins(ta: :groupings).where('groupings.assessment_id': assignment.id).select('criterion_ta_associations.criterion_id','groupings.id').distinct).group('subquery.criterion_id').count
-    # finds all of 
     # counts = CriterionTaAssociation
     #          .from(
     #            # subquery
@@ -138,15 +138,13 @@ class Criterion < ApplicationRecord
     #          .group('subquery.criterion_id')
     #          .count
 
-    [RubricCriterion, FlexibleCriterion, CheckboxCriterion].each do |klass|
-      records = klass.where(assessment_id: assignment.id)
-                     .pluck_to_hash
-                     .map do |h|
-        { **h.symbolize_keys, assigned_groups_count: counts[[h['id'], klass.to_s]] || 0 }
-      end
-      unless records.empty?
-        klass.upsert_all(records)
-      end
+    records = Criterion.where(assessment_id: assignment.id)
+                    .pluck_to_hash
+                    .map do |h|
+      { **h.symbolize_keys, assigned_groups_count: counts[[h['id'], 'Criterion']] || 0 }
+    end
+    unless records.empty?
+      Criterion.upsert_all(records)
     end
   end
 
