@@ -44,7 +44,7 @@ class Criterion < ApplicationRecord
   end
 
   # Assigns a random TA from a list of TAs specified by +ta_ids+ to each
-  # criterion in a list of criteria specified by +criterion_ids_types+. The criteria
+  # criterion in a list of criteria specified by +criterion_ids+. The criteria
   # must belong to the given assignment +assignment+.
   def self.randomly_assign_tas(criterion_ids, ta_ids, assignment)
     assign_tas(criterion_ids, ta_ids, assignment) do |criterion_ids, ta_ids|
@@ -55,12 +55,12 @@ class Criterion < ApplicationRecord
   end
 
   # Assigns all TAs in a list of TAs specified by +ta_ids+ to each criterion in
-  # a list of criteria specified by +criterion_ids_types+. The criteria must belong
+  # a list of criteria specified by +criterion_ids+. The criteria must belong
   # to the given assignment +assignment+.
   def self.assign_all_tas(criterion_ids, ta_ids, assignment)
     assign_tas(criterion_ids, ta_ids, assignment) do |criterion_ids, ta_ids|
       # Need to call Array#flatten because after the second product each element has
-      # the form [[id, type], ta_id].
+      # the form [[id], ta_id].
       criterion_ids.product(ta_ids).map &:flatten
     end
   end
@@ -77,13 +77,10 @@ class Criterion < ApplicationRecord
   #
   # The criteria must belong to the given assignment +assignment+.
   def self.assign_tas(criterion_ids, ta_ids, assignment)
-    # gets ids within criterion_ids_types
     ta_ids = Array(ta_ids)
 
     # Only use IDs that identify existing model instances.
     ta_ids = Ta.where(id: ta_ids).pluck(:id)
-    # criteria = assignment.get_criteria(:ta)
-    #                      .select { |crit| criterion_ids.include? [crit.id, crit.class.to_s] }
     columns = [:criterion_id, :ta_id]
     # Get all existing criterion-TA associations to avoid violating the unique
     # constraint.
@@ -91,7 +88,6 @@ class Criterion < ApplicationRecord
                       .where(criterion_id: criterion_ids,
                              ta_id: ta_ids)
                       .pluck(:criterion_id, :ta_id)
-    # existing_values = CriterionTaAssociation.where(criterion_id: criteria.map(&:id),ta_id: ta_ids).pluck(:criterion_id, :ta_id)
 
     # Delegate the assign function to the caller-specified block and remove
     # values that already exist in the database.
