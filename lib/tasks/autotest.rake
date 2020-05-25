@@ -45,8 +45,6 @@ class AutotestSetup
 
   def create_new_assignment
     puts "Creating sample autotesting assignment #{@assg_short_id}"
-    rule = NoLateSubmissionRule.new
-    assignment_stat = AssignmentStat.new
     Assignment.create(
       short_identifier: @assg_short_id,
       description: 'Assignment for testing the autotester',
@@ -61,8 +59,6 @@ class AutotestSetup
         enable_student_tests: true,
         unlimited_tokens: true
       },
-      submission_rule: rule,
-      assignment_stat: assignment_stat
     )
   end
 

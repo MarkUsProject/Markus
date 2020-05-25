@@ -20,8 +20,6 @@ namespace :db do
         token_period: 1,
         scanned_exam: true
       },
-      submission_rule: NoLateSubmissionRule.new,
-      assignment_stat: AssignmentStat.new
     )
 
     # For a description of the seed files, see db/data/scanned_exams/README.md.
