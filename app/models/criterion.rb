@@ -49,7 +49,7 @@ class Criterion < ApplicationRecord
     assign_tas(criterion_ids, ta_ids, assignment) do |c_ids, t_ids|
       # Assign TAs in a round-robin fashion to a list of random criteria.
       shuffled_criterion_ids = c_ids.shuffle
-      (shuffled_criterion_ids.zip(t_ids.cycle).map) &:flatten
+      shuffled_criterion_ids.zip(t_ids.cycle).map &:flatten
     end
   end
 
@@ -60,7 +60,7 @@ class Criterion < ApplicationRecord
     assign_tas(criterion_ids, ta_ids, assignment) do |c_ids, t_ids|
       # Need to call Array#flatten because after the second product each element has
       # the form [[id], ta_id].
-      (c_ids.product(t_ids).map) &:flatten
+      c_ids.product(t_ids).map &:flatten
     end
   end
 
@@ -133,8 +133,8 @@ class Criterion < ApplicationRecord
              .count
 
     records = Criterion.where(assessment_id: assignment.id)
-                        .pluck_to_hash
-                        .map do |h|
+                       .pluck_to_hash
+                       .map do |h|
       { **h.symbolize_keys, assigned_groups_count: counts[h['id']] || 0 }
     end
 
