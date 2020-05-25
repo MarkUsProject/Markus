@@ -7,7 +7,7 @@ class Criterion < ApplicationRecord
   accepts_nested_attributes_for :marks
 
   has_many :criterion_ta_associations,
-            dependent: :destroy
+           dependent: :destroy
 
   validates_presence_of :assigned_groups_count
   validates_numericality_of :assigned_groups_count
@@ -34,7 +34,6 @@ class Criterion < ApplicationRecord
   has_many :levels, -> { order(:mark) }, inverse_of: :criterion, dependent: :destroy, autosave: true
   accepts_nested_attributes_for :levels, allow_destroy: true
 
-
   def update_assigned_groups_count
     result = []
     criterion_ta_associations.each do |cta|
@@ -47,10 +46,10 @@ class Criterion < ApplicationRecord
   # criterion in a list of criteria specified by +criterion_ids+. The criteria
   # must belong to the given assignment +assignment+.
   def self.randomly_assign_tas(criterion_ids, ta_ids, assignment)
-    assign_tas(criterion_ids, ta_ids, assignment) do |criterion_ids, ta_ids|
+    assign_tas(criterion_ids, ta_ids, assignment) do |c_ids, t_ids|
       # Assign TAs in a round-robin fashion to a list of random criteria.
-      shuffled_criterion_ids = criterion_ids.shuffle
-      shuffled_criterion_ids.zip(ta_ids.cycle).map &:flatten
+      shuffled_criterion_ids = c_ids.shuffle
+      (shuffled_criterion_ids.zip(t_ids.cycle).map) &:flatten
     end
   end
 
@@ -58,10 +57,10 @@ class Criterion < ApplicationRecord
   # a list of criteria specified by +criterion_ids+. The criteria must belong
   # to the given assignment +assignment+.
   def self.assign_all_tas(criterion_ids, ta_ids, assignment)
-    assign_tas(criterion_ids, ta_ids, assignment) do |criterion_ids, ta_ids|
+    assign_tas(criterion_ids, ta_ids, assignment) do |c_ids, t_ids|
       # Need to call Array#flatten because after the second product each element has
       # the form [[id], ta_id].
-      criterion_ids.product(ta_ids).map &:flatten
+      (c_ids.product(t_ids).map) &:flatten
     end
   end
 
