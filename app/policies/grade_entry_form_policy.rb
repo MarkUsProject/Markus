@@ -1,6 +1,6 @@
 class GradeEntryFormPolicy < ApplicationPolicy
   default_rule :grading?
-  alias_rule [:new?, :create?, :edit?, :update?], to: :manage?
+  alias_rule :new?, :create?, :edit?, :update?, to: :manage?
 
   def grading?
     user.admin? || user.ta?

@@ -1,4 +1,4 @@
-<% if @current_user.admin? %>
+<% if @current_user.admin? || @current_user.ta?%>
   <% if (controller.controller_name == 'assignments' &&
          controller.action_name != 'index' &&
          controller.action_name != 'new' &&
@@ -18,25 +18,27 @@
           <li class='<%= "active" if controller.controller_name == 'assignments' %>'>
             <%= link_to t('menu.properties'), edit_assignment_path(@assignment) %>
           </li>
-          <li class='<%= "active" if controller.controller_name == 'tags' %>'>
-            <%= link_to Tag.model_name.human.pluralize,
-                        assignment_tags_path(@assignment) %>
-          </li>
-          <li <% if controller.controller_name == 'criteria'%>
-              class='active'
-              <% end %>>
-            <%= link_to Criterion.model_name.human.pluralize,
-                        assignment_criteria_path(@assignment.id) %>
-          </li>
-          <li class='<%= "active" if controller.controller_name == 'annotation_categories' %>'>
-            <%= link_to Annotation.model_name.human.pluralize,
-                        assignment_annotation_categories_path(@assignment) %>
-          </li>
-          <% if Rails.configuration.x.autotest.enable && !@assignment.is_peer_review? && !@assignment.scanned_exam? %>
-            <li class='<%= "active" if controller.controller_name == 'automated_tests' %>'>
-              <%= link_to t('automated_tests.title'),
-                          manage_assignment_automated_tests_path(@assignment) %>
+          <% if @current_user.admin? %>
+            <li class='<%= "active" if controller.controller_name == 'tags' %>'>
+              <%= link_to Tag.model_name.human.pluralize,
+                          assignment_tags_path(@assignment) %>
             </li>
+            <li <% if controller.controller_name == 'criteria'%>
+                class='active'
+                <% end %>>
+              <%= link_to Criterion.model_name.human.pluralize,
+                          assignment_criteria_path(@assignment.id) %>
+            </li>
+            <li class='<%= "active" if controller.controller_name == 'annotation_categories' %>'>
+              <%= link_to Annotation.model_name.human.pluralize,
+                          assignment_annotation_categories_path(@assignment) %>
+            </li>
+            <% if Rails.configuration.x.autotest.enable && !@assignment.is_peer_review? && !@assignment.scanned_exam? %>
+              <li class='<%= "active" if controller.controller_name == 'automated_tests' %>'>
+                <%= link_to t('automated_tests.title'),
+                            manage_assignment_automated_tests_path(@assignment) %>
+              </li>
+            <% end %>
           <% end %>
           <% if @assignment.scanned_exam? %>
             <li class='<%= "active" if controller.controller_name == 'exam_templates' %>'>
