@@ -1,5 +1,5 @@
 class AssignmentPolicy < ApplicationPolicy
-  alias_rule [:new?, :create?, :edit?], to: :manage?
+  alias_rule :new?, :create?, :edit?, :update?, to: :manage?
   def run_tests?
     check?(:not_a_ta?) &&
     check?(:enabled?) &&

@@ -25,8 +25,10 @@
 <% elsif @current_user.ta? && (controller.controller_name == 'assignments' ||
                                controller.controller_name == 'submissions' ||
                                controller.controller_name == 'results' ||
+                               controller.controller_name == 'grade_entry_forms' ||
+                               controller.controller_name == 'peer_reviews' ||
                                controller.controller_name == 'summaries') %>
-  <%= render partial: 'layouts/menus/ta_sub_menu' %>
+  <%= render partial: 'layouts/menus/ta_sub_menu', locals: { assessment: @assignment || @grade_entry_form } %>
 <% elsif @current_user.student? %>
   <%= render partial: 'layouts/menus/student_sub_menu' %>
 <% end %>

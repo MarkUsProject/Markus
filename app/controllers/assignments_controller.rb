@@ -8,15 +8,19 @@ class AssignmentsController < ApplicationController
                               :new,
                               :create,
                               :edit,
+                              :update,
                               :peer_review,
+                              :view_summary,
                               :summary,
                               :switch_assignment,
                               :start_timed_assignment]
 
   before_action      :authorize_for_ta_and_admin,
                      only: [:summary,
+                            :view_summary,
                             :new,
                             :edit,
+                            :update,
                             :create]
 
   before_action      :authorize_for_student,
@@ -26,6 +30,10 @@ class AssignmentsController < ApplicationController
   before_action      :authorize_for_user,
                      only: [:index, :switch_assignment]
 
+  before_action only: [:edit, :new, :update, :create] do
+    authorize! with: AssignmentPolicy
+  end
+  rescue_from ActionPolicy::Unauthorized, with: :user_not_authorized
   # Publicly accessible actions ---------------------------------------
 
   def show
@@ -157,7 +165,6 @@ class AssignmentsController < ApplicationController
 
   # Called on editing assignments (GET)
   def edit
-    authorize! with: AssignmentPolicy
     @assignment = Assignment.find_by_id(params[:id])
     past_date = @assignment.section_names_past_due_date
     @assignments = Assignment.all
@@ -179,9 +186,6 @@ class AssignmentsController < ApplicationController
     end
     @section_due_dates = @assignment.section_due_dates
                                     .sort_by { |s| [SectionDueDate.due_date_for(s.section, @assignment), s.section.name] }
-  rescue ActionPolicy::Unauthorized => e
-    flash_message(:error, e.message)
-    redirect_back(fallback_location: root_path)
   end
 
   # Called when editing assignments form is submitted (PUT).
@@ -209,7 +213,6 @@ class AssignmentsController < ApplicationController
   # Called in order to generate a form for creating a new assignment.
   # i.e. GET request on assignments/new
   def new
-    authorize! with: AssignmentPolicy
     @assignments = Assignment.all
     @assignment = Assignment.new
     if params[:scanned].present?
@@ -231,14 +234,10 @@ class AssignmentsController < ApplicationController
     # set default value if web submits are allowed
     @assignment.allow_web_submits = !Rails.configuration.x.repository.external_submits_only
     render :new
-  rescue ActionPolicy::Unauthorized => e
-    flash_message(:error, e.message)
-    redirect_back(fallback_location: root_path)
   end
 
   # Called after a new assignment form is submitted.
   def create
-    authorize! with: AssignmentPolicy
     @assignment = Assignment.new
     @assignment.transaction do
       begin
@@ -271,9 +270,6 @@ class AssignmentsController < ApplicationController
       end
     end
     respond_with @assignment, location: -> { edit_assignment_path(@assignment) }
-  rescue ActionPolicy::Unauthorized => e
-    flash_message(:error, e.message)
-    redirect_back(fallback_location: root_path)
   end
 
   def summary
