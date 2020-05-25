@@ -124,25 +124,25 @@ class Criterion < ApplicationRecord
   # Updates the +assigned_groups_count+ field of all criteria that belong to
   # an assignment with ID +assignment_id+.
   def self.update_assigned_groups_counts(assignment)
-    counts = CriterionTaAssociation.from(assignment.criterion_ta_associations.joins(ta: :groupings).where('groupings.assessment_id': assignment.id).select('criterion_ta_associations.criterion_id','groupings.id').distinct).group('subquery.criterion_id').count
-    # counts = CriterionTaAssociation
-    #          .from(
-    #            # subquery
-    #            assignment.criterion_ta_associations
-    #                      .joins(ta: :groupings)
-    #                      .where('groupings.assessment_id': assignment.id)
-    #                      .select('criterion_ta_associations.criterion_id',
-    #                              'groupings.id')
-    #                      .distinct
-    #          )
-    #          .group('subquery.criterion_id')
-    #          .count
+    counts = CriterionTaAssociation
+             .from(
+               # subquery
+               assignment.criterion_ta_associations
+                         .joins(ta: :groupings)
+                         .where('groupings.assessment_id': assignment.id)
+                         .select('criterion_ta_associations.criterion_id',
+                                 'groupings.id')
+                         .distinct
+             )
+             .group('subquery.criterion_id')
+             .count
 
     records = Criterion.where(assessment_id: assignment.id)
                     .pluck_to_hash
                     .map do |h|
-      { **h.symbolize_keys, assigned_groups_count: counts[[h['id'], 'Criterion']] || 0 }
+      { **h.symbolize_keys, assigned_groups_count: counts[h['id']] || 0 }
     end
+
     unless records.empty?
       Criterion.upsert_all(records)
     end
