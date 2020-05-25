@@ -450,7 +450,7 @@ fieldset {
   display: flex;
 
   .pane {
-    border: 1px solid $grey;
+    border: 1px solid $blue;
     border-radius: $radius;
     flex: 1;
     min-height: 1px;
@@ -462,6 +462,39 @@ fieldset {
 
     &.highlight {
       background-color: $lighter-green;
+    }
+
+    // TODO: decide whether to adopt this style more broadly
+    // (currently only used in assignments/show and assignments/peer_review)
+    &.block {
+      padding: 0 0 1em;
+
+      h2 {
+        background-color: $light-grey;
+        border-bottom: 1px solid $grey;
+        border-top-left-radius: $radius;
+        border-top-right-radius: $radius;
+        font-size: 1.5em;
+        padding: 0.5em 10px;
+      }
+
+      h3 {
+        border-bottom: 1px solid $grey;
+        font-size: 1.25em;
+        padding: 0.5em 0.1em;
+      }
+
+      .block-content {
+        padding: 0 15px;
+
+        ul {
+          padding-left: 25px;
+        }
+
+        li {
+          margin-bottom: 0.5em;
+        }
+      }
     }
   }
 

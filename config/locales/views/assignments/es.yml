@@ -72,7 +72,6 @@ es:
     # Miscellaneous
     average_annotations: "%{average_annotations} anotaciones por entrega calificada"
     hidden: "%{assignment_text} (oculto)"
-    information: "Reglas del Proyecto"
     manage_course_work: "Administrar trabajos del curso"
     marking_scheme: "Esquema de Calificación: %{identifier}"
     no_required_files: "No hay archivos requeridos para este proyecto."

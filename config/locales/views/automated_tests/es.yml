@@ -1,7 +1,6 @@
 es:
   automated_tests:
     files: "UPDATE ME"
-    information: "Información"
     loading_specs: "UPDATE ME"
     need_one_file: "Usted necesita al menos un archivo en la entrega para poder ejecutar las pruebas."
     need_group_for_test: "Usted debe tener un grupo para lanzar la prueba"

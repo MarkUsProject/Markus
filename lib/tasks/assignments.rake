@@ -5,7 +5,7 @@ namespace :db do
     # Assignments
 
     rule = GracePeriodSubmissionRule.new
-    puts 'Assignment 0: Grace Token usage'
+    puts 'Assignment 0: Grace Credit usage'
     Assignment.create(
       short_identifier: 'A0',
       description: 'Variables and Simple Operations',

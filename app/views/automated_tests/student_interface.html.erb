@@ -1,52 +1,35 @@
 <% content_for :title, t('automated_tests.title') %>
 
 <% if @assignment.enable_student_tests && !@grouping.nil? %>
-  <div class='block'>
-    <div class='block_content'>
-      <h3><%= t('automated_tests.information') %></h3>
+  <p>
+    <strong><%= Assignment.human_attribute_name(:token_start_date) %>:</strong>
+    <%= l(@assignment.token_start_date) %>
+  </p>
 
-        <div class='sub_block'>
-          <span class="prop_label"><%= Assignment.human_attribute_name(:token_start_date) %></span>
-          <%= l(@assignment.token_start_date) %>
-        </div>
+  <% unless @assignment.unlimited_tokens || @assignment.non_regenerating_tokens %>
+    <p>
+      <strong><%= Assignment.human_attribute_name(:token_period) %>:</strong>
+      <%= "#{@assignment.token_period} #{t(:hours)}" %>
+    </p>
+  <% end %>
 
-        <% unless @assignment.unlimited_tokens || @assignment.non_regenerating_tokens %>
-          <div class='sub_block'>
-            <span class="prop_label">
-              <%= Assignment.human_attribute_name(:token_period) %>
-            </span>
-            <%= "#{@assignment.token_period} #{t(:hours)}" %>
-          </div>
-        <% end %>
+  <p>
+    <strong><%= Grouping.human_attribute_name(:test_tokens) %>:</strong>
+    <% if @assignment.unlimited_tokens %>
+      <%= Assignment.human_attribute_name(:unlimited_tokens) %>
+    <% else %>
+      <%= @grouping.test_tokens %> / <%= @assignment.tokens_per_period %>
+    <% end %>
+  </p>
 
-        <div class='sub_block'>
-          <span class="prop_label"><%= Grouping.human_attribute_name(:test_tokens) %></span>
-          <% if @assignment.unlimited_tokens %>
-            <%= Assignment.human_attribute_name(:unlimited_tokens) %>
-          <% else %>
-            <%= @grouping.test_tokens %> / <%= @assignment.tokens_per_period %>
-          <% end %>
-        </div>
+  <p>
+    <%= t('automated_tests.need_one_file') %>
+  </p>
 
-        <div class='sub_block'>
-          <%= t('automated_tests.need_one_file') %>
-        </div>
-    </div>
-  </div>
-
-  <div class='block'>
-    <%= render partial: 'automated_tests/test_runs', locals: { ran_by: 'student' } %>
-  </div>
+  <%= render partial: 'automated_tests/test_runs', locals: { ran_by: 'student' } %>
 
 <% elsif @grouping.nil? %>
-  <div class='block'>
-      <%= t('automated_tests.need_group_for_test') %>
-  </div>
+  <p><%= t('automated_tests.need_group_for_test') %></p>
 <% else %>
-  <div class='block'>
-    <h3><%= t('automated_tests.information') %></h3>
-    <div class='sub_block'>
-      <%= t('automated_tests.testing_disabled') %>
-    </div>
-  </div>
+  <p><%= t('automated_tests.testing_disabled') %></p>
 <% end %>
