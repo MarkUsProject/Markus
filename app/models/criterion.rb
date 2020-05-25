@@ -134,14 +134,13 @@ class Criterion < ApplicationRecord
              .count
 
     records = Criterion.where(assessment_id: assignment.id)
-                    .pluck_to_hash
-                    .map do |h|
+                        .pluck_to_hash
+                        .map do |h|
       { **h.symbolize_keys, assigned_groups_count: counts[h['id']] || 0 }
     end
 
-    unless records.empty?
-      Criterion.upsert_all(records)
-    end
+    return if records.empty?
+    Criterion.upsert_all(records)
   end
 
   # When max_mark of criterion is changed, all associated marks should have their mark value scaled to the change.

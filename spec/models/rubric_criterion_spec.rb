@@ -4,7 +4,6 @@ describe RubricCriterion do
   context 'A rubric criterion model passes criterion tests' do
     it_behaves_like 'a criterion'
   end
-  
   context 'A good rubric criterion model' do
     before(:each) do
       @rubric = create(:rubric_criterion)
