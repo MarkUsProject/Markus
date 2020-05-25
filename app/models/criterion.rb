@@ -6,6 +6,15 @@ class Criterion < ApplicationRecord
   has_many :marks, dependent: :destroy
   accepts_nested_attributes_for :marks
 
+  has_many :criterion_ta_associations,
+           dependent: :destroy
+
+  validates_presence_of :assigned_groups_count
+  validates_numericality_of :assigned_groups_count
+  before_validation :update_assigned_groups_count
+
+  has_many :tas, through: :criterion_ta_associations
+
   validates_presence_of :name
   validates_uniqueness_of :name, scope: :assessment_id
 
@@ -13,8 +22,8 @@ class Criterion < ApplicationRecord
   validates_numericality_of :max_mark, greater_than: 0
 
   has_many :criteria_assignment_files_joins,
-           as: :criterion,
            dependent: :destroy
+
   has_many :assignment_files,
            through: :criteria_assignment_files_joins
   accepts_nested_attributes_for :criteria_assignment_files_joins, allow_destroy: true
@@ -25,26 +34,33 @@ class Criterion < ApplicationRecord
   has_many :levels, -> { order(:mark) }, inverse_of: :criterion, dependent: :destroy, autosave: true
   accepts_nested_attributes_for :levels, allow_destroy: true
 
+  def update_assigned_groups_count
+    result = []
+    criterion_ta_associations.each do |cta|
+      result = result.concat(cta.ta.get_groupings_by_assignment(assignment))
+    end
+    self.assigned_groups_count = result.uniq.length
+  end
+
   # Assigns a random TA from a list of TAs specified by +ta_ids+ to each
-  # criterion in a list of criteria specified by +criterion_ids_types+. The criteria
+  # criterion in a list of criteria specified by +criterion_ids+. The criteria
   # must belong to the given assignment +assignment+.
-  def self.randomly_assign_tas(criterion_ids_types, ta_ids, assignment)
-    assign_tas(criterion_ids_types, ta_ids, assignment) do |criterion_ids, criterion_types, ta_ids|
+  def self.randomly_assign_tas(criterion_ids, ta_ids, assignment)
+    assign_tas(criterion_ids, ta_ids, assignment) do |c_ids, t_ids|
       # Assign TAs in a round-robin fashion to a list of random criteria.
-      crit_ids_and_types = criterion_ids.zip(criterion_types).shuffle
-      crit_ids_and_types.zip(ta_ids.cycle).map &:flatten
+      shuffled_criterion_ids = c_ids.shuffle
+      shuffled_criterion_ids.zip(t_ids.cycle).map(&:flatten)
     end
   end
 
   # Assigns all TAs in a list of TAs specified by +ta_ids+ to each criterion in
-  # a list of criteria specified by +criterion_ids_types+. The criteria must belong
+  # a list of criteria specified by +criterion_ids+. The criteria must belong
   # to the given assignment +assignment+.
-  def self.assign_all_tas(criterion_ids_types, ta_ids, assignment)
-    assign_tas(criterion_ids_types, ta_ids, assignment) do |criterion_ids, criterion_types, ta_ids|
-      crit_ids_and_types = criterion_ids.zip(criterion_types)
+  def self.assign_all_tas(criterion_ids, ta_ids, assignment)
+    assign_tas(criterion_ids, ta_ids, assignment) do |c_ids, t_ids|
       # Need to call Array#flatten because after the second product each element has
-      # the form [[id, type], ta_id].
-      crit_ids_and_types.product(ta_ids).map &:flatten
+      # the form [[id], ta_id].
+      c_ids.product(t_ids).map(&:flatten)
     end
   end
 
@@ -59,26 +75,22 @@ class Criterion < ApplicationRecord
   #   end
   #
   # The criteria must belong to the given assignment +assignment+.
-  def self.assign_tas(criterion_ids_types, ta_ids, assignment)
-    criterion_ids_in = criterion_ids_types.map { |id_type| id_type[0] }
-    criterion_types = criterion_ids_types.map { |id_type| id_type[1] }
+  def self.assign_tas(criterion_ids, ta_ids, assignment)
     ta_ids = Array(ta_ids)
 
     # Only use IDs that identify existing model instances.
     ta_ids = Ta.where(id: ta_ids).pluck(:id)
-    criteria = assignment.get_criteria(:ta)
-                         .select { |crit| criterion_ids_types.include? [crit.id, crit.class.to_s] }
-    columns = [:criterion_id, :criterion_type, :ta_id]
+    columns = [:criterion_id, :ta_id]
     # Get all existing criterion-TA associations to avoid violating the unique
     # constraint.
     existing_values = CriterionTaAssociation
-                      .where(criterion_id: criteria.map(&:id),
+                      .where(criterion_id: criterion_ids,
                              ta_id: ta_ids)
-                      .pluck(:criterion_id, :criterion_type, :ta_id)
+                      .pluck(:criterion_id, :ta_id)
 
     # Delegate the assign function to the caller-specified block and remove
     # values that already exist in the database.
-    new_values = yield(criteria.map(&:id), criteria.map { |c| "#{c.class}" }, ta_ids)
+    new_values = yield(criterion_ids, ta_ids)
     values = new_values - existing_values
 
     # Add assessment_id column common to all rows. It is not included above so
@@ -89,15 +101,7 @@ class Criterion < ApplicationRecord
     # CriterionTaAssociation.create when the PG driver supports bulk create,
     # then remove the activerecord-import gem.
     CriterionTaAssociation.import(columns, values, validate: false)
-
     Grouping.update_criteria_coverage_counts(assignment)
-    criterion_ids_by_type = {}
-    %w(RubricCriterion FlexibleCriterion CheckboxCriterion).each do |type|
-      criterion_ids_by_type[type] =
-        criterion_ids_in.zip(criterion_types)
-                        .select { |_, crit_type| crit_type == type}
-                        .map { |crit_id, _| crit_id }
-    end
     update_assigned_groups_counts(assignment)
   end
 
@@ -105,7 +109,7 @@ class Criterion < ApplicationRecord
   # membership IDs that specifies the unassignment to be done. +criterion_ids+
   # is a list of grouping IDs involved in the unassignment. The memberships
   # and groupings must belong to the given assignment +assignment+.
-  def self.unassign_tas(criterion_ta_ids, criterion_ids_by_type, assignment)
+  def self.unassign_tas(criterion_ta_ids, assignment)
     CriterionTaAssociation.where(id: criterion_ta_ids).delete_all
 
     Grouping.update_criteria_coverage_counts(assignment)
@@ -122,23 +126,20 @@ class Criterion < ApplicationRecord
                          .joins(ta: :groupings)
                          .where('groupings.assessment_id': assignment.id)
                          .select('criterion_ta_associations.criterion_id',
-                                 'criterion_ta_associations.criterion_type',
                                  'groupings.id')
                          .distinct
              )
-             .group('subquery.criterion_id', 'subquery.criterion_type')
+             .group('subquery.criterion_id')
              .count
 
-    [RubricCriterion, FlexibleCriterion, CheckboxCriterion].each do |klass|
-      records = klass.where(assessment_id: assignment.id)
-                     .pluck_to_hash
-                     .map do |h|
-        { **h.symbolize_keys, assigned_groups_count: counts[[h['id'], klass.to_s]] || 0 }
-      end
-      unless records.empty?
-        klass.upsert_all(records)
-      end
+    records = Criterion.where(assessment_id: assignment.id)
+                       .pluck_to_hash
+                       .map do |h|
+      { **h.symbolize_keys, assigned_groups_count: counts[h['id']] || 0 }
     end
+
+    return if records.empty?
+    Criterion.upsert_all(records)
   end
 
   # When max_mark of criterion is changed, all associated marks should have their mark value scaled to the change.

@@ -1,11 +1,5 @@
 # Represents a flexible criterion used to mark an assignment.
 class FlexibleCriterion < Criterion
-  has_many :criterion_ta_associations,
-           as: :criterion,
-           dependent: :destroy
-
-  has_many :tas, through: :criterion_ta_associations
-
   belongs_to :assignment, foreign_key: :assessment_id
 
   has_many :test_groups, as: :criterion

@@ -1,7 +1,5 @@
 class CheckboxCriterion < Criterion
   belongs_to :assignment, foreign_key: :assessment_id
-  has_many :criterion_ta_associations, as: :criterion, dependent: :destroy
-  has_many :tas, through: :criterion_ta_associations
   has_many :test_groups, as: :criterion
 
   DEFAULT_MAX_MARK = 1
