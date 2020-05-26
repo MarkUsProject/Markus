@@ -114,27 +114,34 @@ describe AnnotationCategory do
       annotation_category.annotation_texts.each do |text|
         annotation_text_deductions << text.deduction
       end
-      expect(annotation_text_deductions).to all( eq(0.0) )
+      expect(annotation_text_deductions).to all(eq(0.0))
     end
   end
 
-  describe 'check_if_deductions_exist' do
+  describe 'delete_allowed?' do
     let(:assignment) { create(:assignment_with_deductive_annotations) }
     let(:annotation_category_with_criteria) do
       assignment.annotation_categories.where.not(flexible_criterion_id: nil).first
     end
 
-    it 'prevent deletion of an annotation_category if results were released' do
+    it 'prevents deletion of an annotation_category if results were released and annotations have deductions' do
       assignment.groupings.first.current_result.update!(released_to_students: true)
       expect { assignment.annotation_categories.destroy_all }.to raise_error ActiveRecord::RecordNotDestroyed
     end
 
-    it 'prevent deletion of an annotation_category if deductions have been applied' do
-      expect { assignment.annotation_categories.destroy_all }.to raise_error ActiveRecord::RecordNotDestroyed
+    it 'does not prevent deletion of an annotation_category if annotations have '\
+       'no deduction and results not released' do
+      annotation_category_with_criteria.update!(flexible_criterion_id: nil)
+      expect { assignment.annotation_categories.destroy_all }.to_not raise_error
     end
 
-    it 'do not prevent deletion of an annotation_category if annotations have no deduction' do
+    it 'does not prevent deletion of an annotation_category if annotations have no deduction and results released' do
       annotation_category_with_criteria.update!(flexible_criterion_id: nil)
+      assignment.groupings.first.current_result.update!(released_to_students: true)
+      expect { assignment.annotation_categories.destroy_all }.to_not raise_error
+    end
+
+    it 'does not prevent deletion of an annotation_category if results not released and annotations have deductions' do
       expect { assignment.annotation_categories.destroy_all }.to_not raise_error
     end
   end
