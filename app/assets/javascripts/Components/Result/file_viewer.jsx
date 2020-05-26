@@ -47,13 +47,13 @@ export class FileViewer extends React.Component {
         from_codeviewer: true,
       }
     );
-    if (this.props.mime_type === 'image/heic') {
+    if (['image/heic', 'image/heif'].includes(this.props.mime_type)) {
       fetch(url)
         .then((res) => res.blob())
         .then((blob) => heic2any({blob, toType:"image/jpeg"}))
-        .then((conversionResult) => {this.setState({url: URL.createObjectURL(conversionResult)})})
+        .then((conversionResult) => {this.setState({url: URL.createObjectURL(conversionResult), loading: false})})
     } else {
-      this.setState({url: url})
+      this.setState({url: url, loading: false})
     }
   };
 
@@ -66,7 +66,7 @@ export class FileViewer extends React.Component {
       this.remove();
     });
 
-    this.setState({loading: true}, () => {
+    this.setState({loading: true, url: null}, () => {
       fetch(Routes.get_file_assignment_submission_path(
               '',
               this.props.assignment_id,
@@ -76,19 +76,14 @@ export class FileViewer extends React.Component {
         .then(res => res.json())
         .then(body => {
           if (body.type === 'image' || body.type === 'pdf') {
-            this.setState({
-              type: body.type,
-              loading: false,
-            }, () => this.setFileUrl(submission_file_id));
+            this.setState({type: body.type}, () => {
+              this.setFileUrl(submission_file_id)
+            })
           } else {
             const content = JSON.parse(body.content).replace(/\r?\n/gm, '\n');
-            this.setState({
-              content: content,
-              type: body.type,
-              loading: false,
-            });
+            this.setState({content: content, type: body.type, loading: false});
           }
-        });
+        })
     });
   };
 

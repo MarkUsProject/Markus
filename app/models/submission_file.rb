@@ -70,7 +70,7 @@ class SubmissionFile < ApplicationRecord
 
   def is_supported_image?
     #Here you can add more image types to support
-    supported_formats = %w(.jpeg .jpg .gif .png .heic)
+    supported_formats = %w(.jpeg .jpg .gif .png .heic .heif)
     supported_formats.include?(File.extname(filename).downcase)
   end
 
