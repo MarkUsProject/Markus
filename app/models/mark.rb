@@ -18,6 +18,24 @@ class Mark < ApplicationRecord
   validates_uniqueness_of :markable_id,
                           scope: [:result_id, :markable_type]
 
+  validates_inclusion_of :override, in: [true, false]
+
+  def calculate_deduction
+    return 0 if self.markable_type != 'FlexibleCriterion' || self.override?
+
+    self.result
+        .annotations
+        .joins(annotation_text: [{ annotation_category: :flexible_criterion }])
+        .where('flexible_criteria.id': self.markable_id)
+        .sum(:deduction)
+  end
+
+  def update_deduction
+    return if self.override?
+    deduction = calculate_deduction
+    self.update!(mark: deduction > self.markable.max_mark ? 0.0 : self.markable.max_mark - deduction)
+  end
+
   def scale_mark(curr_max_mark, prev_max_mark, update: true)
     return if mark.nil?
     return 0 if prev_max_mark == 0 || mark == 0 # no scaling occurs if prev_max_mark is 0 or mark is 0

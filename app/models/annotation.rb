@@ -19,6 +19,15 @@ class Annotation < ApplicationRecord
   validates_format_of :type,
                       with: /\AImageAnnotation|TextAnnotation|PdfAnnotation\z/
 
+  after_create :modify_mark_with_deduction
+  after_destroy :modify_mark_with_deduction
+
+  def modify_mark_with_deduction
+    criterion_id = self.annotation_text&.annotation_category&.flexible_criterion
+    return if criterion_id.nil? || self.annotation_text.deduction.nil?
+    self.result.marks.find_by(markable_id: criterion_id).update_deduction
+  end
+
   def get_data(include_creator=false)
     data = {
       id: id,
