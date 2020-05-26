@@ -1,7 +1,7 @@
 class AnnotationCategory < ApplicationRecord
   # The before_destroy callback must be before the annotation_text association declaration,
   # as it is currently the only way to ensure the annotation_texts do not get destroyed before the callback.
-  before_destroy :check_if_deductions_exist
+  before_destroy :delete_allowed?
 
   has_many :annotation_texts, dependent: :destroy
 
@@ -36,21 +36,26 @@ class AnnotationCategory < ApplicationRecord
     end
   end
 
-  def marks_not_released?
-    return true if self.flexible_criterion.nil?
-    self.flexible_criterion.marks.joins(:result).where('results.released_to_students' => true).empty?
+  def marks_released?
+    return false if self.flexible_criterion_id.nil?
+    !self.flexible_criterion.marks.joins(:result).where('results.released_to_students' => true).empty?
   end
 
-  def check_if_deductions_exist
-    return if marks_not_released? && self.annotation_texts.joins(:annotations).where.not(deduction: nil).empty?
-    errors.add(:base, 'Cannot delete annotation category once deductions have been applied')
-    throw(:abort)
+  def deductive_annotations_exist?
+    !self.annotation_texts.joins(:annotations).where.not(deduction: nil).empty?
+  end
+
+  def delete_allowed?
+    if marks_released? && deductive_annotations_exist?
+      errors.add(:base, 'Cannot delete annotation category once deductions have been applied')
+      throw(:abort)
+    end
   end
 
   def update_annotation_text_deductions
     return unless changes_to_save.key?('flexible_criterion_id')
 
-    unless marks_not_released?
+    if marks_released?
       errors.add(:base, 'Cannot update annotation category flexible criterion once results are released.')
       throw(:abort)
     end
