@@ -1,4 +1,8 @@
 class AnnotationCategory < ApplicationRecord
+  # The before_destroy callback must be before the annotation_text association declaration,
+  # as it is currently the only way to ensure the annotation_texts do not get destroyed before the callback.
+  before_destroy :check_if_deductions_exist
+
   has_many :annotation_texts, dependent: :destroy
 
   validates_presence_of :annotation_category_name
@@ -9,7 +13,6 @@ class AnnotationCategory < ApplicationRecord
   belongs_to :flexible_criterion, required: false
 
   before_update :update_annotation_text_deductions
-  before_destroy :check_if_deductions_exist
 
   # Takes an array of comma separated values, and tries to assemble an
   # Annotation Category, and associated Annotation Texts
@@ -39,8 +42,7 @@ class AnnotationCategory < ApplicationRecord
   end
 
   def check_if_deductions_exist
-    byebug
-    return if marks_not_released? || self.annotation_texts.joins(:annotations).where.not(deduction: nil).empty?
+    return if marks_not_released? && self.annotation_texts.joins(:annotations).where.not(deduction: nil).empty?
     errors.add(:base, 'Cannot delete annotation category once deductions have been applied')
     throw(:abort)
   end

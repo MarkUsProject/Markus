@@ -9,6 +9,8 @@ describe AnnotationCategory do
     it { is_expected.to have_many(:annotation_texts) }
     it { is_expected.to belong_to(:assignment) }
 
+    it { is_expected.to allow_value(nil).for(:flexible_criterion_id) }
+
     it do
       is_expected.to validate_uniqueness_of(:annotation_category_name).scoped_to(:assessment_id)
     end
@@ -116,17 +118,24 @@ describe AnnotationCategory do
     end
   end
 
-  describe 'callbacks' do
+  describe 'check_if_deductions_exist' do
     let(:assignment) { create(:assignment_with_deductive_annotations) }
+    let(:annotation_category_with_criteria) do
+      assignment.annotation_categories.where.not(flexible_criterion_id: nil).first
+    end
 
     it 'prevent deletion of an annotation_category if results were released' do
       assignment.groupings.first.current_result.update!(released_to_students: true)
-      expect { assignment.annotation_categories.destroy_all }.to raise_error ActiveRecord::RecordNotSaved
+      expect { assignment.annotation_categories.destroy_all }.to raise_error ActiveRecord::RecordNotDestroyed
     end
 
     it 'prevent deletion of an annotation_category if deductions have been applied' do
-      # Not working
-      expect { assignment.annotation_categories.destroy_all }.to raise_error ActiveRecord::RecordNotSaved
+      expect { assignment.annotation_categories.destroy_all }.to raise_error ActiveRecord::RecordNotDestroyed
+    end
+
+    it 'do not prevent deletion of an annotation_category if annotations have no deduction' do
+      annotation_category_with_criteria.update!(flexible_criterion_id: nil)
+      expect { assignment.annotation_categories.destroy_all }.to_not raise_error
     end
   end
 end
