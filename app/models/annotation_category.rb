@@ -53,17 +53,14 @@ class AnnotationCategory < ApplicationRecord
   end
 
   def update_annotation_text_deductions
-    return unless changes_to_save.key?('flexible_criterion_id')
+    return if !changes_to_save.key?('flexible_criterion_id') || self.annotation_texts.empty?
 
     if marks_released?
       errors.add(:base, 'Cannot update annotation category flexible criterion once results are released.')
       throw(:abort)
     end
-
-    return if self.annotation_texts.nil?
     prev_criterion = FlexibleCriterion.find_by_id(changes_to_save['flexible_criterion_id'].first)
     new_criterion = FlexibleCriterion.find_by_id(changes_to_save['flexible_criterion_id'].second)
-    return unless prev_criterion != new_criterion
     if new_criterion.nil?
       self.annotation_texts.each do |text|
         text.update!(deduction: nil)
