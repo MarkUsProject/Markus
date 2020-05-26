@@ -6,4 +6,8 @@ FactoryBot.define do
     creator { FactoryBot.create(:admin) }
     association :annotation_category, factory: :annotation_category
   end
+
+  factory :annotation_text_with_deduction, parent: :annotation_text do
+    deduction { 1.0 }
+  end
 end
