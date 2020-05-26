@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_05_04_201055) do
+ActiveRecord::Schema.define(version: 2020_05_26_185329) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -333,7 +333,6 @@ ActiveRecord::Schema.define(version: 2020_05_04_201055) do
     t.decimal "weight"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean "is_assignment", null: false
   end
 
   create_table "marks", id: :serial, force: :cascade do |t|
