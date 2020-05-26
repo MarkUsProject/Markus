@@ -10,6 +10,7 @@
 - Introduces automated email sending for grouping invitations (#4470)
 - Introduces student email settings (#4578)
 - Fixed bug preventing all git hooks from being run in production (#4594)
+- Added support for displaying .heic and .heif files in the file viewer (#4607)
 
 ## [v1.9.1]
 - Fixed bug where the output column was not shown in the test results table if the first row had no output (#4537)

@@ -1,5 +1,5 @@
 import React from 'react';
-import heic2any from "heic2any";
+import heic2any from 'heic2any';
 
 import {ImageViewer} from './image_viewer'
 import {TextViewer} from './text_viewer'
@@ -53,7 +53,7 @@ export class FileViewer extends React.Component {
         .then((blob) => heic2any({blob, toType:"image/jpeg"}))
         .then((conversionResult) => {this.setState({url: URL.createObjectURL(conversionResult), loading: false})})
     } else {
-      this.setState({url: url, loading: false})
+      this.setState({url: url, loading: false});
     }
   };
 
@@ -76,9 +76,7 @@ export class FileViewer extends React.Component {
         .then(res => res.json())
         .then(body => {
           if (body.type === 'image' || body.type === 'pdf') {
-            this.setState({type: body.type}, () => {
-              this.setFileUrl(submission_file_id)
-            })
+            this.setState({type: body.type}, () => {this.setFileUrl(submission_file_id)})
           } else {
             const content = JSON.parse(body.content).replace(/\r?\n/gm, '\n');
             this.setState({content: content, type: body.type, loading: false});
