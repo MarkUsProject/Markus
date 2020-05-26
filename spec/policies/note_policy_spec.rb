@@ -15,7 +15,7 @@ describe NotePolicy do
     context 'TA can manage the notes' do
       it { is_expected.to pass :manage? }
     end
-    context 'When TA is editing or updating others note' do
+    context 'When TA is editing or updating the notes created by others' do
       it { is_expected.not_to pass :modify? }
     end
     context 'When TA is editing or updating their own notes' do
