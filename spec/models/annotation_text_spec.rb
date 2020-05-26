@@ -88,8 +88,7 @@ describe AnnotationText do
       assignment.reload
       marks = []
       assignment.groupings.includes(:current_result).each do |grouping|
-        marks << grouping.current_result
-                         .marks
+        marks << grouping.current_result.marks
                          .find_by(markable_id: annotation_category_with_criterion.flexible_criterion_id).mark
       end
       expect(marks).to eq([1.0, 1.0, 1.0])
@@ -98,8 +97,7 @@ describe AnnotationText do
     it 'returns without updating marks if its annotation category doesn\'t belong to a flexible criterion' do
       previous_marks = []
       assignment.groupings.includes(:current_result).each do |grouping|
-        previous_marks << grouping.current_result
-                                  .marks
+        previous_marks << grouping.current_result.marks
                                   .find_by(markable_id: annotation_category_with_criterion.flexible_criterion_id).mark
       end
       create(:text_annotation,
@@ -108,8 +106,7 @@ describe AnnotationText do
       text_without_deduction.update!(content: 'Do not plagiarize!')
       new_marks = []
       assignment.groupings.includes(:current_result).each do |grouping|
-        new_marks << grouping.current_result
-                             .marks
+        new_marks << grouping.current_result.marks
                              .find_by(markable_id: annotation_category_with_criterion.flexible_criterion_id).mark
       end
       expect(new_marks).to eq(previous_marks)
@@ -120,8 +117,7 @@ describe AnnotationText do
       assignment.reload
       marks = []
       assignment.groupings.includes(:current_result).each do |grouping|
-        marks << grouping.current_result
-                         .marks
+        marks << grouping.current_result.marks
                          .find_by(markable_id: annotation_category_with_criterion.flexible_criterion_id).mark
       end
       expect(marks).to eq([2.0, 2.0, 2.0])
@@ -139,8 +135,7 @@ describe AnnotationText do
       assignment.reload
       marks = []
       assignment.groupings.includes(:current_result).each do |grouping|
-        marks << grouping.current_result
-                         .marks
+        marks << grouping.current_result.marks
                          .find_by(markable_id: annotation_category_with_criterion.flexible_criterion_id).mark
       end
       expect(marks).to eq([1.0, 1.0, 1.0])
