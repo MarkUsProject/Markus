@@ -53,6 +53,31 @@ describe FlexibleCriterion do
       @assignment = create(:assignment)
     end
 
+    context 'with deductive annotations' do
+      let(:assignment) { create(:assignment_with_deductive_annotations) }
+      it 'reassigns it\'s annotation_category\'s flexible_criterion_id to nil before being destroyed if it has one' do
+        assignment.flexible_criteria.first.destroy
+        assignment.reload
+        expect(assignment.annotation_categories.first.flexible_criterion_id).to eq(nil)
+      end
+
+      it 'reassigns it\'s annotation_categories\' flexible_criterion_ids to nil before ' \
+         'being destroyed if it has many' do
+        create(:annotation_category,
+               flexible_criterion_id: assignment.flexible_criteria.first.id,
+               assignment: assignment)
+        byebug
+        assignment.flexible_criteria.first.destroy
+        assignment.reload
+        category_criteria = []
+        assignment.annotation_categories.each do |category|
+          category_criteria << category.flexible_criterion_id
+        end
+        byebug
+        expect(category_criteria).to eq([nil, nil])
+      end
+    end
+
     context 'with criterion from a 2 element row with no description overwritten' do
       before :each do
         @criterion = FlexibleCriterion.create_or_update_from_csv_row(['name', 10.0], @assignment)
