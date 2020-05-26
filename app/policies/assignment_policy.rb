@@ -55,6 +55,6 @@ class AssignmentPolicy < ApplicationPolicy
   end
 
   def manage?
-    user.admin? || (user.ta? && GraderPermission.find_by(user_id: user.id).create_assignments)
+    user.admin? || (user.ta? && allowed_to?(:manage_assignments?, with: GraderPermissionsPolicy))
   end
 end

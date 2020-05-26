@@ -38,6 +38,10 @@ class SubmissionsController < ApplicationController
   before_action :authorize_for_user,
                 only: [:download, :downloads, :get_feedback_file, :get_file,
                        :populate_file_manager, :update_files]
+  before_action only: [:collect_submissions] do
+    authorize! with: SubmissionPolicy
+  end
+  rescue_from ActionPolicy::Unauthorized, with: :user_not_authorized
 
   def index
     respond_to do |format|
@@ -206,48 +210,43 @@ class SubmissionsController < ApplicationController
       head 400
       return
     end
-    begin
-      authorize! with: SubmissionPolicy
-      assignment = Assignment.includes(:groupings).find(params[:assignment_id])
-      groupings = assignment.groupings.find(params[:groupings])
-      collectable = []
-      some_before_due = false
-      some_released = Grouping.joins(current_submission_used: :results)
-                              .where('results.released_to_students': true)
-                              .where(id: groupings)
-                              .pluck(:id).to_set
-      collection_dates = assignment.all_grouping_collection_dates
-      is_scanned_exam = assignment.scanned_exam?
-      groupings.each do |grouping|
-        unless is_scanned_exam
-          collect_now = collection_dates[grouping.id] <= Time.current
-          some_before_due = true unless collect_now
-          next unless collect_now
-        end
-        next if params[:override] != 'true' && grouping.is_collected?
-        next if some_released.include?(grouping.id)
+    assignment = Assignment.includes(:groupings).find(params[:assignment_id])
+    groupings = assignment.groupings.find(params[:groupings])
+    collectable = []
+    some_before_due = false
+    some_released = Grouping.joins(current_submission_used: :results)
+                            .where('results.released_to_students': true)
+                            .where(id: groupings)
+                            .pluck(:id).to_set
+    collection_dates = assignment.all_grouping_collection_dates
+    is_scanned_exam = assignment.scanned_exam?
+    groupings.each do |grouping|
+      unless is_scanned_exam
+        collect_now = collection_dates[grouping.id] <= Time.current
+        some_before_due = true unless collect_now
+        next unless collect_now
+      end
+      next if params[:override] != 'true' && grouping.is_collected?
+      next if some_released.include?(grouping.id)
 
-        collectable << grouping
-      end
-      if collectable.count > 0
-        @current_job = SubmissionsJob.perform_later(collectable,
-                                                    collection_dates: collection_dates.transform_keys(&:to_s))
-        session[:job_id] = @current_job.job_id
-      end
-      if some_before_due
-        error = I18n.t('submissions.collect.could_not_collect_some_due',
-                       assignment_identifier: assignment.short_identifier)
-        flash_now(:error, error)
-      end
-      if some_released.present?
-        error = I18n.t('submissions.collect.could_not_collect_some_released',
-                       assignment_identifier: assignment.short_identifier)
-        flash_now(:error, error)
-      end
-      render 'shared/_poll_job.js.erb'
-    rescue ActionPolicy::Unauthorized => e
-      flash_message(:error, e.message)
+      collectable << grouping
     end
+    if collectable.count > 0
+      @current_job = SubmissionsJob.perform_later(collectable,
+                                                  collection_dates: collection_dates.transform_keys(&:to_s))
+      session[:job_id] = @current_job.job_id
+    end
+    if some_before_due
+      error = I18n.t('submissions.collect.could_not_collect_some_due',
+                     assignment_identifier: assignment.short_identifier)
+      flash_now(:error, error)
+    end
+    if some_released.present?
+      error = I18n.t('submissions.collect.could_not_collect_some_released',
+                     assignment_identifier: assignment.short_identifier)
+      flash_now(:error, error)
+    end
+    render 'shared/_poll_job.js.erb'
   end
 
   def run_tests

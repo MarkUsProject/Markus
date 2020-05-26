@@ -11,6 +11,6 @@ class NotePolicy < ApplicationPolicy
   end
 
   def create?
-    user.admin? || (user.ta? && GraderPermission.find_by(user_id: user.id).create_notes)
+    user.admin? || (user.ta? && allowed_to?(:create_notes?, with: GraderPermissionsPolicy))
   end
 end
