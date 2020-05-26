@@ -121,15 +121,14 @@ describe AnnotationText do
       marks = []
       assignment.groupings.includes(:current_result).each do |grouping|
         marks << grouping.current_result
-                     .marks
-                     .find_by(markable_id: annotation_category_with_criterion.flexible_criterion_id).mark
+                         .marks
+                         .find_by(markable_id: annotation_category_with_criterion.flexible_criterion_id).mark
       end
       expect(marks).to eq([2.0, 2.0, 2.0])
     end
   end
 
   describe '#scale_deduction' do
-
     it 'does not affect the deduction when deduction is nil' do
       text_without_deduction.scale_deduction(2.0)
       expect(text_without_deduction.deduction).to eq(nil)
@@ -141,8 +140,8 @@ describe AnnotationText do
       marks = []
       assignment.groupings.includes(:current_result).each do |grouping|
         marks << grouping.current_result
-                     .marks
-                     .find_by(markable_id: annotation_category_with_criterion.flexible_criterion_id).mark
+                         .marks
+                         .find_by(markable_id: annotation_category_with_criterion.flexible_criterion_id).mark
       end
       expect(marks).to eq([1.0, 1.0, 1.0])
     end

@@ -66,14 +66,12 @@ describe FlexibleCriterion do
         create(:annotation_category,
                flexible_criterion_id: assignment.flexible_criteria.first.id,
                assignment: assignment)
-        byebug
         assignment.flexible_criteria.first.destroy
         assignment.reload
         category_criteria = []
         assignment.annotation_categories.each do |category|
           category_criteria << category.flexible_criterion_id
         end
-        byebug
         expect(category_criteria).to eq([nil, nil])
       end
     end

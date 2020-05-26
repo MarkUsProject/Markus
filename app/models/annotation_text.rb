@@ -39,8 +39,8 @@ class AnnotationText < ApplicationRecord
   def update_mark_deductions
     return unless previous_changes.key?('deduction')
 
-    #depending on category to change marks if deduction becomes nil
-    return if self.deduction == nil
+    # depending on category to change marks if deduction becomes nil
+    return if self.deduction.nil?
 
     annotations = self.annotations.includes(:result)
     annotations.each do |annotation|
