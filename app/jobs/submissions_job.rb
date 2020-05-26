@@ -17,6 +17,7 @@ class SubmissionsJob < ApplicationJob
   end
 
   def perform(groupings, options = {})
+    byebug
     return if groupings.empty?
 
     m_logger = MarkusLogger.instance

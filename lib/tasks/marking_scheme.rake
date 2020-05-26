@@ -7,17 +7,11 @@ namespace :db do
       name: 'Scheme A'
     )
 
-    #for each assignment, add a marking weight to marking_scheme
-    Assignment.find_each do |a|
+    #for each assessment, add a marking weight to marking_scheme
+    Assessment.find_each do |a|
       random_weight = 1 + rand(0...10)
       marking_scheme.marking_weights << MarkingWeight.new(
-        gradable_item_id: a.id, weight: random_weight, is_assignment: true)
-    end
-
-    GradeEntryForm.find_each do |grade_entry_form|
-      random_weight = 1 + rand(0...10)
-      marking_scheme.marking_weights << MarkingWeight.new(
-        gradable_item_id: grade_entry_form.id, weight: random_weight, is_assignment: false)
+        assessment_id: a.id, weight: random_weight)
     end
   end
 end

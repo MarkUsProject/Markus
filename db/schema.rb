@@ -329,10 +329,11 @@ ActiveRecord::Schema.define(version: 2020_05_26_185329) do
 
   create_table "marking_weights", id: :serial, force: :cascade do |t|
     t.integer "marking_scheme_id"
-    t.integer "gradable_item_id"
     t.decimal "weight"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.bigint "assessment_id"
+    t.index ["assessment_id"], name: "index_marking_weights_on_assessment_id"
   end
 
   create_table "marks", id: :serial, force: :cascade do |t|
