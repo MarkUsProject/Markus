@@ -21,4 +21,24 @@ describe Annotation do
     it { is_expected.to allow_value('PdfAnnotation').for(:type) }
     it { is_expected.to_not allow_value('OtherAnnotation').for(:type) }
   end
+
+  context 'when associated with a deduction' do
+    let(:assignment) { create(:assignment_with_deductive_annotations) }
+    let(:annotation_category) { assignment.annotation_categories.where.not(flexible_criterion_id: nil).first }
+    let(:annotation_text) { annotation_category.annotation_texts.first }
+    let(:result) { assignment.groupings.first.current_result }
+    let(:mark) { result.marks.find_by(markable_id: annotation_category.flexible_criterion_id) }
+
+    it 'correctly updates the mark when created' do
+      create(:text_annotation,
+             annotation_text: annotation_text,
+             result: result)
+      expect(mark.mark).to eq(1.0)
+    end
+
+    it 'correctly updates the mark when destroyed' do
+      result.annotations.find_by(annotation_text: annotation_text).destroy
+      expect(mark.mark).to eq(3.0)
+    end
+  end
 end
