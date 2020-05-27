@@ -11,13 +11,13 @@ class AnnotationCategory < ApplicationRecord
   belongs_to :assignment, foreign_key: :assessment_id
 
   belongs_to :flexible_criterion, required: false
-  validates :flexible_criterion_id, inclusion: { in: assignment_criteria,
-                                                 message: 'Invalid criterion for this assignment.' }
+  validates :flexible_criterion_id,
+            inclusion: { in: :assignment_criteria, message: '%{value} is an invalid criterion for this assignment.' }
 
   before_update :update_annotation_text_deductions
 
   def assignment_criteria
-    self.assignment.flexible_criteria.pluck(id)
+    self.assignment.flexible_criteria.map { |c| c.id } + [nil]
   end
 
   # Takes an array of comma separated values, and tries to assemble an
