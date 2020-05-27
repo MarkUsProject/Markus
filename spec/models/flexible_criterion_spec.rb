@@ -55,8 +55,12 @@ describe FlexibleCriterion do
 
     context 'with deductive annotations' do
       let(:assignment) { create(:assignment_with_deductive_annotations) }
+      let(:flexible_criterion) { assignment.flexible_criteria.first }
+      let(:annotation_category) do
+        assignment.annotation_categories.where(flexible_criterion_id: flexible_criterion.id).first
+      end
       it 'reassigns it\'s annotation_category\'s flexible_criterion_id to nil before being destroyed if it has one' do
-        assignment.flexible_criteria.first.destroy
+        flexible_criterion.destroy
         assignment.reload
         expect(assignment.annotation_categories.first.flexible_criterion_id).to eq(nil)
       end
@@ -64,15 +68,37 @@ describe FlexibleCriterion do
       it 'reassigns it\'s annotation_categories\' flexible_criterion_ids to nil before ' \
          'being destroyed if it has many' do
         create(:annotation_category,
-               flexible_criterion_id: assignment.flexible_criteria.first.id,
+               flexible_criterion_id: flexible_criterion.id,
                assignment: assignment)
-        assignment.flexible_criteria.first.destroy
+        flexible_criterion.destroy
         assignment.reload
         category_criteria = []
         assignment.annotation_categories.each do |category|
           category_criteria << category.flexible_criterion_id
         end
         expect(category_criteria).to eq([nil, nil])
+      end
+
+      it 'correctly scales up annotation text deductions when it\'s max_mark is increased' do
+        create(:annotation_text, annotation_category: annotation_category, deduction: 2.0)
+        flexible_criterion.update!(max_mark: 6.0)
+        assignment.reload
+        deductions = []
+        annotation_category.annotation_texts.each do |text|
+          deductions << text.deduction
+        end
+        expect(deductions).to eq([2.0, 4.0])
+      end
+
+      it 'correctly scales down annotation text deductions when it\'s max_mark is decreased' do
+        create(:annotation_text, annotation_category: annotation_category, deduction: 2.0)
+        flexible_criterion.update!(max_mark: 1.0)
+        assignment.reload
+        deductions = []
+        annotation_category.annotation_texts.each do |text|
+          deductions << text.deduction
+        end
+        expect(deductions).to eq([0.33, 0.67])
       end
     end
 
