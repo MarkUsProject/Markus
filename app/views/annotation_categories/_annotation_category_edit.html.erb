@@ -19,12 +19,13 @@
         <%= f.label :annotation_category_name,
                     AnnotationCategory.human_attribute_name(:annotation_category_name) %>
         <%= f.text_field :annotation_category_name, rows: '3' %>
-      </div>
-      <br>
-      <div class='inline-labels'>
         <%= f.label :flexible_criterion_id,
                     t('annotation_categories.flexible_criterion_choice') %>
-        <%= f.collection_select :flexible_criterion_id, FlexibleCriterion.all, :id, :name, { include_blank: true } %>
+        <%= f.collection_select :flexible_criterion_id,
+                                FlexibleCriterion.all.where(assignment: annotation_category.assignment),
+                                :id,
+                                :name,
+                                { include_blank: true } %>
       </div>
 
       <p><%= f.submit t(:save), data: { disable_with: t('working') } %></p>
