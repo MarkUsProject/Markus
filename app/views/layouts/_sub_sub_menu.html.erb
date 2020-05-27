@@ -15,7 +15,7 @@
         <% if controller.controller_name != 'assignments' ||
               (controller.controller_name == 'assignments' &&
                controller.action_name != 'new' ) %>
-          <% if @current_user.admin? || (@current_user.ta? && GraderPermission.find_by(user_id: @current_user.id).create_assignments) %>
+          <% if @current_user.admin? || (@current_user.ta? && GraderPermissions.find_by(user_id: @current_user.id).manage_assignments) %>
             <li class='<%= "active" if controller.controller_name == 'assignments' %>'>
               <%= link_to t('menu.properties'), edit_assignment_path(@assignment) %>
             </li>
@@ -43,7 +43,7 @@
             <% end %>
           <% end %>
           <% if @assignment.scanned_exam? %>
-            <% if @current_user.admin? || (@current_user.ta? && GraderPermission.find_by(user_id: @current_user.id).create_assignments) %>
+            <% if @current_user.admin? || (@current_user.ta? && GraderPermissions.find_by(user_id: @current_user.id).manage_assignments) %>
               <li class='<%= "active" if controller.controller_name == 'exam_templates' %>'>
                 <%= link_to ExamTemplate.model_name.human.pluralize,
                             assignment_exam_templates_path(@assignment) %>

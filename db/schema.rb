@@ -265,15 +265,15 @@ ActiveRecord::Schema.define(version: 2020_06_08_190551) do
     t.integer "ta_id"
   end
 
-  create_table "grader_permission", force: :cascade do |t|
+  create_table "grader_permissions", force: :cascade do |t|
     t.integer "user_id"
     t.boolean "delete_grace_period_deduction"
     t.boolean "create_notes"
     t.boolean "create_delete_annotations"
-    t.boolean "manually_collect_and_begin_grading"
-    t.boolean "update_grade_entry_students"
+    t.boolean "collect_submissions"
+    t.boolean "release_unrelease_grades"
     t.boolean "manage_grade_entry_forms"
-    t.boolean "create_assignments"
+    t.boolean "manage_assignments"
     t.boolean "manage_reviewers"
     t.boolean "manage_exam_templates"
     t.boolean "run_tests"
@@ -633,7 +633,7 @@ ActiveRecord::Schema.define(version: 2020_06_08_190551) do
   add_foreign_key "extensions", "groupings"
   add_foreign_key "extra_marks", "results", name: "fk_extra_marks_results", on_delete: :cascade
   add_foreign_key "feedback_files", "submissions"
-  add_foreign_key "grader_permission", "users"
+  add_foreign_key "grader_permissions", "users"
   add_foreign_key "groupings", "assessments", name: "fk_groupings_assignments"
   add_foreign_key "groupings", "groups", name: "fk_groupings_groups"
   add_foreign_key "levels", "rubric_criteria"
