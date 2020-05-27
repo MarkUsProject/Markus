@@ -12,12 +12,12 @@ class AnnotationCategory < ApplicationRecord
 
   belongs_to :flexible_criterion, required: false
   validates :flexible_criterion_id,
-            inclusion: { in: :assignment_criteria, message: '%{value} is an invalid criterion for this assignment.' }
+            inclusion: { in: :assignment_criteria, message: '%<value>s is an invalid criterion for this assignment.' }
 
   before_update :update_annotation_text_deductions
 
   def assignment_criteria
-    self.assignment.flexible_criteria.map { |c| c.id } + [nil]
+    self.assignment.flexible_criteria.map(&:id) + [nil]
   end
 
   # Takes an array of comma separated values, and tries to assemble an
