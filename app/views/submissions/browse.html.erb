@@ -8,6 +8,7 @@
           show_sections: <%= Section.exists? %>,
           is_admin: <%= @current_user.admin? %>,
           is_ta: <%= @current_user.ta? %>,
+          is_ta_allowed: <%=  GraderPermission.find_by(user_id: @current_user.id).manually_collect_and_begin_grading %>,
           can_run_tests: <%= @current_user.admin? && @assignment.enable_test %>,
           defaultFiltered: [{ id: '<%= params[:filter_by] %>', value: '<%= params[:filter_value] %>' }]
         }
