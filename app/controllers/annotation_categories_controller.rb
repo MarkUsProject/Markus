@@ -66,7 +66,6 @@ class AnnotationCategoriesController < ApplicationController
   def update
     @assignment = Assignment.find(params[:assignment_id])
     @annotation_category = @assignment.annotation_categories.find(params[:id])
-
     if @annotation_category.update(annotation_category_params)
       flash_message(:success, t('.success'))
     else
@@ -206,7 +205,7 @@ class AnnotationCategoriesController < ApplicationController
 
   def annotation_category_params
     params.require(:annotation_category)
-          .permit(:annotation_category_name)
+          .permit(:annotation_category_name, :flexible_criterion_id)
   end
 
   def annotation_text_params
