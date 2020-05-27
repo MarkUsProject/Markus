@@ -253,6 +253,7 @@ class RawSubmissionTable extends React.Component {
           disabled={this.props.selection.length === 0}
           is_admin={this.props.is_admin}
           is_ta={this.props.is_ta}
+          is_ta_allowed={this.props.is_ta_allowed}
           assignment_id={this.props.assignment_id}
           can_run_tests={this.props.can_run_tests}
 
@@ -365,7 +366,7 @@ class SubmissionsActionBox extends React.Component {
         </button>
       );
     }
-    if (this.props.is_ta) {
+    if (this.props.is_ta && this.props.is_ta_allowed) {
       collectButton = (
         <button
           onClick={this.props.collectSubmissions}

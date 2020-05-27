@@ -6,8 +6,6 @@
       <%# Display an appropriate message in the dropdown menu %>
       <% if assessment.nil? %>
         <%= t('menu.choose') %>
-      <% elsif assessment.new_record? %>
-        <%= t('helpers.submit.create', model: assessment.class.model_name.human) %>
       <% else %>
         <% title = assessment.short_identifier %>
         <% if assessment.is_a?(Assignment) && assessment.is_peer_review? %>
@@ -25,10 +23,12 @@
   </li>
 
   <% if assessment.is_a?(GradeEntryForm) && !assessment.new_record? %>
-    <li class='<%= "active" if controller.action_name == 'edit' %>'>
-      <%= link_to t('menu.properties'),
-                  edit_grade_entry_form_path(assessment) %>
-    </li>
+    <% if @current_user.ta? && GraderPermission.find_by(user_id: @current_user.id).create_assignments %>
+      <li class='<%= "active" if controller.action_name == 'edit' %>'>
+        <%= link_to t('menu.properties'),
+                    edit_grade_entry_form_path(assessment) %>
+      </li>
+    <% end %>
     <li class='<%= "active" if controller.action_name == 'grades' %>'>
       <%= link_to GradeEntryForm.human_attribute_name(:grades),
                   grades_grade_entry_form_path(assessment) %>
@@ -36,24 +36,28 @@
   <% elsif assessment.is_a?(Assignment) && !assessment.new_record? %>
     <% target_id = is_viewing_a_peer_review_result ? assessment.pr_assignment.id :
                      assessment.id %>
-    <li <% if ['criteria',
-               'annotation_categories',
-               'automated_tests',
-               'exam_templates'].include?(controller.controller_name) ||
-      (controller.controller_name == 'assignments' &&
-        controller.action_name != 'summary' && controller.action_name != 'batch_runs') %>
-        class='active'
-        <% end %>
-        >
-      <%= link_to t('menu.settings'),
-                  edit_assignment_path(target_id) %>
-    </li>
-    <% if assessment.is_peer_review? || is_viewing_a_peer_review_result %>
-      <li class='<%= 'active' if controller.controller_name == 'peer_reviews' %>'>
-        <%= link_to t('peer_reviews.assign'),
-                    assignment_peer_reviews_path(target_id) %>
+    <% if @current_user.ta? && GraderPermission.find_by(user_id: @current_user.id).create_assignments %>
+      <li <% if ['criteria',
+                 'annotation_categories',
+                 'automated_tests',
+                 'exam_templates'].include?(controller.controller_name) ||
+        (controller.controller_name == 'assignments' &&
+          controller.action_name != 'summary' && controller.action_name != 'batch_runs') %>
+          class='active'
+          <% end %>
+          >
+        <%= link_to t('menu.settings'),
+                    edit_assignment_path(target_id) %>
       </li>
-    <% end %>
+      <% end %>
+      <% if assessment.is_peer_review? || is_viewing_a_peer_review_result %>
+        <% if @current_user.ta? && GraderPermission.find_by(user_id: @current_user.id).manage_reviewers %>
+          <li class='<%= 'active' if controller.controller_name == 'peer_reviews' %>'>
+            <%= link_to t('peer_reviews.assign'),
+                        assignment_peer_reviews_path(target_id) %>
+          </li>
+        <% end %>
+      <% end %>
     <li
       <% if controller.controller_name == 'submissions' ||
         controller.controller_name == 'results' %>

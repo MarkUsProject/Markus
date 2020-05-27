@@ -15,11 +15,13 @@
         <% if controller.controller_name != 'assignments' ||
               (controller.controller_name == 'assignments' &&
                controller.action_name != 'new' ) %>
-          <li <% if controller.controller_name == 'assignments' && controller.action_name != 'starter_file' %>
-              class='active'
-              <% end %>>
-            <%= link_to t('menu.properties'), edit_assignment_path(@assignment) %>
-          </li>
+          <% if @current_user.admin? || (@current_user.ta? && GraderPermission.find_by(user_id: @current_user.id).create_assignments) %>
+            <li <% if controller.controller_name == 'assignments' && controller.action_name != 'starter_file' %>
+                class='active'
+                <% end %>>
+              <%= link_to t('menu.properties'), edit_assignment_path(@assignment) %>
+            </li>
+          <% end %>
           <% if @current_user.admin? %>
             <li class='<%= "active" if controller.controller_name == 'tags' %>'>
               <%= link_to Tag.model_name.human.pluralize,
@@ -49,10 +51,12 @@
             <% end %>
           <% end %>
           <% if @assignment.scanned_exam? %>
-            <li class='<%= "active" if controller.controller_name == 'exam_templates' %>'>
-              <%= link_to ExamTemplate.model_name.human.pluralize,
-                          assignment_exam_templates_path(@assignment) %>
-            </li>
+            <% if @current_user.admin? || (@current_user.ta? && GraderPermission.find_by(user_id: @current_user.id).create_assignments) %>
+              <li class='<%= "active" if controller.controller_name == 'exam_templates' %>'>
+                <%= link_to ExamTemplate.model_name.human.pluralize,
+                            assignment_exam_templates_path(@assignment) %>
+              </li>
+            <% end %>
           <% end %>
         <% end %>
       <% end %>
