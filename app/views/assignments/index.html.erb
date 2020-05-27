@@ -1,6 +1,6 @@
 <% content_for :title, t('assignments.manage_course_work') %>
 
-<% if @current_user.admin? || (@current_user.ta? && GraderPermission.find_by(user_id: @current_user.id).create_assignments) %>
+<% if @current_user.admin? || (@current_user.ta? && GraderPermissions.find_by(user_id: @current_user.id).manage_assignments) %>
   <% @heading_buttons = [
     { link_text: t('download'),
       link_path: '#',

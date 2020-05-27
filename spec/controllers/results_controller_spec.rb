@@ -678,7 +678,7 @@ describe ResultsController do
       end
       context 'When TA is allowed to delete_grace_period_deduction' do
         before do
-          GraderPermission.create(user_id: ta.id, delete_grace_period_deduction: true)
+          GraderPermissions.create(user_id: ta.id, delete_grace_period_deduction: true)
         end
         it 'should delete grace period deduction' do
           delete :delete_grace_period_deduction,
@@ -689,7 +689,7 @@ describe ResultsController do
       end
       context 'When TA is not allowed to delete_grace_period_deduction' do
         before do
-          GraderPermission.create(user_id: ta.id, delete_grace_period_deduction: false)
+          GraderPermissions.create(user_id: ta.id, delete_grace_period_deduction: false)
         end
         it 'should not delete grace period deduction' do
           delete :delete_grace_period_deduction,
