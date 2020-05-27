@@ -17,6 +17,7 @@ class AnnotationCategory < ApplicationRecord
   before_update :update_annotation_text_deductions
 
   def assignment_criteria
+    return [nil] if self.assignment.nil?
     self.assignment.flexible_criteria.map(&:id) + [nil]
   end
 
