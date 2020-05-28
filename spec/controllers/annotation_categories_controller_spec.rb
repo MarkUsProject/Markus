@@ -59,10 +59,56 @@ describe AnnotationCategoriesController do
             params: {
               assignment_id: assignment.id,
               id: annotation_category.id,
-              annotation_category: { annotation_category_name: category2.annotation_category_name }
+              annotation_category: { annotation_category_name: category2.annotation_category_name },
+              format: :js
             }
 
       expect(annotation_category.reload.annotation_category_name).to eq original_name
+    end
+
+    it 'successfully sets the AnnotationCategory\'s associated flexible_criterion' do
+      assignment = annotation_category.assignment
+      flexible_criterion = create(:flexible_criterion, assignment: assignment)
+
+      patch :update,
+            params: {
+              assignment_id: assignment.id,
+              id: annotation_category.id,
+              annotation_category: { flexible_criterion_id: flexible_criterion.id },
+              format: :js
+            }
+
+      expect(annotation_category.reload.flexible_criterion_id).to eq(flexible_criterion.id)
+    end
+
+    it 'successfully updates the AnnotationCategory\'s associated flexible_criterion to nil' do
+      assignment = create(:assignment_with_deductive_annotations)
+      category = assignment.annotation_categories.where.not(flexible_criterion_id: nil).first
+
+      patch :update,
+            params: {
+              assignment_id: assignment.id,
+              id: category.id,
+              annotation_category: { flexible_criterion_id: '' },
+              format: :js
+            }
+
+      expect(category.reload.flexible_criterion_id).to eq(nil)
+    end
+
+    it 'fails to update the AnnotationCategory\'s associated flexible_criterion to an id '\
+       'of a criterion for another assignment' do
+      assignment = annotation_category.assignment
+      flexible_criterion = create(:flexible_criterion)
+
+      patch :update,
+            params: {
+              assignment_id: assignment.id,
+              id: annotation_category.id,
+              annotation_category: { flexible_criterion_id: flexible_criterion.id },
+              format: :js
+            }
+      expect(annotation_category.flexible_criterion_id).to eq(nil)
     end
   end
 

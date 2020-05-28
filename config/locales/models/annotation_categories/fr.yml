@@ -6,4 +6,5 @@ fr:
     attributes:
       annotation_category:
         annotation_category_name: "Nom de la catégorie"
+        flexible_criterion: 'UPDATE ME'
 
