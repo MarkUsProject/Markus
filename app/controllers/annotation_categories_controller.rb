@@ -1,6 +1,8 @@
 class AnnotationCategoriesController < ApplicationController
   include AnnotationCategoriesHelper
 
+  respond_to :js
+
   before_action      :authorize_only_for_admin, except: :index
   before_action      :authorize_for_ta_and_admin, only: :index
 
@@ -208,7 +210,7 @@ class AnnotationCategoriesController < ApplicationController
 
   def annotation_category_params
     params.require(:annotation_category)
-          .permit(:annotation_category_name)
+          .permit(:annotation_category_name, :flexible_criterion_id)
   end
 
   def annotation_text_params

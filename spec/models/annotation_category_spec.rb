@@ -14,6 +14,24 @@ describe AnnotationCategory do
     it do
       is_expected.to validate_uniqueness_of(:annotation_category_name).scoped_to(:assessment_id)
     end
+
+    context 'when changing flexible criterion id' do
+      let(:assignment) { create(:assignment_with_deductive_annotations) }
+      let(:category) { assignment.annotation_categories.where.not(flexible_criterion_id: nil).first }
+
+      it 'does not allow the flexible_criterion_id to be set to reference a criterion of another assignment' do
+        other_assignment = create(:assignment_with_criteria_and_results)
+        other_criterion_id = other_assignment.flexible_criteria.first.id
+        category.flexible_criterion_id = other_criterion_id
+        expect(category).to_not be_valid
+      end
+
+      it 'allows the flexible_criterion_id to be set to reference a criterion of it\'s assignment' do
+        other_criterion = create(:flexible_criterion, assignment: assignment)
+        category.flexible_criterion_id = other_criterion.id
+        expect(category).to be_valid
+      end
+    end
   end
 
   describe '.add_by_row' do
