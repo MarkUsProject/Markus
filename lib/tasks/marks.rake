@@ -87,8 +87,8 @@ namespace :db do
         is_remark: new_submission.has_remark?,
         annotation_text_id: AnnotationText.all
                                           .joins(:annotation_category)
-                                          .where('annotation_categories.assignment': grouping.assignment)
-                                          .where.not('annotation_texts.deduction': nil)
+                                          .where('annotation_categories.assignment': grouping.assignment,
+                                                 'annotation_texts.deduction': nil)
                                           .pluck(:id).to_a.sample,
         annotation_number: new_submission.annotations.count + 1,
         creator_id: Admin.first.id,
@@ -126,6 +126,30 @@ namespace :db do
       .joins(result: [submission: [grouping: :assignment]])
       .where(assessments: { short_identifier: %w[A0 A1 A2] }).destroy_all
     Mark.import marks
+
+    Grouping.joins(:assignment).where(assessments: { short_identifier: %w[A0 A1 A2] }).each do |grouping|
+      submission_file = grouping.current_submission_used.submission_files.find_by(filename: 'hello.py')
+      base_attributes = {
+          submission_file_id: submission_file.id,
+          is_remark: grouping.current_submission_used.has_remark?,
+          annotation_text_id: AnnotationText.all
+                                  .joins(:annotation_category)
+                                  .where('annotation_categories.assignment': grouping.assignment)
+                                  .where.not('annotation_texts.deduction': nil)
+                                  .pluck(:id).to_a.sample,
+          annotation_number: grouping.current_submission_used.annotations.count + 1,
+          creator_id: Admin.first.id,
+          creator_type: 'Admin',
+          result_id: grouping.current_submission_used.current_result.id
+      }
+      TextAnnotation.create(
+          line_start: 4,
+          line_end: 5,
+          column_start: 6,
+          column_end: 15,
+          **base_attributes
+      )
+    end
 
     puts 'Release Results for Assignments'
     #Release the marks after they have been inputed into the assignments
