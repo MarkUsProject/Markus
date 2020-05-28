@@ -155,7 +155,6 @@ describe Mark do
     end
 
     it 'does not take into account deductions related to other criteria' do
-      assignment.reload
       new_criterion = create(:flexible_criterion_with_annotation_category,
                              assignment: assignment)
       create(:mark,

@@ -18,7 +18,7 @@ class AnnotationCategory < ApplicationRecord
 
   def assignment_criteria
     return [nil] if self.assignment.nil?
-    self.assignment.flexible_criteria.map(&:id) + [nil]
+    self.assignment.flexible_criteria.ids + [nil]
   end
 
   # Takes an array of comma separated values, and tries to assemble an
@@ -44,8 +44,7 @@ class AnnotationCategory < ApplicationRecord
   end
 
   def marks_released?
-    return false if self.flexible_criterion_id.nil?
-    !self.flexible_criterion.marks.joins(:result).where('results.released_to_students' => true).empty?
+    !self.assignment.released_marks.empty?
   end
 
   def deductive_annotations_exist?
@@ -63,7 +62,7 @@ class AnnotationCategory < ApplicationRecord
     return if !changes_to_save.key?('flexible_criterion_id') || self.annotation_texts.empty?
 
     if marks_released?
-      errors.add(:base, 'Cannot update annotation category flexible criterion once results are released.')
+      errors.add(:base, 'Cannot update annotation category flexible criterion once results are released')
       throw(:abort)
     end
     prev_criterion = FlexibleCriterion.find_by_id(changes_to_save['flexible_criterion_id'].first)
