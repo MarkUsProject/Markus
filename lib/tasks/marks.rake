@@ -42,7 +42,10 @@ namespace :db do
       base_attributes = {
         submission_file_id: submission_file.id,
         is_remark: new_submission.has_remark?,
-        annotation_text_id: AnnotationText.all.pluck(:id).to_a.sample,
+        annotation_text_id: AnnotationText.all
+                                          .joins(:annotation_category)
+                                          .where('annotation_categories.assignment': grouping.assignment)
+                                          .pluck(:id).to_a.sample,
         annotation_number: new_submission.annotations.count + 1,
         creator_id: Admin.first.id,
         creator_type: 'Admin',
@@ -59,7 +62,10 @@ namespace :db do
       base_attributes = {
         submission_file_id: submission_file.id,
         is_remark: new_submission.has_remark?,
-        annotation_text_id: AnnotationText.all.pluck(:id).to_a.sample,
+        annotation_text_id: AnnotationText.all
+                                          .joins(:annotation_category)
+                                          .where('annotation_categories.assignment': grouping.assignment)
+                                          .pluck(:id).to_a.sample,
         annotation_number: new_submission.annotations.count + 1,
         creator_id: Admin.first.id,
         creator_type: 'Admin',
@@ -77,7 +83,10 @@ namespace :db do
       base_attributes = {
         submission_file_id: submission_file.id,
         is_remark: new_submission.has_remark?,
-        annotation_text_id: AnnotationText.all.pluck(:id).to_a.sample,
+        annotation_text_id: AnnotationText.all
+                                          .joins(:annotation_category)
+                                          .where('annotation_categories.assignment': grouping.assignment)
+                                          .pluck(:id).to_a.sample,
         annotation_number: new_submission.annotations.count + 1,
         creator_id: Admin.first.id,
         creator_type: 'Admin',
