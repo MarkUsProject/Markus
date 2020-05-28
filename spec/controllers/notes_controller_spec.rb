@@ -72,6 +72,7 @@ describe NotesController do
       @message = 'This is a note'
       @ta = create(:ta)
     end
+    let(:grader_permissions) { create(:grader_permissions, user_id: @ta.id) }
 
     it 'be able to get :notes_dialog' do
       get_as @ta,
@@ -104,13 +105,15 @@ describe NotesController do
     end
 
     it 'when TA is allowed to get :new' do
-      GraderPermissions.create(user_id: @ta.id, create_notes: true)
+      grader_permissions.create_notes = true
+      grader_permissions.save
       get_as @ta, :new
       expect(response).to have_http_status :success
     end
 
     it 'when TA is not allowed to get :new' do
-      GraderPermissions.create(user_id: @ta.id, create_notes: false)
+      grader_permissions.create_notes = false
+      grader_permissions.save
       get_as @ta, :new
       expect(response.status).to eq 403
       assert_response :forbidden
@@ -118,7 +121,7 @@ describe NotesController do
 
     context 'POST on :create' do
       before :each do
-        GraderPermissions.create(user_id: @ta.id, create_notes: true)
+        create(:grader_permissions, user_id: @ta.id, create_notes: true)
       end
       it 'be able to create with empty note' do
         post_as @ta,

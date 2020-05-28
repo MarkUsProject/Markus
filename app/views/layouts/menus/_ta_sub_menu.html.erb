@@ -23,7 +23,7 @@
   </li>
 
   <% if assessment.is_a?(GradeEntryForm) && !assessment.new_record? %>
-    <% if @current_user.ta? && GraderPermissions.find_by(user_id: @current_user.id).manage_assignments %>
+    <% if @current_user.ta? && GraderPermissions.find_by(user_id: @current_user.id).manage_grade_entry_forms %>
       <li class='<%= "active" if controller.action_name == 'edit' %>'>
         <%= link_to t('menu.properties'),
                     edit_grade_entry_form_path(assessment) %>
