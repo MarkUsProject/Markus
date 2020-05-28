@@ -14,11 +14,11 @@ describe AutomatedTestsController do
       # TODO: write tests
     end
     context 'GET student_interface' do
-      before { get_as admin, :student_interface, params: {id: 1} }
+      before { get_as admin, :student_interface, params: { id: 1 } }
       # TODO: write tests
     end
     context 'POST execute_test_run' do
-      before { post_as admin, :execute_test_run, params: {id: 1} }
+      before { post_as admin, :execute_test_run, params: { id: 1 } }
       # TODO: write tests
     end
     context 'GET get_test_runs_students' do
@@ -37,11 +37,6 @@ describe AutomatedTestsController do
       after do
         FileUtils.rm_f File.join(Rails.configuration.x.autotest.client_dir, 'testers.json')
         FileUtils.rm_f assignment.autotest_settings_file
-      end
-      let(:default_body) do
-        { schema: {}, :files =>[], :formData =>{}, :enable_test =>false, :enable_student_tests =>false,
-          :tokens_per_period =>0, :token_period =>1.0, :token_start_date =>"2020-05-28 10:34 AM",
-          :non_regenerating_tokens =>false, :unlimited_tokens =>false}
       end
       it 'should respond with success' do
         subject
@@ -86,13 +81,13 @@ describe AutomatedTestsController do
       end
       context 'assignment data' do
         let(:properties) do
-          {enable_test: true,
-           enable_student_tests: true,
-           tokens_per_period: 10,
-           token_period: 24,
-           token_start_date: Time.now.strftime('%Y-%m-%d %l:%M %p'),
-           non_regenerating_tokens: false,
-           unlimited_tokens: false}
+          { enable_test: true,
+            enable_student_tests: true,
+            tokens_per_period: 10,
+            token_period: 24,
+            token_start_date: Time.now.strftime('%Y-%m-%d %l:%M %p'),
+            non_regenerating_tokens: false,
+            unlimited_tokens: false }
         end
         before { assignment.update!(properties) }
         it 'should include assignment data' do
@@ -247,11 +242,11 @@ describe AutomatedTestsController do
       it('should respond with 404') { expect(response.status).to eq 404 }
     end
     context 'GET student_interface' do
-      before { get_as grader, :student_interface, params: {id: 1} }
+      before { get_as grader, :student_interface, params: { id: 1 } }
       it('should respond with 404') { expect(response.status).to eq 404 }
     end
     context 'POST execute_test_run' do
-      before { post_as grader, :execute_test_run, params: {id: 1} }
+      before { post_as grader, :execute_test_run, params: { id: 1 } }
       it('should respond with 404') { expect(response.status).to eq 404 }
     end
     context 'GET get_test_runs_students' do
