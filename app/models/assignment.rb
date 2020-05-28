@@ -1197,7 +1197,7 @@ class Assignment < Assessment
 
     if current_user.ta? && hide_unassigned_criteria
       assigned_criteria = current_user.criterion_ta_associations
-                                      .where(assignment_id: self.id)
+                                      .where(assessment_id: self.id)
                                       .pluck(:criterion_type, :criterion_id)
                                       .map { |t, id| "#{t}-#{id}" }
     else
