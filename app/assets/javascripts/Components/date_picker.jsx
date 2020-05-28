@@ -21,9 +21,9 @@ class Datepicker extends React.Component {
     }
   };
 
-  handleSelect = () => {
+  handleSelect = (date) => {
     if (typeof this.props.onChange === 'function') {
-      this.props.onChange();
+      this.props.onChange(date);
     }
   };
 
