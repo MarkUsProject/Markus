@@ -44,7 +44,8 @@ namespace :db do
         is_remark: new_submission.has_remark?,
         annotation_text_id: AnnotationText.all
                                           .joins(:annotation_category)
-                                          .where('annotation_categories.assignment': grouping.assignment)
+                                          .where('annotation_categories.assignment': grouping.assignment,
+                                                 'annotation_texts.deduction': nil)
                                           .pluck(:id).to_a.sample,
         annotation_number: new_submission.annotations.count + 1,
         creator_id: Admin.first.id,
@@ -64,7 +65,8 @@ namespace :db do
         is_remark: new_submission.has_remark?,
         annotation_text_id: AnnotationText.all
                                           .joins(:annotation_category)
-                                          .where('annotation_categories.assignment': grouping.assignment)
+                                          .where('annotation_categories.assignment': grouping.assignment,
+                                                 'annotation_texts.deduction': nil)
                                           .pluck(:id).to_a.sample,
         annotation_number: new_submission.annotations.count + 1,
         creator_id: Admin.first.id,
@@ -86,6 +88,7 @@ namespace :db do
         annotation_text_id: AnnotationText.all
                                           .joins(:annotation_category)
                                           .where('annotation_categories.assignment': grouping.assignment)
+                                          .where.not('annotation_texts.deduction': nil)
                                           .pluck(:id).to_a.sample,
         annotation_number: new_submission.annotations.count + 1,
         creator_id: Admin.first.id,

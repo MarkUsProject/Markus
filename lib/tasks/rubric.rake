@@ -54,6 +54,16 @@ namespace :db do
             assigned_groups_count:   nil
         )
       end
+      ac_with_criterion = AnnotationCategory.create(assignment: assignment,
+                                                    position: 6,
+                                                    annotation_category_name: random_words(3),
+                                                    flexible_criterion_id: assignment.flexible_criteria.first.id)
+      (rand(10) + 3).times do |index|
+        AnnotationText.create(annotation_category: ac_with_criterion,
+                              content: 'deduction # ' + index.to_s,
+                              deduction: assignment.flexible_criteria.first.max_mark,
+                              creator: Admin.first)
+      end
 
       3.times do |index|
         CheckboxCriterion.create(
