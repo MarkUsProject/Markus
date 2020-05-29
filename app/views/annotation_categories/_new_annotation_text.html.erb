@@ -4,6 +4,12 @@
                remote: true do |f| %>
     <%= f.hidden_field :annotation_category_id %>
     <%= f.text_area :content, cols: 50, rows: 5 %>
+    <% unless annotation_category.flexible_criterion.nil? %>
+      <% max_mark = annotation_category.flexible_criterion.max_mark %>
+      <%= f.label :deduction,
+                  AnnotationText.human_attribute_name(:deduction) %>
+      <%= f.number_field :deduction, {min: 0.0, max: max_mark, step: 0.01 }%>
+    <% end %>
     <%= f.submit t(:save), data: { disable_with: t('working') } %>
   <% end %>
 </li>
