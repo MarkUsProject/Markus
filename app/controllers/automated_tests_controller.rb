@@ -7,7 +7,8 @@ class AutomatedTestsController < ApplicationController
 
   before_action      :authorize_for_student,
                      only: [:student_interface,
-                            :get_test_runs_students]
+                            :get_test_runs_students,
+                            :execute_test_run]
 
   def update
     assignment = Assignment.find(params[:assignment_id])
@@ -79,13 +80,6 @@ class AutomatedTestsController < ApplicationController
     render json: test_runs.group_by { |t| t['test_runs.id'] }
   end
 
-  # TODO: use authorizations from here on
-  def fetch_testers
-    @current_job = AutotestTestersJob.perform_later
-    session[:job_id] = @current_job.job_id
-    head :no_content
-  end
-
   def populate_autotest_manager
     assignment = Assignment.find(params[:assignment_id])
     testers_schema_path = File.join(Rails.configuration.x.autotest.client_dir, 'testers.json')
@@ -111,12 +105,9 @@ class AutomatedTestsController < ApplicationController
     end
     test_specs_path = assignment.autotest_settings_file
     test_specs = File.exist?(test_specs_path) ? JSON.parse(File.open(test_specs_path, &:read)) : {}
-    assignment_data = assignment.attributes.slice(*required_params.map(&:to_s))
-    if assignment_data[:token_start_date].nil?
-      assignment_data[:token_start_date] = Time.now.strftime('%Y-%m-%d %l:%M %p')
-    else
-      assignment_data[:token_start_date] = assignment_data[:token_start_date].strftime('%Y-%m-%d %l:%M %p')
-    end
+    assignment_data = assignment.assignment_properties.attributes.slice(*required_params.map(&:to_s))
+    assignment_data['token_start_date'] ||= Time.zone.now
+    assignment_data['token_start_date'] = assignment_data['token_start_date'].strftime('%Y-%m-%d %l:%M %p')
     data = { schema: schema_data, files: files_data, formData: test_specs }.merge(assignment_data)
     render json: data
   end
