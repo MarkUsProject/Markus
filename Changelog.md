@@ -9,6 +9,8 @@
 - Introduces automated email sending for spreadsheet releases (#4460)
 - Introduces automated email sending for grouping invitations (#4470)
 - Introduces student email settings (#4578)
+
+## [v1.9.2]
 - Fixed bug preventing all git hooks from being run in production (#4594)
 - Fixed bug preventing folders from being deleted in file managers (#4605)
 - Added support for displaying .heic and .heif files in the file viewer (#4607)
