@@ -89,8 +89,8 @@ describe SubmissionsJob do
     end
   end
   context 'when applying a late penalty' do
-    let!(:period) { create :period, submission_rule: submission_rule, hours: 2 }
     before :each do
+      create :period, submission_rule: submission_rule, hours: 2
       groupings.each do |g|
         submit_file_at_time(g.assignment, g.group, 'test', (g.due_date + 1.hour).to_s, 'test.txt', 'aaa')
         g.reload
@@ -102,6 +102,7 @@ describe SubmissionsJob do
         groupings.each do |g|
           g.inviter_membership.user.update(grace_credits: 5)
           create :grace_period_deduction, membership: g.inviter_membership
+          g.reload
         end
       end
       it 'should remove any previous deductions' do
@@ -113,7 +114,7 @@ describe SubmissionsJob do
       it 'should add a deduction' do
         SubmissionsJob.perform_now(groupings, apply_late_penalty: true)
         groupings.each do |g|
-          expect(g.inviter_membership.user.reload.remaining_grace_credits).to eq 4
+          expect(g.reload.inviter_membership.user.remaining_grace_credits).to eq 4
         end
       end
     end
@@ -122,7 +123,7 @@ describe SubmissionsJob do
       it 'should add a deduction' do
         SubmissionsJob.perform_now(groupings, apply_late_penalty: true)
         groupings.each do |g|
-          expect(g.current_result.extra_marks.length).to eq 1
+          expect(g.reload.current_result.extra_marks.length).to eq 1
         end
       end
     end
@@ -131,7 +132,7 @@ describe SubmissionsJob do
       it 'should add a deduction' do
         SubmissionsJob.perform_now(groupings, apply_late_penalty: true)
         groupings.each do |g|
-          expect(g.current_result.extra_marks.length).to eq 1
+          expect(g.reload.current_result.extra_marks.length).to eq 1
         end
       end
     end
