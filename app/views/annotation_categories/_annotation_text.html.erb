@@ -16,7 +16,7 @@
                     class: 'inline-button' %>
     </div>
     <div class='annotation_text_details'>
-      <%= Annotation.human_attribute_name(:creator) %>
+      <%= AnnotationText.human_attribute_name(:creator) %>
       <% if annotation_text.creator.nil? %>
         <%= 'N/A' %>
       <% else %>
@@ -31,6 +31,14 @@
         <%= annotation_text.last_editor.user_name %>
       <% end %>
     </div>
+    <div class='annotation_text_details'>
+      <%= AnnotationText.human_attribute_name(:deduction) %>
+      <% if annotation_text.deduction.nil? %>
+        <%= 'None' %>
+      <% else %>
+        <%= annotation_text.deduction.to_s %>
+      <% end %>
+    </div>
   </div>
 
   <div id='annotation_text_<%= annotation_text.id %>_edit' style='display:none;'>
@@ -38,8 +46,16 @@
                  url: update_annotation_text_assignment_annotation_categories_path(id: annotation_text.id),
                  method: 'put',
                  remote: true do |f| %>
-      <%= f.hidden_field :annotation_category_id %>
-      <%= f.text_area :content, cols: 50, rows: 5 %>
+      <div class='inline-labels'>
+        <%= f.hidden_field :annotation_category_id %>
+        <%= f.text_area :content, cols: 50, rows: 5 %>
+        <% unless annotation_text.annotation_category.flexible_criterion.nil? %>
+          <% max_mark = annotation_text.annotation_category.flexible_criterion.max_mark %>
+          <%= f.label :deduction,
+                      AnnotationText.human_attribute_name(:deduction) %>
+          <%= f.number_field :deduction, {min: 0.0, max: max_mark, step: 0.01 }%>
+        <% end %>
+      </div>
 
       <p>
         <%= f.submit t(:save) , data: { disable_with: t('working') } %>

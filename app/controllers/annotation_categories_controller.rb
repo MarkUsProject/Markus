@@ -212,7 +212,7 @@ class AnnotationCategoriesController < ApplicationController
   end
 
   def annotation_text_params
-    params.require(:annotation_text).permit(:content, :annotation_category_id)
+    params.require(:annotation_text).permit(:content, :deduction, :annotation_category_id)
   end
 
   def flash_interpolation_options
