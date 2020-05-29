@@ -3,7 +3,8 @@ class AutomatedTestsController < ApplicationController
 
   before_action      :authorize_only_for_admin,
                      except: [:student_interface,
-                              :get_test_runs_students]
+                              :get_test_runs_students,
+                              :execute_test_run]
 
   before_action      :authorize_for_student,
                      only: [:student_interface,
