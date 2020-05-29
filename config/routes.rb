@@ -411,7 +411,6 @@ Rails.application.routes.draw do
       member do
         get 'student_interface'
         post 'execute_test_run'
-        post 'fetch_testers'
       end
     end
 
