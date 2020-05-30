@@ -59,7 +59,7 @@ class Criterion < ApplicationRecord
   def self.assign_all_tas(criterion_ids, ta_ids, assignment)
     assign_tas(criterion_ids, ta_ids, assignment) do |c_ids, t_ids|
       # Need to call Array#flatten because after the second product each element has
-      # the form [id, ta_id].
+      # the form [[criterion_ids], ta_id].
       c_ids.product(t_ids)
     end
   end
@@ -106,8 +106,7 @@ class Criterion < ApplicationRecord
   end
 
   # Unassigns TAs from groupings. +criterion_ta_ids+ is a list of TA
-  # membership IDs that specifies the unassignment to be done. +criterion_ids+
-  # is a list of grouping IDs involved in the unassignment. The memberships
+  # membership IDs that specifies the unassignment to be done. The memberships
   # and groupings must belong to the given assignment +assignment+.
   def self.unassign_tas(criterion_ta_ids, assignment)
     CriterionTaAssociation.where(id: criterion_ta_ids).delete_all

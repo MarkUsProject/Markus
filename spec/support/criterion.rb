@@ -8,7 +8,7 @@ shared_examples 'a criterion' do
     let(:tas) { Array.new(2) { create(:ta) } }
     let(:criterion_ids) { criteria.map(&:id) }
     let(:criterion_one_id) do
-      criteria[0].id
+      [criteria[0].id]
     end
     let(:ta_ids) { tas.map(&:id) }
 
@@ -61,88 +61,88 @@ shared_examples 'a criterion' do
     #   end
     # end
 
-    describe '.assign_all_tas' do
-      it 'can bulk assign no TAs to no criteria' do
-        Criterion.assign_all_tas([], [], assignment)
-      end
-
-      it 'can bulk assign all TAs to no criteria' do
-        Criterion.assign_all_tas([], ta_ids, assignment)
-      end
-
-      it 'can bulk assign no TAs to all criteria' do
-        Criterion.assign_all_tas(criterion_ids, [], assignment)
-      end
-
-      it 'can bulk assign all TAs to all criteria' do
-        Criterion.assign_all_tas(criterion_ids, ta_ids, assignment)
-
-        criteria.each do |criterion|
-          criterion.reload
-          expect(criterion.tas).to match_array(tas)
-        end
-      end
-
-      it 'can bulk assign duplicated TAs to criteria' do
-        Criterion.assign_all_tas(criterion_one_id, ta_ids, assignment)
-        Criterion.assign_all_tas(criterion_ids, ta_ids.first, assignment)
-
-        # First criterion gets all the TAs.
-        criterion = criteria.shift
-        criterion.reload
-        expect(criterion.tas).to match_array(tas)
-
-        # The rest of the criteria gets only the first TA.
-        criteria.each do |criterion|
-          criterion.reload
-          expect(criterion.tas).to eq [tas.first]
-        end
-      end
-
-      it 'updates criteria coverage counts after bulk assign all TAs' do
-        expect(Grouping).to receive(:update_criteria_coverage_counts)
-          .with(assignment)
-        Criterion.assign_all_tas(criterion_ids, ta_ids, assignment)
-      end
-
-      it 'updates assigned groups counts after bulk assign all TAs' do
-        expect(Criterion).to receive(:update_assigned_groups_counts).with(assignment)
-        Criterion.assign_all_tas(criterion_ids, ta_ids, assignment)
-      end
-    end
-
-    # describe '.unassign_tas' do
-    #   it 'can bulk unassign no TAs' do
-    #     Criterion.unassign_tas([], { 'RubricCriterion' => [] }, assignment)
+    # describe '.assign_all_tas' do
+    #   it 'can bulk assign no TAs to no criteria' do
+    #     Criterion.assign_all_tas([], [], assignment)
     #   end
     #
-    #   it 'can bulk unassign TAs' do
-    #     Criterion.assign_all_tas(criterion_ids_types, ta_ids, assignment)
-    #     criteria.each { |criterion| criterion.reload }
+    #   it 'can bulk assign all TAs to no criteria' do
+    #     Criterion.assign_all_tas([], ta_ids, assignment)
+    #   end
     #
-    #     criterion_ta_ids = criteria
-    #       .map { |criterion| criterion.criterion_ta_associations.pluck(:id) }
-    #       .reduce(:+)
+    #   it 'can bulk assign no TAs to all criteria' do
+    #     Criterion.assign_all_tas(criterion_ids, [], assignment)
+    #   end
     #
-    #     Criterion.unassign_tas(criterion_ta_ids, criterion_ids_types, assignment)
+    #   it 'can bulk assign all TAs to all criteria' do
+    #     Criterion.assign_all_tas(criterion_ids, ta_ids, assignment)
     #
     #     criteria.each do |criterion|
     #       criterion.reload
-    #       expect(criterion.tas).to be_empty
+    #       expect(criterion.tas).to match_array(tas)
     #     end
     #   end
     #
-    #   it 'updates criteria coverage counts after bulk unassign TAs' do
-    #     expect(Grouping).to receive(:update_criteria_coverage_counts)
-    #       .with(assignment)
-    #     Criterion.unassign_tas([], criterion_ids_types, assignment)
+    #   it 'can bulk assign duplicated TAs to criteria' do
+    #     Criterion.assign_all_tas(criterion_one_id, ta_ids, assignment)
+    #     Criterion.assign_all_tas(criterion_ids, ta_ids.first, assignment)
+    #
+    #     # First criterion gets all the TAs.
+    #     criterion = criteria.shift
+    #     criterion.reload
+    #     expect(criterion.tas).to match_array(tas)
+    #
+    #     # The rest of the criteria gets only the first TA.
+    #     criteria.each do |criterion|
+    #       criterion.reload
+    #       expect(criterion.tas).to eq [tas.first]
+    #     end
     #   end
     #
-    #   it 'updates assigned groups counts after bulk unassign TAs' do
+    #   it 'updates criteria coverage counts after bulk assign all TAs' do
+    #     expect(Grouping).to receive(:update_criteria_coverage_counts)
+    #       .with(assignment)
+    #     Criterion.assign_all_tas(criterion_ids, ta_ids, assignment)
+    #   end
+    #
+    #   it 'updates assigned groups counts after bulk assign all TAs' do
     #     expect(Criterion).to receive(:update_assigned_groups_counts).with(assignment)
-    #     Criterion.unassign_tas([], criterion_ids_types, assignment)
+    #     Criterion.assign_all_tas(criterion_ids, ta_ids, assignment)
     #   end
     # end
+
+    describe '.unassign_tas' do
+      it 'can bulk unassign no TAs' do
+        Criterion.unassign_tas([], assignment)
+      end
+
+      it 'can bulk unassign TAs' do
+        Criterion.assign_all_tas(criterion_ids, ta_ids, assignment)
+        criteria.each { |criterion| criterion.reload }
+
+        criterion_ta_ids = criteria
+          .map { |criterion| criterion.criterion_ta_associations.pluck(:id) }
+          .reduce(:+)
+
+        Criterion.unassign_tas(criterion_ta_ids, assignment)
+
+        criteria.each do |criterion|
+          criterion.reload
+          expect(criterion.tas).to be_empty
+        end
+      end
+
+      it 'updates criteria coverage counts after bulk unassign TAs' do
+        expect(Grouping).to receive(:update_criteria_coverage_counts)
+          .with(assignment)
+        Criterion.unassign_tas([], assignment)
+      end
+
+      it 'updates assigned groups counts after bulk unassign TAs' do
+        expect(Criterion).to receive(:update_assigned_groups_counts).with(assignment)
+        Criterion.unassign_tas([], assignment)
+      end
+    end
   end
 
   # describe '.update_assigned_groups_counts' do
