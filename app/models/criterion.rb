@@ -59,8 +59,8 @@ class Criterion < ApplicationRecord
   def self.assign_all_tas(criterion_ids, ta_ids, assignment)
     assign_tas(criterion_ids, ta_ids, assignment) do |c_ids, t_ids|
       # Need to call Array#flatten because after the second product each element has
-      # the form [[id], ta_id].
-      c_ids.product(t_ids).map(&:flatten)
+      # the form [id, ta_id].
+      c_ids.product(t_ids)
     end
   end
 
