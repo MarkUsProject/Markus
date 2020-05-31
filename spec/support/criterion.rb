@@ -228,7 +228,7 @@ shared_examples 'a criterion' do
             end
 
             context 'when TAs are also assigned to groups of another ' +
-                      'assignment' do
+                    'assignment' do
               before :each do
                 # Creating a new criterion also creates a new assignment.
                 criterion = create(criterion_factory_name)
