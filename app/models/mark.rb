@@ -6,7 +6,7 @@ class Mark < ApplicationRecord
   after_save :update_result
 
   belongs_to :result
-
+  
   validates_numericality_of :mark,
                             allow_nil: true,
                             greater_than_or_equal_to: 0,

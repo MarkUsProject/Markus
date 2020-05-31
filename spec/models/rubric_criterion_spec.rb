@@ -276,9 +276,9 @@ describe RubricCriterion do
 
     context 'editing levels edits marks' do
       before(:each) do
-        create(:rubric_mark, markable: @criterion, mark: 0)
-        create(:rubric_mark, markable: @criterion, mark: 1)
-        create(:rubric_mark, markable: @criterion, mark: 1)
+        create(:rubric_mark, mark: 0, criterion: @criterion)
+        create(:rubric_mark, mark: 1, criterion: @criterion)
+        create(:rubric_mark, mark: 1, criterion: @criterion)
       end
 
       context 'updating level updates respective mark' do
