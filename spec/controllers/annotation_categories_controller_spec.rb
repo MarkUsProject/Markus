@@ -33,6 +33,16 @@ describe AnnotationCategoriesController do
 
       expect(assignment.annotation_categories.count).to eq 1
     end
+
+    it 'successfully creates annotation_category with nil flexible_criterion' do
+      category = create(:annotation_category, assignment: assignment)
+
+      post :create, params: { assignment_id: assignment.id,
+                              annotation_category: { annotation_category_name: category.annotation_category_name } }
+
+      expect(assignment.annotation_categories.find_by(annotation_category_name: category.annotation_category_name)
+                                             .flexible_criterion).to eq(nil)
+    end
   end
 
   describe '#update' do
@@ -156,6 +166,33 @@ describe AnnotationCategoriesController do
       expect(annotation_category.annotation_texts.count).to eq 1
       expect(annotation_category.annotation_texts.first.content).to eq 'New content'
     end
+
+    it 'successfully creates an annotation text associated with an annotation category with a deduction' do
+      assignment_w_deductions = create(:assignment_with_deductive_annotations)
+      category = assignment_w_deductions.annotation_categories.where.not(flexible_criterion_id: nil).first
+      category.annotation_texts.destroy_all
+      category.reload
+      post :create_annotation_text, params: { assignment_id: category.assessment_id,
+                                              annotation_text: { content: 'New content',
+                                                                 annotation_category_id: category.id,
+                                                                 deduction: 0.5 },
+                                              format: :js }
+      expect(category.annotation_texts.first.deduction).to eq 0.5
+    end
+
+    it 'does not allow creation of an annotation text associated with an annotation category with a deduction '\
+       'with a nil deduction' do
+      assignment_w_deductions = create(:assignment_with_deductive_annotations)
+      category = assignment_w_deductions.annotation_categories.where.not(flexible_criterion_id: nil).first
+      category.annotation_texts.destroy_all
+      post :create_annotation_text, params: { assignment_id: category.assessment_id,
+                                              annotation_text: { content: 'New content',
+                                                                 annotation_category_id: category.id,
+                                                                 deduction: nil },
+                                              format: :js }
+
+      expect(response.status).to eq(400)
+    end
   end
 
   describe '#destroy_annotation_text' do
@@ -174,7 +211,7 @@ describe AnnotationCategoriesController do
   end
 
   describe '#update_annotation_text' do
-    it 'successfully updates an annotation text associated with an annotation category' do
+    it 'successfully updates an annotation text\'s (associated with an annotation category) content' do
       text = create(:annotation_text)
       category = text.annotation_category
       put :update_annotation_text,
@@ -186,6 +223,37 @@ describe AnnotationCategoriesController do
           }
 
       expect(text.reload.content).to eq 'updated content'
+    end
+
+    it 'successfully updates an annotation text\'s (associated with an annotation category) deduction' do
+      assignment_w_deductions = create(:assignment_with_deductive_annotations)
+      category = assignment_w_deductions.annotation_categories.where.not(flexible_criterion_id: nil).first
+      text = category.annotation_texts.first
+      put :update_annotation_text,
+          params: {
+            assignment_id: category.assessment_id,
+            id: text.id,
+            annotation_text: { content: 'more updated content', deduction: 0.1 },
+            format: :js
+          }
+
+      expect(text.reload.deduction).to eq(0.1)
+    end
+
+    it 'correctly responds when updating an annotation text\'s (associated with an annotation category) '\
+       'deduction with nil value' do
+      assignment_w_deductions = create(:assignment_with_deductive_annotations)
+      category = assignment_w_deductions.annotation_categories.where.not(flexible_criterion_id: nil).first
+      text = category.annotation_texts.first
+      put :update_annotation_text,
+          params: {
+            assignment_id: category.assessment_id,
+            id: text.id,
+            annotation_text: { content: 'more updated content', deduction: nil },
+            format: :js
+          }
+
+      expect(response.status).to eq(400)
     end
   end
 
