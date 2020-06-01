@@ -41,7 +41,7 @@ describe AnnotationCategoriesController do
                               annotation_category: { annotation_category_name: category.annotation_category_name } }
 
       expect(assignment.annotation_categories.find_by(annotation_category_name: category.annotation_category_name)
-                                             .flexible_criterion).to eq(nil)
+                                             .flexible_criterion).to eq nil
     end
   end
 
@@ -191,7 +191,7 @@ describe AnnotationCategoriesController do
                                                                  deduction: nil },
                                               format: :js }
 
-      expect(response.status).to eq(400)
+      assert_response 400
     end
   end
 
@@ -237,7 +237,7 @@ describe AnnotationCategoriesController do
             format: :js
           }
 
-      expect(text.reload.deduction).to eq(0.1)
+      expect(text.reload.deduction).to eq 0.1
     end
 
     it 'correctly responds when updating an annotation text\'s (associated with an annotation category) '\
@@ -253,7 +253,7 @@ describe AnnotationCategoriesController do
             format: :js
           }
 
-      expect(response.status).to eq(400)
+      assert_response 400
     end
   end
 
