@@ -5,9 +5,15 @@ es:
     destroy_annotation_text:
       confirm: "Eliminar esta anotación removerá el texto de cualquier archivo que lo contenga. ¿Está seguro/a de realizar esto?"
       success: "Eliminar la categoría de anotación"
+      error: 'UPDATE ME!'
+    update_annotation_text:
+      error: 'UPDATE ME!'
+    create_annotation_text:
+      error: 'UPDATE ME!'
     destroy:
       success: "Eliminar la categoría de anotación"
       warning: "Eliminar esta categoría de anotación también eliminará las anotaciones de la misma. Las anotaciones eliminadas no estarán asociadas a las entregas de los estudiantes. ¿Está seguro/a de querer hacer esto?"
+      error: 'UPDATE ME!'
     download:
       title: "Descargar Anotaciones"
     index:
