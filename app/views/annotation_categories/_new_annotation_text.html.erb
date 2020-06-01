@@ -9,10 +9,9 @@
     <% unless annotation_category.flexible_criterion.nil? %>
       <div class='inline-labels'>
         <% max_mark = annotation_category.flexible_criterion.max_mark %>
-        <% marks_released = annotation_category.marks_released? %>
         <%= f.label :deduction,
                     AnnotationText.human_attribute_name(:deduction) %>
-        <%= f.number_field :deduction, { min: 0.0, max: max_mark, step: 0.01, value: 0.0, disabled: marks_released } %>
+        <%= f.number_field :deduction, { min: 0.0, max: max_mark, step: 0.01, value: 0.0 } %>
       </div>
     <% end %>
     <p><%= f.submit t(:save), data: { disable_with: t('working') } %></p>
