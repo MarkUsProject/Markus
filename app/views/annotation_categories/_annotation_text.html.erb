@@ -34,7 +34,7 @@
     <% unless annotation_text.deduction.nil?  %>
       <div class='annotation_text_details'>
         <%= AnnotationText.human_attribute_name(:deduction) %>
-        <%= annotation_text.deduction.to_s %>
+        <%= annotation_text.deduction %>
       </div>
     <% end %>
   </div>
@@ -44,19 +44,19 @@
                  url: update_annotation_text_assignment_annotation_categories_path(id: annotation_text.id),
                  method: 'put',
                  remote: true do |f| %>
-        <%= f.hidden_field :annotation_category_id %>
+      <%= f.hidden_field :annotation_category_id %>
       <p>
         <%= f.text_area :content, cols: 50, rows: 5 %>
       </p>
-      <div class='inline-labels'>
-        <% unless annotation_text.annotation_category.flexible_criterion.nil? %>
+      <% unless annotation_text.annotation_category.flexible_criterion.nil? %>
+        <div class='inline-labels'>
           <% max_mark = annotation_text.annotation_category.flexible_criterion.max_mark %>
           <% marks_released = annotation_text.annotation_category.marks_released? %>
           <%= f.label :deduction,
                       AnnotationText.human_attribute_name(:deduction) %>
-          <%= f.number_field :deduction, {min: 0.0, max: max_mark, step: 0.01, disabled: marks_released }%>
-        <% end %>
-      </div>
+          <%= f.number_field :deduction, { min: 0.0, max: max_mark, step: 0.01, disabled: marks_released } %>
+        </div>
+      <% end %>
 
       <p>
         <%= f.submit t(:save) , data: { disable_with: t('working') } %>
