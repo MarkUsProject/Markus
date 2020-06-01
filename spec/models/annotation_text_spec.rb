@@ -76,8 +76,17 @@ describe AnnotationText do
       expect(deductive_text.update(content: 'Do not plagiarize!')).to be(false)
     end
 
-    it 'does not prevent an update of content if any results are released and there is no deduction' do
+    it 'do not prevent an update of content if any results are released and there is no deduction' do
       expect(deductive_text.update(content: 'Do not plagiarize!')).to be(true)
+    end
+
+    it 'prevent a destruction of the annotation_text if any results are released and there is a deduction value' do
+      assignment.groupings.first.current_result.update!(released_to_students: true)
+      expect(deductive_text.destroy).to be(false)
+    end
+
+    it 'do not prevent a destruction of the annotation_text if no results are released even with a deduction value' do
+      expect(deductive_text.destroy).to eq(deductive_text)
     end
   end
 
