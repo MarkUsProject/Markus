@@ -41,7 +41,7 @@ describe Annotation do
       expect(mark.mark).to eq(3.0)
     end
 
-    it 'correctly updates the mark for it\'s criterion\'s mark when a different type of criterion has the same id' do
+    it 'correctly updates the mark for its criterion\'s mark when a different type of criterion has the same id' do
       other_f_c = create(:flexible_criterion_with_annotation_category, id: 5, assignment: assignment)
       create(:rubric_criterion, id: 5, assignment: assignment)
       other_a_c = other_f_c.annotation_categories.first
