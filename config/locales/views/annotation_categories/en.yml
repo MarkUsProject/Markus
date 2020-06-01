@@ -9,7 +9,7 @@ en:
     update_annotation_text:
       error: 'Cannot update this annotation.'
     create_annotation_text:
-      error: 'Cannot create a new annotation.'
+      error: 'Could not create a new annotation.'
     destroy:
       success: "Annotation category deleted."
       warning: "Deleting this annotation category will also delete its annotations. Deleted annotations will no longer be attached to student submissions. Are you sure you want to do this?"
