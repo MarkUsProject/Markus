@@ -6,19 +6,9 @@ shared_examples 'a criterion' do
       Array.new(2) { create(criterion_factory_name, assignment: assignment) }
     end
     let(:tas) { Array.new(2) { create(:ta) } }
-    let(:criterion_ids_types) do
-      criteria.map { |criterion| [criterion.id, criterion.class.to_s] }
-    end
-    let(:criterion_ids_types_one) do
-      [[criteria[0].id, criteria[1].class.to_s]]
-    end
-    let(:criterion_ids_types_match) do
-      criterion_ids_by_type = {}
-      %w(RubricCriterion FlexibleCriterion CheckboxCriterion).each do |type|
-        criterion_ids_by_type[type] =
-          criterion_ids_types.select { |id_type| id_type[1] == type }.map { |c| c[0] }
-      end
-      criterion_ids_by_type
+    let(:criterion_ids) { criteria.map(&:id) }
+    let(:criterion_one_id) do
+      [criteria[0].id]
     end
     let(:ta_ids) { tas.map(&:id) }
 
@@ -32,11 +22,11 @@ shared_examples 'a criterion' do
       end
 
       it 'can randomly bulk assign no TAs to all criteria' do
-        Criterion.randomly_assign_tas(criterion_ids_types, [], assignment)
+        Criterion.randomly_assign_tas(criterion_ids, [], assignment)
       end
 
       it 'can randomly bulk assign TAs to all criteria' do
-        Criterion.randomly_assign_tas(criterion_ids_types, ta_ids, assignment)
+        Criterion.randomly_assign_tas(criterion_ids, ta_ids, assignment)
 
         criteria.each do |criterion|
           criterion.reload
@@ -49,7 +39,7 @@ shared_examples 'a criterion' do
         # The probability of assigning no duplicated TAs after (tas.size + 1)
         # trials is 0.
         (tas.size + 1).times do
-          Criterion.randomly_assign_tas(criterion_ids_types, ta_ids, assignment)
+          Criterion.randomly_assign_tas(criterion_ids, ta_ids, assignment)
         end
         ta_set = tas.to_set
         criteria.each do |criterion|
@@ -62,12 +52,12 @@ shared_examples 'a criterion' do
       it 'updates criteria coverage counts after randomly bulk assign TAs' do
         expect(Grouping).to receive(:update_criteria_coverage_counts)
           .with(assignment)
-        Criterion.randomly_assign_tas(criterion_ids_types, ta_ids, assignment)
+        Criterion.randomly_assign_tas(criterion_ids, ta_ids, assignment)
       end
 
       it 'updates assigned groups counts after randomly bulk assign TAs' do
         expect(Criterion).to receive(:update_assigned_groups_counts).with(assignment)
-        Criterion.randomly_assign_tas(criterion_ids_types, ta_ids, assignment)
+        Criterion.randomly_assign_tas(criterion_ids, ta_ids, assignment)
       end
     end
 
@@ -81,11 +71,11 @@ shared_examples 'a criterion' do
       end
 
       it 'can bulk assign no TAs to all criteria' do
-        Criterion.assign_all_tas(criterion_ids_types, [], assignment)
+        Criterion.assign_all_tas(criterion_ids, [], assignment)
       end
 
       it 'can bulk assign all TAs to all criteria' do
-        Criterion.assign_all_tas(criterion_ids_types, ta_ids, assignment)
+        Criterion.assign_all_tas(criterion_ids, ta_ids, assignment)
 
         criteria.each do |criterion|
           criterion.reload
@@ -94,8 +84,8 @@ shared_examples 'a criterion' do
       end
 
       it 'can bulk assign duplicated TAs to criteria' do
-        Criterion.assign_all_tas(criterion_ids_types_one, ta_ids, assignment)
-        Criterion.assign_all_tas(criterion_ids_types, ta_ids.first, assignment)
+        Criterion.assign_all_tas(criterion_one_id, ta_ids, assignment)
+        Criterion.assign_all_tas(criterion_ids, ta_ids.first, assignment)
 
         # First criterion gets all the TAs.
         criterion = criteria.shift
@@ -112,29 +102,29 @@ shared_examples 'a criterion' do
       it 'updates criteria coverage counts after bulk assign all TAs' do
         expect(Grouping).to receive(:update_criteria_coverage_counts)
           .with(assignment)
-        Criterion.assign_all_tas(criterion_ids_types, ta_ids, assignment)
+        Criterion.assign_all_tas(criterion_ids, ta_ids, assignment)
       end
 
       it 'updates assigned groups counts after bulk assign all TAs' do
         expect(Criterion).to receive(:update_assigned_groups_counts).with(assignment)
-        Criterion.assign_all_tas(criterion_ids_types, ta_ids, assignment)
+        Criterion.assign_all_tas(criterion_ids, ta_ids, assignment)
       end
     end
 
     describe '.unassign_tas' do
       it 'can bulk unassign no TAs' do
-        Criterion.unassign_tas([], { 'RubricCriterion' => [] }, assignment)
+        Criterion.unassign_tas([], assignment)
       end
 
       it 'can bulk unassign TAs' do
-        Criterion.assign_all_tas(criterion_ids_types, ta_ids, assignment)
+        Criterion.assign_all_tas(criterion_ids, ta_ids, assignment)
         criteria.each { |criterion| criterion.reload }
 
         criterion_ta_ids = criteria
           .map { |criterion| criterion.criterion_ta_associations.pluck(:id) }
           .reduce(:+)
 
-        Criterion.unassign_tas(criterion_ta_ids, criterion_ids_types, assignment)
+        Criterion.unassign_tas(criterion_ta_ids, assignment)
 
         criteria.each do |criterion|
           criterion.reload
@@ -145,12 +135,12 @@ shared_examples 'a criterion' do
       it 'updates criteria coverage counts after bulk unassign TAs' do
         expect(Grouping).to receive(:update_criteria_coverage_counts)
           .with(assignment)
-        Criterion.unassign_tas([], criterion_ids_types, assignment)
+        Criterion.unassign_tas([], assignment)
       end
 
       it 'updates assigned groups counts after bulk unassign TAs' do
         expect(Criterion).to receive(:update_assigned_groups_counts).with(assignment)
-        Criterion.unassign_tas([], criterion_ids_types, assignment)
+        Criterion.unassign_tas([], assignment)
       end
     end
   end
@@ -179,7 +169,7 @@ shared_examples 'a criterion' do
         let!(:tas) { Array.new(2) { create(:ta) } }
 
         before :each do
-          Criterion.assign_all_tas([[criterion.id, criterion.class.to_s]], tas.map(&:id), criterion.assignment)
+          Criterion.assign_all_tas([criterion.id], tas.map(&:id), criterion.assignment)
         end
 
         context 'with no assigned groups' do
@@ -238,7 +228,7 @@ shared_examples 'a criterion' do
             end
 
             context 'when TAs are also assigned to groups of another ' +
-                    'assignment' do
+                      'assignment' do
               before :each do
                 # Creating a new criterion also creates a new assignment.
                 criterion = create(criterion_factory_name)
