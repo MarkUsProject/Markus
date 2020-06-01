@@ -98,7 +98,7 @@ class AnnotationCategoriesController < ApplicationController
       flash_now(:success, t('annotation_categories.update.success'))
       render :insert_new_annotation_text
     else
-      flash_message(:error, t('create_annotation_text.error'))
+      flash_message(:error, t('.error'))
       render 'show', assignment_id: @assignment.id, id: @annotation_category.id, status: :bad_request
     end
   end
@@ -108,7 +108,7 @@ class AnnotationCategoriesController < ApplicationController
     if @annotation_text.destroy
       flash_now(:success, t('.success'))
     else
-      flash_message(:error, t('.destroy_annotation_text.error'))
+      flash_message(:error, t('.error'))
       render 'show', assignment_id: @assignment.id, id: @annotation_category.id, status: :bad_request
     end
   end
@@ -120,7 +120,7 @@ class AnnotationCategoriesController < ApplicationController
     if @annotation_text.update(**annotation_text_params.to_h.symbolize_keys, last_editor_id: current_user.id)
       flash_now(:success, t('annotation_categories.update.success'))
     else
-      flash_message(:error, t('.update_annotation_text.error'))
+      flash_message(:error, t('.error'))
       render 'show', assignment_id: @assignment.id, id: @annotation_category.id, status: :bad_request
     end
   end
