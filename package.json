@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "@babel/core": "^7.9.6",
+    "@babel/core": "^7.10.2",
     "@babel/preset-react": "^7.9.4",
     "@rails/webpacker": "5.1",
     "chart.js": "^2.9.3",
