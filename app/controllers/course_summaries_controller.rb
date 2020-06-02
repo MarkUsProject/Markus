@@ -2,7 +2,14 @@ class CourseSummariesController < ApplicationController
   include CourseSummariesHelper
 
   before_action :authorize_only_for_admin,
-                except: [:populate, :index]
+                except: [:populate,
+                         :index,
+                         :download_csv_grades_report]
+
+  before_action only: [:download_csv_grades_report] do
+    authorize! with: CourseSummariesPolicy
+  end
+  rescue_from ActionPolicy::Unauthorized, with: :user_not_authorized
 
   layout 'assignment_content'
 

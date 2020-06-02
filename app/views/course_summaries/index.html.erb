@@ -11,16 +11,19 @@
 <% else %>
   <%= content_for :title, t('course_summary.title') %>
 
-  <%
-    @heading_buttons = [
-      { link_text: MarkingScheme.model_name.human.pluralize,
-        link_path: marking_schemes_path }
+<%
+  @heading_buttons = []
+  if @current_user.admin? || (@current_user.ta? && GraderPermissions.find_by(user_id: @current_user.id).manage_marking_schemes)
+  @heading_buttons += [
+    { link_text: MarkingScheme.model_name.human.pluralize,
+      link_path: marking_schemes_path }
+  ]
+  end
+  if @current_user.admin? || (@current_user.ta? && GraderPermissions.find_by(user_id: @current_user.id).download_grades_report)
+    @heading_buttons += [
+      { link_text: t('download_the', item: t('course_summary.grade_report')),
+        link_path: download_csv_grades_report_course_summaries_path }
     ]
-    if @current_user.admin?
-      @heading_buttons += [
-        { link_text: t('download_the', item: t('course_summary.grade_report')),
-          link_path: download_csv_grades_report_course_summaries_path }
-      ]
     end
   %>
 <% end %>

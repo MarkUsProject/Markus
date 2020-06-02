@@ -1,3 +1,8 @@
+<% if @current_user.ta? %>
+  <% manage_marking_schemes = GraderPermissions.find_by(user_id: @current_user.id).manage_marking_schemes %>
+  <% download_grades_report = GraderPermissions.find_by(user_id: @current_user.id).download_grades_report %>
+<% end %>
+
 <ul class='main'>
   <li id='logo'>
     <a href='<%= root_url %>' id='logo-img'></a>
@@ -68,7 +73,7 @@
     </li>
   <% end %>
 
-  <% if @current_user.admin? %>
+  <% if @current_user.admin? || (@current_user.ta? && (manage_marking_schemes || download_grades_report)) %>
     <li <% if controller.controller_name == 'course_summaries' ||
               controller.controller_name == 'marking_schemes' %>
           class='active'

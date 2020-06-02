@@ -278,6 +278,7 @@ ActiveRecord::Schema.define(version: 2020_06_08_190551) do
     t.boolean "manage_exam_templates"
     t.boolean "run_tests"
     t.boolean "manage_marking_schemes"
+    t.boolean "download_grades_report"
   end
 
   create_table "grades", id: :serial, force: :cascade do |t|
