@@ -6,6 +6,7 @@ pt:
       confirm: "Deletar essa anotação irá remover o texto de todos os arquivos ao qual possa estar anexado. Tem certeza de que quer fazer isto?"
       success: "Apagar categoria de anotação"
     destroy:
+      error: 'UPDATE ME!'
       success: "Apagar categoria de anotação"
       warning: "Apagar esta categoria de anotação também irá apagar suas anotações. Anotações excluídas deixarão de estar ligadas à apresentações dos alunos. Tem certeza de que quer fazer isto?"
     download:
