@@ -73,6 +73,7 @@ class AnnotationCategoriesController < ApplicationController
 
     if @annotation_category.update(annotation_category_params)
       flash_message(:success, t('.success'))
+      render 'show', assignment_id: @assignment.id, id: @annotation_category.id
     else
       respond_with @annotation_category, render: { body: nil, status: :bad_request }
     end
@@ -96,7 +97,8 @@ class AnnotationCategoriesController < ApplicationController
       @annotation_category = @annotation_text.annotation_category
       render :insert_new_annotation_text
     else
-      respond_with @annotation_text, render: { body: nil, status: :bad_request }
+      flash_message(:error, t('.error'))
+      head :bad_request
     end
   end
 
@@ -104,6 +106,9 @@ class AnnotationCategoriesController < ApplicationController
     @annotation_text = AnnotationText.find(params[:id])
     if @annotation_text.destroy
       flash_now(:success, t('.success'))
+    else
+      flash_message(:error, t('.error'))
+      head :bad_request
     end
   end
 
@@ -111,6 +116,9 @@ class AnnotationCategoriesController < ApplicationController
     @annotation_text = AnnotationText.find(params[:id])
     if @annotation_text.update(**annotation_text_params.to_h.symbolize_keys, last_editor_id: current_user.id)
       flash_now(:success, t('annotation_categories.update.success'))
+    else
+      flash_message(:error, t('.error'))
+      head :bad_request
     end
   end
 
@@ -214,7 +222,7 @@ class AnnotationCategoriesController < ApplicationController
   end
 
   def annotation_text_params
-    params.require(:annotation_text).permit(:content, :annotation_category_id)
+    params.require(:annotation_text).permit(:content, :deduction, :annotation_category_id)
   end
 
   def flash_interpolation_options
