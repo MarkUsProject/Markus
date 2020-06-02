@@ -1,10 +1,13 @@
 module MarkingSchemesHelper
   def get_table_json_data
     all_marking_schemes = MarkingScheme.all
-    assignment_weights = MarkingWeight.joins(:assessments).where(marking_scheme_id: ms.id, type: 'Assignment')
-    grade_entry_form_weights = MarkingWeight.joins(:assessments).where(marking_scheme_id: ms.id, type: 'GradeEntryForm')
+    assignment_ids = Assignment.all.pluck(:id)
+    grade_entry_form_ids = GradeEntryForm.all.pluck(:id)
 
     req_data = all_marking_schemes.map do |ms|
+      assignment_weights = MarkingWeight.where(marking_scheme_id: ms.id, assessment_id: assignment_ids)
+      grade_entry_form_weights = MarkingWeight.where(marking_scheme_id: ms.id, assessment_id: grade_entry_form_ids)
+
       {
         name: ms.name,
         id: ms.id,
