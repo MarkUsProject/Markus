@@ -128,11 +128,13 @@ class ResultsController < ApplicationController
           data[:annotation_categories] = annotation_categories.map do |category|
             {
               id: category.id,
-              annotation_category_name: category.annotation_category_name,
+              annotation_category_name: category.annotation_category_name +
+                  (category.flexible_criterion_id.nil? ? '' : ' [' + category.flexible_criterion.name + ']' ),
               texts: category.annotation_texts.map do |text|
                 {
                   id: text.id,
-                  content: text.content
+                  content: text.content,
+                  deduction: text.deduction.nil? ? '' : text.deduction
                 }
               end
             }
