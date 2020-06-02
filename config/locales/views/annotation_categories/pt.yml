@@ -4,8 +4,8 @@ pt:
       success: "Esta categoria de anotação foi atualizada com sucesso"
     destroy_annotation_text:
       confirm: "Deletar essa anotação irá remover o texto de todos os arquivos ao qual possa estar anexado. Tem certeza de que quer fazer isto?"
-      success: "Apagar categoria de anotação"
       error: 'UPDATE ME!'
+      success: "Apagar categoria de anotação"
     update_annotation_text:
       error: 'UPDATE ME!'
     create_annotation_text:
@@ -13,7 +13,6 @@ pt:
     destroy:
       success: "Apagar categoria de anotação"
       warning: "Apagar esta categoria de anotação também irá apagar suas anotações. Anotações excluídas deixarão de estar ligadas à apresentações dos alunos. Tem certeza de que quer fazer isto?"
-      error: 'UPDATE ME!'
     download:
       title: "Baixar anotações"
     index:
