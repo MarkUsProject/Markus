@@ -112,8 +112,6 @@ class AnnotationCategoriesController < ApplicationController
 
   def update_annotation_text
     @annotation_text = AnnotationText.find(params[:id])
-    @assignment = Assignment.find(params[:assignment_id])
-    @annotation_category = @annotation_text.annotation_category
     if @annotation_text.update(**annotation_text_params.to_h.symbolize_keys, last_editor_id: current_user.id)
       flash_now(:success, t('annotation_categories.update.success'))
     else
