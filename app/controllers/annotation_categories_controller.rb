@@ -57,9 +57,11 @@ class AnnotationCategoriesController < ApplicationController
   def destroy
     @assignment = Assignment.find(params[:assignment_id])
     @annotation_category = @assignment.annotation_categories.find(params[:id])
-
     if @annotation_category.destroy
       flash_message(:success, t('.success'))
+    else
+      flash_message(:error, t('.error'))
+      render 'show', assignment_id: @assignment.id, id: @annotation_category.id
     end
   end
 
