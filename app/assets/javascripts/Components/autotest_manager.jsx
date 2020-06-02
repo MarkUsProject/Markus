@@ -97,10 +97,10 @@ class AutotestManager extends React.Component {
       .then(this.endAction);
   };
 
-  handleDeleteFolder = (folderKey) => {
+  handleDeleteFolder = (folderKeys) => {
     $.post({
       url: Routes.upload_files_assignment_automated_tests_path(this.props.assignment_id),
-      data: {delete_folders: [folderKey]}
+      data: {delete_folders: folderKeys}
     }).then(this.fetchFileDataOnly)
       .then(() => this.toggleFormChanged(true))
       .then(this.endAction);

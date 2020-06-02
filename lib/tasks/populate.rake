@@ -87,7 +87,6 @@ namespace :markus do
     req_file3 = AssignmentFile.new
     req_file3.filename = "Dog.java"
     req_file3.assignment = a2
-    rule = NoLateSubmissionRule.new
     a2.save!
     req_file1.save!
     req_file2.save!
@@ -109,8 +108,6 @@ Neptune,ignored_repo,c7dallap,c7guarni,c7kimear\n"
     req_file1 = AssignmentFile.new
     req_file1.filename = "gcd.sh"
     req_file1.assignment = a3
-    a3.submission_rule = rule
-    a3.assignment_stat = AssignmentStat.new
     a3.save!
     # create groupings/groups
     data = groups_csv_string.split("\n").map do |row|

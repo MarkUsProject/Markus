@@ -5,8 +5,7 @@ namespace :db do
     # Assignments
 
     rule = GracePeriodSubmissionRule.new
-    assignment_stat = AssignmentStat.new
-    puts 'Assignment 0: Grace Token usage'
+    puts 'Assignment 0: Grace Credit usage'
     Assignment.create(
       short_identifier: 'A0',
       description: 'Variables and Simple Operations',
@@ -21,13 +20,10 @@ namespace :db do
         token_period: 1
       },
       submission_rule: rule,
-      assignment_stat: assignment_stat,
     )
     Period.create(submission_rule: rule, hours: 24)
 
     puts 'Assignment 1: Single Student Assignment No Marks'
-    assignment_stat = AssignmentStat.new
-    rule = NoLateSubmissionRule.new
     Assignment.create(
         short_identifier: 'A1',
         description: 'Conditionals and Loops',
@@ -40,12 +36,8 @@ namespace :db do
           token_start_date: Time.current,
           token_period: 1
         },
-        submission_rule: rule,
-        assignment_stat: assignment_stat
     )
 
-    rule = NoLateSubmissionRule.new
-    assignment_stat = AssignmentStat.new
     assignment_msg  = <<-EOS
     Basic exercise in Object Oriented Programming.
     Implement Animal, Cat, and Dog, as described in class.
@@ -64,12 +56,8 @@ namespace :db do
           token_start_date: Time.current,
           token_period: 1
         },
-        submission_rule: rule,
-        assignment_stat: assignment_stat
     )
 
-    assignment_stat = AssignmentStat.new
-    rule = NoLateSubmissionRule.new
     puts 'Assignment 3: Single Student Sporadic Marks'
     Assignment.create(
         short_identifier: 'A3',
@@ -82,12 +70,8 @@ namespace :db do
           token_period: 1,
           section_due_dates_type: true
         },
-        submission_rule: rule,
-        assignment_stat: assignment_stat
     )
 
-    rule = NoLateSubmissionRule.new
-    assignment_stat = AssignmentStat.new
     puts 'Assignment 4: Group Assignment Sporadic Marks'
     Assignment.create(
         short_identifier: 'A4',
@@ -103,8 +87,6 @@ namespace :db do
           token_period: 1,
           section_due_dates_type: true
         },
-        submission_rule: rule,
-        assignment_stat: assignment_stat
     )
 
     Assignment.joins(:assignment_properties)

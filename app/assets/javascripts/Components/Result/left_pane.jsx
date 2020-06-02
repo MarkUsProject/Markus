@@ -88,18 +88,17 @@ export class LeftPane extends React.Component {
           </div>
         </TabPanel>
         <TabPanel>
-          <div id='testviewer' className='block'>
-            <h2 className='test_runs_header'>
-              {I18n.t('activerecord.models.test_result.other')}
-              {/* student results page (with instructor tests released) does not need the button */}
-              {!this.props.student_view &&
+          <div id='testviewer'>
+            {/* student results page (with instructor tests released) does not need the button */}
+            {!this.props.student_view &&
+             <div className='rt-action-box'>
                <form method='post' action={Routes.run_tests_assignment_submission_result_path(
                                              this.props.assignment_id, this.props.submission_id, this.props.result_id)}>
                  <input type="submit" value={I18n.t('automated_tests.run_tests')}
                         disabled={!this.props.can_run_tests} />
                  <input type="hidden" name="authenticity_token" value={AUTH_TOKEN} />
-               </form>}
-            </h2>
+               </form>
+             </div>}
 
             <TestRunTable
               result_id={this.props.result_id}

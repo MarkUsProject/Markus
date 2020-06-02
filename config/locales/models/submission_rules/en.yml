@@ -11,7 +11,7 @@ en:
         commit_after_collection_message:
           "The due date for this assignment, plus the maximum grace period, has passed.
            Your changes have been recorded, but will not be included in the grading."
-        description: "You may submit up to a set time past the due date, provided you have enough remaining grace tokens to do so."
+        description: "You may submit up to a set time past the due date, provided you have enough remaining grace credits to do so."
         form_description: "Automatically deduct grace credits"
 
       no_late_submission_rule:

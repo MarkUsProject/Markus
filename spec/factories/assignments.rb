@@ -7,8 +7,6 @@ FactoryBot.define do
     message { Faker::Lorem.sentence }
 
     due_date { 1.minute.from_now }
-    submission_rule { NoLateSubmissionRule.new }
-    assignment_stat { AssignmentStat.new }
     is_hidden { false }
 
     transient do
@@ -35,9 +33,6 @@ FactoryBot.define do
       3.times { create(:grouping_with_inviter_and_submission, assignment: a) }
       a.groupings.each do |grouping|
         result = grouping.current_result
-        a.get_criteria(:ta).each do |criterion|
-          result.marks.create(markable: criterion, mark: Random.rand(criterion.max_mark + 1))
-        end
         result.update_total_mark
         result.update(marking_state: Result::MARKING_STATES[:complete])
       end

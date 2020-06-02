@@ -115,8 +115,6 @@ describe Assignment do
       }
       a = Assignment.new(attrs)
       a.repository_folder = 't'
-      a.build_assignment_stat
-      a.build_submission_rule
       a.save!
 
       expect(a.assignment_files.first.filename).to eq 't.py'
@@ -1663,6 +1661,17 @@ describe Assignment do
         data = assignment.current_submission_data(ta)
         expect(data.size).to eq 1
         expect(data[0][:_id]).to be groupings[0].id
+      end
+
+      context 'when hide_unassigned_criteria is true' do
+        let(:assigned_criteria) { create :flexible_criterion, assignment: assignment, max_mark: 3 }
+        let(:unassigned_criteria) { create :flexible_criterion, assignment: assignment, max_mark: 1 }
+        let!(:criterion_ta_association) { create :criterion_ta_association, criterion: assigned_criteria, ta: ta }
+        it 'should only include assigned criteria in max_mark' do
+          assignment.update(hide_unassigned_criteria: true)
+          data = assignment.current_submission_data(ta)
+          expect(data[0][:max_mark]).to eq 3
+        end
       end
 
       context 'when a grace period deduction has been applied' do

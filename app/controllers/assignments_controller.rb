@@ -54,6 +54,7 @@ class AssignmentsController < ApplicationController
     unless @grouping.nil?
       set_repo_vars(@assignment, @grouping)
     end
+    render layout: 'assignment_content'
   end
 
   def peer_review
@@ -201,8 +202,6 @@ class AssignmentsController < ApplicationController
                                    .where(assignment_properties: { vcs_submit: true })
                                    .order(:id)
     @sections = Section.all
-    @assignment.build_submission_rule
-    @assignment.build_assignment_stat
 
     # build section_due_dates for each section
     Section.all.each { |s| @assignment.section_due_dates.build(section: s)}
@@ -217,8 +216,6 @@ class AssignmentsController < ApplicationController
   # Called after a new assignment form is submitted.
   def create
     @assignment = Assignment.new
-    @assignment.build_assignment_stat
-    @assignment.build_submission_rule
     @assignment.transaction do
       begin
         @assignment, new_required_files = process_assignment_form(@assignment)

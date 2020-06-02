@@ -15,7 +15,7 @@ class Assignment < Assessment
   delegate_missing_to :assignment_properties
   accepts_nested_attributes_for :assignment_properties, update_only: true
   validates_presence_of :assignment_properties
-  after_initialize :create_assignment_properties
+  after_initialize :create_associations
 
   # Add assignment_properties to default scope because we almost always want to load an assignment with its properties
   default_scope { includes(:assignment_properties) }
@@ -888,8 +888,6 @@ class Assignment < Assessment
     return unless has_peer_review && Assignment.where(parent_assessment_id: id).empty?
     peerreview_assignment = Assignment.new
     peerreview_assignment.parent_assignment = self
-    peerreview_assignment.submission_rule = NoLateSubmissionRule.new
-    peerreview_assignment.assignment_stat = AssignmentStat.new
     peerreview_assignment.token_period = 1
     peerreview_assignment.non_regenerating_tokens = false
     peerreview_assignment.unlimited_tokens = false
@@ -1191,7 +1189,7 @@ class Assignment < Assessment
 
     if current_user.ta? && hide_unassigned_criteria
       assigned_criteria = current_user.criterion_ta_associations
-                                      .where(assignment_id: self.id)
+                                      .where(assessment_id: self.id)
                                       .pluck(:criterion_type, :criterion_id)
                                       .map { |t, id| "#{t}-#{id}" }
     else
@@ -1357,8 +1355,6 @@ class Assignment < Assessment
           assignment.assignment_properties.repository_folder = row[0]
           assignment.assignment_properties.token_period = 1
           assignment.assignment_properties.unlimited_tokens = false
-          assignment.submission_rule = NoLateSubmissionRule.new
-          assignment.assignment_stat = AssignmentStat.new
         end
         assignment.update(attrs)
         raise CsvInvalidLineError unless assignment.valid?
@@ -1389,8 +1385,10 @@ class Assignment < Assessment
     end
   end
 
-  def create_assignment_properties
+  def create_associations
     return unless self.new_record?
     self.assignment_properties ||= AssignmentProperties.new
+    self.assignment_stat ||= AssignmentStat.new
+    self.submission_rule ||= NoLateSubmissionRule.new
   end
 end

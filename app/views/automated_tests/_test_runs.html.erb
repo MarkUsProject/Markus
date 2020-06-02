@@ -13,16 +13,18 @@
   </script>
 <% end %>
 
-<h2 class="test_runs_header">
+<h2>
   <%= TestResult.model_name.human.pluralize %>
-  <%# student results page (with instructor tests released) does not need the button %>
-  <% unless @current_user.student? && ran_by == 'instructor' %>
-    <% route = @current_user.admin? ?
-                 run_tests_assignment_submission_result_path :
-                 execute_test_run_automated_test_path(id: @assignment.id, grouping_id: @grouping.id) %>
-    <%= button_to t('automated_tests.run_tests'), route, disabled: !@authorized %>
-  <% end %>
 </h2>
-<div class="block_content">
-  <div id='test_run_table'></div>
-</div>
+
+<%# student results page (with instructor tests released) does not need the button %>
+<% unless @current_user.student? && ran_by == 'instructor' %>
+  <% route = @current_user.admin? ?
+    run_tests_assignment_submission_result_path :
+    execute_test_run_automated_test_path(id: @assignment.id, grouping_id: @grouping.id) %>
+  <div class="rt-action-box">
+    <%= button_to t('automated_tests.run_tests'), route, disabled: !@authorized %>
+  </div>
+<% end %>
+
+<div id='test_run_table'></div>

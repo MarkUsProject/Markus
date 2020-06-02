@@ -1,4 +1,5 @@
 import React from 'react';
+import heic2any from 'heic2any';
 
 import {ImageViewer} from './image_viewer'
 import {TextViewer} from './text_viewer'
@@ -34,6 +35,28 @@ export class FileViewer extends React.Component {
     }
   }
 
+  setFileUrl = (submission_file_id) => {
+    let url = Routes.download_assignment_submission_result_path(
+      '',
+      this.props.assignment_id,
+      this.props.submission_id,
+      this.props.result_id,
+      {
+        select_file_id: submission_file_id,
+        show_in_browser: true,
+        from_codeviewer: true,
+      }
+    );
+    if (['image/heic', 'image/heif'].includes(this.props.mime_type)) {
+      fetch(url)
+        .then((res) => res.blob())
+        .then((blob) => heic2any({blob, toType:"image/jpeg"}))
+        .then((conversionResult) => {this.setState({url: URL.createObjectURL(conversionResult), loading: false})})
+    } else {
+      this.setState({url: url, loading: false});
+    }
+  };
+
   /*
    * Update the contents being displayed with the given submission file id.
    */
@@ -43,7 +66,7 @@ export class FileViewer extends React.Component {
       this.remove();
     });
 
-    this.setState({loading: true}, () => {
+    this.setState({loading: true, url: null}, () => {
       fetch(Routes.get_file_assignment_submission_path(
               '',
               this.props.assignment_id,
@@ -53,30 +76,12 @@ export class FileViewer extends React.Component {
         .then(res => res.json())
         .then(body => {
           if (body.type === 'image' || body.type === 'pdf') {
-            this.setState({
-              type: body.type,
-              url: Routes.download_assignment_submission_result_path(
-                '',
-                this.props.assignment_id,
-                this.props.submission_id,
-                this.props.result_id,
-                {
-                  select_file_id: submission_file_id,
-                  show_in_browser: true,
-                  from_codeviewer: true,
-                }
-              ),
-              loading: false,
-            });
+            this.setState({type: body.type}, () => {this.setFileUrl(submission_file_id)})
           } else {
             const content = JSON.parse(body.content).replace(/\r?\n/gm, '\n');
-            this.setState({
-              content: content,
-              type: body.type,
-              loading: false,
-            });
+            this.setState({content: content, type: body.type, loading: false});
           }
-        });
+        })
     });
   };
 
