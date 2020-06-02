@@ -52,7 +52,7 @@
         <div class='inline-labels'>
           <% max_mark = annotation_text.annotation_category.flexible_criterion.max_mark %>
           <% marks_released = !annotation_text.annotations.joins(:result)
-                                                         .where('results.released_to_students' => true).empty? %>
+                                                          .where('results.released_to_students' => true).empty? %>
           <%= f.label :deduction,
                       AnnotationText.human_attribute_name(:deduction) %>
           <%= f.number_field :deduction, { min: 0.0, max: max_mark, step: 0.01, disabled: marks_released } %>
