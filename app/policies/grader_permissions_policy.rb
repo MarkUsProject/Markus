@@ -30,4 +30,12 @@ class GraderPermissionsPolicy < ApplicationPolicy
   def delete_grace_credit_deduction?
     GraderPermissions.find_by(user_id: user.id).delete_grace_period_deduction
   end
+
+  def download_grades_report?
+    GraderPermissions.find_by(user_id: user.id).download_grades_report
+  end
+
+  def manage_marking_schemes?
+    GraderPermissions.find_by(user_id: user.id).manage_marking_schemes
+  end
 end
