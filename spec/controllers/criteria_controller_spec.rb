@@ -139,7 +139,7 @@ describe CriteriaController do
         before(:each) do
           get_as admin,
                  :new,
-                 params: { assignment_id: assignment.id, criterion_type: 'FlexibleCriterion' },
+                 params: { assignment_id: assignment.id },
                  format: :js
         end
 
@@ -160,7 +160,7 @@ describe CriteriaController do
         before(:each) do
           get_as admin,
                  :edit,
-                 params: { assignment_id: 1, id: flexible_criterion.id, criterion_type: flexible_criterion.class.to_s },
+                 params: { assignment_id: 1, id: flexible_criterion.id },
                  format: :js
         end
 
@@ -188,8 +188,7 @@ describe CriteriaController do
             get_as admin,
                    :update,
                    params: { assignment_id: 1, id: flexible_criterion.id,
-                             flexible_criterion: { name: 'one', max_mark: 10 },
-                             criterion_type: 'FlexibleCriterion' },
+                             flexible_criterion: { name: 'one', max_mark: 10 } },
                    format: :js
           end
 
@@ -207,8 +206,7 @@ describe CriteriaController do
             get_as admin,
                    :update,
                    params: { assignment_id: 1, id: flexible_criterion.id,
-                             flexible_criterion: { name: 'one', max_mark: 10 },
-                             criterion_type: 'FlexibleCriterion' },
+                             flexible_criterion: { name: 'one', max_mark: 10 } },
                    format: :js
           end
 
@@ -250,7 +248,7 @@ describe CriteriaController do
             post_as admin,
                     :create,
                     params: { assignment_id: assignment.id, flexible_criterion: { name: 'first', max_mark: 10 },
-                              new_criterion_prompt: 'first', criterion_type: 'FlexibleCriterion' },
+                              new_criterion_prompt: 'first', criterion_type: flexible_criterion.class.to_s },
                     format: :js
           end
           it 'should respond with appropriate content' do
@@ -268,7 +266,7 @@ describe CriteriaController do
             post_as admin,
                     :create,
                     params: { assignment_id: assignment.id, flexible_criterion: { name: 'first' },
-                              new_criterion_prompt: 'first', criterion_type: 'FlexibleCriterion', max_mark_prompt: 10 },
+                              new_criterion_prompt: 'first', max_mark_prompt: 10 },
                     format: :js
           end
           it 'should respond with appropriate content' do
@@ -289,7 +287,7 @@ describe CriteriaController do
             post_as admin,
                     :create,
                     params: { assignment_id: assignment.id, flexible_criterion: { name: 'first' },
-                              new_criterion_prompt: 'first', criterion_type: 'FlexibleCriterion', max_mark_prompt: 10 },
+                              new_criterion_prompt: 'first', max_mark_prompt: 10 },
                     format: :js
           end
           it 'should respond with appropriate content' do
@@ -311,8 +309,7 @@ describe CriteriaController do
           post_as admin,
                   :edit,
                   params: { assignment_id: 1,
-                            id: flexible_criterion.id,
-                            criterion_type: flexible_criterion.class.to_s },
+                            id: flexible_criterion.id },
                   format: :js
         end
 
@@ -351,8 +348,7 @@ describe CriteriaController do
         delete_as admin,
                   :destroy,
                   params: { assignment_id: 1,
-                            id: flexible_criterion.id,
-                            criterion_type: flexible_criterion.class.to_s },
+                            id: flexible_criterion.id },
                   format: :js
         expect(assigns(:criterion)).to be_truthy
         i18t_strings = [I18n.t('flash.criteria.destroy.success')].map { |f| extract_text f }
@@ -499,7 +495,7 @@ describe CriteriaController do
         before(:each) do
           get_as admin,
                  :new,
-                 params: { assignment_id: assignment.id, criterion_type: 'RubricCriterion' },
+                 params: { assignment_id: assignment.id },
                  format: :js
         end
 
@@ -520,7 +516,7 @@ describe CriteriaController do
         before(:each) do
           get_as admin,
                  :edit,
-                 params: { assignment_id: 1, id: rubric_criterion.id, criterion_type: rubric_criterion.class.to_s },
+                 params: { assignment_id: 1, id: rubric_criterion.id },
                  format: :js
         end
 
@@ -546,8 +542,8 @@ describe CriteriaController do
             )
             get_as admin,
                    :update,
-                   params: { assignment_id: 1, id: rubric_criterion.id, rubric_criterion: { name: 'one', max_mark: 10 },
-                             criterion_type: 'RubricCriterion' },
+                   params: { assignment_id: 1, id: rubric_criterion.id,
+                             rubric_criterion: { name: 'one', max_mark: 10 } },
                    format: :js
           end
 
@@ -564,8 +560,8 @@ describe CriteriaController do
           before(:each) do
             get_as admin,
                    :update,
-                   params: { assignment_id: 1, id: rubric_criterion.id, rubric_criterion: { name: 'one', max_mark: 10 },
-                             criterion_type: 'RubricCriterion' },
+                   params: { assignment_id: 1, id: rubric_criterion.id,
+                             rubric_criterion: { name: 'one', max_mark: 10 } },
                    format: :js
           end
 
@@ -607,7 +603,7 @@ describe CriteriaController do
             post_as admin,
                     :create,
                     params: { assignment_id: assignment.id, max_mark_prompt: 10,
-                              new_criterion_prompt: 'first', criterion_type: 'RubricCriterion' },
+                              new_criterion_prompt: 'first' },
                     format: :js
           end
           it 'should respond with appropriate content' do
@@ -625,7 +621,7 @@ describe CriteriaController do
             post_as admin,
                     :create,
                     params: { assignment_id: assignment.id,
-                              new_criterion_prompt: 'first', criterion_type: 'RubricCriterion', max_mark_prompt: 10 },
+                              new_criterion_prompt: 'first', max_mark_prompt: 10 },
                     format: :js
           end
           it 'should respond with appropriate content' do
@@ -646,7 +642,7 @@ describe CriteriaController do
             post_as admin,
                     :create,
                     params: { assignment_id: assignment.id, rubric_criterion: { name: 'first' },
-                              new_criterion_prompt: 'first', criterion_type: 'RubricCriterion', max_mark_prompt: 10 },
+                              new_criterion_prompt: 'first', max_mark_prompt: 10 },
                     format: :js
           end
           it 'should respond with appropriate content' do
@@ -667,7 +663,7 @@ describe CriteriaController do
         before(:each) do
           post_as admin,
                   :edit,
-                  params: { assignment_id: 1, id: rubric_criterion.id, criterion_type: rubric_criterion.class.to_s },
+                  params: { assignment_id: 1, id: rubric_criterion.id },
                   format: :js
         end
 
@@ -705,7 +701,7 @@ describe CriteriaController do
       it ' should be able to delete the criterion' do
         delete_as admin,
                   :destroy,
-                  params: { assignment_id: 1, id: rubric_criterion.id, criterion_type: rubric_criterion.class.to_s },
+                  params: { assignment_id: 1, id: rubric_criterion.id },
                   format: :js
         expect(assigns(:criterion)).to be_truthy
         i18t_string = [I18n.t('flash.criteria.destroy.success')].map { |f| extract_text f }
