@@ -328,6 +328,7 @@ ul.annotation_text_list {
   li {
     background: $white !important;
     border-radius: 0 !important;
+    display: inline-flex;
     padding: 0.5em 0.25em;
     width: 100%;
 
@@ -342,6 +343,15 @@ ul.annotation_text_list {
       border-radius: 0 0 $radius $radius;
     }
   }
+}
+
+.text_content {
+  flex: 1;
+}
+
+.text_deduction {
+  text-align: right;
+  color: $red;
 }
 
 

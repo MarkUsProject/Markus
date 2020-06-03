@@ -34,7 +34,11 @@ export class AnnotationManager extends React.Component {
                         }}
                         onMouseDown={e => e.preventDefault()}
                         title={text.content}>
-                      {text.content.slice(0, 70)}
+                      <span className={"text_content"}>{text.content.slice(0, 70)}</span>
+                      {isNaN(text.deduction) || text.deduction == 0 ?
+                        <span className={"text_deduction"}>{''}</span> :
+                        <span className={"text_deduction"}>{'-' + text.deduction}</span>
+                      }
                     </li>)}
                  </ul>
                </div>
