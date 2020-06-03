@@ -136,7 +136,8 @@ class ResultsController < ApplicationController
                   content: text.content,
                   deduction: text.deduction.nil? ? '' : text.deduction
                 }
-              end
+              end,
+              flexible_criterion_id: category.flexible_criterion_id.nil? ? '' : category.flexible_criterion_id
             }
           end
           data[:notes_count] = submission.grouping.notes.count

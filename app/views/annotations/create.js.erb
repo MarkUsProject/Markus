@@ -23,7 +23,10 @@ resultComponent.addAnnotation({
     start: <%= [@annotation.y1, @annotation.y2].min || 'undefined' %>,
     end: <%= [@annotation.y1, @annotation.y2].max || 'undefined' %>
   }
-});
+},
+<%= @criterion_id %>,
+  <%= @new_mark %>
+);
 
 hide_all_annotation_content_editors();
 reloadDOM();

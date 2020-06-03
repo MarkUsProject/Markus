@@ -209,8 +209,18 @@ class Result extends React.Component {
     }
   };
 
-  addAnnotation = (annotation) => {
+  addAnnotation = (annotation, criterion_id, mark_value) => {
     this.setState({annotations: this.state.annotations.concat([annotation])});
+
+    if(!isNaN(criterion_id)) {
+      let newMarks = [...this.state.marks];
+      let i = newMarks.findIndex(m => m.id === criterion_id && m.criterion_type === "FlexibleCriterion");
+      if (i >= 0) {
+        newMarks[i] = {...newMarks[i]};
+        newMarks[i].mark = mark_value;
+        this.setState({marks: newMarks});
+      }
+    }
 
     if (annotation.annotation_category) {
       this.refreshAnnotationCategories();

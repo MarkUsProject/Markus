@@ -49,6 +49,17 @@ class AnnotationsController < ApplicationController
         **base_attributes
       )
     end
+    @criterion_id = ''
+    @new_mark = ''
+    unless @annotation.annotation_text.deduction.nil?
+      @criterion_id = @annotation.annotation_text.annotation_category.flexible_criterion_id
+      @new_mark = @annotation.result
+                             .marks
+                             .find_by(markable_id: @annotation.annotation_text.annotation_category
+                                                                              .flexible_criterion_id,
+                                      markable_type: 'FlexibleCriterion').mark
+    end
+
     render :create
   end
 
