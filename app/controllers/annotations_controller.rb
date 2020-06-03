@@ -51,6 +51,8 @@ class AnnotationsController < ApplicationController
     end
     @criterion_id = ''
     @new_mark = ''
+    @deduction = ''
+    @criterion_name = ''
     unless @annotation.annotation_text.deduction.nil?
       @criterion_id = @annotation.annotation_text.annotation_category.flexible_criterion_id
       @new_mark = @annotation.result
@@ -58,6 +60,8 @@ class AnnotationsController < ApplicationController
                              .find_by(markable_id: @annotation.annotation_text.annotation_category
                                                                               .flexible_criterion_id,
                                       markable_type: 'FlexibleCriterion').mark
+      @deduction = annotation_text.deduction
+      @criterion_name = annotation_text.annotation_category.flexible_criterion.name
     end
 
     render :create
