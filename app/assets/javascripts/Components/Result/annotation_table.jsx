@@ -61,7 +61,7 @@ export class AnnotationTable extends React.Component {
       accessor: 'content',
       Cell: data => {
         let edit_button = "";
-        if (!this.props.released_to_students) {
+        if (!this.props.released_to_students && isNaN(data.original.deduction)) {
           edit_button = <a
             href="#"
             className="edit-icon"
@@ -99,6 +99,17 @@ export class AnnotationTable extends React.Component {
     },
   ];
 
+  deductionColumn = [
+    {
+      Header: I18n.t('activerecord.attributes.annotation_text.deduction'),
+      accessor: 'deduction',
+      Cell: data => {
+        return data.original.criterion_name + " -" + data.original.deduction
+      },
+      maxWidth: 120
+    }
+  ];
+
   componentDidMount() {
     MathJax.Hub.Queue(['Typeset', MathJax.Hub, 'annotation_table']);
   }
@@ -111,6 +122,9 @@ export class AnnotationTable extends React.Component {
     let allColumns = this.columns;
     if (this.props.detailed) {
       allColumns = allColumns.concat(this.detailedColumns);
+      if(this.props.annotations.some(a => !isNaN(a.deduction))) {
+        allColumns = allColumns.concat(this.deductionColumn);
+      }
     }
 
     return (
