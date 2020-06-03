@@ -4,7 +4,12 @@ fr:
       success: "La catégorie d'annotations a bien été créée ou mise à jour."
     destroy_annotation_text:
       confirm: "Supprimer cette annotation va supprimer les commentaires attachés à tous les fichiers auquels elle pourrait être rattachée. Êtes-vous sûr de vouloir faire cela ?"
+      error: 'UPDATE ME!'
       success: "Supprimer la catégorie d'annotations"
+    update_annotation_text:
+      error: 'UPDATE ME!'
+    create_annotation_text:
+      error: 'UPDATE ME!'
     destroy:
       success: "Supprimer la catégorie d'annotations"
       warning: "Supprimer cette catégorie d'annotation va supprimer aussi toutes les annotations. Les annotations supprimées ne seront plus rattachées au devoirs des étudiants. Êtes-vous sûr de vouloir faire cela ?"
