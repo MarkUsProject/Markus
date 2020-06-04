@@ -32,7 +32,7 @@ resultComponent.addAnnotation({
                                      markable_type: 'FlexibleCriterion')&.mark || 'undefined' %>,
 <%= @annotation.result.get_subtotal() %>,
 <%= @annotation.result.get_total_mark() %>,
-<%= @new_num_marked %>
+<%= @annotation.result.grouping.assignment.get_num_marked(@current_user.admin? ? nil : @current_user.id) %>
 );
 
 hide_all_annotation_content_editors();

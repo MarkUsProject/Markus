@@ -111,7 +111,6 @@ export class AnnotationTable extends React.Component {
       id: 'deduction',
       filterMethod: this.deductionFilter,
       Cell: data => {
-        console.log( data.original.criterion_name)
         if(data.original.deduction == 'undefined' || data.original.deduction == 0) return ''
         return (
           <div>

@@ -26,7 +26,7 @@ class AnnotationCategoriesController < ApplicationController
               {
                 id: text.id,
                 content: text.content,
-                deduction: text.deduction.nil? ? '' : text.deduction
+                deduction: text.deduction.nil? ? 'undefined' : text.deduction
               }
             end
           }
