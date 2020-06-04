@@ -9,6 +9,8 @@
 - Introduces automated email sending for spreadsheet releases (#4460)
 - Introduces automated email sending for grouping invitations (#4470)
 - Introduces student email settings (#4578)
+- Assignment grader distribution graphs only show marks for assigned criteria when graders are assigned specific
+  criteria (#4656) 
 
 ## [v1.9.2]
 - Fixed bug preventing all git hooks from being run in production (#4594)
