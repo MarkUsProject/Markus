@@ -231,13 +231,24 @@ class FlexibleCriterionInput extends React.Component {
   }
 
   listDeductions = () => {
-    let list_deductions = 'Deductions: ';
+    let deductions = ''
+    let label = 'Deductions from annotations: ';
     this.props.annotations.map( a => {
-      if(a.criterion_id != 'undefined' && a.criterion_id == this.props.id) {
-        list_deductions += a.deduction + ', '
+      if(a.criterion_id != 'undefined' && a.deduction != 0 && a.criterion_id == this.props.id) {
+        deductions += '-' + a.deduction + ', '
       }
     });
-    return <span>{list_deductions.substring(0, list_deductions.length - 2)}</span>
+    if (deductions.length < 1) return <span></span>
+
+    return (
+      <div className={'mark_deductions'}>
+        <span>
+          {label}
+        </span>
+        <span className={'text_deduction'}>
+          {deductions.substring(0, deductions.length - 2)}
+        </span>
+      </div>);
   }
 
   handleChange = (event) => {
@@ -302,9 +313,6 @@ class FlexibleCriterionInput extends React.Component {
                {I18n.t('helpers.submit.delete', {model: I18n.t('activerecord.models.mark.one')})}
              </a>
             }
-            <div>
-              {this.listDeductions()}
-            </div>
           </div>
           <div className='criterion-description'>
             {this.props.description}
@@ -314,6 +322,7 @@ class FlexibleCriterionInput extends React.Component {
             &nbsp;/&nbsp;
             {this.props.max_mark}
           </span>
+          {this.listDeductions()}
           {this.props.oldMark !== undefined &&
            <div className='old-mark'>
              {`(${I18n.t('results.remark.old_mark')}: ${this.props.oldMark})`}

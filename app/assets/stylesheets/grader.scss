@@ -597,6 +597,17 @@ ul.annotation_text_list {
   }
 }
 
+.mark_deductions {
+  clear: both;
+  color: $dark-blue;
+  cursor: pointer;
+  font-size: 1.1em;
+  font-weight: bold;
+  padding-bottom: 5px;
+  padding-top: 2px;
+  text-align: right;
+}
+
 .padding_left {
   padding-left: 30px;
 }

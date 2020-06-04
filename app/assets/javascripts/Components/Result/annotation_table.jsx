@@ -107,11 +107,22 @@ export class AnnotationTable extends React.Component {
   deductionColumn = [
     {
       Header: I18n.t('activerecord.attributes.annotation_text.deduction'),
-      accessor: row => row.criterion_name + row.deduction,
+      accessor: row => '[' + row.criterion_name + '] -' + row.deduction,
       id: 'deduction',
       filterMethod: this.deductionFilter,
       Cell: data => {
-        return data.original.criterion_name + " " + data.original.deduction
+        console.log( data.original.criterion_name)
+        if(data.original.deduction == 'undefined' || data.original.deduction == 0) return ''
+        return (
+          <div>
+            <span>
+              {'[' + data.original.criterion_name + '] '}
+            </span>
+            <span className={'text_deduction'}>
+              {'-' + data.original.deduction}
+            </span>
+          </div>
+        );
       },
       maxWidth: 120
     }
@@ -129,7 +140,7 @@ export class AnnotationTable extends React.Component {
     let allColumns = this.columns;
     if (this.props.detailed) {
       allColumns = allColumns.concat(this.detailedColumns);
-      if(this.props.annotations.some(a => a.deduction != '')) {
+      if(this.props.annotations.some(a => a.deduction != 'undefined')) {
         allColumns = allColumns.concat(this.deductionColumn);
       }
     }
