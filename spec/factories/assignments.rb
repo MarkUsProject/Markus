@@ -33,6 +33,9 @@ FactoryBot.define do
       3.times { create(:grouping_with_inviter_and_submission, assignment: a) }
       a.groupings.each do |grouping|
         result = grouping.current_result
+        result.marks.each do |mark|
+          mark.update(mark: rand(mark.markable.max_mark + 1))
+        end
         result.update_total_mark
         result.update(marking_state: Result::MARKING_STATES[:complete])
       end
