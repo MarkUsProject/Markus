@@ -129,12 +129,12 @@ class ResultsController < ApplicationController
             {
               id: category.id,
               annotation_category_name: category.annotation_category_name +
-                  (category.flexible_criterion_id.nil? ? '' : ' [' + category.flexible_criterion.name + ']' ),
+                  (category.flexible_criterion_id.nil? ? 'undefined' : ' [' + category.flexible_criterion.name + ']' ),
               texts: category.annotation_texts.map do |text|
                 {
                   id: text.id,
                   content: text.content,
-                  deduction: text.deduction.nil? ? '' : text.deduction
+                  deduction: text.deduction.nil? ? 'undefined' : text.deduction
                 }
               end,
               flexible_criterion_id: category.flexible_criterion_id.nil? ? '' : category.flexible_criterion_id
