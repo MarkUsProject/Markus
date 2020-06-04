@@ -3,6 +3,11 @@ import ReactTable from 'react-table';
 
 
 export class AnnotationTable extends React.Component {
+
+  deductionFilter = (filter, row) => {
+    return String(row[filter.id]).toLocaleLowerCase().includes(filter.value.toLocaleLowerCase());
+  }
+
   columns = [
     {
       Header: '#',
@@ -102,7 +107,9 @@ export class AnnotationTable extends React.Component {
   deductionColumn = [
     {
       Header: I18n.t('activerecord.attributes.annotation_text.deduction'),
-      accessor: 'criterion_name',
+      accessor: row => row.criterion_name + row.deduction,
+      id: 'deduction',
+      filterMethod: this.deductionFilter,
       Cell: data => {
         return data.original.criterion_name + " " + data.original.deduction
       },
