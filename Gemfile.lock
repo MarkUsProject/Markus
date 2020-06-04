@@ -255,7 +255,7 @@ GEM
     redis-namespace (1.6.0)
       redis (>= 3.0.4)
     regexp_parser (1.7.0)
-    responders (3.0.0)
+    responders (3.0.1)
       actionpack (>= 5.0)
       railties (>= 5.0)
     resque (2.0.0)
