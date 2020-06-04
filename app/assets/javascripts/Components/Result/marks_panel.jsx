@@ -94,6 +94,7 @@ export class MarksPanel extends React.Component {
       expanded: this.state.expanded.has(key),
       oldMark: this.props.old_marks[`${markData.criterion_type}-${markData.id}`],
       toggleExpanded: () => this.toggleExpanded(key),
+      annotations: this.props.annotations,
       ... markData
     };
     if (markData.criterion_type === 'CheckboxCriterion') {
@@ -229,6 +230,16 @@ class FlexibleCriterionInput extends React.Component {
     };
   }
 
+  listDeductions = () => {
+    let list_deductions = 'Deductions: ';
+    this.props.annotations.map( a => {
+      if(a.criterion_id != 'undefined' && a.criterion_id == this.props.id) {
+        list_deductions += a.deduction + ', '
+      }
+    });
+    return <span>{list_deductions.substring(0, list_deductions.length - 2)}</span>
+  }
+
   handleChange = (event) => {
     const mark = parseFloat(event.target.value);
     if (event.target.value !== '' && isNaN(mark)) {
@@ -279,23 +290,21 @@ class FlexibleCriterionInput extends React.Component {
       <li id={`flexible_criterion_${this.props.id}`}
           className={`flexible_criterion ${expandedClass} ${unassignedClass}`}>
         <div data-id={this.props.id}>
-          <div className='criterion-name'
-               onClick={this.props.toggleExpanded}
-          >
-            <div className={this.props.expanded ? 'arrow-up' : 'arrow-down'}
-                 style={{float: 'left'}}
-            />
+          <div className='criterion-name' onClick={this.props.toggleExpanded}>
+            <div className={this.props.expanded ? 'arrow-up' : 'arrow-down'} style={{float: 'left'}} />
             {this.props.name}
             {!this.props.released_to_students &&
              !this.props.unassigned &&
              this.props.mark !== null &&
              <a href="#"
                 onClick={e => this.props.destroyMark(e, this.props.criterion_type, this.props.id)}
-                style={{float: 'right'}}
-             >
+                style={{float: 'right'}} >
                {I18n.t('helpers.submit.delete', {model: I18n.t('activerecord.models.mark.one')})}
              </a>
             }
+            <div>
+              {this.listDeductions()}
+            </div>
           </div>
           <div className='criterion-description'>
             {this.props.description}

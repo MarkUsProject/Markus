@@ -529,6 +529,7 @@ class Result extends React.Component {
             <div id='right-pane'>
               <RightPane
                 {...this.props}
+                annotations={this.state.annotations}
                 assigned_criteria={this.state.assigned_criteria}
                 assignment_max_mark={this.state.assignment_max_mark}
                 available_tags={this.state.available_tags}

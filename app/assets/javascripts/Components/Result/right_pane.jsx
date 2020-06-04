@@ -23,6 +23,7 @@ export class RightPane extends React.Component {
         </TabList>
         <TabPanel>
           <MarksPanel
+            annotations={this.props.annotations}
             old_marks={this.props.old_marks}
             marks={this.props.marks}
             assigned_criteria={this.props.assigned_criteria}
