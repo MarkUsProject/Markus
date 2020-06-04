@@ -7,9 +7,9 @@ resultComponent.addAnnotation({
   content: '<%= @annotation.annotation_text.escape_content %>',
   annotation_category: '<%= @annotation.annotation_text.annotation_category&.annotation_category_name %>',
   annotation_text_id: <%= @annotation.annotation_text_id %>,
-  criterion_id: <%= @criterion_id %>,
-  criterion_name: <%= @criterion_name %>,
-  deduction: <%= @deduction %>,
+  criterion_id: <%= @annotation.annotation_text&.annotation_category.flexible_criterion_id || 'undefined' %>,
+  criterion_name: '<%= @annotation.annotation_text&.annotation_category&.flexible_criterion&.name || 'undefined' %>',
+  deduction: <%=  @annotation.annotation_text.deduction || 'undefined' %>,
   type: '<%= @annotation.class.name %>',
   number: <%= @annotation.annotation_number %>,
   is_remark: <%= @annotation.is_remark %>,
@@ -27,8 +27,9 @@ resultComponent.addAnnotation({
     end: <%= [@annotation.y1, @annotation.y2].max || 'undefined' %>
   }
 },
-<%= @criterion_id %>,
-  <%= @new_mark %>
+<%= @annotation.annotation_text.annotation_category.flexible_criterion_id || 'undefined' %>,
+<%= @annotation.result.marks.find_by(markable_id: @annotation.annotation_text&.annotation_category.flexible_criterion_id,
+                                     markable_type: 'FlexibleCriterion')&.mark || 'undefined' %>
 );
 
 hide_all_annotation_content_editors();
