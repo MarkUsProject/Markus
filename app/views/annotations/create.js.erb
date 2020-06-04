@@ -29,7 +29,10 @@ resultComponent.addAnnotation({
 },
 <%= @annotation.annotation_text.annotation_category.flexible_criterion_id || 'undefined' %>,
 <%= @annotation.result.marks.find_by(markable_id: @annotation.annotation_text&.annotation_category.flexible_criterion_id,
-                                     markable_type: 'FlexibleCriterion')&.mark || 'undefined' %>
+                                     markable_type: 'FlexibleCriterion')&.mark || 'undefined' %>,
+<%= @annotation.result.get_subtotal() %>,
+<%= @annotation.result.get_total_mark() %>,
+<%= @new_num_marked %>
 );
 
 hide_all_annotation_content_editors();

@@ -50,6 +50,8 @@ class AnnotationsController < ApplicationController
       )
     end
 
+    @new_num_marked = result.grouping.assignment.get_num_marked(current_user.admin? ? nil : current_user.id)
+
     render :create
   end
 
