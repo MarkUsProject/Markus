@@ -345,13 +345,13 @@ ul.annotation_text_list {
   }
 }
 
-.text_content {
+.text-content {
   flex: 1;
 }
 
-.text_deduction {
-  text-align: right;
+.text-deduction {
   color: $red;
+  text-align: right;
 }
 
 
@@ -597,12 +597,11 @@ ul.annotation_text_list {
   }
 }
 
-.mark_deductions {
+.mark-deductions {
   clear: both;
   color: $dark-blue;
   cursor: pointer;
   font-size: 1.1em;
-  font-weight: bold;
   padding-bottom: 5px;
   padding-top: 2px;
   text-align: right;
