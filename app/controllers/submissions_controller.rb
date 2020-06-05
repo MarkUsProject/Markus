@@ -21,6 +21,7 @@ class SubmissionsController < ApplicationController
                          :set_result_marking_state,
                          :update_submissions,
                          :collect_submissions,
+                         :run_tests,
                          :populate_submissions_table,
                          :populate_peer_submissions_table]
   before_action :authorize_for_ta_and_admin,
@@ -30,6 +31,7 @@ class SubmissionsController < ApplicationController
                        :revisions,
                        :repo_browser,
                        :collect_submissions,
+                       :run_tests,
                        :zip_groupings_files,
                        :download_zipped_file,
                        :update_submissions]

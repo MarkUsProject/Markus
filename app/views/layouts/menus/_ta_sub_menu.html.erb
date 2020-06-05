@@ -23,7 +23,7 @@
   </li>
 
   <% if assessment.is_a?(GradeEntryForm) && !assessment.new_record? %>
-    <% if @current_user.ta? && GraderPermissions.find_by(user_id: @current_user.id).manage_grade_entry_forms %>
+    <% if @current_user.ta? && GraderPermission.find_by(user_id: @current_user.id).manage_grade_entry_forms %>
       <li class='<%= "active" if controller.action_name == 'edit' %>'>
         <%= link_to t('menu.properties'),
                     edit_grade_entry_form_path(assessment) %>
@@ -36,7 +36,7 @@
   <% elsif assessment.is_a?(Assignment) && !assessment.new_record? %>
     <% target_id = is_viewing_a_peer_review_result ? assessment.pr_assignment.id :
                      assessment.id %>
-    <% if @current_user.ta? && GraderPermissions.find_by(user_id: @current_user.id).manage_assignments %>
+    <% if @current_user.ta? && GraderPermission.find_by(user_id: @current_user.id).manage_assignments %>
       <li <% if ['criteria',
                  'annotation_categories',
                  'automated_tests',
@@ -51,7 +51,7 @@
       </li>
       <% end %>
       <% if assessment.is_peer_review? || is_viewing_a_peer_review_result %>
-        <% if @current_user.ta? && GraderPermissions.find_by(user_id: @current_user.id).manage_reviewers %>
+        <% if @current_user.ta? && GraderPermission.find_by(user_id: @current_user.id).manage_reviewers %>
           <li class='<%= 'active' if controller.controller_name == 'peer_reviews' %>'>
             <%= link_to t('peer_reviews.assign'),
                         assignment_peer_reviews_path(target_id) %>
@@ -74,7 +74,7 @@
       <%= link_to t('results.summary'),
                   summary_assignment_path(@assignment || @grouping.assignment) %>
     </li>
-    <% if assessment.enable_test && GraderPermissions.find_by(user_id: @current_user.id).run_tests %>
+    <% if assessment.enable_test && GraderPermission.find_by(user_id: @current_user.id).run_tests %>
       <li class='<%= "active" if controller.controller_name == 'assignments' && controller.action_name == 'batch_runs' %>'>
         <%= link_to t('automated_tests.test_runs_status'),
                     batch_runs_assignment_path(target_id) %>

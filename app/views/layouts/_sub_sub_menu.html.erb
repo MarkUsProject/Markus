@@ -1,5 +1,5 @@
 <% if @current_user.ta? %>
-  <% manage_assignments = GraderPermissions.find_by(user_id: @current_user.id).manage_assignments %>
+  <% manage_assignments = GraderPermission.find_by(user_id: @current_user.id).manage_assignments %>
 <% end %>
 <% if @current_user.admin? || @current_user.ta?%>
   <% if (controller.controller_name == 'assignments' &&
