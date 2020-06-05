@@ -44,10 +44,10 @@ export class ImageViewer extends React.Component {
 
   display_annotation = (annotation) => {
     let content = '';
-    if(annotation.deduction == 'undefined' || annotation.deduction == 0){
+    if(annotation.deduction === null || annotation.deduction === 0){
       content += annotation.content
     } else {
-      content += '-' + annotation.deduction + ' [' + annotation.criterion_name + '] ' + annotation.content ;
+      content += annotation.content + ' [' + annotation.criterion_name + ': -' + annotation.deduction + ']';
     }
     add_annotation_text(annotation.annotation_text_id, content);
     annotation_manager.add_to_grid({
