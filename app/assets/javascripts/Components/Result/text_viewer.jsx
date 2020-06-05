@@ -47,7 +47,13 @@ export class TextViewer extends React.Component {
   };
 
   display_annotation = (annotation) => {
-    add_annotation_text(annotation.annotation_text_id, annotation.content);
+    let content = '';
+    if(annotation.deduction == 'undefined' || annotation.deduction == 0){
+      content += annotation.content
+    } else {
+      content += '-' + annotation.deduction + ' [' + annotation.criterion_name + '] ' + annotation.content ;
+    }
+    add_annotation_text(annotation.annotation_text_id, content);
     annotation_manager.annotateRange(
       annotation.id,
       {
