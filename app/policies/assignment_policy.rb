@@ -1,14 +1,10 @@
 class AssignmentPolicy < ApplicationPolicy
   alias_rule :new?, :create?, :edit?, :update?, to: :manage?
   def run_tests?
-    check?(:not_a_ta?) &&
+    check?(:can_run_tests?) &&
     check?(:enabled?) &&
     check?(:test_groups_exist?) &&
     (!user.student? || check?(:tokens_released?))
-  end
-
-  def not_a_ta?
-    !user.ta?
   end
 
   def enabled?
@@ -58,7 +54,7 @@ class AssignmentPolicy < ApplicationPolicy
     user.admin? || (user.ta? && allowed_to?(:manage_assignments?, with: GraderPermissionPolicy))
   end
 
-  def batch_runs?
+  def can_run_tests?
     user.admin? || (user.ta? && allowed_to?(:grader_run_tests?, with: GraderPermissionPolicy))
   end
 end

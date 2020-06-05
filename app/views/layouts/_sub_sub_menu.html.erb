@@ -1,5 +1,5 @@
 <% if @current_user.ta? %>
-  <% manage_assignments = GraderPermissions.find_by(user_id: @current_user.id).manage_assignments %>
+  <% manage_assignments = GraderPermission.find_by(user_id: @current_user.id).manage_assignments %>
 <% end %>
 <% if @current_user.admin? || @current_user.ta?%>
   <% if (controller.controller_name == 'assignments' &&
@@ -18,7 +18,7 @@
         <% if controller.controller_name != 'assignments' ||
               (controller.controller_name == 'assignments' &&
                controller.action_name != 'new' ) %>
-          <% if @current_user.admin? || (@current_user.ta? && allowed_to?(:manage?)) %>
+          <% if @current_user.admin? || (@current_user.ta? && manage_assignments) %>
             <li class='<%= "active" if controller.controller_name == 'assignments' %>'>
               <%= link_to t('menu.properties'), edit_assignment_path(@assignment) %>
             </li>
