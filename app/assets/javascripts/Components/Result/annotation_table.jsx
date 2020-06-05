@@ -104,28 +104,29 @@ export class AnnotationTable extends React.Component {
     },
   ];
 
-  deductionColumn = [
-    {
-      Header: I18n.t('activerecord.attributes.annotation_text.deduction'),
-      accessor: row => '[' + row.criterion_name + '] -' + row.deduction,
-      id: 'deduction',
-      filterMethod: this.deductionFilter,
-      Cell: data => {
-        if(data.original.deduction == 'undefined' || data.original.deduction == 0) return ''
+  deductionColumn = {
+    Header: I18n.t('activerecord.attributes.annotation_text.deduction'),
+    accessor: row => '[' + row.criterion_name + '] -' + row.deduction,
+    id: 'deduction',
+    filterMethod: this.deductionFilter,
+    Cell: data => {
+      if (data.original.deduction === null || data.original.deduction === 0) {
+        return '';
+      } else {
         return (
           <div>
             <span>
               {'[' + data.original.criterion_name + '] '}
             </span>
-            <span className={'text_deduction'}>
+            <span className={'text-deduction'}>
               {'-' + data.original.deduction}
             </span>
           </div>
         );
-      },
-      maxWidth: 120
-    }
-  ];
+      }
+    },
+    maxWidth: 120
+  };
 
   componentDidMount() {
     MathJax.Hub.Queue(['Typeset', MathJax.Hub, 'annotation_table']);
@@ -139,8 +140,8 @@ export class AnnotationTable extends React.Component {
     let allColumns = this.columns;
     if (this.props.detailed) {
       allColumns = allColumns.concat(this.detailedColumns);
-      if(this.props.annotations.some(a => a.deduction != 'undefined')) {
-        allColumns = allColumns.concat(this.deductionColumn);
+      if(this.props.annotations.some(a => a.deduction != null)) {
+        allColumns.push(this.deductionColumn);
       }
     }
 
