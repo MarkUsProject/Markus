@@ -64,6 +64,7 @@ class NotesController < ApplicationController
     @note = Note.new(notes_params)
     @note.noteable_type = params[:noteable_type]
     @note.creator_id = @current_user.id
+
     if @note.save
       respond_with @note
     else

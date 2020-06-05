@@ -8,9 +8,8 @@ class PeerReviewsController < ApplicationController
                                                     :show_reviews, :show_result]
   before_action :authorize_for_user, only: [:list_reviews, :show_reviews, :show_result]
   before_action only: [:index, :populate, :assign_groups] do
-    authorize! with: PeerReviewPolicy
+    authorize!
   end
-  rescue_from ActionPolicy::Unauthorized, with: :user_not_authorized
   layout 'assignment_content'
 
   def index
@@ -99,7 +98,6 @@ class PeerReviewsController < ApplicationController
   end
 
   def assign_groups
-    authorize! with: PeerReviewPolicy
     @assignment = Assignment.find(params[:assignment_id])
     selected_reviewer_group_ids = params[:selectedReviewerGroupIds] || []
     selected_reviewee_group_ids = params[:selectedRevieweeGroupIds] || []
@@ -151,9 +149,6 @@ class PeerReviewsController < ApplicationController
     end
 
     head :ok
-  rescue ActionPolicy::Unauthorized => e
-    flash_message(:error, e.message)
-    head :bad_request
   end
 
   def peer_review_mapping

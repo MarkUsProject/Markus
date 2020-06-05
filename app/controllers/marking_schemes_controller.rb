@@ -2,8 +2,7 @@ class MarkingSchemesController < ApplicationController
   include MarkingSchemesHelper
 
   respond_to :html, :js
-  before_action { authorize! with: MarkingSchemePolicy }
-  rescue_from ActionPolicy::Unauthorized, with: :user_not_authorized
+  before_action { authorize! }
 
   layout 'assignment_content'
 
