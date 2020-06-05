@@ -788,14 +788,14 @@ class ResultsController < ApplicationController
   def delete_grace_period_deduction
     result = Result.find(params[:id])
     begin
-      authorize! result, with: ResultsPolicy
-      grace_deduction = result.submission.grouping.grace_period_deductions.find(params[:deduction_id])
-      grace_deduction.destroy
-      head :ok
+      authorize!
     rescue ActionPolicy::Unauthorized => e
       flash_message(:error, e.message)
       head :bad_request
     end
+      grace_deduction = result.submission.grouping.grace_period_deductions.find(params[:deduction_id])
+      grace_deduction.destroy
+      head :ok
   end
 
   def get_test_runs_instructors

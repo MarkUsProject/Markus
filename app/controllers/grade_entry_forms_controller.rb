@@ -2,8 +2,7 @@
 
 class GradeEntryFormsController < ApplicationController
   include GradeEntryFormsHelper
-  before_action { authorize! with: GradeEntryFormPolicy }
-  rescue_from ActionPolicy::Unauthorized, with: :user_not_authorized
+  before_action { authorize! }
   layout 'assignment_content'
 
   responders :flash

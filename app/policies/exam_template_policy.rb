@@ -9,6 +9,6 @@ class ExamTemplatePolicy < ApplicationPolicy
   end
 
   def modify?
-    user.admin? || (user.ta? && allowed_to?(:manage_exam_templates?, with: GraderPermissionsPolicy))
+    user.admin? || (user.ta? && allowed_to?(:manage_exam_templates?, with: GraderPermissionPolicy))
   end
 end

@@ -13,7 +13,8 @@ class AssignmentsController < ApplicationController
                               :view_summary,
                               :summary,
                               :switch_assignment,
-                              :start_timed_assignment]
+                              :start_timed_assignment,
+                              :batch_runs]
 
   before_action      :authorize_for_ta_and_admin,
                      only: [:summary,
@@ -21,6 +22,7 @@ class AssignmentsController < ApplicationController
                             :new,
                             :edit,
                             :update,
+                            :batch_runs,
                             :create]
 
   before_action      :authorize_for_student,
@@ -30,10 +32,9 @@ class AssignmentsController < ApplicationController
   before_action      :authorize_for_user,
                      only: [:index, :switch_assignment]
 
-  before_action only: [:edit, :new, :update, :create] do
-    authorize! with: AssignmentPolicy
+  before_action only: [:edit, :new, :update, :create, :batch_runs] do
+    authorize!
   end
-  rescue_from ActionPolicy::Unauthorized, with: :user_not_authorized
   # Publicly accessible actions ---------------------------------------
 
   def show

@@ -3,8 +3,7 @@ class ExamTemplatesController < ApplicationController
   responders :flash, :http_cache
   respond_to :html
 
-  before_action { authorize! with: ExamTemplatePolicy }
-  rescue_from ActionPolicy::Unauthorized, with: :user_not_authorized
+  before_action { authorize! }
 
   layout 'assignment_content'
 

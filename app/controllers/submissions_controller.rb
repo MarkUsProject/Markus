@@ -39,9 +39,8 @@ class SubmissionsController < ApplicationController
                 only: [:download, :downloads, :get_feedback_file, :get_file,
                        :populate_file_manager, :update_files]
   before_action only: [:collect_submissions] do
-    authorize! with: SubmissionPolicy
+    authorize!
   end
-  rescue_from ActionPolicy::Unauthorized, with: :user_not_authorized
 
   def index
     respond_to do |format|
@@ -176,7 +175,7 @@ class SubmissionsController < ApplicationController
   end
 
   def manually_collect_and_begin_grading
-    authorize! with: SubmissionPolicy
+    authorize!
     @grouping = Grouping.find(params[:id])
     @revision_identifier = params[:current_revision_identifier]
     apply_late_penalty = params[:apply_late_penalty].nil? ? false : params[:apply_late_penalty]

@@ -6,10 +6,10 @@ class CourseSummariesController < ApplicationController
                          :index,
                          :download_csv_grades_report]
 
-  before_action only: [:download_csv_grades_report] do
-    authorize! with: CourseSummariesPolicy
+  before_action only: [:populate, :index, :download_csv_grades_report] do
+    assignments = Assignment.all
+    authorize! assignments, with: CourseSummaryPolicy
   end
-  rescue_from ActionPolicy::Unauthorized, with: :user_not_authorized
 
   layout 'assignment_content'
 

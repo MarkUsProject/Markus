@@ -3,6 +3,6 @@ class MarkingSchemePolicy < ApplicationPolicy
              :edit?, :destroy?, to: :manage?
 
   def manage?
-    user.admin? || (user.ta? && allowed_to?(:manage_marking_schemes?, with: GraderPermissionsPolicy))
+    user.admin? || (user.ta? && allowed_to?(:manage_marking_schemes?, with: GraderPermissionPolicy))
   end
 end
