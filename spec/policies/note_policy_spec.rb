@@ -25,13 +25,13 @@ describe NotePolicy do
     end
     context 'When TA is allowed to create notes' do
       before do
-        create(:grader_permissions, user_id: user.id, create_notes: true)
+        create(:grader_permission, user_id: user.id, create_notes: true)
       end
       it { is_expected.to pass :create? }
     end
     context 'When TA is not allowed to create notes' do
       before do
-        create(:grader_permissions, user_id: user.id, create_notes: false)
+        create(:grader_permission, user_id: user.id, create_notes: false)
       end
       it { is_expected.not_to pass :create? }
     end

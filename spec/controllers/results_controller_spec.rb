@@ -685,9 +685,11 @@ describe ResultsController do
       let(:deduction) do
         create :grace_period_deduction, membership: grouping.accepted_student_memberships.first, deduction: 1
       end
+      let(:grader_permission) { create(:grader_permission, user_id: ta.id) }
       context 'When TA is allowed to delete_grace_period_deduction' do
         before do
-          GraderPermissions.create(user_id: ta.id, delete_grace_period_deduction: true)
+          grader_permission.delete_grace_period_deduction = true
+          grader_permission.save
         end
         it 'should delete grace period deduction' do
           delete :delete_grace_period_deduction,
@@ -698,7 +700,8 @@ describe ResultsController do
       end
       context 'When TA is not allowed to delete_grace_period_deduction' do
         before do
-          GraderPermissions.create(user_id: ta.id, delete_grace_period_deduction: false)
+          grader_permission.delete_grace_period_deduction = false
+          grader_permission.save
         end
         it 'should not delete grace period deduction' do
           delete :delete_grace_period_deduction,

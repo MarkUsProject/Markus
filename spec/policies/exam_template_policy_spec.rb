@@ -15,13 +15,13 @@ describe ExamTemplatePolicy do
     let(:user) { create(:ta) }
     context 'When TA is allowed to edit, update, download, destroy exam templates' do
       before do
-        create(:grader_permissions, user_id: user.id, manage_exam_templates: true)
+        create(:grader_permission, user_id: user.id, manage_exam_templates: true)
       end
       it { is_expected.to pass :modify? }
     end
     context 'When TA is not allowed to edit, update, download, destroy exam templates' do
       before do
-        create(:grader_permissions, user_id: user.id, manage_exam_templates: false)
+        create(:grader_permission, user_id: user.id, manage_exam_templates: false)
       end
       it { is_expected.not_to pass :modify? }
     end
