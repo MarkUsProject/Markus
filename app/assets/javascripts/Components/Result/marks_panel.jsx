@@ -231,21 +231,23 @@ class FlexibleCriterionInput extends React.Component {
   }
 
   listDeductions = () => {
-    let deductions = ''
-    let label = 'Deductions from annotations: ';
+    let deductions = '';
+    let label = I18n.t('annotations.list_deductions');
     this.props.annotations.map( a => {
       if(a.criterion_id != 'undefined' && a.deduction != 0 && a.criterion_id == this.props.id) {
-        deductions += '-' + a.deduction + ', '
+        deductions += '-' + a.deduction + ', ';
       }
     });
-    if (deductions.length < 1) return <span></span>
+    if (deductions.length < 1) {
+      return <span></span>;
+    }
 
     return (
-      <div className={'mark_deductions'}>
+      <div className={'mark-deductions'}>
         <span>
           {label}
         </span>
-        <span className={'text_deduction'}>
+        <span className={'text-deduction'}>
           {deductions.substring(0, deductions.length - 2)}
         </span>
       </div>);
@@ -301,15 +303,20 @@ class FlexibleCriterionInput extends React.Component {
       <li id={`flexible_criterion_${this.props.id}`}
           className={`flexible_criterion ${expandedClass} ${unassignedClass}`}>
         <div data-id={this.props.id}>
-          <div className='criterion-name' onClick={this.props.toggleExpanded}>
-            <div className={this.props.expanded ? 'arrow-up' : 'arrow-down'} style={{float: 'left'}} />
+          <div className='criterion-name'
+               onClick={this.props.toggleExpanded}
+          >
+            <div className={this.props.expanded ? 'arrow-up' : 'arrow-down'}
+                 style={{float: 'left'}}
+            />
             {this.props.name}
             {!this.props.released_to_students &&
              !this.props.unassigned &&
              this.props.mark !== null &&
              <a href="#"
                 onClick={e => this.props.destroyMark(e, this.props.criterion_type, this.props.id)}
-                style={{float: 'right'}} >
+                style={{float: 'right'}}
+             >
                {I18n.t('helpers.submit.delete', {model: I18n.t('activerecord.models.mark.one')})}
              </a>
             }

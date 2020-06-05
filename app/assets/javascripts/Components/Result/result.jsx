@@ -209,7 +209,8 @@ class Result extends React.Component {
     }
   };
 
-  addAnnotation = (annotation, criterion_id, mark_value, new_subtotal, new_total, new_num_marked) => {
+  addAnnotation = (annotation, criterion_id = 0, mark_value = 0,
+                   new_subtotal = 0, new_total = 0, new_num_marked = 0) => {
     this.setState({annotations: this.state.annotations.concat([annotation])});
 
     if(!isNaN(criterion_id)) {
