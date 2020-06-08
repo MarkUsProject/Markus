@@ -94,7 +94,6 @@ describe MarkingSchemesController do
             assignment_with_criteria_and_results
           ]
         )
-
         params = {
           'id': MarkingScheme.first.id,
           'marking_scheme': {
@@ -109,13 +108,11 @@ describe MarkingSchemesController do
         }
 
         post_as admin, :update, params: params
-
         marking_scheme = MarkingScheme.first
         marking_weights = marking_scheme.marking_weights
+        expected_weights = [2.5, 3.5, 1.5, 0]
         expect(marking_scheme.name).to eq 'Test Marking Scheme 2'
         expect(marking_weights.size).to eq 4
-
-        expected_weights = [2.5, 3.5, 1.5, 0]
         expect(marking_weights.map(&:weight)).to match_array expected_weights
       end
     end
