@@ -6,7 +6,7 @@ FactoryBot.define do
     name { Faker::Lorem.sentence }
 
     after(:create) do |marking_scheme, evaluator|
-      for assessment in evaluator.assessments
+      evaluator.assessments.each do |assessment|
         create(:marking_weight, marking_scheme: marking_scheme, assessment: assessment)
       end
     end

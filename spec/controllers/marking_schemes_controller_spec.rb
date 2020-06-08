@@ -1,5 +1,4 @@
 describe MarkingSchemesController do
-
   let(:grade_entry_form) { create(:grade_entry_form) }
   let(:grade_entry_form_with_data) { create(:grade_entry_form_with_data) }
   let(:assignment) { create(:assignment) }
@@ -33,11 +32,11 @@ describe MarkingSchemesController do
     context '#populate' do
       it 'returns correct JSON data' do
         create(:marking_scheme, assessments: [
-            grade_entry_form,
-            grade_entry_form_with_data,
-            assignment,
-            assignment_with_criteria_and_results
-        ])
+                                               grade_entry_form,
+                                               grade_entry_form_with_data,
+                                               assignment,
+                                               assignment_with_criteria_and_results
+                                             ])
         get_as admin, :populate, format: :json
 
         expected_keys = %w[id name assignment_weights grade_entry_form_weights edit_link delete_link]
@@ -82,21 +81,21 @@ describe MarkingSchemesController do
     context '#update' do
       it 'updates an existing marking scheme with new marking weights' do
         create(:marking_scheme, assessments: [
-            grade_entry_form,
-            grade_entry_form_with_data,
-            assignment,
-            assignment_with_criteria_and_results
-        ])
+                                               grade_entry_form,
+                                               grade_entry_form_with_data,
+                                               assignment,
+                                               assignment_with_criteria_and_results
+                                             ])
 
         params = {
             'id': MarkingScheme.first.id,
             'marking_scheme': {
                 'name': 'Test Marking Scheme 2',
                 'marking_weights_attributes': {
-                    '0': {'id': assignment, 'weight': 2.5},
-                    '1': {'id': assignment_with_criteria_and_results, 'weight': 3.5},
-                    '2': {'id': grade_entry_form, 'weight': 1.5},
-                    '3': {'id': grade_entry_form_with_data, 'weight': 0}
+                    '0': {'id': assignment, 'weight': 2.5 },
+                    '1': {'id': assignment_with_criteria_and_results, 'weight': 3.5 },
+                    '2': {'id': grade_entry_form, 'weight': 1.5 },
+                    '3': {'id': grade_entry_form_with_data, 'weight': 0 }
                 }
             }
         }
@@ -130,11 +129,11 @@ describe MarkingSchemesController do
     context '#edit' do
       before(:each) do
         create(:marking_scheme, assessments: [
-            grade_entry_form,
-            grade_entry_form_with_data,
-            assignment,
-            assignment_with_criteria_and_results
-        ])
+                                               grade_entry_form,
+                                               grade_entry_form_with_data,
+                                               assignment,
+                                               assignment_with_criteria_and_results
+                                             ])
         post_as admin,
                 :edit,
                 params: { id: MarkingScheme.first.id },
@@ -153,11 +152,11 @@ describe MarkingSchemesController do
     context '#destroy' do
       it ' should be able to delete the marking scheme' do
         create(:marking_scheme, assessments: [
-            grade_entry_form,
-            grade_entry_form_with_data,
-            assignment,
-            assignment_with_criteria_and_results
-        ])
+                                               grade_entry_form,
+                                               grade_entry_form_with_data,
+                                               assignment,
+                                               assignment_with_criteria_and_results
+                                             ])
 
         ms = MarkingScheme.first
         delete_as admin,
