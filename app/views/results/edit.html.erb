@@ -26,21 +26,10 @@
                                           .assignment
                                           .annotation_categories
                                           .where.not(flexible_criterion_id: nil).pluck(:id) %>
-      <% puts @result.submission
-                     .grouping
-                                          .assignment
-                                          .annotation_categories
-                                          .where.not(flexible_criterion_id: nil).pluck(:id)[0].class %>
-      console.log([1,2])
     function check_criterion () {
-      console.log(categories_with_criteria)
-      console.log($('#new_annotation_category').val())
-      console.log(categories_with_criteria.indexOf($('#new_annotation_category').val()));
-      if (categories_with_criteria.includes($('#new_annotation_category').val())) {
-        console.log(categories_with_criteria.includes($('#new_annotation_category').val()))
+      if (categories_with_criteria.includes(parseInt($('#new_annotation_category').val()))) {
         $('#deduction_disclaimer').removeClass('hidden');
       } else {
-        console.log(categories_with_criteria.includes($('#new_annotation_category').val()))
         $('#deduction_disclaimer').addClass('hidden');
       }
     }
