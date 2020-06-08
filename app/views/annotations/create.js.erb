@@ -1,4 +1,4 @@
-let annotation_details = {
+annotation_details = {
   id: <%= @annotation.id %>,
   creator: '<%= "#{@annotation.creator.first_name} #{@annotation.creator.last_name}" %>',
   filename: '<%= @annotation.submission_file.filename %>',
@@ -7,9 +7,9 @@ let annotation_details = {
   content: '<%= @annotation.annotation_text.escape_content %>',
   annotation_category: '<%= @annotation.annotation_text.annotation_category&.annotation_category_name %>',
   annotation_text_id: <%= @annotation.annotation_text_id %>,
-  criterion_id: <%= @annotation.annotation_text&.annotation_category.flexible_criterion_id %>,
+  criterion_id: '<%= @annotation.annotation_text.annotation_category&.flexible_criterion_id %>',
   criterion_name: '<%= @annotation.annotation_text&.annotation_category&.flexible_criterion&.name %>',
-  deduction: <%=  @annotation.annotation_text.deduction %>,
+  deduction: '<%= @annotation.annotation_text.deduction %>',
   type: '<%= @annotation.class.name %>',
   number: <%= @annotation.annotation_number %>,
   is_remark: <%= @annotation.is_remark %>,
@@ -28,10 +28,9 @@ let annotation_details = {
   }
 };
 
-let deduction_applied = <%= @annotation.annotation_text.deduction %>;
-if (deduction_applied === null || deduction_applied === 0) {
+<% if @annotation.annotation_text.deduction.nil? %>
   resultComponent.addAnnotation(annotation_details);
-} else {
+<% else %>
   resultComponent.addAnnotation(
     annotation_details,
     <%= @annotation.annotation_text.annotation_category.flexible_criterion_id %>,
@@ -41,7 +40,7 @@ if (deduction_applied === null || deduction_applied === 0) {
     <%= @annotation.result.get_total_mark %>,
     <%= @annotation.result.grouping.assignment.get_num_marked(@current_user.admin? ? nil : @current_user.id) %>
   );
-}
+<% end %>
 
 hide_all_annotation_content_editors();
 reloadDOM();
