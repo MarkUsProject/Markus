@@ -6,6 +6,7 @@ es:
       confirm: "Eliminar esta anotación removerá el texto de cualquier archivo que lo contenga. ¿Está seguro/a de realizar esto?"
       success: "Eliminar la categoría de anotación"
     destroy:
+      error: 'UPDATE ME!'
       success: "Eliminar la categoría de anotación"
       warning: "Eliminar esta categoría de anotación también eliminará las anotaciones de la misma. Las anotaciones eliminadas no estarán asociadas a las entregas de los estudiantes. ¿Está seguro/a de querer hacer esto?"
     download:

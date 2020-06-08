@@ -117,7 +117,7 @@ end
 group :development, :test do
   gem 'byebug'
   gem 'i18n-tasks'
-  gem 'rspec-rails', '~> 4.0.0'
+  gem 'rspec-rails', '~> 4.0.1'
 end
 
 # Gems needed (wanted) for development, test and production_test
