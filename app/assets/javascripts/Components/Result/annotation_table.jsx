@@ -110,7 +110,7 @@ export class AnnotationTable extends React.Component {
     id: 'deduction',
     filterMethod: this.deductionFilter,
     Cell: data => {
-      if (data.original.deduction === null || data.original.deduction === 0) {
+      if (data.original.deduction === null || data.original.deduction === '' || parseFloat(data.original.deduction) === 0.0) {
         return '';
       } else {
         return (
@@ -140,7 +140,7 @@ export class AnnotationTable extends React.Component {
     let allColumns = this.columns;
     if (this.props.detailed) {
       allColumns = allColumns.concat(this.detailedColumns);
-      if(this.props.annotations.some(a => a.deduction != null)) {
+      if(this.props.annotations.some(a => a.deduction != null && a.deduction !== '')) {
         allColumns.push(this.deductionColumn);
       }
     }

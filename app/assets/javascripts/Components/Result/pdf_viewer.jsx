@@ -68,7 +68,7 @@ export class PDFViewer extends React.Component {
       return;
     }
     let content = '';
-    if(annotation.deduction === null || annotation.deduction === 0){
+    if(annotation.deduction === null || annotation.deduction === '' || parseFloat(annotation.deduction) === 0.0){
       content += annotation.content
     } else {
       content += annotation.content + ' [' + annotation.criterion_name + ': -' + annotation.deduction + ']';

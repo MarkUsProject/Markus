@@ -110,7 +110,6 @@ export class MarksPanel extends React.Component {
 
   render() {
     const markComponents = this.props.marks.map(this.renderMarkComponent);
-
     return (
       <div id='mark_viewer' className='flex-col'>
         {!this.props.released_to_students &&
@@ -234,7 +233,9 @@ class FlexibleCriterionInput extends React.Component {
     let deductions = '';
     let label = I18n.t('annotations.list_deductions');
     this.props.annotations.map( a => {
-      if(a.criterion_id != 'undefined' && a.deduction != 0 && a.criterion_id == this.props.id) {
+      console.log(a)
+      if(a.criterion_id !== 'undefined' && parseFloat(a.deduction) !== 0.0 &&
+        parseFloat(a.criterion_id) === this.props.id) {
         deductions += '-' + a.deduction + ', ';
       }
     });
