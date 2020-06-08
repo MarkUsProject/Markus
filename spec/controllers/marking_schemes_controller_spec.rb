@@ -31,12 +31,15 @@ describe MarkingSchemesController do
   describe 'An authorized user' do
     context '#populate' do
       it 'returns correct JSON data' do
-        create(:marking_scheme, assessments: [
-                                               grade_entry_form,
-                                               grade_entry_form_with_data,
-                                               assignment,
-                                               assignment_with_criteria_and_results
-                                             ])
+        create(
+          :marking_scheme,
+          assessments: [
+            grade_entry_form,
+            grade_entry_form_with_data,
+            assignment,
+            assignment_with_criteria_and_results
+          ]
+        )
         get_as admin, :populate, format: :json
 
         expected_keys = %w[id name assignment_weights grade_entry_form_weights edit_link delete_link]
@@ -58,13 +61,13 @@ describe MarkingSchemesController do
     context '#create' do
       it 'creates a marking scheme with marking weights' do
         params = {
-            'marking_scheme': {
-                'name': 'Test Marking Scheme',
-                'marking_weights_attributes': {
-                    '0': {'id': assignment, 'weight': 1},
-                    '1': {'id': assignment_with_criteria_and_results, 'weight': 2}
-                }
+          'marking_scheme': {
+            'name': 'Test Marking Scheme',
+            'marking_weights_attributes': {
+              '0': {'id': assignment, 'weight': 1 },
+              '1': {'id': assignment_with_criteria_and_results, 'weight': 2 }
             }
+          }
         }
 
         post_as admin, :create, params: params
@@ -74,7 +77,7 @@ describe MarkingSchemesController do
         expect(marking_weights.size).to eq 2
 
         expected_ids = [assignment.id, assignment_with_criteria_and_results.id]
-        expect(marking_weights.map { |mw| mw.assessment_id }).to match_array expected_ids
+        expect(marking_weights.map(&:assessment_id)).to match_array expected_ids
       end
     end
 
@@ -88,16 +91,16 @@ describe MarkingSchemesController do
                                              ])
 
         params = {
-            'id': MarkingScheme.first.id,
-            'marking_scheme': {
-                'name': 'Test Marking Scheme 2',
-                'marking_weights_attributes': {
-                    '0': {'id': assignment, 'weight': 2.5 },
-                    '1': {'id': assignment_with_criteria_and_results, 'weight': 3.5 },
-                    '2': {'id': grade_entry_form, 'weight': 1.5 },
-                    '3': {'id': grade_entry_form_with_data, 'weight': 0 }
-                }
+          'id': MarkingScheme.first.id,
+          'marking_scheme': {
+            'name': 'Test Marking Scheme 2',
+            'marking_weights_attributes': {
+              '0': {'id': assignment, 'weight': 2.5 },
+              '1': {'id': assignment_with_criteria_and_results, 'weight': 3.5 },
+              '2': {'id': grade_entry_form, 'weight': 1.5 },
+              '3': {'id': grade_entry_form_with_data, 'weight': 0 }
             }
+          }
         }
 
         post_as admin, :update, params: params
@@ -108,7 +111,7 @@ describe MarkingSchemesController do
         expect(marking_weights.size).to eq 4
 
         expected_weights = [2.5, 3.5, 1.5, 0]
-        expect(marking_weights.map { |mw| mw.weight }).to match_array expected_weights
+        expect(marking_weights.map(&:weight)).to match_array expected_weights
       end
     end
 
@@ -128,12 +131,16 @@ describe MarkingSchemesController do
 
     context '#edit' do
       before(:each) do
-        create(:marking_scheme, assessments: [
-                                               grade_entry_form,
-                                               grade_entry_form_with_data,
-                                               assignment,
-                                               assignment_with_criteria_and_results
-                                             ])
+        create(
+          :marking_scheme,
+          assessments: [
+            grade_entry_form,
+            grade_entry_form_with_data,
+            assignment,
+            assignment_with_criteria_and_results
+          ]
+        )
+
         post_as admin,
                 :edit,
                 params: { id: MarkingScheme.first.id },
@@ -151,12 +158,15 @@ describe MarkingSchemesController do
 
     context '#destroy' do
       it ' should be able to delete the marking scheme' do
-        create(:marking_scheme, assessments: [
-                                               grade_entry_form,
-                                               grade_entry_form_with_data,
-                                               assignment,
-                                               assignment_with_criteria_and_results
-                                             ])
+        create(
+          :marking_scheme,
+          assessments: [
+            grade_entry_form,
+            grade_entry_form_with_data,
+            assignment,
+            assignment_with_criteria_and_results
+          ]
+        )
 
         ms = MarkingScheme.first
         delete_as admin,
