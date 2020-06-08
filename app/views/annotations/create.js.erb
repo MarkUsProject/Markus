@@ -9,7 +9,7 @@
     annotation_category: '<%= @annotation.annotation_text.annotation_category&.annotation_category_name %>',
     annotation_text_id: <%= @annotation.annotation_text_id %>,
     criterion_id: <%= @annotation.annotation_text.annotation_category&.flexible_criterion_id || 'undefined' %>,
-    criterion_name: <%= @annotation.annotation_text.annotation_category&.flexible_criterion&.name || 'undefined' %>,
+    criterion_name: '<%= @annotation.annotation_text.annotation_category&.flexible_criterion&.name || 'undefined' %>',
     deduction: <%= @annotation.annotation_text.deduction || 'undefined' %>,
     type: '<%= @annotation.class.name %>',
     number: <%= @annotation.annotation_number %>,
