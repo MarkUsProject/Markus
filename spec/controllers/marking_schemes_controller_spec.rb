@@ -51,10 +51,12 @@ describe MarkingSchemesController do
         expect(data_hash.keys).to match_array expected_keys
 
         assignment_weights = data_hash['assignment_weights']
-        expect(assignment_weights.keys).to match_array [assignment.id.to_s, assignment_with_criteria_and_results.id.to_s]
+        expected_assignment_ids = [assignment.id.to_s, assignment_with_criteria_and_results.id.to_s]
+        expect(assignment_weights.keys).to match_array expected_assignment_ids
 
         grade_entry_form_weights = data_hash['grade_entry_form_weights']
-        expect(grade_entry_form_weights.keys).to match_array [grade_entry_form.id.to_s, grade_entry_form_with_data.id.to_s]
+        expected_grade_entry_form_ids = [grade_entry_form.id.to_s, grade_entry_form_with_data.id.to_s]
+        expect(grade_entry_form_weights.keys).to match_array expected_grade_entry_form_ids
       end
     end
 
@@ -83,12 +85,15 @@ describe MarkingSchemesController do
 
     context '#update' do
       it 'updates an existing marking scheme with new marking weights' do
-        create(:marking_scheme, assessments: [
-                                               grade_entry_form,
-                                               grade_entry_form_with_data,
-                                               assignment,
-                                               assignment_with_criteria_and_results
-                                             ])
+        create(
+          :marking_scheme,
+          assessments: [
+            grade_entry_form,
+            grade_entry_form_with_data,
+            assignment,
+            assignment_with_criteria_and_results
+          ]
+        )
 
         params = {
           'id': MarkingScheme.first.id,
