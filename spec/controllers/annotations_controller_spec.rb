@@ -119,12 +119,11 @@ describe AnnotationsController do
       it 'successfully creates an annotation where the deduction is not specified but a category with criterion is' do
         assignment = create(:assignment_with_deductive_annotations)
         category = assignment.annotation_categories.where.not(flexible_criterion_id: nil).first
-        text = category.annotation_texts.first
         result = assignment.groupings.first.current_result
         submission_file = create(:submission_file, submission: result.submission)
         post_as user,
                 :create,
-                params: { content: text.content, category_id: category.id,
+                params: { content: 'I like icecream!', category_id: category.id,
                           submission_file_id: submission_file.id, line_start: 1, line_end: 1, column_start: 1,
                           column_end: 1, result_id: result.id, assignment_id: assignment.id },
                 format: :js
