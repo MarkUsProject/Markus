@@ -64,8 +64,8 @@ describe MarkingSchemesController do
           'marking_scheme': {
             'name': 'Test Marking Scheme',
             'marking_weights_attributes': {
-              '0': {'id': assignment, 'weight': 1 },
-              '1': {'id': assignment_with_criteria_and_results, 'weight': 2 }
+              '0': { 'id': assignment, 'weight': 1 },
+              '1': { 'id': assignment_with_criteria_and_results, 'weight': 2 }
             }
           }
         }
@@ -95,10 +95,10 @@ describe MarkingSchemesController do
           'marking_scheme': {
             'name': 'Test Marking Scheme 2',
             'marking_weights_attributes': {
-              '0': {'id': assignment, 'weight': 2.5 },
-              '1': {'id': assignment_with_criteria_and_results, 'weight': 3.5 },
-              '2': {'id': grade_entry_form, 'weight': 1.5 },
-              '3': {'id': grade_entry_form_with_data, 'weight': 0 }
+              '0': { 'id': assignment, 'weight': 2.5 },
+              '1': { 'id': assignment_with_criteria_and_results, 'weight': 3.5 },
+              '2': { 'id': grade_entry_form, 'weight': 1.5 },
+              '3': { 'id': grade_entry_form_with_data, 'weight': 0 }
             }
           }
         }
