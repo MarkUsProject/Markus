@@ -110,7 +110,8 @@ export class AnnotationTable extends React.Component {
     id: 'deduction',
     filterMethod: this.deductionFilter,
     Cell: data => {
-      if (data.original.deduction === null || data.original.deduction === '' || parseFloat(data.original.deduction) === 0.0) {
+      if (data.original.deduction === undefined || data.original.deduction === null ||
+          data.original.deduction === 0.0) {
         return '';
       } else {
         return (

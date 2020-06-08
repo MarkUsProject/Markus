@@ -233,9 +233,9 @@ class FlexibleCriterionInput extends React.Component {
     let deductions = '';
     let label = I18n.t('annotations.list_deductions');
     this.props.annotations.map( a => {
-      console.log(a)
-      if(a.criterion_id !== 'undefined' && parseFloat(a.deduction) !== 0.0 &&
-        parseFloat(a.criterion_id) === this.props.id) {
+      if (a.criterion_id !== undefined && a.criterion_id !== null &&
+          a.deduction !== 0.0 && a.criterion_id === this.props.id) {
+        console.log(a);
         deductions += '-' + a.deduction + ', ';
       }
     });
