@@ -763,9 +763,9 @@ class ResultsController < ApplicationController
       flash_message(:error, e.message)
       head :bad_request
     end
-      grace_deduction = result.submission.grouping.grace_period_deductions.find(params[:deduction_id])
-      grace_deduction.destroy
-      head :ok
+    grace_deduction = result.submission.grouping.grace_period_deductions.find(params[:deduction_id])
+    grace_deduction.destroy
+    head :ok
   end
 
   def get_test_runs_instructors
