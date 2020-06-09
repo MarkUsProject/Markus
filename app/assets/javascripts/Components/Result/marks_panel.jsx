@@ -110,6 +110,7 @@ export class MarksPanel extends React.Component {
 
   render() {
     const markComponents = this.props.marks.map(this.renderMarkComponent);
+
     return (
       <div id='mark_viewer' className='flex-col'>
         {!this.props.released_to_students &&

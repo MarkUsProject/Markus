@@ -25,7 +25,7 @@
                                           .grouping
                                           .assignment
                                           .annotation_categories
-                                          .where.not(flexible_criterion_id: nil).pluck(:id) %>
+                                          .where.not(flexible_criterion_id: nil).pluck(:id) %>;
     function check_criterion () {
       if (categories_with_criteria.includes(parseInt($('#new_annotation_category').val()))) {
         $('#deduction_disclaimer').removeClass('hidden');
