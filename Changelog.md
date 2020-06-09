@@ -9,6 +9,8 @@
 - Introduces automated email sending for spreadsheet releases (#4460)
 - Introduces automated email sending for grouping invitations (#4470)
 - Introduces student email settings (#4578)
+- Fixed bug preventing graders from downloading submission files from multiple students (#4658)
+- Fixed bug preventing downloading all submission files from git repo (#4658)
 - Assignment grader distribution graphs only show marks for assigned criteria when graders are assigned specific
   criteria (#4656) 
 
