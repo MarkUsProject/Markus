@@ -226,7 +226,8 @@ class FlexibleCriterionInput extends React.Component {
     super(props);
     this.state = {
       rawText: this.props.mark === null ? '' : String(this.props.mark),
-      invalid: false
+      invalid: false,
+      override: false
     };
   }
 
@@ -252,6 +253,21 @@ class FlexibleCriterionInput extends React.Component {
           {deductions.substring(0, deductions.length - 2)}
         </span>
       </div>);
+  }
+
+  changeMark = () => {
+
+    let button = ''
+    // add logic to change back to auto marking
+    if (!this.props.released_to_students && !this.props.unassigned && this.props.mark !== null) {
+      button = <a href="#"
+                  onClick={e => this.props.destroyMark(e, this.props.criterion_type, this.props.id)}
+                  style={{float: 'right'}}>
+                 {I18n.t('helpers.submit.delete', {model: I18n.t('activerecord.models.mark.one')})}
+               </a>
+    }
+
+    return button;
   }
 
   handleChange = (event) => {
@@ -311,16 +327,7 @@ class FlexibleCriterionInput extends React.Component {
                  style={{float: 'left'}}
             />
             {this.props.name}
-            {!this.props.released_to_students &&
-             !this.props.unassigned &&
-             this.props.mark !== null &&
-             <a href="#"
-                onClick={e => this.props.destroyMark(e, this.props.criterion_type, this.props.id)}
-                style={{float: 'right'}}
-             >
-               {I18n.t('helpers.submit.delete', {model: I18n.t('activerecord.models.mark.one')})}
-             </a>
-            }
+            {this.changeMark()}
           </div>
           <div className='criterion-description'>
             {this.props.description}
