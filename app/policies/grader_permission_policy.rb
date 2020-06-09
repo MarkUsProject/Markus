@@ -2,6 +2,7 @@ class GraderPermissionPolicy < ApplicationPolicy
   def create_delete_annotations?
     user.grader_permission.create_delete_annotations
   end
+
   def collect_all_submissions?
     user.grader_permission.collect_submissions
   end
