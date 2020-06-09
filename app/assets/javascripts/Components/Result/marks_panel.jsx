@@ -94,6 +94,7 @@ export class MarksPanel extends React.Component {
       expanded: this.state.expanded.has(key),
       oldMark: this.props.old_marks[`${markData.criterion_type}-${markData.id}`],
       toggleExpanded: () => this.toggleExpanded(key),
+      annotations: this.props.annotations,
       ... markData
     };
     if (markData.criterion_type === 'CheckboxCriterion') {
@@ -229,6 +230,30 @@ class FlexibleCriterionInput extends React.Component {
     };
   }
 
+  listDeductions = () => {
+    let deductions = '';
+    let label = I18n.t('annotations.list_deductions');
+    this.props.annotations.map( a => {
+      if (a.criterion_id !== undefined && a.criterion_id !== null &&
+          a.deduction !== 0.0 && a.criterion_id === this.props.id) {
+        deductions += '-' + a.deduction + ', ';
+      }
+    });
+    if (deductions.length < 1) {
+      return <span></span>;
+    }
+
+    return (
+      <div className={'mark-deductions'}>
+        <span>
+          {label}
+        </span>
+        <span className={'text-deduction'}>
+          {deductions.substring(0, deductions.length - 2)}
+        </span>
+      </div>);
+  }
+
   handleChange = (event) => {
     const mark = parseFloat(event.target.value);
     if (event.target.value !== '' && isNaN(mark)) {
@@ -305,6 +330,7 @@ class FlexibleCriterionInput extends React.Component {
             &nbsp;/&nbsp;
             {this.props.max_mark}
           </span>
+          {this.listDeductions()}
           {this.props.oldMark !== undefined &&
            <div className='old-mark'>
              {`(${I18n.t('results.remark.old_mark')}: ${this.props.oldMark})`}

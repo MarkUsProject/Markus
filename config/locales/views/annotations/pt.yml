@@ -2,6 +2,8 @@ pt:
   annotations:
     help_message: "Clique em uma categoria de anotação para adicionar anotações."
     last_edited_by: "Última edição por:"
+    default_deduction: 'UPDATE ME!'
+    list_deductions: 'UPDATE ME!'
 
     download_submission_file:
       begin_annotation: "%{comment_start} ANOTAÇÃO %{id}: %{text} %{comment_end}"

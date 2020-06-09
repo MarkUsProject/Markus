@@ -67,8 +67,14 @@ export class PDFViewer extends React.Component {
     if (annotation.x_range === undefined || annotation.y_range === undefined) {
       return;
     }
+    let content = '';
+    if (annotation.deduction === undefined || annotation.deduction === null || annotation.deduction === 0.0) {
+      content += annotation.content;
+    } else {
+      content += annotation.content + ' [' + annotation.criterion_name + ': -' + annotation.deduction + ']';
+    }
 
-    add_annotation_text(annotation.annotation_text_id, annotation.content);
+    add_annotation_text(annotation.annotation_text_id, content);
     annotation_manager.addAnnotation(
       annotation.annotation_text_id,
       marked(annotation.content, {sanitize: true}),

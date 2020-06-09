@@ -1,29 +1,49 @@
-resultComponent.addAnnotation({
-  id: <%= @annotation.id %>,
-  creator: '<%= "#{@annotation.creator.first_name} #{@annotation.creator.last_name}" %>',
-  filename: '<%= @annotation.submission_file.filename %>',
-  path: '<%= @annotation.submission_file.path.split('/', 2)[1] %>',
-  submission_file_id: <%= @annotation.submission_file_id %>,
-  content: '<%= @annotation.annotation_text.escape_content %>',
-  annotation_category: '<%= @annotation.annotation_text.annotation_category&.annotation_category_name %>',
-  annotation_text_id: <%= @annotation.annotation_text_id %>,
-  type: '<%= @annotation.class.name %>',
-  number: <%= @annotation.annotation_number %>,
-  is_remark: <%= @annotation.is_remark %>,
-  line_start: <%= @annotation.line_start || 'undefined' %>,
-  line_end: <%= @annotation.line_end || 'undefined' %>,
-  column_start: <%= @annotation.column_start || 'undefined' %>,
-  column_end: <%= @annotation.column_end || 'undefined' %>,
-  page: <%= @annotation.page || 'undefined' %>,
-  x_range: {
-    start: <%= [@annotation.x1, @annotation.x2].min || 'undefined' %>,
-    end: <%= [@annotation.x1, @annotation.x2].max || 'undefined' %>
-  },
-  y_range: {
-    start: <%= [@annotation.y1, @annotation.y2].min || 'undefined' %>,
-    end: <%= [@annotation.y1, @annotation.y2].max || 'undefined' %>
-  }
-});
+(function () {
+  annotation_details = {
+    id: <%= @annotation.id %>,
+    creator: '<%= "#{@annotation.creator.first_name} #{@annotation.creator.last_name}" %>',
+    filename: '<%= @annotation.submission_file.filename %>',
+    path: '<%= @annotation.submission_file.path.split('/', 2)[1] %>',
+    submission_file_id: <%= @annotation.submission_file_id %>,
+    content: '<%= @annotation.annotation_text.escape_content %>',
+    annotation_category: '<%= @annotation.annotation_text.annotation_category&.annotation_category_name %>',
+    annotation_text_id: <%= @annotation.annotation_text_id %>,
+    criterion_id: <%= @annotation.annotation_text.annotation_category&.flexible_criterion_id || 'undefined' %>,
+    criterion_name: '<%= @annotation.annotation_text.annotation_category&.flexible_criterion&.name || 'undefined' %>',
+    deduction: <%= @annotation.annotation_text.deduction || 'undefined' %>,
+    type: '<%= @annotation.class.name %>',
+    number: <%= @annotation.annotation_number %>,
+    is_remark: <%= @annotation.is_remark %>,
+    line_start: <%= @annotation.line_start || 'undefined' %>,
+    line_end: <%= @annotation.line_end || 'undefined' %>,
+    column_start: <%= @annotation.column_start || 'undefined' %>,
+    column_end: <%= @annotation.column_end || 'undefined' %>,
+    page: <%= @annotation.page || 'undefined' %>,
+    x_range: {
+      start: <%= [@annotation.x1, @annotation.x2].min || 'undefined' %>,
+      end: <%= [@annotation.x1, @annotation.x2].max || 'undefined' %>
+    },
+    y_range: {
+      start: <%= [@annotation.y1, @annotation.y2].min || 'undefined' %>,
+      end: <%= [@annotation.y1, @annotation.y2].max || 'undefined' %>
+    }
+  };
 
-hide_all_annotation_content_editors();
-reloadDOM();
+
+  <% if @annotation.annotation_text.deduction.nil? %>
+    resultComponent.addAnnotation(annotation_details);
+  <% else %>
+    resultComponent.addAnnotation(
+      annotation_details,
+      <%= @annotation.annotation_text.annotation_category.flexible_criterion_id %>,
+      <%= @annotation.result.marks
+                     .find_by(markable: @annotation.annotation_text&.annotation_category.flexible_criterion).mark  %>,
+      <%= @annotation.result.get_subtotal %>,
+      <%= @annotation.result.get_total_mark %>,
+      <%= @annotation.result.grouping.assignment.get_num_marked(@current_user.admin? ? nil : @current_user.id) %>
+    );
+  <% end %>
+
+  hide_all_annotation_content_editors();
+  reloadDOM();
+})();

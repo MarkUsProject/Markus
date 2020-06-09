@@ -3,6 +3,8 @@ en:
     help_message: "Click on an annotation category to add annotations."
     last_edited_by: "Last Edited By:"
     text: "Text"
+    default_deduction: 'This annotation will have no deduction. Admins can configure deductions in assignment settings.'
+    list_deductions: 'Deductions from annotations: '
 
     download_submission_file:
       begin_annotation: "%{comment_start} ANNOTATION %{id}: %{text} %{comment_end}"

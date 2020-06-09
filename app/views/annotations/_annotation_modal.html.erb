@@ -21,13 +21,18 @@
         <h3><%= AnnotationCategory.model_name.human %></h3>
         <% options = [[t('annotation_categories.one_time_only'), '']] %>
         <% assignment.annotation_categories.each do |annotation_category| %>
-          <% options << [annotation_category.annotation_category_name, annotation_category.id] %>
+          <% c = annotation_category.flexible_criterion_id.nil? ? '' :
+                   " [#{annotation_category.flexible_criterion.name}]" %>
+          <% options << [annotation_category.annotation_category_name + c, annotation_category.id] %>
         <% end %>
         <% selected = annotation&.annotation_text&.annotation_category_id %>
-        <select id='new_annotation_category' name='category_id'
+        <select id='new_annotation_category' name='category_id' onchange="check_criterion()"
                 <%= "disabled='true'" unless annotation.nil? %>>
           <%= options_for_select(options, selected) %>
         </select>
+        <p id='deduction_disclaimer' class='hidden'>
+          <%= t('annotations.default_deduction') %>
+        </p>
       <% end %>
 
       <section class='dialog-actions'>
