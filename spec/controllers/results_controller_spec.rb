@@ -322,6 +322,36 @@ describe ResultsController do
         expect(incomplete_result.overall_comment).to eq SAMPLE_COMMENT
       end
     end
+
+    context 'accessing an assignment with deductive annotations' do
+      it 'returns annotation data with criteria information' do
+        assignment = create(:assignment_with_deductive_annotations)
+        post :get_annotations, params: { assignment_id: assignment.id,
+                                         submission_id: assignment.groupings.first.current_result.submission.id,
+                                         id: assignment.groupings.first.current_result,
+                                         format: :json }, xhr: true
+
+        expect(response.parsed_body.first['criterion_name']).to eq assignment.flexible_criteria.first.name
+        expect(response.parsed_body.first['criterion_id']).to eq assignment.flexible_criteria.first.id
+        expect(response.parsed_body.first['deduction']).to eq 1.0
+      end
+
+      it 'returns annotation_category data with deductive information' do
+        assignment = create(:assignment_with_deductive_annotations)
+        category = assignment.annotation_categories.where.not(flexible_criterion: nil).first
+        post :show, params: { assignment_id: assignment.id,
+                              submission_id: assignment.groupings.first.current_result.submission.id,
+                              id: assignment.groupings.first.current_result,
+                              format: :json }, xhr: true
+
+        expect(response.parsed_body['annotation_categories'].first['annotation_category_name'])
+          .to eq "#{category.annotation_category_name}"\
+                 "#{category.flexible_criterion_id.nil? ? '' : " [#{category.flexible_criterion.name}]"}"
+        expect(response.parsed_body['annotation_categories'].first['texts'].first['deduction']).to eq 1.0
+        expect(response.parsed_body['annotation_categories']
+                   .first['flexible_criterion_id']).to eq category.flexible_criterion.id
+      end
+    end
   end
 
   ROUTES = { update_mark: :patch,

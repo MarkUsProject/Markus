@@ -62,11 +62,14 @@ class AnnotationsController < ApplicationController
     submission = result.submission
     submission_file = submission.submission_files.find(params[:submission_file_id])
 
+    d = result.grouping.assignment.annotation_categories.find_by(id: params[:category_id])&.flexible_criterion_id
+
     text = AnnotationText.create!(
       content: params[:content],
       annotation_category_id: params[:category_id],
       creator_id: current_user.id,
-      last_editor_id: current_user.id
+      last_editor_id: current_user.id,
+      deduction: d.nil? ? nil : 0.0
     )
     base_attributes = {
       annotation_number: result.annotations.size + 1,

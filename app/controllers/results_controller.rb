@@ -126,15 +126,18 @@ class ResultsController < ApplicationController
                                             .order(:position)
                                             .includes(:annotation_texts)
           data[:annotation_categories] = annotation_categories.map do |category|
+            name_extension = category.flexible_criterion_id.nil? ? '' : " [#{category.flexible_criterion.name}]"
             {
               id: category.id,
-              annotation_category_name: category.annotation_category_name,
+              annotation_category_name: category.annotation_category_name + name_extension,
               texts: category.annotation_texts.map do |text|
                 {
                   id: text.id,
-                  content: text.content
+                  content: text.content,
+                  deduction: text.deduction
                 }
-              end
+              end,
+              flexible_criterion_id: category.flexible_criterion_id
             }
           end
           data[:notes_count] = submission.grouping.notes.count

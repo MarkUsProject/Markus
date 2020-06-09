@@ -647,6 +647,7 @@ ul.tags {
       li {
         color: $dark-grey;
         cursor: pointer;
+        display: inline-flex;
         list-style: none;
         padding: 0.5em;
         width: 100%;
@@ -657,6 +658,15 @@ ul.tags {
         }
       }
     }
+  }
+
+  .text-content {
+    flex: 1;
+  }
+
+  .text-deduction {
+    color: $red;
+    text-align: right;
   }
 }
 
@@ -686,6 +696,10 @@ ul.tags {
   position: absolute;
   top: 50%;
   transform: translate(-50%, -50%);
+}
+
+.hidden {
+  display: none;
 }
 
 .dialog {

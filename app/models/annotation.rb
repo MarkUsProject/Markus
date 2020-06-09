@@ -40,7 +40,10 @@ class Annotation < ApplicationRecord
         annotation_text.annotation_category&.annotation_category_name,
       type: self.class.name,
       number: annotation_number,
-      is_remark: is_remark
+      is_remark: is_remark,
+      deduction: annotation_text.deduction,
+      criterion_name: annotation_text.annotation_category&.flexible_criterion&.name,
+      criterion_id: annotation_text.annotation_category&.flexible_criterion&.id
     }
 
     if include_creator

@@ -20,6 +20,19 @@
 
       window.modal_help = new ModalMarkus('#help_dialog');
     });
+
+    categories_with_criteria = <%= @result.submission
+                                          .grouping
+                                          .assignment
+                                          .annotation_categories
+                                          .where.not(flexible_criterion_id: nil).pluck(:id) %>;
+    function check_criterion () {
+      if (categories_with_criteria.includes(parseInt($('#new_annotation_category').val()))) {
+        $('#deduction_disclaimer').removeClass('hidden');
+      } else {
+        $('#deduction_disclaimer').addClass('hidden');
+      }
+    }
   </script>
 <% end %>
 

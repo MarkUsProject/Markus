@@ -3,6 +3,11 @@ import ReactTable from 'react-table';
 
 
 export class AnnotationTable extends React.Component {
+
+  deductionFilter = (filter, row) => {
+    return String(row[filter.id]).toLocaleLowerCase().includes(filter.value.toLocaleLowerCase());
+  }
+
   columns = [
     {
       Header: '#',
@@ -61,7 +66,7 @@ export class AnnotationTable extends React.Component {
       accessor: 'content',
       Cell: data => {
         let edit_button = "";
-        if (!this.props.released_to_students) {
+        if (!this.props.released_to_students && isNaN(data.original.deduction)) {
           edit_button = <a
             href="#"
             className="edit-icon"
@@ -99,6 +104,31 @@ export class AnnotationTable extends React.Component {
     },
   ];
 
+  deductionColumn = {
+    Header: I18n.t('activerecord.attributes.annotation_text.deduction'),
+    accessor: row => '[' + row.criterion_name + '] -' + row.deduction,
+    id: 'deduction',
+    filterMethod: this.deductionFilter,
+    Cell: data => {
+      if (data.original.deduction === undefined || data.original.deduction === null ||
+          data.original.deduction === 0.0) {
+        return '';
+      } else {
+        return (
+          <div>
+            <span>
+              {'[' + data.original.criterion_name + '] '}
+            </span>
+            <span className={'text-deduction'}>
+              {'-' + data.original.deduction}
+            </span>
+          </div>
+        );
+      }
+    },
+    maxWidth: 120
+  };
+
   componentDidMount() {
     MathJax.Hub.Queue(['Typeset', MathJax.Hub, 'annotation_table']);
   }
@@ -111,6 +141,9 @@ export class AnnotationTable extends React.Component {
     let allColumns = this.columns;
     if (this.props.detailed) {
       allColumns = allColumns.concat(this.detailedColumns);
+    }
+    if (this.props.annotations.some(a => a.deduction !== null && a.deduction !== undefined)) {
+      allColumns.push(this.deductionColumn);
     }
 
     return (
