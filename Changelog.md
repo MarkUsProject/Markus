@@ -1,4 +1,5 @@
 # Changelog
+
 ## [v1.9.2]
 - Fixed bug preventing all git hooks from being run in production (#4594)
 - Fixed bug preventing folders from being deleted in file managers (#4605)

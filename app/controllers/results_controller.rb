@@ -494,7 +494,7 @@ class ResultsController < ApplicationController
         revision = repo.get_revision(revision_identifier)
         repo.send_tree_to_zip(assignment.repository_folder, zip_file, zip_name, revision) do |file|
           submission_file = files.find_by(filename: file.name, path: file.path)
-          submission_file.retrieve_file(params[:include_annotations] == 'true' && !submission_file.is_supported_image?)
+          submission_file&.retrieve_file(params[:include_annotations] == 'true' && !submission_file.is_supported_image?)
         end
       end
     end
