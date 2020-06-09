@@ -142,7 +142,7 @@ export class AnnotationTable extends React.Component {
     if (this.props.detailed) {
       allColumns = allColumns.concat(this.detailedColumns);
     }
-    if (this.props.annotations.some(a => a.deduction !== null && a.deduction !== '')) {
+    if (this.props.annotations.some(a => a.deduction !== null && a.deduction !== undefined)) {
       allColumns.push(this.deductionColumn);
     }
 
