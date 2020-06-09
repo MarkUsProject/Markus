@@ -235,7 +235,6 @@ class FlexibleCriterionInput extends React.Component {
     this.props.annotations.map( a => {
       if (a.criterion_id !== undefined && a.criterion_id !== null &&
           a.deduction !== 0.0 && a.criterion_id === this.props.id) {
-        console.log(a);
         deductions += '-' + a.deduction + ', ';
       }
     });

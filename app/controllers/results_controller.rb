@@ -126,10 +126,10 @@ class ResultsController < ApplicationController
                                             .order(:position)
                                             .includes(:annotation_texts)
           data[:annotation_categories] = annotation_categories.map do |category|
+            name_extension = category.flexible_criterion_id.nil? ? '' : " [#{category.flexible_criterion.name}]"
             {
               id: category.id,
-              annotation_category_name: "#{category.annotation_category_name}"\
-                                        "#{category.flexible_criterion_id.nil? ? '' : " [#{category.flexible_criterion.name}]"}",
+              annotation_category_name: category.annotation_category_name + name_extension,
               texts: category.annotation_texts.map do |text|
                 {
                   id: text.id,

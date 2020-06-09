@@ -132,7 +132,6 @@ describe AnnotationsController do
         expect(result.annotations.reload.size).to eq 2
         expect(result.annotations.joins(:annotation_text).where('annotation_texts.deduction': 0).size).to eq 1
       end
-
     end
 
     describe '#destroy' do

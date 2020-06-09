@@ -209,11 +209,11 @@ class Result extends React.Component {
     }
   };
 
-  addAnnotation = (annotation, criterion_id = null, mark_value = 0,
-                   new_subtotal = 0, new_total = 0, new_num_marked = 0) => {
+  addAnnotation = (annotation, criterion_id = null, mark_value = null,
+                   new_subtotal = null, new_total = null, new_num_marked = null) => {
     this.setState({annotations: this.state.annotations.concat([annotation])});
 
-    if(!isNaN(criterion_id)) {
+    if (!isNaN(criterion_id)) {
       let newMarks = [...this.state.marks];
       let i = newMarks.findIndex(m => m.id === criterion_id && m.criterion_type === "FlexibleCriterion");
       if (i >= 0) {

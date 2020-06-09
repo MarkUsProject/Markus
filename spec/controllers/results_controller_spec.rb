@@ -343,8 +343,8 @@ describe ResultsController do
                               id: assignment.groupings.first.current_result }, xhr: true
 
         expect(JSON.parse(response.body)['annotation_categories'].first['annotation_category_name'])
-            .to eq "#{category.annotation_category_name}"\
-                   "#{category.flexible_criterion_id.nil? ? '' : " [#{category.flexible_criterion.name}]"}"
+          .to eq "#{category.annotation_category_name}"\
+                 "#{category.flexible_criterion_id.nil? ? '' : " [#{category.flexible_criterion.name}]"}"
         expect(JSON.parse(response.body)['annotation_categories'].first['texts'].first['deduction']).to eq 1.0
         expect(JSON.parse(response.body)['annotation_categories']
                    .first['flexible_criterion_id']).to eq category.flexible_criterion.id
