@@ -904,32 +904,9 @@ describe CriteriaController do
       end
 
       it 'does not create criteria that have unmatched keys / more keys than required' do
+        expect(assignment.get_criteria(:all, :rubric).length).to eq(1)
         post_as admin, :upload, params: { assignment_id: assignment.id, upload_file: partially_valid_file }
-
-        criteria = assignment.get_criteria(:all, :rubric).first
-        expect(criteria.name).to eq('Quality of Writing')
-        expect(criteria.levels.size).to eq 6
-        criteria.levels.each do |level|
-          expect(level.valid?).to eq true
-        end
-        expect(criteria.levels[0].name).to eq('Beginner')
-        expect(criteria.levels[0].description).to eq('The essay is very poorly organized'\
-                                                       ' structure and gives no new information.')
-        expect(criteria.levels[0].mark).to eq(10.0)
-
-        expect(criteria.levels[1].name).to eq('Capable')
-        expect(criteria.levels[1].description).to eq('The essay is poorly organized but gives new information.')
-        expect(criteria.levels[1].mark).to eq(14.0)
-
-        expect(criteria.levels[2].name).to eq('Accomplished')
-        expect(criteria.levels[2].description).to eq('The essay is well-structure and conveys new information clearly.')
-        expect(criteria.levels[2].mark).to eq(18.0)
-
-        expect(criteria.levels[3].name).to eq('Level 3')
-        expect(criteria.levels[3].description).to eq('Level 3 description in one line.')
-        expect(criteria.levels[3].mark).to eq(22.0)
-
-        pending('We should report there is an invalid key in the file')
+        expect(assignment.get_criteria(:all, :rubric).length).to eq(1)
         expect(flash[:error]).not_to be_nil
       end
 
