@@ -332,7 +332,7 @@ ActiveRecord::Schema.define(version: 2020_05_26_185329) do
     t.decimal "weight"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.bigint "assessment_id"
+    t.bigint "assessment_id", null: false
     t.index ["assessment_id"], name: "index_marking_weights_on_assessment_id"
   end
 
@@ -611,6 +611,7 @@ ActiveRecord::Schema.define(version: 2020_05_26_185329) do
   add_foreign_key "groupings", "assessments", name: "fk_groupings_assignments"
   add_foreign_key "groupings", "groups", name: "fk_groupings_groups"
   add_foreign_key "levels", "rubric_criteria"
+  add_foreign_key "marking_weights", "assessments"
   add_foreign_key "marks", "results", name: "fk_marks_results", on_delete: :cascade
   add_foreign_key "memberships", "groupings", name: "fk_memberships_groupings"
   add_foreign_key "memberships", "users", name: "fk_memberships_users"
