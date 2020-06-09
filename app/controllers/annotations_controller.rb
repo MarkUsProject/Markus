@@ -11,48 +11,47 @@ class AnnotationsController < ApplicationController
     submission_file = submission.submission_files.find(params[:submission_file_id])
     begin
       authorize! with: AnnotationPolicy
-      base_attributes = {
-        submission_file_id: submission_file.id,
-        is_remark: submission.has_remark?,
-        annotation_text_id: params[:annotation_text_id],
-        annotation_number: result.annotations.size + 1,
-        creator: current_user,
-        result_id: params[:result_id]
-      }
-
-      if submission_file.is_supported_image?
-        @annotation = result.annotations.create(
-          type: 'ImageAnnotation',
-          x1: params[:x1],
-          y1: params[:y1],
-          x2: params[:x2],
-          y2: params[:y2],
-          **base_attributes
-        )
-      elsif submission_file.is_pdf?
-        @annotation = result.annotations.create(
-          type: 'PdfAnnotation',
-          x1: params[:x1],
-          y1: params[:y1],
-          x2: params[:x2],
-          y2: params[:y2],
-          page: params[:page],
-          **base_attributes
-        )
-      else
-        @annotation = result.annotations.create(
-          type: 'TextAnnotation',
-          line_start: params[:line_start],
-          line_end: params[:line_end],
-          column_start: params[:column_start],
-          column_end: params[:column_end],
-          **base_attributes
-        )
-      end
-      render :create
     rescue ActionPolicy::Unauthorized => e
       flash_message(:error, e.message)
     end
+    base_attributes = {
+      submission_file_id: submission_file.id,
+      is_remark: submission.has_remark?,
+      annotation_text_id: params[:annotation_text_id],
+      annotation_number: result.annotations.size + 1,
+      creator: current_user,
+      result_id: params[:result_id]
+    }
+    if submission_file.is_supported_image?
+      @annotation = result.annotations.create(
+        type: 'ImageAnnotation',
+        x1: params[:x1],
+        y1: params[:y1],
+        x2: params[:x2],
+        y2: params[:y2],
+        **base_attributes
+      )
+    elsif submission_file.is_pdf?
+      @annotation = result.annotations.create(
+        type: 'PdfAnnotation',
+        x1: params[:x1],
+        y1: params[:y1],
+        x2: params[:x2],
+        y2: params[:y2],
+        page: params[:page],
+        **base_attributes
+      )
+    else
+      @annotation = result.annotations.create(
+        type: 'TextAnnotation',
+        line_start: params[:line_start],
+        line_end: params[:line_end],
+        column_start: params[:column_start],
+        column_end: params[:column_end],
+        **base_attributes
+      )
+    end
+    render :create
   end
 
   def new
