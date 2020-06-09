@@ -248,7 +248,7 @@ describe CriteriaController do
             post_as admin,
                     :create,
                     params: { assignment_id: assignment.id, flexible_criterion: { name: 'first', max_mark: 10 },
-                              new_criterion_prompt: 'first', criterion_type: flexible_criterion.class.to_s },
+                              new_criterion_prompt: 'first', criterion_type: 'FlexibleCriterion' },
                     format: :js
           end
           it 'should respond with appropriate content' do
@@ -266,7 +266,8 @@ describe CriteriaController do
             post_as admin,
                     :create,
                     params: { assignment_id: assignment.id, flexible_criterion: { name: 'first' },
-                              new_criterion_prompt: 'first', max_mark_prompt: 10 },
+                              new_criterion_prompt: 'first', max_mark_prompt: 10,
+                              criterion_type: 'FlexibleCriterion' },
                     format: :js
           end
           it 'should respond with appropriate content' do
@@ -287,7 +288,8 @@ describe CriteriaController do
             post_as admin,
                     :create,
                     params: { assignment_id: assignment.id, flexible_criterion: { name: 'first' },
-                              new_criterion_prompt: 'first', max_mark_prompt: 10 },
+                              new_criterion_prompt: 'first', max_mark_prompt: 10,
+                              criterion_type: 'FlexibleCriterion' },
                     format: :js
           end
           it 'should respond with appropriate content' do
@@ -603,7 +605,7 @@ describe CriteriaController do
             post_as admin,
                     :create,
                     params: { assignment_id: assignment.id, max_mark_prompt: 10,
-                              new_criterion_prompt: 'first' },
+                              new_criterion_prompt: 'first', criterion_type: 'RubricCriterion' },
                     format: :js
           end
           it 'should respond with appropriate content' do
@@ -621,7 +623,8 @@ describe CriteriaController do
             post_as admin,
                     :create,
                     params: { assignment_id: assignment.id,
-                              new_criterion_prompt: 'first', max_mark_prompt: 10 },
+                              new_criterion_prompt: 'first', max_mark_prompt: 10,
+                              criterion_type: 'RubricCriterion' },
                     format: :js
           end
           it 'should respond with appropriate content' do
@@ -642,7 +645,8 @@ describe CriteriaController do
             post_as admin,
                     :create,
                     params: { assignment_id: assignment.id, rubric_criterion: { name: 'first' },
-                              new_criterion_prompt: 'first', max_mark_prompt: 10 },
+                              new_criterion_prompt: 'first', max_mark_prompt: 10,
+                              criterion_type: 'RubricCriterion' },
                     format: :js
           end
           it 'should respond with appropriate content' do
@@ -949,7 +953,7 @@ describe CriteriaController do
     end
   end
 
-  context '#upload', pending: true do # Until criteria tables merged together, can't use Criterion.count
+  context '#upload' do # Until criteria tables merged together, can't use Criterion.count
     include_examples 'a controller supporting upload' do
       let(:params) { { assignment_id: assignment.id } }
     end
