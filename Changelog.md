@@ -9,6 +9,8 @@
 - Introduces automated email sending for spreadsheet releases (#4460)
 - Introduces automated email sending for grouping invitations (#4470)
 - Introduces student email settings (#4578)
+- Fixed bug preventing graders from downloading submission files from multiple students (#4658)
+- Fixed bug preventing downloading all submission files from git repo (#4658)
 
 ## [v1.9.2]
 - Fixed bug preventing all git hooks from being run in production (#4594)
