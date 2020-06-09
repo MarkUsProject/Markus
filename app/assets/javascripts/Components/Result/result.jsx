@@ -213,7 +213,7 @@ class Result extends React.Component {
                    new_subtotal = null, new_total = null, new_num_marked = null) => {
     this.setState({annotations: this.state.annotations.concat([annotation])});
 
-    if (!isNaN(criterion_id)) {
+    if (criterion_id !== null && criterion_id !== undefined) {
       let newMarks = [...this.state.marks];
       let i = newMarks.findIndex(m => m.id === criterion_id && m.criterion_type === "FlexibleCriterion");
       if (i >= 0) {
