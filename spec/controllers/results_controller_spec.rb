@@ -328,11 +328,12 @@ describe ResultsController do
         assignment = create(:assignment_with_deductive_annotations)
         post :get_annotations, params: { assignment_id: assignment.id,
                                          submission_id: assignment.groupings.first.current_result.submission.id,
-                                         id: assignment.groupings.first.current_result }, xhr: true
+                                         id: assignment.groupings.first.current_result,
+                                         format: :json }, xhr: true
 
-        expect(JSON.parse(response.body).first['criterion_name']).to eq assignment.flexible_criteria.first.name
-        expect(JSON.parse(response.body).first['criterion_id']).to eq assignment.flexible_criteria.first.id
-        expect(JSON.parse(response.body).first['deduction']).to eq 1.0
+        expect(response.parsed_body.first['criterion_name']).to eq assignment.flexible_criteria.first.name
+        expect(response.parsed_body.first['criterion_id']).to eq assignment.flexible_criteria.first.id
+        expect(response.parsed_body.first['deduction']).to eq 1.0
       end
 
       it 'returns annotation_category data with deductive information' do
@@ -340,13 +341,14 @@ describe ResultsController do
         category = assignment.annotation_categories.where.not(flexible_criterion: nil).first
         post :show, params: { assignment_id: assignment.id,
                               submission_id: assignment.groupings.first.current_result.submission.id,
-                              id: assignment.groupings.first.current_result }, xhr: true
+                              id: assignment.groupings.first.current_result,
+                              format: :json }, xhr: true
 
-        expect(JSON.parse(response.body)['annotation_categories'].first['annotation_category_name'])
+        expect(response.parsed_body['annotation_categories'].first['annotation_category_name'])
           .to eq "#{category.annotation_category_name}"\
                  "#{category.flexible_criterion_id.nil? ? '' : " [#{category.flexible_criterion.name}]"}"
-        expect(JSON.parse(response.body)['annotation_categories'].first['texts'].first['deduction']).to eq 1.0
-        expect(JSON.parse(response.body)['annotation_categories']
+        expect(response.parsed_body['annotation_categories'].first['texts'].first['deduction']).to eq 1.0
+        expect(response.parsed_body['annotation_categories']
                    .first['flexible_criterion_id']).to eq category.flexible_criterion.id
       end
     end
