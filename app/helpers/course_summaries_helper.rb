@@ -72,12 +72,12 @@ module CourseSummariesHelper
         student[:weighted_marks] = {}
         weighted = 0
         scheme.marking_weights.each do |mw|
-          if mw.is_assignment
-            mark = student[:assignment_marks][mw.gradable_item_id]
-            max_mark = @max_marks[mw.gradable_item_id]
+          if mw.assessment.type == 'Assignment'
+            mark = student[:assignment_marks][mw.assessment_id]
+            max_mark = @max_marks[mw.assessment_id]
           else
-            mark = student[:grade_entry_form_marks][mw.gradable_item_id]
-            max_mark = @gef_max_marks[mw.gradable_item_id]
+            mark = student[:grade_entry_form_marks][mw.assessment_id]
+            max_mark = @gef_max_marks[mw.assessment_id]
           end
           unless mw.weight.nil? || mark.nil? || max_mark.nil? || max_mark == 0
             weighted += mark * mw.weight / max_mark

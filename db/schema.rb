@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_05_04_201055) do
+ActiveRecord::Schema.define(version: 2020_05_26_185329) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -329,11 +329,11 @@ ActiveRecord::Schema.define(version: 2020_05_04_201055) do
 
   create_table "marking_weights", id: :serial, force: :cascade do |t|
     t.integer "marking_scheme_id"
-    t.integer "gradable_item_id"
     t.decimal "weight"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean "is_assignment", null: false
+    t.bigint "assessment_id", null: false
+    t.index ["assessment_id"], name: "index_marking_weights_on_assessment_id"
   end
 
   create_table "marks", id: :serial, force: :cascade do |t|
@@ -611,6 +611,7 @@ ActiveRecord::Schema.define(version: 2020_05_04_201055) do
   add_foreign_key "groupings", "assessments", name: "fk_groupings_assignments"
   add_foreign_key "groupings", "groups", name: "fk_groupings_groups"
   add_foreign_key "levels", "rubric_criteria"
+  add_foreign_key "marking_weights", "assessments"
   add_foreign_key "marks", "results", name: "fk_marks_results", on_delete: :cascade
   add_foreign_key "memberships", "groupings", name: "fk_memberships_groupings"
   add_foreign_key "memberships", "users", name: "fk_memberships_users"

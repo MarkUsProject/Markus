@@ -84,9 +84,8 @@ class AutotestSetup
     # give all assignments an equal marking weight (1)
     marking_scheme = MarkingScheme.find_or_create_by(name: 'Scheme Autotest')
     marking_weight = MarkingWeight.find_or_create_by(
-      gradable_item_id: @assignment.id,
+      assessment_id: @assignment.id,
       weight: 1,
-      is_assignment: true
     )
     marking_scheme.marking_weights << marking_weight
   end

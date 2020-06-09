@@ -4,6 +4,8 @@ class Assessment < ApplicationRecord
   scope :assignments, -> { where(type: 'Assignment') }
   scope :grade_entry_forms, -> { where(type: 'GradeEntryForm') }
 
+  has_many :marking_weights, dependent: :destroy
+
   # Call custom validator in order to validate the :due_date attribute
   # date: true maps to DateValidator (custom_name: true maps to CustomNameValidator)
   # Look in lib/validators/* for more info
