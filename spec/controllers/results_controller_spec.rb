@@ -244,6 +244,17 @@ describe ResultsController do
                                       mark: 1 }, xhr: true
         expect(JSON.parse(response.body)['num_marked']).to eq 0
       end
+      it 'should set override to true for a flexible criterion mark' do
+        assignment = create(:assignment_with_deductive_annotations)
+        result = assignment.groupings.first.current_result
+        submission = result.submission
+        mark = assignment.groupings.first.current_result.marks.first
+        patch :update_mark, params: { assignment_id: assignment.id, submission_id: submission.id,
+                                      id: result.id, markable_id: mark.markable_id,
+                                      markable_type: mark.markable_type,
+                                      mark: 3.0 }, xhr: true
+        expect(mark.reload.override).to be true
+      end
       it { expect(response).to have_http_status(:redirect) }
       context 'but cannot save the mark' do
         before :each do
