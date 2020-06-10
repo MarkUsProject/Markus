@@ -19,6 +19,7 @@ fr:
     summary: "Récapitulatif"
     total_extra_marks: "Total Notes Supplémentaires"
     your_mark:  "Votre note : %{mark}"
+    cancel_override: 'UPDATE ME!'
 
     # Annotations
     annotation:

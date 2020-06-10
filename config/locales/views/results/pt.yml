@@ -19,6 +19,7 @@ pt:
     summary: "Resumo"
     total_extra_marks: "Nota extra total"
     your_mark: "Sua nota: %{mark}"
+    cancel_override: 'UPDATE ME!'
 
     # Annotations
     annotation:

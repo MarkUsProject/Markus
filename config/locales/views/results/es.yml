@@ -23,6 +23,7 @@ es:
     summary: "Resumen"
     total_extra_marks: "Notas Adicionales Totales"
     your_mark: "Su nota: %{mark}"
+    cancel_override: 'UPDATE ME!'
 
     # Annotations
     annotation:
