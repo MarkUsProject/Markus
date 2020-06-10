@@ -540,7 +540,7 @@ class ResultsController < ApplicationController
     m_logger = MarkusLogger.instance
 
     if params[:markable_type] == 'FlexibleCriterion'
-        result_mark.update!(override: true)
+      result_mark.update!(override: true)
     end
 
     if result_mark.update(mark: mark_value)

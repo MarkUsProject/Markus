@@ -367,13 +367,15 @@ describe ResultsController do
         assignment = create(:assignment_with_deductive_annotations)
         mark = assignment.groupings.first.current_result.marks.first
         mark.update!(override: true, mark: 3.0)
-        patch :revert_to_automatic_deductions, params: { assignment_id: assignment.id,
-                                                                       submission_id: assignment.groupings.first
-                                                                                                .current_result
-                                                                                                .submission.id,
-                                                                       id: assignment.groupings.first.current_result,
-                                                                       markable_id: mark.markable_id,
-                                                                       format: :json }, xhr: true
+        patch :revert_to_automatic_deductions, params: {
+          assignment_id: assignment.id,
+          submission_id: assignment.groupings.first
+                                   .current_result
+                                   .submission.id,
+          id: assignment.groupings.first.current_result,
+          markable_id: mark.markable_id,
+          format: :json
+        }, xhr: true
 
         mark.reload
         expect(mark.mark).to eq 2.0
