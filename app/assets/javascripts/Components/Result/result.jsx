@@ -386,7 +386,7 @@ class Result extends React.Component {
           return markData;
         }
       });
-      this.setState({marks: marks})
+      this.setState({marks: marks});
     });
   };
 
