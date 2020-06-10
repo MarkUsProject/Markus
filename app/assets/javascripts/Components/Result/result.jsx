@@ -346,6 +346,7 @@ class Result extends React.Component {
           let newMark = {...markData};
           newMark.mark = mark;
           newMark['marks.mark'] = mark;
+          newMark['marks.override'] = true;
           return newMark;
         } else {
           return markData;
@@ -365,6 +366,10 @@ class Result extends React.Component {
   destroyMark = (criterion_type, criterion_id) => {
     this.updateMark(criterion_type, criterion_id, null);
   };
+
+  revertToAutomaticDeductions = () => {
+    console.log("This mark will revert to automatic deduction mark")
+  }
 
   createExtraMark = (description, extra_mark) => {
     return $.ajax({
@@ -546,6 +551,7 @@ class Result extends React.Component {
                 old_total={this.state.old_total}
                 released_to_students={this.state.released_to_students}
                 remark_submitted={this.state.remark_submitted}
+                revertToAutomaticDeductions={this.revertToAutomaticDeductions}
                 subtotal={this.state.subtotal}
                 total={this.state.total}
                 updateMark={this.updateMark}

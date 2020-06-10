@@ -95,6 +95,7 @@ export class MarksPanel extends React.Component {
       oldMark: this.props.old_marks[`${markData.criterion_type}-${markData.id}`],
       toggleExpanded: () => this.toggleExpanded(key),
       annotations: this.props.annotations,
+      revertToAutomaticDeductions: this.props.revertToAutomaticDeductions,
       ... markData
     };
     if (markData.criterion_type === 'CheckboxCriterion') {
@@ -257,14 +258,23 @@ class FlexibleCriterionInput extends React.Component {
 
   changeMark = () => {
 
-    let button = ''
-    // add logic to change back to auto marking
-    if (!this.props.released_to_students && !this.props.unassigned && this.props.mark !== null) {
-      button = <a href="#"
-                  onClick={e => this.props.destroyMark(e, this.props.criterion_type, this.props.id)}
-                  style={{float: 'right'}}>
-                 {I18n.t('helpers.submit.delete', {model: I18n.t('activerecord.models.mark.one')})}
-               </a>
+    let button = '';
+    if (!this.props.released_to_students && !this.props.unassigned){
+      if (this.props.annotations.some(a => a.deduction !== null && a.criterion_id ===
+          this.props["marks.markable_id"]) && this.props["marks.override"]) {
+        button = (<a href="#"
+                     onClick={e => this.props.revertToAutomaticDeductions(e, this.props.id)}
+                     style={{float: 'right'}}>
+                    {I18n.t('results.cancel_override')}
+                  </a>);
+      }
+      else if (this.props.mark !== null && this.props["marks.override"]) {
+        button = (<a href="#"
+                     onClick={e => this.props.destroyMark(e, this.props.criterion_type, this.props.id)}
+                     style={{float: 'right'}}>
+          {I18n.t('helpers.submit.delete', {model: I18n.t('activerecord.models.mark.one')})}
+        </a>);
+      }
     }
 
     return button;

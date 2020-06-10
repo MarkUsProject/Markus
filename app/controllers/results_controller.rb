@@ -169,7 +169,7 @@ class ResultsController < ApplicationController
           criteria_info = criteria.pluck_to_hash(*fields)
           marks_info = criteria.joins(:marks)
                                .where('marks.result_id': result.id)
-                               .pluck_to_hash(*fields, 'marks.mark', 'marks.override')
+                               .pluck_to_hash(*fields, 'marks.mark', 'marks.override', 'marks.markable_id')
                                .group_by { |h| h[:id] }
           # adds a criterion type to each of the marks info hashes
           criteria_info.map do |cr|
@@ -539,13 +539,8 @@ class ResultsController < ApplicationController
 
     m_logger = MarkusLogger.instance
 
-    unless result_mark.result.annotations
-                             .joins(:annotation_text)
-                             .where.not('annotation_text.deduction': nil)
-                             .joins(:annotation_category)
-                             .where('annotation_category.flexible_criterion_id': params[:markable_id])
-                             .empty?
-      result_mark.update!(override: true)
+    if params[:markable_type] == 'FlexibleCriterion'
+        result_mark.update!(override: true)
     end
 
     if result_mark.update(mark: mark_value)
