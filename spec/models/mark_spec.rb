@@ -171,6 +171,16 @@ describe Mark do
       expect(mark.mark).to eq(2.0)
     end
   end
+
+  describe '#ensure_mark_value' do
+    it 'updates the mark value to be calculated from annotation deductions if override changed from true to false' do
+      assignment = create(:assignment_with_deductive_annotations)
+      mark = assignment.groupings.first.current_result.marks.first
+      mark.update!(override: true, mark: mark.markable.max_mark)
+      mark.update!(override: false)
+      expect(mark.reload.mark).to eq 2.0
+    end
+  end
   # private methods
   describe '#ensure_not_released_to_students'
   describe '#update_grouping_mark'
