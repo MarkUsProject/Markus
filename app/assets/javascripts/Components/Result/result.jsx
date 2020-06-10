@@ -367,9 +367,28 @@ class Result extends React.Component {
     this.updateMark(criterion_type, criterion_id, null);
   };
 
-  revertToAutomaticDeductions = () => {
-    console.log("This mark will revert to automatic deduction mark")
-  }
+  revertToAutomaticDeductions = (criterion_id) => {
+    $.ajax({
+      url: Routes.revert_to_automatic_deductions_assignment_submission_result_path(
+        this.props.assignment_id, this.props.submission_id, this.props.result_id
+      ),
+      method: 'PATCH',
+      data: {markable_id: criterion_id}
+    }).then((data) => {
+      let marks = this.state.marks.map(markData => {
+        if (markData.id === criterion_id && markData.criterion_type === 'FlexibleCriterion') {
+          let newMark = {...markData};
+          newMark.mark = data['new_mark'];
+          newMark['marks.mark'] = data['new_mark'];
+          newMark['marks.override'] = false;
+          return newMark;
+        } else {
+          return markData;
+        }
+      });
+      this.setState({marks: marks})
+    });
+  };
 
   createExtraMark = (description, extra_mark) => {
     return $.ajax({
