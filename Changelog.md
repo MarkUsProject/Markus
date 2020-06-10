@@ -1,4 +1,9 @@
 # Changelog
+## [v1.9.3]
+- Fixed inverse association bug with assignments (#4551)
+- Fixed bug preventing graders from downloading submission files from multiple students (#4658)
+- Fixed bug preventing downloading all submission files from git repo (#4658)
+
 ## [v1.9.2]
 - Fixed bug preventing all git hooks from being run in production (#4594)
 - Fixed bug preventing folders from being deleted in file managers (#4605)
