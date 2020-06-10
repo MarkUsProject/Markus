@@ -227,8 +227,7 @@ class FlexibleCriterionInput extends React.Component {
     super(props);
     this.state = {
       rawText: this.props.mark === null ? '' : String(this.props.mark),
-      invalid: false,
-      override: false
+      invalid: false
     };
   }
 
