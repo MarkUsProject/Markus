@@ -351,6 +351,23 @@ describe ResultsController do
         expect(response.parsed_body['annotation_categories']
                    .first['flexible_criterion_id']).to eq category.flexible_criterion.id
       end
+
+      it 'reverts a mark to a value calculated from automatic deductions correctly' do
+        assignment = create(:assignment_with_deductive_annotations)
+        mark = assignment.groupings.first.current_result.marks.first
+        mark.update!(override: true, mark: 3.0)
+        patch :revert_to_automatic_deductions, params: { assignment_id: assignment.id,
+                                                                       submission_id: assignment.groupings.first
+                                                                                                .current_result
+                                                                                                .submission.id,
+                                                                       id: assignment.groupings.first.current_result,
+                                                                       markable_id: mark.markable_id,
+                                                                       format: :json }, xhr: true
+
+        mark.reload
+        expect(mark.mark).to eq 2.0
+        expect(mark.override).to be false
+      end
     end
   end
 
@@ -364,6 +381,7 @@ describe ResultsController do
              delete_grace_period_deduction: :delete,
              next_grouping: :get,
              remove_extra_mark: :post,
+             revert_to_automatic_deductions: :patch,
              set_released_to_students: :post,
              update_overall_comment: :post,
              toggle_marking_state: :post,
