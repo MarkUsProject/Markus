@@ -262,7 +262,7 @@ class FlexibleCriterionInput extends React.Component {
       if (this.props.annotations.some(a => a.deduction !== null && a.criterion_id ===
           this.props.id) && this.props["marks.override"]) {
         button = (<a href="#"
-                     onClick={e => this.props.revertToAutomaticDeductions(this.props.id)}
+                     onClick={_ => this.props.revertToAutomaticDeductions(this.props.id)}
                      style={{float: 'right'}}>
                     {I18n.t('results.cancel_override')}
                   </a>);
