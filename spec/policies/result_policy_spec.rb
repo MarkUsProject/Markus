@@ -1,4 +1,4 @@
-describe ResultsPolicy do
+describe ResultPolicy do
   include PolicyHelper
   describe 'When the user is admin' do
     subject { described_class.new(user: user) }

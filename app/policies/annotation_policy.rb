@@ -1,11 +1,12 @@
 class AnnotationPolicy < ApplicationPolicy
+  include SessionHandler
   default_rule :manage?
   def add_existing_annotation?
     user.admin? || (user.ta? && check?(:ta_allowed?))
   end
 
   def manage?
-    user.admin? || (user.ta? && check?(:ta_allowed?)) || (authorized?(user) && check?(:reviewer_allowed?))
+    user.admin? || (user.ta? && check?(:ta_allowed?)) || ((user.student?) && check?(:reviewer_allowed?))
   end
 
   def ta_allowed?
