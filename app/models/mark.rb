@@ -4,6 +4,7 @@ class Mark < ApplicationRecord
   before_save :ensure_not_released_to_students
 
   after_save :update_result
+  after_update :ensure_mark_value
 
   belongs_to :result
   validates_presence_of :markable_type
@@ -34,6 +35,13 @@ class Mark < ApplicationRecord
     return if self.override?
     deduction = calculate_deduction
     self.update!(mark: deduction > self.markable.max_mark ? 0.0 : self.markable.max_mark - deduction)
+  end
+
+  def ensure_mark_value
+    return unless previous_changes.key?('override')
+    if previous_changes['override'].first == true && previous_changes['override'].second == false
+      update_deduction
+    end
   end
 
   def scale_mark(curr_max_mark, prev_max_mark, update: true)
