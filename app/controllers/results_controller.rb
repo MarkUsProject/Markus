@@ -169,7 +169,7 @@ class ResultsController < ApplicationController
           criteria_info = criteria.pluck_to_hash(*fields)
           marks_info = criteria.joins(:marks)
                                .where('marks.result_id': result.id)
-                               .pluck_to_hash(*fields, 'marks.mark', 'marks.override', 'marks.markable_id')
+                               .pluck_to_hash(*fields, 'marks.mark', 'marks.override')
                                .group_by { |h| h[:id] }
           # adds a criterion type to each of the marks info hashes
           criteria_info.map do |cr|
@@ -566,6 +566,15 @@ class ResultsController < ApplicationController
                    MarkusLogger::ERROR)
       render json: result_mark.errors.full_messages.join, status: :bad_request
     end
+  end
+
+  def revert_to_automatic_deductions
+    result = Result.find(params[:id])
+    result_mark = result.marks.find_or_create_by(markable_id: params[:markable_id], markable_type: 'FlexibleCriterion')
+
+    result_mark.update!(override: false)
+
+    render json: { new_mark: result_mark.mark }
   end
 
   def view_marks
