@@ -1,5 +1,6 @@
 describe User do
   it { is_expected.to have_many :memberships }
+  it { is_expected.to have_one :grader_permission }
   it { is_expected.to have_many(:groupings).through(:memberships) }
   it { is_expected.to have_many(:notes).dependent(:destroy) }
   it { is_expected.to have_many :accepted_memberships }
