@@ -282,7 +282,7 @@ describe ResultsController do
         expect(response.parsed_body.key?('sub_total')).to be true
         expect(response.parsed_body.key?('mark_override')).to be true
         expect(response.parsed_body.key?('num_marked')).to be true
-        expect(response.parsed_body.key?('new_mark_value')).to be true
+        expect(response.parsed_body.key?('mark')).to be true
       end
       it 'sets override to false for mark if input value null and no deductive annotations exist' do
         patch :update_mark, params: { assignment_id: assignment.id, submission_id: submission.id,
@@ -430,7 +430,7 @@ describe ResultsController do
 
         expect(response.parsed_body.key?('sub_total')).to be true
         expect(response.parsed_body.key?('total')).to be true
-        expect(response.parsed_body.key?('new_mark')).to be true
+        expect(response.parsed_body.key?('mark')).to be true
         expect(response.parsed_body.key?('num_marked')).to be true
       end
     end
