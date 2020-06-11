@@ -255,28 +255,25 @@ class FlexibleCriterionInput extends React.Component {
       </div>);
   }
 
-  changeMark = () => {
-
-    let button = '';
-    if (!this.props.released_to_students && !this.props.unassigned){
+  deleteManualMark = () => {
+    if (!this.props.released_to_students && !this.props.unassigned) {
       if (this.props.annotations.some(a => a.deduction !== null && a.criterion_id ===
           this.props.id) && this.props["marks.override"]) {
-        button = (<a href="#"
-                     onClick={_ => this.props.revertToAutomaticDeductions(this.props.id)}
-                     style={{float: 'right'}}>
-                    {I18n.t('results.cancel_override')}
-                  </a>);
+        return (<a href="#"
+                   onClick={_ => this.props.revertToAutomaticDeductions(this.props.id)}
+                   style={{float: 'right'}}>
+                  {I18n.t('results.cancel_override')}
+                </a>);
       }
       else if (this.props.mark !== null && this.props["marks.override"]) {
-        button = (<a href="#"
-                     onClick={e => this.props.destroyMark(e, this.props.criterion_type, this.props.id)}
-                     style={{float: 'right'}}>
-          {I18n.t('helpers.submit.delete', {model: I18n.t('activerecord.models.mark.one')})}
-        </a>);
+        return (<a href="#"
+                   onClick={e => this.props.destroyMark(e, this.props.criterion_type, this.props.id)}
+                   style={{float: 'right'}}>
+                  {I18n.t('helpers.submit.delete', {model: I18n.t('activerecord.models.mark.one')})}
+                </a>);
       }
     }
-
-    return button;
+    return '';
   }
 
   handleChange = (event) => {
@@ -336,7 +333,7 @@ class FlexibleCriterionInput extends React.Component {
                  style={{float: 'left'}}
             />
             {this.props.name}
-            {this.changeMark()}
+            {this.deleteManualMark()}
           </div>
           <div className='criterion-description'>
             {this.props.description}
