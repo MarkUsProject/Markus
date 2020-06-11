@@ -577,9 +577,9 @@ class ResultsController < ApplicationController
     result_mark.update!(override: false)
 
     if @current_user.ta?
-      num_marked = assignment.get_num_marked(@current_user.id)
+      num_marked = result.submission.grouping.assignment.get_num_marked(@current_user.id)
     else
-      num_marked = assignment.get_num_marked(nil)
+      num_marked = result.submission.grouping.assignment.get_num_marked(nil)
     end
     render json: {
       num_marked: num_marked,

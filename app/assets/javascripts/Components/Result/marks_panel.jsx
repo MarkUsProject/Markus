@@ -244,6 +244,10 @@ class FlexibleCriterionInput extends React.Component {
       return <span></span>;
     }
 
+    if (this.props['marks.override']) {
+      label = '(Overridden) ' + label;
+    }
+
     return (
       <div className={'mark-deductions'}>
         <span>
