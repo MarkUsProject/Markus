@@ -183,7 +183,7 @@ describe Mark do
   end
 
   describe '#ensure_mark_value' do
-    it 'updates the mark value to be calculated from annotation deductions if override changed from true to false' do
+    it 'updates the mark value to be calculated from annotation deductions if override changed to false' do
       assignment = create(:assignment_with_deductive_annotations)
       mark = assignment.groupings.first.current_result.marks.first
       mark.update!(override: true, mark: mark.markable.max_mark)
