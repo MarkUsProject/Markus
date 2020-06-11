@@ -30,15 +30,29 @@ class AnnotationCategory < ApplicationRecord
     annotation_category = assignment.annotation_categories.find_or_create_by(
       annotation_category_name: name
     )
-
-    row.each do |text|
-      annotation_text = annotation_category.annotation_texts.build(
-        content: text,
-        creator_id: current_user.id,
-        last_editor_id: current_user.id
-      )
-      unless annotation_text.save
-        raise CsvInvalidLineError
+    criterion = row.shift
+    if criterion.nil?
+      row.each do |text|
+        annotation_text = annotation_category.annotation_texts.build(
+          content: text,
+          creator_id: current_user.id,
+          last_editor_id: current_user.id
+        )
+        unless annotation_text.save
+          raise CsvInvalidLineError
+        end
+      end
+    else
+      row.each_slice(2) do |text_with_deduction|
+        annotation_text = annotation_category.annotation_texts.build(
+            content: text_with_deduction.first,
+            creator_id: current_user.id,
+            last_editor_id: current_user.id,
+            deduction: text_with_deduction.second
+        )
+        unless annotation_text.save
+          raise CsvInvalidLineError
+        end
       end
     end
   end
