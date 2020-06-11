@@ -180,6 +180,14 @@ describe Mark do
       annotation_text.update!(deduction: 0) # update deduction called in annotation_text callback
       expect(mark.reload.mark).to eq(nil)
     end
+
+    it 'updates the override of a mark to false when last deductive annotation deleted if the override '\
+       'was true before and the mark was nil' do
+      mark.update!(mark: nil, override: true)
+      result.annotations.joins(annotation_text: :annotation_category)
+            .where('annotation_categories.flexible_criterion_id': mark.markable_id).first.destroy
+      expect(mark.reload.override).to be false
+    end
   end
 
   describe '#ensure_mark_value' do
