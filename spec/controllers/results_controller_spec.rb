@@ -265,7 +265,7 @@ describe ResultsController do
         end
         it 'sets override to false for mark if input value null and only annotations with 0 value deduction exist' do
           assignment.annotation_categories.where.not(flexible_criterion: nil).first
-              .annotation_texts.first.update!(deduction: 0)
+                    .annotation_texts.first.update!(deduction: 0)
           patch :update_mark, params: { assignment_id: assignment.id, submission_id: submission.id,
                                         id: result.id, markable_id: mark.markable_id,
                                         markable_type: mark.markable_type,
