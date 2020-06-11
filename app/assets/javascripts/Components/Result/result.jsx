@@ -344,8 +344,8 @@ class Result extends React.Component {
       let marks = this.state.marks.map(markData => {
         if (markData.id === criterion_id && markData.criterion_type === criterion_type) {
           let newMark = {...markData};
-          newMark.mark = data.new_mark_value;
-          newMark['marks.mark'] = data.new_mark_value;
+          newMark.mark = data.mark;
+          newMark['marks.mark'] = data.mark;
           newMark['marks.override'] = data.mark_override;
           return newMark;
         } else {
@@ -378,8 +378,8 @@ class Result extends React.Component {
       let marks = this.state.marks.map(markData => {
         if (markData.id === criterion_id && markData.criterion_type === 'FlexibleCriterion') {
           let newMark = {...markData};
-          newMark.mark = data['new_mark'];
-          newMark['marks.mark'] = data['new_mark'];
+          newMark.mark = data['mark'];
+          newMark['marks.mark'] = data['mark'];
           newMark['marks.override'] = false;
           return newMark;
         } else {

@@ -561,7 +561,7 @@ class ResultsController < ApplicationController
       end
       render json: {
         num_marked: num_marked,
-        new_mark_value: result_mark.reload.mark,
+        mark: result_mark.reload.mark,
         mark_override: result_mark.override,
         sub_total: result.get_subtotal,
         total: result.get_total_mark
@@ -590,7 +590,7 @@ class ResultsController < ApplicationController
     end
     render json: {
       num_marked: num_marked,
-      new_mark: result_mark.reload.mark,
+      mark: result_mark.reload.mark,
       sub_total: result.get_subtotal,
       total: result.get_total_mark
     }
