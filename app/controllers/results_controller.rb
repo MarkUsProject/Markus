@@ -540,9 +540,7 @@ class ResultsController < ApplicationController
     m_logger = MarkusLogger.instance
 
     if result_mark.update(mark: mark_value)
-      if params[:markable_type] == 'FlexibleCriterion'
-        result_mark.update(override: true)
-      end
+      result_mark.update(override: true)
 
       m_logger.log("User '#{current_user.user_name}' updated mark for " +
                    "submission (id: #{submission.id}) of " +
