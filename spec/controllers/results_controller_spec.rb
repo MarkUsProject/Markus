@@ -244,47 +244,34 @@ describe ResultsController do
                                       mark: 1 }, xhr: true
         expect(JSON.parse(response.body)['num_marked']).to eq 0
       end
-      it 'sets override to true for mark if input value is not null' do
-        assignment = create(:assignment_with_deductive_annotations)
-        result = assignment.groupings.first.current_result
-        submission = result.submission
-        mark = assignment.groupings.first.current_result.marks.first
-        patch :update_mark, params: { assignment_id: assignment.id, submission_id: submission.id,
-                                      id: result.id, markable_id: mark.markable_id,
-                                      markable_type: mark.markable_type,
-                                      mark: 3.0 }, xhr: true
-        expect(mark.reload.override).to be true
-      end
-      it 'sets override to true for mark if input value null and deductive annotations exist' do
-        assignment = create(:assignment_with_deductive_annotations)
-        result = assignment.groupings.first.current_result
-        submission = result.submission
-        mark = assignment.groupings.first.current_result.marks.first
-        patch :update_mark, params: { assignment_id: assignment.id, submission_id: submission.id,
-                                      id: result.id, markable_id: mark.markable_id,
-                                      markable_type: mark.markable_type,
-                                      mark: '' }, xhr: true
-        expect(mark.reload.override).to be true
-      end
-      it 'sets override to false for mark if input value null and no deductive annotations exist' do
-        patch :update_mark, params: { assignment_id: assignment.id, submission_id: submission.id,
-                                      id: incomplete_result.id, markable_id: rubric_mark.markable_id,
-                                      markable_type: rubric_mark.markable_type,
-                                      mark: '', format: :json }, xhr: true
-        expect(response.parsed_body['mark_override']).to be false
-      end
-      it 'sets override to false for mark if input value null and deductive annotations with 0 value deduction exist' do
-        assignment = create(:assignment_with_deductive_annotations)
-        result = assignment.groupings.first.current_result
-        submission = result.submission
-        mark = assignment.groupings.first.current_result.marks.first
-        assignment.annotation_categories.where.not(flexible_criterion: nil).first
-                  .annotation_texts.first.update!(deduction: 0)
-        patch :update_mark, params: { assignment_id: assignment.id, submission_id: submission.id,
-                                      id: result.id, markable_id: mark.markable_id,
-                                      markable_type: mark.markable_type,
-                                      mark: '' }, xhr: true
-        expect(mark.reload.override).to be false
+      context 'setting override when annotations linked to criteria exist' do
+        let(:assignment) { create(:assignment_with_deductive_annotations) }
+        let(:result) { assignment.groupings.first.current_result }
+        let(:submission) { result.submission }
+        let(:mark) { assignment.groupings.first.current_result.marks.first }
+        it 'sets override to true for mark if input value is not null' do
+          patch :update_mark, params: { assignment_id: assignment.id, submission_id: submission.id,
+                                        id: result.id, markable_id: mark.markable_id,
+                                        markable_type: mark.markable_type,
+                                        mark: 3.0 }, xhr: true
+          expect(mark.reload.override).to be true
+        end
+        it 'sets override to true for mark if input value null and deductive annotations exist' do
+          patch :update_mark, params: { assignment_id: assignment.id, submission_id: submission.id,
+                                        id: result.id, markable_id: mark.markable_id,
+                                        markable_type: mark.markable_type,
+                                        mark: '' }, xhr: true
+          expect(mark.reload.override).to be true
+        end
+        it 'sets override to false for mark if input value null and only annotations with 0 value deduction exist' do
+          assignment.annotation_categories.where.not(flexible_criterion: nil).first
+              .annotation_texts.first.update!(deduction: 0)
+          patch :update_mark, params: { assignment_id: assignment.id, submission_id: submission.id,
+                                        id: result.id, markable_id: mark.markable_id,
+                                        markable_type: mark.markable_type,
+                                        mark: '' }, xhr: true
+          expect(mark.reload.override).to be false
+        end
       end
       it 'returns correct json fields when updating a mark' do
         patch :update_mark, params: { assignment_id: assignment.id, submission_id: submission.id,
@@ -296,6 +283,13 @@ describe ResultsController do
         expect(response.parsed_body.key?('mark_override')).to be true
         expect(response.parsed_body.key?('num_marked')).to be true
         expect(response.parsed_body.key?('new_mark_value')).to be true
+      end
+      it 'sets override to false for mark if input value null and no deductive annotations exist' do
+        patch :update_mark, params: { assignment_id: assignment.id, submission_id: submission.id,
+                                      id: incomplete_result.id, markable_id: rubric_mark.markable_id,
+                                      markable_type: rubric_mark.markable_type,
+                                      mark: '', format: :json }, xhr: true
+        expect(response.parsed_body['mark_override']).to be false
       end
       it { expect(response).to have_http_status(:redirect) }
       context 'but cannot save the mark' do
@@ -377,8 +371,9 @@ describe ResultsController do
     end
 
     context 'accessing an assignment with deductive annotations' do
+      let(:assignment) { create(:assignment_with_deductive_annotations) }
+      let(:mark) { assignment.groupings.first.current_result.marks.first }
       it 'returns annotation data with criteria information' do
-        assignment = create(:assignment_with_deductive_annotations)
         post :get_annotations, params: { assignment_id: assignment.id,
                                          submission_id: assignment.groupings.first.current_result.submission.id,
                                          id: assignment.groupings.first.current_result,
@@ -390,7 +385,6 @@ describe ResultsController do
       end
 
       it 'returns annotation_category data with deductive information' do
-        assignment = create(:assignment_with_deductive_annotations)
         category = assignment.annotation_categories.where.not(flexible_criterion: nil).first
         post :show, params: { assignment_id: assignment.id,
                               submission_id: assignment.groupings.first.current_result.submission.id,
@@ -406,8 +400,6 @@ describe ResultsController do
       end
 
       it 'reverts a mark to a value calculated from automatic deductions correctly' do
-        assignment = create(:assignment_with_deductive_annotations)
-        mark = assignment.groupings.first.current_result.marks.first
         mark.update!(override: true, mark: 3.0)
         patch :revert_to_automatic_deductions, params: {
           assignment_id: assignment.id,
@@ -425,8 +417,6 @@ describe ResultsController do
       end
 
       it 'returns correct information when reverting a mark to a value calculated from automatic deductions' do
-        assignment = create(:assignment_with_deductive_annotations)
-        mark = assignment.groupings.first.current_result.marks.first
         mark.update!(override: true, mark: 3.0)
         patch :revert_to_automatic_deductions, params: {
           assignment_id: assignment.id,
