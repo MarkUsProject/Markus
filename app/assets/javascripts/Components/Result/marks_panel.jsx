@@ -245,7 +245,7 @@ class FlexibleCriterionInput extends React.Component {
     }
 
     if (this.props['marks.override']) {
-      label = '(Overridden) ' + label;
+      label = '(' + I18n.t('results.overridden_deductions') + ') ' + label;
     }
 
     return (

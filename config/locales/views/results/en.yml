@@ -22,6 +22,7 @@ en:
     total_extra_marks: "Total Extra Marks"
     your_mark: "Your mark: %{mark}"
     cancel_override: 'Revert to automatic deductions'
+    overridden_deductions: 'Overridden'
 
     # Annotations
     annotation:

@@ -24,6 +24,7 @@ es:
     total_extra_marks: "Notas Adicionales Totales"
     your_mark: "Su nota: %{mark}"
     cancel_override: 'UPDATE ME!'
+    overridden_deductions: 'UPDATE ME!'
 
     # Annotations
     annotation:
