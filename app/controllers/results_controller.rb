@@ -540,15 +540,7 @@ class ResultsController < ApplicationController
     m_logger = MarkusLogger.instance
 
     if result_mark.update(mark: mark_value)
-      if params[:markable_type] == 'FlexibleCriterion' && mark_value.nil?
-        result_mark.update(override: false)
-        unless result_mark.result
-                          .annotations
-                          .joins(annotation_text: :annotation_category)
-                          .where('annotation_categories.flexible_criterion_id': result_mark.markable_id).empty?
-          result_mark.update_deduction
-        end
-      else
+      if params[:markable_type] == 'FlexibleCriterion'
         result_mark.update(override: true)
       end
 
@@ -565,7 +557,9 @@ class ResultsController < ApplicationController
       render json: {
         num_marked: num_marked,
         new_mark_value: result_mark.reload.mark,
-        mark_override: result_mark.override
+        mark_override: result_mark.override,
+        sub_total: result.get_subtotal,
+        total: result.get_total_mark
       }
     else
       m_logger.log("Error while trying to update mark of submission. " +
@@ -584,7 +578,17 @@ class ResultsController < ApplicationController
 
     result_mark.update!(override: false)
 
-    render json: { new_mark: result_mark.mark }
+    if @current_user.ta?
+      num_marked = assignment.get_num_marked(@current_user.id)
+    else
+      num_marked = assignment.get_num_marked(nil)
+    end
+    render json: {
+      num_marked: num_marked,
+      new_mark: result_mark.reload.mark,
+      sub_total: result.get_subtotal,
+      total: result.get_total_mark
+    }
   end
 
   def view_marks

@@ -352,7 +352,7 @@ class Result extends React.Component {
           return markData;
         }
       });
-      let stateUpdate = { marks, num_marked: data.num_marked };
+      let stateUpdate = { marks, num_marked: data.num_marked, subtotal: data.subtotal, total: data.total };
       if (mark === null) {
         stateUpdate['marking_state'] = 'incomplete';
       }
@@ -386,7 +386,7 @@ class Result extends React.Component {
           return markData;
         }
       });
-      this.setState({marks: marks});
+      this.setState({marks: marks, num_marked: data.num_marked, subtotal: data.subtotal, total: data.total});
     });
   };
 
