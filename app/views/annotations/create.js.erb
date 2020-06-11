@@ -31,17 +31,16 @@
 
 
   <% deduction = @annotation.annotation_text.deduction %>
-  <% if deduction.nil? || deduction == 0 ||
-  @annotation.result
-             .marks
-             .find_by(markable: @annotation.annotation_text.annotation_category.flexible_criterion).override == true %>
+  <% mark = @annotation.result
+                       .marks
+                       .find_by(markable: @annotation.annotation_text&.annotation_category&.flexible_criterion) %>
+  <% if deduction.nil? || deduction == 0 || mark.override %>
     resultComponent.addAnnotation(annotation_details);
   <% else %>
     resultComponent.addAnnotation(
       annotation_details,
       <%= @annotation.annotation_text.annotation_category.flexible_criterion_id %>,
-      <%= @annotation.result.marks.find_by(markable: @annotation.annotation_text.annotation_category
-                                                                                    .flexible_criterion).mark  %>,
+      <%= mark.mark %>,
       <%= @annotation.result.get_subtotal %>,
       <%= @annotation.result.get_total_mark %>,
       <%= @annotation.result.grouping.assignment.get_num_marked(@current_user.admin? ? nil : @current_user.id) %>
