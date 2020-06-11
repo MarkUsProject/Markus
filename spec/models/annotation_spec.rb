@@ -38,7 +38,7 @@ describe Annotation do
 
     it 'correctly updates the mark when destroyed' do
       result.annotations.find_by(annotation_text: annotation_text).destroy
-      expect(mark.mark).to eq(3.0)
+      expect(mark.mark).to eq(nil)
     end
 
     it 'correctly updates the mark for its criterion\'s mark when a different type of criterion has the same id' do

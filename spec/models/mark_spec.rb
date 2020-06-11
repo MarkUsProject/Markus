@@ -151,7 +151,7 @@ describe Mark do
       mark_without_deductions = grouping_with_result.current_result.marks.first
       mark_without_deductions.update_deduction
       mark_without_deductions.reload
-      expect(mark_without_deductions.mark).to eq(1.0)
+      expect(mark_without_deductions.mark).to eq(nil)
     end
 
     it 'does not take into account deductions related to other criteria' do
@@ -169,6 +169,16 @@ describe Mark do
       mark.update_deduction
       mark.reload
       expect(mark.mark).to eq(2.0)
+    end
+
+    it 'does not update the mark to max_mark value when there are no annotations' do
+      result.annotations.destroy_all # update deduction called in annotation callback
+      expect(mark.reload.mark).to eq(nil)
+    end
+
+    it 'does not update the mark to max_mark value when there are only deductive annotations with 0 value deductions' do
+      annotation_text.update!(deduction: 0) # update deduction called in annotation_text callback
+      expect(mark.reload.mark).to eq(nil)
     end
   end
 
