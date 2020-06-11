@@ -549,7 +549,6 @@ class ResultsController < ApplicationController
         result_mark.update(override: true)
       end
 
-
       m_logger.log("User '#{current_user.user_name}' updated mark for " +
                    "submission (id: #{submission.id}) of " +
                    "assignment #{assignment.short_identifier} for " +
