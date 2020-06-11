@@ -34,8 +34,13 @@ class Mark < ApplicationRecord
   def update_deduction
     return if self.override?
     deduction = calculate_deduction
-    return self.update!(mark: nil) if deduction == 0
-    self.update!(mark: deduction > self.markable.max_mark ? 0.0 : self.markable.max_mark - deduction)
+    if deduction == 0
+      return self.update!(mark: nil)
+    elsif deduction > self.markable.max_mark
+      return self.update!(mark: 0.0)
+    else
+      return self.update!(mark: self.markable.max_mark - deduction)
+    end
   end
 
   def ensure_mark_value
