@@ -32,6 +32,13 @@ class Mark < ApplicationRecord
   end
 
   def update_deduction
+    if self.mark.nil? && self.result
+                             .annotations
+                             .joins(annotation_text: [{ annotation_category: :flexible_criterion }])
+                             .where('flexible_criteria.id': self.markable_id)
+                             .where.not('annotation_texts.deduction': 0).empty?
+      return self.update!(override: false)
+    end
     return if self.override?
     deduction = calculate_deduction
     if deduction == 0
