@@ -261,7 +261,7 @@ class FlexibleCriterionInput extends React.Component {
 
   deleteManualMark = () => {
     if (!this.props.released_to_students && !this.props.unassigned) {
-      if (this.props.annotations.some(a => a.deduction !== null && a.criterion_id ===
+      if (this.props.annotations.some(a => a.deduction !== null && a.deduction !== 0 && a.criterion_id ===
           this.props.id) && this.props["marks.override"]) {
         return (<a href="#"
                    onClick={_ => this.props.revertToAutomaticDeductions(this.props.id)}
