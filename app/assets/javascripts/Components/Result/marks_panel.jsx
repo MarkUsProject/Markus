@@ -259,7 +259,7 @@ class FlexibleCriterionInput extends React.Component {
       </div>);
   }
 
-  deleteManualMark = () => {
+  deleteManualMarkLink = () => {
     if (!this.props.released_to_students && !this.props.unassigned) {
       if (this.props.annotations.some(a => a.deduction !== null && a.deduction !== 0 && a.criterion_id ===
           this.props.id) && this.props["marks.override"]) {
@@ -268,8 +268,7 @@ class FlexibleCriterionInput extends React.Component {
                    style={{float: 'right'}}>
                   {I18n.t('results.cancel_override')}
                 </a>);
-      }
-      else if (this.props.mark !== null && this.props["marks.override"]) {
+      } else if (this.props.mark !== null && this.props["marks.override"]) {
         return (<a href="#"
                    onClick={e => this.props.destroyMark(e, this.props.criterion_type, this.props.id)}
                    style={{float: 'right'}}>
@@ -337,7 +336,7 @@ class FlexibleCriterionInput extends React.Component {
                  style={{float: 'left'}}
             />
             {this.props.name}
-            {this.deleteManualMark()}
+            {this.deleteManualMarkLink()}
           </div>
           <div className='criterion-description'>
             {this.props.description}
