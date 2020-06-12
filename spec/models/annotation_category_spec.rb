@@ -35,6 +35,20 @@ describe AnnotationCategory do
   end
 
   describe '.add_by_row' do
+    it 'creates a flexible criterion if one with the name given does not exist' do
+      row = ['category_name', 'criterion_name', 'text_content', '1.0']
+      AnnotationCategory.add_by_row(row, assignment, admin)
+      expect(FlexibleCriterion.all.size).to eq 1
+      expect(FlexibleCriterion.all.first.name).to eq 'criterion_name'
+    end
+
+    it 'creates an annotation_text with a 0.0 deduction if nil value given' do
+      row = ['category_name', 'criterion_name', 'text_content', nil, 'more_text_content', '1.0']
+      AnnotationCategory.add_by_row(row, assignment, admin)
+      expect(AnnotationText.where(content: 'text_content').first.deduction).to eq 0.0
+      expect(AnnotationText.all.size).to eq 2
+    end
+
     context 'when no annotation categories exists' do
       before :each do
         @row = []
