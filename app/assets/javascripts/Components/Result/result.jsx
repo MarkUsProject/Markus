@@ -344,14 +344,15 @@ class Result extends React.Component {
       let marks = this.state.marks.map(markData => {
         if (markData.id === criterion_id && markData.criterion_type === criterion_type) {
           let newMark = {...markData};
-          newMark.mark = mark;
-          newMark['marks.mark'] = mark;
+          newMark.mark = data.mark;
+          newMark['marks.mark'] = data.mark;
+          newMark['marks.override'] = data.mark_override;
           return newMark;
         } else {
           return markData;
         }
       });
-      let stateUpdate = { marks, num_marked: data.num_marked };
+      let stateUpdate = { marks, num_marked: data.num_marked, subtotal: data.subtotal, total: data.total };
       if (mark === null) {
         stateUpdate['marking_state'] = 'incomplete';
       }
@@ -364,6 +365,29 @@ class Result extends React.Component {
 
   destroyMark = (criterion_type, criterion_id) => {
     this.updateMark(criterion_type, criterion_id, null);
+  };
+
+  revertToAutomaticDeductions = (criterion_id) => {
+    $.ajax({
+      url: Routes.revert_to_automatic_deductions_assignment_submission_result_path(
+        this.props.assignment_id, this.props.submission_id, this.props.result_id
+      ),
+      method: 'PATCH',
+      data: {markable_id: criterion_id}
+    }).then((data) => {
+      let marks = this.state.marks.map(markData => {
+        if (markData.id === criterion_id && markData.criterion_type === 'FlexibleCriterion') {
+          let newMark = {...markData};
+          newMark.mark = data['mark'];
+          newMark['marks.mark'] = data['mark'];
+          newMark['marks.override'] = false;
+          return newMark;
+        } else {
+          return markData;
+        }
+      });
+      this.setState({marks: marks, num_marked: data.num_marked, subtotal: data.subtotal, total: data.total});
+    });
   };
 
   createExtraMark = (description, extra_mark) => {
@@ -546,6 +570,7 @@ class Result extends React.Component {
                 old_total={this.state.old_total}
                 released_to_students={this.state.released_to_students}
                 remark_submitted={this.state.remark_submitted}
+                revertToAutomaticDeductions={this.revertToAutomaticDeductions}
                 subtotal={this.state.subtotal}
                 total={this.state.total}
                 updateMark={this.updateMark}

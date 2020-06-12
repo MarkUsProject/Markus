@@ -95,6 +95,7 @@ export class MarksPanel extends React.Component {
       oldMark: this.props.old_marks[`${markData.criterion_type}-${markData.id}`],
       toggleExpanded: () => this.toggleExpanded(key),
       annotations: this.props.annotations,
+      revertToAutomaticDeductions: this.props.revertToAutomaticDeductions,
       ... markData
     };
     if (markData.criterion_type === 'CheckboxCriterion') {
@@ -243,6 +244,10 @@ class FlexibleCriterionInput extends React.Component {
       return <span></span>;
     }
 
+    if (this.props['marks.override']) {
+      label = '(' + I18n.t('results.overridden_deductions') + ') ' + label;
+    }
+
     return (
       <div className={'mark-deductions'}>
         <span>
@@ -252,6 +257,26 @@ class FlexibleCriterionInput extends React.Component {
           {deductions.substring(0, deductions.length - 2)}
         </span>
       </div>);
+  }
+
+  deleteManualMarkLink = () => {
+    if (!this.props.released_to_students && !this.props.unassigned) {
+      if (this.props.annotations.some(a => a.deduction !== null && a.deduction !== 0 && a.criterion_id ===
+          this.props.id) && this.props["marks.override"]) {
+        return (<a href="#"
+                   onClick={_ => this.props.revertToAutomaticDeductions(this.props.id)}
+                   style={{float: 'right'}}>
+                  {I18n.t('results.cancel_override')}
+                </a>);
+      } else if (this.props.mark !== null && this.props["marks.override"]) {
+        return (<a href="#"
+                   onClick={e => this.props.destroyMark(e, this.props.criterion_type, this.props.id)}
+                   style={{float: 'right'}}>
+                  {I18n.t('helpers.submit.delete', {model: I18n.t('activerecord.models.mark.one')})}
+                </a>);
+      }
+    }
+    return '';
   }
 
   handleChange = (event) => {
@@ -311,16 +336,7 @@ class FlexibleCriterionInput extends React.Component {
                  style={{float: 'left'}}
             />
             {this.props.name}
-            {!this.props.released_to_students &&
-             !this.props.unassigned &&
-             this.props.mark !== null &&
-             <a href="#"
-                onClick={e => this.props.destroyMark(e, this.props.criterion_type, this.props.id)}
-                style={{float: 'right'}}
-             >
-               {I18n.t('helpers.submit.delete', {model: I18n.t('activerecord.models.mark.one')})}
-             </a>
-            }
+            {this.deleteManualMarkLink()}
           </div>
           <div className='criterion-description'>
             {this.props.description}

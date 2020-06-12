@@ -32,15 +32,28 @@ class Mark < ApplicationRecord
   end
 
   def update_deduction
+    if self.mark.nil? && self.result
+                             .annotations
+                             .joins(annotation_text: [{ annotation_category: :flexible_criterion }])
+                             .where('flexible_criteria.id': self.markable_id)
+                             .where.not('annotation_texts.deduction': 0).empty?
+      return self.update!(override: false)
+    end
     return if self.override?
     deduction = calculate_deduction
-    self.update!(mark: deduction > self.markable.max_mark ? 0.0 : self.markable.max_mark - deduction)
+    if deduction == 0
+      return self.update!(mark: nil)
+    elsif deduction > self.markable.max_mark
+      return self.update!(mark: 0.0)
+    else
+      return self.update!(mark: self.markable.max_mark - deduction)
+    end
   end
 
   def ensure_mark_value
     return unless previous_changes.key?('override')
-    if previous_changes['override'].first == true && previous_changes['override'].second == false
-      update_deduction
+    if previous_changes['override'].second == false
+      self.update_deduction
     end
   end
 
