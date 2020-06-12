@@ -305,7 +305,7 @@ describe AnnotationCategoriesController do
       # the last element in the file.
       test_category_name = 'Artemis'
       test_criterion = 'hephaestus'
-      test_text = ['enyo', 'athena']
+      test_text = %w[enyo athena]
       found_cat = false
       AnnotationCategory.all.each do |ac|
         next unless ac['annotation_category_name'] == test_category_name

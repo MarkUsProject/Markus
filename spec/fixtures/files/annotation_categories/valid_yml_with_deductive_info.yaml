@@ -1,16 +1,24 @@
 ---
 fleabag:
-  - cafe
-  - loan
-  - 1.0
+  criterion: cafe
+  texts:
+    -
+      - loan
+      - 1.0
 claire:
-  - finland
-  - haircut
-  - 1.0
+  criterion: finland
+  texts:
+    -
+      - haircut
+      - 1.0
+    -
+      - son
+      - 1.0
 godmother:
-  - artist
-  - rude
-  - 1.0
+  criterion: artist
+  texts:
+    -
+      - rude
+      - 1.0
 Belinda:
-  -
   - award
