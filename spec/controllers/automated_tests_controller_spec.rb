@@ -1,31 +1,25 @@
 describe AutomatedTestsController do
   let(:assignment) { create :assignment }
   let(:params) { { assignment_id: assignment.id } }
-  context 'as an admin' do
-    let(:admin) { create :admin }
-
+  shared_examples 'An authorized admin and grader managing automated testing' do
+    include_examples 'An unauthorized user accessing student interface'
     context 'PUT update' do
-      before { put_as admin, :update, params: params }
+      before { put_as user, :update, params: params }
       # TODO: write tests
     end
     context 'GET manage' do
-      before { get_as admin, :manage, params: params }
-      # TODO: write tests
-    end
-    context 'GET student_interface' do
-      before { get_as admin, :student_interface, params: { id: 1 } }
-      # TODO: write tests
-    end
-    context 'POST execute_test_run' do
-      before { post_as admin, :execute_test_run, params: { id: 1 } }
-      # TODO: write tests
-    end
-    context 'GET get_test_runs_students' do
-      before { post_as admin, :get_test_runs_students, params: params }
-      # TODO: write tests
+      before :each do
+        get_as user, :manage, params: params
+      end
+      it 'User should be able to view the Automated Testing manage page' do
+        expect(response.status).to eq(200)
+      end
+      it 'should render the assignment_content layout' do
+        expect(response).to render_template('layouts/assignment_content')
+      end
     end
     context 'GET populate_autotest_manager' do
-      subject { get_as admin, :populate_autotest_manager, params: params }
+      subject { get_as user, :populate_autotest_manager, params: params }
       let(:settings_content) { '{}' }
       before do
         allow(AutotestTestersJob).to receive(:perform_later) { AutotestTestersJob.new }
@@ -123,11 +117,11 @@ describe AutomatedTestsController do
       end
     end
     context 'GET download_file' do
-      before { get_as admin, :download_file, params: params }
+      before { get_as user, :download_file, params: params }
       # TODO: write tests
     end
     context 'GET download_files' do
-      subject { get_as admin, :download_files, params: params }
+      subject { get_as user, :download_files, params: params }
       let(:content) { response.body }
       it_behaves_like 'zip file download'
       it 'should be successful' do
@@ -136,7 +130,7 @@ describe AutomatedTestsController do
       end
     end
     context 'POST upload_files' do
-      before { post_as admin, :upload_files, params: params }
+      before { post_as user, :upload_files, params: params }
       after { FileUtils.rm_r assignment.autotest_files_dir }
       context 'uploading a zip file' do
         let(:zip_file) { fixture_file_upload(File.join('/files', 'test_zip.zip'), 'application/zip') }
@@ -174,7 +168,7 @@ describe AutomatedTestsController do
         let(:content) { '{"a":1}' }
         before :each do
           File.write(assignment.autotest_settings_file, content)
-          get_as admin, :download_specs, params: params
+          get_as user, :download_specs, params: params
         end
         it 'should download a file containing the content' do
           expect(response.body).to eq content
@@ -186,7 +180,7 @@ describe AutomatedTestsController do
       context 'when the file does not exist' do
         before :each do
           FileUtils.rm_f(assignment.autotest_settings_file)
-          get_as admin, :download_specs, params: params
+          get_as user, :download_specs, params: params
         end
         it 'should download a file with an empty hash' do
           expect(response.body).to eq '{}'
@@ -199,7 +193,7 @@ describe AutomatedTestsController do
     context 'POST upload_specs' do
       before :each do
         File.write(assignment.autotest_settings_file, '')
-        post_as admin, :upload_specs, params: { assignment_id: assignment.id, specs_file: file }
+        post_as user, :upload_specs, params: { assignment_id: assignment.id, specs_file: file }
         file&.rewind
       end
       after :each do
@@ -240,98 +234,91 @@ describe AutomatedTestsController do
       end
     end
   end
-  context 'as a student' do
-    let(:student) { create :student }
+  shared_examples 'An unauthorized user managing automated testing' do
     context 'PUT update' do
-      before { put_as student, :update, params: params }
-      it('should respond with 404') { expect(response.status).to eq 404 }
+      before { put_as user, :update, params: params }
+      it('should respond with 403') { expect(response.status).to eq 403 }
     end
     context 'GET manage' do
-      before { get_as student, :manage, params: params }
-      it('should respond with 404') { expect(response.status).to eq 404 }
-    end
-    context 'GET student_interface' do
-      before { get_as student, :student_interface, params: params }
-      # TODO: write tests
-    end
-    context 'POST execute_test_run' do
-      before { post_as student, :execute_test_run, params: params }
-      # TODO: write tests
-    end
-    context 'GET get_test_runs_students' do
-      before { post_as student, :get_test_runs_students, params: params }
-      # TODO: write tests
+      before { get_as user, :manage, params: params }
+      it('should respond with 403') { expect(response.status).to eq 403 }
     end
     context 'GET populate_autotest_manager' do
-      before { get_as student, :populate_autotest_manager, params: params }
-      it('should respond with 404') { expect(response.status).to eq 404 }
+      before { get_as user, :populate_autotest_manager, params: params }
+      it('should respond with 403') { expect(response.status).to eq 403 }
     end
     context 'GET download_file' do
-      before { get_as student, :download_file, params: params }
-      it('should respond with 404') { expect(response.status).to eq 404 }
+      before { get_as user, :download_file, params: params }
+      it('should respond with 403') { expect(response.status).to eq 403 }
     end
     context 'GET download_files' do
-      before { get_as student, :download_files, params: params }
-      it('should respond with 404') { expect(response.status).to eq 404 }
+      before { get_as user, :download_files, params: params }
+      it('should respond with 403') { expect(response.status).to eq 403 }
     end
     context 'POST upload_files' do
-      before { post_as student, :upload_files, params: params }
-      it('should respond with 404') { expect(response.status).to eq 404 }
+      before { post_as user, :upload_files, params: params }
+      it('should respond with 403') { expect(response.status).to eq 403 }
     end
     context 'GET download_specs' do
-      before { get_as student, :download_specs, params: params }
-      it('should respond with 404') { expect(response.status).to eq 404 }
+      before { get_as user, :download_specs, params: params }
+      it('should respond with 403') { expect(response.status).to eq 403 }
     end
     context 'POST upload_specs' do
-      before { post_as student, :upload_specs, params: params }
-      it('should respond with 404') { expect(response.status).to eq 404 }
+      before { post_as user, :upload_specs, params: params }
+      it('should respond with 403') { expect(response.status).to eq 403 }
     end
   end
-  context 'as a grader' do
-    let(:grader) { create :ta }
-    context 'PUT update' do
-      before { put_as grader, :update, params: params }
-      it('should respond with 404') { expect(response.status).to eq 404 }
-    end
-    context 'GET manage' do
-      before { get_as grader, :manage, params: params }
-      it('should respond with 404') { expect(response.status).to eq 404 }
-    end
+  shared_examples 'An unauthorized user accessing student interface' do
     context 'GET student_interface' do
-      before { get_as grader, :student_interface, params: { id: 1 } }
-      it('should respond with 404') { expect(response.status).to eq 404 }
+      before { get_as user, :student_interface, params: { id: assignment.id } }
+      it('should respond with 403') { expect(response.status).to eq 403 }
     end
     context 'POST execute_test_run' do
-      before { post_as grader, :execute_test_run, params: { id: 1 } }
-      it('should respond with 404') { expect(response.status).to eq 404 }
+      before { post_as user, :execute_test_run, params: { id: assignment.id } }
+      it('should respond with 403') { expect(response.status).to eq 403 }
     end
     context 'GET get_test_runs_students' do
-      before { post_as grader, :get_test_runs_students, params: params }
-      it('should respond with 404') { expect(response.status).to eq 404 }
+      before { post_as user, :get_test_runs_students, params: params }
+      it('should respond with 403') { expect(response.status).to eq 403 }
     end
-    context 'GET populate_autotest_manager' do
-      before { get_as grader, :populate_autotest_manager, params: params }
-      it('should respond with 404') { expect(response.status).to eq 404 }
+  end
+  context 'as a student' do
+    let!(:user) { create :student }
+    context 'GET student_interface' do
+      before { get_as user, :student_interface, params: params }
+      # TODO: write tests
     end
-    context 'GET download_file' do
-      before { get_as grader, :download_file, params: params }
-      it('should respond with 404') { expect(response.status).to eq 404 }
+    context 'POST execute_test_run' do
+      before { post_as user, :execute_test_run, params: params }
+      # TODO: write tests
     end
-    context 'GET download_files' do
-      before { get_as grader, :download_files, params: params }
-      it('should respond with 404') { expect(response.status).to eq 404 }
+    context 'GET get_test_runs_students' do
+      before { post_as user, :get_test_runs_students, params: params }
+      # TODO: write tests
     end
-    context 'POST upload_files' do
-      before { post_as grader, :upload_files, params: params }
-      it('should respond with 404') { expect(response.status).to eq 404 }
+    context 'When student trying to manage automated testing' do
+      include_examples 'An unauthorized user managing automated testing'
     end
-    context 'GET download_specs' do
-      before { get_as grader, :download_specs, params: params }
-      it('should respond with 404') { expect(response.status).to eq 404 }
+  end
+  describe 'an authenticated admin' do
+    let!(:user) { create(:admin) }
+    include_examples 'An authorized admin and grader managing automated testing'
+  end
+
+  describe 'When the grader is allowed to download grades report and populate course summary' do
+    let!(:user) { create(:ta) }
+    before do
+      create(:grader_permission, user_id: user.id, manage_assignments: true)
     end
-    context 'POST upload_specs' do
-      before { post_as grader, :upload_specs, params: params }
-      it('should respond with 404') { expect(response.status).to eq 404 }
+    include_examples 'An authorized admin and grader managing automated testing'
+  end
+
+  describe 'When the grader is not allowed to download grades report and populate course summary' do
+    let!(:user) { create(:ta) }
+    before do
+      create(:grader_permission, user_id: user.id, manage_assignments: false)
     end
+    include_examples 'An unauthorized user managing automated testing'
+    include_examples 'An unauthorized user accessing student interface'
   end
 end
