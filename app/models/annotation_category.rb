@@ -30,8 +30,9 @@ class AnnotationCategory < ApplicationRecord
     annotation_category = assignment.annotation_categories.find_or_create_by(
       annotation_category_name: name
     )
-    criterion = row.shift
-    if criterion.nil?
+    # The second column is the optional flexible criterion name.
+    criterion_name = row.shift
+    if criterion_name.nil?
       row.each do |text|
         annotation_text = annotation_category.annotation_texts.build(
           content: text,
@@ -43,12 +44,16 @@ class AnnotationCategory < ApplicationRecord
         end
       end
     else
+      criterion = assignment.flexible_criteria.find_or_create_by(name: criterion_name)
+      annotation_category.update!(flexible_criterion_id: criterion.id)
       row.each_slice(2) do |text_with_deduction|
+        content = text_with_deduction.first
+        deduction = text_with_deduction.second.to_f
         annotation_text = annotation_category.annotation_texts.build(
-            content: text_with_deduction.first,
+            content: content,
             creator_id: current_user.id,
             last_editor_id: current_user.id,
-            deduction: text_with_deduction.second
+            deduction: deduction > criterion.max_mark ? criterion.max_mark : deduction
         )
         unless annotation_text.save
           raise CsvInvalidLineError
