@@ -199,8 +199,17 @@ class AnnotationCategoriesController < ApplicationController
         successes = 0
         annotation_line = 0
         data[:contents].each do |category, texts|
-          AnnotationCategory.add_by_row([category] + texts, @assignment, current_user)
-          successes += 1
+          if texts.class == Array
+            AnnotationCategory.add_by_row([category] + [nil] + texts, @assignment, current_user)
+            successes += 1
+          elsif texts.class == Hash
+            row = [category] + [texts['criterion']]
+            texts['texts'].each do |annotation_text|
+              row += annotation_text
+            end
+            AnnotationCategory.add_by_row(row, @assignment, current_user)
+            successes += 1
+          end
         rescue CsvInvalidLineError
           flash_message(:error, t('annotation_categories.upload.error',
                                   annotation_category: key, annotation_line: annotation_line))
