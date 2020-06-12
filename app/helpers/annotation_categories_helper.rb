@@ -3,11 +3,21 @@ module AnnotationCategoriesHelper
   def prepare_for_conversion(annotation_categories)
     result = {}
     annotation_categories.each do |annotation_category|
-      annotation_texts = []
-      annotation_category.annotation_texts.each do |annotation_text|
-        annotation_texts.push(annotation_text.content)
+      if annotation_category.flexible_criterion.nil?
+        annotation_texts = []
+        annotation_category.annotation_texts.each do |annotation_text|
+          annotation_texts.push(annotation_text.content)
+        end
+        result[annotation_category.annotation_category_name] = annotation_texts
+      else
+        annotation_text_info = []
+        annotation_text_info.push(annotation_category.flexible_criterion.name)
+        annotation_category.annotation_texts.each do |annotation_text|
+          annotation_text_info.push(annotation_text.content)
+          annotation_text_info.push(annotation_text.deduction.to_s)
+        end
+        result[annotation_category.annotation_category_name] = annotation_text_info
       end
-      result[annotation_category.annotation_category_name] = annotation_texts
     end
     result
   end
