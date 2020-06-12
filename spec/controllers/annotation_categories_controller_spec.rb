@@ -333,7 +333,7 @@ describe AnnotationCategoriesController do
       expect(response).to redirect_to(action: 'index', assignment_id: assignment.id)
     end
 
-    it 'accepts a valid yml file' do
+    it 'accepts a valid yml file without deductive annotation info' do
       @valid_yml_file = fixture_file_upload('files/annotation_categories/valid_yml.yml', 'text/yml')
       post :upload, params: { assignment_id: assignment.id, upload_file: @valid_yml_file }
 
@@ -349,6 +349,31 @@ describe AnnotationCategoriesController do
         expect(curr_cat.annotation_texts.all[0].content).to be_eql(('Test on question ' + (index + 1).to_s))
         index += 1
       end
+      expect(annotation_category_list.size).to eq(4)
+    end
+
+    it 'accepts a valid yml file with deductive annotation info' do
+      @valid_yml_file = fixture_file_upload('files/annotation_categories/valid_yml_with_deductive_info.yaml',
+                                            'text/yml')
+      post :upload, params: { assignment_id: assignment.id, upload_file: @valid_yml_file }
+
+      expect(flash[:success].size).to eq(1)
+      expect(response.status).to eq(302)
+
+      annotation_category_list = AnnotationCategory.order(:annotation_category_name)
+      test_category_name = 'fleabag'
+      test_criterion = 'cafe'
+      test_text = ['loan']
+      AnnotationCategory.all.each do |ac|
+        next unless ac['annotation_category_name'] == test_category_name
+
+        expect(AnnotationText.where(annotation_category: ac).pluck(:content)).to eq(test_text)
+        expect(AnnotationText.where(annotation_category: ac).pluck(:deduction)).to eq([1.0])
+        expect(ac.flexible_criterion.name).to eq(test_criterion)
+      end
+      category_without_deductions = AnnotationCategory.where(flexible_criterion_id: nil).first
+      expect(category_without_deductions.annotation_category_name).to eq 'Belinda'
+      expect(category_without_deductions.annotation_texts.first.content).to eq 'award'
       expect(annotation_category_list.size).to eq(4)
     end
 
