@@ -1,7 +1,7 @@
 <div class=<%= assignment.is_peer_review? ? 'pr_date' : 'date' %>>
   <% grouping = @current_user.accepted_grouping_for(assignment.id) %>
   <% due_date = grouping&.due_date %>
-  <% if grouping.nil? %>
+  <% if due_date.nil? %>
     <%= l(assignment.due_date) %>
     <% due_date = assignment.section_due_date(@current_user.section) %>
   <% elsif grouping.extension.nil? %>

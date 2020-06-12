@@ -22,6 +22,9 @@
                 new_assignment_path(scanned: true),
                 class: 'button' %>
   <% end %>
+  <%= link_to t('helpers.submit.create', model: t('activerecord.models.timed_assignment.one')),
+              new_assignment_path(timed: true),
+              class: 'button' %>
   <%= link_to t('helpers.submit.create', model: GradeEntryForm.model_name.human),
               new_grade_entry_form_path,
               class: 'button' %>

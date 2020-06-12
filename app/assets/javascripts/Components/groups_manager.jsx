@@ -3,8 +3,10 @@ import {render} from 'react-dom';
 
 import {withSelection, CheckboxTable} from './markus_with_selection_hoc';
 import ExtensionModal from './Modals/extension_modal';
+import {durationSort} from "./Helpers/table_helpers";
 
 class GroupsManager extends React.Component {
+
   constructor(props) {
     super(props);
     this.state = {
@@ -14,7 +16,8 @@ class GroupsManager extends React.Component {
       show_modal: false,
       selected_extension_data: {},
       updating_extension: false,
-      loading: true
+      loading: true,
+      times: !!props.timed ? ['hours', 'minutes'] : ['weeks', 'days', 'hours']
     }
   }
 
@@ -169,6 +172,12 @@ class GroupsManager extends React.Component {
     })
   };
 
+  extraModalInfo = () => {
+    if (this.props.timed) {
+      return `${I18n.t('assignments.timed.modal_current_duration')} ${this.props.current_duration}`
+    }
+  };
+
   render() {
     return (
       <div>
@@ -201,6 +210,7 @@ class GroupsManager extends React.Component {
               scanned_exam={this.props.scanned_exam}
               assignment_id={this.props.assignment_id}
               onExtensionModal={this.handleShowModal}
+              times={this.state.times}
             />
           </div>
         </div>
@@ -210,11 +220,14 @@ class GroupsManager extends React.Component {
           weeks={this.state.selected_extension_data.weeks}
           days={this.state.selected_extension_data.days}
           hours={this.state.selected_extension_data.hours}
+          minutes={this.state.selected_extension_data.minutes}
           note={this.state.selected_extension_data.note}
           penalty={this.state.selected_extension_data.apply_penalty}
           grouping_id={this.state.selected_extension_data.grouping_id}
           extension_id={this.state.selected_extension_data.id}
           updating={this.state.updating_extension}
+          times={this.state.times}
+          extra_info={this.extraModalInfo()}
           key={this.state.selected_extension_data.id} // this causes the ExtensionModal to be recreated if this value changes
         />
       </div>
@@ -338,16 +351,18 @@ class RawGroupsTable extends React.Component {
       accessor: 'extension',
       show: !this.props.scanned_exam,
       Cell: row => {
-        let extension = ['weeks', 'days', 'hours'].map(
+        let extension = this.props.times.map(
           (key) => {
             if (row.original.extension[key]) {
               // don't build these strings dynamically or they will be missed by the i18n-tasks checkers.
               if (key === 'weeks') {
-                return I18n.t('extensions.durations.weeks', {count: row.original.extension[key]});
+                return `${val} ${I18n.t('durations.weeks', {count: val})}`;
               } else if (key === 'days') {
-                return I18n.t('extensions.durations.days', {count: row.original.extension[key]});
+                return `${val} ${I18n.t('durations.days', {count: val})}`;
               } else if (key === 'hours') {
-                return I18n.t('extensions.durations.hours', {count: row.original.extension[key]});
+                return `${val} ${I18n.t('durations.hours', {count: val})}`;
+              } else if (key === 'minutes') {
+                return `${val} ${I18n.t('durations.minutes', {count: val})}`;
               } else {
                 return '';
               }
@@ -369,17 +384,7 @@ class RawGroupsTable extends React.Component {
         }
       },
       filterable: false,
-      sortMethod: (a, b) =>  {
-        a = [a.weeks || -1, a.days || -1, a.hours || -1];
-        b = [b.weeks || -1, b.days || -1, b.hours || -1];
-        if (a < b) {
-          return 1
-        } else if (b < a) {
-          return -1
-        } else {
-          return 0
-        }
-      }
+      sortMethod: durationSort
     }
   ];
 

@@ -35,8 +35,8 @@
                     assignment_path(@assignment.id) %>
       </li>
 
-
-      <% if !@assignment.scanned_exam? && !@assignment.is_peer_review? %>
+      <% @grouping = @current_user.accepted_grouping_for(@assignment.id) %>
+      <% if !@assignment.scanned_exam? && !@assignment.is_peer_review? && !@grouping.start_time.nil? %>
         <li class='<%= "active" if controller.controller_name == 'submissions' %>'>
           <%= link_to Submission.model_name.human.pluralize,
                       file_manager_assignment_submissions_path(@assignment) %>
@@ -53,7 +53,6 @@
         </li>
       <% end %>
 
-      <% @grouping = @current_user.accepted_grouping_for(@assignment.id) %>
       <% @submission = @grouping.nil? ? nil : @grouping.current_submission_used %>
       <% @result = @submission.nil? ? nil : @submission.get_original_result %>
       <% if !@grouping.nil? && !@submission.nil? && !@result.nil? %>
