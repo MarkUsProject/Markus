@@ -51,6 +51,47 @@ class AssignmentProperties < ApplicationRecord
 
   validate :minimum_number_of_groups
 
+  attribute :duration, :duration
+  validates :duration, numericality: { greater_than: 0 }, allow_nil: false, if: :is_timed
+  validates_presence_of :start_time, if: :is_timed
+  validate :start_before_due, if: :is_timed
+  validate :not_timed_and_scanned
+
+  DURATION_PARTS = [:hours, :minutes].freeze
+
+  def update_permissions_if_vcs_changed
+    return unless saved_change_to_vcs_submit?
+    Repository.get_class.update_permissions
+  end
+
+  def duration_parts
+    AssignmentProperties.duration_parts(self.duration)
+  end
+
+  def self.duration_parts(dur)
+    dur = dur.to_i
+    DURATION_PARTS.map do |part|
+      amt = (dur / 1.send(part)).to_i
+      dur -= amt.send(part)
+      [part, amt]
+    end.to_h
+  end
+
+  # Return the duration of this assignment or the time between now and the +due_date+ whichever is
+  # less. If the +due_date+ has passed return 0 seconds.
+  # If +add+ is given, it will be added to the duration.
+  def adjusted_duration(due_date, start_time, add: 0.seconds)
+    dur = duration + add
+    time_until_due = due_date - Time.current
+    if dur < time_until_due
+      dur
+    else
+      ActiveSupport::Duration.build([time_until_due, 0].max.round)
+    end
+  end
+
+  private
+
   def minimum_number_of_groups
     return unless (group_max && group_min) && group_max < group_min
     errors.add(:group_max, 'must be greater than the minimum number of groups')
@@ -63,8 +104,12 @@ class AssignmentProperties < ApplicationRecord
     false
   end
 
-  def update_permissions_if_vcs_changed
-    return unless saved_change_to_vcs_submit?
-    Repository.get_class.update_permissions
+  def start_before_due
+    return if start_time.nil? || duration.nil?
+    errors.add(:start_time, 'must be before due date') if start_time > assignment.due_date - duration #TODO: I18n
+  end
+
+  def not_timed_and_scanned
+    errors.add(:base, 'scanned_exam and is_timed cannot both be true') if is_timed && scanned_exam #TODO: I18n
   end
 end

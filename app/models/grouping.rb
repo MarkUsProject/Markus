@@ -489,15 +489,22 @@ class Grouping < ApplicationRecord
 
   # Return the due date for this grouping. If this grouping has an extension, the time_delta
   # of the extension is added to the due date.
+  #
+  # If the assignment is a timed assignment, the due date is this grouping's start time plus
+  # the duration plus any extension. If this due date is after the assignment due date or if
+  # the grouping hasn't started the timed assignment yet, the assignment due date is returned
+  # instead.
   def due_date
-    if use_section_due_date?
-      assignment_due_date = assignment.section_due_dates.find_by(section_id: inviter.section.id).due_date
-    else
-      assignment_due_date = assignment.due_date
-    end
-    return assignment_due_date + extension.time_delta if extension.present?
+    a_due_date = assignment.section_due_dates.find_by(section_id: inviter&.section)&.due_date || assignment.due_date
+    extension_time_delta = (extension&.time_delta || 0)
 
-    assignment_due_date
+    if assignment.is_timed
+      return a_due_date if Time.current > a_due_date || start_time.nil?
+
+      [start_time + assignment.duration + extension_time_delta, a_due_date].min
+    else
+      a_due_date + extension_time_delta
+    end
   end
 
   # Finds the correct due date (section or not) and checks if the last commit is after it.
@@ -522,6 +529,14 @@ class Grouping < ApplicationRecord
 
   def past_collection_date?
     collection_date < Time.current
+  end
+
+  # Return the duration of this grouping's assignment or the time between now and the collection_date whichever is
+  # less. If the collection date has already passed, return the duration of this grouping's assignment.
+  def adjusted_duration
+    add = assignment.submission_rule.periods.pluck(:hours).sum.hours + (extension&.time_delta || 0)
+    start = [assignment.section_start_time(inviter&.section), Time.current].max
+    assignment.assignment_properties.adjusted_duration(collection_date, start, add: add)
   end
 
   def self.get_assign_scans_grouping(assignment, grouping_id = nil)

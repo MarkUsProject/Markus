@@ -160,6 +160,10 @@ class Assignment < Assessment
     SectionDueDate.due_date_for(section, self)
   end
 
+  def section_start_time(section)
+    section&.section_due_dates&.find_by(assignment: self)&.start_time || start_time
+  end
+
   # Calculate the latest due date among all sections for the assignment.
   def latest_due_date
     return due_date unless section_due_dates_type
@@ -193,7 +197,7 @@ class Assignment < Assessment
 
     due_dates = Hash.new { |h, k| h[k] = due_date }
     section_due_dates.each do |grouping_id, sec_due_date|
-      due_dates[grouping_id] = sec_due_date
+      due_dates[grouping_id] = sec_due_date unless sec_due_date.nil?
     end
     grouping_extensions.each do |grouping_id, ext|
       due_dates[grouping_id] += ActiveSupport::Duration.parse(ext)
@@ -1008,6 +1012,7 @@ class Assignment < Assessment
     Assignment.joins(:assignment_properties)
               .includes(groupings: [:group, { accepted_student_memberships: :user }])
               .where(assignment_properties: { vcs_submit: true })
+              .where.not(groupings: { start_time: nil })
               .order(due_date: :desc)
   end
 

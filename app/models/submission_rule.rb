@@ -54,7 +54,13 @@ class SubmissionRule < ApplicationRecord
 
   def calculate_grouping_collection_time(grouping)
     if grouping.extension.nil? || grouping.extension.apply_penalty
-      grouping.due_date + hours_sum.hours
+      if assignment.is_timed
+        due_date = grouping.due_date
+
+        [due_date + hours_sum.hours, assignment.due_date].min
+      else
+        grouping.due_date + hours_sum.hours
+      end
     else
       grouping.due_date
     end
