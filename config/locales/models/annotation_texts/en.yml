@@ -7,3 +7,4 @@ en:
       annotation_text:
         creator: 'Created By'
         deduction: 'Deduction'
+        invalid_deduction: 'Deduction value invalid'

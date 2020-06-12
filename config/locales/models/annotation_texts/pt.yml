@@ -7,3 +7,4 @@ pt:
       annotation_text:
         creator: 'UPDATE ME!'
         deduction: 'UPDATE ME!'
+        invalid_deduction: 'UPDATE ME!'

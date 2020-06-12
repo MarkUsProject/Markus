@@ -27,12 +27,10 @@ class AnnotationCategory < ApplicationRecord
   def self.add_by_row(row, assignment, current_user)
     # The first column is the annotation category name.
     name = row.shift
-    if name.nil?
-      raise CsvInvalidLineError
-    end
     annotation_category = assignment.annotation_categories.find_or_create_by(
       annotation_category_name: name
     )
+    raise CsvInvalidLineError unless annotation_category.valid?
     # The second column is the optional flexible criterion name.
     criterion_name = row.shift
     if criterion_name.nil?
@@ -47,14 +45,16 @@ class AnnotationCategory < ApplicationRecord
         end
       end
     else
-      criterion = assignment.flexible_criteria.find_or_create_by(name: criterion_name)
-      if criterion.max_mark.nil?
-        criterion.update!(max_mark: FlexibleCriterion::DEFAULT_MAX_MARK)
-      end
+      criterion = assignment.flexible_criteria.find_by(name: criterion_name)
+      raise CsvInvalidLineError if criterion.nil?
       annotation_category.update!(flexible_criterion_id: criterion.id)
       row.each_slice(2) do |text_with_deduction|
         content = text_with_deduction.first
         deduction = text_with_deduction.second.to_f
+        if deduction > criterion.max_mark
+          errors.add(:base, I18n.t('activerecord.attributes.annotation_text.invalid_deduction'))
+          next
+        end
         annotation_text = annotation_category.annotation_texts.build(
           content: content,
           creator_id: current_user.id,
