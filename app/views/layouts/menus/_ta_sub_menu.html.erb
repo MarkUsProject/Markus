@@ -1,4 +1,3 @@
-<% is_viewing_a_peer_review_result = !@result.nil? && @result.is_a_review? %>
 
 <ul class='sub'>
   <li id='dropdown'>
@@ -34,7 +33,7 @@
                   grades_grade_entry_form_path(assessment) %>
     </li>
   <% elsif assessment.is_a?(Assignment) && !assessment.new_record? %>
-    <% target_id = is_viewing_a_peer_review_result ? assessment.pr_assignment.id :
+    <% target_id = @result&.is_a_review? ? assessment.pr_assignment.id :
                      assessment.id %>
     <% if @current_user.ta? && GraderPermission.find_by(user_id: @current_user.id).manage_assignments %>
       <li <% if ['criteria',
@@ -50,7 +49,7 @@
                     edit_assignment_path(target_id) %>
       </li>
       <% end %>
-      <% if assessment.is_peer_review? || is_viewing_a_peer_review_result %>
+      <% if assessment.is_peer_review? || @result&.is_a_review? %>
         <% if @current_user.ta? && GraderPermission.find_by(user_id: @current_user.id).manage_reviewers %>
           <li class='<%= 'active' if controller.controller_name == 'peer_reviews' %>'>
             <%= link_to t('peer_reviews.assign'),
@@ -64,7 +63,7 @@
       class='active'
       <% end %>
       >
-      <%= link_to assessment.is_peer_review? || is_viewing_a_peer_review_result ?
+      <%= link_to assessment.is_peer_review? || @result&.is_a_review? ?
                     PeerReview.model_name.human.pluralize : Submission.model_name.human.pluralize,
                   browse_assignment_submissions_path(target_id) %>
     </li>
