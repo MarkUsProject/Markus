@@ -262,7 +262,7 @@ describe AnnotationCategoriesController do
       let(:params) { { assignment_id: assignment.id } }
     end
 
-    it 'accepts a valid csv file' do
+    it 'accepts a valid csv file without deductive annotation info' do
       file_good = fixture_file_upload('files/annotation_categories/form_good.csv', 'text/csv')
 
       post :upload, params: { assignment_id: assignment.id, upload_file: file_good }
@@ -284,6 +284,36 @@ describe AnnotationCategoriesController do
 
         found_cat = true
         expect(AnnotationText.where(annotation_category: ac).take['content']).to eq(test_content)
+      end
+      expect(found_cat).to eq(true)
+    end
+
+    it 'accepts a valid csv file with deductive annotation info' do
+      file_good = fixture_file_upload('files/annotation_categories/form_good_with_deductive_info.csv',
+                                      'text/csv')
+
+      post :upload, params: { assignment_id: assignment.id, upload_file: file_good }
+
+      expect(response.status).to eq(302)
+      expect(flash[:error]).to be_nil
+      expect(flash[:success].map { |f| extract_text f }).to eq([I18n.t('upload_success',
+                                                                       count: 3)].map { |f| extract_text f })
+      expect(response).to redirect_to(action: 'index', assignment_id: assignment.id)
+
+      expect(AnnotationCategory.all.size).to eq(3)
+      # check that the data is being updated, in particular
+      # the last element in the file.
+      test_category_name = 'Artemis'
+      test_criterion = 'hephaestus'
+      test_text = ['enyo', 'athena']
+      found_cat = false
+      AnnotationCategory.all.each do |ac|
+        next unless ac['annotation_category_name'] == test_category_name
+
+        found_cat = true
+        expect(AnnotationText.where(annotation_category: ac).pluck(:content)).to eq(test_text)
+        expect(AnnotationText.where(annotation_category: ac).pluck(:deduction)).to eq([1.0, 1.0])
+        expect(ac.flexible_criterion.name).to eq(test_criterion)
       end
       expect(found_cat).to eq(true)
     end
