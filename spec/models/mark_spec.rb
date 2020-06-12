@@ -151,7 +151,7 @@ describe Mark do
       mark_without_deductions = grouping_with_result.current_result.marks.first
       mark_without_deductions.update_deduction
       mark_without_deductions.reload
-      expect(mark_without_deductions.mark).to eq(1.0)
+      expect(mark_without_deductions.mark).to eq(nil)
     end
 
     it 'does not take into account deductions related to other criteria' do
@@ -170,10 +170,28 @@ describe Mark do
       mark.reload
       expect(mark.mark).to eq(2.0)
     end
+
+    it 'does not update the mark to max_mark value when there are no annotations' do
+      result.annotations.destroy_all # update deduction called in annotation callback
+      expect(mark.reload.mark).to eq(nil)
+    end
+
+    it 'does not update the mark to max_mark value when there are only deductive annotations with 0 value deductions' do
+      annotation_text.update!(deduction: 0) # update deduction called in annotation_text callback
+      expect(mark.reload.mark).to eq(nil)
+    end
+
+    it 'updates the override of a mark to false when last deductive annotation deleted if the override '\
+       'was true before and the mark was nil' do
+      mark.update!(mark: nil, override: true)
+      result.annotations.joins(annotation_text: :annotation_category)
+            .where('annotation_categories.flexible_criterion_id': mark.markable_id).first.destroy
+      expect(mark.reload.override).to be false
+    end
   end
 
   describe '#ensure_mark_value' do
-    it 'updates the mark value to be calculated from annotation deductions if override changed from true to false' do
+    it 'updates the mark value to be calculated from annotation deductions if override changed to false' do
       assignment = create(:assignment_with_deductive_annotations)
       mark = assignment.groupings.first.current_result.marks.first
       mark.update!(override: true, mark: mark.markable.max_mark)

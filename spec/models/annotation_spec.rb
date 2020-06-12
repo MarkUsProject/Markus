@@ -36,9 +36,17 @@ describe Annotation do
       expect(mark.mark).to eq(1.0)
     end
 
-    it 'correctly updates the mark when destroyed' do
+    it 'correctly updates the mark when destroyed, being only deductive annotation applied' do
       result.annotations.find_by(annotation_text: annotation_text).destroy
-      expect(mark.mark).to eq(3.0)
+      expect(mark.mark).to eq(nil)
+    end
+
+    it 'correctly updates the mark when destroyed, being one of several deductive annotations applied' do
+      create(:text_annotation,
+             annotation_text: annotation_text,
+             result: result)
+      result.annotations.find_by(annotation_text: annotation_text).destroy
+      expect(mark.mark).to eq(2.0)
     end
 
     it 'correctly updates the mark for its criterion\'s mark when a different type of criterion has the same id' do
