@@ -24,6 +24,25 @@ module AnnotationCategoriesHelper
   end
 
   def convert_to_yml(annotation_categories)
-    prepare_for_conversion(annotation_categories).ya2yaml
+    categories_data = {}
+    annotation_categories.each do |category|
+      if category.flexible_criterion_id.nil?
+        annotation_texts = []
+        category.annotation_texts.each do |annotation_text|
+          annotation_texts.push(annotation_text.content)
+        end
+        categories_data[category.annotation_category_name] = annotation_texts
+      else
+        info = {}
+        info['criterion'] = category.flexible_criterion.name
+        text_info = []
+        category.annotation_texts.each do |text|
+          text_info += [[text.content, text.deduction]]
+        end
+        info['texts'] = text_info
+        categories_data[category.annotation_category_name] = info
+      end
+    end
+    categories_data.ya2yaml
   end
 end
