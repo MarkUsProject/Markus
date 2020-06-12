@@ -8,12 +8,12 @@ class ResultsController < ApplicationController
                          :download, :download_zip,
                          :update_remark_request, :cancel_remark_request,
                          :get_test_runs_instructors, :get_test_runs_instructors_released,
-                         :add_tag, :remove_tag
+                         :add_tag, :remove_tag, :revert_to_automatic_deductions
                 ]
   before_action :authorize_for_ta_and_admin,
                 only: [:create, :add_extra_mark,
                        :remove_extra_mark, :get_test_runs_instructors,
-                       :add_tag, :remove_tag]
+                       :add_tag, :remove_tag, :revert_to_automatic_deductions]
   before_action :authorize_for_user,
                 only: [:show, :download, :download_zip,
                        :view_marks, :get_annotations, :show]
@@ -169,7 +169,7 @@ class ResultsController < ApplicationController
           criteria_info = criteria.pluck_to_hash(*fields)
           marks_info = criteria.joins(:marks)
                                .where('marks.result_id': result.id)
-                               .pluck_to_hash(*fields, 'marks.mark')
+                               .pluck_to_hash(*fields, 'marks.mark', 'marks.override')
                                .group_by { |h| h[:id] }
           # adds a criterion type to each of the marks info hashes
           criteria_info.map do |cr|
@@ -540,6 +540,15 @@ class ResultsController < ApplicationController
     m_logger = MarkusLogger.instance
 
     if result_mark.update(mark: mark_value)
+      if mark_value.nil? && result.annotations
+                                  .joins(annotation_text: [{ annotation_category: :flexible_criterion }])
+                                  .where('flexible_criteria.id': result_mark.markable_id)
+                                  .where.not('annotation_texts.deduction': 0).empty?
+        result_mark.update(override: false)
+      else
+        result_mark.update(override: true)
+      end
+
       m_logger.log("User '#{current_user.user_name}' updated mark for " +
                    "submission (id: #{submission.id}) of " +
                    "assignment #{assignment.short_identifier} for " +
@@ -551,7 +560,11 @@ class ResultsController < ApplicationController
         num_marked = assignment.get_num_marked(nil)
       end
       render json: {
-        num_marked: num_marked
+        num_marked: num_marked,
+        mark: result_mark.reload.mark,
+        mark_override: result_mark.override,
+        sub_total: result.get_subtotal,
+        total: result.get_total_mark
       }
     else
       m_logger.log("Error while trying to update mark of submission. " +
@@ -562,6 +575,25 @@ class ResultsController < ApplicationController
                    MarkusLogger::ERROR)
       render json: result_mark.errors.full_messages.join, status: :bad_request
     end
+  end
+
+  def revert_to_automatic_deductions
+    result = Result.find(params[:id])
+    result_mark = result.marks.find_or_create_by(markable_id: params[:markable_id], markable_type: 'FlexibleCriterion')
+
+    result_mark.update!(override: false)
+
+    if @current_user.ta?
+      num_marked = result.submission.grouping.assignment.get_num_marked(@current_user.id)
+    else
+      num_marked = result.submission.grouping.assignment.get_num_marked(nil)
+    end
+    render json: {
+      num_marked: num_marked,
+      mark: result_mark.reload.mark,
+      sub_total: result.get_subtotal,
+      total: result.get_total_mark
+    }
   end
 
   def view_marks

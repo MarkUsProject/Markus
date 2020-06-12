@@ -30,6 +30,7 @@ export class RightPane extends React.Component {
             released_to_students={this.props.released_to_students}
             updateMark={this.props.updateMark}
             destroyMark={this.props.destroyMark}
+            revertToAutomaticDeductions={this.props.revertToAutomaticDeductions}
           />
         </TabPanel>
         <TabPanel>

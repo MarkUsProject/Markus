@@ -244,6 +244,53 @@ describe ResultsController do
                                       mark: 1 }, xhr: true
         expect(JSON.parse(response.body)['num_marked']).to eq 0
       end
+      context 'setting override when annotations linked to criteria exist' do
+        let(:assignment) { create(:assignment_with_deductive_annotations) }
+        let(:result) { assignment.groupings.first.current_result }
+        let(:submission) { result.submission }
+        let(:mark) { assignment.groupings.first.current_result.marks.first }
+        it 'sets override to true for mark if input value is not null' do
+          patch :update_mark, params: { assignment_id: assignment.id, submission_id: submission.id,
+                                        id: result.id, markable_id: mark.markable_id,
+                                        markable_type: mark.markable_type,
+                                        mark: 3.0 }, xhr: true
+          expect(mark.reload.override).to be true
+        end
+        it 'sets override to true for mark if input value null and deductive annotations exist' do
+          patch :update_mark, params: { assignment_id: assignment.id, submission_id: submission.id,
+                                        id: result.id, markable_id: mark.markable_id,
+                                        markable_type: mark.markable_type,
+                                        mark: '' }, xhr: true
+          expect(mark.reload.override).to be true
+        end
+        it 'sets override to false for mark if input value null and only annotations with 0 value deduction exist' do
+          assignment.annotation_categories.where.not(flexible_criterion: nil).first
+                    .annotation_texts.first.update!(deduction: 0)
+          patch :update_mark, params: { assignment_id: assignment.id, submission_id: submission.id,
+                                        id: result.id, markable_id: mark.markable_id,
+                                        markable_type: mark.markable_type,
+                                        mark: '' }, xhr: true
+          expect(mark.reload.override).to be false
+        end
+      end
+      it 'returns correct json fields when updating a mark' do
+        patch :update_mark, params: { assignment_id: assignment.id, submission_id: submission.id,
+                                      id: incomplete_result.id, markable_id: rubric_mark.markable_id,
+                                      markable_type: rubric_mark.markable_type,
+                                      mark: '1', format: :json }, xhr: true
+        expect(response.parsed_body.key?('total')).to be true
+        expect(response.parsed_body.key?('sub_total')).to be true
+        expect(response.parsed_body.key?('mark_override')).to be true
+        expect(response.parsed_body.key?('num_marked')).to be true
+        expect(response.parsed_body.key?('mark')).to be true
+      end
+      it 'sets override to false for mark if input value null and no deductive annotations exist' do
+        patch :update_mark, params: { assignment_id: assignment.id, submission_id: submission.id,
+                                      id: incomplete_result.id, markable_id: rubric_mark.markable_id,
+                                      markable_type: rubric_mark.markable_type,
+                                      mark: '', format: :json }, xhr: true
+        expect(response.parsed_body['mark_override']).to be false
+      end
       it { expect(response).to have_http_status(:redirect) }
       context 'but cannot save the mark' do
         before :each do
@@ -324,8 +371,9 @@ describe ResultsController do
     end
 
     context 'accessing an assignment with deductive annotations' do
+      let(:assignment) { create(:assignment_with_deductive_annotations) }
+      let(:mark) { assignment.groupings.first.current_result.marks.first }
       it 'returns annotation data with criteria information' do
-        assignment = create(:assignment_with_deductive_annotations)
         post :get_annotations, params: { assignment_id: assignment.id,
                                          submission_id: assignment.groupings.first.current_result.submission.id,
                                          id: assignment.groupings.first.current_result,
@@ -337,7 +385,6 @@ describe ResultsController do
       end
 
       it 'returns annotation_category data with deductive information' do
-        assignment = create(:assignment_with_deductive_annotations)
         category = assignment.annotation_categories.where.not(flexible_criterion: nil).first
         post :show, params: { assignment_id: assignment.id,
                               submission_id: assignment.groupings.first.current_result.submission.id,
@@ -350,6 +397,41 @@ describe ResultsController do
         expect(response.parsed_body['annotation_categories'].first['texts'].first['deduction']).to eq 1.0
         expect(response.parsed_body['annotation_categories']
                    .first['flexible_criterion_id']).to eq category.flexible_criterion.id
+      end
+
+      it 'reverts a mark to a value calculated from automatic deductions correctly' do
+        mark.update!(override: true, mark: 3.0)
+        patch :revert_to_automatic_deductions, params: {
+          assignment_id: assignment.id,
+          submission_id: assignment.groupings.first
+                                   .current_result
+                                   .submission.id,
+          id: assignment.groupings.first.current_result,
+          markable_id: mark.markable_id,
+          format: :json
+        }, xhr: true
+
+        mark.reload
+        expect(mark.mark).to eq 2.0
+        expect(mark.override).to be false
+      end
+
+      it 'returns correct information when reverting a mark to a value calculated from automatic deductions' do
+        mark.update!(override: true, mark: 3.0)
+        patch :revert_to_automatic_deductions, params: {
+          assignment_id: assignment.id,
+          submission_id: assignment.groupings.first
+                                   .current_result
+                                   .submission.id,
+          id: assignment.groupings.first.current_result,
+          markable_id: mark.markable_id,
+          format: :json
+        }, xhr: true
+
+        expect(response.parsed_body.key?('sub_total')).to be true
+        expect(response.parsed_body.key?('total')).to be true
+        expect(response.parsed_body.key?('mark')).to be true
+        expect(response.parsed_body.key?('num_marked')).to be true
       end
     end
   end
@@ -364,6 +446,7 @@ describe ResultsController do
              delete_grace_period_deduction: :delete,
              next_grouping: :get,
              remove_extra_mark: :post,
+             revert_to_automatic_deductions: :patch,
              set_released_to_students: :post,
              update_overall_comment: :post,
              toggle_marking_state: :post,
