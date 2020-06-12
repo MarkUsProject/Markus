@@ -68,6 +68,18 @@ es:
       description: "UPDATE ME."
       overwrite: "UPDATE ME"
       title: "Código Inicial"
+    timed:
+      start_button: "UPDATE ME"
+      end_time: "UPDATE ME"
+      start_time_instructions: "UPDATE ME"
+      end_time_instructions: "UPDATE ME"
+      past_due_date: "UPDATE ME"
+      past_end_time: "UPDATE ME"
+      before_start_instructions: "UPDATE ME %{duration_string}"
+      after_start_instructions: "UPDATE ME %{start_time} %{due_date}"
+      full_duration_warning_html: "UPDATE ME"
+      start_confirmation: "UPDATE ME"
+      modal_current_duration: "UPDATE ME"
 
     # Miscellaneous
     average_annotations: "%{average_annotations} anotaciones por entrega calificada"

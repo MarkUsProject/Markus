@@ -5,6 +5,8 @@ es:
         one: "Proyect"
       scanned_assignment:
         one: "Proyecto Escaneado"
+      timed_assignment:
+        one: "UPDATE ME"
     attributes:
       assignment:
         allow_groups: "Los estudiantes pueden trabajar en grupos."
@@ -37,3 +39,4 @@ es:
         tokens_per_period: "Las fichas están disponibles por grupo"
         unlimited_tokens: "Ilimitado"
         vcs_submit: "Permitir entregas a través de version control"
+        start_time: "UPDATE ME"

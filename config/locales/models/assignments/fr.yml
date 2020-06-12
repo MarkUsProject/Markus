@@ -5,6 +5,8 @@ fr:
         one: "Projet"
       scanned_assignment:
         one: "Projet Scanné"
+      timed_assignment:
+        one: "Projet Chronométré"
     attributes:
       assignment:
         allow_groups: "Les étudiants peuvent travailler en groupe"
@@ -36,3 +38,4 @@ fr:
         tokens_per_period: "Jetons disponibles par groupe"
         unlimited_tokens: "Infinis jetons"
         vcs_submit: "Permettre soumet à travers le contrôle de version"
+        start_time: "Heure de début"
