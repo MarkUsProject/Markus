@@ -39,6 +39,7 @@ describe AnnotationCategory do
       before :each do
         @row = []
         @row.push('annotation category name')
+        @row.push(nil)
         @row.push('annotation text 1')
         @row.push('annotation text 2')
       end
@@ -54,6 +55,7 @@ describe AnnotationCategory do
       before do
         @row = []
         @row.push('annotation category name 2')
+        @row.push(nil)
         @row.push('annotation text 2 1')
         @row.push('annotation text 2 2')
 
@@ -71,6 +73,7 @@ describe AnnotationCategory do
       before do
         @row = []
         @row.push('annotation category name 3')
+        @row.push(nil)
         @row.push('annotation text 3 1')
         @row.push('annotation text 3 2')
 
@@ -85,7 +88,7 @@ describe AnnotationCategory do
 
     context 'when the annotation category has no associated texts' do
       before do
-        @row = ['annotation category name 4']
+        @row = ['annotation category name 4', nil]
         @initial_size = AnnotationText.all.size
       end
 
