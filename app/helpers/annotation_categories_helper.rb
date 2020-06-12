@@ -5,6 +5,7 @@ module AnnotationCategoriesHelper
     annotation_categories.each do |annotation_category|
       if annotation_category.flexible_criterion.nil?
         annotation_texts = []
+        annotation_texts.push(nil)
         annotation_category.annotation_texts.each do |annotation_text|
           annotation_texts.push(annotation_text.content)
         end

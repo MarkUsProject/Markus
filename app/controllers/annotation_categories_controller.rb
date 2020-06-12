@@ -160,7 +160,8 @@ class AnnotationCategoriesController < ApplicationController
         ac = prepare_for_conversion(@annotation_categories)
         file_out = MarkusCsv.generate(
           ac) do |annotation_category_name, annotation_texts|
-          # csv format is annotation_category.name, annotation_text.content
+          # csv format is annotation_category.name, annotation_category.flexible_criterion,
+          # annotation_text.content[, optional: annotation_text.deduction ]
           annotation_texts.unshift(annotation_category_name)
         end
         send_data file_out,
