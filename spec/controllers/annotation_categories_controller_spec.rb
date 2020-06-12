@@ -270,10 +270,10 @@ describe AnnotationCategoriesController do
       expect(response.status).to eq(302)
       expect(flash[:error]).to be_nil
       expect(flash[:success].map { |f| extract_text f }).to eq([I18n.t('upload_success',
-                                                                       count: 3)].map { |f| extract_text f })
+                                                                       count: 2)].map { |f| extract_text f })
       expect(response).to redirect_to(action: 'index', assignment_id: assignment.id)
 
-      expect(AnnotationCategory.all.size).to eq(3)
+      expect(AnnotationCategory.all.size).to eq(2)
       # check that the data is being updated, in particular
       # the last element in the file.
       test_category_name = 'test_category'
@@ -344,7 +344,7 @@ describe AnnotationCategoriesController do
              annotation_category: annotation_category)
     end
     let(:csv_data) do
-      "#{annotation_category.annotation_category_name}," \
+      "#{annotation_category.annotation_category_name},," \
       "#{annotation_text.content}\n"
     end
     let(:csv_options) do
