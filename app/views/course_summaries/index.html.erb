@@ -13,13 +13,13 @@
 
 <%
   @heading_buttons = []
-  if @current_user.admin? || (@current_user.ta? && allowed_to?(:marking_schemes?, @current_user, with: CourseSummaryPolicy))
+  if allowed_to?(:marking_schemes?, @current_user, with: CourseSummaryPolicy)
   @heading_buttons += [
     { link_text: MarkingScheme.model_name.human.pluralize,
       link_path: marking_schemes_path }
   ]
   end
-  if @current_user.admin? || (@current_user.ta? && allowed_to?(:download_csv_grades_report?, @current_user, with: CourseSummaryPolicy))
+  if allowed_to?(:download_csv_grades_report?, @current_user, with: CourseSummaryPolicy)
     @heading_buttons += [
       { link_text: t('download_the', item: t('course_summary.grade_report')),
         link_path: download_csv_grades_report_course_summaries_path }

@@ -177,7 +177,13 @@ class SubmissionsController < ApplicationController
   end
 
   def manually_collect_and_begin_grading
-    authorize!
+    begin
+      authorize!
+    rescue ActionPolicy::Unauthorized => e
+      flash_message(:error, e.message)
+      redirect_back(fallback_location: root_path)
+      return
+    end
     @grouping = Grouping.find(params[:id])
     @revision_identifier = params[:current_revision_identifier]
     apply_late_penalty = params[:apply_late_penalty].nil? ? false : params[:apply_late_penalty]
@@ -190,9 +196,6 @@ class SubmissionsController < ApplicationController
       submission_id: submission.id,
       id: submission.get_latest_result.id
     )
-  rescue ActionPolicy::Unauthorized => e
-    flash_message(:error, e.message)
-    redirect_back(fallback_location: root_path)
   end
 
   def uncollect_all_submissions

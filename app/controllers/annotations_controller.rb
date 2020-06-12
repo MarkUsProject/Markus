@@ -4,16 +4,12 @@ class AnnotationsController < ApplicationController
     result = Result.find(params[:result_id])
     authorize! result, with: AnnotationPolicy
   end
+  rescue_from ActionPolicy::Unauthorized, with: :not_authorized
 
   def add_existing_annotation
     result = Result.find(params[:result_id])
     submission = result.submission
     submission_file = submission.submission_files.find(params[:submission_file_id])
-    begin
-      authorize! with: AnnotationPolicy
-    rescue ActionPolicy::Unauthorized => e
-      flash_message(:error, e.message)
-    end
     base_attributes = {
       submission_file_id: submission_file.id,
       is_remark: submission.has_remark?,
@@ -152,5 +148,10 @@ class AnnotationsController < ApplicationController
       end
     end
     @annotation_text.update(content: params[:content])
+  end
+
+  def not_authorized(exception)
+    flash_message(:error, exception.message)
+    redirect_back(fallback_location: root_path)
   end
 end
