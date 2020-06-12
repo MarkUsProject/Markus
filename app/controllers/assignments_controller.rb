@@ -732,11 +732,12 @@ class AssignmentsController < ApplicationController
   def duration_params
     params.require(:assignment).permit(
       assignment_properties_attributes: [
-      duration: [
-        :hours,
-        :minutes
+        duration: [
+          :hours,
+          :minutes
+        ]
       ]
-    ])
+    )
   end
 
   def submission_rule_params
