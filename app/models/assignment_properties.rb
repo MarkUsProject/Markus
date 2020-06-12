@@ -77,12 +77,12 @@ class AssignmentProperties < ApplicationRecord
     end.to_h
   end
 
-  # Return the duration of this assignment or the time between now and the +due_date+ whichever is
+  # Return the duration of this assignment or the time between the +start_time+ and the +due_date+ whichever is
   # less. If the +due_date+ has passed return 0 seconds.
   # If +add+ is given, it will be added to the duration.
   def adjusted_duration(due_date, start_time, add: 0.seconds)
     dur = duration + add
-    time_until_due = due_date - Time.current
+    time_until_due = due_date - start_time
     if dur < time_until_due
       dur
     else
@@ -106,10 +106,10 @@ class AssignmentProperties < ApplicationRecord
 
   def start_before_due
     return if start_time.nil? || duration.nil?
-    errors.add(:start_time, 'must be before due date') if start_time > assignment.due_date - duration #TODO: I18n
+    errors.add(:start_time, 'must be before due date') if start_time > assignment.due_date - duration # TODO: I18n
   end
 
   def not_timed_and_scanned
-    errors.add(:base, 'scanned_exam and is_timed cannot both be true') if is_timed && scanned_exam #TODO: I18n
+    errors.add(:base, 'scanned_exam and is_timed cannot both be true') if is_timed && scanned_exam # TODO: I18n
   end
 end

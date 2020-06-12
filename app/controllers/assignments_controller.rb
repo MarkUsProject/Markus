@@ -526,7 +526,7 @@ class AssignmentsController < ApplicationController
     return head 400 if grouping.nil?
 
     duration = params[:hours].to_i.hours + params[:minutes].to_i.minutes
-    unless grouping.update({duration: duration, start_time: params[:start_time]})
+    unless grouping.update(duration: duration, start_time: params[:start_time])
       flash_now(:error, grouping.errors.full_messages.join(' '))
     end
     redirect_to assignment_path(params[:id])
@@ -655,8 +655,8 @@ class AssignmentsController < ApplicationController
   end
 
   def process_timed_duration(assignment)
-    durs = duration_params["assignment_properties_attributes"]["duration"]
-    assignment.duration = durs["hours"].to_i.hours + durs["minutes"].to_i.minutes
+    durs = duration_params['assignment_properties_attributes']['duration']
+    assignment.duration = durs['hours'].to_i.hours + durs['minutes'].to_i.minutes
   end
 
   def graders_options_params
@@ -730,13 +730,13 @@ class AssignmentsController < ApplicationController
   end
 
   def duration_params
-    params.require(:assignment)
-          .permit(assignment_properties_attributes: [
-              duration: [
-                  :hours,
-                  :minutes
-              ]
-          ])
+    params.require(:assignment).permit(
+      assignment_properties_attributes: [
+      duration: [
+        :hours,
+        :minutes
+      ]
+    ])
   end
 
   def submission_rule_params

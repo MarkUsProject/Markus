@@ -121,7 +121,7 @@ class Student < User
             m_logger.log("Could not create a group for Student '#{user_name}'."\
             " The group was #{@group.inspect} - errors:"\
             " #{@group.errors.inspect}", MarkusLogger::ERROR)
-              raise 'Sorry!  For some reason, your group could not be created.'\
+            raise 'Sorry!  For some reason, your group could not be created.'\
             '  Please wait a few seconds, then hit refresh to try again.  If'\
             ' you come back to this page, you should inform the course'\
             ' instructor.'

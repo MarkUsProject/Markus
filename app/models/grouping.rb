@@ -532,7 +532,7 @@ class Grouping < ApplicationRecord
   end
 
   # Return the duration of this grouping's assignment or the time between now and the collection_date whichever is
-  # less. If the collection date has already passed, return the duration of this grouping's assignment.
+  # less. If the collection date has already passed, return 0 seconds.
   def adjusted_duration
     add = assignment.submission_rule.periods.pluck(:hours).sum.hours + (extension&.time_delta || 0)
     start = [assignment.section_start_time(inviter&.section), Time.current].max
