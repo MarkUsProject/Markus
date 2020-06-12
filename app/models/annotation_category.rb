@@ -27,6 +27,9 @@ class AnnotationCategory < ApplicationRecord
   def self.add_by_row(row, assignment, current_user)
     # The first column is the annotation category name.
     name = row.shift
+    if name.nil? 
+      raise CsvInvalidLineError
+    end
     annotation_category = assignment.annotation_categories.find_or_create_by(
       annotation_category_name: name
     )
