@@ -1,15 +1,8 @@
 describe Mark do
-  it { is_expected.to validate_presence_of(:markable_type) }
-
-  it { is_expected.to belong_to(:markable) }
+  it { is_expected.to belong_to(:criterion) }
   it { is_expected.to belong_to(:result) }
 
-  it { is_expected.to allow_value('RubricCriterion').for(:markable_type) }
-  it { is_expected.to allow_value('FlexibleCriterion').for(:markable_type) }
-  it { is_expected.to_not allow_value('').for(:markable_type) }
-  it { is_expected.to_not allow_value(nil).for(:markable_type) }
-
-  describe 'when markable type is rubric and the max mark is exceeded' do
+  describe 'when mark belongs to rubric criterion and the max mark is exceeded' do
     let(:rubric_mark) do
       FactoryBot.build(:rubric_mark, mark: 10)
     end
@@ -18,7 +11,7 @@ describe Mark do
     end
   end
 
-  describe 'when markable type is flexible and the max mark is exceeded' do
+  describe 'when mark belongs to flexible criterion and the max mark is exceeded' do
     let(:flexible_mark) do
       FactoryBot.build(:flexible_mark, mark: 10)
     end
@@ -27,7 +20,7 @@ describe Mark do
     end
   end
 
-  describe 'when markable type is flexible and the max mark is exceeded' do
+  describe 'when mark belongs to flexible criterion and the max mark is exceeded' do
     let(:checkbox_mark) do
       FactoryBot.build(:checkbox_mark, mark: 10)
     end
@@ -50,8 +43,8 @@ describe Mark do
       FactoryBot.create(:rubric_mark, mark: 4)
     end
     it 'equals to mark times weight' do
-      markable = RubricCriterion.find(rubric_mark.markable_id)
-      expect(rubric_mark.mark).to eq(markable.weight)
+      related_rubric = RubricCriterion.find(rubric_mark.criterion_id)
+      expect(rubric_mark.mark).to eq(related_rubric.weight)
     end
   end
 
