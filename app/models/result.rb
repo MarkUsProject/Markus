@@ -204,7 +204,7 @@ class Result < ApplicationRecord
   def mark_hash
     Hash[
       marks.map do |mark|
-        ["#{mark.markable_type}-#{mark.markable_id}",
+        ["#{mark.criterion.type}-#{mark.criterion_id}",
          mark.mark]
       end
     ]
