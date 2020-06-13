@@ -116,7 +116,7 @@ namespace :markus do
   def mark_submission(submission)
     result = submission.results.last
     result.marks.each do |mark|
-      criterion = mark.markable
+      criterion = mark.criterion
       if criterion.class == RubricCriterion
         random_mark = criterion.max_mark / 4 * rand(0..4)
       elsif criterion.class == FlexibleCriterion

@@ -211,8 +211,7 @@ namespace :markus do
               assignment.get_criteria.each do |criterion|
                 # Save a mark for each criterion
                 m = Mark.new()
-                m.markable_type = "RubricCriterion"
-                m.markable_id = criterion.id
+                m.criterion = criterion
                 m.result = result
                 m.mark = rand(4) # assign some random mark
                 m.save!
