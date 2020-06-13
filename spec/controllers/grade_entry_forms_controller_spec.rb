@@ -40,7 +40,7 @@ describe GradeEntryFormsController do
       )
     end
 
-    include_examples 'a controller supporting upload' do
+    include_examples 'a controller supporting upload', formats: [:yml, :csv] do
       let(:params) { { id: grade_entry_form.id, model: Grade } } # model: Grade checks the number of grades.
     end
 

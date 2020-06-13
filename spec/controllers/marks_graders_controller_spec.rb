@@ -10,7 +10,7 @@ describe MarksGradersController do
   let(:grade_entry_form_with_data) { create(:grade_entry_form_with_data) }
 
   context '#upload' do
-    include_examples 'a controller supporting upload' do
+    include_examples 'a controller supporting upload', formats: [:yml, :csv] do
       let(:params) { { grade_entry_form_id: grade_entry_form.id, model: GradeEntryStudentTa } }
     end
 

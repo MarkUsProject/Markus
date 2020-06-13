@@ -930,8 +930,8 @@ describe CriteriaController do
     end
   end
 
-  context '#upload' do # Until criteria tables merged together, can't use Criterion.count
-    include_examples 'a controller supporting upload' do
+  context '#upload' do
+    include_examples 'a controller supporting upload', formats: [:yml] do
       let(:params) { { assignment_id: assignment.id } }
     end
   end
