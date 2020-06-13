@@ -632,7 +632,7 @@ describe Assignment do
           create(:mark,
                  mark: 4,
                  result: @result,
-          criterion: rubric_criterion)
+                 criterion: rubric_criterion)
           @sum += weight
         end
         @total = @sum * 4
