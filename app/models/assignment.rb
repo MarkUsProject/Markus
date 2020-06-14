@@ -644,7 +644,7 @@ class Assignment < Assessment
   # Returns an array of [mark, max_mark].
   def get_marks_list(submission)
     get_criteria.map do |criterion|
-      mark = submission.get_latest_result.marks.find_by(markable: criterion)
+      mark = submission.get_latest_result.marks.find_by(criterion: criterion)
       [(mark.nil? || mark.mark.nil?) ? '' : mark.mark,
        criterion.max_mark]
     end
@@ -795,7 +795,7 @@ class Assignment < Assessment
         ta = Ta.find(ta_id)
         num_assigned_criteria = ta.criterion_ta_associations.where(assignment: self).count
         marked = ta.criterion_ta_associations
-                   .joins('INNER JOIN marks m ON criterion_id = m.markable_id AND criterion_type = m.markable_type')
+                   .joins('INNER JOIN marks m ON criterion_id = m.criterion_id')
                    .where('m.mark IS NOT NULL AND assessment_id = ?', self.id)
                    .group('m.result_id')
                    .count
@@ -1216,7 +1216,7 @@ class Assignment < Assessment
 
     result_ids = result_data.values.map { |arr| arr.map { |h| h['results.id'] } }.flatten
 
-    total_marks = Mark.where(markable: criteria, result_id: result_ids)
+    total_marks = Mark.where(criterion: criteria, result_id: result_ids)
                       .pluck(:result_id, :mark)
                       .group_by(&:first)
                       .transform_values { |arr| arr.map(&:second).compact.sum }

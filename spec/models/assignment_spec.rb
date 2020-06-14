@@ -628,10 +628,11 @@ describe Assignment do
 
         @sum = 0
         [2, 2.7, 2.2, 2].each do |weight|
+          rubric_criterion = create(:rubric_criterion, assignment: @assignment, max_mark: weight * 4)
           create(:mark,
                  mark: 4,
                  result: @result,
-                 markable: create(:rubric_criterion, assignment: @assignment, max_mark: weight * 4))
+                 criterion: rubric_criterion)
           @sum += weight
         end
         @total = @sum * 4
