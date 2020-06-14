@@ -14,6 +14,7 @@ class Criterion < ApplicationRecord
   before_validation :update_assigned_groups_count
 
   has_many :tas, through: :criterion_ta_associations
+  has_many :test_groups
 
   validates_presence_of :name
   validates_uniqueness_of :name, scope: :assessment_id
