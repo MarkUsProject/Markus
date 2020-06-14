@@ -9,7 +9,7 @@ describe StudentsController do
   let(:student) { create(:student, grace_credits: 5) }
 
   context '#upload' do
-    include_examples 'a controller supporting upload', formats: [:yml, :csv] do
+    include_examples 'a controller supporting upload' do
       let(:params) { {} }
     end
     it 'creates grade_entry_students as well' do

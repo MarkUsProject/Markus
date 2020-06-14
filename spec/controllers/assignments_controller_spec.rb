@@ -20,7 +20,7 @@ describe AssignmentsController do
       allow(controller).to receive(:current_user).and_return(build(:admin))
     end
 
-    include_examples 'a controller supporting upload', formats: [:yml, :csv] do
+    include_examples 'a controller supporting upload' do
       let(:params) { {} }
     end
 

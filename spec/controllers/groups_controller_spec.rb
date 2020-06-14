@@ -161,7 +161,7 @@ describe GroupsController do
         end
       end
 
-      include_examples 'a controller supporting upload', formats: [:yml, :csv] do
+      include_examples 'a controller supporting upload' do
         let(:params) { { assignment_id: @assignment.id } }
       end
 

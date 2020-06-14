@@ -105,7 +105,7 @@ describe PeerReviewsController do
   end
 
   describe '#upload' do
-    include_examples 'a controller supporting upload', formats: [:yml, :csv] do
+    include_examples 'a controller supporting upload' do
       let(:params) { { assignment_id: @pr_id, model: PeerReview } }
     end
 

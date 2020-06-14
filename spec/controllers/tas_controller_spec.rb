@@ -7,7 +7,7 @@ describe TasController do
   end
 
   context '#upload' do
-    include_examples 'a controller supporting upload', formats: [:yml, :csv] do
+    include_examples 'a controller supporting upload' do
       let(:params) { {} }
     end
 

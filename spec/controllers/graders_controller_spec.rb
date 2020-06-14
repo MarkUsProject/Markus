@@ -45,7 +45,7 @@ describe GradersController do
     end #manage
 
     context 'doing a POST on :upload' do
-      include_examples 'a controller supporting upload', formats: [:yml, :csv] do
+      include_examples 'a controller supporting upload' do
         let(:params) { { assignment_id: @assignment.id, model: TaMembership, groupings: true } }
       end
 
@@ -149,7 +149,7 @@ describe GradersController do
     end #groups csv upload
 
     context 'doing a POST on :upload' do
-      include_examples 'a controller supporting upload', formats: [:yml, :csv] do
+      include_examples 'a controller supporting upload' do
         let(:params) { { assignment_id: @assignment.id, model: TaMembership, criteria: true } }
       end
 
