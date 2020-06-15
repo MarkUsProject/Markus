@@ -160,7 +160,8 @@ class AnnotationCategoriesController < ApplicationController
         ac = prepare_for_conversion(@annotation_categories)
         file_out = MarkusCsv.generate(
           ac) do |annotation_category_name, annotation_texts|
-          # csv format is annotation_category.name, annotation_text.content
+          # csv format is annotation_category.name, annotation_category.flexible_criterion,
+          # annotation_text.content[, optional: annotation_text.deduction ]
           annotation_texts.unshift(annotation_category_name)
         end
         send_data file_out,
@@ -197,9 +198,15 @@ class AnnotationCategoriesController < ApplicationController
       elsif data[:type] == '.yml'
         successes = 0
         annotation_line = 0
-        data[:contents].each do |category, texts|
-          AnnotationCategory.add_by_row([category] + texts, @assignment, current_user)
-          successes += 1
+        data[:contents].each do |category, category_data|
+          if category_data.is_a?(Array)
+            AnnotationCategory.add_by_row([category, nil] + category_data, @assignment, current_user)
+            successes += 1
+          elsif category_data.is_a?(Hash)
+            row = [category, category_data['criterion']] + category_data['texts'].flatten
+            AnnotationCategory.add_by_row(row, @assignment, current_user)
+            successes += 1
+          end
         rescue CsvInvalidLineError
           flash_message(:error, t('annotation_categories.upload.error',
                                   annotation_category: key, annotation_line: annotation_line))

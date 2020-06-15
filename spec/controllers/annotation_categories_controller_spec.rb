@@ -1,4 +1,5 @@
 describe AnnotationCategoriesController do
+  include AnnotationCategoriesHelper
   before :each do
     # Authenticate user is not timed out, and has administrator rights.
     allow(controller).to receive(:session_expired?).and_return(false)
@@ -262,7 +263,7 @@ describe AnnotationCategoriesController do
       let(:params) { { assignment_id: assignment.id } }
     end
 
-    it 'accepts a valid csv file' do
+    it 'accepts a valid csv file without deductive annotation info' do
       file_good = fixture_file_upload('files/annotation_categories/form_good.csv', 'text/csv')
 
       post :upload, params: { assignment_id: assignment.id, upload_file: file_good }
@@ -288,6 +289,29 @@ describe AnnotationCategoriesController do
       expect(found_cat).to eq(true)
     end
 
+    it 'accepts a valid csv file with deductive annotation info' do
+      file_good = fixture_file_upload('files/annotation_categories/form_good_with_deductive_info.csv',
+                                      'text/csv')
+      create(:flexible_criterion, name: 'hephaestus', assignment: assignment)
+      post :upload, params: { assignment_id: assignment.id, upload_file: file_good }
+
+      expect(response.status).to eq(302)
+      expect(flash[:error]).to be_nil
+      expect(flash[:success].map { |f| extract_text f }).to eq([I18n.t('upload_success',
+                                                                       count: 3)].map { |f| extract_text f })
+      expect(response).to redirect_to(action: 'index', assignment_id: assignment.id)
+
+      expect(AnnotationCategory.all.size).to eq(3)
+      # check that the data is being updated, in particular
+      # the last element in the file.
+      test_criterion = 'hephaestus'
+      test_text = %w[enyo athena]
+      ac = AnnotationCategory.find_by(annotation_category_name: 'Artemis')
+      expect(AnnotationText.where(annotation_category: ac).pluck(:content)).to eq(test_text)
+      expect(AnnotationText.where(annotation_category: ac).pluck(:deduction)).to eq([1.0, 1.0])
+      expect(ac.flexible_criterion.name).to eq(test_criterion)
+    end
+
     # this test case is to test a file with an annotation under an annotation category that has no name
     it 'does not accept files with invalid columns' do
       @file_invalid_column = fixture_file_upload(
@@ -303,7 +327,7 @@ describe AnnotationCategoriesController do
       expect(response).to redirect_to(action: 'index', assignment_id: assignment.id)
     end
 
-    it 'accepts a valid yml file' do
+    it 'accepts a valid yml file without deductive annotation info' do
       @valid_yml_file = fixture_file_upload('files/annotation_categories/valid_yml.yml', 'text/yml')
       post :upload, params: { assignment_id: assignment.id, upload_file: @valid_yml_file }
 
@@ -319,6 +343,31 @@ describe AnnotationCategoriesController do
         expect(curr_cat.annotation_texts.all[0].content).to be_eql(('Test on question ' + (index + 1).to_s))
         index += 1
       end
+      expect(annotation_category_list.size).to eq(4)
+    end
+
+    it 'accepts a valid yml file with deductive annotation info' do
+      @valid_yml_file = fixture_file_upload('files/annotation_categories/valid_yml_with_deductive_info.yaml',
+                                            'text/yml')
+      create(:flexible_criterion, assignment: assignment, name: 'cafe')
+      create(:flexible_criterion, assignment: assignment, name: 'finland')
+      create(:flexible_criterion, assignment: assignment, name: 'artist')
+      post :upload, params: { assignment_id: assignment.id, upload_file: @valid_yml_file }
+
+      expect(flash[:success].size).to eq(1)
+      expect(response.status).to eq(302)
+
+      annotation_category_list = AnnotationCategory.order(:annotation_category_name)
+      test_criterion = 'cafe'
+      test_text = ['loan']
+      ac = AnnotationCategory.find_by(annotation_category_name: 'fleabag')
+      expect(AnnotationText.where(annotation_category: ac).pluck(:content)).to eq(test_text)
+      expect(AnnotationText.where(annotation_category: ac).pluck(:deduction)).to eq([1.0])
+      expect(ac.flexible_criterion.name).to eq(test_criterion)
+
+      category_without_deductions = AnnotationCategory.where(flexible_criterion_id: nil).first
+      expect(category_without_deductions.annotation_category_name).to eq 'Belinda'
+      expect(category_without_deductions.annotation_texts.first.content).to eq 'award'
       expect(annotation_category_list.size).to eq(4)
     end
 
@@ -344,7 +393,7 @@ describe AnnotationCategoriesController do
              annotation_category: annotation_category)
     end
     let(:csv_data) do
-      "#{annotation_category.annotation_category_name}," \
+      "#{annotation_category.annotation_category_name},," \
       "#{annotation_text.content}\n"
     end
     let(:csv_options) do
@@ -374,6 +423,24 @@ describe AnnotationCategoriesController do
       get :download, params: { assignment_id: assignment.id }, format: 'csv'
     end
 
+    it 'expects correct call to send_data when deductive information is included' do
+      assignment = create(:assignment_with_deductive_annotations)
+      category = assignment.annotation_categories.where.not(flexible_criterion_id: nil).first
+      criterion_name = category.flexible_criterion.name
+      annotation_text = category.annotation_texts.first
+      csv_data = "#{category.annotation_category_name},#{criterion_name}," \
+        "#{annotation_text.content},#{annotation_text.deduction}\n"
+      csv_options = {
+        filename: "#{assignment.short_identifier}_annotations.csv",
+        disposition: 'attachment'
+      }
+      expect(@controller).to receive(:send_data).with(csv_data, csv_options) {
+        # to prevent a 'missing template' error
+        @controller.head :ok
+      }
+      get :download, params: { assignment_id: assignment.id }, format: 'csv'
+    end
+
     # parse header object to check for the right content type
     it 'returns text/csv type' do
       get :download, params: { assignment_id: assignment.id }, format: 'csv'
@@ -386,6 +453,22 @@ describe AnnotationCategoriesController do
       filename = response.header['Content-Disposition']
                          .split[1].split('"').second
       expect(filename).to eq "#{assignment.short_identifier}_annotations.csv"
+    end
+  end
+
+  context 'YAML download' do
+    it 'correctly downloads annotation_category information with deductive information' do
+      assignment = create(:assignment_with_deductive_annotations)
+      yml_data = convert_to_yml(assignment.annotation_categories)
+      yml_options = {
+        filename: "#{assignment.short_identifier}_annotations.yml",
+        disposition: 'attachment'
+      }
+      expect(@controller).to receive(:send_data).with(yml_data, yml_options) {
+        # to prevent a 'missing template' error
+        @controller.head :ok
+      }
+      get :download, params: { assignment_id: assignment.id }, format: 'yml'
     end
   end
 
