@@ -291,7 +291,7 @@ describe AnnotationCategoriesController do
     it 'accepts a valid csv file with deductive annotation info' do
       file_good = fixture_file_upload('files/annotation_categories/form_good_with_deductive_info.csv',
                                       'text/csv')
-
+      create(:flexible_criterion, name: 'hephaestus', assignment: assignment)
       post :upload, params: { assignment_id: assignment.id, upload_file: file_good }
 
       expect(response.status).to eq(302)
@@ -303,19 +303,12 @@ describe AnnotationCategoriesController do
       expect(AnnotationCategory.all.size).to eq(3)
       # check that the data is being updated, in particular
       # the last element in the file.
-      test_category_name = 'Artemis'
       test_criterion = 'hephaestus'
       test_text = %w[enyo athena]
-      found_cat = false
-      AnnotationCategory.all.each do |ac|
-        next unless ac['annotation_category_name'] == test_category_name
-
-        found_cat = true
-        expect(AnnotationText.where(annotation_category: ac).pluck(:content)).to eq(test_text)
-        expect(AnnotationText.where(annotation_category: ac).pluck(:deduction)).to eq([1.0, 1.0])
-        expect(ac.flexible_criterion.name).to eq(test_criterion)
-      end
-      expect(found_cat).to eq(true)
+      ac = AnnotationCategory.find_by(annotation_category_name: 'Artemis')
+      expect(AnnotationText.where(annotation_category: ac).pluck(:content)).to eq(test_text)
+      expect(AnnotationText.where(annotation_category: ac).pluck(:deduction)).to eq([1.0, 1.0])
+      expect(ac.flexible_criterion.name).to eq(test_criterion)
     end
 
     # this test case is to test a file with an annotation under an annotation category that has no name
@@ -355,6 +348,9 @@ describe AnnotationCategoriesController do
     it 'accepts a valid yml file with deductive annotation info' do
       @valid_yml_file = fixture_file_upload('files/annotation_categories/valid_yml_with_deductive_info.yaml',
                                             'text/yml')
+      create(:flexible_criterion, assignment: assignment, name: 'cafe')
+      create(:flexible_criterion, assignment: assignment, name: 'finland')
+      create(:flexible_criterion, assignment: assignment, name: 'artist')
       post :upload, params: { assignment_id: assignment.id, upload_file: @valid_yml_file }
 
       expect(flash[:success].size).to eq(1)
