@@ -357,16 +357,13 @@ describe AnnotationCategoriesController do
       expect(response.status).to eq(302)
 
       annotation_category_list = AnnotationCategory.order(:annotation_category_name)
-      test_category_name = 'fleabag'
       test_criterion = 'cafe'
       test_text = ['loan']
-      AnnotationCategory.all.each do |ac|
-        next unless ac['annotation_category_name'] == test_category_name
+      ac = AnnotationCategory.find_by(annotation_category_name: 'fleabag')
+      expect(AnnotationText.where(annotation_category: ac).pluck(:content)).to eq(test_text)
+      expect(AnnotationText.where(annotation_category: ac).pluck(:deduction)).to eq([1.0])
+      expect(ac.flexible_criterion.name).to eq(test_criterion)
 
-        expect(AnnotationText.where(annotation_category: ac).pluck(:content)).to eq(test_text)
-        expect(AnnotationText.where(annotation_category: ac).pluck(:deduction)).to eq([1.0])
-        expect(ac.flexible_criterion.name).to eq(test_criterion)
-      end
       category_without_deductions = AnnotationCategory.where(flexible_criterion_id: nil).first
       expect(category_without_deductions.annotation_category_name).to eq 'Belinda'
       expect(category_without_deductions.annotation_texts.first.content).to eq 'award'
