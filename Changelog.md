@@ -13,6 +13,7 @@
 - Fixed bug preventing downloading all submission files from git repo (#4658)
 - Assignment grader distribution graphs only show marks for assigned criteria when graders are assigned specific
   criteria (#4656) 
+- Fixed bug preventing new tags from being created from results view (#4669)
 
 ## [v1.9.2]
 - Fixed bug preventing all git hooks from being run in production (#4594)
