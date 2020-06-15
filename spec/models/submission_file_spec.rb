@@ -242,6 +242,7 @@ describe SubmissionFile do
 
   context '#add_annotations' do
     it 'includes deductive information when deductive annotations applied' do
+      pending('retrieve_file() not yet usable in testing, and add_annotations is private.')
       assignment = create(:assignment_with_deductive_annotations)
       file = create(:submission_file, submission: assignment.groupings.first.current_result.submission)
       category = assignment.annotation_categories.where.not(flexible_criterion_id: nil).first
