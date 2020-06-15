@@ -145,12 +145,16 @@ class SubmissionFile < ApplicationRecord
     file_contents.split("\n").each_with_index do |contents, index|
       annotations.each do |annot|
         if index == annot.line_start.to_i - 1
-           text = AnnotationText.find(annot.annotation_text_id).content
-           result = result.concat(I18n.t('annotations.download_submission_file.begin_annotation',
-               id: annot.annotation_number.to_s,
-               text: text,
-               comment_start: comment_syntax[0],
-               comment_end: comment_syntax[1]) + "\n")
+          annotation_text = AnnotationText.find(annot.annotation_text_id)
+          text = annotation_text.content
+          unless annotation_text.deduction.nil?
+            text += " [#{annotation_text.annotation_category.flexible_criterion.name}: -#{annotation_text.deduction}]"
+          end
+          result = result.concat(I18n.t('annotations.download_submission_file.begin_annotation',
+             id: annot.annotation_number.to_s,
+             text: text,
+             comment_start: comment_syntax[0],
+             comment_end: comment_syntax[1]) + "\n")
         elsif index == annot.line_end.to_i
           result = result.concat(I18n.t('annotations.download_submission_file.end_annotation',
                id: annot.annotation_number.to_s,
