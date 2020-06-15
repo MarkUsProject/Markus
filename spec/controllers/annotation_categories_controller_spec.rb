@@ -472,8 +472,8 @@ describe AnnotationCategoriesController do
         "      - \"#{annotation_text.content}\"\n" \
         "      - #{annotation_text.deduction}\n"
       yml_options = {
-          filename: "#{assignment.short_identifier}_annotations.yml",
-          disposition: 'attachment'
+        filename: "#{assignment.short_identifier}_annotations.yml",
+        disposition: 'attachment'
       }
       expect(@controller).to receive(:send_data).with(yml_data, yml_options) {
         # to prevent a 'missing template' error
