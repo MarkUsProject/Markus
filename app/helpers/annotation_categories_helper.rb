@@ -4,19 +4,12 @@ module AnnotationCategoriesHelper
     result = {}
     annotation_categories.each do |annotation_category|
       if annotation_category.flexible_criterion.nil?
-        annotation_texts = []
-        annotation_texts.push(nil)
-        annotation_category.annotation_texts.each do |annotation_text|
-          annotation_texts.push(annotation_text.content)
-        end
+        annotation_texts = [nil]
+        annotation_texts += annotation_category.annotation_texts.pluck(:content)
         result[annotation_category.annotation_category_name] = annotation_texts
       else
-        annotation_text_info = []
-        annotation_text_info.push(annotation_category.flexible_criterion.name)
-        annotation_category.annotation_texts.each do |annotation_text|
-          annotation_text_info.push(annotation_text.content)
-          annotation_text_info.push(annotation_text.deduction.to_s)
-        end
+        annotation_text_info = [annotation_category.flexible_criterion.name]
+        annotation_text_info += annotation_category.annotation_texts.pluck(:content, :deduction).flatten
         result[annotation_category.annotation_category_name] = annotation_text_info
       end
     end
@@ -27,18 +20,12 @@ module AnnotationCategoriesHelper
     categories_data = {}
     annotation_categories.each do |category|
       if category.flexible_criterion_id.nil?
-        annotation_texts = []
-        category.annotation_texts.each do |annotation_text|
-          annotation_texts.push(annotation_text.content)
-        end
+        annotation_texts = category.annotation_texts.pluck(:content)
         categories_data[category.annotation_category_name] = annotation_texts
       else
-        info = {}
-        info['criterion'] = category.flexible_criterion.name
+        info = { 'criterion': category.flexible_criterion.name }
         text_info = []
-        category.annotation_texts.each do |text|
-          text_info += [[text.content, text.deduction]]
-        end
+        text_info += category.annotation_texts.pluck(:content, :deduction)
         info['texts'] = text_info
         categories_data[category.annotation_category_name] = info
       end

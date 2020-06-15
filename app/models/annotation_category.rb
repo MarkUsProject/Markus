@@ -49,17 +49,11 @@ class AnnotationCategory < ApplicationRecord
       raise CsvInvalidLineError if criterion.nil?
       annotation_category.update!(flexible_criterion_id: criterion.id)
       row.each_slice(2) do |text_with_deduction|
-        content = text_with_deduction.first
-        deduction = text_with_deduction.second.to_f
-        if deduction > criterion.max_mark
-          errors.add(:base, I18n.t('activerecord.attributes.annotation_text.invalid_deduction'))
-          next
-        end
         annotation_text = annotation_category.annotation_texts.build(
-          content: content,
+          content: text_with_deduction.first,
           creator_id: current_user.id,
           last_editor_id: current_user.id,
-          deduction: deduction > criterion.max_mark ? criterion.max_mark : deduction
+          deduction: text_with_deduction.second.to_f
         )
         unless annotation_text.save
           raise CsvInvalidLineError

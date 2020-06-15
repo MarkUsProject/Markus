@@ -198,15 +198,12 @@ class AnnotationCategoriesController < ApplicationController
       elsif data[:type] == '.yml'
         successes = 0
         annotation_line = 0
-        data[:contents].each do |category, texts|
-          if texts.class == Array
-            AnnotationCategory.add_by_row([category] + [nil] + texts, @assignment, current_user)
+        data[:contents].each do |category, category_data|
+          if category_data.is_a?(Array)
+            AnnotationCategory.add_by_row([category, nil] + category_data, @assignment, current_user)
             successes += 1
-          elsif texts.class == Hash
-            row = [category] + [texts['criterion']]
-            texts['texts'].each do |annotation_text|
-              row += annotation_text
-            end
+          elsif category_data.is_a?(Hash)
+            row = [category, category_data['criterion']] + category_data['texts'].flatten
             AnnotationCategory.add_by_row(row, @assignment, current_user)
             successes += 1
           end
