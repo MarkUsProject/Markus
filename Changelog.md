@@ -13,6 +13,7 @@
 - Fixed bug preventing downloading all submission files from git repo (#4658)
 - Assignment grader distribution graphs only show marks for assigned criteria when graders are assigned specific
   criteria (#4656) 
+- Fixed but preventing graders from creating new notes in results view (#4668)
 - Fixed bug preventing new tags from being created from results view (#4669)
 
 ## [v1.9.2]
