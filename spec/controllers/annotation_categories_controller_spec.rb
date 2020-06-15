@@ -425,6 +425,24 @@ describe AnnotationCategoriesController do
       get :download, params: { assignment_id: assignment.id }, format: 'csv'
     end
 
+    it 'expects correct call to send_data when deductive information is included' do
+      assignment = create(:assignment_with_deductive_annotations)
+      category = assignment.annotation_categories.where.not(flexible_criterion_id: nil).first
+      criterion_name = category.flexible_criterion.name
+      annotation_text = category.annotation_texts.first
+      csv_data = "#{category.annotation_category_name},#{criterion_name}," \
+        "#{annotation_text.content},#{annotation_text.deduction}\n"
+      csv_options = {
+        filename: "#{assignment.short_identifier}_annotations.csv",
+        disposition: 'attachment'
+      }
+      expect(@controller).to receive(:send_data).with(csv_data, csv_options) {
+        # to prevent a 'missing template' error
+        @controller.head :ok
+      }
+      get :download, params: { assignment_id: assignment.id }, format: 'csv'
+    end
+
     # parse header object to check for the right content type
     it 'returns text/csv type' do
       get :download, params: { assignment_id: assignment.id }, format: 'csv'
@@ -437,6 +455,31 @@ describe AnnotationCategoriesController do
       filename = response.header['Content-Disposition']
                          .split[1].split('"').second
       expect(filename).to eq "#{assignment.short_identifier}_annotations.csv"
+    end
+  end
+
+  context 'YAML download' do
+    it 'correctly downloads annotation_category information with deductive information' do
+      assignment = create(:assignment_with_deductive_annotations)
+      category = assignment.annotation_categories.where.not(flexible_criterion_id: nil).first
+      criterion_name = category.flexible_criterion.name
+      annotation_text = category.annotation_texts.first
+      yml_data = "--- \n"\
+        "? \"#{category.annotation_category_name}\"\n: \n"\
+        "  criterion: \"#{criterion_name}\"\n" \
+        "  texts: \n" \
+        "    - \n" \
+        "      - \"#{annotation_text.content}\"\n" \
+        "      - #{annotation_text.deduction}\n"
+      yml_options = {
+          filename: "#{assignment.short_identifier}_annotations.yml",
+          disposition: 'attachment'
+      }
+      expect(@controller).to receive(:send_data).with(yml_data, yml_options) {
+        # to prevent a 'missing template' error
+        @controller.head :ok
+      }
+      get :download, params: { assignment_id: assignment.id }, format: 'yml'
     end
   end
 
