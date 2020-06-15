@@ -252,7 +252,7 @@ describe SubmissionFile do
              submission_file: file,
              result: assignment.groupings.first.current_result)
       deductive_info = " [#{category.flexible_criterion.name}: -#{text.deduction}]"
-      expect(file.retrieve_file().include?(deductive_info)).to be true
+      expect(file.retrieve_file.include?(deductive_info)).to be true
     end
   end
 end
