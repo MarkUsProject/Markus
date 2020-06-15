@@ -1,5 +1,5 @@
 class JobMessagesController < ApplicationController
-  before_action :authorize_only_for_admin
+  before_action :authorize_for_ta_and_admin
 
   def get
     status = ActiveJob::Status.get(params[:job_id])

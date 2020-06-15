@@ -10,7 +10,6 @@ describe CourseSummariesController do
     describe '#download_csv_grades_report' do
       before :each do
         3.times { create(:assignment_with_criteria_and_results) }
-        create(:grouping_with_inviter, assignment: Assignment.first)
       end
 
       it 'be able to get a csv grade report' do
@@ -42,10 +41,8 @@ describe CourseSummariesController do
                   assignments[index].max_mark == 0).to be_truthy
               end
             else
-              out_of = assignments[index].max_mark
               grouping = student.accepted_grouping_for(assignments[index])
-              expect(final_mark.to_f.round).to eq((grouping.current_result.total_mark / out_of *
-                100).to_f.round)
+              expect(final_mark.to_f.round).to eq(grouping.current_result.total_mark.to_f.round)
             end
           end
         end
