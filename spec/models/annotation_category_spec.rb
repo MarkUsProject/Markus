@@ -35,10 +35,30 @@ describe AnnotationCategory do
   end
 
   describe '.add_by_row' do
+    it 'raises an error if a criterion with the name given does not exist' do
+      row = ['category_name', 'criterion_name', 'text_content', '1.0']
+      expect { AnnotationCategory.add_by_row(row, assignment, admin) }.to raise_error CsvInvalidLineError
+    end
+
+    it 'raises an error if a deduction given for an annotation text is greater than the max mark of the criterion' do
+      row = ['category_name', 'criterion_name', 'text_content', '1.0']
+      create(:flexible_criterion, assignment: assignment, name: 'criterion_name', max_mark: 0.5)
+      expect { AnnotationCategory.add_by_row(row, assignment, admin) }.to raise_error CsvInvalidLineError
+    end
+
+    it 'creates an annotation_text with a 0.0 deduction if nil value given' do
+      row = ['category_name', 'criterion_name', 'text_content', nil, 'more_text_content', '1.0']
+      create(:flexible_criterion, assignment: assignment, name: 'criterion_name')
+      AnnotationCategory.add_by_row(row, assignment, admin)
+      expect(AnnotationText.where(content: 'text_content').first.deduction).to eq 0.0
+      expect(AnnotationText.all.size).to eq 2
+    end
+
     context 'when no annotation categories exists' do
       before :each do
         @row = []
         @row.push('annotation category name')
+        @row.push(nil)
         @row.push('annotation text 1')
         @row.push('annotation text 2')
       end
@@ -54,6 +74,7 @@ describe AnnotationCategory do
       before do
         @row = []
         @row.push('annotation category name 2')
+        @row.push(nil)
         @row.push('annotation text 2 1')
         @row.push('annotation text 2 2')
 
@@ -71,6 +92,7 @@ describe AnnotationCategory do
       before do
         @row = []
         @row.push('annotation category name 3')
+        @row.push(nil)
         @row.push('annotation text 3 1')
         @row.push('annotation text 3 2')
 
@@ -85,7 +107,7 @@ describe AnnotationCategory do
 
     context 'when the annotation category has no associated texts' do
       before do
-        @row = ['annotation category name 4']
+        @row = ['annotation category name 4', nil]
         @initial_size = AnnotationText.all.size
       end
 
