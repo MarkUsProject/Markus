@@ -1,4 +1,5 @@
 describe AnnotationCategoriesController do
+  include AnnotationCategoriesHelper
   before :each do
     # Authenticate user is not timed out, and has administrator rights.
     allow(controller).to receive(:session_expired?).and_return(false)
@@ -458,16 +459,7 @@ describe AnnotationCategoriesController do
   context 'YAML download' do
     it 'correctly downloads annotation_category information with deductive information' do
       assignment = create(:assignment_with_deductive_annotations)
-      category = assignment.annotation_categories.where.not(flexible_criterion_id: nil).first
-      criterion_name = category.flexible_criterion.name
-      annotation_text = category.annotation_texts.first
-      yml_data = "--- \n"\
-        "? \"#{category.annotation_category_name}\"\n: \n"\
-        "  criterion: \"#{criterion_name}\"\n" \
-        "  texts: \n" \
-        "    - \n" \
-        "      - \"#{annotation_text.content}\"\n" \
-        "      - #{annotation_text.deduction}\n"
+      yml_data = convert_to_yml(assignment.annotation_categories)
       yml_options = {
         filename: "#{assignment.short_identifier}_annotations.yml",
         disposition: 'attachment'
