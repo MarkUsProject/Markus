@@ -83,7 +83,7 @@
   <aside class='dialog' id='create_new_tag' style='display:none'>
     <h1><%= t('helpers.submit.create', model: Tag.model_name.human) %></h1>
     <p><%= Tag.human_attribute_name(:name) %></p>
-    <%= form_for :create_new,
+    <%= form_for :tag,
                  url: assignment_tags_path(@assignment),
                  html: { multipart: true } do |f| %>
         <div>
