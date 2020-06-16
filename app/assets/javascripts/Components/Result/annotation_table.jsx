@@ -116,6 +116,7 @@ export class AnnotationTable extends React.Component {
     return (
       <div id={'annotation_table'}>
         <ReactTable
+          className='auto-overflow'
           data={this.props.annotations}
           columns={allColumns}
           filterable

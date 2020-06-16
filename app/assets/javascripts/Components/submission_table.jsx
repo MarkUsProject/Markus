@@ -154,7 +154,7 @@ class RawSubmissionTable extends React.Component {
         <div className="tag_list">
           {row.original.tags.map(tag =>
             <span key={`${row.original._id}-${tag}`}
-              className="tag_element">
+              className="tag-element">
               {tag}
             </span>
           )}

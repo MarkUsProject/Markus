@@ -35,7 +35,7 @@
 <%= render partial: 'download_modal', layout: 'layouts/modal_dialog'  %>
 
 <aside class='dialog' id='help_dialog' style='display:none'>
-  <h1><%=t('results.keybinding.keyboard_help')%></h1>
+  <h2><%=t('results.keybinding.keyboard_help')%></h2>
   <table class="help_table">
     <tr>
       <td><kbd>Alt</kbd> + <kbd>Enter/return</kbd></td>
@@ -120,4 +120,4 @@
 <div id='annotation_holder'></div>
 
 <!-- Modal element -->
-<aside class='dialog' id='annotation_dialog'></aside>
+<aside class='dialog' id='annotation_dialog' style="width: 600px;"></aside>

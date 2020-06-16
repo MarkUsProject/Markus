@@ -117,6 +117,8 @@
     }
 
     let $control = $('<div />').attr('id', 'sel_box');
+    $control.addClass('annotation-holder-active');
+    $control.hide();
 
     // append $control before the first annotation_holder but after the annotationLayer
     // or else you will be prevented from deleting/editing old annotations

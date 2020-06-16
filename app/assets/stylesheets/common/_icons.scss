@@ -67,13 +67,13 @@
 .button.previous::before {
   content: asset_url('icons/arrow_left.png');
   padding-right: 5px;
-  vertical-align: text-top;
+  vertical-align: sub;
 }
 
 .button.next::after {
   content: asset_url('icons/arrow_right.png');
   padding-left: 5px;
-  vertical-align: text-top;
+  vertical-align: sub;
 }
 
 .set-complete::before {

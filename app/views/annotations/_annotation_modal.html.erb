@@ -7,14 +7,15 @@
     <input type='hidden' name='<%= key %>' value='<%= val %>'>
   <% end %>
   <div>
-    <div style="float: left;">
+    <div>
       <h2><%= title %></h2>
       <p>
         <%= f.text_area :content, id: 'new_annotation_content', name: 'content', value: content, required: true,
-                        placeholder: t('results.annotation.placeholder') %>
+                        placeholder: t('results.annotation.placeholder'),
+                        rows: 10 %>
       </p>
-      <h3 id="annotation_preview_title"><%= t(:preview) %></h3>
-      <div id="annotation_preview" style="word-wrap: break-word;"></div>
+      <h3><%= t(:preview) %></h3>
+      <div id="annotation_preview" class="preview"></div>
       <% if @current_user.is_reviewer_for?(assignment.pr_assignment, result) %>
         <%= hidden_field_tag 'new_annotation_category', value: t('annotation_categories.one_time_only') %>
       <% else %>

@@ -93,8 +93,8 @@ export class SubmissionSelector extends React.Component {
     }
 
     return (
-      <div id='submission-selector-container'>
-        <div id={'submission-selector'}>
+      <div className='submission-selector-container'>
+        <div className='submission-selector'>
           <a
             className='button previous'
             href={`${url}?direction=-1`}>
