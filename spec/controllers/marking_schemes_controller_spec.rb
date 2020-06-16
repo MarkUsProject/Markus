@@ -42,7 +42,7 @@ describe MarkingSchemesController do
         )
         get_as admin, :populate, format: :json
 
-        expected_keys = %w[id name assignment_weights grade_entry_form_weights edit_link delete_link]
+        expected_keys = %w[id name assessment_weights edit_link delete_link]
         expect(response.parsed_body).is_a? Hash
         expect(response.parsed_body.keys).to match_array %w[data columns]
         expect(response.parsed_body['data']).to_not be_empty
@@ -50,13 +50,13 @@ describe MarkingSchemesController do
         data_hash = response.parsed_body['data'][0]
         expect(data_hash.keys).to match_array expected_keys
 
-        assignment_weights = data_hash['assignment_weights']
-        expected_assignment_ids = [assignment.id.to_s, assignment_with_criteria_and_results.id.to_s]
-        expect(assignment_weights.keys).to match_array expected_assignment_ids
-
-        grade_entry_form_weights = data_hash['grade_entry_form_weights']
-        expected_grade_entry_form_ids = [grade_entry_form.id.to_s, grade_entry_form_with_data.id.to_s]
-        expect(grade_entry_form_weights.keys).to match_array expected_grade_entry_form_ids
+        assessment_weights = data_hash['assessment_weights']
+        expected_assessment_ids = [
+            assignment.id.to_s,
+            assignment_with_criteria_and_results.id.to_s,
+            grade_entry_form.id.to_s,
+            grade_entry_form_with_data.id.to_s]
+        expect(assessment_weights.keys).to match_array expected_assessment_ids
       end
     end
 
