@@ -129,14 +129,11 @@ namespace :db do
 
     Grouping.joins(:assignment).where(assessments: { short_identifier: %w[A0 A1 A2] }).each do |grouping|
       submission_file = grouping.current_submission_used.submission_files.find_by(filename: 'hello.py')
+      categories_with_criteria = grouping.assignment.annotation_categories.where.not(flexible_criterion_id: nil)
       base_attributes = {
         submission_file_id: submission_file.id,
         is_remark: grouping.current_submission_used.has_remark?,
-        annotation_text_id: AnnotationText.all
-                                          .joins(:annotation_category)
-                                          .where('annotation_categories.assignment': grouping.assignment)
-                                          .where.not('annotation_texts.deduction': nil)
-                                          .pluck(:id).to_a.sample,
+        annotation_text_id: categories_with_criteria.first.annotation_texts.pluck(:id).to_a.sample,
         annotation_number: grouping.current_submission_used.annotations.count + 1,
         creator_id: Admin.first.id,
         creator_type: 'Admin',
@@ -149,6 +146,17 @@ namespace :db do
         column_end: 15,
         **base_attributes
       )
+      base_attributes[:annotation_text_id] = categories_with_criteria.second.annotation_texts.pluck(:id).to_a.sample
+      base_attributes[:annotation_number] = grouping.reload.current_submission_used.annotations.count + 1
+      TextAnnotation.create(
+        line_start: 12,
+        line_end: 12,
+        column_start: 1,
+        column_end: 26,
+        **base_attributes
+      )
+      mark = grouping.current_result.marks.find_by(markable: categories_with_criteria.second.flexible_criterion)
+      mark.update!(override: true, mark: mark.markable.max_mark)
     end
 
     puts 'Release Results for Assignments'
