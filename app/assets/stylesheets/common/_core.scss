@@ -234,16 +234,32 @@ label.required::after, th.required::after {
 
 
 // Customize react-table styling
-.ReactTable .rt-thead,
-.ReactTable .rt-tbody {
-  overflow-y: scroll;
-  overflow-x: hidden;
-}
-
 .ReactTable {
+  .rt-thead,
+  .rt-tbody {
+    overflow-x: hidden;
+    overflow-y: scroll;
+  }
+
   .rt-thead .rt-hidden,
   .rt-hidden {
     padding: 0;
+  }
+
+  .rt-td:last-child {
+    // Hack to ensure scrollbar doesn't cover cell contents.
+    padding-right: 22px;
+  }
+
+  &.auto-overflow {
+    .rt-thead,
+    .rt-tbody {
+      overflow-y: auto;
+    }
+
+    .rt-td:last-child {
+      padding-right: 5px;
+    }
   }
 }
 
@@ -251,9 +267,11 @@ label.required::after, th.required::after {
   margin: 0;
 }
 
-.rt-td:last-child {
-  // Hack to ensure scrollbar doesn't cover cell contents.
-  padding-right: 22px;
+.rt-td {
+  // Do not have top margin for first <p> tag in a cell.
+  p:first-child {
+    margin-top: 0;
+  }
 }
 
 .rt-action-box {

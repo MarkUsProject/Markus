@@ -16,7 +16,6 @@ class Result extends React.Component {
     if (fullscreen) {
       let toggle_elements = [
         $('#menus'),
-        $('.top_bar'),
         $('.title_bar'),
         $('#footer_wrapper')
       ];
@@ -163,7 +162,6 @@ class Result extends React.Component {
   toggleFullscreen = () => {
     let toggle_elements = [
       $('#menus'),
-      $('.top_bar'),
       $('.title_bar'),
       $('#footer_wrapper')
     ];

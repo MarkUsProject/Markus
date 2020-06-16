@@ -55,7 +55,7 @@ export class ImageViewer extends React.Component {
 
   render() {
     return (
-      <div id='image_container' className='image_container'>
+      <div id='image_container'>
         <img id='image_preview'
           src={this.props.url}
           alt={I18n.t('results.cant_display_image')} />

@@ -113,7 +113,7 @@ export class MarksPanel extends React.Component {
     return (
       <div id='mark_viewer' className='flex-col'>
         {!this.props.released_to_students &&
-         <div className='mark_tools'>
+         <div className='text-center'>
            <button className='inline-button' onClick={() => this.expandAll()}>
              {I18n.t('results.expand_all')}
            </button>

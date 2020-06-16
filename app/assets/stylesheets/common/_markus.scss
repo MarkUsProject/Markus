@@ -5,6 +5,7 @@
 @import 'mixins';
 @import 'icons';
 @import 'react_json_schema_form';
+@import 'react_tabs';
 
 /** Main */
 
@@ -159,7 +160,6 @@ textarea {
   color: $dark-grey;
   font: 400 1em $fonts;
   outline: none;
-  padding: 0.25em 0.75em;
   transition: all $time-quick;
   width: 100%;
 
@@ -171,6 +171,7 @@ textarea {
   &:focus {
     background-color: $white;
     border-color: $blue;
+    border-width: 3px;
   }
 
   &:invalid {
@@ -204,7 +205,12 @@ textarea {
   }
 }
 
+input {
+  padding: 0.25em 0.75em;
+}
+
 textarea {
+  padding: 0.75em;
   resize: none;
 }
 
@@ -271,6 +277,7 @@ button,
   }
 
   &.inline-button {
+    margin: 0 2pt;
     min-width: 70px;
     padding: 0.25em 0.5em;
   }
@@ -427,6 +434,19 @@ fieldset {
   }
 }
 
+// Keyboard shortcuts
+kbd {
+  background-color: $light-grey;
+  border: 1px solid $grey;
+  border-radius: $radius;
+  box-shadow: 0 1px 0 $black, 0 0 0 2px $light-grey inset;
+  display: inline-block;
+  font-family: $mono-fonts;
+  font-size: 0.9em;
+  padding: 0.4em 0.6em;
+  text-shadow: 0 1px 0 $white;
+}
+
 /** Test script results table */
 
 .test-result-pass {
@@ -513,6 +533,11 @@ fieldset {
   float: right;
 }
 
+.text-center {
+  text-align: center;
+}
+
+
 /** Sortable lists */
 
 .sortable {
@@ -582,28 +607,25 @@ ul.tags {
   display: block;
   height: auto;
   margin: 0;
-  padding: 0;
+  padding: 4px 0 0;
 
   & > li {
-    background: $grey;
-    border: 1px solid $grey;
+    background-color: $white;
+    border: 1px solid $dark-blue;
     border-radius: $radius;
-    color: $white;
     cursor: pointer;
-    display: block;
-    font-size: 0.9em;
-    float: left;
+    display: inline-block;
     list-style: none;
-    margin-right: 0.5em;
-    padding: 0 0.6em;
+    padding: 5px 0.6em;
     position: relative;
-    text-transform: uppercase;
-    transition: all $time-quick;
+
+    &:not(:last-child) {
+      margin-right: 5px;
+    }
 
     &:hover {
-      background: $white;
+      background: $lighter-blue;
       border: 1px solid $blue;
-      border-radius: 0;
       color: $dark-blue;
 
       ul {
@@ -614,9 +636,9 @@ ul.tags {
     ul {
       background: $white;
       border: 1px solid $blue;
-      border-radius: 0 0 $radius $radius;
       display: none;
       left: -1px;
+      margin-top: 0.3em;
       padding: 0;
       position: absolute;
       width: 340px;
@@ -624,24 +646,35 @@ ul.tags {
 
       li {
         color: $dark-grey;
+        cursor: pointer;
         list-style: none;
-        text-transform: none;
-
-        a {
-          color: $dark-grey;
-          display: block;
-          padding: 0.4em 0.5em;
-
-          &:hover {
-            color: $white;
-          }
-        }
+        padding: 0.5em;
+        width: 100%;
 
         &:hover {
           background: $blue;
+          color: $white;
         }
       }
     }
+  }
+}
+
+.tag-element {
+  background-color: $light-blue;
+  border: 1px solid $blue;
+  border-radius: 15px;
+  color: $dark-blue;
+  cursor: pointer;
+  padding-left: 5px;
+  padding-right: 5px;
+  text-align: center;
+  transition: background-color 0.2s, color 0.2s;
+  white-space: nowrap;
+
+  &:hover {
+    background-color: $dark-blue;
+    color: $white;
   }
 }
 
@@ -675,6 +708,14 @@ ul.tags {
     input {
       display: inline-block;
     }
+  }
+
+  h2 {
+    margin-bottom: 0.5em;
+  }
+
+  textarea {
+    width: 100%;
   }
 }
 
@@ -753,8 +794,7 @@ nav {
   border-top: 7.5px solid $dark-blue;
   float: right;
   height: 0;
-  margin-right: 3px;
-  margin-top: 3px;
+  margin-top: 4px;
   width: 0;
 }
 
@@ -764,21 +804,18 @@ nav {
   border-right: 7.5px solid transparent;
   float: right;
   height: 0;
-  margin-right: 3px;
-  margin-top: 3px;
+  margin-top: 4px;
   width: 0;
 }
 
 .dropdown {
   background: $white;
   border: 1px solid $dark-blue;
-  border-radius: $radius;
   cursor: pointer;
   display: inline-block;
   min-width: 200px;
   padding: 0.5em;
   position: relative;
-  text-align: center;
 
   &:hover {
     border-radius: 0;
@@ -805,6 +842,7 @@ nav {
     li {
       display: block;
       list-style: none;
+      padding: 0.5em;
       text-align: left;
 
       &:last-child {
@@ -823,13 +861,8 @@ nav {
       &.active {
         background: $blue;
         color: $white;
-      }
 
-      a {
-        display: block;
-        padding: 0.5em 1em;
-
-        &:hover {
+        > a {
           color: $white;
         }
       }
@@ -841,10 +874,149 @@ nav {
       text-transform: uppercase;
     }
   }
+
+  .arrow-down,
+  .arrow-up {
+    margin-left: 5px;
+  }
+}
+
+.nested-submenu {
+  > .nested-folder {
+    left: 100%;
+    margin-left: -1px;
+    margin-top: -6px;
+    top: 0;
+  }
+
+  > a {
+    font-weight: bold;
+  }
+
+  &::after {
+    border: transparent solid 5px;
+    border-left-color: $dark-blue;
+    border-right-width: 0;
+    content: ' ';
+    float: right;
+    margin-left: 10px;
+    margin-top: 3px;
+  }
+}
+
+// Annotations
+
+.annotation_text_display {
+  background: $white;
+  border: 1px solid $black;
+  border-radius: $radius;
+  box-shadow: 4px 4px 2px $grey;
+  max-width: 400px;
+  padding: 0.25em 1em;
+  position: absolute;
+  width: auto;
+  word-wrap: break-word;
+  z-index: 100000;
+}
+
+.annotation_holder {
+  background: $orange;
+  border: 1px solid $black;
+  opacity: 0.2;
+  position: absolute;
+  z-index: 1;
+}
+
+.annotation-holder-active {
+  background: $orange-transparent;
+  border: 3px solid $red;
+  position: absolute;
+  z-index: 1;
+}
+
+
+// Text editing and previews
+.preview {
+  border: 1px dashed $grey;
+  margin: 1em 0;
+  max-height: 15em;
+  min-height: 3em;
+  overflow-y: auto;
+  padding: 0 10px;
+  word-wrap: break-word;
+}
+
+// Grading components
+.submission-selector-container {
+  background-color: $lighter-blue;
+  border: $dark-grey 1px solid;
+  padding: 0.25em 0;
+  width: 100%;
+}
+
+.submission-selector {
+  align-items: center;
+  display: flex;
+  justify-content: space-evenly;
+  margin: 0;
+  padding: 0.3em 0;
+  width: 100%;
+
+  .button {
+    display: inline-block;
+    height: 3em;
+    line-height: 1.8em;
+    margin: 0 5px;
+    min-width: 90px;
+    padding: 0.5em;
+  }
+
+  button {
+    height: 3em;
+    margin: 0 5px;
+    min-width: 100px;
+    padding: 0.4em;
+  }
+
+  meter {
+    height: 30px;
+    margin: 0 8px;
+    vertical-align: middle;
+    width: 150px;
+  }
+}
+
+.group-name {
+  display: inline-block;
+  margin: 0 5px;
+  max-width: 200px;
+  overflow-x: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.total {
+  background: $light-blue;
+  border: 1px solid $grey;
+  border-radius: $radius;
+  display: inline-block;
+  flex-basis: auto;
+  margin: 0 5px;
+  min-width: 100px;
+  padding: 0 5px;
+  text-align: center;
+}
+
+.highlight-bar {
+  background: $lighter-blue;
+  border: 1px solid $black;
+  font-size: 1.2em;
+  font-weight: 600;
+  margin: 1em 0;
+  padding: 10px;
 }
 
 // Login
 .cookies-eu-ok {
   background-color: $blue;
 }
-
