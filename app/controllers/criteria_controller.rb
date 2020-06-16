@@ -47,7 +47,7 @@ class CriteriaController < ApplicationController
   end
 
   def edit
-    @criterion = params[:criterion_type].constantize.find(params[:id])
+    @criterion = Criterion.find(params[:id])
     @assignment = @criterion.assignment
     if @assignment.released_marks.any?
       flash_now(:error, t('criteria.errors.released_marks'))
@@ -55,7 +55,7 @@ class CriteriaController < ApplicationController
   end
 
   def destroy
-    @criterion = params[:criterion_type].constantize.find(params[:id])
+    @criterion = Criterion.find(params[:id])
     @assignment = @criterion.assignment
     if @assignment.released_marks.any?
       flash_now(:error, t('criteria.errors.released_marks'))
@@ -67,8 +67,8 @@ class CriteriaController < ApplicationController
   end
 
   def update
-    criterion_type = params[:criterion_type]
-    @criterion = criterion_type.constantize.find(params[:id])
+    @criterion = Criterion.find(params[:id])
+    criterion_type = @criterion.type
     @assignment = @criterion.assignment
     if @assignment.released_marks.any?
       flash_now(:error, t('criteria.errors.released_marks'))

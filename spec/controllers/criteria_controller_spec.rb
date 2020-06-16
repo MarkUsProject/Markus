@@ -139,7 +139,7 @@ describe CriteriaController do
         before(:each) do
           get_as admin,
                  :new,
-                 params: { assignment_id: assignment.id, criterion_type: 'FlexibleCriterion' },
+                 params: { assignment_id: assignment.id },
                  format: :js
         end
 
@@ -160,7 +160,7 @@ describe CriteriaController do
         before(:each) do
           get_as admin,
                  :edit,
-                 params: { assignment_id: 1, id: flexible_criterion.id, criterion_type: flexible_criterion.class.to_s },
+                 params: { assignment_id: 1, id: flexible_criterion.id },
                  format: :js
         end
 
@@ -188,8 +188,7 @@ describe CriteriaController do
             get_as admin,
                    :update,
                    params: { assignment_id: 1, id: flexible_criterion.id,
-                             flexible_criterion: { name: 'one', max_mark: 10 },
-                             criterion_type: 'FlexibleCriterion' },
+                             flexible_criterion: { name: 'one', max_mark: 10 } },
                    format: :js
           end
 
@@ -207,8 +206,7 @@ describe CriteriaController do
             get_as admin,
                    :update,
                    params: { assignment_id: 1, id: flexible_criterion.id,
-                             flexible_criterion: { name: 'one', max_mark: 10 },
-                             criterion_type: 'FlexibleCriterion' },
+                             flexible_criterion: { name: 'one', max_mark: 10 } },
                    format: :js
           end
 
@@ -268,7 +266,8 @@ describe CriteriaController do
             post_as admin,
                     :create,
                     params: { assignment_id: assignment.id, flexible_criterion: { name: 'first' },
-                              new_criterion_prompt: 'first', criterion_type: 'FlexibleCriterion', max_mark_prompt: 10 },
+                              new_criterion_prompt: 'first', max_mark_prompt: 10,
+                              criterion_type: 'FlexibleCriterion' },
                     format: :js
           end
           it 'should respond with appropriate content' do
@@ -289,7 +288,8 @@ describe CriteriaController do
             post_as admin,
                     :create,
                     params: { assignment_id: assignment.id, flexible_criterion: { name: 'first' },
-                              new_criterion_prompt: 'first', criterion_type: 'FlexibleCriterion', max_mark_prompt: 10 },
+                              new_criterion_prompt: 'first', max_mark_prompt: 10,
+                              criterion_type: 'FlexibleCriterion' },
                     format: :js
           end
           it 'should respond with appropriate content' do
@@ -311,8 +311,7 @@ describe CriteriaController do
           post_as admin,
                   :edit,
                   params: { assignment_id: 1,
-                            id: flexible_criterion.id,
-                            criterion_type: flexible_criterion.class.to_s },
+                            id: flexible_criterion.id },
                   format: :js
         end
 
@@ -351,8 +350,7 @@ describe CriteriaController do
         delete_as admin,
                   :destroy,
                   params: { assignment_id: 1,
-                            id: flexible_criterion.id,
-                            criterion_type: flexible_criterion.class.to_s },
+                            id: flexible_criterion.id },
                   format: :js
         expect(assigns(:criterion)).to be_truthy
         i18t_strings = [I18n.t('flash.criteria.destroy.success')].map { |f| extract_text f }
@@ -499,7 +497,7 @@ describe CriteriaController do
         before(:each) do
           get_as admin,
                  :new,
-                 params: { assignment_id: assignment.id, criterion_type: 'RubricCriterion' },
+                 params: { assignment_id: assignment.id },
                  format: :js
         end
 
@@ -520,7 +518,7 @@ describe CriteriaController do
         before(:each) do
           get_as admin,
                  :edit,
-                 params: { assignment_id: 1, id: rubric_criterion.id, criterion_type: rubric_criterion.class.to_s },
+                 params: { assignment_id: 1, id: rubric_criterion.id },
                  format: :js
         end
 
@@ -546,8 +544,8 @@ describe CriteriaController do
             )
             get_as admin,
                    :update,
-                   params: { assignment_id: 1, id: rubric_criterion.id, rubric_criterion: { name: 'one', max_mark: 10 },
-                             criterion_type: 'RubricCriterion' },
+                   params: { assignment_id: 1, id: rubric_criterion.id,
+                             rubric_criterion: { name: 'one', max_mark: 10 } },
                    format: :js
           end
 
@@ -564,8 +562,8 @@ describe CriteriaController do
           before(:each) do
             get_as admin,
                    :update,
-                   params: { assignment_id: 1, id: rubric_criterion.id, rubric_criterion: { name: 'one', max_mark: 10 },
-                             criterion_type: 'RubricCriterion' },
+                   params: { assignment_id: 1, id: rubric_criterion.id,
+                             rubric_criterion: { name: 'one', max_mark: 10 } },
                    format: :js
           end
 
@@ -625,7 +623,8 @@ describe CriteriaController do
             post_as admin,
                     :create,
                     params: { assignment_id: assignment.id,
-                              new_criterion_prompt: 'first', criterion_type: 'RubricCriterion', max_mark_prompt: 10 },
+                              new_criterion_prompt: 'first', max_mark_prompt: 10,
+                              criterion_type: 'RubricCriterion' },
                     format: :js
           end
           it 'should respond with appropriate content' do
@@ -646,7 +645,8 @@ describe CriteriaController do
             post_as admin,
                     :create,
                     params: { assignment_id: assignment.id, rubric_criterion: { name: 'first' },
-                              new_criterion_prompt: 'first', criterion_type: 'RubricCriterion', max_mark_prompt: 10 },
+                              new_criterion_prompt: 'first', max_mark_prompt: 10,
+                              criterion_type: 'RubricCriterion' },
                     format: :js
           end
           it 'should respond with appropriate content' do
@@ -667,7 +667,7 @@ describe CriteriaController do
         before(:each) do
           post_as admin,
                   :edit,
-                  params: { assignment_id: 1, id: rubric_criterion.id, criterion_type: rubric_criterion.class.to_s },
+                  params: { assignment_id: 1, id: rubric_criterion.id },
                   format: :js
         end
 
@@ -705,7 +705,7 @@ describe CriteriaController do
       it ' should be able to delete the criterion' do
         delete_as admin,
                   :destroy,
-                  params: { assignment_id: 1, id: rubric_criterion.id, criterion_type: rubric_criterion.class.to_s },
+                  params: { assignment_id: 1, id: rubric_criterion.id },
                   format: :js
         expect(assigns(:criterion)).to be_truthy
         i18t_string = [I18n.t('flash.criteria.destroy.success')].map { |f| extract_text f }
@@ -904,32 +904,9 @@ describe CriteriaController do
       end
 
       it 'does not create criteria that have unmatched keys / more keys than required' do
+        expect(assignment.get_criteria(:all, :rubric).length).to eq(1)
         post_as admin, :upload, params: { assignment_id: assignment.id, upload_file: partially_valid_file }
-
-        criteria = assignment.get_criteria(:all, :rubric).first
-        expect(criteria.name).to eq('Quality of Writing')
-        expect(criteria.levels.size).to eq 6
-        criteria.levels.each do |level|
-          expect(level.valid?).to eq true
-        end
-        expect(criteria.levels[0].name).to eq('Beginner')
-        expect(criteria.levels[0].description).to eq('The essay is very poorly organized'\
-                                                       ' structure and gives no new information.')
-        expect(criteria.levels[0].mark).to eq(10.0)
-
-        expect(criteria.levels[1].name).to eq('Capable')
-        expect(criteria.levels[1].description).to eq('The essay is poorly organized but gives new information.')
-        expect(criteria.levels[1].mark).to eq(14.0)
-
-        expect(criteria.levels[2].name).to eq('Accomplished')
-        expect(criteria.levels[2].description).to eq('The essay is well-structure and conveys new information clearly.')
-        expect(criteria.levels[2].mark).to eq(18.0)
-
-        expect(criteria.levels[3].name).to eq('Level 3')
-        expect(criteria.levels[3].description).to eq('Level 3 description in one line.')
-        expect(criteria.levels[3].mark).to eq(22.0)
-
-        pending('We should report there is an invalid key in the file')
+        expect(assignment.get_criteria(:all, :rubric).length).to eq(1)
         expect(flash[:error]).not_to be_nil
       end
 
@@ -953,8 +930,8 @@ describe CriteriaController do
     end
   end
 
-  context '#upload', pending: true do # Until criteria tables merged together, can't use Criterion.count
-    include_examples 'a controller supporting upload' do
+  context '#upload' do
+    include_examples 'a controller supporting upload', formats: [:yml] do
       let(:params) { { assignment_id: assignment.id } }
     end
   end

@@ -1,4 +1,4 @@
-shared_examples 'a controller supporting upload' do
+shared_examples 'a controller supporting upload' do |formats: [:yml, :csv]|
   before :each do
     # Authenticate user is not timed out, and has administrator rights.
     # controller = described_class.new
@@ -16,26 +16,6 @@ shared_examples 'a controller supporting upload' do
     expect(model_count).to eq @initial_count
   end
 
-  it 'does not accept an empty csv file' do
-    post :upload, params: {
-      **params,
-      upload_file: fixture_file_upload('files/upload_shared_files/empty.csv')
-    }
-
-    expect(flash[:error]).not_to be_empty
-    expect(model_count).to eq @initial_count
-  end
-
-  it 'does not accept an empty csv file' do
-    post :upload, params: {
-      **params,
-      upload_file: fixture_file_upload('files/upload_shared_files/empty.yml')
-    }
-
-    expect(flash[:error]).not_to be_empty
-    expect(model_count).to eq @initial_count
-  end
-
   it 'does not accept an xls file' do
     post :upload, params: {
       **params,
@@ -45,24 +25,28 @@ shared_examples 'a controller supporting upload' do
     expect(model_count).to eq @initial_count
   end
 
-  it 'does not accept an invalid csv file even with a .csv extension' do
-    post :upload, params: {
-      **params,
-      upload_file: fixture_file_upload('files/upload_shared_files/bad_csv.csv')
-    }
+  formats.each do |format|
+    context "in #{format}" do
+      it 'does not accept an empty file' do
+        post :upload, params: {
+          **params,
+          upload_file: fixture_file_upload("files/upload_shared_files/empty.#{format}")
+        }
 
-    expect(flash[:error]).to_not be_empty
-    expect(model_count).to eq @initial_count
-  end
+        expect(flash[:error]).not_to be_empty
+        expect(model_count).to eq @initial_count
+      end
 
-  it 'does not accept an invalid yml file even with a .yml extension' do
-    post :upload, params: {
-      **params,
-      upload_file: fixture_file_upload('files/upload_shared_files/bad_yml.yml')
-    }
+      it "does not accept an invalid file even with a .#{format} extension" do
+        post :upload, params: {
+          **params,
+          upload_file: fixture_file_upload("files/upload_shared_files/bad_#{format}.#{format}")
+        }
 
-    expect(flash[:error]).to_not be_empty
-    expect(model_count).to eq @initial_count
+        expect(flash[:error]).to_not be_empty
+        expect(model_count).to eq @initial_count
+      end
+    end
   end
 
   private
