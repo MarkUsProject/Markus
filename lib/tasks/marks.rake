@@ -149,11 +149,11 @@ namespace :db do
       base_attributes[:annotation_text_id] = categories_with_criteria.second.annotation_texts.pluck(:id).to_a.sample
       base_attributes[:annotation_number] = grouping.reload.current_submission_used.annotations.count + 1
       TextAnnotation.create(
-          line_start: 12,
-          line_end: 12,
-          column_start: 1,
-          column_end: 26,
-          **base_attributes
+        line_start: 12,
+        line_end: 12,
+        column_start: 1,
+        column_end: 26,
+        **base_attributes
       )
       mark = grouping.current_result.marks.find_by(markable: categories_with_criteria.second.flexible_criterion)
       mark.update!(override: true, mark: mark.markable.max_mark)
