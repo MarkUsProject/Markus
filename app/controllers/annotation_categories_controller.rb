@@ -193,6 +193,10 @@ class AnnotationCategoriesController < ApplicationController
       if data[:type] == '.csv'
         result = MarkusCsv.parse(data[:file].read, encoding: data[:encoding]) do |row|
           next if CSV.generate_line(row).strip.empty?
+          if !row[1].nil? && @assignment.flexible_criteria.find_by(name: row[1]).nil?
+            flash_message(:error, t('annotation_categories.upload.criterion_not_found',
+                                         missing_criterion: row[1]))
+          end
           AnnotationCategory.add_by_row(row, @assignment, current_user)
         end
         flash_message(:error, result[:invalid_lines]) unless result[:invalid_lines].empty?
@@ -207,7 +211,6 @@ class AnnotationCategoriesController < ApplicationController
             if @assignment.flexible_criteria.find_by(name: category_data['criterion']).nil?
               flash_message(:error, t('annotation_categories.upload.criterion_not_found',
                                            missing_criterion: category_data['criterion']))
-              raise CsvInvalidLineError
             end
             row = [category, category_data['criterion']] + category_data['texts'].flatten
             AnnotationCategory.add_by_row(row, @assignment, current_user)
