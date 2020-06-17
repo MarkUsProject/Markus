@@ -39,3 +39,11 @@ pt:
         unlimited_tokens: "UPDATE ME"
         vcs_submit: "Permitir que sustenta através de controle de versão"
         start_time: "UPDATE ME"
+    errors:
+      models:
+        assignment_properties:
+          attributes:
+            start_time:
+              before_due_date: "UPDATE ME"
+            is_timed:
+              not_scanned: "UPDATE ME"

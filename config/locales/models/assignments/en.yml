@@ -39,3 +39,11 @@ en:
         unlimited_tokens: "Unlimited tokens"
         vcs_submit: "Allow students to submit through a version control system"
         start_time: "Start time"
+    errors:
+      models:
+        assignment_properties:
+          attributes:
+            start_time:
+              before_due_date: "must be before due date"
+            is_timed:
+              not_scanned: "scanned_exam and is_timed cannot both be true"

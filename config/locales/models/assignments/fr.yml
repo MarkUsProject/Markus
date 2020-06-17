@@ -39,3 +39,11 @@ fr:
         unlimited_tokens: "Infinis jetons"
         vcs_submit: "Permettre soumet à travers le contrôle de version"
         start_time: "Heure de début"
+    errors:
+      models:
+        assignment_properties:
+          attributes:
+            start_time:
+              before_due_date: "UPDATE ME"
+            is_timed:
+              not_scanned: "UPDATE ME"

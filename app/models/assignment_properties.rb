@@ -106,10 +106,12 @@ class AssignmentProperties < ApplicationRecord
 
   def start_before_due
     return if start_time.nil? || duration.nil?
-    errors.add(:start_time, 'must be before due date') if start_time > assignment.due_date - duration # TODO: I18n
+    msg = I18n.t('activerecord.errors.models.assignment_properties.attributes.start_time.before_due_date')
+    errors.add(:start_time, msg) if start_time > assignment.due_date - duration
   end
 
   def not_timed_and_scanned
-    errors.add(:base, 'scanned_exam and is_timed cannot both be true') if is_timed && scanned_exam # TODO: I18n
+    msg = I18n.t('activerecord.errors.models.assignment_properties.attributes.is_timed.not_scanned')
+    errors.add(:base, msg) if is_timed && scanned_exam
   end
 end

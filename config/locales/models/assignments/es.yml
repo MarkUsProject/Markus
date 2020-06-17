@@ -40,3 +40,11 @@ es:
         unlimited_tokens: "Ilimitado"
         vcs_submit: "Permitir entregas a través de version control"
         start_time: "UPDATE ME"
+    errors:
+      models:
+        assignment_properties:
+          attributes:
+            start_time:
+              before_due_date: "UPDATE ME"
+            is_timed:
+              not_scanned: "UPDATE ME"
