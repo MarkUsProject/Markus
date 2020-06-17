@@ -13,6 +13,6 @@ module AnnotationCategoriesHelper
   end
 
   def convert_to_yml(annotation_categories)
-    prepare_for_conversion(annotation_categories).ya2yaml
+    prepare_for_conversion(annotation_categories).to_yaml
   end
 end
