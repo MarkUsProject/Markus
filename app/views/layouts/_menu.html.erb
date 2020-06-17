@@ -48,12 +48,13 @@
         <% end %>>
       <%= link_to t('menu.home'), controller: 'assignments' %>
     </li>
-    <li <% if controller.controller_name == 'students' %>
-        class='active'
-        <% end %>>
-      <%= link_to t('menu.settings'), controller: 'students', action: 'mailer_settings' %>
-    </li>
-
+    <% unless @current_user.admin? || @current_user.ta? %>
+      <li <% if controller.controller_name == 'students' %>
+          class='active'
+          <% end %>>
+        <%= link_to t('menu.settings'), controller: 'students', action: 'mailer_settings' %>
+      </li>
+    <% end %>
   <% end %>
 
   <% if @current_user.admin? || @current_user.ta? %>
