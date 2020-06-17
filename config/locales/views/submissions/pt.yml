@@ -54,7 +54,6 @@ pt:
     # Miscellaneous
     cannot_display: "Conteudo binário: Use o botao de download para ver o arquivo!"
     commit_date: "Data de envio"
-    detailed_csv_report: "Relatório detalhado CSV"
     grace_credits_used: "Créditos de tolerância usados"
     grading_can_begin: "Avaliação pode começar"
     grading_can_begin_after: "Avaliação pode começar depois %{time}"
