@@ -59,15 +59,30 @@ class AssignmentProperties < ApplicationRecord
 
   DURATION_PARTS = [:hours, :minutes].freeze
 
+  # Update the repository permissions file if the vcs_submit
+  # attribute was changed after a save.
   def update_permissions_if_vcs_changed
     return unless saved_change_to_vcs_submit?
     Repository.get_class.update_permissions
   end
 
+  # Return the duration attribute for this assignment as a hash
+  # with keys from +DURATION_PARTS+.
+  #
+  # For example:
+  #
+  # self.duration  # 10.hours and 4.minutes
+  # self.duration_parts # {hours: 10, minutes: 4}
   def duration_parts
     AssignmentProperties.duration_parts(self.duration)
   end
 
+  # Return +dur+ as a hash with keys from +DURATION_PARTS+.
+  #
+  # For example:
+  #
+  # dur  # 10.hours and 4.minutes
+  # AssignmentProperties.duration_parts(dur) # {hours: 10, minutes: 4}
   def self.duration_parts(dur)
     dur = dur.to_i
     DURATION_PARTS.map do |part|
@@ -104,12 +119,19 @@ class AssignmentProperties < ApplicationRecord
     false
   end
 
+  # Add an error if this the duration attribute is greater than the amount of time
+  # between the start_time and due_date.
+  #
+  # Note that this will fail silently if either the start_time or duration is nil since
+  # those values are checked by other validations and so should not be checked twice.
   def start_before_due
     return if start_time.nil? || duration.nil?
     msg = I18n.t('activerecord.errors.models.assignment_properties.attributes.start_time.before_due_date')
     errors.add(:start_time, msg) if start_time > assignment.due_date - duration
   end
 
+  # Add an error if the is_timed and scanned_exam attributes for this assignment
+  # are both true.
   def not_timed_and_scanned
     msg = I18n.t('activerecord.errors.models.assignment_properties.attributes.is_timed.not_scanned')
     errors.add(:base, msg) if is_timed && scanned_exam

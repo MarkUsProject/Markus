@@ -517,6 +517,7 @@ class AssignmentsController < ApplicationController
     head :ok
   end
 
+  # Updates the duration and/or start_time for the grouping with id +params[:grouping_id]+
   def update_grouping_timed_settings
     grouping = Grouping.find(params[:grouping_id])
     return head 400 if grouping.nil?
@@ -650,6 +651,8 @@ class AssignmentsController < ApplicationController
     return assignment, new_required_files
   end
 
+  # Convert the hours and minutes value given in the params to a duration value
+  # and assign it to the duration attribute of +assignment+.
   def process_timed_duration(assignment)
     durs = duration_params['assignment_properties_attributes']['duration']
     assignment.duration = durs['hours'].to_i.hours + durs['minutes'].to_i.minutes

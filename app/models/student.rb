@@ -96,7 +96,8 @@ class Student < User
   end
 
   # creates a group and a grouping for a student to work alone, for
-  # assignment aid
+  # assignment aid. If this is a timed assignment, a new group will
+  # always be created.
   def create_group_for_working_alone_student(aid)
     @assignment = Assignment.find(aid)
     Group.transaction do

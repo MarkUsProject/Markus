@@ -88,6 +88,7 @@ class ExtensionModal extends React.Component {
   };
 
   getLabel = (time) => {
+    // Return the internationalized version of +time+
     if (time === 'weeks') {
       return I18n.t('durations.weeks.other');
     } else if (time === 'days') {
@@ -100,6 +101,8 @@ class ExtensionModal extends React.Component {
   };
 
   renderTimeInput = () => {
+    // Render a label and input for each time in
+    // this.props.times
     return this.props.times.map( (time) =>
       <label key={time}>
         <input
@@ -115,6 +118,7 @@ class ExtensionModal extends React.Component {
   };
 
   renderExtraInfo = () => {
+    // Render this.props.extra info if it exists
     if (!!this.props.extra_info) {
       return <div className={'modal-container'}>{this.props.extra_info}</div>;
     }

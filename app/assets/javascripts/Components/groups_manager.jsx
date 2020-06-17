@@ -173,6 +173,7 @@ class GroupsManager extends React.Component {
   };
 
   extraModalInfo = () => {
+    // Render extra modal info for timed assignments only
     if (this.props.timed) {
       return `${I18n.t('assignments.timed.modal_current_duration')} ${this.props.current_duration}`
     }

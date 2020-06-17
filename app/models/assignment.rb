@@ -160,6 +160,8 @@ class Assignment < Assessment
     SectionDueDate.due_date_for(section, self)
   end
 
+  # Return the start_time for +section+ if it is not nil, otherwise return this
+  # assignments start_time instead.
   def section_start_time(section)
     section&.section_due_dates&.find_by(assignment: self)&.start_time || start_time
   end
