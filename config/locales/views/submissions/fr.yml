@@ -49,7 +49,6 @@ fr:
     # Miscellaneous
     cannot_display: "Fichier binaire : utiliser le bouton Télécharger pour voir."
     commit_date: "Date d'envoi (commit)"
-    detailed_csv_report: "Rappost CSV détaillé"
     grace_credits_used: "Utilisation des \"grace credits\""
     grading_can_begin: "L'évaluation peut commencer"
     grading_can_begin_after: "L'évaluation commencera à partir du %{time}"

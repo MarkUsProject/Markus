@@ -38,8 +38,6 @@
 <% unless @assignment.is_peer_review? %>
   <% if @current_user.admin? %>
     <% @heading_buttons += [
-      { link_text: t('submissions.detailed_csv_report'),
-        link_path: summary_assignment_path(@assignment) },
       { link_text: t('submissions.repo_list'),
         link_path: download_repo_list_assignment_submissions_path(@assignment) },
       { link_text: t('submissions.repo_checkout_file'),
