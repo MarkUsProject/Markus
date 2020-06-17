@@ -87,7 +87,7 @@ describe FlexibleCriterion do
         annotation_category.annotation_texts.each do |text|
           deductions << text.deduction
         end
-        expect(deductions).to eq([2.0, 4.0])
+        expect(deductions.sort!).to eq([2.0, 4.0])
       end
 
       it 'correctly scales down annotation text deductions when it\'s max_mark is decreased' do
@@ -98,7 +98,7 @@ describe FlexibleCriterion do
         annotation_category.annotation_texts.each do |text|
           deductions << text.deduction
         end
-        expect(deductions).to eq([0.33, 0.67])
+        expect(deductions.sort!).to eq([0.33, 0.67])
       end
     end
 
