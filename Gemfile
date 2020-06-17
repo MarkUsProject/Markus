@@ -55,7 +55,6 @@ gem 'net-ssh'
 gem 'redcarpet'
 gem 'rubyzip', require: 'zip'
 gem 'rugged'
-gem 'ya2yaml'
 
 # Rails miscellany
 gem 'activerecord-session_store'
