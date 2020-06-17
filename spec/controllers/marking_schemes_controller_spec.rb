@@ -1,5 +1,5 @@
 describe MarkingSchemesController do
-  # TODO - Add more tests to check the functionality
+  # TODO: Add more tests to check the functionality
   let(:marking_scheme) { create(:marking_scheme) }
   shared_examples 'An authorized user' do
     context 'POST create' do
