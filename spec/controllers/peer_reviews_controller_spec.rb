@@ -33,9 +33,9 @@ describe PeerReviewsController do
         # Perform peer_review_mapping via GET
         get :peer_review_mapping, params: { assignment_id: @pr_id }
         @downloaded_text = response.body
-        @found_filename = response.header['Content-Disposition'].include?(
-            "filename=\"#{@assignment_with_pr.pr_assignment.short_identifier}_peer_review_mapping.csv\""
-        )
+        @found_filename = response.header['Content-Disposition']
+                                  .include?("filename=\"#{
+                                  @assignment_with_pr.pr_assignment.short_identifier}_peer_review_mapping.csv\"")
         @lines = @downloaded_text[0...-1].split("\n")
       end
 
@@ -133,7 +133,8 @@ describe PeerReviewsController do
       end
       it 'returns the correct id_to_group_names_map' do
         expected = {}
-        @assignment_with_pr.groupings.or(@assignment_with_pr.pr_assignment.groupings).includes(:group).each do |grouping|
+        @assignment_with_pr.groupings.or(@assignment_with_pr.pr_assignment.groupings)
+                           .includes(:group).each do |grouping|
           expected[grouping.id.to_s] = grouping.group.group_name
         end
         expect(@response['id_to_group_names_map']).to eq(expected)
@@ -149,11 +150,11 @@ describe PeerReviewsController do
     context 'random assign' do
       before :each do
         post_as user, :assign_groups,
-             params: { actionString: 'random_assign',
-                       selectedReviewerGroupIds: @selected_reviewer_group_ids,
-                       selectedRevieweeGroupIds: @selected_reviewee_group_ids,
-                       assignment_id: @pr_id,
-                       numGroupsToAssign: 1 }
+                params: { actionString: 'random_assign',
+                          selectedReviewerGroupIds: @selected_reviewer_group_ids,
+                          selectedRevieweeGroupIds: @selected_reviewee_group_ids,
+                          assignment_id: @pr_id,
+                          numGroupsToAssign: 1 }
       end
 
       it 'creates the correct number of peer reviews' do
@@ -180,16 +181,15 @@ describe PeerReviewsController do
     context 'assign' do
       before :each do
         post_as user, :assign_groups,
-             params: { actionString: 'assign',
-                       selectedReviewerGroupIds: @selected_reviewer_group_ids,
-                       selectedRevieweeGroupIds: @selected_reviewee_group_ids,
-                       assignment_id: @pr_id }
+                params: { actionString: 'assign',
+                          selectedReviewerGroupIds: @selected_reviewer_group_ids,
+                          selectedRevieweeGroupIds: @selected_reviewee_group_ids,
+                          assignment_id: @pr_id }
       end
 
       it 'creates the correct number of peer reviews' do
-        expect(@assignment_with_pr.peer_reviews.count).to eq(
-                                                              @selected_reviewee_group_ids.size * @selected_reviewer_group_ids.size
-                                                            )
+        expect(@assignment_with_pr.peer_reviews.count)
+          .to eq(@selected_reviewee_group_ids.size * @selected_reviewer_group_ids.size)
       end
 
       it 'does not assign a reviewee group to review their own submission' do
@@ -208,19 +208,19 @@ describe PeerReviewsController do
     context 'unassign' do
       before :each do
         post_as user, :assign_groups,
-                      params: { actionString: 'assign',
-                                selectedReviewerGroupIds: @selected_reviewer_group_ids,
-                                selectedRevieweeGroupIds: @selected_reviewee_group_ids,
-                                assignment_id: @pr_id }
+                params: { actionString: 'assign',
+                          selectedReviewerGroupIds: @selected_reviewer_group_ids,
+                          selectedRevieweeGroupIds: @selected_reviewee_group_ids,
+                          assignment_id: @pr_id }
         @num_peer_reviews = @assignment_with_pr.peer_reviews.count
       end
 
       context 'all reviewers for selected reviewees' do
         before :each do
           post_as user, :assign_groups,
-               params: { actionString: 'unassign',
-                         selectedRevieweeGroupIds: @selected_reviewee_group_ids[0],
-                         assignment_id: @pr_id }
+                  params: { actionString: 'unassign',
+                            selectedRevieweeGroupIds: @selected_reviewee_group_ids[0],
+                            assignment_id: @pr_id }
         end
         it 'deletes the correct number of peer reviews' do
           expect(@assignment_with_pr.peer_reviews.count).to eq @num_peer_reviews - @selected_reviewer_group_ids.size
@@ -236,9 +236,9 @@ describe PeerReviewsController do
           selected = {}
           selected[@reviewee.id] = selected_group
           post_as user, :assign_groups,
-               params: { actionString: 'unassign',
-                         selectedReviewerInRevieweeGroups: selected,
-                         assignment_id: @pr_id }
+                  params: { actionString: 'unassign',
+                            selectedReviewerInRevieweeGroups: selected,
+                            assignment_id: @pr_id }
         end
 
         it 'deletes the correct number of peer reviews' do
