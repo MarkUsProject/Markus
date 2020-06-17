@@ -4,19 +4,19 @@ class KeyPairsController < ApplicationController
   # GET /key_pairs
   def index
     # Grab the own user's keys only
-    @key_pairs = KeyPair.where(user_id: @current_user.id)
+    @key_pairs = @current_user.key_pairs
   end
 
   # GET /key_pairs/new
   def new
-    @key_pair = KeyPair.new
+    @key_pair = @current_user.key_pairs.new
   end
 
   # POST /key_pairs
   def create
     # If user uploads the public key as a file then that takes precedence over the key_string
     public_key_content = key_pair_params[:file]&.read || key_pair_params[:key_string]
-    @key_pair = KeyPair.new(user_id: @current_user.id, public_key: public_key_content.strip)
+    @key_pair = @current_user.key_pairs.new(public_key: public_key_content.strip)
     if @key_pair.save
       flash_message(:success, t('key_pairs.create.success'))
       redirect_to key_pairs_path
@@ -31,7 +31,7 @@ class KeyPairsController < ApplicationController
   # DELETE /key_pairs/1
   def destroy
     # only allowed to destroy your own key_pairs
-    @key_pair = KeyPair.where(user_id: @current_user.id, id: params[:id]).first
+    @key_pair = @current_user.key_pairs.find_by(id: params[:id])
 
     flash_message(:success, t('key_pairs.delete.success')) if @key_pair&.destroy
     redirect_to key_pairs_path
