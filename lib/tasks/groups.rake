@@ -12,8 +12,8 @@ namespace :db do
         # if this is an individual assignment
         if assignment.group_min == 1 && assignment.group_max == 1
           student.create_group_for_working_alone_student(assignment.id)
-          group = Group.find_by group_name: student.user_name
           grouping = student.accepted_grouping_for(assignment.id)
+          group = grouping.group
         # if this is a group assignment
         else
           group = Group.create(
@@ -39,7 +39,7 @@ namespace :db do
         group.access_repo do |repo|
           # add files to the root folder of the repo (e.g. "A1")
           # recursively copying contents(files & directories) inside the file_dir
-          txn = repo.get_transaction(group.grouping_for_assignment(assignment.id).inviter.user_name)
+          txn = repo.get_transaction(grouping.inviter.user_name)
           file_dir  = File.join(File.dirname(__FILE__), '/../../db/data/submission_files')
           copy_dir(file_dir, txn, assignment.repository_folder)
           repo.commit(txn)

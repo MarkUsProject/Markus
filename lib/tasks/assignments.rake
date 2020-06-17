@@ -94,6 +94,26 @@ namespace :db do
         },
     )
 
+    puts 'Assignment 5: Timed Assignment'
+    Assignment.create(
+        short_identifier: 'A5',
+        description: 'Timed Assignment',
+        message: 'A timed assignment',
+        due_date: 2.months.from_now,
+        assignment_properties_attributes: {
+            group_min: 1,
+            group_max: 1,
+            student_form_groups: false,
+            is_timed: true,
+            start_time: 2.months.from_now - 10.hours,
+            duration: 2.hours,
+            repository_folder: 'A5',
+            token_start_date: Time.current,
+            token_period: 1,
+            section_due_dates_type: true
+        }
+    )
+
     Assignment.joins(:assignment_properties)
               .where(assignment_properties: { section_due_dates_type: true })
               .find_each do |assignment|
