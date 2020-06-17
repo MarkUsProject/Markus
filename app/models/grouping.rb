@@ -495,7 +495,11 @@ class Grouping < ApplicationRecord
   # the grouping hasn't started the timed assignment yet, the assignment due date is returned
   # instead.
   def due_date
-    a_due_date = assignment.section_due_dates.find_by(section_id: inviter&.section)&.due_date || assignment.due_date
+    if assignment.section_due_dates_type
+      a_due_date = assignment.section_due_dates.find_by(section_id: inviter&.section)&.due_date || assignment.due_date
+    else
+      a_due_date = assignment.due_date
+    end
     extension_time_delta = extension&.time_delta || 0
 
     if assignment.is_timed

@@ -1,7 +1,7 @@
 en:
   notification_mailer:
     release_email:
-      subject: "MarkUs Notification (%{course}) Your marks for %{assignment} have been released!"
+      subject_line: "MarkUs Notification (%{course}) Your marks for %{assignment} have been released!"
       greeting: "Hello %{first_name} %{last_name},"
       text_body: "Your marks for %{assignment} have now been released on MarkUs and can be viewed."
       button_text: 'View Results'

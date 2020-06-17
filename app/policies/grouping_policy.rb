@@ -60,4 +60,11 @@ class GroupingPolicy < ApplicationPolicy
   def no_extension?
     record.extension.nil?
   end
+
+  def view_file_manager?
+    not (record.nil? ||
+         record.assignment.scanned_exam? ||
+         record.assignment.is_peer_review? ||
+         record.assignment.is_timed? && record.start_time.nil?)
+  end
 end
