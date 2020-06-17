@@ -22,6 +22,7 @@ en:
     update:
       success: "This annotation category was successfully updated."
     upload:
+      criterion_not_found: "Criterion %{missing_criterion} must exist prior to the upload of the annotation category belonging to it"
       error: "Unable to upload category: %{annotation_category} located in line %{annotation_line}"
       success: "Successfully uploaded %{annotation_category_number} Annotation Categories"
       title: "Upload Annotations"

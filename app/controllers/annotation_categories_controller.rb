@@ -199,19 +199,23 @@ class AnnotationCategoriesController < ApplicationController
         flash_message(:success, result[:valid_lines]) unless result[:valid_lines].empty?
       elsif data[:type] == '.yml'
         successes = 0
-        annotation_line = 0
         data[:contents].each do |category, category_data|
           if category_data.is_a?(Array)
             AnnotationCategory.add_by_row([category, nil] + category_data, @assignment, current_user)
             successes += 1
           elsif category_data.is_a?(Hash)
+            if @assignment.flexible_criteria.find_by(name: category_data['criterion']).nil?
+              flash_message(:error, t('annotation_categories.upload.criterion_not_found',
+                                           missing_criterion: category_data['criterion']))
+              raise CsvInvalidLineError
+            end
             row = [category, category_data['criterion']] + category_data['texts'].flatten
             AnnotationCategory.add_by_row(row, @assignment, current_user)
             successes += 1
           end
         rescue CsvInvalidLineError
           flash_message(:error, t('annotation_categories.upload.error',
-                                  annotation_category: key, annotation_line: annotation_line))
+                                       annotation_category: category))
           next
         end
         if successes > 0

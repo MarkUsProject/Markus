@@ -46,7 +46,6 @@ class AnnotationCategory < ApplicationRecord
       end
     else
       criterion = assignment.flexible_criteria.find_by(name: criterion_name)
-      raise CsvInvalidLineError if criterion.nil?
       annotation_category.update!(flexible_criterion_id: criterion.id)
       row.each_slice(2) do |text_with_deduction|
         annotation_text = annotation_category.annotation_texts.build(

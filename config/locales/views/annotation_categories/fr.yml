@@ -22,6 +22,7 @@ fr:
     update:
       success: "La catégorie d'annotations a bien été créée ou mise à jour."
     upload:
+      criterion_not_found: 'UPDATE ME!'
       error: "Impossible d'envoyer les catégories : problème à la catégorie %{annotation_category} située sur la ligne %{annotation_line}"
       success: "Envoi réussi des catégories d'annotations (%{annotation_category_number} envoyées)."
       title: "Envoi d'annotations"
