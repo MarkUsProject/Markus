@@ -116,7 +116,7 @@ class ExtensionModal extends React.Component {
 
   renderExtraInfo = () => {
     if (!!this.props.extra_info) {
-      return <div className={'modal-container'}>{this.props.extra_info}</div>
+      return <div className={'modal-container'}>{this.props.extra_info}</div>;
     }
   };
 

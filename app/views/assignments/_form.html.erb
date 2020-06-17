@@ -148,13 +148,13 @@
               <%= dur_f.number_field :hours,
                                      min: 0,
                                      max: 999,
-                                     value: @assignment_duration_parts[:hours],
+                                     value: @assignment.duration_parts[:hours],
                                      onchange: 'set_onbeforeunload(true);' %>
               <%= dur_f.label :hours, I18n.t('durations.any_hours') %>
               <%= dur_f.number_field :minutes,
                                      min: 0,
                                      max: 59,
-                                     value: @assignment_duration_parts[:minutes],
+                                     value: @assignment.duration_parts[:minutes],
                                      onchange: 'set_onbeforeunload(true);' %>
               <%= dur_f.label :minutes, I18n.t('durations.any_minutes') %>
             <% end %>

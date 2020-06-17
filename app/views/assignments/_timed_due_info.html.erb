@@ -6,10 +6,10 @@
 <h3><%= I18n.t('activerecord.models.timed_assignment.one') %></h3>
 <p>
   <strong><%= I18n.t('assignments.timed.start_time_instructions') %></strong>
-  <%= @assignment.section_start_time(@current_user&.section).strftime('%Y-%m-%d %l:%M %p') %>
+  <%= I18n.l @assignment.section_start_time(@current_user&.section) %>
 <p>
   <strong><%= I18n.t('assignments.timed.end_time_instructions') %></strong>
-  <%= due_date.strftime('%Y-%m-%d %l:%M %p') %>
+  <%= I18n.l due_date %>
 </p>
 <% if @grouping&.start_time.nil? %>
   <% if Time.current <= due_date && Time.current >= start_time %>
@@ -18,11 +18,14 @@
          duration_string = ["#{parts[:hours]} #{I18n.t('durations.hours', count: parts[:hours])}",
                             "#{parts[:minutes]} #{I18n.t('durations.minutes', count: parts[:minutes])}"].join(', ')
       %>
-      <%= I18n.t('assignments.timed.before_start_instructions', duration_string: duration_string)%>
+      <%= I18n.t('assignments.timed.before_start_instructions', duration_string: duration_string) %>
     </p>
-    <%= form_with url: start_timed_assignment_assignment_path(@assignment.id), method: 'put', local: true do |f| %>
-      <%= f.hidden_field :grouping_id, value: @grouping.id %>
-      <%= f.submit I18n.t('assignments.timed.start_button'), data: { confirm: t('assignments.timed.start_confirmation') } %>
+    <% unless @grouping.nil? %>
+      <%= form_with url: start_timed_assignment_assignment_path(@assignment.id), method: 'put', local: true do |f| %>
+        <%= f.hidden_field :grouping_id, value: @grouping.id %>
+        <%= f.submit I18n.t('assignments.timed.start_button'),
+                     data: { confirm: t('assignments.timed.start_confirmation') } %>
+      <% end %>
     <% end %>
   <% else %>
     <p><%= I18n.t('assignments.timed.past_end_time') %></p>
@@ -31,8 +34,8 @@
   <% if Time.current < @grouping.due_date %>
     <p>
       <%= I18n.t('assignments.timed.after_start_instructions',
-                 start_time: @grouping.start_time.strftime('%Y-%m-%d %l:%M %p'),
-                 due_date: @grouping.due_date.strftime('%Y-%m-%d %l:%M %p')) %>
+                 start_time: I18n.l(@grouping.start_time),
+                 due_date: I18n.l(@grouping.due_date)) %>
     </p>
   <% else %>
     <p><%= I18n.t('assignments.timed.past_due_date') %></p>

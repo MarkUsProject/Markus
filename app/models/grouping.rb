@@ -496,7 +496,7 @@ class Grouping < ApplicationRecord
   # instead.
   def due_date
     a_due_date = assignment.section_due_dates.find_by(section_id: inviter&.section)&.due_date || assignment.due_date
-    extension_time_delta = (extension&.time_delta || 0)
+    extension_time_delta = extension&.time_delta || 0
 
     if assignment.is_timed
       return a_due_date if Time.current > a_due_date || start_time.nil?

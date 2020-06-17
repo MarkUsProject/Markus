@@ -52,9 +52,8 @@ class AssignmentsController < ApplicationController
         end
         @grouping = @current_user.accepted_grouping_for(@assignment.id)
       end
-    else
-      set_repo_vars(@assignment, @grouping)
     end
+    set_repo_vars(@assignment, @grouping) unless @grouping.nil?
     render layout: 'assignment_content'
   end
 
@@ -158,7 +157,6 @@ class AssignmentsController < ApplicationController
         flash_now(:notice, t('assignments.due_date.past_due_date_notice') + past_date.join(', '))
       end
     end
-    @assignment_duration_parts = @assignment.assignment_properties.duration_parts if @assignment.is_timed
     # build section_due_dates for each section that doesn't already have a due date
     Section.all.each do |s|
       unless SectionDueDate.find_by(assessment_id: @assignment.id, section_id: s.id)
@@ -188,7 +186,6 @@ class AssignmentsController < ApplicationController
       end
     rescue
     end
-    @assignment_duration_parts = @assignment.assignment_properties.duration_parts if @assignment.is_timed
     respond_with @assignment, location: -> { edit_assignment_path(@assignment) }
   end
 
@@ -202,7 +199,6 @@ class AssignmentsController < ApplicationController
     end
     if params[:timed].present?
       @assignment.is_timed = true
-      @assignment_duration_parts = @assignment.assignment_properties.duration_parts
     end
     @clone_assignments = Assignment.joins(:assignment_properties)
                                    .where(assignment_properties: { vcs_submit: true })
