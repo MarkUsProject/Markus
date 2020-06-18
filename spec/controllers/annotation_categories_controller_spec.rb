@@ -323,7 +323,7 @@ describe AnnotationCategoriesController do
       expect(response.status).to eq(302)
       # One annotation category was created, and one has an error.
       expect(AnnotationCategory.all.size).to eq(1)
-      expect(flash[:error].size).to eq(3)
+      expect(flash[:error].size).to eq(1)
       expect(response).to redirect_to(action: 'index', assignment_id: assignment.id)
     end
 
