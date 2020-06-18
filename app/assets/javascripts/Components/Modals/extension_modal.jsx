@@ -114,7 +114,7 @@ class ExtensionModal extends React.Component {
           onChange={this.handleModalInputChange}
         /> {this.getLabel(time)}
       </label>
-    )
+    );
   };
 
   renderExtraInfo = () => {
