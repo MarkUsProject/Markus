@@ -31,7 +31,7 @@ class AnnotationCategory < ApplicationRecord
       annotation_category_name: name
     )
     unless annotation_category.valid?
-      return I18n.t('annotation_categories.upload.empty_category_name')
+      raise CsvInvalidLineError.new(I18n.t('annotation_categories.upload.empty_category_name'))
     end
     # The second column is the optional flexible criterion name.
     criterion_name = row.shift
@@ -43,22 +43,23 @@ class AnnotationCategory < ApplicationRecord
           last_editor_id: current_user.id
         )
         unless annotation_text.save
-          raise CsvInvalidLineError
+          raise CsvInvalidLineError.new(I18n.t('annotation_categories.upload.error',
+                                               annotation_category: category))
         end
       end
     else
       criterion = assignment.flexible_criteria.find_by(name: criterion_name)
       if criterion.nil?
-        return I18n.t('annotation_categories.upload.criterion_not_found',
-                      missing_criterion: criterion_name)
+        raise CsvInvalidLineError.new(I18n.t('annotation_categories.upload.criterion_not_found',
+                                             missing_criterion: criterion_name))
       end
       annotation_category.update!(flexible_criterion_id: criterion.id)
       row.each_slice(2) do |text_with_deduction|
         new_deduction = text_with_deduction.second.to_f
         if new_deduction > criterion.max_mark || new_deduction < 0
-          return I18n.t('annotation_categories.upload.invalid_deduction',
-                        annotation_content: text_with_deduction.first,
-                        criterion_name: criterion_name)
+          raise CsvInvalidLineError.new(I18n.t('annotation_categories.upload.invalid_deduction',
+                                               annotation_content: text_with_deduction.first,
+                                               criterion_name: criterion_name))
         end
         annotation_text = annotation_category.annotation_texts.build(
           content: text_with_deduction.first,
@@ -67,11 +68,11 @@ class AnnotationCategory < ApplicationRecord
           deduction: new_deduction
         )
         unless annotation_text.save
-          raise CsvInvalidLineError
+          raise CsvInvalidLineError.new(I18n.t('annotation_categories.upload.error',
+                                               annotation_category: category))
         end
       end
     end
-    nil
   end
 
   def marks_released?

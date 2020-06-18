@@ -193,11 +193,7 @@ class AnnotationCategoriesController < ApplicationController
       if data[:type] == '.csv'
         result = MarkusCsv.parse(data[:file].read, encoding: data[:encoding]) do |row|
           next if CSV.generate_line(row).strip.empty?
-          category_status = AnnotationCategory.add_by_row(row, @assignment, current_user)
-          unless category_status.nil?
-            flash_message(:error, category_status)
-            raise CsvInvalidLineError
-          end
+          AnnotationCategory.add_by_row(row, @assignment, current_user)
         end
         flash_message(:error, result[:invalid_lines]) unless result[:invalid_lines].empty?
         flash_message(:success, result[:valid_lines]) unless result[:valid_lines].empty?
@@ -205,24 +201,15 @@ class AnnotationCategoriesController < ApplicationController
         successes = 0
         data[:contents].each do |category, category_data|
           if category_data.is_a?(Array)
-            category_status = AnnotationCategory.add_by_row([category, nil] + category_data, @assignment, current_user)
-            unless category_status.nil?
-              flash_message(:error, category_status)
-              raise CsvInvalidLineError
-            end
+            AnnotationCategory.add_by_row([category, nil] + category_data, @assignment, current_user)
             successes += 1
           elsif category_data.is_a?(Hash)
             row = [category, category_data['criterion']] + category_data['texts'].flatten
-            category_status = AnnotationCategory.add_by_row(row, @assignment, current_user)
-            unless category_status.nil?
-              flash_message(:error, category_status)
-              raise CsvInvalidLineError
-            end
+            AnnotationCategory.add_by_row(row, @assignment, current_user)
             successes += 1
           end
-        rescue CsvInvalidLineError
-          flash_message(:error, t('annotation_categories.upload.error',
-                                  annotation_category: category))
+        rescue CsvInvalidLineError => e
+          flash_message(:error, e.message)
           next
         end
         if successes > 0

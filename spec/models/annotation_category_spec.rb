@@ -38,14 +38,16 @@ describe AnnotationCategory do
     it 'returns an error message if the category name is blank' do
       row = [nil, 'criterion_name', 'text_content', '1.0']
       expected_message = I18n.t('annotation_categories.upload.empty_category_name')
-      expect(AnnotationCategory.add_by_row(row, assignment, admin)).to eq expected_message
+      expect { AnnotationCategory.add_by_row(row, assignment, admin) }.to raise_error(CsvInvalidLineError,
+                                                                                      expected_message)
     end
 
     it 'returns an error message if a criterion with the name given does not exist' do
       row = ['category_name', 'criterion_name', 'text_content', '1.0']
       expected_message = I18n.t('annotation_categories.upload.criterion_not_found',
                                 missing_criterion: 'criterion_name')
-      expect(AnnotationCategory.add_by_row(row, assignment, admin)).to eq expected_message
+      expect { AnnotationCategory.add_by_row(row, assignment, admin) }.to raise_error(CsvInvalidLineError,
+                                                                                      expected_message)
     end
 
     it 'returns an error message if a deduction given for an annotation text '\
@@ -55,7 +57,8 @@ describe AnnotationCategory do
       expected_message = I18n.t('annotation_categories.upload.invalid_deduction',
                                 annotation_content: 'text_content',
                                 criterion_name: 'criterion_name')
-      expect(AnnotationCategory.add_by_row(row, assignment, admin)).to eq expected_message
+      expect { AnnotationCategory.add_by_row(row, assignment, admin) }.to raise_error(CsvInvalidLineError,
+                                                                                      expected_message)
     end
 
     context 'when no annotation categories exists' do
