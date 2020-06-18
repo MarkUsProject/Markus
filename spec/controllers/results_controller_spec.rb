@@ -392,8 +392,7 @@ describe ResultsController do
                               format: :json }, xhr: true
 
         expect(response.parsed_body['annotation_categories'].first['annotation_category_name'])
-          .to eq "#{category.annotation_category_name}"\
-                 "#{category.flexible_criterion_id.nil? ? '' : " [#{category.flexible_criterion.name}]"}"
+          .to eq "#{category.annotation_category_name} [#{category.flexible_criterion.name}]"
         expect(response.parsed_body['annotation_categories'].first['texts'].first['deduction']).to eq 1.0
         expect(response.parsed_body['annotation_categories']
                    .first['flexible_criterion_id']).to eq category.flexible_criterion.id
@@ -653,6 +652,22 @@ describe ResultsController do
       end
     end
 
+    context 'when criteria are assigned to graders, but not this grader' do
+      it 'receives no deductive annotation category data if has no ta_criterion_associations' do
+        assignment = create(:assignment_with_deductive_annotations)
+        assignment.assignment_properties.update(assign_graders_to_criteria: true)
+        non_deductive_category = create(:annotation_category, assignment: assignment)
+        post :show, params: { assignment_id: assignment.id,
+                              submission_id: assignment.groupings.first.current_result.submission.id,
+                              id: assignment.groupings.first.current_result,
+                              format: :json }, xhr: true
+
+        expect(response.parsed_body['annotation_categories']
+                       .first['annotation_category_name']).to eq non_deductive_category.annotation_category_name
+        expect(response.parsed_body['annotation_categories'].size).to eq 1
+      end
+    end
+
     context 'when criteria are assigned to this grader' do
       let(:data) { JSON.parse(response.body) }
       let(:params) { { assignment_id: assignment.id, submission_id: submission.id, id: incomplete_result.id } }
@@ -667,19 +682,23 @@ describe ResultsController do
       end
 
       context 'when accessing an assignment with deductive annotations' do
-        it 'receives limited annotation_category data' do
+        it 'receives limited annotation category data if has ta_criterion_association' do
           assignment = create(:assignment_with_deductive_annotations)
-          other_criterion = create(:checkbox_criterion, assignment: assignment)
+          other_criterion = create(:flexible_criterion, assignment: assignment)
+          assignment.groupings.each do |grouping|
+            create(:flexible_mark, markable: other_criterion, result: grouping.current_result)
+          end
           assignment.assignment_properties.update(assign_graders_to_criteria: true)
           create(:criterion_ta_association, criterion: other_criterion, ta: ta)
-          non_deductive_category = create(:annotation_category, assignment: assignment)
+          other_category = create(:annotation_category,
+                                  assignment: assignment,
+                                  flexible_criterion_id: other_criterion.id)
           post :show, params: { assignment_id: assignment.id,
                                 submission_id: assignment.groupings.first.current_result.submission.id,
                                 id: assignment.groupings.first.current_result,
                                 format: :json }, xhr: true
-
-          expect(response.parsed_body['annotation_categories']
-                         .first['annotation_category_name']).to eq non_deductive_category.annotation_category_name
+          expect(response.parsed_body['annotation_categories'].first['annotation_category_name'])
+            .to eq "#{other_category.annotation_category_name} [#{other_category.flexible_criterion.name}]"
           expect(response.parsed_body['annotation_categories'].size).to eq 1
         end
       end
