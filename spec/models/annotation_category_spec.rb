@@ -44,7 +44,7 @@ describe AnnotationCategory do
     it 'returns an error message if a criterion with the name given does not exist' do
       row = ['category_name', 'criterion_name', 'text_content', '1.0']
       expected_message = I18n.t('annotation_categories.upload.criterion_not_found',
-                                missing_criterion: 'criterion_name',)
+                                missing_criterion: 'criterion_name')
       expect(AnnotationCategory.add_by_row(row, assignment, admin)).to eq expected_message
     end
 

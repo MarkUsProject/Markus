@@ -222,7 +222,7 @@ class AnnotationCategoriesController < ApplicationController
           end
         rescue CsvInvalidLineError
           flash_message(:error, t('annotation_categories.upload.error',
-                                       annotation_category: category))
+                                  annotation_category: category))
           next
         end
         if successes > 0
