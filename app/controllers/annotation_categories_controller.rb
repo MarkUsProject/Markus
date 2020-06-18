@@ -193,11 +193,11 @@ class AnnotationCategoriesController < ApplicationController
       if data[:type] == '.csv'
         result = MarkusCsv.parse(data[:file].read, encoding: data[:encoding]) do |row|
           next if CSV.generate_line(row).strip.empty?
-          if !row[1].nil? && @assignment.flexible_criteria.find_by(name: row[1]).nil?
-            flash_message(:error, t('annotation_categories.upload.criterion_not_found',
-                                         missing_criterion: row[1]))
+          category_status = AnnotationCategory.add_by_row(row, @assignment, current_user)
+          unless category_status.nil?
+            flash_message(:error, category_status)
+            raise CsvInvalidLineError
           end
-          AnnotationCategory.add_by_row(row, @assignment, current_user)
         end
         flash_message(:error, result[:invalid_lines]) unless result[:invalid_lines].empty?
         flash_message(:success, result[:valid_lines]) unless result[:valid_lines].empty?
@@ -205,15 +205,19 @@ class AnnotationCategoriesController < ApplicationController
         successes = 0
         data[:contents].each do |category, category_data|
           if category_data.is_a?(Array)
-            AnnotationCategory.add_by_row([category, nil] + category_data, @assignment, current_user)
+            category_status = AnnotationCategory.add_by_row([category, nil] + category_data, @assignment, current_user)
+            unless category_status.nil?
+              flash_message(:error, category_status)
+              raise CsvInvalidLineError
+            end
             successes += 1
           elsif category_data.is_a?(Hash)
-            if @assignment.flexible_criteria.find_by(name: category_data['criterion']).nil?
-              flash_message(:error, t('annotation_categories.upload.criterion_not_found',
-                                           missing_criterion: category_data['criterion']))
-            end
             row = [category, category_data['criterion']] + category_data['texts'].flatten
-            AnnotationCategory.add_by_row(row, @assignment, current_user)
+            category_status = AnnotationCategory.add_by_row(row, @assignment, current_user)
+            unless category_status.nil?
+              flash_message(:error, category_status)
+              raise CsvInvalidLineError
+            end
             successes += 1
           end
         rescue CsvInvalidLineError

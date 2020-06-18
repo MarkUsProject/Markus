@@ -23,7 +23,9 @@ pt:
       success: "Esta categoria de anotação foi atualizada com sucesso"
     upload:
       criterion_not_found: 'UPDATE ME!'
-      error: "Não foi possível fazer o upload de categoria: erro com %{annotation_category} localizado na linha %{annotation_line}"
+      empty_category_name: 'UPDATE ME!'
+      error: "Não foi possível fazer o upload de categoria: erro com %{annotation_category}"
+      invalid_deduction: 'UPDATE ME!'
       success: "Carregado com sucesso %{annotation_category_number} categorias de anotações"
       title: "Carregar anotações"
 
