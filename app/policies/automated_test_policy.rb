@@ -3,10 +3,10 @@ class AutomatedTestPolicy < ApplicationPolicy
   alias_rule :student_interface?, :get_test_runs_students?, :execute_test_run?, to: :student_access?
 
   def student_access?
-    user.student?
+    record.student?
   end
 
   def manage?
-    user.admin? || (user.ta? && allowed_to?(:manage_assignments?, with: GraderPermissionPolicy))
+    record.admin? || (record.ta? && allowed_to?(:manage_assignments?, with: GraderPermissionPolicy))
   end
 end

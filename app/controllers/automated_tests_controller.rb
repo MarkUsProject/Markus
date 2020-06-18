@@ -2,12 +2,7 @@ class AutomatedTestsController < ApplicationController
   include AutomatedTestsHelper
 
   before_action do
-    if params[:id].nil?
-      assignment = Assignment.find(params[:assignment_id])
-    else
-      assignment = Assignment.find(params[:id])
-    end
-    authorize! assignment, with: AutomatedTestPolicy
+    authorize! current_user, with: AutomatedTestPolicy
   end
 
   def update

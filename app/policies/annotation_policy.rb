@@ -13,7 +13,7 @@ class AnnotationPolicy < ApplicationPolicy
   end
 
   def reviewer_allowed?
-    assignment = result.submission.assignment
-    assignment.has_peer_review && user.is_reviewer_for?(assignment.pr_assignment, result)
+    assignment = record.submission.assignment
+    assignment.has_peer_review && user.is_reviewer_for?(assignment.pr_assignment, record)
   end
 end
