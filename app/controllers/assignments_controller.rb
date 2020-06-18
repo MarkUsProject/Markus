@@ -16,15 +16,6 @@ class AssignmentsController < ApplicationController
                               :start_timed_assignment,
                               :batch_runs]
 
-  before_action      :authorize_for_ta_and_admin,
-                     only: [:summary,
-                            :view_summary,
-                            :new,
-                            :edit,
-                            :update,
-                            :batch_runs,
-                            :create]
-
   before_action      :authorize_for_student,
                      only: [:show,
                             :peer_review]
@@ -32,7 +23,7 @@ class AssignmentsController < ApplicationController
   before_action      :authorize_for_user,
                      only: [:index, :switch_assignment]
 
-  before_action only: [:edit, :new, :update, :create, :batch_runs] do
+  before_action only: [:edit, :new, :update, :create, :batch_runs, :summary, :view_summary] do
     authorize!
   end
   # Publicly accessible actions ---------------------------------------
