@@ -666,6 +666,24 @@ describe ResultsController do
         expect(data['assigned_criteria']).to eq ["#{rubric_criterion.class}-#{rubric_criterion.id}"]
       end
 
+      context 'when accessing an assignment with deductive annotations' do
+        it 'receives limited annotation_category data' do
+          assignment = create(:assignment_with_deductive_annotations)
+          other_criterion = create(:checkbox_criterion, assignment: assignment)
+          assignment.assignment_properties.update(assign_graders_to_criteria: true)
+          create(:criterion_ta_association, criterion: other_criterion, ta: ta)
+          non_deductive_category = create(:annotation_category, assignment: assignment)
+          post :show, params: { assignment_id: assignment.id,
+                                submission_id: assignment.groupings.first.current_result.submission.id,
+                                id: assignment.groupings.first.current_result,
+                                format: :json }, xhr: true
+
+          expect(response.parsed_body['annotation_categories']
+                         .first['annotation_category_name']).to eq non_deductive_category.annotation_category_name
+          expect(response.parsed_body['annotation_categories'].size).to eq 1
+        end
+      end
+
       context 'when unassigned criteria are hidden from the grader' do
         before :each do
           assignment.assignment_properties.update(hide_unassigned_criteria: true)
