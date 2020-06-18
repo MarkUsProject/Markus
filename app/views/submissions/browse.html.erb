@@ -8,7 +8,7 @@
           show_sections: <%= Section.exists? %>,
           is_admin: <%= @current_user.admin? %>,
           is_allowed_to_collect: <%= allowed_to? :collect? %>,
-          can_run_tests: <%= (allowed_to? :allowed_to_run_tests?) && (allowed_to?(:enabled?, @assignment)) %>,
+          can_run_tests: <%= (allowed_to?(:allowed_to_run_tests?, @assignment, with: SubmissionPolicy)) %>,
           defaultFiltered: [{ id: '<%= params[:filter_by] %>', value: '<%= params[:filter_value] %>' }]
         }
       );

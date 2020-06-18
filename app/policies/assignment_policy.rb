@@ -1,5 +1,5 @@
 class AssignmentPolicy < ApplicationPolicy
-  alias_rule :new?, :create?, :edit?, :update?, to: :manage?
+  default_rule :manage?
   def run_tests?
     check?(:can_run_tests?) &&
     check?(:enabled?) &&
@@ -56,5 +56,9 @@ class AssignmentPolicy < ApplicationPolicy
 
   def can_run_tests?
     user.admin? || (user.ta? && allowed_to?(:grader_run_tests?, with: GraderPermissionPolicy))
+  end
+
+  def view_pr_review?
+    user.admin? || user.ta?
   end
 end
