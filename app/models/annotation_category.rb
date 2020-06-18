@@ -58,7 +58,7 @@ class AnnotationCategory < ApplicationRecord
         if new_deduction > criterion.max_mark || new_deduction < 0
           return I18n.t('annotation_categories.upload.invalid_deduction',
                         annotation_content: text_with_deduction.first,
-                        criterion_name: new_deduction)
+                        criterion_name: criterion_name)
         end
         annotation_text = annotation_category.annotation_texts.build(
           content: text_with_deduction.first,
