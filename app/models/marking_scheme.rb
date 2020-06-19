@@ -16,12 +16,22 @@ class MarkingScheme < ApplicationRecord
   # Returns a weighted grade distribution for all students' total weighted grades
   def students_weighted_grade_distribution_array(current_user, intervals = 20)
     data = students_weighted_grades_array(current_user)
-    data.extend(Histogram)
-    histogram = data.histogram(intervals, min: 1, max: 100, bin_boundary: :min, bin_width: 100 / intervals)
-    distribution = histogram.fetch(1)
-    distribution[0] = distribution.first + data.count{ |x| x < 1 }
-    distribution[-1] = distribution.last + data.count{ |x| x > 100 }
+    if data.max > 80
+      max = 100
+    elsif data.max > 60
+      max = 80
+    elsif data.max > 40
+      max = 40
+    else
+      max = 20
+    end
 
-    distribution
+    data.extend(Histogram)
+    histogram = data.histogram(intervals, min: 0, max: max, bin_boundary: :min, bin_width: max / intervals)
+    distribution = histogram.fetch(1)
+    distribution[0] = distribution.first + data.count{ |x| x < 0 }
+    distribution[-1] = distribution.last + data.count{ |x| x > max }
+
+    { 'data': distribution, 'max': max }
   end
 end

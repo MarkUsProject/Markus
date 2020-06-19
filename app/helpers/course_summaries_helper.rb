@@ -69,7 +69,7 @@ module CourseSummariesHelper
   def calculate_course_grades(students)
     MarkingScheme.all.each do |scheme|
       students.each do |_, student|
-        student[:weighted_marks] = {}
+        student[:weighted_marks] ||= {}
         weighted = 0
         scheme.marking_weights.each do |mw|
           if mw.assessment.type == 'Assignment'

@@ -6,18 +6,26 @@
 
   <script>
     $(document).ready(function () {
+      const intervals = 20;
+      var label_multiplier = 5;
+      var dist = {};
+      <% unless assignments.nil? && grade_entry_forms.nil? %>
+        dist = <%= marking_scheme.students_weighted_grade_distribution_array(@current_user).to_json.html_safe %>;
+        label_multiplier = dist.max / intervals;
+      <% end %>
+
       // Set up graph
       var ctx = document.getElementById('<%= "weighted_summary_graph_#{marking_scheme.id}" %>').getContext('2d');
 
       // Set up data
       var data = {
-        labels: Array.apply(null, Array(21)).map(function (_, i) { return i * 5; }),
+        labels: Array.apply(null, Array(intervals + 1)).map(function (_, i) { return i * label_multiplier; }),
         datasets: [
           <% unless assignments.nil? && grade_entry_forms.nil? %>
             {
               label: "Weighted Total Grades <%= marking_scheme.id %>",
               backgroundColor: colours[<%= index %>],
-              data: <%= marking_scheme.students_weighted_grade_distribution_array(@current_user) %>
+              data: dist.data
             }
           <% end %>
         ]
@@ -29,9 +37,9 @@
             title: function (tooltipItems) {
               var baseNum = parseInt(tooltipItems[0].xLabel, 10);
               if (baseNum === 0) {
-                return '0-5';
+                return '0-' + label_multiplier;
               } else {
-                return (baseNum + 1) + '-' + (baseNum + 5);
+                return baseNum + '-' + (baseNum + label_multiplier);
               }
             }
           }
