@@ -22,7 +22,10 @@ en:
     update:
       success: "This annotation category was successfully updated."
     upload:
-      error: "Unable to upload category: %{annotation_category} located in line %{annotation_line}"
+      criterion_not_found: "Criterion %{missing_criterion} must exist prior to the upload of the annotation category belonging to it"
+      empty_category_name: 'Category name cannot be blank'
+      error: "Unable to upload category: %{annotation_category}"
+      invalid_deduction: "The annotation with content '%{annotation_content}' has an invalid deduction for the criterion %{criterion_name}"
       success: "Successfully uploaded %{annotation_category_number} Annotation Categories"
       title: "Upload Annotations"
 
