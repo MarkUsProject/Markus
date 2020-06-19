@@ -143,11 +143,10 @@ class AnnotationsController < ApplicationController
     unless @annotation_text.deduction.nil?
       if current_user.ta?
         flash_message(:error, t('annotations.prevent_update'))
-        render
-        return
+        head :bad_request
       elsif !@annotation_text.annotations.joins(:result).where('results.released_to_students' => true).empty?
         flash_message(:error, t('annotations.prevent_update'))
-        return
+        head :bad_request
       end
     end
     @annotation_text.update(content: params[:content])
