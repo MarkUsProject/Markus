@@ -1,6 +1,3 @@
-<% if @current_user.ta? %>
-  <% manage_assignments = GraderPermission.find_by(user_id: @current_user.id).manage_assignments %>
-<% end %>
 <% if @current_user.admin? || @current_user.ta?%>
   <% if (controller.controller_name == 'assignments' &&
          controller.action_name != 'index' &&
@@ -18,7 +15,7 @@
         <% if controller.controller_name != 'assignments' ||
               (controller.controller_name == 'assignments' &&
                controller.action_name != 'new' ) %>
-          <% if @current_user.admin? || (@current_user.ta? && manage_assignments) %>
+          <% if allowed_to?(:manage?, with: AssignmentPolicy) %>
             <li class='<%= "active" if controller.controller_name == 'assignments' %>'>
               <%= link_to t('menu.properties'), edit_assignment_path(@assignment) %>
             </li>
@@ -39,7 +36,7 @@
                           assignment_annotation_categories_path(@assignment) %>
             </li>
           <% end %>
-          <% if @current_user.admin? || (@current_user.ta? && manage_assignments) %>
+          <% if allowed_to?(:manage?, @current_user, with: AutomatedTestPolicy) %>
             <% if Rails.configuration.x.autotest.enable && !@assignment.is_peer_review? && !@assignment.scanned_exam? %>
               <li class='<%= "active" if controller.controller_name == 'automated_tests' %>'>
                 <%= link_to t('automated_tests.title'),
@@ -48,7 +45,7 @@
             <% end %>
           <% end %>
           <% if @assignment.scanned_exam? %>
-            <% if @current_user.admin? || (@current_user.ta? && manage_assignments) %>
+            <% if allowed_to?(:modify?, with: ExamTemplatePolicy) %>
               <li class='<%= "active" if controller.controller_name == 'exam_templates' %>'>
                 <%= link_to ExamTemplate.model_name.human.pluralize,
                             assignment_exam_templates_path(@assignment) %>
