@@ -199,7 +199,6 @@ class AnnotationCategoriesController < ApplicationController
         flash_message(:success, result[:valid_lines]) unless result[:valid_lines].empty?
       elsif data[:type] == '.yml'
         successes = 0
-        annotation_line = 0
         data[:contents].each do |category, category_data|
           if category_data.is_a?(Array)
             AnnotationCategory.add_by_row([category, nil] + category_data, @assignment, current_user)
@@ -209,9 +208,8 @@ class AnnotationCategoriesController < ApplicationController
             AnnotationCategory.add_by_row(row, @assignment, current_user)
             successes += 1
           end
-        rescue CsvInvalidLineError
-          flash_message(:error, t('annotation_categories.upload.error',
-                                  annotation_category: key, annotation_line: annotation_line))
+        rescue CsvInvalidLineError => e
+          flash_message(:error, e.message)
           next
         end
         if successes > 0
