@@ -123,7 +123,7 @@ class ResultsController < ApplicationController
         # Annotation categories
         if current_user.admin? || current_user.ta?
           if current_user.ta? && assignment.assign_graders_to_criteria
-            visible = current_user.criterion_ta_associations.pluck(:criterion_id).to_a + [nil]
+            visible = current_user.criterion_ta_associations.pluck(:criterion_id) + [nil]
             annotation_categories = assignment.annotation_categories
                                               .order(:position)
                                               .includes(:annotation_texts)

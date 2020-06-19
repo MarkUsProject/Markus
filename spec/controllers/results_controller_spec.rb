@@ -617,6 +617,62 @@ describe ResultsController do
         expect(complete_result.submission.grouping.tags.size).to eq 0
       end
     end
+
+    describe 'when criteria are assigned to graders' do
+      let(:assignment) { create(:assignment_with_deductive_annotations) }
+      before(:each) { assignment.assignment_properties.update(assign_graders_to_criteria: true) }
+      context 'when some criteria are assigned to graders' do
+        it 'receives all deductive annotation category data' do
+          helper_ta = create(:ta)
+          first_category = assignment.annotation_categories.where.not(flexible_criterion_id: nil).first
+          first_name = "#{first_category.annotation_category_name} [#{first_category.flexible_criterion.name}]"
+          other_criterion = create(:flexible_criterion, assignment: assignment)
+          assignment.groupings.each do |grouping|
+            create(:flexible_mark, markable: other_criterion, result: grouping.current_result)
+          end
+          create(:criterion_ta_association, criterion: other_criterion, ta: helper_ta)
+          second_category = create(:annotation_category,
+                                   assignment: assignment,
+                                   flexible_criterion_id: other_criterion.id)
+          second_name = "#{second_category.annotation_category_name} [#{second_category.flexible_criterion.name}]"
+          post :show, params: { assignment_id: assignment.id,
+                                submission_id: assignment.groupings.first.current_result.submission.id,
+                                id: assignment.groupings.first.current_result,
+                                format: :json }, xhr: true
+
+          category_names = [first_name, second_name].sort!
+          returned_categories = []
+          response.parsed_body['annotation_categories'].each do |cat|
+            returned_categories += [cat['annotation_category_name']]
+          end
+          expect(returned_categories.sort!).to eq category_names
+          expect(response.parsed_body['annotation_categories'].size).to eq 2
+        end
+      end
+
+      context 'when none of the criteria are assigned to graders' do
+        it 'receives all deductive annotation category data' do
+          deductive_category = assignment.annotation_categories.where.not(flexible_criterion_id: nil).first
+          cat_name = "#{deductive_category.annotation_category_name} [#{deductive_category.flexible_criterion.name}]"
+          non_deductive_category = create(:annotation_category, assignment: assignment)
+          post :show, params: { assignment_id: assignment.id,
+                                submission_id: assignment.groupings.first.current_result.submission.id,
+                                id: assignment.groupings.first.current_result,
+                                format: :json }, xhr: true
+
+          category_names = [cat_name, non_deductive_category.annotation_category_name].sort!
+          returned_categories = []
+          response.parsed_body['annotation_categories'].each do |cat|
+            returned_categories += [cat['annotation_category_name']]
+          end
+          expect(returned_categories.sort!).to eq category_names
+          expect(response.parsed_body['annotation_categories'].size).to eq 2
+          expect(response.parsed_body['annotation_categories'].select do |cat|
+            cat['id'] == deductive_category.id
+          end.size).to eq 1
+        end
+      end
+    end
   end
   context 'A TA' do
     before(:each) { sign_in ta }
