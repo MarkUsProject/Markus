@@ -122,9 +122,17 @@ class ResultsController < ApplicationController
 
         # Annotation categories
         if current_user.admin? || current_user.ta?
-          annotation_categories = assignment.annotation_categories
-                                            .order(:position)
-                                            .includes(:annotation_texts)
+          if current_user.ta? && assignment.assign_graders_to_criteria
+            visible = current_user.criterion_ta_associations.pluck(:criterion_id) + [nil]
+            annotation_categories = assignment.annotation_categories
+                                              .order(:position)
+                                              .includes(:annotation_texts)
+                                              .where('annotation_categories.flexible_criterion_id': visible)
+          else
+            annotation_categories = assignment.annotation_categories
+                                              .order(:position)
+                                              .includes(:annotation_texts)
+          end
           data[:annotation_categories] = annotation_categories.map do |category|
             name_extension = category.flexible_criterion_id.nil? ? '' : " [#{category.flexible_criterion.name}]"
             {
