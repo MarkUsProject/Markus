@@ -142,8 +142,12 @@ class Result extends React.Component {
         }];
       } else {
         children = annotation_category.texts.map(text => {
+          let deduction = '';
+          if (text.deduction !== undefined && text.deduction !== null && text.deduction !== 0) {
+            deduction = '-' + text.deduction;
+          }
           return {
-            title: text.content.replace(/\r?\n/gi, ' '),
+            title: `${text.content.replace(/\r?\n/gi, ' ')} <span class="text-deduction">${deduction}</span>`,
             cmd: `annotation_text_${text.id}`,
             action: () => this.addExistingAnnotation(text.id)
           };
