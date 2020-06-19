@@ -117,6 +117,16 @@ class AnnotationsController < ApplicationController
   def destroy
     result = Result.find(params[:result_id])
     @annotation = result.annotations.find(params[:id])
+    unless @annotation.annotation_text.deduction.nil? || !current_user.ta?
+      assignment = result.grouping.assignment
+      if assignment.assign_graders_to_criteria &&
+          !current_user.criterion_ta_associations.pluck(:criterion_id).include?(@annotation.annotation_text
+                                                                                           .annotation_category
+                                                                                           .flexible_criterion_id)
+        flash_message(:error, 'cannot delete this')
+        return
+      end
+    end
     text = @annotation.annotation_text
     text.destroy if text.annotation_category_id.nil?
     @annotation.destroy
