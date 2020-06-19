@@ -68,20 +68,18 @@ module CourseSummariesHelper
   def calculate_course_grades(students)
     MarkingScheme.all.each do |scheme|
       students.each do |_, student|
-        student[:weighted_marks] = {} if student[:weighted_marks].nil?
+        student[:weighted_marks] ||= {}
         weighted = 0
-        total_weight = 0
         scheme.marking_weights.each do |mw|
           mw.assessment.type == 'Assignment' ?
               max_mark = @max_marks[mw.assessment_id] :
               max_mark = @gef_max_marks[mw.assessment_id]
           mark = student[:assessment_marks][mw.assessment_id]
           unless mw.weight.nil? || mark.nil? || max_mark.nil? || max_mark == 0
-            total_weight += mw.weight
             weighted += mark * mw.weight / max_mark
           end
         end
-        student[:weighted_marks][scheme.id] = (weighted.round(2).to_f / total_weight) * 100
+        student[:weighted_marks][scheme.id] = weighted.round(2).to_f
       end
     end
   end
