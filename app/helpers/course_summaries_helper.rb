@@ -21,7 +21,7 @@ module CourseSummariesHelper
          first_name: student.first_name,
          last_name: student.last_name,
          hidden: student.hidden,
-         assessment_marks: {},
+         assessment_marks: {}
        }]
     end]
 
@@ -71,9 +71,11 @@ module CourseSummariesHelper
         student[:weighted_marks] ||= {}
         weighted = 0
         scheme.marking_weights.each do |mw|
-          mw.assessment.type == 'Assignment' ?
-              max_mark = @max_marks[mw.assessment_id] :
-              max_mark = @gef_max_marks[mw.assessment_id]
+          if mw.assessment.type == 'Assignment'
+            max_mark = @max_marks[mw.assessment_id]
+          else
+            max_mark = @gef_max_marks[mw.assessment_id]
+          end
           mark = student[:assessment_marks][mw.assessment_id]
           unless mw.weight.nil? || mark.nil? || max_mark.nil? || max_mark == 0
             weighted += mark * mw.weight / max_mark

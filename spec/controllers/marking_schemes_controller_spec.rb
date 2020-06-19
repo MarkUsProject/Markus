@@ -52,10 +52,11 @@ describe MarkingSchemesController do
 
         assessment_weights = data_hash['assessment_weights']
         expected_assessment_ids = [
-            assignment.id.to_s,
-            assignment_with_criteria_and_results.id.to_s,
-            grade_entry_form.id.to_s,
-            grade_entry_form_with_data.id.to_s]
+          assignment.id.to_s,
+          assignment_with_criteria_and_results.id.to_s,
+          grade_entry_form.id.to_s,
+          grade_entry_form_with_data.id.to_s
+        ]
         expect(assessment_weights.keys).to match_array expected_assessment_ids
       end
     end
