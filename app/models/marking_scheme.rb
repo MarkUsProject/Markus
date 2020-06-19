@@ -11,8 +11,6 @@ class MarkingScheme < ApplicationRecord
 
     all_grades = get_table_json_data(current_user)
     @grades_array = all_grades.map { |s| s[:weighted_marks][self.id] } # Note: this also returns the assigned value
-    p @grades_array
-    @grades_array
   end
 
   # Returns a weighted grade distribution for all students' total weighted grades
