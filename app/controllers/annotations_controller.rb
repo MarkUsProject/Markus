@@ -123,7 +123,7 @@ class AnnotationsController < ApplicationController
           !current_user.criterion_ta_associations.pluck(:criterion_id).include?(@annotation.annotation_text
                                                                                            .annotation_category
                                                                                            .flexible_criterion_id)
-        flash_message(:error, 'cannot delete this')
+        flash_message(:error, t('annotations.prevent_ta_delete'))
         return
       end
     end
@@ -140,6 +140,16 @@ class AnnotationsController < ApplicationController
   def update
     @annotation = Annotation.find(params[:id])
     @annotation_text = @annotation.annotation_text
+    unless @annotation_text.deduction.nil?
+      if current_user.ta?
+        flash_message(:error, t('annotations.prevent_update'))
+        render
+        return
+      elsif !@annotation_text.annotations.joins(:result).where('results.released_to_students' => true).empty?
+        flash_message(:error, t('annotations.prevent_update'))
+        return
+      end
+    end
     @annotation_text.update(content: params[:content])
   end
 end
