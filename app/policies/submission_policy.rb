@@ -34,6 +34,6 @@ class SubmissionPolicy < ApplicationPolicy
   end
 
   def allowed_to_run_tests?
-    (user.admin? || (user.ta? && allowed_to?(:grader_run_tests?, with: GraderPermissionPolicy)) && record.enable_test)
+    (user.admin? || (user.ta? && allowed_to?(:grader_run_tests?, with: GraderPermissionPolicy))) && record.enable_test
   end
 end
