@@ -29,8 +29,8 @@ class MarkingScheme < ApplicationRecord
     data.extend(Histogram)
     histogram = data.histogram(intervals, min: 0, max: max, bin_boundary: :min, bin_width: max / intervals)
     distribution = histogram.fetch(1)
-    distribution[0] = distribution.first + data.count{ |x| x < 0 }
-    distribution[-1] = distribution.last + data.count{ |x| x > max }
+    distribution[0] = distribution.first + data.count { |x| x < 0 }
+    distribution[-1] = distribution.last + data.count { |x| x > max }
 
     { 'data': distribution, 'max': max }
   end
