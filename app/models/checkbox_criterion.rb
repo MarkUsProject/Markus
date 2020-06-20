@@ -1,6 +1,4 @@
 class CheckboxCriterion < Criterion
-  belongs_to :assignment, foreign_key: :assessment_id
-
   DEFAULT_MAX_MARK = 1
 
   def self.symbol

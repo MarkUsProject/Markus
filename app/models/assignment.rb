@@ -20,23 +20,9 @@ class Assignment < Assessment
   # Add assignment_properties to default scope because we almost always want to load an assignment with its properties
   default_scope { includes(:assignment_properties) }
 
-  has_many :rubric_criteria,
+  has_many :criteria,
            -> { order(:position) },
-           class_name: 'RubricCriterion',
-           dependent: :destroy,
-           inverse_of: :assignment,
-           foreign_key: :assessment_id
-
-  has_many :flexible_criteria,
-           -> { order(:position) },
-           class_name: 'FlexibleCriterion',
-           dependent: :destroy,
-           inverse_of: :assignment,
-           foreign_key: :assessment_id
-
-  has_many :checkbox_criteria,
-           -> { order(:position) },
-           class_name: 'CheckboxCriterion',
+           class_name: 'Criterion',
            dependent: :destroy,
            inverse_of: :assignment,
            foreign_key: :assessment_id
@@ -685,18 +671,7 @@ class Assignment < Assessment
   end
 
   def get_all_criteria(type, include_opt)
-    if type == :all
-      all_criteria = rubric_criteria.includes(include_opt) +
-                     flexible_criteria.includes(include_opt) +
-                     checkbox_criteria.includes(include_opt)
-      all_criteria.sort_by(&:position)
-    elsif type == :rubric
-      rubric_criteria.includes(include_opt).order(:position)
-    elsif type == :flexible
-      flexible_criteria.includes(include_opt).order(:position)
-    elsif type == :checkbox
-      checkbox_criteria.includes(include_opt).order(:position)
-    end
+    criteria.includes(include_opt).sort_by(&:position)
   end
 
   def get_ta_visible_criteria(type, include_opt)
@@ -795,7 +770,7 @@ class Assignment < Assessment
         ta = Ta.find(ta_id)
         num_assigned_criteria = ta.criterion_ta_associations.where(assignment: self).count
         marked = ta.criterion_ta_associations
-                   .joins('INNER JOIN marks m ON criterion_id = m.criterion_id')
+                   .joins('INNER JOIN marks m ON marks.criterion_id = m.criterion_id')
                    .where('m.mark IS NOT NULL AND assessment_id = ?', self.id)
                    .group('m.result_id')
                    .count

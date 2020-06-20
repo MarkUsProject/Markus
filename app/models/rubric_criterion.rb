@@ -4,8 +4,6 @@ class RubricCriterion < Criterion
   before_validation :scale_marks_if_max_mark_changed
   validates_presence_of :levels
 
-  belongs_to :assignment, foreign_key: :assessment_id
-
   DEFAULT_MAX_MARK = 4
 
   def self.symbol

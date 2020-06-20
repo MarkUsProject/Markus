@@ -936,3 +936,4 @@ describe CriteriaController do
     end
   end
 end
+
