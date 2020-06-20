@@ -230,8 +230,7 @@ describe Api::GroupsController do
       end
       context 'when a grouping does have a mark already' do
         before :each do
-          mark = submission.current_result.marks.find_or_initialize_by(markable_id: criterion.id,
-                                                                       markable_type: criterion.class.name)
+          mark = submission.current_result.marks.find_or_initialize_by(criterion_id: criterion.id)
           mark.mark = 10
           mark.save!
           post :update_marks, params: { id: grouping.group.id,
@@ -250,8 +249,7 @@ describe Api::GroupsController do
       end
       context 'when a result is complete' do
         before :each do
-          mark = submission.current_result.marks.find_or_initialize_by(markable_id: criterion.id,
-                                                                       markable_type: criterion.class.name)
+          mark = submission.current_result.marks.find_or_initialize_by(criterion_id: criterion.id)
           mark.mark = 10
           mark.save!
           submission.current_result.update(marking_state: Result::MARKING_STATES[:complete])

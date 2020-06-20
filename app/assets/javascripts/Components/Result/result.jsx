@@ -324,8 +324,7 @@ class Result extends React.Component {
       ),
       method: 'PATCH',
       data: {
-        markable_type: criterion_type,
-        markable_id: criterion_id,
+        criterion_id: criterion_id,
         mark: mark
       },
       dataType: 'json'

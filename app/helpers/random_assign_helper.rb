@@ -178,8 +178,7 @@ module RandomAssignHelper
         results.flat_map do |result|
           assignment_criteria.map do |criterion|
             { result_id: result['id'],
-              markable_id: criterion.id,
-              markable_type: criterion.class.to_s,
+              criterion_id: criterion.id,
               created_at: now,
               updated_at: now }
           end
