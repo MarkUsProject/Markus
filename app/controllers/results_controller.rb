@@ -528,8 +528,7 @@ class ResultsController < ApplicationController
     mark_value = params[:mark].blank? ? nil : params[:mark].to_f
 
     result_mark = result.marks.find_or_create_by(
-      markable_id: params[:markable_id],
-      markable_type: params[:markable_type]
+      criterion_id: params[:criterion_id]
     )
 
     m_logger = MarkusLogger.instance

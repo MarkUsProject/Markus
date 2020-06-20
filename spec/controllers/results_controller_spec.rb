@@ -9,9 +9,9 @@ describe ResultsController do
   let(:complete_result) { create :complete_result, submission: submission }
   let(:submission_file) { create :submission_file, submission: submission }
   let(:rubric_criterion) { create(:rubric_criterion, assignment: assignment) }
-  let(:rubric_mark) { create :rubric_mark, result: incomplete_result, markable: rubric_criterion }
+  let(:rubric_mark) { create :rubric_mark, result: incomplete_result, criterion: rubric_criterion }
   let(:flexible_criterion) { create(:flexible_criterion, assignment: assignment) }
-  let(:flexible_mark) { create :flexible_mark, result: incomplete_result, markable: flexible_criterion }
+  let(:flexible_mark) { create :flexible_mark, result: incomplete_result, criterion: flexible_criterion }
 
   SAMPLE_FILE_CONTENT = 'sample file content'.freeze
   SAMPLE_ERROR_MESSAGE = 'sample error message'.freeze
@@ -245,8 +245,7 @@ describe ResultsController do
     context 'accessing update_mark' do
       it 'should report an updated mark' do
         patch :update_mark, params: { assignment_id: assignment.id, submission_id: submission.id,
-                                      id: incomplete_result.id, markable_id: rubric_mark.markable_id,
-                                      markable_type: rubric_mark.markable_type,
+                                      id: incomplete_result.id, criterion_id: rubric_mark.criterion_id,
                                       mark: 1 }, xhr: true
         expect(JSON.parse(response.body)['num_marked']).to eq 0
       end
@@ -256,8 +255,7 @@ describe ResultsController do
           allow_any_instance_of(Mark).to receive(:save).and_return false
           allow_any_instance_of(ActiveModel::Errors).to receive(:full_messages).and_return [SAMPLE_ERROR_MESSAGE]
           patch :update_mark, params: { assignment_id: assignment.id, submission_id: submission.id,
-                                        id: incomplete_result.id, markable_id: rubric_mark.markable_id,
-                                        markable_type: rubric_mark.markable_type,
+                                        id: incomplete_result.id, criterion_id: rubric_mark.criterion_id,
                                         mark: 1 }, xhr: true
         end
         it { expect(response).to have_http_status(:bad_request) }
@@ -579,7 +577,7 @@ describe ResultsController do
       let(:params) { { assignment_id: assignment.id, submission_id: submission.id, id: incomplete_result.id } }
       before :each do
         assignment.assignment_properties.update(assign_graders_to_criteria: true)
-        create(:criterion_ta_association, criterion: rubric_mark.markable, ta: ta)
+        create(:criterion_ta_association, criterion: rubric_mark.criterion, ta: ta)
         get :show, params: params, xhr: true
       end
 
@@ -619,8 +617,7 @@ describe ResultsController do
         grouping2.current_result.update(marking_state: Result::MARKING_STATES[:complete])
 
         patch :update_mark, params: { assignment_id: assignment.id, submission_id: submission.id,
-                                      id: incomplete_result.id, markable_id: rubric_mark.markable_id,
-                                      markable_type: rubric_mark.markable_type,
+                                      id: incomplete_result.id, criterion_id: rubric_mark.criterion_id,
                                       mark: 1 }, xhr: true
         expect(JSON.parse(response.body)['num_marked']).to eq 0
       end

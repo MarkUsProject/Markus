@@ -5,7 +5,7 @@ shared_examples 'Scale_mark' do
         mark.update(mark: nil)
       end
       it 'should return nil' do
-        expect(mark.scale_mark(curr_max_mark, mark.markable.max_mark)).to eq(nil)
+        expect(mark.scale_mark(curr_max_mark, mark.criterion.max_mark)).to eq(nil)
       end
       it 'should not update the mark' do
         expect(mark.mark).to eq(nil)
@@ -16,7 +16,7 @@ shared_examples 'Scale_mark' do
         mark.update(mark: 0)
       end
       it 'should return 0' do
-        expect(mark.scale_mark(curr_max_mark, mark.markable.max_mark)).to eq(0)
+        expect(mark.scale_mark(curr_max_mark, mark.criterion.max_mark)).to eq(0)
         expect(mark.scale_mark(curr_max_mark, 0)).to eq(0)
       end
       it 'should not update the mark' do
@@ -24,12 +24,12 @@ shared_examples 'Scale_mark' do
       end
     end
     it 'should update and return the new_mark' do
-      expect(mark.scale_mark(curr_max_mark, mark.markable.max_mark)).to eq(mark.mark)
+      expect(mark.scale_mark(curr_max_mark, mark.criterion.max_mark)).to eq(mark.mark)
     end
   end
   describe 'when update is false' do
     it 'should not update the new mark' do
-      expect(mark.scale_mark(curr_max_mark, mark.markable.max_mark, update: false)).not_to eq(mark.mark)
+      expect(mark.scale_mark(curr_max_mark, mark.criterion.max_mark, update: false)).not_to eq(mark.mark)
     end
   end
 end
