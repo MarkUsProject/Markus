@@ -22,7 +22,6 @@ class Assignment < Assessment
 
   has_many :criteria,
            -> { order(:position) },
-           class_name: 'Criterion',
            dependent: :destroy,
            inverse_of: :assignment,
            foreign_key: :assessment_id
@@ -671,7 +670,7 @@ class Assignment < Assessment
   end
 
   def get_all_criteria(type, include_opt)
-    criteria.includes(include_opt).sort_by(&:position)
+    criteria.includes(include_opt).order(:position)
   end
 
   def get_ta_visible_criteria(type, include_opt)

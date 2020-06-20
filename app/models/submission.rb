@@ -150,6 +150,7 @@ class Submission < ApplicationRecord
         final_mark = (all_marks_earned / all_marks_total * mark.criterion.max_mark).round(2)
         if mark.criterion.instance_of? RubricCriterion
           # find the nearest mark associated to a level
+          # this logic is incorrect due to having an arbitrary number of levels in a rubric criterion
           nearest_mark = (final_mark / mark.criterion.weight.to_f).round * mark.criterion.weight
           final_mark = nearest_mark
         end

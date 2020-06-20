@@ -43,7 +43,7 @@ describe Mark do
       FactoryBot.create(:rubric_mark, mark: 4)
     end
     it 'equals to mark times weight' do
-      related_rubric = RubricCriterion.find(rubric_mark.criterion_id)
+      related_rubric = rubric_mark.criterion
       expect(rubric_mark.mark).to eq(related_rubric.weight)
     end
   end
