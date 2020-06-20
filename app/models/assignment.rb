@@ -655,7 +655,6 @@ class Assignment < Assessment
   # Returns a filtered list of criteria.
   def get_criteria(user_visibility = :all, type = :all, options = {})
     @criteria ||= Hash.new
-    byebug
     unless @criteria[[user_visibility, type, options]].nil? || options[:no_cache]
       return @criteria[[user_visibility, type, options]]
     end
