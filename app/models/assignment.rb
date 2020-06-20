@@ -655,30 +655,31 @@ class Assignment < Assessment
   # Returns a filtered list of criteria.
   def get_criteria(user_visibility = :all, type = :all, options = {})
     @criteria ||= Hash.new
+    byebug
     unless @criteria[[user_visibility, type, options]].nil? || options[:no_cache]
       return @criteria[[user_visibility, type, options]]
     end
 
     include_opt = options[:includes]
     if user_visibility == :all
-      @criteria[[user_visibility, type, options]] = get_all_criteria(type, include_opt)
+      @criteria[[user_visibility, type, options]] = get_all_criteria(include_opt)
     elsif user_visibility == :ta
-      @criteria[[user_visibility, type, options]] = get_ta_visible_criteria(type, include_opt)
+      @criteria[[user_visibility, type, options]] = get_ta_visible_criteria(include_opt)
     elsif user_visibility == :peer
-      @criteria[[user_visibility, type, options]] = get_peer_visible_criteria(type, include_opt)
+      @criteria[[user_visibility, type, options]] = get_peer_visible_criteria(include_opt)
     end
   end
 
-  def get_all_criteria(type, include_opt)
+  def get_all_criteria(include_opt)
     criteria.includes(include_opt).order(:position)
   end
 
-  def get_ta_visible_criteria(type, include_opt)
-    get_all_criteria(type, include_opt).select(&:ta_visible)
+  def get_ta_visible_criteria(include_opt)
+    get_all_criteria(include_opt).select(&:ta_visible)
   end
 
-  def get_peer_visible_criteria(type, include_opt)
-    get_all_criteria(type, include_opt).select(&:peer_visible)
+  def get_peer_visible_criteria(include_opt)
+    get_all_criteria(include_opt).select(&:peer_visible)
   end
 
   def criteria_count
