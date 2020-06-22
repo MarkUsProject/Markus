@@ -124,7 +124,7 @@ class AnnotationsController < ApplicationController
                                                                                            .annotation_category
                                                                                            .flexible_criterion_id)
         flash_message(:error, t('annotations.prevent_ta_delete'))
-        return
+        head :bad_request
       end
     end
     text = @annotation.annotation_text
