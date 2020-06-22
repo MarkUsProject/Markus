@@ -17,6 +17,25 @@ describe SubmissionsController do
       request.env['HTTP_REFERER'] = 'back'
     end
 
+    it 'should be rejected if it is a scanned assignment' do
+      get_as @student, :file_manager, params: { assignment_id: create(:assignment_for_scanned_exam).id }
+      expect(response).to have_http_status 403
+    end
+
+    it 'should be rejected if it is a timed assignment and the student has not yet started' do
+      assignment = create(:timed_assignment)
+      create(:grouping, inviter: @student, assignment: assignment)
+      get_as @student, :file_manager, params: { assignment_id: assignment.id }
+      expect(response).to have_http_status 403
+    end
+
+    it 'should not be rejected if it is a timed assignment and the student has started' do
+      assignment = create(:timed_assignment)
+      create(:grouping, inviter: @student, assignment: assignment, start_time: 10.minutes.ago)
+      get_as @student, :file_manager, params: { assignment_id: assignment.id }
+      expect(response).to have_http_status 200
+    end
+
     it 'should be able to add and access files' do
       file_1 = fixture_file_upload(File.join('/files', 'Shapes.java'),
                                    'text/java')

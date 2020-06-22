@@ -61,4 +61,34 @@ describe GroupingPolicy do
       end
     end
   end
+
+  describe '#file_manager?' do
+    subject { described_class.new(grouping, user: 'not needed') }
+    context 'when the grouping is nil' do
+      let(:grouping) { nil }
+      it { is_expected.not_to pass :file_manager? }
+    end
+    context 'when the assignment is a regular one' do
+      let(:grouping) { create :grouping }
+      it { is_expected.to pass :file_manager? }
+    end
+    context 'when the assignment is scanned' do
+      let(:grouping) { create :grouping, assignment: create(:assignment_for_scanned_exam) }
+      it { is_expected.not_to pass :file_manager? }
+    end
+    context 'when the assignment is a peer review' do
+      let(:grouping) { create :grouping, assignment: create(:peer_review_assignment) }
+      it { is_expected.not_to pass :file_manager? }
+    end
+    context 'when the assignment is timed' do
+      let(:grouping) { create :grouping, assignment: create(:timed_assignment) }
+      context 'when the grouping has not started' do
+        it { is_expected.not_to pass :file_manager? }
+      end
+      context 'when the grouping has started' do
+        before { grouping.update!(start_time: 1.hour.ago) }
+        it { is_expected.to pass :file_manager? }
+      end
+    end
+  end
 end

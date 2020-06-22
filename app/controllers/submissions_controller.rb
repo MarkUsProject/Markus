@@ -37,6 +37,11 @@ class SubmissionsController < ApplicationController
                 only: [:download, :downloads, :get_feedback_file, :get_file,
                        :populate_file_manager, :update_files]
 
+  before_action only: [:file_manager] do
+    grouping = current_user.accepted_grouping_for(params[:assignment_id])
+    authorize! grouping
+  end
+
   def index
     respond_to do |format|
       format.json do
@@ -113,10 +118,6 @@ class SubmissionsController < ApplicationController
   def file_manager
     @assignment = Assignment.find(params[:assignment_id])
     @grouping = current_user.accepted_grouping_for(@assignment.id)
-    unless allowed_to? :view_file_manager?, @grouping
-      redirect_to assignment_path(params[:assignment_id])
-      return
-    end
 
     @path = params[:path] || '/'
 

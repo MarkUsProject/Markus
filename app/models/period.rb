@@ -1,5 +1,5 @@
 class Period < ApplicationRecord
-  belongs_to :submission_rule, polymorphic: true
+  belongs_to :submission_rule, polymorphic: true, inverse_of: :periods
 
   validates_numericality_of :hours, greater_than_or_equal_to: 0
   validates_numericality_of :deduction, greater_than_or_equal_to: 0, if: :check_deduction

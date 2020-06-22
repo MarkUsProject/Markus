@@ -127,25 +127,25 @@
         <% end %>
         <li><%= t('submissions.student.files_submitted', count: @num_submitted_files) %></li>
       </ul>
-    <% end %>
 
-    <h3><%= Assignment.human_attribute_name(:assignment_files) %></h3>
-    <% if @assignment.assignment_files.length == 0 %>
-      <p><%= t('assignments.no_required_files') %></p>
-    <% else %>
-      <ul>
-        <% @assignment.assignment_files.each do |assignment_file| %>
-          <li><%= assignment_file.filename %></li>
-        <% end %>
-      </ul>
-      <p>
-        <% text = t('submissions.student.missing_required_files', count: @num_missing_assignment_files) %>
-        <% if @num_missing_assignment_files > 0 %>
-          <strong><%= text %></strong>
-        <% else %>
-          <%= text %>
-        <% end %>
-      </p>
+      <h3><%= Assignment.human_attribute_name(:assignment_files) %></h3>
+      <% if @assignment.assignment_files.length == 0 %>
+        <p><%= t('assignments.no_required_files') %></p>
+      <% else %>
+        <ul>
+          <% @assignment.assignment_files.each do |assignment_file| %>
+            <li><%= assignment_file.filename %></li>
+          <% end %>
+        </ul>
+        <p>
+          <% text = t('submissions.student.missing_required_files', count: @num_missing_assignment_files) %>
+          <% if @num_missing_assignment_files > 0 %>
+            <strong><%= text %></strong>
+          <% else %>
+            <%= text %>
+          <% end %>
+        </p>
+      <% end %>
     <% end %>
-  <% end %>
+<% end %>
 </div>

@@ -61,7 +61,7 @@ class GroupingPolicy < ApplicationPolicy
     record.extension.nil?
   end
 
-  def view_file_manager?
+  def file_manager?
     # record is a grouping object
     !(record.nil? ||
         record.assignment.scanned_exam? ||

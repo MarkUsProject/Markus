@@ -163,6 +163,8 @@ class Assignment < Assessment
   # Return the start_time for +section+ if it is not nil, otherwise return this
   # assignments start_time instead.
   def section_start_time(section)
+    return start_time unless section_due_dates_type
+
     section&.section_due_dates&.find_by(assignment: self)&.start_time || start_time
   end
 
@@ -1011,11 +1013,12 @@ class Assignment < Assessment
   # (Basically, it's nice for a group to share a repo among assignments, but at a certain point during the course
   # we may want to add or [more frequently] remove some students from it)
   def self.get_repo_auth_records
-    Assignment.joins(:assignment_properties)
-              .includes(groupings: [:group, { accepted_student_memberships: :user }])
-              .where(assignment_properties: { vcs_submit: true })
-              .where.not(groupings: { start_time: nil })
-              .order(due_date: :desc)
+    records = Assignment.joins(:assignment_properties)
+                        .includes(groupings: [:group, { accepted_student_memberships: :user }])
+                        .where(assignment_properties: { vcs_submit: true })
+                        .order(due_date: :desc)
+    records.where(assignment_properties: { is_timed: false })
+           .or(records.where.not( { groupings: { start_time: nil } } ))
   end
 
   ### /REPO ###

@@ -120,6 +120,15 @@ describe 'An Assignment' do
           id: assignment.id.to_s,
           locale: 'en')
     end
+
+    it 'routes PUT start_timed_assignment properly' do
+      expect(put: path + '/' + assignment.id.to_s + '/start_timed_assignment')
+        .to route_to(
+          controller: ctrl,
+          action: 'start_timed_assignment',
+          id: assignment.id.to_s,
+          locale: 'en')
+    end
   end
   # end Assignment member route tests
 

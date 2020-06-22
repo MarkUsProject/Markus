@@ -976,6 +976,59 @@ describe Assignment do
     end
   end
 
+  describe '#section_start_time' do
+    context 'with SectionDueDates disabled' do
+      let(:assignment) { create :timed_assignment }
+
+      context 'when no section is specified' do
+        it 'returns the start time of the assignment' do
+          expect(assignment.section_start_time(nil)).to eq assignment.start_time
+        end
+      end
+
+      context 'when a section is specified' do
+        it 'returns the start time of the assignment' do
+          section = create(:section)
+          expect(assignment.section_start_time(section)).to eq assignment.start_time
+        end
+      end
+    end
+
+    context 'with SectionDueDates enabled' do
+      let(:assignment) { create :timed_assignment, assignment_properties_attributes: { section_due_dates_type: true } }
+
+      context 'when no section is specified' do
+        it 'returns the start time of the assignment' do
+          expect(assignment.section_start_time(nil)).to eq assignment.start_time
+        end
+      end
+
+      context 'when a section is specified' do
+        let(:section) { create :section }
+
+        context 'that does not have a SectionDueDate' do
+          it 'returns the start time of the assignment' do
+            expect(assignment.section_start_time(section)).to eq assignment.start_time
+          end
+        end
+
+        context 'that has a SectionDueDate for another assignment' do
+          it 'returns the start time of the assignment' do
+            create(:section_due_date)
+            expect(assignment.section_start_time(section)).to eq assignment.start_time
+          end
+        end
+
+        context 'that has a SectionDueDate for this assignment' do
+          it 'returns the start time of the section' do
+            section_due_date = create(:section_due_date, assignment: assignment, section: section)
+            expect(assignment.section_start_time(section)).to eq section_due_date.start_time
+          end
+        end
+      end
+    end
+  end
+
   describe '#section_due_date' do
     context 'with SectionDueDates disabled' do
       before :each do
@@ -1990,6 +2043,46 @@ describe Assignment do
           expect(summary).to_not be_empty
           expect(summary[0]).to_not be_empty
           expect(summary[0]).to include('User name', 'Group', 'Final grade')
+        end
+      end
+    end
+  end
+
+  describe '#self.get_repo_auth_records' do
+    let(:assignment1) { create :assignment, assignment_properties_attributes: { vcs_submit: false } }
+    let(:assignment2) { create :assignment, assignment_properties_attributes: { vcs_submit: false } }
+    let!(:groupings1) { create_list :grouping_with_inviter, 3, assignment: assignment1 }
+    let!(:groupings2) { create_list :grouping_with_inviter, 3, assignment: assignment2 }
+    context 'all assignments with vcs_submit == false' do
+      it 'should be empty' do
+        expect(Assignment.get_repo_auth_records).to be_empty
+      end
+    end
+    context 'one assignment with vcs_submit == true' do
+      let(:assignment1) { create :assignment, assignment_properties_attributes: { vcs_submit: true } }
+      it 'should only contain valid memberships' do
+        ids = groupings1.map { |g| g.inviter.id }
+        expect(Assignment.get_repo_auth_records.pluck('users.id')).to contain_exactly(*ids)
+      end
+      context 'when there is a pending membership' do
+        let!(:membership) { create :student_membership, grouping: groupings1.first }
+        it 'should not contain the pending membership' do
+          ids = groupings1.map { |g| g.inviter.id }
+          expect(Assignment.get_repo_auth_records.pluck('users.id')).to contain_exactly(*ids)
+        end
+      end
+    end
+    context 'both assignments with vcs_submit == true and is_timed == true' do
+      let(:assignment1) { create :timed_assignment, assignment_properties_attributes: { vcs_submit: true } }
+      let(:assignment2) { create :timed_assignment, assignment_properties_attributes: { vcs_submit: true } }
+      it 'should be empty' do
+        expect(Assignment.get_repo_auth_records).to be_empty
+      end
+      context 'when one grouping has started their assignment' do
+        it 'should contain only the members of that group' do
+          g = groupings1.first
+          g.update!(start_time: Time.now)
+          expect(Assignment.get_repo_auth_records.pluck('users.id')).to contain_exactly(g.inviter.id)
         end
       end
     end

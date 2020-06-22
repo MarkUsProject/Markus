@@ -55,17 +55,13 @@ class SubmissionRule < ApplicationRecord
   # Return the time after which +grouping+ can be collected.
   # This is calculated by adding any penalty periods to this grouping.
   # If this grouping belongs to a timed_assignment then the value is
-  # calculated in the same way but the assignments due_date is given if
-  # the returned value would be a date after the due_date.
+  # calculated in the same way but the assignments due_date (or section's due date
+  # if applicable) is given if the returned value would be a date after the due_date.
   def calculate_grouping_collection_time(grouping)
     if grouping.extension.nil? || grouping.extension.apply_penalty
-      if assignment.is_timed
-        due_date = grouping.due_date
-
-        [due_date + hours_sum.hours, assignment.due_date].min
-      else
-        grouping.due_date + hours_sum.hours
-      end
+      due_date = grouping.due_date + hours_sum.hours
+      section_due_date = grouping&.inviter&.section&.section_due_date_for(assignment)&.due_date || assignment&.due_date
+      assignment.is_timed ? [due_date, section_due_date].min : due_date
     else
       grouping.due_date
     end

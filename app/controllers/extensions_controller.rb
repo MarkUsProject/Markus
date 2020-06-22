@@ -48,6 +48,6 @@ class ExtensionsController < ApplicationController
   end
 
   def extension_params
-    params.permit(*Extension::PARTS, :grouping_id, :penalty, :note, :id, :custom_duration)
+    params.permit(*Extension::PARTS, :grouping_id, :penalty, :note, :id)
   end
 end

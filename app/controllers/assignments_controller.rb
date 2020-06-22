@@ -517,22 +517,13 @@ class AssignmentsController < ApplicationController
     head :ok
   end
 
-  # Updates the duration and/or start_time for the grouping with id +params[:grouping_id]+
-  def update_grouping_timed_settings
-    grouping = Grouping.find(params[:grouping_id])
-    return head 400 if grouping.nil?
-
-    duration = params[:hours].to_i.hours + params[:minutes].to_i.minutes
-    unless grouping.update(duration: duration, start_time: params[:start_time])
-      flash_now(:error, grouping.errors.full_messages.join(' '))
-    end
-    redirect_to assignment_path(params[:id])
-  end
-
+  # Start timed assignment for grouping with the id passed as a param
   def start_timed_assignment
-    grouping = Grouping.find(params[:grouping_id])
+    assignment = Assignment.find(params[:id])
+    grouping = assignment.groupings.find_by(id: params[:grouping_id])
+    return head 400 if grouping.nil?
     unless grouping.update(start_time: Time.current)
-      flash_now(:error, grouping.errors.full_messages.join(' '))
+      flash_message(:error, grouping.errors.full_messages.join(' '))
     end
     redirect_to action: :show
   end
