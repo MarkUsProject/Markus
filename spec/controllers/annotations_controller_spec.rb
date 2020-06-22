@@ -350,6 +350,22 @@ describe AnnotationsController do
         expect(result.reload.annotations.size).to eq 1
       end
 
+      it 'cannot destroy a deductive annotation if assigned to a criterion of a different type '\
+         'with the same id annotation\'s criterion' do
+        other_criterion = create(:rubric_criterion, assignment: assignment, id: assignment.flexible_criteria.first.id)
+        assignment.assignment_properties.update(assign_graders_to_criteria: true)
+        create(:criterion_ta_association, criterion: other_criterion, ta: user)
+        post_as user,
+                :destroy,
+                params: { id: annotation.id,
+                          result_id: result.id,
+                          assignment_id: assignment.id
+                },
+                format: :js
+        assert_response :bad_request
+        expect(result.reload.annotations.size).to eq 1
+      end
+
       it 'can destroy a deductive annotation if assigned to the annotation\'s criterion' do
         assignment.assignment_properties.update(assign_graders_to_criteria: true)
         create(:criterion_ta_association, criterion: assignment.flexible_criteria.first, ta: user)
