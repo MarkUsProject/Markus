@@ -982,14 +982,14 @@ describe Assignment do
 
       context 'when no section is specified' do
         it 'returns the start time of the assignment' do
-          expect(assignment.section_start_time(nil)).to eq assignment.start_time
+          expect(assignment.section_start_time(nil)).to be_within(1.second).of(assignment.start_time)
         end
       end
 
       context 'when a section is specified' do
         it 'returns the start time of the assignment' do
           section = create(:section)
-          expect(assignment.section_start_time(section)).to eq assignment.start_time
+          expect(assignment.section_start_time(section)).to be_within(1.second).of(assignment.start_time)
         end
       end
     end
@@ -999,7 +999,7 @@ describe Assignment do
 
       context 'when no section is specified' do
         it 'returns the start time of the assignment' do
-          expect(assignment.section_start_time(nil)).to eq assignment.start_time
+          expect(assignment.section_start_time(nil)).to be_within(1.second).of(assignment.start_time)
         end
       end
 
@@ -1008,14 +1008,14 @@ describe Assignment do
 
         context 'that does not have a SectionDueDate' do
           it 'returns the start time of the assignment' do
-            expect(assignment.section_start_time(section)).to eq assignment.start_time
+            expect(assignment.section_start_time(section)).to be_within(1.second).of(assignment.start_time)
           end
         end
 
         context 'that has a SectionDueDate for another assignment' do
           it 'returns the start time of the assignment' do
             create(:section_due_date)
-            expect(assignment.section_start_time(section)).to eq assignment.start_time
+            expect(assignment.section_start_time(section)).to be_within(1.second).of(assignment.start_time)
           end
         end
 
@@ -1025,7 +1025,7 @@ describe Assignment do
                                       assignment: assignment,
                                       section: section,
                                       start_time: 10.minutes.ago)
-            expect(assignment.section_start_time(section)).to eq section_due_date.start_time
+            expect(assignment.section_start_time(section)).to be_within(1.second).of(section_due_date.start_time)
           end
         end
       end
