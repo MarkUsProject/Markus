@@ -4,6 +4,8 @@ fr:
     last_edited_by: "Dernière édition par :"
     default_deduction: 'UPDATE ME!'
     list_deductions: 'UPDATE ME!'
+    prevent_ta_delete: 'UPDATE ME!'
+    prevent_update: 'UPDATE ME!'
 
     download_submission_file:
       begin_annotation: "%{comment_start} ANNOTATION %{id}: %{text} %{comment_end}"
