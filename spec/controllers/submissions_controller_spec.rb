@@ -18,7 +18,9 @@ describe SubmissionsController do
     end
 
     it 'should be rejected if it is a scanned assignment' do
-      get_as @student, :file_manager, params: { assignment_id: create(:assignment_for_scanned_exam).id }
+      assignment = create(:assignment_for_scanned_exam)
+      create(:grouping_with_inviter, inviter: @student, assignment: assignment)
+      get_as @student, :file_manager, params: { assignment_id: assignment.id }
       expect(response).to have_http_status 403
     end
 

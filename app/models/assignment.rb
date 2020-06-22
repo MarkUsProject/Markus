@@ -1018,7 +1018,7 @@ class Assignment < Assessment
                         .where(assignment_properties: { vcs_submit: true })
                         .order(due_date: :desc)
     records.where(assignment_properties: { is_timed: false })
-           .or(records.where.not( { groupings: { start_time: nil } } ))
+           .or(records.where.not(groupings: { start_time: nil }))
   end
 
   ### /REPO ###

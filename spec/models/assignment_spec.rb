@@ -1021,7 +1021,10 @@ describe Assignment do
 
         context 'that has a SectionDueDate for this assignment' do
           it 'returns the start time of the section' do
-            section_due_date = create(:section_due_date, assignment: assignment, section: section)
+            section_due_date = create(:section_due_date,
+                                      assignment: assignment,
+                                      section: section,
+                                      start_time: 10.minutes.ago)
             expect(assignment.section_start_time(section)).to eq section_due_date.start_time
           end
         end
