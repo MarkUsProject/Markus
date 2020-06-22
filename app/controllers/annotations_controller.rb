@@ -125,6 +125,7 @@ class AnnotationsController < ApplicationController
                                                                                            .flexible_criterion_id)
         flash_message(:error, t('annotations.prevent_ta_delete'))
         head :bad_request
+        return
       end
     end
     text = @annotation.annotation_text
@@ -144,9 +145,11 @@ class AnnotationsController < ApplicationController
       if current_user.ta?
         flash_message(:error, t('annotations.prevent_update'))
         head :bad_request
+        return
       elsif !@annotation_text.annotations.joins(:result).where('results.released_to_students' => true).empty?
         flash_message(:error, t('annotations.prevent_update'))
         head :bad_request
+        return
       end
     end
     @annotation_text.update(content: params[:content])
