@@ -124,7 +124,7 @@ class ResultsController < ApplicationController
         if current_user.admin? || current_user.ta?
           if current_user.ta? && assignment.assign_graders_to_criteria
             visible = current_user.criterion_ta_associations.where(criterion_type: 'FlexibleCriterion')
-                                                            .pluck(:criterion_id) + [nil]
+                                  .pluck(:criterion_id) + [nil]
             annotation_categories = assignment.annotation_categories
                                               .order(:position)
                                               .includes(:annotation_texts)
