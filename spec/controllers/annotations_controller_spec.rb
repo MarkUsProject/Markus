@@ -261,6 +261,21 @@ describe AnnotationsController do
   describe 'an authenticated TA' do
     let!(:user) { create(:ta) }
     include_examples 'an authenticated admin or TA'
+
+    it 'cannot update a deductive annotation' do
+      assignment = create(:assignment_with_deductive_annotations)
+      result = assignment.groupings.first.current_result
+      annotation = result.annotations.first
+      post_as user,
+              :update,
+              params: { content: 'New content!',
+                        id: annotation.id,
+                        result_id: result.id,
+                        assignment_id: assignment.id
+              },
+              format: :js
+      assert_response :bad_request
+    end
   end
 
   context 'An authenticated and authorized Student doing a POST' do
