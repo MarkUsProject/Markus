@@ -6,7 +6,7 @@
         submission_id: <%= @result&.submission_id || 'null' %>,
         assignment_id: <%= @assignment.id %>,
         grouping_id: <%= @grouping.id %>,
-        instructor_run: <%= ran_by == 'instructor' || (allowed_to? :can_run_tests?) %>,
+        instructor_run: <%= ran_by == 'instructor' %>,
         instructor_view: <%= !@current_user.student? %>
       });
     })
