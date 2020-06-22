@@ -267,8 +267,7 @@ describe AnnotationsController do
                 params: { content: 'New content!',
                           id: annotation.id,
                           result_id: result.id,
-                          assignment_id: assignment.id
-                },
+                          assignment_id: assignment.id },
                 format: :js
         expect(annotation.reload.annotation_text.content).to eq 'New content!'
       end
@@ -276,14 +275,13 @@ describe AnnotationsController do
       it 'cannot update deductive annotation content if that content has been applied to released results' do
         assignment.groupings.first.current_result.update(released_to_students: true)
         other_grouping = assignment.reload.groupings.joins(submissions: :results)
-                                                    .where(results: {released_to_students: false}).first
+                                   .where(results: { released_to_students: false }).first
         post_as user,
                 :update,
                 params: { content: 'New content!',
                           id: annotation.id,
                           result_id: other_grouping.current_result.id,
-                          assignment_id: assignment.id
-                },
+                          assignment_id: assignment.id },
                 format: :js
         assert_response :bad_request
         expect(annotation.reload.annotation_text.content).to_not eq 'New content!'
@@ -294,8 +292,7 @@ describe AnnotationsController do
                 :destroy,
                 params: { id: annotation.id,
                           result_id: result.id,
-                          assignment_id: assignment.id
-                },
+                          assignment_id: assignment.id },
                 format: :js
         expect(result.reload.annotations.size).to eq 0
       end
@@ -306,8 +303,7 @@ describe AnnotationsController do
                 :destroy,
                 params: { id: annotation.id,
                           result_id: result.id,
-                          assignment_id: assignment.id
-                },
+                          assignment_id: assignment.id },
                 format: :js
         expect(result.reload.annotations.size).to eq 0
       end
@@ -328,8 +324,7 @@ describe AnnotationsController do
                 params: { content: 'New content!',
                           id: annotation.id,
                           result_id: result.id,
-                          assignment_id: assignment.id
-                },
+                          assignment_id: assignment.id },
                 format: :js
         assert_response :bad_request
         expect(annotation.reload.annotation_text.content).to_not eq 'New content!'
@@ -343,8 +338,7 @@ describe AnnotationsController do
                 :destroy,
                 params: { id: annotation.id,
                           result_id: result.id,
-                          assignment_id: assignment.id
-                },
+                          assignment_id: assignment.id },
                 format: :js
         assert_response :bad_request
         expect(result.reload.annotations.size).to eq 1
@@ -359,8 +353,7 @@ describe AnnotationsController do
                 :destroy,
                 params: { id: annotation.id,
                           result_id: result.id,
-                          assignment_id: assignment.id
-                },
+                          assignment_id: assignment.id },
                 format: :js
         assert_response :bad_request
         expect(result.reload.annotations.size).to eq 1
@@ -373,8 +366,7 @@ describe AnnotationsController do
                 :destroy,
                 params: { id: annotation.id,
                           result_id: result.id,
-                          assignment_id: assignment.id
-                },
+                          assignment_id: assignment.id },
                 format: :js
         expect(result.reload.annotations.size).to eq 0
       end
@@ -385,8 +377,7 @@ describe AnnotationsController do
                 :destroy,
                 params: { id: annotation.id,
                           result_id: result.id,
-                          assignment_id: assignment.id
-                },
+                          assignment_id: assignment.id },
                 format: :js
         assert_response :bad_request
         expect(result.reload.annotations.size).to eq 1
