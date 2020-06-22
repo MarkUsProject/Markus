@@ -10,6 +10,9 @@ pt:
         students_form_groups?: "Atribuição não permite que os alunos formem grupos."
         tokens_released?: "Nenhum tokens dado."
         work_alone?: "Você não pode trabalhar sozinho para este projeto - o tamanho mínimo do grupo é de %{group_min}."
+        can_run_tests?: "UPDATE ME."
+        view_pr_review?: "UPDATE ME."
+        manage?: "UPDATE ME."
       grouping:
         before_due_date?: "A data de entrega para este projeto já passou."
         deletable_by?: "Você não tem permissão para deletar este grupo."
@@ -25,3 +28,35 @@ pt:
         get_feedback_file?: "Não há accesso para resultado do teste."
         not_a_student?: "UPDATE ME."
         manage_subdirectories?: "UPDATE ME."
+        collect?: "UPDATE ME."
+      group:
+        student_manage?: "UPDATE ME."
+        manage?: "UPDATE ME."
+      note:
+        manage?: "UPDATE ME."
+        modify?: "UPDATE ME."
+        create?: "UPDATE ME."
+      annotation:
+        add_existing_annotation?: "UPDATE ME."
+        manage?: "UPDATE ME."
+      automated_test:
+        student_access?: "UPDATE ME."
+        manage?: "UPDATE ME."
+      course_summary:
+        view_course_summary?: "UPDATE ME."
+        download_csv_grades_report?: "UPDATE ME."
+        marking_schemes?: "UPDATE ME."
+      exam_template:
+        manage?: "UPDATE ME."
+        modify?: "UPDATE ME."
+      grade_entry_form:
+        grading?: "UPDATE ME."
+        manage?: "UPDATE ME."
+        student_interface?: "UPDATE ME."
+        update_grade_entry_students?: "UPDATE ME."
+      result:
+        delete_grace_period_deduction?: "UPDATE ME."
+      peer_review:
+        assign_reviewers?: "UPDATE ME."
+      marking_scheme:
+        manage?: "UPDATE ME."

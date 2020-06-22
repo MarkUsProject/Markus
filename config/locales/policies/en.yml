@@ -6,12 +6,14 @@ en:
         before_due_date?: "You cannot run tests because the due date for this assignment has passed."
         collection_date_passed?: "Could not create group: the due date for this assignment has passed."
         enabled?: "You cannot run tests because they are not enabled for this assignment."
-        not_a_ta?: "You cannot run tests because graders are not allowed to."
+        can_run_tests?: "You do not have permissions to run tests."
         not_yet_in_group?: "You already have a group, and cannot create another."
         students_form_groups?: "This assignment does not allow students to form their own groups."
         test_groups_exist?: "You cannot run tests because the test framework is not configured."
         tokens_released?: "You cannot run tests because tokens are not available yet."
         work_alone?: "You cannot work alone for this assignment. The minimum group size is %{group_min}."
+        view_pr_review?: "You are not allowed to view and manage peer reviews."
+        manage?: "You do not have permissions to create and manage assignments."
       grouping:
         before_due_date?: "The due date for this assignment has passed."
         deletable_by?: "You are not allowed to delete the group."
@@ -27,10 +29,35 @@ en:
         get_feedback_file?: "No access to feedback file."
         not_a_student?: "You cannot run tests because students are not allowed to."
         manage_subdirectories?: "You are not allowed to create, delete or change subdirectories."
+        collect?: "You do not have permissions to collect the submissions"
       group:
         student_manage?: "You are not allowed to create or manage groups"
         manage?: "You are not allowed to manage groups"
       note:
         manage?: "You cannot add or modify the notes because students are not allowed to."
         modify?: "You do not have permissions to edit or delete the notes which is created by others."
-
+        create?: "You do not have permissions to create notes."
+      annotation:
+        add_existing_annotation?: "You do not have permissions to add existing annotations."
+        manage?: "You do not have permissions to create, delete or modify annotations."
+      automated_test:
+        student_access?: "You are not allowed to access student interface."
+        manage?: "You do not have permissions to manage automated testing."
+      course_summary:
+        view_course_summary?: "You do not have permissions to view course summary."
+        download_csv_grades_report?: "You do not have permissions to download grades report."
+        marking_schemes?: "You do not have permissions to create or manage marking schemes."
+      exam_template:
+        manage?: "You cannot manage exam template, only an admin can manage."
+        modify?: "You do not have permissions to modify exam template."
+      grade_entry_form:
+        grading?: "You cannot do grading, only admin and grader are allowed to."
+        manage?: "You do not have permissions to create or manage grade entry forms."
+        student_interface?: "You cannot access the student interface, only students can."
+        update_grade_entry_students?: "You do not have permissions to release or unrelease the marks."
+      result:
+        delete_grace_period_deduction?: "You do not have permissions to delete grace period deduction."
+      peer_review:
+        assign_reviewers?: "You do not have permissions to assign reviewers."
+      marking_scheme:
+        manage?: "You do not have permissions to create or manage marking schemes."
