@@ -121,9 +121,8 @@ class AnnotationsController < ApplicationController
       assignment = result.grouping.assignment
       if assignment.assign_graders_to_criteria &&
           !current_user.criterion_ta_associations.where(criterion_type: 'FlexibleCriterion')
-                                                 .pluck(:criterion_id).include?(@annotation.annotation_text
-                                                                                           .annotation_category
-                                                                                           .flexible_criterion_id)
+                       .pluck(:criterion_id)
+                       .include?(@annotation.annotation_text.annotation_category.flexible_criterion_id)
         flash_message(:error, t('annotations.prevent_ta_delete'))
         head :bad_request
         return
