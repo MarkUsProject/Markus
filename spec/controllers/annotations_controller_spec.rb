@@ -345,7 +345,7 @@ describe AnnotationsController do
       end
 
       it 'cannot destroy a deductive annotation if assigned to a criterion of a different type '\
-         'with the same id annotation\'s criterion' do
+         'with the same id as the annotation\'s criterion' do
         other_criterion = create(:rubric_criterion, assignment: assignment, id: assignment.flexible_criteria.first.id)
         assignment.assignment_properties.update(assign_graders_to_criteria: true)
         create(:criterion_ta_association, criterion: other_criterion, ta: user)
