@@ -738,8 +738,8 @@ describe ResultsController do
       end
 
       context 'when accessing an assignment with deductive annotations' do
+        let(:assignment) { create(:assignment_with_deductive_annotations) }
         it 'receives limited annotation category data if has ta_criterion_association' do
-          assignment = create(:assignment_with_deductive_annotations)
           other_criterion = create(:flexible_criterion, assignment: assignment)
           assignment.groupings.each do |grouping|
             create(:flexible_mark, markable: other_criterion, result: grouping.current_result)
@@ -755,6 +755,24 @@ describe ResultsController do
                                 format: :json }, xhr: true
           expect(response.parsed_body['annotation_categories'].first['annotation_category_name'])
             .to eq "#{other_category.annotation_category_name} [#{other_category.flexible_criterion.name}]"
+          expect(response.parsed_body['annotation_categories'].size).to eq 1
+        end
+
+        it 'receives limited annotation category data even when it has a ta_criterion_association '\
+           'with a criterion that has the same id as a flexible criterion' do
+          other_criterion = create(:rubric_criterion, assignment: assignment, id: assignment.flexible_criteria.first.id)
+          assignment.groupings.each do |grouping|
+            create(:rubric_mark, markable: other_criterion, result: grouping.current_result)
+          end
+          assignment.assignment_properties.update(assign_graders_to_criteria: true)
+          create(:criterion_ta_association, criterion: other_criterion, ta: ta)
+          non_deductive_category = create(:annotation_category, assignment: assignment)
+          post :show, params: { assignment_id: assignment.id,
+                                submission_id: assignment.groupings.first.current_result.submission.id,
+                                id: assignment.groupings.first.current_result,
+                                format: :json }, xhr: true
+          expect(response.parsed_body['annotation_categories']
+                         .first['annotation_category_name']).to eq non_deductive_category
           expect(response.parsed_body['annotation_categories'].size).to eq 1
         end
       end
