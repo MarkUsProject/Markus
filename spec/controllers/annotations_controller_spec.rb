@@ -259,7 +259,7 @@ describe AnnotationsController do
   end
 
   describe 'an authenticated TA' do
-    let!(:user) { create(:admin) }
+    let!(:user) { create(:ta) }
     include_examples 'an authenticated admin or TA'
   end
 
