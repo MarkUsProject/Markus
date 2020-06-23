@@ -24,7 +24,7 @@
   </li>
 
   <% if assessment.is_a?(GradeEntryForm) && !assessment.new_record? %>
-    <% if allowed_to?(:manage?, with: GradeEntryFormPolicy) %>
+    <% if allowed_to?(:manage?, assessment, with: GradeEntryFormPolicy) %>
       <li class='<%= "active" if controller.action_name == 'edit' %>'>
         <%= link_to t('menu.properties'),
                     edit_grade_entry_form_path(assessment) %>
@@ -43,7 +43,7 @@
   <% elsif assessment.is_a?(Assignment) && !assessment.new_record? %>
     <% target_id = @result&.is_a_review? ? assessment.pr_assignment.id :
                                                      assessment.id %>
-    <% if allowed_to?(:manage?, with: AssignmentPolicy) %>
+    <% if allowed_to?(:manage?, assessment, with: AssignmentPolicy) %>
       <li <% if ['criteria',
                  'annotation_categories',
                  'automated_tests',

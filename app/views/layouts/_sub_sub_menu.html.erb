@@ -15,7 +15,7 @@
         <% if controller.controller_name != 'assignments' ||
               (controller.controller_name == 'assignments' &&
                controller.action_name != 'new' ) %>
-          <% if allowed_to?(:manage?, with: AssignmentPolicy) %>
+          <% if allowed_to?(:manage?, @assignment, with: AssignmentPolicy) %>
             <li <% if controller.controller_name == 'assignments' && controller.action_name != 'starter_file' %>
                 class='active'
                 <% end %>>
@@ -44,7 +44,7 @@
                           assignment_annotation_categories_path(@assignment) %>
             </li>
           <% end %>
-          <% if allowed_to?(:manage?, @current_user, with: AutomatedTestPolicy) %>
+          <% if allowed_to?(:manage?, @assignment, with: AutomatedTestPolicy) %>
             <% if Rails.configuration.x.autotest.enable && !@assignment.is_peer_review? && !@assignment.scanned_exam? %>
               <li class='<%= "active" if controller.controller_name == 'automated_tests' %>'>
                 <%= link_to t('automated_tests.title'),
