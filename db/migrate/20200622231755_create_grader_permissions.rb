@@ -13,6 +13,7 @@ class CreateGraderPermissions < ActiveRecord::Migration[6.0]
       t.column :manage_exam_templates, :boolean
       t.column :run_tests, :boolean
       t.column :manage_marking_schemes, :boolean
+      t.column :download_grades_report, :boolean
     end
 
     add_foreign_key :grader_permissions, :users
