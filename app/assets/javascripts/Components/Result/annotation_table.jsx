@@ -107,7 +107,14 @@ export class AnnotationTable extends React.Component {
 
   deductionColumn = {
     Header: I18n.t('activerecord.attributes.annotation_text.deduction'),
-    accessor: row => '[' + row.criterion_name + '] -' + row.deduction,
+    accessor: row => {
+      if (row.deduction === undefined || row.deduction === null ||
+        row.deduction === 0.0) {
+        return '';
+      } else {
+        return '[' + row.criterion_name + '] -' + row.deduction;
+      }
+    },
     id: 'deduction',
     filterMethod: this.deductionFilter,
     Cell: data => {
@@ -154,6 +161,7 @@ export class AnnotationTable extends React.Component {
           data={this.props.annotations}
           columns={allColumns}
           filterable
+          resizable
           defaultSorted={[
             {id: 'filename'},
             {id: 'number'}
