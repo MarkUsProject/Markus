@@ -9,7 +9,7 @@ class User < ApplicationRecord
   before_validation :nillify_empty_email_and_id_number
 
   # Group relationships
-  has_one :grader_permission
+  has_one :grader_permission, dependent: :destroy
   has_many :memberships, dependent: :delete_all
   has_many :grade_entry_students
   has_many :groupings, through: :memberships
