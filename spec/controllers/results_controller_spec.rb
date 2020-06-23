@@ -772,7 +772,7 @@ describe ResultsController do
                                 id: assignment.groupings.first.current_result,
                                 format: :json }, xhr: true
           expect(response.parsed_body['annotation_categories']
-                         .first['annotation_category_name']).to eq non_deductive_category
+                         .first['annotation_category_name']).to eq non_deductive_category.annotation_category_name
           expect(response.parsed_body['annotation_categories'].size).to eq 1
         end
       end
