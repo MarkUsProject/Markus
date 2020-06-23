@@ -1,12 +1,12 @@
 describe MarkingSchemesController do
   # TODO: Add more tests to check the functionality
-  let(:marking_scheme) { create(:marking_scheme) }
+  let(:assignment) { create(:assignment) }
+  let(:marking_scheme) { create(:marking_scheme, assessments: [assignment]) }
   shared_examples 'An authorized user' do
     context 'POST create' do
       let(:params) do
         { 'marking_scheme' => { 'name' => 'Scheme B',
-                                'marking_weights_attributes' => { '0' => { 'type' => 'Assignment',
-                                                                           'id' => '1', 'weight' => '2' } } } }
+                                'marking_weights_attributes' => { '0' => { 'id' => assignment, 'weight' => '2' } } } }
       end
       before { post_as user, :create, params: params }
       it('should respond with 302') { expect(response.status).to eq 302 }
@@ -55,13 +55,9 @@ describe MarkingSchemesController do
       let(:params) do
         { 'id' => marking_scheme.id,
           'marking_scheme' => { 'name' => 'Scheme C',
-                                'marking_weights_attributes' => { '0' => { 'type' => 'Assignment',
-                                                                           'id' => '1', 'weight' => '2' } } } }
+                                'marking_weights_attributes' => { '0' => { 'id' => assignment, 'weight' => '2' } } } }
       end
-      before do
-        create(:marking_weight, marking_scheme_id: marking_scheme.id, gradable_item_id: 1, is_assignment: true)
-        put_as user, :update, params: params
-      end
+      before { put_as user, :update, params: params }
       it('should respond with 302') { expect(response.status).to eq 302 }
     end
     context 'GET index' do
@@ -90,9 +86,8 @@ describe MarkingSchemesController do
     end
     context 'POST create' do
       let(:params) do
-        { 'marking_scheme' => { 'name' => 'Scheme B',
-                                'marking_weights_attributes' => { '0' => { 'type' => 'Assignment',
-                                                                           'id' => '1', 'weight' => '2' } } } }
+        { 'marking_scheme' => { 'name' => 'Scheme D',
+                                'marking_weights_attributes' => { '0' => { 'id' => assignment, 'weight' => '2' } } } }
       end
       before { post_as grader, :create, params: params }
       it('should respond with 403') { expect(response.status).to eq 403 }
@@ -116,14 +111,10 @@ describe MarkingSchemesController do
     context 'PUT update' do
       let(:params) do
         { 'id' => marking_scheme.id,
-          'marking_scheme' => { 'name' => 'Scheme C',
-                                'marking_weights_attributes' => { '0' => { 'type' => 'Assignment',
-                                                                           'id' => '1', 'weight' => '2' } } } }
+          'marking_scheme' => { 'name' => 'Scheme E',
+                                'marking_weights_attributes' => { '0' => { 'id' => assignment, 'weight' => '10' } } } }
       end
-      before do
-        create(:marking_weight, marking_scheme_id: marking_scheme.id, gradable_item_id: 1, is_assignment: true)
-        put_as grader, :update, params: params
-      end
+      before { put_as grader, :update, params: params }
       it('should respond with 403') { expect(response.status).to eq 403 }
     end
     context 'GET index' do
