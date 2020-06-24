@@ -5,6 +5,17 @@
   <%= render partial: 'layouts/mathjax_config' %>
   <%= javascript_include_tag 'MathJax_lib/MathJax.js?config=TeX-AMS-MML_HTMLorMML' %>
   <%= javascript_include_tag 'MathJax/mathjax_helpers' %>
+  <script>
+    addAnnotationStatPanel = (annotation_id) => {
+      console.log(document);
+      console.log('this is running');
+      window.annotationStatPanel = window.makeAnnotationStatPanel(document.getElementById('annotation-stat-panel'),
+        {
+          annotation_id: annotation_id,
+        }
+      );
+    }
+  </script>
 <% end %>
 
 <% content_for :title, t('.title',
