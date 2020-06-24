@@ -878,12 +878,7 @@ describe Grouping do
         before do
           grouping.update!(start_time: start_time + 30.minutes)
         end
-        it 'should return the due date if the assignment due date has passed' do
-          due_date_obj.update!(due_date: 1.minute.ago)
-          expect(grouping.due_date).to be_within(1.second).of(due_date)
-        end
         it 'should return the start_time + duration if the assignment due date has not passed' do
-          due_date_obj.update!(due_date: 1.minute.from_now)
           due_date = grouping.reload.start_time + assignment.duration + addition
           expect(grouping.due_date).to be_within(1.second).of(due_date)
         end
@@ -989,38 +984,74 @@ describe Grouping do
     end
   end
 
-  describe '#adjusted_duration' do
-    let(:assignment) { create(:timed_assignment, due_date: Time.now + 10.hours) }
-    let(:grouping) { create(:grouping_with_inviter, assignment: assignment) }
-    context 'when there is enough time between the start time and the due date' do
+  describe '#duration' do
+    let(:assignment) { create(:timed_assignment) }
+    let(:grouping) { create :grouping_with_inviter, assignment: assignment }
+    context 'when there is no penalty period' do
       it 'should return the duration' do
-        expect(grouping.adjusted_duration).to eq(assignment.duration)
+        expect(grouping.duration).to eq assignment.duration
       end
-      context 'when there is an extension' do
-        let!(:extension) { create :extension, time_delta: 1.hour, grouping: grouping }
-        it 'should return the duration plus the extension' do
-          expect(grouping.reload.adjusted_duration).to eq(assignment.duration + extension.time_delta)
-        end
-      end
-      context 'when there is a penalty period' do
-        let(:rule) { create :penalty_period_submission_rule, assignment: assignment }
-        it 'should return the duration plus the penalty_periods' do
-          create :period, submission_rule: rule, hours: 2, interval: 1
-          grouping.assignment.submission_rule.reload
-          expect(grouping.adjusted_duration).to eq(assignment.duration + 2.hours)
+      context 'with an extension' do
+        let!(:extension) { create :extension, grouping: grouping, time_delta: 1.hour }
+        it 'should include the extension' do
+          expect(grouping.duration).to eq(assignment.duration + extension.time_delta)
         end
       end
     end
-    context 'when there is not enough time between the start time and the due date' do
-      let(:assignment) { create(:timed_assignment, due_date: Time.now + 10.minutes) }
-      it 'should return the difference between the due date and start time' do
-        expect(grouping.adjusted_duration).to be_within(1.second).of(10.minutes)
+    context 'when there is a penalty period' do
+      let(:rule) { create :penalty_period_submission_rule, assignment: assignment }
+      let!(:period) { create :period, submission_rule: rule }
+      it 'should return the duration plus penalty period hours' do
+        expect(grouping.reload.duration).to eq(assignment.duration + period.hours.hours)
+      end
+      context 'with an extension' do
+        let!(:extension) { create :extension, grouping: grouping, time_delta: 1.hour }
+        it 'should include the extension' do
+          expect(grouping.reload.duration).to eq(assignment.duration + extension.time_delta + extension.time_delta)
+        end
       end
     end
-    context 'when the collection date has passed' do
-      let(:assignment) { create(:timed_assignment, due_date: Time.now - 10.minutes) }
-      it 'should return the difference between the due date and current time' do
-        expect(grouping.adjusted_duration).to eq(0.seconds)
+  end
+
+  describe '#past_assessment_start_time?' do
+    let(:assignment) { create(:timed_assignment) }
+    let(:grouping) { create :grouping_with_inviter, assignment: assignment }
+    context 'when assignment start time has passed' do
+      it 'should return true' do
+        expect(grouping.past_assessment_start_time?).to eq true
+      end
+    end
+    context 'when assignment start time has not passed' do
+      before { assignment.update! due_date: 1.day.from_now, start_time: 10.minutes.from_now }
+      it 'should return false' do
+        expect(grouping.past_assessment_start_time?).to eq false
+      end
+    end
+    context 'when a section exists' do
+      let(:section) { create :section }
+      let(:section_due_date) { create :section_due_date, assignment: assignment, section: section }
+      let(:grouping) { create :grouping_with_inviter, assignment: assignment }
+      before do
+        grouping.inviter.update!(section_id: section.id)
+        assignment.update!(section_due_dates_type: true)
+      end
+      context 'when section start time has passed' do
+        before { section_due_date.update! start_time: 1.minute.ago }
+        it 'should return true' do
+          expect(grouping.past_assessment_start_time?).to eq true
+        end
+      end
+      context 'when section start time has not passed' do
+        before { section_due_date.update! start_time: 1.minute.from_now }
+        it 'should return false' do
+          expect(grouping.past_assessment_start_time?).to eq false
+        end
+        context 'when section_due_dates_type is false' do
+          before { assignment.update!(section_due_dates_type: false) }
+          it 'should return true' do
+            expect(grouping.past_assessment_start_time?).to eq true
+          end
+        end
       end
     end
   end

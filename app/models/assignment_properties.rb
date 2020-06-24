@@ -92,17 +92,9 @@ class AssignmentProperties < ApplicationRecord
     end.to_h
   end
 
-  # Return the duration of this assignment or the time between the +start_time+ and the +due_date+ whichever is
-  # less. If the +due_date+ has passed return 0 seconds.
-  # If +add+ is given, it will be added to the duration.
-  def adjusted_duration(due_date, start_time, add: 0.seconds)
-    dur = duration + add
-    time_until_due = due_date - start_time
-    if dur < time_until_due
-      dur
-    else
-      ActiveSupport::Duration.build([time_until_due, 0].max.round)
-    end
+  # Return the duration of this assignment plus any penalty periods
+  def adjusted_duration
+    duration + assignment.submission_rule.periods.pluck(:hours).sum.hours
   end
 
   private

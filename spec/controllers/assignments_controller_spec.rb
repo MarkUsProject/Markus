@@ -499,50 +499,50 @@ describe AssignmentsController do
   end
 
   context '#start_timed_assignment' do
-    let(:assignment) { create :assignment }
+    let(:assignment) { create :timed_assignment }
     context 'as a student' do
       let(:user) { create :student }
       context 'when a grouping exists' do
-        let(:grouping) { create :grouping, assignment: assignment, start_time: nil }
+        let!(:grouping) { create :grouping_with_inviter, assignment: assignment, start_time: nil, inviter: user }
         it 'should respond with 302' do
-          put_as user, :start_timed_assignment, params: { id: assignment.id, grouping_id: grouping.id }
+          put_as user, :start_timed_assignment, params: { id: assignment.id }
           expect(response).to have_http_status :redirect
         end
         it 'should redirect to show' do
-          put_as user, :start_timed_assignment, params: { id: assignment.id, grouping_id: grouping.id }
+          put_as user, :start_timed_assignment, params: { id: assignment.id }
           expect(response).to redirect_to(action: :show)
         end
         it 'should update the start_time' do
-          put_as user, :start_timed_assignment, params: { id: assignment.id, grouping_id: grouping.id }
+          put_as user, :start_timed_assignment, params: { id: assignment.id }
           expect(grouping.reload.start_time).to be_within(5.seconds).of(Time.current)
         end
         context 'a validation fails' do
           it 'should flash an error message' do
             allow_any_instance_of(Grouping).to receive(:update).and_return false
-            put_as user, :start_timed_assignment, params: { id: assignment.id, grouping_id: grouping.id }
+            put_as user, :start_timed_assignment, params: { id: assignment.id }
             expect(flash[:error]).not_to be_nil
           end
         end
       end
       context 'when a grouping does not exist' do
         it 'should respond with 400' do
-          put_as user, :start_timed_assignment, params: { id: assignment.id, grouping_id: -1 }
+          put_as user, :start_timed_assignment, params: { id: assignment.id }
           expect(response).to have_http_status 400
         end
       end
     end
     context 'as an admin' do
       let(:user) { create :admin }
-      it 'should respond with 404' do
-        put_as user, :start_timed_assignment, params: { id: assignment.id, grouping_id: 1 }
-        expect(response).to have_http_status 404
+      it 'should respond with 400' do
+        put_as user, :start_timed_assignment, params: { id: assignment.id }
+        expect(response).to have_http_status 400
       end
     end
     context 'as an grader' do
       let(:user) { create :ta }
-      it 'should respond with 404' do
-        put_as user, :start_timed_assignment, params: { id: assignment.id, grouping_id: 1 }
-        expect(response).to have_http_status 404
+      it 'should respond with 400' do
+        put_as user, :start_timed_assignment, params: { id: assignment.id }
+        expect(response).to have_http_status 400
       end
     end
   end

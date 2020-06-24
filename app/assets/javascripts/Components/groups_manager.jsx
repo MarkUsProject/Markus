@@ -354,7 +354,8 @@ class RawGroupsTable extends React.Component {
       Cell: row => {
         let extension = this.props.times.map(
           (key) => {
-            if (row.original.extension[key]) {
+            const val = row.original.extension[key];
+            if (val) {
               // don't build these strings dynamically or they will be missed by the i18n-tasks checkers.
               if (key === 'weeks') {
                 return `${val} ${I18n.t('durations.weeks', {count: val})}`;

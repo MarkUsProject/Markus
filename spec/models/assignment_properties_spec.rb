@@ -74,36 +74,16 @@ describe AssignmentProperties do
   end
   describe '#adjusted_duration' do
     let(:assignment) { create(:timed_assignment) }
-    context 'when there is enough time between the start time and the due date' do
+    context 'when there is no penalty period' do
       it 'should return the duration' do
-        due_date = Time.now
-        start_time = Time.now - assignment.duration - 10.minutes
-        expect(assignment.adjusted_duration(due_date, start_time)).to eq(assignment.duration)
-      end
-      context 'when there is an added amount' do
-        it 'should return the duration plus the added amount' do
-          due_date = Time.now
-          start_time = Time.now - assignment.duration - 10.minutes
-          add = 5.minutes
-          expect(assignment.adjusted_duration(due_date, start_time, add: add)).to eq(assignment.duration + add)
-        end
+        expect(assignment.adjusted_duration).to eq assignment.duration
       end
     end
-    context 'when there is not enough time between the start time and the due date' do
-      it 'should return the difference between the due date and start time' do
-        due_date = Time.now
-        start_time = Time.now - assignment.duration + 10.minutes
-        expected = ActiveSupport::Duration.build((due_date - start_time).round)
-        expect(assignment.adjusted_duration(due_date, start_time)).to eq(expected)
-      end
-      context 'when there is an added amount' do
-        it 'should return the difference between the due date and start time' do
-          due_date = Time.now
-          start_time = Time.now - assignment.duration + 10.minutes
-          add = 5.minutes
-          expected = ActiveSupport::Duration.build((due_date - start_time).round)
-          expect(assignment.adjusted_duration(due_date, start_time, add: add)).to eq(expected)
-        end
+    context 'when there is a penalty period' do
+      let(:rule) { create :penalty_period_submission_rule, assignment: assignment }
+      let!(:period) { create :period, submission_rule: rule }
+      it 'should return the duration plus penalty period hours' do
+        expect(assignment.reload.adjusted_duration).to eq(assignment.duration + period.hours.hours)
       end
     end
   end

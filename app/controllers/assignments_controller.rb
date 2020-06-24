@@ -15,8 +15,7 @@ class AssignmentsController < ApplicationController
 
   before_action      :authorize_for_student,
                      only: [:show,
-                            :peer_review,
-                            :start_timed_assignment]
+                            :peer_review]
 
   before_action      :authorize_for_user,
                      only: [:index, :switch_assignment]
@@ -517,11 +516,11 @@ class AssignmentsController < ApplicationController
     head :ok
   end
 
-  # Start timed assignment for grouping with the id passed as a param
+  # Start timed assignment for the current user's grouping for this assignment
   def start_timed_assignment
-    assignment = Assignment.find(params[:id])
-    grouping = assignment.groupings.find_by(id: params[:grouping_id])
+    grouping = current_user.try(:accepted_grouping_for, params[:id])
     return head 400 if grouping.nil?
+    authorize! grouping
     unless grouping.update(start_time: Time.current)
       flash_message(:error, grouping.errors.full_messages.join(' '))
     end

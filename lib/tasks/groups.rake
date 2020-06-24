@@ -32,7 +32,7 @@ namespace :db do
             StudentMembership::STATUSES[:accepted],
             invoked_by_admin: true)
         end
-        if assignment.section_due_dates_type && grouping.id % 5 == 0
+        if !assignment.is_timed && assignment.section_due_dates_type && grouping.id % 5 == 0
             note = Faker::Movies::PrincessBride.quote
             Extension.create(grouping: grouping, time_delta: 1.week, note: note)
         end

@@ -1,8 +1,6 @@
 <% due_date = @assignment.section_due_date(@current_user&.section)
    start_time = @assignment.section_start_time(@current_user&.section) %>
-<% duration = @grouping.nil? ?
-                @assignment.assignment_properties.adjusted_duration(due_date, [Time.current, start_time].max) :
-                @grouping.adjusted_duration %>
+<% duration = @grouping.nil? ? @assignment.adjusted_duration : @grouping.duration %>
 <h3><%= I18n.t('activerecord.models.timed_assignment.one') %></h3>
 <p>
   <strong><%= I18n.t('assignments.timed.start_time_instructions') %></strong>
@@ -20,9 +18,8 @@
       %>
       <%= I18n.t('assignments.timed.before_start_instructions', duration_string: duration_string) %>
     </p>
-    <% unless @grouping.nil? %>
+    <% if !@grouping.nil? && allowed_to?(:start_timed_assignment?, @grouping) %>
       <%= form_with url: start_timed_assignment_assignment_path(@assignment.id), method: 'put', local: true do |f| %>
-        <%= f.hidden_field :grouping_id, value: @grouping.id %>
         <%= f.submit I18n.t('assignments.timed.start_button'),
                      data: { confirm: t('assignments.timed.start_confirmation') } %>
       <% end %>

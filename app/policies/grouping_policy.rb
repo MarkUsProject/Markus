@@ -62,10 +62,16 @@ class GroupingPolicy < ApplicationPolicy
   end
 
   def view_file_manager?
-    # record is a grouping object
     user.student? &&
       !(record.assignment.scanned_exam? ||
         record.assignment.is_peer_review? ||
         (record.assignment.is_timed? && record.start_time.nil?))
+  end
+
+  def start_timed_assignment?
+    user.student? &&
+      record.start_time.nil? &&
+      !record.past_collection_date? &&
+      record.past_assessment_start_time?
   end
 end
