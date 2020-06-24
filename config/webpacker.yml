@@ -78,7 +78,7 @@ development:
 
 test:
   <<: *default
-  compile: false
+  compile: true
   cache_manifest: true
 
   # Compile test packs to a separate directory
