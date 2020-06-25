@@ -1,4 +1,5 @@
 import React from 'react';
+import ReactTable from 'react-table';
 import { render } from 'react-dom';
 import ReactDOM from 'react-dom';
 
@@ -16,6 +17,36 @@ class AnnotationStatPanel extends React.Component {
     ReactDOM.unmountComponentAtNode(panel);
   }
 
+  columns = [
+    {
+      Header: 'Applier',
+      accessor: 'applier',
+      id: 'applier',
+      maxWidth: 50,
+      resizeable: false,
+      Cell: row => {
+        return (
+          <div>
+            {row.original.applier}
+          </div>
+        );
+      }
+    },
+    {
+      Header: 'Grouping_name',
+      accessor: 'grouping_name',
+      id: 'submission',
+      Cell: row => {
+        return (
+          <div>
+            {row.original.grouping_name}
+          </div>
+        );
+      },
+      maxWidth: 150,
+    }
+  ];
+
   fetchData = () => {
     $.ajax({
       url: Routes.get_annotation_text_stats_assignment_annotation_categories_path(this.props.assignment_id),
@@ -24,13 +55,20 @@ class AnnotationStatPanel extends React.Component {
       },
       dataType: 'json'
     }).then(res => {
-      console.log(res)
-      this.setState({num_used: res['num_times_used']});
+      this.setState({applications: res['uses'], num_times_used: res['num_times_used']});
     });
   };
 
   render() {
-    return <fieldset><p>{this.state.num_used}</p></fieldset>;
+    return (<fieldset>
+      <p>{JSON.stringify(this.state)}</p>
+      <ReactTable
+        className='auto-overflow'
+        data={this.state.applications}
+        columns={this.columns}
+        filterable
+      />
+    </fieldset>);
   }
 }
 
