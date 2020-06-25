@@ -16,6 +16,7 @@
 - Fixed bug preventing graders from creating new notes in results view (#4668)
 - Fixed bug preventing new tags from being created from results view (#4669)
 - Remove deprecated "detailed CSV" download link from submissions/browse (#4675)
+- Fixed bug where bonuses and deductions were not displayed properly (#4699)
 
 ## [v1.9.2]
 - Fixed bug preventing all git hooks from being run in production (#4594)
