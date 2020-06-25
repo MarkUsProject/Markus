@@ -187,4 +187,3 @@ export class AnnotationTable extends React.Component {
     );
   }
 }
-
