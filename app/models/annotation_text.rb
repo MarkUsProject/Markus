@@ -14,4 +14,11 @@ class AnnotationText < ApplicationRecord
     content.gsub('\\', '\\\\\\') # Replaces '\\' with '\\\\'
            .gsub(/\r?\n/, '\\n')
   end
+
+  def get_stats
+    stats = {
+      num_times_used: self.annotations.count
+    }
+    stats
+  end
 end
