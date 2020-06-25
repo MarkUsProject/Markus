@@ -135,16 +135,16 @@ export class AnnotationTable extends React.Component {
       }
     },
     sortMethod: (a, b) => {
-      if (a === ''){
+      if (a === '') {
         return 1;
       }
-      if (b === ''){
+      else if (b === '') {
         return -1;
       }
-      if (a > b) {
+      else if (a > b) {
         return 1;
       }
-      if (a < b) {
+      else if (a < b) {
         return -1;
       }
       return 0;
