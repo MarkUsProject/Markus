@@ -72,7 +72,7 @@ describe NotesController do
       @message = 'This is a note'
       @ta = create(:ta)
     end
-    let(:grader_permission) { create(:grader_permission, user_id: @ta.id) }
+    let!(:grader_permission) { create(:grader_permission, user_id: @ta.id, create_notes: true) }
 
     it 'be able to get :notes_dialog' do
       get_as @ta,
@@ -105,8 +105,6 @@ describe NotesController do
     end
 
     it 'when TA is allowed to get :new' do
-      grader_permission.create_notes = true
-      grader_permission.save
       get_as @ta, :new
       expect(response).to have_http_status :success
     end
@@ -120,9 +118,6 @@ describe NotesController do
     end
 
     context 'POST on :create' do
-      before :each do
-        create(:grader_permission, user_id: @ta.id, create_notes: true)
-      end
       it 'be able to create with empty note' do
         post_as @ta,
                 :create,
