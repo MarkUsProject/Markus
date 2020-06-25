@@ -1,72 +1,19 @@
 describe AnnotationsController do
-
-  context 'An unauthenticated user' do
-    it 'on :add_existing_annotation' do
-      post :add_existing_annotation, params: { submission_file_id: 1 }
-      assert_response :redirect
-    end
-
-    it 'on :create' do
-      post :create, params: { id: 1 }
-      assert_response :redirect
-    end
-
-    it 'on :destroy' do
-      delete :destroy, params: { id: 1 }
-      assert_response :redirect
-    end
-
-    it 'on :update' do
-      put :update, params: { id: 1 }
-      assert_response :redirect
-    end
-  end
-
-  let(:result) { create(:result, marking_state: Result::MARKING_STATES[:incomplete]) }
-  let(:submission) { result.submission }
-  let(:assignment) { submission.assignment }
+  let(:reviewee) { create(:student) }
+  let(:reviewer) { create(:student) }
+  let(:assignment) { create(:assignment_with_peer_review) }
+  let(:grouping_one) { create(:grouping_with_inviter, assignment: assignment, inviter: reviewee) }
+  let(:submission) { create(:submission, grouping: grouping_one) }
+  let(:result) { create(:incomplete_result, submission: submission) }
+  let(:grouping_two) { create(:grouping_with_inviter, assignment: assignment.pr_assignment, inviter: reviewer) }
+  let!(:peer_review) { create(:peer_review, result: result, reviewer: grouping_two) }
   let(:submission_file) { create(:submission_file, submission: submission) }
   let(:image_submission_file) { create(:image_submission_file, submission: submission) }
   let(:pdf_submission_file) { create(:pdf_submission_file, submission: submission) }
   let(:annotation_category) { create(:annotation_category, assignment: assignment) }
   let(:annotation_text) { create(:annotation_text, annotation_category: annotation_category) }
 
-  shared_examples 'an authenticated admin or TA' do
-    describe '#add_existing_annotation' do
-      it 'successfully creates a text annotation' do
-        post_as user,
-                :add_existing_annotation,
-                params: { annotation_text_id: annotation_text.id, submission_file_id: submission_file.id, line_start: 1,
-                          line_end: 1, column_start: 1, column_end: 1, result_id: result.id },
-                format: :js
-
-        assert_response :success
-        expect(result.annotations.reload.size).to eq 1
-      end
-
-      it 'successfully creates an image annotation' do
-        post_as user,
-                :add_existing_annotation,
-                params: { annotation_text_id: annotation_text.id, submission_file_id: image_submission_file.id,
-                          x1: 0, x2: 1, y1: 0, y2: 1, result_id: result.id },
-                format: :js
-
-        assert_response :success
-        expect(result.annotations.reload.size).to eq 1
-      end
-
-      it 'successfully creates a PDF annotation' do
-        post_as user,
-                :add_existing_annotation,
-                params: { annotation_text_id: annotation_text.id, submission_file_id: pdf_submission_file.id,
-                          x1: 0, x2: 1, y1: 0, y2: 1, page: 1, result_id: result.id },
-                format: :js
-
-        assert_response :success
-        expect(result.annotations.reload.size).to eq 1
-      end
-    end
-
+  shared_examples 'An authorized user doing a POST' do
     describe '#new' do
       it 'renders the correct template' do
         get_as user,
@@ -253,9 +200,124 @@ describe AnnotationsController do
     end
   end
 
-  describe 'an authenticated admin' do
+  shared_examples 'An unauthorized user doing a POST' do
+    describe '#add_existing_annotation' do
+      it 'should respond with redirect' do
+        post_as user,
+                :add_existing_annotation,
+                params: { annotation_text_id: annotation_text.id, submission_file_id: submission_file.id, line_start: 1,
+                          line_end: 1, column_start: 1, column_end: 1, result_id: result.id },
+                format: :js
+
+        assert_response :redirect
+        expect(response.status).to eq(302)
+        expect(result.annotations.reload.size).to eq 0
+      end
+    end
+
+    describe '#create' do
+      it 'should respond with redirect' do
+        post_as user,
+                :create,
+                params: { content: annotation_text.content, category_id: annotation_category.id,
+                          submission_file_id: submission_file.id, line_start: 1, line_end: 1, column_start: 1,
+                          column_end: 1, result_id: result.id, assignment_id: assignment.id },
+                format: :js
+
+        assert_response :redirect
+        expect(response.status).to eq(302)
+        expect(result.annotations.reload.size).to eq 0
+      end
+    end
+
+    describe '#destroy' do
+      it 'should respond with redirect' do
+        anno = create(:text_annotation,
+                      annotation_text: annotation_text,
+                      submission_file: submission_file,
+                      result: result)
+        delete_as user,
+                  :destroy,
+                  params: { id: anno.id, submission_file_id: submission_file.id, assignment_id: assignment.id,
+                            result_id: result.id },
+                  format: :js
+
+        assert_response :redirect
+        expect(response.status).to eq(302)
+        expect(result.annotations.reload.size).to eq 1
+      end
+    end
+
+    describe '#edit' do
+      it 'renders the correct template' do
+        anno = create(:text_annotation, submission_file: submission_file, creator: user, result: result)
+        get_as user,
+               :edit,
+               params: { id: anno.id, result_id: result.id, assignment_id: assignment.id },
+               format: :js
+
+        assert_response :redirect
+        expect(response.status).to eq(302)
+        expect(response).not_to render_template('edit')
+      end
+    end
+
+    describe '#update' do
+      it 'should respond with redirect' do
+        anno = create(:text_annotation, submission_file: submission_file, creator: user, result: result)
+        put_as user,
+               :update,
+               params: { id: anno.id, assignment_id: assignment.id, submission_file_id: submission_file.id,
+                         result_id: result.id, content: 'new content' },
+               format: :js
+        assert_response :redirect
+        expect(response.status).to eq(302)
+        expect(anno.annotation_text.reload.content).to_not eq 'new content'
+      end
+    end
+  end
+
+  shared_examples 'An authorized user adding an existing annotation' do
+    describe '#add_existing_annotation' do
+      it 'successfully creates a text annotation' do
+        post_as user,
+                :add_existing_annotation,
+                params: { annotation_text_id: annotation_text.id, submission_file_id: submission_file.id, line_start: 1,
+                          line_end: 1, column_start: 1, column_end: 1, result_id: result.id },
+                format: :js
+
+        assert_response :success
+        expect(result.annotations.reload.size).to eq 1
+      end
+
+      it 'successfully creates an image annotation' do
+        post_as user,
+                :add_existing_annotation,
+                params: { annotation_text_id: annotation_text.id, submission_file_id: image_submission_file.id,
+                          x1: 0, x2: 1, y1: 0, y2: 1, result_id: result.id },
+                format: :js
+
+        assert_response :success
+        expect(result.annotations.reload.size).to eq 1
+      end
+
+      it 'successfully creates a PDF annotation' do
+        post_as user,
+                :add_existing_annotation,
+                params: { annotation_text_id: annotation_text.id, submission_file_id: pdf_submission_file.id,
+                          x1: 0, x2: 1, y1: 0, y2: 1, page: 1, result_id: result.id },
+                format: :js
+
+        assert_response :success
+        expect(result.annotations.reload.size).to eq 1
+      end
+    end
+  end
+
+  describe 'an authorized admin' do
     let!(:user) { create(:admin) }
-    include_examples 'an authenticated admin or TA'
+    include_examples 'An authorized user doing a POST'
+    include_examples 'An authorized user adding an existing annotation'
 
     describe 'accessing annotations for results in an assignment with deductive annotations' do
       let(:assignment) { create(:assignment_with_deductive_annotations) }
@@ -275,7 +337,7 @@ describe AnnotationsController do
       it 'cannot update deductive annotation content if that content has been applied to released results' do
         assignment.groupings.first.current_result.update(released_to_students: true)
         other_grouping = assignment.reload.groupings.joins(submissions: :results)
-                                   .where(results: { released_to_students: false }).first
+                             .where(results: { released_to_students: false }).first
         post_as user,
                 :update,
                 params: { content: 'New content!',
@@ -310,10 +372,7 @@ describe AnnotationsController do
     end
   end
 
-  describe 'an authenticated TA' do
-    let!(:user) { create(:ta) }
-    include_examples 'an authenticated admin or TA'
-
+  shared_examples 'When a grader trying to manage deductive annotations' do
     describe 'accessing annotations for results in an assignment with deductive annotations' do
       let(:assignment) { create(:assignment_with_deductive_annotations) }
       let(:result) { assignment.groupings.first.current_result }
@@ -411,71 +470,33 @@ describe AnnotationsController do
     end
   end
 
-  context 'An authenticated and authorized Student doing a POST' do
-    let(:user) { create(:student) }
-
-    describe '#add_existing_annotation' do
-      it 'returns a :not_found status code' do
-        post_as user,
-                :add_existing_annotation,
-                params: { annotation_text_id: annotation_text.id, submission_file_id: submission_file.id, line_start: 1,
-                          line_end: 1, column_start: 1, column_end: 1, result_id: result.id },
-                format: :js
-
-        assert_response :not_found
-        expect(result.annotations.reload.size).to eq 0
-      end
+  describe 'an authorized grader' do
+    let!(:user) { create(:ta) }
+    before do
+      create(:grader_permission, user_id: user.id, create_delete_annotations: true)
     end
+    include_examples 'An authorized user doing a POST'
+    include_examples 'An authorized user adding an existing annotation'
+    include_examples 'When a grader trying to manage deductive annotations'
+  end
 
-    describe '#create' do
-      it 'returns a :not_found status code' do
-        post_as user,
-                :create,
-                params: { content: annotation_text.content, category_id: annotation_category.id,
-                          submission_file_id: submission_file.id, line_start: 1, line_end: 1, column_start: 1,
-                          column_end: 1, result_id: result.id, assignment_id: assignment.id },
-                format: :js
-
-        assert_response :not_found
-        expect(result.annotations.reload.size).to eq 0
-      end
+  describe 'an unauthorized grader' do
+    let!(:user) { create(:ta) }
+    before do
+      create(:grader_permission, user_id: user.id, create_delete_annotations: false)
     end
+    include_examples 'An unauthorized user doing a POST'
+    include_examples 'An authorized user adding an existing annotation'
+    include_examples 'When a grader trying to manage deductive annotations'
+  end
 
-    describe '#destroy' do
-      it 'returns a :not_found status code' do
-        anno = create(
-          :text_annotation,
-          annotation_text: annotation_text,
-          submission_file: submission_file,
-          result: result
-        )
-        delete_as user,
-                  :destroy,
-                  params: { id: anno.id, submission_file_id: submission_file.id, assignment_id: assignment.id,
-                            result_id: result.id },
-                  format: :js
+  describe 'an unauthorized student' do
+    let!(:user) { create(:student) }
+    include_examples 'An unauthorized user doing a POST'
+  end
 
-        assert_response :not_found
-        expect(result.annotations.reload.size).to eq 1
-      end
-    end
-
-    describe '#update' do
-      it 'returns a :not_found status code' do
-        anno = create(
-          :text_annotation,
-          submission_file: submission_file,
-          creator: user,
-          result: result
-        )
-        put_as user,
-               :update,
-               params: { id: anno.id, assignment_id: assignment.id, submission_file_id: submission_file.id,
-                         result_id: result.id, content: 'new content' },
-               format: :js
-        assert_response :not_found
-        expect(anno.annotation_text.reload.content).to_not eq 'new content'
-      end
-    end
+  describe 'an authorized student' do
+    let!(:user) { reviewer }
+    include_examples 'An authorized user doing a POST'
   end
 end
