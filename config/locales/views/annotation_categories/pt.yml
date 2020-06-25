@@ -34,3 +34,4 @@ pt:
     no_annotations: "Existem anotações nessa categoria"
     none: "Ainda não há categorias de anotação."
     one_time_only: "Uma única vez"
+    unselected_criterion: 'UPDATE ME!'
