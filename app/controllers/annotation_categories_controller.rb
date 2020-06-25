@@ -204,6 +204,11 @@ class AnnotationCategoriesController < ApplicationController
     redirect_to assignment_annotation_categories_path(assignment_id: @assignment.id)
   end
 
+  def get_annotation_text_stats
+    annotation_stats = AnnotationText.find_by(id: params[:annotation_text_id]).get_stats
+    render json: annotation_stats
+  end
+
   private
 
   def annotation_category_params
@@ -217,13 +222,5 @@ class AnnotationCategoriesController < ApplicationController
 
   def flash_interpolation_options
     { errors: @annotation_category.errors.full_messages.join('; ') }
-  end
-
-  def get_annotation_text_stats
-    byebug
-    data = {
-        num_times_used: AnnotationText.find_by(id: params[:id]).annotations.count
-    }
-    render json: data
   end
 end

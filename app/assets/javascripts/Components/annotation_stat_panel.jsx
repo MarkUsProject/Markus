@@ -18,12 +18,9 @@ class AnnotationStatPanel extends React.Component {
 
   fetchData = () => {
     $.ajax({
-      url: Routes.get_annotation_text_stats_assignment_annotation_categories_path(
-        this.props.assignment_id,
-        this.props.annotation_category
-      ),
+      url: Routes.get_annotation_text_stats_assignment_annotation_categories_path(this.props.assignment_id),
       data: {
-        annotation_text_id: this.state.annotation_id
+        annotation_text_id: this.props.annotation_id
       },
       dataType: 'json'
     }).then(res => {
