@@ -150,7 +150,8 @@ export class AnnotationTable extends React.Component {
     if (this.props.detailed) {
       allColumns = allColumns.concat(this.detailedColumns);
     }
-    if (this.props.annotations.some(a => a.deduction !== null && a.deduction !== undefined)) {
+    if (this.props.annotations.some(a => a.deduction !== null && a.deduction !== undefined && a.deduction !== 0)) {
+      console.log(this.props.annotations)
       allColumns.push(this.deductionColumn);
     }
 
@@ -164,7 +165,7 @@ export class AnnotationTable extends React.Component {
           resizable
           defaultSorted={[
             {id: 'deduction', desc: true},
-            {id: 'filename', desc: true},
+            {id: 'filename'},
             {id: 'number'}
           ]}
         />
