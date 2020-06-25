@@ -8,18 +8,15 @@
   <script>
     toggleAnnotationStatPanel = (annotation_id) => {
       statsPanel = document.getElementById('annotation-text-' + annotation_id + '-stat-panel');
-      console.log(statsPanel.innerText === '')
       if (statsPanel.innerText === ''){
         window.annotationStatPanel = window.makeAnnotationStatPanel(
           statsPanel,
           {
             annotation_id: annotation_id,
-            assignment_id: <%= @assignment.id %>,
-            category_id: <%= @assignment.id %>
+            assignment_id: <%= @assignment.id %>
           }
         );
       } else {
-        console.log(window.annotationStatPanel)
         window.annotationStatPanel.remove_component(statsPanel);
       }
     }
