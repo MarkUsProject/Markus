@@ -1,4 +1,8 @@
 # Changelog
+
+## [v1.9.4]
+- Fixed bug where bonuses and deductions were not displayed properly (#4699)
+
 ## [v1.9.3]
 - Fixed inverse association bug with assignments (#4551)
 - Fixed bug preventing graders from downloading submission files from multiple students (#4658)
