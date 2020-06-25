@@ -520,7 +520,7 @@ class Assignment < Assessment
     members = groupings.joins(:accepted_students)
                        .pluck_to_hash(:id, 'users.user_name', 'users.first_name', 'users.last_name')
                        .group_by { |x| x[:id] }
-    groupings_with_results = groupings.includes(:submitted_remark, :extension, current_result: :marks)
+    groupings_with_results = groupings.includes(current_result: :marks).includes(:submitted_remark, :extension)
     result_ids = groupings_with_results.pluck('results.id').uniq.compact
     extra_marks_hash = Result.get_total_extra_marks(result_ids, max_mark: max_mark)
 
@@ -560,6 +560,7 @@ class Assignment < Assessment
       end
 
       criteria = result.nil? ? {} : result.mark_hash.select { |key, _| criteria_shown.include?(key) }
+      extra_mark = extra_marks_hash[result&.id]
       {
         group_name: group_name,
         section: section,
@@ -570,12 +571,12 @@ class Assignment < Assessment
                                      result&.marking_state,
                                      result&.released_to_students,
                                      g.collection_date),
-        final_grade: criteria.values.compact.sum,
+        final_grade: criteria.values.compact.sum + extra_mark || 0,
         criteria: criteria,
         max_mark: max_mark,
         result_id: result&.id,
         submission_id: result&.submission_id,
-        total_extra_marks: extra_marks_hash[result&.id]
+        total_extra_marks: extra_mark
       }
     end
 
@@ -1220,6 +1221,7 @@ class Assignment < Assessment
                       .transform_values { |arr| arr.map(&:second).compact.sum }
 
     max_mark = criteria.map(&:max_mark).compact.sum
+    extra_marks_hash = Result.get_total_extra_marks(result_ids, max_mark: max_mark)
 
     collection_dates = all_grouping_collection_dates
 
@@ -1248,8 +1250,9 @@ class Assignment < Assessment
       end
 
       if result_info['results.id'].present?
+        extra_mark = extra_marks_hash[result_info['results.id']] || 0
         base[:result_id] = result_info['results.id']
-        base[:final_grade] = total_marks[result_info['results.id']] || 0.0
+        base[:final_grade] = (total_marks[result_info['results.id']] || 0.0) + extra_mark
       end
 
       base[:members] = member_info.map { |h| h['users.user_name'] } unless member_info.nil?
