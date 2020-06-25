@@ -134,6 +134,21 @@ export class AnnotationTable extends React.Component {
         );
       }
     },
+    sortMethod: (a, b) => {
+      if (a === ''){
+        return 1;
+      }
+      if (b === ''){
+        return -1;
+      }
+      if (a > b) {
+        return 1;
+      }
+      if (a < b) {
+        return -1;
+      }
+      return 0;
+    },
     maxWidth: 120
   };
 
@@ -151,7 +166,6 @@ export class AnnotationTable extends React.Component {
       allColumns = allColumns.concat(this.detailedColumns);
     }
     if (this.props.annotations.some(a => a.deduction !== null && a.deduction !== undefined && a.deduction !== 0)) {
-      console.log(this.props.annotations)
       allColumns.push(this.deductionColumn);
     }
 
@@ -164,7 +178,7 @@ export class AnnotationTable extends React.Component {
           filterable
           resizable
           defaultSorted={[
-            {id: 'deduction', desc: true},
+            {id: 'deduction'},
             {id: 'filename'},
             {id: 'number'}
           ]}
@@ -173,3 +187,4 @@ export class AnnotationTable extends React.Component {
     );
   }
 }
+
