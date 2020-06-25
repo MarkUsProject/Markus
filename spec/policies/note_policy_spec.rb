@@ -6,7 +6,7 @@ describe NotePolicy do
     context 'Admin can manage, create, edit and update the notes' do
       it { is_expected.to pass :manage? }
       it { is_expected.to pass :modify? }
-      it { is_expected.to pass :create? }
+      it { is_expected.to pass :new_note? }
     end
   end
   describe 'When the user is TA' do
@@ -27,13 +27,13 @@ describe NotePolicy do
       before do
         create(:grader_permission, user_id: user.id, create_notes: true)
       end
-      it { is_expected.to pass :create? }
+      it { is_expected.to pass :new_note? }
     end
     context 'When TA is not allowed to create notes' do
       before do
         create(:grader_permission, user_id: user.id, create_notes: false)
       end
-      it { is_expected.not_to pass :create? }
+      it { is_expected.not_to pass :new_note? }
     end
   end
 end
