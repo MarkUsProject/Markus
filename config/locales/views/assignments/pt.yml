@@ -36,10 +36,14 @@ pt:
       past_due_date: "UPDATE ME"
       past_end_time: "UPDATE ME"
       before_start_instructions: "UPDATE ME %{duration_string}"
+      before_start_instructions_extension: "UPDATE ME %{duration_string} %{extension_string}"
       after_start_instructions: "UPDATE ME %{start_time} %{due_date}"
       full_duration_warning_html: "UPDATE ME"
       start_confirmation: "UPDATE ME"
       modal_current_duration: "UPDATE ME"
+      started_message: "UPDATE ME"
+      starter_code_prompt: "UPDATE ME"
+      time_until_due_warning: "UPDATE ME %{due_date}"
 
     # Miscellaneous
     average_annotations: "%{average_annotations} anotaciones por presentación marcada"

@@ -132,6 +132,8 @@ class SubmissionsController < ApplicationController
                     @assignment.submission_rule.class.human_attribute_name(:after_collection_message))
     elsif @assignment.grouping_past_due_date?(@grouping)
       flash_message(:warning, @assignment.submission_rule.overtime_message(@grouping))
+    elsif @assignment.is_timed
+      flash_message(:warning, I18n.t('assignments.timed.time_until_due_warning', due_date: I18n.l(@grouping.due_date)))
     end
 
     if !@grouping.is_valid?

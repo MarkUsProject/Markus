@@ -52,6 +52,10 @@ class AssignmentsController < ApplicationController
         @grouping = @current_user.accepted_grouping_for(@assignment.id)
       end
     end
+    if @assignment.is_timed && !@grouping.start_time.nil? && !@grouping.past_collection_date?
+      flash_message(:note, I18n.t('assignments.timed.started_message'))
+      flash_message(:note, I18n.t('assignments.timed.starter_code_prompt'))
+    end
     set_repo_vars(@assignment, @grouping) unless @grouping.nil?
     render layout: 'assignment_content'
   end

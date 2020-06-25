@@ -100,6 +100,7 @@ namespace :db do
       description: 'Timed Assignment',
       message: 'A timed assignment',
       due_date: 2.months.from_now,
+      is_hidden: false,
       assignment_properties_attributes: {
         group_min: 1,
         group_max: 1,
