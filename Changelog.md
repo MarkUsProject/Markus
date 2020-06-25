@@ -3,19 +3,21 @@
 - Issue #3670: Added API for adding and removing extra marks (#4499)
 - Restrict confirmation dialog for annotation editing to annotations that belong to annotation categories (#4540)
 - Fixed sorting in annotation table in results view (#4542)
-- Fixed inverse association bug with assignments (#4551)
 - Enabled customization of rubric criterion level number and marks (#4535)
 - Introduces automated email sending for submissions releases (#4432)
 - Introduces automated email sending for spreadsheet releases (#4460)
 - Introduces automated email sending for grouping invitations (#4470)
 - Introduces student email settings (#4578)
-- Fixed bug preventing graders from downloading submission files from multiple students (#4658)
-- Fixed bug preventing downloading all submission files from git repo (#4658)
 - Assignment grader distribution graphs only show marks for assigned criteria when graders are assigned specific
   criteria (#4656) 
 - Fixed bug preventing graders from creating new notes in results view (#4668)
 - Fixed bug preventing new tags from being created from results view (#4669)
 - Remove deprecated "detailed CSV" download link from submissions/browse (#4675)
+
+## [v1.9.3]
+- Fixed inverse association bug with assignments (#4551)
+- Fixed bug preventing graders from downloading submission files from multiple students (#4658)
+- Fixed bug preventing downloading all submission files from git repo (#4658)
 
 ## [v1.9.2]
 - Fixed bug preventing all git hooks from being run in production (#4594)
