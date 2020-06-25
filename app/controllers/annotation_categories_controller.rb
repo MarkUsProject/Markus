@@ -220,6 +220,7 @@ class AnnotationCategoriesController < ApplicationController
   end
 
   def get_annotation_text_stats
+    byebug
     data = {
         num_times_used: AnnotationText.find_by(id: params[:id]).annotations.count
     }
