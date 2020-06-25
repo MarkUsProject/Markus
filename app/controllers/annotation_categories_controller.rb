@@ -218,4 +218,11 @@ class AnnotationCategoriesController < ApplicationController
   def flash_interpolation_options
     { errors: @annotation_category.errors.full_messages.join('; ') }
   end
+
+  def get_annotation_text_stats
+    data = {
+        num_times_used: AnnotationText.find_by(id: params[:id]).annotations.count
+    }
+    render json: data
+  end
 end
