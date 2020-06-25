@@ -163,7 +163,8 @@ export class AnnotationTable extends React.Component {
           filterable
           resizable
           defaultSorted={[
-            {id: 'filename'},
+            {id: 'deduction', desc: true},
+            {id: 'filename', desc: true},
             {id: 'number'}
           ]}
         />
