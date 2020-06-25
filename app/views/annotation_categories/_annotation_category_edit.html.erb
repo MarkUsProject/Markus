@@ -28,7 +28,7 @@
                                                    .where(assignment: annotation_category.assignment, ta_visible: true),
                                 :id,
                                 :name,
-                                { include_blank: true },
+                                { include_blank: t('annotation_categories.unselected_criterion') },
                                 { disabled: released } %>
       </div>
 

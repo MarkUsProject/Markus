@@ -34,3 +34,4 @@ en:
     no_annotations: "There are no annotations in this category"
     none: "There are no annotation categories yet."
     one_time_only: "One Time Only"
+    unselected_criterion: '(None)'
