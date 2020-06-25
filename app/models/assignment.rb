@@ -575,7 +575,7 @@ class Assignment < Assessment
                                      result&.marking_state,
                                      result&.released_to_students,
                                      g.collection_date),
-        final_grade: criteria.values.compact.sum + extra_mark || 0,
+        final_grade: criteria.values.compact.sum + (extra_mark || 0),
         criteria: criteria,
         max_mark: max_mark,
         result_id: result&.id,
