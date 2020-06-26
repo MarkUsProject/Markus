@@ -4,9 +4,7 @@ describe AssignmentPolicy do
   describe '#run_tests?' do
     subject { described_class.new(assignment, user: user) }
 
-    context 'when the user is an admin' do
-      let(:user) { build(:admin) }
-
+    shared_examples 'An authorized user running tests' do
       context 'if enable_test is false' do
         let(:assignment) { build(:assignment) }
         it { is_expected.not_to pass :run_tests?, because_of: :enabled? }
@@ -26,14 +24,26 @@ describe AssignmentPolicy do
       end
     end
 
-    context 'when the user is a TA' do
-      let(:user) { build(:ta) }
-      let(:assignment) { build(:assignment) }
-      it { is_expected.not_to pass :run_tests?, because_of: :not_a_ta? }
+    context 'when the user is a grader and allowed to run tests' do
+      let!(:user) { create(:ta) }
+      let!(:grader_permission) { create(:grader_permission, user_id: user.id, run_tests: true) }
+      include_examples 'An authorized user running tests'
+    end
+
+    context 'When the user is admin' do
+      let!(:user) { build(:admin) }
+      include_examples 'An authorized user running tests'
+    end
+
+    context 'When the user is TA and not allowed to run tests' do
+      let(:user) { create(:ta) }
+      let(:assignment) { create(:assignment_for_tests) }
+      let!(:grader_permission) { create(:grader_permission, user_id: user.id, run_tests: false) }
+      it { is_expected.not_to pass :run_tests?, because_of: :can_run_tests? }
     end
 
     context 'when the user is a student' do
-      let(:user) { build(:student) }
+      let(:user) { create(:student) }
 
       context 'if enable_test is false' do
         let(:assignment) { build(:assignment) }
