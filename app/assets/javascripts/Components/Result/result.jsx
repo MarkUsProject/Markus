@@ -470,8 +470,8 @@ class Result extends React.Component {
     });
   };
 
-  findDeductiveAnnotation = (file, submission_file_id, focus_line) => {
-    this.leftPane.current.selectFile(file, submission_file_id, focus_line);
+  findDeductiveAnnotation = (file, submission_file_id, focus_line, annotation_id) => {
+    this.leftPane.current.selectFile(file, submission_file_id, focus_line, annotation_id);
   };
 
   /* Callbacks for SubmissionSelector */

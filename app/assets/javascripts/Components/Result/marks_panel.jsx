@@ -244,7 +244,8 @@ class FlexibleCriterionInput extends React.Component {
                     this.props.findDeductiveAnnotation(
                     full_path,
                     a.submission_file_id,
-                    a.line_start)}>
+                    a.line_start,
+                    a.id)}>
                  {'-' + a.deduction + ' '}
                </a>;
       }

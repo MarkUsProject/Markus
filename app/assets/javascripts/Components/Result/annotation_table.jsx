@@ -54,7 +54,8 @@ export class AnnotationTable extends React.Component {
               this.props.selectFile(
                 full_path,
                 row.original.submission_file_id,
-                row.original.line_start)}>
+                row.original.line_start,
+                row.original.id)}>
               {name}
           </a>
         );
