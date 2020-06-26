@@ -33,15 +33,6 @@ export class ImageViewer extends React.Component {
     );
   };
 
-  componentWillUnmount() {
-    let box = document.getElementById('sel_box');
-    if (box) {
-      box.style.display = 'none';
-      box.style.width   = '0';
-      box.style.height  = '0';
-    }
-  }
-
   display_annotation = (annotation) => {
     add_annotation_text(annotation.annotation_text_id, annotation.content);
     annotation_manager.add_to_grid({
@@ -56,6 +47,7 @@ export class ImageViewer extends React.Component {
   render() {
     return (
       <div id='image_container'>
+        <div key='sel_box' id='sel_box' className='annotation-holder-active' style={{display: 'none'}}/>
         <img id='image_preview'
           src={this.props.url}
           alt={I18n.t('results.cant_display_image')} />
