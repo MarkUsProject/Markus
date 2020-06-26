@@ -1007,7 +1007,7 @@ describe Grouping do
       context 'with an extension' do
         let!(:extension) { create :extension, grouping: grouping, time_delta: 1.hour }
         it 'should include the extension' do
-          expect(grouping.reload.duration).to eq(assignment.duration + extension.time_delta + extension.time_delta)
+          expect(grouping.reload.duration).to eq(assignment.duration + extension.time_delta + period.hours.hours)
         end
       end
     end
