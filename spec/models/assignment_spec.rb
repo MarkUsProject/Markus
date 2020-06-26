@@ -307,7 +307,7 @@ describe Assignment do
           end
 
           it 'raises an exception' do
-            expect { @assignment.add_group(@group_name) }.to raise_error
+            expect { @assignment.add_group(@group_name) }.to raise_error(RuntimeError)
           end
         end
 
@@ -1120,7 +1120,6 @@ describe Assignment do
           @section_due_date = SectionDueDate.create(section: create(:section),
                                                     assignment: @assignment,
                                                     due_date: 1.days.ago)
-          puts @section_due_date.inspect
         end
 
         it 'returns false' do
