@@ -21,7 +21,6 @@ class AnnotationStatPanel extends React.Component {
     {
       Header: 'Applier',
       accessor: 'applier',
-      id: 'applier',
       maxWidth: 50,
       resizeable: false,
       Cell: row => {
@@ -35,7 +34,19 @@ class AnnotationStatPanel extends React.Component {
     {
       Header: 'Grouping_name',
       accessor: 'grouping_name',
-      id: 'submission',
+      aggregate: (vals, pivots) => {
+        console.log('vals')
+        console.log(vals)
+        console.log('pivots')
+        console.log(pivots)
+        return pivots[0].original.grouping_name + '...'
+      },
+      sortable: false,
+      Aggregated: row => (
+        <span>
+          {row.value}
+        </span>
+      ),
       Cell: row => {
         return (
           <div>
@@ -67,6 +78,7 @@ class AnnotationStatPanel extends React.Component {
         data={this.state.applications}
         columns={this.columns}
         filterable
+        pivotBy={['applier']}
       />
     </fieldset>);
   }
