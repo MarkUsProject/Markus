@@ -19,42 +19,51 @@ class AnnotationStatPanel extends React.Component {
 
   columns = [
     {
-      Header: 'Applier',
-      accessor: 'applier',
-      maxWidth: 50,
+      Header: I18n.t('annotations.used_by'),
+      accessor: row => row['users.first_name'] + ' ' + row['users.last_name'],
+      id: 'user',
+      minWidth: 200,
+      maxWidth: 200,
       resizeable: false,
+      PivotValue: ({ value }) =>
+        <span>
+          {value}
+        </span>,
       Cell: row => {
         return (
           <div>
-            {row.original.applier}
+            {row.original['users.first_name'] + ' ' + row.original['users.last_name']}
           </div>
         );
       }
     },
     {
-      Header: 'Grouping_name',
-      accessor: 'grouping_name',
+      Header: I18n.t('activerecord.models.submission.one'),
+      accessor: 'groups.group_name',
       aggregate: (vals, pivots) => {
-        console.log('vals')
-        console.log(vals)
-        console.log('pivots')
-        console.log(pivots)
-        return pivots[0].original.grouping_name + '...'
+        return pivots.length
       },
       sortable: false,
       Aggregated: row => (
         <span>
-          {row.value}
+          {'(' + row.value + ')'}
         </span>
       ),
       Cell: row => {
         return (
           <div>
-            {row.original.grouping_name}
+            <a href={Routes.edit_assignment_submission_result_path(
+              row.original['groupings.assessment_id'],
+              row.original['results.submission_id'],
+              row.original['results.id']
+            )}
+            >
+              {row.original['groups.group_name']}
+            </a>
           </div>
         );
       },
-      maxWidth: 150,
+      maxWidth: 200,
     }
   ];
 
@@ -72,13 +81,13 @@ class AnnotationStatPanel extends React.Component {
 
   render() {
     return (<fieldset>
-      <p>{JSON.stringify(this.state)}</p>
+      <p>{I18n.t('annotations.count') + this.state.num_times_used}</p>
       <ReactTable
         className='auto-overflow'
         data={this.state.applications}
         columns={this.columns}
         filterable
-        pivotBy={['applier']}
+        pivotBy={['user']}
       />
     </fieldset>);
   }

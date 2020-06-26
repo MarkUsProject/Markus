@@ -16,32 +16,18 @@ class AnnotationText < ApplicationRecord
   end
 
   def get_stats
-    applications = []
-    self.annotations.each do |instance|
-      instance_info = {
-        applier: User.find_by(id: instance.creator_id).user_name,
-        grouping_name: get_grouping_name(instance.result.grouping.id),
-        link: 'text link'
-      }
-      # url_for(Rails.application.routes.url_helpers.edit_assignment_submission_result_path(
-      #     instance.result.grouping.assignment.id,
-      #     instance.result.submission_id,
-      #     instance.result.id)
-      # )
-      applications << instance_info
-    end
+    applications = self.annotations.joins(result: { grouping: :group })
+                       .joins('INNER JOIN users ON annotations.creator_id = users.id')
+                       .pluck_to_hash('results.id',
+                                      'groupings.assessment_id',
+                                      'results.submission_id',
+                                      'groups.group_name',
+                                      'users.first_name',
+                                      'users.last_name')
     stats = {
       num_times_used: self.annotations.count,
       uses: applications
     }
     stats
-  end
-  def get_grouping_name(grouping_id)
-    grouping = Grouping.find_by(id: grouping_id)
-    name = ''
-    grouping.accepted_students.each do |member|
-      name += member.user_name + ', '
-    end
-    name[0...-2]
   end
 end
