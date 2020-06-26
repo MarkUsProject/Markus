@@ -14,6 +14,7 @@
 - Fixed bug preventing new tags from being created from results view (#4669)
 - Remove deprecated "detailed CSV" download link from submissions/browse (#4675)
 - Fixed bug where bonuses and deductions were not displayed properly (#4699)
+- Fixed bug where image annotations did not stay fixed relative to the image (#4706)
 
 ## [v1.9.3]
 - Fixed inverse association bug with assignments (#4551)
