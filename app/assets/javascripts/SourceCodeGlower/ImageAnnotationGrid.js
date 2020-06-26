@@ -57,10 +57,10 @@ ImageAnnotationGrid.prototype.draw_holders = function() {
   var image_container = document.getElementById('image_container');
   var codeviewer      = document.getElementById('codeviewer');
 
-  var top_edge    = image_preview.offsetTop + codeviewer.scrollTop;
-  var left_edge   = image_preview.offsetLeft + image_container.scrollLeft;
-  var right_edge  = image_preview.offsetLeft + image_container.scrollLeft + codeviewer.offsetWidth;
-  var bottom_edge = image_preview.offsetTop + codeviewer.scrollTop + codeviewer.offsetHeight;
+  var top_edge    = 0;
+  var left_edge   = 0;
+  var right_edge  = image_preview.width;
+  var bottom_edge = image_preview.height;
 
   for (var i = 0; i < annot_grid.length; i++) {
     var grid_element = annot_grid[i];

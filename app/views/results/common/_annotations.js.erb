@@ -181,12 +181,8 @@
 
   function get_selection_box_coordinates() {
     var box = document.getElementById('sel_box');
-    var x1 = parseInt(box.style.left, 10) -
-               document.getElementById('image_preview').offsetLeft +
-               document.getElementById('image_container').scrollLeft;
-    var y1 = parseInt(box.style.top, 10) -
-               document.getElementById('image_preview').offsetTop +
-               document.getElementById('codeviewer').scrollTop;
+    var x1 = parseInt(box.style.left, 10);
+    var y1 = parseInt(box.style.top, 10);
     var x2 = x1 + parseInt(box.style.width, 10);
     var y2 = y1 + parseInt(box.style.height, 10);
 

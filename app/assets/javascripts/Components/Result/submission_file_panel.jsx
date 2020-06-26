@@ -127,7 +127,6 @@ export class SubmissionFilePanel extends React.Component {
       visibleAnnotations = this.props.annotations.filter(a => a.submission_file_id === submission_file_id);
     }
     return [
-        <div key='sel_box' id='sel_box'/>,
         <div key='annotation_menu' id='annotation_menu'>
           <FileSelector
             fileData={this.props.fileData}

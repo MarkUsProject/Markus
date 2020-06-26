@@ -108,6 +108,10 @@
   white-space: normal !important;
 }
 
+#image_container {
+  position: relative;
+}
+
 .remove-icon::before {
   content: asset_url('icons/cross.png');
   padding-right: 5px;

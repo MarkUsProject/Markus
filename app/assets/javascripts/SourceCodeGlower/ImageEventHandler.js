@@ -45,7 +45,7 @@ ImageEventHandler.prototype.get_annotation_grid = function() {
   return this.annotation_grid;
 }
 
-// Get the coordinates of the mouse pointer relative to page
+// Get the coordinates of the mouse pointer relative to image container
 // and return them in an array of the form [x, y].
 // Taken from http://www.quirksmode.org/js/events_properties.html#positions
 ImageEventHandler.prototype.get_absolute_cursor_pos = function(e) {
@@ -63,6 +63,10 @@ ImageEventHandler.prototype.get_absolute_cursor_pos = function(e) {
     posy = e.clientY + document.body.scrollTop
             + document.documentElement.scrollTop;
   }
+  let image_container = document.getElementById('image_container');
+  let codeviewer = document.getElementById('codeviewer');
+  posx -= image_container.offsetLeft - codeviewer.scrollLeft;
+  posy -= image_container.offsetTop - codeviewer.scrollTop;
 
   return [posx, posy];
 }
@@ -167,14 +171,7 @@ ImageEventHandler.prototype.check_for_annotations = function(e) {
     return;
   }
 
-  var abs_xy = this.get_absolute_cursor_pos(e);
-
-  // X/Y coords relative to the image
-  var image_preview   = document.getElementById('image_preview');
-  var image_container = document.getElementById('image_container');
-  var codeviewer = document.getElementById('codeviewer');
-  var xy_coords = [abs_xy[0] - image_preview.offsetLeft + image_container.scrollLeft,
-                   abs_xy[1] - image_preview.offsetTop + codeviewer.scrollTop];
+  var xy_coords = this.get_absolute_cursor_pos(e);
   var annot_grid = this.get_annotation_grid();
   var annots_to_display = [];
 
@@ -190,7 +187,11 @@ ImageEventHandler.prototype.check_for_annotations = function(e) {
   }
 
   if (annots_to_display.length > 0) {
-    annotation_manager.display_image_annotation(annots_to_display, abs_xy[0], abs_xy[1]);
+    let image_container = document.getElementById('image_container');
+    let codeviewer = document.getElementById('codeviewer');
+    xy_coords[0] += image_container.offsetLeft - codeviewer.scrollLeft;
+    xy_coords[1] += image_container.offsetTop - codeviewer.scrollTop;
+    annotation_manager.display_image_annotation(annots_to_display, xy_coords[0], xy_coords[1]);
   } else {
     // No annotation found
     hide_image_annotations();
