@@ -470,6 +470,10 @@ class Result extends React.Component {
     });
   };
 
+  findDeductiveAnnotation = (file, submission_file_id, focus_line) => {
+    this.leftPane.current.selectFile(file, submission_file_id, focus_line);
+  };
+
   /* Callbacks for SubmissionSelector */
   toggleMarkingState = () => {
     $.ajax({
@@ -583,6 +587,7 @@ class Result extends React.Component {
                 addTag={this.addTag}
                 removeTag={this.removeTag}
                 newNote={this.newNote}
+                findDeductiveAnnotation={this.findDeductiveAnnotation}
               />
             </div>
           </div>
