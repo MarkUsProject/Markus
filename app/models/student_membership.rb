@@ -74,8 +74,9 @@ class StudentMembership < Membership
   def one_accepted_per_assignment
     return unless user.try(:student?)
 
-    all_groupings = user.accepted_groupings.where('groupings.assessment_id': grouping.assessment_id)
-    all_memberships = StudentMembership.accepted_or_inviter.where(grouping_id: all_groupings.ids)
+    all_memberships = user.accepted_memberships
+                          .joins(:grouping)
+                          .where('groupings.assessment_id': grouping.assessment_id)
     return if all_memberships.empty? || all_memberships.find_by(id: self.id)
 
     errors.add(:base, I18n.t('csv.memberships_not_unique'))
