@@ -96,6 +96,7 @@ export class MarksPanel extends React.Component {
       toggleExpanded: () => this.toggleExpanded(key),
       annotations: this.props.annotations,
       revertToAutomaticDeductions: this.props.revertToAutomaticDeductions,
+      findDeductiveAnnotation: this.props.findDeductiveAnnotation,
       ... markData
     };
     if (markData.criterion_type === 'CheckboxCriterion') {
@@ -232,15 +233,23 @@ class FlexibleCriterionInput extends React.Component {
   }
 
   listDeductions = () => {
-    let deductions = '';
+    let hyperlinkedDeductions = '';
     let label = I18n.t('annotations.list_deductions');
-    this.props.annotations.map( a => {
+    hyperlinkedDeductions = this.props.annotations.map( a => {
       if (a.criterion_id !== undefined && a.criterion_id !== null &&
           a.deduction !== 0.0 && a.criterion_id === this.props.id) {
-        deductions += '-' + a.deduction + ', ';
+        let full_path = a.path ? a.path + '/' + a.filename : a.filename;
+        return <a href="javascript:void(0)"
+                  onClick={() =>
+                    this.props.findDeductiveAnnotation(
+                    full_path,
+                    a.submission_file_id,
+                    a.line_start)}>
+                 {'-' + a.deduction + ' '}
+               </a>;
       }
     });
-    if (deductions.length < 1) {
+    if (hyperlinkedDeductions === '') {
       return <span></span>;
     }
 
@@ -254,7 +263,7 @@ class FlexibleCriterionInput extends React.Component {
           {label}
         </span>
         <span className={'text-deduction'}>
-          {deductions.substring(0, deductions.length - 2)}
+          {hyperlinkedDeductions}
         </span>
       </div>);
   }
