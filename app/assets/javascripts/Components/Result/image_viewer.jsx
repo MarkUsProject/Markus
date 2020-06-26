@@ -7,19 +7,16 @@ export class ImageViewer extends React.Component {
     super();
   }
 
-  componentDidMount() {
-    if (this.props.url) {
-      this.ready_annotations();
-      this.props.annotations.forEach(this.display_annotation);
-    }
+  componentDidUpdate(prevProps, prevState) {
+    this.display_annotations();
   }
 
-  componentDidUpdate(prevProps, prevState) {
+  display_annotations = () => {
     if (this.props.url) {
       this.ready_annotations();
       this.props.annotations.forEach(this.display_annotation);
     }
-  }
+  };
 
   ready_annotations = () => {
     window.annotation_type = ANNOTATION_TYPES.IMAGE;
@@ -50,6 +47,7 @@ export class ImageViewer extends React.Component {
         <div key='sel_box' id='sel_box' className='annotation-holder-active' style={{display: 'none'}}/>
         <img id='image_preview'
           src={this.props.url}
+          onLoad={this.display_annotations}
           alt={I18n.t('results.cant_display_image')} />
       </div>
     );
