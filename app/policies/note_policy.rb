@@ -1,7 +1,7 @@
 class NotePolicy < ApplicationPolicy
   default_rule :manage?
   alias_rule :edit?, :update?, to: :modify?
-  alias_rule :new?, :create, to: :new_note?
+  alias_rule :new?, :create?, to: :new_note?
 
   def manage?
     user.ta? || user.admin?
