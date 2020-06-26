@@ -1,10 +1,11 @@
 en:
   annotations:
+    count: 'Number of times used: '
     help_message: "Click on an annotation category to add annotations."
     last_edited_by: "Last Edited By:"
     text: "Text"
+    usage: 'Show Annotation Usage'
     used_by: 'Used By'
-    count: 'Number of times used: '
 
     download_submission_file:
       begin_annotation: "%{comment_start} ANNOTATION %{id}: %{text} %{comment_end}"
