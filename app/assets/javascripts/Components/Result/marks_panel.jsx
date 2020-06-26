@@ -233,24 +233,25 @@ class FlexibleCriterionInput extends React.Component {
   }
 
   listDeductions = () => {
-    let hyperlinkedDeductions = '';
     let label = I18n.t('annotations.list_deductions');
-    hyperlinkedDeductions = this.props.annotations.map( a => {
-      if (a.criterion_id !== undefined && a.criterion_id !== null &&
-          a.deduction !== 0.0 && a.criterion_id === this.props.id) {
-        let full_path = a.path ? a.path + '/' + a.filename : a.filename;
-        return <a href="javascript:void(0)"
-                  onClick={() =>
-                    this.props.findDeductiveAnnotation(
-                    full_path,
-                    a.submission_file_id,
-                    a.line_start,
-                    a.id)}>
-                 {'-' + a.deduction + ' '}
-               </a>;
-      }
+    let deductiveAnnotations = this.props.annotations.filter( a => {
+      return a.criterion_id !== undefined && a.criterion_id !== null &&
+        a.deduction !== 0.0 && a.criterion_id === this.props.id;
     });
-    if (hyperlinkedDeductions === '') {
+
+    let hyperlinkedDeductions = deductiveAnnotations.map( a => {
+      let full_path = a.path ? a.path + '/' + a.filename : a.filename;
+      return <a onClick={() =>
+                  this.props.findDeductiveAnnotation(
+                  full_path,
+                  a.submission_file_id,
+                  a.line_start,
+                  a.id)}>
+               {'-' + a.deduction}
+             </a>;
+    });
+    console.log(hyperlinkedDeductions === [])
+    if (hyperlinkedDeductions === []) {
       return <span></span>;
     }
 

@@ -12,7 +12,8 @@ export class SubmissionFilePanel extends React.Component {
     super(props);
     this.state = {
       selectedFile: null,
-      focusLine: null
+      focusLine: null,
+      annotationFocus: undefined
     };
     this.submissionFileViewer = React.createRef();
   }
