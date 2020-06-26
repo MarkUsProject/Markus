@@ -31,12 +31,12 @@
         <%= annotation_text.last_editor.user_name %>
       <% end %>
     </div>
-    <div id='annotation-text-<%= annotation_text.id %>-stat-reveal'>
+    <p>
       <%= link_to 'Show Annotation Statistics',
                   'javascript:void(0);',
                   onclick:"toggleAnnotationStatPanel(#{annotation_text.id});",
                   class: 'button' %>
-    </div>
+    </p>
     <div id='annotation-text-<%= annotation_text.id %>-stat-panel'></div>
   </div>
 
