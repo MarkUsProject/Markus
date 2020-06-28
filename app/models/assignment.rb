@@ -495,7 +495,7 @@ class Assignment < Assessment
       if self.assign_graders_to_criteria
         assigned_criteria = user.criterion_ta_associations
                                 .where(assessment_id: self.id)
-                                .pluck(:criterion_type, :criterion_id)
+                                .pluck(:criterion_id)
                                 .map { |t, id| "#{t}-#{id}" }
       else
         assigned_criteria = nil
@@ -769,7 +769,7 @@ class Assignment < Assessment
         ta = Ta.find(ta_id)
         num_assigned_criteria = ta.criterion_ta_associations.where(assignment: self).count
         marked = ta.criterion_ta_associations
-                   .joins('INNER JOIN marks m ON marks.criterion_id = m.criterion_id')
+                   .joins('INNER JOIN marks m ON criterion_ta_associations.criterion_id = m.criterion_id')
                    .where('m.mark IS NOT NULL AND assessment_id = ?', self.id)
                    .group('m.result_id')
                    .count
@@ -1177,7 +1177,7 @@ class Assignment < Assessment
     if current_user.ta? && hide_unassigned_criteria
       assigned_criteria = current_user.criterion_ta_associations
                                       .where(assignment_id: self.id)
-                                      .pluck(:criterion_type, :criterion_id)
+                                      .pluck(:criterion_id)
                                       .map { |t, id| "#{t}-#{id}" }
     else
       assigned_criteria = nil

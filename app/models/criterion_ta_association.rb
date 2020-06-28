@@ -34,7 +34,6 @@ class CriterionTaAssociation < ApplicationRecord
         ta_id = Ta.find_by(user_name: user_name).id
         new_ta_mappings << {
           criterion_id: criterion.id,
-          criterion_type: criterion.class,
           ta_id: ta_id,
           assessment_id: assignment.id
         }
