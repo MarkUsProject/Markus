@@ -48,12 +48,11 @@ module AutomatedTestsHelper
         display_output = extra_data_specs['display_output'] || TestGroup.display_outputs.keys.first
         test_group_name = extra_data_specs['name'] || TestGroup.model_name.human
         criterion_id = nil
-        criterion_type = nil
         if !extra_data_specs['criterion'].nil? && extra_data_specs['criterion'].include?('_')
-          criterion_id, criterion_type = extra_data_specs['criterion'].split('_') # polymorphic field
+          criterion_id = extra_data_specs['criterion'].split('_')
         end
         fields = { assignment: assignment, name: test_group_name, display_output: display_output,
-                   criterion_id: criterion_id, criterion_type: criterion_type }
+                   criterion_id: criterion_id }
         if test_group_id.nil?
           test_group = TestGroup.create!(fields)
           test_group_id = test_group.id
