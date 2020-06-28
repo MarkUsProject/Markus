@@ -582,7 +582,7 @@ describe ResultsController do
       end
 
       it 'should include assigned criteria list' do
-        expect(data['assigned_criteria']).to eq ["#{rubric_criterion.class}-#{rubric_criterion.id}"]
+        expect(data['assigned_criteria']).to eq ["#{rubric_criterion.id}"]
       end
 
       context 'when unassigned criteria are hidden from the grader' do
@@ -592,6 +592,7 @@ describe ResultsController do
 
         it 'should only include marks for the assigned criteria' do
           expected = [[rubric_criterion.class.to_s, rubric_criterion.id]]
+          byebug
           expect(data['marks'].map { |m| [m['criterion_type'], m['id']] }).to eq expected
         end
 
