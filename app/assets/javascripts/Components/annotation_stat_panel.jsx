@@ -6,43 +6,38 @@ import ReactDOM from 'react-dom';
 class AnnotationStatPanel extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {}
+    this.state = {
+      applications: null,
+      details: false
+    }
   }
 
-  componentDidMount() {
-    this.fetchData();
-  }
-
-  remove_component = (panel) => {
-    ReactDOM.unmountComponentAtNode(panel);
+  toggle = () => {
+    if (this.state.applications === null) {
+      this.fetchData()
+    }
+    this.setState({details: !this.state.details})
   }
 
   columns = [
     {
       Header: I18n.t('annotations.used_by'),
-      accessor: row => row['users.first_name'] + ' ' + row['users.last_name'],
+      accessor: row => row['users.first_name'],
       id: 'user',
       minWidth: 200,
       maxWidth: 200,
       resizeable: false,
-      PivotValue: ({ value }) =>
-        <span>
-          {value}
-        </span>,
+      PivotValue: ({value}) => value,
       Cell: row => {
-        return (
-          <div>
-            {row.original['users.first_name'] + ' ' + row.original['users.last_name']}
-          </div>
-        );
+        return '(' + row.original['users.first_name'] + ') ' + row.original['users.first_name'] +
+          ' ' + row.original['users.last_name'];
       }
     },
     {
       Header: I18n.t('activerecord.models.submission.one'),
-      accessor: 'groups.group_name',
-      aggregate: (vals, pivots) => {
-        return pivots.length
-      },
+      accessor: row => row['groups.group_name'],
+      id: 'group',
+      aggregate: (vals, pivots) => I18n.t('annotations.used_times', {'number': pivots.length}),
       sortable: false,
       Aggregated: row => (
         <span>
@@ -69,7 +64,7 @@ class AnnotationStatPanel extends React.Component {
 
   fetchData = () => {
     $.ajax({
-      url: Routes.get_annotation_text_stats_assignment_annotation_categories_path(this.props.assignment_id),
+      url: Routes.annotation_text_stats_assignment_annotation_categories_path(this.props.assignment_id),
       data: {
         annotation_text_id: this.props.annotation_id
       },
@@ -80,16 +75,24 @@ class AnnotationStatPanel extends React.Component {
   };
 
   render() {
-    return (<fieldset>
-      <p>{I18n.t('annotations.count') + this.state.num_times_used}</p>
+
+    let annotation_table =  (
       <ReactTable
         className='auto-overflow'
         data={this.state.applications}
         columns={this.columns}
         filterable
         pivotBy={['user']}
-      />
-    </fieldset>);
+      />);
+
+    if (this.state.details) {
+      return (<fieldset>
+        <a onclick={this.toggle()}>{I18n.t('annotations.count') + this.state.num_times_used}</a>
+        {annotation_table}
+      </fieldset>);
+    } else {
+      return <a onClick={this.toggle()}>{I18n.t('annotations.count') + this.state.num_times_used}</a>;
+    }
   }
 }
 
