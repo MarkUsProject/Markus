@@ -5,6 +5,7 @@ es:
     last_edited_by: "Editado por última vez por:"
     usage: 'UPDATE ME!'
     used_by: 'UPDATE ME!'
+    used_times: 'UPDATE ME!'
 
     download_submission_file:
       begin_annotation: "%{comment_start} ANOTACIÓN %{id}: %{text} %{comment_end}"
