@@ -15,7 +15,8 @@ class AnnotationText < ApplicationRecord
            .gsub(/\r?\n/, '\\n')
   end
 
-  def get_stats
+  def stats
+    # TODO: simplify second join once creator is no longer polymoprhic
     applications = self.annotations.joins(result: { grouping: :group })
                        .joins('INNER JOIN users ON annotations.creator_id = users.id')
                        .pluck_to_hash('results.id',
@@ -23,7 +24,8 @@ class AnnotationText < ApplicationRecord
                                       'results.submission_id',
                                       'groups.group_name',
                                       'users.first_name',
-                                      'users.last_name')
+                                      'users.last_name',
+                                      'users.user_name')
     stats = {
       num_times_used: self.annotations.count,
       uses: applications
