@@ -160,7 +160,7 @@ class GradersController < ApplicationController
 
         criterion_ids_types.each do |id, type|
           criterion_associations.concat(@assignment.criterion_ta_associations
-                                                   .where(criterion_id: id, criterion_type: type, ta_id: grader_ids)
+                                                   .where(criterion_id: id, ta_id: grader_ids)
                                                    .pluck(:id))
           criterion_ids_by_type[type.to_sym] << id
         end

@@ -661,24 +661,15 @@ class Assignment < Assessment
 
     include_opt = options[:includes]
     if user_visibility == :all
-      @criteria[[user_visibility, type, options]] = get_all_criteria(include_opt)
+      @criteria[[user_visibility, type, options]] = criteria.includes(include_opt)
+                                                      .order(:position)
     elsif user_visibility == :ta
-      @criteria[[user_visibility, type, options]] = get_ta_visible_criteria(include_opt)
+      @criteria[[user_visibility, type, options]] = criteria.includes(include_opt)
+                                                      .order(:position).select(&:ta_visible)
     elsif user_visibility == :peer
-      @criteria[[user_visibility, type, options]] = get_peer_visible_criteria(include_opt)
+      @criteria[[user_visibility, type, options]] = criteria.includes(include_opt)
+                                                      .order(:position).select(&:peer_visible)
     end
-  end
-
-  def get_all_criteria(include_opt)
-    criteria.includes(include_opt).order(:position)
-  end
-
-  def get_ta_visible_criteria(include_opt)
-    get_all_criteria(include_opt).select(&:ta_visible)
-  end
-
-  def get_peer_visible_criteria(include_opt)
-    get_all_criteria(include_opt).select(&:peer_visible)
   end
 
   def criteria_count
@@ -770,7 +761,7 @@ class Assignment < Assessment
         num_assigned_criteria = ta.criterion_ta_associations.where(assignment: self).count
         marked = ta.criterion_ta_associations
                    .joins('INNER JOIN marks m ON criterion_ta_associations.criterion_id = m.criterion_id')
-                   .where('m.mark IS NOT NULL AND assessment_id = ?', self.id)
+                   .where('m.mark IS NOT NaULL AND assessment_id = ?', self.id)
                    .group('m.result_id')
                    .count
         ta_memberships.includes(grouping: :current_result).where(user_id: ta_id).find_each do |t_mem|
