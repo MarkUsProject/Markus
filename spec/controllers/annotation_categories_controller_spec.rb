@@ -84,6 +84,32 @@ describe AnnotationCategoriesController do
     end
   end
 
+  describe '#annotation_text_stats' do
+    let(:assignment) { create(:assignment_with_criteria_and_results) }
+    let(:category) { create(:annotation_category, assignment: assignment) }
+    let(:annotation_text) { create(:annotation_text, annotation_category: annotation_category) }
+    let(:user) { create(:admin) }
+
+    it 'returns the the number of times the annotation_text was used' do
+      create(:text_annotation,
+             annotation_text: annotation_text,
+             creator: user,
+             result: assignment.groupings.first.current_result)
+      get_as user,
+             :annotation_text_stats,
+             params: { assignment_id: assignment.id,
+                       annotation_text_id: annotation_text.id },
+             format: 'csv'
+      assert_response 200
+      res = JSON.parse(response.body)
+      expect(res['num_times_used']).to eq 1
+      uses = res['uses'].first
+      expect(uses['results.id']).to eq assignment.groupings.first.current_result.id
+      expect(uses['groupings.assessment_id']).to eq assignment.id
+      expect(uses['users.user_name']).to eq user.user_name
+    end
+  end
+
   describe '#destroy' do
     it 'successfully deletes an annotation category' do
       assignment = annotation_category.assignment
