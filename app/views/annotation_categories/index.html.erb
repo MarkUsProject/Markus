@@ -5,22 +5,6 @@
   <%= render partial: 'layouts/mathjax_config' %>
   <%= javascript_include_tag 'MathJax_lib/MathJax.js?config=TeX-AMS-MML_HTMLorMML' %>
   <%= javascript_include_tag 'MathJax/mathjax_helpers' %>
-  <script>
-    toggleAnnotationStatPanel = (annotation_id) => {
-      statsPanel = document.getElementById('annotation-text-' + annotation_id + '-stat-panel');
-      if (statsPanel.innerText === ''){
-        window.annotationStatPanel = window.makeAnnotationStatPanel(
-          statsPanel,
-          {
-            annotation_id: annotation_id,
-            assignment_id: <%= @assignment.id %>
-          }
-        );
-      } else {
-        window.annotationStatPanel.remove_component(statsPanel);
-      }
-    }
-  </script>
 <% end %>
 
 <% content_for :title, t('.title',
