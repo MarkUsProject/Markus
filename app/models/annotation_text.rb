@@ -19,13 +19,13 @@ class AnnotationText < ApplicationRecord
     # TODO: simplify second join once creator is no longer polymoprhic
     applications = self.annotations.joins(result: { grouping: :group })
                        .joins('INNER JOIN users ON annotations.creator_id = users.id')
-                       .pluck_to_hash('results.id',
-                                      'groupings.assessment_id',
-                                      'results.submission_id',
-                                      'groups.group_name',
-                                      'users.first_name',
-                                      'users.last_name',
-                                      'users.user_name')
+                       .pluck_to_hash('results.id AS result_id',
+                                      'groupings.assessment_id AS assignment_id',
+                                      'results.submission_id AS submission_id',
+                                      'groups.group_name AS group_name',
+                                      'users.first_name AS first_name',
+                                      'users.last_name AS last_name',
+                                      'users.user_name AS user_name')
     stats = {
       num_times_used: self.annotations.count,
       uses: applications
