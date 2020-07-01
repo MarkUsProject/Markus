@@ -234,7 +234,7 @@ class FlexibleCriterionInput extends React.Component {
 
   listDeductions = () => {
     let label = I18n.t('annotations.list_deductions');
-    let deductiveAnnotations = this.props.annotations.filter( a => {
+    let deductiveAnnotations = this.props.annotations.filter(a => {
       return a.criterion_id !== undefined && a.criterion_id !== null &&
         a.deduction !== 0.0 && a.criterion_id === this.props.id;
     });
@@ -248,10 +248,11 @@ class FlexibleCriterionInput extends React.Component {
       return <span key={a.id}>
                <a onClick={() =>
                     this.props.findDeductiveAnnotation(
-                    full_path,
-                    a.submission_file_id,
-                    a.line_start,
-                    a.id)}>
+                      full_path,
+                      a.submission_file_id,
+                      a.line_start,
+                      a.id
+                    )}>
                  {'-' + a.deduction}
                </a>
                {index !== deductiveAnnotations.length - 1 ? ', ' : ''}
