@@ -60,7 +60,7 @@
     statsPanel,
     {
       annotation_id: <%= annotation_text.id %>,
-      assignment_id: <%= @assignment.id %>,
+      assignment_id: <%= annotation_text.annotation_category.assessment_id %>,
       num_used: <%= annotation_text.annotations.count %>
     }
   );
