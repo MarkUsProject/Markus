@@ -1,20 +1,3 @@
-<%= content_for :head do %>
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      console.log(<%= annotation_text.id %>)
-      console.log('script tag insert')
-      statsPanel = document.getElementById('annotation-text-' + <%= annotation_text.id %> + '-stat-panel');
-      window.annotationStatPanel = window.makeAnnotationStatPanel(
-        statsPanel,
-        {
-          annotation_id: <%= annotation_text.id %>,
-          assignment_id: <%= @assignment.id %>
-        }
-      );
-    });
-  </script>
-<% end %>
-
 <li id='annotation_text_<%= annotation_text.id %>'>
   <div id='annotation_text_<%= annotation_text.id %>_control' style="word-break: break-all">
     <%= markdown(annotation_text.content) %>
@@ -70,3 +53,15 @@
     <% end %>
   </div>
 </li>
+
+<script>
+  statsPanel = document.getElementById('annotation-text-' + <%= annotation_text.id %> + '-stat-panel');
+  window.annotationStatPanel = window.makeAnnotationStatPanel(
+    statsPanel,
+    {
+      annotation_id: <%= annotation_text.id %>,
+      assignment_id: <%= @assignment.id %>,
+      num_used: <%= annotation_text.annotations.count %>
+    }
+  );
+</script>

@@ -4,7 +4,7 @@ en:
     help_message: "Click on an annotation category to add annotations."
     last_edited_by: "Last Edited By:"
     text: "Text"
-    usage: 'Show Annotation Usage'
+    usage: 'Usage Details'
     used_by: 'Used By'
     used_times: "Used %{number} times"
 

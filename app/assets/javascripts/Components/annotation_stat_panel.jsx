@@ -8,34 +8,35 @@ class AnnotationStatPanel extends React.Component {
     super(props);
     this.state = {
       applications: null,
-      details: false
+      details: false,
+      num_times_used: props.num_used
     }
   }
 
   toggle = () => {
     if (this.state.applications === null) {
       this.fetchData()
+    } else {
+      this.setState({details: !this.state.details})
     }
-    this.setState({details: !this.state.details})
   }
 
   columns = [
     {
       Header: I18n.t('annotations.used_by'),
-      accessor: row => row['users.first_name'],
+      accessor: row => '(' + row['user_name'] + ') ' + row['first_name'] + ' ' + row['last_name'],
       id: 'user',
       minWidth: 200,
       maxWidth: 200,
       resizeable: false,
       PivotValue: ({value}) => value,
-      Cell: row => {
-        return '(' + row.original['users.first_name'] + ') ' + row.original['users.first_name'] +
-          ' ' + row.original['users.last_name'];
+      filterMethod: (filter, row) => {
+        return row[filter.id].toLowerCase().includes(filter.value.toLowerCase());
       }
     },
     {
       Header: I18n.t('activerecord.models.submission.one'),
-      accessor: row => row['groups.group_name'],
+      accessor: row => row['group_name'],
       id: 'group',
       aggregate: (vals, pivots) => I18n.t('annotations.used_times', {'number': pivots.length}),
       sortable: false,
@@ -44,16 +45,25 @@ class AnnotationStatPanel extends React.Component {
           {'(' + row.value + ')'}
         </span>
       ),
+      filterMethod: (filter, row) => {
+        console.log(row[filter.id].toLowerCase())
+        console.log(row[filter.id].toLowerCase().includes(filter.value.toLowerCase()))
+        if (row._subRows === undefined){
+          return row[filter.id].toLowerCase().includes(filter.value.toLowerCase())
+        } else {
+          return true;
+        }
+      },
       Cell: row => {
         return (
           <div>
             <a href={Routes.edit_assignment_submission_result_path(
-              row.original['groupings.assessment_id'],
-              row.original['results.submission_id'],
-              row.original['results.id']
+              row.original['assignment_id'],
+              row.original['submission_id'],
+              row.original['result_id']
             )}
             >
-              {row.original['groups.group_name']}
+              {row.original['group_name']}
             </a>
           </div>
         );
@@ -70,28 +80,35 @@ class AnnotationStatPanel extends React.Component {
       },
       dataType: 'json'
     }).then(res => {
-      this.setState({applications: res['uses'], num_times_used: res['num_times_used']});
+      console.log(res)
+      this.setState({applications: res['uses'], num_times_used: res['num_times_used'], details: true});
     });
   };
 
   render() {
-
-    let annotation_table =  (
-      <ReactTable
-        className='auto-overflow'
-        data={this.state.applications}
-        columns={this.columns}
-        filterable
-        pivotBy={['user']}
-      />);
-
     if (this.state.details) {
+      let annotation_table =  (
+        <ReactTable
+          className='auto-overflow'
+          data={this.state.applications}
+          columns={this.columns}
+          filterable
+          pivotBy={['user']}
+        />);
       return (<fieldset>
-        <a onclick={this.toggle()}>{I18n.t('annotations.count') + this.state.num_times_used}</a>
+        <p>{I18n.t('annotations.count') + this.state.num_times_used}</p>
+        <a onClick={() => this.toggle()} className='button usage-details'>
+          {I18n.t('annotations.usage')}
+        </a>
         {annotation_table}
       </fieldset>);
     } else {
-      return <a onClick={this.toggle()}>{I18n.t('annotations.count') + this.state.num_times_used}</a>;
+      return (<fieldset>
+        <p>{I18n.t('annotations.count') + this.state.num_times_used}</p>
+        <a onClick={() => this.toggle()} className='button usage-details'>
+        {I18n.t('annotations.usage')}
+      </a>
+      </fieldset>);
     }
   }
 }
