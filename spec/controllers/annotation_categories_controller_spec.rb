@@ -90,7 +90,7 @@ describe AnnotationCategoriesController do
     let(:annotation_text) { create(:annotation_text, annotation_category: annotation_category) }
     let(:user) { create(:admin) }
 
-    it 'returns the the number of times the annotation_text was used' do
+    it 'returns the correct data if the annotation_text was used once' do
       create(:text_annotation,
              annotation_text: annotation_text,
              creator: user,
@@ -99,14 +99,55 @@ describe AnnotationCategoriesController do
              :annotation_text_stats,
              params: { assignment_id: assignment.id,
                        annotation_text_id: annotation_text.id },
-             format: 'csv'
+             format: :json
       assert_response 200
-      res = JSON.parse(response.body)
+      res = response.parsed_body
       expect(res['num_times_used']).to eq 1
+      expect(res['uses'].size).to eq 1
       uses = res['uses'].first
-      expect(uses['results.id']).to eq assignment.groupings.first.current_result.id
-      expect(uses['groupings.assessment_id']).to eq assignment.id
-      expect(uses['users.user_name']).to eq user.user_name
+      expect(uses['result_id']).to eq assignment.groupings.first.current_result.id
+      expect(uses['assignment_id']).to eq assignment.id
+      expect(uses['user_name']).to eq user.user_name
+      expect(uses['submission_id']).to eq assignment.groupings.first.current_result.submission_id
+    end
+
+    it 'returns the correct data if the annotation_text was used more than once' do
+      one_grouping = assignment.groupings.first
+      another_grouping = assignment.groupings.second
+      create(:text_annotation,
+             annotation_text: annotation_text,
+             creator: user,
+             result: one_grouping.current_result)
+      create(:text_annotation,
+             annotation_text: annotation_text,
+             creator: user,
+             result: another_grouping.current_result)
+      get_as user,
+             :annotation_text_stats,
+             params: { assignment_id: assignment.id,
+                       annotation_text_id: annotation_text.id },
+             format: :json
+      assert_response 200
+      res = response.parsed_body
+      expect(res['num_times_used']).to eq 2
+      expect(res['uses'].size).to eq 2
+      results = [res['uses'].first['result_id'], res['uses'].second['result_id']].sort!
+      expect(results).to eq [one_grouping.current_result.id, another_grouping.current_result.id].sort!
+      expect([res['uses'].first['user_name'], res['uses'].second['user_name']]).to eq [user.user_name, user.user_name]
+      expect([res['uses'].first['assignment_id'],
+              res['uses'].second['assignment_id']]).to eq [assignment.id, assignment.id]
+    end
+
+    it 'returns the correct data if the annotation_text was never used' do
+      get_as user,
+             :annotation_text_stats,
+             params: { assignment_id: assignment.id,
+                       annotation_text_id: annotation_text.id },
+             format: :json
+      assert_response 200
+      res = response.parsed_body
+      expect(res['num_times_used']).to eq 0
+      expect(res['uses']).to eq []
     end
   end
 
