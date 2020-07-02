@@ -42,9 +42,9 @@
 - [ ] I have fixed any Hound bot comments. <!-- (check after opening pull request) -->
 - [ ] I have verified that the TravisCI tests have passed. <!-- (check after opening pull request) -->
 - [ ] I have reviewed the test coverage changes reported on Coveralls. <!-- (check after opening pull request) -->
-- [ ] I have added tests for my changes. <!-- (delete this milestone if not applicable) -->
-- [ ] I have updated the Changelog.md file. <!-- (delete this milestone if not applicable) -->
-- [ ] I have described any required documentation changes below. <!-- (delete this milestone if not applicable) -->
+- [ ] I have added tests for my changes. <!-- (delete this checklist item if not applicable) -->
+- [ ] I have updated the Changelog.md file. <!-- (delete this checklist item if not applicable) -->
+- [ ] I have described any required documentation changes below. <!-- (delete this checklist item if not applicable) -->
 
 
 ### Required documentation changes (if applicable)
