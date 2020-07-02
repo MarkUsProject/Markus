@@ -6,7 +6,10 @@ en:
     text: "Text"
     usage: 'Usage Details'
     used_by: 'Used By'
-    used_times: "Used %{number} times"
+    used_times:
+      one: 'Used once'
+      other: "Used %{count} times"
+      zero: 'Never used'
 
     download_submission_file:
       begin_annotation: "%{comment_start} ANNOTATION %{id}: %{text} %{comment_end}"
