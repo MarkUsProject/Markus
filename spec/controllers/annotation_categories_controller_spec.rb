@@ -84,7 +84,7 @@ describe AnnotationCategoriesController do
     end
   end
 
-  describe '#annotation_text_stats' do
+  describe '#annotation_text_uses' do
     let(:assignment) { create(:assignment_with_criteria_and_results) }
     let(:category) { create(:annotation_category, assignment: assignment) }
     let(:annotation_text) { create(:annotation_text, annotation_category: annotation_category) }
@@ -96,15 +96,13 @@ describe AnnotationCategoriesController do
              creator: user,
              result: assignment.groupings.first.current_result)
       get_as user,
-             :annotation_text_stats,
+             :annotation_text_uses,
              params: { assignment_id: assignment.id,
                        annotation_text_id: annotation_text.id },
              format: :json
       assert_response 200
-      res = response.parsed_body
-      expect(res['num_times_used']).to eq 1
-      expect(res['uses'].size).to eq 1
-      uses = res['uses'].first
+      expect(response.parsed_body.size).to eq 1
+      uses = response.parsed_body.first
       expect(uses['result_id']).to eq assignment.groupings.first.current_result.id
       expect(uses['assignment_id']).to eq assignment.id
       expect(uses['user_name']).to eq user.user_name
@@ -123,31 +121,27 @@ describe AnnotationCategoriesController do
              creator: user,
              result: another_grouping.current_result)
       get_as user,
-             :annotation_text_stats,
+             :annotation_text_uses,
              params: { assignment_id: assignment.id,
                        annotation_text_id: annotation_text.id },
              format: :json
       assert_response 200
       res = response.parsed_body
-      expect(res['num_times_used']).to eq 2
-      expect(res['uses'].size).to eq 2
-      results = [res['uses'].first['result_id'], res['uses'].second['result_id']].sort!
+      expect(res.size).to eq 2
+      results = [res.first['result_id'], res.second['result_id']].sort!
       expect(results).to eq [one_grouping.current_result.id, another_grouping.current_result.id].sort!
-      expect([res['uses'].first['user_name'], res['uses'].second['user_name']]).to eq [user.user_name, user.user_name]
-      expect([res['uses'].first['assignment_id'],
-              res['uses'].second['assignment_id']]).to eq [assignment.id, assignment.id]
+      expect([res.first['user_name'], res.second['user_name']]).to eq [user.user_name, user.user_name]
+      expect([res.first['assignment_id'], res.second['assignment_id']]).to eq [assignment.id, assignment.id]
     end
 
     it 'returns the correct data if the annotation_text was never used' do
       get_as user,
-             :annotation_text_stats,
+             :annotation_text_uses,
              params: { assignment_id: assignment.id,
                        annotation_text_id: annotation_text.id },
              format: :json
       assert_response 200
-      res = response.parsed_body
-      expect(res['num_times_used']).to eq 0
-      expect(res['uses']).to eq []
+      expect(response.parsed_body).to eq []
     end
   end
 
