@@ -61,4 +61,8 @@ class AssignmentPolicy < ApplicationPolicy
   def view_pr_review?
     user.admin? || user.ta?
   end
+
+  def summary?
+    user.admin? || user.ta?
+  end
 end

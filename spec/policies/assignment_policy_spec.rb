@@ -93,6 +93,7 @@ describe AssignmentPolicy do
     context 'Admin can view, manage, create, edit and update the assignments' do
       it { is_expected.to pass :manage? }
       it { is_expected.to pass :view_pr_review? }
+      it { is_expected.to pass :summary? }
     end
   end
 
@@ -101,6 +102,9 @@ describe AssignmentPolicy do
     let(:user) { create(:ta) }
     context 'Grader can view peer review' do
       it { is_expected.to pass :view_pr_review? }
+    end
+    context 'Grader can view assignment summary' do
+      it { is_expected.to pass :summary? }
     end
     context 'When the grader is allowed to manage, create, edit and update the assignments' do
       before do

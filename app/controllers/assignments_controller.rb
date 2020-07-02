@@ -10,7 +10,6 @@ class AssignmentsController < ApplicationController
                               :edit,
                               :update,
                               :peer_review,
-                              :view_summary,
                               :summary,
                               :switch_assignment,
                               :start_timed_assignment,
@@ -23,7 +22,7 @@ class AssignmentsController < ApplicationController
   before_action      :authorize_for_user,
                      only: [:index, :switch_assignment]
 
-  before_action only: [:edit, :new, :update, :create, :batch_runs, :summary, :view_summary] do
+  before_action only: [:edit, :new, :update, :create, :batch_runs, :summary] do
     authorize!
   end
   # Publicly accessible actions ---------------------------------------
