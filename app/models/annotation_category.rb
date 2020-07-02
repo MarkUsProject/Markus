@@ -80,7 +80,7 @@ class AnnotationCategory < ApplicationRecord
   end
 
   def deductive_annotations_exist?
-    !self.annotation_texts.joins(:annotations).where.not(deduction: nil).empty?
+    self.annotation_texts.joins(:annotations).where.not(deduction: [nil, 0]).exists?
   end
 
   def delete_allowed?

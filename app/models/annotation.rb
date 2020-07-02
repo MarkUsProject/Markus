@@ -24,7 +24,7 @@ class Annotation < ApplicationRecord
 
   def modify_mark_with_deduction
     criterion_id = self.annotation_text&.annotation_category&.flexible_criterion
-    return if criterion_id.nil? || self.annotation_text.deduction.nil?
+    return if criterion_id.nil? || self.annotation_text.deduction == 0
     self.result.marks.find_by(markable_id: criterion_id, markable_type: 'FlexibleCriterion').update_deduction
   end
 
