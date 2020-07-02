@@ -34,7 +34,10 @@ class AnnotationUsagePanel extends React.Component {
     {
       Header: I18n.t('activerecord.models.submission.one'),
       accessor: 'group_name',
-      aggregate: (vals, pivots) => I18n.t('annotations.used_times', {'number': pivots.length}),
+      aggregate: (vals, pivots) => {
+        let usageCount = pivots.reduce((accumulator, p) => accumulator + p._original['count'], 0);
+        return I18n.t('annotations.used_times', {'count': usageCount});
+      },
       sortable: false,
       Aggregated: row => '(' + row.value + ')',
       filterMethod: (filter, row) => {
@@ -52,7 +55,7 @@ class AnnotationUsagePanel extends React.Component {
             row.original['result_id']
           )}
           >
-            {row.original['group_name']}
+            {row.original['group_name'] + (row.original['count'] > 1 ? ' (' + row.original['count'] + ')' : '')}
           </a>
         );
       },
