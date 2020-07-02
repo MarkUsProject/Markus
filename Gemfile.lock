@@ -78,7 +78,7 @@ GEM
       tzinfo (~> 1.1)
       zeitwerk (~> 2.2, >= 2.2.2)
     ast (2.4.1)
-    autoprefixer-rails (9.7.6)
+    autoprefixer-rails (9.8.4)
       execjs
     awesome_print (1.8.0)
     better_errors (2.7.1)
