@@ -48,13 +48,12 @@ export class AnnotationTable extends React.Component {
           name = full_path;
         }
         return (
-          <a
-            href="javascript:void(0)"
-            onClick={() =>
+          <a onClick={() =>
               this.props.selectFile(
                 full_path,
                 row.original.submission_file_id,
-                row.original.line_start)}>
+                row.original.line_start,
+                row.original.id)}>
               {name}
           </a>
         );

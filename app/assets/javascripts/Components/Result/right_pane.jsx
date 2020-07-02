@@ -31,6 +31,7 @@ export class RightPane extends React.Component {
             updateMark={this.props.updateMark}
             destroyMark={this.props.destroyMark}
             revertToAutomaticDeductions={this.props.revertToAutomaticDeductions}
+            findDeductiveAnnotation={this.props.findDeductiveAnnotation}
           />
         </TabPanel>
         <TabPanel>

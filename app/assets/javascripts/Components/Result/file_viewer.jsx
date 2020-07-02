@@ -101,6 +101,7 @@ export class FileViewer extends React.Component {
     } else if (this.state.type === 'pdf') {
       return <PDFViewer
         url={this.state.url}
+        annotationFocus={this.props.annotationFocus}
         {...commonProps}
       />;
     } else if (this.state.type !== '') {
