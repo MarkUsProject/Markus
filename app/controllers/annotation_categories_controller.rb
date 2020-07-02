@@ -204,9 +204,8 @@ class AnnotationCategoriesController < ApplicationController
     redirect_to assignment_annotation_categories_path(assignment_id: @assignment.id)
   end
 
-  def annotation_text_stats
-    annotation_stats = AnnotationText.find(params[:annotation_text_id]).stats
-    render json: annotation_stats
+  def annotation_text_uses
+    render json: AnnotationText.find(params[:annotation_text_id]).uses
   end
 
   private
