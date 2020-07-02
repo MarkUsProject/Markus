@@ -86,4 +86,33 @@ describe AssignmentPolicy do
       end
     end
   end
+
+  describe 'When the user is admin' do
+    subject { described_class.new(user: user) }
+    let(:user) { create(:admin) }
+    context 'Admin can view, manage, create, edit and update the assignments' do
+      it { is_expected.to pass :manage? }
+      it { is_expected.to pass :view_pr_review? }
+    end
+  end
+
+  describe 'When the user is grader' do
+    subject { described_class.new(user: user) }
+    let(:user) { create(:ta) }
+    context 'Grader can view peer review' do
+      it { is_expected.to pass :view_pr_review? }
+    end
+    context 'When the grader is allowed to manage, create, edit and update the assignments' do
+      before do
+        create(:grader_permission, user_id: user.id, manage_assignments: true)
+      end
+      it { is_expected.to pass :manage? }
+    end
+    context 'When the grader is not allowed to manage, create, edit and update the assignments' do
+      before do
+        create(:grader_permission, user_id: user.id, manage_assignments: false)
+      end
+      it { is_expected.not_to pass :manage? }
+    end
+  end
 end
