@@ -99,8 +99,7 @@ class AnnotationCategoriesController < ApplicationController
       @annotation_category = @annotation_text.annotation_category
       render :insert_new_annotation_text
     else
-      flash_message(:error, t('.error'))
-      head :bad_request
+      respond_with @annotation_text, render: { body: nil, status: :bad_request }
     end
   end
 
