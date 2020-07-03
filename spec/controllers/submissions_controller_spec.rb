@@ -242,7 +242,9 @@ describe SubmissionsController do
     end
   end
 
-  describe 'A TA' do
+  describe 'A grader' do
+    let(:grader) { create(:ta) }
+    let!(:grader_permission) { create(:grader_permission, user_id: grader.id) }
     before(:each) do
       @group = create(:group)
       @assignment = create(:assignment)
@@ -266,12 +268,10 @@ describe SubmissionsController do
         Submission.generate_new_submission(Grouping.last,
                                            repo.get_latest_revision)
       end
-      @ta_membership = create(:ta_membership,
-                              grouping: @grouping)
     end
     it 'should be able to access the repository browser.' do
       revision_identifier = Grouping.last.group.access_repo { |repo| repo.get_latest_revision.revision_identifier }
-      get_as @ta_membership.user,
+      get_as grader,
              :repo_browser,
              params: { assignment_id: @assignment.id, id: Grouping.last.id,
                        revision_identifier: revision_identifier,
@@ -281,7 +281,7 @@ describe SubmissionsController do
 
     it 'should render with the assignment_content layout' do
       revision_identifier = Grouping.last.group.access_repo { |repo| repo.get_latest_revision.revision_identifier }
-      get_as @ta_membership.user,
+      get_as grader,
              :repo_browser,
              params: { assignment_id: @assignment.id, id: Grouping.last.id,
                        revision_identifier: revision_identifier,
@@ -290,13 +290,59 @@ describe SubmissionsController do
     end
 
     it 'should be able to download the svn checkout commands' do
-      get_as @ta_membership.user, :download_repo_checkout_commands, params: { assignment_id: 1 }
+      get_as grader, :download_repo_checkout_commands, params: { assignment_id: 1 }
       is_expected.to respond_with(:missing)
     end
 
     it 'should be able to download the svn repository list' do
-      get_as @ta_membership.user, :download_repo_list, params: { assignment_id: 1 }
+      get_as grader, :download_repo_list, params: { assignment_id: 1 }
       is_expected.to respond_with(:missing)
+    end
+
+    let(:revision_identifier) do
+      @grouping.group.access_repo { |repo| repo.get_latest_revision.revision_identifier }
+    end
+
+    describe 'When grader is allowed to collect submissions' do
+      before do
+        grader_permission.collect_submissions = true
+        grader_permission.save
+      end
+      context '#collect_submissions' do
+        before do
+          post_as grader, :collect_submissions, params: { assignment_id: @assignment.id, groupings: [@grouping.id] }
+        end
+        it('should respond with 200') { expect(response.status).to eq 200 }
+      end
+      context '#manually_collect_and_begin_grading' do
+        before do
+          post_as grader, :manually_collect_and_begin_grading,
+                  params: { assignment_id: @assignment.id, id: @grouping.id,
+                            current_revision_identifier: revision_identifier }
+        end
+        it('should respond with 302') { expect(response.status).to eq 302 }
+      end
+    end
+
+    describe 'When grader is not allowed to collect submissions' do
+      before do
+        grader_permission.collect_submissions = false
+        grader_permission.save
+      end
+      context '#collect_submissions' do
+        before do
+          post_as grader, :collect_submissions, params: { assignment_id: @assignment.id, groupings: [@grouping.id] }
+        end
+        it('should respond with 403') { expect(response.status).to eq 403 }
+      end
+      context '#manually_collect_and_begin_grading' do
+        before do
+          post_as grader, :manually_collect_and_begin_grading,
+                  params: { assignment_id: @assignment.id, id: @grouping.id,
+                            current_revision_identifier: revision_identifier }
+        end
+        it('should respond with redirect') { is_expected.to respond_with :redirect }
+      end
     end
   end
 
