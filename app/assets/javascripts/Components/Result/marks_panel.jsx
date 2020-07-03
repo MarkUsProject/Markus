@@ -96,6 +96,7 @@ export class MarksPanel extends React.Component {
       toggleExpanded: () => this.toggleExpanded(key),
       annotations: this.props.annotations,
       revertToAutomaticDeductions: this.props.revertToAutomaticDeductions,
+      findDeductiveAnnotation: this.props.findDeductiveAnnotation,
       ... markData
     };
     if (markData.criterion_type === 'CheckboxCriterion') {
@@ -232,17 +233,31 @@ class FlexibleCriterionInput extends React.Component {
   }
 
   listDeductions = () => {
-    let deductions = '';
     let label = I18n.t('annotations.list_deductions');
-    this.props.annotations.map( a => {
-      if (a.criterion_id !== undefined && a.criterion_id !== null &&
-          a.deduction !== 0.0 && a.criterion_id === this.props.id) {
-        deductions += '-' + a.deduction + ', ';
-      }
+    let deductiveAnnotations = this.props.annotations.filter(a => {
+      return a.criterion_id !== undefined && a.criterion_id !== null &&
+        a.deduction !== 0.0 && a.criterion_id === this.props.id;
     });
-    if (deductions.length < 1) {
+
+    if (deductiveAnnotations.length === 0) {
       return <span></span>;
     }
+
+    let hyperlinkedDeductions = deductiveAnnotations.map((a, index) => {
+      let full_path = a.path ? a.path + '/' + a.filename : a.filename;
+      return <span key={a.id}>
+               <a onClick={() =>
+                    this.props.findDeductiveAnnotation(
+                      full_path,
+                      a.submission_file_id,
+                      a.line_start,
+                      a.id
+                    )}>
+                 {'-' + a.deduction}
+               </a>
+               {index !== deductiveAnnotations.length - 1 ? ', ' : ''}
+             </span>;
+    });
 
     if (this.props['marks.override']) {
       label = '(' + I18n.t('results.overridden_deductions') + ') ' + label;
@@ -254,7 +269,7 @@ class FlexibleCriterionInput extends React.Component {
           {label}
         </span>
         <span className={'red-text'}>
-          {deductions.substring(0, deductions.length - 2)}
+          {hyperlinkedDeductions}
         </span>
       </div>);
   }

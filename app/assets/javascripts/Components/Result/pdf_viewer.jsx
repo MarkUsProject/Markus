@@ -61,6 +61,9 @@ export class PDFViewer extends React.Component {
     $('.annotation_holder').remove();
     this.pdfViewer.currentScaleValue = 'page-width';
     this.props.annotations.forEach(this.display_annotation);
+    if (this.props.annotationFocus !== null && this.props.annotationFocus !== undefined) {
+      document.getElementById('annotation_holder_' + this.props.annotationFocus).scrollIntoView();
+    }
   };
 
   display_annotation = (annotation) => {
