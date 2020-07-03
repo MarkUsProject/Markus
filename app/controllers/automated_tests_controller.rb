@@ -94,7 +94,8 @@ class AutomatedTestsController < ApplicationController
       else
         file_keys << file
         { key: file, size: 1,
-          url: download_file_assignment_automated_tests_url(assignment_id: assignment.id, file_name: file) }
+          url: download_file_assignment_automated_tests_url(assignment_id: assignment.id,
+                                                            file_name: File.basename(file)) }
       end
     end
     if File.exist? testers_schema_path
