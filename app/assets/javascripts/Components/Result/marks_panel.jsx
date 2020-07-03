@@ -253,7 +253,7 @@ class FlexibleCriterionInput extends React.Component {
         <span>
           {label}
         </span>
-        <span className={'right-red-text'}>
+        <span className={'red-text'}>
           {deductions.substring(0, deductions.length - 2)}
         </span>
       </div>);
