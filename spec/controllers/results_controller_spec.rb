@@ -668,6 +668,7 @@ describe ResultsController do
     end
   end
   context 'A TA' do
+    let!(:grader_permission) { create(:grader_permission, user_id: ta.id) }
     before(:each) { sign_in ta }
     [:set_released_to_students].each { |route_name| test_unauthorized(route_name) }
     context 'accessing edit' do
@@ -685,7 +686,6 @@ describe ResultsController do
       let(:deduction) do
         create :grace_period_deduction, membership: grouping.accepted_student_memberships.first, deduction: 1
       end
-      let(:grader_permission) { create(:grader_permission, user_id: ta.id) }
       context 'When TA is allowed to delete_grace_period_deduction' do
         before do
           grader_permission.delete_grace_period_deduction = true

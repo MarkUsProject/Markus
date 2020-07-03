@@ -792,6 +792,7 @@ class ResultsController < ApplicationController
     rescue ActionPolicy::Unauthorized => e
       flash_message(:error, e.message)
       head :bad_request
+      return
     end
     grace_deduction = result.submission.grouping.grace_period_deductions.find(params[:deduction_id])
     grace_deduction.destroy
