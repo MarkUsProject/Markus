@@ -146,7 +146,7 @@ class Result extends React.Component {
             deduction = '-' + text.deduction;
           }
           return {
-            title: `${text.content.replace(/\r?\n/gi, ' ')} <span class="text-deduction">${deduction}</span>`,
+            title: `${text.content.replace(/\r?\n/gi, ' ')} <span class="red-text">${deduction}</span>`,
             cmd: `annotation_text_${text.id}`,
             action: () => this.addExistingAnnotation(text.id)
           };
