@@ -238,8 +238,8 @@ class Assignment < Assessment
   end
 
   # Returns the maximum possible mark for a particular assignment
-  def max_mark(user_visibility = :ta)
-    # TODO: sum method does not work with empty arrays. Consider updating/replacing gem:
+  def max_mark(user_visibility = :ta_visible)
+    # TODO: sum method does not work with empty arrays. Consider updating/replacing gem``:
     #       see: https://github.com/thirtysixthspan/descriptive_statistics/issues/44
     max_marks = get_criteria(user_visibility).map(&:max_mark)
     s = max_marks.empty? ? 0 : max_marks.sum
@@ -594,7 +594,7 @@ class Assignment < Assessment
     end
 
     headers = [['User name', 'Group', 'Final grade'], ['', 'Out of', self.max_mark]]
-    criteria = self.get_criteria(:ta)
+    criteria = self.get_criteria(:ta_visible)
     criteria.each do |crit|
       headers[0] << crit.name
       headers[1] << crit.max_mark
@@ -654,22 +654,7 @@ class Assignment < Assessment
 
   # Returns a filtered list of criteria.
   def get_criteria(user_visibility = :all, type = :all, options = {})
-    @criteria ||= Hash.new
-    unless @criteria[[user_visibility, type, options]].nil? || options[:no_cache]
-      return @criteria[[user_visibility, type, options]]
-    end
-
-    include_opt = options[:includes]
-    if user_visibility == :all
-      @criteria[[user_visibility, type, options]] = criteria.includes(include_opt)
-                                                      .order(:position)
-    elsif user_visibility == :ta
-      @criteria[[user_visibility, type, options]] = criteria.includes(include_opt)
-                                                      .order(:position).select(&:ta_visible)
-    elsif user_visibility == :peer
-      @criteria[[user_visibility, type, options]] = criteria.includes(include_opt)
-                                                      .order(:position).select(&:peer_visible)
-    end
+    criteria.includes(options[:includes]).order(:position).select(&user_visibility)
   end
 
   def criteria_count

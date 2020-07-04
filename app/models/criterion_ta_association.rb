@@ -11,7 +11,7 @@ class CriterionTaAssociation < ApplicationRecord
   before_validation       :add_assignment_reference, on: :create
 
   def self.from_csv(assignment, csv_data, remove_existing)
-    criteria = assignment.get_criteria(:ta, :all, includes: [:criterion_ta_associations])
+    criteria = assignment.get_criteria(:ta_visible, :all, includes: [:criterion_ta_associations])
     if remove_existing
       criteria.each do |criterion|
         criterion.criterion_ta_associations.destroy_all

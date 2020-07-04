@@ -192,7 +192,7 @@ describe Assignment do
           end
 
           it 'shows the criteria visible to tas only' do
-            expect(@assignment.get_criteria(:ta).select(&:id)).to match_array(@ta_criteria.select(&:id) +
+            expect(@assignment.get_criteria(:ta_visible).select(&:id)).to match_array(@ta_criteria.select(&:id) +
                                                                                 @ta_and_peer_criteria.select(&:id))
           end
 

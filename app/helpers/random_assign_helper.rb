@@ -155,7 +155,7 @@ module RandomAssignHelper
   def save_peer_reviews(pr_assignment)
     return if @reviewers.empty? || @reviewees.empty?
 
-    assignment_criteria = pr_assignment.get_criteria(:peer)
+    assignment_criteria = pr_assignment.get_criteria(:peer_visible)
 
     groupings = Grouping.includes(:current_submission_used)
                         .where(id: @reviewees)

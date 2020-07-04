@@ -649,10 +649,10 @@ class ResultsController < ApplicationController
     if @result.is_a_review?
       if @current_user.is_reviewer_for?(@assignment.pr_assignment, @result) ||
           !@grouping.membership_status(current_user).nil? || !@current_user.student?
-        @mark_criteria = @assignment.get_criteria(:peer)
+        @mark_criteria = @assignment.get_criteria(:peer_visible)
       end
     else
-      @mark_criteria = @assignment.get_criteria(:ta)
+      @mark_criteria = @assignment.get_criteria(:ta_visible)
     end
 
     @mark_criteria.each do |criterion|

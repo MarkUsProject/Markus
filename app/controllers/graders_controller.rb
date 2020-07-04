@@ -64,7 +64,7 @@ class GradersController < ApplicationController
 
   def grader_criteria_mapping
     assignment = Assignment.find(params[:assignment_id])
-    criteria = assignment.get_criteria(:ta, :all, includes: [:tas])
+    criteria = assignment.get_criteria(:ta_visible, :all, includes: [:tas])
 
     file_out = MarkusCsv.generate(criteria) do |criterion|
       [criterion.name] + criterion.tas.map(&:user_name)

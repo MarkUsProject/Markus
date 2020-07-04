@@ -64,7 +64,7 @@ class Result < ApplicationRecord
   # See the documentation for update_total_mark for information about when to explicitly
   # pass the +assignment+ variable and associated warnings.
   def get_total_mark(assignment: nil)
-    user_visibility = is_a_review? ? :peer : :ta
+    user_visibility = is_a_review? ? :peer_visible : :ta_visible
     subtotal = get_subtotal(assignment: assignment)
     extra_marks = get_total_extra_marks(user_visibility: user_visibility)
     [0, subtotal + extra_marks].max
@@ -80,10 +80,10 @@ class Result < ApplicationRecord
     else
       assignment ||= submission.grouping.assignment
       if is_a_review?
-        user_visibility = :peer
+        user_visibility = :peer_visible
         assignment = assignment.pr_assignment
       else
-        user_visibility = :ta
+        user_visibility = :ta_visible
       end
       criteria = assignment.get_criteria(user_visibility).map(&:id)
       marks_array = (marks.to_a.select { |m| criteria.member? m.criterion_id }).map &:mark
@@ -165,7 +165,7 @@ class Result < ApplicationRecord
   end
 
   # Point deduction for late penalty
-  def get_total_extra_percentage_as_points(user_visibility = :ta)
+  def get_total_extra_percentage_as_points(user_visibility = :ta_visible)
     (get_total_extra_percentage * submission.assignment.max_mark(user_visibility) / 100).round(1)
   end
 
@@ -193,7 +193,7 @@ class Result < ApplicationRecord
 
   def create_marks
     assignment = self.submission.assignment
-    assignment.get_criteria(:ta).each do |criterion|
+    assignment.get_criteria(:ta_visible).each do |criterion|
       criterion.marks.find_or_create_by(result_id: id)
     end
     self.update_total_mark
@@ -221,7 +221,7 @@ class Result < ApplicationRecord
     true
   end
 
-  def check_for_nil_marks(user_visibility = :ta)
+  def check_for_nil_marks(user_visibility = :ta_visible)
     # This check is only required when the marking state is complete.
     return true unless marking_state == Result::MARKING_STATES[:complete]
 

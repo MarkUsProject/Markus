@@ -1,6 +1,6 @@
 module AutomatedTestsHelper
   def extra_test_group_schema(assignment)
-    criterion_names, criterion_disambig = assignment.get_criteria(:ta).map do |c|
+    criterion_names, criterion_disambig = assignment.get_criteria(:ta_visible).map do |c|
       [c.name, "#{c.id}_#{c.class.name}"]
     end.transpose
     { type: :object,
