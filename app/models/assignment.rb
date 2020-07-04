@@ -761,7 +761,7 @@ class Assignment < Assessment
         num_assigned_criteria = ta.criterion_ta_associations.where(assignment: self).count
         marked = ta.criterion_ta_associations
                    .joins('INNER JOIN marks m ON criterion_ta_associations.criterion_id = m.criterion_id')
-                   .where('m.mark IS NOT NaULL AND assessment_id = ?', self.id)
+                   .where('m.mark IS NOT NULL AND assessment_id = ?', self.id)
                    .group('m.result_id')
                    .count
         ta_memberships.includes(grouping: :current_result).where(user_id: ta_id).find_each do |t_mem|

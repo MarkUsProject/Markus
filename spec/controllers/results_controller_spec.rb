@@ -582,7 +582,7 @@ describe ResultsController do
       end
 
       it 'should include assigned criteria list' do
-        expect(data['assigned_criteria']).to eq ["#{rubric_criterion.id}"]
+        expect(data['assigned_criteria']).to eq [rubric_criterion.id.to_s]
       end
 
       context 'when unassigned criteria are hidden from the grader' do
