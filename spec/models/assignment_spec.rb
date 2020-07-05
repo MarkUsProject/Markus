@@ -152,7 +152,7 @@ describe Assignment do
 
         context 'when no criteria are found' do
           it 'returns an empty list of criteria' do
-            expect(@assignment.get_criteria).to be_empty
+            expect(@assignment.criteria).to be_empty
           end
 
           context 'a submission and result are created' do

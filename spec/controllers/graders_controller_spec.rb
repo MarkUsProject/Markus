@@ -657,7 +657,7 @@ describe GradersController do
                     params: { assignment_id: @assignment.id, global_actions: 'random_assign',
                               current_table: 'criteria_table' }
             expect(response.status).to eq(400)
-            @assignment.get_criteria do |criterion|
+            @assignment.criteria do |criterion|
               expect(criterion.tas).to eq []
             end
           end
@@ -668,7 +668,7 @@ describe GradersController do
                     params: { assignment_id: @assignment.id, global_actions: 'random_assign', graders: [@ta1],
                               current_table: 'criteria_table' }
             expect(response.status).to eq(400)
-            @assignment.get_criteria do |criterion|
+            @assignment.criteria do |criterion|
               expect(criterion.tas).to eq []
             end
           end
@@ -680,7 +680,7 @@ describe GradersController do
                               criteria: [@criterion1.position],
                               current_table: 'criteria_table' }
             expect(response.status).to eq(400)
-            @assignment.get_criteria do |criterion|
+            @assignment.criteria do |criterion|
               expect(criterion.tas).to eq []
             end
           end
@@ -764,7 +764,7 @@ describe GradersController do
                     :global_actions,
                     params: { assignment_id: @assignment.id, global_actions: 'assign', current_table: 'criteria_table' }
             expect(response.status).to eq(400)
-            @assignment.get_criteria do |criterion|
+            @assignment.criteria do |criterion|
               expect(criterion.tas).to eq []
             end
           end
@@ -775,7 +775,7 @@ describe GradersController do
                     params: { assignment_id: @assignment.id, global_actions: 'assign', graders: [@ta1],
                               current_table: 'criteria_table' }
             expect(response.status).to eq(400)
-            @assignment.get_criteria do |criterion|
+            @assignment.criteria do |criterion|
               expect(criterion.tas).to eq []
             end
           end
@@ -787,7 +787,7 @@ describe GradersController do
                               criteria: [@criterion1.position],
                               current_table: 'criteria_table' }
             expect(response.status).to eq(400)
-            @assignment.get_criteria do |criterion|
+            @assignment.criteria do |criterion|
               expect(criterion.tas).to eq []
             end
           end
@@ -1039,7 +1039,7 @@ describe GradersController do
                     params: { assignment_id: @assignment.id, global_actions: 'random_assign',
                               current_table: 'criteria_table' }
             expect(response.status).to eq(400)
-            @assignment.get_criteria do |criterion|
+            @assignment.criteria do |criterion|
               expect(criterion.tas).to eq []
             end
           end
@@ -1050,7 +1050,7 @@ describe GradersController do
                     params: { assignment_id: @assignment.id, global_actions: 'random_assign', graders: [@ta1],
                               current_table: 'criteria_table' }
             expect(response.status).to eq(400)
-            @assignment.get_criteria do |criterion|
+            @assignment.criteria do |criterion|
               expect(criterion.tas).to eq []
             end
           end
@@ -1062,7 +1062,7 @@ describe GradersController do
                               criteria: [@criterion1.position],
                               current_table: 'criteria_table' }
             expect(response.status).to eq(400)
-            @assignment.get_criteria do |criterion|
+            @assignment.criteria do |criterion|
               expect(criterion.tas).to eq []
             end
           end
@@ -1149,7 +1149,7 @@ describe GradersController do
                     :global_actions,
                     params: { assignment_id: @assignment.id, global_actions: 'assign', current_table: 'criteria_table' }
             expect(response.status).to eq(400)
-            @assignment.get_criteria do |criterion|
+            @assignment.criteria do |criterion|
               expect(criterion.tas).to eq []
             end
           end
@@ -1160,7 +1160,7 @@ describe GradersController do
                     params: { assignment_id: @assignment.id, global_actions: 'assign', graders: [@ta1],
                               current_table: 'criteria_table' }
             expect(response.status).to eq(400)
-            @assignment.get_criteria do |criterion|
+            @assignment.criteria do |criterion|
               expect(criterion.tas).to eq []
             end
           end
@@ -1171,7 +1171,7 @@ describe GradersController do
                     params: { assignment_id: @assignment.id, global_actions: 'assign', criteria: [@criterion1],
                               current_table: 'criteria_table' }
             expect(response.status).to eq(400)
-            @assignment.get_criteria do |criterion|
+            @assignment.criteria do |criterion|
               expect(criterion.tas).to eq []
             end
           end
