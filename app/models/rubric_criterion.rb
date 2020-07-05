@@ -69,7 +69,7 @@ class RubricCriterion < Criterion
     working_row = row.clone
     name = working_row.shift
 
-    criterion = assignment.criteria.where(type: "RubricCriterion").find_or_create_by(name: name)
+    criterion = assignment.criteria.where(type: 'RubricCriterion').find_or_create_by(name: name)
 
     # Only set the position if this is a new record.
     if criterion.new_record?

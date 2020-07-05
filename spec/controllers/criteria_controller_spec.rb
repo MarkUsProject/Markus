@@ -757,9 +757,9 @@ describe CriteriaController do
       it 'deletes all criteria previously created' do
         post_as admin, :upload, params: { assignment_id: assignment.id, upload_file: mixed_file }
 
-        expect(assignment.criteria.where(type: "RubricCriterion").find_by(name: rubric_criterion.name)).to be_nil
-        expect(assignment.criteria.where(type: "FlexibleCriterion").find_by(name: flexible_criterion.name)).to be_nil
-        expect(assignment.criteria.where(type: "CheckboxCriterion").find_by(name: checkbox_criterion.name)).to be_nil
+        expect(assignment.criteria.where(type: 'RubricCriterion').find_by(name: rubric_criterion.name)).to be_nil
+        expect(assignment.criteria.where(type: 'FlexibleCriterion').find_by(name: flexible_criterion.name)).to be_nil
+        expect(assignment.criteria.where(type: 'CheckboxCriterion').find_by(name: checkbox_criterion.name)).to be_nil
       end
 
       it 'maintains the order between entries and positions for criteria' do
@@ -793,8 +793,8 @@ describe CriteriaController do
 
       it 'creates rubric criteria with properly formatted entries' do
         post_as admin, :upload, params: { assignment_id: assignment.id, upload_file: mixed_file }
-        expect(assignment.criteria.where(type: "RubricCriterion").pluck(:name)).to contain_exactly('cr30', 'cr90')
-        cr1 = assignment.criteria.where(type: "RubricCriterion").find_by(name: 'cr30')
+        expect(assignment.criteria.where(type: 'RubricCriterion').pluck(:name)).to contain_exactly('cr30', 'cr90')
+        cr1 = assignment.criteria.where(type: 'RubricCriterion').find_by(name: 'cr30')
         expect(cr1.levels.size).to eq(5)
         expect(cr1.max_mark).to eq(5.0)
         expect(cr1.ta_visible).to be false
@@ -807,7 +807,7 @@ describe CriteriaController do
         expect(cr1.levels.find_by(name: 'Good', description: 'Alright', mark: 3)).not_to be_nil
         expect(cr1.levels.find_by(name: 'Excellent', description: 'Impressive', mark: 5)).not_to be_nil
 
-        cr2 = assignment.criteria.where(type: "RubricCriterion").find_by(name: 'cr90')
+        cr2 = assignment.criteria.where(type: 'RubricCriterion').find_by(name: 'cr90')
         expect(cr2.max_mark).to eq(4.6)
         expect(cr2.levels.size).to eq(5)
         expect(cr2.ta_visible).to be true
@@ -817,27 +817,27 @@ describe CriteriaController do
       it 'creates flexible criteria with properly formatted entries' do
         post_as admin, :upload, params: { assignment_id: assignment.id, upload_file: mixed_file }
 
-        expect(assignment.criteria.where(type: "FlexibleCriterion").pluck(:name)).to contain_exactly('cr20', 'cr50', 'cr80', 'cr60')
+        expect(assignment.criteria.where(type: 'FlexibleCriterion').pluck(:name)).to contain_exactly('cr20', 'cr50', 'cr80', 'cr60')
 
-        cr80 = assignment.criteria.where(type: "FlexibleCriterion").find_by(name: 'cr80')
+        cr80 = assignment.criteria.where(type: 'FlexibleCriterion').find_by(name: 'cr80')
         expect(cr80.max_mark).to eq(10.0)
         expect(cr80.description).to eq('')
         expect(cr80.ta_visible).to be true
         expect(cr80.peer_visible).to be true
 
-        cr20 = assignment.criteria.where(type: "FlexibleCriterion").find_by(name: 'cr20')
+        cr20 = assignment.criteria.where(type: 'FlexibleCriterion').find_by(name: 'cr20')
         expect(cr20.max_mark).to eq(2.0)
         expect(cr20.description).to eq('I am flexible')
         expect(cr20.ta_visible).to be true
         expect(cr20.peer_visible).to be true
 
-        cr50 = assignment.criteria.where(type: "FlexibleCriterion").find_by(name: 'cr50')
+        cr50 = assignment.criteria.where(type: 'FlexibleCriterion').find_by(name: 'cr50')
         expect(cr50.max_mark).to eq(1.0)
         expect(cr50.description).to eq('Another flexible.')
         expect(cr50.ta_visible).to be true
         expect(cr50.peer_visible).to be false
 
-        cr60 = assignment.criteria.where(type: "FlexibleCriterion").find_by(name: 'cr60')
+        cr60 = assignment.criteria.where(type: 'FlexibleCriterion').find_by(name: 'cr60')
         expect(cr60.max_mark).to eq(10.0)
         expect(cr60.description).to eq('')
         expect(cr60.ta_visible).to be true
@@ -847,8 +847,8 @@ describe CriteriaController do
       it 'creates checkbox criteria with properly formatted entries' do
         post_as admin, :upload, params: { assignment_id: assignment.id, upload_file: mixed_file }
 
-        expect(assignment.criteria.where(type: "CheckboxCriterion").pluck(:name)).to contain_exactly('cr100', 'cr40')
-        cr1 = assignment.criteria.where(type: "CheckboxCriterion").find_by(name: 'cr100')
+        expect(assignment.criteria.where(type: 'CheckboxCriterion').pluck(:name)).to contain_exactly('cr100', 'cr40')
+        cr1 = assignment.criteria.where(type: 'CheckboxCriterion').find_by(name: 'cr100')
         expect(cr1.max_mark).to eq(5.0)
         expect(cr1.description).to eq('I am checkbox')
         expect(cr1.ta_visible).to be true
@@ -858,30 +858,30 @@ describe CriteriaController do
       it 'creates criteria being case insensitive with the type given' do
         post_as admin, :upload, params: { assignment_id: assignment.id, upload_file: mixed_file }
 
-        expect(assignment.criteria.where(type: "FlexibleCriterion").pluck(:name)).to contain_exactly('cr20', 'cr80', 'cr60', 'cr50')
+        expect(assignment.criteria.where(type: 'FlexibleCriterion').pluck(:name)).to contain_exactly('cr20', 'cr80', 'cr60', 'cr50')
       end
 
       it 'creates criteria that lack a description' do
         post_as admin, :upload, params: { assignment_id: assignment.id, upload_file: mixed_file }
 
-        expect(assignment.criteria.where(type: "FlexibleCriterion").map(&:name)).to include('cr80')
-        expect(assignment.criteria.where(type: "FlexibleCriterion").find_by(name: 'cr80').description).to eq('')
+        expect(assignment.criteria.where(type: 'FlexibleCriterion').map(&:name)).to include('cr80')
+        expect(assignment.criteria.where(type: 'FlexibleCriterion').find_by(name: 'cr80').description).to eq('')
       end
 
       it 'creates criteria with the default visibility options if these are not given in the entries' do
         post_as admin, :upload, params: { assignment_id: assignment.id, upload_file: mixed_file }
         expect(assignment.criteria.map(&:name)).to include('cr100', 'cr60')
-        expect(assignment.criteria.where(type: "CheckboxCriterion").find_by(name: 'cr100').ta_visible).to be true
-        expect(assignment.criteria.where(type: "CheckboxCriterion").find_by(name: 'cr100').peer_visible).to be false
-        expect(assignment.criteria.where(type: "FlexibleCriterion").find_by(name: 'cr60').ta_visible).to be true
-        expect(assignment.criteria.where(type: "FlexibleCriterion").find_by(name: 'cr60').peer_visible).to be false
+        expect(assignment.criteria.where(type: 'CheckboxCriterion').find_by(name: 'cr100').ta_visible).to be true
+        expect(assignment.criteria.where(type: 'CheckboxCriterion').find_by(name: 'cr100').peer_visible).to be false
+        expect(assignment.criteria.where(type: 'FlexibleCriterion').find_by(name: 'cr60').ta_visible).to be true
+        expect(assignment.criteria.where(type: 'FlexibleCriterion').find_by(name: 'cr60').peer_visible).to be false
       end
 
       it 'creates criteria with rounded (up to first digit after decimal point) maximum mark' do
         post_as admin, :upload, params: { assignment_id: assignment.id, upload_file: round_max_mark_file }
-        expect(assignment.criteria.where(type: "RubricCriterion").first.name).to eq('cr90')
+        expect(assignment.criteria.where(type: 'RubricCriterion').first.name).to eq('cr90')
 
-        expect(assignment.criteria.where(type: "RubricCriterion").first.max_mark).to eq(4.6)
+        expect(assignment.criteria.where(type: 'RubricCriterion').first.max_mark).to eq(4.6)
       end
       it 'does not create criteria with format errors in entries' do
         post_as admin, :upload, params: { assignment_id: assignment.id, upload_file: invalid_mixed_file }
@@ -904,9 +904,9 @@ describe CriteriaController do
       end
 
       it 'does not create criteria that have unmatched keys / more keys than required' do
-        expect(assignment.criteria.where(type: "RubricCriterion").length).to eq(1)
+        expect(assignment.criteria.where(type: 'RubricCriterion').length).to eq(1)
         post_as admin, :upload, params: { assignment_id: assignment.id, upload_file: partially_valid_file }
-        expect(assignment.criteria.where(type: "RubricCriterion").length).to eq(1)
+        expect(assignment.criteria.where(type: 'RubricCriterion').length).to eq(1)
         expect(flash[:error]).not_to be_nil
       end
 
