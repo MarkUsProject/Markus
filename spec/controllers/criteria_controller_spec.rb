@@ -817,7 +817,8 @@ describe CriteriaController do
       it 'creates flexible criteria with properly formatted entries' do
         post_as admin, :upload, params: { assignment_id: assignment.id, upload_file: mixed_file }
 
-        expect(assignment.criteria.where(type: 'FlexibleCriterion').pluck(:name)).to contain_exactly('cr20', 'cr50', 'cr80', 'cr60')
+        expect(assignment.criteria.where(type: 'FlexibleCriterion').pluck(:name))
+                                  .to contain_exactly('cr20', 'cr50', 'cr80', 'cr60')
 
         cr80 = assignment.criteria.where(type: 'FlexibleCriterion').find_by(name: 'cr80')
         expect(cr80.max_mark).to eq(10.0)
@@ -858,7 +859,8 @@ describe CriteriaController do
       it 'creates criteria being case insensitive with the type given' do
         post_as admin, :upload, params: { assignment_id: assignment.id, upload_file: mixed_file }
 
-        expect(assignment.criteria.where(type: 'FlexibleCriterion').pluck(:name)).to contain_exactly('cr20', 'cr80', 'cr60', 'cr50')
+        expect(assignment.criteria.where(type: 'FlexibleCriterion').pluck(:name))
+                                  .to contain_exactly('cr20', 'cr80', 'cr60', 'cr50')
       end
 
       it 'creates criteria that lack a description' do
