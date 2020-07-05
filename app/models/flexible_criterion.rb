@@ -36,7 +36,7 @@ class FlexibleCriterion < Criterion
     name = working_row.shift
     # If a FlexibleCriterion with the same name exits, load it up.  Otherwise,
     # create a new one.
-    criterion = assignment.get_criteria(:all, :flexible).find_or_create_by(name: name)
+    criterion = assignment.criteria.where(type: "FlexibleCriterion").find_or_create_by(name: name)
     # Check that max is not a string.
     begin
       criterion.max_mark = Float(working_row.shift)
