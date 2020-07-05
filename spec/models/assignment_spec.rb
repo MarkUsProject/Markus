@@ -12,12 +12,6 @@ describe Assignment do
     it { is_expected.to have_many(:section_due_dates) }
     it { is_expected.to accept_nested_attributes_for(:section_due_dates) }
     it { is_expected.to have_one(:assignment_stat).dependent(:destroy) }
-    it do
-      is_expected.to have_many(:rubric_criteria).dependent(:destroy).order(:position)
-    end
-    it do
-      is_expected.to have_many(:flexible_criteria).dependent(:destroy).order(:position)
-    end
 
     it { is_expected.to have_many(:assignment_files).dependent(:destroy) }
     it { is_expected.to have_many(:test_groups).dependent(:destroy) }

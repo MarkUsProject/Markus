@@ -520,8 +520,8 @@ class Assignment < Assessment
     criteria_shown = Set.new
     max_mark = 0
 
-    visibility = user.admin? ? :all : :ta
-    criteria_columns = criteria.select(&visibility).map do |crit|
+    selected_criteria = user.admin? ? criteria : criteria.select(&:ta_visible)
+    criteria_columns = selected_criteria.map do |crit|
       unassigned = !assigned_criteria.nil? && !assigned_criteria.include?("#{crit.class}-#{crit.id}")
       next if hide_unassigned && unassigned
 
@@ -596,7 +596,7 @@ class Assignment < Assessment
     end
 
     headers = [['User name', 'Group', 'Final grade'], ['', 'Out of', self.max_mark]]
-    criteria = criteria.select(:ta_visible)
+    criteria = self.criteria.select(&:ta_visible)
     criteria.each do |crit|
       headers[0] << crit.name
       headers[1] << crit.max_mark
@@ -1163,7 +1163,7 @@ class Assignment < Assessment
     end
 
     visibility = current_user.admin? ? :all : :ta
-    criteria = criteria.select(&visibility).reject do |crit|
+    criteria = self.criteria.select(&visibility).reject do |crit|
       !assigned_criteria.nil? && !assigned_criteria.include?("#{crit.class}-#{crit.id}")
     end
 
