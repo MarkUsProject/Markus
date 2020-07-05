@@ -8,7 +8,7 @@ class CriteriaController < ApplicationController
     if @assignment.marking_started?
       flash_now(:notice, I18n.t('assignments.due_date.marking_started_warning'))
     end
-    @criteria = @assignment.get_criteria
+    @criteria = @assignment.criteria
   end
 
   def new
@@ -128,7 +128,7 @@ class CriteriaController < ApplicationController
 
   def download
     assignment = Assignment.find(params[:assignment_id])
-    criteria = assignment.get_criteria.sort_by(&:position)
+    criteria = assignment.criteria.sort_by(&:position)
     yml_criteria = criteria.reduce({}) { |a, b| a.merge b.to_yml }
     send_data yml_criteria.ya2yaml(hash_order: criteria.map(&:name)),
               filename: "#{assignment.short_identifier}_criteria.yml",
@@ -152,7 +152,7 @@ class CriteriaController < ApplicationController
     else
       if data[:type] == '.yml'
         ApplicationRecord.transaction do
-          assignment.get_criteria.each(&:destroy)
+          assignment.criteria.each(&:destroy)
 
           # Create criteria based on the parsed data.
           successes = 0

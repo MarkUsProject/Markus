@@ -4,7 +4,7 @@ class FlexibleCriteriaController < ApplicationController
 
   def download
     @assignment = Assignment.find(params[:assignment_id])
-    criteria = @assignment.get_criteria(:all, :flexible)
+    criteria = @assignment.criteria.where(type: "FlexibleCriterion")
     file_out = MarkusCsv.generate(criteria) do |criterion|
       [criterion.name, criterion.max_mark, criterion.description]
     end

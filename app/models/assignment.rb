@@ -86,6 +86,8 @@ class Assignment < Assessment
   # Because of app/views/main/_grade_distribution_graph.html.erb:25
   validates_presence_of :assignment_stat
 
+  scope :ta_criteria, -> { criteria.includes(options[:includes]).order(:position).select(&user_visibility) }
+
   BLANK_MARK = ''
   STARTER_CODE_REPO_NAME = "starter-code"
 
@@ -241,7 +243,7 @@ class Assignment < Assessment
   def max_mark(user_visibility = :ta_visible)
     # TODO: sum method does not work with empty arrays. Consider updating/replacing gem``:
     #       see: https://github.com/thirtysixthspan/descriptive_statistics/issues/44
-    max_marks = get_criteria(user_visibility).map(&:max_mark)
+    max_marks = criteria.select(&user_visibility).map(&:max_mark)
     s = max_marks.empty? ? 0 : max_marks.sum
     s.nil? ? 0 : s.round(2)
   end
@@ -519,7 +521,7 @@ class Assignment < Assessment
     max_mark = 0
 
     visibility = user.admin? ? :all : :ta
-    criteria_columns = self.get_criteria(visibility).map do |crit|
+    criteria_columns = criteria.select(&visibility).map do |crit|
       unassigned = !assigned_criteria.nil? && !assigned_criteria.include?("#{crit.class}-#{crit.id}")
       next if hide_unassigned && unassigned
 
@@ -594,7 +596,7 @@ class Assignment < Assessment
     end
 
     headers = [['User name', 'Group', 'Final grade'], ['', 'Out of', self.max_mark]]
-    criteria = self.get_criteria(:ta_visible)
+    criteria = criteria.select(:ta_visible)
     criteria.each do |crit|
       headers[0] << crit.name
       headers[1] << crit.max_mark
@@ -628,7 +630,7 @@ class Assignment < Assessment
 
   # Returns an array of [mark, max_mark].
   def get_marks_list(submission)
-    get_criteria.map do |criterion|
+    criteria.map do |criterion|
       mark = submission.get_latest_result.marks.find_by(criterion: criterion)
       [(mark.nil? || mark.mark.nil?) ? '' : mark.mark,
        criterion.max_mark]
@@ -649,16 +651,17 @@ class Assignment < Assessment
   def next_criterion_position
     # We're using count here because this fires off a DB query, thus
     # grabbing the most up-to-date count of the criteria.
-    get_criteria.count > 0 ? get_criteria.last.position + 1 : 1
+    criteria.count > 0 ? criteria.last.position + 1 : 1
   end
 
   # Returns a filtered list of criteria.
   def get_criteria(user_visibility = :all, type = :all, options = {})
+    # can't use select(&:all) because all isn't a field
     criteria.includes(options[:includes]).order(:position).select(&user_visibility)
   end
 
   def criteria_count
-    get_criteria.size
+    criteria.size
   end
 
   # Determine the total mark for a particular student, as a percentage
@@ -1160,7 +1163,7 @@ class Assignment < Assessment
     end
 
     visibility = current_user.admin? ? :all : :ta
-    criteria = self.get_criteria(visibility).reject do |crit|
+    criteria = criteria.select(&visibility).reject do |crit|
       !assigned_criteria.nil? && !assigned_criteria.include?("#{crit.class}-#{crit.id}")
     end
 
