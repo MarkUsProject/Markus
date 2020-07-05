@@ -81,7 +81,7 @@ namespace :markus do
           submission = Submission.create_by_timestamp(grouping, Time.now)
           result = submission.get_latest_result
           # create marks for each criterion and attach to result
-          a1.get_criteria.each do |criterion|
+          a1.criteria.each do |criterion|
             # save a mark for each criterion
             m = Mark.new
             m.criterion = criterion
