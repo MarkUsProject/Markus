@@ -116,7 +116,8 @@ describe AutomatedTestsController do
             m.receiver.basename.to_s == 'some_dir'
           end
           subject
-          url = download_file_assignment_automated_tests_url(assignment_id: assignment.id, file_name: 'file.txt')
+          url = download_file_assignment_automated_tests_url(assignment_id: assignment.id,
+                                                             file_name: 'some_dir/file.txt')
           data = [{ key: 'some_dir/' }, { key: 'some_dir/file.txt', size: 1, url: url }]
           expect(JSON.parse(response.body)['files']).to eq(data.map { |h| h.transform_keys(&:to_s) })
         end
