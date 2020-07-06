@@ -26,6 +26,7 @@ es:
       deduction_absent: 'UPDATE ME!'
       empty_category_name: 'UPDATE ME!'
       error: "No se pudo subir la categoría: %{annotation_category}"
+      invalid_criterion: 'UPDATE ME!'
       invalid_deduction: 'UPDATE ME!'
       success: "%{annotation_category_number} categorías de anotación han sido actualizadas exitosamente"
       title: "Subir Anotaciones"

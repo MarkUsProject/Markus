@@ -23,18 +23,25 @@ class AnnotationCategory < ApplicationRecord
 
   # Takes an array of comma separated values, and tries to assemble an
   # Annotation Category, and associated Annotation Texts
-  # Format:  annotation_category,annotation_text,annotation_text,...
+  # Format:  annotation_category,flexible criterion,annotation_text[, deduction], annotation_text[, deduction]...
   def self.add_by_row(row, assignment, current_user)
     # The first column is the annotation category name.
     name = row.shift
-    annotation_category = assignment.annotation_categories.find_or_create_by(
-      annotation_category_name: name
-    )
+    annotation_category = assignment.annotation_categories.find_by(annotation_category_name: name)
+    # The second column is the optional flexible criterion name.
+    criterion_name = row.shift
+    unless annotation_category.nil?
+      if (annotation_category.flexible_criterion_id.nil? && !criterion_name.nil?) ||
+          (annotation_category.flexible_criterion.name != criterion_name)
+        raise CsvInvalidLineError,  I18n.t('annotation_categories.upload.invalid_criterion',
+                                           annotation_category: name)
+      end
+    else
+      annotation_category = assignment.annotation_categories.create(annotation_category_name: name)
+    end
     unless annotation_category.valid?
       raise CsvInvalidLineError, I18n.t('annotation_categories.upload.empty_category_name')
     end
-    # The second column is the optional flexible criterion name.
-    criterion_name = row.shift
     if criterion_name.nil?
       row.each do |text|
         annotation_text = annotation_category.annotation_texts.build(
@@ -44,7 +51,7 @@ class AnnotationCategory < ApplicationRecord
         )
         unless annotation_text.save
           raise CsvInvalidLineError, I18n.t('annotation_categories.upload.error',
-                                            annotation_category: category)
+                                            annotation_category: annotation_category.annotation_category_name)
         end
       end
     else
@@ -74,7 +81,7 @@ class AnnotationCategory < ApplicationRecord
         )
         unless annotation_text.save
           raise CsvInvalidLineError, I18n.t('annotation_categories.upload.error',
-                                            annotation_category: category)
+                                            annotation_category: annotation_category.annotation_category_name)
         end
       end
     end

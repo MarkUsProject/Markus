@@ -26,6 +26,7 @@ pt:
       deduction_absent: 'UPDATE ME!'
       empty_category_name: 'UPDATE ME!'
       error: "Não foi possível fazer o upload de categoria: erro com %{annotation_category}"
+      invalid_criterion: 'UPDATE ME!'
       invalid_deduction: 'UPDATE ME!'
       success: "Carregado com sucesso %{annotation_category_number} categorias de anotações"
       title: "Carregar anotações"

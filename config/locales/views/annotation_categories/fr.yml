@@ -26,6 +26,7 @@ fr:
       deduction_absent: 'UPDATE ME!'
       empty_category_name: 'UPDATE ME!'
       error: "Impossible d'envoyer les catégories : problème à la catégorie %{annotation_category}"
+      invalid_criterion: 'UPDATE ME!'
       invalid_deduction: 'UPDATE ME!'
       success: "Envoi réussi des catégories d'annotations (%{annotation_category_number} envoyées)."
       title: "Envoi d'annotations"
