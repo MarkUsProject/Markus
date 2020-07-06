@@ -4,7 +4,7 @@ en:
       success: "This annotation category was successfully created."
     destroy_annotation_text:
       confirm: "Deleting this annotation will remove the text from any files it may be attached to.  Are you sure you want to do this?"
-      error: 'Cannot delete this annotation'
+      deductive_annotation_released_error: 'Cannot delete this annotation because it has a deductive value greater than 0 and has been applied to released results.'
       success: "Deleted annotation"
     update_annotation_text:
       error: 'Cannot update this annotation.'
