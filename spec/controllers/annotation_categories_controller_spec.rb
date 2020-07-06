@@ -259,7 +259,7 @@ describe AnnotationCategoriesController do
     end
 
     it 'correctly responds when updating an annotation text\'s (associated with an annotation category) '\
-       'deduction with nil value' do
+       'deduction with nil value when its category belongs to a flexible criterion' do
       assignment_w_deductions = create(:assignment_with_deductive_annotations)
       category = assignment_w_deductions.annotation_categories.where.not(flexible_criterion_id: nil).first
       text = category.annotation_texts.first
@@ -272,6 +272,26 @@ describe AnnotationCategoriesController do
           }
 
       assert_response 400
+      expect(text.reload.deduction).to_not be nil
+    end
+
+    it 'fails to update an annotation text\'s (associated with an annotation category) '\
+       'content when it is a deductive annotation that has been applied to released results' do
+      assignment_w_deductions = create(:assignment_with_deductive_annotations)
+      category = assignment_w_deductions.annotation_categories.where.not(flexible_criterion_id: nil).first
+      text = category.annotation_texts.first
+      prev_content = text.content
+      assignment_w_deductions.groupings.first.current_result.update!(released_to_students: true)
+      put :update_annotation_text,
+          params: {
+              assignment_id: category.assessment_id,
+              id: text.id,
+              annotation_text: { content: 'more updated content', deduction: nil },
+              format: :js
+          }
+
+      assert_response 400
+      expect(text.reload.content).to eq(prev_content)
     end
   end
 
