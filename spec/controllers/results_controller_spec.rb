@@ -243,6 +243,7 @@ describe ResultsController do
                                       markable_type: rubric_mark.markable_type,
                                       mark: 1 }, xhr: true
         expect(JSON.parse(response.body)['num_marked']).to eq 0
+        expect(rubric_mark.reload.override).to be true
       end
       context 'setting override when annotations linked to criteria exist' do
         let(:assignment) { create(:assignment_with_deductive_annotations) }
