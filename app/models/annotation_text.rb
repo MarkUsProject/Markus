@@ -42,9 +42,10 @@ class AnnotationText < ApplicationRecord
     return unless previous_changes.key?('deduction')
 
     if self.annotation_category.changes_to_save.key?('flexible_criterion_id')
-      return if FlexibleCriterion.find_by(id: self.annotation_category
-                                                  .changes_to_save['flexible_criterion_id']
-                                                  .first).nil?
+      criterion = FlexibleCriterion.find_by(id: self.annotation_category
+                                                    .changes_to_save['flexible_criterion_id']
+                                                    .first)
+      return if criterion.nil? || criterion.marks == []
       criterion_id = self.annotation_category.changes_to_save['flexible_criterion_id'].first
     else
       criterion_id = self.annotation_category.flexible_criterion_id
