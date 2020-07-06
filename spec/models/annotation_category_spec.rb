@@ -120,6 +120,37 @@ describe AnnotationCategory do
         AnnotationCategory.add_by_row(@row, assignment, admin)
         expect(@initial_size + 1).to eq(AnnotationCategory.all.size)
       end
+
+      context 'and the assignment has deductive annotations' do
+        let(:assignment) { create(:assignment_with_deductive_annotations) }
+        let(:category) { assignment.annotation_categories.where.not(flexible_criterion_id: nil).first }
+
+        it 'does not allow the flexible criterion to changed to nil' do
+          row = [category.annotation_category_name, nil, 'text 1']
+          expected_message = I18n.t('annotation_categories.upload.invalid_criterion',
+                                    annotation_category: category.annotation_category_name)
+          expect { AnnotationCategory.add_by_row(row, assignment, admin) }.to raise_error(CsvInvalidLineError,
+                                                                                          expected_message)
+        end
+
+        it 'does not allow the flexible criterion for the category to changed to a different criterion' do
+          other_criterion = create(:flexible_criterion, assignment: assignment)
+          row = [category.annotation_category_name, other_criterion.name, 'text 1', 1.0]
+          expected_message = I18n.t('annotation_categories.upload.invalid_criterion',
+                                    annotation_category: category.annotation_category_name)
+          expect { AnnotationCategory.add_by_row(row, assignment, admin) }.to raise_error(CsvInvalidLineError,
+                                                                                          expected_message)
+        end
+
+        it 'does not allow the criterion for the category to be specified it was not before' do
+          other_category = create(:annotation_category, assignment: assignment)
+          row = [other_category.annotation_category_name, assignment.flexible_criteria.first.name, 'text 1', 1.0]
+          expected_message = I18n.t('annotation_categories.upload.invalid_criterion',
+                                    annotation_category: other_category.annotation_category_name)
+          expect { AnnotationCategory.add_by_row(row, assignment, admin) }.to raise_error(CsvInvalidLineError,
+                                                                                          expected_message)
+        end
+      end
     end
 
     context 'when the text of the annotation category already exists' do
