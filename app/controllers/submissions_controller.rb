@@ -319,6 +319,7 @@ class SubmissionsController < ApplicationController
   # update_files action handles transactional submission of files.
   def update_files
     assignment_id = params[:assignment_id]
+    unzip = params[:unzip] == 'true'
     @assignment = Assignment.find(assignment_id)
     raise t('student.submission.external_submit_only') if current_user.student? && !@assignment.allow_web_submits
 
@@ -353,6 +354,16 @@ class SubmissionsController < ApplicationController
     if delete_files.empty? && new_files.empty? && new_folders.empty? && delete_folders.empty?
       flash_message(:warning, I18n.t('student.submission.no_action_detected'))
     else
+      if unzip
+        zdirs, zfiles = new_files.map do |f|
+          next unless f.content_type == 'application/zip'
+          unzip_uploaded_file(f.path)
+        end.compact.transpose.map(&:flatten)
+        new_files.reject! { |f| f.content_type == 'application/zip' }
+        new_folders.push(*zdirs)
+        new_files.push(*zfiles)
+      end
+
       messages = []
       @grouping.group.access_repo do |repo|
         # Create transaction, setting the author.  Timestamp is implicit.

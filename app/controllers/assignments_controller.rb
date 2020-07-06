@@ -390,6 +390,7 @@ class AssignmentsController < ApplicationController
     unless Rails.configuration.starter_code_on
       raise t('student.submission.external_submit_only') #TODO: Update this
     end
+    unzip = params[:unzip] == 'true'
 
     @assignment = Assignment.find(params[:id])
 
@@ -412,6 +413,15 @@ class AssignmentsController < ApplicationController
       flash_message(:warning, I18n.t('student.submission.no_action_detected'))
       redirect_back(fallback_location: root_path)
     else
+      if unzip
+        zdirs, zfiles = new_files.map do |f|
+          next unless f.content_type == 'application/zip'
+          unzip_uploaded_file(f.path)
+        end.compact.transpose.map(&:flatten)
+        new_files.reject! { |f| f.content_type == 'application/zip' }
+        new_folders.push(*zdirs)
+        new_files.push(*zfiles)
+      end
       messages = []
       @assignment.access_starter_code_repo do |repo|
         # Create transaction, setting the author.

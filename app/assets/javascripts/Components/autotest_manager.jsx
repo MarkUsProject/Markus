@@ -60,12 +60,13 @@ class AutotestManager extends React.Component {
     this.setState({form_changed: value}, () => set_onbeforeunload(this.state.form_changed));
   };
 
-  handleCreateFiles = (files) => {
+  handleCreateFiles = (files, unzip) => {
     const prefix = this.state.uploadTarget || '';
     this.setState({showFileUploadModal: false, uploadTarget: undefined});
     let data = new FormData();
     Array.from(files).forEach(f => data.append('new_files[]', f, f.name));
     data.append('path', prefix);
+    data.append('unzip', unzip);
     $.post({
       url: Routes.upload_files_assignment_automated_tests_path(this.props.assignment_id),
       data: data,
