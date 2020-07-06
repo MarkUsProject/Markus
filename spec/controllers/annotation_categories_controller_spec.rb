@@ -344,7 +344,7 @@ describe AnnotationCategoriesController do
       test_criterion = 'hephaestus'
       test_text = %w[enyo athena]
       ac = AnnotationCategory.find_by(annotation_category_name: 'Artemis')
-      expect(AnnotationText.where(annotation_category: ac).pluck(:content)).to eq(test_text)
+      expect(AnnotationText.where(annotation_category: ac).pluck(:content).sort!).to eq(test_text.sort!)
       expect(AnnotationText.where(annotation_category: ac).pluck(:deduction)).to eq([1.0, 1.0])
       expect(ac.flexible_criterion.name).to eq(test_criterion)
     end
