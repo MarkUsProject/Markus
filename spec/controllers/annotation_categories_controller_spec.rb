@@ -121,6 +121,23 @@ describe AnnotationCategoriesController do
             }
       expect(annotation_category.flexible_criterion_id).to eq(nil)
     end
+
+    it 'fails to update the AnnotationCategory\'s associated flexible_criterion'\
+       'after results have been released' do
+      assignment = create(:assignment_with_deductive_annotations)
+      category = assignment.annotation_categories.where.not(flexible_criterion_id: nil).first
+      flexible_criterion = create(:flexible_criterion, assignment: assignment)
+      assignment.groupings.first.current_result.update!(released_to_students: true)
+      previous_criterion_id = category.flexible_criterion_id
+      patch :update,
+            params: {
+                assignment_id: assignment.id,
+                id: category.id,
+                annotation_category: { flexible_criterion_id: flexible_criterion.id },
+                format: :js
+            }
+      expect(category.reload.flexible_criterion_id).to eq(previous_criterion_id)
+    end
   end
 
   describe '#update_positions' do
