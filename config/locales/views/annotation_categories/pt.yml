@@ -23,6 +23,7 @@ pt:
       success: "Esta categoria de anotação foi atualizada com sucesso"
     upload:
       criterion_not_found: 'UPDATE ME!'
+      deduction_absent: 'UPDATE ME!'
       empty_category_name: 'UPDATE ME!'
       error: "Não foi possível fazer o upload de categoria: erro com %{annotation_category}"
       invalid_deduction: 'UPDATE ME!'

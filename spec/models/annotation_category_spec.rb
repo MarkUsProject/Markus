@@ -61,6 +61,33 @@ describe AnnotationCategory do
                                                                                       expected_message)
     end
 
+    it 'returns an error message if a deduction given for an annotation text is negative' do
+      row = ['category_name', 'criterion_name', 'text_content', '-1.0']
+      create(:flexible_criterion, assignment: assignment, name: 'criterion_name', max_mark: 1.5)
+      expected_message = I18n.t('annotation_categories.upload.invalid_deduction',
+                                annotation_content: 'text_content',
+                                criterion_name: 'criterion_name')
+      expect { AnnotationCategory.add_by_row(row, assignment, admin) }.to raise_error(CsvInvalidLineError,
+                                                                                      expected_message)
+    end
+
+    it 'rounds value if a deduction given for an annotation text is specified past two decimal points' do
+      row = ['category_name', 'criterion_name', 'text_content', '1.333']
+      create(:flexible_criterion, assignment: assignment, name: 'criterion_name', max_mark: 1.5)
+      AnnotationCategory.add_by_row(row, assignment, admin)
+      expect(AnnotationText.find_by(content: 'text_content').deduction).to eq(1.33)
+    end
+
+    it 'returns an error message if no deduction given for an annotation text '\
+       'despite there being a criterion specified for the category' do
+      row = ['category_name', 'criterion_name', 'text_content', 'other_text_content']
+      create(:flexible_criterion, assignment: assignment, name: 'criterion_name', max_mark: 0.5)
+      expected_message = I18n.t('annotation_categories.upload.deduction_absent',
+                                annotation_category: 'category_name')
+      expect { AnnotationCategory.add_by_row(row, assignment, admin) }.to raise_error(CsvInvalidLineError,
+                                                                                      expected_message)
+    end
+
     context 'when no annotation categories exists' do
       before :each do
         @row = []

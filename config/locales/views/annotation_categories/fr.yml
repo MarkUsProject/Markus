@@ -23,6 +23,7 @@ fr:
       success: "La catégorie d'annotations a bien été créée ou mise à jour."
     upload:
       criterion_not_found: 'UPDATE ME!'
+      deduction_absent: 'UPDATE ME!'
       empty_category_name: 'UPDATE ME!'
       error: "Impossible d'envoyer les catégories : problème à la catégorie %{annotation_category}"
       invalid_deduction: 'UPDATE ME!'

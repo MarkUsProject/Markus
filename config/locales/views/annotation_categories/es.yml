@@ -23,6 +23,7 @@ es:
       success: "Esta categoría de anotación fue actualizada satisfactoriamente"
     upload:
       criterion_not_found: 'UPDATE ME!'
+      deduction_absent: 'UPDATE ME!'
       empty_category_name: 'UPDATE ME!'
       error: "No se pudo subir la categoría: %{annotation_category}"
       invalid_deduction: 'UPDATE ME!'
