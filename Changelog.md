@@ -17,6 +17,7 @@
 - Fixed bug where bonuses and deductions were not displayed properly (#4699)
 - Fixed bug where image annotations did not stay fixed relative to the image (#4706)
 - Fixed bug where image annotations did not load properly (#4706)
+- Introduces an option to unzip an uploaded zip file in place (#4731)
 
 ## [v1.9.3]
 - Fixed inverse association bug with assignments (#4551)

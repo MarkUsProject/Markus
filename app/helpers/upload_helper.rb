@@ -35,7 +35,6 @@ module UploadHelper
   def unzip_uploaded_file(zip_file_path)
     unzipped_files = []
     unzipped_dirs = []
-    ActionDispatch::Http::UploadedFile
     Zip::File.open(zip_file_path) do |zipfile|
       zipfile.each do |zf|
         unzipped_dirs << zf.name if zf.directory?
