@@ -110,7 +110,8 @@
   PdfAnnotationManager.prototype.getSelectionBox = function($page) {
     let pageNumber = $page.data('page-number');
 
-    if (this.selectionBox.page === pageNumber) {
+    if (this.selectionBox.page === pageNumber && this.selectionBox.$control !== null &&
+        $.contains(document, this.selectionBox.$control[0])) {
       return this.selectionBox;
     } else if (this.selectionBox.$control != null) {
       this.selectionBox.$control.remove(); // Remove old control

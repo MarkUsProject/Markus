@@ -11,6 +11,7 @@ namespace :db do
       description: 'Variables and Simple Operations',
       message: 'using basic operators and assigning variables',
       due_date: Time.current, # Will be adjusted in marks.rake
+      is_hidden: false,
       assignment_properties_attributes: {
         group_min: 2,
         group_max: 3,
@@ -29,6 +30,7 @@ namespace :db do
         description: 'Conditionals and Loops',
         message: 'Learn to use conditional statements, and loops.',
         due_date: Time.current, # Will be adjusted in marks.rake
+        is_hidden: false,
         assignment_properties_attributes: {
           repository_folder: 'A1',
           allow_remarks: true,
@@ -48,6 +50,7 @@ namespace :db do
         description: 'Cats and Dogs',
         message: assignment_msg,
         due_date: Time.current, # Will be adjusted in marks.rake
+        is_hidden: false,
         assignment_properties_attributes: {
           group_min: 2,
           group_max: 3,
@@ -64,6 +67,7 @@ namespace :db do
         description: 'Ode to a Python program',
         message: 'Learn to use files, dictionaries, and testing.',
         due_date: 2.months.from_now,
+        is_hidden: false,
         assignment_properties_attributes: {
           repository_folder: 'A3',
           token_start_date: Time.current,
@@ -78,6 +82,7 @@ namespace :db do
         description: 'Introduction to Recursion',
         message: 'Implement functions using Recursion',
         due_date: 2.months.from_now,
+        is_hidden: false,
         assignment_properties_attributes: {
           group_min: 2,
           group_max: 3,
