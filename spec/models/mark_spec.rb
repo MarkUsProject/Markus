@@ -139,8 +139,7 @@ describe Mark do
     end
 
     it 'does not change the mark if override is enabled' do
-      mark.update!(mark: 3.0)
-      mark.update!(override: true)
+      mark.update!(mark: 3.0, override: true)
       create(:text_annotation,
              annotation_text: annotation_text,
              result: result)
