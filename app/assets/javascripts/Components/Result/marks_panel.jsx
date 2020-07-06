@@ -240,7 +240,7 @@ class FlexibleCriterionInput extends React.Component {
     });
 
     if (deductiveAnnotations.length === 0) {
-      return <span></span>;
+      return '';
     }
 
     let hyperlinkedDeductions = deductiveAnnotations.map((a, index) => {
@@ -265,9 +265,7 @@ class FlexibleCriterionInput extends React.Component {
 
     return (
       <div className={'mark-deductions'}>
-        <span>
-          {label}
-        </span>
+        {label}
         <span className={'text-deduction'}>
           {hyperlinkedDeductions}
         </span>
@@ -276,8 +274,8 @@ class FlexibleCriterionInput extends React.Component {
 
   deleteManualMarkLink = () => {
     if (!this.props.released_to_students && !this.props.unassigned) {
-      if (this.props.annotations.some(a => a.deduction !== null && a.deduction !== 0 && a.criterion_id ===
-          this.props.id) && this.props["marks.override"]) {
+      if (this.props.annotations.some(a => a.deduction !== null && a.deduction !== undefined && a.deduction !== 0 &&
+          a.criterion_id === this.props.id) && this.props["marks.override"]) {
         return (<a href="#"
                    onClick={_ => this.props.revertToAutomaticDeductions(this.props.id)}
                    style={{float: 'right'}}>

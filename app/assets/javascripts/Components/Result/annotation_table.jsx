@@ -123,9 +123,7 @@ export class AnnotationTable extends React.Component {
       } else {
         return (
           <div>
-            <span>
-              {'[' + data.original.criterion_name + '] '}
-            </span>
+            {'[' + data.original.criterion_name + '] '}
             <span className={'text-deduction'}>
               {'-' + data.original.deduction}
             </span>
