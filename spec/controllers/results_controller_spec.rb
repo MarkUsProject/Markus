@@ -705,7 +705,7 @@ describe ResultsController do
     end
 
     context 'when criteria are assigned to graders, but not this grader' do
-      it 'receives no deductive annotation category data if has no ta_criterion_associations' do
+      it 'receives no deductive annotation category data' do
         assignment = create(:assignment_with_deductive_annotations)
         assignment.assignment_properties.update(assign_graders_to_criteria: true)
         non_deductive_category = create(:annotation_category, assignment: assignment)
@@ -735,7 +735,8 @@ describe ResultsController do
 
       context 'when accessing an assignment with deductive annotations' do
         let(:assignment) { create(:assignment_with_deductive_annotations) }
-        it 'receives limited annotation category data if has ta_criterion_association' do
+        it 'receives limited annotation category data when assigned '\
+           'to a subset of criteria that have associated categories' do
           other_criterion = create(:flexible_criterion, assignment: assignment)
           assignment.groupings.each do |grouping|
             create(:flexible_mark, markable: other_criterion, result: grouping.current_result)
@@ -755,7 +756,7 @@ describe ResultsController do
         end
 
         it 'receives limited annotation category data even when it has a ta_criterion_association '\
-           'with a criterion that has the same id as a flexible criterion' do
+           'with a criterion that has the same id as a flexible criterion which is associated with a category' do
           other_criterion = create(:rubric_criterion, assignment: assignment, id: assignment.flexible_criteria.first.id)
           assignment.groupings.each do |grouping|
             create(:rubric_mark, markable: other_criterion, result: grouping.current_result)
