@@ -50,6 +50,15 @@ describe AnnotationCategory do
                                                                                       expected_message)
     end
 
+    it 'returns an error message if a criterion with the name given exists only as a non flexible criterion' do
+      row = ['category_name', 'criterion_name', 'text_content', '1.0']
+      create(:rubric_criterion, assignment: assignment, name: 'criterion_name')
+      expected_message = I18n.t('annotation_categories.upload.criterion_not_found',
+                                missing_criterion: 'criterion_name')
+      expect { AnnotationCategory.add_by_row(row, assignment, admin) }.to raise_error(CsvInvalidLineError,
+                                                                                      expected_message)
+    end
+
     it 'returns an error message if a deduction given for an annotation text '\
        'is greater than the max mark of the criterion' do
       row = ['category_name', 'criterion_name', 'text_content', '1.0']
