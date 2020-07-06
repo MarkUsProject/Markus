@@ -279,11 +279,8 @@ describe ResultsController do
                                       id: incomplete_result.id, markable_id: rubric_mark.markable_id,
                                       markable_type: rubric_mark.markable_type,
                                       mark: '1', format: :json }, xhr: true
-        expect(response.parsed_body.key?('total')).to be true
-        expect(response.parsed_body.key?('sub_total')).to be true
-        expect(response.parsed_body.key?('mark_override')).to be true
-        expect(response.parsed_body.key?('num_marked')).to be true
-        expect(response.parsed_body.key?('mark')).to be true
+        expected_keys = %w[total sub_total mark_override num_marked mark]
+        expect(response.parsed_body.keys.sort!).to eq(expected_keys.sort!)
       end
       it 'sets override to false for mark if input value null and no deductive annotations exist' do
         patch :update_mark, params: { assignment_id: assignment.id, submission_id: submission.id,
@@ -428,10 +425,8 @@ describe ResultsController do
           format: :json
         }, xhr: true
 
-        expect(response.parsed_body.key?('sub_total')).to be true
-        expect(response.parsed_body.key?('total')).to be true
-        expect(response.parsed_body.key?('mark')).to be true
-        expect(response.parsed_body.key?('num_marked')).to be true
+        expected_keys = %w[total sub_total num_marked mark]
+        expect(response.parsed_body.keys.sort!).to eq(expected_keys.sort!)
       end
     end
   end
