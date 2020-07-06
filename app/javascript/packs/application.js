@@ -106,3 +106,5 @@ import { makeAutotestManager } from 'javascripts/Components/autotest_manager';
 window.makeAutotestManager = makeAutotestManager;
 import { makeStudentPeerReviewsTable } from 'javascripts/Components/student_peer_reviews_table';
 window.makeStudentPeerReviewsTable = makeStudentPeerReviewsTable;
+import { makeAnnotationUsagePanel } from 'javascripts/Components/annotation_usage_panel';
+window.makeAnnotationUsagePanel = makeAnnotationUsagePanel;

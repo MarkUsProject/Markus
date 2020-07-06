@@ -1,7 +1,14 @@
 es:
   annotations:
+    count: 'UPDATE ME!'
     help_message: "De click en una categoría de anotación para añadir anotaciones."
     last_edited_by: "Editado por última vez por:"
+    usage: 'UPDATE ME!'
+    used_by: 'UPDATE ME!'
+    used_times:
+      one: 'UPDATE ME'
+      other: 'UPDATE ME'
+      zero: 'UPDATE ME'
 
     download_submission_file:
       begin_annotation: "%{comment_start} ANOTACIÓN %{id}: %{text} %{comment_end}"
