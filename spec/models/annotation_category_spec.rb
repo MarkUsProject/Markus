@@ -258,5 +258,11 @@ describe AnnotationCategory do
     it 'does not prevent deletion of an annotation_category if results not released and annotations have deductions' do
       expect { assignment.annotation_categories.destroy_all }.to_not raise_error
     end
+
+    it 'does not prevent deletion of an annotation_category if results released '\
+       'and annotations have deductions of value 0 only' do
+      annotation_category_with_criteria.annotation_texts.first.update!(deduction: 0)
+      expect { assignment.annotation_categories.destroy_all }.to_not raise_error
+    end
   end
 end
