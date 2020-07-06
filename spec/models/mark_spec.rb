@@ -95,6 +95,19 @@ describe Mark do
       deducted = mark.calculate_deduction
       expect(deducted).to eq(2.0)
     end
+
+    it 'returns 0 when override is true' do
+      mark.update!(mark: 1.0, override: true)
+      deducted = mark.calculate_deduction
+      expect(deducted).to eq(0)
+    end
+
+    it 'returns 0 when markable type is non flexible' do
+      rubric_criterion = create(:rubric_criterion, assignment: assignment)
+      non_flex_mark = create(:rubric_mark, markable: rubric_criterion)
+      deducted = non_flex_mark.calculate_deduction
+      expect(deducted).to eq(0)
+    end
   end
 
   describe '#update_deduction' do
