@@ -65,8 +65,7 @@ export class AnnotationTable extends React.Component {
       accessor: 'content',
       Cell: data => {
         let edit_button = "";
-        if (!this.props.released_to_students && (data.original.deduction === undefined ||
-            data.original.deduction === null)) {
+        if (!this.props.released_to_students && !data.original.deduction) {
           edit_button = <a
             href="#"
             className="edit-icon"
@@ -107,8 +106,7 @@ export class AnnotationTable extends React.Component {
   deductionColumn = {
     Header: I18n.t('activerecord.attributes.annotation_text.deduction'),
     accessor: row => {
-      if (row.deduction === undefined || row.deduction === null ||
-        row.deduction === 0.0) {
+      if (!row.deduction) {
         return '';
       } else {
         return '[' + row.criterion_name + '] -' + row.deduction;
@@ -117,8 +115,7 @@ export class AnnotationTable extends React.Component {
     id: 'deduction',
     filterMethod: this.deductionFilter,
     Cell: data => {
-      if (data.original.deduction === undefined || data.original.deduction === null ||
-          data.original.deduction === 0.0) {
+      if (!data.original.deduction) {
         return '';
       } else {
         return (
