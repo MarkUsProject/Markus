@@ -58,7 +58,7 @@ namespace :db do
                                                     position: 6,
                                                     annotation_category_name: random_words(1),
                                                     flexible_criterion_id: assignment.flexible_criteria.first.id)
-      rand(3..12).times do |index|
+      rand(3..12).times do
         AnnotationText.create(annotation_category: ac_with_criterion,
                               content: random_sentences(3),
                               deduction: assignment.flexible_criteria.first.max_mark,
@@ -68,7 +68,7 @@ namespace :db do
                                                           position: 7,
                                                           annotation_category_name: random_words(1),
                                                           flexible_criterion_id: assignment.flexible_criteria.second.id)
-      rand(3..12).times do |index|
+      rand(3..12).times do
         AnnotationText.create(annotation_category: other_ac_with_criterion,
                               content: random_sentences(2),
                               deduction: assignment.flexible_criteria.second.max_mark,
