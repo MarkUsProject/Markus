@@ -131,10 +131,10 @@ describe AnnotationCategoriesController do
       previous_criterion_id = category.flexible_criterion_id
       patch :update,
             params: {
-                assignment_id: assignment.id,
-                id: category.id,
-                annotation_category: { flexible_criterion_id: flexible_criterion.id },
-                format: :js
+              assignment_id: assignment.id,
+              id: category.id,
+              annotation_category: { flexible_criterion_id: flexible_criterion.id },
+              format: :js
             }
       expect(category.reload.flexible_criterion_id).to eq(previous_criterion_id)
     end
@@ -284,10 +284,10 @@ describe AnnotationCategoriesController do
       assignment_w_deductions.groupings.first.current_result.update!(released_to_students: true)
       put :update_annotation_text,
           params: {
-              assignment_id: category.assessment_id,
-              id: text.id,
-              annotation_text: { content: 'more updated content', deduction: nil },
-              format: :js
+            assignment_id: category.assessment_id,
+            id: text.id,
+            annotation_text: { content: 'more updated content', deduction: nil },
+            format: :js
           }
 
       assert_response 400
