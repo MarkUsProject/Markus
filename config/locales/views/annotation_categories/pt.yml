@@ -4,7 +4,7 @@ pt:
       success: "Esta categoria de anotação foi atualizada com sucesso"
     destroy_annotation_text:
       confirm: "Deletar essa anotação irá remover o texto de todos os arquivos ao qual possa estar anexado. Tem certeza de que quer fazer isto?"
-      error: 'UPDATE ME!'
+      deductive_annotation_released_error: 'UPDATE ME!'
       success: "Apagar categoria de anotação"
     update_annotation_text:
       error: 'UPDATE ME!'
