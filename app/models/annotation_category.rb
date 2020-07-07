@@ -30,14 +30,12 @@ class AnnotationCategory < ApplicationRecord
     annotation_category = assignment.annotation_categories.find_by(annotation_category_name: name)
     # The second column is the optional flexible criterion name.
     criterion_name = row.shift
-    unless annotation_category.nil?
-      if (annotation_category.flexible_criterion_id.nil? && !criterion_name.nil?) ||
-          (annotation_category.flexible_criterion.name != criterion_name)
-        raise CsvInvalidLineError,  I18n.t('annotation_categories.upload.invalid_criterion',
-                                           annotation_category: name)
-      end
-    else
+    if annotation_category.nil?
       annotation_category = assignment.annotation_categories.create(annotation_category_name: name)
+    elsif (annotation_category.flexible_criterion_id.nil? && !criterion_name.nil?) ||
+          (annotation_category.flexible_criterion.name != criterion_name)
+      raise CsvInvalidLineError, I18n.t('annotation_categories.upload.invalid_criterion',
+                                        annotation_category: name)
     end
     unless annotation_category.valid?
       raise CsvInvalidLineError, I18n.t('annotation_categories.upload.empty_category_name')
@@ -63,8 +61,8 @@ class AnnotationCategory < ApplicationRecord
       annotation_category.update!(flexible_criterion_id: criterion.id)
       row.each_slice(2) do |text_with_deduction|
         begin
-        new_deduction = Float(text_with_deduction.second)
-        rescue
+          new_deduction = Float(text_with_deduction.second)
+        rescue ArgumentError
           raise CsvInvalidLineError, I18n.t('annotation_categories.upload.deduction_absent',
                                             annotation_category: annotation_category.annotation_category_name)
         end

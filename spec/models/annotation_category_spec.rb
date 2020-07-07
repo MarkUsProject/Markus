@@ -89,7 +89,7 @@ describe AnnotationCategory do
 
     it 'returns an error message if no deduction given for an annotation text '\
        'despite there being a criterion specified for the category' do
-      row = ['category_name', 'criterion_name', 'text_content', 'other_text_content']
+      row = %w[category_name criterion_name text_content other_text_content]
       create(:flexible_criterion, assignment: assignment, name: 'criterion_name', max_mark: 0.5)
       expected_message = I18n.t('annotation_categories.upload.deduction_absent',
                                 annotation_category: 'category_name')
