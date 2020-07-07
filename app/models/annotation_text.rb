@@ -62,6 +62,7 @@ class AnnotationText < ApplicationRecord
     return if self.deduction.nil?
     prev_deduction = self.deduction
     self.update!(deduction: (prev_deduction * scalar).round(2))
+  end
 
   def uses
     # TODO: simplify second join once creator is no longer polymoprhic
