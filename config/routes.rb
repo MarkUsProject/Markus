@@ -294,6 +294,7 @@ Rails.application.routes.draw do
           delete 'destroy_annotation_text'
           put 'update_annotation_text'
           get 'find_annotation_text'
+          get 'annotation_text_uses'
         end
       end
     end

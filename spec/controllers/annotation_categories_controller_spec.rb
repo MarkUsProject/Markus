@@ -158,6 +158,67 @@ describe AnnotationCategoriesController do
     end
   end
 
+  describe '#annotation_text_uses' do
+    let(:assignment) { create(:assignment_with_criteria_and_results) }
+    let(:category) { create(:annotation_category, assignment: assignment) }
+    let(:annotation_text) { create(:annotation_text, annotation_category: annotation_category) }
+    let(:user) { create(:admin) }
+
+    it 'returns the correct data if the annotation_text was used once' do
+      create(:text_annotation,
+             annotation_text: annotation_text,
+             creator: user,
+             result: assignment.groupings.first.current_result)
+      get_as user,
+             :annotation_text_uses,
+             params: { assignment_id: assignment.id,
+                       annotation_text_id: annotation_text.id },
+             format: :json
+      assert_response 200
+      expect(response.parsed_body.size).to eq 1
+      uses = response.parsed_body.first
+      expect(uses['result_id']).to eq assignment.groupings.first.current_result.id
+      expect(uses['assignment_id']).to eq assignment.id
+      expect(uses['user_name']).to eq user.user_name
+      expect(uses['submission_id']).to eq assignment.groupings.first.current_result.submission_id
+    end
+
+    it 'returns the correct data if the annotation_text was used more than once' do
+      one_grouping = assignment.groupings.first
+      another_grouping = assignment.groupings.second
+      create(:text_annotation,
+             annotation_text: annotation_text,
+             creator: user,
+             result: one_grouping.current_result)
+      create(:text_annotation,
+             annotation_text: annotation_text,
+             creator: user,
+             result: another_grouping.current_result)
+      get_as user,
+             :annotation_text_uses,
+             params: { assignment_id: assignment.id,
+                       annotation_text_id: annotation_text.id },
+             format: :json
+      assert_response 200
+      res = response.parsed_body
+      expect(res.size).to eq 2
+      results = [res.first['result_id'], res.second['result_id']].sort!
+      expect(results).to eq [one_grouping.current_result.id, another_grouping.current_result.id].sort!
+      expect([res.first['user_name'], res.second['user_name']]).to eq [user.user_name, user.user_name]
+      expect([res.first['assignment_id'], res.second['assignment_id']]).to eq [assignment.id, assignment.id]
+    end
+
+    it 'returns the correct data if the annotation_text was never used' do
+      get_as user,
+             :annotation_text_uses,
+             params: { assignment_id: assignment.id,
+                       annotation_text_id: annotation_text.id },
+             format: :json
+      assert_response 200
+      expect(response.parsed_body).to eq []
+    end
+  end
+
   describe '#destroy' do
     it 'successfully deletes an annotation category' do
       assignment = annotation_category.assignment

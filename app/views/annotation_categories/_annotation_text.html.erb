@@ -37,6 +37,7 @@
         <%= annotation_text.deduction %>
       </div>
     <% end %>
+    <div id='annotation-text-<%= annotation_text.id %>-usage-panel'></div>
   </div>
 
   <div id='annotation_text_<%= annotation_text.id %>_edit' style='display:none;'>
@@ -70,3 +71,17 @@
     <% end %>
   </div>
 </li>
+
+<script>
+  (() => {
+    let usagePanel = document.getElementById('annotation-text-' + <%= annotation_text.id %> + '-usage-panel');
+    window.AnnotationUsagePanel = window.makeAnnotationUsagePanel(
+      usagePanel,
+      {
+        annotation_id: <%= annotation_text.id %>,
+        assignment_id: <%= annotation_text.annotation_category.assessment_id %>,
+        num_used: <%= annotation_text.annotations.count %>
+      }
+    );
+  })();
+</script>

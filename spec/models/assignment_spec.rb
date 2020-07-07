@@ -307,7 +307,7 @@ describe Assignment do
           end
 
           it 'raises an exception' do
-            expect { @assignment.add_group(@group_name) }.to raise_error
+            expect { @assignment.add_group(@group_name) }.to raise_error(RuntimeError)
           end
         end
 
@@ -1120,7 +1120,6 @@ describe Assignment do
           @section_due_date = SectionDueDate.create(section: create(:section),
                                                     assignment: @assignment,
                                                     due_date: 1.days.ago)
-          puts @section_due_date.inspect
         end
 
         it 'returns false' do
@@ -1686,6 +1685,18 @@ describe Assignment do
           expect(data.map { |h| h[:grace_credits_used] }.compact).to contain_exactly(1)
         end
       end
+
+      context 'there is an extra mark' do
+        let(:submission) { create :version_used_submission, grouping: groupings[0] }
+        let(:result) { create :complete_result, submission: submission }
+        let!(:extra_mark) { create :extra_mark_points, result: result }
+        it 'should include the extra mark in the total' do
+          final_grade = submission.current_result.total_mark + extra_mark.extra_mark
+          data = assignment.current_submission_data(ta)
+          expect(data.map { |h| h[:final_grade] }).to include(final_grade)
+          expect(data.select { |h| h.key? :final_grade }.count).to eq 1
+        end
+      end
     end
 
     context 'a Student user' do
@@ -1699,7 +1710,7 @@ describe Assignment do
       let(:admin) { create :admin }
       let(:tags) { create_list :tag, 3, user: admin }
       let(:groupings_with_tags) { groupings.each_with_index { |g, i| g.update(tags: [tags[i]]) && g } }
-      let(:data) { assignment.current_submission_data(admin) }
+      let(:data) { assignment.reload.current_submission_data(admin) }
       let(:submission) { create :version_used_submission, grouping: groupings[0] }
       let(:released_result) { create :released_result, submission: submission }
 
@@ -1783,6 +1794,16 @@ describe Assignment do
         final_grade = submission.current_result.total_mark
         expect(data.map { |h| h[:final_grade] }).to include(final_grade)
         expect(data.select { |h| h.key? :final_grade }.count).to eq 1
+      end
+
+      context 'there is an extra mark' do
+        let(:result) { create :complete_result, submission: submission }
+        let!(:extra_mark) { create :extra_mark_points, result: result }
+        it 'should include the extra mark in the total' do
+          final_grade = submission.current_result.total_mark + extra_mark.extra_mark
+          expect(data.map { |h| h[:final_grade] }).to include(final_grade)
+          expect(data.select { |h| h.key? :final_grade }.count).to eq 1
+        end
       end
 
       context 'there are groups without members' do
@@ -1914,6 +1935,22 @@ describe Assignment do
         it 'has group with members' do
           data = @assignment.summary_json(admin)[:data]
           expect(data[0][:members]).not_to be_empty
+        end
+
+        context 'with an extra mark' do
+          let(:grouping) { @assignment.groupings.first }
+          let!(:extra_mark) { create :extra_mark_points, result: grouping.current_result }
+          it 'should included the extra mark value' do
+            data = @assignment.summary_json(admin)[:data]
+            grouping_data = data.select { |d| d[:group_name] == grouping.group.group_name }.first
+            expect(grouping_data[:total_extra_marks]).to eq extra_mark.extra_mark
+          end
+          it 'should add the extra mark to the total mark' do
+            data = @assignment.summary_json(admin)[:data]
+            grouping_data = data.select { |d| d[:group_name] == grouping.group.group_name }.first
+            extra = grouping.current_result.extra_marks.pluck(:extra_mark).sum
+            expect(grouping_data[:final_grade]).to eq(grouping.current_result.total_mark + extra)
+          end
         end
       end
     end
