@@ -266,7 +266,7 @@ class FlexibleCriterionInput extends React.Component {
     return (
       <div className={'mark-deductions'}>
         {label}
-        <span className={'text-deduction'}>
+        <span className={'red-text'}>
           {hyperlinkedDeductions}
         </span>
       </div>);
