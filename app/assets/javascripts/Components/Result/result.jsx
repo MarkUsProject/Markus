@@ -376,12 +376,12 @@ class Result extends React.Component {
       ),
       method: 'PATCH',
       data: {markable_id: criterion_id}
-    }).then((data) => {
+    }).then(data => {
       let marks = this.state.marks.map(markData => {
         if (markData.id === criterion_id && markData.criterion_type === 'FlexibleCriterion') {
           let newMark = {...markData};
-          newMark.mark = data['mark'];
-          newMark['marks.mark'] = data['mark'];
+          newMark.mark = data.mark;
+          newMark['marks.mark'] = data.mark;
           newMark['marks.override'] = false;
           return newMark;
         } else {
