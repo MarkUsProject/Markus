@@ -87,9 +87,19 @@ describe AnnotationCategory do
       expect(AnnotationText.find_by(content: 'text_content').deduction).to eq(1.33)
     end
 
-    it 'returns an error message if no deduction given for an annotation text '\
+    it 'returns an error message if given another text rather than a deduction for an annotation text '\
        'despite there being a criterion specified for the category' do
       row = %w[category_name criterion_name text_content other_text_content]
+      create(:flexible_criterion, assignment: assignment, name: 'criterion_name', max_mark: 0.5)
+      expected_message = I18n.t('annotation_categories.upload.deduction_absent',
+                                annotation_category: 'category_name')
+      expect { AnnotationCategory.add_by_row(row, assignment, admin) }.to raise_error(CsvInvalidLineError,
+                                                                                      expected_message)
+    end
+
+    it 'returns an error message if given nil rather than a deduction for an annotation text '\
+       'despite there being a criterion specified for the category' do
+      row = ['category_name', 'criterion_name', 'text_content', nil]
       create(:flexible_criterion, assignment: assignment, name: 'criterion_name', max_mark: 0.5)
       expected_message = I18n.t('annotation_categories.upload.deduction_absent',
                                 annotation_category: 'category_name')
