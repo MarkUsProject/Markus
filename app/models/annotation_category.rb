@@ -61,6 +61,7 @@ class AnnotationCategory < ApplicationRecord
       annotation_category.update!(flexible_criterion_id: criterion.id)
       row.each_slice(2) do |text_with_deduction|
         begin
+          raise ArgumentError if text_with_deduction.second.nil?
           new_deduction = Float(text_with_deduction.second)
         rescue ArgumentError
           raise CsvInvalidLineError, I18n.t('annotation_categories.upload.deduction_absent',
