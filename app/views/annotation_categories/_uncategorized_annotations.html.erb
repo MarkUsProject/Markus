@@ -1,0 +1,10 @@
+<li id='uncategorized'>
+  <span>
+    <%= link_to 'nope',
+                [assignment, nil],
+                remote: true %>
+  </span>
+  <span class='right'>
+    (<%= AnnotationText.where(annotation_category: nil).count %>)
+  </span>
+</li>

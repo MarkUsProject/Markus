@@ -15,3 +15,9 @@
     <% end %>
   </ul>
 </div>
+<div class='sortable'>
+  <ul id='annotation_category_pane_list'>
+    <%= render partial: 'uncategorized_annotations',
+               locals: {assignment: @annotation_categories.first.assignment} %>
+  </ul>
+</div>
