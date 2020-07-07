@@ -252,7 +252,7 @@ class FlexibleCriterionInput extends React.Component {
                       a.submission_file_id,
                       a.line_start,
                       a.id
-                    )}>
+                    )} className={'red-text'}>
                  {'-' + a.deduction}
                </a>
                {index !== deductiveAnnotations.length - 1 ? ', ' : ''}
@@ -266,9 +266,7 @@ class FlexibleCriterionInput extends React.Component {
     return (
       <div className={'mark-deductions'}>
         {label}
-        <span className={'red-text'}>
-          {hyperlinkedDeductions}
-        </span>
+        {hyperlinkedDeductions}
       </div>);
   }
 
