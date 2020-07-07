@@ -243,6 +243,7 @@ describe ResultsController do
                                       markable_type: rubric_mark.markable_type,
                                       mark: 1 }, xhr: true
         expect(JSON.parse(response.body)['num_marked']).to eq 0
+        expect(rubric_mark.reload.override).to be true
       end
       context 'setting override when annotations linked to criteria exist' do
         let(:assignment) { create(:assignment_with_deductive_annotations) }
@@ -278,11 +279,8 @@ describe ResultsController do
                                       id: incomplete_result.id, markable_id: rubric_mark.markable_id,
                                       markable_type: rubric_mark.markable_type,
                                       mark: '1', format: :json }, xhr: true
-        expect(response.parsed_body.key?('total')).to be true
-        expect(response.parsed_body.key?('sub_total')).to be true
-        expect(response.parsed_body.key?('mark_override')).to be true
-        expect(response.parsed_body.key?('num_marked')).to be true
-        expect(response.parsed_body.key?('mark')).to be true
+        expected_keys = %w[total sub_total mark_override num_marked mark]
+        expect(response.parsed_body.keys.sort!).to eq(expected_keys.sort!)
       end
       it 'sets override to false for mark if input value null and no deductive annotations exist' do
         patch :update_mark, params: { assignment_id: assignment.id, submission_id: submission.id,
@@ -427,10 +425,8 @@ describe ResultsController do
           format: :json
         }, xhr: true
 
-        expect(response.parsed_body.key?('sub_total')).to be true
-        expect(response.parsed_body.key?('total')).to be true
-        expect(response.parsed_body.key?('mark')).to be true
-        expect(response.parsed_body.key?('num_marked')).to be true
+        expected_keys = %w[total sub_total num_marked mark]
+        expect(response.parsed_body.keys.sort!).to eq(expected_keys.sort!)
       end
     end
   end
@@ -709,7 +705,7 @@ describe ResultsController do
     end
 
     context 'when criteria are assigned to graders, but not this grader' do
-      it 'receives no deductive annotation category data if has no ta_criterion_associations' do
+      it 'receives no deductive annotation category data' do
         assignment = create(:assignment_with_deductive_annotations)
         assignment.assignment_properties.update(assign_graders_to_criteria: true)
         non_deductive_category = create(:annotation_category, assignment: assignment)
@@ -739,7 +735,8 @@ describe ResultsController do
 
       context 'when accessing an assignment with deductive annotations' do
         let(:assignment) { create(:assignment_with_deductive_annotations) }
-        it 'receives limited annotation category data if has ta_criterion_association' do
+        it 'receives limited annotation category data when assigned '\
+           'to a subset of criteria that have associated categories' do
           other_criterion = create(:flexible_criterion, assignment: assignment)
           assignment.groupings.each do |grouping|
             create(:flexible_mark, markable: other_criterion, result: grouping.current_result)
@@ -759,7 +756,7 @@ describe ResultsController do
         end
 
         it 'receives limited annotation category data even when it has a ta_criterion_association '\
-           'with a criterion that has the same id as a flexible criterion' do
+           'with a criterion that has the same id as a flexible criterion which is associated with a category' do
           other_criterion = create(:rubric_criterion, assignment: assignment, id: assignment.flexible_criteria.first.id)
           assignment.groupings.each do |grouping|
             create(:rubric_mark, markable: other_criterion, result: grouping.current_result)

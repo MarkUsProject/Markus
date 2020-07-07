@@ -50,6 +50,15 @@ describe AnnotationCategory do
                                                                                       expected_message)
     end
 
+    it 'returns an error message if a criterion with the name given exists only as a non flexible criterion' do
+      row = ['category_name', 'criterion_name', 'text_content', '1.0']
+      create(:rubric_criterion, assignment: assignment, name: 'criterion_name')
+      expected_message = I18n.t('annotation_categories.upload.criterion_not_found',
+                                missing_criterion: 'criterion_name')
+      expect { AnnotationCategory.add_by_row(row, assignment, admin) }.to raise_error(CsvInvalidLineError,
+                                                                                      expected_message)
+    end
+
     it 'returns an error message if a deduction given for an annotation text '\
        'is greater than the max mark of the criterion' do
       row = ['category_name', 'criterion_name', 'text_content', '1.0']
@@ -57,6 +66,33 @@ describe AnnotationCategory do
       expected_message = I18n.t('annotation_categories.upload.invalid_deduction',
                                 annotation_content: 'text_content',
                                 criterion_name: 'criterion_name')
+      expect { AnnotationCategory.add_by_row(row, assignment, admin) }.to raise_error(CsvInvalidLineError,
+                                                                                      expected_message)
+    end
+
+    it 'returns an error message if a deduction given for an annotation text is negative' do
+      row = ['category_name', 'criterion_name', 'text_content', '-1.0']
+      create(:flexible_criterion, assignment: assignment, name: 'criterion_name', max_mark: 1.5)
+      expected_message = I18n.t('annotation_categories.upload.invalid_deduction',
+                                annotation_content: 'text_content',
+                                criterion_name: 'criterion_name')
+      expect { AnnotationCategory.add_by_row(row, assignment, admin) }.to raise_error(CsvInvalidLineError,
+                                                                                      expected_message)
+    end
+
+    it 'rounds value if a deduction given for an annotation text is specified past two decimal points' do
+      row = ['category_name', 'criterion_name', 'text_content', '1.333']
+      create(:flexible_criterion, assignment: assignment, name: 'criterion_name', max_mark: 1.5)
+      AnnotationCategory.add_by_row(row, assignment, admin)
+      expect(AnnotationText.find_by(content: 'text_content').deduction).to eq(1.33)
+    end
+
+    it 'returns an error message if no deduction given for an annotation text '\
+       'despite there being a criterion specified for the category' do
+      row = %w[category_name criterion_name text_content other_text_content]
+      create(:flexible_criterion, assignment: assignment, name: 'criterion_name', max_mark: 0.5)
+      expected_message = I18n.t('annotation_categories.upload.deduction_absent',
+                                annotation_category: 'category_name')
       expect { AnnotationCategory.add_by_row(row, assignment, admin) }.to raise_error(CsvInvalidLineError,
                                                                                       expected_message)
     end
@@ -92,6 +128,37 @@ describe AnnotationCategory do
       it 'creates an annotation' do
         AnnotationCategory.add_by_row(@row, assignment, admin)
         expect(@initial_size + 1).to eq(AnnotationCategory.all.size)
+      end
+
+      context 'and the assignment has deductive annotations' do
+        let(:assignment) { create(:assignment_with_deductive_annotations) }
+        let(:category) { assignment.annotation_categories.where.not(flexible_criterion_id: nil).first }
+
+        it 'does not allow the flexible criterion to changed to nil' do
+          row = [category.annotation_category_name, nil, 'text 1']
+          expected_message = I18n.t('annotation_categories.upload.invalid_criterion',
+                                    annotation_category: category.annotation_category_name)
+          expect { AnnotationCategory.add_by_row(row, assignment, admin) }.to raise_error(CsvInvalidLineError,
+                                                                                          expected_message)
+        end
+
+        it 'does not allow the flexible criterion for the category to changed to a different criterion' do
+          other_criterion = create(:flexible_criterion, assignment: assignment)
+          row = [category.annotation_category_name, other_criterion.name, 'text 1', 1.0]
+          expected_message = I18n.t('annotation_categories.upload.invalid_criterion',
+                                    annotation_category: category.annotation_category_name)
+          expect { AnnotationCategory.add_by_row(row, assignment, admin) }.to raise_error(CsvInvalidLineError,
+                                                                                          expected_message)
+        end
+
+        it 'does not allow the criterion for the category to be specified it was not before' do
+          other_category = create(:annotation_category, assignment: assignment)
+          row = [other_category.annotation_category_name, assignment.flexible_criteria.first.name, 'text 1', 1.0]
+          expected_message = I18n.t('annotation_categories.upload.invalid_criterion',
+                                    annotation_category: other_category.annotation_category_name)
+          expect { AnnotationCategory.add_by_row(row, assignment, admin) }.to raise_error(CsvInvalidLineError,
+                                                                                          expected_message)
+        end
       end
     end
 
@@ -189,6 +256,12 @@ describe AnnotationCategory do
     end
 
     it 'does not prevent deletion of an annotation_category if results not released and annotations have deductions' do
+      expect { assignment.annotation_categories.destroy_all }.to_not raise_error
+    end
+
+    it 'does not prevent deletion of an annotation_category if results released '\
+       'and annotations have deductions of value 0 only' do
+      annotation_category_with_criteria.annotation_texts.first.update!(deduction: 0)
       expect { assignment.annotation_categories.destroy_all }.to_not raise_error
     end
   end

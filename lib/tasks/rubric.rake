@@ -56,21 +56,21 @@ namespace :db do
       end
       ac_with_criterion = AnnotationCategory.create(assignment: assignment,
                                                     position: 6,
-                                                    annotation_category_name: random_words(3),
+                                                    annotation_category_name: random_words(1),
                                                     flexible_criterion_id: assignment.flexible_criteria.first.id)
       rand(3..12).times do |index|
         AnnotationText.create(annotation_category: ac_with_criterion,
-                              content: 'deduction # ' + index.to_s,
+                              content: random_sentences(3),
                               deduction: assignment.flexible_criteria.first.max_mark,
                               creator: Admin.first)
       end
       other_ac_with_criterion = AnnotationCategory.create(assignment: assignment,
                                                           position: 7,
-                                                          annotation_category_name: random_words(3),
+                                                          annotation_category_name: random_words(1),
                                                           flexible_criterion_id: assignment.flexible_criteria.second.id)
       rand(3..12).times do |index|
         AnnotationText.create(annotation_category: other_ac_with_criterion,
-                              content: 'problem # ' + index.to_s,
+                              content: random_sentences(2),
                               deduction: assignment.flexible_criteria.second.max_mark,
                               creator: Admin.first)
       end

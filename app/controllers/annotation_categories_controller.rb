@@ -109,7 +109,7 @@ class AnnotationCategoriesController < ApplicationController
     if @annotation_text.destroy
       flash_now(:success, t('.success'))
     else
-      flash_message(:error, t('.error'))
+      flash_message(:error, t('.deductive_annotation_released_error'))
       head :bad_request
     end
   end

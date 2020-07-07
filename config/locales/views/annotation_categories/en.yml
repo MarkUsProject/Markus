@@ -4,7 +4,7 @@ en:
       success: "This annotation category was successfully created."
     destroy_annotation_text:
       confirm: "Deleting this annotation will remove the text from any files it may be attached to.  Are you sure you want to do this?"
-      error: 'Cannot delete this annotation'
+      deductive_annotation_released_error: 'Cannot delete this annotation because it has a deductive value greater than 0 and has been applied to released results.'
       success: "Deleted annotation"
     update_annotation_text:
       error: 'Cannot update this annotation.'
@@ -23,8 +23,10 @@ en:
       success: "This annotation category was successfully updated."
     upload:
       criterion_not_found: "Criterion %{missing_criterion} must exist prior to the upload of the annotation category belonging to it"
+      deduction_absent: 'Deduction values for category %{annotation_category} absent, despite criterion specification.'
       empty_category_name: 'Category name cannot be blank'
       error: "Unable to upload category: %{annotation_category}"
+      invalid_criterion: "Cannot change the criterion association for pre existing category %{annotation_category}"
       invalid_deduction: "The annotation with content '%{annotation_content}' has an invalid deduction for the criterion %{criterion_name}"
       success: "Successfully uploaded %{annotation_category_number} Annotation Categories"
       title: "Upload Annotations"

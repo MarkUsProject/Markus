@@ -25,7 +25,7 @@
         <%= f.collection_select :flexible_criterion_id,
                                 annotation_category.assignment
                                                    .flexible_criteria
-                                                   .where(assignment: annotation_category.assignment, ta_visible: true),
+                                                   .where(assignment: annotation_category.assignment),
                                 :id,
                                 :name,
                                 { include_blank: t('annotation_categories.unselected_criterion') },

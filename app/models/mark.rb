@@ -31,12 +31,16 @@ class Mark < ApplicationRecord
         .sum(:deduction)
   end
 
+  def deductive_annotations_absent?
+    self.result
+        .annotations
+        .joins(annotation_text: [{ annotation_category: :flexible_criterion }])
+        .where('flexible_criteria.id': self.markable_id)
+        .where.not('annotation_texts.deduction': 0).empty?
+  end
+
   def update_deduction
-    if self.mark.nil? && self.result
-                             .annotations
-                             .joins(annotation_text: [{ annotation_category: :flexible_criterion }])
-                             .where('flexible_criteria.id': self.markable_id)
-                             .where.not('annotation_texts.deduction': 0).empty?
+    if self.mark.nil? && deductive_annotations_absent?
       return self.update!(override: false)
     end
     return if self.override?

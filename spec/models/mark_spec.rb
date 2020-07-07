@@ -95,6 +95,19 @@ describe Mark do
       deducted = mark.calculate_deduction
       expect(deducted).to eq(2.0)
     end
+
+    it 'returns 0 when override is true' do
+      mark.update!(mark: 1.0, override: true)
+      deducted = mark.calculate_deduction
+      expect(deducted).to eq(0)
+    end
+
+    it 'returns 0 when markable type is non flexible' do
+      rubric_criterion = create(:rubric_criterion, assignment: assignment)
+      non_flex_mark = create(:rubric_mark, markable: rubric_criterion)
+      deducted = non_flex_mark.calculate_deduction
+      expect(deducted).to eq(0)
+    end
   end
 
   describe '#update_deduction' do
@@ -126,8 +139,7 @@ describe Mark do
     end
 
     it 'does not change the mark if override is enabled' do
-      mark.update!(mark: 3.0)
-      mark.update!(override: true)
+      mark.update!(mark: 3.0, override: true)
       create(:text_annotation,
              annotation_text: annotation_text,
              result: result)
@@ -197,6 +209,28 @@ describe Mark do
       mark.update!(override: true, mark: mark.markable.max_mark)
       mark.update!(override: false)
       expect(mark.reload.mark).to eq 2.0
+    end
+  end
+  describe '#deductive_annotations_absent?' do
+    it 'returns true when one deductive annotation that affects this mark has been applied' do
+      assignment = create(:assignment_with_deductive_annotations)
+      mark = assignment.groupings.first.current_result.marks.first
+      expect(mark.deductive_annotations_absent?).to be false
+    end
+
+    it 'returns true when multiple deductive annotations that affect this mark have been applied' do
+      assignment = create(:assignment_with_deductive_annotations)
+      result = assignment.groupings.first.current_result
+      category = assignment.annotation_categories.where.not(flexible_criterion: nil).first
+      create(:text_annotation, result: result, annotation_text: category.annotation_texts.first)
+      mark = result.reload.marks.first
+      expect(mark.deductive_annotations_absent?).to be false
+    end
+
+    it 'returns false when no deductive annotations that affect this mark have been applied' do
+      assignment = create(:assignment_with_criteria_and_results)
+      mark = assignment.groupings.first.current_result.marks.first
+      expect(mark.deductive_annotations_absent?).to be true
     end
   end
   # private methods

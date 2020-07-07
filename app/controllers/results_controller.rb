@@ -549,10 +549,7 @@ class ResultsController < ApplicationController
     m_logger = MarkusLogger.instance
 
     if result_mark.update(mark: mark_value)
-      if mark_value.nil? && result.annotations
-                                  .joins(annotation_text: [{ annotation_category: :flexible_criterion }])
-                                  .where('flexible_criteria.id': result_mark.markable_id)
-                                  .where.not('annotation_texts.deduction': 0).empty?
+      if mark_value.nil? && result_mark.deductive_annotations_absent?
         result_mark.update(override: false)
       else
         result_mark.update(override: true)

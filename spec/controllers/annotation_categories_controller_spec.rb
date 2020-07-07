@@ -121,6 +121,23 @@ describe AnnotationCategoriesController do
             }
       expect(annotation_category.flexible_criterion_id).to eq(nil)
     end
+
+    it 'fails to update the AnnotationCategory\'s associated flexible_criterion'\
+       'after results have been released' do
+      assignment = create(:assignment_with_deductive_annotations)
+      category = assignment.annotation_categories.where.not(flexible_criterion_id: nil).first
+      flexible_criterion = create(:flexible_criterion, assignment: assignment)
+      assignment.groupings.first.current_result.update!(released_to_students: true)
+      previous_criterion_id = category.flexible_criterion_id
+      patch :update,
+            params: {
+              assignment_id: assignment.id,
+              id: category.id,
+              annotation_category: { flexible_criterion_id: flexible_criterion.id },
+              format: :js
+            }
+      expect(category.reload.flexible_criterion_id).to eq(previous_criterion_id)
+    end
   end
 
   describe '#update_positions' do
@@ -242,7 +259,7 @@ describe AnnotationCategoriesController do
     end
 
     it 'correctly responds when updating an annotation text\'s (associated with an annotation category) '\
-       'deduction with nil value' do
+       'deduction with nil value when its category belongs to a flexible criterion' do
       assignment_w_deductions = create(:assignment_with_deductive_annotations)
       category = assignment_w_deductions.annotation_categories.where.not(flexible_criterion_id: nil).first
       text = category.annotation_texts.first
@@ -255,6 +272,26 @@ describe AnnotationCategoriesController do
           }
 
       assert_response 400
+      expect(text.reload.deduction).to_not be nil
+    end
+
+    it 'fails to update an annotation text\'s (associated with an annotation category) '\
+       'content when it is a deductive annotation that has been applied to released results' do
+      assignment_w_deductions = create(:assignment_with_deductive_annotations)
+      category = assignment_w_deductions.annotation_categories.where.not(flexible_criterion_id: nil).first
+      text = category.annotation_texts.first
+      prev_content = text.content
+      assignment_w_deductions.groupings.first.current_result.update!(released_to_students: true)
+      put :update_annotation_text,
+          params: {
+            assignment_id: category.assessment_id,
+            id: text.id,
+            annotation_text: { content: 'more updated content', deduction: nil },
+            format: :js
+          }
+
+      assert_response 400
+      expect(text.reload.content).to eq(prev_content)
     end
   end
 
@@ -307,7 +344,7 @@ describe AnnotationCategoriesController do
       test_criterion = 'hephaestus'
       test_text = %w[enyo athena]
       ac = AnnotationCategory.find_by(annotation_category_name: 'Artemis')
-      expect(AnnotationText.where(annotation_category: ac).pluck(:content)).to eq(test_text)
+      expect(AnnotationText.where(annotation_category: ac).pluck(:content).sort!).to eq(test_text.sort!)
       expect(AnnotationText.where(annotation_category: ac).pluck(:deduction)).to eq([1.0, 1.0])
       expect(ac.flexible_criterion.name).to eq(test_criterion)
     end
