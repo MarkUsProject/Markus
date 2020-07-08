@@ -41,7 +41,6 @@ en:
       before_start_instructions: "Once this timed assessment has been started, you will have %{duration_string} to complete it without penalty."
       before_start_instructions_extension: "Once this timed assessment has been started, you will have %{duration_string} to complete it without penalty (this includes a duration extension of %{extension_string})."
       after_start_instructions_html: "This assessment is due before <strong>%{due_date}</strong> without penalty. (started %{start_time})."
-      full_duration_warning_html: "<strong>Warning:</strong> Late submission policies only apply if you submit before the final due date"
       start_confirmation: "You are about to start a timed assessment. You cannot undo this action. Click OK to continue."
       modal_current_duration: "This will extend the current duration for this group. The current duration is: %{duration}."
       started_message: "You have started this assessment."
