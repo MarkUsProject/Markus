@@ -95,32 +95,32 @@ describe AnnotationText do
        ' for every grouping if its deduction changed' do
       deductive_text.update!(deduction: 2.0)
       assignment.reload
-      marks = assignment.groupings.includes(:current_result).map { |grouping|
+      marks = assignment.groupings.includes(:current_result).map do |grouping|
         grouping.current_result.marks.find_by(markable: flexible_criterion).mark
-      }
+      end
       expect(marks).to eq [1.0, 1.0, 1.0]
     end
 
     it 'returns without updating marks if its annotation category doesn\'t belong to a flexible criterion' do
-      previous_marks = assignment.groupings.includes(:current_result).map { |grouping|
+      previous_marks = assignment.groupings.includes(:current_result).map do |grouping|
         grouping.current_result.marks.find_by(markable: flexible_criterion).mark
-      }
+      end
       create(:text_annotation,
              annotation_text: text_without_deduction,
              result: assignment.groupings.first.current_result)
       text_without_deduction.update!(content: 'Do not plagiarize!')
-      new_marks = assignment.groupings.includes(:current_result).map { |grouping|
+      new_marks = assignment.groupings.includes(:current_result).map do |grouping|
         grouping.current_result.marks.find_by(markable: flexible_criterion).mark
-      }
+      end
       expect(new_marks).to eq previous_marks
     end
 
     it 'returns without updating marks if its deduction was not changed' do
       deductive_text.update!(content: 'Do not plagiarize!')
       assignment.reload
-      marks = assignment.groupings.includes(:current_result).map { |grouping|
+      marks = assignment.groupings.includes(:current_result).map do |grouping|
         grouping.current_result.marks.find_by(markable: flexible_criterion).mark
-      }
+      end
       expect(marks).to eq [2.0, 2.0, 2.0]
     end
   end
@@ -134,9 +134,9 @@ describe AnnotationText do
     it 'triggers update_mark_deductions to be called after it successfully executes' do
       deductive_text.scale_deduction(2.0)
       assignment.reload
-      marks = assignment.groupings.includes(:current_result).map { |grouping|
+      marks = assignment.groupings.includes(:current_result).map do |grouping|
         grouping.current_result.marks.find_by(markable: flexible_criterion).mark
-      }
+      end
       expect(marks).to eq [1.0, 1.0, 1.0]
     end
 
