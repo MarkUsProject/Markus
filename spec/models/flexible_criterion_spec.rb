@@ -59,46 +59,37 @@ describe FlexibleCriterion do
       let(:annotation_category) do
         assignment.annotation_categories.where(flexible_criterion_id: flexible_criterion.id).first
       end
-      it 'reassigns it\'s annotation_category\'s flexible_criterion_id to nil before being destroyed if it has one' do
+      it 'reassigns its annotation_category\'s flexible_criterion_id to nil before being destroyed if it has one' do
         flexible_criterion.destroy
         assignment.reload
-        expect(assignment.annotation_categories.first.flexible_criterion_id).to eq(nil)
+        expect(assignment.annotation_categories.first.flexible_criterion_id).to eq nil
       end
 
-      it 'reassigns it\'s annotation_categories\' flexible_criterion_ids to nil before ' \
+      it 'reassigns its annotation_categories\' flexible_criterion_ids to nil before ' \
          'being destroyed if it has many' do
         create(:annotation_category,
                flexible_criterion_id: flexible_criterion.id,
                assignment: assignment)
         flexible_criterion.destroy
         assignment.reload
-        category_criteria = []
-        assignment.annotation_categories.each do |category|
-          category_criteria << category.flexible_criterion_id
-        end
-        expect(category_criteria).to eq([nil, nil])
+        category_criteria = assignment.annotation_categories.map { |category| category.flexible_criterion_id }
+        expect(category_criteria).to eq [nil, nil]
       end
 
-      it 'correctly scales up annotation text deductions when it\'s max_mark is increased' do
+      it 'correctly scales up annotation text deductions when its max_mark is increased' do
         create(:annotation_text, annotation_category: annotation_category, deduction: 2.0)
         flexible_criterion.update!(max_mark: 6.0)
         assignment.reload
-        deductions = []
-        annotation_category.annotation_texts.each do |text|
-          deductions << text.deduction
-        end
-        expect(deductions.sort!).to eq([2.0, 4.0])
+        deductions = annotation_category.annotation_texts.map { |text| text.deduction }
+        expect(deductions.sort!).to eq [2.0, 4.0]
       end
 
-      it 'correctly scales down annotation text deductions when it\'s max_mark is decreased' do
+      it 'correctly scales down annotation text deductions when its max_mark is decreased' do
         create(:annotation_text, annotation_category: annotation_category, deduction: 2.0)
         flexible_criterion.update!(max_mark: 1.0)
         assignment.reload
-        deductions = []
-        annotation_category.annotation_texts.each do |text|
-          deductions << text.deduction
-        end
-        expect(deductions.sort!).to eq([0.33, 0.67])
+        deductions = annotation_category.annotation_texts.each { |text| text.deduction }
+        expect(deductions.sort!).to eq [0.33, 0.67]
       end
     end
 

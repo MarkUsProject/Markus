@@ -34,7 +34,7 @@ describe AnnotationText do
   end
   let(:category_without_criteria) { create(:annotation_category, assignment: assignment) }
   let(:text_without_deduction) { create(:annotation_text, annotation_category: category_without_criteria) }
-
+  let(:flexible_criterion) { annotation_category_with_criterion.flexible_criterion }
   describe 'validation of deduction' do
     it 'is invalid with a deduction greater than the annotation_category\'s flexible_criterion\'s max mark' do
       deductive_text.deduction = 4.0
@@ -68,25 +68,25 @@ describe AnnotationText do
   describe 'callbacks' do
     it 'prevent an update of deduction if any results are released' do
       assignment.groupings.first.current_result.update!(released_to_students: true)
-      expect(deductive_text.update(deduction: 2.0)).to be(false)
+      expect(deductive_text.update(deduction: 2.0)).to be false
     end
 
     it 'prevent an update of content if any results are released and there is a deduction' do
       assignment.groupings.first.current_result.update!(released_to_students: true)
-      expect(deductive_text.update(content: 'Do not plagiarize!')).to be(false)
+      expect(deductive_text.update(content: 'Do not plagiarize!')).to be false
     end
 
     it 'do not prevent an update of content if any results are released and there is no deduction' do
-      expect(deductive_text.update(content: 'Do not plagiarize!')).to be(true)
+      expect(deductive_text.update(content: 'Do not plagiarize!')).to be true
     end
 
     it 'prevent a destruction of the annotation_text if any results are released and there is a deduction value' do
       assignment.groupings.first.current_result.update!(released_to_students: true)
-      expect(deductive_text.destroy).to be(false)
+      expect(deductive_text.destroy).to be false
     end
 
     it 'do not prevent a destruction of the annotation_text if no results are released even with a deduction value' do
-      expect(deductive_text.destroy).to eq(deductive_text)
+      expect(deductive_text.destroy).to eq deductive_text
     end
   end
 
@@ -95,59 +95,49 @@ describe AnnotationText do
        ' for every grouping if its deduction changed' do
       deductive_text.update!(deduction: 2.0)
       assignment.reload
-      marks = []
-      assignment.groupings.includes(:current_result).each do |grouping|
-        marks << grouping.current_result.marks
-                         .find_by(markable_id: annotation_category_with_criterion.flexible_criterion_id).mark
-      end
-      expect(marks).to eq([1.0, 1.0, 1.0])
+      marks = assignment.groupings.includes(:current_result).map { |grouping|
+        grouping.current_result.marks.find_by(markable: flexible_criterion).mark
+      }
+      expect(marks).to eq [1.0, 1.0, 1.0]
     end
 
     it 'returns without updating marks if its annotation category doesn\'t belong to a flexible criterion' do
-      previous_marks = []
-      assignment.groupings.includes(:current_result).each do |grouping|
-        previous_marks << grouping.current_result.marks
-                                  .find_by(markable_id: annotation_category_with_criterion.flexible_criterion_id).mark
-      end
+      previous_marks = assignment.groupings.includes(:current_result).map { |grouping|
+        grouping.current_result.marks.find_by(markable: flexible_criterion).mark
+      }
       create(:text_annotation,
              annotation_text: text_without_deduction,
              result: assignment.groupings.first.current_result)
       text_without_deduction.update!(content: 'Do not plagiarize!')
-      new_marks = []
-      assignment.groupings.includes(:current_result).each do |grouping|
-        new_marks << grouping.current_result.marks
-                             .find_by(markable_id: annotation_category_with_criterion.flexible_criterion_id).mark
-      end
-      expect(new_marks).to eq(previous_marks)
+      new_marks = assignment.groupings.includes(:current_result).map { |grouping|
+        grouping.current_result.marks.find_by(markable: flexible_criterion).mark
+      }
+      expect(new_marks).to eq previous_marks
     end
 
     it 'returns without updating marks if its deduction was not changed' do
       deductive_text.update!(content: 'Do not plagiarize!')
       assignment.reload
-      marks = []
-      assignment.groupings.includes(:current_result).each do |grouping|
-        marks << grouping.current_result.marks
-                         .find_by(markable_id: annotation_category_with_criterion.flexible_criterion_id).mark
-      end
-      expect(marks).to eq([2.0, 2.0, 2.0])
+      marks = assignment.groupings.includes(:current_result).map { |grouping|
+        grouping.current_result.marks.find_by(markable: flexible_criterion).mark
+      }
+      expect(marks).to eq [2.0, 2.0, 2.0]
     end
   end
 
   describe '#scale_deduction' do
     it 'does not affect the deduction when deduction is nil' do
       text_without_deduction.scale_deduction(2.0)
-      expect(text_without_deduction.deduction).to eq(nil)
+      expect(text_without_deduction.deduction).to eq nil
     end
 
     it 'triggers update_mark_deductions to be called after it successfully executes' do
       deductive_text.scale_deduction(2.0)
       assignment.reload
-      marks = []
-      assignment.groupings.includes(:current_result).each do |grouping|
-        marks << grouping.current_result.marks
-                         .find_by(markable_id: annotation_category_with_criterion.flexible_criterion_id).mark
-      end
-      expect(marks).to eq([1.0, 1.0, 1.0])
+      marks = assignment.groupings.includes(:current_result).map { |grouping|
+        grouping.current_result.marks.find_by(markable: flexible_criterion).mark
+      }
+      expect(marks).to eq [1.0, 1.0, 1.0]
     end
 
     it 'does not affect the deduction when results have released' do

@@ -26,7 +26,7 @@ describe AnnotationCategory do
         expect(category).to_not be_valid
       end
 
-      it 'allows the flexible_criterion_id to be set to reference a criterion of it\'s assignment' do
+      it 'allows the flexible_criterion_id to be set to reference a criterion of its assignment' do
         other_criterion = create(:flexible_criterion, assignment: assignment)
         category.flexible_criterion_id = other_criterion.id
         expect(category).to be_valid
@@ -148,7 +148,7 @@ describe AnnotationCategory do
         let(:assignment) { create(:assignment_with_deductive_annotations) }
         let(:category) { assignment.annotation_categories.where.not(flexible_criterion_id: nil).first }
 
-        it 'does not allow the flexible criterion to changed to nil' do
+        it 'does not allow the flexible criterion to change to nil' do
           row = [category.annotation_category_name, nil, 'text 1']
           expected_message = I18n.t('annotation_categories.upload.invalid_criterion',
                                     annotation_category: category.annotation_category_name)
@@ -156,7 +156,7 @@ describe AnnotationCategory do
                                                                                           expected_message)
         end
 
-        it 'does not allow the flexible criterion for the category to changed to a different criterion' do
+        it 'does not allow the flexible criterion for the category to change to a different criterion' do
           other_criterion = create(:flexible_criterion, assignment: assignment)
           row = [category.annotation_category_name, other_criterion.name, 'text 1', 1.0]
           expected_message = I18n.t('annotation_categories.upload.invalid_criterion',
@@ -165,7 +165,7 @@ describe AnnotationCategory do
                                                                                           expected_message)
         end
 
-        it 'does not allow the criterion for the category to be specified it was not before' do
+        it 'does not allow a criterion to be specified for the category if the category did not have one previously' do
           other_category = create(:annotation_category, assignment: assignment)
           row = [other_category.annotation_category_name, assignment.flexible_criteria.first.name, 'text 1', 1.0]
           expected_message = I18n.t('annotation_categories.upload.invalid_criterion',

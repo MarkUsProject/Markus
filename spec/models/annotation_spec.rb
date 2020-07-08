@@ -33,12 +33,12 @@ describe Annotation do
       create(:text_annotation,
              annotation_text: annotation_text,
              result: result)
-      expect(mark.mark).to eq(1.0)
+      expect(mark.mark).to eq 1.0
     end
 
     it 'correctly updates the mark when destroyed, being only deductive annotation applied' do
       result.annotations.find_by(annotation_text: annotation_text).destroy
-      expect(mark.mark).to eq(nil)
+      expect(mark.mark).to eq nil
     end
 
     it 'correctly updates the mark when destroyed, being one of several deductive annotations applied' do
@@ -46,7 +46,7 @@ describe Annotation do
              annotation_text: annotation_text,
              result: result)
       result.annotations.find_by(annotation_text: annotation_text).destroy
-      expect(mark.mark).to eq(2.0)
+      expect(mark.mark).to eq 2.0
     end
 
     it 'correctly updates the mark for its criterion\'s mark when a different type of criterion has the same id' do
@@ -64,7 +64,7 @@ describe Annotation do
              result: result)
       result.reload
       flex_mark = result.marks.find_by(markable_id: 5, markable_type: 'FlexibleCriterion')
-      expect(flex_mark.mark).to eq(2.0)
+      expect(flex_mark.mark).to eq 2.0
     end
   end
 end

@@ -3,7 +3,7 @@ class Mark < ApplicationRecord
   # Result has not been released to students
   before_save :ensure_not_released_to_students
 
-  after_save :update_results
+  after_save :update_result
   after_update :update_deduction, if: ->(m) { m.markable_type == 'FlexibleCriterion' &&
                                               m.previous_changes.key?('override') && !m.override }
 
