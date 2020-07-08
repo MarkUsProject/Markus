@@ -1,0 +1,10 @@
+<div id='annotation_list_holder'>
+  <h2>
+    <%= t('activerecord.models.annotation.other') %>
+  </h2>
+
+  <ul id='annotation_list'>
+    <%= render partial: 'annotation_text',
+               collection: texts %>
+  </ul>
+</div>
