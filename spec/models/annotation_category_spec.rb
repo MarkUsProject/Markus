@@ -65,7 +65,8 @@ describe AnnotationCategory do
       create(:flexible_criterion, assignment: assignment, name: 'criterion_name', max_mark: 0.5)
       expected_message = I18n.t('annotation_categories.upload.invalid_deduction',
                                 annotation_content: 'text_content',
-                                criterion_name: 'criterion_name')
+                                criterion_name: 'criterion_name',
+                                value: 1.0)
       expect { AnnotationCategory.add_by_row(row, assignment, admin) }.to raise_error(CsvInvalidLineError,
                                                                                       expected_message)
     end
@@ -75,7 +76,8 @@ describe AnnotationCategory do
       create(:flexible_criterion, assignment: assignment, name: 'criterion_name', max_mark: 1.5)
       expected_message = I18n.t('annotation_categories.upload.invalid_deduction',
                                 annotation_content: 'text_content',
-                                criterion_name: 'criterion_name')
+                                criterion_name: 'criterion_name',
+                                value: -1.0)
       expect { AnnotationCategory.add_by_row(row, assignment, admin) }.to raise_error(CsvInvalidLineError,
                                                                                       expected_message)
     end
@@ -92,6 +94,7 @@ describe AnnotationCategory do
       row = %w[category_name criterion_name text_content other_text_content]
       create(:flexible_criterion, assignment: assignment, name: 'criterion_name', max_mark: 0.5)
       expected_message = I18n.t('annotation_categories.upload.deduction_absent',
+                                value: 'other_text_content',
                                 annotation_category: 'category_name')
       expect { AnnotationCategory.add_by_row(row, assignment, admin) }.to raise_error(CsvInvalidLineError,
                                                                                       expected_message)
@@ -102,6 +105,7 @@ describe AnnotationCategory do
       row = ['category_name', 'criterion_name', 'text_content', nil]
       create(:flexible_criterion, assignment: assignment, name: 'criterion_name', max_mark: 0.5)
       expected_message = I18n.t('annotation_categories.upload.deduction_absent',
+                                value: nil,
                                 annotation_category: 'category_name')
       expect { AnnotationCategory.add_by_row(row, assignment, admin) }.to raise_error(CsvInvalidLineError,
                                                                                       expected_message)
