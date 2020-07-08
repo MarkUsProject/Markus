@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_06_22_231755) do
+ActiveRecord::Schema.define(version: 2020_07_08_154150) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -267,18 +267,18 @@ ActiveRecord::Schema.define(version: 2020_06_22_231755) do
 
   create_table "grader_permissions", force: :cascade do |t|
     t.integer "user_id"
-    t.boolean "delete_grace_period_deduction"
-    t.boolean "create_notes"
-    t.boolean "create_delete_annotations"
-    t.boolean "collect_submissions"
-    t.boolean "release_unrelease_grades"
-    t.boolean "manage_grade_entry_forms"
-    t.boolean "manage_assignments"
-    t.boolean "manage_reviewers"
-    t.boolean "manage_exam_templates"
-    t.boolean "run_tests"
-    t.boolean "manage_marking_schemes"
-    t.boolean "download_grades_report"
+    t.boolean "delete_grace_period_deduction", default: false
+    t.boolean "create_notes", default: false
+    t.boolean "create_delete_annotations", default: false
+    t.boolean "collect_submissions", default: false
+    t.boolean "release_unrelease_grades", default: false
+    t.boolean "manage_grade_entry_forms", default: false
+    t.boolean "manage_assignments", default: false
+    t.boolean "manage_reviewers", default: false
+    t.boolean "manage_exam_templates", default: false
+    t.boolean "run_tests", default: false
+    t.boolean "manage_marking_schemes", default: false
+    t.boolean "download_grades_report", default: false
   end
 
   create_table "grades", id: :serial, force: :cascade do |t|
