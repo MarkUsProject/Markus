@@ -36,10 +36,8 @@ describe AnnotationCategoriesController do
     end
 
     it 'successfully creates annotation_category with nil flexible_criterion' do
-      category = create(:annotation_category, assignment: assignment)
-
       post :create, params: { assignment_id: assignment.id,
-                              annotation_category: { annotation_category_name: category.annotation_category_name } }
+                              annotation_category: { annotation_category_name: 'Category 1' } }
 
       expect(assignment.annotation_categories.find_by(annotation_category_name: category.annotation_category_name)
                                              .flexible_criterion).to eq nil
@@ -393,13 +391,13 @@ describe AnnotationCategoriesController do
       create(:flexible_criterion, name: 'hephaestus', assignment: assignment)
       post :upload, params: { assignment_id: assignment.id, upload_file: file_good }
 
-      expect(response.status).to eq(302)
+      expect(response.status).to eq 302
       expect(flash[:error]).to be_nil
       expect(flash[:success].map { |f| extract_text f }).to eq([I18n.t('upload_success',
                                                                        count: 3)].map { |f| extract_text f })
       expect(response).to redirect_to(action: 'index', assignment_id: assignment.id)
 
-      expect(AnnotationCategory.all.size).to eq(3)
+      expect(AnnotationCategory.all.size).to eq 3
       # check that the data is being updated, in particular
       # the last element in the file.
       test_criterion = 'hephaestus'
@@ -452,8 +450,8 @@ describe AnnotationCategoriesController do
       create(:flexible_criterion, assignment: assignment, name: 'artist')
       post :upload, params: { assignment_id: assignment.id, upload_file: @valid_yml_file }
 
-      expect(flash[:success].size).to eq(1)
-      expect(response.status).to eq(302)
+      expect(flash[:success].size).to eq 1
+      expect(response.status).to eq 302
 
       annotation_category_list = AnnotationCategory.order(:annotation_category_name)
       test_criterion = 'cafe'
