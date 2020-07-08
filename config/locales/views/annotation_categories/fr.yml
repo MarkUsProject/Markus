@@ -7,7 +7,7 @@ fr:
       deductive_annotation_released_error: 'UPDATE ME!'
       success: "Supprimer la catégorie d'annotations"
     update_annotation_text:
-      error: 'UPDATE ME!'
+      deductive_annotation_released_error: 'UPDATE ME!'
     create_annotation_text:
       error: 'UPDATE ME!'
     destroy:

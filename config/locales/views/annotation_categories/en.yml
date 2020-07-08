@@ -7,7 +7,7 @@ en:
       deductive_annotation_released_error: 'Cannot delete this annotation because it has a deduction and has been applied to released results.'
       success: "Deleted annotation"
     update_annotation_text:
-      error: 'Cannot update this annotation.'
+      deductive_annotation_released_error: 'Cannot update this annotation because it has a deduction and has been applied to released results.'
     create_annotation_text:
       error: 'Could not create a new annotation.'
     destroy:
