@@ -200,17 +200,14 @@ describe Mark do
             .where('annotation_categories.flexible_criterion_id': mark.markable_id).first.destroy
       expect(mark.reload.override).to be false
     end
-  end
 
-  describe '#ensure_mark_value' do
     it 'updates the mark value to be calculated from annotation deductions if override changed to false' do
-      assignment = create(:assignment_with_deductive_annotations)
-      mark = assignment.groupings.first.current_result.marks.first
       mark.update!(override: true, mark: mark.markable.max_mark)
       mark.update!(override: false)
       expect(mark.reload.mark).to eq 2.0
     end
   end
+
   describe '#deductive_annotations_absent?' do
     it 'returns true when one deductive annotation that affects this mark has been applied' do
       assignment = create(:assignment_with_deductive_annotations)

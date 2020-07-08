@@ -3,8 +3,9 @@ class Mark < ApplicationRecord
   # Result has not been released to students
   before_save :ensure_not_released_to_students
 
-  after_save :update_result
-  after_update :ensure_mark_value
+  after_save :update_results
+  after_update :update_deduction, if: ->(m) { m.markable_type == 'FlexibleCriterion' &&
+                                              m.previous_changes.key?('override') && !m.override }
 
   belongs_to :result
   validates_presence_of :markable_type
@@ -51,13 +52,6 @@ class Mark < ApplicationRecord
       return self.update!(mark: 0.0)
     else
       return self.update!(mark: self.markable.max_mark - deduction)
-    end
-  end
-
-  def ensure_mark_value
-    return unless previous_changes.key?('override')
-    if previous_changes['override'].second == false
-      self.update_deduction
     end
   end
 
