@@ -72,7 +72,7 @@ describe FlexibleCriterion do
                assignment: assignment)
         flexible_criterion.destroy
         assignment.reload
-        category_criteria = assignment.annotation_categories.map { |category| category.flexible_criterion_id }
+        category_criteria = assignment.annotation_categories.map(&:flexible_criterion_id)
         expect(category_criteria).to eq [nil, nil]
       end
 
@@ -80,7 +80,7 @@ describe FlexibleCriterion do
         create(:annotation_text, annotation_category: annotation_category, deduction: 2.0)
         flexible_criterion.update!(max_mark: 6.0)
         assignment.reload
-        deductions = annotation_category.annotation_texts.map { |text| text.deduction }
+        deductions = annotation_category.annotation_texts.map(&:deduction)
         expect(deductions.sort!).to eq [2.0, 4.0]
       end
 
@@ -88,7 +88,7 @@ describe FlexibleCriterion do
         create(:annotation_text, annotation_category: annotation_category, deduction: 2.0)
         flexible_criterion.update!(max_mark: 1.0)
         assignment.reload
-        deductions = annotation_category.annotation_texts.each { |text| text.deduction }
+        deductions = annotation_category.annotation_texts.map(&:deduction)
         expect(deductions.sort!).to eq [0.33, 0.67]
       end
     end

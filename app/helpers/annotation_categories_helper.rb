@@ -22,8 +22,8 @@ module AnnotationCategoriesHelper
         categories_data[category.annotation_category_name] = category.annotation_texts.pluck(:content)
       else
         categories_data[category.annotation_category_name] = {
-            'criterion' => category.flexible_criterion.name,
-            'texts' => category.annotation_texts.pluck(:content, :deduction)
+          'criterion' => category.flexible_criterion.name,
+          'texts' => category.annotation_texts.pluck(:content, :deduction)
         }
       end
     end

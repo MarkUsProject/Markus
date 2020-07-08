@@ -4,8 +4,9 @@ class Mark < ApplicationRecord
   before_save :ensure_not_released_to_students
 
   after_save :update_result
-  after_update :update_deduction, if: ->(m) { m.markable_type == 'FlexibleCriterion' &&
-                                              m.previous_changes.key?('override') && !m.override }
+  after_update :update_deduction, if: lambda { |m|
+    m.markable_type == 'FlexibleCriterion' && m.previous_changes.key?('override') && !m.override
+  }
 
   belongs_to :result
   validates_presence_of :markable_type
