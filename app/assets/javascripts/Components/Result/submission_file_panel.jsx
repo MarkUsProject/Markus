@@ -12,7 +12,8 @@ export class SubmissionFilePanel extends React.Component {
     super(props);
     this.state = {
       selectedFile: null,
-      focusLine: null
+      focusLine: null,
+      annotationFocus: undefined
     };
     this.submissionFileViewer = React.createRef();
   }
@@ -105,8 +106,8 @@ export class SubmissionFilePanel extends React.Component {
     return null;
   };
 
-  selectFile = (file, id, focusLine) => {
-    this.setState({selectedFile: [file, id], focusLine: focusLine});
+  selectFile = (file, id, focusLine, annotationFocus) => {
+    this.setState({selectedFile: [file, id], focusLine: focusLine, annotationFocus: annotationFocus});
     localStorage.setItem('file', file);
   };
 
@@ -155,6 +156,7 @@ export class SubmissionFilePanel extends React.Component {
             selectedFile={submission_file_id}
             annotations={visibleAnnotations}
             focusLine={this.state.focusLine}
+            annotationFocus={this.state.annotationFocus}
             released_to_students={this.props.released_to_students}
           />
         </div>

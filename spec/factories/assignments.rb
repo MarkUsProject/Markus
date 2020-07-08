@@ -42,6 +42,25 @@ FactoryBot.define do
     end
   end
 
+  factory :assignment_with_deductive_annotations, parent: :assignment do
+    # This factory creates an assignment with three groupings that each have a result.
+    # The assignment has a flexible_criterion with a max_mark of 3.0.
+    # The assignment also has an annotation_category that belongs to the flexible criterion.
+    # The assignment's annotation category has one annotation_text with a deduction of 1.0.
+    # Each grouping's result has one annotation which belongs to the annotation_text mentioned.
+    after(:create) do |a|
+      create(:flexible_criterion_with_annotation_category, assignment: a)
+      3.times { create(:grouping_with_inviter_and_submission, assignment: a) }
+      a.groupings.each do |grouping|
+        result = grouping.current_result
+        create(:text_annotation,
+               annotation_text: a.annotation_categories.first.annotation_texts.first,
+               result: result)
+        result.update_total_mark
+      end
+    end
+  end
+
   factory :assignment_with_peer_review, parent: :assignment do
     assignment_properties_attributes { { has_peer_review: true } }
   end

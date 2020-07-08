@@ -1,8 +1,12 @@
 pt:
   annotations:
     count: 'UPDATE ME!'
+    default_deduction: 'UPDATE ME!'
     help_message: "Clique em uma categoria de anotação para adicionar anotações."
     last_edited_by: "Última edição por:"
+    list_deductions: 'UPDATE ME!'
+    prevent_ta_delete: 'UPDATE ME!'
+    prevent_update: 'UPDATE ME!'
     usage: 'UPDATE ME!'
     used_by: 'UPDATE ME!'
     used_times:

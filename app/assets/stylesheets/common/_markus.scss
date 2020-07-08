@@ -647,6 +647,7 @@ ul.tags {
       li {
         color: $dark-grey;
         cursor: pointer;
+        display: inline-flex;
         list-style: none;
         padding: 0.5em;
         width: 100%;
@@ -658,6 +659,14 @@ ul.tags {
       }
     }
   }
+}
+
+.text-content {
+  flex: 1;
+}
+
+.red-text {
+  color: $red;
 }
 
 .tag-element {

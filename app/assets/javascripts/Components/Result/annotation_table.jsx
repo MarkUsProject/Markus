@@ -3,6 +3,11 @@ import ReactTable from 'react-table';
 
 
 export class AnnotationTable extends React.Component {
+
+  deductionFilter = (filter, row) => {
+    return String(row[filter.id]).toLocaleLowerCase().includes(filter.value.toLocaleLowerCase());
+  }
+
   columns = [
     {
       Header: '#',
@@ -43,13 +48,12 @@ export class AnnotationTable extends React.Component {
           name = full_path;
         }
         return (
-          <a
-            href="javascript:void(0)"
-            onClick={() =>
+          <a onClick={() =>
               this.props.selectFile(
                 full_path,
                 row.original.submission_file_id,
-                row.original.line_start)}>
+                row.original.line_start,
+                row.original.id)}>
               {name}
           </a>
         );
@@ -61,7 +65,7 @@ export class AnnotationTable extends React.Component {
       accessor: 'content',
       Cell: data => {
         let edit_button = "";
-        if (!this.props.released_to_students) {
+        if (!this.props.released_to_students && !data.original.deduction) {
           edit_button = <a
             href="#"
             className="edit-icon"
@@ -99,6 +103,46 @@ export class AnnotationTable extends React.Component {
     },
   ];
 
+  deductionColumn = {
+    Header: I18n.t('activerecord.attributes.annotation_text.deduction'),
+    accessor: row => {
+      if (!row.deduction) {
+        return '';
+      } else {
+        return '[' + row.criterion_name + '] -' + row.deduction;
+      }
+    },
+    id: 'deduction',
+    filterMethod: this.deductionFilter,
+    Cell: data => {
+      if (!data.original.deduction) {
+        return '';
+      } else {
+        return (
+          <div>
+            {'[' + data.original.criterion_name + '] '}
+            <span className={'red-text'}>
+              {'-' + data.original.deduction}
+            </span>
+          </div>
+        );
+      }
+    },
+    sortMethod: (a, b) => {
+      if (a === '') {
+        return 1;
+      } else if (b === '') {
+        return -1;
+      } else if (a > b) {
+        return 1;
+      } else if (a < b) {
+        return -1;
+      }
+      return 0;
+    },
+    maxWidth: 120
+  };
+
   componentDidMount() {
     MathJax.Hub.Queue(['Typeset', MathJax.Hub, 'annotation_table']);
   }
@@ -112,6 +156,9 @@ export class AnnotationTable extends React.Component {
     if (this.props.detailed) {
       allColumns = allColumns.concat(this.detailedColumns);
     }
+    if (this.props.annotations.some(a => !!a.deduction)) {
+      allColumns.push(this.deductionColumn);
+    }
 
     return (
       <div id={'annotation_table'}>
@@ -120,7 +167,9 @@ export class AnnotationTable extends React.Component {
           data={this.props.annotations}
           columns={allColumns}
           filterable
+          resizable
           defaultSorted={[
+            {id: 'deduction'},
             {id: 'filename'},
             {id: 'number'}
           ]}

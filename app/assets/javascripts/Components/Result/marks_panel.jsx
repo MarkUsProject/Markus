@@ -94,6 +94,9 @@ export class MarksPanel extends React.Component {
       expanded: this.state.expanded.has(key),
       oldMark: this.props.old_marks[`${markData.criterion_type}-${markData.id}`],
       toggleExpanded: () => this.toggleExpanded(key),
+      annotations: this.props.annotations,
+      revertToAutomaticDeductions: this.props.revertToAutomaticDeductions,
+      findDeductiveAnnotation: this.props.findDeductiveAnnotation,
       ... markData
     };
     if (markData.criterion_type === 'CheckboxCriterion') {
@@ -229,6 +232,63 @@ class FlexibleCriterionInput extends React.Component {
     };
   }
 
+  listDeductions = () => {
+    let label = I18n.t('annotations.list_deductions');
+    let deductiveAnnotations = this.props.annotations.filter(a => {
+      return !!a.deduction && a.criterion_id === this.props.id;
+    });
+
+    if (deductiveAnnotations.length === 0) {
+      return '';
+    }
+
+    let hyperlinkedDeductions = deductiveAnnotations.map((a, index) => {
+      let full_path = a.path ? a.path + '/' + a.filename : a.filename;
+      return <span key={a.id}>
+               <a onClick={() =>
+                    this.props.findDeductiveAnnotation(
+                      full_path,
+                      a.submission_file_id,
+                      a.line_start,
+                      a.id
+                    )} className={'red-text'}>
+                 {'-' + a.deduction}
+               </a>
+               {index !== deductiveAnnotations.length - 1 ? ', ' : ''}
+             </span>;
+    });
+
+    if (this.props['marks.override']) {
+      label = '(' + I18n.t('results.overridden_deductions') + ') ' + label;
+    }
+
+    return (
+      <div className={'mark-deductions'}>
+        {label}
+        {hyperlinkedDeductions}
+      </div>);
+  }
+
+  deleteManualMarkLink = () => {
+    if (!this.props.released_to_students && !this.props.unassigned) {
+      if (this.props.annotations.some(a => !!a.deduction && a.criterion_id === this.props.id) &&
+          this.props["marks.override"]) {
+        return (<a href="#"
+                   onClick={_ => this.props.revertToAutomaticDeductions(this.props.id)}
+                   style={{float: 'right'}}>
+                  {I18n.t('results.cancel_override')}
+                </a>);
+      } else if (this.props.mark !== null && this.props["marks.override"]) {
+        return (<a href="#"
+                   onClick={e => this.props.destroyMark(e, this.props.criterion_type, this.props.id)}
+                   style={{float: 'right'}}>
+                  {I18n.t('helpers.submit.delete', {model: I18n.t('activerecord.models.mark.one')})}
+                </a>);
+      }
+    }
+    return '';
+  }
+
   handleChange = (event) => {
     const mark = parseFloat(event.target.value);
     if (event.target.value !== '' && isNaN(mark)) {
@@ -286,16 +346,7 @@ class FlexibleCriterionInput extends React.Component {
                  style={{float: 'left'}}
             />
             {this.props.name}
-            {!this.props.released_to_students &&
-             !this.props.unassigned &&
-             this.props.mark !== null &&
-             <a href="#"
-                onClick={e => this.props.destroyMark(e, this.props.criterion_type, this.props.id)}
-                style={{float: 'right'}}
-             >
-               {I18n.t('helpers.submit.delete', {model: I18n.t('activerecord.models.mark.one')})}
-             </a>
-            }
+            {this.deleteManualMarkLink()}
           </div>
           <div className='criterion-description'>
             {this.props.description}
@@ -305,6 +356,7 @@ class FlexibleCriterionInput extends React.Component {
             &nbsp;/&nbsp;
             {this.props.max_mark}
           </span>
+          {this.listDeductions()}
           {this.props.oldMark !== undefined &&
            <div className='old-mark'>
              {`(${I18n.t('results.remark.old_mark')}: ${this.props.oldMark})`}
