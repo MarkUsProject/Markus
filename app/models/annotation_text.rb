@@ -4,8 +4,8 @@ class AnnotationText < ApplicationRecord
   belongs_to :last_editor, class_name: 'User', foreign_key: :last_editor_id, optional: true
 
   after_update :update_mark_deductions
-  before_update :check_if_released
-  before_destroy :check_if_released
+  before_update :check_if_released, unless: ->(t) { t.deduction.nil? }
+  before_destroy :check_if_released, unless: ->(t) { t.deduction.nil? }
 
   # An AnnotationText has many Annotations that are destroyed when an
   # AnnotationText is destroyed.
@@ -32,8 +32,7 @@ class AnnotationText < ApplicationRecord
 
   def check_if_released
     # Cannot update if any results have been released with the annotation and the deduction is non nil
-    return if self.annotations.joins(:result).where('results.released_to_students' => true).empty? ||
-        self.deduction.nil?
+    return if self.annotations.joins(:result).where('results.released_to_students' => true).empty?
     errors.add(:base, 'Cannot update/destroy annotation_text once results are released.')
     throw(:abort)
   end
