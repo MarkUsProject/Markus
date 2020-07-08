@@ -279,7 +279,7 @@ describe ResultsController do
                                       id: incomplete_result.id, markable_id: rubric_mark.markable_id,
                                       markable_type: rubric_mark.markable_type,
                                       mark: '1', format: :json }, xhr: true
-        expected_keys = %w[total sub_total mark_override num_marked mark]
+        expected_keys = %w[total subtotal mark_override num_marked mark]
         expect(response.parsed_body.keys.sort!).to eq(expected_keys.sort!)
       end
       it 'sets override to false for mark if input value null and no deductive annotations exist' do
@@ -425,7 +425,7 @@ describe ResultsController do
           format: :json
         }, xhr: true
 
-        expected_keys = %w[total sub_total num_marked mark]
+        expected_keys = %w[total subtotal num_marked mark]
         expect(response.parsed_body.keys.sort!).to eq(expected_keys.sort!)
       end
     end

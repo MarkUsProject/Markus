@@ -37,9 +37,9 @@ describe AnnotationCategoriesController do
 
     it 'successfully creates annotation_category with nil flexible_criterion' do
       post :create, params: { assignment_id: assignment.id,
-                              annotation_category: { annotation_category_name: 'Category 1' } }
-
-      expect(assignment.annotation_categories.find_by(annotation_category_name: category.annotation_category_name)
+                              annotation_category: { annotation_category_name: 'Category 1' },
+                              format: :js }
+      expect(assignment.annotation_categories.find_by(annotation_category_name: 'Category 1')
                                              .flexible_criterion).to eq nil
     end
   end
