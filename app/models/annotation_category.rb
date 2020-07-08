@@ -60,12 +60,14 @@ class AnnotationCategory < ApplicationRecord
           new_deduction = Float(text_with_deduction.second)
         rescue ArgumentError, TypeError
           raise CsvInvalidLineError, I18n.t('annotation_categories.upload.deduction_absent',
+                                            value: text_with_deduction.second,
                                             annotation_category: annotation_category.annotation_category_name)
         end
         if new_deduction > criterion.max_mark || new_deduction < 0
           raise CsvInvalidLineError, I18n.t('annotation_categories.upload.invalid_deduction',
                                             annotation_content: text_with_deduction.first,
-                                            criterion_name: criterion_name)
+                                            criterion_name: criterion_name,
+                                            value: new_deduction)
         end
         annotation_text = annotation_category.annotation_texts.build(
           content: text_with_deduction.first,
