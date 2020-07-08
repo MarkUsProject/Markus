@@ -33,7 +33,8 @@ en:
     select_a_group: "Select a group"
     select_a_student: "Select a student"
     select_only_one_group: "You may only assign each student to one group."
-    extension: "Due Date Extension"
+    due_date_extension: "Due Date Extension"
+    duration_extension: "Duration Extension"
 
     # Student interface
     student_interface:

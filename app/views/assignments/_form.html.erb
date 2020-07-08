@@ -16,6 +16,7 @@
   <%= f.fields_for :assignment_properties do |ap_f| %>
 
     <%= ap_f.hidden_field :scanned_exam, value: @assignment.scanned_exam  %>
+    <%= ap_f.hidden_field :is_timed, value: @assignment.is_timed  %>
 
     <label class='required'><%= t('required_fields') %></label>
 
@@ -55,9 +56,21 @@
                         cols: 65,
                         rows: 8,
                         onchange: 'set_onbeforeunload(true);' %>
-
+        <% if @assignment.is_timed %>
+          <%= ap_f.label :start_time,
+                         I18n.t('activerecord.attributes.assignment.start_time'),
+                      class: 'required' %>
+          <%= ap_f.text_field :start_time,
+                              onchange: 'set_onbeforeunload(true);',
+                              value: @assignment.start_time.nil? ? '' :
+                                       @assignment.start_time.strftime(
+                                         '%Y-%m-%d %l:%M %p'),
+                              size: 35,
+                              required: true,
+                              placeholder: t('time.format_string.placeholder') %>
+        <% end %>
         <%= f.label :due_date,
-                    Assignment.human_attribute_name(:due_date),
+                    @assignment.is_timed ? I18n.t('assignments.timed.end_time') : Assignment.human_attribute_name(:due_date),
                     class: 'required' %>
         <%= f.text_field :due_date,
                          onchange: 'set_onbeforeunload(true);',
@@ -87,7 +100,12 @@
               <thead>
                 <tr>
                   <th><%= Section.model_name.human %></th>
-                  <th><%= Assignment.human_attribute_name(:due_date) %></th>
+                  <% if @assignment.is_timed %>
+                    <th><%= Assignment.human_attribute_name(:start_time) %></th>
+                  <% end %>
+                  <th><%= @assignment.is_timed ?
+                            I18n.t('assignments.timed.end_time') :
+                            Assignment.human_attribute_name(:due_date) %></th>
                 </tr>
               </thead>
               <tbody>
@@ -96,6 +114,15 @@
                 <tr>
                   <% obj = due_date_f.object %>
                   <td><%= obj.section.name %></td>
+                  <% if @assignment.is_timed %>
+                    <td>
+                      <%= due_date_f.text_field :start_time,
+                                                class: 'section_due_date_input',
+                                                value: obj.start_time.nil? ? '' :
+                                                         obj.start_time.strftime(
+                                                           '%Y-%m-%d %l:%M %p') %>
+                    </td>
+                  <% end %>
                   <td>
                     <%= due_date_f.text_field :section_id, class: 'hidden' %>
                     <%= due_date_f.text_field :due_date,
@@ -111,7 +138,29 @@
           </div>
         </div>
       <% end %>
-
+      <% if @assignment.is_timed %>
+          <fieldset class="timed_assignment_duration_properties">
+            <legend>
+              <span><%= Assignment.human_attribute_name(:duration)%></span>
+            </legend>
+            <div class="timed_assignment_duration_properties">
+            <%= ap_f.fields_for :duration do |dur_f| %>
+              <%= dur_f.number_field :hours,
+                                     min: 0,
+                                     max: 999,
+                                     value: @assignment.duration_parts[:hours],
+                                     onchange: 'set_onbeforeunload(true);' %>
+              <%= dur_f.label :hours, I18n.t('durations.any_hours') %>
+              <%= dur_f.number_field :minutes,
+                                     min: 0,
+                                     max: 59,
+                                     value: @assignment.duration_parts[:minutes],
+                                     onchange: 'set_onbeforeunload(true);' %>
+              <%= dur_f.label :minutes, I18n.t('durations.any_minutes') %>
+            <% end %>
+          </div>
+        </fieldset>
+      <% end %>
       <fieldset class='no-legend'>
         <div class='inline-labels'>
         <% unless @assignment.scanned_exam %>

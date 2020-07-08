@@ -8,6 +8,7 @@
 
 fieldset {
   &.period,
+  &.timed_assignment_duration_properties,
   &.group_properties {
     border: 1px solid $grey;
     border-radius: $radius;

@@ -7,7 +7,7 @@ class Extension < ApplicationRecord
 
   after_create :remove_pending_memberships
 
-  PARTS = [:weeks, :days, :hours].freeze
+  PARTS = [:weeks, :days, :hours, :minutes].freeze
 
   def self.to_parts(duration)
     PARTS.map do |part|

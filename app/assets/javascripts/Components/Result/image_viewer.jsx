@@ -31,7 +31,13 @@ export class ImageViewer extends React.Component {
   };
 
   display_annotation = (annotation) => {
-    add_annotation_text(annotation.annotation_text_id, annotation.content);
+    let content = '';
+    if (!annotation.deduction) {
+      content += annotation.content;
+    } else {
+      content += annotation.content + ' [' + annotation.criterion_name + ': -' + annotation.deduction + ']';
+    }
+    add_annotation_text(annotation.annotation_text_id, content);
     annotation_manager.add_to_grid({
       x_range: annotation.x_range,
       y_range: annotation.y_range,

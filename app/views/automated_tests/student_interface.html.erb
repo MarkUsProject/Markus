@@ -9,7 +9,7 @@
   <% unless @assignment.unlimited_tokens || @assignment.non_regenerating_tokens %>
     <p>
       <strong><%= Assignment.human_attribute_name(:token_period) %>:</strong>
-      <%= "#{@assignment.token_period} #{t(:hours)}" %>
+      <%= "#{@assignment.token_period} #{t('durations.any_hours')}" %>
     </p>
   <% end %>
 

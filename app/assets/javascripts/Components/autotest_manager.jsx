@@ -266,7 +266,7 @@ class AutotestManager extends React.Component {
                            !this.state.enable_student_tests}
                  style={{marginRight: '1em'}}
           />
-          {I18n.t('hours')}
+          {I18n.t('durations.any_hours')}
           <span style={{marginLeft: '1em'}}>
             <label className='inline_label'>
               ({I18n.t('activerecord.attributes.assignment.non_regenerating_tokens')}

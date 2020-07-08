@@ -8,9 +8,12 @@ class ExtensionModal extends React.Component {
     weeks: 0,
     days: 0,
     hours: 0,
+    minutes: 0,
     note: '',
     penalty: false,
-    updating: false
+    updating: false,
+    times: [],
+    title: ''
   };
 
   constructor(props) {
@@ -19,6 +22,7 @@ class ExtensionModal extends React.Component {
       weeks: props.weeks,
       days: props.days,
       hours: props.hours,
+      minutes: props.minutes,
       note: props.note,
       penalty: props.penalty
     };
@@ -44,6 +48,7 @@ class ExtensionModal extends React.Component {
         weeks: this.state.weeks,
         days: this.state.days,
         hours: this.state.hours,
+        minutes: this.state.minutes,
         note: this.state.note,
         penalty: this.state.penalty,
         grouping_id: this.props.grouping_id
@@ -83,6 +88,43 @@ class ExtensionModal extends React.Component {
     });
   };
 
+  getLabel = (time) => {
+    // Return the internationalized version of +time+
+    if (time === 'weeks') {
+      return I18n.t('durations.weeks.other');
+    } else if (time === 'days') {
+      return I18n.t('durations.days.other');
+    } else if (time === 'hours') {
+      return I18n.t('durations.hours.other');
+    } else if (time === 'minutes') {
+      return I18n.t('durations.minutes.other');
+    }
+  };
+
+  renderTimeInput = () => {
+    // Render a label and input for each time in
+    // this.props.times
+    return this.props.times.map( (time) =>
+      <label key={time}>
+        <input
+          type="number"
+          value={this.state[time]}
+          max={time === 'minutes' ? 60 : 999}
+          min={0}
+          name={time}
+          onChange={this.handleModalInputChange}
+        /> {this.getLabel(time)}
+      </label>
+    );
+  };
+
+  renderExtraInfo = () => {
+    // Render this.props.extra info if it exists
+    if (!!this.props.extra_info) {
+      return <div className={'modal-container'}>{this.props.extra_info}</div>;
+    }
+  };
+
   render() {
     return (
       <Modal
@@ -90,40 +132,14 @@ class ExtensionModal extends React.Component {
         isOpen={this.props.isOpen}
         onRequestClose={this.props.onRequestClose}
       >
-        <h2>{I18n.t("activerecord.models.extensions.one")}</h2>
+        <h2>{this.props.title}</h2>
         <form onSubmit={this.submitForm}>
           <div className={'modal-container-vertical'}>
             <div className={'modal-container'}>
-              <label>
-                <input
-                  type="number"
-                  value={this.state.weeks}
-                  max={999}
-                  min={0}
-                  name={'weeks'}
-                  onChange={this.handleModalInputChange}
-                /> {I18n.t('extensions.weeks')}
-              </label>
-              <label>
-                <input
-                  type="number"
-                  value={this.state.days}
-                  max={999}
-                  min={0}
-                  name={'days'}
-                  onChange={this.handleModalInputChange}
-                /> {I18n.t('extensions.days')}
-              </label>
-              <label>
-                <input
-                  type="number"
-                  value={this.state.hours}
-                  max={999}
-                  min={0}
-                  name={'hours'}
-                  onChange={this.handleModalInputChange}
-                /> {I18n.t('extensions.hours')}
-              </label>
+              {this.renderExtraInfo()}
+            </div>
+            <div className={'modal-container'}>
+              {this.renderTimeInput()}
             </div>
             <br/>
             <div>

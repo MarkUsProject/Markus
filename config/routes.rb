@@ -81,6 +81,7 @@ Rails.application.routes.draw do
         get 'stop_test'
         get 'stop_batch_tests'
         get 'switch_assignment'
+        put 'start_timed_assignment'
       end
 
       resources :tags do
@@ -225,6 +226,7 @@ Rails.application.routes.draw do
             delete 'delete_grace_period_deduction'
             get 'next_grouping'
             post 'remove_extra_mark'
+            patch 'revert_to_automatic_deductions'
             post 'set_released_to_students'
             post 'update_overall_comment'
             post 'toggle_marking_state'
