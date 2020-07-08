@@ -30,34 +30,30 @@ describe MarkingSchemesController do
 
   describe 'An authorized user' do
     context '#populate' do
-      it 'returns correct JSON data' do
-        create(
-          :marking_scheme,
-          assessments: [
-            grade_entry_form,
-            grade_entry_form_with_data,
-            assignment,
-            assignment_with_criteria_and_results
-          ]
-        )
+      let(:assessments) do
+        [grade_entry_form,
+         grade_entry_form_with_data,
+         assignment,
+         assignment_with_criteria_and_results]
+      end
+      before do
+        create :marking_scheme, assessments: assessments
         get_as admin, :populate, format: :json
-
+      end
+      it 'returns a hash with the correct keys' do
+        expect(response.parsed_body.keys).to contain_exactly('data', 'columns')
+      end
+      it 'returns a nested data hash with the correct keys' do
         expected_keys = %w[id name assessment_weights edit_link delete_link]
-        expect(response.parsed_body).is_a? Hash
-        expect(response.parsed_body.keys).to match_array %w[data columns]
-        expect(response.parsed_body['data']).to_not be_empty
-
-        data_hash = response.parsed_body['data'][0]
-        expect(data_hash.keys).to match_array expected_keys
-
-        assessment_weights = data_hash['assessment_weights']
-        expected_assessment_ids = [
-          assignment.id.to_s,
-          assignment_with_criteria_and_results.id.to_s,
-          grade_entry_form.id.to_s,
-          grade_entry_form_with_data.id.to_s
-        ]
-        expect(assessment_weights.keys).to match_array expected_assessment_ids
+        expect(response.parsed_body['data'][0].keys).to contain_exactly(*expected_keys)
+      end
+      it 'should contain the correct weights' do
+        expected_assessment_ids = assessments.map(&:id).map(&:to_s)
+        expect(response.parsed_body['data'][0]['assessment_weights'].keys).to contain_exactly(*expected_assessment_ids)
+      end
+      it 'should contain the correct column accessors' do
+        accessors = response.parsed_body['columns'].map { |c| c['accessor'] }
+        expect(accessors).to contain_exactly(*assessments.map { |a| "assessment_weights.#{a.id}" })
       end
     end
 
