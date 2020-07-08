@@ -19,16 +19,12 @@ class Annotation < ApplicationRecord
   validates_format_of :type,
                       with: /\AImageAnnotation|TextAnnotation|PdfAnnotation\z/
 
-  after_create :modify_mark_with_deduction, unless: lambda { |a|
-    a.annotation_text.deduction.nil? || a.annotation_text.deduction == 0
-  }
-  after_destroy :modify_mark_with_deduction, unless: lambda { |a|
-    a.annotation_text.deduction.nil? || a.annotation_text.deduction == 0
-  }
+  after_create :modify_mark_with_deduction, unless: ->(a) { [nil, 0].include? a.annotation_text.deduction }
+  after_destroy :modify_mark_with_deduction, unless: ->(a) { [nil, 0].include? a.annotation_text.deduction }
 
   def modify_mark_with_deduction
-    criterion_id = self.annotation_text&.annotation_category&.flexible_criterion
-    self.result.marks.find_by(markable_id: criterion_id, markable_type: 'FlexibleCriterion').update_deduction
+    criterion = self.annotation_text.annotation_category.flexible_criterion
+    self.result.marks.find_by(markable: criterion).update_deduction
   end
 
   def get_data(include_creator=false)
