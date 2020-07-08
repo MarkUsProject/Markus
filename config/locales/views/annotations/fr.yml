@@ -1,9 +1,9 @@
 fr:
   annotations:
     count: 'UPDATE ME!'
+    default_deduction: 'UPDATE ME!'
     help_message: "Cliquer sur les catégories d'annotations pour créer des annotations."
     last_edited_by: "Dernière édition par :"
-    default_deduction: 'UPDATE ME!'
     list_deductions: 'UPDATE ME!'
     prevent_ta_delete: 'UPDATE ME!'
     prevent_update: 'UPDATE ME!'
