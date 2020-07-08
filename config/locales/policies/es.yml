@@ -60,3 +60,16 @@ es:
         assign_reviewers?: "UPDATE ME."
       marking_scheme:
         manage?: "UPDATE ME."
+      grader_permission:
+        create_delete_annotations?: "UPDATE ME."
+        collect_all_submissions?: "UPDATE ME."
+        manage_assignments?: "UPDATE ME."
+        manage_exam_templates?: "UPDATE ME."
+        manage_grade_entry_forms?: "UPDATE ME."
+        release_unrelease_grades?: "UPDATE ME."
+        create_notes?: "UPDATE ME."
+        manage_reviewers?: "UPDATE ME."
+        delete_grace_credit_deduction?: "UPDATE ME."
+        download_grades_report?: "UPDATE ME."
+        manage_marking_schemes?: "UPDATE ME."
+        grader_run_tests?: "UPDATE ME."
