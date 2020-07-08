@@ -63,3 +63,16 @@ en:
         assign_reviewers?: "You do not have permissions to assign reviewers."
       marking_scheme:
         manage?: "You do not have permissions to create or manage marking schemes."
+      grader_permission:
+        create_delete_annotations?: "You do not have permissions to create, delete annotations."
+        collect_all_submissions?: "You do not have permissions to collect submissions."
+        manage_assignments?: "You do not have permissions to create, edit and manage assignments."
+        manage_exam_templates?: "You do not have permissions to create, edit and manage exam templates."
+        manage_grade_entry_forms?: "You do not have permissions to manage grade entry forms."
+        release_unrelease_grades?: "You do not have permissions to release or unrelease the grades to students."
+        create_notes?: "You do not have permissions to create notes."
+        manage_reviewers?: "You do not have permissions to assign, unassign and manage reviewers."
+        delete_grace_credit_deduction?: "You do not have permissions to delete the grace period deduction."
+        download_grades_report?: "You do not have permissions to download grades report."
+        manage_marking_schemes?: "You do not have permissions to create, edit and manage marking schemes."
+        grader_run_tests?: "You do not have permissions to run tests."
