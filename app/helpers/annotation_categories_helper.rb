@@ -21,9 +21,10 @@ module AnnotationCategoriesHelper
       if category.flexible_criterion_id.nil?
         categories_data[category.annotation_category_name] = category.annotation_texts.pluck(:content)
       else
-        info = { 'criterion' => category.flexible_criterion.name }
-        info['texts'] = category.annotation_texts.pluck(:content, :deduction)
-        categories_data[category.annotation_category_name] = info
+        categories_data[category.annotation_category_name] = {
+            'criterion' => category.flexible_criterion.name,
+            'texts' => category.annotation_texts.pluck(:content, :deduction)
+        }
       end
     end
     categories_data.to_yaml

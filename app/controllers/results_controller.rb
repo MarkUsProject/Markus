@@ -564,7 +564,7 @@ class ResultsController < ApplicationController
         num_marked: num_marked,
         mark: result_mark.reload.mark,
         mark_override: result_mark.override,
-        sub_total: result.get_subtotal,
+        subtotal: result.get_subtotal,
         total: result.get_total_mark
       }
     else
@@ -592,7 +592,7 @@ class ResultsController < ApplicationController
     render json: {
       num_marked: num_marked,
       mark: result_mark.reload.mark,
-      sub_total: result.get_subtotal,
+      subtotal: result.get_subtotal,
       total: result.get_total_mark
     }
   end
