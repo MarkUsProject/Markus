@@ -489,15 +489,19 @@ class Grouping < ApplicationRecord
 
   # Return the due date for this grouping. If this grouping has an extension, the time_delta
   # of the extension is added to the due date.
+  #
+  # If the assignment is a timed assignment and the student has started working, the due date
+  # is this grouping's start time plus the duration plus any extension.
   def due_date
-    if use_section_due_date?
-      assignment_due_date = assignment.section_due_dates.find_by(section_id: inviter.section.id).due_date
+    if assignment.section_due_dates_type
+      a_due_date = assignment.section_due_dates.find_by(section_id: inviter&.section)&.due_date || assignment.due_date
     else
-      assignment_due_date = assignment.due_date
+      a_due_date = assignment.due_date
     end
-    return assignment_due_date + extension.time_delta if extension.present?
+    extension_time = (extension&.time_delta || 0)
+    return a_due_date + extension_time if !assignment.is_timed || start_time.nil?
 
-    assignment_due_date
+    start_time + extension_time + assignment.duration
   end
 
   # Finds the correct due date (section or not) and checks if the last commit is after it.
@@ -522,6 +526,15 @@ class Grouping < ApplicationRecord
 
   def past_collection_date?
     collection_date < Time.current
+  end
+
+  def past_assessment_start_time?
+    assignment.section_start_time(inviter&.section) < Time.current
+  end
+
+  # Return the duration of this grouping's assignment plus any extensions
+  def duration
+    assignment.duration + (extension&.time_delta || 0)
   end
 
   def self.get_assign_scans_grouping(assignment, grouping_id = nil)

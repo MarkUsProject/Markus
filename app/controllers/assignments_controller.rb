@@ -7,7 +7,8 @@ class AssignmentsController < ApplicationController
                               :show,
                               :peer_review,
                               :summary,
-                              :switch_assignment]
+                              :switch_assignment,
+                              :start_timed_assignment]
 
   before_action      :authorize_for_ta_and_admin,
                      only: [:summary]
@@ -52,6 +53,10 @@ class AssignmentsController < ApplicationController
       end
     end
     unless @grouping.nil?
+      if @assignment.is_timed && !@grouping.start_time.nil? && !@grouping.past_collection_date?
+        flash_message(:note, I18n.t('assignments.timed.started_message'))
+        flash_message(:note, I18n.t('assignments.timed.starter_code_prompt'))
+      end
       set_repo_vars(@assignment, @grouping)
     end
     render layout: 'assignment_content'
@@ -197,6 +202,9 @@ class AssignmentsController < ApplicationController
     @assignment = Assignment.new
     if params[:scanned].present?
       @assignment.scanned_exam = true
+    end
+    if params[:timed].present?
+      @assignment.is_timed = true
     end
     @clone_assignments = Assignment.joins(:assignment_properties)
                                    .where(assignment_properties: { vcs_submit: true })
@@ -515,6 +523,17 @@ class AssignmentsController < ApplicationController
     head :ok
   end
 
+  # Start timed assignment for the current user's grouping for this assignment
+  def start_timed_assignment
+    grouping = current_user.try(:accepted_grouping_for, params[:id])
+    return head 400 if grouping.nil?
+    authorize! grouping
+    unless grouping.update(start_time: Time.current)
+      flash_message(:error, grouping.errors.full_messages.join(' '))
+    end
+    redirect_to action: :show
+  end
+
   private
 
     def sanitize_file_name(file_name)
@@ -593,6 +612,7 @@ class AssignmentsController < ApplicationController
     periods = submission_rule_params['submission_rule_attributes']['periods_attributes'].to_h.values.map { |h| h[:id] }
     assignment.submission_rule.periods.where.not(id: periods).each(&:destroy)
     assignment.assign_attributes(assignment_params)
+    process_timed_duration(assignment) if assignment.is_timed
     assignment.repository_folder = short_identifier unless assignment.is_peer_review?
     assignment.save!
     new_required_files = assignment.saved_change_to_only_required_files? ||
@@ -626,6 +646,13 @@ class AssignmentsController < ApplicationController
     end
 
     return assignment, new_required_files
+  end
+
+  # Convert the hours and minutes value given in the params to a duration value
+  # and assign it to the duration attribute of +assignment+.
+  def process_timed_duration(assignment)
+    durs = duration_params['assignment_properties_attributes']['duration']
+    assignment.duration = durs['hours'].to_i.hours + durs['minutes'].to_i.minutes
   end
 
   def graders_options_params
@@ -667,13 +694,16 @@ class AssignmentsController < ApplicationController
         :section_groups_only,
         :only_required_files,
         :section_due_dates_type,
-        :scanned_exam
+        :scanned_exam,
+        :is_timed,
+        :start_time
       ],
       section_due_dates_attributes: [
         :_destroy,
         :id,
         :section_id,
-        :due_date
+        :due_date,
+        :start_time
       ],
       assignment_files_attributes:  [
         :_destroy,
@@ -691,6 +721,17 @@ class AssignmentsController < ApplicationController
           :hours,
           :_destroy
         ] }
+      ]
+    )
+  end
+
+  def duration_params
+    params.require(:assignment).permit(
+      assignment_properties_attributes: [
+        duration: [
+          :hours,
+          :minutes
+        ]
       ]
     )
   end

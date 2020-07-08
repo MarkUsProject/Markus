@@ -21,4 +21,18 @@ en:
     prev:   "Previous"
     time:   "Time"
 
-  hours: "hour(s)"
+  durations:
+    any_minutes: minute(s)
+    any_hours: hour(s)
+    minutes:
+      one: minute
+      other: minutes
+    hours:
+      one: hour
+      other: hours
+    days:
+      one: day
+      other: days
+    weeks:
+      one: week
+      other: weeks

@@ -20,4 +20,18 @@ fr:
     next:   "Suivante"
     prev:   "Précédente"
 
-  hours: "heure(s)"
+  durations:
+    any_minutes: minute(s)
+    any_hours: heur(s)
+    minutes:
+      one: minute
+      other: minutes
+    hours:
+      one: heur
+      other: heurs
+    days:
+      one: jour
+      other: jours
+    weeks:
+      one: semaine
+      other: semaines
