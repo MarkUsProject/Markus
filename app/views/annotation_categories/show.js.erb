@@ -1,22 +1,7 @@
-let annotation_holder = $('#annotation_list_holder')
-console.log('hello')
-<% if @annotation_category.nil? %>
-annotation_holder.replaceWith(
-  <div>
-    <h2>
-      <%= t('activerecord.models.annotation.other') %>
-    </h2>
-    <ul id='annotation_list'>
-      <%= render partial: 'annotation_text',
-               collection: @uncategorized_annotations %>
-    </ul>
-  </div>);
-<%else %>
-annotation_holder.replaceWith(
+$('#annotation_list_holder').replaceWith(
   "<%= escape_javascript(render partial: 'annotation_list',
                                 locals: { annotation_texts: @annotation_texts,
                                           annotation_category: @annotation_category }).html_safe %>");
-<% end %>
 reloadDOM();
 ajax_events.setUpCallbacks(document.getElementById('delete_annotation_category'));
 ajax_events.setUpCallbacks(document.getElementsByClassName('edit_annotation_category')[0]);

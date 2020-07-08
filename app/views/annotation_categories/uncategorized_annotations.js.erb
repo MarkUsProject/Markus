@@ -1,0 +1,11 @@
+$('#annotation_list_holder').replaceWith(
+  <div>
+    <h2>
+      <%= t('activerecord.models.annotation.other') %>
+    </h2>
+    <ul id='annotation_list'>
+      <%= render partial: 'annotation_text', collection: @texts %>
+    </ul>
+  </div>
+);
+reloadDOM();

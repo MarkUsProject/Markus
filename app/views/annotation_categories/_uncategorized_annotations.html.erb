@@ -1,7 +1,8 @@
 <li id='uncategorized'>
   <span>
-    <%= link_to 'nope',
-                [assignment, nil],
+    <%= link_to 'Uncategorized Annotations',
+                controller: 'annotation_categories',
+                action: "uncategorized_annotations",
                 remote: true %>
   </span>
   <span class='right'>

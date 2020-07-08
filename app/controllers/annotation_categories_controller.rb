@@ -55,12 +55,7 @@ class AnnotationCategoriesController < ApplicationController
 
   def show
     @assignment = Assignment.find(params[:assignment_id])
-    if params[:id].nil?
-      @uncategorized_annotations = AnnotationText.where(annotation_category: nil).all
-      @annotation_category = nil
-    else
-      @annotation_category = AnnotationCategory.find(params[:id])
-    end
+    @annotation_category = AnnotationCategory.find(params[:id])
   end
 
   def destroy
@@ -228,6 +223,10 @@ class AnnotationCategoriesController < ApplicationController
 
   def annotation_text_uses
     render json: AnnotationText.find(params[:annotation_text_id]).uses
+  end
+
+  def uncategorized_annotations
+    @texts = AnnotationText.where(annotation_category: nil)
   end
 
   private
