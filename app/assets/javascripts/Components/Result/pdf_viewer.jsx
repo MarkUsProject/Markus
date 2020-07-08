@@ -61,7 +61,7 @@ export class PDFViewer extends React.Component {
     $('.annotation_holder').remove();
     this.pdfViewer.currentScaleValue = 'page-width';
     this.props.annotations.forEach(this.display_annotation);
-    if (this.props.annotationFocus !== null && this.props.annotationFocus !== undefined) {
+    if (!!this.props.annotationFocus) {
       document.getElementById('annotation_holder_' + this.props.annotationFocus).scrollIntoView();
     }
   };
@@ -71,7 +71,7 @@ export class PDFViewer extends React.Component {
       return;
     }
     let content = '';
-    if (annotation.deduction === undefined || annotation.deduction === null || annotation.deduction === 0.0) {
+    if (!annotation.deduction) {
       content += annotation.content;
     } else {
       content += annotation.content + ' [' + annotation.criterion_name + ': -' + annotation.deduction + ']';

@@ -235,8 +235,7 @@ class FlexibleCriterionInput extends React.Component {
   listDeductions = () => {
     let label = I18n.t('annotations.list_deductions');
     let deductiveAnnotations = this.props.annotations.filter(a => {
-      return a.criterion_id !== undefined && a.criterion_id !== null &&
-        a.deduction !== 0.0 && a.criterion_id === this.props.id;
+      return !!a.deduction && a.criterion_id === this.props.id;
     });
 
     if (deductiveAnnotations.length === 0) {
@@ -272,8 +271,8 @@ class FlexibleCriterionInput extends React.Component {
 
   deleteManualMarkLink = () => {
     if (!this.props.released_to_students && !this.props.unassigned) {
-      if (this.props.annotations.some(a => a.deduction !== null && a.deduction !== undefined && a.deduction !== 0 &&
-          a.criterion_id === this.props.id) && this.props["marks.override"]) {
+      if (this.props.annotations.some(a => !!a.deduction && a.criterion_id === this.props.id) &&
+          this.props["marks.override"]) {
         return (<a href="#"
                    onClick={_ => this.props.revertToAutomaticDeductions(this.props.id)}
                    style={{float: 'right'}}>
