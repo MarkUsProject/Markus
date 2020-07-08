@@ -30,7 +30,8 @@ fr:
     select_only_one_group: "Vous ne pouvez assigner un(e) étudiant(e) qu'à un seul groupe."
     unassigned_students: "Non assigné(s)"
     validate_confirm: "Ceci autorisera ce groupe à poster sans avoir le nombre requis d'étudiants. Est-ce correct ?"
-    extension: "Extension de la date d'échéance"
+    due_date_extension: "Extension de la date d'échéance"
+    duration_extension: "UPDATE ME"
 
     # Student interface
     student_interface:

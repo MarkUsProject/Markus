@@ -29,7 +29,6 @@ namespace :db do
         end
       end
 
-      names = Faker::Lorem.unique.words(number: 3)
       3.times do |index|
         attributes = []
         5.times do |number|
@@ -38,7 +37,7 @@ namespace :db do
         end
 
         RubricCriterion.create!(
-          name: names[index], assessment_id: assignment.id,
+          name: random_sentences(1), assessment_id: assignment.id,
           position: index + 1, max_mark: 4, levels_attributes: attributes
         )
       end

@@ -16,8 +16,7 @@ class GroupsManager extends React.Component {
       show_modal: false,
       selected_extension_data: {},
       updating_extension: false,
-      loading: true,
-      times: !!props.timed ? ['hours', 'minutes'] : ['weeks', 'days', 'hours']
+      loading: true
     }
   }
 
@@ -175,11 +174,13 @@ class GroupsManager extends React.Component {
   extraModalInfo = () => {
     // Render extra modal info for timed assignments only
     if (this.props.timed) {
-      return `${I18n.t('assignments.timed.modal_current_duration')} ${this.props.current_duration}`
+      return I18n.t('assignments.timed.modal_current_duration', { duration: this.props.current_duration });
     }
   };
 
   render() {
+    const times = !!this.props.timed ? ['hours', 'minutes'] : ['weeks', 'days', 'hours'];
+    const title = !!this.props.timed ? I18n.t('groups.duration_extension') : I18n.t('groups.due_date_extension');
     return (
       <div>
         <GroupsActionBox
@@ -211,7 +212,8 @@ class GroupsManager extends React.Component {
               scanned_exam={this.props.scanned_exam}
               assignment_id={this.props.assignment_id}
               onExtensionModal={this.handleShowModal}
-              times={this.state.times}
+              extensionColumnHeader={title}
+              times={times}
             />
           </div>
         </div>
@@ -227,7 +229,8 @@ class GroupsManager extends React.Component {
           grouping_id={this.state.selected_extension_data.grouping_id}
           extension_id={this.state.selected_extension_data.id}
           updating={this.state.updating_extension}
-          times={this.state.times}
+          times={times}
+          title={title}
           extra_info={this.extraModalInfo()}
           key={this.state.selected_extension_data.id} // this causes the ExtensionModal to be recreated if this value changes
         />
@@ -348,7 +351,7 @@ class RawGroupsTable extends React.Component {
       sortable: false
     },
     {
-      Header: I18n.t('groups.extension'),
+      Header: this.props.extensionColumnHeader,
       accessor: 'extension',
       show: !this.props.scanned_exam,
       Cell: row => {

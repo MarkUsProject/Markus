@@ -6,7 +6,7 @@ en:
       scanned_assignment:
         one: "Scanned Assignment"
       timed_assignment:
-        one: "Timed Assignment"
+        one: "Timed Assessment"
     attributes:
       assignment:
         allow_groups: "Students can work in groups"

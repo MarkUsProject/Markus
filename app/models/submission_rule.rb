@@ -53,7 +53,7 @@ class SubmissionRule < ApplicationRecord
   end
 
   # Return the time after which +grouping+ can be collected.
-  # This is calculated by adding any penalty periods to this grouping.
+  # This is calculated by adding any penalty periods to this grouping's due date.
   #
   # If this grouping belongs to a timed_assignment and the student has not started
   # the assignment yet, the collection date it the due date without any additions.

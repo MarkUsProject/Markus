@@ -62,7 +62,7 @@ describe GroupingPolicy do
     end
   end
 
-  describe '#file_manager?' do
+  describe '#view_file_manager?' do
     subject { described_class.new(grouping, user: user) }
     context 'as an admin' do
       let(:user) { create :admin }

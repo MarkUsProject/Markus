@@ -12,7 +12,8 @@ class ExtensionModal extends React.Component {
     note: '',
     penalty: false,
     updating: false,
-    times: []
+    times: [],
+    title: ''
   };
 
   constructor(props) {
@@ -131,7 +132,7 @@ class ExtensionModal extends React.Component {
         isOpen={this.props.isOpen}
         onRequestClose={this.props.onRequestClose}
       >
-        <h2>{I18n.t('groups.extension')}</h2>
+        <h2>{this.props.title}</h2>
         <form onSubmit={this.submitForm}>
           <div className={'modal-container-vertical'}>
             <div className={'modal-container'}>

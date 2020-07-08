@@ -52,11 +52,13 @@ class AssignmentsController < ApplicationController
         @grouping = @current_user.accepted_grouping_for(@assignment.id)
       end
     end
-    if @assignment.is_timed && !@grouping.start_time.nil? && !@grouping.past_collection_date?
-      flash_message(:note, I18n.t('assignments.timed.started_message'))
-      flash_message(:note, I18n.t('assignments.timed.starter_code_prompt'))
+    unless @grouping.nil?
+      if @assignment.is_timed && !@grouping.start_time.nil? && !@grouping.past_collection_date?
+        flash_message(:note, I18n.t('assignments.timed.started_message'))
+        flash_message(:note, I18n.t('assignments.timed.starter_code_prompt'))
+      end
+      set_repo_vars(@assignment, @grouping)
     end
-    set_repo_vars(@assignment, @grouping) unless @grouping.nil?
     render layout: 'assignment_content'
   end
 
@@ -160,6 +162,7 @@ class AssignmentsController < ApplicationController
         flash_now(:notice, t('assignments.due_date.past_due_date_notice') + past_date.join(', '))
       end
     end
+
     # build section_due_dates for each section that doesn't already have a due date
     Section.all.each do |s|
       unless SectionDueDate.find_by(assessment_id: @assignment.id, section_id: s.id)

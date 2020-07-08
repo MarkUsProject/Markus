@@ -7,4 +7,19 @@
   <strong><%= I18n.t('assignments.timed.end_time_instructions') %></strong>
   <%= I18n.l due_date %>
 </p>
-<%= render partial: 'timed_due_message', locals: { assignment: @assignment, grouping: @grouping, show_button: true } %>
+<%= render partial: 'timed_due_message', locals: { assignment: @assignment, grouping: @grouping } %>
+<p>
+  <% duration = @assignment.duration + (@grouping&.extension&.time_delta || 0)
+     parts = AssignmentProperties.duration_parts(duration)
+     duration_string = ["#{parts[:hours]} #{I18n.t('durations.hours', count: parts[:hours])}",
+                        "#{parts[:minutes]} #{I18n.t('durations.minutes', count: parts[:minutes])}"].join(', ') %>
+  <strong><%= Assignment.human_attribute_name(:duration) %></strong>: <%= duration_string %>
+  <% unless @grouping.extension.nil? %>
+    <% ext_parts = AssignmentProperties.duration_parts(@grouping.extension.time_delta)
+       extension_string = [
+         "#{ext_parts[:hours]} #{I18n.t('durations.hours', count: ext_parts[:hours])}",
+         "#{ext_parts[:minutes]} #{I18n.t('durations.minutes', count: ext_parts[:minutes])}"
+       ].join(', ') %>
+    <%= I18n.t('assignments.timed.duration_extension_info', extension_string: extension_string) %>
+  <% end %>
+</p>

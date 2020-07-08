@@ -532,9 +532,9 @@ class Grouping < ApplicationRecord
     assignment.section_start_time(inviter&.section) < Time.current
   end
 
-  # Return the duration of this grouping's assignment plus any penalty periods and extensions
+  # Return the duration of this grouping's assignment plus any extensions
   def duration
-    assignment.adjusted_duration + (extension&.time_delta || 0)
+    assignment.duration + (extension&.time_delta || 0)
   end
 
   def self.get_assign_scans_grouping(assignment, grouping_id = nil)

@@ -94,11 +94,11 @@ namespace :db do
         },
     )
 
-    puts 'Assignment 5: Timed Assignment'
+    puts 'Assignment 5: Timed Assessment'
     Assignment.create(
       short_identifier: 'A5',
-      description: 'Timed Assignment',
-      message: 'A timed assignment',
+      description: 'Timed Assessment',
+      message: 'A timed assessment',
       due_date: 2.months.from_now,
       is_hidden: false,
       assignment_properties_attributes: {

@@ -984,36 +984,6 @@ describe Grouping do
     end
   end
 
-  describe '#duration' do
-    let(:assignment) { create(:timed_assignment) }
-    let(:grouping) { create :grouping_with_inviter, assignment: assignment }
-    context 'when there is no penalty period' do
-      it 'should return the duration' do
-        expect(grouping.duration).to eq assignment.duration
-      end
-      context 'with an extension' do
-        let!(:extension) { create :extension, grouping: grouping, time_delta: 1.hour }
-        it 'should include the extension' do
-          expect(grouping.duration).to eq(assignment.duration + extension.time_delta)
-        end
-      end
-    end
-    context 'when there is a penalty period' do
-      skip 'fails on travis only because the object is not properly reloaded'
-      let(:rule) { create :penalty_period_submission_rule, assignment: assignment }
-      let!(:period) { create :period, submission_rule: rule }
-      it 'should return the duration plus penalty period hours' do
-        expect(grouping.reload.duration).to eq(assignment.duration + period.hours.hours)
-      end
-      context 'with an extension' do
-        let!(:extension) { create :extension, grouping: grouping, time_delta: 1.hour }
-        it 'should include the extension' do
-          expect(grouping.reload.duration).to eq(assignment.duration + extension.time_delta + period.hours.hours)
-        end
-      end
-    end
-  end
-
   describe '#past_assessment_start_time?' do
     let(:assignment) { create(:timed_assignment) }
     let(:grouping) { create :grouping_with_inviter, assignment: assignment }
