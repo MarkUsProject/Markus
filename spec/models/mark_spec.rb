@@ -148,11 +148,7 @@ describe Mark do
     end
 
     it 'does not allow deductions to reduce the mark past 0' do
-      3.times do
-        create(:text_annotation,
-               annotation_text: annotation_text,
-               result: result)
-      end
+      create_list(:text_annotation, 3, annotation_text: annotation_text, result: result)
       result.reload
       expect(mark.mark).to eq(0.0)
     end

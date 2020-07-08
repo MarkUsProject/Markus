@@ -637,10 +637,7 @@ describe ResultsController do
                                 format: :json }, xhr: true
 
           category_names = [first_name, second_name].sort!
-          returned_categories = []
-          response.parsed_body['annotation_categories'].each do |cat|
-            returned_categories += [cat['annotation_category_name']]
-          end
+          returned_categories = response.parsed_body['annotation_categories'].map { |c| c['annotation_category_name'] }
           expect(returned_categories.sort!).to eq category_names
           expect(response.parsed_body['annotation_categories'].size).to eq 2
         end
