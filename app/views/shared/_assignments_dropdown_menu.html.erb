@@ -14,6 +14,12 @@
     </li>
   <% end %>
   <li>
+    <%= link_to t('helpers.submit.create', model: t('activerecord.models.timed_assignment.one')),
+                controller: 'assignments',
+                action: 'new',
+                timed: true %>
+  </li>
+  <li>
     <%= link_to t('helpers.submit.create', model: GradeEntryForm.model_name.human),
                 controller: 'grade_entry_forms',
                 action: 'new' %>

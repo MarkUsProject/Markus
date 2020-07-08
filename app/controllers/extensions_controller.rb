@@ -9,9 +9,9 @@ class ExtensionsController < ApplicationController
                               apply_penalty: params[:penalty],
                               note: params[:note])
     if extension.save
-      flash_now(:success, I18n.t('extensions.create.success'))
+      flash_now(:success, I18n.t('extensions.create_extension'))
     else
-      flash_now(:error, I18n.t('extensions.create.error'))
+      flash_now(:error, extension.errors.full_messages.join(' '))
     end
     head :ok
   end
@@ -23,18 +23,19 @@ class ExtensionsController < ApplicationController
                                     time_delta: duration_from_params,
                                     apply_penalty: params[:penalty],
                                     note: params[:note])
-      flash_now(:success, I18n.t('extensions.create.success'))
+      flash_now(:success, I18n.t('extensions.create_extension'))
     else
-      flash_now(:error, I18n.t('extensions.create.error'))
+      flash_now(:error, extension.errors.full_messages.join(' '))
     end
     head :ok
   end
 
   def destroy
-    if Extension.find(params[:id])&.destroy&.destroyed?
-      flash_now(:success, I18n.t('extensions.delete.success'))
+    extension = Extension.find(params[:id])
+    if extension&.destroy&.destroyed?
+      flash_now(:success, I18n.t('extensions.delete_extension'))
     else
-      flash_now(:error, I18n.t('extensions.delete.error'))
+      flash_now(:error, extension.errors.full_messages.join(' '))
     end
     head :ok
   end

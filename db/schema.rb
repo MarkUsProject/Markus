@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_05_26_185329) do
+ActiveRecord::Schema.define(version: 2020_06_08_190551) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -22,7 +22,9 @@ ActiveRecord::Schema.define(version: 2020_05_26_185329) do
     t.datetime "updated_at"
     t.integer "annotation_texts_count", default: 0
     t.bigint "assessment_id", null: false
+    t.bigint "flexible_criterion_id"
     t.index ["assessment_id"], name: "index_annotation_categories_on_assessment_id"
+    t.index ["flexible_criterion_id"], name: "index_annotation_categories_on_flexible_criterion_id"
   end
 
   create_table "annotation_texts", id: :serial, force: :cascade do |t|
@@ -32,6 +34,7 @@ ActiveRecord::Schema.define(version: 2020_05_26_185329) do
     t.datetime "updated_at"
     t.integer "creator_id"
     t.integer "last_editor_id"
+    t.float "deduction"
     t.index ["annotation_category_id"], name: "index_annotation_texts_on_annotation_category_id"
   end
 
@@ -123,6 +126,9 @@ ActiveRecord::Schema.define(version: 2020_05_26_185329) do
     t.boolean "hide_unassigned_criteria", default: false, null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.string "duration"
+    t.datetime "start_time"
+    t.boolean "is_timed", default: false, null: false
     t.index ["assessment_id"], name: "index_assignment_properties_on_assessment_id", unique: true
   end
 
@@ -279,6 +285,7 @@ ActiveRecord::Schema.define(version: 2020_05_26_185329) do
     t.integer "test_tokens", default: 0, null: false
     t.text "starter_code_revision_identifier"
     t.bigint "assessment_id", null: false
+    t.datetime "start_time"
     t.index ["assessment_id", "group_id"], name: "groupings_u1", unique: true
   end
 
@@ -343,6 +350,7 @@ ActiveRecord::Schema.define(version: 2020_05_26_185329) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string "markable_type"
+    t.boolean "override", default: false, null: false
     t.index ["markable_id", "result_id", "markable_type"], name: "marks_u1", unique: true
     t.index ["markable_id"], name: "index_marks_on_markable_id"
     t.index ["result_id"], name: "index_marks_on_result_id"
@@ -419,6 +427,7 @@ ActiveRecord::Schema.define(version: 2020_05_26_185329) do
     t.datetime "due_date"
     t.integer "section_id"
     t.bigint "assessment_id"
+    t.datetime "start_time"
   end
 
   create_table "sections", id: :serial, force: :cascade do |t|
@@ -596,6 +605,7 @@ ActiveRecord::Schema.define(version: 2020_05_26_185329) do
   end
 
   add_foreign_key "annotation_categories", "assessments", name: "fk_annotation_categories_assignments", on_delete: :cascade
+  add_foreign_key "annotation_categories", "flexible_criteria"
   add_foreign_key "annotation_texts", "annotation_categories", name: "fk_annotation_labels_annotation_categories", on_delete: :cascade
   add_foreign_key "annotations", "annotation_texts", name: "fk_annotations_annotation_texts"
   add_foreign_key "annotations", "submission_files", name: "fk_annotations_submission_files"

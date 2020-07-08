@@ -1,19 +1,23 @@
 <div class=<%= assignment.is_peer_review? ? 'pr_date' : 'date' %>>
   <% grouping = @current_user.accepted_grouping_for(assignment.id) %>
   <% due_date = grouping&.due_date %>
-  <% if grouping.nil? %>
-    <%= l(assignment.due_date) %>
-    <% due_date = assignment.section_due_date(@current_user.section) %>
-  <% elsif grouping.extension.nil? %>
-    <%= l(due_date) %>
+  <% if assignment.is_timed %>
+    <%= render partial: 'timed_due_message', locals: { assignment: assignment, grouping: grouping, simple: true } %>
   <% else %>
-    <%= I18n.t('assignments.deadline_with_extension',
-               deadline: I18n.l(assignment.section_due_date(@current_user.section)),
-               extension_deadline: l(due_date)) %>
-  <% end %>
-  <% if due_date > Time.zone.now %>
-    <p class='time_left'>
-      (<%= distance_of_time_in_words_to_now(due_date) %>)
-    </p>
+    <% if due_date.nil? %>
+      <%= l(assignment.due_date) %>
+      <% due_date = assignment.section_due_date(@current_user.section) %>
+    <% elsif grouping.extension.nil? %>
+      <%= l(due_date) %>
+    <% else %>
+      <%= I18n.t('assignments.deadline_with_extension',
+                 deadline: I18n.l(assignment.section_due_date(@current_user.section)),
+                 extension_deadline: l(due_date)) %>
+    <% end %>
+    <% if due_date > Time.zone.now %>
+      <p class='time_left'>
+        (<%= distance_of_time_in_words_to_now(due_date) %>)
+      </p>
+    <% end %>
   <% end %>
 </div>

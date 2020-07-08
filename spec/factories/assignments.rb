@@ -10,11 +10,11 @@ FactoryBot.define do
     is_hidden { false }
 
     transient do
-      assignment_properties_attributes { nil }
+      assignment_properties_attributes { {} }
     end
 
     after(:build) do |assignment, evaluator|
-      if evaluator.assignment_properties_attributes
+      if evaluator.assignment_properties_attributes.present?
         assignment.assignment_properties = build(:assignment_properties,
                                                  assignment: assignment,
                                                  repository_folder: assignment.short_identifier,
@@ -42,8 +42,31 @@ FactoryBot.define do
     end
   end
 
+  factory :assignment_with_deductive_annotations, parent: :assignment do
+    # This factory creates an assignment with three groupings that each have a result.
+    # The assignment has a flexible_criterion with a max_mark of 3.0.
+    # The assignment also has an annotation_category that belongs to the flexible criterion.
+    # The assignment's annotation category has one annotation_text with a deduction of 1.0.
+    # Each grouping's result has one annotation which belongs to the annotation_text mentioned.
+    after(:create) do |a|
+      create(:flexible_criterion_with_annotation_category, assignment: a)
+      3.times { create(:grouping_with_inviter_and_submission, assignment: a) }
+      a.groupings.each do |grouping|
+        result = grouping.current_result
+        create(:text_annotation,
+               annotation_text: a.annotation_categories.first.annotation_texts.first,
+               result: result)
+        result.update_total_mark
+      end
+    end
+  end
+
   factory :assignment_with_peer_review, parent: :assignment do
     assignment_properties_attributes { { has_peer_review: true } }
+  end
+
+  factory :peer_review_assignment, parent: :assignment do
+    association :parent_assignment, factory: :assignment_with_peer_review
   end
 
   # This creates an assignment and peer review assignment, and also creates the
@@ -64,11 +87,7 @@ FactoryBot.define do
   factory :assignment_for_tests, parent: :assignment do
     after(:build) do |assignment, evaluator| # called by both create and build
       properties = { enable_test: true }
-      if evaluator.assignment_properties_attributes
-        evaluator.assignment_properties_attributes = properties.merge(evaluator.assignment_properties_attributes)
-      else
-        evaluator.assignment_properties_attributes = properties
-      end
+      evaluator.assignment_properties_attributes = properties.merge(evaluator.assignment_properties_attributes)
 
       create(:test_group, assignment: assignment)
     end
@@ -77,17 +96,23 @@ FactoryBot.define do
   factory :assignment_for_student_tests, parent: :assignment do
     after(:build) do |assignment, evaluator| # called by both create and build
       properties = { enable_test: true, enable_student_tests: true, token_start_date: Time.current }
-      if evaluator.assignment_properties_attributes
-        evaluator.assignment_properties_attributes = properties.merge(evaluator.assignment_properties_attributes)
-      else
-        evaluator.assignment_properties_attributes = properties
-      end
+      evaluator.assignment_properties_attributes = properties.merge(evaluator.assignment_properties_attributes)
 
       create(:test_group, assignment: assignment)
     end
   end
 
   factory :assignment_for_scanned_exam, parent: :assignment do
-    assignment_properties_attributes { { scanned_exam: true } }
+    after :build do |_assignment, evaluator|
+      properties =  { scanned_exam: true }
+      evaluator.assignment_properties_attributes = properties.merge(evaluator.assignment_properties_attributes)
+    end
+  end
+
+  factory :timed_assignment, parent: :assignment do
+    after :build do |_assignment, evaluator|
+      properties =  { is_timed: true, duration: 1.hour + 30.minutes, start_time: 10.hours.ago }
+      evaluator.assignment_properties_attributes = properties.merge(evaluator.assignment_properties_attributes)
+    end
   end
 end

@@ -8,15 +8,19 @@
   <% if @assignment.message %>
     <p><%= @assignment.message %></p>
   <% end %>
-  <p>
-    <strong><%= Assignment.human_attribute_name(:due_date) %></strong>:
-    <%= I18n.l(@assignment.section_due_date(@current_user.try(:section))) %>
-  </p>
-  <% unless @grouping&.extension.nil? %>
+  <% if @assignment.is_timed %>
+    <%= render partial: 'timed_due_info' %>
+  <% else %>
     <p>
-      <%= I18n.t('assignments.deadline_with_extension',
-                 extension_deadline: I18n.l(@grouping&.due_date)) %>
+      <strong><%= Assignment.human_attribute_name(:due_date) %></strong>:
+      <%= I18n.l(@assignment.section_due_date(@current_user.try(:section))) %>
     </p>
+    <% unless @grouping&.extension.nil? %>
+      <p>
+        <%= I18n.t('assignments.deadline_with_extension',
+                   extension_deadline: I18n.l(@grouping&.due_date)) %>
+      </p>
+    <% end %>
   <% end %>
 
   <% if @assignment.display_grader_names_to_students && !@grouping.nil? %>
@@ -33,12 +37,12 @@
 
   <% unless @assignment.submission_rule.type == "NoLateSubmissionRule" || @grouping&.extension&.apply_penalty == false %>
     <h3><%= SubmissionRule.model_name.human.capitalize %></h3>
-    <p><%= @assignment.submission_rule.class.human_attribute_name(:description) %></p>
+    <p><%= @assignment.submission_rule.class.human_attribute_name(:description) unless @assignment.is_timed %></p>
 
     <ul>
       <% if @grouping.nil? %>
         <li><%= t('grace_period_submission_rules.no_group_yet') %></li>
-      <% else %>
+      <% elsif !@assignment.is_timed || !@grouping.start_time.nil? %>
         <% acc = 0 %>
         <% if @assignment.submission_rule.type == "GracePeriodSubmissionRule" %>
           <% remaining_credits = @grouping.available_grace_credits %>
@@ -121,25 +125,25 @@
         <% end %>
         <li><%= t('submissions.student.files_submitted', count: @num_submitted_files) %></li>
       </ul>
-    <% end %>
 
-    <h3><%= Assignment.human_attribute_name(:assignment_files) %></h3>
-    <% if @assignment.assignment_files.length == 0 %>
-      <p><%= t('assignments.no_required_files') %></p>
-    <% else %>
-      <ul>
-        <% @assignment.assignment_files.each do |assignment_file| %>
-          <li><%= assignment_file.filename %></li>
-        <% end %>
-      </ul>
-      <p>
-        <% text = t('submissions.student.missing_required_files', count: @num_missing_assignment_files) %>
-        <% if @num_missing_assignment_files > 0 %>
-          <strong><%= text %></strong>
-        <% else %>
-          <%= text %>
-        <% end %>
-      </p>
+      <h3><%= Assignment.human_attribute_name(:assignment_files) %></h3>
+      <% if @assignment.assignment_files.length == 0 %>
+        <p><%= t('assignments.no_required_files') %></p>
+      <% else %>
+        <ul>
+          <% @assignment.assignment_files.each do |assignment_file| %>
+            <li><%= assignment_file.filename %></li>
+          <% end %>
+        </ul>
+        <p>
+          <% text = t('submissions.student.missing_required_files', count: @num_missing_assignment_files) %>
+          <% if @num_missing_assignment_files > 0 %>
+            <strong><%= text %></strong>
+          <% else %>
+            <%= text %>
+          <% end %>
+        </p>
+      <% end %>
     <% end %>
-  <% end %>
+<% end %>
 </div>

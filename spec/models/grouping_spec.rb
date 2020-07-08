@@ -865,11 +865,37 @@ describe Grouping do
   end
 
   describe '#due_date' do
+    shared_examples 'timed assignment due date' do
+      let(:assignment) { create :timed_assignment }
+      let(:due_date) { due_date_obj.due_date || assignment.due_date }
+      let(:start_time) { due_date_obj.start_time || assignment.start_time }
+      context 'before the grouping has started' do
+        it 'should return the due date' do
+          expect(grouping.due_date).to be_within(1.second).of(due_date)
+        end
+      end
+      context 'after the grouping has started' do
+        before do
+          grouping.update!(start_time: start_time + 30.minutes)
+        end
+        it 'should return the start_time + duration if the assignment due date has not passed' do
+          due_date = grouping.reload.start_time + assignment.duration + addition
+          expect(grouping.due_date).to be_within(1.second).of(due_date)
+        end
+      end
+    end
+
     let(:assignment) { create :assignment }
     let(:grouping) { create :grouping_with_inviter, assignment: assignment }
     context 'with an assignment due date' do
       it 'should return the assigment due date' do
         expect(grouping.due_date).to be_within(1.second).of(assignment.due_date)
+      end
+
+      context 'with a timed assignment' do
+        let(:addition) { 0.seconds }
+        let(:due_date_obj) { assignment }
+        it_behaves_like 'timed assignment due date'
       end
 
       context 'and a grouping extension' do
@@ -879,11 +905,20 @@ describe Grouping do
           expected_due_date = assignment.due_date + extension.time_delta
           expect(grouping.due_date).to be_within(1.second).of(expected_due_date)
         end
+
+        context 'with a timed assignment' do
+          let(:extension) { create :extension, grouping: grouping, time_delta: 1.hour }
+          let(:due_date_obj) { assignment }
+          let(:addition) { extension.time_delta }
+          it_behaves_like 'timed assignment due date'
+        end
       end
 
       context 'and a section due date' do
         let(:section) { create :section }
-        let(:section_due_date) { create :section_due_date, assignment: assignment, section: section }
+        let!(:section_due_date) do
+          create :section_due_date, assignment: assignment, section: section, due_date: 2.minutes.ago
+        end
 
         before :each do
           grouping.inviter.update!(section: section)
@@ -896,6 +931,12 @@ describe Grouping do
 
           it 'should return the assignment due date' do
             expect(grouping.due_date).to be_within(1.second).of(assignment.due_date)
+          end
+
+          context 'with a timed assignment' do
+            let(:addition) { 0.seconds }
+            let(:due_date_obj) { assignment }
+            it_behaves_like 'timed assignment due date'
           end
 
           context 'and a grouping extension' do
@@ -912,6 +953,12 @@ describe Grouping do
             assignment.assignment_properties.update!(section_due_dates_type: true)
           end
 
+          context 'with a timed assignment' do
+            let(:addition) { 0.seconds }
+            let(:due_date_obj) { section_due_date }
+            it_behaves_like 'timed assignment due date'
+          end
+
           it 'should return the section due date' do
             expected_due_date = section_due_date.due_date
             expect(grouping.due_date).to be_within(1.second).of(expected_due_date)
@@ -919,6 +966,13 @@ describe Grouping do
 
           context 'and a grouping extension' do
             let(:extension) { create :extension, grouping: grouping }
+
+            context 'with a timed assignment' do
+              let(:extension) { create :extension, grouping: grouping, time_delta: 1.hour }
+              let(:addition) { extension.time_delta }
+              let(:due_date_obj) { section_due_date }
+              it_behaves_like 'timed assignment due date'
+            end
 
             it 'should return the section due date plus the extension' do
               expected_due_date = section_due_date.due_date + extension.time_delta
@@ -929,6 +983,50 @@ describe Grouping do
       end
     end
   end
+
+  describe '#past_assessment_start_time?' do
+    let(:assignment) { create(:timed_assignment) }
+    let(:grouping) { create :grouping_with_inviter, assignment: assignment }
+    context 'when assignment start time has passed' do
+      it 'should return true' do
+        expect(grouping.past_assessment_start_time?).to eq true
+      end
+    end
+    context 'when assignment start time has not passed' do
+      before { assignment.update! due_date: 1.day.from_now, start_time: 10.minutes.from_now }
+      it 'should return false' do
+        expect(grouping.past_assessment_start_time?).to eq false
+      end
+    end
+    context 'when a section exists' do
+      let(:section) { create :section }
+      let(:section_due_date) { create :section_due_date, assignment: assignment, section: section }
+      let(:grouping) { create :grouping_with_inviter, assignment: assignment }
+      before do
+        grouping.inviter.update!(section_id: section.id)
+        assignment.update!(section_due_dates_type: true)
+      end
+      context 'when section start time has passed' do
+        before { section_due_date.update! start_time: 1.minute.ago }
+        it 'should return true' do
+          expect(grouping.past_assessment_start_time?).to eq true
+        end
+      end
+      context 'when section start time has not passed' do
+        before { section_due_date.update! start_time: 1.minute.from_now }
+        it 'should return false' do
+          expect(grouping.past_assessment_start_time?).to eq false
+        end
+        context 'when section_due_dates_type is false' do
+          before { assignment.update!(section_due_dates_type: false) }
+          it 'should return true' do
+            expect(grouping.past_assessment_start_time?).to eq true
+          end
+        end
+      end
+    end
+  end
+
   describe '#past_due_date?' do
     context 'with an assignment' do
       before :each do

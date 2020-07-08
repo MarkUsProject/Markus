@@ -142,7 +142,7 @@
         </ul>
 
         <% # Display the URL of this group's repository if applicable
-           if @assignment.vcs_submit %>
+           if @assignment.vcs_submit && !@grouping.start_time.nil? %>
           <h3><%= t('groups.student_interface.url_group_repository') %></h3>
           <p>
             <%= @grouping.group.repository_external_access_url %>

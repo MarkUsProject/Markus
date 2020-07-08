@@ -61,14 +61,23 @@ export class PDFViewer extends React.Component {
     $('.annotation_holder').remove();
     this.pdfViewer.currentScaleValue = 'page-width';
     this.props.annotations.forEach(this.display_annotation);
+    if (!!this.props.annotationFocus) {
+      document.getElementById('annotation_holder_' + this.props.annotationFocus).scrollIntoView();
+    }
   };
 
   display_annotation = (annotation) => {
     if (annotation.x_range === undefined || annotation.y_range === undefined) {
       return;
     }
+    let content = '';
+    if (!annotation.deduction) {
+      content += annotation.content;
+    } else {
+      content += annotation.content + ' [' + annotation.criterion_name + ': -' + annotation.deduction + ']';
+    }
 
-    add_annotation_text(annotation.annotation_text_id, annotation.content);
+    add_annotation_text(annotation.annotation_text_id, content);
     annotation_manager.addAnnotation(
       annotation.annotation_text_id,
       marked(annotation.content, {sanitize: true}),

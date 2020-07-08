@@ -13,12 +13,14 @@
 - Fixed bug preventing graders from creating new notes in results view (#4668)
 - Fixed bug preventing new tags from being created from results view (#4669)
 - Remove deprecated "detailed CSV" download link from submissions/browse (#4675)
+- Introduces Deductive Annotations (#4693)
 - Introduces annotation usage details panel to Annotations tab in admin settings (#4695)
 - Fixed bug where bonuses and deductions were not displayed properly (#4699)
 - Fixed bug where image annotations did not stay fixed relative to the image (#4706)
 - Fixed bug where image annotations did not load properly (#4706)
 - Fixed bug where downloading files in nested directories renamed the downloaded file (#4730)
 - Fixed bug where marking scheme weights were not displayed (#4735)
+- Introduces timed assignments (#4665)
 
 ## [v1.9.3]
 - Fixed inverse association bug with assignments (#4551)

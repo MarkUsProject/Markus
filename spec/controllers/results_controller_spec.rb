@@ -243,6 +243,51 @@ describe ResultsController do
                                       markable_type: rubric_mark.markable_type,
                                       mark: 1 }, xhr: true
         expect(JSON.parse(response.body)['num_marked']).to eq 0
+        expect(rubric_mark.reload.override).to be true
+      end
+      context 'setting override when annotations linked to criteria exist' do
+        let(:assignment) { create(:assignment_with_deductive_annotations) }
+        let(:result) { assignment.groupings.first.current_result }
+        let(:submission) { result.submission }
+        let(:mark) { assignment.groupings.first.current_result.marks.first }
+        it 'sets override to true for mark if input value is not null' do
+          patch :update_mark, params: { assignment_id: assignment.id, submission_id: submission.id,
+                                        id: result.id, markable_id: mark.markable_id,
+                                        markable_type: mark.markable_type,
+                                        mark: 3.0 }, xhr: true
+          expect(mark.reload.override).to be true
+        end
+        it 'sets override to true for mark if input value null and deductive annotations exist' do
+          patch :update_mark, params: { assignment_id: assignment.id, submission_id: submission.id,
+                                        id: result.id, markable_id: mark.markable_id,
+                                        markable_type: mark.markable_type,
+                                        mark: '' }, xhr: true
+          expect(mark.reload.override).to be true
+        end
+        it 'sets override to false for mark if input value null and only annotations with 0 value deduction exist' do
+          assignment.annotation_categories.where.not(flexible_criterion: nil).first
+                    .annotation_texts.first.update!(deduction: 0)
+          patch :update_mark, params: { assignment_id: assignment.id, submission_id: submission.id,
+                                        id: result.id, markable_id: mark.markable_id,
+                                        markable_type: mark.markable_type,
+                                        mark: '' }, xhr: true
+          expect(mark.reload.override).to be false
+        end
+      end
+      it 'returns correct json fields when updating a mark' do
+        patch :update_mark, params: { assignment_id: assignment.id, submission_id: submission.id,
+                                      id: incomplete_result.id, markable_id: rubric_mark.markable_id,
+                                      markable_type: rubric_mark.markable_type,
+                                      mark: '1', format: :json }, xhr: true
+        expected_keys = %w[total subtotal mark_override num_marked mark]
+        expect(response.parsed_body.keys.sort!).to eq(expected_keys.sort!)
+      end
+      it 'sets override to false for mark if input value null and no deductive annotations exist' do
+        patch :update_mark, params: { assignment_id: assignment.id, submission_id: submission.id,
+                                      id: incomplete_result.id, markable_id: rubric_mark.markable_id,
+                                      markable_type: rubric_mark.markable_type,
+                                      mark: '', format: :json }, xhr: true
+        expect(response.parsed_body['mark_override']).to be false
       end
       it { expect(response).to have_http_status(:redirect) }
       context 'but cannot save the mark' do
@@ -322,6 +367,68 @@ describe ResultsController do
         expect(incomplete_result.overall_comment).to eq SAMPLE_COMMENT
       end
     end
+
+    context 'accessing an assignment with deductive annotations' do
+      let(:assignment) { create(:assignment_with_deductive_annotations) }
+      let(:mark) { assignment.groupings.first.current_result.marks.first }
+      it 'returns annotation data with criteria information' do
+        post :get_annotations, params: { assignment_id: assignment.id,
+                                         submission_id: assignment.groupings.first.current_result.submission.id,
+                                         id: assignment.groupings.first.current_result,
+                                         format: :json }, xhr: true
+
+        expect(response.parsed_body.first['criterion_name']).to eq assignment.flexible_criteria.first.name
+        expect(response.parsed_body.first['criterion_id']).to eq assignment.flexible_criteria.first.id
+        expect(response.parsed_body.first['deduction']).to eq 1.0
+      end
+
+      it 'returns annotation_category data with deductive information' do
+        category = assignment.annotation_categories.where.not(flexible_criterion: nil).first
+        post :show, params: { assignment_id: assignment.id,
+                              submission_id: assignment.groupings.first.current_result.submission.id,
+                              id: assignment.groupings.first.current_result,
+                              format: :json }, xhr: true
+
+        expect(response.parsed_body['annotation_categories'].first['annotation_category_name'])
+          .to eq "#{category.annotation_category_name} [#{category.flexible_criterion.name}]"
+        expect(response.parsed_body['annotation_categories'].first['texts'].first['deduction']).to eq 1.0
+        expect(response.parsed_body['annotation_categories']
+                   .first['flexible_criterion_id']).to eq category.flexible_criterion.id
+      end
+
+      it 'reverts a mark to a value calculated from automatic deductions correctly' do
+        mark.update!(override: true, mark: 3.0)
+        patch :revert_to_automatic_deductions, params: {
+          assignment_id: assignment.id,
+          submission_id: assignment.groupings.first
+                                   .current_result
+                                   .submission.id,
+          id: assignment.groupings.first.current_result,
+          markable_id: mark.markable_id,
+          format: :json
+        }, xhr: true
+
+        mark.reload
+        expect(mark.mark).to eq 2.0
+        expect(mark.override).to be false
+      end
+
+      it 'returns correct information when reverting a mark to a value calculated from automatic deductions' do
+        mark.update!(override: true, mark: 3.0)
+        patch :revert_to_automatic_deductions, params: {
+          assignment_id: assignment.id,
+          submission_id: assignment.groupings.first
+                                   .current_result
+                                   .submission.id,
+          id: assignment.groupings.first.current_result,
+          markable_id: mark.markable_id,
+          format: :json
+        }, xhr: true
+
+        expected_keys = %w[total subtotal num_marked mark]
+        expect(response.parsed_body.keys.sort!).to eq(expected_keys.sort!)
+      end
+    end
   end
 
   ROUTES = { update_mark: :patch,
@@ -334,6 +441,7 @@ describe ResultsController do
              delete_grace_period_deduction: :delete,
              next_grouping: :get,
              remove_extra_mark: :post,
+             revert_to_automatic_deductions: :patch,
              set_released_to_students: :post,
              update_overall_comment: :post,
              toggle_marking_state: :post,
@@ -505,6 +613,59 @@ describe ResultsController do
         expect(complete_result.submission.grouping.tags.size).to eq 0
       end
     end
+
+    describe 'when criteria are assigned to graders' do
+      let(:assignment) { create(:assignment_with_deductive_annotations) }
+      before(:each) { assignment.assignment_properties.update(assign_graders_to_criteria: true) }
+      context 'when some criteria are assigned to graders' do
+        it 'receives all deductive annotation category data' do
+          helper_ta = create(:ta)
+          first_category = assignment.annotation_categories.where.not(flexible_criterion_id: nil).first
+          first_name = "#{first_category.annotation_category_name} [#{first_category.flexible_criterion.name}]"
+          other_criterion = create(:flexible_criterion, assignment: assignment)
+          assignment.groupings.each do |grouping|
+            create(:flexible_mark, markable: other_criterion, result: grouping.current_result)
+          end
+          create(:criterion_ta_association, criterion: other_criterion, ta: helper_ta)
+          second_category = create(:annotation_category,
+                                   assignment: assignment,
+                                   flexible_criterion_id: other_criterion.id)
+          second_name = "#{second_category.annotation_category_name} [#{second_category.flexible_criterion.name}]"
+          post :show, params: { assignment_id: assignment.id,
+                                submission_id: assignment.groupings.first.current_result.submission.id,
+                                id: assignment.groupings.first.current_result,
+                                format: :json }, xhr: true
+
+          category_names = [first_name, second_name].sort!
+          returned_categories = response.parsed_body['annotation_categories'].map { |c| c['annotation_category_name'] }
+          expect(returned_categories.sort!).to eq category_names
+          expect(response.parsed_body['annotation_categories'].size).to eq 2
+        end
+      end
+
+      context 'when none of the criteria are assigned to graders' do
+        it 'receives all deductive annotation category data' do
+          deductive_category = assignment.annotation_categories.where.not(flexible_criterion_id: nil).first
+          cat_name = "#{deductive_category.annotation_category_name} [#{deductive_category.flexible_criterion.name}]"
+          non_deductive_category = create(:annotation_category, assignment: assignment)
+          post :show, params: { assignment_id: assignment.id,
+                                submission_id: assignment.groupings.first.current_result.submission.id,
+                                id: assignment.groupings.first.current_result,
+                                format: :json }, xhr: true
+
+          category_names = [cat_name, non_deductive_category.annotation_category_name].sort!
+          returned_categories = []
+          response.parsed_body['annotation_categories'].each do |cat|
+            returned_categories += [cat['annotation_category_name']]
+          end
+          expect(returned_categories.sort!).to eq category_names
+          expect(response.parsed_body['annotation_categories'].size).to eq 2
+          expect(response.parsed_body['annotation_categories'].select do |cat|
+            cat['id'] == deductive_category.id
+          end.size).to eq 1
+        end
+      end
+    end
   end
   context 'A TA' do
     before(:each) { sign_in ta }
@@ -540,6 +701,22 @@ describe ResultsController do
       end
     end
 
+    context 'when criteria are assigned to graders, but not this grader' do
+      it 'receives no deductive annotation category data' do
+        assignment = create(:assignment_with_deductive_annotations)
+        assignment.assignment_properties.update(assign_graders_to_criteria: true)
+        non_deductive_category = create(:annotation_category, assignment: assignment)
+        post :show, params: { assignment_id: assignment.id,
+                              submission_id: assignment.groupings.first.current_result.submission.id,
+                              id: assignment.groupings.first.current_result,
+                              format: :json }, xhr: true
+
+        expect(response.parsed_body['annotation_categories']
+                       .first['annotation_category_name']).to eq non_deductive_category.annotation_category_name
+        expect(response.parsed_body['annotation_categories'].size).to eq 1
+      end
+    end
+
     context 'when criteria are assigned to this grader' do
       let(:data) { JSON.parse(response.body) }
       let(:params) { { assignment_id: assignment.id, submission_id: submission.id, id: incomplete_result.id } }
@@ -551,6 +728,47 @@ describe ResultsController do
 
       it 'should include assigned criteria list' do
         expect(data['assigned_criteria']).to eq ["#{rubric_criterion.class}-#{rubric_criterion.id}"]
+      end
+
+      context 'when accessing an assignment with deductive annotations' do
+        let(:assignment) { create(:assignment_with_deductive_annotations) }
+        it 'receives limited annotation category data when assigned '\
+           'to a subset of criteria that have associated categories' do
+          other_criterion = create(:flexible_criterion, assignment: assignment)
+          assignment.groupings.each do |grouping|
+            create(:flexible_mark, markable: other_criterion, result: grouping.current_result)
+          end
+          assignment.assignment_properties.update(assign_graders_to_criteria: true)
+          create(:criterion_ta_association, criterion: other_criterion, ta: ta)
+          other_category = create(:annotation_category,
+                                  assignment: assignment,
+                                  flexible_criterion_id: other_criterion.id)
+          post :show, params: { assignment_id: assignment.id,
+                                submission_id: assignment.groupings.first.current_result.submission.id,
+                                id: assignment.groupings.first.current_result,
+                                format: :json }, xhr: true
+          expect(response.parsed_body['annotation_categories'].first['annotation_category_name'])
+            .to eq "#{other_category.annotation_category_name} [#{other_category.flexible_criterion.name}]"
+          expect(response.parsed_body['annotation_categories'].size).to eq 1
+        end
+
+        it 'receives limited annotation category data even when it has a ta_criterion_association '\
+           'with a criterion that has the same id as a flexible criterion which is associated with a category' do
+          other_criterion = create(:rubric_criterion, assignment: assignment, id: assignment.flexible_criteria.first.id)
+          assignment.groupings.each do |grouping|
+            create(:rubric_mark, markable: other_criterion, result: grouping.current_result)
+          end
+          assignment.assignment_properties.update(assign_graders_to_criteria: true)
+          create(:criterion_ta_association, criterion: other_criterion, ta: ta)
+          non_deductive_category = create(:annotation_category, assignment: assignment)
+          post :show, params: { assignment_id: assignment.id,
+                                submission_id: assignment.groupings.first.current_result.submission.id,
+                                id: assignment.groupings.first.current_result,
+                                format: :json }, xhr: true
+          expect(response.parsed_body['annotation_categories']
+                         .first['annotation_category_name']).to eq non_deductive_category.annotation_category_name
+          expect(response.parsed_body['annotation_categories'].size).to eq 1
+        end
       end
 
       context 'when unassigned criteria are hidden from the grader' do

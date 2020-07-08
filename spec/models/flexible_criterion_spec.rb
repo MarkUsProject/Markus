@@ -53,6 +53,46 @@ describe FlexibleCriterion do
       @assignment = create(:assignment)
     end
 
+    context 'with deductive annotations' do
+      let(:assignment) { create(:assignment_with_deductive_annotations) }
+      let(:flexible_criterion) { assignment.flexible_criteria.first }
+      let(:annotation_category) do
+        assignment.annotation_categories.where(flexible_criterion_id: flexible_criterion.id).first
+      end
+      it 'reassigns its annotation_category\'s flexible_criterion_id to nil before being destroyed if it has one' do
+        flexible_criterion.destroy
+        assignment.reload
+        expect(assignment.annotation_categories.first.flexible_criterion_id).to eq nil
+      end
+
+      it 'reassigns its annotation_categories\' flexible_criterion_ids to nil before ' \
+         'being destroyed if it has many' do
+        create(:annotation_category,
+               flexible_criterion_id: flexible_criterion.id,
+               assignment: assignment)
+        flexible_criterion.destroy
+        assignment.reload
+        category_criteria = assignment.annotation_categories.map(&:flexible_criterion_id)
+        expect(category_criteria).to eq [nil, nil]
+      end
+
+      it 'correctly scales up annotation text deductions when its max_mark is increased' do
+        create(:annotation_text, annotation_category: annotation_category, deduction: 2.0)
+        flexible_criterion.update!(max_mark: 6.0)
+        assignment.reload
+        deductions = annotation_category.annotation_texts.map(&:deduction)
+        expect(deductions.sort!).to eq [2.0, 4.0]
+      end
+
+      it 'correctly scales down annotation text deductions when its max_mark is decreased' do
+        create(:annotation_text, annotation_category: annotation_category, deduction: 2.0)
+        flexible_criterion.update!(max_mark: 1.0)
+        assignment.reload
+        deductions = annotation_category.annotation_texts.map(&:deduction)
+        expect(deductions.sort!).to eq [0.33, 0.67]
+      end
+    end
+
     context 'with criterion from a 2 element row with no description overwritten' do
       before :each do
         @criterion = FlexibleCriterion.create_or_update_from_csv_row(['name', 10.0], @assignment)

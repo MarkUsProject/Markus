@@ -12,8 +12,9 @@ en:
       remarks: "Remark Requests"
       required_files_by_student:  "You may specify file(s) that students are required to submit."
       section_due_dates_option: "If the section due dates option is checked, students can only form groups within their section."
-      section_due_dates_info_html: "<strong>Important</strong> The global due date needs to be filled in.
+      section_due_dates_info_html: "<strong>Important</strong> The global due date and start time need to be filled in.
         If a section has no due date specified, the global due date will be used instead.
+        If a section has no start time specified, the global start time will be used instead.
         Students not assigned to any section will only be allowed to form groups with other students not assigned to any section."
     help:
       edit:
@@ -28,6 +29,24 @@ en:
       description: "Starter code files you upload will be automatically added to every new group's repositories."
       overwrite: "Overwrite group files"
       title: "Starter Code"
+    timed:
+      start_button: "Start"
+      end_time: "End time"
+      start_time_instructions: "You may start any time after: "
+      start_end_time_instructions: "You may start this timed assessment any time between %{start_time} and %{end_time}."
+      end_time_instructions: "You must start this timed assessment before the final due date: "
+      past_due_date: "This timed assessment is now over."
+      past_end_time: "This timed assessment is no longer available."
+      before_start_time: "This timed assessment is not available yet."
+      before_start_instructions: "Once this timed assessment has been started, you will have %{duration_string} to complete it without penalty."
+      before_start_instructions_extension: "Once this timed assessment has been started, you will have %{duration_string} to complete it without penalty (this includes a duration extension of %{extension_string})."
+      after_start_instructions_html: "This assessment is due before <strong>%{due_date}</strong> without penalty. (started %{start_time})."
+      start_confirmation: "You are about to start a timed assessment. You cannot undo this action. Click OK to continue."
+      modal_current_duration: "This will extend the current duration for this group. The current duration is: %{duration}."
+      started_message: "You have started this assessment."
+      starter_code_prompt: "Go to the Submissions tab to view starter files for this assessment."
+      time_until_due_warning: "This assessment is due before %{due_date} without penalty."
+      duration_extension_info: "(this includes a duration extension of %{extension_string})"
 
     # Miscellaneous
     average_annotations: "%{average_annotations} annotations per marked submission"
