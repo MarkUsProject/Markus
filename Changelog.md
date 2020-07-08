@@ -19,6 +19,7 @@
 - Fixed bug where image annotations did not stay fixed relative to the image (#4706)
 - Fixed bug where image annotations did not load properly (#4706)
 - Fixed bug where downloading files in nested directories renamed the downloaded file (#4730)
+- Fixed bug where marking scheme weights were not displayed (#4735)
 - Introduces timed assignments (#4665)
 
 ## [v1.9.3]
