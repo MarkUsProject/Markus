@@ -142,7 +142,7 @@ class Result extends React.Component {
       } else {
         children = annotation_category.texts.map(text => {
           let deduction = '';
-          if (text.deduction !== undefined && text.deduction !== null && text.deduction !== 0) {
+          if (!!text.deduction) {
             deduction = '-' + text.deduction;
           }
           return {
@@ -215,7 +215,7 @@ class Result extends React.Component {
                    new_subtotal = null, new_total = null, new_num_marked = null) => {
     this.setState({annotations: this.state.annotations.concat([annotation])});
 
-    if (criterion_id !== null && criterion_id !== undefined) {
+    if (!!criterion_id) {
       let newMarks = [...this.state.marks];
       let i = newMarks.findIndex(m => m.id === criterion_id && m.criterion_type === "FlexibleCriterion");
       if (i >= 0) {
