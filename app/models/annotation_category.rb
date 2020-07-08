@@ -14,12 +14,8 @@ class AnnotationCategory < ApplicationRecord
   validates :flexible_criterion_id,
             inclusion: { in: :assignment_criteria, message: '%<value>s is an invalid criterion for this assignment.' }
 
-  before_update :update_annotation_text_deductions
-
-  def assignment_criteria
-    return [nil] if self.assignment.nil?
-    self.assignment.flexible_criteria.ids + [nil]
-  end
+  before_update :update_annotation_text_deductions, if: ->(c) { changes_to_save.key?('flexible_criterion_id') &&
+                                                                c.annotation_texts.exists? }
 
   # Takes an array of comma separated values, and tries to assemble an
   # Annotation Category, and associated Annotation Texts
@@ -32,13 +28,13 @@ class AnnotationCategory < ApplicationRecord
     criterion_name = row.shift
     if annotation_category.nil?
       annotation_category = assignment.annotation_categories.create(annotation_category_name: name)
+      unless annotation_category.valid?
+        raise CsvInvalidLineError, I18n.t('annotation_categories.upload.empty_category_name')
+      end
     elsif (annotation_category.flexible_criterion_id.nil? && !criterion_name.nil?) ||
           (annotation_category.flexible_criterion.name != criterion_name)
       raise CsvInvalidLineError, I18n.t('annotation_categories.upload.invalid_criterion',
                                         annotation_category: name)
-    end
-    unless annotation_category.valid?
-      raise CsvInvalidLineError, I18n.t('annotation_categories.upload.empty_category_name')
     end
     if criterion_name.nil?
       row.each do |text|
@@ -89,6 +85,11 @@ class AnnotationCategory < ApplicationRecord
     !self.assignment.released_marks.empty?
   end
 
+  def assignment_criteria
+    return [nil] if self.assignment.nil?
+    self.assignment.flexible_criteria.ids + [nil]
+  end
+
   def deductive_annotations_exist?
     self.annotation_texts.joins(:annotations).where.not(deduction: [nil, 0]).exists?
   end
@@ -101,8 +102,6 @@ class AnnotationCategory < ApplicationRecord
   end
 
   def update_annotation_text_deductions
-    return if !changes_to_save.key?('flexible_criterion_id') || self.annotation_texts.empty?
-
     if marks_released?
       errors.add(:base, 'Cannot update annotation category flexible criterion once results are released')
       throw(:abort)
