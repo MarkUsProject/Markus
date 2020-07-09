@@ -16,6 +16,19 @@ export function dateSort(a, b) {
   return (Date.parse(a) || 0) > (Date.parse(b) || 0);
 };
 
+export function durationSort(a, b) {
+  /** Sort values as a duration in weeks, days, hours, etc. */
+  a = [a.weeks || -1, a.days || -1, a.hours || -1, a.minutes || -1, a.seconds || -1];
+  b = [b.weeks || -1, b.days || -1, b.hours || -1, b.minutes || -1, b.seconds || -1];
+  if (a < b) {
+    return 1;
+  } else if (b < a) {
+    return -1;
+  } else {
+    return 0;
+  }
+};
+
 export function markingStateColumn(...override_keys) {
   return ({
     Header: I18n.t('activerecord.attributes.result.marking_state'),

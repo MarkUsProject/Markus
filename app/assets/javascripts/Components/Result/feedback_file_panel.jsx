@@ -74,7 +74,7 @@ export class FeedbackFilePanel extends React.Component {
 
     return (
       <div>
-        <div id='feedback_file_selector_menu'>
+        <div className='react-tabs-panel-action-bar'>
           <div>
             {feedbackSelector}
           </div>

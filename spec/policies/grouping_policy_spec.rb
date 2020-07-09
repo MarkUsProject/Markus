@@ -61,4 +61,75 @@ describe GroupingPolicy do
       end
     end
   end
+
+  describe '#view_file_manager?' do
+    subject { described_class.new(grouping, user: user) }
+    context 'as an admin' do
+      let(:user) { create :admin }
+      let(:grouping) { create :grouping }
+      it { is_expected.not_to pass :view_file_manager? }
+    end
+    context 'as a grader' do
+      let(:user) { create :ta }
+      let(:grouping) { create :grouping }
+      it { is_expected.not_to pass :view_file_manager? }
+    end
+    context 'as a student' do
+      let(:user) { create :student }
+      context 'when the assignment is a regular one' do
+        let(:grouping) { create :grouping }
+        it { is_expected.to pass :view_file_manager? }
+      end
+      context 'when the assignment is scanned' do
+        let(:grouping) { create :grouping, assignment: create(:assignment_for_scanned_exam) }
+        it { is_expected.not_to pass :view_file_manager? }
+      end
+      context 'when the assignment is a peer review' do
+        let(:grouping) { create :grouping, assignment: create(:peer_review_assignment) }
+        it { is_expected.not_to pass :view_file_manager? }
+      end
+      context 'when the assignment is timed' do
+        let(:grouping) { create :grouping, assignment: create(:timed_assignment) }
+        context 'when the grouping has not started' do
+          it { is_expected.not_to pass :view_file_manager? }
+        end
+        context 'when the grouping has started' do
+          before { grouping.update!(start_time: 1.hour.ago) }
+          it { is_expected.to pass :view_file_manager? }
+        end
+      end
+    end
+  end
+
+  describe '#start_timed_assignment?' do
+    subject { described_class.new(grouping, user: user) }
+    context 'as an admin' do
+      let(:user) { create :admin }
+      let(:grouping) { create :grouping }
+      it { is_expected.not_to pass :start_timed_assignment? }
+    end
+    context 'as a grader' do
+      let(:user) { create :ta }
+      let(:grouping) { create :grouping }
+      it { is_expected.not_to pass :start_timed_assignment? }
+    end
+    context 'as a student' do
+      let(:user) { create :student }
+      let(:assignment) { create :timed_assignment }
+      let(:grouping) { create :grouping_with_inviter, inviter: user, assignment: assignment }
+      it { is_expected.to pass :start_timed_assignment? }
+      context 'when the grouping has already started the assignment' do
+        before { grouping.update!(start_time: 1.hour.ago) }
+        it { is_expected.not_to pass :start_timed_assignment? }
+      end
+      context 'when the collection date has passed' do
+        before { assignment.update!(due_date: 1.minute.ago) }
+        it { is_expected.not_to pass :start_timed_assignment? }
+      end
+      context 'when the assignment start time has not started yet' do
+        before { assignment.update!(due_date: 10.hours.from_now, start_time: 1.minute.from_now) }
+        it { is_expected.not_to pass :start_timed_assignment? }
+      end
+    end
+  end
 end

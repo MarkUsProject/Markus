@@ -27,7 +27,7 @@ services:
       - bundle:/bundle
       - node_modules:/app/node_modules
       - packs:/app/public/packs
-      - packs:/app/public/packs-test
+      - packs_test:/app/public/packs-test
       - .:/app:cached
       - .dockerfiles/.psqlrc:/root/.psqlrc:ro
       - ssh_pub_key:/ssh_pub_key

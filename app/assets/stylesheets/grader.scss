@@ -1,21 +1,4 @@
 @import 'common/core';
-@import 'common/tags';
-@import 'common/notes_dialog';
-
-
-/* Annotations */
-
-.annotation_text_display {
-  background: #f6f6f6;
-  border: 1px solid $grey;
-  border-radius: $radius;
-  max-width: 400px;
-  padding: 0.25em 1em;
-  position: absolute;
-  width: auto;
-  z-index: 100000;
-  word-wrap: break-word;
-}
 
 /* Peer Review Styles */
 
@@ -41,121 +24,7 @@
   font-size: 14px;
 }
 
-
-/* Top toolbars: student selector/file selector/download buttons */
-#submission-selector-container {
-  background-color: $lighter-blue;
-  border: $dark-grey 1px solid;
-  padding: 0.25em 0;
-  width: 100%;
-}
-
-#submission-selector {
-  align-items: center;
-  display: flex;
-  justify-content: space-evenly;
-  margin: 0;
-  padding: 0.3em 0;
-  width: 100%;
-
-  .button {
-    display: inline-block;
-    height: 3em;
-    margin: 0 5px;
-    min-width: 90px;
-    padding: 0.7em 0.5em 0.5em;
-  }
-
-  button {
-    height: 3em;
-    margin: 0 5px;
-    min-width: 100px;
-    padding: 0.4em;
-  }
-
-  .group-name {
-    display: inline-block;
-    max-width: 200px;
-    margin: 0 5px;
-    overflow-x: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  .total {
-    background: $light-blue;
-    border: 1px solid $grey;
-    border-radius: $radius;
-    display: inline-block;
-    flex-basis: auto;
-    margin: 0 5px;
-    min-width: 100px;
-    padding: 0 5px;
-    text-align: center;
-  }
-
-  meter {
-    margin: 0 8px;
-    vertical-align: baseline;
-    width: 100px;
-  }
-}
-
-.nested-submenu > .nested-folder {
-    top: 0;
-    left: 100%;
-    margin-top: -6px;
-    margin-left: -1px;
-}
-
-.nested-submenu > a:after {
-    display: block;
-    content: " ";
-    float: right;
-    width: 0;
-    height: 0;
-    border-color: transparent;
-    border-style: solid;
-    border-width: 5px 0 5px 5px;
-    border-left-color: #ccc;
-    margin-top: 5px;
-    margin-right: -10px;
-}
-
-
-/* Download Files Modal */
-
-#download_file_selector {
-  border-radius: $radius;
-  text-align: center;
-  margin-bottom: 10px;
-  margin-top: 10px;
-  line-height: 16.25px;
-}
-
-.inline_label {
-  margin-left: 0.5em;
-}
-
-#annotations_options {
-  display: block;
-  padding-top: 10px;
-  padding-bottom: 5px;
-  margin-left: 110px;
-}
-
-
 /* Panes content (for controlling the heights) */
-
-#mark_viewer,
-#summary_viewer,
-#codeviewer,
-#testviewer,
-#annotations_summary,
-#feedback_file_content {
-  border-radius: 0 0 $radius $radius;
-  overflow: auto;
-}
 
 #codeviewer,
 #testviewer,
@@ -164,239 +33,25 @@
 #annotations_summary,
 #remark_request_tab,
 #feedback_file_content {
-  flex-basis: 600px;
-  flex-grow: 1;
-  width: 100%;
-}
-
-#annotations_summary {
-  padding: 0 0.5em;
-}
-
-
-/* Source code pane */
-
-.image_container {
-  overflow: auto;
-  width: auto;
-}
-
-#sel_box {
-  border: 1px dashed #f00;
-  display: none;
-  position: absolute;
-}
-
-.annotation_holder {
-  background: orange;
-  border: 1px solid #000;
-  cursor: crosshair;
-  opacity: 0.2;
-  position: absolute;
-  z-index: 1;
-}
-
-.code_scroller {
-  margin: 0;
-  overflow: auto;
-  padding-left: 50px !important;
-}
-
-.dp-highlighter {
   display: flex;
+  flex-basis: 600px;
   flex-direction: column;
   flex-grow: 1;
-
-  .annotation_highlighted_text {
-    background-color: #f99;
-    color: $dark-grey;
-  }
-
-  .annotation_highlighted_text_overlap {
-    background-color: #dd5;
-    color: $dark-blue;
-  }
-
-  > ol {
-    flex-grow: 1;
-    overflow: auto;
-    padding-left: 40px;
-  }
-}
-
-
-/* Annotation dialog - for creating or editing new annotations */
-
-#annotation_dialog {
-  padding-top: 1.5em;
-
-  textarea#new_annotation_content {
-    height: 175px;
-    margin-top: 1em;
-    width: 100%;
-    padding: 10px;
-  }
-}
-
-/* Annotations menus */
-
-#annotation_menu, #file_selector_menu, #feedback_file_selector_menu {
-  background: #b7d3ec;
-  border-radius: $radius $radius 0 0;
-  display: table;
-  margin: 0;
-  padding: 0.5em;
-  width: 100%;
-}
-
-#annotation_options {
-  display: block;
-  float: left;
-}
-
-#file_download_button {
-  float: left;
-  margin: 0 1em 0 0;
-}
-
-#new_annotation_button {
-  display: table-cell;
-  color: $grey;
-  text-shadow: none;
-  text-transform: uppercase;
-  border: none;
-  background: $white;
-  font-weight: normal;
-  margin: 0 0.5em 0 0;
-  min-width: 0;
-  vertical-align: top;
-  float: left;
-  font-size: 1em;
-  padding: 0.2em 0.5em;
-  margin-top: 4px;
-  box-shadow: none;
-}
-
-#annotation_categories {
-  display: table-cell;
-  float: left;
-  padding-top: 7px;
-}
-
-.file_selector {
-  background: $light-grey;
-  border-radius: $radius;
-  display: table-cell;
-  vertical-align: top;
-  float: left;
-  line-height: 16.25px;
-}
-
-.file_selector {
-  margin-right: 1em;
-
-  @include breakpoint(mobile) {
-    margin-bottom: 1em;
-  }
-
-  select {
-    background: $white;
-  }
-
-  #next_button,
-  #back_button {
-    min-width: 0;
-  }
-}
-
-li.annotation_category {
-  margin-bottom: 0.25em;
-}
-
-ul.annotation_text_list {
-  background: $white !important;
-  border: 1px solid #aaa;
-  border-radius: 0 0 $radius $radius;
-  height: auto;
-  margin: 0;
   overflow: auto;
-  padding: 0;
-  position: absolute;
-  left: -0.65em !important;
-  width: 300px;
-
-  li {
-    background: $white !important;
-    border-radius: 0 !important;
-    padding: 0.5em 0.25em;
-    width: 100%;
-
-    &:hover {
-      background: $blue !important;
-      color: $white;
-      cursor: pointer;
-    }
-
-    &:last-child {
-      border: 0;
-      border-radius: 0 0 $radius $radius;
-    }
-  }
-}
-
-
-/* Annotations pane */
-.overall-comment {
-  textarea {
-    margin: 1em 0;
-    width: 100%;
-  }
-}
-
-/* MathJAX previews */
-
-#annotation_preview, #overall_comment_preview, #overall_remark_comment_preview {
-  margin: 1em 0 20px 0;
-  border: 1px dashed $grey;
-  padding: 0 10px;
-  min-height: 43px;
-  max-height: 15em;
-  overflow-y: scroll;
-  word-wrap: break-word;
-}
-
-#annotation_preview {
-  width: 450px;
-}
-
-/* Remark request pane */
-
-#remark_request {
-  padding: 1em;
-
-  h3 + h3 {
-    margin: 1em 0 0.5em;
-  }
-
-  textarea {
-    margin-bottom: 1em;
-    width: 100%;
-  }
+  width: 100%;
 }
 
 
 /* Marks pane */
 
 .marks-list {
-  font-size: 0.9em;
   list-style: none;
   margin: 0;
   padding: 0;
   width: 100%;
 
   li {
-    border-bottom: 1px solid lightgrey;
-    border-radius: 0;
+    border-bottom: 1px solid $light-grey;
     padding: 5px;
     width: 100%;
     display: inline-block;
@@ -410,18 +65,6 @@ ul.annotation_text_list {
   .active-criterion,
   .active-rubric {
     box-shadow: inset 0 0 10px 0 $dark-blue;
-  }
-
-  input:focus {
-    border: 5px solid $blue;
-  }
-}
-
-.mark_tools {
-  text-align: center;
-
-  .inline-button {
-    margin: 0 2pt;
   }
 }
 
@@ -490,7 +133,11 @@ ul.annotation_text_list {
   font-size: 1.1em;
   font-weight: bold;
   padding-bottom: 5px;
-  padding-top: 2px;
+
+  .arrow-down,
+  .arrow-up {
+    margin-right: 5px;
+  }
 }
 
 .criterion-description {
@@ -535,93 +182,16 @@ ul.annotation_text_list {
   }
 }
 
-
-/* Submission Rule Pane */
-
-.bonus-deduction {
-  background-color: #cee3ea;
-  padding: 3px 3px 3px 3px;
-}
-
-/* Extra Mark holder */
-
-.extra-marks-pane {
-  border: 0;
-  margin-top: 1em;
-}
-
-
-/* Summary pane */
-.marks-summary-pane {
-  .ReactTable .rt-thead,
-  .ReactTable .rt-tbody {
-    overflow-y: auto;
-  }
-}
-
-.summary_block {
-  border: none;
+.mark-deductions {
+  clear: both;
+  color: $dark-blue;
+  cursor: pointer;
+  font-size: 1.1em;
+  padding-bottom: 5px;
+  padding-top: 2px;
   text-align: right;
-  line-height: 1.6em;
-  margin: 0.25em 0.25em 1.5em;
-  padding: 5px;
 }
 
-.mark_subtotal {
-  font-weight: 600;
-  padding: 10px 20px;
-}
-
-.mark_total {
-  background: $light-grey;
-  border: 1px solid $grey;
-  border-radius: $radius;
-  font-weight: 600;
-  margin: 1em 0;
-  padding: 10px;
-
-  .final_mark {
-    float: right;
-    font-size: 1.5em;
-    font-style: italic;
-  }
-}
-
-.padding_left {
-  padding-left: 30px;
-}
-
-.padding_left_old {
-  padding-left: 30px;
-  background-color: #fdfebc;
-}
-
-
-/* Tag pane */
-
-#tag_viewer {
-  margin-bottom: 1em;
-}
-
-.tag_collector_pane {
-  background: $light-grey;
-  border: 1px solid $grey;
-  border-radius: $radius;
-  font-weight: 600;
-  margin: 1em 0;
-  padding: 10px;
-
-  .tag_list {
-    font-weight: 400 !important;
-    line-height: 200%;
-    padding-top: 5px;
-    text-align: center;
-  }
-}
-
-.tag_admin {
-  text-align: center;
-}
 
 /* Resizable column panes */
 
@@ -697,29 +267,4 @@ ul.annotation_text_list {
       display: none;
     }
   }
-}
-
-.react-tabs__tab--disabled {
-  display: none;
-}
-
-.react-tabs {
-  display: flex;
-  flex-direction: column;
-  flex-grow: 1;
-}
-
-.react-tabs__tab-panel {
-  flex-grow: 1;
-}
-
-.react-tabs__tab-panel--selected {
-  display: flex;
-  flex-direction: column;
-}
-
-#result-main {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
 }

@@ -5,6 +5,8 @@ en:
         one: "Assignment"
       scanned_assignment:
         one: "Scanned Assignment"
+      timed_assignment:
+        one: "Timed Assessment"
     attributes:
       assignment:
         allow_groups: "Students can work in groups"
@@ -36,3 +38,12 @@ en:
         tokens_per_period: "Tokens per group"
         unlimited_tokens: "Unlimited tokens"
         vcs_submit: "Allow students to submit through a version control system"
+        start_time: "Start time"
+    errors:
+      models:
+        assignment_properties:
+          attributes:
+            start_time:
+              before_due_date: "must be before due date"
+            is_timed:
+              not_scanned: "scanned_exam and is_timed cannot both be true"

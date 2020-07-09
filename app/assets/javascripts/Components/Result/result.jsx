@@ -16,7 +16,6 @@ class Result extends React.Component {
     if (fullscreen) {
       let toggle_elements = [
         $('#menus'),
-        $('.top_bar'),
         $('.title_bar'),
         $('#footer_wrapper')
       ];
@@ -142,8 +141,12 @@ class Result extends React.Component {
         }];
       } else {
         children = annotation_category.texts.map(text => {
+          let deduction = '';
+          if (!!text.deduction) {
+            deduction = '-' + text.deduction;
+          }
           return {
-            title: text.content.replace(/\r?\n/gi, ' '),
+            title: `${text.content.replace(/\r?\n/gi, ' ')} <span class="red-text">${deduction}</span>`,
             cmd: `annotation_text_${text.id}`,
             action: () => this.addExistingAnnotation(text.id)
           };
@@ -163,7 +166,6 @@ class Result extends React.Component {
   toggleFullscreen = () => {
     let toggle_elements = [
       $('#menus'),
-      $('.top_bar'),
       $('.title_bar'),
       $('#footer_wrapper')
     ];
@@ -209,8 +211,19 @@ class Result extends React.Component {
     }
   };
 
-  addAnnotation = (annotation) => {
+  addAnnotation = (annotation, criterion_id = null, mark_value = null,
+                   new_subtotal = null, new_total = null, new_num_marked = null) => {
     this.setState({annotations: this.state.annotations.concat([annotation])});
+
+    if (!!criterion_id) {
+      let newMarks = [...this.state.marks];
+      let i = newMarks.findIndex(m => m.id === criterion_id && m.criterion_type === "FlexibleCriterion");
+      if (i >= 0) {
+        newMarks[i] = {...newMarks[i]};
+        newMarks[i].mark = mark_value;
+        this.setState({marks: newMarks, subtotal: new_subtotal, total: new_total, num_marked: new_num_marked});
+      }
+    }
 
     if (annotation.annotation_category) {
       this.refreshAnnotationCategories();
@@ -333,14 +346,15 @@ class Result extends React.Component {
       let marks = this.state.marks.map(markData => {
         if (markData.id === criterion_id && markData.criterion_type === criterion_type) {
           let newMark = {...markData};
-          newMark.mark = mark;
-          newMark['marks.mark'] = mark;
+          newMark.mark = data.mark;
+          newMark['marks.mark'] = data.mark;
+          newMark['marks.override'] = data.mark_override;
           return newMark;
         } else {
           return markData;
         }
       });
-      let stateUpdate = { marks, num_marked: data.num_marked };
+      let stateUpdate = { marks, num_marked: data.num_marked, subtotal: data.subtotal, total: data.total };
       if (mark === null) {
         stateUpdate['marking_state'] = 'incomplete';
       }
@@ -353,6 +367,29 @@ class Result extends React.Component {
 
   destroyMark = (criterion_type, criterion_id) => {
     this.updateMark(criterion_type, criterion_id, null);
+  };
+
+  revertToAutomaticDeductions = (criterion_id) => {
+    $.ajax({
+      url: Routes.revert_to_automatic_deductions_assignment_submission_result_path(
+        this.props.assignment_id, this.props.submission_id, this.props.result_id
+      ),
+      method: 'PATCH',
+      data: {markable_id: criterion_id}
+    }).then(data => {
+      let marks = this.state.marks.map(markData => {
+        if (markData.id === criterion_id && markData.criterion_type === 'FlexibleCriterion') {
+          let newMark = {...markData};
+          newMark.mark = data.mark;
+          newMark['marks.mark'] = data.mark;
+          newMark['marks.override'] = false;
+          return newMark;
+        } else {
+          return markData;
+        }
+      });
+      this.setState({marks: marks, num_marked: data.num_marked, subtotal: data.subtotal, total: data.total});
+    });
   };
 
   createExtraMark = (description, extra_mark) => {
@@ -431,6 +468,10 @@ class Result extends React.Component {
       method: 'GET',
       dataType: 'script'
     });
+  };
+
+  findDeductiveAnnotation = (file, submission_file_id, focus_line, annotation_id) => {
+    this.leftPane.current.selectFile(file, submission_file_id, focus_line, annotation_id);
   };
 
   /* Callbacks for SubmissionSelector */
@@ -519,6 +560,7 @@ class Result extends React.Component {
             <div id='right-pane'>
               <RightPane
                 {...this.props}
+                annotations={this.state.annotations}
                 assigned_criteria={this.state.assigned_criteria}
                 assignment_max_mark={this.state.assignment_max_mark}
                 available_tags={this.state.available_tags}
@@ -534,6 +576,7 @@ class Result extends React.Component {
                 old_total={this.state.old_total}
                 released_to_students={this.state.released_to_students}
                 remark_submitted={this.state.remark_submitted}
+                revertToAutomaticDeductions={this.revertToAutomaticDeductions}
                 subtotal={this.state.subtotal}
                 total={this.state.total}
                 updateMark={this.updateMark}
@@ -544,6 +587,7 @@ class Result extends React.Component {
                 addTag={this.addTag}
                 removeTag={this.removeTag}
                 newNote={this.newNote}
+                findDeductiveAnnotation={this.findDeductiveAnnotation}
               />
             </div>
           </div>

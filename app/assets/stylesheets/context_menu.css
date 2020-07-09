@@ -9,6 +9,7 @@
   background: white;
   border: 1px solid #CCC;
   border-radius: 5px;
+  z-index: 100001;
 }
 .ui-menu .ui-menu {
   margin-top: -3px;
@@ -80,7 +81,11 @@
 }
 
 .ui-menu kbd {
-  padding-left: 1em;
+  background-color: transparent;
+  border: none;
+  box-shadow: none;
   float: right;
+  padding: 0 0 0 0;
+  text-shadow: none;
 }
 

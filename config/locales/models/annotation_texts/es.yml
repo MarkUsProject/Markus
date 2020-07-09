@@ -1,0 +1,9 @@
+es:
+  activerecord:
+    models:
+      annotation_text:
+        one: 'UPDATE ME!'
+    attributes:
+      annotation_text:
+        creator: 'UPDATE ME!'
+        deduction: 'UPDATE ME!'

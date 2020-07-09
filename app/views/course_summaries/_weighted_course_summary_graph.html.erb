@@ -21,7 +21,7 @@
       var data = {
         labels: Array.apply(null, Array(intervals + 1)).map(function (_, i) { return i * label_multiplier; }),
         datasets: [
-          <% unless assignments.nil? && grade_entry_forms.nil? %>
+          <% unless assessments.nil? %>
             {
               label: "Weighted Total Grades <%= marking_scheme.id %>",
               backgroundColor: colours[<%= index %>],

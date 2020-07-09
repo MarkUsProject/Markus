@@ -110,13 +110,16 @@
   PdfAnnotationManager.prototype.getSelectionBox = function($page) {
     let pageNumber = $page.data('page-number');
 
-    if (this.selectionBox.page === pageNumber) {
+    if (this.selectionBox.page === pageNumber && this.selectionBox.$control !== null &&
+        $.contains(document, this.selectionBox.$control[0])) {
       return this.selectionBox;
     } else if (this.selectionBox.$control != null) {
       this.selectionBox.$control.remove(); // Remove old control
     }
 
     let $control = $('<div />').attr('id', 'sel_box');
+    $control.addClass('annotation-holder-active');
+    $control.hide();
 
     // append $control before the first annotation_holder but after the annotationLayer
     // or else you will be prevented from deleting/editing old annotations

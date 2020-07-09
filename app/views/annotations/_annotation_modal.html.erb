@@ -7,27 +7,33 @@
     <input type='hidden' name='<%= key %>' value='<%= val %>'>
   <% end %>
   <div>
-    <div style="float: left;">
+    <div>
       <h2><%= title %></h2>
       <p>
         <%= f.text_area :content, id: 'new_annotation_content', name: 'content', value: content, required: true,
-                        placeholder: t('results.annotation.placeholder') %>
+                        placeholder: t('results.annotation.placeholder'),
+                        rows: 10 %>
       </p>
-      <h3 id="annotation_preview_title"><%= t(:preview) %></h3>
-      <div id="annotation_preview" style="word-wrap: break-word;"></div>
+      <h3><%= t(:preview) %></h3>
+      <div id="annotation_preview" class="preview"></div>
       <% if @current_user.is_reviewer_for?(assignment.pr_assignment, result) %>
         <%= hidden_field_tag 'new_annotation_category', value: t('annotation_categories.one_time_only') %>
       <% else %>
         <h3><%= AnnotationCategory.model_name.human %></h3>
         <% options = [[t('annotation_categories.one_time_only'), '']] %>
         <% assignment.annotation_categories.each do |annotation_category| %>
-          <% options << [annotation_category.annotation_category_name, annotation_category.id] %>
+          <% c = annotation_category.flexible_criterion_id.nil? ? '' :
+                   " [#{annotation_category.flexible_criterion.name}]" %>
+          <% options << [annotation_category.annotation_category_name + c, annotation_category.id] %>
         <% end %>
         <% selected = annotation&.annotation_text&.annotation_category_id %>
-        <select id='new_annotation_category' name='category_id'
+        <select id='new_annotation_category' name='category_id' onchange="check_criterion()"
                 <%= "disabled='true'" unless annotation.nil? %>>
           <%= options_for_select(options, selected) %>
         </select>
+        <p id='deduction_disclaimer' class='hidden'>
+          <%= t('annotations.default_deduction') %>
+        </p>
       <% end %>
 
       <section class='dialog-actions'>

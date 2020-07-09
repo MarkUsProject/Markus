@@ -2,19 +2,13 @@
 @import 'constants';
 
 .dp-highlighter {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
   font: 1em $mono-fonts;
-  margin: 0;
-  width: 100%;
+  padding-bottom: 5px;
 
   /* Clear styles */
-  ol,
-  ol li,
-  ol li span {
-    border: none;
-    margin: 0;
-    padding: 0;
-  }
-
   a,
   a:hover {
     background: none;
@@ -31,42 +25,14 @@
 
   /* Actual styling */
   ol {
-    background-color: $white;
-    color: $dark-grey;
+    flex-grow: 1;
     list-style: decimal outside;
-    padding: 0;
+    margin: 0;
 
     li {
-      &:nth-child(odd) {
-        background-color: $white;
-        color: inherit;
-      }
-
-      span {
-        background-color: inherit;
-        color: #000;
-      }
-    }
-  }
-
-  ol li,
-  .columns div {
-    background-color: #f8f8f8;
-    border-left: 2px solid #ddd;
-    color: #5c5c5c;
-    line-height: 1.2em;
-    margin: 0 !important;
-    padding: 0 3px 1px 10px !important;
-  }
-
-  .columns {
-    background-color: #f8f8f8;
-    color: #777;
-    overflow: hidden;
-    width: 100%;
-
-    div {
-      padding-bottom: 5px;
+      border-left: 1px solid $grey;
+      line-height: 1.25em;
+      padding-left: 10px;
     }
   }
 
@@ -89,57 +55,6 @@
       color: #ee6415;
       background-color: inherit;
       text-decoration: none;
-    }
-  }
-
-  &.collapsed {
-    .bar {
-      padding-left: 0;
-    }
-
-    ol {
-      margin: 0;
-
-      li {
-        display: none;
-      }
-    }
-
-    .tools {
-      border-bottom: 0;
-    }
-  }
-
-  &.nogutter {
-    .bar {
-      padding-left: 0;
-    }
-
-    ol,
-    ol li {
-      list-style: none !important;
-      margin-left: 0 !important;
-    }
-
-    ol li,
-    .columns div {
-      border: 0;
-    }
-
-    .tools {
-      border-left: 0;
-    }
-  }
-
-  &.printing {
-    border: none;
-
-    .tools {
-      display: none !important;
-    }
-
-    li {
-      display: list-item !important;
     }
   }
 

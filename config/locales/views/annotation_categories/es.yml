@@ -4,7 +4,12 @@ es:
       success: "Esta categoría de anotación fue actualizada satisfactoriamente"
     destroy_annotation_text:
       confirm: "Eliminar esta anotación removerá el texto de cualquier archivo que lo contenga. ¿Está seguro/a de realizar esto?"
+      deductive_annotation_released_error: 'UPDATE ME!'
       success: "Eliminar la categoría de anotación"
+    update_annotation_text:
+      deductive_annotation_released_error: 'UPDATE ME!'
+    create_annotation_text:
+      error: 'UPDATE ME!'
     destroy:
       error: 'UPDATE ME!'
       success: "Eliminar la categoría de anotación"
@@ -17,7 +22,12 @@ es:
     update:
       success: "Esta categoría de anotación fue actualizada satisfactoriamente"
     upload:
-      error: "No se pudo subir la categoría: %{annotation_category} localizada en la línea %{annotation_line}"
+      criterion_not_found: 'UPDATE ME!'
+      deduction_absent: 'UPDATE ME!'
+      empty_category_name: 'UPDATE ME!'
+      error: "No se pudo subir la categoría: %{annotation_category}"
+      invalid_criterion: 'UPDATE ME!'
+      invalid_deduction: 'UPDATE ME!'
       success: "%{annotation_category_number} categorías de anotación han sido actualizadas exitosamente"
       title: "Subir Anotaciones"
 
@@ -26,3 +36,4 @@ es:
     no_annotations: "No existen anotaciones en esta categoría"
     none: "No existen categorías de anotación todavía."
     one_time_only: "Una sola vez"
+    unselected_criterion: 'UPDATE ME!'
