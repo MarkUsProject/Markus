@@ -3,7 +3,9 @@
     <%= t('annotations.non_categorized') %>
   </h2>
   <% if texts.empty? %>
-    <p> There are no non categorized annotations :'( </p>
+    <p>
+      <%= t('annotations.empty_uncategorized') %>
+    </p>
   <% else %>
     <ul id='annotation_list'>
       <%= render partial: 'annotation_text',
