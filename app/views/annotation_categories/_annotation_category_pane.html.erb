@@ -15,9 +15,7 @@
     <% end %>
   </ul>
 </div>
-<div style="margin-top: 20px;" class="sortable">
-  <ul>
-    <%= render partial: 'uncategorized_annotations',
-               locals: {assignment: @annotation_categories.first.assignment} %>
-  </ul>
+<div class="separate-listing">
+  <%= render partial: 'uncategorized_annotations',
+             locals: {assignment: @annotation_categories.first.assignment} %>
 </div>
