@@ -7,6 +7,7 @@ pt:
     list_deductions: 'UPDATE ME!'
     prevent_ta_delete: 'UPDATE ME!'
     prevent_update: 'UPDATE ME!'
+    non_categorized: 'UPDATE ME!'
     usage: 'UPDATE ME!'
     used_by: 'UPDATE ME!'
     used_times:
