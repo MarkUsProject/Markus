@@ -87,12 +87,12 @@ namespace :db do
                                          creator: Admin.first)
       base_attributes[:annotation_text_id] = on_the_fly.id
       PdfAnnotation.create(
-          x1: 52_444,
-          y1: 20_703,
-          x2: 88_008,
-          y2: 35_185,
-          page: 2,
-          **base_attributes
+        x1: 52_444,
+        y1: 20_703,
+        x2: 88_008,
+        y2: 35_185,
+        page: 2,
+        **base_attributes
       )
 
       submission_file = new_submission.submission_files.find_by(filename: 'hello.py')

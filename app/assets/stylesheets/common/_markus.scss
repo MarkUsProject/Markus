@@ -604,13 +604,13 @@ kbd {
   background: $white;
   border: 1px solid $grey;
   border-radius: $radius;
-  user-select: none;
   margin-top: 20px;
+  user-select: none;
 
   li {
     list-style: none;
-    padding: 0.5em 1em;
     outline: none;
+    padding: 0.5em 1em;
   }
 }
 
