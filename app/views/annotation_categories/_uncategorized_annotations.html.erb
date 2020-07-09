@@ -6,8 +6,8 @@
                 remote: true %>
   </span>
   <span>
-    (<%= AnnotationText.joins(annotations: [{result: :grouping}])
-                       .where('annotation_texts.annotation_category': nil,
+    (<%= AnnotationText.joins(annotations: [{ result: :grouping }])
+                       .where('annotation_texts.annotation_category_id': nil,
                               'groupings.assessment_id': params[:assignment_id]).count %>)
   </span>
 </li>
