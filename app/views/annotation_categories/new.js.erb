@@ -1,7 +1,9 @@
-$('#annotation_category_pane_list').prepend(
-  "<%= escape_javascript("#{render partial: 'new_annotation_category',
-                                   locals: { assignment_id: @assignment.id }}").html_safe %>");
-let new_category_form = document.getElementById('add_annotation_category');
-new_category_form.getElementsByTagName('input')[0].focus();
+(function () {
+  $('#annotation_category_pane_list').prepend(
+    "<%= escape_javascript("#{render partial: 'new_annotation_category',
+                                     locals: { assignment_id: @assignment.id }}").html_safe %>");
+  let new_category_form = document.getElementById('add_annotation_category');
+  new_category_form.getElementsByTagName('input')[0].focus();
 
-ajax_events.setUpCallbacks(new_category_form);
+  ajax_events.setUpCallbacks(new_category_form);
+})();
