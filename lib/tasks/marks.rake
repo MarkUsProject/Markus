@@ -86,6 +86,7 @@ namespace :db do
                                          content: random_sentences(3),
                                          creator: Admin.first)
       base_attributes[:annotation_text_id] = on_the_fly.id
+      base_attributes[:annotation_number] = new_submission.annotations.count + 1
       PdfAnnotation.create(
         x1: 52_444,
         y1: 20_703,
