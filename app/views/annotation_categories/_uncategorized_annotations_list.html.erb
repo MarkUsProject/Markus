@@ -1,10 +1,13 @@
 <div id='annotation_list_holder'>
   <h2>
-    <%= t('activerecord.models.annotation.other') %>
+    <%= t('annotations.non_categorized') %>
   </h2>
-
-  <ul id='annotation_list'>
-    <%= render partial: 'annotation_text',
-               collection: texts %>
-  </ul>
+  <% if texts.empty? %>
+    <p> There are no non categorized annotations :'( </p>
+  <% else %>
+    <ul id='annotation_list'>
+      <%= render partial: 'annotation_text',
+                 collection: texts %>
+    </ul>
+  <% end %>
 </div>

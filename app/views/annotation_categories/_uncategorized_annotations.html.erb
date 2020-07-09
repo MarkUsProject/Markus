@@ -1,11 +1,13 @@
-<li id='uncategorized'>
+<li id='uncategorized' class="new" style="border-top: 0px;">
   <span>
-    <%= link_to 'Uncategorized Annotations',
+    <%= link_to t('annotations.non_categorized'),
                 controller: 'annotation_categories',
                 action: "uncategorized_annotations",
                 remote: true %>
   </span>
   <span class='right'>
-    (<%= AnnotationText.where(annotation_category: nil).count %>)
+    (<%= AnnotationText.joins(annotations: [{result: :grouping}])
+                       .where('annotation_texts.annotation_category': nil,
+                              'groupings.assessment_id': params[:assignment_id]).count %>)
   </span>
 </li>
