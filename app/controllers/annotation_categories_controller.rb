@@ -226,7 +226,9 @@ class AnnotationCategoriesController < ApplicationController
   end
 
   def uncategorized_annotations
-    @texts = AnnotationText.where(annotation_category: nil)
+    @texts = AnnotationText.joins(annotations: [{result: :grouping}])
+                           .where('annotation_texts.annotation_category': nil,
+                                  'groupings.assessment_id': params[:assignment_id])
   end
 
   private
