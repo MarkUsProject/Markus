@@ -354,6 +354,57 @@ describe AnnotationCategoriesController do
     end
   end
 
+  describe '#uncategorized_annotations' do
+    let(:admin) { create :admin }
+    let(:assignment) { create(:assignment_with_criteria_and_results) }
+    let(:assignment_result) { assignment.groupings.first.current_result }
+    let(:text) { create(:annotation_text, annotation_category: nil) }
+    let(:different_text) { create(:annotation_text, annotation_category: nil) }
+
+    it 'finds no instance of non categorized annotations when there are no annotation texts' do
+      get_as admin, :uncategorized_annotations, params: { assignment_id: assignment.id}
+      expect(assigns(:texts)).to eq []
+    end
+
+    it 'finds no instance of non categorized annotations when only categorized annotation texts exists' do
+      category = create(:annotation_category, assignment: assignment)
+      categorized_text = create(:annotation_text, annotation_category: category)
+      create(:text_annotation, annotation_text: categorized_text, result: assignment_result)
+      get_as admin, :uncategorized_annotations, params: { assignment_id: assignment.id}
+      expect(assigns(:texts)).to eq []
+    end
+
+    it 'does not find uncategorized annotations from other assignments' do
+      other_assignment = create(:assignment_with_criteria_and_results)
+      create(:text_annotation, annotation_text: text, result: other_assignment.groupings.first.current_result)
+      get_as admin, :uncategorized_annotations, params: { assignment_id: assignment.id}
+      expect(assigns(:texts)).to eq []
+    end
+
+    it 'finds one uncategorized annotation if only one exists' do
+      create(:text_annotation, annotation_text: text, result: assignment_result)
+      get_as admin, :uncategorized_annotations, params: { assignment_id: assignment.id}
+      expect(assigns(:texts).first).to eq text
+    end
+
+    it 'finds multiple uncategorized annotations if many exist' do
+      create(:text_annotation, annotation_text: text, result: assignment_result)
+      create(:text_annotation, annotation_text: different_text, result: assignment_result)
+      get_as admin, :uncategorized_annotations, params: { assignment_id: assignment.id}
+      expect(assigns[:texts].size).to eq 2
+      expect([assigns(:texts).first, assigns(:texts).second].sort!).to eq [text, different_text].sort!
+    end
+
+    it 'finds uncategorized annotations if they exist across different results' do
+      create(:text_annotation, annotation_text: text, result: assignment_result)
+      other_grouping = assignment.groupings.where.not(id: assignment_result.grouping.id).first
+      create(:text_annotation, annotation_text: different_text, result: other_grouping.current_result)
+      get_as admin, :uncategorized_annotations, params: { assignment_id: assignment.id}
+      expect(assigns[:texts].size).to eq 2
+      expect([assigns(:texts).first, assigns(:texts).second].sort!).to eq [text, different_text].sort!
+    end
+  end
+
   context '#upload' do
     include_examples 'a controller supporting upload' do
       let(:params) { { assignment_id: assignment.id } }
