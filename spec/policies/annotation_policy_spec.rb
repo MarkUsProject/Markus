@@ -10,22 +10,23 @@ describe AnnotationPolicy do
       it { is_expected.to pass :add_existing_annotation? }
     end
   end
-  describe 'When the user is TA' do
+  describe 'When the user is grader' do
     subject { described_class.new(user: user) }
     let(:user) { create(:ta) }
-    context 'When TA is allowed to manage annotations' do
+    context 'Grader can add existing annotation' do
+      it { is_expected.to pass :add_existing_annotation? }
+    end
+    context 'When grader is allowed to manage annotations' do
       before do
         create(:grader_permission, user_id: user.id, create_delete_annotations: true)
       end
       it { is_expected.to pass :manage? }
-      it { is_expected.to pass :add_existing_annotation? }
     end
-    context 'When TA is not allowed to manage annotations' do
+    context 'When grader is not allowed to manage annotations' do
       before do
         create(:grader_permission, user_id: user.id, create_delete_annotations: false)
       end
       it { is_expected.not_to pass :manage? }
-      it { is_expected.not_to pass :add_existing_annotation? }
     end
   end
   describe 'When the user is student' do

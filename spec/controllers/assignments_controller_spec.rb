@@ -698,7 +698,7 @@ describe AssignmentsController do
       include_examples 'An authorized user managing assignments'
     end
   end
-  
+
   describe 'When the grader is not allowed to manage assignments' do
     let(:grader) { create(:ta) }
     before do
