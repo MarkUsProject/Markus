@@ -6,10 +6,10 @@
 
   <script>
     $(document).ready(function () {
-      const intervals = 20;
+      var intervals = 20;
       var label_multiplier = 5;
       var dist = {};
-      <% unless assignments.nil? && grade_entry_forms.nil? %>
+      <% unless @assessments.nil? %>
         dist = <%= marking_scheme.students_weighted_grade_distribution_array(@current_user).to_json.html_safe %>;
         label_multiplier = dist.max / intervals;
       <% end %>
@@ -19,9 +19,9 @@
 
       // Set up data
       var data = {
-        labels: Array.apply(null, Array(intervals + 1)).map(function (_, i) { return i * label_multiplier; }),
+        labels: Array.apply(null, Array(intervals + 1)).map(function (_, i) { return Math.round(i * label_multiplier); }),
         datasets: [
-          <% unless assessments.nil? %>
+          <% unless @assessments.nil? %>
             {
               label: "Weighted Total Grades <%= marking_scheme.id %>",
               backgroundColor: colours[<%= index %>],
@@ -35,12 +35,8 @@
         tooltips: {
           callbacks: {
             title: function (tooltipItems) {
-              var baseNum = parseInt(tooltipItems[0].xLabel, 10);
-              if (baseNum === 0) {
-                return '0-' + label_multiplier;
-              } else {
-                return baseNum + '-' + (baseNum + label_multiplier);
-              }
+              var baseNum = tooltipItems[0].index;
+              return (baseNum * label_multiplier) + '-' + ((baseNum + 1) * label_multiplier);
             }
           }
         },

@@ -16,15 +16,7 @@ class MarkingScheme < ApplicationRecord
   # Returns a weighted grade distribution for all students' total weighted grades
   def students_weighted_grade_distribution_array(current_user, intervals = 20)
     data = students_weighted_grades_array(current_user)
-    if data.max > 80
-      max = 100
-    elsif data.max > 60
-      max = 80
-    elsif data.max > 40
-      max = 40
-    else
-      max = 20
-    end
+    max = [data.max, intervals].max
 
     data.extend(Histogram)
     histogram = data.histogram(intervals, min: 0, max: max, bin_boundary: :min, bin_width: max / intervals)
