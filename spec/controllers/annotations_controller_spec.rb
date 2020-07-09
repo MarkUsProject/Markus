@@ -201,20 +201,6 @@ describe AnnotationsController do
   end
 
   shared_examples 'An unauthorized user doing a POST' do
-    describe '#add_existing_annotation' do
-      it 'should respond with redirect' do
-        post_as user,
-                :add_existing_annotation,
-                params: { annotation_text_id: annotation_text.id, submission_file_id: submission_file.id, line_start: 1,
-                          line_end: 1, column_start: 1, column_end: 1, result_id: result.id },
-                format: :js
-
-        assert_response :redirect
-        expect(response.status).to eq(302)
-        expect(result.annotations.reload.size).to eq 0
-      end
-    end
-
     describe '#create' do
       it 'should respond with redirect' do
         post_as user,
@@ -456,7 +442,7 @@ describe AnnotationsController do
     end
   end
 
-  describe 'an authorized grader' do
+  describe 'an authorized grader trying to create, delete annotations' do
     let!(:user) { create(:ta) }
     before do
       create(:grader_permission, user_id: user.id, create_delete_annotations: true)
@@ -466,7 +452,7 @@ describe AnnotationsController do
     include_examples 'When a grader trying to manage deductive annotations'
   end
 
-  describe 'an unauthorized grader' do
+  describe 'an unauthorized grader trying to create, delete annotations' do
     let!(:user) { create(:ta) }
     before do
       create(:grader_permission, user_id: user.id, create_delete_annotations: false)
@@ -479,6 +465,19 @@ describe AnnotationsController do
   describe 'an unauthorized student' do
     let!(:user) { create(:student) }
     include_examples 'An unauthorized user doing a POST'
+    describe '#add_existing_annotation' do
+      it 'should respond with redirect' do
+        post_as user,
+                :add_existing_annotation,
+                params: { annotation_text_id: annotation_text.id, submission_file_id: submission_file.id, line_start: 1,
+                          line_end: 1, column_start: 1, column_end: 1, result_id: result.id },
+                format: :js
+
+        assert_response :redirect
+        expect(response.status).to eq(302)
+        expect(result.annotations.reload.size).to eq 0
+      end
+    end
   end
 
   describe 'an authorized student' do

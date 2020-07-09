@@ -1,7 +1,7 @@
 class AnnotationPolicy < ApplicationPolicy
   default_rule :manage?
   def add_existing_annotation?
-    user.admin? || (user.ta? && check?(:ta_allowed?))
+    user.admin? || user.ta?
   end
 
   def manage?
