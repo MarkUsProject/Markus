@@ -65,4 +65,8 @@ class AssignmentPolicy < ApplicationPolicy
   def summary?
     user.admin? || user.ta?
   end
+
+  def batch_runs?
+    user.admin? || (user.ta? && allowed_to?(:grader_run_tests?, with: GraderPermissionPolicy))
+  end
 end
