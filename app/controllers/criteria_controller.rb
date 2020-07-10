@@ -128,7 +128,7 @@ class CriteriaController < ApplicationController
 
   def download
     assignment = Assignment.find(params[:assignment_id])
-    criteria = assignment.criteria.sort_by(&:position)
+    criteria = assignment.criteria
     yml_criteria = criteria.reduce({}) { |a, b| a.merge b.to_yml }
     send_data yml_criteria.ya2yaml(hash_order: criteria.map(&:name)),
               filename: "#{assignment.short_identifier}_criteria.yml",

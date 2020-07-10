@@ -137,7 +137,7 @@ module Api
           'Marking for that submission is already completed' }, status: 404
         return
       end
-      matched_criteria = assignment.criteria.select { |criterion| params.keys.include?(criterion.name) }
+      matched_criteria = assignment.criteria.where(name: params.keys)
       if matched_criteria.empty?
         render 'shared/http_status', locals: { code: '404', message:
           'No criteria were found that match that request.' }, status: 404

@@ -186,8 +186,8 @@ describe Assignment do
           end
 
           it 'shows the criteria visible to tas only' do
-            expect(@assignment.get_criteria(:ta_visible).select(&:id)).to match_array(@ta_criteria.select(&:id) +
-                                                                                @ta_and_peer_criteria.select(&:id))
+            expect(@assignment.criteria.where(&:ta_visible).where(&:id)).to match_array(@ta_criteria.where(&:id) +
+                                                                                @ta_and_peer_criteria.where(&:id))
           end
 
           context 'a submission and a result are created' do

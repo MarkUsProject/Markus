@@ -26,6 +26,11 @@ class Assignment < Assessment
            inverse_of: :assignment,
            foreign_key: :assessment_id
 
+  has_many :ta_criteria,
+           -> { where(ta_visible: true).order(:position) },
+           class_name: "Criterion",
+           foreign_key: :assessment_id
+
   has_many :test_groups, dependent: :destroy, inverse_of: :assignment, foreign_key: :assessment_id
   accepts_nested_attributes_for :test_groups, allow_destroy: true, reject_if: ->(attrs) { attrs[:name].blank? }
 
@@ -85,8 +90,6 @@ class Assignment < Assessment
   validates_associated :assignment_stat
   # Because of app/views/main/_grade_distribution_graph.html.erb:25
   validates_presence_of :assignment_stat
-
-  scope :ta_criteria, -> { criteria.includes(options[:includes]).order(:position).select(&user_visibility) }
 
   BLANK_MARK = ''
   STARTER_CODE_REPO_NAME = "starter-code"
@@ -241,9 +244,9 @@ class Assignment < Assessment
 
   # Returns the maximum possible mark for a particular assignment
   def max_mark(user_visibility = :ta_visible)
-    # TODO: sum method does not work with empty arrays. Consider updating/replacing gem``:
+    # TODO: sum method does not work with empty arrays. Consider updating/replacing gem:
     #       see: https://github.com/thirtysixthspan/descriptive_statistics/issues/44
-    max_marks = criteria.select(&user_visibility).map(&:max_mark)
+    max_marks = criteria.where(&user_visibility).map(&:max_mark)
     s = max_marks.empty? ? 0 : max_marks.sum
     s.nil? ? 0 : s.round(2)
   end
@@ -520,7 +523,7 @@ class Assignment < Assessment
     criteria_shown = Set.new
     max_mark = 0
 
-    selected_criteria = user.admin? ? criteria : criteria.select(&:ta_visible)
+    selected_criteria = user.admin? ? criteria : criteria.where(&:ta_visible)
     criteria_columns = selected_criteria.map do |crit|
       unassigned = !assigned_criteria.nil? && !assigned_criteria.include?("#{crit.class}-#{crit.id}")
       next if hide_unassigned && unassigned
@@ -596,7 +599,7 @@ class Assignment < Assessment
     end
 
     headers = [['User name', 'Group', 'Final grade'], ['', 'Out of', self.max_mark]]
-    criteria = self.criteria.select(&:ta_visible)
+    criteria = self.criteria.where(&:ta_visible)
     criteria.each do |crit|
       headers[0] << crit.name
       headers[1] << crit.max_mark
@@ -657,11 +660,7 @@ class Assignment < Assessment
   # Returns a filtered list of criteria.
   def get_criteria(user_visibility = :all, type = :all, options = {})
     # can't use select(&:all) because all isn't a field
-    criteria.includes(options[:includes]).order(:position).select(&user_visibility)
-  end
-
-  def criteria_count
-    criteria.size
+    criteria.includes(options[:includes]).order(:position).where(&user_visibility)
   end
 
   # Determine the total mark for a particular student, as a percentage
@@ -1163,7 +1162,7 @@ class Assignment < Assessment
     end
 
     visibility = current_user.admin? ? :all : :ta
-    criteria = self.criteria.select(&visibility).reject do |crit|
+    criteria = self.criteria.where(&visibility).reject do |crit|
       !assigned_criteria.nil? && !assigned_criteria.include?("#{crit.class}-#{crit.id}")
     end
 
