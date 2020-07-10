@@ -39,13 +39,12 @@
     <% end %>
     <% if annotation_text.annotation_category.nil? %>
       <div class='annotation_text_details'>
-        <% annotation = annotation_text.annotations.first %>
-        <% grouping = annotation.result.grouping %>
+        <% this_text = text_info[annotation_text_iteration.index] %>
         <%= t('activerecord.models.submission', {'count': 1}) + ': ' %>
-        <%= link_to grouping.group.group_name,
-                    edit_assignment_submission_result_url(assignment_id: grouping.assignment.id,
-                                                          submission_id: grouping.current_submission_used.id,
-                                                          id: annotation.result) %>
+        <%= link_to this_text['group_name'],
+                    edit_assignment_submission_result_url(assignment_id: this_text['assignment_id'],
+                                                          submission_id: this_text['submission_id'],
+                                                          id: this_text['result_id']) %>
       </div>
     <% else %>
       <div id='annotation-text-<%= annotation_text.id %>-usage-panel'></div>
