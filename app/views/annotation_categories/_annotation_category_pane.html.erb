@@ -1,4 +1,4 @@
-<div class='sortable'>
+<div class='listings sortable'>
   <header>
     <span><%= AnnotationCategory.model_name.human %></span>
   </header>
@@ -15,7 +15,7 @@
     <% end %>
   </ul>
 </div>
-<div class="separate-listing">
+<div class="listings separate-listing">
   <%= render partial: 'uncategorized_annotations',
              locals: { assignment: @annotation_categories.first.assignment } %>
 </div>
