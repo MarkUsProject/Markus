@@ -46,6 +46,7 @@ namespace :db do
                                           .joins(:annotation_category)
                                           .where('annotation_categories.assignment': grouping.assignment,
                                                  'annotation_texts.deduction': nil)
+                                          .where.not('annotation_texts.annotation_category_id': nil)
                                           .pluck(:id).sample,
         annotation_number: new_submission.annotations.count + 1,
         creator_id: Admin.first.id,
@@ -67,6 +68,7 @@ namespace :db do
                                           .joins(:annotation_category)
                                           .where('annotation_categories.assignment': grouping.assignment,
                                                  'annotation_texts.deduction': nil)
+                                          .where.not('annotation_texts.annotation_category_id': nil)
                                           .pluck(:id).sample,
         annotation_number: new_submission.annotations.count + 1,
         creator_id: Admin.first.id,
@@ -104,6 +106,7 @@ namespace :db do
                                           .joins(:annotation_category)
                                           .where('annotation_categories.assignment': grouping.assignment,
                                                  'annotation_texts.deduction': nil)
+                                          .where.not('annotation_texts.annotation_category_id': nil)
                                           .pluck(:id).sample,
         annotation_number: new_submission.annotations.count + 1,
         creator_id: Admin.first.id,
