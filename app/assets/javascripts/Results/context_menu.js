@@ -13,7 +13,7 @@
 
    */
 var annotation_context_menu = {
-  setup: function(annot_path, result_id, assignment_id, file_dl_path) {
+  setup: function(annot_path, result_id, assignment_id, manage_annotations, file_dl_path) {
     var menu_items = {
       new_annotation: {
         title: I18n.t('helpers.submit.create',
@@ -116,8 +116,11 @@ var annotation_context_menu = {
             return !!get_selection_box_coordinates();
           }
         })();
+        var selection_exists_and_allowed_to_create = (function () {
+          return !!(manage_annotations && selection_exists);
+        })();
         $(document).contextmenu('enableEntry', 'new_annotation',
-                                selection_exists);
+                                selection_exists_and_allowed_to_create);
         $(document).contextmenu('enableEntry', 'common_annotations',
                                 selection_exists);
         $(document).contextmenu('enableEntry', 'copy',
@@ -138,10 +141,13 @@ var annotation_context_menu = {
             return clicked_element.closest('.annotation_holder').length > 0;
           }
         })();
+        var annotation_selected_and_allowed_to_modify = (function () {
+          return !!(manage_annotations && annotation_selected);
+        })();
         $(document).contextmenu('enableEntry', 'edit_annotation',
-                                annotation_selected);
+                                annotation_selected_and_allowed_to_modify);
         $(document).contextmenu('enableEntry', 'delete_annotation',
-                                annotation_selected);
+                                annotation_selected_and_allowed_to_modify);
       }
     });
   },
