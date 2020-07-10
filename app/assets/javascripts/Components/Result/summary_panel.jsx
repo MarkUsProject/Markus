@@ -260,7 +260,7 @@ export class SummaryPanel extends React.Component {
                 {count: d.deduction})}
             </td>
             <td>
-              {!this.props.released_to_students &&
+              {!this.props.released_to_students && this.props.is_allowed_to_delete_grace_period_deduction &&
               <button
                 className='inline-button'
                 onClick={() => this.props.deleteGraceTokenDeduction(d.id)}
