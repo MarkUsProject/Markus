@@ -1,15 +1,15 @@
-<li id='annotation_text_<%= annotation_text.id %>'>
-  <div id='annotation_text_<%= annotation_text.id %>_control' style="word-break: break-all">
-    <%= markdown(annotation_text.content) %>
+<li id='annotation_text_<%= annotation_text['id'] %>'>
+  <div id='annotation_text_<%= annotation_text['id'] %>_control' style="word-break: break-all">
+    <%= markdown(annotation_text['content']) %>
 
     <div class='annotation_text_details'>
       <%= link_to t(:edit),
                   'javascript:void(0);',
-                  onclick:"$('#annotation_text_' + #{annotation_text.id} + '_control').hide();
-                  $('#annotation_text_' + #{annotation_text.id} + '_edit').show();",
+                  onclick:"$('#annotation_text_' + #{annotation_text['id']} + '_control').hide();
+                  $('#annotation_text_' + #{annotation_text['id']} + '_edit').show();",
         class: 'button inline-button' %>
       <%= button_to t(:delete),
-                    destroy_annotation_text_assignment_annotation_categories_path(id: annotation_text.id),
+                    destroy_annotation_text_assignment_annotation_categories_path(id: annotation_text['id']),
                     method: 'delete',
                     data: { confirm: t('annotation_categories.destroy_annotation_text.confirm') },
                     remote: true,
@@ -17,50 +17,48 @@
     </div>
     <div class='annotation_text_details'>
       <%= AnnotationText.human_attribute_name(:creator) %>
-      <% if annotation_text.creator.nil? %>
+      <% if annotation_text['creator'].nil? %>
         <%= 'N/A' %>
       <% else %>
-        <%= annotation_text.creator.user_name %>
+        <%= annotation_text['creator'] %>
       <% end %>
     </div>
     <div class='annotation_text_details'>
       <%= t('annotations.last_edited_by') %>
-      <% if annotation_text.last_editor.nil? %>
+      <% if annotation_text['last_editor'].nil? %>
         <%= 'N/A' %>
       <% else %>
-        <%= annotation_text.last_editor.user_name %>
+        <%= annotation_text['last_editor'] %>
       <% end %>
     </div>
-    <% unless annotation_text.deduction.nil?  %>
+    <% unless annotation_text['deduction'].nil?  %>
       <div class='annotation_text_details'>
         <%= AnnotationText.human_attribute_name(:deduction) %>
         <%= annotation_text.deduction %>
       </div>
     <% end %>
-    <% if annotation_text.annotation_category.nil? %>
+    <% if annotation_text['annotation_category'].nil? %>
       <div class='annotation_text_details'>
-        <% this_text = text_info[annotation_text_iteration.index] %>
         <%= t('activerecord.models.submission', {'count': 1}) + ': ' %>
-        <%= link_to this_text['group_name'],
-                    edit_assignment_submission_result_url(assignment_id: this_text['assignment_id'],
-                                                          submission_id: this_text['submission_id'],
-                                                          id: this_text['result_id']) %>
+        <%= link_to annotation_text['group_name'],
+                    edit_assignment_submission_result_url(assignment_id: annotation_text['assignment_id'],
+                                                          submission_id: annotation_text['submission_id'],
+                                                          id: annotation_text['result_id']) %>
       </div>
     <% else %>
-      <div id='annotation-text-<%= annotation_text.id %>-usage-panel'></div>
+      <div id='annotation-text-<%= annotation_text['id'] %>-usage-panel'></div>
     <% end %>
   </div>
 
-  <div id='annotation_text_<%= annotation_text.id %>_edit' style='display:none;'>
-    <%= form_for annotation_text,
-                 url: update_annotation_text_assignment_annotation_categories_path(id: annotation_text.id),
-                 method: 'put',
-                 remote: true do |f| %>
+  <div id='annotation_text_<%= annotation_text['id'] %>_edit' style='display:none;'>
+    <%= form_with url: update_annotation_text_assignment_annotation_categories_path(id: annotation_text['id']),
+                  method: 'put',
+                  remote: true do |f| %>
       <%= f.hidden_field :annotation_category_id %>
       <p>
         <%= f.text_area :content, cols: 50, rows: 5 %>
       </p>
-      <% unless annotation_text&.annotation_category&.flexible_criterion.nil? %>
+      <% unless annotation_text[:annotation_category].nil? %>
         <div class='inline-labels'>
           <% max_mark = annotation_text.annotation_category.flexible_criterion.max_mark %>
           <% marks_released = !annotation_text.annotations.joins(:result)
@@ -76,21 +74,21 @@
 
         <input type='reset'
                value='<%= t(:cancel) %>'
-               onclick="$('#annotation_text_' + <%= annotation_text.id %> + '_edit').hide();
-                        $('#annotation_text_' + <%= annotation_text.id %> + '_control').show();">
+               onclick="$('#annotation_text_' + <%= annotation_text['id'] %> + '_edit').hide();
+                        $('#annotation_text_' + <%= annotation_text['id'] %> + '_control').show();">
       </p>
     <% end %>
   </div>
 </li>
 
-<% unless annotation_text.annotation_category.nil? %>
+<% unless annotation_text['annotation_category'].nil? %>
   <script>
     (() => {
-      let usagePanel = document.getElementById('annotation-text-' + <%= annotation_text.id %> + '-usage-panel');
+      let usagePanel = document.getElementById('annotation-text-' + <%= annotation_text['id'] %> + '-usage-panel');
       window.AnnotationUsagePanel = window.makeAnnotationUsagePanel(
         usagePanel,
         {
-          annotation_id: <%= annotation_text.id %>,
+          annotation_id: <%= annotation_text['id'] %>,
           assignment_id: <%= annotation_text.annotation_category.assessment_id %>,
           num_used: <%= annotation_text.annotations.count %>
         }

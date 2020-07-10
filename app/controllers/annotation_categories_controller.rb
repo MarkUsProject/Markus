@@ -227,10 +227,20 @@ class AnnotationCategoriesController < ApplicationController
 
   def uncategorized_annotations
     @texts = AnnotationText.joins(annotations: { result: { grouping: :group } })
-                           .joins('INNER JOIN users ON annotation_texts.creator_id = users.id')
+                           .joins('INNER JOIN users u1 ON annotation_texts.creator_id = u1.id')
+                           .joins('INNER JOIN users u2 ON annotation_texts.last_editor_id = u2.id')
                            .where('annotation_texts.annotation_category_id': nil,
                                   'groupings.assessment_id': params[:assignment_id])
-                           .order('users.user_name', 'results.id')
+                           .order('u1.user_name', 'results.id')
+                           .pluck_to_hash('groups.group_name AS group_name',
+                                          'groupings.assessment_id AS assignment_id',
+                                          'results.id AS result_id',
+                                          'results.submission_id AS submission_id',
+                                          'annotation_texts.id AS id',
+                                          'annotation_texts.content AS content',
+                                          'u1.user_name AS creator',
+                                          'annotation_texts.last_editor_id AS last_editor_id',
+                                          'u2.user_name AS last_editor')
   end
 
   private
