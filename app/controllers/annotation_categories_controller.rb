@@ -56,6 +56,29 @@ class AnnotationCategoriesController < ApplicationController
   def show
     @assignment = Assignment.find(params[:assignment_id])
     @annotation_category = AnnotationCategory.find(params[:id])
+    @annotation_texts = AnnotationText.includes(annotation_category: :flexible_criterion, annotations: :result)
+                                      .joins('INNER JOIN users u1 ON annotation_texts.creator_id = u1.id')
+                                      .joins('INNER JOIN users u2 ON annotation_texts.last_editor_id = u2.id')
+                                      .where('annotation_texts.annotation_category_id': params[:id])
+                                      .group('annotation_categories.assessment_id',
+                                             'annotation_texts.id',
+                                             'annotation_texts.deduction',
+                                             'annotation_texts.annotation_category_id',
+                                             'annotation_texts.content',
+                                             'u1.user_name',
+                                             'u2.user_name',
+                                             'flexible_criteria.max_mark')
+                                      .order('u1.user_name')
+                                      .pluck_to_hash('annotation_categories.assessment_id AS assignment_id',
+                                                     'annotation_texts.id AS id',
+                                                     'annotation_texts.deduction AS deduction',
+                                                     'annotation_texts.annotation_category_id AS annotation_category',
+                                                     'annotation_texts.content AS content',
+                                                     'u1.user_name AS creator',
+                                                     'count(*) AS num_uses ',
+                                                     'count(results.released_to_students OR NULL) AS released',
+                                                     'u2.user_name AS last_editor',
+                                                     'flexible_criteria.max_mark AS max_mark')
   end
 
   def destroy
