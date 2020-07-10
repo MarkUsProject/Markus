@@ -63,6 +63,7 @@ export class LeftPane extends React.Component {
               canDownload={this.props.is_reviewer === undefined ? undefined : !this.props.is_reviewer}
               fileData={this.props.submission_files}
               annotation_categories={this.props.annotation_categories}
+              manage_annotations={this.props.manage_annotations}
               annotations={this.props.annotations}
               newAnnotation={this.props.newAnnotation}
               addExistingAnnotation={this.props.addExistingAnnotation}

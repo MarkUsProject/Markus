@@ -141,6 +141,7 @@ export class SubmissionFilePanel extends React.Component {
           {this.props.show_annotation_manager &&
            <AnnotationManager
              categories={this.props.annotation_categories}
+             manage_annotations={this.props.manage_annotations}
              newAnnotation={this.props.newAnnotation}
              addExistingAnnotation={this.props.addExistingAnnotation}
            />

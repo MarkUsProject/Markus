@@ -543,6 +543,7 @@ class Result extends React.Component {
                 revision_identifier={this.state.revision_identifier}
                 submission_files={this.state.submission_files}
                 student_view={this.props.role === 'Student'}
+                manage_annotations={this.props.manage_annotations}
                 newAnnotation={this.newAnnotation}
                 addAnnotation={this.addAnnotation}
                 addExistingAnnotation={this.addExistingAnnotation}
