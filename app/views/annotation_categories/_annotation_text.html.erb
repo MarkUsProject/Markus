@@ -37,7 +37,6 @@
         <%= annotation_text.deduction %>
       </div>
     <% end %>
-    <div id='annotation-text-<%= annotation_text.id %>-usage-panel'></div>
     <% if annotation_text.annotation_category.nil? %>
       <div class='annotation_text_details'>
         <% annotation = annotation_text.annotations.first %>
@@ -62,7 +61,7 @@
       <p>
         <%= f.text_area :content, cols: 50, rows: 5 %>
       </p>
-      <% unless annotation_text.annotation_category.flexible_criterion.nil? %>
+      <% unless annotation_text&.annotation_category&.flexible_criterion.nil? %>
         <div class='inline-labels'>
           <% max_mark = annotation_text.annotation_category.flexible_criterion.max_mark %>
           <% marks_released = !annotation_text.annotations.joins(:result)
