@@ -295,7 +295,7 @@ describe AnnotationCategoriesController do
           params: {
             assignment_id: category.assessment_id,
             id: text.id,
-            annotation_text: { content: 'updated content' },
+            content: 'updated content',
             format: :js
           }
 
@@ -310,7 +310,8 @@ describe AnnotationCategoriesController do
           params: {
             assignment_id: category.assessment_id,
             id: text.id,
-            annotation_text: { content: 'more updated content', deduction: 0.1 },
+            content: 'more updated content',
+            deduction: 0.1,
             format: :js
           }
 
@@ -326,7 +327,8 @@ describe AnnotationCategoriesController do
           params: {
             assignment_id: category.assessment_id,
             id: text.id,
-            annotation_text: { content: 'more updated content', deduction: nil },
+            content: 'more updated content',
+            deduction: nil,
             format: :js
           }
 
@@ -363,7 +365,7 @@ describe AnnotationCategoriesController do
 
     it 'finds no instance of non categorized annotations when there are no annotation texts' do
       get_as admin, :uncategorized_annotations, params: { assignment_id: assignment.id }
-      expect(assigns(:texts)).to eq []
+      expect(assigns['texts']).to eq []
     end
 
     it 'finds no instance of non categorized annotations when only categorized annotation texts exists' do
@@ -371,28 +373,29 @@ describe AnnotationCategoriesController do
       categorized_text = create(:annotation_text, annotation_category: category)
       create(:text_annotation, annotation_text: categorized_text, result: assignment_result)
       get_as admin, :uncategorized_annotations, params: { assignment_id: assignment.id }
-      expect(assigns(:texts)).to eq []
+      expect(assigns['texts']).to eq []
     end
 
     it 'does not find uncategorized annotations from other assignments' do
       other_assignment = create(:assignment_with_criteria_and_results)
       create(:text_annotation, annotation_text: text, result: other_assignment.groupings.first.current_result)
       get_as admin, :uncategorized_annotations, params: { assignment_id: assignment.id }
-      expect(assigns(:texts)).to eq []
+      expect(assigns['texts']).to eq []
     end
 
     it 'finds one uncategorized annotation if only one exists' do
       create(:text_annotation, annotation_text: text, result: assignment_result)
       get_as admin, :uncategorized_annotations, params: { assignment_id: assignment.id }
-      expect(assigns(:texts).first).to eq text
+      expect(assigns['texts'].first['id']).to eq text.id
     end
 
     it 'finds multiple uncategorized annotations if many exist' do
       create(:text_annotation, annotation_text: text, result: assignment_result)
       create(:text_annotation, annotation_text: different_text, result: assignment_result)
       get_as admin, :uncategorized_annotations, params: { assignment_id: assignment.id }
-      expect(assigns[:texts].size).to eq 2
-      expect([assigns(:texts).first, assigns(:texts).second].sort!).to eq [text, different_text].sort!
+      expect(assigns['texts'].size).to eq 2
+      expect([assigns['texts'].first['id'], assigns['texts'].second['id']].sort!).to eq [text.id,
+                                                                                         different_text.id].sort!
     end
 
     it 'finds uncategorized annotations if they exist across different results' do
@@ -400,8 +403,9 @@ describe AnnotationCategoriesController do
       other_grouping = assignment.groupings.where.not(id: assignment_result.grouping.id).first
       create(:text_annotation, annotation_text: different_text, result: other_grouping.current_result)
       get_as admin, :uncategorized_annotations, params: { assignment_id: assignment.id }
-      expect(assigns[:texts].size).to eq 2
-      expect([assigns(:texts).first, assigns(:texts).second].sort!).to eq [text, different_text].sort!
+      expect(assigns['texts'].size).to eq 2
+      expect([assigns['texts'].first['id'], assigns['texts'].second['id']].sort!).to eq [text.id,
+                                                                                         different_text.id].sort!
     end
   end
 
