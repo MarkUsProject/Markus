@@ -55,15 +55,19 @@
                   method: 'put',
                   remote: true do |f| %>
       <p>
-        <%= f.text_area :content, cols: 50, rows: 5 %>
+        <%= f.text_area :content, cols: 50, rows: 5, value: annotation_text['content'] %>
       </p>
-      <% unless annotation_text[:annotation_category].nil? %>
+      <% unless annotation_text[:deduction].nil? %>
         <div class='inline-labels'>
           <% max_mark = annotation_text[:max_mark] %>
           <% marks_released = annotation_text[:released] > 0 %>
           <%= f.label :deduction,
                       AnnotationText.human_attribute_name(:deduction) %>
-          <%= f.number_field :deduction, { min: 0.0, max: max_mark, step: 0.01, disabled: marks_released } %>
+          <%= f.number_field :deduction, { min: 0.0,
+                                           max: max_mark,
+                                           step: 0.01,
+                                           disabled: marks_released,
+                                           value: annotation_text['deduction'] } %>
         </div>
       <% end %>
 

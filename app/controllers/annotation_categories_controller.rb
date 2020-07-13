@@ -119,10 +119,9 @@ class AnnotationCategoriesController < ApplicationController
     @annotation_text = AnnotationText.find(params[:id])
     if @annotation_text.update(**annotation_text_params.to_h.symbolize_keys, last_editor_id: current_user.id)
       flash_now(:success, t('annotation_categories.update.success'))
-      @text = annotation_text_data(@annotation_text.annotation_category.id).find do |text|
+      @text = annotation_text_data(@annotation_text.annotation_category_id).find do |text|
         text[:id] == @annotation_text.id
       end
-      byebug
     else
       flash_message(:error, t('.deductive_annotation_released_error'))
       head :bad_request
