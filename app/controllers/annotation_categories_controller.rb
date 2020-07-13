@@ -56,29 +56,7 @@ class AnnotationCategoriesController < ApplicationController
   def show
     @assignment = Assignment.find(params[:assignment_id])
     @annotation_category = AnnotationCategory.find(params[:id])
-    @annotation_texts = AnnotationText.includes(annotation_category: :flexible_criterion, annotations: :result)
-                                      .joins('INNER JOIN users u1 ON annotation_texts.creator_id = u1.id')
-                                      .joins('INNER JOIN users u2 ON annotation_texts.last_editor_id = u2.id')
-                                      .where('annotation_texts.annotation_category_id': params[:id])
-                                      .group('annotation_categories.assessment_id',
-                                             'annotation_texts.id',
-                                             'annotation_texts.deduction',
-                                             'annotation_texts.annotation_category_id',
-                                             'annotation_texts.content',
-                                             'u1.user_name',
-                                             'u2.user_name',
-                                             'flexible_criteria.max_mark')
-                                      .order('u1.user_name')
-                                      .pluck_to_hash('annotation_categories.assessment_id AS assignment_id',
-                                                     'annotation_texts.id AS id',
-                                                     'annotation_texts.deduction AS deduction',
-                                                     'annotation_texts.annotation_category_id AS annotation_category',
-                                                     'annotation_texts.content AS content',
-                                                     'u1.user_name AS creator',
-                                                     'count(*) AS num_uses ',
-                                                     'count(results.released_to_students OR NULL) AS released',
-                                                     'u2.user_name AS last_editor',
-                                                     'flexible_criteria.max_mark AS max_mark')
+    @annotation_texts = annotation_text_data(params[:id])
   end
 
   def destroy
@@ -141,6 +119,10 @@ class AnnotationCategoriesController < ApplicationController
     @annotation_text = AnnotationText.find(params[:id])
     if @annotation_text.update(**annotation_text_params.to_h.symbolize_keys, last_editor_id: current_user.id)
       flash_now(:success, t('annotation_categories.update.success'))
+      @text = annotation_text_data(@annotation_text.annotation_category.id).find do |text|
+        text[:id] == @annotation_text.id
+      end
+      byebug
     else
       flash_message(:error, t('.deductive_annotation_released_error'))
       head :bad_request
@@ -244,26 +226,56 @@ class AnnotationCategoriesController < ApplicationController
     redirect_to assignment_annotation_categories_path(assignment_id: @assignment.id)
   end
 
+  def annotation_text_data(category)
+    if category.nil?
+      AnnotationText.joins(annotations: { result: { grouping: :group } })
+                    .joins('INNER JOIN users u1 ON annotation_texts.creator_id = u1.id')
+                    .joins('INNER JOIN users u2 ON annotation_texts.last_editor_id = u2.id')
+                    .where('annotation_texts.annotation_category_id': nil,
+                           'groupings.assessment_id': params[:assignment_id])
+                    .order('u1.user_name', 'results.id')
+                    .pluck_to_hash('groups.group_name AS group_name',
+                                   'groupings.assessment_id AS assignment_id',
+                                   'results.id AS result_id',
+                                   'results.submission_id AS submission_id',
+                                   'annotation_texts.id AS id',
+                                   'annotation_texts.content AS content',
+                                   'u1.user_name AS creator',
+                                   'annotation_texts.last_editor_id AS last_editor_id',
+                                   'u2.user_name AS last_editor')
+    else
+      AnnotationText.includes(annotation_category: :flexible_criterion, annotations: :result)
+                    .joins('INNER JOIN users u1 ON annotation_texts.creator_id = u1.id')
+                    .joins('INNER JOIN users u2 ON annotation_texts.last_editor_id = u2.id')
+                    .where('annotation_texts.annotation_category_id': category)
+                    .group('annotation_categories.assessment_id',
+                           'annotation_texts.id',
+                           'annotation_texts.deduction',
+                           'annotation_texts.annotation_category_id',
+                           'annotation_texts.content',
+                           'u1.user_name',
+                           'u2.user_name',
+                           'flexible_criteria.max_mark')
+                    .order('u1.user_name')
+                    .pluck_to_hash('annotation_categories.assessment_id AS assignment_id',
+                                   'annotation_texts.id AS id',
+                                   'annotation_texts.deduction AS deduction',
+                                   'annotation_texts.annotation_category_id AS annotation_category',
+                                   'annotation_texts.content AS content',
+                                   'u1.user_name AS creator',
+                                   'count(*) AS num_uses ',
+                                   'count(results.released_to_students OR NULL) AS released',
+                                   'u2.user_name AS last_editor',
+                                   'flexible_criteria.max_mark AS max_mark')
+    end
+  end
+
   def annotation_text_uses
     render json: AnnotationText.find(params[:annotation_text_id]).uses
   end
 
   def uncategorized_annotations
-    @texts = AnnotationText.joins(annotations: { result: { grouping: :group } })
-                           .joins('INNER JOIN users u1 ON annotation_texts.creator_id = u1.id')
-                           .joins('INNER JOIN users u2 ON annotation_texts.last_editor_id = u2.id')
-                           .where('annotation_texts.annotation_category_id': nil,
-                                  'groupings.assessment_id': params[:assignment_id])
-                           .order('u1.user_name', 'results.id')
-                           .pluck_to_hash('groups.group_name AS group_name',
-                                          'groupings.assessment_id AS assignment_id',
-                                          'results.id AS result_id',
-                                          'results.submission_id AS submission_id',
-                                          'annotation_texts.id AS id',
-                                          'annotation_texts.content AS content',
-                                          'u1.user_name AS creator',
-                                          'annotation_texts.last_editor_id AS last_editor_id',
-                                          'u2.user_name AS last_editor')
+    @texts = annotation_text_data(nil)
   end
 
   private
@@ -274,7 +286,7 @@ class AnnotationCategoriesController < ApplicationController
   end
 
   def annotation_text_params
-    params.require(:annotation_text).permit(:content, :deduction, :annotation_category_id)
+    params.permit(:id, :content, :deduction, :annotation_category_id)
   end
 
   def flash_interpolation_options
