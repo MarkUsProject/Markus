@@ -236,7 +236,8 @@ describe AnnotationCategoriesController do
       post :create_annotation_text,
            params: {
              assignment_id: annotation_category.assessment_id,
-             annotation_text: { content: 'New content', annotation_category_id: annotation_category.id },
+             content: 'New content',
+             annotation_category_id: annotation_category.id,
              format: :js
            }
 
@@ -250,9 +251,9 @@ describe AnnotationCategoriesController do
       category.annotation_texts.destroy_all
       category.reload
       post :create_annotation_text, params: { assignment_id: category.assessment_id,
-                                              annotation_text: { content: 'New content',
-                                                                 annotation_category_id: category.id,
-                                                                 deduction: 0.5 },
+                                              content: 'New content',
+                                              annotation_category_id: category.id,
+                                              deduction: 0.5,
                                               format: :js }
       expect(category.annotation_texts.first.deduction).to eq 0.5
     end
@@ -263,9 +264,9 @@ describe AnnotationCategoriesController do
       category = assignment_w_deductions.annotation_categories.where.not(flexible_criterion_id: nil).first
       category.annotation_texts.destroy_all
       post :create_annotation_text, params: { assignment_id: category.assessment_id,
-                                              annotation_text: { content: 'New content',
-                                                                 annotation_category_id: category.id,
-                                                                 deduction: nil },
+                                              content: 'New content',
+                                              annotation_category_id: category.id,
+                                              deduction: nil,
                                               format: :js }
 
       assert_response 400
