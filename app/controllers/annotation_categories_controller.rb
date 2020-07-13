@@ -98,6 +98,9 @@ class AnnotationCategoriesController < ApplicationController
       flash_now(:success, t('annotation_categories.update.success'))
       @assignment = Assignment.find(params[:assignment_id])
       @annotation_category = @annotation_text.annotation_category
+      @text = annotation_text_data(@annotation_text.annotation_category_id).find do |text|
+        text[:id] == @annotation_text.id
+      end
       render :insert_new_annotation_text
     else
       flash_message(:error, t('.error'))

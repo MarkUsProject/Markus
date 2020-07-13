@@ -1,8 +1,8 @@
 <li id='add_annotation_text'>
-  <%= form_with model: annotation_category.annotation_texts.build,
+  <%= form_with method: 'post',
                url: { action: 'create_annotation_text' },
                remote: true do |f| %>
-    <%= f.hidden_field :annotation_category_id %>
+    <%= f.hidden_field :annotation_category_id, value: annotation_category.id %>
     <p>
       <%= f.text_area :content, cols: 50, rows: 5 %>
     </p>
