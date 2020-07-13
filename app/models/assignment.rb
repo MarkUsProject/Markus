@@ -28,7 +28,7 @@ class Assignment < Assessment
 
   has_many :ta_criteria,
            -> { where(ta_visible: true).order(:position) },
-           class_name: "Criterion",
+           class_name: 'Criterion',
            foreign_key: :assessment_id
 
   has_many :test_groups, dependent: :destroy, inverse_of: :assignment, foreign_key: :assessment_id
@@ -246,7 +246,7 @@ class Assignment < Assessment
   def max_mark(user_visibility = :ta_visible)
     # TODO: sum method does not work with empty arrays. Consider updating/replacing gem:
     #       see: https://github.com/thirtysixthspan/descriptive_statistics/issues/44
-    max_marks = criteria.where(&user_visibility).map(&:max_mark)
+    max_marks = criteria.where(user_visibility => true).map(&:max_mark)
     s = max_marks.empty? ? 0 : max_marks.sum
     s.nil? ? 0 : s.round(2)
   end
@@ -523,7 +523,7 @@ class Assignment < Assessment
     criteria_shown = Set.new
     max_mark = 0
 
-    selected_criteria = user.admin? ? criteria : criteria.where(&:ta_visible)
+    selected_criteria = user.admin? ? criteria : ta_criteria
     criteria_columns = selected_criteria.map do |crit|
       unassigned = !assigned_criteria.nil? && !assigned_criteria.include?("#{crit.class}-#{crit.id}")
       next if hide_unassigned && unassigned
@@ -599,7 +599,7 @@ class Assignment < Assessment
     end
 
     headers = [['User name', 'Group', 'Final grade'], ['', 'Out of', self.max_mark]]
-    criteria = self.criteria.where(&:ta_visible)
+    criteria = self.ta_criteria
     criteria.each do |crit|
       headers[0] << crit.name
       headers[1] << crit.max_mark
@@ -1161,8 +1161,8 @@ class Assignment < Assessment
       assigned_criteria = nil
     end
 
-    visibility = current_user.admin? ? :all : :ta
-    criteria = self.criteria.where(&visibility).reject do |crit|
+    visible_criteria = current_user.admin? ? self.criteria : ta_criteria
+    criteria = visible_criteria.reject do |crit|
       !assigned_criteria.nil? && !assigned_criteria.include?("#{crit.class}-#{crit.id}")
     end
 

@@ -193,7 +193,7 @@ class ResultsController < ApplicationController
           assigned_criteria = current_user.criterion_ta_associations
                                           .where(assessment_id: assignment.id)
                                           .pluck(:criterion_id)
-                                          .map { |id| id.to_s }
+                                          .map(&:to_s)
           if assignment.hide_unassigned_criteria
             marks_map = marks_map.select { |m| assigned_criteria.include? m[:id].to_s }
             old_marks = old_marks.select { |m| assigned_criteria.include? m }
@@ -230,7 +230,7 @@ class ResultsController < ApplicationController
 
         # Totals
         data[:assignment_max_mark] =
-          result.is_a_review? ? assignment.pr_assignment.max_mark(:peer) : marks_map.map { |h| h['max_mark'] }.sum
+          result.is_a_review? ? assignment.pr_assignment.max_mark(:peer_visible) : marks_map.map { |h| h['max_mark'] }.sum
         data[:total] = marks_map.map { |h| h['mark'] }
         data[:old_total] = old_marks.values.sum
 
@@ -649,10 +649,10 @@ class ResultsController < ApplicationController
     if @result.is_a_review?
       if @current_user.is_reviewer_for?(@assignment.pr_assignment, @result) ||
           !@grouping.membership_status(current_user).nil? || !@current_user.student?
-        @mark_criteria = @assignment.get_criteria(:peer_visible)
+        @mark_criteria = @assignment.criteria.where(&:peer_visible)
       end
     else
-      @mark_criteria = @assignment.get_criteria(:ta_visible)
+      @mark_criteria = @assignment.ta_criteria
     end
 
     @mark_criteria.each do |criterion|

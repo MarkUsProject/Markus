@@ -85,7 +85,7 @@ class Result < ApplicationRecord
       else
         user_visibility = :ta_visible
       end
-      criteria = assignment.get_criteria(user_visibility).map(&:id)
+      criteria = assignment.criteria.where(user_visibility => true).map(&:id)
       marks_array = (marks.to_a.select { |m| criteria.member? m.criterion_id }).map &:mark
       # TODO: sum method does not work with empty arrays or with arrays containing nil values.
       #       Consider updating/replacing gem:
@@ -105,7 +105,7 @@ class Result < ApplicationRecord
   #
   # +user_visibility+ is passed to the Assignment.max_mark method to determine the
   # max_mark value only if the +max_mark+ argument is nil.
-  def get_total_extra_marks(max_mark: nil, user_visibility: :ta)
+  def get_total_extra_marks(max_mark: nil, user_visibility: :ta_visible)
     Result.get_total_extra_marks(id, max_mark: max_mark, user_visibility: user_visibility)[id] || 0
   end
 
@@ -121,7 +121,7 @@ class Result < ApplicationRecord
   #
   # +user_visibility+ is passed to the Assignment.max_mark method to determine the
   # max_mark value only if the +max_mark+ argument is nil.
-  def self.get_total_extra_marks(result_ids, max_mark: nil, user_visibility: :ta)
+  def self.get_total_extra_marks(result_ids, max_mark: nil, user_visibility: :ta_visible)
     result_data = Result.joins(:extra_marks, submission: [grouping: :assignment])
                         .where(id: result_ids)
                         .pluck(:id, :extra_mark, :unit, 'assessments.id')
@@ -193,7 +193,7 @@ class Result < ApplicationRecord
 
   def create_marks
     assignment = self.submission.assignment
-    assignment.get_criteria(:ta_visible).each do |criterion|
+    assignment.ta_criteria.each do |criterion|
       criterion.marks.find_or_create_by(result_id: id)
     end
     self.update_total_mark
@@ -229,9 +229,9 @@ class Result < ApplicationRecord
     # we can't pass in a parameter to the before_save filter, so we need
     # to manually determine the visibility. If it's a pr result, we know we
     # want the peer-visible criteria
-    visibility = is_a_review? ? :peer : user_visibility
+    visibility = is_a_review? ? :peer_visible : user_visibility
 
-    criteria = submission.assignment.get_criteria(visibility).map(&:id)
+    criteria = submission.assignment.criteria.where(visibility => true).map(&:id)
     nil_marks = false
     num_marks = 0
     marks.each do |mark|

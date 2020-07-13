@@ -64,7 +64,7 @@ class GradersController < ApplicationController
 
   def grader_criteria_mapping
     assignment = Assignment.find(params[:assignment_id])
-    criteria = assignment.get_criteria(:ta_visible, :all, includes: [:tas])
+    criteria = assignment.ta_criteria.includes(:tas)
 
     file_out = MarkusCsv.generate(criteria) do |criterion|
       [criterion.name] + criterion.tas.map(&:user_name)
@@ -135,9 +135,12 @@ class GradersController < ApplicationController
       positions = params[:criteria]
       # TODO: simplify data format interface between here and Criterion#assign_tas.
       criterion_ids_types =
-        @assignment.rubric_criteria.where(position: positions).pluck(:id).map { |id| [id, 'RubricCriterion'] } +
-          @assignment.flexible_criteria.where(position: positions).pluck(:id).map { |id| [id, 'FlexibleCriterion'] } +
-          @assignment.checkbox_criteria.where(position: positions).pluck(:id).map { |id| [id, 'CheckboxCriterion'] }
+        @assignment.criteria.where(type: 'RubricCriterion')
+          .where(position: positions).pluck(:id).map { |id| [id, 'RubricCriterion'] } +
+        @assignment.criteria.where(type: 'FlexibleCriterion')
+          .where(position: positions).pluck(:id).map { |id| [id, 'FlexibleCriterion'] } +
+        @assignment.criteria.where(type: 'CheckboxCriterion')
+          .where(position: positions).pluck(:id).map { |id| [id, 'CheckboxCriterion'] }
       if criterion_ids_types.blank?
         flash_now(:error, I18n.t('graders.select_a_criterion'))
         head :bad_request

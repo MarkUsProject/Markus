@@ -309,7 +309,7 @@ class Submission < ApplicationRecord
                                 unit: extra_mark.unit)
     end
 
-    remark_assignment.get_criteria(:ta_visible).each do |criterion|
+    remark_assignment.ta_criteria.each do |criterion|
       remark_mark = Mark.where(criterion: criterion, result_id: remark.id)
       original_mark = Mark.where(criterion: criterion, result_id: original_result.id)
       remark_mark.first.update!(mark: original_mark.first.mark)

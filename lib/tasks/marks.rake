@@ -92,7 +92,7 @@ namespace :db do
       )
 
       #Automate marks for assignment using appropriate criteria
-      grouping.assignment.get_criteria(:all, :all, includes: :marks).each do |criterion|
+      grouping.assignment.criteria.includes(:marks).each do |criterion|
         if criterion.class == RubricCriterion
           random_mark = criterion.max_mark / 4 * rand(0..4)
         elsif criterion.class == FlexibleCriterion
