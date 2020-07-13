@@ -632,9 +632,7 @@ describe AnnotationCategoriesController do
         expect(response.body).to eq('')
       end
       it 'should render an empty string if string matches first part of more than one annotation text' do
-        annotation_text_two = create(:annotation_text,
-                                     annotation_category: annotation_category,
-                                     content: 'This is another annotation text.')
+        create(:annotation_text, annotation_category: annotation_category, content: 'This is another annotation text.')
         string = 'This is an'
 
         get_as user, :find_annotation_text, params: { assignment_id: assignment.id, string: string }
