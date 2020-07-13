@@ -4,7 +4,7 @@
                remote: true do |f| %>
     <%= f.hidden_field :annotation_category_id, value: annotation_category.id %>
     <p>
-      <%= f.text_area :content, cols: 50, rows: 5 %>
+      <%= f.text_area :content, cols: 50, rows: 5, id: "annotation_text_content" %>
     </p>
     <% unless annotation_category.flexible_criterion.nil? %>
       <div class='inline-labels'>
