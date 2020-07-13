@@ -55,7 +55,7 @@
                   method: 'put',
                   remote: true do |f| %>
       <p>
-        <%= f.text_area :content, cols: 50, rows: 5, value: annotation_text['content'] %>
+        <%= f.text_area :content, cols: 50, rows: 5, value: annotation_text['content'], id: "annotation_text_content" %>
       </p>
       <% unless annotation_text[:deduction].nil? %>
         <div class='inline-labels'>
