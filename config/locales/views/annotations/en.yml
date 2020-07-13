@@ -2,11 +2,11 @@ en:
   annotations:
     count: 'Number of times used: '
     default_deduction: 'This annotation will have no deduction. Admins can configure deductions in assignment settings.'
-    empty_uncategorized: 'Currently, no annotations without a category exist.'
+    empty_uncategorized: 'No one time only annotations exist.'
     help_message: "Click on an annotation category to add annotations."
     last_edited_by: "Last Edited By:"
     list_deductions: 'Deductions from annotations: '
-    non_categorized: 'Non-Categorized Annotations'
+    uncategorized: 'One Time Only Annotations'
     text: "Text"
     prevent_ta_delete: 'You cannot delete this deductive annotation because you are not assigned its criterion.'
     prevent_update: 'You cannot update this annotation because you may not have permission or it is deductive and already applied to released results.'

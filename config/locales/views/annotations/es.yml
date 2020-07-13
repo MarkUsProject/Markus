@@ -6,7 +6,7 @@ es:
     help_message: "De click en una categoría de anotación para añadir anotaciones."
     last_edited_by: "Editado por última vez por:"
     list_deductions: 'UPDATE ME!'
-    non_categorized: 'UPDATE ME!'
+    uncategorized: 'UPDATE ME!'
     prevent_ta_delete: 'UPDATE ME!'
     prevent_update: 'UPDATE ME!'
     usage: 'UPDATE ME!'
