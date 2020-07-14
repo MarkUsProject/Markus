@@ -229,34 +229,30 @@ class AnnotationCategoriesController < ApplicationController
   end
 
   def annotation_text_data(category)
+    shared_values = ['annotation_texts.id AS id',
+                     'last_editors_annotation_texts.user_name AS last_editor',
+                     'users.user_name AS creator',
+                     'annotation_texts.content AS content']
+    base_query = AnnotationText.joins(:creator)
+                     .left_outer_joins(:last_editor)
+                     .where('annotation_texts.annotation_category_id': category)
+                     .order('users.user_name')
     if category.nil?
-      text_data = AnnotationText.joins(:creator, annotations: { result: { grouping: :group } })
-                                .left_outer_joins(:last_editor)
-                                .where('annotation_texts.annotation_category_id': nil,
-                                       'groupings.assessment_id': params[:assignment_id])
-                                .order('users.user_name', 'results.id')
-                                .pluck_to_hash('groups.group_name AS group_name',
-                                               'groupings.assessment_id AS assignment_id',
-                                               'results.id AS result_id',
-                                               'results.submission_id AS submission_id',
-                                               'annotation_texts.id AS id',
-                                               'annotation_texts.content AS content',
-                                               'users.user_name AS creator',
-                                               'annotation_texts.last_editor_id AS last_editor_id',
-                                               'last_editors_annotation_texts.user_name AS last_editor')
+      text_data = base_query.joins(annotations: { result: { grouping: :group } })
+                            .where('groupings.assessment_id': params[:assignment_id])
+                            .order('results.id')
+                            .pluck_to_hash('groups.group_name AS group_name',
+                                           'groupings.assessment_id AS assignment_id',
+                                           'results.id AS result_id',
+                                           'results.submission_id AS submission_id',
+                                           *shared_values)
     else
-      text_data = AnnotationText.joins(:creator)
-                                .left_outer_joins(:last_editor, annotation_category: :flexible_criterion)
-                                .where('annotation_texts.annotation_category_id': category)
-                                .order('users.user_name')
-                                .pluck_to_hash('annotation_categories.assessment_id AS assignment_id',
-                                               'annotation_texts.id AS id',
-                                               'annotation_texts.deduction AS deduction',
-                                               'annotation_texts.annotation_category_id AS annotation_category',
-                                               'annotation_texts.content AS content',
-                                               'users.user_name AS creator',
-                                               'last_editors_annotation_texts.user_name AS last_editor',
-                                               'flexible_criteria.max_mark AS max_mark')
+      text_data = base_query.left_outer_joins(annotation_category: :flexible_criterion)
+                            .pluck_to_hash('annotation_categories.assessment_id AS assignment_id',
+                                           'annotation_texts.deduction AS deduction',
+                                           'annotation_texts.annotation_category_id AS annotation_category',
+                                           'flexible_criteria.max_mark AS max_mark',
+                                           *shared_values)
       text_usage = AnnotationText.left_outer_joins(annotations: :result)
                                  .where('annotation_texts.annotation_category_id': category)
                                  .group('annotation_texts.id')
