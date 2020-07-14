@@ -11,21 +11,36 @@ describe AnnotationCategoryPolicy do
   describe 'When the user is grader' do
     subject { described_class.new(user: user) }
     let(:user) { create(:ta) }
+    let(:grader_permission) { create(:grader_permission, user_id: user.id)}
     context 'When the grader is allowed to manage assignments and also annotations' do
       before do
-        create(:grader_permission, user_id: user.id, create_delete_annotations: true, manage_assignments: true)
+        grader_permission.create_delete_annotations = true
+        grader_permission.manage_assignments = true
+        grader_permission.save
       end
       it { is_expected.to pass :manage? }
     end
     context 'When the grader is allowed to manage assignments but not annotations' do
       before do
-        create(:grader_permission, user_id: user.id, create_delete_annotations: false, manage_assignments: true)
+        grader_permission.create_delete_annotations = false
+        grader_permission.manage_assignments = true
+        grader_permission.save
       end
       it { is_expected.not_to pass :manage? }
     end
     context 'When the grader is allowed to manage annotations but not assignments' do
       before do
-        create(:grader_permission, user_id: user.id, create_delete_annotations: true, manage_assignments: false)
+        grader_permission.create_delete_annotations = true
+        grader_permission.manage_assignments = false
+        grader_permission.save
+      end
+      it { is_expected.not_to pass :manage? }
+    end
+    context 'When the grader is not allowed to manage annotations and assignments' do
+      before do
+        grader_permission.create_delete_annotations = false
+        grader_permission.manage_assignments = false
+        grader_permission.save
       end
       it { is_expected.not_to pass :manage? }
     end
