@@ -5,8 +5,8 @@ describe MarkingSchemesController do
   shared_examples 'An authorized user' do
     context 'POST create' do
       let(:params) do
-        { 'marking_scheme' => { 'name' => 'Scheme B',
-                                'marking_weights_attributes' => { '0' => { 'id' => assignment, 'weight' => '2' } } } }
+        { marking_scheme: { name: 'Scheme B',
+                            marking_weights_attributes: { '0' => { id: assignment, weight: '2' } } } }
       end
       before { post_as user, :create, params: params }
       it('should respond with 302') { expect(response.status).to eq 302 }
@@ -129,18 +129,18 @@ describe MarkingSchemesController do
       it('should respond with 302') { expect(response.status).to eq 302 }
     end
     context 'DELETE destroy' do
-      before { delete_as user, :destroy, params: { 'id' => marking_scheme.id } }
+      before { delete_as user, :destroy, params: { id: marking_scheme.id } }
       it('should respond with 200') { expect(response.status).to eq 200 }
     end
     context 'GET edit' do
-      before { get_as user, :edit, params: { 'id' => marking_scheme.id } }
+      before { get_as user, :edit, params: { id: marking_scheme.id } }
       it('should respond with 200') { expect(response.status).to eq 200 }
     end
     context 'PUT update' do
       let(:params) do
-        { 'id' => marking_scheme.id,
-          'marking_scheme' => { 'name' => 'Scheme C',
-                                'marking_weights_attributes' => { '0' => { 'id' => assignment, 'weight' => '2' } } } }
+        { id: marking_scheme.id,
+          marking_scheme: { name: 'Scheme C',
+                            marking_weights_attributes: { '0' => { id: assignment, weight: '2' } } } }
       end
       before { put_as user, :update, params: params }
       it('should respond with 302') { expect(response.status).to eq 302 }
@@ -171,8 +171,8 @@ describe MarkingSchemesController do
     end
     context 'POST create' do
       let(:params) do
-        { 'marking_scheme' => { 'name' => 'Scheme D',
-                                'marking_weights_attributes' => { '0' => { 'id' => assignment, 'weight' => '2' } } } }
+        { marking_scheme: { name: 'Scheme D',
+                            marking_weights_attributes: { '0' => { id: assignment, weight: '2' } } } }
       end
       before { post_as grader, :create, params: params }
       it('should respond with 403') { expect(response.status).to eq 403 }
@@ -186,18 +186,18 @@ describe MarkingSchemesController do
       it('should respond with 403') { expect(response.status).to eq 403 }
     end
     context 'DELETE destroy' do
-      before { delete_as grader, :destroy, params: { 'id' => marking_scheme.id } }
+      before { delete_as grader, :destroy, params: { id: marking_scheme.id } }
       it('should respond with 403') { expect(response.status).to eq 403 }
     end
     context 'GET edit' do
-      before { get_as grader, :edit, params: { 'id' => marking_scheme.id } }
+      before { get_as grader, :edit, params: { id: marking_scheme.id } }
       it('should respond with 403') { expect(response.status).to eq 403 }
     end
     context 'PUT update' do
       let(:params) do
-        { 'id' => marking_scheme.id,
-          'marking_scheme' => { 'name' => 'Scheme E',
-                                'marking_weights_attributes' => { '0' => { 'id' => assignment, 'weight' => '10' } } } }
+        { id: marking_scheme.id,
+          marking_scheme: { name: 'Scheme E',
+                            marking_weights_attributes: { '0' => { id: assignment, weight: '10' } } } }
       end
       before { put_as grader, :update, params: params }
       it('should respond with 403') { expect(response.status).to eq 403 }

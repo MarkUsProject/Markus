@@ -8,16 +8,16 @@ describe ExamTemplatesController do
     describe '#create' do
       let(:file_io) { fixture_file_upload('files/scanned_exams/midterm1-v2-test.pdf') }
       let(:params) do
-        { 'create_template' => { 'file_io' => file_io, 'name' => 'Template 1' },
-          'assignment_id' => exam_template.assignment.id }
+        { create_template: { file_io: file_io, name: 'Template 1' },
+          assignment_id: exam_template.assignment.id }
       end
       before { post_as user, :create, params: params }
       it('should respond with 302') { expect(response.status).to eq 302 }
     end
     describe '#update' do
       let(:params) do
-        { 'exam_template' => { 'name' => 'test template' },
-          'id' => exam_template.id, 'assignment_id' => exam_template.assignment.id }
+        { exam_template: { name: 'test template' },
+          id: exam_template.id, assignment_id: exam_template.assignment.id }
       end
       before { put_as user, :update, params: params }
       it('should respond with 302') { expect(response.status).to eq 302 }
@@ -56,16 +56,16 @@ describe ExamTemplatesController do
       describe '#create' do
         let(:file_io) { fixture_file_upload('files/scanned_exams/midterm1-v2-test.pdf') }
         let(:params) do
-          { 'create_template' => { 'file_io' => file_io, 'name' => 'Template 1' },
-            'assignment_id' => exam_template.assignment.id }
+          { create_template: { file_io: file_io, name: 'Template 1' },
+            assignment_id: exam_template.assignment.id }
         end
         before { post_as user, :create, params: params }
         it('should respond with 403') { expect(response.status).to eq 403 }
       end
       describe '#update' do
         let(:params) do
-          { 'exam_template' => { 'name' => 'template-1' },
-            'id' => exam_template.id, 'assignment_id' => exam_template.assignment.id }
+          { exam_template: { name: 'template-1' },
+            id: exam_template.id, assignment_id: exam_template.assignment.id }
         end
         before { put_as user, :update, params: params }
         it('should respond with 403') { expect(response.status).to eq 403 }
