@@ -10,7 +10,7 @@
 <% content_for :title, t('menu.home') %>
 
 <div class='section'>
-  <h3><%= Assignment.model_name.human.pluralize %></h3>
+  <h3><%= t('assignments.due_date.upcoming') %></h3>
   <%= render partial: 'assignments/list', locals: {
     assessments: Assignment.where(is_hidden: false)
                            .includes(:pr_assignment)
@@ -20,7 +20,7 @@
 </div>
 
 <div class='section'>
-  <h3><%= GradeEntryForm.model_name.human.pluralize %></h3>
+  <h3><%= t('assignments.due_date.past') %></h3>
   <%= render partial: 'assignments/list',
              locals: { assessments: Assignment.where(is_hidden: false)
                                               .includes(:pr_assignment)
