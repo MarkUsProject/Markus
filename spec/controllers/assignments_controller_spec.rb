@@ -675,6 +675,9 @@ describe AssignmentsController do
       before { post_as user, :edit, params: { id: assignment.id } }
       it('should respond with 200') { expect(response.status).to eq 200 }
     end
+  end
+
+  shared_examples 'An authorized user running tests' do
     context '#batch_runs' do
       let(:assignment) { create(:assignment_for_tests) }
       before { get_as user, :batch_runs, params: { id: assignment.id } }
@@ -686,42 +689,61 @@ describe AssignmentsController do
     let!(:user) { create(:admin) }
     include_examples 'An authorized user updating the assignment'
     include_examples 'An authorized user managing assignments'
+    include_examples 'An authorized user running tests'
   end
 
   describe 'When the user is grader' do
+    let!(:user) { create(:ta) }
+    let(:grader_permission) { create(:grader_permission, user_id: user.id) }
+
     context 'When the grader is allowed to manage assignments' do
-      let!(:user) { create(:ta) }
       before do
-        create(:grader_permission, user_id: user.id, manage_assignments: true)
+        grader_permission.manage_assignments = true
+        grader_permission.save
       end
       include_examples 'An authorized user updating the assignment'
       include_examples 'An authorized user managing assignments'
     end
-  end
 
-  describe 'When the grader is not allowed to manage assignments' do
-    let(:grader) { create(:ta) }
-    before do
-      create(:grader_permission, user_id: grader.id, manage_assignments: false)
+    context 'When the grader is not allowed to manage assignments' do
+      before do
+        grader_permission.manage_assignments = false
+        grader_permission.save
+      end
+      context '#new' do
+        before { get_as user, :new }
+        it('should respond with 403') { expect(response.status).to eq 403 }
+      end
+      context '#create' do
+        let(:params) { { short_identifier: 'A0', description: 'Ruby on rails', due_date: Time.now } }
+        before { post_as user, :create, params: params }
+        it('should respond with 403') { expect(response.status).to eq 403 }
+      end
+      context '#edit' do
+        let(:assignment) { create(:assignment) }
+        before { post_as user, :edit, params: { id: assignment.id } }
+        it('should respond with 403') { expect(response.status).to eq 403 }
+      end
     end
-    context '#new' do
-      before { get_as grader, :new }
-      it('should respond with 403') { expect(response.status).to eq 403 }
+
+    context 'When the grader is allowed to run tests' do
+      before do
+        grader_permission.run_tests = true
+        grader_permission.save
+      end
+      include_examples 'An authorized user running tests'
     end
-    context '#create' do
-      let(:params) { { short_identifier: 'A0', description: 'Ruby on rails', due_date: Time.now } }
-      before { post_as grader, :create, params: params }
-      it('should respond with 403') { expect(response.status).to eq 403 }
-    end
-    context '#edit' do
-      let(:assignment) { create(:assignment) }
-      before { post_as grader, :edit, params: { id: assignment.id } }
-      it('should respond with 403') { expect(response.status).to eq 403 }
-    end
-    context '#batch_runs' do
-      let(:assignment) { create(:assignment_for_tests) }
-      before { get_as grader, :batch_runs, params: { id: assignment.id } }
-      it('should respond with 403') { expect(response.status).to eq 403 }
+
+    context 'When the grader is not allowed to run tests' do
+      before do
+        grader_permission.run_tests = false
+        grader_permission.save
+      end
+      context '#batch_runs' do
+        let(:assignment) { create(:assignment_for_tests) }
+        before { get_as user, :batch_runs, params: { id: assignment.id } }
+        it('should respond with 403') { expect(response.status).to eq 403 }
+      end
     end
   end
   describe '#starter_file' do
