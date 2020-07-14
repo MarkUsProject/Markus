@@ -84,11 +84,11 @@ namespace :db do
         **base_attributes
       )
 
-      on_the_fly = AnnotationText.create(annotation_category: nil,
+      one_time_only = AnnotationText.create(annotation_category: nil,
                                          content: random_sentences(3),
                                          creator: Admin.first,
                                          last_editor: Admin.first)
-      base_attributes[:annotation_text_id] = on_the_fly.id
+      base_attributes[:annotation_text_id] = one_time_only.id
       base_attributes[:annotation_number] = new_submission.annotations.count + 1
       PdfAnnotation.create(
         x1: 52_444,
