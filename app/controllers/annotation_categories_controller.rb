@@ -234,9 +234,9 @@ class AnnotationCategoriesController < ApplicationController
                      'users.user_name AS creator',
                      'annotation_texts.content AS content']
     base_query = AnnotationText.joins(:creator)
-                     .left_outer_joins(:last_editor)
-                     .where('annotation_texts.annotation_category_id': category)
-                     .order('users.user_name')
+                               .left_outer_joins(:last_editor)
+                               .where('annotation_texts.annotation_category_id': category)
+                               .order('users.user_name')
     if category.nil?
       text_data = base_query.joins(annotations: { result: { grouping: :group } })
                             .where('groupings.assessment_id': params[:assignment_id])
