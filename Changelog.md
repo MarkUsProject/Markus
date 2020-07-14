@@ -21,7 +21,7 @@
 - Fixed bug where downloading files in nested directories renamed the downloaded file (#4730)
 - Fixed bug where marking scheme weights were not displayed (#4735)
 - Introduces timed assignments (#4665)
-- Introduces non categorized annotations grouping in Annotations settings tab (#4733)
+- Introduces uncategorized annotations grouping in Annotations settings tab (#4733)
 
 ## [v1.9.3]
 - Fixed inverse association bug with assignments (#4551)

@@ -364,12 +364,12 @@ describe AnnotationCategoriesController do
     let(:text) { create(:annotation_text, annotation_category: nil) }
     let(:different_text) { create(:annotation_text, annotation_category: nil) }
 
-    it 'finds no instance of non categorized annotations when there are no annotation texts' do
+    it 'finds no instance of uncategorized annotations when there are no annotation texts' do
       get_as admin, :uncategorized_annotations, params: { assignment_id: assignment.id }
       expect(assigns['texts']).to eq []
     end
 
-    it 'finds no instance of non categorized annotations when only categorized annotation texts exists' do
+    it 'finds no instance of uncategorized annotations when only categorized annotation texts exists' do
       category = create(:annotation_category, assignment: assignment)
       categorized_text = create(:annotation_text, annotation_category: category)
       create(:text_annotation, annotation_text: categorized_text, result: assignment_result)
