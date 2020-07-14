@@ -11,12 +11,22 @@
 
 <div class='section'>
   <h3><%= Assignment.model_name.human.pluralize %></h3>
-  <%= render partial: 'assignments/list' %>
+  <%= render partial: 'assignments/list', locals: {
+    assessments: Assignment.where(is_hidden: false)
+                           .includes(:pr_assignment)
+                           .order(:id)
+                           .select { |a| a.upcoming(@current_user) }
+  } %>
 </div>
 
 <div class='section'>
   <h3><%= GradeEntryForm.model_name.human.pluralize %></h3>
-  <%= render partial: 'grade_entry_forms/list' %>
+  <%= render partial: 'assignments/list',
+             locals: { assessments: Assignment.where(is_hidden: false)
+                                              .includes(:pr_assignment)
+                                              .order(:id)
+                                              .select { |a| !a.upcoming(@current_user) },
+                       grade_tables: GradeEntryForm.where(is_hidden: false).order(:id) } %>
 </div>
 
 <div class='section'>
