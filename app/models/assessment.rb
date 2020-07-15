@@ -28,7 +28,7 @@ class Assessment < ApplicationRecord
     false
   end
 
-  def upcoming(current_user=nil)
+  def upcoming(current_user = nil)
     self.due_date > Time.current
   end
 end
