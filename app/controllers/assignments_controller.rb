@@ -423,10 +423,10 @@ class AssignmentsController < ApplicationController
     else
       if unzip
         zdirs, zfiles = new_files.map do |f|
-          next unless File.extname(f.path).downcase == '.zip'
+          next unless File.extname(f.path).casecmp?('.zip')
           unzip_uploaded_file(f.path)
         end.compact.transpose.map(&:flatten)
-        new_files.reject! { |f| File.extname(f.path).downcase == '.zip' }
+        new_files.reject! { |f| File.extname(f.path).casecmp?('.zip') }
         new_folders.push(*zdirs)
         new_files.push(*zfiles)
       end
