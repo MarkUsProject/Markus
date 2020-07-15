@@ -40,8 +40,8 @@ module UploadHelper
         unzipped_dirs << zf.name if zf.directory?
         if zf.file?
           mime = Rack::Mime.mime_type(File.extname(zf.name))
-          tempfile = Tempfile.new
-          tempfile.write(zipfile.get_input_stream(zf.name).read)
+          tempfile = Tempfile.new.binmode
+          tempfile.write(zf.get_input_stream.read)
           tempfile.rewind
           unzipped_files << ActionDispatch::Http::UploadedFile.new(filename: zf.name, tempfile: tempfile, type: mime)
         end

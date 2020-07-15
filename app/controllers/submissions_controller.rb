@@ -360,10 +360,10 @@ class SubmissionsController < ApplicationController
     else
       if unzip
         zdirs, zfiles = new_files.map do |f|
-          next unless f.content_type == 'application/zip'
+          next unless File.extname(f.path).downcase == '.zip'
           unzip_uploaded_file(f.path)
         end.compact.transpose.map(&:flatten)
-        new_files.reject! { |f| f.content_type == 'application/zip' }
+        new_files.reject! { |f| File.extname(f.path).downcase == '.zip' }
         new_folders.push(*zdirs)
         new_files.push(*zfiles)
       end
