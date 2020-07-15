@@ -5,68 +5,19 @@
     <table>
       <thead>
         <tr>
-          <th><%= Assignment.model_name.human %></th>
+          <th><%= Assessment.model_name.human %></th>
           <th><%= Assignment.human_attribute_name(:due_date) %></th>
-          <th><%= Result.model_name.human.pluralize %></th>
+          <% unless upcoming %>
+            <th><%= Result.model_name.human.pluralize %></th>
+          <% end %>
         </tr>
       </thead>
       <tbody>
         <% assessments.each do |assessment| %>
           <% if assessment.is_a?(GradeEntryForm) %>
-            <% gef_text = "#{h(assessment.short_identifier)}: #{h(assessment.description)}" %>
-            <% route = student_interface_grade_entry_form_path(assessment.id) %>
-            <%= render partial: 'grade_entry_forms/row', locals: { gef_text: gef_text,
-                                                                  route: route,
-                                                                  grade_entry_form: assessment} %>
+            <%= render partial: 'grade_entry_forms/row', locals: { grade_entry_form: assessment, upcoming: upcoming } %>
           <% else %>
-            <% route = assignment_path(assessment.id) %>
-            <% assignment_text = "#{h(assessment.description)}" %>
-            <tr>
-              <td>
-                <%= link_to assignment_text, route %>
-                <% if assessment.has_peer_review? && !assessment.pr_assignment.is_hidden %>
-                    <%= link_to "#{assessment.short_identifier} #{PeerReview.model_name.human}",
-                                peer_review_assignment_path(id: assessment.pr_assignment.id),
-                                class: 'pr_assignment_list' %>
-                <% end %>
-              </td>
-              <td>
-                <%= render partial: 'assignments/assignment_date',
-                           locals: { assignment: assessment } %>
-
-                <% if assessment.has_peer_review? && !assessment.pr_assignment.is_hidden %>
-                  <%= render partial: 'assignments/assignment_date',
-                             locals: { assignment: assessment.pr_assignment } %>
-                <% end %>
-              </td>
-              <td>
-                <% result = @a_id_results[assessment.id] %>
-                <% if !result.nil? %>
-                  <% if assessment.max_mark > 0 && !assessment.results_average.nil? %>
-                    <strong>
-                      <%= t('results.your_mark',
-                            mark: number_to_percentage(result.total_mark * 100 / assessment.max_mark, precision: 1)) %>
-                    </strong>
-                    <br>
-                    <%= "#{t(:class_average)}: #{number_to_percentage(assessment.results_average, precision: 1)}" %>
-                    <% if assessment.display_median_to_students %>
-                      <br>
-                      <%= "#{t(:class_median)}: #{number_to_percentage(assessment.results_median, precision: 1)}" %>
-                    <% end %>
-
-                    <p>
-                      <%= link_to Result.model_name.human.pluralize,
-                                  view_marks_assignment_submission_result_path(
-                                    assignment_id: assessment.id,
-                                    submission_id: result.submission_id,
-                                    id: result.id) %>
-                    </p>
-                  <% end %>
-                <% elsif assessment.due_date < Time.zone.now %>
-                  <%= t('results.no_result') %>
-                <% end %>
-              </td>
-            </tr>
+          <%= render partial: 'assignments/row', locals: { assignment: assessment, upcoming: upcoming } %>
           <% end %>
         <% end %>
       </tbody>
