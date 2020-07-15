@@ -1,5 +1,6 @@
 class AssignmentPolicy < ApplicationPolicy
   default_rule :manage?
+  alias_rule :batch_runs?, :stop_test? , to: :run_and_stop_test?
   def run_tests?
     check?(:can_run_tests?) &&
     check?(:enabled?) &&
@@ -66,7 +67,7 @@ class AssignmentPolicy < ApplicationPolicy
     user.admin? || user.ta?
   end
 
-  def batch_runs?
+  def run_and_stop_test?
     user.admin? || (user.ta? && allowed_to?(:grader_run_tests?, with: GraderPermissionPolicy))
   end
 end

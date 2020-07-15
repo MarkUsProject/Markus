@@ -5,9 +5,9 @@ describe AssignmentPolicy do
     subject { described_class.new(assignment, user: user) }
 
     shared_examples 'An authorized user running tests' do
-      context 'user can view the test runs status' do
+      context 'user can view the test runs status and stop test' do
         let(:assignment) { build(:assignment) }
-        it { is_expected.to pass :batch_runs? }
+        it { is_expected.to pass :run_and_stop_test? }
       end
       context 'if enable_test is false' do
         let(:assignment) { build(:assignment) }
@@ -44,7 +44,7 @@ describe AssignmentPolicy do
       let(:assignment) { create(:assignment_for_tests) }
       let!(:grader_permission) { create(:grader_permission, user_id: user.id, run_tests: false) }
       it { is_expected.not_to pass :run_tests?, because_of: :can_run_tests? }
-      it { is_expected.not_to pass :batch_runs? }
+      it { is_expected.not_to pass :run_and_stop_test? }
     end
 
     context 'when the user is a student' do
