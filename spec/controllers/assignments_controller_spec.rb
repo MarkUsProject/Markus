@@ -678,10 +678,16 @@ describe AssignmentsController do
   end
 
   shared_examples 'An authorized user running tests' do
+    let(:assignment) { create(:assignment_for_tests) }
+    let(:grouping) { create(:grouping, assignment: assignment) }
+    let(:test_run) { create(:test_run, grouping: grouping) }
     context '#batch_runs' do
-      let(:assignment) { create(:assignment_for_tests) }
       before { get_as user, :batch_runs, params: { id: assignment.id } }
       it('should respond with 200') { expect(response.status).to eq 200 }
+    end
+    context '#stop_test' do
+      before { get_as user, :stop_test, params: { id: assignment.id, test_run_id: test_run.id } }
+      it('should respond with 302') { expect(response.status).to eq 302 }
     end
   end
 
@@ -735,13 +741,19 @@ describe AssignmentsController do
     end
 
     context 'When the grader is not allowed to run tests' do
+      let(:assignment) { create(:assignment_for_tests) }
+      let(:grouping) { create(:grouping, assignment: assignment) }
+      let(:test_run) { create(:test_run, grouping: grouping) }
       before do
         grader_permission.run_tests = false
         grader_permission.save
       end
       context '#batch_runs' do
-        let(:assignment) { create(:assignment_for_tests) }
         before { get_as user, :batch_runs, params: { id: assignment.id } }
+        it('should respond with 403') { expect(response.status).to eq 403 }
+      end
+      context '#stop_test' do
+        before { get_as user, :stop_test, params: { id: assignment.id, test_run_id: test_run.id } }
         it('should respond with 403') { expect(response.status).to eq 403 }
       end
     end
