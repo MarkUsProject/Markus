@@ -2,24 +2,10 @@ import React from 'react';
 
 
 export class AnnotationManager extends React.Component {
-  componentDidMount() {
+  componentDidUpdate(prevProps, prevState, snapshot) {
     this.props.categories.forEach(cat => {
       new DropDownMenu($(`#annotation_category_${cat.id}`),
                        $(`#annotation_text_list_${cat.id}`));
-    });
-  }
-
-  componentDidUpdate(prevProps, prevState, snapshot) {
-    this.props.categories.forEach(cat => {
-      let list = $(`#annotation_text_list_${cat.id}`)[0].getBoundingClientRect();
-      let panel = $('.react-tabs-panel-action-bar')[0].getBoundingClientRect();
-      console.log(list)
-      console.log(panel)
-      console.log(list.width > panel.right - list.left)
-      if (list.width > panel.right - list.left) {
-        $(`#annotation_text_list_${cat.id}`)[0].style.position = relative;
-        $(`#annotation_text_list_${cat.id}`)[0].style.right = panel.right - list.left;
-      }
     });
   }
 
