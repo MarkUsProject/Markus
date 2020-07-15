@@ -6,6 +6,7 @@ class UpdateStarterCodeJob < ApplicationJob
     I18n.t('poll_job.update_starter_code_job', progress: status[:progress], total: status[:total])
   end
 
+  # TODO update this for new starter code assignment mechanism
   def perform(assignment_id, overwrite)
     assignment = Assignment.includes(groupings: :group).find(assignment_id)
     return unless Repository.get_class.repository_exists?(assignment.starter_code_repo_path)

@@ -68,9 +68,7 @@ Rails.application.routes.draw do
       member do
         get 'refresh_graph'
         get 'view_summary'
-        post 'upload_starter_code'
         post 'update_starter_code'
-        get 'download_starter_code'
         get 'peer_review'
         get 'populate_starter_code_manager'
         get 'summary'

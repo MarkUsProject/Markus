@@ -98,8 +98,6 @@ import { makeBatchTestRunTable } from 'javascripts/Components/batch_test_run_tab
 window.makeBatchTestRunTable = makeBatchTestRunTable;
 import { makeMarkingSchemeTable } from 'javascripts/Components/marking_schemes_table';
 window.makeMarkingSchemeTable = makeMarkingSchemeTable;
-import { makeStarterCodeFileManager } from 'javascripts/Components/starter_code_file_manager';
-window.makeStarterCodeFileManager = makeStarterCodeFileManager;
 import { makeAutotestManager } from 'javascripts/Components/autotest_manager';
 window.makeAutotestManager = makeAutotestManager;
 import { makeStudentPeerReviewsTable } from 'javascripts/Components/student_peer_reviews_table';

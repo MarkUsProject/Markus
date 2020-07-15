@@ -383,17 +383,6 @@ class AssignmentsController < ApplicationController
     redirect_to action: 'index'
   end
 
-  def populate_file_manager
-    assignment = Assignment.find(params[:id])
-    entries = []
-    assignment.access_starter_code_repo do |repo|
-      revision = repo.get_latest_revision
-      entries = get_all_file_data(revision, assignment, '')
-    end
-    entries.reject! { |f| Repository.get_class.internal_file_names.include? f[:raw_name] }
-    render json: entries
-  end
-
   def starter_code
     # TODO: check if assignment exists and render 400/404
     @assignment = Assignment.find(params[:id])
@@ -421,121 +410,6 @@ class AssignmentsController < ApplicationController
   def update_starter_code_rule_type
     assignment = Assignment.find(params[:id])
     assignment.assignment_properties.update!(starter_code_type: params[:starter_code_type])
-  end
-
-  def upload_starter_code
-    unless Rails.configuration.starter_code_on
-      raise t('student.submission.external_submit_only') #TODO: Update this
-    end
-    unzip = params[:unzip] == 'true'
-
-    @assignment = Assignment.find(params[:id])
-
-    path = params[:path] || '/'
-    path = Pathname.new(@assignment.repository_folder).join(path.gsub(%r{^/}, ''))
-
-    # The files that will be deleted
-    delete_files = params[:delete_files] || []
-
-    # The files that will be added
-    new_files = params[:new_files] || []
-
-    # The folders that will be added
-    new_folders = params[:new_folders] || []
-
-    # The folders that will be deleted
-    delete_folders = params[:delete_folders] || []
-
-    if delete_files.empty? && new_files.empty? && new_folders.empty? && delete_folders.empty?
-      flash_message(:warning, I18n.t('student.submission.no_action_detected'))
-      redirect_back(fallback_location: root_path)
-    else
-      if unzip
-        zdirs, zfiles = new_files.map do |f|
-          next unless File.extname(f.path).casecmp?('.zip')
-          unzip_uploaded_file(f.path)
-        end.compact.transpose.map(&:flatten)
-        new_files.reject! { |f| File.extname(f.path).casecmp?('.zip') }
-        new_folders.push(*zdirs)
-        new_files.push(*zfiles)
-      end
-      messages = []
-      @assignment.access_starter_code_repo do |repo|
-        # Create transaction, setting the author.
-        txn = repo.get_transaction(current_user.user_name, I18n.t('repo.commits.starter_code',
-                                                                  assignment: @assignment.short_identifier))
-        should_commit = true
-        if delete_files.present?
-          success, msgs = remove_files(delete_files, current_user, repo, path: path, txn: txn)
-          should_commit &&= success
-          messages.concat msgs
-        end
-        if new_files.present?
-          success, msgs = add_files(new_files, current_user, repo, path: path, txn: txn, check_size: true)
-          should_commit &&= success
-          messages.concat msgs
-        end
-        if new_folders.present?
-          success, msgs = add_folders(new_folders, current_user, repo, path: path, txn: txn)
-          should_commit &&= success
-          messages = messages.concat msgs
-        end
-        if delete_folders.present?
-          success, msgs = remove_folders(delete_folders, current_user, repo, path: path, txn: txn)
-          should_commit &&= success
-          messages = messages.concat msgs
-        end
-        if should_commit
-          commit_success, commit_msg = commit_transaction(repo, txn)
-          flash_message(:success, I18n.t('flash.actions.update_files.success')) if commit_success
-          messages << commit_msg
-        else
-          commit_success = should_commit
-        end
-
-        flash_repository_messages messages
-
-        if should_commit && commit_success
-          if new_files.present?
-            @current_job = UpdateStarterCodeJob.perform_later(@assignment.id,
-                                                              params.fetch(:overwrite, 'false') == 'true')
-            session[:job_id] = @current_job.job_id
-            redirect_back(fallback_location: root_path)
-          else
-            head :ok
-          end
-        else
-          head :bad_request
-        end
-      end
-    end
-  end
-
-  def download_starter_code
-    assignment = Assignment.find(params[:id])
-    # find_appropriate_grouping can be found in SubmissionsHelper
-
-    revision_identifier = params[:revision_identifier]
-    path = params[:path] || '/'
-    assignment.access_starter_code_repo do |repo|
-      if revision_identifier.nil?
-        revision = repo.get_latest_revision
-      else
-        revision = repo.get_revision(revision_identifier)
-      end
-
-      begin
-        file = revision.files_at_path(File.join(assignment.repository_folder,
-                                                path))[params[:file_name]]
-        file_contents = repo.download_as_string(file)
-      rescue Exception => e
-        render plain: t('student.submission.missing_file',
-                        file_name: params[:file_name], message: e.message)
-        return
-      end
-
-      send_data_download file_contents, filename: params[:file_name]
-    end
   end
 
   def switch_assignment
@@ -596,52 +470,6 @@ class AssignmentsController < ApplicationController
       missing_assignment_files = grouping.missing_assignment_files(@revision)
       @num_missing_assignment_files = missing_assignment_files.length
     end
-  end
-
-  # Recursively return data for all starter code files.
-  # TODO: remove code duplication with the equivalent SubmissionsController method.
-  def get_all_file_data(revision, assignment, path)
-    full_path = File.join(assignment.repository_folder, path)
-    return [] unless revision.path_exists?(full_path)
-
-    entries = revision.tree_at_path(full_path).sort do |a, b|
-      a[0].count(File::SEPARATOR) <=> b[0].count(File::SEPARATOR) # less nested first
-    end
-    entries.map do |file_name, file_obj|
-      if file_obj.is_a? Repository::RevisionFile
-        dirname, basename = File.split(file_name)
-        dirname = '' if dirname == '.'
-        data = get_file_info(basename, file_obj, assignment.id, dirname)
-        next if data.nil?
-        data[:key] = file_name
-        data[:modified] = data[:last_revised_date]
-        data
-      else
-        { key: "#{file_name}/", last_modified_revision: file_obj.last_modified_revision }
-      end
-    end.compact
-  end
-
-  def get_file_info(file_name, file, assignment_id, path)
-    {
-      id: file.object_id,
-      url: download_starter_code_assignment_url(
-        id: assignment_id,
-        file_name: file_name,
-        path: path,
-      ),
-      filename: view_context.image_tag('icons/page_white_text.png') +
-        view_context.link_to(file_name,
-                             action: 'download_starter_code',
-                             id: assignment_id,
-                             file_name: file_name,
-                             path: path),
-      raw_name: file_name,
-      last_revised_date: l(file.last_modified_date),
-      last_modified_revision: file.last_modified_revision,
-      revision_by: file.user_id,
-      submitted_date: I18n.l(file.submitted_date)
-    }
   end
 
   def process_assignment_form(assignment)

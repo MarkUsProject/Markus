@@ -83,7 +83,6 @@ class Assignment < Assessment
 
   has_many :starter_code_groups, dependent: :destroy, inverse_of: :assignment, foreign_key: :assessment_id
 
-  after_create :build_starter_code_repo # TODO: remove
   after_create :create_autotest_dirs
 
   before_save :reset_collection_time
@@ -934,33 +933,6 @@ class Assignment < Assessment
     starter_code_groups.find_by(is_default: true)
   end
 
-  def build_starter_code_repo # TODO: remove
-    return unless Rails.configuration.x.repository.is_repository_admin && Rails.configuration.starter_code_on
-    begin
-      unless Repository.get_class.repository_exists?(starter_code_repo_path)
-        Repository.get_class.create(starter_code_repo_path, with_hooks: false)
-      end
-      access_starter_code_repo do |repo|
-        txn = repo.get_transaction('Markus', I18n.t('repo.commits.starter_code', assignment: self.short_identifier))
-        txn.add_path(self.repository_folder)
-        repo.commit(txn)
-      end
-    rescue StandardError => e
-      errors.add(:base, starter_code_repo_path)
-      m_logger = MarkusLogger.instance
-      m_logger.log("Creating repository '#{starter_code_repo_path}' failed with '#{e.message}'", MarkusLogger::ERROR)
-    end
-  end
-
-  def starter_code_repo_path # TODO: remove
-    File.join(Rails.configuration.x.repository.storage, STARTER_CODE_REPO_NAME)
-  end
-
-  #Yields a repository object, if possible, and closes it after it is finished
-  def access_starter_code_repo(&block) # TODO: remove
-    Repository.get_class.access(starter_code_repo_path, &block)
-  end
-
   # Yield an open repo for each grouping of this assignment, then yield again for each repo that raised an exception, to
   # try to mitigate concurrent accesses to those repos.
   def each_group_repo
@@ -985,39 +957,6 @@ class Assignment < Assessment
         # give up
       end
     end
-  end
-
-  def update_starter_code_files(group_repo, starter_repo, starter_tree, overwrite: true, starter_files: nil) # TODO: remove
-    txn = group_repo.get_transaction('Markus', I18n.t('repo.commits.starter_code',
-                                                      assignment: self.short_identifier))
-    group_revision = group_repo.get_latest_revision
-    internal_file_names = Repository.get_class.internal_file_names
-    starter_tree.sort { |a, b| a[0].count(File::SEPARATOR) <=> b[0].count(File::SEPARATOR) } # less nested first
-                .each do |starter_obj_name, starter_obj|
-      next if internal_file_names.include?(File.basename(starter_obj_name))
-      starter_obj_path = File.join(self.repository_folder, starter_obj_name)
-      already_exists = group_revision.path_exists?(starter_obj_path)
-      next if already_exists && !overwrite
-      if starter_obj.is_a? Repository::RevisionDirectory
-        txn.add_path(starter_obj_path) unless already_exists
-      else # Repository::RevisionFile
-        if starter_files.nil? || !starter_files.has_key?(starter_obj_name) # handle cache of starter code files
-          starter_file = starter_repo.download_as_string(starter_obj)
-          unless starter_files.nil?
-            starter_files[starter_obj_name] = starter_file
-          end
-        else
-          starter_file = starter_files[starter_obj_name]
-        end
-        if already_exists
-          txn.replace(starter_obj_path, starter_file, starter_obj.mime_type, group_revision.revision_identifier)
-        else
-          txn.add(starter_obj_path, starter_file, starter_obj.mime_type)
-        end
-      end
-    end
-
-    txn
   end
 
   # Repository authentication subtleties:

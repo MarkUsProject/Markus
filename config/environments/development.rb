@@ -217,12 +217,6 @@ Markus::Application.configure do
   config.x.repository.is_repository_admin = true
 
   ###################################################################
-  # Starter code settings
-  ###################################################################
-  # Global flag to enable/disable starter code feature.
-  config.starter_code_on = true
-
-  ###################################################################
   # Session Timeouts
   ###################################################################
   config.student_session_timeout        = 1800 # Timeout for student users

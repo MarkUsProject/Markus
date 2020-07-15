@@ -483,13 +483,3 @@
     </p>
   <% end %>
 <% end %>
-
-<%# Starter Code %>
-<% if Rails.configuration.starter_code_on && @assignment.id %>
-  <fieldset>
-    <legend>
-      <span><%= t('upload_the', item: t('assignments.starter_code.title')) %></span>
-    </legend>
-    <%= render 'file_manager' %>
-  </fieldset>
-<% end %>
