@@ -68,11 +68,11 @@ Rails.application.routes.draw do
       member do
         get 'refresh_graph'
         get 'view_summary'
-        get 'populate_file_manager'
         post 'upload_starter_code'
         post 'update_starter_code'
         get 'download_starter_code'
         get 'peer_review'
+        get 'populate_starter_code_manager'
         get 'summary'
         get 'batch_runs'
         post 'set_boolean_graders_options'
@@ -80,6 +80,16 @@ Rails.application.routes.draw do
         get 'stop_batch_tests'
         get 'switch_assignment'
         put 'start_timed_assignment'
+        get 'starter_code'
+        put 'update_starter_code_rule_type'
+      end
+
+      resources :starter_code_groups do
+        member do
+          get 'download_file'
+          get 'download_files'
+          post 'update_files'
+        end
       end
 
       resources :tags do
@@ -362,7 +372,11 @@ Rails.application.routes.draw do
       end
     end
 
-    resources :sections
+    resources :sections do
+      member do
+        post 'update_starter_code_group'
+      end
+    end
 
     resources :annotations do
       collection do

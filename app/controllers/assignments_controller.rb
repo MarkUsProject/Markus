@@ -394,6 +394,35 @@ class AssignmentsController < ApplicationController
     render json: entries
   end
 
+  def starter_code
+    # TODO: check if assignment exists and render 400/404
+    @assignment = Assignment.find(params[:id])
+  end
+
+  def populate_starter_code_manager
+    assignment = Assignment.find(params[:id])
+    file_data = []
+    assignment.starter_code_groups.order(:id).each do |g|
+      file_data << { id: g.id, name: g.name, files: starter_code_group_file_data(g) }
+    end
+    section_data = Section.left_outer_joins(:starter_code_groups)
+                          .order(:id)
+                          .pluck_to_hash('sections.id as section_id',
+                                         'sections.name as section_name',
+                                         'starter_code_groups.id as group_id',
+                                         'starter_code_groups.name as group_name')
+    data = { files: file_data,
+             sections: section_data,
+             starterCodeType: assignment.starter_code_type,
+             defaultStarterCodeGroup: assignment.default_starter_code_group&.id || '' }
+    render json: data
+  end
+
+  def update_starter_code_rule_type
+    assignment = Assignment.find(params[:id])
+    assignment.assignment_properties.update!(starter_code_type: params[:starter_code_type])
+  end
+
   def upload_starter_code
     unless Rails.configuration.starter_code_on
       raise t('student.submission.external_submit_only') #TODO: Update this
@@ -663,6 +692,19 @@ class AssignmentsController < ApplicationController
   def process_timed_duration(assignment)
     durs = duration_params['assignment_properties_attributes']['duration']
     assignment.duration = durs['hours'].to_i.hours + durs['minutes'].to_i.minutes
+  end
+
+  def starter_code_group_file_data(starter_code_group)
+    starter_code_group.files.map do |file|
+      if (starter_code_group.path + file).directory?
+        { key: "#{file}/" }
+      else
+        { key: file, size: 1,
+          url: download_file_assignment_starter_code_group_url(starter_code_group.assignment.id,
+                                                               starter_code_group.id,
+                                                               file_name: file) }
+      end
+    end
   end
 
   def graders_options_params

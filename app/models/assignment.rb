@@ -81,7 +81,9 @@ class Assignment < Assessment
 
   has_many :exam_templates, dependent: :destroy, inverse_of: :assignment, foreign_key: :assessment_id
 
-  after_create :build_starter_code_repo
+  has_many :starter_code_groups, dependent: :destroy, inverse_of: :assignment, foreign_key: :assessment_id
+
+  after_create :build_starter_code_repo # TODO: remove
   after_create :create_autotest_dirs
 
   before_save :reset_collection_time
@@ -924,7 +926,15 @@ class Assignment < Assessment
 
   ### REPO ###
 
-  def build_starter_code_repo
+  def starter_code_path
+    File.join(Rails.configuration.x.repository.storage, STARTER_CODE_REPO_NAME, repository_folder)
+  end
+
+  def default_starter_code_group
+    starter_code_groups.find_by(is_default: true)
+  end
+
+  def build_starter_code_repo # TODO: remove
     return unless Rails.configuration.x.repository.is_repository_admin && Rails.configuration.starter_code_on
     begin
       unless Repository.get_class.repository_exists?(starter_code_repo_path)
@@ -942,12 +952,12 @@ class Assignment < Assessment
     end
   end
 
-  def starter_code_repo_path
+  def starter_code_repo_path # TODO: remove
     File.join(Rails.configuration.x.repository.storage, STARTER_CODE_REPO_NAME)
   end
 
   #Yields a repository object, if possible, and closes it after it is finished
-  def access_starter_code_repo(&block)
+  def access_starter_code_repo(&block) # TODO: remove
     Repository.get_class.access(starter_code_repo_path, &block)
   end
 
@@ -977,7 +987,7 @@ class Assignment < Assessment
     end
   end
 
-  def update_starter_code_files(group_repo, starter_repo, starter_tree, overwrite: true, starter_files: nil)
+  def update_starter_code_files(group_repo, starter_repo, starter_tree, overwrite: true, starter_files: nil) # TODO: remove
     txn = group_repo.get_transaction('Markus', I18n.t('repo.commits.starter_code',
                                                       assignment: self.short_identifier))
     group_revision = group_repo.get_latest_revision

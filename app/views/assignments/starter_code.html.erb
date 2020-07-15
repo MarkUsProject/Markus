@@ -1,0 +1,14 @@
+<%= content_for :head do %>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      makeStarterCodeManager(
+        document.getElementById('starter_code_manager'),
+        {
+          assignment_id: <%= @assignment.id %>
+        }
+      );
+    });
+  </script>
+<% end %>
+
+<div id='starter_code_manager'></div>

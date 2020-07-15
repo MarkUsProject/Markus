@@ -2,6 +2,8 @@ class Section < ApplicationRecord
   validates :name, presence: true, uniqueness: true, allow_blank: false
   has_many :students
   has_many :section_due_dates
+  has_many :section_starter_code_groups
+  has_many :starter_code_groups, through: :section_starter_code_groups
 
   # Returns true when students are part of this section
   def has_students?

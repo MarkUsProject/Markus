@@ -3,7 +3,7 @@ import { render } from 'react-dom';
 import FileManager from './markus_file_manager';
 import Form from 'react-jsonschema-form';
 import Datepicker from './date_picker'
-import AutotestFileUploadModal from './Modals/autotest_file_upload_modal'
+import FileUploadModal from './Modals/file_upload_modal'
 import AutotestSpecsUploadModal from "./Modals/autotest_specs_upload_modal";
 
 class AutotestManager extends React.Component {
@@ -342,7 +342,7 @@ class AutotestManager extends React.Component {
           >
           </input>
         </p>
-        <AutotestFileUploadModal
+        <FileUploadModal
           isOpen={this.state.showFileUploadModal}
           onRequestClose={() => this.setState({showFileUploadModal: false, uploadTarget: undefined})}
           onSubmit={this.handleCreateFiles}

@@ -110,3 +110,5 @@ import { makeGradesSummaryDisplay } from 'javascripts/Components/grades_summary_
 window.makeGradesSummaryDisplay = makeGradesSummaryDisplay;
 import { makeDataChart } from 'javascripts/Components/Helpers/data_chart';
 window.makeDataChart = makeDataChart;
+import { makeStarterCodeManager } from 'javascripts/Components/starter_code_manager';
+window.makeStarterCodeManager = makeStarterCodeManager;
