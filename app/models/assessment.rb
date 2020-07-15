@@ -27,4 +27,8 @@ class Assessment < ApplicationRecord
     errors.add(:short_id_change, 'short identifier should not be changed once an assessment has been created')
     false
   end
+
+  def upcoming(current_user=nil)
+    self.due_date > Time.current
+  end
 end
