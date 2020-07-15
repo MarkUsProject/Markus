@@ -296,6 +296,7 @@ Rails.application.routes.draw do
           put 'update_annotation_text'
           get 'find_annotation_text'
           get 'annotation_text_uses'
+          get 'uncategorized_annotations'
         end
       end
     end

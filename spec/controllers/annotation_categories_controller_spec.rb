@@ -236,7 +236,8 @@ describe AnnotationCategoriesController do
       post :create_annotation_text,
            params: {
              assignment_id: annotation_category.assessment_id,
-             annotation_text: { content: 'New content', annotation_category_id: annotation_category.id },
+             content: 'New content',
+             annotation_category_id: annotation_category.id,
              format: :js
            }
 
@@ -250,9 +251,9 @@ describe AnnotationCategoriesController do
       category.annotation_texts.destroy_all
       category.reload
       post :create_annotation_text, params: { assignment_id: category.assessment_id,
-                                              annotation_text: { content: 'New content',
-                                                                 annotation_category_id: category.id,
-                                                                 deduction: 0.5 },
+                                              content: 'New content',
+                                              annotation_category_id: category.id,
+                                              deduction: 0.5,
                                               format: :js }
       expect(category.annotation_texts.first.deduction).to eq 0.5
     end
@@ -263,9 +264,9 @@ describe AnnotationCategoriesController do
       category = assignment_w_deductions.annotation_categories.where.not(flexible_criterion_id: nil).first
       category.annotation_texts.destroy_all
       post :create_annotation_text, params: { assignment_id: category.assessment_id,
-                                              annotation_text: { content: 'New content',
-                                                                 annotation_category_id: category.id,
-                                                                 deduction: nil },
+                                              content: 'New content',
+                                              annotation_category_id: category.id,
+                                              deduction: nil,
                                               format: :js }
 
       assert_response 400
@@ -295,7 +296,7 @@ describe AnnotationCategoriesController do
           params: {
             assignment_id: category.assessment_id,
             id: text.id,
-            annotation_text: { content: 'updated content' },
+            content: 'updated content',
             format: :js
           }
 
@@ -310,7 +311,8 @@ describe AnnotationCategoriesController do
           params: {
             assignment_id: category.assessment_id,
             id: text.id,
-            annotation_text: { content: 'more updated content', deduction: 0.1 },
+            content: 'more updated content',
+            deduction: 0.1,
             format: :js
           }
 
@@ -326,7 +328,8 @@ describe AnnotationCategoriesController do
           params: {
             assignment_id: category.assessment_id,
             id: text.id,
-            annotation_text: { content: 'more updated content', deduction: nil },
+            content: 'more updated content',
+            deduction: nil,
             format: :js
           }
 
@@ -351,6 +354,59 @@ describe AnnotationCategoriesController do
 
       assert_response 400
       expect(text.reload.content).to eq(prev_content)
+    end
+  end
+
+  describe '#uncategorized_annotations' do
+    let(:admin) { create :admin }
+    let(:assignment) { create(:assignment_with_criteria_and_results) }
+    let(:assignment_result) { assignment.groupings.first.current_result }
+    let(:text) { create(:annotation_text, annotation_category: nil) }
+    let(:different_text) { create(:annotation_text, annotation_category: nil) }
+
+    it 'finds no instance of uncategorized annotations when there are no annotation texts' do
+      get_as admin, :uncategorized_annotations, params: { assignment_id: assignment.id }
+      expect(assigns['texts']).to eq []
+    end
+
+    it 'finds no instance of uncategorized annotations when only categorized annotation texts exists' do
+      category = create(:annotation_category, assignment: assignment)
+      categorized_text = create(:annotation_text, annotation_category: category)
+      create(:text_annotation, annotation_text: categorized_text, result: assignment_result)
+      get_as admin, :uncategorized_annotations, params: { assignment_id: assignment.id }
+      expect(assigns['texts']).to eq []
+    end
+
+    it 'does not find uncategorized annotations from other assignments' do
+      other_assignment = create(:assignment_with_criteria_and_results)
+      create(:text_annotation, annotation_text: text, result: other_assignment.groupings.first.current_result)
+      get_as admin, :uncategorized_annotations, params: { assignment_id: assignment.id }
+      expect(assigns['texts']).to eq []
+    end
+
+    it 'finds one uncategorized annotation if only one exists' do
+      create(:text_annotation, annotation_text: text, result: assignment_result)
+      get_as admin, :uncategorized_annotations, params: { assignment_id: assignment.id }
+      expect(assigns['texts'].first['id']).to eq text.id
+    end
+
+    it 'finds multiple uncategorized annotations if many exist' do
+      create(:text_annotation, annotation_text: text, result: assignment_result)
+      create(:text_annotation, annotation_text: different_text, result: assignment_result)
+      get_as admin, :uncategorized_annotations, params: { assignment_id: assignment.id }
+      expect(assigns['texts'].size).to eq 2
+      expect([assigns['texts'].first['id'], assigns['texts'].second['id']].sort!).to eq [text.id,
+                                                                                         different_text.id].sort!
+    end
+
+    it 'finds uncategorized annotations if they exist across different results' do
+      create(:text_annotation, annotation_text: text, result: assignment_result)
+      other_grouping = assignment.groupings.where.not(id: assignment_result.grouping.id).first
+      create(:text_annotation, annotation_text: different_text, result: other_grouping.current_result)
+      get_as admin, :uncategorized_annotations, params: { assignment_id: assignment.id }
+      expect(assigns['texts'].size).to eq 2
+      expect([assigns['texts'].first['id'], assigns['texts'].second['id']].sort!).to eq [text.id,
+                                                                                         different_text.id].sort!
     end
   end
 

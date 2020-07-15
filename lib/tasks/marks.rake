@@ -46,6 +46,7 @@ namespace :db do
                                           .joins(:annotation_category)
                                           .where('annotation_categories.assignment': grouping.assignment,
                                                  'annotation_texts.deduction': nil)
+                                          .where.not('annotation_texts.annotation_category_id': nil)
                                           .pluck(:id).sample,
         annotation_number: new_submission.annotations.count + 1,
         creator_id: Admin.first.id,
@@ -67,6 +68,7 @@ namespace :db do
                                           .joins(:annotation_category)
                                           .where('annotation_categories.assignment': grouping.assignment,
                                                  'annotation_texts.deduction': nil)
+                                          .where.not('annotation_texts.annotation_category_id': nil)
                                           .pluck(:id).sample,
         annotation_number: new_submission.annotations.count + 1,
         creator_id: Admin.first.id,
@@ -81,6 +83,22 @@ namespace :db do
         page: 1,
         **base_attributes
       )
+
+      one_time_only = AnnotationText.create(annotation_category: nil,
+                                            content: random_sentences(3),
+                                            creator: Admin.first,
+                                            last_editor: Admin.first)
+      base_attributes[:annotation_text_id] = one_time_only.id
+      base_attributes[:annotation_number] = new_submission.annotations.count + 1
+      PdfAnnotation.create(
+        x1: 52_444,
+        y1: 20_703,
+        x2: 88_008,
+        y2: 35_185,
+        page: 2,
+        **base_attributes
+      )
+
       submission_file = new_submission.submission_files.find_by(filename: 'hello.py')
       base_attributes = {
         submission_file_id: submission_file.id,
@@ -89,6 +107,7 @@ namespace :db do
                                           .joins(:annotation_category)
                                           .where('annotation_categories.assignment': grouping.assignment,
                                                  'annotation_texts.deduction': nil)
+                                          .where.not('annotation_texts.annotation_category_id': nil)
                                           .pluck(:id).sample,
         annotation_number: new_submission.annotations.count + 1,
         creator_id: Admin.first.id,
