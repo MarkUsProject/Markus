@@ -2,7 +2,11 @@
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       makeGradesSummaryDisplay(document.getElementById('grades_summary_display'),
-                               { student: <%= @current_user.student? %> });
+        {
+          student: <%= @current_user.student? %>,
+          view_course_summary: <%= allowed_to?(:download_csv_grades_report?, @current_user, with: CourseSummaryPolicy) %>
+        }
+      );
     });
   </script>
 <% end %>
