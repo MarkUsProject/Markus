@@ -53,7 +53,7 @@ class SubmissionFileManager extends React.Component {
     }
   }
 
-  handleCreateFiles = (files) => {
+  handleCreateFiles = (files, unzip) => {
     const prefix = this.state.uploadTarget || '';
     this.setState({showModal: false, uploadTarget: undefined});
     let data = new FormData();
@@ -62,6 +62,7 @@ class SubmissionFileManager extends React.Component {
     if (this.props.grouping_id) {
       data.append('grouping_id', this.props.grouping_id);
     }
+    data.append('unzip', unzip);
     $.post({
       url: Routes.update_files_assignment_submissions_path(this.props.assignment_id),
       data: data,

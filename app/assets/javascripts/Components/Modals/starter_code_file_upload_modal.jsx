@@ -7,7 +7,8 @@ class StarterCodeFileUploadModal extends React.Component {
     super(props);
     this.state = {
       newFiles: [],
-      overwrite: true
+      overwrite: true,
+      unzip: false
     };
   }
 
@@ -17,7 +18,7 @@ class StarterCodeFileUploadModal extends React.Component {
 
   onSubmit = (event) => {
     event.preventDefault();
-    this.props.onSubmit(this.state.newFiles, this.state.overwrite);
+    this.props.onSubmit(this.state.newFiles, this.state.overwrite, this.state.unzip);
   };
 
   handleFileUpload = (event) => {
@@ -26,6 +27,10 @@ class StarterCodeFileUploadModal extends React.Component {
 
   handleOverwriteChange = (event) => {
     this.setState({overwrite: event.target.checked})
+  };
+
+  toggleUnzip = () => {
+    this.setState({unzip: !this.state.unzip});
   };
 
   render() {
@@ -50,6 +55,16 @@ class StarterCodeFileUploadModal extends React.Component {
                   name={'overwrite'}
                   onChange={this.handleOverwriteChange}
                 /> {I18n.t('assignments.starter_code.overwrite')}
+              </label>
+            </div>
+            <div>
+              <label htmlFor='unzip'>
+                <input
+                  type={'checkbox'}
+                  name={'unzip'}
+                  checked={this.state.unzip}
+                  onChange={this.toggleUnzip}
+                /> {I18n.t('modals.file_upload.unzip')}
               </label>
             </div>
             <div className={'modal-container'}>

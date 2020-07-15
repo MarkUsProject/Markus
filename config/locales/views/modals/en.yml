@@ -1,0 +1,4 @@
+en:
+  modals:
+    file_upload:
+      unzip: "unzip all zip files in place"
