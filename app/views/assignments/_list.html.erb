@@ -15,7 +15,7 @@
           <% if assessment.is_a?(GradeEntryForm) %>
             <% gef_text = "#{h(assessment.short_identifier)}: #{h(assessment.description)}" %>
             <% route = student_interface_grade_entry_form_path(assessment.id) %>
-            <% render partial: 'grade_entry_forms/row', locals: { gef_text: gef_text,
+            <%= render partial: 'grade_entry_forms/row', locals: { gef_text: gef_text,
                                                                   route: route,
                                                                   grade_entry_form: assessment} %>
           <% else %>

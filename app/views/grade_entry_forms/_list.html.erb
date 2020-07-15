@@ -16,7 +16,7 @@
         <% grade_entry_forms.each do |grade_entry_form| %>
           <% gef_text = "#{h(grade_entry_form.short_identifier)}: #{h(grade_entry_form.description)}" %>
           <% route = student_interface_grade_entry_form_path(grade_entry_form.id) %>
-          <% render partial: 'grade_entry_forms/row', locals: { gef_text: gef_text,
+          <%= render partial: 'grade_entry_forms/row', locals: { gef_text: gef_text,
                                                            route: route,
                                                            grade_entry_form: grade_entry_form} %>
         <% end %>
