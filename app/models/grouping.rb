@@ -711,7 +711,7 @@ class Grouping < ApplicationRecord
   end
 
   def test_runs_instructors(submission)
-    filtered = filter_test_runs(filters: { 'users.type' => ['Admin', 'Ta'], 'test_runs.submission': submission })
+    filtered = filter_test_runs(filters: {'users.type' => %w(Admin Ta), 'test_runs.submission' : submission })
     plucked = Grouping.pluck_test_runs(filtered)
     Grouping.group_hash_list(plucked)
   end
