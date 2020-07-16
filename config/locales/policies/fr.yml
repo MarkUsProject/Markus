@@ -13,7 +13,7 @@ fr:
         can_run_tests?: "UPDATE ME."
         view_pr_review?: "UPDATE ME."
         manage?: "UPDATE ME."
-        batch_runs?: "UPDATE ME."
+        run_and_stop_test?: "UPDATE ME."
       grouping:
         before_due_date?: "La date de retour pour ce devoir est passée."
         deletable_by?: "Vous ne pouvez pas supprimer ce groupe."
