@@ -14,7 +14,7 @@ en:
         work_alone?: "You cannot work alone for this assignment. The minimum group size is %{group_min}."
         view_pr_review?: "You are not allowed to view and manage peer reviews."
         manage?: "You do not have permissions to create and manage assignments."
-        batch_runs?: "You do not have permissions to view test runs status."
+        run_and_stop_test?: "You do not have permissions to view test runs status and stop test."
       grouping:
         before_due_date?: "The due date for this assignment has passed."
         deletable_by?: "You are not allowed to delete the group."
