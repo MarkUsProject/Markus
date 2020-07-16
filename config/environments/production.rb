@@ -44,7 +44,8 @@ Markus::Application.configure do
       secret: '650d281667d8011a3a6ad6dd4b5d4f9ddbce14a7d78b107812dbb40b24e234256ab2c5572c8196cf6cde6b85942688b6bfd337ffa0daee648d04e1674cf1fdf6',
       path: '/',
       expire_after: 3.weeks,
-      secure: false
+      secure: false,
+      same_site: :lax
   )
 
   ###################################################################

@@ -23,6 +23,7 @@
 - Fixed bug where marking scheme weights were not displayed (#4735)
 - Introduces timed assignments (#4665)
 - Introduces uncategorized annotations grouping in Annotations settings tab (#4733)
+- Set SameSite=Lax on cookies (#4742)
 
 ## [v1.9.3]
 - Fixed inverse association bug with assignments (#4551)
