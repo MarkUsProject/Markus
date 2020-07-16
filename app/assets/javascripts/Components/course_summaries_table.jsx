@@ -96,7 +96,7 @@ class CourseSummaryTable extends React.Component {
       <ReactTable
         key='course-summary-table'
         data={this.state.data}
-        columns={this.nameColumns.concat(this.state.columns)}
+        columns={this.props.student ? this.state.columns : this.nameColumns.concat(this.state.columns)}
         defaultFilterMethod={stringFilter}
         defaultSorted={[
           {
