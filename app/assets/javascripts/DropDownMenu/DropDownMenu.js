@@ -26,11 +26,11 @@ DropDownMenu.prototype.refreshPositions = function() {
   let panel = $('.react-tabs-panel-action-bar')[0].getBoundingClientRect();
 
   // Position menu node so that it's directly under the trigger node,
-  // and hide it
+  // and hide it. (340px & 5px values are due to accommodating CSS ul.tags rules in _markus.scss)
   $(this.getMenuNode()).css({
     'position' : 'absolute',
     'left' : Math.min(0, panel.right - (offset_left + 340)),
-    'top' : (offset_height + 5) + 'px',
+    'top' : (offset_height + 5),
     'zIndex': '10000'
   });
 }

@@ -2,7 +2,7 @@ import React from 'react';
 
 
 export class AnnotationManager extends React.Component {
-  componentDidUpdate(prevProps, prevState, snapshot) {
+  componentDidUpdate() {
     this.props.categories.forEach(cat => {
       new DropDownMenu($(`#annotation_category_${cat.id}`),
                        $(`#annotation_text_list_${cat.id}`));
