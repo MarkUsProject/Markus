@@ -1,6 +1,8 @@
 describe MarkingSchemesController do
-  # TODO: Add more tests to check the functionality
+  let(:grade_entry_form) { create(:grade_entry_form) }
+  let(:grade_entry_form_with_data) { create(:grade_entry_form_with_data) }
   let(:assignment) { create(:assignment) }
+  let(:assignment_with_criteria_and_results) { create(:assignment_with_criteria_and_results) }
   let(:marking_scheme) { create(:marking_scheme, assessments: [assignment]) }
   shared_examples 'An authorized user' do
     context 'POST create' do
