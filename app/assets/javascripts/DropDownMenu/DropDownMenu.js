@@ -12,7 +12,7 @@ function DropDownMenu(trigger_node, menu_node) {
 
   // Set up the trigger_node click event
   var me = this;
-  $(this.trigger_node).hover(function(event) {
+  $(this.trigger_node).hover(function() {
     me.refreshPositions();
     me.show();
   });
@@ -28,10 +28,10 @@ DropDownMenu.prototype.refreshPositions = function() {
   // Position menu node so that it's directly under the trigger node,
   // and hide it
   $(this.getMenuNode()).css({
-    "position" : "absolute",
-    "left" : Math.min(0, panel.right - (offset_left + 340)),
-    "top" : (offset_height + 5) + 'px',
-    "zIndex": "10000"
+    'position' : 'absolute',
+    'left' : Math.min(0, panel.right - (offset_left + 340)),
+    'top' : (offset_height + 5) + 'px',
+    'zIndex': '10000'
   });
 }
 
