@@ -1,5 +1,4 @@
 describe MarkingScheme do
-
   it { is_expected.to have_many :marking_weights }
 
   describe 'students_weighted_grade_distribution_array' do
@@ -19,5 +18,4 @@ describe MarkingScheme do
       end
     end
   end
-
 end
