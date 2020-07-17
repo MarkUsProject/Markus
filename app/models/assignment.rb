@@ -144,6 +144,13 @@ class Assignment < Assessment
     sections_past
   end
 
+  def upcoming(current_user)
+    grouping = current_user.accepted_grouping_for(self.id)
+    due_date = grouping&.collection_date
+    return !past_collection_date?(current_user.section) if due_date.nil?
+    due_date > Time.current
+  end
+
   # Whether or not this grouping is past its due date for this assignment.
   def grouping_past_due_date?(grouping)
     return past_all_due_dates? if grouping.nil?

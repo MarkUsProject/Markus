@@ -2090,4 +2090,31 @@ describe Assignment do
       end
     end
   end
+
+  describe '#upcoming' do
+    # the upcoming method is only called in cases where the user is a student
+    context 'a student with a grouping' do
+      it 'returns false if an assignment was due before the current time' do
+        a = create(:assignment_with_criteria_and_results, due_date: Time.current - (60 * 60 * 24))
+        expect(a.upcoming(a.groupings.first.students.first)).to be false
+      end
+
+      it 'returns true if an assignment is due after the current time' do
+        a = create(:assignment_with_criteria_and_results, due_date: Time.current + (60 * 60 * 24))
+        expect(a.upcoming(a.groupings.first.students.first)).to be true
+      end
+    end
+
+    context 'a student without a grouping' do
+      it 'returns false if an assignment was due before the current time' do
+        a = create(:assignment_with_criteria_and_results, due_date: Time.current - (60 * 60 * 24))
+        expect(a.upcoming(create(:student))).to be false
+      end
+
+      it 'returns true if an assignment is due after the current time' do
+        a = create(:assignment_with_criteria_and_results, due_date: Time.current + (60 * 60 * 24))
+        expect(a.upcoming(create(:student))).to be true
+      end
+    end
+  end
 end

@@ -5,8 +5,8 @@
     <%= render partial: 'timed_due_message', locals: { assignment: assignment, grouping: grouping, simple: true } %>
   <% else %>
     <% if due_date.nil? %>
-      <%= l(assignment.due_date) %>
       <% due_date = assignment.section_due_date(@current_user.section) %>
+      <%= l(due_date) %>
     <% elsif grouping.extension.nil? %>
       <%= l(due_date) %>
     <% else %>
