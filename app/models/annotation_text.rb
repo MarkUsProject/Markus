@@ -83,6 +83,6 @@ class AnnotationText < ApplicationRecord
                        'users.first_name AS first_name',
                        'users.last_name AS last_name',
                        'users.user_name AS user_name',
-                       'count(*) AS count')
+                       Arel.sql('count(*) AS count'))
   end
 end
