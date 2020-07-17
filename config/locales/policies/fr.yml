@@ -5,7 +5,6 @@ fr:
         before_due_date?: "La date d'échéance est déjà pasée."
         collection_date_passed?: "Impossible de créer le groupe: la date de retour pour ce projet est passée et il n'y a pas de temps supplémentaire alloué ou le temps supplémentaire alloué est terminé."
         enabled?: "Les tests ne sont pas activés pour ce projet."
-        not_a_ta?: "Les correcteurs ne sont pas autorisés à éxecuter des tests."
         not_yet_in_group?: "Vous avez déjà un groupe, vous ne pouvez pas en créer d'autres."
         students_form_groups?: "Ce projet n'autorise pas les étudiants à former des groupes."
         tokens_released?: "Aucun jetons disponible."

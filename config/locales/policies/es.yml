@@ -5,7 +5,6 @@ es:
         before_due_date?: "Usted no puede lanzar las prueba debido a que el último plazo de entrega para este proyecto ha pasado."
         collection_date_passed?: "No se pudo crear el grupo: el último plazo para este proyecto ha pasado."
         enabled?: "UPDATE ME."
-        not_a_ta?: "UPDATE ME."
         not_yet_in_group?: "Usted ya tiene un grupo, y no puede crear otro."
         students_form_groups?: "El proyecto no les permite a los estudiantes formar grupos."
         tokens_released?: "No se han dado fichas todavía."
