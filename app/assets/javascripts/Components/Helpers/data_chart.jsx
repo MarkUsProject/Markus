@@ -13,29 +13,27 @@ export class DataChart extends React.Component {
       labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
       datasets: [{
         label: 'My First dataset',
-        backgroundColor: 'rgb(255, 99, 132)',
-        borderColor: 'rgb(255, 99, 132)',
+        backgroundColor: '#ffb4b4',
         data: [0, 10, 5, 2, 20, 30, 45]
       }, {
         label: 'My Second dataset',
-        backgroundColor: 'rgb(74,97,208)',
-        borderColor: 'rgb(51,120,173)',
+        backgroundColor: '#89b1dd',
         data: [4, 14, 9, 4, 20, 34, 40]
       }]
     };
     var options = {
-      tooltips: {
-        callbacks: {
-          title: function (tooltipItems) {
-            var baseNum = parseInt(tooltipItems[0].xLabel);
-            if (baseNum === 0) {
-              return '0-5';
-            }
-            else {
-              return (baseNum + 1) + '-' + (baseNum + 5);
-            }
+      responsive: true,
+      legend: {
+        display: true
+      },
+      scales: {
+        yAxes: [{
+          ticks: {
+            beginAtZero: true,
+            min: 0,
+            max: 100
           }
-        }
+        }]
       }
     };
 

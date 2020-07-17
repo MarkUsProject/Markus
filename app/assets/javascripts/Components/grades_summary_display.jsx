@@ -31,7 +31,7 @@ class GradesSummaryDisplay extends React.Component {
       <CourseSummaryTable
         student={this.props.student}
       />
-      <fieldset>
+      <fieldset width={'500'}>
         <DataChart/>
       </fieldset>
     </div>);
