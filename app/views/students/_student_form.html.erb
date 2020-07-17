@@ -1,51 +1,39 @@
 <aside class='dialog' id='add_new_section_dialog'></aside>
 
-<div class='section'>
-  <%= form_for @user, as: :user do |f| %>
+<%= form_for @user, as: :user do |f| %>
+  <div class='inline-labels'>
+    <%= f.label :user_name, User.human_attribute_name(:user_name) %>
+    <%= f.text_field :user_name %>
 
-    <table>
-      <tr>
-        <td><%= raw(f.label(:user_name, User.human_attribute_name(:user_name))) %>:</td>
-        <td><%= raw(f.text_field :user_name) %></td>
-      </tr>
+    <%= f.label :last_name, User.human_attribute_name(:last_name) %>
+    <%= f.text_field :last_name %>
 
-      <tr>
-        <td><%= raw(f.label(:last_name, User.human_attribute_name(:last_name))) %>:</td>
-        <td><%= raw(f.text_field :last_name) %></td>
-      </tr>
+    <%= f.label :first_name, User.human_attribute_name(:first_name) %>
+    <%= f.text_field :first_name %>
 
-      <tr>
-        <td><%= raw(f.label(:first_name, User.human_attribute_name(:first_name))) %>:</td>
-        <td><%= raw(f.text_field :first_name) %></td>
-      </tr>
+    <%= f.label :email, User.human_attribute_name(:email) %>
+    <%= f.text_field :email %>
 
-      <tr>
-        <td><%= raw(f.label(:email, User.human_attribute_name(:email))) %>:</td>
-        <td><%= raw(f.text_field :email) %></td>
-      </tr>
+    <%= f.label :id_number, User.human_attribute_name(:id_number) %>
+    <%= f.text_field :id_number %>
 
-      <tr>
-        <td><%= raw(f.label(:id_number, User.human_attribute_name(:id_number))) %>:</td>
-        <td><%= raw(f.text_field :id_number) %></td>
-      </tr>
+    <%= f.label :grace_credits, User.human_attribute_name(:grace_credits) %>
+    <%= f.text_field :grace_credits %>
 
-      <tr>
-        <td><%= raw(f.label(:grace_credits, User.human_attribute_name(:grace_credits))) %>:</td>
-        <td><%= raw(f.text_field :grace_credits) %></td>
-      </tr>
+    <%= f.label :section_id, Section.model_name.human %>
+    <span id='select_sections'>
+      <%= render partial: 'sections/select_sections',
+                 locals: { user: @user, new_student: true } %>
+    </span>
+  </div>
 
-      <tr id='select_sections'>
-        <%= render partial: 'sections/select_sections',
-                   locals: { user: @user, new_student: true } %>
-      </tr>
-    </table>
+  <%= f.hidden_field :id %>
 
-    <%= f.hidden_field :id %>
+  <p>
     <%= f.submit t(:save),
                  name: 'submit',
                  data: { disable_with: t('working') },
                  class: 'button' %>
-    <%= link_to t(:cancel), students_path(), class: 'button' %>
-
-  <% end %>
-</div>
+    <%= link_to t(:cancel), students_path, class: 'button' %>
+  </p>
+<% end %>
