@@ -1,6 +1,7 @@
 import React from 'react';
 import {render} from 'react-dom';
 import { CourseSummaryTable } from './course_summaries_table';
+import { DataChart } from './Helpers/data_chart';
 
 class GradesSummaryDisplay extends React.Component {
   constructor() {
@@ -26,9 +27,14 @@ class GradesSummaryDisplay extends React.Component {
   }
 
   render() {
-    return (<CourseSummaryTable
-              student={this.props.student}
-            />);
+    return (<div>
+      <CourseSummaryTable
+        student={this.props.student}
+      />
+      <fieldset>
+        <DataChart/>
+      </fieldset>
+    </div>);
   }
 }
 
