@@ -29,7 +29,12 @@ module CourseSummariesHelper
                                 .where('results.released_to_students': released)
                                 .pluck('users.id', 'groupings.assessment_id', 'results.total_mark')
     assignment_grades.each do |student_id, assessment_id, mark|
-      student_data[student_id][:assessment_marks][assessment_id] = mark
+      student_data[student_id][:assessment_marks][assessment_id] = {
+          mark: mark,
+          max_mark: Assignment.find_by(id: assessment_id).max_mark,
+          percentage: (mark * 100 / Assignment.find_by(id: assessment_id).max_mark).round
+      }
+
     end
 
     gef_grades = students.joins(:grade_entry_students)
@@ -39,7 +44,11 @@ module CourseSummariesHelper
                                 'grade_entry_students.total_grade')
 
     gef_grades.each do |student_id, assessment_id, mark|
-      student_data[student_id][:assessment_marks][assessment_id] = mark
+      student_data[student_id][:assessment_marks][assessment_id] = {
+          mark: mark,
+          max_mark: GradeEntryForm.find_by(id: assessment_id).grade_entry_items.sum(:out_of),
+          percentage: (mark * 100 / GradeEntryForm.find_by(id: assessment_id).grade_entry_items.sum(:out_of)).round
+      }
     end
 
     unless current_user.student?
