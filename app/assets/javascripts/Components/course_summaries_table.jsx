@@ -5,33 +5,20 @@ import ReactTable from 'react-table';
 import {stringFilter} from './Helpers/table_helpers';
 
 export class CourseSummaryTable extends React.Component {
-  constructor() {
+  constructor(props) {
     super();
     this.state = {
-      data: [],
-      columns: [],
-      loading: true,
+      data: props.data,
+      columns: props.columns,
+      loading: props.loading,
       showHidden: false,
       filtered: [{id: 'hidden', value: false}]
     };
-    this.fetchData = this.fetchData.bind(this);
   }
 
-  componentDidMount() {
-    this.fetchData();
-  }
-
-  fetchData() {
-    $.ajax({
-      url: Routes.populate_course_summaries_path(),
-      dataType: 'json',
-    }).then(res => {
-      this.setState({
-        data: res.data,
-        columns: res.columns,
-        loading: false,
-      });
-    });
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    console.log(prevState);
+    console.log(this.state);
   }
 
   nameColumns = [
