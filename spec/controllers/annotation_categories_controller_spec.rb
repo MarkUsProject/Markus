@@ -1,9 +1,11 @@
 describe AnnotationCategoriesController do
+  include AnnotationCategoriesHelper
   let(:assignment) { FactoryBot.create(:assignment) }
   let(:annotation_category) { FactoryBot.create(:annotation_category, assignment: assignment) }
 
   shared_examples 'An authorized user managing annotation categories' do
     describe '#index' do
+      before { create(:annotation_category, assignment: assignment) }
       it 'should respond with 200' do
         get_as user, :index, params: { assignment_id: assignment.id }
         expect(response.status).to eq(200)
@@ -52,11 +54,10 @@ describe AnnotationCategoriesController do
 
       it 'fails when the annotation category name is already used' do
         category = create(:annotation_category, assignment: assignment)
-
         post_as user, :create,
                 params: { assignment_id: assignment.id,
-                          annotation_category: { annotation_category_name: category.annotation_category_name } }
-
+                          annotation_category: { annotation_category_name: category.annotation_category_name },
+                          format: :js }
         expect(assignment.annotation_categories.count).to eq 1
       end
     end
@@ -413,7 +414,7 @@ describe AnnotationCategoriesController do
         put_as user, :update_annotation_text,
                params: { assignment_id: category.assessment_id,
                          id: text.id,
-                         annotation_text: { content: 'updated content' },
+                         content: 'updated content',
                          format: :js }
 
         expect(text.reload.content).to eq 'updated content'
@@ -541,7 +542,7 @@ describe AnnotationCategoriesController do
                annotation_category: annotation_category)
       end
       let(:csv_data) do
-        "#{annotation_category.annotation_category_name}," \
+        "#{annotation_category.annotation_category_name},," \
       "#{annotation_text.content}\n"
       end
       let(:csv_options) do
