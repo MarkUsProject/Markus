@@ -30,7 +30,7 @@ DropDownMenu.prototype.refreshPositions = function() {
   $(this.getMenuNode()).css({
     'position' : 'absolute',
     'left' : Math.min(0, panel.right - (offset_left + 340)),
-    'top' : (offset_height + 5),
+    'top' : offset_height + 5,
     'zIndex': '10000'
   });
 }
