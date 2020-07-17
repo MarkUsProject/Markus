@@ -1,12 +1,3 @@
-<%= content_for :head do %>
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      makeCourseSummaryTable(document.getElementById('course_summaries_table'),
-                             { student: <%= @current_user.student? %> });
-    });
-  </script>
-<% end %>
-
 <% content_for :title, t('menu.home') %>
 
 <% upcoming, past = Assessment.where(is_hidden: false)
@@ -20,9 +11,4 @@
 <div class='section'>
   <h3><%= t('assignments.due_date.past') %></h3>
   <%= render partial: 'assignments/list', locals: { assessments: past, upcoming: false } %>
-</div>
-
-<div class='section'>
-  <h3><%= t('course_summary.student_title') %></h3>
-  <div id='course_summaries_table'></div>
 </div>
