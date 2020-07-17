@@ -7,12 +7,6 @@ class CourseSummariesController < ApplicationController
   layout 'assignment_content'
 
   def index
-    if current_user.student?
-      @labels = Assessment.where(is_hidden: false).order(id: :asc).pluck(:short_identifier)
-      @marks = Assessment.where(is_hidden: false).order(id: :asc).map do |assessment|
-        'student mark for assessment'
-      end
-    end
   end
 
   def populate

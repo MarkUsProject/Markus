@@ -4,7 +4,7 @@ import {render} from 'react-dom';
 import ReactTable from 'react-table';
 import {stringFilter} from './Helpers/table_helpers';
 
-class CourseSummaryTable extends React.Component {
+export class CourseSummaryTable extends React.Component {
   constructor() {
     super();
     this.state = {
@@ -109,8 +109,4 @@ class CourseSummaryTable extends React.Component {
       />
     ];
   }
-}
-
-export function makeCourseSummaryTable(elem, props) {
-  render(<CourseSummaryTable {...props} />, elem);
 }
