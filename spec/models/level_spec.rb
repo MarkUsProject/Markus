@@ -1,5 +1,5 @@
 describe Level do
-  it { is_expected.to belong_to(:rubric_criterion) }
+  it { is_expected.to belong_to(:criterion) }
   it { is_expected.to validate_presence_of(:name) }
   it { is_expected.to allow_value('').for(:description) }
   it { is_expected.to_not allow_value(nil).for(:description) }
