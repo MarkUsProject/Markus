@@ -31,8 +31,8 @@ module CourseSummariesHelper
     assignment_grades.each do |student_id, assessment_id, mark|
       student_data[student_id][:assessment_marks][assessment_id] = {
           mark: mark,
-          max_mark: Assignment.find_by(id: assessment_id).max_mark,
-          percentage: (mark * 100 / Assignment.find_by(id: assessment_id).max_mark).round
+          max_mark: @max_marks[assessment_id],
+          percentage: mark.nil? ? nil : (mark * 100 / @max_marks[assessment_id]).round
       }
 
     end
@@ -46,8 +46,8 @@ module CourseSummariesHelper
     gef_grades.each do |student_id, assessment_id, mark|
       student_data[student_id][:assessment_marks][assessment_id] = {
           mark: mark,
-          max_mark: GradeEntryForm.find_by(id: assessment_id).grade_entry_items.sum(:out_of),
-          percentage: (mark * 100 / GradeEntryForm.find_by(id: assessment_id).grade_entry_items.sum(:out_of)).round
+          max_mark: @gef_max_marks[assessment_id],
+          percentage: mark.nil? ? nil : (mark * 100 / @gef_max_marks[assessment_id]).round
       }
     end
 
@@ -85,7 +85,7 @@ module CourseSummariesHelper
           else
             max_mark = @gef_max_marks[mw.assessment_id]
           end
-          mark = student[:assessment_marks][mw.assessment_id]
+          mark = student[:assessment_marks][mw.assessment_id]&.[](:mark)
           unless mw.weight.nil? || mark.nil? || max_mark.nil? || max_mark == 0
             weighted += mark * mw.weight / max_mark
           end
