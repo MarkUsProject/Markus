@@ -10,17 +10,11 @@ export class DataChart extends React.Component {
       datasets: info.slice(1)
     };
     var options = {
-      offset: true,
-      responsive: true,
+      responsive: false,
       legend: {
         display: true
       },
       scales: {
-        xAxes: [{
-          gridLines: {
-            offsetGridLines: true
-          }
-        }],
         yAxes: [{
           ticks: {
             beginAtZero: true,
@@ -40,7 +34,7 @@ export class DataChart extends React.Component {
 
   render() {
     return (
-      <canvas id='term_marks' width='500px' height='450px'></canvas>
+      <canvas id='term_marks' style={{display: 'inline-flex', width: 'auto', height: 500}}></canvas>
     );
   }
 }

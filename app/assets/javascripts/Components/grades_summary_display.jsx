@@ -30,7 +30,6 @@ class GradesSummaryDisplay extends React.Component {
         columns: res.columns,
         loading: false,
       });
-      console.log(res)
       let marks = []
       let labels = Object.keys(res.columns).map(k => {
         if(res.data[0].assessment_marks[parseInt(k) + 1]) {
@@ -40,7 +39,16 @@ class GradesSummaryDisplay extends React.Component {
         }
         return res.columns[k].Header;
       });
-      this.chart.current.setChart([labels, {label: 'your marks', data: marks}, {label: 'averages', data: res.averages}]);
+      if(this.props.student){
+        this.chart.current.setChart([labels,
+          {label: 'My Mark', data: marks, backgroundColor: 'rgba(58,106,179,0.35)', borderColor: '#3a6ab3', borderWidth: 1},
+          {label: 'Class Average', data: res.averages, backgroundColor: 'rgba(228,151,44,0.35)', borderColor: '#e4972c', borderWidth: 1}]);
+      } else {
+        this.chart.current.setChart([labels, {label: 'Class Average',
+          data: res.averages,
+          backgroundColor: 'rgba(228,151,44,0.25)',
+          borderColor: '#e4972c'}]);
+      }
       this.table.current.setTable(this.state.columns, this.state.data);
     });
   }
@@ -54,7 +62,7 @@ class GradesSummaryDisplay extends React.Component {
         ref={this.table}
         student={this.props.student}
       />
-      <fieldset width={'500'}>
+      <fieldset style={{display: 'flex', 'justify-content': 'center'}}>
         <DataChart
           ref={this.chart}
         />
