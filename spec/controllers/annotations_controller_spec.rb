@@ -323,7 +323,7 @@ describe AnnotationsController do
       it 'cannot update deductive annotation content if that content has been applied to released results' do
         assignment_with_da.groupings.first.current_result.update(released_to_students: true)
         other_grouping = assignment_with_da.reload.groupings.joins(submissions: :results)
-                             .where(results: { released_to_students: false }).first
+                                           .where(results: { released_to_students: false }).first
         post_as user,
                 :update,
                 params: { content: 'New content!',
@@ -407,7 +407,8 @@ describe AnnotationsController do
 
       it 'cannot destroy a deductive annotation if assigned to a criterion of a different type '\
          'with the same id as the annotation\'s criterion' do
-        other_criterion = create(:rubric_criterion, assignment: assignment_with_da, id: assignment_with_da.flexible_criteria.first.id)
+        other_criterion = create(:rubric_criterion,
+                                 assignment: assignment_with_da, id: assignment_with_da.flexible_criteria.first.id)
         assignment_with_da.assignment_properties.update(assign_graders_to_criteria: true)
         create(:criterion_ta_association, criterion: other_criterion, ta: user)
         post_as user,

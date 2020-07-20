@@ -36,9 +36,10 @@ describe AnnotationCategoriesController do
 
     describe '#create' do
       it 'successfully creates annotation_category with nil flexible_criterion' do
-        post_as user, :create, params: { assignment_id: assignment.id,
-                                annotation_category: { annotation_category_name: 'Category 1' },
-                                format: :js }
+        post_as user, :create,
+                params: { assignment_id: assignment.id,
+                          annotation_category: { annotation_category_name: 'Category 1' },
+                          format: :js }
         expect(assignment.annotation_categories.find_by(annotation_category_name: 'Category 1')
                    .flexible_criterion).to eq nil
       end
@@ -89,12 +90,10 @@ describe AnnotationCategoriesController do
         flexible_criterion = create(:flexible_criterion, assignment: assignment)
 
         patch_as user, :update,
-              params: {
-                  assignment_id: assignment.id,
-                  id: annotation_category.id,
-                  annotation_category: { flexible_criterion_id: flexible_criterion.id },
-                  format: :js
-              }
+                 params: { assignment_id: assignment.id,
+                           id: annotation_category.id,
+                           annotation_category: { flexible_criterion_id: flexible_criterion.id },
+                           format: :js }
 
         expect(annotation_category.reload.flexible_criterion_id).to eq(flexible_criterion.id)
       end
@@ -104,12 +103,10 @@ describe AnnotationCategoriesController do
         category = assignment.annotation_categories.where.not(flexible_criterion_id: nil).first
 
         patch_as user, :update,
-              params: {
-                  assignment_id: assignment.id,
-                  id: category.id,
-                  annotation_category: { flexible_criterion_id: '' },
-                  format: :js
-              }
+                 params: { assignment_id: assignment.id,
+                           id: category.id,
+                           annotation_category: { flexible_criterion_id: '' },
+                           format: :js }
 
         expect(category.reload.flexible_criterion_id).to eq(nil)
       end
@@ -120,12 +117,10 @@ describe AnnotationCategoriesController do
         flexible_criterion = create(:flexible_criterion)
 
         patch_as user, :update,
-              params: {
-                  assignment_id: assignment.id,
-                  id: annotation_category.id,
-                  annotation_category: { flexible_criterion_id: flexible_criterion.id },
-                  format: :js
-              }
+                 params: { assignment_id: assignment.id,
+                           id: annotation_category.id,
+                           annotation_category: { flexible_criterion_id: flexible_criterion.id },
+                           format: :js }
         expect(annotation_category.flexible_criterion_id).to eq(nil)
       end
 
@@ -137,12 +132,10 @@ describe AnnotationCategoriesController do
         assignment.groupings.first.current_result.update!(released_to_students: true)
         previous_criterion_id = category.flexible_criterion_id
         patch_as user, :update,
-              params: {
-                  assignment_id: assignment.id,
-                  id: category.id,
-                  annotation_category: { flexible_criterion_id: flexible_criterion.id },
-                  format: :js
-              }
+                 params: { assignment_id: assignment.id,
+                           id: category.id,
+                           annotation_category: { flexible_criterion_id: flexible_criterion.id },
+                           format: :js }
         expect(category.reload.flexible_criterion_id).to eq(previous_criterion_id)
       end
     end
@@ -234,12 +227,10 @@ describe AnnotationCategoriesController do
     describe '#create_annotation_text' do
       it 'successfully creates an annotation text associated with an annotation category' do
         post_as user, :create_annotation_text,
-             params: {
-                 assignment_id: annotation_category.assessment_id,
-                 content: 'New content',
-                 annotation_category_id: annotation_category.id,
-                 format: :js
-             }
+                params: { assignment_id: annotation_category.assessment_id,
+                          content: 'New content',
+                          annotation_category_id: annotation_category.id,
+                          format: :js }
 
         expect(annotation_category.annotation_texts.count).to eq 1
         expect(annotation_category.annotation_texts.first.content).to eq 'New content'
@@ -250,11 +241,12 @@ describe AnnotationCategoriesController do
         category = assignment_w_deductions.annotation_categories.where.not(flexible_criterion_id: nil).first
         category.annotation_texts.destroy_all
         category.reload
-        post_as user, :create_annotation_text, params: { assignment_id: category.assessment_id,
-                                                content: 'New content',
-                                                annotation_category_id: category.id,
-                                                deduction: 0.5,
-                                                format: :js }
+        post_as user, :create_annotation_text,
+                params: { assignment_id: category.assessment_id,
+                          content: 'New content',
+                          annotation_category_id: category.id,
+                          deduction: 0.5,
+                          format: :js }
         expect(category.annotation_texts.first.deduction).to eq 0.5
       end
 
@@ -263,12 +255,12 @@ describe AnnotationCategoriesController do
         assignment_w_deductions = create(:assignment_with_deductive_annotations)
         category = assignment_w_deductions.annotation_categories.where.not(flexible_criterion_id: nil).first
         category.annotation_texts.destroy_all
-        post_as user, :create_annotation_text, params: { assignment_id: category.assessment_id,
-                                                content: 'New content',
-                                                annotation_category_id: category.id,
-                                                deduction: nil,
-                                                format: :js }
-
+        post_as user, :create_annotation_text,
+                params: { assignment_id: category.assessment_id,
+                          content: 'New content',
+                          annotation_category_id: category.id,
+                          deduction: nil,
+                          format: :js }
         assert_response 400
       end
     end
@@ -278,12 +270,10 @@ describe AnnotationCategoriesController do
         text = create(:annotation_text)
         category = text.annotation_category
         put_as user, :update_annotation_text,
-            params: {
-                assignment_id: category.assessment_id,
-                id: text.id,
-                content: 'updated content',
-                format: :js
-            }
+               params: { assignment_id: category.assessment_id,
+                         id: text.id,
+                         content: 'updated content',
+                         format: :js }
 
         expect(text.reload.content).to eq 'updated content'
       end
@@ -293,13 +283,11 @@ describe AnnotationCategoriesController do
         category = assignment_w_deductions.annotation_categories.where.not(flexible_criterion_id: nil).first
         text = category.annotation_texts.first
         put_as user, :update_annotation_text,
-            params: {
-                assignment_id: category.assessment_id,
-                id: text.id,
-                content: 'more updated content',
-                deduction: 0.1,
-                format: :js
-            }
+               params: { assignment_id: category.assessment_id,
+                         id: text.id,
+                         content: 'more updated content',
+                         deduction: 0.1,
+                         format: :js }
 
         expect(text.reload.deduction).to eq 0.1
       end
@@ -310,13 +298,11 @@ describe AnnotationCategoriesController do
         category = assignment_w_deductions.annotation_categories.where.not(flexible_criterion_id: nil).first
         text = category.annotation_texts.first
         put_as user, :update_annotation_text,
-            params: {
-                assignment_id: category.assessment_id,
-                id: text.id,
-                content: 'more updated content',
-                deduction: nil,
-                format: :js
-            }
+               params: { assignment_id: category.assessment_id,
+                         id: text.id,
+                         content: 'more updated content',
+                         deduction: nil,
+                         format: :js }
 
         assert_response 400
         expect(text.reload.deduction).to_not be nil
@@ -330,12 +316,10 @@ describe AnnotationCategoriesController do
         prev_content = text.content
         assignment_w_deductions.groupings.first.current_result.update!(released_to_students: true)
         put_as user, :update_annotation_text,
-            params: {
-                assignment_id: category.assessment_id,
-                id: text.id,
-                annotation_text: { content: 'more updated content', deduction: nil },
-                format: :js
-            }
+               params: { assignment_id: category.assessment_id,
+                         id: text.id,
+                         annotation_text: { content: 'more updated content', deduction: nil },
+                         format: :js }
 
         assert_response 400
         expect(text.reload.content).to eq(prev_content)
@@ -575,7 +559,7 @@ describe AnnotationCategoriesController do
       it 'filename passes naming conventions' do
         get_as user, :download, params: { assignment_id: assignment.id }, format: 'csv'
         filename = response.header['Content-Disposition']
-                       .split[1].split('"').second
+                           .split[1].split('"').second
         expect(filename).to eq "#{assignment.short_identifier}_annotations.csv"
       end
       it 'expects correct call to send_data when deductive information is included' do
@@ -585,10 +569,8 @@ describe AnnotationCategoriesController do
         annotation_text = category.annotation_texts.first
         csv_data = "#{category.annotation_category_name},#{criterion_name}," \
         "#{annotation_text.content},#{annotation_text.deduction}\n"
-        csv_options = {
-            filename: "#{assignment.short_identifier}_annotations.csv",
-            disposition: 'attachment'
-        }
+        csv_options = { filename: "#{assignment.short_identifier}_annotations.csv",
+                        disposition: 'attachment' }
         expect(@controller).to receive(:send_data).with(csv_data, csv_options) {
           # to prevent a 'missing template' error
           @controller.head :ok
@@ -601,10 +583,8 @@ describe AnnotationCategoriesController do
       it 'correctly downloads annotation_category information with deductive information' do
         assignment = create(:assignment_with_deductive_annotations)
         yml_data = convert_to_yml(assignment.annotation_categories)
-        yml_options = {
-            filename: "#{assignment.short_identifier}_annotations.yml",
-            disposition: 'attachment'
-        }
+        yml_options = { filename: "#{assignment.short_identifier}_annotations.yml",
+                        disposition: 'attachment' }
         expect(@controller).to receive(:send_data).with(yml_data, yml_options) {
           # to prevent a 'missing template' error
           @controller.head :ok
@@ -711,58 +691,52 @@ describe AnnotationCategoriesController do
       end
     end
     context 'When searching for an annotation text' do
-      before(:each) do
-        @annotation_text_one = create(:annotation_text,
-                                      annotation_category: annotation_category,
-                                      content: 'This is an annotation text.')
-        context '#destroy_annotation_text' do
-          it 'should respond with 403' do
-            text = create(:annotation_text)
-            category = text.annotation_category
-            delete_as user, :destroy_annotation_text,
-                      params: { assignment_id: category.assessment_id,
-                                id: text.id,
-                                format: :js }
-            expect(response.status).to eq(403)
-          end
+      context '#destroy_annotation_text' do
+        it 'should respond with 403' do
+          text = create(:annotation_text)
+          category = text.annotation_category
+          delete_as user, :destroy_annotation_text,
+                    params: { assignment_id: category.assessment_id,
+                              id: text.id,
+                              format: :js }
+          expect(response.status).to eq(403)
         end
-        context '#update_annotation_text' do
-          it 'should respond with 403' do
-            text = create(:annotation_text)
-            category = text.annotation_category
-            put_as user, :update_annotation_text,
-                   params: { assignment_id: category.assessment_id,
-                             id: text.id,
-                             annotation_text: { content: 'updated content' },
-                             format: :js }
-            expect(response.status).to eq(403)
-          end
+      end
+      context '#update_annotation_text' do
+        it 'should respond with 403' do
+          text = create(:annotation_text)
+          category = text.annotation_category
+          put_as user, :update_annotation_text,
+                 params: { assignment_id: category.assessment_id,
+                           id: text.id,
+                           annotation_text: { content: 'updated content' },
+                           format: :js }
+          expect(response.status).to eq(403)
         end
-        context '#upload' do
-          it 'should respond with 403' do
-            file_good = fixture_file_upload('files/annotation_categories/form_good.csv', 'text/csv')
-
-            post_as user, :upload, params: { assignment_id: assignment.id, upload_file: file_good }
-            expect(response.status).to eq(403)
-          end
+      end
+      context '#upload' do
+        it 'should respond with 403' do
+          file_good = fixture_file_upload('files/annotation_categories/form_good.csv', 'text/csv')
+          post_as user, :upload, params: { assignment_id: assignment.id, upload_file: file_good }
+          expect(response.status).to eq(403)
         end
-        context '#download' do
-          it 'should respond with 403' do
-            get_as user, :download, params: { assignment_id: assignment.id }, format: 'csv'
-            expect(response.status).to eq(403)
-          end
+      end
+      context '#download' do
+        it 'should respond with 403' do
+          get_as user, :download, params: { assignment_id: assignment.id }, format: 'csv'
+          expect(response.status).to eq(403)
         end
-        context '#find_annotation_text' do
-          before do
-            create(:annotation_text,
-                   annotation_category: annotation_category,
-                   content: 'This is an annotation text.')
-          end
-          it 'should respond with 403' do
-            string = 'This is an'
-            get_as user, :find_annotation_text, params: { assignment_id: assignment.id, string: string }
-            expect(response.status).to eq(403)
-          end
+      end
+      context '#find_annotation_text' do
+        before do
+          create(:annotation_text,
+                 annotation_category: annotation_category,
+                 content: 'This is an annotation text.')
+        end
+        it 'should respond with 403' do
+          string = 'This is an'
+          get_as user, :find_annotation_text, params: { assignment_id: assignment.id, string: string }
+          expect(response.status).to eq(403)
         end
       end
     end
