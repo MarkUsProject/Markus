@@ -10,9 +10,13 @@ class CourseSummariesController < ApplicationController
   end
 
   def populate
+    assignment_avg = Assignment.all.map(&:results_average)
+    gef_avg = GradeEntryForm.all.map(&:calculate_average)
+    averages = (assignment_avg.map{ |a| a.nil? ? nil : a.round }) + (gef_avg.map{ |g| g.nil? ? nil : g.round })
     render json: {
       data: get_table_json_data(current_user),
-      columns: populate_columns
+      columns: populate_columns,
+      averages: averages
     }
   end
 

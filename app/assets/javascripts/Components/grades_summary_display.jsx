@@ -30,6 +30,7 @@ class GradesSummaryDisplay extends React.Component {
         columns: res.columns,
         loading: false,
       });
+      console.log(res)
       let marks = []
       let labels = Object.keys(res.columns).map(k => {
         if(res.data[0].assessment_marks[parseInt(k) + 1]) {
@@ -39,8 +40,8 @@ class GradesSummaryDisplay extends React.Component {
         }
         return res.columns[k].Header;
       });
-      this.chart.current.setChart([labels, {label: 'your marks', data: marks}]);
-      this.table.current.setTable(res.columns, res.data);
+      this.chart.current.setChart([labels, {label: 'your marks', data: marks}, {label: 'averages', data: res.averages}]);
+      this.table.current.setTable(this.state.columns, this.state.data);
     });
   }
 
