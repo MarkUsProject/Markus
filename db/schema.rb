@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_07_09_165042) do
+ActiveRecord::Schema.define(version: 2020_06_08_190551) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -129,7 +129,6 @@ ActiveRecord::Schema.define(version: 2020_07_09_165042) do
     t.string "duration"
     t.datetime "start_time"
     t.boolean "is_timed", default: false, null: false
-    t.string "starter_code_type", default: "simple", null: false
     t.index ["assessment_id"], name: "index_assignment_properties_on_assessment_id", unique: true
   end
 
@@ -430,13 +429,6 @@ ActiveRecord::Schema.define(version: 2020_07_09_165042) do
     t.datetime "start_time"
   end
 
-  create_table "section_starter_code_groups", force: :cascade do |t|
-    t.bigint "section_id", null: false
-    t.bigint "starter_code_group_id", null: false
-    t.index ["section_id"], name: "index_section_starter_code_groups_on_section_id"
-    t.index ["starter_code_group_id"], name: "index_section_starter_code_groups_on_starter_code_group_id"
-  end
-
   create_table "sections", id: :serial, force: :cascade do |t|
     t.string "name"
     t.datetime "created_at"
@@ -480,20 +472,6 @@ ActiveRecord::Schema.define(version: 2020_07_09_165042) do
     t.integer "exam_template_id"
     t.index ["exam_template_id"], name: "index_split_pdf_logs_on_exam_template_id"
     t.index ["user_id"], name: "index_split_pdf_logs_on_user_id"
-  end
-
-  create_table "starter_code_entries", force: :cascade do |t|
-    t.bigint "starter_code_group_id", null: false
-    t.string "path", null: false
-    t.index ["starter_code_group_id"], name: "index_starter_code_entries_on_starter_code_group_id"
-  end
-
-  create_table "starter_code_groups", force: :cascade do |t|
-    t.bigint "assessment_id", null: false
-    t.boolean "is_default", default: false, null: false
-    t.string "entry_rename"
-    t.string "name", null: false
-    t.index ["assessment_id"], name: "index_starter_code_groups_on_assessment_id"
   end
 
   create_table "submission_files", id: :serial, force: :cascade do |t|
@@ -652,14 +630,10 @@ ActiveRecord::Schema.define(version: 2020_07_09_165042) do
   add_foreign_key "results", "peer_reviews", on_delete: :cascade
   add_foreign_key "results", "submissions", name: "fk_results_submissions", on_delete: :cascade
   add_foreign_key "rubric_criteria", "assessments", name: "fk_rubric_criteria_assignments", on_delete: :cascade
-  add_foreign_key "section_starter_code_groups", "sections"
-  add_foreign_key "section_starter_code_groups", "starter_code_groups"
   add_foreign_key "split_pages", "groups"
   add_foreign_key "split_pages", "split_pdf_logs"
   add_foreign_key "split_pdf_logs", "exam_templates"
   add_foreign_key "split_pdf_logs", "users"
-  add_foreign_key "starter_code_entries", "starter_code_groups"
-  add_foreign_key "starter_code_groups", "assessments"
   add_foreign_key "submission_files", "submissions", name: "fk_submission_files_submissions"
   add_foreign_key "tags", "users"
   add_foreign_key "template_divisions", "assignment_files"

@@ -389,10 +389,16 @@ class AssignmentsController < ApplicationController
   end
 
   def populate_starter_code_manager
+    # TODO: flash message if starter_code_type is 'simple' or 'sections' and there is no default starter_code_group
+    # TODO: flash message if there is a starter code group with starter_code_type == 'sections', use_rename == true and a blank rename_entry
     assignment = Assignment.find(params[:id])
     file_data = []
     assignment.starter_code_groups.order(:id).each do |g|
-      file_data << { id: g.id, name: g.name, files: starter_code_group_file_data(g) }
+      file_data << { id: g.id,
+                     name: g.name,
+                     rename: g.entry_rename,
+                     use_rename: g.use_rename,
+                     files: starter_code_group_file_data(g) }
     end
     section_data = Section.left_outer_joins(:starter_code_groups)
                           .order(:id)
@@ -448,14 +454,6 @@ class AssignmentsController < ApplicationController
   end
 
   private
-
-    def sanitize_file_name(file_name)
-      # If file_name is blank, return the empty string
-      return '' if file_name.nil?
-      File.basename(file_name).gsub(
-          SubmissionFile::FILENAME_SANITIZATION_REGEXP,
-          SubmissionFile::SUBSTITUTION_CHAR)
-    end
 
   def set_repo_vars(assignment, grouping)
     grouping.group.access_repo do |repo|
@@ -523,7 +521,7 @@ class AssignmentsController < ApplicationController
   end
 
   def starter_code_group_file_data(starter_code_group)
-    starter_code_group.files.map do |file|
+    starter_code_group.files_and_dirs.map do |file|
       if (starter_code_group.path + file).directory?
         { key: "#{file}/" }
       else

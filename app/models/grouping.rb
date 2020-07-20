@@ -430,6 +430,23 @@ class Grouping < ApplicationRecord
                           !assignment.past_collection_date?(self.inviter.section))
   end
 
+  def select_starter_code_entries
+    case assignment.starter_code_type
+    when 'simple'
+      return assignment.default_starter_code_group&.starter_code_entries || []
+    when 'sections'
+      return inviter&.section&.starter_code_group_for(assignment)&.starter_code_entries || []
+    when 'shuffle'
+      return assignment.starter_code_groups.includes(:starter_code_entries).map do |g|
+        StarterCodeEntry.find_by(id: g.starter_code_entries.ids.sample)
+      end.compact
+    when 'group'
+      return StarterCodeGroup.find_by(id: assignment.starter_code_groups.ids.sample)&.starter_code_entries || []
+    else
+      raise RuntimeError, 'starter_code_type is invalid'
+    end
+  end
+
   # When a Grouping is created, automatically create the folder for the
   # assignment in the repository, if it doesn't already exist.
   def create_grouping_repository_folder
@@ -443,7 +460,17 @@ class Grouping < ApplicationRecord
         txn.add_path(assignment_folder)
         result = group_repo.commit(txn)
       end
-      # TODO: add starter code
+      txn = group_repo.get_transaction('Markus', I18n.t('repo.commits.starter_code',
+                                                        assignment: self.assignment.short_identifier))
+      latest_revision = group_repo.get_latest_revision
+      current_tree = latest_revision.tree_at_path(assignment_folder, with_attrs: false)
+      select_starter_code_entries.each do |entry|
+        entry.add_files_to_transaction(txn, latest_revision.revision_identifier, current_tree: current_tree)
+      end
+      if txn.has_jobs?
+        result = group_repo.commit(txn)
+        self.update(starter_code_revision_identifier: group_repo.get_latest_revision.revision_identifier)
+      end
     end
 
     raise I18n.t('repo.assignment_dir_creation_error', short_identifier: assignment.short_identifier) unless result

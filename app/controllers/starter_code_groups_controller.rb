@@ -37,7 +37,7 @@ class StarterCodeGroupsController < ApplicationController
   def update
     assignment = Assignment.find_by(id: params[:assignment_id])
     starter_code_group = assignment.starter_code_groups.find_by(id: params[:id])
-    starter_code_group.update!(starter_code_group_params)
+    starter_code_group.update!(starter_code_group_params) # TODO: flash error message
   end
 
   def download_files
@@ -89,6 +89,10 @@ class StarterCodeGroupsController < ApplicationController
   private
 
   def starter_code_group_params
-    params.permit(:name, :assessment_id, :is_default)
+    group_params = params.permit(:name, :assessment_id, :is_default, :entry_rename, :use_rename)
+    %w[is_default use_rename].each do |bool_attr|
+      group_params[bool_attr] = group_params[bool_attr] == 'true' if group_params.key?(bool_attr)
+    end
+    group_params
   end
 end

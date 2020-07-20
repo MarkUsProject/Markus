@@ -4,10 +4,14 @@ import FileManager from "./markus_file_manager";
 import FileUploadModal from "./Modals/file_upload_modal";
 import ReactTable from "react-table";
 
+function blurOnEnter(event) {
+  if (event.key === 'Enter') { document.activeElement.blur() }
+}
+
 class StarterCodeManager extends React.Component {
 
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
       loading: true,
       dirUploadTarget: undefined,
@@ -97,7 +101,7 @@ class StarterCodeManager extends React.Component {
 
   changeGroupName = (groupUploadTarget, original_name, event) => {
     const new_name = event.target.value;
-    if (original_name !== new_name) {
+    if (!!new_name && original_name !== new_name) {
       $.ajax({
         type: "PUT",
         url: Routes.assignment_starter_code_group_path(
@@ -106,6 +110,28 @@ class StarterCodeManager extends React.Component {
         data: {name: new_name}
       }).then(this.fetchData);
     }
+  };
+
+  changeGroupRename = (groupUploadTarget, original_name, new_name) => {
+    if (!!new_name && original_name !== new_name) {
+      $.ajax({
+        type: "PUT",
+        url: Routes.assignment_starter_code_group_path(
+          this.props.assignment_id, groupUploadTarget
+        ),
+        data: {entry_rename: new_name}
+      }).then(this.fetchData);
+    }
+  };
+
+  changeGroupUseRename = (groupUploadTarget, checked) => {
+    $.ajax({
+      type: "PUT",
+      url: Routes.assignment_starter_code_group_path(
+        this.props.assignment_id, groupUploadTarget
+      ),
+      data: {use_rename: checked}
+    }).then(this.fetchData);
   };
 
   renderFileManagers = () => {
@@ -242,7 +268,6 @@ class StarterCodeManager extends React.Component {
         <label>
           Default Starter Code Group {/* TODO: internationalize this */}
           <select onChange={this.updateDefaultStarterCode} value={this.state.defaultStarterCodeGroup}>
-            <option disabled value={''}/>
             {Object.entries(this.state.files).map( (data, index) => {
               const {id, name} = data[1];
               return (
@@ -297,6 +322,34 @@ class StarterCodeManager extends React.Component {
     return '';
   };
 
+  renderStarterCodeRenamer = () => {
+    if (this.state.starterCodeType === 'shuffle') {
+      return (
+        <ReactTable
+          columns={[
+            {Header: 'group',
+             Cell: row => `${row.index + 1}: ${row.original.name}`},
+            {Header: 'rename',
+             Cell: row => {
+              return (
+                <StarterCodeEntryRenameInput
+                  rename={row.original.rename}
+                  use_rename={row.original.use_rename}
+                  groupUploadTarget={row.original.id}
+                  changeGroupRename={this.changeGroupRename}
+                  changeGroupUseRename={this.changeGroupUseRename}
+                />
+              )
+             }
+            }
+          ]}
+          data={this.state.files}
+        />
+      )
+    }
+    return '';
+  };
+
   render() {
     return (
       <div>
@@ -319,25 +372,77 @@ class StarterCodeManager extends React.Component {
         />
         {this.renderStarterCodeTypes()}
         {this.renderStarterCodeAssigner()}
+        {this.renderStarterCodeRenamer()}
       </div>
     )
   }
 }
 
 class StarterCodeGroupName extends React.Component {
-  blurOnEnter = (event) => {
-    if (event.key === 'Enter') { document.activeElement.blur() }
+  constructor(props) {
+    super(props);
+    this.state = {
+      editing: false
+    }
+  }
+
+  handleBlur = (event) => {
+    this.setState(
+      {editing: false},
+      this.props.changeGroupName(this.props.groupUploadTarget, this.props.name, event)
+    );
+  };
+
+  render() {
+    if (this.state.editing) {
+      return (
+        <input
+          autoFocus
+          type={'text'}
+          placeholder={this.props.name}
+          onKeyPress={blurOnEnter}
+          onBlur={this.handleBlur}
+        />
+      )
+    } else {
+      return (
+        <a href={'#'} onClick={() => {this.setState({editing: true})}}>
+          <h3>{this.props.name}</h3>
+        </a>
+      )
+    }
+  }
+}
+
+class StarterCodeEntryRenameInput extends React.Component {
+  handleBlur = (event) => {
+    this.props.changeGroupRename(this.props.groupUploadTarget, this.props.rename, event.target.value);
+  };
+
+  handleClick = (event) => {
+    this.props.changeGroupUseRename(this.props.groupUploadTarget, !event.target.checked)
   };
 
   render() {
     return (
-      <input
-        type={'text'}
-        placeholder={this.props.name}
-        onKeyPress={this.blurOnEnter}
-        onBlur={(e) => this.props.changeGroupName(this.props.groupUploadTarget, this.props.name, e)}
-      />
-    ) // TODO: add styling to make this more like a title
+      <React.Fragment>
+        <input
+          type={'text'}
+          placeholder={this.props.rename}
+          onKeyPress={blurOnEnter}
+          onBlur={this.handleBlur}
+          disabled={!this.props.use_rename}
+        />
+        <label>
+          <input
+            type={'checkbox'}
+            onChange={this.handleClick}
+            checked={!this.props.use_rename}
+          />
+          Use Original File Name
+        </label>
+      </React.Fragment>
+    )
   }
 }
 

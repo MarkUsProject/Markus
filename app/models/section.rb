@@ -18,4 +18,8 @@ class Section < ApplicationRecord
   def section_due_date_for(aid)
     SectionDueDate.where(assessment_id: aid, section_id: id).first
   end
+
+  def starter_code_group_for(assessment)
+    starter_code_groups.where(assessment_id: assessment.id).first || assessment.default_starter_code_group
+  end
 end

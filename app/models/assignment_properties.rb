@@ -57,7 +57,7 @@ class AssignmentProperties < ApplicationRecord
   validate :start_before_due, if: :is_timed
   validate :not_timed_and_scanned
 
-  STARTER_CODE_TYPES = %w[simple sections shuffle group custom].freeze
+  STARTER_CODE_TYPES = %w[simple sections shuffle group].freeze
 
   validates_inclusion_of :starter_code_type, in: STARTER_CODE_TYPES
 
