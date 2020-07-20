@@ -3,18 +3,24 @@ import React from 'react';
 export class DataChart extends React.Component {
 
   setChart(info) {
+    // info is list with first element as labels, each subsequent item a dataset
     let ctx = document.getElementById('term_marks').getContext('2d');
-    console.log(info);
     let data = {
-      labels: info.labels,
-      datasets: [{data: info.marks}]
+      labels: info[0],
+      datasets: info.slice(1)
     };
     var options = {
+      offset: true,
       responsive: true,
       legend: {
         display: true
       },
       scales: {
+        xAxes: [{
+          gridLines: {
+            offsetGridLines: true
+          }
+        }],
         yAxes: [{
           ticks: {
             beginAtZero: true,
@@ -25,7 +31,6 @@ export class DataChart extends React.Component {
       }
     };
 
-    // Draw it
     new Chart(ctx, {
       type: 'bar',
       data: data,

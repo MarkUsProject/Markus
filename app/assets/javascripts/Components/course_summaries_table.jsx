@@ -16,9 +16,10 @@ export class CourseSummaryTable extends React.Component {
     };
   }
 
-  componentDidUpdate(prevProps, prevState, snapshot) {
-    console.log(prevState);
-    console.log(this.state);
+  setTable(columns, data) {
+    console.log(columns)
+    console.log(data)
+    this.setState({columns: columns, data: data, loading: false});
   }
 
   nameColumns = [

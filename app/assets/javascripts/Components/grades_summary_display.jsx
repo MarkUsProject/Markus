@@ -12,6 +12,7 @@ class GradesSummaryDisplay extends React.Component {
       loading: true
     }
     this.chart = React.createRef();
+    this.table = React.createRef();
     this.fetchData = this.fetchData.bind(this);
   }
 
@@ -29,16 +30,17 @@ class GradesSummaryDisplay extends React.Component {
         columns: res.columns,
         loading: false,
       });
-      let marks = Object.keys(res.data[0].assessment_marks).map(k => {
-        return res.data[0].assessment_marks[k].percentage;
-      });
+      let marks = []
       let labels = Object.keys(res.columns).map(k => {
+        if(res.data[0].assessment_marks[parseInt(k) + 1]) {
+          marks.push(res.data[0].assessment_marks[parseInt(k) + 1].percentage);
+        } else {
+          marks.push(null);
+        }
         return res.columns[k].Header;
       });
-      this.chart.current.setChart({
-        marks: marks,
-        labels: labels
-      });
+      this.chart.current.setChart([labels, {label: 'your marks', data: marks}]);
+      this.table.current.setTable(res.columns, res.data);
     });
   }
 
@@ -48,6 +50,7 @@ class GradesSummaryDisplay extends React.Component {
         columns={this.state.columns}
         data={this.state.data}
         loading={this.state.loading}
+        ref={this.table}
         student={this.props.student}
       />
       <fieldset width={'500'}>
