@@ -31,7 +31,6 @@ module CourseSummariesHelper
     assignment_grades.each do |student_id, assessment_id, mark|
       student_data[student_id][:assessment_marks][assessment_id] = {
           mark: mark,
-          max_mark: @max_marks[assessment_id],
           percentage: mark.nil? ? nil : (mark * 100 / @max_marks[assessment_id]).round
       }
 
@@ -46,7 +45,6 @@ module CourseSummariesHelper
     gef_grades.each do |student_id, assessment_id, mark|
       student_data[student_id][:assessment_marks][assessment_id] = {
           mark: mark,
-          max_mark: @gef_max_marks[assessment_id],
           percentage: mark.nil? ? nil : (mark * 100 / @gef_max_marks[assessment_id]).round
       }
     end
@@ -71,6 +69,7 @@ module CourseSummariesHelper
                                    .where(grade_entry_items: { bonus: false })
                                    .group('assessment_id')
                                    .sum('grade_entry_items.out_of')
+    return @max_marks.merge(@gef_max_marks)
   end
 
   # Update student hashes with weighted grades for every marking scheme.
