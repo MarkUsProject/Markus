@@ -22,7 +22,7 @@ export class CourseSummaryTable extends React.Component {
         if(d.assessment_marks[m].mark === null) {
           d.assessment_marks[m] = null;
         } else {
-          d.assessment_marks[m] = d.assessment_marks[m].mark.toString() + ' / ' + d.assessment_marks[m].max_mark;
+          d.assessment_marks[m] = d.assessment_marks[m].mark.toString();
         }
       })
     });

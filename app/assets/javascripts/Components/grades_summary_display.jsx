@@ -41,14 +41,29 @@ class GradesSummaryDisplay extends React.Component {
       });
       if(this.props.student){
         this.chart.current.setChart([labels,
-          {label: 'My Mark', data: marks, backgroundColor: 'rgba(58,106,179,0.35)', borderColor: '#3a6ab3', borderWidth: 1},
-          {label: 'Class Average', data: res.averages, backgroundColor: 'rgba(228,151,44,0.35)', borderColor: '#e4972c', borderWidth: 1}]);
+          { label: 'My Mark',
+            data: marks,
+            backgroundColor: 'rgba(58,106,179,0.35)',
+            borderColor: '#3a6ab3',
+            borderWidth: 1,
+            hoverBackgroundColor: 'rgba(58,106,179,0.75)'},
+          { label: 'Class Average',
+            data: res.averages, backgroundColor: 'rgba(228,151,44,0.35)',
+            borderColor: '#e4972c',
+            borderWidth: 1,
+            hoverBackgroundColor: 'rgba(228,151,44,0.75)'}], true);
       } else {
         this.chart.current.setChart([labels, {label: 'Class Average',
           data: res.averages,
-          backgroundColor: 'rgba(228,151,44,0.25)',
-          borderColor: '#e4972c'}]);
+          backgroundColor: 'rgba(228,151,44,0.35)',
+          borderColor: '#e4972c',
+          borderWidth: 1,
+          hoverBackgroundColor: 'rgba(228,151,44,0.75)'}],
+          false);
       }
+      this.state.columns.forEach((c, i) => {
+        c.Header += ' (/' + res.totals[i + 1] +')'
+      })
       this.table.current.setTable(this.state.columns, this.state.data);
     });
   }
@@ -62,7 +77,7 @@ class GradesSummaryDisplay extends React.Component {
         ref={this.table}
         student={this.props.student}
       />
-      <fieldset style={{display: 'flex', 'justify-content': 'center'}}>
+      <fieldset style={{display: 'flex', justifyContent: 'center'}}>
         <DataChart
           ref={this.chart}
         />

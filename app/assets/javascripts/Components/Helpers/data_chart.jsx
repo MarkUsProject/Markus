@@ -2,7 +2,7 @@ import React from 'react';
 
 export class DataChart extends React.Component {
 
-  setChart(info) {
+  setChart(info, legend) {
     // info is list with first element as labels, each subsequent item a dataset
     let ctx = document.getElementById('term_marks').getContext('2d');
     let data = {
@@ -12,7 +12,7 @@ export class DataChart extends React.Component {
     var options = {
       responsive: false,
       legend: {
-        display: true
+        display: legend
       },
       scales: {
         yAxes: [{
@@ -34,7 +34,7 @@ export class DataChart extends React.Component {
 
   render() {
     return (
-      <canvas id='term_marks' style={{display: 'inline-flex', width: 'auto', height: 500}}></canvas>
+      <canvas id='term_marks' style={{display: 'inline-flex', width: 'auto', height: 500, margin: '10px'}}></canvas>
     );
   }
 }
