@@ -17,8 +17,15 @@ export class CourseSummaryTable extends React.Component {
   }
 
   setTable(columns, data) {
-    console.log(columns)
-    console.log(data)
+    data.forEach(d => {
+      Object.keys(d.assessment_marks).forEach(m => {
+        if(d.assessment_marks[m].mark === null) {
+          d.assessment_marks[m] = null;
+        } else {
+          d.assessment_marks[m] = d.assessment_marks[m].mark.toString() + ' / ' + d.assessment_marks[m].max_mark;
+        }
+      })
+    });
     this.setState({columns: columns, data: data, loading: false});
   }
 
