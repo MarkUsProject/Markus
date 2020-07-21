@@ -230,7 +230,8 @@ class ResultsController < ApplicationController
 
         # Totals
         data[:assignment_max_mark] =
-          result.is_a_review? ? assignment.pr_assignment.max_mark(:peer_visible) : marks_map.map { |h| h['max_mark'] }.sum
+          result.is_a_review? ? assignment.pr_assignment.max_mark(:peer_visible)
+            : marks_map.map { |h| h['max_mark'] }.sum
         data[:total] = marks_map.map { |h| h['mark'] }
         data[:old_total] = old_marks.values.sum
 

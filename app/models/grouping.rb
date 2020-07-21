@@ -152,23 +152,14 @@ class Grouping < ApplicationRecord
   # Updates the +criteria_coverage_count+ field of all groupings specified
   # by +grouping_ids+.
   def self.update_criteria_coverage_counts(assignment, grouping_ids = nil)
+    byebug
     if grouping_ids.nil?
       grouping_ids = assignment.groupings.pluck(:id)
     end
     return if grouping_ids.empty?
 
-    counts = CriterionTaAssociation
-             .from(
-               # subquery
-               assignment.criterion_ta_associations
-                         .joins(ta: :groupings)
-                         .where('groupings.id': grouping_ids)
-                         .select('criterion_ta_associations.criterion_id',
-                                 'groupings.id')
-                         .distinct
-             )
-             .group('subquery.id')
-             .count
+    counts = assignment.criterion_ta_associations.joins(ta: :groupings).group(:id).count
+
     grouping_data = Grouping.where(id: grouping_ids).pluck_to_hash.map do |h|
       { **h.symbolize_keys, criteria_coverage_count: counts[h['id'].to_i] || 0 }
     end
