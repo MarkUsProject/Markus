@@ -1,5 +1,8 @@
+# Policy for annotations controller. Default rule is manage?
 class AnnotationPolicy < ApplicationPolicy
+  # Default rule: Only admin, authorized grader and authorized reviewer can manage annotations.
   default_rule :manage?
+
   def add_existing_annotation?
     user.admin? || user.ta?
   end

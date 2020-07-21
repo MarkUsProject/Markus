@@ -1,7 +1,9 @@
+# Policy for Grade entry forms controller
 class GradeEntryFormPolicy < ApplicationPolicy
   default_rule :grading?
   alias_rule :new?, :create?, :edit?, :update?, to: :manage?
 
+  # Only admin and grader can grade the students result.
   def grading?
     user.admin? || user.ta?
   end

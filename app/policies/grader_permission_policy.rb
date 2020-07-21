@@ -1,3 +1,4 @@
+# Contains policy for all the grader permissions in the grader_permissions table
 class GraderPermissionPolicy < ApplicationPolicy
   def create_delete_annotations?
     user.grader_permission.create_delete_annotations

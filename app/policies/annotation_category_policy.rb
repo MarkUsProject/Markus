@@ -1,3 +1,4 @@
+# Policy for annotation categories controller.
 class AnnotationCategoryPolicy < ApplicationPolicy
   default_rule :manage?
 
