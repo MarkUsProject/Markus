@@ -1,5 +1,8 @@
+# Policy for Course summaries controller.
 class CourseSummaryPolicy < ApplicationPolicy
   alias_rule :index?, :populate?, to: :view_course_summary?
+
+  # Only admin and authorized grader can view course summary.
   def view_course_summary?
     user.admin? || (user.ta? &&
         (allowed_to?(:download_csv_grades_report?) || allowed_to?(:marking_schemes?))) || user.student?

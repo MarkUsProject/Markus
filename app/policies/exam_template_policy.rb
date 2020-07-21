@@ -1,3 +1,4 @@
+# Policy for Exam templates controller.
 class ExamTemplatePolicy < ApplicationPolicy
   default_rule :manage?
   alias_rule :index?, :create?, :destroy?, :update?, :generate?,
@@ -8,6 +9,7 @@ class ExamTemplatePolicy < ApplicationPolicy
     user.admin?
   end
 
+  # Only admin and authorized grader can manage or modify exam templates
   def modify?
     user.admin? || (user.ta? && allowed_to?(:manage_exam_templates?, with: GraderPermissionPolicy))
   end

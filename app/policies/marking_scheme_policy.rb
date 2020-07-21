@@ -1,4 +1,6 @@
+# Policy for Marking schemes controller.
 class MarkingSchemePolicy < ApplicationPolicy
+  # Default rule: Only admin and authorized grader can manage marking schemes.
   default_rule :manage?
 
   def manage?
