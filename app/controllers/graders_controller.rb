@@ -155,7 +155,7 @@ class GradersController < ApplicationController
                                                    .where(criterion_id: id, ta_id: grader_ids)
                                                    .pluck(:id))
         end
-        unassign_graders_from_criteria(criterion_associations, criterion_ids)
+        unassign_graders_from_criteria(criterion_associations)
       when 'random_assign'
         randomly_assign_graders_to_criteria(criterion_ids, grader_ids)
       end

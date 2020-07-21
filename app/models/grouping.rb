@@ -152,7 +152,6 @@ class Grouping < ApplicationRecord
   # Updates the +criteria_coverage_count+ field of all groupings specified
   # by +grouping_ids+.
   def self.update_criteria_coverage_counts(assignment, grouping_ids = nil)
-    byebug
     if grouping_ids.nil?
       grouping_ids = assignment.groupings.pluck(:id)
     end

@@ -244,6 +244,9 @@ describe GradersController do
                   params: { assignment_id: @assignment.id, upload_file: @criteria_grader_map_file, criteria: true }
 
           expect(response).to be_redirect
+          @criterion1.reload
+          @criterion2.reload
+          @criterion3.reload
           expect(@criterion1.tas.count).to eq 2
           expect(@criterion1.tas).to include(@ta1)
           expect(@criterion1.tas).to include(@ta2)
@@ -265,6 +268,9 @@ describe GradersController do
                   params: { assignment_id: @assignment.id, upload_file: @criteria_grader_map_file, criteria: true }
 
           expect(response).to be_redirect
+          @criterion1.reload
+          @criterion2.reload
+          @criterion3.reload
           expect(@criterion1.tas.count).to eq 0 # entire row is ignored
           expect(@criterion2.tas.count).to eq 1
           expect(@criterion2.tas).to include(@ta1)
@@ -284,6 +290,9 @@ describe GradersController do
                   params: { assignment_id: @assignment.id, upload_file: @criteria_grader_map_file, criteria: true }
 
           expect(response).to be_redirect
+          @criterion1.reload
+          @criterion2.reload
+          @criterion3.reload
           expect(@criterion1.tas.count).to eq 2
           expect(@criterion1.tas).to include(@ta1)
           expect(@criterion2.tas.count).to eq 0
@@ -1010,6 +1019,9 @@ describe GradersController do
                               graders: [@ta1.id, @ta2.id, @ta3.id],
                               current_table: 'criteria_table' }
             expect(response.status).to eq(200)
+            @criterion1.reload
+            @criterion2.reload
+            @criterion3.reload
             expect(@criterion1.tas).to eq []
             expect(@criterion2.tas).to eq []
             expect(@criterion3.tas).to eq []
@@ -1074,6 +1086,9 @@ describe GradersController do
                               criteria: [@criterion1.position], graders: [@ta1.id],
                               current_table: 'criteria_table' }
             expect(response.status).to eq(200)
+            @criterion1.reload
+            @criterion2.reload
+            @criterion3.reload
             expect(@criterion1.tas[0].id).to eq @ta1.id
             expect(@criterion2.tas).to eq []
             expect(@criterion3.tas).to eq []
@@ -1087,6 +1102,9 @@ describe GradersController do
                               graders: [@ta1.id],
                               current_table: 'criteria_table' }
             expect(response.status).to eq(200)
+            @criterion1.reload
+            @criterion2.reload
+            @criterion3.reload
             expect(@criterion1.tas[0].id).to eq @ta1.id
             expect(@criterion2.tas[0].id).to eq @ta1.id
             expect(@criterion3.tas).to eq []
@@ -1100,6 +1118,9 @@ describe GradersController do
                               graders: [@ta1.id, @ta2.id],
                               current_table: 'criteria_table' }
             expect(response.status).to eq(200)
+            @criterion1.reload
+            @criterion2.reload
+            @criterion3.reload
             expect(@criterion1.tas[0].id).to eq(@ta1.id).or(eq(@ta2.id))
             expect(@criterion2.tas).to eq []
             expect(@criterion3.tas).to eq []
@@ -1113,6 +1134,9 @@ describe GradersController do
                               graders: [@ta1.id, @ta2.id],
                               current_table: 'criteria_table' }
             expect(response.status).to eq(200)
+            @criterion1.reload
+            @criterion2.reload
+            @criterion3.reload
             expect(@criterion1.tas[0].id).to eq(@ta1.id).or(eq(@ta2.id))
             expect(@criterion2.tas[0].id).to eq(@ta1.id).or(eq(@ta2.id))
             expect(@criterion1.tas[0].id).not_to eq(@criterion2.tas[0].id)
@@ -1128,6 +1152,9 @@ describe GradersController do
                               graders: [@ta1.id, @ta2.id, @ta3.id],
                               current_table: 'criteria_table' }
             expect(response.status).to eq(200)
+            @criterion1.reload
+            @criterion2.reload
+            @criterion3.reload
             expect(@criterion1.tas.size).to eq 1
             expect(@criterion2.tas.size).to eq 1
             expect(@criterion3.tas.size).to eq 1
@@ -1149,6 +1176,7 @@ describe GradersController do
                     :global_actions,
                     params: { assignment_id: @assignment.id, global_actions: 'assign', current_table: 'criteria_table' }
             expect(response.status).to eq(400)
+            @assignment.reload
             @assignment.criteria do |criterion|
               expect(criterion.tas).to eq []
             end
@@ -1160,6 +1188,7 @@ describe GradersController do
                     params: { assignment_id: @assignment.id, global_actions: 'assign', graders: [@ta1],
                               current_table: 'criteria_table' }
             expect(response.status).to eq(400)
+            @assignment.reload
             @assignment.criteria do |criterion|
               expect(criterion.tas).to eq []
             end
@@ -1184,6 +1213,9 @@ describe GradersController do
                               graders: [@ta1.id],
                               current_table: 'criteria_table' }
             expect(response.status).to eq(200)
+            @criterion1.reload
+            @criterion2.reload
+            @criterion3.reload
             expect(@criterion1.tas[0].id).to eq @ta1.id
             expect(@criterion2.tas).to eq []
             expect(@criterion3.tas).to eq []
@@ -1197,6 +1229,9 @@ describe GradersController do
                               graders: [@ta1.id],
                               current_table: 'criteria_table' }
             expect(response.status).to eq(200)
+            @criterion1.reload
+            @criterion2.reload
+            @criterion3.reload
             expect(@criterion1.tas[0].id).to eq @ta1.id
             expect(@criterion2.tas[0].id).to eq @ta1.id
             expect(@criterion3.tas).to eq []
@@ -1210,6 +1245,9 @@ describe GradersController do
                               graders: [@ta1.id, @ta2.id],
                               current_table: 'criteria_table' }
             expect(response.status).to eq(200)
+            @criterion1.reload
+            @criterion2.reload
+            @criterion3.reload
             expect(@criterion1.tas.length).to eq 2
             expect(@criterion1.tas).to include(@ta1)
             expect(@criterion1.tas).to include(@ta2)
@@ -1225,6 +1263,9 @@ describe GradersController do
                               graders: [@ta1.id, @ta2.id],
                               current_table: 'criteria_table' }
             expect(response.status).to eq(200)
+            @criterion1.reload
+            @criterion2.reload
+            @criterion3.reload
             expect(@criterion1.tas.length).to eq 2
             expect(@criterion1.tas).to include(@ta1)
             expect(@criterion1.tas).to include(@ta2)
@@ -1242,6 +1283,9 @@ describe GradersController do
                               criteria: [@criterion1.position, @criterion2.position, @criterion3.position],
                               graders: [@ta1.id, @ta2.id, @ta3.id], current_table: 'criteria_table' }
             expect(response.status).to eq(200)
+            @criterion1.reload
+            @criterion2.reload
+            @criterion3.reload
             expect(@criterion1.tas.length).to eq 3
             expect(@criterion1.tas).to include(@ta1)
             expect(@criterion1.tas).to include(@ta2)
@@ -1263,6 +1307,7 @@ describe GradersController do
             expect(response.status).to eq(200)
             @criterion1.reload
             @criterion2.reload
+            @criterion3.reload
             expect(@criterion1.tas.length).to eq 2
             expect(@criterion1.tas).to include(@ta1)
             expect(@criterion1.tas).to include(@ta2)
