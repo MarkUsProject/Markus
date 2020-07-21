@@ -68,5 +68,6 @@ en:
         default: "Update files"
         required_files: "Update the list of required files for assignment %{assignment}"
         starter_code: "Update starter code files for assignment %{assignment}"
+        clear: "Clear files for %{assignment}"
       timeout: 'Waited %{ms} milliseconds to access this repository. Please wait a few seconds and try again.'
       assignment_dir_creation_error: 'Unable to create a directory for %{short_identifier}. Please retry this action.'

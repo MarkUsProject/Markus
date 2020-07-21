@@ -67,5 +67,6 @@ fr:
         default: "UPDATE ME"
         required_files: "UPDATE ME %{assignment}"
         starter_code: "UPDATE ME %{assignment}"
+        clear: "UPDATE ME %{assignment}"
       timeout: 'Attendu %{ms} millisecondes pour accéder à ce repo. Veuillez patienter quelques secondes et réessayer.'
       assignment_dir_creation_error: "N'a pas réussi à créer un dossier pour %{short_identifier}. Veuillez réessayer cette action"

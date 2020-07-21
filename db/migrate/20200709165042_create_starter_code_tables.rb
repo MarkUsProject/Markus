@@ -18,6 +18,13 @@ class CreateStarterCodeTables < ActiveRecord::Migration[6.0]
       t.references :starter_code_group, null: false, foreign_key: true
     end
 
+    create_table :grouping_starter_code_entries do |t|
+      t.references :grouping, null: false, foreign_key: true
+      t.references :starter_code_entry, null: false, foreign_key: true
+    end
+
     add_column :assignment_properties, :starter_code_type, :string, null: false, default: :simple
+    remove_column :groupings, :starter_code_revision_identifier, :text
+    add_column :groupings, :starter_code_timestamp, :datetime
   end
 end

@@ -77,5 +77,6 @@ es:
         default: "UPDATE ME"
         required_files: "UPDATE ME %{assignment}"
         starter_code: "UPDATE ME %{assignment}"
+        clear: "UPDATE ME %{assignment}"
       timeout: 'UPDATE ME %{ms}'
       assignment_dir_creation_error: "UPDATE ME %{short_identifier}"

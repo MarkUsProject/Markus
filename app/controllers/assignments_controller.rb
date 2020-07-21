@@ -391,6 +391,7 @@ class AssignmentsController < ApplicationController
   def populate_starter_code_manager
     # TODO: flash message if starter_code_type is 'simple' or 'sections' and there is no default starter_code_group
     # TODO: flash message if there is a starter code group with starter_code_type == 'sections', use_rename == true and a blank rename_entry
+    # TODO: flash message if there are changes and a starter code group exists
     assignment = Assignment.find(params[:id])
     file_data = []
     assignment.starter_code_groups.order(:id).each do |g|

@@ -4,7 +4,7 @@ require 'set'
 class Grouping < ApplicationRecord
   include SubmissionsHelper
 
-  after_create :create_grouping_repository_folder
+  after_create :update_starter_code
   after_commit :update_repo_permissions_after_save, on: [:create, :update]
 
   has_many :memberships, dependent: :destroy
@@ -80,6 +80,9 @@ class Grouping < ApplicationRecord
   validates_numericality_of :test_tokens, greater_than_or_equal_to: 0, only_integer: true
 
   has_one :extension
+
+  has_many :grouping_starter_code_entries, dependent: :destroy
+  has_many :starter_code_entries, through: :grouping_starter_code_entries
 
   # Assigns a random TA from a list of TAs specified by +ta_ids+ to each
   # grouping in a list of groupings specified by +grouping_ids+. The groupings
@@ -447,33 +450,56 @@ class Grouping < ApplicationRecord
     end
   end
 
-  # When a Grouping is created, automatically create the folder for the
-  # assignment in the repository, if it doesn't already exist.
-  def create_grouping_repository_folder
+  def update_starter_code
     return unless Rails.configuration.x.repository.is_repository_admin # create folder only if we are repo admin
     result = true
-    self.group.access_repo do |group_repo|
-      assignment_folder = self.assignment.repository_folder
-      unless group_repo.get_latest_revision.path_exists?(assignment_folder)
-        txn = group_repo.get_transaction('Markus', I18n.t('repo.commits.assignment_folder',
-                                                          assignment: self.assignment.short_identifier))
-        txn.add_path(assignment_folder)
-        result = group_repo.commit(txn)
-      end
-      txn = group_repo.get_transaction('Markus', I18n.t('repo.commits.starter_code',
-                                                        assignment: self.assignment.short_identifier))
-      latest_revision = group_repo.get_latest_revision
-      current_tree = latest_revision.tree_at_path(assignment_folder, with_attrs: false)
-      select_starter_code_entries.each do |entry|
-        entry.add_files_to_transaction(txn, latest_revision.revision_identifier, current_tree: current_tree)
-      end
-      if txn.has_jobs?
-        result = group_repo.commit(txn)
-        self.update(starter_code_revision_identifier: group_repo.get_latest_revision.revision_identifier)
-      end
-    end
+    GroupingStarterCodeEntry.transaction do
+      self.group.access_repo do |group_repo|
+        assignment_folder = self.assignment.repository_folder
+        latest_revision = group_repo.get_latest_revision
+        if latest_revision.path_exists?(assignment_folder)
+          txn = group_repo.get_transaction('Markus', I18n.t('repo.commits.clear',
+                                                            assignment: self.assignment.short_identifier))
+          latest_revision.tree_at_path(assignment_folder, with_attrs: false).map do |_path, obj|
+            obj_path = File.join(obj.path, obj.name)
+            if obj.is_a? Repository::RevisionFile
+              txn.remove(obj_path, latest_revision.revision_identifier)
+            else
+              txn.remove_directory(obj_path, latest_revision.revision_identifier)
+            end
+          end
+        else
+          txn = group_repo.get_transaction('Markus', I18n.t('repo.commits.assignment_folder',
+                                                            assignment: self.assignment.short_identifier))
+          txn.add_path(assignment_folder)
+        end
 
-    raise I18n.t('repo.assignment_dir_creation_error', short_identifier: assignment.short_identifier) unless result
+        if txn.has_jobs?
+          result = group_repo.commit(txn)
+          self.update!(starter_code_timestamp: group_repo.get_latest_revision.server_timestamp)
+        end
+
+        txn = group_repo.get_transaction('Markus', I18n.t('repo.commits.starter_code',
+                                                          assignment: self.assignment.short_identifier))
+        select_starter_code_entries.each do |entry|
+          entry.add_files_to_transaction(txn)
+          GroupingStarterCodeEntry.create(starter_code_entry_id: entry.id, grouping_id: self.id)
+        end
+
+        if txn.has_jobs?
+          result = group_repo.commit(txn)
+          self.update!(starter_code_timestamp: group_repo.get_latest_revision.server_timestamp)
+        end
+      end
+
+      raise I18n.t('repo.assignment_dir_creation_error', short_identifier: assignment.short_identifier) unless result
+    end
+  end
+
+  def changed_starter_code_at?(revision)
+    revision.tree_at_path(assignment.repository_folder, with_attrs: true).values.any? do |obj|
+      self.starter_code_timestamp.nil? || self.starter_code_timestamp < obj.last_modified_date
+    end
   end
 
   # Get the section for this group. If assignment restricts member of a groupe

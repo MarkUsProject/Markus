@@ -50,7 +50,7 @@ class StarterCodeGroup < ApplicationRecord
     entry_paths = starter_code_entries.pluck(:path)
     to_delete = entry_paths - fs_entry_paths
     to_add = fs_entry_paths - entry_paths
-    starter_code_entries.where(path: to_delete).delete_all unless to_delete.empty?
+    starter_code_entries.where(path: to_delete).destroy_all unless to_delete.empty?
     StarterCodeEntry.upsert_all(to_add.map { |p| { starter_code_group_id: self.id, path: p } } ) unless to_add.empty?
   end
 

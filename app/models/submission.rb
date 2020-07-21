@@ -65,11 +65,8 @@ class Submission < ApplicationRecord
           raise ActiveRecord::Rollback
         end
       end
-      starter_code_revision = grouping.starter_code_revision_identifier
-      unless starter_code_revision.nil?
-        # if starter code exists, check if the student did not change the starter code
-        new_submission.is_empty = starter_code_revision == revision&.revision_identifier
-      end
+      # if starter code exists, check if the student did not change the starter code
+      new_submission.is_empty = !grouping.changed_starter_code_at?(revision) unless revision.nil?
       new_submission.save!
       new_submission
     end
