@@ -39,19 +39,19 @@ class GradesSummaryDisplay extends React.Component {
           }
         });
         // Colors for chart are based on constants.css file, with modifications for opacity.
-        this.setState({labels: labels, datasets: [{ label: 'My Mark',
+        this.setState({labels: labels, datasets: [{ label: I18n.t('course_summary.student_mark'),
             data: student_marks,
             backgroundColor: 'rgba(58,106,179,0.35)',
             borderColor: '#3a6ab3',
             borderWidth: 1,
             hoverBackgroundColor: 'rgba(58,106,179,0.75)'},
-          { label: 'Class Average',
+          { label: I18n.t('course_summary.class_average'),
             data: res.averages, backgroundColor: 'rgba(228,151,44,0.35)',
             borderColor: '#e4972c',
             borderWidth: 1,
             hoverBackgroundColor: 'rgba(228,151,44,0.75)'}], legend: true});
       } else {
-        this.setState({labels: labels, datasets: [{label: 'Class Average',
+        this.setState({labels: labels, datasets: [{label: I18n.t('course_summary.class_average'),
           data: res.averages,
           backgroundColor: 'rgba(228,151,44,0.35)',
           borderColor: '#e4972c',

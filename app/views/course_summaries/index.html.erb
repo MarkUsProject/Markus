@@ -7,7 +7,7 @@
   </script>
 <% end %>
 <% if @current_user.student? %>
-  <h1><%= t('activerecord.models.mark.other') %></h1>
+  <h1 style="padding: 10px;"><%= t('course_summary.student_title') %></h1>
 <% else %>
   <%= content_for :title, t('course_summary.title') %>
 

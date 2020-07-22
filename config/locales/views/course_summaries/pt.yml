@@ -1,5 +1,7 @@
 pt:
   course_summary:
+    class_average: 'UPDATE ME!'
     grade_report: "Relatório de notas"
+    student_mark: 'UPDATE ME!'
     student_title: "Suas notas"
     title: "Course Summary"

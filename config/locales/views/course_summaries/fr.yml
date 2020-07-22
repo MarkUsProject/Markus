@@ -1,5 +1,7 @@
 fr:
   course_summary:
+    class_average: 'UPDATE ME!'
     grade_report: "Liste des étudiants et des devoirs"
+    student_mark: 'UPDATE ME!'
     student_title: "Vos marques de terme"
     title: "Course Summary"

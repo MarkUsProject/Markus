@@ -1,5 +1,7 @@
 en:
   course_summary:
+    class_average: 'Class Average'
     grade_report: "Grades report"
+    student_mark: 'My Mark'
     student_title: "Your Term Marks"
-    title: "Course Summary"
+    title: "Grades Summary"
