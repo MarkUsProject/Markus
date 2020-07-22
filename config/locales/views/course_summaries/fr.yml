@@ -1,5 +1,6 @@
 fr:
   course_summary:
+    absent: 'UPDATE ME!'
     class_average: 'UPDATE ME!'
     grade_report: "Liste des étudiants et des devoirs"
     student_mark: 'UPDATE ME!'

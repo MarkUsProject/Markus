@@ -1,5 +1,6 @@
 pt:
   course_summary:
+    absent: 'UPDATE ME!'
     class_average: 'UPDATE ME!'
     grade_report: "Relatório de notas"
     student_mark: 'UPDATE ME!'

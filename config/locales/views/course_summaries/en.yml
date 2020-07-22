@@ -1,5 +1,6 @@
 en:
   course_summary:
+    absent: 'No summary to display.'
     class_average: 'Class Average'
     grade_report: "Grades report"
     student_mark: 'My Mark'
