@@ -39,7 +39,7 @@ class GradesSummaryDisplay extends React.Component {
           }
         });
         // Colors for chart are based on constants.css file, with modifications for opacity.
-        this.setState({labels: labels, datasets: [{ label: I18n.t('course_summary.student_mark'),
+        this.setState({labels: labels, datasets: [{ label: I18n.t('results.your_mark'),
             data: student_marks,
             backgroundColor: 'rgba(58,106,179,0.35)',
             borderColor: '#3a6ab3',

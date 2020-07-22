@@ -3,6 +3,5 @@ es:
     absent: 'UPDATE ME!'
     class_average: 'UPDATE ME!'
     grade_report: "El reporte de notas"
-    student_mark: 'UPDATE ME!'
     student_title: "Sus notas del semestre"
     title: "Course Summary"

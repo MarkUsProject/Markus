@@ -20,7 +20,7 @@ en:
     subtotal: "Subtotal"
     summary: "Summary"
     total_extra_marks: "Total Extra Marks"
-    your_mark: "Your mark: %{mark}"
+    your_mark: 'Your Mark'
     cancel_override: 'Revert to automatic deductions'
     overridden_deductions: 'Overridden'
 

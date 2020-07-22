@@ -18,7 +18,7 @@ pt:
     subtotal: "Subtotal"
     summary: "Resumo"
     total_extra_marks: "Nota extra total"
-    your_mark: "Sua nota: %{mark}"
+    your_mark: 'Sua Nota'
     cancel_override: 'UPDATE ME!'
     overridden_deductions: 'UPDATE ME!'
 

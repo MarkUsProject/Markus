@@ -3,6 +3,5 @@ en:
     absent: 'No summary to display.'
     class_average: 'Class Average'
     grade_report: "Grades report"
-    student_mark: 'My Mark'
     student_title: "Your Term Marks"
     title: "Grades Summary"
