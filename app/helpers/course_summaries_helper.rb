@@ -31,7 +31,7 @@ module CourseSummariesHelper
     assignment_grades.each do |student_id, assessment_id, mark|
       student_data[student_id][:assessment_marks][assessment_id] = {
         mark: mark,
-        percentage: mark.nil? ? nil : (mark * 100 / @max_marks[assessment_id]).round
+        percentage: mark.nil? ? nil : (mark * 100 / @max_marks[assessment_id]).round(2)
       }
     end
 
@@ -44,7 +44,7 @@ module CourseSummariesHelper
     gef_grades.each do |student_id, assessment_id, mark|
       student_data[student_id][:assessment_marks][assessment_id] = {
         mark: mark,
-        percentage: mark.nil? ? nil : (mark * 100 / @gef_max_marks[assessment_id]).round
+        percentage: mark.nil? ? nil : (mark * 100 / @gef_max_marks[assessment_id]).round(2)
       }
     end
 
