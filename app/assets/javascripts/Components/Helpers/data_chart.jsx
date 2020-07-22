@@ -6,14 +6,14 @@ export class DataChart extends React.Component {
     let ctx = document.getElementById('term_marks').getContext('2d');
 
     let data = {
-      labels: [],
-      datasets: []
+      labels: this.props.labels,
+      datasets: this.props.datasets
     };
 
     let options = {
       responsive: false,
       legend: {
-        display: true
+        display: this.props.legend
       },
       scales: {
         yAxes: [{

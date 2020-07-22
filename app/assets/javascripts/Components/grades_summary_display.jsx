@@ -73,7 +73,7 @@ class GradesSummaryDisplay extends React.Component {
   }
 
   render() {
-    if (this.state.columns.length === 0) {
+    if (this.state.columns.length === 0 && !this.state.loading) {
       return <p>{I18n.t('course_summary.absent')}</p>;
     }
     return (<div>
