@@ -29,7 +29,8 @@ describe AnnotationCategoriesController do
       post :create,
            params: {
              assignment_id: assignment.id,
-             annotation_category: { annotation_category_name: category.annotation_category_name }
+             annotation_category: { annotation_category_name: category.annotation_category_name },
+             format: :js
            }
 
       expect(assignment.annotation_categories.count).to eq 1
