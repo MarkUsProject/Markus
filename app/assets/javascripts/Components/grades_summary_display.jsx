@@ -29,10 +29,10 @@ class GradesSummaryDisplay extends React.Component {
       let labels = Object.keys(res.columns).map(k => {
         return res.columns[k].Header;
       });
-      if(this.props.student){
+      if (this.props.student) {
         let student_marks = []
         Object.keys(res.columns).forEach(k => {
-          if(res.data[0].assessment_marks[parseInt(k) + 1]) {
+          if (res.data[0].assessment_marks[parseInt(k) + 1]) {
             student_marks.push(res.data[0].assessment_marks[parseInt(k) + 1].percentage);
           } else {
             student_marks.push(null);
