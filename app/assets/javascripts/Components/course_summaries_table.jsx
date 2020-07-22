@@ -6,27 +6,11 @@ import {stringFilter} from './Helpers/table_helpers';
 
 export class CourseSummaryTable extends React.Component {
   constructor(props) {
-    super();
+    super(props);
     this.state = {
-      data: props.data,
-      columns: props.columns,
-      loading: props.loading,
       showHidden: false,
       filtered: [{id: 'hidden', value: false}]
     };
-  }
-
-  setTable(columns, data) {
-    data.forEach(d => {
-      Object.keys(d.assessment_marks).forEach(m => {
-        if(d.assessment_marks[m].mark === null) {
-          d.assessment_marks[m] = null;
-        } else {
-          d.assessment_marks[m] = d.assessment_marks[m].mark.toString();
-        }
-      })
-    });
-    this.setState({columns: columns, data: data, loading: false});
   }
 
   nameColumns = [
@@ -90,15 +74,15 @@ export class CourseSummaryTable extends React.Component {
       </div>,
       <ReactTable
         key='course-summary-table'
-        data={this.state.data}
-        columns={this.props.student ? this.state.columns : this.nameColumns.concat(this.state.columns)}
+        data={this.props.data}
+        columns={this.props.student ? this.props.columns : this.nameColumns.concat(this.props.columns)}
         defaultFilterMethod={stringFilter}
         defaultSorted={[
           {
             id: 'user_name'
           }
         ]}
-        loading={this.state.loading}
+        loading={this.props.loading}
         filtered={this.state.filtered}
         onFilteredChange={(filtered) => this.setState({filtered})}
       />

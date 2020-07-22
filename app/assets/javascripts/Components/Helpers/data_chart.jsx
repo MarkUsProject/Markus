@@ -2,17 +2,18 @@ import React from 'react';
 
 export class DataChart extends React.Component {
 
-  setChart(info, legend) {
-    // info is list with first element as labels, each subsequent item a dataset
+  componentDidMount() {
     let ctx = document.getElementById('term_marks').getContext('2d');
+
     let data = {
-      labels: info[0],
-      datasets: info.slice(1)
+      labels: [],
+      datasets: []
     };
-    var options = {
+
+    let options = {
       responsive: false,
       legend: {
-        display: legend
+        display: true
       },
       scales: {
         yAxes: [{
@@ -25,11 +26,17 @@ export class DataChart extends React.Component {
       }
     };
 
-    new Chart(ctx, {
+    this.chart = new Chart(ctx, {
       type: 'bar',
       data: data,
       options: options
     });
+  }
+
+  componentDidUpdate() {
+    this.chart.data= {labels: this.props.labels, datasets: this.props.datasets}
+    this.chart.options.legend.display = this.props.legend;
+    this.chart.update();
   }
 
   render() {

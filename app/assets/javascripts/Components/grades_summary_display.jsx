@@ -4,15 +4,16 @@ import { CourseSummaryTable } from './course_summaries_table';
 import { DataChart } from './Helpers/data_chart';
 
 class GradesSummaryDisplay extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
       columns: [],
       data: [],
-      loading: true
+      loading: true,
+      datasets: [],
+      legend: true,
+      labels: []
     }
-    this.chart = React.createRef();
-    this.table = React.createRef();
     this.fetchData = this.fetchData.bind(this);
   }
 
@@ -25,24 +26,21 @@ class GradesSummaryDisplay extends React.Component {
       url: Routes.populate_course_summaries_path(),
       dataType: 'json',
     }).then(res => {
-      this.setState({
-        data: res.data,
-        columns: res.columns,
-        loading: false,
-      });
-      let marks = []
       let labels = Object.keys(res.columns).map(k => {
-        if(res.data[0].assessment_marks[parseInt(k) + 1]) {
-          marks.push(res.data[0].assessment_marks[parseInt(k) + 1].percentage);
-        } else {
-          marks.push(null);
-        }
         return res.columns[k].Header;
       });
       if(this.props.student){
-        this.chart.current.setChart([labels,
-          { label: 'My Mark',
-            data: marks,
+        let student_marks = []
+        Object.keys(res.columns).forEach(k => {
+          if(res.data[0].assessment_marks[parseInt(k) + 1]) {
+            student_marks.push(res.data[0].assessment_marks[parseInt(k) + 1].percentage);
+          } else {
+            student_marks.push(null);
+          }
+        });
+        // Colors for chart are based on constants.css file, with modifications for opacity.
+        this.setState({labels: labels, datasets: [{ label: 'My Mark',
+            data: student_marks,
             backgroundColor: 'rgba(58,106,179,0.35)',
             borderColor: '#3a6ab3',
             borderWidth: 1,
@@ -51,20 +49,26 @@ class GradesSummaryDisplay extends React.Component {
             data: res.averages, backgroundColor: 'rgba(228,151,44,0.35)',
             borderColor: '#e4972c',
             borderWidth: 1,
-            hoverBackgroundColor: 'rgba(228,151,44,0.75)'}], true);
+            hoverBackgroundColor: 'rgba(228,151,44,0.75)'}], legend: true});
       } else {
-        this.chart.current.setChart([labels, {label: 'Class Average',
+        this.setState({labels: labels, datasets: [{label: 'Class Average',
           data: res.averages,
           backgroundColor: 'rgba(228,151,44,0.35)',
           borderColor: '#e4972c',
           borderWidth: 1,
-          hoverBackgroundColor: 'rgba(228,151,44,0.75)'}],
-          false);
+          hoverBackgroundColor: 'rgba(228,151,44,0.75)'}], legend: false});
       }
-      this.state.columns.forEach((c, i) => {
-        c.Header += ' (/' + res.totals[i + 1] +')'
-      })
-      this.table.current.setTable(this.state.columns, this.state.data);
+      let tableColumns = res.columns.map((c, i) => {
+        return {accessor: c.accessor + '.mark',
+          className: c.className,
+          minWidth: c.minWidth,
+          Header: c.Header + ' (/' + res.totals[i + 1] + ')'};
+      });
+      this.setState({
+        data: res.data,
+        columns: tableColumns,
+        loading: false,
+      });
     });
   }
 
@@ -74,12 +78,13 @@ class GradesSummaryDisplay extends React.Component {
         columns={this.state.columns}
         data={this.state.data}
         loading={this.state.loading}
-        ref={this.table}
         student={this.props.student}
       />
       <fieldset style={{display: 'flex', justifyContent: 'center'}}>
         <DataChart
-          ref={this.chart}
+          labels={this.state.labels}
+          datasets={this.state.datasets}
+          legend={this.state.legend}
         />
       </fieldset>
     </div>);
