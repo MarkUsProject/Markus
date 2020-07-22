@@ -13,7 +13,7 @@ class CourseSummariesController < ApplicationController
     assignments_avg = Assignment.all.map { |a| a.results_average&.round(2) }
     gefs_avg = GradeEntryForm.all.map { |g| g.calculate_average&.round(2) }
     averages = assignments_avg + gefs_avg
-    if (current_user.admin?)
+    if current_user.admin?
       schemes_avg = MarkingScheme.all.map do |m|
         DescriptiveStatistics.mean(m.students_weighted_grades_array(current_user)).round(2)
       end
