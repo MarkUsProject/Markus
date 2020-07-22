@@ -708,4 +708,43 @@ describe AssignmentsController do
       end
     end
   end
+
+  context '#upload_starter_code' do
+    let(:assignment) { create :assignment }
+    let(:admin) { create :admin }
+    context 'uploading a zip file' do
+      let(:unzip) { 'true' }
+      let(:tree) do
+        zip_file = fixture_file_upload(File.join('/files', 'test_zip.zip'), 'application/zip')
+        post_as admin, :upload_starter_code, params: { id: assignment.id, new_files: [zip_file], unzip: unzip }
+        assignment.access_starter_code_repo do |repo|
+          repo.get_latest_revision.tree_at_path(assignment.repository_folder)
+        end
+      end
+      context 'when unzip if false' do
+        let(:unzip) { 'false' }
+        it 'should just upload the zip file as is' do
+          expect(tree['test_zip.zip']).not_to be_nil
+        end
+        it 'should not upload any other files' do
+          expect(tree.length).to eq 1
+        end
+      end
+      it 'should not upload the zip file' do
+        expect(tree['test_zip.zip']).to be_nil
+      end
+      it 'should upload the outer dir' do
+        expect(tree['test_zip']).not_to be_nil
+      end
+      it 'should upload the inner dir' do
+        expect(tree['test_zip/zip_subdir']).not_to be_nil
+      end
+      it 'should upload a file in the outer dir' do
+        expect(tree['test_zip/Shapes.java']).not_to be_nil
+      end
+      it 'should upload a file in the inner dir' do
+        expect(tree['test_zip/zip_subdir/TestShapes.java']).not_to be_nil
+      end
+    end
+  end
 end

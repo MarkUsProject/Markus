@@ -141,9 +141,20 @@ class AutomatedTestsController < ApplicationController
     delete_folders = params[:delete_folders] || []
     delete_files = params[:delete_files] || []
     new_files = params[:new_files] || []
+    unzip = params[:unzip] == 'true'
+
+    if unzip
+      zdirs, zfiles = new_files.map do |f|
+        next unless File.extname(f.path).casecmp?('.zip')
+        unzip_uploaded_file(f.path)
+      end.compact.transpose.map(&:flatten)
+      new_files.reject! { |f| File.extname(f.path).casecmp?('.zip') }
+      new_folders.push(*zdirs)
+      new_files.push(*zfiles)
+    end
 
     new_folders.each do |f|
-      folder_path = File.join(assignment.autotest_files_dir, f)
+      folder_path = File.join(assignment.autotest_files_dir, params[:path], f)
       FileUtils.mkdir_p(folder_path)
     end
     delete_folders.each do |f|

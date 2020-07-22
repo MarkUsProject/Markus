@@ -56,6 +56,7 @@ class AnnotationCategoriesController < ApplicationController
   def show
     @assignment = Assignment.find(params[:assignment_id])
     @annotation_category = AnnotationCategory.find(params[:id])
+    @annotation_texts = annotation_text_data(params[:id])
   end
 
   def destroy
@@ -97,6 +98,9 @@ class AnnotationCategoriesController < ApplicationController
       flash_now(:success, t('annotation_categories.update.success'))
       @assignment = Assignment.find(params[:assignment_id])
       @annotation_category = @annotation_text.annotation_category
+      @text = annotation_text_data(@annotation_text.annotation_category_id).find do |text|
+        text[:id] == @annotation_text.id
+      end
       render :insert_new_annotation_text
     else
       flash_message(:error, t('.error'))
@@ -118,6 +122,9 @@ class AnnotationCategoriesController < ApplicationController
     @annotation_text = AnnotationText.find(params[:id])
     if @annotation_text.update(**annotation_text_params.to_h.symbolize_keys, last_editor_id: current_user.id)
       flash_now(:success, t('annotation_categories.update.success'))
+      @text = annotation_text_data(@annotation_text.annotation_category_id).find do |text|
+        text[:id] == @annotation_text.id
+      end
     else
       flash_message(:error, t('.deductive_annotation_released_error'))
       head :bad_request
@@ -221,8 +228,53 @@ class AnnotationCategoriesController < ApplicationController
     redirect_to assignment_annotation_categories_path(assignment_id: @assignment.id)
   end
 
+  def annotation_text_data(category)
+    shared_values = ['annotation_texts.id AS id',
+                     'last_editors_annotation_texts.user_name AS last_editor',
+                     'users.user_name AS creator',
+                     'annotation_texts.content AS content']
+    base_query = AnnotationText.joins(:creator)
+                               .left_outer_joins(:last_editor)
+                               .where('annotation_texts.annotation_category_id': category)
+                               .order('users.user_name')
+    if category.nil?
+      text_data = base_query.joins(annotations: { result: { grouping: :group } })
+                            .where('groupings.assessment_id': params[:assignment_id])
+                            .order('results.id')
+                            .pluck_to_hash('groups.group_name AS group_name',
+                                           'groupings.assessment_id AS assignment_id',
+                                           'results.id AS result_id',
+                                           'results.submission_id AS submission_id',
+                                           *shared_values)
+    else
+      text_data = base_query.left_outer_joins(annotation_category: :flexible_criterion)
+                            .pluck_to_hash('annotation_categories.assessment_id AS assignment_id',
+                                           'annotation_texts.deduction AS deduction',
+                                           'annotation_texts.annotation_category_id AS annotation_category',
+                                           'flexible_criteria.max_mark AS max_mark',
+                                           *shared_values)
+      text_usage = AnnotationText.left_outer_joins(annotations: :result)
+                                 .where('annotation_texts.annotation_category_id': category)
+                                 .group('annotation_texts.id')
+                                 .count('annotations.id')
+      text_released = AnnotationText.left_outer_joins(annotations: :result)
+                                    .where('annotation_texts.annotation_category_id': category)
+                                    .group('annotation_texts.id')
+                                    .count('results.released_to_students OR NULL')
+      text_data.each do |text|
+        text['num_uses'] = text_usage[text[:id]]
+        text['released'] = text_released[text[:id]]
+      end
+    end
+    text_data
+  end
+
   def annotation_text_uses
     render json: AnnotationText.find(params[:annotation_text_id]).uses
+  end
+
+  def uncategorized_annotations
+    @texts = annotation_text_data(nil)
   end
 
   private
@@ -233,7 +285,7 @@ class AnnotationCategoriesController < ApplicationController
   end
 
   def annotation_text_params
-    params.require(:annotation_text).permit(:content, :deduction, :annotation_category_id)
+    params.permit(:id, :content, :deduction, :annotation_category_id)
   end
 
   def flash_interpolation_options

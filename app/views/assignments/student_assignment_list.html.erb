@@ -5,10 +5,10 @@
                               .partition { |a| a.upcoming(@current_user) } %>
 <div class='section'>
   <h3><%= t('assignments.due_date.upcoming') %></h3>
-  <%= render partial: 'assignments/list', locals: { assessments: upcoming, upcoming: true } %>
+  <%= render partial: 'assessments/list', locals: { assessments: upcoming, upcoming: true } %>
 </div>
 
 <div class='section'>
   <h3><%= t('assignments.due_date.past') %></h3>
-  <%= render partial: 'assignments/list', locals: { assessments: past, upcoming: false } %>
+  <%= render partial: 'assessments/list', locals: { assessments: past, upcoming: false } %>
 </div>

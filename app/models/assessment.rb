@@ -29,6 +29,7 @@ class Assessment < ApplicationRecord
   end
 
   def upcoming(*)
+    return true if self.due_date.nil?
     self.due_date > Time.current
   end
 end

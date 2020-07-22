@@ -146,10 +146,8 @@ class Assignment < Assessment
 
   def upcoming(current_user)
     grouping = current_user.accepted_grouping_for(self.id)
-    due_date = grouping&.due_date
-    if due_date.nil?
-      due_date = assignment.section_due_date(current_user.section)
-    end
+    due_date = grouping&.collection_date
+    return !past_collection_date?(current_user.section) if due_date.nil?
     due_date > Time.current
   end
 

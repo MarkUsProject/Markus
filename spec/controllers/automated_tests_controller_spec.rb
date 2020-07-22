@@ -138,7 +138,37 @@ describe AutomatedTestsController do
     end
     context 'POST upload_files' do
       before { post_as admin, :upload_files, params: params }
-      # TODO: write tests
+      after { FileUtils.rm_r assignment.autotest_files_dir }
+      context 'uploading a zip file' do
+        let(:zip_file) { fixture_file_upload(File.join('/files', 'test_zip.zip'), 'application/zip') }
+        let(:unzip) { 'true' }
+        let(:params) { { assignment_id: assignment.id, unzip: unzip, new_files: [zip_file], path: '' } }
+        let(:tree) { assignment.autotest_files }
+        context 'when unzip if false' do
+          let(:unzip) { 'false' }
+          it 'should just upload the zip file as is' do
+            expect(tree).to include('test_zip.zip')
+          end
+          it 'should not upload any other files' do
+            expect(tree.length).to eq 1
+          end
+        end
+        it 'should not upload the zip file' do
+          expect(tree).not_to include('test_zip.zip')
+        end
+        it 'should upload the outer dir' do
+          expect(tree).to include('test_zip')
+        end
+        it 'should upload the inner dir' do
+          expect(tree).to include('test_zip/zip_subdir')
+        end
+        it 'should upload a file in the outer dir' do
+          expect(tree).to include('test_zip/Shapes.java')
+        end
+        it 'should upload a file in the inner dir' do
+          expect(tree).to include('test_zip/zip_subdir/TestShapes.java')
+        end
+      end
     end
     context 'GET download_specs' do
       context 'when the file exists' do

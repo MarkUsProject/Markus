@@ -537,15 +537,16 @@ kbd {
   text-align: center;
 }
 
-
-/** Sortable lists */
-
-.sortable {
+.listings {
   background: $white;
   border: 1px solid $grey;
   border-radius: $radius;
   user-select: none;
+}
 
+// Sortable lists
+
+.sortable {
   header {
     border-bottom: 1px solid $grey;
     border-radius: $radius $radius 0 0;
@@ -600,6 +601,18 @@ kbd {
   }
 }
 
+.separate-listing {
+  margin-top: 20px;
+
+  li {
+    list-style: none;
+    padding: 0.5em 1em;
+  }
+
+  a {
+    outline: none;
+  }
+}
 
 /** Tags */
 

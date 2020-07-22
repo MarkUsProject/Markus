@@ -157,6 +157,11 @@ describe GradeEntryForm do
       gef = create(:grade_entry_form, due_date: Time.current - (60 * 60 * 24))
       expect(gef.upcoming(create(:student))).to be false
     end
+
+    it 'returns true if a grade entry form has a nil due date' do
+      gef = create(:grade_entry_form, due_date: nil)
+      expect(gef.upcoming(create(:student))).to be true
+    end
   end
 
   # Tests for calculate_average

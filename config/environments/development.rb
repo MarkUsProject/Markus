@@ -55,7 +55,8 @@ Markus::Application.configure do
     key: '_markus_session',
     path: '/csc108',
     expire_after: 3.weeks,
-    secure: false
+    secure: false,
+    same_site: :lax
   )
 
 

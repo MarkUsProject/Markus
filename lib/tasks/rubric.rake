@@ -26,7 +26,10 @@ namespace :db do
                                        annotation_category_name: random_words(3))
 
         (rand(10) + 3).times do
-          AnnotationText.create(annotation_category: ac, content: random_sentences(3), creator: Admin.first)
+          AnnotationText.create(annotation_category: ac,
+                                content: random_sentences(3),
+                                creator: Admin.first,
+                                last_editor: Admin.first)
         end
       end
 
@@ -63,7 +66,8 @@ namespace :db do
         AnnotationText.create(annotation_category: ac_with_criterion,
                               content: random_sentences(3),
                               deduction: assignment.flexible_criteria.first.max_mark,
-                              creator: Admin.first)
+                              creator: Admin.first,
+                              last_editor: Admin.first)
       end
       other_ac_with_criterion = AnnotationCategory.create(assignment: assignment,
                                                           position: 7,
@@ -73,7 +77,8 @@ namespace :db do
         AnnotationText.create(annotation_category: other_ac_with_criterion,
                               content: random_sentences(2),
                               deduction: assignment.flexible_criteria.second.max_mark,
-                              creator: Admin.first)
+                              creator: Admin.first,
+                              last_editor: Admin.first)
       end
 
       3.times do |index|
