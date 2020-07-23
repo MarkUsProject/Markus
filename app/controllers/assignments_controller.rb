@@ -386,7 +386,6 @@ class AssignmentsController < ApplicationController
   def starter_code
     # TODO: check if assignment exists and render 400/404
     @assignment = Assignment.find(params[:id])
-    # flash_message(:warning, 'Groupings exist') if @assignment.groupings.exists? # TODO: internationalize this
   end
 
   def populate_starter_code_manager
