@@ -158,16 +158,16 @@ class Grouping < ApplicationRecord
     return if grouping_ids.empty?
 
     counts = CriterionTaAssociation
-             .from(	
-               # subquery	
-               assignment.criterion_ta_associations	
-                         .joins(ta: :groupings)	
-                         .where('groupings.id': grouping_ids)	
-                         .select('criterion_ta_associations.criterion_id',	
-                                 'groupings.id')	
-                         .distinct	
-             )	
-             .group('subquery.id')	
+             .from(
+                # subquery
+                assignment.criterion_ta_associations
+                         .joins(ta: :groupings)
+                         .where('groupings.id': grouping_ids)
+                         .select('criterion_ta_associations.criterion_id',
+                                 'groupings.id')
+                         .distinct
+             )
+             .group('subquery.id')
              .count
 
     grouping_data = Grouping.where(id: grouping_ids).pluck_to_hash.map do |h|
