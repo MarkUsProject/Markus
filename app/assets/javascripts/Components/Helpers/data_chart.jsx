@@ -13,7 +13,7 @@ export class DataChart extends React.Component {
     let options = {
       responsive: false,
       legend: {
-        display: this.props.legend
+        display: true
       },
       scales: {
         yAxes: [{
@@ -47,7 +47,6 @@ export class DataChart extends React.Component {
       yRange = yRange.concat(d.data);
     });
     this.chart.data = {labels: this.props.labels, datasets: this.props.datasets};
-    this.chart.options.legend.display = this.props.legend;
     this.chart.options.scales.yAxes[0].ticks.max = Math.max(...yRange);
     this.chart.options.scales.yAxes[0].scaleLabel = {display: true, labelString: this.props.yLabel};
     this.chart.options.scales.xAxes[0].scaleLabel = {display: true, labelString: this.props.xLabel};
