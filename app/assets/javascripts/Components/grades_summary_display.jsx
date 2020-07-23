@@ -72,15 +72,16 @@ class GradesSummaryDisplay extends React.Component {
           yLabel: I18n.t('activerecord.models.mark.one') + ' (%)',
           xLabel: I18n.t('activerecord.models.assessment.one')});
       }
-      let tableColumns = res.columns.map((c, i) => {
-        return {accessor: c.accessor + '.mark',
-          className: c.className,
-          minWidth: c.minWidth,
-          Header: c.Header + ' (/' + res.totals[i + 1] + ')'};
+      let marksAbsent = Object.keys(res.data[0].assessment_marks).length === 0;
+      res.columns.forEach((c, i) => {
+        c.Header += ' (/' + res.totals[i + 1] + ')';
+        if (marksAbsent) {
+          c.accessor = 'filler';
+        }
       });
       this.setState({
-        data: res.data,
-        columns: tableColumns,
+        data: marksAbsent ? [{filler: '...'}] : res.data,
+        columns: res.columns,
         loading: false,
       });
     });
