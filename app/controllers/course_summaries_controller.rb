@@ -11,22 +11,33 @@ class CourseSummariesController < ApplicationController
 
   def populate
     averages = {}
-    Assignment.all.each do |a|
-      averages[a.short_identifier] = a.results_average&.round(2)
-    end
-    GradeEntryForm.all.each do |g|
-      averages[g.short_identifier] = g.calculate_average&.round(2)
-    end
+    visible_assessment_totals = []
     if current_user.admin?
+      visible_assessments = Assessment.all.order(id: :asc).pluck_to_hash(:id, :type, :short_identifier)
       MarkingScheme.all.each do |m|
         averages[m.name] = DescriptiveStatistics.mean(m.students_weighted_grades_array(current_user)).round(2)
+      end
+    else
+      visible_assessments = Assessment.where(is_hidden: false).order(id: :asc).pluck_to_hash(:id,
+                                                                                             :type,
+                                                                                             :short_identifier)
+    end
+    visible_assessments.each do |a|
+      if a[:type] == 'GradeEntryForm'
+        gef = GradeEntryForm.find(a[:id])
+        visible_assessment_totals << gef.grade_entry_items.sum(:out_of)
+        averages[gef.short_identifier] = gef.calculate_average&.round(2)
+      else
+        assignment = Assignment.find(a[:id])
+        visible_assessment_totals << assignment.max_mark
+        averages[assignment.short_identifier] = assignment.results_average&.round(2)
       end
     end
     render json: {
       data: get_table_json_data(current_user),
       columns: populate_columns,
       averages: averages,
-      totals: course_information
+      totals: visible_assessment_totals
     }
   end
 

@@ -68,7 +68,6 @@ module CourseSummariesHelper
                                    .where(grade_entry_items: { bonus: false })
                                    .group('assessment_id')
                                    .sum('grade_entry_items.out_of')
-    @max_marks.merge(@gef_max_marks)
   end
 
   # Update student hashes with weighted grades for every marking scheme.

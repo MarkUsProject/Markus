@@ -71,9 +71,7 @@ class GradesSummaryDisplay extends React.Component {
           xLabel: I18n.t('activerecord.models.assessment.one')});
       }
       res.columns.forEach((c, i) => {
-        if ((i + 1) in res.totals) {
-          c.Header += ' (/' + (Math.round(parseFloat(res.totals[i + 1]) * 100) / 100).toString() + ')';
-        }
+        c.Header += ' (/' + (Math.round(parseFloat(res.totals[i]) * 100) / 100).toString() + ')';
       });
       this.setState({
         data: res.data,
