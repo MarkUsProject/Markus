@@ -11,6 +11,7 @@ class CourseSummariesController < ApplicationController
 
   def populate
     averages = {}
+    medians = {}
     visible_assessment_totals = []
     if current_user.admin?
       visible_assessments = Assessment.all.order(id: :asc).pluck_to_hash(:id, :type, :short_identifier)
@@ -27,16 +28,21 @@ class CourseSummariesController < ApplicationController
         gef = GradeEntryForm.find(a[:id])
         visible_assessment_totals << gef.grade_entry_items.sum(:out_of)
         averages[gef.short_identifier] = gef.calculate_average&.round(2)
+        medians[gef.short_identifier] = gef.calculate_median&.round(2)
       else
         assignment = Assignment.find(a[:id])
         visible_assessment_totals << assignment.max_mark
         averages[assignment.short_identifier] = assignment.results_average&.round(2)
+        if current_user.admin? || assignment.display_median_to_students
+          medians[assignment.short_identifier] = assignment.results_median&.round(2)
+        end
       end
     end
     render json: {
-      data: get_table_json_data(current_user),
-      columns: populate_columns,
       averages: averages,
+      columns: populate_columns,
+      data: get_table_json_data(current_user),
+      medians: medians,
       totals: visible_assessment_totals
     }
   end

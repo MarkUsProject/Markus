@@ -7,11 +7,19 @@ class GradesSummaryDisplay extends React.Component {
 
   // Colors for chart are based on constants.css file, with modifications for opacity.
   averageDataSet = {
-    label: I18n.t('course_summary.class_average'),
+    label: I18n.t('class_average'),
     backgroundColor: 'rgba(228,151,44,0.35)',
     borderColor: '#e4972c',
     borderWidth: 1,
     hoverBackgroundColor: 'rgba(228,151,44,0.75)'
+  };
+
+  medianDataSet = {
+    label: I18n.t('class_median'),
+    backgroundColor: 'rgba(35,192,35,0.35)',
+    borderColor: '#23c023',
+    borderWidth: 1,
+    hoverBackgroundColor: 'rgba(35,192,35,0.75)'
   };
 
   individualDataSet = {
@@ -48,14 +56,14 @@ class GradesSummaryDisplay extends React.Component {
       let labels = Object.keys(res.columns).map(k => {
         return res.columns[k].Header;
       });
-      let averages = labels.map(l => {
-        if (res.averages[l]) {
-          return parseFloat(res.averages[l]);
-        } else {
-          return null;
-        }
+      let averages = [];
+      let medians = [];
+      labels.forEach(l => {
+        averages.push(res.averages[l] ? parseFloat(res.averages[l]) : null);
+        medians.push(res.medians[l] ? parseFloat(res.medians[l]) : null);
       });
       this.averageDataSet.data = averages;
+      this.medianDataSet.data = medians;
       if (this.props.student) {
         let student_marks = []
         Object.keys(res.columns).forEach(k => {
@@ -66,9 +74,9 @@ class GradesSummaryDisplay extends React.Component {
           }
         });
         this.individualDataSet.data = student_marks;
-        this.setState({labels: labels, datasets: [this.individualDataSet, this.averageDataSet]});
+        this.setState({labels: labels, datasets: [this.individualDataSet, this.averageDataSet, this.medianDataSet]});
       } else {
-        this.setState({labels: labels, datasets: [this.averageDataSet]});
+        this.setState({labels: labels, datasets: [this.averageDataSet, this.medianDataSet]});
       }
 
       res.columns.forEach((c, i) => {
