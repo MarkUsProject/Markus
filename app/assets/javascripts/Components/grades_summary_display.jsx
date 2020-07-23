@@ -32,13 +32,17 @@ class GradesSummaryDisplay extends React.Component {
         return res.columns[k].Header;
       });
       let averages = labels.map(l => {
-        return res.averages[l];
+        if (res.averages[l]) {
+          return parseFloat(res.averages[l]);
+        } else {
+          return null;
+        }
       });
       if (this.props.student) {
         let student_marks = []
         Object.keys(res.columns).forEach(k => {
           if (res.data[0].assessment_marks[parseInt(k) + 1]) {
-            student_marks.push(res.data[0].assessment_marks[parseInt(k) + 1].percentage);
+            student_marks.push(parseFloat(res.data[0].assessment_marks[parseInt(k) + 1].percentage));
           } else {
             student_marks.push(null);
           }
