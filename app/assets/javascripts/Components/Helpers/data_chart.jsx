@@ -21,6 +21,14 @@ export class DataChart extends React.Component {
             beginAtZero: true,
             min: 0,
             max: 100
+          },
+          scaleLabel: {
+            display: false
+          }
+        }],
+        xAxes: [{
+          scaleLabel: {
+            display: false
           }
         }]
       }
@@ -36,6 +44,8 @@ export class DataChart extends React.Component {
   componentDidUpdate() {
     this.chart.data= {labels: this.props.labels, datasets: this.props.datasets}
     this.chart.options.legend.display = this.props.legend;
+    this.chart.options.scales.yAxes[0].scaleLabel = {display: true, labelString: this.props.yLabel}
+    this.chart.options.scales.xAxes[0].scaleLabel = {display: true, labelString: this.props.xLabel}
     this.chart.update();
   }
 

@@ -12,7 +12,9 @@ class GradesSummaryDisplay extends React.Component {
       loading: true,
       datasets: [],
       legend: true,
-      labels: []
+      labels: [],
+      xLabel: '',
+      yLabel: ''
     }
     this.fetchData = this.fetchData.bind(this);
   }
@@ -49,14 +51,19 @@ class GradesSummaryDisplay extends React.Component {
             data: res.averages, backgroundColor: 'rgba(228,151,44,0.35)',
             borderColor: '#e4972c',
             borderWidth: 1,
-            hoverBackgroundColor: 'rgba(228,151,44,0.75)'}], legend: true});
+            hoverBackgroundColor: 'rgba(228,151,44,0.75)'}],
+          legend: true,
+          yLabel: I18n.t('activerecord.models.mark.one') + ' (%)',
+          xLabel: I18n.t('activerecord.models.assessment.one')});
       } else {
         this.setState({labels: labels, datasets: [{label: I18n.t('course_summary.class_average'),
           data: res.averages,
           backgroundColor: 'rgba(228,151,44,0.35)',
           borderColor: '#e4972c',
           borderWidth: 1,
-          hoverBackgroundColor: 'rgba(228,151,44,0.75)'}], legend: false});
+          hoverBackgroundColor: 'rgba(228,151,44,0.75)'}], legend: false,
+          yLabel: I18n.t('activerecord.models.mark.one') + ' (%)',
+          xLabel: I18n.t('activerecord.models.assessment.one')});
       }
       let tableColumns = res.columns.map((c, i) => {
         return {accessor: c.accessor + '.mark',
@@ -88,6 +95,8 @@ class GradesSummaryDisplay extends React.Component {
           labels={this.state.labels}
           datasets={this.state.datasets}
           legend={this.state.legend}
+          xLabel={this.state.xLabel}
+          yLabel={this.state.yLabel}
         />
       </fieldset>
     </div>);
