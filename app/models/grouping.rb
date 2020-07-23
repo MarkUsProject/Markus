@@ -380,6 +380,10 @@ class Grouping < ApplicationRecord
     !current_submission_used.nil?
   end
 
+  def has_non_empty_submission?
+    has_submission? && !current_submission_used.is_empty
+  end
+
   def marking_completed?
     !current_result.nil? && current_result.marking_state == Result::MARKING_STATES[:complete]
   end
