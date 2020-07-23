@@ -66,21 +66,6 @@ class SectionsController < ApplicationController
     redirect_to action: :index
   end
 
-  def update_starter_code_group
-    assignment_id = params[:assignment_id]
-    section_id = params[:id]
-    group_id = params[:starter_code_group_id]
-    group_id = group_id.present? ? group_id : nil
-    SectionStarterCodeGroup.joins(:starter_code_group)
-                           .where('starter_code_groups.assessment_id': assignment_id)
-                           .where('section_id': section_id)
-                           .where.not('starter_code_groups.id': group_id)
-                           .each(&:destroy)
-    return if group_id.nil?
-
-    SectionStarterCodeGroup.find_or_create_by(section_id: section_id, starter_code_group_id: group_id)
-  end
-
   private
 
   def section_params

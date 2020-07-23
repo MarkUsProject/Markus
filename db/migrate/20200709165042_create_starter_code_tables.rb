@@ -26,5 +26,6 @@ class CreateStarterCodeTables < ActiveRecord::Migration[6.0]
     add_column :assignment_properties, :starter_code_type, :string, null: false, default: :simple
     remove_column :groupings, :starter_code_revision_identifier, :text
     add_column :groupings, :starter_code_timestamp, :datetime
+    add_column :groupings, :starter_code_changed, :boolean, null: false, default: false
   end
 end

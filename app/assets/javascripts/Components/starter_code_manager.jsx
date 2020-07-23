@@ -20,13 +20,18 @@ class StarterCodeManager extends React.Component {
       starterCodeType: 'simple',
       defaultStarterCodeGroup: '',
       files: {},
-      sections: {}
+      sections: {},
+      form_changed: false,
     }
   }
 
   componentDidMount() {
     this.fetchData();
   }
+
+  toggleFormChanged = (value) => {
+    this.setState({form_changed: value}, () => set_onbeforeunload(this.state.form_changed));
+  };
 
   fetchData = () => {
     $.get({
@@ -61,11 +66,12 @@ class StarterCodeManager extends React.Component {
     }).then(() => this.setState({groupUploadTarget: undefined})).then(this.fetchData);
   };
 
-  handleCreateFiles = (groupUploadTarget, files) => {
+  handleCreateFiles = (groupUploadTarget, files, unzip) => {
     const prefix = this.state.dirUploadTarget || '';
     let data = new FormData();
     Array.from(files).forEach(f => data.append('new_files[]', f, f.name));
     data.append('path', prefix);
+    data.append('unzip', unzip);
     $.post({
       url: Routes.update_files_assignment_starter_code_group_path(
         this.props.assignment_id, groupUploadTarget,
@@ -112,26 +118,50 @@ class StarterCodeManager extends React.Component {
     }
   };
 
-  changeGroupRename = (groupUploadTarget, original_name, new_name) => {
-    if (!!new_name && original_name !== new_name) {
-      $.ajax({
-        type: "PUT",
-        url: Routes.assignment_starter_code_group_path(
-          this.props.assignment_id, groupUploadTarget
-        ),
-        data: {entry_rename: new_name}
-      }).then(this.fetchData);
-    }
+  saveStateChanges = () => {
+    let starter_code_groups = this.state.files.map( (file_data) => {
+      file_data.is_default = file_data.id === this.state.defaultStarterCodeGroup;
+      let {files, ...rest} = file_data;
+      return rest
+    });
+    const data = {
+      assignment: {starter_code_type: this.state.starterCodeType},
+      sections: this.state.sections,
+      starter_code_groups: starter_code_groups,
+      default_starter_code_group: this.state.defaultStarterCodeGroup,
+    };
+    $.ajax({
+      type: "PUT",
+      url: Routes.update_starter_code_assignment_path(this.props.assignment_id),
+      data: JSON.stringify(data),
+      processData: false,
+      contentType: 'application/json'
+    }).then(this.fetchData)
+      .then(() => this.toggleFormChanged(false));
+  };
+
+  changeGroupRename = (groupUploadTarget, new_name) => {
+    this.setState((prevState) => {
+      let new_files = prevState.files.map( (files) => {
+        if (files.id === groupUploadTarget) {
+          files.entry_rename = new_name
+        }
+        return files;
+      });
+      return {files: new_files};
+    }, () => this.toggleFormChanged(true));
   };
 
   changeGroupUseRename = (groupUploadTarget, checked) => {
-    $.ajax({
-      type: "PUT",
-      url: Routes.assignment_starter_code_group_path(
-        this.props.assignment_id, groupUploadTarget
-      ),
-      data: {use_rename: checked}
-    }).then(this.fetchData);
+    this.setState((prevState) => {
+      let new_files = prevState.files.map( (files) => {
+        if (files.id === groupUploadTarget) {
+          files.use_rename = checked
+        }
+        return files;
+      });
+      return {files: new_files};
+    }, () => this.toggleFormChanged(true));
   };
 
   renderFileManagers = () => {
@@ -140,7 +170,7 @@ class StarterCodeManager extends React.Component {
         {Object.entries(this.state.files).map( (data, index) => {
           const {id, name, files} = data[1];
           return (
-            <div key={index}>
+            <fieldset key={index}>
               <StarterCodeGroupName
                 name={name}
                 groupUploadTarget={id}
@@ -166,45 +196,24 @@ class StarterCodeManager extends React.Component {
               >
                 Delete
               </button> {/* TODO: add styling to right align with x icon */}
-            </div>
+            </fieldset>
           );
         })}
       </React.Fragment>
     )
   };
 
-  updateStarterCodeType = (event) => {
-    const type = event.target.value;
-    if (type !== this.state.starterCodeType) {
-      $.ajax({
-        type: "PUT",
-        url: Routes.update_starter_code_rule_type_assignment_path(
-          this.props.assignment_id
-        ),
-        data: {starter_code_type: type}
-      }).then(this.fetchData);
-    }
-  };
-
-  updateDefaultStarterCode = (event) => {
-    const id = event.target.value;
-    $.ajax({
-      type: 'PUT',
-      url: Routes.assignment_starter_code_group_path(
-        this.props.assignment_id, id
-      ),
-      data: {is_default: true}
-    }).then(this.fetchData)
-  };
-
   updateSectionStarterCode = (event) => {
-    let [section_id, group_id] = event.target.value.split('_');
-    $.post({
-      url: Routes.update_starter_code_group_section_path(
-        section_id
-      ),
-      data: {assignment_id: this.props.assignment_id, starter_code_group_id: group_id}
-    }).then(this.fetchData)
+    let [section_id, group_id] = event.target.value.split('_').map( (val) => { return parseInt(val) || null } );
+    this.setState((prevState) => {
+      let new_sections = prevState.sections.map( (section) => {
+        if (section.section_id === section_id) {
+          section.group_id = group_id
+        }
+        return section;
+      });
+      return {sections: new_sections};
+    }, () => this.toggleFormChanged(true));
   };
 
   renderStarterCodeTypes = () => {
@@ -217,7 +226,7 @@ class StarterCodeManager extends React.Component {
               name={'starter_code_type'}
               value={'simple'}
               checked={this.state.starterCodeType === 'simple'}
-              onChange={this.updateStarterCodeType}
+              onChange={() => { this.setState({starterCodeType: 'simple'}, () => this.toggleFormChanged(true)) }}
             />
             Simple
           </label>
@@ -229,7 +238,7 @@ class StarterCodeManager extends React.Component {
               name={'starter_code_type'}
               value={'sections'}
               checked={this.state.starterCodeType === 'sections'}
-              onChange={this.updateStarterCodeType}
+              onChange={() => { this.setState({starterCodeType: 'sections'}, () => this.toggleFormChanged(true)) }}
             />
             Sections
           </label>
@@ -241,7 +250,7 @@ class StarterCodeManager extends React.Component {
               name={'starter_code_type'}
               value={'shuffle'}
               checked={this.state.starterCodeType === 'shuffle'}
-              onChange={this.updateStarterCodeType}
+              onChange={() => { this.setState({starterCodeType: 'shuffle'}, () => this.toggleFormChanged(true)) }}
             />
             Shuffle
           </label>
@@ -253,7 +262,7 @@ class StarterCodeManager extends React.Component {
               name={'starter_code_type'}
               value={'group'}
               checked={this.state.starterCodeType === 'group'}
-              onChange={this.updateStarterCodeType}
+              onChange={() => { this.setState({starterCodeType: 'group'}, () => this.toggleFormChanged(true)) }}
             />
             Group
           </label>
@@ -267,7 +276,12 @@ class StarterCodeManager extends React.Component {
       let default_selector = (
         <label>
           Default Starter Code Group {/* TODO: internationalize this */}
-          <select onChange={this.updateDefaultStarterCode} value={this.state.defaultStarterCodeGroup}>
+          <select
+            onChange={(e) => this.setState(
+              {defaultStarterCodeGroup: parseInt(e.target.value)}, () => this.toggleFormChanged(true)
+            )}
+            value={this.state.defaultStarterCodeGroup}
+          >
             {Object.entries(this.state.files).map( (data, index) => {
               const {id, name} = data[1];
               return (
@@ -287,12 +301,7 @@ class StarterCodeManager extends React.Component {
               {
                 Header: 'starter code group',
                 Cell: row => {
-                  let selected;
-                  if (row.original.group_id) {
-                    selected = `${row.original.section_id}_${row.original.group_id}`;
-                  } else {
-                    selected = `${row.original.section_id}_`;
-                  }
+                  let selected = `${row.original.section_id}_${row.original.group_id || ''}`;
                   return (
                     <select onChange={this.updateSectionStarterCode} value={selected}>
                       <option value={`${row.original.section_id}_`}/>
@@ -333,7 +342,7 @@ class StarterCodeManager extends React.Component {
              Cell: row => {
               return (
                 <StarterCodeEntryRenameInput
-                  rename={row.original.rename}
+                  entry_rename={row.original.entry_rename}
                   use_rename={row.original.use_rename}
                   groupUploadTarget={row.original.id}
                   changeGroupRename={this.changeGroupRename}
@@ -353,26 +362,36 @@ class StarterCodeManager extends React.Component {
   render() {
     return (
       <div>
-        {this.renderFileManagers()}
-        <button
-          key={'create_starter_code_group_button'}
-          onClick={this.createStarterCodeGroup}
-        >
-          New
-        </button> {/* TODO: add styling to right align with + icon */}
-        <StarterCodeFileUploadModal
-          groupUploadTarget={this.state.groupUploadTarget}
-          isOpen={this.state.showFileUploadModal}
-          onRequestClose={() => this.setState({
-            showFileUploadModal: false,
-            groupUploadTarget: undefined,
-            dirUploadTarget: undefined
-          })}
-          onSubmit={this.handleCreateFiles}
-        />
-        {this.renderStarterCodeTypes()}
-        {this.renderStarterCodeAssigner()}
-        {this.renderStarterCodeRenamer()}
+        <fieldset>
+          {this.renderFileManagers()}
+          <button
+            key={'create_starter_code_group_button'}
+            onClick={this.createStarterCodeGroup}
+          >
+            New
+          </button> {/* TODO: add styling to right align with + icon */}
+          <StarterCodeFileUploadModal
+            groupUploadTarget={this.state.groupUploadTarget}
+            isOpen={this.state.showFileUploadModal}
+            onRequestClose={() => this.setState({
+              showFileUploadModal: false,
+              groupUploadTarget: undefined,
+              dirUploadTarget: undefined
+            })}
+            onSubmit={this.handleCreateFiles}
+          />
+        </fieldset>
+        <fieldset>
+          {this.renderStarterCodeTypes()}
+          {this.renderStarterCodeAssigner()}
+          {this.renderStarterCodeRenamer()}
+          <button
+            onClick={this.saveStateChanges}
+            disabled={!this.state.form_changed}
+          >
+            {I18n.t('save')}
+          </button>
+        </fieldset>
       </div>
     )
   }
@@ -416,7 +435,7 @@ class StarterCodeGroupName extends React.Component {
 
 class StarterCodeEntryRenameInput extends React.Component {
   handleBlur = (event) => {
-    this.props.changeGroupRename(this.props.groupUploadTarget, this.props.rename, event.target.value);
+    this.props.changeGroupRename(this.props.groupUploadTarget, event.target.value);
   };
 
   handleClick = (event) => {
@@ -428,7 +447,7 @@ class StarterCodeEntryRenameInput extends React.Component {
       <React.Fragment>
         <input
           type={'text'}
-          placeholder={this.props.rename}
+          placeholder={this.props.entry_rename}
           onKeyPress={blurOnEnter}
           onBlur={this.handleBlur}
           disabled={!this.props.use_rename}

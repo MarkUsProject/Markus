@@ -294,6 +294,7 @@ ActiveRecord::Schema.define(version: 2020_07_09_165042) do
     t.bigint "assessment_id", null: false
     t.datetime "start_time"
     t.datetime "starter_code_timestamp"
+    t.boolean "starter_code_changed", default: false, null: false
     t.index ["assessment_id", "group_id"], name: "groupings_u1", unique: true
   end
 

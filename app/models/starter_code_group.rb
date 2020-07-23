@@ -12,6 +12,7 @@ class StarterCodeGroup < ApplicationRecord
   after_save :only_one_default, if: -> { self.is_default }
 
   validates_exclusion_of :entry_rename, in: %w[.. .]
+  validates_presence_of :entry_rename, if: -> { self.use_rename }
 
   def path
     Pathname.new(assignment.starter_code_path) + id.to_s
@@ -82,7 +83,7 @@ class StarterCodeGroup < ApplicationRecord
 
   def sanitize_rename_entry
     if entry_rename_changed?
-      self.entry_rename = sanitize_file_name(entry_rename)
+      self.entry_rename = sanitize_file_name(entry_rename).strip
     end
   end
 end

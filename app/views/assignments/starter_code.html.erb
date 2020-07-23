@@ -9,6 +9,12 @@
       );
     });
   </script>
+
+  <%= render partial: 'shared/navigation_warning',
+             formats: [:js],
+             handlers: [:erb] %>
 <% end %>
+
+<%= render 'shared/flash_message' %>
 
 <div id='starter_code_manager'></div>

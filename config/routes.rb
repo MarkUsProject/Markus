@@ -79,7 +79,7 @@ Rails.application.routes.draw do
         get 'switch_assignment'
         put 'start_timed_assignment'
         get 'starter_code'
-        put 'update_starter_code_rule_type'
+        put 'update_starter_code'
       end
 
       resources :starter_code_groups do
@@ -367,12 +367,6 @@ Rails.application.routes.draw do
     resources :marking_schemes do
       collection do
         get 'populate'
-      end
-    end
-
-    resources :sections do
-      member do
-        post 'update_starter_code_group'
       end
     end
 

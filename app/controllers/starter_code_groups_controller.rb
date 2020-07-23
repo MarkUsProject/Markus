@@ -50,6 +50,7 @@ class StarterCodeGroupsController < ApplicationController
   def update_files
     assignment = Assignment.find(params[:assignment_id])
     starter_code_group = assignment&.starter_code_groups&.find_by(id: params[:id])
+    unzip = params[:unzip] == 'true'
     if starter_code_group.nil?
       # TODO flash error message
     else
@@ -57,6 +58,17 @@ class StarterCodeGroupsController < ApplicationController
       delete_folders = params[:delete_folders] || []
       delete_files = params[:delete_files] || []
       new_files = params[:new_files] || []
+
+      if unzip
+        zdirs, zfiles = new_files.map do |f|
+          next unless File.extname(f.path).casecmp?('.zip')
+          unzip_uploaded_file(f.path)
+        end.compact.transpose.map(&:flatten)
+        new_files.reject! { |f| File.extname(f.path).casecmp?('.zip') }
+        new_folders.push(*zdirs)
+        new_files.push(*zfiles)
+      end
+
       new_folders.each do |f|
         folder_path = File.join(starter_code_group.path, f)
         FileUtils.mkdir_p(folder_path)
@@ -82,6 +94,20 @@ class StarterCodeGroupsController < ApplicationController
         file_path = File.join(starter_code_group.path, f)
         File.delete(file_path)
       end
+      if params[:path].blank?
+        all_paths = [new_folders,
+                     new_files.map(&:original_filename),
+                     delete_files,
+                     delete_folders.map(&:original_filename)].flatten
+      else
+        all_paths = [params[:path]]
+      end
+      clean_paths = all_paths.map { |p| p.split(File::Separator).first }
+      # mark all groupings with starter code that was changed as changed
+      Grouping.joins(starter_code_entries: :starter_code_group)
+              .where('starter_code_entries.path': clean_paths)
+              .where('starter_code_groups.id': starter_code_group)
+              .update_all(starter_code_changed: true)
       starter_code_group.update_entries
     end
   end
@@ -89,10 +115,6 @@ class StarterCodeGroupsController < ApplicationController
   private
 
   def starter_code_group_params
-    group_params = params.permit(:name, :assessment_id, :is_default, :entry_rename, :use_rename)
-    %w[is_default use_rename].each do |bool_attr|
-      group_params[bool_attr] = group_params[bool_attr] == 'true' if group_params.key?(bool_attr)
-    end
-    group_params
+    params.permit(:name)
   end
 end

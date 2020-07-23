@@ -386,18 +386,18 @@ class AssignmentsController < ApplicationController
   def starter_code
     # TODO: check if assignment exists and render 400/404
     @assignment = Assignment.find(params[:id])
+    # flash_message(:warning, 'Groupings exist') if @assignment.groupings.exists? # TODO: internationalize this
   end
 
   def populate_starter_code_manager
-    # TODO: flash message if starter_code_type is 'simple' or 'sections' and there is no default starter_code_group
-    # TODO: flash message if there is a starter code group with starter_code_type == 'sections', use_rename == true and a blank rename_entry
-    # TODO: flash message if there are changes and a starter code group exists
+    # TODO: flash message if a grouping exists
     assignment = Assignment.find(params[:id])
+    flash_message(:warning, 'Groupings exist') if assignment.groupings.exists? # TODO: internationalize this
     file_data = []
     assignment.starter_code_groups.order(:id).each do |g|
       file_data << { id: g.id,
                      name: g.name,
-                     rename: g.entry_rename,
+                     entry_rename: g.entry_rename,
                      use_rename: g.use_rename,
                      files: starter_code_group_file_data(g) }
     end
@@ -414,9 +414,36 @@ class AssignmentsController < ApplicationController
     render json: data
   end
 
-  def update_starter_code_rule_type
+  def update_starter_code
     assignment = Assignment.find(params[:id])
-    assignment.assignment_properties.update!(starter_code_type: params[:starter_code_type])
+    all_changed = false
+    success = true
+    ApplicationRecord.transaction do
+      assignment.assignment_properties.update!(starter_code_assignment_params)
+      all_changed = assignment.assignment_properties.saved_changes?
+      starter_code_section_params.each do |section_params|
+        Section.find_by(id: section_params[:section_id])
+               &.update_starter_code_group(assignment.id, section_params[:group_id])
+      end
+      starter_code_group_params.each do |group_params|
+        starter_code_group = assignment.starter_code_groups.find_by(id: group_params[:id])
+        starter_code_group.update!(group_params)
+        all_changed ||= starter_code_group.saved_changes?
+        assignment.groupings.update_all(starter_code_changed: true) if assignment.assignment_properties.saved_changes?
+      end
+    rescue ActiveRecord::RecordInvalid => e
+      flash_message(:error, e.message)
+      success = false
+      raise ActiveRecord::Rollback
+    rescue RuntimeError => e
+      flash_message(:error, e.message)
+      success = false
+      raise ActiveRecord::Rollback
+    end
+    flash_message(:success, I18n.t('flash.actions.update.success',
+                                   resource_name: I18n.t('assignments.starter_code.title'))) if success
+    # mark all groupings with starter code that was changed as changed
+    assignment.groupings.update_all(starter_code_changed: true) if success and all_changed
   end
 
   def switch_assignment
@@ -629,6 +656,19 @@ class AssignmentsController < ApplicationController
               :_destroy
             ] }
           ])
+  end
+
+  def starter_code_assignment_params
+    params.require(:assignment).permit(:starter_code_type)
+  end
+
+  def starter_code_section_params
+    params.permit(sections: [:section_id, :group_id]).require(:sections)
+  end
+
+  def starter_code_group_params
+    params.permit(starter_code_groups: [:id, :name, :is_default, :entry_rename, :use_rename])
+          .require(:starter_code_groups)
   end
 
   def flash_interpolation_options

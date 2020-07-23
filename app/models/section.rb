@@ -22,4 +22,21 @@ class Section < ApplicationRecord
   def starter_code_group_for(assessment)
     starter_code_groups.where(assessment_id: assessment.id).first || assessment.default_starter_code_group
   end
+
+  def update_starter_code_group(assessment_id, starter_code_group_id)
+    return if starter_code_groups.where(assessment_id: assessment_id).first&.id == starter_code_group_id
+
+    # delete all old section starter code groups
+    section_starter_code_groups.where.not('starter_code_group_id': starter_code_group_id).each(&:destroy)
+
+    unless starter_code_group_id.nil?
+      SectionStarterCodeGroup.find_or_create_by(section_id: self.id, starter_code_group_id: starter_code_group_id)
+    end
+
+    # mark all groupings with starter code that was changed as changed
+    Grouping.joins(:inviter)
+            .where('users.section_id': self.id)
+            .where(assessment_id: assessment_id)
+            .update_all(starter_code_changed: true)
+  end
 end
