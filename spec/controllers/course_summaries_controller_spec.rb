@@ -70,7 +70,7 @@ describe CourseSummariesController do
             Header: a.short_identifier,
             minWidth: 50,
             className: 'number',
-            headerStyle: {textAlign: 'right'}
+            headerStyle: { textAlign: 'right' }
           }
           expect(@columns).to include expected
         end
@@ -88,17 +88,18 @@ describe CourseSummariesController do
             hidden: student.hidden,
             assessment_marks: Hash[GradeEntryForm.all.map do |ges|
               [ges.id.to_s.to_sym, {
-                  mark: ges.grade_entry_students.find_by(user: student).total_grade,
-                  percentage: (ges.grade_entry_students.find_by(user: student).total_grade * 100 / ges.grade_entry_items
-                                                                                                      .sum(:out_of))
-                                                                                                      .round(2)
+                mark: ges.grade_entry_students.find_by(user: student).total_grade,
+                percentage: (ges.grade_entry_students
+                                .find_by(user: student).total_grade * 100 / ges.grade_entry_items.sum(:out_of)).round(2)
               }]
             end
             ]
           }
           student.accepted_groupings.each do |g|
-            expected[:assessment_marks][g.assessment_id.to_s.to_sym] = { mark: g.current_result.total_mark,
-                                                                        percentage: (g.current_result.total_mark * 100 / g.assignment.max_mark).round(2).to_s }
+            expected[:assessment_marks][g.assessment_id.to_s.to_sym] = {
+              mark: g.current_result.total_mark,
+              percentage: (g.current_result.total_mark * 100 / g.assignment.max_mark).round(2).to_s
+            }
           end
           expect(@data).to include expected
         end
@@ -153,7 +154,7 @@ describe CourseSummariesController do
               Header: a.short_identifier,
               minWidth: 50,
               className: 'number',
-              headerStyle: {textAlign: 'right'}
+              headerStyle: { textAlign: 'right' }
             }
             expect(@columns).to include expected
           end

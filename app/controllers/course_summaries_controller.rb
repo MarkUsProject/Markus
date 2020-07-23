@@ -103,7 +103,7 @@ class CourseSummariesController < ApplicationController
         Header: short_identifier,
         minWidth: 50,
         className: 'number',
-        headerStyle: {textAlign: 'right'}
+        headerStyle: { textAlign: 'right' }
       }
     end
 
@@ -113,7 +113,7 @@ class CourseSummariesController < ApplicationController
         Header: name,
         minWidth: 50,
         className: 'number',
-        headerStyle: {textAlign: 'right'}
+        headerStyle: { textAlign: 'right' }
       }
     end
 
