@@ -74,7 +74,9 @@ class GradesSummaryDisplay extends React.Component {
       }
       let marksAbsent = Object.keys(res.data[0].assessment_marks).length === 0;
       res.columns.forEach((c, i) => {
-        c.Header += ' (/' + res.totals[i + 1] + ')';
+        if ((i + 1) in res.totals) {
+          c.Header += ' (/' + (Math.round(parseFloat(res.totals[i + 1]) * 100) / 100).toString() + ')';
+        }
         if (marksAbsent) {
           c.accessor = 'filler';
         }
