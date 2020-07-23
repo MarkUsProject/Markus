@@ -10,14 +10,17 @@ class CourseSummariesController < ApplicationController
   end
 
   def populate
-    assignments_avg = Assignment.all.map { |a| a.results_average&.round(2) }
-    gefs_avg = GradeEntryForm.all.map { |g| g.calculate_average&.round(2) }
-    averages = assignments_avg + gefs_avg
+    averages = {}
+    Assignment.all.each do |a|
+      averages[a.short_identifier] = a.results_average&.round(2)
+    end
+    GradeEntryForm.all.each do |g|
+      averages[g.short_identifier] = g.calculate_average&.round(2)
+    end
     if current_user.admin?
-      schemes_avg = MarkingScheme.all.map do |m|
-        DescriptiveStatistics.mean(m.students_weighted_grades_array(current_user)).round(2)
+      MarkingScheme.all.each do |m|
+        averages[m.name] = DescriptiveStatistics.mean(m.students_weighted_grades_array(current_user)).round(2)
       end
-      averages += schemes_avg
     end
     render json: {
       data: get_table_json_data(current_user),

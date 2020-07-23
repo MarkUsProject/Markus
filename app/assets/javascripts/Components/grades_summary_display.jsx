@@ -31,6 +31,9 @@ class GradesSummaryDisplay extends React.Component {
       let labels = Object.keys(res.columns).map(k => {
         return res.columns[k].Header;
       });
+      let averages = labels.map(l => {
+        return res.averages[l];
+      });
       if (this.props.student) {
         let student_marks = []
         Object.keys(res.columns).forEach(k => {
@@ -48,7 +51,7 @@ class GradesSummaryDisplay extends React.Component {
             borderWidth: 1,
             hoverBackgroundColor: 'rgba(58,106,179,0.75)'},
           { label: I18n.t('course_summary.class_average'),
-            data: res.averages, backgroundColor: 'rgba(228,151,44,0.35)',
+            data: averages, backgroundColor: 'rgba(228,151,44,0.35)',
             borderColor: '#e4972c',
             borderWidth: 1,
             hoverBackgroundColor: 'rgba(228,151,44,0.75)'}],
@@ -57,7 +60,7 @@ class GradesSummaryDisplay extends React.Component {
           xLabel: I18n.t('activerecord.models.assessment.one')});
       } else {
         this.setState({labels: labels, datasets: [{label: I18n.t('course_summary.class_average'),
-          data: res.averages,
+          data: averages,
           backgroundColor: 'rgba(228,151,44,0.35)',
           borderColor: '#e4972c',
           borderWidth: 1,
