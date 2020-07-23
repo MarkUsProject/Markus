@@ -4,6 +4,24 @@ import { CourseSummaryTable } from './course_summaries_table';
 import { DataChart } from './Helpers/data_chart';
 
 class GradesSummaryDisplay extends React.Component {
+
+  // Colors for chart are based on constants.css file, with modifications for opacity.
+  averageDataSet = {
+    label: I18n.t('course_summary.class_average'),
+    backgroundColor: 'rgba(228,151,44,0.35)',
+    borderColor: '#e4972c',
+    borderWidth: 1,
+    hoverBackgroundColor: 'rgba(228,151,44,0.75)'
+  };
+
+  individualDataSet = {
+    label: I18n.t('results.your_mark'),
+    backgroundColor: 'rgba(58,106,179,0.35)',
+    borderColor: '#3a6ab3',
+    borderWidth: 1,
+    hoverBackgroundColor: 'rgba(58,106,179,0.75)'
+  };
+
   constructor(props) {
     super(props);
     this.state = {
@@ -12,8 +30,8 @@ class GradesSummaryDisplay extends React.Component {
       loading: true,
       datasets: [],
       labels: [],
-      xLabel: '',
-      yLabel: ''
+      xTitle: I18n.t('activerecord.models.assessment.one'),
+      yTitle: I18n.t('activerecord.models.mark.one') + ' (%)'
     }
     this.fetchData = this.fetchData.bind(this);
   }
@@ -37,6 +55,7 @@ class GradesSummaryDisplay extends React.Component {
           return null;
         }
       });
+      this.averageDataSet.data = averages;
       if (this.props.student) {
         let student_marks = []
         Object.keys(res.columns).forEach(k => {
@@ -46,30 +65,12 @@ class GradesSummaryDisplay extends React.Component {
             student_marks.push(null);
           }
         });
-        // Colors for chart are based on constants.css file, with modifications for opacity.
-        this.setState({labels: labels, datasets: [{ label: I18n.t('results.your_mark'),
-            data: student_marks,
-            backgroundColor: 'rgba(58,106,179,0.35)',
-            borderColor: '#3a6ab3',
-            borderWidth: 1,
-            hoverBackgroundColor: 'rgba(58,106,179,0.75)'},
-          { label: I18n.t('course_summary.class_average'),
-            data: averages, backgroundColor: 'rgba(228,151,44,0.35)',
-            borderColor: '#e4972c',
-            borderWidth: 1,
-            hoverBackgroundColor: 'rgba(228,151,44,0.75)'}],
-          yLabel: I18n.t('activerecord.models.mark.one') + ' (%)',
-          xLabel: I18n.t('activerecord.models.assessment.one')});
+        this.individualDataSet.data = student_marks;
+        this.setState({labels: labels, datasets: [this.individualDataSet, this.averageDataSet]});
       } else {
-        this.setState({labels: labels, datasets: [{label: I18n.t('course_summary.class_average'),
-          data: averages,
-          backgroundColor: 'rgba(228,151,44,0.35)',
-          borderColor: '#e4972c',
-          borderWidth: 1,
-          hoverBackgroundColor: 'rgba(228,151,44,0.75)'}],
-          yLabel: I18n.t('activerecord.models.mark.one') + ' (%)',
-          xLabel: I18n.t('activerecord.models.assessment.one')});
+        this.setState({labels: labels, datasets: [this.averageDataSet]});
       }
+
       res.columns.forEach((c, i) => {
         c.Header += ' (/' + (Math.round(parseFloat(res.totals[i]) * 100) / 100).toString() + ')';
       });
@@ -96,8 +97,8 @@ class GradesSummaryDisplay extends React.Component {
         <DataChart
           labels={this.state.labels}
           datasets={this.state.datasets}
-          xLabel={this.state.xLabel}
-          yLabel={this.state.yLabel}
+          xTitle={this.state.xTitle}
+          yTitle={this.state.yTitle}
         />
       </fieldset>
     </div>);
