@@ -11,7 +11,6 @@ class GradesSummaryDisplay extends React.Component {
       data: [],
       loading: true,
       datasets: [],
-      legend: true,
       labels: [],
       xLabel: '',
       yLabel: ''
@@ -59,7 +58,6 @@ class GradesSummaryDisplay extends React.Component {
             borderColor: '#e4972c',
             borderWidth: 1,
             hoverBackgroundColor: 'rgba(228,151,44,0.75)'}],
-          legend: true,
           yLabel: I18n.t('activerecord.models.mark.one') + ' (%)',
           xLabel: I18n.t('activerecord.models.assessment.one')});
       } else {
@@ -68,21 +66,17 @@ class GradesSummaryDisplay extends React.Component {
           backgroundColor: 'rgba(228,151,44,0.35)',
           borderColor: '#e4972c',
           borderWidth: 1,
-          hoverBackgroundColor: 'rgba(228,151,44,0.75)'}], legend: false,
+          hoverBackgroundColor: 'rgba(228,151,44,0.75)'}],
           yLabel: I18n.t('activerecord.models.mark.one') + ' (%)',
           xLabel: I18n.t('activerecord.models.assessment.one')});
       }
-      let marksAbsent = Object.keys(res.data[0].assessment_marks).length === 0;
       res.columns.forEach((c, i) => {
         if ((i + 1) in res.totals) {
           c.Header += ' (/' + (Math.round(parseFloat(res.totals[i + 1]) * 100) / 100).toString() + ')';
         }
-        if (marksAbsent) {
-          c.accessor = 'filler';
-        }
       });
       this.setState({
-        data: marksAbsent ? [{filler: '...'}] : res.data,
+        data: res.data,
         columns: res.columns,
         loading: false,
       });
@@ -104,7 +98,6 @@ class GradesSummaryDisplay extends React.Component {
         <DataChart
           labels={this.state.labels}
           datasets={this.state.datasets}
-          legend={this.state.legend}
           xLabel={this.state.xLabel}
           yLabel={this.state.yLabel}
         />
