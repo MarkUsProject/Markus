@@ -47,7 +47,7 @@ class CourseSummariesController < ApplicationController
 
     csv_string = MarkusCsv.generate(grades_data, [generate_csv_header]) do |student|
       row = [student[:user_name], student[:first_name], student[:last_name], student[:id_number]]
-      row.concat(assessments.map { |a_id| student[:assessment_marks][a_id] || nil })
+      row.concat(assessments.map { |a_id| student[:assessment_marks][a_id]&.[](:mark) || nil })
       row.concat(marking_schemes.map { |ms_id| student[:weighted_marks][ms_id] })
       row
     end
