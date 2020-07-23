@@ -66,10 +66,11 @@ describe CourseSummariesController do
         expect(@columns.length).to eq(Assignment.count + GradeEntryForm.count)
         Assessment.find_each do |a|
           expected = {
-            accessor: "assessment_marks.#{a.id}",
+            accessor: "assessment_marks.#{a.id}.mark",
             Header: a.short_identifier,
             minWidth: 50,
-            className: 'number'
+            className: 'number',
+            headerStyle: {textAlign: 'right'}
           }
           expect(@columns).to include expected
         end
@@ -86,12 +87,18 @@ describe CourseSummariesController do
             last_name: student.last_name,
             hidden: student.hidden,
             assessment_marks: Hash[GradeEntryForm.all.map do |ges|
-              [ges.id.to_s.to_sym, ges.grade_entry_students.find_by(user: student).total_grade]
+              [ges.id.to_s.to_sym, {
+                  mark: ges.grade_entry_students.find_by(user: student).total_grade,
+                  percentage: (ges.grade_entry_students.find_by(user: student).total_grade * 100 / ges.grade_entry_items
+                                                                                                      .sum(:out_of))
+                                                                                                      .round(2)
+              }]
             end
             ]
           }
           student.accepted_groupings.each do |g|
-            expected[:assessment_marks][g.assessment_id.to_s.to_sym] = g.current_result.total_mark
+            expected[:assessment_marks][g.assessment_id.to_s.to_sym] = { mark: g.current_result.total_mark,
+                                                                        percentage: (g.current_result.total_mark * 100 / g.assignment.max_mark).round(2).to_s }
           end
           expect(@data).to include expected
         end
@@ -142,10 +149,11 @@ describe CourseSummariesController do
           expect(@columns.length).to eq(Assignment.count + GradeEntryForm.count)
           Assessment.find_each do |a|
             expected = {
-              accessor: "assessment_marks.#{a.id}",
+              accessor: "assessment_marks.#{a.id}.mark",
               Header: a.short_identifier,
               minWidth: 50,
-              className: 'number'
+              className: 'number',
+              headerStyle: {textAlign: 'right'}
             }
             expect(@columns).to include expected
           end

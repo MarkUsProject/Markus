@@ -88,7 +88,7 @@ class CourseSummariesController < ApplicationController
 
     assessment_columns = assessments.map do |id, short_identifier|
       {
-        accessor: "assessment_marks.#{id}",
+        accessor: "assessment_marks.#{id}.mark",
         Header: short_identifier,
         minWidth: 50,
         className: 'number',
