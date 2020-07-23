@@ -91,7 +91,8 @@ class CourseSummariesController < ApplicationController
         accessor: "assessment_marks.#{id}",
         Header: short_identifier,
         minWidth: 50,
-        className: 'number'
+        className: 'number',
+        headerStyle: {textAlign: 'right'}
       }
     end
 
@@ -100,7 +101,8 @@ class CourseSummariesController < ApplicationController
         accessor: "weighted_marks.#{id}",
         Header: name,
         minWidth: 50,
-        className: 'number'
+        className: 'number',
+        headerStyle: {textAlign: 'right'}
       }
     end
 
