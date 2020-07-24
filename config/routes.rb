@@ -177,6 +177,7 @@ Rails.application.routes.draw do
 
         member do
           post 'rename_group'
+          get 'download_starter_code'
         end
       end
 

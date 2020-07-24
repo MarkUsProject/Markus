@@ -4,7 +4,7 @@ require 'set'
 class Grouping < ApplicationRecord
   include SubmissionsHelper
 
-  after_create :update_starter_code
+  after_create :create_starter_code
   after_commit :update_repo_permissions_after_save, on: [:create, :update]
 
   has_many :memberships, dependent: :destroy
@@ -442,7 +442,8 @@ class Grouping < ApplicationRecord
     when 'simple'
       return assignment.default_starter_code_group&.starter_code_entries || []
     when 'sections'
-      return inviter&.section&.starter_code_group_for(assignment)&.starter_code_entries || []
+      return inviter.section&.starter_code_group_for(assignment)&.starter_code_entries unless inviter.nil?
+      return assignment.default_starter_code_group&.starter_code_entries || []
     when 'shuffle'
       return assignment.starter_code_groups.includes(:starter_code_entries).map do |g|
         StarterCodeEntry.find_by(id: g.starter_code_entries.ids.sample)
@@ -454,49 +455,32 @@ class Grouping < ApplicationRecord
     end
   end
 
-  def update_starter_code
+  def reset_starter_code_entries
+    old_grouping_entry_ids = self.grouping_starter_code_entries.ids
+    new_grouping_entry_ids = select_starter_code_entries.map do |entry|
+      GroupingStarterCodeEntry.find_or_create_by!(starter_code_entry_id: entry.id, grouping_id: self.id).id
+    end
+    self.grouping_starter_code_entries.where(id: old_grouping_entry_ids - new_grouping_entry_ids).destroy_all
+  end
+
+  def create_starter_code
     return unless Rails.configuration.x.repository.is_repository_admin # create folder only if we are repo admin
-    result = true
     GroupingStarterCodeEntry.transaction do
       self.group.access_repo do |group_repo|
         assignment_folder = self.assignment.repository_folder
-        latest_revision = group_repo.get_latest_revision
-        if latest_revision.path_exists?(assignment_folder)
-          txn = group_repo.get_transaction('Markus', I18n.t('repo.commits.clear',
-                                                            assignment: self.assignment.short_identifier))
-          latest_revision.tree_at_path(assignment_folder, with_attrs: false).map do |_path, obj|
-            obj_path = File.join(obj.path, obj.name)
-            if obj.is_a? Repository::RevisionFile
-              txn.remove(obj_path, latest_revision.revision_identifier)
-            else
-              txn.remove_directory(obj_path, latest_revision.revision_identifier)
-            end
-          end
-        else
-          txn = group_repo.get_transaction('Markus', I18n.t('repo.commits.assignment_folder',
-                                                            assignment: self.assignment.short_identifier))
-          txn.add_path(assignment_folder)
-        end
-
-        if txn.has_jobs?
-          result = group_repo.commit(txn)
-          self.update!(starter_code_timestamp: group_repo.get_latest_revision.server_timestamp)
-        end
-
-        txn = group_repo.get_transaction('Markus', I18n.t('repo.commits.starter_code',
+        txn = group_repo.get_transaction('Markus', I18n.t('repo.commits.assignment_folder',
                                                           assignment: self.assignment.short_identifier))
-        select_starter_code_entries.each do |entry|
-          entry.add_files_to_transaction(txn)
-          GroupingStarterCodeEntry.create(starter_code_entry_id: entry.id, grouping_id: self.id)
-        end
+        txn.add_path(assignment_folder)
+
+        reset_starter_code_entries
+        self.reload.starter_code_entries.each { |entry| entry.add_files_to_transaction(txn) }
 
         if txn.has_jobs?
-          result = group_repo.commit(txn)
+          raise I18n.t('repo.assignment_dir_creation_error',
+                       short_identifier: assignment.short_identifier) unless group_repo.commit(txn)
           self.update!(starter_code_timestamp: group_repo.get_latest_revision.server_timestamp)
         end
       end
-
-      raise I18n.t('repo.assignment_dir_creation_error', short_identifier: assignment.short_identifier) unless result
     end
   end
 

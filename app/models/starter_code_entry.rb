@@ -34,6 +34,22 @@ class StarterCodeEntry < ApplicationRecord
     end
   end
 
+  def add_files_to_zip_file(zip_file)
+    relative_root = Pathname.new(starter_code_group.path)
+    should_rename = starter_code_group.should_rename
+    rename = starter_code_group.entry_rename
+    files_and_dirs.each do |abs_path|
+      zip_entry_path = abs_path.relative_path_from(relative_root)
+      zip_entry_path = File.join(rename, *zip_entry_path.each_filename.to_a[1..-1]) if should_rename
+
+      if abs_path.directory?
+        zip_file.mkdir(zip_entry_path)
+      else
+        zip_file.get_output_stream(zip_entry_path) { |f| f.puts abs_path.read }
+      end
+    end
+  end
+
   private
 
   def entry_exists

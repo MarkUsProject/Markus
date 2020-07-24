@@ -1,9 +1,15 @@
 class StarterCodeGroupsController < ApplicationController
 
+  respond_to :js
+
   # TODO: authorize! for all routes
 
   def create
-    StarterCodeGroup.create(starter_code_group_params)
+    starter_code_group = StarterCodeGroup.new(create_params)
+    if starter_code_group.save
+      assignment = Assignment.find(params[:assessment_id])
+      assignment.assignment_properties.update!(starter_code_updated_at: Time.zone.now)
+    end
   end
 
   def destroy
@@ -13,7 +19,11 @@ class StarterCodeGroupsController < ApplicationController
       # TODO flash error message
     else
       # TODO: add an authorize! check here
-      starter_code_group.destroy # TODO: flash a message on error
+      affected_groupings = Grouping.joins(starter_code_entries: :starter_code_group)
+                                   .where('starter_code_groups.id': starter_code_group.id)
+      if starter_code_group.destroy
+        affected_groupings.update_all(starter_code_changed: true)
+      end
     end
   end
 
@@ -37,7 +47,7 @@ class StarterCodeGroupsController < ApplicationController
   def update
     assignment = Assignment.find_by(id: params[:assignment_id])
     starter_code_group = assignment.starter_code_groups.find_by(id: params[:id])
-    starter_code_group.update!(starter_code_group_params) # TODO: flash error message
+    starter_code_group.update!(update_params) # TODO: flash error message
   end
 
   def download_files
@@ -108,13 +118,21 @@ class StarterCodeGroupsController < ApplicationController
               .where('starter_code_entries.path': clean_paths)
               .where('starter_code_groups.id': starter_code_group)
               .update_all(starter_code_changed: true)
+      assignment.assignment_properties.update!(starter_code_updated_at: Time.zone.now) unless all_paths.empty?
       starter_code_group.update_entries
     end
   end
 
   private
 
-  def starter_code_group_params
+  def create_params
+    group_params = params.permit(:name, :assessment_id, :is_default, :entry_rename, :use_rename)
+    %w[is_default use_rename].each do |bool_attr|
+      group_params[bool_attr] = group_params[bool_attr] == 'true' if group_params.key?(bool_attr)
+    end
+    group_params
+  end
+  def update_params
     params.permit(:name)
   end
 end

@@ -146,4 +146,14 @@
       <% end %>
     <% end %>
 <% end %>
+<% unless @assignment.starter_code_updated_at.nil? %>
+  <% if !@assignment.is_timed || !@grouping.start_time.nil? %>
+    <h3><%= I18n.t('assignments.starter_code.title') %></h3>
+    <p><%= 'Starter files have been provided for this assignment' %></p>
+    <p><%= 'Click here to download a new copy of the starter code' %></p>
+    <%= button_to t(:download),
+                  download_starter_code_assignment_group_path(@assignment, @grouping.group),
+                  method: 'get' %>
+  <% end %>
+<% end %>
 </div>

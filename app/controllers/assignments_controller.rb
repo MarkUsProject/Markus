@@ -53,6 +53,7 @@ class AssignmentsController < ApplicationController
       end
     end
     unless @grouping.nil?
+      flash_message(:warning, 'Starter code changed') if @grouping.starter_code_changed # TODO: internationalize
       if @assignment.is_timed && !@grouping.start_time.nil? && !@grouping.past_collection_date?
         flash_message(:note, I18n.t('assignments.timed.started_message'))
         flash_message(:note, I18n.t('assignments.timed.starter_code_prompt'))
@@ -430,6 +431,7 @@ class AssignmentsController < ApplicationController
         all_changed ||= starter_code_group.saved_changes?
         assignment.groupings.update_all(starter_code_changed: true) if assignment.assignment_properties.saved_changes?
       end
+      assignment.assignment_properties.update!(starter_code_updated_at: Time.zone.now)
     rescue ActiveRecord::RecordInvalid => e
       flash_message(:error, e.message)
       success = false

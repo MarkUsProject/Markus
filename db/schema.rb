@@ -130,6 +130,7 @@ ActiveRecord::Schema.define(version: 2020_07_09_165042) do
     t.datetime "start_time"
     t.boolean "is_timed", default: false, null: false
     t.string "starter_code_type", default: "simple", null: false
+    t.datetime "starter_code_updated_at"
     t.index ["assessment_id"], name: "index_assignment_properties_on_assessment_id", unique: true
   end
 

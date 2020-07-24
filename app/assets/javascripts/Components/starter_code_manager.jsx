@@ -226,6 +226,7 @@ class StarterCodeManager extends React.Component {
               name={'starter_code_type'}
               value={'simple'}
               checked={this.state.starterCodeType === 'simple'}
+              disabled={!this.state.files.length}
               onChange={() => { this.setState({starterCodeType: 'simple'}, () => this.toggleFormChanged(true)) }}
             />
             Simple
@@ -238,6 +239,7 @@ class StarterCodeManager extends React.Component {
               name={'starter_code_type'}
               value={'sections'}
               checked={this.state.starterCodeType === 'sections'}
+              disabled={!this.state.files.length}
               onChange={() => { this.setState({starterCodeType: 'sections'}, () => this.toggleFormChanged(true)) }}
             />
             Sections
@@ -250,6 +252,7 @@ class StarterCodeManager extends React.Component {
               name={'starter_code_type'}
               value={'shuffle'}
               checked={this.state.starterCodeType === 'shuffle'}
+              disabled={!this.state.files.length}
               onChange={() => { this.setState({starterCodeType: 'shuffle'}, () => this.toggleFormChanged(true)) }}
             />
             Shuffle
@@ -262,6 +265,7 @@ class StarterCodeManager extends React.Component {
               name={'starter_code_type'}
               value={'group'}
               checked={this.state.starterCodeType === 'group'}
+              disabled={!this.state.files.length}
               onChange={() => { this.setState({starterCodeType: 'group'}, () => this.toggleFormChanged(true)) }}
             />
             Group
@@ -281,6 +285,7 @@ class StarterCodeManager extends React.Component {
               {defaultStarterCodeGroup: parseInt(e.target.value)}, () => this.toggleFormChanged(true)
             )}
             value={this.state.defaultStarterCodeGroup}
+            disabled={!this.state.files.length}
           >
             {Object.entries(this.state.files).map( (data, index) => {
               const {id, name} = data[1];
@@ -303,7 +308,11 @@ class StarterCodeManager extends React.Component {
                 Cell: row => {
                   let selected = `${row.original.section_id}_${row.original.group_id || ''}`;
                   return (
-                    <select onChange={this.updateSectionStarterCode} value={selected}>
+                    <select
+                      onChange={this.updateSectionStarterCode}
+                      value={selected}
+                      disabled={!this.state.files.length}
+                    >
                       <option value={`${row.original.section_id}_`}/>
                       {Object.entries(this.state.files).map( (data, index) => {
                         const {id, name} = data[1];
@@ -450,13 +459,13 @@ class StarterCodeEntryRenameInput extends React.Component {
           placeholder={this.props.entry_rename}
           onKeyPress={blurOnEnter}
           onBlur={this.handleBlur}
-          disabled={!this.props.use_rename}
+          disabled={!this.props.use_rename || this.props.disabled}
         />
         <label>
           <input
             type={'checkbox'}
             onChange={this.handleClick}
-            checked={!this.props.use_rename}
+            checked={!this.props.use_rename || this.props.disabled}
           />
           Use Original File Name
         </label>
