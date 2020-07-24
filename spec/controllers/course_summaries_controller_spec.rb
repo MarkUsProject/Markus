@@ -54,12 +54,20 @@ describe CourseSummariesController do
       before :each do
         3.times { create(:assignment_with_criteria_and_results) }
         2.times { create(:grade_entry_form_with_data) }
+
+        # Ensure statistics exist for one assignment
+        assignments = Assignment.all
+        assignments.first.update_results_stats
+
         # TODO: Create marking scheme as well
 
         get_as @admin, :populate, format: :json
         response_data = response.parsed_body.deep_symbolize_keys
+        @averages = response_data[:averages]
         @columns = response_data[:columns]
         @data = response_data[:data]
+        @medians = response_data[:medians]
+        @totals = response_data[:totals]
       end
 
       it 'returns the correct columns' do
@@ -104,6 +112,48 @@ describe CourseSummariesController do
           expect(@data).to include expected
         end
       end
+
+      it 'returns the correct totals' do
+        totals = []
+        Assessment.all.order(id: :asc).pluck_to_hash(:id, :type, :short_identifier).each do |a|
+          if a[:type] == 'GradeEntryForm'
+            gef = GradeEntryForm.find(a[:id])
+            totals << gef.grade_entry_items.sum(:out_of)
+          else
+            assignment = Assignment.find(a[:id])
+            totals << assignment.max_mark.to_s
+          end
+        end
+        expect(@totals).to eq totals
+      end
+
+      it 'returns the correct averages' do
+        averages = {}
+        Assessment.all.order(id: :asc).pluck_to_hash(:id, :type, :short_identifier).each do |a|
+          if a[:type] == 'GradeEntryForm'
+            gef = GradeEntryForm.find(a[:id])
+            averages[gef.short_identifier.to_sym] = gef.calculate_average&.round(2)
+          else
+            assignment = Assignment.find(a[:id])
+            averages[assignment.short_identifier.to_sym] = assignment.results_average&.round(2)
+          end
+        end
+        expect(@averages).to eq averages
+      end
+
+      it 'returns the correct medians' do
+        medians = {}
+        Assessment.all.order(id: :asc).pluck_to_hash(:id, :type, :short_identifier).each do |a|
+          if a[:type] == 'GradeEntryForm'
+            gef = GradeEntryForm.find(a[:id])
+            medians[gef.short_identifier.to_sym] = gef.calculate_median&.round(2)
+          else
+            assignment = Assignment.find(a[:id])
+            medians[assignment.short_identifier.to_sym] = assignment.results_median&.round(2)
+          end
+        end
+        expect(@medians).to eq medians
+      end
     end
   end
 
@@ -133,19 +183,68 @@ describe CourseSummariesController do
     end
 
     describe '#populate' do
-      context 'when no marks are released' do
-        before :each do
-          3.times { create(:assignment_with_criteria_and_results) }
-          2.times { create(:grade_entry_form_with_data) }
-          # TODO: Create marking scheme as well
+      before :each do
+        3.times { create(:assignment_with_criteria_and_results) }
+        2.times { create(:grade_entry_form_with_data) }
+        # TODO: Create marking scheme as well
 
-          @student2 = Student.first
-          get_as @student2, :populate, format: :json
-          response_data = response.parsed_body.deep_symbolize_keys
-          @columns = response_data[:columns]
-          @data = response_data[:data]
+        @student2 = Student.first
+      end
+      context 'when assessments are hidden' do
+        before :each do
+          Assessment.all.each do |a|
+            a.update(is_hidden: true)
+          end
         end
 
+        it 'displays no information if all assessments are hidden' do
+          get_as @student2, :populate, format: :json
+          r = response.parsed_body
+          expect(r['columns']).to eq []
+          expect(r['averages']).to eq({})
+          expect(r['totals']).to eq []
+          expect(r['medians']).to eq({})
+          expect(r['data'][0]['assessment_marks']).to eq({})
+          expect(r['data'][0]['user_name']).to eq @student2.user_name
+        end
+
+        it 'displays limited information if only some assessments are hidden' do
+          assignments = Assignment.all
+          assignments.first.update(is_hidden: false)
+          assignments.first.update_results_stats
+          grouping = assignments.first.groupings.first
+          grouping.current_result.update(released_to_students: true)
+          student = grouping.inviter
+          gefs = GradeEntryForm.all
+          gefs.first.update(is_hidden: false)
+          averages = {}
+          averages[gefs.first.short_identifier] = gefs.first.calculate_average&.round(2)
+          averages[assignments.first.short_identifier] = assignments.first.results_average&.round(2)
+          expected_assessment_marks = {}
+          expected_assessment_marks[assignments.first.id.to_s] = {
+            'mark' => grouping.current_result.total_mark,
+            'percentage' => (grouping.current_result.total_mark * 100 / grouping.assignment.max_mark).round(2).to_s
+          }
+          get_as student, :populate, format: :json
+          r = response.parsed_body
+          expect(r['columns'].length).to eq 2
+          expect(r['averages']).to eq(averages)
+          expect(r['totals']).to eq [assignments.first.max_mark.to_s, gefs.first.grade_entry_items.sum(:out_of)]
+          expect(r['medians']).to eq({})
+          expect(r['data'][0]['assessment_marks']).to eq(expected_assessment_marks)
+          expect(r['data'][0]['user_name']).to eq student.user_name
+        end
+      end
+      context 'when no marks are released' do
+        before :each do
+          get_as @student2, :populate, format: :json
+          response_data = response.parsed_body.deep_symbolize_keys
+          @averages = response_data[:averages]
+          @columns = response_data[:columns]
+          @data = response_data[:data]
+          @medians = response_data[:medians]
+          @totals = response_data[:totals]
+        end
         it 'returns the correct columns' do
           expect(@columns.length).to eq(Assignment.count + GradeEntryForm.count)
           Assessment.find_each do |a|
@@ -172,6 +271,38 @@ describe CourseSummariesController do
             assessment_marks: {}
           }
           expect(@data).to include expected
+        end
+
+        it 'returns no median information on assessments' do
+          expect(@medians).to eq({})
+        end
+
+        it 'returns the correct totals' do
+          totals = []
+          Assessment.all.order(id: :asc).pluck_to_hash(:id, :type, :short_identifier).each do |a|
+            if a[:type] == 'GradeEntryForm'
+              gef = GradeEntryForm.find(a[:id])
+              totals << gef.grade_entry_items.sum(:out_of)
+            else
+              assignment = Assignment.find(a[:id])
+              totals << assignment.max_mark.to_s
+            end
+          end
+          expect(@totals).to eq totals
+        end
+
+        it 'returns the correct averages' do
+          averages = {}
+          Assessment.all.order(id: :asc).pluck_to_hash(:id, :type, :short_identifier).each do |a|
+            if a[:type] == 'GradeEntryForm'
+              gef = GradeEntryForm.find(a[:id])
+              averages[gef.short_identifier.to_sym] = gef.calculate_average&.round(2)
+            else
+              assignment = Assignment.find(a[:id])
+              averages[assignment.short_identifier.to_sym] = assignment.results_average&.round(2)
+            end
+          end
+          expect(@averages).to eq averages
         end
       end
     end
