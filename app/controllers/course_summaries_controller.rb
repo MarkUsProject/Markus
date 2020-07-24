@@ -28,7 +28,9 @@ class CourseSummariesController < ApplicationController
         gef = GradeEntryForm.find(a[:id])
         visible_assessment_totals << gef.grade_entry_items.sum(:out_of)
         averages[gef.short_identifier] = gef.calculate_average&.round(2)
-        medians[gef.short_identifier] = gef.calculate_median&.round(2)
+        if current_user.admin?
+          medians[gef.short_identifier] = gef.calculate_median&.round(2)
+        end
       else
         assignment = Assignment.find(a[:id])
         visible_assessment_totals << assignment.max_mark
