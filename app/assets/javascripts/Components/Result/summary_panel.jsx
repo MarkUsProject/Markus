@@ -270,17 +270,17 @@ export class SummaryPanel extends React.Component {
     return (
       <div>
         <p style={{textAlign: 'center'}}>
-          <button onClick={() => this.toggleMarksChart()} className={'inline-button'}>
+          <button onClick={() => this.toggleMarksChart()} className={'mark-chart'} style={{width: '85%'}}>
             {I18n.t('results.marks_chart')}
           </button>
         </p>
-        <aside className='dialog' id={'marks_chart'} style={{width: "600px"}}>
+        <aside className='dialog' id={'marks_chart'} style={{width: window.innerWidth * .8 + 'px'}}>
           <DataChart
             labels={this.state.labels}
             datasets={this.state.datasets}
             xTitle={this.state.xTitle}
             yTitle={this.state.yTitle}
-            width={'500px'}
+            width={window.innerWidth * .7 + 'px'}
             legend={false}
           />
         </aside>
