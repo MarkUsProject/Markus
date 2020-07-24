@@ -1,4 +1,5 @@
 import React from 'react';
+import {render} from 'react-dom';
 
 export class DataChart extends React.Component {
 
@@ -23,12 +24,14 @@ export class DataChart extends React.Component {
             max: 100
           },
           scaleLabel: {
-            display: false
+            display: true,
+            labelString: this.props.yTitle
           }
         }],
         xAxes: [{
           scaleLabel: {
-            display: false
+            display: true,
+            labelString: this.props.xTitle
           }
         }]
       }
@@ -61,3 +64,6 @@ export class DataChart extends React.Component {
   }
 }
 
+export function makeDataChart(elem, props) {
+  render(<DataChart {...props} />, elem);
+}

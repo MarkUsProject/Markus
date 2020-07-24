@@ -29,3 +29,24 @@
     </table>
   </div>
 <% end %>
+<fieldset id='gef_data_chart' style="text-align: center; padding-bottom: 0;"></fieldset>
+<%= content_for :head do %>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      makeDataChart(document.getElementById('gef_data_chart'),
+        { xTitle: '<%= t('activerecord.models.criterion.one') %>',
+          yTitle: '<%= t('activerecord.models.mark.one') + ' (%)' %>',
+          legend: false,
+          width: '<%= @labels.size > 5 ? 'auto' : (@labels.size * 150).to_s + 'px' %>',
+          labels: <%= @labels.to_json.html_safe %>,
+          datasets: [{
+            data: <%= @item_percentages.to_json.html_safe %>,
+            backgroundColor: 'rgba(58,106,179,0.35)',
+            borderColor: '#3a6ab3',
+            borderWidth: 1,
+            hoverBackgroundColor: 'rgba(58,106,179,0.75)'
+          }]
+        });
+    });
+  </script>
+<% end %>
