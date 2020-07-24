@@ -1,6 +1,7 @@
 import React from 'react';
 import { render } from 'react-dom';
 import ReactTable from 'react-table';
+import { DataChart } from '../Helpers/data_chart'
 
 
 export class SummaryPanel extends React.Component {
@@ -11,12 +12,41 @@ export class SummaryPanel extends React.Component {
     graceTokenDeductions: []
   };
 
+  markDataSet = {
+    label: I18n.t('results.your_mark'),
+    backgroundColor: 'rgba(58,106,179,0.35)',
+    borderColor: '#3a6ab3',
+    borderWidth: 1,
+    hoverBackgroundColor: 'rgba(58,106,179,0.75)'
+  };
+
   constructor(props) {
     super(props);
     this.state = {
       showNewExtraMark: false,
+      xTitle: I18n.t('activerecord.models.criterion.one'),
+      yTitle: I18n.t('activerecord.models.mark.one') + ' (%)',
+      datasets: [],
+      labels: []
     }
   }
+
+  componentDidMount() {
+    this.marks_modal = new ModalMarkus('#marks_chart');
+  }
+
+  toggleMarksChart = () => {
+    console.log(this.props)
+    let labels = []
+    let markData = []
+    this.props.marks.forEach(m => {
+      labels.push(m.name)
+      markData.push(Math.round(m.mark * 100) / m.max_mark);
+    });
+    this.markDataSet.data = markData;
+    this.setState({datasets: [this.markDataSet], labels: labels});
+    this.marks_modal.open()
+  };
 
   criterionColumns = () => [
     {
@@ -239,6 +269,21 @@ export class SummaryPanel extends React.Component {
   render() {
     return (
       <div>
+        <p style={{textAlign: 'center'}}>
+          <button onClick={() => this.toggleMarksChart()} className={'inline-button'}>
+            {I18n.t('results.marks_chart')}
+          </button>
+        </p>
+        <aside className='dialog' id={'marks_chart'} style={{width: "600px"}}>
+          <DataChart
+            labels={this.state.labels}
+            datasets={this.state.datasets}
+            xTitle={this.state.xTitle}
+            yTitle={this.state.yTitle}
+            width={'500px'}
+            legend={false}
+          />
+        </aside>
         <ReactTable
           columns={this.criterionColumns()}
           data={this.props.criterionSummaryData}

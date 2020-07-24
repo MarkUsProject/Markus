@@ -118,6 +118,8 @@ class GradesSummaryDisplay extends React.Component {
           datasets={this.state.datasets}
           xTitle={this.state.xTitle}
           yTitle={this.state.yTitle}
+          width={'auto'}
+          legend={true}
         />
       </fieldset>
     </div>);

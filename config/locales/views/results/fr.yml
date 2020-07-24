@@ -7,6 +7,7 @@ fr:
     expand_all: "Montrer toutes"
     expand_unmarked: "Montrer non évaluées"
     late_submission_warning_html: "La date du <a href=\"%{url}\">envoi</a> de ce groupe est postérieure à la date de retour."
+    marks_chart: 'UPDATE ME!'
     marks_released: "Les notes sont maintenant affichées. Vous ne pouvez plus les changer."
     next_submission: "Suivant"
     no_feedback_files: "[Aucun fichier de support disponible]"

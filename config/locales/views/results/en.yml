@@ -9,6 +9,7 @@ en:
     fullscreen_enter: "Fullscreen"
     fullscreen_exit: "Leave fullscreen"
     late_submission_warning_html: "This group <a href=\"%{url}\">submitted work</a> after the due date."
+    marks_chart: 'Marks Chart'
     marks_released: "The marks have been released. You cannot change the grades."
     next_submission: "Next"
     no_feedback_files: "[No feedback files available]"

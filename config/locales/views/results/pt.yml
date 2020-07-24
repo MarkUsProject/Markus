@@ -7,6 +7,7 @@ pt:
     expand_all: "Expandir todos"
     expand_unmarked: "Expandir não-selecionados"
     late_submission_warning_html: "O <a href=\"%{url}\">submissão</a> desse grupo está depois do prazo."
+    marks_chart: 'UPDATE ME!'
     marks_released: "As notas foram liberadas. Você não pode alterá-las."
     next_submission: "Próxima"
     no_feedback_files: "[No arquivo de feedback disponíveis]"

@@ -13,7 +13,7 @@ export class DataChart extends React.Component {
     let options = {
       responsive: false,
       legend: {
-        display: true
+        display: this.props.legend
       },
       scales: {
         yAxes: [{
@@ -55,7 +55,7 @@ export class DataChart extends React.Component {
 
   render() {
     return (
-      <canvas id='term_marks' style={{display: 'inline-flex', width: 'auto', height: 500, margin: '10px'}}></canvas>
+      <canvas id='term_marks' style={{display: 'inline-flex', width: this.props.width, height: 500, margin: '10px'}}></canvas>
     );
   }
 }

@@ -11,6 +11,7 @@ es:
     expand_all: "Expandir todos"
     expand_unmarked: "Expandir no calificados"
     late_submission_warning_html: "El <a href=\"%{url}\">submitted work</a> de este grupo se ha realizado después de la fecha límite de entrega."
+    marks_chart: 'UPDATE ME!'
     marks_released: "Las notas han sido publicadas. Usted no puede cambiar las notas."
     next_submission: "Siguiente"
     no_feedback_files: "[El archivo de retroalimentación no está disponible]"
