@@ -48,6 +48,7 @@ export class DataChart extends React.Component {
     });
     this.chart.data = {labels: this.props.labels, datasets: this.props.datasets};
     this.chart.options.scales.yAxes[0].ticks.max = Math.max(...yRange);
+    this.chart.options.legend.display = this.props.legend;
     this.chart.options.scales.yAxes[0].scaleLabel = {display: true, labelString: this.props.yTitle};
     this.chart.options.scales.xAxes[0].scaleLabel = {display: true, labelString: this.props.xTitle};
     this.chart.update();

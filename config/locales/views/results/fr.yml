@@ -3,6 +3,7 @@ fr:
     cant_display_image: "L'image ne peut pas être affichée. Si vous essayez d'afficher un PDF, vérifiez que l'option permettant d'afficher les PDF est activée. Vous pouvez télécharger manuellement le fichier."
     collapse_all: "Cacher toutes"
     criterion_incomplete_error: "Note non remplie, mais état fixé comme terminé."
+    current_mark: 'UPDATE ME!'
     delete_extra_mark_confirm: "Êtes-vous sûr de vouloir enlever cette note supplémentaire ?"
     expand_all: "Montrer toutes"
     expand_unmarked: "Montrer non évaluées"

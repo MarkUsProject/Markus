@@ -13,11 +13,20 @@ export class SummaryPanel extends React.Component {
   };
 
   markDataSet = {
-    label: I18n.t('results.your_mark'),
+    label: I18n.t('activerecord.models.mark.one'),
     backgroundColor: 'rgba(58,106,179,0.35)',
     borderColor: '#3a6ab3',
     borderWidth: 1,
     hoverBackgroundColor: 'rgba(58,106,179,0.75)'
+  };
+
+  // Colors for chart are based on constants.css file, with modifications for opacity.
+  oldMarkDataSet = {
+    label: I18n.t('results.remark.old_mark'),
+    backgroundColor: 'rgba(250,253,170,0.65)',
+    borderColor: '#dde426',
+    borderWidth: 1,
+    hoverBackgroundColor: '#dde426'
   };
 
   constructor(props) {
@@ -27,7 +36,8 @@ export class SummaryPanel extends React.Component {
       xTitle: I18n.t('activerecord.models.criterion.one'),
       yTitle: I18n.t('activerecord.models.mark.one') + ' (%)',
       datasets: [],
-      labels: []
+      labels: [],
+      chartLegend: false
     }
   }
 
@@ -36,16 +46,30 @@ export class SummaryPanel extends React.Component {
   }
 
   toggleMarksChart = () => {
-    console.log(this.props)
-    let labels = []
-    let markData = []
+    let labels = [];
+    let markData = [];
+    let oldMarks = [];
+    let oldMarksExist = Object.keys(this.props.old_marks).length > 0;
     this.props.marks.forEach(m => {
-      labels.push(m.name)
+      labels.push(m.name);
       markData.push(Math.round(m.mark * 100) / m.max_mark);
+      if (oldMarksExist) {
+        if (this.props.old_marks[m.criterion_type + '-' + m.id]) {
+          oldMarks.push(Math.round(this.props.old_marks[m.criterion_type + '-' + m.id] * 100) / m.max_mark);
+        } else {
+          oldMarks.push(Math.round(m.mark * 100) / m.max_mark);
+        }
+      }
     });
     this.markDataSet.data = markData;
-    this.setState({datasets: [this.markDataSet], labels: labels});
-    this.marks_modal.open()
+    if (oldMarksExist) {
+      this.oldMarkDataSet.data = oldMarks;
+      this.markDataSet.label = I18n.t('results.current_mark');
+      this.setState({datasets: [this.oldMarkDataSet, this.markDataSet], labels: labels, chartLegend: true});
+    } else {
+      this.setState({datasets: [this.markDataSet], labels: labels});
+    }
+    this.marks_modal.open();
   };
 
   criterionColumns = () => [
@@ -274,14 +298,14 @@ export class SummaryPanel extends React.Component {
             {I18n.t('results.marks_chart')}
           </button>
         </p>
-        <aside className='dialog' id={'marks_chart'} style={{width: window.innerWidth * .8 + 'px'}}>
+        <aside className='dialog' id={'marks_chart'} style={{width: window.innerWidth * 0.8 + 'px'}}>
           <DataChart
             labels={this.state.labels}
             datasets={this.state.datasets}
             xTitle={this.state.xTitle}
             yTitle={this.state.yTitle}
-            width={window.innerWidth * .7 + 'px'}
-            legend={false}
+            width={window.innerWidth * 0.7 + 'px'}
+            legend={this.state.chartLegend}
           />
         </aside>
         <ReactTable
