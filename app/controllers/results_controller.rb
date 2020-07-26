@@ -192,13 +192,13 @@ class ResultsController < ApplicationController
         if assignment.assign_graders_to_criteria && current_user.ta?
           assigned_criteria = current_user.criterion_ta_associations
                                           .where(assessment_id: assignment.id)
-                                          .pluck(:criterion_type, :criterion_id)
-                                          .map { |t, id| "#{t}-#{id}" }
+                                          .pluck(:criterion_id)
+                                          .map(&:to_s)
           if assignment.hide_unassigned_criteria
-            marks_map = marks_map.select { |m| assigned_criteria.include? "#{m[:criterion_type]}-#{m[:id]}" }
+            marks_map = marks_map.select { |m| assigned_criteria.include? m[:id].to_s }
             old_marks = old_marks.select { |m| assigned_criteria.include? m }
           else
-            marks_map = marks_map.partition { |m| assigned_criteria.include? "#{m[:criterion_type]}-#{m[:id]}" }
+            marks_map = marks_map.partition { |m| assigned_criteria.include? m[:id].to_s }
                                  .flatten
           end
         else
@@ -229,8 +229,11 @@ class ResultsController < ApplicationController
         end
 
         # Totals
-        data[:assignment_max_mark] =
-          result.is_a_review? ? assignment.pr_assignment.max_mark(:peer) : marks_map.map { |h| h['max_mark'] }.sum
+        if result.is_a_review?
+          data[:assignment_max_mark] = assignment.pr_assignment.max_mark(:peer_visible)
+        else
+          data[:assignment_max_mark] = marks_map.map { |h| h['max_mark'] }.sum
+        end
         data[:total] = marks_map.map { |h| h['mark'] }
         data[:old_total] = old_marks.values.sum
 
@@ -649,10 +652,10 @@ class ResultsController < ApplicationController
     if @result.is_a_review?
       if @current_user.is_reviewer_for?(@assignment.pr_assignment, @result) ||
           !@grouping.membership_status(current_user).nil? || !@current_user.student?
-        @mark_criteria = @assignment.get_criteria(:peer)
+        @mark_criteria = @assignment.criteria.where(&:peer_visible)
       end
     else
-      @mark_criteria = @assignment.get_criteria(:ta)
+      @mark_criteria = @assignment.ta_criteria
     end
 
     @mark_criteria.each do |criterion|

@@ -41,7 +41,7 @@ FactoryBot.define do
       3.times { create(:grouping_with_inviter_and_submission, assignment: a) }
       a.groupings.each do |grouping|
         result = grouping.current_result
-        a.get_criteria(:ta).each do |criterion|
+        a.ta_criteria.each do |criterion|
           result.marks.create(criterion: criterion, mark: Random.rand(criterion.max_mark + 1))
         end
         result.update_total_mark

@@ -4,7 +4,7 @@ class RubricCriteriaController < ApplicationController
 
   def download_csv
     @assignment = Assignment.find(params[:assignment_id])
-    file_out = MarkusCsv.generate(@assignment.get_criteria(:all, :rubric)) do |criterion|
+    file_out = MarkusCsv.generate(@assignment.criteria.where(type: 'RubricCriterion')) do |criterion|
       criterion_array = [criterion.name, criterion.max_mark]
       criterion.levels.each do |level|
         criterion_array.push(level.name)
