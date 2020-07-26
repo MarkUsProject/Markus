@@ -159,8 +159,8 @@ class Grouping < ApplicationRecord
 
     counts = CriterionTaAssociation
              .from(
-                # subquery
-                assignment.criterion_ta_associations
+               # subquery
+               assignment.criterion_ta_associations
                          .joins(ta: :groupings)
                          .where('groupings.id': grouping_ids)
                          .select('criterion_ta_associations.criterion_id',
