@@ -29,7 +29,10 @@ module CourseSummariesHelper
                                 .where('results.released_to_students': released)
                                 .pluck('users.id', 'groupings.assessment_id', 'results.total_mark')
     assignment_grades.each do |student_id, assessment_id, mark|
-      student_data[student_id][:assessment_marks][assessment_id] = mark
+      student_data[student_id][:assessment_marks][assessment_id] = {
+        mark: mark,
+        percentage: mark.nil? ? nil : (mark * 100 / @max_marks[assessment_id]).round(2)
+      }
     end
 
     gef_grades = students.joins(:grade_entry_students)
@@ -39,7 +42,10 @@ module CourseSummariesHelper
                                 'grade_entry_students.total_grade')
 
     gef_grades.each do |student_id, assessment_id, mark|
-      student_data[student_id][:assessment_marks][assessment_id] = mark
+      student_data[student_id][:assessment_marks][assessment_id] = {
+        mark: mark,
+        percentage: mark.nil? ? nil : (mark * 100 / @gef_max_marks[assessment_id]).round(2)
+      }
     end
 
     unless current_user.student?
@@ -76,7 +82,7 @@ module CourseSummariesHelper
           else
             max_mark = @gef_max_marks[mw.assessment_id]
           end
-          mark = student[:assessment_marks][mw.assessment_id]
+          mark = student[:assessment_marks][mw.assessment_id]&.[](:mark)
           unless mw.weight.nil? || mark.nil? || max_mark.nil? || max_mark == 0
             weighted += mark * mw.weight / max_mark
           end
@@ -86,4 +92,3 @@ module CourseSummariesHelper
     end
   end
 end
-

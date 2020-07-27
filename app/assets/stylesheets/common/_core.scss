@@ -267,6 +267,10 @@ label.required::after, th.required::after {
   margin: 0;
 }
 
+.rt-tr {
+  min-height: 2em;
+}
+
 .rt-td {
   // Do not have top margin for first <p> tag in a cell.
   p:first-child {

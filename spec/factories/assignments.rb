@@ -39,6 +39,7 @@ FactoryBot.define do
         result.update_total_mark
         result.update(marking_state: Result::MARKING_STATES[:complete])
       end
+      a.update_results_stats
     end
   end
 

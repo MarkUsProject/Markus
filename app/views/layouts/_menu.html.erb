@@ -49,6 +49,11 @@
       <%= link_to t('menu.home'), controller: 'assignments' %>
     </li>
     <% unless @current_user.admin? || @current_user.ta? %>
+      <li <% if controller.controller_name == 'course_summaries'%>
+          class='active'
+          <% end %>>
+        <%= link_to t('course_summary.title'), course_summaries_path %>
+      </li>
       <li <% if controller.controller_name == 'students' %>
           class='active'
           <% end %>>
