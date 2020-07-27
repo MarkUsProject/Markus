@@ -112,8 +112,6 @@ class CourseSummariesController < ApplicationController
     assessment_columns.concat(marking_scheme_columns)
   end
 
-  private
-
   def assessment_overview(assessment)
     if assessment.is_a? GradeEntryForm
       info = { total: assessment.grade_entry_items.sum(:out_of), average: assessment.calculate_average&.round(2) }

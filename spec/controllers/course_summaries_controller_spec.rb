@@ -57,7 +57,6 @@ describe CourseSummariesController do
 
         # Ensure statistics exist for one assignment
         assignments = Assignment.all
-        assignments.first.update_results_stats
 
         # TODO: Create marking scheme as well
 
