@@ -9,21 +9,6 @@ class CourseSummariesController < ApplicationController
   def index
   end
 
-  def assessment_overview(assessment)
-    if assessment.is_a? GradeEntryForm
-      info = { total: assessment.grade_entry_items.sum(:out_of), average: assessment.calculate_average&.round(2) }
-      if current_user.admin?
-        info[:median] = assessment.calculate_median&.round(2)
-      end
-    else
-      info = { total: assessment.max_mark, average: assessment.results_average&.round(2) }
-      if current_user.admin? || assessment.display_median_to_students
-        info[:median] = assessment.results_median&.round(2)
-      end
-    end
-    info
-  end
-
   def populate
     visible_assessments_info = {}
     marking_schemes = {}
@@ -125,5 +110,22 @@ class CourseSummariesController < ApplicationController
     end
 
     assessment_columns.concat(marking_scheme_columns)
+  end
+
+  private
+
+  def assessment_overview(assessment)
+    if assessment.is_a? GradeEntryForm
+      info = { total: assessment.grade_entry_items.sum(:out_of), average: assessment.calculate_average&.round(2) }
+      if current_user.admin?
+        info[:median] = assessment.calculate_median&.round(2)
+      end
+    else
+      info = { total: assessment.max_mark, average: assessment.results_average&.round(2) }
+      if current_user.admin? || assessment.display_median_to_students
+        info[:median] = assessment.results_median&.round(2)
+      end
+    end
+    info
   end
 end
