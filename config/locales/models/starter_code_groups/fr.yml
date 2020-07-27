@@ -1,0 +1,6 @@
+fr:
+  activerecord:
+    models:
+      starter_code_group:
+        one: "UPDATE ME"
+        other: "UPDATE ME"

@@ -53,7 +53,7 @@ class AssignmentsController < ApplicationController
       end
     end
     unless @grouping.nil?
-      flash_message(:warning, 'Starter code changed') if @grouping.starter_code_changed # TODO: internationalize
+      flash_message(:warning, I18n.t('assignments.starter_code.changed_warning')) if @grouping.starter_code_changed # TODO: internationalize
       if @assignment.is_timed && !@grouping.start_time.nil? && !@grouping.past_collection_date?
         flash_message(:note, I18n.t('assignments.timed.started_message'))
         flash_message(:note, I18n.t('assignments.timed.starter_code_prompt'))
@@ -392,7 +392,7 @@ class AssignmentsController < ApplicationController
   def populate_starter_code_manager
     # TODO: flash message if a grouping exists
     assignment = Assignment.find(params[:id])
-    flash_message(:warning, 'Groupings exist') if assignment.groupings.exists? # TODO: internationalize this
+    flash_message(:warning, I18n.t('assignments.starter_code.groupings_exist_warning_html')) if assignment.groupings.exists?
     file_data = []
     assignment.starter_code_groups.order(:id).each do |g|
       file_data << { id: g.id,

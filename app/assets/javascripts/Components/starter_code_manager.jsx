@@ -45,7 +45,7 @@ class StarterCodeManager extends React.Component {
       url: Routes.assignment_starter_code_groups_path(this.props.assignment_id),
       data: {
         assessment_id: this.props.assignment_id,
-        name: 'New Starter Code Group' // TODO: internationalize this
+        name: I18n.t('assignments.starter_code.new_starter_code_group')
       }
     }).then(this.fetchData)
   };
@@ -171,11 +171,14 @@ class StarterCodeManager extends React.Component {
           const {id, name, files} = data[1];
           return (
             <fieldset key={index}>
-              <StarterCodeGroupName
-                name={name}
-                groupUploadTarget={id}
-                changeGroupName={this.changeGroupName}
-              />
+              <legend>
+                <StarterCodeGroupName
+                  name={name}
+                  groupUploadTarget={id}
+                  index={index}
+                  changeGroupName={this.changeGroupName}
+                />
+              </legend>
               <StarterCodeFileManager
                 groupUploadTarget={id}
                 files={files}
@@ -192,10 +195,9 @@ class StarterCodeManager extends React.Component {
               />
               <button
                 key={'delete_starter_code_group_button'}
+                className={'button remove-icon'}
                 onClick={() => this.deleteStarterCodeGroup(id)}
-              >
-                Delete
-              </button> {/* TODO: add styling to right align with x icon */}
+              />
             </fieldset>
           );
         })}
@@ -229,7 +231,7 @@ class StarterCodeManager extends React.Component {
               disabled={!this.state.files.length}
               onChange={() => { this.setState({starterCodeType: 'simple'}, () => this.toggleFormChanged(true)) }}
             />
-            Simple
+            {I18n.t('assignments.starter_code.starter_code_rule_types.simple')}
           </label>
         </div>
         <div>
@@ -242,7 +244,7 @@ class StarterCodeManager extends React.Component {
               disabled={!this.state.files.length}
               onChange={() => { this.setState({starterCodeType: 'sections'}, () => this.toggleFormChanged(true)) }}
             />
-            Sections
+            {I18n.t('assignments.starter_code.starter_code_rule_types.sections')}
           </label>
         </div>
         <div>
@@ -255,7 +257,7 @@ class StarterCodeManager extends React.Component {
               disabled={!this.state.files.length}
               onChange={() => { this.setState({starterCodeType: 'shuffle'}, () => this.toggleFormChanged(true)) }}
             />
-            Shuffle
+            {I18n.t('assignments.starter_code.starter_code_rule_types.shuffle')}
           </label>
         </div>
         <div>
@@ -268,7 +270,7 @@ class StarterCodeManager extends React.Component {
               disabled={!this.state.files.length}
               onChange={() => { this.setState({starterCodeType: 'group'}, () => this.toggleFormChanged(true)) }}
             />
-            Group
+            {I18n.t('assignments.starter_code.starter_code_rule_types.group')}
           </label>
         </div>
       </div>
@@ -279,7 +281,7 @@ class StarterCodeManager extends React.Component {
     if (['simple', 'sections'].includes(this.state.starterCodeType)) {
       let default_selector = (
         <label>
-          Default Starter Code Group {/* TODO: internationalize this */}
+          {I18n.t('assignments.starter_code.default_starter_code_group')}
           <select
             onChange={(e) => this.setState(
               {defaultStarterCodeGroup: parseInt(e.target.value)}, () => this.toggleFormChanged(true)
@@ -302,9 +304,9 @@ class StarterCodeManager extends React.Component {
         section_table = (
           <ReactTable
             columns={[
-              {Header: 'section', accessor: 'section_name'},
+              {Header: I18n.t('activerecord.models.section.one'), accessor: 'section_name'},
               {
-                Header: 'starter code group',
+                Header: I18n.t('activerecord.models.starter_code_group.one'),
                 Cell: row => {
                   let selected = `${row.original.section_id}_${row.original.group_id || ''}`;
                   return (
@@ -345,9 +347,9 @@ class StarterCodeManager extends React.Component {
       return (
         <ReactTable
           columns={[
-            {Header: 'group',
+            {Header: I18n.t('activerecord.models.starter_code_group.one'),
              Cell: row => `${row.index + 1}: ${row.original.name}`},
-            {Header: 'rename',
+            {Header: I18n.t('assignments.starter_code.rename'),
              Cell: row => {
               return (
                 <StarterCodeEntryRenameInput
@@ -371,14 +373,16 @@ class StarterCodeManager extends React.Component {
   render() {
     return (
       <div>
-        <fieldset>
+        <fieldset className={'starter_code_properties'}>
+          <legend>
+            <span>{I18n.t('activerecord.models.starter_code_group.other')}</span>
+          </legend>
           {this.renderFileManagers()}
           <button
             key={'create_starter_code_group_button'}
+            className={'button add-new-button'}
             onClick={this.createStarterCodeGroup}
-          >
-            New
-          </button> {/* TODO: add styling to right align with + icon */}
+          />
           <StarterCodeFileUploadModal
             groupUploadTarget={this.state.groupUploadTarget}
             isOpen={this.state.showFileUploadModal}
@@ -390,7 +394,10 @@ class StarterCodeManager extends React.Component {
             onSubmit={this.handleCreateFiles}
           />
         </fieldset>
-        <fieldset>
+        <fieldset className={'starter_code_rule_types'}>
+          <legend>
+            <span>{I18n.t('assignments.starter_code.starter_code_rule')}</span>
+          </legend>
           {this.renderStarterCodeTypes()}
           {this.renderStarterCodeAssigner()}
           {this.renderStarterCodeRenamer()}
@@ -434,9 +441,12 @@ class StarterCodeGroupName extends React.Component {
       )
     } else {
       return (
-        <a href={'#'} onClick={() => {this.setState({editing: true})}}>
-          <h3>{this.props.name}</h3>
-        </a>
+        <h3>
+          {`${this.props.index + 1}: `}
+          <a href={'#'} onClick={() => {this.setState({editing: true})}}>
+            {this.props.name}
+          </a>
+        </h3>
       )
     }
   }
@@ -453,23 +463,24 @@ class StarterCodeEntryRenameInput extends React.Component {
 
   render() {
     return (
-      <React.Fragment>
+      <span className={'starter_code_rename_cell_content'}>
         <input
+          className={'rename_input'}
           type={'text'}
           placeholder={this.props.entry_rename}
           onKeyPress={blurOnEnter}
           onBlur={this.handleBlur}
           disabled={!this.props.use_rename || this.props.disabled}
         />
-        <label>
+        <label className={'original_checkbox'}>
           <input
             type={'checkbox'}
             onChange={this.handleClick}
             checked={!this.props.use_rename || this.props.disabled}
           />
-          Use Original File Name
+          {I18n.t('assignments.starter_code.use_original_filename')}
         </label>
-      </React.Fragment>
+      </span>
     )
   }
 }

@@ -9,6 +9,7 @@
 fieldset {
   &.period,
   &.timed_assignment_duration_properties,
+  &.starter_code_properties,
   &.group_properties {
     border: 1px solid $grey;
     border-radius: $radius;
@@ -122,4 +123,20 @@ fieldset {
   margin: 0 8px;
   vertical-align: baseline;
   width: 100px;
+}
+
+.starter_code_rename_cell_content {
+  .rename_input {
+    float :left;
+  }
+  .original_checkbox {
+    float :right;
+    vertical-align: middle;
+  }
+}
+
+.starter_code_rule_types {
+  > * {
+    padding-bottom: 10px;
+  }
 }
