@@ -2,12 +2,12 @@
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       makeGradesSummaryDisplay(document.getElementById('grades_summary_display'),
-                             { student: <%= @current_user.student? %> });
+                               { student: <%= @current_user.student? %> });
     });
   </script>
 <% end %>
 <% if @current_user.student? %>
-  <h1 style="padding-bottom: 10px;"><%= t('course_summary.student_title') %></h1>
+  <%= content_for :title, t('course_summary.student_title') %>
 <% else %>
   <%= content_for :title, t('course_summary.title') %>
 

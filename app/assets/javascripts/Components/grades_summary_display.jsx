@@ -59,26 +59,38 @@ class GradesSummaryDisplay extends React.Component {
       this.averageDataSet.data = [];
       this.medianDataSet.data = [];
       labels.forEach(l => {
-        this.averageDataSet.data.push(res.averages[l] ? parseFloat(res.averages[l]) : null);
-        this.medianDataSet.data.push(res.medians[l] ? parseFloat(res.medians[l]) : null);
+        if (res.assessment_info[l]) {
+          this.averageDataSet.data.push(
+            res.assessment_info[l]['average'] ? parseFloat(res.assessment_info[l]['average']) : null
+          );
+          this.medianDataSet.data.push(
+            res.assessment_info[l]['median'] ? parseFloat(res.assessment_info[l]['median']) : null
+          );
+        }
       });
       let chartInfo = {labels: labels};
       if (this.props.student) {
         this.individualDataSet.data = [];
         Object.keys(res.columns).forEach(k => {
           if (res.data[0].assessment_marks[parseInt(k, 10) + 1]) {
-            this.individualDataSet.data.push(parseFloat(res.data[0].assessment_marks[parseInt(k) + 1].percentage));
+            this.individualDataSet.data.push(parseFloat(res.data[0].assessment_marks[parseInt(k, 10) + 1].percentage));
           } else {
             this.individualDataSet.data.push(null);
           }
         });
         chartInfo['datasets'] = [this.individualDataSet, this.averageDataSet, this.medianDataSet];
       } else {
+        Object.keys(res.schemes).forEach(k => {
+          this.averageDataSet.data.push(res.schemes[k].average ? res.schemes[k].average : null);
+          this.medianDataSet.data.push(res.schemes[k].median ? res.schemes[k].median : null);
+        });
         chartInfo['datasets'] = [this.averageDataSet, this.medianDataSet];
       }
 
-      res.columns.forEach((c, i) => {
-        c.Header += `(/${Math.round(parseFloat(res.totals[i]) * 100) / 100})`;
+      res.columns.forEach((c) => {
+        if (res.assessment_info[c.Header]) {
+          c.Header += ` (/${Math.round(parseFloat(res.assessment_info[c.Header]['total']) * 100) / 100})`;
+        }
       });
       this.setState({
         data: res.data,

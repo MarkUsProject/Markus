@@ -9,43 +9,42 @@ class CourseSummariesController < ApplicationController
   def index
   end
 
-  def populate
-    averages = {}
-    medians = {}
-    visible_assessment_totals = []
-    if current_user.admin?
-      visible_assessments = Assessment.all.order(id: :asc).pluck_to_hash(:id, :type, :short_identifier)
-      MarkingScheme.all.each do |m|
-        averages[m.name] = DescriptiveStatistics.mean(m.students_weighted_grades_array(current_user)).round(2)
+  def assessment_overview(assessment)
+    if assessment.is_a? GradeEntryForm
+      info = { total: assessment.grade_entry_items.sum(:out_of), average: assessment.calculate_average&.round(2) }
+      if current_user.admin?
+        info[:median] = assessment.calculate_median&.round(2)
       end
     else
-      visible_assessments = Assessment.where(is_hidden: false).order(id: :asc).pluck_to_hash(:id,
-                                                                                             :type,
-                                                                                             :short_identifier)
-    end
-    visible_assessments.each do |a|
-      if a[:type] == 'GradeEntryForm'
-        gef = GradeEntryForm.find(a[:id])
-        visible_assessment_totals << gef.grade_entry_items.sum(:out_of)
-        averages[gef.short_identifier] = gef.calculate_average&.round(2)
-        if current_user.admin?
-          medians[gef.short_identifier] = gef.calculate_median&.round(2)
-        end
-      else
-        assignment = Assignment.find(a[:id])
-        visible_assessment_totals << assignment.max_mark
-        averages[assignment.short_identifier] = assignment.results_average&.round(2)
-        if current_user.admin? || assignment.display_median_to_students
-          medians[assignment.short_identifier] = assignment.results_median&.round(2)
-        end
+      info = { total: assessment.max_mark, average: assessment.results_average&.round(2) }
+      if current_user.admin? || assessment.display_median_to_students
+        info[:median] = assessment.results_median&.round(2)
       end
     end
+    info
+  end
+
+  def populate
+    visible_assessments_info = {}
+    marking_schemes = {}
+    if current_user.admin?
+      visible_assessments = Assessment.all.order(id: :asc)
+      MarkingScheme.all.each do |m|
+        grades = m.students_weighted_grades_array(current_user)
+        marking_schemes[m.name] = { average: DescriptiveStatistics.mean(grades).round(2),
+                                    median: DescriptiveStatistics.median(grades).round(2) }
+      end
+    else
+      visible_assessments = Assessment.where(is_hidden: false).order(id: :asc)
+    end
+    visible_assessments.each do |a|
+      visible_assessments_info[a.short_identifier] = assessment_overview(a)
+    end
     render json: {
-      averages: averages,
+      assessment_info: visible_assessments_info,
       columns: populate_columns,
       data: get_table_json_data(current_user),
-      medians: medians,
-      totals: visible_assessment_totals
+      schemes: marking_schemes
     }
   end
 
