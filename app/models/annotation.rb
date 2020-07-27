@@ -19,6 +19,14 @@ class Annotation < ApplicationRecord
   validates_format_of :type,
                       with: /\AImageAnnotation|TextAnnotation|PdfAnnotation\z/
 
+  after_create :modify_mark_with_deduction, unless: ->(a) { [nil, 0].include? a.annotation_text.deduction }
+  after_destroy :modify_mark_with_deduction, unless: ->(a) { [nil, 0].include? a.annotation_text.deduction }
+
+  def modify_mark_with_deduction
+    criterion = self.annotation_text.annotation_category.flexible_criterion
+    self.result.marks.find_by(criterion: criterion).update_deduction
+  end
+
   def get_data(include_creator=false)
     data = {
       id: id,
@@ -31,7 +39,10 @@ class Annotation < ApplicationRecord
         annotation_text.annotation_category&.annotation_category_name,
       type: self.class.name,
       number: annotation_number,
-      is_remark: is_remark
+      is_remark: is_remark,
+      deduction: annotation_text.deduction,
+      criterion_name: annotation_text.annotation_category&.flexible_criterion&.name,
+      criterion_id: annotation_text.annotation_category&.flexible_criterion&.id
     }
 
     if include_creator

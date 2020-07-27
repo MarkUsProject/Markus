@@ -8,12 +8,12 @@ class ResultsController < ApplicationController
                          :download, :download_zip,
                          :update_remark_request, :cancel_remark_request,
                          :get_test_runs_instructors, :get_test_runs_instructors_released,
-                         :add_tag, :remove_tag
+                         :add_tag, :remove_tag, :revert_to_automatic_deductions
                 ]
   before_action :authorize_for_ta_and_admin,
                 only: [:create, :add_extra_mark,
                        :remove_extra_mark, :get_test_runs_instructors,
-                       :add_tag, :remove_tag]
+                       :add_tag, :remove_tag, :revert_to_automatic_deductions]
   before_action :authorize_for_user,
                 only: [:show, :download, :download_zip,
                        :view_marks, :get_annotations, :show]
@@ -122,19 +122,33 @@ class ResultsController < ApplicationController
 
         # Annotation categories
         if current_user.admin? || current_user.ta?
-          annotation_categories = assignment.annotation_categories
-                                            .order(:position)
-                                            .includes(:annotation_texts)
+          if current_user.ta? && assignment.assign_graders_to_criteria
+            visible = current_user.criterion_ta_associations
+                                  .joins(:criterion)
+                                  .where('criteria.type': 'FlexibleCriterion')
+                                  .pluck(:criterion_id) + [nil]
+            annotation_categories = assignment.annotation_categories
+                                              .order(:position)
+                                              .includes(:annotation_texts)
+                                              .where('annotation_categories.flexible_criterion_id': visible)
+          else
+            annotation_categories = assignment.annotation_categories
+                                              .order(:position)
+                                              .includes(:annotation_texts)
+          end
           data[:annotation_categories] = annotation_categories.map do |category|
+            name_extension = category.flexible_criterion_id.nil? ? '' : " [#{category.flexible_criterion.name}]"
             {
               id: category.id,
-              annotation_category_name: category.annotation_category_name,
+              annotation_category_name: category.annotation_category_name + name_extension,
               texts: category.annotation_texts.map do |text|
                 {
                   id: text.id,
-                  content: text.content
+                  content: text.content,
+                  deduction: text.deduction
                 }
-              end
+              end,
+              flexible_criterion_id: category.flexible_criterion_id
             }
           end
           data[:notes_count] = submission.grouping.notes.count
@@ -166,7 +180,7 @@ class ResultsController < ApplicationController
           criteria_info = criteria.pluck_to_hash(*fields)
           marks_info = criteria.joins(:marks)
                                .where('marks.result_id': result.id)
-                               .pluck_to_hash(*fields, 'marks.mark')
+                               .pluck_to_hash(*fields, 'marks.mark', 'marks.override')
                                .group_by { |h| h[:id] }
           # adds a criterion type to each of the marks info hashes
           criteria_info.map do |cr|
@@ -297,6 +311,7 @@ class ResultsController < ApplicationController
       test_run = submission.create_test_run!(user: current_user)
       @current_job = AutotestRunJob.perform_later(request.protocol + request.host_with_port,
                                                   current_user.id,
+                                                  assignment.id,
                                                   [{ id: test_run.id }])
       session[:job_id] = @current_job.job_id
       flash_message(:notice, I18n.t('automated_tests.tests_running'))
@@ -309,7 +324,8 @@ class ResultsController < ApplicationController
 
   def stop_test
     test_id = params[:test_run_id].to_i
-    @current_job = AutotestCancelJob.perform_later(request.protocol + request.host_with_port, [test_id])
+    assignment_id = params[:assignment_id]
+    @current_job = AutotestCancelJob.perform_later(request.protocol + request.host_with_port, assignment_id, [test_id])
     session[:job_id] = @current_job.job_id
     redirect_back(fallback_location: root_path)
   end
@@ -499,7 +515,7 @@ class ResultsController < ApplicationController
         revision = repo.get_revision(revision_identifier)
         repo.send_tree_to_zip(assignment.repository_folder, zip_file, zip_name, revision) do |file|
           submission_file = files.find_by(filename: file.name, path: file.path)
-          submission_file.retrieve_file(params[:include_annotations] == 'true' && !submission_file.is_supported_image?)
+          submission_file&.retrieve_file(params[:include_annotations] == 'true' && !submission_file.is_supported_image?)
         end
       end
     end
@@ -536,7 +552,8 @@ class ResultsController < ApplicationController
 
     m_logger = MarkusLogger.instance
 
-    if result_mark.update(mark: mark_value)
+    if result_mark.update(mark: mark_value, override: !(mark_value.nil? && result_mark.deductive_annotations_absent?))
+
       m_logger.log("User '#{current_user.user_name}' updated mark for " +
                    "submission (id: #{submission.id}) of " +
                    "assignment #{assignment.short_identifier} for " +
@@ -548,7 +565,11 @@ class ResultsController < ApplicationController
         num_marked = assignment.get_num_marked(nil)
       end
       render json: {
-        num_marked: num_marked
+        num_marked: num_marked,
+        mark: result_mark.reload.mark,
+        mark_override: result_mark.override,
+        subtotal: result.get_subtotal,
+        total: result.get_total_mark
       }
     else
       m_logger.log("Error while trying to update mark of submission. " +
@@ -559,6 +580,26 @@ class ResultsController < ApplicationController
                    MarkusLogger::ERROR)
       render json: result_mark.errors.full_messages.join, status: :bad_request
     end
+  end
+
+  def revert_to_automatic_deductions
+    result = Result.find(params[:id])
+    criterion = Criterion.find_by!(id: params[:criterion_id], type: 'FlexibleCriterion')
+    result_mark = result.marks.find_or_create_by(criterion: criterion)
+
+    result_mark.update!(override: false)
+
+    if @current_user.ta?
+      num_marked = result.submission.grouping.assignment.get_num_marked(@current_user.id)
+    else
+      num_marked = result.submission.grouping.assignment.get_num_marked(nil)
+    end
+    render json: {
+      num_marked: num_marked,
+      mark: result_mark.reload.mark,
+      subtotal: result.get_subtotal,
+      total: result.get_total_mark
+    }
   end
 
   def view_marks

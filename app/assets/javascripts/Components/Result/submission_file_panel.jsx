@@ -4,6 +4,7 @@ import ReactDOM from 'react-dom';
 import { AnnotationManager } from './annotation_manager';
 import { FileViewer } from './file_viewer';
 import { DownloadSubmissionModal } from './download_submission_modal';
+import { lookup } from 'mime-types';
 
 
 export class SubmissionFilePanel extends React.Component {
@@ -11,7 +12,8 @@ export class SubmissionFilePanel extends React.Component {
     super(props);
     this.state = {
       selectedFile: null,
-      focusLine: null
+      focusLine: null,
+      annotationFocus: undefined
     };
     this.submissionFileViewer = React.createRef();
   }
@@ -104,8 +106,8 @@ export class SubmissionFilePanel extends React.Component {
     return null;
   };
 
-  selectFile = (file, id, focusLine) => {
-    this.setState({selectedFile: [file, id], focusLine: focusLine});
+  selectFile = (file, id, focusLine, annotationFocus) => {
+    this.setState({selectedFile: [file, id], focusLine: focusLine, annotationFocus: annotationFocus});
     localStorage.setItem('file', file);
   };
 
@@ -115,17 +117,18 @@ export class SubmissionFilePanel extends React.Component {
   };
 
   render() {
-    let submission_file_id, visibleAnnotations;
+    let submission_file_id, visibleAnnotations, submission_file_mime_type;
     if (this.state.selectedFile === null) {
       submission_file_id = null;
+      submission_file_mime_type = null;
       visibleAnnotations = [];
     } else {
       submission_file_id = this.state.selectedFile[1];
+      submission_file_mime_type = lookup(this.state.selectedFile[0]);
       visibleAnnotations = this.props.annotations.filter(a => a.submission_file_id === submission_file_id);
     }
     return [
-        <div key='sel_box' id='sel_box'/>,
-        <div key='annotation_menu' id='annotation_menu'>
+        <div key='annotation_menu' className='react-tabs-panel-action-bar'>
           <FileSelector
             fileData={this.props.fileData}
             onSelectFile={this.selectFile}
@@ -135,25 +138,25 @@ export class SubmissionFilePanel extends React.Component {
             <button onClick={() => this.modalDownload.open()}>
               {I18n.t('download')}
             </button>}
-          <div id='annotation_options'>
-            {this.props.show_annotation_manager &&
-             <AnnotationManager
-               categories={this.props.annotation_categories}
-               newAnnotation={this.props.newAnnotation}
-               addExistingAnnotation={this.props.addExistingAnnotation}
-             />
-            }
-          </div>
+          {this.props.show_annotation_manager &&
+           <AnnotationManager
+             categories={this.props.annotation_categories}
+             newAnnotation={this.props.newAnnotation}
+             addExistingAnnotation={this.props.addExistingAnnotation}
+           />
+          }
         </div>,
         <div key='codeviewer' id='codeviewer'>
           <FileViewer
             ref={this.submissionFileViewer}
             assignment_id={this.props.assignment_id}
             submission_id={this.props.submission_id}
+            mime_type={submission_file_mime_type}
             result_id={this.props.result_id}
             selectedFile={submission_file_id}
             annotations={visibleAnnotations}
             focusLine={this.state.focusLine}
+            annotationFocus={this.state.annotationFocus}
             released_to_students={this.props.released_to_students}
           />
         </div>
@@ -190,9 +193,10 @@ export class FileSelector extends React.Component {
       if (hash['directories'].hasOwnProperty(d)) {
         let dir = hash['directories'][d];
         dirs.push(
-          <li className='nested-submenu' key={dir.path.join('/')}>
-            <a key={`${dir.path.join('/')}-a`} onClick={(e) => this.selectDirectory(e, dir.path)}>
-              <strong>{dir.name}</strong>
+          <li className='nested-submenu' key={dir.path.join('/')}
+              onClick={(e) => this.selectDirectory(e, dir.path)}>
+            <a key={`${dir.path.join('/')}-a`}>
+              {dir.name}
             </a>
             {this.hashToHTMLList(dir, newExpanded)}
           </li>
@@ -253,23 +257,21 @@ export class FileSelector extends React.Component {
     }
 
     return (
-      <div className='file_selector'>
-        <div
-          className='dropdown'
-          onClick={(e) => {
-            e.stopPropagation();
-            this.expandFileSelector(expand);
-          }}
-          onBlur={() => this.expandFileSelector(null)}
-          tabIndex={-1}
-        >
-          <a>{selectorLabel}</a>
-          {arrow}
-          {this.state.expanded &&
-           <div>
-             {fileSelector}
-           </div>}
-        </div>
+      <div
+        className='dropdown'
+        onClick={(e) => {
+          e.stopPropagation();
+          this.expandFileSelector(expand);
+        }}
+        onBlur={() => this.expandFileSelector(null)}
+        tabIndex={-1}
+      >
+        <a>{selectorLabel}</a>
+        {arrow}
+        {this.state.expanded &&
+         <div>
+           {fileSelector}
+         </div>}
       </div>
     );
   }

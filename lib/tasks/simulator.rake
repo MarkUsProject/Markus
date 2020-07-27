@@ -48,7 +48,6 @@ namespace :markus do
 
         puts assignment_short_identifier
         assignment = Assignment.create
-        rule = NoLateSubmissionRule.new
         assignment.short_identifier = assignment_short_identifier
         assignment.description = "Conditionals and Loops"
         assignment.message = "Learn to use conditional statements, and loops."
@@ -67,8 +66,6 @@ namespace :markus do
         end
         assignment.due_date = assignment_due_date
         assignment.repository_folder = assignment_short_identifier
-        assignment.submission_rule = rule
-        assignment.assignment_stat = AssignmentStat.new
         assignment.save!
 
         puts "Creating the Rubric for " + assignment_short_identifier + " ..."

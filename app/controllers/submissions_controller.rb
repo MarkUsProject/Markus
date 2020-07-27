@@ -113,10 +113,12 @@ class SubmissionsController < ApplicationController
   def file_manager
     @assignment = Assignment.find(params[:assignment_id])
     @grouping = current_user.accepted_grouping_for(@assignment.id)
-    if @grouping.nil? || @assignment.scanned_exam? || @assignment.is_peer_review?
-      redirect_to assignment_path(params[:assignment_id])
+    if @grouping.nil?
+      head 400
       return
     end
+
+    authorize! @grouping, to: :view_file_manager?
 
     @path = params[:path] || '/'
 
@@ -130,6 +132,8 @@ class SubmissionsController < ApplicationController
                     @assignment.submission_rule.class.human_attribute_name(:after_collection_message))
     elsif @assignment.grouping_past_due_date?(@grouping)
       flash_message(:warning, @assignment.submission_rule.overtime_message(@grouping))
+    elsif @assignment.is_timed
+      flash_message(:warning, I18n.t('assignments.timed.time_until_due_warning', due_date: I18n.l(@grouping.due_date)))
     end
 
     if !@grouping.is_valid?
@@ -254,6 +258,7 @@ class SubmissionsController < ApplicationController
         authorize! assignment, to: :run_tests?
         @current_job = AutotestRunJob.perform_later(request.protocol + request.host_with_port,
                                                     current_user.id,
+                                                    assignment.id,
                                                     test_runs)
         session[:job_id] = @current_job.job_id
         success = I18n.t('automated_tests.tests_running', assignment_identifier: assignment.short_identifier)
@@ -318,6 +323,7 @@ class SubmissionsController < ApplicationController
   # update_files action handles transactional submission of files.
   def update_files
     assignment_id = params[:assignment_id]
+    unzip = params[:unzip] == 'true'
     @assignment = Assignment.find(assignment_id)
     raise t('student.submission.external_submit_only') if current_user.student? && !@assignment.allow_web_submits
 
@@ -352,6 +358,16 @@ class SubmissionsController < ApplicationController
     if delete_files.empty? && new_files.empty? && new_folders.empty? && delete_folders.empty?
       flash_message(:warning, I18n.t('student.submission.no_action_detected'))
     else
+      if unzip
+        zdirs, zfiles = new_files.map do |f|
+          next unless File.extname(f.path).casecmp?('.zip')
+          unzip_uploaded_file(f.path)
+        end.compact.transpose.map(&:flatten)
+        new_files.reject! { |f| File.extname(f.path).casecmp?('.zip') }
+        new_folders.push(*zdirs)
+        new_files.push(*zfiles)
+      end
+
       messages = []
       @grouping.group.access_repo do |repo|
         # Create transaction, setting the author.  Timestamp is implicit.

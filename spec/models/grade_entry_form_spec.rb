@@ -147,6 +147,23 @@ describe GradeEntryForm do
     end
   end
 
+  describe '#upcoming' do
+    it 'returns true if a grade entry form is due after the current time' do
+      gef = create(:grade_entry_form, due_date: Time.current + (60 * 60 * 24))
+      expect(gef.upcoming(create(:student))).to be true
+    end
+
+    it 'returns false if a grade entry form was due before the current time' do
+      gef = create(:grade_entry_form, due_date: Time.current - (60 * 60 * 24))
+      expect(gef.upcoming(create(:student))).to be false
+    end
+
+    it 'returns true if a grade entry form has a nil due date' do
+      gef = create(:grade_entry_form, due_date: nil)
+      expect(gef.upcoming(create(:student))).to be true
+    end
+  end
+
   # Tests for calculate_average
   describe '#calculate_average' do
     before(:each) do

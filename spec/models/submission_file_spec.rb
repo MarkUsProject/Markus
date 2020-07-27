@@ -240,7 +240,19 @@ describe SubmissionFile do
     end
   end
 
-  def teardown
-    destroy_repos
+  context '#add_annotations' do
+    it 'includes deductive information when deductive annotations applied' do
+      pending('retrieve_file() not yet usable in testing, and add_annotations is private.')
+      assignment = create(:assignment_with_deductive_annotations)
+      file = create(:submission_file, submission: assignment.groupings.first.current_result.submission)
+      category = assignment.annotation_categories.where.not(flexible_criterion_id: nil).first
+      text = category.annotation_texts.first
+      create(:text_annotation,
+             annotation_text: text,
+             submission_file: file,
+             result: assignment.groupings.first.current_result)
+      deductive_info = " [#{category.flexible_criterion.name}: -#{text.deduction}]"
+      expect(file.retrieve_file.include?(deductive_info)).to be true
+    end
   end
 end

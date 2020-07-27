@@ -1,5 +1,5 @@
 shared_examples 'cancel test job' do
-  subject { described_class.perform_now(host_with_port, test_run_ids) }
+  subject { described_class.perform_now(host_with_port, assignment.id, test_run_ids) }
   context 'when the cancelation is performed without errors' do
     let(:data) { '' }
     let(:exit_code) { 0 }
@@ -28,7 +28,9 @@ end
 
 describe AutotestCancelJob do
   let(:host_with_port) { 'http://localhost:3000' }
-  let(:test_runs) { create_list(:test_run, 3) }
+  let(:assignment) { create(:assignment) }
+  let(:grouping) { create(:grouping, assignment: assignment) }
+  let(:test_runs) { create_list(:test_run, 3, grouping: grouping) }
   let(:test_run_ids) { test_runs.map(&:id) }
   context 'when running as a background job' do
     let(:job_args) { [host_with_port, test_run_ids] }

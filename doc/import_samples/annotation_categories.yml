@@ -19,3 +19,13 @@ Question 4:
     - Forgive me, I think we just have 3 questions for each problem set.
 
 Question 5: []  # Empty annotation category
+
+Question 6:
+  criterion: Question 6
+  texts:
+    -
+      - Please remember to state preconditions.
+      - 0.5
+    -
+      - Do not use a nested for loop.
+      - 1.0

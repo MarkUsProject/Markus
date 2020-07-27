@@ -6,11 +6,11 @@ shared_examples 'a criterion' do
       Array.new(2) { create(criterion_factory_name, assignment: assignment) }
     end
     let(:tas) { Array.new(2) { create(:ta) } }
+    let(:ta_ids) { tas.map(&:id) }
     let(:criterion_ids) { criteria.map(&:id) }
     let(:criterion_one_id) do
       [criteria[0].id]
     end
-    let(:ta_ids) { tas.map(&:id) }
 
     describe '.randomly_assign_tas' do
       it 'can randomly bulk assign no TAs to no criteria' do

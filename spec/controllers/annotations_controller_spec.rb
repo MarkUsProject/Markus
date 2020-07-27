@@ -115,6 +115,23 @@ describe AnnotationsController do
         expect(response.status).to eq(200)
         expect(result.annotations.reload.size).to eq 1
       end
+
+      it 'successfully creates an annotation where the deduction is not specified but a category with criterion is' do
+        assignment = create(:assignment_with_deductive_annotations)
+        category = assignment.annotation_categories.where.not(flexible_criterion_id: nil).first
+        result = assignment.groupings.first.current_result
+        submission_file = create(:submission_file, submission: result.submission)
+        post_as user,
+                :create,
+                params: { content: 'I like icecream!', category_id: category.id,
+                          submission_file_id: submission_file.id, line_start: 1, line_end: 1, column_start: 1,
+                          column_end: 1, result_id: result.id, assignment_id: assignment.id },
+                format: :js
+
+        assert_response :success
+        expect(result.annotations.reload.size).to eq 2
+        expect(result.annotations.joins(:annotation_text).where('annotation_texts.deduction': 0).size).to eq 1
+      end
     end
 
     describe '#destroy' do
@@ -239,11 +256,144 @@ describe AnnotationsController do
   describe 'an authenticated admin' do
     let!(:user) { create(:admin) }
     include_examples 'an authenticated admin or TA'
+
+    describe 'accessing annotations for results in an assignment with deductive annotations' do
+      let(:assignment) { create(:assignment_with_deductive_annotations) }
+      let(:result) { assignment.groupings.first.current_result }
+      let(:annotation) { result.annotations.first }
+      it 'can update a deductive annotation\'s content' do
+        post_as user,
+                :update,
+                params: { content: 'New content!',
+                          id: annotation.id,
+                          result_id: result.id,
+                          assignment_id: assignment.id },
+                format: :js
+        expect(annotation.reload.annotation_text.content).to eq 'New content!'
+      end
+
+      it 'cannot update deductive annotation content if that content has been applied to released results' do
+        assignment.groupings.first.current_result.update(released_to_students: true)
+        other_grouping = assignment.reload.groupings.joins(submissions: :results)
+                                   .where(results: { released_to_students: false }).first
+        post_as user,
+                :update,
+                params: { content: 'New content!',
+                          id: annotation.id,
+                          result_id: other_grouping.current_result.id,
+                          assignment_id: assignment.id },
+                format: :js
+        assert_response :bad_request
+        expect(annotation.reload.annotation_text.content).to_not eq 'New content!'
+      end
+
+      it 'can destroy a deductive annotation' do
+        post_as user,
+                :destroy,
+                params: { id: annotation.id,
+                          result_id: result.id,
+                          assignment_id: assignment.id },
+                format: :js
+        expect(result.reload.annotations.size).to eq 0
+      end
+
+      it 'can destroy a deductive annotation when criteria assigned to graders' do
+        assignment.assignment_properties.update(assign_graders_to_criteria: true)
+        post_as user,
+                :destroy,
+                params: { id: annotation.id,
+                          result_id: result.id,
+                          assignment_id: assignment.id },
+                format: :js
+        expect(result.reload.annotations.size).to eq 0
+      end
+    end
   end
 
   describe 'an authenticated TA' do
-    let!(:user) { create(:admin) }
+    let!(:user) { create(:ta) }
     include_examples 'an authenticated admin or TA'
+
+    describe 'accessing annotations for results in an assignment with deductive annotations' do
+      let(:assignment) { create(:assignment_with_deductive_annotations) }
+      let(:result) { assignment.groupings.first.current_result }
+      let(:annotation) { result.annotations.first }
+      it 'cannot update a deductive annotation' do
+        post_as user,
+                :update,
+                params: { content: 'New content!',
+                          id: annotation.id,
+                          result_id: result.id,
+                          assignment_id: assignment.id },
+                format: :js
+        assert_response :bad_request
+        expect(annotation.reload.annotation_text.content).to_not eq 'New content!'
+      end
+
+      it 'cannot update a deductive annotation even if assigned to its criterion' do
+        assignment.assignment_properties.update(assign_graders_to_criteria: true)
+        create(:criterion_ta_association,
+               criterion: annotation.annotation_text.annotation_category.flexible_criterion,
+               ta: user)
+        post_as user,
+                :update,
+                params: { content: 'New content!',
+                          id: annotation.id,
+                          result_id: result.id,
+                          assignment_id: assignment.id },
+                format: :js
+        assert_response :bad_request
+        expect(annotation.reload.annotation_text.content).to_not eq 'New content!'
+      end
+
+      it 'cannot destroy a deductive annotation if unassigned to the annotation\'s criterion' do
+        other_criterion = create(:rubric_criterion, assignment: assignment)
+        assignment.assignment_properties.update(assign_graders_to_criteria: true)
+        create(:criterion_ta_association, criterion: other_criterion, ta: user)
+        post_as user,
+                :destroy,
+                params: { id: annotation.id,
+                          result_id: result.id,
+                          assignment_id: assignment.id },
+                format: :js
+        assert_response :bad_request
+        expect(result.reload.annotations.size).to eq 1
+      end
+
+      it 'can destroy a deductive annotation if assigned to the annotation\'s criterion' do
+        assignment.assignment_properties.update(assign_graders_to_criteria: true)
+        create(:criterion_ta_association, criterion: assignment.criteria.where(type: 'FlexibleCriterion').first, ta: user)
+        post_as user,
+                :destroy,
+                params: { id: annotation.id,
+                          result_id: result.id,
+                          assignment_id: assignment.id },
+                format: :js
+        expect(result.reload.annotations.size).to eq 0
+      end
+
+      it 'cannot destroy a deductive annotation if unassigned to any criteria when assignment does assign criteria' do
+        assignment.assignment_properties.update(assign_graders_to_criteria: true)
+        post_as user,
+                :destroy,
+                params: { id: annotation.id,
+                          result_id: result.id,
+                          assignment_id: assignment.id },
+                format: :js
+        assert_response :bad_request
+        expect(result.reload.annotations.size).to eq 1
+      end
+
+      it 'can destroy a deductive annotation when assignment does not assign criteria' do
+        post_as user,
+                :destroy,
+                params: { id: annotation.id,
+                          result_id: result.id,
+                          assignment_id: assignment.id },
+                format: :js
+        expect(result.reload.annotations.size).to eq 0
+      end
+    end
   end
 
   context 'An authenticated and authorized Student doing a POST' do

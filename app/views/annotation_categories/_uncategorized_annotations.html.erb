@@ -1,0 +1,9 @@
+<li id='uncategorized'>
+    <%= link_to t('annotations.uncategorized'),
+                controller: 'annotation_categories',
+                action: 'uncategorized_annotations',
+                remote: true %>
+    (<%= AnnotationText.joins(annotations: [{ result: :grouping }])
+                       .where('annotation_texts.annotation_category_id': nil,
+                              'groupings.assessment_id': params[:assignment_id]).count %>)
+</li>

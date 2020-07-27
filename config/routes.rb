@@ -81,6 +81,7 @@ Rails.application.routes.draw do
         get 'stop_test'
         get 'stop_batch_tests'
         get 'switch_assignment'
+        put 'start_timed_assignment'
       end
 
       resources :tags do
@@ -225,6 +226,7 @@ Rails.application.routes.draw do
             delete 'delete_grace_period_deduction'
             get 'next_grouping'
             post 'remove_extra_mark'
+            patch 'revert_to_automatic_deductions'
             post 'set_released_to_students'
             post 'update_overall_comment'
             post 'toggle_marking_state'
@@ -293,6 +295,8 @@ Rails.application.routes.draw do
           delete 'destroy_annotation_text'
           put 'update_annotation_text'
           get 'find_annotation_text'
+          get 'annotation_text_uses'
+          get 'uncategorized_annotations'
         end
       end
     end
@@ -371,10 +375,12 @@ Rails.application.routes.draw do
     resources :students do
       collection do
         patch 'bulk_modify'
+        patch 'update_mailer_settings'
         get 'manage'
         get 'add_new_section'
         get 'download'
         post 'upload'
+        get 'mailer_settings'
       end
 
       member do
@@ -409,7 +415,6 @@ Rails.application.routes.draw do
       member do
         get 'student_interface'
         post 'execute_test_run'
-        post 'fetch_testers'
       end
     end
 

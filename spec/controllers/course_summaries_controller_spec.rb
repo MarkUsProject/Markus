@@ -16,7 +16,7 @@ describe CourseSummariesController do
         csv_rows = get_as(@admin, :download_csv_grades_report, format: :csv).parsed_body
         expect(csv_rows.size).to eq(Student.count + 1) # one header row plus one row per student
 
-        assignments = Assignment.all
+        assignments = Assignment.all.order(id: :asc)
         header = [User.human_attribute_name(:user_name),
                   User.human_attribute_name(:first_name),
                   User.human_attribute_name(:last_name),
@@ -41,10 +41,8 @@ describe CourseSummariesController do
                   assignments[index].max_mark == 0).to be_truthy
               end
             else
-              out_of = assignments[index].max_mark
               grouping = student.accepted_grouping_for(assignments[index])
-              expect(final_mark.to_f.round).to eq((grouping.current_result.total_mark / out_of *
-                100).to_f.round)
+              expect(final_mark.to_f.round).to eq(grouping.current_result.total_mark.to_f.round)
             end
           end
         end
@@ -66,19 +64,10 @@ describe CourseSummariesController do
 
       it 'returns the correct columns' do
         expect(@columns.length).to eq(Assignment.count + GradeEntryForm.count)
-        Assignment.find_each do |a|
+        Assessment.find_each do |a|
           expected = {
-            accessor: "assignment_marks.#{a.id}",
+            accessor: "assessment_marks.#{a.id}",
             Header: a.short_identifier,
-            minWidth: 50,
-            className: 'number'
-          }
-          expect(@columns).to include expected
-        end
-        GradeEntryForm.find_each do |gef|
-          expected = {
-            accessor: "grade_entry_form_marks.#{gef.id}",
-            Header: gef.short_identifier,
             minWidth: 50,
             className: 'number'
           }
@@ -96,14 +85,13 @@ describe CourseSummariesController do
             first_name: student.first_name,
             last_name: student.last_name,
             hidden: student.hidden,
-            assignment_marks: {},
-            grade_entry_form_marks: Hash[GradeEntryForm.all.map do |ges|
+            assessment_marks: Hash[GradeEntryForm.all.map do |ges|
               [ges.id.to_s.to_sym, ges.grade_entry_students.find_by(user: student).total_grade]
             end
             ]
           }
           student.accepted_groupings.each do |g|
-            expected[:assignment_marks][g.assessment_id.to_s.to_sym] = g.current_result.total_mark
+            expected[:assessment_marks][g.assessment_id.to_s.to_sym] = g.current_result.total_mark
           end
           expect(@data).to include expected
         end
@@ -152,19 +140,10 @@ describe CourseSummariesController do
 
         it 'returns the correct columns' do
           expect(@columns.length).to eq(Assignment.count + GradeEntryForm.count)
-          Assignment.find_each do |a|
+          Assessment.find_each do |a|
             expected = {
-              accessor: "assignment_marks.#{a.id}",
+              accessor: "assessment_marks.#{a.id}",
               Header: a.short_identifier,
-              minWidth: 50,
-              className: 'number'
-            }
-            expect(@columns).to include expected
-          end
-          GradeEntryForm.find_each do |gef|
-            expected = {
-              accessor: "grade_entry_form_marks.#{gef.id}",
-              Header: gef.short_identifier,
               minWidth: 50,
               className: 'number'
             }
@@ -181,8 +160,7 @@ describe CourseSummariesController do
             first_name: @student2.first_name,
             last_name: @student2.last_name,
             hidden: @student2.hidden,
-            assignment_marks: {},
-            grade_entry_form_marks: {}
+            assessment_marks: {}
           }
           expect(@data).to include expected
         end

@@ -3,14 +3,48 @@
 - Issue #3670: Added API for adding and removing extra marks (#4499)
 - Restrict confirmation dialog for annotation editing to annotations that belong to annotation categories (#4540)
 - Fixed sorting in annotation table in results view (#4542)
-- Fixed inverse association bug with assignments (#4551)
 - Enabled customization of rubric criterion level number and marks (#4535)
+- Introduces automated email sending for submissions releases (#4432)
+- Introduces automated email sending for spreadsheet releases (#4460)
+- Introduces automated email sending for grouping invitations (#4470)
+- Introduces student email settings (#4578)
+- Assignment grader distribution graphs only show marks for assigned criteria when graders are assigned specific
+  criteria (#4656) 
+- Fixed bug preventing graders from creating new notes in results view (#4668)
+- Fixed bug preventing new tags from being created from results view (#4669)
+- Remove deprecated "detailed CSV" download link from submissions/browse (#4675)
+- Introduces Deductive Annotations (#4693)
+- Introduces annotation usage details panel to Annotations tab in admin settings (#4695)
+- Fixed bug where bonuses and deductions were not displayed properly (#4699)
+- Fixed bug where image annotations did not stay fixed relative to the image (#4706)
+- Fixed bug where image annotations did not load properly (#4706)
+- Fixed bug where downloading files in nested directories renamed the downloaded file (#4730)
+- Introduces an option to unzip an uploaded zip file in place (#4731)
+- Fixed bug where marking scheme weights were not displayed (#4735)
+- Introduces timed assignments (#4665)
+- Introduces uncategorized annotations grouping in Annotations settings tab (#4733)
+- Set SameSite=Lax on cookies (#4742)
+- Fix annotation modal overflow issue (#4748)
+
+## [v1.9.3]
+- Fixed inverse association bug with assignments (#4551)
+- Fixed bug preventing graders from downloading submission files from multiple students (#4658)
+- Fixed bug preventing downloading all submission files from git repo (#4658)
+
+## [v1.9.2]
+- Fixed bug preventing all git hooks from being run in production (#4594)
+- Fixed bug preventing folders from being deleted in file managers (#4605)
+- Added support for displaying .heic and .heif files in the file viewer (#4607)
+- Fixed bug preventing students from running tests and viewing student-run test settings properly (#4616)
+- Fixed a bug preventing graders viewing the submissions page if they had specific criteria assigned to them (#4617)
 
 ## [v1.9.1]
 - Fixed bug where the output column was not shown in the test results table if the first row had no output (#4537)
 - Fixed N+1 queries in Assignment repo list methods (#4543)
 - Fixed submission download_repo_list file extension (#4543)
 - Fixed bug preventing creation of assignments with submission rules (#4557)
+- Fixed inverse association bug with assignments (#4551)
+- Updated interface with the autotester so that files do not need to be copied when test are setup/enqueued (#4546)
 
 ## [v1.9.0]
 - Added option to anonymize group membership when viewed by graders (#4331)

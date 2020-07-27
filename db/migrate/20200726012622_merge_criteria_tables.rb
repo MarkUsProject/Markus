@@ -29,6 +29,9 @@ class MergeCriteriaTables < ActiveRecord::Migration[6.0]
     rename_column :levels, :rubric_criterion_id, :criterion_id
     add_foreign_key :levels, :criteria
 
+    remove_foreign_key :annotation_categories, :flexible_criteria
+    add_foreign_key :annotation_categories, :criteria, column: :flexible_criterion_id
+
     remove_index :marks, column: [:markable_id, :result_id, :markable_type], name: "marks_u1", unique: true
     remove_column :marks, :markable_type, :string
     rename_column :marks, :markable_id, :criterion_id

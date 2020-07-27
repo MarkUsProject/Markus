@@ -1,7 +1,6 @@
 es:
   automated_tests:
     files: "UPDATE ME"
-    information: "Información"
     loading_specs: "UPDATE ME"
     need_one_file: "Usted necesita al menos un archivo en la entrega para poder ejecutar las pruebas."
     need_group_for_test: "Usted debe tener un grupo para lanzar la prueba"
@@ -40,7 +39,6 @@ es:
       extra_malformed: "UPDATE ME \n%{extra}\n"
       extra_raw_output: "UPDATE ME \n%{extra}\n"
       extra_stderr: "UPDATE ME \n%{extra}\n"
-      no_source_files: "No se encontró ningún archivo para probar"
       no_tests: "UPDATE ME"
       timeout: "%{seconds} UPDATE ME"
       unknown_test: "UPDATE ME"

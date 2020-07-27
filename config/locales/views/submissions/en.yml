@@ -1,7 +1,7 @@
 en:
   submissions:
     collect:
-      apply_late_penalty: "Apply late penalty/Deduct grace tokens (Leaving this box unchecked means the submission will not be penalized, regardless of submission time.)"
+      apply_late_penalty: "Apply late penalty/Deduct grace credits (Leaving this box unchecked means the submission will not be penalized, regardless of submission time.)"
       could_not_collect_some_due: "Could not collect submissions for some groupings and assignment %{assignment_identifier} - the collection date has not been reached for these groupings."
       could_not_collect_some_released: "Could not collect submissions for some groupings and assignment %{assignment_identifier} - the submission has already been released."
       manual_collection: "Manual Collection"
@@ -42,7 +42,7 @@ en:
         one: "One file submitted"
         other: "%{count} files submitted"
       invalid_group_cannot_submit: "Your group does not have enough members, and so you cannot submit any work."
-      last_revision_date: "Last Revision Date"
+      last_revision_date: "Last revised"
       missing_required_files:
         zero: "No missing required files"
         one: "One missing required file"
@@ -56,7 +56,6 @@ en:
     # Miscellaneous
     cannot_display: "Cannot display this file. Please download it to view."
     commit_date: "Submission Date"
-    detailed_csv_report: "Detailed CSV Report"
     grace_credits_used: "Grace Credits Used"
     grading_can_begin: "Grading can begin"
     grading_can_begin_after: "Grading can begin after %{time}"

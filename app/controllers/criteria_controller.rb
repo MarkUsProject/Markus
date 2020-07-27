@@ -130,7 +130,7 @@ class CriteriaController < ApplicationController
     assignment = Assignment.find(params[:assignment_id])
     criteria = assignment.criteria
     yml_criteria = criteria.reduce({}) { |a, b| a.merge b.to_yml }
-    send_data yml_criteria.ya2yaml(hash_order: criteria.map(&:name)),
+    send_data yml_criteria.to_yaml,
               filename: "#{assignment.short_identifier}_criteria.yml",
               disposition: 'attachment'
   end

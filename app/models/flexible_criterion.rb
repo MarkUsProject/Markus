@@ -1,6 +1,17 @@
 # Represents a flexible criterion used to mark an assignment.
 class FlexibleCriterion < Criterion
+
+  has_many :annotation_categories
+
+  before_destroy :reassign_annotation_category
+
   DEFAULT_MAX_MARK = 1
+
+  def reassign_annotation_category
+    self.annotation_categories.each do |category|
+      category.update!(flexible_criterion_id: nil)
+    end
+  end
 
   def self.symbol
     :flexible
@@ -112,5 +123,16 @@ class FlexibleCriterion < Criterion
   def has_associated_ta?(ta)
     return false unless ta.ta?
     !(criterion_ta_associations.where(ta_id: ta.id).first == nil)
+  end
+
+  def scale_marks
+    super
+    return if self&.annotation_categories.nil?
+    annotation_categories = self.annotation_categories.includes(:annotation_texts)
+    annotation_categories.each do |category|
+      category.annotation_texts.each do |text|
+        text.scale_deduction(previous_changes['max_mark'][1] / previous_changes['max_mark'][0])
+      end
+    end
   end
 end

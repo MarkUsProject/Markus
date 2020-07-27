@@ -21,8 +21,7 @@ module CourseSummariesHelper
          first_name: student.first_name,
          last_name: student.last_name,
          hidden: student.hidden,
-         assignment_marks: {},
-         grade_entry_form_marks: {}
+         assessment_marks: {}
        }]
     end]
 
@@ -30,7 +29,7 @@ module CourseSummariesHelper
                                 .where('results.released_to_students': released)
                                 .pluck('users.id', 'groupings.assessment_id', 'results.total_mark')
     assignment_grades.each do |student_id, assessment_id, mark|
-      student_data[student_id][:assignment_marks][assessment_id] = mark
+      student_data[student_id][:assessment_marks][assessment_id] = mark
     end
 
     gef_grades = students.joins(:grade_entry_students)
@@ -40,7 +39,7 @@ module CourseSummariesHelper
                                 'grade_entry_students.total_grade')
 
     gef_grades.each do |student_id, assessment_id, mark|
-      student_data[student_id][:grade_entry_form_marks][assessment_id] = mark
+      student_data[student_id][:assessment_marks][assessment_id] = mark
     end
 
     unless current_user.student?
@@ -69,16 +68,15 @@ module CourseSummariesHelper
   def calculate_course_grades(students)
     MarkingScheme.all.each do |scheme|
       students.each do |_, student|
-        student[:weighted_marks] = {}
+        student[:weighted_marks] ||= {}
         weighted = 0
         scheme.marking_weights.each do |mw|
-          if mw.is_assignment
-            mark = student[:assignment_marks][mw.gradable_item_id]
-            max_mark = @max_marks[mw.gradable_item_id]
+          if mw.assessment.type == 'Assignment'
+            max_mark = @max_marks[mw.assessment_id]
           else
-            mark = student[:grade_entry_form_marks][mw.gradable_item_id]
-            max_mark = @gef_max_marks[mw.gradable_item_id]
+            max_mark = @gef_max_marks[mw.assessment_id]
           end
+          mark = student[:assessment_marks][mw.assessment_id]
           unless mw.weight.nil? || mark.nil? || max_mark.nil? || max_mark == 0
             weighted += mark * mw.weight / max_mark
           end

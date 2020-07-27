@@ -49,11 +49,11 @@ export class SummaryPanel extends React.Component {
     let oldTotal = '';
     if (this.props.remark_submitted) {
       oldTotal = (
-        <div className='mark_total'>
+        <div className='highlight-bar'>
           <span>
             {I18n.t('results.remark.old_total')}
           </span>
-          <span className='final_mark'>
+          <span className='float-right'>
             <span>{this.props.old_total}</span>
             &nbsp;/&nbsp;
             {assignment_total}
@@ -62,11 +62,11 @@ export class SummaryPanel extends React.Component {
       );
     }
     let currentTotal = (
-      <div className='mark_total'>
+      <div className='highlight-bar'>
         <span>
           {I18n.t('activerecord.attributes.result.total_mark')}
         </span>
-        <span className='final_mark'>
+        <span className='float-right'>
           <span>{this.props.total}</span>
           &nbsp;/&nbsp;
           {assignment_total}
@@ -168,26 +168,24 @@ export class SummaryPanel extends React.Component {
     }
 
     return (
-      <div className='extra-marks-pane'>
-        <div className='bonus-deduction'>
-          <strong>{I18n.t('activerecord.models.extra_mark.other')}</strong>
-        </div>
+      <div>
+        <h4>{I18n.t('activerecord.models.extra_mark.other')}</h4>
         {data.length > 0 &&
          <ReactTable
            columns={this.extraMarksColumns()}
            data={data} />
         }
         {!this.props.released_to_students &&
-         <div>
-           <button onClick={this.newExtraMark}>
+         <p>
+           <button className='inline-button' onClick={this.newExtraMark}>
              {I18n.t('helpers.submit.create',
                      {model: I18n.t('activerecord.models.extra_mark.one')})}
            </button>
-         </div>
+         </p>
         }
-        <div className='mark_total'>
+        <div className='highlight-bar'>
           {I18n.t('results.total_extra_marks')}
-          <span className='final_mark'>
+          <span className='float-right'>
             {this.props.extraMarkSubtotal.toFixed(2)}
           </span>
         </div>
@@ -240,13 +238,14 @@ export class SummaryPanel extends React.Component {
 
   render() {
     return (
-      <div className={'marks-summary-pane'}>
+      <div>
         <ReactTable
           columns={this.criterionColumns()}
-          data={this.props.criterionSummaryData} />
-        <div className='mark_total'>
+          data={this.props.criterionSummaryData}
+          className='auto-overflow'/>
+        <div className='highlight-bar'>
           {I18n.t('results.subtotal')}
-          <span className='final_mark'>
+          <span className='float-right'>
             {this.props.subtotal}
             &nbsp;/&nbsp;
             {+(this.props.assignment_max_mark)}

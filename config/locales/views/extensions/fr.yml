@@ -1,22 +1,5 @@
 fr:
   extensions:
-    hours: heurs
-    days: jours
-    weeks: semaines
     apply_penalty: "UPDATE ME"
-    create:
-      success: "Extension créée"
-      error: "Extension non créée"
-    delete:
-      success: "Extension supprimée"
-      error: "Extension non supprimée"
-    durations:
-      hours:
-        one: 1 heur
-        other: "%{count} heurs"
-      days:
-        one: 1 jour
-        other: "%{count} days"
-      weeks:
-        one: 1 semaine
-        other: "%{count} semaines"
+    create_extension: "Extension créée"
+    delete_extension: "Extension supprimée"

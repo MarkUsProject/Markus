@@ -17,6 +17,27 @@ describe SubmissionsController do
       request.env['HTTP_REFERER'] = 'back'
     end
 
+    it 'should be rejected if it is a scanned assignment' do
+      assignment = create(:assignment_for_scanned_exam)
+      create(:grouping_with_inviter, inviter: @student, assignment: assignment)
+      get_as @student, :file_manager, params: { assignment_id: assignment.id }
+      expect(response).to have_http_status 403
+    end
+
+    it 'should be rejected if it is a timed assignment and the student has not yet started' do
+      assignment = create(:timed_assignment)
+      create(:grouping, inviter: @student, assignment: assignment)
+      get_as @student, :file_manager, params: { assignment_id: assignment.id }
+      expect(response).to have_http_status 403
+    end
+
+    it 'should not be rejected if it is a timed assignment and the student has started' do
+      assignment = create(:timed_assignment)
+      create(:grouping, inviter: @student, assignment: assignment, start_time: 10.minutes.ago)
+      get_as @student, :file_manager, params: { assignment_id: assignment.id }
+      expect(response).to have_http_status 200
+    end
+
     it 'should be able to add and access files' do
       file_1 = fixture_file_upload(File.join('/files', 'Shapes.java'),
                                    'text/java')
@@ -43,6 +64,41 @@ describe SubmissionsController do
         files = revision.files_at_path(@assignment.repository_folder)
         expect(files['Shapes.java']).to_not be_nil
         expect(files['TestShapes.java']).to_not be_nil
+      end
+    end
+
+    context 'uploading a zip file' do
+      let(:unzip) { 'true' }
+      let(:tree) do
+        zip_file = fixture_file_upload(File.join('/files', 'test_zip.zip'), 'application/zip')
+        post_as @student, :update_files, params: { assignment_id: @assignment.id, new_files: [zip_file], unzip: unzip }
+        @grouping.group.access_repo do |repo|
+          repo.get_latest_revision.tree_at_path(@assignment.repository_folder)
+        end
+      end
+      context 'when unzip if false' do
+        let(:unzip) { 'false' }
+        it 'should just upload the zip file as is' do
+          expect(tree['test_zip.zip']).not_to be_nil
+        end
+        it 'should not upload any other files' do
+          expect(tree.length).to eq 1
+        end
+      end
+      it 'should not upload the zip file' do
+        expect(tree['test_zip.zip']).to be_nil
+      end
+      it 'should upload the outer dir' do
+        expect(tree['test_zip']).not_to be_nil
+      end
+      it 'should upload the inner dir' do
+        expect(tree['test_zip/zip_subdir']).not_to be_nil
+      end
+      it 'should upload a file in the outer dir' do
+        expect(tree['test_zip/Shapes.java']).not_to be_nil
+      end
+      it 'should upload a file in the inner dir' do
+        expect(tree['test_zip/zip_subdir/TestShapes.java']).not_to be_nil
       end
     end
 
@@ -400,52 +456,88 @@ describe SubmissionsController do
                             release_results: 'true' }
           is_expected.to respond_with(:success)
         end
-
-        it 'should send an email to one grouping if only one is selected' do
-          allow(Assignment).to receive(:find) { @assignment }
-          expect do
-            post_as @admin,
-                    :update_submissions,
-                    params: { assignment_id: 1,
-                             groupings: ([] << @assignment.groupings).flatten,
-                             release_results: 'true' }
-          end.to change { ActionMailer::Base.deliveries.count }.by(1)
-        end
-        it 'should send emails for every grouping selected if more than one are selected' do
-          allow(Assignment).to receive(:find) { @assignment }
-          @other_grouping = create(:grouping, assignment: @assignment)
-          @other_membership = create(:student_membership, membership_status: 'inviter', grouping: @other_grouping)
-          @other_grouping.group.access_repo do |repo|
-            txn = repo.get_transaction('test')
-            path = File.join(@assignment.repository_folder, 'file1_name')
-            txn.add(path, 'file1 content', '')
-            repo.commit(txn)
-            # Generate submission
-            submission = Submission.generate_new_submission(@other_grouping, repo.get_latest_revision)
-            result = submission.get_latest_result
-            result.marking_state = Result::MARKING_STATES[:complete]
-            result.save
-            submission.save
+        context 'with one grouping selected' do
+          it 'sends an email to the student if only one student exists in the grouping' do
+            expect do
+              post_as @admin,
+                      :update_submissions,
+                      params: { assignment_id: @assignment.id,
+                                groupings: ([] << @assignment.groupings).flatten,
+                                release_results: 'true' }
+            end.to change { ActionMailer::Base.deliveries.count }.by(1)
           end
-          @other_grouping.update! is_collected: true
-          expect do
-            post_as @admin,
-                    :update_submissions,
-                    params: { assignment_id: 1,
-                              groupings: ([] << @assignment.groupings).flatten,
-                              release_results: 'true' }
-          end.to change { ActionMailer::Base.deliveries.count }.by(2)
+          it 'sends an email to every student in a grouping if it has multiple students' do
+            create(:student_membership, membership_status: 'inviter', grouping: @grouping)
+            expect do
+              post_as @admin,
+                      :update_submissions,
+                      params: { assignment_id: @assignment.id,
+                                groupings: ([] << @assignment.groupings).flatten,
+                                release_results: 'true' }
+            end.to change { ActionMailer::Base.deliveries.count }.by(2)
+          end
+          it 'does not send an email to some students in a grouping if some have emails disabled' do
+            another_membership = create(:student_membership, membership_status: 'inviter', grouping: @grouping)
+            another_membership.user.update!(receives_results_emails: false)
+            expect do
+              post_as @admin,
+                      :update_submissions,
+                      params: { assignment_id: @assignment.id,
+                                groupings: ([] << @assignment.groupings).flatten,
+                                release_results: 'true' }
+            end.to change { ActionMailer::Base.deliveries.count }.by(1)
+          end
         end
-        it 'should send an email to every student in a grouping if groupings have multiple students' do
-          allow(Assignment).to receive(:find) { @assignment }
-          @another_membership = create(:student_membership, membership_status: 'inviter', grouping: @grouping)
-          expect do
-            post_as @admin,
-                    :update_submissions,
-                    params: { assignment_id: 1,
-                              groupings: ([] << @assignment.groupings).flatten,
-                              release_results: 'true' }
-          end.to change { ActionMailer::Base.deliveries.count }.by(2)
+        context 'with several groupings selected' do
+          it 'sends emails to students in every grouping selected if more than one grouping is selected' do
+            other_grouping = create(:grouping, assignment: @assignment)
+            create(:student_membership, membership_status: 'inviter', grouping: other_grouping)
+            other_grouping.group.access_repo do |repo|
+              txn = repo.get_transaction('test')
+              path = File.join(@assignment.repository_folder, 'file1_name')
+              txn.add(path, 'file1 content', '')
+              repo.commit(txn)
+              # Generate submission
+              submission = Submission.generate_new_submission(other_grouping, repo.get_latest_revision)
+              result = submission.get_latest_result
+              result.marking_state = Result::MARKING_STATES[:complete]
+              result.save
+              submission.save
+            end
+            other_grouping.update! is_collected: true
+            expect do
+              post_as @admin,
+                      :update_submissions,
+                      params: { assignment_id: @assignment.id,
+                                groupings: ([] << @assignment.groupings).flatten,
+                                release_results: 'true' }
+            end.to change { ActionMailer::Base.deliveries.count }.by(2)
+          end
+          it 'does not email some students in some groupings if those students have them disabled' do
+            other_grouping = create(:grouping, assignment: @assignment)
+            other_membership = create(:student_membership, membership_status: 'inviter', grouping: other_grouping)
+            other_membership.user.update!(receives_results_emails: false)
+            other_grouping.group.access_repo do |repo|
+              txn = repo.get_transaction('test')
+              path = File.join(@assignment.repository_folder, 'file1_name')
+              txn.add(path, 'file1 content', '')
+              repo.commit(txn)
+              # Generate submission
+              submission = Submission.generate_new_submission(other_grouping, repo.get_latest_revision)
+              result = submission.get_latest_result
+              result.marking_state = Result::MARKING_STATES[:complete]
+              result.save
+              submission.save
+            end
+            other_grouping.update! is_collected: true
+            expect do
+              post_as @admin,
+                      :update_submissions,
+                      params: { assignment_id: @assignment.id,
+                                groupings: ([] << @assignment.groupings).flatten,
+                                release_results: 'true' }
+            end.to change { ActionMailer::Base.deliveries.count }.by(1)
+          end
         end
       end
 

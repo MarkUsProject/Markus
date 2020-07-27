@@ -1,0 +1,4 @@
+$('#annotation_list_holder').replaceWith(
+  "<%= escape_javascript(render partial: 'uncategorized_annotations_list',
+                                locals: { texts: @texts }).html_safe %>");
+reloadDOM();

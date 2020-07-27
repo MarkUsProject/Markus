@@ -19,4 +19,18 @@ es:
     next:   "Siquiente"
     prev:   "Previo"
 
-  hours: "hora(s)"
+  durations:
+    any_minutes: minuto(s)
+    any_hours: hora(s)
+    minutes:
+      one: minuto
+      other: minutos
+    hours:
+      one: hora
+      other: horas
+    days:
+      one: día
+      other: días
+    weeks:
+      one: semana
+      other: semanas

@@ -17,7 +17,7 @@ en:
     delete_confirm: "This will remove all members in the group and delete all information associated with this group. Continue?"
     delete_groups_linked: "This will delete all the groups linked to this assignment. Continue?"
     empty: "Empty Group"
-    grace_day_over_limit: "You have assigned one or more students who has less grace tokens than the amount already used by group %{group} for this assignment."
+    grace_day_over_limit: "You have assigned one or more students who has less grace credits than the amount already used by group %{group} for this assignment."
     group_name_already_in_use: "This name is already in use for this assignment."
     help: "Manage student groups. You can create new groups and manually add and remove students to groups."
     invalidate_confirm: "This will prevent this group from submitting, even with the required number of students. Are you sure?"
@@ -33,14 +33,15 @@ en:
     select_a_group: "Select a group"
     select_a_student: "Select a student"
     select_only_one_group: "You may only assign each student to one group."
-    extension: "Due Date Extension"
+    due_date_extension: "Due Date Extension"
+    duration_extension: "Duration Extension"
 
     # Student interface
     student_interface:
       confirm_create_group: "This action will decline your pending invitations. Are you sure?"
       confirm_delete_group: "WARNING: You will lose access to your submitted files after deleting your group.
                              Make sure you have a local copy of your files before clicking OK."
-      form_group: "Create or join a group"
+      form_group: "Create a group"
       group_information: "Group information"
       group_options: "Group options"
       group_properties: "Policies"

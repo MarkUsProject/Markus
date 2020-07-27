@@ -52,10 +52,6 @@ class TestRun < ApplicationRecord
     end
   end
 
-  def test_categories
-    [self.user.type.downcase]
-  end
-
   def self.all_test_categories
     [Admin.name.downcase, Student.name.downcase]
   end
@@ -144,7 +140,6 @@ class TestRun < ApplicationRecord
 
   def create_test_group_results_from_json(test_output)
     # check that the output is well-formed
-    json_root = nil
     begin
       json_root = JSON.parse(test_output)
     rescue StandardError => e

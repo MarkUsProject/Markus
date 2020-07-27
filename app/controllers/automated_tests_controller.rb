@@ -3,11 +3,13 @@ class AutomatedTestsController < ApplicationController
 
   before_action      :authorize_only_for_admin,
                      except: [:student_interface,
-                              :get_test_runs_students]
+                              :get_test_runs_students,
+                              :execute_test_run]
 
   before_action      :authorize_for_student,
                      only: [:student_interface,
-                            :get_test_runs_students]
+                            :get_test_runs_students,
+                            :execute_test_run]
 
   def update
     assignment = Assignment.find(params[:assignment_id])
@@ -29,6 +31,7 @@ class AutomatedTestsController < ApplicationController
   def manage
     @assignment = Assignment.find(params[:assignment_id])
     @assignment.test_groups.build
+    render layout: 'assignment_content'
   end
 
   def student_interface
@@ -63,6 +66,7 @@ class AutomatedTestsController < ApplicationController
       test_run = grouping.create_test_run!(user: current_user)
       @current_job = AutotestRunJob.perform_later(request.protocol + request.host_with_port,
                                                   current_user.id,
+                                                  assignment.id,
                                                   [{ id: test_run.id }])
       session[:job_id] = @current_job.job_id
       flash_message(:notice, I18n.t('automated_tests.tests_running'))
@@ -77,13 +81,6 @@ class AutomatedTestsController < ApplicationController
     @grouping = current_user.accepted_grouping_for(params[:assignment_id])
     test_runs = @grouping.test_runs_students
     render json: test_runs.group_by { |t| t['test_runs.id'] }
-  end
-
-  # TODO: use authorizations from here on
-  def fetch_testers
-    @current_job = AutotestTestersJob.perform_later
-    session[:job_id] = @current_job.job_id
-    head :no_content
   end
 
   def populate_autotest_manager
@@ -111,12 +108,9 @@ class AutomatedTestsController < ApplicationController
     end
     test_specs_path = assignment.autotest_settings_file
     test_specs = File.exist?(test_specs_path) ? JSON.parse(File.open(test_specs_path, &:read)) : {}
-    assignment_data = assignment.attributes.slice(*required_params.map(&:to_s))
-    if assignment_data[:token_start_date].nil?
-      assignment_data[:token_start_date] = Time.now.strftime('%Y-%m-%d %l:%M %p')
-    else
-      assignment_data[:token_start_date] = assignment_data[:token_start_date].strftime('%Y-%m-%d %l:%M %p')
-    end
+    assignment_data = assignment.assignment_properties.attributes.slice(*required_params.map(&:to_s))
+    assignment_data['token_start_date'] ||= Time.zone.now
+    assignment_data['token_start_date'] = assignment_data['token_start_date'].strftime('%Y-%m-%d %l:%M %p')
     data = { schema: schema_data, files: files_data, formData: test_specs }.merge(assignment_data)
     render json: data
   end
@@ -124,10 +118,11 @@ class AutomatedTestsController < ApplicationController
   def download_file
     assignment = Assignment.find(params[:assignment_id])
     file_path = File.join(assignment.autotest_files_dir, params[:file_name])
+    filename = File.basename params[:file_name]
     if File.exist?(file_path)
-      send_file_download file_path, filename: params[:file_name]
+      send_file_download file_path, filename: filename
     else
-      render plain: t('student.submission.missing_file', file_name: params[:file_name])
+      render plain: t('student.submission.missing_file', file_name: filename)
     end
   end
 
@@ -146,9 +141,20 @@ class AutomatedTestsController < ApplicationController
     delete_folders = params[:delete_folders] || []
     delete_files = params[:delete_files] || []
     new_files = params[:new_files] || []
+    unzip = params[:unzip] == 'true'
+
+    if unzip
+      zdirs, zfiles = new_files.map do |f|
+        next unless File.extname(f.path).casecmp?('.zip')
+        unzip_uploaded_file(f.path)
+      end.compact.transpose.map(&:flatten)
+      new_files.reject! { |f| File.extname(f.path).casecmp?('.zip') }
+      new_folders.push(*zdirs)
+      new_files.push(*zfiles)
+    end
 
     new_folders.each do |f|
-      folder_path = File.join(assignment.autotest_files_dir, f)
+      folder_path = File.join(assignment.autotest_files_dir, params[:path], f)
       FileUtils.mkdir_p(folder_path)
     end
     delete_folders.each do |f|

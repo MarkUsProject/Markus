@@ -25,7 +25,7 @@ class StarterCodeFileManager extends React.Component {
       .then(data => this.setState({files: data}));
   };
 
-  handleCreateFiles = (files, overwrite) => {
+  handleCreateFiles = (files, overwrite, unzip) => {
     const prefix = this.state.uploadTarget || '';
     this.setState({showModal: false, uploadTarget: undefined});
     let data = new FormData();
@@ -35,6 +35,7 @@ class StarterCodeFileManager extends React.Component {
       data.append('grouping_id', this.props.grouping_id);
     }
     data.append('overwrite', overwrite);
+    data.append('unzip', unzip);
     $.post({
       url: Routes.upload_starter_code_assignment_path(this.props.assignment_id),
       data: data,
@@ -68,11 +69,11 @@ class StarterCodeFileManager extends React.Component {
       .then(this.endAction);
   };
 
-  handleDeleteFolder = (folderKey) => {
+  handleDeleteFolder = (folderKeys) => {
     $.post({
       url: Routes.upload_starter_code_assignment_path(this.props.assignment_id),
       data: {
-        delete_folders: [folderKey],
+        delete_folders: folderKeys,
         grouping_id: this.props.grouping_id
       }
     }).then(typeof this.props.onChange === 'function' ? this.props.onChange : this.fetchData)

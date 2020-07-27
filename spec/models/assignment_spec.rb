@@ -109,8 +109,6 @@ describe Assignment do
       }
       a = Assignment.new(attrs)
       a.repository_folder = 't'
-      a.build_assignment_stat
-      a.build_submission_rule
       a.save!
 
       expect(a.assignment_files.first.filename).to eq 't.py'
@@ -303,7 +301,7 @@ describe Assignment do
           end
 
           it 'raises an exception' do
-            expect { @assignment.add_group(@group_name) }.to raise_error
+            expect { @assignment.add_group(@group_name) }.to raise_error(RuntimeError)
           end
         end
 
@@ -539,29 +537,28 @@ describe Assignment do
                              due_date: 2.days.ago,
                              assignment_properties_attributes: { section_due_dates_type: true })
         @section = create(:section, name: 'section_name')
-        create(:section_due_date, section: @section, assignment: @assignment, due_date: 1.day.ago)
-        student = create(:student, section: @section)
-        @grouping = create(:grouping, assignment: @assignment)
-        create(:student_membership,
-               grouping: @grouping,
-               user: student,
-               membership_status: StudentMembership::STATUSES[:inviter])
+        create(:section_due_date, section: @section, assignment: @assignment, due_date: 1.day.from_now)
       end
 
-      it 'return the normal due date for section due date' do
-        expect @assignment.section_due_date(@section)
+      it 'returns the correct due date for the section' do
+        expect(@assignment.section_due_date(@section)).to eq(
+          @section.section_due_dates.find_by(assessment_id: @assignment.id).due_date
+        )
       end
 
-      context 'another' do
+      context 'and with another section' do
         before(:each) do
-          @section = create(:section, name: 'section_name2')
-          create(:section_due_date, section: @section, assignment: @assignment, due_date: 1.day.ago)
-          student = create(:Student, section: @section)
-          @grouping = create(:grouping, assignment: @assignment)
-          create(:StudentMembership,
-                 grouping: @grouping,
-                 user: student,
-                 membership_status: StudentMembership::STATUSES[:inviter])
+          @section2 = create(:section, name: 'section_name2')
+          create(:section_due_date, section: @section2, assignment: @assignment, due_date: 2.days.from_now)
+        end
+
+        it 'returns the correct due date for each section' do
+          expect(@assignment.section_due_date(@section)).to eq(
+            @section.section_due_dates.find_by(assessment_id: @assignment.id).due_date
+          )
+          expect(@assignment.section_due_date(@section2)).to eq(
+            @section2.section_due_dates.find_by(assessment_id: @assignment.id).due_date
+          )
         end
       end
     end
@@ -758,7 +755,7 @@ describe Assignment do
           end
         end
         it 'destroy all previous groupings if cloning was successful' do
-          old_groupings = @target.groupings
+          old_groupings = @target.groupings.to_a
           @target.clone_groupings_from(@source.id)
           old_groupings.each do |old_grouping|
             expect(@target.groupings.include?(old_grouping)).to be_falsey
@@ -974,6 +971,62 @@ describe Assignment do
     end
   end
 
+  describe '#section_start_time' do
+    context 'with SectionDueDates disabled' do
+      let(:assignment) { create :timed_assignment }
+
+      context 'when no section is specified' do
+        it 'returns the start time of the assignment' do
+          expect(assignment.section_start_time(nil)).to be_within(1.second).of(assignment.start_time)
+        end
+      end
+
+      context 'when a section is specified' do
+        it 'returns the start time of the assignment' do
+          section = create(:section)
+          expect(assignment.section_start_time(section)).to be_within(1.second).of(assignment.start_time)
+        end
+      end
+    end
+
+    context 'with SectionDueDates enabled' do
+      let(:assignment) { create :timed_assignment, assignment_properties_attributes: { section_due_dates_type: true } }
+
+      context 'when no section is specified' do
+        it 'returns the start time of the assignment' do
+          expect(assignment.section_start_time(nil)).to be_within(1.second).of(assignment.start_time)
+        end
+      end
+
+      context 'when a section is specified' do
+        let(:section) { create :section }
+
+        context 'that does not have a SectionDueDate' do
+          it 'returns the start time of the assignment' do
+            expect(assignment.section_start_time(section)).to be_within(1.second).of(assignment.start_time)
+          end
+        end
+
+        context 'that has a SectionDueDate for another assignment' do
+          it 'returns the start time of the assignment' do
+            create(:section_due_date)
+            expect(assignment.section_start_time(section)).to be_within(1.second).of(assignment.start_time)
+          end
+        end
+
+        context 'that has a SectionDueDate for this assignment' do
+          it 'returns the start time of the section' do
+            section_due_date = create(:section_due_date,
+                                      assignment: assignment,
+                                      section: section,
+                                      start_time: 10.minutes.ago)
+            expect(assignment.section_start_time(section)).to be_within(1.second).of(section_due_date.start_time)
+          end
+        end
+      end
+    end
+  end
+
   describe '#section_due_date' do
     context 'with SectionDueDates disabled' do
       before :each do
@@ -1118,7 +1171,6 @@ describe Assignment do
           @section_due_date = SectionDueDate.create(section: create(:section),
                                                     assignment: @assignment,
                                                     due_date: 1.days.ago)
-          puts @section_due_date.inspect
         end
 
         it 'returns false' do
@@ -1661,6 +1713,17 @@ describe Assignment do
         expect(data[0][:_id]).to be groupings[0].id
       end
 
+      context 'when hide_unassigned_criteria is true' do
+        let(:assigned_criteria) { create :flexible_criterion, assignment: assignment, max_mark: 3 }
+        let(:unassigned_criteria) { create :flexible_criterion, assignment: assignment, max_mark: 1 }
+        let!(:criterion_ta_association) { create :criterion_ta_association, criterion: assigned_criteria, ta: ta }
+        it 'should only include assigned criteria in max_mark' do
+          assignment.update(hide_unassigned_criteria: true)
+          data = assignment.current_submission_data(ta)
+          expect(data[0][:max_mark]).to eq 3
+        end
+      end
+
       context 'when a grace period deduction has been applied' do
         let(:assignment) { create :assignment, submission_rule: create(:grace_period_submission_rule) }
         let!(:grace_period_deduction) do
@@ -1671,6 +1734,18 @@ describe Assignment do
         it 'should include grace credit deductions' do
           data = assignment.current_submission_data(ta)
           expect(data.map { |h| h[:grace_credits_used] }.compact).to contain_exactly(1)
+        end
+      end
+
+      context 'there is an extra mark' do
+        let(:submission) { create :version_used_submission, grouping: groupings[0] }
+        let(:result) { create :complete_result, submission: submission }
+        let!(:extra_mark) { create :extra_mark_points, result: result }
+        it 'should include the extra mark in the total' do
+          final_grade = submission.current_result.total_mark + extra_mark.extra_mark
+          data = assignment.current_submission_data(ta)
+          expect(data.map { |h| h[:final_grade] }).to include(final_grade)
+          expect(data.select { |h| h.key? :final_grade }.count).to eq 1
         end
       end
     end
@@ -1686,7 +1761,7 @@ describe Assignment do
       let(:admin) { create :admin }
       let(:tags) { create_list :tag, 3, user: admin }
       let(:groupings_with_tags) { groupings.each_with_index { |g, i| g.update(tags: [tags[i]]) && g } }
-      let(:data) { assignment.current_submission_data(admin) }
+      let(:data) { assignment.reload.current_submission_data(admin) }
       let(:submission) { create :version_used_submission, grouping: groupings[0] }
       let(:released_result) { create :released_result, submission: submission }
 
@@ -1770,6 +1845,16 @@ describe Assignment do
         final_grade = submission.current_result.total_mark
         expect(data.map { |h| h[:final_grade] }).to include(final_grade)
         expect(data.select { |h| h.key? :final_grade }.count).to eq 1
+      end
+
+      context 'there is an extra mark' do
+        let(:result) { create :complete_result, submission: submission }
+        let!(:extra_mark) { create :extra_mark_points, result: result }
+        it 'should include the extra mark in the total' do
+          final_grade = submission.current_result.total_mark + extra_mark.extra_mark
+          expect(data.map { |h| h[:final_grade] }).to include(final_grade)
+          expect(data.select { |h| h.key? :final_grade }.count).to eq 1
+        end
       end
 
       context 'there are groups without members' do
@@ -1902,6 +1987,22 @@ describe Assignment do
           data = @assignment.summary_json(admin)[:data]
           expect(data[0][:members]).not_to be_empty
         end
+
+        context 'with an extra mark' do
+          let(:grouping) { @assignment.groupings.first }
+          let!(:extra_mark) { create :extra_mark_points, result: grouping.current_result }
+          it 'should included the extra mark value' do
+            data = @assignment.summary_json(admin)[:data]
+            grouping_data = data.select { |d| d[:group_name] == grouping.group.group_name }.first
+            expect(grouping_data[:total_extra_marks]).to eq extra_mark.extra_mark
+          end
+          it 'should add the extra mark to the total mark' do
+            data = @assignment.summary_json(admin)[:data]
+            grouping_data = data.select { |d| d[:group_name] == grouping.group.group_name }.first
+            extra = grouping.current_result.extra_marks.pluck(:extra_mark).sum
+            expect(grouping_data[:final_grade]).to eq(grouping.current_result.total_mark + extra)
+          end
+        end
       end
     end
   end
@@ -1941,6 +2042,73 @@ describe Assignment do
           expect(summary[0]).to_not be_empty
           expect(summary[0]).to include('User name', 'Group', 'Final grade')
         end
+      end
+    end
+  end
+
+  describe '#self.get_repo_auth_records' do
+    let(:assignment1) { create :assignment, assignment_properties_attributes: { vcs_submit: false } }
+    let(:assignment2) { create :assignment, assignment_properties_attributes: { vcs_submit: false } }
+    let!(:groupings1) { create_list :grouping_with_inviter, 3, assignment: assignment1 }
+    let!(:groupings2) { create_list :grouping_with_inviter, 3, assignment: assignment2 }
+    context 'all assignments with vcs_submit == false' do
+      it 'should be empty' do
+        expect(Assignment.get_repo_auth_records).to be_empty
+      end
+    end
+    context 'one assignment with vcs_submit == true' do
+      let(:assignment1) { create :assignment, assignment_properties_attributes: { vcs_submit: true } }
+      it 'should only contain valid memberships' do
+        ids = groupings1.map { |g| g.inviter.id }
+        expect(Assignment.get_repo_auth_records.pluck('users.id')).to contain_exactly(*ids)
+      end
+      context 'when there is a pending membership' do
+        let!(:membership) { create :student_membership, grouping: groupings1.first }
+        it 'should not contain the pending membership' do
+          ids = groupings1.map { |g| g.inviter.id }
+          expect(Assignment.get_repo_auth_records.pluck('users.id')).to contain_exactly(*ids)
+        end
+      end
+    end
+    context 'both assignments with vcs_submit == true and is_timed == true' do
+      let(:assignment1) { create :timed_assignment, assignment_properties_attributes: { vcs_submit: true } }
+      let(:assignment2) { create :timed_assignment, assignment_properties_attributes: { vcs_submit: true } }
+      it 'should be empty' do
+        expect(Assignment.get_repo_auth_records).to be_empty
+      end
+      context 'when one grouping has started their assignment' do
+        it 'should contain only the members of that group' do
+          g = groupings1.first
+          g.update!(start_time: Time.now)
+          expect(Assignment.get_repo_auth_records.pluck('users.id')).to contain_exactly(g.inviter.id)
+        end
+      end
+    end
+  end
+
+  describe '#upcoming' do
+    # the upcoming method is only called in cases where the user is a student
+    context 'a student with a grouping' do
+      it 'returns false if an assignment was due before the current time' do
+        a = create(:assignment_with_criteria_and_results, due_date: Time.current - (60 * 60 * 24))
+        expect(a.upcoming(a.groupings.first.students.first)).to be false
+      end
+
+      it 'returns true if an assignment is due after the current time' do
+        a = create(:assignment_with_criteria_and_results, due_date: Time.current + (60 * 60 * 24))
+        expect(a.upcoming(a.groupings.first.students.first)).to be true
+      end
+    end
+
+    context 'a student without a grouping' do
+      it 'returns false if an assignment was due before the current time' do
+        a = create(:assignment_with_criteria_and_results, due_date: Time.current - (60 * 60 * 24))
+        expect(a.upcoming(create(:student))).to be false
+      end
+
+      it 'returns true if an assignment is due after the current time' do
+        a = create(:assignment_with_criteria_and_results, due_date: Time.current + (60 * 60 * 24))
+        expect(a.upcoming(create(:student))).to be true
       end
     end
   end

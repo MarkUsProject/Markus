@@ -585,9 +585,7 @@ describe Grouping do
           assignment_folder = File.join(@assignment.repository_folder, File::SEPARATOR)
           begin
             txn.add(File.join(assignment_folder, 'Shapes.java'), 'shapes content', 'text/plain')
-            unless repo.commit(txn)
-              raise 'Unable to setup test!'
-            end
+            repo.commit(txn)
           end
         end
       end
@@ -619,14 +617,9 @@ describe Grouping do
         # submit another file so that we have all required files submitted
         @grouping.group.access_repo do |repo|
           txn = repo.get_transaction('markus')
-          begin
-            txn.add(File.join(@assignment.repository_folder, @file.filename), 'ShapesTest content', 'text/plain')
-            unless repo.commit(txn)
-              raise 'Commit failed!'
-            end
-          rescue Exception => e
-            raise 'Submitting file failed: ' + e.message
-          end
+          txn.add(File.join(@assignment.repository_folder, @file.filename), 'ShapesTest content', 'text/plain')
+          repo.commit(txn)
+
           # check again; there shouldn't be any missing files anymore
           missing_files = @grouping.missing_assignment_files
           expect(missing_files.length).to eq(0)
@@ -781,169 +774,89 @@ describe Grouping do
       end
     end
 
-    context 'with an assignment that has a grace period of 24 hours after due date' do
-      before :each do
-        @assignment = create(:assignment)
-        @group = create(:group)
-        grace_period_submission_rule = GracePeriodSubmissionRule.new
-        @assignment.replace_submission_rule(grace_period_submission_rule)
-        GracePeriodDeduction.destroy_all
-        grace_period_submission_rule.save
-
-        # On July 1 at 1PM, the instructor sets up the course...
-        pretend_now_is(Time.parse('July 1 2009 1:00PM')) do
-          # Due date is July 23 @ 5PM
-          @assignment.due_date = Time.parse('July 23 2009 5:00PM')
-          # Overtime begins at July 23 @ 5PM
-          # Add a 24 hour grace period
-          period = Period.new
-          period.submission_rule = @assignment.submission_rule
-          period.hours = 24
-          period.save
-          # Collect date is now after July 24 @ 5PM
-          @assignment.save
-        end
-      end
-
-      teardown do
-        destroy_repos
-      end
-
-      context 'with one student submitting an assignment' do
-        before :each do
-          # grouping of only one student
-          @grouping = create(:grouping, assignment: @assignment, group: @group)
-          @inviter_membership = create(:inviter_student_membership,
-                                       user: create(:student, user_name: 'student1'),
-                                       grouping: @grouping,
-                                       membership_status: StudentMembership::STATUSES[:inviter])
-          @inviter = @inviter_membership.user
-
-          # On July 15, the Student logs in, triggering repository folder creation
-          pretend_now_is(Time.parse('July 15 2009 6:00PM')) do
-            @grouping.create_grouping_repository_folder
-          end
-        end
-
+    context do
+      let(:rule_type) { :grace_period_submission_rule }
+      context 'when the group submitted on time' do
+        include_context 'submission_rule_on_time'
         describe '#student_membership_number' do
           it 'returns 1' do
-            expect(@grouping.student_membership_number).to eq(1)
+            expect(grouping.student_membership_number).to eq(1)
           end
         end
 
         describe '#available_grace_credits' do
           it 'returns more than 1 grace credit remaining' do
-            expect(@grouping.available_grace_credits).to be >= 1
+            apply_rule
+            expect(grouping.available_grace_credits).to be >= 1
           end
         end
 
         describe '#grace_period_deduction_single' do
           it 'shows no grace credit deduction because submission is on time' do
-            submit_file_at_time(@assignment, @group, 'test', 'July 20 2009 5:00PM', 'TestFile.java',
-                                'Some contents for TestFile.java')
-            submit_file_at_time(@assignment, @group, 'test', 'July 20 2009 5:00PM', 'Test.java',
-                                'Some contents for Test.java')
-            submit_file_at_time(@assignment, @group, 'test', 'July 20 2009 5:00PM', 'Driver.java',
-                                'Some contents for Driver.java')
+            apply_rule
+            expect(grouping.grace_period_deduction_single).to eq(0)
+          end
+        end
 
-            # An Instructor or Grader decides to begin grading
-            pretend_now_is(Time.parse('July 28 2009 1:00PM')) do
-              submission = Submission.create_by_timestamp(@grouping,
-                                                          @assignment.submission_rule.calculate_collection_time)
-              @assignment.submission_rule.apply_submission_rule(submission)
-
-              @grouping.reload
-              # Should be no deduction because submitting on time
-              expect(@grouping.grace_period_deduction_single).to eq(0)
+        context 'with two students submitting an assignment' do
+          let!(:accepted_membership) { create :accepted_student_membership, grouping: grouping }
+          describe '#student_membership_number' do
+            it 'returns 2' do
+              expect(grouping.student_membership_number).to eq(2)
             end
           end
 
-          it 'shows one grace credition deduction because submission was late' do
-            submit_file_at_time(@assignment, @group, 'test', 'July 24 2009 9:00AM', 'LateSubmission.java',
-                                'Some overtime contents')
+          describe '#available_grace_credits' do
+            it 'returns more than 1 grace credit remaining' do
+              apply_rule
+              expect(grouping.available_grace_credits).to be >= 1
+            end
+          end
 
-            # An Instructor or Grader decides to begin grading
-            pretend_now_is(Time.parse('July 28 2009 1:00PM')) do
-              submission = Submission.create_by_timestamp(@grouping,
-                                                          @assignment.submission_rule.calculate_collection_time)
-              @assignment.submission_rule.apply_submission_rule(submission)
-
-              @grouping.reload
-              # Should display 1 credit deduction because of one-day late submission
-              expect(@grouping.grace_period_deduction_single).to eq(1)
+          describe '#grace_period_deduction_single' do
+            it 'shows no grace credit deduction because submission is on time' do
+              apply_rule
+              expect(grouping.grace_period_deduction_single).to eq(0)
             end
           end
         end
       end
 
-      context 'with two students submitting an assignment' do
-        before :each do
-          # grouping of two students
-          @grouping = create(:grouping, assignment: @assignment, group: @group)
-          # should consist of inviter and another student
-          @membership = create(:accepted_student_membership,
-                               user: create(:student, user_name: 'student1'),
-                               grouping: @grouping,
-                               membership_status: StudentMembership::STATUSES[:accepted])
-
-          @inviter_membership = create(:inviter_student_membership,
-                                       user: create(:student, user_name: 'student2'),
-                                       grouping: @grouping,
-                                       membership_status: StudentMembership::STATUSES[:inviter])
-          @inviter = @inviter_membership.user
-
-          # On July 15, the Student logs in, triggering repository folder creation
-          pretend_now_is(Time.parse('July 15 2009 6:00PM')) do
-            @grouping.create_grouping_repository_folder
-          end
-        end
-
-        describe '#student_membership_number' do
-          it 'returns 2' do
-            expect(@grouping.student_membership_number).to eq(2)
-          end
-        end
-
-        describe '#available_grace_credits' do
-          it 'returns more than 1 grace credit remaining' do
-            expect(@grouping.available_grace_credits).to be >= 1
-          end
-        end
-
+      context 'when the group submitted during the first penalty period' do
+        include_context 'submission_rule_during_first'
         describe '#grace_period_deduction_single' do
-          it 'shows no grace credit deductions because submission is on time' do
-            submit_file_at_time(@assignment, @group, 'test', 'July 20 2009 5:00PM', 'TestFile.java',
-                                'Some contents for TestFile.java')
-            submit_file_at_time(@assignment, @group, 'test', 'July 20 2009 5:00PM', 'Test.java',
-                                'Some contents for Test.java')
-            submit_file_at_time(@assignment, @group, 'test', 'July 20 2009 5:00PM', 'Driver.java',
-                                'Some contents for Driver.java')
+          it 'shows one grace credit deduction because submission is late' do
+            apply_rule
+            expect(grouping.grace_period_deduction_single).to eq(1)
+          end
+        end
 
-            # An Instructor or Grader decides to begin grading
-            pretend_now_is(Time.parse('July 28 2009 1:00PM')) do
-              submission = Submission.create_by_timestamp(@grouping,
-                                                          @assignment.submission_rule.calculate_collection_time)
-              @assignment.submission_rule.apply_submission_rule(submission)
-
-              @grouping.reload
-              # Should be no deduction because submitting on time
-              expect(@grouping.grace_period_deduction_single).to eq(0)
+        context 'with two students submitting an assignment' do
+          let!(:accepted_membership) { create :accepted_student_membership, grouping: grouping }
+          describe '#grace_period_deduction_single' do
+            it 'shows one grace credit deduction because submission is late' do
+              apply_rule
+              expect(grouping.grace_period_deduction_single).to eq(1)
             end
           end
+        end
+      end
 
-          it 'shows one grace credit deduction because submission is late' do
-            submit_file_at_time(@assignment, @group, 'test', 'July 24 2009 9:00AM', 'LateSubmission.java',
-                                'Some overtime contents')
+      describe 'when the group submitted during the second penalty period' do
+        include_context 'submission_rule_during_second'
+        describe '#grace_period_deduction_single' do
+          it 'shows two grace credit deduction because submission was submitted in second grace period' do
+            apply_rule
+            expect(grouping.grace_period_deduction_single).to eq(2)
+          end
+        end
 
-            # An Instructor or Grader decides to begin grading
-            pretend_now_is(Time.parse('July 28 2009 1:00PM')) do
-              submission = Submission.create_by_timestamp(@grouping,
-                                                          @assignment.submission_rule.calculate_collection_time)
-              @assignment.submission_rule.apply_submission_rule(submission)
-
-              @grouping.reload
-              # Should display 1 credit deduction because of one-day late submission
-              expect(@grouping.grace_period_deduction_single).to eq(1)
+        context 'with two students submitting an assignment' do
+          let!(:accepted_membership) { create :accepted_student_membership, grouping: grouping }
+          describe '#grace_period_deduction_single' do
+            it 'shows two grace credit deduction because submission was submitted in second grace period' do
+              apply_rule
+              expect(grouping.grace_period_deduction_single).to eq(2)
             end
           end
         end
@@ -952,11 +865,37 @@ describe Grouping do
   end
 
   describe '#due_date' do
+    shared_examples 'timed assignment due date' do
+      let(:assignment) { create :timed_assignment }
+      let(:due_date) { due_date_obj.due_date || assignment.due_date }
+      let(:start_time) { due_date_obj.start_time || assignment.start_time }
+      context 'before the grouping has started' do
+        it 'should return the due date' do
+          expect(grouping.due_date).to be_within(1.second).of(due_date)
+        end
+      end
+      context 'after the grouping has started' do
+        before do
+          grouping.update!(start_time: start_time + 30.minutes)
+        end
+        it 'should return the start_time + duration if the assignment due date has not passed' do
+          due_date = grouping.reload.start_time + assignment.duration + addition
+          expect(grouping.due_date).to be_within(1.second).of(due_date)
+        end
+      end
+    end
+
     let(:assignment) { create :assignment }
     let(:grouping) { create :grouping_with_inviter, assignment: assignment }
     context 'with an assignment due date' do
       it 'should return the assigment due date' do
         expect(grouping.due_date).to be_within(1.second).of(assignment.due_date)
+      end
+
+      context 'with a timed assignment' do
+        let(:addition) { 0.seconds }
+        let(:due_date_obj) { assignment }
+        it_behaves_like 'timed assignment due date'
       end
 
       context 'and a grouping extension' do
@@ -966,11 +905,20 @@ describe Grouping do
           expected_due_date = assignment.due_date + extension.time_delta
           expect(grouping.due_date).to be_within(1.second).of(expected_due_date)
         end
+
+        context 'with a timed assignment' do
+          let(:extension) { create :extension, grouping: grouping, time_delta: 1.hour }
+          let(:due_date_obj) { assignment }
+          let(:addition) { extension.time_delta }
+          it_behaves_like 'timed assignment due date'
+        end
       end
 
       context 'and a section due date' do
         let(:section) { create :section }
-        let(:section_due_date) { create :section_due_date, assignment: assignment, section: section }
+        let!(:section_due_date) do
+          create :section_due_date, assignment: assignment, section: section, due_date: 2.minutes.ago
+        end
 
         before :each do
           grouping.inviter.update!(section: section)
@@ -983,6 +931,12 @@ describe Grouping do
 
           it 'should return the assignment due date' do
             expect(grouping.due_date).to be_within(1.second).of(assignment.due_date)
+          end
+
+          context 'with a timed assignment' do
+            let(:addition) { 0.seconds }
+            let(:due_date_obj) { assignment }
+            it_behaves_like 'timed assignment due date'
           end
 
           context 'and a grouping extension' do
@@ -999,6 +953,12 @@ describe Grouping do
             assignment.assignment_properties.update!(section_due_dates_type: true)
           end
 
+          context 'with a timed assignment' do
+            let(:addition) { 0.seconds }
+            let(:due_date_obj) { section_due_date }
+            it_behaves_like 'timed assignment due date'
+          end
+
           it 'should return the section due date' do
             expected_due_date = section_due_date.due_date
             expect(grouping.due_date).to be_within(1.second).of(expected_due_date)
@@ -1006,6 +966,13 @@ describe Grouping do
 
           context 'and a grouping extension' do
             let(:extension) { create :extension, grouping: grouping }
+
+            context 'with a timed assignment' do
+              let(:extension) { create :extension, grouping: grouping, time_delta: 1.hour }
+              let(:addition) { extension.time_delta }
+              let(:due_date_obj) { section_due_date }
+              it_behaves_like 'timed assignment due date'
+            end
 
             it 'should return the section due date plus the extension' do
               expected_due_date = section_due_date.due_date + extension.time_delta
@@ -1016,6 +983,50 @@ describe Grouping do
       end
     end
   end
+
+  describe '#past_assessment_start_time?' do
+    let(:assignment) { create(:timed_assignment) }
+    let(:grouping) { create :grouping_with_inviter, assignment: assignment }
+    context 'when assignment start time has passed' do
+      it 'should return true' do
+        expect(grouping.past_assessment_start_time?).to eq true
+      end
+    end
+    context 'when assignment start time has not passed' do
+      before { assignment.update! due_date: 1.day.from_now, start_time: 10.minutes.from_now }
+      it 'should return false' do
+        expect(grouping.past_assessment_start_time?).to eq false
+      end
+    end
+    context 'when a section exists' do
+      let(:section) { create :section }
+      let(:section_due_date) { create :section_due_date, assignment: assignment, section: section }
+      let(:grouping) { create :grouping_with_inviter, assignment: assignment }
+      before do
+        grouping.inviter.update!(section_id: section.id)
+        assignment.update!(section_due_dates_type: true)
+      end
+      context 'when section start time has passed' do
+        before { section_due_date.update! start_time: 1.minute.ago }
+        it 'should return true' do
+          expect(grouping.past_assessment_start_time?).to eq true
+        end
+      end
+      context 'when section start time has not passed' do
+        before { section_due_date.update! start_time: 1.minute.from_now }
+        it 'should return false' do
+          expect(grouping.past_assessment_start_time?).to eq false
+        end
+        context 'when section_due_dates_type is false' do
+          before { assignment.update!(section_due_dates_type: false) }
+          it 'should return true' do
+            expect(grouping.past_assessment_start_time?).to eq true
+          end
+        end
+      end
+    end
+  end
+
   describe '#past_due_date?' do
     context 'with an assignment' do
       before :each do

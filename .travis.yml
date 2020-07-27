@@ -1,12 +1,11 @@
 language: ruby
 rvm:
   - 2.5.3
-dist: xenial
+dist: bionic
 addons:
   postgresql: "10"
   apt:
     packages:
-      - postgresql-10
       - postgresql-client-10
 
 before_install:

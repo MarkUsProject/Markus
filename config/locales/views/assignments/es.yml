@@ -4,7 +4,9 @@ es:
       final_due_date_passed: "El plazo de aplazamiento de gracia para este proyecto ha pasado"
       marking_started_warning: "UPDATE ME"
       marking_overwrite_warning_html: "UPDATE ME"
+      past: 'UPDATE ME!'
       past_due_date_notice: "El último plazo de entrega para este proyecto está en el pasado por: "
+      upcoming: 'UPDATE ME!'
     form:
       add_required_file: "Añadir un archivo requerido"
       group_properties: "Propiedades del Grupo"
@@ -68,11 +70,28 @@ es:
       description: "UPDATE ME."
       overwrite: "UPDATE ME"
       title: "Código Inicial"
+    timed:
+      start_button: "UPDATE ME"
+      end_time: "UPDATE ME"
+      start_time_instructions: "UPDATE ME"
+      start_end_time_instructions: "UPDATE ME"
+      end_time_instructions: "UPDATE ME"
+      past_due_date: "UPDATE ME"
+      past_end_time: "UPDATE ME"
+      before_start_time: "UPDATE ME"
+      before_start_instructions: "UPDATE ME %{duration_string}"
+      before_start_instructions_extension: "UPDATE ME %{duration_string} %{extension_string}"
+      after_start_instructions_html: "UPDATE ME %{start_time} %{due_date}"
+      start_confirmation: "UPDATE ME"
+      modal_current_duration: "UPDATE ME"
+      started_message: "UPDATE ME"
+      starter_code_prompt: "UPDATE ME"
+      time_until_due_warning: "UPDATE ME %{due_date}"
+      duration_extension_info: "UPDATE ME %{extension_string}"
 
     # Miscellaneous
     average_annotations: "%{average_annotations} anotaciones por entrega calificada"
     hidden: "%{assignment_text} (oculto)"
-    information: "Reglas del Proyecto"
     manage_course_work: "Administrar trabajos del curso"
     marking_scheme: "Esquema de Calificación: %{identifier}"
     no_required_files: "No hay archivos requeridos para este proyecto."

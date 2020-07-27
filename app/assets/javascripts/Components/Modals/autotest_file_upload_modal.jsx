@@ -6,7 +6,8 @@ class AutotestFileUploadModal extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      newFiles: []
+      newFiles: [],
+      unzip: false
     };
   }
 
@@ -17,7 +18,7 @@ class AutotestFileUploadModal extends React.Component {
   onSubmit = (event) => {
     event.preventDefault();
     if (!!this.state.newFiles) {
-      this.props.onSubmit(this.state.newFiles);
+      this.props.onSubmit(this.state.newFiles, this.state.unzip);
       this.setState({newFiles: []});
     } else {
       this.props.onRequestClose();
@@ -26,6 +27,10 @@ class AutotestFileUploadModal extends React.Component {
 
   handleFileUpload = (event) => {
     this.setState({newFiles: event.target.files});
+  };
+
+  toggleUnzip = () => {
+    this.setState({unzip: !this.state.unzip});
   };
 
   render() {
@@ -38,6 +43,16 @@ class AutotestFileUploadModal extends React.Component {
         <h2>{I18n.t('upload')}</h2>
         <form onSubmit={this.onSubmit}>
           <div className={'modal-container-vertical'}>
+            <div>
+              <label htmlFor='unzip'>
+                <input
+                  type={'checkbox'}
+                  name={'unzip'}
+                  checked={this.state.unzip}
+                  onChange={this.toggleUnzip}
+                /> {I18n.t('modals.file_upload.unzip')}
+              </label>
+            </div>
             <div className={'modal-container'}>
               <input type={'file'} name={'new_files'} multiple={true} onChange={this.handleFileUpload}/>
             </div>

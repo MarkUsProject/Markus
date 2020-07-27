@@ -1,0 +1,15 @@
+<div id='annotation_list_holder'>
+  <h2>
+    <%= t('annotations.uncategorized') %>
+  </h2>
+  <% if texts.empty? %>
+    <p>
+      <%= t('annotations.empty_uncategorized') %>
+    </p>
+  <% else %>
+    <ul id='annotation_list'>
+      <%= render partial: 'annotation_text',
+                 collection: texts %>
+    </ul>
+  <% end %>
+</div>

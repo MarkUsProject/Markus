@@ -1,0 +1,22 @@
+{
+  "definitions": {
+    "files_list": {
+      "type": "string",
+      "enum": []
+    },
+    "test_data_categories": {
+      "type": "string",
+      "enum": [],
+      "enumNames": []
+    },
+    "extra_group_data": {},
+    "installed_testers": {
+      "type": "string",
+      "enum": []
+    },
+    "tester_schemas": {
+      "oneOf": [
+      ]
+    }
+  }
+}

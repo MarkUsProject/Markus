@@ -7,13 +7,12 @@ class Criterion < ApplicationRecord
   has_many :marks, dependent: :destroy
   accepts_nested_attributes_for :marks
 
-  has_many :criterion_ta_associations,
-           dependent: :destroy
-
   validates_presence_of :assigned_groups_count
   validates_numericality_of :assigned_groups_count
   before_validation :update_assigned_groups_count
 
+
+  has_many :criterion_ta_associations, dependent: :destroy
   has_many :tas, through: :criterion_ta_associations
   has_many :test_groups
 

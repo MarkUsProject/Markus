@@ -42,7 +42,12 @@ namespace :db do
       base_attributes = {
         submission_file_id: submission_file.id,
         is_remark: new_submission.has_remark?,
-        annotation_text_id: AnnotationText.all.pluck(:id).to_a.sample,
+        annotation_text_id: AnnotationText.all
+                                          .joins(:annotation_category)
+                                          .where('annotation_categories.assignment': grouping.assignment,
+                                                 'annotation_texts.deduction': nil)
+                                          .where.not('annotation_texts.annotation_category_id': nil)
+                                          .pluck(:id).sample,
         annotation_number: new_submission.annotations.count + 1,
         creator_id: Admin.first.id,
         creator_type: 'Admin',
@@ -59,7 +64,12 @@ namespace :db do
       base_attributes = {
         submission_file_id: submission_file.id,
         is_remark: new_submission.has_remark?,
-        annotation_text_id: AnnotationText.all.pluck(:id).to_a.sample,
+        annotation_text_id: AnnotationText.all
+                                          .joins(:annotation_category)
+                                          .where('annotation_categories.assignment': grouping.assignment,
+                                                 'annotation_texts.deduction': nil)
+                                          .where.not('annotation_texts.annotation_category_id': nil)
+                                          .pluck(:id).sample,
         annotation_number: new_submission.annotations.count + 1,
         creator_id: Admin.first.id,
         creator_type: 'Admin',
@@ -73,11 +83,32 @@ namespace :db do
         page: 1,
         **base_attributes
       )
+
+      one_time_only = AnnotationText.create(annotation_category: nil,
+                                            content: random_sentences(3),
+                                            creator: Admin.first,
+                                            last_editor: Admin.first)
+      base_attributes[:annotation_text_id] = one_time_only.id
+      base_attributes[:annotation_number] = new_submission.annotations.count + 1
+      PdfAnnotation.create(
+        x1: 52_444,
+        y1: 20_703,
+        x2: 88_008,
+        y2: 35_185,
+        page: 2,
+        **base_attributes
+      )
+
       submission_file = new_submission.submission_files.find_by(filename: 'hello.py')
       base_attributes = {
         submission_file_id: submission_file.id,
         is_remark: new_submission.has_remark?,
-        annotation_text_id: AnnotationText.all.pluck(:id).to_a.sample,
+        annotation_text_id: AnnotationText.all
+                                          .joins(:annotation_category)
+                                          .where('annotation_categories.assignment': grouping.assignment,
+                                                 'annotation_texts.deduction': nil)
+                                          .where.not('annotation_texts.annotation_category_id': nil)
+                                          .pluck(:id).sample,
         annotation_number: new_submission.annotations.count + 1,
         creator_id: Admin.first.id,
         creator_type: 'Admin',
@@ -113,6 +144,38 @@ namespace :db do
       .joins(result: [submission: [grouping: :assignment]])
       .where(assessments: { short_identifier: %w[A0 A1 A2] }).destroy_all
     Mark.import marks
+
+    Grouping.joins(:assignment).where(assessments: { short_identifier: %w[A0 A1 A2] }).each do |grouping|
+      submission_file = grouping.current_submission_used.submission_files.find_by(filename: 'hello.py')
+      categories_with_criteria = grouping.assignment.annotation_categories.where.not(flexible_criterion_id: nil)
+      base_attributes = {
+        submission_file_id: submission_file.id,
+        is_remark: grouping.current_submission_used.has_remark?,
+        annotation_text_id: categories_with_criteria.first.annotation_texts.pluck(:id).to_a.sample,
+        annotation_number: grouping.current_submission_used.annotations.count + 1,
+        creator_id: Admin.first.id,
+        creator_type: 'Admin',
+        result_id: grouping.current_submission_used.current_result.id
+      }
+      TextAnnotation.create(
+        line_start: 4,
+        line_end: 5,
+        column_start: 6,
+        column_end: 15,
+        **base_attributes
+      )
+      base_attributes[:annotation_text_id] = categories_with_criteria.second.annotation_texts.pluck(:id).to_a.sample
+      base_attributes[:annotation_number] = grouping.reload.current_submission_used.annotations.count + 1
+      TextAnnotation.create(
+        line_start: 12,
+        line_end: 12,
+        column_start: 1,
+        column_end: 26,
+        **base_attributes
+      )
+      mark = grouping.current_result.marks.find_by(criterion: categories_with_criteria.second.flexible_criterion)
+      mark.update!(override: true, mark: mark.criterion.max_mark)
+    end
 
     puts 'Release Results for Assignments'
     #Release the marks after they have been inputed into the assignments

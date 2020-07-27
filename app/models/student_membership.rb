@@ -70,19 +70,16 @@ class StudentMembership < Membership
     end
   end
 
+  # Raises an error if this user already has an accepted membership for a different grouping for this assignment
   def one_accepted_per_assignment
-    return true unless membership_status_changed?
-    old, new = membership_status_change
-    accepted_or_inviter = [STATUSES[:accepted], STATUSES[:inviter]]
-    return true unless accepted_or_inviter.include?(new) && !accepted_or_inviter.include?(old)
-    other_users = StudentMembership.joins(:grouping)
-                                   .where('groupings.assessment_id': grouping.assessment_id)
-                                   .where(membership_status: [:inviter, :accepted])
-                                   .where(user_id: user_id)
-    unless other_users.empty?
-      errors.add(:base, I18n.t('csv.memberships_not_unique'))
-      return false
-    end
-    true
+    return unless user.try(:student?)
+
+    all_memberships = user.accepted_memberships
+                          .joins(:grouping)
+                          .where('groupings.assessment_id': grouping.assessment_id)
+    return if all_memberships.empty? || all_memberships.find_by(id: self.id)
+
+    errors.add(:base, I18n.t('csv.memberships_not_unique'))
+    throw(:abort)
   end
 end

@@ -7,7 +7,8 @@ class AssignmentsController < ApplicationController
                               :show,
                               :peer_review,
                               :summary,
-                              :switch_assignment]
+                              :switch_assignment,
+                              :start_timed_assignment]
 
   before_action      :authorize_for_ta_and_admin,
                      only: [:summary]
@@ -52,8 +53,13 @@ class AssignmentsController < ApplicationController
       end
     end
     unless @grouping.nil?
+      if @assignment.is_timed && !@grouping.start_time.nil? && !@grouping.past_collection_date?
+        flash_message(:note, I18n.t('assignments.timed.started_message'))
+        flash_message(:note, I18n.t('assignments.timed.starter_code_prompt'))
+      end
       set_repo_vars(@assignment, @grouping)
     end
+    render layout: 'assignment_content'
   end
 
   def peer_review
@@ -197,12 +203,13 @@ class AssignmentsController < ApplicationController
     if params[:scanned].present?
       @assignment.scanned_exam = true
     end
+    if params[:timed].present?
+      @assignment.is_timed = true
+    end
     @clone_assignments = Assignment.joins(:assignment_properties)
                                    .where(assignment_properties: { vcs_submit: true })
                                    .order(:id)
     @sections = Section.all
-    @assignment.build_submission_rule
-    @assignment.build_assignment_stat
 
     # build section_due_dates for each section
     Section.all.each { |s| @assignment.section_due_dates.build(section: s)}
@@ -217,8 +224,6 @@ class AssignmentsController < ApplicationController
   # Called after a new assignment form is submitted.
   def create
     @assignment = Assignment.new
-    @assignment.build_assignment_stat
-    @assignment.build_submission_rule
     @assignment.transaction do
       begin
         @assignment, new_required_files = process_assignment_form(@assignment)
@@ -270,14 +275,16 @@ class AssignmentsController < ApplicationController
 
   def stop_test
     test_id = params[:test_run_id].to_i
-    @current_job = AutotestCancelJob.perform_later(request.protocol + request.host_with_port, [test_id])
+    assignment_id = params[:id]
+    @current_job = AutotestCancelJob.perform_later(request.protocol + request.host_with_port, assignment_id, [test_id])
     session[:job_id] = @current_job.job_id
     redirect_back(fallback_location: root_path)
   end
 
   def stop_batch_tests
     test_runs = TestRun.where(test_batch_id: params[:test_batch_id]).pluck(:id)
-    @current_job = AutotestCancelJob.perform_later(request.protocol + request.host_with_port, test_runs)
+    assignment_id = params[:id]
+    @current_job = AutotestCancelJob.perform_later(request.protocol + request.host_with_port, assignment_id, test_runs)
     session[:job_id] = @current_job.job_id
     redirect_back(fallback_location: root_path)
   end
@@ -391,6 +398,7 @@ class AssignmentsController < ApplicationController
     unless Rails.configuration.starter_code_on
       raise t('student.submission.external_submit_only') #TODO: Update this
     end
+    unzip = params[:unzip] == 'true'
 
     @assignment = Assignment.find(params[:id])
 
@@ -413,6 +421,15 @@ class AssignmentsController < ApplicationController
       flash_message(:warning, I18n.t('student.submission.no_action_detected'))
       redirect_back(fallback_location: root_path)
     else
+      if unzip
+        zdirs, zfiles = new_files.map do |f|
+          next unless File.extname(f.path).casecmp?('.zip')
+          unzip_uploaded_file(f.path)
+        end.compact.transpose.map(&:flatten)
+        new_files.reject! { |f| File.extname(f.path).casecmp?('.zip') }
+        new_folders.push(*zdirs)
+        new_files.push(*zfiles)
+      end
       messages = []
       @assignment.access_starter_code_repo do |repo|
         # Create transaction, setting the author.
@@ -516,6 +533,17 @@ class AssignmentsController < ApplicationController
     head :ok
   end
 
+  # Start timed assignment for the current user's grouping for this assignment
+  def start_timed_assignment
+    grouping = current_user.try(:accepted_grouping_for, params[:id])
+    return head 400 if grouping.nil?
+    authorize! grouping
+    unless grouping.update(start_time: Time.current)
+      flash_message(:error, grouping.errors.full_messages.join(' '))
+    end
+    redirect_to action: :show
+  end
+
   private
 
     def sanitize_file_name(file_name)
@@ -590,7 +618,11 @@ class AssignmentsController < ApplicationController
   def process_assignment_form(assignment)
     num_files_before = assignment.assignment_files.length
     short_identifier = assignment_params[:short_identifier]
+    # remove potentially invalid periods before updating
+    periods = submission_rule_params['submission_rule_attributes']['periods_attributes'].to_h.values.map { |h| h[:id] }
+    assignment.submission_rule.periods.where.not(id: periods).each(&:destroy)
     assignment.assign_attributes(assignment_params)
+    process_timed_duration(assignment) if assignment.is_timed
     assignment.repository_folder = short_identifier unless assignment.is_peer_review?
     assignment.save!
     new_required_files = assignment.saved_change_to_only_required_files? ||
@@ -623,85 +655,14 @@ class AssignmentsController < ApplicationController
       assignment.group_max = 1
     end
 
-    # Due to some funkiness, we need to handle submission rules separately
-    # from the main attribute update
-    # First, figure out what kind of rule has been requested
-    rule_attributes = params[:assignment][:submission_rule_attributes]
-    if rule_attributes.nil?
-      rule_name = assignment.submission_rule.class.to_s
-    else
-      rule_name = rule_attributes[:type]
-    end
-
-    [NoLateSubmissionRule, GracePeriodSubmissionRule,
-     PenaltyPeriodSubmissionRule, PenaltyDecayPeriodSubmissionRule]
-    if SubmissionRule.const_defined?(rule_name)
-      potential_rule = SubmissionRule.const_get(rule_name)
-    else
-      raise SubmissionRule::InvalidRuleType, rule_name
-    end
-
-    # If the submission rule was changed, we need to do a more complicated
-    # dance with the database in order to get things updated.
-    if assignment.submission_rule.class != potential_rule
-
-      # In this case, the easiest thing to do is nuke the old rule along
-      # with all the periods and a new submission rule...this may cause
-      # issues with foreign keys in the future, but not with the current
-      # schema
-      assignment.submission_rule.delete
-      assignment.submission_rule = potential_rule.create!(assignment: assignment)
-
-      # this part of the update is particularly hacky, because the incoming
-      # data will include some mix of the old periods and new periods; in
-      # the case of purely new periods the input is only an array, but in
-      # the case of a mixture the input is a hash, and if there are no
-      # periods at all then the periods_attributes will be nil
-      periods = submission_rule_params[:submission_rule_attributes][:periods_attributes]
-      begin
-        periods = periods.to_h
-      rescue
-      end
-      periods = case periods
-                when Hash
-                  # in this case, we do not care about the keys, because
-                  # the new periods will have nonsense values for the key
-                  # and the old periods are being discarded
-                  periods.map { |_, p| p }.reject { |p| p.has_key?(:id) }
-                when Array
-                  periods
-                else
-                  []
-                end
-      # now that we know what periods we want to keep, we can create them
-      periods.each do |p|
-        new_period = assignment.submission_rule.periods.build(p)
-        new_period.submission_rule = assignment.submission_rule
-        new_period.save!
-      end
-    elsif !submission_rule_params.blank? # TODO: do this in a more Rails way
-      periods = submission_rule_params[:submission_rule_attributes][:periods_attributes]
-      begin
-        periods = periods.to_h
-      rescue
-      end
-      periods = case periods
-                when Hash
-                  periods.map { |_, p| p }.select { |p| p.key?(:hours) }
-                when Array
-                  periods
-                else
-                  []
-                end
-      assignment.submission_rule.periods_attributes = periods
-      assignment.submission_rule.periods.each do |period|
-        period.submission_rule = assignment.submission_rule
-        period.save
-      end
-      assignment.submission_rule.save
-    end
-
     return assignment, new_required_files
+  end
+
+  # Convert the hours and minutes value given in the params to a duration value
+  # and assign it to the duration attribute of +assignment+.
+  def process_timed_duration(assignment)
+    durs = duration_params['assignment_properties_attributes']['duration']
+    assignment.duration = durs['hours'].to_i.hours + durs['minutes'].to_i.minutes
   end
 
   def graders_options_params
@@ -743,18 +704,44 @@ class AssignmentsController < ApplicationController
         :section_groups_only,
         :only_required_files,
         :section_due_dates_type,
-        :scanned_exam
+        :scanned_exam,
+        :is_timed,
+        :start_time
       ],
       section_due_dates_attributes: [
         :_destroy,
         :id,
         :section_id,
-        :due_date
+        :due_date,
+        :start_time
       ],
       assignment_files_attributes:  [
         :_destroy,
         :id,
         :filename
+      ],
+      submission_rule_attributes: [
+        :_destroy,
+        :id,
+        :type,
+        { periods_attributes: [
+          :id,
+          :deduction,
+          :interval,
+          :hours,
+          :_destroy
+        ] }
+      ]
+    )
+  end
+
+  def duration_params
+    params.require(:assignment).permit(
+      assignment_properties_attributes: [
+        duration: [
+          :hours,
+          :minutes
+        ]
       ]
     )
   end

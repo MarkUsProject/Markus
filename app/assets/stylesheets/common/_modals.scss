@@ -15,6 +15,10 @@
 .modal-container {
   display: flex;
   justify-content: space-evenly;
+
+  > * {
+    padding: 5px;
+  }
 }
 
 .modal-container-vertical {

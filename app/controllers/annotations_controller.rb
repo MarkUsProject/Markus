@@ -62,11 +62,14 @@ class AnnotationsController < ApplicationController
     submission = result.submission
     submission_file = submission.submission_files.find(params[:submission_file_id])
 
+    d = result.grouping.assignment.annotation_categories.find_by(id: params[:category_id])&.flexible_criterion_id
+
     text = AnnotationText.create!(
       content: params[:content],
       annotation_category_id: params[:category_id],
       creator_id: current_user.id,
-      last_editor_id: current_user.id
+      last_editor_id: current_user.id,
+      deduction: d.nil? ? nil : 0.0
     )
     base_attributes = {
       annotation_number: result.annotations.size + 1,
@@ -114,6 +117,17 @@ class AnnotationsController < ApplicationController
   def destroy
     result = Result.find(params[:result_id])
     @annotation = result.annotations.find(params[:id])
+    unless @annotation.annotation_text.deduction.nil? || !current_user.ta?
+      assignment = result.grouping.assignment
+      if assignment.assign_graders_to_criteria &&
+          !current_user.criterion_ta_associations
+                       .pluck(:criterion_id)
+                       .include?(@annotation.annotation_text.annotation_category.flexible_criterion_id)
+        flash_message(:error, t('annotations.prevent_ta_delete'))
+        head :bad_request
+        return
+      end
+    end
     text = @annotation.annotation_text
     text.destroy if text.annotation_category_id.nil?
     @annotation.destroy
@@ -127,6 +141,14 @@ class AnnotationsController < ApplicationController
   def update
     @annotation = Annotation.find(params[:id])
     @annotation_text = @annotation.annotation_text
+    unless @annotation_text.deduction.nil?
+      if current_user.ta? || @annotation_text.annotations.joins(:result)
+                                             .where('results.released_to_students' => true).exists?
+        flash_message(:error, t('annotations.prevent_update'))
+        head :bad_request
+        return
+      end
+    end
     @annotation_text.update(content: params[:content])
   end
 end

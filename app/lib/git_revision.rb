@@ -137,7 +137,7 @@ class GitRevision < Repository::AbstractRevision
     found = false
     walker = Rugged::Walker.new(@repo)
     walker.sorting(Rugged::SORT_TOPO)
-    walker.push(last_commit)
+    walker.push(last_commit.oid)
     walker.each do |commit|
       current_reflog_entry = GitRepository.try_advance_reflog!(reflog, reflog_entries, commit)
       found = true if @commit.oid == commit.oid
