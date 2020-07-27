@@ -152,7 +152,7 @@ class CriteriaController < ApplicationController
     else
       if data[:type] == '.yml'
         ApplicationRecord.transaction do
-          assignment.criteria.each(&:destroy)
+          assignment.criteria.destroy_all
 
           # Create criteria based on the parsed data.
           successes = 0

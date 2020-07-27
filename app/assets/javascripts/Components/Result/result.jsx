@@ -324,10 +324,10 @@ class Result extends React.Component {
   };
 
   /* Callbacks for RightPane */
-  updateMark = (criterion_type, criterion_id, mark) => {
+  updateMark = (criterion_id, mark) => {
     if (this.state.released_to_students ||
         (this.state.assigned_criteria !== null &&
-         !this.state.assigned_criteria.includes(`${criterion_type}-${criterion_id}`))) {
+         !this.state.assigned_criteria.includes(`${criterion_id}`))) {
       return;
     }
 
@@ -343,7 +343,7 @@ class Result extends React.Component {
       dataType: 'json'
     }).then(data => {
       let marks = this.state.marks.map(markData => {
-        if (markData.id === criterion_id && markData.criterion_type === criterion_type) {
+        if (markData.id === criterion_id) {
           let newMark = {...markData};
           newMark.mark = data.mark;
           newMark['marks.mark'] = data.mark;
@@ -365,7 +365,7 @@ class Result extends React.Component {
   };
 
   destroyMark = (criterion_type, criterion_id) => {
-    this.updateMark(criterion_type, criterion_id, null);
+    this.updateMark(criterion_id, null);
   };
 
   revertToAutomaticDeductions = (criterion_id) => {

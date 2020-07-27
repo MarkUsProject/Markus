@@ -31,6 +31,11 @@ class Assignment < Assessment
            class_name: 'Criterion',
            foreign_key: :assessment_id
 
+  has_many :peer_criteria,
+           -> { where(peer_visible: true).order(:position) },
+           class_name: 'Criterion',
+           foreign_key: :assessment_id
+
   has_many :test_groups, dependent: :destroy, inverse_of: :assignment, foreign_key: :assessment_id
   accepts_nested_attributes_for :test_groups, allow_destroy: true, reject_if: ->(attrs) { attrs[:name].blank? }
 

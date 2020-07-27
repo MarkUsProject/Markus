@@ -546,9 +546,7 @@ class ResultsController < ApplicationController
     assignment = submission.grouping.assignment
     mark_value = params[:mark].blank? ? nil : params[:mark].to_f
 
-    result_mark = result.marks.find_or_create_by(
-      criterion_id: params[:criterion_id]
-    )
+    result_mark = result.marks.find_or_create_by(criterion_id: params[:criterion_id])
 
     m_logger = MarkusLogger.instance
 
@@ -693,7 +691,7 @@ class ResultsController < ApplicationController
     if @result.is_a_review?
       if @current_user.is_reviewer_for?(@assignment.pr_assignment, @result) ||
           !@grouping.membership_status(current_user).nil? || !@current_user.student?
-        @mark_criteria = @assignment.criteria.where(&:peer_visible)
+        @mark_criteria = @assignment.peer_criteria
       end
     else
       @mark_criteria = @assignment.ta_criteria
