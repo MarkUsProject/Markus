@@ -54,10 +54,6 @@ describe CourseSummariesController do
       before :each do
         3.times { create(:assignment_with_criteria_and_results) }
         2.times { create(:grade_entry_form_with_data) }
-
-        # Ensure statistics exist for one assignment
-        assignments = Assignment.all
-
         # TODO: Create marking scheme as well
 
         get_as @admin, :populate, format: :json
