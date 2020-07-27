@@ -49,7 +49,9 @@ class AnnotationCategoriesController < ApplicationController
         format.js { render :insert_new_annotation_category }
       end
     else
-      respond_with @annotation_category, render: { body: nil, status: :bad_request }
+      respond_with @annotation_category do |format|
+        format.js { head :bad_request }
+      end
     end
   end
 
