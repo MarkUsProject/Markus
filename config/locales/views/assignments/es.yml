@@ -67,8 +67,6 @@ es:
     scanned_exam:
       under_review: "Este examen todavía está en revisión"
     starter_code:
-      description: "UPDATE ME."
-      overwrite: "UPDATE ME"
       title: "Código Inicial"
       provided: "UPDATE ME"
       download_instructions: "UPDATE ME"

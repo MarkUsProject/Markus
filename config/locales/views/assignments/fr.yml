@@ -28,8 +28,6 @@ fr:
     scanned_exam:
       under_review: "Cet examen est marqué"
     starter_code:
-      description: "UPDATE ME."
-      overwrite: "UPDATE ME"
       title: "UPDATE ME"
       provided: "UPDATE ME"
       download_instructions: "UPDATE ME"

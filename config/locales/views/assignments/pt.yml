@@ -27,8 +27,6 @@ pt:
     scanned_exam:
       under_review: "Este exame está sendo marcado"
     starter_code:
-      description: "UPDATE ME."
-      overwrite: "UPDATE ME"
       title: "UPDATE ME"
       provided: "UPDATE ME"
       download_instructions: "UPDATE ME"

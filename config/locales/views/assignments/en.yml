@@ -28,8 +28,6 @@ en:
     scanned_exam:
       under_review: "This exam is still under review."
     starter_code:
-      description: "Starter code files you upload will be automatically added to every new group's repositories."
-      overwrite: "Overwrite group files"
       title: "Starter Code"
       provided: "Starter files have been provided for this assignment"
       download_instructions: "Click below to download a new copy of the starter code"
