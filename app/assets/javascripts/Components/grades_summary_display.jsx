@@ -56,36 +56,35 @@ class GradesSummaryDisplay extends React.Component {
       let labels = Object.keys(res.columns).map(k => {
         return res.columns[k].Header;
       });
-      let averages = [];
-      let medians = [];
+      this.averageDataSet.data = [];
+      this.medianDataSet.data = [];
       labels.forEach(l => {
-        averages.push(res.averages[l] ? parseFloat(res.averages[l]) : null);
-        medians.push(res.medians[l] ? parseFloat(res.medians[l]) : null);
+        this.averageDataSet.data.push(res.averages[l] ? parseFloat(res.averages[l]) : null);
+        this.medianDataSet.data.push(res.medians[l] ? parseFloat(res.medians[l]) : null);
       });
-      this.averageDataSet.data = averages;
-      this.medianDataSet.data = medians;
+      let chartInfo = {labels: labels};
       if (this.props.student) {
-        let student_marks = []
+        this.individualDataSet.data = [];
         Object.keys(res.columns).forEach(k => {
-          if (res.data[0].assessment_marks[parseInt(k) + 1]) {
-            student_marks.push(parseFloat(res.data[0].assessment_marks[parseInt(k) + 1].percentage));
+          if (res.data[0].assessment_marks[parseInt(k, 10) + 1]) {
+            this.individualDataSet.data.push(parseFloat(res.data[0].assessment_marks[parseInt(k) + 1].percentage));
           } else {
-            student_marks.push(null);
+            this.individualDataSet.data.push(null);
           }
         });
-        this.individualDataSet.data = student_marks;
-        this.setState({labels: labels, datasets: [this.individualDataSet, this.averageDataSet, this.medianDataSet]});
+        chartInfo['datasets'] = [this.individualDataSet, this.averageDataSet, this.medianDataSet];
       } else {
-        this.setState({labels: labels, datasets: [this.averageDataSet, this.medianDataSet]});
+        chartInfo['datasets'] = [this.averageDataSet, this.medianDataSet];
       }
 
       res.columns.forEach((c, i) => {
-        c.Header += ' (/' + (Math.round(parseFloat(res.totals[i]) * 100) / 100).toString() + ')';
+        c.Header += `(/${Math.round(parseFloat(res.totals[i]) * 100) / 100})`;
       });
       this.setState({
         data: res.data,
         columns: res.columns,
         loading: false,
+        ...chartInfo
       });
     });
   }
