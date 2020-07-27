@@ -8,7 +8,10 @@ class AssignmentsController < ApplicationController
                               :peer_review,
                               :summary,
                               :switch_assignment,
-                              :start_timed_assignment]
+                              :start_timed_assignment,
+                              :starter_code,
+                              :populate_starter_code_manager,
+                              :update_starter_code]
 
   before_action      :authorize_for_ta_and_admin,
                      only: [:summary]
@@ -53,7 +56,7 @@ class AssignmentsController < ApplicationController
       end
     end
     unless @grouping.nil?
-      flash_message(:warning, I18n.t('assignments.starter_code.changed_warning')) if @grouping.starter_code_changed # TODO: internationalize
+      flash_message(:warning, I18n.t('assignments.starter_code.changed_warning')) if @grouping.starter_code_changed
       if @assignment.is_timed && !@grouping.start_time.nil? && !@grouping.past_collection_date?
         flash_message(:note, I18n.t('assignments.timed.started_message'))
         flash_message(:note, I18n.t('assignments.timed.starter_code_prompt'))
@@ -385,14 +388,18 @@ class AssignmentsController < ApplicationController
   end
 
   def starter_code
-    # TODO: check if assignment exists and render 400/404
     @assignment = Assignment.find(params[:id])
+    if @assignment.nil?
+      render 'shared/http_status',
+             locals: { code: '404', message: HttpStatusHelper::ERROR_CODE['message']['404'] },
+             status: 404
+    end
   end
 
   def populate_starter_code_manager
-    # TODO: flash message if a grouping exists
     assignment = Assignment.find(params[:id])
-    flash_message(:warning, I18n.t('assignments.starter_code.groupings_exist_warning_html')) if assignment.groupings.exists?
+    flash_message(:warning,
+                  I18n.t('assignments.starter_code.groupings_exist_warning_html')) if assignment.groupings.exists?
     file_data = []
     assignment.starter_code_groups.order(:id).each do |g|
       file_data << { id: g.id,

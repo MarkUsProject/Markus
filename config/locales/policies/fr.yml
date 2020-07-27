@@ -25,3 +25,5 @@ fr:
         get_feedback_file?: "UPDATE ME."
         not_a_student?: "UPDATE ME."
         manage_subdirectories?: "Vous n'êtes pas autorisé à créer, supprimer ou modifier des dossiers."
+      starter_code_group:
+        manage?: "UPDATE ME."
