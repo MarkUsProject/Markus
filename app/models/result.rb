@@ -86,7 +86,7 @@ class Result < ApplicationRecord
         user_visibility = :ta_visible
       end
       criteria = assignment.criteria.where(user_visibility => true).map(&:id)
-      marks_array = (marks.to_a.select { |m| criteria.member? [m.criterion_id] }).map(&:mark)
+      marks_array = (marks.to_a.select { |m| criteria.member? m.criterion_id }).map(&:mark)
       # TODO: sum method does not work with empty arrays or with arrays containing nil values.
       #       Consider updating/replacing gem:
       #       see: https://github.com/thirtysixthspan/descriptive_statistics/issues/44
