@@ -470,15 +470,19 @@ class Grouping < ApplicationRecord
         assignment_folder = self.assignment.repository_folder
         txn = group_repo.get_transaction('Markus', I18n.t('repo.commits.assignment_folder',
                                                           assignment: self.assignment.short_identifier))
-        txn.add_path(assignment_folder)
 
-        reset_starter_code_entries
-        self.reload.starter_code_entries.each { |entry| entry.add_files_to_transaction(txn) }
+        # path may already exist if this is a peer review assignment. In that case do not create
+        # starter code since it should already be there from the parent assignment.
+        unless group_repo.get_latest_revision.path_exists?(assignment_folder)
+          txn.add_path(assignment_folder)
 
-        if txn.has_jobs?
-          raise I18n.t('repo.assignment_dir_creation_error',
-                       short_identifier: assignment.short_identifier) unless group_repo.commit(txn)
-          self.update!(starter_code_timestamp: group_repo.get_latest_revision.server_timestamp)
+          reset_starter_code_entries
+          self.reload.starter_code_entries.each { |entry| entry.add_files_to_transaction(txn) }
+          if txn.has_jobs?
+            raise I18n.t('repo.assignment_dir_creation_error',
+                         short_identifier: assignment.short_identifier) unless group_repo.commit(txn)
+            self.update!(starter_code_timestamp: group_repo.get_latest_revision.server_timestamp)
+          end
         end
       end
     end
