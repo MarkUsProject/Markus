@@ -101,7 +101,7 @@ class GradeEntryFormsController < ApplicationController
     @labels = []
     @grade_entry_form.grade_entry_items.each do |grade_entry_item|
       @columns << "#{grade_entry_item.name} (#{grade_entry_item.out_of})"
-      @labels << "#{grade_entry_item.name}"
+      @labels << grade_entry_item.name
       mark = @grade_entry_student.grades.find_by(grade_entry_item_id: grade_entry_item.id)
       if !mark.nil? && !mark.grade.nil?
         @data << mark.grade
