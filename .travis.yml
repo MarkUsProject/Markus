@@ -32,7 +32,7 @@ before_script:
 
 script:
   # - bundle exec rake test # shoulda (with rails 5) compatibility issues
-  - bundle exec rspec
+  - RSPEC_RENDER_VIEWS=true bundle exec rspec
 
 services:
   - postgresql

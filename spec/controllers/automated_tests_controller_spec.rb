@@ -1,5 +1,4 @@
 describe AutomatedTestsController do
-  render_views false
   let(:assignment) { create :assignment }
   let(:params) { { assignment_id: assignment.id } }
   context 'as an admin' do
