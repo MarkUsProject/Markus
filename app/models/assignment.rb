@@ -660,7 +660,6 @@ class Assignment < Assessment
   def next_criterion_position
     # We're using count here because this fires off a DB query, thus
     # grabbing the most up-to-date count of the criteria.
-    get_criteria.count > 0 ? get_criteria.last.position + 1 : 1
     criteria.count > 0 ? criteria.last.position + 1 : 1
   end
 
