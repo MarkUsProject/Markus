@@ -2,6 +2,7 @@ import React from 'react'
 import { render } from 'react-dom'
 import FileManager from './markus_file_manager'
 import SubmissionFileUploadModal from './Modals/submission_file_upload_modal'
+import {FileViewer} from "./Result/file_viewer";
 
 
 class SubmissionFileManager extends React.Component {
@@ -11,7 +12,9 @@ class SubmissionFileManager extends React.Component {
     this.state = {
       files: [],
       showModal: false,
-      uploadTarget: undefined
+      uploadTarget: undefined,
+      viewFileName: null,
+      viewFilePath: null
     };
   }
 
@@ -127,7 +130,18 @@ class SubmissionFileManager extends React.Component {
     this.setState({showModal: true, uploadTarget: uploadTarget})
   };
 
+  showFile = (item) => {
+    console.log(item)
+    console.log(item.relativeKey.length > item.raw_name.length)
+    console.log(item.relativeKey.slice(0, item.relativeKey.length - item.raw_name.length - 1))
+    this.setState({
+      viewFileName: item.raw_name,
+      viewFilePath: item.relativeKey.length > item.raw_name.length ? item.relativeKey.slice(0, item.relativeKey.length - item.raw_name.length - 1) : ''
+    })
+  };
+
   render() {
+    console.log(this.state)
     return (
       <div>
         <FileManager
@@ -142,11 +156,20 @@ class SubmissionFileManager extends React.Component {
           downloadAllURL={this.getDownloadAllURL()}
           onActionBarAddFileClick={this.props.readOnly ? undefined : this.openUploadModal}
           disableActions={{rename: true, addFolder: !this.props.enableSubdirs, deleteFolder: !this.props.enableSubdirs}}
+          onSelectFile={this.showFile}
         />
         <SubmissionFileUploadModal
           isOpen={this.state.showModal}
           onRequestClose={() => this.setState({showModal: false, uploadTarget: undefined})}
           onSubmit={this.handleCreateFiles}
+        />
+        <FileViewer
+          assignment_id={this.props.assignment_id}
+          grouping_id={this.props.grouping_id}
+          revision_id={this.props.revision_identifier}
+          selectedFileName={this.state.viewFileName}
+          selectedFilePath={this.state.viewFilePath}
+          submission_result={false}
         />
       </div>
     );
