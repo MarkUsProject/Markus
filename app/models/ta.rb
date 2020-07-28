@@ -4,6 +4,7 @@ class Ta < User
   SESSION_TIMEOUT = Rails.configuration.ta_session_timeout
 
   has_many :criterion_ta_associations, dependent: :delete_all
+  has_many :criteria, through: :criterion_ta_associations
 
   has_many :grade_entry_student_tas, dependent: :delete_all
   has_many :grade_entry_students, through: :grade_entry_student_tas, dependent: :delete_all

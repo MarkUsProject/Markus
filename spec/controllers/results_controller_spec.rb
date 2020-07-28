@@ -766,7 +766,7 @@ describe ResultsController do
           let(:params) { { assignment_id: assignment.id, submission_id: remarked.id, id: incomplete_result.id } }
 
           it 'should only include marks for assigned criteria in the remark result' do
-            expect(data['old_marks'].keys).to eq ["#{rubric_criterion.class}-#{rubric_criterion.id}"]
+            expect(data['old_marks'].keys).to eq ["rubric_criterion.id"]
           end
         end
       end
