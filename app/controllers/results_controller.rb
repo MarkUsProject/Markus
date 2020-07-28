@@ -244,7 +244,7 @@ class ResultsController < ApplicationController
 
         # Totals
         if result.is_a_review?
-          data[:assignment_max_mark] = assignment.pr_assignment.max_mark(:peer_visible)
+          data[:assignment_max_mark] = assignment.max_mark
         else
           data[:assignment_max_mark] = marks_map.map { |h| h['max_mark'] }.sum
         end
