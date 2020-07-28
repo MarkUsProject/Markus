@@ -11,7 +11,6 @@ class Criterion < ApplicationRecord
   validates_numericality_of :assigned_groups_count
   before_validation :update_assigned_groups_count
 
-
   has_many :criterion_ta_associations, dependent: :destroy
   has_many :tas, through: :criterion_ta_associations
   has_many :test_groups
