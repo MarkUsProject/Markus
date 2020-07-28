@@ -36,11 +36,8 @@ class Ta < User
     grades = []
 
     if assignment.assign_graders_to_criteria
-      criteria_data = self.criterion_ta_associations.where(assessment_id: assignment.id).pluck(:criterion_id)
-      out_of = criteria_data.sum do |criterion_id|
-        Criterion.find(criterion_id).max_mark
-      end
-      return [] if out_of.zero?
+      criteria_data = self.criteria.where('criteria.assessment_id': assignment.id).sum(:max_mark)
+      return [] if criteria_data.zero?
 
       mark_data = groupings.joins(current_result: :marks)
                            .where('marks.criterion_id': criteria_data)
