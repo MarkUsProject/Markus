@@ -661,12 +661,6 @@ class Assignment < Assessment
     end
   end
 
-  def next_criterion_position
-    # We're using count here because this fires off a DB query, thus
-    # grabbing the most up-to-date count of the criteria.
-    criteria.count > 0 ? criteria.last.position + 1 : 1
-  end
-
   # Returns a filtered list of criteria.
   def get_criteria(user_visibility = :all, type = :all, options = {})
     # can't use select(&:all) because all isn't a field

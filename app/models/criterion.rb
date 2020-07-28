@@ -99,6 +99,7 @@ class Criterion < ApplicationRecord
     # CriterionTaAssociation.create when the PG driver supports bulk create,
     # then remove the activerecord-import gem.
     CriterionTaAssociation.import(columns, values, validate: false)
+
     Grouping.update_criteria_coverage_counts(assignment)
     update_assigned_groups_counts(assignment)
   end
@@ -129,9 +130,9 @@ class Criterion < ApplicationRecord
              .group('subquery.criterion_id')
              .count
 
-    records = Criterion.where(assessment_id: assignment.id)
-                       .pluck_to_hash
-                       .map do |h|
+    records = assignment.criteria
+                        .pluck_to_hash
+                        .map do |h|
       { **h.symbolize_keys, assigned_groups_count: counts[h['id']] || 0 }
     end
 

@@ -721,7 +721,7 @@ describe ResultsController do
       end
 
       it 'should include assigned criteria list' do
-        expect(data['assigned_criteria']).to eq [rubric_criterion.id.to_s]
+        expect(data['assigned_criteria']).to eq [rubric_criterion.id]
       end
 
       context 'when accessing an assignment with deductive annotations' do
