@@ -545,7 +545,7 @@ class Assignment < Assessment
       next if hide_unassigned && unassigned
 
       max_mark += crit.max_mark
-      accessor = "#{crit.class}-#{crit.id}"
+      accessor = crit.id
       criteria_shown << accessor
       {
         Header: crit.name,
@@ -639,7 +639,7 @@ class Assignment < Assessment
             row += Array.new(2 + criteria.length, nil)
           else
             row << result.total_mark
-            row += criteria.map { |crit| marks["#{crit.class.name}-#{crit.id}"] }
+            row += criteria.map { |crit| marks[crit.id] }
             row << extra_marks_hash[result&.id]
           end
           csv << row
@@ -657,10 +657,11 @@ class Assignment < Assessment
     end
   end
 
-  # Returns a filtered list of criteria.
-  def get_criteria(user_visibility = :all, type = :all, options = {})
-    # can't use select(&:all) because all isn't a field
-    criteria.includes(options[:includes]).order(:position).where(&user_visibility)
+  def next_criterion_position
+    # We're using count here because this fires off a DB query, thus
+    # grabbing the most up-to-date count of the criteria.
+    get_criteria.count > 0 ? get_criteria.last.position + 1 : 1
+    criteria.count > 0 ? criteria.last.position + 1 : 1
   end
 
   # Determine the total mark for a particular student, as a percentage
