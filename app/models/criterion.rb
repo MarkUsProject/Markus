@@ -35,9 +35,8 @@ class Criterion < ApplicationRecord
   accepts_nested_attributes_for :levels, allow_destroy: true
 
   def update_assigned_groups_count
-    result = []
-    criterion_ta_associations.each do |cta|
-      result = result.concat(cta.ta.get_groupings_by_assignment(assignment))
+    result = criterion_ta_associations.flat_map do |cta|
+      cta.ta.get_groupings_by_assignment(assignment)
     end
     self.assigned_groups_count = result.uniq.length
   end

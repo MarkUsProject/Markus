@@ -264,11 +264,7 @@ class Assignment < Assessment
 
   # Returns the maximum possible mark for a particular assignment
   def max_mark(user_visibility = :ta_visible)
-    # TODO: sum method does not work with empty arrays. Consider updating/replacing gem:
-    #       see: https://github.com/thirtysixthspan/descriptive_statistics/issues/44
-    max_marks = criteria.where(user_visibility => true).map(&:max_mark)
-    s = max_marks.empty? ? 0 : max_marks.sum
-    s.nil? ? 0 : s.round(2)
+    criteria.where(user_visibility => true).sum(:max_mark).round(2)
   end
 
   # Returns a boolean indicating whether marking has started for at least
@@ -521,7 +517,7 @@ class Assignment < Assessment
         assigned_criteria = user.criterion_ta_associations
                                 .where(assessment_id: self.id)
                                 .pluck(:criterion_id)
-                                .map { |t, id| "#{t}-#{id}" }
+                                .map
       else
         assigned_criteria = nil
       end

@@ -48,7 +48,7 @@ class CheckboxCriterion < Criterion
 
     # If a CheckboxCriterion with the same name exists, load it up. Otherwise,
     # create a new one.
-    criterion = assignment.criteria.where(type: 'CheckboxCriterion').find_or_create_by(name: name)
+    criterion = assignment.criteria.find_or_create_by(name: name, type: 'CheckboxCriterion')
 
     # Check that max is not a string.
     begin
