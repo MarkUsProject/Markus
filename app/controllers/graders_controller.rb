@@ -150,8 +150,8 @@ class GradersController < ApplicationController
         # group counts.
         criterion_grader_ids = criterion_ids.flat_map do |id|
           @assignment.criterion_ta_associations
-                      .where(criterion_id: id, ta_id: grader_ids)
-                      .pluck(:id)
+                     .where(criterion_id: id, ta_id: grader_ids)
+                     .pluck(:id)
         end
 
         unassign_graders_from_criteria(criterion_grader_ids)
