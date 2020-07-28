@@ -71,12 +71,6 @@ RSpec.configure do |config|
 
   # Clean up any created file folders
   config.after(:suite) do
-    FileUtils.rm_rf(Dir["#{Rails.root}/data/test/repos/*"])
-    FileUtils.rm_rf(Dir["#{Rails.root}/data/test/exam_templates/*"])
-  end
-
-  config.before(:suite) do
-    FileUtils.rm_rf(Dir["#{Rails.root}/data/test/repos/*"])
     FileUtils.rm_rf(Dir["#{Rails.root}/data/test/exam_templates/*"])
   end
 
