@@ -13,8 +13,7 @@ export class FileViewer extends React.Component {
       content: '',
       type: '',
       url: '',
-      loading: true,
-      submission_result: this.props.submission_result
+      loading: true
     };
   }
 
@@ -46,24 +45,38 @@ export class FileViewer extends React.Component {
   }
 
   setFileUrl = (submission_file_id) => {
-    let url = Routes.download_assignment_submission_result_path(
-      '',
-      this.props.assignment_id,
-      this.props.submission_id,
-      this.props.result_id,
-      {
-        select_file_id: submission_file_id,
-        show_in_browser: true,
-        from_codeviewer: true,
-      }
-    );
+    let url;
+    if (!this.props.submission_result) {
+      url = Routes.download_assignment_submissions_path(
+        {
+          file_name: this.props.selectedFileName,
+          path: this.props.selectedFilePath,
+          revision_identifier: this.props.revision_id,
+          grouping_id: this.props.grouping_id,
+          assignment_id: this.props.assignment_id
+        }
+      );
+    } else {
+      url = Routes.download_assignment_submission_result_path(
+        '',
+        this.props.assignment_id,
+        this.props.submission_id,
+        this.props.result_id,
+        {
+          select_file_id: submission_file_id,
+          show_in_browser: true,
+          from_codeviewer: true,
+        }
+      );
+    }
     if (['image/heic', 'image/heif'].includes(this.props.mime_type)) {
       fetch(url)
         .then((res) => res.blob())
         .then((blob) => heic2any({blob, toType:"image/jpeg"}))
         .then((conversionResult) => {this.setState({url: URL.createObjectURL(conversionResult), loading: false})})
     } else {
-      this.setState({url: url, loading: false});
+      console.log(url)
+      this.setState({url: url, loading: false, type: 'pdf'});
     }
   };
 
@@ -95,20 +108,21 @@ export class FileViewer extends React.Component {
           })
       });
     } else {
-      $.ajax({
-        url: Routes.download_assignment_submissions_path(this.props.assignment_id),
-        method: 'GET',
-        data: {
-          file_name: this.props.selectedFileName,
-          path: this.props.selectedFilePath,
-          revision_identifier: this.props.revision_id,
-          grouping_id: this.props.grouping_id,
-          id: this.props.assignment_id
-        }
-      }).then(res => {
-        console.log(res);
-        this.setState({content: res, type: 'text', loading: false});
-      })
+      this.setFileUrl();
+      // $.ajax({
+      //   url: Routes.download_assignment_submissions_path(this.props.assignment_id),
+      //   method: 'GET',
+      //   data: {
+      //     file_name: this.props.selectedFileName,
+      //     path: this.props.selectedFilePath,
+      //     revision_identifier: this.props.revision_id,
+      //     grouping_id: this.props.grouping_id,
+      //     id: this.props.assignment_id
+      //   }
+      // }).then(res => {
+      //   console.log(res);
+      //   this.setState({content: res, type: 'text', loading: false});
+      // })
     }
   };
 
