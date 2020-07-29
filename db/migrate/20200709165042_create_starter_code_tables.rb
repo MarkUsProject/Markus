@@ -2,7 +2,6 @@ class CreateStarterCodeTables < ActiveRecord::Migration[6.0]
   def change
     create_table :starter_code_groups do |t|
       t.references :assessment, null: false, foreign_key: true
-      t.boolean :is_default, null: false, default: false
       t.string :entry_rename, null: false, default: ''
       t.boolean :use_rename, null: false, default: false
       t.string :name, null: false
@@ -25,6 +24,7 @@ class CreateStarterCodeTables < ActiveRecord::Migration[6.0]
 
     add_column :assignment_properties, :starter_code_type, :string, null: false, default: :simple
     add_column :assignment_properties, :starter_code_updated_at, :datetime
+    add_reference :assignment_properties, :default_starter_code_group
     remove_column :groupings, :starter_code_revision_identifier, :text
     add_column :groupings, :starter_code_timestamp, :datetime
     add_column :groupings, :starter_code_changed, :boolean, null: false, default: false

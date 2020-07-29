@@ -435,8 +435,7 @@ class AssignmentsController < ApplicationController
       starter_code_group_params.each do |group_params|
         starter_code_group = assignment.starter_code_groups.find_by(id: group_params[:id])
         starter_code_group.update!(group_params)
-        all_changed ||= starter_code_group.saved_changes?
-        assignment.groupings.update_all(starter_code_changed: true) if assignment.assignment_properties.saved_changes?
+        all_changed ||= starter_code_group.saved_changes? || assignment.assignment_properties.saved_changes?
       end
       assignment.assignment_properties.update!(starter_code_updated_at: Time.zone.now)
     rescue ActiveRecord::RecordInvalid => e
@@ -667,7 +666,7 @@ class AssignmentsController < ApplicationController
   end
 
   def starter_code_assignment_params
-    params.require(:assignment).permit(:starter_code_type)
+    params.require(:assignment).permit(:starter_code_type, :default_starter_code_group_id)
   end
 
   def starter_code_section_params
@@ -675,7 +674,7 @@ class AssignmentsController < ApplicationController
   end
 
   def starter_code_group_params
-    params.permit(starter_code_groups: [:id, :name, :is_default, :entry_rename, :use_rename])
+    params.permit(starter_code_groups: [:id, :name, :entry_rename, :use_rename])
           .require(:starter_code_groups)
   end
 

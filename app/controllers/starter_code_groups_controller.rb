@@ -5,21 +5,12 @@ class StarterCodeGroupsController < ApplicationController
   respond_to :js
 
   def create
-    starter_code_group = StarterCodeGroup.new(create_params)
-    if starter_code_group.save
-      assignment = Assignment.find(params[:assessment_id])
-      assignment.assignment_properties.update!(starter_code_updated_at: Time.zone.now)
-    end
+    StarterCodeGroup.create(create_params)
   end
 
   def destroy
     assignment = Assignment.find_by(id: params[:assignment_id])
-    starter_code_group = assignment.starter_code_groups.find_by(id: params[:id])
-    affected_groupings = Grouping.joins(starter_code_entries: :starter_code_group)
-                                 .where('starter_code_groups.id': starter_code_group.id)
-    if starter_code_group.destroy
-      affected_groupings.update_all(starter_code_changed: true)
-    end
+    assignment.starter_code_groups.find_by(id: params[:id]).destroy
   end
 
   def download_file
@@ -69,7 +60,7 @@ class StarterCodeGroupsController < ApplicationController
     end
 
     new_folders.each do |f|
-      folder_path = File.join(starter_code_group.path, f)
+      folder_path = File.join(starter_code_group.path, params[:path], f)
       FileUtils.mkdir_p(folder_path)
     end
     delete_folders.each do |f|

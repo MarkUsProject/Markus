@@ -119,16 +119,16 @@ class StarterCodeManager extends React.Component {
   };
 
   saveStateChanges = () => {
-    let starter_code_groups = this.state.files.map( (file_data) => {
-      file_data.is_default = file_data.id === this.state.defaultStarterCodeGroup;
-      let {files, ...rest} = file_data;
-      return rest
-    });
     const data = {
-      assignment: {starter_code_type: this.state.starterCodeType},
+      assignment: {
+        starter_code_type: this.state.starterCodeType,
+        default_starter_code_group_id: this.state.defaultStarterCodeGroup
+      },
       sections: this.state.sections,
-      starter_code_groups: starter_code_groups,
-      default_starter_code_group: this.state.defaultStarterCodeGroup,
+      starter_code_groups: this.state.files.map((data) => {
+        let {files, ...rest} = data;
+        return rest
+      }),
     };
     $.ajax({
       type: "PUT",

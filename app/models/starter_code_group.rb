@@ -1,15 +1,16 @@
 class StarterCodeGroup < ApplicationRecord
   include SubmissionsHelper
   belongs_to :assignment, foreign_key: :assessment_id
-  has_many :section_starter_code_groups
+  has_many :section_starter_code_groups, dependent: :destroy
   has_many :sections, through: :section_starter_code_groups
   has_many :starter_code_entries, dependent: :destroy
 
   after_destroy_commit :delete_files
   after_create_commit :create_dir
   before_validation :sanitize_rename_entry
-  before_create :set_default_if_first
-  after_save :only_one_default, if: -> { self.is_default }
+  before_destroy :update_default
+  before_destroy :warn_affected_groupings
+  after_save :update_timestamp
 
   validates_exclusion_of :entry_rename, in: %w[.. .]
   validates_presence_of :entry_rename, if: -> { self.use_rename }
@@ -69,21 +70,25 @@ class StarterCodeGroup < ApplicationRecord
     FileUtils.mkdir_p self.path
   end
 
-  def only_one_default
-    assignment.starter_code_groups.where.not(id: self.id).each do |g|
-      g.update(is_default: false)
-    end
-  end
-
-  def set_default_if_first
-    return if assignment.starter_code_groups.exists?
-
-    self.is_default = true
-  end
-
   def sanitize_rename_entry
     if entry_rename_changed?
       self.entry_rename = sanitize_file_name(entry_rename).strip
     end
+  end
+
+  def warn_affected_groupings
+    affected_groupings = Grouping.joins(starter_code_entries: :starter_code_group)
+                                 .where('starter_code_groups.id': self.id)
+    affected_groupings.update_all(starter_code_changed: true)
+  end
+
+  def update_default
+    if self.id == assignment.assignment_properties.default_starter_code_group_id
+      assignment.assignment_properties.update(default_starter_code_group_id: nil)
+    end
+  end
+
+  def update_timestamp
+    assignment.assignment_properties.update(starter_code_updated_at: Time.zone.now)
   end
 end

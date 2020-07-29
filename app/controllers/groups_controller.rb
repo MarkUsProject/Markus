@@ -528,7 +528,6 @@ class GroupsController < ApplicationController
   def download_starter_code
     assignment = Assignment.find(params[:assignment_id])
     grouping = current_user.accepted_grouping_for(assignment.id)
-    # TODO: handle case where grouping.nil?
 
     if grouping.starter_code_changed
       grouping.reset_starter_code_entries

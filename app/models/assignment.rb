@@ -930,7 +930,8 @@ class Assignment < Assessment
   end
 
   def default_starter_code_group
-    starter_code_groups.find_by(is_default: true)
+    default = starter_code_groups.find_by(id: self.default_starter_code_group_id)
+    default.nil? ? starter_code_groups.order(:id).first : default
   end
 
   # Yield an open repo for each grouping of this assignment, then yield again for each repo that raised an exception, to

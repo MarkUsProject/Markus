@@ -44,6 +44,16 @@ Rails.application.routes.draw do
             delete 'remove_extra_marks'
           end
         end
+        resources :starter_code_groups do
+          member do
+            get 'entries'
+            post 'create_file'
+            post 'create_folder'
+            delete 'remove_file'
+            delete 'remove_folder'
+            get 'download_entries'
+          end
+        end
         member do
           get 'test_files'
           get 'grades_summary'

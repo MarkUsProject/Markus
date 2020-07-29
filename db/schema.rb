@@ -131,7 +131,9 @@ ActiveRecord::Schema.define(version: 2020_07_09_165042) do
     t.boolean "is_timed", default: false, null: false
     t.string "starter_code_type", default: "simple", null: false
     t.datetime "starter_code_updated_at"
+    t.bigint "default_starter_code_group_id"
     t.index ["assessment_id"], name: "index_assignment_properties_on_assessment_id", unique: true
+    t.index ["default_starter_code_group_id"], name: "index_assignment_properties_on_default_starter_code_group_id"
   end
 
   create_table "assignment_stats", id: :serial, force: :cascade do |t|
@@ -499,7 +501,6 @@ ActiveRecord::Schema.define(version: 2020_07_09_165042) do
 
   create_table "starter_code_groups", force: :cascade do |t|
     t.bigint "assessment_id", null: false
-    t.boolean "is_default", default: false, null: false
     t.string "entry_rename", default: "", null: false
     t.boolean "use_rename", default: false, null: false
     t.string "name", null: false
