@@ -59,9 +59,11 @@ export class TagsPanel extends React.Component {
          </button>
         }
         <p>
+          {this.props.is_allowed_to_create_notes &&
           <a onClick={this.props.newNote}>
             {I18n.t('activerecord.models.note.other')} ({this.props.notes_count})
           </a>
+          }
         </p>
       </div>
     );

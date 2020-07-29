@@ -32,7 +32,7 @@
                           assignment_criteria_path(@assignment.id) %>
             </li>
           <% end %>
-          <% if allowed_to?(:manage?, with: AnnotationCategoryPolicy) %>
+          <% if allowed_to?(:manage?, @assignment, with: AnnotationCategoryPolicy) %>
             <li class='<%= "active" if controller.controller_name == 'annotation_categories' %>'>
               <%= link_to Annotation.model_name.human.pluralize,
                           assignment_annotation_categories_path(@assignment) %>

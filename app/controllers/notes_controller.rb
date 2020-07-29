@@ -1,11 +1,15 @@
 class NotesController < ApplicationController
-  before_action do
+  before_action except: :add_note do
     if params[:id].nil?
       authorize!
     else
       note = Note.find(params[:id])
       authorize! note, with: NotePolicy
     end
+  end
+
+  before_action only: :add_note do
+    authorize!
   end
   responders :flash, :collection
 
