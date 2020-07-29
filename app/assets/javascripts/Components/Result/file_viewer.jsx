@@ -39,7 +39,9 @@ export class FileViewer extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    if (!this.props.submission_result && (prevProps.selectedFileName !== this.props.selectedFileName || prevProps.selectedFilePath !== this.props.selectedFilePath)){
+    if (!this.props.submission_result &&
+      (prevProps.selectedFileName !== this.props.selectedFileName ||
+        prevProps.selectedFilePath !== this.props.selectedFilePath)){
       this.set_submission_file(null);
     }
   }
@@ -124,7 +126,6 @@ export class FileViewer extends React.Component {
             id: this.props.assignment_id
           }
         }).then(res => {
-          console.log(res);
           this.setState({content: res, type: 'text', loading: false});
         })
       }
@@ -137,13 +138,15 @@ export class FileViewer extends React.Component {
       commonProps = {
         submission_file_id: this.props.selectedFile,
         annotations: this.props.annotations,
-        released_to_students: this.props.released_to_students
+        released_to_students: this.props.released_to_students,
+        resultView: this.props.submission_result
       };
     } else {
       commonProps = {
         submission_file_id: null,
         annotations: null,
-        released_to_students: null
+        released_to_students: null,
+        resultView: this.props.submission_result
       };
     }
     if (this.state.loading) {

@@ -12,7 +12,7 @@ export class ImageViewer extends React.Component {
   }
 
   display_annotations = () => {
-    if (this.props.url) {
+    if (this.props.resultView && this.props.url) {
       this.ready_annotations();
       this.props.annotations.forEach(this.display_annotation);
     }

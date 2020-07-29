@@ -1,9 +1,14 @@
 <% content_for :head do %>
+  <%= javascript_pack_tag 'result' %>
+  <%= javascript_include_tag 'Results/main' %>
+
   <%= render partial: 'shared/navigation_warning',
              formats: [:js],
              handlers: [:erb] %>
 
   <script>
+    pdfjs.GlobalWorkerOptions.workerSrc = '<%= asset_pack_path('pdf.js') %>';
+
     document.addEventListener('DOMContentLoaded', () => {
       makeSubmissionFileManager(document.getElementById('file_manager'),
         {

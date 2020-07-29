@@ -11,19 +11,23 @@ export class TextViewer extends React.Component {
   }
 
   componentDidMount() {
-    // if (this.props.content) {
-    //   this.ready_annotations(RAW_TEXT_DIV_ID);
-    //   this.props.annotations.forEach(this.display_annotation);
-    //   scrollToLine(this.props.focusLine);
-    // }
+    if (this.props.content) {
+      this.ready_annotations(RAW_TEXT_DIV_ID);
+      if (this.props.resultView) {
+        this.props.annotations.forEach(this.display_annotation);
+        scrollToLine(this.props.focusLine);
+      }
+    }
   }
 
   componentDidUpdate() {
-    // if (this.props.content) {
-    //   this.ready_annotations(RAW_TEXT_DIV_ID);
-    //   this.props.annotations.forEach(this.display_annotation);
-    //   scrollToLine(this.props.focusLine);
-    // }
+    if (this.props.content) {
+      this.ready_annotations(RAW_TEXT_DIV_ID);
+      if (this.props.resultView) {
+        this.props.annotations.forEach(this.display_annotation);
+        scrollToLine(this.props.focusLine);
+      }
+    }
   }
 
   // Generate text view with syntax highlighting and annotations.
@@ -31,19 +35,21 @@ export class TextViewer extends React.Component {
     // Remove existing syntax highlighted code.
     $('.dp-highlighter').remove();
     dp.SyntaxHighlighter.HighlightAll(source_id);
-    window.annotation_type = ANNOTATION_TYPES.CODE;
-    window.syntax_highlighter_adapter = new SyntaxHighlighter1p5Adapter($('.dp-highlighter ol')[0]);
+    if (this.props.resultView) {
+      window.annotation_type = ANNOTATION_TYPES.CODE;
+      window.syntax_highlighter_adapter = new SyntaxHighlighter1p5Adapter($('.dp-highlighter ol')[0]);
 
-    window.annotation_manager = new SourceCodeLineAnnotations(
-      new SourceCodeLineManager(
-        window.syntax_highlighter_adapter,
-        new SourceCodeLineFactory(),
-        new SourceCodeLineArray()),
-      new AnnotationTextManager(),
-      new AnnotationTextDisplayer());
+      window.annotation_manager = new SourceCodeLineAnnotations(
+        new SourceCodeLineManager(
+          window.syntax_highlighter_adapter,
+          new SourceCodeLineFactory(),
+          new SourceCodeLineArray()),
+        new AnnotationTextManager(),
+        new AnnotationTextDisplayer());
 
-    // Apply modifications to Syntax Highlighter
-    window.syntax_highlighter_adapter.applyMods();
+      // Apply modifications to Syntax Highlighter
+      window.syntax_highlighter_adapter.applyMods();
+    }
   };
 
   display_annotation = (annotation) => {
