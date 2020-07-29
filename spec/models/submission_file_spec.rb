@@ -12,7 +12,7 @@ describe SubmissionFile do
                                                submission_id: 1)
     end
     it 'return java' do
-      expect(@submission_file.get_file_type).to eq('java')
+      expect(SubmissionFile.get_file_type(@submission_file.filename)).to eq('java')
     end
     it 'return java comment' do
       expect(@submission_file.get_comment_syntax).to eq(%w(/* */))
@@ -26,7 +26,7 @@ describe SubmissionFile do
                                                submission_id: 1)
     end
     it 'return ruby' do
-      expect(@submission_file.get_file_type).to eq('ruby')
+      expect(SubmissionFile.get_file_type(@submission_file.filename)).to eq('ruby')
     end
     it 'return ruby comment' do
       expect(@submission_file.get_comment_syntax).to eq(["=begin\n", "\n=end"])
@@ -40,7 +40,7 @@ describe SubmissionFile do
                                                submission_id: 1)
     end
     it 'return python' do
-      expect(@submission_file.get_file_type).to eq('python')
+      expect(SubmissionFile.get_file_type(@submission_file.filename)).to eq('python')
     end
     it 'return python comment' do
       expect(@submission_file.get_comment_syntax).to eq(%w(""" """))
@@ -54,7 +54,7 @@ describe SubmissionFile do
                                                submission_id: 1)
     end
     it 'return javascript' do
-      expect(@submission_file.get_file_type).to eq('javascript')
+      expect(SubmissionFile.get_file_type(@submission_file.filename)).to eq('javascript')
     end
     it 'return javascript comment' do
       expect(@submission_file.get_comment_syntax).to eq(%w(/* */))
@@ -96,7 +96,7 @@ describe SubmissionFile do
                                                submission_id: 1)
     end
     it 'return c' do
-      expect(@submission_file.get_file_type).to eq('c')
+      expect(SubmissionFile.get_file_type(@submission_file.filename)).to eq('c')
     end
     it 'return c comment' do
       expect(@submission_file.get_comment_syntax).to eq(%w(/* */))
@@ -110,7 +110,7 @@ describe SubmissionFile do
                                                submission_id: 1)
     end
     it 'return tex' do
-      expect(@submission_file.get_file_type).to eq('tex')
+      expect(SubmissionFile.get_file_type(@submission_file.filename)).to eq('tex')
     end
   end
 
@@ -121,7 +121,7 @@ describe SubmissionFile do
                                                submission_id: 1)
     end
     it 'return a unknown file extension' do
-      expect(@submission_file.get_file_type).to eq('unknown')
+      expect(SubmissionFile.get_file_type(@submission_file.filename)).to eq('unknown')
     end
     it 'return generic comment' do
       expect(@submission_file.get_comment_syntax).to eq(%w(## ##))
@@ -135,7 +135,7 @@ describe SubmissionFile do
                                                submission_id: 1)
     end
     it 'return a unknown file extension' do
-      expect(@submission_file.get_file_type).to eq('unknown')
+      expect(SubmissionFile.get_file_type(@submission_file.filename)).to eq('unknown')
     end
     it 'return generic comment' do
       expect(@submission_file.get_comment_syntax).to eq(%w(## ##))

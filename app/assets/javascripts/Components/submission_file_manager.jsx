@@ -146,7 +146,11 @@ class SubmissionFileManager extends React.Component {
     if (this.state.viewFileName !== null) {
       fileViewer = (
         <fieldset style={{display: 'flex', flexDirection: 'column'}}>
-          <legend><span>{'currently viewing: ' + this.state.viewFilePath + '/' + this.state.viewFileName}</span></legend>
+          <legend>
+            <span>
+              {I18n.t('submissions.student.viewing') + this.state.viewFilePath + '/' + this.state.viewFileName}
+            </span>
+          </legend>
           <div id='codeviewer'>
             <FileViewer
               assignment_id={this.props.assignment_id}
@@ -163,7 +167,7 @@ class SubmissionFileManager extends React.Component {
     } else {
       fileViewer = (
         <fieldset>
-          <legend><span>{'select a file to view'}</span></legend>
+          <legend><span>{I18n.t('submissions.student.select_file')}</span></legend>
         </fieldset>
       );
     }
