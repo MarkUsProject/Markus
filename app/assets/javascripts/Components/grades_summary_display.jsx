@@ -108,12 +108,15 @@ class GradesSummaryDisplay extends React.Component {
     if (this.state.columns.length === 0 && !this.state.loading) {
       return <p>{I18n.t('course_summary.absent')}</p>;
     }
-    return (<div>
+    return (
+      this.props.view_course_summary &&
+      <div>
       <CourseSummaryTable
         columns={this.state.columns}
         data={this.state.data}
         loading={this.state.loading}
         student={this.props.student}
+        view_course_summary={this.props.course_summary}
       />
       <fieldset style={{display: 'flex', justifyContent: 'center'}}>
         <DataChart
