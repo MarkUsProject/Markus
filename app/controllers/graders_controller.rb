@@ -148,14 +148,13 @@ class GradersController < ApplicationController
         # Gets criterion associations from params then
         # gets their criterion ids so we can update the
         # group counts.
-        criterion_associations = []
-
-        criterion_ids.each do |id|
-          criterion_associations.concat(@assignment.criterion_ta_associations
-                                                   .where(criterion_id: id, ta_id: grader_ids)
-                                                   .pluck(:id))
+        criterion_grader_ids = criterion_ids.flat_map do |id|
+          @assignment.criterion_ta_associations
+                     .where(criterion_id: id, ta_id: grader_ids)
+                     .pluck(:id)
         end
-        unassign_graders_from_criteria(criterion_associations)
+
+        unassign_graders_from_criteria(criterion_grader_ids)
       when 'random_assign'
         randomly_assign_graders_to_criteria(criterion_ids, grader_ids)
       end

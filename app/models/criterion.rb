@@ -35,9 +35,8 @@ class Criterion < ApplicationRecord
   accepts_nested_attributes_for :levels, allow_destroy: true
 
   def update_assigned_groups_count
-    result = []
-    criterion_ta_associations.each do |cta|
-      result = result.concat(cta.ta.get_groupings_by_assignment(assignment))
+    result = criterion_ta_associations.flat_map do |cta|
+      cta.ta.get_groupings_by_assignment(assignment)
     end
     self.assigned_groups_count = result.uniq.length
   end
@@ -99,6 +98,7 @@ class Criterion < ApplicationRecord
     # CriterionTaAssociation.create when the PG driver supports bulk create,
     # then remove the activerecord-import gem.
     CriterionTaAssociation.import(columns, values, validate: false)
+
     Grouping.update_criteria_coverage_counts(assignment)
     update_assigned_groups_counts(assignment)
   end
@@ -129,9 +129,9 @@ class Criterion < ApplicationRecord
              .group('subquery.criterion_id')
              .count
 
-    records = Criterion.where(assessment_id: assignment.id)
-                       .pluck_to_hash
-                       .map do |h|
+    records = assignment.criteria
+                        .pluck_to_hash
+                        .map do |h|
       { **h.symbolize_keys, assigned_groups_count: counts[h['id']] || 0 }
     end
 

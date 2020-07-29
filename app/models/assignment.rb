@@ -31,6 +31,11 @@ class Assignment < Assessment
            class_name: 'Criterion',
            foreign_key: :assessment_id
 
+  has_many :peer_criteria,
+           -> { where(peer_visible: true).order(:position) },
+           class_name: 'Criterion',
+           foreign_key: :assessment_id
+
   has_many :test_groups, dependent: :destroy, inverse_of: :assignment, foreign_key: :assessment_id
   accepts_nested_attributes_for :test_groups, allow_destroy: true, reject_if: ->(attrs) { attrs[:name].blank? }
 
@@ -259,11 +264,7 @@ class Assignment < Assessment
 
   # Returns the maximum possible mark for a particular assignment
   def max_mark(user_visibility = :ta_visible)
-    # TODO: sum method does not work with empty arrays. Consider updating/replacing gem:
-    #       see: https://github.com/thirtysixthspan/descriptive_statistics/issues/44
-    max_marks = criteria.where(user_visibility => true).map(&:max_mark)
-    s = max_marks.empty? ? 0 : max_marks.sum
-    s.nil? ? 0 : s.round(2)
+    criteria.where(user_visibility => true).sum(:max_mark).round(2)
   end
 
   # Returns a boolean indicating whether marking has started for at least
@@ -516,7 +517,7 @@ class Assignment < Assessment
         assigned_criteria = user.criterion_ta_associations
                                 .where(assessment_id: self.id)
                                 .pluck(:criterion_id)
-                                .map { |t, id| "#{t}-#{id}" }
+                                .map
       else
         assigned_criteria = nil
       end
@@ -544,7 +545,7 @@ class Assignment < Assessment
       next if hide_unassigned && unassigned
 
       max_mark += crit.max_mark
-      accessor = "#{crit.class}-#{crit.id}"
+      accessor = crit.id
       criteria_shown << accessor
       {
         Header: crit.name,
@@ -638,7 +639,7 @@ class Assignment < Assessment
             row += Array.new(2 + criteria.length, nil)
           else
             row << result.total_mark
-            row += criteria.map { |crit| marks["#{crit.class.name}-#{crit.id}"] }
+            row += criteria.map { |crit| marks[crit.id] }
             row << extra_marks_hash[result&.id]
           end
           csv << row
@@ -660,12 +661,6 @@ class Assignment < Assessment
     # We're using count here because this fires off a DB query, thus
     # grabbing the most up-to-date count of the criteria.
     criteria.count > 0 ? criteria.last.position + 1 : 1
-  end
-
-  # Returns a filtered list of criteria.
-  def get_criteria(user_visibility = :all, type = :all, options = {})
-    # can't use select(&:all) because all isn't a field
-    criteria.includes(options[:includes]).order(:position).where(&user_visibility)
   end
 
   # Determine the total mark for a particular student, as a percentage

@@ -721,7 +721,7 @@ describe ResultsController do
       end
 
       it 'should include assigned criteria list' do
-        expect(data['assigned_criteria']).to eq [rubric_criterion.id.to_s]
+        expect(data['assigned_criteria']).to eq [rubric_criterion.id]
       end
 
       context 'when accessing an assignment with deductive annotations' do
@@ -766,7 +766,7 @@ describe ResultsController do
           let(:params) { { assignment_id: assignment.id, submission_id: remarked.id, id: incomplete_result.id } }
 
           it 'should only include marks for assigned criteria in the remark result' do
-            expect(data['old_marks'].keys).to eq ["#{rubric_criterion.class}-#{rubric_criterion.id}"]
+            expect(data['old_marks'].keys).to eq [rubric_criterion.id.to_s]
           end
         end
       end
