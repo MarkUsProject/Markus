@@ -1,4 +1,5 @@
 module Api
+  # Api controller for starter code groups
   class StarterCodeGroupsController < MainApiController
     def create
       assignment = Assignment.find_by_id(params[:assignment_id])
@@ -9,7 +10,7 @@ module Api
       name = I18n.t('assignments.starter_code.new_starter_code_group')
       starter_code_group = StarterCodeGroup.new(assessment_id: assignment.id, name: name)
       if starter_code_group.save
-        render 'shared/http_status', locals: {code: '201', message:
+        render 'shared/http_status', locals: { code: '201', message:
             HttpStatusHelper::ERROR_CODE['message']['201'] }, status: 201
       else
         render 'shared/http_status', locals: { code: '500', message:
