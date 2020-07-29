@@ -17,6 +17,7 @@
           role: '<%= @current_user.class.name %>',
           manage_annotations: <%= allowed_to?(:manage?, @result, with: AnnotationPolicy) %>,
           is_allowed_to_delete_grace_period_deduction: <%= allowed_to? :delete_grace_period_deduction? %>,
+          is_allowed_to_create_notes: <%= allowed_to?(:new_note?, with: NotePolicy) %>,
         }
       );
 
