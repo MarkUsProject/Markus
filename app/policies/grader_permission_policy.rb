@@ -16,10 +16,6 @@ class GraderPermissionPolicy < ApplicationPolicy
     user.grader_permission.manage_exam_templates
   end
 
-  def manage_grade_entry_forms?
-    user.grader_permission.manage_grade_entry_forms
-  end
-
   def release_unrelease_grades?
     user.grader_permission.release_unrelease_grades
   end

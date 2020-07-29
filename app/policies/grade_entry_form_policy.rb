@@ -9,7 +9,7 @@ class GradeEntryFormPolicy < ApplicationPolicy
   end
 
   def manage?
-    user.admin? || (user.ta? && allowed_to?(:manage_grade_entry_forms?, with: GraderPermissionPolicy))
+    user.admin? || (user.ta? && allowed_to?(:manage_assignments?, with: GraderPermissionPolicy))
   end
 
   def student_interface?

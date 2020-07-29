@@ -402,14 +402,14 @@ describe GradeEntryFormsController do
     end
     describe 'When the grader is allowed to create, edit and update grade entry forms' do
       before do
-        grader_permission.manage_grade_entry_forms = true
+        grader_permission.manage_assignments = true
         grader_permission.save
       end
       include_examples '#manage grade entry forms'
     end
     describe 'When the grader is not allowed to create, edit and update grade entry forms' do
       before do
-        grader_permission.manage_grade_entry_forms = false
+        grader_permission.manage_assignments = false
         grader_permission.save
       end
       context '#new' do
