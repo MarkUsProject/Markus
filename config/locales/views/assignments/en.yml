@@ -39,6 +39,7 @@ en:
       starter_code_rule: "Starter Code Assignment Rules"
       rename: "Rename Selected File or Directory"
       use_original_filename: "Use original filename"
+      download_mappings_csv: "Download assigned starter code csv"
       starter_code_rule_types:
         simple: "Assign the default starter code group to all students"
         sections: "Assign starter code groups by section"

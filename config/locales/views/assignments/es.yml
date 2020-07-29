@@ -78,6 +78,7 @@ es:
       starter_code_rule: "UPDATE ME"
       rename: "UPDATE ME"
       use_original_filename: "UPDATE ME"
+      download_mappings_csv: "UPDATE ME"
       starter_code_rule_types:
         simple: "UPDATE ME"
         sections: "UPDATE ME"

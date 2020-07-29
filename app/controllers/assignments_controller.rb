@@ -11,7 +11,8 @@ class AssignmentsController < ApplicationController
                               :start_timed_assignment,
                               :starter_code,
                               :populate_starter_code_manager,
-                              :update_starter_code]
+                              :update_starter_code,
+                              :download_starter_code_mappings]
 
   before_action      :authorize_for_ta_and_admin,
                      only: [:summary]
@@ -455,6 +456,16 @@ class AssignmentsController < ApplicationController
     end
     # mark all groupings with starter code that was changed as changed
     assignment.groupings.update_all(starter_code_changed: true) if success && all_changed
+  end
+
+  def download_starter_code_mappings
+    assignment = Assignment.find(params[:id])
+    mappings = assignment.starter_code_mappings
+    file_out = MarkusCsv.generate(mappings, [mappings.first&.keys].compact) { |h| h.values }
+    send_data(file_out,
+              type: 'text/csv',
+              filename: "#{assignment.short_identifier}_starter_code_mappings.csv",
+              disposition: 'inline')
   end
 
   def switch_assignment

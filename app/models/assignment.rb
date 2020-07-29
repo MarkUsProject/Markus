@@ -934,6 +934,13 @@ class Assignment < Assessment
     default.nil? ? starter_code_groups.order(:id).first : default
   end
 
+  def starter_code_mappings
+    groupings.joins(:group, grouping_starter_code_entries: [starter_code_entry: :starter_code_group])
+             .pluck_to_hash('groups.group_name as group_name',
+                            'starter_code_groups.name as starter_code_group_name',
+                            'starter_code_entries.path as starter_code_entry_path')
+  end
+
   # Yield an open repo for each grouping of this assignment, then yield again for each repo that raised an exception, to
   # try to mitigate concurrent accesses to those repos.
   def each_group_repo
