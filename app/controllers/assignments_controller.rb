@@ -461,7 +461,7 @@ class AssignmentsController < ApplicationController
   def download_starter_code_mappings
     assignment = Assignment.find(params[:id])
     mappings = assignment.starter_code_mappings
-    file_out = MarkusCsv.generate(mappings, [mappings.first&.keys].compact) { |h| h.values }
+    file_out = MarkusCsv.generate(mappings, [mappings.first&.keys].compact, &:values)
     send_data(file_out,
               type: 'text/csv',
               filename: "#{assignment.short_identifier}_starter_code_mappings.csv",

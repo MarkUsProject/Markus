@@ -398,7 +398,7 @@ class StarterCodeManager extends React.Component {
           <legend>
             <span>{I18n.t('assignments.starter_code.starter_code_rule')}</span>
           </legend>
-          <div className={'download_button'}>
+          <div className={'download-button'}>
             <a href={Routes.download_starter_code_mappings_assignment_path(this.props.assignment_id)}>
               {I18n.t('assignments.starter_code.download_mappings_csv')}
             </a>
