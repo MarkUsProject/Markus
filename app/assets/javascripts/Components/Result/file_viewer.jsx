@@ -75,8 +75,7 @@ export class FileViewer extends React.Component {
         .then((blob) => heic2any({blob, toType:"image/jpeg"}))
         .then((conversionResult) => {this.setState({url: URL.createObjectURL(conversionResult), loading: false})})
     } else {
-      console.log(url)
-      this.setState({url: url, loading: false, type: 'pdf'});
+      this.setState({url: url, loading: false});
     }
   };
 
@@ -108,21 +107,27 @@ export class FileViewer extends React.Component {
           })
       });
     } else {
-      this.setFileUrl();
-      // $.ajax({
-      //   url: Routes.download_assignment_submissions_path(this.props.assignment_id),
-      //   method: 'GET',
-      //   data: {
-      //     file_name: this.props.selectedFileName,
-      //     path: this.props.selectedFilePath,
-      //     revision_identifier: this.props.revision_id,
-      //     grouping_id: this.props.grouping_id,
-      //     id: this.props.assignment_id
-      //   }
-      // }).then(res => {
-      //   console.log(res);
-      //   this.setState({content: res, type: 'text', loading: false});
-      // })
+      let fileExtension = this.props.selectedFileName
+        .substring(this.props.selectedFileName.lastIndexOf('.')).toLowerCase();
+      if (['.jpeg', '.jpg', '.gif', '.png', '.heic', '.heif', '.pdf'].indexOf(fileExtension) >= 0){
+        this.setState({type: fileExtension === '.pdf' ? 'pdf' : 'image'});
+        this.setFileUrl();
+      } else {
+        $.ajax({
+          url: Routes.download_assignment_submissions_path(this.props.assignment_id),
+          method: 'GET',
+          data: {
+            file_name: this.props.selectedFileName,
+            path: this.props.selectedFilePath,
+            revision_identifier: this.props.revision_id,
+            grouping_id: this.props.grouping_id,
+            id: this.props.assignment_id
+          }
+        }).then(res => {
+          console.log(res);
+          this.setState({content: res, type: 'text', loading: false});
+        })
+      }
     }
   };
 
