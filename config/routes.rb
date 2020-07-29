@@ -76,6 +76,7 @@ Rails.application.routes.draw do
       end
 
       member do
+        get 'download_starter_code_mappings'
         get 'refresh_graph'
         get 'view_summary'
         post 'update_starter_code'
@@ -380,6 +381,8 @@ Rails.application.routes.draw do
         get 'populate'
       end
     end
+
+    resources :sections
 
     resources :annotations do
       collection do

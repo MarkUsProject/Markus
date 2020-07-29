@@ -60,7 +60,7 @@ class StarterCodeGroupsController < ApplicationController
     end
 
     new_folders.each do |f|
-      folder_path = File.join(starter_code_group.path, params[:path], f)
+      folder_path = File.join(starter_code_group.path, params[:path].to_s, f)
       FileUtils.mkdir_p(folder_path)
     end
     delete_folders.each do |f|
@@ -76,7 +76,7 @@ class StarterCodeGroupsController < ApplicationController
       elsif f.size == 0
         flash_now(:warning, t('student.submission.empty_file_warning', file_name: f.original_filename))
       end
-      file_path = File.join(starter_code_group.path, params[:path], f.original_filename)
+      file_path = File.join(starter_code_group.path, params[:path].to_s, f.original_filename)
       file_content = f.read
       File.write(file_path, file_content, mode: 'wb')
     end
