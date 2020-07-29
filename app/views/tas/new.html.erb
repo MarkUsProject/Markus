@@ -1,5 +1,14 @@
 <% content_for :title, t('tas.new') %>
 
-<%= render partial: 'layouts/userform',
-           locals: { controller: 'tas',
-                     action: 'create'} %>
+<div class='pane-wrapper'>
+  <div id=new_grader_pane>
+    <%= render partial: 'layouts/userform',
+               locals: { controller: 'tas',
+                         action: 'create'} %>
+  </div>
+  <div class='pane'>
+    <div id='grader_permission_pane'>
+      <%= render partial: 'grader_permissions/grader_permission_pane' %>
+    </div>
+  </div>
+</div>

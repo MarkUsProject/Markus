@@ -1,1 +1,38 @@
 @import 'common/core';
+
+.sub_category {
+  margin-left: 30px;
+}
+
+.permission {
+  margin-bottom: 1em
+}
+
+.tooltip {
+  position: relative;
+  display: inline-block;
+  margin-bottom: 1em;
+}
+
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: auto;
+  min-width: 550px;
+  height: auto;
+  background-color: white;
+  color: #000000;
+  text-align: left;
+  line-height: 1.6;
+  border-radius: 6px;
+  position: absolute;
+  z-index: 1;
+  top: -15px;
+  left: 135%;
+  padding: 6px;
+  border-style: ridge;
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+  opacity: 1;
+}
