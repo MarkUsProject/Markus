@@ -57,9 +57,8 @@ export class CourseSummaryTable extends React.Component {
   };
 
   render() {
-    console.log(this.props.view_course_summary);
     return [
-      !this.props.student && this.props.course_summary &&
+      !this.props.student && this.props.view_course_summary &&
       <div key='show-hidden' style={{'height': '2em'}}>
         <input
           id='show_hidden'
