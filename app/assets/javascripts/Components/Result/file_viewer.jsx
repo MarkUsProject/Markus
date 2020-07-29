@@ -18,7 +18,7 @@ export class FileViewer extends React.Component {
   }
 
   componentDidMount() {
-    if (this.props.selectedFile !== null && this.props.submission_result) {
+    if (!this.props.submission_result || this.props.selectedFile !== null) {
       this.set_submission_file(this.props.selectedFile);
     } else {
       this.setState({loading: false})
@@ -109,10 +109,10 @@ export class FileViewer extends React.Component {
           })
       });
     } else {
-      let fileExtension = this.props.selectedFileName
-        .substring(this.props.selectedFileName.lastIndexOf('.')).toLowerCase();
-      if (['.jpeg', '.jpg', '.gif', '.png', '.heic', '.heif', '.pdf'].indexOf(fileExtension) >= 0){
-        this.setState({type: fileExtension === '.pdf' ? 'pdf' : 'image'});
+      if (this.props.selectedFileName === null) {
+        this.setState({loading: false, type: 'none'})
+      } else if (['image', 'pdf'].indexOf(this.props.selectedFileType) >= 0) {
+        this.setState({type: this.props.selectedFileType});
         this.setFileUrl();
       } else {
         $.ajax({
@@ -152,26 +152,29 @@ export class FileViewer extends React.Component {
     if (this.state.loading) {
       return I18n.t('working');
     } else if (this.state.type === 'image') {
-      return <ImageViewer
-        url={this.state.url}
-        {...commonProps}
-      />;
+      return (
+        <ImageViewer
+          url={this.state.url}
+          {...commonProps}
+        />
+      );
     } else if (this.state.type === 'pdf') {
       return (
-      <div key='codeviewer' id='codeviewer'>
         <PDFViewer
           url={this.state.url}
           annotationFocus={this.props.annotationFocus}
           {...commonProps}
         />
-      </div>);
+      );
     } else if (this.state.type !== '') {
-      return <TextViewer
-        type={this.state.type}
-        content={this.state.content}
-        focusLine={this.props.focusLine}
-        {...commonProps}
-      />;
+      return (
+        <TextViewer
+          type={this.state.type}
+          content={this.state.content}
+          focusLine={this.props.focusLine}
+          {...commonProps}
+        />
+      );
     } else {
       return '';
     }

@@ -77,6 +77,7 @@ class SubmissionFileManager extends React.Component {
   };
 
   handleDeleteFile = (fileKeys) => {
+    this.setState({viewFileName: null, viewFilePath: null, viewFileType: null});
     if (!this.state.files.some(f => fileKeys.includes(f.key))) {
       return;
     }
@@ -141,8 +142,33 @@ class SubmissionFileManager extends React.Component {
   };
 
   render() {
+    let fileViewer;
+    if (this.state.viewFileName !== null) {
+      fileViewer = (
+        <fieldset style={{display: 'flex', flexDirection: 'column'}}>
+          <legend><span>{'currently viewing: ' + this.state.viewFilePath + '/' + this.state.viewFileName}</span></legend>
+          <div id='codeviewer'>
+            <FileViewer
+              assignment_id={this.props.assignment_id}
+              grouping_id={this.props.grouping_id}
+              revision_id={this.props.revision_identifier}
+              selectedFileName={this.state.viewFileName}
+              selectedFilePath={this.state.viewFilePath}
+              selectedFileType={this.state.viewFileType}
+              submission_result={false}
+            />
+          </div>
+        </fieldset>
+      );
+    } else {
+      fileViewer = (
+        <fieldset>
+          <legend><span>{'select a file to view'}</span></legend>
+        </fieldset>
+      );
+    }
     return (
-      <div style={{display: 'flex', flexDirection: 'column'}}>
+      <div>
         <FileManager
           files={this.state.files}
           noFilesMessage={I18n.t('submissions.no_files_available')}
@@ -162,15 +188,7 @@ class SubmissionFileManager extends React.Component {
           onRequestClose={() => this.setState({showModal: false, uploadTarget: undefined})}
           onSubmit={this.handleCreateFiles}
         />
-        <FileViewer
-          assignment_id={this.props.assignment_id}
-          grouping_id={this.props.grouping_id}
-          revision_id={this.props.revision_identifier}
-          selectedFileName={this.state.viewFileName}
-          selectedFilePath={this.state.viewFilePath}
-          selectedFileType={this.state.viewFileType}
-          submission_result={false}
-        />
+        {fileViewer}
       </div>
     );
   }
