@@ -440,18 +440,18 @@ class Grouping < ApplicationRecord
   def select_starter_code_entries
     case assignment.starter_code_type
     when 'simple'
-      return assignment.default_starter_code_group&.starter_code_entries || []
+      assignment.default_starter_code_group&.starter_code_entries || []
     when 'sections'
       return inviter.section&.starter_code_group_for(assignment)&.starter_code_entries unless inviter.nil?
-      return assignment.default_starter_code_group&.starter_code_entries || []
+      assignment.default_starter_code_group&.starter_code_entries || []
     when 'shuffle'
-      return assignment.starter_code_groups.includes(:starter_code_entries).map do |g|
+      assignment.starter_code_groups.includes(:starter_code_entries).map do |g|
         StarterCodeEntry.find_by(id: g.starter_code_entries.ids.sample)
       end.compact
     when 'group'
-      return StarterCodeGroup.find_by(id: assignment.starter_code_groups.ids.sample)&.starter_code_entries || []
+      StarterCodeGroup.find_by(id: assignment.starter_code_groups.ids.sample)&.starter_code_entries || []
     else
-      raise RuntimeError, 'starter_code_type is invalid'
+      raise 'starter_code_type is invalid'
     end
   end
 

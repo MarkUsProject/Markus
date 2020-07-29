@@ -3,15 +3,14 @@ module Api
     def create
       assignment = Assignment.find_by_id(params[:assignment_id])
       if assignment.nil?
-        render 'shared/http_status', locals: {code: '404', message:
-            'Assignment was not found'}, status: 404
+        render 'shared/http_status', locals: { code: '404', message: 'Assignment was not found' }, status: 404
         return
       end
       name = I18n.t('assignments.starter_code.new_starter_code_group')
-      starter_code_group = StarterCodeGroup.new({assessment_id: assignment.id, name: name})
+      starter_code_group = StarterCodeGroup.new(assessment_id: assignment.id, name: name)
       if starter_code_group.save
         render 'shared/http_status', locals: {code: '201', message:
-            HttpStatusHelper::ERROR_CODE['message']['201']}, status: 201
+            HttpStatusHelper::ERROR_CODE['message']['201'] }, status: 201
       else
         render 'shared/http_status', locals: { code: '500', message:
             starter_code_group.errors.full_messages.first }, status: 500
@@ -26,7 +25,7 @@ module Api
           starter_code_group.assignment.groupings.update_all(starter_code_changed: true)
         end
         render 'shared/http_status', locals: { code: '200', message:
-            HttpStatusHelper::ERROR_CODE['message']['200']}, status: 200
+            HttpStatusHelper::ERROR_CODE['message']['200'] }, status: 200
       else
         render 'shared/http_status', locals: { code: '500', message:
             starter_code_group.errors.full_messages.first }, status: 500
@@ -37,7 +36,7 @@ module Api
       starter_code_group = find_starter_code_group || return
       if starter_code_group.destroy
         render 'shared/http_status', locals: { code: '200', message:
-            HttpStatusHelper::ERROR_CODE['message']['200']}, status: 200
+            HttpStatusHelper::ERROR_CODE['message']['200'] }, status: 200
       else
         render 'shared/http_status', locals: { code: '500', message:
             starter_code_group.errors.full_messages.first }, status: 500
@@ -47,8 +46,7 @@ module Api
     def index
       assignment = Assignment.find_by_id(params[:assignment_id])
       if assignment.nil?
-        render 'shared/http_status', locals: {code: '404', message:
-            'Assignment was not found'}, status: 404
+        render 'shared/http_status', locals: { code: '404', message: 'Assignment was not found' }, status: 404
         return
       end
       respond_to do |format|
@@ -156,13 +154,7 @@ module Api
     end
 
     def entries
-      assignment = Assignment.find_by_id(params[:assignment_id])
-      starter_code_group = assignment.starter_code_groups.find_by(id: params[:id])
-      if starter_code_group.nil?
-        render 'shared/http_status', locals: {code: '404', message:
-            'Starter code group was not found'}, status: 404
-        return
-      end
+      starter_code_group = find_starter_code_group || return
       respond_to do |format|
         paths = starter_code_group.files_and_dirs
         format.xml { render xml: paths.to_xml(root: 'paths', skip_types: 'true') }
@@ -174,9 +166,9 @@ module Api
 
     def update_entries_and_warn(starter_code_group, path)
       Grouping.joins(starter_code_entries: :starter_code_group)
-          .where('starter_code_entries.path': path.split(File::Separator).reject(&:blank?).first)
-          .where('starter_code_groups.id': starter_code_group)
-          .update_all(starter_code_changed: true)
+              .where('starter_code_entries.path': path.split(File::Separator).reject(&:blank?).first)
+              .where('starter_code_groups.id': starter_code_group)
+              .update_all(starter_code_changed: true)
       starter_code_group.assignment.assignment_properties.update!(starter_code_updated_at: Time.zone.now)
       starter_code_group.update_entries
     end
@@ -185,8 +177,7 @@ module Api
       assignment = Assignment.find_by_id(params[:assignment_id])
       starter_code_group = assignment.starter_code_groups.find_by(id: params[:id])
       if starter_code_group.nil?
-        render 'shared/http_status', locals: {code: '404', message:
-            'Starter code group was not found'}, status: 404
+        render 'shared/http_status', locals: { code: '404', message: 'Starter code group was not found' }, status: 404
         false
       else
         starter_code_group

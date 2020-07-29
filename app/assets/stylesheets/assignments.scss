@@ -125,17 +125,18 @@ fieldset {
   width: 100px;
 }
 
-.starter_code_rename_cell_content {
-  .rename_input {
-    float :left;
+.starter-code-rename-cell-content {
+  .rename-input {
+    float: left;
   }
-  .original_checkbox {
-    float :right;
+
+  .original-checkbox {
+    float: right;
     vertical-align: middle;
   }
 }
 
-.starter_code_rule_types {
+.starter-code-rule-types {
   > * {
     padding-bottom: 10px;
   }

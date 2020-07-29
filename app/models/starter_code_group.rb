@@ -1,3 +1,4 @@
+# Class describing a group of starter code files
 class StarterCodeGroup < ApplicationRecord
   include SubmissionsHelper
   belongs_to :assignment, foreign_key: :assessment_id
@@ -53,7 +54,7 @@ class StarterCodeGroup < ApplicationRecord
     to_delete = entry_paths - fs_entry_paths
     to_add = fs_entry_paths - entry_paths
     starter_code_entries.where(path: to_delete).destroy_all unless to_delete.empty?
-    StarterCodeEntry.upsert_all(to_add.map { |p| { starter_code_group_id: self.id, path: p } } ) unless to_add.empty?
+    StarterCodeEntry.upsert_all(to_add.map { |p| { starter_code_group_id: self.id, path: p } }) unless to_add.empty?
   end
 
   def should_rename

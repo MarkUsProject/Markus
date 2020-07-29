@@ -394,7 +394,7 @@ class StarterCodeManager extends React.Component {
             onSubmit={this.handleCreateFiles}
           />
         </fieldset>
-        <fieldset className={'starter_code_rule_types'}>
+        <fieldset className={'starter-code-rule-types'}>
           <legend>
             <span>{I18n.t('assignments.starter_code.starter_code_rule')}</span>
           </legend>
@@ -463,16 +463,16 @@ class StarterCodeEntryRenameInput extends React.Component {
 
   render() {
     return (
-      <span className={'starter_code_rename_cell_content'}>
+      <span className={'starter-code-rename-cell-content'}>
         <input
-          className={'rename_input'}
+          className={'rename-input'}
           type={'text'}
           placeholder={this.props.entry_rename}
           onKeyPress={blurOnEnter}
           onBlur={this.handleBlur}
           disabled={!this.props.use_rename || this.props.disabled}
         />
-        <label className={'original_checkbox'}>
+        <label className={'original-checkbox'}>
           <input
             type={'checkbox'}
             onChange={this.handleClick}

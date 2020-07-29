@@ -398,8 +398,10 @@ class AssignmentsController < ApplicationController
 
   def populate_starter_code_manager
     assignment = Assignment.find(params[:id])
-    flash_message(:warning,
-                  I18n.t('assignments.starter_code.groupings_exist_warning_html')) if assignment.groupings.exists?
+    if assignment.groupings.exists?
+      flash_message(:warning,
+                    I18n.t('assignments.starter_code.groupings_exist_warning_html'))
+    end
     file_data = []
     assignment.starter_code_groups.order(:id).each do |g|
       file_data << { id: g.id,
@@ -447,10 +449,12 @@ class AssignmentsController < ApplicationController
       success = false
       raise ActiveRecord::Rollback
     end
-    flash_message(:success, I18n.t('flash.actions.update.success',
-                                   resource_name: I18n.t('assignments.starter_code.title'))) if success
+    if success
+      flash_message(:success, I18n.t('flash.actions.update.success',
+                                     resource_name: I18n.t('assignments.starter_code.title')))
+    end
     # mark all groupings with starter code that was changed as changed
-    assignment.groupings.update_all(starter_code_changed: true) if success and all_changed
+    assignment.groupings.update_all(starter_code_changed: true) if success && all_changed
   end
 
   def switch_assignment

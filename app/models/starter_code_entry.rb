@@ -1,3 +1,4 @@
+# Class describing a top level file or directory in a starter code group
 class StarterCodeEntry < ApplicationRecord
   belongs_to :starter_code_group
   validate :entry_exists

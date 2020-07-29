@@ -1,3 +1,6 @@
+# Class joining a section to a starter code group. This starter code group
+# is used to assign starter code to groups within a section for assessments
+# with starter_code_rule_type == 'sections'
 class SectionStarterCodeGroup < ApplicationRecord
   belongs_to :starter_code_group
   belongs_to :section

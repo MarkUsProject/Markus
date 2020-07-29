@@ -1,5 +1,5 @@
+# Controller for starter code groups
 class StarterCodeGroupsController < ApplicationController
-
   before_action { authorize! }
 
   respond_to :js
@@ -104,6 +104,7 @@ class StarterCodeGroupsController < ApplicationController
   def create_params
     params.permit(:name, :assessment_id)
   end
+
   def update_params
     params.permit(:name)
   end
