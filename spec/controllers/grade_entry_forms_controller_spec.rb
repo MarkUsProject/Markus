@@ -345,8 +345,6 @@ describe GradeEntryFormsController do
 
   describe '#student_interface' do
     before :each do
-      allow(controller).to receive(:session_expired?).and_return(false)
-      allow(controller).to receive(:logged_in?).and_return(true)
       allow(controller).to receive(:current_user).and_return(@student)
     end
 
