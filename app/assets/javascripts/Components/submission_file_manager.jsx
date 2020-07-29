@@ -14,7 +14,8 @@ class SubmissionFileManager extends React.Component {
       showModal: false,
       uploadTarget: undefined,
       viewFileName: null,
-      viewFilePath: null
+      viewFilePath: null,
+      viewFileType: null
     };
   }
 
@@ -131,19 +132,17 @@ class SubmissionFileManager extends React.Component {
   };
 
   showFile = (item) => {
-    console.log(item)
-    console.log(item.relativeKey.length > item.raw_name.length)
-    console.log(item.relativeKey.slice(0, item.relativeKey.length - item.raw_name.length - 1))
     this.setState({
       viewFileName: item.raw_name,
-      viewFilePath: item.relativeKey.length > item.raw_name.length ? item.relativeKey.slice(0, item.relativeKey.length - item.raw_name.length - 1) : ''
+      viewFilePath: item.relativeKey.length > item.raw_name.length ?
+        item.relativeKey.slice(0, item.relativeKey.length - item.raw_name.length - 1) : '',
+      viewFileType: item.type
     })
   };
 
   render() {
-    console.log(this.state)
     return (
-      <div>
+      <div style={{display: 'flex', flexDirection: 'column'}}>
         <FileManager
           files={this.state.files}
           noFilesMessage={I18n.t('submissions.no_files_available')}
@@ -169,6 +168,7 @@ class SubmissionFileManager extends React.Component {
           revision_id={this.props.revision_identifier}
           selectedFileName={this.state.viewFileName}
           selectedFilePath={this.state.viewFilePath}
+          selectedFileType={this.state.viewFileType}
           submission_result={false}
         />
       </div>

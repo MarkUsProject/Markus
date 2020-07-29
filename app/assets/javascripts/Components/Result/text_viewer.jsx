@@ -35,9 +35,13 @@ export class TextViewer extends React.Component {
     // Remove existing syntax highlighted code.
     $('.dp-highlighter').remove();
     dp.SyntaxHighlighter.HighlightAll(source_id);
+    window.syntax_highlighter_adapter = new SyntaxHighlighter1p5Adapter($('.dp-highlighter ol')[0]);
+
+    // Apply modifications to Syntax Highlighter
+    window.syntax_highlighter_adapter.applyMods();
+
     if (this.props.resultView) {
       window.annotation_type = ANNOTATION_TYPES.CODE;
-      window.syntax_highlighter_adapter = new SyntaxHighlighter1p5Adapter($('.dp-highlighter ol')[0]);
 
       window.annotation_manager = new SourceCodeLineAnnotations(
         new SourceCodeLineManager(
@@ -46,9 +50,6 @@ export class TextViewer extends React.Component {
           new SourceCodeLineArray()),
         new AnnotationTextManager(),
         new AnnotationTextDisplayer());
-
-      // Apply modifications to Syntax Highlighter
-      window.syntax_highlighter_adapter.applyMods();
     }
   };
 

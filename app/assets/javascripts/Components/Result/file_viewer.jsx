@@ -126,7 +126,7 @@ export class FileViewer extends React.Component {
             id: this.props.assignment_id
           }
         }).then(res => {
-          this.setState({content: res, type: 'text', loading: false});
+          this.setState({content: res, type: this.props.selectedFileType, loading: false});
         })
       }
     }

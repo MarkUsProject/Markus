@@ -18,7 +18,7 @@ class SubmissionFile < ApplicationRecord
 
   validates_inclusion_of :is_converted, in: [true, false]
 
-  def get_file_type
+  def self.get_file_type(filename)
     # This is where you can add more languages that SubmissionFile will
     # recognize.  It will return the name of the language, which
     # SyntaxHighlighter can work with.
