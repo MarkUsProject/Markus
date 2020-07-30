@@ -13,20 +13,16 @@ export class TextViewer extends React.Component {
   componentDidMount() {
     if (this.props.content) {
       this.ready_annotations(RAW_TEXT_DIV_ID);
-      if (this.props.resultView) {
-        this.props.annotations.forEach(this.display_annotation);
-        scrollToLine(this.props.focusLine);
-      }
+      this.props.annotations.forEach(this.display_annotation);
+      scrollToLine(this.props.focusLine);
     }
   }
 
   componentDidUpdate() {
     if (this.props.content) {
       this.ready_annotations(RAW_TEXT_DIV_ID);
-      if (this.props.resultView) {
-        this.props.annotations.forEach(this.display_annotation);
-        scrollToLine(this.props.focusLine);
-      }
+      this.props.annotations.forEach(this.display_annotation);
+      scrollToLine(this.props.focusLine);
     }
   }
 

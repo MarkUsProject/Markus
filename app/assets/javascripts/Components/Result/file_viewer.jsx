@@ -39,20 +39,34 @@ export class FileViewer extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    if (!this.props.submission_result &&
-      (prevProps.selectedFileName !== this.props.selectedFileName ||
-        prevProps.selectedFilePath !== this.props.selectedFilePath)){
+    if (!this.props.submission_result && prevProps.selectedFile !== this.props.selectedFile) {
       this.set_submission_file(null);
+    }
+  }
+
+  getFilePathAndName() {
+    let directory = this.props.selectedFile.lastIndexOf('/');
+    if (directory > 0) {
+      return {
+        path: this.props.selectedFile.substring(0, directory),
+        name: this.props.selectedFile.substring(directory + 1)
+      };
+    } else {
+      return {
+        path: '',
+        name: this.props.selectedFile
+      };
     }
   }
 
   setFileUrl = (submission_file_id) => {
     let url;
     if (!this.props.submission_result) {
+      let fileInfo = this.getFilePathAndName();
       url = Routes.download_assignment_submissions_path(
         {
-          file_name: this.props.selectedFileName,
-          path: this.props.selectedFilePath,
+          file_name: fileInfo.name,
+          path: fileInfo.path,
           revision_identifier: this.props.revision_id,
           grouping_id: this.props.grouping_id,
           assignment_id: this.props.assignment_id
@@ -85,51 +99,53 @@ export class FileViewer extends React.Component {
    * Update the contents being displayed with the given submission file id.
    */
   set_submission_file = (submission_file_id) => {
-    if (this.props.submission_result) {
-      // TODO: is this the right spot to remove these? Should it be done earlier?
-      $('.annotation_text_display').each(function() {
-        this.remove();
-      });
-
-      this.setState({loading: true, url: null}, () => {
-        fetch(Routes.get_file_assignment_submission_path(
-          '',
-          this.props.assignment_id,
-          this.props.submission_id,
-          {submission_file_id: submission_file_id}),
-          {credentials: 'include'})
-          .then(res => res.json())
-          .then(body => {
-            if (body.type === 'image' || body.type === 'pdf') {
-              this.setState({type: body.type}, () => {this.setFileUrl(submission_file_id)})
-            } else {
-              const content = JSON.parse(body.content).replace(/\r?\n/gm, '\n');
-              this.setState({content: content, type: body.type, loading: false});
-            }
-          })
-      });
-    } else {
-      if (this.props.selectedFileName === null) {
-        this.setState({loading: false, type: 'none'})
-      } else if (['image', 'pdf'].indexOf(this.props.selectedFileType) >= 0) {
-        this.setState({type: this.props.selectedFileType});
-        this.setFileUrl();
-      } else {
-        $.ajax({
-          url: Routes.download_assignment_submissions_path(this.props.assignment_id),
-          method: 'GET',
-          data: {
-            file_name: this.props.selectedFileName,
-            path: this.props.selectedFilePath,
-            revision_identifier: this.props.revision_id,
-            grouping_id: this.props.grouping_id,
-            id: this.props.assignment_id
-          }
-        }).then(res => {
-          this.setState({content: res, type: this.props.selectedFileType, loading: false});
-        })
-      }
+    if (!this.props.submission_result && this.props.selectedFile === null) {
+      this.setState({loading: false, type: null});
     }
+
+    // TODO: is this the right spot to remove these? Should it be done earlier?
+    $('.annotation_text_display').each(function() {
+      this.remove();
+    });
+
+    this.setState({loading: true, url: null}, () => {
+      if (this.props.submission_result) {
+          fetch(Routes.get_file_assignment_submission_path(
+            '',
+            this.props.assignment_id,
+            this.props.submission_id,
+            {submission_file_id: submission_file_id}),
+            {credentials: 'include'})
+            .then(res => res.json())
+            .then(body => {
+              if (body.type === 'image' || body.type === 'pdf') {
+                this.setState({type: body.type}, () => {this.setFileUrl(submission_file_id)})
+              } else {
+                const content = JSON.parse(body.content).replace(/\r?\n/gm, '\n');
+                this.setState({content: content, type: body.type, loading: false});
+              }
+            })
+      } else {
+        if (this.props.selectedFileType === 'image' || this.props.selectedFileType === 'pdf') {
+          this.setState({type: this.props.selectedFileType}, () => {this.setFileUrl()});
+        } else {
+          let fileInfo = this.getFilePathAndName();
+          $.ajax({
+            url: Routes.download_assignment_submissions_path(this.props.assignment_id),
+            method: 'GET',
+            data: {
+              file_name: fileInfo.name,
+              path: fileInfo.path,
+              revision_identifier: this.props.revision_id,
+              grouping_id: this.props.grouping_id,
+              id: this.props.assignment_id
+            }
+          }).then(res => {
+            this.setState({content: res.replace(/\r?\n/gm, '\n'), type: this.props.selectedFileType, loading: false});
+          });
+        }
+      }
+    });
   };
 
   render() {
@@ -144,7 +160,7 @@ export class FileViewer extends React.Component {
     } else {
       commonProps = {
         submission_file_id: null,
-        annotations: null,
+        annotations: [],
         released_to_students: null,
         resultView: this.props.submission_result
       };

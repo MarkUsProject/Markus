@@ -93,7 +93,6 @@ es:
       version_control_warning: "Entregar archivos aquí reescribe todos los cambios realizados usando
                                 version control. Asegúrese que haya trabajado en los archivos más recientes
                                 antes de realizar la entrega."
-      viewing: 'UPDATE ME!'
 
     # Miscellaneous
     cannot_display: "Contenido binario: Use el botón de descarga para ver el archivo!"

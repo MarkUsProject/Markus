@@ -2,7 +2,7 @@ import React from 'react'
 import { render } from 'react-dom'
 import FileManager from './markus_file_manager'
 import SubmissionFileUploadModal from './Modals/submission_file_upload_modal'
-import {FileViewer} from "./Result/file_viewer";
+import {FileViewer} from './Result/file_viewer';
 
 
 class SubmissionFileManager extends React.Component {
@@ -13,8 +13,7 @@ class SubmissionFileManager extends React.Component {
       files: [],
       showModal: false,
       uploadTarget: undefined,
-      viewFileName: null,
-      viewFilePath: null,
+      viewFile: null,
       viewFileType: null
     };
   }
@@ -53,7 +52,7 @@ class SubmissionFileManager extends React.Component {
   // Update state when a new revision_identifier props is passed
   componentDidUpdate(oldProps) {
     if (oldProps.revision_identifier !== this.props.revision_identifier) {
-      this.setState({viewFileName: null, viewFilePath: null, viewFileType: null});
+      this.setState({viewFile: null, viewFileType: null});
       this.fetchData();
     }
   }
@@ -78,7 +77,7 @@ class SubmissionFileManager extends React.Component {
   };
 
   handleDeleteFile = (fileKeys) => {
-    this.setState({viewFileName: null, viewFilePath: null, viewFileType: null});
+    this.setState({viewFile: null, viewFileType: null});
     if (!this.state.files.some(f => fileKeys.includes(f.key))) {
       return;
     }
@@ -135,43 +134,45 @@ class SubmissionFileManager extends React.Component {
 
   showFile = (item) => {
     this.setState({
-      viewFileName: item.raw_name,
-      viewFilePath: item.relativeKey.length > item.raw_name.length ?
-        item.relativeKey.slice(0, item.relativeKey.length - item.raw_name.length - 1) : '',
+      viewFile: item.relativeKey,
       viewFileType: item.type
     })
   };
 
-  render() {
-    let fileViewer;
-    if (this.state.viewFileName !== null) {
-      fileViewer = (
-        <fieldset style={{display: 'flex', flexDirection: 'column'}}>
-          <legend>
-            <span>
-              {I18n.t('submissions.student.viewing') + this.state.viewFilePath + '/' + this.state.viewFileName}
-            </span>
-          </legend>
+  fileViewer = () => {
+    let heading;
+    let content = '';
+    if (this.state.viewFile !== null) {
+      heading = this.state.viewFile;
+      content = (
           <div id='codeviewer'>
             <FileViewer
               assignment_id={this.props.assignment_id}
               grouping_id={this.props.grouping_id}
               revision_id={this.props.revision_identifier}
-              selectedFileName={this.state.viewFileName}
-              selectedFilePath={this.state.viewFilePath}
+              selectedFile={this.state.viewFile}
               selectedFileType={this.state.viewFileType}
               submission_result={false}
             />
           </div>
-        </fieldset>
       );
     } else {
-      fileViewer = (
-        <fieldset>
-          <legend><span>{I18n.t('submissions.student.select_file')}</span></legend>
-        </fieldset>
-      );
+      heading = I18n.t('submissions.student.select_file');
     }
+
+    return (
+      <fieldset style={{display: 'flex', flexDirection: 'column'}}>
+        <legend>
+            <span>
+              {heading}
+            </span>
+        </legend>
+        {content}
+      </fieldset>
+    );
+  }
+
+  render() {
     return (
       <div>
         <FileManager
@@ -193,7 +194,7 @@ class SubmissionFileManager extends React.Component {
           onRequestClose={() => this.setState({showModal: false, uploadTarget: undefined})}
           onSubmit={this.handleCreateFiles}
         />
-        {fileViewer}
+        {this.fileViewer()}
       </div>
     );
   }
