@@ -109,7 +109,7 @@ class GradesSummaryDisplay extends React.Component {
       return <p>{I18n.t('course_summary.absent')}</p>;
     }
     return (
-      this.props.view_course_summary &&
+      (this.props.view_course_summary || this.props.student) &&
       <div>
       <CourseSummaryTable
         columns={this.state.columns}
