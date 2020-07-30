@@ -28,6 +28,8 @@
 }
 
 #content {
+  display: flex;
+  flex-direction: column;
   z-index: auto !important;
 }
 
