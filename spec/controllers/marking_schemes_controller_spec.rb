@@ -161,7 +161,8 @@ describe MarkingSchemesController do
   describe 'When the grader is allowed to manage marking schemes' do
     let!(:user) { create(:ta) }
     before do
-      create(:grader_permission, user_id: user.id, manage_marking_schemes: true)
+      user.grader_permission.manage_marking_schemes = true
+      user.grader_permission.save
     end
     include_examples 'An authorized user'
   end
@@ -169,7 +170,8 @@ describe MarkingSchemesController do
   describe 'When the grader is not allowed to manage marking schemes' do
     let(:grader) { create(:ta) }
     before do
-      create(:grader_permission, user_id: grader.id, manage_marking_schemes: false)
+      grader.grader_permission.manage_marking_schemes = false
+      grader.grader_permission.save
     end
     context 'POST create' do
       let(:params) do

@@ -244,7 +244,7 @@ describe SubmissionsController do
 
   describe 'A grader' do
     let(:grader) { create(:ta) }
-    let!(:grader_permission) { create(:grader_permission, user_id: grader.id) }
+    let!(:grader_permission) { grader.grader_permission }
     before(:each) do
       @group = create(:group)
       @assignment = create(:assignment)

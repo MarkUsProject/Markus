@@ -308,7 +308,8 @@ describe AutomatedTestsController do
   describe 'When the grader is allowed to download grades report and populate course summary' do
     let!(:user) { create(:ta) }
     before do
-      create(:grader_permission, user_id: user.id, manage_assignments: true)
+      user.grader_permission.manage_assignments = true
+      user.grader_permission.save
     end
     include_examples 'An authorized admin and grader managing automated testing'
   end
@@ -316,7 +317,8 @@ describe AutomatedTestsController do
   describe 'When the grader is not allowed to download grades report and populate course summary' do
     let!(:user) { create(:ta) }
     before do
-      create(:grader_permission, user_id: user.id, manage_assignments: false)
+      user.grader_permission.manage_assignments = false
+      user.grader_permission.save
     end
     include_examples 'An unauthorized user managing automated testing'
     include_examples 'An unauthorized user accessing student interface'

@@ -381,7 +381,7 @@ describe GradeEntryFormsController do
 
   describe 'When the user is grader' do
     let!(:user) { create(:ta) }
-    let(:grader_permission) { create(:grader_permission, user_id: user.id) }
+    let(:grader_permission) { user.grader_permission }
     describe 'When the grader is allowed to release and unrelease the grades' do
       before do
         grader_permission.release_unrelease_grades = true

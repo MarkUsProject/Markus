@@ -18,13 +18,15 @@ describe AnnotationPolicy do
     end
     context 'When grader is allowed to manage annotations' do
       before do
-        create(:grader_permission, user_id: user.id, create_delete_annotations: true)
+        user.grader_permission.create_delete_annotations = true
+        user.grader_permission.save
       end
       it { is_expected.to pass :manage? }
     end
     context 'When grader is not allowed to manage annotations' do
       before do
-        create(:grader_permission, user_id: user.id, create_delete_annotations: false)
+        user.grader_permission.create_delete_annotations = false
+        user.grader_permission.save
       end
       it { is_expected.not_to pass :manage? }
     end

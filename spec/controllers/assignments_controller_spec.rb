@@ -293,7 +293,7 @@ describe AssignmentsController do
 
     context 'a TA' do
       let(:user) { create(:ta) }
-      let!(:grader_permission) { create(:grader_permission, user_id: user.id) }
+      let!(:grader_permission) { user.grader_permission }
 
       context 'when there are no assessments' do
         it 'responds with a success' do
@@ -491,7 +491,7 @@ describe AssignmentsController do
     describe 'When the user is grader' do
       let!(:user) { create(:ta) }
       let!(:assignment) { create(:assignment) }
-      let!(:grader_permission) { create(:grader_permission, user_id: user.id) }
+      let!(:grader_permission) { user.grader_permission }
       include_examples 'An authorized user viewing assignment summary'
     end
   end
@@ -700,7 +700,7 @@ describe AssignmentsController do
 
   describe 'When the user is grader' do
     let!(:user) { create(:ta) }
-    let(:grader_permission) { create(:grader_permission, user_id: user.id) }
+    let(:grader_permission) { user.grader_permission }
 
     context 'When the grader is allowed to manage assignments' do
       before do
