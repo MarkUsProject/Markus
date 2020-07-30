@@ -364,7 +364,7 @@ class Result extends React.Component {
     });
   };
 
-  destroyMark = (criterion_type, criterion_id) => {
+  destroyMark = (criterion_id) => {
     this.updateMark(criterion_id, null);
   };
 
