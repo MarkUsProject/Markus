@@ -1,4 +1,5 @@
 import React from 'react';
+import {render} from 'react-dom';
 
 export class DataChart extends React.Component {
 
@@ -13,7 +14,7 @@ export class DataChart extends React.Component {
     let options = {
       responsive: false,
       legend: {
-        display: true
+        display: this.props.legend
       },
       scales: {
         yAxes: [{
@@ -23,12 +24,14 @@ export class DataChart extends React.Component {
             max: 100
           },
           scaleLabel: {
-            display: false
+            display: true,
+            labelString: this.props.yTitle
           }
         }],
         xAxes: [{
           scaleLabel: {
-            display: false
+            display: true,
+            labelString: this.props.xTitle
           }
         }]
       }
@@ -48,6 +51,7 @@ export class DataChart extends React.Component {
     });
     this.chart.data = {labels: this.props.labels, datasets: this.props.datasets};
     this.chart.options.scales.yAxes[0].ticks.max = Math.max(...yRange);
+    this.chart.options.legend.display = this.props.legend;
     this.chart.options.scales.yAxes[0].scaleLabel = {display: true, labelString: this.props.yTitle};
     this.chart.options.scales.xAxes[0].scaleLabel = {display: true, labelString: this.props.xTitle};
     this.chart.update();
@@ -55,8 +59,11 @@ export class DataChart extends React.Component {
 
   render() {
     return (
-      <canvas id='term_marks' style={{display: 'inline-flex', width: 'auto', height: 500, margin: '10px'}}></canvas>
+      <canvas id='term_marks' style={{display: 'inline-flex', width: this.props.width, height: 500, margin: '10px'}}></canvas>
     );
   }
 }
 
+export function makeDataChart(elem, props) {
+  render(<DataChart {...props} />, elem);
+}

@@ -6,7 +6,7 @@ describe GradeEntryFormsController do
     allow(controller).to receive(:current_user).and_return(build(:admin))
 
     # initialize student DB entries
-    create(:student, user_name: 'c8shosta')
+    @student = create(:student, user_name: 'c8shosta')
   end
 
   let(:grade_entry_form) { create(:grade_entry_form) }
@@ -340,6 +340,23 @@ describe GradeEntryFormsController do
                        students: [@student.id, @another.id],
                        release_results: 'true' }
       end.to change { ActionMailer::Base.deliveries.count }.by(1)
+    end
+  end
+
+  describe '#student_interface' do
+    before :each do
+      allow(controller).to receive(:current_user).and_return(@student)
+    end
+
+    it 'does not allow students to see hidden grade entry forms' do
+      grade_entry_form.update!(is_hidden: true)
+      get_as @student, :student_interface, params: { id: grade_entry_form.id }
+      assert_response 404
+    end
+
+    it 'allows students to see non hidden grade entry forms' do
+      get_as @student, :student_interface, params: { id: grade_entry_form.id }
+      assert_response 200
     end
   end
 end

@@ -106,6 +106,12 @@
   vertical-align: text-top;
 }
 
+.mark-chart::before {
+  content: asset_url('icons/chart_bar.png');
+  padding-right: 5px;
+  vertical-align: text-top;
+}
+
 
 // Miscellaneous icons
 .flexible-criteria-icon {

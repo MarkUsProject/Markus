@@ -7,10 +7,12 @@ es:
     criterion_incomplete_error: "Usted no puede marcar el estado de calificación como completo. No todas las notas han
                                  sido insertadas. Revise los criterios de calificación y asegúrese que cada uno de
                                  ellos tenga su nota correspondiente."
+    current_mark: 'UPDATE ME!'
     delete_extra_mark_confirm: "¿Está seguro/a de querer remover esta nota adicional?"
     expand_all: "Expandir todos"
     expand_unmarked: "Expandir no calificados"
     late_submission_warning_html: "El <a href=\"%{url}\">submitted work</a> de este grupo se ha realizado después de la fecha límite de entrega."
+    marks_chart: 'UPDATE ME!'
     marks_released: "Las notas han sido publicadas. Usted no puede cambiar las notas."
     next_submission: "Siguiente"
     no_feedback_files: "[El archivo de retroalimentación no está disponible]"

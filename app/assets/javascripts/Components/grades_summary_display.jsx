@@ -78,7 +78,10 @@ class GradesSummaryDisplay extends React.Component {
             this.individualDataSet.data.push(null);
           }
         });
-        chartInfo['datasets'] = [this.individualDataSet, this.averageDataSet, this.medianDataSet];
+        chartInfo['datasets'] = [this.individualDataSet, this.averageDataSet];
+        if (this.medianDataSet.data.some(m => m !== null)) {
+          chartInfo['datasets'].push(this.medianDataSet);
+        }
       } else {
         Object.keys(res.schemes).forEach(k => {
           this.averageDataSet.data.push(res.schemes[k].average ? res.schemes[k].average : null);
@@ -118,6 +121,8 @@ class GradesSummaryDisplay extends React.Component {
           datasets={this.state.datasets}
           xTitle={this.state.xTitle}
           yTitle={this.state.yTitle}
+          width={'auto'}
+          legend={true}
         />
       </fieldset>
     </div>);

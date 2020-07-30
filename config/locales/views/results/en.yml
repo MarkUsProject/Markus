@@ -3,12 +3,14 @@ en:
     cant_display_image: "Image cannot be displayed. Click on the Download button to download the file instead."
     collapse_all: "Collapse All"
     criterion_incomplete_error: "Unable to change marking status to complete because not every criterion has been given a mark."
+    current_mark: 'Current mark'
     delete_extra_mark_confirm: "Are you sure you want to remove this extra mark?"
     expand_all: "Expand All"
     expand_unmarked: "Expand Unmarked"
     fullscreen_enter: "Fullscreen"
     fullscreen_exit: "Leave fullscreen"
     late_submission_warning_html: "This group <a href=\"%{url}\">submitted work</a> after the due date."
+    marks_chart: 'Marks Chart'
     marks_released: "The marks have been released. You cannot change the grades."
     next_submission: "Next"
     no_feedback_files: "[No feedback files available]"

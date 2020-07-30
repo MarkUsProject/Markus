@@ -108,3 +108,5 @@ import { makeAnnotationUsagePanel } from 'javascripts/Components/annotation_usag
 window.makeAnnotationUsagePanel = makeAnnotationUsagePanel;
 import { makeGradesSummaryDisplay } from 'javascripts/Components/grades_summary_display';
 window.makeGradesSummaryDisplay = makeGradesSummaryDisplay;
+import { makeDataChart } from 'javascripts/Components/Helpers/data_chart';
+window.makeDataChart = makeDataChart;
