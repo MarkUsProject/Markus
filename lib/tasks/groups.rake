@@ -6,7 +6,7 @@ namespace :db do
     Faker::Config.random = Random.new(42) # seeds the random number generator so Faker output is deterministic
     students = Student.all
     Assignment.all.each do |assignment|
-      num_groups = assignment.short_identifier == 'A1' || assignment.short_identifier == 'A3' ? students.length : 5
+      num_groups = (assignment.short_identifier == 'A1' || assignment.short_identifier == 'A3') ? students.length : 15
       num_groups.times do |time|
         student = students[time]
         # if this is an individual assignment

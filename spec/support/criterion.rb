@@ -8,9 +8,7 @@ shared_examples 'a criterion' do
     let(:tas) { Array.new(2) { create(:ta) } }
     let(:ta_ids) { tas.map(&:id) }
     let(:criterion_ids) { criteria.map(&:id) }
-    let(:criterion_one_id) do
-      [criteria[0].id]
-    end
+    let(:criterion_one_id) { [criteria[0].id] }
 
     describe '.randomly_assign_tas' do
       it 'can randomly bulk assign no TAs to no criteria' do
@@ -228,7 +226,7 @@ shared_examples 'a criterion' do
             end
 
             context 'when TAs are also assigned to groups of another ' +
-                      'assignment' do
+                    'assignment' do
               before :each do
                 # Creating a new criterion also creates a new assignment.
                 criterion = create(criterion_factory_name)
