@@ -72,7 +72,7 @@ export class CourseSummaryTable extends React.Component {
           {I18n.t('students.display_inactive')}
         </label>
       </div>,
-      this.props.view_course_summary &&
+      (this.props.view_course_summary || this.props.student) &&
       <ReactTable
         key='course-summary-table'
         data={this.props.data}

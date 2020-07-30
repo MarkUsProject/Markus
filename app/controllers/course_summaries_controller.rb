@@ -19,8 +19,9 @@ class CourseSummariesController < ApplicationController
   def populate
     visible_assessments_info = {}
     marking_schemes = {}
-    if current_user.admin?
+    if current_user.admin? || current_user.ta?
       visible_assessments = Assessment.all.order(id: :asc)
+      allowed_to? :download_csv_grades_report?, visible_assessments, with: CourseSummaryPolicy
       MarkingScheme.all.each do |m|
         grades = m.students_weighted_grades_array(current_user)
         marking_schemes[m.name] = { average: DescriptiveStatistics.mean(grades).round(2),
@@ -122,12 +123,13 @@ class CourseSummariesController < ApplicationController
   def assessment_overview(assessment)
     if assessment.is_a? GradeEntryForm
       info = { total: assessment.grade_entry_items.sum(:out_of), average: assessment.calculate_average&.round(2) }
-      if current_user.admin?
+      if allowed_to? :download_csv_grades_report?, assessment, with: CourseSummaryPolicy
         info[:median] = assessment.calculate_median&.round(2)
       end
     else
       info = { total: assessment.max_mark, average: assessment.results_average&.round(2) }
-      if current_user.admin? || assessment.display_median_to_students
+      if (allowed_to? :download_csv_grades_report?, assessment, with: CourseSummaryPolicy) ||
+          assessment.display_median_to_students
         info[:median] = assessment.results_median&.round(2)
       end
     end
