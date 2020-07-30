@@ -26,6 +26,7 @@
 - Introduces new grades summary chart, and makes student view of grades consistent with admin (#4740)
 - Set SameSite=Lax on cookies (#4742)
 - Fix annotation modal overflow issue (#4748)
+- Make skipping empty submissions the default behaviour when assigning graders (#4761)
 
 ## [v1.9.3]
 - Fixed inverse association bug with assignments (#4551)
