@@ -255,16 +255,18 @@ describe PeerReviewsController do
     include_examples 'An authorized admin or grader'
   end
   describe 'When user is grader and allowed to manage reviewers' do
-    let!(:user) { create(:ta) }
+    let(:user) { create(:ta) }
     before do
-      create(:grader_permission, user_id: user.id, manage_reviewers: true)
+      user.grader_permission.manage_reviewers = true
+      user.grader_permission.save
     end
     include_examples 'An authorized admin or grader'
   end
   describe 'When the user is grader and not allowed to manage reviewers' do
     let(:grader) { create(:ta) }
     before :each do
-      create(:grader_permission, user_id: grader.id, manage_reviewers: false)
+      grader.grader_permission.manage_reviewers = false
+      grader.grader_permission.save
     end
     describe '#random assign' do
       it 'should return 403 response' do

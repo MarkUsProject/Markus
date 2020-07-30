@@ -11,7 +11,7 @@ describe AnnotationCategoryPolicy do
   describe 'When the user is grader' do
     subject { described_class.new(user: user) }
     let(:user) { create(:ta) }
-    let(:grader_permission) { create(:grader_permission, user_id: user.id) }
+    let(:grader_permission) { user.grader_permission }
     context 'When the grader is allowed to manage assignments and also annotations' do
       before do
         grader_permission.create_delete_annotations = true

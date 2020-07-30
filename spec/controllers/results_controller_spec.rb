@@ -668,7 +668,7 @@ describe ResultsController do
     end
   end
   context 'A TA' do
-    let!(:grader_permission) { create(:grader_permission, user_id: ta.id) }
+    let!(:grader_permission) { ta.grader_permission }
     before(:each) { sign_in ta }
     [:set_released_to_students].each { |route_name| test_unauthorized(route_name) }
     context 'accessing edit' do

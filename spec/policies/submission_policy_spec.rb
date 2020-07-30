@@ -98,13 +98,21 @@ describe SubmissionPolicy do
     context 'When the user is grader and allowed to run tests' do
       let(:user) { create(:ta) }
       let(:assignment) { build(:assignment, assignment_properties_attributes: { enable_test: true }) }
-      let!(:grader_permission) { create(:grader_permission, user_id: user.id, run_tests: true) }
+      let(:grader_permission) { user.grader_permission }
+      before do
+        grader_permission.run_tests = true
+        grader_permission.save
+      end
       it { is_expected.to pass :allowed_to_run_tests? }
     end
     context 'When the user is grader and not allowed to run tests' do
       let(:user) { create(:ta) }
       let(:assignment) { build(:assignment, assignment_properties_attributes: { enable_test: true }) }
-      let!(:grader_permission) { create(:grader_permission, user_id: user.id, run_tests: false) }
+      let(:grader_permission) { user.grader_permission }
+      before do
+        grader_permission.run_tests = false
+        grader_permission.save
+      end
       it { is_expected.not_to pass :allowed_to_run_tests? }
     end
   end
@@ -117,12 +125,20 @@ describe SubmissionPolicy do
     end
     context 'When the user is grader and allowed to collect submisisons' do
       let(:user) { create(:ta) }
-      let!(:grader_permission) { create(:grader_permission, user_id: user.id, collect_submissions: true) }
+      let(:grader_permission) { user.grader_permission }
+      before do
+        grader_permission.collect_submissions = true
+        grader_permission.save
+      end
       it { is_expected.to pass :collect? }
     end
     context 'When the user is grader and not allowed to run tests' do
       let(:user) { create(:ta) }
-      let!(:grader_permission) { create(:grader_permission, user_id: user.id, collect_submissions: false) }
+      let(:grader_permission) { user.grader_permission }
+      before do
+        grader_permission.collect_submissions = false
+        grader_permission.save
+      end
       it { is_expected.not_to pass :collect? }
     end
   end

@@ -71,8 +71,10 @@ describe NotesController do
       @action_to = 'manage'
       @message = 'This is a note'
       @ta = create(:ta)
+      grader_permission.create_notes = true
+      grader_permission.save
     end
-    let!(:grader_permission) { create(:grader_permission, user_id: @ta.id, create_notes: true) }
+    let(:grader_permission) { @ta.grader_permission }
 
     it 'be able to get :notes_dialog' do
       get_as @ta,

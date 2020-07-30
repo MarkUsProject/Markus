@@ -29,8 +29,12 @@ describe AssignmentPolicy do
     end
 
     context 'when the user is a grader and allowed to run tests' do
-      let!(:user) { create(:ta) }
-      let!(:grader_permission) { create(:grader_permission, user_id: user.id, run_tests: true) }
+      let(:user) { create(:ta) }
+      let(:grader_permission) { user.grader_permission }
+      before do
+        grader_permission.run_tests = true
+        grader_permission.save
+      end
       include_examples 'An authorized user running tests'
     end
 
@@ -42,7 +46,11 @@ describe AssignmentPolicy do
     context 'When the user is TA and not allowed to run tests' do
       let(:user) { create(:ta) }
       let(:assignment) { create(:assignment_for_tests) }
-      let!(:grader_permission) { create(:grader_permission, user_id: user.id, run_tests: false) }
+      let(:grader_permission) { user.grader_permission }
+      before do
+        grader_permission.run_tests = false
+        grader_permission.save
+      end
       it { is_expected.not_to pass :run_tests?, because_of: :can_run_tests? }
       it { is_expected.not_to pass :run_and_stop_test? }
     end
@@ -113,13 +121,15 @@ describe AssignmentPolicy do
     end
     context 'When the grader is allowed to manage, create, edit and update the assignments' do
       before do
-        create(:grader_permission, user_id: user.id, manage_assignments: true)
+        user.grader_permission.manage_assignments = true
+        user.grader_permission.save
       end
       it { is_expected.to pass :manage? }
     end
     context 'When the grader is not allowed to manage, create, edit and update the assignments' do
       before do
-        create(:grader_permission, user_id: user.id, manage_assignments: false)
+        user.grader_permission.manage_assignments = false
+        user.grader_permission.save
       end
       it { is_expected.not_to pass :manage? }
     end

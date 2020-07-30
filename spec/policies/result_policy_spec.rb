@@ -12,13 +12,15 @@ describe ResultPolicy do
     let(:user) { create(:ta) }
     context 'When TA is allowed to delete grace period deduction' do
       before do
-        create(:grader_permission, user_id: user.id, delete_grace_period_deduction: true)
+        user.grader_permission.delete_grace_period_deduction = true
+        user.grader_permission.save
       end
       it { is_expected.to pass :delete_grace_period_deduction? }
     end
     context 'When TA is not allowed to delete grace period deduction' do
       before do
-        create(:grader_permission, user_id: user.id, delete_grace_period_deduction: false)
+        user.grader_permission.delete_grace_period_deduction = false
+        user.grader_permission.save
       end
       it { is_expected.not_to pass :delete_grace_period_deduction? }
     end

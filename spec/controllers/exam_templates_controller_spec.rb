@@ -41,13 +41,15 @@ describe ExamTemplatesController do
     let!(:user) { create(:ta) }
     context 'When grader is allowed to manage exam template' do
       before do
-        create(:grader_permission, user_id: user.id, manage_exam_templates: true)
+        user.grader_permission.manage_exam_templates = true
+        user.grader_permission.save
       end
       include_examples 'An authorized admin or grader managing exam templates'
     end
     context 'When grader is not allowed to manage exam template' do
       before do
-        create(:grader_permission, user_id: user.id, manage_exam_templates: false)
+        user.grader_permission.manage_exam_templates = false
+        user.grader_permission.save
       end
       describe '#index' do
         before { get_as user, :index, params: { assignment_id: exam_template.assignment.id } }

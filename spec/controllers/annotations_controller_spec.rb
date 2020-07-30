@@ -364,7 +364,8 @@ describe AnnotationsController do
   describe 'an authorized grader trying to create, delete annotations' do
     let!(:user) { create(:ta) }
     before do
-      create(:grader_permission, user_id: user.id, create_delete_annotations: true)
+      user.grader_permission.create_delete_annotations = true
+      user.grader_permission.save
     end
     include_examples 'An authorized user doing a POST'
     include_examples 'An authorized user adding an existing annotation'
@@ -473,7 +474,8 @@ describe AnnotationsController do
   describe 'an unauthorized grader trying to create, delete annotations' do
     let!(:user) { create(:ta) }
     before do
-      create(:grader_permission, user_id: user.id, create_delete_annotations: false)
+      user.grader_permission.create_delete_annotations = false
+      user.grader_permission.save
     end
     include_examples 'An unauthorized user doing a POST'
     include_examples 'An authorized user adding an existing annotation'
