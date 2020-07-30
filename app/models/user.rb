@@ -10,6 +10,7 @@ class User < ApplicationRecord
 
   # Group relationships
   has_one :grader_permission, dependent: :destroy
+  after_create :create_grader_permission
   has_many :memberships, dependent: :delete_all
   has_many :grade_entry_students
   has_many :groupings, through: :memberships
@@ -338,5 +339,11 @@ class User < ApplicationRecord
   def nillify_empty_email_and_id_number
     self.email = nil if self.email.blank?
     self.id_number = nil if self.id_number.blank?
+  end
+
+  def create_grader_permission
+    if is_a?(Ta)
+      self.grader_permission = GraderPermission.new
+    end
   end
 end
