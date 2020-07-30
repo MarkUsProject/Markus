@@ -53,6 +53,7 @@ class SubmissionFileManager extends React.Component {
   // Update state when a new revision_identifier props is passed
   componentDidUpdate(oldProps) {
     if (oldProps.revision_identifier !== this.props.revision_identifier) {
+      this.setState({viewFileName: null, viewFilePath: null, viewFileType: null});
       this.fetchData();
     }
   }
