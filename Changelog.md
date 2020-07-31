@@ -27,6 +27,7 @@
 - Set SameSite=Lax on cookies (#4742)
 - Introduces individual marks chart view for assessments (#4747)
 - Fix annotation modal overflow issue (#4748)
+- Make skipping empty submissions the default behaviour when assigning graders (#4761)
 
 ## [v1.9.3]
 - Fixed inverse association bug with assignments (#4551)
