@@ -60,7 +60,7 @@ class Mark < ApplicationRecord
     return if mark.nil?
     return 0 if prev_max_mark == 0 || mark == 0 # no scaling occurs if prev_max_mark is 0 or mark is 0
     if markable.is_a? RubricCriterion
-      new_mark = (mark * (curr_max_mark / prev_max_mark)).round(1)
+      new_mark = (mark * (curr_max_mark / prev_max_mark)).round(2)
     elsif markable.is_a? FlexibleCriterion
       new_mark = (mark * (curr_max_mark.to_f / prev_max_mark)).round(2)
     else # if it is CheckboxCriterion
