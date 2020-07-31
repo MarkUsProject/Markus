@@ -149,10 +149,6 @@ volumes:
   packs_test:
   tmp:
   log:
-    driver_opts:
-      type: none
-      device: ${PWD}/log
-      o: bind
   ssh_pub_key:
     name: ssh_pub_key
 
