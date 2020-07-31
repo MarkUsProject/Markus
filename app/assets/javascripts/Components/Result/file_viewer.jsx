@@ -7,6 +7,9 @@ import {PDFViewer} from './pdf_viewer';
 
 
 export class FileViewer extends React.Component {
+  // this.props.result_id is used as a flag for the component to
+  // know whether it is displaying within the result view.
+
   constructor(props) {
     super(props);
     this.state = {
@@ -18,7 +21,7 @@ export class FileViewer extends React.Component {
   }
 
   componentDidMount() {
-    if (!this.props.submission_result || this.props.selectedFile !== null) {
+    if (!this.props.result_id || this.props.selectedFile !== null) {
       this.set_submission_file(this.props.selectedFile);
     } else {
       this.setState({loading: false})
@@ -27,10 +30,7 @@ export class FileViewer extends React.Component {
 
   // Manually manage a change of selectedFile, as this requires fetching new file data.
   shouldComponentUpdate(nextProps) {
-    if (!this.props.submission_result) {
-      return true;
-    }
-    if (this.props.selectedFile !== nextProps.selectedFile) {
+    if (!!this.props.result_id && this.props.selectedFile !== nextProps.selectedFile) {
       this.set_submission_file(nextProps.selectedFile);
       return false;
     } else {
@@ -39,7 +39,7 @@ export class FileViewer extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    if (!this.props.submission_result && prevProps.selectedFile !== this.props.selectedFile) {
+    if (!this.props.result_id && prevProps.selectedFile !== this.props.selectedFile) {
       this.set_submission_file(null);
     }
   }
@@ -61,7 +61,7 @@ export class FileViewer extends React.Component {
 
   setFileUrl = (submission_file_id) => {
     let url;
-    if (!this.props.submission_result) {
+    if (!this.props.result_id) {
       let fileInfo = this.getFilePathAndName();
       url = Routes.download_assignment_submissions_path(
         {
@@ -99,8 +99,9 @@ export class FileViewer extends React.Component {
    * Update the contents being displayed with the given submission file id.
    */
   set_submission_file = (submission_file_id) => {
-    if (!this.props.submission_result && this.props.selectedFile === null) {
+    if (!this.props.result_id && this.props.selectedFile === null) {
       this.setState({loading: false, type: null});
+      return;
     }
 
     // TODO: is this the right spot to remove these? Should it be done earlier?
@@ -150,47 +151,41 @@ export class FileViewer extends React.Component {
 
   render() {
     let commonProps;
-    if (this.props.submission_result) {
+    if (!!this.props.result_id) {
       commonProps = {
         submission_file_id: this.props.selectedFile,
         annotations: this.props.annotations,
         released_to_students: this.props.released_to_students,
-        resultView: this.props.submission_result
+        resultView: !!this.props.result_id
       };
     } else {
       commonProps = {
         submission_file_id: null,
         annotations: [],
         released_to_students: null,
-        resultView: this.props.submission_result
+        resultView: !!this.props.result_id
       };
     }
     if (this.state.loading) {
       return I18n.t('working');
     } else if (this.state.type === 'image') {
-      return (
-        <ImageViewer
-          url={this.state.url}
-          {...commonProps}
-        />
-      );
+      return <ImageViewer
+        url={this.state.url}
+        {...commonProps}
+      />;
     } else if (this.state.type === 'pdf') {
-      return (
-        <PDFViewer
-          url={this.state.url}
-          annotationFocus={this.props.annotationFocus}
-          {...commonProps}
-        />
-      );
+      return <PDFViewer
+        url={this.state.url}
+        annotationFocus={this.props.annotationFocus}
+        {...commonProps}
+      />;
     } else if (this.state.type !== '') {
-      return (
-        <TextViewer
-          type={this.state.type}
-          content={this.state.content}
-          focusLine={this.props.focusLine}
-          {...commonProps}
-        />
-      );
+      return <TextViewer
+        type={this.state.type}
+        content={this.state.content}
+        focusLine={this.props.focusLine}
+        {...commonProps}
+      />;
     } else {
       return '';
     }

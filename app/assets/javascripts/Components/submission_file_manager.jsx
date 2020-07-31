@@ -143,18 +143,19 @@ class SubmissionFileManager extends React.Component {
     let heading;
     let content = '';
     if (this.state.viewFile !== null) {
+      let withinSize = document.getElementById('content').getBoundingClientRect().width - 150 + 'px';
       heading = this.state.viewFile;
       content = (
-          <div id='codeviewer'>
-            <FileViewer
-              assignment_id={this.props.assignment_id}
-              grouping_id={this.props.grouping_id}
-              revision_id={this.props.revision_identifier}
-              selectedFile={this.state.viewFile}
-              selectedFileType={this.state.viewFileType}
-              submission_result={false}
-            />
-          </div>
+        <div id='codeviewer' style={{maxWidth: withinSize}}>
+          <FileViewer
+            assignment_id={this.props.assignment_id}
+            grouping_id={this.props.grouping_id}
+            revision_id={this.props.revision_identifier}
+            selectedFile={this.state.viewFile}
+            selectedFileType={this.state.viewFileType}
+            submission_result={false}
+          />
+        </div>
       );
     } else {
       heading = I18n.t('submissions.student.select_file');
@@ -163,9 +164,9 @@ class SubmissionFileManager extends React.Component {
     return (
       <fieldset style={{display: 'flex', flexDirection: 'column'}}>
         <legend>
-            <span>
-              {heading}
-            </span>
+          <span>
+            {heading}
+          </span>
         </legend>
         {content}
       </fieldset>
