@@ -155,7 +155,7 @@ GEM
       sprockets-rails
     js_cookie_rails (2.2.0)
       railties (>= 3.1)
-    json (2.3.0)
+    json (2.3.1)
     kgio (2.11.3)
     libv8 (7.3.492.27.1)
     loofah (2.6.0)
