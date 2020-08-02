@@ -64,7 +64,7 @@ class Mark < ApplicationRecord
     elsif markable.is_a? FlexibleCriterion
       new_mark = (mark * (curr_max_mark.to_f / prev_max_mark)).round(2)
     else # if it is CheckboxCriterion
-      new_mark = ((mark / prev_max_mark) * curr_max_mark).round(0)
+      new_mark = curr_max_mark
     end
     if update
       # Use update_columns to skip validations.
