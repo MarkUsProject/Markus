@@ -230,6 +230,7 @@ class FlexibleCriterionInput extends React.Component {
       rawText: this.props.mark === null ? '' : String(this.props.mark),
       invalid: false
     };
+    this.typing_timer = undefined;
   }
 
   listDeductions = () => {
@@ -290,6 +291,10 @@ class FlexibleCriterionInput extends React.Component {
   }
 
   handleChange = (event) => {
+    if (this.typing_timer) {
+      clearTimeout(this.typing_timer);
+    }
+
     const mark = parseFloat(event.target.value);
     if (event.target.value !== '' && isNaN(mark)) {
       this.setState({rawText: event.target.value, invalid: true});
@@ -300,9 +305,12 @@ class FlexibleCriterionInput extends React.Component {
       this.setState({rawText: event.target.value, invalid: true});
     } else {
       this.setState({rawText: event.target.value, invalid: false});
-      this.props.updateMark(
-        this.props.criterion_type, this.props.id, isNaN(mark) ? null : mark
-      );
+
+      this.typing_timer = setTimeout(() => {
+        this.props.updateMark(
+          this.props.criterion_type, this.props.id, isNaN(mark) ? null : mark
+        );
+      }, 300);
     }
   };
 

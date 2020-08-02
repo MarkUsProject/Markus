@@ -138,9 +138,9 @@ class RawSubmissionTable extends React.Component {
       Header: I18n.t('activerecord.attributes.result.total_mark'),
       accessor: 'final_grade',
       Cell: row => {
-        const value = row.original.final_grade;
+        const value = row.original.final_grade === undefined ? '-' : Math.round(row.original.final_grade * 100) / 100;
         const max_mark = Math.round(row.original.max_mark * 100) / 100;
-        return (value === undefined ? '-' : value) + ' / ' + max_mark;
+        return value + ' / ' + max_mark;
       },
       className: 'number',
       minWidth: 80,

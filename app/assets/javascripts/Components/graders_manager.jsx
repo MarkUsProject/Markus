@@ -15,7 +15,7 @@ class GradersManager extends React.Component {
       assign_graders_to_criteria: false,
       loading: true,
       tableName: 'groups_table', // The first tab
-      skip_empty_submissions: false,
+      skip_empty_submissions: true,
       anonymize_groups: false,
       hide_unassigned_criteria: false,
       sections: {}
