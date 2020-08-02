@@ -61,6 +61,34 @@ describe SubmissionFile do
     end
   end
 
+  context 'A .html Submission file' do
+    before(:each) do
+      @submission_file = SubmissionFile.create(filename: 'filename.html',
+                                               path:     'path',
+                                               submission_id: 1)
+    end
+    it 'return javascript' do
+      expect(@submission_file.get_file_type).to eq('html')
+    end
+    it 'return javascript comment' do
+      expect(@submission_file.get_comment_syntax).to eq(%w(<!-- -->))
+    end
+  end
+
+  context 'A .css Submission file' do
+    before(:each) do
+      @submission_file = SubmissionFile.create(filename: 'filename.css',
+                                               path:     'path',
+                                               submission_id: 1)
+    end
+    it 'return javascript' do
+      expect(@submission_file.get_file_type).to eq('css')
+    end
+    it 'return javascript comment' do
+      expect(@submission_file.get_comment_syntax).to eq(%w(/* */))
+    end
+  end
+
   context 'A .c Submission file' do
     before(:each) do
       @submission_file = SubmissionFile.create(filename: 'filename.c',
