@@ -1027,7 +1027,7 @@ describe Grouping do
     end
   end
 
-  describe '#past_due_date?' do
+  describe '#submitted_after_collection_date?' do
     context 'with an assignment' do
       before :each do
         @assignment = create(:assignment, due_date: Time.parse('July 22 2009 5:00PM'))
@@ -1044,7 +1044,7 @@ describe Grouping do
       context 'without sections before due date' do
         it 'returns false' do
           submit_file_at_time(@assignment, @group, 'test', 'July 20 2009 5:00PM', 'my_file', 'Hello, World!')
-          expect(@grouping.past_due_date?).to be false
+          expect(@grouping.submitted_after_collection_date?).to be false
         end
       end
 
@@ -1062,13 +1062,13 @@ describe Grouping do
         it 'returns false when before section due date' do
           SectionDueDate.create(section: @section, assignment: @assignment, due_date: Time.parse('July 24 2009 5:00PM'))
           submit_file_at_time(@assignment, @group, 'test', 'July 20 2009 5:00PM', 'my_file', 'Hello, World!')
-          expect(@grouping.past_due_date?).to be false
+          expect(@grouping.submitted_after_collection_date?).to be false
         end
 
         it 'returns false when after section duedate' do
           SectionDueDate.create(section: @section, assignment: @assignment, due_date: Time.parse('July 18 2009 5:00PM'))
           submit_file_at_time(@assignment, @group, 'test', 'July 20 2009 5:00PM', 'my_file', 'Hello, World!')
-          expect(@grouping.past_due_date?).to be true
+          expect(@grouping.submitted_after_collection_date?).to be true
         end
       end
 
@@ -1083,7 +1083,7 @@ describe Grouping do
 
         it 'returns true after due date' do
           submit_file_at_time(@assignment, @group, 'test', 'July 28 2009 5:00PM', 'my_file', 'Hello, World!')
-          expect(@grouping.past_due_date?).to be true
+          expect(@grouping.submitted_after_collection_date?).to be true
         end
       end
 
@@ -1101,13 +1101,40 @@ describe Grouping do
         it 'returns false when before section due_date' do
           SectionDueDate.create(section: @section, assignment: @assignment, due_date: Time.parse('July 30 2009 5:00PM'))
           submit_file_at_time(@assignment, @group, 'test', 'July 28 2009 1:00PM', 'my_file', 'Hello, World!')
-          expect(@grouping.past_due_date?).to be false
+          expect(@grouping.submitted_after_collection_date?).to be false
         end
 
         it 'returns true when after section due_date' do
           SectionDueDate.create(section: @section, assignment: @assignment, due_date: Time.parse('July 20 2009 5:00PM'))
           submit_file_at_time(@assignment, @group, 'test', 'July 28 2009 1:00PM', 'my_file', 'Hello, World!')
-          expect(@grouping.past_due_date?).to be true
+          expect(@grouping.submitted_after_collection_date?).to be true
+        end
+      end
+
+      context 'with late penalty' do
+        before :each do
+          @assignment.update(submission_rule: PenaltyPeriodSubmissionRule.create(
+            periods_attributes: [{
+              hours: 1,
+              deduction: 10,
+              interval: 1
+            }]
+          ))
+        end
+
+        it 'returns false when before due date' do
+          submit_file_at_time(@assignment, @group, 'test', 'July 20 2009 5:00PM', 'my_file', 'Hello, World!')
+          expect(@grouping.submitted_after_collection_date?).to be false
+        end
+
+        it 'returns false when after due date but before penalty period' do
+          submit_file_at_time(@assignment, @group, 'test', 'July 22 2009 5:30PM', 'my_file', 'Hello, World!')
+          expect(@grouping.submitted_after_collection_date?).to be false
+        end
+
+        it 'returns true when after penalty period' do
+          submit_file_at_time(@assignment, @group, 'test', 'July 22 2009 6:30PM', 'my_file', 'Hello, World!')
+          expect(@grouping.submitted_after_collection_date?).to be true
         end
       end
     end
