@@ -29,6 +29,7 @@
 - Fix annotation modal overflow issue (#4748)
 - Make skipping empty submissions the default behaviour when assigning graders (#4761)
 - Introduce typing delay for entering flexible criterion mark (#4763)
+- Fix UI overflow bug for large images in results file viewer (#4764)
 
 ## [v1.9.3]
 - Fixed inverse association bug with assignments (#4551)

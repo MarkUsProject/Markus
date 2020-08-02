@@ -40,7 +40,7 @@
       <%= render partial: 'layouts/noscript'%>
       <%= content_for?(:content) ? yield(:content) : yield %>
     </section>
-    <div id='footer_wrapper'><%= render partial: 'layouts/footer' %></div>
+    <%= render partial: 'layouts/footer' %>
   </div>
 
 </div>
