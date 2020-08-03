@@ -46,13 +46,12 @@ class SubmissionFileManager extends React.Component {
         'content-type': 'application/json'
       }
     }).then(data => data.json())
-      .then(data => this.setState({files: data}));
+      .then(data => this.setState({files: data, viewFile: null, viewFileType: null}));
   };
 
   // Update state when a new revision_identifier props is passed
   componentDidUpdate(oldProps) {
     if (oldProps.revision_identifier !== this.props.revision_identifier) {
-      this.setState({viewFile: null, viewFileType: null});
       this.fetchData();
     }
   }
@@ -88,7 +87,9 @@ class SubmissionFileManager extends React.Component {
         delete_files: fileKeys,
         grouping_id: this.props.grouping_id
       }
-    }).then(typeof this.props.onChange === 'function' ? this.props.onChange : this.fetchData)
+    }).then(typeof this.props.onChange === 'function' ? this.setState({viewFile: null, viewFileType: null}, () => {
+      this.props.onChange;
+    }) : this.fetchData)
       .then(this.endAction);
   };
 
@@ -132,14 +133,14 @@ class SubmissionFileManager extends React.Component {
     this.setState({showModal: true, uploadTarget: uploadTarget})
   };
 
-  showFile = (item) => {
+  updateViewFile = (item) => {
     this.setState({
       viewFile: item.relativeKey,
       viewFileType: item.type
     })
   };
 
-  fileViewer = () => {
+  renderFileViewer = () => {
     let heading;
     let content = '';
     if (this.state.viewFile !== null) {
@@ -153,7 +154,6 @@ class SubmissionFileManager extends React.Component {
             revision_id={this.props.revision_identifier}
             selectedFile={this.state.viewFile}
             selectedFileType={this.state.viewFileType}
-            submission_result={false}
           />
         </div>
       );
@@ -188,14 +188,14 @@ class SubmissionFileManager extends React.Component {
           downloadAllURL={this.getDownloadAllURL()}
           onActionBarAddFileClick={this.props.readOnly ? undefined : this.openUploadModal}
           disableActions={{rename: true, addFolder: !this.props.enableSubdirs, deleteFolder: !this.props.enableSubdirs}}
-          onSelectFile={this.showFile}
+          onSelectFile={this.updateViewFile}
         />
         <SubmissionFileUploadModal
           isOpen={this.state.showModal}
           onRequestClose={() => this.setState({showModal: false, uploadTarget: undefined})}
           onSubmit={this.handleCreateFiles}
         />
-        {this.fileViewer()}
+        {this.renderFileViewer()}
       </div>
     );
   }

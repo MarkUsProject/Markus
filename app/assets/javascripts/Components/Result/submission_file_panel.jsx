@@ -158,7 +158,6 @@ export class SubmissionFilePanel extends React.Component {
             focusLine={this.state.focusLine}
             annotationFocus={this.state.annotationFocus}
             released_to_students={this.props.released_to_students}
-            submission_result={true}
           />
         </div>
     ];

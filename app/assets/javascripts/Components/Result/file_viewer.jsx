@@ -110,7 +110,7 @@ export class FileViewer extends React.Component {
     });
 
     this.setState({loading: true, url: null}, () => {
-      if (this.props.submission_result) {
+      if (!!this.props.result_id) {
           fetch(Routes.get_file_assignment_submission_path(
             '',
             this.props.assignment_id,
