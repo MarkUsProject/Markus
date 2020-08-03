@@ -86,7 +86,7 @@ class Result < ApplicationRecord
         user_visibility = :ta_visible
       end
       criterion_ids = assignment.criteria.where(user_visibility => true).ids
-      marks_array = (marks.to_a.select { |m| criterion_ids.member? m.criterion_id }).map(&:mark)
+      marks_array = marks.where(criterion_id: criterion_ids).pluck(:mark)
       # TODO: sum method does not work with empty arrays or with arrays containing nil values.
       #       Consider updating/replacing gem:
       #       see: https://github.com/thirtysixthspan/descriptive_statistics/issues/44
@@ -204,8 +204,7 @@ class Result < ApplicationRecord
   def mark_hash
     Hash[
       marks.map do |mark|
-        [mark.criterion_id,
-         mark.mark]
+        [mark.criterion_id, mark.mark]
       end
     ]
   end

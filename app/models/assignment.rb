@@ -517,7 +517,6 @@ class Assignment < Assessment
         assigned_criteria = user.criterion_ta_associations
                                 .where(assessment_id: self.id)
                                 .pluck(:criterion_id)
-                                .map
       else
         assigned_criteria = nil
       end

@@ -76,9 +76,9 @@ export class MarksPanel extends React.Component {
     }
   };
 
-  destroyMark = (e, criterion_type, criterion_id) => {
+  destroyMark = (e, criterion_id) => {
     e.stopPropagation();
-    this.props.destroyMark(criterion_type, criterion_id);
+    this.props.destroyMark(criterion_id);
   };
 
   renderMarkComponent = (markData) => {
@@ -92,7 +92,7 @@ export class MarksPanel extends React.Component {
       updateMark: this.updateMark,
       destroyMark: this.destroyMark,
       expanded: this.state.expanded.has(key),
-      oldMark: this.props.old_marks[`${markData.criterion_type}-${markData.id}`],
+      oldMark: this.props.old_marks[`${markData.id}`],
       toggleExpanded: () => this.toggleExpanded(key),
       annotations: this.props.annotations,
       revertToAutomaticDeductions: this.props.revertToAutomaticDeductions,
@@ -170,7 +170,7 @@ class CheckboxCriterionInput extends React.Component {
              !this.props.unassigned &&
              this.props.mark !== null &&
              <a href="#"
-                onClick={e => this.props.destroyMark(e, this.props.criterion_type, this.props.id)}
+                onClick={e => this.props.destroyMark(e, this.props.id)}
                 style={{float: 'right'}}
              >
                {I18n.t('helpers.submit.delete', {model: I18n.t('activerecord.models.mark.one')})}
@@ -280,7 +280,7 @@ class FlexibleCriterionInput extends React.Component {
                 </a>);
       } else if (this.props.mark !== null && this.props["marks.override"]) {
         return (<a href="#"
-                   onClick={e => this.props.destroyMark(e, this.props.criterion_type, this.props.id)}
+                   onClick={e => this.props.destroyMark(e, this.props.id)}
                    style={{float: 'right'}}>
                   {I18n.t('helpers.submit.delete', {model: I18n.t('activerecord.models.mark.one')})}
                 </a>);
@@ -435,7 +435,7 @@ class RubricCriterionInput extends React.Component {
              !this.props.unassigned &&
              this.props.mark !== null &&
              <a href="#"
-                onClick={e => this.props.destroyMark(e, this.props.criterion_type, this.props.id)}
+                onClick={e => this.props.destroyMark(e, this.props.id)}
                 style={{float: 'right'}}
              >
                {I18n.t('helpers.submit.delete', {model: I18n.t('activerecord.models.mark.one')})}

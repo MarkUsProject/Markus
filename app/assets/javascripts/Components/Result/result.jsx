@@ -103,7 +103,7 @@ class Result extends React.Component {
       criterionSummaryData.push({
         criterion: data.name,
         mark: data.mark,
-        old_mark: result_data.old_marks[`${data.criterion_type}-${data.id}`],
+        old_mark: result_data.old_marks[`${data.id}`],
         max_mark: data.max_mark
       });
       subtotal += data.mark || 0;
@@ -217,7 +217,7 @@ class Result extends React.Component {
 
     if (!!criterion_id) {
       let newMarks = [...this.state.marks];
-      let i = newMarks.findIndex(m => m.id === criterion_id && m.criterion_type === "FlexibleCriterion");
+      let i = newMarks.findIndex(m => m.id === criterion_id);
       if (i >= 0) {
         newMarks[i] = {...newMarks[i]};
         newMarks[i].mark = mark_value;
@@ -364,7 +364,7 @@ class Result extends React.Component {
     });
   };
 
-  destroyMark = (criterion_type, criterion_id) => {
+  destroyMark = (criterion_id) => {
     this.updateMark(criterion_id, null);
   };
 
@@ -377,7 +377,7 @@ class Result extends React.Component {
       data: {criterion_id: criterion_id}
     }).then(data => {
       let marks = this.state.marks.map(markData => {
-        if (markData.id === criterion_id && markData.criterion_type === 'FlexibleCriterion') {
+        if (markData.id === criterion_id) {
           let newMark = {...markData};
           newMark.mark = data.mark;
           newMark['marks.mark'] = data.mark;
