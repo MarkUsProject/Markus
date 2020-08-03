@@ -152,20 +152,20 @@ describe SubmissionFile do
                                         path:     'path',
                                         submission_id: 2)
       @gif_file = SubmissionFile.create(filename: 'filename.gif',
-                                       path:     'path',
-                                       submission_id: 3)
+                                        path:     'path',
+                                        submission_id: 3)
       @png_file = SubmissionFile.create(filename: 'filename.png',
-                                       path:     'path',
-                                       submission_id: 4)
+                                        path:     'path',
+                                        submission_id: 4)
       @heic_file = SubmissionFile.create(filename: 'filename.heic',
-                                        path:     'path',
-                                        submission_id: 5)
+                                         path:     'path',
+                                         submission_id: 5)
       @heif_file = SubmissionFile.create(filename: 'filename.heif',
-                                        path:     'path',
-                                        submission_id: 6)
+                                         path:     'path',
+                                         submission_id: 6)
       @unsupported_file = SubmissionFile.create(filename: 'filename.bmp',
-                                       path:     'path',
-                                       submission_id: 7)
+                                                path:     'path',
+                                                submission_id: 7)
     end
     it 'return true' do
       expect(@jpeg_file.is_supported_image?).to be true
