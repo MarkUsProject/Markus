@@ -14,7 +14,8 @@ class SubmissionFileManager extends React.Component {
       showModal: false,
       uploadTarget: undefined,
       viewFile: null,
-      viewFileType: null
+      viewFileType: null,
+      viewFileURL: null
     };
   }
 
@@ -46,7 +47,7 @@ class SubmissionFileManager extends React.Component {
         'content-type': 'application/json'
       }
     }).then(data => data.json())
-      .then(data => this.setState({files: data, viewFile: null, viewFileType: null}));
+      .then(data => this.setState({files: data, viewFile: null, viewFileType: null, viewFileURL: null}));
   };
 
   // Update state when a new revision_identifier props is passed
@@ -76,7 +77,6 @@ class SubmissionFileManager extends React.Component {
   };
 
   handleDeleteFile = (fileKeys) => {
-    this.setState({viewFile: null, viewFileType: null});
     if (!this.state.files.some(f => fileKeys.includes(f.key))) {
       return;
     }
@@ -87,9 +87,9 @@ class SubmissionFileManager extends React.Component {
         delete_files: fileKeys,
         grouping_id: this.props.grouping_id
       }
-    }).then(typeof this.props.onChange === 'function' ? this.setState({viewFile: null, viewFileType: null}, () => {
-      this.props.onChange;
-    }) : this.fetchData)
+    }).then(typeof this.props.onChange === 'function' ?
+      this.setState({viewFile: null, viewFileType: null, viewFileURL: null}, () => {this.props.onChange;}) :
+      this.fetchData)
       .then(this.endAction);
   };
 
@@ -136,7 +136,8 @@ class SubmissionFileManager extends React.Component {
   updateViewFile = (item) => {
     this.setState({
       viewFile: item.relativeKey,
-      viewFileType: item.type
+      viewFileType: item.type,
+      viewFileURL: item.url
     })
   };
 
@@ -154,6 +155,7 @@ class SubmissionFileManager extends React.Component {
             revision_id={this.props.revision_identifier}
             selectedFile={this.state.viewFile}
             selectedFileType={this.state.viewFileType}
+            selectedFileURL={this.state.viewFileURL}
           />
         </div>
       );

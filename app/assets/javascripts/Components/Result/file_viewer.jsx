@@ -44,34 +44,10 @@ export class FileViewer extends React.Component {
     }
   }
 
-  getFilePathAndName() {
-    let directory = this.props.selectedFile.lastIndexOf('/');
-    if (directory > 0) {
-      return {
-        path: this.props.selectedFile.substring(0, directory),
-        name: this.props.selectedFile.substring(directory + 1)
-      };
-    } else {
-      return {
-        path: '',
-        name: this.props.selectedFile
-      };
-    }
-  }
-
   setFileUrl = (submission_file_id) => {
     let url;
     if (!this.props.result_id) {
-      let fileInfo = this.getFilePathAndName();
-      url = Routes.download_assignment_submissions_path(
-        {
-          file_name: fileInfo.name,
-          path: fileInfo.path,
-          revision_identifier: this.props.revision_id,
-          grouping_id: this.props.grouping_id,
-          assignment_id: this.props.assignment_id
-        }
-      );
+      url = this.props.selectedFileURL
     } else {
       url = Routes.download_assignment_submission_result_path(
         '',
@@ -130,17 +106,9 @@ export class FileViewer extends React.Component {
         if (this.props.selectedFileType === 'image' || this.props.selectedFileType === 'pdf') {
           this.setState({type: this.props.selectedFileType}, () => {this.setFileUrl()});
         } else {
-          let fileInfo = this.getFilePathAndName();
           $.ajax({
-            url: Routes.download_assignment_submissions_path(this.props.assignment_id),
-            method: 'GET',
-            data: {
-              file_name: fileInfo.name,
-              path: fileInfo.path,
-              revision_identifier: this.props.revision_id,
-              grouping_id: this.props.grouping_id,
-              id: this.props.assignment_id
-            }
+            url: this.props.selectedFileURL,
+            method: 'GET'
           }).then(res => {
             this.setState({content: res.replace(/\r?\n/gm, '\n'), type: this.props.selectedFileType, loading: false});
           });
