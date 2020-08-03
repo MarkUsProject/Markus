@@ -314,7 +314,7 @@ shared_examples 'a criterion' do
     end
   end
 
-  context 'when deleting a criteron' do
+  context 'when deleting a criterion' do
     let(:assignment) { create :assignment }
     let(:grouping) { create :grouping_with_inviter, assignment: assignment }
     let(:submission) { create :version_used_submission, grouping: grouping }
