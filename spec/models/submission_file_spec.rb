@@ -67,10 +67,10 @@ describe SubmissionFile do
                                                path:     'path',
                                                submission_id: 1)
     end
-    it 'return javascript' do
-      expect(@submission_file.get_file_type).to eq('html')
+    it 'return html' do
+      expect(SubmissionFile.get_file_type(@submission_file.filename)).to eq('html')
     end
-    it 'return javascript comment' do
+    it 'return html comment' do
       expect(@submission_file.get_comment_syntax).to eq(%w(<!-- -->))
     end
   end
@@ -81,10 +81,10 @@ describe SubmissionFile do
                                                path:     'path',
                                                submission_id: 1)
     end
-    it 'return javascript' do
-      expect(@submission_file.get_file_type).to eq('css')
+    it 'return css' do
+      expect(SubmissionFile.get_file_type(@submission_file.filename)).to eq('css')
     end
-    it 'return javascript comment' do
+    it 'return css comment' do
       expect(@submission_file.get_comment_syntax).to eq(%w(/* */))
     end
   end
@@ -157,9 +157,15 @@ describe SubmissionFile do
       @png_file = SubmissionFile.create(filename: 'filename.png',
                                        path:     'path',
                                        submission_id: 4)
+      @heic_file = SubmissionFile.create(filename: 'filename.heic',
+                                        path:     'path',
+                                        submission_id: 5)
+      @heif_file = SubmissionFile.create(filename: 'filename.heif',
+                                        path:     'path',
+                                        submission_id: 6)
       @unsupported_file = SubmissionFile.create(filename: 'filename.bmp',
                                        path:     'path',
-                                       submission_id: 5)
+                                       submission_id: 7)
     end
     it 'return true' do
       expect(@jpeg_file.is_supported_image?).to be true
@@ -169,6 +175,14 @@ describe SubmissionFile do
     end
     it 'return false' do
       expect(@unsupported_file.is_supported_image?).to be false
+    end
+    it 'returns \'image\' when checking file type' do
+      expect(SubmissionFile.get_file_type(@jpeg_file.filename)).to eq 'image'
+      expect(SubmissionFile.get_file_type(@jpg_file.filename)).to eq 'image'
+      expect(SubmissionFile.get_file_type(@gif_file.filename)).to eq 'image'
+      expect(SubmissionFile.get_file_type(@png_file.filename)).to eq 'image'
+      expect(SubmissionFile.get_file_type(@heic_file.filename)).to eq 'image'
+      expect(SubmissionFile.get_file_type(@heif_file.filename)).to eq 'image'
     end
   end
 
@@ -221,7 +235,7 @@ describe SubmissionFile do
 
     context 'from a pdf file' do
       before(:each) do
-        @submission_file = SubmissionFile.create(filename: 'filename.jpeg',
+        @submission_file = SubmissionFile.create(filename: 'filename.pdf',
                                                 path: 'path')
       end
       context 'with no annotations' do
@@ -251,6 +265,11 @@ describe SubmissionFile do
                      y_range: {start: 0, end: 10}},
                     {id: 2, annot_id: 4, x_range: {start: 57, end: 73},
                      y_range: {start: 2, end: 100}}])
+        end
+      end
+      context 'when checking the file type' do
+        it 'returns \'pdf\'' do
+          expect(SubmissionFile.get_file_type(@submission_file.filename)).to eq 'pdf'
         end
       end
     end
