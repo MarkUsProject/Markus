@@ -318,19 +318,23 @@ shared_examples 'a criterion' do
     let(:assignment) { create :assignment }
     let(:grouping) { create :grouping_with_inviter, assignment: assignment }
     let(:submission) { create :version_used_submission, grouping: grouping }
-    let(:result) { create :incomplete_result }
+    let(:result) { create :incomplete_result, submission: submission }
     let(:mark) do
       mark = result.marks.first
       mark.update!(mark: 1)
       mark.reload
     end
+    let(:other_mark) do
+      other_mark = result.marks.second
+      other_mark.update!(mark: 1)
+      other_mark.reload
+    end
 
     it 'result total marks get updated to reflect the loss of the marks' do
-      # not working
       create(criterion_factory_name, assignment: assignment, max_mark: 10)
       criterion_to_remove = create(criterion_factory_name, assignment: assignment, max_mark: 10)
       removed_value = mark.mark
-      previous_total = result.total_mark
+      previous_total = mark.mark + other_mark.mark
       criterion_to_remove.destroy
       expect(result.reload.total_mark).to eq previous_total - removed_value
     end
