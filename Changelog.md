@@ -30,6 +30,7 @@
 - Make skipping empty submissions the default behaviour when assigning graders (#4761)
 - Introduce typing delay for entering flexible criterion mark (#4763)
 - Fix UI overflow bug for large images in results file viewer (#4764)
+- Add disabled delete button to submissions file manager when files unselected (#4765)
 - Support syntax highlighting for html and css files (#4781)
 
 ## [v1.9.3]
