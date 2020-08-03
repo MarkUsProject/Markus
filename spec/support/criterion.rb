@@ -305,7 +305,11 @@ shared_examples 'a criterion' do
         criterion.max_mark *= 10
         criterion.save!
         mark.reload
-        expect(mark.mark).to eq prev_mark * 10
+        if criterion.is_a? CheckboxCriterion
+          expect(mark.mark).to eq criterion.max_mark
+        else
+          expect(mark.mark).to eq prev_mark * 10
+        end
       end
     end
   end
