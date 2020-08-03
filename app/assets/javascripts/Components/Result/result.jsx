@@ -217,7 +217,7 @@ class Result extends React.Component {
 
     if (!!criterion_id) {
       let newMarks = [...this.state.marks];
-      let i = newMarks.findIndex(m => m.id === criterion_id && m.criterion_type === "FlexibleCriterion");
+      let i = newMarks.findIndex(m => m.id === criterion_id);
       if (i >= 0) {
         newMarks[i] = {...newMarks[i]};
         newMarks[i].mark = mark_value;
@@ -377,7 +377,7 @@ class Result extends React.Component {
       data: {criterion_id: criterion_id}
     }).then(data => {
       let marks = this.state.marks.map(markData => {
-        if (markData.id === criterion_id && markData.criterion_type === 'FlexibleCriterion') {
+        if (markData.id === criterion_id) {
           let newMark = {...markData};
           newMark.mark = data.mark;
           newMark['marks.mark'] = data.mark;
