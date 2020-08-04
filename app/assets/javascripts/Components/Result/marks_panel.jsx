@@ -33,7 +33,7 @@ export class MarksPanel extends React.Component {
       // Expand by default if a mark has not yet been given, and the current user can give the mark.
       let expanded = new Set();
       this.props.marks.forEach(data => {
-        const key = `${data.criterion_type}-${data.id}`;
+        const key = `${data.id}`;
         if ((data.mark === null || data.mark === undefined) &&
             (this.props.assigned_criteria === null || this.props.assigned_criteria.includes(key))) {
           expanded.add(key);
@@ -47,7 +47,7 @@ export class MarksPanel extends React.Component {
     let expanded = new Set();
     this.props.marks.forEach(markData => {
       if (!onlyUnmarked || markData.mark === null || markData.mark === undefined) {
-        expanded.add(`${markData.criterion_type}-${markData.id}`);
+        expanded.add(`${markData.id}`);
       }
     });
     this.setState({ expanded });
@@ -66,11 +66,11 @@ export class MarksPanel extends React.Component {
     this.setState({ expanded: this.state.expanded })
   };
 
-  updateMark = (criterion_type, criterion_id, mark) => {
-    let result = this.props.updateMark(criterion_type, criterion_id, mark);
+  updateMark = (criterion_id, mark) => {
+    let result = this.props.updateMark(criterion_id, mark);
     if (result !== undefined) {
       result.then(() => {
-        this.state.expanded.delete(`${criterion_type}-${criterion_id}`);
+        this.state.expanded.delete(`${criterion_id}`);
         this.setState({ expanded: this.state.expanded });
       })
     }
@@ -82,7 +82,7 @@ export class MarksPanel extends React.Component {
   };
 
   renderMarkComponent = (markData) => {
-    const key = `${markData.criterion_type}-${markData.id}`;
+    const key = `${markData.id}`;
     const unassigned = this.props.assigned_criteria !== null && !this.props.assigned_criteria.includes(key);
 
     const props = {
@@ -146,9 +146,9 @@ class CheckboxCriterionInput extends React.Component {
 
   handleChange = (event) => {
     if (event.target.value === 'yes') {
-      this.props.updateMark(this.props.criterion_type, this.props.id, this.props.max_mark);
+      this.props.updateMark(this.props.id, this.props.max_mark);
     } else {
-      this.props.updateMark(this.props.criterion_type, this.props.id, 0);
+      this.props.updateMark(this.props.id, 0);
     }
   };
 
@@ -300,9 +300,7 @@ class FlexibleCriterionInput extends React.Component {
       this.setState({rawText: event.target.value, invalid: true});
     } else {
       this.setState({rawText: event.target.value, invalid: false});
-      this.props.updateMark(
-        this.props.criterion_type, this.props.id, isNaN(mark) ? null : mark
-      );
+      this.props.updateMark(this.props.id, isNaN(mark) ? null : mark);
     }
   };
 
@@ -376,9 +374,7 @@ class RubricCriterionInput extends React.Component {
 
   // The parameter `level` is the level object selected
   handleChange = (level) => {
-    this.props.updateMark(
-      this.props.criterion_type, this.props.id, level.mark
-    );
+    this.props.updateMark(this.props.id, level.mark);
   };
 
   // The parameter `level` is the level object selected
