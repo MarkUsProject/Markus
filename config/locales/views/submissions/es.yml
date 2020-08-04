@@ -108,7 +108,7 @@ es:
                                  seguro/a de querer proceder?"
     release_marks: "Publicar Notas"
     repo_list: "Lista de Repositorios"
-    repo_checkout_file: "Nueva Copia de Archivo"
+    repo_checkout_file: "Nueva Copia de Archivo (%{type})"
     run_tests: "Lanzar pruebas"
     status: "Estado"
     successfully_changed: "%{changed} resultados han sido actualizados exitosamente"

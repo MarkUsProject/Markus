@@ -59,7 +59,7 @@ fr:
     no_files_available: "Aucun fichier disponible"
     release_marks: "Montrer les notes"
     repo_list: "Liste des dépôts"
-    repo_checkout_file: "Commandes pour extraire les projets"
+    repo_checkout_file: "Commandes pour extraire les projets (%{type})"
     status: "Statut"
     successfully_changed: "Les %{changed} résultats ont été mis à jour."
     unrelease_marks: "Cacher les notes"

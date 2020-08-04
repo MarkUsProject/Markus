@@ -39,9 +39,11 @@
   <% if @current_user.admin? %>
     <% @heading_buttons += [
       { link_text: t('submissions.repo_list'),
-        link_path: download_repo_list_assignment_submissions_path(@assignment) },
-      { link_text: t('submissions.repo_checkout_file'),
-        link_path: download_repo_checkout_commands_assignment_submissions_path(@assignment) }
+        link_path: download_repo_list_assignment_submissions_path(@assignment)},
+      { link_text: t('submissions.repo_checkout_file', type: 'HTTPS'),
+        link_path: download_repo_checkout_commands_assignment_submissions_path(@assignment, url_type: :https)},
+      { link_text: t('submissions.repo_checkout_file', type: 'SSH'),
+        link_path: download_repo_checkout_commands_assignment_submissions_path(@assignment, url_type: :ssh)}
     ] %>
   <% end %>
 <% end %>

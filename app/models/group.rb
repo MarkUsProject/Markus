@@ -39,6 +39,10 @@ class Group < ApplicationRecord
     Rails.configuration.x.repository.url + '/' + repository_name
   end
 
+  def repository_ssh_access_url
+    "#{Rails.configuration.x.repository.ssh_url}/#{repository_name}.git"
+  end
+
   def build_repository
     # create repositories if and only if we are admin
     return true unless Rails.configuration.x.repository.is_repository_admin

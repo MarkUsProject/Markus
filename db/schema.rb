@@ -312,8 +312,7 @@ ActiveRecord::Schema.define(version: 2020_06_08_190551) do
 
   create_table "key_pairs", id: :serial, force: :cascade do |t|
     t.integer "user_id"
-    t.string "user_name"
-    t.string "file_name"
+    t.string "public_key"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -620,6 +619,7 @@ ActiveRecord::Schema.define(version: 2020_06_08_190551) do
   add_foreign_key "feedback_files", "submissions"
   add_foreign_key "groupings", "assessments", name: "fk_groupings_assignments"
   add_foreign_key "groupings", "groups", name: "fk_groupings_groups"
+  add_foreign_key "key_pairs", "users"
   add_foreign_key "levels", "rubric_criteria"
   add_foreign_key "marking_weights", "assessments"
   add_foreign_key "marks", "results", name: "fk_marks_results", on_delete: :cascade

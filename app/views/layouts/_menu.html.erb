@@ -77,8 +77,7 @@
     </li>
   <% end %>
 
-  <%# TODO: Enable key pairs when functionality is supported. %>
-  <% if false && Rails.configuration.x.repository.type == 'git' %>
+  <% if allowed_to?(:manage?, KeyPair) %>
       <li <% if controller.controller_name == 'key_pairs' %>
           class='active'
           <% end %>>
