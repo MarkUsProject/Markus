@@ -4,15 +4,14 @@ class CourseSummaryPolicy < ApplicationPolicy
 
   # Only admin and authorized grader can view course summary.
   def view_course_summary?
-    user.admin? || (user.ta? &&
-        (allowed_to?(:download_csv_grades_report?) || allowed_to?(:marking_schemes?))) || user.student?
+    user.admin? || (user.ta? && allowed_to?(:download_csv_grades_report?)) || user.student?
   end
 
   def download_csv_grades_report?
-    user.admin? || (user.ta? && allowed_to?(:download_grades_report?, with: GraderPermissionPolicy))
+    user.admin? || (user.ta? && allowed_to?(:manage_course_grades?, with: GraderPermissionPolicy))
   end
 
   def marking_schemes?
-    user.admin? || (user.ta? && allowed_to?(:manage_marking_schemes?, with: GraderPermissionPolicy))
+    check?(:download_csv_grades_report?)
   end
 end

@@ -4,7 +4,7 @@ class AnnotationCategoryPolicy < ApplicationPolicy
 
   def manage?
     user.admin? ||
-        (user.ta? && check?(:grader_allowed?) && allowed_to?(:manage_assignments?, with: GraderPermissionPolicy))
+        (user.ta? && check?(:grader_allowed?) && allowed_to?(:manage_assessments?, with: GraderPermissionPolicy))
   end
 
   def grader_allowed?

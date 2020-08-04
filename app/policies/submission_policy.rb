@@ -30,7 +30,7 @@ class SubmissionPolicy < ApplicationPolicy
   end
 
   def collect?
-    user.admin? || (user.ta? && allowed_to?(:collect_all_submissions?, with: GraderPermissionPolicy))
+    user.admin? || (user.ta? && allowed_to?(:manage_submissions?, with: GraderPermissionPolicy))
   end
 
   def allowed_to_run_tests?
