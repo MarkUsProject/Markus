@@ -366,7 +366,12 @@ class Assignment < Assessment
       if data['extensions.time_delta'].nil?
         extension_data = {}
       else
-        extension_data = Extension.to_parts ActiveSupport::Duration.parse(data['extensions.time_delta'])
+        duration = ActiveSupport::Duration.parse(data['extensions.time_delta'])
+        if assignment.is_timed
+          extension_data = AssignmentProperties.duration_parts duration
+        else
+          extension_data = Extension.to_parts duration
+        end
       end
       extension_data[:note] = data['extensions.note'] || ''
       extension_data[:apply_penalty] = data['extensions.apply_penalty'] || false
