@@ -2,6 +2,7 @@
 # criterion.
 class Criterion < ApplicationRecord
   after_update :scale_marks
+  before_destroy :update_results
 
   validates_presence_of :name
   validates_uniqueness_of :name, scope: :assessment_id
@@ -182,6 +183,17 @@ class Criterion < ApplicationRecord
     else
       errors.add(:base, I18n.t('activerecord.errors.models.criterion.visibility_error'))
       false
+    end
+  end
+
+  def update_results
+    self.marks.includes(:result).each do |m|
+      next if m.mark.nil?
+      if m.result.marks.count == 1
+        m.result.update(marking_state: Result::MARKING_STATES[:incomplete], total_mark: nil)
+      else
+        m.result.update(total_mark: m.result.total_mark - m.mark >= 0 ? m.result.total_mark - m.mark : 0)
+      end
     end
   end
 end

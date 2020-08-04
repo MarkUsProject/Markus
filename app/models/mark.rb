@@ -7,7 +7,7 @@ class Mark < ApplicationRecord
   after_update :update_deduction, if: lambda { |m|
     m.markable_type == 'FlexibleCriterion' && m.previous_changes.key?('override') && !m.override
   }
-  after_destroy ->(m) { m.result.update_total_mark }
+
   belongs_to :result
   validates_presence_of :markable_type
 
