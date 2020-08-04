@@ -330,11 +330,21 @@ shared_examples 'a criterion' do
       other_mark.reload
     end
 
-    it 'result total marks get updated to reflect the loss of the marks' do
+    it 'result total marks get updated to reflect the loss of the marks when marking state incomplete' do
       create(criterion_factory_name, assignment: assignment, max_mark: 10)
       criterion_to_remove = create(criterion_factory_name, assignment: assignment, max_mark: 10)
       removed_value = mark.mark
       previous_total = mark.mark + other_mark.mark
+      criterion_to_remove.destroy
+      expect(result.reload.total_mark).to eq previous_total - removed_value
+    end
+
+    it 'result total marks get updated to reflect the loss of the marks when marking state complete' do
+      create(criterion_factory_name, assignment: assignment, max_mark: 10)
+      criterion_to_remove = create(criterion_factory_name, assignment: assignment, max_mark: 10)
+      removed_value = mark.mark
+      previous_total = mark.mark + other_mark.mark
+      result.update(marking_state: Result::MARKING_STATES[:complete])
       criterion_to_remove.destroy
       expect(result.reload.total_mark).to eq previous_total - removed_value
     end
