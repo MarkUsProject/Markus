@@ -254,17 +254,11 @@ ActiveRecord::Schema.define(version: 2020_08_11_194846) do
   create_table "grader_permissions", force: :cascade do |t|
     t.integer "user_id"
     t.boolean "delete_grace_period_deduction", default: false
-    t.boolean "create_notes", default: false
     t.boolean "create_delete_annotations", default: false
-    t.boolean "collect_submissions", default: false
-    t.boolean "release_unrelease_grades", default: false
-    t.boolean "manage_grade_entry_forms", default: false
-    t.boolean "manage_assignments", default: false
-    t.boolean "manage_reviewers", default: false
-    t.boolean "manage_exam_templates", default: false
+    t.boolean "manage_submissions", default: false
+    t.boolean "manage_assessments", default: false
     t.boolean "run_tests", default: false
-    t.boolean "manage_marking_schemes", default: false
-    t.boolean "download_grades_report", default: false
+    t.boolean "manage_course_grades", default: false
   end
 
   create_table "grades", id: :serial, force: :cascade do |t|
