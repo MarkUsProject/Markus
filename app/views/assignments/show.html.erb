@@ -141,7 +141,7 @@
           <% end %>
         </ul>
 
-        <% # Display the URL of thires group's repository if applicable
+        <% # Display the URL of this group's repository if applicable
            if @assignment.vcs_submit && (!@assignment.is_timed || !@grouping.start_time.nil?) %>
           <h3><%= t('groups.student_interface.url_group_repository') %></h3>
           <div class='sub_block'>
