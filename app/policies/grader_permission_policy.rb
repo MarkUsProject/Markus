@@ -4,40 +4,20 @@ class GraderPermissionPolicy < ApplicationPolicy
     user.grader_permission.create_delete_annotations
   end
 
-  def collect_all_submissions?
-    user.grader_permission.collect_submissions
+  def manage_submissions?
+    user.grader_permission.manage_submissions
   end
 
-  def manage_assignments?
-    user.grader_permission.manage_assignments
-  end
-
-  def manage_exam_templates?
-    user.grader_permission.manage_exam_templates
-  end
-
-  def release_unrelease_grades?
-    user.grader_permission.release_unrelease_grades
-  end
-
-  def create_notes?
-    user.grader_permission.create_notes
-  end
-
-  def manage_reviewers?
-    user.grader_permission.manage_reviewers
+  def manage_assessments?
+    user.grader_permission.manage_assessments
   end
 
   def delete_grace_credit_deduction?
     user.grader_permission.delete_grace_period_deduction
   end
 
-  def download_grades_report?
-    user.grader_permission.download_grades_report
-  end
-
-  def manage_marking_schemes?
-    user.grader_permission.manage_marking_schemes
+  def manage_course_grades?
+    user.grader_permission.manage_course_grades
   end
 
   def grader_run_tests?
