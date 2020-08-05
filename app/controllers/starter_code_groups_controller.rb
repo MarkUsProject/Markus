@@ -5,7 +5,8 @@ class StarterCodeGroupsController < ApplicationController
   respond_to :js
 
   def create
-    StarterCodeGroup.create(create_params)
+    assignment = Assignment.find_by(id: params[:assignment_id])
+    assignment.starter_code_groups.create(update_params)
   end
 
   def destroy
@@ -100,10 +101,6 @@ class StarterCodeGroupsController < ApplicationController
   end
 
   private
-
-  def create_params
-    params.permit(:name, :assessment_id)
-  end
 
   def update_params
     params.permit(:name)

@@ -44,7 +44,6 @@ class StarterCodeManager extends React.Component {
     $.post({
       url: Routes.assignment_starter_code_groups_path(this.props.assignment_id),
       data: {
-        assessment_id: this.props.assignment_id,
         name: I18n.t('assignments.starter_code.new_starter_code_group')
       }
     }).then(this.fetchData)

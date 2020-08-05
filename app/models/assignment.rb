@@ -1124,7 +1124,8 @@ class Assignment < Assessment
            .pluck('groupings.id',
                   'groups.group_name',
                   'submissions.revision_timestamp',
-                  'submissions.is_empty')
+                  'submissions.is_empty',
+                  'groupings.start_time')
 
     tag_data = groupings
                .joins(:tags)
@@ -1192,7 +1193,7 @@ class Assignment < Assessment
     data_collections = [tag_data, result_data, member_data, section_data, collection_dates]
 
     # This is the submission data that's actually returned
-    data.map do |grouping_id, group_name, revision_timestamp, is_empty|
+    data.map do |grouping_id, group_name, revision_timestamp, is_empty, start_time|
       tag_info, result_info, member_info, section_info, collection_date = data_collections.map { |c| c[grouping_id] }
       has_remark = result_info&.count&.> 1
       result_info = result_info&.first || {}
@@ -1208,9 +1209,11 @@ class Assignment < Assessment
                                      collection_date)
       }
 
+      base[:start_time] = I18n.l(start_time, format: :shorter) if self.is_timed && !start_time.nil?
+
       unless is_empty || revision_timestamp.nil?
         # TODO: for some reason, this is not automatically converted to our timezone by the query
-        base[:submission_time] = I18n.l(revision_timestamp.in_time_zone)
+        base[:submission_time] = I18n.l(revision_timestamp.in_time_zone, format: :shorter)
       end
 
       if result_info['results.id'].present?

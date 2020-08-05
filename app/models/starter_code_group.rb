@@ -90,6 +90,6 @@ class StarterCodeGroup < ApplicationRecord
   end
 
   def update_timestamp
-    assignment.assignment_properties.update(starter_code_updated_at: Time.zone.now)
+    assignment.assignment_properties.update(starter_code_updated_at: Time.current)
   end
 end

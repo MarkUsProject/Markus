@@ -58,7 +58,7 @@
                         onchange: 'set_onbeforeunload(true);' %>
         <% if @assignment.is_timed %>
           <%= ap_f.label :start_time,
-                         I18n.t('activerecord.attributes.assignment.start_time'),
+                         I18n.t('assignments.timed.start_time'),
                       class: 'required' %>
           <%= ap_f.text_field :start_time,
                               onchange: 'set_onbeforeunload(true);',
@@ -101,7 +101,7 @@
                 <tr>
                   <th><%= Section.model_name.human %></th>
                   <% if @assignment.is_timed %>
-                    <th><%= Assignment.human_attribute_name(:start_time) %></th>
+                    <th><%= I18n.t('assignments.timed.start_time')  %></th>
                   <% end %>
                   <th><%= @assignment.is_timed ?
                             I18n.t('assignments.timed.end_time') :

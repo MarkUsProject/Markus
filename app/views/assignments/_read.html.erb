@@ -146,7 +146,7 @@
       <% end %>
     <% end %>
 <% end %>
-<% unless @assignment.starter_code_updated_at.nil? %>
+<% unless @assignment.starter_code_updated_at.nil? || @grouping.nil? %>
   <% if !@assignment.is_timed || !@grouping.start_time.nil? %>
     <h3><%= I18n.t('assignments.starter_code.title') %></h3>
     <p><%= I18n.t('assignments.starter_code.provided') %></p>

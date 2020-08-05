@@ -59,7 +59,7 @@ class AssignmentsController < ApplicationController
     unless @grouping.nil?
       flash_message(:warning, I18n.t('assignments.starter_code.changed_warning')) if @grouping.starter_code_changed
       if @assignment.is_timed && !@grouping.start_time.nil? && !@grouping.past_collection_date?
-        flash_message(:note, I18n.t('assignments.timed.started_message'))
+        flash_message(:note, I18n.t('assignments.timed.started_message_html'))
         flash_message(:note, I18n.t('assignments.timed.starter_code_prompt'))
       end
       set_repo_vars(@assignment, @grouping)
@@ -394,6 +394,8 @@ class AssignmentsController < ApplicationController
       render 'shared/http_status',
              locals: { code: '404', message: HttpStatusHelper::ERROR_CODE['message']['404'] },
              status: 404
+    else
+      render layout: 'assignment_content'
     end
   end
 

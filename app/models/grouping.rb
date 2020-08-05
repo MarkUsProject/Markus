@@ -442,7 +442,7 @@ class Grouping < ApplicationRecord
     when 'simple'
       assignment.default_starter_code_group&.starter_code_entries || []
     when 'sections'
-      return inviter.section&.starter_code_group_for(assignment)&.starter_code_entries unless inviter.nil?
+      return inviter.section&.starter_code_group_for(assignment)&.starter_code_entries || [] unless inviter.nil?
       assignment.default_starter_code_group&.starter_code_entries || []
     when 'shuffle'
       assignment.starter_code_groups.includes(:starter_code_entries).map do |g|
