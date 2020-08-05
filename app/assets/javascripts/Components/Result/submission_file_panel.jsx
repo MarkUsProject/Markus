@@ -210,10 +210,8 @@ export class FileSelector extends React.Component {
         {hash['files'].map(f => {
           const [name, id] = f;
           const fullPath = hash.path.concat([name]).join('/');
-          return (<li className='file_item' key={fullPath}>
-            <a
-              key={`${fullPath}-a`}
-              onClick={(e) => this.selectFile(e, fullPath, id)}>
+          return (<li className='file_item' key={fullPath} onClick={(e) => this.selectFile(e, fullPath, id)}>
+            <a key={`${fullPath}-a`}>
               {f[0]}
             </a>
           </li>)
