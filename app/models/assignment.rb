@@ -103,7 +103,7 @@ class Assignment < Assessment
   validates_presence_of :assignment_stat
 
   BLANK_MARK = ''
-  STARTER_FILE_REPO_NAME = "starter-files"
+  STARTER_FILE_REPO_NAME = 'starter-files'.freeze
 
   # Copy of API::AssignmentController without selected attributes and order changed
   # to put first the 4 required fields
