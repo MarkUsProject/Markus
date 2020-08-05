@@ -1,8 +1,8 @@
 <%= content_for :head do %>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      makeStarterCodeManager(
-        document.getElementById('starter_code_manager'),
+      makeStarterFileManager(
+        document.getElementById('starter_file_manager'),
         {
           assignment_id: <%= @assignment.id %>
         }
@@ -15,4 +15,4 @@
              handlers: [:erb] %>
 <% end %>
 
-<div id='starter_code_manager'></div>
+<div id='starter_file_manager'></div>

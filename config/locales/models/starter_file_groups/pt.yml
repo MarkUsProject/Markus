@@ -1,6 +1,6 @@
-es:
+pt:
   activerecord:
     models:
-      starter_code_group:
+      starter_file_group:
         one: "UPDATE ME"
         other: "UPDATE ME"

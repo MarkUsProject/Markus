@@ -1,13 +1,13 @@
-# Class describing a top level file or directory in a starter code group
-class StarterCodeEntry < ApplicationRecord
-  belongs_to :starter_code_group
+# Class describing a top level file or directory in a starter files group
+class StarterFileEntry < ApplicationRecord
+  belongs_to :starter_file_group
   validate :entry_exists
 
-  has_many :grouping_starter_code_entries, dependent: :destroy
-  has_many :groupings, through: :grouping_starter_code_entries
+  has_many :grouping_starter_file_entries, dependent: :destroy
+  has_many :groupings, through: :grouping_starter_file_entries
 
   def full_path
-    starter_code_group.path + path
+    starter_file_group.path + path
   end
 
   def files_and_dirs
@@ -19,10 +19,10 @@ class StarterCodeEntry < ApplicationRecord
   end
 
   def add_files_to_transaction(txn)
-    relative_root = Pathname.new(starter_code_group.path)
-    repo_root_dir = starter_code_group.assignment.repository_folder
-    should_rename = starter_code_group.should_rename
-    rename = starter_code_group.entry_rename
+    relative_root = Pathname.new(starter_file_group.path)
+    repo_root_dir = starter_file_group.assignment.repository_folder
+    should_rename = starter_file_group.should_rename
+    rename = starter_file_group.entry_rename
     files_and_dirs.each do |fd|
       rel_path = fd.relative_path_from(relative_root)
       rel_path = File.join(rename, *rel_path.each_filename.to_a[1..-1]) if should_rename
@@ -36,12 +36,13 @@ class StarterCodeEntry < ApplicationRecord
   end
 
   def add_files_to_zip_file(zip_file)
-    relative_root = Pathname.new(starter_code_group.path)
-    should_rename = starter_code_group.should_rename
-    rename = starter_code_group.entry_rename
-    files_and_dirs.each do |abs_path|
+    relative_root = Pathname.new(starter_file_group.path)
+    should_rename = starter_file_group.should_rename
+    rename = starter_file_group.entry_rename
+    files_and_dirs.sort.each do |abs_path|
       zip_entry_path = abs_path.relative_path_from(relative_root)
       zip_entry_path = File.join(rename, *zip_entry_path.each_filename.to_a[1..-1]) if should_rename
+      next if zip_file.find_entry(zip_entry_path)
 
       if abs_path.directory?
         zip_file.mkdir(zip_entry_path)

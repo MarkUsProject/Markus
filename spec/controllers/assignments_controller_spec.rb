@@ -709,15 +709,15 @@ describe AssignmentsController do
     end
   end
 
-  context '#upload_starter_code' do
+  context '#upload_starter_file' do
     let(:assignment) { create :assignment }
     let(:admin) { create :admin }
     context 'uploading a zip file' do
       let(:unzip) { 'true' }
       let(:tree) do
         zip_file = fixture_file_upload(File.join('/files', 'test_zip.zip'), 'application/zip')
-        post_as admin, :upload_starter_code, params: { id: assignment.id, new_files: [zip_file], unzip: unzip }
-        assignment.access_starter_code_repo do |repo|
+        post_as admin, :upload_starter_file, params: { id: assignment.id, new_files: [zip_file], unzip: unzip }
+        assignment.access_starter_file_repo do |repo|
           repo.get_latest_revision.tree_at_path(assignment.repository_folder)
         end
       end

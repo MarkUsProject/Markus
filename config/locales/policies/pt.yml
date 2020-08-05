@@ -25,5 +25,5 @@ pt:
         get_feedback_file?: "Não há accesso para resultado do teste."
         not_a_student?: "UPDATE ME."
         manage_subdirectories?: "UPDATE ME."
-      starter_code_group:
+      starter_file_group:
         manage?: "UPDATE ME."

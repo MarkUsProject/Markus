@@ -1,23 +1,23 @@
-# Controller for starter code groups
-class StarterCodeGroupsController < ApplicationController
+# Controller for starter file groups
+class StarterFileGroupsController < ApplicationController
   before_action { authorize! }
 
   respond_to :js
 
   def create
     assignment = Assignment.find_by(id: params[:assignment_id])
-    assignment.starter_code_groups.create(update_params)
+    assignment.starter_file_groups.create(update_params)
   end
 
   def destroy
     assignment = Assignment.find_by(id: params[:assignment_id])
-    assignment.starter_code_groups.find_by(id: params[:id]).destroy
+    assignment.starter_file_groups.find_by(id: params[:id]).destroy
   end
 
   def download_file
     assignment = Assignment.find_by(id: params[:assignment_id])
-    starter_code_group = assignment.starter_code_groups.find_by(id: params[:id])
-    file_path = File.join starter_code_group.path, params[:file_name]
+    starter_file_group = assignment.starter_file_groups.find_by(id: params[:id])
+    file_path = File.join starter_file_group.path, params[:file_name]
     filename = File.basename params[:file_name]
     if File.exist?(file_path)
       send_file_download file_path, filename: filename
@@ -28,22 +28,22 @@ class StarterCodeGroupsController < ApplicationController
 
   def update
     assignment = Assignment.find_by(id: params[:assignment_id])
-    starter_code_group = assignment.starter_code_groups.find_by(id: params[:id])
-    starter_code_group.update!(update_params)
+    starter_file_group = assignment.starter_file_groups.find_by(id: params[:id])
+    starter_file_group.update!(update_params)
   rescue ActiveRecord::RecordInvalid => e
     flash_message(:error, e.message)
   end
 
   def download_files
     assignment = Assignment.find(params[:assignment_id])
-    starter_code_group = assignment.starter_code_groups.find_by(id: params[:id])
-    zip_path = starter_code_group.zip_starter_code_files(current_user)
+    starter_file_group = assignment.starter_file_groups.find_by(id: params[:id])
+    zip_path = starter_file_group.zip_starter_file_files(current_user)
     send_file zip_path, filename: File.basename(zip_path)
   end
 
   def update_files
     assignment = Assignment.find(params[:assignment_id])
-    starter_code_group = assignment.starter_code_groups.find_by(id: params[:id])
+    starter_file_group = assignment.starter_file_groups.find_by(id: params[:id])
     unzip = params[:unzip] == 'true'
     new_folders = params[:new_folders] || []
     delete_folders = params[:delete_folders] || []
@@ -61,11 +61,11 @@ class StarterCodeGroupsController < ApplicationController
     end
 
     new_folders.each do |f|
-      folder_path = File.join(starter_code_group.path, params[:path].to_s, f)
+      folder_path = File.join(starter_file_group.path, params[:path].to_s, f)
       FileUtils.mkdir_p(folder_path)
     end
     delete_folders.each do |f|
-      folder_path = File.join(starter_code_group.path, f)
+      folder_path = File.join(starter_file_group.path, f)
       FileUtils.rm_rf(folder_path)
     end
     new_files.each do |f|
@@ -77,12 +77,12 @@ class StarterCodeGroupsController < ApplicationController
       elsif f.size == 0
         flash_now(:warning, t('student.submission.empty_file_warning', file_name: f.original_filename))
       end
-      file_path = File.join(starter_code_group.path, params[:path].to_s, f.original_filename)
+      file_path = File.join(starter_file_group.path, params[:path].to_s, f.original_filename)
       file_content = f.read
       File.write(file_path, file_content, mode: 'wb')
     end
     delete_files.each do |f|
-      file_path = File.join(starter_code_group.path, f)
+      file_path = File.join(starter_file_group.path, f)
       File.delete(file_path)
     end
     if params[:path].blank?
@@ -91,13 +91,13 @@ class StarterCodeGroupsController < ApplicationController
       all_paths = [params[:path]]
     end
     clean_paths = all_paths.map { |p| p.split(File::Separator).first }
-    # mark all groupings with starter code that was changed as changed
-    Grouping.joins(starter_code_entries: :starter_code_group)
-            .where('starter_code_entries.path': clean_paths)
-            .where('starter_code_groups.id': starter_code_group)
-            .update_all(starter_code_changed: true)
-    assignment.assignment_properties.update!(starter_code_updated_at: Time.zone.now) unless all_paths.empty?
-    starter_code_group.update_entries
+    # mark all groupings with starter files that were changed as changed
+    Grouping.joins(starter_file_entries: :starter_file_group)
+            .where('starter_file_entries.path': clean_paths)
+            .where('starter_file_groups.id': starter_file_group)
+            .update_all(starter_file_changed: true)
+    assignment.assignment_properties.update!(starter_file_updated_at: Time.zone.now) unless all_paths.empty?
+    starter_file_group.update_entries
   end
 
   private

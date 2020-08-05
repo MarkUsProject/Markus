@@ -44,7 +44,7 @@ Rails.application.routes.draw do
             delete 'remove_extra_marks'
           end
         end
-        resources :starter_code_groups do
+        resources :starter_file_groups do
           member do
             get 'entries'
             post 'create_file'
@@ -76,12 +76,12 @@ Rails.application.routes.draw do
       end
 
       member do
-        get 'download_starter_code_mappings'
+        get 'download_starter_file_mappings'
         get 'refresh_graph'
         get 'view_summary'
-        post 'update_starter_code'
+        post 'update_starter_file'
         get 'peer_review'
-        get 'populate_starter_code_manager'
+        get 'populate_starter_file_manager'
         get 'summary'
         get 'batch_runs'
         post 'set_boolean_graders_options'
@@ -89,11 +89,11 @@ Rails.application.routes.draw do
         get 'stop_batch_tests'
         get 'switch_assignment'
         put 'start_timed_assignment'
-        get 'starter_code'
-        put 'update_starter_code'
+        get 'starter_file'
+        put 'update_starter_file'
       end
 
-      resources :starter_code_groups do
+      resources :starter_file_groups do
         member do
           get 'download_file'
           get 'download_files'
@@ -188,7 +188,7 @@ Rails.application.routes.draw do
 
         member do
           post 'rename_group'
-          get 'download_starter_code'
+          get 'download_starter_file'
         end
       end
 

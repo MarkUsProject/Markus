@@ -146,15 +146,15 @@
       <% end %>
     <% end %>
 <% end %>
-<% unless @assignment.starter_code_updated_at.nil? || @grouping.nil? %>
+<% unless @assignment.starter_file_updated_at.nil? || @grouping.nil? %>
   <% if !@assignment.is_timed || !@grouping.start_time.nil? %>
-    <h3><%= I18n.t('assignments.starter_code.title') %></h3>
-    <p><%= I18n.t('assignments.starter_code.provided') %></p>
-    <p><%= I18n.t('assignments.starter_code.changed_at',
-                  changed_date: I18n.l(@assignment.starter_code_updated_at)) %></p>
-    <p><%= I18n.t('assignments.starter_code.download_instructions') %></p>
+    <h3><%= I18n.t('assignments.starter_file.title') %></h3>
+    <p><%= I18n.t('assignments.starter_file.provided') %></p>
+    <p><%= I18n.t('assignments.starter_file.changed_at',
+                  changed_date: I18n.l(@assignment.starter_file_updated_at)) %></p>
+    <p><%= I18n.t('assignments.starter_file.download_instructions') %></p>
     <%= button_to t(:download),
-                  download_starter_code_assignment_group_path(@assignment, @grouping.group),
+                  download_starter_file_assignment_group_path(@assignment, @grouping.group),
                   method: 'get' %>
   <% end %>
 <% end %>

@@ -1,10 +1,10 @@
-# Class describing a group of starter code files
-class StarterCodeGroup < ApplicationRecord
+# Class describing a group of starter files
+class StarterFileGroup < ApplicationRecord
   include SubmissionsHelper
   belongs_to :assignment, foreign_key: :assessment_id
-  has_many :section_starter_code_groups, dependent: :destroy
-  has_many :sections, through: :section_starter_code_groups
-  has_many :starter_code_entries, dependent: :destroy
+  has_many :section_starter_file_groups, dependent: :destroy
+  has_many :sections, through: :section_starter_file_groups
+  has_many :starter_file_entries, dependent: :destroy
 
   after_destroy_commit :delete_files
   after_create_commit :create_dir
@@ -17,14 +17,14 @@ class StarterCodeGroup < ApplicationRecord
   validates_presence_of :entry_rename, if: -> { self.use_rename }
 
   def path
-    Pathname.new(assignment.starter_code_path) + id.to_s
+    Pathname.new(assignment.starter_file_path) + id.to_s
   end
 
   def files_and_dirs
-    starter_code_entries.map(&:files_and_dirs).flatten.map { |f| f.relative_path_from(path).to_s }
+    starter_file_entries.map(&:files_and_dirs).flatten.map { |f| f.relative_path_from(path).to_s }
   end
 
-  def zip_starter_code_files(user)
+  def zip_starter_file_files(user)
     zip_name = "#{assignment.short_identifier}-#{name}-starter-files-#{user.user_name}"
     zip_path = File.join('tmp', zip_name + '.zip')
     FileUtils.rm_rf zip_path
@@ -50,15 +50,15 @@ class StarterCodeGroup < ApplicationRecord
         Pathname.new(f).relative_path_from(path).to_s
       end
     end.compact
-    entry_paths = starter_code_entries.pluck(:path)
+    entry_paths = starter_file_entries.pluck(:path)
     to_delete = entry_paths - fs_entry_paths
     to_add = fs_entry_paths - entry_paths
-    starter_code_entries.where(path: to_delete).destroy_all unless to_delete.empty?
-    StarterCodeEntry.upsert_all(to_add.map { |p| { starter_code_group_id: self.id, path: p } }) unless to_add.empty?
+    starter_file_entries.where(path: to_delete).destroy_all unless to_delete.empty?
+    StarterFileEntry.upsert_all(to_add.map { |p| { starter_file_group_id: self.id, path: p } }) unless to_add.empty?
   end
 
   def should_rename
-    use_rename && !entry_rename.blank? && assignment.starter_code_type == 'shuffle'
+    use_rename && !entry_rename.blank? && assignment.starter_file_type == 'shuffle'
   end
 
   private
@@ -78,18 +78,18 @@ class StarterCodeGroup < ApplicationRecord
   end
 
   def warn_affected_groupings
-    affected_groupings = Grouping.joins(starter_code_entries: :starter_code_group)
-                                 .where('starter_code_groups.id': self.id)
-    affected_groupings.update_all(starter_code_changed: true)
+    affected_groupings = Grouping.joins(starter_file_entries: :starter_file_group)
+                                 .where('starter_file_groups.id': self.id)
+    affected_groupings.update_all(starter_file_changed: true)
   end
 
   def update_default
-    if self.id == assignment.assignment_properties.default_starter_code_group_id
-      assignment.assignment_properties.update(default_starter_code_group_id: nil)
+    if self.id == assignment.assignment_properties.default_starter_file_group_id
+      assignment.assignment_properties.update(default_starter_file_group_id: nil)
     end
   end
 
   def update_timestamp
-    assignment.assignment_properties.update(starter_code_updated_at: Time.current)
+    assignment.assignment_properties.update(starter_file_updated_at: Time.current)
   end
 end

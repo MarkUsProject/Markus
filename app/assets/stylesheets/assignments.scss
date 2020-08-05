@@ -9,7 +9,7 @@
 fieldset {
   &.period,
   &.timed_assignment_duration_properties,
-  &.starter_code_properties,
+  &.starter_file_properties,
   &.group_properties {
     border: 1px solid $grey;
     border-radius: $radius;
@@ -125,7 +125,7 @@ fieldset {
   width: 100px;
 }
 
-.starter-code-rename-cell-content {
+.starter-file-rename-cell-content {
   .rename-input {
     float: left;
   }
@@ -136,7 +136,7 @@ fieldset {
   }
 }
 
-.starter-code-rule-types {
+.starter-file-rule-types {
   > * {
     padding-bottom: 10px;
   }

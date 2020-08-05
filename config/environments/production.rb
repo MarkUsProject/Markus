@@ -272,8 +272,8 @@ Markus::Application.configure do
   config.x.queues.repo_required_files = 'CSC108'
   config.x.queues.exam_generate = 'CSC108'
   config.x.queues.split_pdf = 'CSC108'
-  # The name of the queue where jobs to update starter code files to student repos wait to be executed.
-  config.x.queues.update_starter_code = 'CSC108'
+  # The name of the queue where jobs to update starter files to student repos wait to be executed.
+  config.x.queues.update_starter_file = 'CSC108'
 
   ###################################################################
   # Automated Testing Engine settings

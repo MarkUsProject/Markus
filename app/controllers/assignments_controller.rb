@@ -9,10 +9,10 @@ class AssignmentsController < ApplicationController
                               :summary,
                               :switch_assignment,
                               :start_timed_assignment,
-                              :starter_code,
-                              :populate_starter_code_manager,
-                              :update_starter_code,
-                              :download_starter_code_mappings]
+                              :starter_file,
+                              :populate_starter_file_manager,
+                              :update_starter_file,
+                              :download_starter_file_mappings]
 
   before_action      :authorize_for_ta_and_admin,
                      only: [:summary]
@@ -57,10 +57,10 @@ class AssignmentsController < ApplicationController
       end
     end
     unless @grouping.nil?
-      flash_message(:warning, I18n.t('assignments.starter_code.changed_warning')) if @grouping.starter_code_changed
+      flash_message(:warning, I18n.t('assignments.starter_file.changed_warning')) if @grouping.starter_file_changed
       if @assignment.is_timed && !@grouping.start_time.nil? && !@grouping.past_collection_date?
         flash_message(:note, I18n.t('assignments.timed.started_message_html'))
-        flash_message(:note, I18n.t('assignments.timed.starter_code_prompt'))
+        flash_message(:note, I18n.t('assignments.timed.starter_file_prompt'))
       end
       set_repo_vars(@assignment, @grouping)
     end
@@ -388,7 +388,7 @@ class AssignmentsController < ApplicationController
     redirect_to action: 'index'
   end
 
-  def starter_code
+  def starter_file
     @assignment = Assignment.find(params[:id])
     if @assignment.nil?
       render 'shared/http_status',
@@ -399,50 +399,50 @@ class AssignmentsController < ApplicationController
     end
   end
 
-  def populate_starter_code_manager
+  def populate_starter_file_manager
     assignment = Assignment.find(params[:id])
     if assignment.groupings.exists?
       flash_message(:warning,
-                    I18n.t('assignments.starter_code.groupings_exist_warning_html'))
+                    I18n.t('assignments.starter_file.groupings_exist_warning_html'))
     end
     file_data = []
-    assignment.starter_code_groups.order(:id).each do |g|
+    assignment.starter_file_groups.order(:id).each do |g|
       file_data << { id: g.id,
                      name: g.name,
                      entry_rename: g.entry_rename,
                      use_rename: g.use_rename,
-                     files: starter_code_group_file_data(g) }
+                     files: starter_file_group_file_data(g) }
     end
-    section_data = Section.left_outer_joins(:starter_code_groups)
+    section_data = Section.left_outer_joins(:starter_file_groups)
                           .order(:id)
                           .pluck_to_hash('sections.id as section_id',
                                          'sections.name as section_name',
-                                         'starter_code_groups.id as group_id',
-                                         'starter_code_groups.name as group_name')
+                                         'starter_file_groups.id as group_id',
+                                         'starter_file_groups.name as group_name')
     data = { files: file_data,
              sections: section_data,
-             starterCodeType: assignment.starter_code_type,
-             defaultStarterCodeGroup: assignment.default_starter_code_group&.id || '' }
+             starterfileType: assignment.starter_file_type,
+             defaultStarterFileGroup: assignment.default_starter_file_group&.id || '' }
     render json: data
   end
 
-  def update_starter_code
+  def update_starter_file
     assignment = Assignment.find(params[:id])
     all_changed = false
     success = true
     ApplicationRecord.transaction do
-      assignment.assignment_properties.update!(starter_code_assignment_params)
+      assignment.assignment_properties.update!(starter_file_assignment_params)
       all_changed = assignment.assignment_properties.saved_changes?
-      starter_code_section_params.each do |section_params|
+      starter_file_section_params.each do |section_params|
         Section.find_by(id: section_params[:section_id])
-               &.update_starter_code_group(assignment.id, section_params[:group_id])
+               &.update_starter_file_group(assignment.id, section_params[:group_id])
       end
-      starter_code_group_params.each do |group_params|
-        starter_code_group = assignment.starter_code_groups.find_by(id: group_params[:id])
-        starter_code_group.update!(group_params)
-        all_changed ||= starter_code_group.saved_changes? || assignment.assignment_properties.saved_changes?
+      starter_file_group_params.each do |group_params|
+        starter_file_group = assignment.starter_file_groups.find_by(id: group_params[:id])
+        starter_file_group.update!(group_params)
+        all_changed ||= starter_file_group.saved_changes? || assignment.assignment_properties.saved_changes?
       end
-      assignment.assignment_properties.update!(starter_code_updated_at: Time.zone.now)
+      assignment.assignment_properties.update!(starter_file_updated_at: Time.zone.now)
     rescue ActiveRecord::RecordInvalid => e
       flash_message(:error, e.message)
       success = false
@@ -454,19 +454,19 @@ class AssignmentsController < ApplicationController
     end
     if success
       flash_message(:success, I18n.t('flash.actions.update.success',
-                                     resource_name: I18n.t('assignments.starter_code.title')))
+                                     resource_name: I18n.t('assignments.starter_file.title')))
     end
-    # mark all groupings with starter code that was changed as changed
-    assignment.groupings.update_all(starter_code_changed: true) if success && all_changed
+    # mark all groupings with starter files that were changed as changed
+    assignment.groupings.update_all(starter_file_changed: true) if success && all_changed
   end
 
-  def download_starter_code_mappings
+  def download_starter_file_mappings
     assignment = Assignment.find(params[:id])
-    mappings = assignment.starter_code_mappings
+    mappings = assignment.starter_file_mappings
     file_out = MarkusCsv.generate(mappings, [mappings.first&.keys].compact, &:values)
     send_data(file_out,
               type: 'text/csv',
-              filename: "#{assignment.short_identifier}_starter_code_mappings.csv",
+              filename: "#{assignment.short_identifier}_starter_file_mappings.csv",
               disposition: 'inline')
   end
 
@@ -572,14 +572,14 @@ class AssignmentsController < ApplicationController
     assignment.duration = durs['hours'].to_i.hours + durs['minutes'].to_i.minutes
   end
 
-  def starter_code_group_file_data(starter_code_group)
-    starter_code_group.files_and_dirs.map do |file|
-      if (starter_code_group.path + file).directory?
+  def starter_file_group_file_data(starter_file_group)
+    starter_file_group.files_and_dirs.map do |file|
+      if (starter_file_group.path + file).directory?
         { key: "#{file}/" }
       else
         { key: file, size: 1,
-          url: download_file_assignment_starter_code_group_url(starter_code_group.assignment.id,
-                                                               starter_code_group.id,
+          url: download_file_assignment_starter_file_group_url(starter_file_group.assignment.id,
+                                                               starter_file_group.id,
                                                                file_name: file) }
       end
     end
@@ -682,17 +682,17 @@ class AssignmentsController < ApplicationController
           ])
   end
 
-  def starter_code_assignment_params
-    params.require(:assignment).permit(:starter_code_type, :default_starter_code_group_id)
+  def starter_file_assignment_params
+    params.require(:assignment).permit(:starter_file_type, :default_starter_file_group_id)
   end
 
-  def starter_code_section_params
+  def starter_file_section_params
     params.permit(sections: [:section_id, :group_id]).require(:sections)
   end
 
-  def starter_code_group_params
-    params.permit(starter_code_groups: [:id, :name, :entry_rename, :use_rename])
-          .require(:starter_code_groups)
+  def starter_file_group_params
+    params.permit(starter_file_groups: [:id, :name, :entry_rename, :use_rename])
+          .require(:starter_file_groups)
   end
 
   def flash_interpolation_options

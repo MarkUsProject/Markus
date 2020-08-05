@@ -4,7 +4,7 @@ require 'set'
 class Grouping < ApplicationRecord
   include SubmissionsHelper
 
-  after_create :create_starter_code
+  after_create :create_starter_file
   after_commit :update_repo_permissions_after_save, on: [:create, :update]
 
   has_many :memberships, dependent: :destroy
@@ -81,8 +81,8 @@ class Grouping < ApplicationRecord
 
   has_one :extension
 
-  has_many :grouping_starter_code_entries, dependent: :destroy
-  has_many :starter_code_entries, through: :grouping_starter_code_entries
+  has_many :grouping_starter_file_entries, dependent: :destroy
+  has_many :starter_file_entries, through: :grouping_starter_file_entries
 
   # Assigns a random TA from a list of TAs specified by +ta_ids+ to each
   # grouping in a list of groupings specified by +grouping_ids+. The groupings
@@ -437,60 +437,60 @@ class Grouping < ApplicationRecord
                           !assignment.past_collection_date?(self.inviter.section))
   end
 
-  def select_starter_code_entries
-    case assignment.starter_code_type
+  def select_starter_file_entries
+    case assignment.starter_file_type
     when 'simple'
-      assignment.default_starter_code_group&.starter_code_entries || []
+      assignment.default_starter_file_group&.starter_file_entries || []
     when 'sections'
-      return inviter.section&.starter_code_group_for(assignment)&.starter_code_entries || [] unless inviter.nil?
-      assignment.default_starter_code_group&.starter_code_entries || []
+      return inviter.section&.starter_file_group_for(assignment)&.starter_file_entries || [] unless inviter.nil?
+      assignment.default_starter_file_group&.starter_file_entries || []
     when 'shuffle'
-      assignment.starter_code_groups.includes(:starter_code_entries).map do |g|
-        StarterCodeEntry.find_by(id: g.starter_code_entries.ids.sample)
+      assignment.starter_file_groups.includes(:starter_file_entries).map do |g|
+        StarterFileEntry.find_by(id: g.starter_file_entries.ids.sample)
       end.compact
     when 'group'
-      StarterCodeGroup.find_by(id: assignment.starter_code_groups.ids.sample)&.starter_code_entries || []
+      StarterFileGroup.find_by(id: assignment.starter_file_groups.ids.sample)&.starter_file_entries || []
     else
-      raise 'starter_code_type is invalid'
+      raise 'starter_file_type is invalid'
     end
   end
 
-  def reset_starter_code_entries
-    old_grouping_entry_ids = self.grouping_starter_code_entries.ids
-    new_grouping_entry_ids = select_starter_code_entries.map do |entry|
-      GroupingStarterCodeEntry.find_or_create_by!(starter_code_entry_id: entry.id, grouping_id: self.id).id
+  def reset_starter_file_entries
+    old_grouping_entry_ids = self.grouping_starter_file_entries.ids
+    new_grouping_entry_ids = select_starter_file_entries.map do |entry|
+      GroupingStarterFileEntry.find_or_create_by!(starter_file_entry_id: entry.id, grouping_id: self.id).id
     end
-    self.grouping_starter_code_entries.where(id: old_grouping_entry_ids - new_grouping_entry_ids).destroy_all
+    self.grouping_starter_file_entries.where(id: old_grouping_entry_ids - new_grouping_entry_ids).destroy_all
   end
 
-  def create_starter_code
+  def create_starter_file
     return unless Rails.configuration.x.repository.is_repository_admin # create folder only if we are repo admin
-    GroupingStarterCodeEntry.transaction do
+    GroupingStarterFileEntry.transaction do
       self.group.access_repo do |group_repo|
         assignment_folder = self.assignment.repository_folder
         txn = group_repo.get_transaction('Markus', I18n.t('repo.commits.assignment_folder',
                                                           assignment: self.assignment.short_identifier))
 
         # path may already exist if this is a peer review assignment. In that case do not create
-        # starter code since it should already be there from the parent assignment.
+        # starter files since it should already be there from the parent assignment.
         unless group_repo.get_latest_revision.path_exists?(assignment_folder)
           txn.add_path(assignment_folder)
 
-          reset_starter_code_entries
-          self.reload.starter_code_entries.each { |entry| entry.add_files_to_transaction(txn) }
+          reset_starter_file_entries
+          self.reload.starter_file_entries.each { |entry| entry.add_files_to_transaction(txn) }
           if txn.has_jobs?
             raise I18n.t('repo.assignment_dir_creation_error',
                          short_identifier: assignment.short_identifier) unless group_repo.commit(txn)
-            self.update!(starter_code_timestamp: group_repo.get_latest_revision.server_timestamp)
+            self.update!(starter_file_timestamp: group_repo.get_latest_revision.server_timestamp)
           end
         end
       end
     end
   end
 
-  def changed_starter_code_at?(revision)
+  def changed_starter_file_at?(revision)
     revision.tree_at_path(assignment.repository_folder, with_attrs: true).values.any? do |obj|
-      self.starter_code_timestamp.nil? || self.starter_code_timestamp < obj.last_modified_date
+      self.starter_file_timestamp.nil? || self.starter_file_timestamp < obj.last_modified_date
     end
   end
 

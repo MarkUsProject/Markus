@@ -1,6 +1,0 @@
-en:
-  activerecord:
-    models:
-      starter_code_group:
-        one: "Starter Code Group"
-        other: "Starter Code Groups"

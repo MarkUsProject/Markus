@@ -27,24 +27,24 @@ en:
         submission_rules: "Several different late submission policies are available. If Accept no late submissions is selected then students will be warned that their submission will not be graded if they attempt to submit after the deadline.  You may choose to give students some number of Grace credits in the Users view, and you can choose the grace period times here.  The Penalty Decay formula allows you to deduct X marks for every Y time period.  The Penalty Formula allows you to specify both the value of the penalty and the time period. If students are working in a group, grace credits will be deducted from every group member."
     scanned_exam:
       under_review: "This exam is still under review."
-    starter_code:
-      title: "Starter Code"
+    starter_file:
+      title: "Starter Files"
       provided: "Starter files have been provided for this assignment"
-      download_instructions: "Click below to download a new copy of the starter code"
-      groupings_exist_warning_html: "Groups already have been created for this assessment.<br/>If any changes are made, students will need to log in to MarkUs to download a new version of their starter code."
-      new_starter_code_group: "New Starter Code Group"
-      changed_warning: "The starter code for this assignment has changed. Please download the newest version of the starter code below and update your submission accordingly."
-      changed_at: "Starter code was last updated on %{changed_date}"
-      default_starter_code_group: "Default Starter Code Group"
-      starter_code_rule: "Starter Code Assignment Rules"
+      download_instructions: "Click below to download a new copy of the starter files"
+      groupings_exist_warning_html: "Groups already have been created for this assessment.<br/>If any changes are made, students will need to log in to MarkUs to download a new version of their starter files."
+      new_starter_file_group: "New Starter File Group"
+      changed_warning: "The starter files for this assignment have changed. Please download the newest version of the starter files below and update your submission accordingly."
+      changed_at: "Starter files were last updated on %{changed_date}"
+      default_starter_file_group: "Default Starter File Group"
+      starter_file_rule: "Starter File Assignment Rules"
       rename: "Rename Selected File or Directory"
       use_original_filename: "Use original filename"
-      download_mappings_csv: "Download assigned starter code csv"
-      starter_code_rule_types:
-        simple: "Assign the default starter code group to all students"
-        sections: "Assign starter code groups by section"
-        shuffle: "Randomly select one top level file or directory from each starter code group"
-        group: "Randomly select one starter code group"
+      download_mappings_csv: "Download assigned starter files csv"
+      starter_file_rule_types:
+        simple: "Assign the default starter file group to all students"
+        sections: "Assign starter file groups by section"
+        shuffle: "Randomly select one top level file or directory from each starter file group"
+        group: "Randomly select one starter file group"
     timed:
       start_button: "Start"
       start_time: "Students may start this assessment after"
@@ -61,7 +61,7 @@ en:
       start_confirmation: "You are about to start a timed assessment. You cannot undo this action. Click OK to continue."
       modal_current_duration: "This will extend the current duration for this group. The current duration is: %{duration}."
       started_message_html: "<strong>You have started this assessment.</strong>"
-      starter_code_prompt: "Go to the Submissions tab to view starter files for this assessment."
+      starter_file_prompt: "Go to the Submissions tab to view starter files for this assessment."
       time_until_due_warning: "This assessment is due before %{due_date} without penalty."
       duration_extension_info: "(this includes a duration extension of %{extension_string})"
 

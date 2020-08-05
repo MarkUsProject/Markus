@@ -81,7 +81,7 @@ class Assignment < Assessment
 
   has_many :exam_templates, dependent: :destroy, inverse_of: :assignment, foreign_key: :assessment_id
 
-  has_many :starter_code_groups, dependent: :destroy, inverse_of: :assignment, foreign_key: :assessment_id
+  has_many :starter_file_groups, dependent: :destroy, inverse_of: :assignment, foreign_key: :assessment_id
 
   after_create :create_autotest_dirs
 
@@ -103,7 +103,7 @@ class Assignment < Assessment
   validates_presence_of :assignment_stat
 
   BLANK_MARK = ''
-  STARTER_CODE_REPO_NAME = "starter-code"
+  STARTER_FILE_REPO_NAME = "starter-files"
 
   # Copy of API::AssignmentController without selected attributes and order changed
   # to put first the 4 required fields
@@ -925,20 +925,20 @@ class Assignment < Assessment
 
   ### REPO ###
 
-  def starter_code_path
-    File.join(Rails.configuration.x.repository.storage, STARTER_CODE_REPO_NAME, repository_folder)
+  def starter_file_path
+    File.join(Rails.configuration.x.repository.storage, STARTER_FILE_REPO_NAME, repository_folder)
   end
 
-  def default_starter_code_group
-    default = starter_code_groups.find_by(id: self.default_starter_code_group_id)
-    default.nil? ? starter_code_groups.order(:id).first : default
+  def default_starter_file_group
+    default = starter_file_groups.find_by(id: self.default_starter_file_group_id)
+    default.nil? ? starter_file_groups.order(:id).first : default
   end
 
-  def starter_code_mappings
-    groupings.joins(:group, grouping_starter_code_entries: [starter_code_entry: :starter_code_group])
+  def starter_file_mappings
+    groupings.joins(:group, grouping_starter_file_entries: [starter_file_entry: :starter_file_group])
              .pluck_to_hash('groups.group_name as group_name',
-                            'starter_code_groups.name as starter_code_group_name',
-                            'starter_code_entries.path as starter_code_entry_path')
+                            'starter_file_groups.name as starter_file_group_name',
+                            'starter_file_entries.path as starter_file_entry_path')
   end
 
   # Yield an open repo for each grouping of this assignment, then yield again for each repo that raised an exception, to
