@@ -257,7 +257,7 @@ describe PeerReviewsController do
   describe 'When user is grader and allowed to manage reviewers' do
     let(:user) { create(:ta) }
     before do
-      user.grader_permission.manage_reviewers = true
+      user.grader_permission.manage_assessments = true
       user.grader_permission.save
     end
     include_examples 'An authorized admin or grader'
@@ -265,7 +265,7 @@ describe PeerReviewsController do
   describe 'When the user is grader and not allowed to manage reviewers' do
     let(:grader) { create(:ta) }
     before :each do
-      grader.grader_permission.manage_reviewers = false
+      grader.grader_permission.manage_assessments = false
       grader.grader_permission.save
     end
     describe '#random assign' do

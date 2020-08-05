@@ -134,7 +134,7 @@ describe CourseSummariesController do
   describe 'When the grader is allowed to download grades report and populate course summary' do
     let!(:user) { create(:ta) }
     before do
-      user.grader_permission.download_grades_report = true
+      user.grader_permission.manage_course_grades = true
       user.grader_permission.save
     end
     include_examples 'An authorized admin and grader managing course summary'
@@ -143,7 +143,7 @@ describe CourseSummariesController do
   describe 'When the grader is not allowed to download grades report and populate course summary' do
     let(:grader) { create(:ta) }
     before do
-      grader.grader_permission.download_grades_report = false
+      grader.grader_permission.manage_course_grades = false
       grader.grader_permission.save
     end
     it 'should response with 403' do

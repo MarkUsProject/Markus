@@ -381,7 +381,7 @@ describe GradeEntryFormsController do
     let(:grader_permission) { user.grader_permission }
     describe 'When the grader is allowed to release and unrelease the grades' do
       before do
-        grader_permission.release_unrelease_grades = true
+        grader_permission.manage_submissions = true
         grader_permission.save
       end
       include_examples '#update_grade_entry_students'
@@ -391,7 +391,7 @@ describe GradeEntryFormsController do
         grade_entry_form_with_data.grade_entry_students.joins(:user).find_by('users.user_name': 'c8shosta')
       end
       before do
-        grader_permission.release_unrelease_grades = false
+        grader_permission.manage_submissions = false
         grader_permission.save
       end
       it 'should respond with 403' do
@@ -402,14 +402,14 @@ describe GradeEntryFormsController do
     end
     describe 'When the grader is allowed to create, edit and update grade entry forms' do
       before do
-        grader_permission.manage_assignments = true
+        grader_permission.manage_assessments = true
         grader_permission.save
       end
       include_examples '#manage grade entry forms'
     end
     describe 'When the grader is not allowed to create, edit and update grade entry forms' do
       before do
-        grader_permission.manage_assignments = false
+        grader_permission.manage_assessments = false
         grader_permission.save
       end
       context '#new' do

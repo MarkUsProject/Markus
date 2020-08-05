@@ -704,7 +704,7 @@ describe AssignmentsController do
 
     context 'When the grader is allowed to manage assignments' do
       before do
-        grader_permission.manage_assignments = true
+        grader_permission.manage_assessments = true
         grader_permission.save
       end
       include_examples 'An authorized user updating the assignment'
@@ -713,7 +713,7 @@ describe AssignmentsController do
 
     context 'When the grader is not allowed to manage assignments' do
       before do
-        grader_permission.manage_assignments = false
+        grader_permission.manage_assessments = false
         grader_permission.save
       end
       context '#new' do

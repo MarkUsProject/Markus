@@ -305,7 +305,7 @@ describe SubmissionsController do
 
     describe 'When grader is allowed to collect submissions' do
       before do
-        grader_permission.collect_submissions = true
+        grader_permission.manage_submissions = true
         grader_permission.save
       end
       context '#collect_submissions' do
@@ -326,7 +326,7 @@ describe SubmissionsController do
 
     describe 'When grader is not allowed to collect submissions' do
       before do
-        grader_permission.collect_submissions = false
+        grader_permission.manage_submissions = false
         grader_permission.save
       end
       context '#collect_submissions' do
