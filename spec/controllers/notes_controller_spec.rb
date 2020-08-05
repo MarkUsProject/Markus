@@ -71,10 +71,7 @@ describe NotesController do
       @action_to = 'manage'
       @message = 'This is a note'
       @ta = create(:ta)
-      grader_permission.create_notes = true
-      grader_permission.save
     end
-    let(:grader_permission) { @ta.grader_permission }
 
     it 'be able to get :notes_dialog' do
       get_as @ta,
@@ -106,21 +103,13 @@ describe NotesController do
       expect(response).to have_http_status :success
     end
 
-    it 'when TA is allowed to get :new' do
+    it 'get :new' do
       get_as @ta, :new
       expect(response).to have_http_status :success
     end
 
-    it 'when TA is not allowed to get :new' do
-      grader_permission.create_notes = false
-      grader_permission.save
-      get_as @ta, :new
-      expect(response.status).to eq 403
-      assert_response :forbidden
-    end
-
     context 'POST on :create' do
-      describe 'When grader is allowed to create notes' do
+      describe 'When grader is trying to create notes' do
         it 'be able to create with empty note' do
           post_as @ta,
                   :create,
@@ -166,15 +155,6 @@ describe NotesController do
           expect(flash[:success]).to eq I18n.t('flash.actions.create.success', resource_name: Note.model_name.human)
           expect(response).to redirect_to(controller: 'notes')
           expect(Note.count).to eq @notes + 1
-        end
-      end
-      describe 'When grader is not allowed to create notes' do
-        it 'should respond with 403' do
-          grader_permission.create_notes = false
-          grader_permission.save
-          post_as @ta, :create, params: { noteable_type: 'Grouping', note: { noteable_id: @grouping.id } }
-          expect(response.status).to eq 403
-          assert_response :forbidden
         end
       end
     end

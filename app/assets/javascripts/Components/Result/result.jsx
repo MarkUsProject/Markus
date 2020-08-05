@@ -590,7 +590,6 @@ class Result extends React.Component {
                 addTag={this.addTag}
                 removeTag={this.removeTag}
                 newNote={this.newNote}
-                is_allowed_to_create_notes={this.props.is_allowed_to_create_notes}
                 findDeductiveAnnotation={this.findDeductiveAnnotation}
               />
             </div>
