@@ -21,28 +21,28 @@ describe GradeEntryFormPolicy do
     let(:user) { create(:ta) }
     context 'When TA is allowed to create, edit, update the grade entry forms' do
       before do
-        user.grader_permission.manage_assignments = true
+        user.grader_permission.manage_assessments = true
         user.grader_permission.save
       end
       it { is_expected.to pass :manage? }
     end
     context 'When TA is not allowed to create, edit, update the grade entry forms' do
       before do
-        user.grader_permission.manage_assignments = false
+        user.grader_permission.manage_assessments = false
         user.grader_permission.save
       end
       it { is_expected.not_to pass :manage? }
     end
     context 'When TA is allowed to release or unrelease the grades' do
       before do
-        user.grader_permission.release_unrelease_grades = true
+        user.grader_permission.manage_submissions = true
         user.grader_permission.save
       end
       it { is_expected.to pass :update_grade_entry_students? }
     end
     context 'When TA is not allowed to release or unrelease the grades' do
       before do
-        user.grader_permission.release_unrelease_grades = false
+        user.grader_permission.manage_submissions = false
         user.grader_permission.save
       end
       it { is_expected.not_to pass :update_grade_entry_students? }

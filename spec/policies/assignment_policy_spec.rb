@@ -121,14 +121,14 @@ describe AssignmentPolicy do
     end
     context 'When the grader is allowed to manage, create, edit and update the assignments' do
       before do
-        user.grader_permission.manage_assignments = true
+        user.grader_permission.manage_assessments = true
         user.grader_permission.save
       end
       it { is_expected.to pass :manage? }
     end
     context 'When the grader is not allowed to manage, create, edit and update the assignments' do
       before do
-        user.grader_permission.manage_assignments = false
+        user.grader_permission.manage_assessments = false
         user.grader_permission.save
       end
       it { is_expected.not_to pass :manage? }

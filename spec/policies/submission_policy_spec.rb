@@ -127,7 +127,7 @@ describe SubmissionPolicy do
       let(:user) { create(:ta) }
       let(:grader_permission) { user.grader_permission }
       before do
-        grader_permission.collect_submissions = true
+        grader_permission.manage_submissions = true
         grader_permission.save
       end
       it { is_expected.to pass :collect? }
@@ -136,7 +136,7 @@ describe SubmissionPolicy do
       let(:user) { create(:ta) }
       let(:grader_permission) { user.grader_permission }
       before do
-        grader_permission.collect_submissions = false
+        grader_permission.manage_submissions = false
         grader_permission.save
       end
       it { is_expected.not_to pass :collect? }
