@@ -2,7 +2,7 @@ class CreateGraderPermissions < ActiveRecord::Migration[6.0]
   def self.up
     create_table :grader_permissions do |t|
       t.column :user_id, :int, :unique => true
-      t.column :delete_grace_period_deduction, :boolean, :default => false
+      t.column :manage_extensions, :boolean, :default => false
       t.column :create_delete_annotations, :boolean, :default => false
       t.column :manage_submissions, :boolean, :default => false
       t.column :manage_assessments, :boolean, :default => false

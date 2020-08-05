@@ -253,7 +253,7 @@ ActiveRecord::Schema.define(version: 2020_08_11_194846) do
 
   create_table "grader_permissions", force: :cascade do |t|
     t.integer "user_id"
-    t.boolean "delete_grace_period_deduction", default: false
+    t.boolean "manage_extensions", default: false
     t.boolean "create_delete_annotations", default: false
     t.boolean "manage_submissions", default: false
     t.boolean "manage_assessments", default: false
