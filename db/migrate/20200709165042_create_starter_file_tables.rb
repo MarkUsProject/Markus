@@ -24,7 +24,8 @@ class CreateStarterFileTables < ActiveRecord::Migration[6.0]
 
     add_column :assignment_properties, :starter_file_type, :string, null: false, default: :simple
     add_column :assignment_properties, :starter_file_updated_at, :datetime
-    add_reference :assignment_properties, :default_starter_file_group, foreign_key: true
+    add_reference :assignment_properties, :default_starter_file_group
+    add_foreign_key :assignment_properties, :starter_file_groups, column: :default_starter_file_group_id
     remove_column :groupings, :starter_code_revision_identifier, :text
     add_column :groupings, :starter_file_timestamp, :datetime
     add_column :groupings, :starter_file_changed, :boolean, null: false, default: false

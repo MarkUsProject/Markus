@@ -643,6 +643,7 @@ ActiveRecord::Schema.define(version: 2020_07_09_165042) do
   add_foreign_key "annotations", "submission_files", name: "fk_annotations_submission_files"
   add_foreign_key "assignment_files", "assessments", name: "fk_assignment_files_assignments", on_delete: :cascade
   add_foreign_key "assignment_properties", "assessments", on_delete: :cascade
+  add_foreign_key "assignment_properties", "starter_file_groups", column: "default_starter_file_group_id"
   add_foreign_key "assignment_stats", "assessments", name: "fk_assignment_stats_assignments", on_delete: :cascade
   add_foreign_key "checkbox_criteria", "assessments"
   add_foreign_key "criteria_assignment_files_joins", "assignment_files"
