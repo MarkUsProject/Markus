@@ -4,7 +4,7 @@ require 'set'
 class Grouping < ApplicationRecord
   include SubmissionsHelper
 
-  after_create :create_starter_file
+  after_create :create_starter_files
   after_commit :update_repo_permissions_after_save, on: [:create, :update]
 
   has_many :memberships, dependent: :destroy
@@ -463,7 +463,7 @@ class Grouping < ApplicationRecord
     self.grouping_starter_file_entries.where(id: old_grouping_entry_ids - new_grouping_entry_ids).destroy_all
   end
 
-  def create_starter_file
+  def create_starter_files
     return unless Rails.configuration.x.repository.is_repository_admin # create folder only if we are repo admin
     GroupingStarterFileEntry.transaction do
       self.group.access_repo do |group_repo|

@@ -26,14 +26,14 @@ describe SubmissionsController do
 
     it 'should be rejected if it is a timed assignment and the student has not yet started' do
       assignment = create(:timed_assignment)
-      create(:grouping, inviter: @student, assignment: assignment)
+      create(:grouping_with_inviter, inviter: @student, assignment: assignment)
       get_as @student, :file_manager, params: { assignment_id: assignment.id }
       expect(response).to have_http_status 403
     end
 
     it 'should not be rejected if it is a timed assignment and the student has started' do
       assignment = create(:timed_assignment)
-      create(:grouping, inviter: @student, assignment: assignment, start_time: 10.minutes.ago)
+      create(:grouping_with_inviter, inviter: @student, assignment: assignment, start_time: 10.minutes.ago)
       get_as @student, :file_manager, params: { assignment_id: assignment.id }
       expect(response).to have_http_status 200
     end

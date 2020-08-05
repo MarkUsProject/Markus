@@ -34,7 +34,7 @@ namespace :markus do
         begin
           student.create_group_for_working_alone_student(a1.id)
           grouping = student.accepted_grouping_for(a1.id)
-          grouping.create_grouping_repository_folder
+          grouping.create_starter_files
         rescue Exception => e
           puts "Caught exception on #{student.user_name}: #{e.message}" # ignore exceptions
         end

@@ -151,7 +151,7 @@ namespace :markus do
             student.save
             grouping = student.accepted_grouping_for(assignment.id)
             grouping.save!
-            grouping.create_grouping_repository_folder
+            grouping.create_starter_files
             grouping.save!
             Grouping.assign_all_tas(grouping.id, [ta.id], assignment)
 

@@ -930,10 +930,10 @@ describe Assignment do
     before :each do
       @assignment = create(:assignment)
       @student = create(:student)
-      @grouping = create(:grouping, assignment: @assignment, inviter: @student)
+      @grouping = create(:grouping_with_inviter, assignment: @assignment, inviter: @student)
       @submission = create(:version_used_submission, grouping: @grouping)
       @other_student = create(:student)
-      @other_grouping = create(:grouping, assignment: @assignment, inviter: @other_student)
+      @other_grouping = create(:grouping_with_inviter, assignment: @assignment, inviter: @other_student)
       @other_submission =
         create(:version_used_submission, grouping: @other_grouping)
     end
@@ -1264,9 +1264,9 @@ describe Assignment do
         context 'that does not have an associated SectionDueDate' do
           it 'returns based on due date of the assignment' do
             @assignment.update(due_date: 1.days.ago)
-            expect(@assignment.grouping_past_due_date?(@grouping)).to be true
+            expect(@assignment.grouping_past_due_date?(@grouping.reload)).to be true
             @assignment.update(due_date: 1.days.from_now)
-            expect(@assignment.grouping_past_due_date?(@grouping)).to be false
+            expect(@assignment.grouping_past_due_date?(@grouping.reload)).to be false
           end
         end
 
@@ -1824,7 +1824,7 @@ describe Assignment do
       end
 
       it 'should include a submission time if a non-empty submission exists' do
-        time_stamp = I18n.l(submission.revision_timestamp.in_time_zone)
+        time_stamp = I18n.l(submission.revision_timestamp.in_time_zone, format: :shorter)
         expect(data.select { |h| h.key? :submission_time }.count).to eq 1
         expect(data.map { |h| h[:submission_time] }).to include(time_stamp)
       end

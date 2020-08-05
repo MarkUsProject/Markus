@@ -1068,7 +1068,7 @@ describe Grouping do
         it 'returns false when after section duedate' do
           SectionDueDate.create(section: @section, assignment: @assignment, due_date: Time.parse('July 18 2009 5:00PM'))
           submit_file_at_time(@assignment, @group, 'test', 'July 20 2009 5:00PM', 'my_file', 'Hello, World!')
-          expect(@grouping.past_due_date?).to be true
+          expect(@grouping.reload.past_due_date?).to be true
         end
       end
 
@@ -1101,7 +1101,7 @@ describe Grouping do
         it 'returns false when before section due_date' do
           SectionDueDate.create(section: @section, assignment: @assignment, due_date: Time.parse('July 30 2009 5:00PM'))
           submit_file_at_time(@assignment, @group, 'test', 'July 28 2009 1:00PM', 'my_file', 'Hello, World!')
-          expect(@grouping.past_due_date?).to be false
+          expect(@grouping.reload.past_due_date?).to be false
         end
 
         it 'returns true when after section due_date' do

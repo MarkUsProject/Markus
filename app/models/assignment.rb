@@ -1209,6 +1209,7 @@ class Assignment < Assessment
                                      collection_date)
       }
 
+      # i18n-tasks-use t('time.formats.shorter')
       base[:start_time] = I18n.l(start_time, format: :shorter) if self.is_timed && !start_time.nil?
 
       unless is_empty || revision_timestamp.nil?
