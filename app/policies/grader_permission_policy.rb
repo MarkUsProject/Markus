@@ -12,8 +12,8 @@ class GraderPermissionPolicy < ApplicationPolicy
     user.grader_permission.manage_assessments
   end
 
-  def delete_grace_credit_deduction?
-    user.grader_permission.delete_grace_period_deduction
+  def manage_extensions?
+    user.grader_permission.manage_extensions
   end
 
   def manage_course_grades?

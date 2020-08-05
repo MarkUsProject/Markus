@@ -65,6 +65,6 @@ fr:
           create_delete_annotations?: "UPDATE ME."
           manage_submissions?: "UPDATE ME."
           manage_assessments?: "UPDATE ME."
-          delete_grace_credit_deduction?: "UPDATE ME."
+          manage_extensions?: "UPDATE ME."
           manage_course_grades?: "UPDATE ME."
           grader_run_tests?: "UPDATE ME."

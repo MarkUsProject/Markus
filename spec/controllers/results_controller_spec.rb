@@ -679,7 +679,7 @@ describe ResultsController do
       end
       context 'When TA is allowed to delete_grace_period_deduction' do
         before do
-          grader_permission.delete_grace_period_deduction = true
+          grader_permission.manage_extensions = true
           grader_permission.save
         end
         it 'should delete grace period deduction' do
@@ -691,7 +691,7 @@ describe ResultsController do
       end
       context 'When TA is not allowed to delete_grace_period_deduction' do
         before do
-          grader_permission.delete_grace_period_deduction = false
+          grader_permission.manage_extensions = false
           grader_permission.save
         end
         it 'should not delete grace period deduction' do
