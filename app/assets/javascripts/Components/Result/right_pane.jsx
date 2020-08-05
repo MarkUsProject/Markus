@@ -65,7 +65,6 @@ export class RightPane extends React.Component {
              addTag={this.props.addTag}
              removeTag={this.props.removeTag}
              newNote={this.props.newNote}
-             is_allowed_to_create_notes={this.props.is_allowed_to_create_notes}
              role={this.props.role}
            />
          </TabPanel>
