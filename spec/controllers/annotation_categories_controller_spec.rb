@@ -753,7 +753,7 @@ describe AnnotationCategoriesController do
     context 'When the grader is allowed to manage assignments and also annotations' do
       before do
         grader_permission.create_delete_annotations = true
-        grader_permission.manage_assignments = true
+        grader_permission.manage_assessments = true
         grader_permission.save
       end
       include_examples 'An authorized user managing annotation categories'
@@ -761,7 +761,7 @@ describe AnnotationCategoriesController do
     context 'When the grader is allowed to manage annotations but not assignments' do
       before do
         grader_permission.create_delete_annotations = true
-        grader_permission.manage_assignments = false
+        grader_permission.manage_assessments = false
         grader_permission.save
       end
       include_examples 'An unauthorized user managing annotation categories'
@@ -769,7 +769,7 @@ describe AnnotationCategoriesController do
     context 'When the grader is allowed to manage assignments but not annotations' do
       before do
         grader_permission.create_delete_annotations = false
-        grader_permission.manage_assignments = true
+        grader_permission.manage_assessments = true
         grader_permission.save
       end
       include_examples 'An unauthorized user managing annotation categories'
@@ -777,7 +777,7 @@ describe AnnotationCategoriesController do
     context 'When the grader is not allowed to manage assignments and annotations' do
       before do
         grader_permission.create_delete_annotations = false
-        grader_permission.manage_assignments = false
+        grader_permission.manage_assessments = false
         grader_permission.save
       end
       include_examples 'An unauthorized user managing annotation categories'
