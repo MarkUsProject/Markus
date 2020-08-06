@@ -179,7 +179,7 @@ class GroupsManager extends React.Component {
   };
 
   render() {
-    const times = !!this.props.timed ? ['hours', 'minutes'] : ['weeks', 'days', 'hours'];
+    const times = !!this.props.timed ? ['hours', 'minutes'] : ['weeks', 'days', 'hours', 'minutes'];
     const title = !!this.props.timed ? I18n.t('groups.duration_extension') : I18n.t('groups.due_date_extension');
     return (
       <div>
