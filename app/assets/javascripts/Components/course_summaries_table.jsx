@@ -58,7 +58,7 @@ export class CourseSummaryTable extends React.Component {
 
   render() {
     return [
-      !this.props.student &&
+      !this.props.student && this.props.view_course_summary &&
       <div key='show-hidden' style={{'height': '2em'}}>
         <input
           id='show_hidden'
@@ -72,6 +72,7 @@ export class CourseSummaryTable extends React.Component {
           {I18n.t('students.display_inactive')}
         </label>
       </div>,
+      (this.props.view_course_summary || this.props.student) &&
       <ReactTable
         key='course-summary-table'
         data={this.props.data}
