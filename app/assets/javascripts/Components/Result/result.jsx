@@ -569,6 +569,7 @@ class Result extends React.Component {
                 extra_marks={this.state.extra_marks}
                 extraMarkSubtotal={this.state.extraMarkSubtotal}
                 grace_token_deductions={this.state.grace_token_deductions}
+                is_allowed_to_delete_grace_period_deduction={this.props.is_allowed_to_delete_grace_period_deduction}
                 is_reviewer={this.state.is_reviewer}
                 marks={this.state.marks}
                 notes_count={this.state.notes_count}
