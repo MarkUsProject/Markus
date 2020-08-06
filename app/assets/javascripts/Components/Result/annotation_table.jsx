@@ -1,4 +1,4 @@
-import React from 'react';
+mimport React from 'react';
 import ReactTable from 'react-table';
 
 
