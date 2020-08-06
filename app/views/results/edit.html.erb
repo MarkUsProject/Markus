@@ -15,6 +15,8 @@
           grouping_id: <%= @result.submission.grouping_id %>,
           assignment_id: <%= @result.submission.grouping.assessment_id %>,
           role: '<%= @current_user.class.name %>',
+          manage_annotations: <%= allowed_to?(:manage?, @result, with: AnnotationPolicy) %>,
+          is_allowed_to_delete_grace_period_deduction: <%= allowed_to? :delete_grace_period_deduction? %>,
         }
       );
 
