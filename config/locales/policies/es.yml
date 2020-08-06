@@ -36,16 +36,9 @@ es:
         manage?: "UPDATE ME."
         modify?: "UPDATE ME."
         create?: "UPDATE ME."
-      annotation:
-        add_existing_annotation?: "UPDATE ME."
-        manage?: "UPDATE ME."
       automated_test:
         student_access?: "UPDATE ME."
         manage?: "UPDATE ME."
-      course_summary:
-        view_course_summary?: "UPDATE ME."
-        download_csv_grades_report?: "UPDATE ME."
-        marking_schemes?: "UPDATE ME."
       exam_template:
         manage?: "UPDATE ME."
         modify?: "UPDATE ME."
@@ -54,11 +47,9 @@ es:
         manage?: "UPDATE ME."
         student_interface?: "UPDATE ME."
         update_grade_entry_students?: "UPDATE ME."
-      result:
-        delete_grace_period_deduction?: "UPDATE ME."
       peer_review:
         assign_reviewers?: "UPDATE ME."
-      marking_scheme:
+      annotation_category:
         manage?: "UPDATE ME."
       starter_file_group:
       grader_permission:
