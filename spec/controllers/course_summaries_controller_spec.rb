@@ -1,12 +1,19 @@
 describe CourseSummariesController do
-  shared_examples 'An authorized admin and grader managing course summary' do
+
+  context 'An admin' do
+    before do
+      @admin = Admin.create(user_name: 'adoe',
+                            last_name: 'doe',
+                            first_name: 'adam')
+    end
+
     describe '#download_csv_grades_report' do
       before :each do
         3.times { create(:assignment_with_criteria_and_results) }
       end
 
       it 'be able to get a csv grade report' do
-        csv_rows = get_as(user, :download_csv_grades_report, format: :csv).parsed_body
+        csv_rows = get_as(@admin, :download_csv_grades_report, format: :csv).parsed_body
         expect(csv_rows.size).to eq(Student.count + 1) # one header row plus one row per student
 
         assignments = Assignment.all.order(id: :asc)
@@ -49,7 +56,7 @@ describe CourseSummariesController do
         2.times { create(:grade_entry_form_with_data) }
         # TODO: Create marking scheme as well
 
-        get_as user, :populate, format: :json
+        get_as @admin, :populate, format: :json
         response_data = response.parsed_body.deep_symbolize_keys
         @assessment_info = response_data[:assessment_info]
         @columns = response_data[:columns]
@@ -126,31 +133,20 @@ describe CourseSummariesController do
       end
     end
   end
-  describe 'an authenticated admin' do
-    let!(:user) { create(:admin) }
-    include_examples 'An authorized admin and grader managing course summary'
+
+  context 'A grader' do
+    before do
+      @grader = Ta.create(user_name: 'adoe',
+                          last_name: 'doe',
+                          first_name: 'adam')
+    end
+
+    it 'not be able to CSV graders report' do
+      get_as @grader, :download_csv_grades_report
+      expect(response.status).to eq(404)
+    end
   end
 
-  describe 'When the grader is allowed to download grades report and populate course summary' do
-    let!(:user) { create(:ta) }
-    before do
-      user.grader_permission.manage_course_grades = true
-      user.grader_permission.save
-    end
-    include_examples 'An authorized admin and grader managing course summary'
-  end
-
-  describe 'When the grader is not allowed to download grades report and populate course summary' do
-    let(:grader) { create(:ta) }
-    before do
-      grader.grader_permission.manage_course_grades = false
-      grader.grader_permission.save
-    end
-    it 'should response with 403' do
-      get_as(grader, :download_csv_grades_report, format: :csv)
-      expect(response.status).to eq(403)
-    end
-  end
   context 'A student' do
     before do
       @student = Student.create(user_name: 'adoe',
@@ -160,7 +156,7 @@ describe CourseSummariesController do
 
     it 'not be able to access grades report' do
       get_as @student, :download_csv_grades_report
-      expect(response.status).to eq(403)
+      expect(response.status).to eq(404)
     end
 
     describe '#populate' do
