@@ -187,13 +187,17 @@ class Criterion < ApplicationRecord
   end
 
   def update_results
-    self.marks.includes(:result).each do |m|
+    new_results = self.marks.includes(:result).map do |m|
       next if m.mark.nil?
       if m.result.marks.count == 1
-        m.result.update(marking_state: Result::MARKING_STATES[:incomplete], total_mark: nil)
+        m.result.marking_state = Result::MARKING_STATES[:incomplete]
+        m.result.total_mark = nil
       else
-        m.result.update(total_mark: m.result.total_mark - m.mark >= 0 ? m.result.total_mark - m.mark : 0)
+        m.result.total_mark = m.result.total_mark - m.mark
       end
+      { id: m.result.id, total_mark: m.result.total_mark, marking_state: m.result.marking_state }
     end
+    new_results = new_results.compact
+    if new_results != [] then Result.upsert_all(new_results) end
   end
 end
