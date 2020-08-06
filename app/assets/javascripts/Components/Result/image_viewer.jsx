@@ -50,9 +50,21 @@ export class ImageViewer extends React.Component {
     });
   };
 
+  addRotation = () => {
+    this.setState({rotation: this.state.rotation + 90 > 270 ? 0 : this.state.rotation + 90}, this.rotateImage)
+  }
+
   rotateImage = () => {
-    this.setState({rotation: this.state.rotation + 90 > 270 ? 0 : this.state.rotation + 90},
-      () => document.getElementById('image_preview').setAttribute('style', 'transform: rotate(' + this.state.rotation.toString() + 'deg)'))
+    let transformation = 'transform: rotate(' + this.state.rotation.toString() + 'deg)';
+    let picture = document.getElementById('image_preview');
+    if(this.state.rotation === 270 || this.state.rotation === 90){
+      if (picture.getBoundingClientRect().width < picture.getBoundingClientRect().height) {
+        transformation += `translateY(${picture.getBoundingClientRect().height - picture.getBoundingClientRect().width}px)`
+        console.log(transformation)
+      }
+    }
+    console.log(picture.getBoundingClientRect())
+    picture.setAttribute('style', transformation);
   }
 
   render() {
@@ -60,7 +72,7 @@ export class ImageViewer extends React.Component {
       <div id='image_container'>
         <p>
           Current rotation = {this.state.rotation}°
-          <button onClick={this.rotateImage} className={'inline-button'}>Rotate 90° degrees</button>
+          <button onClick={this.addRotation} className={'inline-button'}>Rotate 90° degrees</button>
         </p>
         <div key='sel_box' id='sel_box' className='annotation-holder-active' style={{display: 'none'}}/>
         <img id='image_preview'
