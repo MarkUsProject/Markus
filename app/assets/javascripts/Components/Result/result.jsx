@@ -124,7 +124,6 @@ class Result extends React.Component {
     window.annotation_context_menu.setup(
       Routes.annotations_path, this.props.result_id,
       this.props.assignment_id,
-      this.props.manage_annotations,
       Routes.download_assignment_submission_result_path(
         this.props.assignment_id,
         this.props.submission_id,
@@ -544,7 +543,6 @@ class Result extends React.Component {
                 revision_identifier={this.state.revision_identifier}
                 submission_files={this.state.submission_files}
                 student_view={this.props.role === 'Student'}
-                manage_annotations={this.props.manage_annotations}
                 newAnnotation={this.newAnnotation}
                 addAnnotation={this.addAnnotation}
                 addExistingAnnotation={this.addExistingAnnotation}

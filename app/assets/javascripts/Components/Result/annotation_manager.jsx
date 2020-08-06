@@ -11,13 +11,10 @@ export class AnnotationManager extends React.Component {
 
   render() {
     return [
-      <span>
-        {this.props.manage_annotations &&
-        <button key='new_annotation_button'
-                onClick={this.props.newAnnotation}>
-          {I18n.t('helpers.submit.create', {model: I18n.t('activerecord.models.annotation.one')})}
-        </button>}
-      </span>,
+      <button key='new_annotation_button'
+              onClick={this.props.newAnnotation}>
+        {I18n.t('helpers.submit.create', {model: I18n.t('activerecord.models.annotation.one')})}
+      </button>,
       <ul className='tags' key='annotation_categories'>
         {this.props.categories.map(cat =>
            <li className='annotation_category'

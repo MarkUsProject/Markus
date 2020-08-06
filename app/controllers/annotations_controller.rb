@@ -1,15 +1,16 @@
 class AnnotationsController < ApplicationController
 
-  before_action do
-    result = Result.find(params[:result_id])
-    authorize! result, with: AnnotationPolicy
+  before_action(except: :add_existing_annotation) do |c|
+    c.authorize_for_ta_admin_and_reviewer(params[:assignment_id], params[:result_id])
   end
-  rescue_from ActionPolicy::Unauthorized, with: :not_authorized
+
+  before_action :authorize_for_ta_and_admin, only: :add_existing_annotation
 
   def add_existing_annotation
     result = Result.find(params[:result_id])
     submission = result.submission
     submission_file = submission.submission_files.find(params[:submission_file_id])
+
     base_attributes = {
       submission_file_id: submission_file.id,
       is_remark: submission.has_remark?,
@@ -18,6 +19,7 @@ class AnnotationsController < ApplicationController
       creator: current_user,
       result_id: params[:result_id]
     }
+
     if submission_file.is_supported_image?
       @annotation = result.annotations.create(
         type: 'ImageAnnotation',
@@ -148,10 +150,5 @@ class AnnotationsController < ApplicationController
       end
     end
     @annotation_text.update(content: params[:content])
-  end
-
-  def not_authorized(exception)
-    flash_message(:error, exception.message)
-    redirect_back(fallback_location: root_path)
   end
 end
