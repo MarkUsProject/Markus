@@ -49,7 +49,6 @@ export class RightPane extends React.Component {
             extra_marks={this.props.extra_marks}
             criterionSummaryData={this.props.criterionSummaryData}
             graceTokenDeductions={this.props.grace_token_deductions}
-            is_allowed_to_delete_grace_period_deduction={this.props.is_allowed_to_delete_grace_period_deduction}
             deleteGraceTokenDeduction={this.props.deleteGraceTokenDeduction}
             createExtraMark={this.props.createExtraMark}
             destroyExtraMark={this.props.destroyExtraMark}
