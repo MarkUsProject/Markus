@@ -8,7 +8,6 @@ import { SubmissionSelector } from './submission_selector';
 class Result extends React.Component {
   constructor(props) {
     super(props);
-    console.log('this.props :>> ', this.props);
     let fullscreen;
     if (typeof(Storage) !== 'undefined') {
       fullscreen = localStorage.getItem('fullscreen') === 'on';
@@ -36,7 +35,6 @@ class Result extends React.Component {
   }
 
   componentDidMount() {
-    console.log('result');
     this.fetchData();
     window.modal = new ModalMarkus('#annotation_dialog');
     // When mod+enter is pressed and the annotation modal is open, submit it
