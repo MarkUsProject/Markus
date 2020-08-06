@@ -5,6 +5,9 @@ import {render} from 'react-dom';
 export class ImageViewer extends React.Component {
   constructor() {
     super();
+    this.state = {
+      rotation: 0
+    };
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -47,9 +50,18 @@ export class ImageViewer extends React.Component {
     });
   };
 
+  rotateImage = () => {
+    this.setState({rotation: this.state.rotation + 90 > 270 ? 0 : this.state.rotation + 90},
+      () => document.getElementById('image_preview').setAttribute('style', 'transform: rotate(' + this.state.rotation.toString() + 'deg)'))
+  }
+
   render() {
     return (
       <div id='image_container'>
+        <p>
+          Current rotation = {this.state.rotation}°
+          <button onClick={this.rotateImage} className={'inline-button'}>Rotate 90° degrees</button>
+        </p>
         <div key='sel_box' id='sel_box' className='annotation-holder-active' style={{display: 'none'}}/>
         <img id='image_preview'
           src={this.props.url}
