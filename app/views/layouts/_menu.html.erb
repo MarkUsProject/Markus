@@ -68,7 +68,7 @@
     </li>
   <% end %>
 
-  <% if allowed_to?(:download_csv_grades_report?, @current_user, with: CourseSummaryPolicy) %>
+  <% if @current_user.admin? %>
     <li <% if controller.controller_name == 'course_summaries' ||
               controller.controller_name == 'marking_schemes' %>
           class='active'
