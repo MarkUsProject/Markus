@@ -99,6 +99,7 @@ export class ImageViewer extends React.Component {
     });
   };
 
+
   rotatedCoordinate = (coordinate, rotation) => {
     if (rotation > 0) {
       return this.rotatedCoordinate([-coordinate[1], coordinate[0]], rotation - 90);
@@ -127,6 +128,7 @@ export class ImageViewer extends React.Component {
         <button onClick={this.addRotation} className={'inline-button'}>{I18n.t('results.rotate_image')}</button>
       </p>,
       <div id='image_container' key={'image_container'}>
+
         <div key='sel_box' id='sel_box' className='annotation-holder-active' style={{display: 'none'}}/>
         <img id='image_preview'
           src={this.props.url}
