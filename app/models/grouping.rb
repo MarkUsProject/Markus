@@ -79,7 +79,7 @@ class Grouping < ApplicationRecord
   validates_presence_of :test_tokens
   validates_numericality_of :test_tokens, greater_than_or_equal_to: 0, only_integer: true
 
-  has_one :extension
+  has_one :extension, dependent: :destroy
 
   # Assigns a random TA from a list of TAs specified by +ta_ids+ to each
   # grouping in a list of groupings specified by +grouping_ids+. The groupings
