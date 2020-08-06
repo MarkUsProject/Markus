@@ -1,8 +1,7 @@
 <div class='float-right'>
   <%= button_to t(:delete),
                 assignment_criterion_path(assignment_id: criterion.assignment.id,
-                                          id: criterion.id,
-                                          criterion_type: criterion.class.to_s),
+                                          id: criterion.id),
                 data: { confirm: t('helpers.confirm.delete', model: Criterion.model_name.human) },
                 method: :delete,
                 class: 'delete',
