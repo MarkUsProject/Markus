@@ -2,6 +2,7 @@ import React from 'react'
 import { render } from 'react-dom'
 import FileManager from './markus_file_manager'
 import SubmissionFileUploadModal from './Modals/submission_file_upload_modal'
+import {FileViewer} from './Result/file_viewer';
 
 
 class SubmissionFileManager extends React.Component {
@@ -11,7 +12,10 @@ class SubmissionFileManager extends React.Component {
     this.state = {
       files: [],
       showModal: false,
-      uploadTarget: undefined
+      uploadTarget: undefined,
+      viewFile: null,
+      viewFileType: null,
+      viewFileURL: null
     };
   }
 
@@ -43,7 +47,7 @@ class SubmissionFileManager extends React.Component {
         'content-type': 'application/json'
       }
     }).then(data => data.json())
-      .then(data => this.setState({files: data}));
+      .then(data => this.setState({files: data, viewFile: null, viewFileType: null, viewFileURL: null}));
   };
 
   // Update state when a new revision_identifier props is passed
@@ -83,7 +87,8 @@ class SubmissionFileManager extends React.Component {
         delete_files: fileKeys,
         grouping_id: this.props.grouping_id
       }
-    }).then(typeof this.props.onChange === 'function' ? this.props.onChange : this.fetchData)
+    }).then(typeof this.props.onChange === 'function' ?
+        () => this.setState({viewFile: null, viewFileType: null, viewFileURL: null}, this.props.onChange) : this.fetchData)
       .then(this.endAction);
   };
 
@@ -127,6 +132,48 @@ class SubmissionFileManager extends React.Component {
     this.setState({showModal: true, uploadTarget: uploadTarget})
   };
 
+  updateViewFile = (item) => {
+    this.setState({
+      viewFile: item.relativeKey,
+      viewFileType: item.type,
+      viewFileURL: item.url
+    })
+  };
+
+  renderFileViewer = () => {
+    let heading;
+    let content = '';
+    if (this.state.viewFile !== null) {
+      let withinSize = document.getElementById('content').getBoundingClientRect().width - 150 + 'px';
+      heading = this.state.viewFile;
+      content = (
+        <div id='codeviewer' style={{maxWidth: withinSize}}>
+          <FileViewer
+            assignment_id={this.props.assignment_id}
+            grouping_id={this.props.grouping_id}
+            revision_id={this.props.revision_identifier}
+            selectedFile={this.state.viewFile}
+            selectedFileType={this.state.viewFileType}
+            selectedFileURL={this.state.viewFileURL}
+          />
+        </div>
+      );
+    } else {
+      heading = I18n.t('submissions.student.select_file');
+    }
+
+    return (
+      <fieldset style={{display: 'flex', flexDirection: 'column'}}>
+        <legend>
+          <span>
+            {heading}
+          </span>
+        </legend>
+        {content}
+      </fieldset>
+    );
+  }
+
   render() {
     return (
       <div>
@@ -142,12 +189,14 @@ class SubmissionFileManager extends React.Component {
           downloadAllURL={this.getDownloadAllURL()}
           onActionBarAddFileClick={this.props.readOnly ? undefined : this.openUploadModal}
           disableActions={{rename: true, addFolder: !this.props.enableSubdirs, deleteFolder: !this.props.enableSubdirs}}
+          onSelectFile={this.updateViewFile}
         />
         <SubmissionFileUploadModal
           isOpen={this.state.showModal}
           onRequestClose={() => this.setState({showModal: false, uploadTarget: undefined})}
           onSubmit={this.handleCreateFiles}
         />
+        {this.renderFileViewer()}
       </div>
     );
   }

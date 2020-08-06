@@ -27,6 +27,7 @@
 - Set SameSite=Lax on cookies (#4742)
 - Introduces individual marks chart view for assessments (#4747)
 - Fix annotation modal overflow issue (#4748)
+- Introduce file viewer for student submission file manager and admin repo manager (#4754)
 - Make skipping empty submissions the default behaviour when assigning graders (#4761)
 - Introduce typing delay for entering flexible criterion mark (#4763)
 - Fix UI overflow bug for large images in results file viewer (#4764)
