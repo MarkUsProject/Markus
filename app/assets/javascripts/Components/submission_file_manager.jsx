@@ -88,8 +88,7 @@ class SubmissionFileManager extends React.Component {
         grouping_id: this.props.grouping_id
       }
     }).then(typeof this.props.onChange === 'function' ?
-      this.setState({viewFile: null, viewFileType: null, viewFileURL: null}, () => {this.props.onChange;}) :
-      this.fetchData)
+        this.setState({viewFile: null, viewFileType: null, viewFileURL: null}, this.props.onChange) : this.fetchData)
       .then(this.endAction);
   };
 
