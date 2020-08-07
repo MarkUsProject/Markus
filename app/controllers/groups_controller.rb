@@ -525,6 +525,24 @@ class GroupsController < ApplicationController
     end
   end
 
+  def download_starter_file
+    assignment = Assignment.find(params[:assignment_id])
+    grouping = current_user.accepted_grouping_for(assignment.id)
+
+    if grouping.starter_file_changed
+      grouping.reset_starter_file_entries
+      grouping.reload.update!(starter_file_changed: false)
+    end
+
+    zip_name = "#{assignment.short_identifier}-starter-files-#{current_user.user_name}"
+    zip_path = File.join('tmp', zip_name + '.zip')
+    FileUtils.rm_rf zip_path
+    Zip::File.open(zip_path, Zip::File::CREATE) do |zip_file|
+      grouping.starter_file_entries.each { |entry| entry.add_files_to_zip_file(zip_file) }
+    end
+    send_file zip_path, filename: File.basename(zip_path)
+  end
+
   private
   # These methods are called through global actions.
 

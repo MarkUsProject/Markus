@@ -58,7 +58,6 @@ en:
       download_submissions_finalizing: "Finalizing submissions for download"
       download_submissions_complete: "Submissions are ready for download. Click here to complete the download."
       update_repo_required_files_job: "%{progress}/%{total} Student repositories updated with new required files"
-      update_starter_code_job: "%{progress}/%{total} Student repositories updated with starter code"
       autotest_run_job_enqueuing: "Enqueuing tests"
       autotest_specs_job: "Setting up automated tests."
     repo:
@@ -67,6 +66,5 @@ en:
         initial: "Initial commit"
         default: "Update files"
         required_files: "Update the list of required files for assignment %{assignment}"
-        starter_code: "Update starter code files for assignment %{assignment}"
       timeout: 'Waited %{ms} milliseconds to access this repository. Please wait a few seconds and try again.'
       assignment_dir_creation_error: 'Unable to create a directory for %{short_identifier}. Please retry this action.'

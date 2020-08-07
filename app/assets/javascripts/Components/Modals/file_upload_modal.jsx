@@ -1,7 +1,7 @@
 import React from 'react';
 import Modal from 'react-modal';
 
-class AutotestFileUploadModal extends React.Component {
+class FileUploadModal extends React.Component {
 
   constructor(props) {
     super(props);
@@ -66,4 +66,4 @@ class AutotestFileUploadModal extends React.Component {
   }
 }
 
-export default AutotestFileUploadModal;
+export default FileUploadModal;

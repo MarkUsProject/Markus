@@ -93,8 +93,8 @@ describe SubmissionRule do
     let(:section_due_date) { create(:section_due_date, section: section, assignment: assignment) }
     let(:inviter_with_section) { create(:student, section: section) }
     let(:inviter_without_section) { create(:student) }
-    let(:grouping_with_section) { create(:grouping, inviter: inviter_with_section, assignment: assignment) }
-    let(:grouping_without_section) { create(:grouping, inviter: inviter_without_section, assignment: assignment) }
+    let(:grouping_with_section) { create(:grouping_with_inviter, inviter: inviter_with_section, assignment: assignment) }
+    let(:grouping_without_section) { create(:grouping_with_inviter, inviter: inviter_without_section, assignment: assignment) }
     context 'are enabled' do
       let(:assignment) { create(:assignment, assignment_properties_attributes: { section_due_dates_type: true }) }
 

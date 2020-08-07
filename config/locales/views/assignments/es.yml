@@ -66,10 +66,24 @@ es:
                            los integrantes del grupo verán sus créditos de gracia reducidos."
     scanned_exam:
       under_review: "Este examen todavía está en revisión"
-    starter_code:
-      description: "UPDATE ME."
-      overwrite: "UPDATE ME"
+    starter_file:
       title: "Código Inicial"
+      provided: "UPDATE ME"
+      download_instructions: "UPDATE ME"
+      groupings_exist_warning_html: "UPDATE ME"
+      new_starter_file_group: "UPDATE ME"
+      changed_warning: "UPDATE ME"
+      changed_at: "UPDATE ME %{changed_date}"
+      default_starter_file_group: "UPDATE ME"
+      starter_file_rule: "UPDATE ME"
+      rename: "UPDATE ME"
+      use_original_filename: "UPDATE ME"
+      download_mappings_csv: "UPDATE ME"
+      starter_file_rule_types:
+        simple: "UPDATE ME"
+        sections: "UPDATE ME"
+        shuffle: "UPDATE ME"
+        group: "UPDATE ME"
     timed:
       start_button: "UPDATE ME"
       end_time: "UPDATE ME"
@@ -84,8 +98,8 @@ es:
       after_start_instructions_html: "UPDATE ME %{start_time} %{due_date}"
       start_confirmation: "UPDATE ME"
       modal_current_duration: "UPDATE ME"
-      started_message: "UPDATE ME"
-      starter_code_prompt: "UPDATE ME"
+      started_message_html: "UPDATE ME"
+      starter_file_prompt: "UPDATE ME"
       time_until_due_warning: "UPDATE ME %{due_date}"
       duration_extension_info: "UPDATE ME %{extension_string}"
 

@@ -120,10 +120,16 @@ class RawSubmissionTable extends React.Component {
         </select>,
     },
     {
+      show: this.props.is_timed,
+      Header: I18n.t('activerecord.attributes.assignment.start_time'),
+      accessor: 'start_time',
+      filterable: false,
+      sortMethod: dateSort
+    },
+    {
       Header: I18n.t('submissions.commit_date'),
       accessor: 'submission_time',
       filterable: false,
-      minWidth: 150,
       sortMethod: dateSort,
     },
     {
@@ -292,6 +298,7 @@ class RawSubmissionTable extends React.Component {
 let SubmissionTable = withSelection(RawSubmissionTable);
 SubmissionTable.defaultProps = {
   is_admin: false,
+  is_timed: false,
   can_run_tests: false
 };
 

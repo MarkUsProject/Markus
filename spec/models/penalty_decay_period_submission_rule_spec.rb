@@ -6,7 +6,7 @@ describe PenaltyDecayPeriodSubmissionRule do
     include_context 'submission_rule_on_time'
     context 'when the student did not submit any files' do
       before :each do
-        pretend_now_is(collection_time) { grouping.create_grouping_repository_folder }
+        pretend_now_is(collection_time) { grouping.create_starter_files }
       end
       let(:submission) { create :version_used_submission, grouping: grouping, is_empty: true }
       let(:collection_time) { due_date - 5.days }

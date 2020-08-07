@@ -57,7 +57,6 @@ fr:
       download_submissions_finalizing: "Finaliser les soumissions à télécharger"
       download_submissions_complete: "Les soumissions sont prêtes. Cliquez ici pour finaliser le téléchargement."
       update_repo_required_files_job: "%{progress}/%{total} repos modifiés"
-      update_starter_code_job: "%{progress}/%{total} repos modifiés"
       autotest_run_job_enqueuing: "UPDATE ME"
       autotest_specs_job: "Configuration de tests automatisés"
     repo:
@@ -66,6 +65,5 @@ fr:
         initial: "UPDATE ME"
         default: "UPDATE ME"
         required_files: "UPDATE ME %{assignment}"
-        starter_code: "UPDATE ME %{assignment}"
       timeout: 'Attendu %{ms} millisecondes pour accéder à ce repo. Veuillez patienter quelques secondes et réessayer.'
       assignment_dir_creation_error: "N'a pas réussi à créer un dossier pour %{short_identifier}. Veuillez réessayer cette action"

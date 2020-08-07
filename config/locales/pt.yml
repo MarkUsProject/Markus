@@ -52,7 +52,6 @@ pt:
       download_submissions_finalizing: "UPDATE ME"
       download_submissions_complete: "UPDATE ME"
       update_repo_required_files_job: "%{progress}/%{total} UPDATE ME"
-      update_starter_code_job: "%{progress}/%{total} UPDATE ME"
       autotest_run_job_enqueuing: "UPDATE ME"
       autotest_specs_job: "UPDATE ME"
     repo:
@@ -61,6 +60,5 @@ pt:
         initial: "UPDATE ME"
         default: "UPDATE ME"
         required_files: "UPDATE ME %{assignment}"
-        starter_code: "UPDATE ME %{assignment}"
       timeout: 'UPDATE ME %{ms}'
       assignment_dir_creation_error: "UPDATE ME %{short_identifier}"

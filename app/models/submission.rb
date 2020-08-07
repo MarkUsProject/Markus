@@ -64,11 +64,8 @@ class Submission < ApplicationRecord
           # populate the submission with no files instead of raising an exception
           raise ActiveRecord::Rollback
         end
-      end
-      starter_code_revision = grouping.starter_code_revision_identifier
-      unless starter_code_revision.nil?
-        # if starter code exists, check if the student did not change the starter code
-        new_submission.is_empty = starter_code_revision == revision&.revision_identifier
+        # if starter files exist, check if the student did not change the starter files
+        new_submission.is_empty = !grouping.changed_starter_file_at?(revision)
       end
       new_submission.save!
       new_submission

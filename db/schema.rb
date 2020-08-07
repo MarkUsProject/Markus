@@ -126,7 +126,11 @@ ActiveRecord::Schema.define(version: 2020_07_26_012622) do
     t.string "duration"
     t.datetime "start_time"
     t.boolean "is_timed", default: false, null: false
+    t.string "starter_file_type", default: "simple", null: false
+    t.datetime "starter_file_updated_at"
+    t.bigint "default_starter_file_group_id"
     t.index ["assessment_id"], name: "index_assignment_properties_on_assessment_id", unique: true
+    t.index ["default_starter_file_group_id"], name: "index_assignment_properties_on_default_starter_file_group_id"
   end
 
   create_table "assignment_stats", id: :serial, force: :cascade do |t|
@@ -255,6 +259,13 @@ ActiveRecord::Schema.define(version: 2020_07_26_012622) do
     t.index ["grade_entry_item_id", "grade_entry_student_id"], name: "index_grades_on_grade_entry_item_id_and_grade_entry_student_id", unique: true
   end
 
+  create_table "grouping_starter_file_entries", force: :cascade do |t|
+    t.bigint "grouping_id", null: false
+    t.bigint "starter_file_entry_id", null: false
+    t.index ["grouping_id"], name: "index_grouping_starter_file_entries_on_grouping_id"
+    t.index ["starter_file_entry_id"], name: "index_grouping_starter_file_entries_on_starter_file_entry_id"
+  end
+
   create_table "groupings", id: :serial, force: :cascade do |t|
     t.integer "group_id", null: false
     t.datetime "created_at"
@@ -264,9 +275,10 @@ ActiveRecord::Schema.define(version: 2020_07_26_012622) do
     t.integer "notes_count", default: 0
     t.integer "criteria_coverage_count", default: 0
     t.integer "test_tokens", default: 0, null: false
-    t.text "starter_code_revision_identifier"
     t.bigint "assessment_id", null: false
     t.datetime "start_time"
+    t.datetime "starter_file_timestamp"
+    t.boolean "starter_file_changed", default: false, null: false
     t.index ["assessment_id", "group_id"], name: "groupings_u1", unique: true
   end
 
@@ -395,6 +407,13 @@ ActiveRecord::Schema.define(version: 2020_07_26_012622) do
     t.datetime "start_time"
   end
 
+  create_table "section_starter_file_groups", force: :cascade do |t|
+    t.bigint "section_id", null: false
+    t.bigint "starter_file_group_id", null: false
+    t.index ["section_id"], name: "index_section_starter_file_groups_on_section_id"
+    t.index ["starter_file_group_id"], name: "index_section_starter_file_groups_on_starter_file_group_id"
+  end
+
   create_table "sections", id: :serial, force: :cascade do |t|
     t.string "name"
     t.datetime "created_at"
@@ -438,6 +457,20 @@ ActiveRecord::Schema.define(version: 2020_07_26_012622) do
     t.integer "exam_template_id"
     t.index ["exam_template_id"], name: "index_split_pdf_logs_on_exam_template_id"
     t.index ["user_id"], name: "index_split_pdf_logs_on_user_id"
+  end
+
+  create_table "starter_file_entries", force: :cascade do |t|
+    t.bigint "starter_file_group_id", null: false
+    t.string "path", null: false
+    t.index ["starter_file_group_id"], name: "index_starter_file_entries_on_starter_file_group_id"
+  end
+
+  create_table "starter_file_groups", force: :cascade do |t|
+    t.bigint "assessment_id", null: false
+    t.string "entry_rename", default: "", null: false
+    t.boolean "use_rename", default: false, null: false
+    t.string "name", null: false
+    t.index ["assessment_id"], name: "index_starter_file_groups_on_assessment_id"
   end
 
   create_table "submission_files", id: :serial, force: :cascade do |t|
@@ -575,6 +608,7 @@ ActiveRecord::Schema.define(version: 2020_07_26_012622) do
   add_foreign_key "annotations", "submission_files", name: "fk_annotations_submission_files"
   add_foreign_key "assignment_files", "assessments", name: "fk_assignment_files_assignments", on_delete: :cascade
   add_foreign_key "assignment_properties", "assessments", on_delete: :cascade
+  add_foreign_key "assignment_properties", "starter_file_groups", column: "default_starter_file_group_id"
   add_foreign_key "assignment_stats", "assessments", name: "fk_assignment_stats_assignments", on_delete: :cascade
   add_foreign_key "criteria", "assessments"
   add_foreign_key "criteria_assignment_files_joins", "assignment_files"
@@ -582,6 +616,8 @@ ActiveRecord::Schema.define(version: 2020_07_26_012622) do
   add_foreign_key "extensions", "groupings"
   add_foreign_key "extra_marks", "results", name: "fk_extra_marks_results", on_delete: :cascade
   add_foreign_key "feedback_files", "submissions"
+  add_foreign_key "grouping_starter_file_entries", "groupings"
+  add_foreign_key "grouping_starter_file_entries", "starter_file_entries"
   add_foreign_key "groupings", "assessments", name: "fk_groupings_assignments"
   add_foreign_key "groupings", "groups", name: "fk_groupings_groups"
   add_foreign_key "key_pairs", "users"
@@ -595,10 +631,14 @@ ActiveRecord::Schema.define(version: 2020_07_26_012622) do
   add_foreign_key "peer_reviews", "results"
   add_foreign_key "results", "peer_reviews", on_delete: :cascade
   add_foreign_key "results", "submissions", name: "fk_results_submissions", on_delete: :cascade
+  add_foreign_key "section_starter_file_groups", "sections"
+  add_foreign_key "section_starter_file_groups", "starter_file_groups"
   add_foreign_key "split_pages", "groups"
   add_foreign_key "split_pages", "split_pdf_logs"
   add_foreign_key "split_pdf_logs", "exam_templates"
   add_foreign_key "split_pdf_logs", "users"
+  add_foreign_key "starter_file_entries", "starter_file_groups"
+  add_foreign_key "starter_file_groups", "assessments"
   add_foreign_key "submission_files", "submissions", name: "fk_submission_files_submissions"
   add_foreign_key "tags", "users"
   add_foreign_key "template_divisions", "assignment_files"

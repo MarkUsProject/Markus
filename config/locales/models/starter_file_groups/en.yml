@@ -1,0 +1,6 @@
+en:
+  activerecord:
+    models:
+      starter_file_group:
+        one: "Starter File Group"
+        other: "Starter File Groups"

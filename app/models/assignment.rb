@@ -76,7 +76,8 @@ class Assignment < Assessment
 
   has_many :exam_templates, dependent: :destroy, inverse_of: :assignment, foreign_key: :assessment_id
 
-  after_create :build_starter_code_repo
+  has_many :starter_file_groups, dependent: :destroy, inverse_of: :assignment, foreign_key: :assessment_id
+
   after_create :create_autotest_dirs
 
   before_save :reset_collection_time
@@ -97,7 +98,7 @@ class Assignment < Assessment
   validates_presence_of :assignment_stat
 
   BLANK_MARK = ''
-  STARTER_CODE_REPO_NAME = "starter-code"
+  STARTER_FILE_REPO_NAME = 'starter-files'.freeze
 
   # Copy of API::AssignmentController without selected attributes and order changed
   # to put first the 4 required fields
@@ -874,31 +875,20 @@ class Assignment < Assessment
 
   ### REPO ###
 
-  def build_starter_code_repo
-    return unless Rails.configuration.x.repository.is_repository_admin && Rails.configuration.starter_code_on
-    begin
-      unless Repository.get_class.repository_exists?(starter_code_repo_path)
-        Repository.get_class.create(starter_code_repo_path, with_hooks: false)
-      end
-      access_starter_code_repo do |repo|
-        txn = repo.get_transaction('Markus', I18n.t('repo.commits.starter_code', assignment: self.short_identifier))
-        txn.add_path(self.repository_folder)
-        repo.commit(txn)
-      end
-    rescue StandardError => e
-      errors.add(:base, starter_code_repo_path)
-      m_logger = MarkusLogger.instance
-      m_logger.log("Creating repository '#{starter_code_repo_path}' failed with '#{e.message}'", MarkusLogger::ERROR)
-    end
+  def starter_file_path
+    File.join(Rails.configuration.x.repository.storage, STARTER_FILE_REPO_NAME, repository_folder)
   end
 
-  def starter_code_repo_path
-    File.join(Rails.configuration.x.repository.storage, STARTER_CODE_REPO_NAME)
+  def default_starter_file_group
+    default = starter_file_groups.find_by(id: self.default_starter_file_group_id)
+    default.nil? ? starter_file_groups.order(:id).first : default
   end
 
-  #Yields a repository object, if possible, and closes it after it is finished
-  def access_starter_code_repo(&block)
-    Repository.get_class.access(starter_code_repo_path, &block)
+  def starter_file_mappings
+    groupings.joins(:group, grouping_starter_file_entries: [starter_file_entry: :starter_file_group])
+             .pluck_to_hash('groups.group_name as group_name',
+                            'starter_file_groups.name as starter_file_group_name',
+                            'starter_file_entries.path as starter_file_entry_path')
   end
 
   # Yield an open repo for each grouping of this assignment, then yield again for each repo that raised an exception, to
@@ -925,39 +915,6 @@ class Assignment < Assessment
         # give up
       end
     end
-  end
-
-  def update_starter_code_files(group_repo, starter_repo, starter_tree, overwrite: true, starter_files: nil)
-    txn = group_repo.get_transaction('Markus', I18n.t('repo.commits.starter_code',
-                                                      assignment: self.short_identifier))
-    group_revision = group_repo.get_latest_revision
-    internal_file_names = Repository.get_class.internal_file_names
-    starter_tree.sort { |a, b| a[0].count(File::SEPARATOR) <=> b[0].count(File::SEPARATOR) } # less nested first
-                .each do |starter_obj_name, starter_obj|
-      next if internal_file_names.include?(File.basename(starter_obj_name))
-      starter_obj_path = File.join(self.repository_folder, starter_obj_name)
-      already_exists = group_revision.path_exists?(starter_obj_path)
-      next if already_exists && !overwrite
-      if starter_obj.is_a? Repository::RevisionDirectory
-        txn.add_path(starter_obj_path) unless already_exists
-      else # Repository::RevisionFile
-        if starter_files.nil? || !starter_files.has_key?(starter_obj_name) # handle cache of starter code files
-          starter_file = starter_repo.download_as_string(starter_obj)
-          unless starter_files.nil?
-            starter_files[starter_obj_name] = starter_file
-          end
-        else
-          starter_file = starter_files[starter_obj_name]
-        end
-        if already_exists
-          txn.replace(starter_obj_path, starter_file, starter_obj.mime_type, group_revision.revision_identifier)
-        else
-          txn.add(starter_obj_path, starter_file, starter_obj.mime_type)
-        end
-      end
-    end
-
-    txn
   end
 
   # Repository authentication subtleties:
@@ -1111,7 +1068,8 @@ class Assignment < Assessment
            .pluck('groupings.id',
                   'groups.group_name',
                   'submissions.revision_timestamp',
-                  'submissions.is_empty')
+                  'submissions.is_empty',
+                  'groupings.start_time')
 
     tag_data = groupings
                .joins(:tags)
@@ -1178,7 +1136,7 @@ class Assignment < Assessment
     data_collections = [tag_data, result_data, member_data, section_data, collection_dates]
 
     # This is the submission data that's actually returned
-    data.map do |grouping_id, group_name, revision_timestamp, is_empty|
+    data.map do |grouping_id, group_name, revision_timestamp, is_empty, start_time|
       tag_info, result_info, member_info, section_info, collection_date = data_collections.map { |c| c[grouping_id] }
       has_remark = result_info&.count&.> 1
       result_info = result_info&.first || {}
@@ -1194,9 +1152,12 @@ class Assignment < Assessment
                                      collection_date)
       }
 
+      # i18n-tasks-use t('time.formats.shorter')
+      base[:start_time] = I18n.l(start_time, format: :shorter) if self.is_timed && !start_time.nil?
+
       unless is_empty || revision_timestamp.nil?
         # TODO: for some reason, this is not automatically converted to our timezone by the query
-        base[:submission_time] = I18n.l(revision_timestamp.in_time_zone)
+        base[:submission_time] = I18n.l(revision_timestamp.in_time_zone, format: :shorter)
       end
 
       if result_info['results.id'].present?
