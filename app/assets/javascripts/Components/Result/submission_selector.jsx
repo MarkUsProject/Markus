@@ -113,8 +113,8 @@ export class SubmissionSelector extends React.Component {
               value={this.props.num_marked}
               min={0}
               max={this.props.num_assigned}
-              low={this.props.num_assigned * 0.35}
-              high={this.props.num_assigned * 0.75}
+              low={!!this.props.num_assigned ? this.props.num_assigned  * 0.35 : 1}
+              high={!!this.props.num_assigned ? this.props.num_assigned  * 0.75 : 1}
               optimum={this.props.num_assigned}
             >
               {this.props.num_marked}/{this.props.num_assigned}
