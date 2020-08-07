@@ -49,6 +49,9 @@ import 'javascripts/chart_config';
 
 //blueimp-load-image
 import * as loadImage from 'blueimp-load-image';
+import 'blueimp-load-image/js/load-image-exif';
+import 'blueimp-load-image/js/load-image-meta';
+import 'blueimp-load-image/js/load-image-orientation';
 window.loadImage = loadImage;
 
 // assets with side-effects only

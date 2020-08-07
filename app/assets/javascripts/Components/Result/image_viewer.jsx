@@ -53,7 +53,8 @@ export class ImageViewer extends React.Component {
     let formattedImage = loadImage(this.props.url, function (img, data) {
       img.id = 'image_preview'
       console.log(data)
-    });
+      console.log(img)
+    }, {meta: true});
 
     console.log(formattedImage)
 
