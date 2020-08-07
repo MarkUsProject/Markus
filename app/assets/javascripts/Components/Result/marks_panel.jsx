@@ -180,7 +180,7 @@ class CheckboxCriterionInput extends React.Component {
           <div>
             {!this.props.released_to_students &&
              <span className='checkbox-criterion-inputs'>
-              <label onClick={() => {document.getElementById(`checkbox_criterion_${this.props.id}_yes`).click()}}>
+              <label onClick={() => this.handleChange({target: {value: 'yes'}})}>
                 <input
                   id={`checkbox_criterion_${this.props.id}_yes`}
                   type='radio'
@@ -191,7 +191,7 @@ class CheckboxCriterionInput extends React.Component {
                 />
                 {I18n.t('checkbox_criteria.answer_yes')}
               </label>
-              <label onClick={() => {document.getElementById(`checkbox_criterion_${this.props.id}_no`).click()}}>
+              <label onClick={this.handleChange}>
               <input
                 id={`checkbox_criterion_${this.props.id}_no`}
                 type='radio'
