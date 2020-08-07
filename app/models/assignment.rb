@@ -544,7 +544,7 @@ class Assignment < Assessment
     criteria_shown = Set.new
     max_mark = 0
 
-    selected_criteria = user.admin? ? criteria : ta_criteria
+    selected_criteria = user.admin? ? self.criteria : self.ta_criteria
     criteria_columns = selected_criteria.map do |crit|
       unassigned = !assigned_criteria.nil? && !assigned_criteria.include?(crit.id)
       next if hide_unassigned && unassigned
@@ -621,8 +621,7 @@ class Assignment < Assessment
     end
 
     headers = [['User name', 'Group', 'Final grade'], ['', 'Out of', self.max_mark]]
-    criteria = self.ta_criteria
-    criteria.each do |crit|
+    self.ta_criteria.each do |crit|
       headers[0] << crit.name
       headers[1] << crit.max_mark
     end
@@ -641,10 +640,10 @@ class Assignment < Assessment
         g.accepted_students.each do |s|
           row = [s.user_name, g.group.group_name]
           if result.nil?
-            row += Array.new(2 + criteria.length, nil)
+            row += Array.new(2 + self.ta_criteria.count, nil)
           else
             row << result.total_mark
-            row += criteria.map { |crit| marks[crit.id] }
+            row += self.ta_criteria.map { |crit| marks[crit.id] }
             row << extra_marks_hash[result&.id]
           end
           csv << row
@@ -1159,7 +1158,7 @@ class Assignment < Assessment
       assigned_criteria = nil
     end
 
-    visible_criteria = current_user.admin? ? self.criteria : ta_criteria
+    visible_criteria = current_user.admin? ? self.criteria : self.ta_criteria
     criteria = visible_criteria.reject do |crit|
       !assigned_criteria.nil? && !assigned_criteria.include?(crit.id)
     end

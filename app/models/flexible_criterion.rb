@@ -126,14 +126,14 @@ class FlexibleCriterion < Criterion
   end
 
   def scale_marks
+    return unless max_mark_previously_changed? && !previous_changes[:max_mark].first.nil? # if max_mark was not updated
+
     super
     return if self&.annotation_categories.nil?
     annotation_categories = self.annotation_categories.includes(:annotation_texts)
     annotation_categories.each do |category|
       category.annotation_texts.each do |text|
-        unless previous_changes['max_mark'].nil?
-          text.scale_deduction(previous_changes['max_mark'][1] / previous_changes['max_mark'][0])
-        end
+        text.scale_deduction(previous_changes['max_mark'][1] / previous_changes['max_mark'][0])
       end
     end
   end

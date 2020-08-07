@@ -266,8 +266,7 @@ describe CriteriaController do
             post_as admin,
                     :create,
                     params: { assignment_id: assignment.id, flexible_criterion: { name: 'first' },
-                              new_criterion_prompt: 'first', max_mark_prompt: 10,
-                              criterion_type: 'FlexibleCriterion' },
+                              new_criterion_prompt: 'first', criterion_type: 'FlexibleCriterion', max_mark_prompt: 10 },
                     format: :js
           end
           it 'should respond with appropriate content' do
@@ -288,8 +287,7 @@ describe CriteriaController do
             post_as admin,
                     :create,
                     params: { assignment_id: assignment.id, flexible_criterion: { name: 'first' },
-                              new_criterion_prompt: 'first', max_mark_prompt: 10,
-                              criterion_type: 'FlexibleCriterion' },
+                              new_criterion_prompt: 'first', criterion_type: 'FlexibleCriterion', max_mark_prompt: 10 },
                     format: :js
           end
           it 'should respond with appropriate content' do
@@ -310,8 +308,7 @@ describe CriteriaController do
         before(:each) do
           post_as admin,
                   :edit,
-                  params: { assignment_id: 1,
-                            id: flexible_criterion.id },
+                  params: { assignment_id: 1, id: flexible_criterion.id },
                   format: :js
         end
 
@@ -348,8 +345,7 @@ describe CriteriaController do
       it ' should be able to delete the criterion' do
         delete_as admin,
                   :destroy,
-                  params: { assignment_id: 1,
-                            id: flexible_criterion.id },
+                  params: { assignment_id: 1, id: flexible_criterion.id },
                   format: :js
         expect(assigns(:criterion)).to be_truthy
         i18t_strings = [I18n.t('flash.criteria.destroy.success')].map { |f| extract_text f }
@@ -622,8 +618,7 @@ describe CriteriaController do
             post_as admin,
                     :create,
                     params: { assignment_id: assignment.id,
-                              new_criterion_prompt: 'first', max_mark_prompt: 10,
-                              criterion_type: 'RubricCriterion' },
+                              new_criterion_prompt: 'first', criterion_type: 'RubricCriterion', max_mark_prompt: 10 },
                     format: :js
           end
           it 'should respond with appropriate content' do
@@ -644,8 +639,7 @@ describe CriteriaController do
             post_as admin,
                     :create,
                     params: { assignment_id: assignment.id, rubric_criterion: { name: 'first' },
-                              new_criterion_prompt: 'first', max_mark_prompt: 10,
-                              criterion_type: 'RubricCriterion' },
+                              new_criterion_prompt: 'first', criterion_type: 'RubricCriterion', max_mark_prompt: 10 },
                     format: :js
           end
           it 'should respond with appropriate content' do
@@ -777,14 +771,14 @@ describe CriteriaController do
       it 'creates all criteria with properly formatted entries' do
         post_as admin, :upload, params: { assignment_id: assignment.id, upload_file: mixed_file }
 
-        expect(assignment.criteria.map(&:name)).to contain_exactly('cr30',
-                                                                       'cr20',
-                                                                       'cr100',
-                                                                       'cr80',
-                                                                       'cr60',
-                                                                       'cr90',
-                                                                       'cr40',
-                                                                       'cr50')
+        expect(assignment.criteria.pluck(:name)).to contain_exactly('cr30',
+                                                                    'cr20',
+                                                                    'cr100',
+                                                                    'cr80',
+                                                                    'cr60',
+                                                                    'cr90',
+                                                                    'cr40',
+                                                                    'cr50')
         expect(flash[:success].map { |f| extract_text f })
           .to eq([I18n.t('upload_success', count: 8)].map { |f| extract_text f })
       end
@@ -864,13 +858,13 @@ describe CriteriaController do
       it 'creates criteria that lack a description' do
         post_as admin, :upload, params: { assignment_id: assignment.id, upload_file: mixed_file }
 
-        expect(assignment.criteria.where(type: 'FlexibleCriterion').map(&:name)).to include('cr80')
+        expect(assignment.criteria.where(type: 'FlexibleCriterion').pluck(:name)).to include('cr80')
         expect(assignment.criteria.where(type: 'FlexibleCriterion').find_by(name: 'cr80').description).to eq('')
       end
 
       it 'creates criteria with the default visibility options if these are not given in the entries' do
         post_as admin, :upload, params: { assignment_id: assignment.id, upload_file: mixed_file }
-        expect(assignment.criteria.map(&:name)).to include('cr100', 'cr60')
+        expect(assignment.criteria.pluck(:name)).to include('cr100', 'cr60')
         expect(assignment.criteria.where(type: 'CheckboxCriterion').find_by(name: 'cr100').ta_visible).to be true
         expect(assignment.criteria.where(type: 'CheckboxCriterion').find_by(name: 'cr100').peer_visible).to be false
         expect(assignment.criteria.where(type: 'FlexibleCriterion').find_by(name: 'cr60').ta_visible).to be true
@@ -886,7 +880,7 @@ describe CriteriaController do
       it 'does not create criteria with format errors in entries' do
         post_as admin, :upload, params: { assignment_id: assignment.id, upload_file: invalid_mixed_file }
 
-        expect(assignment.criteria.map(&:name)).not_to include('cr40', 'cr50', 'cr70')
+        expect(assignment.criteria.pluck(:name)).not_to include('cr40', 'cr50', 'cr70')
         expect(flash[:error].map { |f| extract_text f })
           .to eq([I18n.t('criteria.errors.invalid_format') + ' cr40, cr70, cr50'].map { |f| extract_text f })
       end
@@ -894,13 +888,13 @@ describe CriteriaController do
       it 'does not create criteria with an invalid mark' do
         post_as admin, :upload, params: { assignment_id: assignment.id, upload_file: invalid_mixed_file }
 
-        expect(assignment.criteria.map(&:name)).not_to include('cr40', 'cr50')
+        expect(assignment.criteria.pluck(:name)).not_to include('cr40', 'cr50')
       end
 
       it 'does not create criteria that have both visibility options set to false' do
         post_as admin, :upload, params: { assignment_id: assignment.id, upload_file: invalid_mixed_file }
 
-        expect(assignment.criteria.map(&:name)).not_to include('cr70')
+        expect(assignment.criteria.pluck(:name)).not_to include('cr70')
       end
 
       it 'does not create criteria that have unmatched keys / more keys than required' do

@@ -47,7 +47,7 @@ export class MarksPanel extends React.Component {
     let expanded = new Set();
     this.props.marks.forEach(markData => {
       if (!onlyUnmarked || markData.mark === null || markData.mark === undefined) {
-        expanded.add(`${markData.id}`);
+        expanded.add(markData.id);
       }
     });
     this.setState({ expanded });
@@ -70,7 +70,7 @@ export class MarksPanel extends React.Component {
     let result = this.props.updateMark(criterion_id, mark);
     if (result !== undefined) {
       result.then(() => {
-        this.state.expanded.delete(`${criterion_id}`);
+        this.state.expanded.delete(criterion_id);
         this.setState({ expanded: this.state.expanded });
       })
     }
@@ -305,6 +305,7 @@ class FlexibleCriterionInput extends React.Component {
       this.setState({rawText: event.target.value, invalid: true});
     } else {
       this.setState({rawText: event.target.value, invalid: false});
+
       this.typing_timer = setTimeout(() => {
         this.props.updateMark(this.props.id, isNaN(mark) ? null : mark);
       }, 300);

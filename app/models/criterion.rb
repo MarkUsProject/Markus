@@ -24,7 +24,6 @@ class Criterion < ApplicationRecord
 
   has_many :criteria_assignment_files_joins,
            dependent: :destroy
-
   has_many :assignment_files,
            through: :criteria_assignment_files_joins
   accepts_nested_attributes_for :criteria_assignment_files_joins, allow_destroy: true
@@ -136,8 +135,7 @@ class Criterion < ApplicationRecord
       { **h.symbolize_keys, assigned_groups_count: counts[h['id']] || 0 }
     end
 
-    return if records.empty?
-    Criterion.upsert_all(records)
+    Criterion.upsert_all(records) unless records.empty?
   end
 
   # When max_mark of criterion is changed, all associated marks should have their mark value scaled to the change.

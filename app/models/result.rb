@@ -230,7 +230,7 @@ class Result < ApplicationRecord
     # want the peer-visible criteria
     visibility = is_a_review? ? :peer_visible : user_visibility
 
-    criteria = submission.assignment.criteria.where(visibility => true).map(&:id)
+    criteria = submission.assignment.criteria.where(visibility => true).ids
     nil_marks = false
     num_marks = 0
     marks.each do |mark|

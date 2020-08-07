@@ -59,7 +59,7 @@ class Mark < ApplicationRecord
     if criterion.is_a? CheckboxCriterion
       new_mark = curr_max_mark
     else
-      new_mark = (mark * (curr_max_mark / prev_max_mark)).round(2)
+      new_mark = (mark * (curr_max_mark.to_f / prev_max_mark)).round(2)
     end
     if update
       # Use update_columns to skip validations.

@@ -21,6 +21,7 @@ describe Assignment do
     it do
       is_expected.to accept_nested_attributes_for(:assignment_files).allow_destroy(true)
     end
+
     it do
       is_expected.to have_many(:criterion_ta_associations).dependent(:destroy)
     end
@@ -187,8 +188,8 @@ describe Assignment do
           end
 
           it 'shows the criteria visible to tas only' do
-            expect(@assignment.ta_criteria.select(&:id)).to match_array(@ta_criteria.select(&:id) +
-                                                                         @ta_and_peer_criteria.select(&:id))
+            expect(@assignment.ta_criteria.ids).to match_array(@ta_criteria.select(&:id) +
+                                                               @ta_and_peer_criteria.select(&:id))
           end
 
           context 'a submission and a result are created' do
