@@ -45,16 +45,29 @@ export class ImageViewer extends React.Component {
       // TODO: rename the following
       id: annotation.annotation_text_id
     });
+
+  };
+
+  loadRemoteImage = () => {
+    console.log(loadImage)
+    let formattedImage = loadImage(this.props.url, function (img, data) {
+      img.id = 'image_preview'
+      console.log(data)
+    });
+
+    console.log(formattedImage)
+
+    return <img id='image_preview'
+             src={this.props.url}
+             onLoad={this.display_annotations}
+             alt={I18n.t('results.cant_display_image')} />;
   };
 
   render() {
     return (
       <div id='image_container'>
         <div key='sel_box' id='sel_box' className='annotation-holder-active' style={{display: 'none'}}/>
-        <img id='image_preview'
-          src={this.props.url}
-          onLoad={this.display_annotations}
-          alt={I18n.t('results.cant_display_image')} />
+        {this.loadRemoteImage()}
       </div>
     );
   }

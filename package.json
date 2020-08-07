@@ -3,6 +3,7 @@
     "@babel/core": "^7.10.4",
     "@babel/preset-react": "^7.10.4",
     "@rails/webpacker": "5.1",
+    "blueimp-load-image": "^5.14.0",
     "chart.js": "^2.9.3",
     "heic2any": "^0.0.3",
     "i18n-js": "^3.7.1",

@@ -47,6 +47,10 @@ window.Jcrop = Jcrop;
 import { Chart } from 'chart.js';
 import 'javascripts/chart_config';
 
+//blueimp-load-image
+import * as loadImage from 'blueimp-load-image';
+window.loadImage = loadImage;
+
 // assets with side-effects only
 import 'javascripts/help-system';
 import 'javascripts/layouts';
