@@ -3,6 +3,7 @@
 class Criterion < ApplicationRecord
   belongs_to :assignment, foreign_key: :assessment_id
   after_update :scale_marks
+  before_destroy :update_results
 
   has_many :marks, dependent: :destroy
   accepts_nested_attributes_for :marks
@@ -185,5 +186,20 @@ class Criterion < ApplicationRecord
       errors.add(:base, I18n.t('activerecord.errors.models.criterion.visibility_error'))
       false
     end
+  end
+
+  def update_results
+    new_results = self.marks.includes(:result).map do |m|
+      next if m.mark.nil?
+      if m.result.marks.count == 1
+        m.result.marking_state = Result::MARKING_STATES[:incomplete]
+        m.result.total_mark = nil
+      else
+        m.result.total_mark = m.result.total_mark - m.mark
+      end
+      { id: m.result.id, total_mark: m.result.total_mark, marking_state: m.result.marking_state }
+    end
+    new_results = new_results.compact
+    Result.upsert_all(new_results) unless new_results.blank?
   end
 end

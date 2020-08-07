@@ -2,7 +2,6 @@
 @import 'common/assignment_dropdown';
 @import 'automated_tests';
 @import 'common/notes_dialog';
-@import 'grader';
 
 
 #remark_request {
@@ -28,6 +27,8 @@
 }
 
 #content {
+  display: flex;
+  flex-direction: column;
   z-index: auto !important;
 }
 

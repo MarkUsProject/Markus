@@ -61,7 +61,7 @@ RSpec.configure do |config|
   # rspec-rails.
   config.infer_base_class_for_anonymous_controllers = false
 
-  config.render_views
+  config.render_views if ENV['RSPEC_RENDER_VIEWS'] == 'true'
 
   # Run specs in random order to surface order dependencies. If you find an
   # order dependency and want to debug it, you can fix the order by providing
@@ -71,12 +71,6 @@ RSpec.configure do |config|
 
   # Clean up any created file folders
   config.after(:suite) do
-    FileUtils.rm_rf(Dir["#{Rails.root}/data/test/repos/*"])
-    FileUtils.rm_rf(Dir["#{Rails.root}/data/test/exam_templates/*"])
-  end
-
-  config.before(:suite) do
-    FileUtils.rm_rf(Dir["#{Rails.root}/data/test/repos/*"])
     FileUtils.rm_rf(Dir["#{Rails.root}/data/test/exam_templates/*"])
   end
 

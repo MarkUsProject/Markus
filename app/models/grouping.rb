@@ -503,9 +503,10 @@ class Grouping < ApplicationRecord
     start_time + extension_time + assignment.duration
   end
 
-  # Finds the correct due date (section or not) and checks if the last commit is after it.
-  def past_due_date?
-    grouping_due_date = due_date
+  # Returns whether the last submission for this grouping is after the grouping's collection date.
+  # Takes into account assignment late penalties, sections, and extensions.
+  def submitted_after_collection_date?
+    grouping_due_date = collection_date
     revision = nil
     group.access_repo do |repo|
       # get the last revision that changed the assignment repo folder after the due date; some repos may not be able to

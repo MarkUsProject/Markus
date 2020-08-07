@@ -23,17 +23,6 @@
       <% result = @a_id_results[assignment.id] %>
       <% if !result.nil? %>
         <% if assignment.max_mark > 0 && !assignment.results_average.nil? %>
-          <strong>
-            <%= t('results.your_mark',
-                  mark: number_to_percentage(result.total_mark * 100 / assignment.max_mark, precision: 1)) %>
-          </strong>
-          <br>
-          <%= "#{t(:class_average)}: #{number_to_percentage(assignment.results_average, precision: 1)}" %>
-          <% if assignment.display_median_to_students %>
-            <br>
-            <%= "#{t(:class_median)}: #{number_to_percentage(assignment.results_median, precision: 1)}" %>
-          <% end %>
-
           <p>
             <%= link_to Result.model_name.human.pluralize,
                         view_marks_assignment_submission_result_path(

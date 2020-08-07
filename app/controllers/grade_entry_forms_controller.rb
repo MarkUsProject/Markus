@@ -97,13 +97,18 @@ class GradeEntryFormsController < ApplicationController
     @grade_entry_student = @grade_entry_form.grade_entry_students.find_by(user_id: current_user.id)
     @columns = []
     @data = []
+    @item_percentages = []
+    @labels = []
     @grade_entry_form.grade_entry_items.each do |grade_entry_item|
       @columns << "#{grade_entry_item.name} (#{grade_entry_item.out_of})"
+      @labels << grade_entry_item.name
       mark = @grade_entry_student.grades.find_by(grade_entry_item_id: grade_entry_item.id)
       if !mark.nil? && !mark.grade.nil?
         @data << mark.grade
+        @item_percentages << ((mark.grade * 100) / grade_entry_item.out_of).round(2)
       else
         @data << t('grade_entry_forms.grades.no_mark')
+        @item_percentages << nil
       end
     end
 

@@ -17,7 +17,7 @@ class Result extends React.Component {
       let toggle_elements = [
         $('#menus'),
         $('.title_bar'),
-        $('#footer_wrapper')
+        $('footer')
       ];
       $.each(toggle_elements, (idx, element) => element.toggle());
       $('#content').toggleClass('expanded_view');
@@ -167,7 +167,7 @@ class Result extends React.Component {
     let toggle_elements = [
       $('#menus'),
       $('.title_bar'),
-      $('#footer_wrapper')
+      $('footer')
     ];
     $.each(toggle_elements, (idx, element) => element.toggle());
     $('#content').toggleClass('expanded_view');

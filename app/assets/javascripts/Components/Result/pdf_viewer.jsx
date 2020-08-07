@@ -8,14 +8,18 @@ export class PDFViewer extends React.Component {
   }
 
   componentDidMount() {
+    this.eventBus = new pdfjsViewer.EventBus();
     this.pdfViewer = new pdfjsViewer.PDFViewer({
+      eventBus: this.eventBus,
       container: this.pdfContainer.current,
       // renderer: 'svg',  TODO: investigate why some fonts don't render with SVG
     });
     window.pdfViewer = this;  // For fixing display when pane width changes
 
-    document.addEventListener('pagesinit', this.ready_annotations);
-    document.addEventListener('pagesloaded', this.refresh_annotations);
+    if (this.props.resultView) {
+      this.eventBus.on('pagesinit', this.ready_annotations);
+      this.eventBus.on('pagesloaded', this.refresh_annotations);
+    }
 
     if (this.props.url) {
       this.loadPDFFile();
@@ -26,7 +30,9 @@ export class PDFViewer extends React.Component {
     if (this.props.url && this.props.url !== prevProps.url) {
       this.loadPDFFile();
     } else {
-      this.refresh_annotations();
+      if (this.props.resultView) {
+        this.refresh_annotations();
+      }
     }
   }
 
@@ -52,8 +58,7 @@ export class PDFViewer extends React.Component {
       box.style.width   = '0';
       box.style.height  = '0';
     }
-    document.removeEventListener('pagesinit', this.ready_annotations);
-    document.removeEventListener('pagesloaded', this.refresh_annotations);
+    this.eventBus = null;
     window.pdfViewer = undefined;
   }
 

@@ -357,7 +357,12 @@ class Assignment < Assessment
       if data['extensions.time_delta'].nil?
         extension_data = {}
       else
-        extension_data = Extension.to_parts ActiveSupport::Duration.parse(data['extensions.time_delta'])
+        duration = ActiveSupport::Duration.parse(data['extensions.time_delta'])
+        if assignment.is_timed
+          extension_data = AssignmentProperties.duration_parts duration
+        else
+          extension_data = Extension.to_parts duration
+        end
       end
       extension_data[:note] = data['extensions.note'] || ''
       extension_data[:apply_penalty] = data['extensions.apply_penalty'] || false
@@ -477,11 +482,12 @@ class Assignment < Assessment
   end
 
   # Get a list of repo checkout client commands to be used for scripting
-  def get_repo_checkout_commands
+  def get_repo_checkout_commands(ssh_url: false)
     self.groupings.includes(:group, :current_submission_used).map do |grouping|
       submission = grouping.current_submission_used
       next if submission&.revision_identifier.nil?
-      Repository.get_class.get_checkout_command(grouping.group.repository_external_access_url,
+      url = ssh_url ? grouping.group.repository_ssh_access_url : grouping.group.repository_external_access_url
+      Repository.get_class.get_checkout_command(url,
                                                 submission.revision_identifier,
                                                 grouping.group.group_name, repository_folder)
     end.compact
@@ -492,7 +498,7 @@ class Assignment < Assessment
     CSV.generate do |csv|
       self.groupings.includes(:group).each do |grouping|
         group = grouping.group
-        csv << [group.group_name, group.repository_external_access_url]
+        csv << [group.group_name, group.repository_external_access_url, group.repository_ssh_access_url]
       end
     end
   end

@@ -18,11 +18,11 @@ class SubmissionFile < ApplicationRecord
 
   validates_inclusion_of :is_converted, in: [true, false]
 
-  def get_file_type
+  def self.get_file_type(filename)
     # This is where you can add more languages that SubmissionFile will
     # recognize.  It will return the name of the language, which
     # SyntaxHighlighter can work with.
-    case File.extname(filename)
+    case File.extname(filename).downcase
     when '.sci'
       'scilab'
     when '.java'
@@ -33,6 +33,10 @@ class SubmissionFile < ApplicationRecord
       'python'
     when '.js'
       'javascript'
+    when '.html'
+      'html'
+    when '.css'
+      'css'
     when '.c', '.h'
       'c'
     when '.hs'
@@ -41,6 +45,10 @@ class SubmissionFile < ApplicationRecord
       'scheme'
     when '.tex', '.latex'
       'tex'
+    when '.jpeg', '.jpg', '.gif', '.png', '.heic', '.heif'
+      'image'
+    when '.pdf'
+      'pdf'
     else
       'unknown'
     end
@@ -53,7 +61,7 @@ class SubmissionFile < ApplicationRecord
     # comment and the second element being the syntax to end a comment.  Use
     #the language's multiple line comment format.
     case File.extname(filename)
-    when '.java', '.js', '.c'
+    when '.java', '.js', '.c', '.css'
       %w(/* */)
     when '.rb'
       ["=begin\n", "\n=end"]
@@ -63,6 +71,8 @@ class SubmissionFile < ApplicationRecord
       %w(#| |#)
     when '.hs'
       %w({- -})
+    when '.html'
+      %w(<!-- -->)
     else
       %w(## ##)
     end

@@ -56,12 +56,10 @@ class Mark < ApplicationRecord
   def scale_mark(curr_max_mark, prev_max_mark, update: true)
     return if mark.nil?
     return 0 if prev_max_mark == 0 || mark == 0 # no scaling occurs if prev_max_mark is 0 or mark is 0
-    if criterion.is_a? RubricCriterion
-      new_mark = (mark * (curr_max_mark / prev_max_mark)).round(1)
-    elsif criterion.is_a? FlexibleCriterion
-      new_mark = (mark * (curr_max_mark.to_f / prev_max_mark)).round(2)
-    else # if it is CheckboxCriterion
-      new_mark = ((mark / prev_max_mark) * curr_max_mark).round(0)
+    if criterion.is_a? CheckboxCriterion
+      new_mark = curr_max_mark
+    else
+      new_mark = (mark * (curr_max_mark / prev_max_mark)).round(2)
     end
     if update
       # Use update_columns to skip validations.

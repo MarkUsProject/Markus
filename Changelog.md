@@ -23,8 +23,17 @@
 - Fixed bug where marking scheme weights were not displayed (#4735)
 - Introduces timed assignments (#4665)
 - Introduces uncategorized annotations grouping in Annotations settings tab (#4733)
+- Introduces new grades summary chart, and makes student view of grades consistent with admin (#4740)
 - Set SameSite=Lax on cookies (#4742)
+- Introduces individual marks chart view for assessments (#4747)
 - Fix annotation modal overflow issue (#4748)
+- Introduce file viewer for student submission file manager and admin repo manager (#4754)
+- Make skipping empty submissions the default behaviour when assigning graders (#4761)
+- Introduce typing delay for entering flexible criterion mark (#4763)
+- Fix UI overflow bug for large images in results file viewer (#4764)
+- Add disabled delete button to submissions file manager when files unselected (#4765)
+- Support syntax highlighting for html and css files (#4781)
+- Add ability to check out git repositories over ssh using a public key uploaded in the new Key Pairs tab (#4598)
 
 ## [v1.9.3]
 - Fixed inverse association bug with assignments (#4551)

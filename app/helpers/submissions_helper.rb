@@ -110,6 +110,7 @@ module SubmissionsHelper
     f[:last_modified_revision] = revision_identifier
     f[:revision_by] = file.user_id
     f[:submitted_date] = I18n.l(file.submitted_date)
+    f[:type] = SubmissionFile.get_file_type(file_name)
     f
   end
 

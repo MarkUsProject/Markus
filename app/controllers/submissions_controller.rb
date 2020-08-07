@@ -447,7 +447,7 @@ class SubmissionsController < ApplicationController
           # If the file appears to be binary, display a warning
           render json: { content: I18n.t('submissions.cannot_display').to_json, type: 'unknown' }
         else
-          render json: { content: file_contents.to_json, type: file.get_file_type }
+          render json: { content: file_contents.to_json, type: SubmissionFile.get_file_type(file.filename) }
         end
       end
     end
@@ -469,7 +469,7 @@ class SubmissionsController < ApplicationController
   end
 
   def download
-    @assignment = Assignment.find(params[:id])
+    @assignment = Assignment.find(params[:assignment_id])
     # find_appropriate_grouping can be found in SubmissionsHelper
     @grouping = find_appropriate_grouping(@assignment.id, params)
 
@@ -618,7 +618,8 @@ class SubmissionsController < ApplicationController
   # See Assignment.get_repo_checkout_commands for details
   def download_repo_checkout_commands
     assignment = Assignment.find(params[:assignment_id])
-    svn_commands = assignment.get_repo_checkout_commands
+    ssh_url = allowed_to?(:git_enabled?, KeyPair) && params[:url_type] == 'ssh'
+    svn_commands = assignment.get_repo_checkout_commands(ssh_url: ssh_url)
     send_data svn_commands.join("\n"),
               disposition: 'attachment',
               type: 'text/plain',
