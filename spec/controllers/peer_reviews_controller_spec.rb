@@ -33,8 +33,9 @@ describe PeerReviewsController do
         # Perform peer_review_mapping via GET
         get :peer_review_mapping, params: { assignment_id: @pr_id }
         @downloaded_text = response.body
-        @found_filename = response.header['Content-Disposition']
-                                  .include?("filename=\"#{@assignment_with_pr.pr_assignment.short_identifier}_peer_review_mapping.csv\"")
+        @found_filename = response.header['Content-Disposition'].include?(
+            "filename=\"#{@assignment_with_pr.pr_assignment.short_identifier}_peer_review_mapping.csv\""
+        )
         @lines = @downloaded_text[0...-1].split("\n")
       end
 
