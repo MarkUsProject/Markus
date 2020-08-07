@@ -23,76 +23,7 @@ class AnnotationCategory < ApplicationRecord
   # Format:  annotation_category,flexible criterion,annotation_text[, deduction], annotation_text[, deduction]...
   def self.add_by_row(row, assignment, current_user)
     # The first column is the annotation category name.
-    name = row.shift
-    annotation_category = assignment.annotation_categories.find_by(annotation_category_name: name)
-    # The second column is the optional flexible criterion name.
-    criterion_name = row.shift
-    previously_exists = true
-    if annotation_category.nil?
-      previously_exists = false
-      annotation_category = assignment.annotation_categories.create(annotation_category_name: name)
-      unless annotation_category.valid?
-        raise CsvInvalidLineError, I18n.t('annotation_categories.upload.empty_category_name')
-      end
-    elsif (annotation_category.flexible_criterion_id.nil? && !criterion_name.nil?) ||
-          (annotation_category.flexible_criterion.name != criterion_name)
-      AnnotationCategory.cleanup(previously_exists, annotation_category, added)
-      raise CsvInvalidLineError, I18n.t('annotation_categories.upload.invalid_criterion',
-                                        annotation_category: name)
-    end
-    added = []
-    if criterion_name.nil?
-      row.each do |text|
-        annotation_text = annotation_category.annotation_texts.build(
-          content: text,
-          creator_id: current_user.id,
-          last_editor_id: current_user.id
-        )
-        unless annotation_text.save
-          AnnotationCategory.cleanup(previously_exists, annotation_category, added)
-          raise CsvInvalidLineError, I18n.t('annotation_categories.upload.error',
-                                            annotation_category: annotation_category.annotation_category_name)
-        end
-        if previously_exists then added << annotation_text.id end
-      end
-    else
-      criterion = assignment.criteria.find_by(name: criterion_name, type: 'FlexibleCriterion')
-      if criterion.nil?
-        AnnotationCategory.cleanup(previously_exists, annotation_category, added)
-        raise CsvInvalidLineError, I18n.t('annotation_categories.upload.criterion_not_found',
-                                          missing_criterion: criterion_name)
-      end
-      annotation_category.update!(flexible_criterion_id: criterion.id)
-      row.each_slice(2) do |text_with_deduction|
-        begin
-          new_deduction = Float(text_with_deduction.second)
-        rescue ArgumentError, TypeError
-          AnnotationCategory.cleanup(previously_exists, annotation_category, added)
-          raise CsvInvalidLineError, I18n.t('annotation_categories.upload.deduction_absent',
-                                            value: text_with_deduction.second,
-                                            annotation_category: annotation_category.annotation_category_name)
-        end
-        if new_deduction > criterion.max_mark || new_deduction < 0
-          AnnotationCategory.cleanup(previously_exists, annotation_category, added)
-          raise CsvInvalidLineError, I18n.t('annotation_categories.upload.invalid_deduction',
-                                            annotation_content: text_with_deduction.first,
-                                            criterion_name: criterion_name,
-                                            value: new_deduction)
-        end
-        annotation_text = annotation_category.annotation_texts.build(
-          content: text_with_deduction.first,
-          creator_id: current_user.id,
-          last_editor_id: current_user.id,
-          deduction: new_deduction.round(2)
-        )
-        unless annotation_text.save
-          AnnotationCategory.cleanup(previously_exists, annotation_category, added)
-          raise CsvInvalidLineError, I18n.t('annotation_categories.upload.error',
-                                            annotation_category: annotation_category.annotation_category_name)
-        end
-        if previously_exists then added << annotation_text.id end
-      end
-    end
+    return
   end
 
   def marks_released?
@@ -128,16 +59,6 @@ class AnnotationCategory < ApplicationRecord
       self.annotation_texts.each { |text| text.update!(deduction: 0.0) }
     else
       self.annotation_texts.each { |text| text.scale_deduction(new_criterion.max_mark / prev_criterion.max_mark) }
-    end
-  end
-
-  private
-
-  def self.cleanup(keep_category, category_to_destroy, texts_to_destroy)
-    if keep_category
-      AnnotationText.delete_all(id: texts_to_destroy)
-    else
-      category_to_destroy.destroy
     end
   end
 end
