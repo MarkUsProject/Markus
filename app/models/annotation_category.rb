@@ -22,8 +22,8 @@ class AnnotationCategory < ApplicationRecord
   # Annotation Category, and associated Annotation Texts
   # Format:  annotation_category,flexible criterion,annotation_text[, deduction], annotation_text[, deduction]...
   def self.add_by_row(row, assignment, current_user)
-    # The first column is the annotation category name.
     AnnotationCategory.transaction do
+      # The first column is the annotation category name.
       name = row.shift
       annotation_category = assignment.annotation_categories.find_by(annotation_category_name: name)
       # The second column is the optional flexible criterion name.
@@ -51,7 +51,7 @@ class AnnotationCategory < ApplicationRecord
           end
         end
       else
-        criterion = assignment.flexible_criteria.find_by(name: criterion_name)
+        criterion = assignment.criteria.find_by(name: criterion_name, type: 'FlexibleCriterion')
         if criterion.nil?
           raise CsvInvalidLineError, I18n.t('annotation_categories.upload.criterion_not_found',
                                             missing_criterion: criterion_name)
