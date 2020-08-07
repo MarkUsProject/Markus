@@ -167,13 +167,8 @@ class ResultsController < ApplicationController
         end
 
         # Marks
-        common_fields = [:id, :name, :position, :max_mark]
+        fields = [:id, :name, :description, :position, :max_mark]
         marks_map = [CheckboxCriterion, FlexibleCriterion, RubricCriterion].flat_map do |klass|
-          if klass == RubricCriterion
-            fields = common_fields
-          else
-            fields = common_fields + [:description]
-          end
           criteria = klass.where(assessment_id: is_review ? assignment.pr_assignment.id : assignment.id,
                                  ta_visible: !is_review,
                                  peer_visible: is_review)
@@ -682,35 +677,6 @@ class ResultsController < ApplicationController
       File.join(a.path, a.filename) <=> File.join(b.path, b.filename)
     end
     @feedback_files = @submission.feedback_files
-    @extra_marks_points = @result.extra_marks.points
-    @extra_marks_percentage = @result.extra_marks.percentage
-    @marks_map = Hash.new
-    @old_marks_map = Hash.new
-
-    if @result.is_a_review?
-      if @current_user.is_reviewer_for?(@assignment.pr_assignment, @result) ||
-          !@grouping.membership_status(current_user).nil? || !@current_user.student?
-        @mark_criteria = @assignment.peer_criteria
-      end
-    else
-      @mark_criteria = @assignment.ta_criteria
-    end
-
-    @mark_criteria.each do |criterion|
-      mark = criterion.marks.find_or_create_by(result_id: @result.id)
-      mark.save(validate: false)
-
-      # See the 'edit' method documentation for reasoning on why two elements are used.
-      @marks_map[[criterion.class.to_s, criterion.id]] = mark
-
-      if @old_result
-        oldmark = criterion.marks.find_or_create_by(result_id: @old_result.id)
-        oldmark.save(validate: false)
-
-        # See the 'edit' method documentation for reasoning on why two elements are used.
-        @old_marks_map[[criterion.class.to_s, criterion.id]] = oldmark
-      end
-    end
 
     @host = Rails.application.config.action_controller.relative_url_root
 

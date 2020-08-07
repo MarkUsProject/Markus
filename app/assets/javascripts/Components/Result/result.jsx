@@ -327,7 +327,7 @@ class Result extends React.Component {
   updateMark = (criterion_id, mark) => {
     if (this.state.released_to_students ||
         (this.state.assigned_criteria !== null &&
-         !this.state.assigned_criteria.includes(`${criterion_id}`))) {
+         !this.state.assigned_criteria.includes(criterion_id))) {
       return;
     }
 

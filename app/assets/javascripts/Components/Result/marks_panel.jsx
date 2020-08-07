@@ -33,7 +33,7 @@ export class MarksPanel extends React.Component {
       // Expand by default if a mark has not yet been given, and the current user can give the mark.
       let expanded = new Set();
       this.props.marks.forEach(data => {
-        const key = `${data.id}`;
+        const key = data.id;
         if ((data.mark === null || data.mark === undefined) &&
             (this.props.assigned_criteria === null || this.props.assigned_criteria.includes(key))) {
           expanded.add(key);
@@ -82,7 +82,7 @@ export class MarksPanel extends React.Component {
   };
 
   renderMarkComponent = (markData) => {
-    const key = `${markData.id}`;
+    const key = markData.id;
     const unassigned = this.props.assigned_criteria !== null && !this.props.assigned_criteria.includes(key);
 
     const props = {
@@ -92,7 +92,7 @@ export class MarksPanel extends React.Component {
       updateMark: this.updateMark,
       destroyMark: this.destroyMark,
       expanded: this.state.expanded.has(key),
-      oldMark: this.props.old_marks[`${markData.id}`],
+      oldMark: this.props.old_marks[markData.id],
       toggleExpanded: () => this.toggleExpanded(key),
       annotations: this.props.annotations,
       revertToAutomaticDeductions: this.props.revertToAutomaticDeductions,

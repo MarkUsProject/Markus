@@ -546,7 +546,7 @@ class Assignment < Assessment
 
     selected_criteria = user.admin? ? criteria : ta_criteria
     criteria_columns = selected_criteria.map do |crit|
-      unassigned = !assigned_criteria.nil? && !assigned_criteria.include?("#{crit.class}-#{crit.id}")
+      unassigned = !assigned_criteria.nil? && !assigned_criteria.include?(crit.id)
       next if hide_unassigned && unassigned
 
       max_mark += crit.max_mark
