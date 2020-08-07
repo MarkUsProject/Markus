@@ -34,6 +34,7 @@
 - Add disabled delete button to submissions file manager when files unselected (#4765)
 - Support syntax highlighting for html and css files (#4781)
 - Add ability to check out git repositories over ssh using a public key uploaded in the new Key Pairs tab (#4598)
+- Unify criterion tables using single table inheritance (refactoring change) (#4749)
 
 ## [v1.9.3]
 - Fixed inverse association bug with assignments (#4551)
