@@ -198,6 +198,6 @@ class Criterion < ApplicationRecord
       { id: m.result.id, total_mark: m.result.total_mark, marking_state: m.result.marking_state }
     end
     new_results = new_results.compact
-    if new_results != [] then Result.upsert_all(new_results) end
+    Result.upsert_all(new_results) unless new_results.blank?
   end
 end
