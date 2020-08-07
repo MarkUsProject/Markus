@@ -54,7 +54,7 @@ export class SummaryPanel extends React.Component {
       labels.push(m.name);
       markData.push(Math.round(m.mark * 100) / m.max_mark);
       if (oldMarksExist) {
-        oldMarks.push(Math.round(this.props.old_marks[m.criterion_type + '-' + m.id] * 100) / m.max_mark);
+        oldMarks.push(Math.round(this.props.old_marks[m.id] * 100) / m.max_mark);
       }
     });
     this.markDataSet.data = markData;

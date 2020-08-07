@@ -253,7 +253,7 @@ class AnnotationCategoriesController < ApplicationController
                             .pluck_to_hash('annotation_categories.assessment_id AS assignment_id',
                                            'annotation_texts.deduction AS deduction',
                                            'annotation_texts.annotation_category_id AS annotation_category',
-                                           'flexible_criteria.max_mark AS max_mark',
+                                           'criteria.max_mark AS max_mark',
                                            *shared_values)
       text_usage = AnnotationText.left_outer_joins(annotations: :result)
                                  .where('annotation_texts.annotation_category_id': category)

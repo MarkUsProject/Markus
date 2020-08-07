@@ -3,7 +3,7 @@ class TestGroup < ApplicationRecord
        _prefix: :display_to
 
   belongs_to :assignment, foreign_key: :assessment_id
-  belongs_to :criterion, optional: true, polymorphic: true
+  belongs_to :criterion, optional: true
   has_many :test_group_results, dependent: :delete_all
 
   validates :name, presence: true

@@ -8,7 +8,7 @@ class CriteriaController < ApplicationController
     if @assignment.marking_started?
       flash_now(:notice, I18n.t('assignments.due_date.marking_started_warning'))
     end
-    @criteria = @assignment.get_criteria
+    @criteria = @assignment.criteria
   end
 
   def new
@@ -26,18 +26,18 @@ class CriteriaController < ApplicationController
       head :bad_request
       return
     end
-    criterion_class = params[:criterion_type].constantize
-    @criterion = criterion_class.new(
+    @criterion = Criterion.new(
+      type: params[:criterion_type],
       name: params[:new_criterion_prompt],
       assignment: @assignment,
       max_mark: params[:max_mark_prompt],
       position: @assignment.next_criterion_position
     )
-    @criterion.set_default_levels if params[:criterion_type] == 'RubricCriterion'
+    @criterion.set_default_levels if @criterion.is_a? RubricCriterion
 
     if @criterion.save
       flash_now(:success, t('flash.actions.create.success',
-                            resource_name: criterion_class.model_name.human))
+                            resource_name: @criterion.class.model_name.human))
     else
       @criterion.errors.full_messages.each do |message|
         flash_message(:error, message)
@@ -47,7 +47,7 @@ class CriteriaController < ApplicationController
   end
 
   def edit
-    @criterion = params[:criterion_type].constantize.find(params[:id])
+    @criterion = Criterion.find(params[:id])
     @assignment = @criterion.assignment
     if @assignment.released_marks.any?
       flash_now(:error, t('criteria.errors.released_marks'))
@@ -55,7 +55,7 @@ class CriteriaController < ApplicationController
   end
 
   def destroy
-    @criterion = params[:criterion_type].constantize.find(params[:id])
+    @criterion = Criterion.find(params[:id])
     @assignment = @criterion.assignment
     if @assignment.released_marks.any?
       flash_now(:error, t('criteria.errors.released_marks'))
@@ -67,20 +67,19 @@ class CriteriaController < ApplicationController
   end
 
   def update
-    criterion_type = params[:criterion_type]
-    @criterion = criterion_type.constantize.find(params[:id])
+    @criterion = Criterion.find(params[:id])
     @assignment = @criterion.assignment
     if @assignment.released_marks.any?
       flash_now(:error, t('criteria.errors.released_marks'))
       head :bad_request
       return
     end
-    if criterion_type == 'RubricCriterion'
+    if @criterion.is_a? RubricCriterion
       properly_updated = @criterion.update(rubric_criterion_params.except(:assignment_files))
       unless rubric_criterion_params[:assignment_files].nil?
         assignment_files = AssignmentFile.find(rubric_criterion_params[:assignment_files].select { |id| !id.empty? })
       end
-    elsif criterion_type == 'FlexibleCriterion'
+    elsif @criterion.is_a? FlexibleCriterion
       properly_updated = @criterion.update(flexible_criterion_params.except(:assignment_files))
       unless flexible_criterion_params[:assignment_files].nil?
         assignment_files = AssignmentFile.find(flexible_criterion_params[:assignment_files].select { |id| !id.empty? })
@@ -116,19 +115,15 @@ class CriteriaController < ApplicationController
     @assignment = Assignment.find(params[:assignment_id])
 
     ApplicationRecord.transaction do
-      params[:criterion].each_with_index do |type_id, index|
-
-        type = type_id.match(/^[a-zA-Z]+/).to_s
-        id   = type_id.match(/\d+/).to_s
-
-        type.constantize.update(id, position: index + 1) unless id.blank?
+      params[:criterion].each_with_index do |id, index|
+        Criterion.update(id, position: index + 1) unless id.blank?
       end
     end
   end
 
   def download
     assignment = Assignment.find(params[:assignment_id])
-    criteria = assignment.get_criteria.sort_by(&:position)
+    criteria = assignment.criteria
     yml_criteria = criteria.reduce({}) { |a, b| a.merge b.to_yml }
     send_data yml_criteria.to_yaml,
               filename: "#{assignment.short_identifier}_criteria.yml",
@@ -152,7 +147,7 @@ class CriteriaController < ApplicationController
     else
       if data[:type] == '.yml'
         ApplicationRecord.transaction do
-          assignment.get_criteria.each(&:destroy)
+          assignment.criteria.destroy_all
 
           # Create criteria based on the parsed data.
           successes = 0

@@ -34,7 +34,7 @@ FactoryBot.define do
       a.groupings.each do |grouping|
         result = grouping.current_result
         result.marks.each do |mark|
-          mark.update(mark: rand(mark.markable.max_mark + 1))
+          mark.update(mark: rand(mark.criterion.max_mark + 1))
         end
         result.update_total_mark
         result.update(marking_state: Result::MARKING_STATES[:complete])

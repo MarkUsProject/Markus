@@ -200,8 +200,8 @@ describe Result do
                     let!(:flex_criteria_first) { create(:flexible_criterion, assignment: assignment) }
                     let!(:flex_criteria_second) { create(:flexible_criterion, max_mark: 2.0, assignment: assignment) }
                     before do
-                      create(:flexible_mark, result: incomp_result, mark: 1, markable: flex_criteria_first)
-                      create(:flexible_mark, result: incomp_result, mark: 2, markable: flex_criteria_second)
+                      create(:flexible_mark, result: incomp_result, mark: 1, criterion: flex_criteria_first)
+                      create(:flexible_mark, result: incomp_result, mark: 2, criterion: flex_criteria_second)
                       incomp_result.update_total_mark
                       incomp_result.reload
                     end

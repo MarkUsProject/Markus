@@ -1,19 +1,5 @@
 # Represents a flexible criterion used to mark an assignment.
 class FlexibleCriterion < Criterion
-  self.table_name = 'flexible_criteria' # set table name correctly
-
-  has_many :marks, as: :markable, dependent: :destroy
-  accepts_nested_attributes_for :marks
-
-  has_many :criterion_ta_associations,
-           as: :criterion,
-           dependent: :destroy
-
-  has_many :tas, through: :criterion_ta_associations
-
-  belongs_to :assignment, foreign_key: :assessment_id, counter_cache: true
-
-  has_many :test_groups, as: :criterion
 
   has_many :annotation_categories
 
@@ -61,7 +47,7 @@ class FlexibleCriterion < Criterion
     name = working_row.shift
     # If a FlexibleCriterion with the same name exits, load it up.  Otherwise,
     # create a new one.
-    criterion = assignment.get_criteria(:all, :flexible).find_or_create_by(name: name)
+    criterion = assignment.criteria.find_or_create_by(name: name, type: 'FlexibleCriterion')
     # Check that max is not a string.
     begin
       criterion.max_mark = Float(working_row.shift)
@@ -140,6 +126,8 @@ class FlexibleCriterion < Criterion
   end
 
   def scale_marks
+    return unless max_mark_previously_changed? && !previous_changes[:max_mark].first.nil? # if max_mark was not updated
+
     super
     return if self&.annotation_categories.nil?
     annotation_categories = self.annotation_categories.includes(:annotation_texts)

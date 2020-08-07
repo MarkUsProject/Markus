@@ -1,18 +1,12 @@
 describe Mark do
-  it { is_expected.to validate_presence_of(:markable_type) }
-
-  it { is_expected.to belong_to(:markable) }
+  it { is_expected.to belong_to(:criterion) }
   it { is_expected.to belong_to(:result) }
 
-  it { is_expected.to allow_value('RubricCriterion').for(:markable_type) }
-  it { is_expected.to allow_value('FlexibleCriterion').for(:markable_type) }
-  it { is_expected.to_not allow_value('').for(:markable_type) }
-  it { is_expected.to_not allow_value(nil).for(:markable_type) }
   it { is_expected.to allow_value(false).for(:override) }
   it { is_expected.to allow_value(true).for(:override) }
   it { is_expected.to_not allow_value(nil).for(:override) }
 
-  describe 'when markable type is rubric and the max mark is exceeded' do
+  describe 'when mark belongs to rubric criterion and the max mark is exceeded' do
     let(:rubric_mark) do
       FactoryBot.build(:rubric_mark, mark: 10)
     end
@@ -21,7 +15,7 @@ describe Mark do
     end
   end
 
-  describe 'when markable type is flexible and the max mark is exceeded' do
+  describe 'when mark belongs to flexible criterion and the max mark is exceeded' do
     let(:flexible_mark) do
       FactoryBot.build(:flexible_mark, mark: 10)
     end
@@ -30,7 +24,7 @@ describe Mark do
     end
   end
 
-  describe 'when markable type is flexible and the max mark is exceeded' do
+  describe 'when mark belongs to flexible criterion and the max mark is exceeded' do
     let(:checkbox_mark) do
       FactoryBot.build(:checkbox_mark, mark: 10)
     end
@@ -53,8 +47,8 @@ describe Mark do
       FactoryBot.create(:rubric_mark, mark: 4)
     end
     it 'equals to mark times weight' do
-      markable = RubricCriterion.find(rubric_mark.markable_id)
-      expect(rubric_mark.mark).to eq(markable.weight)
+      related_rubric = rubric_mark.criterion
+      expect(rubric_mark.mark).to eq(related_rubric.weight)
     end
   end
 
@@ -102,9 +96,9 @@ describe Mark do
       expect(deducted).to eq(0)
     end
 
-    it 'returns 0 when markable type is non flexible' do
+    it 'returns 0 when criterion type is non flexible' do
       rubric_criterion = create(:rubric_criterion, assignment: assignment)
-      non_flex_mark = create(:rubric_mark, markable: rubric_criterion)
+      non_flex_mark = create(:rubric_mark, criterion: rubric_criterion)
       deducted = non_flex_mark.calculate_deduction
       expect(deducted).to eq(0)
     end
@@ -166,8 +160,7 @@ describe Mark do
       new_criterion = create(:flexible_criterion_with_annotation_category,
                              assignment: assignment)
       create(:mark,
-             markable_id: new_criterion.id,
-             markable_type: 'FlexibleCriterion',
+             criterion_id: new_criterion.id,
              result: result)
       new_annotation_text = create(:annotation_text_with_deduction,
                                    annotation_category: new_criterion.annotation_categories.first)
@@ -193,12 +186,12 @@ describe Mark do
        'was true before and the mark was nil' do
       mark.update!(mark: nil, override: true)
       result.annotations.joins(annotation_text: :annotation_category)
-            .where('annotation_categories.flexible_criterion_id': mark.markable_id).first.destroy
+            .where('annotation_categories.flexible_criterion_id': mark.criterion_id).first.destroy
       expect(mark.reload.override).to be false
     end
 
     it 'updates the mark value to be calculated from annotation deductions if override changed to false' do
-      mark.update!(override: true, mark: mark.markable.max_mark)
+      mark.update!(override: true, mark: mark.criterion.max_mark)
       mark.update!(override: false)
       expect(mark.reload.mark).to eq 2.0
     end

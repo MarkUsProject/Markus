@@ -21,7 +21,7 @@ describe AnnotationCategory do
 
       it 'does not allow the flexible_criterion_id to be set to reference a criterion of another assignment' do
         other_assignment = create(:assignment_with_criteria_and_results)
-        other_criterion_id = other_assignment.flexible_criteria.first.id
+        other_criterion_id = other_assignment.criteria.where(type: 'FlexibleCriterion').first.id
         category.flexible_criterion_id = other_criterion_id
         expect(category).to_not be_valid
       end
@@ -167,7 +167,9 @@ describe AnnotationCategory do
 
         it 'does not allow a criterion to be specified for the category if the category did not have one previously' do
           other_category = create(:annotation_category, assignment: assignment)
-          row = [other_category.annotation_category_name, assignment.flexible_criteria.first.name, 'text 1', 1.0]
+          row = [other_category.annotation_category_name,
+                 assignment.criteria.where(type: 'FlexibleCriterion').first.name,
+                 'text 1', 1.0]
           expected_message = I18n.t('annotation_categories.upload.invalid_criterion',
                                     annotation_category: other_category.annotation_category_name)
           expect { AnnotationCategory.add_by_row(row, assignment, admin) }.to raise_error(CsvInvalidLineError,
@@ -216,8 +218,7 @@ describe AnnotationCategory do
       new_criterion = create(:flexible_criterion, assignment: assignment)
       assignment.groupings.includes(:current_result).each do |grouping|
         create(:mark,
-               markable_id: new_criterion.id,
-               markable_type: 'FlexibleCriterion',
+               criterion_id: new_criterion.id,
                result: grouping.current_result)
       end
       annotation_category_with_criteria.update!(flexible_criterion_id: new_criterion.id)
@@ -233,7 +234,7 @@ describe AnnotationCategory do
 
     it 'updates deductions to 0.0 if it becomes associated with a flexible_criterion after previously not being so' do
       new_assignment = create(:assignment_with_criteria_and_results)
-      flex_criterion = new_assignment.flexible_criteria.first
+      flex_criterion = new_assignment.criteria.where(type: 'FlexibleCriterion').first
       annotation_category = create(:annotation_category, assignment: new_assignment)
       create(:annotation_text, annotation_category: annotation_category)
       create(:annotation_text, annotation_category: annotation_category)

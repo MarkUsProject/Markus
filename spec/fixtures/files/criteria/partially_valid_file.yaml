@@ -18,8 +18,8 @@ Quality of Writing:
       description: Level 4 description in one line.
       mark: 23.0
     Level 5:
-      description: Level 5 description in one line.
-      mark: 24.0
+      description:
+      mark:
   ta_visible: True
   peer_visible: False
 

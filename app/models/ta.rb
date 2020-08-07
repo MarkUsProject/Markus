@@ -4,6 +4,7 @@ class Ta < User
   SESSION_TIMEOUT = Rails.configuration.ta_session_timeout
 
   has_many :criterion_ta_associations, dependent: :delete_all
+  has_many :criteria, through: :criterion_ta_associations
 
   has_many :grade_entry_student_tas, dependent: :delete_all
   has_many :grade_entry_students, through: :grade_entry_student_tas, dependent: :delete_all
@@ -36,28 +37,25 @@ class Ta < User
     grades = []
 
     if assignment.assign_graders_to_criteria
-      criteria_data = self.criterion_ta_associations.where(assessment_id: assignment.id)
-                          .pluck(:criterion_type, :criterion_id)
-      out_of = criteria_data.sum do |criterion_type, criterion_id|
-        criterion_type.constantize.find(criterion_id).max_mark
+      criteria_ids = self.criterion_ta_associations.where(assessment_id: assignment.id).pluck(:criterion_id)
+      out_of = criteria_ids.sum do |criterion_id|
+        Criterion.find(criterion_id).max_mark
       end
       return [] if out_of.zero?
 
-      # TODO: can add a "where markable_id in ..." when we merge criteria tables.
       mark_data = groupings.joins(current_result: :marks)
+                           .where('marks.criterion_id': criteria_ids)
                            .where.not('marks.mark': nil)
-                           .pluck('results.id', 'marks.markable_id', 'marks.markable_type', 'marks.mark')
+                           .pluck('results.id', 'marks.mark')
                            .group_by { |x| x[0] }
       mark_data.values.each do |marks|
         next if marks.empty?
 
         subtotal = 0
         has_mark = false
-        marks.each do |_, criterion_id, criterion_type, mark|
-          if criteria_data.include?([criterion_type, criterion_id])
-            subtotal += mark
-            has_mark = true
-          end
+        marks.each do |_, mark|
+          subtotal += mark
+          has_mark = true
         end
         grades << subtotal / out_of * 100 if has_mark
       end

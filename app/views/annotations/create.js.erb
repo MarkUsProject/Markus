@@ -33,7 +33,7 @@
   <% deduction = @annotation.annotation_text.deduction %>
   <% mark = @annotation.result
                        .marks
-                       .find_by(markable: @annotation.annotation_text&.annotation_category&.flexible_criterion) %>
+                       .find_by(criterion: @annotation.annotation_text&.annotation_category&.flexible_criterion) %>
   <% if deduction.nil? || deduction == 0 || mark.override %>
     resultComponent.addAnnotation(annotation_details);
   <% else %>

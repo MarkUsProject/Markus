@@ -20,25 +20,20 @@ class Assignment < Assessment
   # Add assignment_properties to default scope because we almost always want to load an assignment with its properties
   default_scope { includes(:assignment_properties) }
 
-  has_many :rubric_criteria,
+  has_many :criteria,
            -> { order(:position) },
-           class_name: 'RubricCriterion',
            dependent: :destroy,
            inverse_of: :assignment,
            foreign_key: :assessment_id
 
-  has_many :flexible_criteria,
-           -> { order(:position) },
-           class_name: 'FlexibleCriterion',
-           dependent: :destroy,
-           inverse_of: :assignment,
+  has_many :ta_criteria,
+           -> { where(ta_visible: true).order(:position) },
+           class_name: 'Criterion',
            foreign_key: :assessment_id
 
-  has_many :checkbox_criteria,
-           -> { order(:position) },
-           class_name: 'CheckboxCriterion',
-           dependent: :destroy,
-           inverse_of: :assignment,
+  has_many :peer_criteria,
+           -> { where(peer_visible: true).order(:position) },
+           class_name: 'Criterion',
            foreign_key: :assessment_id
 
   has_many :test_groups, dependent: :destroy, inverse_of: :assignment, foreign_key: :assessment_id
@@ -268,12 +263,8 @@ class Assignment < Assessment
   end
 
   # Returns the maximum possible mark for a particular assignment
-  def max_mark(user_visibility = :ta)
-    # TODO: sum method does not work with empty arrays. Consider updating/replacing gem:
-    #       see: https://github.com/thirtysixthspan/descriptive_statistics/issues/44
-    max_marks = get_criteria(user_visibility).map(&:max_mark)
-    s = max_marks.empty? ? 0 : max_marks.sum
-    s.nil? ? 0 : s.round(2)
+  def max_mark(user_visibility = :ta_visible)
+    criteria.where(user_visibility => true).sum(:max_mark).round(2)
   end
 
   # Returns a boolean indicating whether marking has started for at least
@@ -531,8 +522,7 @@ class Assignment < Assessment
       if self.assign_graders_to_criteria
         assigned_criteria = user.criterion_ta_associations
                                 .where(assessment_id: self.id)
-                                .pluck(:criterion_type, :criterion_id)
-                                .map { |t, id| "#{t}-#{id}" }
+                                .pluck(:criterion_id)
       else
         assigned_criteria = nil
       end
@@ -554,13 +544,13 @@ class Assignment < Assessment
     criteria_shown = Set.new
     max_mark = 0
 
-    visibility = user.admin? ? :all : :ta
-    criteria_columns = self.get_criteria(visibility).map do |crit|
-      unassigned = !assigned_criteria.nil? && !assigned_criteria.include?("#{crit.class}-#{crit.id}")
+    selected_criteria = user.admin? ? self.criteria : self.ta_criteria
+    criteria_columns = selected_criteria.map do |crit|
+      unassigned = !assigned_criteria.nil? && !assigned_criteria.include?(crit.id)
       next if hide_unassigned && unassigned
 
       max_mark += crit.max_mark
-      accessor = "#{crit.class}-#{crit.id}"
+      accessor = crit.id
       criteria_shown << accessor
       {
         Header: crit.name,
@@ -631,8 +621,7 @@ class Assignment < Assessment
     end
 
     headers = [['User name', 'Group', 'Final grade'], ['', 'Out of', self.max_mark]]
-    criteria = self.get_criteria(:ta)
-    criteria.each do |crit|
+    self.ta_criteria.each do |crit|
       headers[0] << crit.name
       headers[1] << crit.max_mark
     end
@@ -651,10 +640,10 @@ class Assignment < Assessment
         g.accepted_students.each do |s|
           row = [s.user_name, g.group.group_name]
           if result.nil?
-            row += Array.new(2 + criteria.length, nil)
+            row += Array.new(2 + self.ta_criteria.count, nil)
           else
             row << result.total_mark
-            row += criteria.map { |crit| marks["#{crit.class.name}-#{crit.id}"] }
+            row += self.ta_criteria.map { |crit| marks[crit.id] }
             row << extra_marks_hash[result&.id]
           end
           csv << row
@@ -665,8 +654,8 @@ class Assignment < Assessment
 
   # Returns an array of [mark, max_mark].
   def get_marks_list(submission)
-    get_criteria.map do |criterion|
-      mark = submission.get_latest_result.marks.find_by(markable: criterion)
+    criteria.map do |criterion|
+      mark = submission.get_latest_result.marks.find_by(criterion: criterion)
       [(mark.nil? || mark.mark.nil?) ? '' : mark.mark,
        criterion.max_mark]
     end
@@ -675,51 +664,7 @@ class Assignment < Assessment
   def next_criterion_position
     # We're using count here because this fires off a DB query, thus
     # grabbing the most up-to-date count of the criteria.
-    get_criteria.count > 0 ? get_criteria.last.position + 1 : 1
-  end
-
-  # Returns a filtered list of criteria.
-  def get_criteria(user_visibility = :all, type = :all, options = {})
-    @criteria ||= Hash.new
-    unless @criteria[[user_visibility, type, options]].nil? || options[:no_cache]
-      return @criteria[[user_visibility, type, options]]
-    end
-
-    include_opt = options[:includes]
-    if user_visibility == :all
-      @criteria[[user_visibility, type, options]] = get_all_criteria(type, include_opt)
-    elsif user_visibility == :ta
-      @criteria[[user_visibility, type, options]] = get_ta_visible_criteria(type, include_opt)
-    elsif user_visibility == :peer
-      @criteria[[user_visibility, type, options]] = get_peer_visible_criteria(type, include_opt)
-    end
-  end
-
-  def get_all_criteria(type, include_opt)
-    if type == :all
-      all_criteria = rubric_criteria.includes(include_opt) +
-                     flexible_criteria.includes(include_opt) +
-                     checkbox_criteria.includes(include_opt)
-      all_criteria.sort_by(&:position)
-    elsif type == :rubric
-      rubric_criteria.includes(include_opt).order(:position)
-    elsif type == :flexible
-      flexible_criteria.includes(include_opt).order(:position)
-    elsif type == :checkbox
-      checkbox_criteria.includes(include_opt).order(:position)
-    end
-  end
-
-  def get_ta_visible_criteria(type, include_opt)
-    get_all_criteria(type, include_opt).select(&:ta_visible)
-  end
-
-  def get_peer_visible_criteria(type, include_opt)
-    get_all_criteria(type, include_opt).select(&:peer_visible)
-  end
-
-  def criteria_count
-    get_criteria.size
+    criteria.count > 0 ? criteria.last.position + 1 : 1
   end
 
   # Determine the total mark for a particular student, as a percentage
@@ -806,7 +751,7 @@ class Assignment < Assessment
         ta = Ta.find(ta_id)
         num_assigned_criteria = ta.criterion_ta_associations.where(assignment: self).count
         marked = ta.criterion_ta_associations
-                   .joins('INNER JOIN marks m ON criterion_id = m.markable_id AND criterion_type = m.markable_type')
+                   .joins('INNER JOIN marks m ON criterion_ta_associations.criterion_id = m.criterion_id')
                    .where('m.mark IS NOT NULL AND assessment_id = ?', self.id)
                    .group('m.result_id')
                    .count
@@ -1120,15 +1065,9 @@ class Assignment < Assessment
     end
 
     criterion_data =
-      self.rubric_criteria.left_outer_joins(:tas)
-          .pluck('rubric_criteria.name', 'rubric_criteria.position',
-                 'rubric_criteria.assigned_groups_count', 'users.user_name') +
-        self.flexible_criteria.left_outer_joins(:tas)
-            .pluck('flexible_criteria.name', 'flexible_criteria.position',
-                   'flexible_criteria.assigned_groups_count', 'users.user_name') +
-        self.checkbox_criteria.left_outer_joins(:tas)
-            .pluck('checkbox_criteria.name', 'checkbox_criteria.position',
-                   'checkbox_criteria.assigned_groups_count', 'users.user_name')
+      self.criteria.left_outer_joins(:tas)
+          .pluck('criteria.name', 'criteria.position',
+                 'criteria.assigned_groups_count', 'users.user_name')
     criteria = Hash.new { |h, k| h[k] = [] }
     criterion_data.sort_by { |c| c[3] || '' }.each do |name, pos, count, ta|
       criteria[[name, pos, count]]
@@ -1214,20 +1153,19 @@ class Assignment < Assessment
     if current_user.ta? && hide_unassigned_criteria
       assigned_criteria = current_user.criterion_ta_associations
                                       .where(assessment_id: self.id)
-                                      .pluck(:criterion_type, :criterion_id)
-                                      .map { |t, id| "#{t}-#{id}" }
+                                      .pluck(:criterion_id)
     else
       assigned_criteria = nil
     end
 
-    visibility = current_user.admin? ? :all : :ta
-    criteria = self.get_criteria(visibility).reject do |crit|
-      !assigned_criteria.nil? && !assigned_criteria.include?("#{crit.class}-#{crit.id}")
+    visible_criteria = current_user.admin? ? self.criteria : self.ta_criteria
+    criteria = visible_criteria.reject do |crit|
+      !assigned_criteria.nil? && !assigned_criteria.include?(crit.id)
     end
 
     result_ids = result_data.values.map { |arr| arr.map { |h| h['results.id'] } }.flatten
 
-    total_marks = Mark.where(markable: criteria, result_id: result_ids)
+    total_marks = Mark.where(criterion: criteria, result_id: result_ids)
                       .pluck(:result_id, :mark)
                       .group_by(&:first)
                       .transform_values { |arr| arr.map(&:second).compact.sum }

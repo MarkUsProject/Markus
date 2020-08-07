@@ -12,18 +12,16 @@ describe Assignment do
     it { is_expected.to have_many(:section_due_dates) }
     it { is_expected.to accept_nested_attributes_for(:section_due_dates) }
     it { is_expected.to have_one(:assignment_stat).dependent(:destroy) }
-    it do
-      is_expected.to have_many(:rubric_criteria).dependent(:destroy).order(:position)
-    end
-    it do
-      is_expected.to have_many(:flexible_criteria).dependent(:destroy).order(:position)
-    end
-
+    it { is_expected.to have_many(:criteria).dependent(:destroy).order(:position) }
+    it { is_expected.to have_many(:peer_criteria).order(:position) }
+    it { is_expected.to have_many(:ta_criteria).order(:position) }
     it { is_expected.to have_many(:assignment_files).dependent(:destroy) }
     it { is_expected.to have_many(:test_groups).dependent(:destroy) }
+
     it do
       is_expected.to accept_nested_attributes_for(:assignment_files).allow_destroy(true)
     end
+
     it do
       is_expected.to have_many(:criterion_ta_associations).dependent(:destroy)
     end
@@ -156,7 +154,7 @@ describe Assignment do
 
         context 'when no criteria are found' do
           it 'returns an empty list of criteria' do
-            expect(@assignment.get_criteria).to be_empty
+            expect(@assignment.criteria).to be_empty
           end
 
           context 'a submission and result are created' do
@@ -190,8 +188,8 @@ describe Assignment do
           end
 
           it 'shows the criteria visible to tas only' do
-            expect(@assignment.get_criteria(:ta).select(&:id)).to match_array(@ta_criteria.select(&:id) +
-                                                                                @ta_and_peer_criteria.select(&:id))
+            expect(@assignment.ta_criteria.ids).to match_array(@ta_criteria.map(&:id) +
+                                                               @ta_and_peer_criteria.map(&:id))
           end
 
           context 'a submission and a result are created' do
@@ -625,10 +623,11 @@ describe Assignment do
 
         @sum = 0
         [2, 2.7, 2.2, 2].each do |weight|
+          rubric_criterion = create(:rubric_criterion, assignment: @assignment, max_mark: weight * 4)
           create(:mark,
                  mark: 4,
                  result: @result,
-                 markable: create(:rubric_criterion, assignment: @assignment, max_mark: weight * 4))
+                 criterion: rubric_criterion)
           @sum += weight
         end
         @total = @sum * 4

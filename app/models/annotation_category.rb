@@ -50,7 +50,7 @@ class AnnotationCategory < ApplicationRecord
         end
       end
     else
-      criterion = assignment.flexible_criteria.find_by(name: criterion_name)
+      criterion = assignment.criteria.find_by(name: criterion_name, type: 'FlexibleCriterion')
       if criterion.nil?
         raise CsvInvalidLineError, I18n.t('annotation_categories.upload.criterion_not_found',
                                           missing_criterion: criterion_name)
@@ -90,7 +90,7 @@ class AnnotationCategory < ApplicationRecord
 
   def assignment_criteria
     return [nil] if self.assignment.nil?
-    self.assignment.flexible_criteria.ids + [nil]
+    self.assignment.criteria.where(type: 'FlexibleCriterion').ids + [nil]
   end
 
   def deductive_annotations_exist?

@@ -9,9 +9,9 @@ describe ResultsController do
   let(:complete_result) { create :complete_result, submission: submission }
   let(:submission_file) { create :submission_file, submission: submission }
   let(:rubric_criterion) { create(:rubric_criterion, assignment: assignment) }
-  let(:rubric_mark) { create :rubric_mark, result: incomplete_result, markable: rubric_criterion }
+  let(:rubric_mark) { create :rubric_mark, result: incomplete_result, criterion: rubric_criterion }
   let(:flexible_criterion) { create(:flexible_criterion, assignment: assignment) }
-  let(:flexible_mark) { create :flexible_mark, result: incomplete_result, markable: flexible_criterion }
+  let(:flexible_mark) { create :flexible_mark, result: incomplete_result, criterion: flexible_criterion }
 
   SAMPLE_FILE_CONTENT = 'sample file content'.freeze
   SAMPLE_ERROR_MESSAGE = 'sample error message'.freeze
@@ -239,8 +239,7 @@ describe ResultsController do
     context 'accessing update_mark' do
       it 'should report an updated mark' do
         patch :update_mark, params: { assignment_id: assignment.id, submission_id: submission.id,
-                                      id: incomplete_result.id, markable_id: rubric_mark.markable_id,
-                                      markable_type: rubric_mark.markable_type,
+                                      id: incomplete_result.id, criterion_id: rubric_mark.criterion_id,
                                       mark: 1 }, xhr: true
         expect(JSON.parse(response.body)['num_marked']).to eq 0
         expect(rubric_mark.reload.override).to be true
@@ -252,15 +251,13 @@ describe ResultsController do
         let(:mark) { assignment.groupings.first.current_result.marks.first }
         it 'sets override to true for mark if input value is not null' do
           patch :update_mark, params: { assignment_id: assignment.id, submission_id: submission.id,
-                                        id: result.id, markable_id: mark.markable_id,
-                                        markable_type: mark.markable_type,
+                                        id: result.id, criterion_id: mark.criterion_id,
                                         mark: 3.0 }, xhr: true
           expect(mark.reload.override).to be true
         end
         it 'sets override to true for mark if input value null and deductive annotations exist' do
           patch :update_mark, params: { assignment_id: assignment.id, submission_id: submission.id,
-                                        id: result.id, markable_id: mark.markable_id,
-                                        markable_type: mark.markable_type,
+                                        id: result.id, criterion_id: mark.criterion_id,
                                         mark: '' }, xhr: true
           expect(mark.reload.override).to be true
         end
@@ -268,24 +265,21 @@ describe ResultsController do
           assignment.annotation_categories.where.not(flexible_criterion: nil).first
                     .annotation_texts.first.update!(deduction: 0)
           patch :update_mark, params: { assignment_id: assignment.id, submission_id: submission.id,
-                                        id: result.id, markable_id: mark.markable_id,
-                                        markable_type: mark.markable_type,
+                                        id: result.id, criterion_id: mark.criterion_id,
                                         mark: '' }, xhr: true
           expect(mark.reload.override).to be false
         end
       end
       it 'returns correct json fields when updating a mark' do
         patch :update_mark, params: { assignment_id: assignment.id, submission_id: submission.id,
-                                      id: incomplete_result.id, markable_id: rubric_mark.markable_id,
-                                      markable_type: rubric_mark.markable_type,
+                                      id: incomplete_result.id, criterion_id: rubric_mark.criterion_id,
                                       mark: '1', format: :json }, xhr: true
         expected_keys = %w[total subtotal mark_override num_marked mark]
         expect(response.parsed_body.keys.sort!).to eq(expected_keys.sort!)
       end
       it 'sets override to false for mark if input value null and no deductive annotations exist' do
         patch :update_mark, params: { assignment_id: assignment.id, submission_id: submission.id,
-                                      id: incomplete_result.id, markable_id: rubric_mark.markable_id,
-                                      markable_type: rubric_mark.markable_type,
+                                      id: incomplete_result.id, criterion_id: rubric_mark.criterion_id,
                                       mark: '', format: :json }, xhr: true
         expect(response.parsed_body['mark_override']).to be false
       end
@@ -295,8 +289,7 @@ describe ResultsController do
           allow_any_instance_of(Mark).to receive(:save).and_return false
           allow_any_instance_of(ActiveModel::Errors).to receive(:full_messages).and_return [SAMPLE_ERROR_MESSAGE]
           patch :update_mark, params: { assignment_id: assignment.id, submission_id: submission.id,
-                                        id: incomplete_result.id, markable_id: rubric_mark.markable_id,
-                                        markable_type: rubric_mark.markable_type,
+                                        id: incomplete_result.id, criterion_id: rubric_mark.criterion_id,
                                         mark: 1 }, xhr: true
         end
         it { expect(response).to have_http_status(:bad_request) }
@@ -377,8 +370,9 @@ describe ResultsController do
                                          id: assignment.groupings.first.current_result,
                                          format: :json }, xhr: true
 
-        expect(response.parsed_body.first['criterion_name']).to eq assignment.flexible_criteria.first.name
-        expect(response.parsed_body.first['criterion_id']).to eq assignment.flexible_criteria.first.id
+        criterion = assignment.criteria.where(type: 'FlexibleCriterion').first
+        expect(response.parsed_body.first['criterion_name']).to eq criterion.name
+        expect(response.parsed_body.first['criterion_id']).to eq criterion.id
         expect(response.parsed_body.first['deduction']).to eq 1.0
       end
 
@@ -404,7 +398,7 @@ describe ResultsController do
                                    .current_result
                                    .submission.id,
           id: assignment.groupings.first.current_result,
-          markable_id: mark.markable_id,
+          criterion_id: mark.criterion_id,
           format: :json
         }, xhr: true
 
@@ -421,7 +415,7 @@ describe ResultsController do
                                    .current_result
                                    .submission.id,
           id: assignment.groupings.first.current_result,
-          markable_id: mark.markable_id,
+          criterion_id: mark.criterion_id,
           format: :json
         }, xhr: true
 
@@ -535,12 +529,9 @@ describe ResultsController do
         test_assigns_not_nil :grouping
         test_assigns_not_nil :submission
         test_assigns_not_nil :result
-        test_assigns_not_nil :mark_criteria
         test_assigns_not_nil :annotation_categories
         test_assigns_not_nil :group
         test_assigns_not_nil :files
-        test_assigns_not_nil :extra_marks_points
-        test_assigns_not_nil :extra_marks_percentage
       end
     end
   end
@@ -624,7 +615,7 @@ describe ResultsController do
           first_name = "#{first_category.annotation_category_name} [#{first_category.flexible_criterion.name}]"
           other_criterion = create(:flexible_criterion, assignment: assignment)
           assignment.groupings.each do |grouping|
-            create(:flexible_mark, markable: other_criterion, result: grouping.current_result)
+            create(:flexible_mark, criterion: other_criterion, result: grouping.current_result)
           end
           create(:criterion_ta_association, criterion: other_criterion, ta: helper_ta)
           second_category = create(:annotation_category,
@@ -722,12 +713,12 @@ describe ResultsController do
       let(:params) { { assignment_id: assignment.id, submission_id: submission.id, id: incomplete_result.id } }
       before :each do
         assignment.assignment_properties.update(assign_graders_to_criteria: true)
-        create(:criterion_ta_association, criterion: rubric_mark.markable, ta: ta)
+        create(:criterion_ta_association, criterion: rubric_mark.criterion, ta: ta)
         get :show, params: params, xhr: true
       end
 
       it 'should include assigned criteria list' do
-        expect(data['assigned_criteria']).to eq ["#{rubric_criterion.class}-#{rubric_criterion.id}"]
+        expect(data['assigned_criteria']).to eq [rubric_criterion.id]
       end
 
       context 'when accessing an assignment with deductive annotations' do
@@ -736,7 +727,7 @@ describe ResultsController do
            'to a subset of criteria that have associated categories' do
           other_criterion = create(:flexible_criterion, assignment: assignment)
           assignment.groupings.each do |grouping|
-            create(:flexible_mark, markable: other_criterion, result: grouping.current_result)
+            create(:flexible_mark, criterion: other_criterion, result: grouping.current_result)
           end
           assignment.assignment_properties.update(assign_graders_to_criteria: true)
           create(:criterion_ta_association, criterion: other_criterion, ta: ta)
@@ -749,24 +740,6 @@ describe ResultsController do
                                 format: :json }, xhr: true
           expect(response.parsed_body['annotation_categories'].first['annotation_category_name'])
             .to eq "#{other_category.annotation_category_name} [#{other_category.flexible_criterion.name}]"
-          expect(response.parsed_body['annotation_categories'].size).to eq 1
-        end
-
-        it 'receives limited annotation category data even when it has a ta_criterion_association '\
-           'with a criterion that has the same id as a flexible criterion which is associated with a category' do
-          other_criterion = create(:rubric_criterion, assignment: assignment, id: assignment.flexible_criteria.first.id)
-          assignment.groupings.each do |grouping|
-            create(:rubric_mark, markable: other_criterion, result: grouping.current_result)
-          end
-          assignment.assignment_properties.update(assign_graders_to_criteria: true)
-          create(:criterion_ta_association, criterion: other_criterion, ta: ta)
-          non_deductive_category = create(:annotation_category, assignment: assignment)
-          post :show, params: { assignment_id: assignment.id,
-                                submission_id: assignment.groupings.first.current_result.submission.id,
-                                id: assignment.groupings.first.current_result,
-                                format: :json }, xhr: true
-          expect(response.parsed_body['annotation_categories']
-                         .first['annotation_category_name']).to eq non_deductive_category.annotation_category_name
           expect(response.parsed_body['annotation_categories'].size).to eq 1
         end
       end
@@ -790,7 +763,7 @@ describe ResultsController do
           let(:params) { { assignment_id: assignment.id, submission_id: remarked.id, id: incomplete_result.id } }
 
           it 'should only include marks for assigned criteria in the remark result' do
-            expect(data['old_marks'].keys).to eq ["#{rubric_criterion.class}-#{rubric_criterion.id}"]
+            expect(data['old_marks'].keys).to eq [rubric_criterion.id.to_s]
           end
         end
       end
@@ -803,8 +776,7 @@ describe ResultsController do
         grouping2.current_result.update(marking_state: Result::MARKING_STATES[:complete])
 
         patch :update_mark, params: { assignment_id: assignment.id, submission_id: submission.id,
-                                      id: incomplete_result.id, markable_id: rubric_mark.markable_id,
-                                      markable_type: rubric_mark.markable_type,
+                                      id: incomplete_result.id, criterion_id: rubric_mark.criterion_id,
                                       mark: 1 }, xhr: true
         expect(JSON.parse(response.body)['num_marked']).to eq 0
       end

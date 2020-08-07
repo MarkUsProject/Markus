@@ -52,8 +52,8 @@ class AnnotationText < ApplicationRecord
     annotations = self.annotations.includes(:result)
     annotations.each do |annotation|
       annotation.result.marks
-                .find_by(markable_id: criterion_id,
-                         markable_type: 'FlexibleCriterion').update_deduction
+                .find_by(criterion_id: criterion_id)
+                .update_deduction
     end
   end
 
