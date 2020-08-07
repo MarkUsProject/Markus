@@ -35,7 +35,7 @@ namespace :db do
     result = remark_submission.results.first
 
     #Automate remarks for assignment using appropriate criteria
-    remark_submission.assignment.get_criteria(:all, :all, includes: :marks).each do |criterion|
+    remark_submission.assignment.criteria.includes(:marks).each do |criterion|
       if criterion.class == RubricCriterion
         random_mark = criterion.max_mark / 4 * rand(0..4)
       elsif criterion.class == FlexibleCriterion
@@ -43,9 +43,8 @@ namespace :db do
       else
         random_mark = rand(0..1)
       end
-      mark = Mark.find_by(result_id:     remark_submission.remark_result.id,
-                          markable_id:   criterion.id,
-                          markable_type: criterion.class.to_s)
+      mark = Mark.find_by(result_id: remark_submission.remark_result.id,
+                          criterion_id: criterion.id)
       mark.update_attribute(:mark, random_mark)
       result.save
     end

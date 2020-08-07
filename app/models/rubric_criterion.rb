@@ -1,42 +1,13 @@
 class RubricCriterion < Criterion
-  self.table_name = 'rubric_criteria' # set table name correctly
-
   before_save :round_max_mark
 
-  has_many :marks, as: :markable, dependent: :destroy
-  accepts_nested_attributes_for :marks
-
-  has_many :criterion_ta_associations,
-           as: :criterion,
-           dependent: :destroy
-
-  has_many :tas, through: :criterion_ta_associations
-
-  has_many :levels, -> { order(:mark) }, inverse_of: :rubric_criterion, dependent: :destroy, autosave: true
-  accepts_nested_attributes_for :levels, allow_destroy: true
   before_validation :scale_marks_if_max_mark_changed
   validates_presence_of :levels
-
-  belongs_to :assignment, foreign_key: :assessment_id, counter_cache: true
-
-  validates_presence_of :assigned_groups_count
-  validates_numericality_of :assigned_groups_count
-  before_validation :update_assigned_groups_count
-
-  has_many :test_groups, as: :criterion
 
   DEFAULT_MAX_MARK = 4
 
   def self.symbol
     :rubric
-  end
-
-  def update_assigned_groups_count
-    result = []
-    criterion_ta_associations.each do |cta|
-      result = result.concat(cta.ta.get_groupings_by_assignment(assignment))
-    end
-    self.assigned_groups_count = result.uniq.length
   end
 
   def scale_marks_if_max_mark_changed
@@ -98,7 +69,7 @@ class RubricCriterion < Criterion
     working_row = row.clone
     name = working_row.shift
 
-    criterion = assignment.get_criteria(:all, :rubric).find_or_create_by(name: name)
+    criterion = assignment.criteria.where(type: 'RubricCriterion').find_or_create_by(name: name)
 
     # Only set the position if this is a new record.
     if criterion.new_record?

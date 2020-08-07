@@ -123,7 +123,9 @@ class ResultsController < ApplicationController
         # Annotation categories
         if current_user.admin? || current_user.ta?
           if current_user.ta? && assignment.assign_graders_to_criteria
-            visible = current_user.criterion_ta_associations.where(criterion_type: 'FlexibleCriterion')
+            visible = current_user.criterion_ta_associations
+                                  .joins(:criterion)
+                                  .where('criteria.type': 'FlexibleCriterion')
                                   .pluck(:criterion_id) + [nil]
             annotation_categories = assignment.annotation_categories
                                               .order(:position)
@@ -165,13 +167,8 @@ class ResultsController < ApplicationController
         end
 
         # Marks
-        common_fields = [:id, :name, :position, :max_mark]
+        fields = [:id, :name, :description, :position, :max_mark]
         marks_map = [CheckboxCriterion, FlexibleCriterion, RubricCriterion].flat_map do |klass|
-          if klass == RubricCriterion
-            fields = common_fields
-          else
-            fields = common_fields + [:description]
-          end
           criteria = klass.where(assessment_id: is_review ? assignment.pr_assignment.id : assignment.id,
                                  ta_visible: !is_review,
                                  peer_visible: is_review)
@@ -186,7 +183,7 @@ class ResultsController < ApplicationController
 
             # adds a levels field to the marks info hash with the same rubric criterion id
             if klass == RubricCriterion
-              info[:levels] = Level.where(rubric_criterion_id: cr[:id])
+              info[:levels] = Level.where(criterion_id: cr[:id])
                                    .order(:mark)
                                    .pluck_to_hash(:name, :description, :mark)
             end
@@ -204,13 +201,12 @@ class ResultsController < ApplicationController
         if assignment.assign_graders_to_criteria && current_user.ta?
           assigned_criteria = current_user.criterion_ta_associations
                                           .where(assessment_id: assignment.id)
-                                          .pluck(:criterion_type, :criterion_id)
-                                          .map { |t, id| "#{t}-#{id}" }
+                                          .pluck(:criterion_id)
           if assignment.hide_unassigned_criteria
-            marks_map = marks_map.select { |m| assigned_criteria.include? "#{m[:criterion_type]}-#{m[:id]}" }
+            marks_map = marks_map.select { |m| assigned_criteria.include? m[:id] }
             old_marks = old_marks.select { |m| assigned_criteria.include? m }
           else
-            marks_map = marks_map.partition { |m| assigned_criteria.include? "#{m[:criterion_type]}-#{m[:id]}" }
+            marks_map = marks_map.partition { |m| assigned_criteria.include? m[:id] }
                                  .flatten
           end
         else
@@ -241,8 +237,11 @@ class ResultsController < ApplicationController
         end
 
         # Totals
-        data[:assignment_max_mark] =
-          result.is_a_review? ? assignment.pr_assignment.max_mark(:peer) : marks_map.map { |h| h['max_mark'] }.sum
+        if result.is_a_review?
+          data[:assignment_max_mark] = assignment.pr_assignment.max_mark(:peer_visible)
+        else
+          data[:assignment_max_mark] = assignment.max_mark
+        end
         data[:total] = marks_map.map { |h| h['mark'] }
         data[:old_total] = old_marks.values.sum
 
@@ -282,7 +281,7 @@ class ResultsController < ApplicationController
                  "#{@grouping.group.group_name}'")
 
     # Check whether this group made a submission after the final deadline.
-    if @grouping.past_due_date?
+    if @grouping.submitted_after_collection_date?
       flash_message(:warning,
                     t('results.late_submission_warning_html',
                       url: repo_browser_assignment_submission_path(@assignment, @grouping)))
@@ -541,10 +540,7 @@ class ResultsController < ApplicationController
     assignment = submission.grouping.assignment
     mark_value = params[:mark].blank? ? nil : params[:mark].to_f
 
-    result_mark = result.marks.find_or_create_by(
-      markable_id: params[:markable_id],
-      markable_type: params[:markable_type]
-    )
+    result_mark = result.marks.find_or_create_by(criterion_id: params[:criterion_id])
 
     m_logger = MarkusLogger.instance
 
@@ -580,7 +576,8 @@ class ResultsController < ApplicationController
 
   def revert_to_automatic_deductions
     result = Result.find(params[:id])
-    result_mark = result.marks.find_or_create_by(markable_id: params[:markable_id], markable_type: 'FlexibleCriterion')
+    criterion = Criterion.find_by!(id: params[:criterion_id], type: 'FlexibleCriterion')
+    result_mark = result.marks.find_or_create_by(criterion: criterion)
 
     result_mark.update!(override: false)
 
@@ -680,35 +677,6 @@ class ResultsController < ApplicationController
       File.join(a.path, a.filename) <=> File.join(b.path, b.filename)
     end
     @feedback_files = @submission.feedback_files
-    @extra_marks_points = @result.extra_marks.points
-    @extra_marks_percentage = @result.extra_marks.percentage
-    @marks_map = Hash.new
-    @old_marks_map = Hash.new
-
-    if @result.is_a_review?
-      if @current_user.is_reviewer_for?(@assignment.pr_assignment, @result) ||
-          !@grouping.membership_status(current_user).nil? || !@current_user.student?
-        @mark_criteria = @assignment.get_criteria(:peer)
-      end
-    else
-      @mark_criteria = @assignment.get_criteria(:ta)
-    end
-
-    @mark_criteria.each do |criterion|
-      mark = criterion.marks.find_or_create_by(result_id: @result.id)
-      mark.save(validate: false)
-
-      # See the 'edit' method documentation for reasoning on why two elements are used.
-      @marks_map[[criterion.class.to_s, criterion.id]] = mark
-
-      if @old_result
-        oldmark = criterion.marks.find_or_create_by(result_id: @old_result.id)
-        oldmark.save(validate: false)
-
-        # See the 'edit' method documentation for reasoning on why two elements are used.
-        @old_marks_map[[criterion.class.to_s, criterion.id]] = oldmark
-      end
-    end
 
     @host = Rails.application.config.action_controller.relative_url_root
 

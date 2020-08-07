@@ -55,25 +55,37 @@ describe FlexibleCriterion do
 
     context 'with deductive annotations' do
       let(:assignment) { create(:assignment_with_deductive_annotations) }
-      let(:flexible_criterion) { assignment.flexible_criteria.first }
+      let(:flexible_criterion) { assignment.criteria.where(type: 'FlexibleCriterion').first }
       let(:annotation_category) do
         assignment.annotation_categories.where(flexible_criterion_id: flexible_criterion.id).first
       end
-      it 'reassigns its annotation_category\'s flexible_criterion_id to nil before being destroyed if it has one' do
-        flexible_criterion.destroy
-        assignment.reload
-        expect(assignment.annotation_categories.first.flexible_criterion_id).to eq nil
-      end
 
-      it 'reassigns its annotation_categories\' flexible_criterion_ids to nil before ' \
-         'being destroyed if it has many' do
-        create(:annotation_category,
-               flexible_criterion_id: flexible_criterion.id,
-               assignment: assignment)
-        flexible_criterion.destroy
-        assignment.reload
-        category_criteria = assignment.annotation_categories.map(&:flexible_criterion_id)
-        expect(category_criteria).to eq [nil, nil]
+      context 'when being destroyed' do
+        it 'does not cause a result to subtract the mark value of the given criterion from the result\'s total_mark '\
+         ' through both the annotation_text callbacks and the given criterion\'s own update_results callback' do
+          new_criterion = create(:flexible_criterion, assignment: assignment)
+          new_mark = create(:flexible_mark, result: assignment.groupings.first.current_result, criterion: new_criterion)
+          assignment.groupings.first.current_result.reload
+          new_mark.update(mark: 1)
+          flexible_criterion.destroy
+          expect(assignment.reload.groupings.first.current_result.total_mark).to eq 1.0
+        end
+
+        it 'reassigns its annotation_category\'s flexible_criterion_id to nil if it has one' do
+          flexible_criterion.destroy
+          assignment.reload
+          expect(assignment.annotation_categories.first.flexible_criterion_id).to eq nil
+        end
+
+        it 'reassigns its annotation_categories\' flexible_criterion_ids to nil if it has many' do
+          create(:annotation_category,
+                 flexible_criterion_id: flexible_criterion.id,
+                 assignment: assignment)
+          flexible_criterion.destroy
+          assignment.reload
+          category_criteria = assignment.annotation_categories.map(&:flexible_criterion_id)
+          expect(category_criteria).to eq [nil, nil]
+        end
       end
 
       it 'correctly scales up annotation text deductions when its max_mark is increased' do

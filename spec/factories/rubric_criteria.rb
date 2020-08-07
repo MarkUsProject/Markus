@@ -8,7 +8,7 @@ FactoryBot.define do
     sequence(:position)
     after(:build) do |criterion|
       5.times.each do |i|
-        criterion.levels << build(:level, rubric_criterion: criterion, mark: criterion.max_mark * i / 4)
+        criterion.levels << build(:level, criterion: criterion, mark: criterion.max_mark * i / 4)
       end
     end
   end

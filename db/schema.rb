@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_07_09_165042) do
+ActiveRecord::Schema.define(version: 2020_07_26_012622) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -68,9 +68,6 @@ ActiveRecord::Schema.define(version: 2020_07_09_165042) do
     t.datetime "due_date"
     t.boolean "is_hidden", default: true, null: false
     t.boolean "show_total", default: false, null: false
-    t.integer "rubric_criteria_count"
-    t.integer "flexible_criteria_count"
-    t.integer "checkbox_criteria_count"
     t.integer "groupings_count"
     t.integer "outstanding_remark_request_count"
     t.integer "notes_count", default: 0
@@ -141,23 +138,23 @@ ActiveRecord::Schema.define(version: 2020_07_09_165042) do
     t.bigint "assessment_id"
   end
 
-  create_table "checkbox_criteria", id: :serial, force: :cascade do |t|
+  create_table "criteria", force: :cascade do |t|
     t.string "name", null: false
-    t.string "description"
-    t.integer "position"
-    t.decimal "max_mark", precision: 10, scale: 1
-    t.integer "assigned_groups_count", default: 0
+    t.string "type", null: false
+    t.text "description", default: "", null: false
+    t.integer "position", null: false
+    t.decimal "max_mark", precision: 10, scale: 1, null: false
+    t.integer "assigned_groups_count", default: 0, null: false
     t.boolean "ta_visible", default: true, null: false
     t.boolean "peer_visible", default: false, null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
     t.bigint "assessment_id", null: false
-    t.index ["assessment_id", "name"], name: "index_checkbox_criteria_on_assessment_id_and_name", unique: true
+    t.index ["assessment_id"], name: "index_criteria_on_assessment_id"
   end
 
   create_table "criteria_assignment_files_joins", id: :serial, force: :cascade do |t|
     t.integer "criterion_id", null: false
-    t.string "criterion_type", null: false
     t.integer "assignment_file_id", null: false
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -165,7 +162,6 @@ ActiveRecord::Schema.define(version: 2020_07_09_165042) do
 
   create_table "criterion_ta_associations", id: :serial, force: :cascade do |t|
     t.integer "ta_id"
-    t.string "criterion_type"
     t.integer "criterion_id"
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -218,21 +214,6 @@ ActiveRecord::Schema.define(version: 2020_07_09_165042) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["submission_id"], name: "index_feedback_files_on_submission_id"
-  end
-
-  create_table "flexible_criteria", id: :serial, force: :cascade do |t|
-    t.string "name", null: false
-    t.text "description"
-    t.integer "position"
-    t.decimal "max_mark", precision: 10, scale: 1, null: false
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.integer "assigned_groups_count", default: 0
-    t.boolean "ta_visible", default: true, null: false
-    t.boolean "peer_visible", default: false, null: false
-    t.bigint "assessment_id", null: false
-    t.index ["assessment_id", "name"], name: "index_flexible_criteria_on_assessment_id_and_name", unique: true
-    t.index ["assessment_id"], name: "index_flexible_criteria_on_assessment_id"
   end
 
   create_table "grace_period_deductions", id: :serial, force: :cascade do |t|
@@ -330,13 +311,13 @@ ActiveRecord::Schema.define(version: 2020_07_09_165042) do
   end
 
   create_table "levels", force: :cascade do |t|
-    t.bigint "rubric_criterion_id", null: false
+    t.bigint "criterion_id", null: false
     t.string "name", null: false
     t.string "description", null: false
     t.float "mark", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.index ["rubric_criterion_id"], name: "index_levels_on_rubric_criterion_id"
+    t.index ["criterion_id"], name: "index_levels_on_criterion_id"
   end
 
   create_table "marking_schemes", id: :serial, force: :cascade do |t|
@@ -356,14 +337,12 @@ ActiveRecord::Schema.define(version: 2020_07_09_165042) do
 
   create_table "marks", id: :serial, force: :cascade do |t|
     t.integer "result_id"
-    t.integer "markable_id"
+    t.integer "criterion_id"
     t.float "mark"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string "markable_type"
     t.boolean "override", default: false, null: false
-    t.index ["markable_id", "result_id", "markable_type"], name: "marks_u1", unique: true
-    t.index ["markable_id"], name: "index_marks_on_markable_id"
+    t.index ["criterion_id"], name: "index_marks_on_criterion_id"
     t.index ["result_id"], name: "index_marks_on_result_id"
   end
 
@@ -419,19 +398,6 @@ ActiveRecord::Schema.define(version: 2020_07_09_165042) do
     t.datetime "remark_request_submitted_at"
     t.integer "peer_review_id"
     t.index ["peer_review_id"], name: "index_results_on_peer_review_id"
-  end
-
-  create_table "rubric_criteria", id: :serial, force: :cascade do |t|
-    t.string "name", null: false
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.integer "position"
-    t.decimal "max_mark", precision: 10, scale: 1, null: false
-    t.integer "assigned_groups_count", default: 0
-    t.boolean "ta_visible", default: true, null: false
-    t.boolean "peer_visible", default: false, null: false
-    t.bigint "assessment_id", null: false
-    t.index ["assessment_id", "name"], name: "rubric_criteria_index_1", unique: true
   end
 
   create_table "section_due_dates", id: :serial, force: :cascade do |t|
@@ -577,13 +543,12 @@ ActiveRecord::Schema.define(version: 2020_07_09_165042) do
   create_table "test_groups", id: :serial, force: :cascade do |t|
     t.text "name", null: false
     t.integer "display_output", default: 0, null: false
-    t.string "criterion_type"
     t.bigint "criterion_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "assessment_id", null: false
     t.index ["assessment_id"], name: "index_test_groups_on_assessment_id"
-    t.index ["criterion_type", "criterion_id"], name: "index_test_groups_on_criterion_type_and_criterion_id"
+    t.index ["criterion_id"], name: "index_test_groups_on_criterion_id"
   end
 
   create_table "test_results", id: :serial, force: :cascade do |t|
@@ -637,7 +602,7 @@ ActiveRecord::Schema.define(version: 2020_07_09_165042) do
   end
 
   add_foreign_key "annotation_categories", "assessments", name: "fk_annotation_categories_assignments", on_delete: :cascade
-  add_foreign_key "annotation_categories", "flexible_criteria"
+  add_foreign_key "annotation_categories", "criteria", column: "flexible_criterion_id"
   add_foreign_key "annotation_texts", "annotation_categories", name: "fk_annotation_labels_annotation_categories", on_delete: :cascade
   add_foreign_key "annotations", "annotation_texts", name: "fk_annotations_annotation_texts"
   add_foreign_key "annotations", "submission_files", name: "fk_annotations_submission_files"
@@ -645,7 +610,7 @@ ActiveRecord::Schema.define(version: 2020_07_09_165042) do
   add_foreign_key "assignment_properties", "assessments", on_delete: :cascade
   add_foreign_key "assignment_properties", "starter_file_groups", column: "default_starter_file_group_id"
   add_foreign_key "assignment_stats", "assessments", name: "fk_assignment_stats_assignments", on_delete: :cascade
-  add_foreign_key "checkbox_criteria", "assessments"
+  add_foreign_key "criteria", "assessments"
   add_foreign_key "criteria_assignment_files_joins", "assignment_files"
   add_foreign_key "exam_templates", "assessments"
   add_foreign_key "extensions", "groupings"
@@ -656,8 +621,9 @@ ActiveRecord::Schema.define(version: 2020_07_09_165042) do
   add_foreign_key "groupings", "assessments", name: "fk_groupings_assignments"
   add_foreign_key "groupings", "groups", name: "fk_groupings_groups"
   add_foreign_key "key_pairs", "users"
-  add_foreign_key "levels", "rubric_criteria"
+  add_foreign_key "levels", "criteria"
   add_foreign_key "marking_weights", "assessments"
+  add_foreign_key "marks", "criteria"
   add_foreign_key "marks", "results", name: "fk_marks_results", on_delete: :cascade
   add_foreign_key "memberships", "groupings", name: "fk_memberships_groupings"
   add_foreign_key "memberships", "users", name: "fk_memberships_users"
@@ -665,7 +631,6 @@ ActiveRecord::Schema.define(version: 2020_07_09_165042) do
   add_foreign_key "peer_reviews", "results"
   add_foreign_key "results", "peer_reviews", on_delete: :cascade
   add_foreign_key "results", "submissions", name: "fk_results_submissions", on_delete: :cascade
-  add_foreign_key "rubric_criteria", "assessments", name: "fk_rubric_criteria_assignments", on_delete: :cascade
   add_foreign_key "section_starter_file_groups", "sections"
   add_foreign_key "section_starter_file_groups", "starter_file_groups"
   add_foreign_key "split_pages", "groups"

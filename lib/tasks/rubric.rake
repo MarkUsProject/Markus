@@ -52,31 +52,31 @@ namespace :db do
           assessment_id:           assignment.id,
           description:             random_sentences(5),
           position:                index + 4,
-          max_mark:                pos_rand(3),
-          created_at:              nil,
-          updated_at:              nil,
-          assigned_groups_count:   nil
+          max_mark:                pos_rand(3)
         )
       end
+      criterion = assignment.criteria.where(type: 'FlexibleCriterion').first
       ac_with_criterion = AnnotationCategory.create(assignment: assignment,
                                                     position: 6,
                                                     annotation_category_name: random_words(1),
-                                                    flexible_criterion_id: assignment.flexible_criteria.first.id)
+                                                    flexible_criterion_id: criterion.id)
       rand(3..12).times do
         AnnotationText.create(annotation_category: ac_with_criterion,
                               content: random_sentences(3),
-                              deduction: assignment.flexible_criteria.first.max_mark,
+                              deduction: criterion.max_mark,
                               creator: Admin.first,
                               last_editor: Admin.first)
       end
+
+      other_criterion = assignment.criteria.where(type: 'FlexibleCriterion').second
       other_ac_with_criterion = AnnotationCategory.create(assignment: assignment,
                                                           position: 7,
                                                           annotation_category_name: random_words(1),
-                                                          flexible_criterion_id: assignment.flexible_criteria.second.id)
+                                                          flexible_criterion_id: other_criterion.id)
       rand(3..12).times do
         AnnotationText.create(annotation_category: other_ac_with_criterion,
                               content: random_sentences(2),
-                              deduction: assignment.flexible_criteria.second.max_mark,
+                              deduction: other_criterion.max_mark,
                               creator: Admin.first,
                               last_editor: Admin.first)
       end
@@ -87,10 +87,7 @@ namespace :db do
           assessment_id:           assignment.id,
           description:             random_sentences(5),
           position:                index + 7,
-          max_mark:                1,
-          created_at:              nil,
-          updated_at:              nil,
-          assigned_groups_count:   nil
+          max_mark:                1
         )
       end
     end

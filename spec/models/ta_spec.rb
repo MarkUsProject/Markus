@@ -28,22 +28,22 @@ describe Ta do
       end
 
       context 'when TAs are assigned specific criteria' do
+        let!(:criterion1) { assignment.criteria.where(type: 'FlexibleCriterion').first }
+        let!(:criterion2) { assignment.criteria.where(type: 'FlexibleCriterion').second }
         let!(:ta_criterion_associations) do
           assignment.update(assign_graders_to_criteria: true)
-          [create(:criterion_ta_association, ta: ta, criterion: assignment.flexible_criteria.first),
-           create(:criterion_ta_association, ta: ta, criterion: assignment.flexible_criteria.second)]
+          [create(:criterion_ta_association, ta: ta, criterion: criterion1),
+           create(:criterion_ta_association, ta: ta, criterion: criterion2)]
         end
 
         it 'returns the grades for their assigned groupings based on assigned criterion marks' do
-          criterion1 = assignment.flexible_criteria.first
-          criterion2 = assignment.flexible_criteria.second
           out_of = criterion1.max_mark + criterion2.max_mark
 
           expected = ta.groupings.where(assessment_id: assignment.id).map do |g|
             result = g.current_result
             subtotal = (
-              result.marks.find_by(markable: criterion1).mark +
-              result.marks.find_by(markable: criterion2).mark
+              result.marks.find_by(criterion: criterion1).mark +
+              result.marks.find_by(criterion: criterion2).mark
             )
             subtotal / out_of * 100
           end

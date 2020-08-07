@@ -18,11 +18,11 @@ class SubmissionFile < ApplicationRecord
 
   validates_inclusion_of :is_converted, in: [true, false]
 
-  def get_file_type
+  def self.get_file_type(filename)
     # This is where you can add more languages that SubmissionFile will
     # recognize.  It will return the name of the language, which
     # SyntaxHighlighter can work with.
-    case File.extname(filename)
+    case File.extname(filename).downcase
     when '.sci'
       'scilab'
     when '.java'
@@ -45,6 +45,10 @@ class SubmissionFile < ApplicationRecord
       'scheme'
     when '.tex', '.latex'
       'tex'
+    when '.jpeg', '.jpg', '.gif', '.png', '.heic', '.heif'
+      'image'
+    when '.pdf'
+      'pdf'
     else
       'unknown'
     end

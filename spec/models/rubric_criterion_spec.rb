@@ -1,7 +1,9 @@
 describe RubricCriterion do
   let(:criterion_factory_name) { :rubric_criterion }
 
-  it_behaves_like 'a criterion'
+  context 'A rubric criterion model passes criterion tests' do
+    it_behaves_like 'a criterion'
+  end
   context 'A good rubric criterion model' do
     before(:each) do
       @rubric = create(:rubric_criterion)
@@ -269,9 +271,9 @@ describe RubricCriterion do
 
     context 'editing levels edits marks' do
       before(:each) do
-        create(:rubric_mark, markable: @criterion, mark: 0)
-        create(:rubric_mark, markable: @criterion, mark: 1)
-        create(:rubric_mark, markable: @criterion, mark: 1)
+        create(:rubric_mark, mark: 0, criterion: @criterion)
+        create(:rubric_mark, mark: 1, criterion: @criterion)
+        create(:rubric_mark, mark: 1, criterion: @criterion)
       end
 
       context 'updating level updates respective mark' do

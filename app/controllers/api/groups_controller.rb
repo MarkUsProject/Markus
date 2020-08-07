@@ -137,7 +137,7 @@ module Api
           'Marking for that submission is already completed' }, status: 404
         return
       end
-      matched_criteria = assignment.get_criteria.select{ |criterion| params.keys.include?(criterion.name) }
+      matched_criteria = assignment.criteria.where(name: params.keys)
       if matched_criteria.empty?
         render 'shared/http_status', locals: { code: '404', message:
           'No criteria were found that match that request.' }, status: 404
@@ -145,7 +145,7 @@ module Api
       end
 
       matched_criteria.each do |crit|
-        mark_to_change = result.marks.find_or_initialize_by(markable_id: crit.id, markable_type: crit.class.name)
+        mark_to_change = result.marks.find_or_initialize_by(criterion_id: crit.id)
         mark_to_change.mark = params[crit.name] == 'nil' ? nil : params[crit.name].to_f
         unless mark_to_change.save
           # Some error occurred (including invalid mark)

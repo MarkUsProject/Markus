@@ -95,7 +95,7 @@ namespace :markus do
           } }
           rubric_criterion.merge(params[:rubric])
           RubricCriterion.create(rubric_criterion)
-          assignment.get_criteria << rc
+          assignment.criteria << rc
         end
         assignment.save
 
@@ -205,11 +205,10 @@ namespace :markus do
               result = submission.get_latest_result
               # Create a mark for each criterion and attach to result
               puts "Generating mark ..."
-              assignment.get_criteria.each do |criterion|
+              assignment.criteria.each do |criterion|
                 # Save a mark for each criterion
                 m = Mark.new()
-                m.markable_type = "RubricCriterion"
-                m.markable_id = criterion.id
+                m.criterion = criterion
                 m.result = result
                 m.mark = rand(4) # assign some random mark
                 m.save!

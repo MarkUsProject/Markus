@@ -103,7 +103,7 @@ class Result extends React.Component {
       criterionSummaryData.push({
         criterion: data.name,
         mark: data.mark,
-        old_mark: result_data.old_marks[`${data.criterion_type}-${data.id}`],
+        old_mark: result_data.old_marks[data.id],
         max_mark: data.max_mark
       });
       subtotal += data.mark || 0;
@@ -217,7 +217,7 @@ class Result extends React.Component {
 
     if (!!criterion_id) {
       let newMarks = [...this.state.marks];
-      let i = newMarks.findIndex(m => m.id === criterion_id && m.criterion_type === "FlexibleCriterion");
+      let i = newMarks.findIndex(m => m.id === criterion_id);
       if (i >= 0) {
         newMarks[i] = {...newMarks[i]};
         newMarks[i].mark = mark_value;
@@ -324,10 +324,10 @@ class Result extends React.Component {
   };
 
   /* Callbacks for RightPane */
-  updateMark = (criterion_type, criterion_id, mark) => {
+  updateMark = (criterion_id, mark) => {
     if (this.state.released_to_students ||
         (this.state.assigned_criteria !== null &&
-         !this.state.assigned_criteria.includes(`${criterion_type}-${criterion_id}`))) {
+         !this.state.assigned_criteria.includes(criterion_id))) {
       return;
     }
 
@@ -337,14 +337,13 @@ class Result extends React.Component {
       ),
       method: 'PATCH',
       data: {
-        markable_type: criterion_type,
-        markable_id: criterion_id,
+        criterion_id: criterion_id,
         mark: mark
       },
       dataType: 'json'
     }).then(data => {
       let marks = this.state.marks.map(markData => {
-        if (markData.id === criterion_id && markData.criterion_type === criterion_type) {
+        if (markData.id === criterion_id) {
           let newMark = {...markData};
           newMark.mark = data.mark;
           newMark['marks.mark'] = data.mark;
@@ -365,8 +364,8 @@ class Result extends React.Component {
     });
   };
 
-  destroyMark = (criterion_type, criterion_id) => {
-    this.updateMark(criterion_type, criterion_id, null);
+  destroyMark = (criterion_id) => {
+    this.updateMark(criterion_id, null);
   };
 
   revertToAutomaticDeductions = (criterion_id) => {
@@ -375,10 +374,10 @@ class Result extends React.Component {
         this.props.assignment_id, this.props.submission_id, this.props.result_id
       ),
       method: 'PATCH',
-      data: {markable_id: criterion_id}
+      data: {criterion_id: criterion_id}
     }).then(data => {
       let marks = this.state.marks.map(markData => {
-        if (markData.id === criterion_id && markData.criterion_type === 'FlexibleCriterion') {
+        if (markData.id === criterion_id) {
           let newMark = {...markData};
           newMark.mark = data.mark;
           newMark['marks.mark'] = data.mark;

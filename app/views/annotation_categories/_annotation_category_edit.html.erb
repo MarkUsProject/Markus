@@ -24,8 +24,8 @@
                     AnnotationCategory.human_attribute_name(:flexible_criterion) %>
         <%= f.collection_select :flexible_criterion_id,
                                 annotation_category.assignment
-                                                   .flexible_criteria
-                                                   .where(assignment: annotation_category.assignment),
+                                                   .criteria
+                                                   .where(type: 'FlexibleCriterion'),
                                 :id,
                                 :name,
                                 { include_blank: t('annotation_categories.unselected_criterion') },
