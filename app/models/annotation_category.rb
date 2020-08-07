@@ -36,7 +36,7 @@ class AnnotationCategory < ApplicationRecord
       end
     elsif (annotation_category.flexible_criterion_id.nil? && !criterion_name.nil?) ||
           (annotation_category.flexible_criterion.name != criterion_name)
-      cleanup(previously_exists, annotation_category, [])
+      AnnotationCategory.cleanup(previously_exists, annotation_category, added)
       raise CsvInvalidLineError, I18n.t('annotation_categories.upload.invalid_criterion',
                                         annotation_category: name)
     end
@@ -49,7 +49,7 @@ class AnnotationCategory < ApplicationRecord
           last_editor_id: current_user.id
         )
         unless annotation_text.save
-          cleanup(previously_exists, annotation_category, added)
+          AnnotationCategory.cleanup(previously_exists, annotation_category, added)
           raise CsvInvalidLineError, I18n.t('annotation_categories.upload.error',
                                             annotation_category: annotation_category.annotation_category_name)
         end
@@ -58,7 +58,7 @@ class AnnotationCategory < ApplicationRecord
     else
       criterion = assignment.criteria.find_by(name: criterion_name, type: 'FlexibleCriterion')
       if criterion.nil?
-        cleanup(previously_exists, annotation_category, added)
+        AnnotationCategory.cleanup(previously_exists, annotation_category, added)
         raise CsvInvalidLineError, I18n.t('annotation_categories.upload.criterion_not_found',
                                           missing_criterion: criterion_name)
       end
@@ -67,13 +67,13 @@ class AnnotationCategory < ApplicationRecord
         begin
           new_deduction = Float(text_with_deduction.second)
         rescue ArgumentError, TypeError
-          cleanup(previously_exists, annotation_category, added)
+          AnnotationCategory.cleanup(previously_exists, annotation_category, added)
           raise CsvInvalidLineError, I18n.t('annotation_categories.upload.deduction_absent',
                                             value: text_with_deduction.second,
                                             annotation_category: annotation_category.annotation_category_name)
         end
         if new_deduction > criterion.max_mark || new_deduction < 0
-          cleanup(previously_exists, annotation_category, added)
+          AnnotationCategory.cleanup(previously_exists, annotation_category, added)
           raise CsvInvalidLineError, I18n.t('annotation_categories.upload.invalid_deduction',
                                             annotation_content: text_with_deduction.first,
                                             criterion_name: criterion_name,
@@ -86,7 +86,7 @@ class AnnotationCategory < ApplicationRecord
           deduction: new_deduction.round(2)
         )
         unless annotation_text.save
-          cleanup(previously_exists, annotation_category, added)
+          AnnotationCategory.cleanup(previously_exists, annotation_category, added)
           raise CsvInvalidLineError, I18n.t('annotation_categories.upload.error',
                                             annotation_category: annotation_category.annotation_category_name)
         end
@@ -133,7 +133,7 @@ class AnnotationCategory < ApplicationRecord
 
   private
 
-  def cleanup(keep_category, category_to_destroy, texts_to_destroy)
+  def self.cleanup(keep_category, category_to_destroy, texts_to_destroy)
     if keep_category
       AnnotationText.delete_all(id: texts_to_destroy)
     else
