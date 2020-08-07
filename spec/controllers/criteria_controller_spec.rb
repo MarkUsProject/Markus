@@ -331,8 +331,7 @@ describe CriteriaController do
       it 'should be able to update_positions' do
         post_as admin,
                 :update_positions,
-                params: { criterion: ["#{flexible_criterion2.class} #{flexible_criterion2.id}",
-                                      "#{flexible_criterion.class} #{flexible_criterion.id}"],
+                params: { criterion: [flexible_criterion2.id, flexible_criterion.id],
                           assignment_id: assignment.id },
                 format: :js
         is_expected.to render_template('criteria/update_positions')
@@ -687,8 +686,7 @@ describe CriteriaController do
       it 'should be able to update_positions' do
         post_as admin,
                 :update_positions,
-                params: { criterion: ["#{rubric_criterion2.class} #{rubric_criterion2.id}",
-                                      "#{rubric_criterion.class} #{rubric_criterion.id}"],
+                params: { criterion: [rubric_criterion2.id, rubric_criterion.id],
                           assignment_id: assignment.id },
                 format: :js
         is_expected.to render_template('criteria/update_positions')

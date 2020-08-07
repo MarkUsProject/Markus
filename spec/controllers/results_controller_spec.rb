@@ -529,12 +529,9 @@ describe ResultsController do
         test_assigns_not_nil :grouping
         test_assigns_not_nil :submission
         test_assigns_not_nil :result
-        test_assigns_not_nil :mark_criteria
         test_assigns_not_nil :annotation_categories
         test_assigns_not_nil :group
         test_assigns_not_nil :files
-        test_assigns_not_nil :extra_marks_points
-        test_assigns_not_nil :extra_marks_percentage
       end
     end
   end
