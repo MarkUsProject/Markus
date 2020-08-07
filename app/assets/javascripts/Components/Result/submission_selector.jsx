@@ -92,6 +92,13 @@ export class SubmissionSelector extends React.Component {
       progressBarColour = '#FE2A2A';
     }
 
+    let meterLow = 0;
+    let meterHigh = 1;
+    if (this.props.num_assigned !== null && this.props.num_assigned !== undefined) {
+      meterLow = this.props.num_assigned * 0.35;
+      meterHigh = this.props.num_assigned * 0.75;
+    }
+
     return (
       <div className='submission-selector-container'>
         <div className='submission-selector'>
@@ -113,8 +120,8 @@ export class SubmissionSelector extends React.Component {
               value={this.props.num_marked}
               min={0}
               max={this.props.num_assigned}
-              low={!!this.props.num_assigned ? this.props.num_assigned  * 0.35 : 1}
-              high={!!this.props.num_assigned ? this.props.num_assigned  * 0.75 : 1}
+              low={meterLow}
+              high={meterHigh}
               optimum={this.props.num_assigned}
             >
               {this.props.num_marked}/{this.props.num_assigned}
