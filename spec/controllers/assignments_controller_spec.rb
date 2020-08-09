@@ -763,7 +763,7 @@ describe AssignmentsController do
         let(:params) { { id: starter_file_group.assignment.id } }
         it 'should contain the right keys' do
           file_data = JSON.parse(response.body)['files'].first.keys
-          expect(file_data).to contain_exactly(*%w[id name entry_rename use_rename files])
+          expect(file_data).to contain_exactly('id', 'name', 'entry_rename', 'use_rename', 'files')
         end
         it 'should contain the right values' do
           file_data = JSON.parse(response.body)['files'].first.slice('id', 'name', 'entry_rename', 'use_rename')

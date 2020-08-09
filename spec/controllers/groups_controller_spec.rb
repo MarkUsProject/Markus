@@ -655,7 +655,7 @@ describe GroupsController do
       let!(:grouping) { create :grouping_with_inviter, assignment: assignment, inviter: user }
       it 'should send a zip file containing the correct content' do
         expect(controller).to receive(:send_file) do |file_path|
-          Zip::File.open(Rails::root + file_path) do |zipfile|
+          Zip::File.open(Rails.root + file_path) do |zipfile|
             expect(zipfile.entries.map(&:name)).to contain_exactly('q1/', 'q1/q1.txt', 'q2.txt')
             expect(zipfile.find_entry('q1/q1.txt').get_input_stream.read.strip).to eq 'q1 content'
             expect(zipfile.find_entry('q2.txt').get_input_stream.read.strip).to eq 'q2 content'

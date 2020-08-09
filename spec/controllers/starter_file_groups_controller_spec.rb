@@ -50,13 +50,13 @@ describe StarterFileGroupsController do
     before { subject }
     context 'when a file exists' do
       it 'should download a file' do
-        expect(response.body).to eq "q2 content"
+        expect(response.body).to eq 'q2 content'
       end
     end
     context 'when a nested file exists' do
       let(:filename) { 'q1/q1.txt' }
       it 'should download a file' do
-        expect(response.body).to eq "q1 content"
+        expect(response.body).to eq 'q1 content'
       end
     end
     context 'when a file does not exist' do
@@ -151,14 +151,14 @@ describe StarterFileGroupsController do
       before { subject }
       it 'should create a top level directory' do
         expect(starter_file_group.reload.files_and_dirs).to include('new_folder')
-        expect(Dir.exist? starter_file_group.path + 'new_folder').to be true
+        expect(Dir.exist?(starter_file_group.path + 'new_folder')).to be true
       end
       it 'should create a new starter file entry' do
         expect(starter_file_group.starter_file_entries.pluck(:path)).to include('new_folder')
       end
       it 'should create a nested directory' do
         expect(starter_file_group.files_and_dirs).to include('q1/new_nested_folder')
-        expect(Dir.exist? starter_file_group.path + 'q1/new_nested_folder').to be true
+        expect(Dir.exist?(starter_file_group.path + 'q1/new_nested_folder')).to be true
       end
     end
     context 'deleting a file' do
@@ -166,11 +166,11 @@ describe StarterFileGroupsController do
       before { subject }
       it 'should delete a top level file' do
         expect(starter_file_group.reload.files_and_dirs).not_to include('q2.txt')
-        expect(File.exist? starter_file_group.path + 'q2.txt').to be false
+        expect(File.exist?(starter_file_group.path + 'q2.txt')).to be false
       end
       it 'should delete a nested file' do
         expect(starter_file_group.reload.files_and_dirs).not_to include('q1/q1.txt')
-        expect(File.exist? starter_file_group.path + 'q1/q1.txt').to be false
+        expect(File.exist?(starter_file_group.path + 'q1/q1.txt')).to be false
       end
       it 'should delete a starter file entry for the top level file' do
         expect(starter_file_group.starter_file_entries.pluck(:path)).not_to include('q2.txt')
@@ -186,11 +186,11 @@ describe StarterFileGroupsController do
       before { subject }
       it 'should delete a top level folder' do
         expect(starter_file_group.reload.files_and_dirs).not_to include('q1')
-        expect(Dir.exist? starter_file_group.path + 'q1').to be false
+        expect(Dir.exist?(starter_file_group.path + 'q1')).to be false
       end
       it 'should delete a nested folder' do
         expect(starter_file_group.reload.files_and_dirs).not_to include('q2/q2')
-        expect(Dir.exist? starter_file_group.path + 'q2/q2').to be false
+        expect(Dir.exist?(starter_file_group.path + 'q2/q2')).to be false
       end
       it 'should delete a starter file entry for the top level file' do
         expect(starter_file_group.starter_file_entries.pluck(:path)).not_to include('q1')
