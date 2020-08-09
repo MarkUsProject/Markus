@@ -412,6 +412,9 @@ describe GroupsController do
       before :each do
         create(:grouping_with_inviter, assignment: @assignment, inviter: @current_student)
       end
+
+      around { |example| perform_enqueued_jobs(&example) }
+
       it 'should send an email to a single student if invited to a grouping' do
         expect do
           post :invite_member,

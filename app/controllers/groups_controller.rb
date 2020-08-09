@@ -433,7 +433,7 @@ class GroupsController < ApplicationController
           if invited_user.receives_invite_emails?
             NotificationMailer.with(inviter: current_user,
                                     invited: invited_user,
-                                    grouping: @grouping).grouping_invite_email.deliver_now
+                                    grouping: @grouping).grouping_invite_email.deliver_later
           end
         end
         flash_message(:success, I18n.t('groups.invite_member.success'))
