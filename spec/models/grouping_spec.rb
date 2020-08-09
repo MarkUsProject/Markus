@@ -1320,17 +1320,17 @@ describe Grouping do
       describe 'and it is relevant to the grouping' do
         let(:starter_file_group) { starter_file_groups.first }
         it 'should add the new starter file entry to the grouping' do
-          expect { grouping.reset_starter_file_entries }.to change {
-            grouping.reload.starter_file_entries.pluck(:path).include?('something_new')
-          }
+          expect { grouping.reset_starter_file_entries }.to(
+            change { grouping.reload.starter_file_entries.pluck(:path).include?('something_new') }
+          )
         end
       end
       describe 'and it is not relevant to the grouping' do
         let(:starter_file_group) { starter_file_groups.second }
         it 'should not add the new starter file entry to the grouping' do
-          expect { grouping.reset_starter_file_entries }.not_to change {
-            grouping.reload.starter_file_entries.pluck(:path).include?('something_new')
-          }
+          expect { grouping.reset_starter_file_entries }.not_to(
+            change { grouping.reload.starter_file_entries.pluck(:path).include?('something_new') }
+          )
         end
       end
     end
@@ -1365,23 +1365,23 @@ describe Grouping do
     it 'should add starter files to the repo' do
       grouping.group.access_repo do |repo|
         files = repo.get_latest_revision.tree_at_path(assignment.repository_folder)
-        expect(files.keys).to contain_exactly("q2.txt", "q1", "q1/q1.txt")
+        expect(files.keys).to contain_exactly('q2.txt', 'q1', 'q1/q1.txt')
       end
     end
     it 'should create grouping starter file entries' do
-      expect(grouping.reload.starter_file_entries.pluck(:path)).to contain_exactly("q2.txt", "q1")
+      expect(grouping.reload.starter_file_entries.pluck(:path)).to contain_exactly('q2.txt', 'q1')
     end
   end
   describe '#changed_starter_file_at?' do
     let(:grouping) { create :grouping }
     it 'should return false if no changes have been made' do
-      revision = grouping.group.access_repo { |repo| repo.get_latest_revision }
+      revision = grouping.group.access_repo(&:get_latest_revision)
       expect(grouping.changed_starter_file_at?(revision)).to be false
     end
     it 'should return true if changes have been made' do
       submit_time = 10.seconds.from_now
       submit_file_at_time(grouping.assignment, grouping.group, 'test', submit_time.to_s, 'my_file', 'Hello, World!')
-      revision = grouping.group.access_repo { |repo| repo.get_latest_revision }
+      revision = grouping.group.access_repo(&:get_latest_revision)
       expect(grouping.changed_starter_file_at?(revision)).to be true
     end
   end

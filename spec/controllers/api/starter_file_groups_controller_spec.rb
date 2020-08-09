@@ -77,7 +77,6 @@ describe Api::StarterFileGroupsController do
         context 'when the starter file type is shuffle' do
           let(:grouping) { create :grouping, assignment: assignment }
           before { assignment.assignment_params.update!(starter_file_type: 'shuffle') }
-
         end
       end
       context 'for a different assignment' do
@@ -171,7 +170,7 @@ describe Api::StarterFileGroupsController do
     let(:starter_file_group) { build :starter_file_group }
     include_examples 'unauthenticated request'
     context 'when there are starter file groups for this assignment' do
-      let!(:starter_file_group) { create :starter_file_group, assignment: assignment }
+      let(:starter_file_group) { create :starter_file_group, assignment: assignment }
       let(:data) do
         assignment.starter_file_groups
                   .pluck_to_hash(:id, :assessment_id, :entry_rename, :use_rename, :name)
@@ -192,7 +191,7 @@ describe Api::StarterFileGroupsController do
       end
     end
     context 'when there are starter file groups for another assignment' do
-      let!(:starter_file_group) { create :starter_file_group }
+      let(:starter_file_group) { create :starter_file_group }
       before { subject }
       context 'expecting xml' do
         it 'should return empty data' do
@@ -217,10 +216,10 @@ describe Api::StarterFileGroupsController do
       grouping2
     end
     it 'should set starter_file_changed for the related grouping' do
-      expect { subject }.to change { grouping2.reload.starter_file_changed }
+      expect { subject }.to(change { grouping2.reload.starter_file_changed })
     end
     it 'should not set starter_file_changed for the unrelated grouping' do
-      expect { subject }.not_to change { grouping1.reload.starter_file_changed }
+      expect { subject }.not_to(change { grouping1.reload.starter_file_changed })
     end
   end
 
@@ -410,7 +409,7 @@ describe Api::StarterFileGroupsController do
         let(:starter_file_group) { create :starter_file_group_with_entries, assignment: assignment }
         it 'should send a zip file containing the correct content' do
           expect(controller).to receive(:send_file) do |file_path|
-            Zip::File.open(Rails::root + file_path) do |zipfile|
+            Zip::File.open(Rails.root + file_path) do |zipfile|
               expect(zipfile.entries.map(&:name)).to contain_exactly('q1/', 'q1/q1.txt', 'q2.txt')
               expect(zipfile.find_entry('q1/q1.txt').get_input_stream.read.strip).to eq 'q1 content'
               expect(zipfile.find_entry('q2.txt').get_input_stream.read.strip).to eq 'q2 content'

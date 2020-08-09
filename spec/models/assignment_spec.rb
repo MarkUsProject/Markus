@@ -2130,12 +2130,6 @@ describe Assignment do
       it 'should return nil' do
         expect(assignment.default_starter_file_group).to be_nil
       end
-      context 'default_starter_file_group_id refers to a non-existant object' do
-        it 'should return nil' do
-          assignment.update!(default_starter_file_group_id: -1)
-          expect(assignment.default_starter_file_group).to be_nil
-        end
-      end
     end
     context 'starter file groups exist' do
       let!(:starter_file_groups) { create_list :starter_file_group, 3, assignment: assignment }
@@ -2149,12 +2143,6 @@ describe Assignment do
           target = starter_file_groups.sort_by(&:id).last
           assignment.update!(default_starter_file_group_id: target.id)
           expect(assignment.default_starter_file_group).to eq target
-        end
-      end
-      context 'default_starter_file_group_id refers to a non-existant object' do
-        it 'should return the first starter code group' do
-          assignment.update!(default_starter_file_group_id: -1)
-          expect(assignment.default_starter_file_group).to eq starter_file_groups.sort_by(&:id).first
         end
       end
     end

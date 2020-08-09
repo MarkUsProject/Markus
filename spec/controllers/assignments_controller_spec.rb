@@ -766,7 +766,7 @@ describe AssignmentsController do
           expect(file_data).to contain_exactly(*%w[id name entry_rename use_rename files])
         end
         it 'should contain the right values' do
-          file_data = JSON.parse(response.body)['files'].first.slice(*%w[id name entry_rename use_rename])
+          file_data = JSON.parse(response.body)['files'].first.slice('id', 'name', 'entry_rename', 'use_rename')
           grp = starter_file_group
           expected = { id: grp.id, name: grp.name, entry_rename: grp.entry_rename, use_rename: grp.use_rename }
           expect(file_data).to eq(expected.transform_keys(&:to_s))
@@ -823,8 +823,7 @@ describe AssignmentsController do
         starter_file_groups: [{ id: starter_file_group1.id,
                                 name: 'changed_name',
                                 entry_rename: 'changed_rename',
-                                use_rename: true }]
-      }
+                                use_rename: true }] }
     end
     let(:params) { base_params }
     context 'an admin' do
@@ -871,7 +870,7 @@ describe AssignmentsController do
           end
           it 'should not update anything' do
             grp = starter_file_group1
-            expect { subject }.not_to change { grp.reload; [grp.name, grp.entry_rename, grp.use_rename]  }
+            expect { subject }.not_to(change { [grp.reload.name, grp.entry_rename, grp.use_rename] })
           end
         end
       end

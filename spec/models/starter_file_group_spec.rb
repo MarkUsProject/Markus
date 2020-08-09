@@ -8,10 +8,10 @@ describe StarterFileGroup do
   context 'more validations' do
     let(:starter_file_group) { create :starter_file_group }
     it 'should validate presence of entry rename if use_rename is true' do
-      expect(build :starter_file_group, entry_rename: nil, use_rename: true).not_to be_valid
+      expect(build(:starter_file_group, entry_rename: nil, use_rename: true)).not_to be_valid
     end
     it 'should not validate presence of entry rename if use_rename is false' do
-      expect(build :starter_file_group, entry_rename: nil, use_rename: false).to be_valid
+      expect(build(:starter_file_group, entry_rename: nil, use_rename: false)).to be_valid
     end
   end
 
@@ -40,7 +40,8 @@ describe StarterFileGroup do
     it 'should not unset the default starter group if it is not the default after it is destroyed' do
       assignment = create(:assignment)
       grp = create(:starter_file_group, assignment: assignment)
-      assignment.update(default_starter_file_group_id: grp.id + 1)
+      grp2 = create(:starter_file_group)
+      assignment.update(default_starter_file_group_id: grp2.id)
       grp.destroy
       expect(assignment.reload.default_starter_file_group_id).not_to be_nil
     end
@@ -70,7 +71,7 @@ describe StarterFileGroup do
   describe '#files_and_dirs' do
     let(:starter_file_group) { create :starter_file_group_with_entries }
     it 'should contain the correct entries' do
-      expect(starter_file_group.files_and_dirs).to contain_exactly(*%w[q1 q1/q1.txt q2.txt])
+      expect(starter_file_group.files_and_dirs).to contain_exactly('q1', 'q1/q1.txt', 'q2.txt')
     end
   end
 
