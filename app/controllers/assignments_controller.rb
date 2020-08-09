@@ -8,11 +8,7 @@ class AssignmentsController < ApplicationController
                               :peer_review,
                               :summary,
                               :switch_assignment,
-                              :start_timed_assignment,
-                              :starter_file,
-                              :populate_starter_file_manager,
-                              :update_starter_file,
-                              :download_starter_file_mappings]
+                              :start_timed_assignment]
 
   before_action      :authorize_for_ta_and_admin,
                      only: [:summary]
@@ -389,7 +385,7 @@ class AssignmentsController < ApplicationController
   end
 
   def starter_file
-    @assignment = Assignment.find(params[:id])
+    @assignment = Assignment.find_by_id(params[:id])
     if @assignment.nil?
       render 'shared/http_status',
              locals: { code: '404', message: HttpStatusHelper::ERROR_CODE['message']['404'] },
@@ -447,7 +443,7 @@ class AssignmentsController < ApplicationController
       flash_message(:error, e.message)
       success = false
       raise ActiveRecord::Rollback
-    rescue RuntimeError => e
+    rescue StandardError => e
       flash_message(:error, e.message)
       success = false
       raise ActiveRecord::Rollback

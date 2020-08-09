@@ -2118,4 +2118,60 @@ describe Assignment do
       end
     end
   end
+  describe '#starter_file_path' do
+    let(:assignment) { create :assignment }
+    it 'should return a path that includes the repository folder' do
+      expect(File.basename assignment.starter_file_path).to eq assignment.repository_folder
+    end
+  end
+  describe '#default_starter_file_group' do
+    let(:assignment) { create :assignment }
+    context 'no starter file groups' do
+      it 'should return nil' do
+        expect(assignment.default_starter_file_group).to be_nil
+      end
+      context 'default_starter_file_group_id refers to a non-existant object' do
+        it 'should return nil' do
+          assignment.update!(default_starter_file_group_id: -1)
+          expect(assignment.default_starter_file_group).to be_nil
+        end
+      end
+    end
+    context 'starter file groups exist' do
+      let!(:starter_file_groups) { create_list :starter_file_group, 3, assignment: assignment }
+      context 'default_starter_file_group_id is nil' do
+        it 'should return the first starter file group' do
+          expect(assignment.default_starter_file_group).to eq starter_file_groups.sort_by(&:id).first
+        end
+      end
+      context 'default_starter_file_group_id refers to an existing object' do
+        it 'should return the specified starter file group' do
+          target = starter_file_groups.sort_by(&:id).last
+          assignment.update!(default_starter_file_group_id: target.id)
+          expect(assignment.default_starter_file_group).to eq target
+        end
+      end
+      context 'default_starter_file_group_id refers to a non-existant object' do
+        it 'should return the first starter code group' do
+          assignment.update!(default_starter_file_group_id: -1)
+          expect(assignment.default_starter_file_group).to eq starter_file_groups.sort_by(&:id).first
+        end
+      end
+    end
+  end
+  describe '#starter_file_mappings' do
+    let(:assignment) { create :assignment }
+    let!(:starter_file_group) { create :starter_file_group_with_entries, assignment: assignment }
+    let!(:groupings) { create_list :grouping_with_inviter, 2, assignment: assignment }
+    it 'returns the right data' do
+      expected = groupings.map do |g|
+        %w[q1 q2.txt].map do |entry|
+          { group_name: g.group.group_name,
+            starter_file_group_name: starter_file_group.name,
+            starter_file_entry_path: entry }.transform_keys(&:to_s)
+        end
+      end.flatten.sort_by(&:values)
+      expect(assignment.starter_file_mappings.sort_by(&:values)).to eq expected
+    end
+  end
 end

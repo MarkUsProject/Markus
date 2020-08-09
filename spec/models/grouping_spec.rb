@@ -1242,4 +1242,147 @@ describe Grouping do
       end
     end
   end
+  describe '#has_non_empty_submission?' do
+    context 'with a submission' do
+      let(:grouping) { create :grouping_with_inviter_and_submission }
+      context 'and it is empty' do
+        it 'returns false' do
+          grouping.current_submission_used.update!(is_empty: true)
+          expect(grouping.has_non_empty_submission?).to be false
+        end
+      end
+      context 'and it is not empty' do
+        it 'returns true' do
+          grouping.current_submission_used.update!(is_empty: false)
+          expect(grouping.has_non_empty_submission?).to be true
+        end
+      end
+    end
+    context 'with no submission' do
+      let(:grouping) { create :grouping }
+      it 'returns false' do
+        expect(grouping.has_non_empty_submission?).to be false
+      end
+    end
+  end
+  describe '#select_starter_file_entries' do
+    let(:assignment) { create :assignment, assignment_properties_attributes: { starter_file_type: starter_file_type } }
+    let(:section) { create :section }
+    let(:student) { create :student, section: section }
+    let(:grouping) { create :grouping_with_inviter, inviter: student, assignment: assignment }
+    let!(:starter_file_groups) do
+      create_list :starter_file_group_with_entries, 3, assignment: assignment, use_rename: true
+    end
+    let(:ssfg) { create :section_starter_file_group, starter_file_group: starter_file_groups.last, section: section }
+    context 'when starter_file_type is simple' do
+      let(:starter_file_type) { 'simple' }
+      it 'should return the entries from the default starter file group' do
+        entries = assignment.default_starter_file_group.starter_file_entries
+        expect(grouping.select_starter_file_entries).to contain_exactly(*entries)
+      end
+    end
+    context 'when starter_file_type is sections' do
+      let(:starter_file_type) { 'sections' }
+      it 'should return the entries from the section starter file group' do
+        entries = ssfg.starter_file_group.starter_file_entries
+        expect(grouping.select_starter_file_entries).to contain_exactly(*entries)
+      end
+    end
+    context 'when starter_file_type is shuffle' do
+      let(:starter_file_type) { 'shuffle' }
+      it 'should return one entry from each starter file group' do
+        entries = grouping.select_starter_file_entries
+        starter_file_groups.each do |grp|
+          expect(entries).to satisfy('contain one of') { |e| (e & grp.starter_file_entries).count == 1 }
+        end
+      end
+    end
+    context 'when starter_file_type is group' do
+      let(:starter_file_type) { 'group' }
+      it 'should return all entries from one group' do
+        expect(grouping.select_starter_file_entries).to satisfy do |e|
+          starter_file_groups.any? { |grp| grp.starter_file_entries == e }
+        end
+      end
+    end
+  end
+  describe '#reset_starter_file_entries' do
+    let(:assignment) { create :assignment }
+    let(:student) { create :student }
+    let!(:starter_file_groups) { create_list :starter_file_group_with_entries, 2, assignment: assignment }
+    let!(:grouping) { create :grouping_with_inviter, inviter: student, assignment: assignment }
+    before { assignment.assignment_properties.update! default_starter_file_group_id: starter_file_groups.first.id }
+    describe 'when a new starter file entry has been added' do
+      before do
+        FileUtils.mkdir_p(starter_file_group.path + 'something_new')
+        starter_file_group.update_entries
+      end
+      describe 'and it is relevant to the grouping' do
+        let(:starter_file_group) { starter_file_groups.first }
+        it 'should add the new starter file entry to the grouping' do
+          expect { grouping.reset_starter_file_entries }.to change {
+            grouping.reload.starter_file_entries.pluck(:path).include?('something_new')
+          }
+        end
+      end
+      describe 'and it is not relevant to the grouping' do
+        let(:starter_file_group) { starter_file_groups.second }
+        it 'should not add the new starter file entry to the grouping' do
+          expect { grouping.reset_starter_file_entries }.not_to change {
+            grouping.reload.starter_file_entries.pluck(:path).include?('something_new')
+          }
+        end
+      end
+    end
+    describe 'when a starter file entry has been deleted' do
+      before do
+        FileUtils.rm(starter_file_group.path + 'q2.txt')
+        starter_file_group.update_entries
+        grouping.reset_starter_file_entries
+      end
+      describe 'and it is relevant to the grouping' do
+        let(:starter_file_group) { starter_file_groups.first }
+        it 'should remove the starter file entry from the grouping' do
+          expect(grouping.reload.starter_file_entries.pluck(:path)).not_to include('q2.txt')
+        end
+      end
+      describe 'and it is not relevant to the grouping' do
+        let(:starter_file_group) { starter_file_groups.second }
+        it 'should not remove the starter file entry from the grouping' do
+          expect(grouping.reload.starter_file_entries.pluck(:path)).to include('q2.txt')
+        end
+      end
+    end
+  end
+  describe '#create_starter_files' do
+    let(:assignment) { create :assignment }
+    let!(:starter_file_group) { create :starter_file_group_with_entries, assignment: assignment }
+    let(:grouping) { create :grouping, assignment: assignment }
+    it 'should be called when creating a grouping' do
+      expect_any_instance_of(Grouping).to receive(:create_starter_files)
+      grouping
+    end
+    it 'should add starter files to the repo' do
+      grouping.group.access_repo do |repo|
+        files = repo.get_latest_revision.tree_at_path(assignment.repository_folder)
+        expect(files.keys).to contain_exactly("q2.txt", "q1", "q1/q1.txt")
+      end
+    end
+    it 'should create grouping starter file entries' do
+      expect(grouping.reload.starter_file_entries.pluck(:path)).to contain_exactly("q2.txt", "q1")
+    end
+  end
+  describe '#changed_starter_file_at?' do
+    let(:grouping) { create :grouping }
+    it 'should return false if no changes have been made' do
+      revision = grouping.group.access_repo { |repo| repo.get_latest_revision }
+      expect(grouping.changed_starter_file_at?(revision)).to be false
+    end
+    it 'should return true if changes have been made' do
+      submit_time = 10.seconds.from_now
+      submit_file_at_time(grouping.assignment, grouping.group, 'test', submit_time.to_s, 'my_file', 'Hello, World!')
+      revision = grouping.group.access_repo { |repo| repo.get_latest_revision }
+      expect(grouping.changed_starter_file_at?(revision)).to be true
+    end
+  end
 end

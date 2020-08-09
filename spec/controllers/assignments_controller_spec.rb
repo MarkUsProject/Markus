@@ -708,4 +708,220 @@ describe AssignmentsController do
       end
     end
   end
+  describe '#starter_file' do
+    before(:each) { get_as user, :starter_file, params: params }
+    let(:assignment) { create :assignment }
+    let(:params) { { id: assignment.id } }
+    context 'an admin' do
+      let(:user) { create :admin }
+      context 'the assignment exists' do
+        it 'should render the starter_file view' do
+          expect(response).to render_template(:starter_file)
+        end
+        it 'should render the assignment_content layout' do
+          expect(response).to render_template(:assignment_content)
+        end
+        it 'should respond with success' do
+          is_expected.to respond_with(:success)
+        end
+      end
+      context 'the assignment does not exist' do
+        let(:params) { { id: -1 } }
+        it 'should return a 404 error' do
+          is_expected.to respond_with(:not_found)
+        end
+      end
+    end
+    context 'a grader' do
+      let(:user) { create :ta }
+      it 'should return a 404 error' do
+        is_expected.to respond_with(:not_found)
+      end
+    end
+    context 'a student' do
+      let(:user) { create :student }
+      it 'should return a 404 error' do
+        is_expected.to respond_with(:not_found)
+      end
+    end
+  end
+  describe '#populate_starter_file_manager' do
+    before { get_as user, :populate_starter_file_manager, params: params }
+    let(:assignment) { create :assignment }
+    let(:params) { { id: assignment.id } }
+    context 'an admin' do
+      let(:user) { create :admin }
+      it 'should contain the right values' do
+        expected = { starterfileType: assignment.starter_file_type,
+                     defaultStarterFileGroup: '',
+                     files: [],
+                     sections: [] }
+        expect(JSON.parse(response.body)).to eq(expected.transform_keys(&:to_s))
+      end
+      context 'the file data' do
+        let(:starter_file_group) { create :starter_file_group_with_entries, assignment: assignment }
+        let(:params) { { id: starter_file_group.assignment.id } }
+        it 'should contain the right keys' do
+          file_data = JSON.parse(response.body)['files'].first.keys
+          expect(file_data).to contain_exactly(*%w[id name entry_rename use_rename files])
+        end
+        it 'should contain the right values' do
+          file_data = JSON.parse(response.body)['files'].first.slice(*%w[id name entry_rename use_rename])
+          grp = starter_file_group
+          expected = { id: grp.id, name: grp.name, entry_rename: grp.entry_rename, use_rename: grp.use_rename }
+          expect(file_data).to eq(expected.transform_keys(&:to_s))
+        end
+        it 'should contain the right file data' do
+          file_names = JSON.parse(response.body)['files']
+                           .first['files']
+                           .map { |h| h['key'].split(File::Separator).first }
+          expected_entries = starter_file_group.starter_file_entries.pluck('path')
+          expect(file_names.to_set).to contain_exactly(*expected_entries)
+        end
+      end
+      context 'the section data' do
+        let(:starter_file_group) { create :starter_file_group, assignment: assignment }
+        let(:section) { create :section }
+        let(:ssfg) { create :section_starter_file_group, starter_file_group: starter_file_group, section: section }
+        let(:params) { { id: ssfg.starter_file_group.assignment.id } }
+        it 'should contain the right values' do
+          file_data = JSON.parse(response.body)['sections'].first
+          expected = { section_id: section.id,
+                       section_name: section.name,
+                       group_id: starter_file_group.id,
+                       group_name: starter_file_group.name }
+          expect(file_data).to eq(expected.transform_keys(&:to_s))
+        end
+      end
+    end
+    context 'a grader' do
+      let(:user) { create :ta }
+      it 'should return a 404 error' do
+        is_expected.to respond_with(:not_found)
+      end
+    end
+    context 'a student' do
+      let(:user) { create :student }
+      it 'should return a 404 error' do
+        is_expected.to respond_with(:not_found)
+      end
+    end
+  end
+  describe '#update_starter_file' do
+    subject { post_as user, :update_starter_file, params: params }
+    let(:assignment) { create :assignment }
+    let(:starter_file_group1) do
+      create :starter_file_group, assignment: assignment, name: 'name', entry_rename: 'name', use_rename: false
+    end
+    let(:starter_file_group2) { create :starter_file_group, assignment: assignment }
+    let(:section) { create :section }
+    let(:base_params) do
+      { id: assignment.id,
+        assignment: { starter_file_type: :shuffle,
+                      default_starter_file_group_id: starter_file_group2.id },
+        sections: [{ section_id: section.id, group_id: starter_file_group1.id }],
+        starter_file_groups: [{ id: starter_file_group1.id,
+                                name: 'changed_name',
+                                entry_rename: 'changed_rename',
+                                use_rename: true }]
+      }
+    end
+    let(:params) { base_params }
+    context 'an admin' do
+      let(:user) { create :admin }
+      it 'should update starter_file_type' do
+        expect { subject }.to change { assignment.reload.starter_file_type }.from('simple').to('shuffle')
+      end
+      it 'should update default_starter_file_group_id' do
+        expect { subject }.to(
+          change { assignment.reload.default_starter_file_group_id }.from(nil).to(starter_file_group2.id)
+        )
+      end
+      context 'when a section exists' do
+        it 'should update section starter file mappings' do
+          expect { subject }.to(
+            change { section.starter_file_group_for(assignment) }.from(starter_file_group2).to(starter_file_group1)
+          )
+        end
+      end
+      context 'when a section does not exist' do
+        let(:params) do
+          base_params[:sections].first[:section_id] = section.id + 1
+          base_params
+        end
+        it 'should not update section starter file mappings' do
+          subject
+          expect(section.starter_file_group_for(assignment)).to eq starter_file_group2
+        end
+      end
+      context 'when updating starter file attributes' do
+        it 'should update name' do
+          expect { subject }.to change { starter_file_group1.reload.name }.to('changed_name')
+        end
+        it 'should update entry_rename' do
+          expect { subject }.to change { starter_file_group1.reload.entry_rename }.to('changed_rename')
+        end
+        it 'should update use_rename' do
+          expect { subject }.to change { starter_file_group1.reload.use_rename }.to(true)
+        end
+        context 'when the starter file group does not exist' do
+          let(:params) do
+            base_params[:starter_file_groups].first[:id] = starter_file_group1.id + 1
+            base_params
+          end
+          it 'should not update anything' do
+            grp = starter_file_group1
+            expect { subject }.not_to change { grp.reload; [grp.name, grp.entry_rename, grp.use_rename]  }
+          end
+        end
+      end
+    end
+    context 'a grader' do
+      let(:user) { create :ta }
+      it 'should return a 404 error' do
+        subject
+        expect(response.status).to eq(404)
+      end
+    end
+    context 'a student' do
+      let(:user) { create :student }
+      it 'should return a 404 error' do
+        subject
+        expect(response.status).to eq(404)
+      end
+    end
+  end
+  describe '#download_starter_file_mappings' do
+    subject { get_as user, :download_starter_file_mappings, params: params }
+    let(:assignment) { create :assignment }
+    let(:params) { { id: assignment.id } }
+    context 'an admin' do
+      let(:user) { create :admin }
+      let!(:starter_file_group) { create :starter_file_group_with_entries, assignment: assignment }
+      let!(:grouping) { create :grouping_with_inviter, assignment: assignment }
+      let(:params) { { id: starter_file_group.assignment.id } }
+      it 'should contain mappings' do
+        expect(@controller).to receive(:send_data) do |file_content|
+          mappings = file_content.split("\n")[1..-1].map { |m| m.split(',') }.sort
+          expected = StarterFileEntry.pluck(:path).map { |p| [grouping.group.group_name, starter_file_group.name, p] }
+          expect(mappings).to eq expected.sort
+        end
+        subject
+      end
+    end
+    context 'a grader' do
+      let(:user) { create :ta }
+      it 'should return a 404 error' do
+        subject
+        expect(response.status).to eq(404)
+      end
+    end
+    context 'a student' do
+      let(:user) { create :student }
+      it 'should return a 404 error' do
+        subject
+        expect(response.status).to eq(404)
+      end
+    end
+  end
 end

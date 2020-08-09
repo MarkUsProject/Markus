@@ -90,12 +90,7 @@ class StarterFileGroupsController < ApplicationController
     else
       all_paths = [params[:path]]
     end
-    clean_paths = all_paths.map { |p| p.split(File::Separator).first }
-    # mark all groupings with starter files that were changed as changed
-    Grouping.joins(starter_file_entries: :starter_file_group)
-            .where('starter_file_entries.path': clean_paths)
-            .where('starter_file_groups.id': starter_file_group)
-            .update_all(starter_file_changed: true)
+    starter_file_group.warn_affected_groupings
     assignment.assignment_properties.update!(starter_file_updated_at: Time.zone.now) unless all_paths.empty?
     starter_file_group.update_entries
   end

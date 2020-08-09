@@ -165,6 +165,7 @@ Rails.application.routes.draw do
           get 'manage'
           get 'assign_scans'
           get 'download'
+          get 'download_starter_file'
           get 'get_names'
           get 'assign_student_and_next'
           get 'next_grouping'
@@ -188,7 +189,6 @@ Rails.application.routes.draw do
 
         member do
           post 'rename_group'
-          get 'download_starter_file'
         end
       end
 

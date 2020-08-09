@@ -10,7 +10,7 @@ class StarterFileGroup < ApplicationRecord
   after_create_commit :create_dir
   before_validation :sanitize_rename_entry
   before_destroy :update_default
-  before_destroy :warn_affected_groupings
+  before_destroy :warn_affected_groupings, prepend: true
   after_save :update_timestamp
 
   validates_exclusion_of :entry_rename, in: %w[.. .]
@@ -30,7 +30,7 @@ class StarterFileGroup < ApplicationRecord
     FileUtils.rm_rf zip_path
     Zip::File.open(zip_path, Zip::File::CREATE) do |zip_file|
       self.files_and_dirs.map do |file|
-        zip_entry_path = File.join zip_name, file
+        zip_entry_path = File.join file
         abs_path = path.join(file)
         if abs_path.directory?
           zip_file.mkdir(zip_entry_path)
@@ -61,6 +61,14 @@ class StarterFileGroup < ApplicationRecord
     use_rename && !entry_rename.blank? && assignment.starter_file_type == 'shuffle'
   end
 
+  # Set starter_file_changed true for all groupings that have a starter file entry
+  # from this starter file group
+  def warn_affected_groupings
+    affected_groupings = Grouping.joins(:starter_file_entries)
+                                 .where('starter_file_entries.id': self.starter_file_entries.ids)
+    affected_groupings.update_all(starter_file_changed: true)
+  end
+
   private
 
   def delete_files
@@ -75,12 +83,6 @@ class StarterFileGroup < ApplicationRecord
     if entry_rename_changed?
       self.entry_rename = sanitize_file_name(entry_rename).strip
     end
-  end
-
-  def warn_affected_groupings
-    affected_groupings = Grouping.joins(starter_file_entries: :starter_file_group)
-                                 .where('starter_file_groups.id': self.id)
-    affected_groupings.update_all(starter_file_changed: true)
   end
 
   def update_default

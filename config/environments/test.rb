@@ -266,8 +266,6 @@ Markus::Application.configure do
   config.x.queues.repo_required_files = 'CSC108'
   config.x.queues.exam_generate = 'CSC108'
   config.x.queues.split_pdf = 'CSC108'
-  # The name of the queue where jobs to update starter files to student repos wait to be executed.
-  config.x.queues.update_starter_file = 'CSC108'
 
   ###################################################################
   # Automated Testing Engine settings
@@ -292,6 +290,12 @@ Markus::Application.configure do
   config.x.scanned_exams.enable = true
   config.x.scanned_exams.path = "#{config.data_dir}/exam_templates"
   config.x.scanned_exams.python = "#{::Rails.root}/lib/scanner/venv/bin/python"
+
+  ###################################################################
+  # Starter file setttings
+  ###################################################################
+
+  config.x.starter_file.storage = "#{config.data_dir}/starter_files"
 
   ###################################################################
   # END OF MarkUs SPECIFIC CONFIGURATION

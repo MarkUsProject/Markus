@@ -7,8 +7,9 @@ module Api
         render 'shared/http_status', locals: { code: '404', message: 'Assignment was not found' }, status: 404
         return
       end
-      name = I18n.t('assignments.starter_file.new_starter_file_group')
-      starter_file_group = StarterFileGroup.new(assessment_id: assignment.id, name: name)
+      name = params[:name] || I18n.t('assignments.starter_file.new_starter_file_group')
+      other_params = params.permit(:entry_rename, :use_rename).to_h.symbolize_keys
+      starter_file_group = StarterFileGroup.new(assessment_id: assignment.id, name: name, **other_params)
       if starter_file_group.save
         render 'shared/http_status', locals: { code: '201', message:
             HttpStatusHelper::ERROR_CODE['message']['201'] }, status: 201
@@ -51,7 +52,7 @@ module Api
         return
       end
       respond_to do |format|
-        format.xml { render xml: assignment.starter_file_groups.to_xml(root: 'starter_file_group', skip_types: 'true') }
+        format.xml { render xml: assignment.starter_file_groups.to_xml(skip_types: 'true') }
         format.json { render json: assignment.starter_file_groups.to_json }
       end
     end
@@ -59,7 +60,7 @@ module Api
     def show
       starter_file_group = find_starter_file_group || return
       respond_to do |format|
-        format.xml { render xml: starter_file_group.to_xml(root: 'starter_file_group', skip_types: 'true') }
+        format.xml { render xml: starter_file_group.to_xml(skip_types: 'true') }
         format.json { render json: starter_file_group.to_json }
       end
     end
@@ -80,7 +81,7 @@ module Api
       end
       file_path = File.join(starter_file_group.path, params[:filename])
       File.write(file_path, content, mode: 'wb')
-      update_entries_and_warn(starter_file_group, params[:filename])
+      update_entries_and_warn(starter_file_group)
       render 'shared/http_status',
              locals: { code: '201', message: HttpStatusHelper::ERROR_CODE['message']['201'] },
              status: 201
@@ -100,7 +101,7 @@ module Api
 
       folder_path = File.join(starter_file_group.path, params[:folder_path])
       FileUtils.mkdir_p(folder_path)
-      update_entries_and_warn(starter_file_group, params[:folder_path])
+      update_entries_and_warn(starter_file_group)
       render 'shared/http_status',
              locals: { code: '201', message: HttpStatusHelper::ERROR_CODE['message']['201'] },
              status: 201
@@ -119,7 +120,7 @@ module Api
       end
       file_path = File.join(starter_file_group.path, params[:filename])
       File.delete(file_path)
-      update_entries_and_warn(starter_file_group, params[:filename])
+      update_entries_and_warn(starter_file_group)
       render 'shared/http_status',
              locals: { code: '200', message: HttpStatusHelper::ERROR_CODE['message']['200'] },
              status: 200
@@ -139,7 +140,7 @@ module Api
 
       folder_path = File.join(starter_file_group.path, params[:folder_path])
       FileUtils.rm_rf(folder_path)
-      update_entries_and_warn(starter_file_group, params[:folder_path])
+      update_entries_and_warn(starter_file_group)
       render 'shared/http_status',
              locals: { code: '200', message: HttpStatusHelper::ERROR_CODE['message']['200'] },
              status: 200
@@ -165,11 +166,10 @@ module Api
 
     private
 
-    def update_entries_and_warn(starter_file_group, path)
-      Grouping.joins(starter_file_entries: :starter_file_group)
-              .where('starter_file_entries.path': path.split(File::Separator).reject(&:blank?).first)
-              .where('starter_file_groups.id': starter_file_group)
-              .update_all(starter_file_changed: true)
+    # Update starter file entries for +starter_file_group+ and set the starter_file_changed
+    # attribute to true for all groupings affected by the change.
+    def update_entries_and_warn(starter_file_group)
+      starter_file_group.warn_affected_groupings
       starter_file_group.assignment.assignment_properties.update!(starter_file_updated_at: Time.zone.now)
       starter_file_group.update_entries
     end
