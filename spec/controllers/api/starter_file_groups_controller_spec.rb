@@ -166,7 +166,7 @@ describe Api::StarterFileGroupsController do
     end
   end
   describe '#show' do
-    subject { get :show, params: { assignment_id: assignment.id, id: starter_file_group.id || -1 } }
+    subject { get :show, params: { assignment_id: assignment.id, id: starter_file_group.id || 1 } }
     let(:starter_file_group) { build :starter_file_group }
     include_examples 'unauthenticated request'
     context 'when there are starter file groups for this assignment' do
