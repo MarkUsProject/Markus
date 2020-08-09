@@ -359,6 +359,8 @@ describe SubmissionsController do
         @grouping.update! is_collected: true
       end
 
+      around { |example| perform_enqueued_jobs(&example) }
+
       context '#set_result_marking_state' do
         let(:marking_state) { Result::MARKING_STATES[:complete] }
         let(:released_to_students) { false }

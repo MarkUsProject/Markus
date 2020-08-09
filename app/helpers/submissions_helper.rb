@@ -40,10 +40,10 @@ module SubmissionsHelper
     end
 
     if release
-      groupings.each do |grouping|
+      groupings.includes(:accepted_students).each do |grouping|
         grouping.accepted_students.each do |student|
           if student.receives_results_emails?
-            NotificationMailer.with(user: student, grouping: grouping).release_email.deliver_now
+            NotificationMailer.with(user: student, grouping: grouping).release_email.deliver_later
           end
         end
       end

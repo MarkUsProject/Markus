@@ -306,6 +306,9 @@ describe GradeEntryFormsController do
       @another = grade_entry_form_with_data.grade_entry_students.joins(:user).find_by('users.user_name': 'paneroar')
       @this_form = grade_entry_form_with_data
     end
+
+    around { |example| perform_enqueued_jobs(&example) }
+
     it 'sends an email to a student who has grades for this form if only one exists' do
       expect do
         post :update_grade_entry_students,
