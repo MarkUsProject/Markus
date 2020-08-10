@@ -48,27 +48,21 @@ export class ImageViewer extends React.Component {
 
   };
 
-  loadRemoteImage = () => {
-    console.log(loadImage)
+  componentDidMount() {
     let formattedImage = loadImage(this.props.url, function (img, data) {
       img.id = 'image_preview'
-      console.log(data)
-      console.log(img)
-    }, {meta: true});
-
-    console.log(formattedImage)
-
-    return <img id='image_preview'
-             src={this.props.url}
-             onLoad={this.display_annotations}
-             alt={I18n.t('results.cant_display_image')} />;
-  };
+    }, {
+      meta: true,
+      orientation: true
+    });
+    document.getElementById('image_container').append(formattedImage)
+  }
 
   render() {
     return (
       <div id='image_container'>
         <div key='sel_box' id='sel_box' className='annotation-holder-active' style={{display: 'none'}}/>
-        {this.loadRemoteImage()}
+        <div id={'image_container'}></div>
       </div>
     );
   }
