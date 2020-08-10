@@ -36,6 +36,7 @@
 - Add minutes field to non timed assessment extension modal (#4791)
 - Add ability to check out git repositories over ssh using a public key uploaded in the new Key Pairs tab (#4598)
 - Unify criterion tables using single table inheritance (refactoring change) (#4749)
+- Add support for uploading multiple versions of starter files (#4751)
 
 ## [v1.9.3]
 - Fixed inverse association bug with assignments (#4551)

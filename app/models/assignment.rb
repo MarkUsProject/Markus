@@ -98,7 +98,6 @@ class Assignment < Assessment
   validates_presence_of :assignment_stat
 
   BLANK_MARK = ''
-  STARTER_FILE_REPO_NAME = 'starter-files'.freeze
 
   # Copy of API::AssignmentController without selected attributes and order changed
   # to put first the 4 required fields
@@ -876,7 +875,7 @@ class Assignment < Assessment
   ### REPO ###
 
   def starter_file_path
-    File.join(Rails.configuration.x.repository.storage, STARTER_FILE_REPO_NAME, repository_folder)
+    File.join(Rails.configuration.x.starter_file.storage, repository_folder)
   end
 
   def default_starter_file_group

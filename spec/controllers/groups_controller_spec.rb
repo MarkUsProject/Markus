@@ -635,4 +635,37 @@ describe GroupsController do
       end
     end
   end
+  describe '#download_starter_file' do
+    subject { get_as user, :download_starter_file, params: { assignment_id: assignment.id } }
+    context 'an admin' do
+      let(:user) { create :admin }
+      it 'should respond with 403' do
+        subject
+        expect(response.status).to eq(403)
+      end
+    end
+    context 'a grader' do
+      let(:user) { create :ta }
+      it 'should respond with 403' do
+        subject
+        expect(response.status).to eq(403)
+      end
+    end
+    context 'a student' do
+      let(:user) { create :student }
+      let(:assignment) { create :assignment }
+      let!(:starter_file_group) { create :starter_file_group_with_entries, assignment: assignment }
+      let!(:grouping) { create :grouping_with_inviter, assignment: assignment, inviter: user }
+      it 'should send a zip file containing the correct content' do
+        expect(controller).to receive(:send_file) do |file_path|
+          Zip::File.open(Rails.root + file_path) do |zipfile|
+            expect(zipfile.entries.map(&:name)).to contain_exactly('q1/', 'q1/q1.txt', 'q2.txt')
+            expect(zipfile.find_entry('q1/q1.txt').get_input_stream.read.strip).to eq 'q1 content'
+            expect(zipfile.find_entry('q2.txt').get_input_stream.read.strip).to eq 'q2 content'
+          end
+        end
+        subject
+      end
+    end
+  end
 end

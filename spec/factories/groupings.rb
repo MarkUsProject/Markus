@@ -4,8 +4,12 @@ FactoryBot.define do
     association :assignment
 
     factory :grouping_with_inviter do
+      transient do
+        inviter { create(:student) }
+      end
+
       after(:create) do |grouping, evaluator|
-        create :inviter_student_membership, grouping: grouping, user: evaluator.inviter || create(:student)
+        create :inviter_student_membership, grouping: grouping, user: evaluator.inviter
         grouping.reload
       end
     end

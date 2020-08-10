@@ -4,7 +4,7 @@ require 'set'
 class Grouping < ApplicationRecord
   include SubmissionsHelper
 
-  after_create :create_starter_files
+  after_create_commit :create_starter_files
   after_commit :update_repo_permissions_after_save, on: [:create, :update]
 
   has_many :memberships, dependent: :destroy
@@ -462,6 +462,11 @@ class Grouping < ApplicationRecord
     self.grouping_starter_file_entries.where(id: old_grouping_entry_ids - new_grouping_entry_ids).destroy_all
   end
 
+  # Select starter files and write them to this grouping's repo.
+  #
+  # Note for future debugging: if this model does not exist in the database when this is called, the
+  # creation of associated GroupingStarterFileEntry objects will be triggered twice. In other words,
+  # do not call this in any callback other than after_create_commit
   def create_starter_files
     return unless Rails.configuration.x.repository.is_repository_admin # create folder only if we are repo admin
     GroupingStarterFileEntry.transaction do
