@@ -111,18 +111,6 @@ describe AnnotationCategory do
                                                                                       expected_message)
     end
 
-    it 'does not create an annotation category if there exists an issue with the annotation texts' do
-      row = ['category_name', 'criterion_name', 'other_content', 0.1, 'text_content', nil]
-      create(:flexible_criterion, assignment: assignment, name: 'criterion_name', max_mark: 0.5)
-      expected_message = I18n.t('annotation_categories.upload.deduction_absent',
-                                value: nil,
-                                annotation_category: 'category_name')
-      expect { AnnotationCategory.add_by_row(row, assignment, admin) }.to raise_error(CsvInvalidLineError,
-                                                                                      expected_message)
-      expect(AnnotationText.all.count).to eq 0
-      expect(AnnotationCategory.all.count).to eq 0
-    end
-
     context 'when no annotation categories exists' do
       before :each do
         @row = []
