@@ -345,7 +345,7 @@ class Result extends React.Component {
         if (markData.id === criterion_id) {
           let newMark = {...markData};
           newMark.mark = data.mark;
-          newMark['override'] = data.mark_override;
+          newMark.override = data.mark_override;
           return newMark;
         } else {
           return markData;
@@ -378,7 +378,7 @@ class Result extends React.Component {
         if (markData.id === criterion_id) {
           let newMark = {...markData};
           newMark.mark = data.mark;
-          newMark['override'] = false;
+          newMark.override = false;
           return newMark;
         } else {
           return markData;
