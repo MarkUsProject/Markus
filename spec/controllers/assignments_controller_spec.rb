@@ -435,6 +435,7 @@ describe AssignmentsController do
       end
     end
   end
+
   context '#new' do
     context 'as an admin' do
       shared_examples 'assignment_new_success' do

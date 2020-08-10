@@ -1,5 +1,4 @@
 describe AutomatedTestsController do
-  render_views false
   let(:assignment) { create :assignment }
   let(:params) { { assignment_id: assignment.id } }
   context 'as an admin' do
@@ -122,6 +121,10 @@ describe AutomatedTestsController do
           expect(JSON.parse(response.body)['files']).to eq(data.map { |h| h.transform_keys(&:to_s) })
         end
       end
+    end
+    context 'GET download_file' do
+      before { get_as admin, :download_file, params: params }
+      # TODO: write tests
     end
     context 'GET download_files' do
       subject { get_as admin, :download_files, params: params }

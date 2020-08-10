@@ -1,5 +1,4 @@
 # Changelog
-
 ## [unreleased]
 - Issue #3670: Added API for adding and removing extra marks (#4499)
 - Restrict confirmation dialog for annotation editing to annotations that belong to annotation categories (#4540)
