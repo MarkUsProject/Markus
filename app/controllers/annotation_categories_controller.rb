@@ -205,11 +205,11 @@ class AnnotationCategoriesController < ApplicationController
             next if CSV.generate_line(row).strip.empty?
             AnnotationCategory.add_by_row(row, @assignment, current_user)
           end
-          unless result[:invalid_lines].empty?
+          if result[:invalid_lines].empty?
+            flash_message(:success, result[:valid_lines]) unless result[:valid_lines].empty?
+          else
             flash_message(:error, result[:invalid_lines])
             raise ActiveRecord::Rollback
-          else
-            flash_message(:success, result[:valid_lines]) unless result[:valid_lines].empty?
           end
         elsif data[:type] == '.yml'
           successes = 0
