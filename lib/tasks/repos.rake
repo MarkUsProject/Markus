@@ -18,7 +18,7 @@ namespace :markus do
       end
       puts "Creating Assignment folders..."
       Grouping.all.each do |grouping|
-        grouping.create_grouping_repository_folder
+        grouping.create_starter_files
       end
     end
   end

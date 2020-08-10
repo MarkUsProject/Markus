@@ -11,6 +11,7 @@ pt:
   time:
     formats:
       default: "%A, %d de %B de %Y %H:%M:%S"
+      shorter: "%d de %B, %H:%M:%S"
 
     format_string:
       js:          "YYYY-DD-MM h:mm A"
@@ -19,4 +20,18 @@ pt:
     next:   "Seguinte"
     prev:   "Anterior"
 
-  hours: "hora(s)"
+  durations:
+    any_minutes: minuto(s)
+    any_hours: hora(s)
+    minutes:
+      one: minuto
+      other: minutos
+    hours:
+      one: hora
+      other: horas
+    days:
+      one: día
+      other: días
+    weeks:
+      one: semana
+      other: semanas

@@ -113,10 +113,12 @@ class SubmissionsController < ApplicationController
   def file_manager
     @assignment = Assignment.find(params[:assignment_id])
     @grouping = current_user.accepted_grouping_for(@assignment.id)
-    if @grouping.nil? || @assignment.scanned_exam? || @assignment.is_peer_review?
-      redirect_to assignment_path(params[:assignment_id])
+    if @grouping.nil?
+      head 400
       return
     end
+
+    authorize! @grouping, to: :view_file_manager?
 
     @path = params[:path] || '/'
 
@@ -130,6 +132,8 @@ class SubmissionsController < ApplicationController
                     @assignment.submission_rule.class.human_attribute_name(:after_collection_message))
     elsif @assignment.grouping_past_due_date?(@grouping)
       flash_message(:warning, @assignment.submission_rule.overtime_message(@grouping))
+    elsif @assignment.is_timed
+      flash_message(:warning, I18n.t('assignments.timed.time_until_due_warning', due_date: I18n.l(@grouping.due_date)))
     end
 
     if !@grouping.is_valid?
@@ -245,7 +249,7 @@ class SubmissionsController < ApplicationController
     assignment = Assignment.includes(groupings: :current_submission_used).find(params[:assignment_id])
     groupings = assignment.groupings.find(params[:groupings])
     # .where.not(current_submission_used: nil) potentially makes find fail with RecordNotFound
-    test_runs = groupings.select(&:has_submission?)
+    test_runs = groupings.select(&:has_non_empty_submission?)
                          .map { |g| { grouping_id: g.id, submission_id: g.current_submission_used.id } }
     success = ''
     error = ''
@@ -254,6 +258,7 @@ class SubmissionsController < ApplicationController
         authorize! assignment, to: :run_tests?
         @current_job = AutotestRunJob.perform_later(request.protocol + request.host_with_port,
                                                     current_user.id,
+                                                    assignment.id,
                                                     test_runs)
         session[:job_id] = @current_job.job_id
         success = I18n.t('automated_tests.tests_running', assignment_identifier: assignment.short_identifier)
@@ -318,6 +323,7 @@ class SubmissionsController < ApplicationController
   # update_files action handles transactional submission of files.
   def update_files
     assignment_id = params[:assignment_id]
+    unzip = params[:unzip] == 'true'
     @assignment = Assignment.find(assignment_id)
     raise t('student.submission.external_submit_only') if current_user.student? && !@assignment.allow_web_submits
 
@@ -352,6 +358,16 @@ class SubmissionsController < ApplicationController
     if delete_files.empty? && new_files.empty? && new_folders.empty? && delete_folders.empty?
       flash_message(:warning, I18n.t('student.submission.no_action_detected'))
     else
+      if unzip
+        zdirs, zfiles = new_files.map do |f|
+          next unless File.extname(f.path).casecmp?('.zip')
+          unzip_uploaded_file(f.path)
+        end.compact.transpose.map(&:flatten)
+        new_files.reject! { |f| File.extname(f.path).casecmp?('.zip') }
+        new_folders.push(*zdirs)
+        new_files.push(*zfiles)
+      end
+
       messages = []
       @grouping.group.access_repo do |repo|
         # Create transaction, setting the author.  Timestamp is implicit.
@@ -431,7 +447,7 @@ class SubmissionsController < ApplicationController
           # If the file appears to be binary, display a warning
           render json: { content: I18n.t('submissions.cannot_display').to_json, type: 'unknown' }
         else
-          render json: { content: file_contents.to_json, type: file.get_file_type }
+          render json: { content: file_contents.to_json, type: SubmissionFile.get_file_type(file.filename) }
         end
       end
     end
@@ -453,7 +469,7 @@ class SubmissionsController < ApplicationController
   end
 
   def download
-    @assignment = Assignment.find(params[:id])
+    @assignment = Assignment.find(params[:assignment_id])
     # find_appropriate_grouping can be found in SubmissionsHelper
     @grouping = find_appropriate_grouping(@assignment.id, params)
 
@@ -602,7 +618,8 @@ class SubmissionsController < ApplicationController
   # See Assignment.get_repo_checkout_commands for details
   def download_repo_checkout_commands
     assignment = Assignment.find(params[:assignment_id])
-    svn_commands = assignment.get_repo_checkout_commands
+    ssh_url = allowed_to?(:git_enabled?, KeyPair) && params[:url_type] == 'ssh'
+    svn_commands = assignment.get_repo_checkout_commands(ssh_url: ssh_url)
     send_data svn_commands.join("\n"),
               disposition: 'attachment',
               type: 'text/plain',
@@ -614,8 +631,7 @@ class SubmissionsController < ApplicationController
     assignment = Assignment.find(params[:assignment_id])
     send_data assignment.get_repo_list,
               disposition: 'attachment',
-              type: 'text/plain',
-              filename: "#{assignment.short_identifier}_repo_list"
+              filename: "#{assignment.short_identifier}_repo_list.csv"
   end
 
   # This action is called periodically from file_manager.

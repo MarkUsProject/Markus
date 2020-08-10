@@ -31,6 +31,7 @@ class AutomatedTestsController < ApplicationController
   def manage
     @assignment = Assignment.find(params[:assignment_id])
     @assignment.test_groups.build
+    render layout: 'assignment_content'
   end
 
   def student_interface
@@ -65,6 +66,7 @@ class AutomatedTestsController < ApplicationController
       test_run = grouping.create_test_run!(user: current_user)
       @current_job = AutotestRunJob.perform_later(request.protocol + request.host_with_port,
                                                   current_user.id,
+                                                  assignment.id,
                                                   [{ id: test_run.id }])
       session[:job_id] = @current_job.job_id
       flash_message(:notice, I18n.t('automated_tests.tests_running'))
@@ -116,10 +118,11 @@ class AutomatedTestsController < ApplicationController
   def download_file
     assignment = Assignment.find(params[:assignment_id])
     file_path = File.join(assignment.autotest_files_dir, params[:file_name])
+    filename = File.basename params[:file_name]
     if File.exist?(file_path)
-      send_file_download file_path, filename: params[:file_name]
+      send_file_download file_path, filename: filename
     else
-      render plain: t('student.submission.missing_file', file_name: params[:file_name])
+      render plain: t('student.submission.missing_file', file_name: filename)
     end
   end
 
@@ -138,9 +141,20 @@ class AutomatedTestsController < ApplicationController
     delete_folders = params[:delete_folders] || []
     delete_files = params[:delete_files] || []
     new_files = params[:new_files] || []
+    unzip = params[:unzip] == 'true'
+
+    if unzip
+      zdirs, zfiles = new_files.map do |f|
+        next unless File.extname(f.path).casecmp?('.zip')
+        unzip_uploaded_file(f.path)
+      end.compact.transpose.map(&:flatten)
+      new_files.reject! { |f| File.extname(f.path).casecmp?('.zip') }
+      new_folders.push(*zdirs)
+      new_files.push(*zfiles)
+    end
 
     new_folders.each do |f|
-      folder_path = File.join(assignment.autotest_files_dir, f)
+      folder_path = File.join(assignment.autotest_files_dir, params[:path], f)
       FileUtils.mkdir_p(folder_path)
     end
     delete_folders.each do |f|

@@ -46,6 +46,11 @@ pt:
   rubric_criteria:
     level:
       level_index: "Nível %{index}"
+      new: "Novo Nível"
+      add: "Adicionar Nível"
+      delete:
+        new: "Excluir Novo Nível"
+        checkbox: "Excluir Nível %{index}"
     defaults:
       level_0: "Insuficiente"
       level_1: "Fraco"

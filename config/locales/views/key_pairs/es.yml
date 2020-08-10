@@ -18,5 +18,3 @@ es:
     remove_key:      "Remover Clave"
     time_of_upload:  "Hora de Subida"
     title:           "Pares de Claves"
-    update:
-      success: "El Par de Claves fue actualizado exitosamente"

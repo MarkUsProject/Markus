@@ -1,6 +1,4 @@
 Rails.application.routes.draw do
-  resources :key_pairs
-
   # Install the default routes as the lowest priority.
   root controller: 'main', action: 'login', via: [:post, :get]
 
@@ -40,8 +38,20 @@ Rails.application.routes.draw do
             get 'annotations'
             post 'add_annotations'
             post 'add_members'
+            post 'create_extra_marks'
             put 'update_marks'
             put 'update_marking_state'
+            delete 'remove_extra_marks'
+          end
+        end
+        resources :starter_file_groups do
+          member do
+            get 'entries'
+            post 'create_file'
+            post 'create_folder'
+            delete 'remove_file'
+            delete 'remove_folder'
+            get 'download_entries'
           end
         end
         member do
@@ -66,19 +76,29 @@ Rails.application.routes.draw do
       end
 
       member do
+        get 'download_starter_file_mappings'
         get 'refresh_graph'
         get 'view_summary'
-        get 'populate_file_manager'
-        post 'upload_starter_code'
-        post 'update_starter_code'
-        get 'download_starter_code'
+        post 'update_starter_file'
         get 'peer_review'
+        get 'populate_starter_file_manager'
         get 'summary'
         get 'batch_runs'
         post 'set_boolean_graders_options'
         get 'stop_test'
         get 'stop_batch_tests'
         get 'switch_assignment'
+        put 'start_timed_assignment'
+        get 'starter_file'
+        put 'update_starter_file'
+      end
+
+      resources :starter_file_groups do
+        member do
+          get 'download_file'
+          get 'download_files'
+          post 'update_files'
+        end
       end
 
       resources :tags do
@@ -145,6 +165,7 @@ Rails.application.routes.draw do
           get 'manage'
           get 'assign_scans'
           get 'download'
+          get 'download_starter_file'
           get 'get_names'
           get 'assign_student_and_next'
           get 'next_grouping'
@@ -223,6 +244,7 @@ Rails.application.routes.draw do
             delete 'delete_grace_period_deduction'
             get 'next_grouping'
             post 'remove_extra_mark'
+            patch 'revert_to_automatic_deductions'
             post 'set_released_to_students'
             post 'update_overall_comment'
             post 'toggle_marking_state'
@@ -291,6 +313,8 @@ Rails.application.routes.draw do
           delete 'destroy_annotation_text'
           put 'update_annotation_text'
           get 'find_annotation_text'
+          get 'annotation_text_uses'
+          get 'uncategorized_annotations'
         end
       end
     end
@@ -363,18 +387,18 @@ Rails.application.routes.draw do
     resources :annotations do
       collection do
         post 'add_existing_annotation'
-        patch 'update_annotation'
-        delete '/' => 'annotations#destroy'
       end
     end
 
     resources :students do
       collection do
         patch 'bulk_modify'
+        patch 'update_mailer_settings'
         get 'manage'
         get 'add_new_section'
         get 'download'
         post 'upload'
+        get 'mailer_settings'
       end
 
       member do

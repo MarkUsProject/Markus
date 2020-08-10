@@ -12,6 +12,7 @@ ENV['RAILS_ENV'] ||= 'test'
 require File.expand_path('../../config/environment', __FILE__)
 require 'rspec/rails'
 require 'action_policy/rspec'
+require 'net/ssh'
 # Loads lib repo stuff.
 require 'time-warp'
 
@@ -43,6 +44,7 @@ RSpec.configure do |config|
   # Include generic helpers.
   config.include Helpers
   config.include AuthenticationHelper
+  config.include ActiveJob::TestHelper
 
   # If you're not using ActiveRecord, or you'd prefer not to run each of your
   # examples within a transaction, remove the following line or assign false
@@ -51,6 +53,7 @@ RSpec.configure do |config|
 
   config.after :each do |test|
     destroy_repos unless test.metadata[:keep_memory_repos]
+    FactoryBot.rewind_sequences
   end
 
   # If true, the base class of anonymous controllers will be inferred
@@ -58,7 +61,7 @@ RSpec.configure do |config|
   # rspec-rails.
   config.infer_base_class_for_anonymous_controllers = false
 
-  config.render_views
+  config.render_views if ENV['RSPEC_RENDER_VIEWS'] == 'true'
 
   # Run specs in random order to surface order dependencies. If you find an
   # order dependency and want to debug it, you can fix the order by providing
@@ -68,12 +71,6 @@ RSpec.configure do |config|
 
   # Clean up any created file folders
   config.after(:suite) do
-    FileUtils.rm_rf(Dir["#{Rails.root}/data/test/repos/*"])
-    FileUtils.rm_rf(Dir["#{Rails.root}/data/test/exam_templates/*"])
-  end
-
-  config.before(:suite) do
-    FileUtils.rm_rf(Dir["#{Rails.root}/data/test/repos/*"])
     FileUtils.rm_rf(Dir["#{Rails.root}/data/test/exam_templates/*"])
   end
 

@@ -45,7 +45,8 @@ Markus::Application.configure do
       key: '_markus_session',
       path: '/',
       expire_after: 3.weeks,
-      secure: false
+      secure: false,
+      same_site: :lax
   )
 
   ###################################################################
@@ -137,10 +138,13 @@ Markus::Application.configure do
   # 'mem' is by design not persistent and only used for testing MarkUs
   config.x.repository.type = 'mem'
 
+  config.data_dir = ENV.fetch('MARKUS_DATA_DIR') { "#{::Rails.root.to_s}/data/test" }
+  config.x.repository.git_shell = ENV.fetch('MARKUS_REPOSITORY_GIT_SHELL') { '/usr/bin/git-shell' }
+
   ###################################################################
   # Directory where Repositories will be created. Make sure MarkUs is allowed
   # to write to this directory
-  config.x.repository.storage = "#{::Rails.root}/data/test/repos"
+  config.x.repository.storage = "#{config.data_dir}/repos"
 
   ###################################################################
   # A hash of repository hook scripts (used only when repository.type
@@ -153,7 +157,8 @@ Markus::Application.configure do
   ###################################################################
   # Directory where authentication keys will be uploaded.
   # Make sure MarkUs is allowed to write to this directory
-  config.key_storage = "#{::Rails.root}/data/test/keys"
+  config.key_storage = "#{config.data_dir}/keys"
+  config.x.queues.update_keys = "CSC108"
 
   # Max file size for submission files, in bytes
   config.max_file_size = 5000000
@@ -175,6 +180,7 @@ Markus::Application.configure do
   # after the hostname matches your <Location> directive in your Apache
   # httpd configuration
   config.x.repository.url = "http://www.example.com/markus/svn"
+  config.x.repository.ssh_url = ENV.fetch('MARKUS_REPOSITORY_SSH_URL') { 'git@example.com/csc108' }
 
   ###################################################################
   # This setting is important for two scenarios:
@@ -185,7 +191,9 @@ Markus::Application.configure do
   # Second, if MarkUs is configured with config.x.repository.external_submits_only
   # set to 'true', you can configure as to where MarkUs should write the
   # Subversion authz file.
-  config.x.repository.permission_file = File.join(config.x.repository.storage, 'dummy')
+  config.x.repository.permission_file = ENV.fetch('MARKUS_REPOSITORY_PERMISSION_FILE') {
+    File.join(config.x.repository.storage, 'dummy')
+  }
 
   ###################################################################
   # This setting configures if MarkUs is reading Subversion
@@ -194,12 +202,6 @@ Markus::Application.configure do
   # REPOSITORY_SVN_AUTHZ_FILE, otherwise it doesn't. Change this to
   # 'false' if repositories are created by a third party.
   config.x.repository.is_repository_admin = true
-
-  ###################################################################
-  # Starter code settings
-  ###################################################################
-  # Global flag to enable/disable starter code feature.
-  config.starter_code_on = true
 
   ###################################################################
   # Session Timeouts
@@ -246,10 +248,12 @@ Markus::Application.configure do
   config.action_mailer.asset_host = 'http://localhost:3000'
   config.action_mailer.default_url_options = {host: 'localhost:3000'}
   config.action_mailer.perform_deliveries = true
+  config.action_mailer.deliver_later_queue_name = 'CSC108'
 
   ###################################################################
   # Resque queues
   ###################################################################
+  config.active_job.queue_adapter = :test
 
   # The name of the queue where jobs to create groups wait to be executed.
   config.x.queues.create_groups = 'CSC108'
@@ -263,8 +267,6 @@ Markus::Application.configure do
   config.x.queues.repo_required_files = 'CSC108'
   config.x.queues.exam_generate = 'CSC108'
   config.x.queues.split_pdf = 'CSC108'
-  # The name of the queue where jobs to update starter code files to student repos wait to be executed.
-  config.x.queues.update_starter_code = 'CSC108'
 
   ###################################################################
   # Automated Testing Engine settings
@@ -273,12 +275,9 @@ Markus::Application.configure do
   # Look at https://github.com/MarkUsProject/markus-autotesting for the documentation
   config.x.autotest.enable = true
   config.x.autotest.student_test_buffer = 1.hour
-  config.x.autotest.client_dir = "#{::Rails.root}/data/test/autotest"
+  config.x.autotest.client_dir = "#{config.data_dir}/autotest"
   config.x.autotest.server_host = ENV.fetch('AUTOTEST_SERVER_HOST') { 'localhost' }
   config.x.autotest.server_username =  ENV.fetch('AUTOTEST_SERVER_USERNAME') { nil }
-  config.x.autotest.server_dir = ENV.fetch('AUTOTEST_SERVER_DIR') {
-    "#{::Rails.root}/../markus-autotesting/server/workspace"
-  }
   config.x.autotest.server_command = 'autotest_enqueuer'
   config.x.queues.autotest_run = 'CSC108'
   config.x.queues.autotest_cancel = 'CSC108'
@@ -290,8 +289,14 @@ Markus::Application.configure do
   ###################################################################
   # Global flag to enable/disable all exam plugin features.
   config.x.scanned_exams.enable = true
-  config.x.scanned_exams.path = "#{::Rails.root}/data/test/exam_templates"
+  config.x.scanned_exams.path = "#{config.data_dir}/exam_templates"
   config.x.scanned_exams.python = "#{::Rails.root}/lib/scanner/venv/bin/python"
+
+  ###################################################################
+  # Starter file setttings
+  ###################################################################
+
+  config.x.starter_file.storage = "#{config.data_dir}/starter_files"
 
   ###################################################################
   # END OF MarkUs SPECIFIC CONFIGURATION

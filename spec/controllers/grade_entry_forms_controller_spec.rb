@@ -6,7 +6,7 @@ describe GradeEntryFormsController do
     allow(controller).to receive(:current_user).and_return(build(:admin))
 
     # initialize student DB entries
-    create(:student, user_name: 'c8shosta')
+    @student = create(:student, user_name: 'c8shosta')
   end
 
   let(:grade_entry_form) { create(:grade_entry_form) }
@@ -306,6 +306,9 @@ describe GradeEntryFormsController do
       @another = grade_entry_form_with_data.grade_entry_students.joins(:user).find_by('users.user_name': 'paneroar')
       @this_form = grade_entry_form_with_data
     end
+
+    around { |example| perform_enqueued_jobs(&example) }
+
     it 'sends an email to a student who has grades for this form if only one exists' do
       expect do
         post :update_grade_entry_students,
@@ -321,6 +324,42 @@ describe GradeEntryFormsController do
                        students: [@student.id, @another.id],
                        release_results: 'true' }
       end.to change { ActionMailer::Base.deliveries.count }.by(2)
+    end
+    it 'does not send emails if all the students have results notifications turned off' do
+      @student.user.update!(receives_results_emails: false)
+      @another.user.update!(receives_results_emails: false)
+      expect do
+        post :update_grade_entry_students,
+             params: { id: @this_form.id,
+                       students: [@student.id, @another.id],
+                       release_results: 'true' }
+      end.to change { ActionMailer::Base.deliveries.count }.by(0)
+    end
+    it 'sends emails to students that have have results notifications enabled if only some do' do
+      @student.user.update!(receives_results_emails: false)
+      expect do
+        post :update_grade_entry_students,
+             params: { id: @this_form.id,
+                       students: [@student.id, @another.id],
+                       release_results: 'true' }
+      end.to change { ActionMailer::Base.deliveries.count }.by(1)
+    end
+  end
+
+  describe '#student_interface' do
+    before :each do
+      allow(controller).to receive(:current_user).and_return(@student)
+    end
+
+    it 'does not allow students to see hidden grade entry forms' do
+      grade_entry_form.update!(is_hidden: true)
+      get_as @student, :student_interface, params: { id: grade_entry_form.id }
+      assert_response 404
+    end
+
+    it 'allows students to see non hidden grade entry forms' do
+      get_as @student, :student_interface, params: { id: grade_entry_form.id }
+      assert_response 200
     end
   end
 end

@@ -7,7 +7,8 @@ class AssignmentsController < ApplicationController
                               :show,
                               :peer_review,
                               :summary,
-                              :switch_assignment]
+                              :switch_assignment,
+                              :start_timed_assignment]
 
   before_action      :authorize_for_ta_and_admin,
                      only: [:summary]
@@ -52,8 +53,14 @@ class AssignmentsController < ApplicationController
       end
     end
     unless @grouping.nil?
+      flash_message(:warning, I18n.t('assignments.starter_file.changed_warning')) if @grouping.starter_file_changed
+      if @assignment.is_timed && !@grouping.start_time.nil? && !@grouping.past_collection_date?
+        flash_message(:note, I18n.t('assignments.timed.started_message_html'))
+        flash_message(:note, I18n.t('assignments.timed.starter_file_prompt'))
+      end
       set_repo_vars(@assignment, @grouping)
     end
+    render layout: 'assignment_content'
   end
 
   def peer_review
@@ -194,16 +201,16 @@ class AssignmentsController < ApplicationController
   def new
     @assignments = Assignment.all
     @assignment = Assignment.new
-    @assignment.assignment_properties = AssignmentProperties.new
     if params[:scanned].present?
       @assignment.scanned_exam = true
+    end
+    if params[:timed].present?
+      @assignment.is_timed = true
     end
     @clone_assignments = Assignment.joins(:assignment_properties)
                                    .where(assignment_properties: { vcs_submit: true })
                                    .order(:id)
     @sections = Section.all
-    @assignment.build_submission_rule
-    @assignment.build_assignment_stat
 
     # build section_due_dates for each section
     Section.all.each { |s| @assignment.section_due_dates.build(section: s)}
@@ -218,8 +225,6 @@ class AssignmentsController < ApplicationController
   # Called after a new assignment form is submitted.
   def create
     @assignment = Assignment.new
-    @assignment.build_assignment_stat
-    @assignment.build_submission_rule
     @assignment.transaction do
       begin
         @assignment, new_required_files = process_assignment_form(@assignment)
@@ -271,14 +276,16 @@ class AssignmentsController < ApplicationController
 
   def stop_test
     test_id = params[:test_run_id].to_i
-    @current_job = AutotestCancelJob.perform_later(request.protocol + request.host_with_port, [test_id])
+    assignment_id = params[:id]
+    @current_job = AutotestCancelJob.perform_later(request.protocol + request.host_with_port, assignment_id, [test_id])
     session[:job_id] = @current_job.job_id
     redirect_back(fallback_location: root_path)
   end
 
   def stop_batch_tests
     test_runs = TestRun.where(test_batch_id: params[:test_batch_id]).pluck(:id)
-    @current_job = AutotestCancelJob.perform_later(request.protocol + request.host_with_port, test_runs)
+    assignment_id = params[:id]
+    @current_job = AutotestCancelJob.perform_later(request.protocol + request.host_with_port, assignment_id, test_runs)
     session[:job_id] = @current_job.job_id
     redirect_back(fallback_location: root_path)
   end
@@ -377,120 +384,86 @@ class AssignmentsController < ApplicationController
     redirect_to action: 'index'
   end
 
-  def populate_file_manager
-    assignment = Assignment.find(params[:id])
-    entries = []
-    assignment.access_starter_code_repo do |repo|
-      revision = repo.get_latest_revision
-      entries = get_all_file_data(revision, assignment, '')
-    end
-    entries.reject! { |f| Repository.get_class.internal_file_names.include? f[:raw_name] }
-    render json: entries
-  end
-
-  def upload_starter_code
-    unless Rails.configuration.starter_code_on
-      raise t('student.submission.external_submit_only') #TODO: Update this
-    end
-
-    @assignment = Assignment.find(params[:id])
-
-    path = params[:path] || '/'
-    path = Pathname.new(@assignment.repository_folder).join(path.gsub(%r{^/}, ''))
-
-    # The files that will be deleted
-    delete_files = params[:delete_files] || []
-
-    # The files that will be added
-    new_files = params[:new_files] || []
-
-    # The folders that will be added
-    new_folders = params[:new_folders] || []
-
-    # The folders that will be deleted
-    delete_folders = params[:delete_folders] || []
-
-    if delete_files.empty? && new_files.empty? && new_folders.empty? && delete_folders.empty?
-      flash_message(:warning, I18n.t('student.submission.no_action_detected'))
-      redirect_back(fallback_location: root_path)
+  def starter_file
+    @assignment = Assignment.find_by_id(params[:id])
+    if @assignment.nil?
+      render 'shared/http_status',
+             locals: { code: '404', message: HttpStatusHelper::ERROR_CODE['message']['404'] },
+             status: 404
     else
-      messages = []
-      @assignment.access_starter_code_repo do |repo|
-        # Create transaction, setting the author.
-        txn = repo.get_transaction(current_user.user_name, I18n.t('repo.commits.starter_code',
-                                                                  assignment: @assignment.short_identifier))
-        should_commit = true
-        if delete_files.present?
-          success, msgs = remove_files(delete_files, current_user, repo, path: path, txn: txn)
-          should_commit &&= success
-          messages.concat msgs
-        end
-        if new_files.present?
-          success, msgs = add_files(new_files, current_user, repo, path: path, txn: txn, check_size: true)
-          should_commit &&= success
-          messages.concat msgs
-        end
-        if new_folders.present?
-          success, msgs = add_folders(new_folders, current_user, repo, path: path, txn: txn)
-          should_commit &&= success
-          messages = messages.concat msgs
-        end
-        if delete_folders.present?
-          success, msgs = remove_folders(delete_folders, current_user, repo, path: path, txn: txn)
-          should_commit &&= success
-          messages = messages.concat msgs
-        end
-        if should_commit
-          commit_success, commit_msg = commit_transaction(repo, txn)
-          flash_message(:success, I18n.t('flash.actions.update_files.success')) if commit_success
-          messages << commit_msg
-        else
-          commit_success = should_commit
-        end
-
-        flash_repository_messages messages
-
-        if should_commit && commit_success
-          if new_files.present?
-            @current_job = UpdateStarterCodeJob.perform_later(@assignment.id,
-                                                              params.fetch(:overwrite, 'false') == 'true')
-            session[:job_id] = @current_job.job_id
-            redirect_back(fallback_location: root_path)
-          else
-            head :ok
-          end
-        else
-          head :bad_request
-        end
-      end
+      render layout: 'assignment_content'
     end
   end
 
-  def download_starter_code
+  def populate_starter_file_manager
     assignment = Assignment.find(params[:id])
-    # find_appropriate_grouping can be found in SubmissionsHelper
-
-    revision_identifier = params[:revision_identifier]
-    path = params[:path] || '/'
-    assignment.access_starter_code_repo do |repo|
-      if revision_identifier.nil?
-        revision = repo.get_latest_revision
-      else
-        revision = repo.get_revision(revision_identifier)
-      end
-
-      begin
-        file = revision.files_at_path(File.join(assignment.repository_folder,
-                                                path))[params[:file_name]]
-        file_contents = repo.download_as_string(file)
-      rescue Exception => e
-        render plain: t('student.submission.missing_file',
-                        file_name: params[:file_name], message: e.message)
-        return
-      end
-
-      send_data_download file_contents, filename: params[:file_name]
+    if assignment.groupings.exists?
+      flash_message(:warning,
+                    I18n.t('assignments.starter_file.groupings_exist_warning_html'))
     end
+    file_data = []
+    assignment.starter_file_groups.order(:id).each do |g|
+      file_data << { id: g.id,
+                     name: g.name,
+                     entry_rename: g.entry_rename,
+                     use_rename: g.use_rename,
+                     files: starter_file_group_file_data(g) }
+    end
+    section_data = Section.left_outer_joins(:starter_file_groups)
+                          .order(:id)
+                          .pluck_to_hash('sections.id as section_id',
+                                         'sections.name as section_name',
+                                         'starter_file_groups.id as group_id',
+                                         'starter_file_groups.name as group_name')
+    data = { files: file_data,
+             sections: section_data,
+             starterfileType: assignment.starter_file_type,
+             defaultStarterFileGroup: assignment.default_starter_file_group&.id || '' }
+    render json: data
+  end
+
+  def update_starter_file
+    assignment = Assignment.find(params[:id])
+    all_changed = false
+    success = true
+    ApplicationRecord.transaction do
+      assignment.assignment_properties.update!(starter_file_assignment_params)
+      all_changed = assignment.assignment_properties.saved_changes?
+      starter_file_section_params.each do |section_params|
+        Section.find_by(id: section_params[:section_id])
+               &.update_starter_file_group(assignment.id, section_params[:group_id])
+      end
+      starter_file_group_params.each do |group_params|
+        starter_file_group = assignment.starter_file_groups.find_by(id: group_params[:id])
+        starter_file_group.update!(group_params)
+        all_changed ||= starter_file_group.saved_changes? || assignment.assignment_properties.saved_changes?
+      end
+      assignment.assignment_properties.update!(starter_file_updated_at: Time.zone.now)
+    rescue ActiveRecord::RecordInvalid => e
+      flash_message(:error, e.message)
+      success = false
+      raise ActiveRecord::Rollback
+    rescue StandardError => e
+      flash_message(:error, e.message)
+      success = false
+      raise ActiveRecord::Rollback
+    end
+    if success
+      flash_message(:success, I18n.t('flash.actions.update.success',
+                                     resource_name: I18n.t('assignments.starter_file.title')))
+    end
+    # mark all groupings with starter files that were changed as changed
+    assignment.groupings.update_all(starter_file_changed: true) if success && all_changed
+  end
+
+  def download_starter_file_mappings
+    assignment = Assignment.find(params[:id])
+    mappings = assignment.starter_file_mappings
+    file_out = MarkusCsv.generate(mappings, [mappings.first&.keys].compact, &:values)
+    send_data(file_out,
+              type: 'text/csv',
+              filename: "#{assignment.short_identifier}_starter_file_mappings.csv",
+              disposition: 'inline')
   end
 
   def switch_assignment
@@ -517,15 +490,18 @@ class AssignmentsController < ApplicationController
     head :ok
   end
 
-  private
-
-    def sanitize_file_name(file_name)
-      # If file_name is blank, return the empty string
-      return '' if file_name.nil?
-      File.basename(file_name).gsub(
-          SubmissionFile::FILENAME_SANITIZATION_REGEXP,
-          SubmissionFile::SUBSTITUTION_CHAR)
+  # Start timed assignment for the current user's grouping for this assignment
+  def start_timed_assignment
+    grouping = current_user.try(:accepted_grouping_for, params[:id])
+    return head 400 if grouping.nil?
+    authorize! grouping
+    unless grouping.update(start_time: Time.current)
+      flash_message(:error, grouping.errors.full_messages.join(' '))
     end
+    redirect_to action: :show
+  end
+
+  private
 
   def set_repo_vars(assignment, grouping)
     grouping.group.access_repo do |repo|
@@ -542,56 +518,14 @@ class AssignmentsController < ApplicationController
     end
   end
 
-  # Recursively return data for all starter code files.
-  # TODO: remove code duplication with the equivalent SubmissionsController method.
-  def get_all_file_data(revision, assignment, path)
-    full_path = File.join(assignment.repository_folder, path)
-    return [] unless revision.path_exists?(full_path)
-
-    entries = revision.tree_at_path(full_path).sort do |a, b|
-      a[0].count(File::SEPARATOR) <=> b[0].count(File::SEPARATOR) # less nested first
-    end
-    entries.map do |file_name, file_obj|
-      if file_obj.is_a? Repository::RevisionFile
-        dirname, basename = File.split(file_name)
-        dirname = '' if dirname == '.'
-        data = get_file_info(basename, file_obj, assignment.id, dirname)
-        next if data.nil?
-        data[:key] = file_name
-        data[:modified] = data[:last_revised_date]
-        data
-      else
-        { key: "#{file_name}/", last_modified_revision: file_obj.last_modified_revision }
-      end
-    end.compact
-  end
-
-  def get_file_info(file_name, file, assignment_id, path)
-    {
-      id: file.object_id,
-      url: download_starter_code_assignment_url(
-        id: assignment_id,
-        file_name: file_name,
-        path: path,
-      ),
-      filename: view_context.image_tag('icons/page_white_text.png') +
-        view_context.link_to(file_name,
-                             action: 'download_starter_code',
-                             id: assignment_id,
-                             file_name: file_name,
-                             path: path),
-      raw_name: file_name,
-      last_revised_date: l(file.last_modified_date),
-      last_modified_revision: file.last_modified_revision,
-      revision_by: file.user_id,
-      submitted_date: I18n.l(file.submitted_date)
-    }
-  end
-
   def process_assignment_form(assignment)
     num_files_before = assignment.assignment_files.length
     short_identifier = assignment_params[:short_identifier]
+    # remove potentially invalid periods before updating
+    periods = submission_rule_params['submission_rule_attributes']['periods_attributes'].to_h.values.map { |h| h[:id] }
+    assignment.submission_rule.periods.where.not(id: periods).each(&:destroy)
     assignment.assign_attributes(assignment_params)
+    process_timed_duration(assignment) if assignment.is_timed
     assignment.repository_folder = short_identifier unless assignment.is_peer_review?
     assignment.save!
     new_required_files = assignment.saved_change_to_only_required_files? ||
@@ -624,85 +558,27 @@ class AssignmentsController < ApplicationController
       assignment.group_max = 1
     end
 
-    # Due to some funkiness, we need to handle submission rules separately
-    # from the main attribute update
-    # First, figure out what kind of rule has been requested
-    rule_attributes = params[:assignment][:submission_rule_attributes]
-    if rule_attributes.nil?
-      rule_name = assignment.submission_rule.class.to_s
-    else
-      rule_name = rule_attributes[:type]
-    end
-
-    [NoLateSubmissionRule, GracePeriodSubmissionRule,
-     PenaltyPeriodSubmissionRule, PenaltyDecayPeriodSubmissionRule]
-    if SubmissionRule.const_defined?(rule_name)
-      potential_rule = SubmissionRule.const_get(rule_name)
-    else
-      raise SubmissionRule::InvalidRuleType, rule_name
-    end
-
-    # If the submission rule was changed, we need to do a more complicated
-    # dance with the database in order to get things updated.
-    if assignment.submission_rule.class != potential_rule
-
-      # In this case, the easiest thing to do is nuke the old rule along
-      # with all the periods and a new submission rule...this may cause
-      # issues with foreign keys in the future, but not with the current
-      # schema
-      assignment.submission_rule.delete
-      assignment.submission_rule = potential_rule.create!(assignment: assignment)
-
-      # this part of the update is particularly hacky, because the incoming
-      # data will include some mix of the old periods and new periods; in
-      # the case of purely new periods the input is only an array, but in
-      # the case of a mixture the input is a hash, and if there are no
-      # periods at all then the periods_attributes will be nil
-      periods = submission_rule_params[:submission_rule_attributes][:periods_attributes]
-      begin
-        periods = periods.to_h
-      rescue
-      end
-      periods = case periods
-                when Hash
-                  # in this case, we do not care about the keys, because
-                  # the new periods will have nonsense values for the key
-                  # and the old periods are being discarded
-                  periods.map { |_, p| p }.reject { |p| p.has_key?(:id) }
-                when Array
-                  periods
-                else
-                  []
-                end
-      # now that we know what periods we want to keep, we can create them
-      periods.each do |p|
-        new_period = assignment.submission_rule.periods.build(p)
-        new_period.submission_rule = assignment.submission_rule
-        new_period.save!
-      end
-    elsif !submission_rule_params.blank? # TODO: do this in a more Rails way
-      periods = submission_rule_params[:submission_rule_attributes][:periods_attributes]
-      begin
-        periods = periods.to_h
-      rescue
-      end
-      periods = case periods
-                when Hash
-                  periods.map { |_, p| p }.select { |p| p.key?(:hours) }
-                when Array
-                  periods
-                else
-                  []
-                end
-      assignment.submission_rule.periods_attributes = periods
-      assignment.submission_rule.periods.each do |period|
-        period.submission_rule = assignment.submission_rule
-        period.save
-      end
-      assignment.submission_rule.save
-    end
-
     return assignment, new_required_files
+  end
+
+  # Convert the hours and minutes value given in the params to a duration value
+  # and assign it to the duration attribute of +assignment+.
+  def process_timed_duration(assignment)
+    durs = duration_params['assignment_properties_attributes']['duration']
+    assignment.duration = durs['hours'].to_i.hours + durs['minutes'].to_i.minutes
+  end
+
+  def starter_file_group_file_data(starter_file_group)
+    starter_file_group.files_and_dirs.map do |file|
+      if (starter_file_group.path + file).directory?
+        { key: "#{file}/" }
+      else
+        { key: file, size: 1,
+          url: download_file_assignment_starter_file_group_url(starter_file_group.assignment.id,
+                                                               starter_file_group.id,
+                                                               file_name: file) }
+      end
+    end
   end
 
   def graders_options_params
@@ -744,18 +620,44 @@ class AssignmentsController < ApplicationController
         :section_groups_only,
         :only_required_files,
         :section_due_dates_type,
-        :scanned_exam
+        :scanned_exam,
+        :is_timed,
+        :start_time
       ],
       section_due_dates_attributes: [
         :_destroy,
         :id,
         :section_id,
-        :due_date
+        :due_date,
+        :start_time
       ],
       assignment_files_attributes:  [
         :_destroy,
         :id,
         :filename
+      ],
+      submission_rule_attributes: [
+        :_destroy,
+        :id,
+        :type,
+        { periods_attributes: [
+          :id,
+          :deduction,
+          :interval,
+          :hours,
+          :_destroy
+        ] }
+      ]
+    )
+  end
+
+  def duration_params
+    params.require(:assignment).permit(
+      assignment_properties_attributes: [
+        duration: [
+          :hours,
+          :minutes
+        ]
       ]
     )
   end
@@ -774,6 +676,19 @@ class AssignmentsController < ApplicationController
               :_destroy
             ] }
           ])
+  end
+
+  def starter_file_assignment_params
+    params.require(:assignment).permit(:starter_file_type, :default_starter_file_group_id)
+  end
+
+  def starter_file_section_params
+    params.permit(sections: [:section_id, :group_id]).require(:sections)
+  end
+
+  def starter_file_group_params
+    params.permit(starter_file_groups: [:id, :name, :entry_rename, :use_rename])
+          .require(:starter_file_groups)
   end
 
   def flash_interpolation_options

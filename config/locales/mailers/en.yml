@@ -7,6 +7,7 @@ en:
       button_text: 'View Results'
       explicit_link: "If the above button doesn't work, copy-and-paste this link into your web browser: %{link}"
       disclaimer: 'This is an automated email. Please do not reply.'
+      settings_link: 'Unsubscribe from future emails.'
 
     release_spreadsheet_email:
       subject: "MarkUs Notification (%{course}) Your marks for %{form} have been released!"
@@ -15,6 +16,7 @@ en:
       button_text: 'View Results'
       explicit_link: "If the above button doesn't work, copy-and-paste this link into your web browser: %{link}"
       disclaimer: 'This is an automated email. Please do not reply.'
+      settings_link: 'Unsubscribe from future emails.'
 
     grouping_invite_email:
       subject: "MarkUs Notification (%{course}) You have been invited to a group!"
@@ -24,3 +26,4 @@ en:
       button_text: 'See Invitation'
       explicit_link: "If the above button doesn't work, copy-and-paste this link into your web browser: %{link}"
       disclaimer: 'This is an automated email. Please do not reply.'
+      settings_link: 'Unsubscribe from future emails.'

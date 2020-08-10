@@ -1,16 +1,25 @@
 <%#
 # Erb template for display rubric criterion levels in the assignment rubric manager
 %>
-<div class="rubric_level_header">
-  <%= f.label "level_#{rubric_level_index}_name".to_sym,
-              I18n.t("rubric_criteria.level.level_index",
-		     index: rubric_level_index),
-	      class: "bold_inline_label" %>
+<div class='level'>
+  <h4 class='rubric_level_header'>
+    <span id="display_name">
+      <%= I18n.t("rubric_criteria.level.level_index", index: level_form.index.to_s) %>
+    </span>
+    <span class="float-right destroy_checkbox">
+      <%= level_form.check_box :_destroy %>
+      <%= level_form.label :_destroy, I18n.t("rubric_criteria.level.delete.checkbox", index: level_form.index.to_s) %>
+    </span>
+  </h4>
+  <div class="inline-labels">
+    <%= level_form.label :name, Level.human_attribute_name(:name), class: 'required' %>
+    <%= level_form.text_field :name, required: true %>
+    <%= level_form.label :mark, class: 'required' %>
+    <%= level_form.number_field :mark, step: 0.1, required: true %>
+    <%= level_form.label :description, Level.human_attribute_name(:description),
+                         class: 'description' %>
+    <%= level_form.text_area :description, cols: 50, rows: 5 %>
+  </div>
 </div>
-<br>
-  <%= f.text_field "level_#{rubric_level_index}_name".to_sym,
-		   class: "rubric_level_input"%>
-  <%= f.text_area "level_#{rubric_level_index}_description".to_sym,
-		  class: "rubric_text_area"%>
-<br>
-<br>
+<!--<br>-->
+<!--<br>-->

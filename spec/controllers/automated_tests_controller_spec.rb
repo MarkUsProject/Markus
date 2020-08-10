@@ -1,5 +1,4 @@
 describe AutomatedTestsController do
-  render_views false
   let(:assignment) { create :assignment }
   let(:params) { { assignment_id: assignment.id } }
   context 'as an admin' do
@@ -95,6 +94,33 @@ describe AutomatedTestsController do
           expect(JSON.parse(response.body).slice(*properties.keys.map(&:to_s))).to eq(properties.transform_keys(&:to_s))
         end
       end
+      context 'files data' do
+        it 'should include assignment files' do
+          allow_any_instance_of(Assignment).to receive(:autotest_files).and_return ['file.txt']
+          subject
+          url = download_file_assignment_automated_tests_url(assignment_id: assignment.id, file_name: 'file.txt')
+          data = [{ key: 'file.txt', size: 1, url: url }.transform_keys(&:to_s)]
+          expect(JSON.parse(response.body)['files']).to eq(data)
+        end
+        it 'should include directories' do
+          allow_any_instance_of(Assignment).to receive(:autotest_files).and_return ['some_dir']
+          allow_any_instance_of(Pathname).to receive(:directory?).and_return true
+          subject
+          data = [{ key: 'some_dir/' }.transform_keys(&:to_s)]
+          expect(JSON.parse(response.body)['files']).to eq(data)
+        end
+        it 'should include nested files' do
+          allow_any_instance_of(Assignment).to receive(:autotest_files).and_return %w[some_dir some_dir/file.txt]
+          allow_any_instance_of(Pathname).to receive(:directory?).and_wrap_original do |m, *_args|
+            m.receiver.basename.to_s == 'some_dir'
+          end
+          subject
+          url = download_file_assignment_automated_tests_url(assignment_id: assignment.id,
+                                                             file_name: 'some_dir/file.txt')
+          data = [{ key: 'some_dir/' }, { key: 'some_dir/file.txt', size: 1, url: url }]
+          expect(JSON.parse(response.body)['files']).to eq(data.map { |h| h.transform_keys(&:to_s) })
+        end
+      end
     end
     context 'GET download_file' do
       before { get_as admin, :download_file, params: params }
@@ -111,7 +137,37 @@ describe AutomatedTestsController do
     end
     context 'POST upload_files' do
       before { post_as admin, :upload_files, params: params }
-      # TODO: write tests
+      after { FileUtils.rm_r assignment.autotest_files_dir }
+      context 'uploading a zip file' do
+        let(:zip_file) { fixture_file_upload(File.join('/files', 'test_zip.zip'), 'application/zip') }
+        let(:unzip) { 'true' }
+        let(:params) { { assignment_id: assignment.id, unzip: unzip, new_files: [zip_file], path: '' } }
+        let(:tree) { assignment.autotest_files }
+        context 'when unzip if false' do
+          let(:unzip) { 'false' }
+          it 'should just upload the zip file as is' do
+            expect(tree).to include('test_zip.zip')
+          end
+          it 'should not upload any other files' do
+            expect(tree.length).to eq 1
+          end
+        end
+        it 'should not upload the zip file' do
+          expect(tree).not_to include('test_zip.zip')
+        end
+        it 'should upload the outer dir' do
+          expect(tree).to include('test_zip')
+        end
+        it 'should upload the inner dir' do
+          expect(tree).to include('test_zip/zip_subdir')
+        end
+        it 'should upload a file in the outer dir' do
+          expect(tree).to include('test_zip/Shapes.java')
+        end
+        it 'should upload a file in the inner dir' do
+          expect(tree).to include('test_zip/zip_subdir/TestShapes.java')
+        end
+      end
     end
     context 'GET download_specs' do
       context 'when the file exists' do

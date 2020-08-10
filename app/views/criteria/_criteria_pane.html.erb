@@ -1,4 +1,4 @@
-<div class='sortable'>
+<div class='listings sortable'>
   <header>
     <span class='left'><%= Criterion.model_name.human %></span>
     <span class='center'>
@@ -9,7 +9,7 @@
   </header>
 
   <ul id='criteria_pane_list'>
-    <% @assignment.get_criteria.each do |criterion| %>
+    <% @assignment.criteria.each do |criterion| %>
       <%= render partial: 'criteria/criterion',
                  locals: { criterion: criterion } %>
     <% end %>

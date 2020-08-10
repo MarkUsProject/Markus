@@ -6,4 +6,5 @@ en:
     attributes:
       annotation_category:
         annotation_category_name: "Category name"
+        flexible_criterion: 'Associated Criterion (Flexible type only)'
 

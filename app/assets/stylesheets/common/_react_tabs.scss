@@ -1,0 +1,37 @@
+.react-tabs__tab--disabled {
+  display: none;
+}
+
+.react-tabs {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.react-tabs__tab-panel {
+  flex-grow: 1;
+
+  h3 {
+    margin-bottom: 0.5em;
+  }
+
+  h4 {
+    margin-bottom: 10px;
+  }
+}
+
+.react-tabs__tab-panel--selected {
+  display: flex;
+  flex-direction: column;
+}
+
+.react-tabs-panel-action-bar {
+  background-color: $light-blue;
+  margin-top: -10px;
+  padding: 0.5em;
+  width: 100%;
+
+  button {
+    margin-left: 5px;
+  }
+}

@@ -6,33 +6,34 @@ class Assignment < Assessment
   MIN_PEER_REVIEWS_PER_GROUP = 1
 
   validates_presence_of :due_date
-  has_one :assignment_properties, dependent: :destroy, inverse_of: :assignment, foreign_key: :assessment_id
+
+  has_one :assignment_properties,
+          dependent: :destroy,
+          inverse_of: :assignment,
+          foreign_key: :assessment_id,
+          autosave: true
   delegate_missing_to :assignment_properties
   accepts_nested_attributes_for :assignment_properties, update_only: true
   validates_presence_of :assignment_properties
+  after_initialize :create_associations
 
   # Add assignment_properties to default scope because we almost always want to load an assignment with its properties
   default_scope { includes(:assignment_properties) }
 
-  has_many :rubric_criteria,
+  has_many :criteria,
            -> { order(:position) },
-           class_name: 'RubricCriterion',
            dependent: :destroy,
            inverse_of: :assignment,
            foreign_key: :assessment_id
 
-  has_many :flexible_criteria,
-           -> { order(:position) },
-           class_name: 'FlexibleCriterion',
-           dependent: :destroy,
-           inverse_of: :assignment,
+  has_many :ta_criteria,
+           -> { where(ta_visible: true).order(:position) },
+           class_name: 'Criterion',
            foreign_key: :assessment_id
 
-  has_many :checkbox_criteria,
-           -> { order(:position) },
-           class_name: 'CheckboxCriterion',
-           dependent: :destroy,
-           inverse_of: :assignment,
+  has_many :peer_criteria,
+           -> { where(peer_visible: true).order(:position) },
+           class_name: 'Criterion',
            foreign_key: :assessment_id
 
   has_many :test_groups, dependent: :destroy, inverse_of: :assignment, foreign_key: :assessment_id
@@ -75,7 +76,8 @@ class Assignment < Assessment
 
   has_many :exam_templates, dependent: :destroy, inverse_of: :assignment, foreign_key: :assessment_id
 
-  after_create :build_starter_code_repo
+  has_many :starter_file_groups, dependent: :destroy, inverse_of: :assignment, foreign_key: :assessment_id
+
   after_create :create_autotest_dirs
 
   before_save :reset_collection_time
@@ -96,7 +98,6 @@ class Assignment < Assessment
   validates_presence_of :assignment_stat
 
   BLANK_MARK = ''
-  STARTER_CODE_REPO_NAME = "starter-code"
 
   # Copy of API::AssignmentController without selected attributes and order changed
   # to put first the 4 required fields
@@ -138,6 +139,13 @@ class Assignment < Assessment
     sections_past
   end
 
+  def upcoming(current_user)
+    grouping = current_user.accepted_grouping_for(self.id)
+    due_date = grouping&.collection_date
+    return !past_collection_date?(current_user.section) if due_date.nil?
+    due_date > Time.current
+  end
+
   # Whether or not this grouping is past its due date for this assignment.
   def grouping_past_due_date?(grouping)
     return past_all_due_dates? if grouping.nil?
@@ -152,6 +160,14 @@ class Assignment < Assessment
     end
 
     SectionDueDate.due_date_for(section, self)
+  end
+
+  # Return the start_time for +section+ if it is not nil, otherwise return this
+  # assignments start_time instead.
+  def section_start_time(section)
+    return start_time unless section_due_dates_type
+
+    section&.section_due_dates&.find_by(assignment: self)&.start_time || start_time
   end
 
   # Calculate the latest due date among all sections for the assignment.
@@ -187,7 +203,7 @@ class Assignment < Assessment
 
     due_dates = Hash.new { |h, k| h[k] = due_date }
     section_due_dates.each do |grouping_id, sec_due_date|
-      due_dates[grouping_id] = sec_due_date
+      due_dates[grouping_id] = sec_due_date unless sec_due_date.nil?
     end
     grouping_extensions.each do |grouping_id, ext|
       due_dates[grouping_id] += ActiveSupport::Duration.parse(ext)
@@ -247,12 +263,8 @@ class Assignment < Assessment
   end
 
   # Returns the maximum possible mark for a particular assignment
-  def max_mark(user_visibility = :ta)
-    # TODO: sum method does not work with empty arrays. Consider updating/replacing gem:
-    #       see: https://github.com/thirtysixthspan/descriptive_statistics/issues/44
-    max_marks = get_criteria(user_visibility).map(&:max_mark)
-    s = max_marks.empty? ? 0 : max_marks.sum
-    s.nil? ? 0 : s.round(2)
+  def max_mark(user_visibility = :ta_visible)
+    criteria.where(user_visibility => true).sum(:max_mark).round(2)
   end
 
   # Returns a boolean indicating whether marking has started for at least
@@ -345,7 +357,12 @@ class Assignment < Assessment
       if data['extensions.time_delta'].nil?
         extension_data = {}
       else
-        extension_data = Extension.to_parts ActiveSupport::Duration.parse(data['extensions.time_delta'])
+        duration = ActiveSupport::Duration.parse(data['extensions.time_delta'])
+        if assignment.is_timed
+          extension_data = AssignmentProperties.duration_parts duration
+        else
+          extension_data = Extension.to_parts duration
+        end
       end
       extension_data[:note] = data['extensions.note'] || ''
       extension_data[:apply_penalty] = data['extensions.apply_penalty'] || false
@@ -465,24 +482,23 @@ class Assignment < Assessment
   end
 
   # Get a list of repo checkout client commands to be used for scripting
-  def get_repo_checkout_commands
-    repo_commands = []
-    self.groupings.each do |grouping|
+  def get_repo_checkout_commands(ssh_url: false)
+    self.groupings.includes(:group, :current_submission_used).map do |grouping|
       submission = grouping.current_submission_used
       next if submission&.revision_identifier.nil?
-      repo_commands << Repository.get_class.get_checkout_command(grouping.group.repository_external_access_url,
-                                                                 submission.revision_identifier,
-                                                                 grouping.group.group_name, repository_folder)
-    end
-    repo_commands
+      url = ssh_url ? grouping.group.repository_ssh_access_url : grouping.group.repository_external_access_url
+      Repository.get_class.get_checkout_command(url,
+                                                submission.revision_identifier,
+                                                grouping.group.group_name, repository_folder)
+    end.compact
   end
 
   # Get a list of group_name, repo-url pairs
   def get_repo_list
     CSV.generate do |csv|
-      self.groupings.each do |grouping|
+      self.groupings.includes(:group).each do |grouping|
         group = grouping.group
-        csv << [group.group_name,group.repository_external_access_url]
+        csv << [group.group_name, group.repository_external_access_url, group.repository_ssh_access_url]
       end
     end
   end
@@ -506,8 +522,7 @@ class Assignment < Assessment
       if self.assign_graders_to_criteria
         assigned_criteria = user.criterion_ta_associations
                                 .where(assessment_id: self.id)
-                                .pluck(:criterion_type, :criterion_id)
-                                .map { |t, id| "#{t}-#{id}" }
+                                .pluck(:criterion_id)
       else
         assigned_criteria = nil
       end
@@ -520,7 +535,7 @@ class Assignment < Assessment
     members = groupings.joins(:accepted_students)
                        .pluck_to_hash(:id, 'users.user_name', 'users.first_name', 'users.last_name')
                        .group_by { |x| x[:id] }
-    groupings_with_results = groupings.includes(:submitted_remark, :extension, current_result: :marks)
+    groupings_with_results = groupings.includes(current_result: :marks).includes(:submitted_remark, :extension)
     result_ids = groupings_with_results.pluck('results.id').uniq.compact
     extra_marks_hash = Result.get_total_extra_marks(result_ids, max_mark: max_mark)
 
@@ -529,13 +544,13 @@ class Assignment < Assessment
     criteria_shown = Set.new
     max_mark = 0
 
-    visibility = user.admin? ? :all : :ta
-    criteria_columns = self.get_criteria(visibility).map do |crit|
-      unassigned = !assigned_criteria.nil? && !assigned_criteria.include?("#{crit.class}-#{crit.id}")
+    selected_criteria = user.admin? ? self.criteria : self.ta_criteria
+    criteria_columns = selected_criteria.map do |crit|
+      unassigned = !assigned_criteria.nil? && !assigned_criteria.include?(crit.id)
       next if hide_unassigned && unassigned
 
       max_mark += crit.max_mark
-      accessor = "#{crit.class}-#{crit.id}"
+      accessor = crit.id
       criteria_shown << accessor
       {
         Header: crit.name,
@@ -560,6 +575,7 @@ class Assignment < Assessment
       end
 
       criteria = result.nil? ? {} : result.mark_hash.select { |key, _| criteria_shown.include?(key) }
+      extra_mark = extra_marks_hash[result&.id]
       {
         group_name: group_name,
         section: section,
@@ -570,12 +586,12 @@ class Assignment < Assessment
                                      result&.marking_state,
                                      result&.released_to_students,
                                      g.collection_date),
-        final_grade: criteria.values.compact.sum,
+        final_grade: criteria.values.compact.sum + (extra_mark || 0),
         criteria: criteria,
         max_mark: max_mark,
         result_id: result&.id,
         submission_id: result&.submission_id,
-        total_extra_marks: extra_marks_hash[result&.id]
+        total_extra_marks: extra_mark
       }
     end
 
@@ -605,8 +621,7 @@ class Assignment < Assessment
     end
 
     headers = [['User name', 'Group', 'Final grade'], ['', 'Out of', self.max_mark]]
-    criteria = self.get_criteria(:ta)
-    criteria.each do |crit|
+    self.ta_criteria.each do |crit|
       headers[0] << crit.name
       headers[1] << crit.max_mark
     end
@@ -625,10 +640,10 @@ class Assignment < Assessment
         g.accepted_students.each do |s|
           row = [s.user_name, g.group.group_name]
           if result.nil?
-            row += Array.new(2 + criteria.length, nil)
+            row += Array.new(2 + self.ta_criteria.count, nil)
           else
             row << result.total_mark
-            row += criteria.map { |crit| marks["#{crit.class.name}-#{crit.id}"] }
+            row += self.ta_criteria.map { |crit| marks[crit.id] }
             row << extra_marks_hash[result&.id]
           end
           csv << row
@@ -639,72 +654,17 @@ class Assignment < Assessment
 
   # Returns an array of [mark, max_mark].
   def get_marks_list(submission)
-    get_criteria.map do |criterion|
-      mark = submission.get_latest_result.marks.find_by(markable: criterion)
+    criteria.map do |criterion|
+      mark = submission.get_latest_result.marks.find_by(criterion: criterion)
       [(mark.nil? || mark.mark.nil?) ? '' : mark.mark,
        criterion.max_mark]
-    end
-  end
-
-  def replace_submission_rule(new_submission_rule)
-    if self.submission_rule.nil?
-      self.submission_rule = new_submission_rule
-      self.save
-    else
-      self.submission_rule.destroy
-      self.submission_rule = new_submission_rule
-      self.save
     end
   end
 
   def next_criterion_position
     # We're using count here because this fires off a DB query, thus
     # grabbing the most up-to-date count of the criteria.
-    get_criteria.count > 0 ? get_criteria.last.position + 1 : 1
-  end
-
-  # Returns a filtered list of criteria.
-  def get_criteria(user_visibility = :all, type = :all, options = {})
-    @criteria ||= Hash.new
-    unless @criteria[[user_visibility, type, options]].nil? || options[:no_cache]
-      return @criteria[[user_visibility, type, options]]
-    end
-
-    include_opt = options[:includes]
-    if user_visibility == :all
-      @criteria[[user_visibility, type, options]] = get_all_criteria(type, include_opt)
-    elsif user_visibility == :ta
-      @criteria[[user_visibility, type, options]] = get_ta_visible_criteria(type, include_opt)
-    elsif user_visibility == :peer
-      @criteria[[user_visibility, type, options]] = get_peer_visible_criteria(type, include_opt)
-    end
-  end
-
-  def get_all_criteria(type, include_opt)
-    if type == :all
-      all_criteria = rubric_criteria.includes(include_opt) +
-                     flexible_criteria.includes(include_opt) +
-                     checkbox_criteria.includes(include_opt)
-      all_criteria.sort_by(&:position)
-    elsif type == :rubric
-      rubric_criteria.includes(include_opt).order(:position)
-    elsif type == :flexible
-      flexible_criteria.includes(include_opt).order(:position)
-    elsif type == :checkbox
-      checkbox_criteria.includes(include_opt).order(:position)
-    end
-  end
-
-  def get_ta_visible_criteria(type, include_opt)
-    get_all_criteria(type, include_opt).select(&:ta_visible)
-  end
-
-  def get_peer_visible_criteria(type, include_opt)
-    get_all_criteria(type, include_opt).select(&:peer_visible)
-  end
-
-  def criteria_count
-    get_criteria.size
+    criteria.count > 0 ? criteria.last.position + 1 : 1
   end
 
   # Determine the total mark for a particular student, as a percentage
@@ -791,7 +751,7 @@ class Assignment < Assessment
         ta = Ta.find(ta_id)
         num_assigned_criteria = ta.criterion_ta_associations.where(assignment: self).count
         marked = ta.criterion_ta_associations
-                   .joins('INNER JOIN marks m ON criterion_id = m.markable_id AND criterion_type = m.markable_type')
+                   .joins('INNER JOIN marks m ON criterion_ta_associations.criterion_id = m.criterion_id')
                    .where('m.mark IS NOT NULL AND assessment_id = ?', self.id)
                    .group('m.result_id')
                    .count
@@ -893,16 +853,12 @@ class Assignment < Assessment
 
   def create_peer_review_assignment_if_not_exist
     return unless has_peer_review && Assignment.where(parent_assessment_id: id).empty?
-    peerreview_assignment_properties = AssignmentProperties.new
-    peerreview_assignment_properties.token_period = 1
-    peerreview_assignment_properties.non_regenerating_tokens = false
-    peerreview_assignment_properties.unlimited_tokens = false
-    peerreview_assignment_properties.repository_folder = repository_folder
     peerreview_assignment = Assignment.new
     peerreview_assignment.parent_assignment = self
-    peerreview_assignment.submission_rule = NoLateSubmissionRule.new
-    peerreview_assignment.assignment_stat = AssignmentStat.new
-    peerreview_assignment.assignment_properties = peerreview_assignment_properties
+    peerreview_assignment.token_period = 1
+    peerreview_assignment.non_regenerating_tokens = false
+    peerreview_assignment.unlimited_tokens = false
+    peerreview_assignment.repository_folder = repository_folder
     peerreview_assignment.short_identifier = short_identifier + '_pr'
     peerreview_assignment.description = description
     peerreview_assignment.due_date = due_date
@@ -918,31 +874,20 @@ class Assignment < Assessment
 
   ### REPO ###
 
-  def build_starter_code_repo
-    return unless Rails.configuration.x.repository.is_repository_admin && Rails.configuration.starter_code_on
-    begin
-      unless Repository.get_class.repository_exists?(starter_code_repo_path)
-        Repository.get_class.create(starter_code_repo_path, with_hooks: false)
-      end
-      access_starter_code_repo do |repo|
-        txn = repo.get_transaction('Markus', I18n.t('repo.commits.starter_code', assignment: self.short_identifier))
-        txn.add_path(self.repository_folder)
-        repo.commit(txn)
-      end
-    rescue StandardError => e
-      errors.add(:base, starter_code_repo_path)
-      m_logger = MarkusLogger.instance
-      m_logger.log("Creating repository '#{starter_code_repo_path}' failed with '#{e.message}'", MarkusLogger::ERROR)
-    end
+  def starter_file_path
+    File.join(Rails.configuration.x.starter_file.storage, repository_folder)
   end
 
-  def starter_code_repo_path
-    File.join(Rails.configuration.x.repository.storage, STARTER_CODE_REPO_NAME)
+  def default_starter_file_group
+    default = starter_file_groups.find_by(id: self.default_starter_file_group_id)
+    default.nil? ? starter_file_groups.order(:id).first : default
   end
 
-  #Yields a repository object, if possible, and closes it after it is finished
-  def access_starter_code_repo(&block)
-    Repository.get_class.access(starter_code_repo_path, &block)
+  def starter_file_mappings
+    groupings.joins(:group, grouping_starter_file_entries: [starter_file_entry: :starter_file_group])
+             .pluck_to_hash('groups.group_name as group_name',
+                            'starter_file_groups.name as starter_file_group_name',
+                            'starter_file_entries.path as starter_file_entry_path')
   end
 
   # Yield an open repo for each grouping of this assignment, then yield again for each repo that raised an exception, to
@@ -971,39 +916,6 @@ class Assignment < Assessment
     end
   end
 
-  def update_starter_code_files(group_repo, starter_repo, starter_tree, overwrite: true, starter_files: nil)
-    txn = group_repo.get_transaction('Markus', I18n.t('repo.commits.starter_code',
-                                                      assignment: self.short_identifier))
-    group_revision = group_repo.get_latest_revision
-    internal_file_names = Repository.get_class.internal_file_names
-    starter_tree.sort { |a, b| a[0].count(File::SEPARATOR) <=> b[0].count(File::SEPARATOR) } # less nested first
-                .each do |starter_obj_name, starter_obj|
-      next if internal_file_names.include?(File.basename(starter_obj_name))
-      starter_obj_path = File.join(self.repository_folder, starter_obj_name)
-      already_exists = group_revision.path_exists?(starter_obj_path)
-      next if already_exists && !overwrite
-      if starter_obj.is_a? Repository::RevisionDirectory
-        txn.add_path(starter_obj_path) unless already_exists
-      else # Repository::RevisionFile
-        if starter_files.nil? || !starter_files.has_key?(starter_obj_name) # handle cache of starter code files
-          starter_file = starter_repo.download_as_string(starter_obj)
-          unless starter_files.nil?
-            starter_files[starter_obj_name] = starter_file
-          end
-        else
-          starter_file = starter_files[starter_obj_name]
-        end
-        if already_exists
-          txn.replace(starter_obj_path, starter_file, starter_obj.mime_type, group_revision.revision_identifier)
-        else
-          txn.add(starter_obj_path, starter_file, starter_obj.mime_type)
-        end
-      end
-    end
-
-    txn
-  end
-
   # Repository authentication subtleties:
   # 1) a repository is associated with a Group, but..
   # 2) ..students are associated with a Grouping (an "instance" of Group for a specific Assignment)
@@ -1015,10 +927,12 @@ class Assignment < Assessment
   # (Basically, it's nice for a group to share a repo among assignments, but at a certain point during the course
   # we may want to add or [more frequently] remove some students from it)
   def self.get_repo_auth_records
-    Assignment.joins(:assignment_properties)
-              .includes(groupings: [:group, { accepted_student_memberships: :user }])
-              .where(assignment_properties: { vcs_submit: true })
-              .order(due_date: :desc)
+    records = Assignment.joins(:assignment_properties)
+                        .includes(groupings: [:group, { accepted_student_memberships: :user }])
+                        .where(assignment_properties: { vcs_submit: true })
+                        .order(due_date: :desc)
+    records.where(assignment_properties: { is_timed: false })
+           .or(records.where.not(groupings: { start_time: nil }))
   end
 
   ### /REPO ###
@@ -1107,15 +1021,9 @@ class Assignment < Assessment
     end
 
     criterion_data =
-      self.rubric_criteria.left_outer_joins(:tas)
-          .pluck('rubric_criteria.name', 'rubric_criteria.position',
-                 'rubric_criteria.assigned_groups_count', 'users.user_name') +
-        self.flexible_criteria.left_outer_joins(:tas)
-            .pluck('flexible_criteria.name', 'flexible_criteria.position',
-                   'flexible_criteria.assigned_groups_count', 'users.user_name') +
-        self.checkbox_criteria.left_outer_joins(:tas)
-            .pluck('checkbox_criteria.name', 'checkbox_criteria.position',
-                   'checkbox_criteria.assigned_groups_count', 'users.user_name')
+      self.criteria.left_outer_joins(:tas)
+          .pluck('criteria.name', 'criteria.position',
+                 'criteria.assigned_groups_count', 'users.user_name')
     criteria = Hash.new { |h, k| h[k] = [] }
     criterion_data.sort_by { |c| c[3] || '' }.each do |name, pos, count, ta|
       criteria[[name, pos, count]]
@@ -1159,7 +1067,8 @@ class Assignment < Assessment
            .pluck('groupings.id',
                   'groups.group_name',
                   'submissions.revision_timestamp',
-                  'submissions.is_empty')
+                  'submissions.is_empty',
+                  'groupings.start_time')
 
     tag_data = groupings
                .joins(:tags)
@@ -1201,32 +1110,32 @@ class Assignment < Assessment
     if current_user.ta? && hide_unassigned_criteria
       assigned_criteria = current_user.criterion_ta_associations
                                       .where(assessment_id: self.id)
-                                      .pluck(:criterion_type, :criterion_id)
-                                      .map { |t, id| "#{t}-#{id}" }
+                                      .pluck(:criterion_id)
     else
       assigned_criteria = nil
     end
 
-    visibility = current_user.admin? ? :all : :ta
-    criteria = self.get_criteria(visibility).reject do |crit|
-      !assigned_criteria.nil? && !assigned_criteria.include?("#{crit.class}-#{crit.id}")
+    visible_criteria = current_user.admin? ? self.criteria : self.ta_criteria
+    criteria = visible_criteria.reject do |crit|
+      !assigned_criteria.nil? && !assigned_criteria.include?(crit.id)
     end
 
     result_ids = result_data.values.map { |arr| arr.map { |h| h['results.id'] } }.flatten
 
-    total_marks = Mark.where(markable: criteria, result_id: result_ids)
+    total_marks = Mark.where(criterion: criteria, result_id: result_ids)
                       .pluck(:result_id, :mark)
                       .group_by(&:first)
                       .transform_values { |arr| arr.map(&:second).compact.sum }
 
     max_mark = criteria.map(&:max_mark).compact.sum
+    extra_marks_hash = Result.get_total_extra_marks(result_ids, max_mark: max_mark)
 
     collection_dates = all_grouping_collection_dates
 
     data_collections = [tag_data, result_data, member_data, section_data, collection_dates]
 
     # This is the submission data that's actually returned
-    data.map do |grouping_id, group_name, revision_timestamp, is_empty|
+    data.map do |grouping_id, group_name, revision_timestamp, is_empty, start_time|
       tag_info, result_info, member_info, section_info, collection_date = data_collections.map { |c| c[grouping_id] }
       has_remark = result_info&.count&.> 1
       result_info = result_info&.first || {}
@@ -1242,14 +1151,18 @@ class Assignment < Assessment
                                      collection_date)
       }
 
+      # i18n-tasks-use t('time.formats.shorter')
+      base[:start_time] = I18n.l(start_time, format: :shorter) if self.is_timed && !start_time.nil?
+
       unless is_empty || revision_timestamp.nil?
         # TODO: for some reason, this is not automatically converted to our timezone by the query
-        base[:submission_time] = I18n.l(revision_timestamp.in_time_zone)
+        base[:submission_time] = I18n.l(revision_timestamp.in_time_zone, format: :shorter)
       end
 
       if result_info['results.id'].present?
+        extra_mark = extra_marks_hash[result_info['results.id']] || 0
         base[:result_id] = result_info['results.id']
-        base[:final_grade] = total_marks[result_info['results.id']] || 0.0
+        base[:final_grade] = (total_marks[result_info['results.id']] || 0.0) + extra_mark
       end
 
       base[:members] = member_info.map { |h| h['users.user_name'] } unless member_info.nil?
@@ -1363,11 +1276,9 @@ class Assignment < Assessment
         attrs = Hash[DEFAULT_FIELDS.zip(row)]
         attrs.delete_if { |_, v| v.nil? }
         if assignment.new_record?
-          assignment.assignment_properties = AssignmentProperties.new(repository_folder: row[0],
-                                                                      token_period: 1,
-                                                                      unlimited_tokens: false)
-          assignment.submission_rule = NoLateSubmissionRule.new
-          assignment.assignment_stat = AssignmentStat.new
+          assignment.assignment_properties.repository_folder = row[0]
+          assignment.assignment_properties.token_period = 1
+          assignment.assignment_properties.unlimited_tokens = false
         end
         assignment.update(attrs)
         raise CsvInvalidLineError unless assignment.valid?
@@ -1379,9 +1290,10 @@ class Assignment < Assessment
         map[:assignments].map do |row|
           assignment = self.find_or_create_by(short_identifier: row[:short_identifier])
           if assignment.new_record?
-            row[:assignment_properties] = AssignmentProperties.new(repository_folder: row[:short_identifier],
-                                                                   token_period: 1,
-                                                                   unlimited_tokens: false)
+            row[:assignment_properties_attributes] = {}
+            row[:assignment_properties_attributes][:repository_folder] = row[:short_identifier]
+            row[:assignment_properties_attributes][:token_period] = 1
+            row[:assignment_properties_attributes][:unlimited_tokens] = false
             row[:submission_rule] = NoLateSubmissionRule.new
             row[:assignment_stat] = AssignmentStat.new
           end
@@ -1397,4 +1309,10 @@ class Assignment < Assessment
     end
   end
 
+  def create_associations
+    return unless self.new_record?
+    self.assignment_properties ||= AssignmentProperties.new
+    self.assignment_stat ||= AssignmentStat.new
+    self.submission_rule ||= NoLateSubmissionRule.new
+  end
 end

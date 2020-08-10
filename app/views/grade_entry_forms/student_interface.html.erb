@@ -1,8 +1,8 @@
 <%# Grades page for students %>
 <% content_for :title, t('grade_entry_forms.students.title') + ' ' + @grade_entry_form.short_identifier %>
 
-<% if !@grade_entry_form.message.empty? %>
-  <div class='marks-message'><%= "#{@grade_entry_form.message}" %></div>
+<% unless @grade_entry_form.message.blank? %>
+  <p><%= "#{@grade_entry_form.message}" %></p>
 <% end %>
 
 <% if @grade_entry_form.grade_entry_items.empty? %>
@@ -10,7 +10,7 @@
 <% elsif @grade_entry_student.nil? || !@grade_entry_student.released_to_student %>
   <p><%= t('grade_entry_forms.students.no_results') %></p>
 <% else %>
-  <div class='marks-table'>
+  <div class='table'>
     <table>
       <thead>
       <tr>
@@ -28,4 +28,25 @@
       </tbody>
     </table>
   </div>
+  <fieldset id='gef_data_chart' style="text-align: center; padding-bottom: 0;"></fieldset>
+  <%= content_for :head do %>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        makeDataChart(document.getElementById('gef_data_chart'),
+          { xTitle: '<%= t('activerecord.models.criterion.one') %>',
+            yTitle: '<%= t('activerecord.models.mark.one') + ' (%)' %>',
+            legend: false,
+            width: '<%= @labels.size > 5 ? 'auto' : (@labels.size * 150).to_s + 'px' %>',
+            labels: <%= @labels.to_json.html_safe %>,
+            datasets: [{
+              data: <%= @item_percentages.to_json.html_safe %>,
+              backgroundColor: 'rgba(58,106,179,0.35)',
+              borderColor: '#3a6ab3',
+              borderWidth: 1,
+              hoverBackgroundColor: 'rgba(58,106,179,0.75)'
+            }]
+          });
+      });
+    </script>
+  <% end %>
 <% end %>

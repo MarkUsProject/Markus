@@ -16,7 +16,7 @@ fr:
       bad_students: "UPDATE ME: %{student_names}"
       memberships_exist: "UPDATE ME: %{student_names}"
 
-    #Sutdent's View (student)
+    #Student's View (student)
     student:
       submission:
         conflicts: "Conflits"
@@ -57,9 +57,7 @@ fr:
       download_submissions_finalizing: "Finaliser les soumissions à télécharger"
       download_submissions_complete: "Les soumissions sont prêtes. Cliquez ici pour finaliser le téléchargement."
       update_repo_required_files_job: "%{progress}/%{total} repos modifiés"
-      update_starter_code_job: "%{progress}/%{total} repos modifiés"
-      autotest_run_job: "%{progress}/%{total} Tests commencés"
-      autotest_run_job_failed_count: "%{failed} Tests échoués"
+      autotest_run_job_enqueuing: "UPDATE ME"
       autotest_specs_job: "Configuration de tests automatisés"
     repo:
       commits:
@@ -67,6 +65,5 @@ fr:
         initial: "UPDATE ME"
         default: "UPDATE ME"
         required_files: "UPDATE ME %{assignment}"
-        starter_code: "UPDATE ME %{assignment}"
       timeout: 'Attendu %{ms} millisecondes pour accéder à ce repo. Veuillez patienter quelques secondes et réessayer.'
       assignment_dir_creation_error: "N'a pas réussi à créer un dossier pour %{short_identifier}. Veuillez réessayer cette action"

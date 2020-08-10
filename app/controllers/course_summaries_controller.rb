@@ -2,7 +2,7 @@ class CourseSummariesController < ApplicationController
   include CourseSummariesHelper
 
   before_action :authorize_only_for_admin,
-                except: [:populate]
+                except: [:populate, :index]
 
   layout 'assignment_content'
 
@@ -10,17 +10,33 @@ class CourseSummariesController < ApplicationController
   end
 
   def populate
+    visible_assessments_info = {}
+    marking_schemes = {}
+    if current_user.admin?
+      visible_assessments = Assessment.all.order(id: :asc)
+      MarkingScheme.all.each do |m|
+        grades = m.students_weighted_grades_array(current_user)
+        marking_schemes[m.name] = { average: DescriptiveStatistics.mean(grades).round(2),
+                                    median: DescriptiveStatistics.median(grades).round(2) }
+      end
+    else
+      visible_assessments = Assessment.where(is_hidden: false).order(id: :asc)
+    end
+    visible_assessments.each do |a|
+      visible_assessments_info[a.short_identifier] = assessment_overview(a)
+    end
     render json: {
+      assessment_info: visible_assessments_info,
+      columns: populate_columns,
       data: get_table_json_data(current_user),
-      columns: populate_columns
+      schemes: marking_schemes
     }
   end
 
   def view_summary
-    @assignments = Assignment.all
     @marking_schemes = MarkingScheme.all
     @marking_weights = MarkingWeight.all
-    @grade_entry_forms = GradeEntryForm.all
+    @assessments = Assessment.all
   end
 
   def get_marking_scheme_details
@@ -28,15 +44,13 @@ class CourseSummariesController < ApplicationController
   end
 
   def download_csv_grades_report
-    assignments = Assignment.all.pluck(:id)
-    grade_entry_forms = GradeEntryForm.all.pluck(:id)
+    assessments = Assessment.all.order(id: :asc).pluck(:id)
     marking_schemes = MarkingScheme.all.pluck(:id)
     grades_data = get_table_json_data(current_user)
 
     csv_string = MarkusCsv.generate(grades_data, [generate_csv_header]) do |student|
       row = [student[:user_name], student[:first_name], student[:last_name], student[:id_number]]
-      row.concat(assignments.map { |a_id| student[:assignment_marks][a_id] || nil })
-      row.concat(grade_entry_forms.map { |gef_id| student[:grade_entry_form_marks][gef_id] || nil })
+      row.concat(assessments.map { |a_id| student[:assessment_marks][a_id]&.[](:mark) || nil })
       row.concat(marking_schemes.map { |ms_id| student[:weighted_marks][ms_id] })
       row
     end
@@ -46,16 +60,14 @@ class CourseSummariesController < ApplicationController
   private
 
   def generate_csv_header
-    assignments = Assignment.all
-    grade_entry_forms = GradeEntryForm.all
+    assessments = Assessment.all.order(id: :asc)
     marking_schemes = MarkingScheme.all
 
     header = [User.human_attribute_name(:user_name),
               User.human_attribute_name(:first_name),
               User.human_attribute_name(:last_name),
               User.human_attribute_name(:id_number)]
-    header.concat(assignments.map(&:short_identifier))
-    header.concat(grade_entry_forms.map(&:short_identifier))
+    header.concat(assessments.map(&:short_identifier))
     header.concat(marking_schemes.map(&:name))
 
     header
@@ -70,30 +82,20 @@ class CourseSummariesController < ApplicationController
 
   def populate_columns
     if current_user.admin? || current_user.ta?
-      assignments = Assignment.pluck(:id, :short_identifier)
-      gefs = GradeEntryForm.pluck(:id, :short_identifier)
+      assessments = Assessment.order(id: :asc).pluck(:id, :short_identifier)
       marking_schemes = MarkingScheme.pluck(:id, :name)
     else
-      assignments = Assignment.where(is_hidden: false).pluck(:id, :short_identifier)
-      gefs = GradeEntryForm.where(is_hidden: false).pluck(:id, :short_identifier)
+      assessments = Assessment.where(is_hidden: false).order(id: :asc).pluck(:id, :short_identifier)
       marking_schemes = MarkingScheme.none
     end
 
-    assignment_columns = assignments.map do |id, short_identifier|
+    assessment_columns = assessments.map do |id, short_identifier|
       {
-        accessor: "assignment_marks.#{id}",
+        accessor: "assessment_marks.#{id}.mark",
         Header: short_identifier,
         minWidth: 50,
-        className: 'number'
-      }
-    end
-
-    gef_columns = gefs.map do |id, short_identifier|
-      {
-        accessor: "grade_entry_form_marks.#{id}",
-        Header: short_identifier,
-        minWidth: 50,
-        className: 'number'
+        className: 'number',
+        headerStyle: { textAlign: 'right' }
       }
     end
 
@@ -102,10 +104,26 @@ class CourseSummariesController < ApplicationController
         accessor: "weighted_marks.#{id}",
         Header: name,
         minWidth: 50,
-        className: 'number'
+        className: 'number',
+        headerStyle: { textAlign: 'right' }
       }
     end
 
-    assignment_columns.concat(gef_columns, marking_scheme_columns)
+    assessment_columns.concat(marking_scheme_columns)
+  end
+
+  def assessment_overview(assessment)
+    if assessment.is_a? GradeEntryForm
+      info = { total: assessment.grade_entry_items.sum(:out_of), average: assessment.calculate_average&.round(2) }
+      if current_user.admin?
+        info[:median] = assessment.calculate_median&.round(2)
+      end
+    else
+      info = { total: assessment.max_mark, average: assessment.results_average&.round(2) }
+      if current_user.admin? || assessment.display_median_to_students
+        info[:median] = assessment.results_median&.round(2)
+      end
+    end
+    info
   end
 end

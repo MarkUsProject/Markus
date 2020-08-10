@@ -1,17 +1,13 @@
 $('#annotation_dialog').empty();
 document.getElementById('annotation_dialog').innerHTML = '<%= escape_javascript(
   render partial: "annotation_modal",
-         locals: { form_url: { action: 'create', controller: 'annotations' },
+         locals: { form_url: annotations_path,
+                   form_values: params,
                    assignment: @assignment,
                    result: @result,
-                   current_user: @current_user,
-                   annotation_categories:
-                     @assignment.annotation_categories
-                                .includes(:annotation_texts),
-                   form_values: params,
+                   annotation: nil,
                    title: t('helpers.submit.create', model: Annotation.model_name.human),
                    content: '',
-                   new_annotation: true,
                    submit_btn_data: {}}
 )%>';
 open_annotation_modal();

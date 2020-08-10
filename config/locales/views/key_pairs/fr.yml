@@ -11,8 +11,6 @@ fr:
     delete:
       success: "Paire de Clés supprimé avec succès"
     file: "Fichier"
-    update:
-      success: "Paire de Clés mis à jour avec succès"
     key_content: "Contenu de Key"
     key_pairs_title: "Vos Paires de Clés"
     new_key_pair: "Nouvelle Paire de Clés"

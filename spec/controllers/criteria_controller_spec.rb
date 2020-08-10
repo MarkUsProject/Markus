@@ -3,6 +3,7 @@ describe CriteriaController do
   let(:assignment) { create :assignment }
   let(:grouping) { create :grouping, assignment: assignment }
   let(:submission) { create :submission, grouping: grouping }
+
   describe 'Using Flexible Criteria' do
     let(:flexible_criterion) do
       create(:flexible_criterion,
@@ -138,7 +139,7 @@ describe CriteriaController do
         before(:each) do
           get_as admin,
                  :new,
-                 params: { assignment_id: assignment.id, criterion_type: 'FlexibleCriterion' },
+                 params: { assignment_id: assignment.id },
                  format: :js
         end
 
@@ -159,7 +160,7 @@ describe CriteriaController do
         before(:each) do
           get_as admin,
                  :edit,
-                 params: { assignment_id: 1, id: flexible_criterion.id, criterion_type: flexible_criterion.class.to_s },
+                 params: { assignment_id: 1, id: flexible_criterion.id },
                  format: :js
         end
 
@@ -187,8 +188,7 @@ describe CriteriaController do
             get_as admin,
                    :update,
                    params: { assignment_id: 1, id: flexible_criterion.id,
-                             flexible_criterion: { name: 'one', max_mark: 10 },
-                             criterion_type: 'FlexibleCriterion' },
+                             flexible_criterion: { name: 'one', max_mark: 10 } },
                    format: :js
           end
 
@@ -206,8 +206,7 @@ describe CriteriaController do
             get_as admin,
                    :update,
                    params: { assignment_id: 1, id: flexible_criterion.id,
-                             flexible_criterion: { name: 'one', max_mark: 10 },
-                             criterion_type: 'FlexibleCriterion' },
+                             flexible_criterion: { name: 'one', max_mark: 10 } },
                    format: :js
           end
 
@@ -244,7 +243,7 @@ describe CriteriaController do
       context '#create' do
         context 'with save error' do
           before(:each) do
-            expect_any_instance_of(FlexibleCriterion).to receive(:update).and_return(false)
+            expect_any_instance_of(FlexibleCriterion).to receive(:save).and_return(false)
             expect_any_instance_of(FlexibleCriterion).to receive(:errors).and_return(ActiveModel::Errors.new(self))
             post_as admin,
                     :create,
@@ -309,9 +308,7 @@ describe CriteriaController do
         before(:each) do
           post_as admin,
                   :edit,
-                  params: { assignment_id: 1,
-                            id: flexible_criterion.id,
-                            criterion_type: flexible_criterion.class.to_s },
+                  params: { assignment_id: 1, id: flexible_criterion.id },
                   format: :js
         end
 
@@ -331,8 +328,7 @@ describe CriteriaController do
       it 'should be able to update_positions' do
         post_as admin,
                 :update_positions,
-                params: { criterion: ["#{flexible_criterion2.class} #{flexible_criterion2.id}",
-                                      "#{flexible_criterion.class} #{flexible_criterion.id}"],
+                params: { criterion: [flexible_criterion2.id, flexible_criterion.id],
                           assignment_id: assignment.id },
                 format: :js
         is_expected.to render_template('criteria/update_positions')
@@ -349,9 +345,7 @@ describe CriteriaController do
       it ' should be able to delete the criterion' do
         delete_as admin,
                   :destroy,
-                  params: { assignment_id: 1,
-                            id: flexible_criterion.id,
-                            criterion_type: flexible_criterion.class.to_s },
+                  params: { assignment_id: 1, id: flexible_criterion.id },
                   format: :js
         expect(assigns(:criterion)).to be_truthy
         i18t_strings = [I18n.t('flash.criteria.destroy.success')].map { |f| extract_text f }
@@ -498,7 +492,7 @@ describe CriteriaController do
         before(:each) do
           get_as admin,
                  :new,
-                 params: { assignment_id: assignment.id, criterion_type: 'RubricCriterion' },
+                 params: { assignment_id: assignment.id },
                  format: :js
         end
 
@@ -519,7 +513,7 @@ describe CriteriaController do
         before(:each) do
           get_as admin,
                  :edit,
-                 params: { assignment_id: 1, id: rubric_criterion.id, criterion_type: rubric_criterion.class.to_s },
+                 params: { assignment_id: 1, id: rubric_criterion.id },
                  format: :js
         end
 
@@ -545,8 +539,8 @@ describe CriteriaController do
             )
             get_as admin,
                    :update,
-                   params: { assignment_id: 1, id: rubric_criterion.id, rubric_criterion: { name: 'one', max_mark: 10 },
-                             criterion_type: 'RubricCriterion' },
+                   params: { assignment_id: 1, id: rubric_criterion.id,
+                             rubric_criterion: { name: 'one', max_mark: 10 } },
                    format: :js
           end
 
@@ -563,8 +557,8 @@ describe CriteriaController do
           before(:each) do
             get_as admin,
                    :update,
-                   params: { assignment_id: 1, id: rubric_criterion.id, rubric_criterion: { name: 'one', max_mark: 10 },
-                             criterion_type: 'RubricCriterion' },
+                   params: { assignment_id: 1, id: rubric_criterion.id,
+                             rubric_criterion: { name: 'one', max_mark: 10 } },
                    format: :js
           end
 
@@ -601,11 +595,11 @@ describe CriteriaController do
       context '#create' do
         context 'with save error' do
           before(:each) do
-            expect_any_instance_of(RubricCriterion).to receive(:update).and_return(false)
+            expect_any_instance_of(RubricCriterion).to receive(:save).and_return(false)
             expect_any_instance_of(RubricCriterion).to receive(:errors).and_return(ActiveModel::Errors.new(self))
             post_as admin,
                     :create,
-                    params: { assignment_id: assignment.id, rubric_criterion: { name: 'first', max_mark: 10 },
+                    params: { assignment_id: assignment.id, max_mark_prompt: 10,
                               new_criterion_prompt: 'first', criterion_type: 'RubricCriterion' },
                     format: :js
           end
@@ -623,7 +617,7 @@ describe CriteriaController do
           before(:each) do
             post_as admin,
                     :create,
-                    params: { assignment_id: assignment.id, rubric_criterion: { name: 'first' },
+                    params: { assignment_id: assignment.id,
                               new_criterion_prompt: 'first', criterion_type: 'RubricCriterion', max_mark_prompt: 10 },
                     format: :js
           end
@@ -666,7 +660,7 @@ describe CriteriaController do
         before(:each) do
           post_as admin,
                   :edit,
-                  params: { assignment_id: 1, id: rubric_criterion.id, criterion_type: rubric_criterion.class.to_s },
+                  params: { assignment_id: 1, id: rubric_criterion.id },
                   format: :js
         end
 
@@ -686,8 +680,7 @@ describe CriteriaController do
       it 'should be able to update_positions' do
         post_as admin,
                 :update_positions,
-                params: { criterion: ["#{rubric_criterion2.class} #{rubric_criterion2.id}",
-                                      "#{rubric_criterion.class} #{rubric_criterion.id}"],
+                params: { criterion: [rubric_criterion2.id, rubric_criterion.id],
                           assignment_id: assignment.id },
                 format: :js
         is_expected.to render_template('criteria/update_positions')
@@ -704,7 +697,7 @@ describe CriteriaController do
       it ' should be able to delete the criterion' do
         delete_as admin,
                   :destroy,
-                  params: { assignment_id: 1, id: rubric_criterion.id, criterion_type: rubric_criterion.class.to_s },
+                  params: { assignment_id: 1, id: rubric_criterion.id },
                   format: :js
         expect(assigns(:criterion)).to be_truthy
         i18t_string = [I18n.t('flash.criteria.destroy.success')].map { |f| extract_text f }
@@ -756,15 +749,15 @@ describe CriteriaController do
       it 'deletes all criteria previously created' do
         post_as admin, :upload, params: { assignment_id: assignment.id, upload_file: mixed_file }
 
-        expect(assignment.rubric_criteria.find_by(name: rubric_criterion.name)).to be_nil
-        expect(assignment.flexible_criteria.find_by(name: flexible_criterion.name)).to be_nil
-        expect(assignment.checkbox_criteria.find_by(name: checkbox_criterion.name)).to be_nil
+        expect(assignment.criteria.where(type: 'RubricCriterion').find_by(name: rubric_criterion.name)).to be_nil
+        expect(assignment.criteria.where(type: 'FlexibleCriterion').find_by(name: flexible_criterion.name)).to be_nil
+        expect(assignment.criteria.where(type: 'CheckboxCriterion').find_by(name: checkbox_criterion.name)).to be_nil
       end
 
       it 'maintains the order between entries and positions for criteria' do
         post_as admin, :upload, params: { assignment_id: assignment.id, upload_file: mixed_file }
 
-        expect(assignment.get_criteria.map { |cr| [cr.name, cr.position] })
+        expect(assignment.criteria.map { |cr| [cr.name, cr.position] })
           .to match_array([['cr30', 1],
                            ['cr20', 2],
                            ['cr100', 3],
@@ -778,50 +771,37 @@ describe CriteriaController do
       it 'creates all criteria with properly formatted entries' do
         post_as admin, :upload, params: { assignment_id: assignment.id, upload_file: mixed_file }
 
-        expect(assignment.get_criteria.map(&:name)).to contain_exactly('cr30',
-                                                                       'cr20',
-                                                                       'cr100',
-                                                                       'cr80',
-                                                                       'cr60',
-                                                                       'cr90',
-                                                                       'cr40',
-                                                                       'cr50')
+        expect(assignment.criteria.pluck(:name)).to contain_exactly('cr30',
+                                                                    'cr20',
+                                                                    'cr100',
+                                                                    'cr80',
+                                                                    'cr60',
+                                                                    'cr90',
+                                                                    'cr40',
+                                                                    'cr50')
         expect(flash[:success].map { |f| extract_text f })
           .to eq([I18n.t('upload_success', count: 8)].map { |f| extract_text f })
       end
 
       it 'creates rubric criteria with properly formatted entries' do
         post_as admin, :upload, params: { assignment_id: assignment.id, upload_file: mixed_file }
-
-        expect(assignment.get_criteria(:all, :rubric).pluck(:name)).to contain_exactly('cr30', 'cr90')
-
-        cr1 = assignment.get_criteria(:all, :rubric).find_by(name: 'cr30')
+        expect(assignment.criteria.where(type: 'RubricCriterion').pluck(:name)).to contain_exactly('cr30', 'cr90')
+        cr1 = assignment.criteria.where(type: 'RubricCriterion').find_by(name: 'cr30')
+        expect(cr1.levels.size).to eq(5)
         expect(cr1.max_mark).to eq(5.0)
-        expect(cr1.level_0_name).to eq('What?')
-        expect(cr1.level_0_description).to eq('Fail')
-        expect(cr1.level_1_name).to eq('Hmm')
-        expect(cr1.level_1_description).to eq('Almost fail')
-        expect(cr1.level_2_name).to eq('Average')
-        expect(cr1.level_2_description).to eq('Not bad')
-        expect(cr1.level_3_name).to eq('Good')
-        expect(cr1.level_3_description).to eq('Alright')
-        expect(cr1.level_4_name).to eq('Excellent')
-        expect(cr1.level_4_description).to eq('Impressive')
         expect(cr1.ta_visible).to be false
         expect(cr1.peer_visible).to be true
+        # Since there are only 5 levels in this rubric criterion, if each of the following queries return an entity,
+        # then this rubric criterion is properly sat up.
+        expect(cr1.levels.find_by(name: 'Beginner', description: 'Fail', mark: 0)).not_to be_nil
+        expect(cr1.levels.find_by(name: 'Hmm', description: 'Almost fail', mark: 1)).not_to be_nil
+        expect(cr1.levels.find_by(name: 'Average', description: 'Not bad', mark: 2)).not_to be_nil
+        expect(cr1.levels.find_by(name: 'Good', description: 'Alright', mark: 3)).not_to be_nil
+        expect(cr1.levels.find_by(name: 'Excellent', description: 'Impressive', mark: 5)).not_to be_nil
 
-        cr2 = assignment.get_criteria(:all, :rubric).find_by(name: 'cr90')
+        cr2 = assignment.criteria.where(type: 'RubricCriterion').find_by(name: 'cr90')
         expect(cr2.max_mark).to eq(4.6)
-        expect(cr2.level_0_name).to be_nil
-        expect(cr2.level_0_description).to be_nil
-        expect(cr2.level_1_name).to be_nil
-        expect(cr2.level_1_description).to be_nil
-        expect(cr2.level_2_name).to be_nil
-        expect(cr2.level_2_description).to be_nil
-        expect(cr2.level_3_name).to be_nil
-        expect(cr2.level_3_description).to be_nil
-        expect(cr2.level_4_name).to be_nil
-        expect(cr2.level_4_description).to be_nil
+        expect(cr2.levels.size).to eq(5)
         expect(cr2.ta_visible).to be true
         expect(cr2.peer_visible).to be false
       end
@@ -829,27 +809,28 @@ describe CriteriaController do
       it 'creates flexible criteria with properly formatted entries' do
         post_as admin, :upload, params: { assignment_id: assignment.id, upload_file: mixed_file }
 
-        expect(assignment.get_criteria(:all, :flexible).pluck(:name)).to contain_exactly('cr20', 'cr50', 'cr80', 'cr60')
+        expect(assignment.criteria.where(type: 'FlexibleCriterion').pluck(:name))
+          .to contain_exactly('cr20', 'cr50', 'cr80', 'cr60')
 
-        cr80 = assignment.get_criteria(:all, :flexible).find_by(name: 'cr80')
+        cr80 = assignment.criteria.where(type: 'FlexibleCriterion').find_by(name: 'cr80')
         expect(cr80.max_mark).to eq(10.0)
         expect(cr80.description).to eq('')
         expect(cr80.ta_visible).to be true
         expect(cr80.peer_visible).to be true
 
-        cr20 = assignment.get_criteria(:all, :flexible).find_by(name: 'cr20')
+        cr20 = assignment.criteria.where(type: 'FlexibleCriterion').find_by(name: 'cr20')
         expect(cr20.max_mark).to eq(2.0)
         expect(cr20.description).to eq('I am flexible')
         expect(cr20.ta_visible).to be true
         expect(cr20.peer_visible).to be true
 
-        cr50 = assignment.get_criteria(:all, :flexible).find_by(name: 'cr50')
+        cr50 = assignment.criteria.where(type: 'FlexibleCriterion').find_by(name: 'cr50')
         expect(cr50.max_mark).to eq(1.0)
         expect(cr50.description).to eq('Another flexible.')
         expect(cr50.ta_visible).to be true
         expect(cr50.peer_visible).to be false
 
-        cr60 = assignment.get_criteria(:all, :flexible).find_by(name: 'cr60')
+        cr60 = assignment.criteria.where(type: 'FlexibleCriterion').find_by(name: 'cr60')
         expect(cr60.max_mark).to eq(10.0)
         expect(cr60.description).to eq('')
         expect(cr60.ta_visible).to be true
@@ -859,8 +840,8 @@ describe CriteriaController do
       it 'creates checkbox criteria with properly formatted entries' do
         post_as admin, :upload, params: { assignment_id: assignment.id, upload_file: mixed_file }
 
-        expect(assignment.get_criteria(:all, :checkbox).pluck(:name)).to contain_exactly('cr100', 'cr40')
-        cr1 = assignment.get_criteria(:all, :checkbox).find_by(name: 'cr100')
+        expect(assignment.criteria.where(type: 'CheckboxCriterion').pluck(:name)).to contain_exactly('cr100', 'cr40')
+        cr1 = assignment.criteria.where(type: 'CheckboxCriterion').find_by(name: 'cr100')
         expect(cr1.max_mark).to eq(5.0)
         expect(cr1.description).to eq('I am checkbox')
         expect(cr1.ta_visible).to be true
@@ -870,36 +851,36 @@ describe CriteriaController do
       it 'creates criteria being case insensitive with the type given' do
         post_as admin, :upload, params: { assignment_id: assignment.id, upload_file: mixed_file }
 
-        expect(assignment.get_criteria(:all, :flexible).pluck(:name)).to contain_exactly('cr20', 'cr80', 'cr60', 'cr50')
+        expect(assignment.criteria.where(type: 'FlexibleCriterion').pluck(:name))
+          .to contain_exactly('cr20', 'cr80', 'cr60', 'cr50')
       end
 
       it 'creates criteria that lack a description' do
         post_as admin, :upload, params: { assignment_id: assignment.id, upload_file: mixed_file }
 
-        expect(assignment.get_criteria(:all, :flexible).map(&:name)).to include('cr80')
-        expect(assignment.get_criteria(:all, :flexible).find_by(name: 'cr80').description).to eq('')
+        expect(assignment.criteria.where(type: 'FlexibleCriterion').pluck(:name)).to include('cr80')
+        expect(assignment.criteria.where(type: 'FlexibleCriterion').find_by(name: 'cr80').description).to eq('')
       end
 
       it 'creates criteria with the default visibility options if these are not given in the entries' do
         post_as admin, :upload, params: { assignment_id: assignment.id, upload_file: mixed_file }
-        expect(assignment.get_criteria.map(&:name)).to include('cr100', 'cr60')
-        expect(assignment.get_criteria(:all, :checkbox).find_by(name: 'cr100').ta_visible).to be true
-        expect(assignment.get_criteria(:all, :checkbox).find_by(name: 'cr100').peer_visible).to be false
-        expect(assignment.get_criteria(:all, :flexible).find_by(name: 'cr60').ta_visible).to be true
-        expect(assignment.get_criteria(:all, :flexible).find_by(name: 'cr60').peer_visible).to be false
+        expect(assignment.criteria.pluck(:name)).to include('cr100', 'cr60')
+        expect(assignment.criteria.where(type: 'CheckboxCriterion').find_by(name: 'cr100').ta_visible).to be true
+        expect(assignment.criteria.where(type: 'CheckboxCriterion').find_by(name: 'cr100').peer_visible).to be false
+        expect(assignment.criteria.where(type: 'FlexibleCriterion').find_by(name: 'cr60').ta_visible).to be true
+        expect(assignment.criteria.where(type: 'FlexibleCriterion').find_by(name: 'cr60').peer_visible).to be false
       end
 
       it 'creates criteria with rounded (up to first digit after decimal point) maximum mark' do
         post_as admin, :upload, params: { assignment_id: assignment.id, upload_file: round_max_mark_file }
+        expect(assignment.criteria.where(type: 'RubricCriterion').first.name).to eq('cr90')
 
-        expect(assignment.get_criteria(:all, :rubric).first.name).to eq('cr90')
-
-        expect(assignment.get_criteria(:all, :rubric).first.max_mark).to eq(4.6)
+        expect(assignment.criteria.where(type: 'RubricCriterion').first.max_mark).to eq(4.6)
       end
       it 'does not create criteria with format errors in entries' do
         post_as admin, :upload, params: { assignment_id: assignment.id, upload_file: invalid_mixed_file }
 
-        expect(assignment.get_criteria.map(&:name)).not_to include('cr40', 'cr50', 'cr70')
+        expect(assignment.criteria.pluck(:name)).not_to include('cr40', 'cr50', 'cr70')
         expect(flash[:error].map { |f| extract_text f })
           .to eq([I18n.t('criteria.errors.invalid_format') + ' cr40, cr70, cr50'].map { |f| extract_text f })
       end
@@ -907,27 +888,19 @@ describe CriteriaController do
       it 'does not create criteria with an invalid mark' do
         post_as admin, :upload, params: { assignment_id: assignment.id, upload_file: invalid_mixed_file }
 
-        expect(assignment.get_criteria.map(&:name)).not_to include('cr40', 'cr50')
+        expect(assignment.criteria.pluck(:name)).not_to include('cr40', 'cr50')
       end
 
       it 'does not create criteria that have both visibility options set to false' do
         post_as admin, :upload, params: { assignment_id: assignment.id, upload_file: invalid_mixed_file }
 
-        expect(assignment.get_criteria.map(&:name)).not_to include('cr70')
+        expect(assignment.criteria.pluck(:name)).not_to include('cr70')
       end
 
       it 'does not create criteria that have unmatched keys / more keys than required' do
+        expect(assignment.criteria.where(type: 'RubricCriterion').length).to eq(1)
         post_as admin, :upload, params: { assignment_id: assignment.id, upload_file: partially_valid_file }
-
-        criteria = assignment.get_criteria(:all, :rubric).first
-        expect(criteria.name).to eq('Quality of Writing')
-        expect(criteria.level_4_name).to be_nil
-        expect(criteria.level_4_description).to be_nil
-        expect(flash[:success].size).to eq(1)
-
-        expect(assignment.get_criteria.map(&:name)).not_to include('Level 5')
-
-        pending('We should report there is an invalid key in the file')
+        expect(assignment.criteria.where(type: 'RubricCriterion').length).to eq(1)
         expect(flash[:error]).not_to be_nil
       end
 
@@ -942,18 +915,17 @@ describe CriteriaController do
 
         it 'sends the correct information' do
           post_as admin, :upload, params: { assignment_id: assignment.id, upload_file: test_upload_download_file }
-
           get :download, params: { assignment_id: assignment.id }
 
-          expect(YAML.safe_load(response.body)).to eq(YAML.safe_load(expected_download.read))
+          expect(YAML.safe_load(response.body, [Symbol], symbolize_names: true))
+            .to eq(YAML.safe_load(expected_download.read, symbolize_names: true))
         end
       end
     end
   end
 
-  let(:assignment) { FactoryBot.create(:assignment) }
-  context '#upload', pending: true do # Until criteria tables merged together, can't use Criterion.count
-    include_examples 'a controller supporting upload' do
+  context '#upload' do
+    include_examples 'a controller supporting upload', formats: [:yml] do
       let(:params) { { assignment_id: assignment.id } }
     end
   end

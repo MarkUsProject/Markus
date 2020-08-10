@@ -11,6 +11,7 @@ en:
   time:
     formats:
       default: "%A, %B %d, %Y, %I:%M:%S %p"
+      shorter: "%B %d, %I:%M:%S %p"
 
     format_string:
       js:          "YYYY-MM-DD h:mm A"
@@ -21,4 +22,18 @@ en:
     prev:   "Previous"
     time:   "Time"
 
-  hours: "hour(s)"
+  durations:
+    any_minutes: minute(s)
+    any_hours: hour(s)
+    minutes:
+      one: minute
+      other: minutes
+    hours:
+      one: hour
+      other: hours
+    days:
+      one: day
+      other: days
+    weeks:
+      one: week
+      other: weeks

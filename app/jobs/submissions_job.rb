@@ -40,8 +40,7 @@ class SubmissionsJob < ApplicationJob
         end
 
         if options[:apply_late_penalty].nil? || options[:apply_late_penalty]
-          new_submission = assignment.submission_rule.apply_submission_rule(
-            new_submission)
+          assignment.submission_rule.apply_submission_rule(new_submission)
         end
 
         grouping.is_collected = true

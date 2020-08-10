@@ -18,5 +18,3 @@ en:
     remove_key: "Remove Key"
     time_of_upload: "Time Of Upload"
     title: "Key Pairs"
-    update:
-      success: "Key Pair was updated successfully"

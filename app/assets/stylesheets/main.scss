@@ -1,85 +1,9 @@
 @import 'common/core';
 @import 'common/login';
-@import 'common/assignment_dropdown';
-
-
-// Login
-button.cookies-eu-ok {
-  background: #4D90FE;
-}
-
 
 // Dashboard
-.link_disabled {
-  color: $black;
-  display: block;
-  pointer-events: none;
-}
-
-#dashboard_lists {
-  float: left;
-  width: 30%;
-}
-
-#spreadsheet_list {
-  padding-top: 15px;
-}
-
-#summary {
-  padding-top: 15px;
-}
-
-#assignment_summaries {
-  position: relative;
-  min-height: 1px;
-  padding-right: 15px;
-  padding-left: 15px;
-  float: right;
-  width: 70%;
-  text-align: center;
-}
 
 .assignment_summary {
-  background-color: $light-grey;
-  border: 1px solid $blue;
-  border-radius: $radius;
-  display: inline-block;
-  margin: $dimen-vertical / 2;
-  padding: 1.25em;
-  text-align: left;
-  width: auto;
-
-  .left {
-    display: inline-block;
-    width: 400px;
-  }
-
-  .right {
-    display: inline-block;
-    font-size: 0.95em;
-    margin-left: 1em;
-    vertical-align: top;
-    width: calc(100% - 450px);
-  }
-
-  .course_summary {
-    display: inline-block;
-    font-size: 0.95em;
-    margin-left: 1em;
-    vertical-align: top;
-  }
-
-  .ta_grade_distribution {
-    display: inline-block;
-    width: 700px;
-  }
-
-  .title {
-    color: $dark-blue;
-    margin-bottom: 1em;
-    padding: 0;
-  }
-
   table {
     width: 100%;
 
@@ -87,39 +11,13 @@ button.cookies-eu-ok {
       border: none;
 
       td {
-        border: none;
         padding-bottom: 1em;
-        padding-right: 1em;
       }
     }
   }
-
-  ul {
-    list-style-type: square;
-    margin-top: 0;
-  }
-
-  .grader_distribution {
-    margin-bottom: 0;
-    display: block;
-  }
-
-  ::-webkit-scrollbar {
-    -webkit-appearance: none;
-    width: 7px;
-  }
-
-  ::-webkit-scrollbar-thumb {
-    background-color: rgba($black, 0.5);
-    border-radius: 4px;
-    box-shadow: 0 0 1px rgba($grey, 0.5);
-  }
-
 }
 
 .due_date {
-  font-weight: 600;
-
   .after {
     color: $red;
   }
@@ -129,22 +27,8 @@ button.cookies-eu-ok {
   }
 }
 
-.api_key {
-  margin-top: $dimen-vertical;
-}
-
 #api_key_box {
-  border: 1px solid $grey;
-  border-radius: $radius;
-  margin-top: 0.5em;
-  overflow: auto;
-  padding: 0.75em;
-
-  #api_key,
-  form {
-    display: inline-block;
-    width: auto;
-  }
+  margin-top: $dimen-vertical;
 }
 
 .pr_assignment_list {
@@ -155,15 +39,4 @@ button.cookies-eu-ok {
 
 .pr_date {
   padding-top: 5px;
-}
-
-/* Error status page (e.g. 404) */
-
-#error {
-  height: 4em;
-  margin-top: -2em;
-  position: absolute;
-  text-align: center;
-  top: 50%;
-  width: 100%;
 }

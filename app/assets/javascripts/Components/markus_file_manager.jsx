@@ -187,6 +187,13 @@ class RawFileManager extends RawFileBrowser {
           </a>
         </li>
       );
+
+      actions.push(
+        <li key="action-delete" style={{color: '#8d8d8d'}}>
+          <i className="fa fa-trash-o" aria-hidden="true"/>
+          &nbsp;{I18n.t('delete')}
+        </li>
+      );
     }
 
     if (this.props.downloadAllURL && !this.props.disableActions.downloadAll) {

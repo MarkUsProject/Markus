@@ -244,7 +244,7 @@ class GitRepository < Repository::AbstractRepository
     # walk through the commits and get revisions
     walker = Rugged::Walker.new(@repos)
     walker.sorting(Rugged::SORT_TOPO)
-    walker.push(last_commit)
+    walker.push(last_commit.oid)
     walker.map do |commit|
       current_reflog_entry = GitRepository.try_advance_reflog!(reflog, reflog_entries, commit)
       revision = get_revision(commit.oid)

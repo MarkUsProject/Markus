@@ -1,22 +1,31 @@
 <% unless @marking_schemes.nil? %>
   <% @marking_schemes.each_with_index do |marking_scheme, index| %>
+  <div class='flex-row'>
 
-  <canvas id='<%= "weighted_summary_graph_#{marking_scheme.id}" %>' width='400' height='350'></canvas>
+  <div><canvas id='<%= "weighted_summary_graph_#{marking_scheme.id}" %>' width='500' height='450'></canvas></div>
 
   <script>
     $(document).ready(function () {
+      var intervals = 20;
+      var label_multiplier = 5;
+      var dist = {};
+      <% unless @assessments.nil? %>
+        dist = <%= marking_scheme.students_weighted_grade_distribution_array(@current_user).to_json.html_safe %>;
+        label_multiplier = dist.max / intervals;
+      <% end %>
+
       // Set up graph
       var ctx = document.getElementById('<%= "weighted_summary_graph_#{marking_scheme.id}" %>').getContext('2d');
 
       // Set up data
       var data = {
-        labels: Array.apply(null, Array(21)).map(function (_, i) { return i * 5; }),
+        labels: Array.apply(null, Array(intervals + 1)).map(function (_, i) { return Math.round(i * label_multiplier); }),
         datasets: [
-          <% unless assignments.nil? && grade_entry_forms.nil? %>
+          <% unless @assessments.nil? %>
             {
               label: "Weighted Total Grades <%= marking_scheme.id %>",
               backgroundColor: colours[<%= index %>],
-              data: <%= marking_scheme.students_weighted_grade_distribution_array(@current_user) %>
+              data: dist.data
             }
           <% end %>
         ]
@@ -26,12 +35,8 @@
         tooltips: {
           callbacks: {
             title: function (tooltipItems) {
-              var baseNum = parseInt(tooltipItems[0].xLabel, 10);
-              if (baseNum === 0) {
-                return '0-5';
-              } else {
-                return (baseNum + 1) + '-' + (baseNum + 5);
-              }
+              var baseNum = tooltipItems[0].index;
+              return (baseNum * label_multiplier) + '-' + ((baseNum + 1) * label_multiplier);
             }
           }
         },
@@ -49,10 +54,11 @@
     });
   </script>
 
-  <div class='course_summary'>
+  <div class='course_summary flex-row-expand'>
     <%= render partial: 'course_summaries/course_summary_info_summary',
                locals: { marking_scheme: marking_scheme,
                          grades: marking_scheme.students_weighted_grades_array(@current_user) } %>
+  </div>
   </div>
   <% end %>
 <% end %>

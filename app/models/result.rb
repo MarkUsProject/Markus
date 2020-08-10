@@ -64,7 +64,7 @@ class Result < ApplicationRecord
   # See the documentation for update_total_mark for information about when to explicitly
   # pass the +assignment+ variable and associated warnings.
   def get_total_mark(assignment: nil)
-    user_visibility = is_a_review? ? :peer : :ta
+    user_visibility = is_a_review? ? :peer_visible : :ta_visible
     subtotal = get_subtotal(assignment: assignment)
     extra_marks = get_total_extra_marks(user_visibility: user_visibility)
     [0, subtotal + extra_marks].max
@@ -80,13 +80,13 @@ class Result < ApplicationRecord
     else
       assignment ||= submission.grouping.assignment
       if is_a_review?
-        user_visibility = :peer
+        user_visibility = :peer_visible
         assignment = assignment.pr_assignment
       else
-        user_visibility = :ta
+        user_visibility = :ta_visible
       end
-      criteria = assignment.get_criteria(user_visibility).map { |c| [c.class.to_s, c.id] }
-      marks_array = (marks.to_a.select { |m| criteria.member? [m.markable_type, m.markable_id] }).map &:mark
+      criterion_ids = assignment.criteria.where(user_visibility => true).ids
+      marks_array = marks.where(criterion_id: criterion_ids).pluck(:mark)
       # TODO: sum method does not work with empty arrays or with arrays containing nil values.
       #       Consider updating/replacing gem:
       #       see: https://github.com/thirtysixthspan/descriptive_statistics/issues/44
@@ -105,7 +105,7 @@ class Result < ApplicationRecord
   #
   # +user_visibility+ is passed to the Assignment.max_mark method to determine the
   # max_mark value only if the +max_mark+ argument is nil.
-  def get_total_extra_marks(max_mark: nil, user_visibility: :ta)
+  def get_total_extra_marks(max_mark: nil, user_visibility: :ta_visible)
     Result.get_total_extra_marks(id, max_mark: max_mark, user_visibility: user_visibility)[id] || 0
   end
 
@@ -121,7 +121,7 @@ class Result < ApplicationRecord
   #
   # +user_visibility+ is passed to the Assignment.max_mark method to determine the
   # max_mark value only if the +max_mark+ argument is nil.
-  def self.get_total_extra_marks(result_ids, max_mark: nil, user_visibility: :ta)
+  def self.get_total_extra_marks(result_ids, max_mark: nil, user_visibility: :ta_visible)
     result_data = Result.joins(:extra_marks, submission: [grouping: :assignment])
                         .where(id: result_ids)
                         .pluck(:id, :extra_mark, :unit, 'assessments.id')
@@ -165,7 +165,7 @@ class Result < ApplicationRecord
   end
 
   # Point deduction for late penalty
-  def get_total_extra_percentage_as_points(user_visibility = :ta)
+  def get_total_extra_percentage_as_points(user_visibility = :ta_visible)
     (get_total_extra_percentage * submission.assignment.max_mark(user_visibility) / 100).round(1)
   end
 
@@ -193,7 +193,7 @@ class Result < ApplicationRecord
 
   def create_marks
     assignment = self.submission.assignment
-    assignment.get_criteria(:ta).each do |criterion|
+    assignment.ta_criteria.each do |criterion|
       criterion.marks.find_or_create_by(result_id: id)
     end
     self.update_total_mark
@@ -204,8 +204,7 @@ class Result < ApplicationRecord
   def mark_hash
     Hash[
       marks.map do |mark|
-        ["#{mark.markable_type}-#{mark.markable_id}",
-         mark.mark]
+        [mark.criterion_id, mark.mark]
       end
     ]
   end
@@ -221,7 +220,7 @@ class Result < ApplicationRecord
     true
   end
 
-  def check_for_nil_marks(user_visibility = :ta)
+  def check_for_nil_marks(user_visibility = :ta_visible)
     # This check is only required when the marking state is complete.
     return true unless marking_state == Result::MARKING_STATES[:complete]
 
@@ -229,13 +228,13 @@ class Result < ApplicationRecord
     # we can't pass in a parameter to the before_save filter, so we need
     # to manually determine the visibility. If it's a pr result, we know we
     # want the peer-visible criteria
-    visibility = is_a_review? ? :peer : user_visibility
+    visibility = is_a_review? ? :peer_visible : user_visibility
 
-    criteria = submission.assignment.get_criteria(visibility).map { |c| [c.class.to_s, c.id] }
+    criteria = submission.assignment.criteria.where(visibility => true).ids
     nil_marks = false
     num_marks = 0
     marks.each do |mark|
-      if criteria.member? [mark.markable_type, mark.markable_id]
+      if criteria.member? mark.criterion_id
         num_marks += 1
         if mark.mark.nil?
           nil_marks = true

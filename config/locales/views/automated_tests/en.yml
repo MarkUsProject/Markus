@@ -1,7 +1,6 @@
 en:
   automated_tests:
     files: "Test Files"
-    information: "Information"
     loading_specs: "Tester settings are being loaded. Please refresh the page in a minute."
     need_one_file: "You must submit at least one file in order to run tests."
     need_group_for_test: "You must have a group to run tests."
@@ -40,7 +39,6 @@ en:
       extra_malformed: "Malformed results discarded by server: \n%{extra}\n"
       extra_raw_output: "Raw test run output: \n%{extra}\n"
       extra_stderr: "Messages on stderr: \n%{extra}\n"
-      no_source_files: "There are no student files to run the tests"
       no_tests: "Test results are empty"
       timeout: "%{seconds} seconds timeout expired (previous marks in this test script will not count)"
       unknown_test: "Unknown test"

@@ -1,0 +1,9 @@
+en:
+  activerecord:
+    models:
+      annotation_text:
+        one: 'Annotation Text'
+    attributes:
+      annotation_text:
+        creator: 'Created By'
+        deduction: 'Deduction'

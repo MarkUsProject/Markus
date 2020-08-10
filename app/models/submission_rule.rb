@@ -7,8 +7,9 @@ class SubmissionRule < ApplicationRecord
   end
 
   belongs_to :assignment, inverse_of: :submission_rule, foreign_key: :assessment_id
-  has_many :periods, -> { order('id') }, dependent: :destroy
+  has_many :periods, dependent: :destroy, inverse_of: :submission_rule
   accepts_nested_attributes_for :periods, allow_destroy: true
+  validates_associated :periods
 
   def self.descendants
     [NoLateSubmissionRule,
@@ -51,12 +52,19 @@ class SubmissionRule < ApplicationRecord
     assignment.section_due_date(section) + hours_sum.hours
   end
 
+  # Return the time after which +grouping+ can be collected.
+  # This is calculated by adding any penalty periods to this grouping's due date.
+  #
+  # If this grouping belongs to a timed_assignment and the student has not started
+  # the assignment yet, the collection date it the due date without any additions.
+  # This is because a student must start the assignment before the due date so their
+  # (empty) submission can be collected as soon as the due date has passed if they have
+  # not started.
   def calculate_grouping_collection_time(grouping)
-    if grouping.extension.nil? || grouping.extension.apply_penalty
-      grouping.due_date + hours_sum.hours
-    else
-      grouping.due_date
-    end
+    return grouping.due_date if assignment.is_timed && grouping.start_time.nil?
+
+    add = grouping.extension.nil? || grouping.extension.apply_penalty ? hours_sum.hours : 0
+    grouping.due_date + add
   end
 
   # When we're past the due date, the File Manager for the students will display

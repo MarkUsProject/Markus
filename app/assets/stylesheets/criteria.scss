@@ -1,113 +1,27 @@
 @import 'common/core';
 @import 'common/assignment_dropdown';
 
-.pane_wrapper {
-  display: table;
-  width: 100%;
-}
-
-#new_criterion {
-  background: none;
-  padding-right: 1em;
-
-  #new_criterion_prompt {
-    margin: 0.5em 0;
-    width: 100%;
-  }
-  #max_mark_prompt {
-    margin: 0.5em 0;
-    width: 100%;
-  }
-  #new_criterion_type_prompt {
-    margin: 0.5em 0;
-    width: 100%;
-  }
-}
-
-#criteria_pane,
-#editing_pane {
-  display: table-cell;
-  vertical-align: top;
-}
-
 #criteria_pane {
   width: 37%;
 }
 
-.flexible_criteria_icon {
-  font-weight: bolder;
-  font-size: 11.3pt;
+.button_to {
+  display: inline-block;
 }
 
-#editing_pane {
-  border: 1px solid $grey;
-  border-radius: $radius;
-  display: table;
-  margin-left: 2em;
-  padding: 1em;
-  width: 100%;
-
-  h2 {
-    margin-bottom: 0.5em;
-  }
-
-  .float_right {
-    float: right;
-  }
-
-  label.bold_inline_label {
-    display: inline-block;
-    font-weight: 600;
-    min-width: 8em;
-
-    & + input {
-      margin-top: 0.5em;
-    }
-  }
+.edit-rubric-criterion {
+  display: flex;
 
   .main_rubric_criteria_edit {
-    display: table-cell;
     padding-right: 1em;
-    width: 250px;
-
-    span {
-      display: block;
-      margin-bottom: 0.25em;
-    }
   }
 
   .rubric_criteria_levels {
     border-left: 1px solid $grey;
-    display: table-cell;
-    padding-left: 1em;
 
-    .rubric_level_header {
-      margin-bottom: 0.5em;
+    .level {
+      border-top: 1px solid $grey;
+      padding: 0.5em;
     }
-
-    input {
-      margin-bottom: 0.5em;
-    }
-
-    textarea {
-      height: 150px;
-      margin-bottom: 1.5em;
-      width: 100%;
-    }
-  }
-
-  #flexible_criteria_preview {
-    border-top: 1px solid $grey;
-    margin-top: 1.5em;
-    padding-top: 1.5em;
-  }
-
-  .criterion_description_edit {
-    display: block;
-    margin: 0.5em 0 1em;
-  }
-
-  input[type='submit'] {
-    margin-top: 1em;
   }
 }

@@ -230,8 +230,7 @@ describe Api::GroupsController do
       end
       context 'when a grouping does have a mark already' do
         before :each do
-          mark = submission.current_result.marks.find_or_initialize_by(markable_id: criterion.id,
-                                                                       markable_type: criterion.class.name)
+          mark = submission.current_result.marks.find_or_initialize_by(criterion_id: criterion.id)
           mark.mark = 10
           mark.save!
           post :update_marks, params: { id: grouping.group.id,
@@ -250,8 +249,7 @@ describe Api::GroupsController do
       end
       context 'when a result is complete' do
         before :each do
-          mark = submission.current_result.marks.find_or_initialize_by(markable_id: criterion.id,
-                                                                       markable_type: criterion.class.name)
+          mark = submission.current_result.marks.find_or_initialize_by(criterion_id: criterion.id)
           mark.mark = 10
           mark.save!
           submission.current_result.update(marking_state: Result::MARKING_STATES[:complete])
@@ -267,6 +265,146 @@ describe Api::GroupsController do
         it 'should add a mark for a grouping' do
           result = submission.current_result
           expect(result.get_total_mark).to eq(10)
+        end
+      end
+    end
+    context 'POST add_extra_marks' do
+      let(:submission) { create(:version_used_submission, grouping: grouping) }
+      context 'add extra_mark' do
+        let(:old_mark) { submission.get_latest_result.total_mark }
+        before :each do
+          old_mark
+          post :create_extra_marks, params: { assignment_id: grouping.assignment.id,
+                                              id: grouping.group.id,
+                                              extra_marks: 10.0,
+                                              description: 'sample' }
+          grouping.reload
+        end
+        it 'should add new extra mark' do
+          result = submission.get_latest_result
+          added_extra_mark = result.extra_marks.last
+          expect(added_extra_mark.extra_mark).to eq(10.0)
+        end
+        it 'should update total_mark' do
+          result = submission.get_latest_result
+          new_total_mark = result.total_mark
+          expect(old_mark + 10.0).to eq(new_total_mark)
+        end
+        it 'should respond with 200' do
+          expect(response.status).to eq(200)
+        end
+      end
+      context 'add wrong extra_mark' do
+        let(:old_mark) { submission.get_latest_result.total_mark }
+        before :each do
+          old_mark
+          post :create_extra_marks, params: { assignment_id: grouping.assignment.id,
+                                              id: grouping.group.id,
+                                              extra_marks: 'a',
+                                              description: 'sample' }
+          grouping.reload
+        end
+        it 'should respond with 500' do
+          expect(response.status).to eq(500)
+        end
+        it 'should not update the total mark' do
+          result = submission.get_latest_result
+          new_total_mark = result.total_mark
+          expect(old_mark).to eq(new_total_mark)
+        end
+      end
+      describe 'when the arguments are invalid' do
+        context 'When the assignment has no submission' do
+          it 'should respond with 404' do
+            post :create_extra_marks,
+                 params: { assignment_id: grouping.assignment.id, id: grouping.group.id, extra_marks: 10.0,
+                           description: 'sample' }
+            expect(response.status).to eq(404)
+          end
+        end
+        context 'when the assignment doest not exist ' do
+          it 'should respond with 404' do
+            post :create_extra_marks,
+                 params: { assignment_id: 9999, id: grouping.group.id, extra_marks: 10.0, description: 'sample' }
+            expect(response.status).to eq(404)
+          end
+        end
+        context 'when the group does not exist' do
+          it 'should respond with 404' do
+            post :create_extra_marks,
+                 params: { assignment_id: grouping.assignment.id, id: 9999, extra_marks: 10.0, description: 'sample' }
+            expect(response.status).to eq(404)
+          end
+        end
+      end
+    end
+    context 'DELETE remove_extra_marks' do
+      describe 'when the arguments are invalid' do
+        context 'When the assignment has no submission' do
+          it 'should respond with 404' do
+            delete :remove_extra_marks,
+                   params: { assignment_id: grouping.assignment.id, id: grouping.group.id, extra_marks: 10.0,
+                             description: 'sample' }
+            expect(response.status).to eq(404)
+          end
+        end
+        context 'when the assignment doest not exist ' do
+          it 'should respond with 404' do
+            delete :remove_extra_marks,
+                   params: { assignment_id: 9999, id: grouping.group.id, extra_marks: 10.0, description: 'sample' }
+            expect(response.status).to eq(404)
+          end
+        end
+        context 'when the group does not exist' do
+          it 'should respond with 404' do
+            delete :remove_extra_marks,
+                   params: { assignment_id: grouping.assignment.id, id: 9999, extra_marks: 10.0, description: 'sample' }
+            expect(response.status).to eq(404)
+          end
+        end
+      end
+      describe 'when the arguments are valid' do
+        let(:submission) { create(:version_used_submission, grouping: grouping) }
+        let(:extra_mark) do
+          create(:extra_mark_points, description: 'sample', extra_mark: 10.0, result: submission.get_latest_result)
+        end
+        context 'remove extra_mark' do
+          let(:old_mark) { submission.get_latest_result.total_mark + extra_mark.extra_mark }
+          before :each do
+            old_mark
+            delete :remove_extra_marks, params: { assignment_id: grouping.assignment.id,
+                                                  id: grouping.group.id,
+                                                  extra_marks: 10.0,
+                                                  description: 'sample' }
+            grouping.reload
+          end
+          it 'should update total mark' do
+            result = submission.get_latest_result
+            new_total_mark = result.total_mark
+            expect(old_mark - 10.0).to eq(new_total_mark)
+          end
+          it 'should respond with 200' do
+            expect(response.status).to eq(200)
+          end
+        end
+        context 'remove extra_mark which does not exist' do
+          let(:old_mark) { submission.get_latest_result.total_mark }
+          before :each do
+            old_mark
+            delete :remove_extra_marks, params: { assignment_id: grouping.assignment.id,
+                                                  id: grouping.group.id,
+                                                  extra_marks: 2.0,
+                                                  description: 'test' }
+            grouping.reload
+          end
+          it 'should respond with 404' do
+            expect(response.status).to eq(404)
+          end
+          it 'should not update the total mark' do
+            result = submission.get_latest_result
+            new_total_mark = result.total_mark
+            expect(old_mark).to eq(new_total_mark)
+          end
         end
       end
     end

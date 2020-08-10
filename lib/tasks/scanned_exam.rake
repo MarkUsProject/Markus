@@ -1,7 +1,7 @@
 namespace :db do
   desc 'Create a populated exam template assignment'
   task scanned_exam: :environment do
-    puts 'Assignment 5: Scanned Exam'
+    puts 'Assignment 6: Scanned Exam'
 
     # remove previously existing pdfs to create room for new ones
     FileUtils.rm_rf(Dir.glob('data/dev/exam_templates/*'))
@@ -20,8 +20,6 @@ namespace :db do
         token_period: 1,
         scanned_exam: true
       },
-      submission_rule: NoLateSubmissionRule.new,
-      assignment_stat: AssignmentStat.new
     )
 
     # For a description of the seed files, see db/data/scanned_exams/README.md.

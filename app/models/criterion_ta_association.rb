@@ -3,8 +3,7 @@ class CriterionTaAssociation < ApplicationRecord
   belongs_to              :ta
   validates_associated    :ta
 
-  belongs_to              :criterion, polymorphic: true
-  validates_presence_of   :criterion_type
+  belongs_to              :criterion
   validates_associated    :criterion
 
   belongs_to              :assignment, foreign_key: :assessment_id
@@ -12,7 +11,7 @@ class CriterionTaAssociation < ApplicationRecord
   before_validation       :add_assignment_reference, on: :create
 
   def self.from_csv(assignment, csv_data, remove_existing)
-    criteria = assignment.get_criteria(:ta, :all, includes: [:criterion_ta_associations])
+    criteria = assignment.ta_criteria.includes(:criterion_ta_associations)
     if remove_existing
       criteria.each do |criterion|
         criterion.criterion_ta_associations.destroy_all
@@ -35,7 +34,6 @@ class CriterionTaAssociation < ApplicationRecord
         ta_id = Ta.find_by(user_name: user_name).id
         new_ta_mappings << {
           criterion_id: criterion.id,
-          criterion_type: criterion.class,
           ta_id: ta_id,
           assessment_id: assignment.id
         }

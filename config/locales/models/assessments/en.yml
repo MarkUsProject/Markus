@@ -1,0 +1,6 @@
+en:
+  activerecord:
+    models:
+      assessment:
+        one: 'Assessment'
+        other: 'Assessments'

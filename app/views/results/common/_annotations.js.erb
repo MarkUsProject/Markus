@@ -1,5 +1,4 @@
 <script>
-  var selected_markable_id = null;
   var selected_extra_mark_id = null;
   var positions = null;
   var modal = null;
@@ -181,12 +180,8 @@
 
   function get_selection_box_coordinates() {
     var box = document.getElementById('sel_box');
-    var x1 = parseInt(box.style.left, 10) -
-               document.getElementById('image_preview').offsetLeft +
-               document.getElementById('image_container').scrollLeft;
-    var y1 = parseInt(box.style.top, 10) -
-               document.getElementById('image_preview').offsetTop +
-               document.getElementById('codeviewer').scrollTop;
+    var x1 = parseInt(box.style.left, 10);
+    var y1 = parseInt(box.style.top, 10);
     var x2 = x1 + parseInt(box.style.width, 10);
     var y2 = y1 + parseInt(box.style.height, 10);
 
@@ -211,7 +206,6 @@
     positions = get_mouse_positions();
     if (syntax_highlighter_adapter === null || !positions) return false;
     return {
-      annotation_type: 'text',
       line_start: positions.line_start,
       line_end: positions.line_end,
       column_start: positions.column_start,
@@ -240,7 +234,6 @@
         break;
     }
     return {
-      annotation_type: 'pdf',
       x1: box.x1,
       x2: box.x2,
       y1: box.y1,
@@ -253,7 +246,6 @@
     var box = get_selection_box();
     if (!box) return false;
     return {
-      annotation_type: 'image',
       x1: box.x1,
       x2: box.x2,
       y1: box.y1,
@@ -265,7 +257,6 @@
   // Used for ctrl-click as a shortcut for "Good!" annotation.
   function get_pdf_annotation_data_with_ids() {
     var data = {
-      annotation_type: 'pdf',
       result_id: <%= result_id %>,
       assignment_id: <%= assignment_id %>,
       submission_file_id: submissionFilePanel.state.selectedFile && submissionFilePanel.state.selectedFile[1]

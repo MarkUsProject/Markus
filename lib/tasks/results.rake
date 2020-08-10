@@ -34,21 +34,28 @@ namespace :markus do
         begin
           student.create_group_for_working_alone_student(a1.id)
           grouping = student.accepted_grouping_for(a1.id)
-          grouping.create_grouping_repository_folder
+          grouping.create_starter_files
         rescue Exception => e
           puts "Caught exception on #{student.user_name}: #{e.message}" # ignore exceptions
         end
       end
 
       # create rubric criteria for a1
-      rubric_criteria = [{name: "Uses Conditionals", max_mark: 4}, {name: "Code Clarity", max_mark: 8}, {name: "Code Is Documented", max_mark: 12}, {name: "Uses For Loop", max_mark: 4}]
-      default_levels = {level_0_name: "Quite Poor", level_0_description: "This criterion was not satisifed whatsoever", level_1_name: "Satisfactory", level_1_description: "This criterion was satisfied", level_2_name: "Good", level_2_description: "This criterion was satisfied well", level_3_name: "Great", level_3_description: "This criterion was satisfied really well!", level_4_name: "Excellent", level_4_description: "This criterion was satisfied excellently"}
-      rubric_criteria.each do |rubric_criteria|
-        rc = RubricCriterion.new
-        rc.update(rubric_criteria)
-        rc.update(default_levels)
-        rc.assignment = a1
-        rc.save
+      rubric_criteria = [{ name: 'Uses Conditionals', max_mark: 4 }, { name: 'Code Clarity', max_mark: 8 },
+                         { name: 'Code Is Documented', max_mark: 12 }, { name: 'Uses For Loop', max_mark: 4 }]
+      default_levels = [
+        { name: 'Quite Poor', description: 'This criterion was not satisfied whatsoever', mark: 0 },
+        { name: 'Satisfactory', description: 'This criterion was satisfied', mark: 1 },
+        { name: 'Good', description: 'This criterion was satisfied well', mark: 2 },
+        { name: 'Great', description: 'This criterion was satisfied really well!', mark: 3 },
+        { name: 'Excellent', description: 'This criterion was satisfied excellently', mark: 4 }
+      ]
+      rubric_criteria.each do |rubric_criterion|
+        params = {
+          assignment: a1, levels_attributes: default_levels
+        }
+        rubric_criterion.merge(params)
+        RubricCriterion.create(rubric_criterion)
       end
 
       # create submissions
@@ -74,10 +81,10 @@ namespace :markus do
           submission = Submission.create_by_timestamp(grouping, Time.now)
           result = submission.get_latest_result
           # create marks for each criterion and attach to result
-          a1.get_criteria.each do |criterion|
+          a1.criteria.each do |criterion|
             # save a mark for each criterion
             m = Mark.new
-            m.markable = criterion
+            m.criterion = criterion
             m.result = result
             m.mark = rand(5) # assign some random mark
             m.save

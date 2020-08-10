@@ -361,7 +361,7 @@ class GradersActionBox extends React.Component {
     const { performAction } = this.props;
 
     return (
-      <div style={{ display: 'flex' }}>
+      <div className='rt-action-box'>
         <div className="peer-review-amount-spinner">
           <span>{I18n.t('peer_reviews.number_per_group')}</span>
           <input type="number" id="peer-review-spinner" min={1} defaultValue={1}
@@ -374,23 +374,21 @@ class GradersActionBox extends React.Component {
             {I18n.t('peer_reviews.action.random_assign')}
           </button>
         </div>
-        <div className='rt-action-box icon'>
-          <button
-            id='assign'
-            className='assign-all-button'
-            onClick={evt => performAction(evt.currentTarget.getAttribute('id'))}
-          >
-            {I18n.t('peer_reviews.action.assign')}
-          </button>
+        <button
+          id='assign'
+          className='assign-all-button'
+          onClick={evt => performAction(evt.currentTarget.getAttribute('id'))}
+        >
+          {I18n.t('peer_reviews.action.assign')}
+        </button>
 
-          <button
-            id='unassign'
-            className='unassign-all-button'
-            onClick={evt => performAction(evt.currentTarget.getAttribute('id'))}
-          >
-            {I18n.t('peer_reviews.action.unassign')}
-          </button>
-        </div>
+        <button
+          id='unassign'
+          className='unassign-all-button'
+          onClick={evt => performAction(evt.currentTarget.getAttribute('id'))}
+        >
+          {I18n.t('peer_reviews.action.unassign')}
+        </button>
       </div>
     )
   };

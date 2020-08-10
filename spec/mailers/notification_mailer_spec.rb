@@ -24,6 +24,10 @@ RSpec.describe NotificationMailer, type: :mailer do
     it 'renders the relevant link correctly' do
       expect(mail.body.to_s).to include(relevant_link)
     end
+
+    it 'renders the link to unsubscribe' do
+      expect(mail.body.to_s).to include(mailer_settings_students_url)
+    end
   end
 
   describe 'release_email' do

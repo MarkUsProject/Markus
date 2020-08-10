@@ -430,9 +430,11 @@ class GroupsController < ApplicationController
         to_invite.each do |i|
           i = i.strip
           invited_user = Student.where(hidden: false).find_by(user_name: i)
-          NotificationMailer.with(inviter: current_user,
-                                  invited: invited_user,
-                                  grouping: @grouping).grouping_invite_email.deliver_now
+          if invited_user.receives_invite_emails?
+            NotificationMailer.with(inviter: current_user,
+                                    invited: invited_user,
+                                    grouping: @grouping).grouping_invite_email.deliver_later
+          end
         end
         flash_message(:success, I18n.t('groups.invite_member.success'))
       else
@@ -521,6 +523,24 @@ class GroupsController < ApplicationController
       flash_now(:error, e.message)
       head 400
     end
+  end
+
+  def download_starter_file
+    assignment = Assignment.find(params[:assignment_id])
+    grouping = current_user.accepted_grouping_for(assignment.id)
+
+    if grouping.starter_file_changed
+      grouping.reset_starter_file_entries
+      grouping.reload.update!(starter_file_changed: false)
+    end
+
+    zip_name = "#{assignment.short_identifier}-starter-files-#{current_user.user_name}"
+    zip_path = File.join('tmp', zip_name + '.zip')
+    FileUtils.rm_rf zip_path
+    Zip::File.open(zip_path, Zip::File::CREATE) do |zip_file|
+      grouping.starter_file_entries.each { |entry| entry.add_files_to_zip_file(zip_file) }
+    end
+    send_file zip_path, filename: File.basename(zip_path)
   end
 
   private

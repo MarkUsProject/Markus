@@ -12,7 +12,7 @@ describe SubmissionFile do
                                                submission_id: 1)
     end
     it 'return java' do
-      expect(@submission_file.get_file_type).to eq('java')
+      expect(SubmissionFile.get_file_type(@submission_file.filename)).to eq('java')
     end
     it 'return java comment' do
       expect(@submission_file.get_comment_syntax).to eq(%w(/* */))
@@ -26,7 +26,7 @@ describe SubmissionFile do
                                                submission_id: 1)
     end
     it 'return ruby' do
-      expect(@submission_file.get_file_type).to eq('ruby')
+      expect(SubmissionFile.get_file_type(@submission_file.filename)).to eq('ruby')
     end
     it 'return ruby comment' do
       expect(@submission_file.get_comment_syntax).to eq(["=begin\n", "\n=end"])
@@ -40,7 +40,7 @@ describe SubmissionFile do
                                                submission_id: 1)
     end
     it 'return python' do
-      expect(@submission_file.get_file_type).to eq('python')
+      expect(SubmissionFile.get_file_type(@submission_file.filename)).to eq('python')
     end
     it 'return python comment' do
       expect(@submission_file.get_comment_syntax).to eq(%w(""" """))
@@ -54,9 +54,37 @@ describe SubmissionFile do
                                                submission_id: 1)
     end
     it 'return javascript' do
-      expect(@submission_file.get_file_type).to eq('javascript')
+      expect(SubmissionFile.get_file_type(@submission_file.filename)).to eq('javascript')
     end
     it 'return javascript comment' do
+      expect(@submission_file.get_comment_syntax).to eq(%w(/* */))
+    end
+  end
+
+  context 'A .html Submission file' do
+    before(:each) do
+      @submission_file = SubmissionFile.create(filename: 'filename.html',
+                                               path:     'path',
+                                               submission_id: 1)
+    end
+    it 'return html' do
+      expect(SubmissionFile.get_file_type(@submission_file.filename)).to eq('html')
+    end
+    it 'return html comment' do
+      expect(@submission_file.get_comment_syntax).to eq(%w(<!-- -->))
+    end
+  end
+
+  context 'A .css Submission file' do
+    before(:each) do
+      @submission_file = SubmissionFile.create(filename: 'filename.css',
+                                               path:     'path',
+                                               submission_id: 1)
+    end
+    it 'return css' do
+      expect(SubmissionFile.get_file_type(@submission_file.filename)).to eq('css')
+    end
+    it 'return css comment' do
       expect(@submission_file.get_comment_syntax).to eq(%w(/* */))
     end
   end
@@ -68,7 +96,7 @@ describe SubmissionFile do
                                                submission_id: 1)
     end
     it 'return c' do
-      expect(@submission_file.get_file_type).to eq('c')
+      expect(SubmissionFile.get_file_type(@submission_file.filename)).to eq('c')
     end
     it 'return c comment' do
       expect(@submission_file.get_comment_syntax).to eq(%w(/* */))
@@ -82,7 +110,7 @@ describe SubmissionFile do
                                                submission_id: 1)
     end
     it 'return tex' do
-      expect(@submission_file.get_file_type).to eq('tex')
+      expect(SubmissionFile.get_file_type(@submission_file.filename)).to eq('tex')
     end
   end
 
@@ -93,7 +121,7 @@ describe SubmissionFile do
                                                submission_id: 1)
     end
     it 'return a unknown file extension' do
-      expect(@submission_file.get_file_type).to eq('unknown')
+      expect(SubmissionFile.get_file_type(@submission_file.filename)).to eq('unknown')
     end
     it 'return generic comment' do
       expect(@submission_file.get_comment_syntax).to eq(%w(## ##))
@@ -107,7 +135,7 @@ describe SubmissionFile do
                                                submission_id: 1)
     end
     it 'return a unknown file extension' do
-      expect(@submission_file.get_file_type).to eq('unknown')
+      expect(SubmissionFile.get_file_type(@submission_file.filename)).to eq('unknown')
     end
     it 'return generic comment' do
       expect(@submission_file.get_comment_syntax).to eq(%w(## ##))
@@ -124,14 +152,20 @@ describe SubmissionFile do
                                         path:     'path',
                                         submission_id: 2)
       @gif_file = SubmissionFile.create(filename: 'filename.gif',
-                                       path:     'path',
-                                       submission_id: 3)
+                                        path:     'path',
+                                        submission_id: 3)
       @png_file = SubmissionFile.create(filename: 'filename.png',
-                                       path:     'path',
-                                       submission_id: 4)
+                                        path:     'path',
+                                        submission_id: 4)
+      @heic_file = SubmissionFile.create(filename: 'filename.heic',
+                                         path:     'path',
+                                         submission_id: 5)
+      @heif_file = SubmissionFile.create(filename: 'filename.heif',
+                                         path:     'path',
+                                         submission_id: 6)
       @unsupported_file = SubmissionFile.create(filename: 'filename.bmp',
-                                       path:     'path',
-                                       submission_id: 5)
+                                                path:     'path',
+                                                submission_id: 7)
     end
     it 'return true' do
       expect(@jpeg_file.is_supported_image?).to be true
@@ -141,6 +175,14 @@ describe SubmissionFile do
     end
     it 'return false' do
       expect(@unsupported_file.is_supported_image?).to be false
+    end
+    it 'returns \'image\' when checking file type' do
+      expect(SubmissionFile.get_file_type(@jpeg_file.filename)).to eq 'image'
+      expect(SubmissionFile.get_file_type(@jpg_file.filename)).to eq 'image'
+      expect(SubmissionFile.get_file_type(@gif_file.filename)).to eq 'image'
+      expect(SubmissionFile.get_file_type(@png_file.filename)).to eq 'image'
+      expect(SubmissionFile.get_file_type(@heic_file.filename)).to eq 'image'
+      expect(SubmissionFile.get_file_type(@heif_file.filename)).to eq 'image'
     end
   end
 
@@ -193,7 +235,7 @@ describe SubmissionFile do
 
     context 'from a pdf file' do
       before(:each) do
-        @submission_file = SubmissionFile.create(filename: 'filename.jpeg',
+        @submission_file = SubmissionFile.create(filename: 'filename.pdf',
                                                 path: 'path')
       end
       context 'with no annotations' do
@@ -225,6 +267,11 @@ describe SubmissionFile do
                      y_range: {start: 2, end: 100}}])
         end
       end
+      context 'when checking the file type' do
+        it 'returns \'pdf\'' do
+          expect(SubmissionFile.get_file_type(@submission_file.filename)).to eq 'pdf'
+        end
+      end
     end
   end
 
@@ -240,7 +287,19 @@ describe SubmissionFile do
     end
   end
 
-  def teardown
-    destroy_repos
+  context '#add_annotations' do
+    it 'includes deductive information when deductive annotations applied' do
+      pending('retrieve_file() not yet usable in testing, and add_annotations is private.')
+      assignment = create(:assignment_with_deductive_annotations)
+      file = create(:submission_file, submission: assignment.groupings.first.current_result.submission)
+      category = assignment.annotation_categories.where.not(flexible_criterion_id: nil).first
+      text = category.annotation_texts.first
+      create(:text_annotation,
+             annotation_text: text,
+             submission_file: file,
+             result: assignment.groupings.first.current_result)
+      deductive_info = " [#{category.flexible_criterion.name}: -#{text.deduction}]"
+      expect(file.retrieve_file.include?(deductive_info)).to be true
+    end
   end
 end
