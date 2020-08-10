@@ -1,11 +1,4 @@
 module AuthenticationHelper
-  def user_params(attrs = {})
-    args = { user_name:  'test',
-             first_name: 'Mark',
-             last_name:  'Us' }.merge(attrs)
-    ActionController::Parameters.new(user: args)
-  end
-
   def sign_in(user)
     real_controller = @controller
     @controller = MainController.new

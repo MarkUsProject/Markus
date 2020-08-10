@@ -4,34 +4,13 @@ import {render} from 'react-dom';
 import ReactTable from 'react-table';
 import {stringFilter} from './Helpers/table_helpers';
 
-class CourseSummaryTable extends React.Component {
-  constructor() {
-    super();
+export class CourseSummaryTable extends React.Component {
+  constructor(props) {
+    super(props);
     this.state = {
-      data: [],
-      columns: [],
-      loading: true,
       showHidden: false,
       filtered: [{id: 'hidden', value: false}]
     };
-    this.fetchData = this.fetchData.bind(this);
-  }
-
-  componentDidMount() {
-    this.fetchData();
-  }
-
-  fetchData() {
-    $.ajax({
-      url: Routes.populate_course_summaries_path(),
-      dataType: 'json',
-    }).then(res => {
-      this.setState({
-        data: res.data,
-        columns: res.columns,
-        loading: false,
-      });
-    });
   }
 
   nameColumns = [
@@ -95,22 +74,19 @@ class CourseSummaryTable extends React.Component {
       </div>,
       <ReactTable
         key='course-summary-table'
-        data={this.state.data}
-        columns={this.nameColumns.concat(this.state.columns)}
+        data={this.props.data}
+        columns={this.props.student ? this.props.columns : this.nameColumns.concat(this.props.columns)}
         defaultFilterMethod={stringFilter}
         defaultSorted={[
           {
             id: 'user_name'
           }
         ]}
-        loading={this.state.loading}
+        loading={this.props.loading}
         filtered={this.state.filtered}
         onFilteredChange={(filtered) => this.setState({filtered})}
+        className={'auto-overflow'}
       />
     ];
   }
-}
-
-export function makeCourseSummaryTable(elem, props) {
-  render(<CourseSummaryTable {...props} />, elem);
 }

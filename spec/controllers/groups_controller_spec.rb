@@ -280,13 +280,99 @@ describe GroupsController do
         end
       end
     end
-    describe '#invalidate_groupings'
-    describe '#validate_groupings'
-    describe '#delete_groupings'
-    describe '#add_members'
-    describe '#add_member'
-    describe '#remove_members'
-    describe '#remove_member'
+
+    describe '#validate_groupings' do
+      let(:grouping) { create :grouping_with_inviter }
+
+      it 'should validate groupings' do
+        post :global_actions, params: {
+          assignment_id: grouping.assignment.id,
+          groupings: [grouping.id],
+          global_actions: 'valid'
+        }
+        expect(grouping.reload.admin_approved).to be true
+      end
+    end
+
+    describe '#invalidate_groupings' do
+      let(:grouping) { create :grouping_with_inviter, admin_approved: true }
+
+      it 'should invalidate groupings' do
+        post :global_actions, params: {
+          assignment_id: grouping.assignment.id,
+          groupings: [grouping.id],
+          global_actions: 'invalid'
+        }
+
+        expect(grouping.reload.admin_approved).to be false
+      end
+    end
+
+    describe '#delete_groupings' do
+      let!(:grouping) { create :grouping_with_inviter }
+      let!(:grouping_with_submission) { create :grouping_with_inviter_and_submission }
+
+      it 'should delete groupings without submissions' do
+        post :global_actions, params: {
+          assignment_id: grouping.assignment.id,
+          groupings: [grouping.id],
+          global_actions: 'delete'
+        }
+
+        expect(Grouping.all.size).to eq 1
+      end
+
+      it 'should not delete groupings with submissions' do
+        post :global_actions, params: {
+          assignment_id: grouping_with_submission.assignment.id,
+          groupings: [grouping_with_submission.id],
+          global_actions: 'delete'
+        }
+
+        expect(Grouping.all.size).to eq 2
+      end
+    end
+
+    describe '#add_members' do
+      let(:grouping) { create :grouping_with_inviter }
+      let(:student1) { create :student }
+      let(:student2) { create :student }
+
+      it 'adds multiple students to group' do
+        post :global_actions, params: {
+          assignment_id: grouping.assignment.id,
+          groupings: [grouping],
+          students: [student1.id, student2.id],
+          global_actions: 'assign'
+        }
+
+        expect(grouping.students.size).to eq 3
+      end
+    end
+
+    describe '#remove_members' do
+      let(:grouping) { create :grouping_with_inviter }
+      let(:student1) { create :student }
+      let(:student2) { create :student }
+
+      it 'should remove multiple students from group' do
+        post :global_actions, params: {
+          assignment_id: grouping.assignment.id,
+          groupings: [grouping],
+          students: [student1.id, student2.id],
+          global_actions: 'assign'
+        }
+
+        post :global_actions, params: {
+          assignment_id: grouping.assignment.id,
+          groupings: [grouping],
+          students_to_remove: [student1.user_name, student2.user_name],
+          global_actions: 'unassign'
+        }
+
+        expect(grouping.students.size).to eq 1
+      end
+    end
   end
 
   describe 'student access' do
@@ -326,6 +412,9 @@ describe GroupsController do
       before :each do
         create(:grouping_with_inviter, assignment: @assignment, inviter: @current_student)
       end
+
+      around { |example| perform_enqueued_jobs(&example) }
+
       it 'should send an email to a single student if invited to a grouping' do
         expect do
           post :invite_member,
@@ -341,6 +430,22 @@ describe GroupsController do
                params: { invite_member: "#{@student.user_name},#{@another_student.user_name}",
                          assignment_id: @assignment.id }
         end.to change { ActionMailer::Base.deliveries.count }.by(2)
+      end
+      it 'should not send an email to every student invited to a grouping if some have emails disabled' do
+        @another_student = create(:student, user_name: 'c9test3', receives_invite_emails: false)
+        expect do
+          post :invite_member,
+               params: { invite_member: "#{@student.user_name},#{@another_student.user_name}",
+                         assignment_id: @assignment.id }
+        end.to change { ActionMailer::Base.deliveries.count }.by(1)
+      end
+      it 'should not send an email to a single student if invited to a grouping and they have emails disabled' do
+        @student.update!(receives_invite_emails: false)
+        expect do
+          post :invite_member,
+               params: { invite_member: @student.user_name,
+                         assignment_id: @assignment.id }
+        end.to change { ActionMailer::Base.deliveries.count }.by(0)
       end
     end
 
@@ -527,6 +632,39 @@ describe GroupsController do
                          membership: invitation.id }
           assert_response :forbidden
         end
+      end
+    end
+  end
+  describe '#download_starter_file' do
+    subject { get_as user, :download_starter_file, params: { assignment_id: assignment.id } }
+    context 'an admin' do
+      let(:user) { create :admin }
+      it 'should respond with 403' do
+        subject
+        expect(response.status).to eq(403)
+      end
+    end
+    context 'a grader' do
+      let(:user) { create :ta }
+      it 'should respond with 403' do
+        subject
+        expect(response.status).to eq(403)
+      end
+    end
+    context 'a student' do
+      let(:user) { create :student }
+      let(:assignment) { create :assignment }
+      let!(:starter_file_group) { create :starter_file_group_with_entries, assignment: assignment }
+      let!(:grouping) { create :grouping_with_inviter, assignment: assignment, inviter: user }
+      it 'should send a zip file containing the correct content' do
+        expect(controller).to receive(:send_file) do |file_path|
+          Zip::File.open(Rails.root + file_path) do |zipfile|
+            expect(zipfile.entries.map(&:name)).to contain_exactly('q1/', 'q1/q1.txt', 'q2.txt')
+            expect(zipfile.find_entry('q1/q1.txt').get_input_stream.read.strip).to eq 'q1 content'
+            expect(zipfile.find_entry('q2.txt').get_input_stream.read.strip).to eq 'q2 content'
+          end
+        end
+        subject
       end
     end
   end

@@ -3,6 +3,7 @@ pt:
     add_column: "Inserir coluna"
     csv:
       overwrite: "Substituir notas existentes?"
+    grade_entry_item_distribution: "UPDATE ME"
     grades:
       marking_state: "Estado"
       no_mark: "N/A"

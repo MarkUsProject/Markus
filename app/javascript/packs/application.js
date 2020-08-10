@@ -80,8 +80,6 @@ import { makeSubmissionFileManager } from 'javascripts/Components/submission_fil
 window.makeSubmissionFileManager = makeSubmissionFileManager;
 import { makeRepoBrowser } from 'javascripts/Components/repo_browser';
 window.makeRepoBrowser = makeRepoBrowser;
-import { makeCourseSummaryTable } from 'javascripts/Components/course_summaries_table';
-window.makeCourseSummaryTable = makeCourseSummaryTable;
 import { makeTestRunTable } from 'javascripts/Components/test_run_table';
 window.makeTestRunTable = makeTestRunTable;
 import { makeSubmissionTable } from 'javascripts/Components/submission_table';
@@ -100,9 +98,15 @@ import { makeBatchTestRunTable } from 'javascripts/Components/batch_test_run_tab
 window.makeBatchTestRunTable = makeBatchTestRunTable;
 import { makeMarkingSchemeTable } from 'javascripts/Components/marking_schemes_table';
 window.makeMarkingSchemeTable = makeMarkingSchemeTable;
-import { makeStarterCodeFileManager } from 'javascripts/Components/starter_code_file_manager';
-window.makeStarterCodeFileManager = makeStarterCodeFileManager;
 import { makeAutotestManager } from 'javascripts/Components/autotest_manager';
 window.makeAutotestManager = makeAutotestManager;
 import { makeStudentPeerReviewsTable } from 'javascripts/Components/student_peer_reviews_table';
 window.makeStudentPeerReviewsTable = makeStudentPeerReviewsTable;
+import { makeAnnotationUsagePanel } from 'javascripts/Components/annotation_usage_panel';
+window.makeAnnotationUsagePanel = makeAnnotationUsagePanel;
+import { makeGradesSummaryDisplay } from 'javascripts/Components/grades_summary_display';
+window.makeGradesSummaryDisplay = makeGradesSummaryDisplay;
+import { makeDataChart } from 'javascripts/Components/Helpers/data_chart';
+window.makeDataChart = makeDataChart;
+import { makeStarterFileManager } from 'javascripts/Components/starter_file_manager';
+window.makeStarterFileManager = makeStarterFileManager;

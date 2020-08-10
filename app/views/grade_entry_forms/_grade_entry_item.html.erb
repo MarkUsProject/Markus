@@ -1,8 +1,5 @@
-<fieldset class='grade_entry_item'>
-  <legend>
-    <span><%= GradeEntryItem.model_name.human %></span>
-  </legend>
-  <div>
+<fieldset class='grade_entry_item no-legend'>
+  <div class="inline-labels">
     <%= form.label :name,
                    GradeEntryItem.human_attribute_name(:name),
                    class: 'required' %>
@@ -12,12 +9,10 @@
                    GradeEntryItem.human_attribute_name(:out_of),
                    class: 'required' %>
     <%= form.text_field :out_of, size: 5, maxlength: 3 %>
-  </div>
-  <div>
+
     <%= form.label :bonus, GradeEntryItem.human_attribute_name(:bonus) %>
     <%= form.check_box :bonus %>
-  </div>
-  <div>
+
     <% if !grade_entry_item.nil? && !grade_entry_item.new_record? %>
       <%= form.label :_destroy,
                      t('delete') %>

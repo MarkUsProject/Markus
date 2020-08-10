@@ -87,22 +87,17 @@ namespace :markus do
       updated_at:              nil,
       assigned_groups_count:   nil
     )
-    RubricCriterion.create(
-      name:                  'Mark3',
-      assessment_id:         a.id,
-      position:              2,
-      max_mark:              10,
-      level_0_name:          'Very Poor',
-      level_0_description:   'Very Poor',
-      level_1_name:          'Weak',
-      level_1_description:   'Weak',
-      level_2_name:          'Passable',
-      level_2_description:   'Passable',
-      level_3_name:          'Good',
-      level_3_description:   'Good',
-      level_4_name:          'Excellent',
-      level_4_description:   'Excellent'
-    )
+
+    attributes = []
+    5.times do |number|
+      lvl = { name: random_words(1), description: random_sentences(5), mark: number }
+      attributes.push(lvl)
+    end
+    params = {
+      name: 'Mark3', assessment_id: a.id,
+      position: 2, max_mark: 4, levels_attributes: attributes
+    }
+    RubricCriterion.create!(params)
   end
 
   def submit_half_on_time(a)
@@ -121,7 +116,7 @@ namespace :markus do
   def mark_submission(submission)
     result = submission.results.last
     result.marks.each do |mark|
-      criterion = mark.markable
+      criterion = mark.criterion
       if criterion.class == RubricCriterion
         random_mark = criterion.max_mark / 4 * rand(0..4)
       elsif criterion.class == FlexibleCriterion
@@ -193,8 +188,6 @@ namespace :markus do
       repository_folder: 'A1NoLate',
       due_date: 24.hours.from_now,
       allow_web_submits: false,
-      submission_rule: NoLateSubmissionRule.new,
-      assignment_stat: AssignmentStat.new,
       allow_remarks: true,
       remark_due_date: 1.week.from_now,
       enable_test: true,
@@ -214,7 +207,6 @@ namespace :markus do
       due_date: 24.hours.from_now,
       allow_web_submits: false,
       submission_rule: GracePeriodSubmissionRule.new,
-      assignment_stat: AssignmentStat.new,
       allow_remarks: true,
       remark_due_date: 1.week.from_now,
       enable_test: true,
@@ -235,7 +227,6 @@ namespace :markus do
       due_date: 24.hours.from_now,
       allow_web_submits: false,
       submission_rule: PenaltyDecayPeriodSubmissionRule.new,
-      assignment_stat: AssignmentStat.new,
       allow_remarks: true,
       remark_due_date: 1.week.from_now,
       enable_test: true,
@@ -262,8 +253,6 @@ namespace :markus do
       repository_folder: 'A4Groups',
       due_date: 1.month.from_now,
       allow_web_submits: false,
-      submission_rule: NoLateSubmissionRule.new,
-      assignment_stat: AssignmentStat.new,
       allow_remarks: true,
       remark_due_date: 2.months.from_now,
       enable_test: true,
@@ -284,8 +273,6 @@ namespace :markus do
       repository_folder: 'A5Collect',
       due_date: 1.month.from_now,
       allow_web_submits: false,
-      submission_rule: NoLateSubmissionRule.new,
-      assignment_stat: AssignmentStat.new,
       allow_remarks: true,
       remark_due_date: 2.months.from_now,
       enable_test: true,
@@ -311,8 +298,6 @@ namespace :markus do
       repository_folder: 'A6MarkingState',
       due_date: 1.month.from_now,
       allow_web_submits: false,
-      submission_rule: NoLateSubmissionRule.new,
-      assignment_stat: AssignmentStat.new,
       allow_remarks: true,
       remark_due_date: 2.months.from_now,
       enable_test: true,

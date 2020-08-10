@@ -1,7 +1,6 @@
 pt:
   automated_tests:
     files: "UPDATE ME"
-    information: "Informação"
     loading_specs: "UPDATE ME"
     need_one_file: "Você precisa de pelo menos um arquivo enviado para executar os testes."
     need_group_for_test: "Você precisa possuir um grupo para executar os testes."
@@ -40,7 +39,6 @@ pt:
       extra_malformed: "UPDATE ME \n%{extra}\n"
       extra_raw_output: "UPDATE ME \n%{extra}\n"
       extra_stderr: "UPDATE ME \n%{extra}\n"
-      no_source_files: "UPDATE ME"
       no_tests: "UPDATE ME"
       timeout: "%{seconds} UPDATE ME"
       unknown_test: "UPDATE ME"

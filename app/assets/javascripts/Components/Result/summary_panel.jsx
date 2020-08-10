@@ -1,6 +1,7 @@
 import React from 'react';
 import { render } from 'react-dom';
 import ReactTable from 'react-table';
+import { DataChart } from '../Helpers/data_chart'
 
 
 export class SummaryPanel extends React.Component {
@@ -11,12 +12,61 @@ export class SummaryPanel extends React.Component {
     graceTokenDeductions: []
   };
 
+  markDataSet = {
+    label: I18n.t('activerecord.models.mark.one'),
+    backgroundColor: 'rgba(58,106,179,0.35)',
+    borderColor: '#3a6ab3',
+    borderWidth: 1,
+    hoverBackgroundColor: 'rgba(58,106,179,0.75)'
+  };
+
+  // Colors for chart are based on constants.css file, with modifications for opacity.
+  oldMarkDataSet = {
+    label: I18n.t('results.remark.old_mark'),
+    backgroundColor: 'rgba(250,253,170,0.65)',
+    borderColor: '#dde426',
+    borderWidth: 1,
+    hoverBackgroundColor: '#dde426'
+  };
+
   constructor(props) {
     super(props);
     this.state = {
       showNewExtraMark: false,
+      xTitle: I18n.t('activerecord.models.criterion.one'),
+      yTitle: I18n.t('activerecord.models.mark.one') + ' (%)',
+      datasets: [],
+      labels: [],
+      chartLegend: false
     }
   }
+
+  componentDidMount() {
+    this.marks_modal = new ModalMarkus('#marks_chart');
+  }
+
+  toggleMarksChart = () => {
+    let labels = [];
+    let markData = [];
+    let oldMarks = [];
+    let oldMarksExist = Object.keys(this.props.old_marks).length > 0;
+    this.props.marks.forEach(m => {
+      labels.push(m.name);
+      markData.push(Math.round(m.mark * 100) / m.max_mark);
+      if (oldMarksExist) {
+        oldMarks.push(Math.round(this.props.old_marks[m.id] * 100) / m.max_mark);
+      }
+    });
+    this.markDataSet.data = markData;
+    if (oldMarksExist) {
+      this.oldMarkDataSet.data = oldMarks;
+      this.markDataSet.label = I18n.t('results.current_mark');
+      this.setState({datasets: [this.oldMarkDataSet, this.markDataSet], labels: labels, chartLegend: true});
+    } else {
+      this.setState({datasets: [this.markDataSet], labels: labels});
+    }
+    this.marks_modal.open();
+  };
 
   criterionColumns = () => [
     {
@@ -49,11 +99,11 @@ export class SummaryPanel extends React.Component {
     let oldTotal = '';
     if (this.props.remark_submitted) {
       oldTotal = (
-        <div className='mark_total'>
+        <div className='highlight-bar'>
           <span>
             {I18n.t('results.remark.old_total')}
           </span>
-          <span className='final_mark'>
+          <span className='float-right'>
             <span>{this.props.old_total}</span>
             &nbsp;/&nbsp;
             {assignment_total}
@@ -62,11 +112,11 @@ export class SummaryPanel extends React.Component {
       );
     }
     let currentTotal = (
-      <div className='mark_total'>
+      <div className='highlight-bar'>
         <span>
           {I18n.t('activerecord.attributes.result.total_mark')}
         </span>
-        <span className='final_mark'>
+        <span className='float-right'>
           <span>{this.props.total}</span>
           &nbsp;/&nbsp;
           {assignment_total}
@@ -168,26 +218,24 @@ export class SummaryPanel extends React.Component {
     }
 
     return (
-      <div className='extra-marks-pane'>
-        <div className='bonus-deduction'>
-          <strong>{I18n.t('activerecord.models.extra_mark.other')}</strong>
-        </div>
+      <div>
+        <h4>{I18n.t('activerecord.models.extra_mark.other')}</h4>
         {data.length > 0 &&
          <ReactTable
            columns={this.extraMarksColumns()}
            data={data} />
         }
         {!this.props.released_to_students &&
-         <div>
-           <button onClick={this.newExtraMark}>
+         <p>
+           <button className='inline-button' onClick={this.newExtraMark}>
              {I18n.t('helpers.submit.create',
                      {model: I18n.t('activerecord.models.extra_mark.one')})}
            </button>
-         </div>
+         </p>
         }
-        <div className='mark_total'>
+        <div className='highlight-bar'>
           {I18n.t('results.total_extra_marks')}
-          <span className='final_mark'>
+          <span className='float-right'>
             {this.props.extraMarkSubtotal.toFixed(2)}
           </span>
         </div>
@@ -240,13 +288,29 @@ export class SummaryPanel extends React.Component {
 
   render() {
     return (
-      <div className={'marks-summary-pane'}>
+      <div>
+        <p style={{textAlign: 'center'}}>
+          <button onClick={() => this.toggleMarksChart()} className={'mark-chart'} style={{width: '85%'}}>
+            {I18n.t('results.marks_chart')}
+          </button>
+        </p>
+        <aside className='dialog' id={'marks_chart'} style={{width: window.innerWidth * 0.8 + 'px'}}>
+          <DataChart
+            labels={this.state.labels}
+            datasets={this.state.datasets}
+            xTitle={this.state.xTitle}
+            yTitle={this.state.yTitle}
+            width={window.innerWidth * 0.7 + 'px'}
+            legend={this.state.chartLegend}
+          />
+        </aside>
         <ReactTable
           columns={this.criterionColumns()}
-          data={this.props.criterionSummaryData} />
-        <div className='mark_total'>
+          data={this.props.criterionSummaryData}
+          className='auto-overflow'/>
+        <div className='highlight-bar'>
           {I18n.t('results.subtotal')}
-          <span className='final_mark'>
+          <span className='float-right'>
             {this.props.subtotal}
             &nbsp;/&nbsp;
             {+(this.props.assignment_max_mark)}

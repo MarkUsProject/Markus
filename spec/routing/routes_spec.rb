@@ -120,6 +120,14 @@ describe 'An Assignment' do
           id: assignment.id.to_s,
           locale: 'en')
     end
+
+    it 'routes PUT start_timed_assignment properly' do
+      expect(put: path + '/' + assignment.id.to_s + '/start_timed_assignment')
+        .to route_to(controller: ctrl,
+                     action: 'start_timed_assignment',
+                     id: assignment.id.to_s,
+                     locale: 'en')
+    end
   end
   # end Assignment member route tests
 
@@ -1133,22 +1141,6 @@ context 'annotation collection' do
     expect(post: path + '/add_existing_annotation').to route_to(
       controller: ctrl,
       action: 'add_existing_annotation',
-      locale: 'en')
-  end
-
-  it 'routes PUT update_annotation properly' do
-    expect(put: path + '/update_annotation').to route_to(
-      controller: ctrl,
-      action: 'update',
-      id: 'update_annotation',
-      locale: 'en')
-  end
-
-  it 'routes DELETE destroy properly' do
-    expect(delete: path + '/destroy').to route_to(
-      controller: ctrl,
-      action: 'destroy',
-      id: 'destroy',
       locale: 'en')
   end
 end

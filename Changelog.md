@@ -1,4 +1,44 @@
 # Changelog
+
+## [unreleased]
+- Issue #3670: Added API for adding and removing extra marks (#4499)
+- Restrict confirmation dialog for annotation editing to annotations that belong to annotation categories (#4540)
+- Fixed sorting in annotation table in results view (#4542)
+- Enabled customization of rubric criterion level number and marks (#4535)
+- Introduces automated email sending for submissions releases (#4432)
+- Introduces automated email sending for spreadsheet releases (#4460)
+- Introduces automated email sending for grouping invitations (#4470)
+- Introduces student email settings (#4578)
+- Assignment grader distribution graphs only show marks for assigned criteria when graders are assigned specific
+  criteria (#4656) 
+- Fixed bug preventing graders from creating new notes in results view (#4668)
+- Fixed bug preventing new tags from being created from results view (#4669)
+- Remove deprecated "detailed CSV" download link from submissions/browse (#4675)
+- Introduces Deductive Annotations (#4693)
+- Introduces annotation usage details panel to Annotations tab in admin settings (#4695)
+- Fixed bug where bonuses and deductions were not displayed properly (#4699)
+- Fixed bug where image annotations did not stay fixed relative to the image (#4706)
+- Fixed bug where image annotations did not load properly (#4706)
+- Fixed bug where downloading files in nested directories renamed the downloaded file (#4730)
+- Introduces an option to unzip an uploaded zip file in place (#4731)
+- Fixed bug where marking scheme weights were not displayed (#4735)
+- Introduces timed assignments (#4665)
+- Introduces uncategorized annotations grouping in Annotations settings tab (#4733)
+- Introduces new grades summary chart, and makes student view of grades consistent with admin (#4740)
+- Set SameSite=Lax on cookies (#4742)
+- Introduces individual marks chart view for assessments (#4747)
+- Fix annotation modal overflow issue (#4748)
+- Introduce file viewer for student submission file manager and admin repo manager (#4754)
+- Make skipping empty submissions the default behaviour when assigning graders (#4761)
+- Introduce typing delay for entering flexible criterion mark (#4763)
+- Fix UI overflow bug for large images in results file viewer (#4764)
+- Add disabled delete button to submissions file manager when files unselected (#4765)
+- Support syntax highlighting for html and css files (#4781)
+- Add minutes field to non timed assessment extension modal (#4791)
+- Add ability to check out git repositories over ssh using a public key uploaded in the new Key Pairs tab (#4598)
+- Unify criterion tables using single table inheritance (refactoring change) (#4749)
+- Add support for uploading multiple versions of starter files (#4751)
+
 ## [v1.9.3]
 - Fixed inverse association bug with assignments (#4551)
 - Fixed bug preventing graders from downloading submission files from multiple students (#4658)
@@ -16,6 +56,8 @@
 - Fixed N+1 queries in Assignment repo list methods (#4543)
 - Fixed submission download_repo_list file extension (#4543)
 - Fixed bug preventing creation of assignments with submission rules (#4557)
+- Fixed inverse association bug with assignments (#4551)
+- Updated interface with the autotester so that files do not need to be copied when test are setup/enqueued (#4546)
 
 ## [v1.9.0]
 - Added option to anonymize group membership when viewed by graders (#4331)
@@ -40,7 +82,7 @@
 - Fixed annotation Markdown and MathJax rendering bug (#4506) 
 - Fixed bug where a grouping could be created even when the assignment subdirectory failed to be created (#4516)
 - Progress messages for background jobs now are hidden once the job is completed (#4519)
-- Fixed bug where a javascript submission/test/starter code file can't be downloaded (#4520) 
+- Fixed bug where a javascript submission/test/starter file can't be downloaded (#4520) 
 - Add ability to upload and download autotest settings as a json file/string through the UI and API (#4498)
 
 ## [v1.8.4]

@@ -1,29 +1,24 @@
-<div class='title_bar'>
-  <h1><%= t('menu.dashboard') %></h1>
-</div>
+<% content_for :title, t('menu.dashboard') %>
 
-<div class='wrapper'>
-  <div id='section'>
-    <div id='dashboard_lists'>
-      <div id='assignment_list'>
-        <h3 class='title'><%= Assignment.model_name.human.pluralize %></h3>
-        <%= render partial: 'dashboard_list' %>
-      </div>
-      <div id='spreadsheet_list'>
-        <h3 class='title'><%= GradeEntryForm.model_name.human.pluralize %></h3>
-        <%= render partial: 'spreadsheet_list' %>
-      </div>
-      <div id='summary'>
-        <h3 class='title'><%= t('course_summary.title') %></h3>
-        <%= render partial: 'summary' %>
-      </div>
-    </div>
-    <div id='assignment_summaries'>
-      <%= render partial: 'assignments/assignment_summary', locals: { assignment: @current_assignment, tas: @tas } %>
-    </div>
-    <div style="clear:both;"></div>
+<div class='pane-wrapper'>
+  <div class='pane no-border' style="flex: 0.5; width: 400px;">
+    <section id='assignment_list'>
+      <h3><%= Assignment.model_name.human.pluralize %></h3>
+      <%= render partial: 'dashboard_list' %>
+    </section>
+    <section id='spreadsheet_list'>
+      <h3><%= GradeEntryForm.model_name.human.pluralize %></h3>
+      <%= render partial: 'spreadsheet_list' %>
+    </section>
+    <section id='summary'>
+      <h3><%= t('course_summary.title') %></h3>
+      <%= render partial: 'summary' %>
+    </section>
   </div>
-  <div id='section'>
-    <%= render partial: 'api/key_display', locals: { user: @current_user } %>
+  <div id='assignment_summaries' class='pane highlight'>
+    <%= render partial: 'assignments/assignment_summary', locals: { assignment: @current_assignment, tas: @tas } %>
   </div>
+</div>
+<div class='pane-wrapper'>
+  <%= render partial: 'api/key_display', locals: { user: @current_user } %>
 </div>

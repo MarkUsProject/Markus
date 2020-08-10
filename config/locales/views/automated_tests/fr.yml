@@ -1,7 +1,6 @@
 fr:
   automated_tests:
     files: "UPDATE ME"
-    information: "Information"
     loading_specs: "UPDATE ME"
     need_one_file: "Vous devez avoir au moins un fichier envoyé pour exécuter un test."
     need_group_for_test: "UPDATE ME"
@@ -40,7 +39,6 @@ fr:
       extra_malformed: "Resultats mal formés: \n%{extra}\n"
       extra_raw_output: "Sortie de donées supplémentaire: \n%{extra}\n"
       extra_stderr: "Messages d'erreur: \n%{extra}\n"
-      no_source_files: "Il n'y a aucun fichiers pour lancer un test"
       no_tests: "Aucun resultats à montrer"
       timeout: "Le délai d'attente a éxpiré après %{seconds} seconds"
       unknown_test: "Test inconnu"

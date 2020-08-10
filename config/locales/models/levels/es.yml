@@ -1,0 +1,11 @@
+es:
+  activerecord:
+    models:
+      level:
+        one: "Nivel"
+        other: "Niveles"
+    attributes:
+      level:
+        name: "Nombre"
+        mark: "Nota"
+        description: "Descripción"

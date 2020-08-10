@@ -1,24 +1,25 @@
 Quality of Writing:
   type: rubric
   max_mark: 24.0
-  level_0:
-    name: Beginner
-    description: The essay is very poorly organized structure and gives no new information.
-  level_1:
-    name: Capable
-    description: The essay is poorly organized but gives new information.
-  level_2:
-    name: Accomplished
-    description: The essay is well-structure and conveys new information clearly.
-  level_3:
-    name: Level 3
-    description: Level 3 description in one line.
-  LEVEL4:
-    name: Level 4
-    description: Level 4 has an incorrect key.
-  level_5:
-    name: Level 5
-    description: This level for a rubric criterion will not be uploaded successfully.
+  levels:
+    Beginner:
+      description: The essay is very poorly organized structure and gives no new information.
+      mark: 10.0
+    Capable:
+      description: The essay is poorly organized but gives new information.
+      mark: 14.0
+    Accomplished:
+      description: The essay is well-structure and conveys new information clearly.
+      mark: 18.0
+    Level 3:
+      description: Level 3 description in one line.
+      mark: 22.0
+    Level 4:
+      description: Level 4 description in one line.
+      mark: 23.0
+    Level 5:
+      description:
+      mark:
   ta_visible: True
   peer_visible: False
 

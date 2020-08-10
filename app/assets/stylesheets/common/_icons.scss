@@ -1,0 +1,138 @@
+.add-new-button::before {
+  content: asset_url('icons/add.png');
+  padding-right: 5px;
+  vertical-align: text-top;
+}
+
+.assign-all-button::before {
+  content: asset_url('add_arrow.png');
+  padding-right: 5px;
+  vertical-align: text-top;
+}
+
+.assign-randomly-button::before {
+  content: asset_url('random_arrow.png');
+  padding-right: 5px;
+  vertical-align: text-top;
+}
+
+.unassign-all-button::before {
+  content: asset_url('remove_arrow.png');
+  padding-right: 5px;
+  vertical-align: text-top;
+}
+
+.download-button::before {
+  content: asset_url('icons/disk.png');
+  padding-right: 5px;
+  vertical-align: middle;
+}
+
+.upload-button::before {
+  content: asset_url('icons/page_white_add.png');
+  padding-right: 5px;
+  vertical-align: middle;
+}
+
+.add-icon::after {
+  content: asset_url('icons/add.png');
+  padding-left: 5px;
+  vertical-align: text-top;
+}
+
+.edit-icon::after {
+  content: asset_url('icons/pencil.png');
+  padding-left: 5px;
+  vertical-align: text-top;
+}
+
+.remove-icon::after {
+  content: asset_url('icons/cross.png');
+  padding-left: 5px;
+  vertical-align: text-top;
+}
+
+.valid-icon::after {
+  content: asset_url('icons/tick.png');
+  padding-left: 5px;
+  vertical-align: text-top;
+}
+
+.invalid-icon::after {
+  content: asset_url('icons/cross.png');
+  padding-left: 5px;
+  vertical-align: text-top;
+}
+
+.button.previous::before {
+  content: asset_url('icons/arrow_left.png');
+  padding-right: 5px;
+  vertical-align: sub;
+}
+
+.button.next::after {
+  content: asset_url('icons/arrow_right.png');
+  padding-left: 5px;
+  vertical-align: sub;
+}
+
+.set-complete::before {
+  content: asset_url('icons/accept.png');
+  padding-right: 5px;
+  vertical-align: text-top;
+}
+
+.set-incomplete::before {
+  content: asset_url('icons/pencil.png');
+  padding-right: 5px;
+  vertical-align: text-top;
+}
+
+.release::before {
+  content: asset_url('icons/email_go.png');
+  padding-right: 5px;
+  vertical-align: text-top;
+}
+
+.fullscreen-enter::before {
+  content: asset_url('icons/fullscreen_enter.png');
+  padding-right: 5px;
+  vertical-align: text-top;
+}
+
+.fullscreen-exit::before {
+  content: asset_url('icons/fullscreen_exit.png');
+  padding-right: 5px;
+  vertical-align: text-top;
+}
+
+.mark-chart::before {
+  content: asset_url('icons/chart_bar.png');
+  padding-right: 5px;
+  vertical-align: text-top;
+}
+
+
+// Miscellaneous icons
+.flexible-criteria-icon {
+  font-size: 11.3pt;
+  font-weight: bolder;
+}
+
+
+// Icons for react-json-schema-forms
+.btn-danger::after {
+  content: asset-url('icons/cross.png');
+}
+
+.btn-add::after {
+  content: asset-url('icons/add.png');
+}
+
+.array-item-move-up::after {
+  content: asset-url('icons/arrow_up.png');
+}
+
+.array-item-move-down::after {
+  content: asset-url('icons/arrow_down.png');
+}

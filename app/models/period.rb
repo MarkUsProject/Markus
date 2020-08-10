@@ -1,33 +1,19 @@
 class Period < ApplicationRecord
-  attr_accessor :submission_rule_type
-
   belongs_to :submission_rule, polymorphic: true
-  validates_associated :submission_rule
 
-  validates_presence_of :hours
   validates_numericality_of :hours, greater_than_or_equal_to: 0
+  validates_numericality_of :deduction, greater_than_or_equal_to: 0, if: :check_deduction
+  validates_numericality_of :interval, greater_than_or_equal_to: 0, if: :check_interval
 
-  with_options if: :is_penalty_decay_period? do |period|
-    period.validates :deduction, presence: true,
-      numericality: { greater_than_or_equal_to: 0 }
-    period.validates :interval, presence: true,
-      numericality: { greater_than_or_equal_to: 0 }
+  before_create -> { self.submission_rule_type = submission_rule.type }
+
+  private
+
+  def check_deduction
+    %w[PenaltyDecayPeriodSubmissionRule PenaltyPeriodSubmissionRule].include? submission_rule.type
   end
 
-  with_options if: :is_penalty_period? do |period|
-    period.validates :deduction, presence: true,
-      numericality: { greater_than_or_equal_to: 0 }
-  end
-
-  def is_penalty_period?
-    self.submission_rule_type == 'PenaltyPeriodSubmissionRule'
-  end
-
-  def is_grace_period?
-    self.submission_rule_type == 'GracePeriodSubmissionRule'
-  end
-
-  def is_penalty_decay_period?
-    self.submission_rule_type == 'PenaltyDecayPeriodSubmissionRule'
+  def check_interval
+    submission_rule.type == 'PenaltyDecayPeriodSubmissionRule'
   end
 end

@@ -47,8 +47,19 @@
           class='active'
         <% end %>>
       <%= link_to t('menu.home'), controller: 'assignments' %>
-   </li>
-
+    </li>
+    <% unless @current_user.admin? || @current_user.ta? %>
+      <li <% if controller.controller_name == 'course_summaries'%>
+          class='active'
+          <% end %>>
+        <%= link_to t('course_summary.title'), course_summaries_path %>
+      </li>
+      <li <% if controller.controller_name == 'students' %>
+          class='active'
+          <% end %>>
+        <%= link_to t('menu.settings'), controller: 'students', action: 'mailer_settings' %>
+      </li>
+    <% end %>
   <% end %>
 
   <% if @current_user.admin? || @current_user.ta? %>
@@ -66,8 +77,7 @@
     </li>
   <% end %>
 
-  <%# TODO: Enable key pairs when functionality is supported. %>
-  <% if false && Rails.configuration.x.repository.type == 'git' %>
+  <% if allowed_to?(:manage?, KeyPair) %>
       <li <% if controller.controller_name == 'key_pairs' %>
           class='active'
           <% end %>>

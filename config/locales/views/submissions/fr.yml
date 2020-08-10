@@ -39,6 +39,7 @@ fr:
         other: "%{count} fichier(s) requis sont manquants"
       no_revision_available: "Aucune révision disponible."
       no_submission: "Vous n'avez encore rien envoyé"
+      select_file: 'UPDATE ME!'
       server_time: "Heure du serveur"
       version_control_warning: "Envoi de fichiers ici annule les modifications apportées à l'aide de contrôle de version.
                                 Assurez-vous que vous avez travaillé sur les fichiers les plus récents avant de soumettre."
@@ -49,7 +50,6 @@ fr:
     # Miscellaneous
     cannot_display: "Fichier binaire : utiliser le bouton Télécharger pour voir."
     commit_date: "Date d'envoi (commit)"
-    detailed_csv_report: "Rappost CSV détaillé"
     grace_credits_used: "Utilisation des \"grace credits\""
     grading_can_begin: "L'évaluation peut commencer"
     grading_can_begin_after: "L'évaluation commencera à partir du %{time}"
@@ -60,7 +60,7 @@ fr:
     no_files_available: "Aucun fichier disponible"
     release_marks: "Montrer les notes"
     repo_list: "Liste des dépôts"
-    repo_checkout_file: "Commandes pour extraire les projets"
+    repo_checkout_file: "Commandes pour extraire les projets (%{type})"
     status: "Statut"
     successfully_changed: "Les %{changed} résultats ont été mis à jour."
     unrelease_marks: "Cacher les notes"

@@ -7,6 +7,12 @@ describe DownloadSubmissionsJob do
       grouping
     end
   end
+
+  context 'when running as a background job' do
+    let(:job_args) { [groupings.map(&:id), 'zip_path.zip', assignment.id] }
+    include_examples 'background job'
+  end
+
   let(:groupings_without_files) { create_list :grouping, 3 }
 
   it 'should create a zip file containing all submission files for the given groupings' do

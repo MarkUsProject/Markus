@@ -1,0 +1,37 @@
+<% gef_text = "#{h(grade_entry_form.short_identifier)}: #{h(grade_entry_form.description)}" %>
+<% route = student_interface_grade_entry_form_path(grade_entry_form.id) %>
+<tr>
+  <td>
+    <%= link_to gef_text, route %>
+  </td>
+  <td>
+    <% unless grade_entry_form.due_date.nil? %>
+      <%= l(grade_entry_form.due_date, format: :long) %>
+    <% end %>
+  </td>
+  <% unless upcoming %>
+    <td>
+      <% result = @g_id_entries[grade_entry_form.id] %>
+      <% if !result.nil? %>
+        <% if grade_entry_form.show_total %>
+          <strong>
+            <%= t('grade_entry_forms.students.mark_message') %>
+            <% if result.all_blank_grades? %>
+              <%= t('grade_entry_forms.grades.no_mark') %>
+            <% else %>
+              <%= number_to_percentage(grade_entry_form.calculate_total_percent(result), precision: 1) %>
+            <% end %>
+          </strong>
+          <br>
+          <%= "(#{t(:class_average)}: "\
+                        "#{number_to_percentage(grade_entry_form.calculate_average, precision: 1)})" %>
+        <% else %>
+          <%= t('grade_entry_forms.students.detailed_marks_message') %>
+        <% end %>
+      <% elsif grade_entry_form.due_date.nil? ||
+        grade_entry_form.due_date < Time.zone.now.to_date %>
+        <%= t('grade_entry_forms.students.no_results') %>
+      <% end %>
+    </td>
+  <% end %>
+</tr>

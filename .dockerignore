@@ -4,6 +4,9 @@
 # git dir
 .git/
 
+tmp/
+public/
+
 config/database.yml
 config/local_environment_override.rb
 

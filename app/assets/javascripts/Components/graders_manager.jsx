@@ -15,7 +15,7 @@ class GradersManager extends React.Component {
       assign_graders_to_criteria: false,
       loading: true,
       tableName: 'groups_table', // The first tab
-      skip_empty_submissions: false,
+      skip_empty_submissions: true,
       anonymize_groups: false,
       hide_unassigned_criteria: false,
       sections: {}
@@ -522,7 +522,7 @@ const CriteriaTable = withSelection(RawCriteriaTable);
 class GradersActionBox extends React.Component {
   render = () => {
     return (
-      <div className='rt-action-box icon'>
+      <div className='rt-action-box'>
         <button
           className='assign-all-button'
           onClick={this.props.assignAll}

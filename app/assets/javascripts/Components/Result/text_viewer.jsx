@@ -31,23 +31,32 @@ export class TextViewer extends React.Component {
     // Remove existing syntax highlighted code.
     $('.dp-highlighter').remove();
     dp.SyntaxHighlighter.HighlightAll(source_id);
-    window.annotation_type = ANNOTATION_TYPES.CODE;
     window.syntax_highlighter_adapter = new SyntaxHighlighter1p5Adapter($('.dp-highlighter ol')[0]);
-
-    window.annotation_manager = new SourceCodeLineAnnotations(
-      new SourceCodeLineManager(
-        window.syntax_highlighter_adapter,
-        new SourceCodeLineFactory(),
-        new SourceCodeLineArray()),
-      new AnnotationTextManager(),
-      new AnnotationTextDisplayer());
 
     // Apply modifications to Syntax Highlighter
     window.syntax_highlighter_adapter.applyMods();
+
+    if (this.props.resultView) {
+      window.annotation_type = ANNOTATION_TYPES.CODE;
+
+      window.annotation_manager = new SourceCodeLineAnnotations(
+        new SourceCodeLineManager(
+          window.syntax_highlighter_adapter,
+          new SourceCodeLineFactory(),
+          new SourceCodeLineArray()),
+        new AnnotationTextManager(),
+        new AnnotationTextDisplayer());
+    }
   };
 
   display_annotation = (annotation) => {
-    add_annotation_text(annotation.annotation_text_id, annotation.content);
+    let content = '';
+    if (!annotation.deduction) {
+      content += annotation.content;
+    } else {
+      content += annotation.content + ' [' + annotation.criterion_name + ': -' + annotation.deduction + ']';
+    }
+    add_annotation_text(annotation.annotation_text_id, content);
     annotation_manager.annotateRange(
       annotation.id,
       {

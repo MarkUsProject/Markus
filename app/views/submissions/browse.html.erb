@@ -7,6 +7,7 @@
           show_grace_tokens: <%= @assignment.submission_rule.type == 'GracePeriodSubmissionRule' %>,
           show_sections: <%= Section.exists? %>,
           is_admin: <%= @current_user.admin? %>,
+          is_timed: <%= @assignment.is_timed %>,
           can_run_tests: <%= @current_user.admin? && @assignment.enable_test %>,
           defaultFiltered: [{ id: '<%= params[:filter_by] %>', value: '<%= params[:filter_value] %>' }]
         }
@@ -38,12 +39,12 @@
 <% unless @assignment.is_peer_review? %>
   <% if @current_user.admin? %>
     <% @heading_buttons += [
-      { link_text: t('submissions.detailed_csv_report'),
-        link_path: summary_assignment_path(@assignment) },
       { link_text: t('submissions.repo_list'),
-        link_path: download_repo_list_assignment_submissions_path(@assignment) },
-      { link_text: t('submissions.repo_checkout_file'),
-        link_path: download_repo_checkout_commands_assignment_submissions_path(@assignment) }
+        link_path: download_repo_list_assignment_submissions_path(@assignment)},
+      { link_text: t('submissions.repo_checkout_file', type: 'HTTPS'),
+        link_path: download_repo_checkout_commands_assignment_submissions_path(@assignment, url_type: :https)},
+      { link_text: t('submissions.repo_checkout_file', type: 'SSH'),
+        link_path: download_repo_checkout_commands_assignment_submissions_path(@assignment, url_type: :ssh)}
     ] %>
   <% end %>
 <% end %>

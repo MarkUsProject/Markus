@@ -18,5 +18,3 @@ pt:
     remove_key: "Remova a Chave"
     time_of_upload: "Tempo de Carregamento"
     title: "Os Pares de Chaves"
-    update:
-      success: "Par de Chaves foi atualizado com sucesso"

@@ -55,23 +55,21 @@
   </h1>
 </div>
 
-<div class='wrapLeft'>
-  <% if @result.is_review_for?(@current_user, @assignment) ||
-      (@result.is_a_review? && !@current_user.student?) %>
-    <%= render partial: 'results/common/peer_reviews',
-               locals: { current_user: @current_user,
-                         assignment: @assignment,
-                         result: @result,
-                         submission: @submission,
-                         grouping: @grouping,
-                         reviewer: @reviewer,
-                         current_group_name: @current_group_name,
-                         prs: @prs,
-                         current_pr: @current_pr} %>
-  <% end %>
+<% if @result.is_review_for?(@current_user, @assignment) ||
+    (@result.is_a_review? && !@current_user.student?) %>
+  <%= render partial: 'results/common/peer_reviews',
+             locals: { current_user: @current_user,
+                       assignment: @assignment,
+                       result: @result,
+                       submission: @submission,
+                       grouping: @grouping,
+                       reviewer: @reviewer,
+                       current_group_name: @current_group_name,
+                       prs: @prs,
+                       current_pr: @current_pr} %>
+<% end %>
 
-  <div id='result-main'></div>
+<div id='result-main'></div>
 
-  <!-- Annotation pane-->
-  <div id='annotation_holder'></div>
-</div>
+<!-- Annotation pane-->
+<div id='annotation_holder'></div>

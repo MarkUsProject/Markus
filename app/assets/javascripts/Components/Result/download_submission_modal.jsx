@@ -32,7 +32,10 @@ export class DownloadSubmissionModal extends React.Component {
 
     return (
       <div>
-        <div>
+        <div className='inline-labels'>
+          <label htmlFor='include_annotations'>
+            {I18n.t('results.annotation.include_in_download')}
+          </label>
           <input
             name='include_annotations'
             id='include_annotations'
@@ -40,14 +43,11 @@ export class DownloadSubmissionModal extends React.Component {
             value={this.state.includeAnnotations}
             onChange={(e) => this.setState({includeAnnotations: e.target.checked})}
           />
-          <label htmlFor='include_annotations' className='inline_label'>
-            {I18n.t('results.annotation.include_in_download')}
-          </label>
-          <p>
-            {I18n.t('results.annotation.include_in_download_warning')}
-          </p>
         </div>
-        <div id='download_file_selector'>
+        <p>
+          {I18n.t('results.annotation.include_in_download_warning')}
+        </p>
+        <div>
           <FileSelector
             fileData={this.props.fileData}
             onSelectFile={this.selectFile}
@@ -55,7 +55,7 @@ export class DownloadSubmissionModal extends React.Component {
           />
           <div style={{clear: 'left'}} />
         </div>
-        <div>
+        <p>
           {this.state.selectedFile === null ?
             <a
               className='button disabled'
@@ -80,7 +80,7 @@ export class DownloadSubmissionModal extends React.Component {
           >
             {I18n.t('download_the', {item: I18n.t('all')})}
           </a>
-        </div>
+        </p>
       </div>
     );
   }

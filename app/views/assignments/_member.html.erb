@@ -1,30 +1,30 @@
 <% if member.membership_status == StudentMembership::STATUSES[:inviter] %>
-  <li id="member_inviter">
-    <%= "#{member.user.first_name} #{member.user.last_name} (#{t('groups.members.statuses.inviter')})" %>
+  <li>
+    <strong><%= "#{member.user.first_name} #{member.user.last_name} (#{t('groups.members.statuses.inviter')})" %></strong>
   </li>
 <% elsif member.membership_status == StudentMembership::STATUSES[:accepted] %>
   <li>
     <%= "#{member.user.first_name} #{member.user.last_name}" %>
   </li>
 <% elsif member.membership_status == StudentMembership::STATUSES[:pending] %>
-  <li class="membership_status_pending">
-     <%= "#{member.user.first_name} #{member.user.last_name} (#{t('groups.members.statuses.pending')})" %>
+  <li>
+    <em><%= "#{member.user.first_name} #{member.user.last_name} (#{t('groups.members.statuses.pending')})" %></em>
      <% if grouping.is_inviter?(@current_user) %>
        <%= link_to t('groups.members.cancel_invitation'),
                    disinvite_member_assignment_groups_path(assignment_id: @assignment.id, membership: member.id),
                    method: 'PATCH',
-                   class: 'delete',
+                   class: 'delete inline-button',
                    data: { confirm: t('groups.members.cancel_invitation_confirm') }
        %>
      <% end %>
   </li>
 <% elsif member.membership_status == StudentMembership::STATUSES[:rejected] %>
   <% if grouping.is_inviter?(@current_user) %>
-    <li class="membership_status_rejected">
-       <%= "#{member.user.first_name} #{member.user.last_name} (#{t('groups.members.statuses.rejected')})" %>
-       <%= link_to t(:delete),
-                   delete_rejected_assignment_groups_path(assignment_id: @assignment.id, membership: member.id),
-                   method: 'DELETE'%>
+    <li>
+      <em><%= "#{member.user.first_name} #{member.user.last_name} (#{t('groups.members.statuses.rejected')})" %></em>
+      <%= link_to t(:delete),
+                  delete_rejected_assignment_groups_path(assignment_id: @assignment.id, membership: member.id),
+                  method: 'DELETE' %>
     </li>
   <% end %>
 <% end %>

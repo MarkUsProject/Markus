@@ -7,19 +7,16 @@ export class ImageViewer extends React.Component {
     super();
   }
 
-  componentDidMount() {
-    if (this.props.url) {
-      this.ready_annotations();
-      this.props.annotations.forEach(this.display_annotation);
-    }
+  componentDidUpdate(prevProps, prevState) {
+    this.display_annotations();
   }
 
-  componentDidUpdate(prevProps, prevState) {
-    if (this.props.url) {
+  display_annotations = () => {
+    if (this.props.resultView && this.props.url) {
       this.ready_annotations();
       this.props.annotations.forEach(this.display_annotation);
     }
-  }
+  };
 
   ready_annotations = () => {
     window.annotation_type = ANNOTATION_TYPES.IMAGE;
@@ -33,17 +30,14 @@ export class ImageViewer extends React.Component {
     );
   };
 
-  componentWillUnmount() {
-    let box = document.getElementById('sel_box');
-    if (box) {
-      box.style.display = 'none';
-      box.style.width   = '0';
-      box.style.height  = '0';
-    }
-  }
-
   display_annotation = (annotation) => {
-    add_annotation_text(annotation.annotation_text_id, annotation.content);
+    let content = '';
+    if (!annotation.deduction) {
+      content += annotation.content;
+    } else {
+      content += annotation.content + ' [' + annotation.criterion_name + ': -' + annotation.deduction + ']';
+    }
+    add_annotation_text(annotation.annotation_text_id, content);
     annotation_manager.add_to_grid({
       x_range: annotation.x_range,
       y_range: annotation.y_range,
@@ -55,9 +49,11 @@ export class ImageViewer extends React.Component {
 
   render() {
     return (
-      <div id='image_container' className='image_container'>
+      <div id='image_container'>
+        <div key='sel_box' id='sel_box' className='annotation-holder-active' style={{display: 'none'}}/>
         <img id='image_preview'
           src={this.props.url}
+          onLoad={this.display_annotations}
           alt={I18n.t('results.cant_display_image')} />
       </div>
     );

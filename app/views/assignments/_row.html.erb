@@ -1,0 +1,39 @@
+<% route = assignment_path(assignment.id) %>
+<% assignment_text = "#{h(assignment.short_identifier)}: #{h(assignment.description)}" %>
+<tr>
+  <td>
+    <%= link_to assignment_text, route %>
+    <% if assignment.has_peer_review? && !assignment.pr_assignment.is_hidden %>
+      <%= link_to "#{assignment.short_identifier} #{PeerReview.model_name.human}",
+                  peer_review_assignment_path(id: assignment.pr_assignment.id),
+                  class: 'pr_assignment_list' %>
+    <% end %>
+  </td>
+  <td>
+    <%= render partial: 'assignments/assignment_date',
+               locals: { assignment: assignment } %>
+
+    <% if assignment.has_peer_review? && !assignment.pr_assignment.is_hidden %>
+      <%= render partial: 'assignments/assignment_date',
+                 locals: { assignment: assignment.pr_assignment } %>
+    <% end %>
+  </td>
+  <% unless upcoming %>
+    <td>
+      <% result = @a_id_results[assignment.id] %>
+      <% if !result.nil? %>
+        <% if assignment.max_mark > 0 && !assignment.results_average.nil? %>
+          <p>
+            <%= link_to Result.model_name.human.pluralize,
+                        view_marks_assignment_submission_result_path(
+                          assignment_id: assignment.id,
+                          submission_id: result.submission_id,
+                          id: result.id) %>
+          </p>
+        <% end %>
+      <% elsif assignment.due_date < Time.zone.now %>
+        <%= t('results.no_result') %>
+      <% end %>
+    </td>
+  <% end %>
+</tr>

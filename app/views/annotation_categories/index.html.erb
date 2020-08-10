@@ -28,17 +28,19 @@
 
 
 <p id='criterion_error' class='warning' style='display: none;'></p>
+<div class='pane-wrapper'>
 <div id='annotation_category_pane'>
   <%= render partial: 'annotation_categories/annotation_category_pane' %>
 </div>
 
-<div id='annotations_pane'>
+<div id='annotations_pane' class='pane'>
   <div id='annotation_list_holder'>
     <div id='annotations_help'>
       <h2><%= t(:help) %></h2>
       <p><%= t('annotations.help_message') %></p>
     </div>
   </div>
+</div>
 </div>
 
 <!-- Modals -->

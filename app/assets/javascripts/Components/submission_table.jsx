@@ -120,10 +120,16 @@ class RawSubmissionTable extends React.Component {
         </select>,
     },
     {
+      show: this.props.is_timed,
+      Header: I18n.t('activerecord.attributes.assignment.start_time'),
+      accessor: 'start_time',
+      filterable: false,
+      sortMethod: dateSort
+    },
+    {
       Header: I18n.t('submissions.commit_date'),
       accessor: 'submission_time',
       filterable: false,
-      minWidth: 150,
       sortMethod: dateSort,
     },
     {
@@ -138,9 +144,9 @@ class RawSubmissionTable extends React.Component {
       Header: I18n.t('activerecord.attributes.result.total_mark'),
       accessor: 'final_grade',
       Cell: row => {
-        const value = row.original.final_grade;
+        const value = row.original.final_grade === undefined ? '-' : Math.round(row.original.final_grade * 100) / 100;
         const max_mark = Math.round(row.original.max_mark * 100) / 100;
-        return (value === undefined ? '-' : value) + ' / ' + max_mark;
+        return value + ' / ' + max_mark;
       },
       className: 'number',
       minWidth: 80,
@@ -154,7 +160,7 @@ class RawSubmissionTable extends React.Component {
         <div className="tag_list">
           {row.original.tags.map(tag =>
             <span key={`${row.original._id}-${tag}`}
-              className="tag_element">
+              className="tag-element">
               {tag}
             </span>
           )}
@@ -292,6 +298,7 @@ class RawSubmissionTable extends React.Component {
 let SubmissionTable = withSelection(RawSubmissionTable);
 SubmissionTable.defaultProps = {
   is_admin: false,
+  is_timed: false,
   can_run_tests: false
 };
 

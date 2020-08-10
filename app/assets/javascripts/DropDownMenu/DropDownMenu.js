@@ -12,34 +12,26 @@ function DropDownMenu(trigger_node, menu_node) {
 
   // Set up the trigger_node click event
   var me = this;
-  $(this.trigger_node).click(function(event) {
+  $(this.trigger_node).hover(function() {
     me.refreshPositions();
     me.show();
-  });
-
-  // Set up the trigger_node mouseout event
-  $(this.trigger_node).bind('mouseout', function(event) {
-    var menu_node = me.getMenuNode();
-    var mouse_entered = me.getRelatedTarget(event);
-    if(mouse_entered !== null && !($(mouse_entered).closest(menu_node).length > 0) && mouse_entered.tagName != "HTML") {
-      me.hide();
-    }
   });
 }
 
 DropDownMenu.prototype.refreshPositions = function() {
   // Get cumulative position offsets of trigger_node...
-  var offset_left   = $(this.getTriggerNode()).offset()[0];
-  var offset_top    = $(this.getTriggerNode()).offset()[1];
+  var offset_left   = $(this.getTriggerNode())[0].getBoundingClientRect().left;
   var offset_height = $(this.getTriggerNode()).height();
 
+  let panel = $('.react-tabs-panel-action-bar')[0].getBoundingClientRect();
+
   // Position menu node so that it's directly under the trigger node,
-  // and hide it
+  // and hide it. (340px & 5px values are due to accommodating CSS ul.tags rules in _markus.scss)
   $(this.getMenuNode()).css({
-    "position" : "absolute",
-    "left" : "offset_left + 'px'",
-    "top" : "(offset_top + offset_height) + 'px'",
-    "zIndex": "10000"
+    'position' : 'absolute',
+    'left' : Math.min(0, panel.right - (offset_left + 340)),
+    'top' : offset_height + 5,
+    'zIndex': '10000'
   });
 }
 

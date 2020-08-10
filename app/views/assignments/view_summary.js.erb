@@ -12,6 +12,6 @@ $('#assignment_<%= @assignment.id %>_graph').html(
                                   locals: { assignment: @assignment, tas: @tas }) %>");
 <% end %>
 
-$('a[data-id]').removeClass('link_disabled');
+$('a[data-id]').removeClass('inactive');
 
-$('a[data-id="<%= @assignment.short_identifier %>"]').addClass('link_disabled');
+$('a[data-id="<%= @assignment.short_identifier %>"]').addClass('inactive');

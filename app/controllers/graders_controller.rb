@@ -64,7 +64,7 @@ class GradersController < ApplicationController
 
   def grader_criteria_mapping
     assignment = Assignment.find(params[:assignment_id])
-    criteria = assignment.get_criteria(:ta, :all, includes: [:tas])
+    criteria = assignment.ta_criteria.includes(:tas)
 
     file_out = MarkusCsv.generate(criteria) do |criterion|
       [criterion.name] + criterion.tas.map(&:user_name)
@@ -133,12 +133,9 @@ class GradersController < ApplicationController
       end
     when 'criteria_table'
       positions = params[:criteria]
-      # TODO: simplify data format interface between here and Criterion#assign_tas.
-      criterion_ids_types =
-        @assignment.rubric_criteria.where(position: positions).pluck(:id).map { |id| [id, 'RubricCriterion'] } +
-          @assignment.flexible_criteria.where(position: positions).pluck(:id).map { |id| [id, 'FlexibleCriterion'] } +
-          @assignment.checkbox_criteria.where(position: positions).pluck(:id).map { |id| [id, 'CheckboxCriterion'] }
-      if criterion_ids_types.blank?
+      criterion_ids = @assignment.criteria.where(position: positions).ids
+
+      if criterion_ids.blank?
         flash_now(:error, I18n.t('graders.select_a_criterion'))
         head :bad_request
         return
@@ -146,27 +143,16 @@ class GradersController < ApplicationController
 
       case params[:global_actions]
       when 'assign'
-        assign_all_graders_to_criteria(criterion_ids_types, grader_ids)
+        Criterion.assign_all_tas(criterion_ids, grader_ids, @assignment)
       when 'unassign'
-        # Gets criterion associations from params then
-        # gets their criterion ids so we can update the
-        # group counts.
-        criterion_associations = []
-        criterion_ids_by_type = {
-          RubricCriterion: [],
-          FlexibleCriterion: [],
-          CheckboxCriterion: []
-        }
-
-        criterion_ids_types.each do |id, type|
-          criterion_associations.concat(@assignment.criterion_ta_associations
-                                                   .where(criterion_id: id, criterion_type: type, ta_id: grader_ids)
-                                                   .pluck(:id))
-          criterion_ids_by_type[type.to_sym] << id
+        criterion_grader_ids = criterion_ids.flat_map do |id|
+          @assignment.criterion_ta_associations
+                     .where(criterion_id: id, ta_id: grader_ids)
+                     .pluck(:id)
         end
-        unassign_graders_from_criteria(criterion_associations, criterion_ids_by_type)
+        Criterion.unassign_tas(criterion_grader_ids, @assignment)
       when 'random_assign'
-        randomly_assign_graders_to_criteria(criterion_ids_types, grader_ids)
+        Criterion.randomly_assign_tas(criterion_ids, grader_ids, @assignment)
       end
     end
     head :ok
@@ -184,24 +170,12 @@ class GradersController < ApplicationController
 
   private
 
-  def randomly_assign_graders_to_criteria(criterion_ids, grader_ids)
-    Criterion.randomly_assign_tas(criterion_ids, grader_ids, @assignment)
-  end
-
   def randomly_assign_graders(grouping_ids, grader_ids)
     Grouping.randomly_assign_tas(grouping_ids, grader_ids, @assignment)
   end
 
   def assign_all_graders(grouping_ids, grader_ids)
     Grouping.assign_all_tas(grouping_ids, grader_ids, @assignment)
-  end
-
-  def assign_all_graders_to_criteria(criterion_ids, grader_ids)
-    Criterion.assign_all_tas(criterion_ids, grader_ids, @assignment)
-  end
-
-  def unassign_graders_from_criteria(criterion_grader_ids, criterion_ids_by_type)
-    Criterion.unassign_tas(criterion_grader_ids, criterion_ids_by_type, @assignment)
   end
 
   def unassign_graders(grouping_ids, grader_ids)

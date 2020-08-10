@@ -1,9 +1,9 @@
-<li id='criterion_<%= criterion.class %><%= criterion.id %>'>
+<li id='criterion_<%= criterion.id %>'>
   <span class='left'>
     <% if criterion.class.to_s == 'RubricCriterion' %>
       <%= image_tag('icons/table.png', title: t('criteria.rubric'))%> &nbsp
     <% elsif criterion.class.to_s == 'FlexibleCriterion' %>
-      <span class="flexible_criteria_icon" title=<%= t('criteria.flexible') %>> ⅔ &nbsp </span>
+      <span class="flexible-criteria-icon" title=<%= t('criteria.flexible') %>> ⅔ &nbsp </span>
     <% elsif criterion.class.to_s == 'CheckboxCriterion' %>
       <%= image_tag('icons/check_box.png', title: t('criteria.checkbox')) %> &nbsp
     <% end %>
@@ -11,8 +11,7 @@
                          length: 27,
                          omission: '...'),
                 edit_assignment_criterion_path(assignment_id: @assignment.id,
-                                               id: criterion.id,
-                                               criterion_type: criterion.class.to_s),
+                                               id: criterion.id),
                 id: "criterion_title_#{criterion.class}#{criterion.id}",
                 remote: true %>
   </span>

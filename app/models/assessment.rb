@@ -4,6 +4,8 @@ class Assessment < ApplicationRecord
   scope :assignments, -> { where(type: 'Assignment') }
   scope :grade_entry_forms, -> { where(type: 'GradeEntryForm') }
 
+  has_many :marking_weights, dependent: :destroy
+
   # Call custom validator in order to validate the :due_date attribute
   # date: true maps to DateValidator (custom_name: true maps to CustomNameValidator)
   # Look in lib/validators/* for more info
@@ -24,5 +26,10 @@ class Assessment < ApplicationRecord
     return unless short_identifier_changed?
     errors.add(:short_id_change, 'short identifier should not be changed once an assessment has been created')
     false
+  end
+
+  def upcoming(*)
+    return true if self.due_date.nil?
+    self.due_date > Time.current
   end
 end

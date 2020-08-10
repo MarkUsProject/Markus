@@ -3,7 +3,6 @@ describe CriterionTaAssociation do
     subject { build_stubbed :criterion_ta_association }
     it { is_expected.to belong_to :ta }
     it { is_expected.to belong_to :criterion }
-    it { is_expected.to validate_presence_of :criterion_type }
     it { is_expected.to belong_to :assignment }
     it { is_expected.to allow_values(subject.criterion.assignment.id).for :assessment_id }
   end

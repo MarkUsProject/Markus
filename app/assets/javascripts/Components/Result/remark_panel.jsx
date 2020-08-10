@@ -146,16 +146,18 @@ class TextForm extends React.Component {
             onChange={this.updateValue}
             rows={5}
           />
-          <input type='submit' value={I18n.t('save')}
-                 data-disable-with={I18n.t('working')}
-                 ref={this.button}
-                 disabled={!this.state.unsavedChanges}
-          />
+          <p>
+            <input type='submit' value={I18n.t('save')}
+                   data-disable-with={I18n.t('working')}
+                   ref={this.button}
+                   disabled={!this.state.unsavedChanges}
+            />
+          </p>
         </form>
         {this.props.previewId && (
           <div>
             <h3>{I18n.t('preview')}</h3>
-            <div id={this.props.previewId} />
+            <div id={this.props.previewId} className='preview' />
           </div>
         )}
       </div>
@@ -197,7 +199,7 @@ class RemarkRequestForm extends React.Component {
             onChange={this.updateValue}
             rows={10}
           />
-          <div>
+          <p>
             <input type='submit' value={I18n.t('save')}
                    name='save'
                    data-disable-with={I18n.t('working')}
@@ -211,7 +213,7 @@ class RemarkRequestForm extends React.Component {
                    data-confirm={I18n.t('results.remark.submit_confirm')}
                    onClick={(e) => this.onSubmit(e)}
             />
-          </div>
+          </p>
         </form>
       </div>
     );

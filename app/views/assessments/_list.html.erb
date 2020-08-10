@@ -1,0 +1,26 @@
+<% if assessments.empty? %>
+  <p><%= t('assessments.none') %></p>
+<% else %>
+  <div class='table'>
+    <table>
+      <thead>
+      <tr>
+        <th><%= Assessment.model_name.human %></th>
+        <th><%= Assignment.human_attribute_name(:due_date) %></th>
+        <% unless upcoming %>
+          <th><%= Result.model_name.human.pluralize %></th>
+        <% end %>
+      </tr>
+      </thead>
+      <tbody>
+      <% assessments.each do |assessment| %>
+        <% if assessment.is_a?(GradeEntryForm) %>
+          <%= render partial: 'grade_entry_forms/row', locals: { grade_entry_form: assessment, upcoming: upcoming } %>
+        <% else %>
+          <%= render partial: 'assignments/row', locals: { assignment: assessment, upcoming: upcoming } %>
+        <% end %>
+      <% end %>
+      </tbody>
+    </table>
+  </div>
+<% end %>

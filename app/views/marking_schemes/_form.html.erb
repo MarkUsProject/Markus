@@ -1,4 +1,13 @@
-<div class='section'>
+<p class='section'>
+  <h3>
+    <% if @marking_scheme.new_record? %>
+      <%= I18n.t('helpers.submit.create',
+                 model: I18n.t('activerecord.models.marking_scheme.one')) %>
+    <% else %>
+      <%= I18n.t('helpers.submit.update',
+                 model: I18n.t('activerecord.models.marking_scheme.one')) %>
+    <% end %>
+  </h3>
   <%= form_for @marking_scheme, as: :marking_scheme do |f| %>
 
     <%= render 'shared/flash_message' %>
@@ -23,13 +32,13 @@
       </table>
     </div>
 
-    <div id='form_actions'>
+    <p>
       <%= f.submit t(:save),
                    name: 'submit',
                    data: { disable_with: t('working') },
                    class: 'button' %>
       <%= link_to t(:cancel), marking_schemes_path, class: 'button' %>
-    </div>
+    </p>
 
   <% end %>
 </div>

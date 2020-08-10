@@ -15,84 +15,76 @@
   </h1>
 </div>
 
-<div class='student_columns'>
-  <div id='student_column_left'>
-    <div class='block'>
-      <%= render partial: 'read', locals: { peer_review: true } %>
-    </div>
+<div class='pane-wrapper'>
+  <div class='pane block'>
+    <%= render partial: 'read', locals: { peer_review: true } %>
 
-    <div class='block'>
-      <h2><%= Submission.model_name.human.pluralize %></h2>
-
-      <div class='block_content'>
-        <div id='peer_submissions_table'></div>
-      </div>
+    <div class='block-content'>
+      <h3><%= Submission.model_name.human.pluralize %></h3>
+      <div id='peer_submissions_table'></div>
     </div>
   </div>
 
-  <div id='student_column_right'>
-    <div class='block'>
-      <h2><%= t('groups.student_interface.group_information') %></h2>
+  <div class='pane block'>
+    <h2><%= t('groups.student_interface.group_information') %></h2>
 
-      <div class='block_content'>
-        <% # If student has no group, inform them
-           if @grouping.nil? %>
-            <p class='notice'>
-              <%= t('groups.student_interface.no_group_yet') %>.
-              <% if @assignment.past_collection_date?(@student.section) %>
-                <%= t('assignments.due_date.final_due_date_passed') %>
-              <% end %>
-            </p>
-        <% else %>
-            <%# Since the student has a group already, we display information about the group only %>
-            <h3>
-              <%= t('groups.student_interface.your_group') %>
-            </h3>
-
-            <% if flash[:fail_notice] && !flash[:fail_notice].empty? %>
-                <div class='notice'>
-                  <% if flash[:fail_notice].is_a?(Array) %>
-                      <ul>
-                        <% flash[:fail_notice].each do |message| %>
-                            <li><%= message %></li>
-                        <% end %>
-                      </ul>
-                  <% else %>
-                      <%= flash[:fail_notice] %>
-                  <% end %>
-                </div>
+    <div class='block-content'>
+      <% # If student has no group, inform them
+         if @grouping.nil? %>
+          <p class='notice'>
+            <%= t('groups.student_interface.no_group_yet') %>.
+            <% if @assignment.past_collection_date?(@student.section) %>
+              <%= t('assignments.due_date.final_due_date_passed') %>
             <% end %>
+          </p>
+      <% else %>
+          <%# Since the student has a group already, we display information about the group only %>
+          <h3>
+            <%= t('groups.student_interface.your_group') %>
+          </h3>
 
-            <% if flash[:success] && !flash[:success].empty? %>
-                <div class='success'>
-                  <% if flash[:success].is_a?(Array) %>
-                      <ul>
-                        <% flash[:success].each do |message| %>
-                            <li><%= message %></li>
-                        <% end %>
-                      </ul>
-                  <% else %>
-                      <%= flash[:success] %>
-                  <% end %>
-                </div>
+          <% if flash[:fail_notice] && !flash[:fail_notice].empty? %>
+              <div class='notice'>
+                <% if flash[:fail_notice].is_a?(Array) %>
+                    <ul>
+                      <% flash[:fail_notice].each do |message| %>
+                          <li><%= message %></li>
+                      <% end %>
+                    </ul>
+                <% else %>
+                    <%= flash[:fail_notice] %>
+                <% end %>
+              </div>
+          <% end %>
+
+          <% if flash[:success] && !flash[:success].empty? %>
+              <div class='success'>
+                <% if flash[:success].is_a?(Array) %>
+                    <ul>
+                      <% flash[:success].each do |message| %>
+                          <li><%= message %></li>
+                      <% end %>
+                    </ul>
+                <% else %>
+                    <%= flash[:success] %>
+                <% end %>
+              </div>
+          <% end %>
+
+          <%# For each member of this group, display name %>
+          <ul>
+            <% @grouping.student_memberships.includes(:user).each do |member|%>
+                <li>
+                  <span class="last_name"><%= member.user.first_name %> </span> <%= member.user.last_name %>
+                </li>
             <% end %>
+          </ul>
+      <% end %>
 
-            <%# For each member of this group, display name %>
-            <ul>
-              <% @grouping.student_memberships.includes(:user).each do |member|%>
-                  <li>
-                    <span class="last_name"><%= member.user.first_name %> </span> <%= member.user.last_name %>
-                  </li>
-              <% end %>
-            </ul>
-        <% end %>
-      </div>
-    </div>
-    <div class='block'>
-      <h2><%= t('peer_reviews.your_results') %></h2>
-      <div id='peer_review_results' class='block_content'>
+      <h3><%= t('peer_reviews.your_results') %></h3>
+      <div>
         <% if @prs.empty? %>
-            <p class='notice'><%= t('peer_reviews.your_results_none') %></p>
+            <p><%= t('peer_reviews.your_results_none') %></p>
         <% else %>
           <ul>
             <% @prs.each_with_index do |pr, i| %>

@@ -2,7 +2,7 @@ describe FlexibleCriterion do
   let(:criterion_factory_name) { :flexible_criterion }
 
   it_behaves_like 'a criterion'
-  context 'A good FlexibleCriterion model' do
+  context 'A good Flexible Criterion model' do
     before :each do
       @criterion = create(:flexible_criterion)
     end
@@ -51,6 +51,58 @@ describe FlexibleCriterion do
   context 'for an assignment' do
     before :each do
       @assignment = create(:assignment)
+    end
+
+    context 'with deductive annotations' do
+      let(:assignment) { create(:assignment_with_deductive_annotations) }
+      let(:flexible_criterion) { assignment.criteria.where(type: 'FlexibleCriterion').first }
+      let(:annotation_category) do
+        assignment.annotation_categories.where(flexible_criterion_id: flexible_criterion.id).first
+      end
+
+      context 'when being destroyed' do
+        it 'does not cause a result to subtract the mark value of the given criterion from the result\'s total_mark '\
+         ' through both the annotation_text callbacks and the given criterion\'s own update_results callback' do
+          new_criterion = create(:flexible_criterion, assignment: assignment)
+          new_mark = create(:flexible_mark, result: assignment.groupings.first.current_result, criterion: new_criterion)
+          assignment.groupings.first.current_result.reload
+          new_mark.update(mark: 1)
+          flexible_criterion.destroy
+          expect(assignment.reload.groupings.first.current_result.total_mark).to eq 1.0
+        end
+
+        it 'reassigns its annotation_category\'s flexible_criterion_id to nil if it has one' do
+          flexible_criterion.destroy
+          assignment.reload
+          expect(assignment.annotation_categories.first.flexible_criterion_id).to eq nil
+        end
+
+        it 'reassigns its annotation_categories\' flexible_criterion_ids to nil if it has many' do
+          create(:annotation_category,
+                 flexible_criterion_id: flexible_criterion.id,
+                 assignment: assignment)
+          flexible_criterion.destroy
+          assignment.reload
+          category_criteria = assignment.annotation_categories.map(&:flexible_criterion_id)
+          expect(category_criteria).to eq [nil, nil]
+        end
+      end
+
+      it 'correctly scales up annotation text deductions when its max_mark is increased' do
+        create(:annotation_text, annotation_category: annotation_category, deduction: 2.0)
+        flexible_criterion.update!(max_mark: 6.0)
+        assignment.reload
+        deductions = annotation_category.annotation_texts.map(&:deduction)
+        expect(deductions.sort!).to eq [2.0, 4.0]
+      end
+
+      it 'correctly scales down annotation text deductions when its max_mark is decreased' do
+        create(:annotation_text, annotation_category: annotation_category, deduction: 2.0)
+        flexible_criterion.update!(max_mark: 1.0)
+        assignment.reload
+        deductions = annotation_category.annotation_texts.map(&:deduction)
+        expect(deductions.sort!).to eq [0.33, 0.67]
+      end
     end
 
     context 'with criterion from a 2 element row with no description overwritten' do
@@ -152,6 +204,35 @@ describe FlexibleCriterion do
       describe '.position' do
         it 'equals 2' do
           expect(@criterion.position).to eq(2)
+        end
+      end
+    end
+  end
+
+  context 'validations work properly' do
+    before(:each) do
+      @criterion = create(:flexible_criterion)
+    end
+    context 'when a result is released' do
+      before(:each) do
+        @marks = @criterion.marks
+        results = []
+        3.times do
+          results << create(:complete_result, released_to_students: false)
+        end
+        @marks.create(mark: 0, result: results[0])
+        @marks.create(mark: 1, result: results[1])
+        @marks.create(mark: 1, result: results[2])
+        results.each do |result|
+          # have to release to students after or else cannot assign marks
+          result.released_to_students = true
+          result.save
+        end
+      end
+
+      describe 'flexible criteria can\'t be updated' do
+        it 'not raise error' do
+          expect(@criterion.update(max_mark: 10)).to be false
         end
       end
     end

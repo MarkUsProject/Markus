@@ -64,11 +64,8 @@ class Submission < ApplicationRecord
           # populate the submission with no files instead of raising an exception
           raise ActiveRecord::Rollback
         end
-      end
-      starter_code_revision = grouping.starter_code_revision_identifier
-      unless starter_code_revision.nil?
-        # if starter code exists, check if the student did not change the starter code
-        new_submission.is_empty = starter_code_revision == revision&.revision_identifier
+        # if starter files exist, check if the student did not change the starter files
+        new_submission.is_empty = !grouping.changed_starter_file_at?(revision)
       end
       new_submission.save!
       new_submission
@@ -125,7 +122,7 @@ class Submission < ApplicationRecord
     complete_marks = true
     result.create_marks # creates marks for any new criteria that may have just been added
     result.marks.each do |mark|
-      test_groups = mark.markable.test_groups
+      test_groups = mark.criterion.test_groups
       if test_groups.empty? # there's at least one manually-assigned mark
         complete_marks = false
         next
@@ -145,12 +142,13 @@ class Submission < ApplicationRecord
       if all_marks_earned == 0 || all_marks_total == 0
         final_mark = 0.0
       elsif all_marks_earned > all_marks_total
-        final_mark = mark.markable.max_mark
+        final_mark = mark.criterion.max_mark
       else
-        final_mark = (all_marks_earned / all_marks_total * mark.markable.max_mark).round(2)
-        if mark.markable.instance_of? RubricCriterion
+        final_mark = (all_marks_earned / all_marks_total * mark.criterion.max_mark).round(2)
+        if mark.criterion.instance_of? RubricCriterion
           # find the nearest mark associated to a level
-          nearest_mark = (final_mark / mark.markable.weight.to_f).round * mark.markable.weight
+          # TODO: this logic is incorrect due to having an arbitrary number of levels (see issue #4753)
+          nearest_mark = (final_mark / mark.criterion.weight.to_f).round * mark.criterion.weight
           final_mark = nearest_mark
         end
       end
@@ -308,9 +306,9 @@ class Submission < ApplicationRecord
                                 unit: extra_mark.unit)
     end
 
-    remark_assignment.get_criteria(:ta).each do |criterion|
-      remark_mark = Mark.where(markable: criterion, result_id: remark.id)
-      original_mark = Mark.where(markable: criterion, result_id: original_result.id)
+    remark_assignment.ta_criteria.each do |criterion|
+      remark_mark = Mark.where(criterion: criterion, result_id: remark.id)
+      original_mark = Mark.where(criterion: criterion, result_id: original_result.id)
       remark_mark.first.update!(mark: original_mark.first.mark)
     end
 

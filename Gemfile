@@ -10,7 +10,7 @@ source 'https://rubygems.org'
 
 # Bundler requires these gems in all environments
 gem 'puma'
-gem 'rails', '~> 6.0.2'
+gem 'rails', '~> 6.0.3'
 gem 'sprockets'
 
 # Models and database interactions
@@ -55,7 +55,6 @@ gem 'net-ssh'
 gem 'redcarpet'
 gem 'rubyzip', require: 'zip'
 gem 'rugged'
-gem 'ya2yaml'
 
 # Rails miscellany
 gem 'activerecord-session_store'
@@ -103,6 +102,7 @@ end
 group :test do
   gem 'coveralls', require: false
   gem 'factory_bot_rails'
+  gem 'fuubar'
   gem 'machinist', '< 3'
   gem 'shoulda'
   gem 'simplecov', require: false
@@ -116,7 +116,7 @@ end
 group :development, :test do
   gem 'byebug'
   gem 'i18n-tasks'
-  gem 'rspec-rails', '~> 4.0.0'
+  gem 'rspec-rails', '~> 4.0.1'
 end
 
 # Gems needed (wanted) for development, test and production_test

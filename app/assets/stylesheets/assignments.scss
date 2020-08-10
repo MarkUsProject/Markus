@@ -6,20 +6,10 @@
   margin-top: 1.5em;
 }
 
-.disable {
-  color: $grey;
-  font-style: italic;
-}
-
 fieldset {
-  box-shadow: none;
-  margin-top: 2em;
-
-  div {
-    margin: 0.5em 0;
-  }
-
   &.period,
+  &.timed_assignment_duration_properties,
+  &.starter_file_properties,
   &.group_properties {
     border: 1px solid $grey;
     border-radius: $radius;
@@ -38,10 +28,12 @@ fieldset {
       margin-top: 1em;
     }
   }
+}
 
-  // Save button in assignment form
-  & + input[type='submit'] {
-    margin-top: 1.5em;
+#assignment_files {
+  input[type=text] {
+    margin-left: 10px;
+    margin-right: 10px;
   }
 }
 
@@ -81,179 +73,10 @@ fieldset {
   }
 }
 
-.PeriodDeltaChain_Hours {
-  width: 42px;
-}
-
-label {
-  display: inline-block;
-  margin-top: 5px;
-  min-width: 12em;
-}
-
-.section_due_date_label {
-  margin-left: 10em;
-}
-
-input[type='number'] {
-  width: 5em;
-}
-
-input#assignment_short_identifier {
-  margin-right: 4em;
-}
-
-input#assignment_short_identifier[readonly] {
-  background-color: $disabled-grey;
-  border-color: $disabled-dark;
-  color: black;
-}
-
-.section_due_date_form {
-  margin-left: 2.5em;
-}
-
-
 /* Students view */
 
-.section + .title_bar {
-  margin-top: $dimen-vertical;
-}
-
-.student_columns {
-  display: table;
-  width: 100%;
-
-  #student_column_left {
-    padding-right: 0.75em;
-  }
-
-  #student_column_right {
-    padding-left: 0.75em;
-  }
-
-  #student_column_left,
-  #student_column_right {
-    display: table-cell;
-    width: 50%;
-
-    @include breakpoint(mobile) {
-      display: block;
-      padding: 0;
-      width: 100%;
-    }
-  }
-}
-
-.block {
-  border: 1px solid $blue;
-  border-radius: $radius;
-  margin: 0 auto 1.5em;
-  padding: 0;
-
-  h2 {
-    background-color: $light-grey;
-    border-bottom: 1px solid $grey;
-    border-radius: $radius $radius 0 0;
-    color: $dark-grey;
-    font-size: 1.5em;
-    font-weight: 300;
-    margin: 0;
-    padding: 0.5em 10px;
-  }
-
-  h3 {
-    border-bottom: 1px solid #ccc;
-    color: $dark-grey;
-    font-size: 1.25em;
-    font-weight: 300;
-    margin: 0 0 1em 0;
-    padding: 0.5em 0.1em;
-  }
-
-  .block_content {
-    padding: 10px 15px;
-
-    li {
-      margin-bottom: 0.5em;
-      margin-left: -1em;
-    }
-
-    // Invite button
-    input[type='button'] {
-      margin-bottom: 2em;
-    }
-  }
-}
-
-.group-options {
-  .group-button,
-  .button_to {
-    display: inline;
-  }
-}
-
-.info {
-  margin-bottom: 1em;
-}
-
-.info.red {
-  color: $red;
-}
-
-.sub_block {
-  margin-bottom: 1em;
-  line-height: 1.4em;
-  overflow: hidden;
-  width: 100%;
-
-  .prop_label {
-    display: inline-block;
-    font-weight: 600;
-    min-width: 12em;
-    float: left;
-
-    @include breakpoint(mobile) {
-      display: block;
-      min-width: 0;
-    }
-  }
-
-  .prop_paragraph {
-    display: block;
-    overflow: hidden;
-  }
-
-  .clear {
-    display: block;
-  }
-}
-
-.block_line {
-  border-top: 1px solid #ccc;
-  display: block;
-  margin: 5px;
-
-  span.box {
-    display: inline-block;
-  }
-}
-
-#member_inviter {
-  font-weight: 600;
-}
-
-.membership_status_pending {
-  font-style: italic;
-}
-
-.membership_status_rejected {
-  color: $grey;
-  font-style: italic;
-}
-
-#invite_dialog fieldset {
-  padding-top: 1.5em;
+.button_to {
+  display: inline-block;
 }
 
 
@@ -300,4 +123,26 @@ input#assignment_short_identifier[readonly] {
   margin: 0 8px;
   vertical-align: baseline;
   width: 100px;
+}
+
+.starter-file-rename-cell-content {
+  .rename-input {
+    float: left;
+  }
+
+  .original-checkbox {
+    float: right;
+    vertical-align: middle;
+  }
+}
+
+.starter-file-rule-types {
+  > * {
+    padding-bottom: 10px;
+  }
+}
+
+.download-button {
+  text-align: right;
+  vertical-align: middle;
 }

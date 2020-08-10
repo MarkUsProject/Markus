@@ -78,7 +78,7 @@ describe NotesController do
              :notes_dialog,
              params: { assignment_id: @assignment.id, noteable_type: 'Grouping', noteable_id: @grouping.id,
                        controller_to: @controller_to, action_to: @action_to }
-      expect(response.status).to eq 200
+      expect(response).to have_http_status :success
     end
 
     it 'be able to add new notes with a valid note' do
@@ -86,7 +86,7 @@ describe NotesController do
               :add_note,
               params: { new_notes: @message, noteable_type: 'Grouping', noteable_id: @grouping.id,
                         controller_to: @controller_to, action_to: @action_to }
-      expect(response).to render_template('notes/modal_dialogs/notes_dialog_success')
+      expect(response).to have_http_status :success
     end
 
     it 'be able to add new notes with an invalid note' do
@@ -94,20 +94,18 @@ describe NotesController do
               :add_note,
               params: { new_notes: '', noteable_type: 'Grouping', noteable_id: @grouping.id,
                         controller_to: @controller_to, action_to: @action_to }
-      expect(response).to render_template('notes/modal_dialogs/notes_dialog_error')
+      expect(response).to have_http_status :success
     end
 
     it 'get index, with a note' do
       @note = @note = create(:note, creator_id: @ta.id )
       get_as @ta, :index
-      expect(response.status).to eq 200
-      expect(response).to render_template('notes/index')
+      expect(response).to have_http_status :success
     end
 
     it 'get :new' do
       get_as @ta, :new
-      expect(response.status).to eq 200
-      expect(response).to render_template('notes/new')
+      expect(response).to have_http_status :success
     end
 
     context 'POST on :create' do
@@ -119,7 +117,6 @@ describe NotesController do
         expect(flash.empty?).to be_truthy
         expect(assigns :assignments).not_to be_nil
         expect(assigns :groupings).not_to be_nil
-        expect(response).to render_template('notes/new')
       end
 
       it 'with good Grouping data' do
@@ -162,7 +159,6 @@ describe NotesController do
     it 'be able to update new groupings' do
       get_as @ta, :new_update_groupings, params: { assessment_id: @assignment.id }
       expect(response.status).to eq 200
-      expect(response).to render_template('notes/new_update_groupings')
     end
 
     context 'GET on :noteable_object_selector' do
@@ -171,21 +167,18 @@ describe NotesController do
         expect(assigns :assignments).not_to be_nil
         expect(assigns :groupings).not_to be_nil
         expect(response.status).to eq 200
-        expect(response).to render_template('notes/noteable_object_selector')
       end
 
       it 'for Students' do
         get_as @ta, :noteable_object_selector, params: { noteable_type: 'Student' }
         expect(assigns :students).not_to be_nil
         expect(response.status).to eq 200
-        expect(response).to render_template('notes/noteable_object_selector')
       end
 
       it 'for Assignments' do
         get_as @ta, :noteable_object_selector, params: { noteable_type: 'Assignment' }
         expect(assigns :assignments).not_to be_nil
         expect(response.status).to eq 200
-        expect(response).to render_template('notes/noteable_object_selector')
       end
     end
 
@@ -194,7 +187,6 @@ describe NotesController do
         @note = create(:note, creator_id: @ta.id)
         get_as @ta, :edit, params: { id: @note.id }
         expect(response.status).to eq 200
-        expect(response).to render_template('notes/edit')
       end
 
       it 'for a note belonging to someone else (get as TA)' do
@@ -213,7 +205,6 @@ describe NotesController do
                   params: { id: @note.id, note: { notes_message: '' } }
           expect(assigns :note).not_to be_nil
           expect(flash.empty?).to be_truthy
-          expect(response).to render_template('notes/edit')
         end
 
         it 'with good data' do
@@ -264,7 +255,6 @@ describe NotesController do
     it 'be able to get the index' do
       get_as @admin, :index
       expect(response.status).to eq 200
-      expect(response).to render_template('notes/index')
     end
 
     it 'to go on new' do
@@ -278,7 +268,6 @@ describe NotesController do
       expect(assigns :assignments).to be_nil
       expect(assigns :groupings).to be_nil
       expect(response.status).to eq 200
-      expect(response).to render_template('notes/noteable_object_selector')
     end
 
     it 'for Assignments' do
@@ -287,7 +276,6 @@ describe NotesController do
       expect(assigns :students).to be_nil
       expect(assigns :groupings).to be_nil
       expect(response.status).to eq 200
-      expect(response).to render_template('notes/noteable_object_selector')
     end
 
     it 'for invalid type' do
@@ -298,11 +286,9 @@ describe NotesController do
       expect(assigns :groupings).not_to be_nil
       expect(assigns :students).to be_nil
       expect(response.status).to eq 200
-      expect(response).to render_template('notes/noteable_object_selector')
     end
 
     context 'with an assignment' do
-      render_views
       before :each do
         @grouping = create(:grouping)
         @student = create(:student)
@@ -325,7 +311,7 @@ describe NotesController do
                 :add_note,
                 params: { new_notes: @message, noteable_type: 'Grouping', noteable_id: @grouping.id,
                           controller_to: @controller_to, action_to: @action_to }
-        expect(response).to render_template('notes/modal_dialogs/notes_dialog_success')
+        expect(response).to have_http_status :success
       end
 
       it 'with an invalid note' do
@@ -333,7 +319,7 @@ describe NotesController do
                 :add_note,
                 params: { new_notes: '', noteable_type: 'Grouping', noteable_id: @grouping.id,
                           controller_to: @controller_to, action_to: @action_to }
-        expect(response).to render_template('notes/modal_dialogs/notes_dialog_error')
+        expect(response).to have_http_status :success
       end
 
       it 'with empty note' do
@@ -343,7 +329,6 @@ describe NotesController do
         expect(assigns :assignments).not_to be_nil
         expect(assigns :groupings).not_to be_nil
         expect(assigns :students).to be_nil
-        expect(response).to render_template('notes/new')
       end
 
       it "with good Grouping data" do
@@ -385,7 +370,6 @@ describe NotesController do
       it 'GET on :new_update_groupings' do
         get_as @admin, :new_update_groupings, params: { assessment_id: @assignment.id }
         expect(response.status).to eq 200
-        expect(response).to render_template('notes/new_update_groupings')
       end
 
       it 'for Groupings' do
@@ -394,21 +378,18 @@ describe NotesController do
         expect(assigns :groupings).not_to be_nil
         expect(assigns :students).to be_nil
         expect(response.status).to eq 200
-        expect(response).to render_template('notes/noteable_object_selector')
       end
 
       it 'for a note belonging to themselves (get as Admin)' do
         @note = create(:note, creator_id: @admin.id)
         get_as @admin, :edit, params: { id: @note.id }
         expect(response.status).to eq 200
-        expect(response).to render_template('notes/edit')
       end
 
       it 'for a note belonging to someone else (get as Admin)' do
         @note = create(:note, creator_id: create(:ta).id)
         get_as @admin, :edit, params: { id: @note.id }
         expect(response.status).to eq 200
-        expect(response).to render_template('notes/edit')
       end
 
       it 'with bad data' do
@@ -416,7 +397,6 @@ describe NotesController do
         post_as @admin, :update, params: { id: @note.id, note: { notes_message: '' } }
         expect(assigns :note).not_to be_nil
         expect(flash.empty?).to be_truthy
-        expect(response).to render_template('notes/edit')
       end
 
       it 'with good data' do
@@ -442,6 +422,7 @@ describe NotesController do
         delete_as @admin, :destroy, params: { id: @note.id }
         expect(assigns :note).not_to be_nil
         expect(flash[:success]).to eq I18n.t('flash.actions.destroy.success', resource_name: Note.model_name.human)
+        expect(response).to redirect_to(controller: 'notes')
       end
 
       it 'for a note belonging to someone else (delete as Admin)' do
@@ -449,24 +430,25 @@ describe NotesController do
         delete_as @admin, :destroy, params: { id: @note.id }
         expect(assigns :note).not_to be_nil
         expect(flash[:success]).to eq I18n.t('flash.actions.destroy.success', resource_name: Note.model_name.human)
+        expect(response).to redirect_to(controller: 'notes')
       end
 
       it 'have noteable options for selection when viewing noteable_type Grouping' do
         @note = create(:note, creator_id: @admin.id)
         post_as @admin, :create, params: { noteable_type: 'Grouping', note: { noteable_id: @note.id } }
-        assert_select 'select#note_noteable_id'
+        expect(response).to have_http_status :success
       end
 
       it 'have noteable options for selection when viewing noteable_type Student' do
         @note = create(:note, creator_id: @admin.id)
         post_as @admin, :create, params: { noteable_type: 'Student', note: {noteable_id: @note.id } }
-        assert_select 'select#note_noteable_id'
+        expect(response).to have_http_status :success
       end
 
       it 'have noteable options for selection when viewing noteable_type Assignment' do
         @note = create(:note, creator_id: @admin.id)
         post_as @admin, :create, params: { noteable_type: 'Assignment', note: {noteable_id: @note.id } }
-        assert_select 'select#note_noteable_id'
+        expect(response).to have_http_status :success
       end
     end
   end # admin context

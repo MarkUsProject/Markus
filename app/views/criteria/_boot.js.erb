@@ -28,4 +28,41 @@
       });
     }
   });
+
+  function add_level(id) {
+    let rubric_form = $('#' + id);
+    let last_level = $('#' + id + " .level").first();
+    let new_level = last_level.clone();
+    new_level.find('#display_name').first().text(I18n.t("rubric_criteria.level.new"));
+    new_level.find('label').first().text(I18n.t("rubric_criteria.level.delete.new"));
+
+    // use regular expressions to update level numbers
+    let regex = new RegExp(/\d+/);
+    let level_num = $('#' + id + " .level").length;
+    // clear the inputs and text areas and create unique ids and names
+    new_level.find('input').each(function () {
+      if ($(this).attr('id')) {
+        $(this).attr('id', $(this).attr('id').replace(regex, level_num));
+      }
+      if ($(this).attr('name')) {
+        $(this).attr('name', $(this).attr('name').replace(regex, level_num));
+      }
+      $(this).val('');
+    });
+    new_level.find('textarea').each(function () {
+      if ($(this).attr('id')) {
+        $(this).attr('id', $(this).attr('id').replace(regex, level_num));
+      }
+      if ($(this).attr('name')) {
+        $(this).attr('name', $(this).attr('name').replace(regex, level_num));
+      }
+      $(this).val('');
+    });
+    // Change destroy checkbox into a link.
+    let delete_link = $('<a></a>').text(I18n.t("rubric_criteria.level.delete.new"));
+    delete_link.on('click', () => new_level.remove());
+    new_level.find('.destroy_checkbox').replaceWith(delete_link);
+
+    rubric_form.prepend(new_level);
+  }
 </script>

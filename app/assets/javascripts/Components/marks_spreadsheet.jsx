@@ -147,7 +147,7 @@ class RawMarksSpreadsheet extends React.Component {
     accessor: 'total_marks',
     Header: `${I18n.t('activerecord.attributes.grade_entry_form.total')} (${this.props.out_of_total})`,
     minWidth: 50,
-    className: 'grade-total',
+    className: 'number',
     Cell: row => {
       return <GradeEntryTotal initial_value={row.value} ref={node => this[`total-${row.original._id}`] = node} />;
     },
@@ -238,24 +238,6 @@ class RawMarksSpreadsheet extends React.Component {
     this.setState({filtered}, () => this.forceUpdate());
   };
 
-  hiddenInput = () => {
-    return (
-      <span>
-        <input
-          id='show_hidden'
-          name='show_hidden'
-          type='checkbox'
-          checked={this.state.show_hidden}
-          onChange={this.updateShowHidden}
-          style={{marginLeft: '5px', marginRight: '5px'}}
-        />
-        <label htmlFor='show_hidden'>
-          {I18n.t('students.display_inactive')}
-        </label>
-      </span>
-    );
-  };
-
   updateShowHidden = (event) => {
     let show_hidden = event.target.checked;
     let filtered = [];
@@ -276,8 +258,9 @@ class RawMarksSpreadsheet extends React.Component {
       <div>
         <SpreadsheetActionBox
           ref={(r) => this.actionBox = r}
-          toggleRelease={this.toggleRelease} />
-        {this.hiddenInput()}
+          toggleRelease={this.toggleRelease}
+          showHidden={this.state.show_hidden}
+          updateShowHidden={this.updateShowHidden} />
         <CheckboxTable
           ref={(r) => this.checkboxTable = r}
           data={data}
@@ -389,9 +372,28 @@ class GradeEntryTotal extends React.Component {
 
 
 class SpreadsheetActionBox extends React.Component {
+  hiddenInput = () => {
+    return (
+      <span>
+        <input
+          id='show_hidden'
+          name='show_hidden'
+          type='checkbox'
+          checked={this.props.showHidden}
+          onChange={this.props.updateShowHidden}
+          style={{marginLeft: '5px', marginRight: '5px'}}
+        />
+        <label htmlFor='show_hidden'>
+          {I18n.t('students.display_inactive')}
+        </label>
+      </span>
+    );
+  };
+
   render() {
     return (
-      <div className='react-release-marks'>
+      <div className='rt-action-box'>
+        {this.hiddenInput()}
         <button onClick={() => this.props.toggleRelease(true)}>
           {I18n.t('submissions.release_marks')}
         </button>

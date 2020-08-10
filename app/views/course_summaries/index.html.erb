@@ -1,25 +1,27 @@
 <%= content_for :head do %>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      makeCourseSummaryTable(document.getElementById('course_summaries_table'),
-                             { student: <%= @current_user.student? %> });
+      makeGradesSummaryDisplay(document.getElementById('grades_summary_display'),
+                               { student: <%= @current_user.student? %> });
     });
   </script>
 <% end %>
+<% if @current_user.student? %>
+  <%= content_for :title, t('course_summary.student_title') %>
+<% else %>
+  <%= content_for :title, t('course_summary.title') %>
 
-<%= content_for :title, t('course_summary.title') %>
-
-<%
-  @heading_buttons = [
-    { link_text: MarkingScheme.model_name.human.pluralize,
-      link_path: marking_schemes_path }
-  ]
-  if @current_user.admin?
-    @heading_buttons += [
-      { link_text: t('download_the', item: t('course_summary.grade_report')),
-        link_path: download_csv_grades_report_course_summaries_path }
+  <%
+    @heading_buttons = [
+      { link_text: MarkingScheme.model_name.human.pluralize,
+        link_path: marking_schemes_path }
     ]
-  end
-%>
-
-<div id='course_summaries_table'></div>
+    if @current_user.admin?
+      @heading_buttons += [
+        { link_text: t('download_the', item: t('course_summary.grade_report')),
+          link_path: download_csv_grades_report_course_summaries_path }
+      ]
+    end
+  %>
+<% end %>
+<div id='grades_summary_display'></div>

@@ -14,11 +14,10 @@
   }
 
   function add_annotation_category(path) {
-    var category_prompt = $('#add_annotation_category_prompt');
+    let new_annotation_category = document.getElementById('add_annotation_category');
 
-    if (category_prompt.length) {
-      category_prompt.select();
-      category_prompt.focus();
+    if (new_annotation_category !== null) {
+      new_annotation_category.getElementsByTagName('input')[0].focus();
     } else {
       $.ajax({
         url:  path,
