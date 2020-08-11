@@ -75,7 +75,7 @@ class NotesController < ApplicationController
 
   # Used to update the values in the groupings dropdown in the new note form
   def new_update_groupings
-    retrieve_groupings(Assignment.find(params[:assessment_id]))
+    retrieve_groupings(Assignment.find(params[:assignment_id]))
     render 'new_update_groupings', formats: [:js], handlers: [:erb]
   end
 
