@@ -474,8 +474,8 @@ describe AnnotationCategoriesController do
       post :upload, params: { assignment_id: assignment.id, upload_file: @file_invalid_column }
 
       expect(response.status).to eq(302)
-      # One annotation category was created, and one has an error.
-      expect(AnnotationCategory.all.size).to eq(1)
+      # One annotation category was created, but one has an error, so neither are saved.
+      expect(AnnotationCategory.all.size).to eq(0)
       expect(flash[:error].size).to eq(1)
       expect(response).to redirect_to(action: 'index', assignment_id: assignment.id)
     end
