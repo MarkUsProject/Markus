@@ -99,7 +99,6 @@ class Result extends React.Component {
     let extraMarkSubtotal = 0;
     result_data.marks.forEach(data => {
       data.max_mark = parseFloat(data.max_mark);
-      data.mark = data['marks.mark'];
       criterionSummaryData.push({
         criterion: data.name,
         mark: data.mark,
@@ -346,8 +345,7 @@ class Result extends React.Component {
         if (markData.id === criterion_id) {
           let newMark = {...markData};
           newMark.mark = data.mark;
-          newMark['marks.mark'] = data.mark;
-          newMark['marks.override'] = data.mark_override;
+          newMark.override = data.mark_override;
           return newMark;
         } else {
           return markData;
@@ -380,8 +378,7 @@ class Result extends React.Component {
         if (markData.id === criterion_id) {
           let newMark = {...markData};
           newMark.mark = data.mark;
-          newMark['marks.mark'] = data.mark;
-          newMark['marks.override'] = false;
+          newMark.override = false;
           return newMark;
         } else {
           return markData;
