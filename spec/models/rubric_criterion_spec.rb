@@ -248,6 +248,18 @@ describe RubricCriterion do
           expect(@criterion.levels).to be_empty
         end
       end
+
+      describe 'when finding a level closest to a mark value' do
+        it 'finds the level with the value closest to a given mark when the value is greater' do
+          criterion = create(:rubric_criterion)
+          expect(criterion.level_with_mark_closest_to(1.17).mark).to eq 1
+        end
+
+        it 'finds the level with the value closest to a given mark when the value is lesser' do
+          criterion = create(:rubric_criterion)
+          expect(criterion.level_with_mark_closest_to(1.77).mark).to eq 2
+        end
+      end
     end
 
     context 'when scaling max mark' do
