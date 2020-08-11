@@ -33,7 +33,7 @@ class AnnotationCategory < ApplicationRecord
         raise CsvInvalidLineError, I18n.t('annotation_categories.upload.empty_category_name')
       end
     elsif (annotation_category.flexible_criterion_id.nil? && !criterion_name.nil?) ||
-        (annotation_category.flexible_criterion.name != criterion_name)
+          (annotation_category.flexible_criterion.name != criterion_name)
       raise CsvInvalidLineError, I18n.t('annotation_categories.upload.invalid_criterion',
                                         annotation_category: name)
     end
