@@ -211,6 +211,7 @@ class CriteriaController < ApplicationController
                                                :max_mark,
                                                :ta_visible,
                                                :peer_visible,
+                                               :bonus,
                                                assignment_files: [])
   end
 
@@ -221,6 +222,7 @@ class CriteriaController < ApplicationController
                                              :ta_visible,
                                              :peer_visible,
                                              :max_mark,
+                                             :bonus,
                                              levels_attributes: [:id, :name, :mark, :description, :_destroy],
                                              assignment_files: [])
   end
@@ -232,6 +234,7 @@ class CriteriaController < ApplicationController
                                                :max_mark,
                                                :ta_visible,
                                                :peer_visible,
+                                               :bonus,
                                                assignment_files: [])
   end
 end
