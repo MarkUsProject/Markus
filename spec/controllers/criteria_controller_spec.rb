@@ -789,6 +789,7 @@ describe CriteriaController do
         cr1 = assignment.criteria.where(type: 'RubricCriterion').find_by(name: 'cr30')
         expect(cr1.levels.size).to eq(5)
         expect(cr1.max_mark).to eq(5.0)
+        expect(cr1.bonus).to be true
         expect(cr1.ta_visible).to be false
         expect(cr1.peer_visible).to be true
         # Since there are only 5 levels in this rubric criterion, if each of the following queries return an entity,
@@ -804,6 +805,7 @@ describe CriteriaController do
         expect(cr2.levels.size).to eq(5)
         expect(cr2.ta_visible).to be true
         expect(cr2.peer_visible).to be false
+        expect(cr2.bonus).to be false
       end
 
       it 'creates flexible criteria with properly formatted entries' do
@@ -817,14 +819,17 @@ describe CriteriaController do
         expect(cr80.description).to eq('')
         expect(cr80.ta_visible).to be true
         expect(cr80.peer_visible).to be true
+        expect(cr80.bonus).to be false
 
         cr20 = assignment.criteria.where(type: 'FlexibleCriterion').find_by(name: 'cr20')
         expect(cr20.max_mark).to eq(2.0)
         expect(cr20.description).to eq('I am flexible')
         expect(cr20.ta_visible).to be true
         expect(cr20.peer_visible).to be true
+        expect(cr20.bonus).to be false
 
         cr50 = assignment.criteria.where(type: 'FlexibleCriterion').find_by(name: 'cr50')
+        expect(cr50.bonus).to be true
         expect(cr50.max_mark).to eq(1.0)
         expect(cr50.description).to eq('Another flexible.')
         expect(cr50.ta_visible).to be true
@@ -835,6 +840,7 @@ describe CriteriaController do
         expect(cr60.description).to eq('')
         expect(cr60.ta_visible).to be true
         expect(cr60.peer_visible).to be false
+        expect(cr60.bonus).to be false
       end
 
       it 'creates checkbox criteria with properly formatted entries' do
@@ -842,6 +848,7 @@ describe CriteriaController do
 
         expect(assignment.criteria.where(type: 'CheckboxCriterion').pluck(:name)).to contain_exactly('cr100', 'cr40')
         cr1 = assignment.criteria.where(type: 'CheckboxCriterion').find_by(name: 'cr100')
+        expect(cr1.bonus).to be true
         expect(cr1.max_mark).to eq(5.0)
         expect(cr1.description).to eq('I am checkbox')
         expect(cr1.ta_visible).to be true
