@@ -19,6 +19,8 @@ class Criterion < ApplicationRecord
   validates_presence_of :name
   validates_uniqueness_of :name, scope: :assessment_id
 
+  validates_inclusion_of :bonus, in: [true, false]
+
   validates_presence_of :max_mark
   validates_numericality_of :max_mark, greater_than: 0
 
