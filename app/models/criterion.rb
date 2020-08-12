@@ -142,6 +142,7 @@ class Criterion < ApplicationRecord
 
   # When max_mark of criterion is changed, all associated marks should have their mark value scaled to the change.
   def scale_marks
+    self.assignment.update_results_stats if previous_changes.key?('bonus')
     return unless max_mark_previously_changed? && !previous_changes[:max_mark].first.nil? # if max_mark was not updated
 
     max_mark_was = previous_changes[:max_mark].first
@@ -201,5 +202,6 @@ class Criterion < ApplicationRecord
     end
     new_results = new_results.compact
     Result.upsert_all(new_results) unless new_results.blank?
+    self.assignment.update_results_stats
   end
 end

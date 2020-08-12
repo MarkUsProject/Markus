@@ -55,10 +55,10 @@ module CourseSummariesHelper
   end
 
   def course_information
-    @max_marks = Hash[Assignment.all.map do |a|
-      [a.id, a.max_mark]
-    end
-    ]
+    @max_marks = Hash[Assignment.all.joins(:criteria)
+                               .where('criteria.bonus': false)
+                               .group('assessments.id')
+                               .pluck('assessments.id', 'SUM(criteria.max_mark)')]
 
     @gef_max_marks = GradeEntryForm.unscoped
                                    .joins(:grade_entry_items)
