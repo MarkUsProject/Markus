@@ -21,7 +21,7 @@ git log:
   peer_visible: true
   ta_visible: false
 cr20:
-  bonus: false
+  bonus: true
   description: "I am flexible"
   max_mark: 2.0
   peer_visible: true
