@@ -12,6 +12,7 @@ en:
         one: "Rubric Criterion"
     attributes:
       criterion:
+        bonus: 'Bonus'
         description: "Description"
         name: "Name"
         max_mark: "Maximum mark"
