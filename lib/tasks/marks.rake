@@ -17,7 +17,12 @@ namespace :db do
     feedbackfiles = []
     marks = []
     #Right now, only generate marks for three assignments
-    Grouping.joins(:assignment).where(assessments: { short_identifier: %w[A0 A1 A2] }).each do |grouping|
+    annotations = []
+    feedback_file_num = 1
+    annotation_num = 1
+    mark_num = 1
+
+    Grouping.joins(:assignment).where(assessments: { short_identifier: %w[A0 A1 A2] }).each.with_index(1) do |grouping, index|
       time = grouping.assignment.submission_rule.calculate_collection_time.localtime
       new_submission = Submission.create_by_timestamp(grouping, time)
       result = new_submission.results.first
@@ -29,14 +34,28 @@ namespace :db do
       end
 
       # add a human written feedback file
-      feedbackfiles << FeedbackFile.new(
-        submission: new_submission, filename: 'humanfb', mime_type: 'text', file_content: hcont
-      )
+      feedbackfiles << {
+        id: feedback_file_num,
+        submission_id: new_submission.id,
+        filename: 'humanfb',
+        mime_type: 'text',
+        file_content: hcont,
+        created_at: Time.now,
+        updated_at: Time.now
+      }
+      feedback_file_num += 1
 
       # add an machine-generated feedback file
-      feedbackfiles << FeedbackFile.new(
-        submission: new_submission, filename: 'machinefb', mime_type: 'text', file_content: mcont
-      )
+      feedbackfiles << {
+        id: feedback_file_num,
+        submission_id: new_submission.id,
+        filename: 'machinefb',
+        mime_type: 'text',
+        file_content: mcont,
+        created_at: Time.now,
+        updated_at: Time.now
+      }
+      feedback_file_num += 1
 
       submission_file = new_submission.submission_files.find_by(filename: 'deferred-process.jpg')
       base_attributes = {
@@ -53,13 +72,22 @@ namespace :db do
         creator_type: 'Admin',
         result_id: new_submission.current_result.id
       }
-      ImageAnnotation.create(
+      annotations << {
+        id: annotation_num,
+        line_start: nil,
+        line_end: nil,
+        column_end: nil,
+        column_start: nil,
+        type: 'ImageAnnotation',
+        page: nil,
         x1: 132,
         y1: 199,
         x2: 346,
         y2: 370,
         **base_attributes
-      )
+      }
+      annotation_num += 1
+
       submission_file = new_submission.submission_files.find_by(filename: 'pdf.pdf')
       base_attributes = {
         submission_file_id: submission_file.id,
@@ -75,14 +103,21 @@ namespace :db do
         creator_type: 'Admin',
         result_id: new_submission.current_result.id
       }
-      PdfAnnotation.create(
+      annotations << {
+        id: annotation_num,
+        line_start: nil,
+        line_end: nil,
+        column_end: nil,
+        column_start: nil,
+        type: 'PdfAnnotation',
         x1: 27_740,
         y1: 58_244,
         x2: 4977,
         y2: 29_748,
         page: 1,
         **base_attributes
-      )
+      }
+      annotation_num += 1
 
       one_time_only = AnnotationText.create(annotation_category: nil,
                                             content: random_sentences(3),
@@ -90,14 +125,21 @@ namespace :db do
                                             last_editor: Admin.first)
       base_attributes[:annotation_text_id] = one_time_only.id
       base_attributes[:annotation_number] = new_submission.annotations.count + 1
-      PdfAnnotation.create(
+      annotations << {
+        id: annotation_num,
+        line_start: nil,
+        line_end: nil,
+        column_end: nil,
+        column_start: nil,
+        type: 'PdfAnnotation',
         x1: 52_444,
         y1: 20_703,
         x2: 88_008,
         y2: 35_185,
         page: 2,
         **base_attributes
-      )
+      }
+      annotation_num += 1
 
       submission_file = new_submission.submission_files.find_by(filename: 'hello.py')
       base_attributes = {
@@ -114,13 +156,21 @@ namespace :db do
         creator_type: 'Admin',
         result_id: new_submission.current_result.id
       }
-      TextAnnotation.create(
+      annotations << {
+        id: annotation_num,
+        type: 'PdfAnnotation',
         line_start: 7,
         line_end: 9,
         column_start: 6,
         column_end: 15,
+        x1: nil,
+        y1: nil,
+        x2: nil,
+        y2: nil,
+        page: nil,
         **base_attributes
-      )
+      }
+      annotation_num += 1
 
       #Automate marks for assignment using appropriate criteria
       grouping.assignment.criteria.includes(:marks).each do |criterion|
@@ -131,19 +181,24 @@ namespace :db do
         else
           random_mark = rand(0..1)
         end
-        marks << Mark.new(
+        marks << {
+          id: mark_num,
           result_id: result.id,
           criterion_id: criterion.id,
-          mark: random_mark
-        )
+          mark: random_mark,
+          created_at: Time.now,
+          updated_at: Time.now,
+          override: false
+        }
+        mark_num += 1
       end
     end
-    FeedbackFile.import feedbackfiles
+    FeedbackFile.upsert_all feedbackfiles
 
     Mark
       .joins(result: [submission: [grouping: :assignment]])
       .where(assessments: { short_identifier: %w[A0 A1 A2] }).destroy_all
-    Mark.import marks
+    Mark.upsert_all marks
 
     Grouping.joins(:assignment).where(assessments: { short_identifier: %w[A0 A1 A2] }).each do |grouping|
       submission_file = grouping.current_submission_used.submission_files.find_by(filename: 'hello.py')
