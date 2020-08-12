@@ -264,7 +264,7 @@ class Assignment < Assessment
 
   # Returns the maximum possible mark for a particular assignment
   def max_mark(user_visibility = :ta_visible)
-    criteria.where(user_visibility => true).sum(:max_mark).round(2)
+    criteria.where(user_visibility => true, bonus: false).sum(:max_mark).round(2)
   end
 
   # Returns a boolean indicating whether marking has started for at least
