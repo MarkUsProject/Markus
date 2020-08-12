@@ -147,9 +147,10 @@ class Submission < ApplicationRecord
         final_mark = (all_marks_earned / all_marks_total * mark.criterion.max_mark).round(2)
         if mark.criterion.instance_of? RubricCriterion
           # find the nearest mark associated to a level
-          # TODO: this logic is incorrect due to having an arbitrary number of levels (see issue #4753)
           nearest_mark = mark.criterion.level_with_mark_closest_to(final_mark).mark
           final_mark = nearest_mark
+        elsif mark.criterion.instance_of? CheckboxCriterion && final_mark != 0
+          final_mark = mark.criterion.max_mark
         end
       end
       mark.mark = final_mark
