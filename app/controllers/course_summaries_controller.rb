@@ -119,6 +119,7 @@ class CourseSummariesController < ApplicationController
         info[:median] = assessment.calculate_median&.round(2)
       end
     else
+      assessment.update_results_stats
       info = { total: assessment.max_mark, average: assessment.results_average&.round(2) }
       if current_user.admin? || assessment.display_median_to_students
         info[:median] = assessment.results_median&.round(2)
