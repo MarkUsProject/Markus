@@ -5,6 +5,27 @@ describe CriteriaController do
   let(:submission) { create :submission, grouping: grouping }
 
   describe 'Using Flexible Criteria' do
+    describe 'An authenticated and authorized admin doing a DELETE' do
+      it 'should update the relevant assignment\'s stats' do
+        assignment = create(:assignment_with_criteria_and_results)
+        checkbox = create(:checkbox_criterion, assignment: assignment, max_mark: 3.0)
+        assignment.groupings.each do |grouping|
+          create(:rubric_mark, result: grouping.current_result, mark: checkbox.max_mark)
+        end
+        assignment.update_results_stats
+        old_average = assignment.results_average
+        old_median = assignment.results_median
+        delete_as admin,
+                  :destroy,
+                  params: { assignment_id: assignment.id, id: checkbox.id },
+                  format: :js
+        expect(assignment.reload.results_median).to be >= old_median
+        expect(assignment.reload.results_average).to be >= old_average
+      end
+    end
+  end
+
+  describe 'Using Flexible Criteria' do
     let(:flexible_criterion) do
       create(:flexible_criterion,
              assignment: assignment,
@@ -218,6 +239,37 @@ describe CriteriaController do
             is_expected.to render_template(:update)
           end
         end
+
+        context 'when changing the bonus' do
+          it 'should be able to update the bonus value' do
+            assignment = create(:assignment_with_criteria_and_results)
+            flex_crit = assignment.criteria.first
+            get_as admin,
+                   :update,
+                   params: { assignment_id: 1, id: flex_crit.id,
+                             flexible_criterion: { name: 'one', bonus: true } },
+                   format: :js
+            expect(flex_crit.reload.bonus).to be true
+          end
+
+          it 'should update the relevant assignment\'s stats' do
+            assignment = create(:assignment_with_criteria_and_results)
+            flex = create(:flexible_criterion, assignment: assignment, max_mark: 3.0)
+            assignment.groupings.each do |grouping|
+              create(:rubric_mark, result: grouping.current_result, mark: flex.max_mark)
+            end
+            assignment.update_results_stats
+            old_average = assignment.results_average
+            old_median = assignment.results_median
+            get_as admin,
+                   :update,
+                   params: { assignment_id: 1, id: flex.id,
+                             flexible_criterion: { name: 'one', bonus: true } },
+                   format: :js
+            expect(assignment.reload.results_median).to be >= old_median
+            expect(assignment.reload.results_average).to be >= old_average
+          end
+        end
       end
     end
 
@@ -353,6 +405,23 @@ describe CriteriaController do
         is_expected.to respond_with(:success)
 
         expect { FlexibleCriterion.find(flexible_criterion.id) }.to raise_error(ActiveRecord::RecordNotFound)
+      end
+
+      it 'should update the relevant assignment\'s stats' do
+        assignment = create(:assignment_with_criteria_and_results)
+        flex = create(:flexible_criterion, assignment: assignment, max_mark: 3.0)
+        assignment.groupings.each do |grouping|
+          create(:rubric_mark, result: grouping.current_result, mark: flex.max_mark)
+        end
+        assignment.update_results_stats
+        old_average = assignment.results_average
+        old_median = assignment.results_median
+        delete_as admin,
+                  :destroy,
+                  params: { assignment_id: assignment.id, id: flex.id },
+                  format: :js
+        expect(assignment.reload.results_median).to be >= old_median
+        expect(assignment.reload.results_average).to be >= old_average
       end
     end
   end
@@ -705,6 +774,23 @@ describe CriteriaController do
         is_expected.to respond_with(:success)
 
         expect { RubricCriterion.find(rubric_criterion.id) }.to raise_error(ActiveRecord::RecordNotFound)
+      end
+
+      it 'should update the relevant assignment\'s stats' do
+        assignment = create(:assignment_with_criteria_and_results)
+        rubric_criterion = create(:rubric_criterion, assignment: assignment)
+        assignment.groupings.each do |grouping|
+          create(:rubric_mark, result: grouping.current_result, mark: rubric_criterion.max_mark)
+        end
+        assignment.update_results_stats
+        old_average = assignment.results_average
+        old_median = assignment.results_median
+        delete_as admin,
+              :destroy,
+              params: { assignment_id: assignment.id, id: rubric_criterion.id },
+              format: :js
+        expect(assignment.reload.results_median).to be >= old_median
+        expect(assignment.reload.results_average).to be >= old_average
       end
     end
   end

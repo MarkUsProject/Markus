@@ -4,6 +4,7 @@ class Criterion < ApplicationRecord
   belongs_to :assignment, foreign_key: :assessment_id
   after_update :scale_marks
   before_destroy :update_results
+  after_destroy ->(c) { c.assignment.update_results_stats }
 
   has_many :marks, dependent: :destroy
   accepts_nested_attributes_for :marks
@@ -202,6 +203,5 @@ class Criterion < ApplicationRecord
     end
     new_results = new_results.compact
     Result.upsert_all(new_results) unless new_results.blank?
-    self.assignment.update_results_stats
   end
 end
