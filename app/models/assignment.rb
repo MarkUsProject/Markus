@@ -549,7 +549,7 @@ class Assignment < Assessment
       unassigned = !assigned_criteria.nil? && !assigned_criteria.include?(crit.id)
       next if hide_unassigned && unassigned
 
-      max_mark += crit.max_mark
+      max_mark += crit.bonus? ? 0 : crit.max_mark
       accessor = crit.id
       criteria_shown << accessor
       {
