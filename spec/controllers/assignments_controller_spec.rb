@@ -483,15 +483,15 @@ describe AssignmentsController do
     end
 
     describe 'When the user is admin' do
-      let!(:user) { create(:admin) }
-      let!(:assignment) { create(:assignment) }
+      let(:user) { create(:admin) }
+      let(:assignment) { create(:assignment) }
       include_examples 'An authorized user viewing assignment summary'
     end
 
     describe 'When the user is grader' do
-      let!(:user) { create(:ta) }
-      let!(:assignment) { create(:assignment) }
-      let!(:grader_permission) { user.grader_permission }
+      let(:user) { create(:ta) }
+      let(:assignment) { create(:assignment) }
+      let(:grader_permission) { user.grader_permission }
       include_examples 'An authorized user viewing assignment summary'
     end
   end
@@ -692,14 +692,14 @@ describe AssignmentsController do
   end
 
   describe 'When the user is admin' do
-    let!(:user) { create(:admin) }
+    let(:user) { create(:admin) }
     include_examples 'An authorized user updating the assignment'
     include_examples 'An authorized user managing assignments'
     include_examples 'An authorized user running tests'
   end
 
   describe 'When the user is grader' do
-    let!(:user) { create(:ta) }
+    let(:user) { create(:ta) }
     let(:grader_permission) { user.grader_permission }
 
     context 'When the grader is allowed to manage assignments' do

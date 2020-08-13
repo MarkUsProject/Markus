@@ -370,7 +370,7 @@ describe GradeEntryFormsController do
     end
   end
   describe 'When the user is admin' do
-    let!(:user) { create(:admin) }
+    let(:user) { create(:admin) }
     include_examples '#update_grade_entry_students'
     include_examples '#manage grade entry forms'
     context 'GET student interface' do
@@ -380,7 +380,7 @@ describe GradeEntryFormsController do
   end
 
   describe 'When the user is grader' do
-    let!(:user) { create(:ta) }
+    let(:user) { create(:ta) }
     let(:grader_permission) { user.grader_permission }
     describe 'When the grader is allowed to release and unrelease the grades' do
       before do

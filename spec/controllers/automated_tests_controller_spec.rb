@@ -283,7 +283,7 @@ describe AutomatedTestsController do
     end
   end
   context 'as a student' do
-    let!(:user) { create :student }
+    let(:user) { create :student }
     context 'GET student_interface' do
       before { get_as user, :student_interface, params: params }
       # TODO: write tests
@@ -301,12 +301,12 @@ describe AutomatedTestsController do
     end
   end
   describe 'an authenticated admin' do
-    let!(:user) { create(:admin) }
+    let(:user) { create(:admin) }
     include_examples 'An authorized admin and grader managing automated testing'
   end
 
   describe 'When the grader is allowed to download grades report and populate course summary' do
-    let!(:user) { create(:ta) }
+    let(:user) { create(:ta) }
     before do
       user.grader_permission.manage_assessments = true
       user.grader_permission.save
@@ -315,7 +315,7 @@ describe AutomatedTestsController do
   end
 
   describe 'When the grader is not allowed to download grades report and populate course summary' do
-    let!(:user) { create(:ta) }
+    let(:user) { create(:ta) }
     before do
       user.grader_permission.manage_assessments = false
       user.grader_permission.save

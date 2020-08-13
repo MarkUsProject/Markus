@@ -33,12 +33,12 @@ describe ExamTemplatesController do
   end
 
   describe 'When the user is admin' do
-    let!(:user) { create(:admin) }
+    let(:user) { create(:admin) }
     include_examples 'An authorized admin or grader managing exam templates'
   end
 
   describe 'When the user is grader' do
-    let!(:user) { create(:ta) }
+    let(:user) { create(:ta) }
     context 'When grader is allowed to manage exam template' do
       before do
         user.grader_permission.manage_assessments = true

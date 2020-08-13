@@ -75,12 +75,12 @@ describe JobMessagesController do
     end
   end
   describe 'When user is an authenticated admin' do
-    let!(:user) { create(:admin) }
+    let(:user) { create(:admin) }
     include_examples 'authenticated admin or TA'
   end
 
   describe 'When the user is an authenticated TA' do
-    let!(:user) { create(:ta) }
+    let(:user) { create(:ta) }
     include_examples 'authenticated admin or TA'
   end
 end

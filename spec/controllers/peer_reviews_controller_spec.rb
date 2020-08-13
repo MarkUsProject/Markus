@@ -254,7 +254,7 @@ describe PeerReviewsController do
     end
   end
   describe 'When user is an authenticated admin' do
-    let!(:user) { create(:admin) }
+    let(:user) { create(:admin) }
     include_examples 'An authorized admin or grader'
   end
   describe 'When user is grader and allowed to manage reviewers' do
