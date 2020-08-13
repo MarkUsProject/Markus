@@ -109,53 +109,50 @@ describe NotesController do
     end
 
     context 'POST on :create' do
-      describe 'When grader is trying to create notes' do
-        it 'be able to create with empty note' do
-          post_as @ta,
-                  :create,
-                  params: { noteable_type: 'Grouping', note: { noteable_id: @grouping.id } }
-          expect((assigns :note)).not_to be_nil
-          expect(flash.empty?).to be_truthy
-          expect((assigns :assignments)).not_to be_nil
-          expect((assigns :groupings)).not_to be_nil
-          expect(response).to render_template('notes/new')
-        end
+      it 'be able to create with empty note' do
+        post_as @ta,
+                :create,
+                params: { noteable_type: 'Grouping', note: { noteable_id: @grouping.id } }
+        expect(assigns :note).not_to be_nil
+        expect(flash.empty?).to be_truthy
+        expect(assigns :assignments).not_to be_nil
+        expect(assigns :groupings).not_to be_nil
+      end
 
-        it 'with good Grouping data' do
-          grouping = create(:grouping)
-          @notes = Note.count
-          post_as @ta,
-                  :create,
-                  params: { noteable_type: 'Grouping', note: { noteable_id: grouping.id, notes_message: @message } }
-          expect((assigns :note)).not_to be_nil
-          expect(flash[:success]).to eq I18n.t('flash.actions.create.success', resource_name: Note.model_name.human)
-          expect(response).to redirect_to(controller: 'notes')
-          expect(Note.count).to eq @notes + 1
-        end
+      it 'with good Grouping data' do
+        grouping = create(:grouping)
+        @notes = Note.count
+        post_as @ta,
+                :create,
+                params: { noteable_type: 'Grouping', note: { noteable_id: grouping.id, notes_message: @message } }
+        expect(assigns :note).not_to be_nil
+        expect(flash[:success]).to eq I18n.t('flash.actions.create.success', resource_name: Note.model_name.human)
+        expect(response).to redirect_to(controller: 'notes')
+        expect(Note.count).to eq @notes + 1
+      end
 
-        it 'with good Student data' do
-          student = create(:student)
-          @notes = Note.count
-          post_as @ta,
-                  :create,
-                  params: { noteable_type: 'Student', note: { noteable_id: student.id, notes_message: @message } }
-          expect((assigns :note)).not_to be_nil
-          expect(flash[:success]).to eq I18n.t('flash.actions.create.success', resource_name: Note.model_name.human)
-          expect(response).to redirect_to(controller: 'notes')
-          expect(Note.count).to eq @notes + 1
-        end
+      it 'with good Student data' do
+        student = create(:student)
+        @notes = Note.count
+        post_as @ta,
+                :create,
+                params: { noteable_type: 'Student', note: { noteable_id: student.id, notes_message: @message } }
+        expect(assigns :note).not_to be_nil
+        expect(flash[:success]).to eq I18n.t('flash.actions.create.success', resource_name: Note.model_name.human)
+        expect(response).to redirect_to(controller: 'notes')
+        expect(Note.count).to eq @notes + 1
+      end
 
-        it 'with good Assignment data' do
-          assignment = create(:assignment)
-          @notes = Note.count
-          post_as @ta,
-                  :create,
-                  params: { noteable_type: 'Assignment', note: { noteable_id: assignment.id, notes_message: @message } }
-          expect((assigns :note)).not_to be_nil
-          expect(flash[:success]).to eq I18n.t('flash.actions.create.success', resource_name: Note.model_name.human)
-          expect(response).to redirect_to(controller: 'notes')
-          expect(Note.count).to eq @notes + 1
-        end
+      it 'with good Assignment data' do
+        assignment = create(:assignment)
+        @notes = Note.count
+        post_as @ta,
+                :create,
+                params: { noteable_type: 'Assignment', note: { noteable_id: assignment.id, notes_message: @message } }
+        expect(assigns :note).not_to be_nil
+        expect(flash[:success]).to eq I18n.t('flash.actions.create.success', resource_name: Note.model_name.human)
+        expect(response).to redirect_to(controller: 'notes')
+        expect(Note.count).to eq @notes + 1
       end
     end
 
