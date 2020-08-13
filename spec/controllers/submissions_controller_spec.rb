@@ -265,8 +265,12 @@ describe SubmissionsController do
         repo.commit(txn)
 
         # Generate submission
-        Submission.generate_new_submission(Grouping.last,
+        submission = Submission.generate_new_submission(Grouping.last,
                                            repo.get_latest_revision)
+        result = submission.get_latest_result
+        result.marking_state = Result::MARKING_STATES[:complete]
+        result.save
+        submission.save
       end
     end
     it 'should be able to access the repository browser.' do
@@ -303,7 +307,7 @@ describe SubmissionsController do
       @grouping.group.access_repo { |repo| repo.get_latest_revision.revision_identifier }
     end
 
-    describe 'When grader is allowed to collect submissions' do
+    describe 'When grader is allowed to collect and update submissions' do
       before do
         grader_permission.manage_submissions = true
         grader_permission.save
@@ -322,9 +326,19 @@ describe SubmissionsController do
         end
         it('should respond with 302') { expect(response.status).to eq 302 }
       end
+      context '#update submissions' do
+        it 'should respond with 302' do
+          post_as grader,
+                  :update_submissions,
+                  params: { assignment_id: @assignment.id,
+                            groupings: [@grouping1.id],
+                            release_results: 'true' }
+          is_expected.to respond_with(:success)
+        end
+      end
     end
 
-    describe 'When grader is not allowed to collect submissions' do
+    describe 'When grader is not allowed to collect and update submissions' do
       before do
         grader_permission.manage_submissions = false
         grader_permission.save
@@ -342,6 +356,16 @@ describe SubmissionsController do
                             current_revision_identifier: revision_identifier }
         end
         it('should respond with redirect') { is_expected.to respond_with :redirect }
+      end
+      context '#update submissions' do
+        it 'should respond with 403' do
+          post_as grader,
+                  :update_submissions,
+                  params: { assignment_id: 1,
+                            groupings: ([] << @assignment.groupings).flatten,
+                            release_results: 'true' }
+          expect(response.status).to eq 403
+        end
       end
     end
   end

@@ -1,5 +1,5 @@
 class SubmissionPolicy < ApplicationPolicy
-  alias_rule :manually_collect_and_begin_grading?, :collect_submissions?, to: :collect?
+  alias_rule :manually_collect_and_begin_grading?, :collect_submissions?, :update_submissions?, to: :collect?
 
   def get_feedback_file?
     grouping = record.grouping

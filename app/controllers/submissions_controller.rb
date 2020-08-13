@@ -40,7 +40,7 @@ class SubmissionsController < ApplicationController
   before_action :authorize_for_user,
                 only: [:download, :downloads, :get_feedback_file, :get_file,
                        :populate_file_manager, :update_files]
-  before_action only: [:collect_submissions] do
+  before_action only: [:collect_submissions, :update_submissions] do
     authorize!
   end
 
@@ -269,7 +269,7 @@ class SubmissionsController < ApplicationController
     begin
       if !test_runs.empty?
         authorize! assignment, to: :run_tests?
-        @current_job = AutotestRunJob.perform_later(request.protocol + request.host_with_port,
+        @current_job = AutotestRunJob.perform_now(request.protocol + request.host_with_port,
                                                     current_user.id,
                                                     assignment.id,
                                                     test_runs)

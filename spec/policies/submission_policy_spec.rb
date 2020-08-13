@@ -117,13 +117,13 @@ describe SubmissionPolicy do
     end
   end
 
-  describe '#collect submission' do
+  describe '#collect and update submission' do
     subject { described_class.new(user: user) }
     context 'When the user is admin' do
       let(:user) { create(:admin) }
       it { is_expected.to pass :collect? }
     end
-    context 'When the user is grader and allowed to collect submisisons' do
+    context 'When the user is grader and allowed to collect and update submissions' do
       let(:user) { create(:ta) }
       let(:grader_permission) { user.grader_permission }
       before do
@@ -132,7 +132,7 @@ describe SubmissionPolicy do
       end
       it { is_expected.to pass :collect? }
     end
-    context 'When the user is grader and not allowed to run tests' do
+    context 'When the user is grader and not allowed to collect and update submissions' do
       let(:user) { create(:ta) }
       let(:grader_permission) { user.grader_permission }
       before do

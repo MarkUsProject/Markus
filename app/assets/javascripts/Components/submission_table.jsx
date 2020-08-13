@@ -340,21 +340,6 @@ class SubmissionsActionBox extends React.Component {
           {I18n.t('submissions.collect.submit')}
         </button>
       );
-
-      releaseMarksButton = (
-        <button
-          disabled={this.props.disabled}
-          onClick={this.props.releaseMarks}>
-          {I18n.t('submissions.release_marks')}
-        </button>
-      );
-      unreleaseMarksButton = (
-        <button
-          disabled={this.props.disabled}
-          onClick={this.props.unreleaseMarks}>
-          {I18n.t('submissions.unrelease_marks')}
-        </button>
-      );
     }
     if (this.props.can_run_tests) {
       runTestsButton = (
@@ -372,6 +357,20 @@ class SubmissionsActionBox extends React.Component {
           disabled={this.props.disabled}
         >
           {I18n.t('submissions.collect.submit')}
+        </button>
+      );
+      releaseMarksButton = (
+        <button
+          disabled={this.props.disabled}
+          onClick={this.props.releaseMarks}>
+          {I18n.t('submissions.release_marks')}
+        </button>
+      );
+      unreleaseMarksButton = (
+        <button
+          disabled={this.props.disabled}
+          onClick={this.props.unreleaseMarks}>
+          {I18n.t('submissions.unrelease_marks')}
         </button>
       );
     }
