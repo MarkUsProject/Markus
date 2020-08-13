@@ -331,15 +331,6 @@ class SubmissionsActionBox extends React.Component {
           {I18n.t('results.set_to_incomplete')}
         </button>
       );
-
-      collectButton = (
-        <button
-          onClick={this.props.collectSubmissions}
-          disabled={this.props.disabled}
-        >
-          {I18n.t('submissions.collect.submit')}
-        </button>
-      );
     }
     if (this.props.can_run_tests) {
       runTestsButton = (
