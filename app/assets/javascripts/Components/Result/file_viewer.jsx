@@ -47,7 +47,7 @@ export class FileViewer extends React.Component {
   setFileUrl = (submission_file_id) => {
     let url;
     if (!this.props.result_id) {
-      url = this.props.selectedFileURL
+      url = this.props.selectedFileURL;
     } else {
       url = Routes.download_assignment_submission_result_path(
         '',
@@ -102,6 +102,33 @@ export class FileViewer extends React.Component {
                 this.setState({content: content, type: body.type, loading: false});
               }
             })
+      } else if (this.props.feedbackFile) {
+        $.get({
+          url: Routes.get_feedback_file_assignment_submission_path(
+            this.props.assignment_id, this.props.submission_id),
+          data: {feedback_file_id: this.props.feedbackFile}
+        }).then((data, status, request) => {
+          let imgUrl = Routes.get_feedback_file_assignment_submission_path(
+            '',
+            this.props.assignment_id,
+            this.props.submission_id,
+            {feedback_file_id: this.props.feedbackFile}
+          );
+          console.log(imgUrl)
+          if (request.getResponseHeader('Content-Type').startsWith('image')) {
+            this.setState({
+              type: 'image',
+              url: imgUrl,
+              loading: false
+            });
+          } else {
+            this.setState({
+              content: data,
+              type: 'text',
+              loading: false
+            });
+          }
+        });
       } else {
         if (this.props.selectedFileType === 'image' || this.props.selectedFileType === 'pdf') {
           this.setState({type: this.props.selectedFileType}, () => {this.setFileUrl()});
