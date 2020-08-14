@@ -52,22 +52,18 @@ class AssignmentPolicy < ApplicationPolicy
   end
 
   def manage?
-    user.admin? || (user.ta? && allowed_to?(:manage_assessments?, with: GraderPermissionPolicy))
+    allowed_to?(:manage_assessments?, with: GraderPermissionPolicy)
   end
 
   def can_run_tests?
-    user.admin? || (user.ta? && allowed_to?(:grader_run_tests?, with: GraderPermissionPolicy)) || user.student?
+    allowed_to?(:grader_run_tests?, with: GraderPermissionPolicy) || user.student?
   end
 
-  def view_pr_review?
-    user.admin? || user.ta?
-  end
-
-  def summary?
+  def view?
     user.admin? || user.ta?
   end
 
   def run_and_stop_test?
-    user.admin? || (user.ta? && allowed_to?(:grader_run_tests?, with: GraderPermissionPolicy))
+    allowed_to?(:grader_run_tests?, with: GraderPermissionPolicy)
   end
 end

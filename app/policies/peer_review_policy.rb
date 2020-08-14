@@ -4,6 +4,6 @@ class PeerReviewPolicy < ApplicationPolicy
 
   # Only admin and authorized grader can manage reviewers.
   def assign_reviewers?
-    user.admin? || (user.ta? && allowed_to?(:manage_assessments?, with: GraderPermissionPolicy))
+    allowed_to?(:manage_assessments?, with: GraderPermissionPolicy)
   end
 end

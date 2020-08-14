@@ -9,6 +9,6 @@ class AutomatedTestPolicy < ApplicationPolicy
 
   # Only admin and authorized grader can setup the automated testing.
   def manage?
-    user.admin? || (user.ta? && allowed_to?(:manage_assessments?, with: GraderPermissionPolicy))
+    allowed_to?(:manage_assessments?, with: GraderPermissionPolicy)
   end
 end
