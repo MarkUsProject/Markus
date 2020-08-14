@@ -60,7 +60,15 @@ class AssignmentPolicy < ApplicationPolicy
   end
 
   def view?
-    user.admin? || user.ta?
+    check?(:admin_allowed?) || check?(:ta_allowed?)
+  end
+
+  def admin_allowed?
+    user.admin?
+  end
+
+  def ta_allowed?
+    user.ta?
   end
 
   def run_and_stop_test?

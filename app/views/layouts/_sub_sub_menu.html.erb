@@ -1,4 +1,4 @@
-<% if @current_user.admin? || @current_user.ta?%>
+<% if allowed_to?(:view?, @current_user, with: AssignmentPolicy) %>
   <% if (controller.controller_name == 'assignments' &&
          controller.action_name != 'index' &&
          controller.action_name != 'new' &&
@@ -22,7 +22,7 @@
               <%= link_to t('menu.properties'), edit_assignment_path(@assignment) %>
             </li>
           <% end %>
-          <% if @current_user.admin? %>
+          <% if allowed_to?(:admin_allowed?, @assignment, with: AssignmentPolicy) %>
             <li class='<%= "active" if controller.controller_name == 'tags' %>'>
               <%= link_to Tag.model_name.human.pluralize,
                           assignment_tags_path(@assignment) %>

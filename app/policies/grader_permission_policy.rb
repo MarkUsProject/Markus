@@ -15,6 +15,7 @@ class GraderPermissionPolicy < ApplicationPolicy
   end
 
   private
+
   def allow_tas
     allow! if user.ta?
     deny! if user.student?
