@@ -143,7 +143,7 @@ class Criterion < ApplicationRecord
 
   def update_results_with_change
     max_mark_changed = previous_changes.key?('max_mark') && !previous_changes[:max_mark].first.nil?
-    return unless max_mark_changed or previous_changes.key?('bonus')
+    return unless max_mark_changed || previous_changes.key?('bonus')
     scale_marks if max_mark_changed
     self.assignment.update_results_stats
   end
