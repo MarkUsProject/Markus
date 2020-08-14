@@ -36,20 +36,54 @@ namespace :db do
                                            'MAX(annotation_texts.id)')]
     end
     ]
+
+    base_attributes = {
+      submission_file_id: 1,
+      is_remark: false,
+      annotation_text_id: 1,
+      annotation_number: 1,
+      creator_id: Admin.first.id,
+      creator_type: 'Admin',
+      result_id: 1
+    }
+    annotation_text_ids = {}
+    Assignment.all.where('assessments.short_identifier': %w[A0 A1 A2]).each do |a|
+      annotation_text_ids[a.id] = a.annotation_categories.joins(:annotation_texts)
+                                                         .where.not('annotation_categories.flexible_criterion_id': nil)
+                                                         .pluck('annotation_texts.id')
+    end
+
+    submission_ids = []
+
     Grouping.joins(:assignment).where(assessments: { short_identifier: %w[A0 A1 A2] }).each do |grouping|
       time = grouping.assignment.submission_rule.calculate_collection_time.localtime
       new_submission = Submission.create_by_timestamp(grouping, time)
-      result = new_submission.results.first
+      submission_ids << new_submission.id
       grouping.is_collected = true
       grouping.save
 
       if grouping.assignment.short_identifier == 'A0'
         grouping.assignment.submission_rule.apply_submission_rule(new_submission)
       end
+    end
+
+    submission_file_ids = Hash[
+      Submission.all.includes(:submission_files).where('submissions.id': submission_ids).map do |s|
+        [s.id, Hash[s.submission_files.where('filename': ['deferred-process.jpg', 'pdf.pdf', 'hello.py']).map do |sf|
+          [sf.filename, sf.id]
+        end
+        ]]
+      end
+    ]
+
+    Grouping.joins(:assignment).where(assessments: { short_identifier: %w[A0 A1 A2] }).each do |grouping|
+      submission = grouping.current_submission_used
+      result = submission.results.first
+      base_attributes[:result_id] = result.id
 
       # add a human written feedback file
       feedbackfiles << {
-        submission_id: new_submission.id,
+        submission_id: submission.id,
         filename: 'humanfb',
         mime_type: 'text',
         file_content: hcont,
@@ -59,7 +93,7 @@ namespace :db do
 
       # add an machine-generated feedback file
       feedbackfiles << {
-        submission_id: new_submission.id,
+        submission_id: submission.id,
         filename: 'machinefb',
         mime_type: 'text',
         file_content: mcont,
@@ -67,21 +101,9 @@ namespace :db do
         updated_at: Time.now
       }
 
-      submission_file = new_submission.submission_files.find_by(filename: 'deferred-process.jpg')
-      base_attributes = {
-        submission_file_id: submission_file.id,
-        is_remark: new_submission.has_remark?,
-        annotation_text_id: AnnotationText.all
-                                          .joins(:annotation_category)
-                                          .where('annotation_categories.assignment': grouping.assignment,
-                                                 'annotation_texts.deduction': nil)
-                                          .where.not('annotation_texts.annotation_category_id': nil)
-                                          .pluck(:id).sample,
-        annotation_number: 1,
-        creator_id: Admin.first.id,
-        creator_type: 'Admin',
-        result_id: new_submission.current_result.id
-      }
+      base_attributes[:submission_file_id] = submission_file_ids[submission.id]['deferred-process.jpg']
+      base_attributes[:annotation_text_id] = annotation_text_ids[grouping.assignment.id].sample
+      base_attributes[:annotation_number] = 1
       annotations << {
         line_start: nil,
         line_end: nil,
@@ -97,21 +119,9 @@ namespace :db do
       }
 
 
-      submission_file = new_submission.submission_files.find_by(filename: 'pdf.pdf')
-      base_attributes = {
-        submission_file_id: submission_file.id,
-        is_remark: new_submission.has_remark?,
-        annotation_text_id: AnnotationText.all
-                                          .joins(:annotation_category)
-                                          .where('annotation_categories.assignment': grouping.assignment,
-                                                 'annotation_texts.deduction': nil)
-                                          .where.not('annotation_texts.annotation_category_id': nil)
-                                          .pluck(:id).sample,
-        annotation_number: 2,
-        creator_id: Admin.first.id,
-        creator_type: 'Admin',
-        result_id: new_submission.current_result.id
-      }
+      base_attributes[:submission_file_id] = submission_file_ids[submission.id]['pdf.pdf']
+      base_attributes[:annotation_text_id] = annotation_text_ids[grouping.assignment.id].sample
+      base_attributes[:annotation_number] = 2
       annotations << {
         line_start: nil,
         line_end: nil,
@@ -132,9 +142,9 @@ namespace :db do
         content: random_sentences(3),
         creator_id: Admin.first,
         last_editor_id: Admin.first,
-        updated_at: Time.now,
+        deduction: nil,
         created_at: Time.now,
-        deduction: nil
+        updated_at: Time.now
       }
       one_time_num += 1
       annotation_texts << one_time_only
@@ -155,21 +165,9 @@ namespace :db do
         **base_attributes
       }
 
-      submission_file = new_submission.submission_files.find_by(filename: 'hello.py')
-      base_attributes = {
-        submission_file_id: submission_file.id,
-        is_remark: new_submission.has_remark?,
-        annotation_text_id: AnnotationText.all
-                                          .joins(:annotation_category)
-                                          .where('annotation_categories.assignment': grouping.assignment,
-                                                 'annotation_texts.deduction': nil)
-                                          .where.not('annotation_texts.annotation_category_id': nil)
-                                          .pluck(:id).sample,
-        annotation_number: 4,
-        creator_id: Admin.first.id,
-        creator_type: 'Admin',
-        result_id: new_submission.current_result.id
-      }
+      base_attributes[:submission_file_id] = submission_file_ids[submission.id]['hello.py']
+      base_attributes[:annotation_text_id] = annotation_text_ids[grouping.assignment.id].sample
+      base_attributes[:annotation_number] = 4
       annotations << {
         type: 'TextAnnotation',
         line_start: 7,
@@ -237,15 +235,16 @@ namespace :db do
           result_id: result.id,
           criterion_id: criterion[0],
           mark: random_mark,
+          override: override,
           created_at: Time.now,
-          updated_at: Time.now,
-          override: override
+          updated_at: Time.now
         }
       end
       results << { id: result.id, total_mark: total_mark, marking_state: 'complete', released_to_students: true }
     end
     FeedbackFile.insert_all feedbackfiles
     AnnotationText.upsert_all annotation_texts
+    Annotation.insert_all annotations
 
     Mark
       .joins(result: [submission: [grouping: :assignment]])
@@ -275,9 +274,7 @@ namespace :db do
         grades << {
           grade_entry_student_id: student.id,
           grade_entry_item_id: grade_entry_item.id,
-          grade: random_grade,
-          created_at: Time.now,
-          updated_at: Time.now
+          grade: random_grade
         }
       end
       students << { id: student.id, total_grade: total_grade}
