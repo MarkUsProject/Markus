@@ -149,7 +149,7 @@ class Submission < ApplicationRecord
           # find the nearest mark associated to a level
           nearest_mark = mark.criterion.level_with_mark_closest_to(final_mark).mark
           final_mark = nearest_mark
-        elsif mark.criterion.instance_of? CheckboxCriterion
+        elsif mark.criterion.is_a? CheckboxCriterion
           final_mark = mark.criterion.max_mark > final_mark ? 0 : mark.criterion.max_mark
         end
       end
