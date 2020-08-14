@@ -143,32 +143,35 @@ class Criterion < ApplicationRecord
 
   # When max_mark of criterion is changed, all associated marks should have their mark value scaled to the change.
   def scale_marks
-    self.assignment.update_results_stats if previous_changes.key?('bonus')
-    return unless max_mark_previously_changed? && !previous_changes[:max_mark].first.nil? # if max_mark was not updated
-
-    max_mark_was = previous_changes[:max_mark].first
-    # results with specific assignment
-    results = Result.includes(submission: :grouping)
-                    .where(groupings: { assessment_id: assessment_id })
-    all_marks = marks.where.not(mark: nil).where(result_id: results.ids)
-    # all associated marks should have their mark value scaled to the change.
-    updated_marks = {}
-    all_marks.each do |mark|
-      updated_marks[mark.id] = mark.scale_mark(max_mark, max_mark_was, update: false)
+    # if max_mark was not updated
+    if max_mark_previously_changed? && !previous_changes[:max_mark].first.nil?
+      max_mark_was = previous_changes[:max_mark].first
+      # results with specific assignment
+      results = Result.includes(submission: :grouping)
+                      .where(groupings: { assessment_id: assessment_id })
+      all_marks = marks.where.not(mark: nil).where(result_id: results.ids)
+      # all associated marks should have their mark value scaled to the change.
+      updated_marks = {}
+      all_marks.each do |mark|
+        updated_marks[mark.id] = mark.scale_mark(max_mark, max_mark_was, update: false)
+      end
+      unless updated_marks.empty?
+        Mark.upsert_all(all_marks.pluck_to_hash.map { |h| { **h.symbolize_keys, mark: updated_marks[h['id'].to_i] } })
+      end
+      a = Assignment.find(assessment_id)
+      updated_results = results.map do |result|
+        [result.id, result.get_total_mark(assignment: a)]
+      end.to_h
+      unless updated_results.empty?
+        Result.upsert_all(
+          results.pluck_to_hash.map { |h| { **h.symbolize_keys, total_mark: updated_results[h['id'].to_i] } }
+        )
+      end
+      a.assignment_stat.refresh_grade_distribution
+    elsif !previous_changes.key?('bonus')
+      return
     end
-    unless updated_marks.empty?
-      Mark.upsert_all(all_marks.pluck_to_hash.map { |h| { **h.symbolize_keys, mark: updated_marks[h['id'].to_i] } })
-    end
-    a = Assignment.find(assessment_id)
-    updated_results = results.map do |result|
-      [result.id, result.get_total_mark(assignment: a)]
-    end.to_h
-    unless updated_results.empty?
-      Result.upsert_all(
-        results.pluck_to_hash.map { |h| { **h.symbolize_keys, total_mark: updated_results[h['id'].to_i] } }
-      )
-    end
-    a.assignment_stat.refresh_grade_distribution
+    self.assignment.update_results_stats
   end
 
   def results_unreleased?
