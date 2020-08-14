@@ -27,15 +27,15 @@ namespace :db do
     ]
     categories_with_criteria = Hash[Assignment.includes(:annotation_categories)
                                               .where('assessments.short_identifier': %w[A0 A1 A2]).map do |a|
-      [a.id, a.annotation_categories.joins(:annotation_texts)
-                                    .where.not(flexible_criterion_id: nil)
-                                    .group('annotation_categories.id',
-                                           'annotation_categories.flexible_criterion_id')
-                                    .pluck('annotation_categories.id',
-                                           'annotation_categories.flexible_criterion_id',
-                                           'MAX(annotation_texts.id)')]
-    end
-    ]
+          [a.id, a.annotation_categories.joins(:annotation_texts)
+                  .where.not(flexible_criterion_id: nil)
+                  .group('annotation_categories.id',
+                         'annotation_categories.flexible_criterion_id')
+                  .pluck('annotation_categories.id',
+                         'annotation_categories.flexible_criterion_id',
+                         'MAX(annotation_texts.id)')]
+        end
+      ]
 
     base_attributes = {
       submission_file_id: 1,
@@ -49,8 +49,8 @@ namespace :db do
     annotation_text_ids = {}
     Assignment.all.where('assessments.short_identifier': %w[A0 A1 A2]).each do |a|
       annotation_text_ids[a.id] = a.annotation_categories.joins(:annotation_texts)
-                                                         .where.not('annotation_categories.flexible_criterion_id': nil)
-                                                         .pluck('annotation_texts.id')
+                                   .where.not('annotation_categories.flexible_criterion_id': nil)
+                                   .pluck('annotation_texts.id')
     end
 
     submission_ids = []
@@ -277,7 +277,7 @@ namespace :db do
           grade: random_grade
         }
       end
-      students << { id: student.id, total_grade: total_grade}
+      students << { id: student.id, total_grade: total_grade }
     end
 
     Grade.insert_all grades
