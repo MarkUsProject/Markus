@@ -53,9 +53,6 @@ es:
         manage?: "UPDATE ME."
       starter_file_group:
       grader_permission:
-        create_delete_annotations?: "UPDATE ME."
         manage_submissions?: "UPDATE ME."
         manage_assessments?: "UPDATE ME."
-        manage_extensions?: "UPDATE ME."
-        manage_course_grades?: "UPDATE ME."
         grader_run_tests?: "UPDATE ME."

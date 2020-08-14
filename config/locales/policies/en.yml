@@ -59,9 +59,6 @@ en:
       peer_review:
         assign_reviewers?: "You do not have permissions to assign reviewers."
       grader_permission:
-        create_delete_annotations?: "You do not have permissions to create, delete annotations."
         manage_submissions?: "You do not have permissions to collect submissions and release or unrelease the grades."
         manage_assessments?: "You do not have permissions to create, edit and manage assessments."
-        manage_extensions?: "You do not have permissions to delete the grace period deduction."
-        manage_course_grades?: "You do not have permissions to manage marking schemes and view or download grades summary."
         grader_run_tests?: "You do not have permissions to run tests."
