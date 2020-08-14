@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_08_11_194846) do
+ActiveRecord::Schema.define(version: 2020_08_13_195934) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -252,13 +252,11 @@ ActiveRecord::Schema.define(version: 2020_08_11_194846) do
   end
 
   create_table "grader_permissions", force: :cascade do |t|
-    t.integer "user_id"
-    t.boolean "manage_extensions", default: false
-    t.boolean "create_delete_annotations", default: false
-    t.boolean "manage_submissions", default: false
-    t.boolean "manage_assessments", default: false
-    t.boolean "run_tests", default: false
-    t.boolean "manage_course_grades", default: false
+    t.bigint "user_id", null: false
+    t.boolean "manage_submissions", default: false, null: false
+    t.boolean "manage_assessments", default: false, null: false
+    t.boolean "run_tests", default: false, null: false
+    t.index ["user_id"], name: "index_grader_permissions_on_user_id", unique: true
   end
 
   create_table "grades", id: :serial, force: :cascade do |t|
@@ -627,9 +625,9 @@ ActiveRecord::Schema.define(version: 2020_08_11_194846) do
   add_foreign_key "extensions", "groupings"
   add_foreign_key "extra_marks", "results", name: "fk_extra_marks_results", on_delete: :cascade
   add_foreign_key "feedback_files", "submissions"
+  add_foreign_key "grader_permissions", "users"
   add_foreign_key "grouping_starter_file_entries", "groupings"
   add_foreign_key "grouping_starter_file_entries", "starter_file_entries"
-  add_foreign_key "grader_permissions", "users"
   add_foreign_key "groupings", "assessments", name: "fk_groupings_assignments"
   add_foreign_key "groupings", "groups", name: "fk_groupings_groups"
   add_foreign_key "key_pairs", "users"
