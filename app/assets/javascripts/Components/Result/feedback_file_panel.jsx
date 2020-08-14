@@ -38,20 +38,18 @@ export class FeedbackFilePanel extends React.Component {
     }
 
     return (
-      <div>
-        <div className='react-tabs-panel-action-bar'>
+        [<div className='react-tabs-panel-action-bar' key={'feedback-file-actionbar'}>
           <div>
             {feedbackSelector}
           </div>
-        </div>
-        <div id='feedback_file_content'>
+        </div>,
+        <div id='feedback_file_content' key={'feedback-file-view'}>
           <FileViewer
             assignment_id={this.props.assignment_id}
             submission_id={this.props.submission_id}
             feedbackFile={this.state.selectedFile}
           />
-        </div>
-      </div>
+        </div>]
     );
   }
 }
