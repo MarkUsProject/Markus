@@ -72,7 +72,7 @@ namespace :db do
                                             'submission_files.filename': %w[deferred-process.jpg pdf.pdf hello.py])
                                      .pluck('submissions.id', 'submission_files.filename', 'submission_files.id')
 
-    submission_file_ids = submission_file_data.inject({}) { |data, item| data.merge(item[0].to_s + item[1] => item[2])}
+    submission_file_ids = submission_file_data.inject({}) { |data, item| data.merge(item[0].to_s + item[1] => item[2]) }
 
     Grouping.joins(:assignment).where(assessments: { short_identifier: %w[A0 A1 A2] }).each do |grouping|
       submission = grouping.current_submission_used
