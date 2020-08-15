@@ -22,7 +22,7 @@ namespace :db do
     results = []
     one_time_num = AnnotationText.all.pluck(:id).max + 1
     criteria = Hash[Assignment.includes(:criteria).where('assessments.short_identifier': %w[A0 A1 A2]).map do |a|
-      [a.id, a.criteria.pluck(:id, :type, :max_mark)]
+      [a.id, a.criteria.pluck_to_hash(:id, :type, :max_mark)]
     end
     ]
     categories_with_criteria = Hash[Assignment.includes(:annotation_categories)
@@ -31,9 +31,9 @@ namespace :db do
                   .where.not(flexible_criterion_id: nil)
                   .group('annotation_categories.id',
                          'annotation_categories.flexible_criterion_id')
-                  .pluck('annotation_categories.id',
-                         'annotation_categories.flexible_criterion_id',
-                         'MAX(annotation_texts.id)')]
+                  .pluck_to_hash('annotation_categories.id AS category_id',
+                                 'annotation_categories.flexible_criterion_id AS category_crit_id',
+                                 'MAX(annotation_texts.id) AS deductive_text')]
         end
       ]
 
@@ -49,7 +49,7 @@ namespace :db do
     annotation_text_ids = {}
     Assignment.all.where('assessments.short_identifier': %w[A0 A1 A2]).each do |a|
       annotation_text_ids[a.id] = a.annotation_categories.joins(:annotation_texts)
-                                   .where.not('annotation_categories.flexible_criterion_id': nil)
+                                   .where('annotation_categories.flexible_criterion_id': nil)
                                    .pluck('annotation_texts.id')
     end
 
@@ -67,14 +67,12 @@ namespace :db do
       end
     end
 
-    submission_file_ids = Hash[
-      Submission.all.includes(:submission_files).where('submissions.id': submission_ids).map do |s|
-        [s.id, Hash[s.submission_files.where('filename': ['deferred-process.jpg', 'pdf.pdf', 'hello.py']).map do |sf|
-          [sf.filename, sf.id]
-        end
-        ]]
-      end
-    ]
+    submission_file_data = Submission.all.includes(:submission_files)
+                                     .where('submissions.id': submission_ids,
+                                            'submission_files.filename': %w[deferred-process.jpg pdf.pdf hello.py])
+                                     .pluck('submissions.id', 'submission_files.filename', 'submission_files.id')
+
+    submission_file_ids = submission_file_data.inject({}) { |data, item| data.merge(item[0].to_s + item[1] => item[2])}
 
     Grouping.joins(:assignment).where(assessments: { short_identifier: %w[A0 A1 A2] }).each do |grouping|
       submission = grouping.current_submission_used
@@ -101,7 +99,7 @@ namespace :db do
         updated_at: Time.now
       }
 
-      base_attributes[:submission_file_id] = submission_file_ids[submission.id]['deferred-process.jpg']
+      base_attributes[:submission_file_id] = submission_file_ids[submission.id.to_s + 'deferred-process.jpg']
       base_attributes[:annotation_text_id] = annotation_text_ids[grouping.assignment.id].sample
       base_attributes[:annotation_number] = 1
       annotations << {
@@ -119,7 +117,7 @@ namespace :db do
       }
 
 
-      base_attributes[:submission_file_id] = submission_file_ids[submission.id]['pdf.pdf']
+      base_attributes[:submission_file_id] = submission_file_ids[submission.id.to_s + 'pdf.pdf']
       base_attributes[:annotation_text_id] = annotation_text_ids[grouping.assignment.id].sample
       base_attributes[:annotation_number] = 2
       annotations << {
@@ -165,7 +163,7 @@ namespace :db do
         **base_attributes
       }
 
-      base_attributes[:submission_file_id] = submission_file_ids[submission.id]['hello.py']
+      base_attributes[:submission_file_id] = submission_file_ids[submission.id.to_s + 'hello.py']
       base_attributes[:annotation_text_id] = annotation_text_ids[grouping.assignment.id].sample
       base_attributes[:annotation_number] = 4
       annotations << {
@@ -183,14 +181,17 @@ namespace :db do
       }
 
       total_mark = 0
+      categories_for_assignment = categories_with_criteria[grouping.assignment.id]
+      deductive_category = categories_for_assignment[0]
+      overridden_category = categories_for_assignment[1]
       #Automate marks for assignment using appropriate criteria
       criteria[grouping.assignment.id].each do |criterion|
         override = false
-        if criterion[1] == 'RubricCriterion'
-          random_mark = criterion[2] / 4 * rand(0..4)
-        elsif criterion[1] == 'FlexibleCriterion'
-          if categories_with_criteria[grouping.assignment.id][0][1] == criterion[0]
-            base_attributes[:annotation_text_id] = categories_with_criteria[grouping.assignment.id][0][2]
+        if criterion[:type] == 'RubricCriterion'
+          random_mark = criterion[:max_mark] / 4 * rand(0..4)
+        elsif criterion[:type] == 'FlexibleCriterion'
+          if deductive_category[:category_crit_id] == criterion[:id]
+            base_attributes[:annotation_text_id] = deductive_category[:deductive_text]
             base_attributes[:annotation_number] = 5
             annotations << {
               type: 'TextAnnotation',
@@ -206,8 +207,8 @@ namespace :db do
               **base_attributes
             }
             random_mark = 0
-          elsif categories_with_criteria[grouping.assignment.id][1][1] == criterion[0]
-            base_attributes[:annotation_text_id] = categories_with_criteria[grouping.assignment.id][1][2]
+          elsif overridden_category[:category_crit_id] == criterion[:id]
+            base_attributes[:annotation_text_id] = overridden_category[:deductive_text]
             base_attributes[:annotation_number] = 6
             annotations << {
               type: 'TextAnnotation',
@@ -223,9 +224,9 @@ namespace :db do
               **base_attributes
             }
             override = true
-            random_mark = criterion[2]
+            random_mark = criterion[:max_mark]
           else
-            random_mark = rand(0..criterion[2])
+            random_mark = rand(0..criterion[:max_mark])
           end
         else
           random_mark = rand(0..1)
@@ -233,7 +234,7 @@ namespace :db do
         total_mark += random_mark
         marks << {
           result_id: result.id,
-          criterion_id: criterion[0],
+          criterion_id: criterion[:id],
           mark: random_mark,
           override: override,
           created_at: Time.now,
