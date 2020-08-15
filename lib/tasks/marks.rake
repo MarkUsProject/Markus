@@ -116,7 +116,6 @@ namespace :db do
         **base_attributes
       }
 
-
       base_attributes[:submission_file_id] = submission_file_ids[submission.id.to_s + 'pdf.pdf']
       base_attributes[:annotation_text_id] = annotation_text_ids[grouping.assignment.id].sample
       base_attributes[:annotation_number] = 2
