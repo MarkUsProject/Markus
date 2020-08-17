@@ -260,6 +260,7 @@ class RawMarksSpreadsheet extends React.Component {
           ref={(r) => this.actionBox = r}
           toggleRelease={this.toggleRelease}
           showHidden={this.state.show_hidden}
+          is_allowed_to_release_unrelease={this.props.is_allowed_to_release_unrelease}
           updateShowHidden={this.updateShowHidden} />
         <CheckboxTable
           ref={(r) => this.checkboxTable = r}
@@ -391,15 +392,24 @@ class SpreadsheetActionBox extends React.Component {
   };
 
   render() {
-    return (
-      <div className='rt-action-box'>
-        {this.hiddenInput()}
+    let releaseButton, unreleaseButton;
+    if (this.props.is_allowed_to_release_unrelease) {
+      releaseButton = (
         <button onClick={() => this.props.toggleRelease(true)}>
           {I18n.t('submissions.release_marks')}
         </button>
+      );
+      unreleaseButton = (
         <button onClick={() => this.props.toggleRelease(false)}>
           {I18n.t('submissions.unrelease_marks')}
         </button>
+      );
+    }
+    return (
+      <div className='rt-action-box'>
+        {this.hiddenInput()}
+        {releaseButton}
+        {unreleaseButton}
       </div>
     );
   }
