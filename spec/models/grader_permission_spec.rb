@@ -12,10 +12,10 @@ describe GraderPermission do
         expect { create :grader_permission, user_id: user.id }.to raise_error(ActiveRecord::RecordInvalid)
       end
     end
+    # Creating a TA will automatically create associated grader_permission
     context 'When the user is grader' do
-      let(:user) { create(:ta) }
       it 'should not raise an error' do
-        expect(create(:grader_permission, user_id: user.id)).to be_valid
+        expect(create(:ta)).to be_valid
       end
     end
     context 'When the user is student' do

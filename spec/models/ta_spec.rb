@@ -1,5 +1,5 @@
 describe Ta do
-  it { is_expected.to have_one (:grader_permission).dependent(:destroy) }
+  it { is_expected.to have_one(:grader_permission).dependent(:destroy) }
   describe '#percentage_grades_array' do
     let(:assignment) { create(:assignment_with_criteria_and_results) }
     let(:ta) { create(:ta) }
