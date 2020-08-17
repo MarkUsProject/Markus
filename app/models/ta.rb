@@ -92,6 +92,6 @@ class Ta < User
   private
 
   def create_grader_permission
-    self.grader_permission = GraderPermission.new
+    self.grader_permission = GraderPermission.create!(user_id: self.id)
   end
 end

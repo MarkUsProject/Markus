@@ -6,7 +6,7 @@ class GraderPermission < ApplicationRecord
   validates_associated :ta
 
   def user_must_be_a_grader
-    unless ta
+    unless Ta.exists?(id: self.user_id)
       errors.add('base', 'User must be a grader')
       false
     end
