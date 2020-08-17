@@ -11,9 +11,7 @@ class RubricCriterion < Criterion
   end
 
   def level_with_mark_closest_to(mark)
-    marks_possible = self.levels.pluck(:mark)
-    closest = marks_possible.min_by { |m| (m - mark).abs }
-    self.levels.where(mark: closest).first
+    self.levels.min_by { |m| (m.mark - mark).abs }
   end
 
   def scale_marks_if_max_mark_changed
