@@ -39,24 +39,15 @@ export class FileViewer extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    let fileManagerChanged = !this.props.result_id && prevProps.selectedFile !== this.props.selectedFile;
-    let feedbackFileChanged = !!this.props.feedbackFile && prevProps.feedbackFile !== this.props.feedbackFile
-    if (fileManagerChanged || feedbackFileChanged) {
+    if (!this.props.result_id && prevProps.selectedFile !== this.props.selectedFile) {
       this.set_submission_file(null);
     }
   }
 
   setFileUrl = (submission_file_id) => {
     let url;
-    if (!this.props.result_id) {
+    if (!!this.props.selectedFileURL) {
       url = this.props.selectedFileURL;
-    } else if (!!this.props.feedbackFile) {
-      url = Routes.get_feedback_file_assignment_submission_path(
-        '',
-        this.props.assignment_id,
-        this.props.submission_id,
-        {feedback_file_id: this.props.feedbackFile}
-      );
     } else {
       url = Routes.download_assignment_submission_result_path(
         '',
@@ -95,24 +86,22 @@ export class FileViewer extends React.Component {
     });
 
     this.setState({loading: true, url: null}, () => {
-      if (!!this.props.result_id || !!this.props.feedbackFile) {
-        fetch(Routes.get_file_assignment_submission_path(
-          '',
-          this.props.assignment_id,
-          this.props.submission_id,
-          {submission_file_id: submission_file_id,
-          feedback_file: !!this.props.feedbackFile ? 'true' : 'false',
-          feedback_file_id: this.props.feedbackFile}),
-          {credentials: 'include'})
-          .then(res => res.json())
-          .then(body => {
-            if (body.type === 'image' || body.type === 'pdf') {
-              this.setState({type: body.type}, () => {this.setFileUrl(submission_file_id)})
-            } else {
-              const content = JSON.parse(body.content).replace(/\r?\n/gm, '\n');
-              this.setState({content: content, type: body.type, loading: false});
-            }
-          })
+      if (!this.props.selectedFileURL) {
+          fetch(Routes.get_file_assignment_submission_path(
+            '',
+            this.props.assignment_id,
+            this.props.submission_id,
+            {submission_file_id: submission_file_id}),
+            {credentials: 'include'})
+            .then(res => res.json())
+            .then(body => {
+              if (body.type === 'image' || body.type === 'pdf') {
+                this.setState({type: body.type}, () => {this.setFileUrl(submission_file_id)})
+              } else {
+                const content = JSON.parse(body.content).replace(/\r?\n/gm, '\n');
+                this.setState({content: content, type: body.type, loading: false});
+              }
+            })
       } else {
         if (this.props.selectedFileType === 'image' || this.props.selectedFileType === 'pdf') {
           this.setState({type: this.props.selectedFileType}, () => {this.setFileUrl()});
@@ -130,7 +119,7 @@ export class FileViewer extends React.Component {
 
   render() {
     let commonProps;
-    if (!!this.props.result_id) {
+    if (!this.props.selectedFileURL) {
       commonProps = {
         submission_file_id: this.props.selectedFile,
         annotations: this.props.annotations,

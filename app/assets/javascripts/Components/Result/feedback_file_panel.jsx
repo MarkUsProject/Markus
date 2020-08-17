@@ -1,5 +1,5 @@
 import React from 'react';
-import {FileViewer} from './file_viewer'
+import {FileViewer} from './file_viewer';
 
 
 export class FeedbackFilePanel extends React.Component {
@@ -11,7 +11,7 @@ export class FeedbackFilePanel extends React.Component {
   }
 
   updateSelectedFile = (event) => {
-    this.setState({selectedFile: event.target.value});
+    this.setState({selectedFile: parseInt(event.target.value, 10)});
   };
 
   render() {
@@ -37,6 +37,17 @@ export class FeedbackFilePanel extends React.Component {
         </select>;
     }
 
+    let url, file_obj;
+    if (this.state.selectedFile !== null) {
+      url = Routes.get_feedback_file_assignment_submission_path(
+        '',
+        this.props.assignment_id,
+        this.props.submission_id,
+        {feedback_file_id: this.state.selectedFile}
+      );
+      file_obj = this.props.feedbackFiles.find(file => file.id === this.state.selectedFile);
+    }
+
     return (
         [<div className='react-tabs-panel-action-bar' key={'feedback-file-actionbar'}>
           <div>
@@ -47,7 +58,9 @@ export class FeedbackFilePanel extends React.Component {
           <FileViewer
             assignment_id={this.props.assignment_id}
             submission_id={this.props.submission_id}
-            feedbackFile={this.state.selectedFile}
+            selectedFile={file_obj.filename}
+            selectedFileURL={url}
+            selectedFileType={file_obj.type}
           />
         </div>]
     );
