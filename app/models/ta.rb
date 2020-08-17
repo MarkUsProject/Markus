@@ -3,6 +3,9 @@ class Ta < User
   CSV_UPLOAD_ORDER = Rails.configuration.ta_csv_upload_order
   SESSION_TIMEOUT = Rails.configuration.ta_session_timeout
 
+  has_one :grader_permission, dependent: :destroy, foreign_key: :user_id
+  after_create :create_grader_permission
+
   has_many :criterion_ta_associations, dependent: :delete_all
   has_many :criteria, through: :criterion_ta_associations
 
@@ -84,5 +87,11 @@ class Ta < User
     distribution[-1] = distribution.last + data.count{ |x| x > 100 }
 
     return distribution
+  end
+
+  private
+
+  def create_grader_permission
+    self.grader_permission = GraderPermission.new
   end
 end

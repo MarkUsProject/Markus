@@ -1,14 +1,15 @@
 # Contains the grader permissions for a particular grader
 class GraderPermission < ApplicationRecord
-  belongs_to :user
+  belongs_to :ta
   validates_presence_of :user_id
   validate :user_must_be_a_grader
-  validates_associated :user
+  validates_associated :ta
 
   def user_must_be_a_grader
-    return unless user && !user.is_a?(Ta)
-
-    errors.add('base', 'User must be a grader')
-    false
+    unless ta
+      errors.add('base', 'User must be a grader')
+      false
+    end
+    true
   end
 end
