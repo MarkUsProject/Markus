@@ -417,6 +417,16 @@ class SubmissionsController < ApplicationController
     submission = Submission.find(params[:id])
     grouping = submission.grouping
 
+    if params[:feedback_file] == 'true'
+      feedback_file = submission.feedback_files.find(params[:feedback_file_id])
+      if feedback_file.mime_type.start_with? 'image'
+        return render json: { type: 'image' }
+      else
+        return render json: { content: feedback_file.file_content.to_json,
+                              type: SubmissionFile.get_file_type(feedback_file.filename) }
+      end
+    end
+
     if !@current_user.is_a_reviewer?(assignment.pr_assignment) && @current_user.student? &&
         @current_user.accepted_grouping_for(assignment.id).id != grouping.id
       flash_message(:error,
