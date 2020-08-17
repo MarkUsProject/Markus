@@ -1,6 +1,6 @@
 # Contains the grader permissions for a particular grader
 class GraderPermission < ApplicationRecord
-  belongs_to :ta
+  belongs_to :ta, class_name: 'User', foreign_key: :user_id
   validates_presence_of :user_id
   validate :user_must_be_a_grader
   validates_associated :ta
