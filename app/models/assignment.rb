@@ -498,7 +498,7 @@ class Assignment < Assessment
     CSV.generate do |csv|
       self.groupings.includes(:group).each do |grouping|
         group = grouping.group
-        data = [group.group_name, group.repository_external_access_url,]
+        data = [group.group_name, group.repository_external_access_url]
         data << group.repository_ssh_access_url if ssh
         csv << data
       end
