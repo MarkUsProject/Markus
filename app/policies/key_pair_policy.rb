@@ -3,11 +3,15 @@ class KeyPairPolicy < ApplicationPolicy
   default_rule :manage?
 
   def manage?
-    Rails.configuration.enable_key_storage && git_enabled? && (user.admin? || user.ta? || any_vcs_submit?)
+    enabled? && git_enabled? && (user.admin? || user.ta? || any_vcs_submit?)
   end
 
   def git_enabled?
     Rails.configuration.x.repository.type == 'git'
+  end
+
+  def enabled?
+    Rails.configuration.enable_key_storage
   end
 
   def any_vcs_submit?
