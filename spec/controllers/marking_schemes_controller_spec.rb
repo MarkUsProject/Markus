@@ -78,6 +78,18 @@ describe MarkingSchemesController do
         expected_ids = [assignment.id, assignment_with_criteria_and_results.id]
         expect(marking_weights.map(&:assessment_id)).to match_array expected_ids
       end
+
+      it 'creates a marking scheme when there are no assessments' do
+        params = {
+          'marking_scheme': { 'name': 'Test Marking Scheme' }
+        }
+
+        post_as admin, :create, params: params
+        marking_scheme = MarkingScheme.first
+        marking_weights = marking_scheme.marking_weights
+        expect(marking_scheme.name).to eq 'Test Marking Scheme'
+        expect(marking_weights.size).to eq 0
+      end
     end
 
     context '#update' do
@@ -111,6 +123,20 @@ describe MarkingSchemesController do
         expect(marking_scheme.name).to eq 'Test Marking Scheme 2'
         expect(marking_weights.size).to eq 4
         expect(marking_weights.map(&:weight)).to match_array expected_weights
+      end
+
+      it 'updates an existing marking scheme with no assessments' do
+        create(:marking_scheme)
+        params = {
+          'id': MarkingScheme.first.id,
+          'marking_scheme': { 'name': 'Test Marking Scheme 2' }
+        }
+
+        post_as admin, :update, params: params
+        marking_scheme = MarkingScheme.first
+        marking_weights = marking_scheme.marking_weights
+        expect(marking_scheme.name).to eq 'Test Marking Scheme 2'
+        expect(marking_weights.size).to eq 0
       end
     end
 
