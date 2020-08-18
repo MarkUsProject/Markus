@@ -801,8 +801,7 @@ describe Assignment do
           @assignment.groupings.each do |grouping|
             group = grouping.group
             expected_string += [group.group_name,
-                                group.repository_external_access_url,
-                                group.repository_ssh_access_url].to_csv
+                                group.repository_external_access_url].to_csv
           end
           expect(expected_string).to eql(@assignment.get_repo_list), 'Repo access url list string is wrong!'
         end
