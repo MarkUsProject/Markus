@@ -61,18 +61,18 @@ describe CourseSummariesController do
         # TODO: Create marking scheme as well
 
         get_as @admin, :populate, format: :json
-        response_data = response.parsed_body.deep_symbolize_keys
-        @assessment_info = response_data[:assessment_info]
-        @columns = response_data[:columns]
-        @data = response_data[:data]
+        @response_data = response.parsed_body.deep_symbolize_keys
+        @columns = @response_data[:columns]
+        @data = @response_data[:data]
       end
 
       it 'returns the correct columns' do
         expect(@columns.length).to eq(Assignment.count + GradeEntryForm.count)
         Assessment.find_each do |a|
+          total = a.respond_to?(:max_mark) ? a.max_mark : a.grade_entry_items.where(bonus: false).sum(:out_of)
           expected = {
             accessor: "assessment_marks.#{a.id}.mark",
-            Header: a.short_identifier,
+            Header: a.short_identifier + " / (#{total.to_i})",
             minWidth: 50,
             className: 'number',
             headerStyle: { textAlign: 'right' }
@@ -116,13 +116,13 @@ describe CourseSummariesController do
         totals = []
         averages = []
         medians = []
-        returned_averages = []
+        returned_averages = @response_data[:average_data]
         returned_totals = []
-        returned_medians = []
+        returned_medians = @response_data[:median_data]
         Assessment.all.order(id: :asc).each do |a|
-          returned_averages << @assessment_info[a.short_identifier.to_sym][:average]
-          returned_medians << @assessment_info[a.short_identifier.to_sym][:median]
-          returned_totals << @assessment_info[a.short_identifier.to_sym][:total]
+          returned_averages << @response_data[a.short_identifier.to_sym][:average]
+          returned_medians << @response_data[a.short_identifier.to_sym][:median]
+          returned_totals << @response_data[a.short_identifier.to_sym][:total]
           if a.is_a? GradeEntryForm
             totals << a.grade_entry_items.sum(:out_of)
             averages << a.calculate_average&.round(2)
