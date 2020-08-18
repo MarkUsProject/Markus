@@ -1,5 +1,5 @@
 FactoryBot.define do
   factory :grader_permission, class: GraderPermission do
-    association :user, factory: :ta
+    association :ta, factory: :ta
   end
 end
