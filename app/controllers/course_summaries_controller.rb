@@ -10,38 +10,42 @@ class CourseSummariesController < ApplicationController
   end
 
   def populate
-    visible_assessments_info = {}
-    marking_schemes = {}
+    data = get_table_json_data(current_user)
+    columns = populate_columns
+    average_data = columns.map { |h| [h[:Header], nil] }.to_h
+    median_data = columns.map { |h| [h[:Header], nil] }.to_h
+    individual_data = columns.map { |h| [h[:Header], nil] }.to_h
+    labels = columns.each_with_index.map { |h, i| [ h[:Header], i ] }.to_h
+
+    visible_assessments = Assessment.order(id: :asc)
+    visible_assessments = visible_assessments.where(is_hidden: false) if current_user.student?
+
+    visible_assessments.each do |a|
+      info = assessment_overview(a)
+      average_data[a.short_identifier] = info[:average]
+      median_data[a.short_identifier] = info[:median]
+      columns[labels[a.short_identifier]][:Header] += " / (#{info[:total].to_i})"
+    end
+
     if current_user.admin?
-      visible_assessments = Assessment.all.order(id: :asc)
-      released_ids = visible_assessments.ids
       MarkingScheme.all.each do |m|
         grades = m.students_weighted_grades_array(current_user)
-        marking_schemes[m.name] = { average: DescriptiveStatistics.mean(grades).round(2),
-                                    median: DescriptiveStatistics.median(grades).round(2) }
+        average_data[m.name] = DescriptiveStatistics.mean(grades).round(2)
+        median_data[m.name] = DescriptiveStatistics.median(grades).round(2)
       end
     else
-      visible_assessments = Assessment.where(is_hidden: false).order(id: :asc)
-      released_ids = current_user.accepted_groupings
-                                 .joins(:current_result)
-                                 .where('results.released_to_students': true)
-                                 .pluck('groupings.assessment_id')
-      released_ids += current_user.grade_entry_students
-                                  .where(released_to_student: true)
-                                  .pluck('grade_entry_students.assessment_id')
-    end
-    visible_assessments.each do |a|
-      if released_ids.include? a.id
-        visible_assessments_info[a.short_identifier] = assessment_overview(a)
-      else
-        visible_assessments_info[a.short_identifier] = {}
+      data.first[:assessment_marks].each do |id, mark_data|
+        individual_data[Assessment.find_by_id(id).short_identifier] = mark_data[:mark]
       end
     end
+
     render json: {
-      assessment_info: visible_assessments_info,
-      columns: populate_columns,
-      data: get_table_json_data(current_user),
-      schemes: marking_schemes
+      columns: columns,
+      data: data,
+      labels: labels.keys,
+      average_data: average_data.values,
+      median_data: median_data.values,
+      individual_data: individual_data.values
     }
   end
 
@@ -126,7 +130,8 @@ class CourseSummariesController < ApplicationController
 
   def assessment_overview(assessment)
     if assessment.is_a? GradeEntryForm
-      info = { total: assessment.grade_entry_items.sum(:out_of), average: assessment.calculate_average&.round(2) }
+      info = { total: assessment.grade_entry_items.where(bonus: false).sum(:out_of),
+               average: assessment.calculate_average&.round(2) }
       if current_user.admin?
         info[:median] = assessment.calculate_median&.round(2)
       end
