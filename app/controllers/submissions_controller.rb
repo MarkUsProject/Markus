@@ -618,7 +618,7 @@ class SubmissionsController < ApplicationController
   # See Assignment.get_repo_checkout_commands for details
   def download_repo_checkout_commands
     assignment = Assignment.find(params[:assignment_id])
-    ssh_url = allowed_to?(:git_enabled?, KeyPair) && params[:url_type] == 'ssh'
+    ssh_url = allowed_to?(:git_enabled?, KeyPair) && allowed_to?(:enabled?, KeyPair) && params[:url_type] == 'ssh'
     svn_commands = assignment.get_repo_checkout_commands(ssh_url: ssh_url)
     send_data svn_commands.join("\n"),
               disposition: 'attachment',
@@ -629,7 +629,7 @@ class SubmissionsController < ApplicationController
   # See Assignment.get_repo_list for details
   def download_repo_list
     assignment = Assignment.find(params[:assignment_id])
-    send_data assignment.get_repo_list,
+    send_data assignment.get_repo_list(ssh: allowed_to?(:git_enabled?, KeyPair) && allowed_to?(:enabled?, KeyPair)),
               disposition: 'attachment',
               filename: "#{assignment.short_identifier}_repo_list.csv"
   end

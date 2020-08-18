@@ -494,11 +494,13 @@ class Assignment < Assessment
   end
 
   # Get a list of group_name, repo-url pairs
-  def get_repo_list
+  def get_repo_list(ssh: false)
     CSV.generate do |csv|
       self.groupings.includes(:group).each do |grouping|
         group = grouping.group
-        csv << [group.group_name, group.repository_external_access_url, group.repository_ssh_access_url]
+        data = [group.group_name, group.repository_external_access_url]
+        data << group.repository_ssh_access_url if ssh
+        csv << data
       end
     end
   end
