@@ -158,6 +158,7 @@ Markus::Application.configure do
   # Directory where authentication keys will be uploaded.
   # Make sure MarkUs is allowed to write to this directory
   config.key_storage = "#{config.data_dir}/keys"
+  config.enable_key_storage = true
   config.x.queues.update_keys = "CSC108"
 
   # Max file size for submission files, in bytes
