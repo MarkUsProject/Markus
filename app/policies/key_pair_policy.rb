@@ -3,7 +3,7 @@ class KeyPairPolicy < ApplicationPolicy
   default_rule :manage?
 
   def manage?
-    git_enabled? && (user.admin? || user.ta? || any_vcs_submit?)
+    Rails.configuration.enable_key_storage && git_enabled? && (user.admin? || user.ta? || any_vcs_submit?)
   end
 
   def git_enabled?
