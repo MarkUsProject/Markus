@@ -748,20 +748,13 @@ describe AnnotationCategoriesController do
   end
 
   describe 'When the user is grader' do
-    let(:user) { create(:ta) }
-    let(:grader_permission) { user.grader_permission }
     context 'When the grader is allowed to manage annotations' do
-      before do
-        grader_permission.manage_assessments = true
-        grader_permission.save
-      end
+      let(:user) { create(:ta, manage_assessments: true) }
       include_examples 'An authorized user managing annotation categories'
     end
     context 'When the grader is not allowed to manage annotations' do
-      before do
-        grader_permission.manage_assessments = false
-        grader_permission.save
-      end
+      # By default all the grader permissions are set to false
+      let(:user) { create(:ta) }
       include_examples 'An unauthorized user managing annotation categories'
     end
   end

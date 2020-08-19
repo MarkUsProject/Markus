@@ -293,7 +293,6 @@ describe AssignmentsController do
 
     context 'a TA' do
       let(:user) { create(:ta) }
-      let!(:grader_permission) { user.grader_permission }
 
       context 'when there are no assessments' do
         it 'responds with a success' do
@@ -491,7 +490,6 @@ describe AssignmentsController do
     describe 'When the user is grader' do
       let(:user) { create(:ta) }
       let(:assignment) { create(:assignment) }
-      let(:grader_permission) { user.grader_permission }
       include_examples 'An authorized user viewing assignment summary'
     end
   end
@@ -699,23 +697,15 @@ describe AssignmentsController do
   end
 
   describe 'When the user is grader' do
-    let(:user) { create(:ta) }
-    let(:grader_permission) { user.grader_permission }
-
     context 'When the grader is allowed to manage assignments' do
-      before do
-        grader_permission.manage_assessments = true
-        grader_permission.save
-      end
+      let(:user) { create(:ta, manage_assessments: true) }
       include_examples 'An authorized user updating the assignment'
       include_examples 'An authorized user managing assignments'
     end
 
     context 'When the grader is not allowed to manage assignments' do
-      before do
-        grader_permission.manage_assessments = false
-        grader_permission.save
-      end
+      # By default all the grader permissions are set to false
+      let(:user) { create(:ta) }
       context '#new' do
         before { get_as user, :new }
         it('should respond with 403') { expect(response.status).to eq 403 }
@@ -733,10 +723,7 @@ describe AssignmentsController do
     end
 
     context 'When the grader is allowed to run tests' do
-      before do
-        grader_permission.run_tests = true
-        grader_permission.save
-      end
+      let(:user) { create(:ta, run_tests: true) }
       include_examples 'An authorized user running tests'
     end
 
@@ -744,10 +731,8 @@ describe AssignmentsController do
       let(:assignment) { create(:assignment_for_tests) }
       let(:grouping) { create(:grouping, assignment: assignment) }
       let(:test_run) { create(:test_run, grouping: grouping) }
-      before do
-        grader_permission.run_tests = false
-        grader_permission.save
-      end
+      # By default all the grader permissions are set to false
+      let(:user) { create(:ta) }
       context '#batch_runs' do
         before { get_as user, :batch_runs, params: { id: assignment.id } }
         it('should respond with 403') { expect(response.status).to eq 403 }

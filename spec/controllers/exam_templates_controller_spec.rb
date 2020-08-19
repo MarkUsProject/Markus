@@ -38,19 +38,13 @@ describe ExamTemplatesController do
   end
 
   describe 'When the user is grader' do
-    let(:user) { create(:ta) }
     context 'When grader is allowed to manage exam template' do
-      before do
-        user.grader_permission.manage_assessments = true
-        user.grader_permission.save
-      end
+      let(:user) { create(:ta, manage_assessments: true) }
       include_examples 'An authorized admin or grader managing exam templates'
     end
     context 'When grader is not allowed to manage exam template' do
-      before do
-        user.grader_permission.manage_assessments = false
-        user.grader_permission.save
-      end
+      # By default all the grader permissions are set to false
+      let(:user) { create(:ta) }
       describe '#index' do
         before { get_as user, :index, params: { assignment_id: exam_template.assignment.id } }
         it('should respond with 403') { expect(response.status).to eq 403 }

@@ -380,22 +380,15 @@ describe GradeEntryFormsController do
   end
 
   describe 'When the user is grader' do
+    # By default all the grader permissions are set to false
     let(:user) { create(:ta) }
-    let(:grader_permission) { user.grader_permission }
     describe 'When the grader is allowed to release and unrelease the grades' do
-      before do
-        grader_permission.manage_submissions = true
-        grader_permission.save
-      end
+      let(:user) { create(:ta, manage_submissions: true) }
       include_examples '#update_grade_entry_students'
     end
     describe 'When the grader is not allowed to release and unrelease the grades' do
       let(:student) do
         grade_entry_form_with_data.grade_entry_students.joins(:user).find_by('users.user_name': 'c8shosta')
-      end
-      before do
-        grader_permission.manage_submissions = false
-        grader_permission.save
       end
       it 'should respond with 403' do
         post_as user, :update_grade_entry_students,
@@ -404,17 +397,10 @@ describe GradeEntryFormsController do
       end
     end
     describe 'When the grader is allowed to create, edit and update grade entry forms' do
-      before do
-        grader_permission.manage_assessments = true
-        grader_permission.save
-      end
+      let(:user) { create(:ta, manage_assessments: true) }
       include_examples '#manage grade entry forms'
     end
     describe 'When the grader is not allowed to create, edit and update grade entry forms' do
-      before do
-        grader_permission.manage_assessments = false
-        grader_permission.save
-      end
       context '#new' do
         before { get_as user, :new }
         it('should respond with 403') { expect(response.status).to eq 403 }

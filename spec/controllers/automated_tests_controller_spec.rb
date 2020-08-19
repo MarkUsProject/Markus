@@ -305,21 +305,14 @@ describe AutomatedTestsController do
     include_examples 'An authorized admin and grader managing automated testing'
   end
 
-  describe 'When the grader is allowed to download grades report and populate course summary' do
-    let(:user) { create(:ta) }
-    before do
-      user.grader_permission.manage_assessments = true
-      user.grader_permission.save
-    end
+  describe 'When the grader is allowed to manage automated testing' do
+    let(:user) { create(:ta, manage_assessments: true) }
     include_examples 'An authorized admin and grader managing automated testing'
   end
 
-  describe 'When the grader is not allowed to download grades report and populate course summary' do
+  describe 'When the grader is not allowed to manage automated testing' do
+    # By default all the permissions are set to false for a grader
     let(:user) { create(:ta) }
-    before do
-      user.grader_permission.manage_assessments = false
-      user.grader_permission.save
-    end
     include_examples 'An unauthorized user managing automated testing'
     include_examples 'An unauthorized user accessing student interface'
   end

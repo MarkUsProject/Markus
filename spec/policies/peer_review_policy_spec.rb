@@ -9,19 +9,13 @@ describe PeerReviewPolicy do
   end
   describe 'When the user is TA' do
     subject { described_class.new(user: user) }
+    # By default all the grader permissions are set to false
     let(:user) { create(:ta) }
     context 'When TA is allowed to assign or unassign reviewers' do
-      before do
-        user.grader_permission.manage_assessments = true
-        user.grader_permission.save
-      end
+      let(:user) { create(:ta, manage_assessments: true) }
       it { is_expected.to pass :assign_reviewers? }
     end
     context 'When TA is not allowed to assign or unassign reviewers' do
-      before do
-        user.grader_permission.manage_assessments = false
-        user.grader_permission.save
-      end
       it { is_expected.not_to pass :assign_reviewers? }
     end
   end

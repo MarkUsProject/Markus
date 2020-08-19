@@ -18,33 +18,20 @@ describe GradeEntryFormPolicy do
   end
   describe 'When the user is TA' do
     subject { described_class.new(user: user) }
+    # By default all the grader permissions are set to false
     let(:user) { create(:ta) }
     context 'When TA is allowed to create, edit, update the grade entry forms' do
-      before do
-        user.grader_permission.manage_assessments = true
-        user.grader_permission.save
-      end
+      let(:user) { create(:ta, manage_assessments: true) }
       it { is_expected.to pass :manage? }
     end
-    context 'When TA is not allowed to create, edit, update the grade entry forms' do
-      before do
-        user.grader_permission.manage_assessments = false
-        user.grader_permission.save
-      end
+    context 'When TA is not allowed to manage grade entry forms' do
       it { is_expected.not_to pass :manage? }
     end
     context 'When TA is allowed to release or unrelease the grades' do
-      before do
-        user.grader_permission.manage_submissions = true
-        user.grader_permission.save
-      end
+      let(:user) { create(:ta, manage_submissions: true) }
       it { is_expected.to pass :update_grade_entry_students? }
     end
     context 'When TA is not allowed to release or unrelease the grades' do
-      before do
-        user.grader_permission.manage_submissions = false
-        user.grader_permission.save
-      end
       it { is_expected.not_to pass :update_grade_entry_students? }
     end
     context 'TA can view, update, download and upload grades' do
