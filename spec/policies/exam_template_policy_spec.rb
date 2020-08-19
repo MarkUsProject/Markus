@@ -15,7 +15,7 @@ describe ExamTemplatePolicy do
     # By default all the grader permissions are set to false
     let(:user) { create(:ta) }
     context 'When TA is allowed to edit, update, download, destroy exam templates' do
-      let(:user) { create(:ta, manage_assessments: true)}
+      let(:user) { create(:ta, manage_assessments: true) }
       it { is_expected.to pass :modify? }
     end
     context 'When TA is not allowed to edit, update, download, destroy exam templates' do
