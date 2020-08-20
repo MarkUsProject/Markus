@@ -1,18 +1,9 @@
 en:
   grader_permissions:
     list: "Grader Permissions"
-    delete_grace_period_deduction: "Delete the grace credit deduction"
-    manage_assignments: "Manage assessments"
-    create_delete_annotations: "Manage annotations"
-    collect_submissions: "Collect the student's submissions"
-    manage_exam_templates: "Manage exam templates"
-    release_unrelease_grades: "Release or unrelease grades for student's mark spreadsheet"
-    create_notes: "Create notes"
-    manage_reviewers: "Manage reviewers"
-    download_grades_report: "Download the grades report of all the students"
-    manage_marking_schemes: "Manage marking schemes"
+    manage_assessments: "Manage assessments"
+    manage_submissions: "Manage submissions"
     run_tests: "Run tests"
-    tooltip1: "This should be checked to enable the below two permissions. Grader can create and manage assignments, scanned assignments, timed assignments and mark spreadsheets."
-    tooltip2: "If this option is unchecked, the grader can still use the already existing annotations."
-    tooltip3: "The grader can collect the submissions of those students, who are assigned to them for grading."
+    tooltip1: "Grader can create and manage all the assessments which includes annotations, automated testing, exam templates."
+    tooltip2: "The grader can collect the submissions and release/unrelease the grades of the students, assigned to them for grading."
 

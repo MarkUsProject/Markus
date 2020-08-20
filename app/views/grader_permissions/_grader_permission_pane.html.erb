@@ -6,48 +6,15 @@
              handlers: [:erb] %>
 
   <%= form_for :grader_permission do |f| %>
-    <div class="tooltip" id='manage_assignments'>
+    <div class="tooltip">
       <span class="tooltiptext"><%= t('grader_permissions.tooltip1') %></span>
-      <%= f.check_box :manage_assignments, onclick: 'set_onbeforeunload(true); change();' %>
-      <%= f.label :manage_assignments, t('grader_permissions.manage_assignments') %><br/>
-    </div>
-    <div class="sub_category" id='manage_exam_templates'>
-      <%= f.check_box :manage_exam_templates, onclick: 'set_onbeforeunload(true);', disabled: true %>
-      <%= f.label :manage_exam_templates, t('grader_permissions.manage_exam_templates') %>
+      <%= f.check_box :manage_assessments, onclick: 'set_onbeforeunload(true);' %>
+      <%= f.label :manage_assessments, t('grader_permissions.manage_assessments') %><br/>
     </div><br/>
-    <div class="sub_category tooltip" id='manage_annotations'>
+    <div class="tooltip">
       <span class="tooltiptext"><%= t('grader_permissions.tooltip2') %></span>
-      <%= f.check_box :create_delete_annotations, onclick: 'set_onbeforeunload(true);', disabled: true %>
-      <%= f.label :create_delete_annotations, t('grader_permissions.create_delete_annotations') %>
-    </div><br/>
-    <div class="permission">
-      <%= f.check_box :delete_grace_period_deduction, onclick: 'set_onbeforeunload(true);' %>
-      <%= f.label :delete_grace_period_deduction, t('grader_permissions.delete_grace_period_deduction') %>
-    </div>
-    <div class="permission tooltip">
-      <span class="tooltiptext"><%= t('grader_permissions.tooltip3') %></span>
-      <%= f.check_box :collect_submissions, onclick: 'set_onbeforeunload(true);' %>
-      <%= f.label :collect_submissions, t('grader_permissions.collect_submissions') %>
-    </div>
-    <div class="permission">
-      <%= f.check_box :create_notes, onclick: 'set_onbeforeunload(true);' %>
-      <%= f.label :create_notes, t('grader_permissions.create_notes') %>
-    </div>
-    <div class="permission">
-      <%= f.check_box :release_unrelease_grades, onclick: 'set_onbeforeunload(true);' %>
-      <%= f.label :release_unrelease_grades, t('grader_permissions.release_unrelease_grades') %>
-    </div>
-    <div class="permission">
-      <%= f.check_box :manage_reviewers, onclick: 'set_onbeforeunload(true);' %>
-      <%= f.label :manage_reviewers, t('grader_permissions.manage_reviewers') %>
-    </div>
-    <div class="permission">
-      <%= f.check_box :download_grades_report, onclick: 'set_onbeforeunload(true);' %>
-      <%= f.label :download_grades_report, t('grader_permissions.download_grades_report') %>
-    </div>
-    <div class="permission">
-      <%= f.check_box :manage_marking_schemes, onclick: 'set_onbeforeunload(true);' %>
-      <%= f.label :manage_marking_schemes, t('grader_permissions.manage_marking_schemes') %>
+      <%= f.check_box :manage_submissions, onclick: 'set_onbeforeunload(true);' %>
+      <%= f.label :manage_submissions, t('grader_permissions.manage_submissions') %>
     </div>
     <div class="permission">
       <%= f.check_box :run_tests, onclick: 'set_onbeforeunload(true);' %>
@@ -60,20 +27,4 @@
                    data: { disable_with: t('working') } %>
     </p>
   <% end %>
-
-  <script>
-    function change(){
-      let manage_exam_templates = document.getElementById('grader_permission_manage_exam_templates');
-      let manage_annotations = document.getElementById('grader_permission_create_delete_annotations');
-      if (document.getElementById('grader_permission_manage_assignments').checked) {
-        manage_exam_templates.disabled = false;
-        manage_annotations.disabled = false;
-      } else{
-        manage_exam_templates.disabled = true;
-        manage_annotations.disabled = true;
-        manage_exam_templates.checked = false;
-        manage_annotations.checked = false;
-      }
-    }
-  </script>
 </div>
