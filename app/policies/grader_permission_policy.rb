@@ -12,14 +12,6 @@ class GraderPermissionPolicy < ApplicationPolicy
     user.grader_permission.manage_assessments
   end
 
-  def manage_extensions?
-    user.grader_permission.manage_extensions
-  end
-
-  def manage_course_grades?
-    user.grader_permission.manage_course_grades
-  end
-
   def grader_run_tests?
     user.grader_permission.run_tests
   end
