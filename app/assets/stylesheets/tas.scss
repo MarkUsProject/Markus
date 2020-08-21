@@ -5,34 +5,34 @@
 }
 
 .permission {
-  margin-bottom: 1em
-}
-
-.tooltip {
-  position: relative;
-  display: inline-block;
   margin-bottom: 1em;
 }
 
+.tooltip {
+  display: inline-block;
+  margin-bottom: 1em;
+  position: relative;
+}
+
 .tooltip .tooltiptext {
+  background-color: #ffffff;
+  border-radius: 6px;
+  border-style: ridge;
+  color: #000;
+  height: auto;
+  left: 135%;
+  line-height: 1.6;
+  min-width: 550px;
+  padding: 6px;
+  position: absolute;
+  text-align: left;
+  top: -15px;
   visibility: hidden;
   width: auto;
-  min-width: 550px;
-  height: auto;
-  background-color: white;
-  color: #000000;
-  text-align: left;
-  line-height: 1.6;
-  border-radius: 6px;
-  position: absolute;
   z-index: 1;
-  top: -15px;
-  left: 135%;
-  padding: 6px;
-  border-style: ridge;
 }
 
 .tooltip:hover .tooltiptext {
-  visibility: visible;
   opacity: 1;
+  visibility: visible;
 }
