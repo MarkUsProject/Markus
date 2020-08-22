@@ -58,21 +58,21 @@ namespace :db do
       x1: nil, y1: nil, x2: nil, y2: nil, page: nil,
       line_start: nil, line_end: nil, column_start: nil, column_end: nil
     }
-    image_annotation_attributes = annotation_attributes.merge({
+    image_annotation_attributes = annotation_attributes.merge(
       type: 'ImageAnnotation', x1: 132, y1: 199, x2: 346, y2: 370
-    })
-    pdf_annotation_attributes = annotation_attributes.merge({
+    )
+    pdf_annotation_attributes = annotation_attributes.merge(
       type: 'PdfAnnotation', x1: 27_740, y1: 58_244, x2: 4977, y2: 29_748, page: 1
-    })
-    text_annotation_attributes = annotation_attributes.merge({
+    )
+    text_annotation_attributes = annotation_attributes.merge(
       type: 'TextAnnotation', line_start: 7, line_end: 9, column_start: 6, column_end: 15
-    })
-    text_annotation_attributes2 = annotation_attributes.merge({
+    )
+    text_annotation_attributes2 = annotation_attributes.merge(
       type: 'TextAnnotation', line_start: 4, line_end: 5, column_start: 6, column_end: 15
-    })
-    text_annotation_attributes3 = annotation_attributes.merge({
+    )
+    text_annotation_attributes3 = annotation_attributes.merge(
       type: 'TextAnnotation', line_start: 12, line_end: 12, column_start: 1, column_end: 26
-    })
+    )
 
     submission_file_ids = Submission.where('submissions.id': submission_ids,
                                            'submission_files.filename': %w[deferred-process.jpg pdf.pdf hello.py])
