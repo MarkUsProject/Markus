@@ -429,7 +429,7 @@ class AssignmentsController < ApplicationController
     ApplicationRecord.transaction do
       assignment.assignment_properties.update!(starter_file_assignment_params)
       all_changed = assignment.assignment_properties.saved_changes?
-      starter_file_section_params.each do |section_params|
+      params[:sections].each do |section_params|
         Section.find_by(id: section_params[:section_id])
                &.update_starter_file_group(assignment.id, section_params[:group_id])
       end
@@ -680,10 +680,6 @@ class AssignmentsController < ApplicationController
 
   def starter_file_assignment_params
     params.require(:assignment).permit(:starter_file_type, :default_starter_file_group_id)
-  end
-
-  def starter_file_section_params
-    params.permit(sections: [:section_id, :group_id]).require(:sections)
   end
 
   def starter_file_group_params
