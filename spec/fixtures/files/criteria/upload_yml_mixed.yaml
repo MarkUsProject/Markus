@@ -19,7 +19,7 @@ cr30:
       description: Impressive
   ta_visible: false
   peer_visible: true
-  bonus: True
+  bonus: true
 cr20:
   type: Flexible
   max_mark: 2.0

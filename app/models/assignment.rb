@@ -553,7 +553,7 @@ class Assignment < Assessment
       accessor = crit.id
       criteria_shown << accessor
       {
-        Header: crit.name,
+        Header: crit.bonus? ? "#{crit.name} (#{Criterion.human_attribute_name(:bonus)})" : crit.name,
         accessor: "criteria.#{accessor}",
         className: 'number ' + (unassigned ? 'unassigned' : ''),
         headerClassName: unassigned ? 'unassigned' : ''
@@ -622,7 +622,7 @@ class Assignment < Assessment
 
     headers = [['User name', 'Group', 'Final grade'], ['', 'Out of', self.max_mark]]
     self.ta_criteria.each do |crit|
-      headers[0] << crit.name
+      headers[0] << (crit.bonus? ? "#{crit.name} (#{Criterion.human_attribute_name(:bonus)})" : crit.name)
       headers[1] << crit.max_mark
     end
     headers[0] << 'Bonus/Deductions'

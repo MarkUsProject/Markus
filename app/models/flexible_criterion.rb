@@ -128,8 +128,6 @@ class FlexibleCriterion < Criterion
   end
 
   def scale_marks
-    return unless max_mark_previously_changed? && !previous_changes[:max_mark].first.nil? # if max_mark was not updated
-
     super
     return if self&.annotation_categories.nil?
     annotation_categories = self.annotation_categories.includes(:annotation_texts)
