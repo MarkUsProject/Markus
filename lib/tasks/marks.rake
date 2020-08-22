@@ -22,30 +22,15 @@ namespace :db do
     groupings.update_all(is_collected: true)
 
     # Add feedback files to submissions
-    hcont = File.read('db/data/feedback_files/humanfb.txt', mode: 'rb')
-    mcont = File.read('db/data/feedback_files/machinefb.txt', mode: 'rb')
+    text1 = File.read('db/data/feedback_files/humanfb.txt', mode: 'rb')
+    text2 = File.read('db/data/feedback_files/machinefb.txt', mode: 'rb')
+    image = File.read('db/data/feedback_files/imagefb.png', mode: 'rb')
 
-    feedback_files = []
-    submission_ids.each do |sid|
-      # add a human-written feedback file
-      feedback_files << {
-        submission_id: sid,
-        filename: 'humanfb.txt',
-        mime_type: 'text',
-        file_content: hcont,
-        created_at: Time.current,
-        updated_at: Time.current
-      }
-
-      # add an machine-generated feedback file
-      feedback_files << {
-        submission_id: sid,
-        filename: 'machinefb.txt',
-        mime_type: 'text',
-        file_content: mcont,
-        created_at: Time.current,
-        updated_at: Time.current
-      }
+    feedback_files = submission_ids.flat_map do |sid|
+      attrs = { submission_id: sid, created_at: Time.current, updated_at: Time.current }
+      [attrs.merge(filename: 'humanfb.txt', mime_type: 'text', file_content: text1),
+       attrs.merge(filename: 'machinefb.txt', mime_type: 'text', file_content: text2),
+       attrs.merge(filename: 'imagefb.png', mime_type: 'image/png', file_content: image)]
     end
     FeedbackFile.insert_all feedback_files
 
