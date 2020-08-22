@@ -18,7 +18,6 @@ namespace :db do
       if grouping.assignment.short_identifier == 'A0'
         grouping.assignment.submission_rule.apply_submission_rule(new_submission)
       end
-      grouping.update(is_collected: true)
     end
     groupings.update_all(is_collected: true)
 
