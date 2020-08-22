@@ -37,7 +37,6 @@ class ResultsController < ApplicationController
         assignment = submission.assignment
         remark_submitted = submission.remark_submitted?
         original_result = remark_submitted ? submission.get_original_result : nil
-        submission.feedback_files
         is_review = result.is_a_review?
         is_reviewer = current_user.student? && current_user.is_reviewer_for?(assignment.pr_assignment, result)
 
@@ -81,7 +80,7 @@ class ResultsController < ApplicationController
           data[:feedback_files] = []
         else
           data[:feedback_files] = submission.feedback_files.map do |f|
-            { id: f.id, filename: f.filename }
+            { id: f.id, filename: f.filename, type: SubmissionFile.get_file_type(f.filename) }
           end
         end
 

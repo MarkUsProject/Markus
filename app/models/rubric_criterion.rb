@@ -10,6 +10,10 @@ class RubricCriterion < Criterion
     :rubric
   end
 
+  def level_with_mark_closest_to(mark)
+    self.levels.min_by { |m| (m.mark - mark).abs }
+  end
+
   def scale_marks_if_max_mark_changed
     return unless self.changed.include?('max_mark')
     return if self.changes['max_mark'][0].nil?
