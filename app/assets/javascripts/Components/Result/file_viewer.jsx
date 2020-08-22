@@ -46,8 +46,8 @@ export class FileViewer extends React.Component {
 
   setFileUrl = (submission_file_id) => {
     let url;
-    if (!this.props.result_id) {
-      url = this.props.selectedFileURL
+    if (!!this.props.selectedFileURL) {
+      url = this.props.selectedFileURL;
     } else {
       url = Routes.download_assignment_submission_result_path(
         '',
@@ -86,7 +86,7 @@ export class FileViewer extends React.Component {
     });
 
     this.setState({loading: true, url: null}, () => {
-      if (!!this.props.result_id) {
+      if (!this.props.selectedFileURL) {
           fetch(Routes.get_file_assignment_submission_path(
             '',
             this.props.assignment_id,
@@ -119,7 +119,7 @@ export class FileViewer extends React.Component {
 
   render() {
     let commonProps;
-    if (!!this.props.result_id) {
+    if (!this.props.selectedFileURL) {
       commonProps = {
         submission_file_id: this.props.selectedFile,
         annotations: this.props.annotations,

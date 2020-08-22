@@ -92,5 +92,7 @@ SyntaxHighlighter1p5Adapter.prototype.applyMods = function() {
   original_commands['About'] = about;
 
   // Attempt to replace tools menu with these new commands
-  document.getElementsByClassName('tools')[0].innerHTML = dp.sh.Toolbar.Create('code').innerHTML;
+  if (!!document.getElementsByClassName('tools')[0]) {
+    document.getElementsByClassName('tools')[0].innerHTML = dp.sh.Toolbar.Create('code').innerHTML;
+  }
 }

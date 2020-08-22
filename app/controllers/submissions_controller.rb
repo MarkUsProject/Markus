@@ -459,13 +459,7 @@ class SubmissionsController < ApplicationController
     authorize! submission
 
     feedback_file = submission.feedback_files.find(params[:feedback_file_id])
-    if feedback_file.mime_type.start_with? 'image'
-      content = Base64.encode64(feedback_file.file_content)
-    else
-      content = feedback_file.file_content
-    end
-
-    render plain: content
+    send_data_download feedback_file.file_content, filename: feedback_file.filename
   end
 
   def download
