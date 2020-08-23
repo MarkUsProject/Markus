@@ -4,7 +4,63 @@ describe CriteriaController do
   let(:grouping) { create :grouping, assignment: assignment }
   let(:submission) { create :submission, grouping: grouping }
 
+  shared_examples 'callbacks' do
+    before :each do
+      @assignment = create(:assignment_with_criteria_and_results)
+      @crit = create(criterion, assignment: assignment, max_mark: 3.0)
+      @assignment.groupings.each do |grouping|
+        create(:mark, result: grouping.current_result, mark: @crit.max_mark, criterion: @crit)
+      end
+    end
+    describe 'An authenticated and authorized admin doing a DELETE' do
+      it 'should update the relevant assignment\'s stats' do
+        @assignment.update_results_stats
+        old_average = @assignment.results_average
+        old_median = @assignment.results_median
+        delete_as admin,
+                  :destroy,
+                  params: { assignment_id: @assignment.id, id: @crit.id },
+                  format: :js
+        assignment.reload
+        expect(@assignment.results_median).to be >= old_median
+        expect(@assignment.results_average).to be >= old_average
+      end
+    end
+    context 'when changing the bonus' do
+      it 'should be able to update the bonus value' do
+        get_as admin,
+               :update,
+               params: { assignment_id: @assignment.id, id: @crit.id,
+                         criterion => { name: 'one', bonus: true } },
+               format: :js
+        expect(@crit.reload.bonus).to be true
+      end
+
+      it 'should update the relevant assignment\'s stats' do
+        @assignment.update_results_stats
+        old_average = @assignment.results_average
+        old_median = @assignment.results_median
+        get_as admin,
+               :update,
+               params: { assignment_id: @assignment.id, id: @crit.id,
+                         criterion => { name: 'one', bonus: true } },
+               format: :js
+        @assignment.reload
+        expect(@assignment.results_median).to be >= old_median
+        expect(@assignment.results_average).to be >= old_average
+      end
+    end
+  end
+
+  describe 'Using Checkbox Criterion' do
+    let(:criterion) { :checkbox_criterion }
+    include_examples 'callbacks'
+  end
+
   describe 'Using Flexible Criteria' do
+    let(:criterion) { :flexible_criterion }
+    include_examples 'callbacks'
+
     let(:flexible_criterion) do
       create(:flexible_criterion,
              assignment: assignment,
@@ -358,6 +414,9 @@ describe CriteriaController do
   end
 
   describe 'Using Rubric Criteria' do
+    let(:criterion) { :rubric_criterion }
+    include_examples 'callbacks'
+
     let(:rubric_criterion) do
       create(:rubric_criterion,
              assignment: assignment,
@@ -789,6 +848,7 @@ describe CriteriaController do
         cr1 = assignment.criteria.where(type: 'RubricCriterion').find_by(name: 'cr30')
         expect(cr1.levels.size).to eq(5)
         expect(cr1.max_mark).to eq(5.0)
+        expect(cr1.bonus).to be true
         expect(cr1.ta_visible).to be false
         expect(cr1.peer_visible).to be true
         # Since there are only 5 levels in this rubric criterion, if each of the following queries return an entity,
@@ -804,6 +864,7 @@ describe CriteriaController do
         expect(cr2.levels.size).to eq(5)
         expect(cr2.ta_visible).to be true
         expect(cr2.peer_visible).to be false
+        expect(cr2.bonus).to be false
       end
 
       it 'creates flexible criteria with properly formatted entries' do
@@ -817,14 +878,17 @@ describe CriteriaController do
         expect(cr80.description).to eq('')
         expect(cr80.ta_visible).to be true
         expect(cr80.peer_visible).to be true
+        expect(cr80.bonus).to be false
 
         cr20 = assignment.criteria.where(type: 'FlexibleCriterion').find_by(name: 'cr20')
         expect(cr20.max_mark).to eq(2.0)
         expect(cr20.description).to eq('I am flexible')
         expect(cr20.ta_visible).to be true
         expect(cr20.peer_visible).to be true
+        expect(cr20.bonus).to be false
 
         cr50 = assignment.criteria.where(type: 'FlexibleCriterion').find_by(name: 'cr50')
+        expect(cr50.bonus).to be true
         expect(cr50.max_mark).to eq(1.0)
         expect(cr50.description).to eq('Another flexible.')
         expect(cr50.ta_visible).to be true
@@ -835,6 +899,7 @@ describe CriteriaController do
         expect(cr60.description).to eq('')
         expect(cr60.ta_visible).to be true
         expect(cr60.peer_visible).to be false
+        expect(cr60.bonus).to be false
       end
 
       it 'creates checkbox criteria with properly formatted entries' do
@@ -842,6 +907,7 @@ describe CriteriaController do
 
         expect(assignment.criteria.where(type: 'CheckboxCriterion').pluck(:name)).to contain_exactly('cr100', 'cr40')
         cr1 = assignment.criteria.where(type: 'CheckboxCriterion').find_by(name: 'cr100')
+        expect(cr1.bonus).to be true
         expect(cr1.max_mark).to eq(5.0)
         expect(cr1.description).to eq('I am checkbox')
         expect(cr1.ta_visible).to be true

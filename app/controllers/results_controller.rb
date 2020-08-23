@@ -174,7 +174,10 @@ class ResultsController < ApplicationController
           criteria_info = criteria.pluck_to_hash(*fields)
           marks_info = criteria.joins(:marks)
                                .where('marks.result_id': result.id)
-                               .pluck_to_hash(*fields, 'marks.mark AS mark', 'marks.override AS override')
+                               .pluck_to_hash(*fields,
+                                              'marks.mark AS mark',
+                                              'marks.override AS override',
+                                              'criteria.bonus AS bonus')
                                .group_by { |h| h[:id] }
           # adds a criterion type to each of the marks info hashes
           criteria_info.map do |cr|

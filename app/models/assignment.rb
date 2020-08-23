@@ -264,7 +264,7 @@ class Assignment < Assessment
 
   # Returns the maximum possible mark for a particular assignment
   def max_mark(user_visibility = :ta_visible)
-    criteria.where(user_visibility => true).sum(:max_mark).round(2)
+    criteria.where(user_visibility => true, bonus: false).sum(:max_mark).round(2)
   end
 
   # Returns a boolean indicating whether marking has started for at least
@@ -549,11 +549,11 @@ class Assignment < Assessment
       unassigned = !assigned_criteria.nil? && !assigned_criteria.include?(crit.id)
       next if hide_unassigned && unassigned
 
-      max_mark += crit.max_mark
+      max_mark += crit.max_mark unless crit.bonus?
       accessor = crit.id
       criteria_shown << accessor
       {
-        Header: crit.name,
+        Header: crit.bonus? ? "#{crit.name} (#{Criterion.human_attribute_name(:bonus)})" : crit.name,
         accessor: "criteria.#{accessor}",
         className: 'number ' + (unassigned ? 'unassigned' : ''),
         headerClassName: unassigned ? 'unassigned' : ''
@@ -622,7 +622,7 @@ class Assignment < Assessment
 
     headers = [['User name', 'Group', 'Final grade'], ['', 'Out of', self.max_mark]]
     self.ta_criteria.each do |crit|
-      headers[0] << crit.name
+      headers[0] << (crit.bonus? ? "#{crit.name} (#{Criterion.human_attribute_name(:bonus)})" : crit.name)
       headers[1] << crit.max_mark
     end
     headers[0] << 'Bonus/Deductions'

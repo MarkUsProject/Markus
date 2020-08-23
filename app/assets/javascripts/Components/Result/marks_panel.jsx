@@ -166,6 +166,7 @@ class CheckboxCriterionInput extends React.Component {
                  style={{float: 'left'}}
             />
             {this.props.name}
+            {this.props.bonus && ` (${I18n.t('activerecord.attributes.criterion.bonus')})`}
             {!this.props.released_to_students &&
              !this.props.unassigned &&
              this.props.mark !== null &&
@@ -352,6 +353,7 @@ class FlexibleCriterionInput extends React.Component {
                  style={{float: 'left'}}
             />
             {this.props.name}
+            {this.props.bonus && ` (${I18n.t('activerecord.attributes.criterion.bonus')})`}
             {this.deleteManualMarkLink()}
           </div>
           <div className='criterion-description'>
@@ -435,6 +437,7 @@ class RubricCriterionInput extends React.Component {
                  style={{float: 'left'}}
             />
             {this.props.name}
+            {this.props.bonus && ` (${I18n.t('activerecord.attributes.criterion.bonus')})`}
             {!this.props.released_to_students &&
              !this.props.unassigned &&
              this.props.mark !== null &&

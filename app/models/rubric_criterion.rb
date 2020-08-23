@@ -131,6 +131,7 @@ class RubricCriterion < Criterion
     }
     attrs[:ta_visible] = criterion_yml[1]['ta_visible'] unless criterion_yml[1]['ta_visible'].nil?
     attrs[:peer_visible] = criterion_yml[1]['peer_visible'] unless criterion_yml[1]['peer_visible'].nil?
+    attrs[:bonus] = criterion_yml[1]['bonus'] unless criterion_yml[1]['bonus'].nil?
     criterion_yml[1]['levels'].each do |level_name, level_yml|
       attrs[:levels_attributes] << {
         name: level_name,
@@ -148,7 +149,8 @@ class RubricCriterion < Criterion
                                      'max_mark' => self.max_mark.to_f,
                                      'levels' => {},
                                      'ta_visible' => self.ta_visible,
-                                     'peer_visible' => self.peer_visible } }
+                                     'peer_visible' => self.peer_visible,
+                                     'bonus' => self.bonus } }
     self.levels.each do |level|
       levels_to_yml[self.name]['levels'][level.name] = { 'description' => level.description,
                                                          'mark' => level.mark }

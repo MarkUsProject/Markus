@@ -100,7 +100,7 @@ class Result extends React.Component {
     result_data.marks.forEach(data => {
       data.max_mark = parseFloat(data.max_mark);
       criterionSummaryData.push({
-        criterion: data.name,
+        criterion: data.bonus ? data.name + ' (' + I18n.t('activerecord.attributes.criterion.bonus') + ')' : data.name,
         mark: data.mark,
         old_mark: result_data.old_marks[data.id],
         max_mark: data.max_mark

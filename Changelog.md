@@ -1,5 +1,6 @@
 # Changelog
 ## [unreleased]
+- Introduce the ability to designate criteria as 'bonus' marks (#4804)
 
 ## [v1.10.0]
 - Issue #3670: Added API for adding and removing extra marks (#4499)

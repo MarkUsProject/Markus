@@ -1,5 +1,9 @@
 shared_examples 'a criterion' do
-  it { is_expected.to callback(:scale_marks).after(:update) }
+  it { is_expected.to callback(:update_results_with_change).after(:update) }
+  it { is_expected.to allow_value(false).for(:bonus) }
+  it { is_expected.to allow_value(true).for(:bonus) }
+  it { is_expected.to_not allow_value(nil).for(:bonus) }
+
   describe 'assigning and unassigning TAs' do
     let(:assignment) { FactoryBot.create(:assignment) }
     let(:criteria) do
