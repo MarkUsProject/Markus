@@ -86,14 +86,24 @@ namespace :db do
     end
     ]
 
-    one_time_num = AnnotationText.all.pluck(:id).max + 1
-    annotation_texts = []
+    one_time_ids = AnnotationText.insert_all(groupings.map do |_|
+      {
+        content: random_sentences(3),
+        creator_id: admin.id,
+        last_editor_id: admin.id,
+        created_at: now,
+        updated_at: now
+      }
+    end)
+    one_time_ids = one_time_ids.map { |x| x['id'] }
+
     annotations = []
     marks = []
     results = []
 
     groupings.joins(:current_result).pluck('groupings.assessment_id', 'results.id', 'results.submission_id')
-             .each do |assignment_id, result_id, submission_id|
+             .each_with_index do |data, i|
+      assignment_id, result_id, submission_id = data
 
       texts = annotation_text_ids[assignment_id]
       cat1, cat2 = deductive_categories[assignment_id]
@@ -117,24 +127,13 @@ namespace :db do
       }
 
       # PDF annotation (one-time-only)
-      annotation_texts << {
-        id: one_time_num,
-        content: random_sentences(3),
-        creator_id: admin.id,
-        last_editor_id: admin.id,
-        created_at: now,
-        updated_at: now
-      }
-
-      annotation_attributes[:annotation_number] = 3
       annotations << {
         result_id: result_id,
         submission_file_id: submission_file_ids[[submission_id, 'pdf.pdf']],
-        annotation_text_id: one_time_num,
+        annotation_text_id: one_time_ids[i],
         annotation_number: 3,
         type: 'PdfAnnotation', x1: 52_444, y1: 20_703, x2: 88_008, y2: 35_185, page: 2, **annotation_attributes
       }
-      one_time_num += 1
 
       # Text file annotation (from category)
       annotations << {
@@ -198,7 +197,6 @@ namespace :db do
         released_to_students: true
       }
     end
-    AnnotationText.upsert_all annotation_texts
     Annotation.insert_all annotations
 
     Mark.joins(criterion: :assignment)
