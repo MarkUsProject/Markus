@@ -55,7 +55,6 @@ describe MarkingSchemesController do
         accessors = response.parsed_body['columns'].map { |c| c['accessor'] }
         expect(accessors).to contain_exactly(*assessments.map { |a| "assessment_weights.#{a.id}" })
       end
-      it('should respond with 200') { expect(response.status).to eq 200 }
     end
 
     context '#create' do
@@ -91,20 +90,15 @@ describe MarkingSchemesController do
         expect(marking_scheme.name).to eq 'Test Marking Scheme'
         expect(marking_weights.size).to eq 0
       end
-      it('should respond with 302') { expect(response.status).to eq 302 }
     end
 
     context '#update' do
       it 'updates an existing marking scheme with new marking weights' do
-        create(
-          :marking_scheme,
-          assessments: [
-            grade_entry_form,
-            grade_entry_form_with_data,
-            assignment,
-            assignment_with_criteria_and_results
-          ]
-        )
+        create(:marking_scheme,
+               assessments: [grade_entry_form,
+                             grade_entry_form_with_data,
+                             assignment,
+                             assignment_with_criteria_and_results])
         params = {
           'id': MarkingScheme.first.id,
           'marking_scheme': {
@@ -139,68 +133,6 @@ describe MarkingSchemesController do
         marking_weights = marking_scheme.marking_weights
         expect(marking_scheme.name).to eq 'Test Marking Scheme 2'
         expect(marking_weights.size).to eq 0
-      end
-      it('should respond with 302') { expect(response.status).to eq 302 }
-    end
-    context 'DELETE destroy' do
-      before { delete_as user, :destroy, params: { id: marking_scheme.id } }
-      it('should respond with 200') { expect(response.status).to eq 200 }
-    end
-
-    context '#create' do
-      it 'creates a marking scheme with marking weights' do
-        params = {
-          'marking_scheme': {
-            'name': 'Test Marking Scheme',
-            'marking_weights_attributes': {
-              '0': { 'id': assignment, 'weight': 1 },
-              '1': { 'id': assignment_with_criteria_and_results, 'weight': 2 }
-            }
-          }
-        }
-
-        post_as admin, :create, params: params
-        marking_scheme = MarkingScheme.first
-        marking_weights = marking_scheme.marking_weights
-        expect(marking_scheme.name).to eq 'Test Marking Scheme'
-        expect(marking_weights.size).to eq 2
-
-        expected_ids = [assignment.id, assignment_with_criteria_and_results.id]
-        expect(marking_weights.map(&:assessment_id)).to match_array expected_ids
-      end
-    end
-
-    context '#update' do
-      it 'updates an existing marking scheme with new marking weights' do
-        create(
-          :marking_scheme,
-          assessments: [
-            grade_entry_form,
-            grade_entry_form_with_data,
-            assignment,
-            assignment_with_criteria_and_results
-          ]
-        )
-        params = {
-          'id': MarkingScheme.first.id,
-          'marking_scheme': {
-            'name': 'Test Marking Scheme 2',
-            'marking_weights_attributes': {
-              '0': { 'id': assignment, 'weight': 2.5 },
-              '1': { 'id': assignment_with_criteria_and_results, 'weight': 3.5 },
-              '2': { 'id': grade_entry_form, 'weight': 1.5 },
-              '3': { 'id': grade_entry_form_with_data, 'weight': 0 }
-            }
-          }
-        }
-
-        post_as admin, :update, params: params
-        marking_scheme = MarkingScheme.first
-        marking_weights = marking_scheme.marking_weights
-        expected_weights = [2.5, 3.5, 1.5, 0]
-        expect(marking_scheme.name).to eq 'Test Marking Scheme 2'
-        expect(marking_weights.size).to eq 4
-        expect(marking_weights.map(&:weight)).to match_array expected_weights
       end
     end
 
