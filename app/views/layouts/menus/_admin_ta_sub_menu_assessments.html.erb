@@ -5,7 +5,7 @@
       <%# Display an appropriate message in the dropdown menu %>
       <% if assessment.nil? %>
         <%= t('menu.choose') %>
-      <% elsif assessment.new_record? && @current_user.admin? %>
+      <% elsif assessment.new_record? && allowed_to?(:admin_allowed?, assessment, with: AssignmentPolicy) %>
         <%= t('helpers.submit.create', model: assessment.class.model_name.human) %>
       <% else %>
         <% title = assessment.short_identifier %>
@@ -34,7 +34,7 @@
       <%= link_to GradeEntryForm.human_attribute_name(:grades),
                   grades_grade_entry_form_path(assessment) %>
     </li>
-    <% if @current_user.admin? %>
+    <% if allowed_to?(:admin_allowed?, assessment, with: AssignmentPolicy) %>
       <li class='<%= "active" if controller.controller_name == 'marks_graders' %>'>
         <%= link_to Ta.model_name.human.pluralize,
                     grade_entry_form_marks_graders_path(assessment) %>
@@ -57,7 +57,7 @@
                   edit_assignment_path(target_id) %>
       </li>
     <% end %>
-    <% if @current_user.admin? %>
+    <% if if allowed_to?(:admin_allowed?, assessment, with: AssignmentPolicy) %>
       <li class='<%= "active" if controller.controller_name == 'groups' %>'>
         <%= link_to Group.model_name.human.pluralize,
                     assignment_groups_path(target_id) %>
