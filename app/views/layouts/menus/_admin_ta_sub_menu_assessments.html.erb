@@ -57,7 +57,7 @@
                   edit_assignment_path(target_id) %>
       </li>
     <% end %>
-    <% if if allowed_to?(:admin_allowed?, assessment, with: AssignmentPolicy) %>
+    <% if allowed_to?(:admin_allowed?, assessment, with: AssignmentPolicy) %>
       <li class='<%= "active" if controller.controller_name == 'groups' %>'>
         <%= link_to Group.model_name.human.pluralize,
                     assignment_groups_path(target_id) %>
