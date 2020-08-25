@@ -1,30 +1,49 @@
 <div id='grader_permission_pane'>
-  <h3><%=t('grader_permissions.list')%></h3>
 
   <%= render partial: 'shared/navigation_warning',
              formats: [:js],
              handlers: [:erb] %>
+  <%= form_for @user, as: :user do |f| %>
+    <div class='inline-labels'>
+      <%= f.label :user_name, User.human_attribute_name(:user_name) %>
+      <%= f.text_field :user_name %>
 
-  <%= form_for :grader_permission do |f| %>
-    <div class="tooltip">
-      <span class="tooltiptext"><%= t('grader_permissions.tooltip1') %></span>
-      <%= f.check_box :manage_assessments, onclick: 'set_onbeforeunload(true);' %>
-      <%= f.label :manage_assessments, t('grader_permissions.manage_assessments') %><br/>
-    </div><br/>
-    <div class="tooltip">
-      <span class="tooltiptext"><%= t('grader_permissions.tooltip2') %></span>
-      <%= f.check_box :manage_submissions, onclick: 'set_onbeforeunload(true);' %>
-      <%= f.label :manage_submissions, t('grader_permissions.manage_submissions') %>
-    </div>
-    <div class="permission">
-      <%= f.check_box :run_tests, onclick: 'set_onbeforeunload(true);' %>
-      <%= f.label :run_tests, t('grader_permissions.run_tests') %>
+      <%= f.label :last_name, User.human_attribute_name(:last_name) %>
+      <%= f.text_field :last_name %>
+
+      <%= f.label :first_name, User.human_attribute_name(:first_name) %>
+      <%= f.text_field :first_name %>
+
+      <%= f.label :email, User.human_attribute_name(:email) %>
+      <%= f.text_field :email %>
     </div>
 
+    <%= f.hidden_field :id %>
+
+    <%= f.fields_for :grader_permission do |ff| %>
+      <h3><%=t('grader_permissions.list')%></h3>
+      <div class="tooltip">
+        <span class="tooltiptext"><%= t('grader_permissions.tooltip1') %></span>
+        <%= ff.check_box :manage_assessments, onclick: 'set_onbeforeunload(true);' %>
+        <%= ff.label :manage_assessments, t('grader_permissions.manage_assessments') %><br/>
+      </div><br/>
+      <div class="tooltip">
+        <span class="tooltiptext"><%= t('grader_permissions.tooltip2') %></span>
+        <%= ff.check_box :manage_submissions, onclick: 'set_onbeforeunload(true);' %>
+        <%= ff.label :manage_submissions, t('grader_permissions.manage_submissions') %>
+      </div>
+      <div class="permission">
+        <%= ff.check_box :run_tests, onclick: 'set_onbeforeunload(true);' %>
+        <%= ff.label :run_tests, t('grader_permissions.run_tests') %>
+      </div>
+    <% end %>
     <p>
       <%= f.submit t(:save),
                    name: 'submit',
                    data: { disable_with: t('working') } %>
+      <%= link_to t(:cancel),
+                  { controller: controller },
+                  class: 'button' %>
     </p>
   <% end %>
 </div>
