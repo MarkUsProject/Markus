@@ -28,6 +28,7 @@ class SubmissionsController < ApplicationController
                 only: [:index,
                        :browse,
                        :manually_collect_and_begin_grading,
+                       :set_result_marking_state,
                        :revisions,
                        :repo_browser,
                        :collect_submissions,

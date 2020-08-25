@@ -6,7 +6,6 @@
           assignment_id: <%= @assignment.id %>,
           show_grace_tokens: <%= @assignment.submission_rule.type == 'GracePeriodSubmissionRule' %>,
           show_sections: <%= Section.exists? %>,
-          is_admin: <%= @current_user.admin? %>,
           is_timed: <%= @assignment.is_timed %>,
           is_allowed_to_collect: <%= allowed_to? :collect? %>,
           can_run_tests: <%= allowed_to?(:allowed_to_run_tests?, @assignment, with: SubmissionPolicy) %>,
