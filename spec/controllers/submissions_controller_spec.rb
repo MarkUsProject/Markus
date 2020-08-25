@@ -3,6 +3,59 @@ describe SubmissionsController do
     destroy_repos
   end
 
+  shared_examples 'An authorized admin and grader accessing #set_result_marking_state' do
+    context '#set_result_marking_state' do
+      let(:marking_state) { Result::MARKING_STATES[:complete] }
+      let(:released_to_students) { false }
+      let(:new_marking_state) { Result::MARKING_STATES[:incomplete] }
+      before :each do
+        @current_result = grouping.current_result
+        @current_result.update!(marking_state: marking_state, released_to_students: released_to_students)
+        post_as user, :set_result_marking_state, params: { assignment_id: @assignment.id,
+                                                           groupings: [grouping.id],
+                                                           marking_state: new_marking_state }
+        @current_result.reload
+      end
+      context 'when the marking state is complete' do
+        let(:new_marking_state) { Result::MARKING_STATES[:incomplete] }
+        it 'should be able to bulk set the marking state to incomplete' do
+          expect(@current_result.marking_state).to eq new_marking_state
+        end
+
+        it 'should be successful' do
+          expect(response).to have_http_status(:success)
+        end
+
+        context 'when the result is released' do
+          let(:released_to_students) { true }
+          it 'should not be able to bulk set the marking state to complete' do
+            expect(@current_result.marking_state).not_to eq new_marking_state
+          end
+
+          it 'should still respond as a success' do
+            expect(response).to have_http_status(:success)
+          end
+
+          it 'should flash an error messages' do
+            expect(flash[:error].size).to be 1
+          end
+        end
+      end
+
+      context 'when the marking state is incomplete' do
+        let(:marking_state) { Result::MARKING_STATES[:incomplete] }
+        let(:new_marking_state) { Result::MARKING_STATES[:complete] }
+        it 'should be able to bulk set the marking state to complete' do
+          expect(@current_result.marking_state).to eq new_marking_state
+        end
+
+        it 'should be successful' do
+          expect(response).to have_http_status(:success)
+        end
+      end
+    end
+  end
+
   describe 'A student working alone' do
     before(:each) do
       @group = create(:group)
@@ -273,6 +326,11 @@ describe SubmissionsController do
         submission.save
       end
     end
+    context '#set_resulting_marking_state' do
+      let(:user) { create(:ta) }
+      let(:grouping) { @grouping1 }
+      include_examples 'An authorized admin and grader accessing #set_result_marking_state'
+    end
     it 'should be able to access the repository browser.' do
       revision_identifier = Grouping.last.group.access_repo { |repo| repo.get_latest_revision.revision_identifier }
       get_as grader,
@@ -431,55 +489,10 @@ describe SubmissionsController do
 
       around { |example| perform_enqueued_jobs(&example) }
 
-      context '#set_result_marking_state' do
-        let(:marking_state) { Result::MARKING_STATES[:complete] }
-        let(:released_to_students) { false }
-        let(:new_marking_state) { Result::MARKING_STATES[:incomplete] }
-        before :each do
-          @current_result = @grouping.current_result
-          @current_result.update!(marking_state: marking_state, released_to_students: released_to_students)
-          post_as @admin, :set_result_marking_state, params: { assignment_id: @assignment.id,
-                                                               groupings: [@grouping.id],
-                                                               marking_state: new_marking_state }
-          @current_result.reload
-        end
-        context 'when the marking state is complete' do
-          let(:new_marking_state) { Result::MARKING_STATES[:incomplete] }
-          it 'should be able to bulk set the marking state to incomplete' do
-            expect(@current_result.marking_state).to eq new_marking_state
-          end
-
-          it 'should be successful' do
-            expect(response).to have_http_status(:success)
-          end
-
-          context 'when the result is released' do
-            let(:released_to_students) { true }
-            it 'should not be able to bulk set the marking state to complete' do
-              expect(@current_result.marking_state).not_to eq new_marking_state
-            end
-
-            it 'should still respond as a success' do
-              expect(response).to have_http_status(:success)
-            end
-
-            it 'should flash an error messages' do
-              expect(flash[:error].size).to be 1
-            end
-          end
-        end
-
-        context 'when the marking state is incomplete' do
-          let(:marking_state) { Result::MARKING_STATES[:incomplete] }
-          let(:new_marking_state) { Result::MARKING_STATES[:complete] }
-          it 'should be able to bulk set the marking state to complete' do
-            expect(@current_result.marking_state).to eq new_marking_state
-          end
-
-          it 'should be successful' do
-            expect(response).to have_http_status(:success)
-          end
-        end
+      context '#set_resulting_marking_state' do
+        let(:user) { create(:ta) }
+        let(:grouping) { @grouping }
+        include_examples 'An authorized admin and grader accessing #set_result_marking_state'
       end
 
       context 'where a grouping does not have a previously collected submission' do
