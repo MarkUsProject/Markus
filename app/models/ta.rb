@@ -3,8 +3,9 @@ class Ta < User
   CSV_UPLOAD_ORDER = Rails.configuration.ta_csv_upload_order
   SESSION_TIMEOUT = Rails.configuration.ta_session_timeout
 
-  has_one :grader_permission, dependent: :destroy, foreign_key: :user_id
-  after_create :create_grader_permission
+  has_one :grader_permission, dependent: :destroy, foreign_key: :user_id, inverse_of: :ta
+  validates_presence_of :grader_permission
+  before_validation :create_grader_permission, on: :create
   accepts_nested_attributes_for :grader_permission
   has_many :criterion_ta_associations, dependent: :delete_all
   has_many :criteria, through: :criterion_ta_associations
@@ -92,6 +93,6 @@ class Ta < User
   private
 
   def create_grader_permission
-    self.grader_permission = GraderPermission.create!(user_id: self.id)
+    self.grader_permission ||= GraderPermission.new
   end
 end

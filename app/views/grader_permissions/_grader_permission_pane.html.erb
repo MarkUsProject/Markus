@@ -24,16 +24,16 @@
       <h3><%=t('grader_permissions.list')%></h3>
       <div class="tooltip">
         <span class="tooltiptext"><%= t('grader_permissions.tooltip1') %></span>
-        <%= ff.check_box :manage_assessments, onclick: 'set_onbeforeunload(true);' %>
+        <%= ff.check_box :manage_assessments %>
         <%= ff.label :manage_assessments, t('grader_permissions.manage_assessments') %><br/>
       </div><br/>
       <div class="tooltip">
         <span class="tooltiptext"><%= t('grader_permissions.tooltip2') %></span>
-        <%= ff.check_box :manage_submissions, onclick: 'set_onbeforeunload(true);' %>
+        <%= ff.check_box :manage_submissions %>
         <%= ff.label :manage_submissions, t('grader_permissions.manage_submissions') %>
       </div>
       <div class="permission">
-        <%= ff.check_box :run_tests, onclick: 'set_onbeforeunload(true);' %>
+        <%= ff.check_box :run_tests %>
         <%= ff.label :run_tests, t('grader_permissions.run_tests') %>
       </div>
     <% end %>

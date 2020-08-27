@@ -3,14 +3,11 @@
 <% end %>
 
 <div class='pane-wrapper'>
-  <div id=new_grader_pane>
-    <%= render partial: 'layouts/userform',
-               locals: { controller: 'tas',
-                         action: 'edit' } %>
-  </div>
   <div class='pane'>
     <div id='grader_permission_pane'>
-      <%= render partial: 'grader_permissions/grader_permission_pane' %>
+      <%= render partial: 'grader_permissions/grader_permission_pane',
+                 locals: { controller: 'tas',
+                           action: 'edit' }%>
     </div>
   </div>
 </div>
