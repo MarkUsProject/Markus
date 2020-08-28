@@ -5,7 +5,7 @@ class Ta < User
 
   has_one :grader_permission, dependent: :destroy, foreign_key: :user_id, inverse_of: :ta
   validates_presence_of :grader_permission
-  before_validation :create_grader_permission
+  before_validation :create_grader_permission, on: [:create, :update]
   accepts_nested_attributes_for :grader_permission
   has_many :criterion_ta_associations, dependent: :delete_all
   has_many :criteria, through: :criterion_ta_associations
