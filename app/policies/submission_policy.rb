@@ -33,7 +33,7 @@ class SubmissionPolicy < ApplicationPolicy
     allowed_to?(:manage_submissions?, with: GraderPermissionPolicy)
   end
 
-  def allowed_to_run_tests?
+  def can_run_tests?
     allowed_to?(:grader_run_tests?, with: GraderPermissionPolicy) && record.enable_test
   end
 end

@@ -88,7 +88,7 @@
       <%= link_to t('results.summary'),
                   summary_assignment_path(target_id) %>
     </li>
-    <% if allowed_to?(:allowed_to_run_tests?, assessment, with: SubmissionPolicy) %>
+    <% if allowed_to?(:can_run_tests?, assessment, with: SubmissionPolicy) %>
       <li class='<%= "active" if controller.controller_name == 'assignments' && controller.action_name == 'batch_runs' %>'>
         <%= link_to t('automated_tests.test_runs_status'),
                     batch_runs_assignment_path(target_id) %>

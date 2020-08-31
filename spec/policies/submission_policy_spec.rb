@@ -93,18 +93,18 @@ describe SubmissionPolicy do
     context 'When the user is admin' do
       let(:user) { create(:admin) }
       let(:assignment) { build(:assignment, assignment_properties_attributes: { enable_test: true }) }
-      it { is_expected.to pass :allowed_to_run_tests? }
+      it { is_expected.to pass :can_run_tests? }
     end
     context 'When the user is grader and allowed to run tests' do
       let(:user) { create(:ta, run_tests: true) }
       let(:assignment) { build(:assignment, assignment_properties_attributes: { enable_test: true }) }
-      it { is_expected.to pass :allowed_to_run_tests? }
+      it { is_expected.to pass :can_run_tests? }
     end
     context 'When the user is grader and not allowed to run tests' do
       # By default all the grader permissions are set to false
       let(:user) { create(:ta) }
       let(:assignment) { build(:assignment, assignment_properties_attributes: { enable_test: true }) }
-      it { is_expected.not_to pass :allowed_to_run_tests? }
+      it { is_expected.not_to pass :can_run_tests? }
     end
   end
 
