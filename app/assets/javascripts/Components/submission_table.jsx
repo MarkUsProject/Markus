@@ -251,7 +251,7 @@ class RawSubmissionTable extends React.Component {
         <SubmissionsActionBox
           ref={(r) => this.actionBox = r}
           disabled={this.props.selection.length === 0}
-          is_allowed_to_collect={this.props.is_allowed_to_collect}
+          can_collect={this.props.can_collect}
           assignment_id={this.props.assignment_id}
           can_run_tests={this.props.can_run_tests}
 
@@ -329,7 +329,7 @@ class SubmissionsActionBox extends React.Component {
         {I18n.t('results.set_to_incomplete')}
       </button>
     );
-    if (this.props.is_allowed_to_collect) {
+    if (this.props.can_collect) {
       collectButton = (
         <button
           onClick={this.props.collectSubmissions}
