@@ -2,6 +2,7 @@ class AssignmentPolicy < ApplicationPolicy
   default_rule :manage?
   alias_rule :summary?, to: :view?
   alias_rule :batch_runs?, :stop_test?, to: :run_and_stop_test?
+  
   def run_tests?
     check?(:can_run_tests?) &&
     check?(:enabled?) &&

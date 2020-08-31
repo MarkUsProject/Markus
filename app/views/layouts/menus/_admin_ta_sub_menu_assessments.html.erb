@@ -1,4 +1,3 @@
-
 <ul class='sub'>
   <li id='dropdown'>
     <div class='dropdown'>
@@ -54,7 +53,7 @@
           <% end %>
       >
         <%= link_to t('menu.settings'),
-                  edit_assignment_path(target_id) %>
+                    edit_assignment_path(target_id) %>
       </li>
     <% end %>
     <% if allowed_to?(:admin_allowed?, assessment, with: AssignmentPolicy) %>

@@ -7,9 +7,11 @@ class PeerReviewsController < ApplicationController
   before_action :authorize_only_for_admin, except: [:list_reviews, :index, :populate, :assign_groups,
                                                     :show_reviews, :show_result]
   before_action :authorize_for_user, only: [:list_reviews, :show_reviews, :show_result]
+
   before_action only: [:index, :populate, :assign_groups] do
     authorize!
   end
+
   layout 'assignment_content'
 
   def index

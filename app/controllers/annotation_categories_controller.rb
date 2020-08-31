@@ -1,5 +1,6 @@
 class AnnotationCategoriesController < ApplicationController
   include AnnotationCategoriesHelper
+
   respond_to :js
 
   before_action { authorize! }
