@@ -61,4 +61,4 @@ en:
       grader_permission:
         manage_submissions?: "You do not have permissions to collect submissions and release or unrelease the grades."
         manage_assessments?: "You do not have permissions to create, edit and manage assessments."
-        grader_run_tests?: "You do not have permissions to run tests."
+        run_tests?: "You do not have permissions to run tests."

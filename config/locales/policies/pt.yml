@@ -55,4 +55,4 @@ pt:
       grader_permission:
         manage_submissions?: "UPDATE ME."
         manage_assessments?: "UPDATE ME."
-        grader_run_tests?: "UPDATE ME."
+        run_tests?: "UPDATE ME."

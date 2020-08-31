@@ -88,7 +88,7 @@ describe SubmissionPolicy do
     end
   end
 
-  describe '#allowed_to_run_tests' do
+  describe '#can_run_tests' do
     subject { described_class.new(assignment, user: user) }
     context 'When the user is admin' do
       let(:user) { create(:admin) }

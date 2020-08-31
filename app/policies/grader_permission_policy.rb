@@ -10,7 +10,7 @@ class GraderPermissionPolicy < ApplicationPolicy
     user.admin? || user.grader_permission.manage_assessments
   end
 
-  def grader_run_tests?
+  def run_tests?
     user.admin? || user.grader_permission.run_tests
   end
 

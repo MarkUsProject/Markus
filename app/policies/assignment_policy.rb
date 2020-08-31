@@ -58,7 +58,7 @@ class AssignmentPolicy < ApplicationPolicy
   end
 
   def can_run_tests?
-    allowed_to?(:grader_run_tests?, with: GraderPermissionPolicy) || user.student?
+    allowed_to?(:run_tests?, with: GraderPermissionPolicy) || user.student?
   end
 
   def view?
@@ -74,6 +74,6 @@ class AssignmentPolicy < ApplicationPolicy
   end
 
   def run_and_stop_test?
-    allowed_to?(:grader_run_tests?, with: GraderPermissionPolicy)
+    allowed_to?(:run_tests?, with: GraderPermissionPolicy)
   end
 end
