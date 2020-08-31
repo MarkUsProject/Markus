@@ -7,7 +7,7 @@ describe AssignmentPolicy do
     shared_examples 'An authorized user running tests' do
       context 'user can view the test runs status and stop test' do
         let(:assignment) { build(:assignment) }
-        it { is_expected.to pass :run_and_stop_test? }
+        it { is_expected.to pass :run_and_stop_tests? }
       end
       context 'if enable_test is false' do
         let(:assignment) { build(:assignment) }
@@ -43,7 +43,7 @@ describe AssignmentPolicy do
       let(:user) { create(:ta) }
       let(:assignment) { create(:assignment_for_tests) }
       it { is_expected.not_to pass :run_tests?, because_of: :can_run_tests? }
-      it { is_expected.not_to pass :run_and_stop_test? }
+      it { is_expected.not_to pass :run_and_stop_tests? }
     end
 
     context 'when the user is a student' do

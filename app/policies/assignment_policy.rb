@@ -1,7 +1,7 @@
 class AssignmentPolicy < ApplicationPolicy
   default_rule :manage?
   alias_rule :summary?, to: :view_assessments?
-  alias_rule :batch_runs?, :stop_test?, to: :run_and_stop_test?
+  alias_rule :batch_runs?, :stop_test?, to: :run_and_stop_tests?
 
   def run_tests?
     check?(:can_run_tests?) &&
@@ -73,7 +73,7 @@ class AssignmentPolicy < ApplicationPolicy
     user.ta?
   end
 
-  def run_and_stop_test?
+  def run_and_stop_tests?
     allowed_to?(:run_tests?, with: GraderPermissionPolicy)
   end
 end

@@ -12,7 +12,7 @@ es:
         can_run_tests?: "UPDATE ME."
         view_assessments?: "UPDATE ME."
         manage?: "UPDATE ME."
-        run_and_stop_test?: "UPDATE ME."
+        run_and_stop_tests?: "UPDATE ME."
       grouping:
         before_due_date?: "El último plazo para este proyecto ha pasado y."
         deletable_by?: "Usted no tiene permiso para eliminar el grupo."
