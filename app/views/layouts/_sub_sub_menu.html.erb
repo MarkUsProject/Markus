@@ -55,7 +55,7 @@
             <% end %>
           <% end %>
           <% if @assignment.scanned_exam? %>
-            <% if allowed_to?(:modify?, with: ExamTemplatePolicy) %>
+            <% if allowed_to?(:manage?, with: ExamTemplatePolicy) %>
               <li class='<%= "active" if controller.controller_name == 'exam_templates' %>'>
                 <%= link_to ExamTemplate.model_name.human.pluralize,
                             assignment_exam_templates_path(@assignment) %>

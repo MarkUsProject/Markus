@@ -48,7 +48,6 @@ en:
         manage?: "You do not have permissions to manage automated testing."
       exam_template:
         manage?: "You do not have permissions to manage exam templates."
-        modify?: "You do not have permissions to modify exam templates."
       grade_entry_form:
         grading?: "You do not have permissions to do grading."
         manage?: "You do not have permissions to create or manage grade entry forms."

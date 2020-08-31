@@ -41,7 +41,6 @@ pt:
         manage?: "UPDATE ME."
       exam_template:
         manage?: "UPDATE ME."
-        modify?: "UPDATE ME."
       grade_entry_form:
         grading?: "UPDATE ME."
         manage?: "UPDATE ME."
