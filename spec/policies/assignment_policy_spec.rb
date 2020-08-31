@@ -96,15 +96,15 @@ describe AssignmentPolicy do
     let(:user) { create(:admin) }
     context 'Admin can view, manage, create, edit and update the assignments' do
       it { is_expected.to pass :manage? }
-      it { is_expected.to pass :view? }
+      it { is_expected.to pass :view_assessments? }
     end
   end
 
   describe 'When the user is grader' do
     subject { described_class.new(user: user) }
     let(:user) { create(:ta) }
-    context 'Grader can view peer review' do
-      it { is_expected.to pass :view? }
+    context 'Grader can view assessments' do
+      it { is_expected.to pass :view_assessments? }
     end
     context 'When the grader is allowed to manage, create, edit and update the assignments' do
       let(:user) { create(:ta, manage_assessments: true) }

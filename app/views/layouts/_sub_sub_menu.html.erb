@@ -1,4 +1,4 @@
-<% if allowed_to?(:view?, @current_user, with: AssignmentPolicy) %>
+<% if allowed_to?(:view_assessments?, @current_user, with: AssignmentPolicy) %>
   <% if (controller.controller_name == 'assignments' &&
          controller.action_name != 'index' &&
          controller.action_name != 'new' &&
