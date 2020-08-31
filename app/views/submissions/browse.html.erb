@@ -7,7 +7,7 @@
           show_grace_tokens: <%= @assignment.submission_rule.type == 'GracePeriodSubmissionRule' %>,
           show_sections: <%= Section.exists? %>,
           is_timed: <%= @assignment.is_timed %>,
-          is_allowed_to_collect: <%= allowed_to? :collect? %>,
+          is_allowed_to_collect: <%= allowed_to? :manage? %>,
           can_run_tests: <%= allowed_to?(:allowed_to_run_tests?, @assignment, with: SubmissionPolicy) %>,
           defaultFiltered: [{ id: '<%= params[:filter_by] %>', value: '<%= params[:filter_value] %>' }]
         }

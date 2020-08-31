@@ -28,7 +28,7 @@ es:
         get_feedback_file?: "No existe acceso al archivo de retroalimentación."
         not_a_student?: "UPDATE ME."
         manage_subdirectories?: "UPDATE ME."
-        collect?: "UPDATE ME."
+        manage?: "UPDATE ME."
       group:
         student_manage?: "UPDATE ME."
         manage?: "UPDATE ME."

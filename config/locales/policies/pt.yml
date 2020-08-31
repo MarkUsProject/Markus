@@ -28,7 +28,7 @@ pt:
         get_feedback_file?: "Não há accesso para resultado do teste."
         not_a_student?: "UPDATE ME."
         manage_subdirectories?: "UPDATE ME."
-        collect?: "UPDATE ME."
+        manage?: "UPDATE ME."
       group:
         student_manage?: "UPDATE ME."
         manage?: "UPDATE ME."

@@ -1,5 +1,5 @@
 class SubmissionPolicy < ApplicationPolicy
-  alias_rule :manually_collect_and_begin_grading?, :collect_submissions?, :update_submissions?, to: :collect?
+  alias_rule :manually_collect_and_begin_grading?, :collect_submissions?, :update_submissions?, to: :manage?
 
   def get_feedback_file?
     grouping = record.grouping
@@ -29,7 +29,7 @@ class SubmissionPolicy < ApplicationPolicy
     !record.current_result.released_to_students
   end
 
-  def collect?
+  def manage?
     allowed_to?(:manage_submissions?, with: GraderPermissionPolicy)
   end
 

@@ -112,16 +112,16 @@ describe SubmissionPolicy do
     subject { described_class.new(user: user) }
     context 'When the user is admin' do
       let(:user) { create(:admin) }
-      it { is_expected.to pass :collect? }
+      it { is_expected.to pass :manage? }
     end
     context 'When the user is grader and allowed to collect and update submissions' do
       let(:user) { create(:ta, manage_submissions: true) }
-      it { is_expected.to pass :collect? }
+      it { is_expected.to pass :manage? }
     end
     context 'When the user is grader and not allowed to collect and update submissions' do
       # By default all the grader permissions are set to false
       let(:user) { create(:ta) }
-      it { is_expected.not_to pass :collect? }
+      it { is_expected.not_to pass :manage? }
     end
   end
 end
