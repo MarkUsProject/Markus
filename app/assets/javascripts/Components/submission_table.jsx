@@ -297,6 +297,7 @@ class RawSubmissionTable extends React.Component {
 
 let SubmissionTable = withSelection(RawSubmissionTable);
 SubmissionTable.defaultProps = {
+  can_collect: false,
   is_timed: false,
   can_run_tests: false
 };
