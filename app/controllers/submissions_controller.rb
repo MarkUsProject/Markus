@@ -27,21 +27,20 @@ class SubmissionsController < ApplicationController
   before_action :authorize_for_ta_and_admin,
                 only: [:index,
                        :browse,
-                       :manually_collect_and_begin_grading,
                        :set_result_marking_state,
                        :revisions,
                        :repo_browser,
-                       :collect_submissions,
-                       :run_tests,
                        :zip_groupings_files,
-                       :download_zipped_file,
-                       :update_submissions]
+                       :download_zipped_file]
   before_action :authorize_for_student,
                 only: [:file_manager]
   before_action :authorize_for_user,
                 only: [:download, :downloads, :get_feedback_file, :get_file,
                        :populate_file_manager, :update_files]
-  before_action only: [:collect_submissions, :update_submissions] do
+  before_action only: [:collect_submissions,
+                       :update_submissions,
+                       :manually_collect_and_begin_grading,
+                       :run_tests] do
     authorize!
   end
 
@@ -178,25 +177,19 @@ class SubmissionsController < ApplicationController
   end
 
   def manually_collect_and_begin_grading
-    begin
-      authorize!
-    rescue ActionPolicy::Unauthorized => e
-      flash_message(:error, e.message)
-      redirect_back(fallback_location: root_path)
-      return
-    end
     @grouping = Grouping.find(params[:id])
     @revision_identifier = params[:current_revision_identifier]
-    apply_late_penalty = params[:apply_late_penalty].nil? ? false : params[:apply_late_penalty]
+    apply_late_penalty = params[:apply_late_penalty].nil? ?
+                         false : params[:apply_late_penalty]
     SubmissionsJob.perform_now([@grouping],
                                apply_late_penalty: apply_late_penalty,
                                revision_identifier: @revision_identifier)
+
     submission = @grouping.reload.current_submission_used
     redirect_to edit_assignment_submission_result_path(
       assignment_id: @grouping.assessment_id,
       submission_id: submission.id,
-      id: submission.get_latest_result.id
-    )
+      id: submission.get_latest_result.id)
   end
 
   def uncollect_all_submissions

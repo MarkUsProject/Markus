@@ -413,7 +413,7 @@ describe SubmissionsController do
                   params: { assignment_id: @assignment.id, id: @grouping.id,
                             current_revision_identifier: revision_identifier }
         end
-        it('should respond with redirect') { is_expected.to respond_with :redirect }
+        it('should respond with 403') { expect(response.status).to eq 403 }
       end
       context '#update submissions' do
         it 'should respond with 403' do
