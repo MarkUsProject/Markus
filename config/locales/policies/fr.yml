@@ -49,6 +49,7 @@ fr:
         update_grade_entry_students?: "UPDATE ME."
       peer_review:
         manage?: "UPDATE ME."
+        manage_reviewers?: "UPDATE ME."
       annotation_category:
         manage?: "UPDATE ME."
       grader_permission:

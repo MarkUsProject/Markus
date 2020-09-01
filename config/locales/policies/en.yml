@@ -56,7 +56,8 @@ en:
       annotation_category:
         manage?: "You do not have permissions to manage annotation categories."
       peer_review:
-        manage?: "You do not have permissions to assign reviewers."
+        manage_reviewers?: "You do not have permissions to assign reviewers."
+        manage?: "You do not have permissions to manage peer reviews."
       grader_permission:
         manage_submissions?: "You do not have permissions to collect submissions and release or unrelease the grades."
         manage_assessments?: "You do not have permissions to create, edit and manage assessments."

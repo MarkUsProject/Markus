@@ -22,7 +22,7 @@ describe PeerReviewPolicy do
       it { is_expected.not_to pass :manage_reviewers? }
     end
     context 'Grader cannot manage peer reviews' do
-      it { is_expected.not_to pass :manage?}
+      it { is_expected.not_to pass :manage? }
     end
   end
 end
