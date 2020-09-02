@@ -5,6 +5,7 @@ class Ta < User
 
   has_one :grader_permission, dependent: :destroy, foreign_key: :user_id, inverse_of: :ta
   before_create :create_grader_permission
+  after_create :validate_grader_permission
   accepts_nested_attributes_for :grader_permission
   has_many :criterion_ta_associations, dependent: :delete_all
   has_many :criteria, through: :criterion_ta_associations
@@ -93,5 +94,11 @@ class Ta < User
 
   def create_grader_permission
     self.grader_permission ||= GraderPermission.new
+  end
+
+  def validate_grader_permission
+    return if self.grader_permission.valid?
+    errors.add('base', 'The associated grader permissions are not created')
+    false
   end
 end
