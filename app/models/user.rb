@@ -208,6 +208,9 @@ class User < ApplicationRecord
           conflict_target: [:user_name], columns: [:last_name, :first_name, :section_id, :email, :id_number]
         }
         User.where(id: imported.ids).each do |user|
+          if user_class == Ta
+            user.run_callbacks(:create) { false }
+          end
           user.validate!
         rescue ActiveRecord::RecordInvalid
           error_message = user.errors
