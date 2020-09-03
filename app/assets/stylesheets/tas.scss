@@ -15,21 +15,16 @@
 }
 
 .tooltiptext {
-  background-color: $white;
-  border-radius: 6px;
   border-style: ridge;
-  color: $black;
   height: auto;
   left: 135%;
   line-height: 1.6;
   min-width: 550px;
   padding: 6px;
   position: absolute;
-  text-align: left;
   top: -15px;
   visibility: hidden;
   width: auto;
-  z-index: 1;
 }
 
 .tooltip:hover .tooltiptext {
