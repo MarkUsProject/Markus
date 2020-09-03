@@ -4,6 +4,5 @@ en:
     manage_assessments: "Manage assessments"
     manage_submissions: "Manage submissions"
     run_tests: "Run tests"
-    tooltip1: "Grader can create and manage all the assessments which includes annotations, automated testing, exam templates."
-    tooltip2: "The grader can collect the submissions and release/unrelease the grades of the students, assigned to them for grading."
-
+    tooltip1: "Create and manage all the assessments which includes annotations, automated testing, exam templates."
+    tooltip2: "Collect and manage submissions, and release/unrelease the grades."

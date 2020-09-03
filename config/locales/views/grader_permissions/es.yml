@@ -1,0 +1,8 @@
+es:
+  grader_permissions:
+    list: "UPDATE ME"
+    manage_assessments: "UPDATE ME"
+    manage_submissions: "UPDATE ME"
+    run_tests: "UPDATE ME"
+    tooltip1: "UPDATE ME"
+    tooltip2: "UPDATE ME"
