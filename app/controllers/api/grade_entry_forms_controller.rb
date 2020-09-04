@@ -164,7 +164,7 @@ module Api
 
       Grade.transaction do
         params[:grade_entry_items].each do |item, score|
-          grade_entry_item = GradeEntryItem.find_by(name: item, grade_entry_form_id: params[:id])
+          grade_entry_item = GradeEntryItem.find_by(name: item, assessment_id: params[:id])
 
           if grade_entry_item.nil?
             # There is no such grade entry item

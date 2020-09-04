@@ -2,6 +2,7 @@ describe Submission do
   describe 'validations' do
     it { is_expected.to have_many(:submission_files) }
     it { is_expected.to have_many(:test_runs) }
+    it { is_expected.to have_many(:test_group_results).through(:test_runs) }
   end
 
   context 'automatically create a result' do
