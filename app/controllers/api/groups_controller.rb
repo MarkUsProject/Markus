@@ -273,7 +273,7 @@ module Api
                                               [submission_files:
                                                  [annotations:
                                                     [annotation_text: :annotation_category]]])
-                                     .where('assignment_id': params[:assignment_id])
+                                     .where('assessment_id': params[:assignment_id])
                                      .where.not('annotations.id': nil)
                                      .pluck_to_hash(*pluck_keys)
       respond_to do |format|
