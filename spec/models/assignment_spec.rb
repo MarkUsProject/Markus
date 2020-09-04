@@ -38,7 +38,7 @@ describe Assignment do
     it { is_expected.to validate_presence_of(:description) }
     it { is_expected.to validate_presence_of(:due_date) }
     it { is_expected.to validate_presence_of(:notes_count) }
-    it { is_expected.to belong_to(:parent_assignment).class_name('Assignment') }
+    it { is_expected.to belong_to(:parent_assignment).class_name('Assignment').optional }
     it { is_expected.to have_one(:pr_assignment).class_name('Assignment') }
 
     describe 'Validation of basic infos of an assignment' do
