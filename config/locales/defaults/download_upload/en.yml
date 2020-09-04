@@ -9,7 +9,7 @@ en:
   upload: "Upload"
   upload_help_html: "
     For information about the file format(s) supported, please visit
-    <a href=\"https://github.com/MarkUsProject/Markus/wiki/Importing-and-Exporting-Data#%{section_id}\">this page</a>."
+    <a href=\"https://github.com/MarkUsProject/Markus/wiki/Instructor-Guide--Importing-and-Exporting-Data#%{section_id}\">this page</a>."
   upload_the: "Upload %{item}"
   upload_errors:
     blank: "Uploaded file is blank."
