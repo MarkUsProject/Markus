@@ -806,6 +806,17 @@ describe Assignment do
           expect(expected_string).to eql(@assignment.get_repo_list), 'Repo access url list string is wrong!'
         end
 
+        it 'be able to get a list of repository access URLs for each group with ssh keys' do
+          expected_string = ''
+          @assignment.groupings.each do |grouping|
+            group = grouping.group
+            expected_string += [group.group_name,
+                                group.repository_external_access_url,
+                                group.repository_ssh_access_url].to_csv
+          end
+          expect(expected_string).to eql(@assignment.get_repo_list(ssh: true)), 'Repo access url list string is wrong!'
+        end
+
         context 'with two groups of a single student each' do
           before :each do
             2.times do
