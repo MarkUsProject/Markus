@@ -4,5 +4,6 @@ en:
     manage_assessments: "Manage assessments"
     manage_submissions: "Manage submissions"
     run_tests: "Run tests"
-    tooltip1: "Create and manage all the assessments which includes annotations, automated testing, exam templates."
-    tooltip2: "Collect and manage submissions, and release/unrelease the grades."
+    manage_assessments_tooltip: "Create and manage all the assessments which includes annotations, automated testing, exam templates."
+    manage_submissions_tooltip: "Collect and manage submissions, and release/unrelease the grades."
+    run_tests_tooltip: "Run and stop tests in submissions and results page."

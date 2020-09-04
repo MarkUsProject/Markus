@@ -4,10 +4,6 @@
   margin-left: 30px;
 }
 
-.permission {
-  margin-bottom: 1em;
-}
-
 .tooltip {
   display: inline-block;
   margin-bottom: 1em;
@@ -17,12 +13,12 @@
 .tooltiptext {
   border-style: ridge;
   height: auto;
-  left: 135%;
+  left: 150%;
   line-height: 1.6;
   min-width: 550px;
   padding: 6px;
   position: absolute;
-  top: -15px;
+  top: -12px;
   visibility: hidden;
   width: auto;
 }

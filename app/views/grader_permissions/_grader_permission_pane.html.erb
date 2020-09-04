@@ -23,16 +23,17 @@
     <%= f.fields_for :grader_permission do |ff| %>
       <h3><%=t('grader_permissions.list')%></h3>
       <div class="tooltip">
-        <span class="tooltip tooltiptext"><%= t('grader_permissions.tooltip1') %></span>
+        <span class="tooltip tooltiptext"><%= t('grader_permissions.manage_assessments_tooltip') %></span>
         <%= ff.check_box :manage_assessments %>
         <%= ff.label :manage_assessments, t('grader_permissions.manage_assessments') %><br/>
       </div><br/>
       <div class="tooltip">
-        <span class="tooltip tooltiptext"><%= t('grader_permissions.tooltip2') %></span>
+        <span class="tooltip tooltiptext"><%= t('grader_permissions.manage_submissions_tooltip') %></span>
         <%= ff.check_box :manage_submissions %>
         <%= ff.label :manage_submissions, t('grader_permissions.manage_submissions') %>
-      </div>
-      <div class="permission">
+      </div><br/>
+      <div class="tooltip">
+        <span class="tooltip tooltiptext"><%= t('grader_permissions.run_tests_tooltip') %></span>
         <%= ff.check_box :run_tests %>
         <%= ff.label :run_tests, t('grader_permissions.run_tests') %>
       </div>
