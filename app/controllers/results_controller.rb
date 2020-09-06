@@ -8,7 +8,8 @@ class ResultsController < ApplicationController
                          :download, :download_zip,
                          :update_remark_request, :cancel_remark_request,
                          :get_test_runs_instructors, :get_test_runs_instructors_released,
-                         :add_tag, :remove_tag, :revert_to_automatic_deductions
+                         :add_tag, :remove_tag, :revert_to_automatic_deductions,
+                         :run_tests
                 ]
   before_action :authorize_for_ta_and_admin,
                 only: [:create, :add_extra_mark,

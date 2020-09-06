@@ -5,13 +5,16 @@ class AssignmentsController < ApplicationController
   before_action      :authorize_only_for_admin,
                      except: [:index,
                               :show,
+                              :new,
+                              :create,
+                              :edit,
+                              :update,
                               :peer_review,
                               :summary,
-                              :switch_assignment,
-                              :start_timed_assignment]
-
-  before_action      :authorize_for_ta_and_admin,
-                     only: [:summary]
+                              :start_timed_assignment,
+                              :batch_runs,
+                              :stop_test,
+                              :switch_assignment]
 
   before_action      :authorize_for_student,
                      only: [:show,
@@ -20,6 +23,9 @@ class AssignmentsController < ApplicationController
   before_action      :authorize_for_user,
                      only: [:index, :switch_assignment]
 
+  before_action only: [:edit, :new, :update, :create, :batch_runs, :summary, :stop_test] do
+    authorize!
+  end
   # Publicly accessible actions ---------------------------------------
 
   def show

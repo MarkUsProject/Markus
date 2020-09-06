@@ -20,22 +20,29 @@ class SubmissionsController < ApplicationController
                          :repo_browser,
                          :set_result_marking_state,
                          :update_submissions,
+                         :collect_submissions,
+                         :run_tests,
                          :populate_submissions_table,
                          :populate_peer_submissions_table]
   before_action :authorize_for_ta_and_admin,
                 only: [:index,
                        :browse,
-                       :manually_collect_and_begin_grading,
+                       :set_result_marking_state,
                        :revisions,
                        :repo_browser,
                        :zip_groupings_files,
-                       :download_zipped_file,
-                       :update_submissions]
+                       :download_zipped_file]
   before_action :authorize_for_student,
                 only: [:file_manager]
   before_action :authorize_for_user,
                 only: [:download, :downloads, :get_feedback_file, :get_file,
                        :populate_file_manager, :update_files]
+  before_action only: [:collect_submissions,
+                       :update_submissions,
+                       :manually_collect_and_begin_grading,
+                       :run_tests] do
+    authorize!
+  end
 
   def index
     respond_to do |format|
@@ -224,7 +231,7 @@ class SubmissionsController < ApplicationController
     end
     if collectable.count > 0
       @current_job = SubmissionsJob.perform_later(collectable,
-                                                 collection_dates: collection_dates.transform_keys(&:to_s))
+                                                  collection_dates: collection_dates.transform_keys(&:to_s))
       session[:job_id] = @current_job.job_id
     end
     if some_before_due

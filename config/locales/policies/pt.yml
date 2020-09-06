@@ -5,11 +5,14 @@ pt:
         before_due_date?: "Você não pode executar o teste pois a sua entrega está fora do prazo."
         collection_date_passed?: "Não foi possível criar grupo: a data de entrega para este projeto já passou e ou não há períodos de carência permitidos, ou o período de tolerância para este projeto já terminou."
         enabled?: "UPDATE ME."
-        not_a_ta?: "UPDATE ME."
         not_yet_in_group?: "Você já tem um grupo, e não pode criar outro"
         students_form_groups?: "Atribuição não permite que os alunos formem grupos."
         tokens_released?: "Nenhum tokens dado."
         work_alone?: "Você não pode trabalhar sozinho para este projeto - o tamanho mínimo do grupo é de %{group_min}."
+        can_run_tests?: "UPDATE ME."
+        view_assessments?: "UPDATE ME."
+        manage?: "UPDATE ME."
+        run_and_stop_tests?: "UPDATE ME."
       grouping:
         before_due_date?: "A data de entrega para este projeto já passou."
         deletable_by?: "Você não tem permissão para deletar este grupo."
@@ -25,5 +28,31 @@ pt:
         get_feedback_file?: "Não há accesso para resultado do teste."
         not_a_student?: "UPDATE ME."
         manage_subdirectories?: "UPDATE ME."
-      starter_file_group:
         manage?: "UPDATE ME."
+      group:
+        student_manage?: "UPDATE ME."
+        manage?: "UPDATE ME."
+      note:
+        manage?: "UPDATE ME."
+        modify?: "UPDATE ME."
+        create?: "UPDATE ME."
+      automated_test:
+        student_access?: "UPDATE ME."
+        manage?: "UPDATE ME."
+      exam_template:
+        manage?: "UPDATE ME."
+      grade_entry_form:
+        grading?: "UPDATE ME."
+        manage?: "UPDATE ME."
+        student_interface?: "UPDATE ME."
+        update_grade_entry_students?: "UPDATE ME."
+      peer_review:
+        manage?: "UPDATE ME."
+        manage_reviewers?: "UPDATE ME."
+      annotation_category:
+        manage?: "UPDATE ME."
+      starter_file_group:
+      grader_permission:
+        manage_submissions?: "UPDATE ME."
+        manage_assessments?: "UPDATE ME."
+        run_tests?: "UPDATE ME."

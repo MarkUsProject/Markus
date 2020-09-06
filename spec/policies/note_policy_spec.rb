@@ -3,14 +3,14 @@ describe NotePolicy do
   describe 'When the user is admin' do
     subject { described_class.new(user: user) }
     let(:user) { build(:admin) }
-    context 'Admin can manage, edit and update the notes' do
+    context 'Admin can manage, create, edit and update the notes' do
       it { is_expected.to pass :manage? }
       it { is_expected.to pass :modify? }
     end
   end
   describe 'When the user is TA' do
     subject { described_class.new(note, user: user) }
-    let(:user) { build(:ta) }
+    let(:user) { create(:ta) }
     let(:note) { create(:note) }
     context 'TA can manage the notes' do
       it { is_expected.to pass :manage? }

@@ -3,8 +3,7 @@ class AnnotationCategoriesController < ApplicationController
 
   respond_to :js
 
-  before_action      :authorize_only_for_admin, except: :index
-  before_action      :authorize_for_ta_and_admin, only: :index
+  before_action { authorize! }
 
   layout 'assignment_content'
 

@@ -4,9 +4,11 @@ describe AssignmentPolicy do
   describe '#run_tests?' do
     subject { described_class.new(assignment, user: user) }
 
-    context 'when the user is an admin' do
-      let(:user) { build(:admin) }
-
+    shared_examples 'An authorized user running tests' do
+      context 'user can view the test runs status and stop test' do
+        let(:assignment) { build(:assignment) }
+        it { is_expected.to pass :run_and_stop_tests? }
+      end
       context 'if enable_test is false' do
         let(:assignment) { build(:assignment) }
         it { is_expected.not_to pass :run_tests?, because_of: :enabled? }
@@ -26,14 +28,26 @@ describe AssignmentPolicy do
       end
     end
 
-    context 'when the user is a TA' do
-      let(:user) { build(:ta) }
-      let(:assignment) { build(:assignment) }
-      it { is_expected.not_to pass :run_tests?, because_of: :not_a_ta? }
+    context 'when the user is a grader and allowed to run tests' do
+      let(:user) { create(:ta, run_tests: true) }
+      include_examples 'An authorized user running tests'
+    end
+
+    context 'When the user is admin' do
+      let!(:user) { build(:admin) }
+      include_examples 'An authorized user running tests'
+    end
+
+    context 'When the user is TA and not allowed to run tests' do
+      # By default all the grader permissions are set to false
+      let(:user) { create(:ta) }
+      let(:assignment) { create(:assignment_for_tests) }
+      it { is_expected.not_to pass :run_tests?, because_of: :can_run_tests? }
+      it { is_expected.not_to pass :run_and_stop_tests? }
     end
 
     context 'when the user is a student' do
-      let(:user) { build(:student) }
+      let(:user) { create(:student) }
 
       context 'if enable_test is false' do
         let(:assignment) { build(:assignment) }
@@ -74,6 +88,30 @@ describe AssignmentPolicy do
           end
         end
       end
+    end
+  end
+
+  describe 'When the user is admin' do
+    subject { described_class.new(user: user) }
+    let(:user) { create(:admin) }
+    context 'Admin can view, manage, create, edit and update the assignments' do
+      it { is_expected.to pass :manage? }
+      it { is_expected.to pass :view_assessments? }
+    end
+  end
+
+  describe 'When the user is grader' do
+    subject { described_class.new(user: user) }
+    let(:user) { create(:ta) }
+    context 'Grader can view assessments' do
+      it { is_expected.to pass :view_assessments? }
+    end
+    context 'When the grader is allowed to manage, create, edit and update the assignments' do
+      let(:user) { create(:ta, manage_assessments: true) }
+      it { is_expected.to pass :manage? }
+    end
+    context 'When the grader is not allowed to manage, create, edit and update the assignments' do
+      it { is_expected.not_to pass :manage? }
     end
   end
 end

@@ -5,11 +5,14 @@ es:
         before_due_date?: "Usted no puede lanzar las prueba debido a que el último plazo de entrega para este proyecto ha pasado."
         collection_date_passed?: "No se pudo crear el grupo: el último plazo para este proyecto ha pasado."
         enabled?: "UPDATE ME."
-        not_a_ta?: "UPDATE ME."
         not_yet_in_group?: "Usted ya tiene un grupo, y no puede crear otro."
         students_form_groups?: "El proyecto no les permite a los estudiantes formar grupos."
         tokens_released?: "No se han dado fichas todavía."
         work_alone?: "Usted no puede trabajar sólo en este proyecto. El número mínimo de estudiantes por grupo es %{group_min}."
+        can_run_tests?: "UPDATE ME."
+        view_assessments?: "UPDATE ME."
+        manage?: "UPDATE ME."
+        run_and_stop_tests?: "UPDATE ME."
       grouping:
         before_due_date?: "El último plazo para este proyecto ha pasado y."
         deletable_by?: "Usted no tiene permiso para eliminar el grupo."
@@ -25,5 +28,31 @@ es:
         get_feedback_file?: "No existe acceso al archivo de retroalimentación."
         not_a_student?: "UPDATE ME."
         manage_subdirectories?: "UPDATE ME."
-      starter_file_group:
         manage?: "UPDATE ME."
+      group:
+        student_manage?: "UPDATE ME."
+        manage?: "UPDATE ME."
+      note:
+        manage?: "UPDATE ME."
+        modify?: "UPDATE ME."
+        create?: "UPDATE ME."
+      automated_test:
+        student_access?: "UPDATE ME."
+        manage?: "UPDATE ME."
+      exam_template:
+        manage?: "UPDATE ME."
+      grade_entry_form:
+        grading?: "UPDATE ME."
+        manage?: "UPDATE ME."
+        student_interface?: "UPDATE ME."
+        update_grade_entry_students?: "UPDATE ME."
+      peer_review:
+        manage?: "UPDATE ME."
+        manage_reviewers?: "UPDATE ME."
+      annotation_category:
+        manage?: "UPDATE ME."
+      starter_file_group:
+      grader_permission:
+        manage_submissions?: "UPDATE ME."
+        manage_assessments?: "UPDATE ME."
+        run_tests?: "UPDATE ME."

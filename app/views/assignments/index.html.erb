@@ -1,6 +1,6 @@
 <% content_for :title, t('assignments.manage_course_work') %>
 
-<% if @current_user.admin? %>
+<% if allowed_to?(:manage?) %>
   <% @heading_buttons = [
     { link_text: t('download'),
       link_path: '#',

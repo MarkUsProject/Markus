@@ -4,8 +4,11 @@ class PeerReviewsController < ApplicationController
 
   before_action :set_peer_review, only: [:show, :edit, :update, :destroy]
 
-  before_action :authorize_only_for_admin, except: [:list_reviews, :show_reviews, :show_result]
   before_action :authorize_for_user, only: [:list_reviews, :show_reviews, :show_result]
+
+  before_action except: [:list_reviews, :show_reviews, :show_result] do
+    authorize!
+  end
 
   layout 'assignment_content'
 

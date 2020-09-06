@@ -1,15 +1,14 @@
 class AutomatedTestsController < ApplicationController
   include AutomatedTestsHelper
 
-  before_action      :authorize_only_for_admin,
-                     except: [:student_interface,
-                              :get_test_runs_students,
-                              :execute_test_run]
-
-  before_action      :authorize_for_student,
-                     only: [:student_interface,
-                            :get_test_runs_students,
-                            :execute_test_run]
+  before_action do
+    if params[:id].nil?
+      assignment = Assignment.find(params[:assignment_id])
+    else
+      assignment = Assignment.find(params[:id])
+    end
+    authorize! assignment, with: AutomatedTestPolicy
+  end
 
   def update
     assignment = Assignment.find(params[:assignment_id])
