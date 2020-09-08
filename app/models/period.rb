@@ -10,10 +10,10 @@ class Period < ApplicationRecord
   private
 
   def check_deduction
-    %w[PenaltyDecayPeriodSubmissionRule PenaltyPeriodSubmissionRule].include? submission_rule.type
+    %w[PenaltyDecayPeriodSubmissionRule PenaltyPeriodSubmissionRule].include? submission_rule&.type
   end
 
   def check_interval
-    submission_rule.type == 'PenaltyDecayPeriodSubmissionRule'
+    submission_rule&.type == 'PenaltyDecayPeriodSubmissionRule'
   end
 end
