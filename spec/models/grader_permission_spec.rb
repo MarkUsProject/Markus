@@ -2,9 +2,6 @@ describe GraderPermission do
   context 'checks relationships' do
     it { is_expected.to belong_to(:ta) }
   end
-  context 'validates the presence of user id' do
-    it { is_expected.to validate_presence_of(:user_id) }
-  end
   describe 'Validating the user' do
     context 'When the user is admin' do
       let(:user) { create(:admin) }
