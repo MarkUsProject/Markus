@@ -1,7 +1,7 @@
 # Class describing a top level file or directory in a starter files group
 class StarterFileEntry < ApplicationRecord
   belongs_to :starter_file_group
-  validate :entry_exists
+  validate :entry_exists, if: :starter_file_group
 
   has_many :grouping_starter_file_entries, dependent: :destroy
   has_many :groupings, through: :grouping_starter_file_entries

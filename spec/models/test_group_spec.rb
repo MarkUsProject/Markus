@@ -10,7 +10,9 @@ describe TestGroup do
 
   it { is_expected.to validate_presence_of :name }
   it { is_expected.to validate_presence_of :display_output }
-  it { is_expected.to define_enum_for(:display_output).with(TestGroup.display_outputs.keys) }
+  it do
+    is_expected.to define_enum_for(:display_output).with_values(TestGroup.display_outputs.keys).with_prefix(:display_to)
+  end
 
   # create
   context 'A valid test group' do
