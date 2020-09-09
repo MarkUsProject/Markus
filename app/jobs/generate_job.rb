@@ -38,10 +38,7 @@ class GenerateJob < ApplicationJob
           qrcode_content = "#{exam_template.name}-#{exam_num}-#{page_num + 1}"
           qrcode = RQRCode::QRCode.new qrcode_content, level: :l, size: 2
           alignment = page_num.even? ? :right : :left
-          # TODO: remove the line below and the pos: argument in render_qr_code once the align: argument is fixed
-          #       see: https://github.com/jabbrwcky/prawn-qrcode/pull/33 (probably in release v0.5.2 of prawn-qrcode)
-          pos = [page_num.even? ? bounds.width - 140 : 0, cursor]
-          render_qr_code(qrcode, align: alignment, dot: 4.0, stroke: false, pos: pos)
+          render_qr_code(qrcode, align: alignment, dot: 4.0, stroke: false)
           draw_text(qrcode_content,
                     at: [alignment == :left ? 140 : bounds.width - 140 - qrcode_content.length * 6, bounds.height - 30])
           start_new_page
