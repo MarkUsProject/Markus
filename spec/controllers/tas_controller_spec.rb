@@ -174,7 +174,7 @@ describe TasController do
         }
       }
     end
-    context '' do
+    context 'When permissions are selected' do
       before :each do
         post :create, params: params
       end
@@ -193,7 +193,7 @@ describe TasController do
       end
     end
 
-    context 'when no permissions are checked' do
+    context 'when no permissions are selected' do
       let(:user_params) do
         {
           user: {
