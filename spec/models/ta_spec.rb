@@ -56,4 +56,19 @@ describe Ta do
       end
     end
   end
+
+  context 'Associated grader permission validation' do
+    subject { create :ta }
+    it { is_expected.to validate_presence_of :grader_permission }
+  end
+
+  context 'Ta model' do
+    let(:user) { create(:ta) }
+    it 'should create a ta' do
+      expect(create(:ta)).to be_valid
+    end
+    it 'should create an associated permissions' do
+      expect(GraderPermission.exists?(user.grader_permission.id)).to be true
+    end
+  end
 end
