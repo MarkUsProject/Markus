@@ -2,6 +2,7 @@
 ## [unreleased]
 - Introduce the ability to designate criteria as 'bonus' marks (#4804)
 - Enable variable permissions for graders (#4601)
+- UI for enable/disable variable permissions for graders (#4756)
 
 ## [v1.10.0]
 - Issue #3670: Added API for adding and removing extra marks (#4499)
