@@ -209,6 +209,7 @@ class User < ApplicationRecord
         }
         User.where(id: imported.ids).each do |user|
           if user_class == Ta
+            # This will only trigger before_create callback in ta model, not after_create callback
             user.run_callbacks(:create) { false }
           end
           user.validate!
