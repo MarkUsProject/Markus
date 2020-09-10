@@ -13,8 +13,7 @@ class SubmissionPolicy < ApplicationPolicy
   end
 
   def run_tests?
-    check?(:not_a_student?) &&
-    check?(:before_release?)
+    allowed_to?(:run_tests?, with: GraderPermissionPolicy)
   end
 
   def manage_subdirectories?
@@ -34,6 +33,6 @@ class SubmissionPolicy < ApplicationPolicy
   end
 
   def can_run_tests?
-    allowed_to?(:run_tests?, with: GraderPermissionPolicy) && record.enable_test
+    check?(:run_tests?) && record.enable_test
   end
 end
