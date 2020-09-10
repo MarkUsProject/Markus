@@ -19,11 +19,11 @@ describe SubmissionPolicy do
             result.released_to_students = true
             result.save!
           end
-          it { is_expected.not_to pass :run_tests?, because_of: :before_release? }
+          it { is_expected.not_to pass :before_release? }
         end
 
         context 'if marks are not released' do
-          it { is_expected.to pass :run_tests? }
+          it { is_expected.to pass :before_release? }
         end
       end
     end
@@ -31,7 +31,7 @@ describe SubmissionPolicy do
     context 'when the user is a student' do
       let(:user) { build(:student) }
       let(:submission) { build_stubbed(:submission) }
-      it { is_expected.not_to pass :run_tests?, because_of: :not_a_student? }
+      it { is_expected.not_to pass :run_tests?, because_of: { GraderPermissionPolicy => :run_tests? } }
     end
   end
 
