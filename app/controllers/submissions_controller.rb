@@ -256,8 +256,11 @@ class SubmissionsController < ApplicationController
     assignment = Assignment.includes(groupings: :current_submission_used).find(params[:assignment_id])
     groupings = assignment.groupings.find(params[:groupings])
     # .where.not(current_submission_used: nil) potentially makes find fail with RecordNotFound
-    test_runs = groupings.select(&:has_non_empty_submission?)
-                         .map { |g| { grouping_id: g.id, submission_id: g.current_submission_used.id } }
+    test_runs = groupings.select(&:has_non_empty_submission?).map do |g|
+      submission = g.current_submission_used
+      authorize! submission, to: :before_release?
+      { grouping_id: g.id, submission_id: submission.id }
+    end
     success = ''
     error = ''
     begin
