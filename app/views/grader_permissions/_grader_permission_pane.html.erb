@@ -4,7 +4,7 @@
       <%= render partial: 'shared/navigation_warning',
                  formats: [:js],
                  handlers: [:erb] %>
-      <%= form_for @user, as: :user do |f| %>
+      <%= form_with model: @user, scope: :user, local: true do |f| %>
         <div class='inline-labels'>
           <%= f.label :user_name, User.human_attribute_name(:user_name) %>
           <%= f.text_field :user_name %>
@@ -18,7 +18,9 @@
           <%= f.label :email, User.human_attribute_name(:email) %>
           <%= f.text_field :email %>
         </div>
-        
+
+        <%= f.hidden_field :id %>
+
         <%= f.fields_for :grader_permission do |ff| %>
           <h3><%=t('grader_permissions.list')%></h3>
           <div class="tooltip">
