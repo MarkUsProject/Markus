@@ -55,16 +55,13 @@ export class ImageViewer extends React.Component {
   }
 
   rotateImage = () => {
-    let transformation = 'transform: rotate(' + this.state.rotation.toString() + 'deg)';
     let picture = document.getElementById('image_preview');
-    if(this.state.rotation === 270 || this.state.rotation === 90){
-      if (picture.getBoundingClientRect().width < picture.getBoundingClientRect().height) {
-        transformation += `translateY(${picture.getBoundingClientRect().height - picture.getBoundingClientRect().width}px)`
-        console.log(transformation)
-      }
+    let dimensions = picture.getBoundingClientRect();
+    if (this.state.rotation === 0) {
+      picture.removeAttribute('class');
+    } else {
+      picture.setAttribute('class', 'rotate' + this.state.rotation.toString());
     }
-    console.log(picture.getBoundingClientRect())
-    picture.setAttribute('style', transformation);
   }
 
   render() {
