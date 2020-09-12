@@ -114,6 +114,7 @@ export class ImageViewer extends React.Component {
 
   rotateImage = () => {
     let picture = document.getElementById('image_preview');
+
     if (this.state.rotation > 0) {
       picture.addClass('rotate' + this.state.rotation.toString());
       picture.removeClass('rotate' + (this.state.rotation - 90).toString());
