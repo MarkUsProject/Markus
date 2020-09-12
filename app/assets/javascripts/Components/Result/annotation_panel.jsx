@@ -10,12 +10,14 @@ export class AnnotationPanel extends React.Component {
       overallComment: props.overallComment,
       unsavedChanges: false
     };
+    this.autoSaveOverallComments = this.autoSaveOverallComments.bind(this);
     this.submitOverallCommentButton = React.createRef();
-  }
+  };
 
   componentDidMount() {
     this.renderOverallCommentText();
-  }
+    setInterval(this.autoSaveOverallComments, 3000);
+  };
 
   componentDidUpdate(prevProps, prevState) {
     if (prevProps.overallComment !== this.props.overallComment) {
@@ -23,7 +25,7 @@ export class AnnotationPanel extends React.Component {
     } else if (prevState.overallComment !== this.state.overallComment) {
       this.renderOverallCommentText();
     }
-  }
+  };
 
   updateOverallComment = (event) => {
     const comment = event.target.value;
@@ -39,9 +41,9 @@ export class AnnotationPanel extends React.Component {
     }
     document.getElementById(target_id).innerHTML = marked(this.state.overallComment, {sanitize: true});
     MathJax.Hub.Queue(['Typeset', MathJax.Hub, target_id]);
-  }
+  };
 
-  submitOverallComment = (event) => {
+  persistOverallComments() {
     $.post({
       url: Routes.update_overall_comment_assignment_submission_result_path(
         this.props.assignment_id, this.props.submission_id, this.props.result_id,
@@ -51,7 +53,17 @@ export class AnnotationPanel extends React.Component {
       Rails.enableElement(this.submitOverallCommentButton.current);
       this.setState({unsavedChanges: false});
     });
+  };
+
+  submitOverallComment = (event) => {
+    this.persistOverallComments();
     event.preventDefault();
+  };
+
+  autoSaveOverallComments() {
+    if (this.state.unsavedChanges) {
+      this.persistOverallComments();
+    }
   };
 
   render() {
