@@ -212,4 +212,47 @@ describe TasController do
       end
     end
   end
+
+  context '#update' do
+    let(:params) do
+      {
+        user: {
+          grader_permission_attributes: {
+            manage_assessments: false,
+            manage_submissions: true,
+            run_tests: true
+          },
+          user_name: 'c6conley',
+          first_name: 'Mike',
+          last_name: 'Conley'
+        }
+      }
+    end
+    before do
+      post :create, params: params
+    end
+    context 'Update grader details and grader permissions' do
+      before :each do
+        ta = Ta.find_by(user_name: 'c6conley')
+        put :update, params: { id: ta.id,
+                               user: {
+                                 first_name: 'Jack',
+                                 grader_permission_attributes: {
+                                   manage_assessments: true
+                                 }
+                               } }
+      end
+      it 'should respond with 302' do
+        expect(response).to have_http_status 302
+      end
+      it 'should update the grader details' do
+        ta = Ta.find_by(user_name: 'c6conley')
+        expect(ta.first_name).to eq('Jack')
+      end
+      it 'should update the grader permission' do
+        ta = Ta.find_by(user_name: 'c6conley')
+        expect(ta.grader_permission.manage_assessments).to be true
+      end
+    end
+  end
 end
