@@ -67,7 +67,7 @@ describe Ta do
     it 'should create a ta' do
       expect(create(:ta)).to be_valid
     end
-    it 'should create an associated permissions' do
+    it 'should create associated permissions' do
       expect(GraderPermission.exists?(user.grader_permission.id)).to be true
     end
   end

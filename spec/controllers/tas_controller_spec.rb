@@ -249,7 +249,7 @@ describe TasController do
         ta = Ta.find_by(user_name: 'c6conley')
         expect(ta.first_name).to eq('Jack')
       end
-      it 'should update the grader permission' do
+      it 'should update the grader permissions' do
         ta = Ta.find_by(user_name: 'c6conley')
         expect(ta.grader_permission.manage_assessments).to be true
       end
