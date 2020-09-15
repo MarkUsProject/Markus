@@ -19,8 +19,6 @@
           <%= f.text_field :email %>
         </div>
 
-        <%= f.hidden_field :id %>
-
         <%= f.fields_for :grader_permission do |ff| %>
           <h3><%=t('grader_permissions.list')%></h3>
           <div class="tooltip">

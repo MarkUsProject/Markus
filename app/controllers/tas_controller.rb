@@ -32,7 +32,7 @@ class TasController < ApplicationController
   end
 
   def update
-    @user = Ta.find(params[:user][:id])
+    @user = Ta.find(params[:id])
     @user.update(user_params)
     respond_with(@user)
   end
