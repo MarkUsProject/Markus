@@ -215,7 +215,6 @@ describe TasController do
 
   context '#update' do
     let(:ta) { create(:ta, user_name: 'c6conley', first_name: 'Mike', manage_assessments: false, run_tests: true) }
-
     context 'Update grader details and grader permissions' do
       before :each do
         put :update, params: { id: ta.id,
