@@ -10,7 +10,6 @@ export class AnnotationPanel extends React.Component {
       overallComment: props.overallComment,
       unsavedChanges: false
     };
-    this.autoSaveOverallComments = this.autoSaveOverallComments.bind(this);
     this.submitOverallCommentButton = React.createRef();
   };
 
@@ -60,7 +59,7 @@ export class AnnotationPanel extends React.Component {
     event.preventDefault();
   };
 
-  autoSaveOverallComments() {
+  autoSaveOverallComments = () => {
     if (this.state.unsavedChanges) {
       this.persistOverallComments();
     }
