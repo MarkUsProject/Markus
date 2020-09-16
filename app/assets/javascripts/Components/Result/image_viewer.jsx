@@ -42,6 +42,7 @@ export class ImageViewer extends React.Component {
     }
     add_annotation_text(annotation.annotation_text_id, content);
 
+
     let originalImgH = document.getElementById('image_preview').height;
     let originalImgW = document.getElementById('image_preview').width;
     let imgW;
@@ -125,11 +126,13 @@ export class ImageViewer extends React.Component {
 
   render() {
     return ([
+
       <p key={'image_toolbar'}>
         {I18n.t('results.current_rotation', {rotation: this.state.rotation})}
         <button onClick={this.addRotation} className={'inline-button'}>{I18n.t('results.rotate_image')}</button>
       </p>,
       <div id='image_container' key={'image_container'}>
+
 
         <div key='sel_box' id='sel_box' className='annotation-holder-active' style={{display: 'none'}}/>
         <img id='image_preview'
