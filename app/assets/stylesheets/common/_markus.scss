@@ -1054,8 +1054,8 @@ nav {
 }
 
 .rotate270 {
-  transform: translateY(-100%) translateX(100%) rotate(270deg);
-  transform-origin: right bottom;
+  transform: translateX(-100%) rotate(270deg);
+  transform-origin: right top;
 }
 
 // Login
