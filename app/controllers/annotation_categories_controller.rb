@@ -139,7 +139,11 @@ class AnnotationCategoriesController < ApplicationController
     texts_for_current_assignment = AnnotationText.joins(annotation_category: :assignment)
                                                  .where(assessments: { id: @assignment.id })
     one_time_texts = AnnotationText.joins(annotations: { result: { grouping: :group } })
-                                   .where(creator_id: params[:id], 'groupings.assessment_id': @assignment.id)
+                                   .where(
+                                     creator_id: params[:id],
+                                     'groupings.assessment_id': @assignment.id,
+                                     annotation_category_id: nil
+                                   )
 
     annotation_texts = texts_for_current_assignment.where('lower(content) LIKE ?', "#{string.downcase}%").limit(10) |
                        one_time_texts.where('lower(content) LIKE ?', "#{string.downcase}%").limit(10)
