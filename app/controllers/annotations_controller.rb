@@ -66,11 +66,11 @@ class AnnotationsController < ApplicationController
 
     if params[:annotation_text_id].strip.empty?
       text = AnnotationText.create!(
-          content: params[:content],
-          annotation_category_id: params[:category_id],
-          creator_id: current_user.id,
-          last_editor_id: current_user.id,
-          deduction: d.nil? ? nil : 0.0
+        content: params[:content],
+        annotation_category_id: params[:category_id],
+        creator_id: current_user.id,
+        last_editor_id: current_user.id,
+        deduction: d.nil? ? nil : 0.0
       )
     else
       text = AnnotationText.find(params[:annotation_text_id])
