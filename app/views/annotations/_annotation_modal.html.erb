@@ -15,6 +15,7 @@
                         rows: 8 %>
       </p>
       <ul class='tags' key='annotation_completion' id='annotation_completion' style='display: none'>
+        <%= hidden_field_tag 'annotation_text_id', value: '' %>
         <li class='annotation_category'
             id='annotation_completion_li'>
           <p id='annotation_completion_text'> Did you mean? (0 similar annotations found)</p>

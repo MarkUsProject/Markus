@@ -301,6 +301,9 @@
   function update_annotation_completion(textArea) {
     const annotationTextList = document.getElementById('annotation_text_list');
     const value = textArea[0].value;
+
+    $('#annotation_text_id').val('');
+
     if (value.length < 2) {
       $('#annotation_completion').hide();
       return;
@@ -325,14 +328,16 @@
       annotationTextList.innerHTML = '';
       $('#annotation_completion_text')[0].innerText = `Did you mean? (${res.length} similar annotations found)`;
       res.forEach((elem) => {
-        console.log(elem);
         const annotation = document.createElement('li');
         annotation.setAttribute('key', 1);
         annotation.setAttribute('id', elem.id);
-        annotation.onclick = () => document.getElementById('new_annotation_content').value = elem.content;
+        annotation.onclick = () => {
+          document.getElementById('new_annotation_content').value = elem.content;
+          $('#annotation_text_id').val(elem.id);
+          $('#new_annotation_category').val(elem.annotation_category_id);
+        }
         annotation.innerText = elem.content;
         annotationTextList.appendChild(annotation);
-        $('#new_annotation_category').val(elem.annotation_category_id);
       });
     }).catch((e) => console.log(e));
   }
