@@ -4,6 +4,7 @@
   <%= javascript_include_tag 'mathjax' %>
   <%= javascript_pack_tag 'result' %>
   <%= javascript_include_tag 'Results/main' %>
+  <% ta_id = @current_user.admin? ? nil : @current_user.id %>
   <script>
     pdfjs.GlobalWorkerOptions.workerSrc = '<%= asset_pack_path('pdf.js') %>';
 
@@ -15,6 +16,7 @@
           grouping_id: <%= @result.submission.grouping_id %>,
           assignment_id: <%= @result.submission.grouping.assessment_id %>,
           role: '<%= @current_user.class.name %>',
+          num_collected: <%= @assignment.get_num_collected(ta_id) %>,
         }
       );
 

@@ -119,14 +119,14 @@ export class SubmissionSelector extends React.Component {
             <meter
               value={this.props.num_marked}
               min={0}
-              max={this.props.num_assigned}
+              max={this.props.num_collected}
               low={meterLow}
               high={meterHigh}
-              optimum={this.props.num_assigned}
+              optimum={this.props.num_collected}
             >
-              {this.props.num_marked}/{this.props.num_assigned}
+              {this.props.num_marked}/{this.props.num_collected}
             </meter>
-            {this.props.num_marked}/{this.props.num_assigned}&nbsp;{I18n.t('submissions.state.complete')}
+            {this.props.num_marked}/{this.props.num_collected}&nbsp;{I18n.t('submissions.state.complete')}
           </div>
 
           <div style={{flexGrow: 1}} />

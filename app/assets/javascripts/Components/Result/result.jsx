@@ -505,6 +505,7 @@ class Result extends React.Component {
           marking_state={this.state.marking_state}
           num_assigned={this.state.num_assigned}
           num_marked={this.state.num_marked}
+          num_collectd={this.props.num_collected}
           released_to_students={this.state.released_to_students}
           total={this.state.total}
           toggleFullscreen={this.toggleFullscreen}
