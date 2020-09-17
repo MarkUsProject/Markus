@@ -64,16 +64,16 @@ class AnnotationsController < ApplicationController
 
     d = result.grouping.assignment.annotation_categories.find_by(id: params[:category_id])&.flexible_criterion_id
 
-    if params[:annotation_text_id]
-      text = AnnotationText.find(params[:annotation_text_id])
-    else
+    if params[:annotation_text_id].strip.empty?
       text = AnnotationText.create!(
-        content: params[:content],
-        annotation_category_id: params[:category_id],
-        creator_id: current_user.id,
-        last_editor_id: current_user.id,
-        deduction: d.nil? ? nil : 0.0
+          content: params[:content],
+          annotation_category_id: params[:category_id],
+          creator_id: current_user.id,
+          last_editor_id: current_user.id,
+          deduction: d.nil? ? nil : 0.0
       )
+    else
+      text = AnnotationText.find(params[:annotation_text_id])
     end
 
     base_attributes = {
