@@ -298,9 +298,51 @@
     }
   }
 
+  function update_annotation_completion(textArea) {
+    const annotationTextList = document.getElementById('annotation_text_list');
+    const value = textArea[0].value;
+    if (value.length < 2) {
+      $('#annotation_completion').hide();
+      return;
+    }
+
+    $.ajax({
+      method: "get",
+      url: Routes.find_annotation_text_assignment_annotation_categories_url(<%= assignment_id %>),
+      dataType: "json",
+      data: {
+        string: value,
+        assignment_id: <%= assignment_id %>,
+        id: <%= @current_user.id %>
+      }
+    }).then((res) => {
+      if (res.length === 0) {
+        $('#annotation_completion').hide();
+        return;
+      }
+
+      $('#annotation_completion').show();
+      annotationTextList.innerHTML = '';
+      $('#annotation_completion_text')[0].innerText = `Did you mean? (${res.length} similar annotations found)`;
+      res.forEach((elem) => {
+        console.log(elem);
+        const annotation = document.createElement('li');
+        annotation.setAttribute('key', 1);
+        annotation.setAttribute('id', elem.id);
+        annotation.onclick = () => document.getElementById('new_annotation_content').value = elem.content;
+        annotation.innerText = elem.content;
+        annotationTextList.appendChild(annotation);
+        $('#new_annotation_category').val(elem.annotation_category_id);
+      });
+    }).catch((e) => console.log(e));
+  }
+
+  var typing_timer;
   function open_annotation_modal() {
-    $('#new_annotation_content').keydown(function(e) {
-    var keyCode = e.keyCode || e.which;
+    const textArea = $('#new_annotation_content');
+
+    textArea.keyup(function(e) {
+      var keyCode = e.keyCode || e.which;
       if (keyCode == 9) {
         e.preventDefault();
         var start = this.selectionStart;
@@ -310,6 +352,11 @@
             + this.value.substring(end);
         this.selectionStart = this.selectionEnd = start + 2;
       }
+
+      if (typing_timer) {
+        clearTimeout(typing_timer);
+      }
+      typing_timer = setTimeout(() => update_annotation_completion(textArea), 300);
     });
     updatePreview('new_annotation_content', 'annotation_preview');
     modal.open();

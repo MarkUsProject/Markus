@@ -14,6 +14,17 @@
                         placeholder: t('results.annotation.placeholder'),
                         rows: 8 %>
       </p>
+      <ul class='tags' key='annotation_completion' id='annotation_completion' style='display: none'>
+        <li class='annotation_category'
+            id='annotation_completion_li'>
+          <p id='annotation_completion_text'> Did you mean? (0 similar annotations found)</p>
+          <div>
+            <ul id='annotation_text_list'>
+            </ul>
+          </div>
+        </li>
+      </ul>
+      <p></p>
       <h3><%= t(:preview) %></h3>
       <div id="annotation_preview" class="preview"></div>
       <% if @current_user.is_reviewer_for?(assignment.pr_assignment, result) %>
