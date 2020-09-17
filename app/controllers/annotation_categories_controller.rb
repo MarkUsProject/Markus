@@ -141,8 +141,8 @@ class AnnotationCategoriesController < ApplicationController
     one_time_texts = AnnotationText.joins(annotations: { result: { grouping: :group } })
                                    .where(creator_id: params[:id], 'groupings.assessment_id': @assignment.id)
 
-    annotation_texts = texts_for_current_assignment.where("lower(content) LIKE ?", "#{string.downcase}%").limit(10) |
-                       one_time_texts.where("lower(content) LIKE ?", "#{string.downcase}%").limit(10)
+    annotation_texts = texts_for_current_assignment.where('lower(content) LIKE ?', "#{string.downcase}%").limit(10) |
+                       one_time_texts.where('lower(content) LIKE ?', "#{string.downcase}%").limit(10)
     render json: annotation_texts
   end
 
