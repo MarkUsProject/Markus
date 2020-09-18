@@ -314,9 +314,7 @@
       url: Routes.find_annotation_text_assignment_annotation_categories_url(<%= assignment_id %>),
       dataType: "json",
       data: {
-        string: value,
-        assignment_id: <%= assignment_id %>,
-        id: <%= @current_user.id %>
+        string: value
       }
     }).then((res) => {
       if (res.length === 0) {
@@ -326,7 +324,8 @@
 
       $('#annotation_completion').show();
       annotationTextList.innerHTML = '';
-      $('#annotation_completion_text')[0].innerText = `Did you mean? (${res.length} similar annotations found)`;
+      document.getElementById('annotation_completion_text').innerText =
+        I18n.t('results.annotation.similar_annotations_found', { count: res.length });
       res.forEach((elem) => {
         const annotation = document.createElement('li');
         annotation.setAttribute('key', 1);
@@ -339,11 +338,11 @@
         annotation.innerText = elem.content;
         annotationTextList.appendChild(annotation);
       });
-    }).catch((e) => console.log(e));
+    }).catch((e) => console.error(e));
   }
 
-  var typing_timer;
   function open_annotation_modal() {
+    var typing_timer;
     const textArea = $('#new_annotation_content');
 
     textArea.keyup(function(e) {

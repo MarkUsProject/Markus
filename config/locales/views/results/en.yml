@@ -39,6 +39,9 @@ en:
       select_some_text: "You must highlight some code to annotate."
       select_an_area: "You must select an area on the image to annotate."
       select_an_area_pdf: "You must select an area on the PDF to annotate."
+      similar_annotations_found:
+        one: "Did you mean? (1 similar annotation found)"
+        other: "Did you mean? (%{count} similar annotations found)"
 
     # Remark requests
     remark:

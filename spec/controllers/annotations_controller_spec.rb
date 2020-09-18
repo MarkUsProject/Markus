@@ -103,6 +103,16 @@ describe AnnotationsController do
         assert_response :success
         expect(result.annotations.reload.size).to eq 1
         expect(AnnotationText.all.size).to eq 1
+
+        post_as user,
+                :create,
+                params: { annotation_text_id: annotation_text.id, submission_file_id: submission_file.id,
+                          line_start: 2, line_end: 2, column_start: 2, column_end: 2, result_id: result.id,
+                          assignment_id: assignment.id },
+                format: :js
+        assert_response :success
+        expect(result.annotations.reload.size).to eq 2
+        expect(AnnotationText.all.size).to eq 1
       end
 
       it 'successfully creates an image annotation' do
