@@ -92,7 +92,6 @@ export class ImageViewer extends React.Component {
         start: imgW/2 + corners[1][0],
         end: imgW/2 + corners[2][0]
       },
-
       y_range: {
         start: imgH/2 + corners[1][1],
         end: imgH/2 + corners[0][1]
@@ -132,6 +131,7 @@ export class ImageViewer extends React.Component {
 
   render() {
     return ([
+
 
 
       <p key={'image_toolbar'}>
