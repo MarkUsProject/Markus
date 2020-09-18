@@ -1,0 +1,14 @@
+en:
+  activerecord:
+    models:
+      grader_permission:
+        one: "Grader Permission"
+        other: "Grader Permissions"
+    attributes:
+      grader_permission:
+        manage_assessments: "Manage assessments"
+        manage_submissions: "Manage submissions"
+        run_tests: "Run tests"
+        manage_assessments_tooltip: "Create and manage all the assessments which includes annotations, automated testing, exam templates."
+        manage_submissions_tooltip: "Collect and manage submissions, and release/unrelease the grades."
+        run_tests_tooltip: "Run and stop tests in submissions and results page."
