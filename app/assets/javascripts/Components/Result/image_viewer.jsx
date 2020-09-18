@@ -66,7 +66,6 @@ export class ImageViewer extends React.Component {
     let rotatedBR = this.rotatedCoordinate(bottomRight, this.state.rotation);
 
     let corners;
-    console.log(rotatedBL[0], rotatedTL[0])
     // index of coordinates in corners array matching position in plane
     //    1 - 2
     //    |
@@ -84,14 +83,12 @@ export class ImageViewer extends React.Component {
       default:
         corners = [rotatedBL, rotatedTL, rotatedTR];
     }
-    let xrange = {
-      start: imgW/2 + corners[1][0],
-        end: imgW/2 + corners[2][0]
-    }
-    console.log(xrange);
 
     annotation_manager.add_to_grid({
-      x_range: xrange,
+      x_range: {
+        start: imgW/2 + corners[1][0],
+        end: imgW/2 + corners[2][0]
+      },
       y_range: {
         start: imgH/2 + corners[1][1],
         end: imgH/2 + corners[0][1]
@@ -104,7 +101,7 @@ export class ImageViewer extends React.Component {
 
   rotatedCoordinate = (coordinate, rotation) => {
     if (rotation > 0) {
-      return this.rotatedCoordinate([coordinate[1], -coordinate[0]], rotation - 90);
+      return this.rotatedCoordinate([-coordinate[1], coordinate[0]], rotation - 90);
     }
     return coordinate;
   }
