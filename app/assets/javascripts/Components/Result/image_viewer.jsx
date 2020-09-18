@@ -67,6 +67,7 @@ export class ImageViewer extends React.Component {
     let rotatedBR = this.rotatedCoordinate(bottomRight, this.state.rotation);
 
     let corners;
+
     // index of coordinates in corners array matching position in plane
     //    1 - 2
     //    |
@@ -85,11 +86,13 @@ export class ImageViewer extends React.Component {
         corners = [rotatedBL, rotatedTL, rotatedTR];
     }
 
+
     annotation_manager.add_to_grid({
       x_range: {
         start: imgW/2 + corners[1][0],
         end: imgW/2 + corners[2][0]
       },
+
       y_range: {
         start: imgH/2 + corners[1][1],
         end: imgH/2 + corners[0][1]
@@ -105,6 +108,7 @@ export class ImageViewer extends React.Component {
   rotatedCoordinate = (coordinate, rotation) => {
     if (rotation > 0) {
       return this.rotatedCoordinate([-coordinate[1], coordinate[0]], rotation - 90);
+
     }
     return coordinate;
   }
@@ -116,22 +120,26 @@ export class ImageViewer extends React.Component {
   rotateImage = () => {
     let picture = document.getElementById('image_preview');
 
+
     if (this.state.rotation > 0) {
       picture.addClass('rotate' + this.state.rotation.toString());
       picture.removeClass('rotate' + (this.state.rotation - 90).toString());
     } else {
       picture.removeClass('rotate270');
     }
+
   }
 
   render() {
     return ([
+
 
       <p key={'image_toolbar'}>
         {I18n.t('results.current_rotation', {rotation: this.state.rotation})}
         <button onClick={this.addRotation} className={'inline-button'}>{I18n.t('results.rotate_image')}</button>
       </p>,
       <div id='image_container' key={'image_container'}>
+
 
 
         <div key='sel_box' id='sel_box' className='annotation-holder-active' style={{display: 'none'}}/>
