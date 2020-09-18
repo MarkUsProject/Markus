@@ -42,32 +42,59 @@ export class ImageViewer extends React.Component {
     }
     add_annotation_text(annotation.annotation_text_id, content);
 
-    let imgH = document.getElementById('image_preview').height;
-    let imgW = document.getElementById('image_preview').width;
+    let originalImgH = document.getElementById('image_preview').height;
+    let originalImgW = document.getElementById('image_preview').width;
+    let imgW;
+    let imgH;
 
     if (this.state.rotation === 90 || this.state.rotation === 270) {
-      let originalImgW = imgH;
-      let originalImgH = imgW;
+      imgW = originalImgH;
+      imgH = originalImgW;
     } else {
-      let originalImgW = imgW;
-      let originalImgH = imgH;
+      imgW = originalImgW;
+      imgH = originalImgH;
     }
 
-    let topLeft = [annotation.x_range.start - originalImgW/2, annotation.y_range.start - originalImgH/2];
-    let topRight = [annotation.x_range.end - originalImgW/2, annotation.y_range.start - originalImgH/2];
-    let bottomLeft = [annotation.x_range.start - originalImgW/2, annotation.y_range.end - originalImgH/2];
-    let rotatedTR = this.rotatedCoordinate(topRight);
-    let rotatedTL = this.rotatedCoordinate(topLeft);
-    let rotatedBL = this.rotatedCoordinate(bottomLeft);
+    let topLeft = [annotation.x_range.start - (originalImgW / 2), annotation.y_range.start - (originalImgH / 2)];
+    let topRight = [annotation.x_range.end - (originalImgW / 2), annotation.y_range.start - (originalImgH / 2)];
+    let bottomLeft = [annotation.x_range.start - (originalImgW / 2), annotation.y_range.end - (originalImgH / 2)];
+    let bottomRight = [annotation.x_range.end - (originalImgW / 2), annotation.y_range.end - (originalImgH / 2)];
+
+    let rotatedTR = this.rotatedCoordinate(topRight, this.state.rotation);
+    let rotatedTL = this.rotatedCoordinate(topLeft, this.state.rotation);
+    let rotatedBL = this.rotatedCoordinate(bottomLeft, this.state.rotation);
+    let rotatedBR = this.rotatedCoordinate(bottomRight, this.state.rotation);
+
+    let corners;
+    console.log(rotatedBL[0], rotatedTL[0])
+    // index of coordinates in corners array matching position in plane
+    //    1 - 2
+    //    |
+    //    0
+    switch (this.state.rotation) {
+      case 90:
+        corners = [rotatedBR, rotatedBL, rotatedTL];
+        break;
+      case 180:
+        corners = [rotatedTR, rotatedBR, rotatedBL];
+        break;
+      case 270:
+        corners = [rotatedTL, rotatedTR, rotatedBR];
+        break;
+      default:
+        corners = [rotatedBL, rotatedTL, rotatedTR];
+    }
+    let xrange = {
+      start: imgW/2 + corners[1][0],
+        end: imgW/2 + corners[2][0]
+    }
+    console.log(xrange);
 
     annotation_manager.add_to_grid({
-      x_range: {
-        start: imgW/2 + rotatedTL[0],
-        end: imgW/2 + rotatedTR[0]
-      },
+      x_range: xrange,
       y_range: {
-        start: imgH/2 + rotatedTL[1],
-        end: imgH/2 + rotatedBL[1]
+        start: imgH/2 + corners[1][1],
+        end: imgH/2 + corners[0][1]
       },
       annot_id: annotation.id,
       // TODO: rename the following
@@ -75,8 +102,11 @@ export class ImageViewer extends React.Component {
     });
   };
 
-  rotatedCoordinate = (coordinate, axis) => {
-    // Rotate the point
+  rotatedCoordinate = (coordinate, rotation) => {
+    if (rotation > 0) {
+      return this.rotatedCoordinate([coordinate[1], -coordinate[0]], rotation - 90);
+    }
+    return coordinate;
   }
 
   addRotation = () => {
@@ -85,21 +115,16 @@ export class ImageViewer extends React.Component {
 
   rotateImage = () => {
     let picture = document.getElementById('image_preview');
-    let dimensions = picture.getBoundingClientRect();
-    if (this.state.rotation === 0) {
-      picture.removeAttribute('class');
-    } else {
-      picture.setAttribute('class', 'rotate' + this.state.rotation.toString());
-    }
+    picture.setAttribute('class', 'rotate' + this.state.rotation.toString());
   }
 
   render() {
     return ([
-      <p>
-        Current rotation = {this.state.rotation}°
+      <p key={'image_toolbar'}>
+        Current rotation (Clockwise) = {this.state.rotation}°
         <button onClick={this.addRotation} className={'inline-button'}>Rotate 90° degrees</button>
       </p>,
-      <div id='image_container'>
+      <div id='image_container' key={'image_container'}>
         <div key='sel_box' id='sel_box' className='annotation-holder-active' style={{display: 'none'}}/>
         <img id='image_preview'
           src={this.props.url}
