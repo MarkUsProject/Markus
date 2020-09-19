@@ -18,6 +18,7 @@ class TasController < ApplicationController
 
   def new
     @user = Ta.new
+    @user.build_grader_permission
   end
 
   def edit
@@ -31,7 +32,7 @@ class TasController < ApplicationController
   end
 
   def update
-    @user = Ta.find(params[:user][:id])
+    @user = Ta.find(params[:id])
     @user.update(user_params)
     respond_with(@user)
   end
@@ -91,7 +92,8 @@ class TasController < ApplicationController
   private
 
   def user_params
-    params.require(:user).permit(:user_name, :last_name, :first_name, :email)
+    params.require(:user).permit(:user_name, :last_name, :first_name, :email,
+                                 grader_permission_attributes: [:manage_assessments, :manage_submissions, :run_tests])
   end
 
   def flash_interpolation_options

@@ -158,4 +158,85 @@ describe TasController do
       end
     end
   end
+
+  context '#create' do
+    let(:params) do
+      {
+        user: {
+          grader_permission_attributes: {
+            manage_assessments: false,
+            manage_submissions: true,
+            run_tests: true
+          },
+          user_name: 'Test',
+          first_name: 'Markus',
+          last_name: 'Test'
+        }
+      }
+    end
+    context 'When permissions are selected' do
+      before :each do
+        post :create, params: params
+      end
+      it 'should respond with 302' do
+        expect(response).to have_http_status 302
+      end
+      it 'should create associated grader permissions' do
+        ta = Ta.find_by(user_name: 'Test')
+        expect(GraderPermission.exists?(ta.grader_permission.id)).to be true
+      end
+      it 'should create the permissions with corresponding values' do
+        ta = Ta.find_by(user_name: 'Test')
+        expect(ta.grader_permission.manage_assessments).to be false
+        expect(ta.grader_permission.manage_submissions).to be true
+        expect(ta.grader_permission.run_tests).to be true
+      end
+    end
+
+    context 'when no permissions are selected' do
+      let(:user_params) do
+        {
+          user: {
+            user_name: 'c6conley',
+            first_name: 'Mike',
+            last_name: 'Conley'
+          }
+        }
+      end
+      it 'default value for all permissions should be false' do
+        post :create, params: user_params
+        ta = Ta.find_by(user_name: 'c6conley')
+        expect(ta.grader_permission.manage_assessments).to be false
+        expect(ta.grader_permission.manage_submissions).to be false
+        expect(ta.grader_permission.run_tests).to be false
+      end
+    end
+  end
+
+  context '#update' do
+    let(:ta) { create(:ta, user_name: 'c6conley', first_name: 'Mike', manage_assessments: false, run_tests: true) }
+    context 'Update grader details and grader permissions' do
+      before :each do
+        put :update, params: { id: ta.id,
+                               user: {
+                                 first_name: 'Jack',
+                                 grader_permission_attributes: {
+                                   manage_assessments: true,
+                                   run_tests: false
+                                 }
+                               } }
+        ta.reload
+      end
+      it 'should respond with 302' do
+        expect(response).to have_http_status 302
+      end
+      it 'should update the grader details' do
+        expect(ta.first_name).to eq('Jack')
+      end
+      it 'should update the grader permissions' do
+        expect(ta.grader_permission.manage_assessments).to be true
+        expect(ta.grader_permission.run_tests).to be false
+      end
+    end
+  end
 end
