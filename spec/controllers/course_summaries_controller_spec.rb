@@ -94,7 +94,7 @@ describe CourseSummariesController do
             assessment_marks: Hash[GradeEntryForm.all.map do |ges|
               total_grade = ges.grade_entry_students.find_by(user: student).total_grade
               out_of = ges.grade_entry_items.sum(:out_of)
-              percent = (total_grade.nil? || out_of.nil?) ? nil : ( total_grade * 100 / out_of).round(2)
+              percent = total_grade.nil? || out_of.nil? ? nil : (total_grade * 100 / out_of).round(2)
               [ges.id.to_s.to_sym, {
                 mark: total_grade,
                 percentage: percent
