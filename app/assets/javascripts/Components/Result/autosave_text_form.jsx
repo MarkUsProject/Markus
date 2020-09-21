@@ -48,6 +48,14 @@ export class TextForm extends React.Component {
     setInterval(this.autoSaveText, 3000);
   }
 
+  componentDidUpdate(prevProps, prevState) {
+    if (prevProps.initialValue !== this.props.initialValue) {
+      this.setState({ value: this.props.initialValue });
+    } else if (prevState.initialValue !== this.state.value) {
+      this.updatePreview();
+    }
+  }
+
   handlePersist = debounce(
     () => {
       this.props.persistChanges(this.state.value).then(() => {
