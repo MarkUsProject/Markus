@@ -32,7 +32,7 @@ module CourseSummariesHelper
       max_mark = @max_marks[assessment_id]
       student_data[student_id][:assessment_marks][assessment_id] = {
         mark: mark,
-        percentage: (mark.nil? || max_mark.nil?) ? nil : (mark * 100 / max_mark).round(2)
+        percentage: mark.nil? || max_mark.nil? ? nil : (mark * 100 / max_mark).round(2)
       }
     end
 
@@ -46,7 +46,7 @@ module CourseSummariesHelper
       max_mark = @gef_max_marks[assessment_id]
       student_data[student_id][:assessment_marks][assessment_id] = {
         mark: mark,
-        percentage: (mark.nil? || max_mark.nil?) ? nil : (mark * 100 / max_mark).round(2)
+        percentage: mark.nil? || max_mark.nil? ? nil : (mark * 100 / max_mark).round(2)
       }
     end
 
