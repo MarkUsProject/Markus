@@ -29,9 +29,10 @@ module CourseSummariesHelper
                                 .where('results.released_to_students': released)
                                 .pluck('users.id', 'groupings.assessment_id', 'results.total_mark')
     assignment_grades.each do |student_id, assessment_id, mark|
+      max_mark = @max_marks[assessment_id]
       student_data[student_id][:assessment_marks][assessment_id] = {
         mark: mark,
-        percentage: mark.nil? ? nil : (mark * 100 / @max_marks[assessment_id]).round(2)
+        percentage: (mark.nil? || max_mark.nil?) ? nil : (mark * 100 / max_mark).round(2)
       }
     end
 
@@ -42,9 +43,10 @@ module CourseSummariesHelper
                                 'grade_entry_students.total_grade')
 
     gef_grades.each do |student_id, assessment_id, mark|
+      max_mark = @gef_max_marks[assessment_id]
       student_data[student_id][:assessment_marks][assessment_id] = {
         mark: mark,
-        percentage: mark.nil? ? nil : (mark * 100 / @gef_max_marks[assessment_id]).round(2)
+        percentage: (mark.nil? || max_mark.nil?) ? nil : (mark * 100 / max_mark).round(2)
       }
     end
 
