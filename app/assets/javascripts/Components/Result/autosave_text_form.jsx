@@ -1,6 +1,38 @@
 import React from "react";
 import { render } from "react-dom";
 
+function debounce(func, wait, immediate) {
+  var timeout;
+
+  return function executedFunction() {
+    var context = this;
+    var args = arguments;
+
+    var later = function () {
+      timeout = null;
+      if (!immediate) func.apply(context, args);
+    };
+
+    var callNow = immediate && !timeout;
+
+    clearTimeout(timeout);
+
+    timeout = setTimeout(later, wait);
+
+    if (callNow) func.apply(context, args);
+  };
+}
+
+const SaveMessage = ({ unSaved }) => (
+  <div className="autosave-text">
+    {unSaved ? (
+      <p> There are unsaved changes </p>
+    ) : (
+      <p> Changes have been saved </p>
+    )}
+  </div>
+);
+
 export class TextForm extends React.Component {
   constructor(props) {
     super(props);
@@ -8,7 +40,7 @@ export class TextForm extends React.Component {
       value: props.initialValue,
       unsavedChanges: false,
     };
-    this.button = React.createRef();
+    this.autoSaveText = this.autoSaveText.bind(this);
   }
 
   componentDidMount() {
@@ -16,9 +48,20 @@ export class TextForm extends React.Component {
     setInterval(this.autoSaveText, 3000);
   }
 
+  handlePersist = debounce(
+    () => {
+      this.props.persistChanges(this.state.value).then(() => {
+        this.setState({ unsavedChanges: false });
+      });
+    },
+    1500,
+    false
+  );
+
   updateValue = (event) => {
     const value = event.target.value;
     this.setState({ value, unsavedChanges: true }, this.updatePreview);
+    this.handlePersist();
   };
 
   updatePreview = () => {
@@ -31,23 +74,11 @@ export class TextForm extends React.Component {
     }
   };
 
-  handlePersist() {
-    this.props.persistChanges(this.state.value).then(() => {
-      Rails.enableElement(this.button.current);
-      this.setState({ unsavedChanges: false });
-    });
-  }
-
-  onSubmit = (event) => {
-    event.preventDefault();
-    this.handlePersist();
-  };
-
-  autoSaveText = () => {
+  autoSaveText() {
     if (this.state.unsavedChanges) {
       this.handlePersist();
     }
-  };
+  }
 
   render() {
     return (
@@ -58,15 +89,7 @@ export class TextForm extends React.Component {
             onChange={this.updateValue}
             rows={5}
           />
-          <p>
-            <input
-              type="submit"
-              value={I18n.t("save")}
-              data-disable-with={I18n.t("working")}
-              ref={this.button}
-              disabled={!this.state.unsavedChanges}
-            />
-          </p>
+          <SaveMessage unSaved={this.state.unsavedChanges} />
         </form>
         {this.props.previewId && (
           <div>
