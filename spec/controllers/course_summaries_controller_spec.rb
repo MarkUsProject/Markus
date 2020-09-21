@@ -9,7 +9,8 @@ describe CourseSummariesController do
 
     describe '#download_csv_grades_report' do
       before :each do
-        3.times { create(:assignment_with_criteria_and_results) }
+        assignments = create_list(:assignment_with_criteria_and_results, 3)
+        create(:grouping_with_inviter_and_submission, assignment: assignments[0])
       end
 
       it 'be able to get a csv grade report' do
@@ -52,8 +53,11 @@ describe CourseSummariesController do
 
     describe '#populate' do
       before :each do
-        3.times { create(:assignment_with_criteria_and_results) }
+        assignments = create_list(:assignment_with_criteria_and_results, 3)
+        create(:grouping_with_inviter_and_submission, assignment: assignments[0])
         2.times { create(:grade_entry_form_with_data) }
+        create(:grade_entry_form)
+
         # TODO: Create marking scheme as well
 
         get_as @admin, :populate, format: :json
@@ -88,10 +92,12 @@ describe CourseSummariesController do
             last_name: student.last_name,
             hidden: student.hidden,
             assessment_marks: Hash[GradeEntryForm.all.map do |ges|
+              total_grade = ges.grade_entry_students.find_by(user: student).total_grade
+              out_of = ges.grade_entry_items.sum(:out_of)
+              percent = (total_grade.nil? || out_of.nil?) ? nil : ( total_grade * 100 / out_of).round(2)
               [ges.id.to_s.to_sym, {
-                mark: ges.grade_entry_students.find_by(user: student).total_grade,
-                percentage: (ges.grade_entry_students
-                                .find_by(user: student).total_grade * 100 / ges.grade_entry_items.sum(:out_of)).round(2)
+                mark: total_grade,
+                percentage: percent
               }]
             end
             ]
