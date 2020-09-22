@@ -82,7 +82,7 @@ export class SubmissionSelector extends React.Component {
       this.props.assignment_id, this.props.submission_id, this.props.result_id
     );
 
-    const progressBarWidth = this.props.num_assigned > 0 ? this.props.num_marked/this.props.num_assigned : 1;
+    const progressBarWidth = this.props.num_collected > 0 ? this.props.num_marked/this.props.num_collected : 1;
     let progressBarColour;
     if (progressBarWidth > 0.75) {
       progressBarColour = 'green';
@@ -94,9 +94,9 @@ export class SubmissionSelector extends React.Component {
 
     let meterLow = 0;
     let meterHigh = 1;
-    if (this.props.num_assigned !== null && this.props.num_assigned !== undefined) {
-      meterLow = this.props.num_assigned * 0.35;
-      meterHigh = this.props.num_assigned * 0.75;
+    if (this.props.num_collected !== null && this.props.num_collected !== undefined) {
+      meterLow = this.props.num_collected * 0.35;
+      meterHigh = this.props.num_collected * 0.75;
     }
 
     return (
