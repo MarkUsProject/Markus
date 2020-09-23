@@ -7,6 +7,6 @@ class GroupPolicy < ApplicationPolicy
   end
 
   def manage?
-    user.admin?
+    check?(:manage_assessments?, user)
   end
 end

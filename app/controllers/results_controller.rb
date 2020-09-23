@@ -1,31 +1,5 @@
 class ResultsController < ApplicationController
-  before_action :authorize_only_for_admin,
-                except: [:show, :edit, :update_mark, :view_marks,
-                         :create, :add_extra_mark, :next_grouping,
-                         :get_annotations,
-                         :update_overall_comment, :remove_extra_mark,
-                         :toggle_marking_state,
-                         :download, :download_zip,
-                         :update_remark_request, :cancel_remark_request,
-                         :get_test_runs_instructors, :get_test_runs_instructors_released,
-                         :add_tag, :remove_tag, :revert_to_automatic_deductions,
-                         :run_tests
-                ]
-  before_action :authorize_for_ta_and_admin,
-                only: [:create, :add_extra_mark,
-                       :remove_extra_mark, :get_test_runs_instructors,
-                       :add_tag, :remove_tag, :revert_to_automatic_deductions]
-  before_action :authorize_for_user,
-                only: [:show, :download, :download_zip,
-                       :view_marks, :get_annotations, :show]
-  before_action :authorize_for_student,
-                only: [:update_remark_request,
-                       :cancel_remark_request,
-                       :get_test_runs_instructors_released]
-  before_action only: [:edit, :update_mark, :toggle_marking_state,
-                       :update_overall_comment, :next_grouping] do |c|
-                  c.authorize_for_ta_admin_and_reviewer(params[:assignment_id], params[:id])
-                end
+  before_action { authorize! }
   after_action  :update_remark_request_count,
                 only: [:update_remark_request, :cancel_remark_request,
                        :set_released_to_students]
@@ -86,13 +60,8 @@ class ResultsController < ApplicationController
         end
 
         if assignment.enable_test
-          begin
-            authorize! assignment, to: :run_tests?
-            authorize! grouping, to: :run_tests?
-            authorize! submission, to: :run_tests?
-            authorized = true
-          rescue ActionPolicy::Unauthorized
-            authorized = false
+          authorized = handle_unauthorized(flash: false) do
+            authorize! current_user, to: :run_tests?, context: { assignment: assignment, grouping: grouping, submission: submission }
           end
           data[:enable_test] = true
           data[:can_run_tests] = authorized
@@ -266,16 +235,9 @@ class ResultsController < ApplicationController
     @assignment = @grouping.assignment
 
     # authorization
-    begin
-      authorize! @assignment, to: :run_tests?
-      authorize! @grouping, to: :run_tests?
-      authorize! @submission, to: :run_tests?
+    @authorized = handle_unauthorized(flash_type: :notice, flash: @assignment.enable_test) do
+      authorize! current_user, to: :run_tests?, context: { assignment: @assignment, grouping: @grouping, submission: @submission }
       @authorized = true
-    rescue ActionPolicy::Unauthorized => e
-      @authorized = false
-      if @assignment.enable_test
-        flash_now(:notice, e.result.reasons.full_messages.join(' '))
-      end
     end
 
     m_logger = MarkusLogger.instance
@@ -299,23 +261,15 @@ class ResultsController < ApplicationController
   end
 
   def run_tests
-    begin
-      submission = Result.find(params[:id]).submission
-      assignment = submission.assignment
-      authorize! assignment, to: :run_tests?
-      authorize! submission.grouping, to: :run_tests?
-      authorize! submission, to: :run_tests?
-      test_run = submission.create_test_run!(user: current_user)
-      @current_job = AutotestRunJob.perform_later(request.protocol + request.host_with_port,
-                                                  current_user.id,
-                                                  assignment.id,
-                                                  [{ id: test_run.id }])
-      session[:job_id] = @current_job.job_id
-      flash_message(:notice, I18n.t('automated_tests.tests_running'))
-    rescue StandardError => e
-      message = e.is_a?(ActionPolicy::Unauthorized) ? e.result.reasons.full_messages.join(' ') : e.message
-      flash_message(:error, message)
-    end
+    submission = Result.find(params[:id]).submission
+    assignment = submission.assignment
+    test_run = submission.create_test_run!(user: current_user)
+    @current_job = AutotestRunJob.perform_later(request.protocol + request.host_with_port,
+                                                current_user.id,
+                                                assignment.id,
+                                                [{ id: test_run.id }])
+    session[:job_id] = @current_job.job_id
+    flash_message(:notice, I18n.t('automated_tests.tests_running'))
     redirect_back(fallback_location: root_path)
   end
 

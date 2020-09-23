@@ -1,15 +1,6 @@
 class GroupingPolicy < ApplicationPolicy
   authorize :membership, optional: true
 
-  def run_tests?
-    !user.student? || (
-      check?(:member?) &&
-      check?(:not_in_progress?) &&
-      check?(:tokens_available?) &&
-      check?(:before_due_date?)
-    )
-  end
-
   def member?
     record.accepted_students.include?(user)
   end
@@ -24,9 +15,7 @@ class GroupingPolicy < ApplicationPolicy
 
   # Policies for group invitations.
   def invite_member?
-    allowed_to?(:students_form_groups?) &&
-      allowed_to?(:no_extension?) &&
-      allowed_to?(:before_due_date?)
+    check?(:students_form_groups?) && check?(:no_extension?) && check?(:before_due_date?)
   end
 
   def students_form_groups?

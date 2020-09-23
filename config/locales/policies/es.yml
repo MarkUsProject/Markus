@@ -10,7 +10,7 @@ es:
         tokens_released?: "No se han dado fichas todavía."
         work_alone?: "Usted no puede trabajar sólo en este proyecto. El número mínimo de estudiantes por grupo es %{group_min}."
         can_run_tests?: "UPDATE ME."
-        view_assessments?: "UPDATE ME."
+        view?: "UPDATE ME."
         manage?: "UPDATE ME."
         run_and_stop_tests?: "UPDATE ME."
       grouping:

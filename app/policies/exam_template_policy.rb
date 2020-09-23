@@ -4,6 +4,6 @@ class ExamTemplatePolicy < ApplicationPolicy
 
   # Only admin and authorized grader can manage or modify exam templates
   def manage?
-    allowed_to?(:manage_assessments?, with: GraderPermissionPolicy)
+    check?(:manage_assessments?, user)
   end
 end

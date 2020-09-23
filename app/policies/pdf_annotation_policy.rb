@@ -1,0 +1,2 @@
+class PdfAnnotationPolicy < AnnotationPolicy
+end

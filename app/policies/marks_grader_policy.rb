@@ -1,5 +1,4 @@
-# Policy for starter file groups
-class StarterFileGroupPolicy < ApplicationPolicy
+class MarksGraderPolicy < ApplicationPolicy
   default_rule :manage?
 
   def manage?

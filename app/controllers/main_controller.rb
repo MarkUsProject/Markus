@@ -8,11 +8,9 @@ class MainController < ApplicationController
   protect_from_forgery with: :exception, except: [:login, :page_not_found]
 
   # check for authorization
-  before_action      :authorize_for_user,
-                     except: [:login,
-                              :page_not_found,
-                              :check_timeout]
-  before_action :authorize_for_admin_and_admin_logged_in_as, only: [:login_as]
+  authorize :real_user, through: :real_user
+  before_action(except: [:login, :page_not_found, :check_timeout]) { authorize! }
+  skip_verify_authorized only: [:login, :page_not_found, :check_timeout]
 
   layout 'main'
 
@@ -408,5 +406,11 @@ private
     validation_result[:error] = nil
     validation_result[:user] = found_user
     validation_result
+  end
+
+  protected
+
+  def implicit_authorization_target
+    OpenStruct.new policy_class: MainPolicy
   end
 end

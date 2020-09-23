@@ -1,0 +1,2 @@
+class TextAnnotationPolicy < AnnotationPolicy
+end

@@ -1,0 +1,2 @@
+class ImageAnnotationPolicy < AnnotationPolicy
+end

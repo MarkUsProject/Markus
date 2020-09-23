@@ -12,7 +12,7 @@ en:
         test_groups_exist?: "You cannot run tests because the test framework is not configured."
         tokens_released?: "You cannot run tests because tokens are not available yet."
         work_alone?: "You cannot work alone for this assignment. The minimum group size is %{group_min}."
-        view_assessments?: "You are not allowed to view and manage assessments."
+        view?: "You are not allowed to view and manage assessments."
         manage?: "You do not have permissions to create and manage assignments."
         run_and_stop_tests?: "You do not have permissions to view test runs status and stop tests."
       grouping:

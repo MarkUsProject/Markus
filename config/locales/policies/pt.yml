@@ -10,7 +10,7 @@ pt:
         tokens_released?: "Nenhum tokens dado."
         work_alone?: "Você não pode trabalhar sozinho para este projeto - o tamanho mínimo do grupo é de %{group_min}."
         can_run_tests?: "UPDATE ME."
-        view_assessments?: "UPDATE ME."
+        view?: "UPDATE ME."
         manage?: "UPDATE ME."
         run_and_stop_tests?: "UPDATE ME."
       grouping:

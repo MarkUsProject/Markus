@@ -10,7 +10,7 @@ fr:
         tokens_released?: "Aucun jetons disponible."
         work_alone?: "Vous ne pouvez pas travailler seul sur ce projet. Il faut au minimum %{group_min} étudiants pour former un groupe."
         can_run_tests?: "UPDATE ME."
-        view_assessments?: "UPDATE ME."
+        view?: "UPDATE ME."
         manage?: "UPDATE ME."
         run_and_stop_tests?: "UPDATE ME."
       grouping:
