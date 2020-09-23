@@ -9,7 +9,7 @@ module Api
     def index
       submission = Submission.get_submission_by_grouping_id_and_assignment_id(
         params[:group_id], params[:assignment_id])
-      
+
       test_results = submission.test_group_results
                     .includes(:test_results)
                     .find(params[:test_group_result_id])
@@ -52,7 +52,10 @@ module Api
     # Requires:
     #  - assignment_id
     #  - group_id
-    #  - file_content: Contents of the test results file to be uploaded
+    #  - name
+    #  - status
+    #  - marks_earned
+    #  - output
     def create
       submission = Submission.get_submission_by_grouping_id_and_assignment_id(
         params[:group_id], params[:assignment_id])
@@ -102,9 +105,15 @@ module Api
     end
 
     # Updates a TestResult instance
-    # Requires: assignment_id, group_id, test_script_result_id, id,
-    # Optional: name, completion_status, marks_earned,
-    # input, actual_output, expected_output, created_at, updated_at
+    # Requires:
+    #  - assignment_id
+    #  - group_id
+    #  - id
+    # Optional
+    #  - name
+    #  - status
+    #  - marks_earned
+    #  - output
     def update
       submission = Submission.get_submission_by_grouping_id_and_assignment_id(
         params[:group_id], params[:assignment_id])
