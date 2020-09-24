@@ -1,3 +1,4 @@
+# Main policy class
 class MainPolicy < ApplicationPolicy
   authorize :real_user, optional: true
   default_rule :manage?

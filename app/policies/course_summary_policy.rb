@@ -1,3 +1,4 @@
+# Course summary policy class
 class CourseSummaryPolicy < ApplicationPolicy
   default_rule :manage?
 

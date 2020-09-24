@@ -1,3 +1,4 @@
+# Submission policy class
 class SubmissionPolicy < ApplicationPolicy
   alias_rule :manually_collect_and_begin_grading?, :collect_submissions?, :update_submissions?, to: :manage?
   alias_rule :index?, :browse?, :set_result_marking_state?, :revisions?, :repo_browser?,

@@ -1,3 +1,4 @@
+# Annotation policy class
 class AnnotationPolicy < ApplicationPolicy
   def manage?
     user.admin? || user.ta? || (

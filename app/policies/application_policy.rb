@@ -1,3 +1,4 @@
+# Application policy class
 class ApplicationPolicy < ActionPolicy::Base
   # make :manage? a real catch-all
   def index?

@@ -198,8 +198,7 @@ class SubmissionsController < ApplicationController
     test_runs = groupings.select(&:has_non_empty_submission?).map do |g|
       submission = g.current_submission_used
       unless handle_unauthorized { authorize! current_user, to: :run_tests?, context: { submission: submission } }
-        head 400
-        return
+        return head 400
       end
       { grouping_id: g.id, submission_id: submission.id }
     end

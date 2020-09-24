@@ -1,3 +1,4 @@
+# Assignment policy class
 class AssignmentPolicy < ApplicationPolicy
   default_rule :manage?
   alias_rule :summary?, to: :view?

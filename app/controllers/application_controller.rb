@@ -80,7 +80,7 @@ class ApplicationController < ActionController::Base
   def handle_unauthorized(flash: true, flash_type: :error, reraise: false, additional_errors: nil)
     yield
     true
-  rescue *[ActionPolicy::Unauthorized, *[additional_errors].compact.flatten] => e
+  rescue ActionPolicy::Unauthorized, *[additional_errors].compact.flatten => e
     message = e&.result&.reasons&.full_messages&.join(' ')
     message = e&.result&.message if message.blank?
     message = e.message if message.blank?

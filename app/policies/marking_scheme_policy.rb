@@ -1,3 +1,4 @@
+# Marking scheme policy class
 class MarkingSchemePolicy < ApplicationPolicy
   default_rule :manage?
 

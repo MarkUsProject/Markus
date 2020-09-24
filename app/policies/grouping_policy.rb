@@ -1,3 +1,4 @@
+# Grouping policy class
 class GroupingPolicy < ApplicationPolicy
   authorize :membership, optional: true
 

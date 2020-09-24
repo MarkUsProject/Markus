@@ -1,3 +1,4 @@
+# Criterion policy class
 class CriterionPolicy < ApplicationPolicy
   default_rule :manage?
 
