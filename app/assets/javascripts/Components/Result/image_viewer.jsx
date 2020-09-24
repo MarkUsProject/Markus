@@ -107,7 +107,7 @@ export class ImageViewer extends React.Component {
   }
 
   addRotation = () => {
-    this.setState({rotation: this.state.rotation + 90 > 270 ? 0 : this.state.rotation + 90}, this.rotateImage)
+    this.setState({rotation: this.state.rotation + 90 > 270 ? 0 : this.state.rotation + 90}, this.rotateImage);
   }
 
   rotateImage = () => {
@@ -123,8 +123,8 @@ export class ImageViewer extends React.Component {
   render() {
     return ([
       <p key={'image_toolbar'}>
-        Current rotation (Clockwise) = {this.state.rotation}°
-        <button onClick={this.addRotation} className={'inline-button'}>Rotate 90° degrees</button>
+        {I18n.t('results.current_rotation', {rotation: this.state.rotation})}
+        <button onClick={this.addRotation} className={'inline-button'}>{I18n.t('results.rotate_image')}</button>
       </p>,
       <div id='image_container' key={'image_container'}>
         <div key='sel_box' id='sel_box' className='annotation-holder-active' style={{display: 'none'}}/>
