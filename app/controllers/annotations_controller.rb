@@ -149,6 +149,14 @@ class AnnotationsController < ApplicationController
         return
       end
     end
-    @annotation_text.update(content: params[:content])
+
+    if params[:change_one]
+      new_text = @annotation_text.dup
+      new_text.update(content: params[:content])
+      new_text.save
+      @annotation.update(annotation_text: new_text)
+    else
+      @annotation_text.update(content: params[:content])
+    end
   end
 end

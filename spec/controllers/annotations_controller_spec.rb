@@ -250,6 +250,22 @@ describe AnnotationsController do
         assert_response :success
         expect(anno.annotation_text.reload.content).to eq 'new content'
       end
+
+      it 'successfully updates a singular annotation text' do
+        anno = create(
+            :text_annotation,
+            submission_file: submission_file,
+            creator: user,
+            result: result
+        )
+        put_as user,
+               :update,
+               params: { id: anno.id, assignment_id: assignment.id, submission_file_id: submission_file.id,
+                         result_id: result.id, content: 'new content' },
+               format: :js
+        assert_response :success
+        expect(anno.annotation_text.reload.content).to eq 'new content'
+      end
     end
   end
 

@@ -37,7 +37,10 @@
       <% end %>
 
       <section class='dialog-actions'>
-        <%= submit_tag title, id:'submit_annotation', data: submit_btn_data %>
+        <%= submit_tag (change_one_option ? title_all : title), id:'submit_annotation', data: submit_btn_data %>
+        <% if change_one_option %>
+          &nbsp;&nbsp;<%= submit_tag title_one, id: 'submit_this_annotation', name: 'change_one' %>
+        <% end %>
         <%= button_tag t('cancel'), type: 'button', onclick: 'close_annotation_modal();' %>
       </section>
     </div>

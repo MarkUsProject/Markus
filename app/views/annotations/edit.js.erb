@@ -9,7 +9,10 @@ document.getElementById('annotation_dialog').innerHTML = '<%= escape_javascript(
                    result: @annotation.result,
                    annotation: @annotation,
                    title: t('helpers.submit.update', model: Annotation.model_name.human),
+                   title_one: t('annotations.update_one'),
+                   title_all: t('annotations.update_all'),
                    content: @annotation.annotation_text.content,
+                   change_one_option: !cat_id.nil?,
                    submit_btn_data: cat_id.nil? ? {} : { confirm: t('results.annotation.change_across_submissions') }
                  }
 )%>';
