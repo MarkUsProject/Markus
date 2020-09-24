@@ -53,8 +53,9 @@ describe PeerReview do
   describe '#get_num_collected' do
     let(:assignment) { create(:assignment) }
     let(:student) { create(:student) }
-    let(:grouping1) { create(:grouping_with_inviter_and_submission, inviter: student, assignment: assignment,
-                             is_collected: true) }
+    let(:grouping1) do
+      create(:grouping_with_inviter_and_submission, inviter: student, assignment: assignment, is_collected: true)
+    end
     let(:grouping2) { create(:grouping_with_inviter_and_submission, assignment: assignment, is_collected: true) }
     let(:grouping3) { create(:grouping_with_inviter_and_submission, assignment: assignment, is_collected: true) }
     let(:grouping4) { create(:grouping_with_inviter_and_submission, assignment: assignment, is_collected: false) }
