@@ -4,6 +4,7 @@ pt:
     collapse_all: "Agrupar todos"
     criterion_incomplete_error: "Impossível alterar status das notas para completo, notas estão faltando. Verifique a rúbrica de notas e tenha certeza que cada critério recebeu uma nota."
     current_mark: 'UPDATE ME!'
+    current_rotation: 'UPDATE ME!'
     delete_extra_mark_confirm: "Tem certeza que você deseja remover essa nota extra?"
     expand_all: "Expandir todos"
     expand_unmarked: "Expandir não-selecionados"
@@ -15,6 +16,7 @@ pt:
     no_result: "Nenhuma nota está disponível."
     previous_submission: "Anterior"
     results_for: "Resultados para"
+    rotate_image: 'UPDATE ME!'
     set_to_incomplete: "Reverter para incompleta"
     set_to_complete: "Conjunto para completar"
     subtotal: "Subtotal"

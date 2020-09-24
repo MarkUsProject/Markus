@@ -57,8 +57,8 @@ ImageAnnotationGrid.prototype.draw_holders = function() {
 
   var top_edge = 0;
   var left_edge = 0;
-  var right_edge = image_preview.width;
-  var bottom_edge = image_preview.height;
+  var right_edge = Math.max(image_preview.width, image_preview.height);
+  var bottom_edge = Math.max(image_preview.width, image_preview.height);
 
   for (var i = 0; i < annot_grid.length; i++) {
     var grid_element = annot_grid[i];
