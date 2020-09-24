@@ -1,3 +1,4 @@
+# Result policy class
 class ResultPolicy < ApplicationPolicy
   default_rule :manage?
   alias_rule :update_remark_request?, :cancel_remark_request?, :get_test_runs_instructors_released?, to: :student?
@@ -14,7 +15,10 @@ class ResultPolicy < ApplicationPolicy
     submission = record.submission
     grouping = submission.grouping
     assignment = grouping.assignment
-    check?(:run_tests?, user, context: { user: user, assignment: assignment, grouping: grouping, submission: submission })
+    check?(:run_tests?, user, context: { user: user,
+                                         assignment: assignment,
+                                         grouping: grouping,
+                                         submission: submission })
   end
 
   def grade?

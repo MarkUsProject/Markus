@@ -1,3 +1,4 @@
+# Section policy class
 class SectionPolicy < ApplicationPolicy
   default_rule :manage?
 

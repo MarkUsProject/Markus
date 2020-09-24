@@ -61,7 +61,9 @@ class ResultsController < ApplicationController
 
         if assignment.enable_test
           authorized = handle_unauthorized(flash: false) do
-            authorize! current_user, to: :run_tests?, context: { assignment: assignment, grouping: grouping, submission: submission }
+            authorize! current_user, to: :run_tests?, context: { assignment: assignment,
+                                                                 grouping: grouping,
+                                                                 submission: submission }
           end
           data[:enable_test] = true
           data[:can_run_tests] = authorized
@@ -236,7 +238,9 @@ class ResultsController < ApplicationController
 
     # authorization
     @authorized = handle_unauthorized(flash_type: :notice, flash: @assignment.enable_test) do
-      authorize! current_user, to: :run_tests?, context: { assignment: @assignment, grouping: @grouping, submission: @submission }
+      authorize! current_user, to: :run_tests?, context: { assignment: @assignment,
+                                                           grouping: @grouping,
+                                                           submission: @submission }
       @authorized = true
     end
 
