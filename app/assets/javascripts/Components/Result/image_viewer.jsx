@@ -59,10 +59,26 @@ export class ImageViewer extends React.Component {
       imgH = originalImgH;
     }
 
-    let topLeft = [annotation.x_range.start - (originalImgW / 2), annotation.y_range.start - (originalImgH / 2)];
-    let topRight = [annotation.x_range.end - (originalImgW / 2), annotation.y_range.start - (originalImgH / 2)];
-    let bottomLeft = [annotation.x_range.start - (originalImgW / 2), annotation.y_range.end - (originalImgH / 2)];
-    let bottomRight = [annotation.x_range.end - (originalImgW / 2), annotation.y_range.end - (originalImgH / 2)];
+    // this is wrong
+    // let xzoom = Math.floor(this.state.zoom * (annotation.x_range.end - annotation.x_range.start) / 2);
+    // let yzoom = Math.floor(this.state.zoom * (annotation.y_range.end - annotation.y_range.start) / 2);
+
+    let topLeft = [
+      annotation.x_range.start - (originalImgW / 2) - xzoom,
+      annotation.y_range.start - (originalImgH / 2) - yzoom
+    ];
+    let topRight = [
+      annotation.x_range.end - (originalImgW / 2) + xzoom,
+      annotation.y_range.start - (originalImgH / 2) - yzoom
+    ];
+    let bottomLeft = [
+      annotation.x_range.start - (originalImgW / 2) - xzoom,
+      annotation.y_range.end - (originalImgH / 2) + yzoom
+    ];
+    let bottomRight = [
+      annotation.x_range.end - (originalImgW / 2) + xzoom,
+      annotation.y_range.end - (originalImgH / 2) + yzoom
+    ];
 
     let rotatedTR = this.rotatedCoordinate(topRight, this.state.rotation);
     let rotatedTL = this.rotatedCoordinate(topLeft, this.state.rotation);
