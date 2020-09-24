@@ -36,6 +36,9 @@ pt:
       select_some_text: "Você deve selecionar algum texto do código fonte."
       select_an_area: "Você deve selecionar uma área da imagem para anotar."
       select_an_area_pdf: "Você deve selecionar uma área do PDF para anotar."
+      similar_annotations_found:
+        one: "Você quis dizer? (1 anotação semelhante encontrada)"
+        other: "Você quis dizer? (%{count} anotações semelhantes encontradas)"
 
     # Remark requests
     remark:
