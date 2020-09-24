@@ -6,7 +6,10 @@ export class ImageViewer extends React.Component {
   constructor() {
     super();
     this.state = {
-      rotation: 0
+      rotation: 0,
+      zoom: 1,
+      heightChange: 0,
+      widthChange: 0
     };
   }
 
@@ -115,6 +118,42 @@ export class ImageViewer extends React.Component {
   addRotation = () => {
     this.setState({rotation: this.state.rotation + 90 > 270 ? 0 : this.state.rotation + 90}, this.rotateImage);
   }
+  zoomIn = () => {
+    let picture = document.getElementById('image_preview');
+    if (this.state.heightChange === 0 && this.state.zoom === 1) {
+      let widthIncrease = Math.floor(picture.width * .10);
+      let heightIncrease = Math.floor(picture.height * .10);
+      this.setState({
+        widthChange: widthIncrease,
+        heightChange: heightIncrease,
+        zoom: 1.1
+      });
+      picture.width = picture.width + widthIncrease;
+      picture.height = picture.height + heightIncrease;
+    } else {
+      picture.width = picture.width + this.state.widthChange;
+      picture.height = picture.height + this.state.heightChange;
+      this.setState({zoom: this.state.zoom + .1});
+    }
+  }
+  zoomOut = () => {
+    let picture = document.getElementById('image_preview');
+    if (this.state.heightChange === 0 && this.state.zoom === 1) {
+      let widthIncrease = Math.floor(picture.width * .10);
+      let heightIncrease = Math.floor(picture.height * .10);
+      this.setState({
+        widthChange: widthIncrease,
+        heightChange: heightIncrease,
+        zoom: 1.1
+      });
+      picture.width = picture.width - widthIncrease;
+      picture.height = picture.height - heightIncrease;
+    } else if (this.state.zoom > 0) {
+      picture.width = picture.width - this.state.widthChange;
+      picture.height = picture.height - this.state.heightChange;
+      this.setState({zoom: this.state.zoom - .1});
+    }
+  }
 
   rotateImage = () => {
     let picture = document.getElementById('image_preview');
@@ -137,6 +176,9 @@ export class ImageViewer extends React.Component {
       <p key={'image_toolbar'}>
         {I18n.t('results.current_rotation', {rotation: this.state.rotation})}
         <button onClick={this.addRotation} className={'inline-button'}>{I18n.t('results.rotate_image')}</button>
+        Current zoom level = {Math.floor(this.state.zoom * 100)}%
+        <button onClick={this.zoomIn} className={'inline-button'}>Zoom +</button>
+        <button onClick={this.zoomOut} className={'inline-button'}>Zoom -</button>
       </p>,
       <div id='image_container' key={'image_container'}>
 
