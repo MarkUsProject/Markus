@@ -133,7 +133,7 @@ export class ImageViewer extends React.Component {
 
 
 
-      
+
       <p key={'image_toolbar'}>
         {I18n.t('results.current_rotation', {rotation: this.state.rotation})}
         <button onClick={this.addRotation} className={'inline-button'}>{I18n.t('results.rotate_image')}</button>
