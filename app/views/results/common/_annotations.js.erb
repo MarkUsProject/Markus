@@ -302,6 +302,7 @@
     const annotationTextList = document.getElementById('annotation_text_list');
     const value = textArea[0].value;
 
+    $('#annotation_text_id').val('');
     if (value.length < 2) {
       $('#annotation_completion').hide();
       return;
@@ -330,6 +331,7 @@
         annotation.setAttribute('id', elem.id);
         annotation.onclick = () => {
           document.getElementById('new_annotation_content').value = elem.content;
+          $('#annotation_text_id').val(elem.id);
           $('#new_annotation_category').val(elem.annotation_category_id);
         }
         annotation.innerText = elem.content;

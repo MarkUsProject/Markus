@@ -26,6 +26,7 @@
       </ul>
       <p></p>
       <h3><%= t(:preview) %></h3>
+      <%= hidden_field_tag 'annotation_text_id', value: '' %>
       <div id="annotation_preview" class="preview"></div>
       <% if @current_user.is_reviewer_for?(assignment.pr_assignment, result) %>
         <%= hidden_field_tag 'new_annotation_category', value: t('annotation_categories.one_time_only') %>
