@@ -30,6 +30,7 @@ class StudentMembership < Membership
   after_destroy :update_repo_permissions_after_destroy
 
   def must_be_valid_student
+    return if user.is_a?(TestStudent)
     if user && !user.is_a?(Student)
       errors.add('base', 'User must be a student')
       return false

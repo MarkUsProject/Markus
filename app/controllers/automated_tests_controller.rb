@@ -55,7 +55,7 @@ class AutomatedTestsController < ApplicationController
   end
 
   def run_tests
-    current_user = TestStudent.find_or_create_by(user_name: 'teststudent') do |user|
+    test_user = TestStudent.find_or_create_by(user_name: 'teststudent') do |user|
       user.first_name = 'Test'
       user.last_name = 'Student'
       user.hidden = true
