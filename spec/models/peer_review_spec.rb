@@ -50,7 +50,7 @@ describe PeerReview do
     end
   end
 
-  describe '#get_num_collected' do
+  describe '#get_num_collected & #get_num_marked' do
     let(:assignment) { create(:assignment) }
     let(:student) { create(:student) }
     let(:grouping1) do
@@ -62,9 +62,18 @@ describe PeerReview do
     let!(:peer_review1) { create(:peer_review, reviewer_id: grouping1.id, result_id: grouping2.current_result.id) }
     let!(:peer_review2) { create(:peer_review, reviewer_id: grouping1.id, result_id: grouping3.current_result.id) }
     let!(:peer_review3) { create(:peer_review, reviewer_id: grouping1.id, result_id: grouping4.current_result.id) }
-    context 'No of collected submissions assigned to a reviewer' do
+    context '#get_num_collected' do
       it 'should return no of collected submissions' do
         expect(PeerReview.get_num_collected(grouping1.id)).to eq(2)
+      end
+    end
+    context '#get_num_marked' do
+      before do
+        grouping2.current_result.update(marking_state: Result::MARKING_STATES[:complete])
+        grouping2.reload
+      end
+      it 'should return no of marked submissions which are collected' do
+        expect(PeerReview.get_num_marked(grouping1.id)).to eq(1)
       end
     end
   end
