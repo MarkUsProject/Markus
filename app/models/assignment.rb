@@ -744,7 +744,7 @@ class Assignment < Assessment
 
   def get_num_marked(ta_id = nil)
     if ta_id.nil?
-      results_join = groupings.left_outer_joins(:current_result)
+      results_join = groupings.left_outer_joins(:current_result).where(is_collected: true)
       num_incomplete = results_join.where('results.id': nil)
                                    .or(results_join.where('results.marking_state': 'incomplete'))
                                    .count
