@@ -80,10 +80,6 @@ class PeerReview < ApplicationRecord
     self.delete_all_peer_reviews_for(selected_reviewee_group_ids)
   end
 
-  def self.get_num_assigned(reviewer_group)
-    self.where(reviewer_id: reviewer_group).size
-  end
-
   def self.get_num_collected(reviewer_group)
     Grouping.joins(:peer_reviews)
             .where('peer_reviews.reviewer_id': reviewer_group)
