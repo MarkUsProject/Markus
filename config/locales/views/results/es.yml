@@ -45,6 +45,9 @@ es:
       select_some_text: "Usted debe seleccionar el código al que pertenece la anotación."
       select_an_area: "Usted debe seleccionar un área o imagen a anotar."
       select_an_area_pdf: "Usted debe seleccionar un área o imagen a anotar."
+      similar_annotations_found:
+        one: "¿Querías decir? (1 anotación similar encontrada)"
+        other: "¿Querías decir? (Se encontraron %{count} anotaciones similares)"
 
     # Remark requests
     remark:

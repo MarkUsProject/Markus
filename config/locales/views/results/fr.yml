@@ -39,6 +39,9 @@ fr:
       select_some_text: "Vous devez sélectionner du texte."
       select_an_area: "Vous devez sélectionner une zone sur l'image pour annoter."
       select_an_area_pdf: "Vous devez sélectionner une zone sur le PDF pour annoter."
+      similar_annotations_found:
+        one: "Vouliez-vous dire? (1 annotation similaire trouvée)"
+        other: "Vouliez-vous dire? (%{count} annotations similaires trouvées)"
 
     # Remark requests
     remark:
