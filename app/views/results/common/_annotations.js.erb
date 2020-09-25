@@ -344,7 +344,7 @@
     var typing_timer;
     const textArea = $('#new_annotation_content');
 
-    textArea.keyup(function(e) {
+    textArea.keydown(function(e) {
       var keyCode = e.keyCode || e.which;
       if (keyCode == 9) {
         e.preventDefault();
@@ -355,7 +355,9 @@
             + this.value.substring(end);
         this.selectionStart = this.selectionEnd = start + 2;
       }
+    });
 
+    textArea.keyup(function(e) {
       if (typing_timer) {
         clearTimeout(typing_timer);
       }
