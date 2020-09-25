@@ -1,5 +1,6 @@
 # Changelog
 ## [unreleased]
+- Add annotation completion to annotation modal (#4851)
 - Introduce the ability to designate criteria as 'bonus' marks (#4804)
 - Enable variable permissions for graders (#4601)
 
