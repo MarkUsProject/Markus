@@ -31,7 +31,7 @@
                           id: result.id) %>
           </p>
         <% end %>
-      <% elsif assignment.due_date < Time.zone.now %>
+      <% elsif assignment.due_date < Time.current %>
         <%= t('results.no_result') %>
       <% end %>
     </td>

@@ -724,7 +724,7 @@ class ResultsController < ApplicationController
       @submission = Submission.find(params[:id])
       @submission.update(
         remark_request: params[:submission][:remark_request],
-        remark_request_timestamp: Time.zone.now
+        remark_request_timestamp: Time.current
       )
       if params[:save]
         flash_message(:success, I18n.t('results.remark.update_success'))

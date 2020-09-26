@@ -34,7 +34,6 @@ describe ResultsController do
       expect(response).to redirect_to action: 'login', controller: 'main'
     end
   end
-
   def self.test_no_flash
     it 'should not display any flash messages' do
       expect(flash).to be_empty
@@ -757,7 +756,7 @@ describe ResultsController do
         context 'when a remark request exists' do
           let(:remarked) do
             submission.make_remark_result
-            submission.update(remark_request_timestamp: Time.zone.now)
+            submission.update(remark_request_timestamp: Time.current)
             submission
           end
           let(:params) { { assignment_id: assignment.id, submission_id: remarked.id, id: incomplete_result.id } }

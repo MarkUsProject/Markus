@@ -22,16 +22,16 @@ class SubmissionRule < ApplicationRecord
     reset_collection_time if @can_collect_now.nil?
     section_id = section.nil? ? 0 : section.id
     return @can_collect_now[section_id] unless @can_collect_now[section_id].nil?
-    @can_collect_now[section_id] = Time.zone.now >= get_collection_time(section)
+    @can_collect_now[section_id] = Time.current >= get_collection_time(section)
   end
 
   def can_collect_all_now?
     return @can_collect_all_now unless @can_collect_all_now.nil?
-    @can_collect_all_now = Time.zone.now >= assignment.latest_due_date
+    @can_collect_all_now = Time.current >= assignment.latest_due_date
   end
 
   def can_collect_grouping_now?(grouping)
-    Time.zone.now >= calculate_grouping_collection_time(grouping)
+    Time.current >= calculate_grouping_collection_time(grouping)
   end
 
   # Cache that allows us to quickly get collection time
