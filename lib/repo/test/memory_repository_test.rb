@@ -292,7 +292,7 @@ class MemoryRepositoryTest < ActiveSupport::TestCase
       txn.add("/"+filename, file_contents)
 
       # collect a timestamp for later use
-      repo_timestamp = Time.now
+      repo_timestamp = Time.current
 
       # remove a file
       txn.remove("/test.xml", @repo.get_latest_revision().revision_identifier) # remove a file previously existent in current rev.
@@ -315,7 +315,7 @@ class MemoryRepositoryTest < ActiveSupport::TestCase
       end
 
       # test the timestamp-revision stuff
-      rev_num_by_timestamp = @repo.get_revision_by_timestamp(Time.now)
+      rev_num_by_timestamp = @repo.get_revision_by_timestamp(Time.current)
       latest_rev = @repo.get_latest_revision()
       assert_instance_of(Repository::MemoryRevision, rev_num_by_timestamp, "Revision number is of wrong type")
       assert_instance_of(Repository::MemoryRevision, latest_rev, "Revision number is of wrong type")

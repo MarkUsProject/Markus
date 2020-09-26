@@ -3,7 +3,7 @@ FactoryBot.define do
     sequence(:short_identifier) { |i| "Spreadsheet #{i}" }
     description { Faker::Lorem.sentence }
     message { Faker::Lorem.sentence }
-    due_date { Time.now }
+    due_date { Time.current }
     is_hidden { false }
     show_total { false }
   end
@@ -12,7 +12,7 @@ FactoryBot.define do
     sequence(:short_identifier) { |i| "Spreadsheet #{i} (with data)" }
     description { Faker::Lorem.sentence }
     message { Faker::Lorem.sentence }
-    due_date { Time.now }
+    due_date { Time.current }
     is_hidden { false }
     show_total { false }
     after(:create) do |grade_entry_form_with_data|
@@ -29,7 +29,7 @@ FactoryBot.define do
     sequence(:short_identifier) { |i| "Spreadsheet #{i} (with data and total)" }
     description { Faker::Lorem.sentence }
     message { Faker::Lorem.sentence }
-    due_date { Time.now }
+    due_date { Time.current }
     is_hidden { false }
     show_total { true }
     after(:create) do |grade_entry_form_with_data|
