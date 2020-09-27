@@ -29,9 +29,9 @@ function debounce(func, wait, immediate) {
 const SaveMessage = ({ unSaved }) => (
   <div className="autosave-text">
     {unSaved ? (
-      <p> There are unsaved changes </p>
+      <p class="invalid-icon">{I18n.t("results.autosave.unsaved")}</p>
     ) : (
-      <p> Changes have been saved </p>
+      <p class="valid-icon">{I18n.t("results.autosave.saved")}</p>
     )}
   </div>
 );

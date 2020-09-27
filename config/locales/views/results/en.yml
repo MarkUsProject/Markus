@@ -70,3 +70,7 @@ en:
       previous_level: "Select previous level"
       toggle_compact: "Toggle fullscreen"
       when_rubric: "(When on rubric) "
+
+    autosave:
+      unsaved: "There are unsaved changed"
+      saved: "Changes have been saved"
