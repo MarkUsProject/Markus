@@ -1,6 +1,9 @@
 import React from "react";
 import { render } from "react-dom";
 
+// We attempt to autosave once [saveAfterMs] has elapsed from the last user action
+const saveAfterMs = 1500;
+
 function debounce(func, wait, immediate) {
   var timeout;
 
@@ -40,12 +43,10 @@ export class TextForm extends React.Component {
       value: props.initialValue,
       unsavedChanges: false,
     };
-    this.autoSaveText = this.autoSaveText.bind(this);
   }
 
   componentDidMount() {
     this.updatePreview();
-    setInterval(this.autoSaveText, 3000);
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -62,7 +63,7 @@ export class TextForm extends React.Component {
         this.setState({ unsavedChanges: false });
       });
     },
-    1500,
+    saveAfterMs,
     false
   );
 
@@ -81,12 +82,6 @@ export class TextForm extends React.Component {
       MathJax.Hub.Queue(["Typeset", MathJax.Hub, this.props.previewId]);
     }
   };
-
-  autoSaveText() {
-    if (this.state.unsavedChanges) {
-      this.handlePersist();
-    }
-  }
 
   render() {
     return (
