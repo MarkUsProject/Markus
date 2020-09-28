@@ -62,8 +62,8 @@ module Api
       else
         ## create the zip name with the user name to have less chance to delete
         ## a currently downloading file
-        short_id = assignment.short_identifier
-        zip_name = Pathname.new(short_id + '_' + current_user.user_name + '.zip')
+        version = params[:collected].present? ? 'collected' : 'latest'
+        zip_name = "#{assignment.short_identifier}_#{group.group_name}_#{current_user.user_name}_#{version}.zip"
         zip_path = Pathname.new('tmp') + zip_name
 
         ## delete the old file if it exists
@@ -77,7 +77,7 @@ module Api
             else
               revision = repo.get_latest_revision
             end
-            repo.send_tree_to_zip(assignment.repository_folder, zip_file, zip_name + group.group_name, revision)
+            repo.send_tree_to_zip(assignment.repository_folder, zip_file, zip_name, revision)
           end
         end
 

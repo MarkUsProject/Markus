@@ -30,6 +30,11 @@ describe Api::GroupsController do
       delete :destroy, params: { id: 1, assignment_id: 1 }
       expect(response.status).to eq(403)
     end
+
+    it 'should fail to authenticate a GET annotations request' do
+      get :annotations, params: { id: 1, assignment_id: 1 }
+      expect(response.status).to eq(403)
+    end
   end
   context 'An authenticated request requesting' do
     let(:assignment) { create :assignment }
@@ -466,6 +471,26 @@ describe Api::GroupsController do
         it 'should set the marking state to complete' do
           expect(submission.current_result.marking_state).to eq(Result::MARKING_STATES[:incomplete])
         end
+      end
+    end
+    describe 'GET annotations' do
+      let(:assignment) { create :assignment }
+      let(:grouping) { create :grouping, assignment: assignment }
+      let(:submission) { create :version_used_submission, grouping: grouping }
+      let(:submission_file) { create :submission_file, submission: submission }
+      let!(:annotation) { create :text_annotation, submission_file: submission_file }
+      let(:response_type) { 'application/xml' }
+      before do
+        request.env['HTTP_ACCEPT'] = response_type
+        get :annotations, params: { assignment_id: assignment.id, id: grouping.id }
+      end
+      it 'should get annotations for the given group' do
+        skip 'fails on travis only'
+        content = Hash.from_xml(response.body)
+        expect(content['annotations']['annotation']['content']).to eq annotation.annotation_text.content
+      end
+      it 'should respond with 200' do
+        expect(response.status).to eq(200)
       end
     end
   end

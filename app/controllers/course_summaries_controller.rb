@@ -14,6 +14,7 @@ class CourseSummariesController < ApplicationController
     marking_schemes = {}
     if current_user.admin?
       visible_assessments = Assessment.all.order(id: :asc)
+      released_ids = visible_assessments.ids
       MarkingScheme.all.each do |m|
         grades = m.students_weighted_grades_array(current_user)
         marking_schemes[m.name] = { average: DescriptiveStatistics.mean(grades).round(2),
@@ -21,9 +22,20 @@ class CourseSummariesController < ApplicationController
       end
     else
       visible_assessments = Assessment.where(is_hidden: false).order(id: :asc)
+      released_ids = current_user.accepted_groupings
+                                 .joins(:current_result)
+                                 .where('results.released_to_students': true)
+                                 .pluck('groupings.assessment_id')
+      released_ids += current_user.grade_entry_students
+                                  .where(released_to_student: true)
+                                  .pluck('grade_entry_students.assessment_id')
     end
     visible_assessments.each do |a|
-      visible_assessments_info[a.short_identifier] = assessment_overview(a)
+      if released_ids.include? a.id
+        visible_assessments_info[a.short_identifier] = assessment_overview(a)
+      else
+        visible_assessments_info[a.short_identifier] = {}
+      end
     end
     render json: {
       assessment_info: visible_assessments_info,

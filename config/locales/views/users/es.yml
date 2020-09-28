@@ -41,7 +41,7 @@ es:
   users:
     api_key:
       help_html: "La clave API es usada como autenticación para la interface REST. Mira la
-                  <a href=\"https://github.com/MarkUsProject/Markus/wiki/RESTfulApiDocumentation\">
+                  <a href=\"https://github.com/MarkUsProject/Markus/wiki/RESTful-API\">
                   Wiki de MarkUs</a> para más información acerca del uso de la REST API."
       reset: "Reiniciar mi clave API"
       unavailable: "No disponible"

@@ -61,10 +61,9 @@ module Api
         test_run.create_test_group_results_from_json(params[:test_output])
         render 'shared/http_status', locals: {code: '201', message:
             HttpStatusHelper::ERROR_CODE['message']['201']}, status: 201
-      rescue
+      rescue StandardError => e
         # Some other error occurred
-        render 'shared/http_status', locals: { code: '500', message:
-          HttpStatusHelper::ERROR_CODE['message']['500'] }, status: 500
+        render 'shared/http_status', locals: { code: '500', message: e.message }, status: 500
       end
       rescue ActiveRecord::RecordNotFound => e
         # Could not find submission

@@ -1,5 +1,11 @@
 # Changelog
 
+## [v1.10.1]
+- Fix out of dates link to the wiki (#4843)
+- Fixed a bug where the grade summary view was not being properly displayed if no criteria existed (#4855)
+- Fixed an error preventing graders from viewing grade entry forms (#4857)
+- Fixed an error which used unreleased results to calculate assignment statistics (#4862)
+
 ## [v1.10.0]
 - Issue #3670: Added API for adding and removing extra marks (#4499)
 - Restrict confirmation dialog for annotation editing to annotations that belong to annotation categories (#4540)
