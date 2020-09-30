@@ -252,7 +252,13 @@ describe AnnotationsController do
       end
 
       it 'successfully updates a singular annotation text' do
-        anno = create(
+        anno1 = create(
+          :text_annotation,
+          submission_file: submission_file,
+          creator: user,
+          result: result
+        )
+        anno2 = create(
             :text_annotation,
             submission_file: submission_file,
             creator: user,
@@ -260,11 +266,12 @@ describe AnnotationsController do
         )
         put_as user,
                :update,
-               params: { id: anno.id, assignment_id: assignment.id, submission_file_id: submission_file.id,
-                         result_id: result.id, content: 'new content' },
+               params: { id: anno1.id, assignment_id: assignment.id, submission_file_id: submission_file.id,
+                         result_id: result.id, content: 'new content', change_one: true },
                format: :js
         assert_response :success
-        expect(anno.annotation_text.reload.content).to eq 'new content'
+        expect(anno1.reload.annotation_text.reload.content).to eq 'new content'
+        expect(anno2.reload.annotation_text.reload.content).to_not eq 'new content'
       end
     end
   end
