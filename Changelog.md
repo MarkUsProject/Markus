@@ -1,5 +1,6 @@
 # Changelog
 ## [unreleased]
+- Fix lingering annotation text displays when hovering (#4875)
 - Add annotation completion to annotation modal (#4851)
 - Introduce the ability to designate criteria as 'bonus' marks (#4804)
 - Enable variable permissions for graders (#4601)
