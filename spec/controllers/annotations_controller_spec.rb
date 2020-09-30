@@ -259,10 +259,10 @@ describe AnnotationsController do
           result: result
         )
         anno2 = create(
-            :text_annotation,
-            submission_file: submission_file,
-            creator: user,
-            result: result
+          :text_annotation,
+          submission_file: submission_file,
+          creator: user,
+          result: result
         )
         put_as user,
                :update,
