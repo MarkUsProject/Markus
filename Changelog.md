@@ -1,5 +1,6 @@
 # Changelog
 ## [unreleased]
+- Add singular annotation update feature when updating non-deductive categorized annotations (#4874)
 - Introduce the ability to designate criteria as 'bonus' marks (#4804)
 - Enable variable permissions for graders (#4601)
 - UI for enable/disable variable permissions for graders (#4756)
