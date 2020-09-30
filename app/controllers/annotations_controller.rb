@@ -152,7 +152,7 @@ class AnnotationsController < ApplicationController
 
     if params[:change_one]
       new_text = @annotation_text.dup
-      new_text.update(content: params[:content])
+      new_text.update(content: params[:content], annotation_category_id: nil)
       new_text.save
       @annotation.update(annotation_text: new_text)
     else
