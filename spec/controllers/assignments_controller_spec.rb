@@ -445,6 +445,17 @@ describe AssignmentsController do
         assert_response :not_found
       end
     end
+
+    context 'when an error is raised' do
+      before do
+        allow_any_instance_of(Student).to receive(:create_group_for_working_alone_student).and_raise(RuntimeError)
+        post_as user, :show, params: { id: assignment.id }
+      end
+      it { expect(response).to have_http_status(:redirect) }
+      it 'is expected to flash an error message' do
+        expect(flash[:error]).not_to be_empty
+      end
+    end
   end
 
   describe '#summary' do

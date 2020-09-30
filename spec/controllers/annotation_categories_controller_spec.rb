@@ -603,21 +603,21 @@ describe AnnotationCategoriesController do
       it 'should render an annotation context, where first part of its content matches given string' do
         string = 'This is an'
 
-        get_as user, :find_annotation_text, params: { assignment_id: assignment.id, string: string }
-        expect(response.body).to eq(@annotation_text_one.content)
+        get_as user, :find_annotation_text, params: { assignment_id: assignment.id, string: string }, format: :js
+        expect(response.parsed_body[0]['content']).to eq(@annotation_text_one.content)
       end
       it 'should render an empty string if string does not match first part of any annotation text' do
         string = 'Hello'
 
-        get_as user, :find_annotation_text, params: { assignment_id: assignment.id, string: string }
-        expect(response.body).to eq('')
+        get_as user, :find_annotation_text, params: { assignment_id: assignment.id, string: string }, format: :js
+        expect(response.parsed_body).to eq([])
       end
-      it 'should render an empty string if string matches first part of more than one annotation text' do
+      it 'should render multiple matches if string matches first part of more than one annotation text' do
         create(:annotation_text, annotation_category: annotation_category, content: 'This is another annotation text.')
         string = 'This is an'
 
-        get_as user, :find_annotation_text, params: { assignment_id: assignment.id, string: string }
-        expect(response.body).to eq('')
+        get_as user, :find_annotation_text, params: { assignment_id: assignment.id, string: string }, format: :js
+        expect(response.parsed_body.size).to eq(2)
       end
     end
   end

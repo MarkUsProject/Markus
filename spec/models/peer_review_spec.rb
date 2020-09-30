@@ -49,4 +49,23 @@ describe PeerReview do
       end
     end
   end
+
+  describe '#get_num_collected' do
+    let(:assignment) { create(:assignment) }
+    let(:student) { create(:student) }
+    let(:grouping1) do
+      create(:grouping_with_inviter_and_submission, inviter: student, assignment: assignment, is_collected: true)
+    end
+    let(:grouping2) { create(:grouping_with_inviter_and_submission, assignment: assignment, is_collected: true) }
+    let(:grouping3) { create(:grouping_with_inviter_and_submission, assignment: assignment, is_collected: true) }
+    let(:grouping4) { create(:grouping_with_inviter_and_submission, assignment: assignment, is_collected: false) }
+    let!(:peer_review1) { create(:peer_review, reviewer_id: grouping1.id, result_id: grouping2.current_result.id) }
+    let!(:peer_review2) { create(:peer_review, reviewer_id: grouping1.id, result_id: grouping3.current_result.id) }
+    let!(:peer_review3) { create(:peer_review, reviewer_id: grouping1.id, result_id: grouping4.current_result.id) }
+    context 'No of collected submissions assigned to a reviewer' do
+      it 'should return no of collected submissions' do
+        expect(PeerReview.get_num_collected(grouping1.id)).to eq(2)
+      end
+    end
+  end
 end

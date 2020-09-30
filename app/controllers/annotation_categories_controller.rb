@@ -133,16 +133,20 @@ class AnnotationCategoriesController < ApplicationController
   end
 
   def find_annotation_text
-    @assignment = Assignment.find(params[:assignment_id])
     string = params[:string]
-    texts_for_current_assignment = AnnotationText.joins(annotation_category: :assignment)
-                                                 .where(assessments: { id: @assignment.id })
-    annotation_texts = texts_for_current_assignment.where("content LIKE ?", "#{string}%")
-    if annotation_texts.size == 1
-      render json: "#{annotation_texts.first.content}".html_safe
-    else
-      render json: ''.html_safe
-    end
+
+    texts_for_current_assignment = AnnotationText.joins(:annotation_category)
+                                                 .where('annotation_categories.assessment_id': params[:assignment_id])
+    one_time_texts = AnnotationText.joins(annotations: { result: { grouping: :group } })
+                                   .where(
+                                     creator_id: current_user.id,
+                                     'groupings.assessment_id': params[:assignment_id],
+                                     annotation_category_id: nil
+                                   )
+
+    annotation_texts = texts_for_current_assignment.where('lower(content) LIKE ?', "#{string.downcase}%").limit(10) |
+                       one_time_texts.where('lower(content) LIKE ?', "#{string.downcase}%").limit(10)
+    render json: annotation_texts
   end
 
   # This method handles the drag/drop Annotations sorting.

@@ -4,6 +4,7 @@ en:
     collapse_all: "Collapse All"
     criterion_incomplete_error: "Unable to change marking status to complete because not every criterion has been given a mark."
     current_mark: 'Current mark'
+    current_rotation: 'Current rotation (Clockwise) = %{rotation}°'
     delete_extra_mark_confirm: "Are you sure you want to remove this extra mark?"
     expand_all: "Expand All"
     expand_unmarked: "Expand Unmarked"
@@ -17,6 +18,7 @@ en:
     no_result: "No marks are available yet."
     previous_submission: "Previous"
     results_for: "Results for"
+    rotate_image: 'Rotate 90°'
     set_to_incomplete: "Set to Incomplete"
     set_to_complete: "Set to Complete"
     subtotal: "Subtotal"
@@ -39,6 +41,9 @@ en:
       select_some_text: "You must highlight some code to annotate."
       select_an_area: "You must select an area on the image to annotate."
       select_an_area_pdf: "You must select an area on the PDF to annotate."
+      similar_annotations_found:
+        one: "Did you mean? (1 similar annotation found)"
+        other: "Did you mean? (%{count} similar annotations found)"
 
     # Remark requests
     remark:

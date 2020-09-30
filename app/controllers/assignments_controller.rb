@@ -54,6 +54,7 @@ class AssignmentsController < ApplicationController
         rescue StandardError => e
           flash_message(:error, e.message)
           redirect_to controller: :assignments
+          return
         end
         @grouping = @current_user.accepted_grouping_for(@assignment.id)
       end
