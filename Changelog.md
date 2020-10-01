@@ -5,6 +5,7 @@
 - Enable variable permissions for graders (#4601)
 - UI for enable/disable variable permissions for graders (#4756)
 - Image rotation tools added in marking UI (#4789)
+- Fixed a bug preventing total marks from updating properly if one of the grades is nil (#4887)
 
 ## [v1.10.1]
 - Fix out of dates link to the wiki (#4843)
