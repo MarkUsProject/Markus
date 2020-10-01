@@ -192,7 +192,7 @@ module SessionHandler
   end
 
   def check_imminent_expiry
-    (Time.parse(session[:timeout]) - Time.now) <= 5.minutes
+    !session[:timeout].nil? && (Time.parse(session[:timeout]) - Time.now) <= 5.minutes
   end
 
   # Clear this current user's session set by this app
