@@ -59,25 +59,36 @@ export class ImageViewer extends React.Component {
       imgH = originalImgH;
     }
 
-    // this is wrong
-    // let xzoom = Math.floor(this.state.zoom * (annotation.x_range.end - annotation.x_range.start) / 2);
-    // let yzoom = Math.floor(this.state.zoom * (annotation.y_range.end - annotation.y_range.start) / 2);
+    let midWidth = originalImgW / this.state.zoom / 2;
+    let midHeight = originalImgH / this.state.zoom / 2;
+    let midWidthRotated = imgW / 2;
+    let midHeightRotated = imgH / 2;
+
+    let xstart = annotation.x_range.start - midWidth;
+    let xend = annotation.x_range.end - midWidth;
+    let ystart = annotation.y_range.start - midHeight;
+    let yend = annotation.y_range.end - midHeight;
+
+    xstart *= this.state.zoom;
+    xend *= this.state.zoom;
+    yend *= this.state.zoom;
+    ystart *= this.state.zoom;
 
     let topLeft = [
-      annotation.x_range.start - (originalImgW / 2) - xzoom,
-      annotation.y_range.start - (originalImgH / 2) - yzoom
+      xstart,
+      ystart
     ];
     let topRight = [
-      annotation.x_range.end - (originalImgW / 2) + xzoom,
-      annotation.y_range.start - (originalImgH / 2) - yzoom
+      xend,
+      ystart
     ];
     let bottomLeft = [
-      annotation.x_range.start - (originalImgW / 2) - xzoom,
-      annotation.y_range.end - (originalImgH / 2) + yzoom
+      xstart,
+      yend
     ];
     let bottomRight = [
-      annotation.x_range.end - (originalImgW / 2) + xzoom,
-      annotation.y_range.end - (originalImgH / 2) + yzoom
+      xend,
+      yend
     ];
 
     let rotatedTR = this.rotatedCoordinate(topRight, this.state.rotation);
@@ -108,12 +119,12 @@ export class ImageViewer extends React.Component {
 
     annotation_manager.add_to_grid({
       x_range: {
-        start: imgW/2 + corners[1][0],
-        end: imgW/2 + corners[2][0]
+        start: Math.floor(midWidthRotated + corners[1][0]),
+        end: Math.floor(midWidthRotated + corners[2][0])
       },
       y_range: {
-        start: imgH/2 + corners[1][1],
-        end: imgH/2 + corners[0][1]
+        start: Math.floor(midHeightRotated + corners[1][1]),
+        end: Math.floor(midHeightRotated + corners[0][1])
       },
       annot_id: annotation.id,
       // TODO: rename the following
@@ -139,16 +150,15 @@ export class ImageViewer extends React.Component {
     if (this.state.heightChange === 0 && this.state.zoom === 1) {
       let widthIncrease = Math.floor(picture.width * .10);
       let heightIncrease = Math.floor(picture.height * .10);
+      picture.width = picture.width + widthIncrease;
+      // picture.height = picture.height + heightIncrease;
       this.setState({
         widthChange: widthIncrease,
         heightChange: heightIncrease,
         zoom: 1.1
       });
-      picture.width = picture.width + widthIncrease;
-      picture.height = picture.height + heightIncrease;
     } else {
       picture.width = picture.width + this.state.widthChange;
-      picture.height = picture.height + this.state.heightChange;
       this.setState({zoom: this.state.zoom + .1});
     }
   }
@@ -157,16 +167,14 @@ export class ImageViewer extends React.Component {
     if (this.state.heightChange === 0 && this.state.zoom === 1) {
       let widthIncrease = Math.floor(picture.width * .10);
       let heightIncrease = Math.floor(picture.height * .10);
+      picture.width = picture.width - widthIncrease;
       this.setState({
         widthChange: widthIncrease,
         heightChange: heightIncrease,
         zoom: 1.1
       });
-      picture.width = picture.width - widthIncrease;
-      picture.height = picture.height - heightIncrease;
     } else if (this.state.zoom > 0) {
       picture.width = picture.width - this.state.widthChange;
-      picture.height = picture.height - this.state.heightChange;
       this.setState({zoom: this.state.zoom - .1});
     }
   }
@@ -202,6 +210,7 @@ export class ImageViewer extends React.Component {
         <div key='sel_box' id='sel_box' className='annotation-holder-active' style={{display: 'none'}}/>
         <img id='image_preview'
           src={this.props.url}
+          data-zoom={this.state.zoom}
           onLoad={this.display_annotations}
           alt={I18n.t('results.cant_display_image')} />
       </div>
