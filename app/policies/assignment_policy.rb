@@ -37,7 +37,7 @@ class AssignmentPolicy < ApplicationPolicy
   end
 
   def tokens_released?
-    Time.current >= record.token_start_date
+    !record.token_start_date.nil? && Time.current >= record.token_start_date
   end
 
   def create_group?

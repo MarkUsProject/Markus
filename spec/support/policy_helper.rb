@@ -7,13 +7,13 @@ module PolicyHelper
 
     def matches?(policy)
       @policy = policy
-      @policy.apply(@function)
+      @passed = @policy.apply(@function)
     end
 
     def does_not_match?(policy)
       @policy = policy
-      passed = @policy.apply(@function)
-      if passed
+      @passed = @policy.apply(@function)
+      if @passed
         return false
       end
       if @because_of.nil?
@@ -41,7 +41,11 @@ module PolicyHelper
     end
 
     def failure_message_when_negated
-      'it passed'
+      if @passed
+        'it passed'
+      else
+        "it did not pass because of \"#{@policy.result.reasons.reasons}\" not because of \"#{@because_of}\""
+      end
     end
   end
 
