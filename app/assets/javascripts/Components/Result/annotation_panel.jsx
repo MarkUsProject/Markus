@@ -6,9 +6,7 @@ export class AnnotationPanel extends React.Component {
   persistChanges = (value) => {
     return $.post({
       url: Routes.update_overall_comment_assignment_submission_result_path(
-        this.props.assignment_id,
-        this.props.submission_id,
-        this.props.result_id
+        this.props.assignment_id, this.props.submission_id, this.props.result_id
       ),
       data: { result: { overall_comment: value } },
     });
@@ -17,7 +15,7 @@ export class AnnotationPanel extends React.Component {
   render() {
     let overallCommentElement;
     if (this.props.released_to_students || this.props.remarkSubmitted) {
-      overallCommentElement = <div id="overall_comment_text" key="overall_comment_text" />;
+      overallCommentElement = <div id='overall_comment_text' key='overall_comment_text' />;
     } else {
       overallCommentElement = (
         <TextForm
@@ -28,10 +26,10 @@ export class AnnotationPanel extends React.Component {
       );
     }
     return [
-      <h3 key="h3-overall-comment">{I18n.t("activerecord.attributes.result.overall_comment")}</h3>,
+      <h3 key="h3-overall-comment">{I18n.t('activerecord.attributes.result.overall_comment')}</h3>,
       overallCommentElement,
-      <h3 key="h3-annotations">{I18n.t("activerecord.models.annotation.other")}</h3>,
-      <p key="annotations-desription">{I18n.t("results.annotation.across_all_submission_files")}</p>,
+      <h3 key="h3-annotations">{I18n.t('activerecord.models.annotation.other')}</h3>,
+      <p key="annotations-desription">{I18n.t('results.annotation.across_all_submission_files')}</p>,
       <AnnotationTable
         key="annotations-table"
         detailed={this.props.detailed}

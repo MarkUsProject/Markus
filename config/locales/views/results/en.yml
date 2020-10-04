@@ -57,7 +57,6 @@ en:
       submit_confirm: "You will not be able to see your results until remarking is finished.
                        Are you sure you want to submit your remark request now?"
       submitted_on: "Remark request was submitted on %{time}."
-      update_success: "Remark request saved, but it has not yet been submitted."
 
     keybinding:
       confirm_annotation: "Confirm annotation"
