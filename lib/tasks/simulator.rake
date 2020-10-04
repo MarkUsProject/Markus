@@ -62,7 +62,7 @@ namespace :markus do
         # If the user wants the assignemnt's due date to be not passed, then
         # set  assignment_due_date to two months from now.
         elsif (!ENV["PASSED_DUE_DATE"].nil? and ENV["PASSED_DUE_DATE"] == "false")
-          assignment_due_date = Time.current + 5184000
+          assignment_due_date = Time.current + 5_184_000
         end
         assignment.due_date = assignment_due_date
         assignment.repository_folder = assignment_short_identifier
