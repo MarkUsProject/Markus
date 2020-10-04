@@ -6,7 +6,13 @@ SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter.new([
   SimpleCov::Formatter::HTMLFormatter,
   Coveralls::SimpleCov::Formatter
 ])
-SimpleCov.start
+SimpleCov.start do
+  add_filter 'better_errors'
+  add_filter 'bullet'
+  add_filter 'rails_erd'
+  add_filter 'subversion'
+  add_filter 'svn'
+end
 
 ENV['RAILS_ENV'] ||= 'test'
 require File.expand_path('../../config/environment', __FILE__)
