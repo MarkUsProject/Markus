@@ -50,9 +50,7 @@ AnnotationTextDisplayer.prototype.displayCollection = function(collection, x, y)
 
 // Hide all showing annotations
 AnnotationTextDisplayer.prototype.hideShowing = function() {
-  if (this.getShowing()) {
-    this.hide();
-  }
+  $('.annotation_text_display').hide();
 }
 
 AnnotationTextDisplayer.prototype.updateDisplayNode = function(text, x, y) {
