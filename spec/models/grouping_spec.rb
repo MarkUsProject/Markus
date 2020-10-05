@@ -1385,4 +1385,13 @@ describe Grouping do
       expect(grouping.changed_starter_file_at?(revision)).to be true
     end
   end
+  describe '#access_repo' do
+    let(:grouping) { create :grouping }
+    it 'should make sure the assignment folder exists' do
+      grouping.group.access_repo { |repo| repo.get_latest_revision.files.clear }
+      grouping.access_repo do |repo|
+        expect(repo.get_latest_revision.files[0].name).to eq grouping.assignment.repository_folder
+      end
+    end
+  end
 end
