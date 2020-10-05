@@ -54,9 +54,6 @@ module Api
       elsif param_user_type == 'testserver'
         user_class = TestServer
         user_type = User::TEST_SERVER
-      elsif param_user_type == 'teststudent'
-        user_class = TestStudent
-        user_type = User::TEST_STUDENT
       else # Unknown user type, Invalid HTTP params.
         render 'shared/http_status', locals: { code: '422', message:
           'Unknown user type' }, status: 422
