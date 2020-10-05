@@ -20,7 +20,8 @@ module Api
       end
 
       group = Group.find_by_id(params[:group_id])
-      if group.nil?
+      grouping = group&.grouping_for_assignment(assignment.id)
+      if group.nil? || grouping.nil?
         # No group exists with that id
         render 'shared/http_status', locals: {code: '404', message:
           'No group exists with that id'}, status: 404
@@ -28,7 +29,7 @@ module Api
       end
 
       if params[:collected].present?
-        submission = group.grouping_for_assignment(assignment.id)&.current_submission_used
+        submission = grouping&.current_submission_used
         if submission.nil?
           # No assignment submission by that group
           render 'shared/http_status', locals: { code: '404', message:
@@ -41,7 +42,7 @@ module Api
         path = File.dirname(params[:filename])
         file_name = File.basename(params[:filename])
         path = path == '.' ? '/' : path
-        submission.grouping.access_repo do |repo|
+        grouping.access_repo do |repo|
           if params[:collected].present?
             revision_id = submission.revision_identifier
             revision = repo.get_revision(revision_id)
@@ -70,7 +71,7 @@ module Api
         File.delete(zip_path) if File.exist?(zip_path)
 
         Zip::File.open(zip_path, Zip::File::CREATE) do |zip_file|
-          submission.grouping.access_repo do |repo|
+          grouping.access_repo do |repo|
             if params[:collected].present?
               revision_id = submission.revision_identifier
               revision = repo.get_revision(revision_id)
