@@ -776,8 +776,9 @@ class Grouping < ApplicationRecord
       reset_starter_file_entries
       self.reload.starter_file_entries.each { |entry| entry.add_files_to_transaction(txn) }
       if txn.has_jobs?
-        raise I18n.t('repo.assignment_dir_creation_error',
-                     short_identifier: assignment.short_identifier) unless group_repo.commit(txn)
+        unless group_repo.commit(txn)
+          raise I18n.t('repo.assignment_dir_creation_error', short_identifier: assignment.short_identifier)
+        end
         self.update!(starter_file_timestamp: group_repo.get_latest_revision.server_timestamp)
       end
     end
