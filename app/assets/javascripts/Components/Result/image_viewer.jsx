@@ -45,7 +45,6 @@ export class ImageViewer extends React.Component {
     }
     add_annotation_text(annotation.annotation_text_id, content);
 
-
     let originalImgH = document.getElementById('image_preview').height;
     let originalImgW = document.getElementById('image_preview').width;
     let imgW;
@@ -97,7 +96,6 @@ export class ImageViewer extends React.Component {
     let rotatedBR = this.rotatedCoordinate(bottomRight, this.state.rotation);
 
     let corners;
-
     // index of coordinates in corners array matching position in plane
     //    1 - 2
     //    |
@@ -116,7 +114,6 @@ export class ImageViewer extends React.Component {
         corners = [rotatedBL, rotatedTL, rotatedTR];
     }
 
-
     annotation_manager.add_to_grid({
       x_range: {
         start: Math.floor(midWidthRotated + corners[1][0]),
@@ -132,12 +129,9 @@ export class ImageViewer extends React.Component {
     });
   };
 
-
-
   rotatedCoordinate = (coordinate, rotation) => {
     if (rotation > 0) {
       return this.rotatedCoordinate([-coordinate[1], coordinate[0]], rotation - 90);
-
     }
     return coordinate;
   }
@@ -145,6 +139,7 @@ export class ImageViewer extends React.Component {
   addRotation = () => {
     this.setState({rotation: this.state.rotation + 90 > 270 ? 0 : this.state.rotation + 90}, this.rotateImage);
   }
+
   zoomIn = () => {
     let picture = document.getElementById('image_preview');
     if (this.state.heightChange === 0 && this.state.zoom === 1) {
@@ -162,6 +157,7 @@ export class ImageViewer extends React.Component {
       this.setState({zoom: this.state.zoom + .1});
     }
   }
+
   zoomOut = () => {
     let picture = document.getElementById('image_preview');
     if (this.state.heightChange === 0 && this.state.zoom === 1) {
@@ -188,15 +184,10 @@ export class ImageViewer extends React.Component {
     } else {
       picture.removeClass('rotate270');
     }
-
   }
 
   render() {
     return ([
-
-
-
-
       <p key={'image_toolbar'}>
         {I18n.t('results.current_rotation', {rotation: this.state.rotation})}
         <button onClick={this.addRotation} className={'inline-button'}>{I18n.t('results.rotate_image')}</button>
@@ -205,8 +196,6 @@ export class ImageViewer extends React.Component {
         <button onClick={this.zoomOut} className={'inline-button'}>Zoom -</button>
       </p>,
       <div id='image_container' key={'image_container'}>
-
-
         <div key='sel_box' id='sel_box' className='annotation-holder-active' style={{display: 'none'}}/>
         <img id='image_preview'
           src={this.props.url}
