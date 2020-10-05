@@ -54,14 +54,6 @@ class AutomatedTestsController < ApplicationController
     render layout: 'assignment_content'
   end
 
-  def run_tests
-    test_user = TestStudent.find_or_create_by(user_name: 'teststudent') do |user|
-      user.first_name = 'Test'
-      user.last_name = 'Student'
-      user.hidden = true
-    end
-  end
-
   def execute_test_run
     begin
       assignment = Assignment.find(params[:id])

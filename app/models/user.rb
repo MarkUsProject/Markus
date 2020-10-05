@@ -26,7 +26,7 @@ class User < ApplicationRecord
   validates_uniqueness_of   :email, :allow_nil => true
   validates_uniqueness_of   :id_number, :allow_nil => true
 
-  validates_format_of       :type,          with: /\AStudent|Admin|Ta|TestServer|TestStudent\z/
+  validates_format_of       :type, with: /\AStudent|Admin|Ta|TestServer|TestStudent\z/
   # role constants
   STUDENT = 'Student'
   ADMIN = 'Admin'
