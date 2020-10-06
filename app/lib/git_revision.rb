@@ -124,10 +124,7 @@ class GitRevision < Repository::AbstractRevision
   # Walk the git history once and collect the last commits and pushes that modified the +entries+ found at +path+.
   def add_entries_info(entries, path)
     # use the git reflog to get a list of pushes
-    repo_path, _sep, repo_name = @repo.workdir[0..-2].rpartition(File::SEPARATOR)
-    bare_path = File.join(repo_path, 'bare', "#{repo_name}.git")
-    bare_repo = Rugged::Repository.new(bare_path)
-    reflog = bare_repo.ref('refs/heads/master').log.reverse
+    reflog = @repo.ref('refs/heads/master').log.reverse
     # walk through all the commits until this revision's +@commit+ is found
     # (this is needed to advance the reflog to the right point, since +@commit+ may be between two pushes)
     walker_entries = entries.dup
@@ -154,8 +151,6 @@ class GitRevision < Repository::AbstractRevision
       end
       break if walker_entries.empty?
     end
-  ensure
-    bare_repo.close
   end
 
   def files_at_path(path, with_attrs: true)
