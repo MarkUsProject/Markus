@@ -377,6 +377,11 @@ class GitRepository < Repository::AbstractRepository
     [DUMMY_FILE_NAME]
   end
 
+  def self.bare_path(connect_string)
+    repo_path, _sep, repo_name = connect_string.rpartition(File::SEPARATOR)
+    File.join(repo_path, 'bare', "#{repo_name}.git")
+  end
+
   ####################################################################
   ##  Private method definitions
   ####################################################################
@@ -417,8 +422,9 @@ class GitRepository < Repository::AbstractRepository
         # make sure working directory is up-to-date
         @non_bare_repo.fetch('origin')
         begin
-          @non_bare_repo.reset('master', :hard) # TODO this shouldn't be necessary, but something is messing up the repo.
-        rescue Rugged::ReferenceError   # It seems the master branch might not be correctly setup at first.
+          # TODO: this shouldn't be necessary, but something is messing up the repo.
+          @non_bare_repo.reset('master', :hard)
+        rescue Rugged::ReferenceError # It seems the master branch might not be correctly setup at first.
         end
         @non_bare_repo.reset('origin/master', :hard) # align to whatever is in origin/master
       rescue Rugged::Error, Rugged::OSError => e
@@ -450,11 +456,6 @@ class GitRepository < Repository::AbstractRepository
     m_logger = MarkusLogger.instance
     m_logger.log msg
     raise
-  end
-
-  def self.bare_path(connect_string)
-    repo_path, _sep, repo_name = connect_string.rpartition(File::SEPARATOR)
-    File.join(repo_path, 'bare', "#{repo_name}.git")
   end
 
   def bare_path
