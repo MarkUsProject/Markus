@@ -599,7 +599,7 @@ class Assignment < Assessment
 
     { data: final_data,
       criteriaColumns: criteria_columns,
-      numAssigned: self.get_num_collected(user.admin? ? nil : user.id),
+      numCollected: self.get_num_collected(user.admin? ? nil : user.id),
       numMarked: self.get_num_marked(user.admin? ? nil : user.id) }
   end
 
@@ -744,7 +744,7 @@ class Assignment < Assessment
 
   def get_num_marked(ta_id = nil)
     if ta_id.nil?
-      results_join = groupings.left_outer_joins(:current_result).where(is_collected: true)
+      results_join = groupings.includes(:current_result).where('groupings.is_collected': true)
       num_incomplete = results_join.where('results.id': nil)
                                    .or(results_join.where('results.marking_state': 'incomplete'))
                                    .count
@@ -759,7 +759,9 @@ class Assignment < Assessment
                    .where('m.mark IS NOT NULL AND assessment_id = ?', self.id)
                    .group('m.result_id')
                    .count
-        ta_memberships.includes(grouping: :current_result).where(user_id: ta_id).find_each do |t_mem|
+        ta_memberships.includes(grouping: :current_result)
+            .where(user_id: ta_id)
+            .where('groupings.is_collected': true).find_each do |t_mem|
           next if t_mem.grouping.current_result.nil?
           result_id = t_mem.grouping.current_result.id
           num_marked = marked[result_id] || 0
@@ -769,9 +771,9 @@ class Assignment < Assessment
         end
         n
       else
-        results_join = groupings.joins(:ta_memberships)
-                                .where('memberships.user_id': ta_id)
-                                .left_outer_joins(:current_result)
+        results_join = ta_memberships.includes(grouping: :current_result)
+                           .where(user_id: ta_id)
+                           .where('groupings.is_collected': true)
         num_incomplete = results_join.where('results.id': nil)
                                      .or(results_join.where('results.marking_state': 'incomplete'))
                                      .count
@@ -813,6 +815,7 @@ class Assignment < Assessment
     num_marked = get_num_marked(ta_id)
     avg = 0
     if num_marked != 0
+
       num_annotations = get_num_annotations(ta_id)
       avg = num_annotations.to_f / num_marked
     end
