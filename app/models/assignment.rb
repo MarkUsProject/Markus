@@ -1058,7 +1058,7 @@ class Assignment < Assessment
       groupings = self.groupings.joins(student_memberships: :user).where.not('users.type': 'TestStudent')
     elsif current_user.ta?
       groupings = self.groupings.where(id: self.groupings.joins(ta_memberships: :user)
-                                                         .where('users.type': 'TestStudent')
+                                                         .where.not('users.type': 'TestStudent')
                                                          .where('memberships.user_id': current_user.id)
                                                          .select(:'groupings.id'))
     else

@@ -1726,7 +1726,6 @@ describe Assignment do
 
 
       it 'should return results for groupings a TA is grading only' do
-        data = assignment.current_submission_data(ta)
         expect(data.size).to eq 1
         expect(data[0][:_id]).to be groupings[0].id
       end
