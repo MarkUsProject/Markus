@@ -310,18 +310,21 @@ class RawRevieweesTable extends React.Component {
     const groups_data = this.props.groups.map( (group) => {
       let reviewerGroups = [];
       const reviewee_group_id = group._id;
-      const reviewer_ids = this.props.revieweeToReviewers[reviewee_group_id];
-      reviewer_ids.forEach( (reviewer_group_id) => {
-        const reviewer_group_name = this.props.groupIdToName[reviewer_group_id];
-        reviewerGroups.push(<div key={reviewer_group_id}>
-          <input id={reviewer_group_id}
-                 type='checkbox'
-                 data-reviewer-group-id={reviewer_group_id}
-                 data-reviewee-group-id={reviewee_group_id}
-                 checked={this.checkboxShouldBeChecked(reviewee_group_id, reviewer_group_id)}
-                 onChange={this.reviewerInRevieweeChange}
-          /> {reviewer_group_name}</div>);
-      });
+      let reviewer_ids = [];
+      if (reviewee_group_id in this.props.revieweeToReviewers){
+        reviewer_ids = this.props.revieweeToReviewers[reviewee_group_id];
+        reviewer_ids.forEach( (reviewer_group_id) => {
+          const reviewer_group_name = this.props.groupIdToName[reviewer_group_id];
+          reviewerGroups.push(<div key={reviewer_group_id}>
+            <input id={reviewer_group_id}
+                   type='checkbox'
+                   data-reviewer-group-id={reviewer_group_id}
+                   data-reviewee-group-id={reviewee_group_id}
+                   checked={this.checkboxShouldBeChecked(reviewee_group_id, reviewer_group_id)}
+                   onChange={this.reviewerInRevieweeChange}
+            /> {reviewer_group_name}</div>);
+        });
+      }
       return {
         _id: group._id,
         name: group.group_name,
