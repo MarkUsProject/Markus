@@ -760,8 +760,8 @@ class Assignment < Assessment
                    .group('m.result_id')
                    .count
         ta_memberships.includes(grouping: :current_result)
-            .where(user_id: ta_id)
-            .where('groupings.is_collected': true).find_each do |t_mem|
+                      .where(user_id: ta_id)
+                      .where('groupings.is_collected': true).find_each do |t_mem|
           next if t_mem.grouping.current_result.nil?
           result_id = t_mem.grouping.current_result.id
           num_marked = marked[result_id] || 0
@@ -772,8 +772,8 @@ class Assignment < Assessment
         n
       else
         results_join = ta_memberships.includes(grouping: :current_result)
-                           .where(user_id: ta_id)
-                           .where('groupings.is_collected': true)
+                                     .where(user_id: ta_id)
+                                     .where('groupings.is_collected': true)
         num_incomplete = results_join.where('results.id': nil)
                                      .or(results_join.where('results.marking_state': 'incomplete'))
                                      .count
