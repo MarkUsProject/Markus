@@ -1877,7 +1877,8 @@ describe Assignment do
         let!(:empty_groupings) { create_list :grouping, 2, assignment: assignment }
 
         it 'should not include member information for groups without members' do
-          expect(data.count).to eq 5
+          expect(assignment.groupings.count).to eq 5
+          expect(data.count).to eq 3
           expect(data.select { |h| h.key? :members }.count).to eq 3
         end
 
