@@ -1046,7 +1046,7 @@ describe Assignment do
   describe '#section_due_date' do
     context 'with SectionDueDates disabled' do
       before :each do
-        @assignment = create(:assignment, due_date: Time.now) # Default 'section_due_dates_type' is false
+        @assignment = create(:assignment, due_date: Time.current) # Default 'section_due_dates_type' is false
       end
 
       context 'when no section is specified' do
@@ -1116,7 +1116,7 @@ describe Assignment do
   describe '#latest_due_date' do
     context 'when SectionDueDates are disabled' do
       before :each do
-        @assignment = create(:assignment, due_date: Time.now) # Default 'section_due_dates_type' is false
+        @assignment = create(:assignment, due_date: Time.current) # Default 'section_due_dates_type' is false
       end
 
       it 'returns the due date of the assignment' do
@@ -1127,7 +1127,7 @@ describe Assignment do
     context 'when SectionDueDates are enabled' do
       before :each do
         @assignment = create(:assignment,
-                             due_date: Time.now,
+                             due_date: Time.current,
                              assignment_properties_attributes: { section_due_dates_type: true })
       end
 
@@ -1826,7 +1826,7 @@ describe Assignment do
       end
 
       it 'should report the marking state as not collected if it is after the due date but not collected' do
-        assignment.update(due_date: Time.now - 1.day)
+        assignment.update(due_date: Time.current - 1.day)
         expect(data.map { |h| h[:marking_state] }).to contain_exactly('not_collected',
                                                                       'not_collected',
                                                                       'not_collected')
@@ -2095,7 +2095,7 @@ describe Assignment do
       context 'when one grouping has started their assignment' do
         it 'should contain only the members of that group' do
           g = groupings1.first
-          g.update!(start_time: Time.now)
+          g.update!(start_time: Time.current)
           expect(Assignment.get_repo_auth_records.pluck('users.id')).to contain_exactly(g.inviter.id)
         end
       end

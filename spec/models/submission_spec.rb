@@ -18,7 +18,7 @@ describe Submission do
 
     it 'should create a new remark result' do
       submission = create(:submission)
-      submission.update(remark_request_timestamp: Time.zone.now)
+      submission.update(remark_request_timestamp: Time.current)
       submission.make_remark_result
       expect(submission.remark_result).to_not be_nil
       expect(submission.remark_result.marking_state).to eq(Result::MARKING_STATES[:incomplete])
@@ -28,7 +28,7 @@ describe Submission do
   context 'handle remark requests' do
     let(:submission) do
       submission = create(:submission)
-      submission.update(remark_request_timestamp: Time.zone.now)
+      submission.update(remark_request_timestamp: Time.current)
       submission
     end
     let(:extra_mark) { create(:extra_mark, result: submission.results.first) }
@@ -59,7 +59,7 @@ describe Submission do
     before :each do
       @result = create(:result, marking_state: Result::MARKING_STATES[:incomplete])
       @submission = @result.submission
-      @submission.update(remark_request_timestamp: Time.zone.now)
+      @submission.update(remark_request_timestamp: Time.current)
       @submission.make_remark_result
       @submission.remark_result.update(remark_request_submitted_at: nil)
     end
@@ -93,7 +93,7 @@ describe Submission do
   describe 'The Submission class' do
     it 'create a remark result' do
       s = create(:submission)
-      s.update(remark_request_timestamp: Time.zone.now)
+      s.update(remark_request_timestamp: Time.current)
       s.make_remark_result
       expect(s.remark_result).to_not be_nil
       expect(s.remark_result.marking_state).to eq Result::MARKING_STATES[:incomplete]

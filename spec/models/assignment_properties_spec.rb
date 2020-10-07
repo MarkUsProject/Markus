@@ -38,14 +38,14 @@ describe AssignmentProperties do
     end
     it 'should check that the start_time is before the due_date if this is a timed assignment' do
       extension = build(:timed_assignment,
-                        due_date: Time.now,
-                        assignment_properties_attributes: { start_time: Time.now + 1.hour })
+                        due_date: Time.current,
+                        assignment_properties_attributes: { start_time: Time.current + 1.hour })
       expect(extension.valid?).to be(false)
     end
     it 'should not check that the start_time is before the due_date if this is a timed assignment' do
       extension = build(:assignment,
-                        due_date: Time.now,
-                        assignment_properties_attributes: { start_time: Time.now + 1.hour })
+                        due_date: Time.current,
+                        assignment_properties_attributes: { start_time: Time.current + 1.hour })
       expect(extension.valid?).to be(true)
     end
     it 'should not permit an assignment to be both scanned and timed' do

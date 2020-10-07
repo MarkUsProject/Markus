@@ -302,7 +302,7 @@ class SubmissionsController < ApplicationController
 
     if @assignment.section_due_dates_type
       section_due_dates = Hash.new
-      now = Time.zone.now
+      now = Time.current
       Section.find_each do |section|
         collection_time = @assignment.submission_rule
                                      .calculate_collection_time(section)
@@ -640,7 +640,7 @@ class SubmissionsController < ApplicationController
 
   # This action is called periodically from file_manager.
   def server_time
-    render plain: l(Time.zone.now)
+    render plain: l(Time.current)
   end
 
   def set_result_marking_state
