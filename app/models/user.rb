@@ -32,7 +32,7 @@ class User < ApplicationRecord
   ADMIN = 'Admin'
   TA = 'Ta'
   TEST_SERVER = 'TestServer'
-  TEST_STUDENT = 'TestStudent'
+  TEST_STUDENT = 'TestStudent'.freeze
 
   # Authentication constants to be used as return values
   # see self.authenticated? and main_controller for details
