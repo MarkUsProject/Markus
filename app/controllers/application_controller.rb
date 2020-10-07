@@ -77,18 +77,6 @@ class ApplicationController < ActionController::Base
     @encodings = [%w(Unicode UTF-8), %w(ISO-8859-1 ISO-8859-1)]
   end
 
-  def handle_unauthorized(flash: true, flash_type: :error, reraise: false, additional_errors: nil)
-    yield
-    true
-  rescue ActionPolicy::Unauthorized, *[additional_errors].compact.flatten => e
-    message = e&.result&.reasons&.full_messages&.join(' ')
-    message = e&.result&.message if message.blank?
-    message = e.message if message.blank?
-    flash_message(flash_type, message) if flash
-    raise(e, message) if reraise
-    false
-  end
-
   # add flash message to AJAX response headers
   def flash_to_headers
     return unless request.xhr?

@@ -106,7 +106,7 @@ class NotesController < ApplicationController
 
   def destroy
     @note = Note.find(params[:id])
-    if handle_unauthorized { authorize! @note, to: :modify? }
+    if flash_allowance(:error, allowance_to(:modify?, @note)).value
       @note.destroy
       respond_with(@note)
     else

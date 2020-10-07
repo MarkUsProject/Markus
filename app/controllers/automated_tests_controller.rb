@@ -33,20 +33,23 @@ class AutomatedTestsController < ApplicationController
 
     unless @grouping.nil?
       @grouping.refresh_test_tokens
-      @authorized = handle_unauthorized(flash_type: :notice) do
-        authorize! current_user, to: :run_tests?, context: { assignment: @assignment, grouping: @grouping }
-      end
+      @authorized = flash_allowance(:notice,
+                                    allowance_to(:run_tests?,
+                                                 current_user,
+                                                 context: { assignment: @assignment, grouping: @grouping })).value
     end
 
     render layout: 'assignment_content'
   end
 
   def execute_test_run
-    handle_unauthorized(additional_errors: StandardError) do
-      assignment = Assignment.find(params[:id])
-      grouping = current_user.accepted_grouping_for(assignment.id)
-      grouping.refresh_test_tokens
-      authorize! current_user, to: :run_tests?, context: { assignment: assignment, grouping: grouping }
+    assignment = Assignment.find(params[:id])
+    grouping = current_user.accepted_grouping_for(assignment.id)
+    grouping.refresh_test_tokens
+    allowed = flash_allowance(:error, allowance_to(:run_tests?,
+                                                   current_user,
+                                                   context: { assignment: assignment, grouping: grouping })).value
+    if allowed
       grouping.decrease_test_tokens
       test_run = grouping.create_test_run!(user: current_user)
       @current_job = AutotestRunJob.perform_later(request.protocol + request.host_with_port,
@@ -56,6 +59,9 @@ class AutomatedTestsController < ApplicationController
       session[:job_id] = @current_job.job_id
       flash_message(:notice, I18n.t('automated_tests.tests_running'))
     end
+  rescue StandardError => e
+    flash_message(:error, e.message)
+  ensure
     redirect_to action: :student_interface, id: params[:id]
   end
 

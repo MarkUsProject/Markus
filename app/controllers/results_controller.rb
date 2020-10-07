@@ -60,11 +60,9 @@ class ResultsController < ApplicationController
         end
 
         if assignment.enable_test
-          authorized = handle_unauthorized(flash: false) do
-            authorize! current_user, to: :run_tests?, context: { assignment: assignment,
-                                                                 grouping: grouping,
-                                                                 submission: submission }
-          end
+          authorized = allowance_to(:run_tests?, current_user, context: { assignment: assignment,
+                                                                          grouping: grouping,
+                                                                          submission: submission })
           data[:enable_test] = true
           data[:can_run_tests] = authorized
         else
@@ -237,12 +235,11 @@ class ResultsController < ApplicationController
     @assignment = @grouping.assignment
 
     # authorization
-    @authorized = handle_unauthorized(flash_type: :notice, flash: @assignment.enable_test) do
-      authorize! current_user, to: :run_tests?, context: { assignment: @assignment,
-                                                           grouping: @grouping,
-                                                           submission: @submission }
-      @authorized = true
-    end
+    allowed = allowance_to(:run_tests?, current_user, context: { assignment: @assignment,
+                                                                 grouping: @grouping,
+                                                                 submission: @submission })
+    flash_allowance(:notice, allowed) if @assignment.enable_test
+    @authorized = allowed.value
 
     m_logger = MarkusLogger.instance
     m_logger.log("User '#{current_user.user_name}' viewed submission (id: #{@submission.id})" +

@@ -197,7 +197,7 @@ class SubmissionsController < ApplicationController
     # .where.not(current_submission_used: nil) potentially makes find fail with RecordNotFound
     test_runs = groupings.select(&:has_non_empty_submission?).map do |g|
       submission = g.current_submission_used
-      unless handle_unauthorized { authorize! current_user, to: :run_tests?, context: { submission: submission } }
+      unless flash_allowance(:error, allowance_to(:run_tests?, current_user, context: { submission: submission })).value
         return head 400
       end
       { grouping_id: g.id, submission_id: submission.id }
@@ -206,15 +206,14 @@ class SubmissionsController < ApplicationController
     error = ''
     begin
       if !test_runs.empty?
-        handle_unauthorized(reraise: true) do
-          authorize! current_user, to: :run_tests?, context: { assignment: assignment }
+        if flash_allowance(:error, allowance_to(:run_tests?, current_user, context: { assignment: assignment })).value
+          @current_job = AutotestRunJob.perform_later(request.protocol + request.host_with_port,
+                                                      current_user.id,
+                                                      assignment.id,
+                                                      test_runs)
+          session[:job_id] = @current_job.job_id
+          success = I18n.t('automated_tests.tests_running', assignment_identifier: assignment.short_identifier)
         end
-        @current_job = AutotestRunJob.perform_later(request.protocol + request.host_with_port,
-                                                    current_user.id,
-                                                    assignment.id,
-                                                    test_runs)
-        session[:job_id] = @current_job.job_id
-        success = I18n.t('automated_tests.tests_running', assignment_identifier: assignment.short_identifier)
       else
         error = I18n.t('automated_tests.need_submission')
       end
