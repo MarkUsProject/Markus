@@ -445,6 +445,17 @@ describe AssignmentsController do
         assert_response :not_found
       end
     end
+
+    context 'when an error is raised' do
+      before do
+        allow_any_instance_of(Student).to receive(:create_group_for_working_alone_student).and_raise(RuntimeError)
+        post_as user, :show, params: { id: assignment.id }
+      end
+      it { expect(response).to have_http_status(:redirect) }
+      it 'is expected to flash an error message' do
+        expect(flash[:error]).not_to be_empty
+      end
+    end
   end
 
   describe '#summary' do
@@ -466,7 +477,7 @@ describe AssignmentsController do
 
         it 'responds with the correct keys' do
           expect(response.parsed_body.keys.to_set).to eq Set[
-            'data', 'criteriaColumns', 'numCollected', 'numMarked'
+            'data', 'criteriaColumns', 'numCollected', 'numAssigned', 'numMarked'
           ]
         end
       end
