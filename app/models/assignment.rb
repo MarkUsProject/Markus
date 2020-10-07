@@ -599,7 +599,7 @@ class Assignment < Assessment
 
     { data: final_data,
       criteriaColumns: criteria_columns,
-      numCollected: self.get_num_collected(user.admin? ? nil : user.id),
+      numAssigned: self.get_num_assigned(user.admin? ? nil : user.id),
       numMarked: self.get_num_marked(user.admin? ? nil : user.id) }
   end
 
@@ -726,6 +726,14 @@ class Assignment < Assessment
     assign_graders_to_criteria && self.criterion_ta_associations.where(ta_id: ta_id).any?
   end
 
+  def get_num_assigned(ta_id = nil)
+    if ta_id.nil?
+      groupings.size
+    else
+      ta_memberships.where(user_id: ta_id).size
+    end
+  end
+
   def get_num_collected(ta_id = nil)
     if ta_id.nil?
       groupings.where(is_collected: true).count
@@ -815,7 +823,6 @@ class Assignment < Assessment
     num_marked = get_num_marked(ta_id)
     avg = 0
     if num_marked != 0
-
       num_annotations = get_num_annotations(ta_id)
       avg = num_annotations.to_f / num_marked
     end

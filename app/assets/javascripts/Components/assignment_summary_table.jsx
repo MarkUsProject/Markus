@@ -12,7 +12,7 @@ class AssignmentSummaryTable extends React.Component {
       data: [],
       criteriaColumns: [],
       loading: true,
-      num_collected: 0,
+      num_assigned: 0,
       num_marked: 0
     };
   }
@@ -33,7 +33,7 @@ class AssignmentSummaryTable extends React.Component {
       this.setState({
         data: res.data,
         criteriaColumns: res.criteriaColumns,
-        num_collected: res.numCollected,
+        num_assigned: res.numAssigned,
         num_marked: res.numMarked,
         loading: false
       });
@@ -118,14 +118,14 @@ class AssignmentSummaryTable extends React.Component {
             <meter
               value={this.state.num_marked}
               min={0}
-              max={this.state.num_collected}
-              low={this.state.num_collected * 0.35}
-              high={this.state.num_collected * 0.75}
-              optimum={this.state.num_collected}
+              max={this.state.num_assigned}
+              low={this.state.num_assigned * 0.35}
+              high={this.state.num_assigned * 0.75}
+              optimum={this.state.num_assigned}
             >
-              {this.state.num_marked}/{this.state.num_collected}
+              {this.state.num_marked}/{this.state.num_assigned}
             </meter>
-            {this.state.num_marked}/{this.state.num_collected}&nbsp;{I18n.t('submissions.state.complete')}
+            {this.state.num_marked}/{this.state.num_assigned}&nbsp;{I18n.t('submissions.state.complete')}
           </div>
         </div>
         {this.props.is_admin &&
