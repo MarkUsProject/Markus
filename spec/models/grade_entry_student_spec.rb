@@ -103,31 +103,40 @@ describe GradeEntryStudent do
   end
   context 'self.refresh_total_grades' do
     let(:form) { create(:grade_entry_form) }
-    let(:grade_entry_item) { create(:grade_entry_item, grade_entry_form: form) }
+    let(:grade_entry_items) { create_list(:grade_entry_item, 3, grade_entry_form: form) }
     let!(:students) { create_list :student, 3 }
     let(:grade_entry_student_ids) { form.grade_entry_students.map(&:id) }
-    let(:grades) do
+    before do
       form.grade_entry_students.map do |ges|
-        create :grade, grade_entry_item: grade_entry_item, grade_entry_student: ges, grade: grade
-      end
-    end
-    describe 'when the grade is not nil' do
-      let(:grade) { 1 }
-      it 'updates the total_grade' do
-        grades
-        GradeEntryStudent.refresh_total_grades(grade_entry_student_ids)
-        form.grade_entry_students.each do |ges|
-          expect(ges.reload.total_grade).to eq 1
+        grade_entry_items.each_with_index.map do |gei, ind|
+          create :grade, grade_entry_item: gei, grade_entry_student: ges, grade: grades[ind]
         end
       end
     end
-    describe 'when the grade is nil' do
-      let(:grade) { nil }
+    describe 'when no grades are nil' do
+      let(:grades) { [1, 1, 1] }
+      it 'updates the total_grade' do
+        GradeEntryStudent.refresh_total_grades(grade_entry_student_ids)
+        form.grade_entry_students.each do |ges|
+          expect(ges.reload.total_grade).to eq 3
+        end
+      end
+    end
+    describe 'when the grades are all nil' do
+      let(:grades) { [nil, nil, nil] }
       it 'updates the total_grade to nil' do
-        grades
         GradeEntryStudent.refresh_total_grades(grade_entry_student_ids)
         form.grade_entry_students.each do |ges|
           expect(ges.reload.total_grade).to be_nil
+        end
+      end
+    end
+    describe 'when some grades are nil' do
+      let(:grades) { [nil, 1, 1] }
+      it 'updates the total_grade to nil' do
+        GradeEntryStudent.refresh_total_grades(grade_entry_student_ids)
+        form.grade_entry_students.each do |ges|
+          expect(ges.reload.total_grade).to eq 2
         end
       end
     end

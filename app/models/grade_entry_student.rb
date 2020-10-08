@@ -181,7 +181,7 @@ class GradeEntryStudent < ApplicationRecord
       if h[:total_grade].all?(&:nil?)
         h[:total_grade] = nil
       else
-        h[:total_grade] = h[:total_grade].sum
+        h[:total_grade] = h[:total_grade].compact.sum
       end
       h
     end
