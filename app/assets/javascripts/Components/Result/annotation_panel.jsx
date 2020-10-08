@@ -3,6 +3,36 @@ import { AnnotationTable } from "./annotation_table";
 import { TextForm } from "./autosave_text_form";
 
 export class AnnotationPanel extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      overallComment: props.overallComment,
+    };
+  }
+
+  componentDidMount() {
+    this.renderReleasedComments();
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevProps.overallComment !== this.props.overallComment) {
+      this.setState({overallComment: this.props.overallComment});
+    } else if (prevState.overallComment !== this.state.overallComment) {
+      this.renderReleasedComments();
+    }
+  }
+
+  renderReleasedComments() {
+    if (this.props.released_to_students || this.props.remarkSubmitted) {
+      let target_id = "overall_comment_text";
+      document.getElementById(target_id).innerHTML = marked(
+        this.state.overallComment,
+        { sanitize: true }
+      );
+      MathJax.Hub.Queue(["Typeset", MathJax.Hub, target_id]);
+    }
+  }
+
   persistChanges = (value) => {
     return $.post({
       url: Routes.update_overall_comment_assignment_submission_result_path(
