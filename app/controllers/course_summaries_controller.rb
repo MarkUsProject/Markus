@@ -15,7 +15,7 @@ class CourseSummariesController < ApplicationController
     average_data = columns.map { |h| [h[:Header], nil] }.to_h
     median_data = columns.map { |h| [h[:Header], nil] }.to_h
     individual_data = columns.map { |h| [h[:Header], nil] }.to_h
-    labels = columns.each_with_index.map { |h, i| [ h[:Header], i ] }.to_h
+    labels = columns.each_with_index.map { |h, i| [h[:Header], i] }.to_h
 
     visible_assessments = Assessment.order(id: :asc)
     visible_assessments = visible_assessments.where(is_hidden: false) if current_user.student?
