@@ -8,6 +8,7 @@
 - UI for enable/disable variable permissions for graders (#4756)
 - Image rotation tools added in marking UI (#4789)
 - Fixed a bug preventing total marks from updating properly if one of the grades is nil (#4887)
+- Fixed calculation bugs for grade summary (#4899)
 
 ## [v1.10.2]
 - Ensure that assignment subdirectories in repositories are maintained (#4893)
