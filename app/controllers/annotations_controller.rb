@@ -150,11 +150,12 @@ class AnnotationsController < ApplicationController
       end
     end
 
-    if params[:change_one]
+    if params[:annotation_text] && params[:annotation_text][:change_one] && params[:annotation_text][:change_one] == '1'
       new_text = @annotation_text.dup
-      new_text.update(content: params[:content], annotation_category_id: nil)
-      new_text.save
-      @annotation.update(annotation_text: new_text)
+      ActiveRecord::Base.transaction do
+        new_text.update(content: params[:content], annotation_category_id: nil)
+        @annotation.update(annotation_text: new_text)
+      end
     else
       @annotation_text.update(content: params[:content])
     end

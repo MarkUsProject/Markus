@@ -297,7 +297,7 @@ class Result extends React.Component {
         this.setState({annotations: newAnnotations});
       }
     }
-    update_annotation_text(annotation.id, marked(annotation.content, {sanitize: true}));
+    update_annotation_text(annotation.annotation_text_id, annotation.content, annotation.id);
   };
 
   destroyAnnotation(annotation_id, range, annotation_text_id) {

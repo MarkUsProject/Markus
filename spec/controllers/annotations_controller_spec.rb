@@ -252,14 +252,15 @@ describe AnnotationsController do
       end
 
       it 'successfully updates a singular annotation text' do
+        anno_text = :text_annotation
         anno1 = create(
-          :text_annotation,
+          anno_text,
           submission_file: submission_file,
           creator: user,
           result: result
         )
         anno2 = create(
-          :text_annotation,
+          anno_text,
           submission_file: submission_file,
           creator: user,
           result: result

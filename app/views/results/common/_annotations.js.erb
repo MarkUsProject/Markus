@@ -47,12 +47,15 @@
   /**
    * Update the text in an annotation.
    */
-  function update_annotation_text(annotation_text_id, new_content) {
+  function update_annotation_text(annotation_text_id, new_content, annotation_id = '') {
     if (annotation_manager.getAnnotationTextManager().annotationTextExists(annotation_text_id)) {
       annotation_manager
         .getAnnotationTextManager()
         .getAnnotationText(annotation_text_id)
         .setContent(new_content);
+    } else {
+      add_annotation_text(annotation_text_id, new_content);
+      annotation_manager.updateRelationships(annotation_id, annotation_text_id);
     }
   }
 
@@ -313,6 +316,13 @@
     });
     updatePreview('new_annotation_content', 'annotation_preview');
     modal.open();
+
+    $('#submit_annotation').click(() => {
+      const changeOneOption = document.getElementById('change_one_annotation');
+      if (changeOneOption && !changeOneOption.checked) {
+        return confirm(I18n.t('results.annotation.change_across_submissions'));
+      }
+    });
   }
 
   function close_annotation_modal() {

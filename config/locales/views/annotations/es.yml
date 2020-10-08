@@ -16,7 +16,6 @@ es:
       other: 'UPDATE ME'
       zero: 'UPDATE ME'
     update_one: 'Actualizar esta anotación'
-    update_all: 'Actualizar todas las anotaciones'
 
     download_submission_file:
       begin_annotation: "%{comment_start} ANOTACIÓN %{id}: %{text} %{comment_end}"

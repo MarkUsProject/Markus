@@ -16,8 +16,7 @@ en:
       one: 'Used once'
       other: "Used %{count} times"
       zero: 'Never used'
-    update_one: 'Update This Annotation'
-    update_all: 'Update All Annotations'
+    update_one: 'Update this annotation only'
 
     download_submission_file:
       begin_annotation: "%{comment_start} ANNOTATION %{id}: %{text} %{comment_end}"
