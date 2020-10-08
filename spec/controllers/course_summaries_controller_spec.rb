@@ -113,27 +113,19 @@ describe CourseSummariesController do
       end
 
       it 'returns correct average, median, and total info about assessments' do
-        totals = []
         averages = []
         medians = []
         returned_averages = @response_data[:average_data]
-        returned_totals = []
         returned_medians = @response_data[:median_data]
         Assessment.all.order(id: :asc).each do |a|
-          returned_averages << @response_data[a.short_identifier.to_sym][:average]
-          returned_medians << @response_data[a.short_identifier.to_sym][:median]
-          returned_totals << @response_data[a.short_identifier.to_sym][:total]
           if a.is_a? GradeEntryForm
-            totals << a.grade_entry_items.sum(:out_of)
             averages << a.calculate_average&.round(2)
             medians << a.calculate_median&.round(2)
           else
-            totals << a.max_mark.to_s
             averages << a.results_average&.round(2)
             medians << a.results_median&.round(2)
           end
         end
-        expect(returned_totals).to eq totals
         expect(returned_medians).to eq medians
         expect(returned_averages).to eq averages
       end
@@ -184,7 +176,6 @@ describe CourseSummariesController do
           get_as @student2, :populate, format: :json
           r = response.parsed_body
           expect(r['columns']).to eq []
-          expect(r['assessment_info']).to eq({})
           expect(r['data'][0]['assessment_marks']).to eq({})
           expect(r['data'][0]['user_name']).to eq @student2.user_name
         end
@@ -206,9 +197,6 @@ describe CourseSummariesController do
           get_as student, :populate, format: :json
           r = response.parsed_body
           expect(r['columns'].length).to eq 2
-          expect(r['assessment_info'].map { |a| a[1]['average']&.to_f }).to match_array averages
-          expect(r['assessment_info'].map { |a| a[1]['total']&.to_f }).to match_array [assignment.max_mark.to_f, nil]
-          expect(r['assessment_info'].map { |a| a[1]['median'] }).to match_array [nil, nil]
           expect(r['data'][0]['assessment_marks']).to eq(expected_assessment_marks)
           expect(r['data'][0]['user_name']).to eq student.user_name
         end
@@ -224,14 +212,7 @@ describe CourseSummariesController do
         it 'returns the correct columns' do
           expect(@columns.length).to eq(Assignment.count + GradeEntryForm.count)
           Assessment.find_each do |a|
-            expected = {
-              accessor: "assessment_marks.#{a.id}.mark",
-              Header: a.short_identifier,
-              minWidth: 50,
-              className: 'number',
-              headerStyle: { textAlign: 'right' }
-            }
-            expect(@columns).to include expected
+            expect(@columns.map { |h| h[:accessor] }).to include "assessment_marks.#{a.id}.mark"
           end
         end
 
@@ -247,20 +228,6 @@ describe CourseSummariesController do
             assessment_marks: {}
           }
           expect(@data).to include expected
-        end
-
-        it 'returns no info about assessments' do
-          returned_averages = []
-          returned_totals = []
-          returned_medians = []
-          Assessment.all.order(id: :asc).each do |a|
-            returned_averages << @assessment_info[a.short_identifier.to_sym][:average]
-            returned_medians << @assessment_info[a.short_identifier.to_sym][:median]
-            returned_totals << @assessment_info[a.short_identifier.to_sym][:total]
-          end
-          expect(returned_totals).to eq [nil] * Assessment.all.size
-          expect(returned_medians).to eq [nil] * Assessment.all.size
-          expect(returned_averages).to eq [nil] * Assessment.all.size
         end
       end
     end
