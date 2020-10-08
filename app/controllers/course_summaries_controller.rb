@@ -35,7 +35,7 @@ class CourseSummariesController < ApplicationController
       end
     else
       data.first[:assessment_marks].each do |id, mark_data|
-        individual_data[Assessment.find_by_id(id).short_identifier] = mark_data[:mark]
+        individual_data[Assessment.find_by_id(id).short_identifier] = mark_data[:percentage]
       end
     end
 
