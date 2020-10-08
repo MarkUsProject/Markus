@@ -36,7 +36,7 @@ namespace :db do
             note = Faker::Movies::PrincessBride.quote
             Extension.create(grouping: grouping, time_delta: 1.week, note: note)
         end
-        group.access_repo do |repo|
+        grouping.access_repo do |repo|
           # add files to the root folder of the repo (e.g. "A1")
           # recursively copying contents(files & directories) inside the file_dir
           txn = repo.get_transaction(grouping.inviter.user_name)

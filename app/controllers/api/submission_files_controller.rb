@@ -20,7 +20,8 @@ module Api
       end
 
       group = Group.find_by_id(params[:group_id])
-      if group.nil?
+      grouping = group&.grouping_for_assignment(assignment.id)
+      if group.nil? || grouping.nil?
         # No group exists with that id
         render 'shared/http_status', locals: {code: '404', message:
           'No group exists with that id'}, status: 404
@@ -28,7 +29,7 @@ module Api
       end
 
       if params[:collected].present?
-        submission = group.grouping_for_assignment(assignment.id)&.current_submission_used
+        submission = grouping&.current_submission_used
         if submission.nil?
           # No assignment submission by that group
           render 'shared/http_status', locals: { code: '404', message:
@@ -41,7 +42,7 @@ module Api
         path = File.dirname(params[:filename])
         file_name = File.basename(params[:filename])
         path = path == '.' ? '/' : path
-        group.access_repo do |repo|
+        grouping.access_repo do |repo|
           if params[:collected].present?
             revision_id = submission.revision_identifier
             revision = repo.get_revision(revision_id)
@@ -70,7 +71,7 @@ module Api
         File.delete(zip_path) if File.exist?(zip_path)
 
         Zip::File.open(zip_path, Zip::File::CREATE) do |zip_file|
-          group.access_repo do |repo|
+          grouping.access_repo do |repo|
             if params[:collected].present?
               revision_id = submission.revision_identifier
               revision = repo.get_revision(revision_id)
@@ -113,7 +114,7 @@ module Api
         file = ActionDispatch::Http::UploadedFile.new(tempfile: tmpfile,
                                                       filename: params[:filename],
                                                       type: params[:mime_type])
-        success, messages = grouping.group.access_repo do |repo|
+        success, messages = grouping.access_repo do |repo|
           path = Pathname.new(grouping.assignment.repository_folder)
           add_files([file], @current_user, repo, path: path)
         end
@@ -146,7 +147,7 @@ module Api
             HttpStatusHelper::ERROR_CODE['message']['422'] }, status: 422
         return
       end
-      success, messages = grouping.group.access_repo do |repo|
+      success, messages = grouping.access_repo do |repo|
         new_folders = Pathname.new(params[:folder_path])
         path = Pathname.new(grouping.assignment.repository_folder)
         add_folders([new_folders], @current_user, repo, path: path)
@@ -178,7 +179,7 @@ module Api
         return
       end
 
-      success, messages = grouping.group.access_repo do |repo|
+      success, messages = grouping.access_repo do |repo|
         path = Pathname.new(grouping.assignment.repository_folder)
         remove_files([params[:filename]], @current_user, repo, path: path)
       end
@@ -209,7 +210,7 @@ module Api
             HttpStatusHelper::ERROR_CODE['message']['422'] }, status: 422
         return
       end
-      success, messages = grouping.group.access_repo do |repo|
+      success, messages = grouping.access_repo do |repo|
         folder = params[:folder_path]
         path = Pathname.new(grouping.assignment.repository_folder)
         remove_folders([folder], @current_user, repo, path: path)

@@ -170,7 +170,7 @@ module Api
     # attribute to true for all groupings affected by the change.
     def update_entries_and_warn(starter_file_group)
       starter_file_group.warn_affected_groupings
-      starter_file_group.assignment.assignment_properties.update!(starter_file_updated_at: Time.zone.now)
+      starter_file_group.assignment.assignment_properties.update!(starter_file_updated_at: Time.current)
       starter_file_group.update_entries
     end
 

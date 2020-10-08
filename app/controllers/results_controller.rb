@@ -508,7 +508,7 @@ class ResultsController < ApplicationController
 
     files = submission.submission_files
     Zip::File.open(zip_path, Zip::File::CREATE) do |zip_file|
-      grouping.group.access_repo do |repo|
+      grouping.access_repo do |repo|
         revision = repo.get_revision(revision_identifier)
         repo.send_tree_to_zip(assignment.repository_folder, zip_file, zip_name, revision) do |file|
           submission_file = files.find_by(filename: file.name, path: file.path)
@@ -724,7 +724,7 @@ class ResultsController < ApplicationController
       @submission = Submission.find(params[:id])
       @submission.update(
         remark_request: params[:submission][:remark_request],
-        remark_request_timestamp: Time.zone.now
+        remark_request_timestamp: Time.current
       )
       if params[:save]
         flash_message(:success, I18n.t('results.remark.update_success'))

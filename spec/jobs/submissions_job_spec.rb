@@ -36,8 +36,8 @@ describe SubmissionsJob do
       end
     end
     context 'when a submission exists before the given collection date' do
-      let(:collection_dates) { groupings.map { |g| [g.id, Time.now - 1.hour] }.to_h }
-      let(:job_kwargs) { { collection_dates: groupings.map { |g| [g.id, Time.now] }.to_h } }
+      let(:collection_dates) { groupings.map { |g| [g.id, Time.current - 1.hour] }.to_h }
+      let(:job_kwargs) { { collection_dates: groupings.map { |g| [g.id, Time.current] }.to_h } }
       it 'collects the latest revision' do
         groupings.each do |g|
           g.reload
@@ -47,8 +47,8 @@ describe SubmissionsJob do
       end
     end
     context 'when a submission does not exist before the given collection date' do
-      let(:collection_dates) { groupings.map { |g| [g.id, Time.now + 1.hour] }.to_h }
-      let(:job_kwargs) { { collection_dates: groupings.map { |g| [g.id, Time.now] }.to_h } }
+      let(:collection_dates) { groupings.map { |g| [g.id, Time.current + 1.hour] }.to_h }
+      let(:job_kwargs) { { collection_dates: groupings.map { |g| [g.id, Time.current] }.to_h } }
       it 'collects a nil revision' do
         groupings.each do |g|
           expect(g.reload.current_submission_used.revision_identifier).to be_nil
@@ -66,7 +66,7 @@ describe SubmissionsJob do
   end
   context 'when creating a submission by revision id' do
     before :each do
-      groupings.each { |g| submit_file_at_time(g.assignment, g.group, 'test', Time.now.to_s, 'test.txt', 'aaa') }
+      groupings.each { |g| submit_file_at_time(g.assignment, g.group, 'test', Time.current.to_s, 'test.txt', 'aaa') }
     end
     let(:revision_ids) do
       groupings.map do |g|

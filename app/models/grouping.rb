@@ -471,23 +471,7 @@ class Grouping < ApplicationRecord
     return unless Rails.configuration.x.repository.is_repository_admin # create folder only if we are repo admin
     GroupingStarterFileEntry.transaction do
       self.group.access_repo do |group_repo|
-        assignment_folder = self.assignment.repository_folder
-        txn = group_repo.get_transaction('Markus', I18n.t('repo.commits.assignment_folder',
-                                                          assignment: self.assignment.short_identifier))
-
-        # path may already exist if this is a peer review assignment. In that case do not create
-        # starter files since it should already be there from the parent assignment.
-        unless group_repo.get_latest_revision.path_exists?(assignment_folder)
-          txn.add_path(assignment_folder)
-
-          reset_starter_file_entries
-          self.reload.starter_file_entries.each { |entry| entry.add_files_to_transaction(txn) }
-          if txn.has_jobs?
-            raise I18n.t('repo.assignment_dir_creation_error',
-                         short_identifier: assignment.short_identifier) unless group_repo.commit(txn)
-            self.update!(starter_file_timestamp: group_repo.get_latest_revision.server_timestamp)
-          end
-        end
+        add_starter_files(group_repo)
       end
     end
   end
@@ -517,7 +501,7 @@ class Grouping < ApplicationRecord
       end
     end
     if revision.nil?
-      group.access_repo do |repo|
+      access_repo do |repo|
         revision = repo.get_latest_revision
         get_missing_assignment_files.call revision
       end
@@ -548,7 +532,7 @@ class Grouping < ApplicationRecord
   def submitted_after_collection_date?
     grouping_due_date = collection_date
     revision = nil
-    group.access_repo do |repo|
+    access_repo do |repo|
       # get the last revision that changed the assignment repo folder after the due date; some repos may not be able to
       # optimize by due_date (returning nil), so a check with revision.server_timestamp is always necessary
       revision = repo.get_revision_by_timestamp(Time.current, assignment.repository_folder, grouping_due_date)
@@ -751,7 +735,7 @@ class Grouping < ApplicationRecord
   def create_test_run!(**attrs)
     self.test_runs.create!(
       user_id: attrs[:user]&.id || attrs.fetch(:user_id) { raise ArgumentError(':user or :user_id is required') },
-      revision_identifier: self.group.access_repo { |repo| repo.get_latest_revision.revision_identifier },
+      revision_identifier: access_repo { |repo| repo.get_latest_revision.revision_identifier },
       test_batch_id: attrs[:test_batch]&.id || attrs[:test_batch_id]
     )
   end
@@ -770,7 +754,35 @@ class Grouping < ApplicationRecord
     end
   end
 
+  def access_repo
+    group.access_repo do |repo|
+      add_starter_files(repo)
+      yield repo
+    end
+  end
+
   private
+
+  def add_starter_files(group_repo)
+    assignment_folder = self.assignment.repository_folder
+
+    # path may already exist if this is a peer review assignment. In that case do not create
+    # starter files since it should already be there from the parent assignment.
+    unless group_repo.get_latest_revision.path_exists?(assignment_folder)
+      txn = group_repo.get_transaction('Markus', I18n.t('repo.commits.assignment_folder',
+                                                        assignment: self.assignment.short_identifier))
+      txn.add_path(assignment_folder)
+
+      reset_starter_file_entries
+      self.reload.starter_file_entries.each { |entry| entry.add_files_to_transaction(txn) }
+      if txn.has_jobs?
+        unless group_repo.commit(txn)
+          raise I18n.t('repo.assignment_dir_creation_error', short_identifier: assignment.short_identifier)
+        end
+        self.update!(starter_file_timestamp: group_repo.get_latest_revision.server_timestamp)
+      end
+    end
+  end
 
   def use_section_due_date?
     assignment.section_due_dates_type &&
