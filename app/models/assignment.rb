@@ -754,8 +754,8 @@ class Assignment < Assessment
     if ta_id.nil?
       results_join = groupings.includes(:current_result).where('groupings.is_collected': true)
       num_complete = results_join.where('results.id': nil)
-                                   .or(results_join.where('results.marking_state': 'complete'))
-                                   .count
+                                 .or(results_join.where('results.marking_state': 'complete'))
+                                 .count
       num_complete
     else
       if is_criteria_mark?(ta_id)
@@ -783,8 +783,8 @@ class Assignment < Assessment
                                      .where(user_id: ta_id)
                                      .where('groupings.is_collected': true)
         num_complete = results_join.where('results.id': nil)
-                                     .or(results_join.where('results.marking_state': 'complete'))
-                                     .count
+                                   .or(results_join.where('results.marking_state': 'complete'))
+                                   .count
         num_complete
       end
     end
