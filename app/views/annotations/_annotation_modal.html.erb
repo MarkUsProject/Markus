@@ -14,7 +14,19 @@
                         placeholder: t('results.annotation.placeholder'),
                         rows: 8 %>
       </p>
+      <ul class='tags' key='annotation_completion' id='annotation_completion' style='display: none'>
+        <li class='annotation_category'
+            id='annotation_completion_li'>
+          <p id='annotation_completion_text'></p>
+          <div>
+            <ul id='annotation_text_list'>
+            </ul>
+          </div>
+        </li>
+      </ul>
+      <p></p>
       <h3><%= t(:preview) %></h3>
+      <%= hidden_field_tag 'annotation_text_id', value: '' %>
       <div id="annotation_preview" class="preview"></div>
       <% if @current_user.is_reviewer_for?(assignment.pr_assignment, result) %>
         <%= hidden_field_tag 'new_annotation_category', value: t('annotation_categories.one_time_only') %>

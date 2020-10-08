@@ -9,7 +9,8 @@ describe CourseSummariesController do
 
     describe '#download_csv_grades_report' do
       before :each do
-        3.times { create(:assignment_with_criteria_and_results) }
+        assignments = create_list(:assignment_with_criteria_and_results, 3)
+        create(:grouping_with_inviter_and_submission, assignment: assignments[0])
       end
 
       it 'be able to get a csv grade report' do
@@ -52,8 +53,11 @@ describe CourseSummariesController do
 
     describe '#populate' do
       before :each do
-        3.times { create(:assignment_with_criteria_and_results) }
+        assignments = create_list(:assignment_with_criteria_and_results, 3)
+        create(:grouping_with_inviter_and_submission, assignment: assignments[0])
         2.times { create(:grade_entry_form_with_data) }
+        create(:grade_entry_form)
+
         # TODO: Create marking scheme as well
 
         get_as @admin, :populate, format: :json
@@ -88,10 +92,12 @@ describe CourseSummariesController do
             last_name: student.last_name,
             hidden: student.hidden,
             assessment_marks: Hash[GradeEntryForm.all.map do |ges|
+              total_grade = ges.grade_entry_students.find_by(user: student).total_grade
+              out_of = ges.grade_entry_items.sum(:out_of)
+              percent = total_grade.nil? || out_of.nil? ? nil : (total_grade * 100 / out_of).round(2)
               [ges.id.to_s.to_sym, {
-                mark: ges.grade_entry_students.find_by(user: student).total_grade,
-                percentage: (ges.grade_entry_students
-                                .find_by(user: student).total_grade * 100 / ges.grade_entry_items.sum(:out_of)).round(2)
+                mark: total_grade,
+                percentage: percent
               }]
             end
             ]
@@ -191,7 +197,7 @@ describe CourseSummariesController do
           student = grouping.inviter
           gef = GradeEntryForm.all.first
           gef.update(is_hidden: false)
-          averages = [gef.calculate_average&.round(2), assignment.results_average&.round(2)].sort!
+          averages = [nil, assignment.results_average&.round(2)]
           expected_assessment_marks = {}
           expected_assessment_marks[assignment.id.to_s] = {
             'mark' => grouping.current_result.total_mark,
@@ -200,11 +206,9 @@ describe CourseSummariesController do
           get_as student, :populate, format: :json
           r = response.parsed_body
           expect(r['columns'].length).to eq 2
-          expect(r['assessment_info'].map { |a| a[1]['average'] }.sort!).to eq(averages)
-          expect(r['assessment_info'].map { |a| a[1]['total'].to_f }.sort!).to eq [assignment.max_mark.to_f,
-                                                                                   gef.grade_entry_items
-                                                                                      .sum(:out_of)].sort!
-          expect(r['assessment_info'].map { |a| a[1]['median'] }).to eq [nil, nil]
+          expect(r['assessment_info'].map { |a| a[1]['average']&.to_f }).to match_array averages
+          expect(r['assessment_info'].map { |a| a[1]['total']&.to_f }).to match_array [assignment.max_mark.to_f, nil]
+          expect(r['assessment_info'].map { |a| a[1]['median'] }).to match_array [nil, nil]
           expect(r['data'][0]['assessment_marks']).to eq(expected_assessment_marks)
           expect(r['data'][0]['user_name']).to eq student.user_name
         end
@@ -245,10 +249,7 @@ describe CourseSummariesController do
           expect(@data).to include expected
         end
 
-        it 'returns correct average, median, and total info about assessments' do
-          totals = []
-          averages = []
-          medians = []
+        it 'returns no info about assessments' do
           returned_averages = []
           returned_totals = []
           returned_medians = []
@@ -256,18 +257,10 @@ describe CourseSummariesController do
             returned_averages << @assessment_info[a.short_identifier.to_sym][:average]
             returned_medians << @assessment_info[a.short_identifier.to_sym][:median]
             returned_totals << @assessment_info[a.short_identifier.to_sym][:total]
-            medians << nil
-            if a.is_a? GradeEntryForm
-              totals << a.grade_entry_items.sum(:out_of)
-              averages << a.calculate_average&.round(2)
-            else
-              totals << a.max_mark.to_s
-              averages << a.results_average&.round(2)
-            end
           end
-          expect(returned_totals).to eq totals
-          expect(returned_medians).to eq medians
-          expect(returned_averages).to eq averages
+          expect(returned_totals).to eq [nil] * Assessment.all.size
+          expect(returned_medians).to eq [nil] * Assessment.all.size
+          expect(returned_averages).to eq [nil] * Assessment.all.size
         end
       end
     end
