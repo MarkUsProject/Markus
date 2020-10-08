@@ -1,4 +1,8 @@
 # Changelog
+<<<<<<< HEAD
+=======
+## [v1.10.2]
+- Fixed calculation bugs for grade summary (#4899)
 
 ## [v1.10.1]
 - Fix out of dates link to the wiki (#4843)
