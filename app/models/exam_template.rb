@@ -157,13 +157,13 @@ class ExamTemplate < ApplicationRecord
         split_page.update(status: 'FIXED', exam_page_number: page_num, group: group)
         # This creates both a new grouping and a new folder in the group repository
         # when a new group is entered.
-        Grouping.find_or_create_by(
+        grouping = Grouping.find_or_create_by(
           group_id: group.id,
           assessment_id: self.assessment_id
         )
 
         # add assignment files based on template divisions
-        group.access_repo do |repo|
+        grouping.access_repo do |repo|
           revision = repo.get_latest_revision
           assignment_folder = self.assignment.repository_folder
           txn = repo.get_transaction(Admin.first.user_name)

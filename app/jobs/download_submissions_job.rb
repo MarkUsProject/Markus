@@ -28,7 +28,7 @@ class DownloadSubmissionsJob < ApplicationJob
       Grouping.includes(:group, :current_submission_used).where(id: grouping_ids).each do |grouping|
         revision_id = grouping.current_submission_used&.revision_identifier
         group_name = grouping.group.group_name
-        grouping.group.access_repo do |repo|
+        grouping.access_repo do |repo|
           revision = repo.get_revision(revision_id)
           repo.send_tree_to_zip(grouping.assignment.repository_folder, zip_file, group_name, revision)
         rescue Repository::RevisionDoesNotExist

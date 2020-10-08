@@ -171,7 +171,7 @@ class SplitPdfJob < ApplicationJob
         split_page.update(status: status)
       end
 
-      group.access_repo do |repo|
+      grouping.access_repo do |repo|
         assignment_folder = exam_template.assignment.repository_folder
         txn = repo.get_transaction(Admin.first.user_name)
 

@@ -105,8 +105,8 @@ class AutotestSetup
     student = Student.find_by(user_name: 'aaaautotest')
     student.create_group_for_working_alone_student(@assignment.id)
     group = Group.find_by group_name: student.user_name
-
-    group.access_repo do |repo|
+    grouping = Grouping.find_by(group_id: group, assessment_id: @assignment.id)
+    grouping.access_repo do |repo|
       transaction = repo.get_transaction(student.user_name)
       @student_files.each do |file_path|
         File.open(file_path, 'r') do |file|
@@ -117,7 +117,6 @@ class AutotestSetup
       end
       repo.commit(transaction)
     end
-    grouping = Grouping.find_by(group_id: group, assessment_id: @assignment.id)
     # create new submission for each grouping
     time = @assignment.submission_rule.calculate_collection_time.localtime
     Submission.create_by_timestamp(grouping, time)

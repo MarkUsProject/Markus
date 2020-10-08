@@ -158,7 +158,7 @@ namespace :markus do
             assignment.groupings << grouping
             assignment.save!
 
-            grouping.group.access_repo do |assignment_repo|
+            grouping.access_repo do |assignment_repo|
               txn = assignment_repo.get_transaction(student_user_name)
               file_data = %|class assignment {
         // This method should sum only positive values
