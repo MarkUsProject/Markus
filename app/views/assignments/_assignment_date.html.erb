@@ -14,7 +14,7 @@
                  deadline: I18n.l(assignment.section_due_date(@current_user.section)),
                  extension_deadline: l(due_date)) %>
     <% end %>
-    <% if due_date > Time.zone.now %>
+    <% if due_date > Time.current %>
       <p class='time_left'>
         (<%= distance_of_time_in_words_to_now(due_date) %>)
       </p>

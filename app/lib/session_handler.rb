@@ -178,7 +178,7 @@ module SessionHandler
           return true
         end
         # Otherwise, expire only if the session timed out.
-        return Time.parse(session[:timeout]) < Time.now
+        return Time.parse(session[:timeout]) < Time.current
       end
       # Expire session if remote user does not match the session's uid.
       # We cannot have switched roles at this point.
@@ -188,11 +188,11 @@ module SessionHandler
       end
     end
     # No REMOTE_USER is involed.
-    Time.parse(session[:timeout]) < Time.now
+    Time.parse(session[:timeout]) < Time.current
   end
 
   def check_imminent_expiry
-    !session[:timeout].nil? && (Time.parse(session[:timeout]) - Time.now) <= 5.minutes
+    !session[:timeout].nil? && (Time.parse(session[:timeout]) - Time.current) <= 5.minutes
   end
 
   # Clear this current user's session set by this app

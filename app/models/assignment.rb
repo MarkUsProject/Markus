@@ -117,21 +117,21 @@ class Assignment < Assessment
   # This does not take extensions into consideration.
   def past_all_due_dates?
     # If no section due dates /!\ do not check empty? it could be wrong
-    return false if !due_date.nil? && Time.zone.now < due_date
-    return false if section_due_dates.any? { |sec| !sec.due_date.nil? && Time.zone.now < sec.due_date }
+    return false if !due_date.nil? && Time.current < due_date
+    return false if section_due_dates.any? { |sec| !sec.due_date.nil? && Time.current < sec.due_date }
 
     true
   end
 
   # Return an array with names of sections past
   def section_names_past_due_date
-    if !self.section_due_dates_type && !due_date.nil? && Time.zone.now > due_date
+    if !self.section_due_dates_type && !due_date.nil? && Time.current > due_date
       return []
     end
 
     sections_past = []
     self.section_due_dates.each do |d|
-      if !d.due_date.nil? && Time.zone.now > d.due_date
+      if !d.due_date.nil? && Time.current > d.due_date
         sections_past << d.section.name
       end
     end
@@ -151,7 +151,7 @@ class Assignment < Assessment
     return past_all_due_dates? if grouping.nil?
 
     date = grouping.due_date
-    !date.nil? && Time.zone.now > date
+    !date.nil? && Time.current > date
   end
 
   def section_due_date(section)
@@ -214,7 +214,7 @@ class Assignment < Assessment
   # checks if the due date for +section+ has passed for this assignment
   # or if the main due date has passed if +section+ is nil.
   def past_collection_date?(section = nil)
-    Time.zone.now > submission_rule.calculate_collection_time(section)
+    Time.current > submission_rule.calculate_collection_time(section)
   end
 
   def past_all_collection_dates?
@@ -228,7 +228,7 @@ class Assignment < Assessment
   end
 
   def past_remark_due_date?
-    !remark_due_date.nil? && Time.zone.now > remark_due_date
+    !remark_due_date.nil? && Time.current > remark_due_date
   end
 
   # Return true if this is a group assignment; false otherwise
