@@ -2196,4 +2196,32 @@ describe Assignment do
       end
     end
   end
+
+  describe '#get_num_marked' do
+    let(:admin) { create(:admin) }
+    let(:ta) { create(:ta) }
+    let(:assignment) { create(:assignment) }
+    let(:grouping1) { create(:grouping_with_inviter_and_submission, assignment: assignment, is_collected: true) }
+    let(:grouping2) { create(:grouping_with_inviter_and_submission, assignment: assignment, is_collected: true) }
+    let(:grouping3) { create(:grouping_with_inviter_and_submission, assignment: assignment, is_collected: true) }
+    let(:grouping4) { create(:grouping_with_inviter_and_submission, assignment: assignment, is_collected: false) }
+    let!(:result1) { create(:complete_result, submission: grouping1.submissions.first) }
+    let!(:result2) { create(:incomplete_result, submission: grouping2.submissions.first) }
+    let!(:result3) { create(:complete_result, submission: grouping3.submissions.first) }
+    let!(:result4) { create(:incomplete_result, submission: grouping4.submissions.first) }
+    before :each do
+      create(:ta_membership, user: ta, grouping: grouping1)
+      create(:ta_membership, user: ta, grouping: grouping2)
+    end
+    context 'When user is admin' do
+      it 'should return no of marked submissions of all groupings' do
+        expect(assignment.get_num_marked).to eq(2)
+      end
+    end
+    context 'When user is TA' do
+      it 'should return no of marked submissions for groupings assigned to them' do
+        expect(assignment.get_num_marked(ta.id)).to eq(1)
+      end
+    end
+  end
 end

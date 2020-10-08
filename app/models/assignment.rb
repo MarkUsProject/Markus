@@ -753,10 +753,10 @@ class Assignment < Assessment
   def get_num_marked(ta_id = nil)
     if ta_id.nil?
       results_join = groupings.includes(:current_result).where('groupings.is_collected': true)
-      num_incomplete = results_join.where('results.id': nil)
-                                   .or(results_join.where('results.marking_state': 'incomplete'))
+      num_complete = results_join.where('results.id': nil)
+                                   .or(results_join.where('results.marking_state': 'complete'))
                                    .count
-      get_num_collected - num_incomplete
+      num_complete
     else
       if is_criteria_mark?(ta_id)
         n = 0
@@ -782,10 +782,10 @@ class Assignment < Assessment
         results_join = ta_memberships.includes(grouping: :current_result)
                                      .where(user_id: ta_id)
                                      .where('groupings.is_collected': true)
-        num_incomplete = results_join.where('results.id': nil)
-                                     .or(results_join.where('results.marking_state': 'incomplete'))
+        num_complete = results_join.where('results.id': nil)
+                                     .or(results_join.where('results.marking_state': 'complete'))
                                      .count
-        get_num_collected(ta_id) - num_incomplete
+        num_complete
       end
     end
   end
