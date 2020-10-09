@@ -1,6 +1,5 @@
 # Changelog
-<<<<<<< HEAD
-=======
+
 ## [v1.10.2]
 - Fixed calculation bugs for grade summary (#4899)
 
