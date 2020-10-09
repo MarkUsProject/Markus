@@ -25,6 +25,8 @@ class Grouping < ApplicationRecord
   has_many :ta_memberships, class_name: 'TaMembership'
   has_many :tas, through: :ta_memberships, source: :user
   has_many :students, through: :student_memberships, source: :user
+  has_many :test_students, class_name: 'TestStudent', through: :student_memberships, source: :user
+
   has_many :pending_students,
            class_name: 'Student',
            through: :pending_student_memberships,

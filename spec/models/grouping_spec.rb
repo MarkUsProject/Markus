@@ -5,6 +5,7 @@ describe Grouping do
     it { is_expected.to have_many(:memberships) }
     it { is_expected.to have_many(:submissions) }
     it { is_expected.to have_many(:notes) }
+    it { is_expected.to have_many(:test_students) }
     it { is_expected.to have_one(:extension).dependent(:destroy) }
   end
 
