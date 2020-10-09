@@ -7,6 +7,7 @@
 - Enable variable permissions for graders (#4601)
 - UI for enable/disable variable permissions for graders (#4756)
 - Image rotation tools added in marking UI (#4789)
+- Fix for reviewers table loading issue (#4894)
 - Fixed a bug preventing total marks from updating properly if one of the grades is nil (#4887)
 - Ensure that assignment subdirectories in repositories are maintained (#4893)
 
