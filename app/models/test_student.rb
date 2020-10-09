@@ -10,5 +10,4 @@ class TestStudent < User
 
   has_many :student_memberships, foreign_key: 'user_id'
   validates_associated :accepted_groupings
-  validates_inclusion_of :hidden, in: [true]
 end
