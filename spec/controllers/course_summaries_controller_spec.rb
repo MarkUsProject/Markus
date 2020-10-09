@@ -1,5 +1,5 @@
 describe CourseSummariesController do
-
+  include CourseSummariesHelper
   context 'An admin' do
     before do
       @admin = Admin.create(user_name: 'adoe',
@@ -57,8 +57,7 @@ describe CourseSummariesController do
         create(:grouping_with_inviter_and_submission, assignment: assignments[0])
         2.times { create(:grade_entry_form_with_data) }
         create(:grade_entry_form)
-
-        # TODO: Create marking scheme as well
+        create :marking_scheme, assessments: Assessment.all
 
         get_as @admin, :populate, format: :json
         @response_data = response.parsed_body.deep_symbolize_keys
@@ -67,7 +66,7 @@ describe CourseSummariesController do
       end
 
       it 'returns the correct columns' do
-        expect(@columns.length).to eq(Assignment.count + GradeEntryForm.count)
+        expect(@columns.length).to eq(Assignment.count + GradeEntryForm.count + MarkingScheme.count)
         Assessment.find_each do |a|
           total = a.respond_to?(:max_mark) ? a.max_mark : a.grade_entry_items.where(bonus: false).sum(:out_of)
           expected = {
@@ -108,7 +107,7 @@ describe CourseSummariesController do
               percentage: (g.current_result.total_mark * 100 / g.assignment.max_mark).round(2).to_s
             }
           end
-          expect(@data).to include expected
+          expect(@data.map { |h| h.except(:weighted_marks) }).to include expected
         end
       end
 
@@ -125,6 +124,11 @@ describe CourseSummariesController do
             averages << a.results_average&.round(2)
             medians << a.results_median&.round(2)
           end
+        end
+        MarkingScheme.all.each do |m|
+          grades = m.students_weighted_grades_array(@admin)
+          averages << DescriptiveStatistics.mean(grades).round(2)
+          medians << DescriptiveStatistics.median(grades).round(2)
         end
         expect(returned_medians).to eq medians
         expect(returned_averages).to eq averages
@@ -161,8 +165,7 @@ describe CourseSummariesController do
       before :each do
         3.times { create(:assignment_with_criteria_and_results) }
         2.times { create(:grade_entry_form_with_data) }
-        # TODO: Create marking scheme as well
-
+        create :marking_scheme, assessments: Assessment.all
         @student2 = Student.first
       end
       context 'when assessments are hidden' do
@@ -212,7 +215,15 @@ describe CourseSummariesController do
         it 'returns the correct columns' do
           expect(@columns.length).to eq(Assignment.count + GradeEntryForm.count)
           Assessment.find_each do |a|
-            expect(@columns.map { |h| h[:accessor] }).to include "assessment_marks.#{a.id}.mark"
+            total = a.respond_to?(:max_mark) ? a.max_mark : a.grade_entry_items.where(bonus: false).sum(:out_of)
+            expected = {
+                accessor: "assessment_marks.#{a.id}.mark",
+                Header: a.short_identifier + " / (#{total.to_i})",
+                minWidth: 50,
+                className: 'number',
+                headerStyle: { textAlign: 'right' }
+            }
+            expect(@columns).to include expected
           end
         end
 
