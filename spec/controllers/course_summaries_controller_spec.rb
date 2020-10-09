@@ -217,11 +217,11 @@ describe CourseSummariesController do
           Assessment.find_each do |a|
             total = a.respond_to?(:max_mark) ? a.max_mark : a.grade_entry_items.where(bonus: false).sum(:out_of)
             expected = {
-                accessor: "assessment_marks.#{a.id}.mark",
-                Header: a.short_identifier + " / (#{total.to_i})",
-                minWidth: 50,
-                className: 'number',
-                headerStyle: { textAlign: 'right' }
+              accessor: "assessment_marks.#{a.id}.mark",
+              Header: a.short_identifier + " / (#{total.to_i})",
+              minWidth: 50,
+              className: 'number',
+              headerStyle: { textAlign: 'right' }
             }
             expect(@columns).to include expected
           end
