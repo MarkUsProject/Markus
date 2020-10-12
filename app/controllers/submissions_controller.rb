@@ -366,14 +366,18 @@ class SubmissionsController < ApplicationController
         txn = repo.get_transaction(current_user.user_name)
         should_commit = true
         path = Pathname.new(@grouping.assignment.repository_folder).join(@path.gsub(%r{^/}, ''))
-        only_required = @grouping.assignment.only_required_files
-        required_files = only_required ? @grouping.assignment.assignment_files.pluck(:filename) : nil
         if delete_files.present?
           success, msgs = remove_files(delete_files, current_user, repo, path: path, txn: txn)
           should_commit &&= success
           messages.concat msgs
         end
         if new_files.present?
+          if current_user.student? && @grouping.assignment.only_required_files
+            required_files = @grouping.assignment.assignment_files.pluck(:filename)
+                                      .map { |name| File.join(@grouping.assignment.repository_folder, name) }
+          else
+            required_files = nil
+          end
           success, msgs = add_files(new_files, current_user, repo,
                                     path: path, txn: txn, check_size: true, required_files: required_files)
           should_commit &&= success
