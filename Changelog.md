@@ -11,6 +11,7 @@
 - Fixed a bug preventing total marks from updating properly if one of the grades is nil (#4887)
 - Ensure that assignment subdirectories in repositories are maintained (#4893)
 - Limit number of tests sent to the autotest server at one time (#4901)
+- Restore the flash messages displayed when students submit files (#4903)
 
 ## [v1.10.1]
 - Fix out of dates link to the wiki (#4843)
