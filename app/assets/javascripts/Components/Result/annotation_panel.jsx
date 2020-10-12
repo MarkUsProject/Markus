@@ -1,57 +1,45 @@
-import React from 'react';
-
-import { AnnotationTable } from './annotation_table';
-
+import React from "react";
+import { AnnotationTable } from "./annotation_table";
+import { TextForm } from "./autosave_text_form";
 
 export class AnnotationPanel extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       overallComment: props.overallComment,
-      unsavedChanges: false
     };
-    this.submitOverallCommentButton = React.createRef();
   }
 
   componentDidMount() {
-    this.renderOverallCommentText();
+    this.renderReleasedComments();
   }
 
   componentDidUpdate(prevProps, prevState) {
     if (prevProps.overallComment !== this.props.overallComment) {
       this.setState({overallComment: this.props.overallComment});
     } else if (prevState.overallComment !== this.state.overallComment) {
-      this.renderOverallCommentText();
+      this.renderReleasedComments();
     }
   }
 
-  updateOverallComment = (event) => {
-    const comment = event.target.value;
-    this.setState({overallComment: comment, unsavedChanges: true});
-  };
-
-  renderOverallCommentText() {
-    let target_id;
+  renderReleasedComments() {
     if (this.props.released_to_students || this.props.remarkSubmitted) {
-      target_id = 'overall_comment_text';
-    } else {
-      target_id = 'overall_comment_preview';
+      let target_id = "overall_comment_text";
+      document.getElementById(target_id).innerHTML = marked(
+        this.state.overallComment,
+        { sanitize: true }
+      );
+      MathJax.Hub.Queue(["Typeset", MathJax.Hub, target_id]);
     }
-    document.getElementById(target_id).innerHTML = marked(this.state.overallComment, {sanitize: true});
-    MathJax.Hub.Queue(['Typeset', MathJax.Hub, target_id]);
   }
 
-  submitOverallComment = (event) => {
-    $.post({
+  persistChanges = (value) => {
+    return $.post({
       url: Routes.update_overall_comment_assignment_submission_result_path(
-        this.props.assignment_id, this.props.submission_id, this.props.result_id,
+        this.props.assignment_id, this.props.submission_id, this.props.result_id
       ),
-      data: {result: {overall_comment: this.state.overallComment}},
-    }).then(() => {
-      Rails.enableElement(this.submitOverallCommentButton.current);
-      this.setState({unsavedChanges: false});
+      data: { result: { overall_comment: value } },
     });
-    event.preventDefault();
   };
 
   render() {
@@ -60,27 +48,13 @@ export class AnnotationPanel extends React.Component {
       overallCommentElement = <div id='overall_comment_text' key='overall_comment_text' />;
     } else {
       overallCommentElement = (
-        <div key='overall_comment_text'>
-          <form onSubmit={this.submitOverallComment}>
-            <textarea
-              value={this.state.overallComment}
-              onChange={this.updateOverallComment}
-              rows={5}
-            />
-            <p>
-              <input type="submit" value={I18n.t('save')}
-                     data-disable-with={I18n.t('working')}
-                     ref={this.submitOverallCommentButton}
-                     disabled={!this.state.unsavedChanges}
-              />
-            </p>
-          </form>
-          <h3>{I18n.t('preview')}</h3>
-          <div id="overall_comment_preview" className="preview"/>
-        </div>
+        <TextForm
+          initialValue={this.props.overallComment}
+          persistChanges={this.persistChanges}
+          previewId={"overall_comment_preview"}
+        />
       );
     }
-
     return [
       <h3 key="h3-overall-comment">{I18n.t('activerecord.attributes.result.overall_comment')}</h3>,
       overallCommentElement,
