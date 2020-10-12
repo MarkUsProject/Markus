@@ -100,7 +100,7 @@ describe SubmissionsController do
       expect(@student.has_accepted_grouping_for?(@assignment.id)).to be_truthy
       post_as @student, :update_files, params: { assignment_id: @assignment.id, new_files: [file_1, file_2] }
 
-      is_expected.to respond_with(:redirect)
+      expect(response).to have_http_status :ok
 
       # update_files action assert assign to various instance variables.
       # These are crucial for the file_manager view to work properly.
@@ -209,7 +209,7 @@ describe SubmissionsController do
                           file_revisions: { 'Shapes.java' => old_file_1.from_revision,
                                             'TestShapes.java' => old_file_2.from_revision } }
       end
-      is_expected.to respond_with(:redirect)
+      expect(response).to have_http_status :ok
 
       expect(assigns :assignment).to_not be_nil
       expect(assigns :grouping).to_not be_nil
@@ -257,7 +257,7 @@ describe SubmissionsController do
                                             'TestShapes.java' => old_file_2.from_revision } }
       end
 
-      is_expected.to respond_with(:redirect)
+      expect(response).to have_http_status :ok
 
       expect(assigns :assignment).to_not be_nil
       expect(assigns :grouping).to_not be_nil
