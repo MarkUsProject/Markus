@@ -54,7 +54,7 @@ class SubmissionsController < ApplicationController
     @assignment = @grouping.assignment
     @collected_revision = nil
     @revision = nil
-    @grouping.group.access_repo do |repo|
+    @grouping.access_repo do |repo|
       collected_submission = @grouping.current_submission_used
 
       # generate a history of relevant revisions (i.e. only related to the assignment) with date and identifier
@@ -88,7 +88,7 @@ class SubmissionsController < ApplicationController
 
   def revisions
     grouping = Grouping.find(params[:grouping_id])
-    grouping.group.access_repo do |repo|
+    grouping.access_repo do |repo|
       # generate a history of relevant revisions (i.e. only related to the assignment) with date and identifier
       assignment_path = grouping.assignment.repository_folder
       assignment_revisions = []
@@ -138,7 +138,7 @@ class SubmissionsController < ApplicationController
       grouping = assignment.groupings.find(params[:grouping_id])
     end
     entries = []
-    grouping.group.access_repo do |repo|
+    grouping.access_repo do |repo|
       if current_user.student? || params[:revision_identifier].blank?
         revision = repo.get_latest_revision
       else
@@ -351,7 +351,7 @@ class SubmissionsController < ApplicationController
       end
 
       messages = []
-      @grouping.group.access_repo do |repo|
+      @grouping.access_repo do |repo|
         # Create transaction, setting the author.  Timestamp is implicit.
         txn = repo.get_transaction(current_user.user_name)
         should_commit = true
@@ -420,7 +420,7 @@ class SubmissionsController < ApplicationController
     elsif file.is_pdf?
       render json: { type: 'pdf' }
     else
-      grouping.group.access_repo do |repo|
+      grouping.access_repo do |repo|
         revision = repo.get_revision(submission.revision_identifier)
         raw_file = revision.files_at_path(file.path)[file.filename]
         if raw_file.nil?
@@ -463,7 +463,7 @@ class SubmissionsController < ApplicationController
 
     revision_identifier = params[:revision_identifier]
     path = params[:path] || '/'
-    @grouping.group.access_repo do |repo|
+    @grouping.access_repo do |repo|
       if revision_identifier.nil?
         @revision = repo.get_latest_revision
       else
@@ -529,7 +529,7 @@ class SubmissionsController < ApplicationController
       grouping = assignment.groupings.find(params[:grouping_id])
     end
     zip_name = "#{assignment.short_identifier}-#{grouping.group.group_name}"
-    grouping.group.access_repo do |repo|
+    grouping.access_repo do |repo|
       if current_user.student? || params[:revision_identifier].nil?
         revision = repo.get_latest_revision
       else
@@ -660,7 +660,7 @@ class SubmissionsController < ApplicationController
 
   # Used in update_files and file_manager actions
   def set_filebrowser_vars(grouping)
-    grouping.group.access_repo do |repo|
+    grouping.access_repo do |repo|
       @revision = repo.get_latest_revision
       @files = @revision.files_at_path(File.join(grouping.assignment.repository_folder, @path))
       @missing_assignment_files = grouping.missing_assignment_files(@revision)

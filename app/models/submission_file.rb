@@ -120,7 +120,8 @@ class SubmissionFile < ApplicationRecord
   # Return the contents of this SubmissionFile. Include annotations in the
   # file if include_annotations is true.
   def retrieve_file(include_annotations = false, repo = nil)
-    student_group = self.submission.grouping.group
+    student_grouping = self.submission.grouping
+    student_group = student_grouping.group
     revision_identifier = self.submission.revision_identifier
 
     get_retrieved_file = lambda do |open_repo|
@@ -135,7 +136,7 @@ class SubmissionFile < ApplicationRecord
     end
 
     if repo.nil?
-      retrieved_file = student_group.access_repo do |open_repo|
+      retrieved_file = student_grouping.access_repo do |open_repo|
         get_retrieved_file.call(open_repo)
       end
     else

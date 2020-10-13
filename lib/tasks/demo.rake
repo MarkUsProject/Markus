@@ -2,8 +2,9 @@ namespace :markus do
   desc "Markus demo"
 
   def submit_files(group, a)
-    group.access_repo do |repo|
-      txn = repo.get_transaction(group.grouping_for_assignment(a.id).inviter.user_name)
+    grouping = group.grouping_for_assignment(a.id)
+    grouping.access_repo do |repo|
+      txn = repo.get_transaction(grouping.inviter.user_name)
       repo_path = File.join(a.repository_folder, 'hello_world.py')
       txn.add(repo_path, 'print("Hello World")', '')
       repo.commit(txn)
