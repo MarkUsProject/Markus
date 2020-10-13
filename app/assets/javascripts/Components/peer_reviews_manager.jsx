@@ -310,7 +310,7 @@ class RawRevieweesTable extends React.Component {
     const groups_data = this.props.groups.map( (group) => {
       let reviewerGroups = [];
       const reviewee_group_id = group._id;
-      const reviewer_ids = this.props.revieweeToReviewers[reviewee_group_id];
+      const reviewer_ids = this.props.revieweeToReviewers[reviewee_group_id] || [];
       reviewer_ids.forEach( (reviewer_group_id) => {
         const reviewer_group_name = this.props.groupIdToName[reviewer_group_id];
         reviewerGroups.push(<div key={reviewer_group_id}>
