@@ -1,6 +1,8 @@
 # Changelog
 
 ## [v1.10.2]
+- Restore the flash messages displayed when students submit files (#4903)
+- Enable assignment only_required_files setting to work with subdirectories (#4903)
 - Fix bug where checkbox marks are updated twice (#4908)
 - Fixed the Assign Reviewers table loading issue (#4894)
 - Fixed a bug where the progress bar in submissions and results page counts the not collected submissions (#4854)
