@@ -1,7 +1,7 @@
 # Changelog
 
 ## [v1.10.2]
-- Fix for Assign Reviewers table loading issue (#4894)
+- Fixed the Assign Reviewers table loading issue (#4894)
 
 ## [v1.10.1]
 - Fix out of dates link to the wiki (#4843)
