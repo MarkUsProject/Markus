@@ -2161,4 +2161,28 @@ describe Assignment do
       expect(assignment.starter_file_mappings.sort_by(&:values)).to eq expected
     end
   end
+
+  describe '#get_num_collected' do
+    let(:admin) { create(:admin) }
+    let(:ta) { create(:ta) }
+    let(:assignment) { create(:assignment) }
+    let(:grouping1) { create(:grouping_with_inviter_and_submission, assignment: assignment, is_collected: true) }
+    let(:grouping2) { create(:grouping_with_inviter_and_submission, assignment: assignment, is_collected: true) }
+    let!(:grouping3) { create(:grouping_with_inviter_and_submission, assignment: assignment, is_collected: true) }
+    let!(:grouping4) { create(:grouping_with_inviter_and_submission, assignment: assignment, is_collected: false) }
+    before :each do
+      create(:ta_membership, user: ta, grouping: grouping1)
+      create(:ta_membership, user: ta, grouping: grouping2)
+    end
+    context 'When user is admin' do
+      it 'should return no of collected submissions of all groupings' do
+        expect(assignment.get_num_collected).to eq(3)
+      end
+    end
+    context 'When user is TA' do
+      it 'should return no of collected submissions for groupings assigned to them' do
+        expect(assignment.get_num_collected(ta.id)).to eq(2)
+      end
+    end
+  end
 end
