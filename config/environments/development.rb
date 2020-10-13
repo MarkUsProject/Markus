@@ -297,6 +297,7 @@ Markus::Application.configure do
   config.x.autotest.server_host = ENV.fetch('AUTOTEST_SERVER_HOST') { 'localhost' }
   config.x.autotest.server_username = ENV.fetch('AUTOTEST_SERVER_USERNAME') { nil }
   config.x.autotest.server_command = 'autotest_enqueuer'
+  config.x.autotest.max_batch_size = 10
   config.x.queues.autotest_run = 'CSC108'
   config.x.queues.autotest_cancel = 'CSC108'
   config.x.queues.autotest_specs = 'CSC108'

@@ -23,16 +23,18 @@ class AutotestRunJob < ApplicationJob
     # TestRun objects can either be created outside of this job (by passing their ids), or here
     test_batch = test_runs.size > 1 ? TestBatch.create : nil # create 1 batch object if needed
 
-    test_run_ids = test_runs.map { |data| data[:id] || create_test_run(data, test_batch, user_id) }
+    test_runs.each_slice(Rails.configuration.x.autotest.max_batch_size) do |test_runs_slice|
+      test_run_ids = test_runs_slice.map { |data| data[:id] || create_test_run(data, test_batch, user_id) }
 
-    server_kwargs = server_params(get_markus_address(host_with_port), assignment_id)
-    server_kwargs[:request_high_priority] = test_runs.length == 1 && User.find(user_id).student?
-    server_kwargs[:test_data] = test_data(test_run_ids)
+      server_kwargs = server_params(get_markus_address(host_with_port), assignment_id)
+      server_kwargs[:request_high_priority] = test_batch.nil? && User.find(user_id).student?
+      server_kwargs[:test_data] = test_data(test_run_ids)
 
-    begin
-      run_autotester_command('run', server_kwargs)
-    rescue StandardError => e
-      TestRun.where(id: test_run_ids).update_all(problems: e.message)
+      begin
+        run_autotester_command('run', server_kwargs)
+      rescue StandardError => e
+        TestRun.where(id: test_run_ids).update_all(problems: e.message)
+      end
     end
   end
 end

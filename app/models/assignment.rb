@@ -734,6 +734,16 @@ class Assignment < Assessment
     end
   end
 
+  def get_num_collected(ta_id = nil)
+    if ta_id.nil?
+      groupings.where(is_collected: true).count
+    else
+      groupings.joins(:ta_memberships)
+               .where('groupings.is_collected': true)
+               .where('memberships.user_id': ta_id).count
+    end
+  end
+
   def get_num_valid
     groupings.includes(:non_rejected_student_memberships, current_submission_used: :submitted_remark)
              .select(&:is_valid?)
