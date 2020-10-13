@@ -1,6 +1,7 @@
 # Changelog
 
 ## [v1.10.2]
+- Fix bug where checkbox marks are updated twice (#4908)
 - Fixed the Assign Reviewers table loading issue (#4894)
 - Fixed a bug where the progress bar in submissions and results page counts the not collected submissions (#4854)
 
