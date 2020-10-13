@@ -13,6 +13,7 @@
 - Limit number of tests sent to the autotest server at one time (#4901)
 - Restore the flash messages displayed when students submit files (#4903)
 - Enable assignment only_required_files setting to work with subdirectories (#4903)
+- Fix bug where checkbox marks are updated twice (#4908)
 
 ## [v1.10.1]
 - Fix out of dates link to the wiki (#4843)
