@@ -153,7 +153,7 @@ class ResultsController < ApplicationController
           end
           data[:notes_count] = submission.grouping.notes.count
           data[:num_marked] = assignment.get_num_marked(current_user.admin? ? nil : current_user.id)
-          data[:num_assigned] = assignment.get_num_assigned(current_user.admin? ? nil : current_user.id)
+          data[:num_collected] = assignment.get_num_collected(current_user.admin? ? nil : current_user.id)
           if current_user.ta? && assignment.anonymize_groups
             data[:group_name] = "#{Group.model_name.human} #{submission.grouping.id}"
           else
@@ -162,7 +162,7 @@ class ResultsController < ApplicationController
         elsif is_reviewer
           reviewer_group = current_user.grouping_for(assignment.pr_assignment.id)
           data[:num_marked] = PeerReview.get_num_marked(reviewer_group)
-          data[:num_assigned] = PeerReview.get_num_assigned(reviewer_group)
+          data[:num_collected] = PeerReview.get_num_collected(reviewer_group)
           data[:group_name] = PeerReview.model_name.human
         end
 
@@ -505,7 +505,7 @@ class ResultsController < ApplicationController
 
     files = submission.submission_files
     Zip::File.open(zip_path, Zip::File::CREATE) do |zip_file|
-      grouping.group.access_repo do |repo|
+      grouping.access_repo do |repo|
         revision = repo.get_revision(revision_identifier)
         repo.send_tree_to_zip(assignment.repository_folder, zip_file, zip_name, revision) do |file|
           submission_file = files.find_by(filename: file.name, path: file.path)

@@ -504,7 +504,7 @@ class AssignmentsController < ApplicationController
   private
 
   def set_repo_vars(assignment, grouping)
-    grouping.group.access_repo do |repo|
+    grouping.access_repo do |repo|
       @revision = repo.get_revision_by_timestamp(Time.current, assignment.repository_folder)
       @last_modified_date = @revision&.server_timestamp
       files = @revision.tree_at_path(assignment.repository_folder, with_attrs: false)

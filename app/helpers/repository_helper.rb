@@ -17,8 +17,8 @@ module RepositoryHelper
   # commit the transaction. The array contains any error or warning messages as arrays of arguments.
   #
   # If +check_size+ is true then check if the file size is greater than Rails.configuration.max_file_size
-  # or less than 0 bytes. If +required_files+ is an array of file names, and some of the uploaded files are not
-  # in that array, a messages will be returned indicating that non-required files were uploaded.
+  # or less than 0 bytes. If +required_files+ is an array of file paths, and some of the uploaded files are not
+  # in that array, a message will be returned indicating that non-required files were uploaded.
   def add_files(files, user, repo, path: '/', txn: nil, check_size: true, required_files: nil)
     messages = []
 
@@ -47,9 +47,8 @@ module RepositoryHelper
       end
       subdir_path, filename = File.split(filename)
       filename = sanitize_file_name(filename)
-      file_path = current_path.join(subdir_path).join(filename)
-      file_path_relative = file_path.relative_path_from(current_path).to_s
-      file_path = file_path.to_s
+      file_path = current_path.join(subdir_path).join(filename).to_s
+      new_files << file_path
       # Sometimes the file pointer of file_object is at the end of the file.
       # In order to avoid empty uploaded files, rewind it to be safe.
       f.rewind
@@ -57,7 +56,6 @@ module RepositoryHelper
       if revision.path_exists?(file_path)
         txn.replace(file_path, f.read, f.content_type, revision.revision_identifier)
       else
-        new_files << file_path_relative
         txn.add(file_path, f.read, f.content_type)
       end
     end

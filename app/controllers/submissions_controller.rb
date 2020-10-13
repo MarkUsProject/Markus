@@ -54,7 +54,7 @@ class SubmissionsController < ApplicationController
     @assignment = @grouping.assignment
     @collected_revision = nil
     @revision = nil
-    @grouping.group.access_repo do |repo|
+    @grouping.access_repo do |repo|
       collected_submission = @grouping.current_submission_used
 
       # generate a history of relevant revisions (i.e. only related to the assignment) with date and identifier
@@ -88,7 +88,7 @@ class SubmissionsController < ApplicationController
 
   def revisions
     grouping = Grouping.find(params[:grouping_id])
-    grouping.group.access_repo do |repo|
+    grouping.access_repo do |repo|
       # generate a history of relevant revisions (i.e. only related to the assignment) with date and identifier
       assignment_path = grouping.assignment.repository_folder
       assignment_revisions = []
@@ -125,28 +125,8 @@ class SubmissionsController < ApplicationController
     # Some vars need to be set in update_files too, so do this in a
     # helper. See update_files action where this is used as well.
     set_filebrowser_vars(@grouping)
+    flash_file_manager_messages
 
-    # generate flash messages
-    if @assignment.submission_rule.can_collect_now?(@grouping.inviter.section)
-      flash_message(:warning,
-                    @assignment.submission_rule.class.human_attribute_name(:after_collection_message))
-    elsif @assignment.grouping_past_due_date?(@grouping)
-      flash_message(:warning, @assignment.submission_rule.overtime_message(@grouping))
-    elsif @assignment.is_timed
-      flash_message(:warning, I18n.t('assignments.timed.time_until_due_warning', due_date: I18n.l(@grouping.due_date)))
-    end
-
-    if !@grouping.is_valid?
-      flash_message(:error, t('groups.invalid_group_warning'))
-    elsif !@missing_assignment_files.blank?
-      flash_message(:warning,
-                    partial: 'submissions/missing_assignment_file_toggle_list',
-                    locals: {missing_assignment_files: @missing_assignment_files})
-    end
-
-    if @assignment.allow_web_submits && @assignment.vcs_submit
-      flash_message(:notice, t('submissions.student.version_control_warning'))
-    end
     render 'file_manager', layout: 'assignment_content', locals: {}
   end
 
@@ -158,7 +138,7 @@ class SubmissionsController < ApplicationController
       grouping = assignment.groupings.find(params[:grouping_id])
     end
     entries = []
-    grouping.group.access_repo do |repo|
+    grouping.access_repo do |repo|
       if current_user.student? || params[:revision_identifier].blank?
         revision = repo.get_latest_revision
       else
@@ -333,6 +313,8 @@ class SubmissionsController < ApplicationController
       @grouping = current_user.accepted_grouping_for(assignment_id)
       unless @grouping.is_valid?
         set_filebrowser_vars(@grouping)
+        flash_file_manager_messages
+        head :bad_request
         return
       end
     else
@@ -369,19 +351,23 @@ class SubmissionsController < ApplicationController
       end
 
       messages = []
-      @grouping.group.access_repo do |repo|
+      @grouping.access_repo do |repo|
         # Create transaction, setting the author.  Timestamp is implicit.
         txn = repo.get_transaction(current_user.user_name)
         should_commit = true
         path = Pathname.new(@grouping.assignment.repository_folder).join(@path.gsub(%r{^/}, ''))
-        only_required = @grouping.assignment.only_required_files
-        required_files = only_required ? @grouping.assignment.assignment_files.pluck(:filename) : nil
         if delete_files.present?
           success, msgs = remove_files(delete_files, current_user, repo, path: path, txn: txn)
           should_commit &&= success
           messages.concat msgs
         end
         if new_files.present?
+          if current_user.student? && @grouping.assignment.only_required_files
+            required_files = @grouping.assignment.assignment_files.pluck(:filename)
+                                      .map { |name| File.join(@grouping.assignment.repository_folder, name) }
+          else
+            required_files = nil
+          end
           success, msgs = add_files(new_files, current_user, repo,
                                     path: path, txn: txn, check_size: true, required_files: required_files)
           should_commit &&= success
@@ -401,15 +387,17 @@ class SubmissionsController < ApplicationController
           commit_success, commit_msg = commit_transaction(repo, txn)
           flash_message(:success, I18n.t('flash.actions.update_files.success')) if commit_success
           messages << commit_msg
+        else
+          head :unprocessable_entity
         end
       end
       flash_repository_messages messages
       set_filebrowser_vars(@grouping)
+      flash_file_manager_messages
     end
   rescue StandardError => e
     flash_message(:error, e.message)
-  ensure
-    redirect_back(fallback_location: root_path)
+    head :bad_request
   end
 
   def get_file
@@ -432,7 +420,7 @@ class SubmissionsController < ApplicationController
     elsif file.is_pdf?
       render json: { type: 'pdf' }
     else
-      grouping.group.access_repo do |repo|
+      grouping.access_repo do |repo|
         revision = repo.get_revision(submission.revision_identifier)
         raw_file = revision.files_at_path(file.path)[file.filename]
         if raw_file.nil?
@@ -475,7 +463,7 @@ class SubmissionsController < ApplicationController
 
     revision_identifier = params[:revision_identifier]
     path = params[:path] || '/'
-    @grouping.group.access_repo do |repo|
+    @grouping.access_repo do |repo|
       if revision_identifier.nil?
         @revision = repo.get_latest_revision
       else
@@ -541,7 +529,7 @@ class SubmissionsController < ApplicationController
       grouping = assignment.groupings.find(params[:grouping_id])
     end
     zip_name = "#{assignment.short_identifier}-#{grouping.group.group_name}"
-    grouping.group.access_repo do |repo|
+    grouping.access_repo do |repo|
       if current_user.student? || params[:revision_identifier].nil?
         revision = repo.get_latest_revision
       else
@@ -672,10 +660,36 @@ class SubmissionsController < ApplicationController
 
   # Used in update_files and file_manager actions
   def set_filebrowser_vars(grouping)
-    grouping.group.access_repo do |repo|
+    grouping.access_repo do |repo|
       @revision = repo.get_latest_revision
       @files = @revision.files_at_path(File.join(grouping.assignment.repository_folder, @path))
       @missing_assignment_files = grouping.missing_assignment_files(@revision)
+    end
+  end
+
+  # Generate flash messages to show the status of a group's submitted files.
+  # Used in update_files and file_manager actions.
+  # Requires @grouping, @assignment, and @missing_assignment_files variables to be set.
+  def flash_file_manager_messages
+    if @assignment.submission_rule.can_collect_now?(@grouping.inviter.section)
+      flash_message(:warning,
+                    @assignment.submission_rule.class.human_attribute_name(:after_collection_message))
+    elsif @assignment.grouping_past_due_date?(@grouping)
+      flash_message(:warning, @assignment.submission_rule.overtime_message(@grouping))
+    elsif @assignment.is_timed
+      flash_message(:notice, I18n.t('assignments.timed.time_until_due_warning', due_date: I18n.l(@grouping.due_date)))
+    end
+
+    if !@grouping.is_valid?
+      flash_message(:error, t('groups.invalid_group_warning'))
+    elsif !@missing_assignment_files.blank?
+      flash_message(:warning,
+                    partial: 'submissions/missing_assignment_file_toggle_list',
+                    locals: { missing_assignment_files: @missing_assignment_files })
+    end
+
+    if @assignment.allow_web_submits && @assignment.vcs_submit
+      flash_message(:notice, t('submissions.student.version_control_warning'))
     end
   end
 
