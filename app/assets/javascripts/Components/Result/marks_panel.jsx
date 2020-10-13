@@ -144,14 +144,6 @@ class CheckboxCriterionInput extends React.Component {
     super(props);
   }
 
-  handleChange = (event) => {
-    if (event.target.value === 'yes') {
-      this.props.updateMark(this.props.id, this.props.max_mark);
-    } else {
-      this.props.updateMark(this.props.id, 0);
-    }
-  };
-
   render() {
     const unassignedClass = this.props.unassigned ? 'unassigned' : '';
     const expandedClass = this.props.expanded ? 'expanded' : 'collapsed';
@@ -181,24 +173,22 @@ class CheckboxCriterionInput extends React.Component {
           <div>
             {!this.props.released_to_students &&
              <span className='checkbox-criterion-inputs'>
-              <label onClick={() => this.handleChange({target: {value: 'yes'}})}>
+              <label onClick={() => this.props.updateMark(this.props.id, this.props.max_mark)}>
                 <input
                   type='radio'
-                  value='yes'
-                  onChange={this.handleChange}
+                  readOnly={true}
                   checked={this.props.mark === this.props.max_mark}
                   disabled={this.props.released_to_students || this.props.unassigned}
                 />
                 {I18n.t('checkbox_criteria.answer_yes')}
               </label>
-              <label onClick={() => this.handleChange({target: {value: 'no'}})}>
-              <input
-                type='radio'
-                value='no'
-                onChange={this.handleChange}
-                checked={this.props.mark === 0}
-                disabled={this.props.released_to_students || this.props.unassigned}
-              />
+              <label onClick={() => this.props.updateMark(this.props.id, 0)}>
+                <input
+                  type='radio'
+                  readOnly={true}
+                  checked={this.props.mark === 0}
+                  disabled={this.props.released_to_students || this.props.unassigned}
+                />
                 {I18n.t('checkbox_criteria.answer_no')}
               </label>
             </span>
