@@ -33,6 +33,15 @@ describe Grouping do
       end
     end
 
+    context 'If the student is a TestStudent' do
+      let(:test_student) { create(:test_student) }
+
+      it 'cannot be invited' do
+        grouping.invite(test_student.user_name)
+        expect(grouping.memberships.count).to eq(0)
+      end
+    end
+
     it 'displays Empty Group since no students in the group' do
       expect(grouping.get_all_students_in_group).to eq('Empty Group')
     end
