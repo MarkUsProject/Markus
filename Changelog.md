@@ -1,5 +1,8 @@
 # Changelog
 
+## [v1.10.2]
+- Easy fix: Not collected submission counts towards progress bar (#4854)
+
 ## [v1.10.1]
 - Fix out of dates link to the wiki (#4843)
 - Fixed a bug where the grade summary view was not being properly displayed if no criteria existed (#4855)
