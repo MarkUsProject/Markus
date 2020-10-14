@@ -86,7 +86,7 @@ class StudentMembership < Membership
   end
 
   def test_student_membership_status
-    user.memberships.each do|membership|
+    user.memberships.each do |membership|
       unless membership.membership_status == 'inviter'
         errors.add(:base, 'A test student can only be an inviter')
         false

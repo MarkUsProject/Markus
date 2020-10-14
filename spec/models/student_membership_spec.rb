@@ -179,7 +179,9 @@ describe StudentMembership do
     end
     context 'When test student is not the inviter of his grouping' do
       let(:grouping) { create(:grouping, assignment: assignment) }
-      let!(:membership) { create(:test_student_membership, user: test_student, grouping: grouping, membership_status: 'accepted') }
+      let!(:membership) do
+        create(:test_student_membership, user: test_student, grouping: grouping, membership_status: 'accepted')
+      end
       it 'should return false' do
         expect(membership).not_to be_valid
       end

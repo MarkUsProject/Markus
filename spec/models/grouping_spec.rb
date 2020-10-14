@@ -1410,8 +1410,9 @@ describe Grouping do
       let(:grouping) { create(:grouping, assignment: assignment) }
       let(:test_student2) { create(:test_student) }
       let!(:membership1) { create(:test_student_membership, user: test_student, grouping: grouping) }
-      let!(:membership2) { create(:test_student_membership,
-                                  user: test_student2, grouping: grouping, membership_status: 'accepted') }
+      let!(:membership2) do
+        create(:test_student_membership, user: test_student2, grouping: grouping, membership_status: 'accepted')
+      end
       it 'should return false' do
         expect(grouping).not_to be_valid
         expect(grouping.memberships.count).to eq(2)
