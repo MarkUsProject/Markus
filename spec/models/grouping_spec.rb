@@ -1394,4 +1394,28 @@ describe Grouping do
       expect(grouping.changed_starter_file_at?(revision)).to be true
     end
   end
+
+  describe '#test_student_grouping_member' do
+    let(:test_student) { create(:test_student) }
+    let(:assignment) { create(:assignment) }
+    context 'When test student is the only member in his grouping' do
+      let(:grouping) { create(:grouping, assignment: assignment) }
+      let!(:membership) { create(:test_student_membership, user: test_student, grouping: grouping) }
+      it 'should return true' do
+        expect(grouping).to be_valid
+        expect(grouping.memberships.count).to eq(1)
+      end
+    end
+    context 'When test student grouping has more than one member' do
+      let(:grouping) { create(:grouping, assignment: assignment) }
+      let(:test_student2) { create(:test_student) }
+      let!(:membership1) { create(:test_student_membership, user: test_student, grouping: grouping) }
+      let!(:membership2) { create(:test_student_membership,
+                                  user: test_student2, grouping: grouping, membership_status: 'accepted') }
+      it 'should return false' do
+        expect(grouping).not_to be_valid
+        expect(grouping.memberships.count).to eq(2)
+      end
+    end
+  end
 end

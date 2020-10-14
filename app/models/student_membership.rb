@@ -19,6 +19,7 @@ class StudentMembership < Membership
         -> { where membership_status: [STATUSES[:accepted], STATUSES[:inviter]] }
 
   validate :must_be_valid_student
+  validate :test_student_membership_status, if: -> { user.is_a?(TestStudent) && !self.id.nil? }
   validate :one_accepted_per_assignment
 
   validates_presence_of :membership_status
@@ -82,5 +83,15 @@ class StudentMembership < Membership
 
     errors.add(:base, I18n.t('csv.memberships_not_unique'))
     throw(:abort)
+  end
+
+  def test_student_membership_status
+    user.memberships.each do|membership|
+      unless membership.membership_status == 'inviter'
+        errors.add(:base, 'A test student can only be an inviter')
+        false
+      end
+    end
+    true
   end
 end

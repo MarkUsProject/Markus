@@ -10,18 +10,4 @@ class TestStudent < User
 
   has_many :student_memberships, foreign_key: 'user_id'
   validates_associated :accepted_groupings
-
-  def validate_membership_status
-    membership = memberships.find_by(user_id: self.id)
-    return true if membership.membership_status == 'inviter'
-    errors.add(:base, 'A test student can only be an inviter')
-    false
-  end
-
-  def validate_grouping_member(grouping)
-    members = grouping.memberships.count
-    return true if members == 1
-    errors.add(:base, 'Grouping with test student should have no other members')
-    false
-  end
 end

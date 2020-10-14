@@ -166,4 +166,23 @@ describe StudentMembership do
     include_examples 'vcs_submit=true', :rejected_student_membership, update_hash
     include_examples 'vcs_submit=false', :rejected_student_membership
   end
+
+  describe '#test_student_membership_status' do
+    let(:test_student) { create(:test_student) }
+    let(:assignment) { create(:assignment) }
+    context 'When test student is the inviter of his grouping' do
+      let(:grouping) { create(:grouping, assignment: assignment) }
+      let!(:membership) { create(:test_student_membership, user: test_student, grouping: grouping) }
+      it 'should return true' do
+        expect(membership).to be_valid
+      end
+    end
+    context 'When test student is not the inviter of his grouping' do
+      let(:grouping) { create(:grouping, assignment: assignment) }
+      let!(:membership) { create(:test_student_membership, user: test_student, grouping: grouping, membership_status: 'accepted') }
+      it 'should return false' do
+        expect(membership).not_to be_valid
+      end
+    end
+  end
 end
