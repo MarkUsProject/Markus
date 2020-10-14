@@ -84,7 +84,6 @@ class Grouping < ApplicationRecord
 
   has_many :grouping_starter_file_entries, dependent: :destroy
   has_many :starter_file_entries, through: :grouping_starter_file_entries
-  byebug
   validate :test_student_grouping_member, if: -> { !self.id.nil? && self.test_students.exists? }
   # Assigns a random TA from a list of TAs specified by +ta_ids+ to each
   # grouping in a list of groupings specified by +grouping_ids+. The groupings
@@ -782,7 +781,6 @@ class Grouping < ApplicationRecord
   end
 
   def test_student_grouping_member
-    byebug
     members = memberships.joins(:user).where(grouping_id: self.id).count
     return true if members == 1
     errors.add(:base, 'Grouping with test student should have no other members')
