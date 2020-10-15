@@ -15,7 +15,7 @@ class CourseSummariesController < ApplicationController
     marking_schemes = current_user.student? ? MarkingScheme.none : MarkingScheme
 
     average, median, individual, assessment_columns, marking_scheme_columns, graph_labels = [], [], [], [], [], []
-    single = current_user.student? ? Hash[table_data.first[:assessment_marks].map { |k, v| [k,v[:percentage]] }] : {}
+    single = current_user.student? ? Hash[table_data.first[:assessment_marks].map { |k, v| [k, v[:percentage]] }] : {}
 
     assessments.order(id: :asc).each do |a|
       info = assessment_overview(a)
