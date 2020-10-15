@@ -9,7 +9,6 @@ document.getElementById('annotation_dialog').innerHTML = '<%= escape_javascript(
                    result: @annotation.result,
                    annotation: @annotation,
                    title: t('helpers.submit.update', model: Annotation.model_name.human),
-                   title_one: t('annotations.update_one'),
                    content: @annotation.annotation_text.content,
                    change_one_option: !cat_id.nil? && @annotation.annotation_text.deduction == nil,
                  }

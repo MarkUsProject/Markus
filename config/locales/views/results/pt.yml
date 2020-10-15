@@ -29,7 +29,6 @@ pt:
     # Annotations
     annotation:
       across_all_submission_files: "Anotações atuais sobre todos os arquivos. Clique no número da linha para ir até a localização no arquivo."
-      change_across_submissions: "Essa mudança irá propagar por todas as submissões com essa anotação. Você tem certeza disso?"
       common: "Common Annotations"
       include_in_download: "Incluir anotações"
       include_in_download_warning: "Aviso! Anotações sobre PDFs não são presentemente descarregado."

@@ -48,7 +48,10 @@
         </p>
       <% end %>
       <% if change_one_option %>
-        <br><br><%= f.check_box :change_one, id: 'change_one_annotation' %> <%= title_one %>
+        <p>
+          <%= f.check_box :change_all, id: 'change_all_annotations' %>
+          <%= f.label :change_all, t('annotations.update_all') %>
+        </p>
       <% end %>
 
       <section class='dialog-actions'>

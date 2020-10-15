@@ -413,13 +413,6 @@
     });
     updatePreview('new_annotation_content', 'annotation_preview');
     modal.open();
-
-    $('#submit_annotation').click(() => {
-      const changeOneOption = document.getElementById('change_one_annotation');
-      if (changeOneOption && !changeOneOption.checked) {
-        return confirm(I18n.t('results.annotation.change_across_submissions'));
-      }
-    });
   }
 
   function close_annotation_modal() {

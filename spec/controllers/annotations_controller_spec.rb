@@ -293,7 +293,7 @@ describe AnnotationsController do
         put_as user,
                :update,
                params: { id: anno1.id, assignment_id: assignment.id, submission_file_id: submission_file.id,
-                         result_id: result.id, content: 'new content', annotation_text: { change_one: '1' } },
+                         result_id: result.id, content: 'new content', annotation_text: { change_all: '0' } },
                format: :js
         assert_response :success
         expect(anno1.reload.annotation_text.reload.content).to eq 'new content'
