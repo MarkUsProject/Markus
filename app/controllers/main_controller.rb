@@ -275,6 +275,12 @@ class MainController < ApplicationController
     # please keep.
   end
 
+  def settings
+    # dummy action for remote rjs calls
+    # triggered by clicking on the "Settings" link
+    # please keep.
+  end
+
   # Action only relevant if REMOTE_USER config is on and if an
   # admin switched role. Since there might not be a logout link
   # provide a vehicle to expire the session (I.e. cancel the

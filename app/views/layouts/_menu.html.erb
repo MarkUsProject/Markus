@@ -60,6 +60,11 @@
         <%= link_to t('menu.settings'), controller: 'students', action: 'mailer_settings' %>
       </li>
     <% end %>
+    <li <% if controller.controller_name == 'main' %>
+        class='active'
+        <% end %>>
+      <%= link_to t('menu.settings'), controller: 'main', action: 'settings' %>
+    </li>
   <% end %>
 
   <% if @current_user.admin? || @current_user.ta? %>

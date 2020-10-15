@@ -426,6 +426,7 @@ Rails.application.routes.draw do
         post 'reset_api_key'
         get 'check_timeout'
         post 'refresh_session'
+        get 'settings'
       end
     end
 
