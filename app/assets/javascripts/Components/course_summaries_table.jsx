@@ -13,6 +13,12 @@ export class CourseSummaryTable extends React.Component {
     };
   }
 
+  static defaultProps = {
+    assessments: [],
+    marking_schemes: [],
+    data: []
+  }
+
   nameColumns = [
     {
       id: 'hidden',
@@ -56,6 +62,33 @@ export class CourseSummaryTable extends React.Component {
     this.setState({filtered, showHidden});
   };
 
+  dataColumns = () => {
+    let columns = [];
+    this.props.assessments.map((data) => {
+      columns.push(
+        {
+          accessor: `assessment_marks.${data['id']}.mark`,
+          Header: data['name'],
+          minWidth: 50,
+          className: 'number',
+          headerStyle: { textAlign: 'right' }
+        }
+      )
+    });
+    this.props.marking_schemes.map((data) => {
+      columns.push(
+        {
+          accessor: `weighted_marks.${data['id']}.mark`,
+          Header: data['name'],
+          minWidth: 50,
+          className: 'number',
+          headerStyle: { textAlign: 'right' }
+        }
+      )
+    });
+    return columns;
+  }
+
   render() {
     return [
       !this.props.student &&
@@ -75,7 +108,7 @@ export class CourseSummaryTable extends React.Component {
       <ReactTable
         key='course-summary-table'
         data={this.props.data}
-        columns={this.props.student ? this.props.columns : this.nameColumns.concat(this.props.columns)}
+        columns={this.props.student ? this.dataColumns() : this.nameColumns.concat(this.dataColumns())}
         defaultFilterMethod={stringFilter}
         defaultSorted={[
           {

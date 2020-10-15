@@ -33,12 +33,11 @@ class GradesSummaryDisplay extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      columns: [],
+      assessments: [],
+      marking_schemes: [],
       data: [],
-      labels: [],
-      average_data: [],
-      median_data: [],
-      individual_data: [],
+      graph_labels: [],
+      datasets: [],
       loading: true
     }
   }
@@ -51,38 +50,39 @@ class GradesSummaryDisplay extends React.Component {
     $.ajax({
       url: Routes.populate_course_summaries_path(),
       dataType: 'json',
-    }).then(res => this.setState({loading: false, ...res}))
+    }).then(res => this.setState({...res, loading: false, datasets: this.compileDatasets(res.graph_data)}))
   }
 
-  compileDatasets = () => {
-    if (this.props.student) {
-      return [
-        {...this.averageDataSet, data: this.state.average_data},
-        {...this.individualDataSet, data: this.state.individual_data}
-      ]
-    } else {
-      return [
-        {...this.averageDataSet, data: this.state.average_data},
-        {...this.medianDataSet, data: this.state.median_data}
-      ]
+  compileDatasets = (data) => {
+    let dataset = [];
+    if (!!data.average.filter(x => x !== null).length) {
+      dataset.push({...this.averageDataSet, data: data.average})
     }
+    if (!!data.median.filter(x => x !== null).length) {
+      dataset.push({...this.medianDataSet, data: data.median})
+    }
+    if (!!data.individual.filter(x => x !== null).length) {
+      dataset.push({...this.individualDataSet, data: data.individual})
+    }
+    return dataset;
   }
 
   render() {
-    if (this.state.columns.length === 0 && !this.state.loading) {
+    if (this.state.assessments.length === 0 && !this.state.loading) {
       return <p>{I18n.t('course_summary.absent')}</p>;
     }
     return (<div>
       <CourseSummaryTable
-        columns={this.state.columns}
+        assessments={this.state.assessments}
+        marking_schemes={this.state.marking_schemes}
         data={this.state.data}
         loading={this.state.loading}
         student={this.props.student}
       />
       <fieldset style={{display: 'flex', justifyContent: 'center'}}>
         <DataChart
-          labels={this.state.labels}
-          datasets={this.compileDatasets()}
+          labels={this.state.graph_labels}
+          datasets={this.state.datasets}
           xTitle={I18n.t('activerecord.models.assessment.one')}
           yTitle={I18n.t('activerecord.models.mark.one') + ' (%)'}
           width={'auto'}
