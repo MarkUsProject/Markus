@@ -15,7 +15,7 @@ namespace :markus do
       a1.short_identifier = ENV['short_id']
       a1.description = "Conditionals and Loops"
       a1.message = "Learn to use conditional statements, and loops."
-      a1.due_date = Time.now
+      a1.due_date = Time.current
       a1.repository_folder = a1.short_identifier
       a1.submission_rule = rule
       a1.build_assignment_stat
@@ -69,7 +69,7 @@ namespace :markus do
             unless File.directory?(File.join(file_dir, filename))
               file_contents = File.open(File.join(file_dir, filename))
               file_contents.rewind
-              group.access_repo do |repo|
+              grouping.access_repo do |repo|
                 txn = repo.get_transaction(student.user_name)
                 path = File.join(a1.repository_folder, filename)
                 txn.add(path, file_contents.read, '')
@@ -78,7 +78,7 @@ namespace :markus do
               file_contents.close
             end
           end
-          submission = Submission.create_by_timestamp(grouping, Time.now)
+          submission = Submission.create_by_timestamp(grouping, Time.current)
           result = submission.get_latest_result
           # create marks for each criterion and attach to result
           a1.criteria.each do |criterion|

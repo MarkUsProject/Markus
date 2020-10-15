@@ -317,7 +317,7 @@ class User < ApplicationRecord
     digest = Digest::SHA2.new(512)
     # generate a unique token
     unique_seed = SecureRandom.hex(20)
-    digest.update("#{unique_seed} SECRET! #{Time.zone.now.to_f}").to_s
+    digest.update("#{unique_seed} SECRET! #{Time.current.to_f}").to_s
   end
 
   # strip input string

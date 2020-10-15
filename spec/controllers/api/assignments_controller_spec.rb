@@ -150,7 +150,7 @@ describe Api::AssignmentsController do
       end
     end
     context 'POST create' do
-      let(:params) { { short_identifier: 'A0', description: 'something', due_date: Time.now } }
+      let(:params) { { short_identifier: 'A0', description: 'something', due_date: Time.current } }
       let(:full_params) do
         { short_identifier: 'A0', message: 'Test Message',
           description: 'Test', due_date: '2012-03-26 18:04:39',

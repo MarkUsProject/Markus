@@ -347,7 +347,13 @@ describe GradeEntryFormsController do
     context '#create' do
       before do
         post_as user, :create,
-                params: { grade_entry_form: { short_identifier: 'G1', description: 'Test form', due_date: Time.now } }
+                params: {
+                  grade_entry_form: {
+                    short_identifier: 'G1',
+                    description: 'Test form',
+                    due_date: Time.current
+                  }
+                }
       end
       it('should respond with 302') { expect(response.status).to eq 302 }
     end
@@ -408,7 +414,13 @@ describe GradeEntryFormsController do
       context '#create' do
         before do
           post_as user, :create,
-                  params: { grade_entry_form: { short_identifier: 'G1', description: 'Test form', due_date: Time.now } }
+                  params: {
+                    grade_entry_form: {
+                      short_identifier: 'G1',
+                      description: 'Test form',
+                      due_date: Time.current
+                    }
+                  }
         end
         it('should respond with 403') { expect(response.status).to eq 403 }
       end

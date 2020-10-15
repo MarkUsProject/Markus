@@ -2,8 +2,9 @@ namespace :markus do
   desc "Markus demo"
 
   def submit_files(group, a)
-    group.access_repo do |repo|
-      txn = repo.get_transaction(group.grouping_for_assignment(a.id).inviter.user_name)
+    grouping = group.grouping_for_assignment(a.id)
+    grouping.access_repo do |repo|
+      txn = repo.get_transaction(grouping.inviter.user_name)
       repo_path = File.join(a.repository_folder, 'hello_world.py')
       txn.add(repo_path, 'print("Hello World")', '')
       repo.commit(txn)
@@ -55,13 +56,13 @@ namespace :markus do
     remark = Result.new(
       marking_state: Result::MARKING_STATES[:incomplete],
       submission_id: submission.id,
-      remark_request_submitted_at: Time.zone.now)
+      remark_request_submitted_at: Time.current)
     remark.save
 
     # Update subission
     submission.update(
       remark_request: 'Please remark my assignment.',
-      remark_request_timestamp: Time.zone.now)
+      remark_request_timestamp: Time.current)
 
     submission.remark_result.update(marking_state: Result::MARKING_STATES[:incomplete])
   end
@@ -105,7 +106,7 @@ namespace :markus do
       student.create_group_for_working_alone_student(a.id)
       group = Group.find_by group_name: student.user_name
       if i == (Student.count/2).ceil
-        a.update(due_date: Time.now, token_start_date: Time.now)
+        a.update(due_date: Time.current, token_start_date: Time.current)
         a.save
       end
       submit_files(group, a)
@@ -287,7 +288,7 @@ namespace :markus do
       submit_files(group, a)
     end
 
-    a.update(due_date: Time.now, token_start_date: Time.now)
+    a.update(due_date: Time.current, token_start_date: Time.current)
     a.save
 
     puts '6: Marking State examples'
@@ -311,7 +312,7 @@ namespace :markus do
       student.create_group_for_working_alone_student(a.id)
       group = Group.find_by group_name: student.user_name
       if j == Student.count - 1
-        a.update(due_date: Time.now, token_start_date: Time.now)
+        a.update(due_date: Time.current, token_start_date: Time.current)
         a.save
       end
       next if j == 1

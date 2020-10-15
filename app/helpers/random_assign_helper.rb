@@ -164,7 +164,7 @@ module RandomAssignHelper
       [g.id, g.current_submission_used.id]
     end]
 
-    now = Time.now
+    now = Time.current
     results = Result.insert_all(
       @reviewees.map do |reviewee_id|
         { submission_id: submission_map[reviewee_id],

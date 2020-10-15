@@ -28,7 +28,7 @@ describe AssignmentsController do
         },
         description: 'Test',
         message: '',
-        due_date: Time.now.to_s
+        due_date: Time.current.to_s
       }
     }
   end
@@ -545,7 +545,7 @@ describe AssignmentsController do
     it_behaves_like 'update assignment_properties', :allow_remarks, false, true
     it_behaves_like 'update assignment', :description, 'AAA', 'BBB'
     it_behaves_like 'update assignment', :message, 'AAA', 'BBB'
-    it_behaves_like 'update assignment', :due_date, Time.now.to_s, (Time.now - 1.hour).to_s
+    it_behaves_like 'update assignment', :due_date, Time.current.to_s, (Time.current - 1.hour).to_s
     it 'should update group_min and group_max when is_group_assignment is true' do
       assignment.update!(group_min: 1, group_max: 1)
       params[:assignment][:assignment_properties_attributes][:group_min] = 2
@@ -567,7 +567,7 @@ describe AssignmentsController do
       expect(assignment.assignment_properties[:group_max]).to eq 1
     end
     it 'should update duration when this is a timed assignment' do
-      assignment.update!(is_timed: true, start_time: Time.now - 10.hours, duration: 10.minutes)
+      assignment.update!(is_timed: true, start_time: Time.current - 10.hours, duration: 10.minutes)
       params[:assignment][:assignment_properties_attributes][:duration] = { hours: 2, minutes: 20 }
       patch_as user, :update, params: params
       expect(assignment.reload.duration).to eq(2.hours + 20.minutes)
@@ -663,17 +663,17 @@ describe AssignmentsController do
       it_behaves_like 'create assignment_properties', :group_min, 3
       it_behaves_like 'create assignment', :description, 'BBB'
       it_behaves_like 'create assignment', :message, 'BBB'
-      it_behaves_like 'create assignment', :due_date, (Time.now - 1.hour).to_s
+      it_behaves_like 'create assignment', :due_date, (Time.current - 1.hour).to_s
       it 'should set duration when this is a timed assignment' do
         params[:assignment][:assignment_properties_attributes][:duration] = { hours: 2, minutes: 20 }
-        params[:assignment][:assignment_properties_attributes][:start_time] = Time.now - 10.hours
+        params[:assignment][:assignment_properties_attributes][:start_time] = Time.current - 10.hours
         params[:assignment][:assignment_properties_attributes][:is_timed] = true
         post_as user, :create, params: params
         expect(assigns(:assignment).duration).to eq(2.hours + 20.minutes)
       end
       it 'should not set duration when this is a not a timed assignment' do
         params[:assignment][:assignment_properties_attributes][:duration] = { hours: 2, minutes: 20 }
-        params[:assignment][:assignment_properties_attributes][:start_time] = Time.now - 10.hours
+        params[:assignment][:assignment_properties_attributes][:start_time] = Time.current - 10.hours
         params[:assignment][:assignment_properties_attributes][:is_timed] = false
         post_as user, :create, params: params
         expect(assigns(:assignment).duration).to eq nil
@@ -722,7 +722,7 @@ describe AssignmentsController do
         it('should respond with 403') { expect(response.status).to eq 403 }
       end
       context '#create' do
-        let(:params) { { short_identifier: 'A0', description: 'Ruby on rails', due_date: Time.now } }
+        let(:params) { { short_identifier: 'A0', description: 'Ruby on rails', due_date: Time.current } }
         before { post_as user, :create, params: params }
         it('should respond with 403') { expect(response.status).to eq 403 }
       end

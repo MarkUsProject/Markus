@@ -34,7 +34,7 @@ class Submission < ApplicationRecord
      unless timestamp.kind_of? Time
        raise 'Expected a timestamp of type Time'
      end
-     submission = grouping.group.access_repo do |repo|
+     submission = grouping.access_repo do |repo|
        path = grouping.assignment.repository_folder
        revision = repo.get_revision_by_timestamp(timestamp, path)
        generate_new_submission(grouping, revision)
@@ -43,7 +43,7 @@ class Submission < ApplicationRecord
   end
 
   def self.create_by_revision_identifier(grouping, revision_identifier)
-    submission = grouping.group.access_repo do |repo|
+    submission = grouping.access_repo do |repo|
       revision = repo.get_revision(revision_identifier)
       generate_new_submission(grouping, revision)
     end
@@ -294,7 +294,7 @@ class Submission < ApplicationRecord
   def make_remark_result
     remark = results.create(
       marking_state: Result::MARKING_STATES[:incomplete],
-      remark_request_submitted_at: Time.zone.now)
+      remark_request_submitted_at: Time.current)
 
     # populate remark result with old marks
     original_result = get_original_result
@@ -302,7 +302,7 @@ class Submission < ApplicationRecord
 
     original_result.extra_marks.each do |extra_mark|
       remark.extra_marks.create(result: remark,
-                                created_at: Time.zone.now,
+                                created_at: Time.current,
                                 description: extra_mark.description,
                                 extra_mark: extra_mark.extra_mark,
                                 unit: extra_mark.unit)

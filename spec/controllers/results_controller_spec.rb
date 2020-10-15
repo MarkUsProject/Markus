@@ -757,7 +757,7 @@ describe ResultsController do
         context 'when a remark request exists' do
           let(:remarked) do
             submission.make_remark_result
-            submission.update(remark_request_timestamp: Time.zone.now)
+            submission.update(remark_request_timestamp: Time.current)
             submission
           end
           let(:params) { { assignment_id: assignment.id, submission_id: remarked.id, id: incomplete_result.id } }

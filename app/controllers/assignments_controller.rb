@@ -98,7 +98,7 @@ class AssignmentsController < ApplicationController
     else
       if @assignment.section_due_dates_type
         section_due_dates = Hash.new
-        now = Time.zone.now
+        now = Time.current
         Section.all.each do |section|
           collection_time = @assignment.submission_rule.calculate_collection_time(section)
           collection_time = now if now >= collection_time
@@ -445,7 +445,7 @@ class AssignmentsController < ApplicationController
         starter_file_group.update!(group_params)
         all_changed ||= starter_file_group.saved_changes? || assignment.assignment_properties.saved_changes?
       end
-      assignment.assignment_properties.update!(starter_file_updated_at: Time.zone.now)
+      assignment.assignment_properties.update!(starter_file_updated_at: Time.current)
     rescue ActiveRecord::RecordInvalid => e
       flash_message(:error, e.message)
       success = false
@@ -511,7 +511,7 @@ class AssignmentsController < ApplicationController
   private
 
   def set_repo_vars(assignment, grouping)
-    grouping.group.access_repo do |repo|
+    grouping.access_repo do |repo|
       @revision = repo.get_revision_by_timestamp(Time.current, assignment.repository_folder)
       @last_modified_date = @revision&.server_timestamp
       files = @revision.tree_at_path(assignment.repository_folder, with_attrs: false)
