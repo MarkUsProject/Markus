@@ -114,8 +114,6 @@ export class ImageViewer extends React.Component {
         corners = [rotatedBL, rotatedTL, rotatedTR];
     }
 
-    console.log("height of annotation: ", Math.floor(midHeightRotated + corners[0][1]) - Math.floor(midHeightRotated + corners[1][1]))
-
     annotation_manager.add_to_grid({
       x_range: {
         start: Math.floor(midWidthRotated + corners[1][0]),
