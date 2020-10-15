@@ -19,7 +19,7 @@ class StudentMembership < Membership
         -> { where membership_status: [STATUSES[:accepted], STATUSES[:inviter]] }
 
   validate :must_be_valid_student
-  validate :test_student_membership_status, if: -> { user.is_a?(TestStudent) && !self.id.nil? }
+  validate :test_student_membership_status, unless: -> { self.new_record? }
   validate :one_accepted_per_assignment
 
   validates_presence_of :membership_status
@@ -86,12 +86,7 @@ class StudentMembership < Membership
   end
 
   def test_student_membership_status
-    user.memberships.each do |membership|
-      unless membership.membership_status == 'inviter'
-        errors.add(:base, 'A test student can only be an inviter')
-        false
-      end
-    end
-    true
+    errors.add(:base, 'A test student can only be an inviter') if user.test_student? &&
+        self.membership_status != STATUSES[:inviter]
   end
 end
