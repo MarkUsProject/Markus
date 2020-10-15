@@ -162,11 +162,11 @@ class AnnotationsController < ApplicationController
     else
       ActiveRecord::Base.transaction do
         new_text = AnnotationText.create(
-            content: params[:content],
-            annotation_category_id: nil,
-            deduction: nil,
-            creator_id: current_user.id,
-            last_editor_id: current_user.id,
+          content: params[:content],
+          annotation_category_id: nil,
+          deduction: nil,
+          creator_id: current_user.id,
+          last_editor_id: current_user.id
         )
         @annotation.update(annotation_text: new_text)
       end
