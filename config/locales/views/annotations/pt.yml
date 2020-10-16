@@ -15,6 +15,7 @@ pt:
       one: 'UPDATE ME'
       other: 'UPDATE ME'
       zero: 'UPDATE ME'
+    update_all: 'Alterar todos os usos existentes deste texto de anotação'
 
     download_submission_file:
       begin_annotation: "%{comment_start} ANOTAÇÃO %{id}: %{text} %{comment_end}"

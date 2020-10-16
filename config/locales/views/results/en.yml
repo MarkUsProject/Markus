@@ -31,8 +31,6 @@ en:
     # Annotations
     annotation:
       across_all_submission_files: "Click on the filename to jump to the annotation."
-      change_across_submissions: "This change will propagate across all submissions where this annotation was given.
-                                  Is this OK?"
       common: "Common Annotations"
       include_in_download: "Include Annotations"
       include_in_download_warning: "Warning: Annotations on PDFs are not currently downloaded."

@@ -47,12 +47,15 @@
   /**
    * Update the text in an annotation.
    */
-  function update_annotation_text(annotation_text_id, new_content) {
+  function update_annotation_text(annotation_text_id, new_content, annotation_id = '') {
     if (annotation_manager.getAnnotationTextManager().annotationTextExists(annotation_text_id)) {
       annotation_manager
         .getAnnotationTextManager()
         .getAnnotationText(annotation_text_id)
         .setContent(new_content);
+    } else {
+      add_annotation_text(annotation_text_id, new_content);
+      annotation_manager.updateRelationships(annotation_id, annotation_text_id);
     }
   }
 

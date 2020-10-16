@@ -294,10 +294,12 @@ class Result extends React.Component {
         // Manually copy the annotation.
         newAnnotations[i] = {...newAnnotations[i]};
         newAnnotations[i].content = annotation.content;
+        newAnnotations[i].annotation_category = annotation.annotation_category;
+        newAnnotations[i].annotation_text_id = annotation.annotation_text_id;
         this.setState({annotations: newAnnotations});
       }
     }
-    update_annotation_text(annotation.id, marked(annotation.content, {sanitize: true}));
+    update_annotation_text(annotation.annotation_text_id, annotation.content, annotation.id);
   };
 
   destroyAnnotation(annotation_id, range, annotation_text_id) {
