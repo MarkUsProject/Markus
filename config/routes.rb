@@ -390,6 +390,13 @@ Rails.application.routes.draw do
       end
     end
 
+    resources :users do
+      collection do
+        get 'settings'
+        post 'settings'
+      end
+    end
+
     resources :students do
       collection do
         patch 'bulk_modify'
@@ -398,7 +405,6 @@ Rails.application.routes.draw do
         get 'add_new_section'
         get 'download'
         post 'upload'
-        get 'mailer_settings'
       end
 
       member do

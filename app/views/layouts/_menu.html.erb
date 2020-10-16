@@ -54,17 +54,12 @@
           <% end %>>
         <%= link_to t('course_summary.title'), course_summaries_path %>
       </li>
-      <li <% if controller.controller_name == 'students' %>
-          class='active'
-          <% end %>>
-        <%= link_to t('menu.settings'), controller: 'students', action: 'mailer_settings' %>
-      </li>
+<!--      <li <%# if controller.controller_name == 'students' %>-->
+<!--          class='active'-->
+<!--          <%# end %>>-->
+        <%#= link_to t('menu.settings'), controller: 'students', action: 'mailer_settings' %>
+<!--      </li>-->
     <% end %>
-    <li <% if controller.controller_name == 'main' %>
-        class='active'
-        <% end %>>
-      <%= link_to t('menu.settings'), controller: 'main', action: 'settings' %>
-    </li>
   <% end %>
 
   <% if @current_user.admin? || @current_user.ta? %>
@@ -82,11 +77,17 @@
     </li>
   <% end %>
 
-  <% if allowed_to?(:manage?, KeyPair) %>
-      <li <% if controller.controller_name == 'key_pairs' %>
-          class='active'
-          <% end %>>
-        <%= link_to t('key_pairs.title'), controller: 'key_pairs' %>
-      </li>
-  <% end %>
+  <%# if allowed_to?(:manage?, KeyPair) %>
+<!--      <li <%# if controller.controller_name == 'key_pairs' %>-->
+<!--          class='active'-->
+<!--          <%# end %>>-->
+        <%#= link_to t('key_pairs.title'), controller: 'key_pairs' %>
+<!--      </li>-->
+  <%# end %>
+
+  <li <% if controller.controller_name == 'users' %>
+      class='active'
+      <% end %>>
+    <%= link_to t('menu.settings'), controller: 'users', action: 'settings' %>
+  </li>
 </ul>
