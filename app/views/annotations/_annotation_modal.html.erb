@@ -49,8 +49,10 @@
       <% end %>
       <% if change_one_option %>
         <p>
-          <%= f.check_box :change_all, id: 'change_all_annotations' %>
-          <%= f.label :change_all, t('annotations.update_all') %>
+          <%= f.label :change_all do %>
+            <%= f.check_box :change_all %>
+            <%= t('annotations.update_all') %>
+          <% end %>
         </p>
       <% end %>
 
