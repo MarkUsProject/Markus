@@ -752,7 +752,7 @@ class Assignment < Assessment
 
   def get_num_marked(ta_id = nil)
     if ta_id.nil?
-      groupings.left_outer_joins(:current_result).where('results.marking_state': 'complete').count
+      groupings.joins(:current_result).where('results.marking_state': 'complete').count
     else
       if is_criteria_mark?(ta_id)
         n = 0
@@ -777,7 +777,7 @@ class Assignment < Assessment
       else
         groupings.joins(:ta_memberships)
                  .where('memberships.user_id': ta_id)
-                 .left_outer_joins(:current_result)
+                 .joins(:current_result)
                  .where('results.marking_state': 'complete').count
       end
     end
