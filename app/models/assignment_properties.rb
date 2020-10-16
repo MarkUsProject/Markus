@@ -54,6 +54,7 @@ class AssignmentProperties < ApplicationRecord
   attribute :duration, :duration
   validates :duration, numericality: { greater_than: 0 }, allow_nil: false, if: :is_timed
   validates_presence_of :start_time, if: :is_timed
+  validate :start_before_due, if: :is_timed
   validate :not_timed_and_scanned
 
   STARTER_FILE_TYPES = %w[simple sections shuffle group].freeze
@@ -112,6 +113,17 @@ class AssignmentProperties < ApplicationRecord
     return unless repository_folder_changed?
     errors.add(:repo_folder_change, 'repository folder should not be changed once an assignment has been created')
     false
+  end
+
+  # Add an error if this the duration attribute is greater than the amount of time
+  # between the start_time and due_date.
+  #
+  # Note that this will fail silently if either the start_time or duration is nil since
+  # those values are checked by other validations and so should not be checked twice.
+  def start_before_due
+    return if start_time.nil? || duration.nil?
+    msg = I18n.t('activerecord.errors.models.assignment_properties.attributes.start_time.before_due_date')
+    errors.add(:start_time, msg) if start_time > assignment.due_date - duration
   end
 
   # Add an error if the is_timed and scanned_exam attributes for this assignment
