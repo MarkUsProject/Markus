@@ -4,6 +4,7 @@ import { render } from 'react-dom';
 import { LeftPane } from './left_pane';
 import { RightPane } from './right_pane';
 import { SubmissionSelector } from './submission_selector';
+import CreateModifyAnnotationPanel from '../Modals/create_modify_annotation_panel_modal';
 
 class Result extends React.Component {
   constructor(props) {
@@ -29,6 +30,13 @@ class Result extends React.Component {
       feedback_files: [],
       submission_files: {files: [], directories: {}, name: '', path: []},
       fullscreen,
+      annotationModal: {
+        show: false,
+        onSubmit: null,
+        title: '',
+        content: '',
+        categoryId: '',
+      },
     };
 
     this.leftPane = React.createRef();
@@ -181,19 +189,50 @@ class Result extends React.Component {
 
   /* Callbacks for annotations */
   newAnnotation = () => {
-    const submission_file_id = this.leftPane.current.submissionFilePanel.current.state.selectedFile[1];
+    const submission_file_id = this.leftPane.current.submissionFilePanel.current
+      .state.selectedFile[1];
     if (submission_file_id === null) return;
 
-    let data = {
+    let metadata = {
       submission_file_id: submission_file_id,
       result_id: this.props.result_id,
-      assignment_id: this.props.assignment_id
+      assignment_id: this.props.assignment_id,
     };
 
-    data = this.extend_with_selection_data(data);
-    if (data) {
-      $.get(Routes.new_annotation_path(), data);
+    metadata = this.extend_with_selection_data(metadata);
+
+    if (!metadata) {
+      return;
     }
+
+    let onSubmit = (formData) => {
+      let data = { ...formData, ...metadata };
+      $.post({
+        url: Routes.annotations_path(),
+        data,
+      }).then(() =>
+        this.setState({
+          annotationModal: {
+            show: false,
+            onSubmit: null,
+            title: "",
+            content: "",
+            categoryId: "",
+          },
+        })
+      ); // Resetting back to original
+    };
+
+    this.setState({
+      annotationModal: {
+        ...this.state.annotationModal,
+        show: true,
+        onSubmit,
+        title: I18n.t("helpers.submit.create", {
+          model: I18n.t("activerecord.models.annotation.one"),
+        }),
+      },
+    });
   };
 
   extend_with_selection_data = (annotation_data) => {
@@ -271,15 +310,59 @@ class Result extends React.Component {
   };
 
   editAnnotation = (annot_id) => {
-    $.ajax({
-      url: Routes.edit_annotation_path(annot_id),
-      method: 'GET',
-      data: {
-        result_id: this.props.result_id,
-        assignment_id: this.props.assignment_id
+    let metadata = {
+      result_id: this.props.result_id,
+      assignment_id: this.props.assignment_id,
+    };
+
+    let onSubmit = (formData) => {
+      let data = { ...formData, ...metadata };
+      $.ajax({
+        url: Routes.annotation_path(annot_id),
+        data,
+        method: "PUT",
+        dataType: "json",
+      }).always(() =>
+        {
+          this.setState({
+            annotationModal: {
+              show: false,
+              onSubmit: null,
+              title: "",
+              content: "",
+              categoryId: "",
+            },
+          })
+        }
+      );
+    };
+
+    let annotation = this.state.annotations.find(
+      (annotation) => annotation.id === parseInt(annot_id)
+    );
+
+    let category_id;
+    if (!annotation.annotation_category) {
+      category_id = "";
+    } else {
+      category_id = this.state.annotation_categories.find(
+        (category) =>
+          category.annotation_category_name === annotation.annotation_category
+      ).id;
+    }
+
+    this.setState({
+      annotationModal: {
+        ...this.state.annotationModal,
+        show: true,
+        content: annotation.content,
+        category_id,
+        onSubmit,
+        title: I18n.t("helpers.submit.create", {
+          model: I18n.t("activerecord.models.annotation.one"),
+        }),
       },
-      dataType: 'script'
-    })
+    });
   };
 
   updateAnnotation = (annotation) => {
@@ -494,6 +577,16 @@ class Result extends React.Component {
 
   render() {
     return [
+        <CreateModifyAnnotationPanel
+          categories={this.state.annotation_categories}
+          onRequestClose={() =>
+            this.setState({
+              annotationModal: { ...this.state.annotationModal, show: false },
+            })
+          }
+          is_reviewer={this.state.is_reviewer}
+          {...this.state.annotationModal}
+        />,
         <SubmissionSelector
           key='submission-selector'
           {...this.props}
