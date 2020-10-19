@@ -7,7 +7,9 @@
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       window.autotestManagerComponent = makeAutotestManager(document.getElementById('autotest-manager'),
-        { assignment_id: <%= @assignment.id %>});
+        { assignment_id: <%= @assignment.id %>,
+          grouping_id: <%= @assignment.groupings.joins(student_memberships: :user)
+                                      .where('users.type': 'TestStudent').first.id %>});
     });
   </script>
   <%= render partial: 'shared/navigation_warning',

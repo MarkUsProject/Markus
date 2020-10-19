@@ -346,7 +346,8 @@ class SubmissionsController < ApplicationController
         return
       end
     else
-      @grouping = @assignment.groupings.find(params[:grouping_id])
+      @grouping = @assignment.groupings.find(params[:grouping_id]) ||
+          @assignment.groupings.joins(student_memberships: :user).where('users.type': 'TestStudent').first
     end
 
     # The files that will be deleted
