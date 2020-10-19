@@ -25,7 +25,6 @@ class Grouping < ApplicationRecord
   has_many :ta_memberships, class_name: 'TaMembership'
   has_many :tas, through: :ta_memberships, source: :user
   has_many :students, through: :student_memberships, source: :user
-  has_many :test_students, class_name: 'TestStudent', through: :student_memberships, source: :user
   has_many :pending_students,
            class_name: 'Student',
            through: :pending_student_memberships,
@@ -84,8 +83,7 @@ class Grouping < ApplicationRecord
 
   has_many :grouping_starter_file_entries, dependent: :destroy
   has_many :starter_file_entries, through: :grouping_starter_file_entries
-  validate :test_student_grouping_member, if: -> { self.test_students.exists? }
-  validates_associated :test_students
+  validate :test_student_grouping_member
   # Assigns a random TA from a list of TAs specified by +ta_ids+ to each
   # grouping in a list of groupings specified by +grouping_ids+. The groupings
   # must belong to the given assignment +assignment+.
@@ -782,8 +780,8 @@ class Grouping < ApplicationRecord
   end
 
   def test_student_grouping_member
-    members =  self.accepted_student_memberships.joins(:user).count
-    return if members == 1
+    members = self.accepted_student_memberships.joins(:user).where('users.type': 'TestStudent').count
+    return if members <= 1
 
     errors.add(:base, 'Grouping with test student should have no other members')
   end
