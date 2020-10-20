@@ -89,7 +89,7 @@ module CourseSummariesHelper
             weighted += mark * mw.weight / max_mark
           end
         end
-        student[:weighted_marks][scheme.id] = weighted.round(2).to_f
+        student[:weighted_marks][scheme.id] = { mark: weighted.round(2).to_f, name: scheme.name }
       end
     end
   end
