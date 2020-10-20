@@ -9,6 +9,7 @@
 - UI for enable/disable variable permissions for graders (#4756)
 - Image rotation tools added in marking UI (#4789)
 - Fixed a bug preventing total marks from updating properly if one of the grades is nil (#4887)
+- Fixed calculation bugs for grade summary (#4899)
 - Fixed a bug where due dates in a flash message were incorrect for timed assessments (#4915)
 - Allowed the difference between the start and end times of a timed assessment to be less than the duration (#4915)
 

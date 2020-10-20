@@ -10,38 +10,40 @@ class CourseSummariesController < ApplicationController
   end
 
   def populate
-    visible_assessments_info = {}
-    marking_schemes = {}
-    if current_user.admin?
-      visible_assessments = Assessment.all.order(id: :asc)
-      released_ids = visible_assessments.ids
-      MarkingScheme.all.each do |m|
-        grades = m.students_weighted_grades_array(current_user)
-        marking_schemes[m.name] = { average: DescriptiveStatistics.mean(grades).round(2),
-                                    median: DescriptiveStatistics.median(grades).round(2) }
-      end
-    else
-      visible_assessments = Assessment.where(is_hidden: false).order(id: :asc)
-      released_ids = current_user.accepted_groupings
-                                 .joins(:current_result)
-                                 .where('results.released_to_students': true)
-                                 .pluck('groupings.assessment_id')
-      released_ids += current_user.grade_entry_students
-                                  .where(released_to_student: true)
-                                  .pluck('grade_entry_students.assessment_id')
+    table_data = get_table_json_data(current_user)
+    assessments = current_user.student? ? Assessment.where(is_hidden: false) : Assessment
+    marking_schemes = current_user.student? ? MarkingScheme.none : MarkingScheme
+
+    average, median, individual, assessment_columns, marking_scheme_columns, graph_labels = [], [], [], [], [], []
+    single = current_user.student? ? Hash[table_data.first[:assessment_marks].map { |k, v| [k, v[:percentage]] }] : {}
+
+    assessments.order(id: :asc).each do |a|
+      info = assessment_overview(a)
+      graph_labels << a.short_identifier
+      average << info[:average]
+      median << info[:median]
+      assessment_columns << { id: a.id, name: "#{a.short_identifier} /(#{info[:total].to_i})" }
+      individual << single[a.id]
     end
-    visible_assessments.each do |a|
-      if released_ids.include? a.id
-        visible_assessments_info[a.short_identifier] = assessment_overview(a)
+    marking_schemes.order(id: :asc).each do |m|
+      grades = table_data.map { |s| s[:weighted_marks][m.id][:mark] }
+      total = m.marking_weights.pluck(:weight).compact.sum
+      graph_labels << m.name
+      if total.zero?
+        average << nil
+        median << nil
       else
-        visible_assessments_info[a.short_identifier] = {}
+        average << (DescriptiveStatistics.mean(grades) * 100 / total).round(2).to_f
+        median << (DescriptiveStatistics.median(grades) * 100 / total).round(2).to_f
       end
+      marking_scheme_columns << { id: m.id, name: m.name }
     end
     render json: {
-      assessment_info: visible_assessments_info,
-      columns: populate_columns,
-      data: get_table_json_data(current_user),
-      schemes: marking_schemes
+      data: table_data,
+      graph_data: { average: average, median: median, individual: individual },
+      graph_labels: graph_labels,
+      assessments: assessment_columns,
+      marking_schemes: marking_scheme_columns
     }
   end
 
@@ -63,7 +65,7 @@ class CourseSummariesController < ApplicationController
     csv_string = MarkusCsv.generate(grades_data, [generate_csv_header]) do |student|
       row = [student[:user_name], student[:first_name], student[:last_name], student[:id_number]]
       row.concat(assessments.map { |a_id| student[:assessment_marks][a_id]&.[](:mark) || nil })
-      row.concat(marking_schemes.map { |ms_id| student[:weighted_marks][ms_id] })
+      row.concat(marking_schemes.map { |ms_id| student[:weighted_marks][ms_id][:mark] })
       row
     end
     name_grades_report_file(csv_string)
@@ -92,50 +94,21 @@ class CourseSummariesController < ApplicationController
               filename: "#{course_name}_grades_report.csv"
   end
 
-  def populate_columns
-    if current_user.admin? || current_user.ta?
-      assessments = Assessment.order(id: :asc).pluck(:id, :short_identifier)
-      marking_schemes = MarkingScheme.pluck(:id, :name)
-    else
-      assessments = Assessment.where(is_hidden: false).order(id: :asc).pluck(:id, :short_identifier)
-      marking_schemes = MarkingScheme.none
-    end
-
-    assessment_columns = assessments.map do |id, short_identifier|
-      {
-        accessor: "assessment_marks.#{id}.mark",
-        Header: short_identifier,
-        minWidth: 50,
-        className: 'number',
-        headerStyle: { textAlign: 'right' }
-      }
-    end
-
-    marking_scheme_columns = marking_schemes.map do |id, name|
-      {
-        accessor: "weighted_marks.#{id}",
-        Header: name,
-        minWidth: 50,
-        className: 'number',
-        headerStyle: { textAlign: 'right' }
-      }
-    end
-
-    assessment_columns.concat(marking_scheme_columns)
-  end
-
   def assessment_overview(assessment)
     if assessment.is_a? GradeEntryForm
-      info = { total: assessment.grade_entry_items.sum(:out_of), average: assessment.calculate_average&.round(2) }
-      if current_user.admin?
-        info[:median] = assessment.calculate_median&.round(2)
-      end
+      {
+        name: assessment.short_identifier,
+        total: assessment.grade_entry_items.where(bonus: false).sum(:out_of),
+        average: assessment.calculate_average&.round(2),
+        median: current_user.admin? ? assessment.calculate_median&.round(2) : nil
+      }
     else
-      info = { total: assessment.max_mark, average: assessment.results_average&.round(2) }
-      if current_user.admin? || assessment.display_median_to_students
-        info[:median] = assessment.results_median&.round(2)
-      end
+      {
+        name: assessment.short_identifier,
+        total: assessment.max_mark,
+        average: assessment.results_average&.round(2),
+        median: current_user.admin? || assessment.display_median_to_students ? assessment.results_median&.round(2) : nil
+      }
     end
-    info
   end
 end

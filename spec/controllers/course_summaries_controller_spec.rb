@@ -1,5 +1,5 @@
 describe CourseSummariesController do
-
+  include CourseSummariesHelper
   context 'An admin' do
     before do
       @admin = Admin.create(user_name: 'adoe',
@@ -57,28 +57,11 @@ describe CourseSummariesController do
         create(:grouping_with_inviter_and_submission, assignment: assignments[0])
         2.times { create(:grade_entry_form_with_data) }
         create(:grade_entry_form)
-
-        # TODO: Create marking scheme as well
+        create :marking_scheme, assessments: Assessment.all
 
         get_as @admin, :populate, format: :json
-        response_data = response.parsed_body.deep_symbolize_keys
-        @assessment_info = response_data[:assessment_info]
-        @columns = response_data[:columns]
-        @data = response_data[:data]
-      end
-
-      it 'returns the correct columns' do
-        expect(@columns.length).to eq(Assignment.count + GradeEntryForm.count)
-        Assessment.find_each do |a|
-          expected = {
-            accessor: "assessment_marks.#{a.id}.mark",
-            Header: a.short_identifier,
-            minWidth: 50,
-            className: 'number',
-            headerStyle: { textAlign: 'right' }
-          }
-          expect(@columns).to include expected
-        end
+        @response_data = response.parsed_body.deep_symbolize_keys
+        @data = @response_data[:data]
       end
 
       it 'returns the correct grades' do
@@ -108,32 +91,30 @@ describe CourseSummariesController do
               percentage: (g.current_result.total_mark * 100 / g.assignment.max_mark).round(2).to_s
             }
           end
-          expect(@data).to include expected
+          expect(@data.map { |h| h.except(:weighted_marks) }).to include expected
         end
       end
 
-      it 'returns correct average, median, and total info about assessments' do
-        totals = []
+      it 'returns correct average, median info about assessments' do
         averages = []
         medians = []
-        returned_averages = []
-        returned_totals = []
-        returned_medians = []
+        returned_averages = @response_data[:graph_data][:average]
+        returned_medians = @response_data[:graph_data][:median]
         Assessment.all.order(id: :asc).each do |a|
-          returned_averages << @assessment_info[a.short_identifier.to_sym][:average]
-          returned_medians << @assessment_info[a.short_identifier.to_sym][:median]
-          returned_totals << @assessment_info[a.short_identifier.to_sym][:total]
           if a.is_a? GradeEntryForm
-            totals << a.grade_entry_items.sum(:out_of)
             averages << a.calculate_average&.round(2)
             medians << a.calculate_median&.round(2)
           else
-            totals << a.max_mark.to_s
             averages << a.results_average&.round(2)
             medians << a.results_median&.round(2)
           end
         end
-        expect(returned_totals).to eq totals
+        MarkingScheme.all.each do |m|
+          total = m.marking_weights.pluck(:weight).compact.sum
+          grades = m.students_weighted_grades_array(@admin)
+          averages << (DescriptiveStatistics.mean(grades) * 100 / total).round(2).to_f
+          medians << (DescriptiveStatistics.median(grades) * 100 / total).round(2).to_f
+        end
         expect(returned_medians).to eq medians
         expect(returned_averages).to eq averages
       end
@@ -169,8 +150,7 @@ describe CourseSummariesController do
       before :each do
         3.times { create(:assignment_with_criteria_and_results) }
         2.times { create(:grade_entry_form_with_data) }
-        # TODO: Create marking scheme as well
-
+        create :marking_scheme, assessments: Assessment.all
         @student2 = Student.first
       end
       context 'when assessments are hidden' do
@@ -183,8 +163,6 @@ describe CourseSummariesController do
         it 'displays no information if all assessments are hidden' do
           get_as @student2, :populate, format: :json
           r = response.parsed_body
-          expect(r['columns']).to eq []
-          expect(r['assessment_info']).to eq({})
           expect(r['data'][0]['assessment_marks']).to eq({})
           expect(r['data'][0]['user_name']).to eq @student2.user_name
         end
@@ -205,38 +183,18 @@ describe CourseSummariesController do
           }
           get_as student, :populate, format: :json
           r = response.parsed_body
-          expect(r['columns'].length).to eq 2
-          expect(r['assessment_info'].map { |a| a[1]['average']&.to_f }).to match_array averages
-          expect(r['assessment_info'].map { |a| a[1]['total']&.to_f }).to match_array [assignment.max_mark.to_f, nil]
-          expect(r['assessment_info'].map { |a| a[1]['median'] }).to match_array [nil, nil]
           expect(r['data'][0]['assessment_marks']).to eq(expected_assessment_marks)
           expect(r['data'][0]['user_name']).to eq student.user_name
         end
       end
       context 'when no marks are released' do
-        before :each do
-          get_as @student2, :populate, format: :json
-          response_data = response.parsed_body.deep_symbolize_keys
-          @assessment_info = response_data[:assessment_info]
-          @columns = response_data[:columns]
-          @data = response_data[:data]
-        end
-        it 'returns the correct columns' do
-          expect(@columns.length).to eq(Assignment.count + GradeEntryForm.count)
-          Assessment.find_each do |a|
-            expected = {
-              accessor: "assessment_marks.#{a.id}.mark",
-              Header: a.short_identifier,
-              minWidth: 50,
-              className: 'number',
-              headerStyle: { textAlign: 'right' }
-            }
-            expect(@columns).to include expected
-          end
-        end
+        let(:populate) { get_as @student2, :populate, format: :json }
+        let(:response_data) { response.parsed_body.deep_symbolize_keys }
+        let(:data) { response_data[:data] }
 
         it 'returns no grades for the student' do
-          expect(@data.length).to eq 1
+          populate
+          expect(data.length).to eq 1
           expected = {
             id: @student2.id,
             id_number: @student2.id_number,
@@ -246,21 +204,36 @@ describe CourseSummariesController do
             hidden: @student2.hidden,
             assessment_marks: {}
           }
-          expect(@data).to include expected
+          expect(data).to include expected
         end
 
-        it 'returns no info about assessments' do
-          returned_averages = []
-          returned_totals = []
-          returned_medians = []
-          Assessment.all.order(id: :asc).each do |a|
-            returned_averages << @assessment_info[a.short_identifier.to_sym][:average]
-            returned_medians << @assessment_info[a.short_identifier.to_sym][:median]
-            returned_totals << @assessment_info[a.short_identifier.to_sym][:total]
+        shared_examples 'check_graph_data' do
+          it 'returns correct average, median info about assessments' do
+            populate
+            averages = []
+            medians = []
+            returned_averages = response_data[:graph_data][:average]
+            returned_medians = response_data[:graph_data][:median]
+            Assessment.all.order(id: :asc).each do |a|
+              if a.is_a? GradeEntryForm
+                averages << a.calculate_average&.round(2)
+                medians << nil
+              else
+                averages << a.results_average&.round(2)
+                medians << (a.display_median_to_students ? a.results_median&.round(2) : nil)
+              end
+            end
+            expect(returned_medians).to eq medians
+            expect(returned_averages).to eq averages
           end
-          expect(returned_totals).to eq [nil] * Assessment.all.size
-          expect(returned_medians).to eq [nil] * Assessment.all.size
-          expect(returned_averages).to eq [nil] * Assessment.all.size
+        end
+
+        context 'when display_median_to_students not set for any assignment' do
+          it_behaves_like 'check_graph_data'
+        end
+        context 'when display_median_to_students set for some assignments' do
+          before { Assignment.order(id: :asc).first.assignment_properties.update(display_median_to_students: true) }
+          it_behaves_like 'check_graph_data'
         end
       end
     end
