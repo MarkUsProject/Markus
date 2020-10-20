@@ -10,8 +10,6 @@
       Annotation Text Displayer must be provided in the constructor
 */
 
-var HORIZONTAL_SCROLLBAR_COMPENSATION = 21;
-var VERTICAL_SCROLLBAR_COMPENSATION   = 4;
 
 
 function ImageAnnotationGrid(image_event_handler, annotation_text_manager, annotation_text_displayer,
@@ -91,16 +89,10 @@ ImageAnnotationGrid.prototype.draw_holders = function() {
       // Holder within codeviewer, draw as much of it as fits.
       holder.style.display = 'block';
 
-      let container = document.getElementById('codeviewer');
-      let verticalScrollBarPresent = container.clientWidth < container.scrollWidth;
-      let horizontalScrollBarPresent = container.clientHeight < container.scrollHeight;
-      let verticalScrollBarCompensation = (horizontalScrollBarPresent ? 21 : 0) + (verticalScrollBarPresent ? 4 : 0);
-      let horizontalScrollBarCompensation = (verticalScrollBarPresent ? 21 : 0) + (horizontalScrollBarPresent ? 4 : 0);
-
       holder.style.width  = Math.min(Math.min(holder_width, (holder_left + holder_width) - left_edge),
-                                     right_edge - horizontalScrollBarCompensation - holder_left) + 'px';
+                                     right_edge - holder_left) + 'px';
       holder.style.height = Math.min(Math.min(holder_height, (holder_top + holder_height) - top_edge),
-                                     bottom_edge - verticalScrollBarCompensation - holder_top) + 'px';
+                                     bottom_edge - holder_top) + 'px';
     }
   }
 }
