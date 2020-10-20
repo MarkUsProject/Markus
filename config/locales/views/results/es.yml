@@ -35,8 +35,6 @@ es:
       across_all_submission_files: "Las anotaciones recientes de todos los archivos de la entrega. Da click en el
                                     número de línea para ser redirigido al lugar exacto en el archivo que contiene la
                                     anotación."
-      change_across_submissions: "Este cambio afectará todas las entregas marcadas con esta anotación. ¿Está de
-                                  acuerdo?"
       common: "Common Annotations"
       include_in_download: "Incluir Anotaciones"
       include_in_download_warning: "Precaución! Las anotaciones en los PDFs no pueden ser descargados por el momento."

@@ -1,5 +1,6 @@
 # Changelog
 ## [unreleased]
+- Add singular annotation update feature when updating non-deductive categorized annotations (#4874)
 - Replace Time.now and Time.zone.now with Time.current (#4896)
 - Fix lingering annotation text displays when hovering (#4875)
 - Add annotation completion to annotation modal (#4851)
@@ -9,6 +10,8 @@
 - Image rotation tools added in marking UI (#4789)
 - Fixed a bug preventing total marks from updating properly if one of the grades is nil (#4887)
 - Fixed calculation bugs for grade summary (#4899)
+- Fixed a bug where due dates in a flash message were incorrect for timed assessments (#4915)
+- Allowed the difference between the start and end times of a timed assessment to be less than the duration (#4915)
 
 ## [v1.10.2]
 - Ensure that assignment subdirectories in repositories are maintained (#4893)
