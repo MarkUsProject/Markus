@@ -4,6 +4,7 @@
 
 
 /* Header */
+@import 'constants';
 
 header#header {
   border-bottom: 1px solid $blue;
@@ -234,7 +235,7 @@ footer {
   background: $lighter-blue;
 
   @include breakpoint(mobile) {
-    background: #000;
+    background: $black;
     height: 100%;
     overflow: hidden;
     padding-top: 3.5em;
