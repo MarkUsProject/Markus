@@ -147,7 +147,7 @@ export class FileViewer extends React.Component {
         annotationFocus={this.props.annotationFocus}
         {...commonProps}
       />;
-    } else if (this.state.type !== '') {
+    } else if ((this.state.type !== '') && (this.state.type !== 'unknown')) {
       return <TextViewer
         type={this.state.type}
         content={this.state.content}
@@ -155,7 +155,7 @@ export class FileViewer extends React.Component {
         {...commonProps}
       />;
     } else {
-      return '';
+      return (I18n.t('submissions.cannot_display'));
     }
   }
 }
