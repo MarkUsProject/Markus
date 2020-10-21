@@ -147,15 +147,16 @@ export class FileViewer extends React.Component {
         annotationFocus={this.props.annotationFocus}
         {...commonProps}
       />;
-    } else if ((this.state.type !== '') && (this.state.type !== 'unknown')) {
+    } else if (!['binary', '', 'unknown'].includes(this.state.type)) {
       return <TextViewer
         type={this.state.type}
         content={this.state.content}
         focusLine={this.props.focusLine}
         {...commonProps}
       />;
-    } else {
+    } else if (this.state.type === 'binary'){
       return (I18n.t('submissions.cannot_display'));
-    }
+    } else
+      return ''
   }
 }
