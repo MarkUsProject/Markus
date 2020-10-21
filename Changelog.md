@@ -1,5 +1,6 @@
 # Changelog
 ## [unreleased]
+- Fixed a bug displaying preview of compressed archives in repo browser (#4920)
 - Add singular annotation update feature when updating non-deductive categorized annotations (#4874)
 - Replace Time.now and Time.zone.now with Time.current (#4896)
 - Fix lingering annotation text displays when hovering (#4875)
