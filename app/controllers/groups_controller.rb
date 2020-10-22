@@ -130,7 +130,7 @@ class GroupsController < ApplicationController
       u.user.first_name + ' ' + u.user.last_name
     end
     num_valid = @assignment.get_num_valid
-    num_total = @assignment.get_num_assigned
+    num_total = @assignment.groupings.size
     if num_valid == num_total
       flash_message(:success, t('exam_templates.assign_scans.done'))
     end
@@ -189,7 +189,7 @@ class GroupsController < ApplicationController
       u.user.first_name + ' ' + u.user.last_name
     end
     num_valid = @assignment.get_num_valid
-    num_total = @assignment.get_num_assigned
+    num_total = @assignment.groupings.size
     if num_valid == num_total
       flash_message(:success, t('exam_templates.assign_scans.done'))
     end
