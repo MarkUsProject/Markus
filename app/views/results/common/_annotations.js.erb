@@ -180,17 +180,17 @@
 
   function get_selection_box_coordinates() {
     let img = document.getElementById('image_preview');
-    let zoomAffectedUnrotatedImageHeight = img.height;
-    let zoomAffectedUnrotatedImageWidth = img.width;
+    let zoomHeight = img.height;
+    let zoomWidth = img.width;
     let zoomedRotatedWidth;
     let zoomedRotatedHeight;
 
     if (img.className === 'rotate90' || img.className === 'rotate270') {
-      zoomedRotatedWidth = zoomAffectedUnrotatedImageHeight;
-      zoomedRotatedHeight = zoomAffectedUnrotatedImageWidth;
+      zoomedRotatedWidth = zoomHeight;
+      zoomedRotatedHeight = zoomWidth;
     } else {
-      zoomedRotatedWidth = zoomAffectedUnrotatedImageWidth;
-      zoomedRotatedHeight = zoomAffectedUnrotatedImageHeight;
+      zoomedRotatedWidth = zoomWidth;
+      zoomedRotatedHeight = zoomHeight;
     }
 
     var box = document.getElementById('sel_box');
@@ -234,10 +234,10 @@
       corners = [bottomLeft, topLeft, topRight];
     }
 
-    var x1 = ((zoomAffectedUnrotatedImageWidth / 2) + corners[1][0]) * unzoom;
-    var y1 = ((zoomAffectedUnrotatedImageHeight / 2) + corners[1][1]) * unzoom;
-    var x2 = ((zoomAffectedUnrotatedImageWidth / 2) + corners[2][0]) * unzoom;
-    var y2 = ((zoomAffectedUnrotatedImageHeight / 2) + corners[0][1]) * unzoom;
+    var x1 = ((zoomWidth / 2) + corners[1][0]) * unzoom;
+    var y1 = ((zoomHeight / 2) + corners[1][1]) * unzoom;
+    var x2 = ((zoomWidth / 2) + corners[2][0]) * unzoom;
+    var y2 = ((zoomHeight / 2) + corners[0][1]) * unzoom;
 
     if ((x2 - x1) < 1 || isNaN(x2 - x1)) {
       return false;

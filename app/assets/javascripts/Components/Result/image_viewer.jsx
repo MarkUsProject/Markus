@@ -143,8 +143,8 @@ export class ImageViewer extends React.Component {
   zoomIn = () => {
     let picture = document.getElementById('image_preview');
     if (this.state.heightChange === 0 && this.state.zoom === 1) {
-      let widthIncrease = Math.floor(picture.width * .10);
-      let heightIncrease = Math.floor(picture.height * .10);
+      let widthIncrease = Math.floor(picture.width * 0.1);
+      let heightIncrease = Math.floor(picture.height * 0.1);
       picture.width = picture.width + widthIncrease;
       this.setState({
         widthChange: widthIncrease,
@@ -153,15 +153,15 @@ export class ImageViewer extends React.Component {
       });
     } else {
       picture.width = picture.width + this.state.widthChange;
-      this.setState({zoom: this.state.zoom + .1});
+      this.setState({zoom: this.state.zoom + 0.1});
     }
   }
 
   zoomOut = () => {
     let picture = document.getElementById('image_preview');
     if (this.state.heightChange === 0 && this.state.zoom === 1) {
-      let widthIncrease = Math.floor(picture.width * .10);
-      let heightIncrease = Math.floor(picture.height * .10);
+      let widthIncrease = Math.floor(picture.width * 0.1);
+      let heightIncrease = Math.floor(picture.height * 0.1);
       picture.width = picture.width - widthIncrease;
       this.setState({
         widthChange: widthIncrease,
@@ -170,7 +170,7 @@ export class ImageViewer extends React.Component {
       });
     } else if (this.state.zoom > 0) {
       picture.width = picture.width - this.state.widthChange;
-      this.setState({zoom: this.state.zoom - .1});
+      this.setState({zoom: this.state.zoom - 0.1});
     }
   }
 
