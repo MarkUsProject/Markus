@@ -710,9 +710,10 @@ class SubmissionsController < ApplicationController
     end
     entries.map do |file_name, file_obj|
       if file_obj.is_a? Repository::RevisionFile
+        byebug
         dirname, basename = File.split(file_name)
         dirname = '' if dirname == '.'
-        data = get_file_info(basename, file_obj, grouping.assignment.id, revision, dirname, grouping, full_path)
+        data = get_file_info(basename, file_obj, revision, dirname, grouping, full_path)
         next if data.nil?
         data[:key] = file_name
         data[:modified] = data[:last_revised_date]

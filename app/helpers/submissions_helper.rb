@@ -88,10 +88,11 @@ module SubmissionsHelper
     end
   end
 
-  def get_file_info(file_name, file, assignment_id, revision, path, grouping, full_path)
+  def get_file_info(file_name, file, revision, path, grouping, full_path)
     return if Repository.get_class.internal_file_names.include? file_name
     revision_identifier = revision.revision_identifier
     grouping_id = grouping.id
+    assignment_id = grouping.assignment.id
     f = {}
     f[:id] = file.object_id
     f[:url] = download_assignment_submissions_url(
