@@ -6,16 +6,6 @@ describe KeyPairsController do
     allow(Rails.configuration.x.repository).to receive(:type).and_return('git')
   end
 
-  describe 'GET index', :keep_memory_repos do
-    before { get_as admin, :index }
-    it 'should respond with success' do
-      is_expected.to respond_with(:success)
-    end
-    it 'should render index' do
-      expect(response).to render_template(:index)
-    end
-  end
-
   describe 'GET new', :keep_memory_repos do
     before { get_as admin, :new }
     it 'should respond with success' do

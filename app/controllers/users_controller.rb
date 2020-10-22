@@ -15,11 +15,11 @@ class UsersController < ApplicationController
                     receives_invite_emails: new_settings[:receives_invite_emails])
     update_success
   end
-  
+
   private
 
   def update_success
-    flash_message(:success, t('students.verify_settings_update'))
+    flash_message(:success, t('users.verify_settings_update'))
     redirect_to action: 'settings'
   end
 end

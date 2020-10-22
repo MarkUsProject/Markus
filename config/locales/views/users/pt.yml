@@ -27,7 +27,6 @@ pt:
     toggle_invite_notifications: 'UPDATE ME'
     toggle_results_notifications: 'UPDATE ME'
     update_settings: 'UPDATE ME'
-    verify_settings_update: 'UPDATE ME'
     account_settings: "UPDATE ME"
 
   tas:
@@ -40,3 +39,4 @@ pt:
     api_key:
       reset: "Gerar outra chave para a API"
       unavailable: "Indisponível"
+    verify_settings_update: 'UPDATE ME'
