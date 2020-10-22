@@ -394,13 +394,13 @@ Rails.application.routes.draw do
       collection do
         get 'settings'
         post 'settings'
+        patch 'update_mailer_settings'
       end
     end
 
     resources :students do
       collection do
         patch 'bulk_modify'
-        patch 'update_mailer_settings'
         get 'manage'
         get 'add_new_section'
         get 'download'

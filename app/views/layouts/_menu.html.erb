@@ -77,14 +77,6 @@
     </li>
   <% end %>
 
-  <%# if allowed_to?(:manage?, KeyPair) %>
-<!--      <li <%# if controller.controller_name == 'key_pairs' %>-->
-<!--          class='active'-->
-<!--          <%# end %>>-->
-        <%#= link_to t('key_pairs.title'), controller: 'key_pairs' %>
-<!--      </li>-->
-  <%# end %>
-
   <li <% if controller.controller_name == 'users' %>
       class='active'
       <% end %>>
