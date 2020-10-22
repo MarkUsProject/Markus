@@ -712,22 +712,11 @@ class SubmissionsController < ApplicationController
       if file_obj.is_a? Repository::RevisionFile
         dirname, basename = File.split(file_name)
         dirname = '' if dirname == '.'
-        data = get_file_info(basename, file_obj, grouping.assignment.id,
-                             revision.revision_identifier, dirname, grouping.id)
+        data = get_file_info(basename, file_obj, grouping.assignment.id, revision, dirname, grouping, full_path)
         next if data.nil?
         data[:key] = file_name
         data[:modified] = data[:last_revised_date]
         data[:revision_by] = '' if anonymize
-        if data[:type] == 'unknown'
-          grouping.access_repo do |repo|
-            file = revision.files_at_path(full_path)[file_name]
-            file_contents = repo.download_as_string(file)
-            file_contents.encode!('UTF-8', invalid: :replace, undef: :replace, replace: '�')
-            if SubmissionFile.is_binary?(file_contents)
-              data[:type] = 'binary'
-            end
-          end
-        end
         data
       else
         { key: "#{file_name}/" }

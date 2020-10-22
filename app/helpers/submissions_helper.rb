@@ -88,8 +88,10 @@ module SubmissionsHelper
     end
   end
 
-  def get_file_info(file_name, file, assignment_id, revision_identifier, path, grouping_id)
+  def get_file_info(file_name, file, assignment_id, revision, path, grouping, full_path)
     return if Repository.get_class.internal_file_names.include? file_name
+    revision_identifier = revision.revision_identifier
+    grouping_id = grouping.id
     f = {}
     f[:id] = file.object_id
     f[:url] = download_assignment_submissions_url(
@@ -111,6 +113,16 @@ module SubmissionsHelper
     f[:revision_by] = file.user_id
     f[:submitted_date] = I18n.l(file.submitted_date)
     f[:type] = SubmissionFile.get_file_type(file_name)
+    if f[:type] == 'unknown'
+      grouping.access_repo do |repo|
+        raw_file = revision.files_at_path(full_path)[file_name]
+        file_contents = repo.download_as_string(raw_file)
+        file_contents.encode!('UTF-8', invalid: :replace, undef: :replace, replace: '�')
+        if SubmissionFile.is_binary?(file_contents)
+          f[:type] = 'binary'
+        end
+      end
+    end
     f
   end
 
