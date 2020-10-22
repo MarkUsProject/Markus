@@ -41,12 +41,12 @@ describe SubmissionsHelper do
   describe '#get_file_info' do
     let(:assignment) { create(:assignment) }
     let(:grouping) { create(:grouping, assignment: assignment) }
-    let(:file_name) { "test.zip" }
+    let(:file_name) { 'test.zip' }
     before do
       grouping.group.access_repo do |repo|
         txn = repo.get_transaction('test')
         path = File.join(grouping.assignment.repository_folder, file_name)
-        txn.add(path, 'test content', '')
+        txn.add(path, '')
         repo.commit(txn)
       end
     end
