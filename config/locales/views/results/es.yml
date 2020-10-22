@@ -9,6 +9,7 @@ es:
                                  ellos tenga su nota correspondiente."
     current_mark: 'UPDATE ME!'
     current_rotation: 'UPDATE ME!'
+    current_zoom_level: 'UPDATE ME!'
     delete_extra_mark_confirm: "¿Está seguro/a de querer remover esta nota adicional?"
     expand_all: "Expandir todos"
     expand_unmarked: "Expandir no calificados"
@@ -29,6 +30,8 @@ es:
     your_mark: 'Su Nota'
     cancel_override: 'UPDATE ME!'
     overridden_deductions: 'UPDATE ME!'
+    zoom_in_image: 'UPDATE ME!'
+    zoom_out_image: 'UPDATE ME!'
 
     # Annotations
     annotation:

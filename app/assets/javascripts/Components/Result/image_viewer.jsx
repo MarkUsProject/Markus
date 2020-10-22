@@ -6,7 +6,10 @@ export class ImageViewer extends React.Component {
   constructor() {
     super();
     this.state = {
-      rotation: 0
+      rotation: 0,
+      zoom: 1,
+      heightChange: 0,
+      widthChange: 0
     };
   }
 
@@ -55,10 +58,37 @@ export class ImageViewer extends React.Component {
       imgH = originalImgH;
     }
 
-    let topLeft = [annotation.x_range.start - (originalImgW / 2), annotation.y_range.start - (originalImgH / 2)];
-    let topRight = [annotation.x_range.end - (originalImgW / 2), annotation.y_range.start - (originalImgH / 2)];
-    let bottomLeft = [annotation.x_range.start - (originalImgW / 2), annotation.y_range.end - (originalImgH / 2)];
-    let bottomRight = [annotation.x_range.end - (originalImgW / 2), annotation.y_range.end - (originalImgH / 2)];
+    let midWidth = originalImgW / this.state.zoom / 2;
+    let midHeight = originalImgH / this.state.zoom / 2;
+    let midWidthRotated = imgW / 2;
+    let midHeightRotated = imgH / 2;
+
+    let xstart = annotation.x_range.start - midWidth;
+    let xend = annotation.x_range.end - midWidth;
+    let ystart = annotation.y_range.start - midHeight;
+    let yend = annotation.y_range.end - midHeight;
+
+    xstart *= this.state.zoom;
+    xend *= this.state.zoom;
+    yend *= this.state.zoom;
+    ystart *= this.state.zoom;
+
+    let topLeft = [
+      xstart,
+      ystart
+    ];
+    let topRight = [
+      xend,
+      ystart
+    ];
+    let bottomLeft = [
+      xstart,
+      yend
+    ];
+    let bottomRight = [
+      xend,
+      yend
+    ];
 
     let rotatedTR = this.rotatedCoordinate(topRight, this.state.rotation);
     let rotatedTL = this.rotatedCoordinate(topLeft, this.state.rotation);
@@ -86,12 +116,12 @@ export class ImageViewer extends React.Component {
 
     annotation_manager.add_to_grid({
       x_range: {
-        start: imgW/2 + corners[1][0],
-        end: imgW/2 + corners[2][0]
+        start: Math.floor(midWidthRotated + corners[1][0]),
+        end: Math.floor(midWidthRotated + corners[2][0])
       },
       y_range: {
-        start: imgH/2 + corners[1][1],
-        end: imgH/2 + corners[0][1]
+        start: Math.floor(midHeightRotated + corners[1][1]),
+        end: Math.floor(midHeightRotated + corners[0][1])
       },
       annot_id: annotation.id,
       // TODO: rename the following
@@ -110,8 +140,43 @@ export class ImageViewer extends React.Component {
     this.setState({rotation: this.state.rotation + 90 > 270 ? 0 : this.state.rotation + 90}, this.rotateImage);
   }
 
+  zoomIn = () => {
+    let picture = document.getElementById('image_preview');
+    if (this.state.heightChange === 0 && this.state.zoom === 1) {
+      let widthIncrease = Math.floor(picture.width * 0.1);
+      let heightIncrease = Math.floor(picture.height * 0.1);
+      picture.width = picture.width + widthIncrease;
+      this.setState({
+        widthChange: widthIncrease,
+        heightChange: heightIncrease,
+        zoom: 1.1
+      });
+    } else {
+      picture.width = picture.width + this.state.widthChange;
+      this.setState({zoom: this.state.zoom + 0.1});
+    }
+  }
+
+  zoomOut = () => {
+    let picture = document.getElementById('image_preview');
+    if (this.state.heightChange === 0 && this.state.zoom === 1) {
+      let widthIncrease = Math.floor(picture.width * 0.1);
+      let heightIncrease = Math.floor(picture.height * 0.1);
+      picture.width = picture.width - widthIncrease;
+      this.setState({
+        widthChange: widthIncrease,
+        heightChange: heightIncrease,
+        zoom: 0.9
+      });
+    } else if (this.state.zoom > 0) {
+      picture.width = picture.width - this.state.widthChange;
+      this.setState({zoom: this.state.zoom - 0.1});
+    }
+  }
+
   rotateImage = () => {
     let picture = document.getElementById('image_preview');
+
     if (this.state.rotation > 0) {
       picture.addClass('rotate' + this.state.rotation.toString());
       picture.removeClass('rotate' + (this.state.rotation - 90).toString());
@@ -125,11 +190,15 @@ export class ImageViewer extends React.Component {
       <p key={'image_toolbar'}>
         {I18n.t('results.current_rotation', {rotation: this.state.rotation})}
         <button onClick={this.addRotation} className={'inline-button'}>{I18n.t('results.rotate_image')}</button>
+        {I18n.t('results.current_zoom_level', {level: Math.floor(this.state.zoom * 100)})}
+        <button onClick={this.zoomIn} className={'inline-button'}>{I18n.t('results.zoom_in_image')}+</button>
+        <button onClick={this.zoomOut} className={'inline-button'}>{I18n.t('results.zoom_out_image')}-</button>
       </p>,
       <div id='image_container' key={'image_container'}>
         <div key='sel_box' id='sel_box' className='annotation-holder-active' style={{display: 'none'}}/>
         <img id='image_preview'
           src={this.props.url}
+          data-zoom={this.state.zoom}
           onLoad={this.display_annotations}
           alt={I18n.t('results.cant_display_image')} />
       </div>

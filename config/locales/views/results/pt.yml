@@ -5,6 +5,7 @@ pt:
     criterion_incomplete_error: "Impossível alterar status das notas para completo, notas estão faltando. Verifique a rúbrica de notas e tenha certeza que cada critério recebeu uma nota."
     current_mark: 'UPDATE ME!'
     current_rotation: 'UPDATE ME!'
+    current_zoom_level: 'UPDATE ME!'
     delete_extra_mark_confirm: "Tem certeza que você deseja remover essa nota extra?"
     expand_all: "Expandir todos"
     expand_unmarked: "Expandir não-selecionados"
@@ -25,6 +26,8 @@ pt:
     your_mark: 'Sua Nota'
     cancel_override: 'UPDATE ME!'
     overridden_deductions: 'UPDATE ME!'
+    zoom_in_image: 'UPDATE ME!'
+    zoom_out_image: 'UPDATE ME!'
 
     # Annotations
     annotation:

@@ -5,6 +5,7 @@ fr:
     criterion_incomplete_error: "Note non remplie, mais état fixé comme terminé."
     current_mark: 'UPDATE ME!'
     current_rotation: 'UPDATE ME!'
+    current_zoom_level: 'UPDATE ME!'
     delete_extra_mark_confirm: "Êtes-vous sûr de vouloir enlever cette note supplémentaire ?"
     expand_all: "Montrer toutes"
     expand_unmarked: "Montrer non évaluées"
@@ -25,6 +26,8 @@ fr:
     your_mark:  'Votre Note'
     cancel_override: 'UPDATE ME!'
     overridden_deductions: 'UPDATE ME!'
+    zoom_in_image: 'UPDATE ME!'
+    zoom_out_image: 'UPDATE ME!'
 
     # Annotations
     annotation:

@@ -8,6 +8,7 @@
 - Enable variable permissions for graders (#4601)
 - UI for enable/disable variable permissions for graders (#4756)
 - Image rotation tools added in marking UI (#4789)
+- Image zooming tools added in marking UI (#4866)
 - Fixed a bug preventing total marks from updating properly if one of the grades is nil (#4887)
 - Allow for more concurrent access to git repositories (#4895)
 - Fixed calculation bugs for grade summary (#4899)
