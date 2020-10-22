@@ -5,6 +5,7 @@ en:
     criterion_incomplete_error: "Unable to change marking status to complete because not every criterion has been given a mark."
     current_mark: 'Current mark'
     current_rotation: 'Current rotation (Clockwise) = %{rotation}°'
+    current_zoom_level: 'Current Zoom Level: %{level} %'
     delete_extra_mark_confirm: "Are you sure you want to remove this extra mark?"
     expand_all: "Expand All"
     expand_unmarked: "Expand Unmarked"
@@ -27,6 +28,8 @@ en:
     your_mark: 'Your Mark'
     cancel_override: 'Revert to automatic deductions'
     overridden_deductions: 'Overridden'
+    zoom_in_image: 'Zoom in'
+    zoom_out_image: 'Zoom out'
 
     # Annotations
     annotation:
