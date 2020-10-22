@@ -329,7 +329,7 @@ class Assignment < Assessment
                     .groupings
                     .joins(:group)
                     .left_outer_joins(:extension)
-                    .left_outer_joins(non_rejected_student_memberships: :user)
+                    .left_outer_joins(non_rejected_student_memberships: :user).where.not('users.type': 'TestStudent')
                     .left_outer_joins(inviter: :section)
                     .pluck_to_hash('groupings.id',
                                    'groupings.admin_approved',
@@ -1055,9 +1055,10 @@ class Assignment < Assessment
   # Uses joins and pluck rather than includes to improve query speed.
   def current_submission_data(current_user)
     if current_user.admin?
-      groupings = self.groupings
+      groupings = self.groupings.joins(student_memberships: :user).where.not('users.type': 'TestStudent')
     elsif current_user.ta?
-      groupings = self.groupings.where(id: self.groupings.joins(:ta_memberships)
+      groupings = self.groupings.where(id: self.groupings.joins(ta_memberships: :user)
+                                                         .where.not('users.type': 'TestStudent')
                                                          .where('memberships.user_id': current_user.id)
                                                          .select(:'groupings.id'))
     else

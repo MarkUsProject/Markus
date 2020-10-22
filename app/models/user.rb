@@ -26,12 +26,13 @@ class User < ApplicationRecord
   validates_uniqueness_of   :email, :allow_nil => true
   validates_uniqueness_of   :id_number, :allow_nil => true
 
-  validates_format_of       :type,          with: /\AStudent|Admin|Ta|TestServer\z/
+  validates_format_of       :type, with: /\AStudent|Admin|Ta|TestServer|TestStudent\z/
   # role constants
-  STUDENT = 'Student'
-  ADMIN = 'Admin'
-  TA = 'Ta'
-  TEST_SERVER = 'TestServer'
+  STUDENT = 'Student'.freeze
+  ADMIN = 'Admin'.freeze
+  TA = 'Ta'.freeze
+  TEST_SERVER = 'TestServer'.freeze
+  TEST_STUDENT = 'TestStudent'.freeze
 
   # Authentication constants to be used as return values
   # see self.authenticated? and main_controller for details
@@ -128,6 +129,10 @@ class User < ApplicationRecord
 
   def test_server?
     self.class == TestServer
+  end
+
+  def test_student?
+    self.class == TestStudent
   end
 
   # Submission helper methods -------------------------------------------------

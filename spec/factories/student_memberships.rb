@@ -16,4 +16,10 @@ FactoryBot.define do
       membership_status { StudentMembership::STATUSES[:rejected] }
     end
   end
+
+  factory :test_student_membership, class: StudentMembership, parent: :membership do
+    association :user, factory: :test_student
+    association :grouping
+    membership_status { StudentMembership::STATUSES[:inviter] }
+  end
 end

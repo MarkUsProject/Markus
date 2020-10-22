@@ -33,6 +33,15 @@ describe Grouping do
       end
     end
 
+    context 'If the student is a TestStudent' do
+      let(:test_student) { create(:test_student) }
+
+      it 'cannot be invited' do
+        grouping.invite(test_student.user_name)
+        expect(grouping.memberships.count).to eq(0)
+      end
+    end
+
     it 'displays Empty Group since no students in the group' do
       expect(grouping.get_all_students_in_group).to eq('Empty Group')
     end
@@ -1383,6 +1392,31 @@ describe Grouping do
       submit_file_at_time(grouping.assignment, grouping.group, 'test', submit_time.to_s, 'my_file', 'Hello, World!')
       revision = grouping.group.access_repo(&:get_latest_revision)
       expect(grouping.changed_starter_file_at?(revision)).to be true
+    end
+  end
+
+  describe '#test_student_grouping_member' do
+    let(:test_student) { create(:test_student) }
+    let(:assignment) { create(:assignment) }
+    context 'When test student is the only member in his grouping' do
+      let(:grouping) { create(:grouping, assignment: assignment) }
+      let!(:membership) { create(:test_student_membership, user: test_student, grouping: grouping) }
+      it 'should return true' do
+        expect(grouping).to be_valid
+        expect(grouping.memberships.count).to eq(1)
+      end
+    end
+    context 'When test student grouping has more than one member' do
+      let(:grouping) { create(:grouping, assignment: assignment) }
+      let(:test_student2) { create(:test_student) }
+      let!(:membership1) { create(:test_student_membership, user: test_student, grouping: grouping) }
+      let!(:membership2) do
+        create(:test_student_membership, user: test_student2, grouping: grouping, membership_status: 'accepted')
+      end
+      it 'should return false' do
+        expect(grouping).not_to be_valid
+        expect(grouping.memberships.count).to eq(2)
+      end
     end
   end
 end

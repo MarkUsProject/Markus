@@ -1722,9 +1722,10 @@ describe Assignment do
     context 'a TA user' do
       let(:ta) { create :ta }
       let!(:ta_membership) { create :ta_membership, grouping: groupings[0], user: ta }
+      let(:data) { assignment.reload.current_submission_data(ta) }
+
 
       it 'should return results for groupings a TA is grading only' do
-        data = assignment.current_submission_data(ta)
         expect(data.size).to eq 1
         expect(data[0][:_id]).to be groupings[0].id
       end
@@ -1735,7 +1736,6 @@ describe Assignment do
         let!(:criterion_ta_association) { create :criterion_ta_association, criterion: assigned_criteria, ta: ta }
         it 'should only include assigned criteria in max_mark' do
           assignment.update(hide_unassigned_criteria: true)
-          data = assignment.current_submission_data(ta)
           expect(data[0][:max_mark]).to eq 3
         end
       end
@@ -1748,7 +1748,6 @@ describe Assignment do
                  deduction: 1)
         end
         it 'should include grace credit deductions' do
-          data = assignment.current_submission_data(ta)
           expect(data.map { |h| h[:grace_credits_used] }.compact).to contain_exactly(1)
         end
       end
@@ -1759,9 +1758,15 @@ describe Assignment do
         let!(:extra_mark) { create :extra_mark_points, result: result }
         it 'should include the extra mark in the total' do
           final_grade = submission.current_result.total_mark + extra_mark.extra_mark
-          data = assignment.current_submission_data(ta)
           expect(data.map { |h| h[:final_grade] }).to include(final_grade)
           expect(data.select { |h| h.key? :final_grade }.count).to eq 1
+        end
+      end
+      context 'When there is a grouping for TestStudent type' do
+        let(:test_student) { create(:test_student) }
+        let(:grouping) { create :grouping_with_inviter, assignment: assignment, inviter: test_student }
+        it 'should not return those grouping' do
+          expect(data.map { |h| h[:_id] }).not_to include(grouping.id)
         end
       end
     end
@@ -1877,7 +1882,8 @@ describe Assignment do
         let!(:empty_groupings) { create_list :grouping, 2, assignment: assignment }
 
         it 'should not include member information for groups without members' do
-          expect(data.count).to eq 5
+          expect(assignment.groupings.count).to eq 5
+          expect(data.count).to eq 3
           expect(data.select { |h| h.key? :members }.count).to eq 3
         end
 
@@ -1926,6 +1932,13 @@ describe Assignment do
         let(:content) { File.read assignment.zip_automated_test_files(admin) }
         subject { content }
         it_behaves_like 'zip file download'
+      end
+      context 'When there is a grouping for TestStudent type' do
+        let(:test_student) { create(:test_student) }
+        let(:grouping) { create :grouping_with_inviter, assignment: assignment, inviter: test_student }
+        it 'should not return those grouping' do
+          expect(data.map { |h| h[:_id] }).not_to include(grouping.id)
+        end
       end
     end
   end
@@ -2170,6 +2183,19 @@ describe Assignment do
         end
       end.flatten.sort_by(&:values)
       expect(assignment.starter_file_mappings.sort_by(&:values)).to eq expected
+    end
+  end
+
+  describe '#all_grouping_data' do
+    let(:assignment) { create(:assignment) }
+    let(:test_student) { create(:test_student) }
+    let!(:grouping) { create(:grouping_with_inviter, assignment: assignment, inviter: test_student) }
+    let!(:grouping1) { create(:grouping_with_inviter, assignment: assignment) }
+    let(:data) { assignment.reload.all_grouping_data }
+
+    it 'should not return grouping of TestStudent' do
+      expect(data[:groups].map { |h| h[:_id] }).not_to include(grouping.id)
+      expect(data[:groups].map { |h| h[:_id] }).to include(grouping1.id)
     end
   end
 end

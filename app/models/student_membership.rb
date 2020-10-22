@@ -19,6 +19,7 @@ class StudentMembership < Membership
         -> { where membership_status: [STATUSES[:accepted], STATUSES[:inviter]] }
 
   validate :must_be_valid_student
+  validate :test_student_membership_status, unless: -> { self.new_record? }
   validate :one_accepted_per_assignment
 
   validates_presence_of :membership_status
@@ -30,6 +31,7 @@ class StudentMembership < Membership
   after_destroy :update_repo_permissions_after_destroy
 
   def must_be_valid_student
+    return if user.is_a?(TestStudent)
     if user && !user.is_a?(Student)
       errors.add('base', 'User must be a student')
       return false
@@ -81,5 +83,10 @@ class StudentMembership < Membership
 
     errors.add(:base, I18n.t('csv.memberships_not_unique'))
     throw(:abort)
+  end
+
+  def test_student_membership_status
+    errors.add(:base, 'A test student can only be an inviter') if user.test_student? &&
+        self.membership_status != STATUSES[:inviter]
   end
 end
