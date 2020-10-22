@@ -363,6 +363,7 @@ class GroupsController < ApplicationController
       flash_message(:error, e.message)
       m_logger.log("Failed to create group. User: '#{@student.user_name}', Error: '#{e.message}'.", MarkusLogger::ERROR)
     end
+  ensure
     redirect_to assignment_path(@assignment.id)
   end
 

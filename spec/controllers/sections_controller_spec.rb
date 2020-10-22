@@ -9,28 +9,28 @@ describe SectionsController do
 
     it 'on index' do
       get_as @student, :index
-      expect(response.status).to eq(404)
+      expect(response.status).to eq(403)
     end
 
     it 'on create new section' do
       post_as @student, :create
-      expect(response.status).to eq(404)
+      expect(response.status).to eq(403)
     end
 
     it 'on edit section' do
       post_as @student, :edit, params: { id: Section.create!(name: 'test').id }
-      expect(response.status).to eq(404)
+      expect(response.status).to eq(403)
     end
 
     it 'on update new section' do
       post_as @student, :update, params: { id: Section.create!(name: 'test').id }
-      expect(response.status).to eq(404)
+      expect(response.status).to eq(403)
     end
 
     it 'not be able to delete a section' do
       section = Section.create!(name: 'test')
       delete_as @student, :destroy, params: { id: section }
-      expect(response.status).to eq(404)
+      expect(response.status).to eq(403)
       expect(Section.find(section.id)).to be_truthy
     end
   end

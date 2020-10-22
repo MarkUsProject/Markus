@@ -70,14 +70,14 @@ describe AssignmentsController do
       let(:user) { create :admin }
       it 'should respond with 400' do
         put_as user, :start_timed_assignment, params: { id: assignment.id }
-        expect(response).to have_http_status 400
+        expect(response).to have_http_status 403
       end
     end
     context 'as an grader' do
       let(:user) { create :ta }
       it 'should respond with 400' do
         put_as user, :start_timed_assignment, params: { id: assignment.id }
-        expect(response).to have_http_status 400
+        expect(response).to have_http_status 403
       end
     end
   end
@@ -686,7 +686,7 @@ describe AssignmentsController do
     end
   end
 
-  shared_examples 'An authorized user running tests' do
+  shared_examples 'An authorized user managing tests' do
     let(:assignment) { create(:assignment_for_tests) }
     let(:grouping) { create(:grouping, assignment: assignment) }
     let(:test_run) { create(:test_run, grouping: grouping) }
@@ -704,7 +704,7 @@ describe AssignmentsController do
     let(:user) { create(:admin) }
     include_examples 'An authorized user updating the assignment'
     include_examples 'An authorized user managing assignments'
-    include_examples 'An authorized user running tests'
+    include_examples 'An authorized user managing tests'
   end
 
   describe 'When the user is grader' do
@@ -734,8 +734,8 @@ describe AssignmentsController do
     end
 
     context 'When the grader is allowed to run tests' do
-      let(:user) { create(:ta, run_tests: true) }
-      include_examples 'An authorized user running tests'
+      let(:user) { create(:ta, manage_assessments: true) }
+      include_examples 'An authorized user managing tests'
     end
 
     context 'When the grader is not allowed to run tests' do
@@ -780,14 +780,14 @@ describe AssignmentsController do
     end
     context 'a grader' do
       let(:user) { create :ta }
-      it 'should return a 404 error' do
-        is_expected.to respond_with(:not_found)
+      it 'should return a 403 error' do
+        is_expected.to respond_with(:forbidden)
       end
     end
     context 'a student' do
       let(:user) { create :student }
-      it 'should return a 404 error' do
-        is_expected.to respond_with(:not_found)
+      it 'should return a 403 error' do
+        is_expected.to respond_with(:forbidden)
       end
     end
   end
@@ -843,13 +843,13 @@ describe AssignmentsController do
     context 'a grader' do
       let(:user) { create :ta }
       it 'should return a 404 error' do
-        is_expected.to respond_with(:not_found)
+        is_expected.to respond_with(:forbidden)
       end
     end
     context 'a student' do
       let(:user) { create :student }
       it 'should return a 404 error' do
-        is_expected.to respond_with(:not_found)
+        is_expected.to respond_with(:forbidden)
       end
     end
   end
@@ -925,14 +925,14 @@ describe AssignmentsController do
       let(:user) { create :ta }
       it 'should return a 404 error' do
         subject
-        expect(response.status).to eq(404)
+        expect(response.status).to eq(403)
       end
     end
     context 'a student' do
       let(:user) { create :student }
       it 'should return a 404 error' do
         subject
-        expect(response.status).to eq(404)
+        expect(response.status).to eq(403)
       end
     end
   end
@@ -958,14 +958,14 @@ describe AssignmentsController do
       let(:user) { create :ta }
       it 'should return a 404 error' do
         subject
-        expect(response.status).to eq(404)
+        expect(response.status).to eq(403)
       end
     end
     context 'a student' do
       let(:user) { create :student }
       it 'should return a 404 error' do
         subject
-        expect(response.status).to eq(404)
+        expect(response.status).to eq(403)
       end
     end
   end

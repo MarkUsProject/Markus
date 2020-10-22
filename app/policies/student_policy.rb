@@ -1,6 +1,7 @@
 # Student policy class
 class StudentPolicy < UserPolicy
-  default_rule :student?
+  default_rule :admin?
+  alias_rule :update_mailer_settings?, to: :student?
   authorize :assignment, :grouping, :submission, optional: true
 
   def run_tests?

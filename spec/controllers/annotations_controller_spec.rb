@@ -457,7 +457,7 @@ describe AnnotationsController do
                           line_end: 1, column_start: 1, column_end: 1, result_id: result.id },
                 format: :js
 
-        assert_response :not_found
+        is_expected.to respond_with(:forbidden)
         expect(result.annotations.reload.size).to eq 0
       end
     end
@@ -471,7 +471,7 @@ describe AnnotationsController do
                           column_end: 1, result_id: result.id, assignment_id: assignment.id },
                 format: :js
 
-        assert_response :not_found
+        is_expected.to respond_with(:forbidden)
         expect(result.annotations.reload.size).to eq 0
       end
     end
@@ -490,7 +490,7 @@ describe AnnotationsController do
                             result_id: result.id },
                   format: :js
 
-        assert_response :not_found
+        is_expected.to respond_with(:forbidden)
         expect(result.annotations.reload.size).to eq 1
       end
     end
@@ -508,7 +508,7 @@ describe AnnotationsController do
                params: { id: anno.id, assignment_id: assignment.id, submission_file_id: submission_file.id,
                          result_id: result.id, content: 'new content' },
                format: :js
-        assert_response :not_found
+        is_expected.to respond_with(:forbidden)
         expect(anno.annotation_text.reload.content).to_not eq 'new content'
       end
     end

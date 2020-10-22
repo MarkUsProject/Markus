@@ -191,7 +191,7 @@ describe MainController do
             post :login_as,
                  params: { effective_user_login: student.user_name, user_login: admin.user_name, admin_password: 'a' }
           end
-          it { is_expected.to respond_with 404 }
+          it { is_expected.to respond_with 403 }
           it 'should not change the uid' do
             expect(session[:uid]).to eq(student.id)
           end
@@ -204,7 +204,7 @@ describe MainController do
             post :login_as,
                  params: { effective_user_login: student.user_name, user_login: ta.user_name, admin_password: 'a' }
           end
-          it { is_expected.to respond_with 404 }
+          it { is_expected.to respond_with 403 }
           it 'should not change the uid' do
             expect(session[:uid]).to eq(student.id)
           end
@@ -243,7 +243,7 @@ describe MainController do
             post :login_as,
                  params: { effective_user_login: ta.user_name, user_login: admin.user_name, admin_password: 'a' }
           end
-          it { is_expected.to respond_with 404 }
+          it { is_expected.to respond_with 403 }
           it 'should not change the uid' do
             expect(session[:uid]).to eq(ta.id)
           end
@@ -256,7 +256,7 @@ describe MainController do
             post :login_as,
                  params: { effective_user_login: ta.user_name, user_login: student.user_name, admin_password: 'a' }
           end
-          it { is_expected.to respond_with 404 }
+          it { is_expected.to respond_with 403 }
           it 'should not change the uid' do
             expect(session[:uid]).to eq(ta.id)
           end
