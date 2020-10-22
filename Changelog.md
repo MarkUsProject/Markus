@@ -14,6 +14,7 @@
 - Fixed calculation bugs for grade summary (#4899)
 - Fixed a bug where due dates in a flash message were incorrect for timed assessments (#4915)
 - Allowed the difference between the start and end times of a timed assessment to be less than the duration (#4915)
+- Group null/undefined values when sorting on dates using react-table (#4921)
 
 ## [v1.10.2]
 - Ensure that assignment subdirectories in repositories are maintained (#4893)

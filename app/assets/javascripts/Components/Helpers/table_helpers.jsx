@@ -13,7 +13,15 @@ export function stringFilter(filter, row) {
 
 export function dateSort(a, b) {
   /** Sort values as dates */
-  return (Date.parse(a) || 0) > (Date.parse(b) || 0);
+  if (!a && !b) {
+    return 0;
+  } else if (!a) {
+    return -1;
+  } else if (!b) {
+    return 1;
+  } else {
+    return (Date.parse(a) || 0) > (Date.parse(b) || 0);
+  }
 };
 
 export function durationSort(a, b) {
