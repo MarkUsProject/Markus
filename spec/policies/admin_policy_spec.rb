@@ -1,48 +1,38 @@
 describe AdminPolicy do
-  include PolicyHelper
-  subject { described_class.new(user, user: user, **context) }
   let(:user) { build(:admin) }
-  let(:context) { {} }
+  let(:context) { { user: user } }
 
-  describe '#run_tests?' do
-    context 'with no additional context' do
-      it { is_expected.to pass :run_tests? }
-    end
+  describe_rule :run_tests? do
+    succeed 'with no additional context'
     context 'authorized with an assignment' do
-      let(:context) { { assignment: assignment } }
-      context 'without tests enabled' do
-        let!(:assignment) { create :assignment, assignment_properties_attributes: { enable_test: false } }
-        it { is_expected.not_to pass :run_tests?, because_of: { AssignmentPolicy => :tests_enabled? } }
+      let(:context) { { user: user, assignment: assignment } }
+      failed 'without tests enabled' do
+        let(:assignment) { create :assignment, assignment_properties_attributes: { enable_test: false } }
       end
       context 'with tests enabled' do
-        let!(:assignment) { create :assignment, assignment_properties_attributes: { enable_test: true } }
-        context 'with test groups' do
+        let(:assignment) { create :assignment, assignment_properties_attributes: { enable_test: true } }
+        succeed 'with test groups' do
           let!(:test_group) { create :test_group, assignment: assignment }
-          it { is_expected.to pass :run_tests? }
         end
-        context 'without test groups' do
-          it { is_expected.not_to pass :run_tests?, because_of: { AssignmentPolicy => :test_groups_exist? } }
-        end
+        failed 'without test groups'
       end
     end
     context 'authorized with a submission' do
-      let(:context) { { submission: result.submission } }
-      context 'with a released result' do
+      let(:context) { { user: user, submission: result.submission } }
+      failed 'with a released result' do
         let!(:result) { create :released_result }
-        it { is_expected.not_to pass :run_tests?, because_of: { SubmissionPolicy => :before_release? } }
       end
-      context 'with a non-release result' do
+      succeed 'with a non-release result' do
         let!(:result) { create :complete_result }
-        it { is_expected.to pass :run_tests? }
       end
     end
   end
 
-  describe '#manage_submissions?' do
-    it { is_expected.to pass :manage_submissions? }
+  describe_rule :manage_submissions? do
+    succeed
   end
 
-  describe '#manage_assessments?' do
-    it { is_expected.to pass :manage_assessments? }
+  describe_rule :manage_assessments? do
+    succeed
   end
 end

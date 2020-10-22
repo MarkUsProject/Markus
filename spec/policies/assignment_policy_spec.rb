@@ -1,117 +1,217 @@
 describe AssignmentPolicy do
-  include PolicyHelper
+  let(:context) { { user: user } }
+  let(:record) { assignment }
+  let(:user) { create :admin }
+  let(:assignment) { create :assignment }
 
-  describe '#run_tests?' do
-    subject { described_class.new(assignment, user: user) }
+  describe_rule :index? do
+    succeed
+  end
 
-    shared_examples 'An authorized user running tests' do
-      context 'user can view the test runs status and stop test' do
-        let(:assignment) { build(:assignment) }
-        it { is_expected.to pass :run_and_stop_tests? }
+  describe_rule :switch_assignment? do
+    succeed
+  end
+
+  describe_rule :manage? do
+    succeed 'user is an admin' do
+      let(:user) { create(:admin) }
+    end
+    context 'user is a ta' do
+      succeed 'that can manage assessments' do
+        let(:user) { create :ta, manage_assessments: true }
       end
-      context 'if enable_test is false' do
-        let(:assignment) { build(:assignment) }
-        it { is_expected.not_to pass :run_tests?, because_of: :enabled? }
-      end
-
-      context 'if enable_test is true' do
-        let(:assignment) { build(:assignment, assignment_properties_attributes: { enable_test: true }) }
-
-        context 'if a test group is not configured' do
-          it { is_expected.not_to pass :run_tests?, because_of: :test_groups_exist? }
-        end
-
-        context 'if a test group is configured' do
-          let(:assignment) { create(:assignment_for_tests) }
-          it { is_expected.to pass :run_tests? }
-        end
+      failed 'that cannot manage assessments' do
+        let(:user) { create :ta, manage_assessments: false }
       end
     end
-
-    context 'when the user is a grader and allowed to run tests' do
-      let(:user) { create(:ta, run_tests: true) }
-      include_examples 'An authorized user running tests'
-    end
-
-    context 'When the user is admin' do
-      let!(:user) { build(:admin) }
-      include_examples 'An authorized user running tests'
-    end
-
-    context 'When the user is TA and not allowed to run tests' do
-      # By default all the grader permissions are set to false
-      let(:user) { create(:ta) }
-      let(:assignment) { create(:assignment_for_tests) }
-      it { is_expected.not_to pass :run_tests?, because_of: :can_run_tests? }
-      it { is_expected.not_to pass :run_and_stop_tests? }
-    end
-
-    context 'when the user is a student' do
+    failed 'user is a student' do
       let(:user) { create(:student) }
+    end
+  end
 
-      context 'if enable_test is false' do
-        let(:assignment) { build(:assignment) }
-        it { is_expected.not_to pass :run_tests?, because_of: :enabled? }
+  describe_rule :view_test_options? do
+    context 'user is an admin' do
+      let(:user) { create(:admin) }
+      succeed 'when tests enabled' do
+        let(:assignment) { create :assignment, assignment_properties_attributes: { enable_test: true } }
       end
-
-      context 'if enable_test is true' do
-        context 'if enable_student_tests is false' do
-          let(:assignment) do
-            build(:assignment, assignment_properties_attributes: { enable_test: true, enable_student_tests: false })
-          end
-          it { is_expected.not_to pass :run_tests?, because_of: :enabled? }
+      failed 'when tests disabled' do
+        let(:assignment) { create :assignment, assignment_properties_attributes: { enable_test: false } }
+      end
+    end
+    context 'user is a ta' do
+      context 'that can run tests' do
+        let(:user) { create :ta, run_tests: true }
+        succeed 'when tests enabled' do
+          let(:assignment) { create :assignment, assignment_properties_attributes: { enable_test: true } }
         end
-
-        context 'if enable_student_tests is true' do
-          context 'if a test group is not configured' do
-            let(:assignment) do
-              create(:assignment, assignment_properties_attributes: { enable_test: true,
-                                                                      enable_student_tests: true,
-                                                                      token_start_date: Time.current })
-            end
-            it { is_expected.not_to pass :run_tests?, because_of: :test_groups_exist? }
-          end
-
-          context 'if a test group is configured' do
-            context 'if tokens are not released yet' do
-              let(:assignment) do
-                create(:assignment_for_student_tests,
-                       assignment_properties_attributes: { token_start_date: Time.current + 1.minute })
-              end
-              it { is_expected.not_to pass :run_tests?, because_of: :tokens_released? }
-            end
-
-            context 'if tokens are released' do
-              let(:assignment) { create(:assignment_for_student_tests) }
-              it { is_expected.to pass :run_tests? }
-            end
-          end
+        failed 'when tests disabled' do
+          let(:assignment) { create :assignment, assignment_properties_attributes: { enable_test: false } }
+        end
+      end
+      failed 'that cannot run tests' do
+        let(:user) { create :ta, run_tests: false }
+      end
+    end
+    context 'user is a student' do
+      let(:user) { create(:student) }
+      failed 'when student tests disabled' do
+        let(:assignment) { build :assignment, assignment_properties_attributes: { enable_student_tests: false } }
+      end
+      context 'when student tests enabled' do
+        let(:assignment) { build :assignment, assignment_properties_attributes: properties }
+        failed 'when there are no tokens given' do
+          let(:properties) { { enable_student_tests: true, unlimited_tokens: false, tokens_per_period: 0 } }
+        end
+        succeed 'when there are unlimited tokens' do
+          let(:properties) { { enable_student_tests: true, unlimited_tokens: true, tokens_per_period: 0 } }
+        end
+        succeed 'when there are some tokens available' do
+          let(:properties) { { enable_student_tests: true, unlimited_tokens: true, tokens_per_period: 1 } }
         end
       end
     end
   end
 
-  describe 'When the user is admin' do
-    subject { described_class.new(user: user) }
-    let(:user) { create(:admin) }
-    context 'Admin can view, manage, create, edit and update the assignments' do
-      it { is_expected.to pass :manage? }
-      it { is_expected.to pass :view_assessments? }
+  describe_rule :student_tests_enabled? do
+    failed 'when student tests disabled' do
+      let(:assignment) { build :assignment, assignment_properties_attributes: { enable_student_tests: false } }
+    end
+    context 'when student tests enabled' do
+      let(:assignment) { build :assignment, assignment_properties_attributes: properties }
+      failed 'when there are no tokens given' do
+        let(:properties) { { enable_student_tests: true, unlimited_tokens: false, tokens_per_period: 0 } }
+      end
+      succeed 'when there are unlimited tokens' do
+        let(:properties) { { enable_student_tests: true, unlimited_tokens: true, tokens_per_period: 0 } }
+      end
+      succeed 'when there are some tokens available' do
+        let(:properties) { { enable_student_tests: true, unlimited_tokens: true, tokens_per_period: 1 } }
+      end
     end
   end
 
-  describe 'When the user is grader' do
-    subject { described_class.new(user: user) }
-    let(:user) { create(:ta) }
-    context 'Grader can view assessments' do
-      it { is_expected.to pass :view_assessments? }
+  describe_rule :tests_enabled? do
+    succeed 'when tests enabled' do
+      let(:assignment) { create :assignment, assignment_properties_attributes: { enable_test: true } }
     end
-    context 'When the grader is allowed to manage, create, edit and update the assignments' do
-      let(:user) { create(:ta, manage_assessments: true) }
-      it { is_expected.to pass :manage? }
+    failed 'when tests disabled' do
+      let(:assignment) { create :assignment, assignment_properties_attributes: { enable_test: false } }
     end
-    context 'When the grader is not allowed to manage, create, edit and update the assignments' do
-      it { is_expected.not_to pass :manage? }
+  end
+
+  describe_rule :test_groups_exist? do
+    succeed 'when test groups exist' do
+      before { create :test_group, assignment: assignment }
+    end
+    failed 'when test groups do not exist'
+  end
+
+  describe_rule :tokens_released? do
+    succeed 'when token start date is in the past' do
+      let(:assignment) { create :assignment, assignment_properties_attributes: { token_start_date: 1.hour.ago } }
+    end
+    failed 'when token start date is in the future' do
+      let(:assignment) { create :assignment, assignment_properties_attributes: { token_start_date: 1.hour.from_now } }
+    end
+    failed 'when token start date is nil'
+  end
+
+  describe_rule :create_group? do
+    let(:user) { create :student }
+    let(:assignment) { create :assignment, assignment_properties_attributes: properties }
+    let(:properties) { {student_form_groups: true, invalid_override: false} }
+    let(:past_collection_date?) { false }
+    let(:has_accepted_grouping_for?) { false }
+    before do
+      allow(record).to receive(:past_collection_date?).and_return past_collection_date?
+      allow(user).to receive(:has_accepted_grouping_for?).and_return has_accepted_grouping_for?
+    end
+    succeed 'when collection date has not passed and students can form groups and the user is not in a group yet'
+    failed 'when collection date has passed' do
+      let(:past_collection_date?) { true }
+    end
+    failed 'when students cannot form groups' do
+      let(:properties) { {student_form_groups: false, invalid_override: false} }
+    end
+    failed 'when the student is in a group for this assignment' do
+      let(:has_accepted_grouping_for?) { true }
+    end
+  end
+
+  describe_rule :work_alone? do
+    succeed 'when group min is one' do
+      let(:assignment) { create :assignment, assignment_properties_attributes: { group_min: 1 } }
+    end
+    failed 'when group min is not one' do
+      let(:assignment) { create :assignment, assignment_properties_attributes: { group_min: 2, group_max: 2 } }
+    end
+  end
+
+  describe_rule :collection_date_passed? do
+    let(:user) { create :student }
+    succeed 'when the collection date has passed' do
+      before { allow(record).to receive(:past_collection_date?).and_return true }
+    end
+    failed 'when the collection date has not passed' do
+      before { allow(record).to receive(:past_collection_date?).and_return false }
+    end
+  end
+
+  describe_rule :students_form_groups? do
+    let(:assignment) { create :assignment, assignment_properties_attributes: properties }
+    failed 'when students cannot form groups' do
+      let(:properties) { {student_form_groups: false, invalid_override: false} }
+    end
+    succeed 'when students can form groups' do
+      let(:properties) { {student_form_groups: true, invalid_override: false} }
+    end
+  end
+
+  describe_rule :not_yet_in_group? do
+    succeed 'when the user is not in a group' do
+      before { allow(user).to receive(:has_accepted_grouping_for?).and_return false }
+    end
+    failed 'when the user is in a group' do
+      before { allow(user).to receive(:has_accepted_grouping_for?).and_return true }
+    end
+  end
+
+  describe_rule :autogenerate_group_name? do
+    succeed 'when group name is autogenerated' do
+      let(:assignment) { create :assignment, assignment_properties_attributes: { group_name_autogenerated: true } }
+    end
+    failed 'when group name is not autogenerated' do
+      let(:assignment) { create :assignment, assignment_properties_attributes: { group_name_autogenerated: false } }
+    end
+  end
+
+  describe_rule :view? do
+    succeed 'user is an admin' do
+      let(:user) { create(:admin) }
+    end
+    succeed 'user is a ta' do
+      let(:user) { create :ta }
+    end
+    failed 'user is a student' do
+      let(:user) { create(:student) }
+    end
+  end
+
+  describe_rule :manage_tests? do
+    succeed 'user is an admin' do
+      let(:user) { create(:admin) }
+    end
+    context 'user is a ta' do
+      succeed 'that can manage assessments' do
+        let(:user) { create :ta, manage_assessments: true }
+      end
+      failed 'that cannot manage assessments' do
+        let(:user) { create :ta, manage_assessments: false }
+      end
+    end
+    failed 'user is a student' do
+      let(:user) { create(:student) }
     end
   end
 end

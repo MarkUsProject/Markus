@@ -1,0 +1,2 @@
+describe ImageAnnotationPolicy do
+end

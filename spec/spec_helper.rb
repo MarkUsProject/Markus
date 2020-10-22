@@ -18,6 +18,7 @@ ENV['RAILS_ENV'] ||= 'test'
 require File.expand_path('../../config/environment', __FILE__)
 require 'rspec/rails'
 require 'action_policy/rspec'
+require "action_policy/rspec/dsl"
 require 'net/ssh'
 # Loads lib repo stuff.
 require 'time-warp'

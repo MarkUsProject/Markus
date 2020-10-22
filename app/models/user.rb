@@ -161,7 +161,6 @@ class User < ApplicationRecord
       return false
     end
     pr = prs.find {|p| p.result_id == Integer(result.id)}
-
     is_a?(Student) && !pr.nil?
   end
 

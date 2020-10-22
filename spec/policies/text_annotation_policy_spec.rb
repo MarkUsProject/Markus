@@ -1,0 +1,2 @@
+describe TextAnnotationPolicy do
+end
