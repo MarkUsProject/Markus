@@ -1,3 +1,4 @@
+# Users controller used to handle universal "Settings" page for all users
 class UsersController < ApplicationController
   before_action :authorize_for_user, only: :settings
   before_action :authorize_for_student, only: [:update_mailer_settings]
