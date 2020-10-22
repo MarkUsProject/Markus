@@ -974,6 +974,12 @@ nav {
   word-wrap: break-word;
 }
 
+.autosave-text {
+  color: $dark-grey;
+  font-size: 0.8em;
+  font-style: italic;
+}
+
 // Grading components
 .submission-selector-container {
   background-color: $lighter-blue;

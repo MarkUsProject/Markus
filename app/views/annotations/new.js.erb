@@ -8,6 +8,7 @@ document.getElementById('annotation_dialog').innerHTML = '<%= escape_javascript(
                    annotation: nil,
                    title: t('helpers.submit.create', model: Annotation.model_name.human),
                    content: '',
-                   submit_btn_data: {}}
+                   change_one_option: false
+                 }
 )%>';
 open_annotation_modal();

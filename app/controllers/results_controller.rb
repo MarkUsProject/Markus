@@ -711,8 +711,6 @@ class ResultsController < ApplicationController
 
   def update_overall_comment
     Result.find(params[:id]).update(overall_comment: params[:result][:overall_comment])
-    flash_message :success,
-                  t('flash.actions.update.success', resource_name: Result.human_attribute_name(:overall_comment))
     head :ok
   end
 
@@ -727,7 +725,6 @@ class ResultsController < ApplicationController
         remark_request_timestamp: Time.current
       )
       if params[:save]
-        flash_message(:success, I18n.t('results.remark.update_success'))
         head :ok
       elsif params[:submit]
         unless @submission.remark_result

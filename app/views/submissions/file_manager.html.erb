@@ -11,7 +11,7 @@
     pdfjs.GlobalWorkerOptions.workerSrc = '<%= asset_pack_path('pdf.js') %>';
 
     document.addEventListener('DOMContentLoaded', () => {
-      makeSubmissionFileManager(document.getElementById('file_manager'),
+      window.submissionFileManager = makeSubmissionFileManager(document.getElementById('file_manager'),
         {
           assignment_id: <%= @assignment.id %>,
           grouping_id: <%= @grouping.id %>,

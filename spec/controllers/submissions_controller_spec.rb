@@ -100,7 +100,7 @@ describe SubmissionsController do
       expect(@student.has_accepted_grouping_for?(@assignment.id)).to be_truthy
       post_as @student, :update_files, params: { assignment_id: @assignment.id, new_files: [file_1, file_2] }
 
-      is_expected.to respond_with(:redirect)
+      expect(response).to have_http_status :ok
 
       # update_files action assert assign to various instance variables.
       # These are crucial for the file_manager view to work properly.
@@ -117,6 +117,73 @@ describe SubmissionsController do
         files = revision.files_at_path(@assignment.repository_folder)
         expect(files['Shapes.java']).to_not be_nil
         expect(files['TestShapes.java']).to_not be_nil
+      end
+    end
+
+    context 'when the grouping is invalid' do
+      it 'should not be able to add files' do
+        @assignment.update!(group_min: 2, group_max: 3)
+        file1 = fixture_file_upload(File.join('/files', 'Shapes.java'),
+                                    'text/java')
+        file2 = fixture_file_upload(File.join('/files', 'TestShapes.java'),
+                                    'text/java')
+
+        expect(@student.has_accepted_grouping_for?(@assignment.id)).to be_truthy
+        post_as @student, :update_files, params: { assignment_id: @assignment.id, new_files: [file1, file2] }
+
+        expect(response).to have_http_status :bad_request
+
+        # Check that the files were not added
+        @grouping.group.access_repo do |repo|
+          revision = repo.get_latest_revision
+          files = revision.files_at_path(@assignment.repository_folder)
+          expect(files['Shapes.java']).to be_nil
+          expect(files['TestShapes.java']).to be_nil
+        end
+      end
+    end
+
+    context 'when only required files can be submitted' do
+      before :each do
+        @assignment.update(
+          only_required_files: true,
+          assignment_files_attributes: [{ filename: 'Shapes.java' }]
+        )
+      end
+
+      it 'should be able to add and access files when uploading only required files' do
+        file1 = fixture_file_upload(File.join('/files', 'Shapes.java'),
+                                    'text/java')
+
+        post_as @student, :update_files, params: { assignment_id: @assignment.id, new_files: [file1] }
+
+        expect(response).to have_http_status :ok
+
+        # Check to see if the file was added
+        @grouping.group.access_repo do |repo|
+          revision = repo.get_latest_revision
+          files = revision.files_at_path(@assignment.repository_folder)
+          expect(files['Shapes.java']).to_not be_nil
+        end
+      end
+
+      it 'should not be able to add and access files when uploading at least one non-required file' do
+        file1 = fixture_file_upload(File.join('/files', 'Shapes.java'),
+                                    'text/java')
+        file2 = fixture_file_upload(File.join('/files', 'TestShapes.java'),
+                                    'text/java')
+
+        post_as @student, :update_files, params: { assignment_id: @assignment.id, new_files: [file1, file2] }
+
+        expect(response).to have_http_status :unprocessable_entity
+
+        # Check to see if the file was added
+        @grouping.group.access_repo do |repo|
+          revision = repo.get_latest_revision
+          files = revision.files_at_path(@assignment.repository_folder)
+          expect(files['Shapes.java']).to be_nil
+          expect(files['TestShapes.java']).to be_nil
+        end
       end
     end
 
@@ -209,7 +276,7 @@ describe SubmissionsController do
                           file_revisions: { 'Shapes.java' => old_file_1.from_revision,
                                             'TestShapes.java' => old_file_2.from_revision } }
       end
-      is_expected.to respond_with(:redirect)
+      expect(response).to have_http_status :ok
 
       expect(assigns :assignment).to_not be_nil
       expect(assigns :grouping).to_not be_nil
@@ -257,7 +324,7 @@ describe SubmissionsController do
                                             'TestShapes.java' => old_file_2.from_revision } }
       end
 
-      is_expected.to respond_with(:redirect)
+      expect(response).to have_http_status :ok
 
       expect(assigns :assignment).to_not be_nil
       expect(assigns :grouping).to_not be_nil

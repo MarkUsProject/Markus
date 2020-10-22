@@ -1,9 +1,9 @@
 resultComponent.updateAnnotation({
   id: <%= @annotation.id %>,
+  annotation_text_id: <%= @annotation.annotation_text.id %>,
   content: '<%= @annotation.annotation_text.escape_content %>',
   annotation_category: '<%= @annotation.annotation_text.annotation_category&.annotation_category_name %>',
 });
 
-update_annotation_text('<%= @annotation_text.id %>', '<%= escape_javascript(@annotation_text.content) %>');
 hide_all_annotation_content_editors();
 reloadDOM();

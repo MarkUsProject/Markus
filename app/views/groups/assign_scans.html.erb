@@ -92,10 +92,10 @@
       id="progress-meter"
       min="0"
       value="<%= @assignment.get_num_valid %>"
-      max="<%= @assignment.get_num_assigned %>"
-      low="<%= @assignment.get_num_assigned * 0.35 %>"
-      high="<%= @assignment.get_num_assigned * 0.75 %>"
-      optimum="<%= @assignment.get_num_assigned %>">
+      max="<%= @assignment.get_num_collected %>"
+      low="<%= @assignment.get_num_collected * 0.35 %>"
+      high="<%= @assignment.get_num_collected * 0.75 %>"
+      optimum="<%= @assignment.get_num_collected %>">
     </meter>
     &nbsp;|&nbsp;
     <%= link_to t('groups.manage_groups'), :assignment_groups %>

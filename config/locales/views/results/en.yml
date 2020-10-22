@@ -31,8 +31,6 @@ en:
     # Annotations
     annotation:
       across_all_submission_files: "Click on the filename to jump to the annotation."
-      change_across_submissions: "This change will propagate across all submissions where this annotation was given.
-                                  Is this OK?"
       common: "Common Annotations"
       include_in_download: "Include Annotations"
       include_in_download_warning: "Warning: Annotations on PDFs are not currently downloaded."
@@ -62,7 +60,6 @@ en:
       submit_confirm: "You will not be able to see your results until remarking is finished.
                        Are you sure you want to submit your remark request now?"
       submitted_on: "Remark request was submitted on %{time}."
-      update_success: "Remark request saved, but it has not yet been submitted."
 
     keybinding:
       confirm_annotation: "Confirm annotation"
@@ -75,3 +72,7 @@ en:
       previous_level: "Select previous level"
       toggle_compact: "Toggle fullscreen"
       when_rubric: "(When on rubric) "
+
+    autosave:
+      unsaved: "There are unsaved changed"
+      saved: "Changes have been saved"
