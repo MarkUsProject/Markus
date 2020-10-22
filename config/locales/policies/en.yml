@@ -1,5 +1,6 @@
 en:
   action_policy:
+    unauthorized: &unauthorized "You are not authorized to perform this action."
     policy:
       admin:
         run_tests?: "You do not have permission to run tests."
@@ -11,18 +12,18 @@ en:
         add_existing_annotation?: "You do not have permissions to add existing annotations."
         manage?: "You do not have permissions to create, delete or modify annotations."
       application:
-        manage?: ~
-        index?: ~
-        create?: ~
-        view_admin_subtabs?: ~
-        view_ta_subtabs?: ~
-        view_student_subtabs?: ~
-        view_sub_sub_tabs?: ~
+        manage?: *unauthorized
+        index?: *unauthorized
+        create?: *unauthorized
+        view_admin_subtabs?: *unauthorized
+        view_ta_subtabs?: *unauthorized
+        view_student_subtabs?: *unauthorized
+        view_sub_sub_tabs?: *unauthorized
         admin?: "Only admins may perform this action"
         ta?: "Only graders may perform this action"
         student?: "Only students may perform this action"
       assignment:
-        index?: ~
+        index?: *unauthorized
         switch_assignment?: "You do not have permission to switch assignments."
         manage?: "You do not have permissions to create and manage assignments."
         view_test_options?: "You do not have permission to view automated testing options."
@@ -42,8 +43,8 @@ en:
         manage?: "You do not have permission to manage automated testing."
       course_summary:
         manage?: "You do not have permission to manage the course summaries."
-        populate?: ~
-        index?: ~
+        populate?: *unauthorized
+        index?: *unauthorized
       criterion:
         manage?: "You do not have permission to manage criteria."
       exam_template:
@@ -74,7 +75,7 @@ en:
         no_submission?: "You already submitted something. You cannot delete your group."
         view_file_manager?: "You do not have permission to view the file manager."
         start_timed_assignment?: "You do not have permission to start the timed assessment."
-      image_annotation: ~
+      image_annotation: *unauthorized
       job_message:
         manage?: "You do not have permission to view background job messages."
       key_pair:
@@ -82,7 +83,7 @@ en:
         view?: "You do not have permission to view key pairs."
       main:
         login_as?: "You do not have permission to switch roles."
-        manage?: ~
+        manage?: *unauthorized
       marking_scheme:
         manage?: "You do not have permission to manage marking schemes."
       marks_grader:
@@ -90,7 +91,7 @@ en:
       note:
         manage?: "You do not have permission to manage notes."
         modify?: "You do not have permissions to edit or delete the notes created by others."
-      pdf_annotation: ~
+      pdf_annotation: *unauthorized
       peer_review:
         view?: "You do not have permission to view peer reviews."
         manage?: "You do not have permissions to manage peer reviews."
@@ -124,7 +125,7 @@ en:
         manage_assessments?: "You do not have permission to manage assessments."
       tag:
         manage?: "You do not have permission to manage tags."
-      text_annotation: ~
+      text_annotation: *unauthorized
       user:
         manage?: "You do not have permission to manage users."
         destroy?: "You do not have permission to delete users."

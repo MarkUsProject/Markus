@@ -1,5 +1,6 @@
 es:
   action_policy:
+    unauthorized: &unauthorized "UPDATE ME."
     policy:
       admin:
         run_tests?: "UPDATE ME."
@@ -11,18 +12,18 @@ es:
         add_existing_annotation?: "UPDATE ME."
         manage?: "UPDATE ME."
       application:
-        manage?: ~
-        index?: ~
-        create?: ~
-        view_admin_subtabs?: ~
-        view_ta_subtabs?: ~
-        view_student_subtabs?: ~
-        view_sub_sub_tabs?: ~
+        manage?: *unauthorized
+        index?: *unauthorized
+        create?: *unauthorized
+        view_admin_subtabs?: *unauthorized
+        view_ta_subtabs?: *unauthorized
+        view_student_subtabs?: *unauthorized
+        view_sub_sub_tabs?: *unauthorized
         admin?: "UPDATE ME."
         ta?: "UPDATE ME."
         student?: "UPDATE ME."
       assignment:
-        index?: ~
+        index?: *unauthorized
         switch_assignment?: "UPDATE ME."
         manage?: "UPDATE ME."
         view_test_options?: "UPDATE ME."
@@ -42,8 +43,8 @@ es:
         manage?: "UPDATE ME."
       course_summary:
         manage?: "UPDATE ME."
-        populate?: ~
-        index?: ~
+        populate?: *unauthorized
+        index?: *unauthorized
       criterion:
         manage?: "UPDATE ME."
       exam_template:
@@ -74,7 +75,7 @@ es:
         no_submission?: "Usted ya ha enviado su entrega. Usted no puede eliminar el grupo."
         view_file_manager?: "UPDATE ME."
         start_timed_assignment?: "UPDATE ME."
-      image_annotation: ~
+      image_annotation: *unauthorized
       job_message:
         manage?: "UPDATE ME."
       key_pair:
@@ -82,7 +83,7 @@ es:
         view?: "UPDATE ME."
       main:
         login_as?: "UPDATE ME."
-        manage?: ~
+        manage?: *unauthorized
       marking_scheme:
         manage?: "UPDATE ME."
       marks_grader:
@@ -90,7 +91,7 @@ es:
       note:
         manage?: "UPDATE ME."
         modify?: "UPDATE ME."
-      pdf_annotation: ~
+      pdf_annotation: *unauthorized
       peer_review:
         view?: "UPDATE ME."
         manage?: "UPDATE ME."
@@ -124,7 +125,7 @@ es:
         manage_assessments?: "UPDATE ME."
       tag:
         manage?: "UPDATE ME."
-      text_annotation: ~
+      text_annotation: *unauthorized
       user:
         manage?: "UPDATE ME."
         destroy?: "UPDATE ME."
