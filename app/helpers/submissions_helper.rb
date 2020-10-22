@@ -96,7 +96,7 @@ module SubmissionsHelper
     f = {}
     f[:id] = file.object_id
     f[:url] = download_assignment_submissions_url(
-      id: assignment_id,
+      assignment_id: assignment_id,
       revision_identifier: revision_identifier,
       file_name: file_name,
       path: path,
@@ -104,7 +104,7 @@ module SubmissionsHelper
     )
     f[:filename] = view_context.image_tag('icons/page_white_text.png') +
                    view_context.link_to(" #{file_name}", action: 'download',
-                                                         id: assignment_id,
+                                                         assignment_id: assignment_id,
                                                          revision_identifier: revision_identifier,
                                                          file_name: file_name,
                                                          path: path, grouping_id: grouping_id)
