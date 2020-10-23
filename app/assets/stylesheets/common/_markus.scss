@@ -154,7 +154,7 @@ strong a {
 
 input,
 textarea {
-  background: lighten($light-grey, 10%);
+  background: $light-grey;
   border: 1px solid $grey;
   border-radius: $radius;
   color: $dark-grey;

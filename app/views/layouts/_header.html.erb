@@ -3,6 +3,8 @@
     <strong><%= Rails.configuration.course_name %></strong>
   </div>
   <div id='user-info'>
+    <input type="checkbox" id="vehicle3" name="vehicle3" value="Boat" onclick="switch_theme()">
+    <label for="vehicle3">Darkmode Enabled</label>
     <span id='logout_area'>
       <span id='admin_logged_in_as'>
         <% if session[:real_uid] %>
@@ -46,4 +48,17 @@
 
 <script>
 <%= render partial: 'shared/poll_job', formats: [:js], handlers: [:erb] %>
+
+function switch_theme () {
+  console.log(document.documentElement.style.getPropertyValue('--white'));
+  if (document.documentElement.style.getPropertyValue('--white') === '#fff') {
+    document.documentElement.style.setProperty('--white', '#464646');
+    document.documentElement.style.setProperty('--light-grey', '#8d8d8d');
+    document.documentElement.style.setProperty('--lighter-blue', '#384a69');
+  } else {
+    document.documentElement.style.setProperty('--white', '#fff');
+    document.documentElement.style.setProperty('--light-grey', '#eee');
+    document.documentElement.style.setProperty('--lighter-blue', '#e8f4f2');
+  }
+};
 </script>
