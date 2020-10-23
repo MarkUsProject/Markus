@@ -478,6 +478,9 @@ class SubmissionsController < ApplicationController
         file = @revision.files_at_path(File.join(@assignment.repository_folder,
                                                  path))[params[:file_name]]
         file_contents = repo.download_as_string(file)
+        if params[:preview] && SubmissionFile.is_binary?(file_contents)
+          file_contents = I18n.t('submissions.cannot_display')
+        end
       rescue Exception => e
         render plain: I18n.t('student.submission.missing_file',
                             file_name: params[:file_name], message: e.message)
@@ -712,7 +715,8 @@ class SubmissionsController < ApplicationController
       if file_obj.is_a? Repository::RevisionFile
         dirname, basename = File.split(file_name)
         dirname = '' if dirname == '.'
-        data = get_file_info(basename, file_obj, revision, dirname, grouping, full_path)
+        data = get_file_info(basename, file_obj, grouping.assignment.id,
+                             revision.revision_identifier, dirname, grouping.id)
         next if data.nil?
         data[:key] = file_name
         data[:modified] = data[:last_revised_date]

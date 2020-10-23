@@ -37,30 +37,4 @@ describe SubmissionsHelper do
       end
     end
   end
-
-  describe '#get_file_info' do
-    let(:assignment) { create(:assignment) }
-    let(:grouping) { create(:grouping, assignment: assignment) }
-    let(:file_name) { 'test.zip' }
-    before do
-      grouping.group.access_repo do |repo|
-        txn = repo.get_transaction('test')
-        path = File.join(grouping.assignment.repository_folder, file_name)
-        txn.add(path, '')
-        repo.commit(txn)
-      end
-    end
-    it 'should return the file type as binary for compressed archives' do
-      file_info = {}
-      grouping.group.access_repo do |repo|
-        revision = repo.get_latest_revision
-        full_path = File.join(grouping.assignment.repository_folder, '')
-        file_obj = revision.tree_at_path(full_path)[file_name]
-        dirname, basename = File.split(file_name)
-        dirname = '' if dirname == '.'
-        file_info = get_file_info(basename, file_obj, revision, dirname, grouping, full_path)
-      end
-      expect(file_info[:type]).to eq('binary')
-    end
-  end
 end

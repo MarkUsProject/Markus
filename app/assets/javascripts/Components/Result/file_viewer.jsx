@@ -108,6 +108,7 @@ export class FileViewer extends React.Component {
         } else {
           $.ajax({
             url: this.props.selectedFileURL,
+            data: {preview: true},
             method: 'GET'
           }).then(res => {
             this.setState({content: res.replace(/\r?\n/gm, '\n'), type: this.props.selectedFileType, loading: false});
@@ -147,8 +148,6 @@ export class FileViewer extends React.Component {
         annotationFocus={this.props.annotationFocus}
         {...commonProps}
       />;
-    } else if (this.state.type === 'binary') {
-      return (I18n.t('submissions.cannot_display'));
     } else if (this.state.type !== '') {
       return <TextViewer
         type={this.state.type}
