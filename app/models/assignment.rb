@@ -79,6 +79,7 @@ class Assignment < Assessment
   has_many :starter_file_groups, dependent: :destroy, inverse_of: :assignment, foreign_key: :assessment_id
 
   after_create :create_autotest_dirs
+  after_create :create_autotest_test_student, if: -> { self.type == 'Assignment' }
 
   before_save :reset_collection_time
   after_save :update_permissions_if_vcs_changed
@@ -1213,6 +1214,19 @@ class Assignment < Assessment
     FileUtils.mkdir_p self.autotest_files_dir
   end
 
+  def create_autotest_test_student
+    group_name = self.short_identifier + '_test_student_group'
+    user_name = self.short_identifier + '_test_student'
+    user = TestStudent.find_by(user_name: user_name)
+    unless user.nil?
+      test_student = TestStudent.create!(user_name: user_name, first_name: 'Test', last_name: 'Student', hidden: true)
+      group = Group.create!(group_name: group_name)
+      grouping = Grouping.create!(group_id: group.id, assessment_id: self.id)
+      StudentMembership.create!(user_id: test_student.id,
+                                membership_status: StudentMembership::STATUSES[:inviter],
+                                grouping_id: grouping.id)
+    end
+  end
   # Returns the marking state used in the submission and course summary tables
   # for the result(s) for single submission.
   #
