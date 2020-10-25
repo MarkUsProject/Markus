@@ -5,6 +5,7 @@ class KeyPairsController < ApplicationController
   def index
     # Grab the own user's keys only
     @key_pairs = @current_user.key_pairs
+    redirect_to settings_users_path
   end
 
   # GET /key_pairs/new

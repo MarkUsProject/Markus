@@ -6,6 +6,16 @@ describe KeyPairsController do
     allow(Rails.configuration.x.repository).to receive(:type).and_return('git')
   end
 
+  describe 'INDEX', :keep_memory_repos do
+    before { get_as admin, :index }
+    it 'should respond with redirect' do
+      is_expected.to respond_with(:redirect)
+    end
+    it 'should redirect to settings' do
+      expect(response).to redirect_to settings_users_path
+    end
+  end
+
   describe 'GET new', :keep_memory_repos do
     before { get_as admin, :new }
     it 'should respond with success' do
