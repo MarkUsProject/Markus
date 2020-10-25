@@ -1,5 +1,6 @@
 # Changelog
 ## [unreleased]
+- Add settings page (#4922)
 - Replace Time.now and Time.zone.now with Time.current (#4896)
 - Fix lingering annotation text displays when hovering (#4875)
 - Add annotation completion to annotation modal (#4851)
