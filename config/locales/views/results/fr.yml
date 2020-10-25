@@ -5,6 +5,7 @@ fr:
     criterion_incomplete_error: "Note non remplie, mais état fixé comme terminé."
     current_mark: 'UPDATE ME!'
     current_rotation: 'UPDATE ME!'
+    current_zoom_level: 'UPDATE ME!'
     delete_extra_mark_confirm: "Êtes-vous sûr de vouloir enlever cette note supplémentaire ?"
     expand_all: "Montrer toutes"
     expand_unmarked: "Montrer non évaluées"
@@ -25,12 +26,12 @@ fr:
     your_mark:  'Votre Note'
     cancel_override: 'UPDATE ME!'
     overridden_deductions: 'UPDATE ME!'
+    zoom_in_image: 'UPDATE ME!'
+    zoom_out_image: 'UPDATE ME!'
 
     # Annotations
     annotation:
       across_all_submission_files: "Annnotations en cours sur tous les fichiers envoyés. Cliquer sur le numéro de ligne pour vous rendre directement au bon endroit sur le fichier."
-      change_across_submissions: "Ce changement sera propagé à toutes les notes comportant cette annotation, même
-                                  celles déjà affichées. Êtes-vous sûr de vouloir continuer ?"
       common: "Common Annotations"
       include_in_download: "Ajouter les annotations"
       include_in_download_warning: "Attention ! Annotations sur les fichiers PDF ne sont actuellement pas téléchargés."

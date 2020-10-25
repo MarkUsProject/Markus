@@ -47,12 +47,15 @@
   /**
    * Update the text in an annotation.
    */
-  function update_annotation_text(annotation_text_id, new_content) {
+  function update_annotation_text(annotation_text_id, new_content, annotation_id = '') {
     if (annotation_manager.getAnnotationTextManager().annotationTextExists(annotation_text_id)) {
       annotation_manager
         .getAnnotationTextManager()
         .getAnnotationText(annotation_text_id)
         .setContent(new_content);
+    } else {
+      add_annotation_text(annotation_text_id, new_content);
+      annotation_manager.updateRelationships(annotation_id, annotation_text_id);
     }
   }
 
@@ -180,24 +183,33 @@
 
   function get_selection_box_coordinates() {
     let img = document.getElementById('image_preview');
-    let originalImgH = img.height;
-    let originalImgW = img.width;
-    let imgW;
-    let imgH;
+    let zoomHeight = img.height;
+    let zoomWidth = img.width;
+    let zoomedRotatedWidth;
+    let zoomedRotatedHeight;
 
     if (img.className === 'rotate90' || img.className === 'rotate270') {
-      imgW = originalImgH;
-      imgH = originalImgW;
+      zoomedRotatedWidth = zoomHeight;
+      zoomedRotatedHeight = zoomWidth;
     } else {
-      imgW = originalImgW;
-      imgH = originalImgH;
+      zoomedRotatedWidth = zoomWidth;
+      zoomedRotatedHeight = zoomHeight;
     }
 
     var box = document.getElementById('sel_box');
 
-    let topLeft = [parseInt(box.style.left, 10) - (imgW / 2), parseInt(box.style.top, 10) - (imgH / 2)];
-    let topRight = [topLeft[0] + parseInt(box.style.width, 10), topLeft[1]];
-    let bottomLeft = [topLeft[0], topLeft[1] + parseInt(box.style.height, 10)];
+    let unzoom = 1 / img.dataset.zoom;
+
+    let imageHalfWidth= zoomedRotatedWidth / 2;
+    let imageHalfHeight = zoomedRotatedHeight / 2;
+    let leftCornerX = parseInt(box.style.left, 10);
+    let leftCornerY = parseInt(box.style.top, 10);
+    let annotationWidth = parseInt(box.style.width, 10);
+    let annotationHeight = parseInt(box.style.height, 10);
+
+    let topLeft = [leftCornerX - imageHalfWidth, leftCornerY - imageHalfHeight];
+    let topRight = [topLeft[0] + annotationWidth, topLeft[1]];
+    let bottomLeft = [topLeft[0], topLeft[1] + annotationHeight];
     let bottomRight = [topRight[0], bottomLeft[1]];
 
     let rotatedTR;
@@ -225,10 +237,10 @@
       corners = [bottomLeft, topLeft, topRight];
     }
 
-    var x1 = (originalImgW / 2) + corners[1][0];
-    var y1 = (originalImgH / 2) + corners[1][1];
-    var x2 = (originalImgW / 2) + corners[2][0];
-    var y2 = (originalImgH / 2) + corners[0][1];
+    var x1 = ((zoomWidth / 2) + corners[1][0]) * unzoom;
+    var y1 = ((zoomHeight / 2) + corners[1][1]) * unzoom;
+    var x2 = ((zoomWidth / 2) + corners[2][0]) * unzoom;
+    var y2 = ((zoomHeight / 2) + corners[0][1]) * unzoom;
 
     if ((x2 - x1) < 1 || isNaN(x2 - x1)) {
       return false;

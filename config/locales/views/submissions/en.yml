@@ -63,6 +63,7 @@ en:
     grading_can_begin_for_sections: "Grading can begin for sections: %{sections}"
     grading_can_begin_after_for_sections: "Grading can begin after %{time} for sections: %{sections}"
     how_many_marked: "%{num_marked}/%{num_assigned} completed"
+    how_many_marked_in_collected: "%{num_marked}/%{num_collected} completed"
     marking_incomplete_warning: "Note: This will only download the submissions that have been collected.\n\nAre you sure you want to proceed?"
     no_files_available: "No files available"
     release_marks: "Release Marks"

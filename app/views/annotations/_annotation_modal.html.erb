@@ -1,7 +1,7 @@
 <%= form_for :annotation_text,
              url: form_url,
              remote: true,
-             html: { onsubmit: 'commit.disabled = true;'} do |f| %>
+             html: { onsubmit: 'commit.disabled = true;' } do |f| %>
 
   <% form_values.each do |key, val| %>
     <input type='hidden' name='<%= key %>' value='<%= val %>'>
@@ -47,9 +47,17 @@
           <%= t('annotations.default_deduction') %>
         </p>
       <% end %>
+      <% if change_one_option %>
+        <p>
+          <%= f.label :change_all do %>
+            <%= f.check_box :change_all %>
+            <%= t('annotations.update_all') %>
+          <% end %>
+        </p>
+      <% end %>
 
       <section class='dialog-actions'>
-        <%= submit_tag title, id:'submit_annotation', data: submit_btn_data %>
+        <%= submit_tag title, id:'submit_annotation' %>
         <%= button_tag t('cancel'), type: 'button', onclick: 'close_annotation_modal();' %>
       </section>
     </div>
