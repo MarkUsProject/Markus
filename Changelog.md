@@ -16,6 +16,7 @@
 - Allowed the difference between the start and end times of a timed assessment to be less than the duration (#4915)
 - Group null/undefined values when sorting on dates using react-table (#4921)
 - Render .heic and .heif files properly in the file preview and feedback file views (#4926)
+- Fixed bug where negative total marks may be displayed when a negative extra mark exists (#4925)
 
 ## [v1.10.2]
 - Ensure that assignment subdirectories in repositories are maintained (#4893)
