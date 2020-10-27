@@ -10,7 +10,7 @@ class MarkingScheme < ApplicationRecord
     return @grades_array unless @grades_array.nil?
 
     all_grades = get_table_json_data(current_user)
-    @grades_array = all_grades.map { |s| s[:weighted_marks][self.id] } # Note: this also returns the assigned value
+    @grades_array = all_grades.map { |s| s[:weighted_marks][self.id][:mark] } # Note: this returns the assigned value
   end
 
   # Returns a weighted grade distribution for all students' total weighted grades
