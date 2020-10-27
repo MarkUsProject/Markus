@@ -1,5 +1,4 @@
 describe UsersController do
-  render_views false
   let(:admin) { create :admin }
 
   describe 'GET settings' do
