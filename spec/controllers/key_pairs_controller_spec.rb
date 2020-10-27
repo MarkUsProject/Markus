@@ -24,7 +24,7 @@ describe KeyPairsController do
           is_expected.to respond_with(:redirect)
         end
         it 'should redirect' do
-          expect(response).to redirect_to(action: :index)
+          expect(response).to redirect_to(settings_users_path)
         end
         it 'should flash a success message' do
           expect(flash[:success]).not_to be_empty
