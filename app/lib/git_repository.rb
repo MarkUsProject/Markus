@@ -17,48 +17,10 @@ class GitRepository < Repository::AbstractRepository
     rescue NotImplementedError; end
     @repos_path = connect_string
     @closed = false
-    if GitRepository.repository_exists?(@repos_path)
-      begin
-        @repos = Rugged::Repository.new(@repos_path)
-        # make sure working directory is up-to-date
-        @repos.fetch('origin')
-        begin
-          @repos.reset('master', :hard) # TODO this shouldn't be necessary, but something is messing up the repo.
-        rescue Rugged::ReferenceError   # It seems the master branch might not be correctly setup at first.
-        end
-        @repos.reset('origin/master', :hard) # align to whatever is in origin/master
-      rescue Rugged::Error, Rugged::OSError => e
-        m_logger = MarkusLogger.instance
-        m_logger.log "Error accessing repository #{@repos_path}: #{e.message}"
-        reclone_repo
-      end
-    else
-      m_logger = MarkusLogger.instance
-      m_logger.log "Error accessing repository #{@repos_path}: repository missing"
-      reclone_repo
-    end
+    @repos = Rugged::Repository.new(bare_path)
   end
 
-  def reclone_repo
-    repo_path, _sep, repo_name = @repos_path.rpartition(File::SEPARATOR)
-    bare_path = File.join(repo_path, 'bare', "#{repo_name}.git")
-    raise 'Repository does not exist' unless Dir.exist?(bare_path)
-    if Dir.exist?(@repos_path)
-      bad_repo_path = "#{@repos_path}.bad"
-      FileUtils.rm_rf(bad_repo_path)
-      FileUtils.mv(@repos_path, bad_repo_path)
-    end
-    @repos = Rugged::Repository.clone_at(bare_path, @repos_path)
-    m_logger = MarkusLogger.instance
-    m_logger.log "Recloned corrupted or missing git repo: #{@repos_path}"
-  rescue StandardError
-    msg = "Failed to clone corrupted or missing git repo: #{@repos_path}"
-    m_logger = MarkusLogger.instance
-    m_logger.log msg
-    raise
-  end
-
-  def self.do_commit(repo, author, message)
+  def self.do_commit_and_push(repo, author, message)
     index = repo.index
     commit_tree = index.write_tree(repo)
     index.write
@@ -72,10 +34,6 @@ class GitRepository < Repository::AbstractRepository
         update_ref: 'HEAD'
     }
     Rugged::Commit.create(repo, commit_options)
-  end
-
-  def self.do_commit_and_push(repo, author, message)
-    GitRepository.do_commit(repo, author, message)
     repo.push('origin', ['refs/heads/master'])
   end
 
@@ -90,39 +48,39 @@ class GitRepository < Repository::AbstractRepository
                          already")
     end
     # Repo is created bare, then clone it in the repository storage location
-    repo_path, _sep, repo_name = connect_string.rpartition(File::SEPARATOR)
-    bare_path = File.join(repo_path, 'bare', "#{repo_name}.git")
-    Rugged::Repository.init_at(bare_path, :bare)
-    bare_config = Rugged::Config.new(File.join(bare_path, 'config'))
-    bare_config['core.logAllRefUpdates'] = true # enable reflog to keep track of push dates
-    bare_config['gc.reflogExpire'] = 'never' # never garbage collect the reflog
-    repo = Rugged::Repository.clone_at(bare_path, connect_string)
+    barepath = bare_path(connect_string)
+    self.redis_exclusive_lock(connect_string, namespace: :repo_lock) do
+      Rugged::Repository.init_at(barepath, :bare)
+      bare_config = Rugged::Config.new(File.join(barepath, 'config'))
+      bare_config['core.logAllRefUpdates'] = true # enable reflog to keep track of push dates
+      bare_config['gc.reflogExpire'] = 'never' # never garbage collect the reflog
+      repo = Rugged::Repository.clone_at(barepath, connect_string)
 
-    # Do an initial commit with the .required_files.json
-    required = Assignment.get_required_files
-    required_path = File.join(connect_string, '.required.json')
-    File.open(required_path, 'w') do |req|
-      req.write(required.to_json)
-    end
-    repo.index.add('.required.json')
+      # Do an initial commit with the .required_files.json
+      required = Assignment.get_required_files
+      required_path = File.join(connect_string, '.required.json')
+      File.open(required_path, 'w') do |req|
+        req.write(required.to_json)
+      end
+      repo.index.add('.required.json')
 
-    # Add client-side hooks
-    if with_hooks && !Rails.configuration.x.repository.client_hooks.empty?
-      client_hooks_path = Rails.configuration.x.repository.client_hooks
-      FileUtils.copy_entry client_hooks_path, File.join(connect_string, 'markus-hooks')
-      FileUtils.chmod 0755, File.join(connect_string, 'markus-hooks', 'pre-commit')
-      repo.index.add_all('markus-hooks')
-    end
+      # Add client-side hooks
+      if with_hooks && !Rails.configuration.x.repository.client_hooks.empty?
+        client_hooks_path = Rails.configuration.x.repository.client_hooks
+        FileUtils.copy_entry client_hooks_path, File.join(connect_string, 'markus-hooks')
+        FileUtils.chmod 0755, File.join(connect_string, 'markus-hooks', 'pre-commit')
+        repo.index.add_all('markus-hooks')
+      end
 
-    GitRepository.do_commit_and_push(repo, 'Markus', I18n.t('repo.commits.initial'))
+      GitRepository.do_commit_and_push(repo, 'Markus', I18n.t('repo.commits.initial'))
 
-    # Set up server-side hooks
-    if with_hooks
-      Rails.configuration.x.repository.hooks.each do |hook_symbol, hook_script|
-        FileUtils.ln_s(hook_script, File.join(bare_path, 'hooks', hook_symbol.to_s))
+      # Set up server-side hooks
+      if with_hooks
+        Rails.configuration.x.repository.hooks.each do |hook_symbol, hook_script|
+          FileUtils.ln_s(hook_script, File.join(barepath, 'hooks', hook_symbol.to_s))
+        end
       end
     end
-
     true
   end
 
@@ -134,12 +92,10 @@ class GitRepository < Repository::AbstractRepository
 
   # static method that should yield to a git repo and then close it
   def self.access(connect_string)
-    self.redis_exclusive_lock(connect_string, namespace: :repo_lock) do
-      repo = GitRepository.open(connect_string)
-      yield repo
-    ensure
-      repo&.close
-    end
+    repo = GitRepository.open(connect_string)
+    yield repo
+  ensure
+    repo&.close
   end
 
   # static method that deletes the git repo
@@ -194,11 +150,8 @@ class GitRepository < Repository::AbstractRepository
   # If +path+ is not nil, then gets only a revision with changes under +path+.
   # Push dates in the git reflog are used to compare timestamps, because a commit date can be arbitrarily crafted.
   def get_revision_by_timestamp(at_or_earlier_than, path = nil, later_than = nil)
-    repo_path, _sep, repo_name = @repos_path.rpartition(File::SEPARATOR)
-    bare_path = File.join(repo_path, 'bare', "#{repo_name}.git")
     # use the git reflog to get a list of pushes: find first push_time <= at_or_earlier_than && > later_than
-    bare_repo = Rugged::Repository.new(bare_path)
-    reflog = bare_repo.ref('refs/heads/master').log.reverse
+    reflog = @repos.ref('refs/heads/master').log.reverse
     current_reflog_entry = {}
     reflog.each_with_index do |reflog_entry, i|
       push_time = reflog_entry[:committer][:time].in_time_zone
@@ -228,16 +181,11 @@ class GitRepository < Repository::AbstractRepository
     end
     # no revision found
     nil
-  ensure
-    bare_repo.close
   end
 
   def get_all_revisions
     # use the git reflog to get a list of pushes
-    repo_path, _sep, repo_name = @repos_path.rpartition(File::SEPARATOR)
-    bare_path = File.join(repo_path, 'bare', "#{repo_name}.git")
-    bare_repo = Rugged::Repository.new(bare_path)
-    reflog = bare_repo.ref('refs/heads/master').log.reverse
+    reflog = @repos.ref('refs/heads/master').log.reverse
     last_commit = @repos.last_commit
     reflog_entries = {}
     reflog_entries[last_commit.oid] = { index: -1 }
@@ -251,8 +199,6 @@ class GitRepository < Repository::AbstractRepository
       revision.server_timestamp = current_reflog_entry[:time]
       revision
     end
-  ensure
-    bare_repo.close
   end
 
   # Given a OID of a file from a Rugged::Repository lookup, return the blob
@@ -379,52 +325,61 @@ class GitRepository < Repository::AbstractRepository
   # 'transaction'. In case of certain conflicts corresponding
   # Repositor::Conflict(s) are added to the transaction object
   def commit(transaction)
-    transaction.jobs.each do |job|
-      case job[:action]
-      when :add_path
-        begin
-          add_directory(job[:path])
-        rescue Repository::Conflict => e
-          transaction.add_conflict(e)
-        end
-      when :add
-        begin
-          add_file(job[:path], job[:file_data])
-        rescue Repository::Conflict => e
-          transaction.add_conflict(e)
-        end
-      when :remove
-        begin
-          remove_file(job[:path], job[:expected_revision_identifier], keep_folder: job[:keep_folder])
-        rescue Repository::Conflict => e
-          transaction.add_conflict(e)
-        end
-      when :remove_directory
-        begin
-          remove_directory(job[:path], job[:expected_revision_identifier], keep_parent_dir: job[:keep_parent_dir])
-        rescue Repository::Conflict => e
-          transaction.add_conflict(e)
-        end
-      when :replace
-        begin
-          replace_file(job[:path], job[:file_data], job[:expected_revision_identifier])
-        rescue Repository::Conflict => e
-          transaction.add_conflict(e)
+    self.class.redis_exclusive_lock(@repos_path, namespace: :repo_lock) do
+      transaction.jobs.each do |job|
+        case job[:action]
+        when :add_path
+          begin
+            add_directory(job[:path])
+          rescue Repository::Conflict => e
+            transaction.add_conflict(e)
+          end
+        when :add
+          begin
+            add_file(job[:path], job[:file_data])
+          rescue Repository::Conflict => e
+            transaction.add_conflict(e)
+          end
+        when :remove
+          begin
+            remove_file(job[:path], job[:expected_revision_identifier], keep_folder: job[:keep_folder])
+          rescue Repository::Conflict => e
+            transaction.add_conflict(e)
+          end
+        when :remove_directory
+          begin
+            remove_directory(job[:path], job[:expected_revision_identifier], keep_parent_dir: job[:keep_parent_dir])
+          rescue Repository::Conflict => e
+            transaction.add_conflict(e)
+          end
+        when :replace
+          begin
+            replace_file(job[:path], job[:file_data], job[:expected_revision_identifier])
+          rescue Repository::Conflict => e
+            transaction.add_conflict(e)
+          end
         end
       end
-    end
 
-    if transaction.conflicts?
-      @repos.reset('master', :hard)
-      false
-    else
-      GitRepository.do_commit_and_push(@repos, transaction.user_id, transaction.comment)
-      true
+      if transaction.conflicts?
+        non_bare_repo.reset('master', :hard)
+        false
+      else
+        GitRepository.do_commit_and_push(non_bare_repo, transaction.user_id, transaction.comment)
+        true
+      end
+    ensure
+      non_bare_repo&.close
     end
   end
 
   def self.internal_file_names
     [DUMMY_FILE_NAME]
+  end
+
+  def self.bare_path(connect_string)
+    repo_path, _sep, repo_name = connect_string.rpartition(File::SEPARATOR)
+    File.join(repo_path, 'bare', "#{repo_name}.git")
   end
 
   ####################################################################
@@ -459,6 +414,54 @@ class GitRepository < Repository::AbstractRepository
 
   private
 
+  def non_bare_repo
+    return @non_bare_repo unless @non_bare_repo.nil?
+    if GitRepository.repository_exists?(@repos_path)
+      begin
+        @non_bare_repo = Rugged::Repository.new(@repos_path)
+        # make sure working directory is up-to-date
+        @non_bare_repo.fetch('origin')
+        begin
+          # TODO: this shouldn't be necessary, but something is messing up the repo.
+          @non_bare_repo.reset('master', :hard)
+        rescue Rugged::ReferenceError # It seems the master branch might not be correctly setup at first.
+        end
+        @non_bare_repo.reset('origin/master', :hard) # align to whatever is in origin/master
+      rescue Rugged::Error, Rugged::OSError => e
+        m_logger = MarkusLogger.instance
+        m_logger.log "Error accessing repository #{@repos_path}: #{e.message}"
+        @non_bare_repo = reclone_repo
+      end
+    else
+      m_logger = MarkusLogger.instance
+      m_logger.log "Error accessing repository #{@repos_path}: repository missing"
+      @non_bare_repo = reclone_repo
+    end
+    @non_bare_repo
+  end
+
+  def reclone_repo
+    raise 'Repository does not exist' unless Dir.exist?(bare_path)
+    if Dir.exist?(@repos_path)
+      bad_repo_path = "#{@repos_path}.bad"
+      FileUtils.rm_rf(bad_repo_path)
+      FileUtils.mv(@repos_path, bad_repo_path)
+    end
+    repo = Rugged::Repository.clone_at(bare_path, @repos_path)
+    m_logger = MarkusLogger.instance
+    m_logger.log "Recloned corrupted or missing git repo: #{@repos_path}"
+    repo
+  rescue StandardError
+    msg = "Failed to clone corrupted or missing git repo: #{@repos_path}"
+    m_logger = MarkusLogger.instance
+    m_logger.log msg
+    raise
+  end
+
+  def bare_path
+    @bare_path ||= GitRepository.bare_path(@repos_path)
+  end
+
   # Creates a file into the repository.
   def add_file(path, file_data)
     if get_latest_revision.path_exists?(path)
@@ -482,7 +485,7 @@ class GitRepository < Repository::AbstractRepository
   # is not exists in order to keep the folder.
   # If +keep_folder+ is false, all the files will be deleted and .gitkeep file will not be added.
   def remove_file(path, expected_revision_identifier, keep_folder: true)
-    if @repos.last_commit.oid != expected_revision_identifier
+    if non_bare_repo.last_commit.oid != expected_revision_identifier
       raise Repository::FileOutOfSyncConflict.new(path)
     end
     unless get_latest_revision.path_exists?(path)
@@ -491,7 +494,7 @@ class GitRepository < Repository::AbstractRepository
     absolute_path = Pathname.new(File.join(@repos_path, path))
     relative_path = Pathname.new(path)
     File.unlink(File.join(@repos_path, path))
-    @repos.index.remove(path)
+    non_bare_repo.index.remove(path)
     return unless keep_folder
     return if File.exist?(File.join(absolute_path.dirname, DUMMY_FILE_NAME))
     gitkeep_filename = File.join(relative_path.dirname, DUMMY_FILE_NAME)
@@ -516,7 +519,7 @@ class GitRepository < Repository::AbstractRepository
 
   # Replaces a file in the repository with new content.
   def replace_file(path, file_data, expected_revision_identifier)
-    if @repos.last_commit.oid != expected_revision_identifier
+    if non_bare_repo.last_commit.oid != expected_revision_identifier
       raise Repository::FileOutOfSyncConflict.new(path)
     end
     unless get_latest_revision.path_exists?(path)
@@ -540,6 +543,6 @@ class GitRepository < Repository::AbstractRepository
     File.open(abs_path, 'w') do |file|
       file.write file_data.force_encoding('UTF-8')
     end
-    @repos.index.add(path)
+    non_bare_repo.index.add(path)
   end
 end
