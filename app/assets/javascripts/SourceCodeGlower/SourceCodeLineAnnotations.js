@@ -141,6 +141,17 @@ SourceCodeLineAnnotations.prototype.relationshipExists = function(annotation_id,
   return null;
 }
 
+SourceCodeLineAnnotations.prototype.updateRelationships = function(annotation_id, annotation_text_id) {
+  var relationships = this.getRelationships();
+
+  for (var i = 0; i < relationships.length; i++) {
+    var relationship = relationships[i];
+    if (relationship.annotation_id === annotation_id) {
+      relationship.annotation_text_id = annotation_text_id;
+    }
+  }
+};
+
 SourceCodeLineAnnotations.prototype.removeRelationship = function(annotation_id, line_num, annotation_text_id) {
   var relationship = this.relationshipExists(annotation_id, line_num, annotation_text_id);
 

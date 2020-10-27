@@ -56,9 +56,9 @@
 <% content_for :additional_headings do %>
   <% if @current_user.ta? %>
     <span class='menu_bar'></span>
-    <%= t('submissions.how_many_marked',
+    <%= t('submissions.how_many_marked_in_collected',
           num_marked: @assignment.get_num_marked(@current_user.id),
-          num_assigned: @assignment.get_num_assigned(@current_user.id)) %>
+          num_collected: @assignment.get_num_collected(@current_user.id)) %>
   <% end %>
 <% end %>
 

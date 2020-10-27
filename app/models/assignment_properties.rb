@@ -115,15 +115,14 @@ class AssignmentProperties < ApplicationRecord
     false
   end
 
-  # Add an error if this the duration attribute is greater than the amount of time
-  # between the start_time and due_date.
+  # Add an error if the start time is after the due date
   #
   # Note that this will fail silently if either the start_time or duration is nil since
   # those values are checked by other validations and so should not be checked twice.
   def start_before_due
     return if start_time.nil? || duration.nil?
     msg = I18n.t('activerecord.errors.models.assignment_properties.attributes.start_time.before_due_date')
-    errors.add(:start_time, msg) if start_time > assignment.due_date - duration
+    errors.add(:start_time, msg) if start_time > assignment.due_date
   end
 
   # Add an error if the is_timed and scanned_exam attributes for this assignment
