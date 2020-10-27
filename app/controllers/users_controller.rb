@@ -1,7 +1,6 @@
 # Users controller used to handle universal "Settings" page for all users
 class UsersController < ApplicationController
-  before_action :authorize_for_user, only: :settings
-  before_action :authorize_for_student, only: [:update_mailer_settings]
+  before_action { authorize! }
 
   layout 'assignment_content'
 
@@ -22,5 +21,11 @@ class UsersController < ApplicationController
   def update_success
     flash_message(:success, t('users.verify_settings_update'))
     redirect_to action: 'settings'
+  end
+
+  protected
+
+  def implicit_authorization_target
+    OpenStruct.new policy_class: UserPolicy
   end
 end
