@@ -1,5 +1,12 @@
 # Changelog
 
+## [v1.10.3]
+- Allow for more concurrent access to git repositories (#4895)
+- Fixed calculation bugs for grade summary (#4899)
+- Fixed a bug where due dates in a flash message were incorrect for timed assessments (#4915)
+- Allowed the difference between the start and end times of a timed assessment to be less than the duration (#4915)
+- Fixed bug where negative total marks may be displayed when a negative extra mark exists (#4925)
+
 ## [v1.10.2]
 - Ensure that assignment subdirectories in repositories are maintained (#4893)
 - Limit number of tests sent to the autotest server at one time (#4901)
