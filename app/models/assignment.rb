@@ -588,7 +588,7 @@ class Assignment < Assessment
                                      result&.marking_state,
                                      result&.released_to_students,
                                      g.collection_date),
-        final_grade: criteria.values.compact.sum + (extra_mark || 0),
+        final_grade: [criteria.values.compact.sum + (extra_mark || 0), 0].max,
         criteria: criteria,
         max_mark: max_mark,
         result_id: result&.id,
@@ -1173,7 +1173,7 @@ class Assignment < Assessment
       if result_info['results.id'].present?
         extra_mark = extra_marks_hash[result_info['results.id']] || 0
         base[:result_id] = result_info['results.id']
-        base[:final_grade] = (total_marks[result_info['results.id']] || 0.0) + extra_mark
+        base[:final_grade] = [0, (total_marks[result_info['results.id']] || 0.0) + extra_mark].max
       end
 
       base[:members] = member_info.map { |h| h['users.user_name'] } unless member_info.nil?
