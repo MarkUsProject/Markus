@@ -61,7 +61,7 @@ en:
       start_confirmation: "You are about to start a timed assessment. You cannot undo this action. Click OK to continue."
       modal_current_duration: "This will extend the current duration for this group. The current duration is: %{duration}."
       started_message_html: "<strong>You have started this assessment.</strong>"
-      starter_file_prompt: "Go to the Submissions tab to view starter files for this assessment."
+      starter_file_prompt: "Click below to download the starter files for this assessment."
       time_until_due_warning: "This assessment is due before %{due_date} without penalty."
       duration_extension_info: "(this includes a duration extension of %{extension_string})"
 
