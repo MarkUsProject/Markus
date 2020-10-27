@@ -62,10 +62,14 @@ class GroupingPolicy < ApplicationPolicy
   end
 
   def view_file_manager?
-    user.student? &&
-      !(record.assignment.scanned_exam? ||
-        record.assignment.is_peer_review? ||
-        (record.assignment.is_timed? && record.start_time.nil?))
+    return false unless user.student?
+    if record.assignment.scanned_exam? || record.assignment.is_peer_review?
+      false
+    elsif record.assignment.is_timed?
+      !record.start_time.nil? || record.past_collection_date?
+    else
+      true
+    end
   end
 
   def start_timed_assignment?

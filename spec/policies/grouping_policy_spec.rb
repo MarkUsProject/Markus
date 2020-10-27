@@ -88,9 +88,14 @@ describe GroupingPolicy do
         it { is_expected.not_to pass :view_file_manager? }
       end
       context 'when the assignment is timed' do
-        let(:grouping) { create :grouping, assignment: create(:timed_assignment) }
+        let(:grouping) { create :grouping, assignment: assignment }
+        let(:assignment) { create :timed_assignment }
         context 'when the grouping has not started' do
           it { is_expected.not_to pass :view_file_manager? }
+          context 'when the assignment collection date has passed' do
+            let(:assignment) { create :timed_assignment, due_date: 1.minute.ago }
+            it { is_expected.to pass :view_file_manager? }
+          end
         end
         context 'when the grouping has started' do
           before { grouping.update!(start_time: 1.hour.ago) }
