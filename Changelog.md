@@ -10,12 +10,14 @@
 - Image rotation tools added in marking UI (#4789)
 - Image zooming tools added in marking UI (#4866)
 - Fixed a bug preventing total marks from updating properly if one of the grades is nil (#4887)
+- Group null/undefined values when sorting on dates using react-table (#4921)
+- Render .heic and .heif files properly in the file preview and feedback file views (#4926)
+
+## [v1.10.3]
 - Allow for more concurrent access to git repositories (#4895)
 - Fixed calculation bugs for grade summary (#4899)
 - Fixed a bug where due dates in a flash message were incorrect for timed assessments (#4915)
 - Allowed the difference between the start and end times of a timed assessment to be less than the duration (#4915)
-- Group null/undefined values when sorting on dates using react-table (#4921)
-- Render .heic and .heif files properly in the file preview and feedback file views (#4926)
 - Fixed bug where negative total marks may be displayed when a negative extra mark exists (#4925)
 
 ## [v1.10.2]
