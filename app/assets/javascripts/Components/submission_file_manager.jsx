@@ -143,7 +143,7 @@ class SubmissionFileManager extends React.Component {
   renderFileViewer = () => {
     let heading;
     let content = '';
-    if (this.state.viewFile !== null) {
+    if (this.state.viewFile !== null && !this.props.is_solution_file) {
       let withinSize = document.getElementById('content').getBoundingClientRect().width - 150 + 'px';
       heading = this.state.viewFile;
       content = (
@@ -158,7 +158,7 @@ class SubmissionFileManager extends React.Component {
           />
         </div>
       );
-    } else {
+    } else if (!this.props.is_solution_file){
       heading = I18n.t('submissions.student.select_file');
     }
 
