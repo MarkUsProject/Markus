@@ -53,6 +53,7 @@ import 'javascripts/layouts';
 import 'javascripts/menu';
 import 'javascripts/react_config';
 import 'javascripts/redirect';
+import 'javascripts/theme_colors';
 
 // assets that export vars/functions/classes
 // TODO: We shouldn't need to make everything global.
@@ -60,6 +61,8 @@ import { poll_job } from 'javascripts/job_poller';
 window.poll_job = poll_job;
 import { colours } from 'javascripts/markus_colors';
 window.colours = colours;
+import { switch_theme } from 'javascripts/theme_colors';
+window.switch_theme = switch_theme;
 import { refreshOrLogout } from 'javascripts/refresh_or_logout';
 window.refreshOrLogout = refreshOrLogout;
 import { ModalMarkus } from 'javascripts/modals';

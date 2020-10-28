@@ -48,17 +48,5 @@
 
 <script>
 <%= render partial: 'shared/poll_job', formats: [:js], handlers: [:erb] %>
-
-function switch_theme () {
-  console.log(document.documentElement.style.getPropertyValue('--white'));
-  if (document.documentElement.style.getPropertyValue('--white') === '#fff') {
-    document.documentElement.style.setProperty('--white', '#464646');
-    document.documentElement.style.setProperty('--light-grey', '#8d8d8d');
-    document.documentElement.style.setProperty('--lighter-blue', '#384a69');
-  } else {
-    document.documentElement.style.setProperty('--white', '#fff');
-    document.documentElement.style.setProperty('--light-grey', '#eee');
-    document.documentElement.style.setProperty('--lighter-blue', '#e8f4f2');
-  }
-};
+console.log(dark_mode_colors);
 </script>

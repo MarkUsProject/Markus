@@ -1,6 +1,6 @@
 :root {
   --lighter-blue: #e8f4f2;
-  --white: #fff;
+  --white: #ffffff;
   --light-blue: #cee3ea;
   --blue: #89b1dd;
   --dark-blue: #3a6ab3;
@@ -9,7 +9,7 @@
   --neon-navy: #0000FF;
   --off-white: #f8f8f8;
   --black: #000;
-  --light-grey: #eee;
+  --light-grey: #eeeeee;
   --grey: #8d8d8d;
   --dark-grey: #464646;
   --light-red: #ffb4b4;
@@ -27,6 +27,19 @@
   --field-set-grey: #c0c0c0;
   --disabled-dark: #afafaf;
 }
+
+$comments: var(--dark-green);
+$key-words: var(--sea-blue);
+$strings: var(--neon-navy);
+$links: var(--neon-navy);
+$pane-highlight: var(--lighter-green);
+$confirmed: var(--light-green);
+$annotation-holder: var(--orange);
+
+
+// not sure what this does...
+$darker-orange: var(--darker-orange);
+
            $fonts: 'Open Sans', 'Lucida Grande', Verdana, Arial, sans-serif;
       $mono-fonts: 'Consolas', 'Courier New', Courier, mono, serif;
           $radius: 5px;
@@ -37,10 +50,6 @@
       $light-blue: var(--light-blue);
             $blue: var(--blue);
        $dark-blue: var(--dark-blue);
-        $sea-blue: var(--sea-blue);
-            $navy: var(--navy);
-       $neon-navy: var(--neon-navy);
-       $off-white: var(--off-white);
            $white: var(--white);
       $light-grey: var(--light-grey);
             $grey: var(--grey);
@@ -50,17 +59,10 @@
     $light-yellow: var(--light-yellow);
           $yellow: var(--yellow);
      $mark-yellow: var(--mark-yellow);
-          $orange: var(--orange);
-   $darker-orange: var(--darker-orange);
-   $lighter-green: var(--lighter-green);
-     $light-green: var(--light-green);
            $green: var(--green);
-      $dark-green: var(--dark-green);
    $disabled-grey: var(--disabled-grey);
   $field-set-grey: var(--field-set-grey);
    $disabled-dark: var(--disabled-dark);
   $dimen-vertical: 2em;
 $dimen-horizontal: 3.5em;
 $dimen-hor-mobile: 1.5em;
-
-$orange-transparent: #e4972c30;

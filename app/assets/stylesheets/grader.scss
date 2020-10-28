@@ -97,7 +97,7 @@
     width: 100%;
 
     &.selected {
-      background-color: $light-green;
+      background-color: $confirmed;
     }
 
     &.old-mark:not(.selected) {

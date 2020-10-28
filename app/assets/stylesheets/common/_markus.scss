@@ -127,7 +127,7 @@ strong a {
 
 .success {
   @extend .alert;
-  background: $light-green asset-url('icons/accept.png') no-repeat 5px center;
+  background: $confirmed asset-url('icons/accept.png') no-repeat 5px center;
   border: 1px solid $green;
 }
 
@@ -197,7 +197,7 @@ textarea {
   &.updated,
   &.updated:focus,
   &.updated:hover {
-    background-color: $light-green;
+    background-color: $confirmed;
   }
 
   &[type='number'] {
@@ -481,7 +481,7 @@ kbd {
     }
 
     &.highlight {
-      background-color: $lighter-green;
+      background-color: $pane-highlight;
     }
 
     // TODO: decide whether to adopt this style more broadly
@@ -948,7 +948,7 @@ nav {
 }
 
 .annotation_holder {
-  background: $orange;
+  background: $annotation-holder;
   border: 1px solid $black;
   opacity: 0.2;
   position: absolute;
@@ -956,8 +956,9 @@ nav {
 }
 
 .annotation-holder-active {
-  background: $orange-transparent;
+  background: $annotation-holder;
   border: 3px solid $red;
+  opacity: 0.2;
   position: absolute;
   z-index: 1;
 }

@@ -37,7 +37,7 @@
   }
 
   .tools {
-    background-color: $off-white;
+    background-color: $white;
     color: $dark-grey;
     font: 0.825em $fonts;
     padding: 5px 0;
@@ -45,7 +45,7 @@
 
     a {
       background-color: inherit;
-      color: $neon-navy;
+      color: $links;
       font-size: 1.1em;
       margin-right: 10px;
       text-decoration: none;
@@ -62,17 +62,17 @@
   .comment,
   .comments {
     background-color: inherit;
-    color: $dark-green;
+    color: $comments;
   }
 
   .string {
     background-color: inherit;
-    color: $neon-navy;
+    color: $strings;
   }
 
   .keyword {
     background-color: inherit;
-    color: $sea-blue;
+    color: $key-words;
     font-weight: bold;
   }
 
@@ -98,7 +98,7 @@
 /* About dialog styles */
 
 .dp-about {
-  background-color: $off-white;
+  background-color: $white;
   color: $dark-grey;
   margin: 0;
   padding: 0;
@@ -131,7 +131,7 @@
 
   .footer {
     background-color: $disabled-grey;
-    border-top: 1px solid $off-white;
+    border-top: 1px solid $white;
     color: $dark-grey;
     text-align: right;
   }
