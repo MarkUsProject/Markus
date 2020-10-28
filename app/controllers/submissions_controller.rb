@@ -478,7 +478,7 @@ class SubmissionsController < ApplicationController
         file = @revision.files_at_path(File.join(@assignment.repository_folder,
                                                  path))[params[:file_name]]
         file_contents = repo.download_as_string(file)
-        if params[:preview] && SubmissionFile.is_binary?(file_contents)
+        if params[:preview] == 'true' && SubmissionFile.is_binary?(file_contents)
           file_contents = I18n.t('submissions.cannot_display')
         end
       rescue Exception => e
