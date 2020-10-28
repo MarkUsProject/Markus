@@ -19,11 +19,11 @@
 
 .due_date {
   .after {
-    color: $red;
+    color: $severe-error;
   }
 
   .before {
-    color: $green;
+    color: $success;
   }
 }
 

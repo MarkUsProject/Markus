@@ -1,20 +1,20 @@
 export const dark_mode_colors = {
-  'primary_one': '#3b723e',
-  'primary_two': '#336b88',
-  'secondary_one': '#338104',
-  'secondary_two': '#3393b5',
-  'background_main': '#262626',
-  'background_support': '#4e4e4e',
-  'line': '#dddddd'
+  'primary_one': '#bc64be',
+  'primary_two': '#5b37ea',
+  'secondary_one': '#69964f',
+  'secondary_two': '#176c92',
+  'background_main': '#212121',
+  'background_support': '#484848',
+  'line': '#9b9b9b'
 };
 export const light_mode_colors = {
-  'primary_one': '#3b723e',
-  'primary_two': '#336b88',
-  'secondary_one': '#338104',
-  'secondary_two': '#3393b5',
-  'background_main': '#262626',
-  'background_support': '#4e4e4e',
-  'line': '#000000'
+  'primary_one': '#6b3f6b',
+  'primary_two': '#483888',
+  'secondary_one': '#335f18',
+  'secondary_two': '#38697c',
+  'background_main': '#e0e0e0',
+  'background_support': '#a2a2a2',
+  'line': '#1a1a1a'
 };
 
 export function switch_theme() {

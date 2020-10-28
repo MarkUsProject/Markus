@@ -63,12 +63,12 @@ input[type='radio'] {
 }
 
 .required_field {
-  color: $red;
+  color: $severe-error;
 }
 
 label.required::after, th.required::after {
   content: "*";
-  color: $red;
+  color: $severe-error;
 }
 
 .hidden {
@@ -77,7 +77,7 @@ label.required::after, th.required::after {
 
 .section h3 {
   border-bottom: 1px solid #ccc;
-  color: $dark-grey;
+  color: $line;
   font-size: 1.25em;
   font-weight: 300;
   margin: 0 0 1em 0;
@@ -88,7 +88,7 @@ label.required::after, th.required::after {
 /* Main content */
 
 #content {
-  background: $white;
+  background: $background-main;
   padding: $dimen-vertical $dimen-horizontal;
 
   @include breakpoint(mobile) {
@@ -102,7 +102,7 @@ label.required::after, th.required::after {
 }
 
 #wrapper {
-  background: $white;
+  background: $background-main;
   min-height: 90%;
 }
 
@@ -179,8 +179,8 @@ label.required::after, th.required::after {
 }
 
 .help-message {
-  background: $light-yellow;
-  border: 1px solid $yellow;
+  background: $alert-light;
+  border: 1px solid $alert;
   border-radius: $radius;
   display: inline-block;
   padding: 10px;
@@ -301,8 +301,8 @@ label.required::after, th.required::after {
 
 .rt-th.unassigned,
 .rt-td.unassigned {
-  background-color: $light-grey;
-  color: $grey;
+  background-color: $background-main;
+  color: $secondary-one;
 }
 
 // Styling patches for react-keyed-file-browser

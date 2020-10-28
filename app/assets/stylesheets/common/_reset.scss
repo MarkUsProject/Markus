@@ -207,8 +207,8 @@ dfn {
  */
 
 mark {
-  background: $mark-yellow;
-  color: $black;
+  background: $alert-dark;
+  color: $sharp-line;
 }
 
 /*
@@ -364,7 +364,7 @@ form {
  */
 
 fieldset {
-  border: 1px solid $field-set-grey;
+  border: 1px solid $background-support;
   margin: 0 2px;
   padding: 0.35em 0.625em 0.75em;
 }

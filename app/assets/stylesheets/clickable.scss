@@ -17,7 +17,7 @@
 }
 
 .make_div_clickable:hover {
-  background: $light-blue;
+  background: $background-support;
   opacity: .5;
 }
 
@@ -27,7 +27,7 @@
   height: 100%;
   top: 0;
   left: 0;
-  border-bottom: 1px solid $disabled-grey;
+  border-bottom: 1px solid $background-support;
 
   z-index: 1;
 }

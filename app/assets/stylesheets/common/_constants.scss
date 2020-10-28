@@ -1,40 +1,44 @@
 :root {
-  --lighter-blue: #e8f4f2;
-  --white: #ffffff;
-  --light-blue: #cee3ea;
-  --blue: #89b1dd;
-  --dark-blue: #3a6ab3;
-  --sea-blue: #069;
-  --navy: #003399;
-  --neon-navy: #0000FF;
-  --off-white: #f8f8f8;
-  --black: #000;
-  --light-grey: #eeeeee;
-  --grey: #8d8d8d;
-  --dark-grey: #464646;
-  --light-red: #ffb4b4;
-  --red: #fe2a2a;
-  --light-yellow: #fafdaa;
-  --yellow: #dde426;
-  --mark-yellow: #ff0;
-  --orange: #e4972c;
-  --darker-orange: #ee6415;
-  --lighter-green: #e4fbef;
-  --light-green: #81d881;
-  --green: #23c023;
-  --dark-green: #008200;
-  --disabled-grey: #cecece;
-  --field-set-grey: #c0c0c0;
-  --disabled-dark: #afafaf;
+--primary_one: #4f6eb7;
+--primary_two: #37555f;
+--primary_three: #3f6239;
+--background_main: #212121;
+--background_support: #353535;
+--line: #b3b3b3;
+--sharp-line: #e7e7e7;
+--error: #ff0000;
+--alert: #ffd452;
+--success: #67b73b;
+--light-success: #48513e;
 }
+// Code viewer
+$comments: var(--primary_two);
+$key-words: var(--primary_three);
+$strings: var(--primary_one);
 
-$comments: var(--dark-green);
-$key-words: var(--sea-blue);
-$strings: var(--neon-navy);
-$links: var(--neon-navy);
-$pane-highlight: var(--lighter-green);
-$confirmed: var(--light-green);
-$annotation-holder: var(--orange);
+// General contexts
+$links: var(--primary_two);
+$pane-highlight: var(--primary_two);
+$confirmed: var(--light-success);
+$annotation-holder: var(--alert);
+
+// Status
+$severe-error: var(--error);
+$light-red: var(--error);
+$alert-light: var(--alert);
+$alert: var(--alert);
+$alert-dark: var(--alert);
+$success: var(--success);
+
+$primary-one: var(--primary_one);
+$secondary-two: var(--primary_three);
+$secondary-one: var(--primary_two);
+
+$background-main: var(--background_main);
+$background-support: var(--background_support);
+
+$line: var(--line);
+$sharp-line: var(--sharp-line);
 
 
 // not sure what this does...
@@ -45,24 +49,6 @@ $darker-orange: var(--darker-orange);
           $radius: 5px;
       $time-quick: 0.25s;
      $time-medium: 0.35s;
-           $black: var(--black);
-    $lighter-blue: var(--lighter-blue);
-      $light-blue: var(--light-blue);
-            $blue: var(--blue);
-       $dark-blue: var(--dark-blue);
-           $white: var(--white);
-      $light-grey: var(--light-grey);
-            $grey: var(--grey);
-       $dark-grey: var(--dark-grey);
-       $light-red: var(--light-red);
-             $red: var(--red);
-    $light-yellow: var(--light-yellow);
-          $yellow: var(--yellow);
-     $mark-yellow: var(--mark-yellow);
-           $green: var(--green);
-   $disabled-grey: var(--disabled-grey);
-  $field-set-grey: var(--field-set-grey);
-   $disabled-dark: var(--disabled-dark);
   $dimen-vertical: 2em;
 $dimen-horizontal: 3.5em;
 $dimen-hor-mobile: 1.5em;
