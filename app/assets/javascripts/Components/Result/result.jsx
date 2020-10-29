@@ -333,6 +333,7 @@ class Result extends React.Component {
               categoryId: "",
             },
           })
+          this.refreshAnnotations();
         }
       );
     };
@@ -341,15 +342,7 @@ class Result extends React.Component {
       (annotation) => annotation.id === parseInt(annot_id)
     );
 
-    let category_id;
-    if (!annotation.annotation_category) {
-      category_id = "";
-    } else {
-      category_id = this.state.annotation_categories.find(
-        (category) =>
-          category.annotation_category_name === annotation.annotation_category
-      ).id;
-    }
+    let category_id = annotation.category_id ? annotation.category_id : "";
 
     this.setState({
       annotationModal: {
@@ -583,7 +576,12 @@ class Result extends React.Component {
           categories={this.state.annotation_categories}
           onRequestClose={() =>
             this.setState({
-              annotationModal: { ...this.state.annotationModal, show: false },
+              annotationModal: {
+                ...this.state.annotationModal,
+                content: '',
+                category_id: '',
+                show: false,
+              },
             })
           }
           is_reviewer={this.state.is_reviewer}
