@@ -63,6 +63,8 @@ import { colours } from 'javascripts/markus_colors';
 window.colours = colours;
 import { switch_theme } from 'javascripts/theme_colors';
 window.switch_theme = switch_theme;
+import { set_theme } from 'javascripts/theme_colors';
+window.set_theme = set_theme;
 import { refreshOrLogout } from 'javascripts/refresh_or_logout';
 window.refreshOrLogout = refreshOrLogout;
 import { ModalMarkus } from 'javascripts/modals';

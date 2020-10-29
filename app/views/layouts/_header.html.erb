@@ -48,6 +48,5 @@
 
 <script>
 <%= render partial: 'shared/poll_job', formats: [:js], handlers: [:erb] %>
-switch_theme();
-switch_theme();
+set_theme('<%= @current_user.theme %>');
 </script>

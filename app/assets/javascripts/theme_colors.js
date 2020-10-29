@@ -1,11 +1,11 @@
 export const dark_mode_colors = {
   primary_one: '#67abfa',
   primary_two: '#243427',
-  primary_three: '#7dcb85',
+  primary_three: '#75a278',
   background_main: '#161616',
   background_support: '#333d3e',
   line: '#b1b1b1',
-  sharp_line: '#eeeeee',
+  sharp_line: '#e5e5e5',
   heavy_error: '#ff7575',
   error_light: '#a20000',
   heavy_alert: '#927c40',
@@ -39,6 +39,18 @@ export const light_mode_colors = {
 
 export function switch_theme() {
   if (document.documentElement.style.getPropertyValue('--sharp_line') === '#000') {
+    Object.keys(dark_mode_colors).forEach(color => {
+      document.documentElement.style.setProperty('--' + color, dark_mode_colors[color]);
+    });
+  } else {
+    Object.keys(light_mode_colors).forEach(color => {
+      document.documentElement.style.setProperty('--' + color, light_mode_colors[color]);
+    });
+  }
+};
+
+export function set_theme(theme) {
+  if (theme === 'dark') {
     Object.keys(dark_mode_colors).forEach(color => {
       document.documentElement.style.setProperty('--' + color, dark_mode_colors[color]);
     });
