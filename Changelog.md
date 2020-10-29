@@ -12,6 +12,9 @@
 - Fixed a bug preventing total marks from updating properly if one of the grades is nil (#4887)
 - Group null/undefined values when sorting on dates using react-table (#4921)
 - Render .heic and .heif files properly in the file preview and feedback file views (#4926)
+- No longer add starter files to group repositories when groupings are created (#4934)
+- When starter files are updated, try to give students the updated version of the starter files they already have been assigned (#4934)
+- Display an alert when students upload files without having downloaded the most up to date starter files first (#4934)
 
 ## [v1.10.3]
 - Allow for more concurrent access to git repositories (#4895)
