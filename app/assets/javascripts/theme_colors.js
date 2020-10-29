@@ -1,55 +1,45 @@
 export const dark_mode_colors = {
-  'primary_one': '#bc64be',
-  'primary_two': '#5b37ea',
-  'secondary_one': '#69964f',
-  'secondary_two': '#176c92',
-  'background_main': '#212121',
-  'background_support': '#484848',
-  'line': '#9b9b9b'
+  primary_one: '#67abfa',
+  primary_two: '#2c3132',
+  primary_three: '#7dcb85',
+  background_main: '#000b1d',
+  background_support: '#002137',
+  line: '#b1b1b1',
+  sharp_line: '#eeeeee',
+  error: '#ffc2c2',
+  error_light: '#a20000',
+  alert: '#ecc767',
+  light_alert: '#a47c00',
+  success: '#b9e586',
+  light_success: '#154100'
 };
 export const light_mode_colors = {
-  'primary_one': '#6b3f6b',
-  'primary_two': '#483888',
-  'secondary_one': '#335f18',
-  'secondary_two': '#38697c',
-  'background_main': '#e0e0e0',
-  'background_support': '#a2a2a2',
-  'line': '#1a1a1a'
+  primary_one: '#245185',
+  primary_two: '#cee3ea',
+  primary_three: '#4c7c51',
+  background_main: '#fff',
+  background_support: '#cee3ea',
+  line: '#464646',
+  sharp_line: '#000',
+  error: '#a20000',
+  error_light: '#ffc2c2',
+  alert: '#ffd452',
+  light_alert: '#ffe9ac',
+  success: '#246700',
+  light_success: '#b9e586'
 };
 
 export function switch_theme() {
-  if (document.documentElement.style.getPropertyValue('--white') === '#fff') {
-    document.documentElement.style.setProperty('--lighter-blue', dark_mode_colors["background_main"]);
-    document.documentElement.style.setProperty('--white', dark_mode_colors["background_main"]);
-    document.documentElement.style.setProperty('--light-blue', dark_mode_colors["background_support"]);
-    document.documentElement.style.setProperty('--blue', dark_mode_colors["primary_one"]);
-    document.documentElement.style.setProperty('--dark-blue', dark_mode_colors["secondary_one"]);
-    document.documentElement.style.setProperty('--sea-blue', dark_mode_colors["secondary_one"]);
-    document.documentElement.style.setProperty('--navy', dark_mode_colors["secondary_one"]);
-    document.documentElement.style.setProperty('--neon-navy', dark_mode_colors["secondary_one"]);
-    document.documentElement.style.setProperty('--off-white', dark_mode_colors["background_main"]);
-    document.documentElement.style.setProperty('--black', dark_mode_colors["primary_one"]);
-    document.documentElement.style.setProperty('--light-grey', dark_mode_colors["primary_one"]);
-    document.documentElement.style.setProperty('--grey', dark_mode_colors["primary_one"]);
-    document.documentElement.style.setProperty('--dark-grey', dark_mode_colors["primary_two"]);
-    document.documentElement.style.setProperty('--light-red', dark_mode_colors["primary_two"]);
-    document.documentElement.style.setProperty('--red', dark_mode_colors["secondary_one"]);
-    document.documentElement.style.setProperty('--light-yellow', dark_mode_colors["primary_two"]);
-    document.documentElement.style.setProperty('--yellow', dark_mode_colors["primary_one"]);
-    document.documentElement.style.setProperty('--mark-yellow', dark_mode_colors["primary_one"]);
-    document.documentElement.style.setProperty('--orange', dark_mode_colors["primary_one"]);
-    document.documentElement.style.setProperty('--darker-orange', dark_mode_colors["primary_one"]);
-    document.documentElement.style.setProperty('--lighter-green', dark_mode_colors["primary_one"]);
-    document.documentElement.style.setProperty('--light-green', dark_mode_colors["primary_one"]);
-    document.documentElement.style.setProperty('--green', dark_mode_colors["secondary_one"]);
-    document.documentElement.style.setProperty('--dark-green', dark_mode_colors["secondary_one"]);
-    document.documentElement.style.setProperty('--disabled-grey', dark_mode_colors["secondary_one"]);
-    document.documentElement.style.setProperty('--field-set-grey', dark_mode_colors["secondary_one"]);
-    document.documentElement.style.setProperty('--disabled-dark', dark_mode_colors["secondary_one"]);
-
+  console.log("sharp line is: ", document.documentElement.style.getPropertyValue('--sharp_line'));
+  if (document.documentElement.style.getPropertyValue('--sharp_line') === '#000') {
+    console.log("switching to dark mode!");
+    Object.keys(dark_mode_colors).forEach(color => {
+      document.documentElement.style.setProperty('--' + color, dark_mode_colors[color]);
+    });
   } else {
-    document.documentElement.style.setProperty('--white', '#fff');
-    document.documentElement.style.setProperty('--light-grey', '#eee');
-    document.documentElement.style.setProperty('--lighter-blue', '#e8f4f2');
+    console.log("switching to light mode!");
+    Object.keys(light_mode_colors).forEach(color => {
+      document.documentElement.style.setProperty('--' + color, light_mode_colors[color]);
+    });
   }
 };

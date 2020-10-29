@@ -5,32 +5,34 @@
 --background_main: #fff;
 --background_support: #cee3ea;
 --line: #464646;
---sharp-line: #000;
---error: #a20000;
---error-light: #ffc2c2;
---alert: #ffd452;
---light-alert: #ffe9ac;
---success: #246700;
---light-success: #b9e586;
+--sharp_line: #000;
+--heavy_error: #a20000;
+--error_light: #ffc2c2;
+--heavy_alert: #ffd452;
+--light_alert: #ffe9ac;
+--heavy_success: #246700;
+--light_success: #b9e586;
+
+--darker-orange: #ee6415;
 }
 // Code viewer
-$comments: var(--success);
+$comments: var(--heavy_success);
 $key-words: var(--primary_one);
-$strings: var(--error);
+$strings: var(--heavy_error);
 
 // General contexts
 $links: var(--primary_one);
 $pane-highlight: var(--primary_two);
-$confirmed: var(--light-success);
-$annotation-holder: var(--alert);
+$confirmed: var(--light_success);
+$annotation-holder: var(--heavy_alert);
 
 // Status
-$severe-error: var(--error);
-$light-red: var(--error-light);
-$alert-light: var(--light-alert);
-$alert: var(--alert);
-$alert-dark: var(--alert);
-$success: var(--success);
+$severe-error: var(--heavy_error);
+$light-red: var(--error_light);
+$alert-light: var(--light_alert);
+$alert: var(--heavy_alert);
+$alert-dark: var(--heavy_alert);
+$success: var(--heavy_success);
 
 $primary-one: var(--primary_one);
 $primary-two: var(--primary_two);
@@ -40,7 +42,7 @@ $background-main: var(--background_main);
 $background-support: var(--background_support);
 
 $line: var(--line);
-$sharp-line: var(--sharp-line);
+$sharp-line: var(--sharp_line);
 
 
 // not sure what this does...
