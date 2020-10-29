@@ -63,12 +63,11 @@ class CreateModifyAnnotationPanel extends React.Component {
 
     return (
       <Modal
-        className="react-modal"
+        className="react-modal dialog"
         isOpen={this.props.show}
         onRequestClose={this.props.onRequestClose}
       >
         <div
-          className="dialog"
           style={{
             width: "600px",
             display: "block",
@@ -76,9 +75,9 @@ class CreateModifyAnnotationPanel extends React.Component {
         >
           <h2>{this.props.title}</h2>
           <form onSubmit={this.onSubmit}>
-            <div>
+            <div className={"modal-container-vertical"}>
               <div>
-                <p>
+                <label>
                   <textarea
                     required={true}
                     id="new_annotation_content"
@@ -88,7 +87,7 @@ class CreateModifyAnnotationPanel extends React.Component {
                     onChange={this.handleChange}
                     rows="8"
                   />
-                </p>
+                </label>
                 <h3>{I18n.t("preview")}</h3>
                 <div id="annotation_preview" className="preview"></div>
                 {this.props.is_reviewer ? (
@@ -118,7 +117,7 @@ class CreateModifyAnnotationPanel extends React.Component {
                   </div>
                 )}
 
-                <section className="dialog-actions">
+                <section className="modal-container dialog-actions">
                   <input type="submit" value={I18n.t("save")} />
                 </section>
               </div>
