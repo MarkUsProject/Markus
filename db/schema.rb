@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_10_28_233019) do
+ActiveRecord::Schema.define(version: 2020_10_29_155930) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -607,6 +607,7 @@ ActiveRecord::Schema.define(version: 2020_10_28_233019) do
     t.boolean "receives_results_emails", default: false, null: false
     t.boolean "receives_invite_emails", default: false, null: false
     t.string "display_name"
+    t.string "time_zone", default: "Eastern Time (US & Canada)", null: false
     t.index ["api_key"], name: "index_users_on_api_key", unique: true
     t.index ["user_name"], name: "index_users_on_user_name", unique: true
   end

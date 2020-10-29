@@ -9,11 +9,15 @@ class UsersController < ApplicationController
   def settings; end
 
   def update_settings
-    student = current_user
-    new_settings = params[:student]
-    student.update!(receives_results_emails: new_settings[:receives_results_emails] || false,
-                    receives_invite_emails: new_settings[:receives_invite_emails] || false,
-                    display_name: new_settings[:display_name])
+    user = current_user
+    p params
+    new_settings = params[:user]
+    user.update!(
+      receives_results_emails: new_settings[:receives_results_emails] || false,
+      receives_invite_emails: new_settings[:receives_invite_emails] || false,
+      display_name: new_settings[:display_name],
+      time_zone: new_settings[:time_zone]
+    )
     update_success
   end
 

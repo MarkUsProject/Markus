@@ -41,3 +41,5 @@ fr:
       reset: "Générer une nouvelle clé"
       unavailable: "Non disponible"
     verify_settings_update: 'UPDATE ME'
+    time_zone: "UPDATE ME"
+    update_settings: 'UPDATE ME'

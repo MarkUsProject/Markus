@@ -27,7 +27,6 @@ en:
     toggle_invite_notifications: 'Receive email notifications when I am invited to a group.'
     toggle_results_notifications: 'Receive email notifications when results are released.'
     display_name: 'Display name:'
-    update_settings: 'Update Settings'
     account_settings: "Account Settings"
 
   tas:
@@ -45,3 +44,5 @@ en:
       reset: "Reset my API key"
       unavailable: "Unavailable"
     verify_settings_update: 'Your settings have been updated!'
+    time_zone: "Time Zone:"
+    update_settings: 'Update Settings'

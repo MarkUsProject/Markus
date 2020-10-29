@@ -14,6 +14,6 @@ class UserPolicy < ApplicationPolicy
   end
 
   def update_settings?
-    user.student?
+    true
   end
 end

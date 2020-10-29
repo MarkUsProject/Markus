@@ -21,7 +21,7 @@ class User < ApplicationRecord
   has_many :split_pdf_logs
   has_many :key_pairs, dependent: :destroy
 
-  validates_presence_of     :user_name, :last_name, :first_name
+  validates_presence_of     :user_name, :last_name, :first_name, :time_zone
   validates_uniqueness_of   :user_name
   validates_uniqueness_of   :email, :allow_nil => true
   validates_uniqueness_of   :id_number, :allow_nil => true
