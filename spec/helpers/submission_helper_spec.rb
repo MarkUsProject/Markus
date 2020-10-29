@@ -47,11 +47,9 @@ describe SubmissionsHelper do
         rev = repo.get_latest_revision
         Repository::RevisionFile.new(
           rev.revision_identifier,
-          {
-            name: file_name,
-            path: grouping.assignment.repository_folder,
-            mime_type: 'application/zip'
-          }
+          name: file_name,
+          path: grouping.assignment.repository_folder,
+          mime_type: 'application/zip'
         )
       end
     end
