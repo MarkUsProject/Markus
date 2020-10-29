@@ -37,31 +37,6 @@ describe StarterFileEntry do
     end
   end
 
-  describe '#add_files_to_transaction' do
-    let(:content) { { 'subdir': nil, 'subdir2': nil, 'subdir/file.txt': 'other content' } }
-    let(:starter_file_entry) { create :starter_file_entry, is_file: false, extra_structure: content }
-    let(:grouping) { create :grouping }
-    let(:user) { create :admin }
-    let(:expected_jobs) do
-      repo_root_dir = starter_file_entry.starter_file_group.assignment.repository_folder
-      content.map do |path, content|
-        if content.nil?
-          extra = { action: :add_path }
-        else
-          extra = { action: :add, file_data: content, mime_type: 'text/plain' }
-        end
-        { path: File.join(repo_root_dir, starter_file_entry.path, path.to_s), **extra }
-      end + [{ action: :add_path, path: File.join(repo_root_dir, starter_file_entry.path) }]
-    end
-    it 'should add files to a transaction' do
-      grouping.group.access_repo do |repo|
-        txn = repo.get_transaction(user.user_name)
-        starter_file_entry.add_files_to_transaction(txn)
-        expect(txn.jobs).to contain_exactly(*expected_jobs)
-      end
-    end
-  end
-
   describe '#add_files_to_zip_file' do
     let(:zip_path) { File.join(::Rails.root, 'tmp', 'test-file.zip') }
     let(:content) { { 'subdir': nil, 'subdir2': nil, 'subdir/file.txt': 'other content' } }

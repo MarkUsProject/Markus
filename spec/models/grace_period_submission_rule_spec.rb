@@ -10,7 +10,7 @@ describe GracePeriodSubmissionRule do
     end
     context 'when the student did not submit any files' do
       before :each do
-        pretend_now_is(collection_time) { grouping.create_starter_files }
+        pretend_now_is(collection_time) { grouping.access_repo {} }
       end
       let(:submission) { create :version_used_submission, grouping: grouping, is_empty: true }
       let(:collection_time) { due_date - 5.days }
@@ -24,7 +24,7 @@ describe GracePeriodSubmissionRule do
     include_context 'submission_rule_during_first'
     context 'when the student did not submit any files' do
       before :each do
-        pretend_now_is(collection_time) { grouping.create_starter_files }
+        pretend_now_is(collection_time) { grouping.access_repo {} }
       end
       let(:submission) { create :version_used_submission, grouping: grouping, is_empty: true }
       let(:collection_time) { due_date + 12.hours }
@@ -66,7 +66,7 @@ describe GracePeriodSubmissionRule do
       context 'when submitting on time before grace period of previous assignment is over' do
         before :each do
           # The Student submits their files before the due date
-          pretend_now_is(due_date - 3.days) { grouping.create_starter_files }
+          pretend_now_is(due_date - 3.days) { grouping.access_repo {} }
           submit_file_at_time(assignment, grouping.group, 'test', (due_date - 2.days).to_s, 'TestFile.java',
                               'Some contents for TestFile.java')
 
@@ -82,7 +82,7 @@ describe GracePeriodSubmissionRule do
       context 'when submitting overtime before the grace period of previous assignment is over' do
         before :each do
           # The Student submits their files before the due date
-          pretend_now_is(due_date - 3.days) { grouping.create_starter_files }
+          pretend_now_is(due_date - 3.days) { grouping.access_repo {} }
 
           submit_file_at_time(assignment, grouping.group, 'test', (due_date + 10.hours).to_s, 'OvertimeFile1.java',
                               'Some overtime contents')
