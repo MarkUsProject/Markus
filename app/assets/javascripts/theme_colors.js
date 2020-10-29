@@ -9,7 +9,8 @@ export const dark_mode_colors = {
   heavy_error: '#ff7575',
   error_light: '#a20000',
   heavy_alert: '#ecc767',
-  light_alert: '#a47c00',
+  light_alert: '#48372c',
+  annotation_holder: '#48372c',
   heavy_success: '#b9e586',
   light_success: '#154100',
   comments_color: 'var(--heavy_success)',
@@ -27,12 +28,13 @@ export const light_mode_colors = {
   heavy_error: '#a20000',
   error_light: '#ffc2c2',
   heavy_alert: '#ffd452',
+  annotation_holder: '#ffd452',
   light_alert: '#ffe9ac',
   heavy_success: '#246700',
   light_success: '#b9e586',
   comments_color: 'var(--heavy_success)',
   key_words_color: 'var(--primary_one)',
-  strings_color: 'var(--heavy_error)'
+  strings_color: 'var(--heavy_error)',
 };
 
 export function switch_theme() {
