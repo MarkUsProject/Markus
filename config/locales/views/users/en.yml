@@ -26,6 +26,7 @@ en:
     not_successfully_added_message_5: "Each line has the required fields specified near the upload form."
     toggle_invite_notifications: 'Receive email notifications when I am invited to a group.'
     toggle_results_notifications: 'Receive email notifications when results are released.'
+    display_name: 'Display name:'
     update_settings: 'Update Settings'
     account_settings: "Account Settings"
 

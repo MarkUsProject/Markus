@@ -13,7 +13,7 @@ class UserPolicy < ApplicationPolicy
     true
   end
 
-  def update_mailer_settings?
+  def update_settings?
     user.student?
   end
 end

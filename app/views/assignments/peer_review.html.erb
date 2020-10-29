@@ -75,7 +75,7 @@
           <ul>
             <% @grouping.student_memberships.includes(:user).each do |member|%>
                 <li>
-                  <span class="last_name"><%= member.user.first_name %> </span> <%= member.user.last_name %>
+                    <%= member.user.display_name.presence || "#{member.user.first_name} #{member.user.last_name}" %>
                 </li>
             <% end %>
           </ul>

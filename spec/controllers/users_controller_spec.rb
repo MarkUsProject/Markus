@@ -17,7 +17,7 @@ describe UsersController do
       it 'can be enabled in settings' do
         student.update!(setting => false)
         patch_as student,
-                 'update_mailer_settings',
+                 'update_settings',
                  params: { student: { setting => true, other_setting => true } }
         student.reload
         expect(student[setting]).to be true
@@ -26,7 +26,7 @@ describe UsersController do
       it 'can be disabled in settings' do
         student.update!(setting => true)
         patch_as student,
-                 'update_mailer_settings',
+                 'update_settings',
                  params: { student: { setting => false, other_setting => true } }
         student.reload
         expect(student[setting]).to be false
@@ -50,13 +50,25 @@ describe UsersController do
 
       include_examples 'changing particular mailer settings'
     end
+
     describe 'changing any setting' do
       let(:student) { create(:student, user_name: 'c6stenha') }
       it 'redirects back to settings' do
         patch_as student,
-                 'update_mailer_settings',
+                 'update_settings',
                  params: { 'student': { 'receives_invite_emails': false, 'receives_results_emails': true } }
         expect(response).to redirect_to(settings_users_path)
+      end
+    end
+
+    describe 'change display name in settings' do
+      let(:student) { create(:student, user_name: 'c6stenha') }
+      it 'updates student display_name' do
+        display_name = 'Fist Last'
+        patch_as student,
+                 'update_settings',
+                 params: { 'student': { 'display_name': display_name } }
+        expect(student.reload.display_name).to eq display_name
       end
     end
   end

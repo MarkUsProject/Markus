@@ -394,7 +394,7 @@ Rails.application.routes.draw do
       collection do
         get 'settings'
         post 'settings'
-        patch 'update_mailer_settings'
+        patch 'update_settings'
       end
     end
 

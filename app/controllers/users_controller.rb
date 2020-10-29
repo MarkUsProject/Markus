@@ -8,11 +8,12 @@ class UsersController < ApplicationController
 
   def settings; end
 
-  def update_mailer_settings
+  def update_settings
     student = current_user
     new_settings = params[:student]
-    student.update!(receives_results_emails: new_settings[:receives_results_emails],
-                    receives_invite_emails: new_settings[:receives_invite_emails])
+    student.update!(receives_results_emails: new_settings[:receives_results_emails] || false,
+                    receives_invite_emails: new_settings[:receives_invite_emails] || false,
+                    display_name: new_settings[:display_name])
     update_success
   end
 

@@ -1,6 +1,12 @@
 <% content_for :title, t('students.account_settings') %>
 <% if @current_user.student? %>
-  <%= form_with url: 'update_mailer_settings', method: 'patch', model: @current_user, local: true do |f| %>
+  <%= form_with url: 'update_settings', method: 'patch', model: @current_user, local: true do |f| %>
+    <p>
+      <%= f.label :display_name, t('students.display_name') %>
+      <%= f.text_field :display_name,
+                       value: @current_user.display_name.presence ||
+                              "#{@current_user.first_name} #{@current_user.last_name}" %>
+    </p>
     <p>
       <%= f.check_box :receives_results_emails %>
       <%= f.label :receives_results_emails, t('students.toggle_results_notifications') %>
