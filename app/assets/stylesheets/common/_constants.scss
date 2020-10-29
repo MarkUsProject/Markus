@@ -1,15 +1,15 @@
 :root {
---primary_one: #4f6eb7;
---primary_two: #37555f;
---primary_three: #3f6239;
---background_main: #212121;
---background_support: #353535;
---line: #b3b3b3;
---sharp-line: #e7e7e7;
---error: #ff0000;
+--primary_one: #416088;
+--primary_two: #cee3ea;
+--primary_three: #89b1dd;
+--background_main: #fff;
+--background_support: #cee3ea;
+--line: #464646;
+--sharp-line: #000;
+--error: #a20000;
 --alert: #ffd452;
---success: #67b73b;
---light-success: #48513e;
+--success: #308800;
+--light-success: #bee78e;
 }
 // Code viewer
 $comments: var(--primary_two);
