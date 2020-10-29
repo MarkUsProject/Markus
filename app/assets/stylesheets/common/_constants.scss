@@ -13,12 +13,16 @@
 --heavy_success: #246700;
 --light_success: #b9e586;
 
+--comments_color: var(--heavy_success);
+--key_words_color: var(--primary_one);
+--strings_color: var(--heavy_error);
+
 --darker-orange: #ee6415;
 }
 // Code viewer
-$comments: var(--heavy_success);
-$key-words: var(--primary_one);
-$strings: var(--heavy_error);
+$comments: var(--comments_color);
+$key-words: var(--key_words_color);
+$strings: var(--strings_color);
 
 // General contexts
 $links: var(--primary_one);
