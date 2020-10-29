@@ -40,6 +40,7 @@ en:
       rename: "Rename Selected File or Directory"
       use_original_filename: "Use original filename"
       download_mappings_csv: "Download assigned starter files csv"
+      upload_confirmation: "The starter files for this assignment have changed since you last downloaded them. Are you sure you want to continue?"
       starter_file_rule_types:
         simple: "Assign the default starter file group to all students"
         sections: "Assign starter file groups by section"

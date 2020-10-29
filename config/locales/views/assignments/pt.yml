@@ -39,6 +39,7 @@ pt:
       rename: "UPDATE ME"
       use_original_filename: "UPDATE ME"
       download_mappings_csv: "UPDATE ME"
+      upload_confirmation: "UPDATE ME"
       starter_file_rule_types:
         simple: "UPDATE ME"
         sections: "UPDATE ME"
