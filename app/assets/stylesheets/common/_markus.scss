@@ -11,7 +11,7 @@
 
 body {
   background-color: $background-support;
-  color: $line;
+  color: $sharp-line;
   font: 400 0.8em/1.2em $fonts;
   transition: background-color $time-quick;
 
@@ -90,7 +90,8 @@ a {
   }
 
   &:hover {
-    color: $primary-three;
+    color: $sharp-line;
+    font-weight: bold;
   }
 }
 
@@ -667,8 +668,8 @@ ul.tags {
         width: 100%;
 
         &:hover {
-          background: $primary-three;
-          color: $background-main;
+          background: $background_support;
+          color: $line;
         }
       }
     }

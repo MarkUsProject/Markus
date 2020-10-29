@@ -1,7 +1,7 @@
 :root {
 --primary_one: #245185;
 --primary_two: #cee3ea;
---primary_three: #4c657c;
+--primary_three: #4c7c51;
 --background_main: #fff;
 --background_support: #cee3ea;
 --line: #464646;
@@ -9,16 +9,17 @@
 --error: #a20000;
 --error-light: #ffc2c2;
 --alert: #ffd452;
---success: #308800;
+--light-alert: #ffe9ac;
+--success: #246700;
 --light-success: #b9e586;
 }
 // Code viewer
-$comments: var(--error);
+$comments: var(--success);
 $key-words: var(--primary_one);
-$strings: var(--success);
+$strings: var(--error);
 
 // General contexts
-$links: var(--primary_two);
+$links: var(--primary_one);
 $pane-highlight: var(--primary_two);
 $confirmed: var(--light-success);
 $annotation-holder: var(--alert);
@@ -26,7 +27,7 @@ $annotation-holder: var(--alert);
 // Status
 $severe-error: var(--error);
 $light-red: var(--error-light);
-$alert-light: var(--alert);
+$alert-light: var(--light-alert);
 $alert: var(--alert);
 $alert-dark: var(--alert);
 $success: var(--success);
