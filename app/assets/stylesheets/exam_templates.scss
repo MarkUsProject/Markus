@@ -9,7 +9,7 @@
   user-select: none;
 
   header {
-    border-bottom: 1px solid $secondary-one;
+    border-bottom: 1px solid $primary-two;
     border-radius: $radius $radius 0 0;
     font-weight: 600;
     padding: 0.5em 2em;
@@ -170,7 +170,7 @@
   }
 
   thead {
-    border-bottom: 1px solid $secondary-one;
+    border-bottom: 1px solid $primary-two;
   }
 }
 

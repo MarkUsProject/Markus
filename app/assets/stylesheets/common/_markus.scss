@@ -21,7 +21,7 @@ body {
 }
 
 ::selection {
-  background-color: $secondary-two;
+  background-color: $primary-three;
 }
 
 // Flexbox display
@@ -90,7 +90,7 @@ a {
   }
 
   &:hover {
-    color: $secondary-two;
+    color: $primary-three;
   }
 }
 
@@ -134,13 +134,13 @@ strong a {
 .information {
   @extend .alert;
   background: $background-main asset-url('icons/information.png') no-repeat 5px center;
-  border: 1px solid $secondary-one;
+  border: 1px solid $primary-two;
 }
 
 .notice {
   @extend .alert;
   background: $background-main asset-url('icons/information.png') no-repeat 5px center;
-  border: 1px solid $secondary-one;
+  border: 1px solid $primary-two;
 }
 
 
@@ -155,7 +155,7 @@ strong a {
 input,
 textarea {
   background: $background-main;
-  border: 1px solid $secondary-one;
+  border: 1px solid $primary-two;
   border-radius: $radius;
   color: $line;
   font: 400 1em $fonts;
@@ -170,7 +170,7 @@ textarea {
 
   &:focus {
     background-color: $background-main;
-    border-color: $secondary-two;
+    border-color: $primary-three;
     border-width: 3px;
   }
 
@@ -232,9 +232,9 @@ input[type='reset'],
 button,
 .button {
   background: linear-gradient(to bottom, $background-main, $background-main);
-  border: 1px solid $secondary-two;
+  border: 1px solid $primary-three;
   border-radius: $radius;
-  box-shadow: inset 0 -1px 0 $secondary-one;
+  box-shadow: inset 0 -1px 0 $primary-two;
   color: $line;
   cursor: pointer;
   display: inline-block;
@@ -248,13 +248,14 @@ button,
 
   &:hover {
     border-color: $primary-one;
-    box-shadow: inset 0 -1px 0 $secondary-one, 0 1px 0 $background-main;
-    color: $primary-one;
+    background: linear-gradient(to bottom, $background-main, $background-support);
+    box-shadow: inset 0 -1px 0 $primary-two, 0 1px 0 $background-main;
+    color: $line;
     top: 1px;
   }
 
   &:focus {
-    box-shadow: inset 0 -1px 0 $secondary-one, 0 0 3px $secondary-two;
+    box-shadow: inset 0 -1px 0 $primary-two, 0 0 3px $primary-three;
   }
 
   &:active {
@@ -265,10 +266,10 @@ button,
 
   &[disabled],
   &.disabled {
-    background: linear-gradient(to bottom, $background-main, $background-support);
+    background: linear-gradient(to bottom, $background-main, $primary-two);
     border-color: $background-support;
     box-shadow: none;
-    color: $background-support;
+    color: $primary-three;
   }
 
   &.large-button {
@@ -310,7 +311,7 @@ fieldset {
   fieldset {
     border: none;
     border-radius: 0;
-    border-top: 1px solid $secondary-one;
+    border-top: 1px solid $primary-two;
 
     legend {
       width: 100%;
@@ -357,13 +358,13 @@ fieldset {
 /** Tables */
 
 .table {
-  border-left: 1px solid $secondary-one;
-  border-right: 1px solid $secondary-one;
+  border-left: 1px solid $primary-two;
+  border-right: 1px solid $primary-two;
   overflow-x: auto;
   width: 100%;
 
   table {
-    border-top: 1px solid $secondary-one;
+    border-top: 1px solid $primary-two;
     width: 100%;
 
     thead,
@@ -392,19 +393,19 @@ fieldset {
     }
 
     thead {
-      border-bottom: 2px solid $secondary-one;
+      border-bottom: 2px solid $primary-two;
     }
 
     tfoot {
-      border-top: 2px solid $secondary-one;
+      border-top: 2px solid $primary-two;
     }
 
     tr {
-      border-bottom: 1px solid $secondary-one;
+      border-bottom: 1px solid $primary-two;
 
       th,
       td {
-        border-right: 1px solid $secondary-one;
+        border-right: 1px solid $primary-two;
         padding: 0.5em 1.5em 0.5em 1em;
         vertical-align: middle;
 
@@ -437,7 +438,7 @@ fieldset {
 // Keyboard shortcuts
 kbd {
   background-color: $background-main;
-  border: 1px solid $secondary-one;
+  border: 1px solid $primary-two;
   border-radius: $radius;
   box-shadow: 0 1px 0 $sharp-line, 0 0 0 2px $background-main inset;
   display: inline-block;
@@ -470,7 +471,7 @@ kbd {
   display: flex;
 
   .pane {
-    border: 1px solid $secondary-two;
+    border: 1px solid $primary-three;
     border-radius: $radius;
     flex: 1;
     min-height: 1px;
@@ -491,7 +492,7 @@ kbd {
 
       h2 {
         background-color: $background-main;
-        border-bottom: 1px solid $secondary-one;
+        border-bottom: 1px solid $primary-two;
         border-top-left-radius: $radius;
         border-top-right-radius: $radius;
         font-size: 1.5em;
@@ -499,7 +500,7 @@ kbd {
       }
 
       h3 {
-        border-bottom: 1px solid $secondary-one;
+        border-bottom: 1px solid $primary-two;
         font-size: 1.25em;
         padding: 0.5em 0.1em;
       }
@@ -539,7 +540,7 @@ kbd {
 
 .listings {
   background: $background-main;
-  border: 1px solid $secondary-one;
+  border: 1px solid $primary-two;
   border-radius: $radius;
   user-select: none;
 }
@@ -548,7 +549,7 @@ kbd {
 
 .sortable {
   header {
-    border-bottom: 1px solid $secondary-one;
+    border-bottom: 1px solid $primary-two;
     border-radius: $radius $radius 0 0;
     font-weight: 600;
     padding: 0.5em;
@@ -580,7 +581,7 @@ kbd {
     li {
       background: url(handle@2x.png) 0.5em center no-repeat;
       background-size: 12px 20px;
-      border-top: 1px solid $secondary-one;
+      border-top: 1px solid $primary-two;
       list-style: none;
       min-height: 2.5em;
       padding: 0.5em 0.5em 0.5em 2em;
@@ -638,7 +639,7 @@ ul.tags {
 
     &:hover {
       background: $background-support;
-      border: 1px solid $secondary-two;
+      border: 1px solid $primary-three;
       color: $primary-one;
 
       ul {
@@ -648,7 +649,7 @@ ul.tags {
 
     ul {
       background: $background-main;
-      border: 1px solid $secondary-two;
+      border: 1px solid $primary-three;
       display: none;
       left: -1px;
       margin-top: 0.3em;
@@ -666,7 +667,7 @@ ul.tags {
         width: 100%;
 
         &:hover {
-          background: $secondary-two;
+          background: $primary-three;
           color: $background-main;
         }
       }
@@ -684,7 +685,7 @@ ul.tags {
 
 .tag-element {
   background-color: $background-support;
-  border: 1px solid $secondary-two;
+  border: 1px solid $primary-three;
   border-radius: 15px;
   color: $primary-one;
   cursor: pointer;
@@ -713,7 +714,7 @@ ul.tags {
 .dialog {
   background: $background-main;
   border-radius: $radius;
-  box-shadow: 0 0 10px $secondary-one;
+  box-shadow: 0 0 10px $primary-two;
   max-height: 90%;
   max-width: 100%;
   overflow-y: auto;
@@ -774,11 +775,11 @@ nav {
 
   ul.main,
   ul.sub_sub {
-    border-bottom: 2px solid $secondary-two;
+    border-bottom: 2px solid $primary-three;
 
     li:hover,
     .active {
-      background-color: $secondary-two;
+      background-color: $primary-three;
       color: $background-main;
       transition: background-color $time-quick;
 
@@ -789,7 +790,7 @@ nav {
   }
 
   ul.sub {
-    background-color: $secondary-two;
+    background-color: $primary-three;
     border-bottom: 2px solid $background-main;
     min-height: 3em;
 
@@ -887,7 +888,7 @@ nav {
 
       &:hover,
       &.active {
-        background: $secondary-two;
+        background: $primary-three;
         color: $background-main;
 
         > a {
@@ -938,7 +939,7 @@ nav {
   background: $background-main;
   border: 1px solid $sharp-line;
   border-radius: $radius;
-  box-shadow: 4px 4px 2px $secondary-one;
+  box-shadow: 4px 4px 2px $primary-two;
   max-width: 400px;
   padding: 0.25em 1em;
   position: absolute;
@@ -966,7 +967,7 @@ nav {
 
 // Text editing and previews
 .preview {
-  border: 1px dashed $secondary-one;
+  border: 1px dashed $primary-two;
   margin: 1em 0;
   max-height: 15em;
   min-height: 3em;
@@ -1032,7 +1033,7 @@ nav {
 
 .total {
   background: $background-support;
-  border: 1px solid $secondary-one;
+  border: 1px solid $primary-two;
   border-radius: $radius;
   display: inline-block;
   flex-basis: auto;
@@ -1068,5 +1069,5 @@ nav {
 
 // Login
 .cookies-eu-ok {
-  background-color: $secondary-two;
+  background-color: $primary-three;
 }

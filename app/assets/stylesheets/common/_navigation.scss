@@ -7,7 +7,7 @@
 @import 'constants';
 
 header#header {
-  border-bottom: 1px solid $secondary-two;
+  border-bottom: 1px solid $primary-three;
   display: table;
   padding: 0.25em $dimen-horizontal;
   width: 100%;
@@ -90,7 +90,7 @@ footer {
   font-size: 0.95em;
   padding: 2em $dimen-horizontal;
   text-align: center;
-  border-top: 1px solid $secondary-two;
+  border-top: 1px solid $primary-three;
 
   @include breakpoint(mobile) {
     display: none;
@@ -100,7 +100,7 @@ footer {
     color: $line;
 
     &:hover {
-      color: $secondary-one;
+      color: $primary-two;
     }
   }
 
@@ -121,7 +121,7 @@ footer {
 
   .lang_chooser,
   .issues {
-    border-left: 1px solid $secondary-one;
+    border-left: 1px solid $primary-two;
     padding-left: 1em;
 
     @include breakpoint(mobile) {
@@ -137,7 +137,7 @@ footer {
 /* Working indicator */
 
 #working {
-  background: $secondary-two;
+  background: $primary-three;
   border: 1px solid $primary-one;
   border-radius: $radius;
   box-shadow: 0 0 5px 0 $background-support;
@@ -184,7 +184,7 @@ footer {
 
 #mobile_menu {
   background: $background-support asset-url('markus_logo_small.png') no-repeat center center / 90px 30px;
-  border-bottom: 1px solid $secondary-two;
+  border-bottom: 1px solid $primary-three;
   display: none;
   height: 3.5em;
   position: fixed;
@@ -249,8 +249,8 @@ footer {
 
   footer {
     background: $background-main !important;
-    border-bottom: 1px solid $secondary-two !important;
-    border-top: 1px solid $secondary-two !important;
+    border-bottom: 1px solid $primary-three !important;
+    border-top: 1px solid $primary-three !important;
     display: none;
     padding: 1em;
 
@@ -263,7 +263,7 @@ footer {
 #menus_child {
   @include breakpoint(mobile) {
     background: $background-support;
-    border-right: 1px solid $secondary-two;
+    border-right: 1px solid $primary-three;
     height: 100%;
     overflow: auto;
   }
@@ -306,8 +306,8 @@ footer {
 .sub_sub {
   @include breakpoint(mobile) {
     background: $background-main;
-    border-bottom: 1px solid $secondary-two;
-    border-top: 1px solid $secondary-two;
+    border-bottom: 1px solid $primary-three;
+    border-top: 1px solid $primary-three;
     display: block;
     margin: 0 0 1em 0;
     padding: 0 !important;
@@ -328,14 +328,14 @@ footer {
 .sub_sub {
   @include breakpoint(mobile) {
     background: $background-main !important;
-    border-bottom: 1px solid $secondary-two !important;
+    border-bottom: 1px solid $primary-three !important;
 
     a {
       color: $primary-one !important;
     }
 
     li:hover {
-      background: $secondary-two !important;
+      background: $primary-three !important;
 
       a {
         color: $background-main !important;
@@ -343,7 +343,7 @@ footer {
     }
 
     li.active {
-      background: $secondary-two !important;
+      background: $primary-three !important;
 
       a {
         color: $background-main !important;
@@ -372,7 +372,7 @@ footer {
 
   #course {
     @include breakpoint(mobile) {
-      border-bottom: 1px solid $secondary-two;
+      border-bottom: 1px solid $primary-three;
     }
   }
 

@@ -1,7 +1,7 @@
 :root {
---primary_one: #416088;
+--primary_one: #245185;
 --primary_two: #cee3ea;
---primary_three: #89b1dd;
+--primary_three: #4c657c;
 --background_main: #fff;
 --background_support: #cee3ea;
 --line: #464646;
@@ -9,12 +9,12 @@
 --error: #a20000;
 --alert: #ffd452;
 --success: #308800;
---light-success: #bee78e;
+--light-success: #b9e586;
 }
 // Code viewer
-$comments: var(--primary_two);
-$key-words: var(--primary_three);
-$strings: var(--primary_one);
+$comments: var(--error);
+$key-words: var(--primary_one);
+$strings: var(--success);
 
 // General contexts
 $links: var(--primary_two);
@@ -31,8 +31,8 @@ $alert-dark: var(--alert);
 $success: var(--success);
 
 $primary-one: var(--primary_one);
-$secondary-two: var(--primary_three);
-$secondary-one: var(--primary_two);
+$primary-two: var(--primary_two);
+$primary-three: var(--primary_three);
 
 $background-main: var(--background_main);
 $background-support: var(--background_support);

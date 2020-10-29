@@ -18,7 +18,7 @@
   }
 
   .bar {
-    background: $secondary-one;
+    background: $primary-two;
     margin: 0 0 10px 0;
     padding: 2px;
   }
@@ -30,7 +30,7 @@
     margin: 0;
 
     li {
-      border-left: 1px solid $secondary-one;
+      border-left: 1px solid $primary-two;
       line-height: 1.25em;
       padding-left: 10px;
     }
@@ -78,7 +78,7 @@
 
   .preprocessor {
     background-color: inherit;
-    color: $secondary-one;
+    color: $primary-two;
   }
 
   .source-code-glowing-1 {
@@ -115,7 +115,7 @@
   }
 
   .copy {
-    border-bottom: 1px solid $secondary-one;
+    border-bottom: 1px solid $primary-two;
     height: 95%;
   }
 

@@ -59,7 +59,7 @@
 
   .unassigned {
     background: $background-main;
-    color: $secondary-one;
+    color: $primary-two;
   }
 
   .active-criterion,
@@ -69,14 +69,14 @@
 }
 
 .rubric-levels {
-  border: 1px solid $secondary-one;
+  border: 1px solid $primary-two;
   border-collapse: collapse;
   margin-left: 1.5em;
   width: calc(100% - 1.5em);
 
   tr {
-    border-bottom: 1px solid $secondary-one;
-    border-top: 1px solid $secondary-one;
+    border-bottom: 1px solid $primary-two;
+    border-top: 1px solid $primary-two;
   }
 
   td {
