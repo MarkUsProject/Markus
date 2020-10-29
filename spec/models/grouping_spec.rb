@@ -1312,6 +1312,12 @@ describe Grouping do
     let!(:starter_file_groups) { create_list :starter_file_group_with_entries, 2, assignment: assignment }
     let!(:grouping) { create :grouping_with_inviter, inviter: student, assignment: assignment }
     before { assignment.assignment_properties.update! default_starter_file_group_id: starter_file_groups.first.id }
+    context 'when the starter_file_changed is true' do
+      before { grouping.update! starter_file_changed: true }
+      it 'should set starter_file_changed to false' do
+        expect { grouping.reset_starter_file_entries }.to change { grouping.reload.starter_file_changed }.to(false)
+      end
+    end
     describe 'when a new starter file entry has been added' do
       before do
         FileUtils.mkdir_p(starter_file_group.path + 'something_new')
