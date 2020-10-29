@@ -43,16 +43,21 @@ describe SubmissionsHelper do
     let(:grouping) { create(:grouping, assignment: assignment) }
     let(:file_name) { 'test.zip' }
     before do
-      grouping.group.access_repo do |repo|
-        txn = repo.get_transaction('test')
-        path = File.join(grouping.assignment.repository_folder, file_name)
-        txn.add(path, '')
-        repo.commit(txn)
+      grouping.access_repo do |repo|
+        rev = repo.get_latest_revision
+        Repository::RevisionFile.new(
+          rev.revision_identifier,
+          {
+            name: file_name,
+            path: grouping.assignment.repository_folder,
+            mime_type: 'application/zip'
+          }
+        )
       end
     end
     it 'should generate and return the file url with correct assignment id' do
       file_info = {}
-      grouping.group.access_repo do |repo|
+      grouping.access_repo do |repo|
         revision = repo.get_latest_revision
         full_path = File.join(grouping.assignment.repository_folder, '')
         file_obj = revision.tree_at_path(full_path)[file_name]
@@ -60,7 +65,7 @@ describe SubmissionsHelper do
         dirname = '' if dirname == '.'
         file_info = get_file_info(basename, file_obj, assignment.id, revision.revision_identifier, dirname, grouping.id)
       end
-      expect(file_info[:url].include?(assignment.id.to_s)).to be true
+      expect(file_info[:url].match(%r{/assignments\/(\d*)/})[1]).to eq(assignment.id.to_s)
     end
   end
 end
