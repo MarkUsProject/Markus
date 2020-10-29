@@ -7,6 +7,7 @@
 --line: #464646;
 --sharp-line: #000;
 --error: #a20000;
+--error-light: #ffc2c2;
 --alert: #ffd452;
 --success: #308800;
 --light-success: #b9e586;
@@ -24,7 +25,7 @@ $annotation-holder: var(--alert);
 
 // Status
 $severe-error: var(--error);
-$light-red: var(--error);
+$light-red: var(--error-light);
 $alert-light: var(--alert);
 $alert: var(--alert);
 $alert-dark: var(--alert);
