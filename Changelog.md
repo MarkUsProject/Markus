@@ -1,5 +1,6 @@
 # Changelog
 ## [unreleased]
+- Add time zone to settings (#4938)
 - Add display name to settings (#4937)
 - Add settings page (#4922)
 - Add singular annotation update feature when updating non-deductive categorized annotations (#4874)
