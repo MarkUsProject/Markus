@@ -29,6 +29,7 @@ es:
     toggle_invite_notifications: 'UPDATE ME'
     toggle_results_notifications: 'UPDATE ME'
     display_name: 'UPDATE ME'
+    toggle_theme: 'UPDATE ME'
     update_settings: 'UPDATE ME'
     account_settings: "UPDATE ME"
 
