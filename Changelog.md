@@ -12,6 +12,7 @@
 - Image zooming tools added in marking UI (#4866)
 - Fixed a bug preventing total marks from updating properly if one of the grades is nil (#4887)
 - Group null/undefined values when sorting on dates using react-table (#4921)
+- Add user settings page (#4922)
 - Render .heic and .heif files properly in the file preview and feedback file views (#4926)
 
 ## [v1.10.3]

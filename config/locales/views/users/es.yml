@@ -29,7 +29,6 @@ es:
     toggle_invite_notifications: 'UPDATE ME'
     toggle_results_notifications: 'UPDATE ME'
     update_settings: 'UPDATE ME'
-    verify_settings_update: 'UPDATE ME'
     account_settings: "UPDATE ME"
 
   tas:
@@ -45,3 +44,4 @@ es:
                   Wiki de MarkUs</a> para más información acerca del uso de la REST API."
       reset: "Reiniciar mi clave API"
       unavailable: "No disponible"
+    verify_settings_update: 'UPDATE ME'

@@ -1,12 +1,6 @@
 class KeyPairsController < ApplicationController
   before_action { authorize! }
 
-  # GET /key_pairs
-  def index
-    # Grab the own user's keys only
-    @key_pairs = @current_user.key_pairs
-  end
-
   # GET /key_pairs/new
   def new
     @key_pair = @current_user.key_pairs.new
@@ -19,7 +13,7 @@ class KeyPairsController < ApplicationController
     @key_pair = @current_user.key_pairs.new(public_key: public_key_content.strip)
     if @key_pair.save
       flash_message(:success, t('key_pairs.create.success'))
-      redirect_to key_pairs_path
+      redirect_to settings_users_path
     else
       @key_pair.errors.full_messages.each do |message|
         flash_message(:error, message)
@@ -34,7 +28,7 @@ class KeyPairsController < ApplicationController
     @key_pair = @current_user.key_pairs.find_by(id: params[:id])
 
     flash_message(:success, t('key_pairs.delete.success')) if @key_pair&.destroy
-    redirect_to key_pairs_path
+    redirect_to settings_users_path
   end
 
   private
