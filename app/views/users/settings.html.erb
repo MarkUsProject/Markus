@@ -1,0 +1,54 @@
+<% content_for :title, t('students.account_settings') %>
+<% if @current_user.student? %>
+  <%= form_with url: 'update_mailer_settings', method: 'patch', model: @current_user, local: true do |f| %>
+    <p>
+      <%= f.check_box :receives_results_emails %>
+      <%= f.label :receives_results_emails, t('students.toggle_results_notifications') %>
+    </p>
+    <p>
+      <%= f.check_box :receives_invite_emails %>
+      <%= f.label :receives_invite_emails, t('students.toggle_invite_notifications') %>
+    </p>
+    <%= f.submit t('students.update_settings') %>
+  <% end %>
+<% end %>
+
+<% if allowed_to?(:manage?, KeyPair) %>
+  <h2><%= t('key_pairs.key_pairs_title') %></h2>
+
+  <br>
+
+  <table>
+    <tr>
+      <th><%= t('key_pairs.time_of_upload') %> |</th>
+      <th><%= t('key_pairs.key_content') %></th>
+      <th></th>
+    </tr>
+
+
+    <% @current_user.key_pairs.each do |key_pair| %>
+      <tr>
+        <td><%= key_pair.created_at %></td>
+        <td><textarea cols="55" rows="10" readonly><%= key_pair.public_key %></textarea></td>
+        <td><%= link_to t('key_pairs.remove_key'), key_pair, method: :delete, data: { confirm: t('key_pairs.are_you_sure') } %></td>
+      </tr>
+
+    <% end %>
+  </table>
+
+  <br />
+
+  <%= link_to t('key_pairs.new_key_pair'), new_key_pair_path %>
+
+  <hr>
+  <h2>Need help?</h2>
+  <br>
+  <a href="https://github.com/MarkUsProject/Markus/wiki/SSH_Keypair_Instructions_Windows" target="_blank">
+    Instructions for users on Windows
+  </a>
+  <br>
+  <a href="https://github.com/MarkUsProject/Markus/wiki/SSH_Keypair_Instructions_Linux-OSX" target="_blank">
+    Instructions for users on Mac OS / Linux
+  </a>
+<% end %>
+

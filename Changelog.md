@@ -1,5 +1,6 @@
 # Changelog
 ## [unreleased]
+- Remove preview of compressed archives in repo browser (#4920)
 - Add singular annotation update feature when updating non-deductive categorized annotations (#4874)
 - Replace Time.now and Time.zone.now with Time.current (#4896)
 - Fix lingering annotation text displays when hovering (#4875)
@@ -11,8 +12,10 @@
 - Image zooming tools added in marking UI (#4866)
 - Fixed a bug preventing total marks from updating properly if one of the grades is nil (#4887)
 - Group null/undefined values when sorting on dates using react-table (#4921)
+- Add user settings page (#4922)
 - Render .heic and .heif files properly in the file preview and feedback file views (#4926)
 - Allow students to submit timed assessments after the collection date has passed even if they haven't started yet (#4935)
+- Fix bug where maximum file size for an uploaded file was not enforced properly (#4939)
 
 ## [v1.10.3]
 - Allow for more concurrent access to git repositories (#4895)
