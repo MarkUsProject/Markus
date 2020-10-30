@@ -28,7 +28,12 @@ class StudentsController < ApplicationController
         sections = Hash[Section.all.map { |section| [section.id, section.name] }]
         render json: {
           students: student_data,
-          sections: sections
+          sections: sections,
+          counts: {
+            all: Student.all.size,
+            active: Student.active.size,
+            inactive: Student.inactive.size
+          }
         }
       }
     end
