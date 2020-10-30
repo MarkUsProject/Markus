@@ -949,5 +949,71 @@ describe SubmissionsController do
       is_expected.to respond_with(:redirect)
     end
   end
-end
 
+  describe '#download' do
+    let(:assignment) { create(:assignment) }
+    let(:admin) { create(:admin) }
+    let(:grouping) { create(:grouping_with_inviter, assignment: assignment) }
+    let(:submission) { create(:submission, grouping: grouping) }
+    let(:file1) { fixture_file_upload(File.join('/files', 'Shapes.java'), 'text/java') }
+    let(:file2) { fixture_file_upload(File.join('/files', 'test_zip.zip'), 'application/zip') }
+    before :each do
+      allow(controller).to receive(:session_expired?).and_return(false)
+      allow(controller).to receive(:logged_in?).and_return(true)
+      allow(controller).to receive(:current_user).and_return(build(:admin))
+      post_as admin, :update_files, params: { assignment_id: assignment.id,
+                                              grouping_id: grouping.id,
+                                              path: '/files',
+                                              new_files: [file1, file2] }
+    end
+    context 'When the file is in preview' do
+      describe 'when the file is not a binary file' do
+        it 'should display the file content' do
+          get :download, params: { assignment_id: assignment.id,
+                                   file_name: 'Shapes.java',
+                                   path: '/files',
+                                   preview: true,
+                                   grouping_id: grouping.id }
+          expect(response.body).to eq(File.read(file1))
+        end
+      end
+      describe 'When the file is a binary file' do
+        it 'should not display the contents of the compressed file' do
+          get :download, params: { assignment_id: assignment.id,
+                                   file_name: 'test_zip.zip',
+                                   path: '/files',
+                                   preview: true,
+                                   grouping_id: grouping.id }
+          expect(response.body).to eq(I18n.t('submissions.cannot_display'))
+        end
+      end
+    end
+    context 'When the file is being downloaded' do
+      describe 'when the file is not a binary file' do
+        it 'should download the file' do
+          get :download, params: { assignment_id: assignment.id,
+                                   file_name: 'Shapes.java',
+                                   path: '/files',
+                                   preview: false,
+                                   grouping_id: grouping.id }
+          expect(response.body).to eq(File.read(file1))
+        end
+      end
+      describe 'When the file is a binary file' do
+        it 'should download all the contents of the zip file' do
+          get :download, params: { assignment_id: assignment.id,
+                                   file_name: 'test_zip.zip',
+                                   path: '/files',
+                                   preview: false,
+                                   grouping_id: grouping.id }
+          grouping.group.access_repo do |repo|
+            revision = repo.get_latest_revision
+            file = revision.files_at_path(File.join(assignment.repository_folder, '/files'))['test_zip.zip']
+            content = repo.download_as_string(file)
+            expect(response.body).to eq(content)
+          end
+        end
+      end
+    end
+  end
+end

@@ -114,7 +114,7 @@ class Result extends React.Component {
         extraMarkSubtotal += data.extra_mark * result_data.assignment_max_mark / 100;
       }
     });
-    return {criterionSummaryData, subtotal, extraMarkSubtotal, total: subtotal + extraMarkSubtotal};
+    return {criterionSummaryData, subtotal, extraMarkSubtotal, total: Math.max(subtotal + extraMarkSubtotal, 0)};
   };
 
   /* Interaction with external components/libraries */
