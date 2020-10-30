@@ -56,12 +56,12 @@ describe SubmissionsHelper do
     end
     before do
       allow(view_context).to receive(:image_tag).and_return('spec/fixtures/files/page_white_text.png')
-      allow(view_context).to receive(:link_to).and_return('test_zip.zip', { action: 'download',
-                                                                            assignment_id: assignment.id,
-                                                                            revision_identifier: revision_identifier,
-                                                                            file_name: file_name,
-                                                                            path: '',
-                                                                            grouping_id: grouping.id })
+      allow(view_context).to receive(:link_to).and_return('test_zip.zip',  action: 'download',
+                                                                           assignment_id: assignment.id,
+                                                                           revision_identifier: revision_identifier,
+                                                                           file_name: file_name,
+                                                                           path: '',
+                                                                           grouping_id: grouping.id)
     end
     it 'should generate and return the file url with correct assignment id' do
       file_info = get_file_info('test.zip', file_obj, assignment.id, revision_identifier, '', grouping.id)
