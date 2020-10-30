@@ -14,6 +14,7 @@
 - Group null/undefined values when sorting on dates using react-table (#4921)
 - Add user settings page (#4922)
 - Render .heic and .heif files properly in the file preview and feedback file views (#4926)
+- Fix bug where maximum file size for an uploaded file was not enforced properly (#4939)
 
 ## [v1.10.3]
 - Allow for more concurrent access to git repositories (#4895)
