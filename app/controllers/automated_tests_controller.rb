@@ -170,6 +170,10 @@ class AutomatedTestsController < ApplicationController
         flash_now(:warning, t('student.submission.empty_file_warning', file_name: f.original_filename))
       end
       file_path = File.join(assignment.autotest_files_dir, params[:path], f.original_filename)
+      dirname = File.dirname(f.original_filename)
+      unless dirname == "."
+        FileUtils.mkdir_p(File.join(assignment.autotest_files_dir, dirname))
+      end
       file_content = f.read
       File.write(file_path, file_content, mode: 'wb')
     end
