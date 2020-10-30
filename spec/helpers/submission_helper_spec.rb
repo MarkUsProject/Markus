@@ -42,7 +42,7 @@ describe SubmissionsHelper do
     let(:assignment) { create(:assignment) }
     let(:grouping) { create(:grouping_with_inviter_and_submission, assignment: assignment) }
     let(:file_name) { 'test.zip' }
-    let(:revision_identifier) { grouping.assignment.revision_identifier }
+    let(:revision_identifier) { grouping.current_submission_used.revision_identifier }
     let(:file_obj) do
       Repository::RevisionFile.new(
         revision_identifier,
