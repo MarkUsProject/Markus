@@ -12,6 +12,7 @@
 - Fixed a bug preventing total marks from updating properly if one of the grades is nil (#4887)
 - Group null/undefined values when sorting on dates using react-table (#4921)
 - Render .heic and .heif files properly in the file preview and feedback file views (#4926)
+- Allow students to submit timed assessments after the collection date has passed even if they haven't started yet (#4935)
 
 ## [v1.10.3]
 - Allow for more concurrent access to git repositories (#4895)
