@@ -3,7 +3,7 @@
     "@babel/core": "^7.11.0",
     "@babel/preset-react": "^7.10.4",
     "@rails/webpacker": "5.1",
-    "chart.js": "^2.9.3",
+    "chart.js": "^2.9.4",
     "heic2any": "^0.0.3",
     "i18n-js": "^3.7.1",
     "jcrop": "^0.0.1",
