@@ -1,5 +1,6 @@
 # Changelog
 ## [unreleased]
+- Remove preview of compressed archives in repo browser (#4920)
 - Add singular annotation update feature when updating non-deductive categorized annotations (#4874)
 - Replace Time.now and Time.zone.now with Time.current (#4896)
 - Fix lingering annotation text displays when hovering (#4875)
@@ -10,11 +11,18 @@
 - Image rotation tools added in marking UI (#4789)
 - Image zooming tools added in marking UI (#4866)
 - Fixed a bug preventing total marks from updating properly if one of the grades is nil (#4887)
+- Group null/undefined values when sorting on dates using react-table (#4921)
+- Add user settings page (#4922)
+- Render .heic and .heif files properly in the file preview and feedback file views (#4926)
+- Fix bug where maximum file size for an uploaded file was not enforced properly (#4939)
+- Add counts of all/active/inactive students to students table (#4942)
+
+## [v1.10.3]
 - Allow for more concurrent access to git repositories (#4895)
 - Fixed calculation bugs for grade summary (#4899)
 - Fixed a bug where due dates in a flash message were incorrect for timed assessments (#4915)
 - Allowed the difference between the start and end times of a timed assessment to be less than the duration (#4915)
-- Group null/undefined values when sorting on dates using react-table (#4921)
+- Fixed bug where negative total marks may be displayed when a negative extra mark exists (#4925)
 
 ## [v1.10.2]
 - Ensure that assignment subdirectories in repositories are maintained (#4893)
