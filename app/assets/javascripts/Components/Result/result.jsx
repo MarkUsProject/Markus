@@ -6,6 +6,14 @@ import { RightPane } from './right_pane';
 import { SubmissionSelector } from './submission_selector';
 import CreateModifyAnnotationPanel from '../Modals/create_modify_annotation_panel_modal';
 
+const INITIAL_ANNOTATION_MODAL_STATE = {
+  show: false,
+  onSubmit: null,
+  title: '',
+  content: '',
+  categoryId: '',
+};
+
 class Result extends React.Component {
   constructor(props) {
     super(props);
@@ -30,13 +38,7 @@ class Result extends React.Component {
       feedback_files: [],
       submission_files: {files: [], directories: {}, name: '', path: []},
       fullscreen,
-      annotationModal: {
-        show: false,
-        onSubmit: null,
-        title: '',
-        content: '',
-        categoryId: '',
-      },
+      annotationModal: INITIAL_ANNOTATION_MODAL_STATE,
     };
 
     this.leftPane = React.createRef();
@@ -212,13 +214,7 @@ class Result extends React.Component {
         data,
       }).then(() =>
         this.setState({
-          annotationModal: {
-            show: false,
-            onSubmit: null,
-            title: "",
-            content: "",
-            categoryId: "",
-          },
+          annotationModal: INITIAL_ANNOTATION_MODAL_STATE
         })
       ); // Resetting back to original
     };
@@ -325,13 +321,7 @@ class Result extends React.Component {
       }).always(() =>
         {
           this.setState({
-            annotationModal: {
-              show: false,
-              onSubmit: null,
-              title: "",
-              content: "",
-              categoryId: "",
-            },
+            annotationModal: INITIAL_ANNOTATION_MODAL_STATE
           })
           this.refreshAnnotations();
         }
@@ -339,10 +329,10 @@ class Result extends React.Component {
     };
 
     let annotation = this.state.annotations.find(
-      (annotation) => annotation.id === parseInt(annot_id)
+      (annotation) => annotation.id === parseInt(annot_id, 10)
     );
 
-    let category_id = annotation.category_id ? annotation.category_id : "";
+    let category_id = annotation.annotation_category_id ? annotation.annotation_category_id : "";
 
     this.setState({
       annotationModal: {
