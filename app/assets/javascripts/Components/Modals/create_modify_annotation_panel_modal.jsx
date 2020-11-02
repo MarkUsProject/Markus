@@ -16,10 +16,14 @@ class CreateModifyAnnotationPanel extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (prevProps !== this.props) {
+    if (
+      prevProps.content !== this.props.content ||
+      prevProps.category_id !== this.props.category_id
+    ) {
       this.setState({
         content: this.props.content,
         category_id: this.props.category_id,
+        show_deduction_disclaimer: false,
       });
     }
   }
@@ -27,7 +31,6 @@ class CreateModifyAnnotationPanel extends React.Component {
   onSubmit = (event) => {
     event.preventDefault();
     this.props.onSubmit({ ...this.state });
-    this.setState({ content: "", category_id: "" });
   };
 
   handleChange = (event) => {
@@ -44,10 +47,10 @@ class CreateModifyAnnotationPanel extends React.Component {
       .filter((category) => category.flexible_criterion_id !== null)
       .map((category) => category.id);
 
-    if (categories_with_criteria.includes(parseInt(val))) {
-      $("#deduction_disclaimer").removeClass("hidden");
+    if (categories_with_criteria.includes(parseInt(val, 10))) {
+      this.setState({ show_deduction_disclaimer: true });
     } else {
-      $("#deduction_disclaimer").addClass("hidden");
+      this.setState({ show_deduction_disclaimer: false });
     }
   };
 
@@ -111,7 +114,12 @@ class CreateModifyAnnotationPanel extends React.Component {
                       {options}
                     </select>
 
-                    <p id="deduction_disclaimer" className="hidden">
+                    <p
+                      id="deduction_disclaimer"
+                      className={
+                        this.state.show_deduction_disclaimer ? "" : "hidden"
+                      }
+                    >
                       {I18n.t("annotations.default_deduction")}
                     </p>
                   </div>
