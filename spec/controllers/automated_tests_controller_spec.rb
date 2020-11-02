@@ -130,24 +130,25 @@ describe AutomatedTestsController do
       end
     end
     context 'POST upload_files' do
-      before { post_as user, :upload_files, params: params }
-      after { FileUtils.rm_r assignment.autotest_files_dir }
       context 'uploading a zip file' do
         let(:zip_file1) { fixture_file_upload(File.join('/files', 'test_zip.zip'), 'application/zip') }
         let(:zip_file2) { fixture_file_upload(File.join('/files', 'zip_file.zip'), 'application/zip') }
         let(:unzip) { 'true' }
-        let(:params) { { assignment_id: assignment.id, unzip: unzip, new_files: [zip_file1, zip_file2], path: '' } }
+        let(:params) { { assignment_id: assignment.id, unzip: unzip, new_files: [file], path: '' } }
         let(:tree) { assignment.autotest_files }
-        context 'when unzip if false' do
-          let(:unzip) { 'false' }
-          it 'should just upload the zip file as is' do
-            expect(tree).to include('test_zip.zip')
-          end
-          it 'should not upload any other files' do
-            expect(tree.length).to eq 2
-          end
-        end
         context 'When the file is a zip file containing sub directory and files inside sub directory' do
+          let(:file) { zip_file1 }
+          before { post_as user, :upload_files, params: params }
+          after { FileUtils.rm_r assignment.autotest_files_dir }
+          context 'when unzip if false' do
+            let(:unzip) { 'false' }
+            it 'should just upload the zip file as is' do
+              expect(tree).to include('test_zip.zip')
+            end
+            it 'should not upload any other files' do
+              expect(tree.length).to eq 1
+            end
+          end
           it 'should not upload the zip file' do
             expect(tree).not_to include('test_zip.zip')
           end
@@ -165,6 +166,9 @@ describe AutomatedTestsController do
           end
         end
         context 'When the file is a zip file without any sub directory' do
+          let(:file) { zip_file2 }
+          before { post_as user, :upload_files, params: params }
+          after { FileUtils.rm_r assignment.autotest_files_dir }
           it 'should upload the outer dir' do
             expect(tree).to include('zip_file')
           end
