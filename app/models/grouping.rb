@@ -4,7 +4,7 @@ require 'set'
 class Grouping < ApplicationRecord
   include SubmissionsHelper
 
-  after_create_commit -> { access_repo {} } # access the repo to trigger creation of assignment subdirectory
+  after_create_commit -> { access_repo } # access the repo to trigger creation of assignment subdirectory
   after_create :reset_starter_file_entries
   after_commit :update_repo_permissions_after_save, on: [:create, :update]
 
@@ -447,7 +447,7 @@ class Grouping < ApplicationRecord
     when 'shuffle'
       assignment.starter_file_groups.includes(:starter_file_entries).map do |g|
         # If this grouping has previous starter files, try to choose an entry with the same path as before
-        old_entry = g.starter_file_entries.where(path: self.starter_file_entries.map(&:path)).sample
+        old_entry = g.starter_file_entries.find_by(path: self.starter_file_entries.map(&:path))
         old_entry || StarterFileEntry.find_by(id: g.starter_file_entries.ids.sample)
       end.compact
     when 'group'
@@ -750,7 +750,7 @@ class Grouping < ApplicationRecord
   def access_repo
     group.access_repo do |repo|
       add_assignment_folder(repo)
-      yield repo
+      yield repo if block_given?
     end
   end
 
