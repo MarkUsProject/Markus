@@ -9,6 +9,17 @@ describe StudentsController do
 
     let(:student) { create(:student, grace_credits: 5) }
 
+    context '#index' do
+      it 'returns correct student counts' do
+        create_list(:student, 3)
+        create_list(:student, 4, hidden: true)
+        get :index, params: { format: :json }
+
+        counts = response.parsed_body['counts']
+        expect(counts).to eq('all' => 7, 'active' => 3, 'inactive' => 4)
+      end
+    end
+
     context '#upload' do
       include_examples 'a controller supporting upload' do
         let(:params) { {} }
@@ -98,56 +109,6 @@ describe StudentsController do
           delete :delete_grace_period_deduction,
                  params: { id: student.id, deduction_id: deduction.id }
         end.to raise_error(ActiveRecord::RecordNotFound)
-      end
-    end
-  end
-
-  describe 'User is a Student' do
-    include ERB::Util
-    RSpec.shared_examples 'changing particular mailer settings' do
-      it 'can be enabled in settings' do
-        student.update!(setting => false)
-        patch_as student,
-                 'update_mailer_settings',
-                 params: { student: { setting => true, other_setting => true } }
-        student.reload
-        expect(student[setting]).to be true
-      end
-
-      it 'can be disabled in settings' do
-        student.update!(setting => true)
-        patch_as student,
-                 'update_mailer_settings',
-                 params: { student: { setting => false, other_setting => true } }
-        student.reload
-        expect(student[setting]).to be false
-      end
-    end
-
-    describe 'results released notifications' do
-      # Authenticate user is not timed out, and is a student.
-      let(:setting) { 'receives_results_emails' }
-      let(:other_setting) { 'receives_invite_emails' }
-      let(:student) { create(:student, user_name: 'c6stenha') }
-
-      include_examples 'changing particular mailer settings'
-    end
-
-    describe 'group invite notifications' do
-      # Authenticate user is not timed out, and is a student.
-      let(:setting) { 'receives_invite_emails' }
-      let(:other_setting) { 'receives_results_emails' }
-      let(:student) { create(:student, user_name: 'c6stenha') }
-
-      include_examples 'changing particular mailer settings'
-    end
-    describe 'changing any setting' do
-      let(:student) { create(:student, user_name: 'c6stenha') }
-      it 'redirects back to settings' do
-        patch_as student,
-                 'update_mailer_settings',
-                 params: { 'student': { 'receives_invite_emails': false, 'receives_results_emails': true } }
-        expect(response).to redirect_to(mailer_settings_students_path)
       end
     end
   end

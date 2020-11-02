@@ -28,7 +28,12 @@ class StudentsController < ApplicationController
         sections = Hash[Section.all.map { |section| [section.id, section.name] }]
         render json: {
           students: student_data,
-          sections: sections
+          sections: sections,
+          counts: {
+            all: Student.all.size,
+            active: Student.active.size,
+            inactive: Student.inactive.size
+          }
         }
       }
     end
@@ -144,17 +149,6 @@ class StudentsController < ApplicationController
     grace_deduction = student.grace_period_deductions.find(params[:deduction_id])
     grace_deduction.destroy
     @grace_period_deductions = student.grace_period_deductions
-  end
-
-  def mailer_settings; end
-
-  def update_mailer_settings
-    student = current_user
-    new_settings = params[:student]
-    student.update!(receives_results_emails: new_settings[:receives_results_emails],
-                    receives_invite_emails: new_settings[:receives_invite_emails])
-    flash_message(:success, t('students.verify_settings_update'))
-    redirect_to action: 'mailer_settings'
   end
 
   private

@@ -1,19 +1,8 @@
 describe KeyPairsController do
-  render_views false
   let(:admin) { create :admin }
 
   before :each do
     allow(Rails.configuration.x.repository).to receive(:type).and_return('git')
-  end
-
-  describe 'GET index', :keep_memory_repos do
-    before { get_as admin, :index }
-    it 'should respond with success' do
-      is_expected.to respond_with(:success)
-    end
-    it 'should render index' do
-      expect(response).to render_template(:index)
-    end
   end
 
   describe 'GET new', :keep_memory_repos do
@@ -35,7 +24,7 @@ describe KeyPairsController do
           is_expected.to respond_with(:redirect)
         end
         it 'should redirect' do
-          expect(response).to redirect_to(action: :index)
+          expect(response).to redirect_to(settings_users_path)
         end
         it 'should flash a success message' do
           expect(flash[:success]).not_to be_empty
