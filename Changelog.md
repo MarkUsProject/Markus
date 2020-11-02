@@ -1,5 +1,6 @@
 # Changelog
 ## [unreleased]
+- Rename the parameter in get_file_info from id to assignment_id (#4936)
 - Add singular annotation update feature when updating non-deductive categorized annotations (#4874)
 - Replace Time.now and Time.zone.now with Time.current (#4896)
 - Fix lingering annotation text displays when hovering (#4875)
