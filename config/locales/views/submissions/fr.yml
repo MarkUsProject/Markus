@@ -48,7 +48,6 @@ fr:
       file_missing: "Aucun fichier nommé %{zip_file} trouvé. Veuillez essayer de préparer à nouveau ce fichier pour le télécharger."
 
     # Miscellaneous
-    files: "UPDATE ME"
     cannot_display: "Fichier binaire : utiliser le bouton Télécharger pour voir."
     commit_date: "Date d'envoi (commit)"
     grace_credits_used: "Utilisation des \"grace credits\""

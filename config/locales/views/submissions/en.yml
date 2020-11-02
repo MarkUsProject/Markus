@@ -55,7 +55,6 @@ en:
                                 Make sure you have worked on the most recent files before submitting."
 
     # Miscellaneous
-    files: "Solution Files"
     cannot_display: "Cannot display this file. Please download it to view."
     commit_date: "Submission Date"
     grace_credits_used: "Grace Credits Used"

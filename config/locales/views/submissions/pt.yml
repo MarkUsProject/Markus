@@ -53,7 +53,6 @@ pt:
       file_missing: "%{zip_file} UPDATE ME"
 
     # Miscellaneous
-    files: "UPDATE ME"
     cannot_display: "Conteudo binário: Use o botao de download para ver o arquivo!"
     commit_date: "Data de envio"
     grace_credits_used: "Créditos de tolerância usados"

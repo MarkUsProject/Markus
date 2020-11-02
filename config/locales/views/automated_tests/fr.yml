@@ -1,6 +1,7 @@
 fr:
   automated_tests:
     files: "UPDATE ME"
+    solution_files: "UPDATE ME"
     loading_specs: "UPDATE ME"
     need_one_file: "Vous devez avoir au moins un fichier envoyé pour exécuter un test."
     need_group_for_test: "UPDATE ME"

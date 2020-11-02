@@ -95,7 +95,6 @@ es:
                                 antes de realizar la entrega."
 
     # Miscellaneous
-    files: "UPDATE ME"
     cannot_display: "Contenido binario: Use el botón de descarga para ver el archivo!"
     commit_date: "Fecha del Commit"
     grace_credits_used: "Créditos de Gracia Usados"

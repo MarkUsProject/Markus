@@ -1,6 +1,7 @@
 en:
   automated_tests:
     files: "Test Files"
+    solution_files: "Solution Files"
     loading_specs: "Tester settings are being loaded. Please refresh the page in a minute."
     need_one_file: "You must submit at least one file in order to run tests."
     need_group_for_test: "You must have a group to run tests."
