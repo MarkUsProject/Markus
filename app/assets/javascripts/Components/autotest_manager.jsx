@@ -323,7 +323,7 @@ class AutotestManager extends React.Component {
             readOnly={!this.state.enable_test}
             assignment_id={this.props.assignment_id}
             grouping_id={this.props.grouping_id}
-            enableSubdirs={this.props.enableSubdirs}
+            enableSubdirs={true}
             is_solution_file={true}
           />
         </fieldset>
