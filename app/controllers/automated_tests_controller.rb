@@ -30,6 +30,8 @@ class AutomatedTestsController < ApplicationController
   def manage
     @assignment = Assignment.find(params[:assignment_id])
     @assignment.test_groups.build
+    @solution_grouping_id = @assignment.groupings.joins(student_memberships: :user)
+                                .where('users.type': 'TestStudent').first.id
     render layout: 'assignment_content'
   end
 
