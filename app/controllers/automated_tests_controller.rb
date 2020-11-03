@@ -30,8 +30,8 @@ class AutomatedTestsController < ApplicationController
   def manage
     @assignment = Assignment.find(params[:assignment_id])
     @assignment.test_groups.build
-    @solution_grouping_id = @assignment.groupings.joins(student_memberships: :user)
-                                .where('users.type': 'TestStudent').first.id
+    find_or_create_test_student(params[:assignment_id])
+    @test_grouping = @assignment.groupings.joins(:group).where('groups.group_name': 'test_student_group').first
     render layout: 'assignment_content'
   end
 
@@ -221,5 +221,35 @@ class AutomatedTestsController < ApplicationController
 
   def assignment_params
     params.require(:assignment).permit(*required_params)
+  end
+
+  def find_or_create_test_student(assignment_id)
+    test_group = Group.find_by(group_name: 'test_student_group')
+    user = TestStudent.find_by(user_name: 'test_student')
+    if user.nil? && test_group.nil?
+      test_student = TestStudent.create!(user_name: 'test_student',
+                                         first_name: 'Test', last_name: 'Student', hidden: true)
+      group = Group.create!(group_name: 'test_student_group')
+      test_grouping = Grouping.create!(group_id: group.id, assessment_id: assignment_id)
+      StudentMembership.create!(user_id: test_student.id,
+                                membership_status: StudentMembership::STATUSES[:inviter],
+                                grouping_id: test_grouping.id)
+    elsif !user.nil?
+      if test_group.nil?
+        group = Group.create!(group_name: 'test_student_group')
+        test_grouping = Grouping.create!(group_id: group.id, assessment_id: assignment_id)
+        StudentMembership.create!(user_id: user.id,
+                                  membership_status: StudentMembership::STATUSES[:inviter],
+                                  grouping_id: test_grouping.id)
+      else
+        test_grouping = Grouping.find_by(group_id: test_group.id, assessment_id: assignment_id)
+        if test_grouping.nil?
+          test_grouping = Grouping.create!(group_id: test_group.id, assessment_id: assignment_id)
+          StudentMembership.create!(user_id: user.id,
+                                    membership_status: StudentMembership::STATUSES[:inviter],
+                                    grouping_id: test_grouping.id)
+        end
+      end
+    end
   end
 end

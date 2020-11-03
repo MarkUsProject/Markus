@@ -318,7 +318,7 @@ class AutotestManager extends React.Component {
           />
         </fieldset>
         <fieldset>
-          <legend><span>{I18n.t("automated_tests.files")}</span></legend>
+          <legend><span>{I18n.t("automated_tests.solution_files")}</span></legend>
           <SubmissionFileManager
             readOnly={!this.state.enable_test}
             assignment_id={this.props.assignment_id}
