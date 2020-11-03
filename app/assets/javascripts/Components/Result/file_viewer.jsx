@@ -108,6 +108,7 @@ export class FileViewer extends React.Component {
         } else {
           $.ajax({
             url: this.props.selectedFileURL,
+            data: {preview: true},
             method: 'GET'
           }).then(res => {
             this.setState({content: res.replace(/\r?\n/gm, '\n'), type: this.props.selectedFileType, loading: false});

@@ -9,7 +9,7 @@ class RawStudentTable extends React.Component {
   constructor() {
     super();
     this.state = {
-      data: {students: [], sections: {}},
+      data: {students: [], sections: {}, counts: {all: 0, active: 0, inactive: 0}},
       loading: true,
     };
   }
@@ -159,9 +159,9 @@ class RawStudentTable extends React.Component {
                   style={{ width: '100%' }}
                   value={filter ? filter.value : 'all'}
                 >
-                  <option value='all'>{I18n.t('all')}</option>
-                  <option value='active'>{I18n.t('students.active')}</option>
-                  <option value='inactive'>{I18n.t('students.inactive')}</option>
+                  <option value='all'>{I18n.t('all')} ({this.state.data.counts.all})</option>
+                  <option value='active'>{I18n.t('students.active')} ({this.state.data.counts.active})</option>
+                  <option value='inactive'>{I18n.t('students.inactive')} ({this.state.data.counts.inactive})</option>
                 </select>,
             },
             {
