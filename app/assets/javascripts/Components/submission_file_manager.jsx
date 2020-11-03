@@ -23,7 +23,8 @@ class SubmissionFileManager extends React.Component {
   static defaultProps = {
     fetchOnMount: true,
     readOnly: false,
-    revision_identifier: undefined
+    revision_identifier: undefined,
+    starterFileChanged: false
   };
 
   componentDidMount() {
@@ -59,22 +60,24 @@ class SubmissionFileManager extends React.Component {
   }
 
   handleCreateFiles = (files, unzip) => {
-    const prefix = this.state.uploadTarget || '';
-    this.setState({showModal: false, uploadTarget: undefined});
-    let data = new FormData();
-    Array.from(files).forEach(f => data.append('new_files[]', f, f.name));
-    data.append('path', '/' + prefix); // Server expects path with leading slash (TODO: fix that)
-    if (this.props.grouping_id) {
-      data.append('grouping_id', this.props.grouping_id);
+    if (!this.props.starterFileChanged || confirm(I18n.t('assignments.starter_file.upload_confirmation'))) {
+      const prefix = this.state.uploadTarget || '';
+      this.setState({showModal: false, uploadTarget: undefined});
+      let data = new FormData();
+      Array.from(files).forEach(f => data.append('new_files[]', f, f.name));
+      data.append('path', '/' + prefix); // Server expects path with leading slash (TODO: fix that)
+      if (this.props.grouping_id) {
+        data.append('grouping_id', this.props.grouping_id);
+      }
+      data.append('unzip', unzip);
+      $.post({
+        url: Routes.update_files_assignment_submissions_path(this.props.assignment_id),
+        data: data,
+        processData: false,  // tell jQuery not to process the data
+        contentType: false   // tell jQuery not to set contentType
+      }).then(typeof this.props.onChange === 'function' ? this.props.onChange : this.fetchData)
+        .then(this.endAction);
     }
-    data.append('unzip', unzip);
-    $.post({
-      url: Routes.update_files_assignment_submissions_path(this.props.assignment_id),
-      data: data,
-      processData: false,  // tell jQuery not to process the data
-      contentType: false   // tell jQuery not to set contentType
-    }).then(typeof this.props.onChange === 'function' ? this.props.onChange : this.fetchData)
-      .then(this.endAction);
   };
 
   handleDeleteFile = (fileKeys) => {
@@ -94,14 +97,16 @@ class SubmissionFileManager extends React.Component {
   };
 
   handleCreateFolder = (folderKey) => {
-    $.post({
-      url: Routes.update_files_assignment_submissions_path(this.props.assignment_id),
-      data: {
-        new_folders: [folderKey],
-        grouping_id: this.props.grouping_id
-      }
-    }).then(typeof this.props.onChange === 'function' ? this.props.onChange : this.fetchData)
-      .then(this.endAction);
+    if (!this.props.starterFileChanged || confirm(I18n.t('assignments.starter_file.upload_confirmation'))) {
+      $.post({
+        url: Routes.update_files_assignment_submissions_path(this.props.assignment_id),
+        data: {
+          new_folders: [folderKey],
+          grouping_id: this.props.grouping_id
+        }
+      }).then(typeof this.props.onChange === 'function' ? this.props.onChange : this.fetchData)
+        .then(this.endAction);
+    }
   };
 
   handleDeleteFolder = (folderKeys) => {
