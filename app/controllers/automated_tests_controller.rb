@@ -229,7 +229,7 @@ class AutomatedTestsController < ApplicationController
                                          first_name: 'Test', last_name: 'Student', hidden: true)
     test_grouping = Grouping.find_by(group_id: test_group.id, assessment_id: assignment_id)
     if test_grouping.nil?
-      grouping = Grouping.create!(group_id: test_group_id, assessment_id: assignment_id)
+      grouping = Grouping.create!(group_id: test_group.id, assessment_id: assignment_id)
       StudentMembership.create!(user_id: user.id,
                                 membership_status: StudentMembership::STATUSES[:inviter],
                                 grouping_id: grouping.id)
