@@ -37,18 +37,6 @@ export const light_mode_colors = {
   strings_color: 'var(--heavy_error)',
 };
 
-export function switch_theme() {
-  if (document.documentElement.style.getPropertyValue('--sharp_line') === '#000') {
-    Object.keys(dark_mode_colors).forEach(color => {
-      document.documentElement.style.setProperty('--' + color, dark_mode_colors[color]);
-    });
-  } else {
-    Object.keys(light_mode_colors).forEach(color => {
-      document.documentElement.style.setProperty('--' + color, light_mode_colors[color]);
-    });
-  }
-};
-
 export function set_theme(theme) {
   if (theme === 'dark') {
     Object.keys(dark_mode_colors).forEach(color => {

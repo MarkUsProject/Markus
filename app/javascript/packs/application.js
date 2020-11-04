@@ -53,7 +53,6 @@ import 'javascripts/layouts';
 import 'javascripts/menu';
 import 'javascripts/react_config';
 import 'javascripts/redirect';
-import 'javascripts/theme_colors';
 
 // assets that export vars/functions/classes
 // TODO: We shouldn't need to make everything global.
