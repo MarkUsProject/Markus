@@ -224,30 +224,15 @@ class AutomatedTestsController < ApplicationController
   end
 
   def find_or_create_test_student(assignment_id)
-    test_group = Group.find_by(group_name: 'test_student_group')
-    user = TestStudent.find_by(user_name: 'test_student')
-    if user.nil? && test_group.nil?
-      test_student = TestStudent.create!(user_name: 'test_student',
+    test_group = Group.find_or_create_by(group_name: 'test_student_group')
+    user = TestStudent.find_or_create_by(user_name: 'test_student',
                                          first_name: 'Test', last_name: 'Student', hidden: true)
-      group = Group.create!(group_name: 'test_student_group')
-      create_test_grouping(group.id, assignment_id, test_student)
-    elsif !user.nil?
-      if test_group.nil?
-        group = Group.create!(group_name: 'test_student_group')
-        create_test_grouping(group.id, assignment_id, user)
-      else
-        test_grouping = Grouping.find_by(group_id: test_group.id, assessment_id: assignment_id)
-        if test_grouping.nil?
-          create_test_grouping(test_group.id, assignment_id, user)
-        end
-      end
+    test_grouping = Grouping.find_by(group_id: test_group.id, assessment_id: assignment_id)
+    if test_grouping.nil?
+      grouping = Grouping.create!(group_id: test_group_id, assessment_id: assignment_id)
+      StudentMembership.create!(user_id: user.id,
+                                membership_status: StudentMembership::STATUSES[:inviter],
+                                grouping_id: grouping.id)
     end
-  end
-
-  def create_test_grouping(test_group_id, assignment_id, user)
-    test_grouping = Grouping.create!(group_id: test_group_id, assessment_id: assignment_id)
-    StudentMembership.create!(user_id: user.id,
-                              membership_status: StudentMembership::STATUSES[:inviter],
-                              grouping_id: test_grouping.id)
   end
 end
