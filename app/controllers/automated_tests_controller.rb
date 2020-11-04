@@ -230,21 +230,21 @@ class AutomatedTestsController < ApplicationController
       test_student = TestStudent.create!(user_name: 'test_student',
                                          first_name: 'Test', last_name: 'Student', hidden: true)
       group = Group.create!(group_name: 'test_student_group')
-      create_test_grouping(group.id, assignment_id,test_student)
+      create_test_grouping(group.id, assignment_id, test_student)
     elsif !user.nil?
       if test_group.nil?
         group = Group.create!(group_name: 'test_student_group')
-        create_test_grouping(group.id, assignment_id,user)
+        create_test_grouping(group.id, assignment_id, user)
       else
         test_grouping = Grouping.find_by(group_id: test_group.id, assessment_id: assignment_id)
         if test_grouping.nil?
-          create_test_grouping(test_group.id, assignment_id,user)
+          create_test_grouping(test_group.id, assignment_id, user)
         end
       end
     end
   end
 
-  def create_test_grouping(test_group_id, assignment_id,user)
+  def create_test_grouping(test_group_id, assignment_id, user)
     test_grouping = Grouping.create!(group_id: test_group_id, assessment_id: assignment_id)
     StudentMembership.create!(user_id: user.id,
                               membership_status: StudentMembership::STATUSES[:inviter],
