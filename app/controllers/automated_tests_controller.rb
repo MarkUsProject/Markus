@@ -30,8 +30,7 @@ class AutomatedTestsController < ApplicationController
   def manage
     @assignment = Assignment.find(params[:assignment_id])
     @assignment.test_groups.build
-    find_or_create_test_student(params[:assignment_id])
-    @test_grouping = @assignment.groupings.joins(:group).where('groups.group_name': 'test_student_group').first
+    @test_grouping = find_or_create_test_grouping(params[:assignment_id])
     render layout: 'assignment_content'
   end
 
@@ -223,16 +222,13 @@ class AutomatedTestsController < ApplicationController
     params.require(:assignment).permit(*required_params)
   end
 
-  def find_or_create_test_student(assignment_id)
+  def find_or_create_test_grouping(assignment_id)
     test_group = Group.find_or_create_by(group_name: 'test_student_group')
-    user = TestStudent.find_or_create_by(user_name: 'test_student',
-                                         first_name: 'Test', last_name: 'Student', hidden: true)
-    test_grouping = Grouping.find_by(group_id: test_group.id, assessment_id: assignment_id)
-    if test_grouping.nil?
-      grouping = Grouping.create!(group_id: test_group.id, assessment_id: assignment_id)
-      StudentMembership.create!(user_id: user.id,
-                                membership_status: StudentMembership::STATUSES[:inviter],
-                                grouping_id: grouping.id)
-    end
+    user = TestStudent.find_or_create_by(user_name: 'test_student', first_name: 'Test', last_name: 'Student')
+    test_grouping = Grouping.find_or_create_by(group_id: test_group.id, assessment_id: assignment_id)
+    membership = StudentMembership.find_or_create_by(user_id: user.id,
+                                                     membership_status: StudentMembership::STATUSES[:inviter],
+                                                     grouping_id: test_grouping.id)
+    test_grouping
   end
 end
