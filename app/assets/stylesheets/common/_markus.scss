@@ -79,7 +79,7 @@ p + p {
 /** Links */
 
 a {
-  color: $primary-one;
+  color: $link;
   cursor: pointer;
   text-decoration: none;
   transition: color $time-quick;
@@ -87,11 +87,6 @@ a {
   &.inactive {
     color: $sharp-line;
     pointer-events: none;
-  }
-
-  &:hover {
-    color: $sharp-line;
-    font-weight: bold;
   }
 }
 
@@ -232,7 +227,7 @@ input[type='submit'],
 input[type='reset'],
 button,
 .button {
-  background: linear-gradient(to bottom, $background-main, $background-main);
+  background: $background-main;
   border: 1px solid $primary-three;
   border-radius: $radius;
   box-shadow: inset 0 -1px 0 $primary-two;

@@ -123,7 +123,7 @@
 }
 
 .display_pane {
-  border: 1px solid $background-main;
+  border: 1px solid $line;
 }
 
 .input_pane {
@@ -137,7 +137,7 @@
 }
 
 .side_header {
-  border-bottom: 1px solid $background-main;
+  border-bottom: 1px solid $background-support;
   padding-bottom: 10px;
   margin-bottom: 10px;
 }
