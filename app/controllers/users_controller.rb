@@ -11,9 +11,7 @@ class UsersController < ApplicationController
   def update_settings
     student = current_user
     new_settings = params[:student]
-    student.update!(receives_results_emails: new_settings[:receives_results_emails] || false,
-                    receives_invite_emails: new_settings[:receives_invite_emails] || false,
-                    display_name: new_settings[:display_name])
+    student.update!(settings_params[:student])
     update_success
   end
 
@@ -22,6 +20,10 @@ class UsersController < ApplicationController
   def update_success
     flash_message(:success, t('users.verify_settings_update'))
     redirect_to action: 'settings'
+  end
+
+  def settings_params
+    params.permit(student: [:receives_invite_emails, :receives_results_emails, :display_name])
   end
 
   protected
