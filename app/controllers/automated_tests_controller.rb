@@ -224,12 +224,15 @@ class AutomatedTestsController < ApplicationController
 
   def find_or_create_test_grouping(assignment_id)
     test_group = Group.find_or_create_by(group_name: Group::TEST_STUDENT_GROUP_NAME)
-    user = TestStudent.find_or_create_by(user_name: User::TEST_STUDENT_USER_NAME,
-                                         first_name: 'Test', last_name: 'Student')
+    user = TestStudent.find_or_create_by(user_name: User::TEST_STUDENT_USER_NAME) do |user|
+      user.first_name = 'Test'
+      user.last_name = 'Student'
+    end
     test_grouping = Grouping.find_or_create_by(group_id: test_group.id, assessment_id: assignment_id)
-    StudentMembership.find_or_create_by(user_id: user.id,
-                                        membership_status: StudentMembership::STATUSES[:inviter],
-                                        grouping_id: test_grouping.id)
+    StudentMembership.find_or_create_by(user_id: user.id) do |membership|
+      membership.membership_status = StudentMembership::STATUSES[:inviter]
+      membership.grouping_id = test_grouping.id
+    end
     test_grouping
   end
 end
