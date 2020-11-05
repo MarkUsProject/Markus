@@ -1763,6 +1763,14 @@ describe Assignment do
           expect(data.map { |h| h[:final_grade] }).to include(final_grade)
           expect(data.select { |h| h.key? :final_grade }.count).to eq 1
         end
+        context 'when the extra mark has a negative value' do
+          let!(:extra_mark) { create :extra_mark_points, result: result, extra_mark: -100 }
+          it 'should not reduce the total mark below zero' do
+            data = assignment.current_submission_data(ta)
+            expect(data.map { |h| h[:final_grade] }).to include(0)
+            expect(data.select { |h| h.key? :final_grade }.count).to eq 1
+          end
+        end
       end
     end
 
@@ -1870,6 +1878,13 @@ describe Assignment do
           final_grade = submission.current_result.total_mark + extra_mark.extra_mark
           expect(data.map { |h| h[:final_grade] }).to include(final_grade)
           expect(data.select { |h| h.key? :final_grade }.count).to eq 1
+        end
+        context 'when the extra mark has a negative value' do
+          let!(:extra_mark) { create :extra_mark_points, result: result, extra_mark: -100 }
+          it 'should not reduce the total mark below zero' do
+            expect(data.map { |h| h[:final_grade] }).to include(0)
+            expect(data.select { |h| h.key? :final_grade }.count).to eq 1
+          end
         end
       end
 
@@ -2017,6 +2032,14 @@ describe Assignment do
             grouping_data = data.select { |d| d[:group_name] == grouping.group.group_name }.first
             extra = grouping.current_result.extra_marks.pluck(:extra_mark).sum
             expect(grouping_data[:final_grade]).to eq(grouping.current_result.total_mark + extra)
+          end
+          context 'when the extra mark has a negative value' do
+            let!(:extra_mark) { create :extra_mark_points, result: grouping.current_result, extra_mark: -100 }
+            it 'should not reduce the total mark below zero' do
+              data = @assignment.summary_json(admin)[:data]
+              grouping_data = data.select { |d| d[:group_name] == grouping.group.group_name }.first
+              expect(grouping_data[:final_grade]).to eq(0)
+            end
           end
         end
       end

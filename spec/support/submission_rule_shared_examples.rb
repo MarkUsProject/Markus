@@ -20,7 +20,7 @@ shared_context 'submission_rule_on_time' do
   include_context 'submission_rule'
   before :each do
     # The Student submits their files before the due date
-    pretend_now_is(due_date - 3.days) { grouping.create_starter_files }
+    pretend_now_is(due_date - 3.days) { grouping }
     submit_file_at_time(assignment, grouping.group, 'test', (due_date - 2.days).to_s, 'TestFile.java',
                         'Some contents for TestFile.java')
   end
@@ -29,7 +29,7 @@ shared_context 'submission_rule_during_first' do
   # the submission was submitted during the first penalty period
   include_context 'submission_rule'
   before :each do
-    pretend_now_is(due_date - 3.days) { grouping.create_starter_files }
+    pretend_now_is(due_date - 3.days) { grouping }
 
     # Now we're past the due date, but before the collection date.
     submit_file_at_time(assignment, grouping.group, 'test', (due_date + 10.hours).to_s, 'OvertimeFile.java',
@@ -44,7 +44,7 @@ shared_context 'submission_rule_during_second' do
   # the submission was submitted during the second penalty period
   include_context 'submission_rule'
   before :each do
-    pretend_now_is(due_date - 3.days) { grouping.create_starter_files }
+    pretend_now_is(due_date - 3.days) { grouping }
 
     # Now we're past the due date, but before the collection date, within the first grace period
     submit_file_at_time(assignment, grouping.group, 'test', (due_date + 10.hours).to_s, 'OvertimeFile1.java',
