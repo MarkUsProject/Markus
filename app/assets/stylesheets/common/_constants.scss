@@ -1,24 +1,22 @@
 :root {
---primary_one: #245185;
---primary_two: #cee3ea;
---primary_three: #4c7c51;
---background_main: #fff;
---background_support: #cee3ea;
---line: #464646;
---sharp_line: #000;
---heavy_error: #a20000;
---error_light: #ffc2c2;
---heavy_alert: #ffd452;
---annotation_holder: #ffd452;
---light_alert: #ffe9ac;
---heavy_success: #246700;
---light_success: #b9e586;
-
---comments_color: var(--heavy_success);
---key_words_color: var(--primary_one);
---strings_color: var(--heavy_error);
-
---darker-orange: #ee6415;
+  --annotation_holder: #ffd452;
+  --background_main: #fff;
+  --background_support: #cee3ea;
+  --comments_color: var(--heavy_success);
+  --darker-orange: #ee6415;
+  --error_light: #ffc2c2;
+  --heavy_alert: #ffd452;
+  --heavy_error: #a20000;
+  --heavy_success: #246700;
+  --key_words_color: var(--primary_one);
+  --light_alert: #ffe9ac;
+  --light_success: #b9e586;
+  --line: #464646;
+  --primary_one: #245185;
+  --primary_two: #cee3ea;
+  --primary_three: #4c7c51;
+  --sharp_line: #000;
+  --strings_color: var(--heavy_error);
 }
 // Code viewer
 $comments: var(--comments_color);
@@ -26,18 +24,18 @@ $key-words: var(--key_words_color);
 $strings: var(--strings_color);
 
 // General contexts
-$links: var(--primary_one);
-$pane-highlight: var(--primary_two);
-$confirmed: var(--light_success);
 $annotation-holder: var(--annotation_holder);
+$link: var(--primary_one);
+$pane-highlight: var(--primary_two);
 
 // Status
-$severe-error: var(--heavy_error);
-$light-red: var(--error_light);
 $alert-light: var(--light_alert);
 $alert: var(--heavy_alert);
 $alert-dark: var(--heavy_alert);
+$light-red: var(--error_light);
+$light-success: var(--light-success);
 $success: var(--heavy_success);
+$severe-error: var(--heavy_error);
 
 $primary-one: var(--primary_one);
 $primary-two: var(--primary_two);

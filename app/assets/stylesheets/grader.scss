@@ -51,7 +51,7 @@
   width: 100%;
 
   li {
-    border-bottom: 1px solid $background-main;
+    border-bottom: 1px solid $background-support;
     padding: 5px;
     width: 100%;
     display: inline-block;
@@ -97,7 +97,7 @@
     width: 100%;
 
     &.selected {
-      background-color: $confirmed;
+      background-color: $primary-two;
     }
 
     &.old-mark:not(.selected) {

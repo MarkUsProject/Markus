@@ -128,7 +128,7 @@ strong a {
 
 .success {
   @extend .alert;
-  background: $confirmed asset-url('icons/accept.png') no-repeat 5px center;
+  background: $light-success asset-url('icons/accept.png') no-repeat 5px center;
   border: 1px solid $success;
 }
 
@@ -198,7 +198,7 @@ textarea {
   &.updated,
   &.updated:focus,
   &.updated:hover {
-    background-color: $confirmed;
+    background-color: $light-success;
   }
 
   &[type='number'] {

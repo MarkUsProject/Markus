@@ -41,12 +41,12 @@ export const themes = {
 
 export function set_theme(theme) {
   if (theme === 'dark') {
-    Object.keys(themes['dark']).forEach(color => {
-      document.documentElement.style.setProperty('--' + color, themes['dark'][color]);
+    Object.keys(themes.dark).forEach(color => {
+      document.documentElement.style.setProperty('--' + color, themes.dark[color]);
     });
   } else {
-    Object.keys(themes['light']).forEach(color => {
-      document.documentElement.style.setProperty('--' + color, themes['light'][color]);
+    Object.keys(themes.light).forEach(color => {
+      document.documentElement.style.setProperty('--' + color, themes.light[color]);
     });
   }
 }

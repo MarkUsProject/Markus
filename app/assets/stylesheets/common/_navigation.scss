@@ -1,10 +1,9 @@
 /**
  * Header, main menu, sub menu, sub_sub menu, and footer.
  */
-
+@import 'constants';
 
 /* Header */
-@import 'constants';
 
 header#header {
   border-bottom: 1px solid $primary-three;
