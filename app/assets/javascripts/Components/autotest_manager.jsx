@@ -324,7 +324,7 @@ class AutotestManager extends React.Component {
             assignment_id={this.props.assignment_id}
             grouping_id={this.props.grouping_id}
             enableSubdirs={true}
-            is_solution_file={true}
+            no_solution_file_preview={true}
           />
         </fieldset>
         <fieldset>
