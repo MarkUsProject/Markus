@@ -27,12 +27,16 @@ class User < ApplicationRecord
   validates_uniqueness_of   :id_number, :allow_nil => true
 
   validates_format_of       :type, with: /\AStudent|Admin|Ta|TestServer|TestStudent\z/
+  validates :user_name_of_user_class
   # role constants
   STUDENT = 'Student'.freeze
   ADMIN = 'Admin'.freeze
   TA = 'Ta'.freeze
   TEST_SERVER = 'TestServer'.freeze
   TEST_STUDENT = 'TestStudent'.freeze
+
+  # test student username constant
+  TEST_STUDENT_USER_NAME = 'test_student'.freeze
 
   # Authentication constants to be used as return values
   # see self.authenticated? and main_controller for details
@@ -105,6 +109,12 @@ class User < ApplicationRecord
     end
   end
 
+  def user_name_of_user_class
+    return if self.class == TestStudent
+    if self.user_name == TEST_STUDENT_USER_NAME
+      errors.add('base', 'User name should not be test_student')
+    end
+  end
 
   #TODO: make these proper associations. They work fine for now but
   # they'll be slow in production
