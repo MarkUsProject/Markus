@@ -46,6 +46,42 @@ describe User do
     end
   end
 
+  context 'Creating user with user name test_student' do
+    let(:user_params) do
+      { user_name: User::TEST_STUDENT_USER_NAME, first_name: 'test', last_name: 'student', type: user_type }
+    end
+    let(:user) { User.new(user_params) }
+    let(:expected_error_message) { { user_name: ['is reserved'] } }
+    context 'when the user type is Admin' do
+      let(:user_type) { 'Admin' }
+      it 'should raise an error' do
+        expect(user.save).to eq false
+        expect(user.errors.messages).to eq(expected_error_message)
+      end
+    end
+    context 'when the user type is Ta' do
+      let(:user_type) { 'Ta' }
+      it 'should raise an error' do
+        expect(user.save).to eq false
+        expect(user.errors.messages).to eq(expected_error_message)
+      end
+    end
+    context 'when the user type is Student' do
+      let(:user_type) { 'Student' }
+      it 'should raise an error' do
+        expect(user.save).to eq false
+        expect(user.errors.messages).to eq(expected_error_message)
+      end
+    end
+    context 'when the user type is TestStudent' do
+      let(:user_type) { 'TestStudent' }
+      it 'should create the user' do
+        expect(user.save).to eq true
+        expect(user.user_name).to eq(User::TEST_STUDENT_USER_NAME)
+      end
+    end
+  end
+
   context 'The repository permissions file' do
     context 'should be upated' do
       it 'when creating an admin' do
