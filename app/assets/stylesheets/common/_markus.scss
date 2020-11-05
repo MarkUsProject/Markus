@@ -182,7 +182,7 @@ textarea {
 
   &[readonly] {
     background-color: $background-support;
-    border-color: $background-support;
+    border-color: $line;
     color: $sharp-line;
   }
 
@@ -663,7 +663,7 @@ ul.tags {
         width: 100%;
 
         &:hover {
-          background: $background_support;
+          background: $background-support;
           color: $line;
         }
       }
@@ -955,7 +955,7 @@ nav {
 .annotation-holder-active {
   background: $annotation-holder;
   border: 3px solid $severe-error;
-  opacity: 0.2;
+  opacity: 0.5;
   position: absolute;
   z-index: 1;
 }
