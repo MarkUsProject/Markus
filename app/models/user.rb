@@ -5,6 +5,9 @@ require 'base64' # required for {set,reset}_api_token
 # => :user_name, :last_name, :first_name
 # If there are added columns, add the default values to default_values
 class User < ApplicationRecord
+  # test student username constant
+  TEST_STUDENT_USER_NAME = 'test_student'.freeze
+
   before_validation :strip_name
   before_validation :nillify_empty_email_and_id_number
 
@@ -35,9 +38,6 @@ class User < ApplicationRecord
   TA = 'Ta'.freeze
   TEST_SERVER = 'TestServer'.freeze
   TEST_STUDENT = 'TestStudent'.freeze
-
-  # test student username constant
-  TEST_STUDENT_USER_NAME = 'test_student'.freeze
 
   # Authentication constants to be used as return values
   # see self.authenticated? and main_controller for details
