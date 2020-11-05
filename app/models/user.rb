@@ -27,7 +27,8 @@ class User < ApplicationRecord
   validates_uniqueness_of   :id_number, :allow_nil => true
 
   validates_format_of       :type, with: /\AStudent|Admin|Ta|TestServer|TestStudent\z/
-  validates :user_name_of_user_class
+  validates :user_name, exclusion: { in: TEST_STUDENT_USER_NAME }, if: -> { self.class != TestStudent }
+
   # role constants
   STUDENT = 'Student'.freeze
   ADMIN = 'Admin'.freeze
@@ -109,12 +110,6 @@ class User < ApplicationRecord
     end
   end
 
-  def user_name_of_user_class
-    return if self.class == TestStudent
-    if self.user_name == TEST_STUDENT_USER_NAME
-      errors.add('base', 'User name should not be test_student')
-    end
-  end
 
   #TODO: make these proper associations. They work fine for now but
   # they'll be slow in production
