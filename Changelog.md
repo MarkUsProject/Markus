@@ -20,6 +20,8 @@
 - Rename the parameter in get_file_info from id to assignment_id (#4936)
 - Fix bug where maximum file size for an uploaded file was not enforced properly (#4939)
 - Add counts of all/active/inactive students to students table (#4942)
+- Allow feedback files to be updated by uploading a binary file object through the API (#4964)
+- Fix a bug where some error messages reported by the API caused a json formatting error (#4964)
 
 ## [v1.10.3]
 - Allow for more concurrent access to git repositories (#4895)
