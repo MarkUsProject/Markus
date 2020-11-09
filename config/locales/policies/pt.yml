@@ -13,8 +13,6 @@ pt:
         manage?: "UPDATE ME."
       application:
         manage?: *unauthorized
-        index?: *unauthorized
-        create?: *unauthorized
         view_admin_subtabs?: *unauthorized
         view_ta_subtabs?: *unauthorized
         view_student_subtabs?: *unauthorized

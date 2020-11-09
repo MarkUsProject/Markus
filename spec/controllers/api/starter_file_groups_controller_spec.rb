@@ -13,7 +13,7 @@ describe Api::StarterFileGroupsController do
     it 'should fail to authenticate' do
       request.env['HTTP_AUTHORIZATION'] = 'garbage http_header'
       subject
-      expect(response.status).to eq(403)
+      expect(response).to have_http_status(403)
     end
   end
 

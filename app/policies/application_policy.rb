@@ -1,12 +1,6 @@
 # Application policy class
 class ApplicationPolicy < ActionPolicy::Base
-  # make :manage? a real catch-all
-  def index?
-    manage?
-  end
-  def create?
-    manage?
-  end
+  alias_rule :index?, :create?, :new?, to: :manage?
 
   # unless overridden, do not allow access by default
   def manage?

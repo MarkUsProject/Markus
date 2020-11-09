@@ -2,19 +2,6 @@ describe ApplicationPolicy do
   let(:context) { { user: user } }
   let(:user) { create :admin }
   let(:policy) { ApplicationPolicy.new(**context) }
-  describe :index? do
-    it 'should call manage' do
-      expect(policy).to receive(:manage?)
-      policy.apply(:index?)
-    end
-  end
-
-  describe :create? do
-    it 'should call manage' do
-      expect(policy).to receive(:manage?)
-      policy.apply(:create?)
-    end
-  end
 
   describe_rule :manage? do
     failed

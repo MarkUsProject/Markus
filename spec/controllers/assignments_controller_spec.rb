@@ -925,14 +925,14 @@ describe AssignmentsController do
       let(:user) { create :ta }
       it 'should return a 404 error' do
         subject
-        expect(response.status).to eq(403)
+        expect(response).to have_http_status(403)
       end
     end
     context 'a student' do
       let(:user) { create :student }
       it 'should return a 404 error' do
         subject
-        expect(response.status).to eq(403)
+        expect(response).to have_http_status(403)
       end
     end
   end
@@ -958,14 +958,14 @@ describe AssignmentsController do
       let(:user) { create :ta }
       it 'should return a 404 error' do
         subject
-        expect(response.status).to eq(403)
+        expect(response).to have_http_status(403)
       end
     end
     context 'a student' do
       let(:user) { create :student }
       it 'should return a 404 error' do
         subject
-        expect(response.status).to eq(403)
+        expect(response).to have_http_status(403)
       end
     end
   end

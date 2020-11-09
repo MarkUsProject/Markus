@@ -13,8 +13,6 @@ en:
         manage?: "You do not have permissions to create, delete or modify annotations."
       application:
         manage?: *unauthorized
-        index?: *unauthorized
-        create?: *unauthorized
         view_admin_subtabs?: *unauthorized
         view_ta_subtabs?: *unauthorized
         view_student_subtabs?: *unauthorized

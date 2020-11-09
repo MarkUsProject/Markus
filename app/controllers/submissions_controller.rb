@@ -198,7 +198,8 @@ class SubmissionsController < ApplicationController
     test_runs = groupings.select(&:has_non_empty_submission?).map do |g|
       submission = g.current_submission_used
       unless flash_allowance(:error, allowance_to(:run_tests?, current_user, context: { submission: submission })).value
-        return head 400
+        head 400
+        return
       end
       { grouping_id: g.id, submission_id: submission.id }
     end
