@@ -20,6 +20,7 @@ en:
       problems: "error"
     title: "Automated Testing"
     display_output_title: "Display test output to students?"
+    no_test_grouping_for_solution_files: "Unexpected error happened while loading solution files."
     invalid_specs_file: "Settings file is not a valid json file"
     specs_file_upload_message: "File must be a valid json file"
     display_output:

@@ -8,14 +8,43 @@ describe AutomatedTestsController do
       # TODO: write tests
     end
     context 'GET manage' do
-      before :each do
-        get_as user, :manage, params: params
+      context '' do
+        before :each do
+          get_as user, :manage, params: params
+        end
+        it 'User should be able to view the Automated Testing manage page' do
+          expect(response.status).to eq(200)
+        end
+        it 'should render the assignment_content layout' do
+          expect(response).to render_template('layouts/assignment_content')
+        end
       end
-      it 'User should be able to view the Automated Testing manage page' do
-        expect(response.status).to eq(200)
-      end
-      it 'should render the assignment_content layout' do
-        expect(response).to render_template('layouts/assignment_content')
+      context 'Getting the test student grouping' do
+        context 'When the assignment already has test grouping' do
+          let(:test_student) { create(:test_student, user_name: User::TEST_STUDENT_USER_NAME) }
+          let(:group) { create(:group, group_name: 'test_student_group') }
+          let(:grouping) { create(:grouping, group: group, assignment: assignment) }
+          let!(:membership) { create(:inviter_student_membership, user: test_student, grouping: grouping) }
+          it 'should return the existing test grouping' do
+            get_as user, :manage, params: params
+            expect(assigns(:test_grouping)).to eq(grouping)
+            expect(assigns(:test_grouping).memberships.first).to eq(membership)
+          end
+        end
+        context 'When there is no test grouping exists for the assignment' do
+          before :each do
+            get_as user, :manage, params: params
+          end
+          it 'should return a newly created test grouping' do
+            expect(assigns(:test_grouping)).to be_truthy
+          end
+          it 'should return a grouping which belongs to a test student' do
+            user_id = assigns(:test_grouping).memberships.first.user_id
+            user = User.find(user_id)
+            expect(user.is_a?(TestStudent)).to be true
+            expect(user.groupings.find_by(assessment_id: assignment.id)).to eq(assigns(:test_grouping))
+          end
+        end
       end
     end
     context 'GET populate_autotest_manager' do
