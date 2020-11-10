@@ -23,7 +23,6 @@
 - Add counts of all/active/inactive students to students table (#4942)
 - Allow feedback files to be updated by uploading a binary file object through the API (#4964)
 - Fix a bug where some error messages reported by the API caused a json formatting error (#4964)
-- Group null/undefined values when sorting on dates using react-table (#4921)
 - Updated all authorization to use ActionPolicy (#4865)
 
 ## [v1.10.3]
@@ -31,6 +30,7 @@
 - Fixed calculation bugs for grade summary (#4899)
 - Fixed a bug where due dates in a flash message were incorrect for timed assessments (#4915)
 - Allowed the difference between the start and end times of a timed assessment to be less than the duration (#4915)
+- Fixed bug where negative total marks may be displayed when a negative extra mark exists (#4925)
 
 ## [v1.10.2]
 - Ensure that assignment subdirectories in repositories are maintained (#4893)
