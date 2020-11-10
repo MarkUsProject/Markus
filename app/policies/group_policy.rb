@@ -1,3 +1,4 @@
+# Group policy class
 class GroupPolicy < ApplicationPolicy
   default_rule :manage?
   alias_rule :create?, :destroy?, :delete_rejected?, :disinvite_member?, :invite_member?, :accept_invitation?,
@@ -7,6 +8,6 @@ class GroupPolicy < ApplicationPolicy
   end
 
   def manage?
-    user.admin?
+    check?(:manage_assessments?, user)
   end
 end

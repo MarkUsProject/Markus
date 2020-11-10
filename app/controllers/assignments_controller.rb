@@ -1,31 +1,8 @@
 class AssignmentsController < ApplicationController
   include RepositoryHelper
   responders :flash
+  before_action { authorize! }
 
-  before_action      :authorize_only_for_admin,
-                     except: [:index,
-                              :show,
-                              :new,
-                              :create,
-                              :edit,
-                              :update,
-                              :peer_review,
-                              :summary,
-                              :start_timed_assignment,
-                              :batch_runs,
-                              :stop_test,
-                              :switch_assignment]
-
-  before_action      :authorize_for_student,
-                     only: [:show,
-                            :peer_review]
-
-  before_action      :authorize_for_user,
-                     only: [:index, :switch_assignment]
-
-  before_action only: [:edit, :new, :update, :create, :batch_runs, :summary, :stop_test] do
-    authorize!
-  end
   # Publicly accessible actions ---------------------------------------
 
   def show

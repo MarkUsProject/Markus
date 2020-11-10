@@ -1,3 +1,4 @@
+# User policy class
 class UserPolicy < ApplicationPolicy
   # Default rule: only admins can manage users.
   def manage?

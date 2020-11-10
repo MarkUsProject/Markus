@@ -1,14 +1,7 @@
 class AutomatedTestsController < ApplicationController
   include AutomatedTestsHelper
 
-  before_action do
-    if params[:id].nil?
-      assignment = Assignment.find(params[:assignment_id])
-    else
-      assignment = Assignment.find(params[:id])
-    end
-    authorize! assignment, with: AutomatedTestPolicy
-  end
+  before_action { authorize! }
 
   def update
     assignment = Assignment.find(params[:assignment_id])
@@ -40,27 +33,23 @@ class AutomatedTestsController < ApplicationController
 
     unless @grouping.nil?
       @grouping.refresh_test_tokens
-      # authorization
-      begin
-        authorize! @assignment, to: :run_tests?
-        authorize! @grouping, to: :run_tests?
-        @authorized = true
-      rescue ActionPolicy::Unauthorized => e
-        @authorized = false
-        flash_now(:notice, e.result.reasons.full_messages.join(' '))
-      end
+      @authorized = flash_allowance(:notice,
+                                    allowance_to(:run_tests?,
+                                                 current_user,
+                                                 context: { assignment: @assignment, grouping: @grouping })).value
     end
 
     render layout: 'assignment_content'
   end
 
   def execute_test_run
-    begin
-      assignment = Assignment.find(params[:id])
-      grouping = current_user.accepted_grouping_for(assignment.id)
-      grouping.refresh_test_tokens
-      authorize! assignment, to: :run_tests?
-      authorize! grouping, to: :run_tests?
+    assignment = Assignment.find(params[:id])
+    grouping = current_user.accepted_grouping_for(assignment.id)
+    grouping.refresh_test_tokens
+    allowed = flash_allowance(:error, allowance_to(:run_tests?,
+                                                   current_user,
+                                                   context: { assignment: assignment, grouping: grouping })).value
+    if allowed
       grouping.decrease_test_tokens
       test_run = grouping.create_test_run!(user: current_user)
       @current_job = AutotestRunJob.perform_later(request.protocol + request.host_with_port,
@@ -69,10 +58,10 @@ class AutomatedTestsController < ApplicationController
                                                   [{ id: test_run.id }])
       session[:job_id] = @current_job.job_id
       flash_message(:notice, I18n.t('automated_tests.tests_running'))
-    rescue StandardError => e
-      message = e.is_a?(ActionPolicy::Unauthorized) ? e.result.reasons.full_messages.join(' ') : e.message
-      flash_message(:error, message)
     end
+  rescue StandardError => e
+    flash_message(:error, e.message)
+  ensure
     redirect_to action: :student_interface, id: params[:id]
   end
 
@@ -209,6 +198,12 @@ class AutomatedTestsController < ApplicationController
     else
       head :unprocessable_entity
     end
+  end
+
+  protected
+
+  def implicit_authorization_target
+    OpenStruct.new policy_class: AutomatedTestPolicy
   end
 
   private
