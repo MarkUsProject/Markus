@@ -8,7 +8,7 @@ describe AutomatedTestsController do
       # TODO: write tests
     end
     context 'GET manage' do
-      context '' do
+      context 'Manage page' do
         before :each do
           get_as user, :manage, params: params
         end
