@@ -25,6 +25,7 @@
 - Fix a bug where some error messages reported by the API caused a json formatting error (#4964)
 - Updated all authorization to use ActionPolicy (#4865)
 - Fix bug that prevented creation of scanned exams (#4968)
+- Fix bug where subdirectories were not being created with the right path in the autotest file manager (#4969)
 
 ## [v1.10.3]
 - Allow for more concurrent access to git repositories (#4895)
