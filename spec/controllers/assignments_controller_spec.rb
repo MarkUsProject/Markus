@@ -27,6 +27,7 @@ describe AssignmentsController do
           periods_attributes: { 999 => { deduction: 10.0, interval: 1.0, hours: 10.0, _destroy: 0, id: nil } }
         },
         description: 'Test',
+        short_identifier: 'Test123',
         message: '',
         due_date: Time.current.to_s
       }
@@ -632,9 +633,9 @@ describe AssignmentsController do
       it 'should create an assignment without errors' do
         post_as user, :create, params: params
       end
-      it 'should respond with 200' do
+      it 'should respond with 302' do
         post_as user, :create, params: params
-        expect(response).to have_http_status 200
+        expect(response).to have_http_status 302
       end
       shared_examples 'create assignment_properties' do |property, after|
         it "should create #{property}" do
@@ -677,6 +678,12 @@ describe AssignmentsController do
         params[:assignment][:assignment_properties_attributes][:is_timed] = false
         post_as user, :create, params: params
         expect(assigns(:assignment).duration).to eq nil
+      end
+      it 'should not require submission rule when assignment is scanned' do
+        params[:assignment][:assignment_properties_attributes][:scanned_exam] = true
+        params[:assignment].delete :submission_rule_attributes
+        post_as user, :create, params: params
+        expect(assigns(:assignment).reload).to be_valid
       end
     end
     context '#edit' do
