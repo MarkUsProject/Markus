@@ -24,6 +24,7 @@
 - Allow feedback files to be updated by uploading a binary file object through the API (#4964)
 - Fix a bug where some error messages reported by the API caused a json formatting error (#4964)
 - Updated all authorization to use ActionPolicy (#4865)
+- Fix bug where note creation form could be submitted before the form had finished updating (#4971)
 
 ## [v1.10.3]
 - Allow for more concurrent access to git repositories (#4895)
