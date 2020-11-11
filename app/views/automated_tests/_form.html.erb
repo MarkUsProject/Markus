@@ -8,7 +8,7 @@
     document.addEventListener('DOMContentLoaded', () => {
       window.autotestManagerComponent = makeAutotestManager(document.getElementById('autotest-manager'),
         { assignment_id: <%= @assignment.id %>,
-          grouping_id: <%= @test_grouping.id %>});
+          solution_grouping_id: <%= @test_grouping.id %>});
     });
   </script>
   <%= render partial: 'shared/navigation_warning',
