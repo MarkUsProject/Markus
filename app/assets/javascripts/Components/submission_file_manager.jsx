@@ -196,7 +196,7 @@ class SubmissionFileManager extends React.Component {
           onRequestClose={() => this.setState({showModal: false, uploadTarget: undefined})}
           onSubmit={this.handleCreateFiles}
         />
-        {!this.props.no_solution_file_preview && this.renderFileViewer()}
+        {(this.props.display_file_preview === undefined ? true : this.props.display_file_preview) && this.renderFileViewer()}
       </div>
     );
   }
