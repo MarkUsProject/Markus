@@ -36,7 +36,7 @@ describe AutomatedTestsController do
             get_as user, :manage, params: params
           end
           it 'should return a newly created test grouping' do
-            expect(assigns(:test_grouping)).to be_truthy
+            expect(assigns(:test_grouping)).to be_valid
           end
           it 'should return a grouping which belongs to a test student' do
             user_id = assigns(:test_grouping).memberships.first.user_id
