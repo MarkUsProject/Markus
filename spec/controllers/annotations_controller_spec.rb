@@ -67,18 +67,6 @@ describe AnnotationsController do
       end
     end
 
-    describe '#new' do
-      it 'renders the correct template' do
-        get_as user,
-               :new,
-               params: { result_id: result.id, assignment_id: assignment.id },
-               format: :js
-
-        assert_response :success
-        expect(response).to render_template('new')
-      end
-    end
-
     describe '#create' do
       it 'successfully creates a text annotation' do
         post_as user,
@@ -236,24 +224,6 @@ describe AnnotationsController do
                   format: :js
 
         expect(AnnotationText.exists?(new_text.id)).to be false
-      end
-    end
-
-    describe '#edit' do
-      it 'renders the correct template' do
-        anno = create(
-          :text_annotation,
-          submission_file: submission_file,
-          creator: user,
-          result: result
-        )
-        get_as user,
-               :edit,
-               params: { id: anno.id, result_id: result.id, assignment_id: assignment.id },
-               format: :js
-
-        assert_response :success
-        expect(response).to render_template('edit')
       end
     end
 
