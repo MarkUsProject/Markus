@@ -240,7 +240,7 @@ class AutomatedTestsController < ApplicationController
         test_group.save
       rescue ActiveRecord::RecordNotSaved => e
         flash_now(:error, e.message)
-        return nil
+        nil
       end
     else
       test_group = test_groupings.first.group
@@ -252,6 +252,6 @@ class AutomatedTestsController < ApplicationController
     test_grouping
   rescue ActiveRecord::RecordInvalid => e
     flash_now(:error, e.message)
-    return nil
+    nil
   end
 end
