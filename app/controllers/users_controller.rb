@@ -7,7 +7,7 @@ class UsersController < ApplicationController
   responders :flash, :collection
 
   def settings; end
-  
+
   def reset_api_key
     @current_user.reset_api_key
   end

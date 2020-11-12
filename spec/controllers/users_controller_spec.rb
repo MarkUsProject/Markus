@@ -86,7 +86,7 @@ describe UsersController do
         expect(student.reload.display_name).to eq display_name
       end
     end
-    
+
     describe '#reset_api_key' do
       let(:student) { create(:student) }
       it 'cannot reset their api key' do
