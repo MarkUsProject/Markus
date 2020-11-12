@@ -28,6 +28,9 @@ describe AutomatedTestsController do
           it 'should return the existing test grouping' do
             get_as user, :manage, params: params
             expect(assigns(:test_grouping)).to eq(grouping)
+          end
+          it 'the membership of the grouping should be same as the membership of the returned test grouping' do
+            get_as user, :manage, params: params
             expect(assigns(:test_grouping).memberships.first).to eq(membership)
           end
         end
@@ -40,9 +43,13 @@ describe AutomatedTestsController do
           end
           it 'should return a grouping which belongs to a test student' do
             user_id = assigns(:test_grouping).memberships.first.user_id
+            user = TestStudent.find(user_id)
+            expect(user.groupings.find_by(assessment_id: assignment.id)).to eq(assigns(:test_grouping))
+          end
+          it 'the grouping associated with the user should be a test student' do
+            user_id = assigns(:test_grouping).memberships.first.user_id
             user = User.find(user_id)
             expect(user.is_a?(TestStudent)).to be true
-            expect(user.groupings.find_by(assessment_id: assignment.id)).to eq(assigns(:test_grouping))
           end
         end
       end
