@@ -1,7 +1,5 @@
 class StudentsController < ApplicationController
-  before_action do |_|
-    authorize! with: UserPolicy
-  end
+  before_action { authorize! }
 
   layout 'assignment_content'
 
@@ -28,7 +26,12 @@ class StudentsController < ApplicationController
         sections = Hash[Section.all.map { |section| [section.id, section.name] }]
         render json: {
           students: student_data,
-          sections: sections
+          sections: sections,
+          counts: {
+            all: Student.all.size,
+            active: Student.active.size,
+            inactive: Student.inactive.size
+          }
         }
       }
     end

@@ -36,6 +36,7 @@ module RepositoryHelper
       if check_size
         if f.size > Rails.configuration.max_file_size
           messages << [:too_large, f.original_filename]
+          next
         elsif f.size == 0
           messages << [:too_small, f.original_filename]
         end

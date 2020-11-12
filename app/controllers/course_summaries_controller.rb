@@ -1,8 +1,7 @@
 class CourseSummariesController < ApplicationController
   include CourseSummariesHelper
 
-  before_action :authorize_only_for_admin,
-                except: [:populate, :index]
+  before_action { authorize! }
 
   layout 'assignment_content'
 
@@ -110,5 +109,11 @@ class CourseSummariesController < ApplicationController
         median: current_user.admin? || assessment.display_median_to_students ? assessment.results_median&.round(2) : nil
       }
     end
+  end
+
+  protected
+
+  def implicit_authorization_target
+    OpenStruct.new policy_class: CourseSummaryPolicy
   end
 end

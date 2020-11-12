@@ -15,6 +15,10 @@ module SessionHandler
     @current_user ||= (session[:uid] && User.find_by_id(session[:uid])) || nil
   end
 
+  def real_user
+    @real_user ||= User.find_by_id(session[:real_uid])
+  end
+
   # Check if there's any user associated with this session
   def logged_in?
     session[:uid] != nil
@@ -65,90 +69,6 @@ module SessionHandler
       end
     end
   end
-
-  # Helper method to check if current user is authorized given a
-  # specific role.
-  def authorize_only_for_admin
-    unless authorized?(Admin)
-      render 'shared/http_status', formats: [:html],
-             locals:
-                 { code: '404',
-                   message: HttpStatusHelper::ERROR_CODE['message']['404'] },
-             status: 404, layout: false
-    end
-  end
-
-  def authorize_for_admin_and_admin_logged_in_as
-    real_user = (session[:real_uid] && User.find_by_id(session[:real_uid])) ||
-        nil
-    unless authorized?(Admin) || (real_user && real_user.is_a?(Admin))
-      render 'shared/http_status', formats: [:html],
-             locals:
-                 { code: '404',
-                   message: HttpStatusHelper::ERROR_CODE['message']['404'] },
-             status: 404, layout: false
-    end
-  end
-
-  def authorize_for_ta_admin_and_reviewer(aid, result_id)
-    result = Result.find(result_id)
-    if aid == 'undefined'
-      assignment = result.submission.assignment
-    else
-      assignment = Assignment.find(aid)
-    end
-    unless authorized?(Admin) || authorized?(Ta) ||
-        (authorized?(Student) && assignment.has_peer_review &&
-            current_user.is_reviewer_for?(assignment.pr_assignment, result))
-      render 'shared/http_status', formats: [:html],
-             locals:
-                 { code: '404',
-                   message: HttpStatusHelper::ERROR_CODE['message']['404'] },
-             status: 404, layout: false
-    end
-  end
-
-  def authorize_for_ta_and_admin
-    unless authorized?(Admin) || authorized?(Ta)
-      render 'shared/http_status', formats: [:html],
-             locals:
-                 { code: '404',
-                   message: HttpStatusHelper::ERROR_CODE['message']['404'] },
-             status: 404, layout: false
-    end
-  end
-
-  def authorize_for_student
-    unless authorized?(Student)
-      render 'shared/http_status', formats: [:html],
-             locals:
-                 { code: '404',
-                   message: HttpStatusHelper::ERROR_CODE['message']['404'] },
-             status: 404, layout: false
-    end
-  end
-
-  def authorize_for_student_and_ta
-    unless authorized?(Ta) || authorized?(Student)
-      render 'shared/http_status', formats: [:html],
-             locals:
-                 { code: '404',
-                   message: HttpStatusHelper::ERROR_CODE['message']['404'] },
-             status: 404, layout: false
-    end
-  end
-
-  def authorize_for_user
-    unless authorized?(User)
-      render 'shared/http_status', formats: [:html],
-             locals:
-                 { code: '404',
-                   message: HttpStatusHelper::ERROR_CODE['message']['404'] },
-             status: 404, layout: false
-    end
-  end
-
-
 
   # Refreshes the timeout for this session to be
   # SESSION_TIMEOUT seconds from now, depending on the role

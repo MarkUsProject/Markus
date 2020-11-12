@@ -9,8 +9,7 @@
     <p>
       <%= f.label :display_name, t('students.display_name') %>
       <%= f.text_field :display_name,
-                       value: @current_user.display_name.presence ||
-                              "#{@current_user.first_name} #{@current_user.last_name}" %>
+                       value: @current_user.display_name %>
     </p>
     <p>
       <%= f.check_box :receives_results_emails %>
@@ -22,6 +21,12 @@
     </p>
   <% end %>
   <p><%= f.submit t('users.update_settings') %></p>
+<% end %>
+
+<% if allowed_to?(:reset_api_key) %>
+  <div class='pane-wrapper'>
+    <%= render partial: 'key_display', locals: { user: @current_user } %>
+  </div>
 <% end %>
 
 <% if allowed_to?(:manage?, KeyPair) %>

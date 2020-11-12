@@ -1,4 +1,4 @@
-<% if @current_user.admin? %>
+<% if allowed_to?(:manage?, with: AssignmentPolicy) %>
   <li class='section'><%= t('menu.quick_links') %></li>
   <li>
     <%= link_to t('helpers.submit.create', model: Assignment.model_name.human),

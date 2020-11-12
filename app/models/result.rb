@@ -129,7 +129,7 @@ class Result < ApplicationRecord
     max_mark_hash = Hash.new
     result_data.each do |id, extra_mark, unit, assessment_id|
       if unit == 'points'
-        extra_marks_hash[id] += extra_mark.round(1)
+        extra_marks_hash[id] += extra_mark.round(2)
       elsif unit == 'percentage'
         if max_mark
           assignment_max_mark = max_mark
@@ -138,7 +138,7 @@ class Result < ApplicationRecord
           assignment_max_mark = max_mark_hash[assessment_id]
         end
         max_mark = max_mark_hash[assessment_id]
-        extra_marks_hash[id] = (extra_mark * assignment_max_mark / 100).round(1)
+        extra_marks_hash[id] = (extra_mark * assignment_max_mark / 100).round(2)
       end
     end
     extra_marks_hash
@@ -146,27 +146,27 @@ class Result < ApplicationRecord
 
   # The sum of the bonuses and deductions, other than late penalty
   def get_total_extra_points
-    extra_marks.points.map(&:extra_mark).reduce(0, :+).round(1)
+    extra_marks.points.map(&:extra_mark).reduce(0, :+).round(2)
   end
 
   # The sum of all the positive extra marks
   def get_positive_extra_points
-    extra_marks.positive.points.map(&:extra_mark).reduce(0, :+).round(1)
+    extra_marks.positive.points.map(&:extra_mark).reduce(0, :+).round(2)
   end
 
   # The sum of all the negative extra marks
   def get_negative_extra_points
-    extra_marks.negative.points.map(&:extra_mark).reduce(0, :+).round(1)
+    extra_marks.negative.points.map(&:extra_mark).reduce(0, :+).round(2)
   end
 
   # Percentage deduction for late penalty
   def get_total_extra_percentage
-    extra_marks.percentage.map(&:extra_mark).reduce(0, :+).round(1)
+    extra_marks.percentage.map(&:extra_mark).reduce(0, :+).round(2)
   end
 
   # Point deduction for late penalty
   def get_total_extra_percentage_as_points(user_visibility = :ta_visible)
-    (get_total_extra_percentage * submission.assignment.max_mark(user_visibility) / 100).round(1)
+    (get_total_extra_percentage * submission.assignment.max_mark(user_visibility) / 100).round(2)
   end
 
   # un-releases the result

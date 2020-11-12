@@ -2,22 +2,17 @@
 class GradeEntryFormPolicy < ApplicationPolicy
   default_rule :manage?
   alias_rule :grades?, :view_summary?, :update_grade?, :get_mark_columns?,
-             :populate_grades_table?, :download?, :upload?, to: :grading?
+             :populate_grades_table?, :download?, :upload?, to: :grade?
 
-  # Only admin and grader can grade the students result.
-  def grading?
+  def grade?
     user.admin? || user.ta?
   end
 
   def manage?
-    allowed_to?(:manage_assessments?, with: GraderPermissionPolicy)
+    check?(:manage_assessments?, user)
   end
 
   def student_interface?
     user.student?
-  end
-
-  def update_grade_entry_students?
-    allowed_to?(:manage_submissions?, with: GraderPermissionPolicy)
   end
 end

@@ -9,6 +9,17 @@ describe StudentsController do
 
     let(:student) { create(:student, grace_credits: 5) }
 
+    context '#index' do
+      it 'returns correct student counts' do
+        create_list(:student, 3)
+        create_list(:student, 4, hidden: true)
+        get :index, params: { format: :json }
+
+        counts = response.parsed_body['counts']
+        expect(counts).to eq('all' => 7, 'active' => 3, 'inactive' => 4)
+      end
+    end
+
     context '#upload' do
       include_examples 'a controller supporting upload' do
         let(:params) { {} }

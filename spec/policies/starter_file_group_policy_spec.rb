@@ -1,24 +1,19 @@
 describe StarterFileGroupPolicy do
-  include PolicyHelper
-  describe 'When the user is admin' do
-    subject { described_class.new(user: user) }
-    let(:user) { build(:admin) }
-    context 'can access the starter file groups' do
-      it { is_expected.to pass :manage? }
+  let(:context) { { user: user } }
+  describe_rule :manage? do
+    succeed 'user is an admin' do
+      let(:user) { create(:admin) }
     end
-  end
-  describe 'When the user is grader' do
-    subject { described_class.new(user: user) }
-    let(:user) { build(:ta) }
-    context 'cannot access the starter file groups' do
-      it { is_expected.not_to pass :manage? }
+    context 'user is a ta' do
+      succeed 'that can manage assessments' do
+        let(:user) { create :ta, manage_assessments: true }
+      end
+      failed 'that cannot manage assessments' do
+        let(:user) { create :ta, manage_assessments: false }
+      end
     end
-  end
-  describe 'When the user is student' do
-    subject { described_class.new(user: user) }
-    let(:user) { build(:student) }
-    context 'cannot access the starter file groups' do
-      it { is_expected.not_to pass :manage? }
+    failed 'user is a student' do
+      let(:user) { create(:student) }
     end
   end
 end

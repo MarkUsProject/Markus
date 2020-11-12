@@ -22,6 +22,17 @@ module ApplicationHelper
     flash_message(type, text, flash.now, **kwargs)
   end
 
+  # A version of flash_message that accepts an ActionPolicy authorization result
+  # instead of a message. The result is used to get failure messages and those
+  # messages are added to the flash hash. If the result is a success, this method
+  # does nothing. The result is then returned.
+  def flash_allowance(type, result, flash_type = flash)
+    message = result.reasons.full_messages.join("\n")
+    message = result.message if message.blank?
+    flash_message(type, message, flash_type) unless result.value
+    result
+  end
+
   def markdown(text)
     options = { filter_html: false, hard_wrap: true,
                 link_attributes: { rel: 'nofollow', target: '_blank' },

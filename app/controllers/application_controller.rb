@@ -5,6 +5,7 @@ class ApplicationController < ActionController::Base
   include UploadHelper
   include DownloadHelper
 
+  verify_authorized
   rescue_from ActionPolicy::Unauthorized, with: :user_not_authorized
 
   # responder set up
@@ -118,5 +119,13 @@ class ApplicationController < ActionController::Base
     render 'shared/http_status',
            formats: [:html], locals: { code: '403', message: HttpStatusHelper::ERROR_CODE['message']['403'] },
            status: 403, layout: false
+  end
+
+  def implicit_authorization_target
+    controller_name.classify.constantize.find_or_initialize_by(identification_params)
+  end
+
+  def identification_params
+    params.permit(:id)
   end
 end

@@ -1,6 +1,6 @@
 # Manages actions relating to assigning graders.
 class MarksGradersController < ApplicationController
-  before_action :authorize_only_for_admin
+  before_action { authorize! }
 
   layout 'assignment_content'
 
@@ -188,5 +188,11 @@ class MarksGradersController < ApplicationController
 
     GradeEntryStudent.randomly_assign_tas(student_ids, grader_ids, @grade_entry_form)
     head :ok
+  end
+
+  protected
+
+  def implicit_authorization_target
+    OpenStruct.new policy_class: MarksGraderPolicy
   end
 end

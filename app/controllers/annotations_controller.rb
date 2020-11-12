@@ -1,10 +1,5 @@
 class AnnotationsController < ApplicationController
-
-  before_action(except: :add_existing_annotation) do |c|
-    c.authorize_for_ta_admin_and_reviewer(params[:assignment_id], params[:result_id])
-  end
-
-  before_action :authorize_for_ta_and_admin, only: :add_existing_annotation
+  before_action { authorize! }
 
   def add_existing_annotation
     result = Result.find(params[:result_id])
@@ -171,5 +166,11 @@ class AnnotationsController < ApplicationController
         @annotation.update(annotation_text: new_text)
       end
     end
+  end
+
+  protected
+
+  def identification_params
+    params.permit(:id, :result_id)
   end
 end
