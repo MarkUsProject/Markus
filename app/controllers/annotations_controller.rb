@@ -52,11 +52,6 @@ class AnnotationsController < ApplicationController
     render :create
   end
 
-  def new
-    @result = Result.find(params[:result_id])
-    @assignment = @result.submission.grouping.assignment
-  end
-
   def create
     result = Result.find(params[:result_id])
     submission = result.submission
@@ -107,11 +102,6 @@ class AnnotationsController < ApplicationController
         **base_attributes
       )
     end
-  end
-
-  def edit
-    @annotation = Annotation.find(params[:id])
-    @assignment = Assignment.find(params[:assignment_id])
   end
 
   def destroy
