@@ -64,7 +64,7 @@ describe UsersController do
     describe 'change display name in settings' do
       let(:student) { create(:student, user_name: 'c6stenha') }
       it 'updates student display_name' do
-        display_name = 'Fist Last'
+        display_name = 'First Last'
         patch_as student,
                  'update_settings',
                  params: { 'student': { 'display_name': display_name } }

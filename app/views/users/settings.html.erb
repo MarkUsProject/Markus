@@ -4,8 +4,7 @@
     <p>
       <%= f.label :display_name, t('students.display_name') %>
       <%= f.text_field :display_name,
-                       value: @current_user.display_name.presence ||
-                              "#{@current_user.first_name} #{@current_user.last_name}" %>
+                       value: @current_user.display_name %>
     </p>
     <p>
       <%= f.check_box :receives_results_emails %>
