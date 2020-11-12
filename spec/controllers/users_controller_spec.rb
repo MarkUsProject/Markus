@@ -30,28 +30,26 @@ describe UsersController do
     include ERB::Util
     RSpec.shared_examples 'changing particular mailer settings' do
       it 'can be enabled in settings' do
-        student.update!(setting => false)
+        student.update!(receives_invite_emails: false)
         patch_as student,
                  'update_settings',
-                 params: { student: { setting => true, other_setting => true } }
+                 params: { user: { receives_invite_emails: true, receives_results_emails: true } }
         student.reload
-        expect(student[setting]).to be true
+        expect(student[:receives_invite_emails]).to be true
       end
 
       it 'can be disabled in settings' do
-        student.update!(setting => true)
+        student.update!(receives_invite_emails: true)
         patch_as student,
                  'update_settings',
-                 params: { student: { setting => false, other_setting => true } }
+                 params: { user: { receives_invite_emails: false, receives_results_emails: false } }
         student.reload
-        expect(student[setting]).to be false
+        expect(student[:receives_invite_emails]).to be false
       end
     end
 
     describe 'results released notifications' do
       # Authenticate user is not timed out, and is a student.
-      let(:setting) { 'receives_results_emails' }
-      let(:other_setting) { 'receives_invite_emails' }
       let(:student) { create(:student, user_name: 'c6stenha') }
 
       include_examples 'changing particular mailer settings'
@@ -71,7 +69,7 @@ describe UsersController do
       it 'redirects back to settings' do
         patch_as student,
                  'update_settings',
-                 params: { 'student': { 'receives_invite_emails': false, 'receives_results_emails': true } }
+                 params: { 'user': { 'receives_invite_emails': false, 'receives_results_emails': true } }
         expect(response).to redirect_to(settings_users_path)
       end
     end
@@ -82,8 +80,19 @@ describe UsersController do
         display_name = 'First Last'
         patch_as student,
                  'update_settings',
-                 params: { 'student': { 'display_name': display_name } }
+                 params: { 'user': { 'display_name': display_name } }
         expect(student.reload.display_name).to eq display_name
+      end
+    end
+
+    describe 'change time zone in settings' do
+      let(:student) { create(:student, user_name: 'c6stenha') }
+      it 'updates time zone for student' do
+        time_zone = 'Fake/TimeZone'
+        patch_as student,
+                 'update_settings',
+                 params: { 'user': { 'time_zone': time_zone } }
+        expect(student.reload.time_zone).to eq time_zone
       end
     end
 
