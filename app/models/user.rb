@@ -8,7 +8,7 @@ class User < ApplicationRecord
   before_validation :strip_name
   before_validation :nillify_empty_email_and_id_number
 
-  enum theme: [ :light, :dark ], _default: "light"
+  enum theme: { light: 1, dark: 2 }
 
   # Group relationships
   has_many :memberships, dependent: :delete_all

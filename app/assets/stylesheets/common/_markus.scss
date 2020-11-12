@@ -177,7 +177,7 @@ textarea {
   &[disabled] {
     background-color: $disabled;
     border-color: $background-support;
-    color: $background-support;
+    color: $sharp-line;
   }
 
   &[readonly] {
@@ -211,8 +211,9 @@ textarea {
 }
 
 select {
-  background: none;
-  border: 1px solid $background-support;
+  background: $background-main;
+  color: $line;
+  border: 1px solid $sharp-line;
   border-radius: $radius;
   font-family: $fonts;
   margin: 5px;
