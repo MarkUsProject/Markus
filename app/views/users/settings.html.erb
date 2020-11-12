@@ -18,6 +18,12 @@
   <% end %>
 <% end %>
 
+<% if allowed_to?(:reset_api_key) %>
+  <div class='pane-wrapper'>
+    <%= render partial: 'key_display', locals: { user: @current_user } %>
+  </div>
+<% end %>
+
 <% if allowed_to?(:manage?, KeyPair) %>
   <h2><%= t('key_pairs.key_pairs_title') %></h2>
 

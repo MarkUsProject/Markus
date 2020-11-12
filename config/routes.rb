@@ -392,6 +392,7 @@ Rails.application.routes.draw do
 
     resources :users do
       collection do
+        post 'reset_api_key'
         get 'settings'
         post 'settings'
         patch 'update_settings'
@@ -429,7 +430,6 @@ Rails.application.routes.draw do
         post 'login_as'
         get 'role_switch'
         get 'clear_role_switch_session'
-        post 'reset_api_key'
         get 'check_timeout'
         post 'refresh_session'
       end

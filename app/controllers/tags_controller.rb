@@ -1,5 +1,5 @@
 class TagsController < ApplicationController
-  before_action :authorize_only_for_admin
+  before_action { authorize! }
   responders :flash
 
   layout 'assignment_content'

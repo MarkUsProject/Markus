@@ -260,67 +260,19 @@ class User < ApplicationRecord
     parsed
   end
 
-  def self.add_user(user_class, row)
-    # convert each line to a hash with FIELDS as corresponding keys
-    # and create or update a user with the hash values
-    #return nil if values.length < UPLOAD_FIELDS.length
-    user_attributes = {}
-    # Loop through the resulting array as key, value pairs
-
-    user_class::CSV_UPLOAD_ORDER.zip(row) do |key, val|
-      # append them to the hash that is returned by User.get_default_ta/student_attrs
-      # remove the section if the user has one
-      if key == :section_name
-        if val
-          # check if the section already exist
-          section = Section.find_or_create_by(name: val)
-          user_attributes['section_id'] = section.id
-        end
-      else
-        user_attributes[key] = val
-      end
-    end
-
-    # Is there already a Student with this User number?
-    current_user = user_class.find_or_create_by(
-      user_name: user_attributes[:user_name])
-    current_user.attributes = user_attributes
-
-    return unless current_user.save
-    current_user
-  end
-
-  # Set API key for user model. The key is a
-  # SHA2 512 bit long digest, which is in turn
-  # MD5 digested and Base64 encoded so that it doesn't
+  # Reset API key for user model. The key is a SHA2 512 bit long digest,
+  # which is in turn MD5 digested and Base64 encoded so that it doesn't
   # include bad HTTP characters.
   #
-  # TODO: If we end up
-  # using this heavily we should probably let this token
-  # expire every X days/hours/weeks. When it does, a new
-  # token should be automatically generated.
-  def set_api_key
-    if self.api_key.nil?
-      key = generate_api_key
-      md5 = Digest::MD5.new
-      md5.update(key)
-      # base64 encode md5 hash
-      self.api_key = Base64.encode64(md5.to_s).strip
-      self.save
-    else
-      true
-    end
-  end
-
-  # Resets the api key. Usually triggered, if the
-  # old md5 hash has gotten into the wrong hands.
+  # TODO: If we end up using this heavily we should probably let this key
+  # expire every X days/hours/weeks. When it does, a new token should be
+  # automatically generated.
   def reset_api_key
     key = generate_api_key
     md5 = Digest::MD5.new
     md5.update(key)
     # base64 encode md5 hash
-    self.api_key = Base64.encode64(md5.to_s).strip
-    self.save
+    self.update(api_key: Base64.encode64(md5.to_s).strip)
   end
 
   private

@@ -1,0 +1,22 @@
+<div class='pane'>
+  <h2>
+    <%= User.human_attribute_name(:api_key) %>
+    <span class='help api_key_help'>
+      <p class='help-message-box api_key_help' style="display:none;">
+        <%= t('users.api_key.help_html') %>
+      </p>
+    </span>
+  </h2>
+  <p id='api_key'>
+    <% if !user.api_key.nil? %>
+      <%= user.api_key %>
+    <% else %>
+      <%= t('users.api_key.unavailable') %>
+    <% end %>
+    <div class='float-right'>
+      <%= form_tag reset_api_key_users_path, remote: true do %>
+        <%= submit_tag t('users.api_key.reset') %>
+      <% end %>
+    </div>
+  </p>
+</div>

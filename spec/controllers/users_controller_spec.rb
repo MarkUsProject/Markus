@@ -11,6 +11,21 @@ describe UsersController do
     end
   end
 
+  describe 'User is an admin' do
+    describe '#reset_api_key' do
+      it 'responds with a success' do
+        post_as admin, :reset_api_key
+        expect(response).to have_http_status(:success)
+      end
+      it 'changes their api key' do
+        old_key = admin.api_key
+        post_as admin, :reset_api_key
+        admin.reload
+        expect(admin.api_key).not_to eq(old_key)
+      end
+    end
+  end
+
   describe 'User is a Student' do
     include ERB::Util
     RSpec.shared_examples 'changing particular mailer settings' do
@@ -69,6 +84,14 @@ describe UsersController do
                  'update_settings',
                  params: { 'student': { 'display_name': display_name } }
         expect(student.reload.display_name).to eq display_name
+      end
+    end
+    
+    describe '#reset_api_key' do
+      let(:student) { create(:student) }
+      it 'cannot reset their api key' do
+        post_as student, :reset_api_key
+        expect(response).to have_http_status(:forbidden)
       end
     end
   end

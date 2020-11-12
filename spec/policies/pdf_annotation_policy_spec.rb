@@ -1,0 +1,2 @@
+describe PdfAnnotationPolicy do
+end

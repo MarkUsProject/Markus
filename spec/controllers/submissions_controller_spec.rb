@@ -345,20 +345,20 @@ describe SubmissionsController do
     # TODO:  TEST REPO BROWSER HERE
     it 'should not be able to use the repository browser' do
       get_as @student, :repo_browser, params: { assignment_id: 1, id: Grouping.last.id }
-      is_expected.to respond_with(:missing)
+      is_expected.to respond_with(:forbidden)
     end
 
     # Stopping a curious student
     it 'should not be able download svn checkout commands' do
       get_as @student, :download_repo_checkout_commands, params: { assignment_id: 1 }
 
-      is_expected.to respond_with(:missing)
+      is_expected.to respond_with(:forbidden)
     end
 
     it 'should not be able to download the svn repository list' do
       get_as @student, :download_repo_list, params: { assignment_id: 1 }
 
-      is_expected.to respond_with(:missing)
+      is_expected.to respond_with(:forbidden)
     end
   end
 
@@ -420,12 +420,12 @@ describe SubmissionsController do
 
     it 'should be able to download the svn checkout commands' do
       get_as grader, :download_repo_checkout_commands, params: { assignment_id: 1 }
-      is_expected.to respond_with(:missing)
+      is_expected.to respond_with(:forbidden)
     end
 
     it 'should be able to download the svn repository list' do
       get_as grader, :download_repo_list, params: { assignment_id: 1 }
-      is_expected.to respond_with(:missing)
+      is_expected.to respond_with(:forbidden)
     end
 
     let(:revision_identifier) do

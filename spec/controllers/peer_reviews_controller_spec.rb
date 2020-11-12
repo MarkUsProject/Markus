@@ -271,7 +271,7 @@ describe PeerReviewsController do
                           selectedReviewerGroupIds: @selected_reviewer_group_ids,
                           selectedRevieweeGroupIds: @selected_reviewee_group_ids,
                           assignment_id: @pr_id }
-        expect(response.status).to eq(403)
+        expect(response).to have_http_status(403)
       end
     end
     describe '#index' do
