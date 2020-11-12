@@ -4,6 +4,7 @@ import heic2any from 'heic2any';
 import {ImageViewer} from './image_viewer'
 import {TextViewer} from './text_viewer'
 import {PDFViewer} from './pdf_viewer';
+import {JupyterNotebookViewer} from "./jupyter_notebook_viewer";
 
 
 export class FileViewer extends React.Component {
@@ -144,6 +145,12 @@ export class FileViewer extends React.Component {
       return <PDFViewer
         url={this.state.url}
         annotationFocus={this.props.annotationFocus}
+        {...commonProps}
+      />;
+    } else if (this.state.type === 'jupyter-notebook') {
+      return <JupyterNotebookViewer
+        annotationFocus={this.props.annotationFocus}
+        content={this.state.content}
         {...commonProps}
       />;
     } else if (this.state.type !== '') {

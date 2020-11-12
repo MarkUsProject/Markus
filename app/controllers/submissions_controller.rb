@@ -407,6 +407,11 @@ class SubmissionsController < ApplicationController
         if SubmissionFile.is_binary?(file_contents)
           # If the file appears to be binary, display a warning
           render json: { content: I18n.t('submissions.cannot_display').to_json, type: 'unknown' }
+        elsif file.is_pynb?
+          args = [Rails.configuration.nbconvert, '--to', 'html', '--stdin', '--stdout']
+          file_contents, status = Open3.capture2(*args, stdin_data: file_contents)
+          file_contents = I18n.t('submissions.cannot_display') unless status.exitstatus.zero?
+          render json: { content: file_contents.to_json, type: SubmissionFile.get_file_type(file.filename) }
         else
           render json: { content: file_contents.to_json, type: SubmissionFile.get_file_type(file.filename) }
         end
@@ -443,6 +448,10 @@ class SubmissionsController < ApplicationController
         file_contents = repo.download_as_string(file)
         if params[:preview] == 'true' && SubmissionFile.is_binary?(file_contents)
           file_contents = I18n.t('submissions.cannot_display')
+        elsif File.extname(params[:file_name]).downcase == '.ipynb'
+          args = [Rails.configuration.nbconvert, '--to', 'html', '--stdin', '--stdout']
+          file_contents, status = Open3.capture2(*args, stdin_data: file_contents)
+          file_contents = I18n.t('submissions.cannot_display') unless status.exitstatus.zero?
         end
       rescue Exception => e
         render plain: I18n.t('student.submission.missing_file',
