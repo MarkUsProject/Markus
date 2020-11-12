@@ -11,6 +11,12 @@ export class RemarkPanel extends React.Component {
       document.getElementById(target_id).innerHTML = marked(comment, {sanitize: true});
       MathJax.Hub.Queue(['Typeset', MathJax.Hub, target_id]);
     }
+
+    if (this.props.remarkSubmitted) {
+      const target_id = 'remark_request_text';
+      document.getElementById(target_id).innerHTML = marked(this.props.remarkRequestText, {sanitize: true});
+      MathJax.Hub.Queue(["Typeset", MathJax.Hub, 'submitted_remark_request_text']);
+    }
   }
 
   persistChanges = (value) => {
@@ -35,8 +41,6 @@ export class RemarkPanel extends React.Component {
   };
 
   render() {
-    const remark_request = marked(this.props.remarkRequestText);
-
     let remarkCommentElement;
     if (this.props.released_to_students) {
       remarkCommentElement = <div id='overall_remark_comment' />;
@@ -79,7 +83,7 @@ export class RemarkPanel extends React.Component {
         <div>
           <p>{I18n.t('results.remark.submitted_on',
                      {time: I18n.l('time.formats.default', this.props.remarkRequestTimestamp)})}</p>
-          <div dangerouslySetInnerHTML={{__html: remark_request}} />
+          <div id='remark_request_text'/>
         </div>
       );
     } else {
@@ -112,9 +116,26 @@ class RemarkRequestForm extends React.Component {
     this.button = React.createRef();
   }
 
+  componentDidUpdate(prevProps, prevState) {
+    if (prevProps.initialValue !== this.props.initialValue) {
+      this.setState({value: this.props.initialValue});
+    } else if (prevState.value !== this.state.value) {
+      this.renderPreview();
+    }
+  }
+
+  renderPreview = () => {
+    let target_id = 'remark-request-preview';
+    document.getElementById(target_id).innerHTML = marked(
+      this.state.value,
+      { sanitize: true }
+    );
+    MathJax.Hub.Queue(["Typeset", MathJax.Hub, target_id]);
+  }
+
   updateValue = (event) => {
     const value = event.target.value;
-    this.setState({value: value, unsavedChanges: true});
+    this.setState({value: value, unsavedChanges: true}, this.renderPreview);
   };
 
   onSubmit = (event) => {
@@ -150,6 +171,8 @@ class RemarkRequestForm extends React.Component {
                    onClick={(e) => this.onSubmit(e)}
             />
           </p>
+          <h3>{I18n.t('preview')}</h3>
+          <div id='remark-request-preview' className='preview'></div>
         </form>
       </div>
     );
