@@ -317,7 +317,7 @@ class AutotestManager extends React.Component {
             disableActions={{rename: true}}
           />
         </fieldset>
-        <fieldset>
+        {this.props.solution_grouping_id && (<fieldset>
           <legend><span>{I18n.t("automated_tests.solution_files")}</span></legend>
           <SubmissionFileManager
             readOnly={!this.state.enable_test}
@@ -327,6 +327,7 @@ class AutotestManager extends React.Component {
             display_file_preview={false}
           />
         </fieldset>
+        )}
         <fieldset>
           <legend><span>{'Testers'}</span></legend>
           <div className={'rt-action-box upload-download'}>

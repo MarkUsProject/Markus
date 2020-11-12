@@ -22,7 +22,8 @@ class SubmissionFileManager extends React.Component {
   static defaultProps = {
     fetchOnMount: true,
     readOnly: false,
-    revision_identifier: undefined
+    revision_identifier: undefined,
+    display_file_preview: true
   };
 
   componentDidMount() {
@@ -196,7 +197,7 @@ class SubmissionFileManager extends React.Component {
           onRequestClose={() => this.setState({showModal: false, uploadTarget: undefined})}
           onSubmit={this.handleCreateFiles}
         />
-        {(this.props.display_file_preview === undefined ? true : this.props.display_file_preview) && this.renderFileViewer()}
+        {this.props.display_file_preview && this.renderFileViewer()}
       </div>
     );
   }
