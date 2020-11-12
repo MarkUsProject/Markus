@@ -245,7 +245,7 @@ class AutomatedTestsController < ApplicationController
       membership.membership_status = StudentMembership::STATUSES[:inviter]
     end
     test_grouping
-  rescue ActiveRecord::RecordInvalid, RecordNotSaved
-    flash_now(:error, I18n.t('automated_tests.no_test_grouping_for_solution_files'))
+  rescue ActiveRecord::RecordInvalid, RecordNotSaved => e
+    flash_now(:error, e.message)
   end
 end

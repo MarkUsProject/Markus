@@ -21,7 +21,6 @@ es:
     title: "Pruebas Automatizadas"
     display_output_title: "UPDATE ME"
     invalid_specs_file: "UPDATE ME"
-    no_test_grouping_for_solution_files: "UPDATE ME"
     specs_file_upload_message: "UPDATE ME"
     display_output:
       instructors: "No mostrar"

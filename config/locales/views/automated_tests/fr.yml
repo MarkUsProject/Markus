@@ -21,7 +21,6 @@ fr:
     title: "Tests automatisés"
     display_output_title: "Montrez le sortie des tests aux étudiants?"
     invalid_specs_file: "Ce fichier n'est pas un fichier JSON valide"
-    no_test_grouping_for_solution_files: "UPDATE ME"
     specs_file_upload_message: "Le fichier doit être un fichier json valide"
     display_output:
       instructors: "Ne montrez jamais le sortie des tests aux étudiants"
