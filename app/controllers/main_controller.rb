@@ -34,7 +34,6 @@ class MainController < ApplicationController
           uri = session[:redirect_uri]
           session[:redirect_uri] = nil
           refresh_timeout
-          current_user.set_api_key # set api key in DB for user if not yet set
           # redirect to last visited page or to main page
           redirect_to( uri || { action: 'index' } )
           return
@@ -93,7 +92,6 @@ class MainController < ApplicationController
       uri = session[:redirect_uri]
       session[:redirect_uri] = nil
       refresh_timeout
-      current_user.set_api_key # set api key in DB for user if not yet set
       # redirect to last visited page or to main page
       redirect_to( uri || { action: 'index' } )
     else
@@ -151,19 +149,6 @@ class MainController < ApplicationController
   def about
     # dummy action for remote rjs calls
     # triggered by clicking on the about icon
-  end
-
-  def reset_api_key
-    render 'shared/http_status', formats: [:html], locals: { code: '404', message: HttpStatusHelper::ERROR_CODE['message']['404'] }, status: 404, layout: false and return unless request.post?
-    # Students shouldn't be able to change their API key
-    unless @current_user.student?
-      @current_user.reset_api_key
-      @current_user.save
-    else
-      render 'shared/http_status', formats: [:html], locals: { code: '404', message: HttpStatusHelper::ERROR_CODE['message']['404'] }, status: 404, layout: false and return
-    end
-    render 'api_key_replace', locals: {user: @current_user },
-      formats: [:js], handlers: [:erb]
   end
 
   # Render 404 error (page not found) if no other route matches.
@@ -254,7 +239,6 @@ class MainController < ApplicationController
     if logged_in?
       session[:redirect_uri] = nil
       refresh_timeout
-      current_user.set_api_key # set api key in DB for user if not yet set
       # All good, redirect to the main page of the viewer, discard
       # role switch modal
       render partial: 'role_switch_handler',

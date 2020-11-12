@@ -8,6 +8,10 @@ class UsersController < ApplicationController
 
   def settings; end
 
+  def reset_api_key
+    @current_user.reset_api_key
+  end
+
   def update_mailer_settings
     student = current_user
     new_settings = params[:student]

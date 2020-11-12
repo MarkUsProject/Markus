@@ -25,6 +25,7 @@
 - Fix a bug where some error messages reported by the API caused a json formatting error (#4964)
 - Updated all authorization to use ActionPolicy (#4865)
 - Fix bug where note creation form could be submitted before the form had finished updating (#4971)
+- Move API key handling to user Settings page (#4967)
 - Fix bug that prevented creation of scanned exams (#4968)
 - Fix bug where subdirectories were not being created with the right path in the autotest file manager (#4969)
 
