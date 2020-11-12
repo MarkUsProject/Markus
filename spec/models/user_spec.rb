@@ -11,6 +11,7 @@ describe User do
   it { is_expected.to allow_value('Admin').for(:type) }
   it { is_expected.to allow_value('Ta').for(:type) }
   it { is_expected.not_to allow_value('OtherTypeOfUser').for(:type) }
+  it { is_expected.to validate_exclusion_of(:user_name).in_array([User::TEST_STUDENT_USER_NAME]) }
 
   describe 'uniqueness validation' do
     subject { create :admin }

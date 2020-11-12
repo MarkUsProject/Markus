@@ -30,7 +30,7 @@ class User < ApplicationRecord
   validates_uniqueness_of   :id_number, :allow_nil => true
 
   validates_format_of       :type, with: /\AStudent|Admin|Ta|TestServer|TestStudent\z/
-  validates :user_name, exclusion: { in: [TEST_STUDENT_USER_NAME] }, if: -> { self.class != TestStudent }
+  validates_exclusion_of :user_name, in: [TEST_STUDENT_USER_NAME] , if: -> { self.class != TestStudent }
 
   # role constants
   STUDENT = 'Student'.freeze
