@@ -20,36 +20,73 @@ describe AutomatedTestsController do
         end
       end
       context 'Getting the test student grouping' do
-        context 'When the assignment already has test grouping' do
-          let(:test_student) { create(:test_student, user_name: User::TEST_STUDENT_USER_NAME) }
-          let(:group) { create(:group, group_name: 'test_student_group') }
-          let(:grouping) { create(:grouping, group: group, assignment: assignment) }
-          let!(:membership) { create(:inviter_student_membership, user: test_student, grouping: grouping) }
-          it 'should return the existing test grouping' do
-            get_as user, :manage, params: params
-            expect(assigns(:test_grouping)).to eq(grouping)
-          end
-          it 'the membership of the grouping should be same as the membership of the returned test grouping' do
-            get_as user, :manage, params: params
-            expect(assigns(:test_grouping).memberships.first).to eq(membership)
-          end
-        end
-        context 'When there is no test grouping exists for the assignment' do
+        context 'When the test student does not exists' do
           before :each do
             get_as user, :manage, params: params
           end
-          it 'should return a newly created test grouping' do
-            expect(assigns(:test_grouping)).to be_valid
-          end
-          it 'should return a grouping which belongs to a test student' do
+          it 'should create a new test student' do
             user_id = assigns(:test_grouping).memberships.first.user_id
             user = TestStudent.find(user_id)
-            expect(user.groupings.find_by(assessment_id: assignment.id)).to eq(assigns(:test_grouping))
-          end
-          it 'the grouping associated with the user should be a test student' do
-            user_id = assigns(:test_grouping).memberships.first.user_id
-            user = User.find(user_id)
             expect(user.is_a?(TestStudent)).to be true
+          end
+          it 'should create a grouping for the new test student' do
+            expect(assigns(:test_grouping)).to be_valid
+          end
+        end
+        context 'When the test student exists' do
+          let!(:test_student) { create(:test_student, user_name: User::TEST_STUDENT_USER_NAME) }
+          context 'When the assignment already has test grouping' do
+            let(:group) { create(:group, group_name: 'test_student_group') }
+            let(:grouping) { create(:grouping, group: group, assignment: assignment) }
+            let!(:membership) { create(:inviter_student_membership, user: test_student, grouping: grouping) }
+            it 'should return the existing test grouping' do
+              get_as user, :manage, params: params
+              expect(assigns(:test_grouping)).to eq(grouping)
+            end
+            it 'the membership of the grouping should be same as the membership of the returned test grouping' do
+              get_as user, :manage, params: params
+              expect(assigns(:test_grouping).memberships.first).to eq(membership)
+            end
+          end
+          context 'When the assignment has no test grouping' do
+            context 'when no test grouping exists' do
+              before :each do
+                get_as user, :manage, params: params
+              end
+              it 'should return a newly created test grouping' do
+                expect(assigns(:test_grouping)).to be_valid
+              end
+              it 'should return a grouping which belongs to a test student' do
+                user_id = assigns(:test_grouping).memberships.first.user_id
+                user = TestStudent.find(user_id)
+                expect(user.groupings.find_by(assessment_id: assignment.id)).to eq(assigns(:test_grouping))
+              end
+              it 'the grouping associated with the user should be the test student' do
+                user_id = assigns(:test_grouping).memberships.first.user_id
+                user = User.find(user_id)
+                expect(user).to eq(test_student)
+              end
+            end
+            context 'when the test group already exists for different assignment' do
+              let(:assignment2) { create(:assignment) }
+              let(:group2) { create(:group, group_name: 'test_student_group2') }
+              let(:grouping2) { create(:grouping, group: group2, assignment: assignment2) }
+              let!(:membership2) { create(:inviter_student_membership, user: test_student, grouping: grouping2) }
+              before :each do
+                get_as user, :manage, params: params
+              end
+              it 'should return a newly created test grouping' do
+                expect(assigns(:test_grouping).group).to eq(group2)
+              end
+            end
+            context 'when there is no test group exists for different assignment' do
+              before :each do
+                get_as user, :manage, params: params
+              end
+              it 'should create a new group and return a newly created test grouping' do
+                expect(assigns(:test_grouping).group).to be_valid
+              end
+            end
           end
         end
       end
