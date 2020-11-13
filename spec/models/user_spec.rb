@@ -11,7 +11,25 @@ describe User do
   it { is_expected.to allow_value('Admin').for(:type) }
   it { is_expected.to allow_value('Ta').for(:type) }
   it { is_expected.not_to allow_value('OtherTypeOfUser').for(:type) }
-  it { is_expected.to validate_exclusion_of(:user_name).in_array([User::TEST_STUDENT_USER_NAME]) }
+
+  context 'Creating user with user name test_student' do
+    context 'When the user type is Admin' do
+      subject { build(:admin, user_name: User::TEST_STUDENT_USER_NAME) }
+      it { is_expected.to validate_exclusion_of(:user_name).in_array([User::TEST_STUDENT_USER_NAME]) }
+    end
+    context 'When the user type is TestStudent' do
+      subject { build(:test_student, user_name: User::TEST_STUDENT_USER_NAME) }
+      it { expect(subject).to be_valid }
+    end
+    context 'When the user type is Ta' do
+      subject { build(:ta, user_name: User::TEST_STUDENT_USER_NAME) }
+      it { is_expected.to validate_exclusion_of(:user_name).in_array([User::TEST_STUDENT_USER_NAME]) }
+    end
+    context 'When the user type is Student' do
+      subject { build(:student, user_name: User::TEST_STUDENT_USER_NAME) }
+      it { is_expected.to validate_exclusion_of(:user_name).in_array([User::TEST_STUDENT_USER_NAME]) }
+    end
+  end
 
   describe 'uniqueness validation' do
     subject { create :admin }
@@ -44,36 +62,6 @@ describe User do
       expect(@user.user_name).to eq 'ausername'
       expect(@user.first_name).to eq 'afirstname'
       expect(@user.last_name).to eq 'alastname'
-    end
-  end
-
-  context 'Creating user with user name test_student' do
-    subject do
-      User.create!(user_name: User::TEST_STUDENT_USER_NAME, first_name: 'test', last_name: 'student', type: user_type)
-    end
-    context 'When the user type is Admin' do
-      let(:user_type) { 'Admin' }
-      it 'should raise an error' do
-        expect { subject }.to raise_error(ActiveRecord::RecordInvalid)
-      end
-    end
-    context 'When the user type is TestStudent' do
-      let(:user_type) { 'TestStudent' }
-      it 'should not raise an error' do
-        expect(subject).to be_valid
-      end
-    end
-    context 'When the user type is Ta' do
-      let(:user_type) { 'Ta' }
-      it 'should raise an error' do
-        expect { subject }.to raise_error(ActiveRecord::RecordInvalid)
-      end
-    end
-    context 'When the user type is Student' do
-      let(:user_type) { 'Student' }
-      it 'should raise an error' do
-        expect { subject }.to raise_error(ActiveRecord::RecordInvalid)
-      end
     end
   end
 
