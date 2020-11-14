@@ -395,7 +395,7 @@ Rails.application.routes.draw do
         post 'reset_api_key'
         get 'settings'
         post 'settings'
-        patch 'update_mailer_settings'
+        patch 'update_settings'
       end
     end
 
