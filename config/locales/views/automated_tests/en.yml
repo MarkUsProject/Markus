@@ -21,6 +21,9 @@ en:
     title: "Automated Testing"
     display_output_title: "Display test output to students?"
     invalid_specs_file: "Settings file is not a valid json file"
+    test_grouping:
+      create:
+        error: "Something unexpected happened due to the following error(s): %{errors}."
     specs_file_upload_message: "File must be a valid json file"
     display_output:
       instructors: "Never display test output to students"

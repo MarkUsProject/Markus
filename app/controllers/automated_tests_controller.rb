@@ -246,7 +246,7 @@ class AutomatedTestsController < ApplicationController
     end
     test_grouping
   rescue ActiveRecord::RecordInvalid, RecordNotSaved => e
-    flash_now(:error, 'Something unexpected happened' + e.message)
+    flash_now(:error, I18n.t('automated_tests.test_grouping.create.error', errors: e.message))
     nil
   end
 end
