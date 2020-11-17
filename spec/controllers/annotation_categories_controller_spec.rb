@@ -626,26 +626,26 @@ describe AnnotationCategoriesController do
     context '#index' do
       it 'should respond with 403' do
         get_as user, :index, params: { assignment_id: assignment.id }
-        expect(response.status).to eq(403)
+        expect(response).to have_http_status(403)
       end
     end
     context '#show' do
       it 'should respond with 403' do
         get_as user, :show, params: { assignment_id: assignment.id, id: annotation_category.id }
-        expect(response.status).to eq(403)
+        expect(response).to have_http_status(403)
       end
     end
     context '#new' do
       it 'should respond with 403' do
         get_as user, :new, params: { assignment_id: assignment.id }
-        expect(response.status).to eq(403)
+        expect(response).to have_http_status(403)
       end
     end
     context '#new_annotation_text' do
       it 'should respond with 403' do
         get_as user, :new_annotation_text,
                params: { assignment_id: assignment.id, annotation_category_id: annotation_category.id }
-        expect(response.status).to eq(403)
+        expect(response).to have_http_status(403)
       end
     end
     context '#create' do
@@ -653,7 +653,7 @@ describe AnnotationCategoriesController do
         post_as user, :create,
                 params: { assignment_id: assignment.id,
                           annotation_category: { annotation_category_name: 'New Category' } }
-        expect(response.status).to eq(403)
+        expect(response).to have_http_status(403)
       end
     end
     context '#update' do
@@ -662,7 +662,7 @@ describe AnnotationCategoriesController do
                  params: { assignment_id: assignment.id,
                            id: annotation_category.id,
                            annotation_category: { annotation_category_name: 'Updated category' } }
-        expect(response.status).to eq(403)
+        expect(response).to have_http_status(403)
       end
     end
     context '#update_positions' do
@@ -671,14 +671,14 @@ describe AnnotationCategoriesController do
         cat2 = create(:annotation_category, assignment: assignment)
         post_as user, :update_positions,
                 params: { assignment_id: assignment.id, annotation_category: [cat2.id, cat1.id] }
-        expect(response.status).to eq(403)
+        expect(response).to have_http_status(403)
       end
     end
 
     context '#destroy' do
       it 'should respond with 403' do
         delete_as user, :destroy, format: :js, params: { assignment_id: assignment.id, id: annotation_category.id }
-        expect(response.status).to eq(403)
+        expect(response).to have_http_status(403)
       end
     end
     context '#create_annotation_text' do
@@ -687,7 +687,7 @@ describe AnnotationCategoriesController do
                 params: { assignment_id: assignment.id,
                           annotation_text: { content: 'New content', annotation_category_id: annotation_category.id },
                           format: :js }
-        expect(response.status).to eq(403)
+        expect(response).to have_http_status(403)
       end
     end
     context 'When searching for an annotation text' do
@@ -699,7 +699,7 @@ describe AnnotationCategoriesController do
                     params: { assignment_id: category.assessment_id,
                               id: text.id,
                               format: :js }
-          expect(response.status).to eq(403)
+          expect(response).to have_http_status(403)
         end
       end
       context '#update_annotation_text' do
@@ -711,20 +711,20 @@ describe AnnotationCategoriesController do
                            id: text.id,
                            annotation_text: { content: 'updated content' },
                            format: :js }
-          expect(response.status).to eq(403)
+          expect(response).to have_http_status(403)
         end
       end
       context '#upload' do
         it 'should respond with 403' do
           file_good = fixture_file_upload('files/annotation_categories/form_good.csv', 'text/csv')
           post_as user, :upload, params: { assignment_id: assignment.id, upload_file: file_good }
-          expect(response.status).to eq(403)
+          expect(response).to have_http_status(403)
         end
       end
       context '#download' do
         it 'should respond with 403' do
           get_as user, :download, params: { assignment_id: assignment.id }, format: 'csv'
-          expect(response.status).to eq(403)
+          expect(response).to have_http_status(403)
         end
       end
       context '#find_annotation_text' do
@@ -736,7 +736,7 @@ describe AnnotationCategoriesController do
         it 'should respond with 403' do
           string = 'This is an'
           get_as user, :find_annotation_text, params: { assignment_id: assignment.id, string: string }
-          expect(response.status).to eq(403)
+          expect(response).to have_http_status(403)
         end
       end
     end

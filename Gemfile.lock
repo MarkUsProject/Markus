@@ -9,7 +9,8 @@ GIT
 GEM
   remote: https://rubygems.org/
   specs:
-    action_policy (0.4.4)
+    action_policy (0.5.1)
+      ruby-next-core (>= 0.10.3)
     actioncable (6.0.3.3)
       actionpack (= 6.0.3.3)
       nio4r (~> 2.0)
@@ -295,6 +296,7 @@ GEM
       rubocop (>= 0.87.0)
       rubocop-ast (>= 0.4.0)
     ruby-graphviz (1.2.4)
+    ruby-next-core (0.10.3)
     ruby-progressbar (1.10.1)
     ruby-rc4 (0.1.5)
     rubyzip (2.3.0)

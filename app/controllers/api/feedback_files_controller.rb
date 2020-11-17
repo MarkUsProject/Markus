@@ -140,7 +140,13 @@ module Api
       # Update filename if provided
       feedback_file.filename = params[:filename] if !params[:filename].nil?
 
-      if feedback_file.save && feedback_file.update_file_content(params[:file_content])
+      if params[:file_content].respond_to? :read # binary data
+        content = params[:file_content].read
+      else
+        content = params[:file_content]
+      end
+
+      if feedback_file.save && feedback_file.update_file_content(content)
         # Everything went fine; report success
         render 'shared/http_status', locals: { code: '200', message:
           HttpStatusHelper::ERROR_CODE['message']['200']}, status: 200

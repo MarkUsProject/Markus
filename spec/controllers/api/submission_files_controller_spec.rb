@@ -7,28 +7,28 @@ describe Api::SubmissionFilesController do
 
     it 'should fail to authenticate a GET index request' do
       get :index, params: { assignment_id: 1, group_id: 1 }
-      expect(response.status).to eq(403)
+      expect(response).to have_http_status(403)
     end
 
     it 'should fail to authenticate a GET show request' do
       get :show, params: { id: 1, assignment_id: 1, group_id: 1 }
-      expect(response.status).to eq(403)
+      expect(response).to have_http_status(403)
     end
 
     it 'should fail to authenticate a POST create request' do
       post :create, params: { assignment_id: 1, group_id: 1 }
 
-      expect(response.status).to eq(403)
+      expect(response).to have_http_status(403)
     end
 
     it 'should fail to authenticate a PUT update request' do
       put :create, params: { id: 1, assignment_id: 1, group_id: 1 }
-      expect(response.status).to eq(403)
+      expect(response).to have_http_status(403)
     end
 
     it 'should fail to authenticate a DELETE destroy request' do
       delete :destroy, params: { id: 1, assignment_id: 1, group_id: 1 }
-      expect(response.status).to eq(403)
+      expect(response).to have_http_status(403)
     end
   end
   context 'An authenticated request' do

@@ -389,7 +389,7 @@ describe GradeEntryFormsController do
     # By default all the grader permissions are set to false
     let(:user) { create(:ta) }
     describe 'When the grader is allowed to release and unrelease the grades' do
-      let(:user) { create(:ta, manage_submissions: true) }
+      let(:user) { create(:ta, manage_assessments: true) }
       include_examples '#update_grade_entry_students'
     end
     describe 'When the grader is not allowed to release and unrelease the grades' do

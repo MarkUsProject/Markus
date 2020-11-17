@@ -1,92 +1,62 @@
-describe KeyPairPolicy do
-  include PolicyHelper
-
-  subject { described_class.new(user: user) }
+describe KeyPairPolicy, keep_memory_repos: true do
+  let(:context) { { user: user } }
   let(:user) { create :admin }
 
-  shared_examples 'vcs_submit_variation' do |force_pass: false, force_fail: false|
-    let(:to_func) { force_pass || (!force_fail && should_pass) ? :to : :not_to }
-    context 'no assignment' do
-      let(:should_pass) { false }
-      it { is_expected.send(to_func, pass(policy)) }
-    end
-    context 'assignment exists' do
-      let!(:assignment) { create :assignment, **attrs }
-      context 'vcs_submit is true' do
-        context 'is_hidden is true' do
-          let(:attrs) { { assignment_properties_attributes: { vcs_submit: true }, is_hidden: true } }
-          let(:should_pass) { false }
-          it { is_expected.send(to_func, pass(policy)) }
-        end
-        context 'is_hidden is false' do
-          let(:attrs) { { assignment_properties_attributes: { vcs_submit: true }, is_hidden: false } }
-          let(:should_pass) { true }
-          it { is_expected.send(to_func, pass(policy)) }
-        end
+  describe_rule :view? do
+    succeed 'repo type is git and key storage is enabled' do
+      before do
+        allow(Rails.configuration.x.repository).to receive(:type).and_return('git')
+        allow(Rails.configuration).to receive(:enable_key_storage).and_return(true)
       end
-      context 'vcs_submit is false' do
-        context 'is_hidden is true' do
-          let(:attrs) { { assignment_properties_attributes: { vcs_submit: false }, is_hidden: true } }
-          let(:should_pass) { false }
-          it { is_expected.send(to_func, pass(policy)) }
-        end
-        context 'is_hidden is false' do
-          let(:attrs) { { assignment_properties_attributes: { vcs_submit: false }, is_hidden: false } }
-          let(:should_pass) { false }
-          it { is_expected.send(to_func, pass(policy)) }
-        end
+    end
+    failed 'repo type is not git' do
+      before do
+        allow(Rails.configuration.x.repository).to receive(:type).and_return('svn')
+        allow(Rails.configuration).to receive(:enable_key_storage).and_return(true)
+      end
+    end
+    failed 'key storage is not enabled' do
+      before do
+        allow(Rails.configuration.x.repository).to receive(:type).and_return('git')
+        allow(Rails.configuration).to receive(:enable_key_storage).and_return(false)
       end
     end
   end
 
-  describe '#manage?', :keep_memory_repos do
-    let(:policy) { :manage? }
-    shared_examples 'user_variation' do |opts: {}|
-      context 'as an admin' do
-        let(:user) { create :admin }
-        include_examples 'vcs_submit_variation', force_pass: opts[:pass_admin], force_fail: opts[:fail_admin]
+  describe_rule :manage? do
+    context 'repo type is git and key storage is enabled' do
+      before do
+        allow(Rails.configuration.x.repository).to receive(:type).and_return('git')
+        allow(Rails.configuration).to receive(:enable_key_storage).and_return(true)
       end
-      context 'as a grader' do
+      succeed 'when the user is an admin'
+      succeed 'when the user is a ta' do
         let(:user) { create :ta }
-        include_examples 'vcs_submit_variation', force_pass: opts[:pass_grader], force_fail: opts[:fail_grader]
       end
-      context 'as a student' do
+      context 'when the user is a student' do
         let(:user) { create :student }
-        include_examples 'vcs_submit_variation', force_pass: opts[:pass_student], force_fail: opts[:fail_student]
+        succeed 'when there is a unhidden assignment with vcs_submit allowed' do
+          before { create :assignment, is_hidden: false, assignment_properties_attributes: { vcs_submit: true } }
+        end
+        failed 'when there is a hidden assignment with vcs_submit allowed' do
+          before { create :assignment, is_hidden: true, assignment_properties_attributes: { vcs_submit: true } }
+        end
+        failed 'when there is an unhidden assignment with vcs_submit not allowed' do
+          before { create :assignment, is_hidden: false, assignment_properties_attributes: { vcs_submit: false } }
+        end
       end
     end
-
-    context 'with git enabled' do
-      before :each do
-        allow(Rails.configuration.x.repository).to receive(:type).and_return('git')
-      end
-      include_examples 'user_variation', opts: { pass_admin: true, pass_grader: true }
-    end
-    context 'with svn enabled' do
-      before :each do
+    failed 'repo type is not git' do
+      before do
         allow(Rails.configuration.x.repository).to receive(:type).and_return('svn')
+        allow(Rails.configuration).to receive(:enable_key_storage).and_return(true)
       end
-      include_examples 'user_variation', opts: { fail_admin: true, fail_grader: true, fail_student: true }
     end
-  end
-
-  describe '#git_enabled?', :keep_memory_repos do
-    context 'with git enabled' do
-      before :each do
+    failed 'key storage is not enabled' do
+      before do
         allow(Rails.configuration.x.repository).to receive(:type).and_return('git')
+        allow(Rails.configuration).to receive(:enable_key_storage).and_return(false)
       end
-      it { is_expected.to pass(:git_enabled?) }
     end
-    context 'with svn enabled' do
-      before :each do
-        allow(Rails.configuration.x.repository).to receive(:type).and_return('svn')
-      end
-      it { is_expected.not_to pass(:git_enabled?) }
-    end
-  end
-
-  describe '#any_vcs_submit?' do
-    let(:policy) { :any_vcs_submit? }
-    include_examples 'vcs_submit_variation'
   end
 end

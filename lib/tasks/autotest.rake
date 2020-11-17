@@ -6,7 +6,8 @@ namespace :db do
     puts 'Set up testing environment for autotest'
     Rake::Task['markus:setup_autotest'].invoke
 
-    User.add_user(Student, %w[aaaautotest Test Otto]) # Create dummy student for autotest submissions.
+    # Create dummy student for autotest submissions.
+    Student.find_or_create_by(user_name: 'aaaautotest', first_name: 'Test', last_name: 'Otto')
 
     autotest_files_dirs = Dir.glob(File.join('db', 'data', 'autotest_files', '*'))
     autotest_files_dirs.each do |dir_path|

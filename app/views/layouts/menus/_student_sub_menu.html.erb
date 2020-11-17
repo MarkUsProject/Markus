@@ -42,9 +42,7 @@
                       file_manager_assignment_submissions_path(@assignment) %>
         </li>
       <% end %>
-
-      <% if @assignment.enable_student_tests && (@assignment.unlimited_tokens ||
-        @assignment.tokens_per_period > 0) %>
+      <% if allowed_to?(:run_tests?, @current_user, context: { assignment: @assignment }) %>
         <li class='<%= "active" if controller.controller_name == 'automated_tests' %>'>
           <%= link_to t('automated_tests.title'),
                       controller: 'automated_tests',

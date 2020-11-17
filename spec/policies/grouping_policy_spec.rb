@@ -1,138 +1,213 @@
 describe GroupingPolicy do
-  include PolicyHelper
+  let(:context) { { user: user } }
+  let(:record) { grouping }
+  let(:grouping) { create :grouping }
+  let(:user) { create :admin }
 
-  describe '#run_tests?' do
-    subject { described_class.new(grouping, user: user) }
-
-    context 'when the user is an admin' do
-      let(:user) { build(:admin) }
-
-      context 'if the assignment policy passes' do
-        let(:assignment) { create(:assignment_for_tests) }
-        let(:grouping) { build_stubbed(:grouping, assignment: assignment) }
-        it { is_expected.to pass :run_tests? }
-      end
+  describe_rule :member? do
+    let(:grouping) { create :grouping_with_inviter }
+    failed 'user is an admin' do
+      let(:user) { create :admin }
     end
-
-    context 'when the user is a student' do
-      let(:user) { build(:student) }
-
-      context 'if the assignment policy passes' do
-        let(:assignment) { create(:assignment_for_student_tests) }
-        let(:grouping) { create(:grouping, assignment: assignment, test_tokens: 0) }
-
-        context 'if the student is not a member of the group' do
-          let(:other_student) { create(:student) }
-          let!(:membership) { create(:accepted_student_membership, user: other_student, grouping: grouping) } # non-lazy
-          it { is_expected.not_to pass :run_tests?, because_of: :member? }
-        end
-
-        context 'if the student is a member of the group' do
-          let!(:membership) { create(:accepted_student_membership, user: user, grouping: grouping) } # non-lazy
-
-          context 'if a test run is in progress' do
-            let!(:test_run) { create(:test_run, user: user, grouping: grouping) } # non-lazy
-            it { is_expected.not_to pass :run_tests?, because_of: :not_in_progress? }
-          end
-
-          context 'if a test run is not in progress' do
-            let(:test_run) { create(:test_run, user: user, grouping: grouping, time_to_service: 10) }
-
-            context 'if the student has tokens available' do
-              let(:grouping) { create(:grouping, assignment: assignment, test_tokens: 1) }
-              it { is_expected.to pass :run_tests? }
-            end
-
-            context 'if the student has no tokens available' do
-              context 'if the assignment has no unlimited tokens' do
-                it { is_expected.not_to pass :run_tests?, because_of: :tokens_available? }
-              end
-
-              context 'if the assignment has unlimited tokens' do
-                let(:assignment) do
-                  create(:assignment_for_student_tests, assignment_properties_attributes: { unlimited_tokens: true })
-                end
-                it { is_expected.to pass :run_tests? }
-              end
-            end
-          end
-        end
+    failed 'user is an ta' do
+      let(:user) { create :ta }
+    end
+    context 'user is a student' do
+      failed 'user is not a member' do
+        let(:user) { create :student }
+      end
+      succeed 'user is a member' do
+        let(:user) { grouping.inviter }
       end
     end
   end
 
-  describe '#view_file_manager?' do
-    subject { described_class.new(grouping, user: user) }
-    context 'as an admin' do
+  describe_rule :not_in_progress? do
+    succeed 'test not in progress' do
+      before { allow(grouping).to receive(:student_test_run_in_progress?).and_return false }
+    end
+    failed 'test in progress' do
+      before { allow(grouping).to receive(:student_test_run_in_progress?).and_return true }
+    end
+  end
+
+  describe_rule :tokens_available? do
+    succeed 'when test tokens exist' do
+      let(:grouping) { create :grouping, test_tokens: 1 }
+    end
+    succeed 'when there are unlimited tokens available' do
+      let(:grouping) do
+        create :grouping, assignment: create(:assignment, assignment_properties_attributes: { unlimited_tokens: true })
+      end
+    end
+    failed 'when there are no tokens and tokens are limited' do
+      let(:grouping) do
+        create :grouping,
+               assignment: create(:assignment, assignment_properties_attributes: { unlimited_tokens: false }),
+               test_tokens: 0
+      end
+    end
+  end
+
+  describe_rule :invite_member? do
+    let(:grouping) { create :grouping, assignment: assignment }
+    let(:assignment) { create :assignment, assignment_properties_attributes: properties }
+    succeed 'students form groups, has no extension, before collection date' do
+      let(:properties) { { invalid_override: false } }
+    end
+    failed 'students do not form groups, has no extension, before collection date' do
+      let(:properties) { { invalid_override: true } }
+    end
+    failed 'students form groups, has an extension, before collection date' do
+      let(:properties) { { invalid_override: false } }
+      before { create :extension, grouping: grouping }
+    end
+    failed 'students form groups, has no extension, after collection date' do
+      let(:properties) { { invalid_override: false } }
+      let(:assignment) { create :assignment, due_date: 1.day.ago, assignment_properties_attributes: properties }
+    end
+  end
+
+  describe_rule :students_form_groups? do
+    let(:grouping) { create :grouping, assignment: assignment }
+    succeed 'invalid override is false' do
+      let(:assignment) { create :assignment, assignment_properties_attributes: { invalid_override: false } }
+    end
+    failed 'invalid override is true' do
+      let(:assignment) { create :assignment, assignment_properties_attributes: { invalid_override: true } }
+    end
+  end
+
+  describe_rule :before_due_date? do
+    succeed 'before collection date' do
+      before { allow(grouping).to receive(:past_collection_date?).and_return false }
+    end
+    failed 'before collection date' do
+      before { allow(grouping).to receive(:past_collection_date?).and_return true }
+    end
+  end
+
+  describe_rule :disinvite_member? do
+    let(:user) { create :student }
+    let(:context) { { user: user, membership: membership } }
+    succeed 'user is inviter and the membership status is pending' do
+      let(:grouping) { create :grouping_with_inviter, inviter: user }
+      let(:membership) { create :student_membership, grouping: grouping }
+    end
+    failed 'user is not the inviter and the membership status is pending' do
+      let(:membership) { create :student_membership, grouping: grouping }
+    end
+    failed 'user is inviter and the membership status is not pending' do
+      let(:grouping) { create :grouping_with_inviter, inviter: user }
+      let(:membership) { create :accepted_student_membership, grouping: grouping }
+    end
+  end
+
+  describe_rule :delete_rejected? do
+    let(:user) { create :student }
+    let(:context) { { user: user, membership: membership } }
+    succeed 'user is inviter and the membership status is rejected' do
+      let(:grouping) { create :grouping_with_inviter, inviter: user }
+      let(:membership) { create :rejected_student_membership, grouping: grouping }
+    end
+    failed 'user is not the inviter and the membership status is rejected' do
+      let(:membership) { create :rejected_student_membership, grouping: grouping }
+    end
+    failed 'user is inviter and the membership status is not rejected' do
+      let(:grouping) { create :grouping_with_inviter, inviter: user }
+      let(:membership) { create :student_membership, grouping: grouping }
+    end
+  end
+
+  describe_rule :destroy? do
+    succeed 'grouping is deletable by the user and there is no submission' do
+      before { allow(grouping).to receive(:deletable_by?).and_return true }
+    end
+    failed 'grouping is not deletable by the user and there is no submission' do
+      before { allow(grouping).to receive(:deletable_by?).and_return false }
+    end
+    failed 'grouping is deletable by the user but there is a submission' do
+      before { allow(grouping).to receive(:deletable_by?).and_return true }
+      let(:grouping) { create :grouping_with_inviter_and_submission }
+    end
+  end
+
+  describe_rule :deletable_by? do
+    succeed 'grouping is deletable by the user' do
+      before { allow(grouping).to receive(:deletable_by?).and_return true }
+    end
+    failed 'grouping is not deletable by the user' do
+      before { allow(grouping).to receive(:deletable_by?).and_return false }
+    end
+  end
+
+  describe_rule :no_submission? do
+    succeed 'grouping has no submission'
+    failed 'grouping has a submission' do
+      let(:grouping) { create :grouping_with_inviter_and_submission }
+    end
+  end
+
+  describe_rule :no_extension? do
+    succeed 'grouping has no extension'
+    failed 'grouping has an extension' do
+      before { create :extension, grouping: grouping }
+    end
+  end
+
+  describe_rule :view_file_manager? do
+    failed 'user is an admin' do
       let(:user) { create :admin }
-      let(:grouping) { create :grouping }
-      it { is_expected.not_to pass :view_file_manager? }
     end
-    context 'as a grader' do
+    failed 'user is a ta' do
       let(:user) { create :ta }
-      let(:grouping) { create :grouping }
-      it { is_expected.not_to pass :view_file_manager? }
     end
-    context 'as a student' do
+    context 'user is a student' do
       let(:user) { create :student }
-      context 'when the assignment is a regular one' do
-        let(:grouping) { create :grouping }
-        it { is_expected.to pass :view_file_manager? }
+      let(:grouping) { create :grouping, assignment: assignment }
+      succeed 'when the assignment is not scanned or a peer review or timed' do
+        let(:assignment) { create :assignment }
       end
-      context 'when the assignment is scanned' do
-        let(:grouping) { create :grouping, assignment: create(:assignment_for_scanned_exam) }
-        it { is_expected.not_to pass :view_file_manager? }
+      failed 'when the assignment is scanned' do
+        let(:assignment) { create :assignment_for_scanned_exam }
       end
-      context 'when the assignment is a peer review' do
-        let(:grouping) { create :grouping, assignment: create(:peer_review_assignment) }
-        it { is_expected.not_to pass :view_file_manager? }
+      failed 'when the assignment is a peer review' do
+        let(:assignment) { create :peer_review_assignment }
       end
       context 'when the assignment is timed' do
-        let(:grouping) { create :grouping, assignment: assignment }
         let(:assignment) { create :timed_assignment }
-        context 'when the grouping has not started' do
-          it { is_expected.not_to pass :view_file_manager? }
-          context 'when the assignment collection date has passed' do
-            let(:assignment) { create :timed_assignment, due_date: 1.minute.ago }
-            it { is_expected.to pass :view_file_manager? }
-          end
+        succeed 'and it has started' do
+          let(:grouping) { create :grouping, assignment: assignment, start_time: 1.minute.ago }
         end
-        context 'when the grouping has started' do
-          before { grouping.update!(start_time: 1.hour.ago) }
-          it { is_expected.to pass :view_file_manager? }
-        end
+        failed 'and it has not started yet'
       end
     end
   end
 
-  describe '#start_timed_assignment?' do
-    subject { described_class.new(grouping, user: user) }
-    context 'as an admin' do
+  describe_rule :start_timed_assignment? do
+    failed 'user is an admin' do
       let(:user) { create :admin }
-      let(:grouping) { create :grouping }
-      it { is_expected.not_to pass :start_timed_assignment? }
     end
-    context 'as a grader' do
+    failed 'user is a ta' do
       let(:user) { create :ta }
-      let(:grouping) { create :grouping }
-      it { is_expected.not_to pass :start_timed_assignment? }
     end
-    context 'as a student' do
+    context 'user is a student' do
       let(:user) { create :student }
-      let(:assignment) { create :timed_assignment }
-      let(:grouping) { create :grouping_with_inviter, inviter: user, assignment: assignment }
-      it { is_expected.to pass :start_timed_assignment? }
-      context 'when the grouping has already started the assignment' do
-        before { grouping.update!(start_time: 1.hour.ago) }
-        it { is_expected.not_to pass :start_timed_assignment? }
+      let(:past_collection_date) { false }
+      let(:past_assessment_start_time) { true }
+      before do
+        allow(grouping).to receive(:past_collection_date?).and_return past_collection_date
+        allow(grouping).to receive(:past_assessment_start_time?).and_return past_assessment_start_time
       end
-      context 'when the collection date has passed' do
-        before { assignment.update!(due_date: 1.minute.ago) }
-        it { is_expected.not_to pass :start_timed_assignment? }
+      succeed 'assignment has not started, not passed collection date, passed start time'
+      failed 'assignment has been started' do
+        let(:grouping) { create :grouping, start_time: 1.minute.ago }
       end
-      context 'when the assignment start time has not started yet' do
-        before { assignment.update!(due_date: 10.hours.from_now, start_time: 1.minute.from_now) }
-        it { is_expected.not_to pass :start_timed_assignment? }
+      failed 'passed collection date' do
+        let(:past_collection_date) { true }
+      end
+      failed 'not passed assessment start time' do
+        let(:past_assessment_start_time) { false }
       end
     end
   end

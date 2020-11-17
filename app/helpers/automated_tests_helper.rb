@@ -134,7 +134,7 @@ module AutomatedTestsHelper
       user.last_name = 'Server'
       user.hidden = true
     end
-    server_user.set_api_key
+    server_user.reset_api_key
 
     server_user.api_key
   rescue ActiveRecord::RecordNotUnique

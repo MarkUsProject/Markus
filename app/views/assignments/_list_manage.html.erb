@@ -24,7 +24,7 @@
 
               <% if assignment.has_peer_review? %>
                 <!--temporary conditional until submissions_controller.browse() is updated to handle pr_assignments-->
-                <% if allowed_to?(:view_assessments?) %>
+                <% if allowed_to?(:view?) %>
                   <% pr_route = { controller: 'assignments', action: action, id: assignment.pr_assignment.id } %>
                 <% else %>
                   <% pr_route = {} %>
