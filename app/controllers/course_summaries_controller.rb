@@ -93,22 +93,33 @@ class CourseSummariesController < ApplicationController
               filename: "#{course_name}_grades_report.csv"
   end
 
-  def assessment_overview(assessment)
+  def get_assessment_data(assessment, type)
     if assessment.is_a? GradeEntryForm
-      {
-        name: assessment.short_identifier,
-        total: assessment.grade_entry_items.where(bonus: false).sum(:out_of),
-        average: assessment.calculate_average&.round(2),
-        median: current_user.admin? ? assessment.calculate_median&.round(2) : nil
-      }
+      return assessment.calculate_median&.round(2) if type == :median
+      return assessment.calculate_average&.round(2) if type == :average
+      return assessment.grade_entry_items.where(bonus: false).sum(:out_of) if type == :total
     else
-      {
-        name: assessment.short_identifier,
-        total: assessment.max_mark,
-        average: assessment.results_average&.round(2),
-        median: current_user.admin? || assessment.display_median_to_students ? assessment.results_median&.round(2) : nil
-      }
+      return assessment.results_median&.round(2) if type == :median
+      return assessment.results_average&.round(2) if type == :average
+      return assessment.max_mark if type == :total
     end
+    nil
+  end
+
+  def assessment_overview(assessment)
+    data = {
+      name: assessment.short_identifier,
+      total: get_assessment_data(assessment, :total),
+      average: nil,
+      median: nil
+    }
+    if current_user.admin? || current_user&.has_released_result_for(assessment)
+      data[:average] = get_assessment_data(assessment, :average)
+      if current_user.admin? || assessment.display_median_to_students
+        data[:median] = get_assessment_data(assessment, :median)
+      end
+    end
+    data
   end
 
   protected
