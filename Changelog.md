@@ -30,6 +30,7 @@
 - Fix bug that prevented creation of scanned exams (#4968)
 - Fix bug where subdirectories were not being created with the right path in the autotest file manager (#4969)
 - Fix bug where students could see average and median marks when the results had not been released yet (#4976)
+- Add email and id_number to user information returned by get requests to api user routes (#4974)
 
 ## [v1.10.3]
 - Allow for more concurrent access to git repositories (#4895)
