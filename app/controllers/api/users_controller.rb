@@ -6,7 +6,8 @@ module Api
     before_action :authorize!
 
     # Define default fields to display for index and show methods
-    DEFAULT_FIELDS = [:id, :user_name, :type, :first_name, :last_name, :grace_credits, :notes_count, :hidden].freeze
+    DEFAULT_FIELDS = [:id, :user_name, :email, :id_number, :type, :first_name,
+                      :last_name, :grace_credits, :notes_count, :hidden].freeze
 
     # Returns users and their attributes
     # Optional: filter, fields
