@@ -1,5 +1,6 @@
 # Changelog
 ## [unreleased]
+- Add display name to settings (#4937)
 - Create the required directory when uploading zip file with unzip is true (#4941)
 - Remove preview of compressed archives in repo browser (#4920)
 - Add singular annotation update feature when updating non-deductive categorized annotations (#4874)
@@ -25,9 +26,11 @@
 - Fix a bug where some error messages reported by the API caused a json formatting error (#4964)
 - Updated all authorization to use ActionPolicy (#4865)
 - Fix bug where note creation form could be submitted before the form had finished updating (#4971)
+- Move API key handling to user Settings page (#4967)
 - Fix bug that prevented creation of scanned exams (#4968)
 - Fix bug where subdirectories were not being created with the right path in the autotest file manager (#4969)
 - Fix bug where penalty periods could have interval/hour values of zero (#4973)
+- Add email and id_number to user information returned by get requests to api user routes (#4974)
 
 ## [v1.10.3]
 - Allow for more concurrent access to git repositories (#4895)

@@ -7,6 +7,7 @@ describe User do
   it { is_expected.to validate_presence_of :user_name }
   it { is_expected.to validate_presence_of :last_name }
   it { is_expected.to validate_presence_of :first_name }
+  it { is_expected.to validate_presence_of :display_name }
   it { is_expected.to allow_value('Student').for(:type) }
   it { is_expected.to allow_value('Admin').for(:type) }
   it { is_expected.to allow_value('Ta').for(:type) }
@@ -43,6 +44,11 @@ describe User do
       expect(@user.user_name).to eq 'ausername'
       expect(@user.first_name).to eq 'afirstname'
       expect(@user.last_name).to eq 'alastname'
+    end
+
+    it 'should set default display name to be first + last name' do
+      expect(@user.save).to eq true
+      expect(@user.display_name).to eq "#{@user.first_name} #{@user.last_name}"
     end
   end
 
