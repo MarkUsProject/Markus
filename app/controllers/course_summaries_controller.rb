@@ -94,16 +94,17 @@ class CourseSummariesController < ApplicationController
   end
 
   def get_assessment_data(assessment, type)
-    if assessment.is_a? GradeEntryForm
-      return assessment.calculate_median&.round(2) if type == :median
-      return assessment.calculate_average&.round(2) if type == :average
-      return assessment.grade_entry_items.where(bonus: false).sum(:out_of) if type == :total
+    is_gef = assessment.is_a? GradeEntryForm
+    case type
+    when :median
+      (is_gef ? assessment.calculate_median : assessment.results_median)&.round(2)
+    when :average
+      (is_gef ? assessment.calculate_average : assessment.results_average)&.round(2)
+    when :total
+      (is_gef ? assessment.grade_entry_items.where(bonus: false).sum(:out_of) : assessment.max_mark)
     else
-      return assessment.results_median&.round(2) if type == :median
-      return assessment.results_average&.round(2) if type == :average
-      return assessment.max_mark if type == :total
+      nil
     end
-    nil
   end
 
   def assessment_overview(assessment)
@@ -113,7 +114,7 @@ class CourseSummariesController < ApplicationController
       average: nil,
       median: nil
     }
-    if current_user.admin? || current_user&.has_released_result_for(assessment)
+    if current_user.admin? || (current_user.student? && current_user.released_result_for?(assessment))
       data[:average] = get_assessment_data(assessment, :average)
       if current_user.admin? || assessment.display_median_to_students
         data[:median] = get_assessment_data(assessment, :median)

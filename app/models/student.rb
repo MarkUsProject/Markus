@@ -247,7 +247,7 @@ class Student < User
       assignment&.due_date
   end
 
-  def has_released_result_for(assessment)
+  def released_result_for?(assessment)
     if assessment.is_a? GradeEntryForm
       grade_entry_students.find_by(assessment_id: assessment.id)&.released_to_student
     else
