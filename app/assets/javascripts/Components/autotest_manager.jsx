@@ -196,8 +196,8 @@ class AutotestManager extends React.Component {
 
   runTests = () => {
     $.post({
-      url: Routes.run_tests_assignment_automated_tests_path(this.props.assignment_id, this.props.solution_grouping_id),
-    });
+      url: Routes.run_tests_assignment_submissions_path(this.props.assignment_id),
+      data: { groupings: [this.props.solution_grouping_id] },    });
   };
 
   studentTestsField = () => {
@@ -334,12 +334,13 @@ class AutotestManager extends React.Component {
           />
         </fieldset>
         )}
-        <p>
+        {this.props.solution_grouping_id && (<p>
           <button onClick={this.runTests} disabled={!this.state.enable_test}
           >
-          {I18n.t('submissions.run_tests')}
-        </button>
+            {I18n.t('submissions.run_tests')}
+          </button>
         </p>
+        )}
         <fieldset>
           <legend><span>{'Testers'}</span></legend>
           <div className={'rt-action-box upload-download'}>
