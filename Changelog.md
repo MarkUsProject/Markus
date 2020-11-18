@@ -1,5 +1,8 @@
 # Changelog
 
+## [v1.10.4]
+- Fix bug where students could see average and median marks when the results had not been released yet (#4976)
+
 ## [v1.10.3]
 - Allow for more concurrent access to git repositories (#4895)
 - Fixed calculation bugs for grade summary (#4899)
