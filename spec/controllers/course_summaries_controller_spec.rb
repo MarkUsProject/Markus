@@ -223,8 +223,8 @@ describe CourseSummariesController do
                 medians << (a.display_median_to_students ? a.results_median&.round(2) : nil)
               end
             end
-            expect(returned_medians).to eq medians
-            expect(returned_averages).to eq averages
+            expect(returned_medians.compact).to be_empty
+            expect(returned_averages.compact).to be_empty
           end
         end
 
