@@ -5,6 +5,7 @@ import Form from 'react-jsonschema-form';
 import Datepicker from './date_picker'
 import FileUploadModal from './Modals/file_upload_modal'
 import AutotestSpecsUploadModal from "./Modals/autotest_specs_upload_modal";
+import {SubmissionFileManager} from "./submission_file_manager";
 
 class AutotestManager extends React.Component {
   constructor(props) {
@@ -316,6 +317,17 @@ class AutotestManager extends React.Component {
             disableActions={{rename: true}}
           />
         </fieldset>
+        {this.props.solution_grouping_id && (<fieldset>
+          <legend><span>{I18n.t("automated_tests.solution_files")}</span></legend>
+          <SubmissionFileManager
+            readOnly={!this.state.enable_test}
+            assignment_id={this.props.assignment_id}
+            grouping_id={this.props.solution_grouping_id}
+            enableSubdirs={true}
+            display_file_preview={false}
+          />
+        </fieldset>
+        )}
         <fieldset>
           <legend><span>{'Testers'}</span></legend>
           <div className={'rt-action-box upload-download'}>

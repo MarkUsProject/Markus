@@ -1,6 +1,7 @@
 en:
   automated_tests:
     files: "Test Files"
+    solution_files: "Solution Files"
     loading_specs: "Tester settings are being loaded. Please refresh the page in a minute."
     need_one_file: "You must submit at least one file in order to run tests."
     need_group_for_test: "You must have a group to run tests."
@@ -20,6 +21,9 @@ en:
     title: "Automated Testing"
     display_output_title: "Display test output to students?"
     invalid_specs_file: "Settings file is not a valid json file"
+    test_grouping:
+      create:
+        error: "Something unexpected happened due to the following error(s): %{errors}."
     specs_file_upload_message: "File must be a valid json file"
     display_output:
       instructors: "Never display test output to students"

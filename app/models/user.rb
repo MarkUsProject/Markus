@@ -5,6 +5,9 @@ require 'base64' # required for {set,reset}_api_token
 # => :user_name, :last_name, :first_name
 # If there are added columns, add the default values to default_values
 class User < ApplicationRecord
+  # test student username constant
+  TEST_STUDENT_USER_NAME = 'test_student'.freeze
+
   before_validation :strip_name
   before_validation :nillify_empty_email_and_id_number
 
@@ -27,6 +30,8 @@ class User < ApplicationRecord
   validates_uniqueness_of   :id_number, :allow_nil => true
 
   validates_format_of       :type, with: /\AStudent|Admin|Ta|TestServer|TestStudent\z/
+  validates_exclusion_of :user_name, in: [TEST_STUDENT_USER_NAME], if: -> { self.class != TestStudent }
+
   # role constants
   STUDENT = 'Student'.freeze
   ADMIN = 'Admin'.freeze

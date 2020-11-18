@@ -2,6 +2,7 @@
 ## [unreleased]
 - Introduce the ability to designate criteria as 'bonus' marks (#4804)
 - Enable variable permissions for graders (#4601)
+- Added file manager for solution files (#4918)
 
 ## [v1.10.0]
 - Issue #3670: Added API for adding and removing extra marks (#4499)

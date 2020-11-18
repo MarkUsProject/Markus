@@ -1,6 +1,7 @@
 fr:
   automated_tests:
     files: "UPDATE ME"
+    solution_files: "UPDATE ME"
     loading_specs: "UPDATE ME"
     need_one_file: "Vous devez avoir au moins un fichier envoyé pour exécuter un test."
     need_group_for_test: "UPDATE ME"
@@ -20,6 +21,9 @@ fr:
     title: "Tests automatisés"
     display_output_title: "Montrez le sortie des tests aux étudiants?"
     invalid_specs_file: "Ce fichier n'est pas un fichier JSON valide"
+    test_grouping:
+      create:
+        error: "UPDATE ME"
     specs_file_upload_message: "Le fichier doit être un fichier json valide"
     display_output:
       instructors: "Ne montrez jamais le sortie des tests aux étudiants"

@@ -1,6 +1,7 @@
 es:
   automated_tests:
     files: "UPDATE ME"
+    solution_files: "UPDATE ME"
     loading_specs: "UPDATE ME"
     need_one_file: "Usted necesita al menos un archivo en la entrega para poder ejecutar las pruebas."
     need_group_for_test: "Usted debe tener un grupo para lanzar la prueba"
@@ -20,6 +21,9 @@ es:
     title: "Pruebas Automatizadas"
     display_output_title: "UPDATE ME"
     invalid_specs_file: "UPDATE ME"
+    test_grouping:
+      create:
+        error: "UPDATE ME"
     specs_file_upload_message: "UPDATE ME"
     display_output:
       instructors: "No mostrar"

@@ -12,6 +12,25 @@ describe User do
   it { is_expected.to allow_value('Ta').for(:type) }
   it { is_expected.not_to allow_value('OtherTypeOfUser').for(:type) }
 
+  context 'Creating user with user name test_student' do
+    context 'When the user type is Admin' do
+      subject { build(:admin, user_name: User::TEST_STUDENT_USER_NAME) }
+      it { is_expected.to validate_exclusion_of(:user_name).in_array([User::TEST_STUDENT_USER_NAME]) }
+    end
+    context 'When the user type is TestStudent' do
+      subject { build(:test_student, user_name: User::TEST_STUDENT_USER_NAME) }
+      it { expect(subject).to be_valid }
+    end
+    context 'When the user type is Ta' do
+      subject { build(:ta, user_name: User::TEST_STUDENT_USER_NAME) }
+      it { is_expected.to validate_exclusion_of(:user_name).in_array([User::TEST_STUDENT_USER_NAME]) }
+    end
+    context 'When the user type is Student' do
+      subject { build(:student, user_name: User::TEST_STUDENT_USER_NAME) }
+      it { is_expected.to validate_exclusion_of(:user_name).in_array([User::TEST_STUDENT_USER_NAME]) }
+    end
+  end
+
   describe 'uniqueness validation' do
     subject { create :admin }
     it { is_expected.to validate_uniqueness_of :user_name }
