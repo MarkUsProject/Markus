@@ -116,12 +116,8 @@ class RemarkRequestForm extends React.Component {
     this.button = React.createRef();
   }
 
-  componentDidUpdate(prevProps, prevState) {
-    if (prevProps.initialValue !== this.props.initialValue) {
-      this.setState({value: this.props.initialValue});
-    } else if (prevState.value !== this.state.value) {
-      this.renderPreview();
-    }
+  componentDidMount() {
+    this.renderPreview();
   }
 
   renderPreview = () => {
