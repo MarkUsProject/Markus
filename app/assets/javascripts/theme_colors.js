@@ -24,7 +24,7 @@ export const themes = {
     background_main: '#fff',
     background_support: '#cee3ea',
     comments_color: 'var(--heavy_success)',
-    disabled: '#a0a0a0',
+    disabled: '#bcbcbc',
     error_light: '#ffc2c2',
     heavy_alert: '#ffd452',
     heavy_error: '#a20000',
