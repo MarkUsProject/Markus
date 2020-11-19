@@ -33,7 +33,7 @@ describe UsersController do
         student.update!(setting => false)
         patch_as student,
                  'update_settings',
-                 params: { student: { setting => true, other_setting => true } }
+                 params: { user: { setting => true, other_setting => true } }
         student.reload
         expect(student[setting]).to be true
       end
@@ -42,7 +42,7 @@ describe UsersController do
         student.update!(setting => true)
         patch_as student,
                  'update_settings',
-                 params: { student: { setting => false, other_setting => true } }
+                 params: { user: { setting => false, other_setting => true } }
         student.reload
         expect(student[setting]).to be false
       end
@@ -71,7 +71,7 @@ describe UsersController do
       it 'redirects back to settings' do
         patch_as student,
                  'update_settings',
-                 params: { 'student': { 'receives_invite_emails': false, 'receives_results_emails': true } }
+                 params: { 'user': { 'receives_invite_emails': false, 'receives_results_emails': true } }
         expect(response).to redirect_to(settings_users_path)
       end
     end
@@ -82,7 +82,7 @@ describe UsersController do
         display_name = 'First Last'
         patch_as student,
                  'update_settings',
-                 params: { 'student': { 'display_name': display_name } }
+                 params: { 'user': { 'display_name': display_name } }
         expect(student.reload.display_name).to eq display_name
       end
     end
