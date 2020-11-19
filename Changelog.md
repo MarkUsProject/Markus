@@ -2,6 +2,7 @@
 
 ## [v1.10.4]
 - Fix bug where students could see average and median marks when the results had not been released yet (#4976)
+- Add email and id_number to user information returned by get requests to api user routes (#4974)
 
 ## [v1.10.3]
 - Allow for more concurrent access to git repositories (#4895)
