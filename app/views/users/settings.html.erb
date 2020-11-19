@@ -19,7 +19,9 @@
     <%= f.select(:theme, [%w[dark dark], %w[light light]]) %>
     <%= f.label :theme, t('students.toggle_theme') %>
   </p>
-  <%= f.submit t('students.update_settings') %>
+  <p>
+    <%= f.submit t('students.update_settings') %>
+  </p>
 <% end %>
 
 <% if allowed_to?(:reset_api_key) %>
