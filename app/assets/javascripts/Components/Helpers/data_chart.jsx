@@ -15,9 +15,12 @@ export class DataChart extends React.Component {
       responsive: false,
       legend: {
         display: this.props.legend
-      },
+        },
       scales: {
         yAxes: [{
+          gridLines: {
+            color: document.documentElement.style.getPropertyValue('--primary_three')
+          },
           ticks: {
             beginAtZero: true,
             min: 0,
@@ -29,6 +32,9 @@ export class DataChart extends React.Component {
           }
         }],
         xAxes: [{
+          gridLines: {
+            color: document.documentElement.style.getPropertyValue('--primary_three')
+          },
           scaleLabel: {
             display: true,
             labelString: this.props.xTitle
@@ -36,7 +42,6 @@ export class DataChart extends React.Component {
         }]
       }
     };
-
     this.chart = new Chart(ctx, {
       type: 'bar',
       data: data,
@@ -52,6 +57,7 @@ export class DataChart extends React.Component {
     this.chart.data = {labels: this.props.labels, datasets: this.props.datasets};
     this.chart.options.scales.yAxes[0].ticks.max = Math.max(...yRange);
     this.chart.options.legend.display = this.props.legend;
+    this.chart.options.legend.fontColor = document.documentElement.style.getPropertyValue('--line');
     this.chart.options.scales.yAxes[0].scaleLabel = {display: true, labelString: this.props.yTitle};
     this.chart.options.scales.xAxes[0].scaleLabel = {display: true, labelString: this.props.xTitle};
     this.chart.update();
