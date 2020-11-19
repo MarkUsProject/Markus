@@ -26,7 +26,7 @@ class UsersController < ApplicationController
   end
 
   def settings_params
-    params.require(:user).permit(:receives_invite_emails, :receives_results_emails, :display_name, :time_zone)
+    params.require(:user).permit(:receives_invite_emails, :receives_results_emails, :display_name, :time_zone, :locale)
   end
 
   protected
