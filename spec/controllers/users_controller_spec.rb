@@ -87,6 +87,53 @@ describe UsersController do
       end
     end
 
+    describe 'change time zone in settings' do
+      let(:student) { create(:student, user_name: 'c6stenha') }
+      it 'updates time zone for student' do
+        time_zone = 'Fake/TimeZone'
+        patch_as student,
+                 'update_settings',
+                 params: { 'user': { 'time_zone': time_zone } }
+        expect(student.reload.time_zone).to eq time_zone
+      end
+    end
+
+    describe 'change locale in settings' do
+      let(:student) { create(:student, user_name: 'c6stenha') }
+
+      after(:each) do
+        I18n.locale = :en
+      end
+
+      it 'updates locale for student' do
+        locale = 'es'
+        expect(I18n.locale).to eq I18n.default_locale
+        patch_as student,
+                 'update_settings',
+                 params: { 'user': { 'locale': locale } }
+
+        @controller = MainController.new
+        get 'check_timeout'
+
+        expect(student.reload.locale).to eq locale
+        expect(I18n.locale).to eq locale.to_sym
+      end
+
+      it 'updates locale for admin' do
+        locale = 'es'
+        expect(I18n.locale).to eq I18n.default_locale
+        patch_as admin,
+                 'update_settings',
+                 params: { 'user': { 'locale': locale } }
+
+        @controller = MainController.new
+        get 'check_timeout'
+
+        expect(admin.reload.locale).to eq locale
+        expect(I18n.locale).to eq locale.to_sym
+      end
+    end
+
     describe '#reset_api_key' do
       let(:student) { create(:student) }
       it 'cannot reset their api key' do
