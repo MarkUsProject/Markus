@@ -246,4 +246,12 @@ class Student < User
       section&.section_due_date_for(assignment)&.due_date ||
       assignment&.due_date
   end
+
+  def released_result_for?(assessment)
+    if assessment.is_a? GradeEntryForm
+      grade_entry_students.find_by(assessment_id: assessment.id)&.released_to_student
+    else
+      accepted_groupings.find_by(assessment_id: assessment.id)&.current_result&.released_to_students
+    end
+  end
 end
