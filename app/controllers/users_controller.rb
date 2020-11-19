@@ -26,7 +26,15 @@ class UsersController < ApplicationController
   end
 
   def settings_params
-    params.require(:student).permit(:receives_invite_emails, :receives_results_emails, :display_name)
+    if current_user.student?
+      params.require(:student).permit(:receives_invite_emails, :receives_results_emails, :display_name, :theme)
+    elsif current_user.admin?
+      params.require(:admin).permit(:theme)
+    elsif current_user.ta?
+      params.require(:ta).permit(:theme)
+    else
+      {}
+    end
   end
 
   protected

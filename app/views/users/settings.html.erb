@@ -1,6 +1,6 @@
 <% content_for :title, t('students.account_settings') %>
-<% if @current_user.student? %>
-  <%= form_with url: 'update_settings', method: 'patch', model: @current_user, local: true do |f| %>
+<%= form_with url: 'update_settings', method: 'patch', model: @current_user, local: true do |f| %>
+  <% if @current_user.student? %>
     <p>
       <%= f.label :display_name, t('students.display_name') %>
       <%= f.text_field :display_name,
@@ -14,8 +14,12 @@
       <%= f.check_box :receives_invite_emails %>
       <%= f.label :receives_invite_emails, t('students.toggle_invite_notifications') %>
     </p>
-    <%= f.submit t('students.update_settings') %>
   <% end %>
+  <p>
+    <%= f.select(:theme, [%w[dark dark], %w[light light]]) %>
+    <%= f.label :theme, t('students.toggle_theme') %>
+  </p>
+  <%= f.submit t('students.update_settings') %>
 <% end %>
 
 <% if allowed_to?(:reset_api_key) %>
