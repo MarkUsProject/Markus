@@ -1,5 +1,6 @@
 # Changelog
 ## [unreleased]
+- Use display name on top right corner (#4979)
 - Add display name to settings (#4937)
 - Create the required directory when uploading zip file with unzip is true (#4941)
 - Remove preview of compressed archives in repo browser (#4920)
