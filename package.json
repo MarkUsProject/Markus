@@ -10,7 +10,7 @@
     "jquery": "^3.5.1",
     "marked": "^0.7.0",
     "mime-types": "^2.1.27",
-    "moment": "^2.27.0",
+    "moment": "^2.29.1",
     "mousetrap": "^1.6.5",
     "pdfjs-dist": "^2.5.207",
     "postcss-preset-env": "^6.7.0",
