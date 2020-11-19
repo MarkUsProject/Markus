@@ -197,7 +197,8 @@ class AutotestManager extends React.Component {
   runTests = () => {
     $.post({
       url: Routes.run_tests_assignment_submissions_path(this.props.assignment_id),
-      data: { groupings: [this.props.solution_grouping_id] },    });
+      data: { groupings: [this.props.solution_grouping_id],
+      is_solution_grouping: true},    });
   };
 
   studentTestsField = () => {

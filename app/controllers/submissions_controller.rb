@@ -253,6 +253,16 @@ class SubmissionsController < ApplicationController
       head 400
       return
     end
+    if params[:is_solution_grouping] == 'true'
+      grouping = Grouping.find(params[:groupings][0])
+      grouping.group.access_repo do |repo|
+        revision_identifier = repo.get_latest_revision.revision_identifier
+        SubmissionsJob.perform_now([grouping],
+                                   revision_identifier: revision_identifier)
+
+        grouping.reload.current_submission_used
+      end
+    end
     assignment = Assignment.includes(groupings: :current_submission_used).find(params[:assignment_id])
     groupings = assignment.groupings.find(params[:groupings])
     # .where.not(current_submission_used: nil) potentially makes find fail with RecordNotFound
