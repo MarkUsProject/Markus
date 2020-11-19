@@ -1,5 +1,8 @@
 # Changelog
 
+## [v1.10.4]
+- Add email and id_number to user information returned by get requests to api user routes (#4974)
+
 ## [v1.10.3]
 - Allow for more concurrent access to git repositories (#4895)
 - Fixed calculation bugs for grade summary (#4899)
