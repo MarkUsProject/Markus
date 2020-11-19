@@ -265,7 +265,7 @@ label.required::after, th.required::after {
     border: 1px solid $line;
   }
 
-  .rt-resizer {
+  .rt-thead .rt-th, .rt-thead .rt-td {
     color: $line;
   }
 
