@@ -166,7 +166,7 @@ class RubricCriterion < Criterion
     # (this was being done in a weird way, leaving the original in case there are problems)
     # factor = 10.0 ** 3
     # self.max_mark = (max_mark * factor).round.to_f / factor
-    self.max_mark = self.max_mark.round(1)
+    self.max_mark = self.max_mark.round(2)
   end
 
   def all_assigned_groups

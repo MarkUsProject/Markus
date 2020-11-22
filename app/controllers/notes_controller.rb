@@ -1,12 +1,5 @@
 class NotesController < ApplicationController
-  before_action do
-    if params[:id].nil?
-      authorize!
-    else
-      note = Note.find(params[:id])
-      authorize! note, with: NotePolicy
-    end
-  end
+  before_action { authorize! }
   responders :flash, :collection
 
   # TODO this method needs explaining ! What is return_id ?
@@ -113,13 +106,10 @@ class NotesController < ApplicationController
 
   def destroy
     @note = Note.find(params[:id])
-    begin
-      authorize! @note, to: :modify?
+    if flash_allowance(:error, allowance_to(:modify?, @note)).value
       @note.destroy
       respond_with(@note)
-    rescue ActionPolicy::Unauthorized => e
-      flash_message(:error,
-                    e.result.message)
+    else
       render 'destroy', formats: [:js], handlers: [:erb]
     end
   end

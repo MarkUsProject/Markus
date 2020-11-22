@@ -10,7 +10,7 @@
         show_total: <%= @grade_entry_form.show_total ? 'true' : 'false' %>,
         out_of_total: <%= @grade_entry_form.out_of_total %>,
         show_sections: <%= Section.exists? %>,
-        can_release: <%= allowed_to? :update_grade_entry_students? %>
+        can_release: <%= allowed_to? :manage? %>
       }
     );
   })

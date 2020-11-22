@@ -1,58 +1,129 @@
 pt:
   action_policy:
+    unauthorized: &unauthorized "UPDATE ME."
     policy:
-      assignment:
-        before_due_date?: "Você não pode executar o teste pois a sua entrega está fora do prazo."
-        collection_date_passed?: "Não foi possível criar grupo: a data de entrega para este projeto já passou e ou não há períodos de carência permitidos, ou o período de tolerância para este projeto já terminou."
-        enabled?: "UPDATE ME."
-        not_yet_in_group?: "Você já tem um grupo, e não pode criar outro"
-        students_form_groups?: "Atribuição não permite que os alunos formem grupos."
-        tokens_released?: "Nenhum tokens dado."
-        work_alone?: "Você não pode trabalhar sozinho para este projeto - o tamanho mínimo do grupo é de %{group_min}."
-        can_run_tests?: "UPDATE ME."
-        view_assessments?: "UPDATE ME."
+      admin:
+        run_tests?: "UPDATE ME."
+        manage_submissions?: "UPDATE ME."
+        manage_assessments?: "UPDATE ME."
+      annotation_category:
         manage?: "UPDATE ME."
-        run_and_stop_tests?: "UPDATE ME."
-      grouping:
-        before_due_date?: "A data de entrega para este projeto já passou."
-        deletable_by?: "Você não tem permissão para deletar este grupo."
-        delete_rejected?: "Apenas o anfitrião pode excluir um convite recusado."
-        disinvite_member?: "UPDATE ME."
-        member?: "UPDATE ME."
-        no_extension?: "UPDATE ME."
-        no_submission?: "Você já enviou algo. Não pode deletar seu grupo."
-        not_in_progress?: "UPDATE ME."
-        tokens_available?: "Nenhum token foi encontrado para esse estudante e para esse projeto."
-      submission:
-        before_release?: "UPDATE ME."
-        get_feedback_file?: "Não há accesso para resultado do teste."
-        not_a_student?: "UPDATE ME."
-        manage_subdirectories?: "UPDATE ME."
+      annotation:
+        add_existing_annotation?: "UPDATE ME."
+        manage?: "UPDATE ME."
+      application:
+        manage?: *unauthorized
+        view_admin_subtabs?: *unauthorized
+        view_ta_subtabs?: *unauthorized
+        view_student_subtabs?: *unauthorized
+        view_sub_sub_tabs?: *unauthorized
+        admin?: "UPDATE ME."
+        ta?: "UPDATE ME."
+        student?: "UPDATE ME."
+      assignment:
+        index?: *unauthorized
+        switch_assignment?: "UPDATE ME."
+        manage?: "UPDATE ME."
+        view_test_options?: "UPDATE ME."
+        student_tests_enabled?: "UPDATE ME."
+        tests_enabled?: "UPDATE ME."
+        test_groups_exist?: "UPDATE ME."
+        tokens_released?: "Nenhum tokens dado."
+        create_group?: "UPDATE ME."
+        work_alone?: "Você não pode trabalhar sozinho para este projeto - o tamanho mínimo do grupo é de %{group_min}."
+        collection_date_passed?: "Não foi possível criar grupo: a data de entrega para este projeto já passou e ou não há períodos de carência permitidos, ou o período de tolerância para este projeto já terminou."
+        students_form_groups?: "Atribuição não permite que os alunos formem grupos."
+        not_yet_in_group?: "Você já tem um grupo, e não pode criar outro"
+        autogenerate_group_name?: "UPDATE ME."
+        view?: "UPDATE ME."
+        manage_tests?: "UPDATE ME."
+      automated_test:
+        manage?: "UPDATE ME."
+      course_summary:
+        manage?: "UPDATE ME."
+        populate?: *unauthorized
+        index?: *unauthorized
+      criterion:
+        manage?: "UPDATE ME."
+      exam_template:
+        manage?: "UPDATE ME."
+      extension:
+        manage?: "UPDATE ME."
+      grade_entry_form:
+        grade?: "UPDATE ME."
+        manage?: "UPDATE ME."
+        student_interface?: "UPDATE ME."
+      grader:
         manage?: "UPDATE ME."
       group:
         student_manage?: "UPDATE ME."
         manage?: "UPDATE ME."
+      grouping:
+        member?: "UPDATE ME."
+        not_in_progress?: "UPDATE ME."
+        tokens_available?: "Nenhum token foi encontrado para esse estudante e para esse projeto."
+        invite_member?: "UPDATE ME."
+        students_form_groups?: "UPDATE ME."
+        before_due_date?: "A data de entrega para este projeto já passou."
+        disinvite_member?: "UPDATE ME."
+        delete_rejected?: "Apenas o anfitrião pode excluir um convite recusado."
+        destroy?: "UPDATE ME."
+        deletable_by?: "Você não tem permissão para deletar este grupo."
+        no_extension?: "UPDATE ME."
+        no_submission?: "Você já enviou algo. Não pode deletar seu grupo."
+        view_file_manager?: "UPDATE ME."
+        start_timed_assignment?: "UPDATE ME."
+      image_annotation: *unauthorized
+      job_message:
+        manage?: "UPDATE ME."
+      key_pair:
+        manage?: "UPDATE ME."
+        view?: "UPDATE ME."
+      main:
+        login_as?: "UPDATE ME."
+        manage?: *unauthorized
+      marking_scheme:
+        manage?: "UPDATE ME."
+      marks_grader:
+        manage?: "UPDATE ME."
       note:
         manage?: "UPDATE ME."
         modify?: "UPDATE ME."
-        create?: "UPDATE ME."
-      automated_test:
-        student_access?: "UPDATE ME."
-        manage?: "UPDATE ME."
-      exam_template:
-        manage?: "UPDATE ME."
-      grade_entry_form:
-        grading?: "UPDATE ME."
-        manage?: "UPDATE ME."
-        student_interface?: "UPDATE ME."
-        update_grade_entry_students?: "UPDATE ME."
+      pdf_annotation: *unauthorized
       peer_review:
+        view?: "UPDATE ME."
         manage?: "UPDATE ME."
         manage_reviewers?: "UPDATE ME."
-      annotation_category:
+      result:
+        view?: "UPDATE ME."
+        run_tests?: "UPDATE ME."
+        grade?: "UPDATE ME."
+        review?: "UPDATE ME."
+        manage?: "UPDATE ME."
+      section:
         manage?: "UPDATE ME."
       starter_file_group:
-      grader_permission:
+        manage?: "UPDATE ME."
+      student:
+        run_tests?: "UPDATE ME."
         manage_submissions?: "UPDATE ME."
         manage_assessments?: "UPDATE ME."
+      submission:
+        manage?: "UPDATE ME."
+        server_time?: "UPDATE ME."
+        file_manager?: "UPDATE ME."
+        get_feedback_file?: "Não há accesso para resultado do teste."
+        manage_files?: "UPDATE ME."
+        manage_subdirectories?: "UPDATE ME."
+        view_files?: "UPDATE ME."
+        before_release?: "UPDATE ME."
+      ta:
         run_tests?: "UPDATE ME."
+        manage_submissions?: "UPDATE ME."
+        manage_assessments?: "UPDATE ME."
+      tag:
+        manage?: "UPDATE ME."
+      text_annotation: *unauthorized
+      user:
+        manage?: "UPDATE ME."
+        destroy?: "UPDATE ME."

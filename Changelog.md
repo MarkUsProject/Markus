@@ -1,5 +1,8 @@
 # Changelog
 ## [unreleased]
+- Use display name on top right corner (#4979)
+- Add display name to settings (#4937)
+- Create the required directory when uploading zip file with unzip is true (#4941)
 - Remove preview of compressed archives in repo browser (#4920)
 - Add singular annotation update feature when updating non-deductive categorized annotations (#4874)
 - Replace Time.now and Time.zone.now with Time.current (#4896)
@@ -14,8 +17,25 @@
 - Group null/undefined values when sorting on dates using react-table (#4921)
 - Add user settings page (#4922)
 - Render .heic and .heif files properly in the file preview and feedback file views (#4926)
+- Allow students to submit timed assessments after the collection date has passed even if they haven't started yet (#4935)
+- No longer add starter files to group repositories when groupings are created (#4934)
+- When starter files are updated, try to give students the updated version of the starter files they already have been assigned (#4934)
+- Display an alert when students upload files without having downloaded the most up to date starter files first (#4934)
+- Rename the parameter in get_file_info from id to assignment_id (#4936)
 - Fix bug where maximum file size for an uploaded file was not enforced properly (#4939)
 - Add counts of all/active/inactive students to students table (#4942)
+- Allow feedback files to be updated by uploading a binary file object through the API (#4964)
+- Fix a bug where some error messages reported by the API caused a json formatting error (#4964)
+- Updated all authorization to use ActionPolicy (#4865)
+- Fix bug where note creation form could be submitted before the form had finished updating (#4971)
+- Move API key handling to user Settings page (#4967)
+- Fix bug that prevented creation of scanned exams (#4968)
+- Fix bug where subdirectories were not being created with the right path in the autotest file manager (#4969)
+- Fix bug where penalty periods could have interval/hour values of zero (#4973)
+
+## [v1.10.4]
+- Fix bug where students could see average and median marks when the results had not been released yet (#4976)
+- Add email and id_number to user information returned by get requests to api user routes (#4974)
 
 ## [v1.10.3]
 - Allow for more concurrent access to git repositories (#4895)

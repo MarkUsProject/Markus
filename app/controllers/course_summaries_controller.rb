@@ -1,8 +1,7 @@
 class CourseSummariesController < ApplicationController
   include CourseSummariesHelper
 
-  before_action :authorize_only_for_admin,
-                except: [:populate, :index]
+  before_action { authorize! }
 
   layout 'assignment_content'
 
@@ -94,21 +93,39 @@ class CourseSummariesController < ApplicationController
               filename: "#{course_name}_grades_report.csv"
   end
 
-  def assessment_overview(assessment)
-    if assessment.is_a? GradeEntryForm
-      {
-        name: assessment.short_identifier,
-        total: assessment.grade_entry_items.where(bonus: false).sum(:out_of),
-        average: assessment.calculate_average&.round(2),
-        median: current_user.admin? ? assessment.calculate_median&.round(2) : nil
-      }
+  def get_assessment_data(assessment, type)
+    is_gef = assessment.is_a? GradeEntryForm
+    case type
+    when :median
+      (is_gef ? assessment.calculate_median : assessment.results_median)&.round(2)
+    when :average
+      (is_gef ? assessment.calculate_average : assessment.results_average)&.round(2)
+    when :total
+      (is_gef ? assessment.grade_entry_items.where(bonus: false).sum(:out_of) : assessment.max_mark)
     else
-      {
-        name: assessment.short_identifier,
-        total: assessment.max_mark,
-        average: assessment.results_average&.round(2),
-        median: current_user.admin? || assessment.display_median_to_students ? assessment.results_median&.round(2) : nil
-      }
+      nil
     end
+  end
+
+  def assessment_overview(assessment)
+    data = {
+      name: assessment.short_identifier,
+      total: get_assessment_data(assessment, :total),
+      average: nil,
+      median: nil
+    }
+    if current_user.admin? || (current_user.student? && current_user.released_result_for?(assessment))
+      data[:average] = get_assessment_data(assessment, :average)
+      if current_user.admin? || assessment.display_median_to_students
+        data[:median] = get_assessment_data(assessment, :median)
+      end
+    end
+    data
+  end
+
+  protected
+
+  def implicit_authorization_target
+    OpenStruct.new policy_class: CourseSummaryPolicy
   end
 end

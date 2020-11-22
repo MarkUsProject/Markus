@@ -1,31 +1,8 @@
 class AssignmentsController < ApplicationController
   include RepositoryHelper
   responders :flash
+  before_action { authorize! }
 
-  before_action      :authorize_only_for_admin,
-                     except: [:index,
-                              :show,
-                              :new,
-                              :create,
-                              :edit,
-                              :update,
-                              :peer_review,
-                              :summary,
-                              :start_timed_assignment,
-                              :batch_runs,
-                              :stop_test,
-                              :switch_assignment]
-
-  before_action      :authorize_for_student,
-                     only: [:show,
-                            :peer_review]
-
-  before_action      :authorize_for_user,
-                     only: [:index, :switch_assignment]
-
-  before_action only: [:edit, :new, :update, :create, :batch_runs, :summary, :stop_test] do
-    authorize!
-  end
   # Publicly accessible actions ---------------------------------------
 
   def show
@@ -529,8 +506,11 @@ class AssignmentsController < ApplicationController
     num_files_before = assignment.assignment_files.length
     short_identifier = assignment_params[:short_identifier]
     # remove potentially invalid periods before updating
-    periods = submission_rule_params['submission_rule_attributes']['periods_attributes'].to_h.values.map { |h| h[:id] }
-    assignment.submission_rule.periods.where.not(id: periods).each(&:destroy)
+    unless assignment_params[:assignment_properties_attributes][:scanned_exam]
+      period_attrs = submission_rule_params['submission_rule_attributes']['periods_attributes']
+      periods = period_attrs.to_h.values.map { |h| h[:id] }
+      assignment.submission_rule.periods.where.not(id: periods).each(&:destroy)
+    end
     assignment.assign_attributes(assignment_params)
     process_timed_duration(assignment) if assignment.is_timed
     assignment.repository_folder = short_identifier unless assignment.is_peer_review?

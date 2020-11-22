@@ -2,7 +2,7 @@ class MarkingSchemesController < ApplicationController
   include MarkingSchemesHelper
 
   respond_to :html, :js
-  before_action :authorize_only_for_admin
+  before_action { authorize! }
 
   layout 'assignment_content'
 

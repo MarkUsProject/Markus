@@ -8,9 +8,7 @@ class GradersController < ApplicationController
   # should be eagerly loaded.
   CRITERION_ASSOC = [criterion_ta_associations: :ta]
 
-  # Administrator
-  # -
-  before_action :authorize_only_for_admin
+  before_action { authorize! }
 
   layout 'assignment_content'
 
@@ -189,5 +187,9 @@ class GradersController < ApplicationController
       submission = Submission.find_by(grouping_id: grouping_id)
       submission && SubmissionFile.where(submission_id: submission.id).exists?
     end
+  end
+
+  def implicit_authorization_target
+    OpenStruct.new policy_class: GraderPolicy
   end
 end

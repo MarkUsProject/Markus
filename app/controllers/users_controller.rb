@@ -8,11 +8,13 @@ class UsersController < ApplicationController
 
   def settings; end
 
-  def update_mailer_settings
+  def reset_api_key
+    @current_user.reset_api_key
+  end
+
+  def update_settings
     student = current_user
-    new_settings = params[:student]
-    student.update!(receives_results_emails: new_settings[:receives_results_emails],
-                    receives_invite_emails: new_settings[:receives_invite_emails])
+    student.update!(settings_params)
     update_success
   end
 
@@ -21,6 +23,10 @@ class UsersController < ApplicationController
   def update_success
     flash_message(:success, t('users.verify_settings_update'))
     redirect_to action: 'settings'
+  end
+
+  def settings_params
+    params.require(:student).permit(:receives_invite_emails, :receives_results_emails, :display_name)
   end
 
   protected

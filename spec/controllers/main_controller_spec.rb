@@ -45,27 +45,6 @@ describe MainController do
         get :login
         expect(response).to redirect_to action: 'index', controller: 'main'
       end
-      it 'should be able to reset their api key' do
-        post :reset_api_key
-        expect(response).to have_http_status(:success)
-      end
-      it 'should change their api key when it is reset' do
-        old_key = admin.api_key
-        post :reset_api_key
-        admin.reload
-        expect(admin.api_key).not_to eq(old_key)
-      end
-      it 'should not change the api key with a get request' do
-        get :reset_api_key
-        expect(response).to have_http_status(:not_found)
-      end
-      it 'should not change the api key with a get request' do
-        admin.reload # admin is initialized with a nil api_key and is assigned one on reload
-        old_key = admin.api_key
-        get :reset_api_key
-        admin.reload
-        expect(admin.api_key).to eq(old_key)
-      end
       it 'should order the assignments in ascending order by due date' do
         get :index
         expect(assigns(:assignments)).to eq(all_assignments)
@@ -191,7 +170,7 @@ describe MainController do
             post :login_as,
                  params: { effective_user_login: student.user_name, user_login: admin.user_name, admin_password: 'a' }
           end
-          it { is_expected.to respond_with 404 }
+          it { is_expected.to respond_with 403 }
           it 'should not change the uid' do
             expect(session[:uid]).to eq(student.id)
           end
@@ -204,7 +183,7 @@ describe MainController do
             post :login_as,
                  params: { effective_user_login: student.user_name, user_login: ta.user_name, admin_password: 'a' }
           end
-          it { is_expected.to respond_with 404 }
+          it { is_expected.to respond_with 403 }
           it 'should not change the uid' do
             expect(session[:uid]).to eq(student.id)
           end
@@ -243,7 +222,7 @@ describe MainController do
             post :login_as,
                  params: { effective_user_login: ta.user_name, user_login: admin.user_name, admin_password: 'a' }
           end
-          it { is_expected.to respond_with 404 }
+          it { is_expected.to respond_with 403 }
           it 'should not change the uid' do
             expect(session[:uid]).to eq(ta.id)
           end
@@ -256,7 +235,7 @@ describe MainController do
             post :login_as,
                  params: { effective_user_login: ta.user_name, user_login: student.user_name, admin_password: 'a' }
           end
-          it { is_expected.to respond_with 404 }
+          it { is_expected.to respond_with 403 }
           it 'should not change the uid' do
             expect(session[:uid]).to eq(ta.id)
           end
