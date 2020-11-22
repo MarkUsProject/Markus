@@ -7,6 +7,7 @@ class Submission < ApplicationRecord
   after_create :create_result
   before_validation :bump_old_submissions, on: :create
 
+  validates_inclusion_of :submission_version_used, in: [true, false]
   validates_numericality_of :submission_version, only_integer: true
   validate :max_number_of_results
   belongs_to :grouping
