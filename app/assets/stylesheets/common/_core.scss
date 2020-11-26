@@ -253,8 +253,8 @@ label.required::after, th.required::after {
   }
 
   ::-webkit-scrollbar {
-    color: $line;
     background-color: $background-main;
+    color: $line;
   }
   ::-webkit-scrollbar-thumb {
     background-color: $line;
