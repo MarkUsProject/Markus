@@ -9,11 +9,12 @@
 
   <%= pf.fields_for :periods, grace_period do |f| %>
     <td>
-      <%= f.text_field :hours,
-                       size: 1,
-                       required: true,
-                       class: 'PeriodDeltaChain_Hours',
-                       onchange: "if (grace_periods) { grace_periods.refresh(); }" %>
+      <%= f.number_field :hours,
+                         min: 0.001,
+                         step: :any,
+                         required: true,
+                         class: 'PeriodDeltaChain_Hours',
+                         onchange: "if (grace_periods) { grace_periods.refresh(); }" %>
       <%= t('submission_rules.hours') %>
     </td>
     <td>

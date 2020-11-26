@@ -939,6 +939,7 @@ class Assignment < Assessment
                         .order(due_date: :desc)
     records.where(assignment_properties: { is_timed: false })
            .or(records.where.not(groupings: { start_time: nil }))
+           .or(records.where(groupings: { start_time: nil }, due_date: Time.new(0)..Time.current))
   end
 
   ### /REPO ###
