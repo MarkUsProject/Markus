@@ -20,6 +20,8 @@ describe GitRevision do
         revision = repo.get_latest_revision
         files = revision.files_at_path('')
 
+        puts Time.now
+        puts Time.current
         expect(files).to include 'test'
       end
       it 'retrieves an object of type Repository::RevisionFile' do
