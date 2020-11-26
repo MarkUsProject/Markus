@@ -263,6 +263,11 @@ label.required::after, th.required::after {
     border-color: $line;
     color: $line;
   }
+
+  .rt-expander::after {
+    border-top-color: $line;
+  }
+  
   .-loading.-inner {
     background-color: $background-support;
     border-color: $line;
