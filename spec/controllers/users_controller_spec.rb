@@ -87,17 +87,6 @@ describe UsersController do
       end
     end
 
-    describe 'change time zone in settings' do
-      let(:student) { create(:student, user_name: 'c6stenha') }
-      it 'updates time zone for student' do
-        time_zone = 'Fake/TimeZone'
-        patch_as student,
-                 'update_settings',
-                 params: { 'user': { 'time_zone': time_zone } }
-        expect(student.reload.time_zone).to eq time_zone
-      end
-    end
-
     describe 'change locale in settings' do
       let(:student) { create(:student, user_name: 'c6stenha') }
 
