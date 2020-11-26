@@ -355,13 +355,13 @@ fieldset {
 /** Tables */
 
 .table {
-  border-left: 1px solid $primary-two;
-  border-right: 1px solid $primary-two;
+  border-left: 1px solid $line;
+  border-right: 1px solid $line;
   overflow-x: auto;
   width: 100%;
 
   table {
-    border-top: 1px solid $primary-two;
+    border-top: 1px solid $line;
     width: 100%;
 
     thead,
@@ -390,7 +390,7 @@ fieldset {
     }
 
     thead {
-      border-bottom: 2px solid $primary-two;
+      border-bottom: 2px solid $line;
     }
 
     tfoot {
@@ -398,11 +398,11 @@ fieldset {
     }
 
     tr {
-      border-bottom: 1px solid $primary-two;
+      border-bottom: 1px solid $line;
 
       th,
       td {
-        border-right: 1px solid $primary-two;
+        border-right: 1px solid $line;
         padding: 0.5em 1.5em 0.5em 1em;
         vertical-align: middle;
 
