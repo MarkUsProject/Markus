@@ -92,7 +92,7 @@ class AutotestManager extends React.Component {
   handleCreateFolder = (folderKey) => {
     $.post({
       url: Routes.upload_files_assignment_automated_tests_path(this.props.assignment_id),
-      data: {new_folders: [folderKey]}
+      data: {new_folders: [folderKey], path: this.state.uploadTarget || ''}
     }).then(this.fetchFileDataOnly)
       .then(() => this.toggleFormChanged(true))
       .then(this.endAction);

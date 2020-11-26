@@ -1,37 +1,37 @@
 describe UserPolicy do
-  include PolicyHelper
-
-  describe '#manage?' do
-    subject { described_class.new(user: user) }
-
-    context 'when the user is admin' do
-      let(:user) { build(:admin) }
-      it { is_expected.to pass :manage? }
+  let(:context) { { user: user } }
+  describe_rule :manage? do
+    succeed 'user is an admin' do
+      let(:user) { create(:admin) }
     end
-    context 'when the user is ta' do
-      let(:user) { build(:ta) }
-      it { is_expected.not_to pass :manage? }
+    failed 'user is a ta' do
+      let(:user) { create(:ta) }
     end
-    context 'when the user is student' do
-      let(:user) { build(:student) }
-      it { is_expected.not_to pass :manage? }
+    failed 'user is a student' do
+      let(:user) { create(:student) }
+    end
+  end
+  describe_rule :destroy? do
+    failed 'user is an admin' do
+      let(:user) { create(:admin) }
+    end
+    failed 'user is a ta' do
+      let(:user) { create(:ta) }
+    end
+    failed 'user is a student' do
+      let(:user) { create(:student) }
     end
   end
 
-  describe '#destroy?' do
-    subject { described_class.new(user: user) }
-
-    context 'when the user is admin' do
-      let(:user) { build(:admin) }
-      it { is_expected.not_to pass :destroy? }
+  describe_rule :reset_api_key? do
+    succeed 'user is an admin' do
+      let(:user) { create(:admin) }
     end
-    context 'when the user is ta' do
-      let(:user) { build(:ta) }
-      it { is_expected.not_to pass :destroy? }
+    failed 'user is a ta' do
+      let(:user) { create(:ta) }
     end
-    context 'when the user is student' do
-      let(:user) { build(:student) }
-      it { is_expected.not_to pass :destroy? }
+    failed 'user is a student' do
+      let(:user) { create(:student) }
     end
   end
 end

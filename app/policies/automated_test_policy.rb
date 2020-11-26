@@ -1,14 +1,10 @@
 # Policy for Automated tests controller.
 class AutomatedTestPolicy < ApplicationPolicy
   default_rule :manage?
-  alias_rule :student_interface?, :get_test_runs_students?, :execute_test_run?, to: :student_access?
-
-  def student_access?
-    user.student?
-  end
+  alias_rule :student_interface?, :get_test_runs_students?, :execute_test_run?, to: :student?
 
   # Only admin and authorized grader can setup the automated testing.
   def manage?
-    allowed_to?(:manage_assessments?, with: GraderPermissionPolicy)
+    check?(:manage_assessments?, user)
   end
 end

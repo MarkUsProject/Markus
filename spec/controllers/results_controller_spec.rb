@@ -46,7 +46,7 @@ describe ResultsController do
       method(ROUTES[route_name]).call(route_name, params: { assignment_id: assignment.id,
                                                             submission_id: submission.id,
                                                             id: incomplete_result.id })
-      expect(response).to have_http_status(:missing)
+      expect(response).to have_http_status(:forbidden)
     end
   end
 

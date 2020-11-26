@@ -4,7 +4,7 @@
       <%# Display an appropriate message in the dropdown menu %>
       <% if assessment.nil? %>
         <%= t('menu.choose') %>
-      <% elsif assessment.new_record? && allowed_to?(:admin_allowed?, assessment, with: AssignmentPolicy) %>
+      <% elsif assessment.new_record? %>
         <%= t('helpers.submit.create', model: assessment.class.model_name.human) %>
       <% else %>
         <% title = assessment.short_identifier %>
@@ -23,7 +23,7 @@
   </li>
 
   <% if assessment.is_a?(GradeEntryForm) && !assessment.new_record? %>
-    <% if allowed_to?(:manage?, assessment, with: GradeEntryFormPolicy) %>
+    <% if allowed_to?(:manage?, with: GradeEntryFormPolicy) %>
       <li class='<%= "active" if controller.action_name == 'edit' %>'>
         <%= link_to t('menu.properties'),
                     edit_grade_entry_form_path(assessment) %>
@@ -33,7 +33,7 @@
       <%= link_to GradeEntryForm.human_attribute_name(:grades),
                   grades_grade_entry_form_path(assessment) %>
     </li>
-    <% if allowed_to?(:admin_allowed?, assessment, with: AssignmentPolicy) %>
+    <% if allowed_to?(:manage?, with: GraderPolicy) %>
       <li class='<%= "active" if controller.controller_name == 'marks_graders' %>'>
         <%= link_to Ta.model_name.human.pluralize,
                     grade_entry_form_marks_graders_path(assessment) %>
@@ -42,7 +42,7 @@
   <% elsif assessment.is_a?(Assignment) && !assessment.new_record? %>
     <% target_id = @result&.is_a_review? ? assessment.pr_assignment.id :
                                                      assessment.id %>
-    <% if allowed_to?(:manage?, assessment, with: AssignmentPolicy) %>
+    <% if allowed_to?(:manage?, with: AssignmentPolicy) %>
       <li <% if ['criteria',
                  'annotation_categories',
                  'automated_tests',
@@ -55,8 +55,6 @@
         <%= link_to t('menu.settings'),
                     edit_assignment_path(target_id) %>
       </li>
-    <% end %>
-    <% if allowed_to?(:admin_allowed?, assessment, with: AssignmentPolicy) %>
       <li class='<%= "active" if controller.controller_name == 'groups' %>'>
         <%= link_to Group.model_name.human.pluralize,
                     assignment_groups_path(target_id) %>
@@ -88,7 +86,7 @@
       <%= link_to t('results.summary'),
                   summary_assignment_path(target_id) %>
     </li>
-    <% if allowed_to?(:can_run_tests?, assessment, with: SubmissionPolicy) %>
+    <% if allowed_to?(:view_test_options?, assessment) %>
       <li class='<%= "active" if controller.controller_name == 'assignments' && controller.action_name == 'batch_runs' %>'>
         <%= link_to t('automated_tests.test_runs_status'),
                     batch_runs_assignment_path(target_id) %>

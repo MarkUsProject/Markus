@@ -1249,13 +1249,6 @@ context 'main' do
         action: 'clear_role_switch_session',
         locale: 'en')
     end
-
-    it 'routes POST reset_api_key properly' do
-      expect(post: path + '/reset_api_key').to route_to(
-        controller: ctrl,
-        action: 'reset_api_key',
-        locale: 'en')
-    end
   end
   # end main collection route tests
   it 'routes GET index properly' do

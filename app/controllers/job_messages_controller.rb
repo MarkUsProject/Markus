@@ -1,5 +1,5 @@
 class JobMessagesController < ApplicationController
-  before_action :authorize_for_ta_and_admin
+  before_action { authorize! }
 
   def get
     status = ActiveJob::Status.get(params[:job_id])
@@ -30,5 +30,11 @@ class JobMessagesController < ApplicationController
     else
       status.queued? ? flash_message(:notice, t('poll_job.queued')) : flash_message(:notice, current_status)
     end
+  end
+
+  protected
+
+  def implicit_authorization_target
+    OpenStruct.new policy_class: JobMessagePolicy
   end
 end
