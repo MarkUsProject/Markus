@@ -2,7 +2,7 @@
 
 <%= form_with url: 'update_settings', method: 'patch', model: User, local: true do |f| %>
   <p>
-    <%= f.label :time_zone, t('users.time_zone') %>
+    <%= f.label :time_zone, User.human_attribute_name(:time_zone) %>
     <%= f.time_zone_select :time_zone, nil, default: @current_user.time_zone %>
   </p>
   <% if @current_user.student? %>

@@ -40,5 +40,4 @@ pt:
       reset: "Gerar outra chave para a API"
       unavailable: "Indisponível"
     verify_settings_update: 'UPDATE ME'
-    time_zone: "UPDATE ME"
     update_settings: 'UPDATE ME'

@@ -19,7 +19,7 @@ class ApplicationController < ActionController::Base
   helper :all # include all helpers in the views, all the time
 
   # set user time zone based on their settings
-  around_action :use_time_zone
+  around_action :use_time_zone, if: :current_user
   # activate i18n for renaming constants in views
   before_action :set_locale, :set_markus_version, :set_remote_user, :get_file_encodings
   # check for active session on every page
@@ -34,11 +34,7 @@ class ApplicationController < ActionController::Base
   protected
 
   def use_time_zone(&block)
-    if current_user
-      Time.use_zone(current_user.time_zone, &block)
-    else
-      yield
-    end
+    Time.use_zone(current_user.time_zone, &block)
   end
 
   # Set version for MarkUs to be available in

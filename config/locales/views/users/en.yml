@@ -44,5 +44,4 @@ en:
       reset: "Reset my API key"
       unavailable: "Unavailable"
     verify_settings_update: 'Your settings have been updated!'
-    time_zone: "Time Zone:"
     update_settings: 'Update Settings'

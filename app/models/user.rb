@@ -26,7 +26,7 @@ class User < ApplicationRecord
   validates_uniqueness_of   :email, :allow_nil => true
   validates_uniqueness_of   :id_number, :allow_nil => true
 
-  after_initialize :set_display_name
+  after_initialize :set_display_name, :set_time_zone
 
   validates_format_of       :type,          with: /\AStudent|Admin|Ta|TestServer\z/
   # role constants
@@ -135,6 +135,10 @@ class User < ApplicationRecord
   def set_display_name
     strip_name
     self.display_name ||= "#{self.first_name} #{self.last_name}"
+  end
+
+  def set_time_zone
+    self.time_zone = config.time_zone
   end
 
   # Submission helper methods -------------------------------------------------
