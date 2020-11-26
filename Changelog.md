@@ -1,5 +1,6 @@
 # Changelog
 ## [unreleased]
+- Refactor localization setting to settings page (#4996)
 - Use display name on top right corner (#4979)
 - Add display name to settings (#4937)
 - Create the required directory when uploading zip file with unzip is true (#4941)
