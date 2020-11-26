@@ -213,7 +213,9 @@ class User < ApplicationRecord
     end
 
     user_columns.push(:display_name)
+    user_columns.push(:time_zone)
     users.each { |u| u.push("#{u[first_name_i]} #{u[last_name_i]}") }
+    users.each { |u| u.push(Time.zone.name) }
 
     existing_user_ids = user_class.all.pluck(:id)
     imported = nil
@@ -222,7 +224,7 @@ class User < ApplicationRecord
       User.transaction do
         imported = user_class.import user_columns, users, on_duplicate_key_update: {
           conflict_target: [:user_name],
-          columns: [:last_name, :first_name, :section_id, :email, :id_number, :display_name]
+          columns: [:last_name, :first_name, :section_id, :email, :id_number, :display_name, :time_zone]
         }
         User.where(id: imported.ids).each do |user|
           if user_class == Ta
