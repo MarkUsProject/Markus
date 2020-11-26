@@ -2116,10 +2116,22 @@ describe Assignment do
         expect(Assignment.get_repo_auth_records).to be_empty
       end
       context 'when one grouping has started their assignment' do
-        it 'should contain only the members of that group' do
+        let!(:grouping) do
           g = groupings1.first
-          g.update!(start_time: Time.current)
-          expect(Assignment.get_repo_auth_records.pluck('users.id')).to contain_exactly(g.inviter.id)
+          g.update!(start_time: 1.hour.ago)
+          g.reload
+        end
+        it 'should contain only the members of that group' do
+          expect(Assignment.get_repo_auth_records.pluck('users.id')).to contain_exactly(grouping.inviter.id)
+        end
+        context 'when the timed assessment due date has ended' do
+          let(:assignment1) do
+            create :timed_assignment, assignment_properties_attributes: { vcs_submit: true }, due_date: 1.minute.ago
+          end
+          it 'should contain all members of all groups' do
+            inviter_ids = groupings1.map(&:inviter).map(&:id)
+            expect(Assignment.get_repo_auth_records.pluck('users.id')).to contain_exactly(*inviter_ids)
+          end
         end
       end
     end

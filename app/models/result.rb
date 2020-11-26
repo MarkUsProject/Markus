@@ -18,6 +18,8 @@ class Result < ApplicationRecord
 
   validates_numericality_of :total_mark, greater_than_or_equal_to: 0
 
+  validates_inclusion_of :released_to_students, in: [true, false]
+
   before_update :check_for_released
   before_save :check_for_nil_marks
 

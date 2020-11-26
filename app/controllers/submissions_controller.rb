@@ -682,7 +682,7 @@ class SubmissionsController < ApplicationController
                              revision.revision_identifier, dirname, grouping.id)
         next if data.nil?
         data[:key] = file_name
-        data[:modified] = data[:last_revised_date]
+        data[:modified] = file_obj.last_modified_date.to_i
         data[:revision_by] = '' if anonymize
         data
       else
