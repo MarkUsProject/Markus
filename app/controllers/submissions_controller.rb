@@ -40,7 +40,7 @@ class SubmissionsController < ApplicationController
           if (params[:revision_identifier] &&
             params[:revision_identifier] == revision.revision_identifier.to_s) ||
             (params[:revision_timestamp] &&
-              Time.parse(params[:revision_timestamp]).in_time_zone >= revision.server_timestamp)
+              Time.zone.parse(params[:revision_timestamp]).in_time_zone >= revision.server_timestamp)
             @revision = revision
           end
         end
