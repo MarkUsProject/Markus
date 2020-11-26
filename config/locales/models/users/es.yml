@@ -19,4 +19,5 @@ es:
         grace_credits: "Créditos de Gracia Restantes"
         id_number: "Número de Identificación"
         last_name: "Apellido"
+        theme: 'UPDATE ME!'
         user_name: "Nombre de Usuario"

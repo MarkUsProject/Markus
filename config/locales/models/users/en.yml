@@ -20,4 +20,5 @@ en:
         grace_credits: "Grace Credits"
         id_number: "ID number"
         last_name: "Last Name"
+        theme: 'Color Theme'
         user_name: "User Name"

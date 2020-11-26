@@ -19,4 +19,5 @@ fr:
         grace_credits: "Crédits de grâce"
         id_number: "Numéro d'identification"
         last_name: "Nom"
+        theme: 'UPDATE ME!'
         user_name: "Nom d'utilisateur"
