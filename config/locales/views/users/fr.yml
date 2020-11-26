@@ -26,7 +26,6 @@ fr:
     not_successfully_added_message_5: "Chaque ligne a le bon nombre de champs comme spécifié."
     toggle_invite_notifications: 'UPDATE ME'
     toggle_results_notifications: 'UPDATE ME'
-    display_name: 'UPDATE ME'
     update_settings: 'UPDATE ME'
     account_settings: "UPDATE ME"
 
@@ -37,6 +36,7 @@ fr:
       manage_graders: "Créer un nouveau correcteur"
 
   users:
+    display_name: 'UPDATE ME'
     api_key:
       reset: "Générer une nouvelle clé"
       unavailable: "Non disponible"
