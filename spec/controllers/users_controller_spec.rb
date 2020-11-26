@@ -30,26 +30,28 @@ describe UsersController do
     include ERB::Util
     RSpec.shared_examples 'changing particular mailer settings' do
       it 'can be enabled in settings' do
-        student.update!(receives_invite_emails: false)
+        student.update!(setting => false)
         patch_as student,
                  'update_settings',
-                 params: { user: { receives_invite_emails: true, receives_results_emails: true } }
+                 params: { user: { setting => true, other_setting => true } }
         student.reload
-        expect(student[:receives_invite_emails]).to be true
+        expect(student[setting]).to be true
       end
 
       it 'can be disabled in settings' do
-        student.update!(receives_invite_emails: true)
+        student.update!(setting => true)
         patch_as student,
                  'update_settings',
-                 params: { user: { receives_invite_emails: false, receives_results_emails: false } }
+                 params: { user: { setting => false, other_setting => true } }
         student.reload
-        expect(student[:receives_invite_emails]).to be false
+        expect(student[setting]).to be false
       end
     end
 
     describe 'results released notifications' do
       # Authenticate user is not timed out, and is a student.
+      let(:setting) { 'receives_results_emails' }
+      let(:other_setting) { 'receives_invite_emails' }
       let(:student) { create(:student, user_name: 'c6stenha') }
 
       include_examples 'changing particular mailer settings'
@@ -63,7 +65,6 @@ describe UsersController do
 
       include_examples 'changing particular mailer settings'
     end
-
     describe 'changing any setting' do
       let(:student) { create(:student, user_name: 'c6stenha') }
       it 'redirects back to settings' do

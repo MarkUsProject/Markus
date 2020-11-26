@@ -138,7 +138,7 @@ class User < ApplicationRecord
   end
 
   def set_time_zone
-    self.time_zone = config.time_zone
+    self.time_zone ||= Time.zone.name
   end
 
   # Submission helper methods -------------------------------------------------
