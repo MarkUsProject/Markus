@@ -20,3 +20,4 @@ fr:
         id_number: "Numéro d'identification"
         last_name: "Nom"
         user_name: "Nom d'utilisateur"
+        display_name: "Afficher un Nom"

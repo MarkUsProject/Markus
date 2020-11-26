@@ -1,5 +1,6 @@
 # Changelog
 ## [unreleased]
+- Add admins to display name (#4994)
 - Adds MathJax and Markdown support for remark requests (#4992)
 - Use display name on top right corner (#4979)
 - Add display name to settings (#4937)
