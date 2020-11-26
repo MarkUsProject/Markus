@@ -38,6 +38,7 @@ es:
       manage_graders: "Crear evaluadores."
 
   users:
+    update_settings: 'Ajustes de actualización'
     api_key:
       help_html: "La clave API es usada como autenticación para la interface REST. Mira la
                   <a href=\"https://github.com/MarkUsProject/Markus/wiki/RESTful-API\">

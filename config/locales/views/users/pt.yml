@@ -36,6 +36,7 @@ pt:
       manage_graders: "Create graders."
 
   users:
+    update_settings: 'Atualizar configurações'
     api_key:
       reset: "Gerar outra chave para a API"
       unavailable: "Indisponível"

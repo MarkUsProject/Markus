@@ -36,6 +36,7 @@ fr:
       manage_graders: "Créer un nouveau correcteur"
 
   users:
+    update_settings: 'Mettre à jour les paramètres'
     api_key:
       reset: "Générer une nouvelle clé"
       unavailable: "Non disponible"
