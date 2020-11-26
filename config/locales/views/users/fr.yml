@@ -35,7 +35,6 @@ fr:
       manage_graders: "Créer un nouveau correcteur"
 
   users:
-    display_name: 'UPDATE ME'
     update_settings: 'UPDATE ME'
     api_key:
       reset: "Générer une nouvelle clé"

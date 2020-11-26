@@ -37,7 +37,6 @@ es:
       manage_graders: "Crear evaluadores."
 
   users:
-    display_name: 'UPDATE ME'
     update_settings: 'UPDATE ME'
     api_key:
       help_html: "La clave API es usada como autenticación para la interface REST. Mira la

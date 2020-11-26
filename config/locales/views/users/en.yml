@@ -36,7 +36,6 @@ en:
 
   # Miscellaneous
   users:
-    display_name: 'Display name'
     update_settings: 'Update Settings'
     api_key:
       help_html: "The API key is used for the REST interface for authentication.

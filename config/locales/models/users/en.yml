@@ -21,3 +21,4 @@ en:
         id_number: "ID number"
         last_name: "Last Name"
         user_name: "User Name"
+        display_name: "Display Name"

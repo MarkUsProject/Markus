@@ -35,7 +35,6 @@ pt:
       manage_graders: "Create graders."
 
   users:
-    display_name: 'UPDATE ME'
     update_settings: 'UPDATE ME'
     api_key:
       reset: "Gerar outra chave para a API"
