@@ -134,9 +134,7 @@ class User < ApplicationRecord
 
   def set_display_name
     strip_name
-    if has_attribute?(:display_name)
-      self.display_name ||= "#{self.first_name} #{self.last_name}"
-    end
+    self.display_name ||= "#{self.first_name} #{self.last_name}"
   end
 
   # Submission helper methods -------------------------------------------------
@@ -301,7 +299,7 @@ class User < ApplicationRecord
     if self.email
       self.email = self.email.strip
     end
-    if has_attribute?(:id_number) && self.id_number
+    if self.id_number
       self.id_number = self.id_number.strip
     end
   end
