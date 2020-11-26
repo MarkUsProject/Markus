@@ -537,7 +537,7 @@ kbd {
 
 .listings {
   background: $background-main;
-  border: 1px solid $primary-two;
+  border: 1px solid $line;
   border-radius: $radius;
   user-select: none;
 }
@@ -578,7 +578,7 @@ kbd {
     li {
       background: url(handle@2x.png) 0.5em center no-repeat;
       background-size: 12px 20px;
-      border-top: 1px solid $primary-two;
+      border-top: 1px solid $line;
       list-style: none;
       min-height: 2.5em;
       padding: 0.5em 0.5em 0.5em 2em;
