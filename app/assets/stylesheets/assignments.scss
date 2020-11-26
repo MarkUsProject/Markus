@@ -80,24 +80,6 @@ fieldset {
 }
 
 
-/* Grader view */
-
-.api_key {
-  margin-top: $dimen-vertical;
-}
-
-#api_key_box {
-  border: 1px solid $primary-two;
-  border-radius: $radius;
-  overflow: auto;
-  padding: 0.75em;
-
-  #api_key,
-  form {
-    display: inline-block;
-    width: auto;
-  }
-}
 /* Table Styles */
 
 .pr_assignment_list {

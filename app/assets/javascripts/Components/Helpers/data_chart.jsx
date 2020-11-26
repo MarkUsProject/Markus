@@ -15,7 +15,7 @@ export class DataChart extends React.Component {
       responsive: false,
       legend: {
         display: this.props.legend
-        },
+      },
       scales: {
         yAxes: [{
           gridLines: {
@@ -42,6 +42,7 @@ export class DataChart extends React.Component {
         }]
       }
     };
+
     this.chart = new Chart(ctx, {
       type: 'bar',
       data: data,

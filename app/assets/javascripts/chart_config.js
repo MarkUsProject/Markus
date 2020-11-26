@@ -26,7 +26,6 @@ $(document).ready(function () {
     ticks: {
       type: 'linear',
       fontColor: ticksColor,
-
     },
     gridLines: {
       color: gridLineColor,
