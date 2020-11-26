@@ -38,7 +38,8 @@ export class DataChart extends React.Component {
           scaleLabel: {
             display: true,
             labelString: this.props.xTitle
-          }
+          },
+          offset: true
         }]
       }
     };
