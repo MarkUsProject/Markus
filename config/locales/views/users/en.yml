@@ -26,7 +26,6 @@ en:
     not_successfully_added_message_5: "Each line has the required fields specified near the upload form."
     toggle_invite_notifications: 'Receive email notifications when I am invited to a group.'
     toggle_results_notifications: 'Receive email notifications when results are released.'
-    update_settings: 'Update Settings'
     account_settings: "Account Settings"
 
   tas:
@@ -38,6 +37,7 @@ en:
   # Miscellaneous
   users:
     display_name: 'Display name'
+    update_settings: 'Update Settings'
     api_key:
       help_html: "The API key is used for the REST interface for authentication.
                   See <a href=\"https://github.com/MarkUsProject/Markus/wiki/RESTful-API\">MarkUs Wiki</a>

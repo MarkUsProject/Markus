@@ -26,7 +26,6 @@ pt:
     not_successfully_added_message_5: "Cada linha tem os campos necesários especificados junto ao formulário de carregamento."
     toggle_invite_notifications: 'UPDATE ME'
     toggle_results_notifications: 'UPDATE ME'
-    update_settings: 'UPDATE ME'
     account_settings: "UPDATE ME"
 
   tas:
@@ -37,6 +36,7 @@ pt:
 
   users:
     display_name: 'UPDATE ME'
+    update_settings: 'UPDATE ME'
     api_key:
       reset: "Gerar outra chave para a API"
       unavailable: "Indisponível"
