@@ -94,8 +94,7 @@
 - Fix UI overflow bug for large images in results file viewer (#4764)
 - Add disabled delete button to submissions file manager when files unselected (#4765)
 - Support syntax highlighting for html and css files (#4781)
-- Add minutes field to non git push --set-upstream origin remark-request-preview
-timed assessment extension modal (#4791)
+- Add minutes field to non timed assessment extension modal (#4791)
 - Add ability to check out git repositories over ssh using a public key uploaded in the new Key Pairs tab (#4598)
 - Unify criterion tables using single table inheritance (refactoring change) (#4749)
 - Add support for uploading multiple versions of starter files (#4751)
