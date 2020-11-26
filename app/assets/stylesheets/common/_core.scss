@@ -252,6 +252,16 @@ label.required::after, th.required::after {
     scrollbar-color: $line $background-main;
   }
 
+  ::-webkit-scrollbar {
+    background-color: $background-main;
+    color: $line;
+  }
+  ::-webkit-scrollbar-thumb {
+    background-color: $line;
+    border-radius: 20px;
+    border: 2px solid $background-main;
+  }
+
   .rt-thead .rt-hidden,
   .rt-hidden,
   .rt-thead .rt-td {
