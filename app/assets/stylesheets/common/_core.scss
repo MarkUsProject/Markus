@@ -259,6 +259,12 @@ label.required::after, th.required::after {
     color: $sharp-line;
   }
 
+  .rt-thead.-filters select {
+    background-color: $background-main;
+    border: solid 1px $line;
+    color: $sharp-line;
+  }
+
   .-loading.-active {
     background-color: $background-support;
     border-color: $line;
