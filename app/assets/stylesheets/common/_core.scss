@@ -236,6 +236,12 @@ label.required::after, th.required::after {
 
 // Customize react-table styling
 .ReactTable {
+
+  .rt-noData {
+    background: $background-support;
+    color: $sharp-line;
+  }
+
   .rt-thead,
   .rt-tbody {
     border-bottom: 1px solid $line;
