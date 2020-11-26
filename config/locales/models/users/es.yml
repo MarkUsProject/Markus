@@ -20,3 +20,4 @@ es:
         id_number: "Número de Identificación"
         last_name: "Apellido"
         user_name: "Nombre de Usuario"
+        language: "Lenguaje"

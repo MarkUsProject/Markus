@@ -20,3 +20,4 @@ pt:
         id_number: "Número de identidade"
         last_name: "Último nome"
         user_name: "Nome de usuário"
+        language: "Escolha o idioma"
