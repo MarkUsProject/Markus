@@ -24,47 +24,54 @@ context 'Admin resource' do
   it 'routes GET index correctly' do
     expect(get: path).to route_to(
       controller: ctrl,
-      action: 'index')
+      action: 'index'
+    )
   end
 
   it 'routes GET new correctly' do
     expect(get: path + '/new').to route_to(
       controller: ctrl,
-      action: 'new')
+      action: 'new'
+    )
   end
 
   it 'routes POST create correctly' do
     expect(post: path).to route_to(
       controller: ctrl,
-      action: 'create')
+      action: 'create'
+    )
   end
 
   it 'routes GET show correctly' do
     expect(get: path + '/' + admin.id.to_s).to route_to(
       controller: ctrl,
       action: 'show',
-      id: admin.id.to_s)
+      id: admin.id.to_s
+    )
   end
 
   it 'routes GET edit correctly' do
     expect(get: path + '/' + admin.id.to_s + '/edit').to route_to(
       controller: ctrl,
       action: 'edit',
-      id: admin.id.to_s)
+      id: admin.id.to_s
+    )
   end
 
   it 'routes PUT update correctly' do
     expect(put: path + '/' + admin.id.to_s).to route_to(
       controller: ctrl,
       action: 'update',
-      id: admin.id.to_s)
+      id: admin.id.to_s
+    )
   end
 
   it 'routes DELETE destroy correctly' do
     expect(delete: path + '/' + admin.id.to_s).to route_to(
       controller: ctrl,
       action: 'destroy',
-      id: admin.id.to_s)
+      id: admin.id.to_s
+    )
   end
 end
 # end Admin route tests
@@ -80,7 +87,8 @@ describe 'An Assignment' do
     it 'routes GET delete_rejected properly' do
       expect(get: path + '/delete_rejected').to route_to(
         controller: ctrl,
-        action: 'delete_rejected')
+        action: 'delete_rejected'
+      )
     end
   end
   # end Assignment collection route tests
@@ -92,7 +100,8 @@ describe 'An Assignment' do
         .to route_to(
           controller: ctrl,
           action: 'refresh_graph',
-          id: assignment.id.to_s)
+          id: assignment.id.to_s
+        )
     end
 
     it 'routes POST set_boolean_graders_options properly' do
@@ -107,7 +116,8 @@ describe 'An Assignment' do
         .to route_to(
           controller: ctrl,
           action: 'show',
-          id: assignment.id.to_s)
+          id: assignment.id.to_s
+        )
     end
 
     it 'routes PUT start_timed_assignment properly' do
@@ -129,7 +139,8 @@ describe 'An Assignment' do
         expect(post: criteria_path + '/update_positions').to route_to(
           controller: criteria_ctrl,
           action: 'update_positions',
-          assignment_id: assignment.id.to_s)
+          assignment_id: assignment.id.to_s
+        )
       end
 
       it 'routes GET show id: update_positions' do
@@ -137,21 +148,24 @@ describe 'An Assignment' do
           controller: criteria_ctrl,
           action: 'show',
           id: 'update_positions',
-          assignment_id: assignment.id.to_s)
+          assignment_id: assignment.id.to_s
+        )
       end
 
       it 'routes GET download properly' do
         expect(get: criteria_path + '/download').to route_to(
           controller: criteria_ctrl,
           action: 'download',
-          assignment_id: assignment.id.to_s)
+          assignment_id: assignment.id.to_s
+        )
       end
 
       it 'routes POST upload properly' do
         expect(post: criteria_path + '/upload').to route_to(
           controller: criteria_ctrl,
           action: 'upload',
-          assignment_id: assignment.id.to_s)
+          assignment_id: assignment.id.to_s
+        )
       end
     end
   end
@@ -167,42 +181,48 @@ describe 'An Assignment' do
         expect(get: autom_path + '/manage').to route_to(
           controller: autom_ctrl,
           action: 'manage',
-          assignment_id: assignment.id.to_s)
+          assignment_id: assignment.id.to_s
+        )
       end
 
       it 'routes POST update properly' do
         expect(post: autom_path).to route_to(
           controller: autom_ctrl,
           action: 'create',
-          assignment_id: assignment.id.to_s)
+          assignment_id: assignment.id.to_s
+        )
       end
 
       it 'routes POST update_positions properly' do
         expect(post: autom_path + '/update_positions').to route_to(
           controller: autom_ctrl,
           action: 'update_positions',
-          assignment_id: assignment.id.to_s)
+          assignment_id: assignment.id.to_s
+        )
       end
 
       it 'routes GET update_positions properly' do
         expect(get: autom_path + '/update_positions').to route_to(
           controller: autom_ctrl,
           action: 'update_positions',
-          assignment_id: assignment.id.to_s)
+          assignment_id: assignment.id.to_s
+        )
       end
 
       it 'routes POST upload properly' do
         expect(post: autom_path + '/upload').to route_to(
           controller: autom_ctrl,
           action: 'upload',
-          assignment_id: assignment.id.to_s)
+          assignment_id: assignment.id.to_s
+        )
       end
 
       it 'routes GET download properly' do
         expect(get: autom_path + '/download').to route_to(
           controller: autom_ctrl,
           action: 'download',
-          assignment_id: assignment.id.to_s)
+          assignment_id: assignment.id.to_s
+        )
       end
 
       it 'routes GET get_test_runs_students properly' do
@@ -272,7 +292,8 @@ describe 'An Assignment' do
             controller: group_ctrl,
             action: 'rename_group',
             id: group.id.to_s,
-            assignment_id: assignment.id.to_s)
+            assignment_id: assignment.id.to_s
+          )
       end
     end
 
@@ -329,49 +350,56 @@ describe 'An Assignment' do
         expect(get: group_path).to route_to(
           controller: group_ctrl,
           action: 'index',
-          assignment_id: assignment.id.to_s)
+          assignment_id: assignment.id.to_s
+        )
       end
 
       it 'routes GET add_group properly' do
         expect(get: group_path + '/add_group').to route_to(
           controller: group_ctrl,
           action: 'add_group',
-          assignment_id: assignment.id.to_s)
+          assignment_id: assignment.id.to_s
+        )
       end
 
       it 'routes POST use_another_assignment_groups properly' do
         expect(post: group_path + '/use_another_assignment_groups').to route_to(
           controller: group_ctrl,
           action: 'use_another_assignment_groups',
-          assignment_id: assignment.id.to_s)
+          assignment_id: assignment.id.to_s
+        )
       end
 
       it 'routes GET manage properly' do
         expect(get: group_path + '/manage').to route_to(
           controller: group_ctrl,
           action: 'manage',
-          assignment_id: assignment.id.to_s)
+          assignment_id: assignment.id.to_s
+        )
       end
 
       it 'routes POST upload properly' do
         expect(post: group_path + '/upload').to route_to(
           controller: group_ctrl,
           action: 'upload',
-          assignment_id: assignment.id.to_s)
+          assignment_id: assignment.id.to_s
+        )
       end
 
       it 'routes GET add_csv_group properly' do
         expect(get: group_path + '/add_csv_group').to route_to(
           controller: group_ctrl,
           action: 'add_csv_group',
-          assignment_id: assignment.id.to_s)
+          assignment_id: assignment.id.to_s
+        )
       end
 
       it 'routes GET download_grouplist properly' do
         expect(get: group_path + '/download_grouplist').to route_to(
           controller: group_ctrl,
           action: 'download_grouplist',
-          assignment_id: assignment.id.to_s)
+          assignment_id: assignment.id.to_s
+        )
       end
 
       it 'route GET create_groups_when_students_work_alone properly' do
@@ -379,56 +407,64 @@ describe 'An Assignment' do
           .to route_to(
             controller: group_ctrl,
             action: 'create_groups_when_students_work_alone',
-            assignment_id: assignment.id.to_s)
+            assignment_id: assignment.id.to_s
+          )
       end
 
       it 'routes GET valid_grouping properly' do
         expect(get: group_path + '/valid_grouping').to route_to(
           controller: group_ctrl,
           action: 'valid_grouping',
-          assignment_id: assignment.id.to_s)
+          assignment_id: assignment.id.to_s
+        )
       end
 
       it 'routes GET invalid_grouping properly' do
         expect(get: group_path + '/invalid_grouping').to route_to(
           controller: group_ctrl,
           action: 'invalid_grouping',
-          assignment_id: assignment.id.to_s)
+          assignment_id: assignment.id.to_s
+        )
       end
 
       it 'routes GET global_actions properly' do
         expect(get: group_path + '/global_actions').to route_to(
           controller: group_ctrl,
           action: 'global_actions',
-          assignment_id: assignment.id.to_s)
+          assignment_id: assignment.id.to_s
+        )
       end
 
       it 'routes GET rename_group properly' do
         expect(get: group_path + '/rename_group').to route_to(
           controller: group_ctrl,
           action: 'rename_group',
-          assignment_id: assignment.id.to_s)
+          assignment_id: assignment.id.to_s
+        )
       end
 
       it 'routes DELETE remove_group properly' do
         expect(delete: group_path + '/remove_group').to route_to(
           controller: group_ctrl,
           action: 'remove_group',
-          assignment_id: assignment.id.to_s)
+          assignment_id: assignment.id.to_s
+        )
       end
 
       it 'routes POST add_group properly' do
         expect(post: group_path + '/add_group').to route_to(
           controller: group_ctrl,
           action: 'add_group',
-          assignment_id: assignment.id.to_s)
+          assignment_id: assignment.id.to_s
+        )
       end
 
       it 'routes POST global_actions properly' do
         expect(post: group_path + '/global_actions').to route_to(
           controller: group_ctrl,
           action: 'global_actions',
-          assignment_id: assignment.id.to_s)
+          assignment_id: assignment.id.to_s
+        )
       end
     end
   end
@@ -445,77 +481,88 @@ describe 'An Assignment' do
         expect(get: sub_path + '/file_manager').to route_to(
           controller: sub_ctrl,
           action: 'file_manager',
-          assignment_id: assignment.id.to_s)
+          assignment_id: assignment.id.to_s
+        )
       end
 
       it 'routes GET browse properly' do
         expect(get: sub_path + '/browse').to route_to(
           controller: sub_ctrl,
           action: 'browse',
-          assignment_id: assignment.id.to_s)
+          assignment_id: assignment.id.to_s
+        )
       end
 
       it 'routes GET populate_file_manager properly' do
         expect(get: sub_path + '/populate_file_manager').to route_to(
           controller: sub_ctrl,
           action: 'populate_file_manager',
-          assignment_id: assignment.id.to_s)
+          assignment_id: assignment.id.to_s
+        )
       end
 
       it 'routes GET download_repo_checkout_commands properly' do
         expect(get: sub_path + '/download_repo_checkout_commands').to route_to(
           controller: sub_ctrl,
           action: 'download_repo_checkout_commands',
-          assignment_id: assignment.id.to_s)
+          assignment_id: assignment.id.to_s
+        )
       end
 
       it 'routes GET download_repo_list properly' do
         expect(get: sub_path + '/download_repo_list').to route_to(
           controller: sub_ctrl,
           action: 'download_repo_list',
-          assignment_id: assignment.id.to_s)
+          assignment_id: assignment.id.to_s
+        )
       end
 
       it 'routes GET populate_submissions_table' do
         expect(get: sub_path + '/populate_submissions_table').to route_to(
           controller: sub_ctrl,
           action: 'populate_submissions_table',
-          assignment_id: assignment.id.to_s)
+          assignment_id: assignment.id.to_s
+        )
       end
 
       it 'routes GET populate_file_manager' do
         expect(get: sub_path + '/populate_file_manager').to route_to(
           controller: sub_ctrl,
           action: 'populate_file_manager',
-          assignment_id: assignment.id.to_s)
+          assignment_id: assignment.id.to_s
+        )
       end
 
       it 'routes GET updated_files properly' do
         expect(get: sub_path + '/updated_files').to route_to(
           controller: sub_ctrl,
           action: 'updated_files',
-          assignment_id: assignment.id.to_s)
+          assignment_id: assignment.id.to_s
+        )
       end
 
       it 'routes GET replace_files properly' do
         expect(get: sub_path + '/replace_files').to route_to(
           controller: sub_ctrl,
           action: 'replace_files',
-          assignment_id: assignment.id.to_s)
+          assignment_id: assignment.id.to_s
+        )
       end
 
       it 'routes GET delete_files properly' do
         expect(get: sub_path + '/delete_files').to route_to(
           controller: sub_ctrl,
           action: 'delete_files',
-          assignment_id: assignment.id.to_s)
+          assignment_id: assignment.id.to_s
+        )
       end
 
       it 'routes POST update_files properly' do
         expect(post: sub_path + '/update_files').to route_to(
           controller: sub_ctrl,
           action: 'update_files',
-          assignment_id: assignment.id.to_s)
+          assignment_id: assignment.id.to_s
+        )
       end
 
       it 'routes POST update_submissions properly' do
@@ -538,14 +585,16 @@ describe 'An Assignment' do
         expect(get: sub_path + '/server_time').to route_to(
           controller: sub_ctrl,
           action: 'server_time',
-          assignment_id: assignment.id.to_s)
+          assignment_id: assignment.id.to_s
+        )
       end
 
       it 'routes GET download properly' do
         expect(get: sub_path + '/download').to route_to(
           controller: sub_ctrl,
           action: 'download',
-          assignment_id: assignment.id.to_s)
+          assignment_id: assignment.id.to_s
+        )
       end
     end
 
@@ -556,7 +605,8 @@ describe 'An Assignment' do
             controller: sub_ctrl,
             action: 'collect_and_begin_grading',
             id: submission.id.to_s,
-            assignment_id: assignment.id.to_s)
+            assignment_id: assignment.id.to_s
+          )
       end
 
       it 'routes POST manually_collect_and_begin_grading properly' do
@@ -565,7 +615,8 @@ describe 'An Assignment' do
             controller: sub_ctrl,
             action: 'manually_collect_and_begin_grading',
             id: submission.id.to_s,
-            assignment_id: assignment.id.to_s)
+            assignment_id: assignment.id.to_s
+          )
       end
 
       it 'routes GET repo_browser properly' do
@@ -574,7 +625,8 @@ describe 'An Assignment' do
             controller: sub_ctrl,
             action: 'repo_browser',
             id: submission.id.to_s,
-            assignment_id: assignment.id.to_s)
+            assignment_id: assignment.id.to_s
+          )
       end
     end
 
@@ -589,7 +641,8 @@ describe 'An Assignment' do
             action: 'update_mark',
             id: '1',
             assignment_id: assignment.id.to_s,
-            submission_id: submission.id.to_s)
+            submission_id: submission.id.to_s
+          )
         end
 
         it 'routes GET expand_criteria properly' do
@@ -598,7 +651,8 @@ describe 'An Assignment' do
             action: 'show',
             id: 'expand_criteria',
             assignment_id: assignment.id.to_s,
-            submission_id: submission.id.to_s)
+            submission_id: submission.id.to_s
+          )
         end
 
         it 'routes GET collapse_criteria properly' do
@@ -607,7 +661,8 @@ describe 'An Assignment' do
             action: 'show',
             id: 'collapse_criteria',
             assignment_id: assignment.id.to_s,
-            submission_id: submission.id.to_s)
+            submission_id: submission.id.to_s
+          )
         end
 
         it 'routes GET expand_unmarked_criteria properly' do
@@ -616,7 +671,8 @@ describe 'An Assignment' do
             action: 'show',
             id: 'expand_unmarked_criteria',
             assignment_id: assignment.id.to_s,
-            submission_id: submission.id.to_s)
+            submission_id: submission.id.to_s
+          )
         end
 
         it 'routes GET edit properly' do
@@ -624,7 +680,8 @@ describe 'An Assignment' do
             controller: res_ctrl,
             action: 'edit',
             assignment_id: assignment.id.to_s,
-            submission_id: submission.id.to_s)
+            submission_id: submission.id.to_s
+          )
         end
 
         it 'routes GET download properly' do
@@ -632,7 +689,8 @@ describe 'An Assignment' do
             controller: res_ctrl,
             action: 'download',
             assignment_id: assignment.id.to_s,
-            submission_id: submission.id.to_s)
+            submission_id: submission.id.to_s
+          )
         end
       end
 
@@ -643,7 +701,8 @@ describe 'An Assignment' do
             action: 'download',
             id: '1',
             assignment_id: assignment.id.to_s,
-            submission_id: submission.id.to_s)
+            submission_id: submission.id.to_s
+          )
         end
 
         it 'routes POST download properly' do
@@ -652,7 +711,8 @@ describe 'An Assignment' do
             action: 'download',
             id: '1',
             assignment_id: assignment.id.to_s,
-            submission_id: submission.id.to_s)
+            submission_id: submission.id.to_s
+          )
         end
 
         it 'routes DELETE cancel_remark_request properly' do
@@ -661,7 +721,8 @@ describe 'An Assignment' do
             action: 'cancel_remark_request',
             id: '1',
             assignment_id: assignment.id.to_s,
-            submission_id: submission.id.to_s)
+            submission_id: submission.id.to_s
+          )
         end
 
         it 'routes POST add_extra_mark properly' do
@@ -670,7 +731,8 @@ describe 'An Assignment' do
             action: 'add_extra_mark',
             id: '1',
             assignment_id: assignment.id.to_s,
-            submission_id: submission.id.to_s)
+            submission_id: submission.id.to_s
+          )
         end
 
         it 'routes GET next_grouping properly' do
@@ -679,7 +741,8 @@ describe 'An Assignment' do
             action: 'next_grouping',
             id: '1',
             assignment_id: assignment.id.to_s,
-            submission_id: submission.id.to_s)
+            submission_id: submission.id.to_s
+          )
         end
 
         it 'routes POST remove_extra_mark properly' do
@@ -688,7 +751,8 @@ describe 'An Assignment' do
             action: 'remove_extra_mark',
             id: '1',
             assignment_id: assignment.id.to_s,
-            submission_id: submission.id.to_s)
+            submission_id: submission.id.to_s
+          )
         end
 
         it 'routes POST set_released_to_students properly' do
@@ -697,7 +761,8 @@ describe 'An Assignment' do
             action: 'set_released_to_students',
             id: '1',
             assignment_id: assignment.id.to_s,
-            submission_id: submission.id.to_s)
+            submission_id: submission.id.to_s
+          )
         end
 
         it 'routes POST update_overall_comment properly' do
@@ -706,7 +771,8 @@ describe 'An Assignment' do
             action: 'update_overall_comment',
             id: '1',
             assignment_id: assignment.id.to_s,
-            submission_id: submission.id.to_s)
+            submission_id: submission.id.to_s
+          )
         end
 
         it 'routes POST toggle_marking_state properly' do
@@ -715,7 +781,8 @@ describe 'An Assignment' do
             action: 'toggle_marking_state',
             id: '1',
             assignment_id: assignment.id.to_s,
-            submission_id: submission.id.to_s)
+            submission_id: submission.id.to_s
+          )
         end
 
         it 'routes PATCH update_remark_request properly' do
@@ -724,7 +791,8 @@ describe 'An Assignment' do
             action: 'update_remark_request',
             id: '1',
             assignment_id: assignment.id.to_s,
-            submission_id: submission.id.to_s)
+            submission_id: submission.id.to_s
+          )
         end
 
         it 'routes GET update_positions properly' do
@@ -733,7 +801,8 @@ describe 'An Assignment' do
             action: 'update_positions',
             id: '1',
             assignment_id: assignment.id.to_s,
-            submission_id: submission.id.to_s)
+            submission_id: submission.id.to_s
+          )
         end
 
         it 'routes GET view_marks properly' do
@@ -742,7 +811,8 @@ describe 'An Assignment' do
             action: 'view_marks',
             id: '1',
             assignment_id: assignment.id.to_s,
-            submission_id: submission.id.to_s)
+            submission_id: submission.id.to_s
+          )
         end
       end
     end
@@ -759,7 +829,8 @@ describe 'An Assignment' do
           .to route_to(
             controller: grader_ctrl,
             action: 'upload',
-            assignment_id: assignment.id.to_s)
+            assignment_id: assignment.id.to_s
+          )
       end
 
       it 'routes GET grader_groupings_mapping properly' do
@@ -767,7 +838,8 @@ describe 'An Assignment' do
           .to route_to(
             controller: grader_ctrl,
             action: 'grader_groupings_mapping',
-            assignment_id: assignment.id.to_s)
+            assignment_id: assignment.id.to_s
+          )
       end
 
       it 'routes GET grader_criteria_mapping properly' do
@@ -775,21 +847,24 @@ describe 'An Assignment' do
           .to route_to(
             controller: grader_ctrl,
             action: 'grader_criteria_mapping',
-            assignment_id: assignment.id.to_s)
+            assignment_id: assignment.id.to_s
+          )
       end
 
       it 'routes GET global_actions properly' do
         expect(get: grader_path + '/global_actions').to route_to(
           controller: grader_ctrl,
           action: 'global_actions',
-          assignment_id: assignment.id.to_s)
+          assignment_id: assignment.id.to_s
+        )
       end
 
       it 'routes POST global_actions properly' do
         expect(post: grader_path + '/global_actions').to route_to(
           controller: grader_ctrl,
           action: 'global_actions',
-          assignment_id: assignment.id.to_s)
+          assignment_id: assignment.id.to_s
+        )
       end
     end
   end
@@ -805,27 +880,30 @@ describe 'An Assignment' do
     context 'members' do
       let(:id) { '1' }
       it 'routes GET properly' do
-        expect(get: annot_path + "/#{1}").to route_to(
+        expect(get: annot_path + '/1').to route_to(
           controller: annot_ctrl,
           action: 'show',
           id: id,
-          assignment_id: assignment.id.to_s)
+          assignment_id: assignment.id.to_s
+        )
       end
 
       it 'routes DELETE properly' do
-        expect(delete: annot_path + "/#{1}").to route_to(
+        expect(delete: annot_path + '/1').to route_to(
           controller: annot_ctrl,
           action: 'destroy',
           id: id,
-          assignment_id: assignment.id.to_s)
+          assignment_id: assignment.id.to_s
+        )
       end
 
       it 'routes PUT properly' do
-        expect(put: annot_path + "/#{1}").to route_to(
+        expect(put: annot_path + '/1').to route_to(
           controller: annot_ctrl,
           action: 'update',
           id: id,
-          assignment_id: assignment.id.to_s)
+          assignment_id: assignment.id.to_s
+        )
       end
     end
 
@@ -834,56 +912,64 @@ describe 'An Assignment' do
         expect(get: annot_path + '/new').to route_to(
           controller: annot_ctrl,
           action: 'new',
-          assignment_id: assignment.id.to_s)
+          assignment_id: assignment.id.to_s
+        )
       end
 
       it 'routes POST properly' do
         expect(post: annot_path).to route_to(
           controller: annot_ctrl,
           action: 'create',
-          assignment_id: assignment.id.to_s)
+          assignment_id: assignment.id.to_s
+        )
       end
 
       it 'routes GET properly' do
         expect(get: annot_path).to route_to(
           controller: annot_ctrl,
           action: 'index',
-          assignment_id: assignment.id.to_s)
+          assignment_id: assignment.id.to_s
+        )
       end
 
       it 'routes POST upload properly' do
         expect(post: annot_path + '/upload').to route_to(
           controller: annot_ctrl,
           action: 'upload',
-          assignment_id: assignment.id.to_s)
+          assignment_id: assignment.id.to_s
+        )
       end
 
       it 'routes GET download properly' do
         expect(get: annot_path + '/download').to route_to(
           controller: annot_ctrl,
           action: 'download',
-          assignment_id: assignment.id.to_s)
+          assignment_id: assignment.id.to_s
+        )
       end
 
       it 'routes POST create_annotation_text properly' do
         expect(post: annot_path + '/create_annotation_text').to route_to(
           controller: annot_ctrl,
           action: 'create_annotation_text',
-          assignment_id: assignment.id.to_s)
+          assignment_id: assignment.id.to_s
+        )
       end
 
       it 'routes DELETE destroy_annotation_text properly' do
         expect(delete: annot_path + '/destroy_annotation_text').to route_to(
           controller: annot_ctrl,
           action: 'destroy_annotation_text',
-          assignment_id: assignment.id.to_s)
+          assignment_id: assignment.id.to_s
+        )
       end
 
       it 'routes PUT update_annotation_text properly' do
         expect(put: annot_path + '/update_annotation_text').to route_to(
           controller: annot_ctrl,
           action: 'update_annotation_text',
-          assignment_id: assignment.id.to_s)
+          assignment_id: assignment.id.to_s
+        )
       end
     end
   end
@@ -900,7 +986,8 @@ context 'grade_entry_forms' do
     it 'routes GET student_interface properly' do
       expect(get: path + '/student_interface').to route_to(
         controller: ctrl,
-        action: 'student_interface')
+        action: 'student_interface'
+      )
     end
   end
   # end grade_entry_forms collection route tests
@@ -911,7 +998,8 @@ context 'grade_entry_forms' do
         .to route_to(
           controller: ctrl,
           action: 'grades',
-          id: grade_entry_form.id.to_s)
+          id: grade_entry_form.id.to_s
+        )
     end
 
     it 'routes GET download properly' do
@@ -919,7 +1007,8 @@ context 'grade_entry_forms' do
         .to route_to(
           controller: ctrl,
           action: 'download',
-          id: grade_entry_form.id.to_s)
+          id: grade_entry_form.id.to_s
+        )
     end
 
     it 'routes POST upload properly' do
@@ -927,7 +1016,8 @@ context 'grade_entry_forms' do
         .to route_to(
           controller: ctrl,
           action: 'upload',
-          id: grade_entry_form.id.to_s)
+          id: grade_entry_form.id.to_s
+        )
     end
 
     it 'routes POST update_grade properly' do
@@ -935,7 +1025,8 @@ context 'grade_entry_forms' do
         .to route_to(
           controller: ctrl,
           action: 'update_grade',
-          id: grade_entry_form.id.to_s)
+          id: grade_entry_form.id.to_s
+        )
     end
 
     it 'routes POST update_grade_entry_students properly' do
@@ -943,7 +1034,8 @@ context 'grade_entry_forms' do
         '/update_grade_entry_students').to route_to(
           controller: ctrl,
           action: 'update_grade_entry_students',
-          id: grade_entry_form.id.to_s)
+          id: grade_entry_form.id.to_s
+        )
     end
 
     it 'routes GET student_interface properly' do
@@ -951,7 +1043,8 @@ context 'grade_entry_forms' do
         .to route_to(
           controller: ctrl,
           action: 'student_interface',
-          id: grade_entry_form.id.to_s)
+          id: grade_entry_form.id.to_s
+        )
     end
   end
 end
@@ -966,31 +1059,36 @@ context 'notes' do
     it 'routes POST add_note properly' do
       expect(post: path + '/add_note').to route_to(
         controller: ctrl,
-        action: 'add_note')
+        action: 'add_note'
+      )
     end
 
     it 'routes POST noteable_object_selector properly' do
       expect(post: path + '/noteable_object_selector').to route_to(
         controller: ctrl,
-        action: 'noteable_object_selector')
+        action: 'noteable_object_selector'
+      )
     end
 
     it 'routes GET new_update_groupings properly' do
       expect(get: path + '/new_update_groupings').to route_to(
         controller: ctrl,
-        action: 'new_update_groupings')
+        action: 'new_update_groupings'
+      )
     end
 
     it 'routes POST new_update_groupings properly' do
       expect(post: path + '/new_update_groupings').to route_to(
         controller: ctrl,
-        action: 'new_update_groupings')
+        action: 'new_update_groupings'
+      )
     end
 
     it 'routes GET notes_dialog properly' do
       expect(get: path + '/notes_dialog').to route_to(
         controller: ctrl,
-        action: 'notes_dialog' )
+        action: 'notes_dialog'
+      )
     end
   end
   # end notes collection route tests
@@ -1000,14 +1098,16 @@ context 'notes' do
       expect(get: path + '/student_interface').to route_to(
         controller: ctrl,
         action: 'show',
-        id: 'student_interface')
+        id: 'student_interface'
+      )
     end
 
     it 'routes POST grades properly' do
       expect(post: path + '/1/grades').to route_to(
         controller: ctrl,
         action: 'grades',
-        id: '1')
+        id: '1'
+      )
     end
   end
   # end notes member route tests
@@ -1022,7 +1122,8 @@ context 'annotation collection' do
   it 'routes POST add_existing_annotation properly' do
     expect(post: path + '/add_existing_annotation').to route_to(
       controller: ctrl,
-      action: 'add_existing_annotation')
+      action: 'add_existing_annotation'
+    )
   end
 end
 # end annotation route tests
@@ -1035,31 +1136,36 @@ context 'students collection' do
   it 'routes PATCH bulk_modify properly' do
     expect(patch: path + '/bulk_modify').to route_to(
       controller: ctrl,
-      action: 'bulk_modify')
+      action: 'bulk_modify'
+    )
   end
 
   it 'routes GET manage properly' do
     expect(get: path + '/manage').to route_to(
       controller: ctrl,
-      action: 'manage')
+      action: 'manage'
+    )
   end
 
   it 'routes GET add_new_section properly' do
     expect(get: path + '/add_new_section').to route_to(
       controller: ctrl,
-      action: 'add_new_section')
+      action: 'add_new_section'
+    )
   end
 
   it 'routes GET download properly' do
     expect(get: path + '/download').to route_to(
       controller: ctrl,
-      action: 'download')
+      action: 'download'
+    )
   end
 
   it 'routes POST upload properly' do
     expect(post: path + '/upload').to route_to(
       controller: ctrl,
-      action: 'upload')
+      action: 'upload'
+    )
   end
 end
 # end students collection route tests
@@ -1072,13 +1178,15 @@ context 'tas collection' do
   it 'routes POST upload properly' do
     expect(post: path + '/upload').to route_to(
       controller: ctrl,
-      action: 'upload')
+      action: 'upload'
+    )
   end
 
   it 'routes GET download properly' do
     expect(get: path + '/download').to route_to(
       controller: ctrl,
-      action: 'download')
+      action: 'download'
+    )
   end
 end
 # end tas collection route tests
@@ -1092,31 +1200,36 @@ context 'main' do
     it 'routes GET logout properly' do
       expect(post: path + '/logout').to route_to(
         controller: ctrl,
-        action: 'logout')
+        action: 'logout'
+      )
     end
 
     it 'routes GET about properly' do
       expect(get: path + '/about').to route_to(
         controller: ctrl,
-        action: 'about')
+        action: 'about'
+      )
     end
 
     it 'routes POST login_as properly' do
       expect(post: path + '/login_as').to route_to(
         controller: ctrl,
-        action: 'login_as')
+        action: 'login_as'
+      )
     end
 
     it 'routes GET role_switch properly' do
       expect(get: path + '/role_switch').to route_to(
         controller: ctrl,
-        action: 'role_switch')
+        action: 'role_switch'
+      )
     end
 
     it 'routes GET clear_role_switch_session properly' do
       expect(get: path + '/clear_role_switch_session').to route_to(
         controller: ctrl,
-        action: 'clear_role_switch_session')
+        action: 'clear_role_switch_session'
+      )
     end
   end
   # end main collection route tests
@@ -1124,19 +1237,22 @@ context 'main' do
     expect(get: path + '/index').to route_to(
       controller: ctrl,
       action: 'show',
-      id: 'index')
+      id: 'index'
+    )
   end
 
   it 'routes GET about properly' do
     expect(get: path + '/about').to route_to(
       controller: ctrl,
-      action: 'about')
+      action: 'about'
+    )
   end
 
   it 'routes GET logout properly' do
     expect(post: path + '/logout').to route_to(
       controller: ctrl,
-      action: 'logout')
+      action: 'logout'
+    )
   end
 end
 # end main route tests

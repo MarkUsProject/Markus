@@ -62,8 +62,6 @@ class ApplicationController < ActionController::Base
   def set_locale
     if params[:locale].nil?
       I18n.locale = I18n.default_locale
-    elsif I18n.available_locales.include? params[:locale].to_sym
-      I18n.locale = params[:locale]
     else
       flash_now(:notice, I18n.t('locale_not_available', locale: params[:locale]))
     end
