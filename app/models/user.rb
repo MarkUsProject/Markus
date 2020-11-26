@@ -133,8 +133,10 @@ class User < ApplicationRecord
   end
 
   def set_display_name
-    strip_name
-    self.display_name ||= "#{self.first_name} #{self.last_name}"
+    if student?
+      strip_name
+      self.display_name ||= "#{self.first_name} #{self.last_name}"
+    end
   end
 
   # Submission helper methods -------------------------------------------------
