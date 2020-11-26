@@ -239,6 +239,7 @@ label.required::after, th.required::after {
   .rt-tbody {
     border-bottom: 1px solid $line;
     border-right: 1px solid $line;
+    border-left: 1px solid $line;
     overflow-x: hidden;
     overflow-y: scroll;
     scrollbar-color: $line $background-main;
@@ -267,7 +268,7 @@ label.required::after, th.required::after {
   .rt-expander::after {
     border-top-color: $line;
   }
-  
+
   .-loading.-inner {
     background-color: $background-support;
     border-color: $line;
