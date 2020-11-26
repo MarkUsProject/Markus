@@ -14,8 +14,10 @@
       <%= f.check_box :receives_invite_emails %>
       <%= f.label :receives_invite_emails, t('students.toggle_invite_notifications') %>
     </p>
-    <%= f.submit t('students.update_settings') %>
   <% end %>
+  <p>
+    <%= f.submit t('students.update_settings') %>
+  </p>
 <% end %>
 
 <% if allowed_to?(:reset_api_key) %>

@@ -15,7 +15,7 @@ class UserPolicy < ApplicationPolicy
   end
 
   def update_settings?
-    user.student?
+    true
   end
 
   # Students and TAs shouldn't be able to change their API key
