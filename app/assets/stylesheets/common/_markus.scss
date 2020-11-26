@@ -136,7 +136,7 @@ strong a {
 .notice {
   @extend .alert;
   background: $background-main asset-url('icons/information.png') no-repeat 5px center;
-  border: 1px solid $primary-two;
+  border: 1px solid $line;
 }
 
 
