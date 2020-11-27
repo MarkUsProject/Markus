@@ -1,11 +1,19 @@
 <% content_for :title, t('students.account_settings') %>
 <%= form_with url: 'update_settings', method: 'patch', model: @current_user, local: true do |f| %>
+  <p>
+    <%= f.label :display_name, User.human_attribute_name(:display_name) %>
+    <%= f.text_field :display_name,
+                     value: @current_user.display_name %>
+  </p>
+  <p>
+    <%= f.label :locale, User.human_attribute_name(:locale) %>
+    <%= f.select :locale, options_for_select(I18n.available_locales, selected: "#{@current_user.locale}") %>
+  </p>
+  <p>
+    <%= f.select(:theme, [%w[dark dark], %w[light light]]) %>
+    <%= f.label :theme, User.human_attribute_name(:theme) %>
+  </p>
   <% if @current_user.student? %>
-    <p>
-      <%= f.label :display_name, t('students.display_name') %>
-      <%= f.text_field :display_name,
-                       value: @current_user.display_name %>
-    </p>
     <p>
       <%= f.check_box :receives_results_emails %>
       <%= f.label :receives_results_emails, t('students.toggle_results_notifications') %>
@@ -16,11 +24,7 @@
     </p>
   <% end %>
   <p>
-    <%= f.select(:theme, [%w[dark dark], %w[light light]]) %>
-    <%= f.label :theme, t('activerecord.attributes.user.theme') %>
-  </p>
-  <p>
-    <%= f.submit t('students.update_settings') %>
+    <%= f.submit t('users.update_settings') %>
   </p>
 <% end %>
 

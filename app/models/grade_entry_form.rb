@@ -271,4 +271,8 @@ class GradeEntryForm < Assessment
                                                      columns: [:out_of, :position] }
     self.grade_entry_items.reload
   end
+
+  def display_median_to_students
+    false
+  end
 end

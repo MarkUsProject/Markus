@@ -8,15 +8,16 @@
 <tr class='period'>
   <%= pf.fields_for :periods, penalty_period do |f| %>
     <td>
-      <%= f.text_field :hours,
-                       size: 1,
-                       class: 'PeriodDeltaChain_Hours',
-                       required: true,
-                       onchange: 'if (penalty_periods) { penalty_periods.refresh(); }' %>
+      <%= f.number_field :hours,
+                         min: 0.001,
+                         step: :any,
+                         class: 'PeriodDeltaChain_Hours',
+                         required: true,
+                         onchange: 'if (penalty_periods) { penalty_periods.refresh(); }' %>
       <%= t('submission_rules.hours') %>
     </td>
     <td>
-      <%= f.text_field :deduction, required: true, size: 1 %> %
+      <%= f.number_field :deduction, min: 0, step: :any, required: true %> %
     </td>
     <td>
       <span class='PeriodDeltaChain'>

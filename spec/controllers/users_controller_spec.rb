@@ -33,7 +33,7 @@ describe UsersController do
         student.update!(setting => false)
         patch_as student,
                  'update_settings',
-                 params: { student: { setting => true, other_setting => true } }
+                 params: { user: { setting => true, other_setting => true } }
         student.reload
         expect(student[setting]).to be true
       end
@@ -42,7 +42,7 @@ describe UsersController do
         student.update!(setting => true)
         patch_as student,
                  'update_settings',
-                 params: { student: { setting => false, other_setting => true } }
+                 params: { user: { setting => false, other_setting => true } }
         student.reload
         expect(student[setting]).to be false
       end
@@ -71,7 +71,7 @@ describe UsersController do
       it 'redirects back to settings' do
         patch_as student,
                  'update_settings',
-                 params: { 'student': { 'receives_invite_emails': false, 'receives_results_emails': true } }
+                 params: { 'user': { 'receives_invite_emails': false, 'receives_results_emails': true } }
         expect(response).to redirect_to(settings_users_path)
       end
     end
@@ -82,8 +82,44 @@ describe UsersController do
         display_name = 'First Last'
         patch_as student,
                  'update_settings',
-                 params: { 'student': { 'display_name': display_name } }
+                 params: { 'user': { 'display_name': display_name } }
         expect(student.reload.display_name).to eq display_name
+      end
+    end
+
+    describe 'change locale in settings' do
+      let(:student) { create(:student, user_name: 'c6stenha') }
+
+      after(:each) do
+        I18n.locale = :en
+      end
+
+      it 'updates locale for student' do
+        locale = 'es'
+        expect(I18n.locale).to eq I18n.default_locale
+        patch_as student,
+                 'update_settings',
+                 params: { 'user': { 'locale': locale } }
+
+        @controller = MainController.new
+        get 'check_timeout'
+
+        expect(student.reload.locale).to eq locale
+        expect(I18n.locale).to eq locale.to_sym
+      end
+
+      it 'updates locale for admin' do
+        locale = 'es'
+        expect(I18n.locale).to eq I18n.default_locale
+        patch_as admin,
+                 'update_settings',
+                 params: { 'user': { 'locale': locale } }
+
+        @controller = MainController.new
+        get 'check_timeout'
+
+        expect(admin.reload.locale).to eq locale
+        expect(I18n.locale).to eq locale.to_sym
       end
     end
 

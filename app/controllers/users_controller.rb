@@ -13,8 +13,8 @@ class UsersController < ApplicationController
   end
 
   def update_settings
-    student = current_user
-    student.update!(settings_params)
+    user = current_user
+    user.update!(settings_params)
     update_success
   end
 
@@ -27,11 +27,12 @@ class UsersController < ApplicationController
 
   def settings_params
     if current_user.student?
-      params.require(:student).permit(:receives_invite_emails, :receives_results_emails, :display_name, :theme)
+      params.require(:student).permit(:receives_invite_emails, :receives_results_emails,
+                                      :display_name, :locale, :theme)
     elsif current_user.admin?
-      params.require(:admin).permit(:theme)
+      params.require(:admin).permit(:display_name, :locale, :theme)
     elsif current_user.ta?
-      params.require(:ta).permit(:theme)
+      params.require(:ta).permit(:display_name, :locale, :theme)
     else
       {}
     end

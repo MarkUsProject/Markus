@@ -14,11 +14,13 @@ en:
     attributes:
       user:
         api_key: "Your API Key"
+        display_name: "Display Name"
         email: "Email"
         first_name: "First Name"
         full_name: "Name"
         grace_credits: "Grace Credits"
         id_number: "ID number"
         last_name: "Last Name"
-        theme: 'Color Theme'
+        locale: "Language"
+        theme: "Color Theme"
         user_name: "User Name"
