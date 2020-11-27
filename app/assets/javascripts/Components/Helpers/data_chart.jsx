@@ -33,6 +33,7 @@ export class DataChart extends React.Component {
         }],
         xAxes: [{
           gridLines: {
+            offsetGridLines: true,
             color: document.documentElement.style.getPropertyValue('--primary_three')
           },
           scaleLabel: {
