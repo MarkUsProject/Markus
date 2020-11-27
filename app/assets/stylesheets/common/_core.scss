@@ -285,7 +285,7 @@ label.required::after, th.required::after {
   .-loading.-active {
     background-color: $background-support;
     border-color: $line;
-    color: $line;
+    color: $sharp-line;
   }
 
   .rt-expander::after {
@@ -371,7 +371,7 @@ label.required::after, th.required::after {
 .rt-th.unassigned,
 .rt-td.unassigned {
   background-color: $background-main;
-  color: $primary-two;
+  color: $disabled;
 }
 
 // Styling patches for react-keyed-file-browser
