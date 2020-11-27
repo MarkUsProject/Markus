@@ -85,11 +85,11 @@ nav {
 
 footer {
   background-color: $background-support;
+  border-top: 1px solid $primary-three;
   color: $line;
   font-size: 0.95em;
   padding: 2em $dimen-horizontal;
   text-align: center;
-  border-top: 1px solid $primary-three;
 
   @include breakpoint(mobile) {
     display: none;

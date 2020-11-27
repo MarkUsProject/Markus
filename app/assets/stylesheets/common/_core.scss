@@ -245,8 +245,8 @@ label.required::after, th.required::after {
   .rt-thead,
   .rt-tbody {
     border-bottom: 1px solid $line;
-    border-right: 1px solid $line;
     border-left: 1px solid $line;
+    border-right: 1px solid $line;
     overflow-x: hidden;
     overflow-y: scroll;
     scrollbar-color: $line $background-main;
@@ -258,8 +258,8 @@ label.required::after, th.required::after {
   }
   ::-webkit-scrollbar-thumb {
     background-color: $line;
-    border-radius: 20px;
     border: 2px solid $background-main;
+    border-radius: 20px;
   }
 
   .rt-thead .rt-hidden,
@@ -271,21 +271,21 @@ label.required::after, th.required::after {
   }
 
   .rt-thead.-filters input {
-    color: $sharp-line;
     background-color: $background-main;
     border: solid 1px $line;
+    color: $sharp-line;
   }
 
   .rt-thead.-filters select {
-    color: $sharp-line;
     background-color: $background-main;
     border: solid 1px $line;
+    color: $sharp-line;
   }
 
   .-loading.-active {
-    color: $line;
     background-color: $background-support;
     border-color: $line;
+    color: $line;
   }
 
   .rt-expander::after {
@@ -293,9 +293,9 @@ label.required::after, th.required::after {
   }
 
   .-loading.-inner {
-    color: $line;
     background-color: $background-support;
     border-color: $line;
+    color: $line;
   }
 
   .rt-thead.-filters .rt-th {
@@ -310,9 +310,9 @@ label.required::after, th.required::after {
 
   .rt-thead .rt-th,
   .rt-thead .rt-td {
-    color: $line;
-    border-top: 1px solid $line;
     border-right: 1px solid $line;
+    border-top: 1px solid $line;
+    color: $line;
   }
 
   .rt-td:last-child {

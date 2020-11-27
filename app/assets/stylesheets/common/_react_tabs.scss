@@ -26,10 +26,11 @@
     background-color: $background-main;
     color: $line;
   }
+
   ::-webkit-scrollbar-thumb {
     background-color: $line;
-    border-radius: 20px;
     border: 2px solid $background-main;
+    border-radius: 20px;
   }
 }
 
