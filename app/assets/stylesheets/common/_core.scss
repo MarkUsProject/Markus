@@ -304,8 +304,8 @@ label.required::after, th.required::after {
   }
 
   .rt-tbody .rt-td {
-    border-bottom: 1px solid $line;
-    border-right: 1px solid $line;
+    border-bottom: 1px solid $gridline;
+    border-right: 1px solid $gridline;
   }
 
   .rt-thead .rt-th,

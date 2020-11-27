@@ -228,7 +228,7 @@ input[type='submit'],
 input[type='reset'],
 button,
 .button {
-  background: $background-main;
+  background: linear-gradient(to bottom, $background-main, $background-support);
   border: 1px solid $primary-three;
   border-radius: $radius;
   box-shadow: inset 0 -1px 0 $primary-two;
@@ -244,7 +244,6 @@ button,
   transition: all $time-quick;
 
   &:hover {
-    background: linear-gradient(to bottom, $background-main, $background-support);
     border-color: $primary-one;
     box-shadow: inset 0 -1px 0 $primary-two, 0 1px 0 $background-main;
     color: $line;

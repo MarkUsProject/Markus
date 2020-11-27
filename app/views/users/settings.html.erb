@@ -10,8 +10,8 @@
     <%= f.select :locale, options_for_select(I18n.available_locales, selected: "#{@current_user.locale}") %>
   </p>
   <p>
-    <%= f.select(:theme, [%w[dark dark], %w[light light]]) %>
     <%= f.label :theme, User.human_attribute_name(:theme) %>
+    <%= f.select(:theme, [%w[dark dark], %w[light light]]) %>
   </p>
   <% if @current_user.student? %>
     <p>
