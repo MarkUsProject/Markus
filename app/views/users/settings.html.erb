@@ -6,7 +6,7 @@
                      value: @current_user.display_name %>
   </p>
   <p>
-    <%= f.label :locale, User.human_attribute_name(:language) %>
+    <%= f.label :locale, User.human_attribute_name(:locale) %>
     <%= f.select :locale, options_for_select(I18n.available_locales, selected: "#{@current_user.locale}") %>
   </p>
   <% if @current_user.student? %>
