@@ -7,6 +7,7 @@ es:
     new: "Crear un nuevo Administrador"
 
   students:
+    account_settings: "UPDATE ME"
     active: "Activo"
     admin_actions:
       add_section: "Añadir sección"
@@ -28,7 +29,6 @@ es:
       para subir archivos."
     toggle_invite_notifications: 'UPDATE ME'
     toggle_results_notifications: 'UPDATE ME'
-    account_settings: "UPDATE ME"
 
   tas:
     edit: "Editar la información del evaluador"
@@ -37,11 +37,11 @@ es:
       manage_graders: "Crear evaluadores."
 
   users:
-    update_settings: 'UPDATE ME'
     api_key:
       help_html: "La clave API es usada como autenticación para la interface REST. Mira la
                   <a href=\"https://github.com/MarkUsProject/Markus/wiki/RESTful-API\">
                   Wiki de MarkUs</a> para más información acerca del uso de la REST API."
       reset: "Reiniciar mi clave API"
       unavailable: "No disponible"
+    update_settings: 'Ajustes de actualización'
     verify_settings_update: 'UPDATE ME'
