@@ -240,7 +240,6 @@ class CreateModifyAnnotationPanel extends React.Component {
                     <h3>
                       {I18n.t("activerecord.models.annotation_category.one")}
                     </h3>
-
                     <select
                       id="new_annotation_category"
                       name="category_id"
