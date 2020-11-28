@@ -132,7 +132,6 @@ class CreateModifyAnnotationPanel extends React.Component {
 
   onSubmit = (event) => {
     event.preventDefault();
-<<<<<<< HEAD
     const { content, category_id, annotation_text_id, change_all } = this.state;
     this.props.onSubmit({
       content,
@@ -142,9 +141,6 @@ class CreateModifyAnnotationPanel extends React.Component {
         change_all: change_all ? 1 : 0,
       },
     });
-=======
-    this.props.onSubmit({ ...this.state });
->>>>>>> Refactors some code w.r.t annotation modals, and fixes failing tests
   };
 
   handleChange = (event) => {
