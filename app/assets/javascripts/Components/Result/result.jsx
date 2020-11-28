@@ -12,6 +12,8 @@ const INITIAL_ANNOTATION_MODAL_STATE = {
   title: '',
   content: '',
   categoryId: '',
+  isNew: true,
+  changeOneOption: false,
 };
 
 class Result extends React.Component {
@@ -47,13 +49,6 @@ class Result extends React.Component {
   componentDidMount() {
     this.fetchData();
     window.modal = new ModalMarkus('#annotation_dialog');
-    // When mod+enter is pressed and the annotation modal is open, submit it
-    Mousetrap(document.getElementById('annotation_dialog')).bind('mod+enter', function(e) {
-      if ($('#annotation_dialog:visible').length) {
-        e.preventDefault();
-        $('#submit_annotation').click();
-      }
-    });
     window.modalNotesGroup = new ModalMarkus('#notes_dialog');
     window.modal_create_new_tag = new ModalMarkus('#create_new_tag');
   }
@@ -340,6 +335,8 @@ class Result extends React.Component {
         show: true,
         content: annotation.content,
         category_id,
+        isNew: false,
+        changeOneOption: annotation.annotation_category_id && !annotation.deduction,
         onSubmit,
         title: I18n.t("helpers.submit.create", {
           model: I18n.t("activerecord.models.annotation.one"),
@@ -566,15 +563,11 @@ class Result extends React.Component {
           categories={this.state.annotation_categories}
           onRequestClose={() =>
             this.setState({
-              annotationModal: {
-                ...this.state.annotationModal,
-                content: '',
-                category_id: '',
-                show: false,
-              },
+              annotationModal: INITIAL_ANNOTATION_MODAL_STATE
             })
           }
           is_reviewer={this.state.is_reviewer}
+          assignment_id={this.props.assignment_id}
           {...this.state.annotationModal}
         />,
         <SubmissionSelector
