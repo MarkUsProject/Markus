@@ -1,5 +1,6 @@
 # Changelog
 ## [unreleased]
+- Converts annotation modals from ERB into React (#4997)
 - Refactor localization setting to settings page (#4996)
 - Add admins to display name (#4994)
 - Adds MathJax and Markdown support for remark requests (#4992)
