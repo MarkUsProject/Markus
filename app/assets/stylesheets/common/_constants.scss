@@ -19,6 +19,7 @@
   --primary_three: #89b1dd;
   --sharp_line: #000;
   --strings_color: var(--heavy_error);
+  --sub_menu: var(--primary_three);
 }
 // Code viewer
 $comments: var(--comments_color);
@@ -29,6 +30,7 @@ $strings: var(--strings_color);
 $annotation-holder: var(--annotation_holder);
 $link: var(--primary_one);
 $pane-highlight: var(--primary_two);
+$sub-menu: var(--sub_menu);
 
 // Status
 $alert-light: var(--light_alert);

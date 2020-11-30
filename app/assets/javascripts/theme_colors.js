@@ -18,7 +18,8 @@ export const themes = {
     primary_two: '#243427',
     primary_three: '#75a278',
     sharp_line: '#e5e5e5',
-    strings_color: 'var(--heavy_error)'
+    strings_color: 'var(--heavy_error)',
+    sub_menu: '#1b426d'
   },
   light: {
     annotation_holder: '#ffd452',
@@ -40,6 +41,7 @@ export const themes = {
     primary_three: '#89b1dd',
     sharp_line: '#000',
     strings_color: 'var(--heavy_error)',
+    sub_menu: 'var(--primary_three)'
   }
 };
 

@@ -771,22 +771,22 @@ nav {
 
   ul.main,
   ul.sub_sub {
-    border-bottom: 2px solid $primary-three;
+    border-bottom: 2px solid $sub-menu;
 
     li:hover,
     .active {
-      background-color: $primary-three;
+      background-color: $sub-menu;
       color: $background-main;
       transition: background-color $time-quick;
 
       a {
-        color: $background-main;
+        color: $sharp-line;
       }
     }
   }
 
   ul.sub {
-    background-color: $primary-three;
+    background-color: $sub-menu;
     border-bottom: 2px solid $background-main;
     min-height: 3em;
 
@@ -802,7 +802,7 @@ nav {
     }
 
     a {
-      color: $background-main;
+      color: $sharp-line;
     }
   }
 
@@ -884,11 +884,11 @@ nav {
 
       &:hover,
       &.active {
-        background: $primary-three;
+        background: $sub-menu;
         color: $background-main;
 
         > a {
-          color: $background-main;
+          color: $sharp-line;
         }
       }
     }
