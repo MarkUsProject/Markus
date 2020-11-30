@@ -382,7 +382,7 @@ label.required::after, th.required::after {
 .rt-th.unassigned,
 .rt-td.unassigned {
   background-color: $background-main;
-  color: $disabled;
+  color: $disabled-text;
 }
 
 // Styling patches for react-keyed-file-browser

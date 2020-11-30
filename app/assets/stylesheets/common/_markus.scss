@@ -175,7 +175,7 @@ textarea {
   }
 
   &[disabled] {
-    background-color: $disabled;
+    background-color: $disabled-area;
     border-color: $background-support;
     color: $sharp-line;
   }
@@ -262,8 +262,8 @@ button,
 
   &[disabled],
   &.disabled {
-    background: linear-gradient(to bottom, $background-main, $disabled);
-    border-color: $disabled;
+    background: linear-gradient(to bottom, $background-main, $disabled-area);
+    border-color: $disabled-area;
     box-shadow: none;
     color: $primary-three;
   }
@@ -347,7 +347,7 @@ fieldset {
 }
 
 .disable {
-  color: $disabled;
+  color: $disabled-text;
   font-style: italic;
 }
 
