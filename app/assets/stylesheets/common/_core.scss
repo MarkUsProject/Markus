@@ -308,8 +308,19 @@ label.required::after, th.required::after {
     border-right: 1px solid $gridline;
   }
 
+  .rt-thead .rt-th.-sort-asc,
+  .rt-thead .rt-td.-sort-asc {
+    box-shadow: inset 0 3px 0 0 $sharp-line;
+  }
+
+  .rt-thead .rt-th.-sort-desc,
+  .rt-thead .rt-td.-sort-desc {
+    box-shadow: inset 0 -3px 0 0 $sharp-line;
+  }
+
   .rt-thead .rt-th,
   .rt-thead .rt-td {
+    background-color: $background-support;
     border-right: 1px solid $line;
     border-top: 1px solid $line;
     color: $line;
