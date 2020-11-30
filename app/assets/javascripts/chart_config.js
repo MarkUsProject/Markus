@@ -3,7 +3,7 @@ $(document).ready(function () {
   let bars = document.documentElement.style.getPropertyValue('--primary_one');
   let ticksColor = document.documentElement.style.getPropertyValue('--line');
   let labelColor = document.documentElement.style.getPropertyValue('--line');
-  let gridLineColor = document.documentElement.style.getPropertyValue('--primary_three');
+  let gridLineColor = document.documentElement.style.getPropertyValue('--gridline');
 
   Chart.defaults.global.defaultColor = bars;
   Chart.defaults.global.defaultFontColor = labelColor;

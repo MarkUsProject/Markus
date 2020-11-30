@@ -19,7 +19,7 @@ export class DataChart extends React.Component {
       scales: {
         yAxes: [{
           gridLines: {
-            color: document.documentElement.style.getPropertyValue('--primary_three')
+            color: document.documentElement.style.getPropertyValue('--gridline')
           },
           ticks: {
             beginAtZero: true,
@@ -34,7 +34,7 @@ export class DataChart extends React.Component {
         xAxes: [{
           gridLines: {
             offsetGridLines: true,
-            color: document.documentElement.style.getPropertyValue('--primary_three')
+            color: document.documentElement.style.getPropertyValue('--gridline')
           },
           scaleLabel: {
             display: true,
