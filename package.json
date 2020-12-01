@@ -18,7 +18,7 @@
     "rails-erb-loader": "^5.5.2",
     "rails-ujs": "^5.2.4",
     "react": "^16.14.0",
-    "react-dom": "^16.13.1",
+    "react-dom": "^16.14.0",
     "react-jsonschema-form": "^1.8.1",
     "react-keyed-file-browser": "^1.10.0",
     "react-modal": "^3.11.2",
