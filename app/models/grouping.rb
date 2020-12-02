@@ -695,7 +695,8 @@ class Grouping < ApplicationRecord
 
   def test_runs_instructors_released(submission)
     filtered = filter_test_runs(filters: { 'users.type': 'Admin', 'test_runs.submission': submission })
-    plucked = Grouping.pluck_test_runs(filtered)
+    latest_test_run = filtered.order('test_runs.created_at': :asc).first
+    plucked = Grouping.pluck_test_runs(filtered.where('test_runs.id': latest_test_run))
     plucked.map! do |data|
       if data['test_groups.display_output'] == TestGroup.display_outputs[:instructors_and_student_tests] ||
          data['test_groups.display_output'] == TestGroup.display_outputs[:instructors]
