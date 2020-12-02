@@ -12,7 +12,6 @@
 
 .react-tabs__tab-panel {
   flex-grow: 1;
-  scrollbar-color: $line $background-main;
 
   h3 {
     margin-bottom: 0.5em;
@@ -20,17 +19,6 @@
 
   h4 {
     margin-bottom: 10px;
-  }
-
-  ::-webkit-scrollbar {
-    background-color: $background-main;
-    color: $line;
-  }
-
-  ::-webkit-scrollbar-thumb {
-    background-color: $line;
-    border: 2px solid $background-main;
-    border-radius: 20px;
   }
 }
 
