@@ -47,6 +47,8 @@ window.Jcrop = Jcrop;
 import { Chart } from 'chart.js';
 import 'javascripts/chart_config';
 
+window.Routes = require('routes.js.erb');
+
 // assets with side-effects only
 import 'javascripts/help-system';
 import 'javascripts/layouts';
