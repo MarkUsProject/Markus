@@ -1210,7 +1210,7 @@ describe Grouping do
             end
             it 'should only return data from the latest test run' do
               test_run2.update(created_at: 1.hour.ago)
-              expect(data.first["test_runs.created_at"]).to be_within(0.1).of(test_run.created_at)
+              expect(data.first['test_runs.created_at']).to be_within(0.1).of(test_run.created_at)
             end
           end
         end
