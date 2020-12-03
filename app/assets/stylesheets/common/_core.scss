@@ -77,7 +77,7 @@ label.required::after, th.required::after {
 }
 
 .section h3 {
-  border-bottom: 1px solid var(--background_support);
+  border-bottom: 1px solid var(--primary_three);
   color: $line;
   font-size: 1.25em;
   font-weight: 300;
@@ -244,41 +244,30 @@ label.required::after, th.required::after {
 
   .rt-thead,
   .rt-tbody {
-    border-bottom: 1px solid $line;
-    border-left: 1px solid $line;
-    border-right: 1px solid $line;
+    border-bottom: 1px solid $gridline;
+    border-left: 1px solid $gridline;
+    border-right: 1px solid $gridline;
     overflow-x: hidden;
     overflow-y: scroll;
-    scrollbar-color: $line $background-main;
-  }
-
-  ::-webkit-scrollbar {
-    background-color: $background-main;
-    color: $line;
-  }
-  ::-webkit-scrollbar-thumb {
-    background-color: $line;
-    border: 2px solid $background-main;
-    border-radius: 20px;
   }
 
   .rt-thead .rt-hidden,
   .rt-hidden,
   .rt-thead .rt-td {
-    border-bottom: 1px solid $line;
-    border-right: 1px solid $line;
+    border-bottom: 1px solid $gridline;
+    border-right: 1px solid $gridline;
     padding: 0;
   }
 
   .rt-thead.-filters input {
     background-color: $background-main;
-    border: solid 1px $line;
+    border: solid 1px $gridline;
     color: $sharp-line;
   }
 
   .rt-thead.-filters select {
     background-color: $background-main;
-    border: solid 1px $line;
+    border: solid 1px $gridline;
     color: $sharp-line;
   }
 
@@ -289,7 +278,7 @@ label.required::after, th.required::after {
   }
 
   .rt-expander::after {
-    border-top-color: $line;
+    border-top-color: $gridline;
   }
 
   .-loading.-inner {
@@ -299,13 +288,12 @@ label.required::after, th.required::after {
   }
 
   .rt-thead.-filters .rt-th {
-    border-bottom: 1px solid $line;
-    border-right: 1px solid $line;
+    border-bottom: 1px solid $gridline;
+    border-right: 1px solid $gridline;
   }
 
   .rt-tbody .rt-td {
     border-bottom: 1px solid $gridline;
-    border-right: 1px solid $gridline;
   }
 
   .rt-thead .rt-th.-sort-asc,
@@ -321,8 +309,8 @@ label.required::after, th.required::after {
   .rt-thead .rt-th,
   .rt-thead .rt-td {
     background-color: $background-support;
-    border-right: 1px solid $line;
-    border-top: 1px solid $line;
+    border-right: 1px solid $gridline;
+    border-top: 1px solid $gridline;
     color: $line;
   }
 
@@ -381,8 +369,8 @@ label.required::after, th.required::after {
 
 .rt-th.unassigned,
 .rt-td.unassigned {
-  background-color: $background-main;
-  color: $disabled-text;
+  background-color: $disabled-area;
+  color: $line;
 }
 
 // Styling patches for react-keyed-file-browser

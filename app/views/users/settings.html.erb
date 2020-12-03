@@ -1,5 +1,5 @@
 <% content_for :title, t('students.account_settings') %>
-<%= form_with url: 'update_settings', method: 'patch', model: @current_user, local: true do |f| %>
+<%= form_with url: 'update_settings', method: 'patch', model: @current_user, scope: :user, local: true do |f| %>
   <p>
     <%= f.label :display_name, User.human_attribute_name(:display_name) %>
     <%= f.text_field :display_name,
