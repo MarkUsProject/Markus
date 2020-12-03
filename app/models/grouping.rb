@@ -46,9 +46,9 @@ class Grouping < ApplicationRecord
   has_many :grace_period_deductions,
            through: :non_rejected_student_memberships
 
-  has_many :test_runs, -> { order 'created_at DESC' }, dependent: :destroy
+  has_many :test_runs, -> { order(created_at: :desc) }, dependent: :destroy
   has_many :test_runs_all_data,
-           -> { left_outer_joins(:user, test_group_results: [:test_group, :test_results]).order('created_at DESC') },
+           -> { left_outer_joins(:user, test_group_results: [:test_group, :test_results]).order(created_at: :desc) },
            class_name: 'TestRun'
 
   has_one :inviter_membership,
@@ -695,8 +695,14 @@ class Grouping < ApplicationRecord
 
   def test_runs_instructors_released(submission)
     filtered = filter_test_runs(filters: { 'users.type': 'Admin', 'test_runs.submission': submission })
-    latest_test_run = filtered.order('test_runs.created_at': :asc).first
-    plucked = Grouping.pluck_test_runs(filtered.where('test_runs.id': latest_test_run))
+    latest_test_group_results = filtered.pluck_to_hash('test_groups.id as tgid',
+                                                       'test_group_results.id as tgrid',
+                                                       'test_group_results.created_at as date')
+                                        .group_by { |h| h['tgid'] }
+                                        .values
+                                        .map { |v| v.sort_by { |h| h['date'] }.last['tgrid'] }
+                                        .compact
+    plucked = Grouping.pluck_test_runs(filtered.where('test_group_results.id': latest_test_group_results))
     plucked.map! do |data|
       if data['test_groups.display_output'] == TestGroup.display_outputs[:instructors_and_student_tests] ||
          data['test_groups.display_output'] == TestGroup.display_outputs[:instructors]

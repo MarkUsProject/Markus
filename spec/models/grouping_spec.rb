@@ -1199,7 +1199,7 @@ describe Grouping do
         let(:data) { grouping.test_runs_instructors_released(submission) }
         context 'when display_output is instructors' do
           it_behaves_like 'test run data', true, false
-          context 'when there are multiple test results' do
+          context 'when there are multiple test group_results' do
             let(:test_run2) { create :test_run, grouping: grouping, user: test_runner, submission: submission }
             let(:test_group_result2) do
               create :test_group_result, test_run: test_run2, test_group: test_group, extra_info: 'AAA'
@@ -1209,7 +1209,7 @@ describe Grouping do
               expect(data.count).to eq 1
             end
             it 'should only return data from the latest test run' do
-              test_run2.update(created_at: 1.hour.ago)
+              test_group_result2.update(created_at: 1.hour.ago)
               expect(data.first['test_runs.created_at']).to be_within(0.1).of(test_run.created_at)
             end
           end
