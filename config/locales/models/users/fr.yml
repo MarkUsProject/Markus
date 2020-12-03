@@ -13,10 +13,12 @@ fr:
     attributes:
       user:
         api_key: "Votre clé - API"
+        display_name: "Afficher un Nom"
         email: "Email"
         first_name: "Prénom"
         full_name: "Nom complet"
         grace_credits: "Crédits de grâce"
         id_number: "Numéro d'identification"
         last_name: "Nom"
+        locale: "Langue"
         user_name: "Nom d'utilisateur"

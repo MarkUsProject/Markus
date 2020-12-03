@@ -9,7 +9,7 @@ class TasController < ApplicationController
     respond_to do |format|
       format.html
       format.json {
-        render json: Ta.select(:id, :user_name, :first_name, :last_name, :email)
+        render json: Ta.pluck_to_hash(:id, :user_name, :first_name, :last_name, :email)
       }
     end
   end

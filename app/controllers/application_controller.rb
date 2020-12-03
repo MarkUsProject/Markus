@@ -25,6 +25,15 @@ class ApplicationController < ActionController::Base
   # check for AJAX requests
   after_action :flash_to_headers
 
+  # Define default URL options to include the locale
+  def default_url_options(options={})
+    if current_user
+      { locale: current_user.locale }
+    else
+      { locale: I18n.locale }
+    end
+  end
+
   protected
 
   # Set version for MarkUs to be available in
@@ -61,7 +70,13 @@ class ApplicationController < ActionController::Base
   # requested, fall back to default locale.
   def set_locale
     if params[:locale].nil?
-      I18n.locale = I18n.default_locale
+      if current_user
+        I18n.locale = current_user.locale
+      else
+        I18n.locale = I18n.default_locale
+      end
+    elsif I18n.available_locales.include? params[:locale].to_sym
+      I18n.locale = params[:locale]
     else
       flash_now(:notice, I18n.t('locale_not_available', locale: params[:locale]))
     end

@@ -607,6 +607,7 @@ ActiveRecord::Schema.define(version: 2020_11_22_174128) do
     t.boolean "receives_results_emails", default: false, null: false
     t.boolean "receives_invite_emails", default: false, null: false
     t.string "display_name", null: false
+    t.string "locale", default: "en", null: false
     t.index ["api_key"], name: "index_users_on_api_key", unique: true
     t.index ["user_name"], name: "index_users_on_user_name", unique: true
   end

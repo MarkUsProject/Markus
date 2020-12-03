@@ -13,8 +13,8 @@ class UsersController < ApplicationController
   end
 
   def update_settings
-    student = current_user
-    student.update!(settings_params)
+    user = current_user
+    user.update!(settings_params)
     update_success
   end
 
@@ -26,7 +26,7 @@ class UsersController < ApplicationController
   end
 
   def settings_params
-    params.require(:student).permit(:receives_invite_emails, :receives_results_emails, :display_name)
+    params.require(:user).permit(:receives_invite_emails, :receives_results_emails, :display_name, :locale)
   end
 
   protected
