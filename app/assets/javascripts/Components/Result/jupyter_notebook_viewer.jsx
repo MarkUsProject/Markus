@@ -3,17 +3,19 @@ import {markupTextInRange} from "../Helpers/range_selector";
 
 export class JupyterNotebookViewer extends React.Component {
 
-  elemMarkup = (node) => {
-    const elem = document.createElement('span');
-    elem.style.backgroundColor = 'red';
-    return elem;
+  constructor() {
+    super();
+    this.state = {
+      annotations: []
+    }
   }
 
   getSelection = () => {
     const iframe = document.getElementById("jupyter-notebook");
     const target = (iframe.contentWindow || iframe.contentDocument);
     const range = target.getSelection().getRangeAt(0)
-    markupTextInRange(range, this.elemMarkup)
+    this.setState(prevState => ({annotations: prevState.annotations.concat([range])}))
+    markupTextInRange(range, 'yellow')
   }
 
   render() {

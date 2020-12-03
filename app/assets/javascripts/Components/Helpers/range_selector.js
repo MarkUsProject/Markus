@@ -54,53 +54,54 @@ function getLeafNodes(root, _nodes) {
   return _nodes
 }
 
-export function markupTextInRange(range, elemMarkup) {
+export function markupTextInRange(range, colour) {
   if (range.startContainer === range.endContainer) {
     const old_node = range.startContainer;
     const parent = old_node.parentNode;
-    const new_node = elemMarkup(range.startContainer);
-    if (new_node) {
-      if (old_node.nodeType === 3) {
-        const unmarked1 = document.createTextNode(old_node.nodeValue.substring(0, range.startOffset));
-        const marked = document.createTextNode(old_node.nodeValue.substring(range.startOffset, range.endOffset));
-        const unmarked2 = document.createTextNode(old_node.nodeValue.substring(range.endOffset));
-        new_node.appendChild(marked);
-        parent.replaceChild(unmarked1, old_node);
-        parent.insertBefore(new_node, unmarked1.nextSibling)
-        parent.insertBefore(unmarked2, new_node.nextSibling)
-      } else if (old_node.nodeName === 'img' || old_node.childNodes.length) {
-        console.log(old_node)
-        new_node.appendChild(old_node.cloneNode(true));
-        parent.replaceChild(new_node, old_node);
-      }
+    if (old_node.nodeType === 3) {
+      const new_node = document.createElement('span');
+      new_node.style.backgroundColor = colour;
+      const unmarked1 = document.createTextNode(old_node.nodeValue.substring(0, range.startOffset));
+      const marked = document.createTextNode(old_node.nodeValue.substring(range.startOffset, range.endOffset));
+      const unmarked2 = document.createTextNode(old_node.nodeValue.substring(range.endOffset));
+      new_node.appendChild(marked);
+      parent.replaceChild(unmarked1, old_node);
+      parent.insertBefore(new_node, unmarked1.nextSibling)
+      parent.insertBefore(unmarked2, new_node.nextSibling)
+    } else if (old_node.nodeName === 'img' || old_node.childNodes.length) {
+      const new_node = document.createElement('div');
+      new_node.style.border = `5px solid ${colour}`
+      new_node.appendChild(old_node.cloneNode(true));
+      parent.replaceChild(new_node, old_node);
     }
   } else {
     getAllNodesInRange(range).forEach(node => {
       getLeafNodes(node).forEach(old_node => {
-        const new_node = elemMarkup(old_node);
-        if (new_node) {
-          const parent = old_node.parentNode;
-          if (old_node.nodeType === 3) {
-            if (old_node === range.startContainer) {
-              const unmarked = document.createTextNode(old_node.nodeValue.substring(0, range.startOffset));
-              const marked = document.createTextNode(old_node.nodeValue.substring(range.startOffset));
-              new_node.appendChild(marked);
-              parent.replaceChild(unmarked, old_node);
-              parent.insertBefore(new_node, unmarked.nextSibling)
-            } else if (old_node === range.endContainer) {
-              const marked = document.createTextNode(old_node.nodeValue.substring(0, range.endOffset));
-              const unmarked = document.createTextNode(old_node.nodeValue.substring(range.endOffset));
-              new_node.appendChild(marked);
-              parent.replaceChild(new_node, old_node);
-              parent.insertBefore(unmarked, new_node.nextSibling)
-            } else {
-              new_node.appendChild(document.createTextNode(old_node.nodeValue));
-              parent.replaceChild(new_node, old_node);
-            }
-          } else if (old_node.nodeName === 'img' || old_node.childNodes.length) {
-            new_node.appendChild(old_node.cloneNode(true));
+        const parent = old_node.parentNode;
+        if (old_node.nodeType === 3) {
+          const new_node = document.createElement('span');
+          new_node.style.backgroundColor = colour;
+          if (old_node === range.startContainer) {
+            const unmarked = document.createTextNode(old_node.nodeValue.substring(0, range.startOffset));
+            const marked = document.createTextNode(old_node.nodeValue.substring(range.startOffset));
+            new_node.appendChild(marked);
+            parent.replaceChild(unmarked, old_node);
+            parent.insertBefore(new_node, unmarked.nextSibling)
+          } else if (old_node === range.endContainer) {
+            const marked = document.createTextNode(old_node.nodeValue.substring(0, range.endOffset));
+            const unmarked = document.createTextNode(old_node.nodeValue.substring(range.endOffset));
+            new_node.appendChild(marked);
+            parent.replaceChild(new_node, old_node);
+            parent.insertBefore(unmarked, new_node.nextSibling)
+          } else {
+            new_node.appendChild(document.createTextNode(old_node.nodeValue));
             parent.replaceChild(new_node, old_node);
           }
+        } else if (old_node.nodeName === 'img' || old_node.childNodes.length) {
+          const new_node = document.createElement('div');
+          new_node.style.border = `5px solid ${colour}`
+          new_node.appendChild(old_node.cloneNode(true));
+          parent.replaceChild(new_node, old_node);
         }
       })
     })
