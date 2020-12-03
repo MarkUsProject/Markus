@@ -342,10 +342,10 @@ footer {
     }
 
     li.active {
-      background: $primary-three !important;
+      background: $sub-menu !important;
 
       a {
-        color: $background-main !important;
+        color: $active-menu-item !important;
       }
     }
   }
