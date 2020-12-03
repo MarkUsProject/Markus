@@ -1,4 +1,5 @@
 :root {
+  --active_menu: var(--background_main);
   --annotation_holder: #ffd452;
   --background_main: #fff;
   --background_support: #7b8e90;
@@ -32,6 +33,7 @@ $annotation-holder: var(--annotation_holder);
 $link: var(--primary_one);
 $pane-highlight: var(--primary_two);
 $sub-menu: var(--sub_menu);
+$active_menu_item: var(--active_menu);
 
 // Status
 $alert-light: var(--light_alert);

@@ -1,6 +1,7 @@
 export const themes = {
   dark: {
     annotation_holder: '#48372c',
+    active_menu: 'var(--sharp_line)',
     background_main: '#161616',
     background_support: '#333d3e',
     comments_color: 'var(--heavy_success)',
@@ -24,6 +25,7 @@ export const themes = {
   },
   light: {
     annotation_holder: '#ffd452',
+    active_menu: 'var(--background_main)',
     background_main: '#fff',
     background_support: '#e8f4f2',
     comments_color: 'var(--heavy_success)',
