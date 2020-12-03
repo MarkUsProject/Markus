@@ -1,5 +1,5 @@
 <% content_for :title, t('students.account_settings') %>
-<%= form_with url: 'update_settings', method: 'patch', model: User, local: true do |f| %>
+<%= form_with url: 'update_settings', method: 'patch', model: @current_user, scope: :user, local: true do |f| %>
   <p>
     <%= f.label :display_name, User.human_attribute_name(:display_name) %>
     <%= f.text_field :display_name,
@@ -8,6 +8,10 @@
   <p>
     <%= f.label :locale, User.human_attribute_name(:locale) %>
     <%= f.select :locale, options_for_select(I18n.available_locales, selected: "#{@current_user.locale}") %>
+  </p>
+  <p>
+    <%= f.label :theme, User.human_attribute_name(:theme) %>
+    <%= f.select(:theme, [%w[dark dark], %w[light light]]) %>
   </p>
   <% if @current_user.student? %>
     <p>

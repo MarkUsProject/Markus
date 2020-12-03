@@ -10,18 +10,18 @@
 /** Main */
 
 body {
-  background-color: $lighter-blue;
-  color: $dark-grey;
+  background-color: $background-support;
+  color: $sharp-line;
   font: 400 0.8em/1.2em $fonts;
   transition: background-color $time-quick;
 
   @include breakpoint(tiny) {
-    background-color: $white;
+    background-color: $background-main;
   }
 }
 
 ::selection {
-  background-color: $blue;
+  background-color: $primary-three;
 }
 
 // Flexbox display
@@ -79,18 +79,14 @@ p + p {
 /** Links */
 
 a {
-  color: $dark-blue;
+  color: $link;
   cursor: pointer;
   text-decoration: none;
   transition: color $time-quick;
 
   &.inactive {
-    color: $black;
+    color: $sharp-line;
     pointer-events: none;
-  }
-
-  &:hover {
-    color: $blue;
   }
 }
 
@@ -111,8 +107,8 @@ strong a {
 
 .error {
   @extend .alert;
-  background: $light-red asset-url('icons/exclamation.png') no-repeat 5px center;
-  border: 1px solid $red;
+  background: $light-error asset-url('icons/exclamation.png') no-repeat 5px center;
+  border: 1px solid $severe-error;
 }
 
 .error.hidden {
@@ -121,26 +117,26 @@ strong a {
 
 .warning {
   @extend .alert;
-  background: $light-yellow asset-url('icons/error.png') no-repeat 5px center;
-  border: 1px solid $yellow;
+  background: $light-alert asset-url('icons/error.png') no-repeat 5px center;
+  border: 1px solid $alert;
 }
 
 .success {
   @extend .alert;
-  background: $light-green asset-url('icons/accept.png') no-repeat 5px center;
-  border: 1px solid $green;
+  background: $light-success asset-url('icons/accept.png') no-repeat 5px center;
+  border: 1px solid $severe-success;
 }
 
 .information {
   @extend .alert;
-  background: $light-grey asset-url('icons/information.png') no-repeat 5px center;
-  border: 1px solid $grey;
+  background: $background-main asset-url('icons/information.png') no-repeat 5px center;
+  border: 1px solid $primary-two;
 }
 
 .notice {
   @extend .alert;
-  background: $light-grey asset-url('icons/information.png') no-repeat 5px center;
-  border: 1px solid $grey;
+  background: $background-main asset-url('icons/information.png') no-repeat 5px center;
+  border: 1px solid $line;
 }
 
 
@@ -154,40 +150,40 @@ strong a {
 
 input,
 textarea {
-  background: lighten($light-grey, 10%);
-  border: 1px solid $grey;
+  background: $background-main;
+  border: 1px solid $primary-two;
   border-radius: $radius;
-  color: $dark-grey;
+  color: $line;
   font: 400 1em $fonts;
   outline: none;
   transition: all $time-quick;
   width: 100%;
 
   &:hover {
-    background-color: $white;
-    border-color: $dark-blue;
+    background-color: $background-main;
+    border-color: $primary-one;
   }
 
   &:focus {
-    background-color: $white;
-    border-color: $blue;
+    background-color: $background-main;
+    border-color: $primary-three;
     border-width: 3px;
   }
 
   &:invalid {
-    background-color: $light-red;
+    background-color: $light-error;
   }
 
   &[disabled] {
-    background-color: $disabled-grey;
-    border-color: $disabled-dark;
-    color: $disabled-dark;
+    background-color: $disabled-area;
+    border-color: $background-support;
+    color: $sharp-line;
   }
 
   &[readonly] {
-    background-color: $disabled-grey;
-    border-color: $disabled-dark;
-    color: $black;
+    background-color: $background-support;
+    border-color: $line;
+    color: $sharp-line;
   }
 
   &.large-text {
@@ -197,7 +193,7 @@ textarea {
   &.updated,
   &.updated:focus,
   &.updated:hover {
-    background-color: $light-green;
+    background-color: $light-success;
   }
 
   &[type='number'] {
@@ -215,9 +211,10 @@ textarea {
 }
 
 select {
-  background: none;
-  border: 1px solid $light-blue;
+  background: $background-main;
+  border: 1px solid $sharp-line;
   border-radius: $radius;
+  color: $line;
   font-family: $fonts;
   margin: 5px;
   padding-left: 5px;
@@ -231,11 +228,11 @@ input[type='submit'],
 input[type='reset'],
 button,
 .button {
-  background: linear-gradient(to bottom, $white, $light-grey);
-  border: 1px solid $blue;
+  background: linear-gradient(to bottom, $background-main, $background-support);
+  border: 1px solid $primary-three;
   border-radius: $radius;
-  box-shadow: inset 0 -1px 0 $grey;
-  color: $dark-grey;
+  box-shadow: inset 0 -1px 0 $primary-two;
+  color: $line;
   cursor: pointer;
   display: inline-block;
   font: 400 1em $fonts;
@@ -243,32 +240,31 @@ button,
   outline: none;
   padding: 0.5em 1.5em;
   text-align: center;
-  text-shadow: 0 1px 0 $white;
+  text-shadow: 0 1px 0 $background-main;
   transition: all $time-quick;
 
   &:hover {
-    border-color: $dark-blue;
-    box-shadow: inset 0 -1px 0 $grey, 0 1px 0 $light-grey;
-    color: $dark-blue;
+    border-color: $primary-one;
+    box-shadow: inset 0 -1px 0 $primary-two, 0 1px 0 $background-main;
+    color: $line;
     top: 1px;
   }
 
   &:focus {
-    box-shadow: inset 0 -1px 0 $grey, 0 0 3px $blue;
+    box-shadow: inset 0 -1px 0 $primary-two, 0 0 3px $primary-three;
   }
 
   &:active {
-    background: linear-gradient(to bottom, $light-grey, $white);
+    background: linear-gradient(to bottom, $background-main, $background-main);
     box-shadow: none;
-    color: $dark-blue;
+    color: $primary-one;
   }
 
   &[disabled],
   &.disabled {
-    background: linear-gradient(to bottom, $light-grey, $disabled-grey);
-    border-color: $disabled-dark;
+    background: linear-gradient(to bottom, $background-main, $disabled-area);
+    border-color: $disabled-area;
     box-shadow: none;
-    color: $disabled-dark;
   }
 
   &.large-button {
@@ -287,7 +283,7 @@ button,
 /** Fieldset */
 
 fieldset {
-  background: $white;
+  background: $background-main;
   border-radius: $radius;
   margin-top: $dimen-vertical;
   padding: 0.25em 1.5em 1.5em;
@@ -310,7 +306,7 @@ fieldset {
   fieldset {
     border: none;
     border-radius: 0;
-    border-top: 1px solid $grey;
+    border-top: 1px solid $primary-two;
 
     legend {
       width: 100%;
@@ -350,25 +346,25 @@ fieldset {
 }
 
 .disable {
-  color: $dark-grey;
+  color: $disabled-text;
   font-style: italic;
 }
 
 /** Tables */
 
 .table {
-  border-left: 1px solid $grey;
-  border-right: 1px solid $grey;
+  border-left: 1px solid $line;
+  border-right: 1px solid $line;
   overflow-x: auto;
   width: 100%;
 
   table {
-    border-top: 1px solid $grey;
+    border-top: 1px solid $line;
     width: 100%;
 
     thead,
     tfoot {
-      background-color: $light-grey;
+      background-color: $background-main;
       font-weight: 600;
       text-align: left;
       text-transform: uppercase;
@@ -392,19 +388,20 @@ fieldset {
     }
 
     thead {
-      border-bottom: 2px solid $grey;
+      background-color: $background-support;
+      border-bottom: 2px solid $line;
     }
 
     tfoot {
-      border-top: 2px solid $grey;
+      border-top: 2px solid $primary-two;
     }
 
     tr {
-      border-bottom: 1px solid $grey;
+      border-bottom: 1px solid $line;
 
       th,
       td {
-        border-right: 1px solid $grey;
+        border-right: 1px solid $line;
         padding: 0.5em 1.5em 0.5em 1em;
         vertical-align: middle;
 
@@ -419,15 +416,15 @@ fieldset {
         transition: background-color $time-quick;
 
         &:nth-child(odd) {
-          background-color: $white;
+          background-color: $background-main;
         }
 
         &:nth-child(even) {
-          background-color: $light-grey;
+          background-color: $background-main;
         }
 
         &:hover {
-          background-color: $lighter-blue;
+          background-color: $background-support;
         }
       }
     }
@@ -436,15 +433,15 @@ fieldset {
 
 // Keyboard shortcuts
 kbd {
-  background-color: $light-grey;
-  border: 1px solid $grey;
+  background-color: $background-main;
+  border: 1px solid $primary-two;
   border-radius: $radius;
-  box-shadow: 0 1px 0 $black, 0 0 0 2px $light-grey inset;
+  box-shadow: 0 1px 0 $sharp-line, 0 0 0 2px $background-main inset;
   display: inline-block;
   font-family: $mono-fonts;
   font-size: 0.9em;
   padding: 0.4em 0.6em;
-  text-shadow: 0 1px 0 $white;
+  text-shadow: 0 1px 0 $background-main;
 }
 
 /** Test script results table */
@@ -470,7 +467,7 @@ kbd {
   display: flex;
 
   .pane {
-    border: 1px solid $blue;
+    border: 1px solid $primary-three;
     border-radius: $radius;
     flex: 1;
     min-height: 1px;
@@ -481,7 +478,7 @@ kbd {
     }
 
     &.highlight {
-      background-color: $lighter-green;
+      background-color: $pane-highlight;
     }
 
     // TODO: decide whether to adopt this style more broadly
@@ -490,8 +487,8 @@ kbd {
       padding: 0 0 1em;
 
       h2 {
-        background-color: $light-grey;
-        border-bottom: 1px solid $grey;
+        background-color: $background-main;
+        border-bottom: 1px solid $primary-two;
         border-top-left-radius: $radius;
         border-top-right-radius: $radius;
         font-size: 1.5em;
@@ -499,7 +496,7 @@ kbd {
       }
 
       h3 {
-        border-bottom: 1px solid $grey;
+        border-bottom: 1px solid $primary-two;
         font-size: 1.25em;
         padding: 0.5em 0.1em;
       }
@@ -538,8 +535,8 @@ kbd {
 }
 
 .listings {
-  background: $white;
-  border: 1px solid $grey;
+  background: $background-main;
+  border: 1px solid $line;
   border-radius: $radius;
   user-select: none;
 }
@@ -548,7 +545,7 @@ kbd {
 
 .sortable {
   header {
-    border-bottom: 1px solid $grey;
+    border-bottom: 1px solid $primary-two;
     border-radius: $radius $radius 0 0;
     font-weight: 600;
     padding: 0.5em;
@@ -580,14 +577,14 @@ kbd {
     li {
       background: url(handle@2x.png) 0.5em center no-repeat;
       background-size: 12px 20px;
-      border-top: 1px solid $grey;
+      border-top: 1px solid $line;
       list-style: none;
       min-height: 2.5em;
       padding: 0.5em 0.5em 0.5em 2em;
       transition: background-color $time-quick;
 
       &:hover {
-        background-color: $lighter-blue;
+        background-color: $background-support;
       }
 
       &:last-child {
@@ -623,8 +620,8 @@ ul.tags {
   padding: 4px 0 0;
 
   & > li {
-    background-color: $white;
-    border: 1px solid $dark-blue;
+    background-color: $background-main;
+    border: 1px solid $primary-one;
     border-radius: $radius;
     cursor: pointer;
     display: inline-block;
@@ -637,9 +634,9 @@ ul.tags {
     }
 
     &:hover {
-      background: $lighter-blue;
-      border: 1px solid $blue;
-      color: $dark-blue;
+      background: $background-support;
+      border: 1px solid $primary-three;
+      color: $primary-one;
 
       ul {
         display: block;
@@ -647,8 +644,8 @@ ul.tags {
     }
 
     ul {
-      background: $white;
-      border: 1px solid $blue;
+      background: $background-main;
+      border: 1px solid $primary-three;
       display: none;
       left: -1px;
       margin-top: 0.3em;
@@ -658,7 +655,7 @@ ul.tags {
       z-index: 9000;
 
       li {
-        color: $dark-grey;
+        color: $line;
         cursor: pointer;
         display: inline-flex;
         list-style: none;
@@ -666,8 +663,8 @@ ul.tags {
         width: 100%;
 
         &:hover {
-          background: $blue;
-          color: $white;
+          background: $background-support;
+          color: $line;
         }
       }
     }
@@ -679,14 +676,14 @@ ul.tags {
 }
 
 .red-text {
-  color: $red;
+  color: $severe-error;
 }
 
 .tag-element {
-  background-color: $light-blue;
-  border: 1px solid $blue;
+  background-color: $background-support;
+  border: 1px solid $primary-three;
   border-radius: 15px;
-  color: $dark-blue;
+  color: $primary-one;
   cursor: pointer;
   padding-left: 5px;
   padding-right: 5px;
@@ -695,8 +692,8 @@ ul.tags {
   white-space: nowrap;
 
   &:hover {
-    background-color: $dark-blue;
-    color: $white;
+    background-color: $primary-one;
+    color: $background-main;
   }
 }
 
@@ -711,9 +708,9 @@ ul.tags {
 }
 
 .dialog {
-  background: $white;
+  background: $background-main;
   border-radius: $radius;
-  box-shadow: 0 0 10px $grey;
+  box-shadow: 0 0 10px $primary-two;
   max-height: 90%;
   max-width: 100%;
   overflow-y: auto;
@@ -774,43 +771,43 @@ nav {
 
   ul.main,
   ul.sub_sub {
-    border-bottom: 2px solid $blue;
+    border-bottom: 2px solid $sub-menu;
 
     li:hover,
     .active {
-      background-color: $blue;
-      color: $white;
+      background-color: $sub-menu;
+      color: $background-main;
       transition: background-color $time-quick;
 
       a {
-        color: $white;
+        color: $active-menu-item;
       }
     }
   }
 
   ul.sub {
-    background-color: $blue;
-    border-bottom: 2px solid $white;
+    background-color: $sub-menu;
+    border-bottom: 2px solid $background-main;
     min-height: 3em;
 
     li:hover,
     .active {
-      background-color: $white;
-      color: $dark-blue;
+      background-color: $background-main;
+      color: $primary-one;
       transition: background-color $time-quick;
 
       a {
-        color: $dark-blue;
+        color: $primary-one;
       }
     }
 
     a {
-      color: $white;
+      color: $sharp-line;
     }
   }
 
   ul.sub_sub {
-    background-color: $white;
+    background-color: $background-main;
   }
 }
 
@@ -819,7 +816,7 @@ nav {
 .arrow-down {
   border-left: 7.5px solid transparent;
   border-right: 7.5px solid transparent;
-  border-top: 7.5px solid $dark-blue;
+  border-top: 7.5px solid $primary-one;
   float: right;
   height: 0;
   margin-top: 4px;
@@ -827,7 +824,7 @@ nav {
 }
 
 .arrow-up {
-  border-bottom: 7.5px solid $dark-blue;
+  border-bottom: 7.5px solid $primary-one;
   border-left: 7.5px solid transparent;
   border-right: 7.5px solid transparent;
   float: right;
@@ -837,8 +834,8 @@ nav {
 }
 
 .dropdown {
-  background: $white;
-  border: 1px solid $dark-blue;
+  background: $background-main;
+  border: 1px solid $primary-one;
   cursor: pointer;
   display: inline-block;
   min-width: 200px;
@@ -854,8 +851,8 @@ nav {
   }
 
   ul {
-    background: $white;
-    border: 1px solid $dark-blue;
+    background: $background-main;
+    border: 1px solid $primary-one;
     border-radius: 0 0 $radius $radius;
     display: none;
     left: -1px;
@@ -887,11 +884,11 @@ nav {
 
       &:hover,
       &.active {
-        background: $blue;
-        color: $white;
+        background: $sub-menu;
+        color: $background-main;
 
         > a {
-          color: $white;
+          color: $sharp-line;
         }
       }
     }
@@ -923,7 +920,7 @@ nav {
 
   &::after {
     border: transparent solid 5px;
-    border-left-color: $dark-blue;
+    border-left-color: $primary-one;
     border-right-width: 0;
     content: ' ';
     float: right;
@@ -935,10 +932,10 @@ nav {
 // Annotations
 
 .annotation_text_display {
-  background: $white;
-  border: 1px solid $black;
+  background: $background-main;
+  border: 1px solid $sharp-line;
   border-radius: $radius;
-  box-shadow: 4px 4px 2px $grey;
+  box-shadow: 4px 4px 2px $primary-two;
   max-width: 400px;
   padding: 0.25em 1em;
   position: absolute;
@@ -948,16 +945,17 @@ nav {
 }
 
 .annotation_holder {
-  background: $orange;
-  border: 1px solid $black;
+  background: $annotation-holder;
+  border: 1px solid $sharp-line;
   opacity: 0.2;
   position: absolute;
   z-index: 1;
 }
 
 .annotation-holder-active {
-  background: $orange-transparent;
-  border: 3px solid $red;
+  background: $annotation-holder;
+  border: 3px solid $severe-error;
+  opacity: 0.5;
   position: absolute;
   z-index: 1;
 }
@@ -965,7 +963,7 @@ nav {
 
 // Text editing and previews
 .preview {
-  border: 1px dashed $grey;
+  border: 1px dashed $primary-two;
   margin: 1em 0;
   max-height: 15em;
   min-height: 3em;
@@ -975,15 +973,15 @@ nav {
 }
 
 .autosave-text {
-  color: $dark-grey;
+  color: $line;
   font-size: 0.8em;
   font-style: italic;
 }
 
 // Grading components
 .submission-selector-container {
-  background-color: $lighter-blue;
-  border: $dark-grey 1px solid;
+  background-color: $background-support;
+  border: $line 1px solid;
   padding: 0.25em 0;
   width: 100%;
 }
@@ -1030,8 +1028,8 @@ nav {
 }
 
 .total {
-  background: $light-blue;
-  border: 1px solid $grey;
+  background: $background-support;
+  border: 1px solid $primary-two;
   border-radius: $radius;
   display: inline-block;
   flex-basis: auto;
@@ -1042,8 +1040,8 @@ nav {
 }
 
 .highlight-bar {
-  background: $lighter-blue;
-  border: 1px solid $black;
+  background: $background-support;
+  border: 1px solid $sharp-line;
   font-size: 1.2em;
   font-weight: 600;
   margin: 1em 0;
@@ -1067,5 +1065,5 @@ nav {
 
 // Login
 .cookies-eu-ok {
-  background-color: $blue;
+  background-color: $primary-three;
 }

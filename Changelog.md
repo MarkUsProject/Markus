@@ -35,6 +35,7 @@
 - Fix bug that prevented creation of scanned exams (#4968)
 - Fix bug where subdirectories were not being created with the right path in the autotest file manager (#4969)
 - Fix bug where penalty periods could have interval/hour values of zero (#4973)
+- Add color theme settings (#4924)
 
 ## [v1.10.4]
 - Fix bug where students could see average and median marks when the results had not been released yet (#4976)

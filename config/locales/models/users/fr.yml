@@ -21,4 +21,5 @@ fr:
         id_number: "Numéro d'identification"
         last_name: "Nom"
         locale: "Langue"
+        theme: "UPDATE ME!"
         user_name: "Nom d'utilisateur"

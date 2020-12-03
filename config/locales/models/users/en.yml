@@ -22,4 +22,5 @@ en:
         id_number: "ID number"
         last_name: "Last Name"
         locale: "Language"
+        theme: "Color Theme"
         user_name: "User Name"
