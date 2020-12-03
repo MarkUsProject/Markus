@@ -107,7 +107,7 @@ strong a {
 
 .error {
   @extend .alert;
-  background: $light-red asset-url('icons/exclamation.png') no-repeat 5px center;
+  background: $light-error asset-url('icons/exclamation.png') no-repeat 5px center;
   border: 1px solid $severe-error;
 }
 
@@ -117,14 +117,14 @@ strong a {
 
 .warning {
   @extend .alert;
-  background: $alert-light asset-url('icons/error.png') no-repeat 5px center;
+  background: $light-alert asset-url('icons/error.png') no-repeat 5px center;
   border: 1px solid $alert;
 }
 
 .success {
   @extend .alert;
   background: $light-success asset-url('icons/accept.png') no-repeat 5px center;
-  border: 1px solid $success;
+  border: 1px solid $severe-success;
 }
 
 .information {
@@ -171,7 +171,7 @@ textarea {
   }
 
   &:invalid {
-    background-color: $light-red;
+    background-color: $light-error;
   }
 
   &[disabled] {

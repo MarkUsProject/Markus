@@ -101,7 +101,7 @@
     }
 
     &.old-mark:not(.selected) {
-      background: $alert-light;
+      background: $light-alert;
     }
   }
 
@@ -157,7 +157,7 @@
     text-align: right;
 
     &.invalid {
-      background-color: $light-red;
+      background-color: $light-error;
     }
   }
 }

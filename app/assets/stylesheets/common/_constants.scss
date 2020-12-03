@@ -3,24 +3,24 @@
   --annotation_holder: #ffd452;
   --background_main: #fff;
   --background_support: #7b8e90;
-  --comments_color: var(--heavy_success);
+  --comments_color: var(--severe_success);
   --darker-orange: #ee6415;
   --disabled_text: #b5b5b5;
   --disabled_area: #a0a0a0;
-  --error_light: #ffc2c2;
   --gridline: #46464640;
-  --heavy_alert: #ffd452;
-  --heavy_error: #a20000;
-  --heavy_success: #246700;
   --key_words_color: var(--primary_one);
   --light_alert: #ffe9ac;
+  --light_error: #ffc2c2;
   --light_success: #b9e586;
   --line: #464646;
   --primary_one: #245185;
   --primary_two: #cee3ea;
   --primary_three: #89b1dd;
+  --severe_alert: #ffd452;
+  --severe_error: #a20000;
+  --severe_success: #246700;
   --sharp_line: #000;
-  --strings_color: var(--heavy_error);
+  --strings_color: var(--severe_error);
   --sub_menu: var(--primary_three);
 }
 // Code viewer
@@ -36,15 +36,15 @@ $sub-menu: var(--sub_menu);
 $active_menu_item: var(--active_menu);
 
 // Status
-$alert-light: var(--light_alert);
-$alert: var(--heavy_alert);
-$alert-dark: var(--heavy_alert);
+$alert: var(--severe_alert);
 $disabled-text: var(--disabled_text);
 $disabled-area: var(--disabled_area);
-$light-red: var(--error_light);
+$light-alert: var(--light_alert);
+$light-error: var(--light_error);
 $light-success: var(--light_success);
-$success: var(--heavy_success);
-$severe-error: var(--heavy_error);
+$severe-alert: var(--severe_alert);
+$severe-error: var(--severe_error);
+$severe-success: var(--severe_success);
 
 $primary-one: var(--primary_one);
 $primary-two: var(--primary_two);

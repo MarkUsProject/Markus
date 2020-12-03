@@ -180,7 +180,7 @@ label.required::after, th.required::after {
 }
 
 .help-message {
-  background: $alert-light;
+  background: $light-alert;
   border: 1px solid $alert;
   border-radius: $radius;
   display: inline-block;
