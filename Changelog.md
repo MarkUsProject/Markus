@@ -1,5 +1,7 @@
 # Changelog
 ## [unreleased]
+
+## [v1.11.0]
 - Converts annotation modals from ERB into React (#4997)
 - Refactor localization setting to settings page (#4996)
 - Add admins to display name (#4994)
