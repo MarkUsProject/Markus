@@ -37,6 +37,7 @@ class Annotation < ApplicationRecord
       content: annotation_text.content,
       annotation_category:
         annotation_text.annotation_category&.annotation_category_name,
+      annotation_category_id: annotation_text.annotation_category_id,
       type: self.class.name,
       number: annotation_number,
       is_remark: is_remark,
