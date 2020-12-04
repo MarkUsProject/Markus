@@ -208,9 +208,12 @@ class Result extends React.Component {
         url: Routes.annotations_path(),
         data,
       }).then(() =>
-        this.setState({
-          annotationModal: INITIAL_ANNOTATION_MODAL_STATE
-        })
+        {
+          this.setState({
+            annotationModal: INITIAL_ANNOTATION_MODAL_STATE
+          })
+          this.refreshAnnotations();
+        }
       ); // Resetting back to original
     };
 

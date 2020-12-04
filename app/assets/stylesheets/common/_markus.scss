@@ -710,6 +710,10 @@ ul.tags {
   transform: translate(-50%, -50%);
 }
 
+.ReactModal__Overlay--after-open {
+  z-index: 2;
+}
+
 .dialog {
   background: $white;
   border-radius: $radius;
