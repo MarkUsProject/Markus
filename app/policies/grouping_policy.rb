@@ -1,14 +1,6 @@
+# Grouping policy class
 class GroupingPolicy < ApplicationPolicy
   authorize :membership, optional: true
-
-  def run_tests?
-    !user.student? || (
-      check?(:member?) &&
-      check?(:not_in_progress?) &&
-      check?(:tokens_available?) &&
-      check?(:before_due_date?)
-    )
-  end
 
   def member?
     record.accepted_students.include?(user)
@@ -24,9 +16,7 @@ class GroupingPolicy < ApplicationPolicy
 
   # Policies for group invitations.
   def invite_member?
-    allowed_to?(:students_form_groups?) &&
-      allowed_to?(:no_extension?) &&
-      allowed_to?(:before_due_date?)
+    check?(:students_form_groups?) && check?(:no_extension?) && check?(:before_due_date?)
   end
 
   def students_form_groups?
@@ -38,11 +28,12 @@ class GroupingPolicy < ApplicationPolicy
   end
 
   def disinvite_member?
-    user.user_name == record.inviter.user_name && membership.membership_status == StudentMembership::STATUSES[:pending]
+    user.user_name == record.inviter&.user_name && membership.membership_status == StudentMembership::STATUSES[:pending]
   end
 
   def delete_rejected?
-    user.user_name == record.inviter.user_name && membership.membership_status == StudentMembership::STATUSES[:rejected]
+    user.user_name == record.inviter&.user_name &&
+        membership.membership_status == StudentMembership::STATUSES[:rejected]
   end
 
   def destroy?
@@ -62,10 +53,14 @@ class GroupingPolicy < ApplicationPolicy
   end
 
   def view_file_manager?
-    user.student? &&
-      !(record.assignment.scanned_exam? ||
-        record.assignment.is_peer_review? ||
-        (record.assignment.is_timed? && record.start_time.nil?))
+    return false unless user.student?
+    if record.assignment.scanned_exam? || record.assignment.is_peer_review?
+      false
+    elsif record.assignment.is_timed?
+      !record.start_time.nil? || record.past_collection_date?
+    else
+      true
+    end
   end
 
   def start_timed_assignment?

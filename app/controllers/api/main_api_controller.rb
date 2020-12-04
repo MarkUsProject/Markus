@@ -6,11 +6,13 @@ module Api
   class MainApiController < ActionController::Base
     include ActionPolicy::Controller, SessionHandler
 
-    authorize :user, through: :current_user
-    rescue_from ActionPolicy::Unauthorized, with: :user_not_authorized
-
     before_action :check_format, :authenticate
     skip_before_action :verify_authenticity_token
+
+    authorize :user, through: :current_user
+    verify_authorized
+    rescue_from ActionPolicy::Unauthorized, with: :user_not_authorized
+    before_action { authorize! }
 
     # Unless overridden by a subclass, all routes are 404's by default
     def index
@@ -56,14 +58,6 @@ module Api
       @current_user = User.find_by_api_key(auth_token)
       if @current_user.nil?
         # Key/username does not exist, return 403 error
-        render 'shared/http_status', locals: {code: '403', message:
-          HttpStatusHelper::ERROR_CODE['message']['403']}, status: 403
-        return
-      end
-
-      # Student's aren't allowed yet
-      if @current_user.student?
-        # API is available for TAs, Admins and TestServers only
         render 'shared/http_status', locals: {code: '403', message:
           HttpStatusHelper::ERROR_CODE['message']['403']}, status: 403
       end
@@ -121,6 +115,12 @@ module Api
       render 'shared/http_status',
              locals: { code: '403', message: HttpStatusHelper::ERROR_CODE['message']['403'] },
              status: 403
+    end
+
+    protected
+
+    def implicit_authorization_target
+      OpenStruct.new policy_class: MainApiPolicy
     end
   end
 end # end Api module

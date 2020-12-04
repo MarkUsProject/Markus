@@ -10,18 +10,19 @@
 <tr class='period'>
     <%= pf.fields_for :periods, penalty_decay_period do |f| %>
       <td>
-        <%= f.text_field :deduction, required: true, size: 1 %> %
+        <%= f.number_field :deduction, min: 0, step: :any, required: true %> %
       </td>
       <td>
-        <%= f.text_field :interval, required: true, size: 1 %>
+        <%= f.number_field :interval, min: 0.001, step: :any, required: true %>
         <%= t('submission_rules.hours') %>
       </td>
       <td>
-        <%= f.text_field :hours,
-                         size: 1,
-                         required: true,
-                         class: 'PeriodDeltaChain_Hours',
-                         onchange: 'if (penalty_decay_periods) { penalty_decay_periods.refresh(); }' %>
+        <%= f.number_field :hours,
+                           min: 0.001,
+                           step: :any,
+                           required: true,
+                           class: 'PeriodDeltaChain_Hours',
+                           onchange: 'if (penalty_decay_periods) { penalty_decay_periods.refresh(); }' %>
         <%= t('submission_rules.hours') %>
       </td>
       <td>

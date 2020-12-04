@@ -1,5 +1,5 @@
 class SectionsController < ApplicationController
-  before_action :authorize_only_for_admin
+  before_action { authorize! }
 
   layout 'assignment_content'
 

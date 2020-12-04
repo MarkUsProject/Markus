@@ -11,7 +11,7 @@ fieldset {
   &.timed_assignment_duration_properties,
   &.starter_file_properties,
   &.group_properties {
-    border: 1px solid $grey;
+    border: 1px solid $primary-two;
     border-radius: $radius;
     padding: 1em;
 
@@ -45,7 +45,7 @@ fieldset {
   &>a {
     display: block;
     width: 100%;
-    background-color: $light-blue;
+    background-color: $background-support;
     padding: 10px;
     text-align: center;
   }
@@ -68,7 +68,7 @@ fieldset {
     }
 
     thead {
-      border-bottom: 1px solid $grey;
+      border-bottom: 1px solid $primary-two;
     }
   }
 }
@@ -79,25 +79,6 @@ fieldset {
   display: inline-block;
 }
 
-
-/* Grader view */
-
-.api_key {
-  margin-top: $dimen-vertical;
-}
-
-#api_key_box {
-  border: 1px solid $grey;
-  border-radius: $radius;
-  overflow: auto;
-  padding: 0.75em;
-
-  #api_key,
-  form {
-    display: inline-block;
-    width: auto;
-  }
-}
 
 /* Table Styles */
 

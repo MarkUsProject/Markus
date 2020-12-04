@@ -88,6 +88,7 @@ module AutomatedTestsHelper
            .pluck_to_hash('groupings.group_id as group_id',
                           'test_runs.id as run_id',
                           'users.type as user_type')
+           .each { |h| h[:user_type] = 'Admin' if h[:user_type] == 'Ta' }
            .each { |h| h[:test_categories] = [h['user_type'].downcase] }
   end
 
@@ -133,7 +134,7 @@ module AutomatedTestsHelper
       user.last_name = 'Server'
       user.hidden = true
     end
-    server_user.set_api_key
+    server_user.reset_api_key
 
     server_user.api_key
   rescue ActiveRecord::RecordNotUnique

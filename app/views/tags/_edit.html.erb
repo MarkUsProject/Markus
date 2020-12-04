@@ -1,7 +1,7 @@
 <div id="edit">
   <h2><%= t('helpers.submit.update', model: Tag.model_name.human) %></h2>
 
-  <%= form_with model: [@assignment, @tag], method: 'PUT' do |f| %>
+  <%= form_with model: [@assignment, @tag], method: 'PUT', local: true do |f| %>
     <div>
       <p><%= f.label :name, Tag.human_attribute_name(:name) %></p>
       <p><%= f.text_field :name %></p>

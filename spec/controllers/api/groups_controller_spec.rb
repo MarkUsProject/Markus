@@ -7,33 +7,33 @@ describe Api::GroupsController do
 
     it 'should fail to authenticate a GET index request' do
       get :index, params: { assignment_id: 1 }
-      expect(response.status).to eq(403)
+      expect(response).to have_http_status(403)
     end
 
     it 'should fail to authenticate a GET show request' do
       get :show, params: { id: 1, assignment_id: 1 }
-      expect(response.status).to eq(403)
+      expect(response).to have_http_status(403)
     end
 
     it 'should fail to authenticate a POST create request' do
       post :create, params: { assignment_id: 1 }
 
-      expect(response.status).to eq(403)
+      expect(response).to have_http_status(403)
     end
 
     it 'should fail to authenticate a PUT update request' do
       put :create, params: { id: 1, assignment_id: 1 }
-      expect(response.status).to eq(403)
+      expect(response).to have_http_status(403)
     end
 
     it 'should fail to authenticate a DELETE destroy request' do
       delete :destroy, params: { id: 1, assignment_id: 1 }
-      expect(response.status).to eq(403)
+      expect(response).to have_http_status(403)
     end
 
     it 'should fail to authenticate a GET annotations request' do
       get :annotations, params: { id: 1, assignment_id: 1 }
-      expect(response.status).to eq(403)
+      expect(response).to have_http_status(403)
     end
   end
   context 'An authenticated request requesting' do
@@ -487,7 +487,7 @@ describe Api::GroupsController do
       it 'should get annotations for the given group' do
         skip 'fails on travis only'
         content = Hash.from_xml(response.body)
-        expect(content['annotations']['annotation']['content']).to eq annotation.annotation_text.content
+        expect(content.dig('annotations', 'annotation', 'content')).to eq annotation.annotation_text.content
       end
       it 'should respond with 200' do
         expect(response.status).to eq(200)

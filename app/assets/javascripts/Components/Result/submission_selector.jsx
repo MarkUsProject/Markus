@@ -13,7 +13,7 @@ export class SubmissionSelector extends React.Component {
       buttonText = I18n.t('results.set_to_complete');
       className = 'set-complete';
       disabled = this.props.marks.some(mark =>
-        mark['marks.mark'] === null || mark['marks.mark'] === undefined
+        mark.mark === null || mark.mark === undefined
       );
     }
     return (

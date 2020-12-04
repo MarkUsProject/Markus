@@ -100,6 +100,7 @@ class CheckboxCriterion < Criterion
     # Visibility options
     criterion.ta_visible = criterion_yml[1]['ta_visible'] unless criterion_yml[1]['ta_visible'].nil?
     criterion.peer_visible = criterion_yml[1]['peer_visible'] unless criterion_yml[1]['peer_visible'].nil?
+    criterion.bonus = criterion_yml[1]['bonus'] unless criterion_yml[1]['bonus'].nil?
     criterion
   end
 
@@ -110,7 +111,8 @@ class CheckboxCriterion < Criterion
         'max_mark'     => self.max_mark.to_f,
         'description'  => self.description.blank? ? '' : self.description,
         'ta_visible'   => self.ta_visible,
-        'peer_visible' => self.peer_visible }
+        'peer_visible' => self.peer_visible,
+        'bonus'        => self.bonus }
     }
   end
 end

@@ -1,30 +1,5 @@
 class ResultsController < ApplicationController
-  before_action :authorize_only_for_admin,
-                except: [:show, :edit, :update_mark, :view_marks,
-                         :create, :add_extra_mark, :next_grouping,
-                         :get_annotations,
-                         :update_overall_comment, :remove_extra_mark,
-                         :toggle_marking_state,
-                         :download, :download_zip,
-                         :update_remark_request, :cancel_remark_request,
-                         :get_test_runs_instructors, :get_test_runs_instructors_released,
-                         :add_tag, :remove_tag, :revert_to_automatic_deductions
-                ]
-  before_action :authorize_for_ta_and_admin,
-                only: [:create, :add_extra_mark,
-                       :remove_extra_mark, :get_test_runs_instructors,
-                       :add_tag, :remove_tag, :revert_to_automatic_deductions]
-  before_action :authorize_for_user,
-                only: [:show, :download, :download_zip,
-                       :view_marks, :get_annotations, :show]
-  before_action :authorize_for_student,
-                only: [:update_remark_request,
-                       :cancel_remark_request,
-                       :get_test_runs_instructors_released]
-  before_action only: [:edit, :update_mark, :toggle_marking_state,
-                       :update_overall_comment, :next_grouping] do |c|
-                  c.authorize_for_ta_admin_and_reviewer(params[:assignment_id], params[:id])
-                end
+  before_action { authorize! }
   after_action  :update_remark_request_count,
                 only: [:update_remark_request, :cancel_remark_request,
                        :set_released_to_students]
@@ -37,7 +12,6 @@ class ResultsController < ApplicationController
         assignment = submission.assignment
         remark_submitted = submission.remark_submitted?
         original_result = remark_submitted ? submission.get_original_result : nil
-        submission.feedback_files
         is_review = result.is_a_review?
         is_reviewer = current_user.student? && current_user.is_reviewer_for?(assignment.pr_assignment, result)
 
@@ -81,19 +55,14 @@ class ResultsController < ApplicationController
           data[:feedback_files] = []
         else
           data[:feedback_files] = submission.feedback_files.map do |f|
-            { id: f.id, filename: f.filename }
+            { id: f.id, filename: f.filename, type: SubmissionFile.get_file_type(f.filename) }
           end
         end
 
         if assignment.enable_test
-          begin
-            authorize! assignment, to: :run_tests?
-            authorize! grouping, to: :run_tests?
-            authorize! submission, to: :run_tests?
-            authorized = true
-          rescue ActionPolicy::Unauthorized
-            authorized = false
-          end
+          authorized = allowance_to(:run_tests?, current_user, context: { assignment: assignment,
+                                                                          grouping: grouping,
+                                                                          submission: submission })
           data[:enable_test] = true
           data[:can_run_tests] = authorized
         else
@@ -175,11 +144,14 @@ class ResultsController < ApplicationController
           criteria_info = criteria.pluck_to_hash(*fields)
           marks_info = criteria.joins(:marks)
                                .where('marks.result_id': result.id)
-                               .pluck_to_hash(*fields, 'marks.mark', 'marks.override')
+                               .pluck_to_hash(*fields,
+                                              'marks.mark AS mark',
+                                              'marks.override AS override',
+                                              'criteria.bonus AS bonus')
                                .group_by { |h| h[:id] }
           # adds a criterion type to each of the marks info hashes
           criteria_info.map do |cr|
-            info = marks_info[cr[:id]]&.first || cr.merge('marks.mark': nil)
+            info = marks_info[cr[:id]]&.first || cr.merge('mark': nil)
 
             # adds a levels field to the marks info hash with the same rubric criterion id
             if klass == RubricCriterion
@@ -263,17 +235,11 @@ class ResultsController < ApplicationController
     @assignment = @grouping.assignment
 
     # authorization
-    begin
-      authorize! @assignment, to: :run_tests?
-      authorize! @grouping, to: :run_tests?
-      authorize! @submission, to: :run_tests?
-      @authorized = true
-    rescue ActionPolicy::Unauthorized => e
-      @authorized = false
-      if @assignment.enable_test
-        flash_now(:notice, e.result.reasons.full_messages.join(' '))
-      end
-    end
+    allowed = allowance_to(:run_tests?, current_user, context: { assignment: @assignment,
+                                                                 grouping: @grouping,
+                                                                 submission: @submission })
+    flash_allowance(:notice, allowed) if @assignment.enable_test
+    @authorized = allowed.value
 
     m_logger = MarkusLogger.instance
     m_logger.log("User '#{current_user.user_name}' viewed submission (id: #{@submission.id})" +
@@ -296,23 +262,15 @@ class ResultsController < ApplicationController
   end
 
   def run_tests
-    begin
-      submission = Result.find(params[:id]).submission
-      assignment = submission.assignment
-      authorize! assignment, to: :run_tests?
-      authorize! submission.grouping, to: :run_tests?
-      authorize! submission, to: :run_tests?
-      test_run = submission.create_test_run!(user: current_user)
-      @current_job = AutotestRunJob.perform_later(request.protocol + request.host_with_port,
-                                                  current_user.id,
-                                                  assignment.id,
-                                                  [{ id: test_run.id }])
-      session[:job_id] = @current_job.job_id
-      flash_message(:notice, I18n.t('automated_tests.tests_running'))
-    rescue StandardError => e
-      message = e.is_a?(ActionPolicy::Unauthorized) ? e.result.reasons.full_messages.join(' ') : e.message
-      flash_message(:error, message)
-    end
+    submission = Result.find(params[:id]).submission
+    assignment = submission.assignment
+    test_run = submission.create_test_run!(user: current_user)
+    @current_job = AutotestRunJob.perform_later(request.protocol + request.host_with_port,
+                                                current_user.id,
+                                                assignment.id,
+                                                [{ id: test_run.id }])
+    session[:job_id] = @current_job.job_id
+    flash_message(:notice, I18n.t('automated_tests.tests_running'))
     redirect_back(fallback_location: root_path)
   end
 
@@ -708,8 +666,6 @@ class ResultsController < ApplicationController
 
   def update_overall_comment
     Result.find(params[:id]).update(overall_comment: params[:result][:overall_comment])
-    flash_message :success,
-                  t('flash.actions.update.success', resource_name: Result.human_attribute_name(:overall_comment))
     head :ok
   end
 
@@ -721,10 +677,9 @@ class ResultsController < ApplicationController
       @submission = Submission.find(params[:id])
       @submission.update(
         remark_request: params[:submission][:remark_request],
-        remark_request_timestamp: Time.zone.now
+        remark_request_timestamp: Time.current
       )
       if params[:save]
-        flash_message(:success, I18n.t('results.remark.update_success'))
         head :ok
       elsif params[:submit]
         unless @submission.remark_result

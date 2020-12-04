@@ -1,9 +1,9 @@
 describe AnnotationText do
   context 'checks relationships' do
-    it { is_expected.to belong_to(:annotation_category) }
+    it { is_expected.to belong_to(:annotation_category).optional }
     it { is_expected.to have_many(:annotations) }
     it { is_expected.to belong_to(:creator) }
-    it { is_expected.to belong_to(:last_editor) }
+    it { is_expected.to belong_to(:last_editor).optional }
 
     describe '#escape_content' do
       it 'double escapes forward slash' do

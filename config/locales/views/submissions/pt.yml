@@ -61,6 +61,7 @@ pt:
     grading_can_begin_for_sections: "Avaliação pode começar para o seções: %{sections}"
     grading_can_begin_after_for_sections: "Avaliação pode começar depois %{time} para o seções: %{sections}"
     how_many_marked: "%{num_marked}/%{num_assigned} submissões são corrigidos"
+    how_many_marked_in_collected: "%{num_marked}/%{num_collected} UPDATE ME"
     marking_incomplete_warning: "Nota: Isso só vai baixar os submissões que foram recolhidos.\n\nTem certeza que deseja continuar?"
     no_files_available: "Nenhum arquivo disponível"
     release_marks: "Mostrar notas"

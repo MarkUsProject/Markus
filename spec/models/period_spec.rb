@@ -1,56 +1,36 @@
 describe Period do
-  describe 'validations' do
-    subject { create :period }
-    it { is_expected.to have_db_column(:interval) }
-    it { is_expected.to belong_to(:submission_rule) }
-
-    it { is_expected.to allow_value(0).for(:hours) }
-    it { is_expected.to allow_value(1).for(:hours) }
-    it { is_expected.to allow_value(2).for(:hours) }
-    it { is_expected.to allow_value(100).for(:hours) }
-    it { is_expected.not_to allow_value(-1).for(:hours) }
-    it { is_expected.not_to allow_value(-100).for(:hours) }
-    it { is_expected.not_to allow_value(nil).for(:hours) }
-    it { is_expected.not_to allow_value('').for(:hours) }
-  end
+  subject { create :period, submission_rule: rule }
 
   context 'A penalty decay period' do
     let(:rule) { create :penalty_decay_period_submission_rule }
-    let(:period) { create :period, submission_rule: rule }
-
-    it 'validate presence of deduction' do
-      period.deduction = nil
-      expect(period.valid?).to be false
-    end
-
-    it 'validate numericality of deduction' do
-      period.deduction = 'string'
-      expect(period.valid?).to be false
-    end
-
-    it 'validate presence of interval' do
-      period.interval = nil
-      expect(period.valid?).to be false
-    end
-
-    it 'validate numericality of interval' do
-      period.interval = 'string'
-      expect(period.valid?).to be false
-    end
+    it { is_expected.to belong_to(:submission_rule) }
+    it { is_expected.to validate_numericality_of(:hours).is_greater_than(0) }
+    it { is_expected.to validate_numericality_of(:deduction).is_greater_than_or_equal_to(0) }
+    it { is_expected.to validate_numericality_of(:interval).is_greater_than(0) }
   end
 
   context 'A penalty period' do
     let(:rule) { create :penalty_period_submission_rule }
-    let(:period) { create :period, submission_rule: rule }
+    it { is_expected.to belong_to(:submission_rule) }
+    it { is_expected.to validate_numericality_of(:hours).is_greater_than(0) }
+    it { is_expected.to validate_numericality_of(:deduction).is_greater_than_or_equal_to(0) }
+    it { is_expected.not_to validate_numericality_of(:interval) }
+  end
 
-    it 'validate presence of deduction' do
-      period.deduction = nil
-      expect(period.valid?).to be false
-    end
+  context 'A grace penalty period' do
+    let(:rule) { create :grace_period_submission_rule }
+    it { is_expected.to belong_to(:submission_rule) }
+    it { is_expected.to validate_numericality_of(:hours).is_greater_than(0) }
+    it { is_expected.not_to validate_numericality_of(:deduction) }
+    it { is_expected.not_to validate_numericality_of(:interval) }
 
-    it 'validate numericality of deduction' do
-      period.deduction = 'string'
-      expect(period.valid?).to be false
-    end
+  end
+
+  context 'A no late penalty period' do
+    let(:rule) { create :no_late_submission_rule }
+    it { is_expected.to belong_to(:submission_rule) }
+    it { is_expected.to validate_numericality_of(:hours).is_greater_than(0) }
+    it { is_expected.not_to validate_numericality_of(:deduction) }
+    it { is_expected.not_to validate_numericality_of(:interval) }
   end
 end

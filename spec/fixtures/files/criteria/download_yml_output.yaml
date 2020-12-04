@@ -1,4 +1,5 @@
 git log:
+  bonus: false
   type: rubric
   max_mark: 8.0
   levels:
@@ -20,12 +21,14 @@ git log:
   peer_visible: true
   ta_visible: false
 cr20:
+  bonus: true
   description: "I am flexible"
   max_mark: 2.0
   peer_visible: true
   ta_visible: true
   type: flexible
 cr100:
+  bonus: false
   description: "I am checkbox"
   max_mark: 5.0
   type: checkbox

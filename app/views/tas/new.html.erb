@@ -1,5 +1,4 @@
 <% content_for :title, t('tas.new') %>
 
-<%= render partial: 'layouts/userform',
-           locals: { controller: 'tas',
-                     action: 'create'} %>
+<%= render partial: 'tas/grader_form',
+           locals: { controller: 'tas' } %>

@@ -104,6 +104,7 @@ es:
     grading_can_begin_after_for_sections: "El proceso de calificación puede iniciar después de %{time} para las
                                            secciones: %{sections}"
     how_many_marked: "%{num_marked}/%{num_assigned} proyectos han sido calificados"
+    how_many_marked_in_collected: "%{num_marked}/%{num_collected} UPDATE ME"
     no_files_available: "No existen archivos disponibles"
     marking_incomplete_warning: "Nota: Esto sólo descargará las entregas que han sido recolectadas.\n\n¿Está
                                  seguro/a de querer proceder?"

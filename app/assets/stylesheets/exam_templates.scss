@@ -3,13 +3,13 @@
 /** Sortable lists */
 
 .division-table {
-  background: $white;
+  background: $background-main;
   max-width: 54em;
   border-radius: $radius;
   user-select: none;
 
   header {
-    border-bottom: 1px solid $grey;
+    border-bottom: 1px solid $primary-two;
     border-radius: $radius $radius 0 0;
     font-weight: 600;
     padding: 0.5em 2em;
@@ -50,14 +50,14 @@
       text-align: center;
 
       &:hover {
-        background-color: $lighter-blue;
+        background-color: $background-support;
       }
     }
   }
 
   .add_template {
     margin-top: 10px;
-    background-color: $light-blue !important;
+    background-color: $background-support;
 
     a{
       display: block;
@@ -123,7 +123,7 @@
 }
 
 .display_pane {
-  border: 1px solid $light-grey;
+  border: 1px solid $line;
 }
 
 .input_pane {
@@ -137,7 +137,7 @@
 }
 
 .side_header {
-  border-bottom: 1px solid $light-grey;
+  border-bottom: 1px solid $background-support;
   padding-bottom: 10px;
   margin-bottom: 10px;
 }
@@ -170,13 +170,13 @@
   }
 
   thead {
-    border-bottom: 1px solid $grey;
+    border-bottom: 1px solid $primary-two;
   }
 }
 
 #exam_scan_log_table {
   .errors {
-    color: $red;
+    color: $severe-error;
     font-weight: bold;
 
     &::before {

@@ -1,90 +1,72 @@
 describe SubmissionPolicy do
-  include PolicyHelper
+  let(:context) { { user: user } }
 
-  describe '#run_tests?' do
-    subject { described_class.new(submission, user: user) }
-
-    context 'when the user is an admin' do
-      let(:user) { build(:admin) }
-
-      context 'if the assignment policy passes' do
-        let(:assignment) { create(:assignment_for_tests) }
-        let(:grouping) { create(:grouping, assignment: assignment) }
-        let(:submission) { create(:submission, grouping: grouping) }
-
-        context 'if marks are released' do
-          before do
-            result = submission.current_result # a submission after_create callback created the result
-            result.marking_state = Result::MARKING_STATES[:complete]
-            result.released_to_students = true
-            result.save!
-          end
-          it { is_expected.not_to pass :run_tests?, because_of: :before_release? }
-        end
-
-        context 'if marks are not released' do
-          it { is_expected.to pass :run_tests? }
-        end
+  describe_rule :manage? do
+    succeed 'user is an admin' do
+      let(:user) { create(:admin) }
+    end
+    context 'user is a ta' do
+      succeed 'that can manage submissions' do
+        let(:user) { create :ta, manage_submissions: true }
+      end
+      failed 'that cannot manage submissions' do
+        let(:user) { create :ta, manage_submissions: false }
       end
     end
-
-    context 'when the user is a student' do
-      let(:user) { build(:student) }
-      let(:submission) { build_stubbed(:submission) }
-      it { is_expected.not_to pass :run_tests?, because_of: :not_a_student? }
+    failed 'user is a student' do
+      let(:user) { create(:student) }
     end
   end
 
-  describe '#get_feedback_file?' do
-    subject { described_class.new(submission, user: user) }
-
-    context 'when the user is an admin' do
+  describe_rule :server_time? do
+    succeed 'user is an admin' do
       let(:user) { create(:admin) }
-      let(:submission) { create(:submission) }
-
-      it { is_expected.to pass :get_feedback_file? }
     end
-
-    context 'when the user is a TA' do
+    succeed 'user is a ta' do
       let(:user) { create(:ta) }
-      let(:submission) { create(:submission) }
-
-      context 'who is assigned to the grouping' do
-        let!(:membership) { create(:ta_membership, user: user, grouping: submission.grouping) }
-        it { is_expected.to pass :get_feedback_file? }
-      end
-
-      context 'who is not assigned to the grouping' do
-        it { is_expected.not_to pass :get_feedback_file? }
-      end
     end
-
-    context 'when the user is a student' do
+    succeed 'user is a student' do
       let(:user) { create(:student) }
-      let(:result) { create(:complete_result) }
-      let(:submission) { result.submission }
+    end
+  end
 
-      context 'who is not part of the grouping' do
-        it { is_expected.not_to pass :get_feedback_file? }
+  describe_rule :file_manager? do
+    failed 'user is an admin' do
+      let(:user) { create(:admin) }
+    end
+    failed 'user is a ta' do
+      let(:user) { create(:ta) }
+    end
+    succeed 'user is a student' do
+      let(:user) { create(:student) }
+    end
+  end
+
+  describe_rule :get_feedback_file? do
+    let(:record) { create :submission }
+    succeed 'user is an admin' do
+      let(:user) { create(:admin) }
+    end
+    context 'user is a ta' do
+      let(:user) { create(:ta) }
+      succeed 'ta is assigned to the submission grouping' do
+        before { create :ta_membership, user: user, grouping: record.grouping }
       end
-
-      context 'when the submission result is not released' do
-        before do
-          submission = result.submission
-          create(:accepted_student_membership, grouping: submission.grouping, user: user)
-          result.update!(released_to_students: false)
+      failed 'ta is not to the submission grouping'
+    end
+    context 'user is a student' do
+      let(:user) { create(:student) }
+      context 'user is a member of the grouping' do
+        let(:grouping) { create :grouping_with_inviter, inviter: user }
+        let(:record) { create :version_used_submission, grouping: grouping }
+        succeed 'result is released' do
+          before { create :released_result, submission: record }
         end
-        it { is_expected.not_to pass :get_feedback_file? }
-      end
-
-      context 'when the submission result is released' do
-        before do
-          submission = result.submission
-          create(:accepted_student_membership, grouping: submission.grouping, user: user)
-          result.update!(released_to_students: true)
+        failed 'result is not released' do
+          before { create :complete_result, submission: record }
         end
-        it { is_expected.to pass :get_feedback_file? }
       end
+      failed 'user is not a member of the grouping'
     end
   end
 end

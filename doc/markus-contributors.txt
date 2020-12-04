@@ -23,6 +23,7 @@ Ante Zheng
 Anthony Labaere
 Anthony Le Jallé
 Anton Braverman
+Anushiya Antony
 Arianne Dee
 Augustin Doury
 Benjamin Thorent
@@ -80,6 +81,7 @@ Haohan David Jiang
 Horatiu Halmaghi
 Ian Smith
 Ibrahim Shahin
+Ignas Panero Armoska
 Irene Fung
 Isabelle Chan
 Ishan Thukral
@@ -154,6 +156,7 @@ Razvan Vlaicu
 Rebecca Frailich
 Rhys Rustad-Elliott
 Robert Burke
+Robert Tan
 Ryan Spring
 Samuel Gougeon
 Sean Budning

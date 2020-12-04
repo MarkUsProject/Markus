@@ -7,6 +7,7 @@ class Submission < ApplicationRecord
   after_create :create_result
   before_validation :bump_old_submissions, on: :create
 
+  validates_inclusion_of :submission_version_used, in: [true, false]
   validates_numericality_of :submission_version, only_integer: true
   validate :max_number_of_results
   belongs_to :grouping
@@ -142,14 +143,15 @@ class Submission < ApplicationRecord
       end
       if all_marks_earned == 0 || all_marks_total == 0
         final_mark = 0.0
-      elsif all_marks_earned > all_marks_total
+      elsif all_marks_earned >= all_marks_total
         final_mark = mark.criterion.max_mark
+      elsif mark.criterion.is_a? CheckboxCriterion
+        final_mark = 0
       else
         final_mark = (all_marks_earned / all_marks_total * mark.criterion.max_mark).round(2)
         if mark.criterion.instance_of? RubricCriterion
           # find the nearest mark associated to a level
-          # TODO: this logic is incorrect due to having an arbitrary number of levels (see issue #4753)
-          nearest_mark = (final_mark / mark.criterion.weight.to_f).round * mark.criterion.weight
+          nearest_mark = mark.criterion.level_with_mark_closest_to(final_mark).mark
           final_mark = nearest_mark
         end
       end
@@ -293,7 +295,7 @@ class Submission < ApplicationRecord
   def make_remark_result
     remark = results.create(
       marking_state: Result::MARKING_STATES[:incomplete],
-      remark_request_submitted_at: Time.zone.now)
+      remark_request_submitted_at: Time.current)
 
     # populate remark result with old marks
     original_result = get_original_result
@@ -301,7 +303,7 @@ class Submission < ApplicationRecord
 
     original_result.extra_marks.each do |extra_mark|
       remark.extra_marks.create(result: remark,
-                                created_at: Time.zone.now,
+                                created_at: Time.current,
                                 description: extra_mark.description,
                                 extra_mark: extra_mark.extra_mark,
                                 unit: extra_mark.unit)

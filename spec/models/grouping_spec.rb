@@ -1312,6 +1312,12 @@ describe Grouping do
     let!(:starter_file_groups) { create_list :starter_file_group_with_entries, 2, assignment: assignment }
     let!(:grouping) { create :grouping_with_inviter, inviter: student, assignment: assignment }
     before { assignment.assignment_properties.update! default_starter_file_group_id: starter_file_groups.first.id }
+    context 'when the starter_file_changed is true' do
+      before { grouping.update! starter_file_changed: true }
+      it 'should set starter_file_changed to false' do
+        expect { grouping.reset_starter_file_entries }.to change { grouping.reload.starter_file_changed }.to(false)
+      end
+    end
     describe 'when a new starter file entry has been added' do
       before do
         FileUtils.mkdir_p(starter_file_group.path + 'something_new')
@@ -1354,18 +1360,18 @@ describe Grouping do
       end
     end
   end
-  describe '#create_starter_files' do
+  describe '#reset_starter_file_entries' do
     let(:assignment) { create :assignment }
     let!(:starter_file_group) { create :starter_file_group_with_entries, assignment: assignment }
     let(:grouping) { create :grouping, assignment: assignment }
     it 'should be called when creating a grouping' do
-      expect_any_instance_of(Grouping).to receive(:create_starter_files)
+      expect_any_instance_of(Grouping).to receive(:reset_starter_file_entries)
       grouping
     end
-    it 'should add starter files to the repo' do
+    it 'should not add starter files to the repo' do
       grouping.group.access_repo do |repo|
         files = repo.get_latest_revision.tree_at_path(assignment.repository_folder)
-        expect(files.keys).to contain_exactly('q2.txt', 'q1', 'q1/q1.txt')
+        expect(files.keys).to be_empty
       end
     end
     it 'should create grouping starter file entries' do

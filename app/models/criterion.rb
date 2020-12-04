@@ -2,8 +2,9 @@
 # criterion.
 class Criterion < ApplicationRecord
   belongs_to :assignment, foreign_key: :assessment_id
-  after_update :scale_marks
+  after_update :update_results_with_change
   before_destroy :update_results
+  after_destroy ->(c) { c.assignment.update_results_stats }
 
   has_many :marks, dependent: :destroy
   accepts_nested_attributes_for :marks
@@ -18,6 +19,8 @@ class Criterion < ApplicationRecord
 
   validates_presence_of :name
   validates_uniqueness_of :name, scope: :assessment_id
+
+  validates_inclusion_of :bonus, in: [true, false]
 
   validates_presence_of :max_mark
   validates_numericality_of :max_mark, greater_than: 0
@@ -138,10 +141,15 @@ class Criterion < ApplicationRecord
     Criterion.upsert_all(records) unless records.empty?
   end
 
+  def update_results_with_change
+    max_mark_changed = previous_changes.key?('max_mark') && !previous_changes[:max_mark].first.nil?
+    return unless max_mark_changed || previous_changes.key?('bonus')
+    scale_marks if max_mark_changed
+    self.assignment.update_results_stats
+  end
+
   # When max_mark of criterion is changed, all associated marks should have their mark value scaled to the change.
   def scale_marks
-    return unless max_mark_previously_changed? && !previous_changes[:max_mark].first.nil? # if max_mark was not updated
-
     max_mark_was = previous_changes[:max_mark].first
     # results with specific assignment
     results = Result.includes(submission: :grouping)

@@ -38,7 +38,7 @@ describe Assignment do
     it { is_expected.to validate_presence_of(:description) }
     it { is_expected.to validate_presence_of(:due_date) }
     it { is_expected.to validate_presence_of(:notes_count) }
-    it { is_expected.to belong_to(:parent_assignment).class_name('Assignment') }
+    it { is_expected.to belong_to(:parent_assignment).class_name('Assignment').optional }
     it { is_expected.to have_one(:pr_assignment).class_name('Assignment') }
 
     describe 'Validation of basic infos of an assignment' do
@@ -806,6 +806,17 @@ describe Assignment do
           expect(expected_string).to eql(@assignment.get_repo_list), 'Repo access url list string is wrong!'
         end
 
+        it 'be able to get a list of repository access URLs for each group with ssh keys' do
+          expected_string = ''
+          @assignment.groupings.each do |grouping|
+            group = grouping.group
+            expected_string += [group.group_name,
+                                group.repository_external_access_url,
+                                group.repository_ssh_access_url].to_csv
+          end
+          expect(expected_string).to eql(@assignment.get_repo_list(ssh: true)), 'Repo access url list string is wrong!'
+        end
+
         context 'with two groups of a single student each' do
           before :each do
             2.times do
@@ -1035,7 +1046,7 @@ describe Assignment do
   describe '#section_due_date' do
     context 'with SectionDueDates disabled' do
       before :each do
-        @assignment = create(:assignment, due_date: Time.now) # Default 'section_due_dates_type' is false
+        @assignment = create(:assignment, due_date: Time.current) # Default 'section_due_dates_type' is false
       end
 
       context 'when no section is specified' do
@@ -1105,7 +1116,7 @@ describe Assignment do
   describe '#latest_due_date' do
     context 'when SectionDueDates are disabled' do
       before :each do
-        @assignment = create(:assignment, due_date: Time.now) # Default 'section_due_dates_type' is false
+        @assignment = create(:assignment, due_date: Time.current) # Default 'section_due_dates_type' is false
       end
 
       it 'returns the due date of the assignment' do
@@ -1116,7 +1127,7 @@ describe Assignment do
     context 'when SectionDueDates are enabled' do
       before :each do
         @assignment = create(:assignment,
-                             due_date: Time.now,
+                             due_date: Time.current,
                              assignment_properties_attributes: { section_due_dates_type: true })
       end
 
@@ -1823,7 +1834,7 @@ describe Assignment do
       end
 
       it 'should report the marking state as not collected if it is after the due date but not collected' do
-        assignment.update(due_date: Time.now - 1.day)
+        assignment.update(due_date: Time.current - 1.day)
         expect(data.map { |h| h[:marking_state] }).to contain_exactly('not_collected',
                                                                       'not_collected',
                                                                       'not_collected')
@@ -2105,10 +2116,22 @@ describe Assignment do
         expect(Assignment.get_repo_auth_records).to be_empty
       end
       context 'when one grouping has started their assignment' do
-        it 'should contain only the members of that group' do
+        let!(:grouping) do
           g = groupings1.first
-          g.update!(start_time: Time.now)
-          expect(Assignment.get_repo_auth_records.pluck('users.id')).to contain_exactly(g.inviter.id)
+          g.update!(start_time: 1.hour.ago)
+          g.reload
+        end
+        it 'should contain only the members of that group' do
+          expect(Assignment.get_repo_auth_records.pluck('users.id')).to contain_exactly(grouping.inviter.id)
+        end
+        context 'when the timed assessment due date has ended' do
+          let(:assignment1) do
+            create :timed_assignment, assignment_properties_attributes: { vcs_submit: true }, due_date: 1.minute.ago
+          end
+          it 'should contain all members of all groups' do
+            inviter_ids = groupings1.map(&:inviter).map(&:id)
+            expect(Assignment.get_repo_auth_records.pluck('users.id')).to contain_exactly(*inviter_ids)
+          end
         end
       end
     end
@@ -2205,6 +2228,34 @@ describe Assignment do
     context 'When user is TA' do
       it 'should return no of collected submissions for groupings assigned to them' do
         expect(assignment.get_num_collected(ta.id)).to eq(2)
+      end
+    end
+  end
+
+  describe '#get_num_marked' do
+    let(:admin) { create(:admin) }
+    let(:ta) { create(:ta) }
+    let(:assignment) { create(:assignment) }
+    let(:grouping1) { create(:grouping_with_inviter_and_submission, assignment: assignment, is_collected: true) }
+    let(:grouping2) { create(:grouping_with_inviter_and_submission, assignment: assignment, is_collected: true) }
+    let(:grouping3) { create(:grouping_with_inviter_and_submission, assignment: assignment, is_collected: true) }
+    let(:grouping4) { create(:grouping_with_inviter_and_submission, assignment: assignment, is_collected: false) }
+    let!(:result1) { create(:complete_result, submission: grouping1.submissions.first) }
+    let!(:result2) { create(:incomplete_result, submission: grouping2.submissions.first) }
+    let!(:result3) { create(:complete_result, submission: grouping3.submissions.first) }
+    let!(:result4) { create(:incomplete_result, submission: grouping4.submissions.first) }
+    before :each do
+      create(:ta_membership, user: ta, grouping: grouping1)
+      create(:ta_membership, user: ta, grouping: grouping2)
+    end
+    context 'When user is admin' do
+      it 'should return no of marked submissions of all groupings' do
+        expect(assignment.get_num_marked).to eq(2)
+      end
+    end
+    context 'When user is TA' do
+      it 'should return no of marked submissions for groupings assigned to them' do
+        expect(assignment.get_num_marked(ta.id)).to eq(1)
       end
     end
   end

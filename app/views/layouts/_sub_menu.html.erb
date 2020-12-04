@@ -1,4 +1,4 @@
-<% if @current_user.admin? %>
+<% if allowed_to?(:view_admin_subtabs?) %>
   <% if controller.controller_name == 'assignments' ||
         controller.controller_name == 'criteria' ||
         controller.controller_name == 'submissions' ||
@@ -14,7 +14,7 @@
         controller.controller_name == 'tags' ||
         controller.controller_name == 'peer_reviews' ||
         controller.controller_name == 'exam_templates' %>
-    <%= render partial: 'layouts/menus/admin_sub_menu_assessments',
+    <%= render partial: 'layouts/menus/admin_ta_sub_menu_assessments',
                locals: { assessment: @assignment || @grade_entry_form } %>
   <% elsif controller.controller_name == 'admins' ||
            controller.controller_name == 'students' ||
@@ -22,11 +22,15 @@
            controller.controller_name == 'sections' %>
     <%= render partial: 'layouts/menus/admin_sub_menu_users' %>
   <% end %>
-<% elsif @current_user.ta? && (controller.controller_name == 'assignments' ||
+<% elsif allowed_to?(:view_ta_subtabs?) &&
+                              (controller.controller_name == 'assignments' ||
                                controller.controller_name == 'submissions' ||
                                controller.controller_name == 'results' ||
+                               controller.controller_name == 'grade_entry_forms' ||
+                               controller.controller_name == 'automated_tests' ||
+                               controller.controller_name == 'peer_reviews' ||
                                controller.controller_name == 'summaries') %>
-  <%= render partial: 'layouts/menus/ta_sub_menu' %>
-<% elsif @current_user.student? %>
+  <%= render partial: 'layouts/menus/admin_ta_sub_menu_assessments', locals: { assessment: @assignment || @grade_entry_form } %>
+<% elsif allowed_to?(:view_student_subtabs?) %>
   <%= render partial: 'layouts/menus/student_sub_menu' %>
 <% end %>

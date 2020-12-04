@@ -1,24 +1,7 @@
 class AssignmentsController < ApplicationController
   include RepositoryHelper
   responders :flash
-
-  before_action      :authorize_only_for_admin,
-                     except: [:index,
-                              :show,
-                              :peer_review,
-                              :summary,
-                              :switch_assignment,
-                              :start_timed_assignment]
-
-  before_action      :authorize_for_ta_and_admin,
-                     only: [:summary]
-
-  before_action      :authorize_for_student,
-                     only: [:show,
-                            :peer_review]
-
-  before_action      :authorize_for_user,
-                     only: [:index, :switch_assignment]
+  before_action { authorize! }
 
   # Publicly accessible actions ---------------------------------------
 
@@ -48,6 +31,7 @@ class AssignmentsController < ApplicationController
         rescue StandardError => e
           flash_message(:error, e.message)
           redirect_to controller: :assignments
+          return
         end
         @grouping = @current_user.accepted_grouping_for(@assignment.id)
       end
@@ -91,7 +75,7 @@ class AssignmentsController < ApplicationController
     else
       if @assignment.section_due_dates_type
         section_due_dates = Hash.new
-        now = Time.zone.now
+        now = Time.current
         Section.all.each do |section|
           collection_time = @assignment.submission_rule.calculate_collection_time(section)
           collection_time = now if now >= collection_time
@@ -438,7 +422,7 @@ class AssignmentsController < ApplicationController
         starter_file_group.update!(group_params)
         all_changed ||= starter_file_group.saved_changes? || assignment.assignment_properties.saved_changes?
       end
-      assignment.assignment_properties.update!(starter_file_updated_at: Time.zone.now)
+      assignment.assignment_properties.update!(starter_file_updated_at: Time.current)
     rescue ActiveRecord::RecordInvalid => e
       flash_message(:error, e.message)
       success = false
@@ -522,8 +506,11 @@ class AssignmentsController < ApplicationController
     num_files_before = assignment.assignment_files.length
     short_identifier = assignment_params[:short_identifier]
     # remove potentially invalid periods before updating
-    periods = submission_rule_params['submission_rule_attributes']['periods_attributes'].to_h.values.map { |h| h[:id] }
-    assignment.submission_rule.periods.where.not(id: periods).each(&:destroy)
+    unless assignment_params[:assignment_properties_attributes][:scanned_exam]
+      period_attrs = submission_rule_params['submission_rule_attributes']['periods_attributes']
+      periods = period_attrs.to_h.values.map { |h| h[:id] }
+      assignment.submission_rule.periods.where.not(id: periods).each(&:destroy)
+    end
     assignment.assign_attributes(assignment_params)
     process_timed_duration(assignment) if assignment.is_timed
     assignment.repository_folder = short_identifier unless assignment.is_peer_review?

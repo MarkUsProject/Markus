@@ -4,7 +4,7 @@
 
     <%= javascript_include_tag 'Tags/text_updater.js',
                                id: 'text_script' %>
-    <%= form_with scope: :tag, url: assignment_tags_path(@assignment) do |f| %>
+    <%= form_with scope: :tag, url: assignment_tags_path(@assignment), local: true do |f| %>
         <div>
           <p><%= f.label :name, Tag.human_attribute_name(:name) %></p>
           <p>

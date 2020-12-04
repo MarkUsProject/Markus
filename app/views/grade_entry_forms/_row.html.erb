@@ -29,7 +29,7 @@
           <%= t('grade_entry_forms.students.detailed_marks_message') %>
         <% end %>
       <% elsif grade_entry_form.due_date.nil? ||
-        grade_entry_form.due_date < Time.zone.now.to_date %>
+        grade_entry_form.due_date < Time.current.to_date %>
         <%= t('grade_entry_forms.students.no_results') %>
       <% end %>
     </td>

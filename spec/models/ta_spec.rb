@@ -1,4 +1,5 @@
 describe Ta do
+  it { is_expected.to have_one(:grader_permission).dependent(:destroy) }
   describe '#percentage_grades_array' do
     let(:assignment) { create(:assignment_with_criteria_and_results) }
     let(:ta) { create(:ta) }
@@ -53,6 +54,21 @@ describe Ta do
           expect(actual.sort).to eq expected.sort
         end
       end
+    end
+  end
+
+  context 'Associated grader permission validation' do
+    subject { create :ta }
+    it { is_expected.to validate_presence_of :grader_permission }
+  end
+
+  context 'Ta model' do
+    let(:user) { create(:ta) }
+    it 'should create a ta' do
+      expect(create(:ta)).to be_valid
+    end
+    it 'should create associated permissions' do
+      expect(GraderPermission.exists?(user.grader_permission.id)).to be true
     end
   end
 end

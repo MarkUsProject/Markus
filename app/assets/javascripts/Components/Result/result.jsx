@@ -4,6 +4,17 @@ import { render } from 'react-dom';
 import { LeftPane } from './left_pane';
 import { RightPane } from './right_pane';
 import { SubmissionSelector } from './submission_selector';
+import CreateModifyAnnotationPanel from '../Modals/create_modify_annotation_panel_modal';
+
+const INITIAL_ANNOTATION_MODAL_STATE = {
+  show: false,
+  onSubmit: null,
+  title: '',
+  content: '',
+  categoryId: '',
+  isNew: true,
+  changeOneOption: false,
+};
 
 class Result extends React.Component {
   constructor(props) {
@@ -29,6 +40,7 @@ class Result extends React.Component {
       feedback_files: [],
       submission_files: {files: [], directories: {}, name: '', path: []},
       fullscreen,
+      annotationModal: INITIAL_ANNOTATION_MODAL_STATE,
     };
 
     this.leftPane = React.createRef();
@@ -37,13 +49,6 @@ class Result extends React.Component {
   componentDidMount() {
     this.fetchData();
     window.modal = new ModalMarkus('#annotation_dialog');
-    // When mod+enter is pressed and the annotation modal is open, submit it
-    Mousetrap(document.getElementById('annotation_dialog')).bind('mod+enter', function(e) {
-      if ($('#annotation_dialog:visible').length) {
-        e.preventDefault();
-        $('#submit_annotation').click();
-      }
-    });
     window.modalNotesGroup = new ModalMarkus('#notes_dialog');
     window.modal_create_new_tag = new ModalMarkus('#create_new_tag');
   }
@@ -99,9 +104,8 @@ class Result extends React.Component {
     let extraMarkSubtotal = 0;
     result_data.marks.forEach(data => {
       data.max_mark = parseFloat(data.max_mark);
-      data.mark = data['marks.mark'];
       criterionSummaryData.push({
-        criterion: data.name,
+        criterion: data.bonus ? data.name + ' (' + I18n.t('activerecord.attributes.criterion.bonus') + ')' : data.name,
         mark: data.mark,
         old_mark: result_data.old_marks[data.id],
         max_mark: data.max_mark
@@ -182,19 +186,47 @@ class Result extends React.Component {
 
   /* Callbacks for annotations */
   newAnnotation = () => {
-    const submission_file_id = this.leftPane.current.submissionFilePanel.current.state.selectedFile[1];
+    const submission_file_id = this.leftPane.current.submissionFilePanel.current
+      .state.selectedFile[1];
     if (submission_file_id === null) return;
 
-    let data = {
+    let metadata = {
       submission_file_id: submission_file_id,
       result_id: this.props.result_id,
-      assignment_id: this.props.assignment_id
+      assignment_id: this.props.assignment_id,
     };
 
-    data = this.extend_with_selection_data(data);
-    if (data) {
-      $.get(Routes.new_annotation_path(), data);
+    metadata = this.extend_with_selection_data(metadata);
+
+    if (!metadata) {
+      return;
     }
+
+    let onSubmit = (formData) => {
+      let data = { ...formData, ...metadata };
+      $.post({
+        url: Routes.annotations_path(),
+        data,
+      }).then(() =>
+        {
+          this.setState({
+            annotationModal: INITIAL_ANNOTATION_MODAL_STATE
+          })
+          this.refreshAnnotations();
+        }
+      ); // Resetting back to original
+    };
+
+    this.setState({
+      annotationModal: {
+        ...this.state.annotationModal,
+        show: true,
+        onSubmit,
+        title: I18n.t("helpers.submit.create", {
+          model: I18n.t("activerecord.models.annotation.one"),
+        }),
+      },
+    });
   };
 
   extend_with_selection_data = (annotation_data) => {
@@ -272,15 +304,48 @@ class Result extends React.Component {
   };
 
   editAnnotation = (annot_id) => {
-    $.ajax({
-      url: Routes.edit_annotation_path(annot_id),
-      method: 'GET',
-      data: {
-        result_id: this.props.result_id,
-        assignment_id: this.props.assignment_id
+    let metadata = {
+      result_id: this.props.result_id,
+      assignment_id: this.props.assignment_id,
+    };
+
+    let onSubmit = (formData) => {
+      let data = { ...formData, ...metadata };
+      $.ajax({
+        url: Routes.annotation_path(annot_id),
+        data,
+        method: "PUT",
+        dataType: "json",
+      }).always(() =>
+        {
+          this.setState({
+            annotationModal: INITIAL_ANNOTATION_MODAL_STATE
+          })
+          this.refreshAnnotations();
+        }
+      );
+    };
+
+    let annotation = this.state.annotations.find(
+      (annotation) => annotation.id === parseInt(annot_id, 10)
+    );
+
+    let category_id = annotation.annotation_category_id ? annotation.annotation_category_id : "";
+
+    this.setState({
+      annotationModal: {
+        ...this.state.annotationModal,
+        show: true,
+        content: annotation.content,
+        category_id,
+        isNew: false,
+        changeOneOption: annotation.annotation_category_id && !annotation.deduction,
+        onSubmit,
+        title: I18n.t("helpers.submit.create", {
+          model: I18n.t("activerecord.models.annotation.one"),
+        }),
       },
-      dataType: 'script'
-    })
+    });
   };
 
   updateAnnotation = (annotation) => {
@@ -295,10 +360,12 @@ class Result extends React.Component {
         // Manually copy the annotation.
         newAnnotations[i] = {...newAnnotations[i]};
         newAnnotations[i].content = annotation.content;
+        newAnnotations[i].annotation_category = annotation.annotation_category;
+        newAnnotations[i].annotation_text_id = annotation.annotation_text_id;
         this.setState({annotations: newAnnotations});
       }
     }
-    update_annotation_text(annotation.id, marked(annotation.content, {sanitize: true}));
+    update_annotation_text(annotation.annotation_text_id, annotation.content, annotation.id);
   };
 
   destroyAnnotation(annotation_id, range, annotation_text_id) {
@@ -346,8 +413,7 @@ class Result extends React.Component {
         if (markData.id === criterion_id) {
           let newMark = {...markData};
           newMark.mark = data.mark;
-          newMark['marks.mark'] = data.mark;
-          newMark['marks.override'] = data.mark_override;
+          newMark.override = data.mark_override;
           return newMark;
         } else {
           return markData;
@@ -380,8 +446,7 @@ class Result extends React.Component {
         if (markData.id === criterion_id) {
           let newMark = {...markData};
           newMark.mark = data.mark;
-          newMark['marks.mark'] = data.mark;
-          newMark['marks.override'] = false;
+          newMark.override = false;
           return newMark;
         } else {
           return markData;
@@ -497,6 +562,17 @@ class Result extends React.Component {
 
   render() {
     return [
+        <CreateModifyAnnotationPanel
+          categories={this.state.annotation_categories}
+          onRequestClose={() =>
+            this.setState({
+              annotationModal: INITIAL_ANNOTATION_MODAL_STATE
+            })
+          }
+          is_reviewer={this.state.is_reviewer}
+          assignment_id={this.props.assignment_id}
+          {...this.state.annotationModal}
+        />,
         <SubmissionSelector
           key='submission-selector'
           {...this.props}

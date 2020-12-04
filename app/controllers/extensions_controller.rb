@@ -1,6 +1,6 @@
 # Controller responsible for managing due date extensions
 class ExtensionsController < ApplicationController
-  before_action :authorize_only_for_admin
+  before_action { authorize! }
 
   def create
     params = extension_params

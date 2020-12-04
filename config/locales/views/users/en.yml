@@ -6,6 +6,7 @@ en:
     new: "Add an Admin"
 
   students:
+    account_settings: "Account Settings"
     active: "Active"
     admin_actions:
       add_section: "Add to section"
@@ -26,9 +27,6 @@ en:
     not_successfully_added_message_5: "Each line has the required fields specified near the upload form."
     toggle_invite_notifications: 'Receive email notifications when I am invited to a group.'
     toggle_results_notifications: 'Receive email notifications when results are released.'
-    update_settings: 'Update Settings'
-    verify_settings_update: 'Your settings have been updated!'
-    account_settings: "Account Settings"
 
   tas:
     edit: "Edit a Grader"
@@ -44,3 +42,5 @@ en:
                   for information on how to use the REST API."
       reset: "Reset my API key"
       unavailable: "Unavailable"
+    update_settings: 'Update Settings'
+    verify_settings_update: 'Your settings have been updated!'

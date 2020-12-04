@@ -55,20 +55,20 @@ describe FlexibleCriterion do
 
     context 'with deductive annotations' do
       let(:assignment) { create(:assignment_with_deductive_annotations) }
-      let(:flexible_criterion) { assignment.criteria.where(type: 'FlexibleCriterion').first }
       let(:annotation_category) do
-        assignment.annotation_categories.where(flexible_criterion_id: flexible_criterion.id).first
+        assignment.annotation_categories.where.not(flexible_criterion_id: nil).first
       end
+      let(:flexible_criterion) { annotation_category.flexible_criterion }
 
       context 'when being destroyed' do
         it 'does not cause a result to subtract the mark value of the given criterion from the result\'s total_mark '\
          ' through both the annotation_text callbacks and the given criterion\'s own update_results callback' do
+          result = assignment.groupings.first.current_result
           new_criterion = create(:flexible_criterion, assignment: assignment)
-          new_mark = create(:flexible_mark, result: assignment.groupings.first.current_result, criterion: new_criterion)
-          assignment.groupings.first.current_result.reload
-          new_mark.update(mark: 1)
+          create(:flexible_mark, result: result, criterion: new_criterion, mark: 1)
+          result.reload
           flexible_criterion.destroy
-          expect(assignment.reload.groupings.first.current_result.total_mark).to eq 1.0
+          expect(result.reload.total_mark).to eq 1.0
         end
 
         it 'reassigns its annotation_category\'s flexible_criterion_id to nil if it has one' do

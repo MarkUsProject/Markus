@@ -1,5 +1,8 @@
 class Student < User
 
+  scope :active, -> { where(hidden: false) }
+  scope :inactive, -> { where(hidden: true) }
+
   has_many :accepted_groupings,
            -> { where 'memberships.membership_status' => [StudentMembership::STATUSES[:accepted], StudentMembership::STATUSES[:inviter]] },
            class_name: 'Grouping',

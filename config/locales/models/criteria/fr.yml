@@ -11,6 +11,7 @@ fr:
         one: "Critère rubrique"
     attributes:
       criterion:
+        bonus: 'UPDATE ME!'
         description: "Description"
         name: "Nom"
         max_mark: "Note maximale"

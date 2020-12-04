@@ -1,7 +1,7 @@
 # Class describing a top level file or directory in a starter files group
 class StarterFileEntry < ApplicationRecord
   belongs_to :starter_file_group
-  validate :entry_exists
+  validate :entry_exists, if: :starter_file_group
 
   has_many :grouping_starter_file_entries, dependent: :destroy
   has_many :groupings, through: :grouping_starter_file_entries
@@ -16,23 +16,6 @@ class StarterFileEntry < ApplicationRecord
         Pathname.new(f)
       end
     end.compact + [full_path]
-  end
-
-  def add_files_to_transaction(txn)
-    relative_root = Pathname.new(starter_file_group.path)
-    repo_root_dir = starter_file_group.assignment.repository_folder
-    should_rename = starter_file_group.should_rename
-    rename = starter_file_group.entry_rename
-    files_and_dirs.each do |fd|
-      rel_path = fd.relative_path_from(relative_root)
-      rel_path = File.join(rename, *rel_path.each_filename.to_a[1..-1]) if should_rename
-      repo_path = File.join(repo_root_dir, rel_path)
-      if fd.directory?
-        txn.add_path(repo_path)
-      else
-        txn.add(repo_path, File.open(fd, 'rb', &:read), Rack::Mime.mime_type(File.extname(fd)))
-      end
-    end
   end
 
   def add_files_to_zip_file(zip_file)

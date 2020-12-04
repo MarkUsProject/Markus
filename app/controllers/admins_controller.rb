@@ -1,7 +1,5 @@
 class AdminsController < ApplicationController
-  before_action do |_|
-    authorize! with: UserPolicy
-  end
+  before_action { authorize! }
 
   layout 'assignment_content'
 
@@ -11,7 +9,7 @@ class AdminsController < ApplicationController
     respond_to do |format|
       format.html
       format.json {
-        render json: Admin.select(:id, :user_name, :first_name, :last_name, :email)
+        render json: Admin.pluck_to_hash(:id, :user_name, :first_name, :last_name, :email)
       }
     end
   end

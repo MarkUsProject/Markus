@@ -8,6 +8,8 @@ class User < ApplicationRecord
   before_validation :strip_name
   before_validation :nillify_empty_email_and_id_number
 
+  enum theme: { light: 1, dark: 2 }
+
   # Group relationships
   has_many :memberships, dependent: :delete_all
   has_many :grade_entry_students
@@ -21,10 +23,12 @@ class User < ApplicationRecord
   has_many :split_pdf_logs
   has_many :key_pairs, dependent: :destroy
 
-  validates_presence_of     :user_name, :last_name, :first_name
+  validates_presence_of     :user_name, :last_name, :first_name, :display_name
   validates_uniqueness_of   :user_name
   validates_uniqueness_of   :email, :allow_nil => true
   validates_uniqueness_of   :id_number, :allow_nil => true
+
+  after_initialize :set_display_name
 
   validates_format_of       :type,          with: /\AStudent|Admin|Ta|TestServer\z/
   # role constants
@@ -130,6 +134,11 @@ class User < ApplicationRecord
     self.class == TestServer
   end
 
+  def set_display_name
+    strip_name
+    self.display_name ||= "#{self.first_name} #{self.last_name}"
+  end
+
   # Submission helper methods -------------------------------------------------
 
   def submission_for(aid)
@@ -166,11 +175,13 @@ class User < ApplicationRecord
   end
 
   def self.upload_user_list(user_class, user_list, encoding)
-    user_columns = user_class::CSV_UPLOAD_ORDER
+    user_columns = user_class::CSV_UPLOAD_ORDER.dup
     users = []
     user_names = Set.new
     user_name_i = user_columns.find_index(:user_name)
     section_name_i = user_columns.find_index(:section_name)
+    first_name_i = user_columns.find_index(:first_name)
+    last_name_i = user_columns.find_index(:last_name)
     unless section_name_i.nil?
       user_columns[section_name_i] = :section_id # becomes foreign key
     end
@@ -199,15 +210,23 @@ class User < ApplicationRecord
       parsed[:valid_lines] = '' # reset the value from MarkusCsv#parse, use import's return instead
     end
 
+    user_columns.push(:display_name)
+    users.each { |u| u.push("#{u[first_name_i]} #{u[last_name_i]}") }
+
     existing_user_ids = user_class.all.pluck(:id)
     imported = nil
     parsed[:invalid_records] = ''
     begin
       User.transaction do
         imported = user_class.import user_columns, users, on_duplicate_key_update: {
-          conflict_target: [:user_name], columns: [:last_name, :first_name, :section_id, :email, :id_number]
+          conflict_target: [:user_name],
+          columns: [:last_name, :first_name, :section_id, :email, :id_number, :display_name]
         }
         User.where(id: imported.ids).each do |user|
+          if user_class == Ta
+            # This will only trigger before_create callback in ta model, not after_create callback
+            user.run_callbacks(:create) { false }
+          end
           user.validate!
         rescue ActiveRecord::RecordInvalid
           error_message = user.errors
@@ -243,67 +262,19 @@ class User < ApplicationRecord
     parsed
   end
 
-  def self.add_user(user_class, row)
-    # convert each line to a hash with FIELDS as corresponding keys
-    # and create or update a user with the hash values
-    #return nil if values.length < UPLOAD_FIELDS.length
-    user_attributes = {}
-    # Loop through the resulting array as key, value pairs
-
-    user_class::CSV_UPLOAD_ORDER.zip(row) do |key, val|
-      # append them to the hash that is returned by User.get_default_ta/student_attrs
-      # remove the section if the user has one
-      if key == :section_name
-        if val
-          # check if the section already exist
-          section = Section.find_or_create_by(name: val)
-          user_attributes['section_id'] = section.id
-        end
-      else
-        user_attributes[key] = val
-      end
-    end
-
-    # Is there already a Student with this User number?
-    current_user = user_class.find_or_create_by(
-      user_name: user_attributes[:user_name])
-    current_user.attributes = user_attributes
-
-    return unless current_user.save
-    current_user
-  end
-
-  # Set API key for user model. The key is a
-  # SHA2 512 bit long digest, which is in turn
-  # MD5 digested and Base64 encoded so that it doesn't
+  # Reset API key for user model. The key is a SHA2 512 bit long digest,
+  # which is in turn MD5 digested and Base64 encoded so that it doesn't
   # include bad HTTP characters.
   #
-  # TODO: If we end up
-  # using this heavily we should probably let this token
-  # expire every X days/hours/weeks. When it does, a new
-  # token should be automatically generated.
-  def set_api_key
-    if self.api_key.nil?
-      key = generate_api_key
-      md5 = Digest::MD5.new
-      md5.update(key)
-      # base64 encode md5 hash
-      self.api_key = Base64.encode64(md5.to_s).strip
-      self.save
-    else
-      true
-    end
-  end
-
-  # Resets the api key. Usually triggered, if the
-  # old md5 hash has gotten into the wrong hands.
+  # TODO: If we end up using this heavily we should probably let this key
+  # expire every X days/hours/weeks. When it does, a new token should be
+  # automatically generated.
   def reset_api_key
     key = generate_api_key
     md5 = Digest::MD5.new
     md5.update(key)
     # base64 encode md5 hash
-    self.api_key = Base64.encode64(md5.to_s).strip
-    self.save
+    self.update(api_key: Base64.encode64(md5.to_s).strip)
   end
 
   private
@@ -313,7 +284,7 @@ class User < ApplicationRecord
     digest = Digest::SHA2.new(512)
     # generate a unique token
     unique_seed = SecureRandom.hex(20)
-    digest.update("#{unique_seed} SECRET! #{Time.zone.now.to_f}").to_s
+    digest.update("#{unique_seed} SECRET! #{Time.current.to_f}").to_s
   end
 
   # strip input string

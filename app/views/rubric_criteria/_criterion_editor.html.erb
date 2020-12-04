@@ -33,6 +33,11 @@
       <%= f.label :max_mark, Criterion.human_attribute_name(:max_mark) %>
       <%= f.number_field :max_mark, value: "#{criterion.max_mark}", step: 0.1 %>
     </p>
+    <p>
+      <%= f.label :bonus,
+                  Criterion.human_attribute_name(:bonus) %>
+      <%= f.check_box :bonus %>
+    </p>
     <% if criterion.assignment.assignment_files.exists? %>
       <span id="<%= "criterion_inputs_#{criterion.id}" %>">
         <% selected_files = criterion.criteria_assignment_files_joins.map { |join| join.assignment_file } %>

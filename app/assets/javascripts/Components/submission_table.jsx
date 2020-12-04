@@ -251,7 +251,7 @@ class RawSubmissionTable extends React.Component {
         <SubmissionsActionBox
           ref={(r) => this.actionBox = r}
           disabled={this.props.selection.length === 0}
-          is_admin={this.props.is_admin}
+          can_collect={this.props.can_collect}
           assignment_id={this.props.assignment_id}
           can_run_tests={this.props.can_run_tests}
 
@@ -297,7 +297,7 @@ class RawSubmissionTable extends React.Component {
 
 let SubmissionTable = withSelection(RawSubmissionTable);
 SubmissionTable.defaultProps = {
-  is_admin: false,
+  can_collect: false,
   is_timed: false,
   can_run_tests: false
 };
@@ -312,25 +312,25 @@ class SubmissionsActionBox extends React.Component {
 
   render = () => {
     let completeButton, incompleteButton, collectButton, runTestsButton, releaseMarksButton, unreleaseMarksButton;
-    if (this.props.is_admin) {
-      completeButton = (
-        <button
-          onClick={this.props.completeResults}
-          disabled={this.props.disabled}
-        >
-          {I18n.t('results.set_to_complete')}
-        </button>
-      );
 
-      incompleteButton = (
-        <button
-          onClick={this.props.incompleteResults}
-          disabled={this.props.disabled}
-        >
-          {I18n.t('results.set_to_incomplete')}
-        </button>
-      );
+    completeButton = (
+      <button
+        onClick={this.props.completeResults}
+        disabled={this.props.disabled}
+      >
+        {I18n.t('results.set_to_complete')}
+      </button>
+    );
 
+    incompleteButton = (
+      <button
+        onClick={this.props.incompleteResults}
+        disabled={this.props.disabled}
+      >
+        {I18n.t('results.set_to_incomplete')}
+      </button>
+    );
+    if (this.props.can_collect) {
       collectButton = (
         <button
           onClick={this.props.collectSubmissions}

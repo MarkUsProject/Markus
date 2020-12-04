@@ -310,7 +310,7 @@ class SubversionRepositoryTest < ActiveSupport::TestCase
       txn.add(filename, file_contents)
 
       # collect a timestamp for later use
-      repo_timestamp = Time.now
+      repo_timestamp = Time.current
 
       # remove a file
       txn.remove("test.xml", @repo.get_latest_revision().revision_identifier) # remove a file previously existent in current rev.
@@ -333,7 +333,7 @@ class SubversionRepositoryTest < ActiveSupport::TestCase
       end
 
       # test the timestamp-revision stuff
-      rev_num_by_timestamp = @repo.get_revision_by_timestamp(Time.now)
+      rev_num_by_timestamp = @repo.get_revision_by_timestamp(Time.current)
       latest_rev = @repo.get_latest_revision()
       assert_instance_of(Repository::SubversionRevision, rev_num_by_timestamp, "Revision number is of wrong type")
       assert_instance_of(Repository::SubversionRevision, latest_rev, "Revision number is of wrong type")
@@ -361,7 +361,7 @@ class SubversionRepositoryTest < ActiveSupport::TestCase
 
       files_to_add.each do |file_name|
         assert_not_nil revision.files_at_path('/')[file_name].last_modified_date
-        assert (revision.files_at_path('/')[file_name].last_modified_date - Time.now) < 1
+        assert (revision.files_at_path('/')[file_name].last_modified_date - Time.current) < 1
       end
 
       txn = @repo.get_transaction(TEST_USER)

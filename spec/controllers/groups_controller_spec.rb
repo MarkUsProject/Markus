@@ -641,14 +641,14 @@ describe GroupsController do
       let(:user) { create :admin }
       it 'should respond with 403' do
         subject
-        expect(response.status).to eq(403)
+        expect(response).to have_http_status(403)
       end
     end
     context 'a grader' do
       let(:user) { create :ta }
       it 'should respond with 403' do
         subject
-        expect(response.status).to eq(403)
+        expect(response).to have_http_status(403)
       end
     end
     context 'a student' do

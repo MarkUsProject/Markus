@@ -1,5 +1,5 @@
 class CriteriaController < ApplicationController
-  before_action :authorize_only_for_admin
+  before_action { authorize! }
 
   layout 'assignment_content'
 
@@ -211,6 +211,7 @@ class CriteriaController < ApplicationController
                                                :max_mark,
                                                :ta_visible,
                                                :peer_visible,
+                                               :bonus,
                                                assignment_files: [])
   end
 
@@ -221,6 +222,7 @@ class CriteriaController < ApplicationController
                                              :ta_visible,
                                              :peer_visible,
                                              :max_mark,
+                                             :bonus,
                                              levels_attributes: [:id, :name, :mark, :description, :_destroy],
                                              assignment_files: [])
   end
@@ -232,6 +234,13 @@ class CriteriaController < ApplicationController
                                                :max_mark,
                                                :ta_visible,
                                                :peer_visible,
+                                               :bonus,
                                                assignment_files: [])
+  end
+
+  protected
+
+  def implicit_authorization_target
+    Criterion
   end
 end

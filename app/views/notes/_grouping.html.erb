@@ -5,12 +5,14 @@
                                                     :id,
                                                     :short_identifier),
                  onchange: "document.getElementById('working').style.display = '';
+                            document.getElementById('new-note-save').disabled = true;
                             $.ajax({
                               url: '" + new_update_groupings_notes_path + "',
                               type: 'POST',
                               data: $(this).serialize() + '&authenticity_token=' + AUTH_TOKEN
                             }).done(function() {
                               document.getElementById('working').style.display = 'none';
+                              document.getElementById('new-note-save').disabled = false;
                             });" %>
   <%= f.label :noteable_id, Group.model_name.human %>
   <%= f.select :noteable_id, @groupings.collect { |p| [p.group_name_with_student_user_names,p.id] } %>

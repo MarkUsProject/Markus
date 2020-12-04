@@ -6,9 +6,9 @@
           assignment_id: <%= @assignment.id %>,
           show_grace_tokens: <%= @assignment.submission_rule.type == 'GracePeriodSubmissionRule' %>,
           show_sections: <%= Section.exists? %>,
-          is_admin: <%= @current_user.admin? %>,
           is_timed: <%= @assignment.is_timed %>,
-          can_run_tests: <%= @current_user.admin? && @assignment.enable_test %>,
+          can_collect: <%= allowed_to? :manage? %>,
+          can_run_tests: <%= allowed_to?(:view_test_options?, @assignment) %>,
           defaultFiltered: [{ id: '<%= params[:filter_by] %>', value: '<%= params[:filter_value] %>' }]
         }
       );
@@ -44,7 +44,7 @@
       { link_text: t('submissions.repo_checkout_file', type: 'HTTPS'),
         link_path: download_repo_checkout_commands_assignment_submissions_path(@assignment, url_type: :https)}
     ] %>
-    <% if allowed_to?(:git_enabled?, KeyPair) && allowed_to?(:enabled?, KeyPair)
+    <% if allowed_to?(:view?, with: KeyPairPolicy)
       @heading_buttons += [
         { link_text: t('submissions.repo_checkout_file', type: 'SSH'),
           link_path: download_repo_checkout_commands_assignment_submissions_path(@assignment, url_type: :ssh)}
@@ -56,9 +56,9 @@
 <% content_for :additional_headings do %>
   <% if @current_user.ta? %>
     <span class='menu_bar'></span>
-    <%= t('submissions.how_many_marked',
+    <%= t('submissions.how_many_marked_in_collected',
           num_marked: @assignment.get_num_marked(@current_user.id),
-          num_assigned: @assignment.get_num_assigned(@current_user.id)) %>
+          num_collected: @assignment.get_num_collected(@current_user.id)) %>
   <% end %>
 <% end %>
 
