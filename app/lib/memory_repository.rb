@@ -233,7 +233,7 @@ class MemoryRepository < Repository::AbstractRepository
     if rev.path_exists?(full_path)
       raise Repository::FolderExistsConflict, full_path # raise conflict if path exists
     end
-    creation_time = Time.now
+    creation_time = Time.current
     dir = Repository::RevisionDirectory.new(rev.revision_identifier, {
       name: File.basename(full_path),
       path: File.dirname(full_path),
@@ -253,7 +253,7 @@ class MemoryRepository < Repository::AbstractRepository
       raise Repository::FileExistsConflict, full_path
     end
     # file does not exist, so add it
-    creation_time = Time.now
+    creation_time = Time.current
     file = Repository::RevisionFile.new(rev.revision_identifier, {
       name: File.basename(full_path),
       path: File.dirname(full_path),

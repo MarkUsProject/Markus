@@ -37,7 +37,7 @@ sudo apt-get install -y postgresql postgresql-client postgresql-contrib libpq-de
 
 # Install node
 echo "- - - Installing Node, Step 1 - - -"
-curl -sL https://deb.nodesource.com/setup_11.x | sudo -E bash -
+curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
 echo "- - - Installing Node, Step 2 - - -"
 sudo apt-get install -y nodejs
 

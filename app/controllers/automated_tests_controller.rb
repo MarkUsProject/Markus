@@ -1,15 +1,7 @@
 class AutomatedTestsController < ApplicationController
   include AutomatedTestsHelper
 
-  before_action      :authorize_only_for_admin,
-                     except: [:student_interface,
-                              :get_test_runs_students,
-                              :execute_test_run]
-
-  before_action      :authorize_for_student,
-                     only: [:student_interface,
-                            :get_test_runs_students,
-                            :execute_test_run]
+  before_action { authorize! }
 
   def update
     assignment = Assignment.find(params[:assignment_id])
@@ -41,27 +33,23 @@ class AutomatedTestsController < ApplicationController
 
     unless @grouping.nil?
       @grouping.refresh_test_tokens
-      # authorization
-      begin
-        authorize! @assignment, to: :run_tests?
-        authorize! @grouping, to: :run_tests?
-        @authorized = true
-      rescue ActionPolicy::Unauthorized => e
-        @authorized = false
-        flash_now(:notice, e.result.reasons.full_messages.join(' '))
-      end
+      @authorized = flash_allowance(:notice,
+                                    allowance_to(:run_tests?,
+                                                 current_user,
+                                                 context: { assignment: @assignment, grouping: @grouping })).value
     end
 
     render layout: 'assignment_content'
   end
 
   def execute_test_run
-    begin
-      assignment = Assignment.find(params[:id])
-      grouping = current_user.accepted_grouping_for(assignment.id)
-      grouping.refresh_test_tokens
-      authorize! assignment, to: :run_tests?
-      authorize! grouping, to: :run_tests?
+    assignment = Assignment.find(params[:id])
+    grouping = current_user.accepted_grouping_for(assignment.id)
+    grouping.refresh_test_tokens
+    allowed = flash_allowance(:error, allowance_to(:run_tests?,
+                                                   current_user,
+                                                   context: { assignment: assignment, grouping: grouping })).value
+    if allowed
       grouping.decrease_test_tokens
       test_run = grouping.create_test_run!(user: current_user)
       @current_job = AutotestRunJob.perform_later(request.protocol + request.host_with_port,
@@ -70,10 +58,10 @@ class AutomatedTestsController < ApplicationController
                                                   [{ id: test_run.id }])
       session[:job_id] = @current_job.job_id
       flash_message(:notice, I18n.t('automated_tests.tests_running'))
-    rescue StandardError => e
-      message = e.is_a?(ActionPolicy::Unauthorized) ? e.result.reasons.full_messages.join(' ') : e.message
-      flash_message(:error, message)
     end
+  rescue StandardError => e
+    flash_message(:error, e.message)
+  ensure
     redirect_to action: :student_interface, id: params[:id]
   end
 
@@ -109,7 +97,7 @@ class AutomatedTestsController < ApplicationController
     test_specs_path = assignment.autotest_settings_file
     test_specs = File.exist?(test_specs_path) ? JSON.parse(File.open(test_specs_path, &:read)) : {}
     assignment_data = assignment.assignment_properties.attributes.slice(*required_params.map(&:to_s))
-    assignment_data['token_start_date'] ||= Time.zone.now
+    assignment_data['token_start_date'] ||= Time.current
     assignment_data['token_start_date'] = assignment_data['token_start_date'].strftime('%Y-%m-%d %l:%M %p')
     data = { schema: schema_data, files: files_data, formData: test_specs }.merge(assignment_data)
     render json: data
@@ -171,6 +159,7 @@ class AutomatedTestsController < ApplicationController
         flash_now(:warning, t('student.submission.empty_file_warning', file_name: f.original_filename))
       end
       file_path = File.join(assignment.autotest_files_dir, params[:path], f.original_filename)
+      FileUtils.mkdir_p(File.dirname(file_path))
       file_content = f.read
       File.write(file_path, file_content, mode: 'wb')
     end
@@ -209,6 +198,12 @@ class AutomatedTestsController < ApplicationController
     else
       head :unprocessable_entity
     end
+  end
+
+  protected
+
+  def implicit_authorization_target
+    OpenStruct.new policy_class: AutomatedTestPolicy
   end
 
   private

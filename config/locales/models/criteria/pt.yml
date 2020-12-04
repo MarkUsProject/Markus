@@ -11,6 +11,7 @@ pt:
         one: "Critério rubrica"
     attributes:
       criterion:
+        bonus: 'UPDATE ME!'
         description: "Descrição"
         name: "Nome"
         max_mark: "Nota máxima"

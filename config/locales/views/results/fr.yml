@@ -4,6 +4,8 @@ fr:
     collapse_all: "Cacher toutes"
     criterion_incomplete_error: "Note non remplie, mais état fixé comme terminé."
     current_mark: 'UPDATE ME!'
+    current_rotation: 'UPDATE ME!'
+    current_zoom_level: 'UPDATE ME!'
     delete_extra_mark_confirm: "Êtes-vous sûr de vouloir enlever cette note supplémentaire ?"
     expand_all: "Montrer toutes"
     expand_unmarked: "Montrer non évaluées"
@@ -15,6 +17,7 @@ fr:
     no_result: "Les notes ne sont pas encore disponibles."
     previous_submission: "Précédent"
     results_for: "Résultats pour"
+    rotate_image: 'UPDATE ME!'
     set_to_incomplete: "Revenir à incomplet"
     set_to_complete: "Réglage pour terminer"
     subtotal: "Sous-total"
@@ -23,12 +26,12 @@ fr:
     your_mark:  'Votre Note'
     cancel_override: 'UPDATE ME!'
     overridden_deductions: 'UPDATE ME!'
+    zoom_in_image: 'UPDATE ME!'
+    zoom_out_image: 'UPDATE ME!'
 
     # Annotations
     annotation:
       across_all_submission_files: "Annnotations en cours sur tous les fichiers envoyés. Cliquer sur le numéro de ligne pour vous rendre directement au bon endroit sur le fichier."
-      change_across_submissions: "Ce changement sera propagé à toutes les notes comportant cette annotation, même
-                                  celles déjà affichées. Êtes-vous sûr de vouloir continuer ?"
       common: "Common Annotations"
       include_in_download: "Ajouter les annotations"
       include_in_download_warning: "Attention ! Annotations sur les fichiers PDF ne sont actuellement pas téléchargés."
@@ -37,6 +40,9 @@ fr:
       select_some_text: "Vous devez sélectionner du texte."
       select_an_area: "Vous devez sélectionner une zone sur l'image pour annoter."
       select_an_area_pdf: "Vous devez sélectionner une zone sur le PDF pour annoter."
+      similar_annotations_found:
+        one: "Vouliez-vous dire? (1 annotation similaire trouvée)"
+        other: "Vouliez-vous dire? (%{count} annotations similaires trouvées)"
 
     # Remark requests
     remark:

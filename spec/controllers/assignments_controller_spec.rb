@@ -27,10 +27,60 @@ describe AssignmentsController do
           periods_attributes: { 999 => { deduction: 10.0, interval: 1.0, hours: 10.0, _destroy: 0, id: nil } }
         },
         description: 'Test',
+        short_identifier: 'Test123',
         message: '',
-        due_date: Time.now.to_s
+        due_date: Time.current.to_s
       }
     }
+  end
+
+  context '#start_timed_assignment' do
+    let(:assignment) { create :timed_assignment }
+    context 'as a student' do
+      let(:user) { create :student }
+      context 'when a grouping exists' do
+        let!(:grouping) { create :grouping_with_inviter, assignment: assignment, start_time: nil, inviter: user }
+        it 'should respond with 302' do
+          put_as user, :start_timed_assignment, params: { id: assignment.id }
+          expect(response).to have_http_status :redirect
+        end
+        it 'should redirect to show' do
+          put_as user, :start_timed_assignment, params: { id: assignment.id }
+          expect(response).to redirect_to(action: :show)
+        end
+        it 'should update the start_time' do
+          put_as user, :start_timed_assignment, params: { id: assignment.id }
+          expect(grouping.reload.start_time).to be_within(5.seconds).of(Time.current)
+        end
+        context 'a validation fails' do
+          it 'should flash an error message' do
+            allow_any_instance_of(Grouping).to receive(:update).and_return false
+            put_as user, :start_timed_assignment, params: { id: assignment.id }
+            expect(flash[:error]).not_to be_nil
+          end
+        end
+      end
+      context 'when a grouping does not exist' do
+        it 'should respond with 400' do
+          put_as user, :start_timed_assignment, params: { id: assignment.id }
+          expect(response).to have_http_status 400
+        end
+      end
+    end
+    context 'as an admin' do
+      let(:user) { create :admin }
+      it 'should respond with 400' do
+        put_as user, :start_timed_assignment, params: { id: assignment.id }
+        expect(response).to have_http_status 403
+      end
+    end
+    context 'as an grader' do
+      let(:user) { create :ta }
+      it 'should respond with 400' do
+        put_as user, :start_timed_assignment, params: { id: assignment.id }
+        expect(response).to have_http_status 403
+      end
+    end
   end
 
   context '#upload' do
@@ -396,13 +446,21 @@ describe AssignmentsController do
         assert_response :not_found
       end
     end
+
+    context 'when an error is raised' do
+      before do
+        allow_any_instance_of(Student).to receive(:create_group_for_working_alone_student).and_raise(RuntimeError)
+        post_as user, :show, params: { id: assignment.id }
+      end
+      it { expect(response).to have_http_status(:redirect) }
+      it 'is expected to flash an error message' do
+        expect(flash[:error]).not_to be_empty
+      end
+    end
   end
 
   describe '#summary' do
-    let!(:assignment) { create(:assignment) }
-
-    context 'when an admin' do
-      let!(:user) { create(:admin) }
+    shared_examples 'An authorized user viewing assignment summary' do
       context 'requests an HTML response' do
         it 'responds with a success' do
           post_as user, :summary, params: { id: assignment.id }, format: 'html'
@@ -434,10 +492,97 @@ describe AssignmentsController do
         end
       end
     end
+
+    describe 'When the user is admin' do
+      let(:user) { create(:admin) }
+      let(:assignment) { create(:assignment) }
+      include_examples 'An authorized user viewing assignment summary'
+    end
+
+    describe 'When the user is grader' do
+      let(:user) { create(:ta) }
+      let(:assignment) { create(:assignment) }
+      include_examples 'An authorized user viewing assignment summary'
+    end
   end
 
-  context '#new' do
-    context 'as an admin' do
+  shared_examples 'An authorized user updating the assignment' do
+    let(:assignment) { create :assignment }
+    let(:submission_rule) { create :penalty_decay_period_submission_rule, assignment: assignment }
+    let(:params) do
+      example_form_params[:id] = assignment.id
+      example_form_params[:assignment][:assignment_properties_attributes][:id] = assignment.id
+      example_form_params[:assignment][:short_identifier] = assignment.short_identifier
+      example_form_params[:assignment][:submission_rule_attributes][:periods_attributes] = submission_rule.id
+      example_form_params
+    end
+    it 'should update an assignment without errors' do
+      patch_as user, :update, params: params
+    end
+    shared_examples 'update assignment_properties' do |property, before, after|
+      it "should update #{property}" do
+        assignment.update!(property => before)
+        params[:assignment][:assignment_properties_attributes][property] = after
+        patch_as user, :update, params: params
+        expect(assignment.reload.assignment_properties[property]).to eq after
+      end
+    end
+    shared_examples 'update assignment' do |property, before, after|
+      it "should update #{property}" do
+        assignment.update!(property => before)
+        params[:assignment][property] = after
+        patch_as user, :update, params: params
+        expect(assignment.reload[property]).to eq after
+      end
+    end
+    it_behaves_like 'update assignment_properties', :section_due_dates_type, false, true
+    it_behaves_like 'update assignment_properties', :allow_web_submits, false, true
+    it_behaves_like 'update assignment_properties', :vcs_submit, false, true
+    it_behaves_like 'update assignment_properties', :display_median_to_students, false, true
+    it_behaves_like 'update assignment_properties', :display_grader_names_to_students, false, true
+    it_behaves_like 'update assignment_properties', :has_peer_review, false, true
+    it_behaves_like 'update assignment_properties', :student_form_groups, false, true
+    it_behaves_like 'update assignment_properties', :group_name_autogenerated, false, true
+    it_behaves_like 'update assignment_properties', :allow_remarks, false, true
+    it_behaves_like 'update assignment', :description, 'AAA', 'BBB'
+    it_behaves_like 'update assignment', :message, 'AAA', 'BBB'
+    it_behaves_like 'update assignment', :due_date, Time.current.to_s, (Time.current - 1.hour).to_s
+    it 'should update group_min and group_max when is_group_assignment is true' do
+      assignment.update!(group_min: 1, group_max: 1)
+      params[:assignment][:assignment_properties_attributes][:group_min] = 2
+      params[:assignment][:assignment_properties_attributes][:group_max] = 3
+      params[:is_group_assignment] = true
+      patch_as user, :update, params: params
+      assignment.reload
+      expect(assignment.assignment_properties[:group_min]).to eq 2
+      expect(assignment.assignment_properties[:group_max]).to eq 3
+    end
+    it 'should not update group_min and group_max when is_group_assignment is false' do
+      assignment.update!(group_min: 1, group_max: 1)
+      params[:assignment][:assignment_properties_attributes][:group_min] = 2
+      params[:assignment][:assignment_properties_attributes][:group_max] = 3
+      params[:is_group_assignment] = false
+      patch_as user, :update, params: params
+      assignment.reload
+      expect(assignment.assignment_properties[:group_min]).to eq 1
+      expect(assignment.assignment_properties[:group_max]).to eq 1
+    end
+    it 'should update duration when this is a timed assignment' do
+      assignment.update!(is_timed: true, start_time: Time.current - 10.hours, duration: 10.minutes)
+      params[:assignment][:assignment_properties_attributes][:duration] = { hours: 2, minutes: 20 }
+      patch_as user, :update, params: params
+      expect(assignment.reload.duration).to eq(2.hours + 20.minutes)
+    end
+    it 'should not update duration when this is a not a timed assignment' do
+      assignment.update!(is_timed: false)
+      params[:assignment][:assignment_properties_attributes][:duration] = { hours: 2, minutes: 20 }
+      patch_as user, :update, params: params
+      expect(assignment.reload.duration).to eq nil
+    end
+  end
+
+  shared_examples 'An authorized user managing assignments' do
+    context '#new' do
       shared_examples 'assignment_new_success' do
         it 'responds with a success' do
           expect(response).to have_http_status :success
@@ -446,7 +591,6 @@ describe AssignmentsController do
           expect(response).to render_template(:new)
         end
       end
-      let(:user) { create :admin }
       context 'when the assignment is a scanned assignment' do
         before do
           get_as user, :new, params: { scanned: true }
@@ -484,91 +628,26 @@ describe AssignmentsController do
         end
       end
     end
-    context 'as a grader' do
-      it 'should respond with 404' do
-        get_as create(:ta), :new, params: {}
-        expect(response).to have_http_status 404
-      end
-    end
-    context 'as a student' do
-      it 'should respond with 404' do
-        get_as create(:student), :new, params: {}
-        expect(response).to have_http_status 404
-      end
-    end
-  end
-
-  context '#start_timed_assignment' do
-    let(:assignment) { create :timed_assignment }
-    context 'as a student' do
-      let(:user) { create :student }
-      context 'when a grouping exists' do
-        let!(:grouping) { create :grouping_with_inviter, assignment: assignment, start_time: nil, inviter: user }
-        it 'should respond with 302' do
-          put_as user, :start_timed_assignment, params: { id: assignment.id }
-          expect(response).to have_http_status :redirect
-        end
-        it 'should redirect to show' do
-          put_as user, :start_timed_assignment, params: { id: assignment.id }
-          expect(response).to redirect_to(action: :show)
-        end
-        it 'should update the start_time' do
-          put_as user, :start_timed_assignment, params: { id: assignment.id }
-          expect(grouping.reload.start_time).to be_within(5.seconds).of(Time.current)
-        end
-        context 'a validation fails' do
-          it 'should flash an error message' do
-            allow_any_instance_of(Grouping).to receive(:update).and_return false
-            put_as user, :start_timed_assignment, params: { id: assignment.id }
-            expect(flash[:error]).not_to be_nil
-          end
-        end
-      end
-      context 'when a grouping does not exist' do
-        it 'should respond with 400' do
-          put_as user, :start_timed_assignment, params: { id: assignment.id }
-          expect(response).to have_http_status 400
-        end
-      end
-    end
-    context 'as an admin' do
-      let(:user) { create :admin }
-      it 'should respond with 400' do
-        put_as user, :start_timed_assignment, params: { id: assignment.id }
-        expect(response).to have_http_status 400
-      end
-    end
-    context 'as an grader' do
-      let(:user) { create :ta }
-      it 'should respond with 400' do
-        put_as user, :start_timed_assignment, params: { id: assignment.id }
-        expect(response).to have_http_status 400
-      end
-    end
-  end
-
-  context '#create' do
-    let(:params) { example_form_params }
-    context 'as an admin' do
-      let(:admin) { create :admin }
+    context '#create' do
+      let(:params) { example_form_params }
       it 'should create an assignment without errors' do
-        post_as admin, :create, params: params
+        post_as user, :create, params: params
       end
-      it 'should respond with 200' do
-        post_as admin, :create, params: params
-        expect(response).to have_http_status 200
+      it 'should respond with 302' do
+        post_as user, :create, params: params
+        expect(response).to have_http_status 302
       end
       shared_examples 'create assignment_properties' do |property, after|
         it "should create #{property}" do
           params[:assignment][:assignment_properties_attributes][property] = after
-          post_as admin, :create, params: params
+          post_as user, :create, params: params
           expect(assigns(:assignment).assignment_properties[property]).to eq after
         end
       end
       shared_examples 'create assignment' do |property, after|
         it "should create #{property}" do
           params[:assignment][property] = after
-          post_as admin, :create, params: params
+          post_as user, :create, params: params
           expect(assigns(:assignment)[property]).to eq after
         end
       end
@@ -585,126 +664,100 @@ describe AssignmentsController do
       it_behaves_like 'create assignment_properties', :group_min, 3
       it_behaves_like 'create assignment', :description, 'BBB'
       it_behaves_like 'create assignment', :message, 'BBB'
-      it_behaves_like 'create assignment', :due_date, (Time.now - 1.hour).to_s
+      it_behaves_like 'create assignment', :due_date, (Time.current - 1.hour).to_s
       it 'should set duration when this is a timed assignment' do
         params[:assignment][:assignment_properties_attributes][:duration] = { hours: 2, minutes: 20 }
-        params[:assignment][:assignment_properties_attributes][:start_time] = Time.now - 10.hours
+        params[:assignment][:assignment_properties_attributes][:start_time] = Time.current - 10.hours
         params[:assignment][:assignment_properties_attributes][:is_timed] = true
-        post_as admin, :create, params: params
+        post_as user, :create, params: params
         expect(assigns(:assignment).duration).to eq(2.hours + 20.minutes)
       end
       it 'should not set duration when this is a not a timed assignment' do
         params[:assignment][:assignment_properties_attributes][:duration] = { hours: 2, minutes: 20 }
-        params[:assignment][:assignment_properties_attributes][:start_time] = Time.now - 10.hours
+        params[:assignment][:assignment_properties_attributes][:start_time] = Time.current - 10.hours
         params[:assignment][:assignment_properties_attributes][:is_timed] = false
-        post_as admin, :create, params: params
+        post_as user, :create, params: params
         expect(assigns(:assignment).duration).to eq nil
       end
-    end
-    context 'as a student' do
-      let(:user) { create :student }
-      it 'should respond with 404' do
+      it 'should not require submission rule when assignment is scanned' do
+        params[:assignment][:assignment_properties_attributes][:scanned_exam] = true
+        params[:assignment].delete :submission_rule_attributes
         post_as user, :create, params: params
-        expect(response).to have_http_status 404
+        expect(assigns(:assignment).reload).to be_valid
       end
     end
-    context 'as an grader' do
-      let(:user) { create :ta }
-      it 'should respond with 404' do
-        post_as user, :create, params: params
-        expect(response).to have_http_status 404
-      end
+    context '#edit' do
+      let(:assignment) { create(:assignment) }
+      before { post_as user, :edit, params: { id: assignment.id } }
+      it('should respond with 200') { expect(response.status).to eq 200 }
     end
   end
 
-  context '#update' do
-    let(:assignment) { create :assignment }
-    let(:submission_rule) { create :penalty_decay_period_submission_rule, assignment: assignment }
-    let(:params) do
-      example_form_params[:id] = assignment.id
-      example_form_params[:assignment][:assignment_properties_attributes][:id] = assignment.id
-      example_form_params[:assignment][:short_identifier] = assignment.short_identifier
-      example_form_params[:assignment][:submission_rule_attributes][:periods_attributes] = submission_rule.id
-      example_form_params
+  shared_examples 'An authorized user managing tests' do
+    let(:assignment) { create(:assignment_for_tests) }
+    let(:grouping) { create(:grouping, assignment: assignment) }
+    let(:test_run) { create(:test_run, grouping: grouping) }
+    context '#batch_runs' do
+      before { get_as user, :batch_runs, params: { id: assignment.id } }
+      it('should respond with 200') { expect(response.status).to eq 200 }
     end
-    context 'as an admin' do
-      let(:admin) { create :admin }
-      it 'should update an assignment without errors' do
-        patch_as admin, :update, params: params
+    context '#stop_test' do
+      before { get_as user, :stop_test, params: { id: assignment.id, test_run_id: test_run.id } }
+      it('should respond with 302') { expect(response.status).to eq 302 }
+    end
+  end
+
+  describe 'When the user is admin' do
+    let(:user) { create(:admin) }
+    include_examples 'An authorized user updating the assignment'
+    include_examples 'An authorized user managing assignments'
+    include_examples 'An authorized user managing tests'
+  end
+
+  describe 'When the user is grader' do
+    context 'When the grader is allowed to manage assignments' do
+      let(:user) { create(:ta, manage_assessments: true) }
+      include_examples 'An authorized user updating the assignment'
+      include_examples 'An authorized user managing assignments'
+    end
+
+    context 'When the grader is not allowed to manage assignments' do
+      # By default all the grader permissions are set to false
+      let(:user) { create(:ta) }
+      context '#new' do
+        before { get_as user, :new }
+        it('should respond with 403') { expect(response.status).to eq 403 }
       end
-      shared_examples 'update assignment_properties' do |property, before, after|
-        it "should update #{property}" do
-          assignment.update!(property => before)
-          params[:assignment][:assignment_properties_attributes][property] = after
-          patch_as admin, :update, params: params
-          expect(assignment.reload.assignment_properties[property]).to eq after
-        end
+      context '#create' do
+        let(:params) { { short_identifier: 'A0', description: 'Ruby on rails', due_date: Time.current } }
+        before { post_as user, :create, params: params }
+        it('should respond with 403') { expect(response.status).to eq 403 }
       end
-      shared_examples 'update assignment' do |property, before, after|
-        it "should update #{property}" do
-          assignment.update!(property => before)
-          params[:assignment][property] = after
-          patch_as admin, :update, params: params
-          expect(assignment.reload[property]).to eq after
-        end
-      end
-      it_behaves_like 'update assignment_properties', :section_due_dates_type, false, true
-      it_behaves_like 'update assignment_properties', :allow_web_submits, false, true
-      it_behaves_like 'update assignment_properties', :vcs_submit, false, true
-      it_behaves_like 'update assignment_properties', :display_median_to_students, false, true
-      it_behaves_like 'update assignment_properties', :display_grader_names_to_students, false, true
-      it_behaves_like 'update assignment_properties', :has_peer_review, false, true
-      it_behaves_like 'update assignment_properties', :student_form_groups, false, true
-      it_behaves_like 'update assignment_properties', :group_name_autogenerated, false, true
-      it_behaves_like 'update assignment_properties', :allow_remarks, false, true
-      it_behaves_like 'update assignment', :description, 'AAA', 'BBB'
-      it_behaves_like 'update assignment', :message, 'AAA', 'BBB'
-      it_behaves_like 'update assignment', :due_date, Time.now.to_s, (Time.now - 1.hour).to_s
-      it 'should update group_min and group_max when is_group_assignment is true' do
-        assignment.update!(group_min: 1, group_max: 1)
-        params[:assignment][:assignment_properties_attributes][:group_min] = 2
-        params[:assignment][:assignment_properties_attributes][:group_max] = 3
-        params[:is_group_assignment] = true
-        patch_as admin, :update, params: params
-        assignment.reload
-        expect(assignment.assignment_properties[:group_min]).to eq 2
-        expect(assignment.assignment_properties[:group_max]).to eq 3
-      end
-      it 'should not update group_min and group_max when is_group_assignment is false' do
-        assignment.update!(group_min: 1, group_max: 1)
-        params[:assignment][:assignment_properties_attributes][:group_min] = 2
-        params[:assignment][:assignment_properties_attributes][:group_max] = 3
-        params[:is_group_assignment] = false
-        patch_as admin, :update, params: params
-        assignment.reload
-        expect(assignment.assignment_properties[:group_min]).to eq 1
-        expect(assignment.assignment_properties[:group_max]).to eq 1
-      end
-      it 'should update duration when this is a timed assignment' do
-        assignment.update!(is_timed: true, start_time: Time.now - 10.hours, duration: 10.minutes)
-        params[:assignment][:assignment_properties_attributes][:duration] = { hours: 2, minutes: 20 }
-        patch_as admin, :update, params: params
-        expect(assignment.reload.duration).to eq(2.hours + 20.minutes)
-      end
-      it 'should not update duration when this is a not a timed assignment' do
-        assignment.update!(is_timed: false)
-        params[:assignment][:assignment_properties_attributes][:duration] = { hours: 2, minutes: 20 }
-        patch_as admin, :update, params: params
-        expect(assignment.reload.duration).to eq nil
+      context '#edit' do
+        let(:assignment) { create(:assignment) }
+        before { post_as user, :edit, params: { id: assignment.id } }
+        it('should respond with 403') { expect(response.status).to eq 403 }
       end
     end
-    context 'as a student' do
-      let(:user) { create :student }
-      it 'should respond with 404' do
-        patch_as user, :update, params: params
-        expect(response).to have_http_status 404
-      end
+
+    context 'When the grader is allowed to run tests' do
+      let(:user) { create(:ta, manage_assessments: true) }
+      include_examples 'An authorized user managing tests'
     end
-    context 'as an grader' do
-      let(:user) { create :ta }
-      it 'should respond with 404' do
-        patch_as user, :update, params: params
-        expect(response).to have_http_status 404
+
+    context 'When the grader is not allowed to run tests' do
+      let(:assignment) { create(:assignment_for_tests) }
+      let(:grouping) { create(:grouping, assignment: assignment) }
+      let(:test_run) { create(:test_run, grouping: grouping) }
+      # By default all the grader permissions are set to false
+      let(:user) { create(:ta) }
+      context '#batch_runs' do
+        before { get_as user, :batch_runs, params: { id: assignment.id } }
+        it('should respond with 403') { expect(response.status).to eq 403 }
+      end
+      context '#stop_test' do
+        before { get_as user, :stop_test, params: { id: assignment.id, test_run_id: test_run.id } }
+        it('should respond with 403') { expect(response.status).to eq 403 }
       end
     end
   end
@@ -734,14 +787,14 @@ describe AssignmentsController do
     end
     context 'a grader' do
       let(:user) { create :ta }
-      it 'should return a 404 error' do
-        is_expected.to respond_with(:not_found)
+      it 'should return a 403 error' do
+        is_expected.to respond_with(:forbidden)
       end
     end
     context 'a student' do
       let(:user) { create :student }
-      it 'should return a 404 error' do
-        is_expected.to respond_with(:not_found)
+      it 'should return a 403 error' do
+        is_expected.to respond_with(:forbidden)
       end
     end
   end
@@ -797,13 +850,13 @@ describe AssignmentsController do
     context 'a grader' do
       let(:user) { create :ta }
       it 'should return a 404 error' do
-        is_expected.to respond_with(:not_found)
+        is_expected.to respond_with(:forbidden)
       end
     end
     context 'a student' do
       let(:user) { create :student }
       it 'should return a 404 error' do
-        is_expected.to respond_with(:not_found)
+        is_expected.to respond_with(:forbidden)
       end
     end
   end
@@ -879,14 +932,14 @@ describe AssignmentsController do
       let(:user) { create :ta }
       it 'should return a 404 error' do
         subject
-        expect(response.status).to eq(404)
+        expect(response).to have_http_status(403)
       end
     end
     context 'a student' do
       let(:user) { create :student }
       it 'should return a 404 error' do
         subject
-        expect(response.status).to eq(404)
+        expect(response).to have_http_status(403)
       end
     end
   end
@@ -912,14 +965,14 @@ describe AssignmentsController do
       let(:user) { create :ta }
       it 'should return a 404 error' do
         subject
-        expect(response.status).to eq(404)
+        expect(response).to have_http_status(403)
       end
     end
     context 'a student' do
       let(:user) { create :student }
       it 'should return a 404 error' do
         subject
-        expect(response.status).to eq(404)
+        expect(response).to have_http_status(403)
       end
     end
   end

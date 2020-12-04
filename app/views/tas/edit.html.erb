@@ -2,6 +2,5 @@
   <%= t('tas.edit') %>
 <% end %>
 
-<%= render partial: 'layouts/userform',
-           locals: { controller: 'tas',
-                     action: 'edit' } %>
+<%= render partial: 'tas/grader_form',
+           locals: { controller: 'tas' } %>

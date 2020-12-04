@@ -14,6 +14,8 @@ class GradeEntryStudent < ApplicationRecord
   has_many :grade_entry_student_tas
   has_many :tas, through: :grade_entry_student_tas
 
+  validates_inclusion_of :released_to_student, in: [true, false]
+
   before_save :refresh_total_grade
 
   # Merges records of GradeEntryStudent that do not exist yet using a caller-
@@ -181,7 +183,7 @@ class GradeEntryStudent < ApplicationRecord
       if h[:total_grade].all?(&:nil?)
         h[:total_grade] = nil
       else
-        h[:total_grade] = h[:total_grade].sum
+        h[:total_grade] = h[:total_grade].compact.sum
       end
       h
     end

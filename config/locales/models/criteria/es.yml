@@ -11,6 +11,7 @@ es:
         one: "Criterio de Calificación por Rúbrica"
     attributes:
       criterion:
+        bonus: 'UPDATE ME!'
         description: "Descripción"
         name: "Nombre del criterio"
         max_mark: "Nota Máxima"

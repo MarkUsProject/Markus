@@ -2,24 +2,7 @@
 
 class GradeEntryFormsController < ApplicationController
   include GradeEntryFormsHelper
-
-  before_action :authorize_only_for_admin,
-                except: [:student_interface,
-                         :populate_grades_table,
-                         :get_mark_columns,
-                         :grades,
-                         :download,
-                         :upload,
-                         :update_grade]
-  before_action :authorize_for_ta_and_admin,
-                only: [:grades,
-                       :populate_grades_table,
-                       :download,
-                       :upload,
-                       :update_grade]
-  before_action :authorize_for_student,
-                only: [:student_interface]
-
+  before_action { authorize! }
   layout 'assignment_content'
 
   responders :flash

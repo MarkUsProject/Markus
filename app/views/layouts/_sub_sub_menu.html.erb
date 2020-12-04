@@ -1,4 +1,4 @@
-<% if @current_user.admin? %>
+<% if allowed_to?(:view_sub_sub_tabs?) %>
   <% if (controller.controller_name == 'assignments' &&
          controller.action_name != 'index' &&
          controller.action_name != 'new' &&
@@ -15,42 +15,56 @@
         <% if controller.controller_name != 'assignments' ||
               (controller.controller_name == 'assignments' &&
                controller.action_name != 'new' ) %>
-          <li <% if controller.controller_name == 'assignments' && controller.action_name != 'starter_file' %>
-              class='active'
-              <% end %>>
-            <%= link_to t('menu.properties'), edit_assignment_path(@assignment) %>
-          </li>
-          <li class='<%= "active" if controller.controller_name == 'tags' %>'>
-            <%= link_to Tag.model_name.human.pluralize,
-                        assignment_tags_path(@assignment) %>
-          </li>
-          <li <% if controller.controller_name == 'criteria'%>
-              class='active'
-              <% end %>>
-            <%= link_to Criterion.model_name.human.pluralize,
-                        assignment_criteria_path(@assignment.id) %>
-          </li>
-          <li <% if controller.controller_name == 'assignments' && controller.action_name == 'starter_file' %>
-              class='active'
-              <% end %>>
-            <%= link_to I18n.t('assignments.starter_file.title'),
-                        starter_file_assignment_path(@assignment.id) %>
-          </li>
-          <li class='<%= "active" if controller.controller_name == 'annotation_categories' %>'>
-            <%= link_to Annotation.model_name.human.pluralize,
-                        assignment_annotation_categories_path(@assignment) %>
-          </li>
-          <% if Rails.configuration.x.autotest.enable && !@assignment.is_peer_review? && !@assignment.scanned_exam? %>
-            <li class='<%= "active" if controller.controller_name == 'automated_tests' %>'>
-              <%= link_to t('automated_tests.title'),
-                          manage_assignment_automated_tests_path(@assignment) %>
+          <% if allowed_to?(:manage?, @assignment) %>
+            <li <% if controller.controller_name == 'assignments' && controller.action_name != 'starter_file' %>
+                class='active'
+                <% end %>>
+              <%= link_to t('menu.properties'), edit_assignment_path(@assignment) %>
             </li>
           <% end %>
-          <% if @assignment.scanned_exam? %>
-            <li class='<%= "active" if controller.controller_name == 'exam_templates' %>'>
-              <%= link_to ExamTemplate.model_name.human.pluralize,
-                          assignment_exam_templates_path(@assignment) %>
+          <% if allowed_to?(:manage?, with: TagPolicy) %>
+            <li class='<%= "active" if controller.controller_name == 'tags' %>'>
+              <%= link_to Tag.model_name.human.pluralize,
+                          assignment_tags_path(@assignment) %>
             </li>
+          <% end %>
+          <% if allowed_to?(:manage?, with: CriterionPolicy) %>
+            <li <% if controller.controller_name == 'criteria'%>
+                class='active'
+                <% end %>>
+              <%= link_to Criterion.model_name.human.pluralize,
+                          assignment_criteria_path(@assignment.id) %>
+            </li>
+          <% end %>
+          <% if allowed_to?(:manage?, with: StarterFileGroupPolicy) %>
+            <li <% if controller.controller_name == 'assignments' && controller.action_name == 'starter_file' %>
+                class='active'
+                <% end %>>
+              <%= link_to I18n.t('assignments.starter_file.title'),
+                          starter_file_assignment_path(@assignment.id) %>
+            </li>
+          <% end %>
+          <% if allowed_to?(:manage?, with: AnnotationCategoryPolicy) %>
+            <li class='<%= "active" if controller.controller_name == 'annotation_categories' %>'>
+              <%= link_to Annotation.model_name.human.pluralize,
+                          assignment_annotation_categories_path(@assignment) %>
+            </li>
+          <% end %>
+          <% if allowed_to?(:manage?, with: AutomatedTestPolicy) %>
+            <% if Rails.configuration.x.autotest.enable && !@assignment.is_peer_review? && !@assignment.scanned_exam? %>
+              <li class='<%= "active" if controller.controller_name == 'automated_tests' %>'>
+                <%= link_to t('automated_tests.title'),
+                            manage_assignment_automated_tests_path(@assignment) %>
+              </li>
+            <% end %>
+          <% end %>
+          <% if @assignment.scanned_exam? %>
+            <% if allowed_to?(:manage?, with: ExamTemplatePolicy) %>
+              <li class='<%= "active" if controller.controller_name == 'exam_templates' %>'>
+                <%= link_to ExamTemplate.model_name.human.pluralize,
+                            assignment_exam_templates_path(@assignment) %>
+              </li>
+            <% end %>
           <% end %>
         <% end %>
       <% end %>

@@ -19,16 +19,12 @@
 
 .due_date {
   .after {
-    color: $red;
+    color: $severe-error;
   }
 
   .before {
-    color: $green;
+    color: $severe-success;
   }
-}
-
-#api_key_box {
-  margin-top: $dimen-vertical;
 }
 
 .pr_assignment_list {

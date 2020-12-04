@@ -1,41 +1,7 @@
 class SubmissionsController < ApplicationController
   include SubmissionsHelper
   include RepositoryHelper
-
-  before_action :authorize_only_for_admin,
-                except: [:index,
-                         :browse,
-                         :server_time,
-                         :populate_file_manager,
-                         :revisions,
-                         :file_manager,
-                         :update_files,
-                         :get_file,
-                         :get_feedback_file,
-                         :download,
-                         :downloads,
-                         :zip_groupings_files,
-                         :download_zipped_file,
-                         :manually_collect_and_begin_grading,
-                         :repo_browser,
-                         :set_result_marking_state,
-                         :update_submissions,
-                         :populate_submissions_table,
-                         :populate_peer_submissions_table]
-  before_action :authorize_for_ta_and_admin,
-                only: [:index,
-                       :browse,
-                       :manually_collect_and_begin_grading,
-                       :revisions,
-                       :repo_browser,
-                       :zip_groupings_files,
-                       :download_zipped_file,
-                       :update_submissions]
-  before_action :authorize_for_student,
-                only: [:file_manager]
-  before_action :authorize_for_user,
-                only: [:download, :downloads, :get_feedback_file, :get_file,
-                       :populate_file_manager, :update_files]
+  before_action { authorize! }
 
   def index
     respond_to do |format|
@@ -204,7 +170,7 @@ class SubmissionsController < ApplicationController
     end
     if collectable.count > 0
       @current_job = SubmissionsJob.perform_later(collectable,
-                                                 collection_dates: collection_dates.transform_keys(&:to_s))
+                                                  collection_dates: collection_dates.transform_keys(&:to_s))
       session[:job_id] = @current_job.job_id
     end
     if some_before_due
@@ -229,24 +195,31 @@ class SubmissionsController < ApplicationController
     assignment = Assignment.includes(groupings: :current_submission_used).find(params[:assignment_id])
     groupings = assignment.groupings.find(params[:groupings])
     # .where.not(current_submission_used: nil) potentially makes find fail with RecordNotFound
-    test_runs = groupings.select(&:has_non_empty_submission?)
-                         .map { |g| { grouping_id: g.id, submission_id: g.current_submission_used.id } }
+    test_runs = groupings.select(&:has_non_empty_submission?).map do |g|
+      submission = g.current_submission_used
+      unless flash_allowance(:error, allowance_to(:run_tests?, current_user, context: { submission: submission })).value
+        head 400
+        return
+      end
+      { grouping_id: g.id, submission_id: submission.id }
+    end
     success = ''
     error = ''
     begin
       if !test_runs.empty?
-        authorize! assignment, to: :run_tests?
-        @current_job = AutotestRunJob.perform_later(request.protocol + request.host_with_port,
-                                                    current_user.id,
-                                                    assignment.id,
-                                                    test_runs)
-        session[:job_id] = @current_job.job_id
-        success = I18n.t('automated_tests.tests_running', assignment_identifier: assignment.short_identifier)
+        if flash_allowance(:error, allowance_to(:run_tests?, current_user, context: { assignment: assignment })).value
+          @current_job = AutotestRunJob.perform_later(request.protocol + request.host_with_port,
+                                                      current_user.id,
+                                                      assignment.id,
+                                                      test_runs)
+          session[:job_id] = @current_job.job_id
+          success = I18n.t('automated_tests.tests_running', assignment_identifier: assignment.short_identifier)
+        end
       else
         error = I18n.t('automated_tests.need_submission')
       end
     rescue StandardError => e
-      error = e.is_a?(ActionPolicy::Unauthorized) ? e.result.reasons.full_messages.join(' ') : e.message
+      error = e.message
     end
     unless success.blank?
       flash_message(:success, success)
@@ -272,7 +245,7 @@ class SubmissionsController < ApplicationController
 
     if @assignment.section_due_dates_type
       section_due_dates = Hash.new
-      now = Time.zone.now
+      now = Time.current
       Section.find_each do |section|
         collection_time = @assignment.submission_rule
                                      .calculate_collection_time(section)
@@ -447,13 +420,7 @@ class SubmissionsController < ApplicationController
     authorize! submission
 
     feedback_file = submission.feedback_files.find(params[:feedback_file_id])
-    if feedback_file.mime_type.start_with? 'image'
-      content = Base64.encode64(feedback_file.file_content)
-    else
-      content = feedback_file.file_content
-    end
-
-    render plain: content
+    send_data_download feedback_file.file_content, filename: feedback_file.filename
   end
 
   def download
@@ -474,6 +441,9 @@ class SubmissionsController < ApplicationController
         file = @revision.files_at_path(File.join(@assignment.repository_folder,
                                                  path))[params[:file_name]]
         file_contents = repo.download_as_string(file)
+        if params[:preview] == 'true' && SubmissionFile.is_binary?(file_contents)
+          file_contents = I18n.t('submissions.cannot_display')
+        end
       rescue Exception => e
         render plain: I18n.t('student.submission.missing_file',
                             file_name: params[:file_name], message: e.message)
@@ -606,7 +576,7 @@ class SubmissionsController < ApplicationController
   # See Assignment.get_repo_checkout_commands for details
   def download_repo_checkout_commands
     assignment = Assignment.find(params[:assignment_id])
-    ssh_url = allowed_to?(:git_enabled?, KeyPair) && allowed_to?(:enabled?, KeyPair) && params[:url_type] == 'ssh'
+    ssh_url = allowed_to?(:view?, with: KeyPairPolicy) && params[:url_type] == 'ssh'
     svn_commands = assignment.get_repo_checkout_commands(ssh_url: ssh_url)
     send_data svn_commands.join("\n"),
               disposition: 'attachment',
@@ -617,14 +587,14 @@ class SubmissionsController < ApplicationController
   # See Assignment.get_repo_list for details
   def download_repo_list
     assignment = Assignment.find(params[:assignment_id])
-    send_data assignment.get_repo_list(ssh: allowed_to?(:git_enabled?, KeyPair) && allowed_to?(:enabled?, KeyPair)),
+    send_data assignment.get_repo_list(ssh: allowed_to?(:view?, with: KeyPairPolicy)),
               disposition: 'attachment',
               filename: "#{assignment.short_identifier}_repo_list.csv"
   end
 
   # This action is called periodically from file_manager.
   def server_time
-    render plain: l(Time.zone.now)
+    render plain: l(Time.current)
   end
 
   def set_result_marking_state
@@ -712,7 +682,7 @@ class SubmissionsController < ApplicationController
                              revision.revision_identifier, dirname, grouping.id)
         next if data.nil?
         data[:key] = file_name
-        data[:modified] = data[:last_revised_date]
+        data[:modified] = file_obj.last_modified_date.to_i
         data[:revision_by] = '' if anonymize
         data
       else

@@ -1,3 +1,4 @@
+# User policy class
 class UserPolicy < ApplicationPolicy
   # Default rule: only admins can manage users.
   def manage?
@@ -9,11 +10,16 @@ class UserPolicy < ApplicationPolicy
     false
   end
 
-  def mailer_settings?
-    user.student?
+  def settings?
+    true
   end
 
-  def update_mailer_settings?
-    user.student?
+  def update_settings?
+    true
+  end
+
+  # Students and TAs shouldn't be able to change their API key
+  def reset_api_key?
+    user.admin?
   end
 end

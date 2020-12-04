@@ -10,7 +10,7 @@
         <% end %>
       </span>
       <span id='user-id'>
-        <%= @current_user.first_name %> <%= @current_user.last_name %>
+        <%= @current_user.display_name %>
         ( <strong><%= @current_user.user_name %></strong> )
       </span>
       <% if @current_user.admin? || (session[:real_uid] &&
@@ -46,4 +46,5 @@
 
 <script>
 <%= render partial: 'shared/poll_job', formats: [:js], handlers: [:erb] %>
+set_theme('<%= @current_user.theme %>');
 </script>

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_07_26_012622) do
+ActiveRecord::Schema.define(version: 2020_11_26_164928) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -49,7 +49,7 @@ ActiveRecord::Schema.define(version: 2020_07_26_012622) do
     t.integer "y2"
     t.string "type"
     t.integer "annotation_number"
-    t.boolean "is_remark"
+    t.boolean "is_remark", default: false, null: false
     t.integer "page"
     t.integer "column_start"
     t.integer "column_end"
@@ -150,6 +150,7 @@ ActiveRecord::Schema.define(version: 2020_07_26_012622) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.bigint "assessment_id", null: false
+    t.boolean "bonus", default: false, null: false
     t.index ["assessment_id"], name: "index_criteria_on_assessment_id"
   end
 
@@ -230,14 +231,14 @@ ActiveRecord::Schema.define(version: 2020_07_26_012622) do
     t.datetime "updated_at"
     t.float "out_of"
     t.integer "position"
-    t.boolean "bonus", default: false
+    t.boolean "bonus", default: false, null: false
     t.bigint "assessment_id"
     t.index ["assessment_id", "name"], name: "index_grade_entry_items_on_assessment_id_and_name", unique: true
   end
 
   create_table "grade_entry_students", id: :serial, force: :cascade do |t|
     t.integer "user_id"
-    t.boolean "released_to_student"
+    t.boolean "released_to_student", default: false, null: false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.float "total_grade"
@@ -248,6 +249,14 @@ ActiveRecord::Schema.define(version: 2020_07_26_012622) do
   create_table "grade_entry_students_tas", id: :serial, force: :cascade do |t|
     t.integer "grade_entry_student_id"
     t.integer "ta_id"
+  end
+
+  create_table "grader_permissions", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.boolean "manage_submissions", default: false, null: false
+    t.boolean "manage_assessments", default: false, null: false
+    t.boolean "run_tests", default: false, null: false
+    t.index ["user_id"], name: "index_grader_permissions_on_user_id", unique: true
   end
 
   create_table "grades", id: :serial, force: :cascade do |t|
@@ -271,7 +280,7 @@ ActiveRecord::Schema.define(version: 2020_07_26_012622) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.boolean "admin_approved", default: false, null: false
-    t.boolean "is_collected", default: false
+    t.boolean "is_collected", default: false, null: false
     t.integer "notes_count", default: 0
     t.integer "criteria_coverage_count", default: 0
     t.integer "test_tokens", default: 0, null: false
@@ -451,7 +460,7 @@ ActiveRecord::Schema.define(version: 2020_07_26_012622) do
     t.integer "num_groups_in_incomplete"
     t.integer "num_pages_qr_scan_error"
     t.integer "original_num_pages"
-    t.boolean "qr_code_found"
+    t.boolean "qr_code_found", default: false, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "exam_template_id"
@@ -477,8 +486,8 @@ ActiveRecord::Schema.define(version: 2020_07_26_012622) do
     t.integer "submission_id"
     t.string "filename"
     t.string "path", default: "/", null: false
-    t.boolean "is_converted", default: false
-    t.boolean "error_converting", default: false
+    t.boolean "is_converted", default: false, null: false
+    t.boolean "error_converting", default: false, null: false
     t.index ["filename"], name: "index_submission_files_on_filename"
     t.index ["submission_id"], name: "index_submission_files_on_submission_id"
   end
@@ -495,7 +504,7 @@ ActiveRecord::Schema.define(version: 2020_07_26_012622) do
     t.integer "grouping_id"
     t.datetime "created_at"
     t.integer "submission_version"
-    t.boolean "submission_version_used"
+    t.boolean "submission_version_used", default: false, null: false
     t.text "revision_identifier"
     t.datetime "revision_timestamp"
     t.text "remark_request"
@@ -597,6 +606,9 @@ ActiveRecord::Schema.define(version: 2020_07_26_012622) do
     t.string "id_number"
     t.boolean "receives_results_emails", default: false, null: false
     t.boolean "receives_invite_emails", default: false, null: false
+    t.string "display_name", null: false
+    t.string "locale", default: "en", null: false
+    t.integer "theme", default: 1, null: false
     t.index ["api_key"], name: "index_users_on_api_key", unique: true
     t.index ["user_name"], name: "index_users_on_user_name", unique: true
   end
@@ -616,6 +628,7 @@ ActiveRecord::Schema.define(version: 2020_07_26_012622) do
   add_foreign_key "extensions", "groupings"
   add_foreign_key "extra_marks", "results", name: "fk_extra_marks_results", on_delete: :cascade
   add_foreign_key "feedback_files", "submissions"
+  add_foreign_key "grader_permissions", "users"
   add_foreign_key "grouping_starter_file_entries", "groupings"
   add_foreign_key "grouping_starter_file_entries", "starter_file_entries"
   add_foreign_key "groupings", "assessments", name: "fk_groupings_assignments"

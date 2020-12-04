@@ -19,6 +19,7 @@ cr30:
       description: Impressive
   ta_visible: false
   peer_visible: true
+  bonus: true
 cr20:
   type: Flexible
   max_mark: 2.0
@@ -29,6 +30,7 @@ cr100:
   type: checkbox
   max_mark: 5.0
   description: I am checkbox
+  bonus: true
 cr40:
   type: Checkbox
   max_mark: 5.0
@@ -42,6 +44,7 @@ cr50:
   type: Flexible
   max_mark: 1.0
   description: Another flexible.
+  bonus: true
 cr60:
   type: flexible
   max_mark: 10.0

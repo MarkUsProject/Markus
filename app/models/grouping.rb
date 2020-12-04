@@ -4,7 +4,8 @@ require 'set'
 class Grouping < ApplicationRecord
   include SubmissionsHelper
 
-  after_create_commit :create_starter_files
+  after_create_commit -> { access_repo } # access the repo to trigger creation of assignment subdirectory
+  after_create :reset_starter_file_entries
   after_commit :update_repo_permissions_after_save, on: [:create, :update]
 
   has_many :memberships, dependent: :destroy
@@ -445,12 +446,17 @@ class Grouping < ApplicationRecord
       assignment.default_starter_file_group&.starter_file_entries || []
     when 'shuffle'
       assignment.starter_file_groups.includes(:starter_file_entries).map do |g|
-        StarterFileEntry.find_by(id: g.starter_file_entries.ids.sample)
+        # If this grouping has previous starter files, try to choose an entry with the same path as before
+        old_entry = g.starter_file_entries.find_by(path: self.starter_file_entries.map(&:path))
+        old_entry || StarterFileEntry.find_by(id: g.starter_file_entries.ids.sample)
       end.compact
     when 'group'
-      StarterFileGroup.find_by(id: assignment.starter_file_groups.ids.sample)&.starter_file_entries || []
+      # If this grouping has previous starter files, try to choose a group already assigned to the student
+      group_ids = self.starter_file_entries.pluck(:starter_file_group_id).compact.sample
+      group_ids ||= assignment.starter_file_groups.ids.sample
+      StarterFileGroup.find_by(id: group_ids)&.starter_file_entries || []
     else
-      raise 'starter_file_type is invalid'
+      raise "starter_file_type is invalid: #{assignment.starter_file_type}"
     end
   end
 
@@ -460,20 +466,7 @@ class Grouping < ApplicationRecord
       GroupingStarterFileEntry.find_or_create_by!(starter_file_entry_id: entry.id, grouping_id: self.id).id
     end
     self.grouping_starter_file_entries.where(id: old_grouping_entry_ids - new_grouping_entry_ids).destroy_all
-  end
-
-  # Select starter files and write them to this grouping's repo.
-  #
-  # Note for future debugging: if this model does not exist in the database when this is called, the
-  # creation of associated GroupingStarterFileEntry objects will be triggered twice. In other words,
-  # do not call this in any callback other than after_create_commit
-  def create_starter_files
-    return unless Rails.configuration.x.repository.is_repository_admin # create folder only if we are repo admin
-    GroupingStarterFileEntry.transaction do
-      self.group.access_repo do |group_repo|
-        add_starter_files(group_repo)
-      end
-    end
+    self.update!(starter_file_changed: false)
   end
 
   def changed_starter_file_at?(revision)
@@ -756,14 +749,14 @@ class Grouping < ApplicationRecord
 
   def access_repo
     group.access_repo do |repo|
-      add_starter_files(repo)
-      yield repo
+      add_assignment_folder(repo)
+      yield repo if block_given?
     end
   end
 
   private
 
-  def add_starter_files(group_repo)
+  def add_assignment_folder(group_repo)
     assignment_folder = self.assignment.repository_folder
 
     # path may already exist if this is a peer review assignment. In that case do not create
@@ -772,9 +765,6 @@ class Grouping < ApplicationRecord
       txn = group_repo.get_transaction('Markus', I18n.t('repo.commits.assignment_folder',
                                                         assignment: self.assignment.short_identifier))
       txn.add_path(assignment_folder)
-
-      reset_starter_file_entries
-      self.reload.starter_file_entries.each { |entry| entry.add_files_to_transaction(txn) }
       if txn.has_jobs?
         unless group_repo.commit(txn)
           raise I18n.t('repo.assignment_dir_creation_error', short_identifier: assignment.short_identifier)

@@ -67,18 +67,6 @@ describe AnnotationsController do
       end
     end
 
-    describe '#new' do
-      it 'renders the correct template' do
-        get_as user,
-               :new,
-               params: { result_id: result.id, assignment_id: assignment.id },
-               format: :js
-
-        assert_response :success
-        expect(response).to render_template('new')
-      end
-    end
-
     describe '#create' do
       it 'successfully creates a text annotation' do
         post_as user,
@@ -90,6 +78,29 @@ describe AnnotationsController do
 
         assert_response :success
         expect(result.annotations.reload.size).to eq 1
+      end
+
+      it 'successfully uses an existing text annotation' do
+        post_as user,
+                :create,
+                params: { annotation_text_id: annotation_text.id, category_id: annotation_category.id,
+                          submission_file_id: submission_file.id, line_start: 1, line_end: 1, column_start: 1,
+                          column_end: 1, result_id: result.id, assignment_id: assignment.id },
+                format: :js
+
+        assert_response :success
+        expect(result.annotations.reload.size).to eq 1
+        expect(AnnotationText.all.size).to eq 1
+
+        post_as user,
+                :create,
+                params: { annotation_text_id: annotation_text.id, category_id: annotation_category.id,
+                          submission_file_id: submission_file.id, line_start: 2, line_end: 2, column_start: 2,
+                          column_end: 2, result_id: result.id, assignment_id: assignment.id },
+                format: :js
+        assert_response :success
+        expect(result.annotations.reload.size).to eq 2
+        expect(AnnotationText.all.size).to eq 1
       end
 
       it 'successfully creates an image annotation' do
@@ -216,24 +227,6 @@ describe AnnotationsController do
       end
     end
 
-    describe '#edit' do
-      it 'renders the correct template' do
-        anno = create(
-          :text_annotation,
-          submission_file: submission_file,
-          creator: user,
-          result: result
-        )
-        get_as user,
-               :edit,
-               params: { id: anno.id, result_id: result.id, assignment_id: assignment.id },
-               format: :js
-
-        assert_response :success
-        expect(response).to render_template('edit')
-      end
-    end
-
     describe '#update' do
       it 'successfully updates annotation text' do
         anno = create(
@@ -249,6 +242,32 @@ describe AnnotationsController do
                format: :js
         assert_response :success
         expect(anno.annotation_text.reload.content).to eq 'new content'
+      end
+
+      it 'successfully updates a singular annotation text' do
+        anno_text = create(:annotation_text, annotation_category: annotation_category)
+        anno1 = create(
+          :text_annotation,
+          annotation_text: anno_text,
+          submission_file: submission_file,
+          creator: user,
+          result: result
+        )
+        anno2 = create(
+          :text_annotation,
+          annotation_text: anno_text,
+          submission_file: submission_file,
+          creator: user,
+          result: result
+        )
+        put_as user,
+               :update,
+               params: { id: anno1.id, assignment_id: assignment.id, submission_file_id: submission_file.id,
+                         result_id: result.id, content: 'new content', annotation_text: { change_all: '0' } },
+               format: :js
+        assert_response :success
+        expect(anno1.reload.annotation_text.reload.content).to eq 'new content'
+        expect(anno2.reload.annotation_text.reload.content).to_not eq 'new content'
       end
     end
   end
@@ -408,7 +427,7 @@ describe AnnotationsController do
                           line_end: 1, column_start: 1, column_end: 1, result_id: result.id },
                 format: :js
 
-        assert_response :not_found
+        is_expected.to respond_with(:forbidden)
         expect(result.annotations.reload.size).to eq 0
       end
     end
@@ -422,7 +441,7 @@ describe AnnotationsController do
                           column_end: 1, result_id: result.id, assignment_id: assignment.id },
                 format: :js
 
-        assert_response :not_found
+        is_expected.to respond_with(:forbidden)
         expect(result.annotations.reload.size).to eq 0
       end
     end
@@ -441,7 +460,7 @@ describe AnnotationsController do
                             result_id: result.id },
                   format: :js
 
-        assert_response :not_found
+        is_expected.to respond_with(:forbidden)
         expect(result.annotations.reload.size).to eq 1
       end
     end
@@ -459,7 +478,7 @@ describe AnnotationsController do
                params: { id: anno.id, assignment_id: assignment.id, submission_file_id: submission_file.id,
                          result_id: result.id, content: 'new content' },
                format: :js
-        assert_response :not_found
+        is_expected.to respond_with(:forbidden)
         expect(anno.annotation_text.reload.content).to_not eq 'new content'
       end
     end

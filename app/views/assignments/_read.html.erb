@@ -106,7 +106,7 @@
     </ul>
   <% end %>
 
-  <% unless peer_review %>
+  <% if !peer_review && (!@assignment.is_timed || !@grouping.start_time.nil? || @grouping.past_collection_date?) %>
     <h3><%= Submission.model_name.human.pluralize %></h3>
     <% if @grouping.nil? %>
       <p><%= t('submissions.student.no_submission') %></p>
@@ -147,7 +147,7 @@
     <% end %>
 <% end %>
 <% unless @assignment.starter_file_updated_at.nil? || @grouping.nil? %>
-  <% if !@assignment.is_timed || !@grouping.start_time.nil? %>
+  <% if !@assignment.is_timed || !@grouping.start_time.nil? || @grouping.past_collection_date? %>
     <h3><%= I18n.t('assignments.starter_file.title') %></h3>
     <p><%= I18n.t('assignments.starter_file.provided') %></p>
     <p><%= I18n.t('assignments.starter_file.changed_at',

@@ -117,21 +117,21 @@ class Assignment < Assessment
   # This does not take extensions into consideration.
   def past_all_due_dates?
     # If no section due dates /!\ do not check empty? it could be wrong
-    return false if !due_date.nil? && Time.zone.now < due_date
-    return false if section_due_dates.any? { |sec| !sec.due_date.nil? && Time.zone.now < sec.due_date }
+    return false if !due_date.nil? && Time.current < due_date
+    return false if section_due_dates.any? { |sec| !sec.due_date.nil? && Time.current < sec.due_date }
 
     true
   end
 
   # Return an array with names of sections past
   def section_names_past_due_date
-    if !self.section_due_dates_type && !due_date.nil? && Time.zone.now > due_date
+    if !self.section_due_dates_type && !due_date.nil? && Time.current > due_date
       return []
     end
 
     sections_past = []
     self.section_due_dates.each do |d|
-      if !d.due_date.nil? && Time.zone.now > d.due_date
+      if !d.due_date.nil? && Time.current > d.due_date
         sections_past << d.section.name
       end
     end
@@ -151,7 +151,7 @@ class Assignment < Assessment
     return past_all_due_dates? if grouping.nil?
 
     date = grouping.due_date
-    !date.nil? && Time.zone.now > date
+    !date.nil? && Time.current > date
   end
 
   def section_due_date(section)
@@ -214,7 +214,7 @@ class Assignment < Assessment
   # checks if the due date for +section+ has passed for this assignment
   # or if the main due date has passed if +section+ is nil.
   def past_collection_date?(section = nil)
-    Time.zone.now > submission_rule.calculate_collection_time(section)
+    Time.current > submission_rule.calculate_collection_time(section)
   end
 
   def past_all_collection_dates?
@@ -228,7 +228,7 @@ class Assignment < Assessment
   end
 
   def past_remark_due_date?
-    !remark_due_date.nil? && Time.zone.now > remark_due_date
+    !remark_due_date.nil? && Time.current > remark_due_date
   end
 
   # Return true if this is a group assignment; false otherwise
@@ -264,7 +264,7 @@ class Assignment < Assessment
 
   # Returns the maximum possible mark for a particular assignment
   def max_mark(user_visibility = :ta_visible)
-    criteria.where(user_visibility => true).sum(:max_mark).round(2)
+    criteria.where(user_visibility => true, bonus: false).sum(:max_mark).round(2)
   end
 
   # Returns a boolean indicating whether marking has started for at least
@@ -551,11 +551,11 @@ class Assignment < Assessment
       unassigned = !assigned_criteria.nil? && !assigned_criteria.include?(crit.id)
       next if hide_unassigned && unassigned
 
-      max_mark += crit.max_mark
+      max_mark += crit.max_mark unless crit.bonus?
       accessor = crit.id
       criteria_shown << accessor
       {
-        Header: crit.name,
+        Header: crit.bonus? ? "#{crit.name} (#{Criterion.human_attribute_name(:bonus)})" : crit.name,
         accessor: "criteria.#{accessor}",
         className: 'number ' + (unassigned ? 'unassigned' : ''),
         headerClassName: unassigned ? 'unassigned' : ''
@@ -624,7 +624,7 @@ class Assignment < Assessment
 
     headers = [['User name', 'Group', 'Final grade'], ['', 'Out of', self.max_mark]]
     self.ta_criteria.each do |crit|
-      headers[0] << crit.name
+      headers[0] << (crit.bonus? ? "#{crit.name} (#{Criterion.human_attribute_name(:bonus)})" : crit.name)
       headers[1] << crit.max_mark
     end
     headers[0] << 'Bonus/Deductions'
@@ -752,11 +752,7 @@ class Assignment < Assessment
 
   def get_num_marked(ta_id = nil)
     if ta_id.nil?
-      results_join = groupings.left_outer_joins(:current_result)
-      num_incomplete = results_join.where('results.id': nil)
-                                   .or(results_join.where('results.marking_state': 'incomplete'))
-                                   .count
-      get_num_assigned - num_incomplete
+      groupings.joins(:current_result).where('results.marking_state': 'complete').count
     else
       if is_criteria_mark?(ta_id)
         n = 0
@@ -767,7 +763,9 @@ class Assignment < Assessment
                    .where('m.mark IS NOT NULL AND assessment_id = ?', self.id)
                    .group('m.result_id')
                    .count
-        ta_memberships.includes(grouping: :current_result).where(user_id: ta_id).find_each do |t_mem|
+        ta_memberships.includes(grouping: :current_result)
+                      .where(user_id: ta_id)
+                      .where('groupings.is_collected': true).find_each do |t_mem|
           next if t_mem.grouping.current_result.nil?
           result_id = t_mem.grouping.current_result.id
           num_marked = marked[result_id] || 0
@@ -777,13 +775,10 @@ class Assignment < Assessment
         end
         n
       else
-        results_join = groupings.joins(:ta_memberships)
-                                .where('memberships.user_id': ta_id)
-                                .left_outer_joins(:current_result)
-        num_incomplete = results_join.where('results.id': nil)
-                                     .or(results_join.where('results.marking_state': 'incomplete'))
-                                     .count
-        get_num_assigned(ta_id) - num_incomplete
+        groupings.joins(:ta_memberships)
+                 .where('memberships.user_id': ta_id)
+                 .joins(:current_result)
+                 .where('results.marking_state': 'complete').count
       end
     end
   end
@@ -944,6 +939,7 @@ class Assignment < Assessment
                         .order(due_date: :desc)
     records.where(assignment_properties: { is_timed: false })
            .or(records.where.not(groupings: { start_time: nil }))
+           .or(records.where(groupings: { start_time: nil }, due_date: Time.new(0)..Time.current))
   end
 
   ### /REPO ###

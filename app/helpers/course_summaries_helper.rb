@@ -57,13 +57,10 @@ module CourseSummariesHelper
   end
 
   def course_information
-    rubric_max = RubricCriterion.group(:assessment_id).sum(:max_mark)
-    flexible_max = FlexibleCriterion.group(:assessment_id).sum(:max_mark)
-    checkbox_max = CheckboxCriterion.group(:assessment_id).sum(:max_mark)
-    @max_marks = Hash[Assignment.all.map do |a|
-      [a.id, rubric_max.fetch(a.id, 0) + flexible_max.fetch(a.id, 0) + checkbox_max.fetch(a.id, 0)]
-    end
-    ]
+    @max_marks = Hash[Assignment.all.joins(:criteria)
+                                .where('criteria.bonus': false)
+                                .group('assessments.id')
+                                .sum('criteria.max_mark')]
 
     @gef_max_marks = GradeEntryForm.unscoped
                                    .joins(:grade_entry_items)

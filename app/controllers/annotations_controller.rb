@@ -1,10 +1,5 @@
 class AnnotationsController < ApplicationController
-
-  before_action(except: :add_existing_annotation) do |c|
-    c.authorize_for_ta_admin_and_reviewer(params[:assignment_id], params[:result_id])
-  end
-
-  before_action :authorize_for_ta_and_admin, only: :add_existing_annotation
+  before_action { authorize! }
 
   def add_existing_annotation
     result = Result.find(params[:result_id])
@@ -52,11 +47,6 @@ class AnnotationsController < ApplicationController
     render :create
   end
 
-  def new
-    @result = Result.find(params[:result_id])
-    @assignment = @result.submission.grouping.assignment
-  end
-
   def create
     result = Result.find(params[:result_id])
     submission = result.submission
@@ -64,13 +54,18 @@ class AnnotationsController < ApplicationController
 
     d = result.grouping.assignment.annotation_categories.find_by(id: params[:category_id])&.flexible_criterion_id
 
-    text = AnnotationText.create!(
-      content: params[:content],
-      annotation_category_id: params[:category_id],
-      creator_id: current_user.id,
-      last_editor_id: current_user.id,
-      deduction: d.nil? ? nil : 0.0
-    )
+    if params[:annotation_text_id] && !params[:annotation_text_id].strip.empty? && !params[:category_id].empty?
+      text = AnnotationText.find(params[:annotation_text_id])
+    else
+      text = AnnotationText.create!(
+        content: params[:content],
+        annotation_category_id: params[:category_id],
+        creator_id: current_user.id,
+        last_editor_id: current_user.id,
+        deduction: d.nil? ? nil : 0.0
+      )
+    end
+
     base_attributes = {
       annotation_number: result.annotations.size + 1,
       annotation_text_id: text.id,
@@ -109,11 +104,6 @@ class AnnotationsController < ApplicationController
     end
   end
 
-  def edit
-    @annotation = Annotation.find(params[:id])
-    @assignment = Assignment.find(params[:assignment_id])
-  end
-
   def destroy
     result = Result.find(params[:result_id])
     @annotation = result.annotations.find(params[:id])
@@ -149,6 +139,28 @@ class AnnotationsController < ApplicationController
         return
       end
     end
-    @annotation_text.update(content: params[:content])
+
+    change_all = !params[:annotation_text] || !params[:annotation_text][:change_all] ||
+        params[:annotation_text][:change_all] == '1'
+    if change_all
+      @annotation_text.update(content: params[:content])
+    else
+      ActiveRecord::Base.transaction do
+        new_text = AnnotationText.create(
+          content: params[:content],
+          annotation_category_id: nil,
+          deduction: nil,
+          creator_id: current_user.id,
+          last_editor_id: current_user.id
+        )
+        @annotation.update(annotation_text: new_text)
+      end
+    end
+  end
+
+  protected
+
+  def identification_params
+    params.permit(:id, :result_id)
   end
 end

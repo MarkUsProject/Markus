@@ -94,15 +94,11 @@ describe MarkingSchemesController do
 
     context '#update' do
       it 'updates an existing marking scheme with new marking weights' do
-        create(
-          :marking_scheme,
-          assessments: [
-            grade_entry_form,
-            grade_entry_form_with_data,
-            assignment,
-            assignment_with_criteria_and_results
-          ]
-        )
+        create(:marking_scheme,
+               assessments: [grade_entry_form,
+                             grade_entry_form_with_data,
+                             assignment,
+                             assignment_with_criteria_and_results])
         params = {
           'id': MarkingScheme.first.id,
           'marking_scheme': {

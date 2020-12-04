@@ -22,9 +22,9 @@ class TestRun < ApplicationRecord
 
   def status
     return STATUSES[:problems] unless self.problems.nil?
-    return STATUSES[:complete] if self.test_group_results.exists?
-    return STATUSES[:cancelled] if self.time_to_service&.negative?
-    STATUSES[:in_progress]
+    return STATUSES[:in_progress] if self.time_to_service.nil?
+    return STATUSES[:cancelled] if self.time_to_service.negative?
+    STATUSES[:complete]
   end
 
   def self.statuses(test_run_ids)
@@ -35,12 +35,12 @@ class TestRun < ApplicationRecord
            .map do |id, problems, test_group_results_id, time_to_service|
       if !problems.nil?
         status_hash[id] = STATUSES[:problems]
-      elsif test_group_results_id
-        status_hash[id] = STATUSES[:complete]
-      elsif time_to_service&.negative?
+      elsif time_to_service.nil?
+        status_hash[id] = STATUSES[:in_progress]
+      elsif time_to_service.negative?
         status_hash[id] = STATUSES[:cancelled]
       else
-        status_hash[id] = STATUSES[:in_progress]
+        status_hash[id] = STATUSES[:complete]
       end
     end
     status_hash

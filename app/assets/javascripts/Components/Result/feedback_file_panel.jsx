@@ -1,37 +1,18 @@
 import React from 'react';
+import {FileViewer} from './file_viewer';
+import {lookup} from "mime-types";
 
 
 export class FeedbackFilePanel extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      selectedFile: props.feedbackFiles ? props.feedbackFiles[0].id : null,
-      fileContents: null,
-      fileType: null,
+      selectedFile: props.feedbackFiles ? props.feedbackFiles[0].id : null
     }
   }
-
-  componentDidMount() {
-    if (this.state.selectedFile !== null) {
-      this.fetchFeedbackFile();
-    }
-  }
-
-  fetchFeedbackFile = () => {
-    $.get({
-      url: Routes.get_feedback_file_assignment_submission_path(
-        this.props.assignment_id, this.props.submission_id),
-      data: {feedback_file_id: this.state.selectedFile}
-    }).then((data, status, request) => {
-      this.setState({
-        fileContents: data,
-        fileType: request.getResponseHeader('Content-Type'),
-      });
-    });
-  };
 
   updateSelectedFile = (event) => {
-    this.setState({selectedFile: event.target.value}, this.fetchFeedbackFile);
+    this.setState({selectedFile: parseInt(event.target.value, 10)});
   };
 
   render() {
@@ -57,32 +38,33 @@ export class FeedbackFilePanel extends React.Component {
         </select>;
     }
 
-    let fileContents;
-    if (this.state.fileContents === null) {
-      fileContents = '';
-    } else if (this.state.fileType.startsWith('text')) {
-      fileContents = <pre>{this.state.fileContents}</pre>;
-    } else if (this.state.fileType.startsWith('image')) {
-      fileContents =
-        <img
-          src={`data:'${this.state.fileType};base64,${this.state.fileContents}'`}
-          style={{maxWidth: '70%'}}
-        />;
-    } else {
-      fileContents = '';
+    let url, file_obj;
+    if (this.state.selectedFile !== null) {
+      url = Routes.get_feedback_file_assignment_submission_path(
+        '',
+        this.props.assignment_id,
+        this.props.submission_id,
+        {feedback_file_id: this.state.selectedFile}
+      );
+      file_obj = this.props.feedbackFiles.find(file => file.id === this.state.selectedFile);
     }
 
     return (
-      <div>
-        <div className='react-tabs-panel-action-bar'>
+        [<div className='react-tabs-panel-action-bar' key={'feedback-file-actionbar'}>
           <div>
             {feedbackSelector}
           </div>
-        </div>
-        <div id='feedback_file_content'>
-          {fileContents}
-        </div>
-      </div>
+        </div>,
+        <div id='feedback_file_content' key={'feedback-file-view'}>
+          <FileViewer
+            assignment_id={this.props.assignment_id}
+            submission_id={this.props.submission_id}
+            selectedFile={file_obj.filename}
+            selectedFileURL={url}
+            mime_type={lookup(file_obj.filename)}
+            selectedFileType={file_obj.type}
+          />
+        </div>]
     );
   }
 }

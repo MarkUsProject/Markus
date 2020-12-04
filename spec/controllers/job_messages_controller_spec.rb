@@ -1,5 +1,5 @@
 describe JobMessagesController do
-  shared_examples 'job messages' do
+  shared_examples 'authenticated admin or TA' do
     describe '.get' do
       let(:job) { ApplicationJob.perform_later }
       let(:status) { ActiveJob::Status.get(job.job_id) }
@@ -74,12 +74,13 @@ describe JobMessagesController do
       end
     end
   end
-  context 'as an admin' do
-    let(:user) { create :admin }
-    it_behaves_like 'job messages'
+  describe 'When user is an authenticated admin' do
+    let(:user) { create(:admin) }
+    include_examples 'authenticated admin or TA'
   end
-  context 'as a grader' do
-    let(:user) { create :ta }
-    it_behaves_like 'job messages'
+
+  describe 'When the user is an authenticated TA' do
+    let(:user) { create(:ta) }
+    include_examples 'authenticated admin or TA'
   end
 end

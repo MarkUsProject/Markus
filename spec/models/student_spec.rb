@@ -37,7 +37,7 @@ describe Student do
     end
 
     it 'will belong to a section' do
-      is_expected.to belong_to :section
+      is_expected.to belong_to(:section).optional
     end
 
     it 'will have some number of grace credits' do

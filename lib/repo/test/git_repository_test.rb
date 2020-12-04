@@ -339,7 +339,7 @@ class GitRepositoryTest < ActiveSupport::TestCase
       txn.add(filename, file_contents)
 
       # collect a timestamp for later use
-      repo_timestamp = Time.now
+      repo_timestamp = Time.current
 
       # delay last commit for our test
       @repo.commit(txn)
@@ -366,7 +366,7 @@ class GitRepositoryTest < ActiveSupport::TestCase
       end
 
       # test the timestamp-revision stuff
-      rev_num_by_timestamp = @repo.get_revision_by_timestamp(Time.now)
+      rev_num_by_timestamp = @repo.get_revision_by_timestamp(Time.current)
       latest_rev = @repo.get_latest_revision()
       assert_instance_of(Repository::GitRevision, rev_num_by_timestamp, "Revision number is of wrong type")
       assert_instance_of(Repository::GitRevision, latest_rev, "Revision number is of wrong type")
@@ -394,7 +394,7 @@ class GitRepositoryTest < ActiveSupport::TestCase
 
       files_to_add.each do |file_name|
         assert_not_nil revision.last_modified_date()
-        assert (revision.last_modified_date - Time.now) < 1
+        assert (revision.last_modified_date - Time.current) < 1
       end
 
       # giving times for diferent commits
@@ -801,8 +801,8 @@ class GitRepositoryTest < ActiveSupport::TestCase
     options = {}
     options[:tree] = repo.get_repos.index.write_tree(repo.get_repos)
 
-    options[:author] = { email: "testuser@github.com", name: 'Test Author', time: Time.now }
-    options[:committer] = { email: "testuser@github.com", name: 'Test Author', time: Time.now }
+    options[:author] = { email: "testuser@github.com", name: 'Test Author', time: Time.current }
+    options[:committer] = { email: "testuser@github.com", name: 'Test Author', time: Time.current }
     options[:message] ||= "Adding File with add_file_helper"
     options[:parents] = repo.get_repos.empty? ? [] : [ repo.get_repos.head.target ].compact
     options[:update_ref] = 'HEAD'

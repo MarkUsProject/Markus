@@ -16,7 +16,8 @@
           assignment_id: <%= @assignment.id %>,
           grouping_id: <%= @grouping.id %>,
           readOnly: <%= !@assignment.allow_web_submits %>,
-          enableSubdirs: <%= allowed_to? :manage_subdirectories? %>
+          enableSubdirs: <%= allowed_to? :manage_subdirectories? %>,
+          starterFileChanged: <%= @grouping.starter_file_changed %>
         });
 
       window.setInterval(() => {
@@ -38,7 +39,7 @@
 
 <% content_for :additional_headings do %>
   <strong><%= t('submissions.student.server_time') %></strong>:
-  <span id='current_time'><%= l(Time.zone.now)%></span>
+  <span id='current_time'><%= l(Time.current)%></span>
 <% end %>
 
 <div id='file_manager'></div>

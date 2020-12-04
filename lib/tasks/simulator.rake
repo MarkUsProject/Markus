@@ -4,7 +4,7 @@ class Time
   # From http://jroller.com/obie/entry/random_times_for_rails
   def self.random(params={})
     years_back = params[:year_range] || 5
-    year = (rand * (years_back)).ceil + (Time.now.year - years_back)
+    year = (rand * (years_back)).ceil + (Time.current.year - years_back)
     month = (rand * 12).ceil
     day = (rand * 31).ceil
     series = [date = Time.local(year, month, day)]
@@ -56,13 +56,13 @@ namespace :markus do
         # before and six months after now.
         assignment_due_date = Time.random(year_range:1)
         # If the user wants the assignment's due date to be passed, set the
-        # assignment_due_date to Time.now.
+        # assignment_due_date to Time.current.
         if (!ENV["PASSED_DUE_DATE"].nil? and ENV["PASSED_DUE_DATE"] == "true")
-          assignment_due_date = Time.now
+          assignment_due_date = Time.current
         # If the user wants the assignemnt's due date to be not passed, then
         # set  assignment_due_date to two months from now.
         elsif (!ENV["PASSED_DUE_DATE"].nil? and ENV["PASSED_DUE_DATE"] == "false")
-          assignment_due_date = Time.now + 5184000
+          assignment_due_date = Time.current + 5184000
         end
         assignment.due_date = assignment_due_date
         assignment.repository_folder = assignment_short_identifier

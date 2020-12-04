@@ -130,7 +130,7 @@ describe CourseSummariesController do
 
     it 'not be able to CSV graders report' do
       get_as @grader, :download_csv_grades_report
-      expect(response.status).to eq(404)
+      expect(response).to have_http_status(403)
     end
   end
 
@@ -143,7 +143,7 @@ describe CourseSummariesController do
 
     it 'not be able to access grades report' do
       get_as @student, :download_csv_grades_report
-      expect(response.status).to eq(404)
+      expect(response).to have_http_status(403)
     end
 
     describe '#populate' do

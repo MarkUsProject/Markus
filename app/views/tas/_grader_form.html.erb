@@ -1,0 +1,51 @@
+<div class='pane-wrapper'>
+  <div class='pane'>
+    <div id='grader_permission_pane'>
+      <%= render partial: 'shared/navigation_warning',
+                 formats: [:js],
+                 handlers: [:erb] %>
+      <%= form_with model: @user, scope: :user, local: true do |f| %>
+        <div class='inline-labels'>
+          <%= f.label :user_name, User.human_attribute_name(:user_name) %>
+          <%= f.text_field :user_name %>
+
+          <%= f.label :last_name, User.human_attribute_name(:last_name) %>
+          <%= f.text_field :last_name %>
+
+          <%= f.label :first_name, User.human_attribute_name(:first_name) %>
+          <%= f.text_field :first_name %>
+
+          <%= f.label :email, User.human_attribute_name(:email) %>
+          <%= f.text_field :email %>
+        </div>
+
+        <%= f.fields_for :grader_permission do |ff| %>
+          <h3><%= GraderPermission.model_name.human.pluralize %></h3>
+          <div class="tooltip">
+            <span class="tooltip tooltiptext"><%= GraderPermission.human_attribute_name(:manage_assessments_tooltip) %></span>
+            <%= ff.check_box :manage_assessments %>
+            <%= ff.label :manage_assessments, GraderPermission.human_attribute_name(:manage_assessments) %><br/>
+          </div><br/>
+          <div class="tooltip">
+            <span class="tooltip tooltiptext"><%=  GraderPermission.human_attribute_name(:manage_submissions_tooltip) %></span>
+            <%= ff.check_box :manage_submissions %>
+            <%= ff.label :manage_submissions, GraderPermission.human_attribute_name(:manage_submissions) %>
+          </div><br/>
+          <div class="tooltip">
+            <span class="tooltip tooltiptext"><%= GraderPermission.human_attribute_name(:run_tests_tooltip) %></span>
+            <%= ff.check_box :run_tests %>
+            <%= ff.label :run_tests, GraderPermission.human_attribute_name(:run_tests) %>
+          </div>
+        <% end %>
+        <p>
+          <%= f.submit t(:save),
+                       name: 'submit',
+                       data: { disable_with: t('working') } %>
+          <%= link_to t(:cancel),
+                      { controller: controller },
+                      class: 'button' %>
+        </p>
+      <% end %>
+    </div>
+  </div>
+</div>

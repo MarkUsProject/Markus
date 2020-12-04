@@ -1,12 +1,12 @@
 /**
  * Header, main menu, sub menu, sub_sub menu, and footer.
  */
-
+@import 'constants';
 
 /* Header */
 
 header#header {
-  border-bottom: 1px solid $blue;
+  border-bottom: 1px solid $primary-three;
   display: table;
   padding: 0.25em $dimen-horizontal;
   width: 100%;
@@ -84,22 +84,22 @@ nav {
 /* Footer */
 
 footer {
-  background-color: $lighter-blue;
-  color: $dark-grey;
+  background-color: $background-support;
+  border-top: 1px solid $primary-three;
+  color: $line;
   font-size: 0.95em;
   padding: 2em $dimen-horizontal;
   text-align: center;
-  border-top: 1px solid $blue;
 
   @include breakpoint(mobile) {
     display: none;
   }
 
   a {
-    color: $dark-grey;
+    color: $line;
 
     &:hover {
-      color: $grey;
+      color: $primary-two;
     }
   }
 
@@ -108,7 +108,7 @@ footer {
 
     select {
       border: none;
-      color: $dark-grey;
+      color: $line;
       font-family: $fonts;
       margin: 0;
     }
@@ -120,7 +120,7 @@ footer {
 
   .lang_chooser,
   .issues {
-    border-left: 1px solid $grey;
+    border-left: 1px solid $primary-two;
     padding-left: 1em;
 
     @include breakpoint(mobile) {
@@ -136,11 +136,11 @@ footer {
 /* Working indicator */
 
 #working {
-  background: $blue;
-  border: 1px solid $dark-blue;
+  background: $primary-three;
+  border: 1px solid $primary-one;
   border-radius: $radius;
-  box-shadow: 0 0 5px 0 $light-blue;
-  color: $white;
+  box-shadow: 0 0 5px 0 $background-support;
+  color: $background-main;
   font-size: 1.25em;
   font-weight: 600;
   left: 50%;
@@ -182,8 +182,8 @@ footer {
 }
 
 #mobile_menu {
-  background: $lighter-blue asset-url('markus_logo_small.png') no-repeat center center / 90px 30px;
-  border-bottom: 1px solid $blue;
+  background: $background-support asset-url('markus_logo_small.png') no-repeat center center / 90px 30px;
+  border-bottom: 1px solid $primary-three;
   display: none;
   height: 3.5em;
   position: fixed;
@@ -216,14 +216,14 @@ footer {
     }
 
     &::before {
-      border-top: 0.2em solid $dark-blue;
+      border-top: 0.2em solid $primary-one;
       height: 1.5em;
       top: 1em;
     }
 
     &::after {
-      border-bottom: 0.2em solid $dark-blue;
-      border-top: 0.2em solid $dark-blue;
+      border-bottom: 0.2em solid $primary-one;
+      border-top: 0.2em solid $primary-one;
       height: 0.8em;
       top: 1.65em;
     }
@@ -231,10 +231,10 @@ footer {
 }
 
 #menus {
-  background: $lighter-blue;
+  background: $background-support;
 
   @include breakpoint(mobile) {
-    background: #000;
+    background: $sharp-line;
     height: 100%;
     overflow: hidden;
     padding-top: 3.5em;
@@ -247,9 +247,9 @@ footer {
   }
 
   footer {
-    background: $light-grey !important;
-    border-bottom: 1px solid $blue !important;
-    border-top: 1px solid $blue !important;
+    background: $background-main;
+    border-bottom: 1px solid $primary-three;
+    border-top: 1px solid $primary-three;
     display: none;
     padding: 1em;
 
@@ -261,8 +261,8 @@ footer {
 
 #menus_child {
   @include breakpoint(mobile) {
-    background: $lighter-blue;
-    border-right: 1px solid $blue;
+    background: $background-support;
+    border-right: 1px solid $primary-three;
     height: 100%;
     overflow: auto;
   }
@@ -304,9 +304,9 @@ footer {
 .sub,
 .sub_sub {
   @include breakpoint(mobile) {
-    background: $light-grey;
-    border-bottom: 1px solid $blue;
-    border-top: 1px solid $blue;
+    background: $background-main;
+    border-bottom: 1px solid $primary-three;
+    border-top: 1px solid $primary-three;
     display: block;
     margin: 0 0 1em 0;
     padding: 0 !important;
@@ -326,26 +326,26 @@ footer {
 .sub,
 .sub_sub {
   @include breakpoint(mobile) {
-    background: $light-grey !important;
-    border-bottom: 1px solid $blue !important;
+    background: $background-main !important;
+    border-bottom: 1px solid $primary-three !important;
 
     a {
-      color: $dark-blue !important;
+      color: $primary-one !important;
     }
 
     li:hover {
-      background: $blue !important;
+      background: $primary-three !important;
 
       a {
-        color: $white !important;
+        color: $background-main !important;
       }
     }
 
     li.active {
-      background: $blue !important;
+      background: $sub-menu !important;
 
       a {
-        color: $white !important;
+        color: $active-menu-item !important;
       }
     }
   }
@@ -371,7 +371,7 @@ footer {
 
   #course {
     @include breakpoint(mobile) {
-      border-bottom: 1px solid $blue;
+      border-bottom: 1px solid $primary-three;
     }
   }
 
@@ -415,12 +415,12 @@ li#dropdown {
       }
 
       &.section {
-        color: $dark-grey;
+        color: $line;
         cursor: default;
         margin-top: 0;
 
         &:hover {
-          color: $dark-grey;
+          color: $line;
         }
       }
     }
@@ -436,16 +436,16 @@ li#dropdown {
     width: 100%;
 
     &:hover li a {
-      color: $dark-blue !important;
+      color: $primary-one !important;
     }
 
     ul {
-      background: $light-grey;
+      background: $background-main;
       border-left: none;
       border-radius: 0;
       border-right: none;
       border-top: none;
-      color: $dark-blue;
+      color: $primary-one;
       display: block;
       left: 0;
       margin-top: -1.2em;
@@ -456,10 +456,10 @@ li#dropdown {
       width: 100%;
 
       a {
-        color: $dark-blue !important;
+        color: $primary-one !important;
 
         &:hover {
-          color: $white !important;
+          color: $background-main !important;
         }
       }
 

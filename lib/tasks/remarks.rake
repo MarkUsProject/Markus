@@ -17,13 +17,13 @@ namespace :db do
         remark = Result.new(
           marking_state: Result::MARKING_STATES[:incomplete],
           submission_id: submission.id,
-          remark_request_submitted_at: Time.zone.now)
+          remark_request_submitted_at: Time.current)
         remark.save
 
         # Update subission
         submission.update(
           remark_request: 'Please remark my assignment.',
-          remark_request_timestamp: Time.zone.now)
+          remark_request_timestamp: Time.current)
 
         submission.remark_result.update(marking_state: Result::MARKING_STATES[:incomplete])
       end

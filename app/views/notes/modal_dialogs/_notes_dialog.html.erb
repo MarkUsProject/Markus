@@ -20,8 +20,7 @@
   <div class='notes_new'>
     <h3><%= Note.human_attribute_name(:notes_message) %></h3>
     <%= form_tag(
-        add_note_notes_path(id: @return_id,
-                            noteable_id: @noteable,
+        add_note_notes_path(noteable_id: @noteable,
                             noteable_type: @cls,
                             user: @current_user,
                             action_to: @action,

@@ -1,37 +1,129 @@
 en:
   action_policy:
+    unauthorized: &unauthorized "You are not authorized to perform this action."
     policy:
+      admin:
+        run_tests?: "You do not have permission to run tests."
+        manage_submissions?: "You do not have permission to manage submissions."
+        manage_assessments?: "You do not have permission to manage assessments."
+      annotation_category:
+        manage?: "You do not have permissions to manage annotation categories."
+      annotation:
+        add_existing_annotation?: "You do not have permissions to add existing annotations."
+        manage?: "You do not have permissions to create, delete or modify annotations."
+      application:
+        manage?: *unauthorized
+        view_admin_subtabs?: *unauthorized
+        view_ta_subtabs?: *unauthorized
+        view_student_subtabs?: *unauthorized
+        view_sub_sub_tabs?: *unauthorized
+        admin?: "Only admins may perform this action"
+        ta?: "Only graders may perform this action"
+        student?: "Only students may perform this action"
       assignment:
-        autogenerate_group_name?: "This assignment does automatically generate group names."
-        before_due_date?: "You cannot run tests because the due date for this assignment has passed."
-        collection_date_passed?: "Could not create group: the due date for this assignment has passed."
-        enabled?: "You cannot run tests because they are not enabled for this assignment."
-        not_a_ta?: "You cannot run tests because graders are not allowed to."
-        not_yet_in_group?: "You already have a group, and cannot create another."
-        students_form_groups?: "This assignment does not allow students to form their own groups."
+        index?: *unauthorized
+        switch_assignment?: "You do not have permission to switch assignments."
+        manage?: "You do not have permissions to create and manage assignments."
+        view_test_options?: "You do not have permission to view automated testing options."
+        student_tests_enabled?: "Student tests are not enabled."
+        tests_enabled?: "Tests are not enabled for this assessment."
         test_groups_exist?: "You cannot run tests because the test framework is not configured."
         tokens_released?: "You cannot run tests because tokens are not available yet."
+        create_group?: "You cannot form a group at this time."
         work_alone?: "You cannot work alone for this assignment. The minimum group size is %{group_min}."
+        collection_date_passed?: "Could not create group: the due date for this assignment has passed."
+        students_form_groups?: "This assignment does not allow students to form their own groups."
+        not_yet_in_group?: "You already have a group, and cannot create another."
+        autogenerate_group_name?: "This assignment does automatically generate group names."
+        view?: "You are not allowed to view and manage assessments."
+        manage_tests?: "You do not have permissions to run tests."
+      automated_test:
+        manage?: "You do not have permission to manage automated testing."
+      course_summary:
+        manage?: "You do not have permission to manage the course summaries."
+        populate?: *unauthorized
+        index?: *unauthorized
+      criterion:
+        manage?: "You do not have permission to manage criteria."
+      exam_template:
+        manage?: "You do not have permissions to manage exam templates."
+      extension:
+        manage?: "You do not have permission to manage extensions."
+      grade_entry_form:
+        grade?: "You do not have permission to grade."
+        manage?: "You do not have permissions to create or manage grade entry forms."
+        student_interface?: "You are not allowed to access the student interface."
+      grader:
+        manage?: "You do not have permission to manage graders."
+      group:
+        student_manage?: "You are not allowed to create or manage groups."
+        manage?: "You are not allowed to manage groups."
       grouping:
-        before_due_date?: "The due date for this assignment has passed."
-        deletable_by?: "You are not allowed to delete the group."
-        delete_rejected?: "Only the inviter can delete a declined invitation."
-        disinvite_member?: "Only the inviter can cancel a pending invitation."
         member?: "You cannot run tests because you do not have a group yet, or your group is not valid."
-        no_extension?: "This group has an extension. You cannot update the group membership."
-        no_submission?: "You already submitted something. You cannot delete your group."
         not_in_progress?: "You cannot run tests because you or your group have a test already enqueued for execution, please wait for the results."
         tokens_available?: "You cannot run tests because you or your group do not have tokens available."
-      submission:
-        before_release?: "You cannot run tests because the marks have been released."
-        get_feedback_file?: "No access to feedback file."
-        not_a_student?: "You cannot run tests because students are not allowed to."
-        manage_subdirectories?: "You are not allowed to create, delete or change subdirectories."
-      group:
-        student_manage?: "You are not allowed to create or manage groups"
-        manage?: "You are not allowed to manage groups"
+        invite_member?: "You are not allowed to invite members."
+        students_form_groups?: "Students are not permitted to form groups."
+        before_due_date?: "The due date for this assignment has passed."
+        disinvite_member?: "Only the inviter can cancel a pending invitation."
+        delete_rejected?: "Only the inviter can delete a declined invitation."
+        destroy?: "You do not have permission to delete groupings."
+        deletable_by?: "You are not allowed to delete the group."
+        no_extension?: "This group has an extension. You cannot update the group membership."
+        no_submission?: "You already submitted something. You cannot delete your group."
+        view_file_manager?: "You do not have permission to view the file manager."
+        start_timed_assignment?: "You do not have permission to start the timed assessment."
+      image_annotation: *unauthorized
+      job_message:
+        manage?: "You do not have permission to view background job messages."
+      key_pair:
+        manage?: "You do not have permission to manage key pairs."
+        view?: "You do not have permission to view key pairs."
+      main:
+        login_as?: "You do not have permission to switch roles."
+        manage?: *unauthorized
+      marking_scheme:
+        manage?: "You do not have permission to manage marking schemes."
+      marks_grader:
+        manage?: "You do not have permission to manage marks graders."
       note:
-        manage?: "You cannot add or modify the notes because students are not allowed to."
-        modify?: "You do not have permissions to edit or delete the notes which is created by others."
+        manage?: "You do not have permission to manage notes."
+        modify?: "You do not have permissions to edit or delete the notes created by others."
+      pdf_annotation: *unauthorized
+      peer_review:
+        view?: "You do not have permission to view peer reviews."
+        manage?: "You do not have permissions to manage peer reviews."
+        manage_reviewers?: "You do not have permissions to assign reviewers."
+      result:
+        view?: "You do not have permission to view results."
+        run_tests?: "You do not have permission to run tests."
+        grade?: "You do not have permission to grade this result."
+        review?: "You do not have permission to grade this result."
+        manage?: "You do not have permission to manage results."
+      section:
+        manage?: "You do not have permission to manage sections."
       starter_file_group:
-        manage?: "You are not allowed to manage starter file groups"
+        manage?: "You do not have permission to manage starter files."
+      student:
+        run_tests?: "You do not have permission to run tests."
+        manage_submissions?: "You do not have permission to manage submissions."
+        manage_assessments?: "You do not have permission to manage assessments."
+      submission:
+        manage?: "You do not have permission to manage submissions."
+        server_time?: "You do not have permission to view the server time."
+        file_manager?: "You do not have permission to view the file manager."
+        get_feedback_file?: "You do not have permission to view feedback files for this group."
+        manage_files?: "You do not have permission to manage files for this group."
+        manage_subdirectories?: "You do not have permission to create subdirectories."
+        view_files?: "You do not have permission to view files."
+        before_release?: "The results for this submission have not been released."
+      ta:
+        run_tests?: "You do not have permission to run tests."
+        manage_submissions?: "You do not have permission to manage submissions."
+        manage_assessments?: "You do not have permission to manage assessments."
+      tag:
+        manage?: "You do not have permission to manage tags."
+      text_annotation: *unauthorized
+      user:
+        manage?: "You do not have permission to manage users."
+        destroy?: "You do not have permission to delete users."

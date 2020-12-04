@@ -3,8 +3,7 @@ class AnnotationCategoriesController < ApplicationController
 
   respond_to :js
 
-  before_action      :authorize_only_for_admin, except: :index
-  before_action      :authorize_for_ta_and_admin, only: :index
+  before_action { authorize! }
 
   layout 'assignment_content'
 
@@ -134,16 +133,20 @@ class AnnotationCategoriesController < ApplicationController
   end
 
   def find_annotation_text
-    @assignment = Assignment.find(params[:assignment_id])
     string = params[:string]
-    texts_for_current_assignment = AnnotationText.joins(annotation_category: :assignment)
-                                                 .where(assessments: { id: @assignment.id })
-    annotation_texts = texts_for_current_assignment.where("content LIKE ?", "#{string}%")
-    if annotation_texts.size == 1
-      render json: "#{annotation_texts.first.content}".html_safe
-    else
-      render json: ''.html_safe
-    end
+
+    texts_for_current_assignment = AnnotationText.joins(:annotation_category)
+                                                 .where('annotation_categories.assessment_id': params[:assignment_id])
+    one_time_texts = AnnotationText.joins(annotations: { result: { grouping: :group } })
+                                   .where(
+                                     creator_id: current_user.id,
+                                     'groupings.assessment_id': params[:assignment_id],
+                                     annotation_category_id: nil
+                                   )
+
+    annotation_texts = texts_for_current_assignment.where('lower(content) LIKE ?', "#{string.downcase}%").limit(10) |
+                       one_time_texts.where('lower(content) LIKE ?', "#{string.downcase}%").limit(10)
+    render json: annotation_texts
   end
 
   # This method handles the drag/drop Annotations sorting.
@@ -199,31 +202,37 @@ class AnnotationCategoriesController < ApplicationController
     rescue StandardError => e
       flash_message(:error, e.message)
     else
-      if data[:type] == '.csv'
-        result = MarkusCsv.parse(data[:file].read, encoding: data[:encoding]) do |row|
-          next if CSV.generate_line(row).strip.empty?
-          AnnotationCategory.add_by_row(row, @assignment, current_user)
-        end
-        flash_message(:error, result[:invalid_lines]) unless result[:invalid_lines].empty?
-        flash_message(:success, result[:valid_lines]) unless result[:valid_lines].empty?
-      elsif data[:type] == '.yml'
-        successes = 0
-        data[:contents].each do |category, category_data|
-          if category_data.is_a?(Array)
-            AnnotationCategory.add_by_row([category, nil] + category_data, @assignment, current_user)
-            successes += 1
-          elsif category_data.is_a?(Hash)
-            row = [category, category_data['criterion']] + category_data['texts'].flatten
+      AnnotationCategory.transaction do
+        if data[:type] == '.csv'
+          result = MarkusCsv.parse(data[:file].read, encoding: data[:encoding]) do |row|
+            next if CSV.generate_line(row).strip.empty?
             AnnotationCategory.add_by_row(row, @assignment, current_user)
-            successes += 1
           end
-        rescue CsvInvalidLineError => e
-          flash_message(:error, e.message)
-          next
-        end
-        if successes > 0
-          flash_message(:success, t('annotation_categories.upload.success',
-                                    annotation_category_number: successes))
+          if result[:invalid_lines].empty?
+            flash_message(:success, result[:valid_lines]) unless result[:valid_lines].empty?
+          else
+            flash_message(:error, result[:invalid_lines])
+            raise ActiveRecord::Rollback
+          end
+        elsif data[:type] == '.yml'
+          successes = 0
+          data[:contents].each do |category, category_data|
+            if category_data.is_a?(Array)
+              AnnotationCategory.add_by_row([category, nil] + category_data, @assignment, current_user)
+              successes += 1
+            elsif category_data.is_a?(Hash)
+              row = [category, category_data['criterion']] + category_data['texts'].flatten
+              AnnotationCategory.add_by_row(row, @assignment, current_user)
+              successes += 1
+            end
+          rescue CsvInvalidLineError => e
+            flash_message(:error, e.message)
+            raise ActiveRecord::Rollback
+          end
+          if successes > 0
+            flash_message(:success, t('annotation_categories.upload.success',
+                                      annotation_category_number: successes))
+          end
         end
       end
     end

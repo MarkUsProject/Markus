@@ -1,10 +1,5 @@
 describe GradeEntryFormsController do
   before :each do
-    # Authenticate user is not timed out, and has administrator rights.
-    allow(controller).to receive(:session_expired?).and_return(false)
-    allow(controller).to receive(:logged_in?).and_return(true)
-    allow(controller).to receive(:current_user).and_return(build(:admin))
-
     # initialize student DB entries
     @student = create(:student, user_name: 'c8shosta')
   end
@@ -15,6 +10,11 @@ describe GradeEntryFormsController do
 
   describe '#upload' do
     before :each do
+      # Authenticate user is not timed out, and has administrator rights.
+      allow(controller).to receive(:session_expired?).and_return(false)
+      allow(controller).to receive(:logged_in?).and_return(true)
+      allow(controller).to receive(:current_user).and_return(build(:admin))
+
       @file_invalid_username =
         fixture_file_upload('files/grade_entry_forms/invalid_username.csv',
                             'text/csv')
@@ -169,6 +169,10 @@ describe GradeEntryFormsController do
     end
 
     before :each do
+      # Authenticate user is not timed out, and has administrator rights.
+      allow(controller).to receive(:session_expired?).and_return(false)
+      allow(controller).to receive(:logged_in?).and_return(true)
+      allow(controller).to receive(:current_user).and_return(build(:admin))
       @user = User.where(user_name: 'c8shosta').first
     end
 
@@ -271,35 +275,7 @@ describe GradeEntryFormsController do
     end
   end
 
-  describe '#update' do
-    it 'clears date if blank' do
-      expect(grade_entry_form.due_date).to_not be_nil
-      patch :update, params: { id: grade_entry_form, grade_entry_form: { due_date: nil } }
-      expect(grade_entry_form.reload.due_date).to be_nil
-    end
-
-    it 'updates date field' do
-      expect(grade_entry_form.due_date).to_not be_nil
-      patch :update, params: { id: grade_entry_form.id, grade_entry_form: { due_date: '2019-11-14' } }
-      expect(grade_entry_form.reload.due_date.to_date).to eq Date.new(2019, 11, 14)
-    end
-  end
-
-  describe '#update' do
-    it 'clears date if blank' do
-      expect(grade_entry_form.due_date).to_not be_nil
-      patch :update, params: { id: grade_entry_form, grade_entry_form: { due_date: nil } }
-      expect(grade_entry_form.reload.due_date).to be_nil
-    end
-
-    it 'updates date field' do
-      expect(grade_entry_form.due_date).to_not be_nil
-      patch :update, params: { id: grade_entry_form.id, grade_entry_form: { due_date: '2019-11-14' } }
-      expect(grade_entry_form.reload.due_date.to_date).to eq Date.new(2019, 11, 14)
-    end
-  end
-
-  describe 'update_grade_entry_students' do
+  shared_examples '#update_grade_entry_students' do
     before :each do
       create(:student, user_name: 'paneroar')
       @student = grade_entry_form_with_data.grade_entry_students.joins(:user).find_by('users.user_name': 'c8shosta')
@@ -311,37 +287,37 @@ describe GradeEntryFormsController do
 
     it 'sends an email to a student who has grades for this form if only one exists' do
       expect do
-        post :update_grade_entry_students,
-             params: { id: @this_form.id,
-                       students: [@student.id],
-                       release_results: 'true' }
+        post_as user, :update_grade_entry_students,
+                params: { id: @this_form.id,
+                          students: [@student.id],
+                          release_results: 'true' }
       end.to change { ActionMailer::Base.deliveries.count }.by(1)
     end
     it 'sends an email to every student who has grades for this form if more than one do' do
       expect do
-        post :update_grade_entry_students,
-             params: { id: @this_form.id,
-                       students: [@student.id, @another.id],
-                       release_results: 'true' }
+        post_as user, :update_grade_entry_students,
+                params: { id: @this_form.id,
+                          students: [@student.id, @another.id],
+                          release_results: 'true' }
       end.to change { ActionMailer::Base.deliveries.count }.by(2)
     end
     it 'does not send emails if all the students have results notifications turned off' do
       @student.user.update!(receives_results_emails: false)
       @another.user.update!(receives_results_emails: false)
       expect do
-        post :update_grade_entry_students,
-             params: { id: @this_form.id,
-                       students: [@student.id, @another.id],
-                       release_results: 'true' }
+        post_as user, :update_grade_entry_students,
+                params: { id: @this_form.id,
+                          students: [@student.id, @another.id],
+                          release_results: 'true' }
       end.to change { ActionMailer::Base.deliveries.count }.by(0)
     end
     it 'sends emails to students that have have results notifications enabled if only some do' do
       @student.user.update!(receives_results_emails: false)
       expect do
-        post :update_grade_entry_students,
-             params: { id: @this_form.id,
-                       students: [@student.id, @another.id],
-                       release_results: 'true' }
+        post_as user, :update_grade_entry_students,
+                params: { id: @this_form.id,
+                          students: [@student.id, @another.id],
+                          release_results: 'true' }
       end.to change { ActionMailer::Base.deliveries.count }.by(1)
     end
   end
@@ -360,6 +336,108 @@ describe GradeEntryFormsController do
     it 'allows students to see non hidden grade entry forms' do
       get_as @student, :student_interface, params: { id: grade_entry_form.id }
       assert_response 200
+    end
+  end
+
+  shared_examples '#manage grade entry forms' do
+    context '#new' do
+      before { get_as user, :new }
+      it('should respond with 200') { expect(response.status).to eq 200 }
+    end
+    context '#create' do
+      before do
+        post_as user, :create,
+                params: {
+                  grade_entry_form: {
+                    short_identifier: 'G1',
+                    description: 'Test form',
+                    due_date: Time.current
+                  }
+                }
+      end
+      it('should respond with 302') { expect(response.status).to eq 302 }
+    end
+    context '#edit' do
+      before { post_as user, :edit, params: { id: grade_entry_form.id } }
+      it('should respond with 200') { expect(response.status).to eq 200 }
+    end
+    context '#update' do
+      it 'clears date if blank' do
+        expect(grade_entry_form.due_date).to_not be_nil
+        patch_as user, :update, params: { id: grade_entry_form.id, grade_entry_form: { due_date: nil } }
+        expect(grade_entry_form.reload.due_date).to be_nil
+      end
+
+      it 'updates date field' do
+        expect(grade_entry_form.due_date).to_not be_nil
+        patch_as user, :update, params: { id: grade_entry_form.id, grade_entry_form: { due_date: '2019-11-14' } }
+        expect(grade_entry_form.reload.due_date.to_date).to eq Date.new(2019, 11, 14)
+      end
+    end
+  end
+  describe 'When the user is admin' do
+    let(:user) { create(:admin) }
+    include_examples '#update_grade_entry_students'
+    include_examples '#manage grade entry forms'
+    context 'GET student interface' do
+      before { get_as user, :student_interface, params: { id: grade_entry_form.id } }
+      it('should respond with 403') { expect(response.status).to eq 403 }
+    end
+  end
+
+  describe 'When the user is grader' do
+    # By default all the grader permissions are set to false
+    let(:user) { create(:ta) }
+    describe 'When the grader is allowed to release and unrelease the grades' do
+      let(:user) { create(:ta, manage_assessments: true) }
+      include_examples '#update_grade_entry_students'
+    end
+    describe 'When the grader is not allowed to release and unrelease the grades' do
+      let(:student) do
+        grade_entry_form_with_data.grade_entry_students.joins(:user).find_by('users.user_name': 'c8shosta')
+      end
+      it 'should respond with 403' do
+        post_as user, :update_grade_entry_students,
+                params: { id: grade_entry_form_with_data.id, students: [student.id], release_results: 'true' }
+        expect(response.status).to eq 403
+      end
+    end
+    describe 'When the grader is allowed to create, edit and update grade entry forms' do
+      let(:user) { create(:ta, manage_assessments: true) }
+      include_examples '#manage grade entry forms'
+    end
+    describe 'When the grader is not allowed to create, edit and update grade entry forms' do
+      context '#new' do
+        before { get_as user, :new }
+        it('should respond with 403') { expect(response.status).to eq 403 }
+      end
+      context '#create' do
+        before do
+          post_as user, :create,
+                  params: {
+                    grade_entry_form: {
+                      short_identifier: 'G1',
+                      description: 'Test form',
+                      due_date: Time.current
+                    }
+                  }
+        end
+        it('should respond with 403') { expect(response.status).to eq 403 }
+      end
+      context '#edit' do
+        before { post_as user, :edit, params: { id: grade_entry_form.id } }
+        it('should respond with 403') { expect(response.status).to eq 403 }
+      end
+      context '#update' do
+        it 'should respond with 403' do
+          patch_as user, :update, params: { id: grade_entry_form, grade_entry_form: { due_date: nil } }
+          expect(response.status).to eq 403
+        end
+      end
+    end
+    context 'GET student interface' do
+      before { get_as user, :student_interface, params: { id: grade_entry_form.id } }
+      it('should respond with 403') { expect(response.status).to eq 403 }
     end
   end
 end

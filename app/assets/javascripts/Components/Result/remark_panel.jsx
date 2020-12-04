@@ -1,5 +1,6 @@
 import React from 'react';
 import { render } from 'react-dom';
+import { TextForm } from './autosave_text_form';
 
 
 export class RemarkPanel extends React.Component {
@@ -10,9 +11,15 @@ export class RemarkPanel extends React.Component {
       document.getElementById(target_id).innerHTML = marked(comment, {sanitize: true});
       MathJax.Hub.Queue(['Typeset', MathJax.Hub, target_id]);
     }
+
+    if (this.props.remarkSubmitted) {
+      const target_id = 'remark_request_text';
+      document.getElementById(target_id).innerHTML = marked(this.props.remarkRequestText, {sanitize: true});
+      MathJax.Hub.Queue(["Typeset", MathJax.Hub, 'submitted_remark_request_text']);
+    }
   }
 
-  submitOverallComment = (value) => {
+  persistChanges = (value) => {
     return $.post({
       url: Routes.update_overall_comment_assignment_submission_result_path(
         this.props.assignment_id, this.props.submission_id, this.props.result_id,
@@ -34,8 +41,6 @@ export class RemarkPanel extends React.Component {
   };
 
   render() {
-    const remark_request = marked(this.props.remarkRequestText);
-
     let remarkCommentElement;
     if (this.props.released_to_students) {
       remarkCommentElement = <div id='overall_remark_comment' />;
@@ -43,7 +48,7 @@ export class RemarkPanel extends React.Component {
       remarkCommentElement =
         <TextForm
           initialValue={this.props.overallComment}
-          onSubmit={this.submitOverallComment}
+          persistChanges={this.persistChanges}
           previewId={'overall_remark_comment_preview'}
         />;
     }
@@ -78,7 +83,7 @@ export class RemarkPanel extends React.Component {
         <div>
           <p>{I18n.t('results.remark.submitted_on',
                      {time: I18n.l('time.formats.default', this.props.remarkRequestTimestamp)})}</p>
-          <div dangerouslySetInnerHTML={{__html: remark_request}} />
+          <div id='remark_request_text'/>
         </div>
       );
     } else {
@@ -101,71 +106,6 @@ export class RemarkPanel extends React.Component {
   }
 }
 
-
-class TextForm extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      value: this.props.initialValue,
-      unsavedChanges: false
-    };
-    this.button = React.createRef();
-  }
-
-  componentDidMount() {
-    this.updatePreview();
-  }
-
-  updateValue = (event) => {
-    const value = event.target.value;
-    this.setState({value: value, unsavedChanges: true}, this.updatePreview);
-  };
-
-  updatePreview = () => {
-    if (this.props.previewId) {
-      document.getElementById(this.props.previewId).innerHTML = marked(this.state.value, {sanitize: true});
-      MathJax.Hub.Queue(['Typeset', MathJax.Hub, this.props.previewId]);
-    }
-  };
-
-  onSubmit = (event) => {
-    event.preventDefault();
-    this.props.onSubmit(this.state.value)
-      .then(() => {
-        Rails.enableElement(this.button.current);
-        this.setState({unsavedChanges: false});
-      });
-  };
-
-  render() {
-    return (
-      <div className={this.props.className || ''}>
-        <form onSubmit={this.onSubmit}>
-          <textarea
-            value={this.state.value}
-            onChange={this.updateValue}
-            rows={5}
-          />
-          <p>
-            <input type='submit' value={I18n.t('save')}
-                   data-disable-with={I18n.t('working')}
-                   ref={this.button}
-                   disabled={!this.state.unsavedChanges}
-            />
-          </p>
-        </form>
-        {this.props.previewId && (
-          <div>
-            <h3>{I18n.t('preview')}</h3>
-            <div id={this.props.previewId} className='preview' />
-          </div>
-        )}
-      </div>
-    );
-  }
-}
-
-
 class RemarkRequestForm extends React.Component {
   constructor(props) {
     super(props);
@@ -176,9 +116,22 @@ class RemarkRequestForm extends React.Component {
     this.button = React.createRef();
   }
 
+  componentDidMount() {
+    this.renderPreview();
+  }
+
+  renderPreview = () => {
+    let target_id = 'remark-request-preview';
+    document.getElementById(target_id).innerHTML = marked(
+      this.state.value,
+      { sanitize: true }
+    );
+    MathJax.Hub.Queue(["Typeset", MathJax.Hub, target_id]);
+  }
+
   updateValue = (event) => {
     const value = event.target.value;
-    this.setState({value: value, unsavedChanges: true});
+    this.setState({value: value, unsavedChanges: true}, this.renderPreview);
   };
 
   onSubmit = (event) => {
@@ -214,6 +167,8 @@ class RemarkRequestForm extends React.Component {
                    onClick={(e) => this.onSubmit(e)}
             />
           </p>
+          <h3>{I18n.t('preview')}</h3>
+          <div id='remark-request-preview' className='preview'></div>
         </form>
       </div>
     );

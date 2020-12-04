@@ -7,27 +7,27 @@ describe GradersController do
 
     it 'GET on :index' do
       get_as @student, :index, params: { assignment_id: 1 }
-      expect(response.status).to eq(404)
+      expect(response).to have_http_status(403)
     end
 
     it 'GET on :upload' do
       get_as @student, :upload, params: { assignment_id: 1 }
-      expect(response.status).to eq(404)
+      expect(response).to have_http_status(403)
     end
 
     it 'GET on :global_actions' do
       get_as @student, :global_actions, params: { assignment_id: 1 }
-      expect(response.status).to eq(404)
+      expect(response).to have_http_status(403)
     end
 
     it 'POST on :upload' do
       post_as @student, :upload, params: { assignment_id: 1 }
-      expect(response.status).to eq(404)
+      expect(response).to have_http_status(403)
     end
 
     it 'POST on :global_actions' do
       post_as @student, :global_actions, params: { assignment_id: 1 }
-      expect(response.status).to eq(404)
+      expect(response).to have_http_status(403)
     end
   end # student context
 

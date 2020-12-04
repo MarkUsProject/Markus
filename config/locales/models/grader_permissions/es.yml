@@ -1,0 +1,14 @@
+es:
+  activerecord:
+    models:
+      grader_permission:
+        one: "UPDATE ME"
+        other: "UPDATE ME"
+    attributes:
+      grader_permission:
+        manage_assessments: "UPDATE ME"
+        manage_submissions: "UPDATE ME"
+        run_tests: "UPDATE ME"
+        manage_assessments_tooltip: "UPDATE ME"
+        manage_submissions_tooltip: "UPDATE ME"
+        run_tests_tooltip: "UPDATE ME"

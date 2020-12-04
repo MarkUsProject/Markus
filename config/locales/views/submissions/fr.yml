@@ -56,6 +56,7 @@ fr:
     grading_can_begin_for_sections: "L'évaluation peut commencer pour les sections: %{sections}"
     grading_can_begin_after_for_sections: "L'évaluation commencera à partir du %{time} pour les sections: %{sections}"
     how_many_marked: "%{num_marked}/%{num_assigned} soumissions sont corrigés"
+    how_many_marked_in_collected: "%{num_marked}/%{num_collected} UPDATE ME"
     marking_incomplete_warning: "Attention: Cela ne fera que télécharger les envois qui ont été recuillis.\n\nÊtes-vous sûr de vouloir continuer?"
     no_files_available: "Aucun fichier disponible"
     release_marks: "Montrer les notes"

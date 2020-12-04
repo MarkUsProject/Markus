@@ -46,7 +46,7 @@ describe ResultsController do
       method(ROUTES[route_name]).call(route_name, params: { assignment_id: assignment.id,
                                                             submission_id: submission.id,
                                                             id: incomplete_result.id })
-      expect(response).to have_http_status(:missing)
+      expect(response).to have_http_status(:forbidden)
     end
   end
 
@@ -757,7 +757,7 @@ describe ResultsController do
         context 'when a remark request exists' do
           let(:remarked) do
             submission.make_remark_result
-            submission.update(remark_request_timestamp: Time.zone.now)
+            submission.update(remark_request_timestamp: Time.current)
             submission
           end
           let(:params) { { assignment_id: assignment.id, submission_id: remarked.id, id: incomplete_result.id } }

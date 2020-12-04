@@ -1,26 +1,39 @@
 describe NotePolicy do
-  include PolicyHelper
-  describe 'When the user is admin' do
-    subject { described_class.new(user: user) }
-    let(:user) { build(:admin) }
-    context 'Admin can manage, edit and update the notes' do
-      it { is_expected.to pass :manage? }
-      it { is_expected.to pass :modify? }
+  let(:context) { { user: user } }
+
+  describe_rule :manage? do
+    succeed 'user is admin' do
+      let(:user) { create :admin }
+    end
+    succeed 'user is ta' do
+      let(:user) { create :ta }
+    end
+    failed 'user is student' do
+      let(:user) { create :student }
     end
   end
-  describe 'When the user is TA' do
-    subject { described_class.new(note, user: user) }
-    let(:user) { build(:ta) }
-    let(:note) { create(:note) }
-    context 'TA can manage the notes' do
-      it { is_expected.to pass :manage? }
+
+  describe_rule :modify? do
+    succeed 'user is admin' do
+      let(:user) { create :admin }
     end
-    context 'When TA is editing or updating others note' do
-      it { is_expected.not_to pass :modify? }
+    context 'user is ta' do
+      let(:user) { create :ta }
+      succeed 'user is the note creator' do
+        let(:record) { create :note, user: user }
+      end
+      failed 'user is not the note creator' do
+        let(:record) { create :note }
+      end
     end
-    context 'When TA is editing or updating their own notes' do
-      let(:note) { build(:note, user: user) }
-      it { is_expected.to pass :modify? }
+    context 'user is student' do
+      let(:user) { create :student }
+      succeed 'user is the note creator' do
+        let(:record) { create :note, user: user }
+      end
+      failed 'user is not the note creator' do
+        let(:record) { create :note }
+      end
     end
   end
 end

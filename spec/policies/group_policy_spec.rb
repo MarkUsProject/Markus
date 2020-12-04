@@ -1,24 +1,30 @@
 describe GroupPolicy do
-  include PolicyHelper
-
-  describe 'When the user is student' do
-    subject { described_class.new(user: user) }
-    let(:user) { build(:student) }
-    it { is_expected.to pass :student_manage? }
-    it { is_expected.not_to pass :manage? }
+  let(:context) { { user: user } }
+  describe_rule :manage? do
+    succeed 'user is an admin' do
+      let(:user) { create(:admin) }
+    end
+    context 'user is a ta' do
+      succeed 'that can manage assessments' do
+        let(:user) { create :ta, manage_assessments: true }
+      end
+      failed 'that cannot manage assessments' do
+        let(:user) { create :ta, manage_assessments: false }
+      end
+    end
+    failed 'user is a student' do
+      let(:user) { create(:student) }
+    end
   end
-
-  describe 'When the user is admin' do
-    subject { described_class.new(user: user) }
-    let(:user) { build(:admin) }
-    it { is_expected.not_to pass :student_manage? }
-    it { is_expected.to pass :manage? }
-  end
-
-  describe 'When the user is ta' do
-    subject { described_class.new(user: user) }
-    let(:user) { build(:ta) }
-    it { is_expected.not_to pass :student_manage? }
-    it { is_expected.not_to pass :manage? }
+  describe_rule :student_manage? do
+    failed 'user is an admin' do
+      let(:user) { create(:admin) }
+    end
+    failed 'that can manage assessments' do
+      let(:user) { create :ta }
+    end
+    succeed 'user is a student' do
+      let(:user) { create(:student) }
+    end
   end
 end

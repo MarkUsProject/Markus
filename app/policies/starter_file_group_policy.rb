@@ -3,6 +3,6 @@ class StarterFileGroupPolicy < ApplicationPolicy
   default_rule :manage?
 
   def manage?
-    user.admin?
+    check?(:manage_assessments?, user)
   end
 end

@@ -10,6 +10,10 @@ class RubricCriterion < Criterion
     :rubric
   end
 
+  def level_with_mark_closest_to(mark)
+    self.levels.min_by { |m| (m.mark - mark).abs }
+  end
+
   def scale_marks_if_max_mark_changed
     return unless self.changed.include?('max_mark')
     return if self.changes['max_mark'][0].nil?
@@ -127,6 +131,7 @@ class RubricCriterion < Criterion
     }
     attrs[:ta_visible] = criterion_yml[1]['ta_visible'] unless criterion_yml[1]['ta_visible'].nil?
     attrs[:peer_visible] = criterion_yml[1]['peer_visible'] unless criterion_yml[1]['peer_visible'].nil?
+    attrs[:bonus] = criterion_yml[1]['bonus'] unless criterion_yml[1]['bonus'].nil?
     criterion_yml[1]['levels'].each do |level_name, level_yml|
       attrs[:levels_attributes] << {
         name: level_name,
@@ -144,7 +149,8 @@ class RubricCriterion < Criterion
                                      'max_mark' => self.max_mark.to_f,
                                      'levels' => {},
                                      'ta_visible' => self.ta_visible,
-                                     'peer_visible' => self.peer_visible } }
+                                     'peer_visible' => self.peer_visible,
+                                     'bonus' => self.bonus } }
     self.levels.each do |level|
       levels_to_yml[self.name]['levels'][level.name] = { 'description' => level.description,
                                                          'mark' => level.mark }
@@ -160,7 +166,7 @@ class RubricCriterion < Criterion
     # (this was being done in a weird way, leaving the original in case there are problems)
     # factor = 10.0 ** 3
     # self.max_mark = (max_mark * factor).round.to_f / factor
-    self.max_mark = self.max_mark.round(1)
+    self.max_mark = self.max_mark.round(2)
   end
 
   def all_assigned_groups

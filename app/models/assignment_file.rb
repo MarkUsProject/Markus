@@ -12,8 +12,6 @@ class AssignmentFile < ApplicationRecord
   private
 
   def clean_filename
-    if self.filename
-      self.filename = Pathname.new(self.filename).cleanpath.to_s
-    end
+    self.filename = Pathname.new(self.filename).cleanpath.to_s unless self.filename.blank?
   end
 end

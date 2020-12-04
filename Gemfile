@@ -100,7 +100,7 @@ group :development do
 end
 
 group :test do
-  gem 'coveralls', require: false
+  gem 'coveralls', '~>0.8.23',  require: false
   gem 'factory_bot_rails'
   gem 'fuubar'
   gem 'machinist', '< 3'
