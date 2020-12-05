@@ -11,7 +11,7 @@
     <%= f.label :theme, User.human_attribute_name(:theme) %>
     <%= f.select(:theme, [%w[dark dark], %w[light light]]) %>
   </div>
-  <% if @current_user.student? %>
+  <% if @current_user.student? && Rails.configuration.action_mailer.perform_deliveries %>
     <p>
       <%= f.check_box :receives_results_emails %>
       <%= f.label :receives_results_emails, Student.human_attribute_name(:receives_results_emails) %>
