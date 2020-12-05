@@ -11,6 +11,9 @@ fr:
       user:
         one: "Utilisateur"
     attributes:
+      student:
+        receives_invite_emails: "UPDATE ME!"
+        receives_results_emails: "UPDATE ME!"
       user:
         api_key: "Votre clé - API"
         display_name: "Afficher un Nom"

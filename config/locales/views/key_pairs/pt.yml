@@ -1,7 +1,6 @@
 pt:
   key_pairs:
     add_key_pair: "Adicionar um Par de Chaves"
-    are_you_sure: "Tem certeza?"
     back: "De Volta"
     copy_paste_key: "Copie e Cole a Sua Chave Pública"
     create_key_pair: "Criar Par de Chaves"
@@ -11,6 +10,9 @@ pt:
     delete:
       success: "Par de Chaves foi removido com sucesso"
     file: "Arquivo"
+    help:
+      macOS_linux: "UPDATE ME"
+      windows: "UPDATE ME"
     key_content: "Conteúdo de Chave"
     key_pairs_title: "Os Seus Pares de Chaves"
     new_key_pair: "Novo Par de Chaves"
