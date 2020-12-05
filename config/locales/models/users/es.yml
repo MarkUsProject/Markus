@@ -11,6 +11,9 @@ es:
       user:
         one: "Usuario"
     attributes:
+      student:
+        receives_invite_emails: "UPDATE ME!"
+        receives_results_emails: "UPDATE ME!"
       user:
         api_key: "Su clave API"
         display_name: "Nombre para Mostrar"

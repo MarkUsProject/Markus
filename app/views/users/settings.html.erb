@@ -1,30 +1,29 @@
-<% content_for :title, t('students.account_settings') %>
+<% content_for :title, t('users.account_settings') %>
 <%= form_with url: 'update_settings', method: 'patch', model: @current_user, scope: :user, local: true do |f| %>
-  <p>
+  <div class="inline-labels">
     <%= f.label :display_name, User.human_attribute_name(:display_name) %>
     <%= f.text_field :display_name,
                      value: @current_user.display_name %>
-  </p>
-  <p>
+
     <%= f.label :locale, User.human_attribute_name(:locale) %>
     <%= f.select :locale, options_for_select(I18n.available_locales, selected: "#{@current_user.locale}") %>
-  </p>
-  <p>
+
     <%= f.label :theme, User.human_attribute_name(:theme) %>
     <%= f.select(:theme, [%w[dark dark], %w[light light]]) %>
-  </p>
+  </div>
   <% if @current_user.student? %>
     <p>
       <%= f.check_box :receives_results_emails %>
-      <%= f.label :receives_results_emails, t('students.toggle_results_notifications') %>
+      <%= f.label :receives_results_emails, Student.human_attribute_name(:receives_results_emails) %>
     </p>
+
     <p>
       <%= f.check_box :receives_invite_emails %>
-      <%= f.label :receives_invite_emails, t('students.toggle_invite_notifications') %>
+      <%= f.label :receives_invite_emails, Student.human_attribute_name(:receives_invite_emails) %>
     </p>
   <% end %>
   <p>
-    <%= f.submit t('users.update_settings') %>
+    <%= f.submit t('save') %>
   </p>
 <% end %>
 
@@ -35,41 +34,47 @@
 <% end %>
 
 <% if allowed_to?(:manage?, KeyPair) %>
-  <h2><%= t('key_pairs.key_pairs_title') %></h2>
+  <fieldset>
+  <legend><span><%= t('key_pairs.key_pairs_title') %></span></legend>
 
-  <br>
+  <% if @current_user.key_pairs.exists? %>
+    <div class="table">
+    <table>
+      <thead>
+        <tr>
+          <th><%= t('key_pairs.time_of_upload') %></th>
+          <th><%= t('key_pairs.key_content') %></th>
+          <th><%= t('actions') %></th>
+        </tr>
+      </thead>
+      <tbody>
+      <% @current_user.key_pairs.each do |key_pair| %>
+        <tr>
+          <td><%= l(key_pair.created_at) %></td>
+          <td><pre style="word-break: break-all"><%= key_pair.public_key %></pre></td>
+          <td><%= link_to t('key_pairs.remove_key'), key_pair, method: :delete %></td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+    </div>
+  <% end %>
 
-  <table>
-    <tr>
-      <th><%= t('key_pairs.time_of_upload') %> |</th>
-      <th><%= t('key_pairs.key_content') %></th>
-      <th></th>
-    </tr>
-
-
-    <% @current_user.key_pairs.each do |key_pair| %>
-      <tr>
-        <td><%= key_pair.created_at %></td>
-        <td><textarea cols="55" rows="10" readonly><%= key_pair.public_key %></textarea></td>
-        <td><%= link_to t('key_pairs.remove_key'), key_pair, method: :delete, data: { confirm: t('key_pairs.are_you_sure') } %></td>
-      </tr>
-
-    <% end %>
-  </table>
-
-  <br />
-
-  <%= link_to t('key_pairs.new_key_pair'), new_key_pair_path %>
-
+  <p>
+    <%= link_to t('key_pairs.new_key_pair'), new_key_pair_path, class: 'button' %>
+  </p>
   <hr>
-  <h2>Need help?</h2>
-  <br>
-  <a href="https://github.com/MarkUsProject/Markus/wiki/SSH_Keypair_Instructions_Windows" target="_blank">
-    Instructions for users on Windows
-  </a>
-  <br>
-  <a href="https://github.com/MarkUsProject/Markus/wiki/SSH_Keypair_Instructions_Linux-OSX" target="_blank">
-    Instructions for users on Mac OS / Linux
-  </a>
+  <h3><%= t('help') %></h3>
+  <p>
+    <a href="https://github.com/MarkUsProject/Markus/wiki/SSH_Keypair_Instructions_Windows" target="_blank">
+      <%= t('key_pairs.help.windows') %>
+    </a>
+  </p>
+  <p>
+    <a href="https://github.com/MarkUsProject/Markus/wiki/SSH_Keypair_Instructions_Linux-OSX" target="_blank">
+      <%= t('key_pairs.help.macOS_linux') %>
+    </a>
+  </p>
+  </fieldset>
 <% end %>
 
