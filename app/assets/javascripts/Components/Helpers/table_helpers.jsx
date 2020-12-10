@@ -20,7 +20,9 @@ export function dateSort(a, b) {
   } else if (!b) {
     return 1;
   } else {
-    return (Date.parse(a) || 0) > (Date.parse(b) || 0);
+    let a_date = new Date(a.split(',')[0] + ', 2020 ' + a.split(',')[1]);
+    let b_date = new Date(b.split(',')[0] + ', 2020 ' + b.split(',')[1]);
+    return (a_date || 0) > (b_date || 0);
   }
 };
 
