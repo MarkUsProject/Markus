@@ -1,5 +1,5 @@
 @import 'markus';
-
+@import 'constants';
 @import 'navigation';
 
 
@@ -53,6 +53,7 @@
 
 input,
 textarea {
+  border-color: $line;
   display: inline-block;
   width: auto;
 }
@@ -63,12 +64,12 @@ input[type='radio'] {
 }
 
 .required_field {
-  color: $red;
+  color: $severe-error;
 }
 
 label.required::after, th.required::after {
   content: "*";
-  color: $red;
+  color: $severe-error;
 }
 
 .hidden {
@@ -76,8 +77,8 @@ label.required::after, th.required::after {
 }
 
 .section h3 {
-  border-bottom: 1px solid #ccc;
-  color: $dark-grey;
+  border-bottom: 1px solid var(--primary_three);
+  color: $line;
   font-size: 1.25em;
   font-weight: 300;
   margin: 0 0 1em 0;
@@ -88,7 +89,7 @@ label.required::after, th.required::after {
 /* Main content */
 
 #content {
-  background: $white;
+  background: $background-main;
   padding: $dimen-vertical $dimen-horizontal;
 
   @include breakpoint(mobile) {
@@ -102,7 +103,7 @@ label.required::after, th.required::after {
 }
 
 #wrapper {
-  background: $white;
+  background: $background-main;
   min-height: 90%;
 }
 
@@ -179,8 +180,8 @@ label.required::after, th.required::after {
 }
 
 .help-message {
-  background: $light-yellow;
-  border: 1px solid $yellow;
+  background: $light-alert;
+  border: 1px solid $alert;
   border-radius: $radius;
   display: inline-block;
   padding: 10px;
@@ -235,15 +236,82 @@ label.required::after, th.required::after {
 
 // Customize react-table styling
 .ReactTable {
+
+  .rt-noData {
+    background: $background-support;
+    color: $sharp-line;
+  }
+
   .rt-thead,
   .rt-tbody {
+    border-bottom: 1px solid $gridline;
+    border-left: 1px solid $gridline;
+    border-right: 1px solid $gridline;
     overflow-x: hidden;
     overflow-y: scroll;
   }
 
   .rt-thead .rt-hidden,
-  .rt-hidden {
+  .rt-hidden,
+  .rt-thead .rt-td {
+    border-bottom: 1px solid $gridline;
+    border-right: 1px solid $gridline;
     padding: 0;
+  }
+
+  .rt-thead.-filters input {
+    background-color: $background-main;
+    border: solid 1px $gridline;
+    color: $sharp-line;
+  }
+
+  .rt-thead.-filters select {
+    background-color: $background-main;
+    border: solid 1px $gridline;
+    color: $sharp-line;
+  }
+
+  .-loading.-active {
+    background-color: $background-support;
+    border-color: $line;
+    color: $sharp-line;
+  }
+
+  .rt-expander::after {
+    border-top-color: $gridline;
+  }
+
+  .-loading.-inner {
+    background-color: $background-support;
+    border-color: $line;
+    color: $line;
+  }
+
+  .rt-thead.-filters .rt-th {
+    border-bottom: 1px solid $gridline;
+    border-right: 1px solid $gridline;
+  }
+
+  .rt-tbody .rt-td {
+    border-bottom: 1px solid $gridline;
+  }
+
+  .rt-thead .rt-th.-sort-asc,
+  .rt-thead .rt-td.-sort-asc {
+    box-shadow: inset 0 3px 0 0 $sharp-line;
+  }
+
+  .rt-thead .rt-th.-sort-desc,
+  .rt-thead .rt-td.-sort-desc {
+    box-shadow: inset 0 -3px 0 0 $sharp-line;
+  }
+
+  .rt-thead .rt-th,
+  .rt-thead .rt-td {
+    background-color: $background-support;
+    border-right: 1px solid $gridline;
+    border-top: 1px solid $gridline;
+    color: $line;
   }
 
   .rt-td:last-child {
@@ -301,8 +369,8 @@ label.required::after, th.required::after {
 
 .rt-th.unassigned,
 .rt-td.unassigned {
-  background-color: $light-grey;
-  color: $grey;
+  background-color: $disabled-area;
+  color: $line;
 }
 
 // Styling patches for react-keyed-file-browser

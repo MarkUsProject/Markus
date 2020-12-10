@@ -26,10 +26,6 @@ es:
     not_successfully_added_message_4: "Cada campo está separado por una coma (no espacios)."
     not_successfully_added_message_5: "Cada línea tiene los campos requeridos especificados cerca de la forma
       para subir archivos."
-    toggle_invite_notifications: 'UPDATE ME'
-    toggle_results_notifications: 'UPDATE ME'
-    display_name: 'UPDATE ME'
-    account_settings: "UPDATE ME"
 
   tas:
     edit: "Editar la información del evaluador"
@@ -38,6 +34,7 @@ es:
       manage_graders: "Crear evaluadores."
 
   users:
+    account_settings: "UPDATE ME"
     api_key:
       help_html: "La clave API es usada como autenticación para la interface REST. Mira la
                   <a href=\"https://github.com/MarkUsProject/Markus/wiki/RESTful-API\">
