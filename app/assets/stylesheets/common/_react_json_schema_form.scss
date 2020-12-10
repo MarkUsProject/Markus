@@ -40,7 +40,7 @@
   }
 
   .array-item {
-    border: 1px solid $grey;
+    border: 1px solid $primary-two;
     border-radius: $radius;
     display: flex;
     padding: 10px;
@@ -88,7 +88,7 @@
   }
 
   .required {
-    color: $red;
+    color: $severe-error;
   }
 
   .form-control {

@@ -42,5 +42,4 @@ en:
 
   about_markus: "About MarkUs"
   issues: "GitHub issues list"
-  language: "Language"
   locale_not_available: "%{locale} translation not available!"

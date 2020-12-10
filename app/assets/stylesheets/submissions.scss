@@ -3,7 +3,7 @@
 @import 'common/modals';
 
 #disable {
-  color: $grey !important;
+  color: $primary-two !important;
 }
 
 .react_buttons {
@@ -19,11 +19,11 @@
 }
 
 .submission_collected {
-  background-color: $light-green !important;
+  background-color: $light-success;
 }
 
 .submission_error {
-  background-color: $light-red !important;
+  background-color: $light-error;
 }
 
 /* Tag CSS Elements */
@@ -40,7 +40,7 @@
     transition: all 0.2s;
 
     &:hover {
-      color: $dark-blue;
+      color: $primary-one;
 
       // When hover is activated on li, shows the menu
       ul {
@@ -51,7 +51,7 @@
     }
 
     ul {
-      background-color: $light-grey;
+      background-color: $background-main;
       cursor: pointer;
       list-style: none;
       margin: 0;
@@ -62,12 +62,12 @@
       visibility: hidden;
 
       li {
-        color: $dark-blue !important;
+        color: $primary-one !important;
         padding: 2px;
         text-align: left;
 
         &:hover {
-          background-color: $dark-grey;
+          background-color: $line;
         }
       }
     }
@@ -77,7 +77,7 @@
 // Removes CSS formatting for titles and search bars
 .tag_list_search:hover,
 .tag_list_title:hover {
-  background-color: $light-grey !important;
+  background-color: $background-main !important;
   cursor: default !important;
 }
 
