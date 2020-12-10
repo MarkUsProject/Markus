@@ -24,7 +24,7 @@ class GitRepository < Repository::AbstractRepository
     index = repo.index
     commit_tree = index.write_tree(repo)
     index.write
-    commit_author = { email: 'markus@markus.com', name: author, time: Time.now }
+    commit_author = { email: 'markus@markus.com', name: author, time: Time.current.to_time }
     commit_options = {
         author: commit_author,
         committer: commit_author,
