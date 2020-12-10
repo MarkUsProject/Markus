@@ -41,4 +41,3 @@ en:
       reset: "Reset API key"
       unavailable: "Unavailable"
     verify_settings_update: 'Your settings have been updated!'
-    update_settings: 'Update Settings'
