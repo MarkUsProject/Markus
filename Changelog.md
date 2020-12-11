@@ -1,6 +1,7 @@
 # Changelog
 ## [unreleased]
 - Fix bug where duplicate marks can get created because of concurrent requests (#5018)
+- Remove localization path parameter (#4985)
 
 ## [v1.11.0]
 - Converts annotation modals from ERB into React (#4997)
