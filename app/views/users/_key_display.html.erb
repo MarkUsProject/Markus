@@ -13,7 +13,7 @@
     <% else %>
       <%= t('users.api_key.unavailable') %>
     <% end %>
-    <div class='float-right'>
+    <div>
       <%= form_tag reset_api_key_users_path, remote: true do %>
         <%= submit_tag t('users.api_key.reset') %>
       <% end %>

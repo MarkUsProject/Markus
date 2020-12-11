@@ -12,6 +12,9 @@ en:
       user:
         one: "User"
     attributes:
+      student:
+        receives_invite_emails: "Receive email notification when invited to a group"
+        receives_results_emails: "Receive email notification when marking results are released"
       user:
         api_key: "Your API Key"
         display_name: "Display Name"
@@ -22,4 +25,5 @@ en:
         id_number: "ID number"
         last_name: "Last Name"
         locale: "Language"
+        theme: "Color Theme"
         user_name: "User Name"

@@ -6,7 +6,6 @@ en:
     new: "Add an Admin"
 
   students:
-    account_settings: "Account Settings"
     active: "Active"
     admin_actions:
       add_section: "Add to section"
@@ -25,8 +24,6 @@ en:
     not_successfully_added_message_3: "Student names are alphanumeric."
     not_successfully_added_message_4: "Each field is separated by a comma (no spaces)."
     not_successfully_added_message_5: "Each line has the required fields specified near the upload form."
-    toggle_invite_notifications: 'Receive email notifications when I am invited to a group.'
-    toggle_results_notifications: 'Receive email notifications when results are released.'
 
   tas:
     edit: "Edit a Grader"
@@ -36,11 +33,11 @@ en:
 
   # Miscellaneous
   users:
+    account_settings: "Account Settings"
     api_key:
-      help_html: "The API key is used for the REST interface for authentication.
+      help_html: "The API key is used for authentication for the MarkUs API.
                   See <a href=\"https://github.com/MarkUsProject/Markus/wiki/RESTful-API\">MarkUs Wiki</a>
-                  for information on how to use the REST API."
-      reset: "Reset my API key"
+                  for information on using the API."
+      reset: "Reset API key"
       unavailable: "Unavailable"
-    update_settings: 'Update Settings'
     verify_settings_update: 'Your settings have been updated!'

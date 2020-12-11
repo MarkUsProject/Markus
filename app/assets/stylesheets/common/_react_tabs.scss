@@ -1,3 +1,5 @@
+@import 'constants';
+
 .react-tabs__tab--disabled {
   display: none;
 }
@@ -20,13 +22,18 @@
   }
 }
 
+.react-tabs__tab--selected {
+  background-color: $background-support;
+  color: $sharp-line;
+}
+
 .react-tabs__tab-panel--selected {
   display: flex;
   flex-direction: column;
 }
 
 .react-tabs-panel-action-bar {
-  background-color: $light-blue;
+  background-color: $background-support;
   margin-top: -10px;
   padding: 0.5em;
   width: 100%;

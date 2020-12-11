@@ -11,6 +11,9 @@ pt:
       user:
         one: "Usuário"
     attributes:
+      student:
+        receives_invite_emails: "UPDATE ME!"
+        receives_results_emails: "UPDATE ME!"
       user:
         api_key: "Chave da API"
         display_name: "Nome em Exibição"
@@ -21,4 +24,5 @@ pt:
         id_number: "Número de identidade"
         last_name: "Último nome"
         locale: "Escolha o idioma"
+        theme: "UPDATE ME!"
         user_name: "Nome de usuário"
