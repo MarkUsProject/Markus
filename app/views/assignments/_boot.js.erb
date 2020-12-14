@@ -118,7 +118,7 @@
 
   $(document).ready(function() {
     // Set locale for language localisation with Moment.js
-    moment.locale(document.getElementById('locale').value);
+    moment.locale(I18n.locale);
 
     // Handle periods and hiding/showing things
     if ($('#assignment_due_date').val()) {
