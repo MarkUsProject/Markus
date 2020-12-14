@@ -714,7 +714,7 @@ describe AssignmentsController do
       let!(:period) { create :period, submission_rule: submission_rule }
       it 'should delete other penalty periods' do
         put_as user, :update, params: params
-        expect { period.reload }.to raise_exception(ActiveRecord::RecordNotFound )
+        expect { period.reload }.to raise_exception(ActiveRecord::RecordNotFound)
       end
       it 'should create new penalty periods' do
         put_as user, :update, params: params
