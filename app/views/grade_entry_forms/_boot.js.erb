@@ -36,9 +36,6 @@
   }
 
   $(document).ready(function() {
-    // Set locale for language localisation with Moment.js
-    moment.locale(I18n.locale);
-
     $('.datepicker').datepicker({
       numberOfMonths:   2,
       dateFormat:       I18n.t('date.format_string.datetimepicker'),
