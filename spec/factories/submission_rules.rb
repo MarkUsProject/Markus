@@ -1,7 +1,15 @@
 FactoryBot.define do
 
   factory :submission_rule, class: SubmissionRule do
-    association :assignment
+    transient do
+      assignment { build(:assignment) }
+    end
+    after(:build) do |rule, evaluator|
+      evaluator.assignment.submission_rule = rule
+    end
+    after(:create) do |rule|
+      rule.assignment.save
+    end
   end
 
   factory :penalty_period_submission_rule, parent: :submission_rule, class: PenaltyPeriodSubmissionRule do
