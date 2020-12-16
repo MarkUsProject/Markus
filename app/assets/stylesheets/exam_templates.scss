@@ -110,34 +110,6 @@
   font-weight: bold;
 }
 
-#viewerContainer {
-  top: 0;
-}
-
-#codeviewer {
-  border-radius: 0;
-}
-
-.display_pane {
-  border: 1px solid $line;
-}
-
-.input_pane {
-  padding: 15px !important;
-}
-
-.input_pane {
-  input[type="text"] {
-    margin-bottom: 5px;
-  }
-}
-
-.side_header {
-  border-bottom: 1px solid $background-support;
-  padding-bottom: 10px;
-  margin-bottom: 10px;
-}
-
 #info_form label {
   //min-width: initial;
   margin-bottom: 3px;
