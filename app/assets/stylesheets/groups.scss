@@ -1,25 +1,8 @@
 @import 'common/core';
 
-@import 'common/columns';
-
 @import 'common/assignment_dropdown';
 
 @import 'common/modals';
-
-.floatRight {
-  float: right;
-}
-
-.grader-row {
-  display: block;
-  line-height: 1.7em;
-  padding-bottom: 0.2em;
-  width: 100%;
-}
-
-.toolbar {
-  display: none;
-}
 
 #viewerContainer {
   top: 0px;
