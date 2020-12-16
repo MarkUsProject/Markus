@@ -772,6 +772,7 @@ class Grouping < ApplicationRecord
       txn = group_repo.get_transaction('Markus', I18n.t('repo.commits.assignment_folder',
                                                         assignment: self.assignment.short_identifier))
       txn.add_path(assignment_folder)
+
       if txn.has_jobs?
         unless group_repo.commit(txn)
           raise I18n.t('repo.assignment_dir_creation_error', short_identifier: assignment.short_identifier)
