@@ -277,7 +277,7 @@ class RawGroupsTable extends React.Component {
             } else {
               status = `(${member[1]})`;
             }
-            return <div key={`${row.original._id}-${member[0]}`} className='grader-row'>
+            return <div key={`${row.original._id}-${member[0]}`}>
               {member[0]} {status}
               <a href='#'
                  className="remove-icon"
