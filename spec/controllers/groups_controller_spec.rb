@@ -373,6 +373,66 @@ describe GroupsController do
         expect(grouping.students.size).to eq 1
       end
     end
+
+    describe 'GET #get_names' do
+      let!(:assignment) { create(:assignment_for_scanned_exam) }
+      let!(:student1) do
+        create(:student, user_name: 'c9test1', first_name: 'first', last_name: 'last', id_number: '12345')
+      end
+      let!(:student2) do
+        create(:student, user_name: 'zzz', first_name: 'zzz', last_name: 'zzz', id_number: '789')
+      end
+      let(:expected) do
+        [{ 'id' => student1.id,
+           'id_number' => student1.id_number,
+           'user_name' => student1.user_name,
+           'value' => "#{student1.first_name} #{student1.last_name}"}]
+      end
+
+      it 'returns matches for user_name' do
+        post :get_names, params: {
+          assignment_id: assignment.id,
+          assignment: assignment.id,
+          term: 'c9',
+          format: :json
+        }
+
+        expect(response.parsed_body).to eq expected
+      end
+
+      it 'returns matches for first_name' do
+        post :get_names, params: {
+          assignment_id: assignment.id,
+          assignment: assignment.id,
+          term: 'fir',
+          format: :json
+        }
+
+        expect(response.parsed_body).to eq expected
+      end
+
+      it 'returns matches for last_name' do
+        post :get_names, params: {
+          assignment_id: assignment.id,
+          assignment: assignment.id,
+          term: 'la',
+          format: :json
+        }
+
+        expect(response.parsed_body).to eq expected
+      end
+
+      it 'returns matches for id_number' do
+        post :get_names, params: {
+          assignment_id: assignment.id,
+          assignment: assignment.id,
+          term: '123',
+          format: :json
+        }
+
+        expect(response.parsed_body).to eq expected
+      end
+    end
   end
 
   describe 'student access' do
