@@ -1,18 +1,1 @@
 @import 'common/core';
-@import 'common/columns';
-
-.grader-row {
-  display: block;
-  line-height: 1.7em;
-  padding-bottom: 0.2em;
-  width: 100%;
-}
-
-.grader-summary-graph {
-  display: inline-block;
-  width: 400px;
-}
-
-.grader-summary-content {
-  text-align: center;
-}

@@ -506,12 +506,13 @@ class AssignmentsController < ApplicationController
     num_files_before = assignment.assignment_files.length
     short_identifier = assignment_params[:short_identifier]
     # remove potentially invalid periods before updating
-    unless assignment_params[:assignment_properties_attributes][:scanned_exam]
+    unless assignment_params[:assignment_properties_attributes][:scanned_exam] == 'true'
       period_attrs = submission_rule_params['submission_rule_attributes']['periods_attributes']
-      periods = period_attrs.to_h.values.map { |h| h[:id] }
+      periods = period_attrs.to_h.values.map { |h| h[:id].blank? ? nil : h[:id] }
       assignment.submission_rule.periods.where.not(id: periods).each(&:destroy)
     end
     assignment.assign_attributes(assignment_params)
+    SubmissionRule.where(assignment: assignment).where.not(id: assignment.submission_rule.id).each(&:destroy)
     process_timed_duration(assignment) if assignment.is_timed
     assignment.repository_folder = short_identifier unless assignment.is_peer_review?
     assignment.save!

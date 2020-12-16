@@ -1,25 +1,16 @@
-<div class='title_bar'>
-  <h2>
-    <% if assignment.is_peer_review? %>
-        <%= link_to "#{assignment.parent_assignment.short_identifier}: #{PeerReview.model_name.human}",
-                    browse_assignment_submissions_path(assignment.id) %>
-    <% else %>
-        <%= link_to "#{assignment.short_identifier}: #{assignment.description}",
-                    browse_assignment_submissions_path(assignment.id) %>
-    <% end %>
-  </h2>
-</div>
-<div class='wrapper'>
-  <div id='section'>
-    <div class='grader-summary-content'>
-      <% @assignment.tas.each do |ta| %>
-        <div class='grader-summary-graph'>
-          <div id='assignment_<%= @assignment.id %>_ta_<% ta.id %>_graph'>
-            <%= render partial: 'graders/ta_grade_distribution_graph',
-                       locals: { assignment: @assignment, tas: [ta] } %>
-          </div>
-        </div>
-      <% end %>
-    </div>
+<% content_for :title do %>
+  <% if @assignment.is_peer_review? %>
+    <%= link_to "#{@assignment.parent_assignment.short_identifier}: #{PeerReview.model_name.human}",
+                browse_assignment_submissions_path(@assignment.id) %>
+  <% else %>
+    <%= link_to "#{@assignment.short_identifier}: #{@assignment.description}",
+                browse_assignment_submissions_path(@assignment.id) %>
+  <% end %>
+<% end %>
+
+<% @assignment.tas.each do |ta| %>
+  <div style="width: 400px; display: inline-block;">
+    <%= render partial: 'graders/ta_grade_distribution_graph',
+               locals: { assignment: @assignment, tas: [ta] } %>
   </div>
-</div>
+<% end %>

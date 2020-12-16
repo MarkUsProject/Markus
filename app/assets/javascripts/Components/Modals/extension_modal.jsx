@@ -128,7 +128,7 @@ class ExtensionModal extends React.Component {
   render() {
     return (
       <Modal
-        className="react-modal"
+        className="react-modal dialog"
         isOpen={this.props.isOpen}
         onRequestClose={this.props.onRequestClose}
       >
@@ -156,7 +156,6 @@ class ExtensionModal extends React.Component {
             <div>
               <label>
                 <textarea
-                  className={'extension-note'}
                   placeholder={I18n.t('activerecord.attributes.extensions.note') + '...'}
                   value={this.state.note}
                   name={'note'}

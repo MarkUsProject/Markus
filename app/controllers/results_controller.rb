@@ -498,7 +498,14 @@ class ResultsController < ApplicationController
     assignment = submission.grouping.assignment
     mark_value = params[:mark].blank? ? nil : params[:mark].to_f
 
-    result_mark = result.marks.find_or_create_by(criterion_id: params[:criterion_id])
+    # make this operation atomic (more or less) so that concurrent requests won't make duplicate values
+    result_mark = Mark.transaction { result.marks.find_or_create_by(criterion_id: params[:criterion_id]) }
+    unless result_mark.valid?
+      # In case the transaction above doesn't do its job, this will clean up any duplicate marks in the database
+      marks = result.marks.where(criterion_id: params[:criterion_id])
+      marks.where.not(id: result_mark.id).destroy_all if marks.count > 1
+      result_mark.save
+    end
 
     m_logger = MarkusLogger.instance
 

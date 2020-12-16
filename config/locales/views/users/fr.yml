@@ -6,7 +6,6 @@ fr:
     new: "Créer un nouvel administrateur"
 
   students:
-    account_settings: "UPDATE ME"
     active: "Actif"
     admin_actions:
       add_section: "Ajouter à une section"
@@ -25,8 +24,6 @@ fr:
     not_successfully_added_message_3: "Les noms des étudiants sont en caractères alphanumériques."
     not_successfully_added_message_4: "Chaque champ est séparé par une virgule (pas d'espace)."
     not_successfully_added_message_5: "Chaque ligne a le bon nombre de champs comme spécifié."
-    toggle_invite_notifications: 'UPDATE ME'
-    toggle_results_notifications: 'UPDATE ME'
 
   tas:
     edit: "Modifier un correcteur"
@@ -35,8 +32,8 @@ fr:
       manage_graders: "Créer un nouveau correcteur"
 
   users:
+    account_settings: "UPDATE ME"
     api_key:
       reset: "Générer une nouvelle clé"
       unavailable: "Non disponible"
-    update_settings: 'Mettre à jour les paramètres'
     verify_settings_update: 'UPDATE ME'

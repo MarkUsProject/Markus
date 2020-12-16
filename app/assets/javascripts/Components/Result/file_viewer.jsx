@@ -50,7 +50,6 @@ export class FileViewer extends React.Component {
       url = this.props.selectedFileURL;
     } else {
       url = Routes.download_assignment_submission_result_path(
-        '',
         this.props.assignment_id,
         this.props.submission_id,
         this.props.result_id,
@@ -88,7 +87,6 @@ export class FileViewer extends React.Component {
     this.setState({loading: true, url: null}, () => {
       if (!this.props.selectedFileURL) {
           fetch(Routes.get_file_assignment_submission_path(
-            '',
             this.props.assignment_id,
             this.props.submission_id,
             {submission_file_id: submission_file_id}),

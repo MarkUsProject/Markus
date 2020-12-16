@@ -49,7 +49,7 @@ describe GradeEntryFormsController do
       expect(response.status).to eq(302)
       expect(flash[:error]).to be_nil
       expect(response).to redirect_to(
-        grades_grade_entry_form_path(grade_entry_form_with_data, locale: 'en')
+        grades_grade_entry_form_path(grade_entry_form_with_data)
       )
 
       # Check that the new column and grade are created
@@ -67,7 +67,7 @@ describe GradeEntryFormsController do
       expect(response.status).to eq(302)
       expect(flash[:error]).to be_nil
       expect(response).to redirect_to(
-        grades_grade_entry_form_path(grade_entry_form_with_data, locale: 'en')
+        grades_grade_entry_form_path(grade_entry_form_with_data)
       )
 
       # Check that the new column and grade are created
@@ -85,7 +85,7 @@ describe GradeEntryFormsController do
       expect(response.status).to eq(302)
       expect(flash[:error]).to be_nil
       expect(response).to redirect_to(
-        grades_grade_entry_form_path(grade_entry_form_with_data, locale: 'en')
+        grades_grade_entry_form_path(grade_entry_form_with_data)
       )
 
       # Check that the existing column still exists, and the student's grade has been changed.
@@ -98,7 +98,7 @@ describe GradeEntryFormsController do
       expect(response.status).to eq(302)
       expect(flash[:error]).to be_nil
       expect(response).to redirect_to(
-        grades_grade_entry_form_path(grade_entry_form_with_data, locale: 'en')
+        grades_grade_entry_form_path(grade_entry_form_with_data)
       )
 
       # Check that the existing column still exists, and the student's grade has not been changed.
@@ -111,7 +111,7 @@ describe GradeEntryFormsController do
       expect(response.status).to eq(302)
       expect(flash[:error]).to_not be_empty
       expect(response).to redirect_to(
-        grades_grade_entry_form_path(grade_entry_form_with_data, locale: 'en')
+        grades_grade_entry_form_path(grade_entry_form_with_data)
       )
 
       # Check that the two columns were still created.
@@ -124,7 +124,7 @@ describe GradeEntryFormsController do
       expect(response.status).to eq(302)
       expect(flash[:error]).to be_nil
       expect(response).to redirect_to(
-        grades_grade_entry_form_path(grade_entry_form_with_data, locale: 'en')
+        grades_grade_entry_form_path(grade_entry_form_with_data)
       )
 
       # Check that the new column and grade are created
@@ -141,7 +141,7 @@ describe GradeEntryFormsController do
       expect(response.status).to eq(302)
       expect(flash[:error]).to be_nil
       expect(response).to redirect_to(
-        grades_grade_entry_form_path(grade_entry_form_with_data, locale: 'en')
+        grades_grade_entry_form_path(grade_entry_form_with_data)
       )
 
       # Check that the original column's total has been updated.
@@ -152,7 +152,7 @@ describe GradeEntryFormsController do
       post :upload, params: { id: grade_entry_form_with_data.id, upload_file: @file_total_included, overwrite: true }
       expect(response.status).to eq(302)
       expect(flash[:error]).to be_nil
-      expect(response).to redirect_to(grades_grade_entry_form_path(grade_entry_form_with_data, locale: 'en'))
+      expect(response).to redirect_to(grades_grade_entry_form_path(grade_entry_form_with_data))
 
       # Check that the total column is the actual total and not the incorrect total given in the file
       expect(@student.grades.first.grade).to eq 22

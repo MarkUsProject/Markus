@@ -399,7 +399,7 @@ class RawGroupsTable extends React.Component {
         accessor: 'graders',
         Cell: row => {
           return row.value.map((ta) =>
-            <div key={`${row.original._id}-${ta}`} className='grader-row'>
+            <div key={`${row.original._id}-${ta}`}>
               {ta}
               <a href='#'
                  className="remove-icon"
@@ -464,7 +464,7 @@ class RawCriteriaTable extends React.Component {
         accessor: 'graders',
         Cell: row => {
           return row.value.map((ta) =>
-            <div key={`${row.original._id}-${ta}`} className='grader-row'>
+            <div key={`${row.original._id}-${ta}`}>
               {ta}
               <a href='#'
                  className="remove-icon"

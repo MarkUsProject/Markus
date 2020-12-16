@@ -46,7 +46,6 @@ class ExamScanLogTable extends React.Component {
           id: 'filename',
           Cell: row => {
             const path = Routes.download_raw_split_file_assignment_exam_template_path(
-              '',
               this.props.assignment_id,
               row.original.exam_template_id,
               {split_pdf_log_id: row.original.file_id}
@@ -143,7 +142,6 @@ class ExamScanErrorsTable extends React.Component {
           return (<span>
             {row.value}&nbsp;
             (<a href={Routes.assign_errors_assignment_exam_template_path(
-              '', // Not sure why this is necessary
               this.props.assignment_id,
               this.props.exam_template_id,
               {split_pdf_log_id: this.props.split_pdf_log_id,
