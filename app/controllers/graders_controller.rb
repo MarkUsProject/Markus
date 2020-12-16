@@ -163,7 +163,7 @@ class GradersController < ApplicationController
       return
     end
     @assignment = Assignment.find(params[:assignment_id])
-    render :grader_summary, layout: 'content'
+    render :grader_summary
   end
 
   private
