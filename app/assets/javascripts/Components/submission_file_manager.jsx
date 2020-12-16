@@ -128,7 +128,7 @@ class SubmissionFileManager extends React.Component {
   };
 
   getDownloadAllURL = () => {
-    return Routes.downloads_assignment_submission_path('', this.props.assignment_id, this.props.grouping_id, {
+    return Routes.downloads_assignment_submission_path(this.props.assignment_id, this.props.grouping_id, {
       revision_identifier: this.props.revision_identifier,
       grouping_id: this.props.grouping_id,
     });

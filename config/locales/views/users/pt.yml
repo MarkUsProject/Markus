@@ -6,7 +6,6 @@ pt:
     new: "Criar novo Administrador"
 
   students:
-    account_settings: "UPDATE ME"
     active: "Ativo"
     admin_actions:
       add_section: "Adicionar a sessão"
@@ -25,8 +24,6 @@ pt:
     not_successfully_added_message_3: "Nome dos alunos são alfa-numéricos."
     not_successfully_added_message_4: "Cada campo é separado por uma vírgula (sem espaços)."
     not_successfully_added_message_5: "Cada linha tem os campos necesários especificados junto ao formulário de carregamento."
-    toggle_invite_notifications: 'UPDATE ME'
-    toggle_results_notifications: 'UPDATE ME'
 
   tas:
     edit: "Editar avaliador"
@@ -35,8 +32,8 @@ pt:
       manage_graders: "Create graders."
 
   users:
+    account_settings: "UPDATE ME"
     api_key:
       reset: "Gerar outra chave para a API"
       unavailable: "Indisponível"
-    update_settings: 'Atualizar configurações'
     verify_settings_update: 'UPDATE ME'

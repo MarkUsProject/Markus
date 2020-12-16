@@ -3,7 +3,6 @@ fr:
     format_string:
       default: "DD d MM yy"
       placeholder: "AAAA-JJ-MM"
-      short: "YYYY-DD-MM"
       datetimepicker: "yy-dd-mm"
 
     before_now_warning: "La date que vous avez choisie est antérieure à la date actuelle."

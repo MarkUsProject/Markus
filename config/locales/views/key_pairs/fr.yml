@@ -1,7 +1,6 @@
 fr:
   key_pairs:
     add_key_pair: "Ajouter une Paire de Clés"
-    are_you_sure: "Êtes-vous sûr?"
     back: "Retourner"
     copy_paste_key: "Copiez et Collez Votre clé Publique"
     create_key_pair: "Créer une Paire de Clés"
@@ -11,6 +10,9 @@ fr:
     delete:
       success: "Paire de Clés supprimé avec succès"
     file: "Fichier"
+    help:
+      macOS_linux: "UPDATE ME"
+      windows: "UPDATE ME"
     key_content: "Contenu de Key"
     key_pairs_title: "Vos Paires de Clés"
     new_key_pair: "Nouvelle Paire de Clés"

@@ -45,7 +45,7 @@
     $('.assignment_file').each(function() {
       if (!filename_re.exec(this.value)) {
         invalid = true;
-        $(this).css('background-color', var(--heavy_error));
+        $(this).css('background-color', document.documentElement.style.getPropertyValue('--light_error'));
       } else {
         $(this).css('background-color', '');
       }
@@ -117,9 +117,6 @@
   }
 
   $(document).ready(function() {
-    // Set locale for language localisation with Moment.js
-    moment.locale(document.getElementById('locale').value);
-
     // Handle periods and hiding/showing things
     if ($('#assignment_due_date').val()) {
       create_grace_periods();

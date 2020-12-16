@@ -1,7 +1,7 @@
 export const themes = {
   dark: {
     annotation_holder: '#48372c',
-    active_menu: 'var(--sharp_line)',
+    active_menu: 'var(--background_main)',
     background_main: '#161616',
     background_support: '#333d3e',
     comments_color: 'var(--severe_success)',
@@ -21,7 +21,7 @@ export const themes = {
     severe_success: '#b9e586',
     sharp_line: '#e5e5e5',
     strings_color: 'var(--severe_error)',
-    sub_menu: '#1b426d'
+    sub_menu: 'var(--primary_one)'
   },
   light: {
     annotation_holder: '#ffd452',
@@ -45,7 +45,7 @@ export const themes = {
     severe_success: '#246700',
     sharp_line: '#000',
     strings_color: 'var(--severe_error)',
-    sub_menu: 'var(--primary_three)'
+    sub_menu: '#32649B'
   }
 };
 
