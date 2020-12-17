@@ -50,11 +50,13 @@ function getErrorPages(value) {
 
 $(document).ready(function () {
   var container = document.getElementById('pdfContainer');
+  let eventBus = new pdfjsViewer.EventBus();
   var pdfViewer = new pdfjsViewer.PDFViewer({
+    eventBus: eventBus,
     container: container,
     renderer: 'svg'
   });
-  document.addEventListener('pagesinit', function () {
+  eventBus.on('pagesinit', function () {
     pdfViewer.currentScaleValue = 'page-fit';
   });
 
