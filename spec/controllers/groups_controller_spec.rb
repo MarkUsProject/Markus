@@ -386,7 +386,7 @@ describe GroupsController do
         [{ 'id' => student1.id,
            'id_number' => student1.id_number,
            'user_name' => student1.user_name,
-           'value' => "#{student1.first_name} #{student1.last_name}"}]
+           'value' => "#{student1.first_name} #{student1.last_name}" }]
       end
 
       it 'returns matches for user_name' do
