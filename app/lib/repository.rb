@@ -349,7 +349,7 @@ module Repository
         if obj.is_a? Repository::RevisionFile
           file_contents = block_given? ? block.call(obj) : download_as_string(obj)
           zip_file.get_output_stream(File.join(zip_name, path)) do |f|
-            f.puts file_contents
+            f.print file_contents
           end
         end
       end

@@ -35,7 +35,7 @@ class StarterFileGroup < ApplicationRecord
         if abs_path.directory?
           zip_file.mkdir(zip_entry_path)
         else
-          zip_file.get_output_stream(zip_entry_path) { |f| f.puts abs_path.read }
+          zip_file.get_output_stream(zip_entry_path) { |f| f.print File.read(abs_path.to_s, mode: 'rb') }
         end
       end
     end

@@ -1203,7 +1203,7 @@ class Assignment < Assessment
         if abs_path.directory?
           zip_file.mkdir(path)
         else
-          zip_file.get_output_stream(path) { |f| f.puts abs_path.read }
+          zip_file.get_output_stream(path) { |f| f.print File.read(abs_path.to_s, mode: 'rb') }
         end
       end
     end
