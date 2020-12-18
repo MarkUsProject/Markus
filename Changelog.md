@@ -1,5 +1,6 @@
 # Changelog
 ## [unreleased]
+- Fix bug where newlines were being added to files in zip archives (#5030)
 
 ## [v1.11.1]
 - Fix bug where duplicate marks can get created because of concurrent requests (#5018)
