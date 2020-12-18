@@ -185,7 +185,7 @@ class GradersController < ApplicationController
   def filter_empty_submissions(grouping_ids)
     grouping_ids.select do |grouping_id|
       submission = Submission.find_by(grouping_id: grouping_id)
-      submission && SubmissionFile.where(submission_id: submission.id).exists?
+      submission && !submission.is_empty
     end
   end
 
