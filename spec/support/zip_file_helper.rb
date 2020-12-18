@@ -25,6 +25,12 @@ shared_examples 'zip file download' do
     it 'should have files that contain the correct content' do
       check_file_content(content, ['test_content'])
     end
+    context 'when there is a newline at the end of the file' do
+      let(:files) { { 'test.txt': 'test_content\n' } }
+      it 'should have files that contain the correct content' do
+        check_file_content(content, ['test_content\n'])
+      end
+    end
   end
   context 'when there is a single test directory' do
     let(:dirs) { ['test_dir'] }
@@ -63,7 +69,7 @@ def check_file_content(content, expected_file_content)
   file_content = []
   Zip::InputStream.open(StringIO.new(content)) do |io|
     while (entry = io.get_next_entry)
-      file_content << io.read.strip.force_encoding('utf-8') unless entry.name_is_directory?
+      file_content << io.read.force_encoding('utf-8') unless entry.name_is_directory?
     end
   end
   expect(file_content).to contain_exactly(*expected_file_content)
