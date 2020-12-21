@@ -106,17 +106,4 @@ export function markupTextInRange(range, colour) {
       })
     })
   }
-  // if (old_node === range.startContainer) {
-  //
-  // } else if (old_node === range.endContainer) {
-  //
-  // } else {
-  //   if (old_node.nodeType === 3) {
-  //     new_node.appendChild(document.createTextNode(old_node.nodeValue));
-  //   } else {
-  //     new_node.appendChild(old_node.cloneNode());
-  //   }
-  //   old_node.parentNode.replaceChild(new_node, old_node);
-  // }
-
 }
