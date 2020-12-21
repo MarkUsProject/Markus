@@ -957,6 +957,7 @@ describe SubmissionsController do
     let(:submission) { create(:submission, grouping: grouping) }
     let(:file1) { fixture_file_upload(File.join('/files', 'Shapes.java'), 'text/java') }
     let(:file2) { fixture_file_upload(File.join('/files', 'test_zip.zip'), 'application/zip') }
+    let(:file3) { fixture_file_upload(File.join('/files', 'example.ipynb')) }
     before :each do
       allow(controller).to receive(:session_expired?).and_return(false)
       allow(controller).to receive(:logged_in?).and_return(true)
@@ -964,7 +965,7 @@ describe SubmissionsController do
       post_as admin, :update_files, params: { assignment_id: assignment.id,
                                               grouping_id: grouping.id,
                                               path: '/files',
-                                              new_files: [file1, file2] }
+                                              new_files: [file1, file2, file3] }
     end
     context 'When the file is in preview' do
       describe 'when the file is not a binary file' do
@@ -975,6 +976,16 @@ describe SubmissionsController do
                                    preview: true,
                                    grouping_id: grouping.id }
           expect(response.body).to eq(File.read(file1))
+        end
+      end
+      describe 'When the file is a jupyter notebook file' do
+        it 'should display rendered html' do
+          get :download, params: { assignment_id: assignment.id,
+                                   file_name: 'example.ipynb',
+                                   path: '/files',
+                                   preview: true,
+                                   grouping_id: grouping.id }
+          expect(response.body).to start_with("<!DOCTYPE html>")
         end
       end
       describe 'When the file is a binary file' do
@@ -997,6 +1008,16 @@ describe SubmissionsController do
                                    preview: false,
                                    grouping_id: grouping.id }
           expect(response.body).to eq(File.read(file1))
+        end
+      end
+      describe 'When the file is a jupyter notebook file' do
+        it 'should download the file as is' do
+          get :download, params: { assignment_id: assignment.id,
+                                   file_name: 'example.ipynb',
+                                   path: '/files',
+                                   preview: false,
+                                   grouping_id: grouping.id }
+          expect(response.body).to eq(File.read(file3))
         end
       end
       describe 'When the file is a binary file' do
