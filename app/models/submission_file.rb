@@ -90,8 +90,8 @@ class SubmissionFile < ApplicationRecord
     File.extname(filename).casecmp('.pdf') == 0
   end
 
-  def is_pynb?
-    File.extname(filename).downcase == '.ipynb'
+  def pynb?
+    File.extname(filename).casecmp('.ipynb')&.zero?
   end
 
   # Taken from http://blade.nagaokaut.ac.jp/cgi-bin/scat.rb/ruby/ruby-talk/44936

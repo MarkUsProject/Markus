@@ -985,7 +985,7 @@ describe SubmissionsController do
                                    path: '/files',
                                    preview: true,
                                    grouping_id: grouping.id }
-          expect(response.body).to start_with("<!DOCTYPE html>")
+          expect(response.body).to start_with('<!DOCTYPE html>')
         end
       end
       describe 'When the file is a binary file' do

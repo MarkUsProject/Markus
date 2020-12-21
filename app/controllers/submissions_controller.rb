@@ -404,8 +404,9 @@ class SubmissionsController < ApplicationController
           file_contents = repo.download_as_string(raw_file)
           file_contents.encode!('UTF-8', invalid: :replace, undef: :replace, replace: '�')
 
-          if file.is_pynb?
-            unique_path = "#{grouping.group.repo_name}/#{raw_file.path}/#{raw_file.name}.#{submission.revision_identifier}"
+          if file.pynb?
+            unique_file = "#{raw_file.name}.#{submission.revision_identifier}"
+            unique_path = "#{grouping.group.repo_name}/#{raw_file.path}/#{unique_file}"
             file_contents = ipynb_to_html(file_contents, unique_path)
           elsif SubmissionFile.is_binary?(file_contents)
             # If the file appears to be binary, display a warning
@@ -446,7 +447,7 @@ class SubmissionsController < ApplicationController
                                                  path))[params[:file_name]]
         file_contents = repo.download_as_string(file)
         if params[:preview] == 'true'
-          if File.extname(params[:file_name]).downcase == '.ipynb'
+          if File.extname(params[:file_name]).casecmp('.ipynb')&.zero?
             file_path = "#{@assignment.repository_folder}/#{path}/#{params[:file_name]}"
             unique_path = "#{@grouping.group.repo_name}/#{file_path}.#{@revision.revision_identifier}"
             file_contents = ipynb_to_html(file_contents, unique_path)

@@ -38,20 +38,20 @@ function getAllNodesInRange(range) {
     between_primes.push(start_prime.nextSibling);
     start_prime = start_prime.nextSibling;
   }
-  return [start].concat(start_ancestors, between_primes, end_ancestors, [end])
+  return [start].concat(start_ancestors, between_primes, end_ancestors, [end]);
 }
 
 function getLeafNodes(root, _nodes) {
   _nodes = _nodes || [];
   let child = root.firstChild;
   if (!child) {
-    _nodes.push(root)
+    _nodes.push(root);
   }
   while(child) {
     getLeafNodes(child, _nodes);
     child = child.nextSibling;
   }
-  return _nodes
+  return _nodes;
 }
 
 export function markupTextInRange(range, colour) {
@@ -66,11 +66,11 @@ export function markupTextInRange(range, colour) {
       const unmarked2 = document.createTextNode(old_node.nodeValue.substring(range.endOffset));
       new_node.appendChild(marked);
       parent.replaceChild(unmarked1, old_node);
-      parent.insertBefore(new_node, unmarked1.nextSibling)
-      parent.insertBefore(unmarked2, new_node.nextSibling)
+      parent.insertBefore(new_node, unmarked1.nextSibling);
+      parent.insertBefore(unmarked2, new_node.nextSibling);
     } else if (old_node.nodeName === 'img' || old_node.childNodes.length) {
       const new_node = document.createElement('div');
-      new_node.style.border = `5px solid ${colour}`
+      new_node.style.border = `5px solid ${colour}`;
       new_node.appendChild(old_node.cloneNode(true));
       parent.replaceChild(new_node, old_node);
     }
@@ -86,24 +86,24 @@ export function markupTextInRange(range, colour) {
             const marked = document.createTextNode(old_node.nodeValue.substring(range.startOffset));
             new_node.appendChild(marked);
             parent.replaceChild(unmarked, old_node);
-            parent.insertBefore(new_node, unmarked.nextSibling)
+            parent.insertBefore(new_node, unmarked.nextSibling);
           } else if (old_node === range.endContainer) {
             const marked = document.createTextNode(old_node.nodeValue.substring(0, range.endOffset));
             const unmarked = document.createTextNode(old_node.nodeValue.substring(range.endOffset));
             new_node.appendChild(marked);
             parent.replaceChild(new_node, old_node);
-            parent.insertBefore(unmarked, new_node.nextSibling)
+            parent.insertBefore(unmarked, new_node.nextSibling);
           } else {
             new_node.appendChild(document.createTextNode(old_node.nodeValue));
             parent.replaceChild(new_node, old_node);
           }
         } else if (old_node.nodeName === 'img' || old_node.childNodes.length) {
           const new_node = document.createElement('div');
-          new_node.style.border = `5px solid ${colour}`
+          new_node.style.border = `5px solid ${colour}`;
           new_node.appendChild(old_node.cloneNode(true));
           parent.replaceChild(new_node, old_node);
         }
-      })
-    })
+      });
+    });
   }
 }
