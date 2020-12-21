@@ -3,7 +3,7 @@ function getAllNodesInRange(range) {
   const end = range.endContainer;
 
   if (start === end) {
-    return [start]
+    return [start];
   }
 
   const commonAncestor = range.commonAncestorContainer;
