@@ -6,7 +6,7 @@
   </td>
   <td>
     <% unless grade_entry_form.due_date.nil? %>
-      <%= l(grade_entry_form.due_date, format: :long) %>
+      <%= l(grade_entry_form.due_date) %>
     <% end %>
   </td>
   <% unless upcoming %>
