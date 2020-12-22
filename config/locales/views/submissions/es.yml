@@ -96,6 +96,7 @@ es:
 
     # Miscellaneous
     cannot_display: "Contenido binario: Use el botón de descarga para ver el archivo!"
+    get_anyway: "UPDATE ME"
     commit_date: "Fecha del Commit"
     grace_credits_used: "Créditos de Gracia Usados"
     grading_can_begin: "El proceso de calificación puede iniciar"

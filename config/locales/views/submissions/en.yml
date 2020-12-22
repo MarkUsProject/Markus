@@ -56,6 +56,7 @@ en:
 
     # Miscellaneous
     cannot_display: "Cannot display this file. Please download it to view."
+    get_anyway: "Try to render this file anyway?"
     commit_date: "Submission Date"
     grace_credits_used: "Grace Credits Used"
     grading_can_begin: "Grading can begin"

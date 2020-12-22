@@ -5,6 +5,7 @@ import {ImageViewer} from './image_viewer'
 import {TextViewer} from './text_viewer'
 import {PDFViewer} from './pdf_viewer';
 import {JupyterNotebookViewer} from "./jupyter_notebook_viewer";
+import {BinaryViewer} from "./binary_viewer";
 
 
 export class FileViewer extends React.Component {
@@ -74,11 +75,12 @@ export class FileViewer extends React.Component {
   /*
    * Update the contents being displayed with the given submission file id.
    */
-  set_submission_file = (submission_file_id) => {
+  set_submission_file = (submission_file_id, force_text) => {
     if (!this.props.result_id && this.props.selectedFile === null) {
       this.setState({loading: false, type: null});
       return;
     }
+    force_text = !!force_text;
 
     // TODO: is this the right spot to remove these? Should it be done earlier?
     $('.annotation_text_display').each(function() {
@@ -90,7 +92,7 @@ export class FileViewer extends React.Component {
           fetch(Routes.get_file_assignment_submission_path(
             this.props.assignment_id,
             this.props.submission_id,
-            {submission_file_id: submission_file_id}),
+            {submission_file_id: submission_file_id, force_text: force_text}),
             {credentials: 'include'})
             .then(res => res.json())
             .then(body => {
@@ -107,7 +109,7 @@ export class FileViewer extends React.Component {
         } else {
           $.ajax({
             url: this.props.selectedFileURL,
-            data: {preview: true},
+            data: {preview: true, force_text: force_text},
             method: 'GET'
           }).then(res => {
             this.setState({content: res.replace(/\r?\n/gm, '\n'), type: this.props.selectedFileType, loading: false});
@@ -153,6 +155,12 @@ export class FileViewer extends React.Component {
         content={this.state.content}
         {...commonProps}
       />;
+    } else if (this.state.type === 'binary') {
+      return <BinaryViewer
+        content={this.state.content}
+        getAnyway={() => this.set_submission_file(this.props.selectedFile, true)}
+        {...commonProps}
+      />
     } else if (this.state.type !== '') {
       return <TextViewer
         type={this.state.type}

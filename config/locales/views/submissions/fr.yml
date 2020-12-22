@@ -49,6 +49,7 @@ fr:
 
     # Miscellaneous
     cannot_display: "Fichier binaire : utiliser le bouton Télécharger pour voir."
+    get_anyway: "Essayez de voir le fichier quand même?"
     commit_date: "Date d'envoi (commit)"
     grace_credits_used: "Utilisation des \"grace credits\""
     grading_can_begin: "L'évaluation peut commencer"
