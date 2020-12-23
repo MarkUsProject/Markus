@@ -22,8 +22,8 @@
   <% else %>
     <%= "#{Submission.model_name.human.pluralize}: #{sanitize(@assignment.short_identifier)}" %>
   <% end %>
-  <div class='title-help submissions_help'>
-    <p class='help-message-title submissions_help'>
+  <div class='title-help'>
+    <p>
       <% if @current_user.ta? %>
         <%= t('submissions.help.browse.tas') %>
       <% else %>
