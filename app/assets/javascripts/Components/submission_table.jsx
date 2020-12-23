@@ -157,14 +157,14 @@ class RawSubmissionTable extends React.Component {
       Header: I18n.t('activerecord.models.tag.other'),
       accessor: 'tags',
       Cell: row => (
-        <div className="tag_list">
+        <ul className="tag-list">
           {row.original.tags.map(tag =>
-            <span key={`${row.original._id}-${tag}`}
+            <li key={`${row.original._id}-${tag}`}
               className="tag-element">
               {tag}
-            </span>
+            </li>
           )}
-        </div>
+        </ul>
       ),
       minWidth: 80,
       sortable: false
@@ -178,7 +178,7 @@ class RawSubmissionTable extends React.Component {
         ri.original.marking_state === 'before_due_date') {
       return {ri};
     } else {
-      return {ri, className: 'submission_collected'};
+      return {ri, style: {background: document.documentElement.style.getPropertyValue('--light_success')}};
     }
   };
 
