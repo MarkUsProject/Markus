@@ -52,20 +52,6 @@ module SubmissionsHelper
     result
   end
 
-  # If the grouping is collected or has an error,
-  # style the table row green or red respectively.
-  # Classname will be applied to the table row
-  # and actually styled in CSS.
-  def get_tr_class(grouping, assignment)
-    if assignment.is_peer_review?
-      nil
-    elsif grouping.is_collected?
-      'submission_collected'
-    else
-      nil
-    end
-  end
-
   def get_grouping_name_url(grouping, result)
     if grouping.assignment.is_peer_review? && !grouping.peer_reviews_to_others.empty? && result.is_a_review?
       url_for(view_marks_assignment_submission_result_path(
