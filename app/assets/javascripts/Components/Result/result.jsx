@@ -31,7 +31,7 @@ class Result extends React.Component {
         $('footer')
       ];
       $.each(toggle_elements, (idx, element) => element.toggle());
-      $('#content').toggleClass('expanded_view');
+      $('#wrapper').toggleClass('fullscreen-view');
     }
 
     this.state = {
@@ -174,7 +174,7 @@ class Result extends React.Component {
       $('footer')
     ];
     $.each(toggle_elements, (idx, element) => element.toggle());
-    $('#content').toggleClass('expanded_view');
+    $('#wrapper').toggleClass('fullscreen-view');
 
     this.setState({fullscreen: !this.state.fullscreen}, fix_panes);
     if (typeof(Storage) !== 'undefined') {
