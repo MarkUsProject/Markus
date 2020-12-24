@@ -96,6 +96,10 @@ label.required::after, th.required::after {
     margin-top: 3.5em;
     padding: $dimen-vertical $dimen-hor-mobile;
   }
+
+  &:fullscreen {
+    padding: 0;
+  }
 }
 
 #loggedIn {

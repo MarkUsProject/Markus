@@ -2,12 +2,3 @@
 @import 'common/assignment_dropdown';
 @import 'automated_tests';
 @import 'common/notes_dialog';
-
-.fullscreen-view {
-  height: 100%;
-  padding: 0;
-
-  #content {
-    padding: 0;
-  }
-}
