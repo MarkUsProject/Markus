@@ -1163,7 +1163,7 @@ class Assignment < Assessment
 
       unless is_empty || revision_timestamp.nil?
         # TODO: for some reason, this is not automatically converted to our timezone by the query
-        base[:submission_time] = I18n.l(revision_timestamp.in_time_zone, format: :shorter)
+        base[:submission_time] = I18n.l(revision_timestamp.in_time_zone)
       end
 
       if result_info['results.id'].present?
