@@ -43,8 +43,14 @@ pre,
 }
 
 .test-results-output {
-  margin-bottom: 0;
-  margin-top: 0;
+  margin: 0;
+
+  &:not(:empty) {
+    padding-bottom: 5px;
+    padding-left: 10px;
+    padding-right: 70px;
+    padding-top: 5px;
+  }
 }
 
 /** Headings */
@@ -446,19 +452,16 @@ kbd {
 /** Test script results table */
 
 .test-result-pass {
-  background-color: #caffc9 !important;
+  background-color: $light-success;
 }
 
 .test-result-partial {
-  background-color: #ffffc9 !important;
+  background-color: $light-alert;
 }
 
+.test-result-error,
 .test-result-fail {
-  background-color: #ffcac9 !important;
-}
-
-.test-result-error {
-  background-color: #ff7a77 !important;
+  background-color: $light-error;
 }
 
 // Panes

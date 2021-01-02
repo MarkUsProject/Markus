@@ -287,8 +287,22 @@ label.required::after, th.required::after {
     color: $sharp-line;
   }
 
+  .rt-expandable:empty {
+    cursor: default;
+  }
+
   .rt-expander::after {
-    border-top-color: $gridline;
+    border-top-color: $sharp-line;
+  }
+
+  .hide-rt-expander {
+    &.rt-expandable {
+      cursor: default;
+    }
+
+    .rt-expander {
+      display: none;
+    }
   }
 
   .-loading.-inner {
