@@ -1,7 +1,7 @@
 {
   "dependencies": {
     "@babel/core": "^7.12.10",
-    "@babel/preset-react": "^7.12.7",
+    "@babel/preset-react": "^7.12.10",
     "@rails/webpacker": "5.2",
     "chart.js": "^2.9.4",
     "heic2any": "^0.0.3",
