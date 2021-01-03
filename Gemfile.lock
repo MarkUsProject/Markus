@@ -241,7 +241,7 @@ GEM
     raindrops (0.19.1)
     rake (13.0.3)
     rdoc (6.3.0)
-    redcarpet (3.5.0)
+    redcarpet (3.5.1)
     redis (4.0.3)
     redis-namespace (1.6.0)
       redis (>= 3.0.4)
