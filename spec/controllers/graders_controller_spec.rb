@@ -532,6 +532,33 @@ describe GradersController do
           expect(@grouping2.tas).to include(@ta2)
           expect(@grouping3.tas).to eq []
         end
+        context 'and skip_empty_submissions is true' do
+          before do
+            submission
+            post_as @admin, :global_actions, params: { assignment_id: @assignment.id, global_actions: 'assign',
+                                                       groupings: [@grouping1], graders: [@ta1.id.to_s],
+                                                       current_table: 'groups_table', skip_empty_submissions: 'true' }
+          end
+          context 'and the group has no submission' do
+            let(:submission) { nil }
+            it 'should not assign graders' do
+              expect(@grouping1.tas).to be_empty
+            end
+          end
+          context 'and the group has a non-empty submission' do
+            let(:submission) { create(:version_used_submission, grouping: @grouping1, is_empty: false) }
+            it 'should assign graders' do
+              expect(@grouping1.tas).to include(@ta1)
+            end
+          end
+          context 'and the group has an empty submission' do
+            let(:submission) { create(:version_used_submission, grouping: @grouping1, is_empty: true) }
+
+            it 'should assign graders' do
+              expect(@grouping1.tas).to be_empty
+            end
+          end
+        end
       end #assign
 
       context 'POST on :global_actions on unassign' do

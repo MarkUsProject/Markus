@@ -11,7 +11,6 @@ function getFile(filename, pdfViewer) {
   $('#info_form input[type=submit]').prop('disabled', false);
   $('#split_page_id').val(filename.split('.')[0])
   var path = Routes.download_error_file_assignment_exam_template_path(
-    '',
     <%= @assignment.id %>,
     <%= @exam_template.id %>,
     { file_name: filename, show_in_browser: true }
@@ -51,11 +50,13 @@ function getErrorPages(value) {
 
 $(document).ready(function () {
   var container = document.getElementById('pdfContainer');
+  let eventBus = new pdfjsViewer.EventBus();
   var pdfViewer = new pdfjsViewer.PDFViewer({
+    eventBus: eventBus,
     container: container,
     renderer: 'svg'
   });
-  document.addEventListener('pagesinit', function () {
+  eventBus.on('pagesinit', function () {
     pdfViewer.currentScaleValue = 'page-fit';
   });
 

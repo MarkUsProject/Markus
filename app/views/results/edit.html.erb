@@ -49,7 +49,7 @@
 
 <aside class='dialog' id='help_dialog' style='display:none'>
   <h2><%=t('results.keybinding.keyboard_help')%></h2>
-  <table class="help_table">
+  <table class="shortcuts-table">
     <tr>
       <td><kbd>Alt</kbd> + <kbd>Enter/return</kbd></td>
       <td><%=t('results.keybinding.toggle_compact')%></td>
@@ -127,7 +127,7 @@
 
 <div id='criterion_incomplete_error' class='error hidden'></div>
 
-<div id='result-main'></div>
+<div id='result-main' class='flex-col'></div>
 
 <!-- Annotation pane-->
 <div id='annotation_holder'></div>

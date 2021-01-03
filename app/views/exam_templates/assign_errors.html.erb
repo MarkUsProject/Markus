@@ -16,11 +16,11 @@
 
 <% content_for :title do %>
   <%= t('exam_templates.assign_errors.fix_errors') %> - <%= @exam_template.name %>
-  <span class='title-help assignment_groups_help'>
-    <span class='help-message-title assignment_groups_help'>
+  <div class='title-help'>
+    <p>
       <%= t('exam_templates.assign_scans.help') %>
-    </span>
-  </span>
+    </p>
+  </div>
 <% end %>
 
 <% @heading_buttons = [
@@ -28,17 +28,15 @@
       link_path: view_logs_assignment_exam_templates_path },
 ] %>
 
-<div id='panes-content'>
-  <div id='left-pane' class='display_pane'>
-    <div id='codeviewer' class='flex-col'>
-      <div id="pdfContainer">
-        <div id="viewer" class="pdfViewer"></div>
-      </div>
+<div class='pane-wrapper' style='height: calc(70vh);'>
+  <div class='pane' style='overflow-y: scroll'>
+    <div id="pdfContainer">
+      <div id="viewer" class="pdfViewer"></div>
     </div>
   </div>
 
-  <div id='right-pane' class='input_pane'>
-    <h2 class="side_header"><%= t('exam_templates.assign_errors.document_info') %></h2>
+  <div class='pane' style="width: 29.5%; flex: 0 auto;">
+    <h2><%= t('exam_templates.assign_errors.document_info') %></h2>
     <%= form_tag fix_error_assignment_exam_template_path(id: @exam_template.id),
                  id: 'info_form',
                  remote: true do %>

@@ -24,8 +24,8 @@
     }).data("ui-autocomplete")._renderItem = function (ul, item) {
       return $("<li>")
         .data("ui-autocomplete-item", item)
-        .append("<div>" + item.label + "<br>" +
-          "<span class='stuid'>" + item.id_number + " | " + item.user_name + "</span></div>")
+        .append(`<div><strong>${item.label}</strong><br>` +
+          `<span>${item.id_number} | ${item.user_name}</span></div>`)
         .appendTo(ul);
     };
     $("#assign_student").submit(function (e) {
@@ -65,11 +65,13 @@
     }
 
     let container = document.getElementById('pdfContainer');
+    let eventBus = new pdfjsViewer.EventBus();
     let pdfViewer = new pdfjsViewer.PDFViewer({
+      eventBus: eventBus,
       container: container,
       renderer: 'svg'
     });
-    document.addEventListener('pagesinit', function() {
+    eventBus.on('pagesinit', function() {
       pdfViewer.currentScaleValue = 'page-fit';
     });
     parseNextScan(<%= raw @data.to_json %>);
@@ -81,11 +83,11 @@
 </script>
 <% content_for :title do %>
     <%= t('exam_templates.assign_scans.title') %>
-    <span class='title-help assignment_groups_help'>
-      <p class='help-message-title assignment_groups_help'>
+    <div class='title-help'>
+      <p>
         <%= t('exam_templates.assign_scans.help') %>
       </p>
-    </span>
+    </div>
 <% end %>
 <% content_for :additional_headings do %>
     <meter
@@ -100,36 +102,33 @@
     &nbsp;|&nbsp;
     <%= link_to t('groups.manage_groups'), :assignment_groups %>
 <% end %>
-<div id='panes-content'>
-  <div id='panes'>
-    <div id='left-pane' class='display_pane'>
-      <div id="pdfContainer">
-        <div id="viewer" class="pdfViewer"></div>
-      </div>
+<div class='pane-wrapper' style='height: calc(70vh);'>
+  <div class='pane' style='overflow-y: scroll'>
+    <div id="pdfContainer">
+      <div id="viewer" class="pdfViewer"></div>
     </div>
+  </div>
 
-    <div id='drag'></div>
+  <div class='pane' style="width: 29.5%; flex: 0 auto;">
+    <div>
+      <h2 id="group_name"></h2>
+      <form id="assign_student">
+        <input id="names" name="names" type="text" placeholder="<%= User.human_attribute_name(:full_name) %>">
+        <input id="student_id" name="s_id" type="hidden">
+        <input id="grouping_id" name="g_id" value="" type="hidden">
 
-    <div id='right-pane' class='input_pane'>
-      <div class='ui-tabs-panel flex-col'>
-        <div class="side_header">
-          <h2 id="group_name"></h2>
-        </div>
-        <form id="assign_student" class="side_header">
-          <input id="names" name="names" type="text" placeholder="<%= User.human_attribute_name(:full_name) %>">
-          <input id="student_id" name="s_id" type="hidden">
-          <input id="grouping_id" name="g_id" value="" type="hidden">
-          <br>
+        <p>
           <label for="skip"><%= t('exam_templates.assign_scans.skip_group') %></label>
           <input type="checkbox" name="skip" id="skip" value="1">
-          <br>
+        </p>
+        <p>
           <button type="submit"><%= t('save') %></button>
-        </form>
-        <h3>
-          <%= Group.human_attribute_name(:student_memberships) %>
-        </h3>
-        <div id="group_members">
-        </div>
+        </p>
+      </form>
+      <h3>
+        <%= Group.human_attribute_name(:student_memberships) %>
+      </h3>
+      <div id="group_members">
       </div>
     </div>
   </div>

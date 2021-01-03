@@ -163,7 +163,7 @@ class GradersController < ApplicationController
       return
     end
     @assignment = Assignment.find(params[:assignment_id])
-    render :grader_summary, layout: 'content'
+    render :grader_summary
   end
 
   private
@@ -185,7 +185,7 @@ class GradersController < ApplicationController
   def filter_empty_submissions(grouping_ids)
     grouping_ids.select do |grouping_id|
       submission = Submission.find_by(grouping_id: grouping_id)
-      submission && SubmissionFile.where(submission_id: submission.id).exists?
+      submission && !submission.is_empty
     end
   end
 

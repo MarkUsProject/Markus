@@ -1,5 +1,14 @@
 # Changelog
 ## [unreleased]
+- Add time zone to settings (#4938)
+- Fix bug where newlines were being added to files in zip archives (#5030)
+- Fix bug where graders could be assigned to groups with empty submissions (#5031)
+- Use Fullscreen API for grading in "fullscreen mode" (#5036)
+
+## [v1.11.1]
+- Fix bug where duplicate marks can get created because of concurrent requests (#5018)
+- Only display latest results for each test group to students viewing results from an released assignment (#5013)
+- Remove localization path parameter (#4985)
 
 ## [v1.11.0]
 - Converts annotation modals from ERB into React (#4997)
@@ -7,7 +16,6 @@
 - Add admins to display name (#4994)
 - Adds MathJax and Markdown support for remark requests (#4992)
 - Use display name on top right corner (#4979)
-- Add time zone to settings (#4938)
 - Add display name to settings (#4937)
 - Create the required directory when uploading zip file with unzip is true (#4941)
 - Remove preview of compressed archives in repo browser (#4920)

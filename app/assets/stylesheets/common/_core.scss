@@ -96,6 +96,10 @@ label.required::after, th.required::after {
     margin-top: 3.5em;
     padding: $dimen-vertical $dimen-hor-mobile;
   }
+
+  &:fullscreen {
+    padding: 0;
+  }
 }
 
 #loggedIn {
@@ -158,49 +162,55 @@ label.required::after, th.required::after {
   background: asset-url('icons/help_icon.png') no-repeat;
   cursor: help;
   display: inline-block;
-  font-size: 0.8rem;
-  font-weight: 400;
-  line-height: 1rem;
   height: 28px;
   width: 28px;
 
-  a {
-    font-size: 1em;
+  p {
+    background: $primary-two;
+    border: 1px solid $primary-three;
+    border-radius: $radius;
+    display: none;
+    font-size: 0.8rem;
+    font-weight: 400;
+    margin: 0;
+    padding: 10px;
+    position: relative;
+    width: 350px;
+    z-index: 10000;
   }
 }
 
 .help {
   @extend .help-icon;
   float: right;
+
+  p {
+    float: right;
+    right: 35px;
+  }
 }
 
 .title-help {
   @extend .help-icon;
   margin-left: 10px;
+
+  p {
+    float: left;
+    left: 35px;
+  }
 }
 
-.help-message {
-  background: $light-alert;
-  border: 1px solid $alert;
-  border-radius: $radius;
-  display: inline-block;
-  padding: 10px;
-  position: relative;
-  top: -15px;
-  width: 350px;
-  z-index: 10000;
-}
+.inline-help {
+  @extend .help-icon;
+  background-size: 1em;
+  height: 1em;
+  margin-left: 5px;
+  width: 1em;
 
-.help-message-title {
-  @extend .help-message;
-  float: left;
-  left: 35px;
-}
-
-.help-message-box {
-  @extend .help-message;
-  float: right;
-  right: 35px;
+  p {
+    float: left;
+    left: calc(1em + 10px);
+  }
 }
 
 /* Tables */

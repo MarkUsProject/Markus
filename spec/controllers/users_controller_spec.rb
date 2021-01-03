@@ -24,6 +24,56 @@ describe UsersController do
         expect(admin.api_key).not_to eq(old_key)
       end
     end
+
+    describe 'Change locale' do
+      it 'updates locale for admin' do
+        locale = 'es'
+        expect(I18n.locale).to eq I18n.default_locale
+        patch_as admin,
+                 'update_settings',
+                 params: { 'user': { 'locale': locale } }
+
+        @controller = MainController.new
+        get 'check_timeout'
+
+        expect(admin.reload.locale).to eq locale
+        expect(I18n.locale).to eq locale.to_sym
+      end
+    end
+  end
+
+  describe 'User is a TA' do
+    let(:ta) { create :ta }
+
+    describe 'change display name in settings' do
+      it 'updates student display_name' do
+        display_name = 'First Last'
+        patch_as ta,
+                 'update_settings',
+                 params: { 'user': { 'display_name': display_name } }
+        expect(ta.reload.display_name).to eq display_name
+      end
+    end
+
+    describe 'change locale in settings' do
+      after(:each) do
+        I18n.locale = :en
+      end
+
+      it 'updates locale for student' do
+        locale = 'es'
+        expect(I18n.locale).to eq I18n.default_locale
+        patch_as ta,
+                 'update_settings',
+                 params: { 'user': { 'locale': locale } }
+
+        @controller = MainController.new
+        get 'check_timeout'
+
+        expect(ta.reload.locale).to eq locale
+        expect(I18n.locale).to eq locale.to_sym
+      end
+    end
   end
 
   describe 'User is a Student' do
@@ -115,20 +165,6 @@ describe UsersController do
         get 'check_timeout'
 
         expect(student.reload.locale).to eq locale
-        expect(I18n.locale).to eq locale.to_sym
-      end
-
-      it 'updates locale for admin' do
-        locale = 'es'
-        expect(I18n.locale).to eq I18n.default_locale
-        patch_as admin,
-                 'update_settings',
-                 params: { 'user': { 'locale': locale } }
-
-        @controller = MainController.new
-        get 'check_timeout'
-
-        expect(admin.reload.locale).to eq locale
         expect(I18n.locale).to eq locale.to_sym
       end
     end

@@ -43,21 +43,3 @@
 <% end %>
 
 <div id='file_manager'></div>
-
-<aside class='dialog' id='addnew_dialog'>
-  <h2><%= t('upload_the', item: t(:file)) %></h2>
-
-  <%= form_tag update_files_assignment_submissions_path(@assignment.id),
-               { multipart: true, id: 'file_form' } do %>
-    <%= file_field_tag :new_files, name: 'new_files[]', multiple: true %>
-    <%= hidden_field_tag :path, @path %>
-
-    <section class='dialog-actions'>
-      <%= submit_tag t(:upload),
-                     disabled: !@grouping.is_valid? %>
-      <%= button_tag t(:cancel),
-                     type: 'button',
-                     onclick: 'modal_addnew.close(); return false;' %>
-    </section>
-  <% end %>
-</aside>

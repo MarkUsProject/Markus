@@ -2,6 +2,7 @@
 
 @import 'reset';
 @import 'constants';
+@import 'columns';
 @import 'mixins';
 @import 'icons';
 @import 'react_json_schema_form';
@@ -174,15 +175,9 @@ textarea {
     background-color: $light-error;
   }
 
-  &[disabled] {
-    background-color: $disabled-area;
-    border-color: $background-support;
-    color: $sharp-line;
-  }
-
+  &[disabled],
   &[readonly] {
-    background-color: $background-support;
-    border-color: $line;
+    background-color: $disabled-area;
     color: $sharp-line;
   }
 
@@ -240,7 +235,6 @@ button,
   outline: none;
   padding: 0.5em 1.5em;
   text-align: center;
-  text-shadow: 0 1px 0 $background-main;
   transition: all $time-quick;
 
   &:hover {
@@ -442,6 +436,11 @@ kbd {
   font-size: 0.9em;
   padding: 0.4em 0.6em;
   text-shadow: 0 1px 0 $background-main;
+}
+
+.shortcuts-table {
+  border-collapse: separate;
+  border-spacing: 5px;
 }
 
 /** Test script results table */
@@ -671,30 +670,44 @@ ul.tags {
   }
 }
 
+.tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  list-style: none;
+  margin: 0 0 5px;
+  padding: 0;
+  text-align: left;
+
+  li {
+    background-color: $background-support;
+    border: 1px solid $primary-three;
+    border-radius: 15px;
+    color: $primary-one;
+    display: inline;
+    margin: 1px;
+    padding-left: 5px;
+    padding-right: 5px;
+    text-align: center;
+    transition: background-color 0.2s, color 0.2s;
+    white-space: nowrap;
+
+    &.active-tag {
+      cursor: pointer;
+
+      &:hover {
+        background-color: $primary-one;
+        color: $background-main;
+      }
+    }
+  }
+}
+
 .text-content {
   flex: 1;
 }
 
 .red-text {
   color: $severe-error;
-}
-
-.tag-element {
-  background-color: $background-support;
-  border: 1px solid $primary-three;
-  border-radius: 15px;
-  color: $primary-one;
-  cursor: pointer;
-  padding-left: 5px;
-  padding-right: 5px;
-  text-align: center;
-  transition: background-color 0.2s, color 0.2s;
-  white-space: nowrap;
-
-  &:hover {
-    background-color: $primary-one;
-    color: $background-main;
-  }
 }
 
 
@@ -806,7 +819,7 @@ nav {
     }
 
     a {
-      color: $sharp-line;
+      color: $background-main;
     }
   }
 
@@ -892,7 +905,7 @@ nav {
         color: $background-main;
 
         > a {
-          color: $sharp-line;
+          color: $background-main;
         }
       }
     }
@@ -962,6 +975,10 @@ nav {
   opacity: 0.5;
   position: absolute;
   z-index: 1;
+}
+
+#image_container {
+  position: relative;  // For image annotations
 }
 
 
@@ -1067,7 +1084,22 @@ nav {
   transform-origin: right top;
 }
 
+// jQuery UI autocomplete
+.ui-autocomplete {
+  max-height: 250px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding-right: 5px;
+}
+
 // Login
 .cookies-eu-ok {
   background-color: $primary-three;
 }
+
+// Flexbox layout for Results/edit and Results/view_marks
+.flex-col {
+  display: flex;
+  flex-direction: column;
+}
+

@@ -3,7 +3,6 @@ en:
     format_string:
       default: "DD, MM d, yy"
       placeholder: "YYYY-MM-DD"
-      short: "YYYY-MM-DD"
       datetimepicker: "yy-mm-dd"
 
     before_now_warning: "WARNING: The date you have selected is in the past."

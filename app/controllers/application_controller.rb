@@ -26,10 +26,11 @@ class ApplicationController < ActionController::Base
   before_action :authenticate, except: [:login, :page_not_found, :check_timeout]
   # check for AJAX requests
   after_action :flash_to_headers
-  # Define default URL options to include the locale
+
+  # Define default URL options to include the locale if the user is not logged in
   def default_url_options(options={})
     if current_user
-      { locale: current_user.locale }
+      {}
     else
       { locale: I18n.locale }
     end

@@ -297,6 +297,26 @@ describe ResultsController do
           expect(response.body).to match SAMPLE_ERROR_MESSAGE
         end
       end
+      context 'when duplicate marks exist' do
+        # NOTE: this should not occur but it does happen because of concurrent requests and the fact that
+        #       the find_or_create_by method is not atomic and neither are database writes
+        let(:mark2) { build :mark, result: flexible_mark.result, criterion: flexible_mark.criterion }
+        before do
+          mark2.save(validate: false)
+          patch :update_mark, params: { assignment_id: assignment.id, submission_id: submission.id,
+                                        id: incomplete_result.id, criterion_id: flexible_mark.criterion_id,
+                                        mark: 1 }, xhr: true
+        end
+        it 'should update the mark' do
+          expect(flexible_mark.reload.mark).to eq 1
+        end
+        it 'should result in a valid mark' do
+          expect(flexible_mark.reload).to be_valid
+        end
+        it 'should destroy the other duplicate mark' do
+          expect { mark2.reload }.to raise_error(ActiveRecord::RecordNotFound)
+        end
+      end
     end
     context 'accessing view_mark' do
       before :each do
