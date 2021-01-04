@@ -19,7 +19,7 @@
   <div id='mobile_menu'>
     <a id='menu_icon'></a>
   </div>
-  <div id='wrapper' class='wrapper_flex'>
+  <div id='wrapper' class='flex-col'>
     <nav id='menus'>
       <div id='menus_child'>
         <%= render partial: 'layouts/header' %>
@@ -35,7 +35,7 @@
       <span id='ellipsis'></span>
     </div>
 
-    <section id='content'>
+    <section id='content' class='flex-col'>
       <%= render partial: 'shared/flash_message' %>
       <%= render partial: 'layouts/noscript'%>
       <%= content_for?(:content) ? yield(:content) : yield %>

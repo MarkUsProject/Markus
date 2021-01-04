@@ -19,27 +19,13 @@ const INITIAL_ANNOTATION_MODAL_STATE = {
 class Result extends React.Component {
   constructor(props) {
     super(props);
-    let fullscreen;
-    if (typeof(Storage) !== 'undefined') {
-      fullscreen = localStorage.getItem('fullscreen') === 'on';
-    }
-
-    if (fullscreen) {
-      let toggle_elements = [
-        $('#menus'),
-        $('.title_bar'),
-        $('footer')
-      ];
-      $.each(toggle_elements, (idx, element) => element.toggle());
-      $('#content').toggleClass('expanded_view');
-    }
 
     this.state = {
       annotation_categories: [],
       loading: true,
       feedback_files: [],
       submission_files: {files: [], directories: {}, name: '', path: []},
-      fullscreen,
+      fullscreen: false,
       annotationModal: INITIAL_ANNOTATION_MODAL_STATE,
     };
 
@@ -51,6 +37,10 @@ class Result extends React.Component {
     window.modal = new ModalMarkus('#annotation_dialog');
     window.modalNotesGroup = new ModalMarkus('#notes_dialog');
     window.modal_create_new_tag = new ModalMarkus('#create_new_tag');
+
+    document.addEventListener('fullscreenchange', () => {
+      this.setState({fullscreen: !!document.fullscreenElement}, fix_panes);
+    });
   }
 
   fetchData = () => {
@@ -168,19 +158,10 @@ class Result extends React.Component {
   };
 
   toggleFullscreen = () => {
-    let toggle_elements = [
-      $('#menus'),
-      $('.title_bar'),
-      $('footer')
-    ];
-    $.each(toggle_elements, (idx, element) => element.toggle());
-    $('#content').toggleClass('expanded_view');
-
-    this.setState({fullscreen: !this.state.fullscreen}, fix_panes);
-    if (typeof(Storage) !== 'undefined') {
-      let compact_view = localStorage.getItem('fullscreen');
-      if (compact_view) localStorage.removeItem('fullscreen');
-      else localStorage.setItem('fullscreen', 'on');
+    if (!document.fullscreenElement) {
+      document.getElementById('content').requestFullscreen();
+    } else {
+      document.exitFullscreen();
     }
   };
 
