@@ -90,7 +90,7 @@ class SubmissionFile < ApplicationRecord
     File.extname(filename).casecmp('.pdf') == 0
   end
 
-  def pynb?
+  def is_pynb?
     File.extname(filename).casecmp('.ipynb')&.zero?
   end
 

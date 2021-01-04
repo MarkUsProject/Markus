@@ -404,7 +404,7 @@ class SubmissionsController < ApplicationController
           file_contents = repo.download_as_string(raw_file)
           file_contents.encode!('UTF-8', invalid: :replace, undef: :replace, replace: '�')
 
-          if file.pynb?
+          if file.is_pynb?
             unique_file = "#{raw_file.name}.#{submission.revision_identifier}"
             unique_path = "#{grouping.group.repo_name}/#{raw_file.path}/#{unique_file}"
             file_contents = ipynb_to_html(file_contents, unique_path)
