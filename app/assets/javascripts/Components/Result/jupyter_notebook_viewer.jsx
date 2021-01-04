@@ -13,15 +13,16 @@ export class JupyterNotebookViewer extends React.Component {
   getSelection = () => {
     const iframe = document.getElementById("jupyter-notebook");
     const target = (iframe.contentWindow || iframe.contentDocument);
-    const range = target.getSelection().getRangeAt(0)
-    this.setState(prevState => ({annotations: prevState.annotations.concat([range])}))
+    const range = target.getSelection().getRangeAt(0);
+    this.setState(prevState => ({annotations: prevState.annotations.concat([range])}));
     markupTextInRange(range, 'yellow')
   }
 
   render() {
     return (
       <div>
-        {/*<button onClick={this.getSelection}>{'highlight'}</button>*/ /*TODO: use annotations instead*/ }
+        {/*<button onClick={this.getSelection}>{'highlight'}</button>*/
+          /*TODO: enable annotations and link with existing annotations*/ }
         <iframe className={'jupyter-notebook'} id={'jupyter-notebook'} srcDoc={this.props.content}/>
       </div>
     )
