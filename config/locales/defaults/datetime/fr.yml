@@ -10,7 +10,6 @@ fr:
   time:
     formats:
       default: "%A %d %B %Y %H:%M:%S"
-      shorter: "%d %B %H:%M:%S"
 
     format_string:
       js:          "YYYY-DD-MM h:mm A"
