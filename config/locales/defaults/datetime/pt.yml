@@ -10,7 +10,6 @@ pt:
   time:
     formats:
       default: "%A, %d de %B de %Y %H:%M:%S %Z"
-      shorter: "%d de %B, %H:%M:%S %Z"
 
     format_string:
       js:          "YYYY-DD-MM h:mm A"
