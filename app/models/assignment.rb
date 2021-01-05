@@ -1158,12 +1158,11 @@ class Assignment < Assessment
                                      collection_date)
       }
 
-      # i18n-tasks-use t('time.formats.shorter')
-      base[:start_time] = I18n.l(start_time, format: :shorter) if self.is_timed && !start_time.nil?
+      base[:start_time] = I18n.l(start_time) if self.is_timed && !start_time.nil?
 
       unless is_empty || revision_timestamp.nil?
         # TODO: for some reason, this is not automatically converted to our timezone by the query
-        base[:submission_time] = I18n.l(revision_timestamp.in_time_zone, format: :shorter)
+        base[:submission_time] = I18n.l(revision_timestamp.in_time_zone)
       end
 
       if result_info['results.id'].present?

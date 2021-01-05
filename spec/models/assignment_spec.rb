@@ -1841,7 +1841,7 @@ describe Assignment do
       end
 
       it 'should include a submission time if a non-empty submission exists' do
-        time_stamp = I18n.l(submission.revision_timestamp.in_time_zone, format: :shorter)
+        time_stamp = I18n.l(submission.revision_timestamp.in_time_zone)
         expect(data.select { |h| h.key? :submission_time }.count).to eq 1
         expect(data.map { |h| h[:submission_time] }).to include(time_stamp)
       end
