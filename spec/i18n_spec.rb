@@ -21,6 +21,5 @@ RSpec.describe 'I18n' do
   it 'has normalized keys' do
     expect(non_normalized).to be_empty,
                               "#{non_normalized.count} non normalized keys, run `i18n-tasks health' to show them."
-                              " run `i18n-tasks normalize' to fix them"
   end
 end
