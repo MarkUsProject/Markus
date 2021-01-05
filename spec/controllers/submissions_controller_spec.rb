@@ -1031,7 +1031,7 @@ describe SubmissionsController do
     let(:admin) { create(:admin) }
     let(:grouping) { create(:grouping_with_inviter, assignment: assignment) }
     let(:file1) { fixture_file_upload(File.join('/files', 'Shapes.java'), 'text/java') }
-    let(:file2) { fixture_file_upload(File.join('/files', 'test_zip.zip'), 'application/zip') }
+    let(:file2) { fixture_file_upload(File.join('/files', 'test_zip.zip'), 'application/zip', true) }
     let(:file3) { fixture_file_upload(File.join('/files', 'example.ipynb')) }
     let(:file4) { fixture_file_upload(File.join('/files', 'page_white_text.png')) }
     let(:file5) { fixture_file_upload(File.join('/files', 'scanned_exams', 'midterm1-v2-test.pdf')) }
@@ -1063,13 +1063,26 @@ describe SubmissionsController do
     end
     describe 'When the file is a binary file' do
       let(:files) { [file2] }
-      it 'should download all the contents of the zip file' do
+      it 'should download a warning instead of the file content' do
         submission_file = submission.submission_files.find_by(filename: file2.original_filename)
         get_as admin, :get_file, params: { assignment_id: assignment.id,
                                            id: submission.id,
                                            submission_file_id: submission_file.id }
         expected = ActiveSupport::JSON.encode(I18n.t('submissions.cannot_display'))
         expect(JSON.parse(response.body)['content']).to eq(expected)
+      end
+      describe 'when force_text is true' do
+        it 'should download the file content' do
+          submission_file = submission.submission_files.find_by(filename: file2.original_filename)
+          get_as admin, :get_file, params: { assignment_id: assignment.id,
+                                             id: submission.id,
+                                             force_text: true,
+                                             submission_file_id: submission_file.id }
+          file2.seek(0)
+          actual = JSON.parse(JSON.parse(response.body)['content'])
+          expected = file2.read.encode('UTF-8', invalid: :replace, undef: :replace, replace: '�')
+          expect(actual).to eq(expected)
+        end
       end
     end
     describe 'when the file is an image' do

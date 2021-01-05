@@ -408,10 +408,10 @@ class SubmissionsController < ApplicationController
             unique_file = "#{raw_file.name}.#{submission.revision_identifier}"
             unique_path = "#{grouping.group.repo_name}/#{raw_file.path}/#{unique_file}"
             file_contents = ipynb_to_html(file_contents, unique_path)
-          elsif SubmissionFile.is_binary?(file_contents)
+          elsif params[:force_text] != 'true' && SubmissionFile.is_binary?(file_contents)
             # If the file appears to be binary, display a warning
             file_contents = I18n.t('submissions.cannot_display')
-            file_type = 'unknown'
+            file_type = 'binary'
           end
         end
         render json: { content: file_contents.to_json, type: file_type }
