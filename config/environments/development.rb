@@ -312,6 +312,11 @@ Markus::Application.configure do
   config.x.scanned_exams.python = "#{::Rails.root}/lib/scanner/venv/bin/python"
 
   ###################################################################
+  # JupyterNotebook settings
+  ###################################################################
+  config.nbconvert = ENV.fetch('NBCONVERT') { "#{::Rails.root}/nbconvertvenv/bin/jupyter-nbconvert" }
+
+  ###################################################################
   # Starter file setttings
   ###################################################################
 

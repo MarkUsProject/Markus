@@ -7,6 +7,7 @@ ARG PG_MAJOR
 ARG NODE_MAJOR
 ARG BUNDLER_VERSION
 ARG YARN_VERSION
+ARG NBCONVERTVENV
 
 RUN apt-get update -qq && DEBIAN_FRONTEND=noninteractive apt-get -yq dist-upgrade && \
     DEBIAN_FRONTEND=noninteractive apt-get install -yq --no-install-recommends curl \
@@ -29,6 +30,9 @@ RUN APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 \
 
 # Add ppa so that we can select different ruby versions
 RUN DEBIAN_FRONTEND=noninteractive apt-add-repository -y ppa:brightbox/ruby-ng
+
+# Add ppa so that we can get the right python version
+RUN DEBIAN_FRONTEND=noninteractive apt-add-repository -y ppa:deadsnakes/ppa
 
 # install packages
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -yq --no-install-recommends \
@@ -55,8 +59,9 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install -yq --no-install-recommends \
     yarn \
     rsync \
     git \
-    python3 \
-    python3-pip && \
+    python3.8 \
+    python3.8-venv \
+    pandoc && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && \
     truncate -s 0 /var/log/*log
@@ -74,6 +79,9 @@ ENV PATH="$GEM_HOME/bin:$GEM_HOME/gems/bin:$PATH"
 RUN ssh-keygen -q -N "" -f /root/.ssh/id_rsa && \
     mkdir -p /ssh_pub_key && \
     cp /root/.ssh/id_rsa.pub /ssh_pub_key/authorized_keys
+
+# Install nbconvert for rendering .ipynb files
+RUN python3.8 -m venv $NBCONVERTVENV && $NBCONVERTVENV/bin/pip install wheel nbconvert
 
 # Create a directory for the app code (keep the name generic)
 RUN mkdir -p /app
