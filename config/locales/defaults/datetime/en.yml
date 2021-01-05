@@ -3,13 +3,13 @@ en:
     format_string:
       default: "DD, MM d, yy"
       placeholder: "YYYY-MM-DD"
-      datetimepicker: "yy-mm-dd"
+      datetimepicker: "yy-mm-dd"https://github.com/MarkUsProject/Markus/pull/5020/conflict?name=config%252Flocales%252Fdefaults%252Fdatetime%252Fes.yml&ancestor_oid=34fbc37e11ec6a1126f8169f6a91a63963a5570c&base_oid=57072546bb57b3c224d324f9936649043b7f3e9c&head_oid=187284b4a828d89cee7164f0c2f7684ae853b339
 
     before_now_warning: "WARNING: The date you have selected is in the past."
 
   time:
     formats:
-      default: "%A, %B %d, %Y, %I:%M:%S %p"
+      default: "%A, %B %d, %Y, %I:%M:%S %p %Z"
 
     format_string:
       js:          "YYYY-MM-DD h:mm A"

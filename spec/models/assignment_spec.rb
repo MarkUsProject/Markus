@@ -1648,7 +1648,7 @@ describe Assignment do
 
     context 'when one assignment is found' do
       before :each do
-        @assignment1 = create(:assignment, due_date: Date.today - 5)
+        @assignment1 = create(:assignment, due_date: Date.current - 5)
       end
 
       it 'returns the only assignment' do
@@ -1660,8 +1660,8 @@ describe Assignment do
     context 'when more than one assignment is found' do
       context 'when there is an assignment due in 3 days' do
         before :each do
-          @a1 = create(:assignment, due_date: Date.today - 5)
-          @a2 = create(:assignment, due_date: Date.today + 3)
+          @a1 = create(:assignment, due_date: Date.current - 5)
+          @a2 = create(:assignment, due_date: Date.current + 3)
         end
 
         it 'returns the assignment due in 3 days' do
@@ -1673,9 +1673,9 @@ describe Assignment do
 
       context 'when the next assignment is due in more than 3 days' do
         before :each do
-          @a1 = create(:assignment, due_date: Date.today - 5)
-          @a2 = create(:assignment, due_date: Date.today - 1)
-          @a3 = create(:assignment, due_date: Date.today + 8)
+          @a1 = create(:assignment, due_date: Date.current - 5)
+          @a2 = create(:assignment, due_date: Date.current - 1)
+          @a3 = create(:assignment, due_date: Date.current + 8)
         end
 
         it 'returns the assignment that was most recently due' do
@@ -1687,9 +1687,9 @@ describe Assignment do
 
       context 'when all assignments are due in more than 3 days' do
         before :each do
-          @a1 = create(:assignment, due_date: Date.today + 5)
-          @a2 = create(:assignment, due_date: Date.today + 12)
-          @a3 = create(:assignment, due_date: Date.today + 19)
+          @a1 = create(:assignment, due_date: Date.current + 5)
+          @a2 = create(:assignment, due_date: Date.current + 12)
+          @a3 = create(:assignment, due_date: Date.current + 19)
         end
 
         it 'returns the assignment that is due first' do
@@ -1701,9 +1701,9 @@ describe Assignment do
 
       context 'when all assignments are past the due date' do
         before :each do
-          @a1 = create(:assignment, due_date: Date.today - 5)
-          @a2 = create(:assignment, due_date: Date.today - 12)
-          @a3 = create(:assignment, due_date: Date.today - 19)
+          @a1 = create(:assignment, due_date: Date.current - 5)
+          @a2 = create(:assignment, due_date: Date.current - 12)
+          @a3 = create(:assignment, due_date: Date.current - 19)
         end
 
         it 'returns the assignment that was due most recently' do
