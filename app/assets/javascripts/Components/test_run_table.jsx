@@ -150,39 +150,39 @@ class TestGroupResultTable extends React.Component {
           return rows[0]['test_group_name'];
         }
       },
-    },
-    {
-      id: 'output',
-      Header: I18n.t('activerecord.attributes.test_result.output'),
-      accessor: row => row['test_results.output'] || '',
-      Cell: ({value}) => <pre className={'test-results-output'}>{value}</pre>,
-      show: this.state.show_output,
-      aggregate: _ => '',
-      className: 'actual_output'
+      minWidth: 200
     },
     {
       id: 'test_status',
       Header: I18n.t('activerecord.attributes.test_result.status'),
       accessor: row => row['test_results.status'],
-      minWidth: 50,
+      width: 80,
       aggregate: _ => ''
     },
     {
       id: 'marks_earned',
       Header: I18n.t('activerecord.attributes.test_result.marks_earned'),
       accessor: row => row['test_results.marks_earned'],
-      minWidth: 40,
+      Cell: row => {
+        const marksEarned = row.original['test_results.marks_earned'];
+        const marksTotal = row.original['test_results.marks_total'];
+        if (marksEarned !== null && marksTotal !== null) {
+          return `${marksEarned} / ${marksTotal}`;
+        } else {
+          return '';
+        }
+      },
+      width: 80,
       className: 'number',
-      aggregate: vals => vals.reduce((a, b) => a + b, 0),
+      aggregate: (vals, rows) => rows.reduce(
+        (acc, row) => [acc[0] + (row._original['test_results.marks_earned'] || 0),
+                       acc[1] + (row._original['test_results.marks_total'] || 0)],
+        [0, 0]
+      ),
+      Aggregated: row => {
+        return `${row.value[0]} / ${row.value[1]}`;
+      }
     },
-    {
-      Header: I18n.t('activerecord.attributes.test_result.marks_total'),
-      id: 'test_results.marks_total',
-      accessor: row => row['test_results.marks_total'],
-      minWidth: 40,
-      className: 'number',
-      aggregate: vals => vals.reduce((a, b) => a + b, 0),
-    }
   ];
 
   render() {
@@ -201,17 +201,29 @@ class TestGroupResultTable extends React.Component {
     return (
       <div>
         <ReactTable
+          className={'auto-overflow'}
           data={this.props.data}
           columns={this.columns()}
           pivotBy={['test_group_name']}
           getTdProps={ (state, rowInfo) => {
             if (rowInfo) {
-              return {className: `test-result-${rowInfo.row['test_status']}`}
+              let className = `test-result-${rowInfo.row['test_status']}`;
+              if (!rowInfo.aggregated &&
+                  (!this.state.show_output || !rowInfo.original['test_results.output'])) {
+                className += ' hide-rt-expander';
+              }
+              return {className: className}
             } else {
               return {};
             }
           }}
           PivotValueComponent={() => ''}
+          SubComponent={ row => (
+            <pre className={`test-results-output test-result-${row.row['test_status']}`}>
+              {row.original['test_results.output']}
+            </pre>
+            )
+          }
         />
         {extraInfoDisplay}
       </div>
