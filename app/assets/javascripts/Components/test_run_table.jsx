@@ -166,13 +166,17 @@ class TestGroupResultTable extends React.Component {
       Cell: row => {
         const marksEarned = row.original['test_results.marks_earned'];
         const marksTotal = row.original['test_results.marks_total'];
-        return `${marksEarned} / ${marksTotal}`;
+        if (marksEarned !== null && marksTotal !== null) {
+          return `${marksEarned} / ${marksTotal}`;
+        } else {
+          return '';
+        }
       },
       width: 80,
       className: 'number',
       aggregate: (vals, rows) => rows.reduce(
-        (acc, row) => [acc[0] + row._original['test_results.marks_earned'],
-                       acc[1] + row._original['test_results.marks_total']],
+        (acc, row) => [acc[0] + (row._original['test_results.marks_earned'] || 0),
+                       acc[1] + (row._original['test_results.marks_total'] || 0)],
         [0, 0]
       ),
       Aggregated: row => {
