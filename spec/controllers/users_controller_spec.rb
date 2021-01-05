@@ -115,7 +115,6 @@ describe UsersController do
 
       include_examples 'changing particular mailer settings'
     end
-
     describe 'changing any setting' do
       let(:student) { create(:student, user_name: 'c6stenha') }
       it 'redirects back to settings' do
@@ -134,6 +133,17 @@ describe UsersController do
                  'update_settings',
                  params: { 'user': { 'display_name': display_name } }
         expect(student.reload.display_name).to eq display_name
+      end
+    end
+
+    describe 'change time zone in settings' do
+      let(:student) { create(:student, user_name: 'c6stenha') }
+      it 'updates time zone for student' do
+        time_zone = 'Fake/TimeZone'
+        patch_as student,
+                 'update_settings',
+                 params: { 'user': { 'time_zone': time_zone } }
+        expect(student.reload.time_zone).to eq time_zone
       end
     end
 

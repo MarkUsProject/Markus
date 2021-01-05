@@ -23,12 +23,12 @@ class User < ApplicationRecord
   has_many :split_pdf_logs
   has_many :key_pairs, dependent: :destroy
 
-  validates_presence_of     :user_name, :last_name, :first_name, :display_name
+  validates_presence_of     :user_name, :last_name, :first_name, :time_zone, :display_name
   validates_uniqueness_of   :user_name
   validates_uniqueness_of   :email, :allow_nil => true
   validates_uniqueness_of   :id_number, :allow_nil => true
 
-  after_initialize :set_display_name
+  after_initialize :set_display_name, :set_time_zone
 
   validates_format_of       :type,          with: /\AStudent|Admin|Ta|TestServer\z/
   # role constants
@@ -139,6 +139,10 @@ class User < ApplicationRecord
     self.display_name ||= "#{self.first_name} #{self.last_name}"
   end
 
+  def set_time_zone
+    self.time_zone ||= Time.zone.name
+  end
+
   # Submission helper methods -------------------------------------------------
 
   def submission_for(aid)
@@ -211,7 +215,9 @@ class User < ApplicationRecord
     end
 
     user_columns.push(:display_name)
+    user_columns.push(:time_zone)
     users.each { |u| u.push("#{u[first_name_i]} #{u[last_name_i]}") }
+    users.each { |u| u.push(Time.zone.name) }
 
     existing_user_ids = user_class.all.pluck(:id)
     imported = nil
@@ -220,7 +226,7 @@ class User < ApplicationRecord
       User.transaction do
         imported = user_class.import user_columns, users, on_duplicate_key_update: {
           conflict_target: [:user_name],
-          columns: [:last_name, :first_name, :section_id, :email, :id_number, :display_name]
+          columns: [:last_name, :first_name, :section_id, :email, :id_number, :display_name, :time_zone]
         }
         User.where(id: imported.ids).each do |user|
           if user_class == Ta
