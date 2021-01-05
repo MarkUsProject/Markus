@@ -80,3 +80,6 @@ Style/ParallelAssignment:
 
 Style/AsciiComments:
   Enabled: false
+
+Naming/PredicateName:
+  Enabled: false

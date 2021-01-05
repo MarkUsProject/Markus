@@ -12,6 +12,7 @@ services:
         NODE_MAJOR: '12'
         YARN_VERSION: '1.13.0'
         BUNDLER_VERSION: '1.17.3'
+        NBCONVERTVENV: '/app/nbconvertvenv'
     image: markus-dev:1.0.0
     tmpfs:
       - /tmp
@@ -49,6 +50,7 @@ services:
       - MARKUS_REPOSITORY_PERMISSION_FILE=/app/data/dev/keys/.access
       - MARKUS_REPOSITORY_SSH_URL=ssh://git@localhost:2222/~/csc108
       - TZ=America/Toronto
+      - NBCONVERT=/app/nbconvertvenv/bin/jupyter-nbconvert
     networks:
       - default
       - markus_dev
