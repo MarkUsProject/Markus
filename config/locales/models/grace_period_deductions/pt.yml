@@ -1,5 +1,6 @@
+---
 pt:
   activerecord:
     models:
       grace_period_deduction:
-        one: "Dedução de Período de tolerância"
+        one: Dedução de Período de tolerância

@@ -1,4 +1,5 @@
+---
 en:
   attributes:
-    date: "Date"
-    filename: "Filename"
+    date: Date
+    filename: Filename

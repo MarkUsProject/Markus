@@ -1,12 +1,13 @@
+---
 en:
   activerecord:
-    models:
-      note:
-        one: "Note"
-        other: "Notes"
     attributes:
       notes:
-        created_at: "Created at"
-        noteable: "Noteable"
-        notes_message: "Message"
-        user: "Creator"
+        created_at: Created at
+        noteable: Noteable
+        notes_message: Message
+        user: Creator
+    models:
+      note:
+        one: Note
+        other: Notes

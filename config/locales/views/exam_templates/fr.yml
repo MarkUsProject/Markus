@@ -1,96 +1,59 @@
+---
 fr:
   exam_templates:
-    update:
-      success:
-        "Le modèle d'examen a été mis à jour avec succès"
-      failure:
-        "Le modèle d'examen n'a pas été mis à jour avec succès"
-      instruction:
-        "Remplacer le fichier modèle"
-    delete:
-      general:
-        "Supprimer le modèle d'examen"
-      success:
-        "Modèle d'examen supprimé avec succès"
-      failure:
-        "Modèle d'examen non supprimé avec succès"
-      confirm:
-        "Êtes-vous sûr de vouloir supprimer %{name}?"
-    create:
-      add_new:
-        "Ajouter un modèle d'examen"
-      success:
-        "Modèle d'examen créé avec succès"
-      failure:
-        "Le modèle d'examen n'a pas été créé avec succès"
-      upload:
-        "Modèle de chargement"
-      add_division:
-        "Ajouter la division modèle"
-
-    download: "Télécharger le modèle d'examen"
-
-    generate:
-      success:
-        "Exemples de copies de %{copies} examens réalisés avec succès"
-      title:
-        "Générer des copies d'examen"
-      copies_label:
-        "Nombre de copies"
-      index_label:
-        "Index de départ"
-      generate:
-        "Générer"
-      generate_job_started:
-        "La génération de pdfs d'examen pour examen %{exam_name} a commencé"
-
-    parsing:
-      title:
-        "Sélection automatique d'analyse"
-      general:
-        "Analyser automatiquement les informations sur les étudiants"
-      save:
-        "sauvegarder"
-
-    split:
-      success:
-        "Examen divisé avec succès"
-      invalid:
-        "type de fichier invalide"
-      missing:
-        "Fichier manquant"
-      title:
-        "Examen partagé"
-      instruction:
-        "Télécharger l'examen PDF"
-      split:
-        "Divisé"
-
-    split_pdf_log:
-      view_logs:
-        "regardes les connexions"
-      scan_error:
-        "Certains fichiers n'ont pas été correctement examinés."
-
-    back_to_log_page: "Retour à la page de connexion"
-
     assign_errors:
-      fix_errors:     "Corriger les erreurs de numérisation"
-      document_info:  "Information sur la documentation"
-      copy_number:    "Numéro de copie"
-      page_number:    "Numéro de page"
-      upside_down:    "Page à l'envers?"
-
+      copy_number: Numéro de copie
+      document_info: Information sur la documentation
+      fix_errors: Corriger les erreurs de numérisation
+      page_number: Numéro de page
+      upside_down: Page à l'envers?
     assign_scans:
-      done: "Tous les groupes ont été attribués avec succès à des étudiants"
-      help: "Assign students to scanned exam groups based on printed student names."
-      skip_group: "Skip group"
-      title: "Affecter des scans"
-
+      done: Tous les groupes ont été attribués avec succès à des étudiants
+      help: Assign students to scanned exam groups based on printed student names.
+      skip_group: Skip group
+      title: Affecter des scans
+    back_to_log_page: Retour à la page de connexion
+    create:
+      add_division: Ajouter la division modèle
+      add_new: Ajouter un modèle d'examen
+      failure: Le modèle d'examen n'a pas été créé avec succès
+      success: Modèle d'examen créé avec succès
+      upload: Modèle de chargement
+    delete:
+      confirm: Êtes-vous sûr de vouloir supprimer %{name}?
+      failure: Modèle d'examen non supprimé avec succès
+      general: Supprimer le modèle d'examen
+      success: Modèle d'examen supprimé avec succès
+    download: Télécharger le modèle d'examen
+    generate:
+      copies_label: Nombre de copies
+      generate: Générer
+      generate_job_started: La génération de pdfs d'examen pour examen %{exam_name} a commencé
+      index_label: Index de départ
+      success: Exemples de copies de %{copies} examens réalisés avec succès
+      title: Générer des copies d'examen
+    parsing:
+      general: Analyser automatiquement les informations sur les étudiants
+      save: sauvegarder
+      title: Sélection automatique d'analyse
+    split:
+      instruction: Télécharger l'examen PDF
+      invalid: type de fichier invalide
+      missing: Fichier manquant
+      split: Divisé
+      success: Examen divisé avec succès
+      title: Examen partagé
+    split_pdf_log:
+      scan_error: Certains fichiers n'ont pas été correctement examinés.
+      view_logs: regardes les connexions
+    update:
+      failure: Le modèle d'examen n'a pas été mis à jour avec succès
+      instruction: Remplacer le fichier modèle
+      success: Le modèle d'examen a été mis à jour avec succès
   flash:
     exam_templates:
-      update:
-        success: "Le modèle d'examen a été mis à jour avec succès"
-        error: "Le modèle d'examen n'a pas été mis à jour avec succès"
       assign_errors:
-        success: "Todos los archivos de error se han asignado correctamente"
+        success: Todos los archivos de error se han asignado correctamente
+      update:
+        error: Le modèle d'examen n'a pas été mis à jour avec succès
+        success: Le modèle d'examen a été mis à jour avec succès

@@ -1,39 +1,38 @@
+---
 en:
   annotation_categories:
+    add_annotation: Add Annotation
     create:
-      success: "This annotation category was successfully created."
-    destroy_annotation_text:
-      confirm: "Deleting this annotation will remove the text from any files it may be attached to.  Are you sure you want to do this?"
-      deductive_annotation_released_error: 'Cannot delete this annotation because it has a deduction and has been applied to released results.'
-      success: "Deleted annotation"
-    update_annotation_text:
-      deductive_annotation_released_error: 'Cannot update this annotation because it has a deduction and has been applied to released results.'
+      success: This annotation category was successfully created.
     create_annotation_text:
-      error: 'Could not create a new annotation.'
+      error: Could not create a new annotation.
     destroy:
-      error: 'Cannot delete this annotation category'
-      success: "Annotation category deleted."
-      warning: "Deleting this annotation category will also delete its annotations. Deleted annotations will no longer be attached to student submissions. Are you sure you want to do this?"
+      error: Cannot delete this annotation category
+      success: Annotation category deleted.
+      warning: Deleting this annotation category will also delete its annotations. Deleted annotations will no longer be attached to student submissions. Are you sure you want to do this?
+    destroy_annotation_text:
+      confirm: Deleting this annotation will remove the text from any files it may be attached to.  Are you sure you want to do this?
+      deductive_annotation_released_error: Cannot delete this annotation because it has a deduction and has been applied to released results.
+      success: Deleted annotation
     download:
-      title: "Download Annotations"
+      title: Download Annotations
     index:
-      add_annotation_category: "Add Annotation Category"
-      title: "Annotations: %{assignment_short_identifier}"
+      add_annotation_category: Add Annotation Category
+      title: 'Annotations: %{assignment_short_identifier}'
+    no_annotations: There are no annotations in this category
+    none: There are no annotation categories yet.
+    one_time_only: One Time Only
+    unselected_criterion: "(None)"
     update:
-      success: "This annotation category was successfully updated."
+      success: This annotation category was successfully updated.
+    update_annotation_text:
+      deductive_annotation_released_error: Cannot update this annotation because it has a deduction and has been applied to released results.
     upload:
-      criterion_not_found: "Flexible criterion '%{missing_criterion}' not found."
-      deduction_absent: "Invalid deduction value %{value} encountered for category %{annotation_category}."
-      empty_category_name: 'Category name cannot be blank'
-      error: "Unable to upload category: %{annotation_category}"
-      invalid_criterion: "Cannot change the associated criterion for an existing category (%{annotation_category})."
-      invalid_deduction: "Invalid deduction %{value} for annotation '%{annotation_content}': value is less than zero or exceeds the maximum mark for %{criterion_name}."
-      success: "Successfully uploaded %{annotation_category_number} Annotation Categories"
-      title: "Upload Annotations"
-
-    # Miscellaneous
-    add_annotation: "Add Annotation"
-    no_annotations: "There are no annotations in this category"
-    none: "There are no annotation categories yet."
-    one_time_only: "One Time Only"
-    unselected_criterion: '(None)'
+      criterion_not_found: Flexible criterion '%{missing_criterion}' not found.
+      deduction_absent: Invalid deduction value %{value} encountered for category %{annotation_category}.
+      empty_category_name: Category name cannot be blank
+      error: 'Unable to upload category: %{annotation_category}'
+      invalid_criterion: Cannot change the associated criterion for an existing category (%{annotation_category}).
+      invalid_deduction: 'Invalid deduction %{value} for annotation ''%{annotation_content}'': value is less than zero or exceeds the maximum mark for %{criterion_name}.'
+      success: Successfully uploaded %{annotation_category_number} Annotation Categories
+      title: Upload Annotations

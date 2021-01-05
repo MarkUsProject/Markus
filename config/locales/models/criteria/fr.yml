@@ -1,42 +1,42 @@
+---
 fr:
   activerecord:
-    models:
-      criterion:
-        one: "Critère"
-      checkbox_criterion:
-        one: "Critère d' Checkbox"
-      flexible_criterion:
-        one: "Critères souples"
-      rubric_criterion:
-        one: "Critère rubrique"
     attributes:
-      criterion:
-        bonus: 'UPDATE ME!'
-        description: "Description"
-        name: "Nom"
-        max_mark: "Note maximale"
-        peer_visible: "Rendre visible à leurs auteurs pairs"
-        ta_visible: "Rendre visible aux assistants d'enseignement"
       checkbox_criterion:
-        description: "Description"
-        name: "Nom"
-        max_mark: "Note maximale"
-        peer_visible: "Rendre visible à leurs auteurs pairs"
-        ta_visible: "Rendre visible aux assistants d'enseignement"
+        description: Description
+        max_mark: Note maximale
+        name: Nom
+        peer_visible: Rendre visible à leurs auteurs pairs
+        ta_visible: Rendre visible aux assistants d'enseignement
+      criterion:
+        bonus: UPDATE ME!
+        description: Description
+        max_mark: Note maximale
+        name: Nom
+        peer_visible: Rendre visible à leurs auteurs pairs
+        ta_visible: Rendre visible aux assistants d'enseignement
       flexible_criterion:
-        description: "Description"
-        name: "Nom"
-        max_mark: "Note maximale"
-        peer_visible: "Rendre visible à leurs auteurs pairs"
-        ta_visible: "Rendre visible aux assistants d'enseignement"
+        description: Description
+        max_mark: Note maximale
+        name: Nom
+        peer_visible: Rendre visible à leurs auteurs pairs
+        ta_visible: Rendre visible aux assistants d'enseignement
       rubric_criterion:
-        description: "Description"
-        name: "Nom"
-        max_mark: "Note maximale"
-        peer_visible: "Rendre visible à leurs auteurs pairs"
-        ta_visible: "Rendre visible aux assistants d'enseignement"
-
+        description: Description
+        max_mark: Note maximale
+        name: Nom
+        peer_visible: Rendre visible à leurs auteurs pairs
+        ta_visible: Rendre visible aux assistants d'enseignement
     errors:
       models:
         criterion:
-          visibility_error: "Sélectionnez au moins une case dans la section de visibilité"
+          visibility_error: Sélectionnez au moins une case dans la section de visibilité
+    models:
+      checkbox_criterion:
+        one: Critère d' Checkbox
+      criterion:
+        one: Critère
+      flexible_criterion:
+        one: Critères souples
+      rubric_criterion:
+        one: Critère rubrique

@@ -1,5 +1,6 @@
+---
 en:
   activerecord:
     attributes:
       grouping:
-        test_tokens: "Tokens available"
+        test_tokens: Tokens available

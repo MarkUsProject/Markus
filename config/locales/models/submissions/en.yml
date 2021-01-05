@@ -1,11 +1,12 @@
+---
 en:
   activerecord:
-    models:
-      submission:
-        one: "Submission"
-        other: "Submissions"
     attributes:
       submission:
-        feedback_files: "Feedback files"
-        submission_files: "Submission files"
-        submitted_remark: "Remark request"
+        feedback_files: Feedback files
+        submission_files: Submission files
+        submitted_remark: Remark request
+    models:
+      submission:
+        one: Submission
+        other: Submissions

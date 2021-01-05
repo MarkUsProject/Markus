@@ -1,10 +1,11 @@
+---
 es:
   activerecord:
-    models:
-      template_division:
-        one: "División de plantillas"
     attributes:
       template_division:
-        label: "etiqueta"
-        start: "comienzo"
-        end: "fin"
+        end: fin
+        label: etiqueta
+        start: comienzo
+    models:
+      template_division:
+        one: División de plantillas

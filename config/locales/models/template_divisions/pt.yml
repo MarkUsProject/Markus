@@ -1,10 +1,11 @@
+---
 pt:
   activerecord:
-    models:
-      template_division:
-        one: "Divisão de modelos"
     attributes:
       template_division:
-        label: "rótulo"
-        start: "começar"
-        end: "fim"
+        end: fim
+        label: rótulo
+        start: começar
+    models:
+      template_division:
+        one: Divisão de modelos

@@ -1,8 +1,9 @@
+---
 pt:
   menu:
-    choose: "Escolher..."
-    dashboard: "Painel"
-    home: "Home"
-    properties: "Propriedades"
-    quick_links: "Links rápidos"
-    settings: "Configurações"
+    choose: Escolher...
+    dashboard: Painel
+    home: Home
+    properties: Propriedades
+    quick_links: Links rápidos
+    settings: Configurações

@@ -1,35 +1,32 @@
+---
 pt:
   date:
+    before_now_warning: O data selecionada está no passado.
     format_string:
-      default: "DD, d 'de' MM 'de' yy"
-      placeholder: "AAAA-DD-MM"
-      datetimepicker: "yy-dd-mm"
-
-    before_now_warning: "O data selecionada está no passado."
-
-  time:
-    formats:
-      default: "%A, %d de %B de %Y %H:%M:%S %Z"
-
-    format_string:
-      js:          "YYYY-DD-MM h:mm A"
-      placeholder: "AAAA-DD-MM H:MM AM/PM"
-
-    next:   "Seguinte"
-    prev:   "Anterior"
-
+      datetimepicker: yy-dd-mm
+      default: DD, d 'de' MM 'de' yy
+      placeholder: AAAA-DD-MM
   durations:
-    any_minutes: minuto(s)
     any_hours: hora(s)
-    minutes:
-      one: minuto
-      other: minutos
-    hours:
-      one: hora
-      other: horas
+    any_minutes: minuto(s)
     days:
       one: día
       other: días
+    hours:
+      one: hora
+      other: horas
+    minutes:
+      one: minuto
+      other: minutos
     weeks:
       one: semana
       other: semanas
+  time:
+    format_string:
+      js: YYYY-DD-MM h:mm A
+      placeholder: AAAA-DD-MM H:MM AM/PM
+    formats:
+      default: "%A, %d de %B de %Y %H:%M:%S %Z"
+      shorter: "%d de %B, %H:%M:%S %Z"
+    next: Seguinte
+    prev: Anterior

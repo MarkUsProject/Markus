@@ -1,10 +1,10 @@
+---
 en:
   activerecord:
-    models:
-      annotation_category:
-        one: "Annotation Category"
     attributes:
       annotation_category:
-        annotation_category_name: "Category name"
-        flexible_criterion: 'Associated Criterion (Flexible type only)'
-
+        annotation_category_name: Category name
+        flexible_criterion: Associated Criterion (Flexible type only)
+    models:
+      annotation_category:
+        one: Annotation Category

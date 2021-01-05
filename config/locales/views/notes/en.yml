@@ -1,12 +1,12 @@
+---
 en:
   notes:
     delete:
-      link_confirm: "This will remove this note permanently. Continue?"
-      link_title: "Delete this note"
-    help: "Notes can be created for students, groups, or assignments. They are visible to admins and graders, but not students."
+      link_confirm: This will remove this note permanently. Continue?
+      link_title: Delete this note
+    existing: Existing notes
+    help: Notes can be created for students, groups, or assignments. They are visible to admins and graders, but not students.
     new:
-      invalid_selector: "Invalid selector chosen."
-      no_noteables: "Notes are attached to groups, assignments, or students, but there are none yet. Please create one first."
-
-    existing: "Existing notes"
+      invalid_selector: Invalid selector chosen.
+      no_noteables: Notes are attached to groups, assignments, or students, but there are none yet. Please create one first.
     note_on_html: "%{user_name} on <strong>%{display_for}</strong>"

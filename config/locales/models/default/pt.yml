@@ -1,4 +1,5 @@
+---
 pt:
   attributes:
-    date: "Data"
-    filename: "Nome do Arquivo"
+    date: Data
+    filename: Nome do Arquivo
