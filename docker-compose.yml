@@ -13,6 +13,7 @@ services:
         YARN_VERSION: '1.13.0'
         BUNDLER_VERSION: '1.17.3'
         NBCONVERTVENV: '/app/nbconvertvenv'
+        USER: 'markus'
     image: markus-dev:1.0.0
     tmpfs:
       - /tmp

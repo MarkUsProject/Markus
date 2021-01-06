@@ -8,6 +8,7 @@ ARG NODE_MAJOR
 ARG BUNDLER_VERSION
 ARG YARN_VERSION
 ARG NBCONVERTVENV
+ARG USER
 
 RUN apt-get update -qq && DEBIAN_FRONTEND=noninteractive apt-get -yq dist-upgrade && \
     DEBIAN_FRONTEND=noninteractive apt-get install -yq --no-install-recommends curl \
@@ -69,16 +70,29 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install -yq --no-install-recommends \
 # Enable reading of PDF files with imagemagick
 RUN sed -ri 's/(rights=")none("\s+pattern="PDF")/\1read\2/' /etc/ImageMagick-6/policy.xml
 
+RUN useradd -m -s /bin/bash $USER
+RUN mkdir -p /bundle \
+             /ssh_pub_key \
+             /app/data/dev/repos/bare \
+             /app/tmp /app/node_modules \
+             /app/public/packs \
+             /app/public/packs-test \
+             /app/data/dev/keys \
+             /app/log && \
+             chown -R $USER /bundle /ssh_pub_key /app
+
 # install bundler
 RUN gem$RUBY_VERSION install bundler -v $BUNDLER_VERSION
+
+USER $USER
 
 ENV GEM_HOME="/bundle"
 ENV PATH="$GEM_HOME/bin:$GEM_HOME/gems/bin:$PATH"
 
 # Create key for ssh-ing to the autotester
-RUN ssh-keygen -q -N "" -f /root/.ssh/id_rsa && \
+RUN ssh-keygen -q -N "" -f /home/$USER/.ssh/id_rsa && \
     mkdir -p /ssh_pub_key && \
-    cp /root/.ssh/id_rsa.pub /ssh_pub_key/authorized_keys
+    cp /home/$USER/.ssh/id_rsa.pub /ssh_pub_key/authorized_keys
 
 # Install nbconvert for rendering .ipynb files
 RUN python3.8 -m venv $NBCONVERTVENV && $NBCONVERTVENV/bin/pip install wheel nbconvert
