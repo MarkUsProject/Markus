@@ -97,8 +97,5 @@ RUN ssh-keygen -q -N "" -f /home/$USER/.ssh/id_rsa && \
 # Install nbconvert for rendering .ipynb files
 RUN python3.8 -m venv $NBCONVERTVENV && $NBCONVERTVENV/bin/pip install wheel nbconvert
 
-# Create a directory for the app code (keep the name generic)
-RUN mkdir -p /app
-
 WORKDIR /app
 
