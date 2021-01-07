@@ -34,24 +34,11 @@ services:
       - authorized_keys:/app/data/dev/keys
       - log:/app/log
       - .:/app:cached
+    env_file:
+      - .dockerfiles/.env
     environment:
       - NODE_ENV=development
       - RAILS_ENV=development
-      - REDIS_URL=redis://redis:6379/
-      - DATABASE_URL=postgres://postgres:postgres@postgres:5432
-      - BOOTSNAP_CACHE_DIR=/bundle/bootsnap
-      - WEBPACKER_DEV_SERVER_HOST=webpacker
-      - WEB_CONCURRENCY=1
-      - EDITOR=vi
-      - RAILS_RELATIVE_URL_ROOT=/csc108
-      - AUTOTEST_SERVER_HOST=autotest
-      - AUTOTEST_SERVER_USERNAME=docker
-      - MARKUS_DATA_DIR=/app/data/dev
-      - MARKUS_REPOSITORY_GIT_SHELL=/usr/local/bin/markus-git-shell.sh
-      - MARKUS_REPOSITORY_PERMISSION_FILE=/app/data/dev/keys/.access
-      - MARKUS_REPOSITORY_SSH_URL=ssh://git@localhost:2222/~/csc108
-      - TZ=America/Toronto
-      - NBCONVERT=/app/nbconvertvenv/bin/jupyter-nbconvert
     networks:
       - default
       - markus_dev
@@ -119,9 +106,6 @@ services:
     environment:
       - NODE_ENV=test
       - RAILS_ENV=test
-      - REDIS_URL=redis://redis:6379/
-      - DATABASE_URL=postgres://postgres:postgres@postgres:5432
-      - BOOTSNAP_CACHE_DIR=/bundle/bootsnap
 
   webpacker:
     <<: *app
