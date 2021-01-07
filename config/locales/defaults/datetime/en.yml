@@ -28,7 +28,6 @@ en:
       time_only: h:mm TT
     formats:
       default: "%A, %B %d, %Y, %I:%M:%S %p %Z"
-      shorter: "%B %d, %I:%M:%S %p %Z"
     next: Next
     prev: Previous
     time: Time

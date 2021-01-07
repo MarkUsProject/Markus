@@ -28,6 +28,5 @@ fr:
       time_only: h:mm TT
     formats:
       default: "%A %d %B %Y %H:%M:%S %Z"
-      shorter: "%d %B %H:%M:%S %Z"
     next: Suivante
     prev: Précédente

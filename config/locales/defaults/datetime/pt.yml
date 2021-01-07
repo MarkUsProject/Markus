@@ -27,6 +27,5 @@ pt:
       placeholder: AAAA-DD-MM H:MM AM/PM
     formats:
       default: "%A, %d de %B de %Y %H:%M:%S %Z"
-      shorter: "%d de %B, %H:%M:%S %Z"
     next: Seguinte
     prev: Anterior
