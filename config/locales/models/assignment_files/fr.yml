@@ -1,14 +1,12 @@
+---
 fr:
   activerecord:
-    models:
-      assignment:
-        one: "Fichier d'affectation"
     attributes:
       assignment_file:
-        filename: "Nom du fichier"
+        filename: Nom du fichier
     errors:
       models:
         assignment_file:
           attributes:
             filename:
-              invalid: "doit être un caractère alphanumérique, « . », « - », « _ » ou « / » uniquement."
+              invalid: doit être un caractère alphanumérique, « . », « - », « _ » ou « / » uniquement.

@@ -1,5 +1,6 @@
+---
 en:
   activerecord:
     attributes:
       test_group_result:
-        extra_info: "Extra Info"
+        extra_info: Extra Info

@@ -1,14 +1,13 @@
+---
 es:
   tags:
-    submissions_used:
-      zero: "0 submissions have this tag."
-      one: "1 submission has this tag."
-      other: "%{count} submissions have this tag."
-
     results:
-      available_tags: "Etiquetas Disponibles"
-      current_tags: "Etiquetas Recientes"
-      no_current_tags: "No hay más etiquetas por asignar."
-      no_available_tags: "No se han asignado etiquetas."
-
-    use: "Uso"
+      available_tags: Etiquetas Disponibles
+      current_tags: Etiquetas Recientes
+      no_available_tags: No se han asignado etiquetas.
+      no_current_tags: No hay más etiquetas por asignar.
+    submissions_used:
+      one: 1 submission has this tag.
+      other: "%{count} submissions have this tag."
+      zero: 0 submissions have this tag.
+    use: Uso

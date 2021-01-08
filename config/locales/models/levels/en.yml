@@ -1,11 +1,12 @@
+---
 en:
   activerecord:
-    models:
-      level:
-        one: "Level"
-        other: "Levels"
     attributes:
       level:
-        name: "Name"
-        mark: "Mark"
-        description: "Description"
+        description: Description
+        mark: Mark
+        name: Name
+    models:
+      level:
+        one: Level
+        other: Levels

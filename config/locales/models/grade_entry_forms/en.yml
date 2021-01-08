@@ -1,14 +1,15 @@
+---
 en:
   activerecord:
-    models:
-      grade_entry_form:
-        one: "Marks Spreadsheet"
     attributes:
       grade_entry_form:
-        description: "Description"
-        grades: "Grades"
-        is_hidden: "Hide Spreadsheet"
-        message: "Message"
-        show_total: "Show Total"
-        short_identifier: "Short Identifier"
-        total: "Total"
+        description: Description
+        grades: Grades
+        is_hidden: Hide Spreadsheet
+        message: Message
+        short_identifier: Short Identifier
+        show_total: Show Total
+        total: Total
+    models:
+      grade_entry_form:
+        one: Marks Spreadsheet

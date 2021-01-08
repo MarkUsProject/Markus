@@ -1,9 +1,10 @@
+---
 pt:
   activerecord:
-    models:
-      section:
-        one: "Sessão"
-        other: "Sessões"
     attributes:
       section:
-        name: "Nome"
+        name: Nome
+    models:
+      section:
+        one: Sessão
+        other: Sessões

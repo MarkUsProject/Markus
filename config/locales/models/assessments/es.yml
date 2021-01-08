@@ -1,6 +1,7 @@
+---
 es:
   activerecord:
     models:
       assessment:
-        one: 'UPDATE ME!'
-        other: 'UPDATE ME!'
+        one: UPDATE ME!
+        other: UPDATE ME!

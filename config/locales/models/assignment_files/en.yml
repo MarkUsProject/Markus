@@ -1,14 +1,15 @@
+---
 en:
   activerecord:
-    models:
-      assignment_file:
-        one: "Required File"
     attributes:
       assignment_file:
-        filename: "filename"
+        filename: filename
     errors:
       models:
         assignment_file:
           attributes:
             filename:
-              invalid: "must include alphanumeric, '.', '-', '_' or '/' characters only."
+              invalid: must include alphanumeric, '.', '-', '_' or '/' characters only.
+    models:
+      assignment_file:
+        one: Required File

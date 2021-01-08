@@ -1,11 +1,12 @@
+---
 pt:
   activerecord:
-    models:
-      level:
-        one: "Nível"
-        other: "Níveis"
     attributes:
       level:
-        name: "Nome"
-        mark: "Nota"
-        description: "Descrição"
+        description: Descrição
+        mark: Nota
+        name: Nome
+    models:
+      level:
+        one: Nível
+        other: Níveis

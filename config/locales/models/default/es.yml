@@ -1,4 +1,5 @@
+---
 es:
   attributes:
-    date: "Fecha"
-    filename: "Nombre del archivo"
+    date: Fecha
+    filename: Nombre del archivo

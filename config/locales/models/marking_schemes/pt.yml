@@ -1,9 +1,10 @@
+---
 pt:
   activerecord:
-    models:
-      marking_scheme:
-        one: "Esquema de avalição"
     attributes:
       marking_schemes:
-        name: "Nome"
-        weight: "Peso para"
+        name: Nome
+        weight: Peso para
+    models:
+      marking_scheme:
+        one: Esquema de avalição

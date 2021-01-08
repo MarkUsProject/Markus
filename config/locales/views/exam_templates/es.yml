@@ -1,97 +1,59 @@
+---
 es:
   exam_templates:
-    update:
-      success:
-        "Plantilla de examen se ha actualizado correctamente"
-      failure:
-        "Exam Template has not been successfully updated"
-      instruction:
-        "Reemplazar archivo de plantilla"
-    delete:
-      general:
-        "Eliminar plantilla de examen"
-      success:
-        "Plantilla de examen eliminada correctamente"
-      failure:
-        "Plantilla de examen no eliminada correctamente"
-      confirm:
-        "Está seguro de que desea eliminar %{name}?"
-    create:
-      add_new:
-        "Añadir plantilla de examen"
-      success:
-        "Plantilla de examen creada correctamente"
-      failure:
-        "Plantilla de examen no creada correctamente"
-      upload:
-        "Cargar plantilla"
-      add_division:
-        "añadir División plantilla"
-
-    download: "Descargar plantilla de examen"
-
-    generate:
-      success:
-        "Exitosamente generó %{copies} copias del examen"
-      title:
-        "Generar copias de exámenes"
-      copies_label:
-        "Número de copias"
-      index_label:
-        "Índice de comienzo"
-      generate:
-        "Gerar"
-      generate_job_started:
-        "Generación de pdfs de examen para el examen %{exam_name} ha comenzado"
-
-    parsing:
-      title:
-        "Selección automática de análisis"
-      general:
-        "Analizar automáticamente la información del estudiante"
-      save:
-        "Salvar"
-
-    split:
-      success:
-        "Examen con éxito dividido"
-      invalid:
-        "tipo de archivo invalido"
-      missing:
-        "Archivo perdido"
-      title:
-        "Dividir el examen"
-      instruction:
-        "Subir un examen PDF"
-      split:
-        "División"
-
-    split_pdf_log:
-      view_logs:
-        "ver los registros"
-      scan_error:
-        "Algunos archivos no se han escaneado correctamente."
-
-    back_to_log_page: "Volver a la página de registro"
-
     assign_errors:
-      fix_errors:     "Corregir errores de análisis"
-      document_info:  "Información del documento"
-      copy_number:    "Número de copia"
-      page_number:    "número de página"
-      upside_down:    "Página al revés?"
-
+      copy_number: Número de copia
+      document_info: Información del documento
+      fix_errors: Corregir errores de análisis
+      page_number: número de página
+      upside_down: Página al revés?
     assign_scans:
-      done: "Todos los grupos han sido asignados con éxito a los estudiantes"
-      help: "Asignar a los estudiantes a grupos basados en nombres de estudiantes impresos."
-      skip_group: "Skip group"
-      title: "Asignar Escaneado"
-
+      done: Todos los grupos han sido asignados con éxito a los estudiantes
+      help: Asignar a los estudiantes a grupos basados en nombres de estudiantes impresos.
+      skip_group: Skip group
+      title: Asignar Escaneado
+    back_to_log_page: Volver a la página de registro
+    create:
+      add_division: añadir División plantilla
+      add_new: Añadir plantilla de examen
+      failure: Plantilla de examen no creada correctamente
+      success: Plantilla de examen creada correctamente
+      upload: Cargar plantilla
+    delete:
+      confirm: Está seguro de que desea eliminar %{name}?
+      failure: Plantilla de examen no eliminada correctamente
+      general: Eliminar plantilla de examen
+      success: Plantilla de examen eliminada correctamente
+    download: Descargar plantilla de examen
+    generate:
+      copies_label: Número de copias
+      generate: Gerar
+      generate_job_started: Generación de pdfs de examen para el examen %{exam_name} ha comenzado
+      index_label: Índice de comienzo
+      success: Exitosamente generó %{copies} copias del examen
+      title: Generar copias de exámenes
+    parsing:
+      general: Analizar automáticamente la información del estudiante
+      save: Salvar
+      title: Selección automática de análisis
+    split:
+      instruction: Subir un examen PDF
+      invalid: tipo de archivo invalido
+      missing: Archivo perdido
+      split: División
+      success: Examen con éxito dividido
+      title: Dividir el examen
+    split_pdf_log:
+      scan_error: Algunos archivos no se han escaneado correctamente.
+      view_logs: ver los registros
+    update:
+      failure: Exam Template has not been successfully updated
+      instruction: Reemplazar archivo de plantilla
+      success: Plantilla de examen se ha actualizado correctamente
   flash:
     exam_templates:
-      update:
-        success: "Plantilla-examen no se ha actualizado con éxito"
-        error: "La plantilla de examen no se ha actualizado correctamente"
       assign_errors:
-        success: "Todos los archivos de error se han asignado correctamente"
-
+        success: Todos los archivos de error se han asignado correctamente
+      update:
+        error: La plantilla de examen no se ha actualizado correctamente
+        success: Plantilla-examen no se ha actualizado con éxito

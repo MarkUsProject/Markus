@@ -1,13 +1,14 @@
+---
 en:
   activerecord:
-    models:
-      test_result:
-        one: "Test Result"
-        other: "Test Results"
     attributes:
       test_result:
-        marks_earned: "Mark"
-        marks_total: "Out of"
-        name: "Test Name"
-        output: "Output"
-        status: "Status"
+        marks_earned: Mark
+        marks_total: Out of
+        name: Test Name
+        output: Output
+        status: Status
+    models:
+      test_result:
+        one: Test Result
+        other: Test Results

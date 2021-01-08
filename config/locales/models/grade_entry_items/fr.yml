@@ -1,10 +1,11 @@
+---
 fr:
   activerecord:
-    models:
-      grade_entry_item:
-        one: "Colonne"
     attributes:
       grade_entry_item:
-        bonus: "Note Bonus"
-        name: "Nom"
-        out_of: "sur"
+        bonus: Note Bonus
+        name: Nom
+        out_of: sur
+    models:
+      grade_entry_item:
+        one: Colonne
