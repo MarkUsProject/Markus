@@ -39,6 +39,7 @@ class Mark < ApplicationRecord
   end
 
   def update_deduction
+    # this thinks deductions are absent because the category callback is "before"
     if self.mark.nil? && deductive_annotations_absent?
       return self.update!(override: false)
     end
