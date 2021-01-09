@@ -127,11 +127,12 @@ describe AnnotationText do
     it 'creates marks if criterion was created after annotation texts' do
       old_criterion = flexible_criterion
       new_flex = create(:flexible_criterion, assignment: assignment)
+      byebug
       annotation_category_with_criterion.update!(flexible_criterion_id: new_flex.id)
-      deductive_text.update!(deduction: 1.0)
       assignment.reload
       prev_criterion_marks = []
       new_criterion_marks = []
+      byebug
       assignment.groupings.includes(:current_result).map do |grouping|
         prev_criterion_marks << grouping.current_result.marks.find_by(criterion: old_criterion).mark
         new_criterion_marks << grouping.current_result.marks.find_by(criterion: new_flex).mark
