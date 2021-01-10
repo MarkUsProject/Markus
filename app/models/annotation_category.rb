@@ -123,7 +123,13 @@ class AnnotationCategory < ApplicationRecord
         annotation_text.annotations.includes(:result).each do |annotation|
           annotation.result.marks
                     .find_or_create_by(criterion_id: new_criterion.id)
-                    .update_deduction
+                    .update(mark: new_criterion.max_mark -
+                      annotation.result
+                                .annotations
+                                .includes(:annotation_text)
+                                .where('annotation_texts.annotation_category': self)
+                                .pluck('deduction')
+                                .sum)
         end
       end
     end
