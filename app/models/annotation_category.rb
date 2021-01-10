@@ -14,7 +14,7 @@ class AnnotationCategory < ApplicationRecord
   validates :flexible_criterion_id,
             inclusion: { in: :assignment_criteria, message: '%<value>s is an invalid criterion for this assignment.' }
 
-  after_update :update_annotation_text_deductions, if: lambda { |c|
+  before_update :update_annotation_text_deductions, if: lambda { |c|
     changes_to_save.key?('flexible_criterion_id') && c.annotation_texts.exists?
   }
 
