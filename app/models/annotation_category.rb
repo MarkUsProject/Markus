@@ -118,13 +118,12 @@ class AnnotationCategory < ApplicationRecord
     else
       self.annotation_texts.each { |text| text.scale_deduction(new_criterion.max_mark / prev_criterion.max_mark) }
     end
-    byebug
     unless new_criterion.nil?
       self.annotation_texts.includes(:annotations).each do |annotation_text|
         annotation_text.annotations.includes(:result).each do |annotation|
           annotation.result.marks
-              .find_or_create_by(criterion_id: new_criterion.id)
-              .update_deduction
+                    .find_or_create_by(criterion_id: new_criterion.id)
+                    .update_deduction
         end
       end
     end
@@ -132,8 +131,8 @@ class AnnotationCategory < ApplicationRecord
       self.annotation_texts.includes(:annotations).each do |annotation_text|
         annotation_text.annotations.includes(:result).each do |annotation|
           annotation.result.marks
-              .find_by(criterion_id: prev_criterion.id)
-              .update(mark: nil)
+                    .find_by(criterion_id: prev_criterion.id)
+                    .update(mark: nil)
         end
       end
     end
