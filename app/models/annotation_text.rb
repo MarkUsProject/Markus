@@ -40,7 +40,7 @@ class AnnotationText < ApplicationRecord
 
   def update_mark_deductions
     return unless previous_changes.key?('deduction')
-
+    criterion_id = self.annotation_category.flexible_criterion_id
     annotations = self.annotations.includes(:result)
     annotations.each do |annotation|
       annotation.result.marks
