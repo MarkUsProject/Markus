@@ -139,7 +139,7 @@ describe UsersController do
     describe 'change time zone in settings' do
       let(:student) { create(:student, user_name: 'c6stenha') }
       it 'updates time zone for student' do
-        time_zone = 'Fake/TimeZone'
+        time_zone = 'Pacific Time (US & Canada)'
         patch_as student,
                  'update_settings',
                  params: { 'user': { 'time_zone': time_zone } }
