@@ -71,6 +71,8 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install -yq --no-install-recommends \
 RUN sed -ri 's/(rights=")none("\s+pattern="PDF")/\1read\2/' /etc/ImageMagick-6/policy.xml
 
 RUN useradd -m -s /bin/bash $USER
+
+# pre-create mount-points for volumes and set ownership of these mountpoints
 RUN mkdir -p /bundle \
              /ssh_pub_key \
              /app/data/dev/repos/bare \
