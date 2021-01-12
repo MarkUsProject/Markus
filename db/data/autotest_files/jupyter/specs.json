@@ -1,0 +1,19 @@
+{
+  "testers": [
+    {
+      "tester_type": "jupyter",
+      "test_data": [
+        {
+          "script_files": [],
+          "timeout": 30,
+          "output_verbosity": "short",
+          "extra_info": {
+            "name": "Test group",
+            "display_output": "instructors",
+            "test_group_id": 9
+          }
+        }
+      ]
+    }
+  ]
+}

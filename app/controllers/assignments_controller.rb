@@ -170,7 +170,7 @@ class AssignmentsController < ApplicationController
         @assignment, new_required_files = process_assignment_form(@assignment)
         @assignment.save!
       end
-      if new_required_files && !Rails.configuration.x.repository.hooks.empty?
+      if new_required_files && !Settings.repository.hooks.empty?
         # update list of required files in all repos only if there is a hook that will use that list
         @current_job = UpdateRepoRequiredFilesJob.perform_later(@assignment.id, current_user.user_name)
         session[:job_id] = @current_job.job_id
@@ -202,7 +202,7 @@ class AssignmentsController < ApplicationController
                                     .sort_by { |s| s.section.name }
 
     # set default value if web submits are allowed
-    @assignment.allow_web_submits = !Rails.configuration.x.repository.external_submits_only
+    @assignment.allow_web_submits = !Settings.repository.external_submits_only
     render :new
   end
 
@@ -233,7 +233,7 @@ class AssignmentsController < ApplicationController
           clone_warnings.each { |w| flash_message(:warning, w) }
         end
       end
-      if new_required_files && !Rails.configuration.x.repository.hooks.empty?
+      if new_required_files && !Settings.repository.hooks.empty?
         # update list of required files in all repos only if there is a hook that will use that list
         @current_job = UpdateRepoRequiredFilesJob.perform_later(@assignment.id, current_user.user_name)
         session[:job_id] = @current_job.job_id

@@ -20,11 +20,11 @@ class KeyPair < ApplicationRecord
                  ssh-rsa].freeze
 
   # Return a single line to add to the authorized_key file that contains the +public_key+,
-  # all +AUTHORIZED_KEY_ARGS+ and the command to call +Rails.configuration.x.repository.git_shell+
+  # all +AUTHORIZED_KEY_ARGS+ and the command to call +Settings.repository.git_shell+
   # with environment variables indicating the +user_name+ and this instance's relative url root
   def self.full_key_string(user_name, public_key)
-    markus_shell = Rails.configuration.x.repository.git_shell
-    relative_url_root = Rails.configuration.action_controller.relative_url_root
+    markus_shell = Settings.repository.git_shell
+    relative_url_root = Settings.action_controller.relative_url_root
     command = "command=\"LOGIN_USER=#{user_name} RELATIVE_URL_ROOT=#{relative_url_root} #{markus_shell}\""
     "#{command},#{AUTHORIZED_KEY_ARGS} #{public_key}"
   end

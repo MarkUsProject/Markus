@@ -28,7 +28,7 @@ class ExamTemplate < ApplicationRecord
     name_input = attributes[:name]
     exam_template_name = name_input.blank? ? File.basename(attributes[:filename].tr(' ', '_'), '.pdf') : name_input
     template_path = File.join(
-      Rails.configuration.x.scanned_exams.path,
+        Settings.scanned_exams.path,
       assignment_name,
       exam_template_name
     )
@@ -64,7 +64,7 @@ class ExamTemplate < ApplicationRecord
     return unless attributes.key? :assessment_id
     assignment_name = Assignment.find(attributes[:assessment_id]).short_identifier
     template_path = File.join(
-      Rails.configuration.x.scanned_exams.path,
+        Settings.scanned_exams.path,
       assignment_name,
       self.name
     )
@@ -236,7 +236,7 @@ class ExamTemplate < ApplicationRecord
   end
 
   def base_path
-    File.join Rails.configuration.x.scanned_exams.path,
+    File.join Settings.scanned_exams.path,
               assignment.short_identifier, self.name
   end
 
@@ -291,12 +291,12 @@ class ExamTemplate < ApplicationRecord
     if self.name_changed?
       assignment_name = self.assignment.short_identifier
       old_directory_name = File.join(
-        Rails.configuration.x.scanned_exams.path,
+        Settings.scanned_exams.path,
         assignment_name,
         name_was
       )
       new_directory_name = File.join(
-        Rails.configuration.x.scanned_exams.path,
+        Settings.scanned_exams.path,
         assignment_name,
         name
       )

@@ -5,20 +5,20 @@ describe KeyPairPolicy, keep_memory_repos: true do
   describe_rule :view? do
     succeed 'repo type is git and key storage is enabled' do
       before do
-        allow(Rails.configuration.x.repository).to receive(:type).and_return('git')
-        allow(Rails.configuration).to receive(:enable_key_storage).and_return(true)
+        allow(Settings.repository).to receive(:type).and_return('git')
+        allow(Settings).to receive(:enable_key_storage).and_return(true)
       end
     end
     failed 'repo type is not git' do
       before do
-        allow(Rails.configuration.x.repository).to receive(:type).and_return('svn')
-        allow(Rails.configuration).to receive(:enable_key_storage).and_return(true)
+        allow(Settings.repository).to receive(:type).and_return('svn')
+        allow(Settings).to receive(:enable_key_storage).and_return(true)
       end
     end
     failed 'key storage is not enabled' do
       before do
-        allow(Rails.configuration.x.repository).to receive(:type).and_return('git')
-        allow(Rails.configuration).to receive(:enable_key_storage).and_return(false)
+        allow(Settings.repository).to receive(:type).and_return('git')
+        allow(Settings).to receive(:enable_key_storage).and_return(false)
       end
     end
   end
@@ -26,8 +26,8 @@ describe KeyPairPolicy, keep_memory_repos: true do
   describe_rule :manage? do
     context 'repo type is git and key storage is enabled' do
       before do
-        allow(Rails.configuration.x.repository).to receive(:type).and_return('git')
-        allow(Rails.configuration).to receive(:enable_key_storage).and_return(true)
+        allow(Settings.repository).to receive(:type).and_return('git')
+        allow(Settings).to receive(:enable_key_storage).and_return(true)
       end
       succeed 'when the user is an admin'
       succeed 'when the user is a ta' do
@@ -48,14 +48,14 @@ describe KeyPairPolicy, keep_memory_repos: true do
     end
     failed 'repo type is not git' do
       before do
-        allow(Rails.configuration.x.repository).to receive(:type).and_return('svn')
-        allow(Rails.configuration).to receive(:enable_key_storage).and_return(true)
+        allow(Settings.repository).to receive(:type).and_return('svn')
+        allow(Settings).to receive(:enable_key_storage).and_return(true)
       end
     end
     failed 'key storage is not enabled' do
       before do
-        allow(Rails.configuration.x.repository).to receive(:type).and_return('git')
-        allow(Rails.configuration).to receive(:enable_key_storage).and_return(false)
+        allow(Settings.repository).to receive(:type).and_return('git')
+        allow(Settings).to receive(:enable_key_storage).and_return(false)
       end
     end
   end

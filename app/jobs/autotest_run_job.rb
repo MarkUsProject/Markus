@@ -1,8 +1,6 @@
 class AutotestRunJob < ApplicationJob
   include AutomatedTestsHelper
 
-  queue_as Rails.configuration.x.queues.autotest_run
-
   def self.show_status(_status)
     I18n.t('poll_job.autotest_run_job_enqueuing')
   end
@@ -23,7 +21,7 @@ class AutotestRunJob < ApplicationJob
     # TestRun objects can either be created outside of this job (by passing their ids), or here
     test_batch = test_runs.size > 1 ? TestBatch.create : nil # create 1 batch object if needed
 
-    test_runs.each_slice(Rails.configuration.x.autotest.max_batch_size) do |test_runs_slice|
+    test_runs.each_slice(Settings.autotest.max_batch_size) do |test_runs_slice|
       test_run_ids = test_runs_slice.map { |data| data[:id] || create_test_run(data, test_batch, user_id) }
 
       server_kwargs = server_params(get_markus_address(host_with_port), assignment_id)

@@ -65,8 +65,8 @@ class GitRepository < Repository::AbstractRepository
       repo.index.add('.required.json')
 
       # Add client-side hooks
-      if with_hooks && !Rails.configuration.x.repository.client_hooks.empty?
-        client_hooks_path = Rails.configuration.x.repository.client_hooks
+      if with_hooks && !Settings.repository.client_hooks.empty?
+        client_hooks_path = Settings.repository.client_hooks
         FileUtils.copy_entry client_hooks_path, File.join(connect_string, 'markus-hooks')
         FileUtils.chmod 0755, File.join(connect_string, 'markus-hooks', 'pre-commit')
         repo.index.add_all('markus-hooks')
@@ -76,7 +76,7 @@ class GitRepository < Repository::AbstractRepository
 
       # Set up server-side hooks
       if with_hooks
-        Rails.configuration.x.repository.hooks.each do |hook_symbol, hook_script|
+        Settings.repository.hooks.each do |hook_symbol, hook_script|
           FileUtils.ln_s(hook_script, File.join(barepath, 'hooks', hook_symbol.to_s))
         end
       end
@@ -393,14 +393,14 @@ class GitRepository < Repository::AbstractRepository
   def self.__update_permissions(permissions, full_access_users)
 
     # If we're not in authoritative mode, bail out
-    unless Rails.configuration.x.repository.is_repository_admin
+    unless Settings.repository.is_repository_admin
       raise NotAuthorityError.new(
         'Unable to set bulk permissions: Not in authoritative mode!')
     end
 
     # Create auth csv file
     sorted_permissions = permissions.sort.to_h
-    CSV.open(Rails.configuration.x.repository.permission_file, 'wb') do |csv|
+    CSV.open(Settings.repository.permission_file, 'wb') do |csv|
       csv.flock(File::LOCK_EX)
       csv << ['*'] + full_access_users
       sorted_permissions.each do |repo_name, users|

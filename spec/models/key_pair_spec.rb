@@ -37,8 +37,8 @@ describe KeyPair do
 
   context 'self.full_key_string' do
     it 'should be formatted properly' do
-      allow(Rails.configuration.x.repository).to receive(:git_shell).and_return('shell')
-      allow(Rails.configuration.action_controller).to receive(:relative_url_root).and_return('/test')
+      allow(Settings.repository).to receive(:git_shell).and_return('shell')
+      allow(Settings.action_controller).to receive(:relative_url_root).and_return('/test')
       expected = "command=\"LOGIN_USER=a RELATIVE_URL_ROOT=/test shell\",#{KeyPair::AUTHORIZED_KEY_ARGS} b"
       expect(KeyPair.full_key_string('a', 'b')).to eq expected
     end

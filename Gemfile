@@ -62,6 +62,7 @@ gem 'cookies_eu'
 gem 'rails-html-sanitizer'
 gem 'responders'
 gem 'activemodel-serializers-xml'
+gem 'config'
 
 # If you are a MarkUs developer and use PostgreSQL, make sure you have
 # PostgreSQL header files installed (e.g. libpq-dev on Debian/Ubuntu).

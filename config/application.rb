@@ -16,20 +16,11 @@ module Markus
     # Initialize configuration defaults for originally generated Rails version
     config.load_defaults 6.0
 
-    # Configure sensitive parameters which will be filtered from the log file
+    # Sensitive parameters which will be filtered from the log file
     config.filter_parameters += [:password]
-
-    # Set the timezone
-    config.time_zone = 'Eastern Time (US & Canada)'
-
-    # Use Resque for background jobs
-    config.active_job.queue_adapter = :resque
 
     # Use json serializer for cookies
     config.action_dispatch.cookies_serializer = :json
-
-    # Set redis as the Rails cache store
-    # config.cache_store = :redis_cache_store
 
     # Do not add autoload paths to load path.
     config.add_autoload_paths_to_load_path = false
@@ -47,9 +38,92 @@ module Markus
     # Add Yarn node_modules folder to the asset load path.
     config.assets.paths << Rails.root.join('node_modules')
 
-    # Configure responders gem flash keys.
-    # NOTE: This didn't work when put in config/initializers/responders.rb.
-    config.responders.flash_keys = [:success, :error]
+    # Settings below are configurable
+
+    # Set the timezone
+    config.time_zone = Settings.rails.time_zone
+
+    # Use Resque for background jobs
+    config.active_job.queue_adapter = Settings.rails.active_job.queue_adapter.to_sym
+
+    # Markus Session Store configuration
+    # Be sure to restart your server when you modify this part.
+    #
+    # Your secret key for verifying cookie session data integrity.
+    # If you change this key, all old sessions will become invalid!
+    # Make sure the secret is at least 30 characters and all random,
+    # no regular words or you'll be exposed to dictionary attacks.
+    # Please make sure :_key is named uniquely if you are hosting
+    # several MarkUs instances on one machine. Also, make sure you change
+    # the :secret string to something else than you find below.
+
+    Rails.application.config.session_store(
+        Settings.rails.session_store.type.to_sym,
+        key: Settings.rails.session_store.args.key,
+        path: Settings.rails.session_store.args.path,
+        expire_after: Settings.rails.session_store.args.expire_after.days,
+        secure: Settings.rails.session_store.args.secure,
+        same_site: Settings.rails.session_store.args.same_site.to_sym
+    )
+
+    # Email notifications
+    config.action_mailer.delivery_method = Settings.rails.action_mailer.delivery_method.to_sym
+    if Settings.rails.action_mailer.delivery_method == "smtp"
+      config.action_mailer.smtp_settings = Settings.rails.action_mailer.smtp_settings.to_h
+    end
+    config.action_mailer.default_url_options = Settings.rails.action_mailer.default_url_options.to_h
+    config.action_mailer.asset_host = Settings.rails.action_mailer.asset_host
+    config.action_mailer.perform_deliveries = Settings.rails.action_mailer.perform_deliveries
+    config.action_mailer.deliver_later_queue_name = Settings.rails.action_mailer.deliver_later_queue_name
+
+    # The settings above are required
+    # The settings below may optionally be set depending on the current environment
+
+    unless Settings.rails.cache_store.nil?
+      # Set redis as the Rails cache store
+      if Settings.rails.cache_store == "redis_cache_store"
+        config.cache_store = Settings.rails.cache_store.to_sym, {url: Settings.redis.url}
+      else
+        config.cache_store = Settings.rails.cache_store.to_sym
+      end
+    end
+
+    config.perform_caching = Settings.rails.perform_caching unless Settings.rails.perform_caching.nil?
+
+    # In the development environment your application's code is reloaded on
+    # every request. This slows down response time but is perfect for development
+    # since you don't have to restart the web server when you make code changes.
+    config.cache_classes = Settings.rails.cache_classes unless Settings.rails.cache_classes.nil?
+
+    # Do not eager load code on boot.
+    config.eager_load = Settings.rails.eager_load unless Settings.rails.eager_load.nil?
+
+    # Show full error reports.
+    unless Settings.rails.consider_all_requests_local.nil?
+      config.consider_all_requests_local = Settings.rails.consider_all_requests_local
+    end
+
+    config.hosts << Settings.rails.hosts unless Settings.rails.hosts.nil?
+
+    # Set high verbosity of logger.
+    config.log_level = Settings.rails.log_level unless Settings.rails.log_level.nil?
+
+    # Print deprecation notices to stderr.
+    unless Settings.rails.active_support.deprecation.nil?
+      config.active_support.deprecation = Settings.rails.active_support.deprecation.to_sym
+    end
+
+    # Show where SQL queries were generated from.
+    unless Settings.rails.active_record.verbose_query_logs.nil?
+      config.active_record.verbose_query_logs = Settings.rails.active_record.verbose_query_logs
+    end
+
+    # Set this if MarkUs is deployed to a subdirectory, e.g. if it is served at https://yourhost.com/instance0
+    unless Settings.rails.action_controller.relative_url_root.nil?
+      config.action_controller.relative_url_root = Settings.rails.action_controller.relative_url_root
+    end
+
+    config.assets.prefix = Settings.rails.assets.prefix unless Settings.rails.assets.prefix.nil?
 
     # TODO review initializers 01 and 02
     # TODO review markus custom config format

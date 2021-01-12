@@ -2,7 +2,7 @@ shared_examples 'run testers job' do
   subject { described_class.perform_now }
   let(:tmp_dir) { Dir.mktmpdir }
   before :each do
-    allow(Rails.configuration.x.autotest).to receive(:client_dir).and_return(tmp_dir)
+    allow(Settings.autotest).to receive(:client_dir).and_return(tmp_dir)
   end
   after :each do
     FileUtils.rm_rf tmp_dir
