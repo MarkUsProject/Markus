@@ -58,17 +58,17 @@ module Markus
     # the :secret string to something else than you find below.
 
     Rails.application.config.session_store(
-        Settings.rails.session_store.type.to_sym,
-        key: Settings.rails.session_store.args.key,
-        path: Settings.rails.session_store.args.path,
-        expire_after: Settings.rails.session_store.args.expire_after.days,
-        secure: Settings.rails.session_store.args.secure,
-        same_site: Settings.rails.session_store.args.same_site.to_sym
+      Settings.rails.session_store.type.to_sym,
+      key: Settings.rails.session_store.args.key,
+      path: Settings.rails.session_store.args.path,
+      expire_after: Settings.rails.session_store.args.expire_after.days,
+      secure: Settings.rails.session_store.args.secure,
+      same_site: Settings.rails.session_store.args.same_site.to_sym
     )
 
     # Email notifications
     config.action_mailer.delivery_method = Settings.rails.action_mailer.delivery_method.to_sym
-    if Settings.rails.action_mailer.delivery_method == "smtp"
+    if Settings.rails.action_mailer.delivery_method == 'smtp'
       config.action_mailer.smtp_settings = Settings.rails.action_mailer.smtp_settings.to_h
     end
     config.action_mailer.default_url_options = Settings.rails.action_mailer.default_url_options.to_h
@@ -81,8 +81,8 @@ module Markus
 
     unless Settings.rails.cache_store.nil?
       # Set redis as the Rails cache store
-      if Settings.rails.cache_store == "redis_cache_store"
-        config.cache_store = Settings.rails.cache_store.to_sym, {url: Settings.redis.url}
+      if Settings.rails.cache_store == 'redis_cache_store'
+        config.cache_store = Settings.rails.cache_store.to_sym, { url: Settings.redis.url }
       else
         config.cache_store = Settings.rails.cache_store.to_sym
       end
