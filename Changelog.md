@@ -6,6 +6,7 @@
 - Use Fullscreen API for grading in "fullscreen mode" (#5036)
 - Render .ipynb submission files as html (#5032)
 - Add option to view a binary file as plain text while grading (#5033)
+- Fix bug where a remarked submission wasn't being shown in the course summary (#5063)
 
 ## [v1.11.1]
 - Fix bug where duplicate marks can get created because of concurrent requests (#5018)

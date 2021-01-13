@@ -8,16 +8,12 @@ describe CourseSummariesController do
     end
 
     describe '#download_csv_grades_report' do
-      before :each do
+      it 'be able to get a csv grade report' do
         assignments = create_list(:assignment_with_criteria_and_results, 3)
         create(:grouping_with_inviter_and_submission, assignment: assignments[0])
-      end
-
-      it 'be able to get a csv grade report' do
         csv_rows = get_as(@admin, :download_csv_grades_report, format: :csv).parsed_body
         expect(csv_rows.size).to eq(Student.count + 1) # one header row plus one row per student
 
-        assignments = Assignment.all.order(id: :asc)
         header = [User.human_attribute_name(:user_name),
                   User.human_attribute_name(:first_name),
                   User.human_attribute_name(:last_name),
@@ -49,74 +45,100 @@ describe CourseSummariesController do
         end
         expect(response.status).to eq(200)
       end
+      context 'when at least one result is a remark result' do
+        it do
+          assignment = create(:assignment_with_criteria_and_results_with_remark)
+          remark_results = assignment.groupings.map(&:results).group_by(&:count)[2].first
+          grouping = remark_results.first.grouping
+          user_name = grouping.students.first.user_name
+          csv_rows = get_as(@admin, :download_csv_grades_report, format: :csv).parsed_body
+          csv_rows.select { |r| r.first == user_name }
+                  .map { |r| expect(r.last).to eq(grouping.current_result.total_mark.to_s) }
+        end
+      end
     end
 
     describe '#populate' do
-      before :each do
-        assignments = create_list(:assignment_with_criteria_and_results, 3)
-        create(:grouping_with_inviter_and_submission, assignment: assignments[0])
-        2.times { create(:grade_entry_form_with_data) }
-        create(:grade_entry_form)
-        create :marking_scheme, assessments: Assessment.all
+      context 'when there are no remark requests' do
+        before :each do
+          assignments = create_list(:assignment_with_criteria_and_results, 3)
+          create(:grouping_with_inviter_and_submission, assignment: assignments[0])
+          2.times { create(:grade_entry_form_with_data) }
+          create(:grade_entry_form)
+          create :marking_scheme, assessments: Assessment.all
 
-        get_as @admin, :populate, format: :json
-        @response_data = response.parsed_body.deep_symbolize_keys
-        @data = @response_data[:data]
-      end
+          get_as @admin, :populate, format: :json
+          @response_data = response.parsed_body.deep_symbolize_keys
+          @data = @response_data[:data]
+        end
 
-      it 'returns the correct grades' do
-        expect(@data.length).to eq Student.count
-        Student.find_each do |student|
-          expected = {
-            id: student.id,
-            id_number: student.id_number,
-            user_name: student.user_name,
-            first_name: student.first_name,
-            last_name: student.last_name,
-            hidden: student.hidden,
-            assessment_marks: Hash[GradeEntryForm.all.map do |ges|
-              total_grade = ges.grade_entry_students.find_by(user: student).total_grade
-              out_of = ges.grade_entry_items.sum(:out_of)
-              percent = total_grade.nil? || out_of.nil? ? nil : (total_grade * 100 / out_of).round(2)
-              [ges.id.to_s.to_sym, {
-                mark: total_grade,
-                percentage: percent
-              }]
-            end
-            ]
-          }
-          student.accepted_groupings.each do |g|
-            expected[:assessment_marks][g.assessment_id.to_s.to_sym] = {
-              mark: g.current_result.total_mark,
-              percentage: (g.current_result.total_mark * 100 / g.assignment.max_mark).round(2).to_s
+        it 'returns the correct grades' do
+          expect(@data.length).to eq Student.count
+          Student.find_each do |student|
+            expected = {
+              id: student.id,
+              id_number: student.id_number,
+              user_name: student.user_name,
+              first_name: student.first_name,
+              last_name: student.last_name,
+              hidden: student.hidden,
+              assessment_marks: Hash[GradeEntryForm.all.map do |ges|
+                total_grade = ges.grade_entry_students.find_by(user: student).total_grade
+                out_of = ges.grade_entry_items.sum(:out_of)
+                percent = total_grade.nil? || out_of.nil? ? nil : (total_grade * 100 / out_of).round(2)
+                [ges.id.to_s.to_sym, {
+                  mark: total_grade,
+                  percentage: percent
+                }]
+              end
+              ]
             }
+            student.accepted_groupings.each do |g|
+              expected[:assessment_marks][g.assessment_id.to_s.to_sym] = {
+                mark: g.current_result.total_mark,
+                percentage: (g.current_result.total_mark * 100 / g.assignment.max_mark).round(2).to_s
+              }
+            end
+            expect(@data.map { |h| h.except(:weighted_marks) }).to include expected
           end
-          expect(@data.map { |h| h.except(:weighted_marks) }).to include expected
+        end
+
+        it 'returns correct average, median info about assessments' do
+          averages = []
+          medians = []
+          returned_averages = @response_data[:graph_data][:average]
+          returned_medians = @response_data[:graph_data][:median]
+          Assessment.all.order(id: :asc).each do |a|
+            if a.is_a? GradeEntryForm
+              averages << a.calculate_average&.round(2)
+              medians << a.calculate_median&.round(2)
+            else
+              averages << a.results_average&.round(2)
+              medians << a.results_median&.round(2)
+            end
+          end
+          MarkingScheme.all.each do |m|
+            total = m.marking_weights.pluck(:weight).compact.sum
+            grades = m.students_weighted_grades_array(@admin)
+            averages << (DescriptiveStatistics.mean(grades) * 100 / total).round(2).to_f
+            medians << (DescriptiveStatistics.median(grades) * 100 / total).round(2).to_f
+          end
+          expect(returned_medians).to eq medians
+          expect(returned_averages).to eq averages
         end
       end
-
-      it 'returns correct average, median info about assessments' do
-        averages = []
-        medians = []
-        returned_averages = @response_data[:graph_data][:average]
-        returned_medians = @response_data[:graph_data][:median]
-        Assessment.all.order(id: :asc).each do |a|
-          if a.is_a? GradeEntryForm
-            averages << a.calculate_average&.round(2)
-            medians << a.calculate_median&.round(2)
-          else
-            averages << a.results_average&.round(2)
-            medians << a.results_median&.round(2)
+      context 'when at least one result is a remark result' do
+        it do
+          assignment = create(:assignment_with_criteria_and_results_with_remark)
+          remark_results = assignment.groupings.map(&:results).group_by(&:count)[2].first
+          grouping = remark_results.first.grouping
+          user_name = grouping.students.first.user_name
+          get_as @admin, :populate, format: :json
+          data = response.parsed_body.deep_symbolize_keys[:data]
+          data.select { |d| d[:user_name] == user_name }.map do |d|
+            expect(d[:assessment_marks][assignment.id.to_s.to_sym][:mark]).to eq(grouping.current_result.total_mark)
           end
         end
-        MarkingScheme.all.each do |m|
-          total = m.marking_weights.pluck(:weight).compact.sum
-          grades = m.students_weighted_grades_array(@admin)
-          averages << (DescriptiveStatistics.mean(grades) * 100 / total).round(2).to_f
-          medians << (DescriptiveStatistics.median(grades) * 100 / total).round(2).to_f
-        end
-        expect(returned_medians).to eq medians
-        expect(returned_averages).to eq averages
       end
     end
   end
