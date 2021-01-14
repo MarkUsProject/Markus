@@ -1240,7 +1240,7 @@ class Assignment < Assessment
   end
 
   def update_assigned_tokens
-    old, new = assignment_properties.saved_change_to_tokens_per_period || [0,0]
+    old, new = assignment_properties.saved_change_to_tokens_per_period || [0, 0]
     difference = new - old
     unless difference.zero?
       max_tokens = assignment_properties.tokens_per_period
