@@ -1,5 +1,4 @@
 namespace :markus do
-
   # Copy directory +src+ to +dest+. If +rev+ is true, instead
   # copy +dest+ to +src+. If +remove_dest+ is true, remove +dest+
   # before copying if it exists.
