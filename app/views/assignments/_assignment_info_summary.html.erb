@@ -1,7 +1,3 @@
-<p>
-  <%= "#{Assignment.human_attribute_name(:due_date)}: #{l(assignment.due_date)}" %>
-</p>
-
 <% if assignment.outstanding_remark_request_count && assignment.outstanding_remark_request_count > 0%>
   <p>
     <%= link_to t(:outstanding_remark_request,
