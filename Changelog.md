@@ -8,6 +8,7 @@
 - Render .ipynb submission files as html (#5032)
 - Add option to view a binary file as plain text while grading (#5033)
 - Fix bug where a remarked submission wasn't being shown in the course summary (#5063)
+- Fix bug where the server user's api key was being regenerated after every test run creation (#5065)
 - Fix bug where additional test tokens were added after every save (#5064)
 
 ## [v1.11.1]
