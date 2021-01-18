@@ -72,6 +72,10 @@ describe CourseSummariesController do
           @data = @response_data[:data]
         end
 
+        it 'displays column headers correctly' do
+          expect(@response_data[:assessments][0][:name]).to eq('A1 (/3)')
+        end
+
         it 'returns the correct grades' do
           expect(@data.length).to eq Student.count
           Student.find_each do |student|

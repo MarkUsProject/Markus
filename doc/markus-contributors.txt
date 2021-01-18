@@ -130,6 +130,7 @@ Michael Lumbroso
 Michael Margel
 Mike Conley
 Mike Gunderloy
+Mike Kang
 Mike Stewart
 Mike Wu
 Mina Almasry
@@ -189,5 +190,6 @@ Wilson Chiang
 Xiang Yu
 Yansong Zang
 Yiqi Zhu
+Yujin Cho
 Yusi Fan
 Zachary Munro-Cape
