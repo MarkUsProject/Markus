@@ -26,6 +26,6 @@ class ApplicationJob < ActiveJob::Base
   end
 
   def self.queue_name
-    Settings.queues[self.name.underscore.gsub(/_job$/, '')] || Settings.queues.default
+    Settings.queues[self.name.underscore] || Settings.queues.default
   end
 end
