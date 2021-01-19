@@ -1,19 +1,15 @@
+---
 fr:
-  # app/views/main/_assignment_info_summary.erb
-  average: "Moyenne"
-  class_average: "Classe moyenne "
-  median: "Médiane"
-  assignments_submitted: "Projets envoyés"
-  assignments_graded: "Projets corrigés"
-  num_failed: "Projets sous la moyenne"
-  num_zeros: "Projets à 0"
+  assignments_graded: Projets corrigés
+  assignments_submitted: Projets envoyés
+  average: Moyenne
+  class_average: 'Classe moyenne '
+  grader_distribution: Correcteurs assignés
+  marking_scheme_with_id: Barème %{marking_scheme_id}
+  median: Médiane
+  num_failed: Projets sous la moyenne
+  num_zeros: Projets à 0
   outstanding_remark_request:
     one: "%{count} demande de remarque restante"
     other: "%{count} demandes de remarque restantes"
-  refresh_graph: "Actualiser le graphique"
-
-  # app/views/main/_grader_summary.erb
-  grader_distribution: "Correcteurs assignés"
-
-  #app/views/course_summaries/_course_summary_info_summary.html.erb
-  marking_scheme_with_id: "Barème %{marking_scheme_id}"
+  refresh_graph: Actualiser le graphique

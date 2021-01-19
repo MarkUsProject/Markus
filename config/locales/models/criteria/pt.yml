@@ -1,42 +1,42 @@
+---
 pt:
   activerecord:
-    models:
-      criterion:
-        one: "Critério"
-      checkbox_criterion:
-        one: "Critério de caixa de seleção"
-      flexible_criterion:
-        one: "Critério flexívei"
-      rubric_criterion:
-        one: "Critério rubrica"
     attributes:
-      criterion:
-        bonus: 'UPDATE ME!'
-        description: "Descrição"
-        name: "Nome"
-        max_mark: "Nota máxima"
-        peer_visible: "Tornar visível a perscrutar revisores"
-        ta_visible: "Tornar visível para assistentes de ensino"
       checkbox_criterion:
-        description: "Descrição"
-        name: "Nome"
-        max_mark: "Nota máxima"
-        peer_visible: "Tornar visível a perscrutar revisores"
-        ta_visible: "Tornar visível para assistentes de ensino"
+        description: Descrição
+        max_mark: Nota máxima
+        name: Nome
+        peer_visible: Tornar visível a perscrutar revisores
+        ta_visible: Tornar visível para assistentes de ensino
+      criterion:
+        bonus: UPDATE ME!
+        description: Descrição
+        max_mark: Nota máxima
+        name: Nome
+        peer_visible: Tornar visível a perscrutar revisores
+        ta_visible: Tornar visível para assistentes de ensino
       flexible_criterion:
-        description: "Descrição"
-        name: "Nome"
-        max_mark: "Nota máxima"
-        peer_visible: "Tornar visível a perscrutar revisores"
-        ta_visible: "Tornar visível para assistentes de ensino"
+        description: Descrição
+        max_mark: Nota máxima
+        name: Nome
+        peer_visible: Tornar visível a perscrutar revisores
+        ta_visible: Tornar visível para assistentes de ensino
       rubric_criterion:
-        description: "Descrição"
-        name: "Nome"
-        max_mark: "Nota máxima"
-        peer_visible: "Tornar visível a perscrutar revisores"
-        ta_visible: "Tornar visível para assistentes de ensino"
-
+        description: Descrição
+        max_mark: Nota máxima
+        name: Nome
+        peer_visible: Tornar visível a perscrutar revisores
+        ta_visible: Tornar visível para assistentes de ensino
     errors:
       models:
         criterion:
-          visibility_error: "Selecione pelo menos uma caixa na seção visibilidade"
+          visibility_error: Selecione pelo menos uma caixa na seção visibilidade
+    models:
+      checkbox_criterion:
+        one: Critério de caixa de seleção
+      criterion:
+        one: Critério
+      flexible_criterion:
+        one: Critério flexívei
+      rubric_criterion:
+        one: Critério rubrica

@@ -1,102 +1,63 @@
+---
 en:
   exam_templates:
-    update:
-      success:
-        "Exam Template has been successfully updated"
-      failure:
-        "Exam Template has not been successfully updated"
-      instruction:
-        "Replace template file"
-    delete:
-      general:
-        "Delete Exam Template"
-      success:
-        "Exam Template successfully deleted"
-      failure:
-        "Exam Template not successfully deleted"
-      confirm:
-        "Are you sure you want to delete %{name}?"
-    create:
-      add_new:
-        "Add Exam Template"
-      success:
-        "Exam Template successfully created"
-      failure:
-        "Exam Template not successfully created"
-      upload:
-        "Upload Template"
-      add_division:
-        "Add Template Division"
-
-    download: "Download Exam Template"
-
-    generate:
-      success:
-        "Successfully generated %{copies} exam copies"
-      title:
-        "Generate Exam Copies"
-      copies_label:
-        "Number of Copies"
-      index_label:
-        "Start Index"
-      generate:
-        "Generate"
-      generate_job_started:
-        "Generating exam pdfs for exam %{exam_name} has begun."
-
-    parsing:
-      title:
-        "Automatic Parsing Selection"
-      general:
-        "Automatically parse student information"
-      save:
-        "Save"
-
-    split:
-      success:
-        "Exam Template is successfully split"
-      failure:
-        "Exam Template is not successfully split"
-      invalid:
-        "Invalid file type"
-      missing:
-        "Missing File"
-      title:
-        "Split Exam"
-      instruction:
-        "Upload PDF Exam"
-      split:
-        "Split"
-
-    split_pdf_log:
-      view_logs:
-        "View Logs"
-      scan_error:
-        "Some files have not been scanned properly."
-
-    back_to_exam_templates_page: "Back to Exam Templates page"
-    back_to_log_page: "Back to Log page"
-
     assign_errors:
-      fix_errors:     "Fix"
-      document_info:  "Document Info"
-      copy_number:    "Copy Number"
-      page_number:    "Page Number"
-      upside_down:    "Page Upside Down?"
-
+      copy_number: Copy Number
+      document_info: Document Info
+      fix_errors: Fix
+      page_number: Page Number
+      upside_down: Page Upside Down?
     assign_scans:
-      done: "All groups have been successfully assigned students"
-      help: "Assign students to scanned exam groups based on printed student names."
-      skip_group: "Skip group"
-      title: "Assign Scans"
-      not_all_submissions_collected: "Not all submissions have been collected."
-      no_cover_page: "This submission does not have a cover page."
-
+      done: All groups have been successfully assigned students
+      help: Assign students to scanned exam groups based on printed student names.
+      no_cover_page: This submission does not have a cover page.
+      not_all_submissions_collected: Not all submissions have been collected.
+      skip_group: Skip group
+      title: Assign Scans
+    back_to_exam_templates_page: Back to Exam Templates page
+    back_to_log_page: Back to Log page
+    create:
+      add_division: Add Template Division
+      add_new: Add Exam Template
+      failure: Exam Template not successfully created
+      success: Exam Template successfully created
+      upload: Upload Template
+    delete:
+      confirm: Are you sure you want to delete %{name}?
+      failure: Exam Template not successfully deleted
+      general: Delete Exam Template
+      success: Exam Template successfully deleted
+    download: Download Exam Template
+    generate:
+      copies_label: Number of Copies
+      generate: Generate
+      generate_job_started: Generating exam pdfs for exam %{exam_name} has begun.
+      index_label: Start Index
+      success: Successfully generated %{copies} exam copies
+      title: Generate Exam Copies
+    parsing:
+      general: Automatically parse student information
+      save: Save
+      title: Automatic Parsing Selection
+    split:
+      failure: Exam Template is not successfully split
+      instruction: Upload PDF Exam
+      invalid: Invalid file type
+      missing: Missing File
+      split: Split
+      success: Exam Template is successfully split
+      title: Split Exam
+    split_pdf_log:
+      scan_error: Some files have not been scanned properly.
+      view_logs: View Logs
+    update:
+      failure: Exam Template has not been successfully updated
+      instruction: Replace template file
+      success: Exam Template has been successfully updated
   flash:
     exam_templates:
-      update:
-        success: "Exam Template has been successfully updated"
-        error: "Exam Template has not been successfully updated"
       assign_errors:
-        success: "All error files have been successfully assigned"
-
+        success: All error files have been successfully assigned
+      update:
+        error: Exam Template has not been successfully updated
+        success: Exam Template has been successfully updated

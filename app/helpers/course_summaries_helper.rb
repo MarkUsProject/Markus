@@ -27,6 +27,7 @@ module CourseSummariesHelper
 
     assignment_grades = students.joins(accepted_groupings: :current_result)
                                 .where('results.released_to_students': released)
+                                .order(:'results.created_at')
                                 .pluck('users.id', 'groupings.assessment_id', 'results.total_mark')
     assignment_grades.each do |student_id, assessment_id, mark|
       max_mark = @max_marks[assessment_id]

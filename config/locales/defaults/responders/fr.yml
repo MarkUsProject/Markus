@@ -1,17 +1,23 @@
+---
 fr:
   flash:
     actions:
       create:
-        success: "Création de %{resource_name}."
-        error: "Erreur dans la création de %{resource_name}."
-      update:
-        success: "Mise à jour de %{resource_name}."
-        error: "Erreur dans la mise à jour de %{resource_name}."
-      update_files:
-        success:  "Les changements ont été enregistrés."
+        error: Erreur dans la création de %{resource_name}.
+        success: Création de %{resource_name}.
       destroy:
-        success: "Supprimé avec succès %{resource_name}."
-        error: "Impossible de supprimer %{resource_name}."
+        error: Impossible de supprimer %{resource_name}.
+        success: Supprimé avec succès %{resource_name}.
+      update:
+        error: Erreur dans la mise à jour de %{resource_name}.
+        success: Mise à jour de %{resource_name}.
+      update_files:
+        success: Les changements ont été enregistrés.
+    admins:
+      create:
+        error: "%{resource_name} ne peut pas être créé à cause de: %{errors}."
+      update:
+        error: "%{resource_name} ne peut pas être modifié à cause de: %{errors}."
     annotation_categories:
       create:
         error: "%{resource_name} ne peut pas être créé à cause de: %{errors}."
@@ -19,13 +25,8 @@ fr:
         error: "%{resource_name} ne peut pas être modifié à cause de: %{errors}."
     criteria:
       destroy:
-        success: "Criterion supprimé avec succès"
+        success: Criterion supprimé avec succès
     students:
-      create:
-        error: "%{resource_name} ne peut pas être créé à cause de: %{errors}."
-      update:
-        error: "%{resource_name} ne peut pas être modifié à cause de: %{errors}."
-    admins:
       create:
         error: "%{resource_name} ne peut pas être créé à cause de: %{errors}."
       update:

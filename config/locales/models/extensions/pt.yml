@@ -1,8 +1,9 @@
+---
 pt:
   activerecord:
-    models:
-      extensions:
-        one: "Extensão"
     attributes:
       extensions:
-        note: "Nota"
+        note: Nota
+    models:
+      extensions:
+        one: Extensão

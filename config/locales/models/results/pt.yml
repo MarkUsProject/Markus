@@ -1,10 +1,11 @@
+---
 pt:
   activerecord:
-    models:
-      result:
-        one: "Resultado"
     attributes:
       result:
-        marking_state: "Status de avalição"
-        overall_comment: "Comentários gerais"
-        total_mark: "Nota total"
+        marking_state: Status de avalição
+        overall_comment: Comentários gerais
+        total_mark: Nota total
+    models:
+      result:
+        one: Resultado

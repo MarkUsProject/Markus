@@ -1,12 +1,12 @@
+---
 pt:
-  uncommitted_changes_warning: "Suas alterações ainda não foram salvas, tem certeza que deseja sair?"
-  optional: "opcional"
-  required_fields: "Campos exigidos"
-
   helpers:
     confirm:
-      delete: "Você tem certeza que quer apagar esse %{model}?"
+      delete: Você tem certeza que quer apagar esse %{model}?
     submit:
-      create: "Criar %{model}"
-      update: "Edit %{model}"
-      delete: "Apagar esse %{model}"
+      create: Criar %{model}
+      delete: Apagar esse %{model}
+      update: Edit %{model}
+  optional: opcional
+  required_fields: Campos exigidos
+  uncommitted_changes_warning: Suas alterações ainda não foram salvas, tem certeza que deseja sair?

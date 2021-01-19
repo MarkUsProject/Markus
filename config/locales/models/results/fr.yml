@@ -1,10 +1,11 @@
+---
 fr:
   activerecord:
-    models:
-      result:
-        one: "Résultat"
     attributes:
       result:
-        marking_state: "Affichage de la note"
-        overall_comment: "Commentaire général"
-        total_mark: "Notes totales"
+        marking_state: Affichage de la note
+        overall_comment: Commentaire général
+        total_mark: Notes totales
+    models:
+      result:
+        one: Résultat

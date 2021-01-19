@@ -1,10 +1,11 @@
+---
 fr:
   activerecord:
-    models:
-      template_division:
-        one: "Division de modèle"
     attributes:
       template_division:
-        label: "étiquette"
-        start: "début"
-        end: "fin"
+        end: fin
+        label: étiquette
+        start: début
+    models:
+      template_division:
+        one: Division de modèle

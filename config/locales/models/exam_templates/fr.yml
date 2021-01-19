@@ -1,11 +1,12 @@
+---
 fr:
   activerecord:
-    models:
-      exam_template:
-        one: "Modèle d'examen"
     attributes:
       exam_template:
-        filename: "Nom du fichier"
-        num_pages: "Nombre de pages"
-        template_divisions: "Divisions de modèles"
-        name: "prénom"
+        filename: Nom du fichier
+        name: prénom
+        num_pages: Nombre de pages
+        template_divisions: Divisions de modèles
+    models:
+      exam_template:
+        one: Modèle d'examen

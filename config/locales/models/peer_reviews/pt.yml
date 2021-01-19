@@ -1,9 +1,10 @@
+---
 pt:
   activerecord:
-    models:
-      peer_review:
-        one: "Avaliação pelos pares"
-        other: "Avaliações pelos pares"
     attributes:
       peer_review:
-        reviewer: "Revisor"
+        reviewer: Revisor
+    models:
+      peer_review:
+        one: Avaliação pelos pares
+        other: Avaliações pelos pares

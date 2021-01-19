@@ -1,8 +1,9 @@
+---
 fr:
   activerecord:
-    models:
-      extensions:
-        one: "Extension"
     attributes:
       extensions:
-        note: "Commentaire"
+        note: Commentaire
+    models:
+      extensions:
+        one: Extension

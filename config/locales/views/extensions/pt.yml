@@ -1,5 +1,6 @@
+---
 pt:
   extensions:
-    apply_penalty: "UPDATE ME"
-    create_extension: "UPDATE ME"
-    delete_extension: "UPDATE ME"
+    apply_penalty: UPDATE ME
+    create_extension: UPDATE ME
+    delete_extension: UPDATE ME

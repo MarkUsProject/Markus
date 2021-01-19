@@ -1,5 +1,6 @@
+---
 fr:
   activerecord:
     attributes:
       test_group_result:
-        extra_info: "Info Supplémentaires"
+        extra_info: Info Supplémentaires

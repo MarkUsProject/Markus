@@ -1,64 +1,58 @@
+---
 pt:
-    csv_upload_user_duplicate: "Nome de usuário duplicado detectado: %{user_name}"
-
-    csv:
-      repo_collision_warning:  "Aviso: Repositório '%{repo_name}' já existe. Nome do grupo era: '%{group_name}'."
-      group_with_different_membership_current_assignment:   "UPDATE ME: %{group_name}"
-      group_with_different_membership_different_assignment: "UPDATE ME: %{group_name}"
-      memberships_not_unique:                               "UPDATE ME:"
-      member_does_not_exist:                                "UPDATE ME: %{group_name} '%{student_user_name}'"
-      bad_cell: "UPDATE ME: %{bad_cells}"
-      duplicate_group_name: "UPDATE ME: %{group_names}"
-      duplicate_repo_name: "UPDATE ME: %{repo_names}"
-      duplicate_membership_name: "UPDATE ME: %{member_names}"
-      bad_repo_warning: "UPDATE ME: %{group_names}"
-      bad_membership_warning: "UPDATE ME: %{group_names}"
-      bad_students: "UPDATE ME: %{student_names}"
-      memberships_exist: "UPDATE ME: %{student_names}"
-
-    #Student's View (student)
-    student:
-      submission:
-        conflicts: "Conflitos"
-        file_conflicts: "Suas mudanças não foram feitas. Os seguintes conflitos foram detectados:"
-        missing_files: "Você ainda precisa enviar %{file} arquivos para este projeto"
-        no_action_detected: "Nenhuma mudança foi detectada."
-        external_submit_only: "MarkUs está aceitando apenas envios externos."
-        invalid_file_name: "Nome inválido para o arquivo enviado."
-        missing_file: "Não foi possível baixar %{file_name}.  O arquivo pode estar faltando."
-        empty_file_warning: "UPDATE ME"
-
-    submission_file:
-      error:
-        no_access: "Não há acesso para o arquivo de submissão com id #%{submission_file_id}."
-
-    #lib/validators/
-    date_validator:
-      invalid_date: "Não é uma data válida"
-
-    poll_job:
-      working_message: "%{progress} fora de %{total}"
-      queued: "Enfileiradas"
-      not_enqueued: "Não enfileiradas"
-      completed: "Completado"
-      failed: "Falhou"
-      split_pdf_job: "Processando a página %{progress} em %{total} para %{exam_name}"
-      generate_job: "Gerando cópia %{progress} de %{total} para %{exam_name}"
-      create_groups_job: "%{progress}/%{total} grupos criados"
-      create_groups_job_extra_info: "Falhou: %{group_name}, %{repo_name}, %{members}"
-      uncollect_submissions_job: "Tarefas não coletadas ... "
-      submissions_job: "%{progress}/%{total} Submissões coletadas"
-      download_submissions_job: "%{progress}/%{total} UPDATE ME"
-      download_submissions_finalizing: "UPDATE ME"
-      download_submissions_complete: "UPDATE ME"
-      update_repo_required_files_job: "%{progress}/%{total} UPDATE ME"
-      autotest_run_job_enqueuing: "UPDATE ME"
-      autotest_specs_job: "UPDATE ME"
-    repo:
-      commits:
-        assignment_folder: "UPDATE ME %{assignment}"
-        initial: "UPDATE ME"
-        default: "UPDATE ME"
-        required_files: "UPDATE ME %{assignment}"
-      timeout: 'UPDATE ME %{ms}'
-      assignment_dir_creation_error: "UPDATE ME %{short_identifier}"
+  csv:
+    bad_cell: 'UPDATE ME: %{bad_cells}'
+    bad_membership_warning: 'UPDATE ME: %{group_names}'
+    bad_repo_warning: 'UPDATE ME: %{group_names}'
+    bad_students: 'UPDATE ME: %{student_names}'
+    duplicate_group_name: 'UPDATE ME: %{group_names}'
+    duplicate_membership_name: 'UPDATE ME: %{member_names}'
+    duplicate_repo_name: 'UPDATE ME: %{repo_names}'
+    group_with_different_membership_current_assignment: 'UPDATE ME: %{group_name}'
+    group_with_different_membership_different_assignment: 'UPDATE ME: %{group_name}'
+    member_does_not_exist: 'UPDATE ME: %{group_name} ''%{student_user_name}'''
+    memberships_exist: 'UPDATE ME: %{student_names}'
+    memberships_not_unique: 'UPDATE ME:'
+    repo_collision_warning: 'Aviso: Repositório ''%{repo_name}'' já existe. Nome do grupo era: ''%{group_name}''.'
+  csv_upload_user_duplicate: 'Nome de usuário duplicado detectado: %{user_name}'
+  date_validator:
+    invalid_date: Não é uma data válida
+  poll_job:
+    autotest_run_job_enqueuing: UPDATE ME
+    autotest_specs_job: UPDATE ME
+    completed: Completado
+    create_groups_job: "%{progress}/%{total} grupos criados"
+    create_groups_job_extra_info: 'Falhou: %{group_name}, %{repo_name}, %{members}'
+    download_submissions_complete: UPDATE ME
+    download_submissions_finalizing: UPDATE ME
+    download_submissions_job: "%{progress}/%{total} UPDATE ME"
+    failed: Falhou
+    generate_job: Gerando cópia %{progress} de %{total} para %{exam_name}
+    not_enqueued: Não enfileiradas
+    queued: Enfileiradas
+    split_pdf_job: Processando a página %{progress} em %{total} para %{exam_name}
+    submissions_job: "%{progress}/%{total} Submissões coletadas"
+    uncollect_submissions_job: 'Tarefas não coletadas ... '
+    update_repo_required_files_job: "%{progress}/%{total} UPDATE ME"
+    working_message: "%{progress} fora de %{total}"
+  repo:
+    assignment_dir_creation_error: UPDATE ME %{short_identifier}
+    commits:
+      assignment_folder: UPDATE ME %{assignment}
+      default: UPDATE ME
+      initial: UPDATE ME
+      required_files: UPDATE ME %{assignment}
+    timeout: UPDATE ME %{ms}
+  student:
+    submission:
+      conflicts: Conflitos
+      empty_file_warning: UPDATE ME
+      external_submit_only: MarkUs está aceitando apenas envios externos.
+      file_conflicts: 'Suas mudanças não foram feitas. Os seguintes conflitos foram detectados:'
+      invalid_file_name: Nome inválido para o arquivo enviado.
+      missing_file: Não foi possível baixar %{file_name}.  O arquivo pode estar faltando.
+      missing_files: Você ainda precisa enviar %{file} arquivos para este projeto
+      no_action_detected: Nenhuma mudança foi detectada.
+  submission_file:
+    error:
+      no_access: 'Não há acesso para o arquivo de submissão com id #%{submission_file_id}.'

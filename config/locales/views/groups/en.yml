@@ -1,99 +1,91 @@
+---
 en:
   groups:
-    add_all_groups: "Create all groups"
-    add_to_group: "Add student(s) to group"
-    another_assignment_group: "Use another assignment's groups"
-    assign_over_limit: "You have assigned more than the maximum number of students to group %{group}."
-    assigned_students: "Assigned"
-    assignment_to_use: "Which assignments groups would you like to use?"
+    add_all_groups: Create all groups
+    add_to_group: Add student(s) to group
+    another_assignment_group: Use another assignment's groups
+    assign_over_limit: You have assigned more than the maximum number of students to group %{group}.
+    assigned_students: Assigned
+    assignment_to_use: Which assignments groups would you like to use?
     clone_warning:
-      could_not_find_source: "Could not find source assignment for cloning groups."
-      could_not_find_target: "Could not find target assignment for cloning groups."
-      no_active_students: "Group '%{group}' not cloned: zero active students left."
-      no_member: "Member '%{member}' not added to group '%{group}': %{error}."
-      other: "Group '%{group}' not cloned: %{error}."
-    could_not_delete: "Could not delete the following groups - note that groups cannot be deleted for this assignment if a submission has already been created for them for grading."
-    delete: "Delete group(s)"
-    delete_confirm: "This will remove all members in the group and delete all information associated with this group. Continue?"
-    delete_groups_linked: "This will delete all the groups linked to this assignment. Continue?"
-    empty: "Empty Group"
-    grace_day_over_limit: "You have assigned one or more students who has less grace credits than the amount already used by group %{group} for this assignment."
-    group_name_already_in_use: "This name is already in use for this assignment."
-    help: "Manage student groups. You can create new groups and manually add and remove students to groups."
-    invalidate_confirm: "This will prevent this group from submitting, even with the required number of students. Are you sure?"
-    invalid_group_warning: "Your group is currently invalid. You probably haven't met the group size minimum. You may not be able to submit anything, and your work may not be graded, until you have met this minimum. "
-    is_not_valid: "Group is not valid"
-    is_valid: "Group is valid"
-    manage_groups: "Manage Groups"
-    rename_group: "Rename Group"
-    reuse_groups: "Reuse Groups"
-    unassigned_students: "Unassigned"
-    valid: "Valid?"
-    validate_confirm: "This will allow this group to submit without the required number of students. Are you sure?"
-    select_a_group: "Select a group"
-    select_a_student: "Select a student"
-    select_only_one_group: "You may only assign each student to one group."
-    due_date_extension: "Due Date Extension"
-    duration_extension: "Duration Extension"
-
-    # Student interface
-    student_interface:
-      confirm_create_group: "This action will decline your pending invitations. Are you sure?"
-      confirm_delete_group: "WARNING: You will lose access to your submitted files after deleting your group.
-                             Make sure you have a local copy of your files before clicking OK."
-      form_group: "Create a group"
-      group_information: "Group information"
-      group_options: "Group options"
-      group_properties: "Policies"
-      group_size_html: "Each group must have between <strong>%{group_min}</strong> to <strong>%{group_max}</strong> members, inclusive."
-      invite_more_students: "Your group does not have enough members, and you need to invite more students."
-      may_not_add_more: "You may not invite any more students to your group."
-      may_not_join: "You may not accept this invitation, because the final due date has passed."
-      may_not_modify: "You may not modify your group at this time."
-      modification_limited: "Modification of your group is very limited, because the final due date has passed."
-      no_group_yet: "You are not currently in a group for this assignment."
-      not_allowed_to_delete_group: "If you would like to remove this group, you must contact your instructor."
-      not_allowed_to_form_group: "You are not allowed to form a group yourself.
-                                  Please wait until your instructor forms your group."
-      section_groups_only: "You can only form a group with students in your section."
-      students_work_alone: "Students work individually."
-      url_group_repository: "Group repository URL"
-      work_alone: "Work alone"
-      working_alone: "You have indicated you are working individually on this assignment.
-                      If you change your mind and want to create or join a group,
-                      first delete your group using the button below."
-      your_group: "Your group"
-
+      could_not_find_source: Could not find source assignment for cloning groups.
+      could_not_find_target: Could not find target assignment for cloning groups.
+      no_active_students: 'Group ''%{group}'' not cloned: zero active students left.'
+      no_member: 'Member ''%{member}'' not added to group ''%{group}'': %{error}.'
+      other: 'Group ''%{group}'' not cloned: %{error}.'
+    could_not_delete: Could not delete the following groups - note that groups cannot be deleted for this assignment if a submission has already been created for them for grading.
+    delete: Delete group(s)
+    delete_confirm: This will remove all members in the group and delete all information associated with this group. Continue?
+    delete_groups_linked: This will delete all the groups linked to this assignment. Continue?
     destroy:
       errors:
-        do_not_have_a_group: "You do not currently have a group."
-
-    members:
-      cancel_invitation: "Cancel invitation"
-      cancel_invitation_confirm: "Are you sure you want to cancel this invitation?"
-      decline: "Decline Invitation"
-      decline_invitation_confirm: "Are you sure you want to decline this invitation?"
-      errors:
-        not_found: "No available membership found for this student and group."
-      invitations: "Group invitations"
-      invite: "Invite student(s)"
-      invite_instructions: "Enter one or more student user names, separated by commas."
-      invited_by: "You have been invited to a group by %{inviter_first_name} %{inviter_last_name}."
-      join: "Join Group"
-      member_disinvited: "Member disinvited."
-      statuses:
-        inviter: "inviter"
-        pending: "invited"
-        rejected: "declined"
-
+        do_not_have_a_group: You do not currently have a group.
+    due_date_extension: Due Date Extension
+    duration_extension: Duration Extension
+    empty: Empty Group
+    grace_day_over_limit: You have assigned one or more students who has less grace credits than the amount already used by group %{group} for this assignment.
+    group_name_already_in_use: This name is already in use for this assignment.
+    help: Manage student groups. You can create new groups and manually add and remove students to groups.
+    invalid_group_warning: 'Your group is currently invalid. You probably haven''t met the group size minimum. You may not be able to submit anything, and your work may not be graded, until you have met this minimum. '
+    invalidate_confirm: This will prevent this group from submitting, even with the required number of students. Are you sure?
     invite_member:
       errors:
-        already_grouped: "Could not invite %{user_name}: this student is already a member of a group."
-        already_pending: "Could not invite %{user_name}: this student already has a pending invitation for this group."
-        group_max_reached: "Could not invite %{user_name}: group maximum has been reached."
-        inviting_self: "You cannot invite yourself to your own group."
-        need_to_create_group: "You must create a group before you can invite members."
-        not_found: "No student '%{user_name}' could be found."
-        not_same_section: "Could not invite %{user_name}: this student is not in your section."
-        extension_exists: "You cannot modify a group with an extension to the due date. Please contact your instructor if you wish to make changes."
-      success: "Invitation(s) successful."
+        already_grouped: 'Could not invite %{user_name}: this student is already a member of a group.'
+        already_pending: 'Could not invite %{user_name}: this student already has a pending invitation for this group.'
+        extension_exists: You cannot modify a group with an extension to the due date. Please contact your instructor if you wish to make changes.
+        group_max_reached: 'Could not invite %{user_name}: group maximum has been reached.'
+        inviting_self: You cannot invite yourself to your own group.
+        need_to_create_group: You must create a group before you can invite members.
+        not_found: No student '%{user_name}' could be found.
+        not_same_section: 'Could not invite %{user_name}: this student is not in your section.'
+      success: Invitation(s) successful.
+    is_not_valid: Group is not valid
+    is_valid: Group is valid
+    manage_groups: Manage Groups
+    members:
+      cancel_invitation: Cancel invitation
+      cancel_invitation_confirm: Are you sure you want to cancel this invitation?
+      decline: Decline Invitation
+      decline_invitation_confirm: Are you sure you want to decline this invitation?
+      errors:
+        not_found: No available membership found for this student and group.
+      invitations: Group invitations
+      invite: Invite student(s)
+      invite_instructions: Enter one or more student user names, separated by commas.
+      invited_by: You have been invited to a group by %{inviter_first_name} %{inviter_last_name}.
+      join: Join Group
+      member_disinvited: Member disinvited.
+      statuses:
+        inviter: inviter
+        pending: invited
+        rejected: declined
+    rename_group: Rename Group
+    reuse_groups: Reuse Groups
+    select_a_group: Select a group
+    select_a_student: Select a student
+    select_only_one_group: You may only assign each student to one group.
+    student_interface:
+      confirm_create_group: This action will decline your pending invitations. Are you sure?
+      confirm_delete_group: 'WARNING: You will lose access to your submitted files after deleting your group. Make sure you have a local copy of your files before clicking OK.'
+      form_group: Create a group
+      group_information: Group information
+      group_options: Group options
+      group_properties: Policies
+      group_size_html: Each group must have between <strong>%{group_min}</strong> to <strong>%{group_max}</strong> members, inclusive.
+      invite_more_students: Your group does not have enough members, and you need to invite more students.
+      may_not_add_more: You may not invite any more students to your group.
+      may_not_join: You may not accept this invitation, because the final due date has passed.
+      may_not_modify: You may not modify your group at this time.
+      modification_limited: Modification of your group is very limited, because the final due date has passed.
+      no_group_yet: You are not currently in a group for this assignment.
+      not_allowed_to_delete_group: If you would like to remove this group, you must contact your instructor.
+      not_allowed_to_form_group: You are not allowed to form a group yourself. Please wait until your instructor forms your group.
+      section_groups_only: You can only form a group with students in your section.
+      students_work_alone: Students work individually.
+      url_group_repository: Group repository URL
+      work_alone: Work alone
+      working_alone: You have indicated you are working individually on this assignment. If you change your mind and want to create or join a group, first delete your group using the button below.
+      your_group: Your group
+    unassigned_students: Unassigned
+    valid: Valid?
+    validate_confirm: This will allow this group to submit without the required number of students. Are you sure?

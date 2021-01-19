@@ -1240,14 +1240,14 @@ class Assignment < Assessment
   end
 
   def update_assigned_tokens
-    difference = assignment_properties.tokens_per_period -
-        (assignment_properties.tokens_per_period_before_last_save || 0)
-    if difference == 0
-      return
-    end
-    groupings.each do |g|
-      g.test_tokens = [g.test_tokens + difference, 0].max
-      g.save
+    old, new = assignment_properties.saved_change_to_tokens_per_period || [0, 0]
+    difference = new - old
+    unless difference.zero?
+      max_tokens = assignment_properties.tokens_per_period
+      groupings.each do |g|
+        g.test_tokens = [[g.test_tokens + difference, 0].max, max_tokens].min
+        g.save
+      end
     end
   end
 

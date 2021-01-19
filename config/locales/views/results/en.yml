@@ -1,81 +1,74 @@
+---
 en:
   results:
-    cant_display_image: "Image cannot be displayed. Click on the Download button to download the file instead."
-    collapse_all: "Collapse All"
-    criterion_incomplete_error: "Unable to change marking status to complete because not every criterion has been given a mark."
-    current_mark: 'Current mark'
-    current_rotation: 'Current rotation (Clockwise) = %{rotation}°'
-    current_zoom_level: 'Current Zoom Level: %{level} %'
-    delete_extra_mark_confirm: "Are you sure you want to remove this extra mark?"
-    expand_all: "Expand All"
-    expand_unmarked: "Expand Unmarked"
-    fullscreen_enter: "Fullscreen"
-    fullscreen_exit: "Leave fullscreen"
-    late_submission_warning_html: "This group <a href=\"%{url}\">submitted work</a> after the due date."
-    marks_chart: 'Marks Chart'
-    marks_released: "The marks have been released. You cannot change the grades."
-    next_submission: "Next"
-    no_feedback_files: "[No feedback files available]"
-    no_result: "No marks are available yet."
-    previous_submission: "Previous"
-    results_for: "Results for"
-    rotate_image: 'Rotate 90°'
-    set_to_incomplete: "Set to Incomplete"
-    set_to_complete: "Set to Complete"
-    subtotal: "Subtotal"
-    summary: "Summary"
-    total_extra_marks: "Total Extra Marks"
-    your_mark: 'Your Mark'
-    cancel_override: 'Revert to automatic deductions'
-    overridden_deductions: 'Overridden'
-    zoom_in_image: 'Zoom in'
-    zoom_out_image: 'Zoom out'
-
-    # Annotations
     annotation:
-      across_all_submission_files: "Click on the filename to jump to the annotation."
-      common: "Common Annotations"
-      include_in_download: "Include Annotations"
-      include_in_download_warning: "Warning: Annotations on PDFs are not currently downloaded."
-      placeholder: "Markdown and basic LaTeX syntax are supported."
-      remark_flag: "remark"
-      select_some_text: "You must highlight some code to annotate."
-      select_an_area: "You must select an area on the image to annotate."
-      select_an_area_pdf: "You must select an area on the PDF to annotate."
+      across_all_submission_files: Click on the filename to jump to the annotation.
+      common: Common Annotations
+      include_in_download: Include Annotations
+      include_in_download_warning: 'Warning: Annotations on PDFs are not currently downloaded.'
+      placeholder: Markdown and basic LaTeX syntax are supported.
+      remark_flag: remark
+      select_an_area: You must select an area on the image to annotate.
+      select_an_area_pdf: You must select an area on the PDF to annotate.
+      select_some_text: You must highlight some code to annotate.
       similar_annotations_found:
-        one: "Did you mean? (1 similar annotation found)"
-        other: "Did you mean? (%{count} similar annotations found)"
-
-    # Remark requests
-    remark:
-      about_remark_save: "Please note that the instructor will be unaware of your saved request unless it has been submitted."
-      about_remark_submission: "Once a remark request has been submitted, you will not be able to see your original results until remark results are available. You will also not be able to edit the request."
-      cancel: "Cancel Remark Request"
-      cancel_confirm: "Are you sure you want to cancel your remark request?
-                       Your existing request will be deleted, and this cannot be undone."
-      cancel_remark_to_change: "In order to change your request, you must cancel your existing request and create a new one."
-      old_mark: "Old Mark"
-      old_total: "Original Total Mark"
-      no_remark_due_date: "No remark due date specified."
-      no_remark_result: "Remark results are not yet available for this assignment."
-      past_remark_due_date: "It is already past the remark due date."
-      submit: "Submit Request to Instructor"
-      submit_confirm: "You will not be able to see your results until remarking is finished.
-                       Are you sure you want to submit your remark request now?"
-      submitted_on: "Remark request was submitted on %{time}."
-
-    keybinding:
-      confirm_annotation: "Confirm annotation"
-      confirm_level: "Confirm level"
-      keyboard_help: "Keyboard Shortcut Help"
-      next_criterion: "Select next criterion"
-      next_level: "Select next level"
-      open_annotation: "Open annotation modal"
-      previous_criterion: "Select previous criterion"
-      previous_level: "Select previous level"
-      toggle_compact: "Toggle fullscreen"
-      when_rubric: "(When on rubric) "
-
+        one: Did you mean? (1 similar annotation found)
+        other: Did you mean? (%{count} similar annotations found)
     autosave:
-      unsaved: "There are unsaved changed"
-      saved: "Changes have been saved"
+      saved: Changes have been saved
+      unsaved: There are unsaved changed
+    cancel_override: Revert to automatic deductions
+    cant_display_image: Image cannot be displayed. Click on the Download button to download the file instead.
+    collapse_all: Collapse All
+    criterion_incomplete_error: Unable to change marking status to complete because not every criterion has been given a mark.
+    current_mark: Current mark
+    current_rotation: Current rotation (Clockwise) = %{rotation}°
+    current_zoom_level: 'Current Zoom Level: %{level} %'
+    delete_extra_mark_confirm: Are you sure you want to remove this extra mark?
+    expand_all: Expand All
+    expand_unmarked: Expand Unmarked
+    fullscreen_enter: Fullscreen
+    fullscreen_exit: Leave fullscreen
+    keybinding:
+      confirm_annotation: Confirm annotation
+      confirm_level: Confirm level
+      keyboard_help: Keyboard Shortcut Help
+      next_criterion: Select next criterion
+      next_level: Select next level
+      open_annotation: Open annotation modal
+      previous_criterion: Select previous criterion
+      previous_level: Select previous level
+      toggle_compact: Toggle fullscreen
+      when_rubric: "(When on rubric) "
+    late_submission_warning_html: This group <a href="%{url}">submitted work</a> after the due date.
+    marks_chart: Marks Chart
+    marks_released: The marks have been released. You cannot change the grades.
+    next_submission: Next
+    no_feedback_files: "[No feedback files available]"
+    no_result: No marks are available yet.
+    overridden_deductions: Overridden
+    previous_submission: Previous
+    remark:
+      about_remark_save: Please note that the instructor will be unaware of your saved request unless it has been submitted.
+      about_remark_submission: Once a remark request has been submitted, you will not be able to see your original results until remark results are available. You will also not be able to edit the request.
+      cancel: Cancel Remark Request
+      cancel_confirm: Are you sure you want to cancel your remark request? Your existing request will be deleted, and this cannot be undone.
+      cancel_remark_to_change: In order to change your request, you must cancel your existing request and create a new one.
+      no_remark_due_date: No remark due date specified.
+      no_remark_result: Remark results are not yet available for this assignment.
+      old_mark: Old Mark
+      old_total: Original Total Mark
+      past_remark_due_date: It is already past the remark due date.
+      submit: Submit Request to Instructor
+      submit_confirm: You will not be able to see your results until remarking is finished. Are you sure you want to submit your remark request now?
+      submitted_on: Remark request was submitted on %{time}.
+    results_for: Results for
+    rotate_image: Rotate 90°
+    set_to_complete: Set to Complete
+    set_to_incomplete: Set to Incomplete
+    subtotal: Subtotal
+    summary: Summary
+    total_extra_marks: Total Extra Marks
+    your_mark: Your Mark
+    zoom_in_image: Zoom in
+    zoom_out_image: Zoom out

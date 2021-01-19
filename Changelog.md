@@ -1,11 +1,15 @@
 # Changelog
 ## [unreleased]
+- Add time zone validations (#5060)
 - Add time zone to settings (#4938)
 - Fix bug where newlines were being added to files in zip archives (#5030)
 - Fix bug where graders could be assigned to groups with empty submissions (#5031)
 - Use Fullscreen API for grading in "fullscreen mode" (#5036)
 - Render .ipynb submission files as html (#5032)
 - Add option to view a binary file as plain text while grading (#5033)
+- Fix bug where a remarked submission wasn't being shown in the course summary (#5063)
+- Fix bug where the server user's api key was being regenerated after every test run creation (#5065)
+- Fix bug where additional test tokens were added after every save (#5064)
 
 ## [v1.11.1]
 - Fix bug where duplicate marks can get created because of concurrent requests (#5018)

@@ -1,17 +1,23 @@
+---
 es:
   flash:
     actions:
       create:
+        error: No se pudo crear %{resource_name}.
         success: "%{resource_name} ha sido creado exitosamente."
-        error: "No se pudo crear %{resource_name}."
-      update:
-        success: "Se actualizó la información del %{resource_name}."
-        error: "No se pudo actualizar la información del %{resource_name}."
-      update_files:
-        success: "Sus cambios han sido realizados."
       destroy:
+        error: No se pudo eliminar %{resource_name}.
         success: "%{resource_name} ha sido eliminado exitosamente."
-        error: "No se pudo eliminar %{resource_name}."
+      update:
+        error: No se pudo actualizar la información del %{resource_name}.
+        success: Se actualizó la información del %{resource_name}.
+      update_files:
+        success: Sus cambios han sido realizados.
+    admins:
+      create:
+        error: "%{resource_name} UPDATE ME: %{errors}."
+      update:
+        error: "%{resource_name} UPDATE ME: %{errors}."
     annotation_categories:
       create:
         error: "%{resource_name} UPDATE ME: %{errors}."
@@ -19,13 +25,8 @@ es:
         error: "%{resource_name} UPDATE ME: %{errors}."
     criteria:
       destroy:
-        success: "Criterion ha sido eliminado exitosamente."
+        success: Criterion ha sido eliminado exitosamente.
     students:
-      create:
-        error: "%{resource_name} UPDATE ME: %{errors}."
-      update:
-        error: "%{resource_name} UPDATE ME: %{errors}."
-    admins:
       create:
         error: "%{resource_name} UPDATE ME: %{errors}."
       update:
