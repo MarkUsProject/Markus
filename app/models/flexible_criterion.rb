@@ -3,7 +3,7 @@ class FlexibleCriterion < Criterion
 
   has_many :annotation_categories
 
-  before_destroy :reassign_annotation_category
+  before_destroy :reassign_annotation_category, prepend: true
 
   DEFAULT_MAX_MARK = 1
 
