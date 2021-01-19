@@ -14,7 +14,11 @@ class AnnotationCategory < ApplicationRecord
   validates :flexible_criterion_id,
             inclusion: { in: :assignment_criteria, message: '%<value>s is an invalid criterion for this assignment.' }
 
-  before_update :update_annotation_text_deductions, if: lambda { |c|
+  before_update :check_if_marks_released, if: lambda { |c|
+    changes_to_save.key?('flexible_criterion_id') && c.annotation_texts.exists?
+  }
+
+  around_update :update_annotation_text_deductions, if: lambda { |c|
     changes_to_save.key?('flexible_criterion_id') && c.annotation_texts.exists?
   }
 
@@ -104,11 +108,14 @@ class AnnotationCategory < ApplicationRecord
     end
   end
 
-  def update_annotation_text_deductions
+  def check_if_marks_released
     if marks_released?
       errors.add(:base, 'Cannot update annotation category flexible criterion once results are released')
       throw(:abort)
     end
+  end
+
+  def update_annotation_text_deductions
     prev_criterion = FlexibleCriterion.find_by_id(changes_to_save['flexible_criterion_id'].first)
     new_criterion = FlexibleCriterion.find_by_id(changes_to_save['flexible_criterion_id'].second)
     if new_criterion.nil?
@@ -118,28 +125,23 @@ class AnnotationCategory < ApplicationRecord
     else
       self.annotation_texts.each { |text| text.scale_deduction(new_criterion.max_mark / prev_criterion.max_mark) }
     end
+
+    yield
+
+    results_to_update = Result.joins(annotations: :annotation_text)
+                              .where('annotation_texts.annotation_category_id': self.id)
+
     unless new_criterion.nil?
-      self.annotation_texts.includes(:annotations).each do |annotation_text|
-        annotation_text.annotations.includes(:result).each do |annotation|
-          annotation.result.marks
-                    .find_or_create_by(criterion_id: new_criterion.id)
-                    .update(mark: new_criterion.max_mark -
-                      annotation.result
-                                .annotations
-                                .includes(:annotation_text)
-                                .where('annotation_texts.annotation_category': self)
-                                .pluck('deduction')
-                                .sum)
-        end
+      results_to_update.each do |result|
+        result.marks.find_or_create_by(criterion_id: new_criterion.id).update_deduction
+        result.update_total_mark
       end
     end
+
     unless prev_criterion.nil?
-      self.annotation_texts.includes(:annotations).each do |annotation_text|
-        annotation_text.annotations.includes(:result).each do |annotation|
-          annotation.result.marks
-                    .find_by(criterion_id: prev_criterion.id)
-                    &.update(mark: nil)
-        end
+      results_to_update.each do |result|
+        result.marks.find_or_create_by(criterion_id: prev_criterion.id).update_deduction
+        result.update_total_mark
       end
     end
   end
