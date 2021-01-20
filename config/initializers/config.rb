@@ -61,9 +61,6 @@ Config.setup do |config|
       optional(:active_record).hash do
         optional(:verbose_query_logs).filled(:bool)
       end
-      optional(:action_controller).hash do
-        optional(:relative_url_root).maybe(:string)
-      end
       required(:active_job).hash do
         required(:queue_adapter).filled(:string)
       end
@@ -73,11 +70,11 @@ Config.setup do |config|
       required(:session_store).hash do
         required(:type).filled(:string)
         required(:args).hash do
-          required(:key).filled(:string)
-          required(:path).filled(:string)
-          required(:expire_after).value(:integer, gt?: 0)
-          required(:secure).filled(:bool)
-          required(:same_site).filled(:string)
+          optional(:key).filled(:string)
+          optional(:path).filled(:string)
+          optional(:expire_after).value(:integer, gt?: 0)
+          optional(:secure).filled(:bool)
+          optional(:same_site).filled(:string)
           optional(:secret).filled(:string)
         end
       end
@@ -130,7 +127,6 @@ Config.setup do |config|
         optional(:'post-receive').filled(:string)
       end
       optional(:client_hooks).maybe(:string)
-      required(:external_submits_only).filled(:bool)
       required(:is_repository_admin).filled(:bool)
     end
     required(:max_file_size).value(:integer, gt?: 0)
@@ -146,7 +142,7 @@ Config.setup do |config|
     required(:logging).hash do
       required(:enabled).filled(:bool)
       required(:rotate_by_interval).filled(:bool)
-      required(:rotate_interval).filled(included_in?: %w[daily weekly monthly])
+      optional(:rotate_interval).filled(included_in?: %w[daily weekly monthly])
       required(:size_threshold).filled(:integer, gt?: 0)
       required(:old_files).filled(:integer, gt?: 0)
       required(:log_file).filled(:string)

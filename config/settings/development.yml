@@ -10,8 +10,6 @@ rails:
   cache_store: redis_cache_store
   active_record:
     verbose_query_logs: true
-  action_controller:
-    relative_url_root: <%= ENV['RAILS_RELATIVE_URL_ROOT'] %>
   action_mailer:
     perform_deliveries: true
 

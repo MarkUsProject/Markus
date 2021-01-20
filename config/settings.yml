@@ -46,7 +46,6 @@ repository:
     update: <%= "#{::Rails.root.to_s}/lib/repo/git_hooks/multihook.py" %>
     post-receive: <%= "#{::Rails.root.to_s}/lib/repo/git_hooks/multihook.py" %>
   client_hooks: <%= "#{::Rails.root.to_s}/lib/repo/git_hooks/client" %>
-  external_submits_only: false
   is_repository_admin: true
 
 max_file_size: 5000000

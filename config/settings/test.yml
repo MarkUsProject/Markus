@@ -5,8 +5,6 @@ rails:
   log_level: debug
   active_support:
     deprecation: stderr
-  action_controller:
-    relative_url_root: <%= ENV['RAILS_RELATIVE_URL_ROOT'] %>
   action_mailer:
     perform_deliveries: true
 

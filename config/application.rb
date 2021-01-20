@@ -113,9 +113,6 @@ module Markus
     # Show where SQL queries were generated from.
     config.active_record.verbose_query_logs = Settings.rails.active_record.verbose_query_logs
 
-    # Set this if MarkUs is deployed to a subdirectory, e.g. if it is served at https://yourhost.com/instance0
-    config.action_controller.relative_url_root = Settings.rails.action_controller.relative_url_root
-
     # TODO review initializers 01 and 02
     # TODO review markus custom config format
     # TODO handle namespaces properly for app/lib

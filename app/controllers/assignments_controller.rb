@@ -200,9 +200,6 @@ class AssignmentsController < ApplicationController
     Section.all.each { |s| @assignment.section_due_dates.build(section: s)}
     @section_due_dates = @assignment.section_due_dates
                                     .sort_by { |s| s.section.name }
-
-    # set default value if web submits are allowed
-    @assignment.allow_web_submits = !Settings.repository.external_submits_only
     render :new
   end
 

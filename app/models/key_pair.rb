@@ -24,7 +24,7 @@ class KeyPair < ApplicationRecord
   # with environment variables indicating the +user_name+ and this instance's relative url root
   def self.full_key_string(user_name, public_key)
     markus_shell = Settings.repository.git_shell
-    relative_url_root = Settings.action_controller.relative_url_root
+    relative_url_root = Rails.application.config.action_controller.relative_url_root
     command = "command=\"LOGIN_USER=#{user_name} RELATIVE_URL_ROOT=#{relative_url_root} #{markus_shell}\""
     "#{command},#{AUTHORIZED_KEY_ARGS} #{public_key}"
   end
