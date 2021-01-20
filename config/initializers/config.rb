@@ -126,7 +126,7 @@ Config.setup do |config|
       optional(:ssh_url).filled(:string)
       required(:hooks).hash do
         optional(:'pre-receive').filled(:string)
-        optional(:'update').filled(:string)
+        optional(:update).filled(:string)
         optional(:'post-receive').filled(:string)
       end
       optional(:client_hooks).maybe(:string)
