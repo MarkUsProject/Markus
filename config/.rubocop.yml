@@ -71,6 +71,9 @@ Style/ConditionalAssignment:
 Style/RedundantSelf:
   Enabled: false
 
+Style/SpecialGlobalVars:
+  Enabled: false
+
 Style/SymbolArray:
   Enabled: false
 
