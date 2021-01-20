@@ -3,7 +3,7 @@ rails:
   active_job:
     queue_adapter: resque
   assets:
-    prefix: ~
+    prefix: /assets
   active_record: {}
   session_store:
     type: cookie_store

@@ -65,7 +65,7 @@ class GitRepository < Repository::AbstractRepository
       repo.index.add('.required.json')
 
       # Add client-side hooks
-      if with_hooks && !Settings.repository.client_hooks.empty?
+      if with_hooks && Settings.repository.client_hooks.present?
         client_hooks_path = Settings.repository.client_hooks
         FileUtils.copy_entry client_hooks_path, File.join(connect_string, 'markus-hooks')
         FileUtils.chmod 0755, File.join(connect_string, 'markus-hooks', 'pre-commit')

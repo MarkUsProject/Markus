@@ -68,62 +68,53 @@ module Markus
 
     # Email notifications
     config.action_mailer.delivery_method = Settings.rails.action_mailer.delivery_method.to_sym
-    if Settings.rails.action_mailer.delivery_method == 'smtp'
-      config.action_mailer.smtp_settings = Settings.rails.action_mailer.smtp_settings.to_h
-    end
+    config.action_mailer.smtp_settings = Settings.rails.action_mailer.smtp_settings.to_h
     config.action_mailer.default_url_options = Settings.rails.action_mailer.default_url_options.to_h
     config.action_mailer.asset_host = Settings.rails.action_mailer.asset_host
     config.action_mailer.perform_deliveries = Settings.rails.action_mailer.perform_deliveries
     config.action_mailer.deliver_later_queue_name = Settings.rails.action_mailer.deliver_later_queue_name
 
+    # Print deprecation notices to stderr.
+    config.active_support.deprecation = Settings.rails.active_support.deprecation.to_sym
+
+    # If false, your application's code is reloaded on every request.
+    # This slows down response time but is perfect for development
+    # since you don't have to restart the web server when you make code changes.
+    config.cache_classes = Settings.rails.cache_classes
+
+    # Do not eager load code on boot.
+    config.eager_load = Settings.rails.eager_load
+
+    # Show full error reports.
+    config.consider_all_requests_local = Settings.rails.consider_all_requests_local
+
+    # Set high verbosity of logger.
+    config.log_level = Settings.rails.log_level
+
+    # Location to write compiled assets
+    config.assets.prefix = Settings.rails.assets.prefix
+
     # The settings above are required
     # The settings below may optionally be set depending on the current environment
 
-    unless Settings.rails.cache_store.nil?
-      # Set redis as the Rails cache store
-      if Settings.rails.cache_store == 'redis_cache_store'
-        config.cache_store = Settings.rails.cache_store.to_sym, { url: Settings.redis.url }
-      else
-        config.cache_store = Settings.rails.cache_store.to_sym
-      end
+    # Set redis as the Rails cache store
+    if Settings.rails.cache_store == 'redis_cache_store'
+      config.cache_store = Settings.rails.cache_store.to_sym, { url: Settings.redis.url }
+    else
+      config.cache_store = Settings.rails.cache_store&.to_sym
     end
 
-    config.perform_caching = Settings.rails.perform_caching unless Settings.rails.perform_caching.nil?
+    # Disable/enable caching
+    config.perform_caching = Settings.rails.perform_caching
 
-    # In the development environment your application's code is reloaded on
-    # every request. This slows down response time but is perfect for development
-    # since you don't have to restart the web server when you make code changes.
-    config.cache_classes = Settings.rails.cache_classes unless Settings.rails.cache_classes.nil?
-
-    # Do not eager load code on boot.
-    config.eager_load = Settings.rails.eager_load unless Settings.rails.eager_load.nil?
-
-    # Show full error reports.
-    unless Settings.rails.consider_all_requests_local.nil?
-      config.consider_all_requests_local = Settings.rails.consider_all_requests_local
-    end
-
-    config.hosts << Settings.rails.hosts unless Settings.rails.hosts.nil?
-
-    # Set high verbosity of logger.
-    config.log_level = Settings.rails.log_level unless Settings.rails.log_level.nil?
-
-    # Print deprecation notices to stderr.
-    unless Settings.rails.active_support.deprecation.nil?
-      config.active_support.deprecation = Settings.rails.active_support.deprecation.to_sym
-    end
+    # Add authorized host urls
+    config.hosts << Settings.rails.hosts || []
 
     # Show where SQL queries were generated from.
-    unless Settings.rails.active_record.verbose_query_logs.nil?
-      config.active_record.verbose_query_logs = Settings.rails.active_record.verbose_query_logs
-    end
+    config.active_record.verbose_query_logs = Settings.rails.active_record.verbose_query_logs
 
     # Set this if MarkUs is deployed to a subdirectory, e.g. if it is served at https://yourhost.com/instance0
-    unless Settings.rails.action_controller.relative_url_root.nil?
-      config.action_controller.relative_url_root = Settings.rails.action_controller.relative_url_root
-    end
-
-    config.assets.prefix = Settings.rails.assets.prefix unless Settings.rails.assets.prefix.nil?
+    config.action_controller.relative_url_root = Settings.rails.action_controller.relative_url_root
 
     # TODO review initializers 01 and 02
     # TODO review markus custom config format
