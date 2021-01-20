@@ -38,9 +38,8 @@ Lint/UnusedMethodArgument:
 Metrics/AbcSize:
   Enabled: false
 
-# Disable max block length for rspec blocks
 Metrics/BlockLength:
-  ExcludedMethods: ['describe', 'context', 'shared_examples', 'shared_context']
+  Enabled: false
 
 Layout/LineLength:
   Max: 120
