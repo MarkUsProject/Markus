@@ -741,7 +741,6 @@ describe AnnotationCategoriesController do
       let(:user) { create(:ta) }
       include_examples 'An unauthorized user managing annotation categories'
       include_examples 'A grader or admin accessing the index or find_annotation_text routes'
-
     end
   end
 end
