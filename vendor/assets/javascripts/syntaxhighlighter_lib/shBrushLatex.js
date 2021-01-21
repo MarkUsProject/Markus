@@ -34,14 +34,10 @@
 
 dp.sh.Brushes.Latex = function()
 {
-  var keywords =	'if fi then elif else for do done until while break continue case function return in eq ne gt lt ge le';
-  //var commands =  'include usepackage begin end ref label includegraphics';
-
   this.regexList = [
     { regex: new RegExp('%.*','gm'),		css: 'comments' },		// one line comments
     { regex: dp.sh.RegexLib.DoubleQuotedString,			css: 'string' },		// double quoted strings
     { regex: new RegExp('\\\\\\w*','gm'),			css: 'keyword' },		// commands
-    { regex: new RegExp(this.GetKeywords(keywords), 'gm'),			css: 'function' },		// keywords
   ];
 }
 
