@@ -9,10 +9,6 @@ class SubmissionPolicy < ApplicationPolicy
     check?(:manage_submissions?, user)
   end
 
-  def server_time?
-    true
-  end
-
   def file_manager?
     user.student?
   end
