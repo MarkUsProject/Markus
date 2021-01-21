@@ -13,6 +13,7 @@
 - Move configuration options to settings yaml files (#5061)
 - Fix bug where latex files were rendered with character escape sequences displayed (#5073)
 - Fix bug where grader permission for creating annotations were not properly set (#5078)
+- Fix bug where zip files with too many entries could not be uploaded (#5080)
 
 ## [v1.11.1]
 - Fix bug where duplicate marks can get created because of concurrent requests (#5018)

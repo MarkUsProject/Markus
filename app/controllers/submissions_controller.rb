@@ -322,7 +322,7 @@ class SubmissionsController < ApplicationController
 
         if current_user.student? && @grouping.assignment.only_required_files
           required_files = @grouping.assignment.assignment_files.pluck(:filename)
-                               .map { |name| File.join(@grouping.assignment.repository_folder, name) }
+                                    .map { |name| File.join(@grouping.assignment.repository_folder, name) }
         else
           required_files = nil
         end
