@@ -30,23 +30,29 @@ module UploadHelper
     end
   end
 
-  # Unzip the file at +zip_file_path+ and return a list of all directory paths in the zipped file as well as a list of
-  # UploadedFile objects that contain the data from all files in the zipped file.
-  def unzip_uploaded_file(zip_file_path)
-    unzipped_files = []
-    unzipped_dirs = []
-    Zip::File.open(zip_file_path) do |zipfile|
-      zipfile.each do |zf|
-        unzipped_dirs << zf.name if zf.directory?
-        if zf.file?
-          mime = Rack::Mime.mime_type(File.extname(zf.name))
-          tempfile = Tempfile.new.binmode
-          tempfile.write(zf.get_input_stream.read)
-          tempfile.rewind
-          unzipped_files << ActionDispatch::Http::UploadedFile.new(filename: zf.name, tempfile: tempfile, type: mime)
+  # Unzip the file at +zip_file_path+ and yield the name of each directory and an
+  # UploadedFile object for each file.
+  def upload_files_helper(new_folders, new_files, unzip: false)
+    new_folders.each do |f|
+      yield f
+    end
+    new_files.each do |f|
+      if unzip && File.extname(f.path).casecmp?('.zip')
+        Zip::File.open(f.path) do |zipfile|
+          zipfile.each do |zf|
+            yield zf.name if zf.directory?
+            if zf.file?
+              mime = Rack::Mime.mime_type(File.extname(zf.name))
+              tempfile = Tempfile.new.binmode
+              tempfile.write(zf.get_input_stream.read)
+              tempfile.rewind
+              yield ActionDispatch::Http::UploadedFile.new(filename: zf.name, tempfile: tempfile, type: mime)
+            end
+          end
         end
+      else
+        yield f
       end
     end
-    [unzipped_dirs, unzipped_files]
   end
 end

@@ -313,43 +313,36 @@ class SubmissionsController < ApplicationController
     if delete_files.empty? && new_files.empty? && new_folders.empty? && delete_folders.empty?
       flash_message(:warning, I18n.t('student.submission.no_action_detected'))
     else
-      if unzip
-        zdirs, zfiles = new_files.map do |f|
-          next unless File.extname(f.path).casecmp?('.zip')
-          unzip_uploaded_file(f.path)
-        end.compact.transpose.map(&:flatten)
-        new_files.reject! { |f| File.extname(f.path).casecmp?('.zip') }
-        new_folders.push(*zdirs)
-        new_files.push(*zfiles)
-      end
-
       messages = []
       @grouping.access_repo do |repo|
         # Create transaction, setting the author.  Timestamp is implicit.
         txn = repo.get_transaction(current_user.user_name)
         should_commit = true
         path = Pathname.new(@grouping.assignment.repository_folder).join(@path.gsub(%r{^/}, ''))
+
+        if current_user.student? && @grouping.assignment.only_required_files
+          required_files = @grouping.assignment.assignment_files.pluck(:filename)
+                               .map { |name| File.join(@grouping.assignment.repository_folder, name) }
+        else
+          required_files = nil
+        end
+
+        upload_files_helper(new_folders, new_files, unzip: unzip) do |f|
+          if f.is_a?(String) # is a directory
+            success, msgs = add_folder(f, current_user, repo, path: path, txn: txn)
+            should_commit &&= success
+            messages = messages.concat msgs
+          else
+            success, msgs = add_file(f, current_user, repo,
+                                     path: path, txn: txn, check_size: true, required_files: required_files)
+            should_commit &&= success
+            messages.concat msgs
+          end
+        end
         if delete_files.present?
           success, msgs = remove_files(delete_files, current_user, repo, path: path, txn: txn)
           should_commit &&= success
           messages.concat msgs
-        end
-        if new_files.present?
-          if current_user.student? && @grouping.assignment.only_required_files
-            required_files = @grouping.assignment.assignment_files.pluck(:filename)
-                                      .map { |name| File.join(@grouping.assignment.repository_folder, name) }
-          else
-            required_files = nil
-          end
-          success, msgs = add_files(new_files, current_user, repo,
-                                    path: path, txn: txn, check_size: true, required_files: required_files)
-          should_commit &&= success
-          messages.concat msgs
-        end
-        if new_folders.present?
-          success, msgs = add_folders(new_folders, current_user, repo, path: path, txn: txn)
-          should_commit &&= success
-          messages = messages.concat msgs
         end
         if delete_folders.present?
           success, msgs = remove_folders(delete_folders, current_user, repo, path: path, txn: txn)
