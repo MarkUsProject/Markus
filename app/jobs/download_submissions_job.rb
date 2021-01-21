@@ -1,7 +1,6 @@
 # Prepares submission files from a list of groupings for download
 # by zipping them up into a single zipfile
 class DownloadSubmissionsJob < ApplicationJob
-  queue_as Rails.configuration.x.queues.download_submissions
 
   def self.show_status(status)
     if status[:progress] == status[:total]

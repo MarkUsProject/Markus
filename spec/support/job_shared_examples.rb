@@ -35,11 +35,11 @@ shared_context 'autotest jobs' do
   before :each do
     allow(Rails.application.config.action_controller).to receive(:relative_url_root).and_return(relative_url_root)
     if server_type == 'local'
-      allow(Rails.configuration.x.autotest).to receive(:server_username).and_return(nil)
+      allow(Settings.autotest).to receive(:server_username).and_return(nil)
       allow(Open3).to receive(:capture2e).and_return([data, fake_exit_status(exit_code)])
       allow(Open3).to receive(:capture3).and_return(['', data, fake_exit_status(exit_code)])
     else
-      allow(Rails.configuration.x.autotest).to receive(:server_username).and_return('autotst')
+      allow(Settings.autotest).to receive(:server_username).and_return('autotst')
       status = Net::SSH::Connection::Session::StringWithExitstatus.new(data, exit_code)
       dummy_connection = instance_double('Net::SSH::Connection::Session')
       allow(dummy_connection).to receive(:exec!).and_return(status)

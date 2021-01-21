@@ -38,7 +38,7 @@ describe Repository::AbstractRepository do
   end
   context 'repository permissions should not be updated' do
     it 'when not in authoritative mode' do
-      allow(Rails.configuration.x.repository).to receive(:is_repository_admin).and_return(false)
+      allow(Settings.repository).to receive(:is_repository_admin).and_return(false)
       expect(Repository.get_class).not_to receive(:__update_permissions)
       Repository.get_class.update_permissions
     end
