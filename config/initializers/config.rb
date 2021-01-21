@@ -84,7 +84,7 @@ Config.setup do |config|
         required(:default_url_options).hash
         required(:asset_host).filled(:string)
         required(:perform_deliveries).filled(:bool)
-        required(:deliver_later_queue_name).filled(:string)
+        required(:deliver_later_queue_name).maybe(:string)
       end
     end
     required(:queues).hash do

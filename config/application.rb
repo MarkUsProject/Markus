@@ -40,22 +40,9 @@ module Markus
 
     # Settings below are configurable
 
-    # Set the timezone
     config.time_zone = Settings.rails.time_zone
 
-    # Use Resque for background jobs
     config.active_job.queue_adapter = Settings.rails.active_job.queue_adapter.to_sym
-
-    # Markus Session Store configuration
-    # Be sure to restart your server when you modify this part.
-    #
-    # Your secret key for verifying cookie session data integrity.
-    # If you change this key, all old sessions will become invalid!
-    # Make sure the secret is at least 30 characters and all random,
-    # no regular words or you'll be exposed to dictionary attacks.
-    # Please make sure :_key is named uniquely if you are hosting
-    # several MarkUs instances on one machine. Also, make sure you change
-    # the :secret string to something else than you find below.
 
     Rails.application.config.session_store(
       Settings.rails.session_store.type.to_sym,
@@ -66,51 +53,39 @@ module Markus
       same_site: Settings.rails.session_store.args.same_site.to_sym
     )
 
-    # Email notifications
     config.action_mailer.delivery_method = Settings.rails.action_mailer.delivery_method.to_sym
     config.action_mailer.smtp_settings = Settings.rails.action_mailer.smtp_settings.to_h
     config.action_mailer.default_url_options = Settings.rails.action_mailer.default_url_options.to_h
     config.action_mailer.asset_host = Settings.rails.action_mailer.asset_host
     config.action_mailer.perform_deliveries = Settings.rails.action_mailer.perform_deliveries
-    config.action_mailer.deliver_later_queue_name = Settings.rails.action_mailer.deliver_later_queue_name
+    deliver_later_queue = Settings.rails.action_mailer.deliver_later_queue_name || Settings.queues.default
+    config.action_mailer.deliver_later_queue_name = deliver_later_queue
 
-    # Print deprecation notices to stderr.
     config.active_support.deprecation = Settings.rails.active_support.deprecation.to_sym
 
-    # If false, your application's code is reloaded on every request.
-    # This slows down response time but is perfect for development
-    # since you don't have to restart the web server when you make code changes.
     config.cache_classes = Settings.rails.cache_classes
 
-    # Do not eager load code on boot.
     config.eager_load = Settings.rails.eager_load
 
-    # Show full error reports.
     config.consider_all_requests_local = Settings.rails.consider_all_requests_local
 
-    # Set high verbosity of logger.
     config.log_level = Settings.rails.log_level
 
-    # Location to write compiled assets
     config.assets.prefix = Settings.rails.assets.prefix
 
     # The settings above are required
     # The settings below may optionally be set depending on the current environment
 
-    # Set redis as the Rails cache store
     if Settings.rails.cache_store == 'redis_cache_store'
       config.cache_store = Settings.rails.cache_store.to_sym, { url: Settings.redis.url }
     else
       config.cache_store = Settings.rails.cache_store&.to_sym
     end
 
-    # Disable/enable caching
     config.perform_caching = Settings.rails.perform_caching
 
-    # Add authorized host urls
     config.hosts << Settings.rails.hosts || []
 
-    # Show where SQL queries were generated from.
     config.active_record.verbose_query_logs = Settings.rails.active_record.verbose_query_logs
 
     # TODO review initializers 01 and 02

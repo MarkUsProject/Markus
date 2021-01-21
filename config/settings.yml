@@ -19,7 +19,7 @@ rails:
       host: 'localhost:3000'
     asset_host: 'http://localhost:3000'
     perform_deliveries: false
-    deliver_later_queue_name: <%= ENV.fetch('MARKUS__QUEUES__DEFAULT') { 'DEFAULT_QUEUE' } %> # Settings.queues.default
+    deliver_later_queue_name: ~
 
 queues:
   default: DEFAULT_QUEUE
