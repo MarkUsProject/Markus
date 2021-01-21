@@ -3,7 +3,7 @@ describe AnnotationCategoriesController do
   let(:assignment) { FactoryBot.create(:assignment) }
   let(:annotation_category) { FactoryBot.create(:annotation_category, assignment: assignment) }
 
-  shared_examples 'An authorized user managing annotation categories' do
+  shared_examples 'A grader or admin accessing the index or find_annotation_text routes' do
     describe '#index' do
       before { create(:annotation_category, assignment: assignment) }
       it 'should respond with 200' do
@@ -11,7 +11,37 @@ describe AnnotationCategoriesController do
         expect(response.status).to eq(200)
       end
     end
+    context 'When searching for an annotation text' do
+      before(:each) do
+        @annotation_text_one = create(:annotation_text,
+                                      annotation_category: annotation_category,
+                                      content: 'This is an annotation text.')
+      end
 
+      it 'should render an annotation context, where first part of its content matches given string' do
+        string = 'This is an'
+
+        get_as user, :find_annotation_text, params: { assignment_id: assignment.id, string: string }, format: :js
+        expect(response.parsed_body[0]['content']).to eq(@annotation_text_one.content)
+      end
+      it 'should render an empty string if string does not match first part of any annotation text' do
+        string = 'Hello'
+
+        get_as user, :find_annotation_text, params: { assignment_id: assignment.id, string: string }, format: :js
+        expect(response.parsed_body).to eq([])
+      end
+      it 'should render multiple matches if string matches first part of more than one annotation text' do
+        create(:annotation_text, annotation_category: annotation_category, content: 'This is another annotation text.')
+        string = 'This is an'
+
+        get_as user, :find_annotation_text, params: { assignment_id: assignment.id, string: string }, format: :js
+        expect(response.parsed_body.size).to eq(2)
+      end
+    end
+  end
+
+  shared_examples 'An authorized user managing annotation categories' do
+    include_examples 'A grader or admin accessing the index or find_annotation_text routes'
     describe '#show' do
       it 'should respond with 200' do
         get_as user, :show, params: { assignment_id: assignment.id, id: annotation_category.id }
@@ -592,43 +622,9 @@ describe AnnotationCategoriesController do
         get_as user, :download, params: { assignment_id: assignment.id }, format: 'yml'
       end
     end
-
-    context 'When searching for an annotation text' do
-      before(:each) do
-        @annotation_text_one = create(:annotation_text,
-                                      annotation_category: annotation_category,
-                                      content: 'This is an annotation text.')
-      end
-
-      it 'should render an annotation context, where first part of its content matches given string' do
-        string = 'This is an'
-
-        get_as user, :find_annotation_text, params: { assignment_id: assignment.id, string: string }, format: :js
-        expect(response.parsed_body[0]['content']).to eq(@annotation_text_one.content)
-      end
-      it 'should render an empty string if string does not match first part of any annotation text' do
-        string = 'Hello'
-
-        get_as user, :find_annotation_text, params: { assignment_id: assignment.id, string: string }, format: :js
-        expect(response.parsed_body).to eq([])
-      end
-      it 'should render multiple matches if string matches first part of more than one annotation text' do
-        create(:annotation_text, annotation_category: annotation_category, content: 'This is another annotation text.')
-        string = 'This is an'
-
-        get_as user, :find_annotation_text, params: { assignment_id: assignment.id, string: string }, format: :js
-        expect(response.parsed_body.size).to eq(2)
-      end
-    end
   end
 
   shared_examples 'An unauthorized user managing annotation categories' do
-    context '#index' do
-      it 'should respond with 403' do
-        get_as user, :index, params: { assignment_id: assignment.id }
-        expect(response).to have_http_status(403)
-      end
-    end
     context '#show' do
       it 'should respond with 403' do
         get_as user, :show, params: { assignment_id: assignment.id, id: annotation_category.id }
@@ -727,18 +723,6 @@ describe AnnotationCategoriesController do
           expect(response).to have_http_status(403)
         end
       end
-      context '#find_annotation_text' do
-        before do
-          create(:annotation_text,
-                 annotation_category: annotation_category,
-                 content: 'This is an annotation text.')
-        end
-        it 'should respond with 403' do
-          string = 'This is an'
-          get_as user, :find_annotation_text, params: { assignment_id: assignment.id, string: string }
-          expect(response).to have_http_status(403)
-        end
-      end
     end
   end
 
@@ -756,6 +740,7 @@ describe AnnotationCategoriesController do
       # By default all the grader permissions are set to false
       let(:user) { create(:ta) }
       include_examples 'An unauthorized user managing annotation categories'
+      include_examples 'A grader or admin accessing the index or find_annotation_text routes'
     end
   end
 end
