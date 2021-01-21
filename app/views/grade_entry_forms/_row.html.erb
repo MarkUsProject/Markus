@@ -26,7 +26,7 @@
           <%= "(#{t(:class_average)}: "\
                         "#{number_to_percentage(grade_entry_form.calculate_average, precision: 1)})" %>
         <% else %>
-          <%= t('grade_entry_forms.students.detailed_marks_message') %>
+          <p><%= link_to "Results", "grade_entry_forms/"+grade_entry_form.id.to_s+"/student_interface" %></p>
         <% end %>
       <% elsif grade_entry_form.due_date.nil? ||
         grade_entry_form.due_date < Time.current.to_date %>
@@ -35,3 +35,4 @@
     </td>
   <% end %>
 </tr>
+
