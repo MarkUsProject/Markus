@@ -371,3 +371,4 @@
 - Fixed annotation_category bug, and average calculation bug (c6conley)
 - Closing #402 (c6conley)
 - Add version and patch level information to MarkUs (g9jerboa)
+- Removed server_time information in submissions_controller.rb and server_time? from submission_policy.rb (choyuji3)
