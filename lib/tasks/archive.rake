@@ -16,35 +16,35 @@ namespace :markus do
   def copy_archive_files(archive_dir, rev: false)
     # copy repo permission file
     permission_file = archive_dir + 'permission_file'
-    archive_copy(Rails.configuration.x.repository.permission_file, permission_file.to_s, rev: rev)
+    archive_copy(Settings.repository.permission_file, permission_file.to_s, rev: rev)
     # copy key storage files
     key_storage_dir = archive_dir + 'key_storage'
-    archive_copy(Rails.configuration.key_storage, key_storage_dir, rev: rev)
+    archive_copy(Settings.key_storage, key_storage_dir, rev: rev)
     # copy log files
-    log_dir = File.dirname(File.join(::Rails.root, Rails.configuration.x.logging.log_file))
+    log_dir = File.dirname(File.join(::Rails.root, Settings.logging.log_file))
     log_files_dir = archive_dir + 'log_files'
     archive_copy(log_dir, log_files_dir, rev: rev)
     # copy error files
-    error_dir = File.dirname(File.join(::Rails.root, Rails.configuration.x.logging.error_file))
+    error_dir = File.dirname(File.join(::Rails.root, Settings.logging.error_file))
     error_files_dir = archive_dir + 'error_dir'
     archive_copy(error_dir, error_files_dir, rev: rev)
     # copy scanned exams
     scanned_exams_dir = archive_dir + 'scanned_exams'
-    archive_copy(Rails.configuration.x.scanned_exams.path, scanned_exams_dir, rev: rev)
+    archive_copy(Settings.scanned_exams.path, scanned_exams_dir, rev: rev)
     # copy starter files
     starter_files_dir = archive_dir + 'starter_files'
-    archive_copy(Rails.configuration.x.starter_file.storage, starter_files_dir, rev: rev)
+    archive_copy(Settings.starter_file.storage, starter_files_dir, rev: rev)
     # copy autotest client dir
     autotest_dir = archive_dir + 'autotest_client'
-    archive_copy(Rails.configuration.x.autotest.client_dir, autotest_dir, rev: rev)
+    archive_copy(Settings.autotest.client_dir, autotest_dir, rev: rev)
     # copy repositories
     repos_dir = archive_dir + 'repos'
-    if Rails.configuration.x.repository.type == 'git'
-      archive_copy(File.join(Rails.configuration.x.repository.storage, 'bare'), repos_dir, rev: rev)
-    elsif Rails.configuration.x.repository.type == 'svn'
-      archive_copy(Rails.configuration.x.repository.storage, repos_dir, rev: rev)
+    if Settings.repository.type == 'git'
+      archive_copy(File.join(Settings.repository.storage, 'bare'), repos_dir, rev: rev)
+    elsif Settings.repository.type == 'svn'
+      archive_copy(Settings.repository.storage, repos_dir, rev: rev)
     else
-      puts "Cannot archive #{Rails.configuration.x.repository.type} type repositories"
+      puts "Cannot archive #{Settings.repository.type} type repositories"
     end
   end
 
@@ -55,11 +55,11 @@ namespace :markus do
     FileUtils.mkdir_p(archive_dir)
     puts 'Copying files on disk'
     copy_archive_files(archive_dir)
-    zip_file = args[:archive_file]
+    zip_file = File.expand_path(args[:archive_file])
     puts "Archiving all repositories and files to #{zip_file}"
     FileUtils.rm_f(zip_file)
-    zip_cmd = ['tar', '-czvf', zip_file.to_s, archive_dir.to_s] # TODO: don't include absolute path in archive
-    Open3.popen3(*zip_cmd)
+    zip_cmd = ['tar', '-czvf', zip_file.to_s, '.']
+    Open3.popen3(*zip_cmd, chdir: archive_dir)
   end
 
   # Copy all stateful MarkUs files from +archive_dir+
