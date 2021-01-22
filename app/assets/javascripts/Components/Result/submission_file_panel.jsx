@@ -72,6 +72,10 @@ export class SubmissionFilePanel extends React.Component {
       }
       this.setState({selectedFile});
     }
+
+    if (prevProps !== this.props) {
+      this.componentDidMount();
+    }
   }
 
   getNamedFileId = (fileData, path, filename) => {

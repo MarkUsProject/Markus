@@ -332,11 +332,13 @@ class ResultsController < ApplicationController
     end
 
     next_result = next_grouping&.current_result
-    if next_result.nil?
-      redirect_to controller: 'submissions', action: 'browse'
-    else
-      redirect_to action: 'edit', id: next_result.id
-    end
+    # if next_result.nil?
+    #   redirect_to controller: 'submissions', action: 'browse'
+    # else
+    #   redirect_to action: 'edit', id: next_result.id
+    # end
+
+    render json: { next_result: next_result, next_grouping: next_grouping, url: 'hi' }
   end
 
   def set_released_to_students

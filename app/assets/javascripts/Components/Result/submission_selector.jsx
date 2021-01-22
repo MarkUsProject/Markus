@@ -102,19 +102,19 @@ export class SubmissionSelector extends React.Component {
     return (
       <div className='submission-selector-container'>
         <div className='submission-selector'>
-          <a
+          <button
             className='button previous'
-            href={`${url}?direction=-1`}>
+            onClick={this.props.previousSubmission}>
             {I18n.t('results.previous_submission')}
-          </a>
+          </button>
           <h2 className='group-name' title={this.props.group_name}>
             {this.props.group_name}
           </h2>
-          <a
+          <button
             className='button next'
-            href={`${url}?direction=1`}>
+            onClick={this.props.nextSubmission}>
             {I18n.t('results.next_submission')}
-          </a>
+          </button>
           <div className='progress'>
             <meter
               value={this.props.num_marked}

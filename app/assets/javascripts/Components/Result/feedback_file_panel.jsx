@@ -46,6 +46,10 @@ export class FeedbackFilePanel extends React.Component {
         {feedback_file_id: this.state.selectedFile}
       );
       file_obj = this.props.feedbackFiles.find(file => file.id === this.state.selectedFile);
+
+      if (!file_obj) {
+        file_obj = this.props.feedbackFiles[0];
+      }
     }
 
     return (
