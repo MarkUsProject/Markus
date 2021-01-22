@@ -210,7 +210,6 @@ Rails.application.routes.draw do
         get 'replace_files'
         get 'delete_files'
         post 'update_files'
-        get 'server_time'
         get 'download'
         post 'zip_groupings_files'
         get 'download_zipped_file'

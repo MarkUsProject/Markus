@@ -71,7 +71,6 @@ pt:
       no_revision_available: Nenhuma revisão disponível.
       no_submission: Você não tem nenhum envio ainda.
       select_file: UPDATE ME!
-      server_time: Data servidor
       version_control_warning: Submetendo arquivos aqui substitui todas as mudanças feitas usando o controle de versão. Certifique-se de que você trabalhou nos arquivos mais recentes antes de enviar.
     successfully_changed: "%{changed} resultados atualizados."
     unrelease_marks: Esconder notas

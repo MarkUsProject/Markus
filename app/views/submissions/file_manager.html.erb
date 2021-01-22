@@ -19,15 +19,6 @@
           enableSubdirs: <%= allowed_to? :manage_subdirectories? %>,
           starterFileChanged: <%= @grouping.starter_file_changed %>
         });
-
-      window.setInterval(() => {
-        $.get({
-          url: '<%= server_time_assignment_submissions_path(@assignment.id) %>',
-          success: function(data) {
-            document.getElementById('current_time').innerHTML = data;
-          }
-        });
-      }, 60000);
     });
   </script>
 <% end %>
@@ -35,11 +26,6 @@
 <% content_for :title do %>
     <%= t('submissions.student.file_manager',
           short_identifier: sanitize(@assignment.short_identifier)) %>
-<% end %>
-
-<% content_for :additional_headings do %>
-  <strong><%= t('submissions.student.server_time') %></strong>:
-  <span id='current_time'><%= l(Time.current)%></span>
 <% end %>
 
 <div id='file_manager'></div>

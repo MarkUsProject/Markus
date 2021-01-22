@@ -115,7 +115,6 @@ fr:
         manage?: UPDATE ME.
         manage_files?: UPDATE ME.
         manage_subdirectories?: Vous n'êtes pas autorisé à créer, supprimer ou modifier des dossiers.
-        server_time?: UPDATE ME.
         view_files?: UPDATE ME.
       ta:
         manage_assessments?: UPDATE ME.

@@ -604,11 +604,6 @@ class SubmissionsController < ApplicationController
               filename: "#{assignment.short_identifier}_repo_list.csv"
   end
 
-  # This action is called periodically from file_manager.
-  def server_time
-    render plain: l(Time.current)
-  end
-
   def set_result_marking_state
     if !params.key?(:groupings) || params[:groupings].empty?
       flash_now(:error, t('groups.select_a_group'))
