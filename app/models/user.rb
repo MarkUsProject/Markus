@@ -57,7 +57,7 @@ class User < ApplicationRecord
   end
 
   # Authenticates login against its password
-  # through a script specified by Rails.configuration.validate_file
+  # through a script specified by Settings.validate_file
   def self.authenticate(login, password, ip: nil)
     # Do not allow the following characters in usernames/passwords
     # Right now, this is \n and \0 only, since username and password
@@ -69,7 +69,7 @@ class User < ApplicationRecord
                        'illegal characters', MarkusLogger::ERROR)
       AUTHENTICATE_BAD_CHAR
     else
-      # Open a pipe and write to stdin of the program specified by Rails.configuration.validate_file.
+      # Open a pipe and write to stdin of the program specified by Settings.validate_file.
       # We could read something from the programs stdout, but there is no need
       # for that at the moment (you would do it by e.g. pipe.readlines)
 
@@ -83,13 +83,13 @@ class User < ApplicationRecord
       #  1 means no such user
       #  2 means bad password
       #  3 is used for other error exits
-      pipe = IO.popen("'#{Rails.configuration.validate_file}'", 'w+') # quotes to avoid choking on spaces
+      pipe = IO.popen("'#{Settings.validate_file}'", 'w+') # quotes to avoid choking on spaces
       to_stdin = [login, password, ip].reject(&:nil?).join("\n")
-      pipe.puts(to_stdin) # write to stdin of Rails.configuration.validate_file
+      pipe.puts(to_stdin) # write to stdin of Settings.validate_file
       pipe.close
       m_logger = MarkusLogger.instance
-      if !Rails.configuration.validate_custom_exit_status.nil? &&
-          $?.exitstatus == Rails.configuration.validate_custom_exit_status
+      if !Settings.validate_custom_exit_status.nil? &&
+          $?.exitstatus == Settings.validate_custom_exit_status
         m_logger.log("Login failed. Reason: Custom exit status.", MarkusLogger::ERROR)
         return AUTHENTICATE_CUSTOM_MESSAGE
       end

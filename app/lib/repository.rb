@@ -174,7 +174,7 @@ module Repository
     # Gets a list of users with permission to access the repo.
     # All permissions are rw for the time being
     def get_users
-      unless Rails.configuration.x.repository.is_repository_admin # are we admin?
+      unless Settings.repository.is_repository_admin # are we admin?
         raise NotAuthorityError.new('Unable to get permissions: Not in authoritative mode!')
       end
       repo_name = get_repo_name
@@ -184,7 +184,7 @@ module Repository
 
     # TODO All permissions are rw for the time being
     def get_permissions(user_name)
-      unless Rails.configuration.x.repository.is_repository_admin # are we admin?
+      unless Settings.repository.is_repository_admin # are we admin?
         raise NotAuthorityError.new('Unable to get permissions: Not in authoritative mode!')
       end
       unless get_users.include?(user_name)
@@ -207,7 +207,7 @@ module Repository
     # makes some update to the database and calls self.get_all_permissions
     # while this thread is still processing self.get_all_permissions
     def self.update_permissions
-      return unless Rails.configuration.x.repository.is_repository_admin
+      return unless Settings.repository.is_repository_admin
       Thread.current[:requested?] = true
       unless Thread.current[:permissions_lock].nil?
         # abort if this is being called in a block passed to
@@ -505,7 +505,7 @@ module Repository
 
   # Gets the configured repository implementation
   def self.get_class
-    repo_type = Rails.configuration.x.repository.type
+    repo_type = Settings.repository.type
     case repo_type
     when 'git'
       return GitRepository

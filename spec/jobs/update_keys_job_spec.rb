@@ -5,20 +5,20 @@ describe UpdateKeysJob do
   end
 
   describe '#perform' do
-    let(:file) { File.join(Rails.configuration.key_storage, KeyPair::AUTHORIZED_KEYS_FILE) }
+    let(:file) { File.join(Settings.key_storage, KeyPair::AUTHORIZED_KEYS_FILE) }
     before :each do
-      FileUtils.rm_rf(Rails.configuration.key_storage)
+      FileUtils.rm_rf(Settings.key_storage)
     end
     it 'should create a key storage directory if it does not exist' do
       UpdateKeysJob.perform_now
-      expect(File.exist?(Rails.configuration.key_storage)).to be true
+      expect(File.exist?(Settings.key_storage)).to be true
     end
     it 'should create an authorized_key file if it does not exist' do
       UpdateKeysJob.perform_now
       expect(File.exist?(file)).to be true
     end
     it 'should clear the old file content' do
-      FileUtils.mkdir_p(Rails.configuration.key_storage)
+      FileUtils.mkdir_p(Settings.key_storage)
       File.write(file, 'some text')
       UpdateKeysJob.perform_now
       expect(File.read(file)).to eq ''

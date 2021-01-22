@@ -1,6 +1,6 @@
 <header id='header'>
   <div id='course'>
-    <strong><%= Rails.configuration.course_name %></strong>
+    <strong><%= Settings.course_name %></strong>
   </div>
   <div id='user-info'>
     <span id='logout_area'>
@@ -27,9 +27,9 @@
                   logout_main_index_path,
                   id: 'logout_link',
                   method: :post) unless
-            Rails.configuration.logout_redirect == 'NONE' %>
+            Settings.logout_redirect == 'NONE' %>
 
-      <% if Rails.configuration.remote_user_auth &&
+      <% if Settings.remote_user_auth &&
             !session[:real_uid].nil? %>
         <%= link_to t('main.role_switch.clear_role_switch_session'),
                     controller: 'main',

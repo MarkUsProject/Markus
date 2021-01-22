@@ -62,7 +62,7 @@ en:
       remark_requested: Remark Requested
     status: Status
     student:
-      file_manager: "%{short_identifier}: File Manager"
+      file_manager: "%{short_identifier}: Submissions"
       files_submitted:
         one: One file submitted
         other: "%{count} files submitted"

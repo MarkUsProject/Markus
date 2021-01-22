@@ -15,7 +15,7 @@
       # For REMOTE_USER we have no way to check a password, so don't
       # provide UI for entering it.
     %>
-    <% unless Rails.configuration.remote_user_auth %>
+    <% unless Settings.remote_user_auth %>
       <%= password_field_tag 'admin_password',
                              nil,
                              placeholder: t('main.role_switch.admin_password'),

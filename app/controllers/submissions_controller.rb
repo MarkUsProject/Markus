@@ -636,7 +636,7 @@ class SubmissionsController < ApplicationController
     cache_file = Pathname.new('tmp/ipynb_html_cache') + "#{unique_path}.html"
     unless File.exist? cache_file
       FileUtils.mkdir_p(cache_file.dirname)
-      args = [Rails.configuration.nbconvert, '--to', 'html', '--stdin', '--output', cache_file.to_s]
+      args = [Settings.nbconvert, '--to', 'html', '--stdin', '--output', cache_file.to_s]
       _stdout, stderr, status = Open3.capture3(*args, stdin_data: file_contents)
       unless status.exitstatus.zero?
         flash_message(:error, stderr)

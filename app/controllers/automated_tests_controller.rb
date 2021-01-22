@@ -73,7 +73,7 @@ class AutomatedTestsController < ApplicationController
 
   def populate_autotest_manager
     assignment = Assignment.find(params[:assignment_id])
-    testers_schema_path = File.join(Rails.configuration.x.autotest.client_dir, 'testers.json')
+    testers_schema_path = File.join(Settings.autotest.client_dir, 'testers.json')
     files_dir = Pathname.new assignment.autotest_files_dir
     file_keys = []
     files_data = assignment.autotest_files.map do |file|
@@ -150,10 +150,10 @@ class AutomatedTestsController < ApplicationController
       FileUtils.rm_rf(folder_path)
     end
     new_files.each do |f|
-      if f.size > Rails.configuration.max_file_size
+      if f.size > Settings.max_file_size
         flash_now(:error, t('student.submission.file_too_large',
                             file_name: f.original_filename,
-                            max_size: (Rails.configuration.max_file_size / 1_000_000.00).round(2)))
+                            max_size: (Settings.max_file_size / 1_000_000.00).round(2)))
         next
       elsif f.size == 0
         flash_now(:warning, t('student.submission.empty_file_warning', file_name: f.original_filename))
