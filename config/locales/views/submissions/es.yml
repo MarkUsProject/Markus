@@ -73,7 +73,6 @@ es:
       no_revision_available: No existe ninguna revisión disponible.
       no_submission: Usted no ha enviado ninguna entrega todavía
       select_file: UPDATE ME!
-      server_time: Tiempo Servidor
       version_control_warning: Entregar archivos aquí reescribe todos los cambios realizados usando version control. Asegúrese que haya trabajado en los archivos más recientes antes de realizar la entrega.
     successfully_changed: "%{changed} resultados han sido actualizados exitosamente"
     unrelease_marks: Ocultar Notas
