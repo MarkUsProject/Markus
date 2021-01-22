@@ -12,6 +12,7 @@
 - Fix bug where additional test tokens were added after every save (#5064)
 - Fix bug where latex files were rendered with character escape sequences displayed (#5073)
 - Fix bug where grader permission for creating annotations were not properly set (#5078)
+- Removed server_time information in submissions_controller.rb and server_time? from submission_policy.rb (#5071)
 
 ## [v1.11.1]
 - Fix bug where duplicate marks can get created because of concurrent requests (#5018)
@@ -371,4 +372,3 @@
 - Fixed annotation_category bug, and average calculation bug (c6conley)
 - Closing #402 (c6conley)
 - Add version and patch level information to MarkUs (g9jerboa)
-- Removed server_time information in submissions_controller.rb and server_time? from submission_policy.rb (choyuji3)
