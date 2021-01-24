@@ -69,10 +69,10 @@ class StarterFileGroupsController < ApplicationController
       FileUtils.rm_rf(folder_path)
     end
     new_files.each do |f|
-      if f.size > Rails.configuration.max_file_size
+      if f.size > Settings.max_file_size
         flash_now(:error, t('student.submission.file_too_large',
                             file_name: f.original_filename,
-                            max_size: (Rails.configuration.max_file_size / 1_000_000.00).round(2)))
+                            max_size: (Settings.max_file_size / 1_000_000.00).round(2)))
         next
       elsif f.size == 0
         flash_now(:warning, t('student.submission.empty_file_warning', file_name: f.original_filename))

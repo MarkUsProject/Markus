@@ -11,6 +11,6 @@ class KeyPairPolicy < ApplicationPolicy
   end
 
   def view?
-    Rails.configuration.x.repository.type == 'git' && Rails.configuration.enable_key_storage
+    Settings.repository.type == 'git' && Settings.enable_key_storage
   end
 end

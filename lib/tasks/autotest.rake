@@ -2,7 +2,7 @@ namespace :db do
   desc 'Sets up environment to test the autotester'
   task autotest: :environment do
     include AutomatedTestsHelper
-    FileUtils.mkdir_p Rails.configuration.x.autotest.client_dir
+    FileUtils.mkdir_p Settings.autotest.client_dir
     puts 'Set up testing environment for autotest'
     Rake::Task['markus:setup_autotest'].invoke
 
@@ -18,7 +18,7 @@ end
 
 class AutotestSetup
   def initialize(root_dir)
-    testers_schema_path = File.join(Rails.configuration.x.autotest.client_dir, 'testers.json')
+    testers_schema_path = File.join(Settings.autotest.client_dir, 'testers.json')
 
     # setup instance variables (mostly paths to directories)
     @assg_short_id = "autotest_#{File.basename(root_dir)}"

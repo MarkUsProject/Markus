@@ -115,7 +115,6 @@ pt:
         manage?: UPDATE ME.
         manage_files?: UPDATE ME.
         manage_subdirectories?: UPDATE ME.
-        server_time?: UPDATE ME.
         view_files?: UPDATE ME.
       ta:
         manage_assessments?: UPDATE ME.

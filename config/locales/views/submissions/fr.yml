@@ -67,7 +67,6 @@ fr:
       no_revision_available: Aucune révision disponible.
       no_submission: Vous n'avez encore rien envoyé
       select_file: UPDATE ME!
-      server_time: Heure du serveur
       version_control_warning: Envoi de fichiers ici annule les modifications apportées à l'aide de contrôle de version. Assurez-vous que vous avez travaillé sur les fichiers les plus récents avant de soumettre.
     successfully_changed: Les %{changed} résultats ont été mis à jour.
     unrelease_marks: Cacher les notes

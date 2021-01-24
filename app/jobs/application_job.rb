@@ -1,6 +1,8 @@
 class ApplicationJob < ActiveJob::Base
   include ActiveJob::Status
 
+  queue_as queue_name
+
   def self.on_complete_js(_status)
     '() => {}'
   end
@@ -21,5 +23,9 @@ class ApplicationJob < ActiveJob::Base
     self.status.update(error_message: e.to_s)
     self.status.update(status: :failed)
     raise
+  end
+
+  def self.queue_name
+    Settings.queues[self.name.underscore] || Settings.queues.default
   end
 end

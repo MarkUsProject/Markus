@@ -604,11 +604,6 @@ class SubmissionsController < ApplicationController
               filename: "#{assignment.short_identifier}_repo_list.csv"
   end
 
-  # This action is called periodically from file_manager.
-  def server_time
-    render plain: l(Time.current)
-  end
-
   def set_result_marking_state
     if !params.key?(:groupings) || params[:groupings].empty?
       flash_now(:error, t('groups.select_a_group'))
@@ -636,7 +631,7 @@ class SubmissionsController < ApplicationController
     cache_file = Pathname.new('tmp/ipynb_html_cache') + "#{unique_path}.html"
     unless File.exist? cache_file
       FileUtils.mkdir_p(cache_file.dirname)
-      args = [Rails.configuration.nbconvert, '--to', 'html', '--stdin', '--output', cache_file.to_s]
+      args = [Settings.nbconvert, '--to', 'html', '--stdin', '--output', cache_file.to_s]
       _stdout, stderr, status = Open3.capture3(*args, stdin_data: file_contents)
       unless status.exitstatus.zero?
         flash_message(:error, stderr)

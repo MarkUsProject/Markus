@@ -5,7 +5,7 @@
                 controller: 'assignments',
                 action: 'new' %>
   </li>
-  <% if Rails.configuration.x.scanned_exams.enable %>
+  <% if Settings.scanned_exams.enable %>
     <li>
       <%= link_to t('helpers.submit.create', model: t('activerecord.models.scanned_assignment.one')),
                   controller: 'assignments',

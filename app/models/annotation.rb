@@ -24,7 +24,7 @@ class Annotation < ApplicationRecord
 
   def modify_mark_with_deduction
     criterion = self.annotation_text.annotation_category.flexible_criterion
-    self.result.marks.find_by(criterion: criterion).update_deduction
+    self.result.marks.find_or_create_by(criterion: criterion).update_deduction
   end
 
   def get_data(include_creator=false)

@@ -1,7 +1,7 @@
 class Ta < User
 
-  CSV_UPLOAD_ORDER = Rails.configuration.ta_csv_upload_order
-  SESSION_TIMEOUT = Rails.configuration.ta_session_timeout
+  CSV_UPLOAD_ORDER = Settings.ta_csv_upload_order.map(&:to_sym).freeze
+  SESSION_TIMEOUT = Settings.ta_session_timeout
 
   has_one :grader_permission, dependent: :destroy, foreign_key: :user_id, inverse_of: :ta
   before_create :create_grader_permission
