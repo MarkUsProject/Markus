@@ -1,8 +1,6 @@
 class AutotestCancelJob < ApplicationJob
   include AutomatedTestsHelper
 
-  queue_as Rails.configuration.x.queues.autotest_cancel
-
   def self.on_complete_js(_status)
     'window.BatchTestRunTable.fetchData'
   end

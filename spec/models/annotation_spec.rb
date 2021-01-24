@@ -48,5 +48,16 @@ describe Annotation do
       result.annotations.find_by(annotation_text: annotation_text).destroy
       expect(mark.mark).to eq 2.0
     end
+
+    it 'creates a mark when associated with its category\'s flexible criterion '\
+       'was made after annotations were made ' do
+      annotation_text.annotations.destroy_all
+      new_flex = create(:flexible_criterion, assignment: assignment)
+      annotation_category.update!(flexible_criterion_id: new_flex.id)
+      create(:text_annotation,
+             annotation_text: annotation_text,
+             result: result)
+      expect(new_flex.marks.first.mark).to eq 0.67
+    end
   end
 end

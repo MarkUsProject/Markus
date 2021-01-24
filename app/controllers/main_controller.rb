@@ -24,7 +24,7 @@ class MainController < ApplicationController
     session[:job_id] = nil
 
     # external auth has been done, skip markus authorization
-    if Rails.configuration.remote_user_auth
+    if Settings.remote_user_auth
       if @markus_auth_remote_user.nil?
         render 'shared/http_status', formats: [:html], locals: { code: '403', message: HttpStatusHelper::ERROR_CODE['message']['403'] }, status: 403, layout: false
         return
@@ -102,7 +102,7 @@ class MainController < ApplicationController
 
   # Clear the sesssion for current user and redirect to login page
   def logout
-    logout_redirect = Rails.configuration.logout_redirect
+    logout_redirect = Settings.logout_redirect
     if logout_redirect == 'NONE'
       page_not_found
       return
@@ -173,7 +173,7 @@ class MainController < ApplicationController
   def login_as
     real_user = (session[:real_uid] && User.find_by_id(session[:real_uid])) ||
         current_user
-    if Rails.configuration.remote_user_auth
+    if Settings.remote_user_auth
       validation_result = validate_user(params[:effective_user_login], real_user.user_name, nil, login: false)
     else
       validation_result = validate_user(params[:effective_user_login], real_user.user_name, params[:admin_password],
@@ -303,7 +303,7 @@ private
       # not a good idea to report this to the outside world. It makes it
       # easier for attempted break-ins
       # if one can distinguish between existent and non-existent users.
-      error_message = Rails.configuration.validate_user_not_allowed_message || I18n.t('main.login_failed')
+      error_message = Settings.validate_user_not_allowed_message || I18n.t('main.login_failed')
       return false, error_message
     end
 
@@ -347,7 +347,7 @@ private
 
     if login
       # Two stage user verification: authentication and authorization
-      ip = Rails.configuration.validate_ip ? request.remote_ip : nil
+      ip = Settings.validate_ip ? request.remote_ip : nil
       authenticate_response = User.authenticate(real_user,
                                                 password,
                                                 ip: ip)
@@ -356,9 +356,9 @@ private
         return validation_result
       end
 
-      if !Rails.configuration.validate_custom_status_message.nil? &&
+      if !Settings.validate_custom_status_message.nil? &&
           authenticate_response == User::AUTHENTICATE_CUSTOM_MESSAGE
-        validation_result[:error] = Rails.configuration.validate_custom_status_message
+        validation_result[:error] = Settings.validate_custom_status_message
         return validation_result
       end
     end
@@ -376,12 +376,12 @@ private
         # not a good idea to report this to the outside world. It makes it
         # easier for attempted break-ins
         # if one can distinguish between existent and non-existent users.
-        validation_result[:error] = Rails.configuration.validate_user_not_allowed_message ||
+        validation_result[:error] = Settings.validate_user_not_allowed_message ||
                                     I18n.t('main.login_failed')
         return validation_result
       end
     else
-      validation_result[:error] = Rails.configuration.incorrect_login_message || I18n.t('main.login_failed')
+      validation_result[:error] = Settings.incorrect_login_message || I18n.t('main.login_failed')
       return validation_result
     end
 

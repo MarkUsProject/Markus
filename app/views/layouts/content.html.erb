@@ -5,7 +5,7 @@
   <title><%= t(:markus) %> - <%= controller.action_name.titleize %></title>
   <%= javascript_pack_tag 'application' %>
   <%= javascript_include_tag 'application' %>
-  <% unless Rails.configuration.remote_user_auth %>
+  <% unless Settings.remote_user_auth %>
     <%= javascript_include_tag 'check_timeout' %>
   <% end %>
   <%= render partial: 'layouts/jsroutes_config' %>
