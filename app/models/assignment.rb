@@ -537,6 +537,12 @@ class Assignment < Assessment
     members = groupings.joins(:accepted_students)
                        .pluck_to_hash(:id, 'users.user_name', 'users.first_name', 'users.last_name')
                        .group_by { |x| x[:id] }
+    
+    tag_data = groupings
+                       .joins(:tags)
+                       .pluck_to_hash(:id, 'tags.name')
+                       .group_by { |h| h[:id] }
+                       
     groupings_with_results = groupings.includes(current_result: :marks).includes(:submitted_remark, :extension)
     result_ids = groupings_with_results.pluck('results.id').uniq.compact
     extra_marks_hash = Result.get_total_extra_marks(result_ids, max_mark: max_mark)
@@ -561,7 +567,6 @@ class Assignment < Assessment
         headerClassName: unassigned ? 'unassigned' : ''
       }
     end.compact
-
     final_data = groupings_with_results.map do |g|
       result = g.current_result
       has_remark = g.current_submission_used&.submitted_remark.present?
@@ -574,14 +579,16 @@ class Assignment < Assessment
         section = grouping_data[g.id][0]['sections.name']
         group_members = members.fetch(g.id, [])
                                .map { |s| [s['users.user_name'], s['users.first_name'], s['users.last_name']] }
+        tag_info = tag_data.fetch(g.id, {}
+                               .map{ |g| [g['tags.name']]})
       end
-
       criteria = result.nil? ? {} : result.mark_hash.select { |key, _| criteria_shown.include?(key) }
       extra_mark = extra_marks_hash[result&.id]
       {
         group_name: group_name,
         section: section,
         members: group_members,
+        tags: (tag_info.nil? ? [] : tag_info.map { |h| h['tags.name'] }) ,
         graders: graders.fetch(g.id, [])
                         .map { |s| [s['users.user_name'], s['users.first_name'], s['users.last_name']] },
         marking_state: marking_state(has_remark,
@@ -596,7 +603,6 @@ class Assignment < Assessment
         total_extra_marks: extra_mark
       }
     end
-
     { data: final_data,
       criteriaColumns: criteria_columns,
       numAssigned: self.get_num_assigned(user.admin? ? nil : user.id),
@@ -1157,7 +1163,6 @@ class Assignment < Assessment
                                      result_info['results.released_to_students'],
                                      collection_date)
       }
-
       base[:start_time] = I18n.l(start_time) if self.is_timed && !start_time.nil?
 
       unless is_empty || revision_timestamp.nil?
@@ -1178,7 +1183,6 @@ class Assignment < Assessment
       base
     end
   end
-
   def to_xml(options = {})
     attributes_hash = self.assignment_properties.attributes.merge(self.attributes).symbolize_keys
     attributes_hash.select { |key, _| Api::AssignmentsController::DEFAULT_FIELDS.include? key }.to_xml(options)

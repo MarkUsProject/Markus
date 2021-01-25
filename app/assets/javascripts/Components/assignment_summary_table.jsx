@@ -98,8 +98,24 @@ class AssignmentSummaryTable extends React.Component {
       filterable: false,
       defaultSortDesc: true,
     },
+    {
+      Header: I18n.t('activerecord.models.tag.other'),
+      accessor: 'tags',
+      Cell: row => (
+        <ul className="tag-list">
+          {row.original.tags.map(tag =>
+            <li key={`${row.original._id}-${tag}`}
+              className="tag-element">
+              {tag}
+            </li> 
+          )}
+        </ul>
+      ),
+      minWidth: 80,
+      sortable: false
+    },
   ];
-
+  
   bonusColumn = {
     Header: I18n.t('activerecord.models.extra_mark.other'),
     accessor: 'total_extra_marks',
