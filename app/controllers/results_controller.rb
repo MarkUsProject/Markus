@@ -320,7 +320,8 @@ class ResultsController < ApplicationController
         next_pr = assigned_prs.where('peer_reviews.id < ?', result.peer_review_id).last
       end
       next_result = Result.find(next_pr.result_id)
-      render json: { next_result: next_result, next_pr: next_pr }
+      render json: { next_result: next_result, next_grouping: next_pr }
+      return
     else
       groupings = assignment.groupings.joins(:group).order('group_name')
       if params[:direction] == '1'
