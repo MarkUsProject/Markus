@@ -1,7 +1,5 @@
 class SubmissionsJob < ApplicationJob
 
-  queue_as Rails.configuration.x.queues.collect_submissions
-
   def self.on_complete_js(status)
     'window.submissionTable.wrapped.fetchData'
   end

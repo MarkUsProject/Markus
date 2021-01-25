@@ -888,7 +888,7 @@ class Assignment < Assessment
   ### REPO ###
 
   def starter_file_path
-    File.join(Rails.configuration.x.starter_file.storage, repository_folder)
+    File.join(Settings.starter_file.storage, repository_folder)
   end
 
   def default_starter_file_group

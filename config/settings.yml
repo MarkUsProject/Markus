@@ -1,0 +1,91 @@
+rails:
+  time_zone: Eastern Time (US & Canada)
+  active_job:
+    queue_adapter: resque
+  assets:
+    prefix: /assets
+  active_record: {}
+  session_store:
+    type: cookie_store
+    args:
+      key: _markus_session
+      path: <%= ENV.fetch('RAILS_RELATIVE_URL_ROOT') { '/' } %>
+      expire_after: 21 # days
+      secure: false
+      same_site: lax
+  action_mailer:
+    delivery_method: test
+    default_url_options:
+      host: 'localhost:3000'
+    asset_host: 'http://localhost:3000'
+    perform_deliveries: false
+    deliver_later_queue_name: ~
+
+queues:
+  default: DEFAULT_QUEUE
+
+redis:
+  url: 'redis://localhost:6379/1'
+
+course_name: 'CSC108 Fall 2009: Introduction to Computer Programming'
+validate_file: <%= "#{::Rails.root}/config/dummy_validate.sh" %>
+validate_ip: false
+validate_custom_exit_status: ~
+validate_custom_status_message: ~
+
+remote_user_auth: false
+
+logout_redirect: DEFAULT
+
+repository:
+  type: git
+  git_shell: /usr/bin/git-shell
+  url: 'http://www.example.com/markus/git'
+  ssh_url: 'git@example.com/csc108'
+  hooks:
+    update: <%= "#{::Rails.root.to_s}/lib/repo/git_hooks/multihook.py" %>
+    post-receive: <%= "#{::Rails.root.to_s}/lib/repo/git_hooks/multihook.py" %>
+  client_hooks: <%= "#{::Rails.root.to_s}/lib/repo/git_hooks/client" %>
+  is_repository_admin: true
+
+max_file_size: 5000000
+
+student_session_timeout: 1800
+ta_session_timeout: 1800
+admin_session_timeout: 1800
+
+enable_key_storage: true
+
+student_csv_upload_order:
+  - user_name
+  - last_name
+  - first_name
+  - section_name
+  - id_number
+  - email
+
+ta_csv_upload_order:
+  - user_name
+  - last_name
+  - first_name
+  - email
+
+logging:
+  enabled: true
+  rotate_by_interval: false
+  rotate_interval: daily
+  size_threshold: 1024000000
+  old_files: 10
+
+autotest:
+  enable: true
+  student_test_buffer_minutes: 60
+  server_host: localhost
+  server_username: ~
+  server_command: autotest_enqueuer
+
+scanned_exams:
+  enable: true
+  python: <%= ::Rails.root %>/lib/scanner/venv/bin/python
+
+nbconvert: <%= ::Rails.root %>/nbconvertvenv/bin/jupyter-nbconvert
