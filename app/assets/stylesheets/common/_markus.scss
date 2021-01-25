@@ -43,8 +43,14 @@ pre,
 }
 
 .test-results-output {
-  margin-bottom: 0;
-  margin-top: 0;
+  margin: 0;
+
+  &:not(:empty) {
+    padding-bottom: 5px;
+    padding-left: 10px;
+    padding-right: 70px;
+    padding-top: 5px;
+  }
 }
 
 /** Headings */
@@ -438,22 +444,24 @@ kbd {
   text-shadow: 0 1px 0 $background-main;
 }
 
+.shortcuts-table {
+  border-collapse: separate;
+  border-spacing: 5px;
+}
+
 /** Test script results table */
 
 .test-result-pass {
-  background-color: #caffc9 !important;
+  background-color: $light-success;
 }
 
 .test-result-partial {
-  background-color: #ffffc9 !important;
+  background-color: $light-alert;
 }
 
+.test-result-error,
 .test-result-fail {
-  background-color: #ffcac9 !important;
-}
-
-.test-result-error {
-  background-color: #ff7a77 !important;
+  background-color: $light-error;
 }
 
 // Panes
@@ -702,7 +710,7 @@ ul.tags {
 }
 
 .ReactModal__Overlay--after-open {
-  z-index: 2;
+  z-index: 100;
 }
 
 .dialog {
@@ -958,6 +966,9 @@ nav {
   z-index: 1;
 }
 
+#image_container {
+  position: relative;  // For image annotations
+}
 
 // Text editing and previews
 .preview {
@@ -1072,4 +1083,10 @@ nav {
 // Login
 .cookies-eu-ok {
   background-color: $primary-three;
+}
+
+// Flexbox layout for Results/edit and Results/view_marks
+.flex-col {
+  display: flex;
+  flex-direction: column;
 }

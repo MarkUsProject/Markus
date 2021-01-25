@@ -396,20 +396,25 @@ class SubmissionsController < ApplicationController
       grouping.access_repo do |repo|
         revision = repo.get_revision(submission.revision_identifier)
         raw_file = revision.files_at_path(file.path)[file.filename]
+        file_type = SubmissionFile.get_file_type(file.filename)
         if raw_file.nil?
-          file_contents = I18n.t('student.submission.missing_file',
-                                 file_name: file.filename)
+          file_contents = I18n.t('student.submission.missing_file', file_name: file.filename)
+          file_type = 'unknown'
         else
           file_contents = repo.download_as_string(raw_file)
           file_contents.encode!('UTF-8', invalid: :replace, undef: :replace, replace: '�')
-        end
 
-        if SubmissionFile.is_binary?(file_contents)
-          # If the file appears to be binary, display a warning
-          render json: { content: I18n.t('submissions.cannot_display').to_json, type: 'unknown' }
-        else
-          render json: { content: file_contents.to_json, type: SubmissionFile.get_file_type(file.filename) }
+          if file.is_pynb?
+            unique_file = "#{raw_file.name}.#{submission.revision_identifier}"
+            unique_path = "#{grouping.group.repo_name}/#{raw_file.path}/#{unique_file}"
+            file_contents = ipynb_to_html(file_contents, unique_path)
+          elsif params[:force_text] != 'true' && SubmissionFile.is_binary?(file_contents)
+            # If the file appears to be binary, display a warning
+            file_contents = I18n.t('submissions.cannot_display')
+            file_type = 'binary'
+          end
         end
+        render json: { content: file_contents.to_json, type: file_type }
       end
     end
   end
@@ -441,10 +446,17 @@ class SubmissionsController < ApplicationController
         file = @revision.files_at_path(File.join(@assignment.repository_folder,
                                                  path))[params[:file_name]]
         file_contents = repo.download_as_string(file)
-        if params[:preview] == 'true' && SubmissionFile.is_binary?(file_contents)
-          file_contents = I18n.t('submissions.cannot_display')
+        if params[:preview] == 'true'
+          if File.extname(params[:file_name]).casecmp('.ipynb')&.zero?
+            file_path = "#{@assignment.repository_folder}/#{path}/#{params[:file_name]}"
+            unique_path = "#{@grouping.group.repo_name}/#{file_path}.#{@revision.revision_identifier}"
+            file_contents = ipynb_to_html(file_contents, unique_path)
+          elsif SubmissionFile.is_binary?(file_contents)
+            file_contents = I18n.t('submissions.cannot_display')
+          end
         end
       rescue Exception => e
+        flash_message(:error, e.message)
         render plain: I18n.t('student.submission.missing_file',
                             file_name: params[:file_name], message: e.message)
         return
@@ -619,6 +631,20 @@ class SubmissionsController < ApplicationController
   end
 
   private
+
+  def ipynb_to_html(file_contents, unique_path)
+    cache_file = Pathname.new('tmp/ipynb_html_cache') + "#{unique_path}.html"
+    unless File.exist? cache_file
+      FileUtils.mkdir_p(cache_file.dirname)
+      args = [Rails.configuration.nbconvert, '--to', 'html', '--stdin', '--output', cache_file.to_s]
+      _stdout, stderr, status = Open3.capture3(*args, stdin_data: file_contents)
+      unless status.exitstatus.zero?
+        flash_message(:error, stderr)
+        return I18n.t('submissions.cannot_display') unless status.exitstatus.zero?
+      end
+    end
+    File.read(cache_file)
+  end
 
   # Return a relative path to a temporary zip file (which may or may not exists).
   # The name of this file is unique by the +assignment+ and current user.

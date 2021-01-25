@@ -49,6 +49,8 @@ class SubmissionFile < ApplicationRecord
       'image'
     when '.pdf'
       'pdf'
+    when '.ipynb'
+      'jupyter-notebook'
     else
       'unknown'
     end
@@ -86,6 +88,10 @@ class SubmissionFile < ApplicationRecord
 
   def is_pdf?
     File.extname(filename).casecmp('.pdf') == 0
+  end
+
+  def is_pynb?
+    File.extname(filename).casecmp('.ipynb')&.zero?
   end
 
   # Taken from http://blade.nagaokaut.ac.jp/cgi-bin/scat.rb/ruby/ruby-talk/44936

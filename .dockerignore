@@ -73,3 +73,6 @@ coverage/
 # scanned exam python files
 **/venv/
 **/__pycache__/
+
+# nbconvert python files
+**/nbconvertvenv/

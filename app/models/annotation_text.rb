@@ -3,7 +3,8 @@ class AnnotationText < ApplicationRecord
   belongs_to :creator, class_name: 'User', foreign_key: :creator_id
   belongs_to :last_editor, class_name: 'User', foreign_key: :last_editor_id, optional: true
 
-  after_update :update_mark_deductions
+  after_update :update_mark_deductions,
+               unless: ->(t) { t.annotation_category.changes_to_save.key?('flexible_criterion_id') }
   before_update :check_if_released, unless: ->(t) { t.deduction.nil? }
   before_destroy :check_if_released, unless: ->(t) { t.deduction.nil? }
 
@@ -39,16 +40,7 @@ class AnnotationText < ApplicationRecord
 
   def update_mark_deductions
     return unless previous_changes.key?('deduction')
-
-    if self.annotation_category.changes_to_save.key?('flexible_criterion_id')
-      criterion = FlexibleCriterion.find_by(id: self.annotation_category
-                                                    .changes_to_save['flexible_criterion_id']
-                                                    .first)
-      return if criterion.nil? || criterion.marks == []
-      criterion_id = self.annotation_category.changes_to_save['flexible_criterion_id'].first
-    else
-      criterion_id = self.annotation_category.flexible_criterion_id
-    end
+    criterion_id = self.annotation_category.flexible_criterion_id
     annotations = self.annotations.includes(:result)
     annotations.each do |annotation|
       annotation.result.marks

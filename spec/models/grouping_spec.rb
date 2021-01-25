@@ -435,30 +435,31 @@ describe Grouping do
     end
 
     describe '#update_assigned_tokens' do
-      before :each do
-        @assignment = FactoryBot.create(:assignment, assignment_properties_attributes: { token_start_date: 1.day.ago,
-                                                                                         tokens_per_period: 6 })
-        @group = FactoryBot.create(:group)
-        @grouping = Grouping.create(group: @group, assignment: @assignment, test_tokens: 5)
-        @assignment.groupings << @grouping # TODO: why the bidirectional association is not automatically created?
+      let(:assignment) do
+        create :assignment, assignment_properties_attributes: { token_start_date: 1.day.ago, tokens_per_period: 6 }
       end
+      let!(:grouping) { create :grouping, assignment: assignment, test_tokens: 5 }
+
+      before { assignment.reload }
 
       it 'updates token count properly when it is being increased' do
-        @assignment.tokens_per_period = 9
-        @assignment.save
-        expect(@grouping.test_tokens).to eq(8)
+        assignment.update!(tokens_per_period: 9)
+        expect(grouping.reload.test_tokens).to eq(8)
       end
 
       it 'updates token count properly when it is being decreased' do
-        @assignment.tokens_per_period = 3
-        @assignment.save
-        expect(@grouping.test_tokens).to eq(2)
+        assignment.update!(tokens_per_period: 3)
+        expect(grouping.reload.test_tokens).to eq(2)
       end
 
       it 'does not allow token count to go below 0' do
-        @assignment.tokens_per_period = 0
-        @assignment.save
-        expect(@grouping.test_tokens).to eq(0)
+        assignment.update!(tokens_per_period: 0)
+        expect(grouping.reload.test_tokens).to eq(0)
+      end
+
+      it 'does not update tokens when there is no change' do
+        assignment.update!(tokens_per_period: 6)
+        expect(grouping.reload.test_tokens).to eq(5)
       end
     end
   end

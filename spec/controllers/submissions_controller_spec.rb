@@ -954,36 +954,39 @@ describe SubmissionsController do
     let(:assignment) { create(:assignment) }
     let(:admin) { create(:admin) }
     let(:grouping) { create(:grouping_with_inviter, assignment: assignment) }
-    let(:submission) { create(:submission, grouping: grouping) }
     let(:file1) { fixture_file_upload(File.join('/files', 'Shapes.java'), 'text/java') }
     let(:file2) { fixture_file_upload(File.join('/files', 'test_zip.zip'), 'application/zip') }
-    before :each do
-      allow(controller).to receive(:session_expired?).and_return(false)
-      allow(controller).to receive(:logged_in?).and_return(true)
-      allow(controller).to receive(:current_user).and_return(build(:admin))
-      post_as admin, :update_files, params: { assignment_id: assignment.id,
-                                              grouping_id: grouping.id,
-                                              path: '/files',
-                                              new_files: [file1, file2] }
+    let(:file3) { fixture_file_upload(File.join('/files', 'example.ipynb')) }
+    let!(:submission) do
+      submit_file(assignment, grouping, file1.original_filename, file1.read)
+      submit_file(assignment, grouping, file2.original_filename, file2.read)
+      submit_file(assignment, grouping, file3.original_filename, file3.read)
     end
     context 'When the file is in preview' do
       describe 'when the file is not a binary file' do
         it 'should display the file content' do
-          get :download, params: { assignment_id: assignment.id,
-                                   file_name: 'Shapes.java',
-                                   path: '/files',
-                                   preview: true,
-                                   grouping_id: grouping.id }
+          get_as admin, :download, params: { assignment_id: assignment.id,
+                                             file_name: 'Shapes.java',
+                                             preview: true,
+                                             grouping_id: grouping.id }
           expect(response.body).to eq(File.read(file1))
+        end
+      end
+      describe 'When the file is a jupyter notebook file' do
+        it 'should display rendered html' do
+          get_as admin, :download, params: { assignment_id: assignment.id,
+                                             file_name: 'example.ipynb',
+                                             preview: true,
+                                             grouping_id: grouping.id }
+          expect(response.body).to start_with('<!DOCTYPE html>')
         end
       end
       describe 'When the file is a binary file' do
         it 'should not display the contents of the compressed file' do
-          get :download, params: { assignment_id: assignment.id,
-                                   file_name: 'test_zip.zip',
-                                   path: '/files',
-                                   preview: true,
-                                   grouping_id: grouping.id }
+          get_as admin, :download, params: { assignment_id: assignment.id,
+                                             file_name: 'test_zip.zip',
+                                             preview: true,
+                                             grouping_id: grouping.id }
           expect(response.body).to eq(I18n.t('submissions.cannot_display'))
         end
       end
@@ -991,28 +994,126 @@ describe SubmissionsController do
     context 'When the file is being downloaded' do
       describe 'when the file is not a binary file' do
         it 'should download the file' do
-          get :download, params: { assignment_id: assignment.id,
-                                   file_name: 'Shapes.java',
-                                   path: '/files',
-                                   preview: false,
-                                   grouping_id: grouping.id }
+          get_as admin, :download, params: { assignment_id: assignment.id,
+                                             file_name: 'Shapes.java',
+                                             preview: false,
+                                             grouping_id: grouping.id }
           expect(response.body).to eq(File.read(file1))
+        end
+      end
+      describe 'When the file is a jupyter notebook file' do
+        it 'should download the file as is' do
+          get_as admin, :download, params: { assignment_id: assignment.id,
+                                             file_name: 'example.ipynb',
+                                             preview: false,
+                                             grouping_id: grouping.id }
+          expect(response.body).to eq(File.read(file3))
         end
       end
       describe 'When the file is a binary file' do
         it 'should download all the contents of the zip file' do
-          get :download, params: { assignment_id: assignment.id,
-                                   file_name: 'test_zip.zip',
-                                   path: '/files',
-                                   preview: false,
-                                   grouping_id: grouping.id }
+          get_as admin, :download, params: { assignment_id: assignment.id,
+                                             file_name: 'test_zip.zip',
+                                             preview: false,
+                                             grouping_id: grouping.id }
           grouping.group.access_repo do |repo|
             revision = repo.get_latest_revision
-            file = revision.files_at_path(File.join(assignment.repository_folder, '/files'))['test_zip.zip']
+            file = revision.files_at_path(assignment.repository_folder)['test_zip.zip']
             content = repo.download_as_string(file)
             expect(response.body).to eq(content)
           end
         end
+      end
+    end
+  end
+  describe '#get_file' do
+    let(:assignment) { create(:assignment) }
+    let(:admin) { create(:admin) }
+    let(:grouping) { create(:grouping_with_inviter, assignment: assignment) }
+    let(:file1) { fixture_file_upload(File.join('/files', 'Shapes.java'), 'text/java') }
+    let(:file2) { fixture_file_upload(File.join('/files', 'test_zip.zip'), 'application/zip', true) }
+    let(:file3) { fixture_file_upload(File.join('/files', 'example.ipynb')) }
+    let(:file4) { fixture_file_upload(File.join('/files', 'page_white_text.png')) }
+    let(:file5) { fixture_file_upload(File.join('/files', 'scanned_exams', 'midterm1-v2-test.pdf')) }
+    let!(:submission) do
+      files.map do |file|
+        submit_file(assignment, grouping, file.original_filename, file.read)
+      end.last
+    end
+    describe 'when the file is not a binary file' do
+      let(:files) { [file1] }
+      it 'should download the file' do
+        submission_file = submission.submission_files.find_by(filename: file1.original_filename)
+        get_as admin, :get_file, params: { assignment_id: assignment.id,
+                                           id: submission.id,
+                                           submission_file_id: submission_file.id }
+        expect(JSON.parse(response.body)['content']).to eq(ActiveSupport::JSON.encode(File.read(file1)))
+      end
+    end
+    describe 'When the file is a jupyter notebook file' do
+      let(:files) { [file3] }
+      it 'should download the file as is' do
+        submission_file = submission.submission_files.find_by(filename: file3.original_filename)
+        get_as admin, :get_file, params: { assignment_id: assignment.id,
+                                           id: submission.id,
+                                           submission_file_id: submission_file.id }
+        expected = ActiveSupport::JSON.encode('<!DOCTYPE html>')[0...-1]
+        expect(JSON.parse(response.body)['content']).to start_with(expected)
+      end
+    end
+    describe 'When the file is a binary file' do
+      let(:files) { [file2] }
+      it 'should download a warning instead of the file content' do
+        submission_file = submission.submission_files.find_by(filename: file2.original_filename)
+        get_as admin, :get_file, params: { assignment_id: assignment.id,
+                                           id: submission.id,
+                                           submission_file_id: submission_file.id }
+        expected = ActiveSupport::JSON.encode(I18n.t('submissions.cannot_display'))
+        expect(JSON.parse(response.body)['content']).to eq(expected)
+      end
+      describe 'when force_text is true' do
+        it 'should download the file content' do
+          submission_file = submission.submission_files.find_by(filename: file2.original_filename)
+          get_as admin, :get_file, params: { assignment_id: assignment.id,
+                                             id: submission.id,
+                                             force_text: true,
+                                             submission_file_id: submission_file.id }
+          file2.seek(0)
+          actual = JSON.parse(JSON.parse(response.body)['content'])
+          expected = file2.read.encode('UTF-8', invalid: :replace, undef: :replace, replace: '�')
+          expect(actual).to eq(expected)
+        end
+      end
+    end
+    describe 'when the file is an image' do
+      let(:files) { [file4] }
+      it 'should return the file type' do
+        submission_file = submission.submission_files.find_by(filename: file4.original_filename)
+        get_as admin, :get_file, params: { assignment_id: assignment.id,
+                                           id: submission.id,
+                                           submission_file_id: submission_file.id }
+        expect(JSON.parse(response.body)['type']).to eq('image')
+      end
+    end
+    describe 'when the file is a pdf' do
+      let(:files) { [file5] }
+      it 'should return the file type' do
+        submission_file = submission.submission_files.find_by(filename: file5.original_filename)
+        get_as admin, :get_file, params: { assignment_id: assignment.id,
+                                           id: submission.id,
+                                           submission_file_id: submission_file.id }
+        expect(JSON.parse(response.body)['type']).to eq('pdf')
+      end
+    end
+    describe 'when the file is missing' do
+      let(:files) { [file1] }
+      it 'should return an unknown file type' do
+        submission_file = submission.submission_files.find_by(filename: file1.original_filename)
+        allow_any_instance_of(MemoryRevision).to receive(:files_at_path).and_return({})
+        get_as admin, :get_file, params: { assignment_id: assignment.id,
+                                           id: submission.id,
+                                           submission_file_id: submission_file.id }
+        expect(JSON.parse(response.body)['type']).to eq('unknown')
       end
     end
   end

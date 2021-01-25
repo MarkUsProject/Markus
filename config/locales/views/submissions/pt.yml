@@ -54,6 +54,7 @@ pt:
 
     # Miscellaneous
     cannot_display: "Conteudo binário: Use o botao de download para ver o arquivo!"
+    get_anyway: "UPDATE ME"
     commit_date: "Data de envio"
     grace_credits_used: "Créditos de tolerância usados"
     grading_can_begin: "Avaliação pode começar"
