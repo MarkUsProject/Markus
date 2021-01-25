@@ -137,7 +137,7 @@ describe ResultsController do
       it 'should receive a JSON object of the next grouping when next grouping has a submission' do
         a2 = create(:assignment_with_criteria_and_results)
         get :next_grouping, params: { assignment_id: a2.id, submission_id: a2.submissions.first.id,
-                                      grouping_id: a2.groupings.first.id, id: a2.submissions.first.current_result.id, direction: 1 }
+                                      grouping_id: a2.groupings.first.id, id: a2.submissions.first.current_result.id }
         expect(response).to have_http_status(:ok)
         expect(response.body).to include('next_result', 'next_grouping')
       end
