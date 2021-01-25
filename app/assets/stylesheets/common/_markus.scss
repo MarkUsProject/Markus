@@ -438,6 +438,11 @@ kbd {
   text-shadow: 0 1px 0 $background-main;
 }
 
+.shortcuts-table {
+  border-collapse: separate;
+  border-spacing: 5px;
+}
+
 /** Test script results table */
 
 .test-result-pass {
@@ -958,6 +963,9 @@ nav {
   z-index: 1;
 }
 
+#image_container {
+  position: relative;  // For image annotations
+}
 
 // Text editing and previews
 .preview {
@@ -1072,4 +1080,10 @@ nav {
 // Login
 .cookies-eu-ok {
   background-color: $primary-three;
+}
+
+// Flexbox layout for Results/edit and Results/view_marks
+.flex-col {
+  display: flex;
+  flex-direction: column;
 }
