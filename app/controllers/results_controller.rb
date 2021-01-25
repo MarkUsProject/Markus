@@ -320,8 +320,7 @@ class ResultsController < ApplicationController
         next_pr = assigned_prs.where('peer_reviews.id < ?', result.peer_review_id).last
       end
       next_result = Result.find(next_pr.result_id)
-      redirect_to action: 'edit', id: next_result.id
-      return
+      render json: { next_result: next_result, next_pr: next_pr }
     else
       groupings = assignment.groupings.joins(:group).order('group_name')
       if params[:direction] == '1'
@@ -332,13 +331,7 @@ class ResultsController < ApplicationController
     end
 
     next_result = next_grouping&.current_result
-    # if next_result.nil?
-    #   redirect_to controller: 'submissions', action: 'browse'
-    # else
-    #   redirect_to action: 'edit', id: next_result.id
-    # end
-
-    render json: { next_result: next_result, next_grouping: next_grouping, url: 'hi' }
+    render json: { next_result: next_result, next_grouping: next_grouping }
   end
 
   def set_released_to_students
