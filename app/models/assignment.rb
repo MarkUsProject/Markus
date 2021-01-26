@@ -541,7 +541,6 @@ class Assignment < Assessment
                .joins(:tags)
                .pluck_to_hash(:id, 'tags.name')
                .group_by { |h| h[:id] }
-               
     groupings_with_results = groupings.includes(current_result: :marks).includes(:submitted_remark, :extension)
     result_ids = groupings_with_results.pluck('results.id').uniq.compact
     extra_marks_hash = Result.get_total_extra_marks(result_ids, max_mark: max_mark)
