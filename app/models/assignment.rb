@@ -579,7 +579,7 @@ class Assignment < Assessment
                                .map { |s| [s['users.user_name'], s['users.first_name'], s['users.last_name']] }
       end
       tag_info = tag_data.fetch(g.id, {}
-                               .map{ |g| [g['tags.name']] })
+                               .map{ |a| [a['tags.name']] })
       criteria = result.nil? ? {} : result.mark_hash.select { |key, _| criteria_shown.include?(key) }
       extra_mark = extra_marks_hash[result&.id]
       {

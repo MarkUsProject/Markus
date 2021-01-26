@@ -2005,6 +2005,7 @@ describe Assignment do
             :max_mark,
             :result_id,
             :submission_id,
+            :tags
             :total_extra_marks,
             :graders
           ]
