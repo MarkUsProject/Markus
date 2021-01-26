@@ -293,7 +293,8 @@ class AnnotationCategoriesController < ApplicationController
     @assignment = Assignment.find(params[:assignment_id])
     @texts = annotation_text_data(nil)
     file_out = MarkusCsv.generate(
-      @texts) do |text|
+      @texts
+    ) do |text|
       row = [text[:group_name], text[:last_editor], text[:creator], text[:content]]
       row
     end
