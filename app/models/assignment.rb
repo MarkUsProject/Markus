@@ -537,12 +537,11 @@ class Assignment < Assessment
     members = groupings.joins(:accepted_students)
                        .pluck_to_hash(:id, 'users.user_name', 'users.first_name', 'users.last_name')
                        .group_by { |x| x[:id] }
-    
     tag_data = groupings
-                       .joins(:tags)
-                       .pluck_to_hash(:id, 'tags.name')
-                       .group_by { |h| h[:id] }
-                       
+               .joins(:tags)
+               .pluck_to_hash(:id, 'tags.name')
+               .group_by { |h| h[:id] }
+               
     groupings_with_results = groupings.includes(current_result: :marks).includes(:submitted_remark, :extension)
     result_ids = groupings_with_results.pluck('results.id').uniq.compact
     extra_marks_hash = Result.get_total_extra_marks(result_ids, max_mark: max_mark)
@@ -579,16 +578,16 @@ class Assignment < Assessment
         section = grouping_data[g.id][0]['sections.name']
         group_members = members.fetch(g.id, [])
                                .map { |s| [s['users.user_name'], s['users.first_name'], s['users.last_name']] }
-        tag_info = tag_data.fetch(g.id, {}
-                               .map{ |g| [g['tags.name']]})
       end
+      tag_info = tag_data.fetch(g.id, {}
+                               .map{ |g| [g['tags.name']]})
       criteria = result.nil? ? {} : result.mark_hash.select { |key, _| criteria_shown.include?(key) }
       extra_mark = extra_marks_hash[result&.id]
-      {
+      { 
         group_name: group_name,
         section: section,
         members: group_members,
-        tags: (tag_info.nil? ? [] : tag_info.map { |h| h['tags.name'] }) ,
+        tags: (tag_info.nil? ? [] : tag_info.map { |h| h['tags.name'] }),
         graders: graders.fetch(g.id, [])
                         .map { |s| [s['users.user_name'], s['users.first_name'], s['users.last_name']] },
         marking_state: marking_state(has_remark,
