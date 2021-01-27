@@ -29,7 +29,8 @@ class User < ApplicationRecord
   validates_uniqueness_of   :id_number, :allow_nil => true
   validates_inclusion_of    :time_zone, :in => ActiveSupport::TimeZone.all.map(&:name)
   validates                 :user_name, format: { with: /\A[a-zA-Z0-9\-_]+\z/,
-                                                  message: 'user_name must be alphanumeric, a hyphen, or an underscore' }
+                                                  message: 'user_name must be alphanumeric, a hyphen, or an underscore'
+                                                }
 
   after_initialize :set_display_name, :set_time_zone
 
