@@ -398,7 +398,6 @@ module Api
                       .get_latest_result
         result.marking_state = params[:marking_state]
         if result.save
-          # result.submission.assignment.assignment_stat.refresh_grade_distribution
           result.submission.assignment.update_results_stats
           render 'shared/http_status', locals: { code: '200', message:
             HttpStatusHelper::ERROR_CODE['message']['200'] }, status: 200
