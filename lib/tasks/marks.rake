@@ -207,7 +207,7 @@ namespace :db do
 
     Assignment.where(short_identifier: %w(A0 A1 A2)).each do |a|
       a.update_results_stats
-      a.assignment_stat.refresh_grade_distribution
+      # a.assignment_stat.refresh_grade_distribution
     end
 
     puts 'Assign Marks for Spreadsheets'
