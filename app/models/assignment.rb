@@ -91,11 +91,11 @@ class Assignment < Assessment
   validates_associated :submission_rule
   validates_presence_of :submission_rule
 
-  has_one :assignment_stat, dependent: :destroy, inverse_of: :assignment, foreign_key: :assessment_id
-  accepts_nested_attributes_for :assignment_stat, allow_destroy: true
-  validates_associated :assignment_stat
-  # Because of app/views/main/_grade_distribution_graph.html.erb:25
-  validates_presence_of :assignment_stat
+  # has_one :assignment_stat, dependent: :destroy, inverse_of: :assignment, foreign_key: :assessment_id
+  # accepts_nested_attributes_for :assignment_stat, allow_destroy: true
+  # validates_associated :assignment_stat
+  # # Because of app/views/main/_grade_distribution_graph.html.erb:25
+  # validates_presence_of :assignment_stat
 
   BLANK_MARK = ''
 
@@ -1301,7 +1301,7 @@ class Assignment < Assessment
             row[:assignment_properties_attributes][:token_period] = 1
             row[:assignment_properties_attributes][:unlimited_tokens] = false
             row[:submission_rule] = NoLateSubmissionRule.new
-            row[:assignment_stat] = AssignmentStat.new
+            # row[:assignment_stat] = AssignmentStat.new
           end
           assignment.update(row)
           unless assignment.id
@@ -1318,7 +1318,7 @@ class Assignment < Assessment
   def create_associations
     return unless self.new_record?
     self.assignment_properties ||= AssignmentProperties.new
-    self.assignment_stat ||= AssignmentStat.new
+    # self.assignment_stat ||= AssignmentStat.new
     self.submission_rule ||= NoLateSubmissionRule.new
   end
 end

@@ -72,7 +72,7 @@ module Api
       attributes = process_attributes(params, attributes)
 
       new_assignment = Assignment.new(attributes)
-      new_assignment.build_assignment_stat
+      # new_assignment.build_assignment_stat
 
       # Get and assign the submission_rule
       submission_rule = get_submission_rule(params)
