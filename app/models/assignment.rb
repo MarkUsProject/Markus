@@ -565,6 +565,7 @@ class Assignment < Assessment
         headerClassName: unassigned ? 'unassigned' : ''
       }
     end.compact
+
     final_data = groupings_with_results.map do |g|
       result = g.current_result
       has_remark = g.current_submission_used&.submitted_remark.present?
@@ -578,8 +579,9 @@ class Assignment < Assessment
         group_members = members.fetch(g.id, [])
                                .map { |s| [s['users.user_name'], s['users.first_name'], s['users.last_name']] }
       end
+
       tag_info = tag_data.fetch(g.id, {}
-                               .map{ |a| [a['tags.name']] })
+                               .map { |a| [a['tags.name']] })
       criteria = result.nil? ? {} : result.mark_hash.select { |key, _| criteria_shown.include?(key) }
       extra_mark = extra_marks_hash[result&.id]
       {
@@ -601,6 +603,7 @@ class Assignment < Assessment
         total_extra_marks: extra_mark
       }
     end
+
     { data: final_data,
       criteriaColumns: criteria_columns,
       numAssigned: self.get_num_assigned(user.admin? ? nil : user.id),
@@ -1161,6 +1164,7 @@ class Assignment < Assessment
                                      result_info['results.released_to_students'],
                                      collection_date)
       }
+
       base[:start_time] = I18n.l(start_time) if self.is_timed && !start_time.nil?
 
       unless is_empty || revision_timestamp.nil?
@@ -1181,6 +1185,7 @@ class Assignment < Assessment
       base
     end
   end
+
   def to_xml(options = {})
     attributes_hash = self.assignment_properties.attributes.merge(self.attributes).symbolize_keys
     attributes_hash.select { |key, _| Api::AssignmentsController::DEFAULT_FIELDS.include? key }.to_xml(options)

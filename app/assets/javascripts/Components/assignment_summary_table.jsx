@@ -1,6 +1,6 @@
 import React from 'react';
 import {render} from 'react-dom';
-import {markingStateColumn} from "./Helpers/table_helpers";
+import {stringFilter, markingStateColumn} from "./Helpers/table_helpers";
 
 import ReactTable from 'react-table';
 
@@ -107,7 +107,7 @@ class AssignmentSummaryTable extends React.Component {
             <li key={`${row.original._id}-${tag}`}
               className="tag-element">
               {tag}
-            </li> 
+            </li>
           )}
         </ul>
       ),
@@ -115,7 +115,7 @@ class AssignmentSummaryTable extends React.Component {
       sortable: false
     },
   ];
-  
+
   bonusColumn = {
     Header: I18n.t('activerecord.models.extra_mark.other'),
     accessor: 'total_extra_marks',
@@ -159,6 +159,7 @@ class AssignmentSummaryTable extends React.Component {
           data={data}
           columns={this.fixedColumns.concat(criteriaColumns, [this.bonusColumn])}
           filterable
+          defaultFilterMethod={stringFilter}
           defaultSorted={[{id: 'group_name'}]}
           SubComponent={(row) => {
             return (
