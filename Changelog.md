@@ -14,6 +14,7 @@
 - Fix bug where latex files were rendered with character escape sequences displayed (#5073)
 - Fix bug where grader permission for creating annotations were not properly set (#5078)
 - Removed server_time information in submissions_controller.rb and server_time? from submission_policy.rb (#5071)
+- Add rake tasks to un/archive all stateful files from a MarkUs instance (#5069)
 
 ## [v1.11.1]
 - Fix bug where duplicate marks can get created because of concurrent requests (#5018)
