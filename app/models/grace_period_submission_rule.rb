@@ -19,11 +19,6 @@ class GracePeriodSubmissionRule < SubmissionRule
     end
   end
 
-  # GracePeriodSubmissionRule works with all Assignments
-  def assignment_valid?
-    !assignment.nil?
-  end
-
   def apply_submission_rule(submission)
     return submission if submission.is_empty
     due_date = submission.grouping.due_date
