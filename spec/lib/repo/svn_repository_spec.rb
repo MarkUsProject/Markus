@@ -15,11 +15,10 @@ describe 'Subversion Repository' do
       end
 
       after :all do
-        FileUtils.rm Settings.repository.permission_file
+        FileUtils.rm SubversionRepository.permission_file
       end
 
-      let(:file_contents) { File.read(Settings.repository.permission_file) }
-
+      let(:file_contents) { File.read(SubversionRepository.permission_file) }
 
       it 'give admins access to all repos' do
         expect(file_contents).to match(/\[\/\]\s*\n\s*admin1\s*=\s*rw/)

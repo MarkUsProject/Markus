@@ -116,7 +116,6 @@ Config.setup do |config|
     required(:logout_redirect).filled(:string)
     required(:repository).hash do
       required(:storage).filled(:string)
-      required(:permission_file).filled(:string)
       required(:type).value(included_in?: %w[git svn mem])
       optional(:git_shell).filled(:string)
       required(:url).filled(:string)
