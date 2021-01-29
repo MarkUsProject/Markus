@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
 
 HOMEDIR=$1
-shopt -s globstar
-cat "${HOMEDIR}"/**/.authorized_keys
+cat "${HOMEDIR}"/.ssh/authorized_keys "${HOMEDIR}"/*/.authorized_keys 2> /dev/null
