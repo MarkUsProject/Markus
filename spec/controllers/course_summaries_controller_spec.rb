@@ -11,6 +11,7 @@ describe CourseSummariesController do
       it 'be able to get a csv grade report' do
         assignments = create_list(:assignment_with_criteria_and_results, 3)
         create(:grouping_with_inviter_and_submission, assignment: assignments[0])
+        create(:grouping_with_inviter, assignment: assignments[0])
         csv_rows = get_as(@admin, :download_csv_grades_report, format: :csv).parsed_body
         expect(csv_rows.size).to eq(Student.count + 1) # one header row plus one row per student
 
