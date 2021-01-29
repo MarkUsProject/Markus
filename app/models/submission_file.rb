@@ -63,7 +63,7 @@ class SubmissionFile < ApplicationRecord
     # comment and the second element being the syntax to end a comment.  Use
     #the language's multiple line comment format.
     case File.extname(filename)
-    when '.java', '.js', '.c', '.css', '.h', 'cpp'
+    when '.java', '.js', '.c', '.css', '.h', '.cpp'
       %w(/* */)
     when '.rb'
       ["=begin\n", "\n=end"]
