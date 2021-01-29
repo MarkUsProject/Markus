@@ -347,10 +347,9 @@ private
 
     if login
       # Two stage user verification: authentication and authorization
-      ip = Settings.validate_ip ? request.remote_ip : nil
       authenticate_response = User.authenticate(real_user,
                                                 password,
-                                                ip: ip)
+                                                request.remote_ip)
       if authenticate_response == User::AUTHENTICATE_BAD_PLATFORM
         validation_result[:error] = I18n.t('main.external_authentication_not_supported')
         return validation_result

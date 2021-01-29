@@ -58,7 +58,7 @@ class User < ApplicationRecord
 
   # Authenticates login against its password
   # through a script specified by Settings.validate_file
-  def self.authenticate(login, password, ip: nil)
+  def self.authenticate(login, password, ip)
     # Do not allow the following characters in usernames/passwords
     # Right now, this is \n and \0 only, since username and password
     # are delimited by \n and C programs use \0 to terminate strings
@@ -84,7 +84,7 @@ class User < ApplicationRecord
       #  2 means bad password
       #  3 is used for other error exits
       pipe = IO.popen("'#{Settings.validate_file}'", 'w+') # quotes to avoid choking on spaces
-      to_stdin = [login, password, ip].reject(&:nil?).join("\n")
+      to_stdin = [login, password, ip].compact.join("\n")
       pipe.puts(to_stdin) # write to stdin of Settings.validate_file
       pipe.close
       m_logger = MarkusLogger.instance
