@@ -310,7 +310,6 @@ class AssignmentsController < ApplicationController
   # Refreshes the grade distribution graph
   def refresh_graph
     @assignment = Assignment.find(params[:id])
-    @assignment.assignment_stat.refresh_grade_distribution
     respond_to do |format|
       format.js
     end
