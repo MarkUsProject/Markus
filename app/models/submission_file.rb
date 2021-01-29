@@ -37,7 +37,7 @@ class SubmissionFile < ApplicationRecord
       'html'
     when '.css'
       'css'
-    when '.c', '.h'
+    when '.c', '.h', '.cpp'
       'c'
     when '.hs'
       'haskell'
