@@ -15,6 +15,7 @@ class UsersController < ApplicationController
   def update_settings
     user = current_user
     user.update!(settings_params)
+    I18n.locale = user.locale if user.saved_change_to_attribute? :locale
     update_success
   end
 
