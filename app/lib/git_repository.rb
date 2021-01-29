@@ -37,9 +37,18 @@ class GitRepository < Repository::AbstractRepository
     repo.push('origin', ['refs/heads/master'])
   end
 
+  def self.server_hooks
+    { update: "#{::Rails.root.to_s}/lib/repo/git_hooks/multihook.py",
+      'post-receive': "#{::Rails.root.to_s}/lib/repo/git_hooks/multihook.py"}
+  end
+
+  def self.client_hooks
+    "#{::Rails.root.to_s}/lib/repo/git_hooks/client"
+  end
+
   # Static method: Creates a new Git repository at
   # location 'connect_string'
-  def self.create(connect_string, with_hooks: true)
+  def self.create(connect_string)
     if GitRepository.repository_exists?(connect_string)
       raise RepositoryCollision.new("There is already a repository at #{connect_string}")
     end
@@ -65,21 +74,18 @@ class GitRepository < Repository::AbstractRepository
       repo.index.add('.required.json')
 
       # Add client-side hooks
-      if with_hooks && Settings.repository.client_hooks.present?
-        client_hooks_path = Settings.repository.client_hooks
-        FileUtils.copy_entry client_hooks_path, File.join(connect_string, 'markus-hooks')
+      if Settings.repository.use_hooks
+        FileUtils.copy_entry client_hooks, File.join(connect_string, 'markus-hooks')
         FileUtils.chmod 0755, File.join(connect_string, 'markus-hooks', 'pre-commit')
         repo.index.add_all('markus-hooks')
-      end
 
-      GitRepository.do_commit_and_push(repo, 'Markus', I18n.t('repo.commits.initial'))
-
-      # Set up server-side hooks
-      if with_hooks
-        Settings.repository.hooks.each do |hook_symbol, hook_script|
+        # Set up server-side hooks
+        server_hooks.each do |hook_symbol, hook_script|
           FileUtils.ln_s(hook_script, File.join(barepath, 'hooks', hook_symbol.to_s))
         end
       end
+
+      GitRepository.do_commit_and_push(repo, 'Markus', I18n.t('repo.commits.initial'))
     end
     true
   end
