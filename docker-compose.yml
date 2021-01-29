@@ -58,11 +58,8 @@ services:
       - repos:/home/git/csc108
       - authorized_keys:/home/git/.ssh/csc108:ro
     environment:
-      - RELATIVE_URL_ROOTS=/csc108 # : separated list
-      - SSH_USER=git
       - TZ=America/Toronto
-    entrypoint: ./entrypoint-ssh.sh
-    command: /usr/sbin/sshd -D
+    command: /usr/sbin/sshd -D -e
     ports:
       - '2222:22'
 

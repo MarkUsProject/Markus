@@ -9,6 +9,7 @@ class KeyPair < ApplicationRecord
   validate :public_key_format, if: -> { self.public_key }
 
   AUTHORIZED_KEYS_FILE = 'authorized_keys'.freeze
+  GIT_SHELL = 'markus-git-shell.sh'.freeze
   AUTHORIZED_KEY_ARGS = 'no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty'.freeze
   KEY_TYPES = %w[sk-ecdsa-sha2-nistp256@openssh.com
                  ecdsa-sha2-nistp256
@@ -20,12 +21,11 @@ class KeyPair < ApplicationRecord
                  ssh-rsa].freeze
 
   # Return a single line to add to the authorized_key file that contains the +public_key+,
-  # all +AUTHORIZED_KEY_ARGS+ and the command to call +Settings.repository.git_shell+
+  # all +AUTHORIZED_KEY_ARGS+ and the command to call +GIT_SHELL+
   # with environment variables indicating the +user_name+ and this instance's relative url root
   def self.full_key_string(user_name, public_key)
-    markus_shell = Settings.repository.git_shell
     relative_url_root = Rails.application.config.action_controller.relative_url_root
-    command = "command=\"LOGIN_USER=#{user_name} RELATIVE_URL_ROOT=#{relative_url_root} #{markus_shell}\""
+    command = "command=\"LOGIN_USER=#{user_name} RELATIVE_URL_ROOT=#{relative_url_root} #{GIT_SHELL}\""
     "#{command},#{AUTHORIZED_KEY_ARGS} #{public_key}"
   end
 
