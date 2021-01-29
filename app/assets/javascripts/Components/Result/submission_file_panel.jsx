@@ -73,7 +73,7 @@ export class SubmissionFilePanel extends React.Component {
       this.setState({selectedFile});
     }
 
-    if (prevProps !== this.props) {
+    if (prevProps.annotations !== this.props.annotations) {
       this.componentDidMount();
     }
   }
