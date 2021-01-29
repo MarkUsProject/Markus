@@ -22,7 +22,7 @@ incorrect_login_message: ~
 repository:
   type: mem
   storage: <%= "#{::Rails.root.to_s}/data/test" %>/repos
-
+  
 logging:
   log_file: log/info_test.log
   error_file: log/error_test.log
