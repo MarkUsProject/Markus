@@ -21,7 +21,7 @@ class CourseSummariesController < ApplicationController
       graph_labels << a.short_identifier
       average << info[:average]
       median << info[:median]
-      assessment_columns << { id: a.id, name: "#{a.short_identifier} /(#{info[:total].to_i})" }
+      assessment_columns << { id: a.id, name: "#{a.short_identifier} (/#{info[:total].to_i})" }
       individual << single[a.id]
     end
     marking_schemes.order(id: :asc).each do |m|
@@ -87,7 +87,7 @@ class CourseSummariesController < ApplicationController
   end
 
   def name_grades_report_file(csv_string)
-    course_name = Rails.configuration.course_name.squish.downcase.tr(' ', '_')
+    course_name = Settings.course_name.squish.downcase.tr(' ', '_')
     send_data csv_string,
               disposition: 'attachment',
               filename: "#{course_name}_grades_report.csv"

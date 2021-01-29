@@ -12,19 +12,19 @@ class SubversionRepository < Repository::AbstractRepository
   # created using SubversionRepository.create(), it it is not yet existent
   def initialize(connect_string)
     # Check if configuration is in order
-    unless Rails.configuration.x.repository.is_repository_admin
+    unless Settings.repository.is_repository_admin
       raise ConfigurationError, "Init: Required config 'repository.is_repository_admin' not set"
     end
-    if Rails.configuration.x.repository.permission_file.nil?
+    if Settings.repository.permission_file.nil?
       raise ConfigurationError, "Required config 'repository.permission_file' not set"
     end
     begin
       super(connect_string) # dummy call to super
     rescue NotImplementedError; end
     @repos_path = connect_string
-    @repos_auth_file = Rails.configuration.x.repository.permission_file ||
+    @repos_auth_file = Settings.repository.permission_file ||
                        File.dirname(connect_string) + '/svn_authz'
-    @repos_admin = Rails.configuration.x.repository.is_repository_admin
+    @repos_admin = Settings.repository.is_repository_admin
     if (SubversionRepository.repository_exists?(@repos_path))
       @repos = Svn::Repos.open(@repos_path)
     else
@@ -286,21 +286,21 @@ class SubversionRepository < Repository::AbstractRepository
   # Semi-private class method
   def self.__read_in_authz_file
     # Check if configuration is in order
-    unless Rails.configuration.x.repository.is_repository_admin
+    unless Settings.repository.is_repository_admin
       raise NotAuthorityError.new('Unable to read authsz file: ' \
                                   'Not in authoritative mode!')
     end
-    if Rails.configuration.x.repository.permission_file.nil?
+    if Settings.repository.permission_file.nil?
       raise ConfigurationError.new('Required config ' \
                                    "'REPOSITORY_PERMISSION_FILE' not set")
     end
-    unless File.exist?(Rails.configuration.x.repository.permission_file)
+    unless File.exist?(Settings.repository.permission_file)
       # create file if it doesn't exist
-      File.open(Rails.configuration.x.repository.permission_file, 'w').close
+      File.open(Settings.repository.permission_file, 'w').close
     end
     # Load up the Permissions:
     file_content = ""
-    File.open(Rails.configuration.x.repository.permission_file, 'r+') do |auth_file|
+    File.open(Settings.repository.permission_file, 'r+') do |auth_file|
       auth_file.flock(File::LOCK_EX)
       file_content = auth_file.read()
       auth_file.flock(File::LOCK_UN) # release lock
@@ -311,22 +311,22 @@ class SubversionRepository < Repository::AbstractRepository
   # Semi-private class method
   def self.__write_out_authz_file(authz_file_contents)
     # Check if configuration is in order
-    unless Rails.configuration.x.repository.is_repository_admin
+    unless Settings.repository.is_repository_admin
       raise NotAuthorityError.new(
         'Unable to write authsz file: Not in authoritative mode!')
     end
 
-    if Rails.configuration.x.repository.permission_file.nil?
+    if Settings.repository.permission_file.nil?
       raise ConfigurationError.new('Required config ' \
                                    "'REPOSITORY_PERMISSION_FILE' not set")
     end
 
-    unless File.exist?(Rails.configuration.x.repository.permission_file)
+    unless File.exist?(Settings.repository.permission_file)
       # create file if not existent
-      File.open(Rails.configuration.x.repository.permission_file, 'w').close
+      File.open(Settings.repository.permission_file, 'w').close
     end
     result = false
-    File.open(Rails.configuration.x.repository.permission_file, 'w+') do |auth_file|
+    File.open(Settings.repository.permission_file, 'w+') do |auth_file|
       auth_file.flock(File::LOCK_EX)
       # Blast out the string to the file
       result = (auth_file.write(authz_file_contents) == authz_file_contents.length)
@@ -489,7 +489,7 @@ class SubversionRepository < Repository::AbstractRepository
 
   # Generate and write the SVN authorization file for the repo.
   def self.__update_permissions(permissions, full_access_users)
-    return true unless Rails.configuration.x.repository.is_repository_admin
+    return true unless Settings.repository.is_repository_admin
     authz_string = "[/]\n"
     full_access_users.each do |user_name|
       authz_string += "#{user_name} = rw\n"

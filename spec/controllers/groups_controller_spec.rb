@@ -150,7 +150,7 @@ describe GroupsController do
         allow(Repository.get_class).to receive(:purge_all).and_return nil
 
         # Setup for Git Repository
-        allow(Rails.configuration.x.repository).to receive(:type).and_return('git')
+        allow(Settings.repository).to receive(:type).and_return('git')
 
         @assignment = create(:assignment)
 

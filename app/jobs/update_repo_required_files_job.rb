@@ -1,7 +1,5 @@
 class UpdateRepoRequiredFilesJob < ApplicationJob
 
-  queue_as Rails.configuration.x.queues.repo_required_files
-
   def self.show_status(status)
     I18n.t('poll_job.update_repo_required_files_job', progress: status[:progress], total: status[:total])
   end

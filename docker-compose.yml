@@ -39,7 +39,6 @@ services:
     environment:
       - NODE_ENV=development
       - RAILS_ENV=development
-      - MARKUS_DATA_DIR=/app/data/dev
     networks:
       - default
       - markus_dev
@@ -107,7 +106,6 @@ services:
     environment:
       - NODE_ENV=test
       - RAILS_ENV=test
-      - MARKUS_DATA_DIR=/app/data/test
 
   webpacker:
     <<: *app

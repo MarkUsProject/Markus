@@ -115,7 +115,6 @@ en:
         manage?: You do not have permission to manage submissions.
         manage_files?: You do not have permission to manage files for this group.
         manage_subdirectories?: You do not have permission to create subdirectories.
-        server_time?: You do not have permission to view the server time.
         view_files?: You do not have permission to view files.
       ta:
         manage_assessments?: You do not have permission to manage assessments.

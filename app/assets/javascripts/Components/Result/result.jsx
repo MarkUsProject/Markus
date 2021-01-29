@@ -185,7 +185,7 @@ class Result extends React.Component {
 
     let onSubmit = (formData) => {
       let data = { ...formData, ...metadata };
-      $.post({
+      return $.post({
         url: Routes.annotations_path(),
         data,
       }).then(() =>

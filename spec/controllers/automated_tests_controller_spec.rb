@@ -24,11 +24,11 @@ describe AutomatedTestsController do
       before do
         allow(AutotestTestersJob).to receive(:perform_later) { AutotestTestersJob.new }
         file = fixture_file_upload('files/automated_tests/minimal_testers.json')
-        File.write(File.join(Rails.configuration.x.autotest.client_dir, 'testers.json'), file.read)
+        File.write(File.join(Settings.autotest.client_dir, 'testers.json'), file.read)
         File.write(assignment.autotest_settings_file, settings_content)
       end
       after do
-        FileUtils.rm_f File.join(Rails.configuration.x.autotest.client_dir, 'testers.json')
+        FileUtils.rm_f File.join(Settings.autotest.client_dir, 'testers.json')
         FileUtils.rm_f assignment.autotest_settings_file
       end
       it 'should respond with success' do
@@ -36,7 +36,7 @@ describe AutomatedTestsController do
         expect(response.status).to eq 200
       end
       context 'testers.json does not exist' do
-        before { FileUtils.rm_rf File.join(Rails.configuration.x.autotest.client_dir, 'testers.json') }
+        before { FileUtils.rm_rf File.join(Settings.autotest.client_dir, 'testers.json') }
         it 'should call the AutotestTestersJob' do
           expect(AutotestTestersJob).to receive(:perform_later)
           subject

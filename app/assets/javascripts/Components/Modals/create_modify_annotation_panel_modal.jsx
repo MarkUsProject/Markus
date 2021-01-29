@@ -140,7 +140,16 @@ class CreateModifyAnnotationPanel extends React.Component {
       annotation_text: {
         change_all: change_all ? 1 : 0,
       },
-    });
+    }).then(() => {
+      // reset defaults
+      this.setState({
+        content: this.props.content,
+        category_id: this.props.category_id,
+        show_autocomplete: false,
+        annotation_text_id: "",
+        change_all: false
+      })
+    })
   };
 
   handleChange = (event) => {

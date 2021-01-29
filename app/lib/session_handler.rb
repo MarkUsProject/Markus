@@ -83,7 +83,7 @@ module SessionHandler
   # Check if this current user's session has not yet expired.
   def session_expired?
     return true if session[:timeout].nil?
-    if Rails.configuration.remote_user_auth
+    if Settings.remote_user_auth
       # expire session if there is not REMOTE_USER anymore.
       return true if @markus_auth_remote_user.nil?
       # If somebody switched role this state should be recorded

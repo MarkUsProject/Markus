@@ -1,6 +1,5 @@
 # create groups job
 class CreateGroupsJob < ApplicationJob
-  queue_as Rails.configuration.x.queues.create_groups
 
   def self.on_complete_js(_status)
     '() => {window.groupsManager && window.groupsManager.fetchData()}'

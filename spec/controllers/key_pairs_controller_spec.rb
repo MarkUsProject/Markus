@@ -2,7 +2,7 @@ describe KeyPairsController do
   let(:admin) { create :admin }
 
   before :each do
-    allow(Rails.configuration.x.repository).to receive(:type).and_return('git')
+    allow(Settings.repository).to receive(:type).and_return('git')
   end
 
   describe 'GET new', :keep_memory_repos do

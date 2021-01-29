@@ -6,7 +6,7 @@
   <%= javascript_pack_tag 'application' %>
   <%= javascript_include_tag 'application' %>
   <%= javascript_include_tag 'menu' %>
-  <% unless Rails.configuration.remote_user_auth %>
+  <% unless Settings.remote_user_auth %>
     <%= javascript_include_tag 'check_timeout' %>
   <% end %>
   <%= yield :head %>

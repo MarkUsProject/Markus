@@ -12,6 +12,9 @@ describe User do
   it { is_expected.to allow_value('Admin').for(:type) }
   it { is_expected.to allow_value('Ta').for(:type) }
   it { is_expected.not_to allow_value('OtherTypeOfUser').for(:type) }
+  it { is_expected.not_to allow_value('A!a.sa').for(:user_name) }
+  it { is_expected.to allow_value('Ads_-hb').for(:user_name) }
+  it { is_expected.to allow_value('-22125-k1lj42_').for(:user_name) }
 
   describe 'uniqueness validation' do
     subject { create :admin }

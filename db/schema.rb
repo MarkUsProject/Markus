@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_01_03_155930) do
+ActiveRecord::Schema.define(version: 2021_01_27_202444) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -131,11 +131,6 @@ ActiveRecord::Schema.define(version: 2021_01_03_155930) do
     t.bigint "default_starter_file_group_id"
     t.index ["assessment_id"], name: "index_assignment_properties_on_assessment_id", unique: true
     t.index ["default_starter_file_group_id"], name: "index_assignment_properties_on_default_starter_file_group_id"
-  end
-
-  create_table "assignment_stats", id: :serial, force: :cascade do |t|
-    t.text "grade_distribution_percentage"
-    t.bigint "assessment_id"
   end
 
   create_table "criteria", force: :cascade do |t|
@@ -622,7 +617,6 @@ ActiveRecord::Schema.define(version: 2021_01_03_155930) do
   add_foreign_key "assignment_files", "assessments", name: "fk_assignment_files_assignments", on_delete: :cascade
   add_foreign_key "assignment_properties", "assessments", on_delete: :cascade
   add_foreign_key "assignment_properties", "starter_file_groups", column: "default_starter_file_group_id"
-  add_foreign_key "assignment_stats", "assessments", name: "fk_assignment_stats_assignments", on_delete: :cascade
   add_foreign_key "criteria", "assessments"
   add_foreign_key "criteria_assignment_files_joins", "assignment_files"
   add_foreign_key "exam_templates", "assessments"

@@ -17,7 +17,7 @@
   <%= link_to t('helpers.submit.create', model: Assignment.model_name.human),
               new_assignment_path,
               class: 'button' %>
-  <% if Rails.configuration.x.scanned_exams.enable %>
+  <% if Settings.scanned_exams.enable %>
     <%= link_to t('helpers.submit.create', model: t('activerecord.models.scanned_assignment.one')),
                 new_assignment_path(scanned: true),
                 class: 'button' %>
