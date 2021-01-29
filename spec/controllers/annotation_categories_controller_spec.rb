@@ -391,8 +391,6 @@ describe AnnotationCategoriesController do
         create(:text_annotation, annotation_text: text, result: assignment_result)
         create(:text_annotation, annotation_text: different_text, result: assignment_result)
         get_as user, :uncategorized_annotations, params: { assignment_id: assignment.id }
-        print(assigns['texts'].first)
-
         expect(assigns['texts'].size).to eq 2
         expect([assigns['texts'].first['id'], assigns['texts'].second['id']].sort!).to eq [text.id,
                                                                                            different_text.id].sort!
@@ -573,7 +571,6 @@ describe AnnotationCategoriesController do
                            .split[1].split('"').second
         expect(filename).to eq "#{assignment.short_identifier}_one_time_annotations.csv"
       end
-
     end
 
     context 'CSV_Downloads' do
