@@ -18,7 +18,6 @@ namespace :markus do
       a1.due_date = Time.current
       a1.repository_folder = a1.short_identifier
       a1.submission_rule = rule
-      a1.build_assignment_stat
       a1.save!
 
       # load users
