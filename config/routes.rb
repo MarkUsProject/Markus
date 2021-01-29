@@ -313,7 +313,6 @@ Rails.application.routes.draw do
         get 'find_annotation_text'
         get 'annotation_text_uses'
         get 'uncategorized_annotations'
-        get 'onetime_annotation_download'
       end
     end
   end

@@ -14,6 +14,7 @@ en:
     prevent_update: You cannot update this annotation because you may not have permission or it is deductive and already applied to released results.
     text: Text
     uncategorized: One Time Only Annotations
+    download_one_time_annotations: Download One Time Annotations
     update_all: Change all existing uses of this annotation text
     usage: Usage Details
     used_by: Used By

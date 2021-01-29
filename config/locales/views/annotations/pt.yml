@@ -13,6 +13,7 @@ pt:
     prevent_ta_delete: UPDATE ME!
     prevent_update: UPDATE ME!
     uncategorized: UPDATE ME!
+    download_one_time_annotations: UPDATE ME!
     update_all: Alterar todos os usos existentes deste texto de anotação
     usage: UPDATE ME!
     used_by: UPDATE ME!

@@ -4,8 +4,8 @@
       <%= t('annotations.uncategorized') %>
     </h2>
     <div class='float-right'>
-      <%= link_to "Download One Time Annotations",
-                  {action: 'onetime_annotation_download',
+      <%= link_to t('annotations.download_one_time_annotations'),
+                  {action: 'uncategorized_annotations',
                    id: @assignment.id,
                    format: 'csv'},
                   class: 'button' %>
