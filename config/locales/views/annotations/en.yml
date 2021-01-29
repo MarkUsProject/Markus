@@ -3,6 +3,7 @@ en:
   annotations:
     count: 'Number of times used: '
     default_deduction: This annotation will have no deduction. Admins can configure deductions in assignment settings.
+    download_one_time_annotations: Download One Time Annotations
     download_submission_file:
       begin_annotation: "%{comment_start} ANNOTATION %{id}: %{text} %{comment_end}"
       end_annotation: "%{comment_start} END ANNOTATION %{id} %{comment_end}"
@@ -14,7 +15,6 @@ en:
     prevent_update: You cannot update this annotation because you may not have permission or it is deductive and already applied to released results.
     text: Text
     uncategorized: One Time Only Annotations
-    download_one_time_annotations: Download One Time Annotations
     update_all: Change all existing uses of this annotation text
     usage: Usage Details
     used_by: Used By

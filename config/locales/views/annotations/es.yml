@@ -3,6 +3,7 @@ es:
   annotations:
     count: UPDATE ME!
     default_deduction: UPDATE ME!
+    download_one_time_annotations: UPDATE ME!
     download_submission_file:
       begin_annotation: "%{comment_start} ANOTACIÓN %{id}: %{text} %{comment_end}"
       end_annotation: "%{comment_start} ANOTACIÓN FINAL %{id} %{comment_end}"
@@ -13,7 +14,6 @@ es:
     prevent_ta_delete: UPDATE ME!
     prevent_update: UPDATE ME!
     uncategorized: UPDATE ME!
-    download_one_time_annotations: UPDATE ME!
     update_all: Cambiar todos los usos existentes de este texto de anotación
     usage: UPDATE ME!
     used_by: UPDATE ME!
