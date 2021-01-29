@@ -4,6 +4,10 @@ describe Group do
     it { is_expected.to validate_presence_of(:group_name) }
     it { is_expected.to validate_uniqueness_of(:group_name) }
     it { is_expected.to validate_length_of(:group_name).is_at_most(30) }
+    it { is_expected.not_to allow_value('A!a.sa').for(:group_name) }
+    it { is_expected.to allow_value('A ds_-hb').for(:group_name) }
+    it { is_expected.to allow_value('group 123').for(:group_name) }
+
 
     context 'fails when group_name is one of the reserved locations' do
       Repository.get_class.reserved_locations.each do |loc|
