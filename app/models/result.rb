@@ -151,16 +151,6 @@ class Result < ApplicationRecord
     extra_marks.points.map(&:extra_mark).reduce(0, :+).round(2)
   end
 
-  # The sum of all the positive extra marks
-  def get_positive_extra_points
-    extra_marks.positive.points.map(&:extra_mark).reduce(0, :+).round(2)
-  end
-
-  # The sum of all the negative extra marks
-  def get_negative_extra_points
-    extra_marks.negative.points.map(&:extra_mark).reduce(0, :+).round(2)
-  end
-
   # Percentage deduction for late penalty
   def get_total_extra_percentage
     extra_marks.percentage.map(&:extra_mark).reduce(0, :+).round(2)

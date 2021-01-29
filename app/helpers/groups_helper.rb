@@ -1,24 +1,4 @@
 module GroupsHelper
-  # Gets information needed to display students
-  # in the table on the front-end. Returns
-  # an array of hashes.
-  def get_students_table_info
-    students = Student.all
-    student_memberships = StudentMembership
-                          .includes(:user)
-                          .where(grouping_id: @assignment.groupings)
-
-    students_in_assignment = student_memberships.map do |membership|
-      membership.user
-    end
-
-    students.map do |student|
-      s = student.attributes
-      s['assigned'] = students_in_assignment.include?(student)
-      s
-    end
-  end
-
   # Run several checks on the data from an uploaded file in order to determine whether to proceed with
   # creating groups based on that file or not. Returns true if any errors are found and displays flash
   # messages describing each error unless +suppress_flash+ is true.
