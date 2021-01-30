@@ -74,21 +74,19 @@ class GitRepository < Repository::AbstractRepository
       repo.index.add('.required.json')
 
       # Add client-side hooks
-      if Settings.repository.use_hooks
-        dest = File.join(connect_string, 'markus-hooks')
-        FileUtils.copy_entry client_hooks, dest
-        too_large_hook = File.join(dest, 'pre-commit.d', '04-file_size_too_large.py')
-        content = File.open(too_large_hook) do |f|
-          f.read.gsub(/MAX_FILE_SIZE\s*=\s*[\d_]*/, "MAX_FILE_SIZE=#{Settings.max_file_size}")
-        end
-        File.open(too_large_hook, 'w') { |f| f.write(content) }
-        FileUtils.chmod 0755, File.join(connect_string, 'markus-hooks', 'pre-commit')
-        repo.index.add_all('markus-hooks')
+      dest = File.join(connect_string, 'markus-hooks')
+      FileUtils.copy_entry client_hooks, dest
+      too_large_hook = File.join(dest, 'pre-commit.d', '04-file_size_too_large.py')
+      content = File.open(too_large_hook) do |f|
+        f.read.gsub(/MAX_FILE_SIZE\s*=\s*[\d_]*/, "MAX_FILE_SIZE=#{Settings.max_file_size}")
+      end
+      File.open(too_large_hook, 'w') { |f| f.write(content) }
+      FileUtils.chmod 0755, File.join(connect_string, 'markus-hooks', 'pre-commit')
+      repo.index.add_all('markus-hooks')
 
-        # Set up server-side hooks
-        server_hooks.each do |hook_symbol, hook_script|
-          FileUtils.ln_s(hook_script, File.join(barepath, 'hooks', hook_symbol.to_s))
-        end
+      # Set up server-side hooks
+      server_hooks.each do |hook_symbol, hook_script|
+        FileUtils.ln_s(hook_script, File.join(barepath, 'hooks', hook_symbol.to_s))
       end
 
       GitRepository.do_commit_and_push(repo, 'Markus', I18n.t('repo.commits.initial'))

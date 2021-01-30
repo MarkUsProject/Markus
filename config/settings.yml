@@ -42,7 +42,6 @@ repository:
   git_shell: /usr/bin/git-shell
   url: 'http://www.example.com/markus/git'
   ssh_url: 'git@example.com/csc108'
-  use_hooks: true
   is_repository_admin: true
 
 max_file_size: 5000000

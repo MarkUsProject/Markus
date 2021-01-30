@@ -121,7 +121,6 @@ Config.setup do |config|
       optional(:git_shell).filled(:string)
       required(:url).filled(:string)
       optional(:ssh_url).filled(:string)
-      optional(:use_hooks).filled(:bool)
       required(:is_repository_admin).filled(:bool)
     end
     required(:max_file_size).value(:integer, gt?: 0)
