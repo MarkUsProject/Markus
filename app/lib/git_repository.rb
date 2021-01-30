@@ -38,12 +38,12 @@ class GitRepository < Repository::AbstractRepository
   end
 
   def self.server_hooks
-    { update: "#{::Rails.root.to_s}/lib/repo/git_hooks/multihook.py",
-      'post-receive': "#{::Rails.root.to_s}/lib/repo/git_hooks/multihook.py"}
+    { update: "#{::Rails.root}/lib/repo/git_hooks/multihook.py",
+      'post-receive': "#{::Rails.root}/lib/repo/git_hooks/multihook.py" }
   end
 
   def self.client_hooks
-    "#{::Rails.root.to_s}/lib/repo/git_hooks/client"
+    "#{::Rails.root}/lib/repo/git_hooks/client"
   end
 
   # Static method: Creates a new Git repository at
