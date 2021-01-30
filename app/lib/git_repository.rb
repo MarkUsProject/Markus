@@ -404,7 +404,7 @@ class GitRepository < Repository::AbstractRepository
 
     # Create auth csv file
     sorted_permissions = permissions.sort.to_h
-    FileUtils.mkdir_p(File.dirname permission_file)
+    FileUtils.mkdir_p(File.dirname(permission_file))
     CSV.open(permission_file, 'wb') do |csv|
       csv.flock(File::LOCK_EX)
       csv << ['*'] + full_access_users

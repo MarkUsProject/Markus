@@ -314,7 +314,7 @@ class SubversionRepository < Repository::AbstractRepository
 
     unless File.exist?(permission_file)
       # create file if not existent
-      FileUtils.mkdir_p(File.dirname permission_file)
+      FileUtils.mkdir_p(File.dirname(permission_file))
       File.open(permission_file, 'w').close
     end
     result = false
