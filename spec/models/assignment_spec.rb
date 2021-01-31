@@ -1957,6 +1957,10 @@ describe Assignment do
 
     context 'a TA user' do
       let(:ta) { create :ta }
+      let(:assignment_tag) { create :assignment }
+      let(:tags) { create_list :tag, 3, user: ta }
+      let(:groupings_with_tags) { groupings.each_with_index { |g, i| g.update(tags: [tags[i]]) && g } }
+      let!(:groupings) { create_list :grouping_with_inviter, 3, assignment: assignment_tag }
 
       before :each do
         @assignment = create(:assignment_with_criteria_and_results)
@@ -1973,10 +1977,21 @@ describe Assignment do
           expect(criteria_info.keys).to include(:Header, :accessor, :className)
         end
       end
+
+        it 'has tags correct info' do
+          Grouping.assign_all_tas(groupings.map(&:id), [ta.id], assignment_tag)
+          tags_names = groupings_with_tags.map { |g| g&.tags&.to_a&.map(&:name) }
+          data = assignment_tag.reload.summary_json(ta)[:data]
+          expect(data.map { |h| h[:tags] }).to contain_exactly(*tags_names)
+        end
     end
 
     context 'an Admin user' do
       let(:admin) { create :admin }
+      let(:assignment_tag) { create :assignment }
+      let(:tags) { create_list :tag, 3, user: admin }
+      let(:groupings_with_tags) { groupings.each_with_index { |g, i| g.update(tags: [tags[i]]) && g } }
+      let!(:groupings) { create_list :grouping_with_inviter, 3, assignment: assignment_tag }
 
       before :each do
         @assignment = create(:assignment_with_criteria_and_results)
@@ -1991,6 +2006,12 @@ describe Assignment do
           criteria_info = @assignment.summary_json(admin)[:criteriaColumns][0]
           expect(criteria_info).is_a? Hash
           expect(criteria_info.keys).to include(:Header, :accessor, :className)
+        end
+
+        it 'has tags correct info' do
+          tags_names = groupings_with_tags.map { |g| g&.tags&.to_a&.map(&:name) }
+          data = assignment_tag.reload.summary_json(admin)[:data]
+          expect(data.map { |h| h[:tags] }).to contain_exactly(*tags_names)
         end
 
         it 'has group data' do

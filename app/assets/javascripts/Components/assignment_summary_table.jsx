@@ -1,6 +1,6 @@
 import React from 'react';
 import {render} from 'react-dom';
-import {stringFilter, markingStateColumn} from "./Helpers/table_helpers";
+import {markingStateColumn} from "./Helpers/table_helpers";
 
 import ReactTable from 'react-table';
 
@@ -112,8 +112,23 @@ class AssignmentSummaryTable extends React.Component {
         </ul>
       ),
       minWidth: 80,
-      sortable: false
-    },
+      sortable: false,
+      filterMethod: (filter, row) => {
+        if (filter.value) {
+
+          // Check tag names
+          const tag_matches = row._original.tags.some(
+            (tag) => tag.includes(filter.value)
+          );
+
+          if (tag_matches) {
+            return true;
+          }
+        } else {
+          return true;
+        }
+      }
+    }
   ];
 
   bonusColumn = {
@@ -159,7 +174,6 @@ class AssignmentSummaryTable extends React.Component {
           data={data}
           columns={this.fixedColumns.concat(criteriaColumns, [this.bonusColumn])}
           filterable
-          defaultFilterMethod={stringFilter}
           defaultSorted={[{id: 'group_name'}]}
           SubComponent={(row) => {
             return (
