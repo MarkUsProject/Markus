@@ -1978,12 +1978,12 @@ describe Assignment do
         end
       end
 
-        it 'has tags correct info' do
-          Grouping.assign_all_tas(groupings.map(&:id), [ta.id], assignment_tag)
-          tags_names = groupings_with_tags.map { |g| g&.tags&.to_a&.map(&:name) }
-          data = assignment_tag.reload.summary_json(ta)[:data]
-          expect(data.map { |h| h[:tags] }).to contain_exactly(*tags_names)
-        end
+      it 'has tags correct info' do
+        Grouping.assign_all_tas(groupings.map(&:id), [ta.id], assignment_tag)
+        tags_names = groupings_with_tags.map { |g| g&.tags&.to_a&.map(&:name) }
+        data = assignment_tag.reload.summary_json(ta)[:data]
+        expect(data.map { |h| h[:tags] }).to contain_exactly(*tags_names)
+      end
     end
 
     context 'an Admin user' do
