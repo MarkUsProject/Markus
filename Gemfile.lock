@@ -172,7 +172,7 @@ GEM
       activesupport (>= 4.2.0)
     highline (2.0.3)
     histogram (0.2.4.1)
-    i18n (1.8.5)
+    i18n (1.8.7)
       concurrent-ruby (~> 1.0)
     i18n-js (3.8.0)
       i18n (>= 0.6.6)
