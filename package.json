@@ -8,7 +8,7 @@
     "i18n-js": "^3.8.0",
     "jcrop": "^0.0.1",
     "jquery": "^3.5.1",
-    "marked": "^1.2.7",
+    "marked": "^1.2.8",
     "mime-types": "^2.1.27",
     "moment": "^2.29.1",
     "mousetrap": "^1.6.5",
