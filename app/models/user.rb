@@ -110,14 +110,6 @@ class User < ApplicationRecord
     end
   end
 
-
-  #TODO: make these proper associations. They work fine for now but
-  # they'll be slow in production
-  def active_groupings
-    groupings.where('memberships.membership_status != ?',
-                         StudentMembership::STATUSES[:rejected])
-  end
-
   # Helper methods -----------------------------------------------------
 
   def admin?
@@ -146,12 +138,6 @@ class User < ApplicationRecord
   end
 
   # Submission helper methods -------------------------------------------------
-
-  def submission_for(aid)
-    grouping = grouping_for(aid)
-    return if grouping.nil?
-    grouping.current_submission_used
-  end
 
   def grouping_for(aid)
     groupings.find { |g| g.assessment_id == aid }

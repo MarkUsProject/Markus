@@ -24,10 +24,6 @@ module GradeEntryFormsHelper
     grade_entry_form_params(attributes)
   end
 
-  def sort_items_by_position(items)
-    sorted = items.sort_by { |hsh| hsh[:position] }
-  end
-
   private
 
   def grade_entry_form_params(attributes)

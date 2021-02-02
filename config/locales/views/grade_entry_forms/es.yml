@@ -13,7 +13,6 @@ es:
     none: No existen hojas de notas por el momento.
     required_fields_html: Campos Requeridos <span class='required_field'>*</span>
     students:
-      detailed_marks_message: Notas detalladas están disponibles.
       mark_message: 'Su nota:'
       no_results: No existen notas disponibles todavía.
       title: 'Notas:'

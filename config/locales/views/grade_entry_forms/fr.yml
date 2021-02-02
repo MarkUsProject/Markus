@@ -13,7 +13,6 @@ fr:
     none: Il n'y a pas de feuille de notes pour le moment.
     required_fields_html: Champs obligatoires <span class='required_field'>*</span>
     students:
-      detailed_marks_message: Les notes détaillées sont disponibles.
       mark_message: 'Votre note : '
       no_results: Il n'y a pas encore de résultats pour cette feuille de notes.
       title: 'Feuille de notes : '
