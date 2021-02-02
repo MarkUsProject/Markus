@@ -581,7 +581,7 @@ class Assignment < Assessment
       end
 
       tag_info = tag_data.fetch(g.id, [])
-                               .map { |a| a['tags.name'] }
+                             .map { |a| a['tags.name'] }
       criteria = result.nil? ? {} : result.mark_hash.select { |key, _| criteria_shown.include?(key) }
       extra_mark = extra_marks_hash[result&.id]
       {
