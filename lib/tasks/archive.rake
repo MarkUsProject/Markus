@@ -16,7 +16,7 @@ namespace :markus do
   def copy_archive_files(archive_dir, rev: false)
     # copy repo permission file
     permission_file = archive_dir + 'permission_file'
-    archive_copy(Settings.repository.permission_file, permission_file.to_s, rev: rev)
+    archive_copy(Repository.get_class.permission_file, permission_file.to_s, rev: rev)
     # copy key storage files
     key_storage_dir = archive_dir + 'key_storage'
     archive_copy(Settings.key_storage, key_storage_dir, rev: rev)

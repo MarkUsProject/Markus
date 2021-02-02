@@ -37,6 +37,10 @@ class GitRepository < Repository::AbstractRepository
     repo.push('origin', ['refs/heads/master'])
   end
 
+  def self.permission_file
+    Settings.key_storage + '/.access'
+  end
+
   # Static method: Creates a new Git repository at
   # location 'connect_string'
   def self.create(connect_string, with_hooks: true)
@@ -400,7 +404,8 @@ class GitRepository < Repository::AbstractRepository
 
     # Create auth csv file
     sorted_permissions = permissions.sort.to_h
-    CSV.open(Settings.repository.permission_file, 'wb') do |csv|
+    FileUtils.mkdir_p(File.dirname(permission_file))
+    CSV.open(permission_file, 'wb') do |csv|
       csv.flock(File::LOCK_EX)
       csv << ['*'] + full_access_users
       sorted_permissions.each do |repo_name, users|

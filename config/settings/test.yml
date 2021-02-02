@@ -22,7 +22,6 @@ incorrect_login_message: ~
 repository:
   type: mem
   storage: <%= "#{::Rails.root.to_s}/data/test" %>/repos
-  permission_file: <%= "#{::Rails.root.to_s}/data/test" %>/.access
 
 key_storage: <%= "#{::Rails.root.to_s}/data/test" %>/keys
 

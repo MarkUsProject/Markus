@@ -15,21 +15,21 @@ class SubversionRepository < Repository::AbstractRepository
     unless Settings.repository.is_repository_admin
       raise ConfigurationError, "Init: Required config 'repository.is_repository_admin' not set"
     end
-    if Settings.repository.permission_file.nil?
-      raise ConfigurationError, "Required config 'repository.permission_file' not set"
-    end
     begin
       super(connect_string) # dummy call to super
     rescue NotImplementedError; end
     @repos_path = connect_string
-    @repos_auth_file = Settings.repository.permission_file ||
-                       File.dirname(connect_string) + '/svn_authz'
+    @repos_auth_file = permission_file
     @repos_admin = Settings.repository.is_repository_admin
     if (SubversionRepository.repository_exists?(@repos_path))
       @repos = Svn::Repos.open(@repos_path)
     else
       raise "Repository does not exist at path \"" + @repos_path + "\""
     end
+  end
+
+  def self.permission_file
+    Settings.repository.storage + '/svn_authz'
   end
 
   # Static method: Creates a new Subversion repository at
@@ -290,17 +290,13 @@ class SubversionRepository < Repository::AbstractRepository
       raise NotAuthorityError.new('Unable to read authsz file: ' \
                                   'Not in authoritative mode!')
     end
-    if Settings.repository.permission_file.nil?
-      raise ConfigurationError.new('Required config ' \
-                                   "'REPOSITORY_PERMISSION_FILE' not set")
-    end
-    unless File.exist?(Settings.repository.permission_file)
+    unless File.exist?(permission_file)
       # create file if it doesn't exist
-      File.open(Settings.repository.permission_file, 'w').close
+      File.open(permission_file, 'w').close
     end
     # Load up the Permissions:
     file_content = ""
-    File.open(Settings.repository.permission_file, 'r+') do |auth_file|
+    File.open(permission_file, 'r+') do |auth_file|
       auth_file.flock(File::LOCK_EX)
       file_content = auth_file.read()
       auth_file.flock(File::LOCK_UN) # release lock
@@ -316,17 +312,13 @@ class SubversionRepository < Repository::AbstractRepository
         'Unable to write authsz file: Not in authoritative mode!')
     end
 
-    if Settings.repository.permission_file.nil?
-      raise ConfigurationError.new('Required config ' \
-                                   "'REPOSITORY_PERMISSION_FILE' not set")
-    end
-
-    unless File.exist?(Settings.repository.permission_file)
+    unless File.exist?(permission_file)
       # create file if not existent
-      File.open(Settings.repository.permission_file, 'w').close
+      FileUtils.mkdir_p(File.dirname(permission_file))
+      File.open(permission_file, 'w').close
     end
     result = false
-    File.open(Settings.repository.permission_file, 'w+') do |auth_file|
+    File.open(permission_file, 'w+') do |auth_file|
       auth_file.flock(File::LOCK_EX)
       # Blast out the string to the file
       result = (auth_file.write(authz_file_contents) == authz_file_contents.length)
