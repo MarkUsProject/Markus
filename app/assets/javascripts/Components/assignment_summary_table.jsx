@@ -84,21 +84,6 @@ class AssignmentSummaryTable extends React.Component {
     },
     markingStateColumn(),
     {
-      Header: I18n.t('activerecord.attributes.result.total_mark'),
-      accessor: 'final_grade',
-      Cell: row => {
-        if (row.original.final_grade || row.original.final_grade === 0) {
-          const max_mark = Math.round(row.original.max_mark * 100) / 100;
-          return row.original.final_grade + ' / ' + max_mark;
-        } else {
-          return '';
-        }
-      },
-      className: 'number',
-      filterable: false,
-      defaultSortDesc: true,
-    },
-    {
       Header: I18n.t('activerecord.models.tag.other'),
       accessor: 'tags',
       Cell: row => (
@@ -115,19 +100,29 @@ class AssignmentSummaryTable extends React.Component {
       sortable: false,
       filterMethod: (filter, row) => {
         if (filter.value) {
-
           // Check tag names
-          const tag_matches = row._original.tags.some(
+          return row._original.tags.some(
             (tag) => tag.includes(filter.value)
           );
-
-          if (tag_matches) {
-            return true;
-          }
         } else {
           return true;
         }
       }
+    },
+    {
+      Header: I18n.t('activerecord.attributes.result.total_mark'),
+      accessor: 'final_grade',
+      Cell: row => {
+        if (row.original.final_grade || row.original.final_grade === 0) {
+          const max_mark = Math.round(row.original.max_mark * 100) / 100;
+          return row.original.final_grade + ' / ' + max_mark;
+        } else {
+          return '';
+        }
+      },
+      className: 'number',
+      filterable: false,
+      defaultSortDesc: true,
     }
   ];
 

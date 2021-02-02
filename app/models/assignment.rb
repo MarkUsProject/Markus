@@ -580,15 +580,15 @@ class Assignment < Assessment
                                .map { |s| [s['users.user_name'], s['users.first_name'], s['users.last_name']] }
       end
 
-      tag_info = tag_data.fetch(g.id, {}
-                               .map { |a| [a['tags.name']] })
+      tag_info = tag_data.fetch(g.id, [])
+                               .map { |a| a['tags.name'] }
       criteria = result.nil? ? {} : result.mark_hash.select { |key, _| criteria_shown.include?(key) }
       extra_mark = extra_marks_hash[result&.id]
       {
         group_name: group_name,
         section: section,
         members: group_members,
-        tags: (tag_info.nil? ? [] : tag_info.map { |h| h['tags.name'] }),
+        tags: tag_info,
         graders: graders.fetch(g.id, [])
                         .map { |s| [s['users.user_name'], s['users.first_name'], s['users.last_name']] },
         marking_state: marking_state(has_remark,
