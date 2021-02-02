@@ -91,12 +91,6 @@ class Assignment < Assessment
   validates_associated :submission_rule
   validates_presence_of :submission_rule
 
-  # has_one :assignment_stat, dependent: :destroy, inverse_of: :assignment, foreign_key: :assessment_id
-  # accepts_nested_attributes_for :assignment_stat, allow_destroy: true
-  # validates_associated :assignment_stat
-  # # Because of app/views/main/_grade_distribution_graph.html.erb:25
-  # validates_presence_of :assignment_stat
-
   BLANK_MARK = ''
 
   # Copy of API::AssignmentController without selected attributes and order changed
@@ -537,6 +531,10 @@ class Assignment < Assessment
     members = groupings.joins(:accepted_students)
                        .pluck_to_hash(:id, 'users.user_name', 'users.first_name', 'users.last_name')
                        .group_by { |x| x[:id] }
+    tag_data = groupings
+               .joins(:tags)
+               .pluck_to_hash(:id, 'tags.name')
+               .group_by { |h| h[:id] }
     groupings_with_results = groupings.includes(current_result: :marks).includes(:submitted_remark, :extension)
     result_ids = groupings_with_results.pluck('results.id').uniq.compact
     extra_marks_hash = Result.get_total_extra_marks(result_ids, max_mark: max_mark)
@@ -576,12 +574,15 @@ class Assignment < Assessment
                                .map { |s| [s['users.user_name'], s['users.first_name'], s['users.last_name']] }
       end
 
+      tag_info = tag_data.fetch(g.id, [])
+                         .map { |a| a['tags.name'] }
       criteria = result.nil? ? {} : result.mark_hash.select { |key, _| criteria_shown.include?(key) }
       extra_mark = extra_marks_hash[result&.id]
       {
         group_name: group_name,
         section: section,
         members: group_members,
+        tags: tag_info,
         graders: graders.fetch(g.id, [])
                         .map { |s| [s['users.user_name'], s['users.first_name'], s['users.last_name']] },
         marking_state: marking_state(has_remark,
@@ -1301,7 +1302,6 @@ class Assignment < Assessment
             row[:assignment_properties_attributes][:token_period] = 1
             row[:assignment_properties_attributes][:unlimited_tokens] = false
             row[:submission_rule] = NoLateSubmissionRule.new
-            # row[:assignment_stat] = AssignmentStat.new
           end
           assignment.update(row)
           unless assignment.id
@@ -1318,7 +1318,6 @@ class Assignment < Assessment
   def create_associations
     return unless self.new_record?
     self.assignment_properties ||= AssignmentProperties.new
-    # self.assignment_stat ||= AssignmentStat.new
     self.submission_rule ||= NoLateSubmissionRule.new
   end
 end

@@ -28,7 +28,8 @@ class User < ApplicationRecord
   validates_uniqueness_of   :email, :allow_nil => true
   validates_uniqueness_of   :id_number, :allow_nil => true
   validates_inclusion_of    :time_zone, :in => ActiveSupport::TimeZone.all.map(&:name)
-
+  validates                 :user_name, format: { with: /\A[a-zA-Z0-9\-_]+\z/,
+                                                  message: 'user_name must be alphanumeric, hyphen, or underscore' }
   after_initialize :set_display_name, :set_time_zone
 
   validates_format_of       :type,          with: /\AStudent|Admin|Ta|TestServer\z/
@@ -109,14 +110,6 @@ class User < ApplicationRecord
     end
   end
 
-
-  #TODO: make these proper associations. They work fine for now but
-  # they'll be slow in production
-  def active_groupings
-    groupings.where('memberships.membership_status != ?',
-                         StudentMembership::STATUSES[:rejected])
-  end
-
   # Helper methods -----------------------------------------------------
 
   def admin?
@@ -145,12 +138,6 @@ class User < ApplicationRecord
   end
 
   # Submission helper methods -------------------------------------------------
-
-  def submission_for(aid)
-    grouping = grouping_for(aid)
-    return if grouping.nil?
-    grouping.current_submission_used
-  end
 
   def grouping_for(aid)
     groupings.find { |g| g.assessment_id == aid }

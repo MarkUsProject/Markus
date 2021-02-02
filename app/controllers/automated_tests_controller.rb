@@ -131,37 +131,28 @@ class AutomatedTestsController < ApplicationController
     new_files = params[:new_files] || []
     unzip = params[:unzip] == 'true'
 
-    if unzip
-      zdirs, zfiles = new_files.map do |f|
-        next unless File.extname(f.path).casecmp?('.zip')
-        unzip_uploaded_file(f.path)
-      end.compact.transpose.map(&:flatten)
-      new_files.reject! { |f| File.extname(f.path).casecmp?('.zip') }
-      new_folders.push(*zdirs)
-      new_files.push(*zfiles)
-    end
-
-    new_folders.each do |f|
-      folder_path = File.join(assignment.autotest_files_dir, params[:path], f)
-      FileUtils.mkdir_p(folder_path)
+    upload_files_helper(new_folders, new_files, unzip: unzip) do |f|
+      if f.is_a?(String) # is a directory
+        folder_path = File.join(assignment.autotest_files_dir, params[:path], f)
+        FileUtils.mkdir_p(folder_path)
+      else
+        if f.size > Settings.max_file_size
+          flash_now(:error, t('student.submission.file_too_large',
+                              file_name: f.original_filename,
+                              max_size: (Settings.max_file_size / 1_000_000.00).round(2)))
+          next
+        elsif f.size == 0
+          flash_now(:warning, t('student.submission.empty_file_warning', file_name: f.original_filename))
+        end
+        file_path = File.join(assignment.autotest_files_dir, params[:path], f.original_filename)
+        FileUtils.mkdir_p(File.dirname(file_path))
+        file_content = f.read
+        File.write(file_path, file_content, mode: 'wb')
+      end
     end
     delete_folders.each do |f|
       folder_path = File.join(assignment.autotest_files_dir, f)
       FileUtils.rm_rf(folder_path)
-    end
-    new_files.each do |f|
-      if f.size > Settings.max_file_size
-        flash_now(:error, t('student.submission.file_too_large',
-                            file_name: f.original_filename,
-                            max_size: (Settings.max_file_size / 1_000_000.00).round(2)))
-        next
-      elsif f.size == 0
-        flash_now(:warning, t('student.submission.empty_file_warning', file_name: f.original_filename))
-      end
-      file_path = File.join(assignment.autotest_files_dir, params[:path], f.original_filename)
-      FileUtils.mkdir_p(File.dirname(file_path))
-      file_content = f.read
-      File.write(file_path, file_content, mode: 'wb')
     end
     delete_files.each do |f|
       file_path = File.join(assignment.autotest_files_dir, f)

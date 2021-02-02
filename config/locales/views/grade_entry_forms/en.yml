@@ -14,7 +14,6 @@ en:
     none: There are currently no marks spreadsheets.
     required_fields_html: Required Fields <span class='required_field'>*</span>
     students:
-      detailed_marks_message: Detailed marks are available.
       mark_message: 'Your mark:'
       no_results: There are no marks available yet.
       title: 'Marks:'

@@ -116,7 +116,7 @@ module Api
                                                       type: params[:mime_type])
         success, messages = grouping.access_repo do |repo|
           path = Pathname.new(grouping.assignment.repository_folder)
-          add_files([file], @current_user, repo, path: path)
+          add_file(file, @current_user, repo, path: path)
         end
       ensure
         tmpfile.close!
@@ -148,9 +148,9 @@ module Api
         return
       end
       success, messages = grouping.access_repo do |repo|
-        new_folders = Pathname.new(params[:folder_path])
+        new_folder = Pathname.new(params[:folder_path])
         path = Pathname.new(grouping.assignment.repository_folder)
-        add_folders([new_folders], @current_user, repo, path: path)
+        add_folder(new_folder, @current_user, repo, path: path)
       end
       message_string = messages.map { |type, *msg| "#{type}: #{msg}" }.join("\n")
       if success

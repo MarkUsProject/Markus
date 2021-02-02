@@ -11,7 +11,6 @@ describe Assignment do
     it { is_expected.to have_many(:notes).dependent(:destroy) }
     it { is_expected.to have_many(:section_due_dates) }
     it { is_expected.to accept_nested_attributes_for(:section_due_dates) }
-    it { is_expected.to have_one(:assignment_stat).dependent(:destroy) }
     it { is_expected.to have_many(:criteria).dependent(:destroy).order(:position) }
     it { is_expected.to have_many(:peer_criteria).order(:position) }
     it { is_expected.to have_many(:ta_criteria).order(:position) }
@@ -27,9 +26,6 @@ describe Assignment do
     end
     it do
       is_expected.to accept_nested_attributes_for(:submission_rule).allow_destroy(true)
-    end
-    it do
-      is_expected.to accept_nested_attributes_for(:assignment_stat).allow_destroy(true)
     end
   end
 
@@ -1957,6 +1953,10 @@ describe Assignment do
 
     context 'a TA user' do
       let(:ta) { create :ta }
+      let(:assignment_tag) { create :assignment }
+      let(:tags) { create_list :tag, 3, user: ta }
+      let(:groupings_with_tags) { groupings.each_with_index { |g, i| g.update(tags: [tags[i]]) && g } }
+      let!(:groupings) { create_list :grouping_with_inviter, 3, assignment: assignment_tag }
 
       before :each do
         @assignment = create(:assignment_with_criteria_and_results)
@@ -1973,10 +1973,21 @@ describe Assignment do
           expect(criteria_info.keys).to include(:Header, :accessor, :className)
         end
       end
+
+      it 'has tags correct info' do
+        Grouping.assign_all_tas(groupings.map(&:id), [ta.id], assignment_tag)
+        tags_names = groupings_with_tags.map { |g| g&.tags&.to_a&.map(&:name) }
+        data = assignment_tag.reload.summary_json(ta)[:data]
+        expect(data.map { |h| h[:tags] }).to contain_exactly(*tags_names)
+      end
     end
 
     context 'an Admin user' do
       let(:admin) { create :admin }
+      let(:assignment_tag) { create :assignment }
+      let(:tags) { create_list :tag, 3, user: admin }
+      let(:groupings_with_tags) { groupings.each_with_index { |g, i| g.update(tags: [tags[i]]) && g } }
+      let!(:groupings) { create_list :grouping_with_inviter, 3, assignment: assignment_tag }
 
       before :each do
         @assignment = create(:assignment_with_criteria_and_results)
@@ -1993,6 +2004,12 @@ describe Assignment do
           expect(criteria_info.keys).to include(:Header, :accessor, :className)
         end
 
+        it 'has tags correct info' do
+          tags_names = groupings_with_tags.map { |g| g&.tags&.to_a&.map(&:name) }
+          data = assignment_tag.reload.summary_json(admin)[:data]
+          expect(data.map { |h| h[:tags] }).to contain_exactly(*tags_names)
+        end
+
         it 'has group data' do
           data = @assignment.summary_json(admin)[:data]
           expected_keys = [
@@ -2005,6 +2022,7 @@ describe Assignment do
             :max_mark,
             :result_id,
             :submission_id,
+            :tags,
             :total_extra_marks,
             :graders
           ]
