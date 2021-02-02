@@ -6,6 +6,7 @@
 - Removed server_time information in submissions_controller.rb and server_time? from submission_policy.rb (#5071)
 - Add rake tasks to un/archive all stateful files from a MarkUs instance (#5069)
 - Fix bug where zip files with too many entries could not be uploaded (#5080)
+- Add button to assignment's annotations tab to allow instructor to download one time annotations (#5088)
 - Removed AssignmentStats table (#5089)
 
 ## [v1.11.2]
