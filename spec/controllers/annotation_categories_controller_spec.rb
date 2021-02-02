@@ -361,7 +361,6 @@ describe AnnotationCategoriesController do
       let(:assignment_result) { assignment.groupings.first.current_result }
       let(:text) { create(:annotation_text, annotation_category: nil) }
       let(:different_text) { create(:annotation_text, annotation_category: nil) }
-
       it 'finds no instance of uncategorized annotations when there are no annotation texts' do
         get_as user, :uncategorized_annotations, params: { assignment_id: assignment.id }
         expect(assigns['texts']).to eq []
@@ -547,6 +546,30 @@ describe AnnotationCategoriesController do
         expect(flash[:error].size).to eq(1)
         expect(AnnotationCategory.all.size).to eq(0)
         expect(response).to redirect_to action: 'index', assignment_id: assignment.id
+      end
+    end
+    context 'CSV_One_Time_Downloads' do
+      it 'responds with appropriate status' do
+        get_as user, :uncategorized_annotations, params: { assignment_id: assignment.id }, format: 'csv'
+        expect(response.status).to eq(200)
+      end
+      # parse header object to check for the right disposition
+      it 'sets disposition as attachment' do
+        get_as user, :uncategorized_annotations, params: { assignment_id: assignment.id }, format: 'csv'
+        d = response.header['Content-Disposition'].split.first
+        expect(d).to eq 'attachment;'
+      end
+      # parse header object to check for the right content type
+      it 'returns text/csv type' do
+        get_as user, :uncategorized_annotations, params: { assignment_id: assignment.id }, format: 'csv'
+        expect(response.media_type).to eq 'text/csv'
+      end
+      # parse header object to check for the right file naming convention
+      it 'filename passes naming conventions' do
+        get_as user, :uncategorized_annotations, params: { assignment_id: assignment.id }, format: 'csv'
+        filename = response.header['Content-Disposition']
+                           .split[1].split('"').second
+        expect(filename).to eq "#{assignment.short_identifier}_one_time_annotations.csv"
       end
     end
 
