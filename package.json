@@ -8,11 +8,11 @@
     "i18n-js": "^3.8.0",
     "jcrop": "^0.0.1",
     "jquery": "^3.5.1",
-    "marked": "^1.2.7",
+    "marked": "^1.2.8",
     "mime-types": "^2.1.27",
     "moment": "^2.29.1",
     "mousetrap": "^1.6.5",
-    "pdfjs-dist": "^2.5.207",
+    "pdfjs-dist": "^2.6.347",
     "postcss-preset-env": "^6.7.0",
     "prop-types": "^15.7.2",
     "rails-erb-loader": "^5.5.2",
@@ -27,6 +27,6 @@
     "webpack": "^4.44.1"
   },
   "devDependencies": {
-    "webpack-dev-server": "3.11.1"
+    "webpack-dev-server": "3.11.2"
   }
 }
