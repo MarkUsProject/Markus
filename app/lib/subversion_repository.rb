@@ -25,10 +25,6 @@ class SubversionRepository < Repository::AbstractRepository
     end
   end
 
-  def self.permission_file
-    Settings.repository.storage + '/svn_authz'
-  end
-
   # Static method: Creates a new Subversion repository at
   # location 'connect_string'
   def self.create(connect_string)
