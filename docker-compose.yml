@@ -24,14 +24,13 @@ services:
     tty: true
     volumes:
       - app_data:/app/data/dev
-      - repos:/app/data/dev/repos/bare
+      - repos:/app/data/dev/repos
       - bundle:/bundle
       - tmp:/app/tmp
       - node_modules:/app/node_modules
       - packs:/app/public/packs
       - packs_test:/app/public/packs-test
       - ssh_pub_key:/ssh_pub_key
-      - authorized_keys:/app/data/dev/keys
       - log:/app/log
       - .:/app:cached
     env_file:
@@ -56,7 +55,6 @@ services:
     volumes:
       - log:/home/git/log
       - repos:/home/git/csc108
-      - authorized_keys:/home/git/.ssh/csc108:ro
     environment:
       - TZ=America/Toronto
     command: /usr/sbin/sshd -D -e
@@ -124,7 +122,6 @@ services:
 volumes:
   app_data:
   repos:
-  authorized_keys:
   postgres:
   redis:
   bundle:

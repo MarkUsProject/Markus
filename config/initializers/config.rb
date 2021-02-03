@@ -133,7 +133,6 @@ Config.setup do |config|
     required(:ta_session_timeout).value(:integer, gt?: 0)
     required(:admin_session_timeout).value(:integer, gt?: 0)
     required(:enable_key_storage).filled(:bool)
-    required(:key_storage).filled(:string)
     required(:student_csv_upload_order).array(
       included_in?: %w[user_name last_name first_name section_name id_number email]
     )

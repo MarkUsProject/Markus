@@ -4,7 +4,7 @@ set -eE -o functrace
 
 LOG_FILE="${LOG_FILE:-${HOME}/log/ssh.log}"
 GIT_SHELL="${GIT_SHELL:-git-shell}"
-GIT_ACCESS_FILE="${HOME}/.ssh/${RELATIVE_URL_ROOT}/.access"
+GIT_ACCESS_FILE="${HOME}/${RELATIVE_URL_ROOT}/.access"
 
 write_log() {
   echo "$(date): ${1}" >> "${LOG_FILE}"

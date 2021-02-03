@@ -8,7 +8,7 @@ class KeyPair < ApplicationRecord
   before_validation(on: :create) { self.public_key&.strip! }
   validate :public_key_format, if: -> { self.public_key }
 
-  AUTHORIZED_KEYS_FILE = 'authorized_keys'.freeze
+  AUTHORIZED_KEYS_FILE = '.authorized_keys'.freeze
   GIT_SHELL = 'markus-git-shell.sh'.freeze
   AUTHORIZED_KEY_ARGS = 'no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty'.freeze
   KEY_TYPES = %w[sk-ecdsa-sha2-nistp256@openssh.com
