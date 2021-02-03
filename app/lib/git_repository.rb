@@ -379,6 +379,14 @@ class GitRepository < Repository::AbstractRepository
     File.join(repo_path, "#{repo_name}.git")
   end
 
+  def tmp_repo
+    @tmp_repo ||= GitRepository.tmp_repo(@connect_string)
+  end
+
+  def self.tmp_repo(connect_string)
+    File.join(::Rails.root.to_s, 'tmp', "git_repo_#{connect_string.gsub(File::Separator, '_')}")
+  end
+
   ####################################################################
   ##  Private method definitions
   ####################################################################
@@ -411,14 +419,6 @@ class GitRepository < Repository::AbstractRepository
   private_class_method :__update_permissions
 
   private
-
-  def tmp_repo
-    @tmp_repo ||= GitRepository.tmp_repo(@connect_string)
-  end
-
-  def self.tmp_repo(connect_string)
-    File.join(::Rails.root.to_s, 'tmp', "git_repo_#{connect_string.gsub(File::Separator, '_')}")
-  end
 
   def non_bare_repo
     return @non_bare_repo unless @non_bare_repo.nil?
