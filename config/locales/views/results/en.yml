@@ -46,6 +46,7 @@ en:
     next_submission: Next
     no_feedback_files: "[No feedback files available]"
     no_result: No marks are available yet.
+    no_results_in_direction: There are no more results in this direction!
     overridden_deductions: Overridden
     previous_submission: Previous
     remark:
@@ -72,4 +73,3 @@ en:
     your_mark: Your Mark
     zoom_in_image: Zoom in
     zoom_out_image: Zoom out
-    no_results_in_direction: There are no more results in this direction!

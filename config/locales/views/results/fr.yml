@@ -41,6 +41,7 @@ fr:
     next_submission: Suivant
     no_feedback_files: "[Aucun fichier de support disponible]"
     no_result: Les notes ne sont pas encore disponibles.
+    no_results_in_direction: Il n'y a plus de résultats dans ce sens!
     overridden_deductions: UPDATE ME!
     previous_submission: Précédent
     remark:
@@ -67,4 +68,3 @@ fr:
     your_mark: Votre Note
     zoom_in_image: UPDATE ME!
     zoom_out_image: UPDATE ME!
-    no_results_in_direction: Il n'y a plus de résultats dans ce sens!

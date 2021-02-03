@@ -597,7 +597,11 @@ class Result extends React.Component {
         />,
         <SubmissionSelector
           key='submission-selector'
-          {...this.state}
+          role={this.props.role}
+          result_id={this.state.result_id}
+          submission_id={this.state.submission_id}
+          assignment_id={this.state.assignment_id}
+          grouping_id={this.state.grouping_id}
           assignment_max_mark={this.state.assignment_max_mark}
           fullscreen={this.state.fullscreen}
           group_name={this.state.group_name}
@@ -619,7 +623,7 @@ class Result extends React.Component {
             <div id='left-pane'>
               <LeftPane
                 ref={this.leftPane}
-                {...this.state}
+                role={this.props.role}
                 loading={this.state.loading}
                 result_id={this.state.result_id}
                 submission_id={this.state.submission_id}
@@ -658,13 +662,11 @@ class Result extends React.Component {
             <div id='drag'/>
             <div id='right-pane'>
               <RightPane
-                {...{
-                  assignment_id: this.state.assignment_id,
-                  submission_id: this.state.submission_id,
-                  result_id: this.state.result_id,
-                  grouping_id: this.state.grouping_id,
-                  role: this.props.role,
-                }}
+                assignment_id={this.state.assignment_id}
+                submission_id={this.state.submission_id}
+                result_id={this.state.result_id}
+                grouping_id={this.state.grouping_id}
+                role={this.props.role}
                 annotations={this.state.annotations}
                 assigned_criteria={this.state.assigned_criteria}
                 assignment_max_mark={this.state.assignment_max_mark}

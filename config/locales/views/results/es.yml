@@ -41,6 +41,7 @@ es:
     next_submission: Siguiente
     no_feedback_files: "[El archivo de retroalimentación no está disponible]"
     no_result: No existen notas disponibles.
+    no_results_in_direction: "¡No hay más resultados en esta dirección!"
     overridden_deductions: UPDATE ME!
     previous_submission: Anterior
     remark:
@@ -67,4 +68,3 @@ es:
     your_mark: Su Nota
     zoom_in_image: UPDATE ME!
     zoom_out_image: UPDATE ME!
-    no_results_in_direction: ¡No hay más resultados en esta dirección!
