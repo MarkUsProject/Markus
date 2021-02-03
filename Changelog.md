@@ -1,5 +1,6 @@
 # Changelog
 ## [unreleased]
+- Change 'Next' and 'Previous' submission button to use partial reloads (#5082)
 - Add time zone validations (#5060)
 - Add time zone to settings (#4938)
 - Move configuration options to settings yaml files (#5061)
