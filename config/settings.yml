@@ -42,10 +42,6 @@ repository:
   git_shell: /usr/bin/git-shell
   url: 'http://www.example.com/markus/git'
   ssh_url: 'git@example.com/csc108'
-  hooks:
-    update: <%= "#{::Rails.root.to_s}/lib/repo/git_hooks/multihook.py" %>
-    post-receive: <%= "#{::Rails.root.to_s}/lib/repo/git_hooks/multihook.py" %>
-  client_hooks: <%= "#{::Rails.root.to_s}/lib/repo/git_hooks/client" %>
   is_repository_admin: true
 
 max_file_size: 5000000
