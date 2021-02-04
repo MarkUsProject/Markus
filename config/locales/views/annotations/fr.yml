@@ -3,6 +3,7 @@ fr:
   annotations:
     count: UPDATE ME!
     default_deduction: UPDATE ME!
+    download_one_time_annotations: UPDATE ME!
     download_submission_file:
       begin_annotation: "%{comment_start} ANNOTATION %{id}: %{text} %{comment_end}"
       end_annotation: "%{comment_start} FIN ANNOTATION %{id} %{comment_end}"

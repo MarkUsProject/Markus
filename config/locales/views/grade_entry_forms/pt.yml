@@ -13,7 +13,6 @@ pt:
     none: Atualmente não há notas nas planilhas.
     required_fields_html: Campos obrigatórios <span class='required_field'>*</span>
     students:
-      detailed_marks_message: Notas detalhadas estão disponíveis.
       mark_message: 'Sua nota:'
       no_results: Não há notas disponíveis ainda...
       title: 'Notas:'

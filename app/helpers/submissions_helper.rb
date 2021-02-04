@@ -52,28 +52,6 @@ module SubmissionsHelper
     result
   end
 
-  def get_grouping_name_url(grouping, result)
-    if grouping.assignment.is_peer_review? && !grouping.peer_reviews_to_others.empty? && result.is_a_review?
-      url_for(view_marks_assignment_submission_result_path(
-                  assignment_id: grouping.assignment.parent_assignment.id, submission_id: result.submission.id,
-                  id: result.id, reviewer_grouping_id: grouping.id))
-    elsif grouping.is_collected?
-      url_for(edit_assignment_submission_result_path(
-                  grouping.assignment, result.submission_id, result))
-    else
-      ''
-    end
-  end
-
-  #TODO: Add a route in routes.rb and method mark_peer_review in the peer_reviews controller
-  def get_url_peer(grouping, id)
-    if grouping.is_collected?
-      url_for(controller: 'peer_reviews', action: 'mark_peer_review', peer_review_id: id)
-    else
-      ''
-    end
-  end
-
   def get_file_info(file_name, file, assignment_id, revision_identifier, path, grouping_id)
     return if Repository.get_class.internal_file_names.include? file_name
     f = {}
@@ -106,18 +84,5 @@ module SubmissionsHelper
     File.basename(file_name).gsub(
         SubmissionFile::FILENAME_SANITIZATION_REGEXP,
         SubmissionFile::SUBSTITUTION_CHAR)
-  end
-
-  # Helper methods to determine remark request status on a submission
-  def remark_in_progress(submission)
-    submission.remark_result &&
-      submission.remark_result.marking_state == Result::MARKING_STATES[:incomplete]
-  end
-
-  def remark_complete_but_unreleased(submission)
-    submission.remark_result &&
-      (submission.remark_result.marking_state ==
-         Result::MARKING_STATES[:complete]) &&
-        !submission.remark_result.released_to_students
   end
 end

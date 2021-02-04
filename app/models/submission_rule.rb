@@ -74,12 +74,6 @@ class SubmissionRule < ApplicationRecord
     raise NotImplementedError.new('SubmissionRule: overtime_message not implemented')
   end
 
-  # Returns true or false based on whether the attached Assignment's properties
-  # will work with this particular SubmissionRule
-  def assignment_valid?
-    raise NotImplementedError.new('SubmissionRule: assignment_valid? not implemented')
-  end
-
   # Takes a Submission (with an attached Result), and based on the properties of
   # this SubmissionRule, applies penalties to the Result - for example, will
   # add an ExtraMark of a negative value, or perhaps add the use of a Grace Day.

@@ -84,6 +84,32 @@ class AssignmentSummaryTable extends React.Component {
     },
     markingStateColumn(),
     {
+      Header: I18n.t('activerecord.models.tag.other'),
+      accessor: 'tags',
+      Cell: row => (
+        <ul className="tag-list">
+          {row.original.tags.map(tag =>
+            <li key={`${row.original._id}-${tag}`}
+              className="tag-element">
+              {tag}
+            </li>
+          )}
+        </ul>
+      ),
+      minWidth: 80,
+      sortable: false,
+      filterMethod: (filter, row) => {
+        if (filter.value) {
+          // Check tag names
+          return row._original.tags.some(
+            (tag) => tag.includes(filter.value)
+          );
+        } else {
+          return true;
+        }
+      }
+    },
+    {
       Header: I18n.t('activerecord.attributes.result.total_mark'),
       accessor: 'final_grade',
       Cell: row => {
@@ -97,7 +123,7 @@ class AssignmentSummaryTable extends React.Component {
       className: 'number',
       filterable: false,
       defaultSortDesc: true,
-    },
+    }
   ];
 
   bonusColumn = {

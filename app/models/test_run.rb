@@ -10,7 +10,6 @@ class TestRun < ApplicationRecord
   validates :time_to_service, numericality: { greater_than_or_equal_to: -1, only_integer: true, allow_nil: true }
 
   ASSIGNMENTS_DIR = File.join(Settings.autotest.client_dir, 'assignments').freeze
-  STUDENTS_DIR = File.join(Settings.autotest.client_dir, 'students').freeze
   SPECS_FILE = 'specs.json'.freeze
   FILES_DIR = 'files'.freeze
   STATUSES = {

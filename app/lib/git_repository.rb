@@ -32,9 +32,18 @@ class GitRepository < Repository::AbstractRepository
     repo.push('origin', ['refs/heads/master'])
   end
 
+  def self.server_hooks
+    { update: "#{::Rails.root}/lib/repo/git_hooks/multihook.py",
+      'post-receive': "#{::Rails.root}/lib/repo/git_hooks/multihook.py" }
+  end
+
+  def self.client_hooks
+    "#{::Rails.root}/lib/repo/git_hooks/client"
+  end
+
   # Static method: Creates a new Git repository at
   # location 'connect_string'
-  def self.create(connect_string, with_hooks: true)
+  def self.create(connect_string)
     if GitRepository.repository_exists?(connect_string)
       raise RepositoryCollision.new("There is already a repository at #{connect_string}")
     end
@@ -62,21 +71,22 @@ class GitRepository < Repository::AbstractRepository
       repo.index.add('.required.json')
 
       # Add client-side hooks
-      if with_hooks && Settings.repository.client_hooks.present?
-        client_hooks_path = Settings.repository.client_hooks
-        FileUtils.copy_entry client_hooks_path, File.join(tmp_repo_path, 'markus-hooks')
-        FileUtils.chmod 0755, File.join(tmp_repo_path, 'markus-hooks', 'pre-commit')
-        repo.index.add_all('markus-hooks')
+      dest = File.join(connect_string, 'markus-hooks')
+      FileUtils.copy_entry client_hooks, dest
+      too_large_hook = File.join(dest, 'pre-commit.d', '04-file_size_too_large.py')
+      content = File.open(too_large_hook) do |f|
+        f.read.gsub(/MAX_FILE_SIZE\s*=\s*[\d_]*/, "MAX_FILE_SIZE=#{Settings.max_file_size}")
+      end
+      File.open(too_large_hook, 'w') { |f| f.write(content) }
+      FileUtils.chmod 0755, File.join(connect_string, 'markus-hooks', 'pre-commit')
+      repo.index.add_all('markus-hooks')
+
+      # Set up server-side hooks
+      server_hooks.each do |hook_symbol, hook_script|
+        FileUtils.ln_s(hook_script, File.join(barepath, 'hooks', hook_symbol.to_s))
       end
 
       GitRepository.do_commit_and_push(repo, 'Markus', I18n.t('repo.commits.initial'))
-
-      # Set up server-side hooks
-      if with_hooks
-        Settings.repository.hooks.each do |hook_symbol, hook_script|
-          FileUtils.ln_s(hook_script, File.join(barepath, 'hooks', hook_symbol.to_s))
-        end
-      end
     end
     true
   end

@@ -122,17 +122,24 @@ describe ResultsController do
   shared_examples 'shared ta and admin tests' do
     include_examples 'download files'
     context 'accessing next_grouping' do
-      it 'should redirect when current grouping has a submission' do
+      it 'should receive 200 when current grouping has a submission' do
         allow_any_instance_of(Grouping).to receive(:has_submission).and_return true
         get :next_grouping, params: { assignment_id: assignment.id, submission_id: submission.id,
                                       grouping_id: grouping.id, id: incomplete_result.id }
-        expect(response).to have_http_status(:redirect)
+        expect(response).to have_http_status(:ok)
       end
-      it 'should redirect when current grouping does not have a submission' do
+      it 'should receive 200 when current grouping does not have a submission' do
         allow_any_instance_of(Grouping).to receive(:has_submission).and_return false
         get :next_grouping, params: { assignment_id: assignment.id, submission_id: submission.id,
                                       grouping_id: grouping.id, id: incomplete_result.id }
-        expect(response).to have_http_status(:redirect)
+        expect(response).to have_http_status(:ok)
+      end
+      it 'should receive a JSON object of the next grouping when next grouping has a submission' do
+        a2 = create(:assignment_with_criteria_and_results)
+        get :next_grouping, params: { assignment_id: a2.id, submission_id: a2.submissions.first.id,
+                                      grouping_id: a2.groupings.first.id, id: a2.submissions.first.current_result.id }
+        expect(response).to have_http_status(:ok)
+        expect(response.body).to include('next_result', 'next_grouping')
       end
     end
     context 'accessing toggle_marking_state' do

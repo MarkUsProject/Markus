@@ -312,16 +312,15 @@ class ResultsController < ApplicationController
       else
         next_grouping = groupings.where('group_name < ?', grouping.group.group_name).last
       end
+      next_result = next_grouping&.current_result
     elsif result.is_a_review? && current_user.is_reviewer_for?(assignment.pr_assignment, result)
       assigned_prs = current_user.grouping_for(assignment.pr_assignment.id).peer_reviews_to_others
       if params[:direction] == '1'
-        next_pr = assigned_prs.where('peer_reviews.id > ?', result.peer_review_id).first
+        next_grouping = assigned_prs.where('peer_reviews.id > ?', result.peer_review_id).first
       else
-        next_pr = assigned_prs.where('peer_reviews.id < ?', result.peer_review_id).last
+        next_grouping = assigned_prs.where('peer_reviews.id < ?', result.peer_review_id).last
       end
-      next_result = Result.find(next_pr.result_id)
-      redirect_to action: 'edit', id: next_result.id
-      return
+      next_result = Result.find(next_grouping.result_id)
     else
       groupings = assignment.groupings.joins(:group).order('group_name')
       if params[:direction] == '1'
@@ -329,14 +328,10 @@ class ResultsController < ApplicationController
       else
         next_grouping = groupings.where('group_name < ?', grouping.group.group_name).last
       end
+      next_result = next_grouping&.current_result
     end
 
-    next_result = next_grouping&.current_result
-    if next_result.nil?
-      redirect_to controller: 'submissions', action: 'browse'
-    else
-      redirect_to action: 'edit', id: next_result.id
-    end
+    render json: { next_result: next_result, next_grouping: next_grouping }
   end
 
   def set_released_to_students

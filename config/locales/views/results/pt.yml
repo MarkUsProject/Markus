@@ -41,6 +41,7 @@ pt:
     next_submission: Próxima
     no_feedback_files: "[No arquivo de feedback disponíveis]"
     no_result: Nenhuma nota está disponível.
+    no_results_in_direction: Não há mais resultados nessa direção!
     overridden_deductions: UPDATE ME!
     previous_submission: Anterior
     remark:

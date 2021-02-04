@@ -285,7 +285,24 @@ class AnnotationCategoriesController < ApplicationController
   end
 
   def uncategorized_annotations
+    @assignment = Assignment.find(params[:assignment_id])
     @texts = annotation_text_data(nil)
+    respond_to do |format|
+      format.js
+      format.csv do
+        data = MarkusCsv.generate(
+          @texts
+        ) do |text|
+          row = [text[:group_name], text[:last_editor], text[:creator], text[:content]]
+          row
+        end
+        filename = "#{@assignment.short_identifier}_one_time_annotations.csv"
+        send_data data,
+                  disposition: 'attachment',
+                  type: 'text/csv',
+                  filename: filename
+      end
+    end
   end
 
   private

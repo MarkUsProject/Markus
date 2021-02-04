@@ -33,10 +33,6 @@ class PenaltyDecayPeriodSubmissionRule < SubmissionRule
     periods.sum('hours')
   end
 
-  def maximum_penalty
-    periods.sum('deduction')
-  end
-
   # Given a number of overtime_hours, calculate the penalty percentage that
   # a student should get
   def calculate_penalty(overtime_hours)

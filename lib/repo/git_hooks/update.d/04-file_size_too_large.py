@@ -3,7 +3,7 @@
 import sys
 import subprocess
 
-MAX_FILE_SIZE = 5_000_000  # this should be changed to match the config.max_file_size config option
+MAX_FILE_SIZE = int(os.environ['MAX_FILE_SIZE'])
 
 if __name__ == '__main__':
     ref_name = sys.argv[1]
