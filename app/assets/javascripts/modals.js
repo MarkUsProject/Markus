@@ -18,7 +18,8 @@ export class ModalMarkus {
         // z-index values set by browser extensions. See issue #3212.
         'zIndex': function () {
           return 100;
-        }
+        },
+        overlayParent: '#content'
       });
     this.$elem.find('.make_div_clickable, [type=reset]').click(() => {
       // Set callbacks for buttons to close the modal.
