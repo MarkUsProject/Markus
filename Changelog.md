@@ -9,6 +9,8 @@
 - Fix bug where zip files with too many entries could not be uploaded (#5080)
 - Add button to assignment's annotations tab to allow instructor to download one time annotations (#5088)
 - Removed AssignmentStats table (#5089)
+
+## [v1.11.3]
 - Fix easyModal overlay bug (#5117)
 
 ## [v1.11.2]
