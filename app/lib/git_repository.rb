@@ -71,14 +71,14 @@ class GitRepository < Repository::AbstractRepository
       repo.index.add('.required.json')
 
       # Add client-side hooks
-      dest = File.join(connect_string, 'markus-hooks')
+      dest = File.join(tmp_repo_path, 'markus-hooks')
       FileUtils.copy_entry client_hooks, dest
       too_large_hook = File.join(dest, 'pre-commit.d', '04-file_size_too_large.py')
       content = File.open(too_large_hook) do |f|
         f.read.gsub(/MAX_FILE_SIZE\s*=\s*[\d_]*/, "MAX_FILE_SIZE=#{Settings.max_file_size}")
       end
       File.open(too_large_hook, 'w') { |f| f.write(content) }
-      FileUtils.chmod 0755, File.join(connect_string, 'markus-hooks', 'pre-commit')
+      FileUtils.chmod 0755, File.join(tmp_repo_path, 'markus-hooks', 'pre-commit')
       repo.index.add_all('markus-hooks')
 
       # Set up server-side hooks
