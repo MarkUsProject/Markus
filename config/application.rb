@@ -84,7 +84,7 @@ module Markus
 
     config.perform_caching = Settings.rails.perform_caching
 
-    config.hosts << Settings.rails.hosts || []
+    config.hosts.push(*Settings.rails.hosts)
 
     config.active_record.verbose_query_logs = Settings.rails.active_record.verbose_query_logs
 
