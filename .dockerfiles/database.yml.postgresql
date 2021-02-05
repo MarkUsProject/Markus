@@ -3,17 +3,16 @@ default: &default
   encoding: unicode
   host: <%= ENV['PGHOST'] %>
   username: <%= ENV['PGUSER'] %>
-  password: <%= ENV['PGPASSWORD'] %>
+  password: <%= ENV.fetch('PGPASSWORD') { Rails.application.secrets.pg_password }  %>
   pool: 5
+  database: <%= ENV['PGDATABASE'] %>
 
 development:
   <<: *default
-  database: markus_development
 
 test:
   <<: *default
-  database: markus_test
+  database: <%= ENV.fetch('PGDATABASETEST') { ENV['PGDATABASE'] + '-test' } %>
 
 production:
   <<: *default
-  database: <%= ENV['PGDATABASE'] %>

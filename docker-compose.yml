@@ -5,6 +5,7 @@ services:
     build:
       context: .
       dockerfile: ./.dockerfiles/Dockerfile
+      target: dev
       args:
         UBUNTU_VERSION: bionic
         RUBY_VERSION: '2.5'
@@ -17,22 +18,8 @@ services:
     image: markus-dev:1.0.0
     tmpfs:
       - /tmp
-
-  backend: &backend
-    <<: *app
     stdin_open: true
     tty: true
-    volumes:
-      - app_data:/app/data/dev
-      - repos:/app/data/dev/repos
-      - bundle:/bundle
-      - tmp:/app/tmp
-      - node_modules:/app/node_modules
-      - packs:/app/public/packs
-      - packs_test:/app/public/packs-test
-      - ssh_pub_key:/ssh_pub_key
-      - log:/app/log
-      - .:/app:cached
     env_file:
       - .dockerfiles/.env
     environment:
@@ -61,21 +48,49 @@ services:
     ports:
       - '2222:22'
 
-  rails:
-    <<: *backend
+  rails_108: &rails_108
+    <<: *app
     entrypoint: .dockerfiles/entrypoint-dev-rails.sh
     command: rails server -b 0.0.0.0
+    environment:
+      - RAILS_RELATIVE_URL_ROOT=/csc108
+      - PGDATABASE=markus-csc108-development
+      - PGDATABASETEST=markus-csc108-test
+      - MARKUS__REPOSITORY__SSH_URL=ssh://git@localhost:2222/~/csc108
     ports:
       - '3000:3000'
+    volumes:
+      - app_data:/app/data/dev
+      - repos:/app/data/dev/repos
+      - bundle:/bundle
+      - tmp:/app/tmp
+      - node_modules:/app/node_modules
+      - packs:/app/public/packs
+      - packs_test:/app/public/packs-test
+      - ssh_pub_key:/ssh_pub_key
+      - log:/app/log
+      - .:/app:cached
     depends_on:
-      - resque
+      - postgres
+      - redis
+      - resque_108
       - webpacker
       - ssh
 
-  resque:
-    <<: *backend
+  resque_108:
+    <<: *rails_108
     entrypoint: .dockerfiles/entrypoint-dev-wait-for-install.sh
     command: rails resque:work QUEUE=* TERM_CHILD=1
+    depends_on:
+      - redis
+    ports: []
+
+  test_108:
+    <<: *rails_108
+    command: /bin/bash
+    environment:
+      - NODE_ENV=test
+      - RAILS_ENV=test
 
   postgres:
     image: postgres:10
@@ -84,9 +99,8 @@ services:
       - log:/root/log:cached
       - tmp:/app/tmp
     environment:
-      - POSTGRES_HOST_AUTH_METHOD=trust
-    ports:
-      - '35432:5432'
+      - POSTGRES_PASSWORD=docker
+      - POSTGRES_INITDB_ARGS="-A md5"
 
   redis:
     image: redis:3.2-alpine
@@ -94,13 +108,6 @@ services:
       - redis:/data
     ports:
       - 6379
-
-  test:
-    <<: *backend
-    command: /bin/bash
-    environment:
-      - NODE_ENV=test
-      - RAILS_ENV=test
 
   webpacker:
     <<: *app

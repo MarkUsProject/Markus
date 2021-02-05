@@ -1,0 +1,14 @@
+FROM httpd:2.4
+
+RUN apt-get update && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -yq --no-install-recommends git
+
+RUN sed -i \
+        -e 's/^#\(LoadModule .*proxy.so\)/\1/' \
+        -e 's/^#\(LoadModule .*proxy_http.so\)/\1/' \
+        -e 's/^#\(LoadModule .*authnz_external.so\)/\1/' \
+        conf/httpd.conf
+
+RUN mkdir -p sites-enabled && \
+#    echo "LoadModule authnz_external_module modules/mod_authnz_external.so" >> conf/httpd.conf && \
+    echo "IncludeOptional sites-enabled/*.conf" >> conf/httpd.conf

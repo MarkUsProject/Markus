@@ -1,0 +1,157 @@
+version: '3.7'
+
+services:
+  app: &app
+    build:
+      context: .
+      dockerfile: ./.dockerfiles/Dockerfile
+      target: prod
+      args:
+        UBUNTU_VERSION: bionic
+        RUBY_VERSION: '2.5'
+        PG_MAJOR: '10'
+        NODE_MAJOR: '12'
+        YARN_VERSION: '1.13.0'
+        BUNDLER_VERSION: '1.17.3'
+        NBCONVERTVENV: '/app/nbconvertvenv'
+        USER: 'markus'
+    image: markus:1.0.0
+    tmpfs:
+      - /tmp
+    stdin_open: true
+    tty: true
+    depends_on:
+      - postgres
+      - redis
+
+  ssh:
+    build:
+      context: ./.dockerfiles
+      dockerfile: ./Dockerfile-ssh
+      args:
+        UBUNTU_VERSION: bionic
+        SSH_USER: git
+    volumes:
+      - log_108:/home/git/log
+      - repos_108:/home/git/csc108
+    environment:
+      - TZ=America/Toronto
+    command: /usr/sbin/sshd -D -e
+    ports:
+      - '2222:22'
+
+  rails_108: &rails_108
+    <<: *app
+    command: bundle exec rails server -b 0.0.0.0
+    environment:
+      - RAILS_RELATIVE_URL_ROOT=/csc108
+      - PGDATABASE=markus-csc108
+      - PGDATABASETEST=markus-csc108-test
+      - SECRET_KEY_BASE=1 # change this to something secure and/or use a secret to set this
+      - PGUSER=postgres
+      - PGHOST=postgres
+      - PGPASSWORD=docker # change this to something secure and/or use a secret to set this
+      - TZ=America/Toronto
+      - NBCONVERT=/app/nbconvertvenv/bin/jupyter-nbconvert
+    ports:
+      - '3000:3000'
+    volumes:
+      - app_data_108:/app/data/prod
+      - repos_108:/app/data/prod/repos
+      - log_108:/app/log
+    secrets:
+      - source: csc108.settings
+        target: /app/config/settings.local.yml
+    depends_on:
+      - postgres
+      - redis
+      - resque_108
+      - ssh
+
+  resque_108:
+    <<: *rails_108
+    command: bundle exec rails resque:work QUEUE=* TERM_CHILD=1
+    depends_on:
+      - redis
+    ports: []
+
+  rails_209: &rails_209
+    <<: *app
+    command: bundle exec rails server -b 0.0.0.0
+    environment:
+      - RAILS_RELATIVE_URL_ROOT=/csc209
+      - PGDATABASE=markus-csc209
+      - PGDATABASETEST=markus-csc209-test
+      - SECRET_KEY_BASE=1 # change this to something secure and/or use a secret to set this
+      - PGUSER=postgres
+      - PGHOST=postgres
+      - PGPASSWORD=docker # change this to something secure and/or use a secret to set this
+      - TZ=America/Toronto
+      - NBCONVERT=/app/nbconvertvenv/bin/jupyter-nbconvert
+    ports:
+      - '3001:3000'
+    volumes:
+      - app_data_209:/app/data/prod
+      - repos_209:/app/data/prod/repos
+      - log_209:/app/log
+    secrets:
+      - source: csc209.settings
+        target: /app/config/settings.local.yml
+    depends_on:
+      - postgres
+      - redis
+      - resque_209
+      - ssh
+
+  resque_209:
+    <<: *rails_209
+    command: bundle exec rails resque:work QUEUE=* TERM_CHILD=1
+    depends_on:
+      - redis
+    ports: []
+
+  postgres:
+    image: postgres:10
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=docker  # change this to something secure and/or use a secret to set this
+      - POSTGRES_INITDB_ARGS="-A md5"
+
+  redis:
+    image: redis:3.2-alpine
+    volumes:
+      - redis:/data
+    ports:
+      - 6379
+
+  httpd:
+    build:
+      context: ./.dockerfiles/production_demo
+      dockerfile: ./Dockerfile-httpd
+    ports:
+      - '8080:80'
+    depends_on:
+      - rails_108
+      - rails_209
+    secrets:
+      - source: markus.conf
+        target: /usr/local/apache2/sites-enabled/markus.conf
+
+volumes:
+  app_data_108:
+  repos_108:
+  log_108:
+  app_data_209:
+  repos_209:
+  log_209:
+  postgres:
+  redis:
+
+secrets:
+  markus.conf:
+    file: ./.dockerfiles/production_demo/httpd.example.conf
+  csc108.settings:
+    file: ./.dockerfiles/production_demo/csc108.settings.example.yml
+  csc209.settings:
+    file: ./.dockerfiles/production_demo/csc209.settings.example.yml
