@@ -12,6 +12,17 @@
           <p><strong><%= note.user.user_name %>: </strong></p>
           <p><small><%=note.format_date%></small></p>
           <p><%= note.notes_message %></p>
+          <% if note.user_can_modify?(@current_user) %>
+            <%= form_tag note_path(id: note.id),
+                         { method: 'delete', remote: true } do |f| %>
+              <%= submit_tag t(:delete),
+                             :onclick => 'modalNotesGroup.close();document.location.reload();',
+                             class: 'delete'
+              %>
+            <% end %>
+          <% else %>
+
+          <% end %>
         </div>
       <% end %>
     </div>
