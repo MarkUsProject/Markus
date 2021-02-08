@@ -24,6 +24,8 @@ module Repository
     end
   end
 
+  PERMISSION_FILE = File.join(Settings.repository.storage, '.access').freeze
+
   # Exceptions for repositories
   class ConnectionError < StandardError; end
 

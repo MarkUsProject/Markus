@@ -37,9 +37,9 @@ describe KeyPair do
 
   context 'self.full_key_string' do
     it 'should be formatted properly' do
-      allow(Settings.repository).to receive(:git_shell).and_return('shell')
       root = ENV['RAILS_RELATIVE_URL_ROOT']
-      expected = "command=\"LOGIN_USER=a RELATIVE_URL_ROOT=#{root} shell\",#{KeyPair::AUTHORIZED_KEY_ARGS} b"
+      shell = KeyPair::GIT_SHELL
+      expected = "command=\"LOGIN_USER=a RELATIVE_URL_ROOT=#{root} #{shell}\",#{KeyPair::AUTHORIZED_KEY_ARGS} b"
       expect(KeyPair.full_key_string('a', 'b')).to eq expected
     end
   end

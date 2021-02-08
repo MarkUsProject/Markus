@@ -26,9 +26,6 @@ incorrect_login_message: 'Login incorrect. You can check your Foo U user name or
 
 repository:
   storage: <%= "#{::Rails.root.to_s}/data/dev" %>/repos
-  permission_file: <%= "#{::Rails.root.to_s}/data/dev" %>/.access
-
-key_storage: <%= "#{::Rails.root.to_s}/data/dev" %>/keys
 
 logging:
   log_file: log/info_development.log
