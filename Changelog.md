@@ -1,5 +1,6 @@
 # Changelog
 ## [unreleased]
+- Remove annotations context menu from peer assignments view (#5116)
 - Change 'Next' and 'Previous' submission button to use partial reloads (#5082)
 - Add time zone validations (#5060)
 - Add time zone to settings (#4938)
