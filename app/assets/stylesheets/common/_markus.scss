@@ -431,6 +431,35 @@ fieldset {
   }
 }
 
+.table-with-add {
+  margin-left: 2.5em;
+  min-width: 500px;
+  width: 70%;
+
+  > a {
+    background-color: $background-support;
+    display: block;
+    padding: 10px;
+    text-align: center;
+    width: 100%;
+  }
+
+  table {
+    width: 100%;
+
+    td,
+    th {
+      padding: 10px;
+      text-align: left;
+    }
+
+    thead {
+      border-bottom: 1px solid $primary-two;
+    }
+  }
+}
+
+
 // Keyboard shortcuts
 kbd {
   background-color: $background-main;
@@ -715,6 +744,17 @@ ul.tags {
 
 .red-text {
   color: $severe-error;
+}
+
+.error-with-icon {
+  color: $severe-error;
+  font-weight: bold;
+
+  &::before {
+    content: asset-url('icons/error.png');
+    padding-right: 10px;
+    vertical-align: top;
+  }
 }
 
 
@@ -1110,3 +1150,8 @@ nav {
   flex-direction: column;
 }
 
+// Jcrop styling
+.jcrop-holder,
+.jcrop-holder div {
+  margin: 0;
+}

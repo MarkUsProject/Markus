@@ -1,21 +1,24 @@
-<div class="division-table">
-  <header>
-    <span class="label"><%= TemplateDivision.human_attribute_name('label') %></span>
-    <span class="start"><%= TemplateDivision.human_attribute_name('start') %></span>
-    <span class="end"><%= TemplateDivision.human_attribute_name('end') %></span>
-    <span class="delete"><%= t(:delete) %></span>
-  </header>
-
-  <ul class="template-division-section-<%= exam_template.id %>">
-      <% disabled = exam_template.exam_been_uploaded? %>
-      <%= render partial: 'exam_templates/template_division',
-                 locals: { f: f, disabled: disabled } %>
-      <% unless disabled %>
-        <li class="add_template">
-          <%= link_to t('exam_templates.create.add_division'),
-                        '#',
-                        onClick: "add_template_division(#{exam_template.id.to_s}); return false;"%>
-        </li>
-      <% end %>
-  </ul>
+<div class="table-with-add">
+  <% disabled = exam_template.exam_been_uploaded? %>
+  <table>
+    <thead>
+      <tr>
+        <th><%= TemplateDivision.human_attribute_name('label') %></th>
+        <th><%= TemplateDivision.human_attribute_name('start') %></th>
+        <th><%= TemplateDivision.human_attribute_name('end') %></th>
+        <th><%= t(:delete) %></th>
+      </tr>
+    </thead>
+    <tbody>
+    <%= render partial: 'exam_templates/template_division',
+               locals: { f: f, disabled: disabled } %>
+    </tbody>
+  </table>
+  <% unless disabled %>
+    <td class="add_template" colspan="4">
+      <%= link_to t('exam_templates.create.add_division'),
+                  '#',
+                  onClick: "add_template_division(); return false;"%>
+    </td>
+  <% end %>
 </div>
