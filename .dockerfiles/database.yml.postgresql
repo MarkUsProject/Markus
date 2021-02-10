@@ -6,6 +6,7 @@ default: &default
   password: <%= ENV.fetch('PGPASSWORD') { Rails.application.secrets.pg_password }  %>
   pool: 5
   database: <%= ENV['PGDATABASE'] %>
+  port: <%= ENV['PGPORT'] %>
 
 development:
   <<: *default

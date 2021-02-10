@@ -113,7 +113,7 @@ ARG USER
 ARG BUNDLER_VERSION
 ARG RUBY_VERSION
 
-RUN mkdir -p /bundle /app && chown -R $USER /bundle /app
+RUN mkdir -p /bundle /app /app/public && chown -R $USER /bundle /app
 
 USER $USER
 
@@ -126,6 +126,6 @@ ENV NODE_ENV=production
 # install bundler
 RUN gem$RUBY_VERSION install bundler -v $BUNDLER_VERSION
 
-RUN SECRET_KEY_BASE=1 bundle install --deployment --path $GEM_HOME --without development test offline mysql sqlite
-
-RUN yarn install --check-files
+RUN SECRET_KEY_BASE=1 bundle install --deployment --path $GEM_HOME --without development test offline mysql sqlite && \
+    SECRET_KEY_BASE=1 PGDATABASE=dummy bundle exec rails i18n:js:export && \
+    SECRET_KEY_BASE=1 PGDATABASE=dummy bundle exec rails assets:precompile
