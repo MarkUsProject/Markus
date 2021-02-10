@@ -48,14 +48,14 @@ services:
     ports:
       - '2222:22'
 
-  rails_108: &rails_108
+  rails: &rails
     <<: *app
     entrypoint: .dockerfiles/entrypoint-dev-rails.sh
-    command: rails server -b 0.0.0.0
+    command: bundle exec rails server -b 0.0.0.0
     environment:
       - RAILS_RELATIVE_URL_ROOT=/csc108
-      - PGDATABASE=markus-csc108-development
-      - PGDATABASETEST=markus-csc108-test
+      - PGDATABASE=markus_development
+      - PGDATABASETEST=markus_test
       - MARKUS__REPOSITORY__SSH_URL=ssh://git@localhost:2222/~/csc108
     ports:
       - '3000:3000'
@@ -73,20 +73,20 @@ services:
     depends_on:
       - postgres
       - redis
-      - resque_108
+      - resque
       - webpacker
       - ssh
 
-  resque_108:
-    <<: *rails_108
+  resque:
+    <<: *rails
     entrypoint: .dockerfiles/entrypoint-dev-wait-for-install.sh
-    command: rails resque:work QUEUE=* TERM_CHILD=1
+    command: bundle exec rails resque:work QUEUE=* TERM_CHILD=1
     depends_on:
       - redis
     ports: []
 
-  test_108:
-    <<: *rails_108
+  test:
+    <<: *rails
     command: /bin/bash
     environment:
       - NODE_ENV=test
@@ -101,6 +101,8 @@ services:
     environment:
       - POSTGRES_PASSWORD=docker
       - POSTGRES_INITDB_ARGS="-A md5"
+    ports:
+      - '35432:5432'
 
   redis:
     image: redis:3.2-alpine
@@ -125,6 +127,8 @@ services:
       - NODE_ENV=${NODE_ENV:-development}
       - RAILS_ENV=${RAILS_ENV:-development}
       - WEBPACKER_DEV_SERVER_HOST=0.0.0.0
+      - PGDATABASE=markus_development
+      - PGDATABASETEST=markus_test
 
 volumes:
   app_data:
