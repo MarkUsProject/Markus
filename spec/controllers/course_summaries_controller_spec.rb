@@ -74,7 +74,7 @@ describe CourseSummariesController do
         end
 
         it 'displays column headers correctly' do
-          expect(@response_data[:assessments][0][:name]).to eq('A1 (/3)')
+          expect(@response_data[:assessments][0][:name]).to eq('A1 (/3.0)')
         end
 
         it 'returns the correct grades' do
