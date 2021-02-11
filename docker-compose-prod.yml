@@ -137,12 +137,16 @@ services:
     volumes:
       - assets_108:/assets/csc108
       - assets_209:/assets/csc209
+      - repos_108:/repos/csc108
+      - repos_209:/repos/csc209
     depends_on:
       - rails_108
       - rails_209
     secrets:
       - source: markus.conf
         target: /usr/local/apache2/sites-enabled/markus.conf
+      - source: validategit
+        target: /auth/validategit
 
 volumes:
   app_data_108:

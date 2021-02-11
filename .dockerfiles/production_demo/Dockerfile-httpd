@@ -6,10 +6,8 @@ RUN apt-get update && \
 RUN sed -i \
         -e 's/^#\(LoadModule .*proxy.so\)/\1/' \
         -e 's/^#\(LoadModule .*proxy_http.so\)/\1/' \
-        -e 's/^#\(LoadModule .*authnz_external.so\)/\1/' \
         conf/httpd.conf
 
 RUN mkdir -p sites-enabled && \
     mkdir -p /assets && \
-#    echo "LoadModule authnz_external_module modules/mod_authnz_external.so" >> conf/httpd.conf && \
     echo "IncludeOptional sites-enabled/*.conf" >> conf/httpd.conf
