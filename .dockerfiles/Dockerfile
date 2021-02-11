@@ -104,7 +104,6 @@ RUN gem$RUBY_VERSION install bundler -v $BUNDLER_VERSION
 
 # Create key for ssh-ing to the autotester
 RUN ssh-keygen -q -N "" -f /home/$USER/.ssh/id_rsa && \
-    mkdir -p /ssh_pub_key && \
     cp /home/$USER/.ssh/id_rsa.pub /ssh_pub_key/authorized_keys
 
 FROM base AS prod
