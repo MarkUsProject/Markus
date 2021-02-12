@@ -19,14 +19,18 @@ RUN mkdir -p -m0755 /var/run/sshd
 # Set up git user
 RUN useradd -m -s /bin/bash $SSH_USER
 
-COPY ./entrypoint-ssh.sh entrypoint-ssh.sh
-
+COPY ./authorized_key_command.sh /authorized_key_command.sh
 COPY ./markus-git-shell.sh /usr/local/bin/markus-git-shell.sh
+
 RUN chown "$SSH_USER:$SSH_USER" /usr/local/bin/markus-git-shell.sh && \
     chmod 700 /usr/local/bin/markus-git-shell.sh && \
-    echo "${SSH_USER} ALL=(root) NOPASSWD:/usr/bin/git-shell" | sudo EDITOR="tee -a" visudo
+    chmod u=rw,go=rx /authorized_key_command.sh
 
-# Disable root login
-RUN sed -i "s@#*PermitRootLogin.*@PermitRootLogin no@g" /etc/ssh/sshd_config
+RUN printf "Match User ${SSH_USER}\n\
+ PermitRootLogin no\n\
+ AuthorizedKeysFile none\n\
+ AuthorizedKeysCommand /authorized_key_command.sh %%h\n\
+ AuthorizedKeysCommandUser ${SSH_USER}\n"\
+>> /etc/ssh/sshd_config
 
 EXPOSE 22

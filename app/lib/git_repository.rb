@@ -10,12 +10,7 @@ class GitRepository < Repository::AbstractRepository
   # repository, using Ruby bindings; Note: A repository has to be
   # created using GitRepository.create(), if it is not yet existent
   def initialize(connect_string)
-
-    # Check if configuration is in order
-    begin
-      super(connect_string) # dummy call to super
-    rescue NotImplementedError; end
-    @repos_path = connect_string
+    @connect_string = connect_string
     @closed = false
     @repos = Rugged::Repository.new(bare_path)
   end
@@ -63,25 +58,27 @@ class GitRepository < Repository::AbstractRepository
       bare_config = Rugged::Config.new(File.join(barepath, 'config'))
       bare_config['core.logAllRefUpdates'] = true # enable reflog to keep track of push dates
       bare_config['gc.reflogExpire'] = 'never' # never garbage collect the reflog
-      repo = Rugged::Repository.clone_at(barepath, connect_string)
+      tmp_repo_path = tmp_repo(connect_string)
+      FileUtils.rm_rf(tmp_repo_path)
+      repo = Rugged::Repository.clone_at(barepath, tmp_repo_path)
 
       # Do an initial commit with the .required_files.json
       required = Assignment.get_required_files
-      required_path = File.join(connect_string, '.required.json')
+      required_path = File.join(tmp_repo_path, '.required.json')
       File.open(required_path, 'w') do |req|
         req.write(required.to_json)
       end
       repo.index.add('.required.json')
 
       # Add client-side hooks
-      dest = File.join(connect_string, 'markus-hooks')
+      dest = File.join(tmp_repo_path, 'markus-hooks')
       FileUtils.copy_entry client_hooks, dest
       too_large_hook = File.join(dest, 'pre-commit.d', '04-file_size_too_large.py')
       content = File.open(too_large_hook) do |f|
         f.read.gsub(/MAX_FILE_SIZE\s*=\s*[\d_]*/, "MAX_FILE_SIZE=#{Settings.max_file_size}")
       end
       File.open(too_large_hook, 'w') { |f| f.write(content) }
-      FileUtils.chmod 0755, File.join(connect_string, 'markus-hooks', 'pre-commit')
+      FileUtils.chmod 0755, File.join(tmp_repo_path, 'markus-hooks', 'pre-commit')
       repo.index.add_all('markus-hooks')
 
       # Set up server-side hooks
@@ -234,7 +231,7 @@ class GitRepository < Repository::AbstractRepository
               'Exported repository already exists')
       end
 
-      repo = Rugged::Repository.clone_at(@repos_path, repo_dest_dir)
+      Rugged::Repository.clone_at(@connect_string, repo_dest_dir)
     else
       # Case 2: clone a file to a folder
       # Raise an error if the destination file already exists
@@ -292,7 +289,7 @@ class GitRepository < Repository::AbstractRepository
 
   # Gets the repository name
   def get_repo_name
-    @repos_path.rpartition(File::SEPARATOR)[2]
+    @connect_string.rpartition(File::SEPARATOR)[2]
   end
 
   # Given a RevisionFile object, returns its content as a string.
@@ -335,7 +332,7 @@ class GitRepository < Repository::AbstractRepository
   # 'transaction'. In case of certain conflicts corresponding
   # Repositor::Conflict(s) are added to the transaction object
   def commit(transaction)
-    self.class.redis_exclusive_lock(@repos_path, namespace: :repo_lock) do
+    self.class.redis_exclusive_lock(@connect_string, namespace: :repo_lock) do
       transaction.jobs.each do |job|
         case job[:action]
         when :add_path
@@ -389,7 +386,15 @@ class GitRepository < Repository::AbstractRepository
 
   def self.bare_path(connect_string)
     repo_path, _sep, repo_name = connect_string.rpartition(File::SEPARATOR)
-    File.join(repo_path, 'bare', "#{repo_name}.git")
+    File.join(repo_path, "#{repo_name}.git")
+  end
+
+  def tmp_repo
+    @tmp_repo ||= GitRepository.tmp_repo(@connect_string)
+  end
+
+  def self.tmp_repo(connect_string)
+    File.join(::Rails.root.to_s, 'tmp', "git_repo_#{connect_string.gsub(File::Separator, '_')}")
   end
 
   ####################################################################
@@ -410,7 +415,8 @@ class GitRepository < Repository::AbstractRepository
 
     # Create auth csv file
     sorted_permissions = permissions.sort.to_h
-    CSV.open(Settings.repository.permission_file, 'wb') do |csv|
+    FileUtils.mkdir_p(File.dirname(Repository::PERMISSION_FILE))
+    CSV.open(Repository::PERMISSION_FILE, 'wb') do |csv|
       csv.flock(File::LOCK_EX)
       csv << ['*'] + full_access_users
       sorted_permissions.each do |repo_name, users|
@@ -426,9 +432,10 @@ class GitRepository < Repository::AbstractRepository
 
   def non_bare_repo
     return @non_bare_repo unless @non_bare_repo.nil?
-    if GitRepository.repository_exists?(@repos_path)
+
+    if GitRepository.repository_exists?(tmp_repo)
       begin
-        @non_bare_repo = Rugged::Repository.new(@repos_path)
+        @non_bare_repo = Rugged::Repository.new(tmp_repo)
         # make sure working directory is up-to-date
         @non_bare_repo.fetch('origin')
         begin
@@ -439,37 +446,37 @@ class GitRepository < Repository::AbstractRepository
         @non_bare_repo.reset('origin/master', :hard) # align to whatever is in origin/master
       rescue Rugged::Error, Rugged::OSError => e
         m_logger = MarkusLogger.instance
-        m_logger.log "Error accessing repository #{@repos_path}: #{e.message}"
-        @non_bare_repo = reclone_repo
+        m_logger.log "Error accessing repository #{tmp_repo}: #{e.message}"
+        @non_bare_repo = reclone_repo(tmp_repo)
       end
     else
       m_logger = MarkusLogger.instance
-      m_logger.log "Error accessing repository #{@repos_path}: repository missing"
-      @non_bare_repo = reclone_repo
+      m_logger.log "Error accessing repository #{tmp_repo}: repository missing"
+      @non_bare_repo = reclone_repo(tmp_repo)
     end
     @non_bare_repo
   end
 
-  def reclone_repo
+  def reclone_repo(tmp_repo)
     raise 'Repository does not exist' unless Dir.exist?(bare_path)
-    if Dir.exist?(@repos_path)
-      bad_repo_path = "#{@repos_path}.bad"
+    if Dir.exist?(tmp_repo)
+      bad_repo_path = "#{tmp_repo}.bad"
       FileUtils.rm_rf(bad_repo_path)
-      FileUtils.mv(@repos_path, bad_repo_path)
+      FileUtils.mv(tmp_repo, bad_repo_path)
     end
-    repo = Rugged::Repository.clone_at(bare_path, @repos_path)
+    repo = Rugged::Repository.clone_at(bare_path, tmp_repo)
     m_logger = MarkusLogger.instance
-    m_logger.log "Recloned corrupted or missing git repo: #{@repos_path}"
+    m_logger.log "Recloned corrupted or missing git repo: #{tmp_repo}"
     repo
   rescue StandardError
-    msg = "Failed to clone corrupted or missing git repo: #{@repos_path}"
+    msg = "Failed to clone corrupted or missing git repo: #{tmp_repo}"
     m_logger = MarkusLogger.instance
     m_logger.log msg
     raise
   end
 
   def bare_path
-    @bare_path ||= GitRepository.bare_path(@repos_path)
+    @bare_path ||= GitRepository.bare_path(@connect_string)
   end
 
   # Creates a file into the repository.
@@ -501,9 +508,9 @@ class GitRepository < Repository::AbstractRepository
     unless get_latest_revision.path_exists?(path)
       raise Repository::FileDoesNotExistConflict, path
     end
-    absolute_path = Pathname.new(File.join(@repos_path, path))
+    absolute_path = Pathname.new(File.join(tmp_repo, path))
     relative_path = Pathname.new(path)
-    File.unlink(File.join(@repos_path, path))
+    File.unlink(File.join(tmp_repo, path))
     non_bare_repo.index.remove(path)
     return unless keep_folder
     return if File.exist?(File.join(absolute_path.dirname, DUMMY_FILE_NAME))
@@ -515,7 +522,7 @@ class GitRepository < Repository::AbstractRepository
     unless get_latest_revision.path_exists?(path)
       raise Repository::FolderDoesNotExistConflict, path
     end
-    absolute_path = Pathname.new(File.join(@repos_path, path))
+    absolute_path = Pathname.new(File.join(tmp_repo, path))
     relative_path = Pathname.new(path)
     unless Dir.empty?(absolute_path)
       raise Repository::FolderIsNotEmptyConflict, path
@@ -542,14 +549,14 @@ class GitRepository < Repository::AbstractRepository
   def write_file(path, file_data)
     # Get directory path of file (one level higher)
     dir = File.dirname(path)
-    abs_path = File.join(@repos_path, dir)
+    abs_path = File.join(tmp_repo, dir)
     # Create the folder (if not present), creating parents folders if necessary.
     # This will not overwrite the folder if it's already present.
     FileUtils.mkdir_p(abs_path)
     # Create a file and commit it. This will overwrite the
     # file on disk if it already exists, but will only make a
     # new commit if the file contents have changed.
-    abs_path = File.join(@repos_path, path)
+    abs_path = File.join(tmp_repo, path)
     File.open(abs_path, 'w') do |file|
       file.write file_data.force_encoding('UTF-8')
     end

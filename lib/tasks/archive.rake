@@ -16,10 +16,7 @@ namespace :markus do
   def copy_archive_files(archive_dir, rev: false)
     # copy repo permission file
     permission_file = archive_dir + 'permission_file'
-    archive_copy(Settings.repository.permission_file, permission_file.to_s, rev: rev)
-    # copy key storage files
-    key_storage_dir = archive_dir + 'key_storage'
-    archive_copy(Settings.key_storage, key_storage_dir, rev: rev)
+    archive_copy(Repository::PERMISSION_FILE, permission_file.to_s, rev: rev)
     # copy log files
     log_dir = File.dirname(File.join(::Rails.root, Settings.logging.log_file))
     log_files_dir = archive_dir + 'log_files'
