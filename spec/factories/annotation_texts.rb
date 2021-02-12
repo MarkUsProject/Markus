@@ -5,6 +5,7 @@ FactoryBot.define do
     updated_at { Time.current }
     creator { FactoryBot.create(:admin) }
     association :annotation_category, factory: :annotation_category
+    association :last_editor, factory: :admin
   end
 
   factory :annotation_text_with_deduction, parent: :annotation_text do
