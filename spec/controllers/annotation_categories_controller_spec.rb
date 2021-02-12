@@ -564,7 +564,7 @@ describe AnnotationCategoriesController do
       let(:csv_options) do
         { filename: "#{assignment.short_identifier}_one_time_annotations.csv",
           disposition: 'attachment',
-          type: 'text/csv'}
+          type: 'text/csv' }
       end
       it 'expects a call to send_data' do
         expect(@controller).to receive(:send_data).with(csv_data, csv_options) {
