@@ -559,7 +559,7 @@ describe AnnotationCategoriesController do
         "#{assignment.groupings.first.group.group_name}," \
         "#{text_annotation.annotation_text.last_editor.user_name}," \
         "#{text_annotation.annotation_text.creator.user_name}," \
-        "#{text_annotation.annotation_text.content }\n"
+        "#{text_annotation.annotation_text.content}\n"
       end
       let(:csv_options) do
         { filename: "#{assignment.short_identifier}_one_time_annotations.csv",
