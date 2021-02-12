@@ -11,6 +11,7 @@
 - Add button to assignment's annotations tab to allow instructor to download one time annotations (#5088)
 - Removed AssignmentStats table (#5089)
 - Display assignment totals on the grade summary table rounded up to 2 decimal places (#5123)
+-Added a delete button to notes under an assignment submission (#5128)
 
 ## [v1.11.3]
 - Fix easyModal overlay bug (#5117)
