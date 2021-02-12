@@ -75,11 +75,10 @@ RUN useradd -m -s /bin/bash $USER
 # pre-create mount-points for volumes and set ownership of these mountpoints
 RUN mkdir -p /bundle \
              /ssh_pub_key \
-             /app/data/dev/repos/bare \
+             /app/data/dev/repos \
              /app/tmp /app/node_modules \
              /app/public/packs \
              /app/public/packs-test \
-             /app/data/dev/keys \
              /app/log && \
              chown -R $USER /bundle /ssh_pub_key /app
 

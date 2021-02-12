@@ -26,9 +26,6 @@ remote_user_auth: false
 
 repository:
   storage: <%= "#{::Rails.root.to_s}/data/prod" %>/repos
-  permission_file: <%= "#{::Rails.root.to_s}/data/prod" %>/.access
-
-key_storage: <%= "#{::Rails.root.to_s}/data/prod" %>/keys
 
 logging:
   log_file: log/info_development.log

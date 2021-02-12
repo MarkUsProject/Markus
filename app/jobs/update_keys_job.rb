@@ -5,8 +5,8 @@ class UpdateKeysJob < ApplicationJob
   def self.show_status(_status); end
 
   def perform
-    FileUtils.mkdir_p(Settings.key_storage)
-    auth_keys_file = File.join(Settings.key_storage, KeyPair::AUTHORIZED_KEYS_FILE)
+    FileUtils.mkdir_p(Settings.repository.storage)
+    auth_keys_file = File.join(Settings.repository.storage, KeyPair::AUTHORIZED_KEYS_FILE)
     FileUtils.touch(auth_keys_file) unless File.exist? auth_keys_file
     File.open(auth_keys_file, 'r+') do |f|
       f.flock(File::LOCK_EX)
