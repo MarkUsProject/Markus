@@ -551,22 +551,34 @@ describe AnnotationCategoriesController do
     context 'CSV_One_Time_Downloads' do
       let(:assignment) { create(:assignment_with_criteria_and_results) }
       let(:assignment_result) { assignment.groupings.first.current_result }
-      let(:text) { create(:annotation_text, annotation_category: nil) }
-      let(:text_annotation) do
-        create(:text_annotation, annotation_text: text, result: assignment_result)
-      end
-      let(:csv_data) do
-        "#{assignment.groupings.first.group.group_name}," \
-        "#{text_annotation.annotation_text.last_editor.user_name}," \
-        "#{text_annotation.annotation_text.creator.user_name}," \
-        "#{text_annotation.annotation_text.content}\n"
-      end
+      let(:last_editor) { create(:admin) }
+      let(:text) { create(:annotation_text, annotation_category: nil, last_editor: last_editor) }
+      let(:different_text) { create(:annotation_text, annotation_category: nil) }
+
       let(:csv_options) do
         { filename: "#{assignment.short_identifier}_one_time_annotations.csv",
           disposition: 'attachment',
           type: 'text/csv' }
       end
-      it 'expects a call to send_data' do
+      it 'expects a call to send_data with editor' do
+        text_annotation = create(:text_annotation, annotation_text: text, result: assignment_result)
+        csv_data = "#{assignment.groupings.first.group.group_name}," \
+                    "#{text_annotation.annotation_text.last_editor.user_name}," \
+                    "#{text_annotation.annotation_text.creator.user_name}," \
+                     "#{text_annotation.annotation_text.content}\n"
+
+        expect(@controller).to receive(:send_data).with(csv_data, csv_options) {
+          # to prevent a 'missing template' error
+          @controller.head :ok
+        }
+        get_as user, :uncategorized_annotations, params: { assignment_id: assignment.id }, format: 'csv'
+      end
+      it 'expects a call to send_data without editor' do
+        text_annotation = create(:text_annotation, annotation_text: different_text, result: assignment_result)
+        csv_data = "#{assignment.groupings.first.group.group_name}," \
+                    "," \
+                    "#{text_annotation.annotation_text.creator.user_name}," \
+                     "#{text_annotation.annotation_text.content}\n"
         expect(@controller).to receive(:send_data).with(csv_data, csv_options) {
           # to prevent a 'missing template' error
           @controller.head :ok
