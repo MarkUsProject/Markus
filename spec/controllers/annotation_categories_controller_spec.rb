@@ -576,7 +576,7 @@ describe AnnotationCategoriesController do
       it 'expects a call to send_data without editor' do
         text_annotation = create(:text_annotation, annotation_text: different_text, result: assignment_result)
         csv_data = "#{assignment.groupings.first.group.group_name}," \
-                    "," \
+                    ',' \
                     "#{text_annotation.annotation_text.creator.user_name}," \
                      "#{text_annotation.annotation_text.content}\n"
         expect(@controller).to receive(:send_data).with(csv_data, csv_options) {
