@@ -13,13 +13,15 @@
           <p><small><%=note.format_date%></small></p>
           <p><%= note.notes_message %></p>
           <% if note.user_can_modify?(@current_user) %>
-            <%= form_tag note_path(id: note.id),
-                         { method: 'delete', remote: true } do |f| %>
-              <%= submit_tag t(:delete),
-                             :onclick => 'modalNotesGroup.close();document.location.reload();',
-                             class: 'delete'
-              %>
-            <% end %>
+            <%= button_to t('delete'),
+                          { action: 'destroy',
+                            id: note.id },
+                          html: { class: 'delete',
+                                  title: t('notes.delete.link_title') },
+                          data: { confirm: t('notes.delete.link_confirm') },
+                          method: 'delete',
+                          remote: true,
+                          class: 'inline-button delete' %>
           <% else %>
 
           <% end %>
@@ -50,3 +52,17 @@
     <% end %>
   </div>
 </div>
+<script>
+  if ($('.inline-button.delete').length) {
+    $('.inline-button.delete').parent().on('ajax:success', function(){
+      modalNotesGroup.close()
+      if (window.resultComponent !== undefined) {
+        window.resultComponent.fetchData();
+      }
+    }).on('ajax:error',function(){
+      modalNotesGroup.close()
+    });
+  }
+</script>
+
+
