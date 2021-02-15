@@ -12,7 +12,8 @@ export class AnnotationManager extends React.Component {
   render() {
     return [
       <button key='new_annotation_button'
-              onClick={this.props.newAnnotation}>
+              onClick={this.props.newAnnotation}
+              title='Shift + N'>
         {I18n.t('helpers.submit.create', {model: I18n.t('activerecord.models.annotation.one')})}
       </button>,
       <ul className='tags' key='annotation_categories'>

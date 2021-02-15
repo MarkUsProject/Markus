@@ -57,6 +57,7 @@ export class SubmissionSelector extends React.Component {
         <button className="fullscreen-exit"
                 onClick={this.props.toggleFullscreen}
                 style={{alignSelf: 'flex-end'}}
+                title="Alt + Enter"
         >
           {I18n.t('results.fullscreen_exit')}
         </button>
@@ -66,6 +67,7 @@ export class SubmissionSelector extends React.Component {
         <button className="fullscreen-enter"
                 onClick={this.props.toggleFullscreen}
                 style={{alignSelf: 'flex-end'}}
+                title="Alt + Enter"
         >
           {I18n.t('results.fullscreen_enter')}
         </button>
@@ -104,7 +106,8 @@ export class SubmissionSelector extends React.Component {
         <div className='submission-selector'>
           <button
             className='button previous'
-            onClick={this.props.previousSubmission}>
+            onClick={this.props.previousSubmission}
+            title='Shift + Left'>
             {I18n.t('results.previous_submission')}
           </button>
           <h2 className='group-name' title={this.props.group_name}>
@@ -112,7 +115,8 @@ export class SubmissionSelector extends React.Component {
           </h2>
           <button
             className='button next'
-            onClick={this.props.nextSubmission}>
+            onClick={this.props.nextSubmission}
+            title='Shift + Right'>
             {I18n.t('results.next_submission')}
           </button>
           <div className='progress'>
