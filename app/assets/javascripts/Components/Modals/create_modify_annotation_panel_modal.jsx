@@ -302,6 +302,7 @@ class CreateModifyAnnotationPanel extends React.Component {
                   <input
                     id="annotation-submit-btn"
                     type="submit"
+                    title="Ctrl/⌘ + Enter"
                     value={I18n.t("save")}
                   />
                 </section>
