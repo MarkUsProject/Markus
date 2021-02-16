@@ -52,17 +52,6 @@
     <% end %>
   </div>
 </div>
-<script>
-  if ($('.inline-button.delete').length) {
-    $('.inline-button.delete').parent().on('ajax:success', function(){
-      modalNotesGroup.close()
-      if (window.resultComponent !== undefined) {
-        window.resultComponent.fetchData();
-      }
-    }).on('ajax:error',function(){
-      modalNotesGroup.close()
-    });
-  }
-</script>
+
 
 

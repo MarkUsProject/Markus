@@ -3,4 +3,14 @@ $('#notes_dialog').html('<%= escape_javascript(
 
 modalNotesGroup.open();
 $('#new_notes').select();
+if ($('.inline-button.delete').length) {
+  $('.inline-button.delete').parent().on('ajax:success', function(){
+    modalNotesGroup.close()
+    if (window.resultComponent !== undefined) {
+      window.resultComponent.fetchData();
+    }
+  }).on('ajax:error',function(){
+    modalNotesGroup.close()
+  });
+}
 
