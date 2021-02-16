@@ -12,7 +12,7 @@
           <p><strong><%= note.user.user_name %>: </strong></p>
           <p><small><%=note.format_date%></small></p>
           <p><%= note.notes_message %></p>
-          <% if note.user_can_modify?(@current_user) %>
+          <% if allowed_to?(:manage?, with: NotePolicy) %>
             <%= button_to t('delete'),
                           { action: 'destroy',
                             id: note.id },
@@ -22,8 +22,6 @@
                           method: 'delete',
                           remote: true,
                           class: 'inline-button delete' %>
-          <% else %>
-
           <% end %>
         </div>
       <% end %>

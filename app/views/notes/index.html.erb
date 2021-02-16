@@ -44,7 +44,7 @@
           </td>
           <td><%= note.notes_message %></td>
           <td>
-            <% if note.user_can_modify?(@current_user) %>
+            <% if allowed_to?(:manage?, with: NotePolicy) %>
               <%= button_to t('edit'),
                             edit_note_path(note.id),
                             method: 'get',
@@ -59,8 +59,6 @@
                             method: 'delete',
                             remote: true,
                             class: 'inline-button' %>
-            <% else %>
-              &nbsp;
             <% end %>
           </td>
         </tr>
