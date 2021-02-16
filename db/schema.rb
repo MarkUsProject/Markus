@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_01_27_202444) do
+ActiveRecord::Schema.define(version: 2021_02_16_160312) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -107,8 +107,6 @@ ActiveRecord::Schema.define(version: 2021_01_27_202444) do
     t.datetime "remark_due_date"
     t.text "remark_message"
     t.float "results_median"
-    t.integer "results_fails"
-    t.integer "results_zeros"
     t.boolean "unlimited_tokens", default: false, null: false
     t.boolean "only_required_files", default: false, null: false
     t.boolean "vcs_submit", default: false, null: false

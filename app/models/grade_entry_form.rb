@@ -118,12 +118,12 @@ class GradeEntryForm < Assessment
     percentage_grades.blank? ? 0 : percentage_grades.size
   end
 
-  def calculate_failed
+  def results_fails
     percentage_grades = percentage_grades_array
     percentage_grades.blank? ? 0 : percentage_grades.count { |mark| mark < 50 }
   end
 
-  def calculate_zeros
+  def results_zeros
     percentage_grades = percentage_grades_array
     percentage_grades.blank? ? 0 : percentage_grades.count(&:zero?)
   end
