@@ -239,7 +239,7 @@ class GroupsController < ApplicationController
       end
       if result[:invalid_lines].empty?
         if validate_csv_upload_file(assignment, group_rows)
-          @current_job = CreateGroupsJob.perform_now assignment, group_rows
+          @current_job = CreateGroupsJob.perform_later assignment, group_rows
           session[:job_id] = @current_job.job_id
         end
       else
@@ -254,7 +254,7 @@ class GroupsController < ApplicationController
     if @assignment.group_max == 1
       # data is a list of lists containing: [[group_name, group_member], ...]
       data = Student.where(hidden: false).pluck(:user_name).map { |user_name| [user_name, user_name] }
-      @current_job = CreateGroupsJob.perform_now @assignment, data
+      @current_job = CreateGroupsJob.perform_later @assignment, data
       session[:job_id] = @current_job.job_id
     end
 
