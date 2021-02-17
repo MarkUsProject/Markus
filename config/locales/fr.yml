@@ -25,7 +25,7 @@ fr:
     autotest_specs_job: Configuration de tests automatisés
     completed: Terminé
     create_groups_job: "%{progress}/%{total} groupes créés"
-    create_groups_job_extra_info: 'Échoué pour: groupe: %{group_name}, repo: %{repo_name}, membres: %{members}'
+    create_groups_job_extra_info: 'Échoué pour: groupe: %{group_name}, membres: %{members}'
     download_submissions_complete: Les soumissions sont prêtes. Cliquez ici pour finaliser le téléchargement.
     download_submissions_finalizing: Finaliser les soumissions à télécharger
     download_submissions_job: "%{progress}/%{total} Soumissions préparées pour téléchargement"

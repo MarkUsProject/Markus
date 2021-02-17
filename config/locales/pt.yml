@@ -22,7 +22,7 @@ pt:
     autotest_specs_job: UPDATE ME
     completed: Completado
     create_groups_job: "%{progress}/%{total} grupos criados"
-    create_groups_job_extra_info: 'Falhou: %{group_name}, %{repo_name}, %{members}'
+    create_groups_job_extra_info: 'Falhou: %{group_name}, %{members}'
     download_submissions_complete: UPDATE ME
     download_submissions_finalizing: UPDATE ME
     download_submissions_job: "%{progress}/%{total} UPDATE ME"

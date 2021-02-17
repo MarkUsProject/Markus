@@ -25,7 +25,7 @@ en:
     autotest_specs_job: Setting up automated tests.
     completed: Completed
     create_groups_job: "%{progress}/%{total} groups created"
-    create_groups_job_extra_info: 'failed for group: %{group_name}, repo: %{repo_name}, members: %{members}'
+    create_groups_job_extra_info: 'failed for group: %{group_name}, members: %{members}'
     download_submissions_complete: Submissions are ready for download. Click here to complete the download.
     download_submissions_finalizing: Finalizing submissions for download
     download_submissions_job: "%{progress}/%{total} Submissions prepared for download"

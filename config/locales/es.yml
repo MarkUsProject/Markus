@@ -25,7 +25,7 @@ es:
     autotest_specs_job: UPDATE ME
     completed: Terminado
     create_groups_job: "%{progress}/%{total} grupos creados"
-    create_groups_job_extra_info: 'Ha fallado: %{group_name}, %{repo_name}, %{members}'
+    create_groups_job_extra_info: 'Ha fallado: %{group_name}, %{members}'
     download_submissions_complete: UPDATE ME
     download_submissions_finalizing: UPDATE ME
     download_submissions_job: "%{progress}/%{total} UPDATE ME"
