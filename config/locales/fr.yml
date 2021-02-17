@@ -3,13 +3,9 @@ fr:
   csv:
     bad_cell: 'UPDATE ME: %{bad_cells}'
     bad_membership_warning: 'UPDATE ME: %{group_names}'
-    bad_repo_warning: 'UPDATE ME: %{group_names}'
     bad_students: 'UPDATE ME: %{student_names}'
     duplicate_group_name: 'UPDATE ME: %{group_names}'
     duplicate_membership_name: 'UPDATE ME: %{member_names}'
-    duplicate_repo_name: 'UPDATE ME: %{repo_names}'
-    group_with_different_membership_current_assignment: 'UPDATE ME: %{group_name}'
-    group_with_different_membership_different_assignment: 'UPDATE ME: %{group_name}'
     member_does_not_exist: 'UPDATE ME: %{group_name} ''%{student_user_name}'''
     memberships_exist: 'UPDATE ME: %{student_names}'
     memberships_not_unique: 'UPDATE ME:'
@@ -25,7 +21,6 @@ fr:
     autotest_specs_job: Configuration de tests automatisés
     completed: Terminé
     create_groups_job: "%{progress}/%{total} groupes créés"
-    create_groups_job_extra_info: 'Échoué pour: groupe: %{group_name}, membres: %{members}'
     download_submissions_complete: Les soumissions sont prêtes. Cliquez ici pour finaliser le téléchargement.
     download_submissions_finalizing: Finaliser les soumissions à télécharger
     download_submissions_job: "%{progress}/%{total} Soumissions préparées pour téléchargement"

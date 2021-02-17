@@ -28,73 +28,54 @@ describe GroupsHelper do
 
     context 'with simple valid data' do
       before :each do
-        @data = [['group1', 'group1', students.first.user_name]]
+        @data = [['group1', students.first.user_name]]
       end
       include_examples 'validate_csv', true, false
     end
 
     context 'with multiple row valid data' do
       before :each do
-        @data = [['group1', 'group1', students.first.user_name],
-                 ['group2', 'group2', students.second.user_name]]
+        @data = [['group1', students.first.user_name],
+                 ['group2', students.second.user_name]]
       end
       include_examples 'validate_csv', true, false
     end
 
     context 'with an invalid cell' do
       before :each do
-        @data = [['group1', 'group1', '']]
+        @data = [['group1', '']]
       end
       include_examples 'validate_csv', false, false
     end
 
     context 'with duplicate group names' do
       before :each do
-        @data = [['group1', 'group1', students.first.user_name],
-                 ['group1', 'group2', students.second.user_name]]
-      end
-      include_examples 'validate_csv', false, false
-    end
-
-    context 'with duplicate repo names' do
-      before :each do
-        @data = [['group1', 'group1', students.first.user_name],
-                 ['group2', 'group1', students.second.user_name]]
+        @data = [['group1', students.first.user_name],
+                 ['group1', students.second.user_name]]
       end
       include_examples 'validate_csv', false, false
     end
 
     context 'with duplicate members in the same group' do
       before :each do
-        @data = [['group1', 'group1', students.first.user_name, students.first.user_name],
-                 ['group2', 'group2', students.second.user_name]]
+        @data = [['group1', students.first.user_name, students.first.user_name],
+                 ['group2', students.second.user_name]]
       end
       include_examples 'validate_csv', false, false
     end
 
     context 'with duplicate members in different groups' do
       before :each do
-        @data = [['group1', 'group1', students.first.user_name],
-                 ['group2', 'group2', students.second.user_name, students.first.user_name]]
-      end
-      include_examples 'validate_csv', false, false
-    end
-
-    context 'with a group that already exists with a different repo name' do
-      before :each do
-        @data = [['group1', 'group1', students.first.user_name]]
-        create :group, group_name: 'group1', repo_name: 'group2'
-      end
-      after :each do
-        destroy_repos
+        @data = [['group1', students.first.user_name],
+                 ['group2', students.second.user_name, students.first.user_name]]
       end
       include_examples 'validate_csv', false, false
     end
 
     context 'with a member that is already in a grouping for that assignment' do
       before :each do
-        @data = [['group1', 'group1', students.first.user_name]]
-        group = create :group, group_name: 'group2', repo_name: 'group2'
+        @data = [['group1', students.first.user_name]]
+        group = create :group, group_name: 'group2'
         create :grouping_with_inviter, group: group, inviter: students.first, assignment: assignment
       end
       after :each do
@@ -105,8 +86,8 @@ describe GroupsHelper do
 
     context 'with a group that already exists with different memberships' do
       before :each do
-        @data = [['group1', 'group1', students.first.user_name, students.second.user_name]]
-        group = create :group, group_name: 'group1', repo_name: 'group1'
+        @data = [['group1', students.first.user_name, students.second.user_name]]
+        group = create :group, group_name: 'group1'
         other_assignment = create :assignment
         create :grouping_with_inviter, group: group, inviter: students.first, assignment: other_assignment
       end
@@ -118,8 +99,8 @@ describe GroupsHelper do
 
     context 'with a group that already exists with the same memberships' do
       before :each do
-        @data = [['group1', 'group1', students.first.user_name]]
-        group = create :group, group_name: 'group1', repo_name: 'group1'
+        @data = [['group1', students.first.user_name]]
+        group = create :group, group_name: 'group1'
         other_assignment = create :assignment
         create :grouping_with_inviter, group: group, inviter: students.first, assignment: other_assignment
       end
@@ -131,7 +112,7 @@ describe GroupsHelper do
 
     context 'with a member that does not exist' do
       before :each do
-        @data = [%w[group1 group1 ghost_student]]
+        @data = [%w[group1 ghost_student]]
       end
       include_examples 'validate_csv', false, false
     end
