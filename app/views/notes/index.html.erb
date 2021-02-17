@@ -44,7 +44,7 @@
           </td>
           <td><%= note.notes_message %></td>
           <td>
-            <% if allowed_to?(:manage?, with: NotePolicy) %>
+            <% if allowed_to?(:modify?, note) %>
               <%= button_to t('edit'),
                             edit_note_path(note.id),
                             method: 'get',
