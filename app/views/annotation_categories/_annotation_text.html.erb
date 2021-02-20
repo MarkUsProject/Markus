@@ -13,7 +13,8 @@
                     method: 'delete',
                     data: { confirm: t('annotation_categories.destroy_annotation_text.confirm') },
                     remote: true,
-                    class: 'inline-button' %>
+                    class: 'inline-button',
+                    form_class: 'display-inline-block' %>
     </div>
     <div class='annotation_text_details'>
       <%= AnnotationText.human_attribute_name(:creator) %>

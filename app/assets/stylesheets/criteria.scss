@@ -1,27 +1,2 @@
 @import 'common/core';
 @import 'common/assignment_dropdown';
-
-#criteria_pane {
-  width: 37%;
-}
-
-.button_to {
-  display: inline-block;
-}
-
-.edit-rubric-criterion {
-  display: flex;
-
-  .main_rubric_criteria_edit {
-    padding-right: 1em;
-  }
-
-  .rubric_criteria_levels {
-    border-left: 1px solid $line;
-
-    .level {
-      border-top: 1px solid $line;
-      padding: 0.5em;
-    }
-  }
-}
