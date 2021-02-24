@@ -1,14 +1,14 @@
+@import 'common/core';
+
 .ui-menu {
-  list-style: none;
-  padding: 2px;
-  margin: 0;
-  display: block;
-  outline: none;
-  font-size: 12px;
-  min-width: 200px;
-  background: white;
-  border: 1px solid #CCC;
+  background: $background-main;
+  border: 1px solid $line;
   border-radius: 5px;
+  display: block;
+  list-style: none;
+  margin: 0;
+  min-width: 200px;
+  padding: 2px;
   z-index: 100001;
 }
 .ui-menu .ui-menu {
@@ -21,26 +21,26 @@
   width: 100%;
 }
 .ui-menu .ui-menu-item div {
-  text-decoration: none;
+  cursor: pointer;
   display: block;
   padding: 5px .4em;
   line-height: 1.5;
-  min-height: 0; /* support: IE7 */
   font-weight: normal;
-  cursor: pointer;
 }
 .ui-menu .ui-menu-item div.ui-state-focus,
 .ui-menu .ui-menu-item div.ui-state-active {
-  color: white;
-  background-color: #89b1dd;
+  background-color: $primary-three;
+  color: $sharp-line;
 }
 
 .ui-menu .ui-state-disabled {
+  background-color: $disabled-area;
+  color: $sharp-line;
+  cursor: default;
   font-weight: normal;
   line-height: 1.5;
 }
 .ui-menu .ui-state-disabled div {
-  color: var(--disabled-text);
   cursor: default;
 }
 
@@ -66,18 +66,11 @@
   float: right;
 }
 
-.ui-menu .ui-widget-content {
-  border: 1px solid #aaaaaa;
-  color: #222222;
-}
-
 .ui-menu .ui-menu-divider {
+  border-top: $line solid 1px;
+  font-size: 0;
   margin: 5px -2px 5px -2px;
   height: 0;
-  font-size: 0;
-  line-height: 0;
-  border-color: lightgrey;
-  border-width: 1px 0 0 0;
 }
 
 .ui-menu kbd {
