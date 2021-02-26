@@ -12,6 +12,16 @@
           <p><strong><%= note.user.user_name %>: </strong></p>
           <p><small><%=note.format_date%></small></p>
           <p><%= note.notes_message %></p>
+          <% if allowed_to?(:modify?, note) %>
+            <%= button_to t('delete'),
+                          { action: 'destroy',
+                            id: note.id },
+                          html: { title: t('notes.delete.link_title') },
+                          data: { confirm: t('notes.delete.link_confirm') },
+                          method: 'delete',
+                          remote: true,
+                          class: 'inline-button delete' %>
+          <% end %>
         </div>
       <% end %>
     </div>
