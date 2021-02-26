@@ -42,6 +42,7 @@ class SubmissionFileUploadModal extends React.Component {
               <label htmlFor='unzip'>
                 <input
                   type={'checkbox'}
+                  id={'unzip'}
                   name={'unzip'}
                   checked={this.state.unzip}
                   onChange={this.toggleUnzip}
