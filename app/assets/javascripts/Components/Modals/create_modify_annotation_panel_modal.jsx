@@ -194,6 +194,7 @@ class CreateModifyAnnotationPanel extends React.Component {
         isOpen={this.props.show}
         onAfterOpen={this.onModalOpen}
         onRequestClose={this.props.onRequestClose}
+        parentSelector={() => document.querySelector('#content')}
       >
         <div
           id="annotation-modal"
@@ -215,6 +216,7 @@ class CreateModifyAnnotationPanel extends React.Component {
                     value={this.state.content}
                     onChange={this.handleChange}
                     rows="8"
+                    autoFocus={true}
                   />
                 </label>
 
@@ -254,10 +256,10 @@ class CreateModifyAnnotationPanel extends React.Component {
                     value={I18n.t("annotation_categories.one_time_only")}
                   />
                 ) : (
-                  <div>
-                    <h3>
+                  <div className="inline-labels">
+                    <label htmlFor="new_annotation_category">
                       {I18n.t("activerecord.models.annotation_category.one")}
-                    </h3>
+                    </label>
 
                     <select
                       id="new_annotation_category"
@@ -300,6 +302,7 @@ class CreateModifyAnnotationPanel extends React.Component {
                   <input
                     id="annotation-submit-btn"
                     type="submit"
+                    title="Ctrl/⌘ + Enter"
                     value={I18n.t("save")}
                   />
                 </section>

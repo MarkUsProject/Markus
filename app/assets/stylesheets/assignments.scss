@@ -37,42 +37,6 @@ fieldset {
   }
 }
 
-#grace_periods, #penalty_decay_periods, #penalty_periods {
-  margin-left: 2.5em;
-  width: 70%;
-  min-width: 500px;
-
-  &>a {
-    display: block;
-    width: 100%;
-    background-color: $background-support;
-    padding: 10px;
-    text-align: center;
-  }
-
-  table {
-    width: 100%;
-    margin-bottom: 10px;
-
-    td, th {
-      padding: 10px 10px;
-      text-align: left;
-    }
-
-    td:last-child, th:last-child {
-      text-align: right;
-    }
-
-    .remove_rule {
-      float: right;
-    }
-
-    thead {
-      border-bottom: 1px solid $primary-two;
-    }
-  }
-}
-
 /* Students view */
 
 .button_to {
