@@ -11,7 +11,8 @@
 - Add button to assignment's annotations tab to allow instructor to download one time annotations (#5088)
 - Removed AssignmentStats table (#5089)
 - Display assignment totals on the grade summary table rounded up to 2 decimal places (#5123)
-- Removed results_fails, results_zeros (assignment_properties), added results_average, results_median (assessments) (#5131)
+- Removed results_fails, results_zeros (assignment_properties), added results_average, results_median (assessments),
+  added a callback in GradeEntryStudent to update results_average and results_median in GradeEntryForm (#5131)
 - Added a delete button to notes dialog under an results edit view and removed user_can_modify under note model,
   removed Notes#user_can_modify and replaced instances of usage with NotePolicy (#5128)
 - Support Markdown syntax for assessment messages (#5135)
