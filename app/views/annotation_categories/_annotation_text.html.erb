@@ -2,7 +2,7 @@
   <div id='annotation_text_<%= annotation_text[:id] %>_control' style="word-break: break-all">
     <%= markdown(annotation_text[:content]) %>
 
-    <div class='annotation_text_details'>
+    <div class='annotation-text-details'>
       <%= link_to t(:edit),
                   'javascript:void(0);',
                   onclick:"$('#annotation_text_' + #{annotation_text[:id]} + '_control').hide();
@@ -16,7 +16,7 @@
                     class: 'inline-button',
                     form_class: 'display-inline-block' %>
     </div>
-    <div class='annotation_text_details'>
+    <div class='annotation-text-details'>
       <%= AnnotationText.human_attribute_name(:creator) %>
       <% if annotation_text[:creator].nil? %>
         <%= 'N/A' %>
@@ -24,7 +24,7 @@
         <%= annotation_text[:creator] %>
       <% end %>
     </div>
-    <div class='annotation_text_details'>
+    <div class='annotation-text-details'>
       <%= t('annotations.last_edited_by') %>
       <% if annotation_text[:last_editor].nil? %>
         <%= 'N/A' %>
@@ -33,13 +33,13 @@
       <% end %>
     </div>
     <% unless annotation_text[:deduction].nil?  %>
-      <div class='annotation_text_details'>
+      <div class='annotation-text-details'>
         <%= AnnotationText.human_attribute_name(:deduction) %>
         <%= annotation_text[:deduction] %>
       </div>
     <% end %>
     <% if annotation_text[:annotation_category].nil? %>
-      <div class='annotation_text_details'>
+      <div class='annotation-text-details'>
         <%= t('activerecord.models.submission', {'count': 1}) + ': ' %>
         <%= link_to annotation_text[:group_name],
                     edit_assignment_submission_result_url(assignment_id: annotation_text[:assignment_id],

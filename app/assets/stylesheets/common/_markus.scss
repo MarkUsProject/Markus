@@ -1210,7 +1210,7 @@ nav {
   display: flex;
   gap: 1em;
 
-  .rubric_criteria_levels {
+  .rubric-criteria-levels {
     border-left: 1px solid $line;
 
     .level {
@@ -1221,7 +1221,7 @@ nav {
 }
 
 // Styling for annotation_categories/index.html
-.annotation_text_details {
+.annotation-text-details {
   display: inline-block;
   font-style: italic;
   min-width: 200px;
