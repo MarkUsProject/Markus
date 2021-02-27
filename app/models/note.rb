@@ -8,10 +8,6 @@ class Note < ApplicationRecord
 
   NOTEABLES = %w(Grouping Student Assignment)
 
-  def user_can_modify?(current_user)
-    current_user.admin? || user == current_user
-  end
-
   def format_date
     I18n.l(created_at)
   end

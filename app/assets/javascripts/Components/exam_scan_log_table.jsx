@@ -68,7 +68,7 @@ class ExamScanLogTable extends React.Component {
           Header: I18n.t('split_pdf_logs.pages_error'),
           Cell: row => {
             let errors = row.original.page_data.filter(p => p.status.startsWith('ERROR')).length;
-            return <span className={errors ? 'errors' : ''}>{errors}</span>;
+            return <span className={errors ? 'error-with-icon' : ''}>{errors}</span>;
           },
           className: 'number'
         },

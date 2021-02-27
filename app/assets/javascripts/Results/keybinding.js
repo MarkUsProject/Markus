@@ -94,6 +94,7 @@ Mousetrap.bind('enter', function(e) {
 Mousetrap.bind('shift+n', function(e) {
   if ($('#annotation_dialog:visible').length == 0) {
     resultComponent.newAnnotation();
+    return false;
   }
 });
 

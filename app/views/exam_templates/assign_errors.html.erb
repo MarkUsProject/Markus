@@ -42,23 +42,24 @@
                  remote: true do %>
       <%= hidden_field_tag :split_pdf_log_id, @split_pdf_log.id %>
       <%= hidden_field_tag :split_page_id %>
-      <%= label_tag :copy_number,
-                    t('exam_templates.assign_errors.copy_number') %>
-      <%= number_field_tag :copy_number, nil,
-                           autofocus: true %><br>
-      <%= label_tag :page_number,
-                    t('exam_templates.assign_errors.page_number') %>
-      <%= number_field_tag :page_number, nil,
-                           min: 1,
-                           max: @split_pdf_log.exam_template.num_pages %>
-      <%= label_tag :upside_down,
-                    t('exam_templates.assign_errors.upside_down') %>
-      <%= check_box_tag :upside_down, 'upside_down', false %><br>
-      <br>
-      <%= submit_tag t('save'),
-                     data: { disable_with: t('save') } %>
-      <%= submit_tag t('skip'),
-                     data: { disable_with: t('skip') }%>
+      <div class="inline-labels">
+        <%= label_tag :copy_number,
+                      t('exam_templates.assign_errors.copy_number') %>
+        <%= number_field_tag :copy_number, nil,
+                             autofocus: true %>
+        <%= label_tag :page_number,
+                      t('exam_templates.assign_errors.page_number') %>
+        <%= number_field_tag :page_number, nil,
+                             min: 1,
+                             max: @split_pdf_log.exam_template.num_pages %>
+        <%= label_tag :upside_down,
+                      t('exam_templates.assign_errors.upside_down') %>
+        <%= check_box_tag :upside_down, 'upside_down', false %>
+      </div>
+      <p>
+        <%= submit_tag t('save'), data: { disable_with: t('save') } %>
+        <%= submit_tag t('skip'), data: { disable_with: t('skip') }%>
+      </p>
     <% end %>
   </div>
 </div>

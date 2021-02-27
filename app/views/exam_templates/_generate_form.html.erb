@@ -1,14 +1,12 @@
 <%= form_for [@assignment, exam_template],
              url: generate_assignment_exam_template_path(id: exam_template.id),
              remote: true do |f| %>
-  <p>
+  <div class="inline-labels">
     <%= f.label t('exam_templates.generate.copies_label') %>
     <input type="number" name="numCopies" class="toolbarField pageNumber" value="1" size="4" min="1" tabindex="15">
-  </p>
 
-  <p>
     <%= f.label t('exam_templates.generate.index_label') %>
     <input type="number" name="examTemplateIndex" class="toolbarField pageNumber" value="1" size="4" min="1" tabindex="15">
-  </p>
+  </div>
   <p><%= submit_tag t('exam_templates.generate.generate') %></p>
 <% end %>
