@@ -177,6 +177,5 @@ describe GradeEntryStudent do
         expect(form.reload.results_median).to eq 0
       end
     end
-
   end
 end
