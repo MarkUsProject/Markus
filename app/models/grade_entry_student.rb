@@ -17,6 +17,7 @@ class GradeEntryStudent < ApplicationRecord
   validates_inclusion_of :released_to_student, in: [true, false]
 
   before_save :refresh_total_grade
+  after_save :update_results
 
   # Merges records of GradeEntryStudent that do not exist yet using a caller-
   # specified block. The block is given the passed-in student IDs and grade
@@ -203,5 +204,10 @@ class GradeEntryStudent < ApplicationRecord
     end
 
     self.total_grade = total
+  end
+
+  def update_results
+    grade_entry_form = GradeEntryForm.find(self.assessment_id)
+    grade_entry_form.update(results_median: grade_entry_form.calculate_median, results_average: grade_entry_form.calculate_average)
   end
 end

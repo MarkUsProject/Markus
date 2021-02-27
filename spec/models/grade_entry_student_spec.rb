@@ -1,4 +1,5 @@
 describe GradeEntryStudent do
+  it { is_expected.to callback(:update_results).after(:save) }
   describe 'assigning and unassigning TAs' do
     let(:form) { create(:grade_entry_form) }
     let(:students) { Array.new(2) { create(:student) } }
@@ -140,5 +141,42 @@ describe GradeEntryStudent do
         end
       end
     end
+  end
+  context 'self.update_results' do
+    let(:form) { create(:grade_entry_form) }
+    let(:grade_entry_items) { create_list(:grade_entry_item, 3, grade_entry_form: form) }
+    let!(:students) { create_list :student, 3 }
+    let(:grade_entry_student_ids) { form.grade_entry_students.map(&:id) }
+    before do
+      form.grade_entry_students.map do |ges|
+        grade_entry_items.each_with_index.map do |gei, ind|
+          create :grade, grade_entry_item: gei, grade_entry_student: ges, grade: grades[ind]
+        end
+        ges.save
+      end
+    end
+    describe 'when no grades are nil' do
+      let(:grades) { [1, 1, 1] }
+      it 'updates the total_grade' do
+        print(form.reload.attributes)
+        expect(form.reload.results_average).to eq 1
+        expect(form.reload.results_median).to eq 1
+      end
+    end
+    describe 'when median and average are different' do
+      let(:grades) { [1, 2, 3] }
+      it 'updates the total_grade' do
+        expect(form.reload.results_average).to eq 2
+        expect(form.reload.results_median).to eq 2
+      end
+    end
+    describe 'when all grades are nil' do
+      let(:grades) { [nil, nil, nil] }
+      it 'updates the total_grade' do
+        expect(form.reload.results_average).to eq 0
+        expect(form.reload.results_median).to eq 0
+      end
+    end
+
   end
 end
