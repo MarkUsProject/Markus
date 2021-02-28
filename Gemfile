@@ -106,7 +106,6 @@ group :test do
   gem 'fuubar'
   gem 'machinist', '< 3'
   gem 'shoulda'
-  gem 'shoulda-matchers', '~> 4.0'
   gem 'simplecov', require: false
   gem 'time-warp'
   gem 'shoulda-callback-matchers', '~> 1.1.1'

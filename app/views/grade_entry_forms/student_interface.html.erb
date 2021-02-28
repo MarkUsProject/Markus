@@ -2,7 +2,7 @@
 <% content_for :title, t('grade_entry_forms.students.title') + ' ' + @grade_entry_form.short_identifier %>
 
 <% unless @grade_entry_form.message.blank? %>
-  <p><%= "#{@grade_entry_form.message}" %></p>
+  <%= markdown @grade_entry_form.message %>
 <% end %>
 
 <% if @grade_entry_form.grade_entry_items.empty? %>

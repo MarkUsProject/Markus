@@ -18,7 +18,9 @@ class Assessment < ApplicationRecord
   validates_inclusion_of :is_hidden, in: [true, false]
   validates_presence_of :notes_count
   validates :short_identifier, format: { with: /\A[a-zA-Z0-9\-_]+\z/,
-                                         message: 'short_identifier must be alphanumeric, hyphen, or underscore' }
+                                         message: 'short_identifier must only contain alphanumeric, hyphen, or '\
+                                                  'underscore' }
+
   def self.type
     %w[Assignment GradeEntryForm]
   end
