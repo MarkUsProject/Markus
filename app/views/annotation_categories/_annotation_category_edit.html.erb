@@ -13,26 +13,24 @@
   <h2><%= annotation_category.annotation_category_name %></h2>
   <% released = annotation_category.marks_released? %>
 
-  <fieldset>
-    <%= form_for [annotation_category.assignment, annotation_category],
-                 remote: true do |f| %>
-      <div class='inline-labels'>
-        <%= f.label :annotation_category_name,
-                    AnnotationCategory.human_attribute_name(:annotation_category_name) %>
-        <%= f.text_field :annotation_category_name, rows: '3' %>
-        <%= f.label :flexible_criterion_id,
-                    AnnotationCategory.human_attribute_name(:flexible_criterion) %>
-        <%= f.collection_select :flexible_criterion_id,
-                                annotation_category.assignment
-                                                   .criteria
-                                                   .where(type: 'FlexibleCriterion'),
-                                :id,
-                                :name,
-                                { include_blank: t('annotation_categories.unselected_criterion') },
-                                { disabled: released } %>
-      </div>
+  <%= form_for [annotation_category.assignment, annotation_category],
+               remote: true do |f| %>
+    <div class='inline-labels'>
+      <%= f.label :annotation_category_name,
+                  AnnotationCategory.human_attribute_name(:annotation_category_name) %>
+      <%= f.text_field :annotation_category_name, rows: '3' %>
+      <%= f.label :flexible_criterion_id,
+                  AnnotationCategory.human_attribute_name(:flexible_criterion) %>
+      <%= f.collection_select :flexible_criterion_id,
+                              annotation_category.assignment
+                                                 .criteria
+                                                 .where(type: 'FlexibleCriterion'),
+                              :id,
+                              :name,
+                              { include_blank: t('annotation_categories.unselected_criterion') },
+                              { disabled: released } %>
+    </div>
 
-      <p><%= f.submit t(:save), data: { disable_with: t('working') } %></p>
-    <% end %>
-  </fieldset>
+    <p><%= f.submit t(:save), data: { disable_with: t('working') } %></p>
+  <% end %>
 </div>

@@ -19,9 +19,4 @@ module MainHelper
     end
 
   end
-
-  def due_date_color(assignment)
-    Time.current > assignment.due_date ? 'after' : 'before'
-  end
-
 end

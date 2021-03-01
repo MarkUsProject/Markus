@@ -30,33 +30,33 @@
               <% end %>
 
               <% if assignment.has_peer_review? %>
+                <p>
                 <% if assignment.pr_assignment.is_hidden %>
                   <%= link_to truncate(t('assignments.hidden',
                                          assignment_text:
                                            "#{assignment.short_identifier} #{PeerReview.model_name.human}")),
                               view_summary_assignment_path(assignment.pr_assignment.id),
                               data: { remote: true, id: assignment.pr_assignment.short_identifier },
-                              class: (assignment.pr_assignment.id == @current_assignment.id ? "pr_assignment_list inactive" :
-                                  "pr_assignment_list")  %>
+                              class: (assignment.pr_assignment.id == @current_assignment.id ? 'inactive' : '')  %>
                 <% else %>
                   <%= link_to "#{assignment.short_identifier} #{PeerReview.model_name.human}",
                               view_summary_assignment_path(assignment.pr_assignment.id),
                               data: { remote: true, id: assignment.pr_assignment.short_identifier },
-                              class: (assignment.pr_assignment.id == @current_assignment.id ? "pr_assignment_list inactive" :
-                                  "pr_assignment_list") %>
+                              class: (assignment.pr_assignment.id == @current_assignment.id ? 'inactive' : '') %>
                 <% end %>
+                </p>
               <% end %>
             </td>
 
-            <td class="due_date">
-              <div class="<%= due_date_color(assignment) %>">
+            <td>
+              <div>
                 <%= l(assignment.due_date) %>
               </div>
 
               <% if assignment.has_peer_review? %>
-                <div class="<%= due_date_color(assignment.pr_assignment) %> pr_date">
+                <p>
                   <%= l(assignment.pr_assignment.due_date) %>
-                </div>
+                </p>
               <% end %>
             </td>
           </tr>
