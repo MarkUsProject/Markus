@@ -296,6 +296,9 @@ describe AnnotationCategoriesController do
     end
 
     describe '#update_annotation_text' do
+      let(:assignment) { create(:assignment_with_criteria_and_results) }
+      let(:assignment_result) { assignment.groupings.first.current_result }
+      let(:uncategorized_text) { create(:annotation_text, annotation_category: nil) }
       it 'successfully updates an annotation text\'s (associated with an annotation category) content' do
         text = create(:annotation_text)
         category = text.annotation_category
@@ -354,6 +357,16 @@ describe AnnotationCategoriesController do
         assert_response 400
         expect(text.reload.content).to eq(prev_content)
       end
+      it 'successfully updates an annotation text\'s (not associated with an annotation category) content' do
+        create(:text_annotation, annotation_text: uncategorized_text, result: assignment_result)
+        put_as user, :update_annotation_text,
+               params: { assignment_id: assignment.id,
+                         id: uncategorized_text.id,
+                         content: 'updated_content',
+                         format: :js }
+
+        expect(uncategorized_text.reload.content).to eq 'updated_content'
+      end
     end
 
     describe '#uncategorized_annotations' do
@@ -408,6 +421,9 @@ describe AnnotationCategoriesController do
     end
 
     describe '#destroy_annotation_text' do
+      let(:assignment) { create(:assignment_with_criteria_and_results) }
+      let(:assignment_result) { assignment.groupings.first.current_result }
+      let(:uncategorized_text) { create(:annotation_text, annotation_category: nil) }
       it 'successfully destroys an annotation text associated with an annotation category' do
         text = create(:annotation_text)
         category = text.annotation_category
@@ -417,6 +433,18 @@ describe AnnotationCategoriesController do
                             format: :js }
 
         expect(category.annotation_texts.count).to eq 0
+      end
+      it 'successfully destroys an annotation text not associated with an annotation category' do
+        create(:text_annotation, annotation_text: uncategorized_text, result: assignment_result)
+        get_as user, :uncategorized_annotations, params: { assignment_id: assignment.id }
+        expect(assigns['texts'].first['id']).to eq uncategorized_text.id
+        delete_as user, :destroy_annotation_text,
+               params: { assignment_id: assignment.id,
+                         id: uncategorized_text.id,
+                         format: :js }
+
+        get_as user, :uncategorized_annotations, params: { assignment_id: assignment.id }
+        expect(assigns['texts']).to eq []
       end
     end
 
