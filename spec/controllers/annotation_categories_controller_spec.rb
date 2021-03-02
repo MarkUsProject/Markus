@@ -440,8 +440,8 @@ describe AnnotationCategoriesController do
         expect(assigns['texts'].first['id']).to eq uncategorized_text.id
         delete_as user, :destroy_annotation_text,
                   params: { assignment_id: assignment.id,
-                         id: uncategorized_text.id,
-                         format: :js }
+                            id: uncategorized_text.id,
+                            format: :js }
 
         get_as user, :uncategorized_annotations, params: { assignment_id: assignment.id }
         expect(assigns['texts']).to eq []
