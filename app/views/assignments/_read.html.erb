@@ -6,7 +6,7 @@
 
 <div class='block-content'>
   <% if @assignment.message %>
-    <p><%= @assignment.message %></p>
+    <%= markdown @assignment.message %>
   <% end %>
   <% if @assignment.is_timed %>
     <%= render partial: 'timed_due_info' %>

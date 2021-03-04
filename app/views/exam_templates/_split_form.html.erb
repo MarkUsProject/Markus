@@ -1,10 +1,9 @@
 <%= form_for [@assignment, exam_template], url: split_assignment_exam_template_path(id: exam_template.id),
              html: { multipart: true },
              authenticity_token: true do |f| %>
-
-    <p>
-      <%= f.label t('exam_templates.split.instruction') %>
-      <%= f.file_field :pdf_to_split %>
-      <p><%= submit_tag t('exam_templates.split.split') %></p>
-    </p>
+  <div class="inline-labels">
+    <%= f.label t('exam_templates.split.instruction') %>
+    <%= f.file_field :pdf_to_split %>
+  </div>
+  <p><%= submit_tag t('exam_templates.split.split') %></p>
 <% end %>

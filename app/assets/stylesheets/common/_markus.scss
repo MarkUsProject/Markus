@@ -3,7 +3,11 @@
 @import 'reset';
 @import 'constants';
 @import 'columns';
+@import 'file_viewer';
+@import 'login';
 @import 'mixins';
+@import 'modals';
+@import 'notes_dialog';
 @import 'icons';
 @import 'react_json_schema_form';
 @import 'react_tabs';
@@ -319,6 +323,21 @@ fieldset {
       }
     }
   }
+
+  fieldset.nested-fieldset {
+    border: 1px solid $primary-two;
+    border-radius: $radius;
+    padding: 1em;
+
+    legend {
+      width: auto;
+
+      span {
+        padding-top: 0;
+        position: static;
+      }
+    }
+  }
 }
 
 .inline-labels {
@@ -431,6 +450,41 @@ fieldset {
   }
 }
 
+.table-with-add {
+  margin-left: 2.5em;
+  min-width: 500px;
+  width: 70%;
+
+  > a {
+    background-color: $background-support;
+    display: block;
+    padding: 10px;
+    text-align: center;
+    width: 100%;
+  }
+
+  table {
+    width: 100%;
+
+    td,
+    th {
+      padding: 10px;
+      text-align: left;
+    }
+
+    thead {
+      border-bottom: 1px solid $primary-two;
+    }
+  }
+}
+
+.grid-2-col {
+  column-gap: 10px;
+  display: grid;
+  grid-template-columns: max-content max-content;
+  row-gap: 1em;
+}
+
 // Keyboard shortcuts
 kbd {
   background-color: $background-main;
@@ -532,6 +586,10 @@ kbd {
   display: inline;
 }
 
+.display-inline-block {
+  display: inline-block;
+}
+
 .float-right {
   float: right;
 }
@@ -614,6 +672,20 @@ kbd {
 
   a {
     outline: none;
+  }
+}
+
+// No-bullet lists
+.block-list {
+  padding-left: 0;
+
+  li {
+    list-style: none;
+    padding: 0.75em 0;
+
+    + li {
+      border-top: 1px solid $primary-two;
+    }
   }
 }
 
@@ -717,6 +789,17 @@ ul.tags {
   color: $severe-error;
 }
 
+.error-with-icon {
+  color: $severe-error;
+  font-weight: bold;
+
+  &::before {
+    content: asset-url('icons/error.png');
+    padding-right: 10px;
+    vertical-align: top;
+  }
+}
+
 
 /** Dialog modal windows */
 
@@ -759,11 +842,17 @@ ul.tags {
     margin-bottom: 0.5em;
   }
 
+  h3 {
+    margin-bottom: 0.4em;
+    margin-top: 0.4em;
+  }
+
   textarea {
     width: 100%;
   }
 
   .preview {
+    height: 10em;
     max-height: 10em;
   }
 }
@@ -1037,13 +1126,13 @@ nav {
     min-width: 100px;
     padding: 0.4em;
   }
+}
 
-  meter {
-    height: 30px;
-    margin: 0 8px;
-    vertical-align: middle;
-    width: 150px;
-  }
+.progress meter {
+  height: 30px;
+  margin: 0 8px;
+  vertical-align: middle;
+  width: 150px;
 }
 
 .group-name {
@@ -1108,5 +1197,57 @@ nav {
 .flex-col {
   display: flex;
   flex-direction: column;
+}
+
+// Jcrop styling
+.jcrop-holder,
+.jcrop-holder div {
+  margin: 0;
+}
+
+// Styling for criteria/index.html
+.edit-rubric-criterion {
+  display: flex;
+  gap: 1em;
+
+  .rubric-criteria-levels {
+    border-left: 1px solid $line;
+
+    .level {
+      border-top: 1px solid $line;
+      padding: 0.5em;
+    }
+  }
+}
+
+// Styling for annotation_categories/index.html
+.annotation-text-details {
+  display: inline-block;
+  font-style: italic;
+  min-width: 200px;
+}
+
+// Styling for grade entry form inputs
+.grade-input {
+  > input[type="number"] {
+    -moz-appearance: textfield;
+    -webkit-appearance: textfield;
+    border-width: 0;
+    height: calc(100% + 2px);
+    padding-right: 0.75em;
+    text-align: right;
+    width: 100%;
+  }
+}
+
+// Styling for peer_reviews/index.html
+.peer-review-amount-spinner {
+  background-color: $background-support;
+  border: $line 1px solid;
+  padding: 5px;
+
+  input {
+    margin-left: 5px;
+  }
 }
 

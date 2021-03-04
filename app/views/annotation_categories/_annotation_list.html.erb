@@ -13,11 +13,11 @@
                 class: 'button' %>
   </div>
 
-  <h2>
+  <h3>
     <%= t('activerecord.models.annotation.other') %>
-  </h2>
+  </h3>
 
-  <ul id='annotation_list'>
+  <ul id='annotation_list' class='block-list'>
     <%= render partial: 'annotation_text',
                collection: annotation_texts %>
   </ul>
