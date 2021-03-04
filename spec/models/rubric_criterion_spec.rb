@@ -30,7 +30,7 @@ describe RubricCriterion do
       submission = create(:submission, grouping: grouping)
       incomplete_result = create(:incomplete_result, submission: submission)
 
-      mark = rubric.mark_for(incomplete_result.id)
+      mark = rubric.marks.where(result_id: incomplete_result.id).first
       expect(mark).to_not be_nil
       expect(mark.mark).to be_nil
     end

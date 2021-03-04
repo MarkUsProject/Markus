@@ -16,6 +16,8 @@
 - Added a delete button to notes dialog under an results edit view and removed user_can_modify under note model,
   removed Notes#user_can_modify and replaced instances of usage with NotePolicy (#5128)
 - Support Markdown syntax for assessment messages (#5135)
+- Remove controller-specific css files (#5136)
+- Replace non-UTF8 characters in text file preview (#5156)
 
 ## [v1.11.3]
 - Fix easyModal overlay bug (#5117)

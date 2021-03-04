@@ -1,5 +1,5 @@
 <% unless assignment.nil? %>
-  <div class='assignment_summary'>
+  <div>
     <h2>
       <% if assignment.is_peer_review? %>
         <%= link_to "#{assignment.parent_assignment.short_identifier}: #{PeerReview.model_name.human}",
@@ -15,7 +15,7 @@
         <%= render partial: 'assignments/grade_distribution_graph', locals: { assignment: assignment } %>
       </div>
 
-      <div class='flex-row-expand'>
+      <div class='flex-row-expand' style='height: 100%; margin-left: 10px;'>
         <%= render partial: 'assignments/assignment_info_summary', locals: { assignment: assignment } %>
         <p>
           <%= link_to I18n.t(:refresh_graph),
