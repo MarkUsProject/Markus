@@ -89,16 +89,13 @@ class OneTimeAnnotationsTable extends React.Component {
     });
   };
 
-  removeAnnotation = (annot_id, result_id) => {
+  removeAnnotation = (annot_id) => {
     $.ajax({
       url: Routes.destroy_annotation_text_assignment_annotation_categories_path(this.props.assignment_id)+ '?id=' + annot_id,
       method: 'delete',
-      data: {
-        result_id: result_id
-      },
       remote: true,
-      dataType: 'json'
-    }).always(() =>
+      dataType: 'script'
+    }).then(() =>
       {
       this.refreshAnnotations()
       });
@@ -224,6 +221,7 @@ class OneTimeAnnotationsTable extends React.Component {
           filterable
           defaultSorted={[{id: 'group_name'}]}
           loading={this.state.loading}
+          noDataText={I18n. t('annotations.empty_uncategorized')}
         />,
       <CreateModifyAnnotationPanel
           key="modify_modal"
