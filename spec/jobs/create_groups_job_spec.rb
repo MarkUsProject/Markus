@@ -41,17 +41,27 @@ describe CreateGroupsJob do
   end
 
   context 'when creating one group from scratch' do
-    before :each do
-      @data = [['group1', 'group_0001', student1.user_name, student2.user_name]]
-    end
+    context 'and group limit is set to 1' do
+      before :each do
+        @data = [['group1', student1.user_name, student2.user_name]]
+      end
 
-    include_examples 'create objects', 1, 1, 2
+      include_examples 'create objects', 0, 0, 0
+    end
+    context 'and group limit is set to 2' do
+      let(:assignment) { create :assignment, assignment_properties_attributes: { group_min: 1, group_max: 2 } }
+      before :each do
+        @data = [['group1', student1.user_name, student2.user_name]]
+      end
+
+      include_examples 'create objects', 1, 1, 2
+    end
   end
 
   context 'when creating multiple group from scratch' do
     before :each do
-      @data = [['group1', 'group_0001', student1.user_name],
-               ['group2', 'group_0002', student2.user_name]]
+      @data = [['group1', student1.user_name],
+               ['group2', student2.user_name]]
     end
 
     include_examples 'create objects', 2, 2, 2
@@ -60,16 +70,16 @@ describe CreateGroupsJob do
   context 'when creating one good and one bad group' do
     context 'when the bad one is first' do
       before :each do
-        @data = [['group1', 'group_0001', student1.user_name + 'bad_padding'],
-                 ['group2', 'group_0002', student2.user_name]]
+        @data = [['group1', student1.user_name + 'bad_padding'],
+                 ['group2', student2.user_name]]
       end
 
       include_examples 'create objects', 0, 0, 0
     end
     context 'when the bad one is not first' do
       before :each do
-        @data = [['group1', 'group_0001', student1.user_name],
-                 ['group2', 'group_0002', student2.user_name + 'bad_padding']]
+        @data = [['group1', student1.user_name],
+                 ['group2', student2.user_name + 'bad_padding']]
       end
 
       include_examples 'create objects', 0, 0, 0
@@ -82,7 +92,7 @@ describe CreateGroupsJob do
     context 'and the grouping already exists for that assignment' do
       it 'should not create a new grouping' do
         create :grouping_with_inviter, group: group, assignment: assignment, inviter: student1
-        data = [[group.group_name, group.repo_name, student1.user_name]]
+        data = [[group.group_name, student1.user_name]]
         expect { CreateGroupsJob.perform_now(assignment, data) }.not_to(change { Grouping.count })
       end
     end
@@ -91,7 +101,7 @@ describe CreateGroupsJob do
       context 'and the repo name and membership is the same' do
         it 'should create a new grouping' do
           create :grouping_with_inviter, group: group, assignment: assignment, inviter: student1
-          data = [[group.group_name, group.repo_name, student1.user_name]]
+          data = [[group.group_name, student1.user_name]]
           expect { CreateGroupsJob.perform_now(create(:assignment), data) }.to change { Grouping.count }.by 1
         end
       end
@@ -99,15 +109,7 @@ describe CreateGroupsJob do
       context 'and the membership is different' do
         it 'should not create a new grouping' do
           create :grouping_with_inviter, group: group, assignment: assignment, inviter: student1
-          data = [[group.group_name, group.repo_name, student1.user_name, student2.user_name]]
-          expect { CreateGroupsJob.perform_now(create(:assignment), data) }.not_to(change { Grouping.count })
-        end
-      end
-
-      context 'and the repo_name is different and already exists' do
-        it 'should not create a new grouping' do
-          create :grouping_with_inviter, group: group, assignment: assignment, inviter: student1
-          data = [[group.group_name, create(:group).repo_name, student1.user_name]]
+          data = [[group.group_name, student1.user_name, student2.user_name]]
           expect { CreateGroupsJob.perform_now(create(:assignment), data) }.not_to(change { Grouping.count })
         end
       end

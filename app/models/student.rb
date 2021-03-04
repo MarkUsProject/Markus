@@ -163,6 +163,7 @@ class Student < User
       StudentMembership.create(grouping_id: grouping.id, membership_status: StudentMembership::STATUSES[:inviter],
                                user_id: self.id)
       self.destroy_all_pending_memberships(aid)
+      grouping
     end
   end
 

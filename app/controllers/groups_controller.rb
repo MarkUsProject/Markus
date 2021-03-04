@@ -252,8 +252,8 @@ class GroupsController < ApplicationController
   def create_groups_when_students_work_alone
     @assignment = Assignment.find(params[:assignment_id])
     if @assignment.group_max == 1
-      # data is a list of lists containing: [[group_name, repo_name, group_member], ...]
-      data = Student.where(hidden: false).pluck(:user_name).map { |user_name| [user_name] * 3 }
+      # data is a list of lists containing: [[group_name, group_member], ...]
+      data = Student.where(hidden: false).pluck(:user_name).map { |user_name| [user_name, user_name] }
       @current_job = CreateGroupsJob.perform_later @assignment, data
       session[:job_id] = @current_job.job_id
     end
