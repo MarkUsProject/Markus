@@ -1,6 +1,6 @@
 import React from 'react';
 import {render} from 'react-dom';
-import {markingStateColumn} from "./Helpers/table_helpers";
+import {defaultSort, markingStateColumn} from "./Helpers/table_helpers";
 
 import ReactTable from 'react-table';
 
