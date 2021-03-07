@@ -4,8 +4,7 @@ class AnnotationText < ApplicationRecord
   belongs_to :last_editor, class_name: 'User', foreign_key: :last_editor_id, optional: true
 
   after_update :update_mark_deductions,
-               if: :should_have_deduction?,
-               unless: ->(t) { t.annotation_category.changes_to_save.key?('flexible_criterion_id') }
+               unless: ->(t) { t.annotation_category.nil? or t.annotation_category.changes_to_save.key?('flexible_criterion_id') }
   before_update :check_if_released, unless: ->(t) { t.deduction.nil? }
   before_destroy :check_if_released, unless: ->(t) { t.deduction.nil? }
 

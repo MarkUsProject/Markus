@@ -374,6 +374,8 @@ describe AnnotationCategoriesController do
       let(:assignment_result) { assignment.groupings.first.current_result }
       let(:text) { create(:annotation_text, annotation_category: nil) }
       let(:different_text) { create(:annotation_text, annotation_category: nil) }
+      let(:last_editor) { create(:admin) }
+      let(:text2) { create(:annotation_text, annotation_category: nil, last_editor: last_editor) }
       it 'finds no instance of uncategorized annotations when there are no annotation texts' do
         get_as user, :uncategorized_annotations, params: { assignment_id: assignment.id }
         expect(assigns['texts']).to eq []
@@ -417,6 +419,46 @@ describe AnnotationCategoriesController do
         expect(assigns['texts'].size).to eq 2
         expect([assigns['texts'].first['id'], assigns['texts'].second['id']].sort!).to eq [text.id,
                                                                                            different_text.id].sort!
+      end
+
+      it 'is not empty when responding to json format and uncategorized annotations exist' do
+        create(:text_annotation, annotation_text: text, result: assignment_result)
+        get_as user, :uncategorized_annotations, :format => :json, params: { assignment_id: assignment.id }
+        expect(JSON.parse(response.body)).not_to be_empty
+      end
+
+      it 'has correct keys when responding to json format and uncategorized annotations exist' do
+        create(:text_annotation, annotation_text: text, result: assignment_result)
+        other_grouping = assignment.groupings.where.not(id: assignment_result.grouping.id).first
+        create(:text_annotation, annotation_text: different_text, result: other_grouping.current_result)
+        expected_keys = [
+          'group_name',
+          'creator',
+          'last_editor',
+          'content',
+          'assignment_id',
+          'result_id',
+          'submission_id',
+          'id'
+        ]
+        get_as user, :uncategorized_annotations, :format => :json, params: { assignment_id: assignment.id }
+        data = JSON.parse(response.body)
+        expect(data.first.keys).to match_array expected_keys
+        expect(data.second.keys).to match_array expected_keys
+      end
+
+      it 'has correct data when responding to json format and uncategorized annotation exists' do
+        create(:text_annotation, annotation_text: text2, result: assignment_result)
+        get_as user, :uncategorized_annotations, :format => :json, params: { assignment_id: assignment.id }
+        data = JSON.parse(response.body)
+        expect(data.first['group_name']).to eq(assignment.groupings.first.group.group_name)
+        expect(data.first['creator']).to eq(text2.creator.user_name)
+        expect(data.first['last_editor']).to eq(last_editor.user_name)
+        expect(data.first['content']).to eq(text2.content)
+        expect(data.first['assignment_id']).to eq(assignment.id)
+        expect(data.first['result_id']).to eq(assignment_result.id)
+        expect(data.first['submission_id']).to eq(assignment.groupings.first.group.id)
+        expect(data.first['id']).to eq(text2.id)
       end
     end
 

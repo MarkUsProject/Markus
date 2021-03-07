@@ -184,7 +184,7 @@ class CreateModifyAnnotationPanel extends React.Component {
     ];
     this.props.categories.forEach((category) => {
       options.push(
-        <option key ={category.id} value={category.id}>{category.annotation_category_name}</option>
+        <option key={category.id} value={category.id}>{category.annotation_category_name}</option>
       );
     });
 
