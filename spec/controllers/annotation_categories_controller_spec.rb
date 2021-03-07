@@ -423,7 +423,7 @@ describe AnnotationCategoriesController do
 
       it 'is not empty when responding to json format and uncategorized annotations exist' do
         create(:text_annotation, annotation_text: text, result: assignment_result)
-        get_as user, :uncategorized_annotations, :format => :json, params: { assignment_id: assignment.id }
+        get_as user, :uncategorized_annotations, format: 'json', params: { assignment_id: assignment.id }
         expect(JSON.parse(response.body)).not_to be_empty
       end
 
@@ -431,17 +431,8 @@ describe AnnotationCategoriesController do
         create(:text_annotation, annotation_text: text, result: assignment_result)
         other_grouping = assignment.groupings.where.not(id: assignment_result.grouping.id).first
         create(:text_annotation, annotation_text: different_text, result: other_grouping.current_result)
-        expected_keys = [
-          'group_name',
-          'creator',
-          'last_editor',
-          'content',
-          'assignment_id',
-          'result_id',
-          'submission_id',
-          'id'
-        ]
-        get_as user, :uncategorized_annotations, :format => :json, params: { assignment_id: assignment.id }
+        expected_keys = %w(group_name creator last_editor content assignment_id result_id submission_id id)
+        get_as user, :uncategorized_annotations, format: 'json', params: { assignment_id: assignment.id }
         data = JSON.parse(response.body)
         expect(data.first.keys).to match_array expected_keys
         expect(data.second.keys).to match_array expected_keys
@@ -449,7 +440,7 @@ describe AnnotationCategoriesController do
 
       it 'has correct data when responding to json format and uncategorized annotation exists' do
         create(:text_annotation, annotation_text: text2, result: assignment_result)
-        get_as user, :uncategorized_annotations, :format => :json, params: { assignment_id: assignment.id }
+        get_as user, :uncategorized_annotations, format: 'json', params: { assignment_id: assignment.id }
         data = JSON.parse(response.body)
         expect(data.first['group_name']).to eq(assignment.groupings.first.group.group_name)
         expect(data.first['creator']).to eq(text2.creator.user_name)
@@ -457,7 +448,7 @@ describe AnnotationCategoriesController do
         expect(data.first['content']).to eq(text2.content)
         expect(data.first['assignment_id']).to eq(assignment.id)
         expect(data.first['result_id']).to eq(assignment_result.id)
-        expect(data.first['submission_id']).to eq(assignment.groupings.first.group.id)
+        expect(data.first['submission_id']).to eq(assignment.groupings.first.current_result.submission_id)
         expect(data.first['id']).to eq(text2.id)
       end
     end
