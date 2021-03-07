@@ -431,7 +431,7 @@ describe AnnotationCategoriesController do
         create(:text_annotation, annotation_text: text, result: assignment_result)
         other_grouping = assignment.groupings.where.not(id: assignment_result.grouping.id).first
         create(:text_annotation, annotation_text: different_text, result: other_grouping.current_result)
-        expected_keys = %w(group_name creator last_editor content assignment_id result_id submission_id id)
+        expected_keys = %w[group_name creator last_editor content assignment_id result_id submission_id id]
         get_as user, :uncategorized_annotations, format: 'json', params: { assignment_id: assignment.id }
         data = JSON.parse(response.body)
         expect(data.first.keys).to match_array expected_keys
