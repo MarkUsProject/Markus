@@ -140,11 +140,14 @@ class AssignmentProperties < ApplicationRecord
     errors.add(:base, msg) if default_sfgroup && default_sfgroup.starter_file_entries.empty?
   end
 
+  # Warn groupings that are affected by a change in starter_file_type. If the type changed to/from 'shuffle' then this
+  # should be all groupings. Otherwise, it only affects groupings that have not been assigned any starter files yet.
+  # Similarly, if the default starter file group changes, only warn those that don't have any assigned starter files.
   def warn_if_starter_file_change
     if saved_change_to_default_starter_file_group_id?
-      assignment.starter_file_groups
-                .find_by(id: attribute_before_last_save(:default_starter_file_group_id))
-                .warn_affected_groupings
+      assignment.groupings.left_outer_joins(:starter_file_entries)
+                .where('starter_file_entries.path': nil)
+                .update_all(starter_file_changed: true)
     end
     if saved_change_to_starter_file_type?
       if saved_change_to_starter_file_type.include?('shuffle')
