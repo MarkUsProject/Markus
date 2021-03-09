@@ -70,7 +70,10 @@ class StarterFileGroup < ApplicationRecord
   end
 
   # Set starter_file_changed true for all groupings that have changed starter files based on
-  # whether starter file entries have changed.
+  # whether starter file entries have changed. Use +assignment.starter_file_type+ to determine which groupings to
+  # warn based on the starter file type.
+  # If +assignment.starter_file_type+ == 'shuffle' and +modified_paths+ is not nil, only update the groupings
+  # that have an existing starter file entry at a path in +modified_paths+.
   def warn_affected_groupings(modified_paths: nil)
     case assignment.starter_file_type
     when 'simple'

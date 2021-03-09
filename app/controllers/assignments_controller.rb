@@ -404,11 +404,9 @@ class AssignmentsController < ApplicationController
 
   def update_starter_file
     assignment = Assignment.find(params[:id])
-    all_changed = false
     success = true
     ApplicationRecord.transaction do
       assignment.assignment_properties.update!(starter_file_assignment_params)
-      all_changed = assignment.assignment_properties.saved_changes?
       params[:sections].each do |section_params|
         Section.find_by(id: section_params[:section_id])
                &.update_starter_file_group(assignment.id, section_params[:group_id])
@@ -416,7 +414,6 @@ class AssignmentsController < ApplicationController
       starter_file_group_params.each do |group_params|
         starter_file_group = assignment.starter_file_groups.find_by(id: group_params[:id])
         starter_file_group.update!(group_params)
-        all_changed ||= starter_file_group.saved_changes? || assignment.assignment_properties.saved_changes?
       end
       assignment.assignment_properties.update!(starter_file_updated_at: Time.current)
     rescue ActiveRecord::RecordInvalid => e
@@ -432,8 +429,6 @@ class AssignmentsController < ApplicationController
       flash_message(:success, I18n.t('flash.actions.update.success',
                                      resource_name: I18n.t('assignments.starter_file.title')))
     end
-    # mark all groupings with starter files that were changed as changed
-    assignment.groupings.update_all(starter_file_changed: true) if success && all_changed
   end
 
   def download_starter_file_mappings

@@ -61,6 +61,7 @@ class AssignmentProperties < ApplicationRecord
   STARTER_FILE_TYPES = %w[simple sections shuffle group].freeze
 
   validates_inclusion_of :starter_file_type, in: STARTER_FILE_TYPES
+  after_save :warn_if_starter_file_change
 
   DURATION_PARTS = [:hours, :minutes].freeze
 
@@ -137,5 +138,21 @@ class AssignmentProperties < ApplicationRecord
     default_sfgroup = StarterFileGroup.find_by(id: default_starter_file_group_id)
     msg = I18n.t('activerecord.errors.models.assignment_properties.attributes.default_starter_file_group_id.is_empty')
     errors.add(:base, msg) if default_sfgroup && default_sfgroup.starter_file_entries.empty?
+  end
+
+  def warn_if_starter_file_change
+    if saved_change_to_default_starter_file_group_id?
+      assignment.starter_file_groups
+                .find_by(id: attribute_before_last_save(:default_starter_file_group_id))
+                .warn_affected_groupings
+    end
+    if saved_change_to_starter_file_type?
+      if saved_change_to_starter_file_type.include?('shuffle')
+        groupings = assignment.groupings
+      else
+        groupings = assignment.groupings.left_outer_joins(:starter_file_entries).where('starter_file_entries.path': nil)
+      end
+      groupings.update_all(starter_file_changed: true)
+    end
   end
 end
