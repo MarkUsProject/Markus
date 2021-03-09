@@ -54,7 +54,14 @@ class StarterFileGroup < ApplicationRecord
     to_delete = entry_paths - fs_entry_paths
     to_add = fs_entry_paths - entry_paths
     starter_file_entries.where(path: to_delete).destroy_all unless to_delete.empty?
-    StarterFileEntry.upsert_all(to_add.map { |p| { starter_file_group_id: self.id, path: p } }) unless to_add.empty?
+    unless to_add.empty?
+      entries = StarterFileEntry.upsert_all(to_add.map { |p| { starter_file_group_id: self.id, path: p } })
+    end
+    if starter_file_entries.empty?
+      assignment.update!(default_starter_file_group_id: nil) if assignment.default_starter_file_group_id == self.id
+      section_starter_file_groups.destroy_all
+    end
+    entries
   end
 
   def should_rename

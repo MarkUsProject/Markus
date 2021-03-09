@@ -41,6 +41,8 @@ en:
               not_scanned: scanned_exam and is_timed cannot both be true
             start_time:
               before_due_date: must be before due date
+            default_starter_file_group_id:
+              is_empty: must contain at least one entry
     models:
       assignment:
         one: Assignment

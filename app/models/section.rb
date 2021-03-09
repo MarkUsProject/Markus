@@ -4,6 +4,7 @@ class Section < ApplicationRecord
   has_many :section_due_dates
   has_many :section_starter_file_groups
   has_many :starter_file_groups, through: :section_starter_file_groups
+  validate :starter_group_not_empty
 
   # Returns true when students are part of this section
   def has_students?
@@ -38,5 +39,12 @@ class Section < ApplicationRecord
             .where('users.section_id': self.id)
             .where(assessment_id: assessment_id)
             .update_all(starter_file_changed: true)
+  end
+
+  def starter_group_not_empty
+    starter_file_groups.each do |sfgroup|
+      msg = I18n.t('activerecord.errors.models.assignment_properties.attributes.default_starter_file_group_id.is_empty')
+      errors.add(:base, msg) if sfgroup && sfgroup.starter_file_entries.empty?
+    end
   end
 end

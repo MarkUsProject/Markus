@@ -56,6 +56,7 @@ class AssignmentProperties < ApplicationRecord
   validates_presence_of :start_time, if: :is_timed
   validate :start_before_due, if: :is_timed
   validate :not_timed_and_scanned
+  validate :default_starter_group_not_empty
 
   STARTER_FILE_TYPES = %w[simple sections shuffle group].freeze
 
@@ -130,5 +131,11 @@ class AssignmentProperties < ApplicationRecord
   def not_timed_and_scanned
     msg = I18n.t('activerecord.errors.models.assignment_properties.attributes.is_timed.not_scanned')
     errors.add(:base, msg) if is_timed && scanned_exam
+  end
+
+  def default_starter_group_not_empty
+    default_sfgroup = StarterFileGroup.find_by(id: default_starter_file_group_id)
+    msg = I18n.t('activerecord.errors.models.assignment_properties.attributes.default_starter_file_group_id.is_empty')
+    errors.add(:base, msg) if default_sfgroup && default_sfgroup.starter_file_entries.empty?
   end
 end

@@ -888,7 +888,8 @@ class Assignment < Assessment
 
   def default_starter_file_group
     default = starter_file_groups.find_by(id: self.default_starter_file_group_id)
-    default.nil? ? starter_file_groups.order(:id).first : default
+    # if no default, pick the first starter file group that has at least one entry
+    default.nil? ? starter_file_groups.joins(:starter_file_entries).order(:id).first : default
   end
 
   def starter_file_mappings

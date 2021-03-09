@@ -289,10 +289,12 @@ class StarterFileManager extends React.Component {
             disabled={!this.state.files.length}
           >
             {Object.entries(this.state.files).map( (data, index) => {
-              const {id, name} = data[1];
-              return (
-                <option value={id} key={id}>{index + 1}: {name}</option>
-              );
+              const {id, name, files} = data[1];
+              if (!!files.length) {
+                return (
+                  <option value={id} key={id}>{index + 1}: {name}</option>
+                );
+              }
             })}
           </select>
         </label>
@@ -316,11 +318,13 @@ class StarterFileManager extends React.Component {
                     >
                       <option value={`${row.original.section_id}_`}/>
                       {Object.entries(this.state.files).map( (data, index) => {
-                        const {id, name} = data[1];
-                        const value = `${row.original.section_id}_${id}`;
-                        return (
-                          <option value={value} key={id}>{index + 1}: {name}</option>
-                        );
+                        const {id, name, files} = data[1];
+                        if (!!files.length) {
+                          const value = `${row.original.section_id}_${id}`;
+                          return (
+                            <option value={value} key={id}>{index + 1}: {name}</option>
+                          );
+                        }
                       })}
                     </select>
                   );
@@ -362,7 +366,7 @@ class StarterFileManager extends React.Component {
              }
             }
           ]}
-          data={this.state.files}
+          data={this.state.files.filter(data => !!data.files.length)}
         />
       )
     }

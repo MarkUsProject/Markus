@@ -41,6 +41,8 @@ es:
               not_scanned: UPDATE ME
             start_time:
               before_due_date: UPDATE ME
+            default_starter_file_group_id:
+              is_empty: UPDATE ME
     models:
       assignment:
         one: Proyect
