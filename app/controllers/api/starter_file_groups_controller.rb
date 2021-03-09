@@ -81,7 +81,7 @@ module Api
       end
       file_path = File.join(starter_file_group.path, params[:filename])
       File.write(file_path, content, mode: 'wb')
-      update_entries_and_warn(starter_file_group)
+      update_entries_and_warn(starter_file_group, params[:filename])
       render 'shared/http_status',
              locals: { code: '201', message: HttpStatusHelper::ERROR_CODE['message']['201'] },
              status: 201
@@ -101,7 +101,7 @@ module Api
 
       folder_path = File.join(starter_file_group.path, params[:folder_path])
       FileUtils.mkdir_p(folder_path)
-      update_entries_and_warn(starter_file_group)
+      update_entries_and_warn(starter_file_group, params[:folder_path])
       render 'shared/http_status',
              locals: { code: '201', message: HttpStatusHelper::ERROR_CODE['message']['201'] },
              status: 201
@@ -120,7 +120,7 @@ module Api
       end
       file_path = File.join(starter_file_group.path, params[:filename])
       File.delete(file_path)
-      update_entries_and_warn(starter_file_group)
+      update_entries_and_warn(starter_file_group, params[:filename])
       render 'shared/http_status',
              locals: { code: '200', message: HttpStatusHelper::ERROR_CODE['message']['200'] },
              status: 200
@@ -140,7 +140,7 @@ module Api
 
       folder_path = File.join(starter_file_group.path, params[:folder_path])
       FileUtils.rm_rf(folder_path)
-      update_entries_and_warn(starter_file_group)
+      update_entries_and_warn(starter_file_group, params[:folder_path])
       render 'shared/http_status',
              locals: { code: '200', message: HttpStatusHelper::ERROR_CODE['message']['200'] },
              status: 200
@@ -168,8 +168,8 @@ module Api
 
     # Update starter file entries for +starter_file_group+ and set the starter_file_changed
     # attribute to true for all groupings affected by the change.
-    def update_entries_and_warn(starter_file_group)
-      starter_file_group.warn_affected_groupings
+    def update_entries_and_warn(starter_file_group, modified_path)
+      starter_file_group.warn_affected_groupings(modified_paths: [modified_path])
       starter_file_group.assignment.assignment_properties.update!(starter_file_updated_at: Time.current)
       starter_file_group.update_entries
     end

@@ -10,7 +10,7 @@ class StarterFileGroup < ApplicationRecord
   after_create_commit :create_dir
   before_validation :sanitize_rename_entry
   before_destroy :update_default
-  before_destroy :warn_affected_groupings, prepend: true
+  before_destroy -> { warn_affected_groupings(modified_paths: self.starter_file_entries.pluck(:path)) }, prepend: true
   after_save :update_timestamp
 
   validates_exclusion_of :entry_rename, in: %w[.. .]
@@ -61,11 +61,24 @@ class StarterFileGroup < ApplicationRecord
     use_rename && !entry_rename.blank? && assignment.starter_file_type == 'shuffle'
   end
 
-  # Set starter_file_changed true for all groupings that have a starter file entry
-  # from this starter file group
-  def warn_affected_groupings
-    affected_groupings = Grouping.joins(:starter_file_entries)
-                                 .where('starter_file_entries.id': self.starter_file_entries.ids)
+  # Set starter_file_changed true for all groupings that have changed starter files based on
+  # whether starter file entries have changed.
+  def warn_affected_groupings(modified_paths: nil)
+    case assignment.starter_file_type
+    when 'simple'
+      affected_groupings = assignment.groupings
+    when 'sections'
+      affected_groupings = assignment.groupings.joins(:accepted_students).where('users.section_id': sections.ids)
+    when 'shuffle'
+      modified_entry_paths = modified_paths&.map { |m| m.split(File::Separator)&.first }
+      affected_groupings = assignment.groupings.left_outer_joins(:starter_file_entries)
+                                               .where('starter_file_entries.path': [nil, *modified_entry_paths])
+    when 'group'
+      affected_groupings = assignment.groupings.left_outer_joins(:starter_file_entries)
+                                               .where('starter_file_entries.id': [nil, *self.starter_file_entries.ids])
+    else
+      raise "starter_file_type is invalid: #{assignment.starter_file_type}"
+    end
     affected_groupings.update_all(starter_file_changed: true)
   end
 
