@@ -137,7 +137,7 @@ class AssignmentProperties < ApplicationRecord
   def default_starter_group_not_empty
     default_sfgroup = StarterFileGroup.find_by(id: default_starter_file_group_id)
     msg = I18n.t('activerecord.errors.models.assignment_properties.attributes.default_starter_file_group_id.is_empty')
-    errors.add(:base, msg) if default_sfgroup && default_sfgroup.starter_file_entries.empty?
+    errors.add(:base, msg) if default_sfgroup&.starter_file_entries&.empty?
   end
 
   # Warn groupings that are affected by a change in starter_file_type. If the type changed to/from 'shuffle' then this

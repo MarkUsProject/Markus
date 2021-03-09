@@ -82,11 +82,13 @@ class StarterFileGroup < ApplicationRecord
       affected_groupings = assignment.groupings.joins(:accepted_students).where('users.section_id': sections.ids)
     when 'shuffle'
       modified_entry_paths = modified_paths&.map { |m| m.split(File::Separator)&.first }
-      affected_groupings = assignment.groupings.left_outer_joins(:starter_file_entries)
-                                               .where('starter_file_entries.path': [nil, *modified_entry_paths])
+      affected_groupings = assignment.groupings
+                                     .left_outer_joins(:starter_file_entries)
+                                     .where('starter_file_entries.path': [nil, *modified_entry_paths])
     when 'group'
-      affected_groupings = assignment.groupings.left_outer_joins(:starter_file_entries)
-                                               .where('starter_file_entries.id': [nil, *self.starter_file_entries.ids])
+      affected_groupings = assignment.groupings
+                                     .left_outer_joins(:starter_file_entries)
+                                     .where('starter_file_entries.id': [nil, *self.starter_file_entries.ids])
     else
       raise "starter_file_type is invalid: #{assignment.starter_file_type}"
     end

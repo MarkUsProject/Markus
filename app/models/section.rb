@@ -44,7 +44,7 @@ class Section < ApplicationRecord
   def starter_group_not_empty
     starter_file_groups.each do |sfgroup|
       msg = I18n.t('activerecord.errors.models.assignment_properties.attributes.default_starter_file_group_id.is_empty')
-      errors.add(:base, msg) if sfgroup && sfgroup.starter_file_entries.empty?
+      errors.add(:base, msg) if sfgroup&.starter_file_entries&.empty?
     end
   end
 end
