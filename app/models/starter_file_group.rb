@@ -10,8 +10,9 @@ class StarterFileGroup < ApplicationRecord
   after_create_commit :create_dir
   before_validation :sanitize_rename_entry
   before_destroy :update_default
-  before_destroy -> { warn_affected_groupings(modified_paths: self.starter_file_entries.pluck(:path)) }, prepend: true
+  before_destroy :warn_all, prepend: true
   after_save :update_timestamp
+  after_save :warn_all, if: -> { saved_change_to_entry_rename? || saved_change_to_use_rename? }
 
   validates_exclusion_of :entry_rename, in: %w[.. .]
   validates_presence_of :entry_rename, if: -> { self.use_rename }
@@ -113,5 +114,9 @@ class StarterFileGroup < ApplicationRecord
 
   def update_timestamp
     assignment.assignment_properties.update(starter_file_updated_at: Time.current)
+  end
+
+  def warn_all
+    warn_affected_groupings(modified_paths: self.starter_file_entries.pluck(:path))
   end
 end
