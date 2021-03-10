@@ -1,5 +1,9 @@
 # Changelog
 
+## [v1.11.4]
+- Override defaultSortMethod for react-table to put null/undefined values at bottom (#5159)
+- Fix bug where groupings created before starter files were uploaded could not download starter files (#5160)
+
 ## [v1.11.3]
 - Fix easyModal overlay bug (#5117)
 
