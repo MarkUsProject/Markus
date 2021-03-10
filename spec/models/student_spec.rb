@@ -261,8 +261,10 @@ describe Student do
                                   membership_status: StudentMembership::STATUSES[:inviter], grouping: @grouping)
           end
 
-          it 'will not cause any errors' do
-            expect { @student.create_group_for_working_alone_student(@assignment.id) }.to_not raise_error
+          it 'will raise a validation error' do
+            expect { @student.create_group_for_working_alone_student(@assignment.id) }.to(
+                raise_error(ActiveRecord::RecordInvalid)
+            )
           end
         end
       end
