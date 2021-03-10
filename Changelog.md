@@ -17,8 +17,10 @@
 - Support Markdown syntax for assessment messages (#5135)
 - Remove controller-specific css files (#5136)
 - Replace non-UTF8 characters in text file preview (#5156)
-- Override defaultSortMethod for react-table to put null/undefined values at bottom (#5157)
-- Fix bug where groupings created before starter files were uploaded could not download starter files (#5158)
+
+## [v1.11.4]
+- Override defaultSortMethod for react-table to put null/undefined values at bottom (#5159)
+- Fix bug where groupings created before starter files were uploaded could not download starter files (#5160)
 
 ## [v1.11.3]
 - Fix easyModal overlay bug (#5117)
