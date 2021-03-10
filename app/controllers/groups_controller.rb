@@ -506,7 +506,6 @@ class GroupsController < ApplicationController
     assignment = Assignment.find(params[:assignment_id])
     grouping = current_user.accepted_grouping_for(assignment.id)
 
-
     grouping.reset_starter_file_entries if grouping.starter_file_changed
 
     zip_name = "#{assignment.short_identifier}-starter-files-#{current_user.user_name}"
