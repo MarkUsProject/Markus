@@ -53,7 +53,7 @@ class StarterFileGroup < ApplicationRecord
     entry_paths = starter_file_entries.pluck(:path)
     to_delete = entry_paths - fs_entry_paths
     to_add = fs_entry_paths - entry_paths
-    warn_affected_groupings unless to_add.empty? && to_delete.empty?
+    warn_affected_groupings
     starter_file_entries.where(path: to_delete).destroy_all unless to_delete.empty?
     StarterFileEntry.upsert_all(to_add.map { |p| { starter_file_group_id: self.id, path: p } }) unless to_add.empty?
   end
