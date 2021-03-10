@@ -53,6 +53,7 @@ class StarterFileGroup < ApplicationRecord
     entry_paths = starter_file_entries.pluck(:path)
     to_delete = entry_paths - fs_entry_paths
     to_add = fs_entry_paths - entry_paths
+    warn_affected_groupings unless to_add.empty? && to_delete.empty?
     starter_file_entries.where(path: to_delete).destroy_all unless to_delete.empty?
     StarterFileEntry.upsert_all(to_add.map { |p| { starter_file_group_id: self.id, path: p } }) unless to_add.empty?
   end
@@ -61,15 +62,16 @@ class StarterFileGroup < ApplicationRecord
     use_rename && !entry_rename.blank? && assignment.starter_file_type == 'shuffle'
   end
 
+  private
+
   # Set starter_file_changed true for all groupings that have a starter file entry
   # from this starter file group
   def warn_affected_groupings
-    affected_groupings = Grouping.joins(:starter_file_entries)
-                                 .where('starter_file_entries.id': self.starter_file_entries.ids)
+    affected_groupings = assignment.groupings
+                                   .left_outer_joins(:starter_file_entries)
+                                   .where('starter_file_entries.id': [nil, *self.starter_file_entries.ids])
     affected_groupings.update_all(starter_file_changed: true)
   end
-
-  private
 
   def delete_files
     FileUtils.rm_rf self.path
