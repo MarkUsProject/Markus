@@ -115,6 +115,18 @@ describe StarterFileGroup do
       starter_file_group.update_entries
       expect(starter_file_group.reload.starter_file_entries.pluck(:path)).to include 'new_folder'
     end
+    it 'should warn affected groupings' do
+      gsfe = create(:grouping_starter_file_entry, starter_file_group: starter_file_group)
+      grouping = gsfe.grouping
+      starter_file_group.update_entries
+      expect(grouping.reload.starter_file_changed).to be true
+    end
+    it 'should not warn non-affected groupings' do
+      create(:grouping_starter_file_entry, starter_file_group: starter_file_group)
+      grouping = create(:grouping)
+      starter_file_group.update_entries
+      expect(grouping.starter_file_changed).to be false
+    end
   end
 
   describe '#should_rename' do
@@ -131,21 +143,6 @@ describe StarterFileGroup do
           end
         end
       end
-    end
-  end
-
-  describe '#warn_affected_groupings' do
-    it 'should warn affected groupings' do
-      gsfe = create(:grouping_starter_file_entry)
-      grouping = gsfe.grouping
-      gsfe.starter_file_entry.starter_file_group.warn_affected_groupings
-      expect(grouping.reload.starter_file_changed).to be true
-    end
-    it 'should not warn non-affected groupings' do
-      gsfe = create(:grouping_starter_file_entry)
-      grouping = create(:grouping)
-      gsfe.starter_file_entry.starter_file_group.warn_affected_groupings
-      expect(grouping.starter_file_changed).to be false
     end
   end
 end

@@ -90,7 +90,6 @@ class StarterFileGroupsController < ApplicationController
     else
       all_paths = [params[:path]]
     end
-    starter_file_group.warn_affected_groupings
     assignment.assignment_properties.update!(starter_file_updated_at: Time.current) unless all_paths.empty?
     starter_file_group.update_entries
   end
