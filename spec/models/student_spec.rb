@@ -263,7 +263,7 @@ describe Student do
 
           it 'will raise a validation error' do
             expect { @student.create_group_for_working_alone_student(@assignment.id) }.to(
-                raise_error(ActiveRecord::RecordInvalid)
+              raise_error(ActiveRecord::RecordInvalid)
             )
           end
         end
