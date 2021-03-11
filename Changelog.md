@@ -17,6 +17,7 @@
 - Support Markdown syntax for assessment messages (#5135)
 - Remove controller-specific css files (#5136)
 - Replace non-UTF8 characters in text file preview (#5156)
+- Prevent deletion/modification of annotation texts associated with a result with a pending remark request (#5170)
 
 ## [v1.11.4]
 - Override defaultSortMethod for react-table to put null/undefined values at bottom (#5159)
