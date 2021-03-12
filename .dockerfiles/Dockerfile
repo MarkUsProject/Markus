@@ -1,6 +1,6 @@
 ARG UBUNTU_VERSION
 
-FROM ubuntu:$UBUNTU_VERSION
+FROM ubuntu:$UBUNTU_VERSION AS base
 
 ARG RUBY_VERSION
 ARG PG_MAJOR
@@ -72,31 +72,59 @@ RUN sed -ri 's/(rights=")none("\s+pattern="PDF")/\1read\2/' /etc/ImageMagick-6/p
 
 RUN useradd -m -s /bin/bash $USER
 
+# Install nbconvert for rendering .ipynb files
+RUN python3.8 -m venv $NBCONVERTVENV && $NBCONVERTVENV/bin/pip install wheel nbconvert
+
+ENV GEM_HOME="/bundle"
+ENV PATH="$GEM_HOME/bin:$GEM_HOME/gems/bin:$PATH"
+
+WORKDIR /app
+
+FROM base AS dev
+
+ARG USER
+ARG BUNDLER_VERSION
+ARG RUBY_VERSION
+
 # pre-create mount-points for volumes and set ownership of these mountpoints
 RUN mkdir -p /bundle \
              /ssh_pub_key \
              /app/data/dev/repos \
-             /app/tmp /app/node_modules \
+             /app/tmp \
+             /app/node_modules \
              /app/public/packs \
              /app/public/packs-test \
              /app/log && \
              chown -R $USER /bundle /ssh_pub_key /app
 
+USER $USER
+
 # install bundler
 RUN gem$RUBY_VERSION install bundler -v $BUNDLER_VERSION
 
-USER $USER
-
-ENV GEM_HOME="/bundle"
-ENV PATH="$GEM_HOME/bin:$GEM_HOME/gems/bin:$PATH"
-
 # Create key for ssh-ing to the autotester
 RUN ssh-keygen -q -N "" -f /home/$USER/.ssh/id_rsa && \
-    mkdir -p /ssh_pub_key && \
     cp /home/$USER/.ssh/id_rsa.pub /ssh_pub_key/authorized_keys
 
-# Install nbconvert for rendering .ipynb files
-RUN python3.8 -m venv $NBCONVERTVENV && $NBCONVERTVENV/bin/pip install wheel nbconvert
+FROM base AS prod
 
-WORKDIR /app
+ARG USER
+ARG BUNDLER_VERSION
+ARG RUBY_VERSION
 
+RUN mkdir -p /bundle /app /app/public && chown -R $USER /bundle /app
+
+USER $USER
+
+COPY --chown=${USER}:${USER} . /app
+COPY --chown=${USER}:${USER} .dockerfiles/database.yml.postgresql /app/config/database.yml
+
+ENV RAILS_ENV=production
+ENV NODE_ENV=production
+
+# install bundler
+RUN gem$RUBY_VERSION install bundler -v $BUNDLER_VERSION
+
+RUN SECRET_KEY_BASE=1 bundle install --deployment --path $GEM_HOME --without development test offline mysql sqlite && \
+    SECRET_KEY_BASE=1 PGDATABASE=dummy bundle exec rails i18n:js:export && \
+    SECRET_KEY_BASE=1 PGDATABASE=dummy bundle exec rails assets:precompile

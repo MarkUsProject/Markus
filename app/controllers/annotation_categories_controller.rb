@@ -288,7 +288,8 @@ class AnnotationCategoriesController < ApplicationController
     @assignment = Assignment.find(params[:assignment_id])
     @texts = annotation_text_data(nil)
     respond_to do |format|
-      format.js
+      format.js {}
+      format.json { render json: @texts }
       format.csv do
         data = MarkusCsv.generate(
           @texts
