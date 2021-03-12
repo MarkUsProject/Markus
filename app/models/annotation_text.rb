@@ -34,8 +34,9 @@ class AnnotationText < ApplicationRecord
            .gsub(/\r?\n/, '\\n')
   end
 
+  # Do not update if any associated results have been released. This includes results
+  # that were previously released and are now the subject of a remark request.
   def check_if_released
-    # Cannot update if any results have been released with the annotation and the deduction is non nil
     annotation_results = self.annotations.joins(result: :submission)
 
     return if annotation_results.where('results.released_to_students': true).empty? &&
