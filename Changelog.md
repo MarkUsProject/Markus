@@ -25,6 +25,7 @@
 - Show informative error message if an uploaded criteria yaml file did not contain a "type" key (#5184)
 - Allow for multiple custom validation messages (#5194)
 - Add ability to hold shift to select a range of values in checkbox tables (#5182)
+- Fix bug where creating an annotation or switching results reset the selected file (#5200)
 
 ## [v1.11.5]
 - Account for percentage deductions when calculating total marks after deleting a criterion (#5176)
