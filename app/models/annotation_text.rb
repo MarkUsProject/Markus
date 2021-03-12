@@ -34,9 +34,15 @@ class AnnotationText < ApplicationRecord
            .gsub(/\r?\n/, '\\n')
   end
 
+  # Do not update if any associated results have been released. This includes results
+  # that were previously released and are now the subject of a remark request.
   def check_if_released
-    # Cannot update if any results have been released with the annotation and the deduction is non nil
-    return if self.annotations.joins(:result).where('results.released_to_students' => true).empty?
+    annotation_results = self.annotations.joins(result: :submission)
+
+    return if annotation_results.where('results.released_to_students': true).empty? &&
+              Result.where(submission_id: annotation_results.pluck('submissions.id'))
+                    .where.not('remark_request_submitted_at': nil)
+                    .empty?
     errors.add(:base, 'Cannot update/destroy annotation_text once results are released.')
     throw(:abort)
   end
