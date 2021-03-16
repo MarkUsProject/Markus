@@ -17,7 +17,7 @@ export class AnnotationTable extends React.Component {
       resizeable: false,
       Cell: row => {
         let remove_button = "";
-        if (!this.props.released_to_students) {
+        if (!this.props.released_to_students && !this.props.remark_submitted) {
           remove_button = <a
             href="#"
             className="remove-icon"

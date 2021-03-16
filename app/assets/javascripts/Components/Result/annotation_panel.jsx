@@ -64,6 +64,7 @@ export class AnnotationPanel extends React.Component {
         key="annotations-table"
         detailed={this.props.detailed}
         released_to_students={this.props.released_to_students}
+        remark_submitted={this.props.remarkSubmitted}
         annotations={this.props.annotations}
         editAnnotation={this.props.editAnnotation}
         removeAnnotation={this.props.removeAnnotation}
