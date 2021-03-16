@@ -3,7 +3,7 @@
 class Criterion < ApplicationRecord
   belongs_to :assignment, foreign_key: :assessment_id
   after_update :update_results_with_change
-  before_destroy :update_results
+  after_destroy :update_results
   after_destroy ->(c) { c.assignment.update_results_stats }
 
   has_many :marks, dependent: :destroy
@@ -194,17 +194,7 @@ class Criterion < ApplicationRecord
   end
 
   def update_results
-    new_results = self.marks.includes(:result).map do |m|
-      next if m.mark.nil?
-      if m.result.marks.count == 1
-        m.result.marking_state = Result::MARKING_STATES[:incomplete]
-        m.result.total_mark = nil
-      else
-        m.result.total_mark = m.result.total_mark - m.mark
-      end
-      { id: m.result.id, total_mark: m.result.total_mark, marking_state: m.result.marking_state }
-    end
-    new_results = new_results.compact
-    Result.upsert_all(new_results) unless new_results.blank?
+    result_ids = Result.includes(submission: :grouping).where(groupings: { assessment_id: assessment_id }).ids
+    Result.update_total_marks(result_ids, assessment_id)
   end
 end
