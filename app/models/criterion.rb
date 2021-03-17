@@ -195,6 +195,6 @@ class Criterion < ApplicationRecord
 
   def update_results
     result_ids = Result.includes(submission: :grouping).where(groupings: { assessment_id: assessment_id }).ids
-    Result.update_total_marks(result_ids, assessment_id)
+    Result.update_total_marks(result_ids)
   end
 end
