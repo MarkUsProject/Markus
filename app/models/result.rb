@@ -57,7 +57,9 @@ class Result < ApplicationRecord
   # Update the total_mark attributes for the results with id in +result_ids+
   def self.update_total_marks(result_ids, user_visibility: :ta_visible)
     total_marks = Result.get_total_marks(result_ids, user_visibility: user_visibility)
-    Result.upsert_all(total_marks.map { |r_id, total_mark| { id: r_id, total_mark: total_mark } })
+    unless total_marks.empty?
+      Result.upsert_all(total_marks.map { |r_id, total_mark| { id: r_id, total_mark: total_mark } })
+    end
   end
 
   # Calculate the total mark for this submission
@@ -70,7 +72,7 @@ class Result < ApplicationRecord
   def self.get_total_marks(result_ids, user_visibility: :ta_visible)
     subtotals = Result.get_subtotals(result_ids, user_visibility: user_visibility)
     extra_marks = Result.get_total_extra_marks(result_ids, user_visibility: user_visibility)
-    result_ids.map { |r_id| [r_id, [0, (subtotals[r_id] || 0) + (extra_marks[r_id] || 0) ].max] }.to_h
+    subtotals.map { |r_id, subtotal| [r_id, [0, (subtotal || 0) + (extra_marks[r_id] || 0) ].max] }.to_h
   end
 
   # The sum of the marks not including bonuses/deductions
