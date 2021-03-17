@@ -272,23 +272,9 @@ class Assignment < Assessment
           .any?
   end
 
-  def results_fails
-    marks = Result.student_marks_by_assignment(id)
-    # No marks released for this assignment.
-    return false if marks.empty?
-    marks.count { |mark| mark < max_mark / 2.0 }
-  end
-
-  def results_zeros
-    marks = Result.student_marks_by_assignment(id)
-    # No marks released for this assignment.
-    return false if marks.empty?
-    marks.count(&:zero?)
-  end
-
   # calculates summary statistics of released results for this assignment
   def update_results_stats
-    marks = Result.student_marks_by_assignment(id)
+    marks = student_marks_by_assignment
     # No marks released for this assignment.
     return false if marks.empty?
 

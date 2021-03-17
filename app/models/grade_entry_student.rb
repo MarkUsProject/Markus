@@ -207,8 +207,7 @@ class GradeEntryStudent < ApplicationRecord
   end
 
   def update_results
-    grade_entry_form = GradeEntryForm.find(self.assessment_id)
-    grade_entry_form.update(results_median: grade_entry_form.calculate_median,
-                            results_average: grade_entry_form.calculate_average)
+    self.grade_entry_form.update(results_median: self.grade_entry_form.calculate_median,
+                            results_average: self.grade_entry_form.calculate_average)
   end
 end

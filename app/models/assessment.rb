@@ -24,12 +24,58 @@ class Assessment < ApplicationRecord
 
   def short_identifier_unchanged
     return unless short_identifier_changed?
+
     errors.add(:short_id_change, 'short identifier should not be changed once an assessment has been created')
     false
   end
 
   def upcoming(*)
     return true if self.due_date.nil?
+
     self.due_date > Time.current
+  end
+
+  # Returns a list of total marks for each student whose submissions are graded
+  # for the assignment specified by +assessment_id+, sorted in ascending order.
+  # This includes duplicated marks for each student in the same group (marks
+  # are given for a group, so each student in the same group gets the same
+  # mark).
+  def student_marks_by_assignment
+    # Need to get a list of total marks of students' latest results (i.e., not
+    # including old results after having remarked results). This is a typical
+    # greatest-n-per-group problem and can be implemented using a subquery
+    # join.
+    if defined? @marks_by_assignment
+      return @marks_by_assignment
+    end
+
+    subquery = Result.select('max(results.id) max_id')
+                     .joins(submission: { grouping: { student_memberships: :user } })
+                     .where(groupings: { assessment_id: self.id },
+                            users: { hidden: false },
+                            submissions: { submission_version_used: true },
+                            marking_state: Result::MARKING_STATES[:complete])
+                     .group('users.id')
+    marks = Result.joins("JOIN (#{subquery.to_sql}) s ON id = s.max_id")
+                  .order(:total_mark).pluck(:total_mark)
+    @marks_by_assignment = marks
+    marks
+
+  end
+
+  def results_fails
+    marks = student_marks_by_assignment
+    # No marks released for this assignment.
+    return false if marks.empty?
+    
+    marks.count { |mark| mark < max_mark / 2.0 }
+  end
+
+  def results_zeros
+    marks = student_marks_by_assignment
+    # No marks released for this assignment.
+    return false if marks.empty?
+
+    marks.count(&:zero?)
   end
 end
