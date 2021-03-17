@@ -72,7 +72,7 @@ class Result < ApplicationRecord
   def self.get_total_marks(result_ids, user_visibility: :ta_visible)
     subtotals = Result.get_subtotals(result_ids, user_visibility: user_visibility)
     extra_marks = Result.get_total_extra_marks(result_ids, user_visibility: user_visibility)
-    subtotals.map { |r_id, subtotal| [r_id, [0, (subtotal || 0) + (extra_marks[r_id] || 0) ].max] }.to_h
+    subtotals.map { |r_id, subtotal| [r_id, [0, (subtotal || 0) + (extra_marks[r_id] || 0)].max] }.to_h
   end
 
   # The sum of the marks not including bonuses/deductions

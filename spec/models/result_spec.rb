@@ -268,17 +268,17 @@ describe Result do
     it 'should update the total mark' do
       old_total = result.total_mark
       allow(result).to receive(:get_total_mark).and_return(old_total - 1)
-      expect { result.update_total_mark }.to change { result.total_mark }.by -1
+      expect { result.update_total_mark }.to change { result.total_mark }.by(-1)
     end
   end
   describe '.update_total_marks' do
     include_context 'get subtotals context'
     it 'should update all total_marks' do
       ids = Result.ids
-      changes = ids.map { |id| [id, Result.find(id).total_mark - 1]}.to_h
+      changes = ids.map { |id| [id, Result.find(id).total_mark - 1] }.to_h
       allow(Result).to receive(:get_total_marks).and_return(changes)
       expect { Result.update_total_marks(ids) }.to(
-        change{ Result.pluck(:total_mark) }.to contain_exactly(*changes.values)
+        change { Result.pluck(:total_mark) }.to(contain_exactly(*changes.values))
       )
     end
   end
