@@ -9,6 +9,4 @@ describe Result do
   it { is_expected.to callback(:create_marks).after(:create) }
   it { is_expected.to callback(:check_for_released).before(:update) }
   it { is_expected.to callback(:check_for_nil_marks).before(:save) }
-
-  
 end

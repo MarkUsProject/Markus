@@ -208,6 +208,6 @@ class GradeEntryStudent < ApplicationRecord
 
   def update_results
     self.grade_entry_form.update(results_median: self.grade_entry_form.calculate_median,
-                            results_average: self.grade_entry_form.calculate_average)
+                                 results_average: self.grade_entry_form.calculate_average)
   end
 end

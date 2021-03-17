@@ -67,7 +67,6 @@ class Assessment < ApplicationRecord
     marks = student_marks_by_assignment
     # No marks released for this assignment.
     return false if marks.empty?
-    
     marks.count { |mark| mark < max_mark / 2.0 }
   end
 
@@ -75,7 +74,6 @@ class Assessment < ApplicationRecord
     marks = student_marks_by_assignment
     # No marks released for this assignment.
     return false if marks.empty?
-
     marks.count(&:zero?)
   end
 end
