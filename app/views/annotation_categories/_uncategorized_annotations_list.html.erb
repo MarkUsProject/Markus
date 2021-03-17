@@ -17,7 +17,7 @@
       <%= t('annotations.empty_uncategorized') %>
     </p>
   <% else %>
-    <ul id='annotation_list'>
+    <ul id='annotation_list' class='block-list'>
       <%= render partial: 'annotation_text',
                  collection: texts %>
     </ul>
