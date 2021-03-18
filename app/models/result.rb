@@ -82,15 +82,16 @@ class Result < ApplicationRecord
     else
       user_visibility = :ta_visible
     end
-    Result.get_subtotals(self.id, user_visibility: user_visibility)[self.id]
+    Result.get_subtotals([self.id], user_visibility: user_visibility)[self.id]
   end
 
   def self.get_subtotals(result_ids, user_visibility: :ta_visible)
-    Mark.joins(:criterion)
-        .where(result_id: result_ids)
-        .where("criteria.#{user_visibility}": true)
-        .group(:result_id)
-        .sum(:mark)
+    marks = Mark.joins(:criterion)
+                .where(result_id: result_ids)
+                .where("criteria.#{user_visibility}": true)
+                .group(:result_id)
+                .sum(:mark)
+    result_ids.map { |r_id| [r_id, marks[r_id] || 0] }.to_h
   end
 
   # The sum of the bonuses deductions and late penalties

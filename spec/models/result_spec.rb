@@ -324,13 +324,6 @@ describe Result do
         expect(Result.send(method_name, ids)).to eq(ids.map { |id| [id, Result.find(id).marks.pluck(:mark).sum] }.to_h)
       end
     end
-    context 'one of the ids does not exist' do
-      it 'should return a hash containing only results that exist' do
-        org_ids = Result.pluck(:id)
-        ids = [*org_ids, org_ids.max + 1]
-        expect(Result.send(method_name, ids).keys).to contain_exactly(*org_ids)
-      end
-    end
     context 'some criteria are peer_visible only' do
       before { assignment.criteria.first.update!(ta_visible: false, peer_visible: true) }
       context 'user_visibility is set to ta_visible' do
