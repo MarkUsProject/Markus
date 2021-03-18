@@ -5,8 +5,7 @@
     <%= link_to assignment_text, route %>
     <% if assignment.has_peer_review? && !assignment.pr_assignment.is_hidden %>
       <%= link_to "#{assignment.short_identifier} #{PeerReview.model_name.human}",
-                  peer_review_assignment_path(id: assignment.pr_assignment.id),
-                  class: 'pr_assignment_list' %>
+                  peer_review_assignment_path(id: assignment.pr_assignment.id) %>
     <% end %>
   </td>
   <td>

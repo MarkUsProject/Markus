@@ -114,19 +114,6 @@ class FlexibleCriterion < Criterion
     1
   end
 
-  def all_assigned_groups
-    result = []
-    tas.each do |ta|
-      result = result.concat(ta.get_groupings_by_assignment(assignment))
-    end
-    result.uniq
-  end
-
-  def has_associated_ta?(ta)
-    return false unless ta.ta?
-    !(criterion_ta_associations.where(ta_id: ta.id).first == nil)
-  end
-
   def scale_marks
     super
     return if self&.annotation_categories.nil?

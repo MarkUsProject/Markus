@@ -3,19 +3,15 @@
     <%= t(:marking_scheme_with_id, marking_scheme_id: marking_scheme.id) %>
   </p>
 
-  <table>
-    <tr>
-      <td><%= t(:average) %></td>
-      <td>
-        <%= number_to_percentage(DescriptiveStatistics.mean(grades) || 0, precision: 1) %>
-      </td>
-    </tr>
+  <div class="grid-2-col">
+    <span><%= t(:average) %></span>
+    <span>
+      <%= number_to_percentage(DescriptiveStatistics.mean(grades) || 0, precision: 1) %>
+    </span>
 
-    <tr>
-      <td><%= t(:median) %></td>
-      <td>
-        <%= number_to_percentage(DescriptiveStatistics.median(grades) || 0, precision: 1) %>
-      </td>
-    </tr>
-  </table>
+    <span><%= t(:median) %></span>
+    <span>
+      <%= number_to_percentage(DescriptiveStatistics.median(grades) || 0, precision: 1) %>
+    </span>
+  </div>
 <% end %>

@@ -11,9 +11,18 @@
 - Add button to assignment's annotations tab to allow instructor to download one time annotations (#5088)
 - Removed AssignmentStats table (#5089)
 - Display assignment totals on the grade summary table rounded up to 2 decimal places (#5123)
+- Do not allow users to set repo names by uploading csv files (#5132)
 - Added a delete button to notes dialog under an results edit view and removed user_can_modify under note model,
   removed Notes#user_can_modify and replaced instances of usage with NotePolicy (#5128)
 - Support Markdown syntax for assessment messages (#5135)
+- Remove controller-specific css files (#5136)
+- Replace non-UTF8 characters in text file preview (#5156)
+- Rollback group creation if error is raised when creating a group for a working-alone student (#5169)
+- Prevent deletion/modification of annotation texts associated with a result with a pending remark request (#5170)
+
+## [v1.11.4]
+- Override defaultSortMethod for react-table to put null/undefined values at bottom (#5159)
+- Fix bug where groupings created before starter files were uploaded could not download starter files (#5160)
 
 ## [v1.11.3]
 - Fix easyModal overlay bug (#5117)

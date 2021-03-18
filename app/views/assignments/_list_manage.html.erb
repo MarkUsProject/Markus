@@ -31,14 +31,14 @@
                 <% end %>
                 <% pr_text = "#{assignment.short_identifier} #{PeerReview.model_name.human}" %>
                 <% pr_text = t('assignments.hidden', assignment_text: pr_text) if assignment.pr_assignment.is_hidden %>
-                <%= link_to pr_text, pr_route, class: 'pr_assignment_list' %>
+                <p style="margin-left: 15px;"><%= link_to pr_text, pr_route %></p>
               <% end %>
             </td>
 
             <td>
               <div><%= l(assignment.due_date) %></div>
               <% if assignment.has_peer_review? %>
-                <div class="pr_date"><%= l(assignment.pr_assignment.due_date) %></div>
+                <p><%= l(assignment.pr_assignment.due_date) %></p>
               <% end %>
             </td>
 

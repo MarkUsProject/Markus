@@ -30,10 +30,6 @@ class RubricCriterion < Criterion
     end
   end
 
-  def mark_for(result_id)
-    marks.where(result_id: result_id).first
-  end
-
   def set_default_levels
     self.assign_attributes(levels_attributes:
       [
@@ -167,20 +163,5 @@ class RubricCriterion < Criterion
     # factor = 10.0 ** 3
     # self.max_mark = (max_mark * factor).round.to_f / factor
     self.max_mark = self.max_mark.round(2)
-  end
-
-  def all_assigned_groups
-    result = []
-    tas.each do |ta|
-      result = result.concat(ta.get_groupings_by_assignment(assignment))
-    end
-    result.uniq
-  end
-
-  def has_associated_ta?(ta)
-    unless ta.ta?
-      return false
-    end
-    !(criterion_ta_associations.where(ta_id: ta.id).first == nil)
   end
 end

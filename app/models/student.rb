@@ -146,8 +146,8 @@ class Student < User
       end
 
       # Create the membership
-      @member = StudentMembership.create(grouping_id: @grouping.id,
-                                         membership_status: StudentMembership::STATUSES[:inviter], user_id: self.id)
+      @member = StudentMembership.create!(grouping_id: @grouping.id,
+                                          membership_status: StudentMembership::STATUSES[:inviter], user_id: self.id)
       # Destroy all the other memberships for this assignment
       self.destroy_all_pending_memberships(aid)
     end
@@ -163,6 +163,7 @@ class Student < User
       StudentMembership.create(grouping_id: grouping.id, membership_status: StudentMembership::STATUSES[:inviter],
                                user_id: self.id)
       self.destroy_all_pending_memberships(aid)
+      grouping
     end
   end
 

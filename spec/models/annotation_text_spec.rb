@@ -66,27 +66,44 @@ describe AnnotationText do
   end
 
   describe 'callbacks' do
-    it 'prevent an update of deduction if any results are released' do
-      assignment.groupings.first.current_result.update!(released_to_students: true)
-      expect(deductive_text.update(deduction: 2.0)).to be false
+    context 'results are released' do
+      before { assignment.groupings.first.current_result.update!(released_to_students: true) }
+      it 'prevents an update to the deduction' do
+        expect(deductive_text.update(deduction: 2.0)).to be false
+      end
+      it 'prevents an update to the content' do
+        expect(deductive_text.update(content: 'Do not plagiarize!')).to be false
+      end
+      it 'prevents deletion' do
+        expect(deductive_text.destroy).to be false
+      end
     end
-
-    it 'prevent an update of content if any results are released and there is a deduction' do
-      assignment.groupings.first.current_result.update!(released_to_students: true)
-      expect(deductive_text.update(content: 'Do not plagiarize!')).to be false
+    context 'results are not released and no remark request exists' do
+      it 'does not prevent an update to the deduction' do
+        expect(deductive_text.update(deduction: 2.0)).to be true
+      end
+      it 'does not prevent an update to the content' do
+        expect(deductive_text.update(content: 'Do not plagiarize!')).to be true
+      end
+      it 'does not prevent deletion' do
+        expect(deductive_text.destroy).to eq deductive_text
+      end
     end
-
-    it 'do not prevent an update of content if any results are released and there is no deduction' do
-      expect(deductive_text.update(content: 'Do not plagiarize!')).to be true
-    end
-
-    it 'prevent a destruction of the annotation_text if any results are released and there is a deduction value' do
-      assignment.groupings.first.current_result.update!(released_to_students: true)
-      expect(deductive_text.destroy).to be false
-    end
-
-    it 'do not prevent a destruction of the annotation_text if no results are released even with a deduction value' do
-      expect(deductive_text.destroy).to eq deductive_text
+    context 'a remark request exists' do
+      before do
+        grouping = assignment.groupings.first
+        grouping.current_result.update!(released_to_students: true)
+        grouping.current_submission_used.make_remark_result
+      end
+      it 'prevents an update to the deduction' do
+        expect(deductive_text.update(deduction: 2.0)).to be false
+      end
+      it 'prevents an update to the content' do
+        expect(deductive_text.update(content: 'Do not plagiarize!')).to be false
+      end
+      it 'prevents deletion' do
+        expect(deductive_text.destroy).to be false
+      end
     end
   end
 

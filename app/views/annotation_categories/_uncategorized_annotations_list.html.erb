@@ -11,15 +11,5 @@
                   class: 'button' %>
       </div>
   </div>
-
-  <% if texts.empty? %>
-    <p>
-      <%= t('annotations.empty_uncategorized') %>
-    </p>
-  <% else %>
-    <ul id='annotation_list'>
-      <%= render partial: 'annotation_text',
-                 collection: texts %>
-    </ul>
-  <% end %>
+  <div id='one_time_annotations_table'></div>
 </div>

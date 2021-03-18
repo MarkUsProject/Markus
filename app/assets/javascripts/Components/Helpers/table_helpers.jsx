@@ -5,6 +5,32 @@ import React from "react";
  * Provides generic helper functions for react tables
 */
 
+export function defaultSort(a, b) {
+  // Sort values, putting undefined/nulls below all other values.
+  // Based on react-table v6 defaultSortMethod (https://github.com/tannerlinsley/react-table/tree/v6/),
+  // but not string-based.
+  if ((a === undefined || a === null) && (b === undefined || b === null)) {
+    return 0;
+  } else if (a === undefined || a === null) {
+    return -1;
+  } else if (b === undefined || b === null) {
+    return 1;
+  } else {
+    // force any string values to lowercase
+    a = typeof a === 'string' ? a.toLowerCase() : a
+    b = typeof b === 'string' ? b.toLowerCase() : b
+    // Return either 1 or -1 to indicate a sort priority
+    if (a > b) {
+      return 1;
+    }
+    if (a < b) {
+      return -1;
+    }
+    // returning 0, undefined or any falsey value will use subsequent sorts or
+    // the index as a tiebreaker
+    return 0;
+  }
+}
 
 export function stringFilter(filter, row) {
   /** Case insensitive, locale aware, string filter function */
