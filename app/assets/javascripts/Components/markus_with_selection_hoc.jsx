@@ -19,6 +19,7 @@ function withSelection(WrappedComponent) {
       this.state = {
         selection: [],
         selectAll: false,
+        last_selected: null
       }
     }
 
@@ -29,17 +30,44 @@ function withSelection(WrappedComponent) {
       if (isNaN(key)) {
         return;
       }
-      let selection = [
-        ...this.state.selection
-      ];
-      const keyIndex = selection.indexOf(key);
-      if (keyIndex >= 0) {
-        selection.splice(keyIndex, 1);
+      let selection = [...this.state.selection];
+      let last_selected = null;
+      if (shift && this.state.last_selected !== null) {
+        // we need to get at the internals of ReactTable
+        const wrappedInstance = this.wrapped.checkboxTable.getWrappedInstance();
+        // the 'sortedData' property contains the currently accessible records based on the filter and sort
+        const currentRecords = wrappedInstance.getResolvedState().sortedData;
+        // find all keys between the last key selected and the current key selected
+        const keys_in_range = new Set;
+        currentRecords.some((record) => {
+          if (record._id === this.state.last_selected || record._id === key) {
+            keys_in_range.add(record._id);
+            if (keys_in_range.size > 1) {
+              return true; // acts like a break statement
+            }
+          } else if (!!keys_in_range.size) {
+            keys_in_range.add(record._id);
+          }
+          return false;
+        })
+        if (selection.indexOf(this.state.last_selected ) < 0) {
+          // if the last key selected unchecked the checkbox: remove all keys in range from the selection array
+          selection = [...new Set(selection.filter(x => !keys_in_range.has(x)))]
+        } else {
+          // otherwise add all keys in range to the selection array
+          selection = [...new Set([...selection, ...keys_in_range])]
+        }
       } else {
-        selection.push(key);
+        const keyIndex = selection.indexOf(key);
+        if (keyIndex >= 0) {
+          selection.splice(keyIndex, 1);
+        } else {
+          selection.push(key);
+        }
+        last_selected = key;
       }
       // update the state
-      this.setState({ selection });
+      this.setState({ selection, last_selected });
     }
 
     toggleAll() {
@@ -63,7 +91,7 @@ function withSelection(WrappedComponent) {
     }
 
     resetSelection() {
-      this.setState({selectAll: false, selection: []});
+      this.setState({selectAll: false, selection: [], last_selected: null});
     }
 
     getCheckboxProps() {
