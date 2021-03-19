@@ -1,5 +1,7 @@
 class Section < ApplicationRecord
-  validates :name, presence: true, uniqueness: true, allow_blank: false
+  validates :name, presence: true, uniqueness: true, allow_blank: false,
+            format: { with: /\A[a-zA-Z0-9\-_ ]+\z/,
+                      message: 'user_name must be alphanumeric, hyphen, whitespace, or underscore' }
   has_many :students
   has_many :section_due_dates
   has_many :section_starter_file_groups
