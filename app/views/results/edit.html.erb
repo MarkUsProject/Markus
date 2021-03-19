@@ -1,10 +1,10 @@
 <% content_for :head do %>
   <%= stylesheet_link_tag 'result_main' %>
   <%= stylesheet_pack_tag 'result' %>
-  <%= javascript_include_tag 'mathjax' %>
-  <%= javascript_pack_tag 'result' %>
-  <%= javascript_include_tag 'Results/main' %>
-  <script>
+  <%= javascript_include_tag 'mathjax', nonce: true %>
+  <%= javascript_pack_tag 'result', nonce: true %>
+  <%= javascript_include_tag 'Results/main', nonce: true %>
+  <%= javascript_tag nonce: true do %>
     pdfjs.GlobalWorkerOptions.workerSrc = '<%= asset_pack_path('pdf.js') %>';
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -33,7 +33,7 @@
         $('#deduction_disclaimer').addClass('hidden');
       }
     }
-  </script>
+  <% end %>
 <% end %>
 
 <%= render partial: 'results/common/annotations',
@@ -44,10 +44,10 @@
            } %>
 
 <!-- Dialogs -->
-<aside class='dialog' id='notes_dialog' style='display:none'></aside>
+<aside class='dialog no-display' id='notes_dialog'></aside>
 <%= render partial: 'download_modal', layout: 'layouts/modal_dialog'  %>
 
-<aside class='dialog' id='help_dialog' style='display:none'>
+<aside class='dialog no-display' id='help_dialog'>
   <h2><%=t('results.keybinding.keyboard_help')%></h2>
   <table class="shortcuts-table">
     <tr>
@@ -93,7 +93,7 @@
   </table>
 </aside>
 <% if @current_user.admin? %>
-  <aside class='dialog' id='create_new_tag' style='display:none'>
+  <aside class='dialog no-display' id='create_new_tag'>
     <h1><%= t('helpers.submit.create', model: Tag.model_name.human) %></h1>
     <p><%= Tag.human_attribute_name(:name) %></p>
     <%= form_for :tag,

@@ -1,4 +1,4 @@
-<script>
+<%= javascript_tag nonce: true do %>
   var grace_periods = null;
   var penalty_decay_periods = null;
   var penalty_periods = null;
@@ -177,4 +177,4 @@
       onClose:          check_due_date,
     });
   });
-</script>
+<% end %>

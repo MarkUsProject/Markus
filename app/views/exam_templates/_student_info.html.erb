@@ -14,9 +14,9 @@
     </div>
 
     <% if exam_template.automatic_parsing %>
-      <script>
+    <%= javascript_tag nonce: true do %>
         window.onload = () => attach_crop_box()
-      </script>
+      <% end %>
     <% end %>
 
     <div class="table-with-add">

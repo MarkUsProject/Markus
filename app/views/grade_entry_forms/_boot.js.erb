@@ -1,4 +1,4 @@
-<script>
+<%= javascript_tag nonce: true do %>
   function add_column() {
     var last_col = $('.grade_entry_item').last();
     var new_col = last_col.clone();
@@ -46,4 +46,4 @@
       nextText:         I18n.t('time.next')
     });
   });
-</script>
+<% end %>

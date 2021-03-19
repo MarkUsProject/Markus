@@ -1,9 +1,9 @@
 <% content_for :title, ExamTemplate.model_name.human.pluralize %>
 
 <% content_for :head do %>
-  <script>
+  <%= javascript_tag nonce: true do %>
     <%= render partial: 'boot.js' %>
-  </script>
+  <% end %>
 <% end %>
 
 <% @heading_buttons = [

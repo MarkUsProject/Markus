@@ -1,4 +1,4 @@
-<script>
+<%= javascript_tag nonce: true do %>
   $(document).ready(function() {
     bindSortable();
 
@@ -65,4 +65,4 @@
 
     rubric_form.prepend(new_level);
   }
-</script>
+<% end %>

@@ -1,5 +1,5 @@
-<script>
-  function add_annotation_prompt(path) {
+<%= javascript_tag nonce: true do %>
+function add_annotation_prompt(path) {
     var annotation_text = $('#add_annotation_text #annotation_text_content');
 
     if (annotation_text.length) {
@@ -58,4 +58,4 @@
       });
     }
   });
-</script>
+<% end %>

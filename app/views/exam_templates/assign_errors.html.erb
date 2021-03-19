@@ -2,17 +2,17 @@
   <%= stylesheet_link_tag('grader') %>
   <%= stylesheet_link_tag('context_menu') %>
 
-  <%= javascript_pack_tag 'result' %>
-  <%= javascript_tag do -%>
+  <%= javascript_pack_tag 'result', nonce: true %>
+  <%= javascript_tag nonce: true do -%>
     pdfjs.GlobalWorkerOptions.workerSrc = '<%= asset_pack_path('pdf.js') %>';
   <% end -%>
 <% end %>
 
-<script>
+<%= javascript_tag nonce: true do %>
 <%= render partial: 'exam_templates/assign_errors',
            formats: [:js],
            handlers: [:erb] %>
-</script>
+<% end %>
 
 <% content_for :title do %>
   <%= t('exam_templates.assign_errors.fix_errors') %> - <%= @exam_template.name %>

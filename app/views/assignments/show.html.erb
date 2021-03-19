@@ -1,5 +1,5 @@
 <% content_for :head do %>
-<script>
+<% end %><%= javascript_tag nonce: true do %>
   var invite_modal = null;
 
   function invite() {
@@ -11,7 +11,7 @@
   $(document).ready(function() {
     invite_modal = new ModalMarkus('#invite_dialog');
   });
-</script>
+<% end %>
 <% end %>
 
 <% content_for :title, "#{Assignment.model_name.human} #{@assignment.short_identifier}" %>

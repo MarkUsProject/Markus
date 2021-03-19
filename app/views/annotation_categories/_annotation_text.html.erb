@@ -51,7 +51,7 @@
     <% end %>
   </div>
 
-  <div id='annotation_text_<%= annotation_text[:id] %>_edit' style='display:none;'>
+  <div id='annotation_text_<%= annotation_text[:id] %>_edit' class="no-display">
     <%= form_with url: update_annotation_text_assignment_annotation_categories_path(id: annotation_text[:id]),
                   method: 'put',
                   remote: true do |f| %>
@@ -85,7 +85,7 @@
 </li>
 
 <% unless annotation_text[:annotation_category].nil? %>
-  <script>
+  <%= javascript_tag nonce: true do %>
     (() => {
       let usagePanel = document.getElementById('annotation-text-' + <%= annotation_text[:id] %> + '-usage-panel');
       window.AnnotationUsagePanel = window.makeAnnotationUsagePanel(
@@ -97,5 +97,5 @@
         }
       );
     })();
-  </script>
+  <% end %>
 <% end %>

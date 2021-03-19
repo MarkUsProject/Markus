@@ -1,10 +1,10 @@
 <% content_for :head do %>
   <%= stylesheet_link_tag 'grader',
                           'jquery-ui' %>
-  <%= javascript_pack_tag 'result' %>
+  <%= javascript_pack_tag 'result', nonce: true %>
 <% end %>
 
-<script>
+<%= javascript_tag nonce: true do %>
   pdfjs.GlobalWorkerOptions.workerSrc = '<%= asset_pack_path('pdf.js') %>';
 
   $(document).ready(function () {
@@ -80,7 +80,7 @@
   function update_bar(v) {
     $('#progress-meter').attr('value', v);
   }
-</script>
+<% end %>
 <% content_for :title do %>
     <%= t('exam_templates.assign_scans.title') %>
     <div class='title-help'>

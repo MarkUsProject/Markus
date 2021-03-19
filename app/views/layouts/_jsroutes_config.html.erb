@@ -1,4 +1,4 @@
-<script>
+<%= javascript_tag nonce: true do %>
   Routes.configure({
     url_links: true,
     <% if Rails.application.config.relative_url_root %>
@@ -6,4 +6,4 @@
     <% end %>
   });
   Routes.config();
-</script>
+<% end %>

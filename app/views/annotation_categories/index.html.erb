@@ -3,8 +3,8 @@
              formats: [:js],
              handlers: [:erb] %>
   <%= render partial: 'layouts/mathjax_config' %>
-  <%= javascript_include_tag 'MathJax_lib/MathJax.js?config=TeX-AMS-MML_HTMLorMML' %>
-  <%= javascript_include_tag 'MathJax/mathjax_helpers' %>
+  <%= javascript_include_tag 'MathJax_lib/MathJax.js?config=TeX-AMS-MML_HTMLorMML', nonce: true %>
+  <%= javascript_include_tag 'MathJax/mathjax_helpers', nonce: true %>
 <% end %>
 
 <% content_for :title, t('.title',
@@ -27,7 +27,7 @@
 ] %>
 
 
-<p id='criterion_error' class='warning' style='display: none;'></p>
+<p id='criterion_error' class='warning no-display'></p>
 <div class='pane-wrapper'>
 <div style='width: 25%'>
   <%= render partial: 'annotation_categories/annotation_category_pane' %>

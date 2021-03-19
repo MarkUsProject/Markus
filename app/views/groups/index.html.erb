@@ -3,9 +3,9 @@
   <%= stylesheet_link_tag 'jquery-ui', 'jquery-ui-timepicker-addon' %>
   <%= javascript_include_tag 'jquery-ui-timepicker-addon',
                              'PeriodDeltaChain/PeriodDeltaChain',
-                             'localize_date'%>
+                             'localize_date', nonce: true %>
 
-  <script>
+  <%= javascript_tag nonce: true do %>
     <% parts = @assignment.duration_parts
        duration_string = ["#{parts[:hours]} #{I18n.t('durations.hours', count: parts[:hours])}",
                           "#{parts[:minutes]} #{I18n.t('durations.minutes', count: parts[:minutes])}"].join(', ')
@@ -23,7 +23,7 @@
         }
       );
     });
-  </script>
+  <% end %>
 <% end %>
 
 <% content_for :title do %>

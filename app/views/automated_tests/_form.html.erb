@@ -2,14 +2,14 @@
   <%= stylesheet_link_tag 'jquery-ui', 'jquery-ui-timepicker-addon' %>
   <%= javascript_include_tag 'jquery-ui-timepicker-addon',
                              'PeriodDeltaChain/PeriodDeltaChain',
-                             'localize_date'%>
+                             'localize_date', nonce: true %>
 
-  <script>
+  <%= javascript_tag nonce: true do %>
     document.addEventListener('DOMContentLoaded', () => {
       window.autotestManagerComponent = makeAutotestManager(document.getElementById('autotest-manager'),
         { assignment_id: <%= @assignment.id %>});
     });
-  </script>
+  <% end %>
   <%= render partial: 'shared/navigation_warning',
              formats: [:js],
              handlers: [:erb] %>

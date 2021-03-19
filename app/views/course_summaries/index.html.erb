@@ -1,10 +1,10 @@
 <%= content_for :head do %>
-  <script>
+  <%= javascript_tag nonce: true do %>
     document.addEventListener('DOMContentLoaded', () => {
       makeGradesSummaryDisplay(document.getElementById('grades_summary_display'),
                                { student: <%= @current_user.student? %> });
     });
-  </script>
+  <% end %>
 <% end %>
 <% if @current_user.student? %>
   <%= content_for :title, t('course_summary.student_title') %>

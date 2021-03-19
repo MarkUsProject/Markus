@@ -1,7 +1,7 @@
 <% flash.discard.inspect %> <!-- keep this line until issue #3342 has been resolved (somehow it fixes it) -->
 <% [:notice, :error, :success, :warning].each do |key| %>
   <% if flash[key].nil? %>
-    <div class="<%= key.to_s %>" style="display: none">
+    <div class="<%= key.to_s %> no-display">
       <a class="hide-flash" onclick="$(this).parent().hide()">&nbsp;</a>
       <div class="flash-content"></div>
     </div>
