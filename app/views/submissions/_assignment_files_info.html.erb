@@ -5,13 +5,13 @@
     <% else %>
       <p>
         <% if assignment.only_required_files%>
-          Students can only submit required files below
+          <%= t('assignments.only_required_files') %>
         <% else %>
-          Students can submit other files in addition to required files
+          <%= t('assignments.not_only_required_files') %>
         <% end %>
       </p>
       <p>
-        Required files:
+        <%= Assignment.human_attribute_name(:assignment_files) %>
       </p>
       <ul>
         <% assignment.assignment_files.each do |assignment_file| %>
@@ -20,8 +20,7 @@
       </ul>
     <% end %>
     <p>
-      Maximum File Size: <%= Settings.max_file_size  / 1000000%> MB
+      <%= t('assignments.maximum_file_size', file_size: Settings.max_file_size  / 1000000) %>
     </p>
   </div>
-
 </div>
