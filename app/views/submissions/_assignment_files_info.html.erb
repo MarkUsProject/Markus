@@ -1,0 +1,27 @@
+<div class='pane-wrapper'>
+  <div class='pane' style='margin-bottom: 1em;'>
+    <% if assignment.assignment_files.length == 0 %>
+      <p><%= t('assignments.no_required_files') %></p>
+    <% else %>
+      <p>
+        <% if assignment.only_required_files%>
+          Students can only submit required files below
+        <% else %>
+          Students can submit other files in addition to required files
+        <% end %>
+      </p>
+      <p>
+        Required files:
+      </p>
+      <ul>
+        <% assignment.assignment_files.each do |assignment_file| %>
+          <li><%= assignment_file.filename %></li>
+        <% end %>
+      </ul>
+    <% end %>
+    <p>
+      Maximum File Size: <%= Settings.max_file_size  / 1000000%> MB
+    </p>
+  </div>
+
+</div>
