@@ -10,5 +10,3 @@ Definition translation:
   description: This is a flexible criterion and you can put either "Flexible" or "flexible".
   ta_visible: True
   peer_visible: False
-
-
