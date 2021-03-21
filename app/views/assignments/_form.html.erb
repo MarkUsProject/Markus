@@ -38,6 +38,7 @@
                     class: 'required' %>
         <%= f.text_field :short_identifier,
                          onchange: 'set_onbeforeunload(true);',
+                         pattern: '[a-zA-Z0-9\-_]+',
                          size: 35,
                          maxlength: 30,
                          required: true,

@@ -4,6 +4,13 @@ describe Section do
   it { is_expected.to have_many(:students) }
   it { is_expected.to have_many(:section_due_dates) }
 
+  it { is_expected.not_to allow_value('A!a.sa').for(:name) }
+  it { is_expected.not_to allow_value('<abc').for(:name) }
+
+  it { is_expected.to allow_value('abc 234').for(:name) }
+  it { is_expected.to allow_value('Ads_-hb').for(:name) }
+  it { is_expected.to allow_value('-22125-k1lj42_').for(:name) }
+
   describe '.has_students?' do
     context 'A section with students associated to' do
       it 'return true to has_students?' do
