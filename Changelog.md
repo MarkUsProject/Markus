@@ -19,6 +19,7 @@
 - Replace non-UTF8 characters in text file preview (#5156)
 - Rollback group creation if error is raised when creating a group for a working-alone student (#5169)
 - Prevent deletion/modification of annotation texts associated with a result with a pending remark request (#5170)
+- Ensure that graders are shown the correct annotation categories (#5181)
 - Show informative error message if an uploaded criteria yaml file did not contain a "type" key (#5184)
 
 ## [v1.11.4]
