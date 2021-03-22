@@ -85,13 +85,6 @@ services:
       - redis
     ports: []
 
-  test:
-    <<: *rails
-    command: /bin/bash
-    environment:
-      - NODE_ENV=test
-      - RAILS_ENV=test
-
   postgres:
     image: postgres:10
     volumes:

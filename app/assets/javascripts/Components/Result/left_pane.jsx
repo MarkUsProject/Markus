@@ -79,6 +79,7 @@ export class LeftPane extends React.Component {
               detailed={this.props.detailed_annotations}
               released_to_students={this.props.released_to_students}
               overallComment={this.props.overall_comment || ''}
+              updateOverallComment={this.props.update_overall_comment}
               remarkSubmitted={this.props.remark_submitted}
               annotations={this.props.annotations}
               editAnnotation={this.props.editAnnotation}
@@ -124,6 +125,7 @@ export class LeftPane extends React.Component {
               submission_id={this.props.submission_id}
               assignment_id={this.props.assignment_id}
               assignmentRemarkMessage={this.props.assignment_remark_message}
+              updateOverallComment={this.props.update_overall_comment}
               remarkDueDate={this.props.remark_due_date}
               pastRemarkDueDate={this.props.past_remark_due_date}
               remarkRequestText={this.props.remark_request_text || ''}
