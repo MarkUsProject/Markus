@@ -73,6 +73,7 @@ function withSelection(WrappedComponent) {
     toggleAll() {
       const selectAll = !this.state.selectAll;
       const selection = [];
+      const last_selected = null;
       if (selectAll) {
         // we need to get at the internals of ReactTable
         const wrappedInstance = this.wrapped.checkboxTable.getWrappedInstance();
@@ -83,7 +84,7 @@ function withSelection(WrappedComponent) {
           selection.push(item._original._id);
         })
       }
-      this.setState({ selectAll, selection });
+      this.setState({ selectAll, selection, last_selected });
     }
 
     isSelected(key) {
