@@ -1,17 +1,17 @@
 <% content_for :head do %>
-<% end %><%= javascript_tag nonce: true do %>
-  var invite_modal = null;
+  <%= javascript_tag nonce: true do %>
+    var invite_modal = null;
 
-  function invite() {
-    invite_modal.open();
-    document.getElementById('invite_member').value = '';
-    document.getElementById('invite_member').focus();
-  }
+    function invite() {
+      invite_modal.open();
+      document.getElementById('invite_member').value = '';
+      document.getElementById('invite_member').focus();
+    }
 
-  $(document).ready(function() {
-    invite_modal = new ModalMarkus('#invite_dialog');
-  });
-<% end %>
+    $(document).ready(function() {
+      invite_modal = new ModalMarkus('#invite_dialog');
+    });
+  <% end %>
 <% end %>
 
 <% content_for :title, "#{Assignment.model_name.human} #{@assignment.short_identifier}" %>
