@@ -169,7 +169,6 @@ module Api
     # Update starter file entries for +starter_file_group+ and set the starter_file_changed
     # attribute to true for all groupings affected by the change.
     def update_entries_and_warn(starter_file_group)
-      starter_file_group.warn_affected_groupings
       starter_file_group.assignment.assignment_properties.update!(starter_file_updated_at: Time.current)
       starter_file_group.update_entries
     end

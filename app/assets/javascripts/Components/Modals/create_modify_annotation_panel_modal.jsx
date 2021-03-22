@@ -180,11 +180,11 @@ class CreateModifyAnnotationPanel extends React.Component {
 
   render() {
     let options = [
-      <option value="">{I18n.t("annotation_categories.one_time_only")}</option>,
+      <option key="one_time_annotation" value="">{I18n.t("annotation_categories.one_time_only")}</option>,
     ];
     this.props.categories.forEach((category) => {
       options.push(
-        <option value={category.id}>{category.annotation_category_name}</option>
+        <option key={category.id} value={category.id}>{category.annotation_category_name}</option>
       );
     });
 

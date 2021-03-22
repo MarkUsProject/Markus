@@ -83,7 +83,7 @@ class GitRepository < Repository::AbstractRepository
 
       # Set up server-side hooks
       server_hooks.each do |hook_symbol, hook_script|
-        FileUtils.ln_s(hook_script, File.join(barepath, 'hooks', hook_symbol.to_s))
+        FileUtils.copy(hook_script, File.join(barepath, 'hooks', hook_symbol.to_s))
       end
 
       GitRepository.do_commit_and_push(repo, 'Markus', I18n.t('repo.commits.initial'))

@@ -3,13 +3,9 @@ en:
   csv:
     bad_cell: 'Error: the csv contains the following invalid cells: %{bad_cells}'
     bad_membership_warning: 'Error: The following groups already exist with different members: %{group_names}'
-    bad_repo_warning: 'Error: The following groups already exist with but with a different repository name: %{group_names}'
     bad_students: 'Error: The following students do not currently exist: %{student_names}'
     duplicate_group_name: 'Error: The following groups appear multiple times in the csv file: %{group_names}'
     duplicate_membership_name: 'Error: The following group members appear multiple times in the csv file: %{member_names}'
-    duplicate_repo_name: 'Error: The following repositories appear multiple times in the csv file: %{repo_names}'
-    group_with_different_membership_current_assignment: 'Error: Group %{group_name} cannot be created since a group with the same name but with different memberships already exists for the current assignment'
-    group_with_different_membership_different_assignment: 'Error: Group %{group_name} cannot be created since a group with the same name but with different memberships already exists for a different assignment'
     member_does_not_exist: 'Error: Group %{group_name} cannot be created since a student with username ''%{student_user_name}'' does not exist'
     memberships_exist: 'Error: The following students already belong to a different group for the current assignment: %{student_names}'
     memberships_not_unique: The student already belongs to a different group for the current assignment
@@ -25,7 +21,6 @@ en:
     autotest_specs_job: Setting up automated tests.
     completed: Completed
     create_groups_job: "%{progress}/%{total} groups created"
-    create_groups_job_extra_info: 'failed for group: %{group_name}, repo: %{repo_name}, members: %{members}'
     download_submissions_complete: Submissions are ready for download. Click here to complete the download.
     download_submissions_finalizing: Finalizing submissions for download
     download_submissions_job: "%{progress}/%{total} Submissions prepared for download"
