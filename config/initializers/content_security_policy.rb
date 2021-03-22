@@ -12,5 +12,5 @@ Rails.application.config.content_security_policy do |policy|
   end
 end
 
-Rails.application.config.content_security_policy_nonce_generator = -> _request { SecureRandom.base64(16) }
-Rails.application.config.content_security_policy_nonce_directives = %[font-src img-src object-src script-src worker-src]
+Rails.application.config.content_security_policy_nonce_generator = ->(_request) { SecureRandom.base64(16) }
+Rails.application.config.content_security_policy_nonce_directives = %(font-src img-src object-src script-src worker-src)
