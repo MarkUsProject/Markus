@@ -5,6 +5,7 @@ rails:
   assets:
     prefix: /assets
   active_record: {}
+  force_ssl: false
   session_store:
     type: cookie_store
     args:

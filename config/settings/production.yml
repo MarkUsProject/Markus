@@ -3,6 +3,7 @@ rails:
   eager_load: true
   consider_all_requests_local: false
   log_level: info
+  force_ssl: true
   active_support:
     deprecation: silence
   perform_caching: true
