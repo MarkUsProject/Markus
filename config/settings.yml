@@ -8,9 +8,9 @@ rails:
   session_store:
     type: cookie_store
     args:
-      key: _markus_session
+      key: _markus_session_<%= ENV.fetch('RAILS_RELATIVE_URL_ROOT') { '' } %>
       path: <%= ENV.fetch('RAILS_RELATIVE_URL_ROOT') { '/' } %>
-      expire_after: 21 # days
+      expire_after: 1 # days
       secure: false
       same_site: lax
   action_mailer:
