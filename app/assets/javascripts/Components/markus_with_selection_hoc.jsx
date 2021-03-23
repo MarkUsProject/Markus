@@ -32,7 +32,7 @@ function withSelection(WrappedComponent) {
       }
       let selection = [...this.state.selection];
       let last_selected = null;
-      if (shift && this.state.last_selected !== null) {
+      if (shift && this.state.last_selected !== null && this.state.last_selected !== key) {
         // we need to get at the internals of ReactTable
         const wrappedInstance = this.wrapped.checkboxTable.getWrappedInstance();
         // the 'sortedData' property contains the currently accessible records based on the filter and sort
