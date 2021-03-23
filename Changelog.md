@@ -20,9 +20,11 @@
 - Rollback group creation if error is raised when creating a group for a working-alone student (#5169)
 - Prevent deletion/modification of annotation texts associated with a result with a pending remark request (#5170)
 - Ensure that browsers cache the correct state of overall comments when marking (#5173)
-- Account for percentage deductions when calculating total marks after deleting a criterion (#5176)
 - Ensure that graders are shown the correct annotation categories (#5181)
 - Show informative error message if an uploaded criteria yaml file did not contain a "type" key (#5184)
+
+## [v1.11.5]
+- Account for percentage deductions when calculating total marks after deleting a criterion (#5176)
 - Prevent students from downloading starter files early (#5189)
 
 ## [v1.11.4]
