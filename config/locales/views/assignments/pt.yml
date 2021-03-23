@@ -30,7 +30,6 @@ pt:
     marking_scheme: 'Esquema de avalição: %{identifier}'
     no_required_files: Não há arquivos exigidos para esse projeto.
     none: Não existem projetos atualmente.
-    only_required_files: UPDATE ME
     scanned_exam:
       under_review: Este exame está sendo marcado
     starter_file:

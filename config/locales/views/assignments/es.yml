@@ -30,7 +30,6 @@ es:
     marking_scheme: 'Esquema de Calificación: %{identifier}'
     no_required_files: No hay archivos requeridos para este proyecto.
     none: No existen proyectos por el momento.
-    only_required_files: UPDATE ME
     scanned_exam:
       under_review: Este examen todavía está en revisión
     starter_file:

@@ -30,7 +30,6 @@ fr:
     marking_scheme: 'Barème: %{identifier}'
     no_required_files: Aucun fichier n'est requis pour ce projet.
     none: Aucun devoir pour le moment.
-    only_required_files: UPDATE ME
     scanned_exam:
       under_review: Cet examen est marqué
     starter_file:
