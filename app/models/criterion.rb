@@ -171,7 +171,6 @@ class Criterion < ApplicationRecord
         results.pluck_to_hash.map { |h| { **h.symbolize_keys, total_mark: updated_results[h['id'].to_i] } }
       )
     end
-    a.assignment_stat.refresh_grade_distribution
   end
 
   def results_unreleased?
