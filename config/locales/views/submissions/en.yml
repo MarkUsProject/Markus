@@ -75,7 +75,7 @@ en:
         other: "%{count} missing required files"
       no_revision_available: No revision available.
       no_submission: You have not submitted any work yet.
-      only_required_files: 'You may only submit the required files listed above.'
+      only_required_files: You may only submit the required files listed above.
       select_file: Select a file to view
       version_control_warning: Submitting files here overrides any changes made using version control. Make sure you have worked on the most recent files before submitting.
     successfully_changed: Successfully updated %{changed} results.
