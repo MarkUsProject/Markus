@@ -28,10 +28,8 @@ es:
     hidden: "%{assignment_text} (oculto)"
     manage_course_work: Administrar trabajos del curso
     marking_scheme: 'Esquema de Calificación: %{identifier}'
-    maximum_file_size: UPDATE ME
     no_required_files: No hay archivos requeridos para este proyecto.
     none: No existen proyectos por el momento.
-    not_only_required_files: UPDATE ME
     only_required_files: UPDATE ME
     scanned_exam:
       under_review: Este examen todavía está en revisión

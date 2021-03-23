@@ -28,11 +28,8 @@ en:
     hidden: "%{assignment_text} (hidden)"
     manage_course_work: Manage Course Work
     marking_scheme: 'Marking Scheme: %{identifier}'
-    maximum_file_size: 'Maximum File Size: %{file_size} MB'
     no_required_files: There are no required files for this assignment.
     none: There are currently no assignments.
-    not_only_required_files: Students can submit other files in addition to required files
-    only_required_files: Students can only submit required files below
     scanned_exam:
       under_review: This exam is still under review.
     starter_file:

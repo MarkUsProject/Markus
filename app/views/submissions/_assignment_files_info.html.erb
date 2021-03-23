@@ -1,15 +1,6 @@
-<div class='pane-wrapper'>
-  <div class='pane' style='margin-bottom: 1em;'>
-    <% if assignment.assignment_files.length == 0 %>
-      <p><%= t('assignments.no_required_files') %></p>
-    <% else %>
-      <p>
-        <% if assignment.only_required_files%>
-          <%= t('assignments.only_required_files') %>
-        <% else %>
-          <%= t('assignments.not_only_required_files') %>
-        <% end %>
-      </p>
+<div class='pane-wrapper' style='margin-bottom: 1em;'>
+  <div class='pane'>
+    <% if assignment.assignment_files.exists? %>
       <p>
         <%= Assignment.human_attribute_name(:assignment_files) %>
       </p>
@@ -20,7 +11,12 @@
       </ul>
     <% end %>
     <p>
-      <%= t('assignments.maximum_file_size', file_size: Settings.max_file_size  / 1000000) %>
+      <% if assignment.only_required_files%>
+        <%= t('submissions.student.only_required_files') %>
+      <% end %>
+    </p>
+    <p>
+      <%= t('submissions.student.maximum_file_size', file_size: Settings.max_file_size / 1000000) %>
     </p>
   </div>
 </div>

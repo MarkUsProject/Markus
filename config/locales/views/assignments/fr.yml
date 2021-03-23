@@ -28,10 +28,8 @@ fr:
     hidden: "%{assignment_text} (masqué)"
     manage_course_work: Gestion du cours
     marking_scheme: 'Barème: %{identifier}'
-    maximum_file_size: UPDATE ME
     no_required_files: Aucun fichier n'est requis pour ce projet.
     none: Aucun devoir pour le moment.
-    not_only_required_files: UPDATE ME
     only_required_files: UPDATE ME
     scanned_exam:
       under_review: Cet examen est marqué
