@@ -156,11 +156,11 @@ class CriteriaController < ApplicationController
           data[:contents].each do |criterion_yml|
             type = criterion_yml[1]['type']
             begin
-              if type.casecmp('rubric') == 0
+              if type&.casecmp('rubric') == 0
                 criterion = RubricCriterion.load_from_yml(criterion_yml)
-              elsif type.casecmp('flexible') == 0
+              elsif type&.casecmp('flexible') == 0
                 criterion = FlexibleCriterion.load_from_yml(criterion_yml)
-              elsif type.casecmp('checkbox') == 0
+              elsif type&.casecmp('checkbox') == 0
                 criterion = CheckboxCriterion.load_from_yml(criterion_yml)
               else
                 raise RuntimeError

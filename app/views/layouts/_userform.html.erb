@@ -1,13 +1,13 @@
 <%= form_for @user, as: :user do |f| %>
   <div class='inline-labels'>
     <%= f.label :user_name, User.human_attribute_name(:user_name) %>
-    <%= f.text_field :user_name %>
+    <%= f.text_field :user_name, required: true, pattern: '[a-zA-Z0-9\-_]+' %>
 
     <%= f.label :last_name, User.human_attribute_name(:last_name) %>
-    <%= f.text_field :last_name %>
+    <%= f.text_field :last_name, required: true %>
 
     <%= f.label :first_name, User.human_attribute_name(:first_name) %>
-    <%= f.text_field :first_name %>
+    <%= f.text_field :first_name, required: true %>
 
     <%= f.label :email, User.human_attribute_name(:email) %>
     <%= f.text_field :email %>

@@ -1,0 +1,12 @@
+Proof header:
+  type: checkbox
+  max_mark: 2.0
+  description: This is one is a checkbox criterion and students either get full marks or 0 for this criterion.
+  ta_visible: True
+  peer_visible: False
+
+Definition translation:
+  max_mark: 5.0
+  description: This is a flexible criterion and you can put either "Flexible" or "flexible".
+  ta_visible: True
+  peer_visible: False

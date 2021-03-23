@@ -795,6 +795,7 @@ describe CriteriaController do
     let(:round_max_mark_file) { fixture_file_upload('files/criteria/round_max_mark.yaml', 'text/yaml') }
     let(:partially_valid_file) { fixture_file_upload('files/criteria/partially_valid_file.yaml', 'text/yaml') }
     let(:uploaded_file) { fixture_file_upload('files/criteria/upload_yml_mixed.yaml', 'text/yaml') }
+    let(:no_type_file)  { fixture_file_upload('files/criteria/marking_criteria_no_type.yml', 'text/yaml') }
 
     context 'When a file containing a mixture of entries is uploaded' do
 
@@ -968,6 +969,13 @@ describe CriteriaController do
         post_as admin, :upload, params: { assignment_id: assignment.id, upload_file: partially_valid_file }
         expect(assignment.criteria.where(type: 'RubricCriterion').length).to eq(1)
         expect(flash[:error]).not_to be_nil
+      end
+
+      context 'when there is no type specified for one of the criteria' do
+        it 'flashes an error message' do
+          post_as admin, :upload, params: { assignment_id: assignment.id, upload_file: no_type_file }
+          expect(flash[:error]).not_to be_nil
+        end
       end
 
       context 'When some criteria have been previously uploaded and and admin performs a download' do

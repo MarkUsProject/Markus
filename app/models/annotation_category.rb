@@ -145,4 +145,20 @@ class AnnotationCategory < ApplicationRecord
       end
     end
   end
+
+  # Return all visible annotation categories associated with +assignment+ for +user+.
+  #
+  # This will return all annotation categories for admins and no admin categories for students.
+  # If graders are assigned annotation categories, then only return assigned categories, otherwise
+  # treat graders the same as admins.
+  def self.visible_categories(assignment, user)
+    return AnnotationCategory.none unless user.ta? || user.admin?
+
+    if user.ta? && assignment.assign_graders_to_criteria
+      visible = user.criterion_ta_associations.joins(:criterion).pluck(:criterion_id) + [nil]
+      assignment.annotation_categories.order(:position).where('annotation_categories.flexible_criterion_id': visible)
+    else
+      assignment.annotation_categories.order(:position)
+    end
+  end
 end
