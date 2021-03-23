@@ -11,8 +11,8 @@ class AnnotationCategoriesController < ApplicationController
 
   def index
     @assignment = Assignment.find(params[:assignment_id])
-    @annotation_categories = @assignment.annotation_categories.order(:position)
-                                        .includes(:assignment, :annotation_texts)
+    @annotation_categories = AnnotationCategory.visible_categories(@assignment, current_user)
+                                               .includes(:assignment, :annotation_texts)
     respond_to do |format|
       format.html
       format.json {

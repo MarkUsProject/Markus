@@ -582,6 +582,22 @@ class Result extends React.Component {
     }
   }
 
+  updateOverallComment = (value, remark) => {
+    return $.post({
+      url: Routes.update_overall_comment_assignment_submission_result_path(
+        this.props.assignment_id, this.props.submission_id, this.props.result_id,
+      ),
+      data: {result: {overall_comment: value}},
+    }).then((result) => {
+      if (remark) {
+        this.setState({ remark_overall_comment: value });
+      } else {
+        this.setState({ overall_comment: value });
+      }
+      return result;
+    })
+  };
+
   render() {
     return [
         <CreateModifyAnnotationPanel
@@ -634,6 +650,7 @@ class Result extends React.Component {
                 annotation_categories={this.state.annotation_categories || []}
                 annotations={this.state.annotations || []}
                 assignment_remark_message={this.state.assignment_remark_message}
+                update_overall_comment={this.updateOverallComment}
                 can_run_tests={this.state.can_run_tests}
                 detailed_annotations={this.state.detailed_annotations}
                 enable_test={this.state.enable_test}
