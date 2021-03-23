@@ -19,7 +19,8 @@
       <%= password_field_tag 'admin_password',
                              nil,
                              placeholder: t('main.role_switch.admin_password'),
-                             tabindex: 20 %>
+                             tabindex: 20,
+                             autocomplete: 'off' %>
     <% end %>
 
     <section class='dialog-actions'>
