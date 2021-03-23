@@ -22,6 +22,7 @@
 - Ensure that browsers cache the correct state of overall comments when marking (#5173)
 - Ensure that graders are shown the correct annotation categories (#5181)
 - Show informative error message if an uploaded criteria yaml file did not contain a "type" key (#5184)
+- Allow for multiple custom validation messages (#5194)
 
 ## [v1.11.4]
 - Override defaultSortMethod for react-table to put null/undefined values at bottom (#5159)

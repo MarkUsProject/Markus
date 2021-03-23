@@ -125,7 +125,7 @@ describe User do
     end
     context 'with a custom exit status message' do
       before do
-        allow(Settings).to receive(:validate_custom_status_message).and_return({ '2' => 'a two!', '3' => 'a three!' })
+        allow(Settings).to receive(:validate_custom_status_message).and_return('2' => 'a two!', '3' => 'a three!')
       end
       context 'a successful login' do
         it 'should return a success message' do
