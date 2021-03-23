@@ -69,4 +69,12 @@ class GroupingPolicy < ApplicationPolicy
       !record.past_collection_date? &&
       record.past_assessment_start_time?
   end
+
+  def download_starter_file?
+    return false unless user.student?
+    return false if record.assignment.is_hidden?
+    return true unless record.assignment.is_timed?
+
+    !record.start_time.nil? || record.past_collection_date?
+  end
 end

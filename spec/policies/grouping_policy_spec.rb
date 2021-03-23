@@ -211,4 +211,27 @@ describe GroupingPolicy do
       end
     end
   end
+
+  describe_rule :download_starter_file? do
+    failed 'user is an admin' do
+      let(:user) { create :admin }
+    end
+    failed 'user is a ta' do
+      let(:user) { create :ta }
+    end
+    context 'user is a student' do
+      let(:user) { create :student }
+      let(:grouping) { create :grouping, assignment: assignment }
+      succeed 'when the assignment is not timed' do
+        let(:assignment) { create :assignment }
+      end
+      context 'when the assignment is timed' do
+        let(:assignment) { create :timed_assignment }
+        succeed 'and it has started' do
+          let(:grouping) { create :grouping, assignment: assignment, start_time: 1.minute.ago }
+        end
+        failed 'and it has not started yet'
+      end
+    end
+  end
 end

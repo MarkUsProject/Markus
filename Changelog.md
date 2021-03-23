@@ -1,5 +1,9 @@
 # Changelog
 
+## [v1.11.5]
+- Account for percentage deductions when calculating total marks after deleting a criterion (#5176)
+- Prevent students from downloading starter files early (#5189)
+
 ## [v1.11.4]
 - Override defaultSortMethod for react-table to put null/undefined values at bottom (#5159)
 - Fix bug where groupings created before starter files were uploaded could not download starter files (#5160)
