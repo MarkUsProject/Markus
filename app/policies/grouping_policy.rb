@@ -71,6 +71,7 @@ class GroupingPolicy < ApplicationPolicy
   end
 
   def download_starter_file?
+    return false unless user.student?
     return false if record.assignment.is_hidden?
     return true unless record.assignment.is_timed?
 
