@@ -330,24 +330,34 @@ shared_examples 'a criterion' do
       other_mark.update!(mark: 1)
       other_mark.reload
     end
+    let!(:criterion) { create(criterion_factory_name, assignment: assignment, max_mark: 10) }
+    let!(:criterion2) { create(criterion_factory_name, assignment: assignment, max_mark: 10) }
 
     it 'result total marks get updated to reflect the loss of the marks when marking state incomplete' do
-      create(criterion_factory_name, assignment: assignment, max_mark: 10)
-      criterion_to_remove = create(criterion_factory_name, assignment: assignment, max_mark: 10)
       removed_value = mark.mark
       previous_total = mark.mark + other_mark.mark
-      criterion_to_remove.destroy
+      criterion2.destroy
       expect(result.reload.total_mark).to eq previous_total - removed_value
     end
 
     it 'result total marks get updated to reflect the loss of the marks when marking state complete' do
-      create(criterion_factory_name, assignment: assignment, max_mark: 10)
-      criterion_to_remove = create(criterion_factory_name, assignment: assignment, max_mark: 10)
       removed_value = mark.mark
       previous_total = mark.mark + other_mark.mark
       result.update(marking_state: Result::MARKING_STATES[:complete])
-      criterion_to_remove.destroy
+      criterion2.destroy
       expect(result.reload.total_mark).to eq previous_total - removed_value
+    end
+
+    context 'when there is a percentage extra mark for the result' do
+      let!(:extra_mark) { create :extra_mark, result: result, extra_mark: 10 }
+      it 'result total marks get updated and percentage bonuses get recalculated' do
+        removed_value = mark.mark
+        previous_total = mark.mark + other_mark.mark
+        new_subtotal = previous_total - removed_value
+        new_total = new_subtotal + (criterion.max_mark * 0.1)
+        criterion2.destroy
+        expect(result.reload.total_mark).to eq new_total
+      end
     end
   end
 end

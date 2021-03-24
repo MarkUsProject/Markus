@@ -23,6 +23,11 @@
 - Ensure that graders are shown the correct annotation categories (#5181)
 - Show informative error message if an uploaded criteria yaml file did not contain a "type" key (#5184)
 - Allow for multiple custom validation messages (#5194)
+- Add ability to hold shift to select a range of values in checkbox tables (#5182)
+
+## [v1.11.5]
+- Account for percentage deductions when calculating total marks after deleting a criterion (#5176)
+- Prevent students from downloading starter files early (#5189)
 
 ## [v1.11.4]
 - Override defaultSortMethod for react-table to put null/undefined values at bottom (#5159)

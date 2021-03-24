@@ -50,51 +50,48 @@ class Result < ApplicationRecord
   end
 
   # Update the total mark attribute
-  #
-  # If the +assignment+ value is nil, the assignment will be determined dynamically.
-  # However, passing the +assignment+ value explicitly is more efficient if we are
-  # updating multiple total marks for a single assignment since it allows for
-  # caching of criteria.
-  # Warning: this does not check if the +assignment+ passed as an argument is actually
-  # the one associate with this result.
-  def update_total_mark(assignment: nil)
-    update(total_mark: get_total_mark(assignment: assignment))
+  def update_total_mark
+    update(total_mark: get_total_mark)
+  end
+
+  # Update the total_mark attributes for the results with id in +result_ids+
+  def self.update_total_marks(result_ids, user_visibility: :ta_visible)
+    total_marks = Result.get_total_marks(result_ids, user_visibility: user_visibility)
+    unless total_marks.empty?
+      Result.upsert_all(total_marks.map { |r_id, total_mark| { id: r_id, total_mark: total_mark } })
+    end
   end
 
   # Calculate the total mark for this submission
-  #
-  # See the documentation for update_total_mark for information about when to explicitly
-  # pass the +assignment+ variable and associated warnings.
-  def get_total_mark(assignment: nil)
+  def get_total_mark
     user_visibility = is_a_review? ? :peer_visible : :ta_visible
-    subtotal = get_subtotal(assignment: assignment)
-    extra_marks = get_total_extra_marks(user_visibility: user_visibility)
-    [0, subtotal + extra_marks].max
+    Result.get_total_marks([self.id], user_visibility: user_visibility)[self.id]
+  end
+
+  # Return a hash mapping each id in +result_ids+ to the total mark for the result with that id.
+  def self.get_total_marks(result_ids, user_visibility: :ta_visible)
+    subtotals = Result.get_subtotals(result_ids, user_visibility: user_visibility)
+    extra_marks = Result.get_total_extra_marks(result_ids, user_visibility: user_visibility)
+    subtotals.map { |r_id, subtotal| [r_id, [0, (subtotal || 0) + (extra_marks[r_id] || 0)].max] }.to_h
   end
 
   # The sum of the marks not including bonuses/deductions
-  #
-  # See the documentation for update_total_mark for information about when to explicitly
-  # pass the +assignment+ variable and associated warnings.
-  def get_subtotal(assignment: nil)
-    if marks.empty?
-      0
+  def get_subtotal
+    if is_a_review?
+      user_visibility = :peer_visible
     else
-      assignment ||= submission.grouping.assignment
-      if is_a_review?
-        user_visibility = :peer_visible
-        assignment = assignment.pr_assignment
-      else
-        user_visibility = :ta_visible
-      end
-      criterion_ids = assignment.criteria.where(user_visibility => true).ids
-      marks_array = marks.where(criterion_id: criterion_ids).pluck(:mark)
-      # TODO: sum method does not work with empty arrays or with arrays containing nil values.
-      #       Consider updating/replacing gem:
-      #       see: https://github.com/thirtysixthspan/descriptive_statistics/issues/44
-      marks_array.map! { |m| m ? m : 0 }
-      marks_array.empty? ? 0 : marks_array.sum
+      user_visibility = :ta_visible
     end
+    Result.get_subtotals([self.id], user_visibility: user_visibility)[self.id]
+  end
+
+  def self.get_subtotals(result_ids, user_visibility: :ta_visible)
+    marks = Mark.joins(:criterion)
+                .where(result_id: result_ids)
+                .where("criteria.#{user_visibility}": true)
+                .group(:result_id)
+                .sum(:mark)
+    result_ids.map { |r_id| [r_id, marks[r_id] || 0] }.to_h
   end
 
   # The sum of the bonuses deductions and late penalties
