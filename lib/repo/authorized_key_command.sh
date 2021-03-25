@@ -15,15 +15,14 @@ source "${HOME}/.ssh/rc"
 [[ -z ${MARKUS_REPO_LOC_PATTERN} ]] && echo 'ERROR: MARKUS_REPO_LOC_PATTERN not set' 1>&2 && exit 1
 
 # Convert the MARKUS_REPO_LOC_PATTERN to an actual path that points to a repository on disk.
-# This function replaces '(instance)' with a * glob pattern and the (repository)
-# with '.authorized_keys'. This allows this script to find all .authorized_keys files associated
+# This function replaces '(instance)' with a * glob pattern and then appends '.authorized_keys'.
+# This allows this script to find all .authorized_keys files associated
 # with all MarkUs instances.
 #
 # For example:
 #  echo $(authorized_key_paths)  # /some/path/*/repos/.authorized_keys
 authorized_key_paths() {
-  local replaced_instance_path="${MARKUS_REPO_LOC_PATTERN//(instance)/*}"
-  echo "${replaced_instance_path//(repository)/.authorized_keys}"
+  echo "${MARKUS_REPO_LOC_PATTERN//(instance)/*}/.authorized_keys"
 }
 
 # shellcheck disable=SC2046

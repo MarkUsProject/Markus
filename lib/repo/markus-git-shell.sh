@@ -29,19 +29,18 @@ failure() {
 }
 
 # Convert the MARKUS_REPO_LOC_PATTERN to an actual path that points to a repository on disk.
-# This function replaces '(instance)' with the REQUESTED_INSTANCE variable and the (repository)
-# with the REQUESTED_REPO_DIR variable. In general REQUESTED_INSTANCE should be the same as
-# the relative url root for a given MarkUs instance and REQUESTED_REPO_DIR is a specific
+# This function replaces '(instance)' with the REQUESTED_INSTANCE variable and appends the
+# REQUESTED_REPO_DIR variable to the end. In general REQUESTED_INSTANCE should be the same as
+# the relative url root for a given MarkUs instance. REQUESTED_REPO_DIR is a specific
 # repository in that instance.
 #
 # For example:
-#  MARKUS_REPO_LOC_PATTERN='/some/path/(instance)/repos/(repository)'
+#  MARKUS_REPO_LOC_PATTERN='/some/path/(instance)/repos'
 #  REQUESTED_INSTANCE=csc108
 #  REQUESTED_REPO_DIR=group_123.git
 #  echo $(updated_repo_path)  # /some/path/csc108/repos/group_123.git
 updated_repo_path() {
-  local replaced_instance_path="${MARKUS_REPO_LOC_PATTERN//(instance)/${REQUESTED_INSTANCE}}"
-  echo "${replaced_instance_path//(repository)/${REQUESTED_REPO_DIR}}"
+  echo "${MARKUS_REPO_LOC_PATTERN//(instance)/${REQUESTED_INSTANCE}}/${REQUESTED_REPO_DIR}"
 }
 
 trap 'failure "$BASH_COMMAND"' ERR
