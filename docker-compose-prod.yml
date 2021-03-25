@@ -33,8 +33,8 @@ services:
         UBUNTU_VERSION: bionic
         SSH_USER: git
     volumes:
-      - log_108:/home/git/log
       - repos_108:/home/git/csc108
+      - repos_209:/home/git/csc209
     environment:
       - TZ=America/Toronto
     command: /usr/sbin/sshd -D -e
