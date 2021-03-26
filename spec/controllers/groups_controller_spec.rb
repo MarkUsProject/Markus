@@ -227,7 +227,7 @@ describe GroupsController do
       end
 
       it 'expects a call to send_data' do
-        csv_data = "#{@group.group_name},#{@group.repo_name}," +
+        csv_data = "#{@group.group_name}," +
           "#{@student1.user_name},#{@student2.user_name}\n"
         expect(@controller).to receive(:send_data).with(csv_data, csv_options) {
           # to prevent a 'missing template' error
