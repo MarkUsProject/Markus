@@ -8,8 +8,8 @@ class AnnotationText < ApplicationRecord
                          t.annotation_category.nil? ||
                          t.annotation_category.changes_to_save.key?('flexible_criterion_id')
                        }
-  before_update :check_if_released, unless: ->(t) { t.deduction.nil? }
-  before_destroy :check_if_released, unless: ->(t) { t.deduction.nil? }
+  before_update :check_if_released
+  before_destroy :check_if_released
 
   # An AnnotationText has many Annotations that are destroyed when an
   # AnnotationText is destroyed.
