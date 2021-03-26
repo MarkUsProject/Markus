@@ -65,7 +65,7 @@ export class AnnotationTable extends React.Component {
       accessor: 'content',
       Cell: data => {
         let edit_button = "";
-        if (!this.props.released_to_students && !data.original.deduction) {
+        if (!this.props.released_to_students && !data.original.deduction && !this.props.remark_submitted) {
           edit_button = <a
             href="#"
             className="edit-icon"
