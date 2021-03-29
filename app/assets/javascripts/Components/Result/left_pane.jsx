@@ -59,7 +59,7 @@ export class LeftPane extends React.Component {
               assignment_id={this.props.assignment_id}
               grouping_id={this.props.grouping_id}
               revision_identifier={this.props.revision_identifier}
-              show_annotation_manager={!this.props.released_to_students && !this.props.is_reviewer}
+              show_annotation_manager={!this.props.released_to_students && !this.props.remark_submitted && !this.props.is_reviewer}
               canDownload={this.props.is_reviewer === undefined ? undefined : !this.props.is_reviewer}
               fileData={this.props.submission_files}
               annotation_categories={this.props.annotation_categories}
