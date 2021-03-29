@@ -26,6 +26,7 @@
 - Allow for multiple custom validation messages (#5194)
 - Add ability to hold shift to select a range of values in checkbox tables (#5182)
 - Fix bug where creating an annotation or switching results reset the selected file (#5200)
+- Fix bug in Assignment#get_num_marked that caused it to double-count remark and original results (#5205)
 
 ## [v1.11.5]
 - Account for percentage deductions when calculating total marks after deleting a criterion (#5176)
