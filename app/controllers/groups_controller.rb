@@ -278,7 +278,7 @@ class GroupsController < ApplicationController
 
     file_out = MarkusCsv.generate(groupings) do |grouping|
       # csv format is group_name, repo_name, user1_name, user2_name, ... etc
-      [grouping.group.group_name, grouping.group.repo_name].concat(
+      [grouping.group.group_name].concat(
         grouping.student_memberships.map do |member|
           member.user.user_name
         end
@@ -505,6 +505,8 @@ class GroupsController < ApplicationController
   def download_starter_file
     assignment = Assignment.find(params[:assignment_id])
     grouping = current_user.accepted_grouping_for(assignment.id)
+
+    authorize! grouping, with: GroupingPolicy
 
     grouping.reset_starter_file_entries if grouping.starter_file_changed
 

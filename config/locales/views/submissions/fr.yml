@@ -61,11 +61,13 @@ fr:
         zero: "%{count} fichiers"
       invalid_group_cannot_submit: Votre groupe n'est pas valide. Vous ne pouvez rien envoyer pour le moment.
       last_revision_date: Dernière révision
+      maximum_file_size: UPDATE ME
       missing_required_files:
         one: "%{count} fichier(s) requis sont manquants"
         other: "%{count} fichier(s) requis sont manquants"
       no_revision_available: Aucune révision disponible.
       no_submission: Vous n'avez encore rien envoyé
+      only_required_files: UPDATE ME
       select_file: UPDATE ME!
       version_control_warning: Envoi de fichiers ici annule les modifications apportées à l'aide de contrôle de version. Assurez-vous que vous avez travaillé sur les fichiers les plus récents avant de soumettre.
     successfully_changed: Les %{changed} résultats ont été mis à jour.

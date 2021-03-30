@@ -52,6 +52,7 @@ Config.setup do |config|
       required(:eager_load).filled(:bool)
       required(:consider_all_requests_local).filled(:bool)
       optional(:hosts).array(:string)
+      required(:force_ssl).filled(:bool)
       required(:log_level).filled(included_in?: %w[debug info warn error fatal unknown])
       required(:active_support).hash do
         required(:deprecation).filled(included_in?: ActiveSupport::Deprecation::DEFAULT_BEHAVIORS.keys.map(&:to_s))
