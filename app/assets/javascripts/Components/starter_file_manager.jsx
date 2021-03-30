@@ -30,7 +30,7 @@ class StarterFileManager extends React.Component {
   }
 
   toggleFormChanged = (value) => {
-    this.setState({form_changed: value}, () => set_onbeforeunload(this.state.form_changed));
+    this.setState({form_changed: value});
   };
 
   fetchData = () => {

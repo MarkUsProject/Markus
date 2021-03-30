@@ -46,5 +46,8 @@ $(document).ready(() => {
   $('.dialog').each((_, dialog) => {
     let open_link = dialog.getAttribute('data-open-link') || undefined;
     new ModalMarkus('#' + dialog.id, open_link);
+    $('#' + dialog.id + '-close').click(function() {
+      dialog.close();
+    })
   })
 });

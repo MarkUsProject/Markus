@@ -5,6 +5,6 @@
     <%= t('main.session_expired') %>
   </div>
   <section class='dialog-actions'>
-    <%= button_tag t('main.log_in'), onclick:'session_expired_modal.close(); window.location.reload();' %>
+    <%= button_tag t('main.log_in'), id: 'session-expired-modal-close' %>
   </section>
 <% end %>

@@ -28,14 +28,12 @@
     <div class='inline-labels'>
       <%= f.label :notes_message, Note.human_attribute_name(:notes_message) %>
         <%= f.text_area :notes_message,
-                         rows: 10,
-                         onchange: 'set_onbeforeunload(true);' %>
+                         rows: 10 %>
     </div>
 
     <p>
       <%= f.submit t('save'),
                    id: 'new-note-save',
-                   onclick: 'set_onbeforeunload(false);',
                    data: { disable_with: t('working') } %>
       <%= link_to t('cancel'), notes_path, class: 'button' %>
     </p>

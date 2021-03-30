@@ -8,6 +8,27 @@
   <%= render partial: 'shared/navigation_warning',
              formats: [:js],
              handlers: [:erb] %>
+
+  <%= javascript_tag nonce: true do %>
+    $(function() {
+      $('#grace-period-add').click(function(e) {
+        add_period("grace_periods", grace_periods);
+        e.preventDefault();
+      })
+      $('#penalty-decay-period-add').click(function(e) {
+        add_period("penalty_decay_periods", penalty_decay_periods);
+        e.preventDefault();
+      })
+      $('#penalty-period-add').click(function(e) {
+        add_period("penalty_periods", penalty_periods);
+        e.preventDefault();
+      })
+      $('#required-file-add').click(function(e) {
+        add_assignment_file();
+        e.preventDefault();
+      })
+    })
+  <% end %>
 <% end %>
 
 <%= render 'shared/flash_message' %>
@@ -37,7 +58,6 @@
                     Assignment.human_attribute_name(:short_identifier),
                     class: 'required' %>
         <%= f.text_field :short_identifier,
-                         onchange: 'set_onbeforeunload(true);',
                          pattern: '[a-zA-Z0-9\-_]+',
                          size: 35,
                          maxlength: 30,
@@ -48,21 +68,18 @@
                     Assignment.human_attribute_name(:description),
                     class: 'required' %>
         <%= f.text_field :description,
-                         onchange: 'set_onbeforeunload(true);',
                          size: 35,
                          required: true %>
 
         <%= f.label :message %>
         <%= f.text_area :message,
                         cols: 65,
-                        rows: 8,
-                        onchange: 'set_onbeforeunload(true);' %>
+                        rows: 8 %>
         <% if @assignment.is_timed %>
           <%= ap_f.label :start_time,
                          I18n.t('assignments.timed.start_time'),
                       class: 'required' %>
           <%= ap_f.text_field :start_time,
-                              onchange: 'set_onbeforeunload(true);',
                               value: @assignment.start_time.nil? ? '' :
                                        @assignment.start_time.strftime(
                                          '%Y-%m-%d %l:%M %p'),
@@ -74,7 +91,6 @@
                     @assignment.is_timed ? I18n.t('assignments.timed.end_time') : Assignment.human_attribute_name(:due_date),
                     class: 'required' %>
         <%= f.text_field :due_date,
-                         onchange: 'set_onbeforeunload(true);',
                          value: @assignment.due_date.nil? ? '' :
                            @assignment.due_date.strftime(
                              '%Y-%m-%d %l:%M %p'),
@@ -85,14 +101,14 @@
         <% unless @sections.empty? %>
           <%= ap_f.label :section_due_dates_type, Assignment.human_attribute_name(:section_due_dates_type) %>
           <span>
-            <%= ap_f.check_box :section_due_dates_type, onclick: 'set_onbeforeunload(true);' %>
+            <%= ap_f.check_box :section_due_dates_type %>
             &nbsp; (<%= t('assignments.form.section_due_dates_option') %>)
           </span>
         <% end %>
       </div>
       <% unless @sections.empty? %>
         <div id='section_due_dates_information'
-             style='<%= 'display: none' unless @assignment.section_due_dates_type %>'>
+             class='<%= 'no-display' unless @assignment.section_due_dates_type %>'>
           <p class='information'>
             <%= t('assignments.form.section_due_dates_info_html') %>
           </p>
@@ -149,14 +165,12 @@
               <%= dur_f.number_field :hours,
                                      min: 0,
                                      max: 999,
-                                     value: @assignment.duration_parts[:hours],
-                                     onchange: 'set_onbeforeunload(true);' %>
+                                     value: @assignment.duration_parts[:hours] %>
               <%= dur_f.label :hours, I18n.t('durations.any_hours') %>
               <%= dur_f.number_field :minutes,
                                      min: 0,
                                      max: 59,
-                                     value: @assignment.duration_parts[:minutes],
-                                     onchange: 'set_onbeforeunload(true);' %>
+                                     value: @assignment.duration_parts[:minutes] %>
               <%= dur_f.label :minutes, I18n.t('durations.any_minutes') %>
             <% end %>
           </div>
@@ -167,33 +181,27 @@
         <% unless @assignment.scanned_exam %>
           <%= ap_f.label :allow_web_submits,
                          Assignment.human_attribute_name(:allow_web_submits) %>
-          <%= ap_f.check_box :allow_web_submits,
-                             onclick: 'set_onbeforeunload(true);' %>
+          <%= ap_f.check_box :allow_web_submits %>
 
           <%= ap_f.label :vcs_submit,
                          Assignment.human_attribute_name(:vcs_submit) %>
-          <%= ap_f.check_box :vcs_submit,
-                             onclick: 'set_onbeforeunload(true);' %>
+          <%= ap_f.check_box :vcs_submit %>
         <% end %>
 
         <%= ap_f.label :display_median_to_students,
                        Assignment.human_attribute_name(:display_median_to_students) %>
-        <%= ap_f.check_box :display_median_to_students,
-                           onclick: 'set_onbeforeunload(true);' %>
+        <%= ap_f.check_box :display_median_to_students %>
 
         <%= ap_f.label :display_grader_names_to_students,
                        Assignment.human_attribute_name(:display_grader_names_to_students) %>
-        <%= ap_f.check_box :display_grader_names_to_students,
-                           onclick: 'set_onbeforeunload(true);' %>
+        <%= ap_f.check_box :display_grader_names_to_students %>
 
         <%= f.label :is_hidden, Assignment.human_attribute_name(:is_hidden) %>
-        <%= f.check_box :is_hidden,
-                        onclick: 'set_onbeforeunload(true);' %>
+        <%= f.check_box :is_hidden %>
 
         <%= ap_f.label :has_peer_review,
                        Assignment.human_attribute_name(:has_peer_review) %>
-        <%= ap_f.check_box :has_peer_review,
-                        onclick: 'set_onbeforeunload(true);' %>
+        <%= ap_f.check_box :has_peer_review %>
       </div>
       </fieldset>
     </fieldset>
@@ -215,7 +223,7 @@
       <p id='assignment_file_add_link'>
         <%= link_to t('assignments.form.add_required_file'),
                     '#',
-                    onclick: 'add_assignment_file(); return false;' %>
+                    id: 'required-file-add' %>
       </p>
       <div id='assignment_files'>
         <%= f.fields_for :assignment_files do |assignment_file_form| %>
@@ -228,7 +236,6 @@
          class='inline-labels <%= @assignment.assignment_files.empty? ? 'disable' : '' %>'>
         <%= ap_f.label :only_required_files, Assignment.human_attribute_name(:only_required_files) %>
         <%= ap_f.check_box :only_required_files,
-                           onclick: 'set_onbeforeunload(true);',
                            disabled: @assignment.assignment_files.empty? %>
       </p>
     </fieldset>
@@ -247,7 +254,7 @@
 
       <% if @assignment.new_record? && @clone_assignments.size > 0 %>
         <p id='persist_groups_assignment_style'>
-          <%= check_box_tag :persist_groups, onclick: 'set_onbeforeunload(true);' %>
+          <%= check_box_tag :persist_groups %>
           <%= label_tag :persist_groups, t('assignments.form.persist_groups_from') %>
           <%= select_tag :persist_groups_assignment,
                          options_for_select(@clone_assignments.map { |a| [a.short_identifier, a.id] }),
@@ -259,33 +266,28 @@
                       Assignment.human_attribute_name(:allow_groups) %>
         <%= check_box_tag :is_group_assignment, true,
                           @assignment.student_form_groups ||
-                          @assignment.invalid_override,
-                          onchange: 'set_onbeforeunload(true);' %>
+                          @assignment.invalid_override %>
       </p>
       <fieldset class='group_properties nested-fieldset'>
         <div class='inline-labels'>
           <%= ap_f.label :student_form_groups,
                          Assignment.human_attribute_name(:student_form_groups) %>
-          <%= ap_f.check_box :student_form_groups,
-                             onchange: 'set_onbeforeunload(true);' %>
+          <%= ap_f.check_box :student_form_groups %>
 
           <%= ap_f.label :group_min,
                          Assignment.human_attribute_name(:group_min) %>
           <%= ap_f.number_field :group_min,
                                 min: 1,
-                                max: 999,
-                                onchange: 'set_onbeforeunload(true);' %>
+                                max: 999 %>
 
           <%= ap_f.label :group_max,
                          Assignment.human_attribute_name(:group_max) %>
           <%= ap_f.number_field :group_max,
                                 min: 1,
-                                max: 999,
-                                onchange: 'set_onbeforeunload(true);' %>
+                                max: 999 %>
 
           <%= ap_f.label :group_name_autogenerated,
-                         Assignment.human_attribute_name(:group_name_autogenerated),
-                         onchange: 'set_onbeforeunload(true);' %>
+                         Assignment.human_attribute_name(:group_name_autogenerated) %>
           <%= ap_f.check_box :group_name_autogenerated %>
         </div>
       </fieldset>
@@ -350,8 +352,7 @@
           </table>
           <%= link_to t('submission_rules.add_period'),
                       '#',
-                      onclick: 'add_period("grace_periods", grace_periods);' +
-                          'return false;' %>
+                      id: 'grace-period-add' %>
         </div>
 
         <p>
@@ -394,8 +395,7 @@
           </table>
           <%= link_to t('submission_rules.add_period'),
                       '#',
-                      onclick: 'add_period("penalty_decay_periods", ' +
-                               'penalty_decay_periods); return false;' %>
+                      id: 'penalty-decay-period-add' %>
         </div>
 
         <p>
@@ -437,8 +437,7 @@
           </table>
           <%= link_to t('submission_rules.add_period'),
                       '#',
-                      onclick: 'add_period("penalty_periods",penalty_periods);' +
-                          ' return false;' %>
+                      id: 'penalty-period-add' %>
         </div>
       <% end %>
     </fieldset>
@@ -457,11 +456,9 @@
 
       <div class='inline-labels'>
         <%= ap_f.label :allow_remarks, Assignment.human_attribute_name(:allow_remarks) %>
-        <%= ap_f.check_box :allow_remarks,
-                           onchange: 'set_onbeforeunload(true);' %>
+        <%= ap_f.check_box :allow_remarks %>
         <%= ap_f.label :remark_due_date, Assignment.human_attribute_name(:remark_due_date) %>
         <%= ap_f.text_field :remark_due_date,
-                            onchange: 'set_onbeforeunload(true);',
                             value: @assignment.remark_due_date.nil? ? '' :
                                    @assignment.remark_due_date.strftime(
                                      '%Y-%m-%d %l:%M %p'),
@@ -470,15 +467,13 @@
         <%= ap_f.label :remark_message, Assignment.human_attribute_name(:remark_message) %>
         <%= ap_f.text_area :remark_message,
                            rows: 8,
-                           cols: 65,
-                           onchange: 'set_onbeforeunload(true);' %>
+                           cols: 65 %>
       </div>
     </fieldset>
 
     <p>
       <%= f.submit t(:save),
-                   data: { disable_with: t('working') },
-                   onclick: 'set_onbeforeunload(false);' %>
+                   data: { disable_with: t('working') } %>
     </p>
   <% end %>
 <% end %>

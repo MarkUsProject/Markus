@@ -3,13 +3,18 @@
 <% content_for :head do %>
   <%= javascript_tag nonce: true do %>
     <%= render partial: 'boot.js' %>
+    $(function() {
+      $('#add-exam-template').click(function() {
+        modal_create_new.open()
+      })
+    })
   <% end %>
 <% end %>
 
 <% @heading_buttons = [
     { link_text: t('exam_templates.create.add_new'),
       link_path: '#',
-      html_options: { onclick:'modal_create_new.open()' } },
+      html_options: { id: 'add-exam-template' } },
     { link_text: t('exam_templates.split_pdf_log.view_logs'),
       link_path: view_logs_assignment_exam_templates_path },
 ] %>

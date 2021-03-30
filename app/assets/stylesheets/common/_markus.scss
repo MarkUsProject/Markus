@@ -161,6 +161,10 @@ strong a {
   display: none;
 }
 
+.flex-display {
+  display: flex;
+}
+
 /** Text and number field inputs */
 
 input,
@@ -1081,6 +1085,10 @@ nav {
   position: relative;  // For image annotations
 }
 
+.crop-target {
+  max-width: 400px;
+  border: 1px solid black;
+}
 
 // Text editing and previews
 .preview {

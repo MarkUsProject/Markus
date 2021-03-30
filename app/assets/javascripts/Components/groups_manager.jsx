@@ -64,6 +64,11 @@ class GroupsManager extends React.Component {
     } else {
       modalCreate.open();
       $('#new_group_name').val('');
+      $(function() {
+        $('#modal-create-close').click(function() {
+          modalCreate.close();
+        })
+      })
     }
   };
 
