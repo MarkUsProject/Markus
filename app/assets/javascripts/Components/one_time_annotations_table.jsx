@@ -2,23 +2,74 @@ import React from 'react';
 import {render} from 'react-dom';
 
 import ReactTable from 'react-table';
-import CreateModifyAnnotationPanel from './Modals/create_modify_annotation_panel_modal';
 
-const INITIAL_ANNOTATION_MODAL_STATE = {
-  show: false,
-  onSubmit: null,
-  title: '',
-  content: '',
-  categoryId: '',
-  isNew: true,
-  changeOneOption: false,
-};
+class AnnotationTextCell extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      editMode: false,
+      content: props.content
+    }
+  }
+  componentDidUpdate(prevProps) {
+    if (prevProps.content !== this.props.content) {
+      this.setState({content: this.props.content});
+    }
+  }
+  render() {
+    //Show input field and save and cancel buttons
+    if (this.state.editMode)
+    {
+      let save_button = <a
+        href="#"
+        className='button inline-button'
+        onClick={() => {
+          if (this.props.content != this.state.content) {
+            this.props.editAnnotation(this.props.id, this.state.content);       
+          }
+          this.setState({editMode: false});         
+          }
+        }>Save</a>;
+      let cancel_button = <a
+        href="#"
+        className='button inline-button'
+        onClick={() => this.setState({
+          editMode: false, 
+          content: this.props.content
+          })
+        }>Cancel</a>;
+      return (
+        <div>
+          <input type="text" 
+            defaultValue={this.state.content} 
+            onChange={e => this.setState({content: e.target.value})}/>   
+          <div className={"alignright"} >{save_button}</div>
+          <div className={"alignright"}>{cancel_button}</div>
+        </div>
+        );
+    }
+    else
+    {
+      let edit_button = <a
+        href="#"
+        className="edit-icon"
+        title={I18n.t('edit')}
+        onClick={() => this.setState({editMode: true})}/>;
+      return(
+        <div>         
+          <div dangerouslySetInnerHTML={{__html: marked(this.state.content, {sanitize: true})}}/>
+          <div className={"alignright"}>{edit_button}</div>
+        </div>
+      );     
+    }
+   
+  }
+}
 class OneTimeAnnotationsTable extends React.Component {
   constructor() {
     super();
     this.state = {
       data: [],
-      annotationModal: INITIAL_ANNOTATION_MODAL_STATE,
       loading: true
     };
   }
@@ -40,34 +91,13 @@ class OneTimeAnnotationsTable extends React.Component {
   };
 
   editAnnotation = (annot_id, content) => {
-    let onSubmit = (formData) => {
-      return ($.ajax({
-        url: Routes.update_annotation_text_assignment_annotation_categories_path(this.props.assignment_id),
-        data:{ ...formData, id: annot_id },
-        method: "PUT",
-        remote: true,
-        dataType: "json",
-      }).always(() => {
-          this.setState({
-            annotationModal: INITIAL_ANNOTATION_MODAL_STATE,
-          });
-          this.fetchData();
-        }
-      ));
-    };
-
-    this.setState({
-      annotationModal: {
-        ...this.state.annotationModal,
-        show: true,
-        content: content,
-        isNew: false,
-        onSubmit,
-        title: I18n.t("helpers.submit.create", {
-          model: I18n.t("activerecord.models.annotation.one"),
-        }),
-      },
-    });
+    $.ajax({
+      url: Routes.update_annotation_text_assignment_annotation_categories_path(this.props.assignment_id),
+      data:{ content: content, id: annot_id },
+      method: "PUT",
+      remote: true,
+      dataType: "json",
+      }).always(() => this.fetchData());
   };
 
   removeAnnotation = (annot_id) => {
@@ -158,19 +188,10 @@ class OneTimeAnnotationsTable extends React.Component {
       accessor: 'content',
       id: 'content',
       Cell: row => {
-        let edit_button = <a
-        href="#"
-        className="edit-icon"
-        title={I18n.t('edit')}
-        onClick={() => this.editAnnotation(row.original.id, row.original.content)}
-      />
-
-        return (
-          <div>
-            <div dangerouslySetInnerHTML={{__html: marked(row.original.content, {sanitize: true})}}/>
-            <div className={"alignright"}>{edit_button}</div>
-          </div>
-        );
+        return <AnnotationTextCell
+                  content={row.original.content} 
+                  id={row.original.id}
+                  editAnnotation={this.editAnnotation}/>;
       },
       filterMethod: (filter, row) => {
         if (filter.value) {
@@ -183,25 +204,14 @@ class OneTimeAnnotationsTable extends React.Component {
   ];
 
   render() {
-    return [
-      <ReactTable
+    return <ReactTable
         key="one_time_annotations_table"
         data={this.state.data}
         columns={this.columns}
         filterable
         defaultSorted={[{id: 'group_name'}]}
         loading={this.state.loading}
-        noDataText={I18n. t('annotations.empty_uncategorized')}
-      />,
-      <CreateModifyAnnotationPanel
-        key="modify_modal"
-        categories={[]}
-        onRequestClose={() => this.setState({annotationModal: INITIAL_ANNOTATION_MODAL_STATE})}
-        is_reviewer={false}
-        assignment_id={this.props.assignment_id}
-        {...this.state.annotationModal}
-      />
-    ];
+        noDataText={I18n. t('annotations.empty_uncategorized')}/>;
   }
 }
 
