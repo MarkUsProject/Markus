@@ -530,6 +530,14 @@ kbd {
 .pane-wrapper {
   display: flex;
 
+  .annotation-pane-wrapper {
+    width: 25%;
+  }
+
+  .criteria-pane-wrapper {
+    width: 37%;
+  }
+
   .pane {
     border: 1px solid $primary-three;
     border-radius: $radius;

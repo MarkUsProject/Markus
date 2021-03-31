@@ -6,6 +6,11 @@
     document.addEventListener('DOMContentLoaded', () => {
       makeTagTable(document.getElementById('tags_table'), {assignment_id: <%= @assignment.id %>});
     });
+    $(function() {
+      $('#add-tag').click(function() {
+        modal_create_new.open()
+      })
+    })
   <% end %>
 <% end %>
 
@@ -18,7 +23,7 @@
 <% @heading_buttons = [
   { link_text: t('helpers.submit.create', model: Tag.model_name.human),
     link_path: '#',
-    html_options: { onclick:'modal_create_new.open()' } },
+    html_options: { id: 'add-tag' } },
   { link_text: t('download'),
     link_path: '#',
     html_options: { id: 'downloadModal' } },

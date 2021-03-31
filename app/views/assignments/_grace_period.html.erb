@@ -5,19 +5,6 @@
    #  differentiate it on submission, and connects the hours and deduction inputs
    #  with a common value
 %>
-<%= javascript_tag nonce: true do %>
-  $(function () {
-    $('#grace-period-hours').on("change", function() {
-      if (grace_periods) {
-        grace_periods.refresh();
-      }
-    })
-    $('#grace-period-delete').click(function(e) {
-      remove_period(this, grace_periods);
-      e.preventDefault();
-    })
-  })
-<% end %>
 <tr class='period'>
 
   <%= pf.fields_for :periods, grace_period do |f| %>
@@ -26,8 +13,7 @@
                          min: 0.001,
                          step: :any,
                          required: true,
-                         class: 'PeriodDeltaChain_Hours',
-                         id: 'grace-period-hours' %>
+                         class: 'PeriodDeltaChain_Hours grace-period-hours'%>
       <%= t('submission_rules.hours') %>
     </td>
     <td>
@@ -46,7 +32,7 @@
       <% else %>
         <%= link_to t(:delete),
                     '#',
-                    id: 'grace-period-delete' %>
+                    class: 'grace-period-delete' %>
       <% end %>
     </td>
   <% end %>

@@ -62,10 +62,12 @@
       '<label class="required" for="' + input_id + '">' + I18n.t('attributes.filename') + '</label>' +
       '<input type="text" required="required" name="assignment[assignment_files_attributes][' +
       new_id + '][filename]" id="' + input_id + '"class="assignment_file" />' +
-      '<a onclick="remove_assignment_file(\''+input_id+'\'); return false;">' +
-      I18n.t('delete') + '</a></p>';
+      '<a id="remove-assignment-file-'+new_id+'">' + I18n.t('delete') + '</a></p>';
     $('#assignment_files').append($(assignment_file));
-
+    $('#remove-assignment-file-'+new_id).click((e) => {
+      remove_assignment_file(input_id);
+      e.preventDefault();
+    })
     $('#only_required_files_option').removeClass('disable');
     document.getElementById('assignment_assignment_properties_attributes_only_required_files').disabled = false;
   }
@@ -99,8 +101,39 @@
     $('#' + id + '_table').append(new_period);
 
     if (periods) {
+      refresh_callbacks();
       periods.refresh();
     }
+  }
+
+  function refresh_callbacks() {
+    $('.grace-period-hours').on("change", function() {
+      if (grace_periods) {
+        grace_periods.refresh();
+      }
+    })
+    $('.grace-period-delete').click(function(e) {
+      remove_period(e.target, grace_periods);
+      e.preventDefault();
+    })
+    $('.penalty-decay-period-hours').on("change", function() {
+      if (penalty_decay_periods) {
+        penalty_decay_periods.refresh();
+      }
+    })
+    $('.penalty-decay-period-delete').click(function(e) {
+      remove_period(e.target, penalty_decay_periods);
+      e.preventDefault();
+    })
+    $('.penalty-period-hours').on("change", function() {
+      if (penalty_periods) {
+        penalty_periods.refresh();
+      }
+    })
+    $('.penalty-period-delete').click(function(e) {
+      remove_period(e.target, penalty_periods);
+      e.preventDefault();
+    })
   }
 
   function remove_period(elem, periods) {

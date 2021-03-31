@@ -1,13 +1,28 @@
+<%= javascript_tag nonce: true do %>
+  $(function() {
+    $('#annotation-text-details-edit-<%= annotation_text[:id] %>').click(function(e) {
+      $('#annotation_text_' + '<%= annotation_text[:id] %>' + '_control').hide();
+      $('#annotation_text_' + '<%= annotation_text[:id] %>' + '_edit').show();
+      e.preventDefault();
+    });
+    $('#annotation-text-edit-<%= annotation_text[:id] %>').on("reset", function(e) {
+      $('#annotation_text_' + '<%= annotation_text[:id] %>' + '_edit').hide();
+      $('#annotation_text_' + '<%= annotation_text[:id] %>' + '_control').show();
+      e.preventDefault();
+    });
+  })
+<% end %>
+
 <li id='annotation_text_<%= annotation_text[:id] %>'>
   <div id='annotation_text_<%= annotation_text[:id] %>_control' style="word-break: break-all">
     <%= markdown(annotation_text[:content]) %>
 
     <div class='annotation-text-details'>
       <%= link_to t(:edit),
-                  'javascript:void(0);',
-                  onclick:"$('#annotation_text_' + #{annotation_text[:id]} + '_control').hide();
-                  $('#annotation_text_' + #{annotation_text[:id]} + '_edit').show();",
-        class: 'button inline-button' %>
+                  '#',
+                  id: "annotation-text-details-edit-#{annotation_text[:id]}",
+                  key: annotation_text[:id],
+                  class: 'button inline-button' %>
       <%= button_to t(:delete),
                     destroy_annotation_text_assignment_annotation_categories_path(id: annotation_text[:id]),
                     method: 'delete',
@@ -54,6 +69,7 @@
   <div id='annotation_text_<%= annotation_text[:id] %>_edit' class="no-display">
     <%= form_with url: update_annotation_text_assignment_annotation_categories_path(id: annotation_text[:id]),
                   method: 'put',
+                  id: "annotation-text-edit-#{annotation_text[:id]}",
                   remote: true do |f| %>
       <p>
         <%= f.text_area :content, cols: 50, rows: 5, value: annotation_text[:content], id: "annotation_text_content" %>
@@ -76,9 +92,7 @@
         <%= f.submit t(:save) , data: { disable_with: t('working') } %>
 
         <input type='reset'
-               value='<%= t(:cancel) %>'
-               onclick="$('#annotation_text_' + <%= annotation_text[:id] %> + '_edit').hide();
-                        $('#annotation_text_' + <%= annotation_text[:id] %> + '_control').show();">
+               value='<%= t(:cancel) %>'>
       </p>
     <% end %>
   </div>
