@@ -54,7 +54,7 @@
     });
   <% end %>
 
-  <div class='flex-row-expand' style='height: 100%; margin-left: 10px;'>
+  <div class='flex-row-expand'>
     <%= render partial: 'course_summaries/course_summary_info_summary',
                locals: { marking_scheme: marking_scheme,
                          grades: marking_scheme.students_weighted_grades_array(@current_user) } %>

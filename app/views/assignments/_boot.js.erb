@@ -101,12 +101,12 @@
     $('#' + id + '_table').append(new_period);
 
     if (periods) {
-      refresh_callbacks();
+      refresh_event_listeners();
       periods.refresh();
     }
   }
 
-  function refresh_callbacks() {
+  function refresh_event_listeners() {
     $('.grace-period-hours').on("change", function() {
       if (grace_periods) {
         grace_periods.refresh();

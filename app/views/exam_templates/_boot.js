@@ -18,13 +18,17 @@ function add_template_division() {
         <input type="number" required="required" name="${nested_form_path}[end]">
       </td>
       <td>
-        <a onClick="this.closest('li').remove(); return false;" class="haha">
+        <a href="#" class="delete-exam-template-row">
           ${I18n.t('delete')}
         </a>
       </td>
     </tr>
     `;
   $('.table-with-add tbody').append(new_division_row);
+  $('.delete-exam-template-row').click((e) => {
+    $(e.target).parents('tr').remove();
+    e.preventDefault();
+  })
 }
 
 function toggle_cover_page(id, fields) {

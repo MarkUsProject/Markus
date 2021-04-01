@@ -8,6 +8,9 @@
     console.log(submit_clicked)
     if (onbeforeunload_flag && !submit_clicked) {
       return I18n.t('uncommitted_changes_warning');
+    } else {
+      onbeforeunload_flag = false;
+      submit_clicked = false;
     }
   };
 
@@ -17,7 +20,6 @@
 
   $(function() {
     $('input[type="submit"]').click(function () {
-      console.log('here')
       submit_clicked = true;
     });
   })

@@ -23,6 +23,16 @@
         }
       );
     });
+    $(function() {
+      $('#assignment-group-use').click(function(e) {
+        modalAssignmentGroupReUse.open();
+        $('#assignment-group-use-close').click(function(e) {
+          modalAssignmentGroupReUse.close();
+          e.preventDefault();
+        })
+        e.preventDefault();
+      })
+    })
   <% end %>
 <% end %>
 
@@ -40,8 +50,8 @@
        # for this assignment.
        if @assignment.vcs_submit %>
       <%= link_to t('groups.another_assignment_group'),
-                  'javascript:void(0);',
-                  onclick:'modalAssignmentGroupReUse.open();' %>
+                  '#',
+                  id: 'assignment-group-use' %>
       <span class='menu_bar'></span>
     <% end %>
     <%= link_to t('download'), '#', id: 'downloadModal' %>

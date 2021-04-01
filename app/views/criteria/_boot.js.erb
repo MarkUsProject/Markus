@@ -60,9 +60,10 @@
     });
     // Change destroy checkbox into a link.
     let delete_link = $('<a></a>').text(I18n.t("rubric_criteria.level.delete.new"));
-    delete_link.on('click', () => new_level.remove());
+    delete_link.attr('class', 'rubric-criteria-delete-new')
     new_level.find('.destroy_checkbox').replaceWith(delete_link);
 
     rubric_form.prepend(new_level);
+    $('.rubric-criteria-delete-new').click((e) => {$(e.target).parents('.level').remove()})
   }
 <% end %>

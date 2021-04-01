@@ -8,6 +8,7 @@
 @import 'mixins';
 @import 'modals';
 @import 'notes_dialog';
+@import "annotations_dialog";
 @import 'icons';
 @import 'react_json_schema_form';
 @import 'react_tabs';
@@ -37,6 +38,8 @@ body {
 
 .flex-row-expand {
   flex-grow: 1;
+  height: 100%;
+  margin-left: 10px;
 }
 
 
@@ -551,6 +554,11 @@ kbd {
 
     &.highlight {
       background-color: $pane-highlight;
+    }
+
+    &.assignment-list-wrapper {
+      flex: 0.5;
+      width: 400px;
     }
 
     // TODO: decide whether to adopt this style more broadly
@@ -1269,5 +1277,15 @@ nav {
   input {
     margin-left: 5px;
   }
+}
+
+// Styling for grade_entry_forms/_form.html
+
+grade-entry-items-wrapper {
+  margin-top: 1em;
+}
+
+.add-new-button-wrapper {
+  float: right;
 }
 
