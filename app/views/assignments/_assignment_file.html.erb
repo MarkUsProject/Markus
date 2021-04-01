@@ -1,9 +1,9 @@
-<div class='assignment_file inline-labels' style='padding-bottom: 0.75em;'>
+<div class='assignment_file inline-labels required-file-wrapper'>
 <%= form.fields_for :assignment_files, assignment_file do |f| %>
     <%= f.label :filename, t('attributes.filename'), class: 'required' %>
     <span>
     <%= f.text_field :filename %>
-    <span style="margin-left: 10px;">(<%= t(:delete) %> <%= f.check_box :_destroy %>)</span>
+    <span class="small-indent">(<%= t(:delete) %> <%= f.check_box :_destroy %>)</span>
     </span>
 <% end %>
 </div>

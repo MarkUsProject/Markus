@@ -357,6 +357,10 @@ fieldset {
   grid-template-columns: max-content max-content;
   row-gap: 10px;
 
+  &.required-file-wrapper {
+    padding-bottom: 0.75em;
+  }
+
   label {
     text-align: right;
   }
@@ -541,6 +545,14 @@ kbd {
     width: 37%;
   }
 
+  &.mid-height {
+    height: calc(70vh);
+  }
+
+  &.small-bottom-margin {
+    margin-bottom: 1em;
+  }
+
   .pane {
     border: 1px solid $primary-three;
     border-radius: $radius;
@@ -559,6 +571,15 @@ kbd {
     &.assignment-list-wrapper {
       flex: 0.5;
       width: 400px;
+    }
+
+    &.scrollable {
+      overflow-y: scroll
+    }
+
+    &.slim-fixed {
+      width: 29.5%;
+      flex: 0 auto;
     }
 
     // TODO: decide whether to adopt this style more broadly
@@ -1289,3 +1310,14 @@ grade-entry-items-wrapper {
   float: right;
 }
 
+// Styling for graphs
+
+.ta-grade-distribution-graph-wrapper {
+  width: 400px;
+  display: inline-block;
+}
+
+#gef_data_chart {
+  text-align: center;
+  padding-bottom: 0;
+}

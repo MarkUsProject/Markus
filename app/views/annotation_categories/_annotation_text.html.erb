@@ -14,7 +14,7 @@
 <% end %>
 
 <li id='annotation_text_<%= annotation_text[:id] %>'>
-  <div id='annotation_text_<%= annotation_text[:id] %>_control' style="word-break: break-all">
+  <div id='annotation_text_<%= annotation_text[:id] %>_control' class="word-break-all">
     <%= markdown(annotation_text[:content]) %>
 
     <div class='annotation-text-details'>

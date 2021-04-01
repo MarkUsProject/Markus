@@ -31,7 +31,7 @@
                 <% end %>
                 <% pr_text = "#{assignment.short_identifier} #{PeerReview.model_name.human}" %>
                 <% pr_text = t('assignments.hidden', assignment_text: pr_text) if assignment.pr_assignment.is_hidden %>
-                <p style="margin-left: 15px;"><%= link_to pr_text, pr_route %></p>
+                <p class="indent"><%= link_to pr_text, pr_route %></p>
               <% end %>
             </td>
 
