@@ -109,8 +109,7 @@ Config.setup do |config|
     required(:course_name).filled(:string)
     required(:validate_file).filled(:string)
     required(:validate_ip).filled(:bool)
-    required(:validate_custom_exit_status).maybe(:string)
-    required(:validate_custom_status_message).maybe(:string)
+    required(:validate_custom_status_message).hash
     required(:validate_user_not_allowed_message).maybe(:string)
     required(:incorrect_login_message).maybe(:string)
     required(:remote_user_auth).filled(:bool)
