@@ -19,6 +19,9 @@ class Annotation < ApplicationRecord
   validates_format_of :type,
                       with: /\AImageAnnotation|TextAnnotation|PdfAnnotation\z/
 
+  before_create :check_if_released
+  before_destroy :check_if_released
+
   after_create :modify_mark_with_deduction, unless: ->(a) { [nil, 0].include? a.annotation_text.deduction }
   after_destroy :modify_mark_with_deduction, unless: ->(a) { [nil, 0].include? a.annotation_text.deduction }
 
@@ -51,5 +54,18 @@ class Annotation < ApplicationRecord
     end
 
     data
+  end
+
+  private
+
+  # check if the submission file is associated with a remark result or a released result
+  def check_if_released
+    annotation_results = result.submission.results
+
+    return if annotation_results.where('results.released_to_students': true).empty? &&
+              annotation_results.where.not('remark_request_submitted_at': nil).empty?
+
+    errors.add(:base, 'Cannot create/destroy annotation once results are released.')
+    throw(:abort)
   end
 end
