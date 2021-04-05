@@ -3,6 +3,12 @@ class AutomatedTestsController < ApplicationController
 
   before_action { authorize! }
 
+  content_security_policy only: :manage do |p|
+    # required because jquery-ui-timepicker-addon inserts style
+    # dynamically. TODO: remove this when possible
+    p.style_src :self, "'unsafe-inline'"
+  end
+
   def update
     assignment = Assignment.find(params[:assignment_id])
     test_specs = params[:schema_form_data]

@@ -1,10 +1,19 @@
+# TODO:
+#  - at the moment, the following dependencies require unsafe configurations:
+#     heic2any: requires script-src 'unsafe-eval'
+#     MathJax: requires style-src 'unsafe-inline'
+#     jquery-ui-timepicker-addon: requires style-src 'unsafe-inline'
+#     bullet: requires style-src 'unsafe-inline'
+#  - These are set as needed in controllers. Eventually we should update
+#    all code and dependencies so that these unsafe configs are not needed
+
 Rails.application.config.content_security_policy do |policy|
   policy.default_src :self
   policy.img_src     :self, :blob
-  #TODO: set unsafe-eval and unsafe-inline on a per-controller or per-method basis
-  policy.script_src  :self, "'strict-dynamic'" # unsafe-eval necessary for heic2any TODO: look for alternative so we can disable this
-  policy.style_src   :self # unsafe-inline necessary for MathJax and jquery-ui-timepicker-addon TODO: look for alternative so we can disable this
+  policy.script_src  :self, "'strict-dynamic'"
+  policy.style_src   :self
   policy.worker_src  :self, :blob
+  policy.form_action :self
   unless Rails.env.production?
     # http and ws are required so that webpack-dev-server can serve assets
     policy.connect_src :self, :http, :ws

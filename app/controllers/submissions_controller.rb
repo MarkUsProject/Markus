@@ -3,6 +3,12 @@ class SubmissionsController < ApplicationController
   include RepositoryHelper
   before_action { authorize! }
 
+  content_security_policy only: [:repo_browser, :file_manager] do |p|
+    # required because heic2any uses libheif which calls
+    # eval (javascript). TODO: remove this when possible
+    p.script_src :self, "'strict-dynamic'", "'unsafe-eval'"
+  end
+
   def index
     respond_to do |format|
       format.json do
