@@ -19,11 +19,15 @@
 - Replace non-UTF8 characters in text file preview (#5156)
 - Rollback group creation if error is raised when creating a group for a working-alone student (#5169)
 - Prevent deletion/modification of annotation texts associated with a result with a pending remark request (#5170)
+- Enhancing student submission log with required assignment file info, file size (fixes issue 5171) (#5188)
 - Ensure that browsers cache the correct state of overall comments when marking (#5173)
 - Ensure that graders are shown the correct annotation categories (#5181)
 - Show informative error message if an uploaded criteria yaml file did not contain a "type" key (#5184)
+- Allow for multiple custom validation messages (#5194)
 - Add ability to hold shift to select a range of values in checkbox tables (#5182)
 - Update ssh authorization to be more flexible, secure, and permit a single user to use the same public key for multiple instances (#5199)
+- Fix bug where creating an annotation or switching results reset the selected file (#5200)
+- Fix bug in Assignment#get_num_marked that caused it to double-count remark and original results (#5205)
 
 ## [v1.11.5]
 - Account for percentage deductions when calculating total marks after deleting a criterion (#5176)

@@ -5,10 +5,11 @@ rails:
   assets:
     prefix: /assets
   active_record: {}
+  force_ssl: false
   session_store:
     type: cookie_store
     args:
-      key: _markus_session_<%= ENV.fetch('RAILS_RELATIVE_URL_ROOT') { '' } %>
+      key: _markus_session_<%= ENV.fetch('RAILS_RELATIVE_URL_ROOT') { '' }.gsub('/', '') %>
       path: <%= ENV.fetch('RAILS_RELATIVE_URL_ROOT') { '/' } %>
       expire_after: 1 # days
       secure: false
@@ -30,8 +31,7 @@ redis:
 course_name: 'CSC108 Fall 2009: Introduction to Computer Programming'
 validate_file: <%= "#{::Rails.root}/config/dummy_validate.sh" %>
 validate_ip: false
-validate_custom_exit_status: ~
-validate_custom_status_message: ~
+validate_custom_status_message: {}
 
 remote_user_auth: false
 

@@ -753,33 +753,22 @@ class Assignment < Assessment
 
   def get_num_marked(ta_id = nil)
     if ta_id.nil?
-      groupings.joins(:current_result).where('results.marking_state': 'complete').count
+      self.current_results.where(marking_state: Result::MARKING_STATES[:complete]).count
     else
       if is_criteria_mark?(ta_id)
-        n = 0
-        ta = Ta.find(ta_id)
-        num_assigned_criteria = ta.criterion_ta_associations.where(assignment: self).count
-        marked = ta.criterion_ta_associations
-                   .joins('INNER JOIN marks m ON criterion_ta_associations.criterion_id = m.criterion_id')
-                   .where('m.mark IS NOT NULL AND assessment_id = ?', self.id)
-                   .group('m.result_id')
-                   .count
-        ta_memberships.includes(grouping: :current_result)
-                      .where(user_id: ta_id)
-                      .where('groupings.is_collected': true).find_each do |t_mem|
-          next if t_mem.grouping.current_result.nil?
-          result_id = t_mem.grouping.current_result.id
-          num_marked = marked[result_id] || 0
-          if num_marked == num_assigned_criteria
-            n += 1
-          end
-        end
-        n
+        assigned_criteria = self.criteria.joins(:criterion_ta_associations)
+                                .where(criterion_ta_associations: { ta_id: ta_id })
+
+        self.current_results.joins(:marks, grouping: :ta_memberships)
+            .where('memberships.user_id': ta_id, 'marks.criterion_id': assigned_criteria.ids)
+            .where.not('marks.mark': nil)
+            .group('results.id')
+            .having('count(*) = ?', assigned_criteria.count)
+            .length
       else
-        groupings.joins(:ta_memberships)
-                 .where('memberships.user_id': ta_id)
-                 .joins(:current_result)
-                 .where('results.marking_state': 'complete').count
+        self.current_results.joins(grouping: :ta_memberships)
+            .where('memberships.user_id': ta_id, 'results.marking_state': 'complete')
+            .count
       end
     end
   end
@@ -843,8 +832,15 @@ class Assignment < Assessment
     end
   end
 
+  # Query for all current results for this assignment
   def current_results
-    groupings.includes(:current_result).map(&:current_result)
+    # The timestamps of all current results
+    subquery = self.groupings.joins(:current_result).group(:id)
+                   .select('groupings.id AS grouping_id', 'MAX(results.created_at) AS results_created_at').to_sql
+
+    Result.joins(:grouping)
+          .joins("INNER JOIN (#{subquery}) sub ON groupings.id = sub.grouping_id AND "\
+                 'results.created_at = sub.results_created_at')
   end
 
   # Returns true if this is a peer review, meaning it has a parent assignment,

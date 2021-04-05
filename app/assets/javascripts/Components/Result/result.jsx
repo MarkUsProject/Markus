@@ -124,7 +124,7 @@ class Result extends React.Component {
 
   /* Interaction with external components/libraries */
   updateContextMenu = () => {
-    if (this.state.released_to_students || this.props.role === "Student") return;
+    if (this.state.released_to_students || this.state.remark_submitted || this.props.role === "Student") return;
 
     window.annotation_context_menu.setup(
       Routes.annotations_path, this.state.result_id,
@@ -557,28 +557,30 @@ class Result extends React.Component {
         this.state.assignment_id, this.state.submission_id, this.state.result_id
       );
 
-      $.ajax({
-        url: url,
-        data: {
-          direction: direction
-        }
-      }).then((result) => {
-        if (!result.next_result || !result.next_grouping) {
-          alert(I18n.t('results.no_results_in_direction'));
-          return;
-        }
+      this.setState({loading: true}, () => {
+        $.ajax({
+          url: url,
+          data: {
+            direction: direction
+          }
+        }).then((result) => {
+          if (!result.next_result || !result.next_grouping) {
+            alert(I18n.t('results.no_results_in_direction'));
+            return;
+          }
 
-        const result_obj = {
-          result_id: result.next_result.id,
-          submission_id: result.next_result.submission_id,
-          grouping_id: result.next_grouping.id,
-        };
-        this.setState(prevState => ({...prevState, ...result_obj}));
-        let new_url = Routes.edit_assignment_submission_result_url(
-          this.state.assignment_id, this.state.submission_id, this.state.result_id
-        );
-        history.pushState({}, document.title, new_url)
-      })
+          const result_obj = {
+            result_id: result.next_result.id,
+            submission_id: result.next_result.submission_id,
+            grouping_id: result.next_grouping.id,
+          };
+          this.setState(prevState => ({...prevState, ...result_obj}));
+          let new_url = Routes.edit_assignment_submission_result_url(
+            this.state.assignment_id, this.state.submission_id, this.state.result_id
+          );
+          history.pushState({}, document.title, new_url)
+        });
+      });
     }
   }
 
