@@ -23,58 +23,48 @@ export class SubmissionFilePanel extends React.Component {
     window.submissionFilePanel = this;
 
     this.modalDownload = new ModalMarkus('#download_dialog');
+    this.refreshSelectedFile();
+  }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.result_id !== this.props.result_id || (prevProps.loading && !this.props.loading)) {
+      this.refreshSelectedFile();
+    }
+  }
+
+  refreshSelectedFile = () => {
     if (localStorage.getItem('assignment_id') !== String(this.props.assignment_id)) {
       localStorage.removeItem('file');
     }
     localStorage.setItem('assignment_id', this.props.assignment_id);
+
+    let selectedFile = [];
+    const stored_file = localStorage.getItem('file');
+    if (!this.state.student_view && stored_file) {
+      let filepath = stored_file.split('/');
+      let filename = filepath.pop();
+      selectedFile = [stored_file, this.getNamedFileId(this.props.fileData, filepath, filename)];
+    }
+    if (!selectedFile[1]) {
+      if (this.props.fileData.files.length > 0 || Object.keys(this.props.fileData.directories).length > 0) {
+        // Remove invalid storage entry if this.props.fileData has data and the file was not found.
+        localStorage.removeItem('file');
+      }
+      selectedFile = this.getFirstFile(this.props.fileData);
+    }
+    this.setState({selectedFile});
 
     // TODO: Incorporate DownloadSubmissionModal as true child of this component.
     if (this.props.canDownload) {
       ReactDOM.render(
         <DownloadSubmissionModal
           fileData={this.props.fileData}
-          initialFile={this.state.selectedFile}
+          initialFile={selectedFile}
           downloadURL={Routes.download_assignment_submission_result_url(
             this.props.assignment_id, this.props.submission_id, this.props.result_id)}
         />,
         document.getElementById('download_dialog_body')
       );
-    }
-    const selectedFile = this.getFirstFile(this.props.fileData);
-    this.setState({selectedFile});
-  }
-
-  componentDidUpdate(prevProps) {
-    if (this.props.canDownload) {
-      ReactDOM.render(
-        <DownloadSubmissionModal
-          fileData={this.props.fileData}
-          initialFile={this.state.selectedFile}
-          downloadURL={Routes.download_assignment_submission_result_url(
-            this.props.assignment_id, this.props.submission_id, this.props.result_id)}
-        />,
-        document.getElementById('download_dialog_body')
-      );
-    }
-
-    if (prevProps.loading && !this.props.loading) {
-      let selectedFile = [];
-      const stored_file = localStorage.getItem('file');
-      const stored_assignment = localStorage.getItem('assignment_id');
-      if (!this.state.student_view && stored_assignment === this.props.assignment_id.toString() && stored_file) {
-        let filepath = stored_file.split('/');
-        let filename = filepath.pop();
-        selectedFile = [stored_file, this.getNamedFileId(this.props.fileData, filepath, filename)];
-      }
-      if (!selectedFile[1]) {
-        localStorage.removeItem('file');
-        selectedFile = this.getFirstFile(this.props.fileData);
-      }
-      this.setState({selectedFile});
-    }
-
-    if (prevProps.annotations !== this.props.annotations) {
-      this.componentDidMount();
     }
   }
 
