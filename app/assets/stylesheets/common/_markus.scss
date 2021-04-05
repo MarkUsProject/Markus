@@ -8,7 +8,7 @@
 @import 'mixins';
 @import 'modals';
 @import 'notes_dialog';
-@import "annotations_dialog";
+@import 'annotations_dialog';
 @import 'icons';
 @import 'react_json_schema_form';
 @import 'react_tabs';
@@ -574,12 +574,12 @@ kbd {
     }
 
     &.scrollable {
-      overflow-y: scroll
+      overflow-y: scroll;
     }
 
     &.slim-fixed {
-      width: 29.5%;
       flex: 0 auto;
+      width: 29.5%;
     }
 
     // TODO: decide whether to adopt this style more broadly
@@ -1123,8 +1123,8 @@ nav {
 }
 
 .crop-target {
+  border: 1px solid #000000;
   max-width: 400px;
-  border: 1px solid black;
 }
 
 // Text editing and previews
@@ -1313,11 +1313,11 @@ grade-entry-items-wrapper {
 // Styling for graphs
 
 .ta-grade-distribution-graph-wrapper {
-  width: 400px;
   display: inline-block;
+  width: 400px;
 }
 
 #gef_data_chart {
-  text-align: center;
   padding-bottom: 0;
+  text-align: center;
 }

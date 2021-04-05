@@ -28,7 +28,7 @@ function add_template_division() {
   $('.delete-exam-template-row').click((e) => {
     $(e.target).parents('tr').remove();
     e.preventDefault();
-  })
+  });
 }
 
 function toggle_cover_page(id, fields) {

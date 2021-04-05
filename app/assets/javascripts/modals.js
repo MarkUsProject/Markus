@@ -48,6 +48,6 @@ $(document).ready(() => {
     new ModalMarkus('#' + dialog.id, open_link);
     $('#' + dialog.id + '-close').click(function() {
       dialog.close();
-    })
+    });
   })
 });

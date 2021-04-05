@@ -7,5 +7,5 @@ $(document).ready(() => {
   $('#session-expired-modal-close').click(function() {
     session_expired_modal.close();
     window.location.reload();
-  })
+  });
 });
