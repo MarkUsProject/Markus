@@ -1,11 +1,10 @@
-# TODO:
-#  - at the moment, the following dependencies require unsafe configurations:
-#     heic2any: requires script-src 'unsafe-eval'
-#     MathJax: requires style-src 'unsafe-inline'
-#     jquery-ui-timepicker-addon: requires style-src 'unsafe-inline'
-#     bullet: requires style-src 'unsafe-inline'
-#  - These are set as needed in controllers. Eventually we should update
-#    all code and dependencies so that these unsafe configs are not needed
+# TODO: - at the moment, the following dependencies require unsafe configurations:
+#          heic2any: requires script-src 'unsafe-eval'
+#          MathJax: requires style-src 'unsafe-inline'
+#          jquery-ui-timepicker-addon: requires style-src 'unsafe-inline'
+#          bullet: requires style-src 'unsafe-inline'
+#       - These are set as needed in controllers. Eventually we should update
+#         all code and dependencies so that these unsafe configs are not needed
 
 Rails.application.config.content_security_policy do |policy|
   policy.default_src :self
