@@ -5,8 +5,10 @@ class SubmissionsController < ApplicationController
 
   content_security_policy only: [:repo_browser, :file_manager] do |p|
     # required because heic2any uses libheif which calls
-    # eval (javascript). TODO: remove this when possible
+    # eval (javascript) and creates an image as a blob.
+    # TODO: remove this when possible
     p.script_src :self, "'strict-dynamic'", "'unsafe-eval'"
+    p.img_src :self, :blob
   end
 
   def index

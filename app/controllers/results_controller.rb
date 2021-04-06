@@ -6,8 +6,13 @@ class ResultsController < ApplicationController
 
   content_security_policy only: [:edit, :view_marks] do |p|
     # required because heic2any uses libheif which calls
-    # eval (javascript). TODO: remove this when possible
+    # eval (javascript) and creates an image as a blob.
+    # TODO: remove this when possible
     p.script_src :self, "'strict-dynamic'", "'unsafe-eval'"
+    p.img_src :self, :blob
+    # required because MathJax dynamically changes
+    # style. # TODO: remove this when possible
+    p.style_src :self, "'unsafe-inline'"
   end
 
   def show
