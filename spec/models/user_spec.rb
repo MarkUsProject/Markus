@@ -58,32 +58,32 @@ describe User do
   context 'The repository permissions file' do
     context 'should be upated' do
       it 'when creating an admin' do
-        expect(Repository.get_class).to receive(:__update_permissions).once
+        expect(Repository.get_class).to receive(:update_permissions_file).once
         create(:admin)
       end
       it 'when destroying an admin' do
         admin = create(:admin)
-        expect(Repository.get_class).to receive(:__update_permissions).once
+        expect(Repository.get_class).to receive(:update_permissions_file).once
         admin.destroy
       end
     end
     context 'should not be updated' do
       it 'when creating a ta' do
-        expect(Repository.get_class).not_to receive(:__update_permissions)
+        expect(Repository.get_class).not_to receive(:update_permissions_file)
         create(:ta)
       end
       it 'when destroying a ta without memberships' do
         ta = create(:ta)
-        expect(Repository.get_class).not_to receive(:__update_permissions)
+        expect(Repository.get_class).not_to receive(:update_permissions_file)
         ta.destroy
       end
       it 'when creating a student' do
-        expect(Repository.get_class).not_to receive(:__update_permissions)
+        expect(Repository.get_class).not_to receive(:update_permissions_file)
         create(:student)
       end
       it 'when destroying a student without memberships' do
         student = create(:student)
-        expect(Repository.get_class).not_to receive(:__update_permissions)
+        expect(Repository.get_class).not_to receive(:update_permissions_file)
         student.destroy
       end
     end

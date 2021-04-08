@@ -161,7 +161,7 @@ describe Grouping do
         Grouping.assign_all_tas(grouping_ids, ta_ids, assignment)
       end
       it 'updates repository permissions exactly once after bulk assign TAs' do
-        expect(Repository.get_class).to receive(:__update_permissions).once
+        expect(Repository.get_class).to receive(:update_permissions_file).once
         Grouping.assign_all_tas([], grouping_ids, assignment)
       end
     end
@@ -176,7 +176,7 @@ describe Grouping do
 
     describe '.assign_tas' do
       it 'updates repository permissions exactly once after assigning all TAs' do
-        expect(Repository.get_class).to receive(:__update_permissions).once
+        expect(Repository.get_class).to receive(:update_permissions_file).once
         Grouping.assign_tas(grouping_ids, ta_ids, assignment) do |grouping_ids, ta_ids|
           grouping_ids.zip(ta_ids.cycle)
         end
@@ -214,7 +214,7 @@ describe Grouping do
       end
 
       it 'updates repository permissions exactly once after bulk unassign TAs' do
-        expect(Repository.get_class).to receive(:__update_permissions).once
+        expect(Repository.get_class).to receive(:update_permissions_file).once
         Grouping.unassign_tas([], grouping_ids, assignment)
       end
     end
