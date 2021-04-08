@@ -82,6 +82,7 @@ Config.setup do |config|
       required(:action_mailer).hash do
         required(:delivery_method).filled(:string)
         optional(:smtp_settings).hash
+        optional(:sendmail_settings).hash
         required(:default_url_options).hash
         required(:asset_host).filled(:string)
         required(:perform_deliveries).filled(:bool)
