@@ -1,4 +1,5 @@
 describe Repository::AbstractRepository do
+  before { Thread.current[:requested?] = false } # simulates each test happening in its own thread
   context 'repository permissions should be updated' do
     context 'exactly once' do
       it 'for a single update' do
@@ -12,6 +13,12 @@ describe Repository::AbstractRepository do
       it 'at the end of a batch update only if requested' do
         expect(UpdateRepoPermissionsJob).to receive(:perform_later).once
         Repository.get_class.update_permissions_after(only_on_request: true) { Repository.get_class.update_permissions }
+      end
+      it 'at the end of the most outer nested batch update' do
+        expect(UpdateRepoPermissionsJob).to receive(:perform_later).once
+        Repository.get_class.update_permissions_after do
+          Repository.get_class.update_permissions_after {}
+        end
       end
     end
     context 'multiple times' do
@@ -31,6 +38,12 @@ describe Repository::AbstractRepository do
     it 'at the end of a batch update if not requested' do
       expect(UpdateRepoPermissionsJob).not_to receive(:perform_later)
       Repository.get_class.update_permissions_after(only_on_request: true) {}
+    end
+    it 'at the end of the most outer nested batch update only if requested' do
+      expect(UpdateRepoPermissionsJob).not_to receive(:perform_later)
+      Repository.get_class.update_permissions_after(only_on_request: true) do
+        Repository.get_class.update_permissions_after(only_on_request: true) {}
+      end
     end
   end
 end
