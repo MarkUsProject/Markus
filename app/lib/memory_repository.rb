@@ -413,13 +413,11 @@ class MemoryRepository < Repository::AbstractRepository
     end
   end
 
-  def self.__update_permissions(permissions, full_access_users)
+  def self.update_permissions_file(permissions, full_access_users)
     @@permissions = {'*' => full_access_users}
     permissions.each do |repo_loc, users|
       @@permissions[repo_loc] = users
     end
   end
-
-  private_class_method :__update_permissions
 
 end # end class MemoryRepository

@@ -405,7 +405,7 @@ class GitRepository < Repository::AbstractRepository
   # Helper method to generate all the permissions for students for all groupings in all assignments.
   # This is done as a single operation to mirror the SVN repo code. We found
   # a substantial performance improvement by writing the auth file only once in the SVN case.
-  def self.__update_permissions(permissions, full_access_users)
+  def self.update_permissions_file(permissions, full_access_users)
 
     # If we're not in authoritative mode, bail out
     unless Settings.repository.is_repository_admin
@@ -418,15 +418,16 @@ class GitRepository < Repository::AbstractRepository
     FileUtils.mkdir_p(File.dirname(Repository::PERMISSION_FILE))
     CSV.open(Repository::PERMISSION_FILE, 'wb') do |csv|
       csv.flock(File::LOCK_EX)
-      csv << ['*'] + full_access_users
-      sorted_permissions.each do |repo_name, users|
-        csv << [repo_name] + users
+      begin
+        csv << ['*'] + full_access_users
+        sorted_permissions.each do |repo_name, users|
+          csv << [repo_name] + users
+        end
+      ensure
+        csv.flock(File::LOCK_UN)
       end
-      csv.flock(File::LOCK_UN)
     end
   end
-
-  private_class_method :__update_permissions
 
   private
 

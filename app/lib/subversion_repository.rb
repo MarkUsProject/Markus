@@ -291,8 +291,11 @@ class SubversionRepository < Repository::AbstractRepository
     file_content = ""
     File.open(Repository::PERMISSION_FILE, 'r+') do |auth_file|
       auth_file.flock(File::LOCK_EX)
-      file_content = auth_file.read()
-      auth_file.flock(File::LOCK_UN) # release lock
+      begin
+        file_content = auth_file.read()
+      ensure
+        auth_file.flock(File::LOCK_UN) # release lock
+      end
     end
     return file_content
   end
@@ -312,10 +315,8 @@ class SubversionRepository < Repository::AbstractRepository
     end
     result = false
     File.open(Repository::PERMISSION_FILE, 'w+') do |auth_file|
-      auth_file.flock(File::LOCK_EX)
       # Blast out the string to the file
       result = (auth_file.write(authz_file_contents) == authz_file_contents.length)
-      auth_file.flock(File::LOCK_UN) # release lock
     end
     return result
   end
@@ -473,7 +474,7 @@ class SubversionRepository < Repository::AbstractRepository
   ####################################################################
 
   # Generate and write the SVN authorization file for the repo.
-  def self.__update_permissions(permissions, full_access_users)
+  def self.update_permissions_file(permissions, full_access_users)
     return true unless Settings.repository.is_repository_admin
     authz_string = "[/]\n"
     full_access_users.each do |user_name|
@@ -489,8 +490,6 @@ class SubversionRepository < Repository::AbstractRepository
     end
     __write_out_authz_file(authz_string)
   end
-
-  private_class_method :__update_permissions
 
   private
 
