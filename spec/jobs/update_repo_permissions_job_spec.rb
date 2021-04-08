@@ -8,7 +8,7 @@ describe UpdateRepoPermissionsJob do
   describe '#perform' do
     it 'should delete the redis key when finished' do
       UpdateRepoPermissionsJob.perform_now('MemoryRepository')
-      expect(Redis::Namespace.new(Rails.root.to_s).get('authorized_keys')).to be_nil
+      expect(Redis::Namespace.new(Rails.root.to_s).get('repo_permissions')).to be_nil
     end
 
     context 'when called with "MemoryRepository"' do
