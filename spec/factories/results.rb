@@ -13,5 +13,10 @@ FactoryBot.define do
         released_to_students { true }
       end
     end
+
+    factory :remark_result do
+      marking_state { Result::MARKING_STATES[:incomplete] }
+      remark_request_submitted_at { Time.current }
+    end
   end
 end

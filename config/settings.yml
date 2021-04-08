@@ -31,8 +31,7 @@ redis:
 course_name: 'CSC108 Fall 2009: Introduction to Computer Programming'
 validate_file: <%= "#{::Rails.root}/config/dummy_validate.sh" %>
 validate_ip: false
-validate_custom_exit_status: ~
-validate_custom_status_message: ~
+validate_custom_status_message: {}
 
 remote_user_auth: false
 
@@ -40,7 +39,7 @@ logout_redirect: DEFAULT
 
 repository:
   type: git
-  git_shell: /usr/bin/git-shell
+  markus_git_shell: <%= File.join(::Rails.root, 'lib', 'repo', 'markus-git-shell.sh') %>
   url: 'http://www.example.com/markus/git'
   ssh_url: 'git@example.com/csc108'
   is_repository_admin: true

@@ -88,4 +88,69 @@ describe User do
       end
     end
   end
+  describe '.authenticate' do
+    context 'bad character' do
+      it 'should not allow a null char in the username' do
+        expect(User.authenticate("a\0b", '123')).to eq User::AUTHENTICATE_BAD_CHAR
+      end
+      it 'should not allow a null char in the password' do
+        expect(User.authenticate('ab', "12\0a3")).to eq User::AUTHENTICATE_BAD_CHAR
+      end
+      it 'should not allow a newline in the username' do
+        expect(User.authenticate("a\nb", '123')).to eq User::AUTHENTICATE_BAD_CHAR
+      end
+      it 'should not allow a newline in the username' do
+        expect(User.authenticate('ab', "12\na3")).to eq User::AUTHENTICATE_BAD_CHAR
+      end
+    end
+    context 'bad platform' do
+      it 'should not allow validation if the server OS is windows' do
+        stub_const('RUBY_PLATFORM', 'mswin')
+        expect(User.authenticate('ab', '123')).to eq User::AUTHENTICATE_BAD_PLATFORM
+      end
+    end
+    context 'without a custom exit status messages' do
+      context 'a successful login' do
+        it 'should return a success message' do
+          allow_any_instance_of(Process::Status).to receive(:exitstatus).and_return(0)
+          expect(User.authenticate('ab', '123')).to eq User::AUTHENTICATE_SUCCESS
+        end
+      end
+      context 'an unsuccessful login' do
+        it 'should return a failure message' do
+          allow_any_instance_of(Process::Status).to receive(:exitstatus).and_return(1)
+          expect(User.authenticate('ab', '123')).to eq User::AUTHENTICATE_ERROR
+        end
+      end
+    end
+    context 'with a custom exit status message' do
+      before do
+        allow(Settings).to receive(:validate_custom_status_message).and_return('2' => 'a two!', '3' => 'a three!')
+      end
+      context 'a successful login' do
+        it 'should return a success message' do
+          allow_any_instance_of(Process::Status).to receive(:exitstatus).and_return(0)
+          expect(User.authenticate('ab', '123')).to eq User::AUTHENTICATE_SUCCESS
+        end
+      end
+      context 'an unsuccessful login' do
+        it 'should return a failure message with a 1' do
+          allow_any_instance_of(Process::Status).to receive(:exitstatus).and_return(1)
+          expect(User.authenticate('ab', '123')).to eq User::AUTHENTICATE_ERROR
+        end
+        it 'should return a failure message with a 4' do
+          allow_any_instance_of(Process::Status).to receive(:exitstatus).and_return(4)
+          expect(User.authenticate('ab', '123')).to eq User::AUTHENTICATE_ERROR
+        end
+        it 'should return a custom message with a 2' do
+          allow_any_instance_of(Process::Status).to receive(:exitstatus).and_return(2)
+          expect(User.authenticate('ab', '123')).to eq '2'
+        end
+        it 'should return a custom message with a 3' do
+          allow_any_instance_of(Process::Status).to receive(:exitstatus).and_return(3)
+          expect(User.authenticate('ab', '123')).to eq '3'
+        end
+      end
+    end
+  end
 end

@@ -109,8 +109,7 @@ Config.setup do |config|
     required(:course_name).filled(:string)
     required(:validate_file).filled(:string)
     required(:validate_ip).filled(:bool)
-    required(:validate_custom_exit_status).maybe(:string)
-    required(:validate_custom_status_message).maybe(:string)
+    required(:validate_custom_status_message).hash
     required(:validate_user_not_allowed_message).maybe(:string)
     required(:incorrect_login_message).maybe(:string)
     required(:remote_user_auth).filled(:bool)
@@ -118,8 +117,8 @@ Config.setup do |config|
     required(:repository).hash do
       required(:storage).filled(:string)
       required(:type).value(included_in?: %w[git svn mem])
-      optional(:git_shell).filled(:string)
       required(:url).filled(:string)
+      optional(:markus_git_shell).filled(:string)
       optional(:ssh_url).filled(:string)
       required(:is_repository_admin).filled(:bool)
     end
