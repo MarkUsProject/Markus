@@ -26,8 +26,8 @@ class UpdateKeysJob < ApplicationJob
     auth_keys_file = File.join(Settings.repository.storage, KeyPair::AUTHORIZED_KEYS_FILE)
     FileUtils.touch(auth_keys_file) unless File.exist? auth_keys_file
     redis = Redis::Namespace.new(Rails.root.to_s)
-    data = KeyPair.joins(:user).pluck('users.user_name', :public_key)
     redis.del('authorized_keys')
+    data = KeyPair.joins(:user).pluck('users.user_name', :public_key)
     File.open(auth_keys_file, 'r+') do |f|
       f.flock(File::LOCK_EX)
       begin

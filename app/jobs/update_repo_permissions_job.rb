@@ -23,9 +23,9 @@ class UpdateRepoPermissionsJob < ApplicationJob
   # delete the key in redis so that any future job will run (with updated info)
   def perform(repo_class)
     redis = Redis::Namespace.new(Rails.root.to_s)
+    redis.del('repo_permissions')
     permissions = repo_class.get_all_permissions
     full_access_users = repo_class.get_full_access_users
-    redis.del('repo_permissions')
     repo_class.update_permissions_file(permissions, full_access_users)
   end
 end
