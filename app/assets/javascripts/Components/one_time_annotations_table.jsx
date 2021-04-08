@@ -3,68 +3,6 @@ import {render} from 'react-dom';
 
 import ReactTable from 'react-table';
 
-class AnnotationTextCell extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      editMode: false,
-      content: props.content
-    }
-  }
-  componentDidUpdate(prevProps) {
-    if (prevProps.content !== this.props.content) {
-      this.setState({content: this.props.content});
-    }
-  }
-  render() {
-    //Show input field and save and cancel buttons
-    if (this.state.editMode)
-    {
-      let save_button = <a
-        href="#"
-        className='button inline-button'
-        onClick={() => {
-          if (this.props.content != this.state.content) {
-            this.props.editAnnotation(this.props.id, this.state.content);       
-          }
-          this.setState({editMode: false});         
-          }
-        }>Save</a>;
-      let cancel_button = <a
-        href="#"
-        className='button inline-button'
-        onClick={() => this.setState({
-          editMode: false, 
-          content: this.props.content
-          })
-        }>Cancel</a>;
-      return (
-        <div>
-          <input type="text" 
-            defaultValue={this.state.content} 
-            onChange={e => this.setState({content: e.target.value})}/>   
-          <div className={"alignright"} >{save_button}</div>
-          <div className={"alignright"}>{cancel_button}</div>
-        </div>
-        );
-    }
-    else
-    {
-      let edit_button = <a
-        href="#"
-        className="edit-icon"
-        title={I18n.t('edit')}
-        onClick={() => this.setState({editMode: true})}/>;
-      return(
-        <div>         
-          <div dangerouslySetInnerHTML={{__html: marked(this.state.content, {sanitize: true})}}/>
-          <div className={"alignright"}>{edit_button}</div>
-        </div>
-      );     
-    }
-   
-  }
-}
 class OneTimeAnnotationsTable extends React.Component {
   constructor() {
     super();
@@ -96,8 +34,8 @@ class OneTimeAnnotationsTable extends React.Component {
       data:{ content: content, id: annot_id },
       method: "PUT",
       remote: true,
-      dataType: "json",
-      }).always(() => this.fetchData());
+      dataType: "script",
+    }).always(this.fetchData);
   };
 
   removeAnnotation = (annot_id) => {
@@ -107,7 +45,7 @@ class OneTimeAnnotationsTable extends React.Component {
       method: 'delete',
       remote: true,
       dataType: 'script'
-    }).then(() => this.fetchData());
+    }).then(this.fetchData);
   };
 
   columns = [
@@ -187,9 +125,10 @@ class OneTimeAnnotationsTable extends React.Component {
       Header: I18n.t('activerecord.models.annotation_text.one'),
       accessor: 'content',
       id: 'content',
+      width: 600,
       Cell: row => {
         return <AnnotationTextCell
-                  content={row.original.content} 
+                  content={row.original.content}
                   id={row.original.id}
                   editAnnotation={this.editAnnotation}/>;
       },
@@ -204,14 +143,88 @@ class OneTimeAnnotationsTable extends React.Component {
   ];
 
   render() {
-    return <ReactTable
+    return (
+      <ReactTable
         key="one_time_annotations_table"
         data={this.state.data}
         columns={this.columns}
         filterable
         defaultSorted={[{id: 'group_name'}]}
         loading={this.state.loading}
-        noDataText={I18n. t('annotations.empty_uncategorized')}/>;
+        noDataText={I18n. t('annotations.empty_uncategorized')}
+      />
+    );
+  }
+}
+
+
+class AnnotationTextCell extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      editMode: false,
+      content: props.content
+    };
+  }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.content !== this.props.content) {
+      this.setState({content: this.props.content});
+    }
+  }
+
+  render() {
+    //Show input field and save and cancel buttons
+    if (this.state.editMode) {
+      let save_button = (
+        <a
+          href="#"
+          className='button inline-button'
+          onClick={() => {
+            if (this.props.content !== this.state.content) {
+              this.props.editAnnotation(this.props.id, this.state.content);
+            }
+            this.setState({editMode: false});
+          }}>
+          {I18n.t('save')}
+        </a>
+      );
+      let cancel_button = (
+        <a
+          href="#"
+          className='button inline-button'
+          onClick={() => this.setState({
+            editMode: false,
+            content: this.props.content
+          })
+        }>
+          {I18n.t('cancel')}
+        </a>
+      );
+      return (
+        <div>
+          <input type="textarea"
+                 className="rt-cell-textarea"
+                 defaultValue={this.state.content}
+                 onChange={e => this.setState({content: e.target.value})}/>
+          <div className={"alignright"}>{save_button}</div>
+          <div className={"alignright"}>{cancel_button}</div>
+        </div>
+      );
+    } else {
+      let edit_button = (
+        <a href="#"
+           className="edit-icon"
+           title={I18n.t('edit')}
+           onClick={() => this.setState({editMode: true})}/>
+      );
+      return(
+        <div>
+          <div dangerouslySetInnerHTML={{__html: marked(this.state.content, {sanitize: true})}}/>
+          <div className={"alignright"}>{edit_button}</div>
+        </div>
+      );
+    }
   }
 }
 
