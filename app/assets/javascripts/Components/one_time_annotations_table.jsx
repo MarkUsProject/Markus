@@ -55,7 +55,6 @@ class OneTimeAnnotationsTable extends React.Component {
       id: 'group_name',
       Cell: row => {
         let remove_button = <a
-          href="#"
           className="remove-icon"
           title={I18n.t('delete')}
           onClick={() => this.removeAnnotation(row.original.id, row.original.result_id)}/>;
@@ -178,7 +177,6 @@ class AnnotationTextCell extends React.Component {
     if (this.state.editMode) {
       let save_button = (
         <a
-          href="#"
           className='button inline-button'
           onClick={() => {
             if (this.props.content !== this.state.content) {
@@ -191,7 +189,6 @@ class AnnotationTextCell extends React.Component {
       );
       let cancel_button = (
         <a
-          href="#"
           className='button inline-button'
           onClick={() => this.setState({
             editMode: false,
@@ -213,8 +210,7 @@ class AnnotationTextCell extends React.Component {
       );
     } else {
       let edit_button = (
-        <a href="#"
-           className="edit-icon"
+        <a className="edit-icon"
            title={I18n.t('edit')}
            onClick={() => this.setState({editMode: true})}/>
       );
