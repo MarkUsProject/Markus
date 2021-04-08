@@ -84,7 +84,7 @@ describe GradersController do
       end
 
       it 'and a successful call updates repository permissions exactly once' do
-        expect(Repository.get_class).to receive(:update_permissions_file)
+        expect(UpdateRepoPermissionsJob).to receive(:perform_later)
         post_as @admin,
                 :upload,
                 params: { assignment_id: @assignment.id, upload_file: @group_grader_map_file, groupings: true }

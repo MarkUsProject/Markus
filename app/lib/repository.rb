@@ -210,7 +210,7 @@ module Repository
       # abort if this is being called in a block passed to
       # self.update_permissions_after
       return if Thread.current[:permissions_lock]&.owned?
-      UpdateRepoPermissionsJob.perform_later(self)
+      UpdateRepoPermissionsJob.perform_later(self.name)
       nil
     end
 

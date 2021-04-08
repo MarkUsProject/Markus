@@ -7,16 +7,9 @@ class UpdateKeysJob < ApplicationJob
   # If another job that will update the authorized_keys file is alread enqueued, then
   # do not enqueue this one.
   around_enqueue do |job, block|
-    block.call if Redis::Namespace.new(Rails.root.to_s).setnx('authorized_keys', job.job_id)
-  end
-
-  # In case an error occurs during execution, ensure that the authorized_keys redis key
-  # gets cleaned up.
-  after_perform do |job|
     redis = Redis::Namespace.new(Rails.root.to_s)
-    if redis.get('authorized_keys') == job.job_id
-      redis.del('authorized_keys')
-    end
+    block.call if redis.setnx('authorized_keys', job.job_id)
+    redis.expire('authorized_keys', 300) # expire the key just in case
   end
 
   # Update authorized_keys file. After getting the key pair info from the database,
@@ -36,6 +29,11 @@ class UpdateKeysJob < ApplicationJob
       ensure
         f.flock(File::LOCK_UN)
       end
+    end
+  ensure
+    redis = Redis::Namespace.new(Rails.root.to_s)
+    if redis.get('repo_permissions') == self.job_id
+      redis.del('repo_permissions')
     end
   end
 end

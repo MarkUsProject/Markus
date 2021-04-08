@@ -11,12 +11,12 @@ describe TaMembership do
 
   context 'should update permissions' do
     it 'when created' do
-      expect(Repository.get_class).to receive(:update_permissions_file)
+      expect(UpdateRepoPermissionsJob).to receive(:perform_later)
       create(:ta_membership)
     end
     it 'when destroyed' do
       membership = create(:ta_membership)
-      expect(Repository.get_class).to receive(:update_permissions_file)
+      expect(UpdateRepoPermissionsJob).to receive(:perform_later)
       membership.destroy
     end
   end

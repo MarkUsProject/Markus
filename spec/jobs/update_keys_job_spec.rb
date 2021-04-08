@@ -1,6 +1,7 @@
 describe UpdateKeysJob do
   context 'when running as a background job' do
     let(:job_args) { [] }
+    before { Redis::Namespace.new(Rails.root.to_s).del('authorized_keys') }
     include_examples 'background job'
   end
 
@@ -18,6 +19,10 @@ describe UpdateKeysJob do
       File.write(file, 'some text')
       UpdateKeysJob.perform_now
       expect(File.read(file)).to eq ''
+    end
+    it 'should delete the redis key when finished' do
+      UpdateKeysJob.perform_now
+      expect(Redis::Namespace.new(Rails.root.to_s).get('authorized_keys')).to be_nil
     end
     context 'when there are some keys' do
       let!(:keys) { create_list :key_pair, 5 }
