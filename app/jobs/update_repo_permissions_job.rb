@@ -1,7 +1,6 @@
 # updates repo permissions file by rewriting the entire file
 # according to the current state of the database
 class UpdateRepoPermissionsJob < ApplicationJob
-
   def self.show_status(_status); end
 
   # If another job that will update the repo permissions file is alread enqueued, then

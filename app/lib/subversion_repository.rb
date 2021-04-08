@@ -292,7 +292,7 @@ class SubversionRepository < Repository::AbstractRepository
     File.open(Repository::PERMISSION_FILE, 'r+') do |auth_file|
       auth_file.flock(File::LOCK_EX)
       begin
-        file_content = auth_file.read()
+        file_content = auth_file.read
       ensure
         auth_file.flock(File::LOCK_UN) # release lock
       end

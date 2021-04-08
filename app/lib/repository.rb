@@ -268,7 +268,7 @@ module Repository
     end
 
     # Generate and write the the authorization file for all repos.
-    def self.update_permissions_file(permissions, full_access_users)
+    def self.update_permissions_file(_permissions, _full_access_users)
       raise NotImplementedError, "Repository.update_permissions: Not yet implemented"
     end
 

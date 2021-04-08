@@ -227,6 +227,13 @@ class MemoryRepository < Repository::AbstractRepository
     return expanded
   end
 
+  def self.update_permissions_file(permissions, full_access_users)
+    @@permissions = {'*' => full_access_users}
+    permissions.each do |repo_loc, users|
+      @@permissions[repo_loc] = users
+    end
+  end
+
   private
   # Creates a directory as part of the provided revision
   def make_directory(rev, full_path)
@@ -410,13 +417,6 @@ class MemoryRepository < Repository::AbstractRepository
       return @timestamps_revisions[Marshal.dump(wanted_timestamp)]
     else
       return @current_revision
-    end
-  end
-
-  def self.update_permissions_file(permissions, full_access_users)
-    @@permissions = {'*' => full_access_users}
-    permissions.each do |repo_loc, users|
-      @@permissions[repo_loc] = users
     end
   end
 
