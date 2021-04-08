@@ -7,14 +7,14 @@ class UpdateKeysJob < ApplicationJob
   # If another job that will update the authorized_keys file is alread enqueued, then
   # do not enqueue this one.
   around_enqueue do |job, block|
-    block.call if Redis::Namespace.new(Rails.root.to_s).setnx('authorized_keys', job.id)
+    block.call if Redis::Namespace.new(Rails.root.to_s).setnx('authorized_keys', job.job_id)
   end
 
   # In case an error occurs during execution, ensure that the authorized_keys redis key
   # gets cleaned up.
   after_perform do |job|
     redis = Redis::Namespace.new(Rails.root.to_s)
-    if redis.get('authorized_keys') == job.id.to_s
+    if redis.get('authorized_keys') == job.job_id
       redis.del('authorized_keys')
     end
   end
