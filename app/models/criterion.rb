@@ -4,7 +4,6 @@ class Criterion < ApplicationRecord
   belongs_to :assignment, foreign_key: :assessment_id
   after_update :update_results_with_change
   after_destroy :update_results
-  after_destroy ->(c) { c.assignment.update_results_stats }
 
   has_many :marks, dependent: :destroy
   accepts_nested_attributes_for :marks
@@ -145,7 +144,6 @@ class Criterion < ApplicationRecord
     max_mark_changed = previous_changes.key?('max_mark') && !previous_changes[:max_mark].first.nil?
     return unless max_mark_changed || previous_changes.key?('bonus')
     scale_marks if max_mark_changed
-    self.assignment.update_results_stats
   end
 
   # When max_mark of criterion is changed, all associated marks should have their mark value scaled to the change.

@@ -6,10 +6,10 @@
 
 <div class="grid-2-col">
   <span><%= t(:average) %></span>
-  <span><%= number_to_percentage(grade_entry_form.calculate_average || 0, precision: 1) %></span>
+  <span><%= number_to_percentage(grade_entry_form.results_average || 0, precision: 1) %></span>
 
   <span><%= t(:median) %></span>
-  <span><%= number_to_percentage(grade_entry_form.calculate_median || 0, precision: 1) %></span>
+  <span><%= number_to_percentage(grade_entry_form.results_median || 0, precision: 1) %></span>
 
   <span><%= t(:num_entries) %></span>
   <span><%= "#{grade_entry_form.count_non_nil}/" +

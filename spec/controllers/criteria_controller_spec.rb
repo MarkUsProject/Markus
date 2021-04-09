@@ -14,7 +14,6 @@ describe CriteriaController do
     end
     describe 'An authenticated and authorized admin doing a DELETE' do
       it 'should update the relevant assignment\'s stats' do
-        @assignment.update_results_stats
         old_average = @assignment.results_average
         old_median = @assignment.results_median
         delete_as admin,
@@ -37,7 +36,6 @@ describe CriteriaController do
       end
 
       it 'should update the relevant assignment\'s stats' do
-        @assignment.update_results_stats
         old_average = @assignment.results_average
         old_median = @assignment.results_median
         get_as admin,

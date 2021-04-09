@@ -18,14 +18,18 @@ describe GradeEntryForm do
     it { is_expected.to validate_uniqueness_of(:short_identifier) }
   end
 
-  # Tests for out_of_total
-  context 'A grade entry form object: ' do
+  describe '#max_mark' do
     before(:each) do
       @grade_entry_form = make_grade_entry_form_with_multiple_grade_entry_items
     end
 
-    it 'verify that the total number of marks is calculated correctly' do
-      expect(@grade_entry_form.out_of_total).to eq (30)
+    it 'calculates the sum of the grade_entry_item out_of values' do
+      expect(@grade_entry_form.max_mark).to eq 30
+    end
+
+    it 'ignores grade_entry_items that are marked as bonus' do
+      @grade_entry_form.grade_entry_items.update_all(bonus: true)
+      expect(@grade_entry_form.max_mark).to eq 0
     end
   end
 
@@ -164,45 +168,119 @@ describe GradeEntryForm do
     end
   end
 
-  # Tests for calculate_average
-  describe '#calculate_average' do
-    before(:each) do
-      @grade_entry_form = make_grade_entry_form_with_multiple_grade_entry_items
-      @grade_entry_items = @grade_entry_form.grade_entry_items
-      # Set up 6 GradeEntryStudents
-      (0..5).each do |i|
-        student = create(:student)
-        grade_entry_student = @grade_entry_form.grade_entry_students.find_by(user: student)
-        # Give the student a grade for all three questions for the grade entry form
-        (0..2).each do |j|
-          grade_entry_student.grades.create(grade_entry_item: @grade_entry_items[j],
-                                            grade: 5 + i + j)
+  describe '#results_average' do
+    let(:form) { create(:grade_entry_form) }
+    let(:grade_entry_items) { create_list(:grade_entry_item, 10, grade_entry_form: form) }
+    let!(:students) { create_list :student, 6 }
+    let(:grade_entry_student_ids) { form.grade_entry_students.map(&:id) }
+    before do
+      form.grade_entry_students.order(:id).each_with_index do |ges, ind|
+        grade_entry_items.each_with_index.map do |gei|
+          ges.grades.find_or_create_by(grade_entry_item: gei).update(grade: grades[ind])
         end
-        # The marks will be released for 3 out of the 6 students
-        if i <= 2
-          grade_entry_student.released_to_student = true
-        else
-          grade_entry_student.released_to_student = false
+        ges.save
+      end
+    end
+
+    describe 'when no grades are nil and all grades are equal' do
+      let(:grades) { [1, 1, 1, 1, 1, 1] }
+      it 'calculates the correct average' do
+        expect(form.results_average).to eq(10 * 100 / form.max_mark)
+      end
+    end
+
+    describe 'when students have different total grades' do
+      let(:grades) { [1, 1, 2, 3, 5, 9] }
+      it 'calculates the correct average' do
+        expect(form.results_average).to eq(35 * 100 / form.max_mark)
+      end
+
+      describe 'when some students are inactive' do
+        it 'calculates the correct average (excluding all inactive students)' do
+          form.grade_entry_students.order(:id).limit(3).each { |ges| ges.user.update!(hidden: true) }
+          average_total_grade = ((3 + 5 + 9) / 3.0 * 10)
+          expect(form.results_average).to eq((average_total_grade * 100 / form.max_mark).round(2))
         end
-        grade_entry_student.save
-        # The last student is inactive.
-        if i == 5
-          student.update(hidden: true)
+      end
+
+      describe 'when some marks are released' do
+        it 'calculates the correct average (including both released and unreleased marks)' do
+          form.grade_entry_students.order(:id).limit(3).each { |ges| ges.update!(released_to_student: true) }
+          expect(form.results_average).to eq(35 * 100 / form.max_mark)
         end
       end
     end
 
-    it 'verify the correct value is returned when multiple marks have been released and there are no blank marks' do
-      expect(@grade_entry_form.calculate_average).to eq 80.00
+    describe 'when all grades are nil' do
+      let(:grades) { [nil, nil, nil, nil, nil, nil] }
+      it 'calculates the correct average' do
+        expect(form.results_average).to eq 0
+      end
     end
 
-    it 'verify the correct value is returned when the student has grades for none of the questions' do
-      # Blank marks for students
-      (0..2).each do
-        student = create(:student)
-        @grade_entry_form.grade_entry_students.find_by(user: student).update(released_to_student: true)
+    describe 'when some grades are nil' do
+      let(:grades) { [nil, 1, nil, 2, nil, 6] }
+      it 'calculates the correct average (ignores nil grades)' do
+        expect(form.results_average).to eq(30 * 100 / form.max_mark)
       end
-      expect(@grade_entry_form.calculate_average).to eq 80.00
+    end
+  end
+
+  describe '#results_median' do
+    let(:form) { create(:grade_entry_form) }
+    let(:grade_entry_items) { create_list(:grade_entry_item, 10, grade_entry_form: form) }
+    let!(:students) { create_list :student, 6 }
+    let(:grade_entry_student_ids) { form.grade_entry_students.map(&:id) }
+    before do
+      form.grade_entry_students.each_with_index do |ges, ind|
+        grade_entry_items.each_with_index.map do |gei|
+          ges.grades.find_or_create_by(grade_entry_item: gei).update(grade: grades[ind])
+        end
+        ges.save
+      end
+    end
+
+    describe 'when no grades are nil and all grades are equal' do
+      let(:grades) { [1, 1, 1, 1, 1, 1] }
+      it 'calculates the correct median' do
+        expect(form.results_median).to eq(10 * 100 / form.max_mark)
+      end
+    end
+
+    describe 'when students have different total grades' do
+      let(:grades) { [1, 1, 2, 3, 5, 9] }
+      it 'calculates the correct median' do
+        expect(form.results_median).to eq(25 * 100 / form.max_mark)
+      end
+
+      describe 'when some students are inactive' do
+        it 'calculates the correct median (excluding all inactive students)' do
+          form.grade_entry_students.order(:id).limit(3).each { |ges| ges.user.update!(hidden: true) }
+          median_total_grade = 5 * 10
+          expect(form.results_median).to eq(median_total_grade * 100 / form.max_mark)
+        end
+      end
+
+      describe 'when some marks are released' do
+        it 'calculates the correct median (including both released and unreleased marks)' do
+          form.grade_entry_students.order(:id).limit(3).each { |ges| ges.update!(released_to_student: true) }
+          expect(form.results_median).to eq(25 * 100 / form.max_mark)
+        end
+      end
+    end
+
+    describe 'when all grades are nil' do
+      let(:grades) { [nil, nil, nil, nil, nil, nil] }
+      it 'calculates the correct median' do
+        expect(form.results_median).to eq 0
+      end
+    end
+
+    describe 'when some grades are nil' do
+      let(:grades) { [nil, 1, nil, 2, nil, 6] }
+      it 'calculates the correct median (ignores nil grades)' do
+        expect(form.results_median).to eq(20 * 100 / form.max_mark)
+      end
     end
   end
 

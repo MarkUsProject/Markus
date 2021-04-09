@@ -6,8 +6,6 @@ FactoryBot.define do
     due_date { Time.current }
     is_hidden { false }
     show_total { false }
-    results_average { 0.0 }
-    results_median { 0.0 }
   end
 
   factory :grade_entry_form_with_data, class: GradeEntryForm do
@@ -17,8 +15,6 @@ FactoryBot.define do
     due_date { Time.current }
     is_hidden { false }
     show_total { false }
-    results_average { 0.0 }
-    results_median { 0.0 }
     after(:create) do |grade_entry_form_with_data|
       item = create(:grade_entry_item, name: 'Test1', grade_entry_form: grade_entry_form_with_data)
       Student.find_each do |student|
@@ -36,8 +32,6 @@ FactoryBot.define do
     due_date { Time.current }
     is_hidden { false }
     show_total { true }
-    results_average { 0.0 }
-    results_median { 0.0 }
     after(:create) do |grade_entry_form_with_data|
       create(:grade_entry_item, grade_entry_form: grade_entry_form_with_data)
     end

@@ -34,48 +34,59 @@ class Assessment < ApplicationRecord
 
   def upcoming(*)
     return true if self.due_date.nil?
-
     self.due_date > Time.current
   end
 
-  # Returns a list of total marks for each student whose submissions are graded
-  # for the assignment specified by +assessment_id+, sorted in ascending order.
-  # This includes duplicated marks for each student in the same group (marks
-  # are given for a group, so each student in the same group gets the same
-  # mark).
-  def student_marks_by_assignment
-    # Need to get a list of total marks of students' latest results (i.e., not
-    # including old results after having remarked results). This is a typical
-    # greatest-n-per-group problem and can be implemented using a subquery
-    # join.
-    if defined? @marks_by_assignment
-      return @marks_by_assignment
+  # Returns grade distribution histogram bins of the grades for this assessment, using the grades in
+  # self.completed_result_marks.
+  def grade_distribution_array(intervals = 20)
+    data = percentage_grades_array
+    data.extend(Histogram)
+    histogram = data.histogram(intervals, :min => 1, :max => 100, :bin_boundary => :min, :bin_width => 100 / intervals)
+    distribution = histogram.fetch(1)
+    distribution[0] = distribution.first + data.count{ |x| x < 1 }
+    distribution[-1] = distribution.last + data.count{ |x| x > 100 }
+
+    distribution
+  end
+
+  # Returns n array of all the grades, as percentages, for this assessment, using the grades in
+  # self.completed_result_marks. Returns an empty array if self.max_mark is 0.
+  def percentage_grades_array
+    return [] if self.max_mark.zero?
+
+    factor = 100 / self.max_mark
+    self.completed_result_marks.map { |mark| mark * factor }
+  end
+
+  # Returns the average grade for this assessment, using all grades in self.completed_result_marks.
+  def results_average
+    marks = self.completed_result_marks
+    if marks.empty? || self.max_mark.zero?
+      0
+    else
+      (DescriptiveStatistics.mean(marks) * 100 / max_mark).round(2)
     end
-
-    subquery = Result.select('max(results.id) max_id')
-                     .joins(submission: { grouping: { student_memberships: :user } })
-                     .where(groupings: { assessment_id: self.id },
-                            users: { hidden: false },
-                            submissions: { submission_version_used: true },
-                            marking_state: Result::MARKING_STATES[:complete])
-                     .group('users.id')
-    marks = Result.joins("JOIN (#{subquery.to_sql}) s ON id = s.max_id")
-                  .order(:total_mark).pluck(:total_mark)
-    @marks_by_assignment = marks
-    marks
   end
 
+  # Returns the median grade for this assessment, using all grades in self.completed_result_marks.
+  def results_median
+    marks = self.completed_result_marks
+    if marks.empty? || self.max_mark.zero?
+      0
+    else
+      (DescriptiveStatistics.median(marks) * 100 / max_mark).round(2)
+    end
+  end
+
+  # Returns the number of grades under 50% for this assessment, using all grades in self.completed_result_marks.
   def results_fails
-    marks = student_marks_by_assignment
-    # No marks released for this assignment.
-    return false if marks.empty?
-    marks.count { |mark| mark < max_mark / 2.0 }
+    out_of = self.max_mark
+    self.completed_result_marks.count { |mark| mark < out_of / 2.0 }
   end
 
+  # Returns the number of grades equal to 0 for this assessment, using all grades in self.completed_result_marks.
   def results_zeros
-    marks = student_marks_by_assignment
-    # No marks released for this assignment.
-    return false if marks.empty?
-    marks.count(&:zero?)
+    self.completed_result_marks.count(&:zero?)
   end
 end

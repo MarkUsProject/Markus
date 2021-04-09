@@ -97,7 +97,7 @@ class GradeEntryFormsController < ApplicationController
 
     # Get data for the total marks column
     if @grade_entry_form.show_total
-      @columns << "#{GradeEntryForm.human_attribute_name(:total)} (#{@grade_entry_form.out_of_total})"
+      @columns << "#{GradeEntryForm.human_attribute_name(:total)} (#{@grade_entry_form.max_mark})"
       total = @grade_entry_student.total_grade
       if !total.nil?
         @data << total

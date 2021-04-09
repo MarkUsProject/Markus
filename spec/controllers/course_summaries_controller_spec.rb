@@ -114,13 +114,8 @@ describe CourseSummariesController do
           returned_averages = @response_data[:graph_data][:average]
           returned_medians = @response_data[:graph_data][:median]
           Assessment.all.order(id: :asc).each do |a|
-            if a.is_a? GradeEntryForm
-              averages << a.calculate_average&.round(2)
-              medians << a.calculate_median&.round(2)
-            else
-              averages << a.results_average&.round(2)
-              medians << a.results_median&.round(2)
-            end
+            averages << a.results_average&.round(2)
+            medians << a.results_median&.round(2)
           end
           MarkingScheme.all.each do |m|
             total = m.marking_weights.pluck(:weight).compact.sum

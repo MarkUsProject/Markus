@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_02_17_162600) do
+ActiveRecord::Schema.define(version: 2021_02_16_160312) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -74,8 +74,6 @@ ActiveRecord::Schema.define(version: 2021_02_17_162600) do
     t.integer "parent_assessment_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.float "results_average"
-    t.float "results_median"
     t.index ["type", "short_identifier"], name: "index_assessments_on_type_and_short_identifier"
   end
 
@@ -97,7 +95,6 @@ ActiveRecord::Schema.define(version: 2021_02_17_162600) do
     t.boolean "group_name_displayed", default: false, null: false
     t.string "repository_folder", null: false
     t.boolean "invalid_override", default: false, null: false
-    t.float "results_average"
     t.boolean "allow_web_submits", default: true, null: false
     t.boolean "section_groups_only", default: false, null: false
     t.boolean "section_due_dates_type", default: false, null: false
@@ -108,7 +105,6 @@ ActiveRecord::Schema.define(version: 2021_02_17_162600) do
     t.boolean "allow_remarks", default: false, null: false
     t.datetime "remark_due_date"
     t.text "remark_message"
-    t.float "results_median"
     t.boolean "unlimited_tokens", default: false, null: false
     t.boolean "only_required_files", default: false, null: false
     t.boolean "vcs_submit", default: false, null: false

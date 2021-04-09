@@ -1563,72 +1563,98 @@ describe Assignment do
     end
   end
 
-  describe '#update_results_stats' do
+  describe '#results_average' do
     let(:assignment) { create :assignment }
-
-    before :each do
+    before do
       allow(assignment).to receive(:max_mark).and_return(10)
     end
 
-    context 'when no marks are found' do
-      before :each do
-        allow(assignment).to receive(:student_marks_by_assignment).and_return([])
-      end
-
-      it 'returns false immediately' do
-        expect(assignment.update_results_stats).to be_falsy
-      end
+    it 'returns 0 when there are no results' do
+      allow(assignment).to receive(:completed_result_marks).and_return([])
+      expect(assignment.results_average).to eq 0
     end
 
-    context 'when even number of marks are found' do
-      before :each do
-        allow(assignment).to receive(:student_marks_by_assignment).and_return([0, 1, 4, 7])
-        assignment.update_results_stats
-      end
-
-      it 'updates results_zeros' do
-        expect(assignment.results_zeros).to eq 1
-      end
-
-      it 'updates results_fails' do
-        expect(assignment.results_fails).to eq 3
-      end
-
-      it 'updates results_average' do
-        expect(assignment.results_average).to eq 30
-      end
-
-      it 'updates results_median to the average of the two middle marks' do
-        expect(assignment.results_median).to eq 25
-      end
-
-      context 'when max_mark is 0' do
-        before :each do
-          allow(assignment).to receive(:max_mark).and_return(0)
-          assignment.update_results_stats
-        end
-
-        it 'updates results_average to 0' do
-          expect(assignment.results_average).to eq 0
-        end
-
-        it 'updates results_median to 0' do
-          expect(assignment.results_median).to eq 0
-        end
-      end
+    it 'returns the correct number when there are completed results' do
+      allow(assignment).to receive(:completed_result_marks).and_return([0, 1, 4, 7])
+      expect(assignment.results_average).to eq(3.0 * 100 / assignment.max_mark)
     end
 
-    context 'when odd number of marks are found' do
-      before :each do
-        allow(assignment).to receive(:student_marks_by_assignment).and_return([0, 1, 4, 7, 9])
-        assignment.update_results_stats
-      end
-
-      it 'updates results_median to the middle mark' do
-        expect(assignment.results_median).to eq 40
-      end
+    it 'returns 0 when the assignment has a max_mark of 0' do
+      allow(assignment).to receive(:max_mark).and_return(0)
+      allow(assignment).to receive(:completed_result_marks).and_return([0, 0, 0, 0])
+      expect(assignment.results_average).to eq 0
     end
   end
+
+  describe '#results_median' do
+    let(:assignment) { create :assignment }
+    before do
+      allow(assignment).to receive(:max_mark).and_return(10)
+    end
+
+    it 'returns 0 when there are no results' do
+      allow(assignment).to receive(:completed_result_marks).and_return([])
+      expect(assignment.results_median).to eq 0
+    end
+
+    it 'returns the correct number when there are completed results' do
+      allow(assignment).to receive(:completed_result_marks).and_return([0, 1, 4, 7])
+      expect(assignment.results_median).to eq(2.5 * 100 / assignment.max_mark)
+    end
+
+    it 'returns 0 when the assignment has a max_mark of 0' do
+      allow(assignment).to receive(:max_mark).and_return(0)
+      allow(assignment).to receive(:completed_result_marks).and_return([0, 0, 0, 0])
+      expect(assignment.results_median).to eq 0
+    end
+  end
+
+  describe '#results_fails' do
+    let(:assignment) { create :assignment }
+    before do
+      allow(assignment).to receive(:max_mark).and_return(10)
+    end
+
+    it 'returns 0 when there are no results' do
+      allow(assignment).to receive(:completed_result_marks).and_return([])
+      expect(assignment.results_fails).to eq 0
+    end
+
+    it 'returns the correct number when there are completed results' do
+      allow(assignment).to receive(:completed_result_marks).and_return([0, 1, 4, 7])
+      expect(assignment.results_fails).to eq 3
+    end
+
+    it 'returns 0 when the assignment has a max_mark of 0' do
+      allow(assignment).to receive(:max_mark).and_return(0)
+      allow(assignment).to receive(:completed_result_marks).and_return([0, 0, 0, 0])
+      expect(assignment.results_fails).to eq 0
+    end
+  end
+
+  describe '#results_zeros' do
+    let(:assignment) { create :assignment }
+    before do
+      allow(assignment).to receive(:max_mark).and_return(10)
+    end
+
+    it 'returns 0 when there are no results' do
+      allow(assignment).to receive(:completed_result_marks).and_return([])
+      expect(assignment.results_zeros).to eq 0
+    end
+
+    it 'returns the correct number when there are completed results' do
+      allow(assignment).to receive(:completed_result_marks).and_return([0, 1, 4, 7])
+      expect(assignment.results_zeros).to eq 1
+    end
+
+    it 'returns the correct number when the assignment has a max_mark of 0' do
+      allow(assignment).to receive(:max_mark).and_return(0)
+      allow(assignment).to receive(:completed_result_marks).and_return([0, 0, 0, 0])
+      expect(assignment.results_zeros).to eq 4
+    end
+  end
+
 
   describe '.get_current_assignment' do
     before :each do
@@ -2374,13 +2400,13 @@ describe Assignment do
     end
   end
 
-  describe 'student_marks_by_assignment' do
+  describe '#completed_result_marks' do
     let(:assignment) { create(:assignment) }
     let!(:criteria) { Array.new(2) { create(:rubric_criterion, assignment: assignment) } }
 
     shared_examples 'empty' do
       it 'returns an empty array' do
-        expect(assignment.student_marks_by_assignment).to be_empty
+        expect(assignment.completed_result_marks).to be_empty
       end
     end
 
@@ -2530,8 +2556,8 @@ describe Assignment do
 
                 it 'returns a list of sorted student mark' do
                   # There are 2 students in one grouping with a mark of 3.
-                  expect(assignment.student_marks_by_assignment)
-                    .to eq [0, 3, 3, 9]
+                  expect(assignment.completed_result_marks)
+                    .to eq [0, 3, 9]
                 end
 
                 context 'when a result is released' do
@@ -2588,10 +2614,9 @@ describe Assignment do
                     end
                   end
 
-                  it 'returns a list excluding the first and third student' do
-                    # There is still 1 active student in the first grouping.
-                    expect(assignment.student_marks_by_assignment)
-                      .to eq [3, 9]
+                  it 'returns a list including groupings with only inactive students' do
+                    expect(assignment.completed_result_marks)
+                      .to eq [0, 3, 9]
                   end
                 end
 
@@ -2612,9 +2637,9 @@ describe Assignment do
                     remarked_result.save
                   end
 
-                  it 'returns student marks without old results' do
-                    expect(assignment.student_marks_by_assignment)
-                      .to eq [3, 3, 5, 9]
+                  it 'returns marks without old results' do
+                    expect(assignment.completed_result_marks)
+                      .to eq [3, 5, 9]
                   end
                 end
               end
