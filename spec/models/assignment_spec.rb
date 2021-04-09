@@ -2270,10 +2270,106 @@ describe Assignment do
       it 'should return no of marked submissions of all groupings' do
         expect(assignment.get_num_marked).to eq(2)
       end
+
+      context 'When there is a remark request that has not been completed' do
+        let!(:result1_remark) { create(:remark_result, submission: grouping1.submissions.first) }
+
+        it 'counts the grouping as not marked' do
+          expect(assignment.get_num_marked).to eq(1)
+        end
+      end
+
+      context 'Where there is a remark request that has been completed' do
+        let!(:result1_remark) do
+          create(:remark_result,
+                 submission: grouping1.submissions.first,
+                 marking_state: Result::MARKING_STATES[:complete])
+        end
+
+        it 'counts the grouping as marked' do
+          expect(assignment.get_num_marked).to eq(2)
+        end
+      end
     end
     context 'When user is TA' do
       it 'should return no of marked submissions for groupings assigned to them' do
         expect(assignment.get_num_marked(ta.id)).to eq(1)
+      end
+
+      context 'When they are assigned a remark request that has not been completed' do
+        let!(:result1_remark) { create(:remark_result, submission: grouping1.submissions.first) }
+
+        it 'counts the grouping as not marked' do
+          expect(assignment.get_num_marked(ta.id)).to eq(0)
+        end
+      end
+
+      context 'When they are assigned a remark request that has been completed' do
+        let!(:result1_remark) do
+          create(:remark_result,
+                 submission: grouping1.submissions.first,
+                 marking_state: Result::MARKING_STATES[:complete])
+        end
+
+        it 'counts the grouping as marked' do
+          expect(assignment.get_num_marked(ta.id)).to eq(1)
+        end
+      end
+
+      context 'When they not assigned a remark request that has been completed' do
+        let!(:result1_remark) do
+          create(:remark_result,
+                 submission: grouping3.submissions.first,
+                 marking_state: Result::MARKING_STATES[:complete])
+        end
+
+        it 'does not count that grouping as marked' do
+          expect(assignment.get_num_marked(ta.id)).to eq(1)
+        end
+      end
+
+      context 'When the assignment has graders assigned to criteria' do
+        let(:assignment2) do
+          create(:assignment_with_criteria_and_results_with_remark,
+                 assignment_properties_attributes: { assign_graders_to_criteria: true })
+        end
+
+        let(:new_grouping) { create(:grouping_with_inviter_and_submission, assignment: assignment2) }
+        let(:new_result) { create(:incomplete_result, submission: new_grouping.current_submission_used) }
+        before do
+          create(:ta_membership, user: ta, grouping: assignment2.groupings.first)
+          create(:ta_membership, user: ta, grouping: new_grouping)
+        end
+
+        it 'counts complete results when the grader is not assigned any criteria' do
+          expect(assignment2.get_num_marked(ta.id)).to eq(1)
+        end
+
+        context 'When the grader is assigned to mark a criterion' do
+          let!(:criterion_ta_association) do
+            create(:criterion_ta_association, ta: ta, criterion: assignment2.criteria.first)
+          end
+
+          it 'counts results where the assigned criteria have marks' do
+            m = Mark.find_by(result: new_result, criterion: assignment2.criteria.first)
+            m.update(mark: 0)
+            expect(assignment2.get_num_marked(ta.id)).to eq(2)
+          end
+
+          it 'does not count results where the assigned criteria do not have marks' do
+            expect(assignment2.get_num_marked(ta.id)).to eq(1)
+          end
+
+          context 'Where there is a remark request' do
+            let!(:remark_result) do
+              create(:remark_result, submission: assignment2.groupings.first.current_submission_used)
+            end
+
+            it 'counts the remark result and not the original result' do
+              expect(assignment2.get_num_marked(ta.id)).to eq(0)
+            end
+          end
+        end
       end
     end
   end

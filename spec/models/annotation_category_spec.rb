@@ -267,7 +267,7 @@ describe AnnotationCategory do
     it 'does not prevent deletion of an annotation_category if annotations have no deduction and results released' do
       annotation_category_with_criteria.update!(flexible_criterion_id: nil)
       assignment.groupings.first.current_result.update!(released_to_students: true)
-      expect { assignment.annotation_categories.destroy_all }.to_not raise_error
+      expect { assignment.annotation_categories.destroy_all }.to raise_error(ActiveRecord::RecordNotDestroyed)
     end
 
     it 'does not prevent deletion of an annotation_category if results not released and annotations have deductions' do

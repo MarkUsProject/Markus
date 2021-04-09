@@ -397,6 +397,12 @@ label.required::after, th.required::after {
   color: $line;
 }
 
+.rt-cell-textarea {
+  display: block;
+  margin-bottom: 1em;
+  width: 100%;
+}
+
 // Styling patches for react-keyed-file-browser
 .fa-trash-o::before {
   content: asset_url('icons/bin_closed.png');

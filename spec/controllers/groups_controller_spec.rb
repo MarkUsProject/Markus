@@ -227,8 +227,7 @@ describe GroupsController do
       end
 
       it 'expects a call to send_data' do
-        csv_data = "#{@group.group_name},#{@group.repo_name}," +
-          "#{@student1.user_name},#{@student2.user_name}\n"
+        csv_data = "#{@group.group_name},#{@student1.user_name},#{@student2.user_name}\n"
         expect(@controller).to receive(:send_data).with(csv_data, csv_options) {
           # to prevent a 'missing template' error
           @controller.head :ok
@@ -716,23 +715,9 @@ describe GroupsController do
       let(:assignment) { create :assignment }
       let(:starter_file_group) { create :starter_file_group_with_entries, assignment: assignment }
       let(:grouping) { create :grouping_with_inviter, assignment: assignment, inviter: user }
-      it 'should send a zip file containing the correct content' do
-        starter_file_group
-        grouping
-        expect(controller).to receive(:send_file) do |file_path|
-          Zip::File.open(Rails.root + file_path) do |zipfile|
-            expect(zipfile.entries.map(&:name)).to contain_exactly('q1/', 'q1/q1.txt', 'q2.txt')
-            expect(zipfile.find_entry('q1/q1.txt').get_input_stream.read.strip).to eq 'q1 content'
-            expect(zipfile.find_entry('q2.txt').get_input_stream.read.strip).to eq 'q2 content'
-          end
-        end
-        subject
-      end
 
-      context 'when the grouping was created before any starter file groups' do
+      shared_examples 'download starter files properly' do
         it 'should send a zip file containing the correct content' do
-          grouping
-          starter_file_group
           expect(controller).to receive(:send_file) do |file_path|
             Zip::File.open(Rails.root + file_path) do |zipfile|
               expect(zipfile.entries.map(&:name)).to contain_exactly('q1/', 'q1/q1.txt', 'q2.txt')
@@ -741,6 +726,60 @@ describe GroupsController do
             end
           end
           subject
+        end
+      end
+      context 'when the grouping was created after any starter file groups' do
+        before do
+          starter_file_group
+          grouping
+        end
+        include_examples 'download starter files properly'
+      end
+
+      context 'when the grouping was created before any starter file groups' do
+        before do
+          grouping
+          starter_file_group
+        end
+        include_examples 'download starter files properly'
+      end
+
+      context 'when the assignment is hidden' do
+        let(:assignment) { create :assignment, is_hidden: true }
+        it 'should respond with 403' do
+          grouping
+          starter_file_group
+          subject
+          expect(response).to have_http_status(403)
+        end
+      end
+
+      context 'when the assignment is timed' do
+        let(:assignment) { create :timed_assignment }
+        context 'the grouping has started' do
+          before do
+            starter_file_group
+            grouping.update!(start_time: 1.minute.ago)
+          end
+          include_examples 'download starter files properly'
+        end
+        context 'when the deadline has already passed' do
+          before do
+            starter_file_group
+            grouping
+            assignment.update!(due_date: 1.minute.ago)
+          end
+          include_examples 'download starter files properly'
+        end
+        context 'the grouping has not started yet' do
+          before do
+            starter_file_group
+            grouping
+          end
+          it 'should respond with 403' do
+            subject
+            expect(response).to have_http_status(403)
+          end
         end
       end
     end

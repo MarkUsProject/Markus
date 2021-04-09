@@ -41,13 +41,10 @@ class User < ApplicationRecord
 
   # Authentication constants to be used as return values
   # see self.authenticated? and main_controller for details
-  AUTHENTICATE_SUCCESS =      0   # valid username/password combination
-  AUTHENTICATE_NO_SUCH_USER = 1   # user does not exist
-  AUTHENTICATE_BAD_PASSWORD = 2   # wrong password
-  AUTHENTICATE_ERROR =        3   # generic/unknown error
-  AUTHENTICATE_BAD_CHAR =     4   # invalid character in username/password
-  AUTHENTICATE_BAD_PLATFORM = 5   # external authentication works for *NIX platforms only
-  AUTHENTICATE_CUSTOM_MESSAGE = 6 # custom validate code for custom message
+  AUTHENTICATE_SUCCESS = 'success'.freeze
+  AUTHENTICATE_ERROR = 'error'.freeze
+  AUTHENTICATE_BAD_PLATFORM = 'bad_platform'.freeze
+  AUTHENTICATE_BAD_CHAR = 'bad_char'.freeze
 
   # Verifies if user is allowed to enter MarkUs
   # Returns user object representing the user with the given login.
@@ -78,34 +75,23 @@ class User < ApplicationRecord
         return AUTHENTICATE_BAD_PLATFORM
       end
 
-      # In general, the external password validation program will return the
-      # following codes (other than 0):
-      #  1 means no such user
-      #  2 means bad password
-      #  3 is used for other error exits
+      # In general, the external password validation program should exit with 0 for success
+      # and exit with any other integer for failure.
       pipe = IO.popen("'#{Settings.validate_file}'", 'w+') # quotes to avoid choking on spaces
       to_stdin = [login, password, ip].reject(&:nil?).join("\n")
       pipe.puts(to_stdin) # write to stdin of Settings.validate_file
       pipe.close
       m_logger = MarkusLogger.instance
-      if !Settings.validate_custom_exit_status.nil? &&
-          $?.exitstatus == Settings.validate_custom_exit_status
-        m_logger.log("Login failed. Reason: Custom exit status.", MarkusLogger::ERROR)
-        return AUTHENTICATE_CUSTOM_MESSAGE
-      end
-      case $?.exitstatus
-        when 0
-          m_logger.log("User '#{login}' logged in.", MarkusLogger::INFO)
-          return AUTHENTICATE_SUCCESS
-        when 1
-          m_logger.log("Login failed. Reason: No such user '#{login}'.", MarkusLogger::ERROR)
-          return AUTHENTICATE_NO_SUCH_USER
-        when 2
-          m_logger.log("Wrong username/password: User '#{login}'.", MarkusLogger::ERROR)
-          return AUTHENTICATE_BAD_PASSWORD
-        else
-          m_logger.log("User '#{login}' failed to log in.", MarkusLogger::ERROR)
-          return AUTHENTICATE_ERROR
+      custom_message = Settings.validate_custom_status_message[$?.exitstatus.to_s]
+      if $?.exitstatus == 0
+        m_logger.log("User '#{login}' logged in.", MarkusLogger::INFO)
+        return AUTHENTICATE_SUCCESS
+      elsif custom_message
+        m_logger.log("Login failed for user #{login}. Reason: #{custom_message}", MarkusLogger::ERROR)
+        return $?.exitstatus.to_s
+      else
+        m_logger.log("User '#{login}' failed to log in.", MarkusLogger::ERROR)
+        return AUTHENTICATE_ERROR
       end
     end
   end

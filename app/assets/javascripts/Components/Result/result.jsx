@@ -124,7 +124,7 @@ class Result extends React.Component {
 
   /* Interaction with external components/libraries */
   updateContextMenu = () => {
-    if (this.state.released_to_students || this.props.role === "Student") return;
+    if (this.state.released_to_students || this.state.remark_submitted || this.props.role === "Student") return;
 
     window.annotation_context_menu.setup(
       Routes.annotations_path, this.state.result_id,
@@ -557,30 +557,48 @@ class Result extends React.Component {
         this.state.assignment_id, this.state.submission_id, this.state.result_id
       );
 
-      $.ajax({
-        url: url,
-        data: {
-          direction: direction
-        }
-      }).then((result) => {
-        if (!result.next_result || !result.next_grouping) {
-          alert(I18n.t('results.no_results_in_direction'));
-          return;
-        }
+      this.setState({loading: true}, () => {
+        $.ajax({
+          url: url,
+          data: {
+            direction: direction
+          }
+        }).then((result) => {
+          if (!result.next_result || !result.next_grouping) {
+            alert(I18n.t('results.no_results_in_direction'));
+            return;
+          }
 
-        const result_obj = {
-          result_id: result.next_result.id,
-          submission_id: result.next_result.submission_id,
-          grouping_id: result.next_grouping.id,
-        };
-        this.setState(prevState => ({...prevState, ...result_obj}));
-        let new_url = Routes.edit_assignment_submission_result_url(
-          this.state.assignment_id, this.state.submission_id, this.state.result_id
-        );
-        history.pushState({}, document.title, new_url)
-      })
+          const result_obj = {
+            result_id: result.next_result.id,
+            submission_id: result.next_result.submission_id,
+            grouping_id: result.next_grouping.id,
+          };
+          this.setState(prevState => ({...prevState, ...result_obj}));
+          let new_url = Routes.edit_assignment_submission_result_url(
+            this.state.assignment_id, this.state.submission_id, this.state.result_id
+          );
+          history.pushState({}, document.title, new_url)
+        });
+      });
     }
   }
+
+  updateOverallComment = (value, remark) => {
+    return $.post({
+      url: Routes.update_overall_comment_assignment_submission_result_path(
+        this.props.assignment_id, this.props.submission_id, this.props.result_id,
+      ),
+      data: {result: {overall_comment: value}},
+    }).then((result) => {
+      if (remark) {
+        this.setState({ remark_overall_comment: value });
+      } else {
+        this.setState({ overall_comment: value });
+      }
+      return result;
+    })
+  };
 
   render() {
     return [
@@ -634,6 +652,7 @@ class Result extends React.Component {
                 annotation_categories={this.state.annotation_categories || []}
                 annotations={this.state.annotations || []}
                 assignment_remark_message={this.state.assignment_remark_message}
+                update_overall_comment={this.updateOverallComment}
                 can_run_tests={this.state.can_run_tests}
                 detailed_annotations={this.state.detailed_annotations}
                 enable_test={this.state.enable_test}

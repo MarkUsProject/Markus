@@ -63,7 +63,6 @@ class Assessment < ApplicationRecord
                   .order(:total_mark).pluck(:total_mark)
     @marks_by_assignment = marks
     marks
-
   end
 
   def results_fails
