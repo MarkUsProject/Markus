@@ -4,7 +4,8 @@ rails:
     queue_adapter: resque
   assets:
     prefix: /assets
-  active_record: {}
+  active_record:
+    verbose_query_logs: false
   force_ssl: false
   session_store:
     type: cookie_store

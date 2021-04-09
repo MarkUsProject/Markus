@@ -61,8 +61,8 @@ Config.setup do |config|
         optional(:perform_caching).filled(:bool)
       end
       optional(:cache_store).filled(:string)
-      optional(:active_record).hash do
-        optional(:verbose_query_logs).filled(:bool)
+      required(:active_record).hash do
+        required(:verbose_query_logs).filled(:bool)
       end
       required(:active_job).hash do
         required(:queue_adapter).filled(:string)
