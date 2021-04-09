@@ -86,7 +86,7 @@ module Markus
       config.cache_store = Settings.rails.cache_store&.to_sym
     end
 
-    config.perform_caching = Settings.rails.perform_caching
+    config.action_controller.perform_caching = Settings.rails.action_controller.perform_caching
 
     config.hosts.push(*Settings.rails.hosts)
 

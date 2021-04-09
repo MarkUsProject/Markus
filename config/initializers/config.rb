@@ -57,7 +57,9 @@ Config.setup do |config|
       required(:active_support).hash do
         required(:deprecation).filled(included_in?: ActiveSupport::Deprecation::DEFAULT_BEHAVIORS.keys.map(&:to_s))
       end
-      optional(:perform_caching).filled(:bool)
+      optional(:action_controller).hash do
+        optional(:perform_caching).filled(:bool)
+      end
       optional(:cache_store).filled(:string)
       optional(:active_record).hash do
         optional(:verbose_query_logs).filled(:bool)
