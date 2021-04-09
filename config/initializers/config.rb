@@ -106,6 +106,7 @@ Config.setup do |config|
       optional(:uncollect_submissions_job).filled(:string)
       optional(:update_keys_job).filled(:string)
       optional(:update_repo_required_files_job).filled(:string)
+      optional(:update_repo_permissions_job).filled(:string)
     end
     required(:redis).hash do
       required(:url).filled(:string)
