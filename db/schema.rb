@@ -209,9 +209,9 @@ ActiveRecord::Schema.define(version: 2021_02_10_032404) do
     t.integer "submission_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.bigint "test_runs_id"
+    t.bigint "test_run_id"
     t.index ["submission_id"], name: "index_feedback_files_on_submission_id"
-    t.index ["test_runs_id"], name: "index_feedback_files_on_test_runs_id"
+    t.index ["test_run_id"], name: "index_feedback_files_on_test_run_id"
   end
 
   create_table "grace_period_deductions", id: :serial, force: :cascade do |t|
@@ -625,7 +625,7 @@ ActiveRecord::Schema.define(version: 2021_02_10_032404) do
   add_foreign_key "extensions", "groupings"
   add_foreign_key "extra_marks", "results", name: "fk_extra_marks_results", on_delete: :cascade
   add_foreign_key "feedback_files", "submissions"
-  add_foreign_key "feedback_files", "test_runs", column: "test_runs_id"
+  add_foreign_key "feedback_files", "test_runs"
   add_foreign_key "grader_permissions", "users"
   add_foreign_key "grouping_starter_file_entries", "groupings"
   add_foreign_key "grouping_starter_file_entries", "starter_file_entries"

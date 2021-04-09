@@ -1,6 +1,7 @@
 class FeedbackFile < ApplicationRecord
-  belongs_to :submission
-  validates_associated :submission # submission need to be valid
+  belongs_to :submission, optional: true
+  belongs_to :test_run, optional: true
+  # validates_associated :submission # submission need to be valid
   validates_presence_of :filename # we need a filename
   validates_presence_of :mime_type # we need a mime type
   validates_presence_of :file_content # we need some content

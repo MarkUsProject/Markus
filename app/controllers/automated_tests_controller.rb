@@ -68,6 +68,17 @@ class AutomatedTestsController < ApplicationController
   def get_test_runs_students
     @grouping = current_user.accepted_grouping_for(params[:assignment_id])
     test_runs = @grouping.test_runs_students
+    test_runs.each do |t|
+      t['feedback_files'] = TestRun.find(t['test_runs.id']).feedback_files.map do |f|
+        {
+          id: f.id,
+          filename: f.filename,
+          type: SubmissionFile.get_file_type(f.filename),
+          assignment_id: params[:assignment_id],
+          submission_id: nil,
+        }
+      end
+    end
     render json: test_runs.group_by { |t| t['test_runs.id'] }
   end
 

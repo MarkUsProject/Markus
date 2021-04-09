@@ -2,6 +2,8 @@ import React from 'react';
 import {render} from 'react-dom';
 import ReactTable from 'react-table';
 import {dateSort} from './Helpers/table_helpers';
+import {FileViewer} from "./Result/file_viewer";
+import {lookup} from "mime-types";
 
 
 export class TestRunTable extends React.Component {
@@ -58,9 +60,11 @@ export class TestRunTable extends React.Component {
             'test_runs.status': test_data[0]['test_runs.status'],
             'test_runs.problems': test_data[0]['test_runs.problems'],
             'test_results': [],
+            'feedback_files': [],
           };
           test_data.forEach(data => {
             Array.prototype.push.apply(row['test_results'], data['test_data']);
+            Array.prototype.push.apply(row['feedback_files'], data['feedback_files']);
           });
           rows.push(row);
         }
@@ -97,7 +101,10 @@ export class TestRunTable extends React.Component {
           SubComponent={ row => (
             row.original['test_runs.problems'] ?
               row.original['test_runs.problems'] :
-              <TestGroupResultTable data={row.original['test_results']}/>
+              <div>
+                <TestGroupResultTable data={row.original['test_results']}/>
+                {row.original['feedback_files'].length > 0 && <TestGroupFeedbackFileTable data={row.original['feedback_files']}/>}
+              </div>
           )}
           noDataText={I18n.t('automated_tests.no_results')}
           getTheadThProps={ () => {
@@ -226,6 +233,61 @@ class TestGroupResultTable extends React.Component {
           }
         />
         {extraInfoDisplay}
+      </div>
+    )
+  }
+}
+
+
+class TestGroupFeedbackFileTable extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      show_output: this.showOutput(props.data)
+    };
+  }
+
+  showOutput = (data) => {
+    if (data) {
+      return data.some((row) => 'test_results.output' in row);
+    } else {
+      return false;
+    }
+  };
+
+  columns = () => [
+    {
+      id: 'name',
+      Header: 'Feedback Files',
+      accessor: row => row['filename'],
+      aggregate: (values, rows) => {
+        if (rows.length === 0) {
+          return '';
+        } else {
+          return rows[0]['filename'];
+        }
+      },
+      minWidth: 200
+    },
+  ];
+
+  render() {
+    return (
+      <div>
+        <ReactTable
+          className={'auto-overflow'}
+          data={this.props.data}
+          columns={this.columns()}
+          SubComponent={ row => (
+            <FileViewer
+              selectedFile={row.original.filename}
+              selectedFileURL={Routes.get_feedback_file_api_feedback_file_path(row.original.id)}
+              mime_type={lookup(row['filename'])}
+              selectedFileType={row.original.type}
+            />
+          )
+          }
+        />
       </div>
     )
   }

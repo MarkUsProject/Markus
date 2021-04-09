@@ -57,6 +57,13 @@ class ResultsController < ApplicationController
           data[:feedback_files] = submission.feedback_files.map do |f|
             { id: f.id, filename: f.filename, type: SubmissionFile.get_file_type(f.filename) }
           end
+          i = submission.test_runs.size + 1
+          data[:feedback_files] += submission.test_runs.flat_map do |f|
+            f.feedback_files.map do |g|
+              i -= 1
+              { id: g.id, filename: "test_run#{i}/#{g.filename}", type: SubmissionFile.get_file_type(g.filename) }
+            end
+          end
         end
 
         if assignment.enable_test
@@ -717,12 +724,22 @@ class ResultsController < ApplicationController
   def get_test_runs_instructors
     submission = Submission.find(params[:submission_id])
     test_runs = submission.grouping.test_runs_instructors(submission)
+    test_runs.each do |t|
+      t['feedback_files'] = TestRun.find(t['test_runs.id']).feedback_files.map do |f|
+        { id: f.id, filename: f.filename, type: SubmissionFile.get_file_type(f.filename) }
+      end
+    end
     render json: test_runs.group_by { |t| t['test_runs.id'] }
   end
 
   def get_test_runs_instructors_released
     submission = Submission.find(params[:submission_id])
     test_runs = submission.grouping.test_runs_instructors_released(submission)
+    test_runs.each do |t|
+      t['feedback_files'] = TestRun.find(t['test_runs.id']).feedback_files.map do |f|
+        { id: f.id, filename: f.filename, type: SubmissionFile.get_file_type(f.filename) }
+      end
+    end
     render json: test_runs.group_by { |t| t['test_runs.id'] }
   end
 
