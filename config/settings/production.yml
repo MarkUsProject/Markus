@@ -25,14 +25,12 @@ i18n:
 validate_user_not_allowed_message: ~
 incorrect_login_message: ~
 
-remote_user_auth: false
-
 repository:
   storage: <%= "#{::Rails.root.to_s}/data/prod" %>/repos
 
 logging:
-  log_file: log/info_development.log
-  error_file: log/error_development.log
+  log_file: log/info_production.log
+  error_file: log/error_production.log
 
 autotest:
   client_dir: <%= "#{::Rails.root.to_s}/data/prod" %>/autotest
