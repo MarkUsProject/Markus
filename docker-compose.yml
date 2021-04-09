@@ -34,8 +34,8 @@ services:
 
   ssh:
     build:
-      context: ./.dockerfiles
-      dockerfile: ./Dockerfile-ssh
+      context: .
+      dockerfile: ./.dockerfiles/Dockerfile-ssh
       args:
         UBUNTU_VERSION: bionic
         SSH_USER: git
@@ -57,6 +57,7 @@ services:
       - PGDATABASE=markus_development
       - PGDATABASETEST=markus_test
       - MARKUS__REPOSITORY__SSH_URL=ssh://git@localhost:2222/~/csc108
+      - MARKUS__REPOSITORY__MARKUS_GIT_SHELL=/markus-git-shell.sh
     ports:
       - '3000:3000'
     volumes:

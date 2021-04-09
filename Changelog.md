@@ -25,6 +25,7 @@
 - Show informative error message if an uploaded criteria yaml file did not contain a "type" key (#5184)
 - Allow for multiple custom validation messages (#5194)
 - Add ability to hold shift to select a range of values in checkbox tables (#5182)
+- Update ssh authorization to be more flexible, secure, and permit a single user to use the same public key for multiple instances (#5199)
 - Fix bug where creating an annotation or switching results reset the selected file (#5200)
 - Fix bug in Assignment#get_num_marked that caused it to double-count remark and original results (#5205)
 

@@ -117,8 +117,8 @@ Config.setup do |config|
     required(:repository).hash do
       required(:storage).filled(:string)
       required(:type).value(included_in?: %w[git svn mem])
-      optional(:git_shell).filled(:string)
       required(:url).filled(:string)
+      optional(:markus_git_shell).filled(:string)
       optional(:ssh_url).filled(:string)
       required(:is_repository_admin).filled(:bool)
     end
