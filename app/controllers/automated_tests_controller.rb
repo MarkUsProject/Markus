@@ -75,7 +75,7 @@ class AutomatedTestsController < ApplicationController
           filename: f.filename,
           type: SubmissionFile.get_file_type(f.filename),
           assignment_id: params[:assignment_id],
-          submission_id: nil,
+          submission_id: nil
         }
       end
     end

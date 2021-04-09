@@ -14,11 +14,11 @@ module Api
     def index
       unless check_params
         # incomplete/invalid HTTP params
-        render 'shared/http_status', locals: {code: '422', message:
-          HttpStatusHelper::ERROR_CODE['message']['422']}, status: 422
+        render 'shared/http_status', locals: { code: '422', message:
+          HttpStatusHelper::ERROR_CODE['message']['422'] }, status: 422
         return
       end
-      association = get_association_by_param
+      association = association_by_param
       collection = association.feedback_files
 
       feedback_files = get_collection(collection) || return
@@ -31,8 +31,7 @@ module Api
       end
       rescue ActiveRecord::RecordNotFound => e
         # Could not find submission or test_run
-        render 'shared/http_status', locals: {code: '404', message:
-          e}, status: 404
+        render 'shared/http_status', locals: { code: '404', message: e }, status: 404
     end
 
     # Sends the contents of the specified Feedback File
@@ -40,11 +39,11 @@ module Api
     def show
       unless check_params([:id])
         # incomplete/invalid HTTP params
-        render 'shared/http_status', locals: {code: '422', message:
-          HttpStatusHelper::ERROR_CODE['message']['422']}, status: 422
+        render 'shared/http_status', locals: { code: '422', message:
+          HttpStatusHelper::ERROR_CODE['message']['422'] }, status: 422
         return
       end
-      association = get_association_by_param
+      association = association_by_param
 
       feedback_file = association.feedback_files.find(params[:id])
 
@@ -55,8 +54,7 @@ module Api
                 disposition: 'inline'
       rescue ActiveRecord::RecordNotFound => e
         # Could not find submission, test run, or feedback file
-        render 'shared/http_status', locals: {code: '404', message:
-          e}, status: 404
+        render 'shared/http_status', locals: { code: '404', message: e }, status: 404
     end
 
     # Creates a new feedback file for a group's latest assignment submission
@@ -68,17 +66,17 @@ module Api
     def create
       unless check_params([:filename, :mime_type, :file_content])
         # incomplete/invalid HTTP params
-        render 'shared/http_status', locals: {code: '422', message:
-          HttpStatusHelper::ERROR_CODE['message']['422']}, status: 422
+        render 'shared/http_status', locals: { code: '422', message:
+          HttpStatusHelper::ERROR_CODE['message']['422'] }, status: 422
         return
       end
-      association = get_association_by_param
+      association = association_by_param
 
       # Render error if there's an existing feedback file with that filename
       feedback_file = association.feedback_files.find_by_filename(params[:filename])
       unless feedback_file.nil?
-        render 'shared/http_status', locals: {code: '409', message:
-          'A Feedback File with that filename already exists'}, status: 409
+        render 'shared/http_status', locals: { code: '409', message:
+          'A Feedback File with that filename already exists' }, status: 409
         return
       end
 
@@ -93,8 +91,8 @@ module Api
                                           file_content: content)
                                           .valid?
         # It worked, render success
-        render 'shared/http_status', locals: {code: '201', message:
-          HttpStatusHelper::ERROR_CODE['message']['201']}, status: 201
+        render 'shared/http_status', locals: { code: '201', message:
+          HttpStatusHelper::ERROR_CODE['message']['201'] }, status: 201
       else
         # Some other error occurred
         render 'shared/http_status', locals: { code: '500', message:
@@ -107,11 +105,11 @@ module Api
     def destroy
       unless check_params([:id])
         # incomplete/invalid HTTP params
-        render 'shared/http_status', locals: {code: '422', message:
-          HttpStatusHelper::ERROR_CODE['message']['422']}, status: 422
+        render 'shared/http_status', locals: { code: '422', message:
+          HttpStatusHelper::ERROR_CODE['message']['422'] }, status: 422
         return
       end
-      association = get_association_by_param
+      association = association_by_param
 
       feedback_file = association.feedback_files.find(params[:id])
 
@@ -126,8 +124,7 @@ module Api
       end
       rescue ActiveRecord::RecordNotFound => e
         # Could not find submission or feedback file
-        render 'shared/http_status', locals: {code: '404', message:
-          e}, status: 404
+        render 'shared/http_status', locals: { code: '404', message: e }, status: 404
     end
 
     # Updates a Feedback File instance
@@ -138,19 +135,19 @@ module Api
     def update
       unless check_params
         # incomplete/invalid HTTP params
-        render 'shared/http_status', locals: {code: '422', message:
-          HttpStatusHelper::ERROR_CODE['message']['422']}, status: 422
+        render 'shared/http_status', locals: { code: '422', message:
+          HttpStatusHelper::ERROR_CODE['message']['422'] }, status: 422
         return
       end
-      association = get_association_by_param
+      association = association_by_param
       feedback_file = association.feedback_files.find(params[:id])
 
       # Render error if the filename is used by another
       # Feedback File for that submission
       existing_file = association.feedback_files.find_by_filename(params[:filename])
       if !existing_file.nil? && existing_file.id != params[:id].to_i
-        render 'shared/http_status', locals: {code: '409', message:
-          'A Feedback File with that filename already exists'}, status: 409
+        render 'shared/http_status', locals: { code: '409', message:
+          'A Feedback File with that filename already exists' }, status: 409
         return
       end
 
@@ -174,22 +171,22 @@ module Api
       end
       rescue ActiveRecord::RecordNotFound => e
         # Could not find submission or feedback file
-        render 'shared/http_status', locals: {code: '404', message:
-          e}, status: 404
+        render 'shared/http_status', locals: { code: '404', message: e }, status: 404
     end
 
-    def check_params(required_params=[])
+    def check_params(required_params = [])
       !(has_missing_params?(required_params) ||
         (has_missing_params?([:assignment_id, :group_id]) &&
           has_missing_params?([:test_run_id])))
     end
 
-    def get_association_by_param
+    def association_by_param
       if params[:test_run_id]
         association = TestRun.find(params[:test_run_id])
       else
         association = Submission.get_submission_by_group_id_and_assignment_id(
-          params[:group_id], params[:assignment_id])
+          params[:group_id], params[:assignment_id]
+        )
       end
       association
     end
@@ -198,6 +195,5 @@ module Api
       feedback_file = FeedbackFile.find(params[:id])
       send_data_download feedback_file.file_content, filename: feedback_file.filename
     end
-
   end # end FeedbackFilesController
 end
