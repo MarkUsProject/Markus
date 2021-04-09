@@ -6,10 +6,10 @@ describe GitRepository do
     end
 
     after :all do
-      FileUtils.rm Settings.repository.permission_file
+      FileUtils.rm Repository::PERMISSION_FILE
     end
 
-    let(:file_contents) { File.read(Settings.repository.permission_file).lines.map(&:chomp) }
+    let(:file_contents) { File.read(Repository::PERMISSION_FILE).lines.map(&:chomp) }
 
     it 'give admins access to all repos' do
       expect(file_contents[0].split(',')[0]).to eq('*')

@@ -33,15 +33,6 @@ export class AnnotationPanel extends React.Component {
     }
   }
 
-  persistChanges = (value) => {
-    return $.post({
-      url: Routes.update_overall_comment_assignment_submission_result_path(
-        this.props.assignment_id, this.props.submission_id, this.props.result_id
-      ),
-      data: { result: { overall_comment: value } },
-    });
-  };
-
   render() {
     let overallCommentElement;
     if (this.props.released_to_students || this.props.remarkSubmitted) {
@@ -50,7 +41,7 @@ export class AnnotationPanel extends React.Component {
       overallCommentElement = (
         <TextForm
           initialValue={this.props.overallComment}
-          persistChanges={this.persistChanges}
+          persistChanges={this.props.updateOverallComment}
           previewId={"overall_comment_preview"}
         />
       );
@@ -64,6 +55,7 @@ export class AnnotationPanel extends React.Component {
         key="annotations-table"
         detailed={this.props.detailed}
         released_to_students={this.props.released_to_students}
+        remark_submitted={this.props.remarkSubmitted}
         annotations={this.props.annotations}
         editAnnotation={this.props.editAnnotation}
         removeAnnotation={this.props.removeAnnotation}

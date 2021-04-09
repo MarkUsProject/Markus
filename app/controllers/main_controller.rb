@@ -356,9 +356,8 @@ private
         return validation_result
       end
 
-      if !Settings.validate_custom_status_message.nil? &&
-          authenticate_response == User::AUTHENTICATE_CUSTOM_MESSAGE
-        validation_result[:error] = Settings.validate_custom_status_message
+      if Settings.validate_custom_status_message[authenticate_response]
+        validation_result[:error] = Settings.validate_custom_status_message[authenticate_response]
         return validation_result
       end
     end

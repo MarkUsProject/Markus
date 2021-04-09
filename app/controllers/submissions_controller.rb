@@ -438,6 +438,7 @@ class SubmissionsController < ApplicationController
         @revision = repo.get_revision(revision_identifier)
       end
 
+      file_contents = nil
       begin
         file = @revision.files_at_path(File.join(@assignment.repository_folder,
                                                  path))[params[:file_name]]
@@ -450,6 +451,13 @@ class SubmissionsController < ApplicationController
           elsif SubmissionFile.is_binary?(file_contents)
             file_contents = I18n.t('submissions.cannot_display')
           end
+        end
+      rescue ArgumentError
+        # Handle UTF8 encoding error
+        if file_contents.nil?
+          raise
+        else
+          file_contents.encode!('UTF-8', invalid: :replace, undef: :replace, replace: '�')
         end
       rescue Exception => e
         flash_message(:error, e.message)

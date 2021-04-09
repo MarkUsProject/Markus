@@ -4,9 +4,12 @@ class AnnotationText < ApplicationRecord
   belongs_to :last_editor, class_name: 'User', foreign_key: :last_editor_id, optional: true
 
   after_update :update_mark_deductions,
-               unless: ->(t) { t.annotation_category.changes_to_save.key?('flexible_criterion_id') }
-  before_update :check_if_released, unless: ->(t) { t.deduction.nil? }
-  before_destroy :check_if_released, unless: ->(t) { t.deduction.nil? }
+               unless: ->(t) {
+                         t.annotation_category.nil? ||
+                         t.annotation_category.changes_to_save.key?('flexible_criterion_id')
+                       }
+  before_update :check_if_released
+  before_destroy :check_if_released
 
   # An AnnotationText has many Annotations that are destroyed when an
   # AnnotationText is destroyed.
@@ -31,9 +34,15 @@ class AnnotationText < ApplicationRecord
            .gsub(/\r?\n/, '\\n')
   end
 
+  # Do not update if any associated results have been released. This includes results
+  # that were previously released and are now the subject of a remark request.
   def check_if_released
-    # Cannot update if any results have been released with the annotation and the deduction is non nil
-    return if self.annotations.joins(:result).where('results.released_to_students' => true).empty?
+    annotation_results = self.annotations.joins(result: :submission)
+
+    return if annotation_results.where('results.released_to_students': true).empty? &&
+              Result.where(submission_id: annotation_results.pluck('submissions.id'))
+                    .where.not('remark_request_submitted_at': nil)
+                    .empty?
     errors.add(:base, 'Cannot update/destroy annotation_text once results are released.')
     throw(:abort)
   end

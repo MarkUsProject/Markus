@@ -49,6 +49,11 @@ import 'javascripts/chart_config';
 
 window.Routes = require('routes.js.erb');
 
+// Override react-table defaultSortMethod
+import { defaultSort } from 'javascripts/Components/Helpers/table_helpers';
+import { ReactTableDefaults } from 'react-table';
+Object.assign(ReactTableDefaults, { defaultSortMethod: defaultSort });
+
 // assets with side-effects only
 import 'javascripts/help-system';
 import 'javascripts/layouts';
@@ -76,6 +81,8 @@ import { makeStudentTable } from 'javascripts/Components/student_table';
 window.makeStudentTable = makeStudentTable;
 import { makeAssignmentSummaryTable } from 'javascripts/Components/assignment_summary_table';
 window.makeAssignmentSummaryTable = makeAssignmentSummaryTable;
+import { makeOneTimeAnnotationsTable } from 'javascripts/Components/one_time_annotations_table';
+window.makeOneTimeAnnotationsTable = makeOneTimeAnnotationsTable;
 import { makeExamScanLogTable } from 'javascripts/Components/exam_scan_log_table';
 window.makeExamScanLogTable = makeExamScanLogTable;
 import { makeMarksSpreadsheet } from 'javascripts/Components/marks_spreadsheet';

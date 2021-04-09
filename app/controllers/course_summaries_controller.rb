@@ -21,7 +21,7 @@ class CourseSummariesController < ApplicationController
       graph_labels << a.short_identifier
       average << info[:average]
       median << info[:median]
-      assessment_columns << { id: a.id, name: "#{a.short_identifier} (/#{info[:total].to_i})" }
+      assessment_columns << { id: a.id, name: "#{a.short_identifier} (/#{info[:total].to_f.round(2)})" }
       individual << single[a.id]
     end
     marking_schemes.order(id: :asc).each do |m|

@@ -3,12 +3,14 @@ rails:
   eager_load: true
   consider_all_requests_local: false
   log_level: info
+  force_ssl: true
   active_support:
     deprecation: silence
   perform_caching: true
   session_store:
     args:
       secret: 650d281667d8011a3a6ad6dd4b5d4f9ddbce14a7d78b107812dbb40b24e234256ab2c5572c8196cf6cde6b85942688b6bfd337ffa0daee648d04e1674cf1fdf6
+      secure: true
   action_mailer:
     delivery_method: smtp
     smtp_settings: {}
@@ -26,9 +28,6 @@ remote_user_auth: false
 
 repository:
   storage: <%= "#{::Rails.root.to_s}/data/prod" %>/repos
-  permission_file: <%= "#{::Rails.root.to_s}/data/prod" %>/.access
-
-key_storage: <%= "#{::Rails.root.to_s}/data/prod" %>/keys
 
 logging:
   log_file: log/info_development.log

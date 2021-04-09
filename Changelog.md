@@ -1,5 +1,6 @@
 # Changelog
 ## [unreleased]
+- Remove annotations context menu from peer assignments view (#5116)
 - Change 'Next' and 'Previous' submission button to use partial reloads (#5082)
 - Add time zone validations (#5060)
 - Add time zone to settings (#4938)
@@ -9,6 +10,34 @@
 - Fix bug where zip files with too many entries could not be uploaded (#5080)
 - Add button to assignment's annotations tab to allow instructor to download one time annotations (#5088)
 - Removed AssignmentStats table (#5089)
+- Display assignment totals on the grade summary table rounded up to 2 decimal places (#5123)
+- Do not allow users to set repo names by uploading csv files (#5132)
+- Added a delete button to notes dialog under an results edit view and removed user_can_modify under note model,
+  removed Notes#user_can_modify and replaced instances of usage with NotePolicy (#5128)
+- Support Markdown syntax for assessment messages (#5135)
+- Remove controller-specific css files (#5136)
+- Replace non-UTF8 characters in text file preview (#5156)
+- Rollback group creation if error is raised when creating a group for a working-alone student (#5169)
+- Prevent deletion/modification of annotation texts associated with a result with a pending remark request (#5170)
+- Enhancing student submission log with required assignment file info, file size (fixes issue 5171) (#5188)
+- Ensure that browsers cache the correct state of overall comments when marking (#5173)
+- Ensure that graders are shown the correct annotation categories (#5181)
+- Show informative error message if an uploaded criteria yaml file did not contain a "type" key (#5184)
+- Allow for multiple custom validation messages (#5194)
+- Add ability to hold shift to select a range of values in checkbox tables (#5182)
+- Update ssh authorization to be more flexible, secure, and permit a single user to use the same public key for multiple instances (#5199)
+- Fix bug where creating an annotation or switching results reset the selected file (#5200)
+- Fix bug in Assignment#get_num_marked that caused it to double-count remark and original results (#5205)
+
+## [v1.11.5]
+- Account for percentage deductions when calculating total marks after deleting a criterion (#5176)
+- Prevent students from downloading starter files early (#5189)
+
+## [v1.11.4]
+- Override defaultSortMethod for react-table to put null/undefined values at bottom (#5159)
+- Fix bug where groupings created before starter files were uploaded could not download starter files (#5160)
+
+## [v1.11.3]
 - Fix easyModal overlay bug (#5117)
 
 ## [v1.11.2]

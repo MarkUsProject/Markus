@@ -1,5 +1,5 @@
 <% unless @grade_entry_form.nil? %>
-    <div class='assignment_summary'>
+    <div>
       <h2>
         <%= link_to "#{@grade_entry_form.short_identifier}: #{@grade_entry_form.description}",
                     edit_grade_entry_form_path(@grade_entry_form.id) %>
@@ -8,7 +8,7 @@
       <div class='flex-row'>
         <div id='grade_entry_form_<%= @grade_entry_form.id %>_graph'></div>
 
-        <div class='flex-row-expand'>
+        <div class='flex-row-expand' style='height: 100%; margin-left: 10px;'>
           <%= render partial: 'grade_entry_forms/grade_entry_form_info_summary', locals: { grade_entry_form: @grade_entry_form } %>
         </div>
       </div>

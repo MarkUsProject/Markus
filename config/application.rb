@@ -73,6 +73,8 @@ module Markus
 
     config.assets.prefix = Settings.rails.assets.prefix
 
+    config.force_ssl = Settings.rails.force_ssl
+
     # The settings above are required
     # The settings below may optionally be set depending on the current environment
 
@@ -84,7 +86,7 @@ module Markus
 
     config.perform_caching = Settings.rails.perform_caching
 
-    config.hosts << Settings.rails.hosts || []
+    config.hosts.push(*Settings.rails.hosts)
 
     config.active_record.verbose_query_logs = Settings.rails.active_record.verbose_query_logs
 

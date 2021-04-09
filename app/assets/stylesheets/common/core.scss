@@ -81,7 +81,7 @@ label.required::after, th.required::after {
   color: $line;
   font-size: 1.25em;
   font-weight: 300;
-  margin: 0 0 1em 0;
+  margin: 1.5em 0 1em;
   padding: 0.5em 0.1em;
 }
 
@@ -395,6 +395,12 @@ label.required::after, th.required::after {
 .rt-td.unassigned {
   background-color: $disabled-area;
   color: $line;
+}
+
+.rt-cell-textarea {
+  display: block;
+  margin-bottom: 1em;
+  width: 100%;
 }
 
 // Styling patches for react-keyed-file-browser

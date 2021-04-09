@@ -2,29 +2,29 @@ $(document).ready(function() {
   window.modal_create_new   = new ModalMarkus('#create_new_template');
 });
 
-function add_template_division(id) {
+function add_template_division() {
   var new_id = new Date().getTime();
   var nested_form_path = `exam_template[template_divisions_attributes][${new_id}]`;
   var input_id = 'exam_template_template_divisions_attributes' + new_id;
   var new_division_row = `
-    <li id="${input_id}_holder" class="new">
-      <span class="label">
+    <tr id="${input_id}_holder" class="new">
+      <td>
         <input type="text" required="required" name="${nested_form_path}[label]">
-      </span>
-      <span class="start">
+      </td>
+      <td>
         <input type="number" required="required" name="${nested_form_path}[start]">
-      </span>
-      <span class="end">
+      </td>
+      <td>
         <input type="number" required="required" name="${nested_form_path}[end]">
-      </span>
-      <span class="delete">
+      </td>
+      <td>
         <a onClick="this.closest('li').remove(); return false;" class="haha">
           ${I18n.t('delete')}
         </a>
-      </span>
-    </li>
+      </td>
+    </tr>
     `;
-  $('.template-division-section-' + id + ' .add_template').before(new_division_row);
+  $('.table-with-add tbody').append(new_division_row);
 }
 
 function toggle_cover_page(id, fields) {

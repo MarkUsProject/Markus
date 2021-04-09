@@ -6,7 +6,7 @@
 
 <div class='block-content'>
   <% if @assignment.message %>
-    <p><%= @assignment.message %></p>
+    <%= markdown @assignment.message %>
   <% end %>
   <% if @assignment.is_timed %>
     <%= render partial: 'timed_due_info' %>
@@ -147,7 +147,7 @@
     <% end %>
 <% end %>
 <% unless @assignment.starter_file_updated_at.nil? || @grouping.nil? %>
-  <% if !@assignment.is_timed || !@grouping.start_time.nil? || @grouping.past_collection_date? %>
+  <% if allowed_to?(:download_starter_file?, @grouping) %>
     <h3><%= I18n.t('assignments.starter_file.title') %></h3>
     <p><%= I18n.t('assignments.starter_file.provided') %></p>
     <p><%= I18n.t('assignments.starter_file.changed_at',

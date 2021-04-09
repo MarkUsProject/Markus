@@ -220,7 +220,7 @@ class StarterFileManager extends React.Component {
   renderStarterFileTypes = () => {
     return (
       <div>
-        <div>
+        <p>
           <label>
             <input
               type={'radio'}
@@ -232,8 +232,8 @@ class StarterFileManager extends React.Component {
             />
             {I18n.t('assignments.starter_file.starter_file_rule_types.simple')}
           </label>
-        </div>
-        <div>
+        </p>
+        <p>
           <label>
             <input
               type={'radio'}
@@ -245,8 +245,8 @@ class StarterFileManager extends React.Component {
             />
             {I18n.t('assignments.starter_file.starter_file_rule_types.sections')}
           </label>
-        </div>
-        <div>
+        </p>
+        <p>
           <label>
             <input
               type={'radio'}
@@ -258,8 +258,8 @@ class StarterFileManager extends React.Component {
             />
             {I18n.t('assignments.starter_file.starter_file_rule_types.group')}
           </label>
-        </div>
-        <div>
+        </p>
+        <p>
           <label>
             <input
               type={'radio'}
@@ -271,7 +271,7 @@ class StarterFileManager extends React.Component {
             />
             {I18n.t('assignments.starter_file.starter_file_rule_types.shuffle')}
           </label>
-        </div>
+        </p>
       </div>
     )
   };
@@ -333,7 +333,7 @@ class StarterFileManager extends React.Component {
       }
       return (
         <div>
-          {default_selector}
+          <p>{default_selector}</p>
           {section_table}
         </div>
       )
@@ -372,7 +372,7 @@ class StarterFileManager extends React.Component {
   render() {
     return (
       <div>
-        <fieldset className={'starter_file_properties'}>
+        <fieldset>
           <legend>
             <span>{I18n.t('activerecord.models.starter_file_group.other')}</span>
           </legend>
@@ -397,7 +397,7 @@ class StarterFileManager extends React.Component {
           <legend>
             <span>{I18n.t('assignments.starter_file.starter_file_rule')}</span>
           </legend>
-          <div className={'download-button'}>
+          <div className={'download-button float-right'}>
             <a href={Routes.download_starter_file_mappings_assignment_path(this.props.assignment_id)}>
               {I18n.t('assignments.starter_file.download_mappings_csv')}
             </a>
@@ -405,12 +405,14 @@ class StarterFileManager extends React.Component {
           {this.renderStarterFileTypes()}
           {this.renderStarterFileAssigner()}
           {this.renderStarterFileRenamer()}
-          <button
-            onClick={this.saveStateChanges}
-            disabled={!this.state.form_changed}
-          >
-            {I18n.t('save')}
-          </button>
+          <p>
+            <button
+              onClick={this.saveStateChanges}
+              disabled={!this.state.form_changed}
+            >
+              {I18n.t('save')}
+            </button>
+          </p>
         </fieldset>
       </div>
     )
@@ -469,14 +471,13 @@ class StarterFileEntryRenameInput extends React.Component {
     return (
       <span className={'starter-file-rename-cell-content'}>
         <input
-          className={'rename-input'}
           type={'text'}
           placeholder={this.props.entry_rename}
           onKeyPress={blurOnEnter}
           onBlur={this.handleBlur}
           disabled={!this.props.use_rename || this.props.disabled}
         />
-        <label className={'original-checkbox'}>
+        <label className={'float-right'}>
           <input
             type={'checkbox'}
             onChange={this.handleClick}

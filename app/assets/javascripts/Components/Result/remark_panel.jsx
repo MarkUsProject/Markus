@@ -19,15 +19,6 @@ export class RemarkPanel extends React.Component {
     }
   }
 
-  persistChanges = (value) => {
-    return $.post({
-      url: Routes.update_overall_comment_assignment_submission_result_path(
-        this.props.assignment_id, this.props.submission_id, this.props.result_id,
-      ),
-      data: {result: {overall_comment: value}},
-    })
-  };
-
   submitRemarkRequest = (value, name) => {
     let data = {submission: {remark_request: value}};
     data[name] = 'true';
@@ -48,7 +39,7 @@ export class RemarkPanel extends React.Component {
       remarkCommentElement =
         <TextForm
           initialValue={this.props.overallComment}
-          persistChanges={this.persistChanges}
+          persistChanges={(value) => this.props.updateOverallComment(value, true)}
           previewId={'overall_remark_comment_preview'}
         />;
     }

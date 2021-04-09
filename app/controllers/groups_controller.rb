@@ -252,8 +252,8 @@ class GroupsController < ApplicationController
   def create_groups_when_students_work_alone
     @assignment = Assignment.find(params[:assignment_id])
     if @assignment.group_max == 1
-      # data is a list of lists containing: [[group_name, repo_name, group_member], ...]
-      data = Student.where(hidden: false).pluck(:user_name).map { |user_name| [user_name] * 3 }
+      # data is a list of lists containing: [[group_name, group_member], ...]
+      data = Student.where(hidden: false).pluck(:user_name).map { |user_name| [user_name, user_name] }
       @current_job = CreateGroupsJob.perform_later @assignment, data
       session[:job_id] = @current_job.job_id
     end
@@ -278,7 +278,7 @@ class GroupsController < ApplicationController
 
     file_out = MarkusCsv.generate(groupings) do |grouping|
       # csv format is group_name, repo_name, user1_name, user2_name, ... etc
-      [grouping.group.group_name, grouping.group.repo_name].concat(
+      [grouping.group.group_name].concat(
         grouping.student_memberships.map do |member|
           member.user.user_name
         end
@@ -506,13 +506,15 @@ class GroupsController < ApplicationController
     assignment = Assignment.find(params[:assignment_id])
     grouping = current_user.accepted_grouping_for(assignment.id)
 
+    authorize! grouping, with: GroupingPolicy
+
     grouping.reset_starter_file_entries if grouping.starter_file_changed
 
     zip_name = "#{assignment.short_identifier}-starter-files-#{current_user.user_name}"
     zip_path = File.join('tmp', zip_name + '.zip')
     FileUtils.rm_rf zip_path
     Zip::File.open(zip_path, Zip::File::CREATE) do |zip_file|
-      grouping.starter_file_entries.each { |entry| entry.add_files_to_zip_file(zip_file) }
+      grouping.starter_file_entries.reload.each { |entry| entry.add_files_to_zip_file(zip_file) }
     end
     send_file zip_path, filename: File.basename(zip_path)
   end
