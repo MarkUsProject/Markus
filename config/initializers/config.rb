@@ -155,6 +155,11 @@ Config.setup do |config|
       required(:default_locale).filled(:string)
     end
     required(:autotest).hash do
+      required(:enable).filled(:bool)
+      required(:student_test_buffer_minutes).value(:integer, gt?: 0)
+      required(:server_host).filled(:string)
+      required(:server_username).filled(:string)
+      required(:server_command).filled(:string)
       required(:client_dir).filled(:string)
       required(:max_batch_size).value(:integer, gt?: 0)
     end
