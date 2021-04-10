@@ -40,13 +40,12 @@ class GradeEntryForm < Assessment
   def completed_result_marks
     return @completed_result_marks if defined? @completed_result_marks
 
-    @completed_result_marks =
-        self.grade_entry_students
-            .joins(:user)
-            .where(users: { hidden: false })
-            .where.not(total_grade: nil)
-            .order(:total_grade)
-            .pluck(:total_grade)
+    @completed_result_marks = self.grade_entry_students
+                                  .joins(:user)
+                                  .where(users: { hidden: false })
+                                  .where.not(total_grade: nil)
+                                  .order(:total_grade)
+                                  .pluck(:total_grade)
   end
 
   # Determine the total mark for a particular student, as a percentage
@@ -82,8 +81,7 @@ class GradeEntryForm < Assessment
 
   # Determine the number of active grade_entry_students that have been given a mark.
   def count_non_nil
-    percentage_grades = percentage_grades_array
-    percentage_grades.blank? ? 0 : percentage_grades.size
+    completed_result_marks.size
   end
 
   # Create grade_entry_student for each student in the course

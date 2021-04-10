@@ -1169,7 +1169,7 @@ describe Assignment do
 
       context 'and SectionDueDates are disabled' do
         before :each do
-          @assignment.update(section_due_dates_type: false)
+          @assignment.assignment_properties.update(section_due_dates_type: false)
         end
 
         it 'returns false' do
@@ -1179,7 +1179,7 @@ describe Assignment do
 
       context 'and there are SectionDueDates past due' do
         before :each do
-          @assignment.update(section_due_dates_type: true)
+          @assignment.assignment_properties.update(section_due_dates_type: true)
           @section_due_date = SectionDueDate.create(section: create(:section),
                                                     assignment: @assignment,
                                                     due_date: 1.days.ago)
@@ -1198,7 +1198,7 @@ describe Assignment do
 
       context 'and SectionDueDates are disabled' do
         before :each do
-          @assignment.update(section_due_dates_type: false)
+          @assignment.assignment_properties.update(section_due_dates_type: false)
         end
 
         it 'returns true' do
@@ -1208,7 +1208,7 @@ describe Assignment do
 
       context 'and there is a SectionDueDate not past due' do
         before :each do
-          @assignment.update(section_due_dates_type: true)
+          @assignment.assignment_properties.update(section_due_dates_type: true)
           SectionDueDate.create(section: create(:section), assignment: @assignment, due_date: 1.days.from_now)
         end
 
