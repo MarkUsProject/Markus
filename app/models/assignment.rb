@@ -280,11 +280,10 @@ class Assignment < Assessment
   def completed_result_marks
     return @completed_result_marks if defined? @completed_result_marks
 
-    @completed_result_marks =
-        self.current_results
-            .where(marking_state: Result::MARKING_STATES[:complete])
-            .order(:total_mark)
-            .pluck(:total_mark)
+    @completed_result_marks = self.current_results
+                                  .where(marking_state: Result::MARKING_STATES[:complete])
+                                  .order(:total_mark)
+                                  .pluck(:total_mark)
   end
 
   def self.get_current_assignment

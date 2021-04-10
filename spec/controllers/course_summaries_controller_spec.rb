@@ -238,7 +238,7 @@ describe CourseSummariesController do
             returned_medians = response_data[:graph_data][:median]
             Assessment.all.order(id: :asc).each do |a|
               if a.is_a? GradeEntryForm
-                averages << a.calculate_average&.round(2)
+                averages << a.results_average&.round(2)
                 medians << nil
               else
                 averages << a.results_average&.round(2)

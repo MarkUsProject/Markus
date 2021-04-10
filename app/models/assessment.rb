@@ -27,7 +27,6 @@ class Assessment < ApplicationRecord
 
   def short_identifier_unchanged
     return unless short_identifier_changed?
-
     errors.add(:short_id_change, 'short identifier should not be changed once an assessment has been created')
     false
   end
@@ -42,10 +41,10 @@ class Assessment < ApplicationRecord
   def grade_distribution_array(intervals = 20)
     data = percentage_grades_array
     data.extend(Histogram)
-    histogram = data.histogram(intervals, :min => 1, :max => 100, :bin_boundary => :min, :bin_width => 100 / intervals)
+    histogram = data.histogram(intervals, min: 1, max: 100, bin_boundary: :min, bin_width: 100 / intervals)
     distribution = histogram.fetch(1)
-    distribution[0] = distribution.first + data.count{ |x| x < 1 }
-    distribution[-1] = distribution.last + data.count{ |x| x > 100 }
+    distribution[0] = distribution.first + data.count { |x| x < 1 }
+    distribution[-1] = distribution.last + data.count { |x| x > 100 }
 
     distribution
   end
@@ -65,7 +64,7 @@ class Assessment < ApplicationRecord
     if marks.empty? || self.max_mark.zero?
       0
     else
-      (DescriptiveStatistics.mean(marks) * 100 / max_mark).round(2)
+      (DescriptiveStatistics.mean(marks) * 100 / max_mark).round(2).to_f
     end
   end
 
@@ -75,7 +74,7 @@ class Assessment < ApplicationRecord
     if marks.empty? || self.max_mark.zero?
       0
     else
-      (DescriptiveStatistics.median(marks) * 100 / max_mark).round(2)
+      (DescriptiveStatistics.median(marks) * 100 / max_mark).round(2).to_f
     end
   end
 

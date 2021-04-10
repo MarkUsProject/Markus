@@ -1655,7 +1655,6 @@ describe Assignment do
     end
   end
 
-
   describe '.get_current_assignment' do
     before :each do
       Assignment.destroy_all
