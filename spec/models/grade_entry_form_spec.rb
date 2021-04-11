@@ -172,7 +172,7 @@ describe GradeEntryForm do
     let(:form) { create(:grade_entry_form) }
     let(:grade_entry_items) { create_list(:grade_entry_item, 10, grade_entry_form: form) }
     let!(:students) { create_list :student, 6 }
-    let(:grade_entry_student_ids) { form.grade_entry_students.map(&:id) }
+
     before do
       form.grade_entry_students.order(:id).each_with_index do |ges, ind|
         grade_entry_items.each_with_index.map do |gei|
@@ -230,7 +230,7 @@ describe GradeEntryForm do
     let(:form) { create(:grade_entry_form) }
     let(:grade_entry_items) { create_list(:grade_entry_item, 10, grade_entry_form: form) }
     let!(:students) { create_list :student, 6 }
-    let(:grade_entry_student_ids) { form.grade_entry_students.map(&:id) }
+
     before do
       form.grade_entry_students.each_with_index do |ges, ind|
         grade_entry_items.each_with_index.map do |gei|
