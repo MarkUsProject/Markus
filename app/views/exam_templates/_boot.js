@@ -3,7 +3,7 @@ $(document).ready(function() {
   $('.add-template-division').click((e) => {
     add_template_division(e.target);
     e.preventDefault();
-  })
+  });
 });
 
 function add_template_division(target) {

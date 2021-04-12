@@ -41,7 +41,7 @@ export function renderFlash(event, request) {
           });
           flashDiv.style.display = 'block';
         } else {
-          flashDiv.style.display = 'none'
+          flashDiv.style.display = 'none';
         }
       }
     }
