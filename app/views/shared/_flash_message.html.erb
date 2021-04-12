@@ -18,10 +18,11 @@
   <% end %>
 <% end %>
 <%= javascript_tag nonce: true do %>
-  $(() => {
-    $('.hide-flash').click((e) => {
-      $(e.target).parent().hide();
-      e.preventDefault();
+  window.onload = function () {
+    Array.from(document.getElementsByClassName('hide-flash')).forEach(function (elem) {
+      elem.addEventListener("click", function(e) {
+        e.target.parentElement.style.display = 'none';
+      })
     })
-  })
+  }
 <% end %>
