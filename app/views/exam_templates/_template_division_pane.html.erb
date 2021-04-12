@@ -1,14 +1,3 @@
-<%= content_for :head do %>
-  <%= javascript_tag nonce: true do %>
-    $(() => {
-      $('#add-template-division').click((e) => {
-        add_template_division();
-        e.preventDefault();
-      })
-    })
-  <% end %>
-<% end %>
-
 <div class="table-with-add">
   <% disabled = exam_template.exam_been_uploaded? %>
   <table>
@@ -29,7 +18,7 @@
     <td class="add_template" colspan="4">
       <%= link_to t('exam_templates.create.add_division'),
                   '#',
-                  id: 'add-template-division' %>
+                  class: 'add-template-division' %>
     </td>
   <% end %>
 </div>

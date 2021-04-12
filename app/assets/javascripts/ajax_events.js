@@ -35,10 +35,14 @@ export function renderFlash(event, request) {
         const messages = flashMessage.split(';');
         const contents = flashDiv.getElementsByClassName('flash-content')[0] || flashDiv;
         contents.innerHTML = '';
-        messages.forEach(message => {
-          contents.insertAdjacentHTML('beforeend', message);
-        });
-        flashDiv.style.display = '';
+        if (messages.length) {
+          messages.forEach(message => {
+            contents.insertAdjacentHTML('beforeend', message);
+          });
+          flashDiv.style.display = 'block';
+        } else {
+          flashDiv.style.display = 'none'
+        }
       }
     }
   });
