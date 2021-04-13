@@ -688,13 +688,13 @@ class Grouping < ApplicationRecord
   end
 
   def test_runs_instructors(submission)
-    filtered = filter_test_runs(filters: { 'users.type': 'Admin', 'test_runs.submission': submission })
+    filtered = filter_test_runs(filters: { 'users.type': %w[Admin Ta], 'test_runs.submission': submission })
     plucked = Grouping.pluck_test_runs(filtered)
     Grouping.group_hash_list(plucked)
   end
 
   def test_runs_instructors_released(submission)
-    filtered = filter_test_runs(filters: { 'users.type': 'Admin', 'test_runs.submission': submission })
+    filtered = filter_test_runs(filters: { 'users.type': %w[Admin Ta], 'test_runs.submission': submission })
     latest_test_group_results = filtered.pluck_to_hash('test_groups.id as tgid',
                                                        'test_group_results.id as tgrid',
                                                        'test_group_results.created_at as date')

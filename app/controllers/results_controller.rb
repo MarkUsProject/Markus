@@ -70,6 +70,8 @@ class ResultsController < ApplicationController
           data[:can_run_tests] = false
         end
 
+        data[:can_release] = allowance_to(:manage_assessments?, current_user)
+
         # Submission files
         file_data = submission.submission_files.order(:path, :filename).pluck_to_hash(:id, :filename, :path)
         file_data.reject! { |f| Repository.get_class.internal_file_names.include? f[:filename] }
