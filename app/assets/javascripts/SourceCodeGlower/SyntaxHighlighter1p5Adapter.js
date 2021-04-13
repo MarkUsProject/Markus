@@ -65,7 +65,7 @@ SyntaxHighlighter1p5Adapter.prototype.applyMods = function() {
   // Get rid of some commands and add font size commands
   delete original_commands['CopyToClipboard'];
   delete original_commands['PrintSource'];
-  delete original_commands['ExpandSource']
+  delete original_commands['ExpandSource'];
 
   original_commands["BoostCode"] = {
     label: '+A',
