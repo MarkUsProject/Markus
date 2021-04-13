@@ -66,7 +66,7 @@ class Assessment < ApplicationRecord
     if marks.empty?
       0
     else
-      (DescriptiveStatistics.mean(marks) * 100 / max_mark).round(2).to_f
+      (DescriptiveStatistics.mean(marks) * 100 / self.max_mark).round(2).to_f
     end
   end
 
@@ -78,7 +78,7 @@ class Assessment < ApplicationRecord
     if marks.empty?
       0
     else
-      (DescriptiveStatistics.median(marks) * 100 / max_mark).round(2).to_f
+      (DescriptiveStatistics.median(marks) * 100 / self.max_mark).round(2).to_f
     end
   end
 
