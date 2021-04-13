@@ -108,6 +108,6 @@ SyntaxHighlighter1p5Adapter.prototype.applyMods = function() {
       });
       tool.innerText = label;
       tools.appendChild(tool);
-    })
+    });
   }
 }
