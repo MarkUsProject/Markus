@@ -31,6 +31,7 @@ class Result extends React.Component {
       submission_id: props.submission_id,
       result_id: props.result_id,
       grouping_id: props.grouping_id,
+      can_release: false
     };
 
     this.leftPane = React.createRef();
@@ -616,6 +617,7 @@ class Result extends React.Component {
         <SubmissionSelector
           key='submission-selector'
           role={this.props.role}
+          can_release={this.state.can_release}
           result_id={this.state.result_id}
           submission_id={this.state.submission_id}
           assignment_id={this.state.assignment_id}
@@ -641,7 +643,6 @@ class Result extends React.Component {
             <div id='left-pane'>
               <LeftPane
                 ref={this.leftPane}
-                role={this.props.role}
                 loading={this.state.loading}
                 result_id={this.state.result_id}
                 submission_id={this.state.submission_id}
