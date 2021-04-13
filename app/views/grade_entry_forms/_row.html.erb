@@ -24,7 +24,7 @@
           </strong>
           <br>
           <%= "(#{t(:class_average)}: "\
-                        "#{number_to_percentage(grade_entry_form.calculate_average, precision: 1)})" %>
+                        "#{number_to_percentage(grade_entry_form.results_average, precision: 1)})" %>
         <% else %>
           <%= link_to Result.model_name.human.pluralize, student_interface_grade_entry_form_path(grade_entry_form.id) %>
         <% end %>

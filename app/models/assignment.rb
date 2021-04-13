@@ -272,24 +272,18 @@ class Assignment < Assessment
           .any?
   end
 
-  # calculates summary statistics of released results for this assignment
-  def update_results_stats
-    marks = Result.student_marks_by_assignment(id)
-    # No marks released for this assignment.
-    return false if marks.empty?
+  # Returns a list of total marks for each complete result for this assignment.
+  # There is one mark per grouping (not per student). Does NOT include:
+  #   - groupings with no submission
+  #   - incomplete results
+  #   - original results when a grouping has submitted a remark request that is not complete
+  def completed_result_marks
+    return @completed_result_marks if defined? @completed_result_marks
 
-    self.results_fails = marks.count { |mark| mark < max_mark / 2.0 }
-    self.results_zeros = marks.count(&:zero?)
-
-    # Avoid division by 0.
-    if max_mark.zero?
-      self.results_average = 0
-      self.results_median = 0
-    else
-      self.results_average = (DescriptiveStatistics.mean(marks) * 100 / max_mark).round(2)
-      self.results_median = (DescriptiveStatistics.median(marks) * 100 / max_mark).round(2)
-    end
-    self.save
+    @completed_result_marks = self.current_results
+                                  .where(marking_state: Result::MARKING_STATES[:complete])
+                                  .order(:total_mark)
+                                  .pluck(:total_mark)
   end
 
   def self.get_current_assignment
@@ -668,47 +662,6 @@ class Assignment < Assessment
     # We're using count here because this fires off a DB query, thus
     # grabbing the most up-to-date count of the criteria.
     criteria.count > 0 ? criteria.last.position + 1 : 1
-  end
-
-  # Determine the total mark for a particular student, as a percentage
-  def calculate_total_percent(result, out_of)
-    total = result.total_mark
-
-    percent = BLANK_MARK
-
-    # Check for NA mark or division by 0
-    unless total.nil? || out_of == 0
-      percent = (total / out_of) * 100
-    end
-    percent
-  end
-
-  # An array of all the grades for an assignment
-  def percentage_grades_array
-    grades = Array.new
-    out_of = max_mark
-
-    groupings.includes(:current_result).each do |grouping|
-      result = grouping.current_result
-      unless result.nil? || result.total_mark.nil? || result.marking_state != Result::MARKING_STATES[:complete]
-        percent = calculate_total_percent(result, out_of)
-        grades.push(percent) unless percent == BLANK_MARK
-      end
-    end
-
-    return grades
-  end
-
-  # Returns grade distribution for a grade entry item for each student
-  def grade_distribution_array(intervals = 20)
-    data = percentage_grades_array
-    data.extend(Histogram)
-    histogram = data.histogram(intervals, :min => 1, :max => 100, :bin_boundary => :min, :bin_width => 100 / intervals)
-    distribution = histogram.fetch(1)
-    distribution[0] = distribution.first + data.count{ |x| x < 1 }
-    distribution[-1] = distribution.last + data.count{ |x| x > 100 }
-
-    return distribution
   end
 
   # Returns all the TAs associated with the assignment

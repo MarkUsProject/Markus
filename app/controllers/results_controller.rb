@@ -329,7 +329,6 @@ class ResultsController < ApplicationController
     released_to_students = !@result.released_to_students
     @result.released_to_students = released_to_students
     if @result.save
-      @result.submission.assignment.update_results_stats
       m_logger = MarkusLogger.instance
       assignment = @result.submission.assignment
       if released_to_students
@@ -355,7 +354,6 @@ class ResultsController < ApplicationController
     end
 
     if @result.save
-      @result.submission.assignment.update_results_stats
       head :ok
     else # Failed to pass validations
       # Show error message

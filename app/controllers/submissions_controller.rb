@@ -560,7 +560,6 @@ class SubmissionsController < ApplicationController
           set_release_on_results(groupings, release)
 
       if changed > 0
-        assignment.update_results_stats
         assignment.update_remark_request_count
 
         # These flashes don't get rendered. Find another way to display?

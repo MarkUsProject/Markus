@@ -27,14 +27,25 @@ class GradeEntryForm < Assessment
   BLANK_MARK = ''
 
   # The total number of marks for this grade entry form
-  def out_of_total
-    total = 0
-    grade_entry_items.each do |grade_entry_item|
-      unless grade_entry_item.bonus
-        total += grade_entry_item.out_of
-      end
-    end
-    total
+  def max_mark
+    self.grade_entry_items.where(bonus: false).sum(:out_of)
+  end
+
+  # Returns a list of total marks for each grade entry student for this grade entry form.
+  # There is one mark per student. Does NOT include:
+  #   - students with no marks
+  #   - inactive students
+  # Currently results are represented as GradeEntryStudents, but in the future we plan to unify
+  # the representations of Assignments and GradeEntryForms.
+  def completed_result_marks
+    return @completed_result_marks if defined? @completed_result_marks
+
+    @completed_result_marks = self.grade_entry_students
+                                  .joins(:user)
+                                  .where(users: { hidden: false })
+                                  .where.not(total_grade: nil)
+                                  .order(:total_grade)
+                                  .pluck(:total_grade)
   end
 
   # Determine the total mark for a particular student, as a percentage
@@ -45,7 +56,7 @@ class GradeEntryForm < Assessment
     end
 
     percent = BLANK_MARK
-    out_of = self.out_of_total
+    out_of = self.max_mark
 
     # Check for NA mark f or division by 0
     unless ges_total_grade.nil? || out_of == 0
@@ -68,64 +79,9 @@ class GradeEntryForm < Assessment
     total_grades
   end
 
-  # An array of all active grade_entry_students' percentage total grades that are not nil
-  def percentage_grades_array
-    if defined? @grades_array
-      return @grades_array
-    end
-
-    grades = Array.new
-    out_of = out_of_total
-
-    grade_entry_students.joins(:user).where('users.hidden': false).find_each do |grade_entry_student|
-      ges_total_grade = grade_entry_student.total_grade
-      if !ges_total_grade.nil? && out_of != 0
-        grades.push((ges_total_grade / out_of) * 100 )
-      end
-    end
-
-    @grades_array = grades
-    grades
-  end
-
-  # Returns grade distribution for a grade entry form for all students
-  def grade_distribution_array(intervals = 20)
-    data = percentage_grades_array
-    data.extend(Histogram)
-    histogram = data.histogram(intervals, :min => 1, :max => 100, :bin_boundary => :min, :bin_width => 100 / intervals)
-    distribution = histogram.fetch(1)
-    distribution[0] = distribution.first + data.count{ |x| x < 1 }
-    distribution[-1] = distribution.last + data.count{ |x| x > 100 }
-
-    return distribution
-  end
-
-  # Returns the average of all active student marks.
-  def calculate_average
-    percentage_grades = percentage_grades_array
-    percentage_grades.blank? ? 0 : DescriptiveStatistics.mean(percentage_grades)
-  end
-
-  # Returns the median of all active student marks.
-  def calculate_median
-    percentage_grades = percentage_grades_array
-    percentage_grades.blank? ? 0 : DescriptiveStatistics.median(percentage_grades)
-  end
-
   # Determine the number of active grade_entry_students that have been given a mark.
   def count_non_nil
-    percentage_grades = percentage_grades_array
-    percentage_grades.blank? ? 0 : percentage_grades.size
-  end
-
-  def calculate_failed
-    percentage_grades = percentage_grades_array
-    percentage_grades.blank? ? 0 : percentage_grades.count { |mark| mark < 50 }
-  end
-
-  def calculate_zeros
-    percentage_grades = percentage_grades_array
-    percentage_grades.blank? ? 0 : percentage_grades.count(&:zero?)
+    completed_result_marks.size
   end
 
   # Create grade_entry_student for each student in the course
@@ -152,7 +108,7 @@ class GradeEntryForm < Assessment
 
     # The second row in the CSV file will contain the column totals
     totals = [GradeEntryItem.human_attribute_name(:out_of)] + self.grade_entry_items.pluck(:out_of)
-    totals << self.out_of_total if self.show_total
+    totals << self.max_mark if self.show_total
     headers << totals
 
     grade_data = self.grades
