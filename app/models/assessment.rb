@@ -60,8 +60,10 @@ class Assessment < ApplicationRecord
 
   # Returns the average grade for this assessment, using all grades in self.completed_result_marks.
   def results_average
+    return 0 if self.max_mark.zero?
+
     marks = self.completed_result_marks
-    if marks.empty? || self.max_mark.zero?
+    if marks.empty?
       0
     else
       (DescriptiveStatistics.mean(marks) * 100 / max_mark).round(2).to_f
@@ -70,8 +72,10 @@ class Assessment < ApplicationRecord
 
   # Returns the median grade for this assessment, using all grades in self.completed_result_marks.
   def results_median
+    return 0 if self.max_mark.zero?
+
     marks = self.completed_result_marks
-    if marks.empty? || self.max_mark.zero?
+    if marks.empty?
       0
     else
       (DescriptiveStatistics.median(marks) * 100 / max_mark).round(2).to_f
