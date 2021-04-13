@@ -57,10 +57,12 @@ Config.setup do |config|
       required(:active_support).hash do
         required(:deprecation).filled(included_in?: ActiveSupport::Deprecation::DEFAULT_BEHAVIORS.keys.map(&:to_s))
       end
-      optional(:perform_caching).filled(:bool)
+      optional(:action_controller).hash do
+        optional(:perform_caching).filled(:bool)
+      end
       optional(:cache_store).filled(:string)
-      optional(:active_record).hash do
-        optional(:verbose_query_logs).filled(:bool)
+      required(:active_record).hash do
+        required(:verbose_query_logs).filled(:bool)
       end
       required(:active_job).hash do
         required(:queue_adapter).filled(:string)
@@ -82,6 +84,8 @@ Config.setup do |config|
       required(:action_mailer).hash do
         required(:delivery_method).filled(:string)
         optional(:smtp_settings).hash
+        optional(:sendmail_settings).hash
+        optional(:file_settings).hash
         required(:default_url_options).hash
         required(:asset_host).filled(:string)
         required(:perform_deliveries).filled(:bool)
@@ -151,6 +155,11 @@ Config.setup do |config|
       required(:default_locale).filled(:string)
     end
     required(:autotest).hash do
+      required(:enable).filled(:bool)
+      required(:student_test_buffer_minutes).value(:integer, gt?: 0)
+      required(:server_host).filled(:string)
+      optional(:server_username).maybe(:string)
+      required(:server_command).filled(:string)
       required(:client_dir).filled(:string)
       required(:max_batch_size).value(:integer, gt?: 0)
     end
