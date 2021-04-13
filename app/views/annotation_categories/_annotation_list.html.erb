@@ -8,8 +8,9 @@
   ) %>
   <%= javascript_tag nonce: true do %>
     $(function() {
-      $('#add-annotation').click(function() {
-        add_annotation_prompt('<%= path %>')
+      $('#add-annotation').click(function(e) {
+        add_annotation_prompt('<%= path %>');
+        e.preventDefault();
       })
     })
   <% end %>

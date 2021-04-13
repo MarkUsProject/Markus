@@ -7,8 +7,9 @@
   <%= javascript_include_tag 'MathJax/mathjax_helpers', nonce: true %>
   <%= javascript_tag nonce: true do %>
     $(function() {
-      $('#add-annotation-category').click(function() {
-        add_annotation_category('<%= new_assignment_annotation_category_path %>')
+      $('#add-annotation-category').click(function(e) {
+        add_annotation_category('<%= new_assignment_annotation_category_path %>');
+        e.preventDefault();
       })
     })
   <% end %>
@@ -39,7 +40,7 @@
   </div>
 
   <div id='annotations_pane' class='pane'>
-      <div id='annotation_list_holder'>
+    <div id='annotation_list_holder'>
       <div id='annotations_help'>
         <h2><%= t(:help) %></h2>
         <p><%= t('annotations.help_message') %></p>

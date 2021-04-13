@@ -111,7 +111,7 @@ class RawSubmissionTable extends React.Component {
       Filter: ({ filter, onChange }) =>
         <select
           onChange={event => onChange(event.target.value)}
-          className={'filter-select'}
+          style={{ width: '100%' }}
           value={filter ? filter.value : 'all'}
         >
           <option value='all'>{I18n.t('all')}</option>

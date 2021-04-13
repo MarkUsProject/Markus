@@ -14,7 +14,7 @@
     </div>
 
     <% if exam_template.automatic_parsing %>
-    <%= javascript_tag nonce: true do %>
+      <%= javascript_tag nonce: true do %>
         window.onload = () => attach_crop_box()
       <% end %>
     <% end %>

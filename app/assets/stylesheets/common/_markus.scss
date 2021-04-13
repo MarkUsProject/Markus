@@ -1122,7 +1122,7 @@ nav {
   position: relative;  // For image annotations
 }
 
-.crop-target {
+#crop-target {
   border: 1px solid black;
   max-width: 400px;
 }
@@ -1302,7 +1302,7 @@ nav {
 
 // Styling for grade_entry_forms/_form.html
 
-grade-entry-items-wrapper {
+.grade-entry-items-wrapper {
   margin-top: 1em;
 }
 

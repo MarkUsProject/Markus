@@ -62,7 +62,7 @@
       '<label class="required" for="' + input_id + '">' + I18n.t('attributes.filename') + '</label>' +
       '<input type="text" required="required" name="assignment[assignment_files_attributes][' +
       new_id + '][filename]" id="' + input_id + '"class="assignment_file" />' +
-      '<a id="remove-assignment-file-'+new_id+'">' + I18n.t('delete') + '</a></p>';
+      '<a id="remove-assignment-file-'+new_id+'" class="small-indent">' + I18n.t('delete') + '</a></p>';
     $('#assignment_files').append($(assignment_file));
     $('#remove-assignment-file-'+new_id).click((e) => {
       remove_assignment_file(input_id);
