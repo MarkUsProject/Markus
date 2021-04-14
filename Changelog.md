@@ -31,6 +31,7 @@
 - Fix bug in Assignment#get_num_marked that caused it to double-count remark and original results (#5205)
 - Fix bug where graders can't see the tests that they run (#5210)
 - Fix bug where graders can't release results on the results page (#5210)
+- Use DOMpurify library to sanitize rendered markdown content (#5211)
 
 ## [v1.11.5]
 - Account for percentage deductions when calculating total marks after deleting a criterion (#5176)

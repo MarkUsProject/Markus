@@ -216,7 +216,7 @@ class AnnotationTextCell extends React.Component {
       );
       return(
         <div>
-          <div dangerouslySetInnerHTML={{__html: marked(this.state.content, {sanitize: true})}}/>
+          <div dangerouslySetInnerHTML={{__html: safe_marked(this.state.content)}}/>
           <div className={"alignright"}>{edit_button}</div>
         </div>
       );
