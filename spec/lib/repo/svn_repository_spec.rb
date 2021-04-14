@@ -10,7 +10,7 @@ describe 'Subversion Repository' do
         @students = [:student1, :student2]
         RSpec::Mocks.with_temporary_scope do
           allow(Settings.repository).to receive(:type).and_return('svn')
-          Repository.get_class.send :__update_permissions, {@repo_name => @students}, ['admin1']
+          Repository.get_class.send :update_permissions_file, { @repo_name => @students }, ['admin1']
         end
       end
 
