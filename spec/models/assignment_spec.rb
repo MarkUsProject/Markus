@@ -2095,7 +2095,6 @@ describe Assignment do
             it 'should add both extra marks to the total mark' do
               data = @assignment.summary_json(admin)[:data]
               grouping_data = data.select { |d| d[:group_name] == grouping.group.group_name }.first
-              extra = grouping.current_result.extra_marks.pluck(:extra_mark).sum
               total = grouping.current_result.total_mark + extra_mark.extra_mark + percentage_extra
               expect(grouping_data[:final_grade]).to eq total
             end
