@@ -2084,6 +2084,21 @@ describe Assignment do
               expect(grouping_data[:final_grade]).to eq(0)
             end
           end
+          context 'and another extra mark' do
+            let!(:extra_mark_percentage) { create :extra_mark, result: grouping.current_result }
+            let(:percentage_extra) { (extra_mark_percentage.extra_mark * @assignment.max_mark / 100).round(2) }
+            it 'should included both extra mark values' do
+              data = @assignment.summary_json(admin)[:data]
+              grouping_data = data.select { |d| d[:group_name] == grouping.group.group_name }.first
+              expect(grouping_data[:total_extra_marks]).to eq(extra_mark.extra_mark + percentage_extra)
+            end
+            it 'should add both extra marks to the total mark' do
+              data = @assignment.summary_json(admin)[:data]
+              grouping_data = data.select { |d| d[:group_name] == grouping.group.group_name }.first
+              total = grouping.current_result.total_mark + extra_mark.extra_mark + percentage_extra
+              expect(grouping_data[:final_grade]).to eq total
+            end
+          end
         end
       end
     end

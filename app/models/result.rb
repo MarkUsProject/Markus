@@ -116,7 +116,7 @@ class Result < ApplicationRecord
           assignment_max_mark = max_mark_hash[assessment_id]
         end
         max_mark = max_mark_hash[assessment_id]
-        extra_marks_hash[id] = (extra_mark * assignment_max_mark / 100).round(2)
+        extra_marks_hash[id] += (extra_mark * assignment_max_mark / 100).round(2)
       end
     end
     extra_marks_hash
