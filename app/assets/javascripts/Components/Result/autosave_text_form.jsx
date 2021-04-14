@@ -75,10 +75,7 @@ export class TextForm extends React.Component {
 
   updatePreview = () => {
     if (this.props.previewId) {
-      document.getElementById(this.props.previewId).innerHTML = marked(
-        this.state.value,
-        { sanitize: true }
-      );
+      document.getElementById(this.props.previewId).innerHTML = safe_marked(this.state.value);
       MathJax.Hub.Queue(["Typeset", MathJax.Hub, this.props.previewId]);
     }
   };

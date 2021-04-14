@@ -42,7 +42,7 @@ AnnotationTextDisplayer.prototype.displayCollection = function(collection, x, y)
 
   // Update the Display node (a div, in this case) to be in the right
   // position, and to have the right contents
-  this.updateDisplayNode(marked(final_string, {sanitize: true}), x, y);
+  this.updateDisplayNode(safe_marked(final_string), x, y);
 
   // Show the Displayer
   this.show();

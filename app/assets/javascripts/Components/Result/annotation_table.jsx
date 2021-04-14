@@ -75,7 +75,7 @@ export class AnnotationTable extends React.Component {
         }
         return (
           <div>
-            <div dangerouslySetInnerHTML={{__html: marked(data.value, {sanitize: true})}}/>
+            <div dangerouslySetInnerHTML={{__html: safe_marked(data.value)}}/>
             <div className={"alignright"}>{edit_button}</div>
           </div>
         )
