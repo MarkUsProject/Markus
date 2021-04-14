@@ -32,8 +32,8 @@ class UpdateKeysJob < ApplicationJob
     end
   ensure
     redis = Redis::Namespace.new(Rails.root.to_s)
-    if redis.get('repo_permissions') == self.job_id
-      redis.del('repo_permissions')
+    if redis.get('authorized_keys') == self.job_id
+      redis.del('authorized_keys')
     end
   end
 end
