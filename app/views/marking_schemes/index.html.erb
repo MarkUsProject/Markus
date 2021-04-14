@@ -1,9 +1,9 @@
 <%= content_for :head do %>
-  <script>
+  <%= javascript_tag nonce: true do %>
     document.addEventListener('DOMContentLoaded', () => {
       makeMarkingSchemeTable(document.getElementById('marking_schemes_table'));
     });
-  </script>
+  <% end %>
 <% end %>
 
 <% content_for :title, MarkingScheme.model_name.human.pluralize %>

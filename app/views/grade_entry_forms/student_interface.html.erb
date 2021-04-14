@@ -28,9 +28,9 @@
       </tbody>
     </table>
   </div>
-  <fieldset id='gef_data_chart' style="text-align: center; padding-bottom: 0;"></fieldset>
+  <fieldset id='gef_data_chart'></fieldset>
   <%= content_for :head do %>
-    <script>
+    <%= javascript_tag nonce: true do %>
       document.addEventListener('DOMContentLoaded', () => {
         makeDataChart(document.getElementById('gef_data_chart'),
           { xTitle: '<%= t('activerecord.models.criterion.one') %>',
@@ -47,6 +47,6 @@
             }]
           });
       });
-    </script>
+    <% end %>
   <% end %>
 <% end %>

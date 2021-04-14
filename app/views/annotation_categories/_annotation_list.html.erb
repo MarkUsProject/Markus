@@ -6,10 +6,18 @@
     assignment_id: annotation_category.assignment.id,
     annotation_category_id: annotation_category.id
   ) %>
+  <%= javascript_tag nonce: true do %>
+    $(function() {
+      $('#add-annotation').click(function(e) {
+        add_annotation_prompt('<%= path %>');
+        e.preventDefault();
+      })
+    })
+  <% end %>
   <div class='float-right'>
     <%= link_to t('annotation_categories.add_annotation'),
-                'javascript:void(0);',
-                onclick: "add_annotation_prompt('#{path}')",
+                '#',
+                id: 'add-annotation',
                 class: 'button' %>
   </div>
 

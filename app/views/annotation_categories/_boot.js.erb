@@ -1,4 +1,4 @@
-<script>
+<%= javascript_tag nonce: true do %>
   function add_annotation_prompt(path) {
     var annotation_text = $('#add_annotation_text #annotation_text_content');
 
@@ -58,4 +58,4 @@
       });
     }
   });
-</script>
+<% end %>

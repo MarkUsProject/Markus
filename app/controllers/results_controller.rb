@@ -4,6 +4,17 @@ class ResultsController < ApplicationController
                 only: [:update_remark_request, :cancel_remark_request,
                        :set_released_to_students]
 
+  content_security_policy only: [:edit, :view_marks] do |p|
+    # required because heic2any uses libheif which calls
+    # eval (javascript) and creates an image as a blob.
+    # TODO: remove this when possible
+    p.script_src :self, "'strict-dynamic'", "'unsafe-eval'"
+    p.img_src :self, :blob
+    # required because MathJax dynamically changes
+    # style. # TODO: remove this when possible
+    p.style_src :self, "'unsafe-inline'"
+  end
+
   def show
     respond_to do |format|
       format.json do

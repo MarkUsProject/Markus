@@ -1,5 +1,5 @@
 <%= content_for :head do %>
-  <script>
+  <%= javascript_tag nonce: true do %>
     document.addEventListener('DOMContentLoaded', () => {
       window.BatchTestRunTable = makeBatchTestRunTable(document.getElementById('batch_test_run_table'), {
         assignment_id: <%= @assignment.id %>,
@@ -7,7 +7,7 @@
                       @current_user.is_reviewer_for?(@assignment.pr_assignment, @result) %>
       });
     })
-  </script>
+  <% end %>
 <% end %>
 
 <div id='batch_test_run_table'></div>

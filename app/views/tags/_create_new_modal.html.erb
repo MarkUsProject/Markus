@@ -3,7 +3,8 @@
 <%= content_for :modal_content do %>
 
     <%= javascript_include_tag 'Tags/text_updater.js',
-                               id: 'text_script' %>
+                               id: 'text_script',
+                               nonce: true %>
     <%= form_with scope: :tag, url: assignment_tags_path(@assignment), local: true do |f| %>
         <div>
           <p><%= f.label :name, Tag.human_attribute_name(:name) %></p>
@@ -32,7 +33,7 @@
                        name: 'submit',
                        data: { disable_with: t('working') },
                        class: 'button' %>
-          <input type='reset' value='<%= t(:cancel) %>' onclick='modal_create_new.close();'/>
+          <input type='reset' value='<%= t(:cancel) %>'/>
         </section>
     <% end %>
 <% end %>

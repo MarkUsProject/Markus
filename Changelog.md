@@ -24,6 +24,7 @@
 - Ensure that browsers cache the correct state of overall comments when marking (#5173)
 - Ensure that graders are shown the correct annotation categories (#5181)
 - Show informative error message if an uploaded criteria yaml file did not contain a "type" key (#5184)
+- Enable content security policies (#5186)
 - Allow for multiple custom validation messages (#5194)
 - Add ability to hold shift to select a range of values in checkbox tables (#5182)
 - Update ssh authorization to be more flexible, secure, and permit a single user to use the same public key for multiple instances (#5199)

@@ -2,7 +2,7 @@
   <%= link_to t('rubric_criteria.level.add'),
               '#',
               class: 'button',
-              onclick: 'add_level("rubric_form");' + 'return false;' %>
+              id: 'add-criterion-level' %>
 
   <%= button_to "#{t(:delete)} #{Criterion.model_name.human}",
                 assignment_criterion_path(assignment_id: criterion.assignment.id,

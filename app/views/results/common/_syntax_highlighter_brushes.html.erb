@@ -13,7 +13,8 @@
                            'SourceCodeGlower/SyntaxHighlighter1p5Adapter',
                            'SourceCodeGlower/ImageAnnotationGrid',
                            'SourceCodeGlower/ImageEventHandler',
-                           'SourceCodeGlower/PdfAnnotationManager' %>
+                           'SourceCodeGlower/PdfAnnotationManager',
+                           nonce: true %>
 
 <% # SYNTAX HIGHLIGHTER %>
-<%= javascript_include_tag 'syntaxhighlighter' %>
+<%= javascript_include_tag 'syntaxhighlighter', nonce: true %>

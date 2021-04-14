@@ -8,6 +8,7 @@
 @import 'mixins';
 @import 'modals';
 @import 'notes_dialog';
+@import 'annotations_dialog';
 @import 'icons';
 @import 'react_json_schema_form';
 @import 'react_tabs';
@@ -37,6 +38,8 @@ body {
 
 .flex-row-expand {
   flex-grow: 1;
+  height: 100%;
+  margin-left: 10px;
 }
 
 
@@ -155,6 +158,14 @@ strong a {
   background: transparent asset-url('icons/cross.png') no-repeat 5px center;
   float: right;
   width: 2em;
+}
+
+.no-display {
+  display: none;
+}
+
+.flex-display {
+  display: flex;
 }
 
 /** Text and number field inputs */
@@ -346,6 +357,10 @@ fieldset {
   grid-template-columns: max-content max-content;
   row-gap: 10px;
 
+  &.required-file-wrapper {
+    padding-bottom: 0.75em;
+  }
+
   label {
     text-align: right;
   }
@@ -522,6 +537,22 @@ kbd {
 .pane-wrapper {
   display: flex;
 
+  .annotation-pane-wrapper {
+    width: 25%;
+  }
+
+  .criteria-pane-wrapper {
+    width: 37%;
+  }
+
+  &.mid-height {
+    height: calc(70vh);
+  }
+
+  &.small-bottom-margin {
+    margin-bottom: 1em;
+  }
+
   .pane {
     border: 1px solid $primary-three;
     border-radius: $radius;
@@ -535,6 +566,20 @@ kbd {
 
     &.highlight {
       background-color: $pane-highlight;
+    }
+
+    &.assignment-list-wrapper {
+      flex: 0.5;
+      width: 400px;
+    }
+
+    &.scrollable {
+      overflow-y: scroll;
+    }
+
+    &.slim-fixed {
+      flex: 0 auto;
+      width: 29.5%;
     }
 
     // TODO: decide whether to adopt this style more broadly
@@ -1077,6 +1122,10 @@ nav {
   position: relative;  // For image annotations
 }
 
+#crop-target {
+  border: 1px solid black;
+  max-width: 400px;
+}
 
 // Text editing and previews
 .preview {
@@ -1251,3 +1300,24 @@ nav {
   }
 }
 
+// Styling for grade_entry_forms/_form.html
+
+.grade-entry-items-wrapper {
+  margin-top: 1em;
+}
+
+.add-new-button-wrapper {
+  float: right;
+}
+
+// Styling for graphs
+
+.ta-grade-distribution-graph-wrapper {
+  display: inline-block;
+  width: 400px;
+}
+
+#gef_data_chart {
+  padding-bottom: 0;
+  text-align: center;
+}

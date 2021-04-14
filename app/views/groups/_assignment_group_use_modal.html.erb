@@ -10,7 +10,7 @@
           <%= submit_tag t(:save),
                          data: { disable_with: t(:working),
                                  confirm: t('groups.delete_groups_linked') } %>
-          <%= button_tag t(:cancel), type: 'button', onclick:'modalAssignmentGroupReUse.close()' %>
+          <%= button_tag t(:cancel), type: 'button', id: 'assignment-group-use-close' %>
         </section>
     <% end %>
 <% end %>

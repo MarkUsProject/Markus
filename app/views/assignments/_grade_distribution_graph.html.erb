@@ -1,6 +1,6 @@
 <canvas id='assignment_<%= assignment.id %>' width='500' height='450'></canvas>
 
-<script>
+<%= javascript_tag nonce: true do %>
   // Set up graph
   $(document).ready(function () {
     var ctx = document.getElementById('assignment_<%= assignment.id %>').getContext('2d');
@@ -38,4 +38,4 @@
       options: options
     });
   });
-</script>
+<% end %>

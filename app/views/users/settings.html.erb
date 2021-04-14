@@ -53,7 +53,7 @@
       <% @current_user.key_pairs.each do |key_pair| %>
         <tr>
           <td><%= l(key_pair.created_at) %></td>
-          <td><pre style="word-break: break-all"><%= key_pair.public_key %></pre></td>
+          <td><pre class="word-break-all"><%= key_pair.public_key %></pre></td>
           <td><%= link_to t('key_pairs.remove_key'), key_pair, method: :delete %></td>
         </tr>
       <% end %>

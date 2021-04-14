@@ -1,10 +1,10 @@
 <% content_for :head do %>
   <%= stylesheet_link_tag 'result_main' %>
   <%= stylesheet_pack_tag 'result' %>
-  <%= javascript_include_tag 'mathjax' %>
-  <%= javascript_pack_tag 'result' %>
-  <%= javascript_include_tag 'Results/main' %>
-  <script>
+  <%= javascript_include_tag 'mathjax', nonce: true %>
+  <%= javascript_pack_tag 'result', nonce: true %>
+  <%= javascript_include_tag 'Results/main', nonce: true %>
+  <%= javascript_tag nonce: true do %>
     pdfjs.GlobalWorkerOptions.workerSrc = '<%= asset_pack_path('pdf.js') %>';
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -18,15 +18,15 @@
         }
       );
     });
-  </script>
+  <% end %>
 <% end %>
 
-<%= javascript_include_tag 'DropDownMenu/DropDownMenu.js'%>
+<%= javascript_include_tag 'DropDownMenu/DropDownMenu.js', nonce: true %>
 
 <!-- DISPLAYING MATHML -->
 <%= render partial: 'layouts/mathjax_config' %>
-<%= javascript_include_tag 'MathJax_lib/MathJax.js?config=TeX-AMS-MML_HTMLorMML' %>
-<%= javascript_include_tag 'MathJax/mathjax_helpers' %>
+<%= javascript_include_tag 'MathJax_lib/MathJax.js?config=TeX-AMS-MML_HTMLorMML', nonce: true %>
+<%= javascript_include_tag 'MathJax/mathjax_helpers', nonce: true %>
 
 <%= render partial: 'results/common/annotations',
            formats: [:js],
