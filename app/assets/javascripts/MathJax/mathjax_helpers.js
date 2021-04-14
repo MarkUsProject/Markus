@@ -11,7 +11,7 @@ function updatePreview(source, destination) {
   var preview = document.getElementById(destination);
 
   if (preview !== null && newAnnotation !== null) {
-    preview.innerHTML = marked(newAnnotation.value, {sanitize: true});
+    preview.innerHTML = safe_marked(newAnnotation.value);
     // typeset the preview
     MathJax.Hub.Queue(['Typeset', MathJax.Hub, destination]);
   }
