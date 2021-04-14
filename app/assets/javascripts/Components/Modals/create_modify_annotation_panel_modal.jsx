@@ -123,10 +123,7 @@ class CreateModifyAnnotationPanel extends React.Component {
 
   updatePreview = () => {
     const target_id = "annotation_preview";
-    document.getElementById(target_id).innerHTML = marked(
-      this.state.content,
-      { sanitize: true }
-    );
+    document.getElementById(target_id).innerHTML = safe_marked(this.state.content);
     MathJax.Hub.Queue(["Typeset", MathJax.Hub, target_id]);
   };
 

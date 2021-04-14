@@ -18,9 +18,9 @@ window.ajax_events = ajax_events;
 // vendor libraries
 import 'javascripts/jquery.easyModal';
 
-// marked (markdown support)
-import marked from 'marked';
-window.marked = marked;
+// Markdown support (using marked and DOMpurify)
+import safe_marked from 'javascripts/safe_marked';
+window.safe_marked = safe_marked;
 
 // moment (date/times manipulation)
 import moment from 'moment';

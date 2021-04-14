@@ -8,13 +8,13 @@ export class RemarkPanel extends React.Component {
     if (this.props.released_to_students) {
       const comment = this.props.overallComment;
       let target_id = 'overall_remark_comment';
-      document.getElementById(target_id).innerHTML = marked(comment, {sanitize: true});
+      document.getElementById(target_id).innerHTML = safe_marked(comment);
       MathJax.Hub.Queue(['Typeset', MathJax.Hub, target_id]);
     }
 
     if (this.props.remarkSubmitted) {
       const target_id = 'remark_request_text';
-      document.getElementById(target_id).innerHTML = marked(this.props.remarkRequestText, {sanitize: true});
+      document.getElementById(target_id).innerHTML = safe_marked(this.props.remarkRequestText);
       MathJax.Hub.Queue(["Typeset", MathJax.Hub, 'submitted_remark_request_text']);
     }
   }
@@ -113,10 +113,7 @@ class RemarkRequestForm extends React.Component {
 
   renderPreview = () => {
     let target_id = 'remark-request-preview';
-    document.getElementById(target_id).innerHTML = marked(
-      this.state.value,
-      { sanitize: true }
-    );
+    document.getElementById(target_id).innerHTML = safe_marked(this.state.value);
     MathJax.Hub.Queue(["Typeset", MathJax.Hub, target_id]);
   }
 
