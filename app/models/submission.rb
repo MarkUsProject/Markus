@@ -164,11 +164,6 @@ class Submission < ApplicationRecord
       result.marking_state = Result::MARKING_STATES[:complete]
       result.save
     end
-    # marking state just set, or it was already complete (tests are overwriting some marks)
-    if result.marking_state == Result::MARKING_STATES[:complete]
-      result.submission.assignment.assignment_stat.refresh_grade_distribution
-      result.submission.assignment.update_results_stats
-    end
   end
 
   def test_group_results_hash

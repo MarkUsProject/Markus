@@ -50,36 +50,28 @@ class StarterFileGroupsController < ApplicationController
     delete_files = params[:delete_files] || []
     new_files = params[:new_files] || []
 
-    if unzip
-      zdirs, zfiles = new_files.map do |f|
-        next unless File.extname(f.path).casecmp?('.zip')
-        unzip_uploaded_file(f.path)
-      end.compact.transpose.map(&:flatten)
-      new_files.reject! { |f| File.extname(f.path).casecmp?('.zip') }
-      new_folders.push(*zdirs)
-      new_files.push(*zfiles)
+    upload_files_helper(new_folders, new_files, unzip: unzip) do |f|
+      if f.is_a?(String) # is a directory
+        folder_path = File.join(starter_file_group.path, params[:path].to_s, f)
+        FileUtils.mkdir_p(folder_path)
+      else
+        if f.size > Settings.max_file_size
+          flash_now(:error, t('student.submission.file_too_large',
+                              file_name: f.original_filename,
+                              max_size: (Settings.max_file_size / 1_000_000.00).round(2)))
+          next
+        elsif f.size == 0
+          flash_now(:warning, t('student.submission.empty_file_warning', file_name: f.original_filename))
+        end
+        file_path = File.join(starter_file_group.path, params[:path].to_s, f.original_filename)
+        file_content = f.read
+        File.write(file_path, file_content, mode: 'wb')
+      end
     end
 
-    new_folders.each do |f|
-      folder_path = File.join(starter_file_group.path, params[:path].to_s, f)
-      FileUtils.mkdir_p(folder_path)
-    end
     delete_folders.each do |f|
       folder_path = File.join(starter_file_group.path, f)
       FileUtils.rm_rf(folder_path)
-    end
-    new_files.each do |f|
-      if f.size > Rails.configuration.max_file_size
-        flash_now(:error, t('student.submission.file_too_large',
-                            file_name: f.original_filename,
-                            max_size: (Rails.configuration.max_file_size / 1_000_000.00).round(2)))
-        next
-      elsif f.size == 0
-        flash_now(:warning, t('student.submission.empty_file_warning', file_name: f.original_filename))
-      end
-      file_path = File.join(starter_file_group.path, params[:path].to_s, f.original_filename)
-      file_content = f.read
-      File.write(file_path, file_content, mode: 'wb')
     end
     delete_files.each do |f|
       file_path = File.join(starter_file_group.path, f)

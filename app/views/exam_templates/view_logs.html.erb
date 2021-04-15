@@ -1,12 +1,12 @@
 <% content_for :title, "#{SplitPdfLog.model_name.human.pluralize} - #{@assignment.short_identifier}" %>
 
 <% content_for :head %>
-<script>
+<%= javascript_tag nonce: true do %>
   document.addEventListener('DOMContentLoaded', () => {
     makeExamScanLogTable(document.getElementById('exam_scan_log_table'),
                          {assignment_id: <%= @assignment.id %>});
   });
-</script>
+<% end %>
 
 <% @heading_buttons = [
   { link_text: t('exam_templates.back_to_exam_templates_page'),

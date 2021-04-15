@@ -6,7 +6,7 @@
   </td>
   <td>
     <% unless grade_entry_form.due_date.nil? %>
-      <%= l(grade_entry_form.due_date, format: :long) %>
+      <%= l(grade_entry_form.due_date) %>
     <% end %>
   </td>
   <% unless upcoming %>
@@ -24,9 +24,9 @@
           </strong>
           <br>
           <%= "(#{t(:class_average)}: "\
-                        "#{number_to_percentage(grade_entry_form.calculate_average, precision: 1)})" %>
+                        "#{number_to_percentage(grade_entry_form.results_average, precision: 1)})" %>
         <% else %>
-          <%= t('grade_entry_forms.students.detailed_marks_message') %>
+          <%= link_to Result.model_name.human.pluralize, student_interface_grade_entry_form_path(grade_entry_form.id) %>
         <% end %>
       <% elsif grade_entry_form.due_date.nil? ||
         grade_entry_form.due_date < Time.current.to_date %>

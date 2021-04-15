@@ -24,6 +24,8 @@ module Repository
     end
   end
 
+  PERMISSION_FILE = File.join(Settings.repository.storage, '.access').freeze
+
   # Exceptions for repositories
   class ConnectionError < StandardError; end
 
@@ -99,7 +101,7 @@ module Repository
 
     # Static method: Creates a new repository at given location; returns
     # an AbstractRepository instance, with the repository opened.
-    def self.create(connect_string, with_hooks: false)
+    def self.create(connect_string)
       raise NotImplementedError, "Repository::create Not yet implemented"
     end
 
@@ -174,7 +176,7 @@ module Repository
     # Gets a list of users with permission to access the repo.
     # All permissions are rw for the time being
     def get_users
-      unless Rails.configuration.x.repository.is_repository_admin # are we admin?
+      unless Settings.repository.is_repository_admin # are we admin?
         raise NotAuthorityError.new('Unable to get permissions: Not in authoritative mode!')
       end
       repo_name = get_repo_name
@@ -184,7 +186,7 @@ module Repository
 
     # TODO All permissions are rw for the time being
     def get_permissions(user_name)
-      unless Rails.configuration.x.repository.is_repository_admin # are we admin?
+      unless Settings.repository.is_repository_admin # are we admin?
         raise NotAuthorityError.new('Unable to get permissions: Not in authoritative mode!')
       end
       unless get_users.include?(user_name)
@@ -202,28 +204,13 @@ module Repository
     # Updates permissions file unless it is being called from within a
     # block passed to self.update_permissions_after or if it does not
     # read the most up to date data (using self.get_all_permissions)
-    #
-    # It may not have the most up to date data if another thread calls
-    # makes some update to the database and calls self.get_all_permissions
-    # while this thread is still processing self.get_all_permissions
     def self.update_permissions
-      return unless Rails.configuration.x.repository.is_repository_admin
+      return unless Settings.repository.is_repository_admin
       Thread.current[:requested?] = true
-      unless Thread.current[:permissions_lock].nil?
-        # abort if this is being called in a block passed to
-        # self.update_permissions_after
-        return if Thread.current[:permissions_lock].owned?
-      end
-      # indicate that this thread is trying to update permissions
-      redis = Redis::Namespace.new(Rails.root.to_s)
-      redis.set('repo_permissions', Thread.current.object_id)
-      # get permissions from the database
-      permissions = self.get_all_permissions
-      full_access_users = self.get_full_access_users
-      # only continue if this was the last thread to get permissions from the database
-      if redis.get('repo_permissions')&.to_i == Thread.current.object_id
-        __update_permissions(permissions, full_access_users)
-      end
+      # abort if this is being called in a block passed to
+      # self.update_permissions_after
+      return if Thread.current[:permissions_lock]&.owned?
+      UpdateRepoPermissionsJob.perform_later(self.name)
       nil
     end
 
@@ -240,8 +227,8 @@ module Repository
     def self.update_permissions_after(only_on_request: false)
       if Thread.current[:permissions_lock].nil?
         Thread.current[:permissions_lock] = Mutex.new
+        Thread.current[:requested?] = false
       end
-      Thread.current[:requested?] = false
       if Thread.current[:permissions_lock].owned?
         # if owned by the current thread, yield the block without
         # trying to lock again (which would raise a ThreadError)
@@ -281,7 +268,7 @@ module Repository
     end
 
     # Generate and write the the authorization file for all repos.
-    def self.__update_permissions(permissions, full_access_users)
+    def self.update_permissions_file(_permissions, _full_access_users)
       raise NotImplementedError, "Repository.update_permissions: Not yet implemented"
     end
 
@@ -333,8 +320,6 @@ module Repository
         redis.lrem(resource_id, -1, Thread.current.object_id)
       end
     end
-
-    private_class_method :__update_permissions
 
     # Given a subdirectory path, and an already created zip_file, fill the subdirectory
     # within the zip_file with all of its files.
@@ -505,7 +490,7 @@ module Repository
 
   # Gets the configured repository implementation
   def self.get_class
-    repo_type = Rails.configuration.x.repository.type
+    repo_type = Settings.repository.type
     case repo_type
     when 'git'
       return GitRepository

@@ -9,17 +9,16 @@ describe 'Subversion Repository' do
         @repo_name = 'mock_repo'
         @students = [:student1, :student2]
         RSpec::Mocks.with_temporary_scope do
-          allow(Rails.configuration.x.repository).to receive(:type).and_return('svn')
-          Repository.get_class.send :__update_permissions, {@repo_name => @students}, ['admin1']
+          allow(Settings.repository).to receive(:type).and_return('svn')
+          Repository.get_class.send :update_permissions_file, { @repo_name => @students }, ['admin1']
         end
       end
 
       after :all do
-        FileUtils.rm Rails.configuration.x.repository.permission_file
+        FileUtils.rm Repository::PERMISSION_FILE
       end
 
-      let(:file_contents) { File.read(Rails.configuration.x.repository.permission_file) }
-
+      let(:file_contents) { File.read(Repository::PERMISSION_FILE) }
 
       it 'give admins access to all repos' do
         expect(file_contents).to match(/\[\/\]\s*\n\s*admin1\s*=\s*rw/)

@@ -5,6 +5,7 @@ services:
     build:
       context: .
       dockerfile: ./.dockerfiles/Dockerfile
+      target: dev
       args:
         UBUNTU_VERSION: bionic
         RUBY_VERSION: '2.5'
@@ -13,44 +14,17 @@ services:
         YARN_VERSION: '1.13.0'
         BUNDLER_VERSION: '1.17.3'
         NBCONVERTVENV: '/app/nbconvertvenv'
+        USER: 'markus'
     image: markus-dev:1.0.0
     tmpfs:
       - /tmp
-
-  backend: &backend
-    <<: *app
     stdin_open: true
     tty: true
-    volumes:
-      - app_data:/app/data/dev
-      - repos:/app/data/dev/repos/bare
-      - bundle:/bundle
-      - tmp:/app/tmp
-      - node_modules:/app/node_modules
-      - packs:/app/public/packs
-      - packs_test:/app/public/packs-test
-      - ssh_pub_key:/ssh_pub_key
-      - authorized_keys:/app/data/dev/keys
-      - log:/app/log
-      - .:/app:cached
+    env_file:
+      - .dockerfiles/.env
     environment:
       - NODE_ENV=development
       - RAILS_ENV=development
-      - REDIS_URL=redis://redis:6379/
-      - DATABASE_URL=postgres://postgres:postgres@postgres:5432
-      - BOOTSNAP_CACHE_DIR=/bundle/bootsnap
-      - WEBPACKER_DEV_SERVER_HOST=webpacker
-      - WEB_CONCURRENCY=1
-      - EDITOR=vi
-      - RAILS_RELATIVE_URL_ROOT=/csc108
-      - AUTOTEST_SERVER_HOST=autotest
-      - AUTOTEST_SERVER_USERNAME=docker
-      - MARKUS_DATA_DIR=/app/data/dev
-      - MARKUS_REPOSITORY_GIT_SHELL=/usr/local/bin/markus-git-shell.sh
-      - MARKUS_REPOSITORY_PERMISSION_FILE=/app/data/dev/keys/.access
-      - MARKUS_REPOSITORY_SSH_URL=ssh://git@localhost:2222/~/csc108
-      - TZ=America/Toronto
-      - NBCONVERT=/app/nbconvertvenv/bin/jupyter-nbconvert
     networks:
       - default
       - markus_dev
@@ -60,39 +34,57 @@ services:
 
   ssh:
     build:
-      context: ./.dockerfiles
-      dockerfile: ./Dockerfile-ssh
+      context: .
+      dockerfile: ./.dockerfiles/Dockerfile-ssh
       args:
         UBUNTU_VERSION: bionic
         SSH_USER: git
     volumes:
       - log:/home/git/log
       - repos:/home/git/csc108
-      - authorized_keys:/home/git/.ssh/csc108:ro
     environment:
-      - RELATIVE_URL_ROOTS=/csc108 # : separated list
-      - SSH_USER=git
       - TZ=America/Toronto
-    entrypoint: ./entrypoint-ssh.sh
-    command: /usr/sbin/sshd -D
+    command: /usr/sbin/sshd -D -e
     ports:
       - '2222:22'
 
-  rails:
-    <<: *backend
+  rails: &rails
+    <<: *app
     entrypoint: .dockerfiles/entrypoint-dev-rails.sh
-    command: rails server -b 0.0.0.0
+    command: bundle exec rails server -b 0.0.0.0
+    environment:
+      - RAILS_RELATIVE_URL_ROOT=/csc108
+      - PGDATABASE=markus_development
+      - PGDATABASETEST=markus_test
+      - MARKUS__REPOSITORY__SSH_URL=ssh://git@localhost:2222/~/csc108
+      - MARKUS__REPOSITORY__MARKUS_GIT_SHELL=/markus-git-shell.sh
     ports:
       - '3000:3000'
+    volumes:
+      - app_data:/app/data/dev
+      - repos:/app/data/dev/repos
+      - bundle:/bundle
+      - tmp:/app/tmp
+      - node_modules:/app/node_modules
+      - packs:/app/public/packs
+      - packs_test:/app/public/packs-test
+      - ssh_pub_key:/ssh_pub_key
+      - log:/app/log
+      - .:/app:cached
     depends_on:
+      - postgres
+      - redis
       - resque
       - webpacker
       - ssh
 
   resque:
-    <<: *backend
+    <<: *rails
     entrypoint: .dockerfiles/entrypoint-dev-wait-for-install.sh
-    command: rails resque:work QUEUE=* TERM_CHILD=1
+    command: bundle exec rails resque:work QUEUE=* TERM_CHILD=1
+    depends_on:
+      - redis
+    ports: []
 
   postgres:
     image: postgres:10
@@ -101,7 +93,8 @@ services:
       - log:/root/log:cached
       - tmp:/app/tmp
     environment:
-      - POSTGRES_HOST_AUTH_METHOD=trust
+      - POSTGRES_PASSWORD=docker
+      - POSTGRES_INITDB_ARGS="-A md5"
     ports:
       - '35432:5432'
 
@@ -111,16 +104,6 @@ services:
       - redis:/data
     ports:
       - 6379
-
-  test:
-    <<: *backend
-    command: /bin/bash
-    environment:
-      - NODE_ENV=test
-      - RAILS_ENV=test
-      - REDIS_URL=redis://redis:6379/
-      - DATABASE_URL=postgres://postgres:postgres@postgres:5432
-      - BOOTSNAP_CACHE_DIR=/bundle/bootsnap
 
   webpacker:
     <<: *app
@@ -138,11 +121,12 @@ services:
       - NODE_ENV=${NODE_ENV:-development}
       - RAILS_ENV=${RAILS_ENV:-development}
       - WEBPACKER_DEV_SERVER_HOST=0.0.0.0
+      - PGDATABASE=markus_development
+      - PGDATABASETEST=markus_test
 
 volumes:
   app_data:
   repos:
-  authorized_keys:
   postgres:
   redis:
   bundle:
@@ -157,4 +141,3 @@ volumes:
 networks:
   markus_dev:
     name: markus_dev
-

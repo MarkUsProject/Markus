@@ -1,9 +1,10 @@
+---
 en:
   activerecord:
-    models:
-      peer_review:
-        one: "Peer Review"
-        other: "Peer Reviews"
     attributes:
       peer_review:
-        reviewer: "Reviewer"
+        reviewer: Reviewer
+    models:
+      peer_review:
+        one: Peer Review
+        other: Peer Reviews

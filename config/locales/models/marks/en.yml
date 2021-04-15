@@ -1,6 +1,7 @@
+---
 en:
   activerecord:
     models:
       mark:
-        one: "Mark"
-        other: "Marks"
+        one: Mark
+        other: Marks

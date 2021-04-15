@@ -1,14 +1,15 @@
+---
 pt:
   activerecord:
-    models:
-      grade_entry_form:
-        one: "Notas nas planilha"
     attributes:
       grade_entry_form:
-        description: "Descrição"
-        grades: "Notas"
-        is_hidden: "Ocultar Planilha"
-        message: "Mensagem"
-        show_total: "Mostrar Total"
-        short_identifier: "Identificador"
-        total: "Total"
+        description: Descrição
+        grades: Notas
+        is_hidden: Ocultar Planilha
+        message: Mensagem
+        short_identifier: Identificador
+        show_total: Mostrar Total
+        total: Total
+    models:
+      grade_entry_form:
+        one: Notas nas planilha

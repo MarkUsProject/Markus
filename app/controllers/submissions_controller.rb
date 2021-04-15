@@ -3,13 +3,21 @@ class SubmissionsController < ApplicationController
   include RepositoryHelper
   before_action { authorize! }
 
+  content_security_policy only: [:repo_browser, :file_manager] do |p|
+    # required because heic2any uses libheif which calls
+    # eval (javascript) and creates an image as a blob.
+    # TODO: remove this when possible
+    p.script_src :self, "'strict-dynamic'", "'unsafe-eval'"
+    p.img_src :self, :blob
+  end
+
   def index
     respond_to do |format|
       format.json do
         assignment = Assignment.find(params[:assignment_id])
         render json: {
-          groupings: assignment.current_submission_data(current_user),
-          sections: Hash[Section.all.pluck(:id, :name)]
+            groupings: assignment.current_submission_data(current_user),
+            sections: Hash[Section.all.pluck(:id, :name)]
         }
       end
     end
@@ -38,9 +46,9 @@ class SubmissionsController < ApplicationController
         # store the displayed revision
         if @revision.nil?
           if (params[:revision_identifier] &&
-            params[:revision_identifier] == revision.revision_identifier.to_s) ||
-            (params[:revision_timestamp] &&
-              Time.parse(params[:revision_timestamp]).in_time_zone >= revision.server_timestamp)
+              params[:revision_identifier] == revision.revision_identifier.to_s) ||
+              (params[:revision_timestamp] &&
+                  Time.zone.parse(params[:revision_timestamp]).in_time_zone >= revision.server_timestamp)
             @revision = revision
           end
         end
@@ -66,10 +74,10 @@ class SubmissionsController < ApplicationController
       end
       revisions_history = assignment_revisions.map do |revision|
         {
-          id: revision.revision_identifier.to_s,
-          id_ui: revision.revision_identifier_ui,
-          timestamp: l(revision.timestamp),
-          server_timestamp: l(revision.server_timestamp)
+            id: revision.revision_identifier.to_s,
+            id_ui: revision.revision_identifier_ui,
+            timestamp: l(revision.timestamp),
+            server_timestamp: l(revision.server_timestamp)
         }
       end
       render json: revisions_history
@@ -119,16 +127,16 @@ class SubmissionsController < ApplicationController
     @grouping = Grouping.find(params[:id])
     @revision_identifier = params[:current_revision_identifier]
     apply_late_penalty = params[:apply_late_penalty].nil? ?
-                         false : params[:apply_late_penalty]
+                             false : params[:apply_late_penalty]
     SubmissionsJob.perform_now([@grouping],
                                apply_late_penalty: apply_late_penalty,
                                revision_identifier: @revision_identifier)
 
     submission = @grouping.reload.current_submission_used
     redirect_to edit_assignment_submission_result_path(
-      assignment_id: @grouping.assessment_id,
-      submission_id: submission.id,
-      id: submission.get_latest_result.id)
+                    assignment_id: @grouping.assessment_id,
+                    submission_id: submission.id,
+                    id: submission.get_latest_result.id)
   end
 
   def uncollect_all_submissions
@@ -152,9 +160,9 @@ class SubmissionsController < ApplicationController
     collectable = []
     some_before_due = false
     some_released = Grouping.joins(current_submission_used: :results)
-                            .where('results.released_to_students': true)
-                            .where(id: groupings)
-                            .pluck(:id).to_set
+                        .where('results.released_to_students': true)
+                        .where(id: groupings)
+                        .pluck(:id).to_set
     collection_dates = assignment.all_grouping_collection_dates
     is_scanned_exam = assignment.scanned_exam?
     groupings.each do |grouping|
@@ -248,7 +256,7 @@ class SubmissionsController < ApplicationController
       now = Time.current
       Section.find_each do |section|
         collection_time = @assignment.submission_rule
-                                     .calculate_collection_time(section)
+                              .calculate_collection_time(section)
         collection_time = now if now >= collection_time
         if section_due_dates[collection_time].nil?
           section_due_dates[collection_time] = Array.new
@@ -313,43 +321,36 @@ class SubmissionsController < ApplicationController
     if delete_files.empty? && new_files.empty? && new_folders.empty? && delete_folders.empty?
       flash_message(:warning, I18n.t('student.submission.no_action_detected'))
     else
-      if unzip
-        zdirs, zfiles = new_files.map do |f|
-          next unless File.extname(f.path).casecmp?('.zip')
-          unzip_uploaded_file(f.path)
-        end.compact.transpose.map(&:flatten)
-        new_files.reject! { |f| File.extname(f.path).casecmp?('.zip') }
-        new_folders.push(*zdirs)
-        new_files.push(*zfiles)
-      end
-
       messages = []
       @grouping.access_repo do |repo|
         # Create transaction, setting the author.  Timestamp is implicit.
         txn = repo.get_transaction(current_user.user_name)
         should_commit = true
         path = Pathname.new(@grouping.assignment.repository_folder).join(@path.gsub(%r{^/}, ''))
+
+        if current_user.student? && @grouping.assignment.only_required_files
+          required_files = @grouping.assignment.assignment_files.pluck(:filename)
+                               .map { |name| File.join(@grouping.assignment.repository_folder, name) }
+        else
+          required_files = nil
+        end
+
+        upload_files_helper(new_folders, new_files, unzip: unzip) do |f|
+          if f.is_a?(String) # is a directory
+            success, msgs = add_folder(f, current_user, repo, path: path, txn: txn)
+            should_commit &&= success
+            messages = messages.concat msgs
+          else
+            success, msgs = add_file(f, current_user, repo,
+                                     path: path, txn: txn, check_size: true, required_files: required_files)
+            should_commit &&= success
+            messages.concat msgs
+          end
+        end
         if delete_files.present?
           success, msgs = remove_files(delete_files, current_user, repo, path: path, txn: txn)
           should_commit &&= success
           messages.concat msgs
-        end
-        if new_files.present?
-          if current_user.student? && @grouping.assignment.only_required_files
-            required_files = @grouping.assignment.assignment_files.pluck(:filename)
-                                      .map { |name| File.join(@grouping.assignment.repository_folder, name) }
-          else
-            required_files = nil
-          end
-          success, msgs = add_files(new_files, current_user, repo,
-                                    path: path, txn: txn, check_size: true, required_files: required_files)
-          should_commit &&= success
-          messages.concat msgs
-        end
-        if new_folders.present?
-          success, msgs = add_folders(new_folders, current_user, repo, path: path, txn: txn)
-          should_commit &&= success
-          messages = messages.concat msgs
         end
         if delete_folders.present?
           success, msgs = remove_folders(delete_folders, current_user, repo, path: path, txn: txn)
@@ -382,7 +383,7 @@ class SubmissionsController < ApplicationController
         @current_user.accepted_grouping_for(assignment.id).id != grouping.id
       flash_message(:error,
                     t('submission_file.error.no_access',
-                          submission_file_id: params[:submission_file_id]))
+                      submission_file_id: params[:submission_file_id]))
       redirect_back(fallback_location: root_path)
       return
     end
@@ -442,6 +443,7 @@ class SubmissionsController < ApplicationController
         @revision = repo.get_revision(revision_identifier)
       end
 
+      file_contents = nil
       begin
         file = @revision.files_at_path(File.join(@assignment.repository_folder,
                                                  path))[params[:file_name]]
@@ -455,10 +457,17 @@ class SubmissionsController < ApplicationController
             file_contents = I18n.t('submissions.cannot_display')
           end
         end
+      rescue ArgumentError
+        # Handle UTF8 encoding error
+        if file_contents.nil?
+          raise
+        else
+          file_contents.encode!('UTF-8', invalid: :replace, undef: :replace, replace: '�')
+        end
       rescue Exception => e
         flash_message(:error, e.message)
         render plain: I18n.t('student.submission.missing_file',
-                            file_name: params[:file_name], message: e.message)
+                             file_name: params[:file_name], message: e.message)
         return
       end
 
@@ -555,11 +564,10 @@ class SubmissionsController < ApplicationController
 
     begin
       changed = assignment.is_peer_review? ?
-          set_pr_release_on_results(groupings, release) :
-          set_release_on_results(groupings, release)
+                    set_pr_release_on_results(groupings, release) :
+                    set_release_on_results(groupings, release)
 
       if changed > 0
-        assignment.update_results_stats
         assignment.update_remark_request_count
 
         # These flashes don't get rendered. Find another way to display?
@@ -567,14 +575,14 @@ class SubmissionsController < ApplicationController
                                    changed: changed))
         if release
           MarkusLogger.instance.log(
-            'Marks released for assignment' +
-            " '#{assignment.short_identifier}', ID: '" +
-            "#{assignment.id}' for #{changed} group(s).")
+              'Marks released for assignment' +
+                  " '#{assignment.short_identifier}', ID: '" +
+                  "#{assignment.id}' for #{changed} group(s).")
         else
           MarkusLogger.instance.log(
-            'Marks unreleased for assignment' +
-            " '#{assignment.short_identifier}', ID: '" +
-            "#{assignment.id}' for #{changed} group(s).")
+              'Marks unreleased for assignment' +
+                  " '#{assignment.short_identifier}', ID: '" +
+                  "#{assignment.id}' for #{changed} group(s).")
         end
       end
 
@@ -604,11 +612,6 @@ class SubmissionsController < ApplicationController
               filename: "#{assignment.short_identifier}_repo_list.csv"
   end
 
-  # This action is called periodically from file_manager.
-  def server_time
-    render plain: l(Time.current)
-  end
-
   def set_result_marking_state
     if !params.key?(:groupings) || params[:groupings].empty?
       flash_now(:error, t('groups.select_a_group'))
@@ -636,7 +639,7 @@ class SubmissionsController < ApplicationController
     cache_file = Pathname.new('tmp/ipynb_html_cache') + "#{unique_path}.html"
     unless File.exist? cache_file
       FileUtils.mkdir_p(cache_file.dirname)
-      args = [Rails.configuration.nbconvert, '--to', 'html', '--stdin', '--output', cache_file.to_s]
+      args = [Settings.nbconvert, '--to', 'html', '--stdin', '--output', cache_file.to_s]
       _stdout, stderr, status = Open3.capture3(*args, stdin_data: file_contents)
       unless status.exitstatus.zero?
         flash_message(:error, stderr)

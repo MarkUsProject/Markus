@@ -4,7 +4,7 @@
 
   <div><canvas id='<%= "weighted_summary_graph_#{marking_scheme.id}" %>' width='500' height='450'></canvas></div>
 
-  <script>
+  <%= javascript_tag nonce: true do %>
     $(document).ready(function () {
       var intervals = 20;
       var label_multiplier = 5;
@@ -52,9 +52,9 @@
         options: options
       });
     });
-  </script>
+  <% end %>
 
-  <div class='course_summary flex-row-expand'>
+  <div class='flex-row-expand'>
     <%= render partial: 'course_summaries/course_summary_info_summary',
                locals: { marking_scheme: marking_scheme,
                          grades: marking_scheme.students_weighted_grades_array(@current_user) } %>

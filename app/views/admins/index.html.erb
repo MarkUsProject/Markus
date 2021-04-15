@@ -1,17 +1,17 @@
 <% content_for :head do %>
-  <script>
+  <%= javascript_tag nonce: true do %>
     document.addEventListener('DOMContentLoaded', () => {
       makeAdminTable(document.getElementById('admins_table'));
     })
-  </script>
+  <% end %>
 <% end %>
 
 <% content_for :title do %>
-  <span class='title-help users_admins_help'>
-    <p class='help-message-title users_admins_help'>
+  <div class='title-help'>
+    <p>
       <%= t('admins.help.manage_admins') %>
     </p>
-  </span>
+  </div>
 <% end %>
 
 <% @heading_buttons = [

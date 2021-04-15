@@ -1,6 +1,6 @@
 <%= content_for :head do %>
 
-  <script>
+  <%= javascript_tag nonce: true do %>
     document.addEventListener('DOMContentLoaded', () => {
       makePeerReviewsManager(document.getElementById('peer_reviews_manager'),
         {
@@ -9,7 +9,7 @@
         }
       );
     });
-  </script>
+  <% end %>
 <% end %>
 
 <% content_for :title, PeerReview.model_name.human.pluralize %>

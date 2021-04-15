@@ -95,13 +95,9 @@ describe StarterFileGroupsController do
     context 'when the starter files do not exist' do
       it 'should send a zip file containing the correct content' do
         subject
-        content = []
         Zip::InputStream.open(StringIO.new(response.body)) do |io|
-          while (entry = io.get_next_entry)
-            content << io.read.strip.force_encoding('utf-8') unless entry.name_is_directory?
-          end
+          expect(io.get_next_entry).to be_nil
         end
-        expect(content).to be_empty
       end
     end
   end

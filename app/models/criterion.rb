@@ -4,7 +4,6 @@ class Criterion < ApplicationRecord
   belongs_to :assignment, foreign_key: :assessment_id
   after_update :update_results_with_change
   after_destroy :update_results
-  after_destroy ->(c) { c.assignment.update_results_stats }
 
   has_many :marks, dependent: :destroy
   accepts_nested_attributes_for :marks
@@ -84,9 +83,9 @@ class Criterion < ApplicationRecord
     # Get all existing criterion-TA associations to avoid violating the unique
     # constraint.
     existing_values = CriterionTaAssociation
-                      .where(criterion_id: criterion_ids,
-                             ta_id: ta_ids)
-                      .pluck(:criterion_id, :ta_id)
+                          .where(criterion_id: criterion_ids,
+                                 ta_id: ta_ids)
+                          .pluck(:criterion_id, :ta_id)
 
     # Delegate the assign function to the caller-specified block and remove
     # values that already exist in the database.
@@ -120,21 +119,21 @@ class Criterion < ApplicationRecord
   # an assignment with ID +assignment_id+.
   def self.update_assigned_groups_counts(assignment)
     counts = CriterionTaAssociation
-             .from(
-               # subquery
-               assignment.criterion_ta_associations
+                 .from(
+                     # subquery
+                     assignment.criterion_ta_associations
                          .joins(ta: :groupings)
                          .where('groupings.assessment_id': assignment.id)
                          .select('criterion_ta_associations.criterion_id',
                                  'groupings.id')
                          .distinct
-             )
-             .group('subquery.criterion_id')
-             .count
+                 )
+                 .group('subquery.criterion_id')
+                 .count
 
     records = assignment.criteria
-                        .pluck_to_hash
-                        .map do |h|
+                  .pluck_to_hash
+                  .map do |h|
       { **h.symbolize_keys, assigned_groups_count: counts[h['id']] || 0 }
     end
 
@@ -145,7 +144,6 @@ class Criterion < ApplicationRecord
     max_mark_changed = previous_changes.key?('max_mark') && !previous_changes[:max_mark].first.nil?
     return unless max_mark_changed || previous_changes.key?('bonus')
     scale_marks if max_mark_changed
-    self.assignment.update_results_stats
   end
 
   # When max_mark of criterion is changed, all associated marks should have their mark value scaled to the change.
@@ -153,7 +151,7 @@ class Criterion < ApplicationRecord
     max_mark_was = previous_changes[:max_mark].first
     # results with specific assignment
     results = Result.includes(submission: :grouping)
-                    .where(groupings: { assessment_id: assessment_id })
+                  .where(groupings: { assessment_id: assessment_id })
     all_marks = marks.where.not(mark: nil).where(result_id: results.ids)
     # all associated marks should have their mark value scaled to the change.
     updated_marks = {}
@@ -168,7 +166,7 @@ class Criterion < ApplicationRecord
     end.to_h
     unless updated_results.empty?
       Result.upsert_all(
-        results.pluck_to_hash.map { |h| { **h.symbolize_keys, total_mark: updated_results[h['id'].to_i] } }
+          results.pluck_to_hash.map { |h| { **h.symbolize_keys, total_mark: updated_results[h['id'].to_i] } }
       )
     end
   end

@@ -1,30 +1,38 @@
 $(document).ready(function() {
   window.modal_create_new   = new ModalMarkus('#create_new_template');
+  $('.add-template-division').click((e) => {
+    add_template_division(e.target);
+    e.preventDefault();
+  });
 });
 
-function add_template_division(id) {
+function add_template_division(target) {
   var new_id = new Date().getTime();
   var nested_form_path = `exam_template[template_divisions_attributes][${new_id}]`;
   var input_id = 'exam_template_template_divisions_attributes' + new_id;
   var new_division_row = `
-    <li id="${input_id}_holder" class="new">
-      <span class="label">
+    <tr id="${input_id}_holder" class="new">
+      <td>
         <input type="text" required="required" name="${nested_form_path}[label]">
-      </span>
-      <span class="start">
+      </td>
+      <td>
         <input type="number" required="required" name="${nested_form_path}[start]">
-      </span>
-      <span class="end">
+      </td>
+      <td>
         <input type="number" required="required" name="${nested_form_path}[end]">
-      </span>
-      <span class="delete">
-        <a onClick="this.closest('li').remove(); return false;" class="haha">
+      </td>
+      <td>
+        <a href="#" class="delete-exam-template-row">
           ${I18n.t('delete')}
         </a>
-      </span>
-    </li>
+      </td>
+    </tr>
     `;
-  $('.template-division-section-' + id + ' .add_template').before(new_division_row);
+  $(target).parent('.table-with-add').find('tbody').append(new_division_row);
+  $('.delete-exam-template-row').click((e) => {
+    $(e.target).parents('tr').remove();
+    e.preventDefault();
+  });
 }
 
 function toggle_cover_page(id, fields) {

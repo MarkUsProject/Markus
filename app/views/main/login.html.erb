@@ -1,12 +1,12 @@
 <% content_for :head do %>
-  <%= javascript_include_tag 'cookies_eu' %>
+  <%= javascript_include_tag 'cookies_eu', nonce: true %>
 <% end %>
 
 <div class='login'>
   <div class='login-image'></div>
 
   <p class='login-course'>
-    <%= Rails.configuration.course_name %>
+    <%= Settings.course_name %>
   </p>
 
   <div class='login-error'>
@@ -30,7 +30,8 @@
                              nil,
                              tabindex: 2,
                              placeholder: t('main.password'),
-                             autofocus: user_login != '' %>
+                             autofocus: user_login != '',
+                             autocomplete: 'off' %>
       <div class='submit'>
         <%= submit_tag t('main.log_in'),
                        data: { disable_with: t('main.logging_in') },

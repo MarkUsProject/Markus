@@ -1,10 +1,11 @@
+---
 pt:
   activerecord:
-    models:
-      extra_mark:
-        one: "Bônus/Deduçõ"
-        other: "Bônus/Deduções"
     attributes:
       extra_mark:
-        description: "Comentario"
-        extra_mark: "Nota"
+        description: Comentario
+        extra_mark: Nota
+    models:
+      extra_mark:
+        one: Bônus/Deduçõ
+        other: Bônus/Deduções

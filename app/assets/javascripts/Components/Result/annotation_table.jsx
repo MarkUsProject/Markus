@@ -17,7 +17,7 @@ export class AnnotationTable extends React.Component {
       resizeable: false,
       Cell: row => {
         let remove_button = "";
-        if (!this.props.released_to_students) {
+        if (!this.props.released_to_students && !this.props.remark_submitted) {
           remove_button = <a
             href="#"
             className="remove-icon"
@@ -65,7 +65,7 @@ export class AnnotationTable extends React.Component {
       accessor: 'content',
       Cell: data => {
         let edit_button = "";
-        if (!this.props.released_to_students && !data.original.deduction) {
+        if (!this.props.released_to_students && !data.original.deduction && !this.props.remark_submitted) {
           edit_button = <a
             href="#"
             className="edit-icon"
@@ -75,7 +75,7 @@ export class AnnotationTable extends React.Component {
         }
         return (
           <div>
-            <div dangerouslySetInnerHTML={{__html: marked(data.value, {sanitize: true})}}/>
+            <div dangerouslySetInnerHTML={{__html: safe_marked(data.value)}}/>
             <div className={"alignright"}>{edit_button}</div>
           </div>
         )

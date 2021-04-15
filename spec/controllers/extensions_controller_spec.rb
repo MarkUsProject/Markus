@@ -103,7 +103,7 @@ describe ExtensionsController do
         end
         it 'should flash an error on error' do
           expect_any_instance_of(ExtensionsController).to receive(:flash_now).with(:error, anything)
-          allow_any_instance_of(Extension).to receive(:destroyed?).and_return(false)
+          allow_any_instance_of(Extension).to receive(:destroy).and_return(extension)
           delete_as admin, :destroy, params: { id: extension.id }
         end
       end

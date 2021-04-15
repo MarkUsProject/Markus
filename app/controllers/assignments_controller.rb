@@ -3,6 +3,12 @@ class AssignmentsController < ApplicationController
   responders :flash
   before_action { authorize! }
 
+  content_security_policy only: [:edit, :new] do |p|
+    # required because jquery-ui-timepicker-addon inserts style
+    # dynamically. TODO: remove this when possible
+    p.style_src :self, "'unsafe-inline'"
+  end
+
   # Publicly accessible actions ---------------------------------------
 
   def show
@@ -170,7 +176,7 @@ class AssignmentsController < ApplicationController
         @assignment, new_required_files = process_assignment_form(@assignment)
         @assignment.save!
       end
-      if new_required_files && !Rails.configuration.x.repository.hooks.empty?
+      if new_required_files && Settings.repository.type == 'git'
         # update list of required files in all repos only if there is a hook that will use that list
         @current_job = UpdateRepoRequiredFilesJob.perform_later(@assignment.id, current_user.user_name)
         session[:job_id] = @current_job.job_id
@@ -200,9 +206,6 @@ class AssignmentsController < ApplicationController
     Section.all.each { |s| @assignment.section_due_dates.build(section: s)}
     @section_due_dates = @assignment.section_due_dates
                                     .sort_by { |s| s.section.name }
-
-    # set default value if web submits are allowed
-    @assignment.allow_web_submits = !Rails.configuration.x.repository.external_submits_only
     render :new
   end
 
@@ -233,7 +236,7 @@ class AssignmentsController < ApplicationController
           clone_warnings.each { |w| flash_message(:warning, w) }
         end
       end
-      if new_required_files && !Rails.configuration.x.repository.hooks.empty?
+      if new_required_files && Settings.repository.type == 'git'
         # update list of required files in all repos only if there is a hook that will use that list
         @current_job = UpdateRepoRequiredFilesJob.perform_later(@assignment.id, current_user.user_name)
         session[:job_id] = @current_job.job_id
@@ -313,7 +316,6 @@ class AssignmentsController < ApplicationController
   # Refreshes the grade distribution graph
   def refresh_graph
     @assignment = Assignment.find(params[:id])
-    @assignment.assignment_stat.refresh_grade_distribution
     respond_to do |format|
       format.js
     end

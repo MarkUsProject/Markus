@@ -46,7 +46,7 @@ class MemoryRepository < Repository::AbstractRepository
   end
 
   # Creates memory repository at "virtual" location (they are identifiable by location)
-  def self.create(location, with_hooks: false)
+  def self.create(location)
     MemoryRepository.new(location) # always overwrite a previous one, we don't care about collisions
     true
   end
@@ -225,6 +225,13 @@ class MemoryRepository < Repository::AbstractRepository
       expanded = expanded[2..-1]#remove the drive letter ('D:')
     end
     return expanded
+  end
+
+  def self.update_permissions_file(permissions, full_access_users)
+    @@permissions = { '*' => full_access_users }
+    permissions.each do |repo_loc, users|
+      @@permissions[repo_loc] = users
+    end
   end
 
   private
@@ -412,14 +419,5 @@ class MemoryRepository < Repository::AbstractRepository
       return @current_revision
     end
   end
-
-  def self.__update_permissions(permissions, full_access_users)
-    @@permissions = {'*' => full_access_users}
-    permissions.each do |repo_loc, users|
-      @@permissions[repo_loc] = users
-    end
-  end
-
-  private_class_method :__update_permissions
 
 end # end class MemoryRepository

@@ -4,6 +4,17 @@ class ResultsController < ApplicationController
                 only: [:update_remark_request, :cancel_remark_request,
                        :set_released_to_students]
 
+  content_security_policy only: [:edit, :view_marks] do |p|
+    # required because heic2any uses libheif which calls
+    # eval (javascript) and creates an image as a blob.
+    # TODO: remove this when possible
+    p.script_src :self, "'strict-dynamic'", "'unsafe-eval'"
+    p.img_src :self, :blob
+    # required because MathJax dynamically changes
+    # style. # TODO: remove this when possible
+    p.style_src :self, "'unsafe-inline'"
+  end
+
   def show
     respond_to do |format|
       format.json do
@@ -70,6 +81,8 @@ class ResultsController < ApplicationController
           data[:can_run_tests] = false
         end
 
+        data[:can_release] = allowance_to(:manage_assessments?, current_user)
+
         # Submission files
         file_data = submission.submission_files.order(:path, :filename).pluck_to_hash(:id, :filename, :path)
         file_data.reject! { |f| Repository.get_class.internal_file_names.include? f[:filename] }
@@ -91,20 +104,8 @@ class ResultsController < ApplicationController
 
         # Annotation categories
         if current_user.admin? || current_user.ta?
-          if current_user.ta? && assignment.assign_graders_to_criteria
-            visible = current_user.criterion_ta_associations
-                                  .joins(:criterion)
-                                  .where('criteria.type': 'FlexibleCriterion')
-                                  .pluck(:criterion_id) + [nil]
-            annotation_categories = assignment.annotation_categories
-                                              .order(:position)
-                                              .includes(:annotation_texts)
-                                              .where('annotation_categories.flexible_criterion_id': visible)
-          else
-            annotation_categories = assignment.annotation_categories
-                                              .order(:position)
-                                              .includes(:annotation_texts)
-          end
+          annotation_categories = AnnotationCategory.visible_categories(assignment, current_user)
+                                                    .includes(:annotation_texts)
           data[:annotation_categories] = annotation_categories.map do |category|
             name_extension = category.flexible_criterion_id.nil? ? '' : " [#{category.flexible_criterion.name}]"
             {
@@ -312,16 +313,15 @@ class ResultsController < ApplicationController
       else
         next_grouping = groupings.where('group_name < ?', grouping.group.group_name).last
       end
+      next_result = next_grouping&.current_result
     elsif result.is_a_review? && current_user.is_reviewer_for?(assignment.pr_assignment, result)
       assigned_prs = current_user.grouping_for(assignment.pr_assignment.id).peer_reviews_to_others
       if params[:direction] == '1'
-        next_pr = assigned_prs.where('peer_reviews.id > ?', result.peer_review_id).first
+        next_grouping = assigned_prs.where('peer_reviews.id > ?', result.peer_review_id).first
       else
-        next_pr = assigned_prs.where('peer_reviews.id < ?', result.peer_review_id).last
+        next_grouping = assigned_prs.where('peer_reviews.id < ?', result.peer_review_id).last
       end
-      next_result = Result.find(next_pr.result_id)
-      redirect_to action: 'edit', id: next_result.id
-      return
+      next_result = Result.find(next_grouping.result_id)
     else
       groupings = assignment.groupings.joins(:group).order('group_name')
       if params[:direction] == '1'
@@ -329,14 +329,10 @@ class ResultsController < ApplicationController
       else
         next_grouping = groupings.where('group_name < ?', grouping.group.group_name).last
       end
+      next_result = next_grouping&.current_result
     end
 
-    next_result = next_grouping&.current_result
-    if next_result.nil?
-      redirect_to controller: 'submissions', action: 'browse'
-    else
-      redirect_to action: 'edit', id: next_result.id
-    end
+    render json: { next_result: next_result, next_grouping: next_grouping }
   end
 
   def set_released_to_students
@@ -344,8 +340,6 @@ class ResultsController < ApplicationController
     released_to_students = !@result.released_to_students
     @result.released_to_students = released_to_students
     if @result.save
-      @result.submission.assignment.assignment_stat.refresh_grade_distribution
-      @result.submission.assignment.update_results_stats
       m_logger = MarkusLogger.instance
       assignment = @result.submission.assignment
       if released_to_students
@@ -371,8 +365,6 @@ class ResultsController < ApplicationController
     end
 
     if @result.save
-      @result.submission.assignment.assignment_stat.refresh_grade_distribution
-      @result.submission.assignment.update_results_stats
       head :ok
     else # Failed to pass validations
       # Show error message

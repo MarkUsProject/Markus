@@ -7,11 +7,6 @@ class NoLateSubmissionRule < SubmissionRule
     NoLateSubmissionRule.human_attribute_name(:after_collection_message)
   end
 
-  # NoLateSubmissionRule works with all Assignments
-  def assignment_valid?
-    !assignment.nil?
-  end
-
   # The NoLateSubmissionRule will not add any penalties
   def apply_submission_rule(submission)
     submission

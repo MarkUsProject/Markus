@@ -1,19 +1,20 @@
+---
 es:
-  actions: "Acciones"
-  add: "Añadir"
-  all: "Todos"
-  apply: "Aplicar"
-  cancel: "Cancelar"
-  close: "Cerrar"
-  copy: "Copy"
-  continue: "Continuar"
-  delete: "Eliminar"
-  edit: "Editar"
-  encoding: "Codificación"
-  help: "Ayuda"
-  markus: "MarkUs"
-  please_wait: "Por favor espere…"
-  preview: "Vista previa"
-  save: "Guardar"
-  skip: "Skip"
-  working: "Cargando"
+  actions: Acciones
+  add: Añadir
+  all: Todos
+  apply: Aplicar
+  cancel: Cancelar
+  close: Cerrar
+  continue: Continuar
+  copy: Copy
+  delete: Eliminar
+  edit: Editar
+  encoding: Codificación
+  help: Ayuda
+  markus: MarkUs
+  please_wait: Por favor espere…
+  preview: Vista previa
+  save: Guardar
+  skip: Skip
+  working: Cargando

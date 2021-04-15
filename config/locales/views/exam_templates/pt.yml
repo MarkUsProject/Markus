@@ -1,96 +1,59 @@
+---
 pt:
   exam_templates:
-    update:
-      success:
-        "Modelo de exame foi atualizado com sucesso"
-      failure:
-        "Modelo de exame não foi atualizado com sucesso"
-      instruction:
-        "Substitua o arquivo de modelo"
-    delete:
-      general:
-        "Apagar modelo de exame"
-      success:
-        "Modelo de exame excluído com sucesso"
-      failure:
-        "Modelo de exame não foi excluído com sucesso"
-      confirm:
-        "Tem certeza de que deseja excluir %{name}?"
-    create:
-      add_new:
-        "Adicionar modelo de exame"
-      success:
-        "Modelo de exame criado com sucesso"
-      failure:
-        "Modelo de exame não criado com sucesso"
-      upload:
-        "Carregar o modelo"
-      add_division:
-        "Adicionar divisão template"
-
-    download: "Download do modelo de exame"
-
-    generate:
-      success:
-        "%{copies} cópias de exame geradas com sucesso"
-      title:
-        "Gerar cópias de exame"
-      copies_label:
-        "Número de cópias"
-      index_label:
-        "Índice inicial"
-      generate:
-        "Gerar"
-      generate_job_started:
-        "Gerando pdfs de exame para exame %{exam_name} começou"
-
-    parsing:
-      title:
-        "Seleção automática de análise"
-      general:
-        "Analise automaticamente as informações do aluno"
-      save:
-        "Salve"
-
-    split:
-      success:
-        "Exame dividido com êxito"
-      invalid:
-        "Tipo de arquivo inválido"
-      missing:
-        "Arquivo desaparecido"
-      title:
-        "Exame dividido"
-      instruction:
-        "Carregar Exame PDF"
-      split:
-        "Dividido"
-
-    split_pdf_log:
-      view_logs:
-        "ver registros"
-      scan_error:
-        "Alguns arquivos não foram digitalizados corretamente."
-
-    back_to_log_page: "Voltar à página de log"
-
     assign_errors:
-      fix_errors:     "Corrigir erros de varredura"
-      document_info:  "Informação do documento"
-      copy_number:    "Numero de cópia"
-      page_number:    "Número de página"
-      upside_down:    "Página de cabeça para baixo?"
-
+      copy_number: Numero de cópia
+      document_info: Informação do documento
+      fix_errors: Corrigir erros de varredura
+      page_number: Número de página
+      upside_down: Página de cabeça para baixo?
     assign_scans:
-      done: "Todos os grupos foram atribuídos com sucesso a estudantes"
-      help: "Assign students to scanned exam groups based on printed student names."
-      skip_group: "Skip group"
-      title: "Atribuir varreduras"
-
+      done: Todos os grupos foram atribuídos com sucesso a estudantes
+      help: Assign students to scanned exam groups based on printed student names.
+      skip_group: Skip group
+      title: Atribuir varreduras
+    back_to_log_page: Voltar à página de log
+    create:
+      add_division: Adicionar divisão template
+      add_new: Adicionar modelo de exame
+      failure: Modelo de exame não criado com sucesso
+      success: Modelo de exame criado com sucesso
+      upload: Carregar o modelo
+    delete:
+      confirm: Tem certeza de que deseja excluir %{name}?
+      failure: Modelo de exame não foi excluído com sucesso
+      general: Apagar modelo de exame
+      success: Modelo de exame excluído com sucesso
+    download: Download do modelo de exame
+    generate:
+      copies_label: Número de cópias
+      generate: Gerar
+      generate_job_started: Gerando pdfs de exame para exame %{exam_name} começou
+      index_label: Índice inicial
+      success: "%{copies} cópias de exame geradas com sucesso"
+      title: Gerar cópias de exame
+    parsing:
+      general: Analise automaticamente as informações do aluno
+      save: Salve
+      title: Seleção automática de análise
+    split:
+      instruction: Carregar Exame PDF
+      invalid: Tipo de arquivo inválido
+      missing: Arquivo desaparecido
+      split: Dividido
+      success: Exame dividido com êxito
+      title: Exame dividido
+    split_pdf_log:
+      scan_error: Alguns arquivos não foram digitalizados corretamente.
+      view_logs: ver registros
+    update:
+      failure: Modelo de exame não foi atualizado com sucesso
+      instruction: Substitua o arquivo de modelo
+      success: Modelo de exame foi atualizado com sucesso
   flash:
     exam_templates:
-      update:
-        success: "Modelo de exame foi atualizado com sucesso"
-        error: "Modelo de exame não foi atualizado com sucesso"
       assign_errors:
-        success: "Todos os arquivos de erro foram atribuídos com sucesso"
+        success: Todos os arquivos de erro foram atribuídos com sucesso
+      update:
+        error: Modelo de exame não foi atualizado com sucesso
+        success: Modelo de exame foi atualizado com sucesso

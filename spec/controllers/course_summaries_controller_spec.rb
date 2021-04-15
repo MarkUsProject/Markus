@@ -11,6 +11,7 @@ describe CourseSummariesController do
       it 'be able to get a csv grade report' do
         assignments = create_list(:assignment_with_criteria_and_results, 3)
         create(:grouping_with_inviter_and_submission, assignment: assignments[0])
+        create(:grouping_with_inviter, assignment: assignments[0])
         csv_rows = get_as(@admin, :download_csv_grades_report, format: :csv).parsed_body
         expect(csv_rows.size).to eq(Student.count + 1) # one header row plus one row per student
 
@@ -35,7 +36,7 @@ describe CourseSummariesController do
               if student.has_accepted_grouping_for?(assignments[index])
                 grouping = student.accepted_grouping_for(assignments[index])
                 expect(!grouping.has_submission? ||
-                  assignments[index].max_mark == 0).to be_truthy
+                           assignments[index].max_mark == 0).to be_truthy
               end
             else
               grouping = student.accepted_grouping_for(assignments[index])
@@ -53,7 +54,7 @@ describe CourseSummariesController do
           user_name = grouping.students.first.user_name
           csv_rows = get_as(@admin, :download_csv_grades_report, format: :csv).parsed_body
           csv_rows.select { |r| r.first == user_name }
-                  .map { |r| expect(r.last).to eq(grouping.current_result.total_mark.to_s) }
+              .map { |r| expect(r.last).to eq(grouping.current_result.total_mark.to_s) }
         end
       end
     end
@@ -72,31 +73,35 @@ describe CourseSummariesController do
           @data = @response_data[:data]
         end
 
+        it 'displays column headers correctly' do
+          expect(@response_data[:assessments][0][:name]).to eq('A1 (/3.0)')
+        end
+
         it 'returns the correct grades' do
           expect(@data.length).to eq Student.count
           Student.find_each do |student|
             expected = {
-              id: student.id,
-              id_number: student.id_number,
-              user_name: student.user_name,
-              first_name: student.first_name,
-              last_name: student.last_name,
-              hidden: student.hidden,
-              assessment_marks: Hash[GradeEntryForm.all.map do |ges|
-                total_grade = ges.grade_entry_students.find_by(user: student).total_grade
-                out_of = ges.grade_entry_items.sum(:out_of)
-                percent = total_grade.nil? || out_of.nil? ? nil : (total_grade * 100 / out_of).round(2)
-                [ges.id.to_s.to_sym, {
-                  mark: total_grade,
-                  percentage: percent
-                }]
-              end
-              ]
+                id: student.id,
+                id_number: student.id_number,
+                user_name: student.user_name,
+                first_name: student.first_name,
+                last_name: student.last_name,
+                hidden: student.hidden,
+                assessment_marks: Hash[GradeEntryForm.all.map do |ges|
+                  total_grade = ges.grade_entry_students.find_by(user: student).total_grade
+                  out_of = ges.grade_entry_items.sum(:out_of)
+                  percent = total_grade.nil? || out_of.nil? ? nil : (total_grade * 100 / out_of).round(2)
+                  [ges.id.to_s.to_sym, {
+                      mark: total_grade,
+                      percentage: percent
+                  }]
+                end
+                ]
             }
             student.accepted_groupings.each do |g|
               expected[:assessment_marks][g.assessment_id.to_s.to_sym] = {
-                mark: g.current_result.total_mark,
-                percentage: (g.current_result.total_mark * 100 / g.assignment.max_mark).round(2).to_s
+                  mark: g.current_result.total_mark,
+                  percentage: (g.current_result.total_mark * 100 / g.assignment.max_mark).round(2).to_s
               }
             end
             expect(@data.map { |h| h.except(:weighted_marks) }).to include expected
@@ -109,13 +114,8 @@ describe CourseSummariesController do
           returned_averages = @response_data[:graph_data][:average]
           returned_medians = @response_data[:graph_data][:median]
           Assessment.all.order(id: :asc).each do |a|
-            if a.is_a? GradeEntryForm
-              averages << a.calculate_average&.round(2)
-              medians << a.calculate_median&.round(2)
-            else
-              averages << a.results_average&.round(2)
-              medians << a.results_median&.round(2)
-            end
+            averages << a.results_average&.round(2)
+            medians << a.results_median&.round(2)
           end
           MarkingScheme.all.each do |m|
             total = m.marking_weights.pluck(:weight).compact.sum
@@ -200,8 +200,8 @@ describe CourseSummariesController do
           averages = [nil, assignment.results_average&.round(2)]
           expected_assessment_marks = {}
           expected_assessment_marks[assignment.id.to_s] = {
-            'mark' => grouping.current_result.total_mark,
-            'percentage' => (grouping.current_result.total_mark * 100 / grouping.assignment.max_mark).round(2).to_s
+              'mark' => grouping.current_result.total_mark,
+              'percentage' => (grouping.current_result.total_mark * 100 / grouping.assignment.max_mark).round(2).to_s
           }
           get_as student, :populate, format: :json
           r = response.parsed_body
@@ -218,13 +218,13 @@ describe CourseSummariesController do
           populate
           expect(data.length).to eq 1
           expected = {
-            id: @student2.id,
-            id_number: @student2.id_number,
-            user_name: @student2.user_name,
-            first_name: @student2.first_name,
-            last_name: @student2.last_name,
-            hidden: @student2.hidden,
-            assessment_marks: {}
+              id: @student2.id,
+              id_number: @student2.id_number,
+              user_name: @student2.user_name,
+              first_name: @student2.first_name,
+              last_name: @student2.last_name,
+              hidden: @student2.hidden,
+              assessment_marks: {}
           }
           expect(data).to include expected
         end
@@ -237,13 +237,8 @@ describe CourseSummariesController do
             returned_averages = response_data[:graph_data][:average]
             returned_medians = response_data[:graph_data][:median]
             Assessment.all.order(id: :asc).each do |a|
-              if a.is_a? GradeEntryForm
-                averages << a.calculate_average&.round(2)
-                medians << nil
-              else
-                averages << a.results_average&.round(2)
-                medians << (a.display_median_to_students ? a.results_median&.round(2) : nil)
-              end
+              averages << a.results_average&.round(2)
+              medians << (a.display_median_to_students ? a.results_median&.round(2) : nil)
             end
             expect(returned_medians.compact).to be_empty
             expect(returned_averages.compact).to be_empty

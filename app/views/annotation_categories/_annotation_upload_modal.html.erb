@@ -12,7 +12,7 @@
     <%= javascript_include_tag 'upload_button_control.js',
                                id: 'annotation_upload',
                                upload_id: 'upload_file',
-                               button_id: 'button_upload' %>
+                               button_id: 'button_upload', nonce: true %>
     <p><%= file_field_tag :upload_file, required: true %></p>
     <div>
       <%= label_tag t('encoding') %>

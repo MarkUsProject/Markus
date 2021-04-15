@@ -1,44 +1,43 @@
+---
 en:
   automated_tests:
-    files: "Test Files"
-    loading_specs: "Tester settings are being loaded. Please refresh the page in a minute."
-    need_one_file: "You must submit at least one file in order to run tests."
-    need_group_for_test: "You must have a group to run tests."
-    need_submission: "Submissions must be collected before tests are run. Not all selected groupings had tests run."
-    run_tests: "Run tests"
-    stop_batch: "Stop batch"
-    stop_test: "Stop test"
-    student_tests: "Student-Run Tests"
-    testing_disabled: "Automated testing is not enabled for this assignment."
-    tests_running: "Running tests. Please refresh this page in a bit to view the results."
-    test_runs_status: "Test Runs Status"
-    test_runs_statuses:
-      cancelled: "cancelled"
-      complete: "complete"
-      in_progress: "in progress"
-      problems: "error"
-    title: "Automated Testing"
-    display_output_title: "Display test output to students?"
-    invalid_specs_file: "Settings file is not a valid json file"
-    specs_file_upload_message: "File must be a valid json file"
     display_output:
-      instructors: "Never display test output to students"
-      instructors_and_students: "Always display test output to students"
-      instructors_and_student_tests: "Only display test output to students for student-run tests"
-
-    # Test results
-    no_results: "No test results to display"
+      instructors: Never display test output to students
+      instructors_and_student_tests: Only display test output to students for student-run tests
+      instructors_and_students: Always display test output to students
+    display_output_title: Display test output to students?
+    files: Test Files
+    invalid_specs_file: Settings file is not a valid json file
+    loading_specs: Tester settings are being loaded. Please refresh the page in a minute.
+    need_group_for_test: You must have a group to run tests.
+    need_one_file: You must submit at least one file in order to run tests.
+    need_submission: Submissions must be collected before tests are run. Not all selected groupings had tests run.
+    no_results: No test results to display
     results:
-      all_tests: "All tests"
-      bad_marks_earned: "Earned marks are missing"
-      bad_marks_total: "Total marks are missing"
-      bad_results: "Test results are malformed: %{error}"
-      bad_server: "Server '%{hostname}' error: %{error}"
-      bad_status: "Unrecognized test status '%{status}'"
+      all_tests: All tests
+      bad_marks_earned: Earned marks are missing
+      bad_marks_total: Total marks are missing
+      bad_results: 'Test results are malformed: %{error}'
+      bad_server: 'Server ''%{hostname}'' error: %{error}'
+      bad_status: Unrecognized test status '%{status}'
       extra_hooks_stderr: "Hooks errors: \n%{extra}\n"
       extra_malformed: "Malformed results discarded by server: \n%{extra}\n"
       extra_raw_output: "Raw test run output: \n%{extra}\n"
       extra_stderr: "Messages on stderr: \n%{extra}\n"
-      no_tests: "Test results are empty"
+      no_tests: Test results are empty
       timeout: "%{seconds} seconds timeout expired (previous marks in this test script will not count)"
-      unknown_test: "Unknown test"
+      unknown_test: Unknown test
+    run_tests: Run tests
+    specs_file_upload_message: File must be a valid json file
+    stop_batch: Stop batch
+    stop_test: Stop test
+    student_tests: Student-Run Tests
+    test_runs_status: Test Runs Status
+    test_runs_statuses:
+      cancelled: cancelled
+      complete: complete
+      in_progress: in progress
+      problems: error
+    testing_disabled: Automated testing is not enabled for this assignment.
+    tests_running: Running tests. Please refresh this page in a bit to view the results.
+    title: Automated Testing

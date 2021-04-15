@@ -1,27 +1,24 @@
+---
 en:
-  download: "Download"
-  download_csv: "Download in CSV Format"
-  download_the: "Download %{item}"
-  download_yml: "Download in YML Format"
+  add_folder: Add Folder
+  download: Download
+  download_csv: Download in CSV Format
   download_errors:
-    unrecognized_format: "Could not recognize %{format} format to download with"
-
-  upload: "Upload"
-  upload_help_html: "
-    For information about the file format(s) supported, please visit
-    <a href=\"https://github.com/MarkUsProject/Markus/wiki/Instructor-Guide--Importing-and-Exporting-Data#%{section_id}\">this page</a>."
-  upload_the: "Upload %{item}"
+    unrecognized_format: Could not recognize %{format} format to download with
+  download_the: Download %{item}
+  download_yml: Download in YML Format
+  rename: Rename
+  upload: Upload
   upload_errors:
-    blank: "Uploaded file is blank."
-    invalid_csv_row_format: "Invalid row format"
-    invalid_rows: "The following CSV rows were invalid: "
-    malformed_csv: "The selected file was improperly formed. Please ensure the file meets MarkUs specifications."
-    syntax_error: "There is an error in the file you uploaded: %{error}"
-    unparseable_csv: "The selected file is not a CSV file (even though it may have a .csv extension)."
-  uploading_please_wait: "Uploading - please wait..."
-
+    blank: Uploaded file is blank.
+    invalid_csv_row_format: Invalid row format
+    invalid_rows: 'The following CSV rows were invalid: '
+    malformed_csv: The selected file was improperly formed. Please ensure the file meets MarkUs specifications.
+    syntax_error: 'There is an error in the file you uploaded: %{error}'
+    unparseable_csv: The selected file is not a CSV file (even though it may have a .csv extension).
+  upload_help_html: ' For information about the file format(s) supported, please visit <a href="https://github.com/MarkUsProject/Markus/wiki/Instructor-Guide--Importing-and-Exporting-Data#%{section_id}">this page</a>.'
   upload_success:
     one: "%{count} object successfully uploaded."
     other: "%{count} objects successfully uploaded."
-  add_folder: "Add Folder"
-  rename: "Rename"
+  upload_the: Upload %{item}
+  uploading_please_wait: Uploading - please wait...

@@ -91,12 +91,6 @@ class Assignment < Assessment
   validates_associated :submission_rule
   validates_presence_of :submission_rule
 
-  has_one :assignment_stat, dependent: :destroy, inverse_of: :assignment, foreign_key: :assessment_id
-  accepts_nested_attributes_for :assignment_stat, allow_destroy: true
-  validates_associated :assignment_stat
-  # Because of app/views/main/_grade_distribution_graph.html.erb:25
-  validates_presence_of :assignment_stat
-
   BLANK_MARK = ''
 
   # Copy of API::AssignmentController without selected attributes and order changed
@@ -278,30 +272,24 @@ class Assignment < Assessment
           .any?
   end
 
-  # calculates summary statistics of released results for this assignment
-  def update_results_stats
-    marks = Result.student_marks_by_assignment(id)
-    # No marks released for this assignment.
-    return false if marks.empty?
+  # Returns a list of total marks for each complete result for this assignment.
+  # There is one mark per grouping (not per student). Does NOT include:
+  #   - groupings with no submission
+  #   - incomplete results
+  #   - original results when a grouping has submitted a remark request that is not complete
+  def completed_result_marks
+    return @completed_result_marks if defined? @completed_result_marks
 
-    self.results_fails = marks.count { |mark| mark < max_mark / 2.0 }
-    self.results_zeros = marks.count(&:zero?)
-
-    # Avoid division by 0.
-    if max_mark.zero?
-      self.results_average = 0
-      self.results_median = 0
-    else
-      self.results_average = (DescriptiveStatistics.mean(marks) * 100 / max_mark).round(2)
-      self.results_median = (DescriptiveStatistics.median(marks) * 100 / max_mark).round(2)
-    end
-    self.save
+    @completed_result_marks = self.current_results
+                                  .where(marking_state: Result::MARKING_STATES[:complete])
+                                  .order(:total_mark)
+                                  .pluck(:total_mark)
   end
 
   def self.get_current_assignment
     # start showing (or "featuring") the assignment 3 days before it's due
-    # query uses Date.today + 4 because results from db seems to be off by 1
-    current_assignment = Assignment.where('due_date <= ?', Date.today + 4)
+    # query uses Date.current + 4 because results from db seems to be off by 1
+    current_assignment = Assignment.where('due_date <= ?', Date.current + 4)
                                    .reorder('due_date DESC').first
 
     if current_assignment.nil?
@@ -537,6 +525,10 @@ class Assignment < Assessment
     members = groupings.joins(:accepted_students)
                        .pluck_to_hash(:id, 'users.user_name', 'users.first_name', 'users.last_name')
                        .group_by { |x| x[:id] }
+    tag_data = groupings
+               .joins(:tags)
+               .pluck_to_hash(:id, 'tags.name')
+               .group_by { |h| h[:id] }
     groupings_with_results = groupings.includes(current_result: :marks).includes(:submitted_remark, :extension)
     result_ids = groupings_with_results.pluck('results.id').uniq.compact
     extra_marks_hash = Result.get_total_extra_marks(result_ids, max_mark: max_mark)
@@ -576,12 +568,15 @@ class Assignment < Assessment
                                .map { |s| [s['users.user_name'], s['users.first_name'], s['users.last_name']] }
       end
 
+      tag_info = tag_data.fetch(g.id, [])
+                         .map { |a| a['tags.name'] }
       criteria = result.nil? ? {} : result.mark_hash.select { |key, _| criteria_shown.include?(key) }
       extra_mark = extra_marks_hash[result&.id]
       {
         group_name: group_name,
         section: section,
         members: group_members,
+        tags: tag_info,
         graders: graders.fetch(g.id, [])
                         .map { |s| [s['users.user_name'], s['users.first_name'], s['users.last_name']] },
         marking_state: marking_state(has_remark,
@@ -669,47 +664,6 @@ class Assignment < Assessment
     criteria.count > 0 ? criteria.last.position + 1 : 1
   end
 
-  # Determine the total mark for a particular student, as a percentage
-  def calculate_total_percent(result, out_of)
-    total = result.total_mark
-
-    percent = BLANK_MARK
-
-    # Check for NA mark or division by 0
-    unless total.nil? || out_of == 0
-      percent = (total / out_of) * 100
-    end
-    percent
-  end
-
-  # An array of all the grades for an assignment
-  def percentage_grades_array
-    grades = Array.new
-    out_of = max_mark
-
-    groupings.includes(:current_result).each do |grouping|
-      result = grouping.current_result
-      unless result.nil? || result.total_mark.nil? || result.marking_state != Result::MARKING_STATES[:complete]
-        percent = calculate_total_percent(result, out_of)
-        grades.push(percent) unless percent == BLANK_MARK
-      end
-    end
-
-    return grades
-  end
-
-  # Returns grade distribution for a grade entry item for each student
-  def grade_distribution_array(intervals = 20)
-    data = percentage_grades_array
-    data.extend(Histogram)
-    histogram = data.histogram(intervals, :min => 1, :max => 100, :bin_boundary => :min, :bin_width => 100 / intervals)
-    distribution = histogram.fetch(1)
-    distribution[0] = distribution.first + data.count{ |x| x < 1 }
-    distribution[-1] = distribution.last + data.count{ |x| x > 100 }
-
-    return distribution
-  end
-
   # Returns all the TAs associated with the assignment
   def tas
     Ta.find(ta_memberships.map(&:user_id))
@@ -752,33 +706,22 @@ class Assignment < Assessment
 
   def get_num_marked(ta_id = nil)
     if ta_id.nil?
-      groupings.joins(:current_result).where('results.marking_state': 'complete').count
+      self.current_results.where(marking_state: Result::MARKING_STATES[:complete]).count
     else
       if is_criteria_mark?(ta_id)
-        n = 0
-        ta = Ta.find(ta_id)
-        num_assigned_criteria = ta.criterion_ta_associations.where(assignment: self).count
-        marked = ta.criterion_ta_associations
-                   .joins('INNER JOIN marks m ON criterion_ta_associations.criterion_id = m.criterion_id')
-                   .where('m.mark IS NOT NULL AND assessment_id = ?', self.id)
-                   .group('m.result_id')
-                   .count
-        ta_memberships.includes(grouping: :current_result)
-                      .where(user_id: ta_id)
-                      .where('groupings.is_collected': true).find_each do |t_mem|
-          next if t_mem.grouping.current_result.nil?
-          result_id = t_mem.grouping.current_result.id
-          num_marked = marked[result_id] || 0
-          if num_marked == num_assigned_criteria
-            n += 1
-          end
-        end
-        n
+        assigned_criteria = self.criteria.joins(:criterion_ta_associations)
+                                .where(criterion_ta_associations: { ta_id: ta_id })
+
+        self.current_results.joins(:marks, grouping: :ta_memberships)
+            .where('memberships.user_id': ta_id, 'marks.criterion_id': assigned_criteria.ids)
+            .where.not('marks.mark': nil)
+            .group('results.id')
+            .having('count(*) = ?', assigned_criteria.count)
+            .length
       else
-        groupings.joins(:ta_memberships)
-                 .where('memberships.user_id': ta_id)
-                 .joins(:current_result)
-                 .where('results.marking_state': 'complete').count
+        self.current_results.joins(grouping: :ta_memberships)
+            .where('memberships.user_id': ta_id, 'results.marking_state': 'complete')
+            .count
       end
     end
   end
@@ -842,8 +785,15 @@ class Assignment < Assessment
     end
   end
 
+  # Query for all current results for this assignment
   def current_results
-    groupings.includes(:current_result).map(&:current_result)
+    # The timestamps of all current results
+    subquery = self.groupings.joins(:current_result).group(:id)
+                   .select('groupings.id AS grouping_id', 'MAX(results.created_at) AS results_created_at').to_sql
+
+    Result.joins(:grouping)
+          .joins("INNER JOIN (#{subquery}) sub ON groupings.id = sub.grouping_id AND "\
+                 'results.created_at = sub.results_created_at')
   end
 
   # Returns true if this is a peer review, meaning it has a parent assignment,
@@ -882,7 +832,7 @@ class Assignment < Assessment
   ### REPO ###
 
   def starter_file_path
-    File.join(Rails.configuration.x.starter_file.storage, repository_folder)
+    File.join(Settings.starter_file.storage, repository_folder)
   end
 
   def default_starter_file_group
@@ -1301,7 +1251,6 @@ class Assignment < Assessment
             row[:assignment_properties_attributes][:token_period] = 1
             row[:assignment_properties_attributes][:unlimited_tokens] = false
             row[:submission_rule] = NoLateSubmissionRule.new
-            row[:assignment_stat] = AssignmentStat.new
           end
           assignment.update(row)
           unless assignment.id
@@ -1318,7 +1267,6 @@ class Assignment < Assessment
   def create_associations
     return unless self.new_record?
     self.assignment_properties ||= AssignmentProperties.new
-    self.assignment_stat ||= AssignmentStat.new
     self.submission_rule ||= NoLateSubmissionRule.new
   end
 end

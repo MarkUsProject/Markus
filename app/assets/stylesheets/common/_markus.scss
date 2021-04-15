@@ -3,7 +3,12 @@
 @import 'reset';
 @import 'constants';
 @import 'columns';
+@import 'file_viewer';
+@import 'login';
 @import 'mixins';
+@import 'modals';
+@import 'notes_dialog';
+@import 'annotations_dialog';
 @import 'icons';
 @import 'react_json_schema_form';
 @import 'react_tabs';
@@ -33,6 +38,8 @@ body {
 
 .flex-row-expand {
   flex-grow: 1;
+  height: 100%;
+  margin-left: 10px;
 }
 
 
@@ -151,6 +158,14 @@ strong a {
   background: transparent asset-url('icons/cross.png') no-repeat 5px center;
   float: right;
   width: 2em;
+}
+
+.no-display {
+  display: none;
+}
+
+.flex-display {
+  display: flex;
 }
 
 /** Text and number field inputs */
@@ -319,6 +334,21 @@ fieldset {
       }
     }
   }
+
+  fieldset.nested-fieldset {
+    border: 1px solid $primary-two;
+    border-radius: $radius;
+    padding: 1em;
+
+    legend {
+      width: auto;
+
+      span {
+        padding-top: 0;
+        position: static;
+      }
+    }
+  }
 }
 
 .inline-labels {
@@ -326,6 +356,10 @@ fieldset {
   display: grid;
   grid-template-columns: max-content max-content;
   row-gap: 10px;
+
+  &.required-file-wrapper {
+    padding-bottom: 0.75em;
+  }
 
   label {
     text-align: right;
@@ -431,6 +465,41 @@ fieldset {
   }
 }
 
+.table-with-add {
+  margin-left: 2.5em;
+  min-width: 500px;
+  width: 70%;
+
+  > a {
+    background-color: $background-support;
+    display: block;
+    padding: 10px;
+    text-align: center;
+    width: 100%;
+  }
+
+  table {
+    width: 100%;
+
+    td,
+    th {
+      padding: 10px;
+      text-align: left;
+    }
+
+    thead {
+      border-bottom: 1px solid $primary-two;
+    }
+  }
+}
+
+.grid-2-col {
+  column-gap: 10px;
+  display: grid;
+  grid-template-columns: max-content max-content;
+  row-gap: 1em;
+}
+
 // Keyboard shortcuts
 kbd {
   background-color: $background-main;
@@ -468,6 +537,22 @@ kbd {
 .pane-wrapper {
   display: flex;
 
+  .annotation-pane-wrapper {
+    width: 25%;
+  }
+
+  .criteria-pane-wrapper {
+    width: 37%;
+  }
+
+  &.mid-height {
+    height: calc(70vh);
+  }
+
+  &.small-bottom-margin {
+    margin-bottom: 1em;
+  }
+
   .pane {
     border: 1px solid $primary-three;
     border-radius: $radius;
@@ -481,6 +566,20 @@ kbd {
 
     &.highlight {
       background-color: $pane-highlight;
+    }
+
+    &.assignment-list-wrapper {
+      flex: 0.5;
+      width: 400px;
+    }
+
+    &.scrollable {
+      overflow-y: scroll;
+    }
+
+    &.slim-fixed {
+      flex: 0 auto;
+      width: 29.5%;
     }
 
     // TODO: decide whether to adopt this style more broadly
@@ -526,6 +625,14 @@ kbd {
   h4 {
     margin-bottom: 0.5em;
   }
+}
+
+.display-inline {
+  display: inline;
+}
+
+.display-inline-block {
+  display: inline-block;
 }
 
 .float-right {
@@ -613,6 +720,20 @@ kbd {
   }
 }
 
+// No-bullet lists
+.block-list {
+  padding-left: 0;
+
+  li {
+    list-style: none;
+    padding: 0.75em 0;
+
+    + li {
+      border-top: 1px solid $primary-two;
+    }
+  }
+}
+
 /** Tags */
 
 ul.tags {
@@ -673,6 +794,38 @@ ul.tags {
   }
 }
 
+.tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  list-style: none;
+  margin: 0 0 5px;
+  padding: 0;
+  text-align: left;
+
+  li {
+    background-color: $background-support;
+    border: 1px solid $primary-three;
+    border-radius: 15px;
+    color: $primary-one;
+    display: inline;
+    margin: 1px;
+    padding-left: 5px;
+    padding-right: 5px;
+    text-align: center;
+    transition: background-color 0.2s, color 0.2s;
+    white-space: nowrap;
+
+    &.active-tag {
+      cursor: pointer;
+
+      &:hover {
+        background-color: $primary-one;
+        color: $background-main;
+      }
+    }
+  }
+}
+
 .text-content {
   flex: 1;
 }
@@ -681,21 +834,14 @@ ul.tags {
   color: $severe-error;
 }
 
-.tag-element {
-  background-color: $background-support;
-  border: 1px solid $primary-three;
-  border-radius: 15px;
-  color: $primary-one;
-  cursor: pointer;
-  padding-left: 5px;
-  padding-right: 5px;
-  text-align: center;
-  transition: background-color 0.2s, color 0.2s;
-  white-space: nowrap;
+.error-with-icon {
+  color: $severe-error;
+  font-weight: bold;
 
-  &:hover {
-    background-color: $primary-one;
-    color: $background-main;
+  &::before {
+    content: asset-url('icons/error.png');
+    padding-right: 10px;
+    vertical-align: top;
   }
 }
 
@@ -741,11 +887,17 @@ ul.tags {
     margin-bottom: 0.5em;
   }
 
+  h3 {
+    margin-bottom: 0.4em;
+    margin-top: 0.4em;
+  }
+
   textarea {
     width: 100%;
   }
 
   .preview {
+    height: 10em;
     max-height: 10em;
   }
 }
@@ -970,6 +1122,11 @@ nav {
   position: relative;  // For image annotations
 }
 
+#crop-target {
+  border: 1px solid black;
+  max-width: 400px;
+}
+
 // Text editing and previews
 .preview {
   border: 1px dashed $primary-two;
@@ -1018,13 +1175,13 @@ nav {
     min-width: 100px;
     padding: 0.4em;
   }
+}
 
-  meter {
-    height: 30px;
-    margin: 0 8px;
-    vertical-align: middle;
-    width: 150px;
-  }
+.progress meter {
+  height: 30px;
+  margin: 0 8px;
+  vertical-align: middle;
+  width: 150px;
 }
 
 .group-name {
@@ -1089,4 +1246,78 @@ nav {
 .flex-col {
   display: flex;
   flex-direction: column;
+}
+
+// Jcrop styling
+.jcrop-holder,
+.jcrop-holder div {
+  margin: 0;
+}
+
+// Styling for criteria/index.html
+.edit-rubric-criterion {
+  display: flex;
+  gap: 1em;
+
+  .rubric-criteria-levels {
+    border-left: 1px solid $line;
+
+    .level {
+      border-top: 1px solid $line;
+      padding: 0.5em;
+    }
+  }
+}
+
+// Styling for annotation_categories/index.html
+.annotation-text-details {
+  display: inline-block;
+  font-style: italic;
+  min-width: 200px;
+}
+
+// Styling for grade entry form inputs
+.grade-input {
+  > input[type="number"] {
+    -moz-appearance: textfield;
+    -webkit-appearance: textfield;
+    border-width: 0;
+    height: calc(100% + 2px);
+    padding-right: 0.75em;
+    text-align: right;
+    width: 100%;
+  }
+}
+
+// Styling for peer_reviews/index.html
+.peer-review-amount-spinner {
+  background-color: $background-support;
+  border: $line 1px solid;
+  padding: 5px;
+
+  input {
+    margin-left: 5px;
+  }
+}
+
+// Styling for grade_entry_forms/_form.html
+
+.grade-entry-items-wrapper {
+  margin-top: 1em;
+}
+
+.add-new-button-wrapper {
+  float: right;
+}
+
+// Styling for graphs
+
+.ta-grade-distribution-graph-wrapper {
+  display: inline-block;
+  width: 400px;
+}
+
+#gef_data_chart {
+  padding-bottom: 0;
+  text-align: center;
 }

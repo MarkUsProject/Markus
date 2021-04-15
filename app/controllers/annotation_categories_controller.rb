@@ -9,10 +9,16 @@ class AnnotationCategoriesController < ApplicationController
 
   responders :flash
 
+  content_security_policy only: :index do |p|
+    # required because MathJax dynamically changes
+    # style. # TODO: remove this when possible
+    p.style_src :self, "'unsafe-inline'"
+  end
+
   def index
     @assignment = Assignment.find(params[:assignment_id])
-    @annotation_categories = @assignment.annotation_categories.order(:position)
-                                        .includes(:assignment, :annotation_texts)
+    @annotation_categories = AnnotationCategory.visible_categories(@assignment, current_user)
+                                               .includes(:assignment, :annotation_texts)
     respond_to do |format|
       format.html
       format.json {
@@ -285,7 +291,25 @@ class AnnotationCategoriesController < ApplicationController
   end
 
   def uncategorized_annotations
+    @assignment = Assignment.find(params[:assignment_id])
     @texts = annotation_text_data(nil)
+    respond_to do |format|
+      format.js {}
+      format.json { render json: @texts }
+      format.csv do
+        data = MarkusCsv.generate(
+          @texts
+        ) do |text|
+          row = [text[:group_name], text[:last_editor], text[:creator], text[:content]]
+          row
+        end
+        filename = "#{@assignment.short_identifier}_one_time_annotations.csv"
+        send_data data,
+                  disposition: 'attachment',
+                  type: 'text/csv',
+                  filename: filename
+      end
+    end
   end
 
   private

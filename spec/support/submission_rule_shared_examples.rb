@@ -1,5 +1,5 @@
 shared_context 'submission_rule' do
-  let(:due_date) { Time.parse('July 23 2009 5:00PM') }
+  let(:due_date) { Time.zone.parse('July 23 2009 5:00PM') }
   let(:assignment) { create :assignment, due_date: due_date }
   let(:grouping) { create :grouping_with_inviter, assignment: assignment }
   let(:rule) { create rule_type, assignment: assignment }

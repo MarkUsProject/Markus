@@ -455,7 +455,7 @@
     var $textSpan = null;
 
     function createTextNode() {
-      var text = marked(annotation.getContent(), {sanitize: true});
+      var text = safe_marked(annotation.getContent());
 
       return $('<div />').addClass('annotation_text_display')
                          .html(text);

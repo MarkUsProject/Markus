@@ -9,8 +9,7 @@ class TestRun < ApplicationRecord
                                                        allow_nil: true }
   validates :time_to_service, numericality: { greater_than_or_equal_to: -1, only_integer: true, allow_nil: true }
 
-  ASSIGNMENTS_DIR = File.join(Rails.configuration.x.autotest.client_dir, 'assignments').freeze
-  STUDENTS_DIR = File.join(Rails.configuration.x.autotest.client_dir, 'students').freeze
+  ASSIGNMENTS_DIR = File.join(Settings.autotest.client_dir, 'assignments').freeze
   SPECS_FILE = 'specs.json'.freeze
   FILES_DIR = 'files'.freeze
   STATUSES = {
@@ -161,7 +160,7 @@ class TestRun < ApplicationRecord
     hooks_error_all = json_root['hooks_error'] || ''
     unless server_error.blank?
       self.problems = I18n.t('automated_tests.results.bad_server',
-                             hostname: Rails.configuration.x.autotest.server_host, error: server_error) +
+                             hostname: Settings.autotest.server_host, error: server_error) +
                       I18n.t('automated_tests.results.extra_raw_output', extra: test_output)
       save
       return

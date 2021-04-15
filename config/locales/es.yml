@@ -1,79 +1,56 @@
+---
 es:
-    csv_upload_user_duplicate:           "Se ha detectado un nombre de usuario duplicado: %{user_name}"
-
-    csv:
-      repo_collision_warning: "Precaución: El repositorio con nombre '%{repo_name}' ya existe. El nombre del grupo
-                               era: '%{group_name}'."
-      group_with_different_membership_current_assignment:   "Error: El grupo %{group_name} no puede ser creado debido a
-                                                             que un grupo con el mismo nombre pero con diferentes
-                                                             membresías ya existe para el proyecto"
-      group_with_different_membership_different_assignment: "Error: El grupo %{group_name} no puede ser creado debido a
-                                                             que un grupo con el mismo nombre pero con diferentes
-                                                             membresías ya existe para un proyecto diferente"
-      memberships_not_unique:                               "El estudiante ya pertenece a un grupo diferente para el proyecto"
-      member_does_not_exist:                                "Error: El grupo %{group_name} no puede ser creado debido
-                                                             a que ningún estudiante tiene como nombre de usuario
-                                                             '%{student_user_name}'"
-      bad_cell: "UPDATE ME: %{bad_cells}"
-      duplicate_group_name: "UPDATE ME: %{group_names}"
-      duplicate_repo_name: "UPDATE ME: %{repo_names}"
-      duplicate_membership_name: "UPDATE ME: %{member_names}"
-      bad_repo_warning: "UPDATE ME: %{group_names}"
-      bad_membership_warning: "UPDATE ME: %{group_names}"
-      bad_students: "UPDATE ME: %{student_names}"
-      memberships_exist: "UPDATE ME: %{student_names}"
-
-    #Student's View (student)
-    student:
-      submission:
-        conflicts:                        "Conflictos"
-        file_conflicts:                   "Sus cambios no han sido realizados. Los siguientes conflictos fueron
-                                           detectados:"
-        missing_files:                    "Usted todavía necesita subir %{file} archivo(s) requeridos para este
-                                           proyecto:"
-        no_action_detected:               "No se ha detectado niguna acción en el último envío. Nada ha cambiado."
-        external_submit_only:             "MarkUs solo aceptará envíos externos por el momento"
-        invalid_file_name:                "El nombre del archivo enviado no es válido"
-        missing_file:                     "No se pudo descargar %{file_name}. Puede que el archivo no haya
-                                           sido encontrado."
-        empty_file_warning: "UPDATE ME"
-
-    submission_file:
-      error:
-        no_access:           "No se pudo acceder el archivo con id #%{submission_file_id}."
-
-    #app/views/job_messages/_job_poller.js.erb
-    job_poller:
-      processing_message:          "Procesando:"
-      processing_message_error:    "El procesamiento falló:"
-
-    #lib/validators/
-    date_validator:
-      invalid_date: "no es una fecha válida"
-
-    poll_job:
-      working_message: "%{progress} fuera de %{total}"
-      queued: "En cola"
-      not_enqueued: "No en cola"
-      completed: "Terminado"
-      failed: "Ha fallado"
-      split_pdf_job: "Procesamiento página %{progress} fuera de %{total} para %{exam_name}"
-      generate_job: "Generación de la copia %{progress} de %{total} para %{exam_name}"
-      create_groups_job: "%{progress}/%{total} grupos creados"
-      create_groups_job_extra_info: "Ha fallado: %{group_name}, %{repo_name}, %{members}"
-      uncollect_submissions_job: "Asignaciones incumplidas... "
-      submissions_job: "%{progress}/%{total} Envíos recibidos"
-      download_submissions_job: "%{progress}/%{total} UPDATE ME"
-      download_submissions_finalizing: "UPDATE ME"
-      download_submissions_complete: "UPDATE ME"
-      update_repo_required_files_job: "%{progress}/%{total} UPDATE ME"
-      autotest_run_job_enqueuing: "UPDATE ME"
-      autotest_specs_job: "UPDATE ME"
-    repo:
-      commits:
-        assignment_folder: "UPDATE ME %{assignment}"
-        initial: "UPDATE ME"
-        default: "UPDATE ME"
-        required_files: "UPDATE ME %{assignment}"
-      timeout: 'UPDATE ME %{ms}'
-      assignment_dir_creation_error: "UPDATE ME %{short_identifier}"
+  csv:
+    bad_cell: 'UPDATE ME: %{bad_cells}'
+    bad_membership_warning: 'UPDATE ME: %{group_names}'
+    bad_students: 'UPDATE ME: %{student_names}'
+    duplicate_group_name: 'UPDATE ME: %{group_names}'
+    duplicate_membership_name: 'UPDATE ME: %{member_names}'
+    member_does_not_exist: 'Error: El grupo %{group_name} no puede ser creado debido a que ningún estudiante tiene como nombre de usuario ''%{student_user_name}'''
+    memberships_exist: 'UPDATE ME: %{student_names}'
+    memberships_not_unique: El estudiante ya pertenece a un grupo diferente para el proyecto
+    repo_collision_warning: 'Precaución: El repositorio con nombre ''%{repo_name}'' ya existe. El nombre del grupo era: ''%{group_name}''.'
+  csv_upload_user_duplicate: 'Se ha detectado un nombre de usuario duplicado: %{user_name}'
+  date_validator:
+    invalid_date: no es una fecha válida
+  job_poller:
+    processing_message: 'Procesando:'
+    processing_message_error: 'El procesamiento falló:'
+  poll_job:
+    autotest_run_job_enqueuing: UPDATE ME
+    autotest_specs_job: UPDATE ME
+    completed: Terminado
+    create_groups_job: "%{progress}/%{total} grupos creados"
+    download_submissions_complete: UPDATE ME
+    download_submissions_finalizing: UPDATE ME
+    download_submissions_job: "%{progress}/%{total} UPDATE ME"
+    failed: Ha fallado
+    generate_job: Generación de la copia %{progress} de %{total} para %{exam_name}
+    not_enqueued: No en cola
+    queued: En cola
+    split_pdf_job: Procesamiento página %{progress} fuera de %{total} para %{exam_name}
+    submissions_job: "%{progress}/%{total} Envíos recibidos"
+    uncollect_submissions_job: 'Asignaciones incumplidas... '
+    update_repo_required_files_job: "%{progress}/%{total} UPDATE ME"
+    working_message: "%{progress} fuera de %{total}"
+  repo:
+    assignment_dir_creation_error: UPDATE ME %{short_identifier}
+    commits:
+      assignment_folder: UPDATE ME %{assignment}
+      default: UPDATE ME
+      initial: UPDATE ME
+      required_files: UPDATE ME %{assignment}
+    timeout: UPDATE ME %{ms}
+  student:
+    submission:
+      conflicts: Conflictos
+      empty_file_warning: UPDATE ME
+      external_submit_only: MarkUs solo aceptará envíos externos por el momento
+      file_conflicts: 'Sus cambios no han sido realizados. Los siguientes conflictos fueron detectados:'
+      invalid_file_name: El nombre del archivo enviado no es válido
+      missing_file: No se pudo descargar %{file_name}. Puede que el archivo no haya sido encontrado.
+      missing_files: 'Usted todavía necesita subir %{file} archivo(s) requeridos para este proyecto:'
+      no_action_detected: No se ha detectado niguna acción en el último envío. Nada ha cambiado.
+  submission_file:
+    error:
+      no_access: 'No se pudo acceder el archivo con id #%{submission_file_id}.'

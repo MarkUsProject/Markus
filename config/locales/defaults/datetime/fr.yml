@@ -1,36 +1,32 @@
+---
 fr:
   date:
+    before_now_warning: La date que vous avez choisie est antérieure à la date actuelle.
     format_string:
-      default: "DD d MM yy"
-      placeholder: "AAAA-JJ-MM"
-      datetimepicker: "yy-dd-mm"
-
-    before_now_warning: "La date que vous avez choisie est antérieure à la date actuelle."
-
-  time:
-    formats:
-      default: "%A %d %B %Y %H:%M:%S %Z"
-
-    format_string:
-      js:          "YYYY-DD-MM h:mm A"
-      placeholder: "AAAA-JJ-MM H:MM AM/PM"
-      time_only: "h:mm TT"
-
-    next:   "Suivante"
-    prev:   "Précédente"
-
+      datetimepicker: yy-dd-mm
+      default: DD d MM yy
+      placeholder: AAAA-JJ-MM
   durations:
-    any_minutes: minute(s)
     any_hours: heur(s)
-    minutes:
-      one: minute
-      other: minutes
-    hours:
-      one: heur
-      other: heurs
+    any_minutes: minute(s)
     days:
       one: jour
       other: jours
+    hours:
+      one: heur
+      other: heurs
+    minutes:
+      one: minute
+      other: minutes
     weeks:
       one: semaine
       other: semaines
+  time:
+    format_string:
+      js: YYYY-DD-MM h:mm A
+      placeholder: AAAA-JJ-MM H:MM AM/PM
+      time_only: h:mm TT
+    formats:
+      default: "%A %d %B %Y %H:%M:%S %Z"
+    next: Suivante
+    prev: Précédente

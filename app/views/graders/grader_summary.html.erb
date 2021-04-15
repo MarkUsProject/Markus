@@ -9,7 +9,7 @@
 <% end %>
 
 <% @assignment.tas.each do |ta| %>
-  <div style="width: 400px; display: inline-block;">
+  <div class="ta-grade-distribution-graph-wrapper">
     <%= render partial: 'graders/ta_grade_distribution_graph',
                locals: { assignment: @assignment, tas: [ta] } %>
   </div>

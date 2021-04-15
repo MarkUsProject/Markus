@@ -39,7 +39,30 @@ FactoryBot.define do
         result.update_total_mark
         result.update(marking_state: Result::MARKING_STATES[:complete])
       end
-      a.update_results_stats
+    end
+  end
+
+  factory :assignment_with_criteria_and_results_with_remark, parent: :assignment do
+    after(:create) do |a|
+      3.times { create(:flexible_criterion, assignment: a) }
+      3.times { create(:grouping_with_inviter_and_submission, assignment: a) }
+      a.groupings.each_with_index do |grouping, i|
+        result = grouping.current_result
+        result.marks.each do |mark|
+          mark.update(mark: mark.criterion.max_mark - 1)
+        end
+        result.update_total_mark
+        result.update!(marking_state: Result::MARKING_STATES[:complete], created_at: 1.minute.ago)
+        if i.zero?
+          grouping.current_submission_used.make_remark_result
+          remark_result = grouping.current_submission_used.current_result
+          remark_result.marks.each do |mark|
+            mark.update!(mark: mark.criterion.max_mark)
+          end
+          remark_result.update_total_mark
+          remark_result.update!(marking_state: Result::MARKING_STATES[:complete])
+        end
+      end
     end
   end
 

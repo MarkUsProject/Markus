@@ -1,9 +1,10 @@
+---
 pt:
   activerecord:
-    models:
-      annotation_category:
-        one: "Categorias de anotação"
     attributes:
       annotation_category:
-        annotation_category_name: "Nome da categoria"
-        flexible_criterion: 'UPDATE ME'
+        annotation_category_name: Nome da categoria
+        flexible_criterion: UPDATE ME
+    models:
+      annotation_category:
+        one: Categorias de anotação

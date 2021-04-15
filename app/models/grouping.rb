@@ -688,13 +688,13 @@ class Grouping < ApplicationRecord
   end
 
   def test_runs_instructors(submission)
-    filtered = filter_test_runs(filters: { 'users.type': 'Admin', 'test_runs.submission': submission })
+    filtered = filter_test_runs(filters: { 'users.type': %w[Admin Ta], 'test_runs.submission': submission })
     plucked = Grouping.pluck_test_runs(filtered)
     Grouping.group_hash_list(plucked)
   end
 
   def test_runs_instructors_released(submission)
-    filtered = filter_test_runs(filters: { 'users.type': 'Admin', 'test_runs.submission': submission })
+    filtered = filter_test_runs(filters: { 'users.type': %w[Admin Ta], 'test_runs.submission': submission })
     latest_test_group_results = filtered.pluck_to_hash('test_groups.id as tgid',
                                                        'test_group_results.id as tgrid',
                                                        'test_group_results.created_at as date')
@@ -743,7 +743,7 @@ class Grouping < ApplicationRecord
   # Checks whether a student test using tokens is currently being enqueued for execution
   # (with buffer time in case of unhandled errors that prevented test results to be stored)
   def student_test_run_in_progress?
-    buffer_time = Rails.configuration.x.autotest.student_test_buffer
+    buffer_time = Settings.autotest.student_test_buffer_minutes.minutes
     last_student_run = test_runs_students_simple.first
     if last_student_run.nil? || # first test
       (last_student_run.created_at + buffer_time) < Time.current || # buffer time expired (for unhandled problems)

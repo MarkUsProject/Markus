@@ -3,11 +3,11 @@
 <head>
   <%= render partial: 'layouts/head' %>
   <title><%= t(:markus) %> - <%= controller.action_name %></title>
-  <%= javascript_pack_tag 'application' %>
-  <%= javascript_include_tag 'application' %>
-  <%= javascript_include_tag 'menu' %>
-  <% unless Rails.configuration.remote_user_auth %>
-    <%= javascript_include_tag 'check_timeout' %>
+  <%= javascript_pack_tag 'application', nonce: true %>
+  <%= javascript_include_tag 'application', nonce: true %>
+  <%= javascript_include_tag 'menu', nonce: true %>
+  <% unless Settings.remote_user_auth %>
+    <%= javascript_include_tag 'check_timeout', nonce: true %>
   <% end %>
   <%= yield :head %>
 </head>

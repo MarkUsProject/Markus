@@ -1,21 +1,37 @@
+<%= javascript_tag nonce: true do %>
+  $(function() {
+    $('#annotation-text-details-edit-<%= annotation_text[:id] %>').click(function(e) {
+      $('#annotation_text_' + '<%= annotation_text[:id] %>' + '_control').hide();
+      $('#annotation_text_' + '<%= annotation_text[:id] %>' + '_edit').show();
+      e.preventDefault();
+    });
+    $('#annotation-text-edit-<%= annotation_text[:id] %>').on("reset", function(e) {
+      $('#annotation_text_' + '<%= annotation_text[:id] %>' + '_edit').hide();
+      $('#annotation_text_' + '<%= annotation_text[:id] %>' + '_control').show();
+      e.preventDefault();
+    });
+  })
+<% end %>
+
 <li id='annotation_text_<%= annotation_text[:id] %>'>
-  <div id='annotation_text_<%= annotation_text[:id] %>_control' style="word-break: break-all">
+  <div id='annotation_text_<%= annotation_text[:id] %>_control' class="word-break-all">
     <%= markdown(annotation_text[:content]) %>
 
-    <div class='annotation_text_details'>
+    <div class='annotation-text-details'>
       <%= link_to t(:edit),
-                  'javascript:void(0);',
-                  onclick:"$('#annotation_text_' + #{annotation_text[:id]} + '_control').hide();
-                  $('#annotation_text_' + #{annotation_text[:id]} + '_edit').show();",
-        class: 'button inline-button' %>
+                  '#',
+                  id: "annotation-text-details-edit-#{annotation_text[:id]}",
+                  key: annotation_text[:id],
+                  class: 'button inline-button' %>
       <%= button_to t(:delete),
                     destroy_annotation_text_assignment_annotation_categories_path(id: annotation_text[:id]),
                     method: 'delete',
                     data: { confirm: t('annotation_categories.destroy_annotation_text.confirm') },
                     remote: true,
-                    class: 'inline-button' %>
+                    class: 'inline-button',
+                    form_class: 'display-inline-block' %>
     </div>
-    <div class='annotation_text_details'>
+    <div class='annotation-text-details'>
       <%= AnnotationText.human_attribute_name(:creator) %>
       <% if annotation_text[:creator].nil? %>
         <%= 'N/A' %>
@@ -23,7 +39,7 @@
         <%= annotation_text[:creator] %>
       <% end %>
     </div>
-    <div class='annotation_text_details'>
+    <div class='annotation-text-details'>
       <%= t('annotations.last_edited_by') %>
       <% if annotation_text[:last_editor].nil? %>
         <%= 'N/A' %>
@@ -32,13 +48,13 @@
       <% end %>
     </div>
     <% unless annotation_text[:deduction].nil?  %>
-      <div class='annotation_text_details'>
+      <div class='annotation-text-details'>
         <%= AnnotationText.human_attribute_name(:deduction) %>
         <%= annotation_text[:deduction] %>
       </div>
     <% end %>
     <% if annotation_text[:annotation_category].nil? %>
-      <div class='annotation_text_details'>
+      <div class='annotation-text-details'>
         <%= t('activerecord.models.submission', {'count': 1}) + ': ' %>
         <%= link_to annotation_text[:group_name],
                     edit_assignment_submission_result_url(assignment_id: annotation_text[:assignment_id],
@@ -50,9 +66,10 @@
     <% end %>
   </div>
 
-  <div id='annotation_text_<%= annotation_text[:id] %>_edit' style='display:none;'>
+  <div id='annotation_text_<%= annotation_text[:id] %>_edit' class="no-display">
     <%= form_with url: update_annotation_text_assignment_annotation_categories_path(id: annotation_text[:id]),
                   method: 'put',
+                  id: "annotation-text-edit-#{annotation_text[:id]}",
                   remote: true do |f| %>
       <p>
         <%= f.text_area :content, cols: 50, rows: 5, value: annotation_text[:content], id: "annotation_text_content" %>
@@ -75,16 +92,14 @@
         <%= f.submit t(:save) , data: { disable_with: t('working') } %>
 
         <input type='reset'
-               value='<%= t(:cancel) %>'
-               onclick="$('#annotation_text_' + <%= annotation_text[:id] %> + '_edit').hide();
-                        $('#annotation_text_' + <%= annotation_text[:id] %> + '_control').show();">
+               value='<%= t(:cancel) %>'>
       </p>
     <% end %>
   </div>
 </li>
 
 <% unless annotation_text[:annotation_category].nil? %>
-  <script>
+  <%= javascript_tag nonce: true do %>
     (() => {
       let usagePanel = document.getElementById('annotation-text-' + <%= annotation_text[:id] %> + '-usage-panel');
       window.AnnotationUsagePanel = window.makeAnnotationUsagePanel(
@@ -96,5 +111,5 @@
         }
       );
     })();
-  </script>
+  <% end %>
 <% end %>

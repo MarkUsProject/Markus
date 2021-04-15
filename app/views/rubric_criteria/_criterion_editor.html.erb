@@ -2,7 +2,7 @@
   <%= link_to t('rubric_criteria.level.add'),
               '#',
               class: 'button',
-              onclick: 'add_level("rubric_form");' + 'return false;' %>
+              id: 'add-criterion-level' %>
 
   <%= button_to "#{t(:delete)} #{Criterion.model_name.human}",
                 assignment_criterion_path(assignment_id: criterion.assignment.id,
@@ -10,6 +10,7 @@
                 data: { confirm: t('helpers.confirm.delete', model: Criterion.model_name.human) },
                 method: :delete,
                 class: 'delete',
+                form_class: 'display-inline-block',
                 title: t('helpers.submit.delete', model: Criterion.model_name.human),
                 remote: true %>
 </div>
@@ -59,7 +60,7 @@
     <p><%= f.submit t(:save), data: { disable_with: t('working') } %></p>
   </div>
 
-  <div class='rubric_criteria_levels'>
+  <div class='rubric-criteria-levels'>
     <%= render partial: 'rubric_criteria/rubric_criterion_levels',
                locals: { criterion: criterion,
                          f: f } %>

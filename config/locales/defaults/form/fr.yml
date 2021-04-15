@@ -1,12 +1,12 @@
+---
 fr:
-  uncommitted_changes_warning: "Les changements n'ont pas encore été enregistrés. Êtes-vous sûr de vouloir continuer ?"
-  optional: "optionnel"
-  required_fields: "Champs obligatoires"
-
   helpers:
     confirm:
-      delete: "Êtes-vous sûr de vouloir supprimer ce %{model} ?"
+      delete: Êtes-vous sûr de vouloir supprimer ce %{model} ?
     submit:
-      create: "Créer %{model}"
-      update: "Update %{model}"
-      delete: "Supprimer ce %{model}"
+      create: Créer %{model}
+      delete: Supprimer ce %{model}
+      update: Update %{model}
+  optional: optionnel
+  required_fields: Champs obligatoires
+  uncommitted_changes_warning: Les changements n'ont pas encore été enregistrés. Êtes-vous sûr de vouloir continuer ?

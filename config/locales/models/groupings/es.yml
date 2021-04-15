@@ -1,5 +1,6 @@
+---
 es:
   activerecord:
     attributes:
       grouping:
-        test_tokens: "Fichas disponibles"
+        test_tokens: Fichas disponibles

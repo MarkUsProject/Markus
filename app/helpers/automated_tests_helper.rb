@@ -101,8 +101,8 @@ module AutomatedTestsHelper
   end
 
   def run_autotester_command(command, server_kwargs)
-    server_username = Rails.configuration.x.autotest.server_username
-    server_command = Rails.configuration.x.autotest.server_command
+    server_username = Settings.autotest.server_username
+    server_command = Settings.autotest.server_command
     output = ''
     if server_username.nil?
       # local cancellation with no authentication
@@ -113,7 +113,7 @@ module AutomatedTestsHelper
       end
     else
       # local or remote cancellation with authentication
-      server_host = Rails.configuration.x.autotest.server_host
+      server_host = Settings.autotest.server_host
       Net::SSH.start(server_host, server_username, auth_methods: ['publickey']) do |ssh|
         args = "#{server_command} #{command} -j '#{JSON.generate(server_kwargs)}'"
         output = ssh.exec!(args)
@@ -128,7 +128,7 @@ module AutomatedTestsHelper
   private
 
   def server_api_key
-    server_host = Rails.configuration.x.autotest.server_host
+    server_host = Settings.autotest.server_host
     server_user = TestServer.find_or_create_by(user_name: server_host) do |user|
       user.first_name = 'Autotest'
       user.last_name = 'Server'

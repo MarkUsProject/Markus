@@ -1,22 +1,22 @@
+---
 en:
   key_pairs:
-    add_key_pair: "Add an SSH Key"
-    back: "Back"
-    copy_paste_key: "Copy and paste your public key"
+    add_key_pair: Add an SSH Key
+    back: Back
+    copy_paste_key: Copy and paste your public key
     create:
-      invalid_key: "Upload failed: Invalid key"
-      success: "SSH Key was uploaded successfully"
-    create_key_pair: "Upload SSH Key"
+      invalid_key: 'Upload failed: Invalid key'
+      success: SSH Key was uploaded successfully
+    create_key_pair: Upload SSH Key
     delete:
-      success: "SSH Key was deleted successfully"
-    file: "File"
+      success: SSH Key was deleted successfully
+    file: File
     help:
-      macOS_linux: "Instructions for users on macOS/Linux"
-      windows: "Instructions for users on Windows"
-    key_content: "Key Content"
-    key_pairs_title: "Your SSH Keys"
-    or: "OR"
-    new_key_pair: "Add New SSH Key"
-    remove_key: "Remove SSH Key"
-    time_of_upload: "Time Of Upload"
-
+      macOS_linux: Instructions for users on macOS/Linux
+      windows: Instructions for users on Windows
+    key_content: Key Content
+    key_pairs_title: Your SSH Keys
+    new_key_pair: Add New SSH Key
+    or: OR
+    remove_key: Remove SSH Key
+    time_of_upload: Time Of Upload

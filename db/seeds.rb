@@ -1,8 +1,8 @@
 # clean up existing repos first
-if Dir.exists?(Rails.configuration.x.repository.storage)
-  FileUtils.rm_rf(Dir.glob(File.join(Rails.configuration.x.repository.storage, '*')))
+if Dir.exists?(Settings.repository.storage)
+  FileUtils.rm_rf(Dir.glob(File.join(Settings.repository.storage, '*')))
 else
-  FileUtils.mkdir_p(Rails.configuration.x.repository.storage)
+  FileUtils.mkdir_p(Settings.repository.storage)
 end
 
 FileUtils.mkdir_p('tmp')

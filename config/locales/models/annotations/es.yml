@@ -1,8 +1,9 @@
+---
 es:
   activerecord:
-    models:
-      annotation:
-        one: "Anotación"
     attributes:
       annotation:
-        creator: "Creado Por:"
+        creator: 'Creado Por:'
+    models:
+      annotation:
+        one: Anotación

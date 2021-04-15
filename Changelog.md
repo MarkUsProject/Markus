@@ -1,4 +1,40 @@
 # Changelog
+## [v1.12.0]
+- Remove annotations context menu from peer assignments view (#5116)
+- Change 'Next' and 'Previous' submission button to use partial reloads (#5082)
+- Add time zone validations (#5060)
+- Add time zone to settings (#4938)
+- Move configuration options to settings yaml files (#5061)
+- Removed server_time information in submissions_controller.rb and server_time? from submission_policy.rb (#5071)
+- Add rake tasks to un/archive all stateful files from a MarkUs instance (#5069)
+- Fix bug where zip files with too many entries could not be uploaded (#5080)
+- Add button to assignment's annotations tab to allow instructor to download one time annotations (#5088)
+- Removed AssignmentStats table (#5089)
+- Display assignment totals on the grade summary table rounded up to 2 decimal places (#5123)
+- Removed results_average, results_median, results_fails, results_zeros cached stats (#5131)
+- Do not allow users to set repo names by uploading csv files (#5132)
+- Added a delete button to notes dialog under an results edit view and removed user_can_modify under note model,
+  removed Notes#user_can_modify and replaced instances of usage with NotePolicy (#5128)
+- Support Markdown syntax for assessment messages (#5135)
+- Remove controller-specific css files (#5136)
+- Replace non-UTF8 characters in text file preview (#5156)
+- Rollback group creation if error is raised when creating a group for a working-alone student (#5169)
+- Prevent deletion/modification of annotation texts associated with a result with a pending remark request (#5170)
+- Enhancing student submission log with required assignment file info, file size (fixes issue 5171) (#5188)
+- Ensure that browsers cache the correct state of overall comments when marking (#5173)
+- Ensure that graders are shown the correct annotation categories (#5181)
+- Show informative error message if an uploaded criteria yaml file did not contain a "type" key (#5184)
+- Enable content security policies (#5186)
+- Allow for multiple custom validation messages (#5194)
+- Add ability to hold shift to select a range of values in checkbox tables (#5182)
+- Update ssh authorization to be more flexible, secure, and permit a single user to use the same public key for multiple instances (#5199)
+- Fix bug where creating an annotation or switching results reset the selected file (#5200)
+- Fix bug in Assignment#get_num_marked that caused it to double-count remark and original results (#5205)
+- Update permission files in background jobs (#5207)
+- Fix bug where graders can't see the tests that they run (#5210)
+- Fix bug where graders can't release results on the results page (#5210)
+- Use DOMpurify library to sanitize rendered markdown content (#5211)
+- Add percentage extra marks when calculating total extra marks properly (#5213)
 
 ## [v1.11.5]
 - Account for percentage deductions when calculating total marks after deleting a criterion (#5176)
@@ -302,7 +338,7 @@
 - Using Rails 2.3.8
 - MarkUs renders a 404 page error for mismatching routes
 - Bug fixes on submission dates and grace period credits
-- Python and Ruby Scripts using MarkUs API (see lib/tools)
+- Python and Ruby Scripts using MarkUs API (see lib/tools)
 - Displaying and annotating images
  A lot of accessibility features have been implemented :
 	* Missing labels & Better focus on forms

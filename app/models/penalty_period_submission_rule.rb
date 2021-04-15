@@ -11,12 +11,6 @@ class PenaltyPeriodSubmissionRule < SubmissionRule
     I18n.t 'penalty_period_submission_rules.overtime_message', potential_penalty: potential_penalty
   end
 
-
-  # GracePeriodSubmissionRule works with all Assignments
-  def assignment_valid?
-    !assignment.nil?
-  end
-
   def apply_submission_rule(submission)
     # Calculate the appropriate penalty, and attach the ExtraMark to the
     # submission Result
@@ -39,10 +33,6 @@ class PenaltyPeriodSubmissionRule < SubmissionRule
 
   def hours_sum
     periods.sum('hours')
-  end
-
-  def maximum_penalty
-    periods.sum('deduction')
   end
 
   # Given a number of overtime_hours, calculate the penalty percentage that

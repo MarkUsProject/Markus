@@ -1,12 +1,12 @@
+---
 es:
-  uncommitted_changes_warning: "Sus cambios no han sido guardados todavía, ¿Está seguro/a de querer salir de esta página?"
-  optional: "Opcional"
-  required_fields: "Campos requeridos"
-
   helpers:
     confirm:
       delete: "¿Está seguro/a de querer eliminar este %{model}?"
     submit:
-      create: "Crear %{model}"
-      update: "Edit %{model}"
-      delete: "Eliminar este %{model}"
+      create: Crear %{model}
+      delete: Eliminar este %{model}
+      update: Edit %{model}
+  optional: Opcional
+  required_fields: Campos requeridos
+  uncommitted_changes_warning: Sus cambios no han sido guardados todavía, ¿Está seguro/a de querer salir de esta página?

@@ -2,14 +2,14 @@ describe GitRepository do
   context 'writes to repository permissions file' do
 
     before :all do
-      GitRepository.send :__update_permissions, { mock_repo: [:student1, :student2] }, ['admin1']
+      GitRepository.send :update_permissions_file, { mock_repo: [:student1, :student2] }, ['admin1']
     end
 
     after :all do
-      FileUtils.rm Rails.configuration.x.repository.permission_file
+      FileUtils.rm Repository::PERMISSION_FILE
     end
 
-    let(:file_contents) { File.read(Rails.configuration.x.repository.permission_file).lines.map(&:chomp) }
+    let(:file_contents) { File.read(Repository::PERMISSION_FILE).lines.map(&:chomp) }
 
     it 'give admins access to all repos' do
       expect(file_contents[0].split(',')[0]).to eq('*')

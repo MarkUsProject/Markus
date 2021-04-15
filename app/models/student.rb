@@ -40,8 +40,8 @@ class Student < User
 
   after_create :create_all_grade_entry_students
 
-  CSV_UPLOAD_ORDER = Rails.configuration.student_csv_upload_order
-  SESSION_TIMEOUT = Rails.configuration.student_session_timeout
+  CSV_UPLOAD_ORDER = Settings.student_csv_upload_order.map(&:to_sym)
+  SESSION_TIMEOUT = Settings.student_session_timeout
 
   # Returns true if this student has a Membership in a Grouping for an
   # Assignment with id 'aid', where that Membership.membership_status is either
@@ -146,8 +146,8 @@ class Student < User
       end
 
       # Create the membership
-      @member = StudentMembership.create(grouping_id: @grouping.id,
-                                         membership_status: StudentMembership::STATUSES[:inviter], user_id: self.id)
+      @member = StudentMembership.create!(grouping_id: @grouping.id,
+                                          membership_status: StudentMembership::STATUSES[:inviter], user_id: self.id)
       # Destroy all the other memberships for this assignment
       self.destroy_all_pending_memberships(aid)
     end
@@ -163,6 +163,7 @@ class Student < User
       StudentMembership.create(grouping_id: grouping.id, membership_status: StudentMembership::STATUSES[:inviter],
                                user_id: self.id)
       self.destroy_all_pending_memberships(aid)
+      grouping
     end
   end
 
@@ -191,8 +192,6 @@ class Student < User
       update_list[student_id] = {hidden: true}
     end
     Student.update(update_list.keys, update_list.values)
-    # Update stats as it changes with the set of active students.
-    Assignment.find_each { |assignment| assignment.update_results_stats }
   end
 
   # "Unhides" students not visible and grants repository
@@ -203,8 +202,6 @@ class Student < User
       update_list[student_id] = {hidden: false}
     end
     Student.update(update_list.keys, update_list.values)
-    # Update stats as it changes with the set of active students.
-    Assignment.find_each { |assignment| assignment.update_results_stats }
   end
 
   def self.give_grace_credits(student_ids, number_of_grace_credits)

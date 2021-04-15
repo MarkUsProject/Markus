@@ -1,23 +1,17 @@
+---
 en:
-  # app/views/main/_assignment_info_summary.erb
-  average: "Average"
-  class_average: "Class average"
-  median: "Median"
-  class_median: "Class median"
-  assignments_submitted: "Number of submissions collected"
-  assignments_graded: "Number of submissions graded"
-  num_failed: "Number of fails"
-  num_zeros: "Number of zeros"
+  assignments_graded: Number of submissions graded
+  assignments_submitted: Number of submissions collected
+  average: Average
+  class_average: Class average
+  class_median: Class median
+  grader_distribution: Grader Distribution
+  marking_scheme_with_id: Marking Scheme %{marking_scheme_id}
+  median: Median
+  num_entries: Number of entries
+  num_failed: Number of fails
+  num_zeros: Number of zeros
   outstanding_remark_request:
     one: "%{count} outstanding remark request"
     other: "%{count} outstanding remark requests"
-  refresh_graph: "Refresh the graph"
-
-  # app/views/main/_grader_summary.erb
-  grader_distribution:       "Grader Distribution"
-
-  #app/views/course_summaries/_course_summary_info_summary.html.erb
-  marking_scheme_with_id: "Marking Scheme %{marking_scheme_id}"
-
-  #app/views/grade_entry_forms/_grade_entry_form_info_summary.html.erb
-  num_entries: "Number of entries"
+  refresh_graph: Refresh the graph

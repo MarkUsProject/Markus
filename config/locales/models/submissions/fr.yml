@@ -1,11 +1,12 @@
+---
 fr:
   activerecord:
-    models:
-      submission:
-        one: "Envoi"
-        other: "Envois"
     attributes:
       submission:
-        feedback_files: "Fichiers de support"
-        submission_files: "Code source"
-        submitted_remark: "Demande de retour"
+        feedback_files: Fichiers de support
+        submission_files: Code source
+        submitted_remark: Demande de retour
+    models:
+      submission:
+        one: Envoi
+        other: Envois

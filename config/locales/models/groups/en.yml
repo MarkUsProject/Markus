@@ -1,10 +1,11 @@
+---
 en:
   activerecord:
-    models:
-      group:
-        one: "Group"
-        other: "Groups"
     attributes:
       group:
-        group_name: "Group name"
-        student_memberships: "Members"
+        group_name: Group name
+        student_memberships: Members
+    models:
+      group:
+        one: Group
+        other: Groups

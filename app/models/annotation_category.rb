@@ -37,16 +37,16 @@ class AnnotationCategory < ApplicationRecord
         raise CsvInvalidLineError, I18n.t('annotation_categories.upload.empty_category_name')
       end
     elsif (annotation_category.flexible_criterion_id.nil? && !criterion_name.nil?) ||
-          (annotation_category.flexible_criterion.name != criterion_name)
+        (annotation_category.flexible_criterion.name != criterion_name)
       raise CsvInvalidLineError, I18n.t('annotation_categories.upload.invalid_criterion',
                                         annotation_category: name)
     end
     if criterion_name.nil?
       row.each do |text|
         annotation_text = annotation_category.annotation_texts.build(
-          content: text,
-          creator_id: current_user.id,
-          last_editor_id: current_user.id
+            content: text,
+            creator_id: current_user.id,
+            last_editor_id: current_user.id
         )
         unless annotation_text.save
           raise CsvInvalidLineError, I18n.t('annotation_categories.upload.error',
@@ -75,10 +75,10 @@ class AnnotationCategory < ApplicationRecord
                                             value: new_deduction)
         end
         annotation_text = annotation_category.annotation_texts.build(
-          content: text_with_deduction.first,
-          creator_id: current_user.id,
-          last_editor_id: current_user.id,
-          deduction: new_deduction.round(2)
+            content: text_with_deduction.first,
+            creator_id: current_user.id,
+            last_editor_id: current_user.id,
+            deduction: new_deduction.round(2)
         )
         unless annotation_text.save
           raise CsvInvalidLineError, I18n.t('annotation_categories.upload.error',
@@ -129,7 +129,7 @@ class AnnotationCategory < ApplicationRecord
     yield
 
     results_to_update = Result.joins(annotations: :annotation_text)
-                              .where('annotation_texts.annotation_category_id': self.id)
+                            .where('annotation_texts.annotation_category_id': self.id)
 
     unless new_criterion.nil?
       results_to_update.each do |result|
@@ -143,6 +143,22 @@ class AnnotationCategory < ApplicationRecord
         result.marks.find_or_create_by(criterion_id: prev_criterion.id).update_deduction
         result.update_total_mark
       end
+    end
+  end
+
+  # Return all visible annotation categories associated with +assignment+ for +user+.
+  #
+  # This will return all annotation categories for admins and no admin categories for students.
+  # If graders are assigned annotation categories, then only return assigned categories, otherwise
+  # treat graders the same as admins.
+  def self.visible_categories(assignment, user)
+    return AnnotationCategory.none unless user.ta? || user.admin?
+
+    if user.ta? && assignment.assign_graders_to_criteria
+      visible = user.criterion_ta_associations.joins(:criterion).pluck(:criterion_id) + [nil]
+      assignment.annotation_categories.order(:position).where('annotation_categories.flexible_criterion_id': visible)
+    else
+      assignment.annotation_categories.order(:position)
     end
   end
 end

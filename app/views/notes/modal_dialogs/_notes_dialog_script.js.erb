@@ -4,3 +4,19 @@ $('#notes_dialog').html('<%= escape_javascript(
 modalNotesGroup.open();
 $('#new_notes').select();
 
+if ($('#notes_dialog .inline-button.delete').length) {
+  $('#notes_dialog .inline-button.delete').parent().on('ajax:success', function() {
+    modalNotesGroup.close();
+    if (window.resultComponent !== undefined) {
+      window.resultComponent.fetchData();
+    }
+  });
+}
+$(function () {
+  $('#notes_submit').click(function() {
+    modalNotesGroup.close()
+  })
+  $('#notes-cancel').click(function() {
+    modalNotesGroup.close()
+  })
+})
