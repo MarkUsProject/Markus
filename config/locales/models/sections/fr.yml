@@ -1,8 +1,9 @@
+---
 fr:
   activerecord:
-    models:
-      section:
-        one: "Section"
     attributes:
       section:
-        name: "Nom de la section"
+        name: Nom de la section
+    models:
+      section:
+        one: Section

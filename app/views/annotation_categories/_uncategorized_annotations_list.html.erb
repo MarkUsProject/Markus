@@ -1,15 +1,15 @@
 <div id='annotation_list_holder'>
-  <h2>
-    <%= t('annotations.uncategorized') %>
-  </h2>
-  <% if texts.empty? %>
-    <p>
-      <%= t('annotations.empty_uncategorized') %>
-    </p>
-  <% else %>
-    <ul id='annotation_list'>
-      <%= render partial: 'annotation_text',
-                 collection: texts %>
-    </ul>
-  <% end %>
+  <div>
+    <h2 class='display-inline'>
+      <%= t('annotations.uncategorized') %>
+    </h2>
+    <div class='float-right'>
+      <%= link_to t('annotations.download_one_time_annotations'),
+                  {action: 'uncategorized_annotations',
+                   id: @assignment.id,
+                   format: 'csv'},
+                  class: 'button' %>
+      </div>
+  </div>
+  <div id='one_time_annotations_table'></div>
 </div>

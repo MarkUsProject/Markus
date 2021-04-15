@@ -29,7 +29,7 @@ export class SubmissionSelector extends React.Component {
   };
 
   renderReleaseMarksButton() {
-    if (this.props.role !== 'Admin') return '';
+    if (!this.props.can_release) return '';
 
     let buttonText, disabled;
     if (this.props.released_to_students) {
@@ -57,6 +57,7 @@ export class SubmissionSelector extends React.Component {
         <button className="fullscreen-exit"
                 onClick={this.props.toggleFullscreen}
                 style={{alignSelf: 'flex-end'}}
+                title="Alt + Enter"
         >
           {I18n.t('results.fullscreen_exit')}
         </button>
@@ -66,6 +67,7 @@ export class SubmissionSelector extends React.Component {
         <button className="fullscreen-enter"
                 onClick={this.props.toggleFullscreen}
                 style={{alignSelf: 'flex-end'}}
+                title="Alt + Enter"
         >
           {I18n.t('results.fullscreen_enter')}
         </button>
@@ -102,19 +104,21 @@ export class SubmissionSelector extends React.Component {
     return (
       <div className='submission-selector-container'>
         <div className='submission-selector'>
-          <a
+          <button
             className='button previous'
-            href={`${url}?direction=-1`}>
+            onClick={this.props.previousSubmission}
+            title='Shift + Left'>
             {I18n.t('results.previous_submission')}
-          </a>
+          </button>
           <h2 className='group-name' title={this.props.group_name}>
             {this.props.group_name}
           </h2>
-          <a
+          <button
             className='button next'
-            href={`${url}?direction=1`}>
+            onClick={this.props.nextSubmission}
+            title='Shift + Right'>
             {I18n.t('results.next_submission')}
-          </a>
+          </button>
           <div className='progress'>
             <meter
               value={this.props.num_marked}

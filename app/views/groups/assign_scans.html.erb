@@ -1,10 +1,10 @@
 <% content_for :head do %>
   <%= stylesheet_link_tag 'grader',
                           'jquery-ui' %>
-  <%= javascript_pack_tag 'result' %>
+  <%= javascript_pack_tag 'result', nonce: true %>
 <% end %>
 
-<script>
+<%= javascript_tag nonce: true do %>
   pdfjs.GlobalWorkerOptions.workerSrc = '<%= asset_pack_path('pdf.js') %>';
 
   $(document).ready(function () {
@@ -65,11 +65,13 @@
     }
 
     let container = document.getElementById('pdfContainer');
+    let eventBus = new pdfjsViewer.EventBus();
     let pdfViewer = new pdfjsViewer.PDFViewer({
+      eventBus: eventBus,
       container: container,
       renderer: 'svg'
     });
-    document.addEventListener('pagesinit', function() {
+    eventBus.on('pagesinit', function() {
       pdfViewer.currentScaleValue = 'page-fit';
     });
     parseNextScan(<%= raw @data.to_json %>);
@@ -78,14 +80,14 @@
   function update_bar(v) {
     $('#progress-meter').attr('value', v);
   }
-</script>
+<% end %>
 <% content_for :title do %>
     <%= t('exam_templates.assign_scans.title') %>
-    <span class='title-help assignment_groups_help'>
-      <p class='help-message-title assignment_groups_help'>
+    <div class='title-help'>
+      <p>
         <%= t('exam_templates.assign_scans.help') %>
       </p>
-    </span>
+    </div>
 <% end %>
 <% content_for :additional_headings do %>
     <meter
@@ -100,14 +102,14 @@
     &nbsp;|&nbsp;
     <%= link_to t('groups.manage_groups'), :assignment_groups %>
 <% end %>
-<div class='pane-wrapper' style='height: calc(70vh);'>
-  <div class='pane' style='overflow-y: scroll'>
+<div class='pane-wrapper mid-height'>
+  <div class='pane scrollable'>
     <div id="pdfContainer">
       <div id="viewer" class="pdfViewer"></div>
     </div>
   </div>
 
-  <div class='pane' style="width: 29.5%; flex: 0 auto;">
+  <div class='pane slim-fixed'>
     <div>
       <h2 id="group_name"></h2>
       <form id="assign_student">

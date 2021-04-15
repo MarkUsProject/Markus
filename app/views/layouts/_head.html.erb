@@ -2,7 +2,7 @@
 <meta http-equiv='X-UA-Compatible' content='IE=Edge'>
 <meta name='viewport' content='width=device-width, initial-scale=1'>
 <%= csrf_meta_tags %>
-<%= stylesheet_link_tag 'application.css' %>
-<%= stylesheet_link_tag params[:controller], media: 'all' %>
+<%= csp_meta_tag %>
+<%= stylesheet_link_tag 'application' %>
 <%= favicon_link_tag 'favicon.ico' %>
-<%= javascript_tag "const AUTH_TOKEN = document.querySelector('[name=\"csrf-token\"]').content;" if protect_against_forgery?%>
+<%= javascript_tag("const AUTH_TOKEN = document.querySelector('[name=\"csrf-token\"]').content;", nonce: true) if protect_against_forgery?%>

@@ -1,18 +1,19 @@
 {
   "dependencies": {
-    "@babel/core": "^7.12.9",
-    "@babel/preset-react": "^7.12.7",
+    "@babel/core": "^7.13.8",
+    "@babel/preset-react": "^7.12.13",
     "@rails/webpacker": "5.2",
     "chart.js": "^2.9.4",
+    "dompurify": "^2.2.7",
     "heic2any": "^0.0.3",
     "i18n-js": "^3.8.0",
     "jcrop": "^0.0.1",
     "jquery": "^3.5.1",
-    "marked": "^1.2.5",
-    "mime-types": "^2.1.27",
+    "marked": "^2.0.1",
+    "mime-types": "^2.1.29",
     "moment": "^2.29.1",
     "mousetrap": "^1.6.5",
-    "pdfjs-dist": "^2.5.207",
+    "pdfjs-dist": "^2.6.347",
     "postcss-preset-env": "^6.7.0",
     "prop-types": "^15.7.2",
     "rails-erb-loader": "^5.5.2",
@@ -23,10 +24,10 @@
     "react-keyed-file-browser": "^1.10.0",
     "react-modal": "^3.12.1",
     "react-table": "^6.9.2",
-    "react-tabs": "^3.1.1",
+    "react-tabs": "^3.2.0",
     "webpack": "^4.44.1"
   },
   "devDependencies": {
-    "webpack-dev-server": "3.11.0"
+    "webpack-dev-server": "3.11.2"
   }
 }

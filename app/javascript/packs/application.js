@@ -18,9 +18,9 @@ window.ajax_events = ajax_events;
 // vendor libraries
 import 'javascripts/jquery.easyModal';
 
-// marked (markdown support)
-import marked from 'marked';
-window.marked = marked;
+// Markdown support (using marked and DOMpurify)
+import safe_marked from 'javascripts/safe_marked';
+window.safe_marked = safe_marked;
 
 // moment (date/times manipulation)
 import moment from 'moment';
@@ -81,6 +81,8 @@ import { makeStudentTable } from 'javascripts/Components/student_table';
 window.makeStudentTable = makeStudentTable;
 import { makeAssignmentSummaryTable } from 'javascripts/Components/assignment_summary_table';
 window.makeAssignmentSummaryTable = makeAssignmentSummaryTable;
+import { makeOneTimeAnnotationsTable } from 'javascripts/Components/one_time_annotations_table';
+window.makeOneTimeAnnotationsTable = makeOneTimeAnnotationsTable;
 import { makeExamScanLogTable } from 'javascripts/Components/exam_scan_log_table';
 window.makeExamScanLogTable = makeExamScanLogTable;
 import { makeMarksSpreadsheet } from 'javascripts/Components/marks_spreadsheet';

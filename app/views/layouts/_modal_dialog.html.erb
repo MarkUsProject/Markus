@@ -1,6 +1,5 @@
-<aside class='dialog' id=<%= yield_content! :modal_id %>
-       data-open-link='<%= yield_content! :modal_open_link %>'
-       style="display:none">
+<aside class='dialog no-display' id=<%= yield_content! :modal_id %>
+       data-open-link='<%= yield_content! :modal_open_link %>'>
   <% if content_for? :modal_title %>
     <h2>
       <%= yield_content! :modal_title %>

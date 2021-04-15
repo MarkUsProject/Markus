@@ -1,5 +1,5 @@
 <% content_for :head do %>
-  <%= javascript_include_tag 'Students/new' %>
+  <%= javascript_include_tag 'Students/new', nonce: true %>
 <% end %>
 
 <% content_for :title, t('students.new') %>

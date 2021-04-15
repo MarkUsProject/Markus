@@ -1,5 +1,5 @@
 <%= content_for :head do %>
-  <script>
+  <%= javascript_tag nonce: true do %>
     document.addEventListener('DOMContentLoaded', () => {
       makeGradersManager(document.getElementById('graders-manager'),
         {
@@ -8,15 +8,15 @@
         }
       );
     });
-  </script>
+  <% end %>
 <% end %>
 
 <% content_for :title do %>
-    <span class='title-help assignment_graders_help'>
-      <p class='help-message-title assignment_graders_help'>
+    <div class='title-help'>
+      <p>
         <%= t('graders.help') %>
       </p>
-    </span>
+    </div>
 <% end %>
 
 <% @heading_buttons = [

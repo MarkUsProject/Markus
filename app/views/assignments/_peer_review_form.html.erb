@@ -3,7 +3,7 @@
   <%= javascript_include_tag 'create_assignment',
                              'jquery-ui-timepicker-addon',
                              'PeriodDeltaChain/PeriodDeltaChain',
-                             'localize_date' %>
+                             'localize_date', nonce: true %>
   <%= render partial: 'boot', formats: [:js], handlers: [:erb] %>
   <%= render partial: 'shared/navigation_warning',
              formats: [:js],
@@ -23,8 +23,8 @@
         <span><%= t('menu.properties') %></span>
       </legend>
 
-      <div class='help assignment_properties_help'>
-        <p class='help-message-box assignment_properties_help'>
+      <div class='help'>
+        <p>
           <%= t('assignments.help.edit.properties_html') %>
         </p>
       </div>
@@ -34,7 +34,6 @@
                     Assignment.human_attribute_name(:short_identifier),
                     class: 'required' %>
         <%= f.text_field :short_identifier,
-                         onchange: 'set_onbeforeunload(true);',
                          size: 35,
                          maxlength: 30,
                          required: true,
@@ -44,21 +43,18 @@
                     Assignment.human_attribute_name(:description),
                     class: 'required' %>
         <%= f.text_field :description,
-                         onchange: 'set_onbeforeunload(true);',
                          size: 35,
                          required: true %>
 
         <%= f.label :message %>
         <%= f.text_area :message,
                         cols: 65,
-                        rows: 8,
-                        onchange: 'set_onbeforeunload(true);' %>
+                        rows: 8 %>
 
         <%= f.label :due_date,
                     Assignment.human_attribute_name(:due_date),
                     class: 'required' %>
         <%= f.text_field :due_date,
-                         onchange: 'set_onbeforeunload(true);',
                          value: @assignment.due_date.nil? ? '' :
                            @assignment.due_date.strftime(
                              '%Y-%m-%d %l:%M %p'),
@@ -69,14 +65,14 @@
         <% unless @sections.empty? %>
           <%= ap_f.label :section_due_dates_type, Assignment.human_attribute_name(:section_due_dates_type) %>
           <span>
-            <%= ap_f.check_box :section_due_dates_type, onclick: 'set_onbeforeunload(true);' %>
+            <%= ap_f.check_box :section_due_dates_type %>
             &nbsp; (<%= t('assignments.form.section_due_dates_option') %>)
           </span>
         <% end %>
       </div>
       <% unless @sections.empty? %>
         <div id='section_due_dates_information'
-             style='<%= 'display: none' unless @assignment.section_due_dates_type %>'>
+             class='<%= 'no-display' unless @assignment.section_due_dates_type %>'>
           <p class='information'>
             <%= t('assignments.form.section_due_dates_info_html') %>
           </p>
@@ -113,8 +109,7 @@
       <fieldset class='no-legend'>
         <div class='inline-labels'>
           <%= f.label :is_hidden, Assignment.human_attribute_name(:is_hidden) %>
-          <%= f.check_box :is_hidden,
-                          onclick: 'set_onbeforeunload(true);' %>
+          <%= f.check_box :is_hidden %>
         </div>
       </fieldset>
     </fieldset>
@@ -125,15 +120,15 @@
         <span><%= t('assignments.form.group_properties') %></span>
       </legend>
 
-      <div class='help assignment_assignment_type_help'>
-        <p class='help-message-box assignment_assignment_type_help'>
+      <div class='help'>
+        <p>
           <%= t('assignments.help.edit.assignment_type_html') %>
         </p>
       </div>
 
       <% if @assignment.new_record? && @clone_assignments.size > 0 %>
         <p id='persist_groups_assignment_style'>
-          <%= check_box_tag :persist_groups, onclick: 'set_onbeforeunload(true);' %>
+          <%= check_box_tag :persist_groups %>
           <%= label_tag :persist_groups, t('assignments.form.persist_groups_from') %>
           <%= select_tag :persist_groups_assignment,
                          options_for_select(@clone_assignments.map { |a| [a.short_identifier, a.id] }),
@@ -145,33 +140,28 @@
                       Assignment.human_attribute_name(:allow_groups) %>
         <%= check_box_tag :is_group_assignment, true,
                           @assignment.student_form_groups ||
-                            @assignment.invalid_override,
-                          onchange: 'set_onbeforeunload(true);' %>
+                            @assignment.invalid_override %>
       </p>
-      <fieldset class='group_properties'>
+      <fieldset class='group_properties nested-fieldset'>
         <div id='group_properties'>
           <div class='inline-labels'>
             <%= ap_f.label :student_form_groups,
                            Assignment.human_attribute_name(:student_form_groups) %>
-            <%= ap_f.check_box :student_form_groups,
-                               onchange: 'set_onbeforeunload(true);' %>
+            <%= ap_f.check_box :student_form_groups %>
 
             <%= ap_f.label :group_min,
                            Assignment.human_attribute_name(:group_min) %>
             <%= ap_f.number_field :group_min,
                                   min: 1,
-                                  max: 999,
-                                  onchange: 'set_onbeforeunload(true);' %>
+                                  max: 999 %>
             <%= ap_f.label :group_max,
                            Assignment.human_attribute_name(:group_max) %>
             <%= ap_f.number_field :group_max,
                                   min: 1,
-                                  max: 999,
-                                  onchange: 'set_onbeforeunload(true);' %>
+                                  max: 999 %>
 
             <%= ap_f.label :group_name_autogenerated,
-                           Assignment.human_attribute_name(:group_name_autogenerated),
-                           onchange: 'set_onbeforeunload(true);' %>
+                           Assignment.human_attribute_name(:group_name_autogenerated) %>
             <%= ap_f.check_box :group_name_autogenerated %>
           </div>
         </div>
@@ -184,8 +174,8 @@
         <span><%= SubmissionRule.model_name.human %></span>
       </legend>
 
-      <div class='help assignment_submission_rules_help'>
-        <p class='help-message-box assignment_submission_rules_help'>
+      <div class='help'>
+        <p>
           <%= t('assignments.help.edit.submission_rules') %>
         </p>
       </div>
@@ -204,8 +194,7 @@
 
     <p>
       <%= f.submit t(:save),
-                   data: { disable_with: t('working') },
-                   onclick: 'set_onbeforeunload(false);' %>
+                   data: { disable_with: t('working') } %>
     </p>
   <% end %>
 <% end %>

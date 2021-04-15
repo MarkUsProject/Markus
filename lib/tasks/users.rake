@@ -27,7 +27,7 @@ namespace :db do
   # this task depends on :environment and :seed
   task(:test_servers => :environment) do
     puts 'Populate database with TestServers'
-    [[Rails.configuration.x.autotest.server_host, 'Test', 'Server1']]
+    [[Settings.autotest.server_host, 'Test', 'Server1']]
         .each do |server|
       TestServer.create(user_name: server[0], first_name: server[1], last_name: server[2], hidden: true)
     end

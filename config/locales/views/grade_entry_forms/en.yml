@@ -1,21 +1,19 @@
+---
 en:
   grade_entry_forms:
-    add_column: "Add a column"
+    add_column: Add a column
     csv:
-      overwrite: "Overwrite existing grades and columns?"
-    grade_entry_item_distribution: "Column Distribution"
+      overwrite: Overwrite existing grades and columns?
+    grade_entry_item_distribution: Column Distribution
     grades:
-      marking_state: "State"
-      no_mark: "N/A"
-      select_a_student: "You must select at least one student to update."
-      successfully_changed: "Successfully updated %{numGradeEntryStudentsChanged} students."
-    message_placeholder: "Please enter a message that you would like to
-      have displayed to the students. Note it is displayed regardless of
-      marks being released."
-    none: "There are currently no marks spreadsheets."
-    required_fields_html: "Required Fields <span class='required_field'>*</span>"
+      marking_state: State
+      no_mark: N/A
+      select_a_student: You must select at least one student to update.
+      successfully_changed: Successfully updated %{numGradeEntryStudentsChanged} students.
+    message_placeholder: Please enter a message that you would like to have displayed to the students. Note it is displayed regardless of marks being released.
+    none: There are currently no marks spreadsheets.
+    required_fields_html: Required Fields <span class='required_field'>*</span>
     students:
-      detailed_marks_message: "Detailed marks are available."
-      mark_message: "Your mark:"
-      no_results: "There are no marks available yet."
-      title: "Marks:"
+      mark_message: 'Your mark:'
+      no_results: There are no marks available yet.
+      title: 'Marks:'

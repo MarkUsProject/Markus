@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_11_26_164928) do
+ActiveRecord::Schema.define(version: 2021_02_16_160312) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -95,7 +95,6 @@ ActiveRecord::Schema.define(version: 2020_11_26_164928) do
     t.boolean "group_name_displayed", default: false, null: false
     t.string "repository_folder", null: false
     t.boolean "invalid_override", default: false, null: false
-    t.float "results_average"
     t.boolean "allow_web_submits", default: true, null: false
     t.boolean "section_groups_only", default: false, null: false
     t.boolean "section_due_dates_type", default: false, null: false
@@ -106,9 +105,6 @@ ActiveRecord::Schema.define(version: 2020_11_26_164928) do
     t.boolean "allow_remarks", default: false, null: false
     t.datetime "remark_due_date"
     t.text "remark_message"
-    t.float "results_median"
-    t.integer "results_fails"
-    t.integer "results_zeros"
     t.boolean "unlimited_tokens", default: false, null: false
     t.boolean "only_required_files", default: false, null: false
     t.boolean "vcs_submit", default: false, null: false
@@ -131,11 +127,6 @@ ActiveRecord::Schema.define(version: 2020_11_26_164928) do
     t.bigint "default_starter_file_group_id"
     t.index ["assessment_id"], name: "index_assignment_properties_on_assessment_id", unique: true
     t.index ["default_starter_file_group_id"], name: "index_assignment_properties_on_default_starter_file_group_id"
-  end
-
-  create_table "assignment_stats", id: :serial, force: :cascade do |t|
-    t.text "grade_distribution_percentage"
-    t.bigint "assessment_id"
   end
 
   create_table "criteria", force: :cascade do |t|
@@ -609,6 +600,7 @@ ActiveRecord::Schema.define(version: 2020_11_26_164928) do
     t.string "display_name", null: false
     t.string "locale", default: "en", null: false
     t.integer "theme", default: 1, null: false
+    t.string "time_zone", null: false
     t.index ["api_key"], name: "index_users_on_api_key", unique: true
     t.index ["user_name"], name: "index_users_on_user_name", unique: true
   end
@@ -621,7 +613,6 @@ ActiveRecord::Schema.define(version: 2020_11_26_164928) do
   add_foreign_key "assignment_files", "assessments", name: "fk_assignment_files_assignments", on_delete: :cascade
   add_foreign_key "assignment_properties", "assessments", on_delete: :cascade
   add_foreign_key "assignment_properties", "starter_file_groups", column: "default_starter_file_group_id"
-  add_foreign_key "assignment_stats", "assessments", name: "fk_assignment_stats_assignments", on_delete: :cascade
   add_foreign_key "criteria", "assessments"
   add_foreign_key "criteria_assignment_files_joins", "assignment_files"
   add_foreign_key "exam_templates", "assessments"

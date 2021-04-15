@@ -1,8 +1,8 @@
 module RepositoryHelper
   include SubmissionsHelper
 
-  # Add new files or overwrite existing files in this open +repo+. +files+ should be a list
-  # of ActionDispatch::Http::UploadedFile objects, +user+ is the user that is responsible for
+  # Add new files or overwrite existing files in this open +repo+. +f+ should be a
+  # ActionDispatch::Http::UploadedFile object, +user+ is the user that is responsible for
   # the repository transaction, +path+ is the relative path from the root of the repository
   # to prepend to each filename.
   #
@@ -16,10 +16,10 @@ module RepositoryHelper
   # nil, the boolean indicates whether any errors were encountered which mean the caller should not
   # commit the transaction. The array contains any error or warning messages as arrays of arguments.
   #
-  # If +check_size+ is true then check if the file size is greater than Rails.configuration.max_file_size
+  # If +check_size+ is true then check if the file size is greater than Settings.max_file_size
   # or less than 0 bytes. If +required_files+ is an array of file paths, and some of the uploaded files are not
   # in that array, a message will be returned indicating that non-required files were uploaded.
-  def add_files(files, user, repo, path: '/', txn: nil, check_size: true, required_files: nil)
+  def add_file(f, user, repo, path: '/', txn: nil, check_size: true, required_files: nil)
     messages = []
 
     if txn.nil?
@@ -32,33 +32,31 @@ module RepositoryHelper
     revision = repo.get_latest_revision
     current_path = Pathname.new path
     new_files = []
-    files.each do |f|
-      if check_size
-        if f.size > Rails.configuration.max_file_size
-          messages << [:too_large, f.original_filename]
-          next
-        elsif f.size == 0
-          messages << [:too_small, f.original_filename]
-        end
-      end
-      filename = f.original_filename
-      if filename.nil?
-        messages << [:invalid_filename, f.original_filename]
+    if check_size
+      if f.size > Settings.max_file_size
+        messages << [:too_large, f.original_filename]
         return false, messages
+      elsif f.size == 0
+        messages << [:too_small, f.original_filename]
       end
-      subdir_path, filename = File.split(filename)
-      filename = sanitize_file_name(filename)
-      file_path = current_path.join(subdir_path).join(filename).to_s
-      new_files << file_path
-      # Sometimes the file pointer of file_object is at the end of the file.
-      # In order to avoid empty uploaded files, rewind it to be safe.
-      f.rewind
-      # Branch on whether the file is new or a replacement
-      if revision.path_exists?(file_path)
-        txn.replace(file_path, f.read, f.content_type, revision.revision_identifier)
-      else
-        txn.add(file_path, f.read, f.content_type)
-      end
+    end
+    filename = f.original_filename
+    if filename.nil?
+      messages << [:invalid_filename, f.original_filename]
+      return false, messages
+    end
+    subdir_path, filename = File.split(filename)
+    filename = sanitize_file_name(filename)
+    file_path = current_path.join(subdir_path).join(filename).to_s
+    new_files << file_path
+    # Sometimes the file pointer of file_object is at the end of the file.
+    # In order to avoid empty uploaded files, rewind it to be safe.
+    f.rewind
+    # Branch on whether the file is new or a replacement
+    if revision.path_exists?(file_path)
+      txn.replace(file_path, f.read, f.content_type, revision.revision_identifier)
+    else
+      txn.add(file_path, f.read, f.content_type)
     end
     # check if only required files are allowed for a submission
     # required_files = assignment.assignment_files.pluck(:filename)
@@ -122,7 +120,7 @@ module RepositoryHelper
     end
   end
 
-  def add_folders(new_folders, user, repo, path: '/', txn: nil)
+  def add_folder(folder_path, user, repo, path: '/', txn: nil)
     messages = []
 
     if txn.nil?
@@ -134,11 +132,9 @@ module RepositoryHelper
 
     current_path = Pathname.new path
 
-    new_folders.each do |folder_path|
-      folder_path = current_path.join(folder_path)
-      folder_path = folder_path.to_s
-      txn.add_path(folder_path)
-    end
+    folder_path = current_path.join(folder_path)
+    folder_path = folder_path.to_s
+    txn.add_path(folder_path)
 
     if commit_txn
       success, txn_messages = commit_transaction repo, txn
@@ -217,7 +213,7 @@ module RepositoryHelper
       next if suppress[msg]
       case msg
       when :too_large
-        max_size = (Rails.configuration.max_file_size / 1_000_000.00).round(2)
+        max_size = (Settings.max_file_size / 1_000_000.00).round(2)
         flash_message(:error, I18n.t('student.submission.file_too_large',
                                      file_name: other_info,
                                      max_size: max_size))

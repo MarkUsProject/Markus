@@ -62,6 +62,7 @@ gem 'cookies_eu'
 gem 'rails-html-sanitizer'
 gem 'responders'
 gem 'activemodel-serializers-xml'
+gem 'config'
 
 # If you are a MarkUs developer and use PostgreSQL, make sure you have
 # PostgreSQL header files installed (e.g. libpq-dev on Debian/Ubuntu).
@@ -116,7 +117,7 @@ end
 group :development, :test do
   gem 'byebug'
   gem 'i18n-tasks'
-  gem 'rspec-rails', '~> 4.0.1'
+  gem 'rspec-rails', '~> 4.0.2'
 end
 
 # Gems needed (wanted) for development, test and production_test

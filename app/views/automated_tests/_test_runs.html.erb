@@ -1,5 +1,5 @@
 <% content_for :head do %>
-  <script>
+  <%= javascript_tag nonce: true do %>
     document.addEventListener('DOMContentLoaded', () => {
       makeTestRunTable(document.getElementById('test_run_table'), {
         result_id: <%= @result&.id || 'null' %>,
@@ -10,7 +10,7 @@
         instructor_view: <%= !@current_user.student? %>
       });
     })
-  </script>
+  <% end %>
 <% end %>
 
 <h2>

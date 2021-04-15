@@ -27,6 +27,11 @@ class Result extends React.Component {
       submission_files: {files: [], directories: {}, name: '', path: []},
       fullscreen: false,
       annotationModal: INITIAL_ANNOTATION_MODAL_STATE,
+      assignment_id: props.assignment_id,
+      submission_id: props.submission_id,
+      result_id: props.result_id,
+      grouping_id: props.grouping_id,
+      can_release: false
     };
 
     this.leftPane = React.createRef();
@@ -43,12 +48,18 @@ class Result extends React.Component {
     });
   }
 
+  componentDidUpdate(prevProps, prevState) {
+    if (this.state.result_id !== prevState.result_id) {
+      this.componentDidMount();
+    }
+  }
+
   fetchData = () => {
     $.get({
       url: Routes.assignment_submission_result_path(
-        this.props.assignment_id,
-        this.props.submission_id,
-        this.props.result_id
+        this.state.assignment_id,
+        this.state.submission_id,
+        this.state.result_id
       ),
       dataType: 'json'
     }).then(res => {
@@ -114,15 +125,15 @@ class Result extends React.Component {
 
   /* Interaction with external components/libraries */
   updateContextMenu = () => {
-    if (this.state.released_to_students) return;
+    if (this.state.released_to_students || this.state.remark_submitted || this.props.role === "Student") return;
 
     window.annotation_context_menu.setup(
-      Routes.annotations_path, this.props.result_id,
-      this.props.assignment_id,
+      Routes.annotations_path, this.state.result_id,
+      this.state.assignment_id,
       Routes.download_assignment_submission_result_path(
-        this.props.assignment_id,
-        this.props.submission_id,
-        this.props.result_id)
+        this.state.assignment_id,
+        this.state.submission_id,
+        this.state.result_id)
     );
 
     let common_annotations = this.state.annotation_categories.map(annotation_category => {
@@ -173,8 +184,8 @@ class Result extends React.Component {
 
     let metadata = {
       submission_file_id: submission_file_id,
-      result_id: this.props.result_id,
-      assignment_id: this.props.assignment_id,
+      result_id: this.state.result_id,
+      assignment_id: this.state.assignment_id,
     };
 
     metadata = this.extend_with_selection_data(metadata);
@@ -252,7 +263,7 @@ class Result extends React.Component {
     let data = {
       submission_file_id: submission_file_id,
       annotation_text_id: annotation_text_id,
-      result_id: this.props.result_id
+      result_id: this.state.result_id
     };
 
     data = this.extend_with_selection_data(data);
@@ -264,7 +275,7 @@ class Result extends React.Component {
   refreshAnnotationCategories = () => {
     $.get({
       url: Routes.assignment_annotation_categories_path(
-        this.props.assignment_id,
+        this.state.assignment_id,
       ),
       dataType: 'json'
     }).then(res => {
@@ -275,9 +286,9 @@ class Result extends React.Component {
   refreshAnnotations = () => {
     $.ajax({
       url: Routes.get_annotations_assignment_submission_result_path(
-        this.props.assignment_id,
-        this.props.submission_id,
-        this.props.result_id),
+        this.state.assignment_id,
+        this.state.submission_id,
+        this.state.result_id),
       dataType: 'json',
     }).then(res => {
       this.setState({annotations: res})
@@ -286,8 +297,8 @@ class Result extends React.Component {
 
   editAnnotation = (annot_id) => {
     let metadata = {
-      result_id: this.props.result_id,
-      assignment_id: this.props.assignment_id,
+      result_id: this.state.result_id,
+      assignment_id: this.state.assignment_id,
     };
 
     let onSubmit = (formData) => {
@@ -364,8 +375,8 @@ class Result extends React.Component {
       url: Routes.annotation_path(annot_id),
       method: 'DELETE',
       data: {
-        result_id: this.props.result_id,
-        assignment_id: this.props.assignment_id
+        result_id: this.state.result_id,
+        assignment_id: this.state.assignment_id
       },
       dataType: 'script'
     }).then(this.fetchData)
@@ -381,7 +392,7 @@ class Result extends React.Component {
 
     return $.ajax({
       url: Routes.update_mark_assignment_submission_result_path(
-        this.props.assignment_id, this.props.submission_id, this.props.result_id
+        this.state.assignment_id, this.state.submission_id, this.state.result_id
       ),
       method: 'PATCH',
       data: {
@@ -418,7 +429,7 @@ class Result extends React.Component {
   revertToAutomaticDeductions = (criterion_id) => {
     $.ajax({
       url: Routes.revert_to_automatic_deductions_assignment_submission_result_path(
-        this.props.assignment_id, this.props.submission_id, this.props.result_id
+        this.state.assignment_id, this.state.submission_id, this.state.result_id
       ),
       method: 'PATCH',
       data: {criterion_id: criterion_id}
@@ -440,7 +451,7 @@ class Result extends React.Component {
   createExtraMark = (description, extra_mark) => {
     return $.ajax({
       url: Routes.add_extra_mark_assignment_submission_result_path(
-        this.props.assignment_id, this.props.submission_id, this.props.result_id
+        this.state.assignment_id, this.state.submission_id, this.state.result_id
       ),
       method: 'POST',
       data: {
@@ -459,7 +470,7 @@ class Result extends React.Component {
 
     $.ajax({
       url: Routes.remove_extra_mark_assignment_submission_result_path(
-        this.props.assignment_id, this.props.submission_id,
+        this.state.assignment_id, this.state.submission_id,
         // TODO: Fix this route so that the id refers to a Result rather than ExtraMark.
         id
       ),
@@ -474,7 +485,7 @@ class Result extends React.Component {
 
     $.ajax({
       url: Routes.delete_grace_period_deduction_assignment_submission_result_path(
-        this.props.assignment_id, this.props.submission_id, this.props.result_id
+        this.state.assignment_id, this.state.submission_id, this.state.result_id
       ),
       method: 'DELETE',
       data: {deduction_id: deduction_id}
@@ -484,7 +495,7 @@ class Result extends React.Component {
   addTag = (tag_id) => {
     $.post({
       url: Routes.add_tag_assignment_submission_result_path(
-        this.props.assignment_id, this.props.submission_id, this.props.result_id),
+        this.state.assignment_id, this.state.submission_id, this.state.result_id),
       data: {tag_id: tag_id}
     }).then(this.fetchData);
   };
@@ -492,7 +503,7 @@ class Result extends React.Component {
   removeTag = (tag_id) => {
     $.post({
       url: Routes.remove_tag_assignment_submission_result_path(
-        this.props.assignment_id, this.props.submission_id, this.props.result_id),
+        this.state.assignment_id, this.state.submission_id, this.state.result_id),
       data: {tag_id: tag_id}
     }).then(this.fetchData);
   };
@@ -500,10 +511,10 @@ class Result extends React.Component {
   newNote = () => {
     $.ajax({
       url: Routes.notes_dialog_notes_path({
-        assignment_id: this.props.assignment_id,
+        assignment_id: this.state.assignment_id,
       }),
       data: {
-        noteable_id: this.props.grouping_id,
+        noteable_id: this.state.grouping_id,
         noteable_type: 'Grouping',
         action_to: 'note_message',
         controller_to: 'results',
@@ -523,7 +534,7 @@ class Result extends React.Component {
   toggleMarkingState = () => {
     $.ajax({
       url: Routes.toggle_marking_state_assignment_submission_result_path(
-        this.props.assignment_id, this.props.submission_id, this.props.result_id
+        this.state.assignment_id, this.state.submission_id, this.state.result_id
       ),
       method: 'POST',
     }).then(this.fetchData);
@@ -532,13 +543,62 @@ class Result extends React.Component {
   setReleasedToStudents = () => {
     $.ajax({
       url: Routes.set_released_to_students_assignment_submission_result_path(
-        this.props.assignment_id, this.props.submission_id, this.props.result_id
+        this.state.assignment_id, this.state.submission_id, this.state.result_id
       ),
       method: 'POST',
     }).then(() => {
       // TODO: Refresh React components without doing a full page refresh
       window.location.reload()
     });
+  };
+
+  nextSubmission = (direction) => {
+    return () => {
+      const url = Routes.next_grouping_assignment_submission_result_path(
+        this.state.assignment_id, this.state.submission_id, this.state.result_id
+      );
+
+      this.setState({loading: true}, () => {
+        $.ajax({
+          url: url,
+          data: {
+            direction: direction
+          }
+        }).then((result) => {
+          if (!result.next_result || !result.next_grouping) {
+            alert(I18n.t('results.no_results_in_direction'));
+            return;
+          }
+
+          const result_obj = {
+            result_id: result.next_result.id,
+            submission_id: result.next_result.submission_id,
+            grouping_id: result.next_grouping.id,
+          };
+          this.setState(prevState => ({...prevState, ...result_obj}));
+          let new_url = Routes.edit_assignment_submission_result_url(
+            this.state.assignment_id, this.state.submission_id, this.state.result_id
+          );
+          history.pushState({}, document.title, new_url)
+        });
+      });
+    }
+  }
+
+  updateOverallComment = (value, remark) => {
+    return $.post({
+      url: Routes.update_overall_comment_assignment_submission_result_path(
+        this.props.assignment_id, this.props.submission_id, this.props.result_id,
+      ),
+      data: {result: {overall_comment: value}},
+    }).then((result) => {
+      if (remark) {
+        this.setState({ remark_overall_comment: value });
+      } else {
+        this.setState({ overall_comment: value });
+      }
+      return result;
+    })
   };
 
   render() {
@@ -551,12 +611,17 @@ class Result extends React.Component {
             })
           }
           is_reviewer={this.state.is_reviewer}
-          assignment_id={this.props.assignment_id}
+          assignment_id={this.state.assignment_id}
           {...this.state.annotationModal}
         />,
         <SubmissionSelector
           key='submission-selector'
-          {...this.props}
+          role={this.props.role}
+          can_release={this.state.can_release}
+          result_id={this.state.result_id}
+          submission_id={this.state.submission_id}
+          assignment_id={this.state.assignment_id}
+          grouping_id={this.state.grouping_id}
           assignment_max_mark={this.state.assignment_max_mark}
           fullscreen={this.state.fullscreen}
           group_name={this.state.group_name}
@@ -570,23 +635,25 @@ class Result extends React.Component {
           toggleFullscreen={this.toggleFullscreen}
           toggleMarkingState={this.toggleMarkingState}
           setReleasedToStudents={this.setReleasedToStudents}
+          nextSubmission={this.nextSubmission(1)}
+          previousSubmission={this.nextSubmission(-1)}
         />,
         <div key='panes-content' id='panes-content'>
           <div id='panes'>
             <div id='left-pane'>
               <LeftPane
                 ref={this.leftPane}
-                {...this.props}
                 loading={this.state.loading}
-                result_id={this.props.result_id}
-                submission_id={this.props.submission_id}
-                assignment_id={this.props.assignment_id}
-                grouping_id={this.props.grouping_id}
+                result_id={this.state.result_id}
+                submission_id={this.state.submission_id}
+                assignment_id={this.state.assignment_id}
+                grouping_id={this.state.grouping_id}
                 is_reviewer={this.state.is_reviewer}
                 allow_remarks={this.state.allow_remarks}
                 annotation_categories={this.state.annotation_categories || []}
                 annotations={this.state.annotations || []}
                 assignment_remark_message={this.state.assignment_remark_message}
+                update_overall_comment={this.updateOverallComment}
                 can_run_tests={this.state.can_run_tests}
                 detailed_annotations={this.state.detailed_annotations}
                 enable_test={this.state.enable_test}
@@ -615,7 +682,11 @@ class Result extends React.Component {
             <div id='drag'/>
             <div id='right-pane'>
               <RightPane
-                {...this.props}
+                assignment_id={this.state.assignment_id}
+                submission_id={this.state.submission_id}
+                result_id={this.state.result_id}
+                grouping_id={this.state.grouping_id}
+                role={this.props.role}
                 annotations={this.state.annotations}
                 assigned_criteria={this.state.assigned_criteria}
                 assignment_max_mark={this.state.assignment_max_mark}

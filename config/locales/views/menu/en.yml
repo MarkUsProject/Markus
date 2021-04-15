@@ -1,8 +1,9 @@
+---
 en:
   menu:
-    choose: "Choose..."
-    dashboard: "Dashboard"
-    home: "Home"
-    properties: "Properties"
-    quick_links: "Quick links"
-    settings: "Settings"
+    choose: Choose...
+    dashboard: Dashboard
+    home: Home
+    properties: Properties
+    quick_links: Quick links
+    settings: Settings

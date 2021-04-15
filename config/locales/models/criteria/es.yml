@@ -1,42 +1,42 @@
+---
 es:
   activerecord:
-    models:
-      criterion:
-        one: "Criterio de calificación"
-      checkbox_criterion:
-        one: "Criterio de Calificación tipo Caja de Selección"
-      flexible_criterion:
-        one: "Criterio de Calificación Flexibles"
-      rubric_criterion:
-        one: "Criterio de Calificación por Rúbrica"
     attributes:
-      criterion:
-        bonus: 'UPDATE ME!'
-        description: "Descripción"
-        name: "Nombre del criterio"
-        max_mark: "Nota Máxima"
-        peer_visible: "Hacer visible a los revisores de compañeros"
-        ta_visible: "Hacer visible a los asistentes de cátedra"
       checkbox_criterion:
-        description: "Descripción"
-        name: "Nombre del criterio"
-        max_mark: "Nota Máxima"
-        peer_visible: "Hacer visible a los revisores de compañeros"
-        ta_visible: "Hacer visible a los asistentes de cátedra"
+        description: Descripción
+        max_mark: Nota Máxima
+        name: Nombre del criterio
+        peer_visible: Hacer visible a los revisores de compañeros
+        ta_visible: Hacer visible a los asistentes de cátedra
+      criterion:
+        bonus: UPDATE ME!
+        description: Descripción
+        max_mark: Nota Máxima
+        name: Nombre del criterio
+        peer_visible: Hacer visible a los revisores de compañeros
+        ta_visible: Hacer visible a los asistentes de cátedra
       flexible_criterion:
-        description: "Descripción"
-        name: "Nombre del criterio"
-        max_mark: "Nota Máxima"
-        peer_visible: "Hacer visible a los revisores de compañeros"
-        ta_visible: "Hacer visible a los asistentes de cátedra"
+        description: Descripción
+        max_mark: Nota Máxima
+        name: Nombre del criterio
+        peer_visible: Hacer visible a los revisores de compañeros
+        ta_visible: Hacer visible a los asistentes de cátedra
       rubric_criterion:
-        description: "Descripción"
-        name: "Nombre del criterio"
-        max_mark: "Nota Máxima"
-        peer_visible: "Hacer visible a los revisores de compañeros"
-        ta_visible: "Hacer visible a los asistentes de cátedra"
-
+        description: Descripción
+        max_mark: Nota Máxima
+        name: Nombre del criterio
+        peer_visible: Hacer visible a los revisores de compañeros
+        ta_visible: Hacer visible a los asistentes de cátedra
     errors:
       models:
         criterion:
-          visibility_error: "Seleccionar al menos una opción en la sección de visibilidad"
+          visibility_error: Seleccionar al menos una opción en la sección de visibilidad
+    models:
+      checkbox_criterion:
+        one: Criterio de Calificación tipo Caja de Selección
+      criterion:
+        one: Criterio de calificación
+      flexible_criterion:
+        one: Criterio de Calificación Flexibles
+      rubric_criterion:
+        one: Criterio de Calificación por Rúbrica

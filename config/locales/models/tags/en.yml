@@ -1,11 +1,12 @@
+---
 en:
   activerecord:
-    models:
-      tag:
-        one: "Tag"
-        other: "Tags"
     attributes:
       tags:
-        description: "Description"
-        name: "Name"
-        user: "Creator"
+        description: Description
+        name: Name
+        user: Creator
+    models:
+      tag:
+        one: Tag
+        other: Tags

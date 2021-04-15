@@ -87,3 +87,9 @@ __pycache__/
 
 # nbconvert python files
 nbconvertvenv/
+
+config/settings.local.yml
+config/settings/*.local.yml
+config/environments/*.local.yml
+
+lib/repo/git_hooks/max_file_size

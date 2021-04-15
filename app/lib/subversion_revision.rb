@@ -11,7 +11,7 @@ class SubversionRevision < Repository::AbstractRevision
     begin
       @timestamp = @repo.__get_property(Svn::Core::PROP_REVISION_DATE, revision_number)
       if @timestamp.instance_of?(String)
-        @timestamp = Time.parse(@timestamp).localtime
+        @timestamp = Time.zone.parse(@timestamp).localtime
       elsif @timestamp.instance_of?(Time)
         @timestamp = @timestamp.localtime
       end

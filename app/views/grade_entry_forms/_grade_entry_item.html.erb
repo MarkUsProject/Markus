@@ -18,9 +18,7 @@
                      t('delete') %>
       <%= form.check_box :_destroy %>
     <% else %>
-      <%= link_to t(:delete), '#', onclick:
-        '$(this).parentsUntil(".grade_entry_item").parent().remove();' +
-        'return false;' %>
+      <%= link_to t(:delete), '#', class: 'grade-entry-item-delete' %>
     <% end %>
   </div>
 </fieldset>

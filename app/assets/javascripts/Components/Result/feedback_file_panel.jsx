@@ -11,6 +11,12 @@ export class FeedbackFilePanel extends React.Component {
     }
   }
 
+  componentWillReceiveProps(nextProps) {
+    if (!nextProps.feedbackFiles.find(file => file.id === this.state.selectedFile)) {
+      this.setState({ selectedFile: nextProps.feedbackFiles ? nextProps.feedbackFiles[0].id : null });
+    }
+  }
+
   updateSelectedFile = (event) => {
     this.setState({selectedFile: parseInt(event.target.value, 10)});
   };

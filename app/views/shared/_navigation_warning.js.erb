@@ -1,15 +1,25 @@
-<script>
+<%= javascript_tag nonce: true do %>
   var onbeforeunload_flag = false;
-
-  function set_onbeforeunload(value) {
-    onbeforeunload_flag = value;
-  }
+  var submit_clicked = false;
 
   // The following will set a warning message to be be shown to the user
   // if he intends to navigate away, and the onbeforeunload_flag is set.
-  window.onbeforeunload = function() {
-    if (onbeforeunload_flag) {
+  window.onbeforeunload = function(e) {
+    if (onbeforeunload_flag && !submit_clicked) {
       return I18n.t('uncommitted_changes_warning');
+    } else {
+      onbeforeunload_flag = false;
+      submit_clicked = false;
     }
   };
-</script>
+
+  addEventListener("change", () => {
+    onbeforeunload_flag = true
+  })
+
+  $(function() {
+    $('input[type="submit"]').click(function () {
+      submit_clicked = true;
+    });
+  })
+<% end %>

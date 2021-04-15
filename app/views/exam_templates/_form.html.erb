@@ -14,19 +14,24 @@
     </p>
   </div>
 
-  <div class='exam-template-section'>
-    <p>
-      <%= f.label ExamTemplate.human_attribute_name('name') %>
-      <%= f.text_field :name %>
-    </p>
-    <p>
-      <span class='exam-template-info'>
-        <%= t('key_pairs.file') %>: <%= link_to exam_template.filename, download_assignment_exam_template_path(id: exam_template.id) %>
-      </span>
-      <%= f.label t('exam_templates.update.instruction') %>
-      <%= f.file_field :new_template %>
-    <p><%= ExamTemplate.human_attribute_name('num_pages') %>: <%= exam_template.num_pages %></p>
+  <div class='inline-labels'>
+    <%= f.label ExamTemplate.human_attribute_name('name') %>
+    <%= f.text_field :name %>
+    <label>
+      <%= t('key_pairs.file') %>
+    </label>
+    <span>
+      <%= link_to exam_template.filename, download_assignment_exam_template_path(id: exam_template.id) %>
+    </span>
+
+    <%= f.label t('exam_templates.update.instruction') %>
+    <%= f.file_field :new_template %>
+
+    <label><%= ExamTemplate.human_attribute_name('num_pages') %></label>
+    <span><%= exam_template.num_pages %></span>
   </div>
+
+  <hr>
 
   <div class='exam-template-section'>
     <h3><%= ExamTemplate.human_attribute_name('template_divisions') %></h3>

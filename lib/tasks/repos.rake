@@ -3,9 +3,9 @@ namespace :markus do
     desc 'Destroy all repositories'
     task(drop: :environment) do
       puts "Destroying Repositories..."
-      FileUtils.rm_r Dir.glob(File.join(Rails.configuration.x.repository.storage, '*'))
-      if File.exist?(Rails.configuration.x.repository.permission_file)
-        File.delete(Rails.configuration.x.repository.permission_file)
+      FileUtils.rm_r Dir.glob(File.join(Settings.repository.storage, '*'))
+      if File.exist?(Repository::PERMISSION_FILE)
+        File.delete(Repository::PERMISSION_FILE)
       end
     end
 

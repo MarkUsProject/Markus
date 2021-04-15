@@ -2,25 +2,25 @@
   <%= stylesheet_link_tag('grader') %>
   <%= stylesheet_link_tag('context_menu') %>
 
-  <%= javascript_pack_tag 'result' %>
-  <%= javascript_tag do -%>
+  <%= javascript_pack_tag 'result', nonce: true %>
+  <%= javascript_tag nonce: true do -%>
     pdfjs.GlobalWorkerOptions.workerSrc = '<%= asset_pack_path('pdf.js') %>';
   <% end -%>
 <% end %>
 
-<script>
+<%= javascript_tag nonce: true do %>
 <%= render partial: 'exam_templates/assign_errors',
            formats: [:js],
            handlers: [:erb] %>
-</script>
+<% end %>
 
 <% content_for :title do %>
   <%= t('exam_templates.assign_errors.fix_errors') %> - <%= @exam_template.name %>
-  <span class='title-help assignment_groups_help'>
-    <span class='help-message-title assignment_groups_help'>
+  <div class='title-help'>
+    <p>
       <%= t('exam_templates.assign_scans.help') %>
-    </span>
-  </span>
+    </p>
+  </div>
 <% end %>
 
 <% @heading_buttons = [
@@ -28,37 +28,38 @@
       link_path: view_logs_assignment_exam_templates_path },
 ] %>
 
-<div class='pane-wrapper' style='height: calc(70vh);'>
-  <div class='pane' style='overflow-y: scroll'>
+<div class='pane-wrapper mid-height'>
+  <div class='pane scrollable'>
     <div id="pdfContainer">
       <div id="viewer" class="pdfViewer"></div>
     </div>
   </div>
 
-  <div class='pane' style="width: 29.5%; flex: 0 auto;">
+  <div class='pane slim-fixed'>
     <h2><%= t('exam_templates.assign_errors.document_info') %></h2>
     <%= form_tag fix_error_assignment_exam_template_path(id: @exam_template.id),
                  id: 'info_form',
                  remote: true do %>
       <%= hidden_field_tag :split_pdf_log_id, @split_pdf_log.id %>
       <%= hidden_field_tag :split_page_id %>
-      <%= label_tag :copy_number,
-                    t('exam_templates.assign_errors.copy_number') %>
-      <%= number_field_tag :copy_number, nil,
-                           autofocus: true %><br>
-      <%= label_tag :page_number,
-                    t('exam_templates.assign_errors.page_number') %>
-      <%= number_field_tag :page_number, nil,
-                           min: 1,
-                           max: @split_pdf_log.exam_template.num_pages %>
-      <%= label_tag :upside_down,
-                    t('exam_templates.assign_errors.upside_down') %>
-      <%= check_box_tag :upside_down, 'upside_down', false %><br>
-      <br>
-      <%= submit_tag t('save'),
-                     data: { disable_with: t('save') } %>
-      <%= submit_tag t('skip'),
-                     data: { disable_with: t('skip') }%>
+      <div class="inline-labels">
+        <%= label_tag :copy_number,
+                      t('exam_templates.assign_errors.copy_number') %>
+        <%= number_field_tag :copy_number, nil,
+                             autofocus: true %>
+        <%= label_tag :page_number,
+                      t('exam_templates.assign_errors.page_number') %>
+        <%= number_field_tag :page_number, nil,
+                             min: 1,
+                             max: @split_pdf_log.exam_template.num_pages %>
+        <%= label_tag :upside_down,
+                      t('exam_templates.assign_errors.upside_down') %>
+        <%= check_box_tag :upside_down, 'upside_down', false %>
+      </div>
+      <p>
+        <%= submit_tag t('save'), data: { disable_with: t('save') } %>
+        <%= submit_tag t('skip'), data: { disable_with: t('skip') }%>
+      </p>
     <% end %>
   </div>
 </div>

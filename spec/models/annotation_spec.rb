@@ -22,6 +22,60 @@ describe Annotation do
     it { is_expected.to_not allow_value('OtherAnnotation').for(:type) }
   end
 
+  context 'creating annotations' do
+    let(:assignment) { create(:assignment_with_criteria_and_results) }
+    context 'with a remark result' do
+      let(:result) do
+        grouping = assignment.groupings.first
+        grouping.current_result.update!(released_to_students: true)
+        grouping.current_submission_used.make_remark_result
+        grouping.current_result
+      end
+      it 'should prevent it being created' do
+        expect { create :text_annotation, result: result }.to raise_error(ActiveRecord::RecordNotSaved)
+      end
+    end
+    context 'with a released result' do
+      let(:annotation) { create :text_annotation, result: create(:released_result) }
+      it 'should prevent it being created' do
+        expect { annotation }.to raise_error(ActiveRecord::RecordNotSaved)
+      end
+    end
+    context 'without remark result or a released result' do
+      it 'should prevent it being created' do
+        expect { create :text_annotation }.not_to raise_error
+      end
+    end
+  end
+  context 'destroying annotations' do
+    let(:assignment) { create(:assignment_with_criteria_and_results) }
+    context 'with a remark result' do
+      let(:annotation) do
+        grouping = assignment.groupings.first
+        annotation = create(:text_annotation, result: grouping.current_result)
+        grouping.current_result.update!(released_to_students: true)
+        grouping.current_submission_used.make_remark_result
+        annotation
+      end
+      it 'should prevent it being destroyed' do
+        expect { annotation.destroy! }.to raise_error(ActiveRecord::RecordNotDestroyed)
+      end
+    end
+    context 'with a released result' do
+      let(:annotation) { create :text_annotation }
+      it 'should prevent it being destroyed' do
+        annotation.result.update!(released_to_students: true)
+        expect { annotation.reload.destroy! }.to raise_error(ActiveRecord::RecordNotDestroyed)
+      end
+    end
+    context 'without remark result or a released result' do
+      let(:annotation) { create :text_annotation }
+      it 'should prevent it being destroyed' do
+        expect { annotation.reload.destroy! }.not_to raise_error
+      end
+    end
+  end
+
   context 'when associated with a deduction' do
     let(:assignment) { create(:assignment_with_deductive_annotations) }
     let(:annotation_category) { assignment.annotation_categories.where.not(flexible_criterion_id: nil).first }

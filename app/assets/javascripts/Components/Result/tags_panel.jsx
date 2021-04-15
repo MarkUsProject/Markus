@@ -14,12 +14,12 @@ export class TagsPanel extends React.Component {
     } else {
       return this.props.currentTags.map(tag => {
         return (
-          <span className='tag-element'
+          <li className='active-tag'
                 key={tag.id}
                 onClick={() => this.props.removeTag(tag.id)}
           >
             {tag.name}
-          </span>
+          </li>
         );
       });
     }
@@ -31,12 +31,12 @@ export class TagsPanel extends React.Component {
     } else {
       return this.props.availableTags.map(tag => {
         return (
-          <span className='tag-element'
+          <li className='active-tag'
                 key={tag.id}
                 onClick={() => this.props.addTag(tag.id)}
           >
             {tag.name}
-          </span>
+          </li>
         );
       });
     }
@@ -46,11 +46,11 @@ export class TagsPanel extends React.Component {
     return (
       <div>
         <h4>{I18n.t('tags.results.current_tags')}</h4>
-        <p>{this.renderTagList()}</p>
+        <ul className='tag-list'>{this.renderTagList()}</ul>
         {!this.props.remark_submitted &&
          (<div>
            <h4>{I18n.t('tags.results.available_tags')}</h4>
-           <p>{this.renderAvailableTags()}</p>
+           <ul className='tag-list'>{this.renderAvailableTags()}</ul>
           </div>)
         }
         {!this.props.remark_submitted && this.props.role === 'Admin' &&

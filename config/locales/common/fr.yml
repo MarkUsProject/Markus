@@ -1,19 +1,20 @@
+---
 fr:
-  actions: "Actes"
-  add: "Ajouter"
-  all: "Tous"
-  apply: "Appliquer"
-  cancel: "Annuler"
-  close: "Fermer"
-  copy: "Copy"
-  continue: "Continuer"
-  delete: "Supprimer"
-  edit: "Éditer"
-  encoding: "Codage"
-  help: "Aide"
-  markus: "MarkUs"
-  please_wait: "Merci de patienter…"
-  preview: "Prévisualisation"
-  save: "Sauvegarder"
-  skip: "Skip"
-  working: "Chargement"
+  actions: Actes
+  add: Ajouter
+  all: Tous
+  apply: Appliquer
+  cancel: Annuler
+  close: Fermer
+  continue: Continuer
+  copy: Copy
+  delete: Supprimer
+  edit: Éditer
+  encoding: Codage
+  help: Aide
+  markus: MarkUs
+  please_wait: Merci de patienter…
+  preview: Prévisualisation
+  save: Sauvegarder
+  skip: Skip
+  working: Chargement

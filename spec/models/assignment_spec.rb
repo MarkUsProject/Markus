@@ -11,7 +11,6 @@ describe Assignment do
     it { is_expected.to have_many(:notes).dependent(:destroy) }
     it { is_expected.to have_many(:section_due_dates) }
     it { is_expected.to accept_nested_attributes_for(:section_due_dates) }
-    it { is_expected.to have_one(:assignment_stat).dependent(:destroy) }
     it { is_expected.to have_many(:criteria).dependent(:destroy).order(:position) }
     it { is_expected.to have_many(:peer_criteria).order(:position) }
     it { is_expected.to have_many(:ta_criteria).order(:position) }
@@ -27,9 +26,6 @@ describe Assignment do
     end
     it do
       is_expected.to accept_nested_attributes_for(:submission_rule).allow_destroy(true)
-    end
-    it do
-      is_expected.to accept_nested_attributes_for(:assignment_stat).allow_destroy(true)
     end
   end
 
@@ -1567,70 +1563,95 @@ describe Assignment do
     end
   end
 
-  describe '#update_results_stats' do
+  describe '#results_average' do
     let(:assignment) { create :assignment }
-
-    before :each do
+    before do
       allow(assignment).to receive(:max_mark).and_return(10)
     end
 
-    context 'when no marks are found' do
-      before :each do
-        allow(Result).to receive(:student_marks_by_assignment).and_return([])
-      end
-
-      it 'returns false immediately' do
-        expect(assignment.update_results_stats).to be_falsy
-      end
+    it 'returns 0 when there are no results' do
+      allow(assignment).to receive(:completed_result_marks).and_return([])
+      expect(assignment.results_average).to eq 0
     end
 
-    context 'when even number of marks are found' do
-      before :each do
-        allow(Result).to receive(:student_marks_by_assignment).and_return([0, 1, 4, 7])
-        assignment.update_results_stats
-      end
-
-      it 'updates results_zeros' do
-        expect(assignment.results_zeros).to eq 1
-      end
-
-      it 'updates results_fails' do
-        expect(assignment.results_fails).to eq 3
-      end
-
-      it 'updates results_average' do
-        expect(assignment.results_average).to eq 30
-      end
-
-      it 'updates results_median to the average of the two middle marks' do
-        expect(assignment.results_median).to eq 25
-      end
-
-      context 'when max_mark is 0' do
-        before :each do
-          allow(assignment).to receive(:max_mark).and_return(0)
-          assignment.update_results_stats
-        end
-
-        it 'updates results_average to 0' do
-          expect(assignment.results_average).to eq 0
-        end
-
-        it 'updates results_median to 0' do
-          expect(assignment.results_median).to eq 0
-        end
-      end
+    it 'returns the correct number when there are completed results' do
+      allow(assignment).to receive(:completed_result_marks).and_return([0, 1, 4, 7])
+      expect(assignment.results_average).to eq(3.0 * 100 / assignment.max_mark)
     end
 
-    context 'when odd number of marks are found' do
-      before :each do
-        allow(Result).to receive(:student_marks_by_assignment).and_return([0, 1, 4, 7, 9])
-        assignment.update_results_stats
-      end
+    it 'returns 0 when the assignment has a max_mark of 0' do
+      allow(assignment).to receive(:max_mark).and_return(0)
+      allow(assignment).to receive(:completed_result_marks).and_return([0, 0, 0, 0])
+      expect(assignment.results_average).to eq 0
+    end
+  end
 
-      it 'updates results_median to the middle mark' do
-        expect(assignment.results_median).to eq 40
-      end
+  describe '#results_median' do
+    let(:assignment) { create :assignment }
+    before do
+      allow(assignment).to receive(:max_mark).and_return(10)
+    end
+
+    it 'returns 0 when there are no results' do
+      allow(assignment).to receive(:completed_result_marks).and_return([])
+      expect(assignment.results_median).to eq 0
+    end
+
+    it 'returns the correct number when there are completed results' do
+      allow(assignment).to receive(:completed_result_marks).and_return([0, 1, 4, 7])
+      expect(assignment.results_median).to eq(2.5 * 100 / assignment.max_mark)
+    end
+
+    it 'returns 0 when the assignment has a max_mark of 0' do
+      allow(assignment).to receive(:max_mark).and_return(0)
+      allow(assignment).to receive(:completed_result_marks).and_return([0, 0, 0, 0])
+      expect(assignment.results_median).to eq 0
+    end
+  end
+
+  describe '#results_fails' do
+    let(:assignment) { create :assignment }
+    before do
+      allow(assignment).to receive(:max_mark).and_return(10)
+    end
+
+    it 'returns 0 when there are no results' do
+      allow(assignment).to receive(:completed_result_marks).and_return([])
+      expect(assignment.results_fails).to eq 0
+    end
+
+    it 'returns the correct number when there are completed results' do
+      allow(assignment).to receive(:completed_result_marks).and_return([0, 1, 4, 7])
+      expect(assignment.results_fails).to eq 3
+    end
+
+    it 'returns 0 when the assignment has a max_mark of 0' do
+      allow(assignment).to receive(:max_mark).and_return(0)
+      allow(assignment).to receive(:completed_result_marks).and_return([0, 0, 0, 0])
+      expect(assignment.results_fails).to eq 0
+    end
+  end
+
+  describe '#results_zeros' do
+    let(:assignment) { create :assignment }
+    before do
+      allow(assignment).to receive(:max_mark).and_return(10)
+    end
+
+    it 'returns 0 when there are no results' do
+      allow(assignment).to receive(:completed_result_marks).and_return([])
+      expect(assignment.results_zeros).to eq 0
+    end
+
+    it 'returns the correct number when there are completed results' do
+      allow(assignment).to receive(:completed_result_marks).and_return([0, 1, 4, 7])
+      expect(assignment.results_zeros).to eq 1
+    end
+
+    it 'returns the correct number when the assignment has a max_mark of 0' do
+      allow(assignment).to receive(:max_mark).and_return(0)
+      allow(assignment).to receive(:completed_result_marks).and_return([0, 0, 0, 0])
+      expect(assignment.results_zeros).to eq 4
     end
   end
 
@@ -1648,7 +1669,7 @@ describe Assignment do
 
     context 'when one assignment is found' do
       before :each do
-        @assignment1 = create(:assignment, due_date: Date.today - 5)
+        @assignment1 = create(:assignment, due_date: Date.current - 5)
       end
 
       it 'returns the only assignment' do
@@ -1660,8 +1681,8 @@ describe Assignment do
     context 'when more than one assignment is found' do
       context 'when there is an assignment due in 3 days' do
         before :each do
-          @a1 = create(:assignment, due_date: Date.today - 5)
-          @a2 = create(:assignment, due_date: Date.today + 3)
+          @a1 = create(:assignment, due_date: Date.current - 5)
+          @a2 = create(:assignment, due_date: Date.current + 3)
         end
 
         it 'returns the assignment due in 3 days' do
@@ -1673,9 +1694,9 @@ describe Assignment do
 
       context 'when the next assignment is due in more than 3 days' do
         before :each do
-          @a1 = create(:assignment, due_date: Date.today - 5)
-          @a2 = create(:assignment, due_date: Date.today - 1)
-          @a3 = create(:assignment, due_date: Date.today + 8)
+          @a1 = create(:assignment, due_date: Date.current - 5)
+          @a2 = create(:assignment, due_date: Date.current - 1)
+          @a3 = create(:assignment, due_date: Date.current + 8)
         end
 
         it 'returns the assignment that was most recently due' do
@@ -1687,9 +1708,9 @@ describe Assignment do
 
       context 'when all assignments are due in more than 3 days' do
         before :each do
-          @a1 = create(:assignment, due_date: Date.today + 5)
-          @a2 = create(:assignment, due_date: Date.today + 12)
-          @a3 = create(:assignment, due_date: Date.today + 19)
+          @a1 = create(:assignment, due_date: Date.current + 5)
+          @a2 = create(:assignment, due_date: Date.current + 12)
+          @a3 = create(:assignment, due_date: Date.current + 19)
         end
 
         it 'returns the assignment that is due first' do
@@ -1701,9 +1722,9 @@ describe Assignment do
 
       context 'when all assignments are past the due date' do
         before :each do
-          @a1 = create(:assignment, due_date: Date.today - 5)
-          @a2 = create(:assignment, due_date: Date.today - 12)
-          @a3 = create(:assignment, due_date: Date.today - 19)
+          @a1 = create(:assignment, due_date: Date.current - 5)
+          @a2 = create(:assignment, due_date: Date.current - 12)
+          @a3 = create(:assignment, due_date: Date.current - 19)
         end
 
         it 'returns the assignment that was due most recently' do
@@ -1957,6 +1978,10 @@ describe Assignment do
 
     context 'a TA user' do
       let(:ta) { create :ta }
+      let(:assignment_tag) { create :assignment }
+      let(:tags) { create_list :tag, 3, user: ta }
+      let(:groupings_with_tags) { groupings.each_with_index { |g, i| g.update(tags: [tags[i]]) && g } }
+      let!(:groupings) { create_list :grouping_with_inviter, 3, assignment: assignment_tag }
 
       before :each do
         @assignment = create(:assignment_with_criteria_and_results)
@@ -1973,10 +1998,21 @@ describe Assignment do
           expect(criteria_info.keys).to include(:Header, :accessor, :className)
         end
       end
+
+      it 'has tags correct info' do
+        Grouping.assign_all_tas(groupings.map(&:id), [ta.id], assignment_tag)
+        tags_names = groupings_with_tags.map { |g| g&.tags&.to_a&.map(&:name) }
+        data = assignment_tag.reload.summary_json(ta)[:data]
+        expect(data.map { |h| h[:tags] }).to contain_exactly(*tags_names)
+      end
     end
 
     context 'an Admin user' do
       let(:admin) { create :admin }
+      let(:assignment_tag) { create :assignment }
+      let(:tags) { create_list :tag, 3, user: admin }
+      let(:groupings_with_tags) { groupings.each_with_index { |g, i| g.update(tags: [tags[i]]) && g } }
+      let!(:groupings) { create_list :grouping_with_inviter, 3, assignment: assignment_tag }
 
       before :each do
         @assignment = create(:assignment_with_criteria_and_results)
@@ -1993,6 +2029,12 @@ describe Assignment do
           expect(criteria_info.keys).to include(:Header, :accessor, :className)
         end
 
+        it 'has tags correct info' do
+          tags_names = groupings_with_tags.map { |g| g&.tags&.to_a&.map(&:name) }
+          data = assignment_tag.reload.summary_json(admin)[:data]
+          expect(data.map { |h| h[:tags] }).to contain_exactly(*tags_names)
+        end
+
         it 'has group data' do
           data = @assignment.summary_json(admin)[:data]
           expected_keys = [
@@ -2005,6 +2047,7 @@ describe Assignment do
             :max_mark,
             :result_id,
             :submission_id,
+            :tags,
             :total_extra_marks,
             :graders
           ]
@@ -2039,6 +2082,21 @@ describe Assignment do
               data = @assignment.summary_json(admin)[:data]
               grouping_data = data.select { |d| d[:group_name] == grouping.group.group_name }.first
               expect(grouping_data[:final_grade]).to eq(0)
+            end
+          end
+          context 'and another extra mark' do
+            let!(:extra_mark_percentage) { create :extra_mark, result: grouping.current_result }
+            let(:percentage_extra) { (extra_mark_percentage.extra_mark * @assignment.max_mark / 100).round(2) }
+            it 'should included both extra mark values' do
+              data = @assignment.summary_json(admin)[:data]
+              grouping_data = data.select { |d| d[:group_name] == grouping.group.group_name }.first
+              expect(grouping_data[:total_extra_marks]).to eq(extra_mark.extra_mark + percentage_extra)
+            end
+            it 'should add both extra marks to the total mark' do
+              data = @assignment.summary_json(admin)[:data]
+              grouping_data = data.select { |d| d[:group_name] == grouping.group.group_name }.first
+              total = grouping.current_result.total_mark + extra_mark.extra_mark + percentage_extra
+              expect(grouping_data[:final_grade]).to eq total
             end
           end
         end
@@ -2252,10 +2310,180 @@ describe Assignment do
       it 'should return no of marked submissions of all groupings' do
         expect(assignment.get_num_marked).to eq(2)
       end
+
+      context 'When there is a remark request that has not been completed' do
+        let!(:result1_remark) { create(:remark_result, submission: grouping1.submissions.first) }
+
+        it 'counts the grouping as not marked' do
+          expect(assignment.get_num_marked).to eq(1)
+        end
+      end
+
+      context 'Where there is a remark request that has been completed' do
+        let!(:result1_remark) do
+          create(:remark_result,
+                 submission: grouping1.submissions.first,
+                 marking_state: Result::MARKING_STATES[:complete])
+        end
+
+        it 'counts the grouping as marked' do
+          expect(assignment.get_num_marked).to eq(2)
+        end
+      end
     end
     context 'When user is TA' do
       it 'should return no of marked submissions for groupings assigned to them' do
         expect(assignment.get_num_marked(ta.id)).to eq(1)
+      end
+
+      context 'When they are assigned a remark request that has not been completed' do
+        let!(:result1_remark) { create(:remark_result, submission: grouping1.submissions.first) }
+
+        it 'counts the grouping as not marked' do
+          expect(assignment.get_num_marked(ta.id)).to eq(0)
+        end
+      end
+
+      context 'When they are assigned a remark request that has been completed' do
+        let!(:result1_remark) do
+          create(:remark_result,
+                 submission: grouping1.submissions.first,
+                 marking_state: Result::MARKING_STATES[:complete])
+        end
+
+        it 'counts the grouping as marked' do
+          expect(assignment.get_num_marked(ta.id)).to eq(1)
+        end
+      end
+
+      context 'When they not assigned a remark request that has been completed' do
+        let!(:result1_remark) do
+          create(:remark_result,
+                 submission: grouping3.submissions.first,
+                 marking_state: Result::MARKING_STATES[:complete])
+        end
+
+        it 'does not count that grouping as marked' do
+          expect(assignment.get_num_marked(ta.id)).to eq(1)
+        end
+      end
+
+      context 'When the assignment has graders assigned to criteria' do
+        let(:assignment2) do
+          create(:assignment_with_criteria_and_results_with_remark,
+                 assignment_properties_attributes: { assign_graders_to_criteria: true })
+        end
+
+        let(:new_grouping) { create(:grouping_with_inviter_and_submission, assignment: assignment2) }
+        let(:new_result) { create(:incomplete_result, submission: new_grouping.current_submission_used) }
+        before do
+          create(:ta_membership, user: ta, grouping: assignment2.groupings.first)
+          create(:ta_membership, user: ta, grouping: new_grouping)
+        end
+
+        it 'counts complete results when the grader is not assigned any criteria' do
+          expect(assignment2.get_num_marked(ta.id)).to eq(1)
+        end
+
+        context 'When the grader is assigned to mark a criterion' do
+          let!(:criterion_ta_association) do
+            create(:criterion_ta_association, ta: ta, criterion: assignment2.criteria.first)
+          end
+
+          it 'counts results where the assigned criteria have marks' do
+            m = Mark.find_by(result: new_result, criterion: assignment2.criteria.first)
+            m.update(mark: 0)
+            expect(assignment2.get_num_marked(ta.id)).to eq(2)
+          end
+
+          it 'does not count results where the assigned criteria do not have marks' do
+            expect(assignment2.get_num_marked(ta.id)).to eq(1)
+          end
+
+          context 'Where there is a remark request' do
+            let!(:remark_result) do
+              create(:remark_result, submission: assignment2.groupings.first.current_submission_used)
+            end
+
+            it 'counts the remark result and not the original result' do
+              expect(assignment2.get_num_marked(ta.id)).to eq(0)
+            end
+          end
+        end
+      end
+    end
+  end
+
+  describe '#completed_result_marks' do
+    let(:assignment) { create(:assignment) }
+    let!(:criteria) { create_list(:rubric_criterion, 2, assignment: assignment, max_mark: 4) }
+
+    shared_examples 'empty' do
+      it 'returns an empty array' do
+        expect(assignment.completed_result_marks).to be_empty
+      end
+    end
+
+    context 'when there are no groupings' do
+      it_returns 'empty'
+    end
+
+    context 'when there are groupings' do
+      let!(:groupings) { create_list(:grouping_with_inviter_and_submission, 4, assignment: assignment) }
+
+      context 'when there are no submissions' do
+        it_returns 'empty'
+      end
+
+      context 'when there only incomplete results' do
+        before { groupings }
+
+        it_returns 'empty'
+      end
+
+      context 'when there are complete results' do
+        let(:marks) { [1, 0, 4] }
+
+        before do
+          marks.zip(groupings).each do |m, g|
+            criteria.each do |criterion|
+              criterion.marks.find_or_create_by(result: g.current_result).update!(mark: m)
+            end
+            g.current_result.update!(total_mark: m * criteria.size, marking_state: Result::MARKING_STATES[:complete])
+          end
+        end
+
+        it 'returns a list of sorted marks when no results are released' do
+          expect(assignment.completed_result_marks).to eq [0, 2, 8]
+        end
+
+        it 'returns a list of sorted marks when some results are released' do
+          groupings.first.current_result.update!(released_to_students: true)
+          expect(assignment.completed_result_marks).to eq [0, 2, 8]
+        end
+
+        it 'returns a list of sorted marks that only includes results marked as complete' do
+          result = assignment.current_results.find_by(total_mark: 2)
+          result.update!(marking_state: Result::MARKING_STATES[:incomplete])
+          expect(assignment.completed_result_marks).to eq [0, 8]
+        end
+
+        context 'when there is a remark result' do
+          let(:original_result) { assignment.current_results.find_by(total_mark: 2) }
+          let!(:remark_result) { create(:remark_result, submission: original_result.submission) }
+
+          it 'does not include the original result or remark result when the latter is incomplete' do
+            expect(assignment.completed_result_marks).to eq [0, 8]
+          end
+
+          it 'only includes the remark result when it is complete' do
+            criteria.each do |c|
+              c.marks.find_or_create_by(result: remark_result).update!(mark: 3)
+            end
+            remark_result.update!(total_mark: 6, marking_state: Result::MARKING_STATES[:complete])
+            expect(assignment.completed_result_marks).to eq [0, 6, 8]
+          end
+        end
       end
     end
   end

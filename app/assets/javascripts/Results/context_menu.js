@@ -6,7 +6,7 @@
   Context-Menu and library related:
     * jquery.ui-contextmenu.min.js (..\app\assets\javascripts\)
       * Depends on jQuery and jQuery-ui
-    * context_menu.css (..\app\assets\stylesheets\)
+    * context_menu.scss (..\app\assets\stylesheets\)
 
   Context-Menu button functionality:
     * _annotations.js.erb (..\app\views\results\common\)

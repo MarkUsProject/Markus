@@ -1,9 +1,10 @@
+---
 en:
   activerecord:
-    models:
-      annotation:
-        one: "Annotation"
-        other: "Annotations"
     attributes:
       annotation:
-        creator: "Created By"
+        creator: Created By
+    models:
+      annotation:
+        one: Annotation
+        other: Annotations

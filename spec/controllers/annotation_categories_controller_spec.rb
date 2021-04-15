@@ -296,6 +296,9 @@ describe AnnotationCategoriesController do
     end
 
     describe '#update_annotation_text' do
+      let(:assignment) { create(:assignment_with_criteria_and_results) }
+      let(:assignment_result) { assignment.groupings.first.current_result }
+      let(:uncategorized_text) { create(:annotation_text, annotation_category: nil) }
       it 'successfully updates an annotation text\'s (associated with an annotation category) content' do
         text = create(:annotation_text)
         category = text.annotation_category
@@ -354,6 +357,16 @@ describe AnnotationCategoriesController do
         assert_response 400
         expect(text.reload.content).to eq(prev_content)
       end
+      it 'successfully updates an annotation text\'s (not associated with an annotation category) content' do
+        create(:text_annotation, annotation_text: uncategorized_text, result: assignment_result)
+        put_as user, :update_annotation_text,
+               params: { assignment_id: assignment.id,
+                         id: uncategorized_text.id,
+                         content: 'updated_content',
+                         format: :js }
+
+        expect(uncategorized_text.reload.content).to eq 'updated_content'
+      end
     end
 
     describe '#uncategorized_annotations' do
@@ -361,7 +374,8 @@ describe AnnotationCategoriesController do
       let(:assignment_result) { assignment.groupings.first.current_result }
       let(:text) { create(:annotation_text, annotation_category: nil) }
       let(:different_text) { create(:annotation_text, annotation_category: nil) }
-
+      let(:last_editor) { create(:admin) }
+      let(:text2) { create(:annotation_text, annotation_category: nil, last_editor: last_editor) }
       it 'finds no instance of uncategorized annotations when there are no annotation texts' do
         get_as user, :uncategorized_annotations, params: { assignment_id: assignment.id }
         expect(assigns['texts']).to eq []
@@ -406,9 +420,43 @@ describe AnnotationCategoriesController do
         expect([assigns['texts'].first['id'], assigns['texts'].second['id']].sort!).to eq [text.id,
                                                                                            different_text.id].sort!
       end
+
+      it 'is not empty when responding to json format and uncategorized annotations exist' do
+        create(:text_annotation, annotation_text: text, result: assignment_result)
+        get_as user, :uncategorized_annotations, format: 'json', params: { assignment_id: assignment.id }
+        expect(JSON.parse(response.body)).not_to be_empty
+      end
+
+      it 'has correct keys when responding to json format and uncategorized annotations exist' do
+        create(:text_annotation, annotation_text: text, result: assignment_result)
+        other_grouping = assignment.groupings.where.not(id: assignment_result.grouping.id).first
+        create(:text_annotation, annotation_text: different_text, result: other_grouping.current_result)
+        expected_keys = %w[group_name creator last_editor content assignment_id result_id submission_id id]
+        get_as user, :uncategorized_annotations, format: 'json', params: { assignment_id: assignment.id }
+        data = JSON.parse(response.body)
+        expect(data.first.keys).to match_array expected_keys
+        expect(data.second.keys).to match_array expected_keys
+      end
+
+      it 'has correct data when responding to json format and uncategorized annotation exists' do
+        create(:text_annotation, annotation_text: text2, result: assignment_result)
+        get_as user, :uncategorized_annotations, format: 'json', params: { assignment_id: assignment.id }
+        data = JSON.parse(response.body)
+        expect(data.first['group_name']).to eq(assignment.groupings.first.group.group_name)
+        expect(data.first['creator']).to eq(text2.creator.user_name)
+        expect(data.first['last_editor']).to eq(last_editor.user_name)
+        expect(data.first['content']).to eq(text2.content)
+        expect(data.first['assignment_id']).to eq(assignment.id)
+        expect(data.first['result_id']).to eq(assignment_result.id)
+        expect(data.first['submission_id']).to eq(assignment.groupings.first.current_result.submission_id)
+        expect(data.first['id']).to eq(text2.id)
+      end
     end
 
     describe '#destroy_annotation_text' do
+      let(:assignment) { create(:assignment_with_criteria_and_results) }
+      let(:assignment_result) { assignment.groupings.first.current_result }
+      let(:uncategorized_text) { create(:annotation_text, annotation_category: nil) }
       it 'successfully destroys an annotation text associated with an annotation category' do
         text = create(:annotation_text)
         category = text.annotation_category
@@ -418,6 +466,18 @@ describe AnnotationCategoriesController do
                             format: :js }
 
         expect(category.annotation_texts.count).to eq 0
+      end
+      it 'successfully destroys an annotation text not associated with an annotation category' do
+        create(:text_annotation, annotation_text: uncategorized_text, result: assignment_result)
+        get_as user, :uncategorized_annotations, params: { assignment_id: assignment.id }
+        expect(assigns['texts'].first['id']).to eq uncategorized_text.id
+        delete_as user, :destroy_annotation_text,
+                  params: { assignment_id: assignment.id,
+                            id: uncategorized_text.id,
+                            format: :js }
+
+        get_as user, :uncategorized_annotations, params: { assignment_id: assignment.id }
+        expect(assigns['texts']).to eq []
       end
     end
 
@@ -547,6 +607,66 @@ describe AnnotationCategoriesController do
         expect(flash[:error].size).to eq(1)
         expect(AnnotationCategory.all.size).to eq(0)
         expect(response).to redirect_to action: 'index', assignment_id: assignment.id
+      end
+    end
+    context 'CSV_One_Time_Downloads' do
+      let(:assignment) { create(:assignment_with_criteria_and_results) }
+      let(:assignment_result) { assignment.groupings.first.current_result }
+      let(:last_editor) { create(:admin) }
+      let(:text) { create(:annotation_text, annotation_category: nil, last_editor: last_editor) }
+      let(:different_text) { create(:annotation_text, annotation_category: nil) }
+
+      let(:csv_options) do
+        { filename: "#{assignment.short_identifier}_one_time_annotations.csv",
+          disposition: 'attachment',
+          type: 'text/csv' }
+      end
+      it 'expects a call to send_data with editor' do
+        text_annotation = create(:text_annotation, annotation_text: text, result: assignment_result)
+        csv_data = "#{assignment.groupings.first.group.group_name}," \
+                    "#{text_annotation.annotation_text.last_editor.user_name}," \
+                    "#{text_annotation.annotation_text.creator.user_name}," \
+                     "#{text_annotation.annotation_text.content}\n"
+
+        expect(@controller).to receive(:send_data).with(csv_data, csv_options) {
+          # to prevent a 'missing template' error
+          @controller.head :ok
+        }
+        get_as user, :uncategorized_annotations, params: { assignment_id: assignment.id }, format: 'csv'
+      end
+      it 'expects a call to send_data without editor' do
+        text_annotation = create(:text_annotation, annotation_text: different_text, result: assignment_result)
+        csv_data = "#{assignment.groupings.first.group.group_name}," \
+                    ',' \
+                    "#{text_annotation.annotation_text.creator.user_name}," \
+                     "#{text_annotation.annotation_text.content}\n"
+        expect(@controller).to receive(:send_data).with(csv_data, csv_options) {
+          # to prevent a 'missing template' error
+          @controller.head :ok
+        }
+        get_as user, :uncategorized_annotations, params: { assignment_id: assignment.id }, format: 'csv'
+      end
+      it 'responds with appropriate status' do
+        get_as user, :uncategorized_annotations, params: { assignment_id: assignment.id }, format: 'csv'
+        expect(response.status).to eq(200)
+      end
+      # parse header object to check for the right disposition
+      it 'sets disposition as attachment' do
+        get_as user, :uncategorized_annotations, params: { assignment_id: assignment.id }, format: 'csv'
+        d = response.header['Content-Disposition'].split.first
+        expect(d).to eq 'attachment;'
+      end
+      # parse header object to check for the right content type
+      it 'returns text/csv type' do
+        get_as user, :uncategorized_annotations, params: { assignment_id: assignment.id }, format: 'csv'
+        expect(response.media_type).to eq 'text/csv'
+      end
+      # parse header object to check for the right file naming convention
+      it 'filename passes naming conventions' do
+        get_as user, :uncategorized_annotations, params: { assignment_id: assignment.id }, format: 'csv'
+        filename = response.header['Content-Disposition']
+                           .split[1].split('"').second
+        expect(filename).to eq "#{assignment.short_identifier}_one_time_annotations.csv"
       end
     end
 

@@ -1,5 +1,5 @@
 <%= content_for :head do %>
-  <script>
+  <%= javascript_tag nonce: true do %>
     document.addEventListener('DOMContentLoaded', () => {
       makeStarterFileManager(
         document.getElementById('starter_file_manager'),
@@ -8,7 +8,7 @@
         }
       );
     });
-  </script>
+  <% end %>
 
   <%= render partial: 'shared/navigation_warning',
              formats: [:js],

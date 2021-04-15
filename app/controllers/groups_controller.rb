@@ -6,6 +6,10 @@ class GroupsController < ApplicationController
   before_action { authorize! }
   layout 'assignment_content'
 
+  content_security_policy only: [:assign_scans] do |p|
+    p.img_src :self, :blob
+  end
+
   # Group administration functions -----------------------------------------
   # Verify that all functions below are included in the authorize filter above
 
@@ -154,10 +158,11 @@ class GroupsController < ApplicationController
 
   def get_names
     names = Student
-            .select(:id, :id_number, :user_name, "CONCAT(first_name,' ',last_name) AS label, CONCAT(first_name,' ',last_name) AS value")
             .where('(lower(first_name) like ? OR lower(last_name) like ? OR lower(user_name) like ? OR id_number like ?) AND users.id NOT IN (?)',
                    "#{params[:term].downcase}%", "#{params[:term].downcase}%", "#{params[:term].downcase}%", "#{params[:term]}%",
                    Membership.select(:user_id).joins(:grouping).where('groupings.assessment_id = ?', params[:assignment]))
+            .pluck_to_hash(:id, :id_number, :user_name,
+                           "CONCAT(first_name,' ',last_name) AS label, CONCAT(first_name,' ',last_name) AS value")
     render json: names
   end
 
@@ -251,8 +256,8 @@ class GroupsController < ApplicationController
   def create_groups_when_students_work_alone
     @assignment = Assignment.find(params[:assignment_id])
     if @assignment.group_max == 1
-      # data is a list of lists containing: [[group_name, repo_name, group_member], ...]
-      data = Student.where(hidden: false).pluck(:user_name).map { |user_name| [user_name] * 3 }
+      # data is a list of lists containing: [[group_name, group_member], ...]
+      data = Student.where(hidden: false).pluck(:user_name).map { |user_name| [user_name, user_name] }
       @current_job = CreateGroupsJob.perform_later @assignment, data
       session[:job_id] = @current_job.job_id
     end
@@ -277,7 +282,7 @@ class GroupsController < ApplicationController
 
     file_out = MarkusCsv.generate(groupings) do |grouping|
       # csv format is group_name, repo_name, user1_name, user2_name, ... etc
-      [grouping.group.group_name, grouping.group.repo_name].concat(
+      [grouping.group.group_name].concat(
         grouping.student_memberships.map do |member|
           member.user.user_name
         end

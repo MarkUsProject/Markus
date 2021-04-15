@@ -1,4 +1,4 @@
-<script>
+<%= javascript_tag nonce: true do %>
   function add_column() {
     var last_col = $('.grade_entry_item').last();
     var new_col = last_col.clone();
@@ -10,7 +10,7 @@
     new_col.find('[id*="destroy"], [name*="destroy"], [for*="destroy"]')
            .remove();
     var a = $('<a>' + remove_text + '</a>');
-    a.click(function() { new_col.remove(); return false; });
+    a.attr('class', 'grade-entry-item-delete')
     new_col.append(a);
 
     new_col.find('input').each(function () {
@@ -33,6 +33,14 @@
       $(this).attr('for', $(this).attr('for').replace(id_re, repl));
     });
     $('#grade_entry_items').append(new_col);
+    refresh_event_listeners();
+  }
+
+  function refresh_event_listeners() {
+    $('.grade-entry-item-delete').click(function(e) {
+      $(e.target).parents(".grade_entry_item").remove();
+      e.preventDefault();
+    })
   }
 
   $(document).ready(function() {
@@ -46,4 +54,4 @@
       nextText:         I18n.t('time.next')
     });
   });
-</script>
+<% end %>

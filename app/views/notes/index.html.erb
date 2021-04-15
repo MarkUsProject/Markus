@@ -1,11 +1,11 @@
 <div class='title_bar'>
   <h1>
     <%= Note.model_name.human.pluralize %>
-    <span class='title-help notes_help'>
-      <p class='help-message-title notes_help'>
+    <div class='title-help'>
+      <p>
         <%= t('notes.help') %>
       </p>
-    </span>
+    </div>
   </h1>
 </div>
 
@@ -44,7 +44,7 @@
           </td>
           <td><%= note.notes_message %></td>
           <td>
-            <% if note.user_can_modify?(@current_user) %>
+            <% if allowed_to?(:modify?, note) %>
               <%= button_to t('edit'),
                             edit_note_path(note.id),
                             method: 'get',

@@ -11,6 +11,7 @@ describe CourseSummariesController do
       it 'be able to get a csv grade report' do
         assignments = create_list(:assignment_with_criteria_and_results, 3)
         create(:grouping_with_inviter_and_submission, assignment: assignments[0])
+        create(:grouping_with_inviter, assignment: assignments[0])
         csv_rows = get_as(@admin, :download_csv_grades_report, format: :csv).parsed_body
         expect(csv_rows.size).to eq(Student.count + 1) # one header row plus one row per student
 
@@ -72,6 +73,10 @@ describe CourseSummariesController do
           @data = @response_data[:data]
         end
 
+        it 'displays column headers correctly' do
+          expect(@response_data[:assessments][0][:name]).to eq('A1 (/3.0)')
+        end
+
         it 'returns the correct grades' do
           expect(@data.length).to eq Student.count
           Student.find_each do |student|
@@ -109,13 +114,8 @@ describe CourseSummariesController do
           returned_averages = @response_data[:graph_data][:average]
           returned_medians = @response_data[:graph_data][:median]
           Assessment.all.order(id: :asc).each do |a|
-            if a.is_a? GradeEntryForm
-              averages << a.calculate_average&.round(2)
-              medians << a.calculate_median&.round(2)
-            else
-              averages << a.results_average&.round(2)
-              medians << a.results_median&.round(2)
-            end
+            averages << a.results_average&.round(2)
+            medians << a.results_median&.round(2)
           end
           MarkingScheme.all.each do |m|
             total = m.marking_weights.pluck(:weight).compact.sum
@@ -237,13 +237,8 @@ describe CourseSummariesController do
             returned_averages = response_data[:graph_data][:average]
             returned_medians = response_data[:graph_data][:median]
             Assessment.all.order(id: :asc).each do |a|
-              if a.is_a? GradeEntryForm
-                averages << a.calculate_average&.round(2)
-                medians << nil
-              else
-                averages << a.results_average&.round(2)
-                medians << (a.display_median_to_students ? a.results_median&.round(2) : nil)
-              end
+              averages << a.results_average&.round(2)
+              medians << (a.display_median_to_students ? a.results_median&.round(2) : nil)
             end
             expect(returned_medians.compact).to be_empty
             expect(returned_averages.compact).to be_empty

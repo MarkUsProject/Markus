@@ -123,10 +123,7 @@ class CreateModifyAnnotationPanel extends React.Component {
 
   updatePreview = () => {
     const target_id = "annotation_preview";
-    document.getElementById(target_id).innerHTML = marked(
-      this.state.content,
-      { sanitize: true }
-    );
+    document.getElementById(target_id).innerHTML = safe_marked(this.state.content);
     MathJax.Hub.Queue(["Typeset", MathJax.Hub, target_id]);
   };
 
@@ -180,11 +177,11 @@ class CreateModifyAnnotationPanel extends React.Component {
 
   render() {
     let options = [
-      <option value="">{I18n.t("annotation_categories.one_time_only")}</option>,
+      <option key="one_time_annotation" value="">{I18n.t("annotation_categories.one_time_only")}</option>,
     ];
     this.props.categories.forEach((category) => {
       options.push(
-        <option value={category.id}>{category.annotation_category_name}</option>
+        <option key={category.id} value={category.id}>{category.annotation_category_name}</option>
       );
     });
 
@@ -194,6 +191,7 @@ class CreateModifyAnnotationPanel extends React.Component {
         isOpen={this.props.show}
         onAfterOpen={this.onModalOpen}
         onRequestClose={this.props.onRequestClose}
+        parentSelector={() => document.querySelector('#content')}
       >
         <div
           id="annotation-modal"
@@ -215,6 +213,7 @@ class CreateModifyAnnotationPanel extends React.Component {
                     value={this.state.content}
                     onChange={this.handleChange}
                     rows="8"
+                    autoFocus={true}
                   />
                 </label>
 
@@ -254,10 +253,10 @@ class CreateModifyAnnotationPanel extends React.Component {
                     value={I18n.t("annotation_categories.one_time_only")}
                   />
                 ) : (
-                  <div>
-                    <h3>
+                  <div className="inline-labels">
+                    <label htmlFor="new_annotation_category">
                       {I18n.t("activerecord.models.annotation_category.one")}
-                    </h3>
+                    </label>
 
                     <select
                       id="new_annotation_category"
@@ -300,6 +299,7 @@ class CreateModifyAnnotationPanel extends React.Component {
                   <input
                     id="annotation-submit-btn"
                     type="submit"
+                    title="Ctrl/⌘ + Enter"
                     value={I18n.t("save")}
                   />
                 </section>

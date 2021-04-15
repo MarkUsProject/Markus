@@ -1,37 +1,33 @@
+---
 en:
   date:
+    before_now_warning: 'WARNING: The date you have selected is in the past.'
     format_string:
-      default: "DD, MM d, yy"
-      placeholder: "YYYY-MM-DD"
-      datetimepicker: "yy-mm-dd"
-
-    before_now_warning: "WARNING: The date you have selected is in the past."
-
-  time:
-    formats:
-      default: "%A, %B %d, %Y, %I:%M:%S %p %Z"
-
-    format_string:
-      js:          "YYYY-MM-DD h:mm A"
-      placeholder: "YYYY-MM-DD H:MM AM/PM"
-      time_only: "h:mm TT"
-
-    next:   "Next"
-    prev:   "Previous"
-    time:   "Time"
-
+      datetimepicker: yy-mm-dd
+      default: DD, MM d, yy
+      placeholder: YYYY-MM-DD
   durations:
-    any_minutes: minute(s)
     any_hours: hour(s)
-    minutes:
-      one: minute
-      other: minutes
-    hours:
-      one: hour
-      other: hours
+    any_minutes: minute(s)
     days:
       one: day
       other: days
+    hours:
+      one: hour
+      other: hours
+    minutes:
+      one: minute
+      other: minutes
     weeks:
       one: week
       other: weeks
+  time:
+    format_string:
+      js: YYYY-MM-DD h:mm A
+      placeholder: YYYY-MM-DD H:MM AM/PM
+      time_only: h:mm TT
+    formats:
+      default: "%A, %B %d, %Y, %I:%M:%S %p %Z"
+    next: Next
+    prev: Previous
+    time: Time

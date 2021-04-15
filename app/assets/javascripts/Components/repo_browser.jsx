@@ -129,7 +129,7 @@ class ManualCollectionForm extends React.Component {
         <input type="hidden"
                name="authenticity_token"
                value={AUTH_TOKEN} />
-        <p>
+        <p className='inline-labels'>
           <input hidden={!this.props.late_penalty} type="checkbox" name="apply_late_penalty" id="apply_late_penalty" />
           <label hidden={!this.props.late_penalty} htmlFor="apply_late_penalty">
             {I18n.t('submissions.collect.apply_late_penalty')}

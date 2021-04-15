@@ -145,7 +145,7 @@ class RawMarksSpreadsheet extends React.Component {
 
   totalColumn = () => { return {
     accessor: 'total_marks',
-    Header: `${I18n.t('activerecord.attributes.grade_entry_form.total')} (${this.props.out_of_total})`,
+    Header: `${I18n.t('activerecord.attributes.grade_entry_form.total')} (${this.props.max_mark})`,
     minWidth: 50,
     className: 'number',
     Cell: row => {

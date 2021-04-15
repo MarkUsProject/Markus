@@ -1,19 +1,15 @@
+---
 es:
-  # app/views/main/_assignment_info_summary.erb
-  average: "Promedio"
-  class_average: "Promedio de la clase"
-  median: "Media"
-  assignments_submitted: "Proyectos Entregados"
-  assignments_graded: "Proyectos Calificados"
-  num_failed: "Número de fallos"
-  num_zeros: "Número de ceros"
+  assignments_graded: Proyectos Calificados
+  assignments_submitted: Proyectos Entregados
+  average: Promedio
+  class_average: Promedio de la clase
+  grader_distribution: Distribución de Evaluadores
+  marking_scheme_with_id: Esquema de puntuación %{marking_scheme_id}
+  median: Media
+  num_failed: Número de fallos
+  num_zeros: Número de ceros
   outstanding_remark_request:
     one: "%{count} solicitud de recalificación pendiente"
     other: "%{count} solicitudes de recalificación pendientes"
-  refresh_graph: "Volver a cargar el gráfico"
-
-  # app/views/main/_grader_summary.erb
-  grader_distribution: "Distribución de Evaluadores"
-
-  #app/views/course_summaries/_course_summary_info_summary.html.erb
-  marking_scheme_with_id: "Esquema de puntuación %{marking_scheme_id}"
+  refresh_graph: Volver a cargar el gráfico

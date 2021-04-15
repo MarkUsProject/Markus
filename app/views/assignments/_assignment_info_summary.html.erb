@@ -1,7 +1,3 @@
-<p>
-  <%= "#{Assignment.human_attribute_name(:due_date)}: #{l(assignment.due_date)}" %>
-</p>
-
 <% if assignment.outstanding_remark_request_count && assignment.outstanding_remark_request_count > 0%>
   <p>
     <%= link_to t(:outstanding_remark_request,
@@ -10,47 +6,23 @@
   </p>
 <% end %>
 
-<table>
-  <tr>
-    <td><%= t(:average) %></td>
-    <td>
-      <%= number_to_percentage(assignment.results_average || 0, precision: 1) %>
-    </td>
-  </tr>
+<div class="grid-2-col">
+  <span><%= t(:average) %></span>
+  <span><%= number_to_percentage(assignment.results_average || 0, precision: 1) %></span>
 
-  <tr>
-    <td><%= t(:median) %></td>
-    <td>
-      <%= number_to_percentage(assignment.results_median || 0, precision: 1) %>
-    </td>
-  </tr>
+  <span><%= t(:median) %></span>
+  <span><%= number_to_percentage(assignment.results_median || 0, precision: 1) %></span>
 
-  <tr>
-    <td><%= t(:assignments_submitted) %></td>
-    <td>
-      <% num_submissions = assignment.current_submissions_used.size %>
-      <%= "#{num_submissions}/#{assignment.groupings.size}" %>
-    </td>
-  </tr>
+  <span><%= t(:assignments_submitted) %></span>
+  <% num_submissions = assignment.current_submissions_used.size %>
+  <span><%= "#{num_submissions}/#{assignment.groupings.size}" %></span>
 
-  <tr>
-    <td><%= t(:assignments_graded) %></td>
-    <td>
-      <%= "#{num_submissions - assignment.ungraded_submission_results.size}/#{assignment.groupings.size}" %>
-    </td>
-  </tr>
+  <span><%= t(:assignments_graded) %></span>
+  <span><%= "#{num_submissions - assignment.ungraded_submission_results.size}/#{assignment.groupings.size}" %></span>
 
-  <tr>
-    <td><%= t(:num_failed) %></td>
-    <td>
-      <%= "#{assignment.results_fails || 0}" %>
-    </td>
-  </tr>
+  <span><%= t(:num_failed) %></span>
+  <span><%= "#{assignment.results_fails || 0}" %></span>
 
-  <tr>
-    <td><%= t(:num_zeros) %></td>
-    <td>
-      <%= "#{assignment.results_zeros || 0}" %>
-    </td>
-  </tr>
-</table>
+  <span><%= t(:num_zeros) %></span>
+  <span><%= "#{assignment.results_zeros || 0}" %></span>
+</div>

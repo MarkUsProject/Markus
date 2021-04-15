@@ -1,85 +1,82 @@
+---
 en:
   submissions:
+    cannot_display: Cannot display this file. Please download it to view.
     collect:
-      apply_late_penalty: "Apply late penalty/Deduct grace credits (Leaving this box unchecked means the submission will not be penalized, regardless of submission time.)"
-      could_not_collect_some_due: "Could not collect submissions for some groupings and assignment %{assignment_identifier} - the collection date has not been reached for these groupings."
-      could_not_collect_some_released: "Could not collect submissions for some groupings and assignment %{assignment_identifier} - the submission has already been released."
-      manual_collection: "Manual Collection"
-      overwrite_warning: "Collecting and grading this revision will overwrite any previous collections/grading done for this group on this assignment.  Are you sure you want to do this?"
+      apply_late_penalty: Apply late penalty/Deduct grace credits (Leaving this box unchecked means the submission will not be penalized, regardless of submission time.)
+      could_not_collect_some_due: Could not collect submissions for some groupings and assignment %{assignment_identifier} - the collection date has not been reached for these groupings.
+      could_not_collect_some_released: Could not collect submissions for some groupings and assignment %{assignment_identifier} - the submission has already been released.
+      manual_collection: Manual Collection
+      override_existing_html: 'Recollect previously collected submissions? <strong>Warning: any previous grading work will be lost.</strong>'
+      overwrite_warning: Collecting and grading this revision will overwrite any previous collections/grading done for this group on this assignment.  Are you sure you want to do this?
       progress: "%{count}/%{size} submissions collected"
-      results_loss_warning: "This action identifies the file version for each selected group that meets the assignment due date and/or late penalty,
-                             and creates the views for grading each selected group."
-      submit: "Collect Submissions"
-      this_revision: "Collect and Grade This Revision"
-      undo_results_loss_warning: "This operation will undo the previous Collect All Submissions operation. This should only be done if the previous Collect All Submissions operation was done in error.
-                                  WARNING: All grading work done since the previous Collect All Submissions operation will be lost."
-      override_existing_html: "Recollect previously collected submissions? <strong>Warning: any previous grading work will be lost.</strong>"
+      results_loss_warning: This action identifies the file version for each selected group that meets the assignment due date and/or late penalty, and creates the views for grading each selected group.
+      submit: Collect Submissions
+      this_revision: Collect and Grade This Revision
+      undo_results_loss_warning: 'This operation will undo the previous Collect All Submissions operation. This should only be done if the previous Collect All Submissions operation was done in error. WARNING: All grading work done since the previous Collect All Submissions operation will be lost.'
+    commit_date: Submission Date
+    download_zipped_file:
+      file_missing: No file named %{zip_file} found. Please try preparing this file for download again.
     errors:
-      could_not_find_file: "Could not find %{filename} for group %{group_name}"
+      could_not_find_file: Could not find %{filename} for group %{group_name}
       no_submission: "%{group_name} has no submissions"
-      not_complete: "Cannot release result for %{group_name}: the marking is not complete."
-      not_complete_unrelease: "Cannot unrelease result for %{group_name}: the marking is not complete."
+      not_complete: 'Cannot release result for %{group_name}: the marking is not complete.'
+      not_complete_unrelease: 'Cannot unrelease result for %{group_name}: the marking is not complete.'
+    get_anyway: Try to render this file anyway?
+    grace_credits_used: Grace Credits Used
+    grading_can_begin: Grading can begin
+    grading_can_begin_after: Grading can begin after %{time}
+    grading_can_begin_after_for_sections: 'Grading can begin after %{time} for sections: %{sections}'
+    grading_can_begin_for_sections: 'Grading can begin for sections: %{sections}'
     help:
       browse:
-        admins: "Check the status of the student submissions. Before grading can begin, the student assignments must be collected. This associates each group with the version of their files that should be graded. This means that when the grader adds annotations and marks, they belong to this particular submission. There are three different ways of collecting submissions: Collect All Submissions, which automatically collects all submissions, based on the due date and late penalties; clicking on an individual group name triggers automatic collection for that group; clicking on the Repository name takes you the Repository view, where you can manually choose a revision to collect.<br>Rows in green have been collected and are ready to begin marking. Clicking on the group name takes you to the Grader view. When a grader sets the Marking State to Complete and you are ready to allow students to view the results, select the students and press \"Release Marks\".<br>CSV Report and Detailed CSV Report are two different ways of downloading the marks in csv format. Subversion Repo List downloads a text file that maps group name to repository path. Subversion Checkout File downloads a text file where each line is an svn checkout command for the collected version of each student submission. Download all submissions downloads a zip file containing repositories for all of the students."
-        tas: "Click on assignments to grade them. Rows in green have been collected and are ready to begin marking. If your assigned submissions haven't been collected, you can click on the group name to collect them. <strong>Warning</strong>: collection will delete any previous annoations or marks."
-    repo_browser:
-      client_time: "commit:"
-      collected: "collected"
-      repository: "Repository"
-      repository_name: "Repository: %{repository}"
-      revised_by: "Revised By"
-      submitted_at:  "Submitted At"
-      viewing_revision: "Viewing Revision:"
-      server_time: "push:"
-    download_zipped_file:
-      file_missing: "No file named %{zip_file} found. Please try preparing this file for download again."
-
-    student:
-      file_manager: "%{short_identifier}: File Manager"
-      files_submitted:
-        zero: "No files submitted"
-        one: "One file submitted"
-        other: "%{count} files submitted"
-      invalid_group_cannot_submit: "Your group does not have enough members, and so you cannot submit any work."
-      last_revision_date: "Last revised"
-      missing_required_files:
-        zero: "No missing required files"
-        one: "One missing required file"
-        other: "%{count} missing required files"
-      no_revision_available: "No revision available."
-      no_submission: "You have not submitted any work yet."
-      select_file: 'Select a file to view'
-      server_time: "Server Time"
-      version_control_warning: "Submitting files here overrides any changes made using version control.
-                                Make sure you have worked on the most recent files before submitting."
-
-    # Miscellaneous
-    cannot_display: "Cannot display this file. Please download it to view."
-    commit_date: "Submission Date"
-    get_anyway: Try to render this file anyway?
-    grace_credits_used: "Grace Credits Used"
-    grading_can_begin: "Grading can begin"
-    grading_can_begin_after: "Grading can begin after %{time}"
-    grading_can_begin_for_sections: "Grading can begin for sections: %{sections}"
-    grading_can_begin_after_for_sections: "Grading can begin after %{time} for sections: %{sections}"
+        admins: 'Check the status of the student submissions. Before grading can begin, the student assignments must be collected. This associates each group with the version of their files that should be graded. This means that when the grader adds annotations and marks, they belong to this particular submission. There are three different ways of collecting submissions: Collect All Submissions, which automatically collects all submissions, based on the due date and late penalties; clicking on an individual group name triggers automatic collection for that group; clicking on the Repository name takes you the Repository view, where you can manually choose a revision to collect.<br>Rows in green have been collected and are ready to begin marking. Clicking on the group name takes you to the Grader view. When a grader sets the Marking State to Complete and you are ready to allow students to view the results, select the students and press "Release Marks".<br>CSV Report and Detailed CSV Report are two different ways of downloading the marks in csv format. Subversion Repo List downloads a text file that maps group name to repository path. Subversion Checkout File downloads a text file where each line is an svn checkout command for the collected version of each student submission. Download all submissions downloads a zip file containing repositories for all of the students.'
+        tas: 'Click on assignments to grade them. Rows in green have been collected and are ready to begin marking. If your assigned submissions haven''t been collected, you can click on the group name to collect them. <strong>Warning</strong>: collection will delete any previous annoations or marks.'
     how_many_marked: "%{num_marked}/%{num_assigned} completed"
     how_many_marked_in_collected: "%{num_marked}/%{num_collected} completed"
-    marking_incomplete_warning: "Note: This will only download the submissions that have been collected.\n\nAre you sure you want to proceed?"
-    no_files_available: "No files available"
-    release_marks: "Release Marks"
-    repo_list: "Repository List"
-    repo_checkout_file: "Repository Checkout File (%{type})"
-    run_tests: "Run Tests"
-    status: "Status"
-    successfully_changed: "Successfully updated %{changed} results."
-    unrelease_marks: "Unrelease Marks"
+    marking_incomplete_warning: |-
+      Note: This will only download the submissions that have been collected.
 
+      Are you sure you want to proceed?
+    no_files_available: No files available
+    release_marks: Release Marks
+    repo_browser:
+      client_time: 'commit:'
+      collected: collected
+      repository: Repository
+      repository_name: 'Repository: %{repository}'
+      revised_by: Revised By
+      server_time: 'push:'
+      submitted_at: Submitted At
+      viewing_revision: 'Viewing Revision:'
+    repo_checkout_file: Repository Checkout File (%{type})
+    repo_list: Repository List
+    run_tests: Run Tests
     state:
-      complete: "Complete"
-      incomplete: "Incomplete"
-      not_collected: "Not Collected"
-      in_progress: "In Progress"
-      released: "Released"
-      remark_requested: "Remark Requested"
-      before_due_date: "Before Due Date"
+      before_due_date: Before Due Date
+      complete: Complete
+      in_progress: In Progress
+      incomplete: Incomplete
+      not_collected: Not Collected
+      released: Released
+      remark_requested: Remark Requested
+    status: Status
+    student:
+      file_manager: "%{short_identifier}: Submissions"
+      files_submitted:
+        one: One file submitted
+        other: "%{count} files submitted"
+        zero: No files submitted
+      invalid_group_cannot_submit: Your group does not have enough members, and so you cannot submit any work.
+      last_revision_date: Last revised
+      maximum_file_size: 'Maximum file upload size: %{file_size} MB'
+      missing_required_files:
+        one: One missing required file
+        other: "%{count} missing required files"
+      no_revision_available: No revision available.
+      no_submission: You have not submitted any work yet.
+      only_required_files: You may only submit the required files listed above.
+      select_file: Select a file to view
+      version_control_warning: Submitting files here overrides any changes made using version control. Make sure you have worked on the most recent files before submitting.
+    successfully_changed: Successfully updated %{changed} results.
+    unrelease_marks: Unrelease Marks

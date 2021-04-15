@@ -1,9 +1,10 @@
+---
 pt:
   activerecord:
-    models:
-      group:
-        one: "Grupo"
     attributes:
       group:
-        group_name: "Nome do grupo"
-        student_memberships: "Membros"
+        group_name: Nome do grupo
+        student_memberships: Membros
+    models:
+      group:
+        one: Grupo

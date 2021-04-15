@@ -48,15 +48,15 @@ class MarkusLogger
   # MarkusLoggerConfigurationError is raised.
   def initialize
     my_pid = Process.pid
-    size = Rails.configuration.x.logging.size_threshold
-    error_log_file = "#{Rails.configuration.x.logging.error_file}.#{my_pid}"
-    log_file = "#{Rails.configuration.x.logging.log_file}.#{my_pid}"
-    interval = Rails.configuration.x.logging.rotate_interval
-    old_files = Rails.configuration.x.logging.old_files
+    size = Settings.logging.size_threshold
+    error_log_file = "#{Settings.logging.error_file}.#{my_pid}"
+    log_file = "#{Settings.logging.log_file}.#{my_pid}"
+    interval = Settings.logging.rotate_interval
+    old_files = Settings.logging.old_files
     if !(valid_file?(error_log_file) && valid_file?(log_file))
       raise MarkusLoggerConfigurationError.new('The log files are not valid')
     end
-    if Rails.configuration.x.logging.rotate_by_interval
+    if Settings.logging.rotate_by_interval
       if !['daily', 'weekly', 'monthly'].include?(interval)
         raise MarkusLoggerConfigurationError.new('The rotation interval is not valid')
       end
@@ -93,7 +93,7 @@ class MarkusLogger
   #=== Exceptions
   # When the log level is not known then an exception of type ArgumentError is raised
   def log(msg, level=INFO)
-    return unless Rails.configuration.x.logging.enabled
+    return unless Settings.logging.enabled
 
     case level
     when INFO

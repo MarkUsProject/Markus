@@ -78,6 +78,7 @@ Gillian Chesnais
 Hannah Li
 Hanson Wu
 Haohan David Jiang
+Heyu Wang
 Horatiu Halmaghi
 Ian Smith
 Ibrahim Shahin
@@ -98,6 +99,7 @@ Jesse Riemann
 Jiahui Xu
 Joel Burford
 Joey Perry
+Jonathan Chen
 Jordan Saleh
 Joseph Mate
 Joseph Maté
@@ -129,6 +131,7 @@ Michael Lumbroso
 Michael Margel
 Mike Conley
 Mike Gunderloy
+Mike Kang
 Mike Stewart
 Mike Wu
 Mina Almasry
@@ -188,5 +191,6 @@ Wilson Chiang
 Xiang Yu
 Yansong Zang
 Yiqi Zhu
+Yujin Cho
 Yusi Fan
 Zachary Munro-Cape

@@ -1,9 +1,10 @@
+---
 en:
   activerecord:
-    models:
-      marking_scheme:
-        one: "Marking Scheme"
     attributes:
       marking_schemes:
-        name: "Name"
-        weight: "Weight for"
+        name: Name
+        weight: Weight for
+    models:
+      marking_scheme:
+        one: Marking Scheme

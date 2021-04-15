@@ -1,13 +1,14 @@
+---
 es:
   activerecord:
-    models:
-      test_result:
-        one: "UPDATE ME"
-        other: "UPDATE ME"
     attributes:
       test_result:
-        marks_earned: "Nota"
-        marks_total: "UPDATE ME"
-        name: "Nombre de la Prueba"
-        output: "Resultado"
-        status: "Estado"
+        marks_earned: Nota
+        marks_total: UPDATE ME
+        name: Nombre de la Prueba
+        output: Resultado
+        status: Estado
+    models:
+      test_result:
+        one: UPDATE ME
+        other: UPDATE ME

@@ -64,6 +64,11 @@ class GroupsManager extends React.Component {
     } else {
       modalCreate.open();
       $('#new_group_name').val('');
+      $(function() {
+        $('#modal-create-close').click(function() {
+          modalCreate.close();
+        })
+      })
     }
   };
 
@@ -313,10 +318,9 @@ class RawGroupsTable extends React.Component {
         if (isValid) {
           return (
             <a href="#"
-               className="valid-icon"
                title={I18n.t('groups.is_valid')}
                onClick={() => this.props.invalidate(row.original._id)}
-            />
+            >✔</a>
           );
         } else {
           return (

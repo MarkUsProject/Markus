@@ -1,5 +1,5 @@
 <% unless assignment.nil? %>
-  <div class='assignment_summary'>
+  <div>
     <h2>
       <% if assignment.is_peer_review? %>
         <%= link_to "#{assignment.parent_assignment.short_identifier}: #{PeerReview.model_name.human}",

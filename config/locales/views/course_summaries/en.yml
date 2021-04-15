@@ -1,6 +1,7 @@
+---
 en:
   course_summary:
-    absent: 'No summary to display.'
-    grade_report: "Grades report"
-    student_title: "Your Term Marks"
-    title: "Grades Summary"
+    absent: No summary to display.
+    grade_report: Grades report
+    student_title: Your Term Marks
+    title: Grades Summary

@@ -1,5 +1,6 @@
+---
 es:
   activerecord:
     models:
       grace_period_deduction:
-        one: "Deducciones del Período de Aplazamiento de Gracia"
+        one: Deducciones del Período de Aplazamiento de Gracia

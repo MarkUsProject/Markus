@@ -1,22 +1,21 @@
+---
 en:
   sections:
     create:
-      error: "Failed to create section."
-      success: "Successfully created section %{name}."
-    edit:
-      title: "Update section"
+      error: Failed to create section.
+      success: Successfully created section %{name}.
     destroy:
-      not_empty: "You cannot delete this section because it has students in it."
-      success: "Section was deleted successfully."
+      not_empty: You cannot delete this section because it has students in it.
+      success: Section was deleted successfully.
+    edit:
+      title: Update section
+    help: You can create new sections or delete sections that are empty (the numbers in parentheses represent the number of students in each section). To add students to a section, use the Users view.
     index:
-      destroy_confirm: "This will remove this section permanently. Continue?"
-      title: "Manage sections"
+      destroy_confirm: This will remove this section permanently. Continue?
+      title: Manage sections
     new:
-      title: "Add a new section"
+      title: Add a new section
+    none: There are no sections yet.
     update:
-      error: "Failed to update section."
-      success: "Successfully updated section %{name}."
-
-    # Miscellaneous
-    help: "You can create new sections or delete sections that are empty (the numbers in parentheses represent the number of students in each section). To add students to a section, use the Users view."
-    none: "There are no sections yet."
+      error: Failed to update section.
+      success: Successfully updated section %{name}.

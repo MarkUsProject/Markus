@@ -12,6 +12,7 @@ FactoryBot.define do
     before(:create) do |starter_file_entry, options|
       FileUtils.rm_rf starter_file_entry.full_path
       if options.is_file
+        FileUtils.mkdir_p(File.dirname(starter_file_entry.full_path))
         File.write(starter_file_entry.full_path, options.content)
       else
         FileUtils.mkdir_p(starter_file_entry.full_path)

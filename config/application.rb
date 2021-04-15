@@ -16,20 +16,11 @@ module Markus
     # Initialize configuration defaults for originally generated Rails version
     config.load_defaults 6.0
 
-    # Configure sensitive parameters which will be filtered from the log file
+    # Sensitive parameters which will be filtered from the log file
     config.filter_parameters += [:password]
-
-    # Set the timezone
-    config.time_zone = 'Eastern Time (US & Canada)'
-
-    # Use Resque for background jobs
-    config.active_job.queue_adapter = :resque
 
     # Use json serializer for cookies
     config.action_dispatch.cookies_serializer = :json
-
-    # Set redis as the Rails cache store
-    # config.cache_store = :redis_cache_store
 
     # Do not add autoload paths to load path.
     config.add_autoload_paths_to_load_path = false
@@ -47,9 +38,59 @@ module Markus
     # Add Yarn node_modules folder to the asset load path.
     config.assets.paths << Rails.root.join('node_modules')
 
-    # Configure responders gem flash keys.
-    # NOTE: This didn't work when put in config/initializers/responders.rb.
-    config.responders.flash_keys = [:success, :error]
+    # Settings below are configurable
+
+    config.time_zone = Settings.rails.time_zone
+
+    config.active_job.queue_adapter = Settings.rails.active_job.queue_adapter.to_sym
+
+    Rails.application.config.session_store(
+      Settings.rails.session_store.type.to_sym,
+      key: Settings.rails.session_store.args.key,
+      path: Settings.rails.session_store.args.path,
+      expire_after: Settings.rails.session_store.args.expire_after.days,
+      secure: Settings.rails.session_store.args.secure,
+      same_site: Settings.rails.session_store.args.same_site.to_sym
+    )
+
+    config.action_mailer.delivery_method = Settings.rails.action_mailer.delivery_method.to_sym
+    config.action_mailer.smtp_settings = Settings.rails.action_mailer.smtp_settings.to_h
+    config.action_mailer.sendmail_settings = Settings.rails.action_mailer.sendmail_settings.to_h
+    config.action_mailer.file_settings = Settings.rails.action_mailer.file_settings.to_h
+    config.action_mailer.default_url_options = Settings.rails.action_mailer.default_url_options.to_h
+    config.action_mailer.asset_host = Settings.rails.action_mailer.asset_host
+    config.action_mailer.perform_deliveries = Settings.rails.action_mailer.perform_deliveries
+    deliver_later_queue = Settings.rails.action_mailer.deliver_later_queue_name || Settings.queues.default
+    config.action_mailer.deliver_later_queue_name = deliver_later_queue
+
+    config.active_support.deprecation = Settings.rails.active_support.deprecation.to_sym
+
+    config.cache_classes = Settings.rails.cache_classes
+
+    config.eager_load = Settings.rails.eager_load
+
+    config.consider_all_requests_local = Settings.rails.consider_all_requests_local
+
+    config.log_level = Settings.rails.log_level
+
+    config.assets.prefix = Settings.rails.assets.prefix
+
+    config.force_ssl = Settings.rails.force_ssl
+
+    # The settings above are required
+    # The settings below may optionally be set depending on the current environment
+
+    if Settings.rails.cache_store == 'redis_cache_store'
+      config.cache_store = Settings.rails.cache_store.to_sym, { url: Settings.redis.url }
+    else
+      config.cache_store = Settings.rails.cache_store&.to_sym
+    end
+
+    config.action_controller.perform_caching = Settings.rails.action_controller&.perform_caching
+
+    config.hosts.push(*Settings.rails.hosts)
+
+    config.active_record.verbose_query_logs = Settings.rails.active_record.verbose_query_logs
 
     # TODO review initializers 01 and 02
     # TODO review markus custom config format

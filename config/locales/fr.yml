@@ -1,69 +1,56 @@
+---
 fr:
-    csv_upload_user_duplicate: "Nom d'utilisateur déjà inscrit (conflit) : %{user_name}"
-
-    csv:
-      repo_collision_warning:  "Attention : le répertoire '%{repo_name}' existe déjà. Le nom du groupe était '%{group_name}'."
-      group_with_different_membership_current_assignment:   "UPDATE ME: %{group_name}"
-      group_with_different_membership_different_assignment: "UPDATE ME: %{group_name}"
-      memberships_not_unique:                               "UPDATE ME:"
-      member_does_not_exist:                                "UPDATE ME: %{group_name} '%{student_user_name}'"
-      bad_cell: "UPDATE ME: %{bad_cells}"
-      duplicate_group_name: "UPDATE ME: %{group_names}"
-      duplicate_repo_name: "UPDATE ME: %{repo_names}"
-      duplicate_membership_name: "UPDATE ME: %{member_names}"
-      bad_repo_warning: "UPDATE ME: %{group_names}"
-      bad_membership_warning: "UPDATE ME: %{group_names}"
-      bad_students: "UPDATE ME: %{student_names}"
-      memberships_exist: "UPDATE ME: %{student_names}"
-
-    #Student's View (student)
-    student:
-      submission:
-        conflicts: "Conflits"
-        file_conflicts: "Vos changements n'ont pas été pris en compte. Les fichiers suivants sont en conflit :"
-        missing_files: "Vous devez toujours envoyer %{file} fichier(s) pour ce projet."
-        no_action_detected: "Aucun changement détecté."
-        external_submit_only: "MarkUs n'accepte que les envois externes"
-        invalid_file_name: "Le nom du fichier envoyé est invalide"
-        missing_file: "%{file_name} n'a pas pu être téléchargé. Le fichier est sans doute manquant."
-        empty_file_warning: "UPDATE ME"
-
-    submission_file:
-      error:
-        no_access: "Pas d'acces au fichier envoye avec l'id #%{submission_file_id}." #Problème d'accents à cause de l'appel JS"
-
-    #app/views/job_messages/_job_poller.js.erb
-    job_poller:
-      processing_message: "Processus en cours d`éxécution:"
-      processing_message_error: "Une erreur c`est produite:"
-
-    #lib/validators/
-    date_validator:
-      invalid_date: "n'est pas une date valide"
-
-    poll_job:
-      working_message: "%{progress} hors de %{total}"
-      queued: "Mis en file d'attente"
-      not_enqueued: "Aucun tâches mis en file"
-      completed: "Terminé"
-      failed: "échoué"
-      split_pdf_job: "Traitement page %{progress} sur %{total} pour %{exam_name}"
-      generate_job: "Génération de la copie %{progress} de %{total} pour %{exam_name}"
-      create_groups_job: "%{progress}/%{total} groupes créés"
-      create_groups_job_extra_info: "Échoué pour: groupe: %{group_name}, repo: %{repo_name}, membres: %{members}"
-      uncollect_submissions_job: "Tâches de décollement... "
-      submissions_job: "%{progress}/%{total} Soumissions collectées"
-      download_submissions_job: "%{progress}/%{total} Soumissions préparées pour téléchargement"
-      download_submissions_finalizing: "Finaliser les soumissions à télécharger"
-      download_submissions_complete: "Les soumissions sont prêtes. Cliquez ici pour finaliser le téléchargement."
-      update_repo_required_files_job: "%{progress}/%{total} repos modifiés"
-      autotest_run_job_enqueuing: "UPDATE ME"
-      autotest_specs_job: "Configuration de tests automatisés"
-    repo:
-      commits:
-        assignment_folder: "UPDATE ME %{assignment}"
-        initial: "UPDATE ME"
-        default: "UPDATE ME"
-        required_files: "UPDATE ME %{assignment}"
-      timeout: 'Attendu %{ms} millisecondes pour accéder à ce repo. Veuillez patienter quelques secondes et réessayer.'
-      assignment_dir_creation_error: "N'a pas réussi à créer un dossier pour %{short_identifier}. Veuillez réessayer cette action"
+  csv:
+    bad_cell: 'UPDATE ME: %{bad_cells}'
+    bad_membership_warning: 'UPDATE ME: %{group_names}'
+    bad_students: 'UPDATE ME: %{student_names}'
+    duplicate_group_name: 'UPDATE ME: %{group_names}'
+    duplicate_membership_name: 'UPDATE ME: %{member_names}'
+    member_does_not_exist: 'UPDATE ME: %{group_name} ''%{student_user_name}'''
+    memberships_exist: 'UPDATE ME: %{student_names}'
+    memberships_not_unique: 'UPDATE ME:'
+    repo_collision_warning: 'Attention : le répertoire ''%{repo_name}'' existe déjà. Le nom du groupe était ''%{group_name}''.'
+  csv_upload_user_duplicate: 'Nom d''utilisateur déjà inscrit (conflit) : %{user_name}'
+  date_validator:
+    invalid_date: n'est pas une date valide
+  job_poller:
+    processing_message: 'Processus en cours d`éxécution:'
+    processing_message_error: 'Une erreur c`est produite:'
+  poll_job:
+    autotest_run_job_enqueuing: UPDATE ME
+    autotest_specs_job: Configuration de tests automatisés
+    completed: Terminé
+    create_groups_job: "%{progress}/%{total} groupes créés"
+    download_submissions_complete: Les soumissions sont prêtes. Cliquez ici pour finaliser le téléchargement.
+    download_submissions_finalizing: Finaliser les soumissions à télécharger
+    download_submissions_job: "%{progress}/%{total} Soumissions préparées pour téléchargement"
+    failed: échoué
+    generate_job: Génération de la copie %{progress} de %{total} pour %{exam_name}
+    not_enqueued: Aucun tâches mis en file
+    queued: Mis en file d'attente
+    split_pdf_job: Traitement page %{progress} sur %{total} pour %{exam_name}
+    submissions_job: "%{progress}/%{total} Soumissions collectées"
+    uncollect_submissions_job: 'Tâches de décollement... '
+    update_repo_required_files_job: "%{progress}/%{total} repos modifiés"
+    working_message: "%{progress} hors de %{total}"
+  repo:
+    assignment_dir_creation_error: N'a pas réussi à créer un dossier pour %{short_identifier}. Veuillez réessayer cette action
+    commits:
+      assignment_folder: UPDATE ME %{assignment}
+      default: UPDATE ME
+      initial: UPDATE ME
+      required_files: UPDATE ME %{assignment}
+    timeout: Attendu %{ms} millisecondes pour accéder à ce repo. Veuillez patienter quelques secondes et réessayer.
+  student:
+    submission:
+      conflicts: Conflits
+      empty_file_warning: UPDATE ME
+      external_submit_only: MarkUs n'accepte que les envois externes
+      file_conflicts: 'Vos changements n''ont pas été pris en compte. Les fichiers suivants sont en conflit :'
+      invalid_file_name: Le nom du fichier envoyé est invalide
+      missing_file: "%{file_name} n'a pas pu être téléchargé. Le fichier est sans doute manquant."
+      missing_files: Vous devez toujours envoyer %{file} fichier(s) pour ce projet.
+      no_action_detected: Aucun changement détecté.
+  submission_file:
+    error:
+      no_access: 'Pas d''acces au fichier envoye avec l''id #%{submission_file_id}.'

@@ -17,19 +17,6 @@ class CheckboxCriterion < Criterion
     max_mark
   end
 
-  def all_assigned_groups
-    result = []
-    tas.each do |ta|
-      result = result.concat(ta.get_groupings_by_assignment(assignment))
-    end
-    result.uniq
-  end
-
-  def has_associated_ta?(ta)
-    return false unless ta.ta?
-    !(criterion_ta_associations.where(ta_id: ta.id).first == nil)
-  end
-
   # Instantiate a CheckboxCriterion from a CSV row and attach it to the supplied
   # assignment.
   # row: An array representing one CSV file row. Should be in the following

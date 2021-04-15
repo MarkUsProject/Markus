@@ -1,5 +1,5 @@
 <div class='notes_wrapper'>
-  <div id='notes_error' class='error' style='display:none;'>
+  <div id='notes_error' class='error no-display'>
     <p id='notes_error_message'><%= t('flash.actions.create.error', resource_name: Note.model_name.human) %></p>
     <div id='notes_error_list'></div>
   </div>
@@ -12,6 +12,16 @@
           <p><strong><%= note.user.user_name %>: </strong></p>
           <p><small><%=note.format_date%></small></p>
           <p><%= note.notes_message %></p>
+          <% if allowed_to?(:modify?, note) %>
+            <%= button_to t('delete'),
+                          { action: 'destroy',
+                            id: note.id },
+                          html: { title: t('notes.delete.link_title') },
+                          data: { confirm: t('notes.delete.link_confirm') },
+                          method: 'delete',
+                          remote: true,
+                          class: 'inline-button delete' %>
+          <% end %>
         </div>
       <% end %>
     </div>
@@ -32,9 +42,8 @@
       <p class='p_margin'>
         <%= submit_tag t(:save),
                        data: { disable_with: t('working') },
-                       id: 'notes_submit',
-                       onclick: 'modalNotesGroup.close();' %>
-        <a class='button' onclick='modalNotesGroup.close();'><%= t(:cancel) %></a>
+                       id: 'notes_submit' %>
+        <a class='button' id="notes-cancel"><%= t(:cancel) %></a>
       </p>
     <% end %>
   </div>
