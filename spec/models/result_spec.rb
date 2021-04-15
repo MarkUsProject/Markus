@@ -28,7 +28,7 @@ describe Result do
       changes = ids.map { |id| [id, Result.find(id).total_mark - 1] }.to_h
       allow(Result).to receive(:get_total_marks).and_return(changes)
       expect { Result.update_total_marks(ids) }.to(
-          change { Result.pluck(:total_mark) }.to(contain_exactly(*changes.values))
+        change { Result.pluck(:total_mark) }.to(contain_exactly(*changes.values))
       )
     end
   end

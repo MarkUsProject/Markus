@@ -1,8 +1,8 @@
 class Result < ApplicationRecord
 
   MARKING_STATES = {
-      complete: 'complete',
-      incomplete: 'incomplete'
+    complete: 'complete',
+    incomplete: 'incomplete'
   }
 
   belongs_to :submission
@@ -101,8 +101,8 @@ class Result < ApplicationRecord
   # max_mark value only if the +max_mark+ argument is nil.
   def self.get_total_extra_marks(result_ids, max_mark: nil, user_visibility: :ta_visible)
     result_data = Result.joins(:extra_marks, submission: [grouping: :assignment])
-                      .where(id: result_ids)
-                      .pluck(:id, :extra_mark, :unit, 'assessments.id')
+                        .where(id: result_ids)
+                        .pluck(:id, :extra_mark, :unit, 'assessments.id')
     extra_marks_hash = Hash.new { |h,k| h[k] = 0 }
     max_mark_hash = Hash.new
     result_data.each do |id, extra_mark, unit, assessment_id|
@@ -171,9 +171,9 @@ class Result < ApplicationRecord
   # TODO: make it include extra marks as well.
   def mark_hash
     Hash[
-        marks.map do |mark|
-          [mark.criterion_id, mark.mark]
-        end
+      marks.map do |mark|
+        [mark.criterion_id, mark.mark]
+      end
     ]
   end
 

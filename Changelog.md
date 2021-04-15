@@ -1,5 +1,5 @@
 # Changelog
-## [v1.12.0]
+## [unreleased]
 - Remove annotations context menu from peer assignments view (#5116)
 - Change 'Next' and 'Previous' submission button to use partial reloads (#5082)
 - Add time zone validations (#5060)
@@ -338,7 +338,7 @@
 - Using Rails 2.3.8
 - MarkUs renders a 404 page error for mismatching routes
 - Bug fixes on submission dates and grace period credits
-- Python and Ruby Scripts using MarkUs API (see lib/tools)
+- Python and Ruby Scripts using MarkUs API (see lib/tools)
 - Displaying and annotating images
  A lot of accessibility features have been implemented :
 	* Missing labels & Better focus on forms

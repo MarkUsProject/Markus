@@ -16,8 +16,8 @@ class SubmissionsController < ApplicationController
       format.json do
         assignment = Assignment.find(params[:assignment_id])
         render json: {
-            groupings: assignment.current_submission_data(current_user),
-            sections: Hash[Section.all.pluck(:id, :name)]
+          groupings: assignment.current_submission_data(current_user),
+          sections: Hash[Section.all.pluck(:id, :name)]
         }
       end
     end
@@ -46,9 +46,9 @@ class SubmissionsController < ApplicationController
         # store the displayed revision
         if @revision.nil?
           if (params[:revision_identifier] &&
-              params[:revision_identifier] == revision.revision_identifier.to_s) ||
-              (params[:revision_timestamp] &&
-                  Time.zone.parse(params[:revision_timestamp]).in_time_zone >= revision.server_timestamp)
+            params[:revision_identifier] == revision.revision_identifier.to_s) ||
+            (params[:revision_timestamp] &&
+              Time.zone.parse(params[:revision_timestamp]).in_time_zone >= revision.server_timestamp)
             @revision = revision
           end
         end
@@ -74,10 +74,10 @@ class SubmissionsController < ApplicationController
       end
       revisions_history = assignment_revisions.map do |revision|
         {
-            id: revision.revision_identifier.to_s,
-            id_ui: revision.revision_identifier_ui,
-            timestamp: l(revision.timestamp),
-            server_timestamp: l(revision.server_timestamp)
+          id: revision.revision_identifier.to_s,
+          id_ui: revision.revision_identifier_ui,
+          timestamp: l(revision.timestamp),
+          server_timestamp: l(revision.server_timestamp)
         }
       end
       render json: revisions_history
@@ -127,16 +127,16 @@ class SubmissionsController < ApplicationController
     @grouping = Grouping.find(params[:id])
     @revision_identifier = params[:current_revision_identifier]
     apply_late_penalty = params[:apply_late_penalty].nil? ?
-                             false : params[:apply_late_penalty]
+                         false : params[:apply_late_penalty]
     SubmissionsJob.perform_now([@grouping],
                                apply_late_penalty: apply_late_penalty,
                                revision_identifier: @revision_identifier)
 
     submission = @grouping.reload.current_submission_used
     redirect_to edit_assignment_submission_result_path(
-                    assignment_id: @grouping.assessment_id,
-                    submission_id: submission.id,
-                    id: submission.get_latest_result.id)
+      assignment_id: @grouping.assessment_id,
+      submission_id: submission.id,
+      id: submission.get_latest_result.id)
   end
 
   def uncollect_all_submissions
@@ -160,9 +160,9 @@ class SubmissionsController < ApplicationController
     collectable = []
     some_before_due = false
     some_released = Grouping.joins(current_submission_used: :results)
-                        .where('results.released_to_students': true)
-                        .where(id: groupings)
-                        .pluck(:id).to_set
+                            .where('results.released_to_students': true)
+                            .where(id: groupings)
+                            .pluck(:id).to_set
     collection_dates = assignment.all_grouping_collection_dates
     is_scanned_exam = assignment.scanned_exam?
     groupings.each do |grouping|
@@ -256,7 +256,7 @@ class SubmissionsController < ApplicationController
       now = Time.current
       Section.find_each do |section|
         collection_time = @assignment.submission_rule
-                              .calculate_collection_time(section)
+                                     .calculate_collection_time(section)
         collection_time = now if now >= collection_time
         if section_due_dates[collection_time].nil?
           section_due_dates[collection_time] = Array.new
@@ -330,7 +330,7 @@ class SubmissionsController < ApplicationController
 
         if current_user.student? && @grouping.assignment.only_required_files
           required_files = @grouping.assignment.assignment_files.pluck(:filename)
-                               .map { |name| File.join(@grouping.assignment.repository_folder, name) }
+                                    .map { |name| File.join(@grouping.assignment.repository_folder, name) }
         else
           required_files = nil
         end
@@ -383,7 +383,7 @@ class SubmissionsController < ApplicationController
         @current_user.accepted_grouping_for(assignment.id).id != grouping.id
       flash_message(:error,
                     t('submission_file.error.no_access',
-                      submission_file_id: params[:submission_file_id]))
+                          submission_file_id: params[:submission_file_id]))
       redirect_back(fallback_location: root_path)
       return
     end
@@ -467,7 +467,7 @@ class SubmissionsController < ApplicationController
       rescue Exception => e
         flash_message(:error, e.message)
         render plain: I18n.t('student.submission.missing_file',
-                             file_name: params[:file_name], message: e.message)
+                            file_name: params[:file_name], message: e.message)
         return
       end
 
@@ -564,8 +564,8 @@ class SubmissionsController < ApplicationController
 
     begin
       changed = assignment.is_peer_review? ?
-                    set_pr_release_on_results(groupings, release) :
-                    set_release_on_results(groupings, release)
+          set_pr_release_on_results(groupings, release) :
+          set_release_on_results(groupings, release)
 
       if changed > 0
         assignment.update_remark_request_count
@@ -575,14 +575,14 @@ class SubmissionsController < ApplicationController
                                    changed: changed))
         if release
           MarkusLogger.instance.log(
-              'Marks released for assignment' +
-                  " '#{assignment.short_identifier}', ID: '" +
-                  "#{assignment.id}' for #{changed} group(s).")
+            'Marks released for assignment' +
+            " '#{assignment.short_identifier}', ID: '" +
+            "#{assignment.id}' for #{changed} group(s).")
         else
           MarkusLogger.instance.log(
-              'Marks unreleased for assignment' +
-                  " '#{assignment.short_identifier}', ID: '" +
-                  "#{assignment.id}' for #{changed} group(s).")
+            'Marks unreleased for assignment' +
+            " '#{assignment.short_identifier}', ID: '" +
+            "#{assignment.id}' for #{changed} group(s).")
         end
       end
 

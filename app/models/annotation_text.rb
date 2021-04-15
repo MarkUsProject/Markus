@@ -5,9 +5,9 @@ class AnnotationText < ApplicationRecord
 
   after_update :update_mark_deductions,
                unless: ->(t) {
-                 t.annotation_category.nil? ||
-                     t.annotation_category.changes_to_save.key?('flexible_criterion_id')
-               }
+                         t.annotation_category.nil? ||
+                         t.annotation_category.changes_to_save.key?('flexible_criterion_id')
+                       }
   before_update :check_if_released
   before_destroy :check_if_released
 
@@ -31,7 +31,7 @@ class AnnotationText < ApplicationRecord
 
   def escape_content
     content.gsub('\\', '\\\\\\') # Replaces '\\' with '\\\\'
-        .gsub(/\r?\n/, '\\n')
+           .gsub(/\r?\n/, '\\n')
   end
 
   # Do not update if any associated results have been released. This includes results
@@ -40,9 +40,9 @@ class AnnotationText < ApplicationRecord
     annotation_results = self.annotations.joins(result: :submission)
 
     return if annotation_results.where('results.released_to_students': true).empty? &&
-        Result.where(submission_id: annotation_results.pluck('submissions.id'))
-            .where.not('remark_request_submitted_at': nil)
-            .empty?
+              Result.where(submission_id: annotation_results.pluck('submissions.id'))
+                    .where.not('remark_request_submitted_at': nil)
+                    .empty?
     errors.add(:base, 'Cannot update/destroy annotation_text once results are released.')
     throw(:abort)
   end
@@ -53,8 +53,8 @@ class AnnotationText < ApplicationRecord
     annotations = self.annotations.includes(:result)
     annotations.each do |annotation|
       annotation.result.marks
-          .find_by(criterion_id: criterion_id)
-          .update_deduction
+                .find_by(criterion_id: criterion_id)
+                .update_deduction
     end
   end
 
