@@ -21,6 +21,8 @@ i18n:
 validate_user_not_allowed_message: ~
 incorrect_login_message: ~
 
+validate_file: <%= "#{::Rails.root}/config/dummy_validate.sh" %>
+
 repository:
   type: mem
   storage: <%= "#{::Rails.root.to_s}/data/test" %>/repos

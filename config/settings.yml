@@ -30,7 +30,6 @@ redis:
   url: 'redis://localhost:6379/1'
 
 course_name: 'CSC108 Fall 2009: Introduction to Computer Programming'
-validate_file: <%= "#{::Rails.root}/config/dummy_validate.sh" %>
 validate_ip: false
 validate_custom_status_message: {}
 
