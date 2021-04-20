@@ -125,6 +125,125 @@ module AutomatedTestsHelper
     output
   end
 
+  module AutotestApi
+    AUTOTEST_USERNAME = "markus_#{Rails.application.config.action_controller.relative_url_root}".freeze
+    AUTOTEST_KEY_FILE = File.join(::Rails.root, 'config', 'autotest.api_key').freeze
+
+    def register
+      test_server = TestServer.find_or_create
+      uri = URI("#{Settings.autotest.url}/register")
+      req = Net::HTTP::Post.new(uri)
+      req['Content-Type'] = 'application/json'
+      req.body = { user_name: AUTOTEST_USERNAME,
+                   auth_type: Api::MainApiController::AUTHTYPE,
+                   credentials: test_server.api_key }.to_json
+      res = send_request!(req, uri)
+      File.write(AUTOTEST_KEY_FILE, JSON.parse(res.body)['api_key'])
+    end
+
+    def update_credentials
+      test_server = TestServer.find_or_create
+      uri = URI("#{Settings.autotest.url}/reset_credentials")
+      req = Net::HTTP::Put.new(uri)
+      req.body = { auth_type: Api::MainApiController::AUTHTYPE, credentials: test_server.api_key }.to_json
+      set_headers(req)
+      send_request!(req, uri)
+    end
+
+    def schema
+      uri = URI("#{Settings.autotest.url}/schema")
+      req = Net::HTTP::Get.new(uri)
+      set_headers(req)
+      res = send_request!(req, uri)
+      testers_path = File.join(Settings.autotest.client_dir, 'testers.json')
+      File.write(testers_path, JSON.parse(res.body).to_json)
+    end
+
+    def update_settings(assignment, host_with_port)
+      if assignment.autotest_settings_id
+        uri = URI("#{Settings.autotest.url}/settings/#{assignment.autotest_settings_id}")
+        req = Net::HTTP::Put.new(uri)
+      else
+        uri = URI("#{Settings.autotest.url}/settings")
+        req = Net::HTTP::Post.new(uri)
+      end
+      set_headers(req)
+      markus_address = get_markus_address(host_with_port)
+      req.body = {
+        settings: JSON.parse(File.read(assignment.autotest_settings_file)),
+        file_url: "#{markus_address}/api/assignments/#{assignment.id}/test_files",
+        files: assignment.autotest_files
+      }.to_json
+      res = send_request!(req, uri)
+      autotest_settings_id = JSON.parse(res.body)['settings_id']
+      assignment.update!(autotest_settings_id: autotest_settings_id)
+    end
+
+    def run_tests(assignment, host_with_port, group_ids, user, collected: true, batch: nil)
+      raise I18n.t('automated_tests.settings_not_setup') unless assignment.autotest_settings_id
+
+      uri = URI("#{Settings.autotest.url}/settings/#{assignment.autotest_settings_id}/test")
+      req = Net::HTTP::Put.new(uri)
+      set_headers(req)
+      markus_address = get_markus_address(host_with_port)
+      file_urls = group_ids.map do |id_|
+        param = collected ? 'collected=true' : ''
+        "#{markus_address}/api/assignments/#{assignment.id}/groups/#{id_}/submission_files?#{param}"
+      end
+      req.body = {
+        file_urls: file_urls,
+        categories: user.student? ? 'student' : 'admin',
+        request_high_priority: batch.nil? && user.student?
+      }.to_json
+      res = send_request!(req, uri)
+      autotest_test_ids = JSON.parse(res.body)['test_ids']
+      test_id_hash = group_ids.zip(autotest_test_ids).to_h
+      groupings = Grouping.includes(:current_submission_used).where(group_id: group_ids, assignment: assignment)
+      groupings.each do |grouping|
+        revision_id = collected ? nil : grouping.access_repo { |repo| repo.get_latest_revision.revision_identifier }
+        TestRun.create!(
+          user_id: user.id,
+          test_batch_id: batch&.id,
+          grouping_id: grouping.id,
+          submission_id: collected ? grouping.current_submission_used.id : nil,
+          revision_identifier: revision_id,
+          autotest_test_id: test_id_hash[grouping.group.id]
+        )
+      end
+    end
+
+    private
+
+    def send_request(req, uri)
+      Net::HTTP.start(uri.hostname, uri.port, use_ssl: uri.scheme == 'https') { |http| http.request(req) }
+    end
+
+    def send_request!(req, uri)
+      res = send_request(req, uri)
+      unless res.is_a?(Net::HTTPSuccess)
+        begin
+          raise JSON.parse(res.body)['message']
+        rescue JSON::ParserError
+          raise res.body
+        end
+      end
+      res
+    end
+
+    def set_headers(req)
+      req['Api-Key'] = File.read(AUTOTEST_KEY_FILE).strip
+      req['Content-Type'] = 'application/json'
+    end
+
+    def get_markus_address(host_with_port)
+      if Rails.application.config.action_controller.relative_url_root.nil?
+        host_with_port
+      else
+        host_with_port + Rails.application.config.action_controller.relative_url_root
+      end
+    end
+  end
+
   private
 
   def server_api_key

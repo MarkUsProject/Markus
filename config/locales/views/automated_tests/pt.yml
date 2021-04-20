@@ -28,6 +28,7 @@ pt:
       timeout: "%{seconds} UPDATE ME"
       unknown_test: UPDATE ME
     run_tests: Executar testes
+    settings_not_setup: UPDATE ME
     specs_file_upload_message: UPDATE ME
     stop_batch: UPDATE ME
     stop_test: UPDATE ME

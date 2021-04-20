@@ -28,6 +28,7 @@ fr:
       timeout: Le délai d'attente a éxpiré après %{seconds} seconds
       unknown_test: Test inconnu
     run_tests: Exécuter les tests
+    settings_not_setup: UPDATE ME
     specs_file_upload_message: Le fichier doit être un fichier json valide
     stop_batch: Arrêter ce lot de tests
     stop_test: Arrêter ce test

@@ -747,7 +747,7 @@ class Grouping < ApplicationRecord
   end
 
   # Create a test run for this grouping, using the latest repo revision.
-  def create_test_run!(**attrs)
+  def create_test_run!(user_id, test_batch_id)
     self.test_runs.create!(
       user_id: attrs[:user]&.id || attrs.fetch(:user_id) { raise ArgumentError(':user or :user_id is required') },
       revision_identifier: access_repo { |repo| repo.get_latest_revision.revision_identifier },

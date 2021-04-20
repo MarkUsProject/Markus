@@ -1,5 +1,5 @@
 class AutotestRunJob < ApplicationJob
-  include AutomatedTestsHelper
+  include AutomatedTestsHelper::AutotestApi
 
   def self.show_status(_status)
     I18n.t('poll_job.autotest_run_job_enqueuing')
@@ -9,30 +9,14 @@ class AutotestRunJob < ApplicationJob
     I18n.t('automated_tests.tests_running')
   end
 
-  def create_test_run(data, test_batch, user_id)
-    submission_id = data[:submission_id]
-    grouping_id = data[:grouping_id]
-    obj = submission_id.nil? ? Grouping.find(grouping_id) : Submission.find(submission_id)
-    obj.create_test_run!(user_id: user_id, test_batch: test_batch).id
-  end
-
-  def perform(host_with_port, user_id, assignment_id, test_runs)
+  def perform(host_with_port, user_id, assignment_id, group_ids, collected: true)
     # create and enqueue test runs
-    # TestRun objects can either be created outside of this job (by passing their ids), or here
-    test_batch = test_runs.size > 1 ? TestBatch.create : nil # create 1 batch object if needed
+    test_batch = group_ids.size > 1 ? TestBatch.create : nil # create 1 batch object if needed
+    user = User.find(user_id)
+    assignment = Assignment.find(assignment_id)
 
-    test_runs.each_slice(Settings.autotest.max_batch_size) do |test_runs_slice|
-      test_run_ids = test_runs_slice.map { |data| data[:id] || create_test_run(data, test_batch, user_id) }
-
-      server_kwargs = server_params(get_markus_address(host_with_port), assignment_id)
-      server_kwargs[:request_high_priority] = test_batch.nil? && User.find(user_id).student?
-      server_kwargs[:test_data] = test_data(test_run_ids)
-
-      begin
-        run_autotester_command('run', server_kwargs)
-      rescue StandardError => e
-        TestRun.where(id: test_run_ids).update_all(problems: e.message)
-      end
+    group_ids.each_slice(Settings.autotest.max_batch_size) do |group_id_slice|
+      run_tests(assignment, host_with_port, group_id_slice, user, collected: collected, batch: test_batch)
     end
   end
 end

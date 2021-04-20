@@ -1,11 +1,11 @@
 class AutotestSpecsJob < ApplicationJob
-  include AutomatedTestsHelper
+  include AutomatedTestsHelper::AutotestApi
 
   def self.show_status(_status)
     I18n.t('poll_job.autotest_specs_job')
   end
 
   def perform(host_with_port, assignment)
-    run_autotester_command('specs', server_params(get_markus_address(host_with_port), assignment.id))
+    update_settings(assignment, host_with_port)
   end
 end

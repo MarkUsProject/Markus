@@ -28,6 +28,7 @@ en:
       timeout: "%{seconds} seconds timeout expired (previous marks in this test script will not count)"
       unknown_test: Unknown test
     run_tests: Run tests
+    settings_not_setup: "Cannot find test script files: please upload some before running tests"
     specs_file_upload_message: File must be a valid json file
     stop_batch: Stop batch
     stop_test: Stop test
