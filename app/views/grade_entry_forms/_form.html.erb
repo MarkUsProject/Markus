@@ -12,6 +12,15 @@
   <%= render partial: 'boot',
              formats: [:js],
              handlers: [:erb] %>
+  <%= javascript_tag nonce: true do %>
+    $(function() {
+      $('#add-new-column').click(function(e) {
+        add_column();
+        e.preventDefault();
+      })
+      refresh_event_listeners();
+    })
+  <% end %>
 <% end %>
 
 <p><%= t('grade_entry_forms.required_fields_html') %></p>
@@ -51,12 +60,12 @@
     </div>
   </fieldset>
 
-  <div id='grade_entry_items' style='margin-top: 1em;'>
-    <div style="float: right">
+  <div class="grade-entry-items-wrapper" id='grade_entry_items'>
+    <div class="add-new-button-wrapper">
       <%= link_to t('grade_entry_forms.add_column'),
                   '#',
-                  onclick: 'add_column(); return false;',
-                  class: 'button add-new-button' %>
+                  class: 'button add-new-button',
+                  id: 'add-new-column' %>
     </div>
     <h2><%= GradeEntryItem.model_name.human.pluralize %></h2>
     <%# Ensures there is at least one column whenever the form is loaded. %>

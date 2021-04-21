@@ -149,6 +149,23 @@ describe ResultPolicy do
     end
   end
 
+  describe_rule :set_released_to_students? do
+    succeed 'user is an admin' do
+      let(:user) { create(:admin) }
+    end
+    context 'user is a ta' do
+      succeed 'that can manage submissions' do
+        let(:user) { create :ta, manage_submissions: true }
+      end
+      failed 'that cannot manage submissions' do
+        let(:user) { create :ta, manage_submissions: false }
+      end
+    end
+    failed 'user is a student' do
+      let(:user) { create(:student) }
+    end
+  end
+
   describe_rule :manage? do
     succeed 'user is an admin' do
       let(:user) { create(:admin) }

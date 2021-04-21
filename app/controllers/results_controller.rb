@@ -4,6 +4,17 @@ class ResultsController < ApplicationController
                 only: [:update_remark_request, :cancel_remark_request,
                        :set_released_to_students]
 
+  content_security_policy only: [:edit, :view_marks] do |p|
+    # required because heic2any uses libheif which calls
+    # eval (javascript) and creates an image as a blob.
+    # TODO: remove this when possible
+    p.script_src :self, "'strict-dynamic'", "'unsafe-eval'"
+    p.img_src :self, :blob
+    # required because MathJax dynamically changes
+    # style. # TODO: remove this when possible
+    p.style_src :self, "'unsafe-inline'"
+  end
+
   def show
     respond_to do |format|
       format.json do
@@ -69,6 +80,8 @@ class ResultsController < ApplicationController
           data[:enable_test] = false
           data[:can_run_tests] = false
         end
+
+        data[:can_release] = allowance_to(:manage_assessments?, current_user)
 
         # Submission files
         file_data = submission.submission_files.order(:path, :filename).pluck_to_hash(:id, :filename, :path)
@@ -327,7 +340,6 @@ class ResultsController < ApplicationController
     released_to_students = !@result.released_to_students
     @result.released_to_students = released_to_students
     if @result.save
-      @result.submission.assignment.update_results_stats
       m_logger = MarkusLogger.instance
       assignment = @result.submission.assignment
       if released_to_students
@@ -353,7 +365,6 @@ class ResultsController < ApplicationController
     end
 
     if @result.save
-      @result.submission.assignment.update_results_stats
       head :ok
     else # Failed to pass validations
       # Show error message

@@ -1,6 +1,6 @@
 <canvas id='grade_entry_form_<%= grade_entry_form.id %>' width='500' height='450'></canvas>
 
-<script>
+<%= javascript_tag nonce: true do %>
   $(document).ready(function () {
     // Set up graph
     var ctx = document.getElementById('grade_entry_form_<%= grade_entry_form.id %>').getContext('2d');
@@ -38,4 +38,4 @@
       options: options
     });
   });
-</script>
+<% end %>

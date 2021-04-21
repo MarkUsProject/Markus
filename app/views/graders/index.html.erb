@@ -1,5 +1,5 @@
 <%= content_for :head do %>
-  <script>
+  <%= javascript_tag nonce: true do %>
     document.addEventListener('DOMContentLoaded', () => {
       makeGradersManager(document.getElementById('graders-manager'),
         {
@@ -8,7 +8,7 @@
         }
       );
     });
-  </script>
+  <% end %>
 <% end %>
 
 <% content_for :title do %>

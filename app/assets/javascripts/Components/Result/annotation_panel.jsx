@@ -25,10 +25,7 @@ export class AnnotationPanel extends React.Component {
   renderReleasedComments() {
     if (this.props.released_to_students || this.props.remarkSubmitted) {
       let target_id = "overall_comment_text";
-      document.getElementById(target_id).innerHTML = marked(
-        this.state.overallComment,
-        { sanitize: true }
-      );
+      document.getElementById(target_id).innerHTML = safe_marked(this.state.overallComment);
       MathJax.Hub.Queue(["Typeset", MathJax.Hub, target_id]);
     }
   }

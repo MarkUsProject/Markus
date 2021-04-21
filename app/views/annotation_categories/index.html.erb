@@ -3,8 +3,16 @@
              formats: [:js],
              handlers: [:erb] %>
   <%= render partial: 'layouts/mathjax_config' %>
-  <%= javascript_include_tag 'MathJax_lib/MathJax.js?config=TeX-AMS-MML_HTMLorMML' %>
-  <%= javascript_include_tag 'MathJax/mathjax_helpers' %>
+  <%= javascript_include_tag 'MathJax_lib/MathJax.js?config=TeX-AMS-MML_HTMLorMML', nonce: true %>
+  <%= javascript_include_tag 'MathJax/mathjax_helpers', nonce: true %>
+  <%= javascript_tag nonce: true do %>
+    $(function() {
+      $('#add-annotation-category').click(function(e) {
+        add_annotation_category('<%= new_assignment_annotation_category_path %>');
+        e.preventDefault();
+      })
+    })
+  <% end %>
 <% end %>
 
 <% content_for :title, t('.title',
@@ -12,12 +20,10 @@
     @assignment.parent_assignment.short_identifier + ' ' + PeerReview.model_name.human :
     @assignment.short_identifier) %>
 
-<% path = new_assignment_annotation_category_path %>
-
 <% @heading_buttons = [
   { link_text: t('.add_annotation_category'),
     link_path: '#',
-    html_options: { onclick: "add_annotation_category('#{path}')" } },
+    html_options: { id: 'add-annotation-category' } },
   { link_text: t('download'),
     link_path: '#',
     html_options: { id: 'downloadModal' } },
@@ -27,20 +33,20 @@
 ] %>
 
 
-<p id='criterion_error' class='warning' style='display: none;'></p>
+<p id='criterion_error' class='warning no-display'></p>
 <div class='pane-wrapper'>
-<div style='width: 25%'>
-  <%= render partial: 'annotation_categories/annotation_category_pane' %>
-</div>
+  <div class="annotation-pane-wrapper">
+    <%= render partial: 'annotation_categories/annotation_category_pane' %>
+  </div>
 
-<div id='annotations_pane' class='pane'>
-  <div id='annotation_list_holder'>
-    <div id='annotations_help'>
-      <h2><%= t(:help) %></h2>
-      <p><%= t('annotations.help_message') %></p>
+  <div id='annotations_pane' class='pane'>
+    <div id='annotation_list_holder'>
+      <div id='annotations_help'>
+        <h2><%= t(:help) %></h2>
+        <p><%= t('annotations.help_message') %></p>
+      </div>
     </div>
   </div>
-</div>
 </div>
 
 <!-- Modals -->

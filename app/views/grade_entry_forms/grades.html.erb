@@ -1,20 +1,20 @@
 <% # Manage grades page %>
 <% content_for :head do %>
 
-  <script>
+  <%= javascript_tag nonce: true do %>
   document.addEventListener('DOMContentLoaded', () => {
     makeMarksSpreadsheet(
       document.getElementById('react_grades_table'),
       {
         grade_entry_form_id: <%= @grade_entry_form.id %>,
         show_total: <%= @grade_entry_form.show_total ? 'true' : 'false' %>,
-        out_of_total: <%= @grade_entry_form.out_of_total %>,
+        max_mark: <%= @grade_entry_form.max_mark %>,
         show_sections: <%= Section.exists? %>,
         can_release: <%= allowed_to? :manage? %>
       }
     );
   })
-  </script>
+  <% end %>
 <% end %>
 
 <% @heading_buttons = [

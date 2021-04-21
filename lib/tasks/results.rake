@@ -94,8 +94,6 @@ namespace :markus do
           result.save
         end
       end
-  		# compute summary statistics for a1
-  		a1.update_results_stats
       puts "Done!"
     end
   end

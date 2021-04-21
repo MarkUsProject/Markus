@@ -280,11 +280,7 @@ class MainController < ApplicationController
   end
 
   def check_timeout
-    if check_imminent_expiry
-      render js: 'timeout_imminent_modal.open()'
-    else
-      head :ok
-    end
+    head :ok unless check_imminent_expiry
   end
 
   def refresh_session

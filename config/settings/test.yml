@@ -3,6 +3,8 @@ rails:
   eager_load: false
   consider_all_requests_local: true
   log_level: debug
+  active_job:
+    queue_adapter: test
   active_support:
     deprecation: stderr
   action_mailer:

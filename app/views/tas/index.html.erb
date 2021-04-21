@@ -1,9 +1,9 @@
 <%= content_for :head do %>
-  <script>
+  <%= javascript_tag nonce: true do %>
     document.addEventListener('DOMContentLoaded', () => {
       makeTATable(document.getElementById('tas_table'));
     })
-  </script>
+  <% end %>
 <% end %>
 
 <% content_for :title do %>

@@ -8,7 +8,8 @@
   <%= javascript_include_tag 'upload_button_control.js',
                              id: 'upload_script',
                              upload_id: 'upload_file',
-                             button_id: 'upload' %>
+                             button_id: 'upload',
+                             nonce: true %>
 
   <p>
     <%= t('upload_help_html', section_id: 'students') %>

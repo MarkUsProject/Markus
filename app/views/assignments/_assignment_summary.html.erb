@@ -15,7 +15,7 @@
         <%= render partial: 'assignments/grade_distribution_graph', locals: { assignment: assignment } %>
       </div>
 
-      <div class='flex-row-expand' style='height: 100%; margin-left: 10px;'>
+      <div class='flex-row-expand'>
         <%= render partial: 'assignments/assignment_info_summary', locals: { assignment: assignment } %>
         <p>
           <%= link_to I18n.t(:refresh_graph),

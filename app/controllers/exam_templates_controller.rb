@@ -7,6 +7,10 @@ class ExamTemplatesController < ApplicationController
 
   layout 'assignment_content'
 
+  content_security_policy only: [:assign_errors] do |p|
+    p.img_src :self, :blob
+  end
+
   def index
     @assignment = Assignment.find(params[:assignment_id])
     @exam_templates = @assignment.exam_templates.includes(:template_divisions)

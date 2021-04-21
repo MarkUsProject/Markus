@@ -192,8 +192,6 @@ class Student < User
       update_list[student_id] = {hidden: true}
     end
     Student.update(update_list.keys, update_list.values)
-    # Update stats as it changes with the set of active students.
-    Assignment.find_each { |assignment| assignment.update_results_stats }
   end
 
   # "Unhides" students not visible and grants repository
@@ -204,8 +202,6 @@ class Student < User
       update_list[student_id] = {hidden: false}
     end
     Student.update(update_list.keys, update_list.values)
-    # Update stats as it changes with the set of active students.
-    Assignment.find_each { |assignment| assignment.update_results_stats }
   end
 
   def self.give_grace_credits(student_ids, number_of_grace_credits)

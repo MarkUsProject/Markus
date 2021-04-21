@@ -243,6 +243,21 @@ label.required::after, th.required::after {
   clear: both;
 }
 
+// indents
+
+.indent {
+  margin-left: 15px;
+}
+
+.small-indent {
+  margin-left: 10px;
+}
+
+// text boxes
+
+.word-break-all {
+  word-break: break-all;
+}
 
 // Customize react-table styling
 .ReactTable {

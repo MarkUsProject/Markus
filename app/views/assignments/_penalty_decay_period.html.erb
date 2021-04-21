@@ -21,8 +21,7 @@
                            min: 0.001,
                            step: :any,
                            required: true,
-                           class: 'PeriodDeltaChain_Hours',
-                           onchange: 'if (penalty_decay_periods) { penalty_decay_periods.refresh(); }' %>
+                           class: 'PeriodDeltaChain_Hours penalty-decay-period-hours' %>
         <%= t('submission_rules.hours') %>
       </td>
       <td>
@@ -41,7 +40,7 @@
         <% else %>
           <%= link_to t(:delete),
                       '#',
-                      onclick: 'remove_period(this, penalty_decay_periods); return false;' %>
+                      class: 'penalty-decay-period-delete' %>
         <% end %>
       </td>
     <% end %>

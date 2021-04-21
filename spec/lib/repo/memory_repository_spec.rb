@@ -4,7 +4,7 @@ describe MemoryRepository do
     before :all do
       @repo_loc = 'mock_repo'
       @students = [:student1, :student2]
-      MemoryRepository.send :__update_permissions, { @repo_loc => @students }, ['admin1']
+      MemoryRepository.send :update_permissions_file, { @repo_loc => @students }, ['admin1']
     end
 
     it 'give admins access to all repos' do

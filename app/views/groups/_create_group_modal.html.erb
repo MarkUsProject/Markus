@@ -10,7 +10,7 @@
                            maxlength: 30 %>
         <section class='dialog-actions'>
           <%= submit_tag t('helpers.submit.create', model: Group.model_name.human) %>
-          <%= button_tag t(:cancel), onclick:'modalCreate.close()' %>
+          <%= button_tag t(:cancel), id: 'modal-create-close' %>
         </section>
     <% end %>
 <% end %>

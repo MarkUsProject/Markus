@@ -94,14 +94,13 @@ class CourseSummariesController < ApplicationController
   end
 
   def get_assessment_data(assessment, type)
-    is_gef = assessment.is_a? GradeEntryForm
     case type
     when :median
-      (is_gef ? assessment.calculate_median : assessment.results_median)&.round(2)
+      assessment.results_median&.round(2)
     when :average
-      (is_gef ? assessment.calculate_average : assessment.results_average)&.round(2)
+      assessment.results_average&.round(2)
     when :total
-      (is_gef ? assessment.grade_entry_items.where(bonus: false).sum(:out_of) : assessment.max_mark)
+      assessment.max_mark
     else
       nil
     end
