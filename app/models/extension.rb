@@ -1,6 +1,8 @@
 class Extension < ApplicationRecord
   belongs_to :grouping
 
+  attribute :time_delta, :interval
+
   validates :time_delta, numericality: { greater_than: 0 }
 
   after_create :remove_pending_memberships
