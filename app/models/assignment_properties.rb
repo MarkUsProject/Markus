@@ -51,7 +51,6 @@ class AssignmentProperties < ApplicationRecord
 
   validate :minimum_number_of_groups
 
-  attribute :duration, :duration
   validates :duration, numericality: { greater_than: 0 }, allow_nil: false, if: :is_timed
   validates_presence_of :start_time, if: :is_timed
   validate :start_before_due, if: :is_timed
