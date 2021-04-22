@@ -15,7 +15,7 @@ class AnnotationText < ApplicationRecord
   # AnnotationText is destroyed.
   has_many :annotations, dependent: :destroy
 
-  belongs_to :annotation_category, optional: true, counter_cache: true
+  belongs_to :annotation_category, optional: true
   validates_associated :annotation_category, on: :create
 
   validates_numericality_of :deduction,

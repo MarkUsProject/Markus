@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_02_16_160312) do
+ActiveRecord::Schema.define(version: 2021_04_22_193041) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -68,9 +68,7 @@ ActiveRecord::Schema.define(version: 2021_02_16_160312) do
     t.datetime "due_date"
     t.boolean "is_hidden", default: true, null: false
     t.boolean "show_total", default: false, null: false
-    t.integer "groupings_count"
     t.integer "outstanding_remark_request_count"
-    t.integer "notes_count", default: 0
     t.integer "parent_assessment_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
@@ -272,7 +270,6 @@ ActiveRecord::Schema.define(version: 2021_02_16_160312) do
     t.datetime "updated_at"
     t.boolean "admin_approved", default: false, null: false
     t.boolean "is_collected", default: false, null: false
-    t.integer "notes_count", default: 0
     t.integer "criteria_coverage_count", default: 0
     t.integer "test_tokens", default: 0, null: false
     t.bigint "assessment_id", null: false
@@ -592,7 +589,6 @@ ActiveRecord::Schema.define(version: 2021_02_16_160312) do
     t.boolean "hidden", default: false, null: false
     t.string "api_key"
     t.integer "section_id"
-    t.integer "notes_count", default: 0
     t.string "email"
     t.string "id_number"
     t.boolean "receives_results_emails", default: false, null: false
