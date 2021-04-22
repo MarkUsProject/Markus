@@ -101,7 +101,7 @@ describe Result do
     context 'there are no extra marks' do
       it 'should return an empty hash' do
         ids = Result.pluck(:id)
-        expected = Hash.new { |h,k| h[k] = nil }
+        expected = Hash.new { |h,k| h[k] = nil}
         expect(Result.get_total_extra_marks(ids)).to eq(expected)
       end
     end
