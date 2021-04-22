@@ -96,6 +96,26 @@ describe Result do
       end
     end
   end
+  describe '.get_total_extra_marks' do
+    include_context 'get subtotals context'
+    context 'there are no extra marks' do
+      it 'should return an empty hash' do
+        ids = Result.pluck(:id)
+        expected = Hash.new { |h,k| h[k] = nil }
+        expect(Result.get_total_extra_marks(ids)).to eq(expected)
+      end
+    end
+    context 'there are only one zero extra mark' do
+      it 'should return a hash containing only one zero extra mark' do
+        ids = Result.pluck(:id)
+        extra_mark = 0.0
+        create(:extra_mark_points, result: Result.find(ids.first), extra_mark: extra_mark)
+        expected = Hash.new { |h,k| h[k] = nil }
+        expected[ids.first] = extra_mark
+        expect(Result.get_total_extra_marks(ids)).to eq(expected)
+      end
+    end
+  end
   describe '#get_total_mark' do
     include_context 'get subtotal context'
     include_examples 'get subtotal only', :get_total_mark

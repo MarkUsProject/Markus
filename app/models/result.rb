@@ -103,9 +103,12 @@ class Result < ApplicationRecord
     result_data = Result.joins(:extra_marks, submission: [grouping: :assignment])
                         .where(id: result_ids)
                         .pluck(:id, :extra_mark, :unit, 'assessments.id')
-    extra_marks_hash = Hash.new { |h,k| h[k] = 0 }
+    extra_marks_hash = Hash.new { |h,k| h[k] = nil }
     max_mark_hash = Hash.new
     result_data.each do |id, extra_mark, unit, assessment_id|
+      if extra_marks_hash[id].nil?
+        extra_marks_hash[id] = 0
+      end
       if unit == 'points'
         extra_marks_hash[id] += extra_mark.round(2)
       elsif unit == 'percentage'
