@@ -101,7 +101,7 @@ describe Result do
     context 'there are no extra marks' do
       it 'should return an empty hash' do
         ids = Result.pluck(:id)
-        expected = Hash.new { |h,k| h[k] = nil}
+        expected = Hash.new { |h, k| h[k] = nil }
         expect(Result.get_total_extra_marks(ids)).to eq(expected)
       end
     end
@@ -110,7 +110,7 @@ describe Result do
         ids = Result.pluck(:id)
         extra_mark = 0.0
         create(:extra_mark_points, result: Result.find(ids.first), extra_mark: extra_mark)
-        expected = Hash.new { |h,k| h[k] = nil}
+        expected = Hash.new { |h, k| h[k] = nil }
         expected[ids.first] = extra_mark
         expect(Result.get_total_extra_marks(ids)).to eq(expected)
       end

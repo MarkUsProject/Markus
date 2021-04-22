@@ -103,7 +103,7 @@ class Result < ApplicationRecord
     result_data = Result.joins(:extra_marks, submission: [grouping: :assignment])
                         .where(id: result_ids)
                         .pluck(:id, :extra_mark, :unit, 'assessments.id')
-    extra_marks_hash = Hash.new { |h,k| h[k] = nil}
+    extra_marks_hash = Hash.new { |h, k| h[k] = nil }
     max_mark_hash = Hash.new
     result_data.each do |id, extra_mark, unit, assessment_id|
       if extra_marks_hash[id].nil?
