@@ -65,6 +65,7 @@ fr:
     student_interface:
       confirm_create_group: Êtes-vous sûr de vouloir décliner l'invitation ?
       confirm_delete_group: 'AVERTISSEMENT : Vous perdrez l''accès à vos dossiers présentés après la suppression de votre groupe . Assurez-vous que vous avez une copie locale de vos fichiers avant de cliquer sur OK .'
+      create_individual_group_on_start: UPDATE ME
       form_group: Former votre propre groupe
       group_information: Informations sur le groupe
       group_options: Options du groupe
@@ -78,7 +79,6 @@ fr:
       no_group_yet: Vous ne faites pas encore partie d'un groupe
       not_allowed_to_delete_group: Vous devez contacter votre formateur de supprimer le groupe.
       not_allowed_to_form_group: Vous n'êtes pas autorisé à former vous-même des groupes pour ce projet. Merci d'attendre que les correcteurs et les administrateurs forment des groupes.
-      create_individual_group_on_start: UPDATE ME
       section_groups_only: Vous ne pouvez inviter que des étudiants de votre section.
       students_work_alone: Les étudiants travaillent seuls.
       url_group_repository: L'adresse du répertoire de votre groupe

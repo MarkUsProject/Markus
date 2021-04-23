@@ -66,6 +66,7 @@ es:
     student_interface:
       confirm_create_group: Esto rechazará la invitación que se le ha realizado. ¿Está seguro/a de querer rechazar esta invitación?
       confirm_delete_group: 'PRECAUCIÓN: Usted perderá acceso a los archivos enviados en su entrega después de eliminar su grupo. Asegúrese de tener una copia local de sus archivos antes de dar click en OK.'
+      create_individual_group_on_start: UPDATE ME
       form_group: Formar su propio grupo
       group_information: Información del Grupo
       group_options: Opciones del grupo
@@ -79,7 +80,6 @@ es:
       no_group_yet: Usted no tiene un grupo todavía.
       not_allowed_to_delete_group: Usted debe contactar su profesor para remover el grupo.
       not_allowed_to_form_group: Usted no puede formar grupos para este proyecto. Por favor espere hasta que el instructor forme los grupos.
-      create_individual_group_on_start: UPDATE ME
       section_groups_only: Usted sólo puede invitar estudiantes de su sección
       students_work_alone: Los estudiantes trabajan solos
       url_group_repository: El URL para el repositorio del grupo
