@@ -62,7 +62,7 @@ describe AssignmentsController do
       end
       context 'when a grouping does not exist' do
         before { put_as user, :start_timed_assignment, params: { id: assignment.id } }
-        context 'when the group_max is 1' do
+        xcontext 'when the group_max is 1' do
           let(:assignment) { create :timed_assignment, assignment_properties_attributes: { group_max: 1 } }
           it 'should create a grouping' do
             expect(user.student_memberships.size).to eq 1
@@ -425,7 +425,7 @@ describe AssignmentsController do
         assignment.update!(group_min: 1, group_max: 1)
         post_as user, :show, params: { id: assignment.id }
       end
-      context 'a regular assignment' do
+      xcontext 'a regular assignment' do
         it 'should create a new grouping' do
           expect(user.student_memberships.size).to eq 1
           expect(user.groupings.first.assessment_id).to eq assignment.id
@@ -440,7 +440,7 @@ describe AssignmentsController do
             expect(user.student_memberships.size).to eq 0
           end
         end
-        context 'after the due date' do
+        xcontext 'after the due date' do
           let(:assignment) { create :timed_assignment, due_date: 1.hour.ago }
           it('should respond with success') { assert_response :success }
           it 'should create a grouping' do
@@ -451,7 +451,7 @@ describe AssignmentsController do
       end
     end
 
-    context 'when the assignment is a group assignment and the student belongs to a group' do
+    xcontext 'when the assignment is a group assignment and the student belongs to a group' do
       it 'responds with a success' do
         assignment.update!(group_min: 1, group_max: 3)
         grouping = create(:grouping_with_inviter, assignment: assignment)

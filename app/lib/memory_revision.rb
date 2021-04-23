@@ -34,7 +34,7 @@ class MemoryRevision < Repository::AbstractRevision
   # Return all of the files in this repository at the root directory
   def files_at_path(path="/", with_attrs: true)
     return Hash.new if @files.empty?
-    files_at_path_helper(path, false, Repository::RevisionFile)
+    files_at_path_helper(path, false)
   end
 
   # Return true if there was files submitted at the desired path for the revision
@@ -99,7 +99,7 @@ class MemoryRevision < Repository::AbstractRevision
 
   private
 
-  def files_at_path_helper(path = '/', only_changed = false, type = nil)
+  def files_at_path_helper(path = '/', only_changed = false, type = Repository::RevisionFile)
     # Automatically append a root slash if not supplied
     result = Hash.new(nil)
     @files.each do |object|
@@ -110,10 +110,8 @@ class MemoryRevision < Repository::AbstractRevision
         alt_path = '/' + object.path
       end
       git_path = object.path + '/'
-      if (type.nil? || object.instance_of?(type)) && (object.path == path ||
-          alt_path == path ||
-          git_path == path ||
-          object.instance_of?(Repository::RevisionDirectory) && object.name == path)
+      if object.instance_of?(type) && (object.path == path ||
+          alt_path == path || git_path == path)
         if !only_changed
           object.from_revision = @revision_identifier # set revision number
           result[object.name] = object
