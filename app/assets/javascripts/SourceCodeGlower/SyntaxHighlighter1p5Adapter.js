@@ -66,9 +66,9 @@ SyntaxHighlighter1p5Adapter.prototype.applyMods = function() {
   delete original_commands['PrintSource'];
   delete original_commands['ExpandSource'];
 
-  original_commands['CopyToClipboard'] = {
+  original_commands.CopyToClipboard = {
     label: 'copy code to clipboard',
-    func: function(highlighter) {
+    func: function() {
       //this is a work-around, selecting the pre element with jQuery wasn't working 
       const text = document.createElement('textarea');
       text.textContent = code.textContent;
@@ -76,7 +76,7 @@ SyntaxHighlighter1p5Adapter.prototype.applyMods = function() {
       text.select();
       success = document.execCommand('copy');
       if (success) {
-        alert("Code is copied to clipboard");
+        alert('Code is copied to clipboard');
       }
       text.remove();
     }
