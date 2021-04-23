@@ -34,7 +34,7 @@ class MemoryRevision < Repository::AbstractRevision
   # Return all of the files in this repository at the root directory
   def files_at_path(path="/", with_attrs: true)
     return Hash.new if @files.empty?
-    return files_at_path_helper(path, false, Repository::RevisionFile)
+    files_at_path_helper(path, false, Repository::RevisionFile)
   end
 
   # Return true if there was files submitted at the desired path for the revision
