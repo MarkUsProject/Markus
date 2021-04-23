@@ -1,5 +1,7 @@
 # Changelog
 ## [unreleased]
+- Modify Result.get_total_extra_marks to differentiate between having extra marks that sum to zero and
+  having no extra marks (#5220)
 - remove counter caches (#5222)
 
 ## [v1.12.0]
