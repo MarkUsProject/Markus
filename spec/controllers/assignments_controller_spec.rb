@@ -61,9 +61,19 @@ describe AssignmentsController do
         end
       end
       context 'when a grouping does not exist' do
-        it 'should respond with 400' do
-          put_as user, :start_timed_assignment, params: { id: assignment.id }
-          expect(response).to have_http_status 400
+        before { put_as user, :start_timed_assignment, params: { id: assignment.id } }
+        context 'when the group_max is 1' do
+          let(:assignment) { create :timed_assignment, assignment_properties_attributes: { group_max: 1 } }
+          it 'should create a grouping' do
+            expect(user.student_memberships.size).to eq 1
+            expect(user.groupings.first.assessment_id).to eq assignment.id
+          end
+        end
+        context 'when the group_max is > 1' do
+          let(:assignment) { create :timed_assignment, assignment_properties_attributes: { group_max: 2 } }
+          it 'should respond with 400' do
+            expect(response).to have_http_status 400
+          end
         end
       end
     end
@@ -410,17 +420,38 @@ describe AssignmentsController do
     let!(:assignment) { create(:assignment) }
     let!(:user) { create(:student) }
 
-    xcontext 'when the assignment is an individual assignment' do
-      it 'responds with a success and creates a new grouping' do
+    context 'when the assignment is an individual assignment' do
+      before do
         assignment.update!(group_min: 1, group_max: 1)
         post_as user, :show, params: { id: assignment.id }
-        assert_response :success
-        expect(user.student_memberships.size).to eq 1
-        expect(user.groupings.first.assignment_id).to eq assignment.id
+      end
+      context 'a regular assignment' do
+        it 'should create a new grouping' do
+          expect(user.student_memberships.size).to eq 1
+          expect(user.groupings.first.assessment_id).to eq assignment.id
+        end
+        it('should respond with success') { assert_response :success }
+      end
+      context 'a timed assessment' do
+        context 'before the due date' do
+          let(:assignment) { create :timed_assignment, due_date: 1.hour.from_now }
+          it('should respond with success') { assert_response :success }
+          it 'should not create a grouping' do
+            expect(user.student_memberships.size).to eq 0
+          end
+        end
+        context 'after the due date' do
+          let(:assignment) { create :timed_assignment, due_date: 1.hour.ago }
+          it('should respond with success') { assert_response :success }
+          it 'should create a grouping' do
+            expect(user.student_memberships.size).to eq 1
+            expect(user.groupings.first.assessment_id).to eq assignment.id
+          end
+        end
       end
     end
 
-    xcontext 'when the assignment is a group assignment and the student belongs to a group' do
+    context 'when the assignment is a group assignment and the student belongs to a group' do
       it 'responds with a success' do
         assignment.update!(group_min: 1, group_max: 3)
         grouping = create(:grouping_with_inviter, assignment: assignment)

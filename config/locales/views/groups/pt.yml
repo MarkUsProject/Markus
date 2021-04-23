@@ -78,6 +78,7 @@ pt:
       no_group_yet: Você ainda não está em um grupo
       not_allowed_to_delete_group: Você deve entrar em contato com seu instrutor para remover o grupo.
       not_allowed_to_form_group: Você não tem permissão para criar um grupo por si só. Por favor, espere até que um instrutor forme os grupos.
+      create_individual_group_on_start: UPDATE ME
       section_groups_only: Você só pode convidar alunos da sua sessão
       students_work_alone: Alunos trabalham sozinhos.
       url_group_repository: URL para o repositório do seu grupo

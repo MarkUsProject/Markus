@@ -79,6 +79,7 @@ es:
       no_group_yet: Usted no tiene un grupo todavía.
       not_allowed_to_delete_group: Usted debe contactar su profesor para remover el grupo.
       not_allowed_to_form_group: Usted no puede formar grupos para este proyecto. Por favor espere hasta que el instructor forme los grupos.
+      create_individual_group_on_start: UPDATE ME
       section_groups_only: Usted sólo puede invitar estudiantes de su sección
       students_work_alone: Los estudiantes trabajan solos
       url_group_repository: El URL para el repositorio del grupo

@@ -80,6 +80,7 @@ en:
       no_group_yet: You are not currently in a group for this assignment.
       not_allowed_to_delete_group: If you would like to remove this group, you must contact your instructor.
       not_allowed_to_form_group: You are not allowed to form a group yourself. Please wait until your instructor forms your group.
+      create_individual_group_on_start: Your individual group will be created when you start this assessment.
       section_groups_only: You can only form a group with students in your section.
       students_work_alone: Students work individually.
       url_group_repository: Group repository URL
