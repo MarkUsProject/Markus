@@ -63,9 +63,25 @@ SyntaxHighlighter1p5Adapter.prototype.applyMods = function() {
   var original_commands = dp.sh.Toolbar.Commands;
 
   // Get rid of some commands and add font size commands
-  delete original_commands['CopyToClipboard'];
   delete original_commands['PrintSource'];
   delete original_commands['ExpandSource'];
+
+  original_commands['CopyToClipboard'] = {
+    label: 'copy code to clipboard',
+    func: function(highlighter) {
+      //this is a work-around, selecting the pre element wasn't working 
+      const text = document.createElement('textarea');
+      text.textContent = code.textContent;
+      document.body.append(text);
+      text.select();
+      success = document.execCommand('copy');
+      if (success)
+      {
+        alert("Code is copied to clipboard");
+      }
+      text.remove();
+    }
+  };
 
   original_commands["BoostCode"] = {
     label: '+A',
