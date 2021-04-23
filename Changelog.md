@@ -1,5 +1,6 @@
 # Changelog
 ## [unreleased]
+- remove counter caches (#5222)
 
 ## [v1.12.0]
 - Remove annotations context menu from peer assignments view (#5116)

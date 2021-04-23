@@ -1,9 +1,9 @@
 class Note < ApplicationRecord
-  belongs_to :noteable, polymorphic: true, counter_cache: true
+  belongs_to :noteable, polymorphic: true
 
   validates_presence_of :notes_message
 
-  belongs_to :user, foreign_key: :creator_id, counter_cache: true
+  belongs_to :user, foreign_key: :creator_id
   validates_associated :user
 
   NOTEABLES = %w(Grouping Student Assignment)

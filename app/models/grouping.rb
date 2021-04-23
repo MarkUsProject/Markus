@@ -69,7 +69,7 @@ class Grouping < ApplicationRecord
   validates_numericality_of :criteria_coverage_count, greater_than_or_equal_to: 0
 
   # user association/validation
-  belongs_to :assignment, foreign_key: :assessment_id, counter_cache: true
+  belongs_to :assignment, foreign_key: :assessment_id
   validates_associated :assignment, on: :create
 
   belongs_to :group
