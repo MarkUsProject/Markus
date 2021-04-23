@@ -75,8 +75,7 @@ SyntaxHighlighter1p5Adapter.prototype.applyMods = function() {
       document.body.append(text);
       text.select();
       success = document.execCommand('copy');
-      if (success)
-      {
+      if (success) {
         alert("Code is copied to clipboard");
       }
       text.remove();
