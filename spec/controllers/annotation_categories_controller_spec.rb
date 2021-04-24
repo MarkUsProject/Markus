@@ -569,7 +569,6 @@ describe AnnotationCategoriesController do
         while index < annotation_category_list.size
           curr_cat = annotation_category_list[index]
           expect(curr_cat.annotation_category_name).to be_eql(('Problem ' + (index + 1).to_s))
-          expect(curr_cat.annotation_texts_count).to eq(1)
           expect(curr_cat.annotation_texts.all[0].content).to be_eql(('Test on question ' + (index + 1).to_s))
           index += 1
         end
