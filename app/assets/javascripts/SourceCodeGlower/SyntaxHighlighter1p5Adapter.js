@@ -63,7 +63,7 @@ SyntaxHighlighter1p5Adapter.prototype.applyMods = function() {
   var original_commands = dp.sh.Toolbar.Commands;
 
   // Get rid of some commands and add font size commands
-  delete original_commands['ViewSource'];
+  delete original_commands.ViewSource;
   delete original_commands['PrintSource'];
   delete original_commands['ExpandSource'];
 
@@ -84,7 +84,7 @@ SyntaxHighlighter1p5Adapter.prototype.applyMods = function() {
         id.value = original_commands.CopyToClipboard.label;
         copy_code.setAttributeNode(id);
         copy_code.innerText = original_commands.CopyToClipboard.label;
-      };
+      }
       text.remove();
     }
   };
