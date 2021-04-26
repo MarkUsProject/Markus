@@ -68,24 +68,17 @@ SyntaxHighlighter1p5Adapter.prototype.applyMods = function() {
   delete original_commands['ExpandSource'];
 
   original_commands.CopyToClipboard = {
-    label: 'copy code to clipboard',
+    label: I18n.t('results.copy_text'),
     func: function() {
-      //this is a work-around, selecting the pre element with jQuery wasn't working
-      const text = document.createElement('textarea');
-      text.textContent = code.textContent;
-      document.body.append(text);
-      text.select();
-      success = document.execCommand('copy');
-      if (success) {
-        let copy_code = document.getElementById(original_commands.CopyToClipboard.label);
-        original_commands.CopyToClipboard.label = '✔ copy code to clipboard';
-        //update id attribute with new label
-        let id = document.createAttribute('id');
-        id.value = original_commands.CopyToClipboard.label;
-        copy_code.setAttributeNode(id);
-        copy_code.innerText = original_commands.CopyToClipboard.label;
-      }
-      text.remove();
+      navigator.clipboard.writeText(code.textContent).then(res => {
+          let copy_code = document.getElementById(original_commands.CopyToClipboard.label);
+          original_commands.CopyToClipboard.label = '✔ ' + I18n.t('results.copy_text');
+          //update id attribute with new label
+          let id = document.createAttribute('id');
+          id.value = original_commands.CopyToClipboard.label;
+          copy_code.setAttributeNode(id);
+          copy_code.innerText = original_commands.CopyToClipboard.label;
+        })
     }
   };
 
