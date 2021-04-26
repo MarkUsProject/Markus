@@ -14,7 +14,7 @@
      duration_string = ["#{parts[:hours]} #{I18n.t('durations.hours', count: parts[:hours])}",
                         "#{parts[:minutes]} #{I18n.t('durations.minutes', count: parts[:minutes])}"].join(', ') %>
   <strong><%= Assignment.human_attribute_name(:duration) %></strong>: <%= duration_string %>
-  <% unless @grouping.extension.nil? %>
+  <% unless @grouping&.extension.nil? %>
     <% ext_parts = AssignmentProperties.duration_parts(@grouping.extension.time_delta)
        extension_string = [
          "#{ext_parts[:hours]} #{I18n.t('durations.hours', count: ext_parts[:hours])}",

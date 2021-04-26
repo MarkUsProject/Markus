@@ -31,7 +31,8 @@ class AssignmentsController < ApplicationController
     if @grouping.nil?
       if @assignment.scanned_exam
         flash_now(:notice, t('assignments.scanned_exam.under_review'))
-      elsif @assignment.group_max == 1
+      elsif @assignment.group_max == 1 && (!@assignment.is_timed ||
+                                           Time.current > assignment.section_due_date(@current_user&.section))
         begin
           current_user.create_group_for_working_alone_student(@assignment.id)
         rescue StandardError => e
@@ -478,7 +479,17 @@ class AssignmentsController < ApplicationController
 
   # Start timed assignment for the current user's grouping for this assignment
   def start_timed_assignment
-    grouping = current_user.try(:accepted_grouping_for, params[:id])
+    assignment = Assignment.find(params[:id])
+    grouping = current_user.accepted_grouping_for(assignment.id)
+    if grouping.nil? && assignment.group_max == 1
+      begin
+        current_user.create_group_for_working_alone_student(assignment.id)
+        grouping = current_user.accepted_grouping_for(assignment.id)
+        set_repo_vars(assignment, grouping)
+      rescue StandardError => e
+        flash_message(:error, e.message)
+      end
+    end
     return head 400 if grouping.nil?
     authorize! grouping
     unless grouping.update(start_time: Time.current)

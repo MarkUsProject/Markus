@@ -34,7 +34,7 @@ class MemoryRevision < Repository::AbstractRevision
   # Return all of the files in this repository at the root directory
   def files_at_path(path="/", with_attrs: true)
     return Hash.new if @files.empty?
-    return files_at_path_helper(path)
+    files_at_path_helper(path, false)
   end
 
   # Return true if there was files submitted at the desired path for the revision
@@ -111,7 +111,7 @@ class MemoryRevision < Repository::AbstractRevision
       end
       git_path = object.path + '/'
       if object.instance_of?(type) && (object.path == path ||
-        alt_path == path || git_path == path)
+          alt_path == path || git_path == path)
         if !only_changed
           object.from_revision = @revision_identifier # set revision number
           result[object.name] = object
