@@ -1,5 +1,5 @@
 class AutotestCancelJob < ApplicationJob
-  include AutomatedTestsHelper
+  include AutomatedTestsHelper::AutotestApi
 
   def self.on_complete_js(_status)
     'window.BatchTestRunTable.fetchData'
@@ -7,11 +7,7 @@ class AutotestCancelJob < ApplicationJob
 
   def self.show_status(_status); end
 
-  def perform(host_with_port, assignment_id, test_run_ids)
-    server_kwargs = server_params(get_markus_address(host_with_port), assignment_id)
-    server_kwargs[:test_data] = test_data(test_run_ids)
-    run_autotester_command('cancel', server_kwargs)
-    TestRun.find(test_run_ids).each { |test_run| test_run.update(time_to_service: -1) }
-    # TODO: Use output for something?
+  def perform(assignment_id, test_run_ids)
+    cancel_tests(Assignment.find(assignment_id), TestRun.where(id: test_run_ids))
   end
 end

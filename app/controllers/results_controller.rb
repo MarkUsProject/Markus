@@ -276,7 +276,7 @@ class ResultsController < ApplicationController
   def stop_test
     test_id = params[:test_run_id].to_i
     assignment_id = params[:assignment_id]
-    @current_job = AutotestCancelJob.perform_later(request.protocol + request.host_with_port, assignment_id, [test_id])
+    @current_job = AutotestCancelJob.perform_later(assignment_id, [test_id])
     session[:job_id] = @current_job.job_id
     redirect_back(fallback_location: root_path)
   end

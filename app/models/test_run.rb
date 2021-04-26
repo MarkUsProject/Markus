@@ -1,4 +1,5 @@
 class TestRun < ApplicationRecord
+  enum status: { in_progress: 0, complete: 1, cancelled: 2, failed: 3 }
   has_many :test_group_results, dependent: :destroy
   has_many :feedback_files, through: :test_group_results
   belongs_to :test_batch, optional: true
@@ -6,49 +7,26 @@ class TestRun < ApplicationRecord
   belongs_to :grouping
   belongs_to :user
 
-  validates :time_to_service_estimate, numericality: { greater_than_or_equal_to: 0, only_integer: true,
-                                                       allow_nil: true }
-  validates :time_to_service, numericality: { greater_than_or_equal_to: -1, only_integer: true, allow_nil: true }
-
   ASSIGNMENTS_DIR = File.join(Settings.autotest.client_dir, 'assignments').freeze
   SPECS_FILE = 'specs.json'.freeze
   FILES_DIR = 'files'.freeze
-  STATUSES = {
-    complete: 'complete',
-    in_progress: 'in_progress',
-    cancelled: 'cancelled',
-    problems: 'problems'
-  }.freeze
 
-  def status
-    return STATUSES[:problems] unless self.problems.nil?
-    return STATUSES[:in_progress] if self.time_to_service.nil?
-    return STATUSES[:cancelled] if self.time_to_service.negative?
-    STATUSES[:complete]
+  def cancel
+    self.update(status: :cancelled) if self.in_progress?
   end
 
-  def self.statuses(test_run_ids)
-    status_hash = Hash.new
-    TestRun.left_outer_joins(test_group_results: :test_results)
-           .where(id: test_run_ids)
-           .pluck(:id, :problems, 'test_group_results.id', :time_to_service)
-           .map do |id, problems, test_group_results_id, time_to_service|
-      if !problems.nil?
-        status_hash[id] = STATUSES[:problems]
-      elsif time_to_service.nil?
-        status_hash[id] = STATUSES[:in_progress]
-      elsif time_to_service.negative?
-        status_hash[id] = STATUSES[:cancelled]
-      else
-        status_hash[id] = STATUSES[:complete]
+  def failure(status)
+    self.update(status: failed, problems: status) if self.in_progress?
+  end
+
+  def update_results!(results)
+    if results['status'] == 'failed'
+      failure(results['error'])
+    else
+      self.update!(status: :complete, problems: results['error'])
+      results['test_groups'].each do
+
       end
-    end
-    status_hash
-  end
-
-  STATUSES.each do |key, value|
-    define_method key.to_s.concat('?').to_sym do
-      return status == value
     end
   end
 
@@ -148,9 +126,6 @@ class TestRun < ApplicationRecord
       save
       return
     end
-    # save statistics
-    self.time_to_service = json_root['time_to_service']
-    save
     # update estimated time to service for other runs in batch
     if self.test_batch && self.time_to_service_estimate && self.time_to_service
       time_delta = self.time_to_service_estimate - self.time_to_service

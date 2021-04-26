@@ -212,6 +212,39 @@ module AutomatedTestsHelper
       end
     end
 
+    def cancel_tests(assignment, test_runs)
+      raise I18n.t('automated_tests.settings_not_setup') unless assignment.autotest_settings_id
+
+      uri = URI("#{Settings.autotest.url}/settings/#{assignment.autotest_settings_id}/tests/cancel")
+      req = Net::HTTP::Delete.new(uri)
+      req.body = {test_ids: test_runs.pluck(:autotest_test_id)}.to_json
+      set_headers(req)
+      send_request!(req, uri)
+      test_runs.each { |test_run| test_run.cancel }
+    end
+
+    def statuses(assignment, test_runs)
+      raise I18n.t('automated_tests.settings_not_setup') unless assignment.autotest_settings_id
+
+      uri = URI("#{Settings.autotest.url}/settings/#{assignment.autotest_settings_id}/tests/status")
+      req = Net::HTTP::Get.new(uri)
+      req.body = {test_ids: test_runs.pluck(:autotest_test_id)}.to_json
+      set_headers(req)
+      res = send_request!(req, uri)
+      JSON.parse(res.body)
+    end
+
+    def results(assignment, test_run)
+      raise I18n.t('automated_tests.settings_not_setup') unless assignment.autotest_settings_id
+
+      test_id = test_run.autotest_test_id
+      uri = URI("#{Settings.autotest.url}/settings/#{assignment.autotest_settings_id}/test/#{test_id}")
+      req = Net::HTTP::Get.new(uri)
+      set_headers(req)
+      res = send_request!(req, uri)
+      test_run.update_results!(JSON.parse(res.body))
+    end
+
     private
 
     def send_request(req, uri)
