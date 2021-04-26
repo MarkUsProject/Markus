@@ -65,6 +65,7 @@ fr:
     student_interface:
       confirm_create_group: Êtes-vous sûr de vouloir décliner l'invitation ?
       confirm_delete_group: 'AVERTISSEMENT : Vous perdrez l''accès à vos dossiers présentés après la suppression de votre groupe . Assurez-vous que vous avez une copie locale de vos fichiers avant de cliquer sur OK .'
+      create_individual_group_on_start: UPDATE ME
       form_group: Former votre propre groupe
       group_information: Informations sur le groupe
       group_options: Options du groupe

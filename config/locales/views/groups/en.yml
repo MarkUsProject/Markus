@@ -67,6 +67,7 @@ en:
     student_interface:
       confirm_create_group: This action will decline your pending invitations. Are you sure?
       confirm_delete_group: 'WARNING: You will lose access to your submitted files after deleting your group. Make sure you have a local copy of your files before clicking OK.'
+      create_individual_group_on_start: Your individual group will be created when you start this assessment.
       form_group: Create a group
       group_information: Group information
       group_options: Group options
