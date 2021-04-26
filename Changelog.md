@@ -3,6 +3,7 @@
 - Modify Result.get_total_extra_marks to differentiate between having extra marks that sum to zero and
   having no extra marks (#5220)
 - remove counter caches (#5222)
+- Add copy to clipboard button for plaintext submission files in Results view (#5223)
 
 ## [v1.12.0]
 - Remove annotations context menu from peer assignments view (#5116)

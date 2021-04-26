@@ -17,6 +17,7 @@ pt:
     cancel_override: UPDATE ME!
     cant_display_image: Imagem não pode ser mostrada. Se estiver tentando ver um arquivo pdf, por favor verifique se você ligou o suporte à pdfs. Clique no botão de download para baixar o arquivo
     collapse_all: Agrupar todos
+    copy_text: UPDATE ME!
     criterion_incomplete_error: Impossível alterar status das notas para completo, notas estão faltando. Verifique a rúbrica de notas e tenha certeza que cada critério recebeu uma nota.
     current_mark: UPDATE ME!
     current_rotation: UPDATE ME!
