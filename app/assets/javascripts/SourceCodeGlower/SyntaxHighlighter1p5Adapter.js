@@ -70,7 +70,7 @@ SyntaxHighlighter1p5Adapter.prototype.applyMods = function() {
   original_commands.CopyToClipboard = {
     label: I18n.t('results.copy_text'),
     func: function() {
-      navigator.clipboard.writeText(code.textContent).then(res => {
+      navigator.clipboard.writeText(code.textContent).then(() => {
           let copy_code = document.getElementById(original_commands.CopyToClipboard.label);
           original_commands.CopyToClipboard.label = '✔ ' + I18n.t('results.copy_text');
           //update id attribute with new label
@@ -78,7 +78,7 @@ SyntaxHighlighter1p5Adapter.prototype.applyMods = function() {
           id.value = original_commands.CopyToClipboard.label;
           copy_code.setAttributeNode(id);
           copy_code.innerText = original_commands.CopyToClipboard.label;
-        })
+        });
     }
   };
 
