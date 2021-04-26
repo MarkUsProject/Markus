@@ -17,6 +17,7 @@ es:
     cancel_override: UPDATE ME!
     cant_display_image: La imagen no puede ser mostrada. Si usted trata de ver un archivo en formato pdf, por favor asegurese de habilitar el soporte para pdf. De click en el botón de descargas para descargar el archivo.
     collapse_all: Reducir todos
+    copy_text: UPDATE ME!
     criterion_incomplete_error: Usted no puede marcar el estado de calificación como completo. No todas las notas han sido insertadas. Revise los criterios de calificación y asegúrese que cada uno de ellos tenga su nota correspondiente.
     current_mark: UPDATE ME!
     current_rotation: UPDATE ME!
