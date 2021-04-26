@@ -3,6 +3,7 @@
 - Modify Result.get_total_extra_marks to differentiate between having extra marks that sum to zero and
   having no extra marks (#5220)
 - Remove counter caches (#5222)
+- Add copy to clipboard button for plaintext submission files in Results view (#5223)
 - Delay grouping creation for working-alone timed assessments to when the student starts the assessment (#5224)
 
 ## [v1.12.0]

@@ -17,6 +17,7 @@ fr:
     cancel_override: UPDATE ME!
     cant_display_image: L'image ne peut pas être affichée. Si vous essayez d'afficher un PDF, vérifiez que l'option permettant d'afficher les PDF est activée. Vous pouvez télécharger manuellement le fichier.
     collapse_all: Cacher toutes
+    copy_text: UPDATE ME!
     criterion_incomplete_error: Note non remplie, mais état fixé comme terminé.
     current_mark: UPDATE ME!
     current_rotation: UPDATE ME!
