@@ -404,6 +404,7 @@ class AssignmentsController < ApplicationController
                                          'starter_file_groups.name as group_name')
     data = { files: file_data,
              sections: section_data,
+             available_after_due: assignment.starter_files_after_due,
              starterfileType: assignment.starter_file_type,
              defaultStarterFileGroup: assignment.default_starter_file_group&.id || '' }
     render json: data
@@ -680,7 +681,7 @@ class AssignmentsController < ApplicationController
   end
 
   def starter_file_assignment_params
-    params.require(:assignment).permit(:starter_file_type, :default_starter_file_group_id)
+    params.require(:assignment).permit(:starter_file_type, :default_starter_file_group_id, :starter_files_after_due)
   end
 
   def starter_file_group_params

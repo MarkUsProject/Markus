@@ -884,7 +884,8 @@ describe AssignmentsController do
     context 'an admin' do
       let(:user) { create :admin }
       it 'should contain the right values' do
-        expected = { starterfileType: assignment.starter_file_type,
+        expected = { available_after_due: true,
+                     starterfileType: assignment.starter_file_type,
                      defaultStarterFileGroup: '',
                      files: [],
                      sections: [] }

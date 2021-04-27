@@ -33,6 +33,8 @@ en:
     scanned_exam:
       under_review: This exam is still under review.
     starter_file:
+      available_after_due: Starter files are available to students after the due date has passed
+      available_after_due_help: For timed assessments, this allows students who do not start the assessment to download starter files after the start window is over.
       changed_at: Starter files were last updated on %{changed_date}
       changed_warning: The starter files for this assignment have changed. Please download the newest version of the starter files below and update your submission accordingly.
       default_starter_file_group: Default Starter File Group
