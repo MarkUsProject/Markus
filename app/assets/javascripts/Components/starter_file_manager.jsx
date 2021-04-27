@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {Fragment} from 'react';
 import {render} from "react-dom";
 import FileManager from "./markus_file_manager";
 import FileUploadModal from "./Modals/file_upload_modal";
@@ -373,17 +373,22 @@ class StarterFileManager extends React.Component {
 
   renderVisibilityOptions = () => {
     return (
-      <label>
-        <input
-          type={'checkbox'}
-          checked={this.state.available_after_due}
-          onChange={() => {
-            this.setState((prev) => ({available_after_due: !prev.available_after_due}),
-                                     () => this.toggleFormChanged(true))
-          }}
-        />
-        {I18n.t('assignments.starter_file.available_after_due')}
-      </label>
+      <Fragment>
+        <label>
+          <input
+            type={'checkbox'}
+            checked={this.state.available_after_due}
+            onChange={() => {
+              this.setState((prev) => ({available_after_due: !prev.available_after_due}),
+                                       () => this.toggleFormChanged(true))
+            }}
+          />
+          {I18n.t('assignments.starter_file.available_after_due')}
+        </label>
+        <div className="inline-help">
+          <p>{I18n.t('assignments.starter_file.available_after_due_help')}</p>
+        </div>
+      </Fragment>
     )
   };
 
