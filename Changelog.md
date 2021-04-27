@@ -1,7 +1,7 @@
 # Changelog
 
 ## [v1.12.1]
-- remove counter caches (#5222)
+- Remove counter caches (#5222)
 - Delay grouping creation for working-alone timed assessments to when the student starts the assessment (#5224)
 - Add option to hide starter files after collection date (#5226)
 
