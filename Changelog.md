@@ -3,6 +3,7 @@
 ## [v1.12.1]
 - remove counter caches (#5222)
 - Delay grouping creation for working-alone timed assessments to when the student starts the assessment (#5224)
+- Add option to hide starter files after collection date (#5226)
 
 ## [v1.12.0]
 - Remove annotations context menu from peer assignments view (#5116)
