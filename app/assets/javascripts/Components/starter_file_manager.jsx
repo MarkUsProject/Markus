@@ -406,12 +406,13 @@ class StarterFileManager extends React.Component {
           {this.renderStarterFileAssigner()}
           {this.renderStarterFileRenamer()}
           <p>
-            <button
+            <input
+              type={'submit'}
+              value={I18n.t('save')}
               onClick={this.saveStateChanges}
               disabled={!this.state.form_changed}
             >
-              {I18n.t('save')}
-            </button>
+            </input>
           </p>
         </fieldset>
       </div>
