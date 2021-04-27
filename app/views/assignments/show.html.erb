@@ -46,8 +46,9 @@
           <% end %>
         </p>
 
-        <% # Test if the student can form groupings or not
-           unless @assignment.student_form_groups %>
+        <% if @assignment.is_timed && @assignment.group_max == 1 %>
+          <p><%= t('groups.student_interface.create_individual_group_on_start') %></p>
+        <% elsif !@assignment.student_form_groups %>
           <p>
             <%= t('groups.student_interface.not_allowed_to_form_group') %>
           </p>

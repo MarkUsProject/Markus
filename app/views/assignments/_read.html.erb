@@ -106,7 +106,7 @@
     </ul>
   <% end %>
 
-  <% if !peer_review && (!@assignment.is_timed || !@grouping.start_time.nil? || @grouping.past_collection_date?) %>
+  <% if !peer_review && (!@assignment.is_timed || !@grouping&.start_time.nil? || @grouping&.past_collection_date?) %>
     <h3><%= Submission.model_name.human.pluralize %></h3>
     <% if @grouping.nil? %>
       <p><%= t('submissions.student.no_submission') %></p>
