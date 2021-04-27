@@ -33,6 +33,7 @@ fr:
     scanned_exam:
       under_review: Cet examen est marqué
     starter_file:
+      available_after_due: UPDATE ME
       changed_at: UPDATE ME %{changed_date}
       changed_warning: UPDATE ME
       default_starter_file_group: UPDATE ME

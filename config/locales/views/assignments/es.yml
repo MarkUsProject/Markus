@@ -33,6 +33,7 @@ es:
     scanned_exam:
       under_review: Este examen todavía está en revisión
     starter_file:
+      available_after_due: UPDATE ME
       changed_at: UPDATE ME %{changed_date}
       changed_warning: UPDATE ME
       default_starter_file_group: UPDATE ME

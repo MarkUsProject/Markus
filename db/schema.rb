@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_04_22_193041) do
+ActiveRecord::Schema.define(version: 2021_04_27_120039) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -20,6 +20,7 @@ ActiveRecord::Schema.define(version: 2021_04_22_193041) do
     t.integer "position"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer "annotation_texts_count", default: 0
     t.bigint "assessment_id", null: false
     t.bigint "flexible_criterion_id"
     t.index ["assessment_id"], name: "index_annotation_categories_on_assessment_id"
@@ -122,6 +123,7 @@ ActiveRecord::Schema.define(version: 2021_04_22_193041) do
     t.string "starter_file_type", default: "simple", null: false
     t.datetime "starter_file_updated_at"
     t.bigint "default_starter_file_group_id"
+    t.boolean "starter_files_after_due", default: true, null: false
     t.index ["assessment_id"], name: "index_assignment_properties_on_assessment_id", unique: true
     t.index ["default_starter_file_group_id"], name: "index_assignment_properties_on_default_starter_file_group_id"
   end

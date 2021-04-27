@@ -22,6 +22,7 @@ class StarterFileManager extends React.Component {
       files: {},
       sections: {},
       form_changed: false,
+      available_after_due: true
     }
   }
 
@@ -121,7 +122,8 @@ class StarterFileManager extends React.Component {
     const data = {
       assignment: {
         starter_file_type: this.state.starterfileType,
-        default_starter_file_group_id: this.state.defaultStarterFileGroup
+        default_starter_file_group_id: this.state.defaultStarterFileGroup,
+        starter_files_after_due: this.state.available_after_due
       },
       sections: this.state.sections,
       starter_file_groups: this.state.files.map((data) => {
@@ -369,6 +371,22 @@ class StarterFileManager extends React.Component {
     return '';
   };
 
+  renderVisibilityOptions = () => {
+    return (
+      <label>
+        <input
+          type={'checkbox'}
+          checked={this.state.available_after_due}
+          onChange={() => {
+            this.setState((prev) => ({available_after_due: !prev.available_after_due}),
+                                     () => this.toggleFormChanged(true))
+          }}
+        />
+        {I18n.t('assignments.starter_file.available_after_due')}
+      </label>
+    )
+  };
+
   render() {
     return (
       <div>
@@ -405,6 +423,7 @@ class StarterFileManager extends React.Component {
           {this.renderStarterFileTypes()}
           {this.renderStarterFileAssigner()}
           {this.renderStarterFileRenamer()}
+          {this.renderVisibilityOptions()}
           <p>
             <input
               type={'submit'}
