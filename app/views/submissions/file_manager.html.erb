@@ -1,13 +1,13 @@
 <% content_for :head do %>
-  <%= javascript_pack_tag 'result' %>
-  <%= javascript_include_tag 'Results/main' %>
+  <%= javascript_pack_tag 'result', nonce: true %>
+  <%= javascript_include_tag 'Results/main', nonce: true %>
   <%= stylesheet_link_tag 'result_main' %>
   <%= stylesheet_pack_tag 'result' %>
   <%= render partial: 'shared/navigation_warning',
              formats: [:js],
              handlers: [:erb] %>
 
-  <script>
+  <%= javascript_tag nonce: true do %>
     pdfjs.GlobalWorkerOptions.workerSrc = '<%= asset_pack_path('pdf.js') %>';
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -20,7 +20,7 @@
           starterFileChanged: <%= @grouping.starter_file_changed %>
         });
     });
-  </script>
+  <% end %>
 <% end %>
 
 <% content_for :title do %>

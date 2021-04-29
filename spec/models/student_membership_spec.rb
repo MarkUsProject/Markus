@@ -4,12 +4,12 @@ shared_examples 'vcs_submit=false' do |class_type|
     let!(:grouping) { create :grouping, assignment: assignment }
     let(:membership) { create class_type, grouping: grouping }
     it 'should not update permission file when created' do
-      expect(Repository.get_class).not_to receive(:__update_permissions)
+      expect(Repository.get_class).not_to receive(:update_permissions_file)
       membership
     end
     it 'should not update permission file when destroyed' do
       m = membership
-      expect(Repository.get_class).not_to receive(:__update_permissions)
+      expect(Repository.get_class).not_to receive(:update_permissions_file)
       m.destroy
     end
     it 'should not update permission file when updated' do
@@ -18,7 +18,7 @@ shared_examples 'vcs_submit=false' do |class_type|
       else
         membership.membership_status = 'inviter'
       end
-      expect(Repository.get_class).not_to receive(:__update_permissions)
+      expect(Repository.get_class).not_to receive(:update_permissions_file)
       membership.save!
     end
   end
@@ -37,9 +37,9 @@ shared_examples 'vcs_submit=true' do |class_type, update_hash|
   context 'when vcs_submit is true' do
     it "#{namer update_hash[:create]} permission file when created" do
       if update_hash[:create]
-        expect(Repository.get_class).to receive(:__update_permissions).once
+        expect(UpdateRepoPermissionsJob).to receive(:perform_later).once
       else
-        expect(Repository.get_class).not_to receive(:__update_permissions)
+        expect(UpdateRepoPermissionsJob).not_to receive(:perform_later)
       end
       membership
     end
@@ -47,9 +47,9 @@ shared_examples 'vcs_submit=true' do |class_type, update_hash|
     it "#{namer update_hash[:destroy]} permission file when destroyed" do
       m = membership
       if update_hash[:destroy]
-        expect(Repository.get_class).to receive(:__update_permissions).once
+        expect(UpdateRepoPermissionsJob).to receive(:perform_later).once
       else
-        expect(Repository.get_class).not_to receive(:__update_permissions)
+        expect(UpdateRepoPermissionsJob).not_to receive(:perform_later)
       end
       m.destroy
     end
@@ -60,9 +60,9 @@ shared_examples 'vcs_submit=true' do |class_type, update_hash|
       it "#{namer update_hash[key]} permission file when status is changed to #{key}" do
         m = membership
         if val
-          expect(Repository.get_class).to receive(:__update_permissions).once
+          expect(UpdateRepoPermissionsJob).to receive(:perform_later).once
         else
-          expect(Repository.get_class).not_to receive(:__update_permissions)
+          expect(UpdateRepoPermissionsJob).not_to receive(:perform_later)
         end
         m.membership_status = key
         m.save!

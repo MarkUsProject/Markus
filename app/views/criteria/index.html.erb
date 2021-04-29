@@ -2,6 +2,21 @@
   <%= render partial: 'boot',
              formats: [:js],
              handlers: [:erb] %>
+  <%= javascript_tag nonce: true do %>
+    $(function() {
+      $('#add-new-criterion').click(function (e) {
+        if(document.getElementById('new_criterion') != null) {
+          document.getElementById('new_criterion_prompt').focus();
+        } else {
+          $.ajax({
+            url: '<%= new_assignment_criterion_path(@assignment) %>',
+            type: 'GET'
+          });
+        }
+        e.preventDefault();
+      })
+    })
+  <% end %>
 <% end %>
 
 <% content_for :title,
@@ -12,15 +27,7 @@
 <% @heading_buttons = [
   { link_text: t('criteria.new.button'),
     link_path: '#',
-    html_options: { onclick:
-      "if(document.getElementById('new_criterion') != null) {
-        document.getElementById('new_criterion_prompt').focus();
-      } else {
-        $.ajax({
-          url: '" + new_assignment_criterion_path(@assignment) + "',
-          type: 'GET'
-        });
-      } "} },
+    html_options: { id: 'add-new-criterion'} },
   { link_text: t('download'),
     link_path: '#',
     html_options: { id: 'downloadModal' } },
@@ -30,11 +37,11 @@
 ] %>
 
 <div class='wrapper'>
-  <p id='new_criterion_error' class='warning' style='display: none;'></p>
+  <p id='new_criterion_error' class='warning no-display'></p>
 </div>
 
 <div class='pane-wrapper'>
-  <div id='criteria_pane' style='width: 37%'>
+  <div id='criteria_pane' class="criteria-pane-wrapper">
     <%= render partial: 'criteria_pane' %>
   </div>
 

@@ -222,15 +222,67 @@ describe GroupingPolicy do
     context 'user is a student' do
       let(:user) { create :student }
       let(:grouping) { create :grouping, assignment: assignment }
-      succeed 'when the assignment is not timed' do
-        let(:assignment) { create :assignment }
+      context 'when the assignment is not timed' do
+        failed 'and is hidden' do
+          let(:assignment) { create :assignment, is_hidden: true }
+        end
+        context 'and is visible' do
+          succeed { let(:assignment) { create :assignment } }
+          context 'and starter_files_after_due is false' do
+            failed 'and grouping has passed collection time' do
+              let(:assignment) do
+                create :assignment,
+                       due_date: 1.hour.ago,
+                       assignment_properties_attributes: { starter_files_after_due: false }
+              end
+            end
+            succeed 'and grouping is before the collection time' do
+              let(:assignment) do
+                create :assignment,
+                       due_date: 1.hour.from_now,
+                       assignment_properties_attributes: { starter_files_after_due: false }
+              end
+            end
+          end
+        end
       end
       context 'when the assignment is timed' do
         let(:assignment) { create :timed_assignment }
         succeed 'and it has started' do
           let(:grouping) { create :grouping, assignment: assignment, start_time: 1.minute.ago }
         end
-        failed 'and it has not started yet'
+        context 'and grouping has passed collection time' do
+          succeed 'and starter_files_after_due is true' do
+            let(:assignment) do
+              create :timed_assignment,
+                     due_date: 1.hour.ago,
+                     assignment_properties_attributes: { starter_files_after_due: true }
+            end
+          end
+          failed 'and starter_files_after_due is false' do
+            let(:assignment) do
+              create :timed_assignment,
+                     due_date: 1.hour.ago,
+                     assignment_properties_attributes: { starter_files_after_due: false }
+            end
+          end
+        end
+        context 'and grouping is before the collection time' do
+          failed 'and starter_files_after_due is true' do
+            let(:assignment) do
+              create :timed_assignment,
+                     due_date: 1.hour.from_now,
+                     assignment_properties_attributes: { starter_files_after_due: true }
+            end
+          end
+          failed 'and starter_files_after_due is false' do
+            let(:assignment) do
+              create :timed_assignment,
+                     due_date: 1.hour.from_now,
+                     assignment_properties_attributes: { starter_files_after_due: false }
+            end
+          end
+        end
       end
     end
   end

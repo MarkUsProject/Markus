@@ -1,15 +1,21 @@
 <% content_for :title, ExamTemplate.model_name.human.pluralize %>
 
 <% content_for :head do %>
-  <script>
+  <%= javascript_tag nonce: true do %>
     <%= render partial: 'boot.js' %>
-  </script>
+    $(function() {
+      $('#add-exam-template').click(function(e) {
+        modal_create_new.open();
+        e.preventDefault();
+      })
+    })
+  <% end %>
 <% end %>
 
 <% @heading_buttons = [
     { link_text: t('exam_templates.create.add_new'),
       link_path: '#',
-      html_options: { onclick:'modal_create_new.open()' } },
+      html_options: { id: 'add-exam-template' } },
     { link_text: t('exam_templates.split_pdf_log.view_logs'),
       link_path: view_logs_assignment_exam_templates_path },
 ] %>

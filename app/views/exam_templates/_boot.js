@@ -1,8 +1,12 @@
 $(document).ready(function() {
   window.modal_create_new   = new ModalMarkus('#create_new_template');
+  $('.add-template-division').click((e) => {
+    add_template_division(e.target);
+    e.preventDefault();
+  });
 });
 
-function add_template_division() {
+function add_template_division(target) {
   var new_id = new Date().getTime();
   var nested_form_path = `exam_template[template_divisions_attributes][${new_id}]`;
   var input_id = 'exam_template_template_divisions_attributes' + new_id;
@@ -18,13 +22,17 @@ function add_template_division() {
         <input type="number" required="required" name="${nested_form_path}[end]">
       </td>
       <td>
-        <a onClick="this.closest('li').remove(); return false;" class="haha">
+        <a href="#" class="delete-exam-template-row">
           ${I18n.t('delete')}
         </a>
       </td>
     </tr>
     `;
-  $('.table-with-add tbody').append(new_division_row);
+  $(target).parent('.table-with-add').find('tbody').append(new_division_row);
+  $('.delete-exam-template-row').click((e) => {
+    $(e.target).parents('tr').remove();
+    e.preventDefault();
+  });
 }
 
 function toggle_cover_page(id, fields) {

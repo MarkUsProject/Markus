@@ -1,5 +1,15 @@
 # Changelog
 ## [unreleased]
+- Modify Result.get_total_extra_marks to differentiate between having extra marks that sum to zero and
+  having no extra marks (#5220)
+- Add copy to clipboard button for plaintext submission files in Results view (#5223)
+
+## [v1.12.1]
+- Remove counter caches (#5222)
+- Delay grouping creation for working-alone timed assessments to when the student starts the assessment (#5224)
+- Add option to hide starter files after collection date (#5226)
+
+## [v1.12.0]
 - Remove annotations context menu from peer assignments view (#5116)
 - Change 'Next' and 'Previous' submission button to use partial reloads (#5082)
 - Add time zone validations (#5060)
@@ -11,6 +21,7 @@
 - Add button to assignment's annotations tab to allow instructor to download one time annotations (#5088)
 - Removed AssignmentStats table (#5089)
 - Display assignment totals on the grade summary table rounded up to 2 decimal places (#5123)
+- Removed results_average, results_median, results_fails, results_zeros cached stats (#5131)
 - Do not allow users to set repo names by uploading csv files (#5132)
 - Added a delete button to notes dialog under an results edit view and removed user_can_modify under note model,
   removed Notes#user_can_modify and replaced instances of usage with NotePolicy (#5128)
@@ -23,11 +34,17 @@
 - Ensure that browsers cache the correct state of overall comments when marking (#5173)
 - Ensure that graders are shown the correct annotation categories (#5181)
 - Show informative error message if an uploaded criteria yaml file did not contain a "type" key (#5184)
+- Enable content security policies (#5186)
 - Allow for multiple custom validation messages (#5194)
 - Add ability to hold shift to select a range of values in checkbox tables (#5182)
 - Update ssh authorization to be more flexible, secure, and permit a single user to use the same public key for multiple instances (#5199)
 - Fix bug where creating an annotation or switching results reset the selected file (#5200)
 - Fix bug in Assignment#get_num_marked that caused it to double-count remark and original results (#5205)
+- Update permission files in background jobs (#5207)
+- Fix bug where graders can't see the tests that they run (#5210)
+- Fix bug where graders can't release results on the results page (#5210)
+- Use DOMpurify library to sanitize rendered markdown content (#5211)
+- Add percentage extra marks when calculating total extra marks properly (#5213)
 
 ## [v1.11.5]
 - Account for percentage deductions when calculating total marks after deleting a criterion (#5176)

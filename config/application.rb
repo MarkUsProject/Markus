@@ -55,6 +55,8 @@ module Markus
 
     config.action_mailer.delivery_method = Settings.rails.action_mailer.delivery_method.to_sym
     config.action_mailer.smtp_settings = Settings.rails.action_mailer.smtp_settings.to_h
+    config.action_mailer.sendmail_settings = Settings.rails.action_mailer.sendmail_settings.to_h
+    config.action_mailer.file_settings = Settings.rails.action_mailer.file_settings.to_h
     config.action_mailer.default_url_options = Settings.rails.action_mailer.default_url_options.to_h
     config.action_mailer.asset_host = Settings.rails.action_mailer.asset_host
     config.action_mailer.perform_deliveries = Settings.rails.action_mailer.perform_deliveries
@@ -84,7 +86,7 @@ module Markus
       config.cache_store = Settings.rails.cache_store&.to_sym
     end
 
-    config.perform_caching = Settings.rails.perform_caching
+    config.action_controller.perform_caching = Settings.rails.action_controller&.perform_caching
 
     config.hosts.push(*Settings.rails.hosts)
 

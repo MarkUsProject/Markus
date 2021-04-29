@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {Fragment} from 'react';
 import {render} from "react-dom";
 import FileManager from "./markus_file_manager";
 import FileUploadModal from "./Modals/file_upload_modal";
@@ -22,6 +22,7 @@ class StarterFileManager extends React.Component {
       files: {},
       sections: {},
       form_changed: false,
+      available_after_due: true
     }
   }
 
@@ -30,7 +31,7 @@ class StarterFileManager extends React.Component {
   }
 
   toggleFormChanged = (value) => {
-    this.setState({form_changed: value}, () => set_onbeforeunload(this.state.form_changed));
+    this.setState({form_changed: value});
   };
 
   fetchData = () => {
@@ -121,7 +122,8 @@ class StarterFileManager extends React.Component {
     const data = {
       assignment: {
         starter_file_type: this.state.starterfileType,
-        default_starter_file_group_id: this.state.defaultStarterFileGroup
+        default_starter_file_group_id: this.state.defaultStarterFileGroup,
+        starter_files_after_due: this.state.available_after_due
       },
       sections: this.state.sections,
       starter_file_groups: this.state.files.map((data) => {
@@ -369,6 +371,27 @@ class StarterFileManager extends React.Component {
     return '';
   };
 
+  renderVisibilityOptions = () => {
+    return (
+      <Fragment>
+        <label>
+          <input
+            type={'checkbox'}
+            checked={this.state.available_after_due}
+            onChange={() => {
+              this.setState((prev) => ({available_after_due: !prev.available_after_due}),
+                                       () => this.toggleFormChanged(true))
+            }}
+          />
+          {I18n.t('assignments.starter_file.available_after_due')}
+        </label>
+        <div className="inline-help">
+          <p>{I18n.t('assignments.starter_file.available_after_due_help')}</p>
+        </div>
+      </Fragment>
+    )
+  };
+
   render() {
     return (
       <div>
@@ -405,13 +428,15 @@ class StarterFileManager extends React.Component {
           {this.renderStarterFileTypes()}
           {this.renderStarterFileAssigner()}
           {this.renderStarterFileRenamer()}
+          {this.renderVisibilityOptions()}
           <p>
-            <button
+            <input
+              type={'submit'}
+              value={I18n.t('save')}
               onClick={this.saveStateChanges}
               disabled={!this.state.form_changed}
             >
-              {I18n.t('save')}
-            </button>
+            </input>
           </p>
         </fieldset>
       </div>

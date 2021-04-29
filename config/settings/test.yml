@@ -3,6 +3,8 @@ rails:
   eager_load: false
   consider_all_requests_local: true
   log_level: debug
+  active_job:
+    queue_adapter: test
   active_support:
     deprecation: stderr
   action_mailer:
@@ -18,6 +20,8 @@ i18n:
 
 validate_user_not_allowed_message: ~
 incorrect_login_message: ~
+
+validate_file: <%= "#{::Rails.root}/config/dummy_validate.sh" %>
 
 repository:
   type: mem

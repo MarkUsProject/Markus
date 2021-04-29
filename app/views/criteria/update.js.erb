@@ -15,3 +15,5 @@ document.getElementById('criteria_total_max_mark').innerHTML = '<%= @criterion.a
 document.getElementById('editing_pane_menu').innerHTML =
   '<%= escape_javascript(render partial: "#{@criterion.class.to_s.tableize}/criterion_editor",
                                 locals: { criterion: @criterion }) %>';
+
+<%= render partial: 'event_listeners' %>

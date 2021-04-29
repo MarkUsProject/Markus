@@ -226,7 +226,7 @@ describe GradeEntryFormsController do
          GradeEntryForm.human_attribute_name(:total)],
         [GradeEntryItem.human_attribute_name(:out_of),
          String(grade_entry_form_with_data_and_total.grade_entry_items[0].out_of),
-         grade_entry_form_with_data_and_total.out_of_total],
+         grade_entry_form_with_data_and_total.max_mark],
         [@user.user_name, '', '']
       ]
       csv_data = MarkusCsv.generate(csv_array) do |data|
@@ -259,7 +259,7 @@ describe GradeEntryFormsController do
          gef.grade_entry_items[0].out_of.to_s,
          gef.grade_entry_items[1].out_of.to_s,
          gef.grade_entry_items[2].out_of.to_s,
-         gef.out_of_total],
+         gef.max_mark],
         [ges.user.user_name, '', '50.0', '', '50.0']
       ]
       csv_data = MarkusCsv.generate(csv_array) do |data|

@@ -1,4 +1,4 @@
-<script>
+<%= javascript_tag nonce: true do %>
   var selected_extra_mark_id = null;
   var positions = null;
   var modal = null;
@@ -369,4 +369,4 @@
     if (annotation_manager == null) { return; }
     annotation_manager.getAnnotationTextDisplayer().hideShowing();
   }
-</script>
+<% end %>

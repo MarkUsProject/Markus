@@ -4,7 +4,8 @@ rails:
     queue_adapter: resque
   assets:
     prefix: /assets
-  active_record: {}
+  active_record:
+    verbose_query_logs: false
   force_ssl: false
   session_store:
     type: cookie_store
@@ -29,7 +30,6 @@ redis:
   url: 'redis://localhost:6379/1'
 
 course_name: 'CSC108 Fall 2009: Introduction to Computer Programming'
-validate_file: <%= "#{::Rails.root}/config/dummy_validate.sh" %>
 validate_ip: false
 validate_custom_status_message: {}
 

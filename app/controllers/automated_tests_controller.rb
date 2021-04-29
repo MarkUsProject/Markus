@@ -3,6 +3,16 @@ class AutomatedTestsController < ApplicationController
 
   before_action { authorize! }
 
+  content_security_policy only: :manage do |p|
+    # required because jquery-ui-timepicker-addon inserts style
+    # dynamically. TODO: remove this when possible
+    p.style_src :self, "'unsafe-inline'"
+    # required because react-jsonschema-form uses ajv which calls
+    # eval (javascript) and creates an image as a blob.
+    # TODO: remove this when possible
+    p.script_src :self, "'strict-dynamic'", "'unsafe-eval'"
+  end
+
   def update
     assignment = Assignment.find(params[:assignment_id])
     test_specs = params[:schema_form_data]

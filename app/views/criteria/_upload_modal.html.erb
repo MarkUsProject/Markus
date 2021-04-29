@@ -8,7 +8,7 @@
   <%= javascript_include_tag 'upload_button_control.js',
                              id: 'upload_script_yml',
                              upload_id: 'upload_file',
-                             button_id: 'upload' %>
+                             button_id: 'upload', nonce: true %>
   <% if @assignment.marking_started? %>
     <div class="warning">
       <p><%= t('assignments.due_date.marking_started_warning').html_safe %></p>

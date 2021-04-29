@@ -3,17 +3,24 @@
   <%= select_tag 'assignment_id',
                  options_from_collection_for_select(@assignments,
                                                     :id,
-                                                    :short_identifier),
-                 onchange: "document.getElementById('working').style.display = '';
-                            document.getElementById('new-note-save').disabled = true;
-                            $.ajax({
-                              url: '" + new_update_groupings_notes_path + "',
-                              type: 'POST',
-                              data: $(this).serialize() + '&authenticity_token=' + AUTH_TOKEN
-                            }).done(function() {
-                              document.getElementById('working').style.display = 'none';
-                              document.getElementById('new-note-save').disabled = false;
-                            });" %>
+                                                    :short_identifier) %>
   <%= f.label :noteable_id, Group.model_name.human %>
   <%= f.select :noteable_id, @groupings.collect { |p| [p.group_name_with_student_user_names,p.id] } %>
+<% end %>
+
+<%= javascript_tag nonce: true do %>
+  $(() => {
+    $('#assignment_id').on("change", (evt) => {
+        document.getElementById('working').style.display = '';
+        document.getElementById('new-note-save').disabled = true;
+      $.ajax({
+        url:  Routes.new_update_groupings_notes_path(evt.target.value),
+        type: 'POST',
+        data: $(evt.target).serialize() + '&authenticity_token=' + AUTH_TOKEN
+      }).done(function() {
+        document.getElementById('working').style.display = 'none';
+        document.getElementById('new-note-save').disabled = false;
+      });
+    })
+  })
 <% end %>

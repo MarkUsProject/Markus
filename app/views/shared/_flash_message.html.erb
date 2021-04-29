@@ -1,14 +1,14 @@
 <% flash.discard.inspect %> <!-- keep this line until issue #3342 has been resolved (somehow it fixes it) -->
 <% [:notice, :error, :success, :warning].each do |key| %>
   <% if flash[key].nil? %>
-    <div class="<%= key.to_s %>" style="display: none">
-      <a class="hide-flash" onclick="$(this).parent().hide()">&nbsp;</a>
+    <div class="<%= key.to_s %> no-display">
+      <a class="hide-flash">&nbsp;</a>
       <div class="flash-content"></div>
     </div>
   <% else %>
     <% flash[key] = [flash[key]] unless flash[key].respond_to?(:each) %>
     <div class="<%= key.to_s %>">
-      <a class="hide-flash" onclick="$(this).parent().hide()">&nbsp;</a>
+      <a class="hide-flash">&nbsp;</a>
       <div class="flash-content">
         <% flash[key].each do |content| %>
           <p><%= content.html_safe %></p>
@@ -16,4 +16,13 @@
       </div>
     </div>
   <% end %>
+<% end %>
+<%= javascript_tag nonce: true do %>
+  window.onload = function () {
+    Array.from(document.getElementsByClassName('hide-flash')).forEach(function (elem) {
+      elem.addEventListener("click", function(e) {
+        e.target.parentElement.style.display = 'none';
+      })
+    })
+  }
 <% end %>

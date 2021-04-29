@@ -5,6 +5,6 @@
     <%= t('main.timeout_imminent') %>
   </div>
   <section class='dialog-actions'>
-    <%= button_tag t(:continue), onclick:'refreshOrLogout(); timeout_imminent_modal.close();' %>
+    <%= button_tag t(:continue), id: 'timeout-imminent-modal-close' %>
   </section>
 <% end %>

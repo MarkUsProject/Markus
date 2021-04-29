@@ -42,13 +42,11 @@
       <%= raw(f.label :notes_message,
                       Note.human_attribute_name(:notes_message)) %>
       <%= raw(f.text_area :notes_message,
-                          rows: 10,
-                          onchange: 'set_onbeforeunload(true);') %>
+                          rows: 10) %>
     </p>
 
     <%= f.submit t('save'),
-                 data: { disable_with: t('working') },
-                 onclick: 'set_onbeforeunload(false);' %>
+                 data: { disable_with: t('working') } %>
     <%= link_to t('cancel'), notes_path(), class: 'button' %>
 
   <% end %>

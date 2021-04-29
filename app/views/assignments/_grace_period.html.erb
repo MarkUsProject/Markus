@@ -13,8 +13,7 @@
                          min: 0.001,
                          step: :any,
                          required: true,
-                         class: 'PeriodDeltaChain_Hours',
-                         onchange: "if (grace_periods) { grace_periods.refresh(); }" %>
+                         class: 'PeriodDeltaChain_Hours grace-period-hours'%>
       <%= t('submission_rules.hours') %>
     </td>
     <td>
@@ -33,7 +32,7 @@
       <% else %>
         <%= link_to t(:delete),
                     '#',
-                    onclick: 'remove_period(this, grace_periods); return false;' %>
+                    class: 'grace-period-delete' %>
       <% end %>
     </td>
   <% end %>

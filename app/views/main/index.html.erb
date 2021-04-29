@@ -1,7 +1,7 @@
 <% content_for :title, t('menu.dashboard') %>
 
 <div class='pane-wrapper'>
-  <div class='pane no-border' style="flex: 0.5; width: 400px;">
+  <div class='pane no-border assignment-list-wrapper'>
     <section id='assignment_list'>
       <h3><%= Assignment.model_name.human.pluralize %></h3>
       <%= render partial: 'dashboard_list' %>

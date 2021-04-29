@@ -2,7 +2,7 @@ describe GitRepository do
   context 'writes to repository permissions file' do
 
     before :all do
-      GitRepository.send :__update_permissions, { mock_repo: [:student1, :student2] }, ['admin1']
+      GitRepository.send :update_permissions_file, { mock_repo: [:student1, :student2] }, ['admin1']
     end
 
     after :all do

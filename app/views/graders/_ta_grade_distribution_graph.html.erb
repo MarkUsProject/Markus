@@ -2,7 +2,7 @@
 <% ta_id = tas.first.id %>
 
 <canvas id='<%= "a#{assignment.id}_ta_#{ta_id}" %>' width='400' height='350'></canvas>
-<script>
+<%= javascript_tag nonce: true do %>
   // Set up graph
   $(document).ready(function () {
     var ctx = document.getElementById('<%= "a#{assignment.id}_ta_#{ta_id}" %>').getContext('2d');
@@ -49,4 +49,4 @@
       options: options
     });
   });
-</script>
+<% end %>

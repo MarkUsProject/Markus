@@ -12,4 +12,11 @@ if ($('#notes_dialog .inline-button.delete').length) {
     }
   });
 }
-
+$(function () {
+  $('#notes_submit').click(function() {
+    modalNotesGroup.close()
+  })
+  $('#notes-cancel').click(function() {
+    modalNotesGroup.close()
+  })
+})

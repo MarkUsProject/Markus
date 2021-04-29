@@ -8,15 +8,15 @@
     <%= t('exam_templates.parsing.general') %><br>
   </p>
 
-  <div id="exam-cover-display-<%= exam_template.id %>" style="display: <% if exam_template.automatic_parsing %>flex<% else %>none<% end %>;">
+  <div id="exam-cover-display-<%= exam_template.id %>" class="<%= exam_template.automatic_parsing ? 'flex-display' : 'no-display' %>">
     <div id="exam_cover-<%= exam_template.id %>">
-      <img src=<%= show_cover_assignment_exam_template_path(id: exam_template.id) %> id="crop-target" style="max-width: 400px; border: 1px solid black;">
+      <img src=<%= show_cover_assignment_exam_template_path(id: exam_template.id) %> id="crop-target" >
     </div>
 
     <% if exam_template.automatic_parsing %>
-      <script>
+      <%= javascript_tag nonce: true do %>
         window.onload = () => attach_crop_box()
-      </script>
+      <% end %>
     <% end %>
 
     <div class="table-with-add">

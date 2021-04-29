@@ -29,7 +29,7 @@ export class SubmissionSelector extends React.Component {
   };
 
   renderReleaseMarksButton() {
-    if (this.props.role !== 'Admin') return '';
+    if (!this.props.can_release) return '';
 
     let buttonText, disabled;
     if (this.props.released_to_students) {

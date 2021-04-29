@@ -11,9 +11,8 @@
       <%= f.number_field :hours,
                          min: 0.001,
                          step: :any,
-                         class: 'PeriodDeltaChain_Hours',
-                         required: true,
-                         onchange: 'if (penalty_periods) { penalty_periods.refresh(); }' %>
+                         class: 'PeriodDeltaChain_Hours penalty-period-hours',
+                         required: true %>
       <%= t('submission_rules.hours') %>
     </td>
     <td>
@@ -35,7 +34,7 @@
       <% else %>
         <%= link_to t(:delete),
                     '#',
-                    onclick: 'remove_period(this, penalty_periods); return false;' %>
+                    class: 'penalty-period-delete' %>
       <% end %>
     </td>
   <% end %>

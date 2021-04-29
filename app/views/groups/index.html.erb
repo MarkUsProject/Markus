@@ -1,11 +1,11 @@
 <% content_for :head do %>
-  <%= javascript_include_tag 'Groups/index' %>
+  <%= javascript_include_tag 'Groups/index', nonce: true %>
   <%= stylesheet_link_tag 'jquery-ui', 'jquery-ui-timepicker-addon' %>
   <%= javascript_include_tag 'jquery-ui-timepicker-addon',
                              'PeriodDeltaChain/PeriodDeltaChain',
-                             'localize_date'%>
+                             'localize_date', nonce: true %>
 
-  <script>
+  <%= javascript_tag nonce: true do %>
     <% parts = @assignment.duration_parts
        duration_string = ["#{parts[:hours]} #{I18n.t('durations.hours', count: parts[:hours])}",
                           "#{parts[:minutes]} #{I18n.t('durations.minutes', count: parts[:minutes])}"].join(', ')
@@ -23,7 +23,17 @@
         }
       );
     });
-  </script>
+    $(function() {
+      $('#assignment-group-use').click(function(e) {
+        modalAssignmentGroupReUse.open();
+        $('#assignment-group-use-close').click(function(e) {
+          modalAssignmentGroupReUse.close();
+          e.preventDefault();
+        })
+        e.preventDefault();
+      })
+    })
+  <% end %>
 <% end %>
 
 <% content_for :title do %>
@@ -40,8 +50,8 @@
        # for this assignment.
        if @assignment.vcs_submit %>
       <%= link_to t('groups.another_assignment_group'),
-                  'javascript:void(0);',
-                  onclick:'modalAssignmentGroupReUse.open();' %>
+                  '#',
+                  id: 'assignment-group-use' %>
       <span class='menu_bar'></span>
     <% end %>
     <%= link_to t('download'), '#', id: 'downloadModal' %>
