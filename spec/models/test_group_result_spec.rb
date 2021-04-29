@@ -81,30 +81,6 @@ describe TestGroupResult do
         expect(@test_group_result).to be_valid
         expect { @test_group_result.destroy }.to change { TestGroupResult.count }.by(-1)
       end
-
-      it 'can create a test result from a json' do
-        n_test_results = TestResult.count
-        json_test = { name: 'name',
-                      output: 'output',
-                      marks_earned: 1,
-                      marks_total: 1,
-                      status: 'pass',
-                      time: nil }.stringify_keys
-        @test_group_result.create_test_result_from_json(json_test)
-        expect(n_test_results + 1).to eq(TestResult.count)
-      end
-
-      it 'can create a test result from a json containing null bytes' do
-        n_test_results = TestResult.count
-        json_test = { name: 'name',
-                      output: "output\u0000",
-                      marks_earned: 1,
-                      marks_total: 1,
-                      status: 'pass',
-                      time: nil }.stringify_keys
-        @test_group_result.create_test_result_from_json(json_test)
-        expect(n_test_results + 1).to eq(TestResult.count)
-      end
     end
 
     context 'An invalid test group result' do
