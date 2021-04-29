@@ -207,7 +207,8 @@ module AutomatedTestsHelper
           grouping_id: grouping.id,
           submission_id: collected ? grouping.current_submission_used.id : nil,
           revision_identifier: revision_id,
-          autotest_test_id: test_id_hash[grouping.group.id]
+          autotest_test_id: test_id_hash[grouping.group.id],
+          status: :in_progress
         )
       end
     end
@@ -241,8 +242,12 @@ module AutomatedTestsHelper
       uri = URI("#{Settings.autotest.url}/settings/#{assignment.autotest_settings_id}/test/#{test_id}")
       req = Net::HTTP::Get.new(uri)
       set_headers(req)
-      res = send_request!(req, uri)
-      test_run.update_results!(JSON.parse(res.body))
+      res = send_request(req, uri)
+      if res.is_a?(Net::HTTPSuccess)
+        test_run.update_results!(JSON.parse(res.body))
+      else
+        test_run.failure(res.body)
+      end
     end
 
     private

@@ -16,8 +16,8 @@ class AutotestRunJob < ApplicationJob
     assignment = Assignment.find(assignment_id)
 
     group_ids.each_slice(Settings.autotest.max_batch_size) do |group_id_slice|
-      test_runs = run_tests(assignment, host_with_port, group_id_slice, user, collected: collected, batch: test_batch)
-      AutotestResultsJob.set(wait: 1.minute).perform_later(assignment_id, test_runs.map(&:id))
+      run_tests(assignment, host_with_port, group_id_slice, user, collected: collected, batch: test_batch)
+      AutotestResultsJob.set(wait: 1.minute).perform_later(assignment_id)
     end
   end
 end
