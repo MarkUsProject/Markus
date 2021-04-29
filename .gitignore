@@ -74,6 +74,8 @@ dump.rdb
 yarn-debug.log*
 .yarn-integrity
 yarn-error.log
+# If this file is pre-generated, for Windows and WSL 2 (see Wiki docker setup instructions)
+app/javascript/routes.js
 
 # simplecov gem
 coverage/

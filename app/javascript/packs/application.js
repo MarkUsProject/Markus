@@ -47,7 +47,7 @@ window.Jcrop = Jcrop;
 import { Chart } from 'chart.js';
 import 'javascripts/chart_config';
 
-window.Routes = require('routes.js.erb');
+window.Routes = require('routes');
 
 // Override react-table defaultSortMethod
 import { defaultSort } from 'javascripts/Components/Helpers/table_helpers';
