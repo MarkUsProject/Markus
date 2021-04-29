@@ -76,3 +76,6 @@ coverage/
 
 # nbconvert python files
 **/nbconvertvenv/
+
+# If this file is pre-generated, for Windows and WSL 2 (see Wiki docker setup instructions)
+app/javascript/routes.js
