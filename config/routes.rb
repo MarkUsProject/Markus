@@ -5,11 +5,6 @@ Rails.application.routes.draw do
   # optional path scope (denoted by the parentheses)
   # API routes
   namespace :api do
-    resources :feedback_files, except: [:new, :edit] do
-      member do
-        get 'get_feedback_file'
-      end
-    end
     resources :users, except: [:new, :edit] do
       collection do
         post 'create_or_unhide'
@@ -193,6 +188,14 @@ Rails.application.routes.draw do
 
       member do
         post 'rename_group'
+      end
+    end
+    
+    resources :groupings do
+      resources :feedback_files do
+        member do
+          get 'get_feedback_file'
+        end
       end
     end
 

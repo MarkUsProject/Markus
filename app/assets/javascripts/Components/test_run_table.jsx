@@ -103,7 +103,15 @@ export class TestRunTable extends React.Component {
               row.original['test_runs.problems'] :
               <div>
                 <TestGroupResultTable data={row.original['test_results']}/>
-                {row.original['feedback_files'].length > 0 && <TestGroupFeedbackFileTable data={row.original['feedback_files']}/>}
+                {row.original['feedback_files'].length > 0 &&
+                  <div className={"test-result-feedback-files"}>
+                    <TestGroupFeedbackFileTable
+                      data={row.original['feedback_files']}
+                      assignment_id={this.props.assignment_id}
+                      grouping_id={this.props.grouping_id}
+                    />
+                  </div>
+                }
               </div>
           )}
           noDataText={I18n.t('automated_tests.no_results')}
@@ -281,7 +289,11 @@ class TestGroupFeedbackFileTable extends React.Component {
           SubComponent={ row => (
             <FileViewer
               selectedFile={row.original.filename}
-              selectedFileURL={Routes.get_feedback_file_api_feedback_file_path(row.original.id)}
+              selectedFileURL={Routes.get_feedback_file_assignment_grouping_feedback_file_path(
+                this.props.assignment_id,
+                this.props.grouping_id,
+                row.original.id,
+              )}
               mime_type={lookup(row['filename'])}
               selectedFileType={row.original.type}
             />

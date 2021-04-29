@@ -3,8 +3,6 @@ module Api
   # Allows for pushing and downloading of Feedback Files
   # Uses Rails' RESTful routes (check 'rake routes' for the configured routes)
   class FeedbackFilesController < MainApiController
-    include DownloadHelper
-
     # Define default fields for index method
     DEFAULT_FIELDS = [:id, :filename].freeze
 
@@ -189,11 +187,6 @@ module Api
         )
       end
       association
-    end
-
-    def get_feedback_file
-      feedback_file = FeedbackFile.find(params[:id])
-      send_data_download feedback_file.file_content, filename: feedback_file.filename
     end
   end # end FeedbackFilesController
 end
