@@ -1,3 +1,4 @@
+# Controller for downloading individual feedback files by id
 class FeedbackFilesController < ApplicationController
   include DownloadHelper
 
