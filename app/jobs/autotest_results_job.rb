@@ -11,26 +11,33 @@ class AutotestResultsJob < ApplicationJob
     self.class.set(wait: 1.minute).perform_later(*job.arguments) if block.call
   rescue StandardError
     # if the job failed, retry 3 times
-    assignment_id, kwargs = job.arguments
-    self.class.set(wait: 1.minute).perform_later(assignment_id, _retry: kwargs[:_retry] - 1) if kwargs[:_retry] > 0
+    kwargs = job.arguments.first || { _retry: 3 }
+    self.class.set(wait: 1.minute).perform_later(_retry: kwargs[:_retry] - 1) if kwargs[:_retry] > 0
   end
 
   def self.show_status(_status); end
 
-  def perform(assignment_id, _retry: 3)
+  def perform(_retry: 3)
     outstanding_results = false
-    test_runs = TestRun.where(status: :in_progress)
-    assignment = Assignment.find(assignment_id)
-    statuses(assignment, test_runs).each do |autotest_test_id, status|
-      # statuses from rq: https://python-rq.org/docs/jobs/#retrieving-a-job-from-redis
-      if %[started queued deferred].include? status
-        outstanding_results = true
-      else
-        test_run = TestRun.where(autotest_test_id: autotest_test_id).first
-        if %[finished failed].include? status
-          results(assignment, test_run) unless test_run.nil?
+    ids = Assignment.joins(groupings: :test_runs)
+                    .where('test_runs.status': TestRun.statuses[:in_progress])
+                    .pluck('assessments.id', 'test_runs.id')
+                    .group_by(&:first)
+                    .transform_values { |v| v.map(&:second) }
+    ids.each do |assignment_id, test_run_ids|
+      assignment = Assignment.find(assignment_id)
+      test_runs = TestRun.find_by(id: test_run_ids)
+      statuses(assignment, test_runs).each do |autotest_test_id, status|
+        # statuses from rq: https://python-rq.org/docs/jobs/#retrieving-a-job-from-redis
+        if %[started queued deferred].include? status
+          outstanding_results = true
         else
-          test_run&.failure(status)
+          test_run = TestRun.where(autotest_test_id: autotest_test_id).first
+          if %[finished failed].include? status
+            results(test_run.grouping.assignment, test_run) unless test_run.nil?
+          else
+            test_run&.failure(status)
+          end
         end
       end
     end

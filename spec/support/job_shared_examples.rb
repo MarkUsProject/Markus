@@ -1,5 +1,9 @@
 shared_examples 'background job' do
-  after :each do
+  before do
+    clear_enqueued_jobs
+    clear_performed_jobs
+  end
+  after do
     clear_enqueued_jobs
     clear_performed_jobs
   end

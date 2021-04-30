@@ -192,7 +192,7 @@ module AutomatedTestsHelper
       end
       req.body = {
         file_urls: file_urls,
-        categories: user.student? ? 'student' : 'admin',
+        categories: user.student? ? ['student'] : ['admin'],
         request_high_priority: batch.nil? && user.student?
       }.to_json
       res = send_request!(req, uri)
