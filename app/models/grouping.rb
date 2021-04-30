@@ -704,8 +704,7 @@ class Grouping < ApplicationRecord
                                         .compact
     plucked = Grouping.pluck_test_runs(filtered.where('test_group_results.id': latest_test_group_results))
     plucked.map! do |data|
-      if data['test_groups.display_output'] == TestGroup.display_outputs[:instructors_and_student_tests] ||
-         data['test_groups.display_output'] == TestGroup.display_outputs[:instructors]
+      if %w[instructors_and_student_tests instructors].include? data['test_groups.display_output']
         data.delete('test_results.output')
       end
       data.delete('test_group_results.extra_info')
@@ -718,7 +717,7 @@ class Grouping < ApplicationRecord
     filtered = filter_test_runs(filters: { 'test_runs.user': self.accepted_students })
     plucked = Grouping.pluck_test_runs(filtered)
     plucked.map! do |data|
-      if data['test_groups.display_output'] == TestGroup.display_outputs[:instructors]
+      if data['test_groups.display_output'] == 'instructors'
         data.delete('test_results.output')
       end
       data.delete('test_group_results.extra_info')

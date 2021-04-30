@@ -77,7 +77,7 @@ describe ExtensionsController do
         end
         it 'time_delta' do
           expected_duration = Extension::PARTS.map { |part| params[part].to_i.send(part) }.sum
-          expect(extension.time_delta).to eq(expected_duration)
+          expect(extension.time_delta.to_i).to eq(expected_duration)
         end
         it 'note' do
           expect(extension.note).to eq(params[:note])

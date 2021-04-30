@@ -90,7 +90,7 @@ RSpec.configure do |config|
 
   # Get fixture_file_upload to work with RSPEC. See http://bit.ly/1yQfoS5
   config.include ActionDispatch::TestProcess
-  config.fixture_path = "#{::Rails.root}/spec/fixtures"
+  config.file_fixture_path = "#{::Rails.root}/spec/fixtures"
 
   # Automatically decode CSV response bodies.
   ActionDispatch::IntegrationTest.register_encoder :csv,
