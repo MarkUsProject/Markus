@@ -53,14 +53,14 @@ describe Api::FeedbackFilesController do
         it 'should be successful if required parameters are present' do
           get :index, params: {
             group_id: grouping.group.id,
-            assignment_id: grouping.assignment.id,
+            assignment_id: grouping.assignment.id
           }
           expect(response.status).to eq(200)
         end
         it 'should return info about feedback files if grouping_id and assignment_id are specified' do
           get :index, params: {
             group_id: grouping.group.id,
-            assignment_id: grouping.assignment.id,
+            assignment_id: grouping.assignment.id
           }
           ids = Hash.from_xml(response.body).dig('feedback_files', 'feedback_file').map { |h| h['id'].to_i }
           expect(ids).to contain_exactly(*feedback_files.pluck(:id))
@@ -69,7 +69,7 @@ describe Api::FeedbackFilesController do
           get :index, params: {
             group_id: grouping.group.id,
             assignment_id: grouping.assignment.id,
-            test_run_id: test_run.id,
+            test_run_id: test_run.id
           }
           ids = Hash.from_xml(response.body).dig('feedback_files', 'feedback_file').map { |h| h['id'].to_i }
           expect(ids).to contain_exactly(*feedback_files_with_test_run.pluck(:id))
@@ -84,14 +84,14 @@ describe Api::FeedbackFilesController do
         it 'should be successful if required parameters are present' do
           get :index, params: {
             group_id: grouping.group.id,
-            assignment_id: grouping.assignment.id,
+            assignment_id: grouping.assignment.id
           }
           expect(response.status).to eq(200)
         end
         it 'should return info about feedback files if grouping_id and assignment_id are specified' do
           get :index, params: {
             group_id: grouping.group.id,
-            assignment_id: grouping.assignment.id,
+            assignment_id: grouping.assignment.id
           }
           expect(JSON.parse(response.body).map { |h| h['id'] }).to contain_exactly(*feedback_files.pluck(:id))
         end
@@ -99,9 +99,10 @@ describe Api::FeedbackFilesController do
           get :index, params: {
             group_id: grouping.group.id,
             assignment_id: grouping.assignment.id,
-            test_run_id: test_run.id,
+            test_run_id: test_run.id
           }
-          expect(JSON.parse(response.body).map { |h| h['id'] }).to contain_exactly(*feedback_files_with_test_run.pluck(:id))
+          expected_ids = feedback_files_with_test_run.pluck(:id)
+          expect(JSON.parse(response.body).map { |h| h['id'] }).to contain_exactly(*expected_ids)
         end
       end
     end
@@ -115,7 +116,7 @@ describe Api::FeedbackFilesController do
           get :show, params: {
             id: feedback_files.first.id,
             group_id: grouping.group.id,
-            assignment_id: grouping.assignment.id,
+            assignment_id: grouping.assignment.id
           }
           expect(response.status).to eq(200)
         end
@@ -123,7 +124,7 @@ describe Api::FeedbackFilesController do
           get :show, params: {
             id: feedback_files.first.id,
             group_id: grouping.group.id,
-            assignment_id: grouping.assignment.id,
+            assignment_id: grouping.assignment.id
           }
           expect(response.body).to eq(feedback_files.first.file_content)
         end
@@ -145,7 +146,7 @@ describe Api::FeedbackFilesController do
           get :show, params: {
             id: feedback_files.first.id,
             group_id: grouping.group.id,
-            assignment_id: grouping.assignment.id,
+            assignment_id: grouping.assignment.id
           }
           expect(response.status).to eq(200)
         end
@@ -153,7 +154,7 @@ describe Api::FeedbackFilesController do
           get :show, params: {
             id: feedback_files.first.id,
             group_id: grouping.group.id,
-            assignment_id: grouping.assignment.id,
+            assignment_id: grouping.assignment.id
           }
           expect(response.body).to eq(feedback_files.first.file_content)
         end
@@ -196,14 +197,14 @@ describe Api::FeedbackFilesController do
       let(:feedback_file) { feedback_files.first }
       context 'when updating an existing feedback_file' do
         it 'should update a filename' do
-          put :update, params: { group_id: grouping.group.id, assignment_id: grouping.assignment.id, 
+          put :update, params: { group_id: grouping.group.id, assignment_id: grouping.assignment.id,
                                  id: feedback_file.id, filename: 'abc.txt', file_content: 'def main(): pass' }
           expect(response.status).to eq(200)
           feedback_file.reload
           expect(feedback_file.filename).to eq('abc.txt')
         end
         it 'should update file content' do
-          put :update, params: { group_id: grouping.group.id, assignment_id: grouping.assignment.id, 
+          put :update, params: { group_id: grouping.group.id, assignment_id: grouping.assignment.id,
                                  id: feedback_file.id, file_content: 'def main(): pass' }
           expect(response.status).to eq(200)
           feedback_file.reload
@@ -212,7 +213,7 @@ describe Api::FeedbackFilesController do
       end
       context 'when updating a user that does not exist' do
         it 'should raise a 404 error' do
-          put :update, params: { group_id: grouping.group.id, assignment_id: grouping.assignment.id, 
+          put :update, params: { group_id: grouping.group.id, assignment_id: grouping.assignment.id,
                                  id: feedback_file.id + 100, filename: 'abc.txt' }
           expect(response.status).to eq(404)
         end
