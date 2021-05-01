@@ -17,7 +17,7 @@
     "postcss-preset-env": "^6.7.0",
     "prop-types": "^15.7.2",
     "rails-erb-loader": "^5.5.2",
-    "rails-ujs": "^5.2.4",
+    "rails-ujs": "^5.2.5",
     "react": "^16.14.0",
     "react-dom": "^16.14.0",
     "react-jsonschema-form": "^1.8.1",

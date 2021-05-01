@@ -6529,10 +6529,10 @@ rails-erb-loader@^5.5.2:
     loader-utils "^1.1.0"
     lodash.defaults "^4.2.0"
 
-rails-ujs@^5.2.4:
-  version "5.2.4"
-  resolved "https://registry.yarnpkg.com/rails-ujs/-/rails-ujs-5.2.4.tgz#31056ccd62d868f7d044395f31d77a4440550ceb"
-  integrity sha512-Mzu6bnTBKn4IuJvP7BDJRy4lzvR1zMWVDeTdPwDubXBfxpFEKqwOi5Nb6tfE2SYtTd+bb3PRETf40I94jgKw3w==
+rails-ujs@^5.2.5:
+  version "5.2.5"
+  resolved "https://registry.yarnpkg.com/rails-ujs/-/rails-ujs-5.2.5.tgz#63908dbd31356d0c13fefc3b0d64f82cdd85488f"
+  integrity sha512-v4eP8U/ufoujBUNF9MKTGaWjpLVHcVmzG7s/EMIChAxi0OtWhYAofTJmZ91ypAFhQ/G74C100fki3+eGBHq4sA==
 
 randombytes@^2.0.0, randombytes@^2.0.1, randombytes@^2.0.5:
   version "2.0.5"
