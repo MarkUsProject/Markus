@@ -61,8 +61,6 @@ module Api
         render 'shared/http_status', locals: {code: '403', message:
           HttpStatusHelper::ERROR_CODE['message']['403']}, status: 403
       end
-
-      @current_user = Admin.first
     end
 
     # Make sure that the passed format is either xml or json

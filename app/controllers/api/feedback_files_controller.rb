@@ -6,7 +6,7 @@ module Api
     # Define default fields for index method
     DEFAULT_FIELDS = [:id, :filename].freeze
 
-    # Returns a list of Feedback Files associated with a group's assignment submission
+    # Returns a list of Feedback Files associated with a group's assignment submission or test run
     # Requires: assignment_id, group_id OR test_run_id
     # Optional: filter, fields, test_run_id
     def index
