@@ -49,7 +49,6 @@ describe FeedbackFilesController do
           assignment_id: feedback_file.submission.grouping.assignment.id
         }
         expect(response.status).to eq(403)
-        expect(response.body).to eq('')
       end
     end
   end
