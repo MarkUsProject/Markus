@@ -3,7 +3,7 @@
     "@babel/core": "^7.13.8",
     "@babel/preset-react": "^7.12.13",
     "@rails/webpacker": "5.2",
-    "chart.js": "^2.9.4",
+    "chart.js": "^3.2.0",
     "dompurify": "^2.2.7",
     "heic2any": "^0.0.3",
     "i18n-js": "^3.8.0",
