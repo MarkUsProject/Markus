@@ -20,7 +20,6 @@ ActiveRecord::Schema.define(version: 2021_04_27_120039) do
     t.integer "position"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer "annotation_texts_count", default: 0
     t.bigint "assessment_id", null: false
     t.bigint "flexible_criterion_id"
     t.index ["assessment_id"], name: "index_annotation_categories_on_assessment_id"
