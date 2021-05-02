@@ -13,7 +13,7 @@ export function setUpCallbacks(elem) {
  * it instead.
  */
 export function renderFlash(event, request) {
-  // For rails-ujs, request is stored in event.
+  // For rails/ujs, request is stored in event.
   if (request === undefined) {
     request = event.detail[0];
   }
@@ -64,7 +64,7 @@ export function hideFlash() {
 
 
 /*
- * Register global callbacks for both rails-ujs and jQuery.
+ * Register global callbacks for both rails/ujs and jQuery.
  */
 document.addEventListener('DOMContentLoaded', () => {
   let elem = document.body;

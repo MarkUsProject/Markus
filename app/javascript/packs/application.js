@@ -29,8 +29,8 @@ window.moment = moment;
 // mousetrap (keybindings)
 import 'mousetrap';
 
-// rails-ujs
-import Rails from 'rails-ujs';
+// rails/ujs
+import Rails from '@rails/ujs';
 Rails.start();
 window.Rails = Rails;
 
