@@ -34,7 +34,7 @@ describe Grouping do
     end
 
     it 'displays Empty Group since no students in the group' do
-      expect(grouping.get_all_students_in_group).to eq('Empty Group')
+      expect(grouping.get_all_students_in_group).to eq(I18n.t('groups.empty'))
     end
 
     it 'creates a subdirectory in the repo for the grouping\'s assignment' do
