@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/inkstak/activejob-status.git
-  revision: 57b411f973debda8dc9ee17710196d9c015c87f1
+  revision: 372802ee2dcb47c2a22bf44792e33ac4ddf4d3fa
   specs:
     activejob-status (0.1.6)
       activejob (>= 4.2)
