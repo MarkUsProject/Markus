@@ -25,7 +25,7 @@
     "react-modal": "^3.12.1",
     "react-table": "^6.9.2",
     "react-tabs": "^3.2.2",
-    "webpack": "^4.44.1"
+    "webpack": "^5.36.2"
   },
   "devDependencies": {
     "webpack-dev-server": "3.11.2"
