@@ -1,3 +1,5 @@
+# Checks the status of in_progress test runs and gets the results
+# of completed tests
 class AutotestResultsJob < ApplicationJob
   include AutomatedTestsHelper::AutotestApi
 
@@ -29,11 +31,11 @@ class AutotestResultsJob < ApplicationJob
       test_runs = TestRun.where(id: test_run_ids)
       statuses(assignment, test_runs).each do |autotest_test_id, status|
         # statuses from rq: https://python-rq.org/docs/jobs/#retrieving-a-job-from-redis
-        if %[started queued deferred].include? status
+        if %(started queued deferred).include? status
           outstanding_results = true
         else
           test_run = TestRun.find_by(autotest_test_id: autotest_test_id)
-          if %[finished failed].include? status
+          if %(finished failed).include? status
             results(test_run.grouping.assignment, test_run) unless test_run.nil?
           else
             test_run&.failure(status)

@@ -33,7 +33,7 @@ class TestRun < ApplicationRecord
               name: test['name'],
               status: test['status'],
               marks_earned: test['marks_earned'],
-              output: test['output'].gsub("\x00", "\\u0000"),
+              output: test['output'].gsub("\x00", '\\u0000'),
               marks_total: test['marks_total'],
               time: test['time']
             )
@@ -42,7 +42,7 @@ class TestRun < ApplicationRecord
           error = e
           raise ActiveRecord::Rollback
         end
-        create_test_group_result(result, _error: error) unless error.nil?
+        create_test_group_result(result, error: error) unless error.nil?
       end
     end
   end
@@ -71,16 +71,16 @@ class TestRun < ApplicationRecord
     TestGroupResult::ERROR_TYPE[:no_results]
   end
 
-  def create_test_group_result(result, _error: nil)
+  def create_test_group_result(result, error: nil)
     test_group_id = result.dig('extra_info', 'test_group_id')
     test_group = TestGroup.find_by(id: test_group_id)
     test_group.test_group_results.create(
       test_run_id: self.id,
-      extra_info: _error.nil? ? extra_info_string(result) : _error.message,
-      marks_total: _error.nil? ? result['tests']&.map { |t| t['marks_total'] }&.sum || 0 : 0,
-      marks_earned: _error.nil? ? result['tests']&.map { |t| t['marks_earned'] }&.sum || 0 : 0,
+      extra_info: error.nil? ? extra_info_string(result) : error.message,
+      marks_total: error.nil? ? result['tests']&.map { |t| t['marks_total'] }&.sum || 0 : 0,
+      marks_earned: error.nil? ? result['tests']&.map { |t| t['marks_earned'] }&.sum || 0 : 0,
       time: result['time'] || 0,
-      error_type: _error.nil? ? error_type(result) : TestGroupResult::ERROR_TYPE[:test_error]
+      error_type: error.nil? ? error_type(result) : TestGroupResult::ERROR_TYPE[:test_error]
     )
   end
 end

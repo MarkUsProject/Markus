@@ -19,9 +19,9 @@ describe AutotestSpecsJob do
     it 'should set the body of the request' do
       file_url = "http://localhost:3000/csc108/api/assignments/#{assignment.id}/test_files"
       expect_any_instance_of(AutotestSpecsJob).to receive(:send_request!) do |_job, net_obj|
-        expect(JSON.parse(net_obj.body).symbolize_keys).to eq({ settings: {},
-                                                                file_url: file_url,
-                                                                files: assignment.autotest_files })
+        expect(JSON.parse(net_obj.body).symbolize_keys).to eq(settings: {},
+                                                              file_url: file_url,
+                                                              files: assignment.autotest_files)
         dummy_return
       end
       subject

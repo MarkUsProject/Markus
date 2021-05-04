@@ -741,15 +741,6 @@ class Grouping < ApplicationRecord
     filter_test_runs(filters: { 'test_runs.user': self.accepted_students }, all_data: false)
   end
 
-  # Create a test run for this grouping, using the latest repo revision.
-  def create_test_run!(user_id, test_batch_id)
-    self.test_runs.create!(
-      user_id: attrs[:user]&.id || attrs.fetch(:user_id) { raise ArgumentError(':user or :user_id is required') },
-      revision_identifier: access_repo { |repo| repo.get_latest_revision.revision_identifier },
-      test_batch_id: attrs[:test_batch]&.id || attrs[:test_batch_id]
-    )
-  end
-
   # Checks whether a student test using tokens is currently being enqueued for execution
   # (with buffer time in case of unhandled errors that prevented test results to be stored)
   def student_test_run_in_progress?

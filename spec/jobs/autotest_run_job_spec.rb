@@ -5,6 +5,7 @@ describe AutotestRunJob do
   let(:groupings) { create_list(:grouping_with_inviter_and_submission, n_groups, assignment: assignment) }
   let(:groups) { groupings.map(&:group) }
   let(:user) { create(:admin) }
+  before { allow(File).to receive(:read).and_return("123456789\n") }
   context 'when running as a background job' do
     let(:job_args) { [host_with_port, user.id, assignment.id, groups.map(&:id)] }
     before { allow(AutotestResultsJob).to receive(:set) }
@@ -28,7 +29,7 @@ describe AutotestRunJob do
       context 'if there is only one group' do
         let(:n_groups) { 1 }
         it 'should not create a batch' do
-          expect { subject }.not_to change { TestBatch.count }
+          expect { subject }.not_to(change { TestBatch.count })
         end
         it 'should create a test run without an associated batch' do
           subject
@@ -76,7 +77,7 @@ describe AutotestRunJob do
       context 'when collected is true' do
         it 'should send the correct url' do
           file_urls = groups.map do |group|
-            'http://localhost:3000/csc108'+
+            'http://localhost:3000/csc108' \
             "/api/assignments/#{assignment.id}/groups/#{group.id}/submission_files?collected=true"
           end
           expect_any_instance_of(AutotestRunJob).to receive(:send_request!) do |_j, net_obj|

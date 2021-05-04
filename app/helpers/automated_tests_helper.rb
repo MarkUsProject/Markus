@@ -125,6 +125,7 @@ module AutomatedTestsHelper
     output
   end
 
+  # Sends RESTful api requests to the autotester
   module AutotestApi
     AUTOTEST_USERNAME = "markus_#{Rails.application.config.action_controller.relative_url_root}".freeze
     AUTOTEST_KEY_FILE = File.join(::Rails.root, 'config', 'autotest.api_key').freeze
@@ -218,10 +219,10 @@ module AutomatedTestsHelper
 
       uri = URI("#{Settings.autotest.url}/settings/#{assignment.autotest_settings_id}/tests/cancel")
       req = Net::HTTP::Delete.new(uri)
-      req.body = {test_ids: test_runs.pluck(:autotest_test_id)}.to_json
+      req.body = { test_ids: test_runs.pluck(:autotest_test_id) }.to_json
       set_headers(req)
       send_request!(req, uri)
-      test_runs.each { |test_run| test_run.cancel }
+      test_runs.each(&:cancel)
     end
 
     def statuses(assignment, test_runs)
@@ -229,7 +230,7 @@ module AutomatedTestsHelper
 
       uri = URI("#{Settings.autotest.url}/settings/#{assignment.autotest_settings_id}/tests/status")
       req = Net::HTTP::Get.new(uri)
-      req.body = {test_ids: test_runs.pluck(:autotest_test_id)}.to_json
+      req.body = { test_ids: test_runs.pluck(:autotest_test_id) }.to_json
       set_headers(req)
       res = send_request!(req, uri)
       JSON.parse(res.body)

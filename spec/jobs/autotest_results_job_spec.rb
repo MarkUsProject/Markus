@@ -2,7 +2,10 @@ describe AutotestResultsJob do
   let(:assignment) { create :assignment }
   let(:grouping) { create(:grouping, assignment: assignment) }
   let(:test_runs) { create_list(:test_run, 3, grouping: grouping, status: :in_progress) }
-  before { test_runs.each_with_index { |t, i| t.update!(autotest_test_id: i+1) } }
+  before do
+    test_runs.each_with_index { |t, i| t.update!(autotest_test_id: i + 1) }
+    allow(File).to receive(:read).and_return("123456789\n")
+  end
   context 'when running as a background job' do
     let(:job_args) { [assignment.id] }
     let(:job) { described_class.perform_later(*job_args) }
@@ -38,8 +41,7 @@ describe AutotestResultsJob do
       let(:assignment) { create :assignment, assignment_properties_attributes: { autotest_settings_id: 10 } }
       context 'when getting the statuses of the tests' do
         it 'should set headers' do
-          allow(File).to receive(:read).and_return("123456789\n")
-          expect_any_instance_of(AutotestResultsJob).to receive(:send_request) do |_job, net_obj|
+          expect_any_instance_of(AutotestResultsJob).to receive(:send_request!) do |_job, net_obj|
             expect(net_obj['Api-Key']).to eq '123456789'
             expect(net_obj['Content-Type']).to eq 'application/json'
             dummy_return
@@ -47,10 +49,10 @@ describe AutotestResultsJob do
           subject
         end
         it 'should send an api request to the autotester' do
-          expect_any_instance_of(AutotestResultsJob).to receive(:send_request) do |_job, net_obj, uri|
+          expect_any_instance_of(AutotestResultsJob).to receive(:send_request!) do |_job, net_obj, uri|
             expect(net_obj.instance_of?(Net::HTTP::Get)).to be true
             expect(uri.to_s).to eq "#{Settings.autotest.url}/settings/10/tests/status"
-            expect(JSON.parse(net_obj.body)['test_ids']).to contain_exactly(1,2,3)
+            expect(JSON.parse(net_obj.body)['test_ids']).to contain_exactly(1, 2, 3)
           end
           subject
         end
@@ -71,7 +73,6 @@ describe AutotestResultsJob do
           context 'a successful request' do
             before { allow_any_instance_of(OpenStruct).to receive(:instance_of?).and_return(true) }
             it 'should set headers' do
-              allow(File).to receive(:read).and_return("123456789\n")
               expect_any_instance_of(AutotestResultsJob).to receive(:send_request) do |_job, net_obj|
                 expect(net_obj['Api-Key']).to eq '123456789'
                 expect(net_obj['Content-Type']).to eq 'application/json'
@@ -109,27 +110,27 @@ describe AutotestResultsJob do
           end
         end
         context 'when at least one of the statuses is "started"' do
-          let(:status_return) { {1 => 'finished', 2 => 'started', 3 => 'finished'} }
+          let(:status_return) { { 1 => 'finished', 2 => 'started', 3 => 'finished' } }
           include_examples 'rescheduling a job'
         end
         context 'when at least one of the statuses is "queued"' do
-          let(:status_return) { {1 => 'finished', 2 => 'queued', 3 => 'finished'} }
+          let(:status_return) { { 1 => 'finished', 2 => 'queued', 3 => 'finished' } }
           include_examples 'rescheduling a job'
         end
         context 'when at least one of the statuses is "deferred"' do
-          let(:status_return) { {1 => 'finished', 2 => 'deferred', 3 => 'finished'} }
+          let(:status_return) { { 1 => 'finished', 2 => 'deferred', 3 => 'finished' } }
           include_examples 'rescheduling a job'
         end
         context 'when at least one of the statuses is "finished"' do
-          let(:status_return) { {1 => 'started', 2 => 'finished', 3 => 'started'} }
+          let(:status_return) { { 1 => 'started', 2 => 'finished', 3 => 'started' } }
           include_examples 'getting results'
         end
         context 'when at least one of the statuses is "failed"' do
-          let(:status_return) { {1 => 'started', 2 => 'failed', 3 => 'started'} }
+          let(:status_return) { { 1 => 'started', 2 => 'failed', 3 => 'started' } }
           include_examples 'getting results'
         end
         context 'when at least one of the statuses is something else' do
-          let(:status_return) { {1 => 'started', 2 => 'something else', 3 => 'started'} }
+          let(:status_return) { { 1 => 'started', 2 => 'something else', 3 => 'started' } }
           it 'should call failure for the test_run' do
             expect_any_instance_of(TestRun).to receive(:failure).with('something else') do |test_run|
               expect(test_run.autotest_test_id).to eq 2

@@ -52,7 +52,7 @@ describe TestRun do
                      timeout: nil,
                      stderr: '',
                      malformed: '',
-                     extra_info: {test_group_id:  test_group.id},
+                     extra_info: { test_group_id: test_group.id },
                      tests: [{
                        name: :test1,
                        status: :pass,
@@ -60,8 +60,7 @@ describe TestRun do
                        marks_total: 1,
                        output: 'output',
                        time: 1
-                     },
-                     {
+                     }, {
                        name: :test2,
                        status: :fail,
                        marks_earned: 0,
@@ -69,7 +68,7 @@ describe TestRun do
                        output: 'failure',
                        time: nil
                      }]
-                   }]}.to_json)
+                   }] }.to_json)
     end
     context 'there is a failure reported' do
       before { results['status'] = 'failed' }
