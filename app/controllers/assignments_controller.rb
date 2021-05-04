@@ -294,13 +294,13 @@ class AssignmentsController < ApplicationController
                                           :submission_id,
                                           'test_batches.created_at',
                                           'test_runs.created_at',
+                                          'test_runs.status',
                                           'groups.group_name',
                                           'results.id')
-        status_hash = TestRun.statuses(test_runs.map { |tr| tr[:id] })
         test_runs.each do |test_run|
           created_at_raw = test_run.delete('test_batches.created_at') || test_run.delete('test_runs.created_at')
           test_run['created_at'] = I18n.l(created_at_raw)
-          test_run['status'] = status_hash[test_run['id']]
+          test_run['status'] = test_run['test_runs.status']
           test_run['group_name'] = test_run.delete('groups.group_name')
           test_run['result_id'] = test_run.delete('results.id')
         end

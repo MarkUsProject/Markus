@@ -14,19 +14,8 @@ pt:
     need_submission: As inscrições devem ser recolhidos antes dos testes são executados. Nem todos os agrupamentos seleccionados tiveram testes executados.
     no_results: UPDATE ME
     results:
-      all_tests: UPDATE ME
-      bad_marks_earned: UPDATE ME
-      bad_marks_total: UPDATE ME
-      bad_results: UPDATE ME '%{error}'
-      bad_server: UPDATE ME
-      bad_status: UPDATE ME '%{status}'
-      extra_hooks_stderr: "UPDATE ME \n%{extra}\n"
       extra_malformed: "UPDATE ME \n%{extra}\n"
-      extra_raw_output: "UPDATE ME \n%{extra}\n"
       extra_stderr: "UPDATE ME \n%{extra}\n"
-      no_tests: UPDATE ME
-      timeout: "%{seconds} UPDATE ME"
-      unknown_test: UPDATE ME
     run_tests: Executar testes
     settings_not_setup: UPDATE ME
     specs_file_upload_message: UPDATE ME

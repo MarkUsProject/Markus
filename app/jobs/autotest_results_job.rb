@@ -26,13 +26,13 @@ class AutotestResultsJob < ApplicationJob
                     .transform_values { |v| v.map(&:second) }
     ids.each do |assignment_id, test_run_ids|
       assignment = Assignment.find(assignment_id)
-      test_runs = TestRun.find_by(id: test_run_ids)
+      test_runs = TestRun.where(id: test_run_ids)
       statuses(assignment, test_runs).each do |autotest_test_id, status|
         # statuses from rq: https://python-rq.org/docs/jobs/#retrieving-a-job-from-redis
         if %[started queued deferred].include? status
           outstanding_results = true
         else
-          test_run = TestRun.where(autotest_test_id: autotest_test_id).first
+          test_run = TestRun.find_by(autotest_test_id: autotest_test_id)
           if %[finished failed].include? status
             results(test_run.grouping.assignment, test_run) unless test_run.nil?
           else

@@ -62,7 +62,7 @@ describe AutotestRunJob do
       end
       it 'should enqueue an AutotestResultsJob job' do
         expect(AutotestResultsJob).to receive(:set).with(wait: 1.minute).once.and_call_original
-        expect_any_instance_of(ActiveJob::ConfiguredJob).to receive(:perform_later).with(assignment.id).once
+        expect_any_instance_of(ActiveJob::ConfiguredJob).to receive(:perform_later).once
         subject
       end
       it 'should send an api request to the autotester' do

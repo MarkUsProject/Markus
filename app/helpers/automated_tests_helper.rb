@@ -243,7 +243,7 @@ module AutomatedTestsHelper
       req = Net::HTTP::Get.new(uri)
       set_headers(req)
       res = send_request(req, uri)
-      if res.is_a?(Net::HTTPSuccess)
+      if res.instance_of?(Net::HTTPSuccess)
         test_run.update_results!(JSON.parse(res.body))
       else
         test_run.failure(res.body)

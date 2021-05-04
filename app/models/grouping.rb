@@ -662,7 +662,7 @@ class Grouping < ApplicationRecord
     fields = ['test_runs.id', 'test_runs.created_at', 'test_runs.problems', 'users.user_name', 'test_groups.name',
               'test_groups.display_output', 'test_group_results.extra_info', 'test_group_results.time',
               'test_results.name', 'test_results.status', 'test_results.marks_earned', 'test_results.marks_total',
-              'test_results.output', 'test_results.time']
+              'test_results.output', 'test_results.time', 'test_runs.status']
     hash_list = assoc.pluck_to_hash(*fields)
 
     # Add feedback files. This has to be done separately because there can be multiple feedback files
@@ -684,8 +684,8 @@ class Grouping < ApplicationRecord
 
   def self.group_hash_list(hash_list)
     new_hash_list = []
-    group_by_keys = ['test_runs.id', 'test_runs.created_at', 'test_runs.problems', 'users.user_name',
-                     'test_groups.name']
+    group_by_keys = %w[test_runs.id test_runs.created_at test_runs.problems
+                       users.user_name test_groups.name test_runs.status]
     hash_list.group_by { |g| g.values_at(*group_by_keys) }.values.each do |val|
       h = Hash.new
       group_by_keys.each do |key|
@@ -693,11 +693,6 @@ class Grouping < ApplicationRecord
       end
       h['test_data'] = val
       new_hash_list << h
-    end
-
-    status_hash = TestRun.statuses(new_hash_list.map { |h| h['test_runs.id'] })
-    new_hash_list.each do |h|
-      h['test_runs.status'] = status_hash[h['test_runs.id']]
     end
 
     new_hash_list

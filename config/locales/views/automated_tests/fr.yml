@@ -14,19 +14,8 @@ fr:
     need_submission: Les soumissions doivent être recueillies avant que les tests sont exécutés. Tous les tests n'ont pas été exécuté.
     no_results: Aucun résultats
     results:
-      all_tests: Tous les tests
-      bad_marks_earned: On ne peut pas trouver les marques gagnés dans le resultat de ce test
-      bad_marks_total: On ne peut pas trouver les marques totales dans le resultat de ce test
-      bad_results: Resultats mal formés '%{error}'
-      bad_server: 'Serveur ''%{hostname}'' erreur: %{error}'
-      bad_status: 'Status inconnu: ''%{status}'''
-      extra_hooks_stderr: "Erreurs des scripts auxiliares: \n%{extra}\n"
       extra_malformed: "Resultats mal formés: \n%{extra}\n"
-      extra_raw_output: "Sortie de donées supplémentaire: \n%{extra}\n"
       extra_stderr: "Messages d'erreur: \n%{extra}\n"
-      no_tests: Aucun resultats à montrer
-      timeout: Le délai d'attente a éxpiré après %{seconds} seconds
-      unknown_test: Test inconnu
     run_tests: Exécuter les tests
     settings_not_setup: UPDATE ME
     specs_file_upload_message: Le fichier doit être un fichier json valide
