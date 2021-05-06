@@ -6,8 +6,8 @@ FactoryBot.define do
   end
 
   factory :student_test_run, class: TestRun do
-    association :grouping
-    association :user, factory: :student
+    association :grouping, factory: :grouping_with_inviter
+    user { grouping.inviter }
     revision_identifier { Faker::Number.hexadecimal(digits: 40) }
   end
 end

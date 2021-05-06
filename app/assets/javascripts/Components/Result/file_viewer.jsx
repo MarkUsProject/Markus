@@ -48,9 +48,9 @@ export class FileViewer extends React.Component {
 
   setFileUrl = (submission_file_id) => {
     let url;
-    if (!!this.props.selectedFileURL) { // Use file URL if defined
+    if (!!this.props.selectedFileURL) {
       url = this.props.selectedFileURL;
-    } else { // Otherwise get submission file data
+    } else {
       url = Routes.download_assignment_submission_result_path(
         this.props.assignment_id,
         this.props.submission_id,

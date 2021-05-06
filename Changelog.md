@@ -3,7 +3,7 @@
 - Modify Result.get_total_extra_marks to differentiate between having extra marks that sum to zero and
   having no extra marks (#5220)
 - Add copy to clipboard button for plaintext submission files in Results view (#5223)
-- Add support to associate feedback files by test run (#5209)
+- Add ability to associate feedback files to test group results (#5209)
 
 ## [v1.12.1]
 - Remove counter caches (#5222)

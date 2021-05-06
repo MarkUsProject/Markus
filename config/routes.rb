@@ -190,14 +190,6 @@ Rails.application.routes.draw do
         post 'rename_group'
       end
     end
-    
-    resources :groupings do
-      resources :feedback_files do
-        member do
-          get 'get_feedback_file'
-        end
-      end
-    end
 
     resources :submissions, only: [:index] do
       collection do
@@ -449,6 +441,8 @@ Rails.application.routes.draw do
   end
 
   resources :extensions
+
+  resources :feedback_files, only: [:show]
 
   resources :job_messages, param: :job_id do
     member do

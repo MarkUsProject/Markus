@@ -425,10 +425,7 @@ class SubmissionsController < ApplicationController
     submission = assignment.submissions.find(params[:id])
     authorize! submission
 
-    feedback_file = submission.feedback_files.find_by_id(params[:feedback_file_id])
-    if feedback_file.nil?
-      feedback_file = FeedbackFile.where(id: params[:feedback_file_id], test_run: submission.test_runs).first
-    end
+    feedback_file = submission.feedback_files.find(params[:feedback_file_id])
     send_data_download feedback_file.file_content, filename: feedback_file.filename
   end
 

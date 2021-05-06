@@ -60,11 +60,9 @@ export class TestRunTable extends React.Component {
             'test_runs.status': test_data[0]['test_runs.status'],
             'test_runs.problems': test_data[0]['test_runs.problems'],
             'test_results': [],
-            'feedback_files': [],
           };
           test_data.forEach(data => {
             Array.prototype.push.apply(row['test_results'], data['test_data']);
-            Array.prototype.push.apply(row['feedback_files'], data['feedback_files']);
           });
           rows.push(row);
         }
@@ -101,18 +99,10 @@ export class TestRunTable extends React.Component {
           SubComponent={ row => (
             row.original['test_runs.problems'] ?
               row.original['test_runs.problems'] :
-              <div>
-                <TestGroupResultTable data={row.original['test_results']}/>
-                {row.original['feedback_files'].length > 0 &&
-                  <div className={"test-result-feedback-files"}>
-                    <TestGroupFeedbackFileTable
-                      data={row.original['feedback_files']}
-                      assignment_id={this.props.assignment_id}
-                      grouping_id={this.props.grouping_id}
-                    />
-                  </div>
-                }
-              </div>
+              <TestGroupResultTable data={row.original['test_results']}
+                                    assignment_id={this.props.assignment_id}
+                                    grouping_id={this.props.grouping_id}
+              />
           )}
           noDataText={I18n.t('automated_tests.no_results')}
           getTheadThProps={ () => {
@@ -212,6 +202,21 @@ class TestGroupResultTable extends React.Component {
     } else {
       extraInfoDisplay = '';
     }
+    const feedbackFiles = this.props.data[0]['feedback_files'];
+    let feedbackFileDisplay;
+    if (feedbackFiles) {
+      feedbackFileDisplay = (
+        <div className={"test-result-feedback-files"}>
+          <TestGroupFeedbackFileTable
+            data={feedbackFiles}
+            assignment_id={this.props.assignment_id}
+            grouping_id={this.props.grouping_id}
+          />
+        </div>
+      );
+    } else {
+      feedbackFileDisplay = '';
+    }
 
     return (
       <div>
@@ -241,6 +246,7 @@ class TestGroupResultTable extends React.Component {
           }
         />
         {extraInfoDisplay}
+        {feedbackFileDisplay}
       </div>
     )
   }
@@ -248,25 +254,10 @@ class TestGroupResultTable extends React.Component {
 
 
 class TestGroupFeedbackFileTable extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      show_output: this.showOutput(props.data)
-    };
-  }
-
-  showOutput = (data) => {
-    if (data) {
-      return data.some((row) => 'test_results.output' in row);
-    } else {
-      return false;
-    }
-  };
-
   columns = () => [
     {
       id: 'name',
-      Header: 'Feedback Files',
+      Header: I18n.t('activerecord.attributes.submission.feedback_files'),
       accessor: row => row['filename'],
       aggregate: (values, rows) => {
         if (rows.length === 0) {
@@ -289,11 +280,7 @@ class TestGroupFeedbackFileTable extends React.Component {
           SubComponent={ row => (
             <FileViewer
               selectedFile={row.original.filename}
-              selectedFileURL={Routes.get_feedback_file_assignment_grouping_feedback_file_path(
-                this.props.assignment_id,
-                this.props.grouping_id,
-                row.original.id,
-              )}
+              selectedFileURL={Routes.feedback_file_path(row.original.id)}
               mime_type={lookup(row['filename'])}
               selectedFileType={row.original.type}
             />
@@ -301,7 +288,7 @@ class TestGroupFeedbackFileTable extends React.Component {
           }
         />
       </div>
-    )
+    );
   }
 }
 

@@ -13,27 +13,27 @@ describe Api::FeedbackFilesController do
 
     it 'should fail to authenticate a GET index request' do
       get :index, params: { assignment_id: grouping.assignment.id, group_id: grouping.group.id }
-      expect(response).to have_http_status(403)
+      expect(response).to have_http_status :forbidden
     end
 
     it 'should fail to authenticate a GET show request' do
       get :show, params: { id: 1, assignment_id: grouping.assignment.id, group_id: grouping.group.id }
-      expect(response).to have_http_status(403)
+      expect(response).to have_http_status :forbidden
     end
 
     it 'should fail to authenticate a POST create request' do
       post :create, params: { assignment_id: grouping.assignment.id, group_id: grouping.group.id }
-      expect(response).to have_http_status(403)
+      expect(response).to have_http_status :forbidden
     end
 
     it 'should fail to authenticate a PUT update request' do
       put :create, params: { id: 1, assignment_id: grouping.assignment.id, group_id: grouping.group.id }
-      expect(response).to have_http_status(403)
+      expect(response).to have_http_status :forbidden
     end
 
     it 'should fail to authenticate a DELETE destroy request' do
       delete :destroy, params: { id: 1, assignment_id: grouping.assignment.id, group_id: grouping.group.id }
-      expect(response).to have_http_status(403)
+      expect(response).to have_http_status :forbidden
     end
   end
 
@@ -48,14 +48,13 @@ describe Api::FeedbackFilesController do
         before :each do
           request.env['HTTP_ACCEPT'] = 'application/xml'
           feedback_files
-          feedback_files_with_test_run
         end
         it 'should be successful if required parameters are present' do
           get :index, params: {
             group_id: grouping.group.id,
             assignment_id: grouping.assignment.id
           }
-          expect(response.status).to eq(200)
+          expect(response).to have_http_status :success
         end
         it 'should return info about feedback files if grouping_id and assignment_id are specified' do
           get :index, params: {
@@ -65,28 +64,18 @@ describe Api::FeedbackFilesController do
           ids = Hash.from_xml(response.body).dig('feedback_files', 'feedback_file').map { |h| h['id'].to_i }
           expect(ids).to contain_exactly(*feedback_files.pluck(:id))
         end
-        it 'should return info about feedback files if test_run_id is additionally specified' do
-          get :index, params: {
-            group_id: grouping.group.id,
-            assignment_id: grouping.assignment.id,
-            test_run_id: test_run.id
-          }
-          ids = Hash.from_xml(response.body).dig('feedback_files', 'feedback_file').map { |h| h['id'].to_i }
-          expect(ids).to contain_exactly(*feedback_files_with_test_run.pluck(:id))
-        end
       end
       context 'expecting an json response' do
         before :each do
           request.env['HTTP_ACCEPT'] = 'application/json'
           feedback_files
-          feedback_files_with_test_run
         end
         it 'should be successful if required parameters are present' do
           get :index, params: {
             group_id: grouping.group.id,
             assignment_id: grouping.assignment.id
           }
-          expect(response.status).to eq(200)
+          expect(response).to have_http_status :success
         end
         it 'should return info about feedback files if grouping_id and assignment_id are specified' do
           get :index, params: {
@@ -94,15 +83,6 @@ describe Api::FeedbackFilesController do
             assignment_id: grouping.assignment.id
           }
           expect(JSON.parse(response.body).map { |h| h['id'] }).to contain_exactly(*feedback_files.pluck(:id))
-        end
-        it 'should return info about feedback files if test_run_id is additionally specified' do
-          get :index, params: {
-            group_id: grouping.group.id,
-            assignment_id: grouping.assignment.id,
-            test_run_id: test_run.id
-          }
-          expected_ids = feedback_files_with_test_run.pluck(:id)
-          expect(JSON.parse(response.body).map { |h| h['id'] }).to contain_exactly(*expected_ids)
         end
       end
     end
@@ -118,7 +98,7 @@ describe Api::FeedbackFilesController do
             group_id: grouping.group.id,
             assignment_id: grouping.assignment.id
           }
-          expect(response.status).to eq(200)
+          expect(response).to have_http_status :success
         end
         it 'should return the file content' do
           get :show, params: {
@@ -127,15 +107,6 @@ describe Api::FeedbackFilesController do
             assignment_id: grouping.assignment.id
           }
           expect(response.body).to eq(feedback_files.first.file_content)
-        end
-        it 'should return the file content when test_run_id is additionally specified' do
-          get :show, params: {
-            id: feedback_files_with_test_run.first.id,
-            group_id: grouping.group.id,
-            assignment_id: grouping.assignment.id,
-            test_run_id: test_run.id
-          }
-          expect(response.body).to eq(feedback_files_with_test_run.first.file_content)
         end
       end
       context 'expecting an json response' do
@@ -148,7 +119,7 @@ describe Api::FeedbackFilesController do
             group_id: grouping.group.id,
             assignment_id: grouping.assignment.id
           }
-          expect(response.status).to eq(200)
+          expect(response).to have_http_status :success
         end
         it 'should return the file content' do
           get :show, params: {
@@ -157,15 +128,6 @@ describe Api::FeedbackFilesController do
             assignment_id: grouping.assignment.id
           }
           expect(response.body).to eq(feedback_files.first.file_content)
-        end
-        it 'should return the file content when test_run_id is additionally specified' do
-          get :show, params: {
-            id: feedback_files_with_test_run.first.id,
-            group_id: grouping.group.id,
-            assignment_id: grouping.assignment.id,
-            test_run_id: test_run.id
-          }
-          expect(response.body).to eq(feedback_files_with_test_run.first.file_content)
         end
       end
     end
@@ -176,7 +138,7 @@ describe Api::FeedbackFilesController do
         it 'should be successful' do
           post :create, params: { group_id: grouping.group.id, assignment_id: grouping.assignment.id,
                                   filename: filename, mime_type: 'text/plain', file_content: 'abcd' }
-          expect(response.status).to eq(201)
+          expect(response).to have_http_status :created
         end
         it 'should create a new feedback_file' do
           post :create, params: { group_id: grouping.group.id, assignment_id: grouping.assignment.id,
@@ -188,7 +150,7 @@ describe Api::FeedbackFilesController do
         it 'should raise a 409 error' do
           post :create, params: { group_id: grouping.group.id, assignment_id: grouping.assignment.id,
                                   filename: feedback_files.first.filename, mime_type: 'text/plain', file_content: 'a' }
-          expect(response.status).to eq(409)
+          expect(response).to have_http_status :conflict
         end
       end
     end
@@ -199,14 +161,14 @@ describe Api::FeedbackFilesController do
         it 'should update a filename' do
           put :update, params: { group_id: grouping.group.id, assignment_id: grouping.assignment.id,
                                  id: feedback_file.id, filename: 'abc.txt', file_content: 'def main(): pass' }
-          expect(response.status).to eq(200)
+          expect(response).to have_http_status :success
           feedback_file.reload
           expect(feedback_file.filename).to eq('abc.txt')
         end
         it 'should update file content' do
           put :update, params: { group_id: grouping.group.id, assignment_id: grouping.assignment.id,
                                  id: feedback_file.id, file_content: 'def main(): pass' }
-          expect(response.status).to eq(200)
+          expect(response).to have_http_status :success
           feedback_file.reload
           expect(feedback_file.file_content).to eq('def main(): pass')
         end
@@ -215,7 +177,7 @@ describe Api::FeedbackFilesController do
         it 'should raise a 404 error' do
           put :update, params: { group_id: grouping.group.id, assignment_id: grouping.assignment.id,
                                  id: feedback_file.id + 100, filename: 'abc.txt' }
-          expect(response.status).to eq(404)
+          expect(response).to have_http_status :not_found
         end
       end
     end
