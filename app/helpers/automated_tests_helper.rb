@@ -128,8 +128,7 @@ module AutomatedTestsHelper
   private
 
   def server_api_key
-    server_host = Settings.autotest.server_host
-    server_user = TestServer.find_or_create_by(user_name: server_host) do |user|
+    server_user = TestServer.find_or_create_by(user_name: '.autotest') do |user|
       user.first_name = 'Autotest'
       user.last_name = 'Server'
       user.hidden = true

@@ -1,5 +1,8 @@
 # Changelog
 
+## [v1.12.2]
+- Require TestServer user to have a non-conflicting user name (#5268) 
+
 ## [v1.12.1]
 - Remove counter caches (#5222)
 - Delay grouping creation for working-alone timed assessments to when the student starts the assessment (#5224)
