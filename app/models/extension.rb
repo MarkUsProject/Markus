@@ -1,7 +1,7 @@
 class Extension < ApplicationRecord
   belongs_to :grouping
 
-  attribute :time_delta, :duration
+  attribute :time_delta, :interval
 
   validates :time_delta, numericality: { greater_than: 0 }
 
@@ -10,6 +10,7 @@ class Extension < ApplicationRecord
   PARTS = [:weeks, :days, :hours, :minutes].freeze
 
   def self.to_parts(duration)
+    duration = duration.to_i
     PARTS.map do |part|
       amt = (duration / 1.send(part)).to_i
       duration -= amt.send(part)

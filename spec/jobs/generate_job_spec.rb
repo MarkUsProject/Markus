@@ -7,7 +7,7 @@ describe GenerateJob do
     include_examples 'background job'
   end
 
-  let(:file) { file_fixture('scanned_exams/midterm1-v2-test.pdf') }
+  let(:file) { file_fixture('files/scanned_exams/midterm1-v2-test.pdf') }
 
   context 'when generating pdfs' do
     before :each do

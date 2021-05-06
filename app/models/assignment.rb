@@ -200,7 +200,7 @@ class Assignment < Assessment
       due_dates[grouping_id] = sec_due_date unless sec_due_date.nil?
     end
     grouping_extensions.each do |grouping_id, ext|
-      due_dates[grouping_id] += ActiveSupport::Duration.parse(ext)
+      due_dates[grouping_id] += ext
     end
     due_dates
   end
@@ -345,11 +345,10 @@ class Assignment < Assessment
       if data['extensions.time_delta'].nil?
         extension_data = {}
       else
-        duration = ActiveSupport::Duration.parse(data['extensions.time_delta'])
         if assignment.is_timed
-          extension_data = AssignmentProperties.duration_parts duration
+          extension_data = AssignmentProperties.duration_parts data['extensions.time_delta']
         else
-          extension_data = Extension.to_parts duration
+          extension_data = Extension.to_parts data['extensions.time_delta']
         end
       end
       extension_data[:note] = data['extensions.note'] || ''

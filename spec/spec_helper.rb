@@ -28,6 +28,14 @@ require 'time-warp'
 # in spec/support/ and its subdirectories.
 Dir[Rails.root.join('spec/support/**/*.rb')].each { |f| require f }
 
+# Checks for pending migrations and applies them before tests are run.
+begin
+  ActiveRecord::Migration.maintain_test_schema!
+rescue ActiveRecord::PendingMigrationError => e
+  puts e.to_s.strip
+  exit 1
+end
+
 RSpec.configure do |config|
   # ## Mock Framework
   #
@@ -45,6 +53,14 @@ RSpec.configure do |config|
 
   # Automatically infer an example group's spec type from the file location.
   config.infer_spec_type_from_file_location!
+
+  # Filter lines from Rails gems in backtraces.
+  config.filter_rails_from_backtrace!
+  # arbitrary gems may also be filtered via:
+  config.filter_gems_from_backtrace(
+    'actiontext',
+    'rails-controller-testing'
+  )
 
   # Include Factory Girl syntax to simplify calls to factory.
   config.include FactoryBot::Syntax::Methods
@@ -90,7 +106,7 @@ RSpec.configure do |config|
 
   # Get fixture_file_upload to work with RSPEC. See http://bit.ly/1yQfoS5
   config.include ActionDispatch::TestProcess
-  config.fixture_path = "#{::Rails.root}/spec/fixtures"
+  config.file_fixture_path = "#{::Rails.root}/spec/fixtures"
 
   # Automatically decode CSV response bodies.
   ActionDispatch::IntegrationTest.register_encoder :csv,
