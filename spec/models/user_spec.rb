@@ -18,9 +18,9 @@ describe User do
   it { is_expected.to allow_value('-22125-k1lj42_').for(:user_name) }
 
   describe 'TestServer' do
-    subject { build :user, type: 'TestServer' }
-    it { is_expected.not_to allow_value('A!a.sa').for(:user_name) }
-    it { is_expected.not_to allow_value('.autotest').for(:user_name) }
+    subject { create :test_server }
+    it { is_expected.to allow_value('A!a.sa').for(:user_name) }
+    it { is_expected.to allow_value('.autotest').for(:user_name) }
   end
 
   describe 'uniqueness validation' do
