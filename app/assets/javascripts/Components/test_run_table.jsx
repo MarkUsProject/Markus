@@ -99,7 +99,7 @@ export class TestRunTable extends React.Component {
           SubComponent={ row => (
             row.original['test_runs.problems'] ?
               row.original['test_runs.problems'] :
-              <TestGroupResultTable data={row.original['test_results']} />
+              <TestGroupResultTable data={row.original['test_results']}/>
           )}
           noDataText={I18n.t('automated_tests.no_results')}
           getTheadThProps={ () => {
@@ -202,15 +202,7 @@ class TestGroupResultTable extends React.Component {
     const feedbackFiles = this.props.data[0]['feedback_files'];
     let feedbackFileDisplay;
     if (feedbackFiles) {
-      feedbackFileDisplay = (
-        <div className={"test-result-feedback-files"}>
-          <TestGroupFeedbackFileTable
-            data={feedbackFiles}
-            assignment_id={this.props.assignment_id}
-            grouping_id={this.props.grouping_id}
-          />
-        </div>
-      );
+      feedbackFileDisplay = <TestGroupFeedbackFileTable data={feedbackFiles}/>;
     } else {
       feedbackFileDisplay = '';
     }
@@ -260,22 +252,20 @@ class TestGroupFeedbackFileTable extends React.Component {
     ];
 
     return (
-      <div>
-        <ReactTable
-          className={'auto-overflow'}
-          data={this.props.data}
-          columns={columns}
-          SubComponent={ row => (
-            <FileViewer
-              selectedFile={row.original.filename}
-              selectedFileURL={Routes.feedback_file_path(row.original.id)}
-              mime_type={lookup(row['filename'])}
-              selectedFileType={row.original.type}
-            />
-          )
-          }
-        />
-      </div>
+      <ReactTable
+        className={'auto-overflow test-result-feedback-files'}
+        data={this.props.data}
+        columns={columns}
+        SubComponent={ row => (
+          <FileViewer
+            selectedFile={row.original.filename}
+            selectedFileURL={Routes.feedback_file_path(row.original.id)}
+            mime_type={lookup(row['filename'])}
+            selectedFileType={row.original.type}
+          />
+        )
+        }
+      />
     );
   }
 }
