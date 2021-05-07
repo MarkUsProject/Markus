@@ -11,6 +11,9 @@ Rails.application.config.content_security_policy do |policy|
   policy.default_src :self
   policy.script_src  :self, "'strict-dynamic'"
   policy.form_action :self
+  # Safari doesn't support worker-src and defaults to child-src, blob is required because of the way Safari
+  # handles dynamically generated images
+  policy.child_src :self, :blob
   unless Rails.env.production?
     # http and ws are required so that webpack-dev-server can serve assets
     policy.connect_src :self, :http, :ws
