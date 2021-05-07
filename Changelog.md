@@ -1,5 +1,8 @@
 # Changelog
 
+## [v1.12.3]
+- Add workaround for content security policy to allow loading blobs in Safari (#5273)
+
 ## [v1.12.2]
 - Require TestServer user to have a non-conflicting user name (#5268) 
 
