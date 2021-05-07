@@ -65,7 +65,7 @@ class ResultsController < ApplicationController
         if is_reviewer
           data[:feedback_files] = []
         else
-          data[:feedback_files] = submission.feedback_files.map do |f|
+          data[:feedback_files] = submission.feedback_files.where(test_group_result_id: nil).map do |f|
             { id: f.id, filename: f.filename, type: SubmissionFile.get_file_type(f.filename) }
           end
         end

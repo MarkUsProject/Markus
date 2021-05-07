@@ -533,6 +533,10 @@ kbd {
   background-color: $light-error;
 }
 
+.test-result-feedback-files {
+  padding: 10px;
+}
+
 // Panes
 .pane-wrapper {
   display: flex;

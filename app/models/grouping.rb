@@ -663,7 +663,23 @@ class Grouping < ApplicationRecord
               'test_groups.display_output', 'test_group_results.extra_info', 'test_group_results.time',
               'test_results.name', 'test_results.status', 'test_results.marks_earned', 'test_results.marks_total',
               'test_results.output', 'test_results.time']
-    assoc.pluck_to_hash(*fields)
+    hash_list = assoc.pluck_to_hash(*fields)
+
+    # Add feedback files. This has to be done separately because there can be multiple feedback files
+    # per test_group_result.
+    feedback_files = FeedbackFile.joins(test_group_result: [:test_run, :test_group])
+                                 .where('test_runs.id': hash_list.map { |h| h['test_runs.id'] })
+                                 .pluck_to_hash(:id, :filename, 'test_runs.id', 'test_groups.name')
+                                 .group_by { |f| [f['test_runs.id'], f['test_groups.name']] }
+
+    hash_list.each do |h|
+      h['feedback_files'] = feedback_files[[h['test_runs.id'], h['test_groups.name']]] || []
+      h['feedback_files'].each do |f|
+        f['type'] = SubmissionFile.get_file_type(f['filename'])
+      end
+    end
+
+    hash_list
   end
 
   def self.group_hash_list(hash_list)

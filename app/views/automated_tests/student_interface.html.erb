@@ -1,4 +1,9 @@
 <% content_for :title, t('automated_tests.title') %>
+<%= stylesheet_link_tag 'result_main' %>
+<%= stylesheet_pack_tag 'result' %>
+<%= javascript_include_tag 'mathjax' %>
+<%= javascript_pack_tag 'result' %>
+<%= javascript_include_tag 'Results/main' %>
 
 <% if @assignment.enable_student_tests && !@grouping.nil? %>
   <p>

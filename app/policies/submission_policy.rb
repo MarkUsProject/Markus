@@ -13,17 +13,6 @@ class SubmissionPolicy < ApplicationPolicy
     user.student?
   end
 
-  def get_feedback_file?
-    grouping = record.grouping
-    if user.student?
-      !grouping.membership_status(user).nil? && record.current_result.released_to_students
-    elsif user.ta?
-      grouping.tas.pluck(:id).include? user.id
-    else
-      true
-    end
-  end
-
   def manage_files?
     user.admin? || user.ta?
   end

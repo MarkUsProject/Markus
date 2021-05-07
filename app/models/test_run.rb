@@ -1,5 +1,6 @@
 class TestRun < ApplicationRecord
   has_many :test_group_results, dependent: :destroy
+  has_many :feedback_files, through: :test_group_results
   belongs_to :test_batch, optional: true
   belongs_to :submission, optional: true
   belongs_to :grouping
