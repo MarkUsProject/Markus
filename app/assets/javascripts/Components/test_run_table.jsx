@@ -1,9 +1,9 @@
 import React from 'react';
 import {render} from 'react-dom';
 import ReactTable from 'react-table';
+import {lookup} from 'mime-types';
 import {dateSort} from './Helpers/table_helpers';
-import {FileViewer} from "./Result/file_viewer";
-import {lookup} from "mime-types";
+import {FileViewer} from './Result/file_viewer';
 
 
 export class TestRunTable extends React.Component {
@@ -99,10 +99,7 @@ export class TestRunTable extends React.Component {
           SubComponent={ row => (
             row.original['test_runs.problems'] ?
               row.original['test_runs.problems'] :
-              <TestGroupResultTable data={row.original['test_results']}
-                                    assignment_id={this.props.assignment_id}
-                                    grouping_id={this.props.grouping_id}
-              />
+              <TestGroupResultTable data={row.original['test_results']} />
           )}
           noDataText={I18n.t('automated_tests.no_results')}
           getTheadThProps={ () => {
@@ -254,29 +251,20 @@ class TestGroupResultTable extends React.Component {
 
 
 class TestGroupFeedbackFileTable extends React.Component {
-  columns = () => [
-    {
-      id: 'name',
-      Header: I18n.t('activerecord.attributes.submission.feedback_files'),
-      accessor: row => row['filename'],
-      aggregate: (values, rows) => {
-        if (rows.length === 0) {
-          return '';
-        } else {
-          return rows[0]['filename'];
-        }
-      },
-      minWidth: 200
-    },
-  ];
-
   render() {
+    const columns = [
+      {
+        Header: I18n.t('activerecord.attributes.submission.feedback_files'),
+        accessor: 'filename'
+      },
+    ];
+
     return (
       <div>
         <ReactTable
           className={'auto-overflow'}
           data={this.props.data}
-          columns={this.columns()}
+          columns={columns}
           SubComponent={ row => (
             <FileViewer
               selectedFile={row.original.filename}

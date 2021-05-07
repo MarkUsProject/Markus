@@ -22,7 +22,7 @@ class FeedbackFilePolicy < ApplicationPolicy
       end
     elsif user.ta?
       grouping.tas.pluck(:id).include? user.id
-    else  # user.admin?
+    else # user.admin?
       true
     end
   end

@@ -669,14 +669,17 @@ class Grouping < ApplicationRecord
     # per test_group_result.
     feedback_files = FeedbackFile.joins(test_group_result: [:test_run, :test_group])
                                  .where('test_runs.id': hash_list.map { |h| h['test_runs.id'] })
-                                 .pluck_to_hash('feedback_files.id AS id', 'feedback_files.filename',
-                                                'feedback_files.mime_type AS type',
-                                                'test_runs.id', 'test_groups.name')
+                                 .pluck_to_hash(:id, :filename, 'test_runs.id', 'test_groups.name')
                                  .group_by { |f| [f['test_runs.id'], f['test_groups.name']] }
 
     hash_list.each do |h|
       h['feedback_files'] = feedback_files[[h['test_runs.id'], h['test_groups.name']]] || []
+      h['feedback_files'].each do |f|
+        f['type'] = SubmissionFile.get_file_type(f['filename'])
+      end
     end
+
+    hash_list
   end
 
   def self.group_hash_list(hash_list)
