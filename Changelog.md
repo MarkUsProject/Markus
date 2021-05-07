@@ -3,6 +3,8 @@
 - Modify Result.get_total_extra_marks to differentiate between having extra marks that sum to zero and
   having no extra marks (#5220)
 - Add copy to clipboard button for plaintext submission files in Results view (#5223)
+
+## [v1.12.3]
 - Add workaround for content security policy to allow loading blobs in Safari (#5273)
 
 ## [v1.12.2]
