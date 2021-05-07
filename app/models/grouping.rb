@@ -48,7 +48,7 @@ class Grouping < ApplicationRecord
 
   has_many :test_runs, -> { order(created_at: :desc) }, dependent: :destroy
   has_many :test_runs_all_data,
-           -> { left_outer_joins(:user, test_group_results: [:test_group, :test_results]).order(created_at: :desc) },
+           -> { includes(:user, test_group_results: [:test_group, :test_results]).order(created_at: :desc) },
            class_name: 'TestRun'
 
   has_one :inviter_membership,

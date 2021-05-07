@@ -10,11 +10,12 @@ class AutotestResultsJob < ApplicationJob
   end
 
   around_perform do |job, block|
-    self.class.set(wait: 1.minute).perform_later(*job.arguments) if block.call
+    self.class.perform_later(*job.arguments) if block.call
   rescue StandardError
     # if the job failed, retry 3 times
     kwargs = job.arguments.first || { _retry: 3 }
-    self.class.set(wait: 1.minute).perform_later(_retry: kwargs[:_retry] - 1) if kwargs[:_retry] > 0
+    self.class.perform_later(_retry: kwargs[:_retry] - 1) if kwargs[:_retry] > 0
+    raise
   end
 
   def self.show_status(_status); end
@@ -31,6 +32,7 @@ class AutotestResultsJob < ApplicationJob
       test_runs = TestRun.where(id: test_run_ids)
       statuses(assignment, test_runs).each do |autotest_test_id, status|
         # statuses from rq: https://python-rq.org/docs/jobs/#retrieving-a-job-from-redis
+        status = 'not_found' if status.nil?
         if %(started queued deferred).include? status
           outstanding_results = true
         else
