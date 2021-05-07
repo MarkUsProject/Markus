@@ -49,6 +49,8 @@ fr:
         manage?: UPDATE ME.
       extension:
         manage?: UPDATE ME.
+      feedback_file:
+        show?: UPDATE ME.
       grade_entry_form:
         grade?: UPDATE ME.
         manage?: UPDATE ME.
@@ -111,7 +113,6 @@ fr:
       submission:
         before_release?: Les notes pour ce test sont déjà montré aux étudiants.
         file_manager?: UPDATE ME.
-        get_feedback_file?: UPDATE ME.
         manage?: UPDATE ME.
         manage_files?: UPDATE ME.
         manage_subdirectories?: Vous n'êtes pas autorisé à créer, supprimer ou modifier des dossiers.

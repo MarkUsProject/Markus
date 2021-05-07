@@ -420,15 +420,6 @@ class SubmissionsController < ApplicationController
     end
   end
 
-  def get_feedback_file
-    assignment = Assignment.find(params[:assignment_id])
-    submission = assignment.submissions.find(params[:id])
-    authorize! submission
-
-    feedback_file = submission.feedback_files.find(params[:feedback_file_id])
-    send_data_download feedback_file.file_content, filename: feedback_file.filename
-  end
-
   def download
     @assignment = Assignment.find(params[:assignment_id])
     # find_appropriate_grouping can be found in SubmissionsHelper

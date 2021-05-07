@@ -1,8 +1,6 @@
 # Policy for FeedbackFilesController
 class FeedbackFilePolicy < ApplicationPolicy
-  default_rule :manage?
-
-  def manage?
+  def show?
     feedback_file = record
     grouping = feedback_file.grouping
 
