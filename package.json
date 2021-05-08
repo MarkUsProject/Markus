@@ -8,7 +8,7 @@
     "dompurify": "^2.2.8",
     "heic2any": "^0.0.3",
     "i18n-js": "^3.8.0",
-    "jcrop": "^0.0.1",
+    "jcrop": "^3.0.1",
     "jquery": "^3.6.0",
     "marked": "^2.0.3",
     "mime-types": "^2.1.30",
