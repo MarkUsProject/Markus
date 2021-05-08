@@ -16,22 +16,22 @@ describe GradeEntryFormsController do
       allow(controller).to receive(:current_user).and_return(build(:admin))
 
       @file_invalid_username =
-        fixture_file_upload('files/grade_entry_forms/invalid_username.csv',
+        fixture_file_upload('grade_entry_forms/invalid_username.csv',
                             'text/csv')
       @file_extra_column =
-        fixture_file_upload('files/grade_entry_forms/extra_column.csv',
+        fixture_file_upload('grade_entry_forms/extra_column.csv',
                             'text/csv')
       @file_different_total =
-        fixture_file_upload('files/grade_entry_forms/different_total.csv',
+        fixture_file_upload('grade_entry_forms/different_total.csv',
                             'text/csv')
       @file_good =
-        fixture_file_upload('files/grade_entry_forms/good.csv',
+        fixture_file_upload('grade_entry_forms/good.csv',
                             'text/csv')
       @file_good_overwrite =
-        fixture_file_upload('files/grade_entry_forms/good_overwrite.csv',
+        fixture_file_upload('grade_entry_forms/good_overwrite.csv',
                             'text/csv')
 
-      @file_total_included = fixture_file_upload('files/grade_entry_forms/total_column_included.csv', 'text/csv')
+      @file_total_included = fixture_file_upload('grade_entry_forms/total_column_included.csv', 'text/csv')
 
       @student = grade_entry_form_with_data.grade_entry_students.joins(:user).find_by('users.user_name': 'c8shosta')
       @original_item = grade_entry_form_with_data.grade_entry_items.first

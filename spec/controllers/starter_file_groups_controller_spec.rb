@@ -107,7 +107,7 @@ describe StarterFileGroupsController do
     let(:delete_folders) { [] }
     let(:delete_files) { [] }
     let(:new_files) { [] }
-    let(:zipfile) { fixture_file_upload(File.join('/files', 'test_zip.zip'), 'application/zip') }
+    let(:zipfile) { fixture_file_upload('test_zip.zip', 'application/zip') }
     let(:starter_file_group) { create :starter_file_group_with_entries, assignment: assignment }
     subject do
       put_as user, :update_files, params: { assignment_id: assignment.id,

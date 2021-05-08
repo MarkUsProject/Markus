@@ -53,10 +53,7 @@ describe GradersController do
         # Contents: test_group,g9browni,g9younas
         #           second_test_group,g9browni
         #           Group 3,c7benjam
-        @group_grader_map_file = fixture_file_upload(
-          File.join('group_csvs',
-                    'group_grader_map.csv')
-        )
+        @group_grader_map_file = fixture_file_upload('group_csvs/group_grader_map.csv')
       end
 
       it 'and all graders and groups are valid' do
@@ -157,9 +154,7 @@ describe GradersController do
         # Contents: correctness,g9browni,g9younas
         #           style,g9browni
         #           class design,c7benjam
-        @criteria_grader_map_file = fixture_file_upload(
-          File.join('group_csvs',
-                    'criteria_grader_map.csv'))
+        @criteria_grader_map_file = fixture_file_upload('group_csvs/criteria_grader_map.csv')
       end
 
       context 'with rubric criteria' do

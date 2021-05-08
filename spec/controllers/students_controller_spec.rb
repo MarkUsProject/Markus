@@ -27,28 +27,28 @@ describe StudentsController do
       it 'creates grade_entry_students as well' do
         create :grade_entry_form
         post :upload, params: {
-          upload_file: fixture_file_upload('files/students/form_good.csv', 'text/csv')
+          upload_file: fixture_file_upload('students/form_good.csv', 'text/csv')
         }
         expect(GradeEntryStudent.all.count).to eq(2)
       end
 
       it 'reports validation errors' do
         post :upload, params: {
-          upload_file: fixture_file_upload('files/students/form_invalid_record.csv', 'text/csv')
+          upload_file: fixture_file_upload('students/form_invalid_record.csv', 'text/csv')
         }
         expect(flash[:error]).not_to be_nil
       end
 
       it 'does not create users when validation errors occur' do
         post :upload, params: {
-          upload_file: fixture_file_upload('files/students/form_invalid_record.csv', 'text/csv')
+          upload_file: fixture_file_upload('students/form_invalid_record.csv', 'text/csv')
         }
         expect(Student.all.count).to be 0
       end
 
       it 'accepts a valid file' do
         post :upload, params: {
-          upload_file: fixture_file_upload('files/students/form_good.csv', 'text/csv')
+          upload_file: fixture_file_upload('students/form_good.csv', 'text/csv')
         }
 
         expect(response.status).to eq(302)
@@ -65,7 +65,7 @@ describe StudentsController do
 
       it 'does not accept files with invalid columns' do
         post :upload, params: {
-          upload_file: fixture_file_upload('files/students/form_invalid_column.csv', 'text/csv')
+          upload_file: fixture_file_upload('students/form_invalid_column.csv', 'text/csv')
         }
 
         expect(response.status).to eq(302)
