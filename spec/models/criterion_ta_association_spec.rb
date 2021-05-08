@@ -13,29 +13,29 @@ describe CriterionTaAssociation do
     let(:criterion) { create :flexible_criterion, name: 'criteria1' }
     let!(:cta) { create :criterion_ta_association, criterion: criterion, ta: grader2 }
     it 'should remove existing criterion ta associations' do
-      file = file_fixture('files/criteria_ta_association/simple.csv')
+      file = file_fixture('criteria_ta_association/simple.csv')
       CriterionTaAssociation.from_csv(cta.assignment, file, true)
       expect { cta.reload }.to raise_error ActiveRecord::RecordNotFound
     end
     it 'should create new criterion ta associations' do
-      file = file_fixture('files/criteria_ta_association/simple.csv')
+      file = file_fixture('criteria_ta_association/simple.csv')
       CriterionTaAssociation.from_csv(cta.assignment, file, true)
       expect(CriterionTaAssociation.find_by_ta_id_and_criterion_id(grader.id, criterion.id)).not_to be_nil
     end
     it 'should not create a ta that does not exist' do
-      file = file_fixture('files/criteria_ta_association/bad_ta.csv')
+      file = file_fixture('criteria_ta_association/bad_ta.csv')
       expect { CriterionTaAssociation.from_csv(cta.assignment, file, false) }.not_to(
           change { CriterionTaAssociation.count }
       )
     end
     it 'should not create a criterion that does not exist' do
-      file = file_fixture('files/criteria_ta_association/bad_criterion.csv')
+      file = file_fixture('criteria_ta_association/bad_criterion.csv')
       expect { CriterionTaAssociation.from_csv(cta.assignment, file, false) }.not_to(
           change { CriterionTaAssociation.count }
       )
     end
     it 'should update criterion coverage counts' do
-      file = file_fixture('files/criteria_ta_association/simple.csv')
+      file = file_fixture('criteria_ta_association/simple.csv')
       grouping = create(:grouping, assignment: criterion.assignment)
       create :ta_membership, grouping: grouping, user: grader
       expect { CriterionTaAssociation.from_csv(cta.assignment, file, false) }.to(
@@ -43,7 +43,7 @@ describe CriterionTaAssociation do
       )
     end
     it 'should update assigned groups counts' do
-      file = file_fixture('files/criteria_ta_association/simple.csv')
+      file = file_fixture('criteria_ta_association/simple.csv')
       grouping = create(:grouping, assignment: criterion.assignment)
       create :ta_membership, grouping: grouping, user: grader
       expect { CriterionTaAssociation.from_csv(cta.assignment, file, false) }.to(

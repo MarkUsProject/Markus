@@ -19,7 +19,7 @@ describe KeyPairsController do
     shared_examples 'key_pair_create' do
       context 'a valid key' do
         let(:key) { 'ssh-rsa aaaaa' }
-        let(:key_file) { 'files/key_pairs/id_rsa.good.pub' }
+        let(:key_file) { 'key_pairs/id_rsa.good.pub' }
         it 'should respond with success' do
           is_expected.to respond_with(:redirect)
         end
@@ -32,7 +32,7 @@ describe KeyPairsController do
       end
       context 'an invalid key' do
         let(:key) { 'aaaaa' }
-        let(:key_file) { 'files/key_pairs/id_rsa.bad.pub' }
+        let(:key_file) { 'key_pairs/id_rsa.bad.pub' }
         it 'should render new' do
           expect(response).to render_template(:new)
         end

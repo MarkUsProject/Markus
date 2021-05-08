@@ -170,7 +170,7 @@ describe GroupsController do
         expect do
           post :upload, params: {
             assignment_id: @assignment.id,
-            upload_file: fixture_file_upload('files/groups/form_good.csv', 'text/csv')
+            upload_file: fixture_file_upload('groups/form_good.csv', 'text/csv')
           }
         end.to have_enqueued_job(CreateGroupsJob)
         expect(response.status).to eq(302)
@@ -181,7 +181,7 @@ describe GroupsController do
       it 'does not accept files with invalid columns' do
         post :upload, params: {
           assignment_id: @assignment.id,
-          upload_file: fixture_file_upload('files/groups/form_invalid_column.csv', 'text/csv')
+          upload_file: fixture_file_upload('groups/form_invalid_column.csv', 'text/csv')
         }
 
         expect(response.status).to eq(302)
