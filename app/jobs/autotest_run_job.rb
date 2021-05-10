@@ -1,3 +1,4 @@
+# Job to run autotest tests
 class AutotestRunJob < AutotestJob
   def self.show_status(_status)
     I18n.t('poll_job.autotest_run_job_enqueuing')

@@ -246,7 +246,7 @@ module AutomatedTestsHelper
       req = Net::HTTP::Get.new(uri)
       set_headers(req)
       res = send_request(req, uri)
-      raise LimitExceededException.new if res.code == '429'
+      raise LimitExceededException if res.code == '429'
       if res.is_a?(Net::HTTPSuccess)
         test_run.update_results!(JSON.parse(res.body))
       else
