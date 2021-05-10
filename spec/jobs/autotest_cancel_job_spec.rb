@@ -33,6 +33,7 @@ describe AutotestCancelJob do
         subject
         expect(test_runs.map { |t| t.reload.status }.uniq).to contain_exactly('cancelled')
       end
+      include_examples 'autotest jobs'
     end
     context 'tests are not set up' do
       it 'should raise an error' do

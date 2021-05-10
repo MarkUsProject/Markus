@@ -39,6 +39,9 @@ describe AutotestResultsJob do
     subject { described_class.perform_now }
     context 'tests are set up for an assignment' do
       let(:assignment) { create :assignment, assignment_properties_attributes: { autotest_settings_id: 10 } }
+      let(:dummy_return) { Net::HTTPSuccess.new(1.0, '200', 'OK') }
+      let(:body) { '{}' }
+      before { allow(dummy_return).to receive(:body) { body } }
       context 'when getting the statuses of the tests' do
         it 'should set headers' do
           expect_any_instance_of(AutotestResultsJob).to receive(:send_request!) do |_job, net_obj|
@@ -53,9 +56,11 @@ describe AutotestResultsJob do
             expect(net_obj.instance_of?(Net::HTTP::Get)).to be true
             expect(uri.to_s).to eq "#{Settings.autotest.url}/settings/10/tests/status"
             expect(JSON.parse(net_obj.body)['test_ids']).to contain_exactly(1, 2, 3)
+            dummy_return
           end
           subject
         end
+        include_examples 'autotest jobs'
       end
       context 'after getting the statuses of the tests' do
         before { allow_any_instance_of(AutotestResultsJob).to receive(:statuses).and_return(status_return) }
@@ -63,16 +68,15 @@ describe AutotestResultsJob do
         shared_examples 'rescheduling a job' do
           before { allow_any_instance_of(AutotestResultsJob).to receive(:results) }
           it 'should schedule another job in a minute' do
-            expect(AutotestResultsJob).to receive(:set).with(wait: 1.minute).once.and_call_original
+            expect(AutotestResultsJob).to receive(:set).with(wait: 5.seconds).once.and_call_original
             expect_any_instance_of(ActiveJob::ConfiguredJob).to receive(:perform_later).once
             subject
           end
         end
         shared_examples 'getting results' do
-          let(:dummy_return) { OpenStruct.new(body: '{}') }
           context 'a successful request' do
-            before { allow_any_instance_of(OpenStruct).to receive(:instance_of?).and_return(true) }
             it 'should set headers' do
+              allow_any_instance_of(TestRun).to receive(:update_results!)
               expect_any_instance_of(AutotestResultsJob).to receive(:send_request) do |_job, net_obj|
                 expect(net_obj['Api-Key']).to eq '123456789'
                 expect(net_obj['Content-Type']).to eq 'application/json'
@@ -81,6 +85,7 @@ describe AutotestResultsJob do
               subject
             end
             it 'should send an api request to the autotester' do
+              allow_any_instance_of(TestRun).to receive(:update_results!)
               expect_any_instance_of(AutotestResultsJob).to receive(:send_request) do |_job, net_obj, uri|
                 expect(net_obj.instance_of?(Net::HTTP::Get)).to be true
                 expect(uri.to_s).to eq "#{Settings.autotest.url}/settings/10/test/2"
@@ -97,8 +102,8 @@ describe AutotestResultsJob do
             end
           end
           context 'an unsuccessful request' do
+            let(:dummy_return) { Net::HTTPServerError.new(1.0, '500', 'Server Error') }
             before do
-              allow_any_instance_of(OpenStruct).to receive(:is_a?).and_return(false)
               allow_any_instance_of(AutotestResultsJob).to receive(:send_request).and_return(dummy_return)
             end
             it 'should call failure for the test_run' do
@@ -142,9 +147,7 @@ describe AutotestResultsJob do
     end
     context 'tests are not set up' do
       it 'should try again with reduced retries' do
-        expect(AutotestResultsJob).to receive(:set).with(wait: 1.minute).once.and_call_original
-        expect_any_instance_of(ActiveJob::ConfiguredJob).to receive(:perform_later).with(_retry: 2).once
-        subject
+        expect { subject }.to raise_error(I18n.t('automated_tests.settings_not_setup'))
       end
     end
   end

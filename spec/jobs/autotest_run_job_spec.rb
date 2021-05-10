@@ -62,8 +62,7 @@ describe AutotestRunJob do
         end
       end
       it 'should enqueue an AutotestResultsJob job' do
-        expect(AutotestResultsJob).to receive(:set).with(wait: 1.minute).once.and_call_original
-        expect_any_instance_of(ActiveJob::ConfiguredJob).to receive(:perform_later).once
+        expect(AutotestResultsJob).to receive(:perform_later).once
         subject
       end
       it 'should send an api request to the autotester' do
@@ -74,6 +73,7 @@ describe AutotestRunJob do
         end
         subject
       end
+      include_examples 'autotest jobs'
       context 'when collected is true' do
         it 'should send the correct url' do
           file_urls = groups.map do |group|

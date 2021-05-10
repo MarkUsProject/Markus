@@ -51,6 +51,7 @@ describe AutotestSpecsJob do
         subject
       end
       include_examples 'autotest specs job'
+      include_examples 'autotest jobs'
     end
     context 'tests are not set up for an assignment' do
       it 'should send an api request to the autotester' do

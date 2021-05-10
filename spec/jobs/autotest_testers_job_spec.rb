@@ -40,5 +40,6 @@ describe AutotestTestersJob do
         expect { subject }.to raise_error(JSON::ParserError)
       end
     end
+    include_examples 'autotest jobs'
   end
 end

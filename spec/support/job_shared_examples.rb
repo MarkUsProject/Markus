@@ -24,3 +24,19 @@ shared_examples 'background job' do
     #       of a way to check this in a test environment.
   end
 end
+
+shared_examples 'autotest jobs' do
+  xcontext 'and the rate limit has been hit' do
+    # TODO: callbacks are not called when calling perform_now. Figure out a better way to test this
+    before do
+      allow_any_instance_of(described_class).to receive(:send_request).and_raise(
+        AutomatedTestsHelper::AutotestApi::LimitExceededException
+      )
+    end
+    it 'reschedules the job one minute later' do
+      expect(described_class).to receive(:set).with(wait: 1.minute).once.and_call_original
+      expect_any_instance_of(ActiveJob::ConfiguredJob).to receive(:perform_later).once
+      subject
+    end
+  end
+end
