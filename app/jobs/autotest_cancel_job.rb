@@ -1,6 +1,4 @@
-class AutotestCancelJob < ApplicationJob
-  include AutomatedTestsHelper::AutotestApi
-
+class AutotestCancelJob < AutotestJob
   def self.on_complete_js(_status)
     'window.BatchTestRunTable.fetchData'
   end

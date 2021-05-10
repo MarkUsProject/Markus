@@ -130,6 +130,8 @@ module AutomatedTestsHelper
     AUTOTEST_USERNAME = "markus_#{Rails.application.config.action_controller.relative_url_root}".freeze
     AUTOTEST_KEY_FILE = File.join(::Rails.root, 'config', 'autotest.api_key').freeze
 
+    class LimitExceededException < StandardError; end
+
     def register
       test_server = TestServer.find_or_create
       uri = URI("#{Settings.autotest.url}/register")
@@ -244,6 +246,7 @@ module AutomatedTestsHelper
       req = Net::HTTP::Get.new(uri)
       set_headers(req)
       res = send_request(req, uri)
+      raise LimitExceededException.new if res.code == '429'
       if res.is_a?(Net::HTTPSuccess)
         test_run.update_results!(JSON.parse(res.body))
       else
@@ -260,6 +263,7 @@ module AutomatedTestsHelper
     def send_request!(req, uri)
       res = send_request(req, uri)
       unless res.is_a?(Net::HTTPSuccess)
+        raise LimitExceededException if res.code == '429'
         begin
           raise JSON.parse(res.body)['message']
         rescue JSON::ParserError

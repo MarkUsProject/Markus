@@ -1,8 +1,6 @@
 # Checks the status of in_progress test runs and gets the results
 # of completed tests
-class AutotestResultsJob < ApplicationJob
-  include AutomatedTestsHelper::AutotestApi
-
+class AutotestResultsJob < AutotestJob
   around_enqueue do |job, block|
     redis = Redis::Namespace.new(Rails.root.to_s)
     block.call if redis.setnx('autotest_results', job.job_id)
@@ -10,7 +8,7 @@ class AutotestResultsJob < ApplicationJob
   end
 
   around_perform do |job, block|
-    self.class.perform_later(*job.arguments) if block.call
+    self.class.set(wait: 5.seconds).perform_later(*job.arguments) if block.call
   rescue StandardError
     # if the job failed, retry 3 times
     kwargs = job.arguments.first || { _retry: 3 }

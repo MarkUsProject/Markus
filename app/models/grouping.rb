@@ -48,7 +48,7 @@ class Grouping < ApplicationRecord
 
   has_many :test_runs, -> { order(created_at: :desc) }, dependent: :destroy
   has_many :test_runs_all_data,
-           -> { includes(:user, test_group_results: [:test_group, :test_results]).order(created_at: :desc) },
+           -> { left_outer_joins(:user, test_group_results: [:test_group, :test_results]).order(created_at: :desc) },
            class_name: 'TestRun'
 
   has_one :inviter_membership,
@@ -659,10 +659,13 @@ class Grouping < ApplicationRecord
   end
 
   def self.pluck_test_runs(assoc)
+    # Active record tries to convert the test_results.status values based on the test_run.status
+    # enum conversion. In order to prevent this, we have to rename test_results.status so that it
+    # doesn't trigger this conversion.
     fields = ['test_runs.id', 'test_runs.created_at', 'test_runs.problems', 'users.user_name', 'test_groups.name',
               'test_groups.display_output', 'test_group_results.extra_info', 'test_group_results.time',
-              'test_results.name', 'test_results.status', 'test_results.marks_earned', 'test_results.marks_total',
-              'test_results.output', 'test_results.time', 'test_runs.status']
+              'test_results.name', 'test_results.status as test_results_status', 'test_results.marks_earned',
+              'test_results.marks_total', 'test_results.output', 'test_results.time', 'test_runs.status']
     hash_list = assoc.pluck_to_hash(*fields)
 
     # Add feedback files. This has to be done separately because there can be multiple feedback files
