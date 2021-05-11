@@ -26,8 +26,8 @@ en:
     test_runs_statuses:
       cancelled: cancelled
       complete: complete
-      in_progress: in progress
       failed: error
+      in_progress: in progress
     testing_disabled: Automated testing is not enabled for this assignment.
     tests_running: Running tests. Please refresh this page in a bit to view the results.
     title: Automated Testing

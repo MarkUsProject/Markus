@@ -26,8 +26,8 @@ es:
     test_runs_statuses:
       cancelled: UPDATE ME
       complete: UPDATE ME
-      in_progress: UPDATE ME
       failed: UPDATE ME
+      in_progress: UPDATE ME
     testing_disabled: Las Pruebas Automatizadas no están habilitadas para este proyecto.
     tests_running: Lanzar pruebas. Por favor vuelva a cargar esta página para ver los resultados.
     title: Pruebas Automatizadas

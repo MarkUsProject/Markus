@@ -26,8 +26,8 @@ pt:
     test_runs_statuses:
       cancelled: UPDATE ME
       complete: UPDATE ME
-      in_progress: UPDATE ME
       failed: UPDATE ME
+      in_progress: UPDATE ME
     testing_disabled: UPDATE ME
     tests_running: UPDATE ME
     title: UPDATE ME
