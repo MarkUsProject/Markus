@@ -1,16 +1,5 @@
 ---
 es:
-  csv:
-    bad_cell: 'UPDATE ME: %{bad_cells}'
-    bad_membership_warning: 'UPDATE ME: %{group_names}'
-    bad_students: 'UPDATE ME: %{student_names}'
-    duplicate_group_name: 'UPDATE ME: %{group_names}'
-    duplicate_membership_name: 'UPDATE ME: %{member_names}'
-    member_does_not_exist: 'Error: El grupo %{group_name} no puede ser creado debido a que ningún estudiante tiene como nombre de usuario ''%{student_user_name}'''
-    memberships_exist: 'UPDATE ME: %{student_names}'
-    memberships_not_unique: El estudiante ya pertenece a un grupo diferente para el proyecto
-    repo_collision_warning: 'Precaución: El repositorio con nombre ''%{repo_name}'' ya existe. El nombre del grupo era: ''%{group_name}''.'
-  csv_upload_user_duplicate: 'Se ha detectado un nombre de usuario duplicado: %{user_name}'
   date_validator:
     invalid_date: no es una fecha válida
   job_poller:

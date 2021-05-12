@@ -34,4 +34,7 @@ fr:
     api_key:
       reset: Générer une nouvelle clé
       unavailable: Non disponible
+    upload:
+      errors:
+        duplicate_users: 'Nom d''utilisateur déjà inscrit (conflit) : %{user_names}.'
     verify_settings_update: UPDATE ME

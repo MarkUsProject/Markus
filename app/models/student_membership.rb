@@ -79,7 +79,7 @@ class StudentMembership < Membership
                           .where('groupings.assessment_id': grouping.assessment_id)
     return if all_memberships.empty? || all_memberships.find_by(id: self.id)
 
-    errors.add(:base, I18n.t('csv.memberships_not_unique'))
+    errors.add(:base, :memberships_not_unique)
     throw(:abort)
   end
 end

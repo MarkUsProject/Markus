@@ -86,4 +86,11 @@ fr:
       working_alone: Vous avez demandé à travailler seul sur cette mission. Si vous changez d'avis et souhaitez former ou rejoindre un groupe, d'abord supprimer votre groupe.
       your_group: Votre groupe
     unassigned_students: Non assigné(s)
+    upload:
+      errors:
+        duplicate_group_name: 'UPDATE ME: %{group_names}'
+        duplicate_membership_name: 'UPDATE ME: %{member_names}'
+        inconsistent_membership: 'UPDATE ME: %{group_names}'
+        memberships_exist: 'UPDATE ME: %{student_names}'
+        unknown_students: 'UPDATE ME: %{student_names}'
     validate_confirm: Ceci autorisera ce groupe à poster sans avoir le nombre requis d'étudiants. Est-ce correct ?
