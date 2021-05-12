@@ -51,7 +51,7 @@ describe StudentsController do
           upload_file: fixture_file_upload('students/form_good.csv', 'text/csv')
         }
 
-        expect(response.status).to eq(302)
+        expect(response).to have_http_status :found
         expect(flash[:error]).to be_nil
         expect(response).to redirect_to action: 'index'
 
@@ -68,12 +68,28 @@ describe StudentsController do
           upload_file: fixture_file_upload('students/form_invalid_column.csv', 'text/csv')
         }
 
-        expect(response.status).to eq(302)
+        expect(response).to have_http_status :found
         expect(flash[:error]).to_not be_empty
         expect(response).to redirect_to action: 'index'
 
         expect(Student.where(last_name: 'Antheil')).to be_empty
         expect(Student.where(user_name: 'c5bennet')).to be_empty
+      end
+
+      it 'reports an error when given a file with duplicate user names' do
+        post :upload, params: {
+          upload_file: fixture_file_upload('students/form_duplicated.csv', 'text/csv')
+        }
+
+        expect(response).to have_http_status :found
+        expect(flash[:error]).to_not be_empty
+        expect(response).to redirect_to action: 'index'
+
+        # The first student was still created
+        student = Student.find_by(user_name: 'c5anthei')
+        expect(student).to_not be_nil
+        expect(student.first_name).to eq 'George'
+        expect(student.last_name).to eq 'Antheil'
       end
     end
 

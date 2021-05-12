@@ -19,7 +19,7 @@ class CreateGroupsJob < ApplicationJob
             # A member in the members list is not a User in the database
             all_users = Set.new students.pluck(:user_name)
             bad_names = (Set.new(members) - all_users).to_a.join(', ')
-            msg = I18n.t('csv.member_does_not_exist', group_name: group_name, student_user_name: bad_names)
+            msg = I18n.t('groups.upload.errors.unknown_students', student_names: bad_names)
             status.update(error_message: msg)
             Rails.logger.error msg
             raise ActiveRecord::Rollback
