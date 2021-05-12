@@ -242,13 +242,16 @@ module AutomatedTestsHelper
       raise I18n.t('automated_tests.settings_not_setup') unless assignment.autotest_settings_id
 
       test_id = test_run.autotest_test_id
-      uri = URI("#{Settings.autotest.url}/settings/#{assignment.autotest_settings_id}/test/#{test_id}")
+      settings_id = assignment.autotest_settings_id
+      uri = URI("#{Settings.autotest.url}/settings/#{settings_id}/test/#{test_id}")
       req = Net::HTTP::Get.new(uri)
       set_headers(req)
       res = send_request(req, uri)
       raise LimitExceededException if res.code == '429'
       if res.is_a?(Net::HTTPSuccess)
-        test_run.update_results!(JSON.parse(res.body))
+        results = JSON.parse(res.body)
+        add_feedback_data(results, settings_id, test_id)
+        test_run.update_results!(results)
       else
         test_run.failure(res.body)
       end
@@ -283,6 +286,21 @@ module AutomatedTestsHelper
         host_with_port
       else
         host_with_port + Rails.application.config.action_controller.relative_url_root
+      end
+    end
+
+    def add_feedback_data(results, settings_id, test_id)
+      results['test_groups'].each do |result|
+        next if result['feedback'].nil?
+
+        feedback_id = result['feedback']['id']
+        next if feedback_id.nil?
+
+        uri = URI("#{Settings.autotest.url}/settings/#{settings_id}/test/#{test_id}/feedback/#{feedback_id}")
+        req = Net::HTTP::Get.new(uri)
+        set_headers(req)
+        res = send_request!(req, uri)
+        result['feedback']['content'] = res.body
       end
     end
   end

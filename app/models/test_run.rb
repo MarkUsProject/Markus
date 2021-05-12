@@ -26,6 +26,7 @@ class TestRun < ApplicationRecord
       self.update!(status: :complete, problems: results['error'])
       results['test_groups'].each do |result|
         error = nil
+        test_group_result = nil
         ApplicationRecord.transaction do
           test_group_result = create_test_group_result(result)
           result['tests'].each do |test|
@@ -42,7 +43,9 @@ class TestRun < ApplicationRecord
           error = e
           raise ActiveRecord::Rollback
         end
-        create_test_group_result(result, error: error) unless error.nil?
+        test_group_result = create_test_group_result(result, error: error) unless error.nil?
+        create_annotations(result['annotations'])
+        create_feedback_file(result['feedback'], test_group_result)
       end
     end
   end
@@ -82,5 +85,48 @@ class TestRun < ApplicationRecord
       time: result['time'] || 0,
       error_type: error.nil? ? error_type(result) : TestGroupResult::ERROR_TYPE[:test_error]
     )
+  end
+
+  def create_feedback_file(feedback_data, test_group_result)
+    return if feedback_data.nil? || test_group_result.nil?
+
+    test_group_result.feedback_files.create(
+      filename: feedback_data['filename'],
+      mime_type: feedback_data['mime_type'],
+      file_content: unzip_file_data(feedback_data)
+    )
+  end
+
+  def create_annotations(annotation_data)
+    return if annotation_data.nil? || self.submission.nil? # don't create annotations for student run tests
+
+    count = self.submission.annotations.count + 1
+    annotation_data.each_with_index do |data, i|
+      annotation_text = AnnotationText.create(
+        content: data['content'],
+        annotation_category_id: nil,
+        creator_id: self.user.id,
+        last_editor_id: self.user.id
+      )
+      result = self.submission.current_result
+      TextAnnotation.create(
+        line_start: data['line_start'],
+        line_end: data['line_end'],
+        column_start: data['column_start'],
+        column_end: data['column_end'],
+        annotation_text_id: annotation_text.id,
+        submission_file_id: submission.submission_files.find_by(filename: data['filename']).id,
+        creator_id: self.user.id,
+        creator_type: self.user.type,
+        is_remark: !result.remark_request_submitted_at.nil?,
+        annotation_number: count + i,
+        result_id: result.id
+      )
+    end
+  end
+
+  def unzip_file_data(file_data)
+    return ActiveSupport::Gzip.decompress(file_data['content']) if file_data['compression'] == 'gzip'
+    file_data['content']
   end
 end
