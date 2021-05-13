@@ -86,7 +86,7 @@ class GitRepository < Repository::AbstractRepository
         FileUtils.ln_s(hook_script, File.join(barepath, 'hooks', hook_symbol.to_s))
       end
       max_file_size_file = ::Rails.root + 'lib' + 'repo' + 'git_hooks' + 'max_file_size'
-      File.ln_s(max_file_size_file, File.join(barepath, 'hooks', 'max_file_size'))
+      FileUtils.ln_s(max_file_size_file, File.join(barepath, 'hooks', 'max_file_size'))
 
       GitRepository.do_commit_and_push(repo, 'Markus', I18n.t('repo.commits.initial'))
     end
