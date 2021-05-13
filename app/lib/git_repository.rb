@@ -89,6 +89,9 @@ class GitRepository < Repository::AbstractRepository
       FileUtils.ln_s(max_file_size_file, File.join(barepath, 'hooks', 'max_file_size'))
 
       GitRepository.do_commit_and_push(repo, 'Markus', I18n.t('repo.commits.initial'))
+    rescue StandardError
+      FileUtils.rm_rf(barepath)
+      raise
     end
     true
   end
