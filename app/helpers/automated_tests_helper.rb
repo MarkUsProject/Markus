@@ -132,6 +132,8 @@ module AutomatedTestsHelper
 
     class LimitExceededException < StandardError; end
 
+    # Register this MarkUs instance with the autotester by sending a unique user name and credentials that
+    # the autotester can use to make get requests to MarkUs' API
     def register
       test_server = TestServer.find_or_create
       uri = URI("#{Settings.autotest.url}/register")
@@ -144,6 +146,7 @@ module AutomatedTestsHelper
       File.write(AUTOTEST_KEY_FILE, JSON.parse(res.body)['api_key'])
     end
 
+    # Send updated credentials to the autotester for this MarkUs instance
     def update_credentials
       test_server = TestServer.find_or_create
       uri = URI("#{Settings.autotest.url}/reset_credentials")
@@ -153,6 +156,8 @@ module AutomatedTestsHelper
       send_request!(req, uri)
     end
 
+    # Get the json schema from the autotester that we can use to render a form using so that users
+    # can customize tests.
     def schema
       uri = URI("#{Settings.autotest.url}/schema")
       req = Net::HTTP::Get.new(uri)
@@ -162,6 +167,8 @@ module AutomatedTestsHelper
       File.write(testers_path, JSON.parse(res.body).to_json)
     end
 
+    # Send settings (result of filling out the schema form and uploading files) to the autotester.
+    # Each assignment can have one or zero settings associated with it on the autotester.
     def update_settings(assignment, host_with_port)
       if assignment.autotest_settings_id
         uri = URI("#{Settings.autotest.url}/settings/#{assignment.autotest_settings_id}")
@@ -182,6 +189,7 @@ module AutomatedTestsHelper
       assignment.update!(autotest_settings_id: autotest_settings_id)
     end
 
+    # Send tests to the autotester to be run.
     def run_tests(assignment, host_with_port, group_ids, user, collected: true, batch: nil)
       raise I18n.t('automated_tests.settings_not_setup') unless assignment.autotest_settings_id
 
@@ -216,6 +224,7 @@ module AutomatedTestsHelper
       end
     end
 
+    # Send a request to the autotester to cancel enqueued tests (will not cancel running tests)
     def cancel_tests(assignment, test_runs)
       raise I18n.t('automated_tests.settings_not_setup') unless assignment.autotest_settings_id
 
@@ -227,6 +236,7 @@ module AutomatedTestsHelper
       test_runs.each(&:cancel)
     end
 
+    # Get the status of tests from the autotester
     def statuses(assignment, test_runs)
       raise I18n.t('automated_tests.settings_not_setup') unless assignment.autotest_settings_id
 
@@ -238,6 +248,8 @@ module AutomatedTestsHelper
       JSON.parse(res.body)
     end
 
+    # Get the results of a test from the autotester. If this is successful, the autotester will discard
+    # the results of the test so all data must be saved.
     def results(assignment, test_run)
       raise I18n.t('automated_tests.settings_not_setup') unless assignment.autotest_settings_id
 
@@ -259,10 +271,12 @@ module AutomatedTestsHelper
 
     private
 
+    # Send an http request
     def send_request(req, uri)
       Net::HTTP.start(uri.hostname, uri.port, use_ssl: uri.scheme == 'https') { |http| http.request(req) }
     end
 
+    # Send an http request and raise an error if the result was not a success
     def send_request!(req, uri)
       res = send_request(req, uri)
       unless res.is_a?(Net::HTTPSuccess)
@@ -276,11 +290,13 @@ module AutomatedTestsHelper
       res
     end
 
+    # Set default authentication and content type headers on the request object.
     def set_headers(req)
       req['Api-Key'] = File.read(AUTOTEST_KEY_FILE).strip
       req['Content-Type'] = 'application/json'
     end
 
+    # Get the current URL for this MarkUs instance (adds the relative url root to +host_with_port+) if it exists.
     def get_markus_address(host_with_port)
       if Rails.application.config.action_controller.relative_url_root.nil?
         host_with_port
@@ -289,6 +305,8 @@ module AutomatedTestsHelper
       end
     end
 
+    # Gets the feedback file data from the autotester for the TestRun with autotest_test_id = +test_id+
+    # and adds it to the +results+ hash.
     def add_feedback_data(results, settings_id, test_id)
       results['test_groups'].each do |result|
         next if result['feedback'].nil?
