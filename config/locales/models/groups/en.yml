@@ -5,6 +5,12 @@ en:
       group:
         group_name: Group name
         student_memberships: Members
+    errors:
+      models:
+        group:
+          attributes:
+            repo_name:
+              taken: Repository %{value} already exists.
     models:
       group:
         one: Group

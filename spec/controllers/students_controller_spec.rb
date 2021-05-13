@@ -27,31 +27,31 @@ describe StudentsController do
       it 'creates grade_entry_students as well' do
         create :grade_entry_form
         post :upload, params: {
-          upload_file: fixture_file_upload('files/students/form_good.csv', 'text/csv')
+          upload_file: fixture_file_upload('students/form_good.csv', 'text/csv')
         }
         expect(GradeEntryStudent.all.count).to eq(2)
       end
 
       it 'reports validation errors' do
         post :upload, params: {
-          upload_file: fixture_file_upload('files/students/form_invalid_record.csv', 'text/csv')
+          upload_file: fixture_file_upload('students/form_invalid_record.csv', 'text/csv')
         }
         expect(flash[:error]).not_to be_nil
       end
 
       it 'does not create users when validation errors occur' do
         post :upload, params: {
-          upload_file: fixture_file_upload('files/students/form_invalid_record.csv', 'text/csv')
+          upload_file: fixture_file_upload('students/form_invalid_record.csv', 'text/csv')
         }
         expect(Student.all.count).to be 0
       end
 
       it 'accepts a valid file' do
         post :upload, params: {
-          upload_file: fixture_file_upload('files/students/form_good.csv', 'text/csv')
+          upload_file: fixture_file_upload('students/form_good.csv', 'text/csv')
         }
 
-        expect(response.status).to eq(302)
+        expect(response).to have_http_status :found
         expect(flash[:error]).to be_nil
         expect(response).to redirect_to action: 'index'
 
@@ -65,15 +65,31 @@ describe StudentsController do
 
       it 'does not accept files with invalid columns' do
         post :upload, params: {
-          upload_file: fixture_file_upload('files/students/form_invalid_column.csv', 'text/csv')
+          upload_file: fixture_file_upload('students/form_invalid_column.csv', 'text/csv')
         }
 
-        expect(response.status).to eq(302)
+        expect(response).to have_http_status :found
         expect(flash[:error]).to_not be_empty
         expect(response).to redirect_to action: 'index'
 
         expect(Student.where(last_name: 'Antheil')).to be_empty
         expect(Student.where(user_name: 'c5bennet')).to be_empty
+      end
+
+      it 'reports an error when given a file with duplicate user names' do
+        post :upload, params: {
+          upload_file: fixture_file_upload('students/form_duplicated.csv', 'text/csv')
+        }
+
+        expect(response).to have_http_status :found
+        expect(flash[:error]).to_not be_empty
+        expect(response).to redirect_to action: 'index'
+
+        # The first student was still created
+        student = Student.find_by(user_name: 'c5anthei')
+        expect(student).to_not be_nil
+        expect(student.first_name).to eq 'George'
+        expect(student.last_name).to eq 'Antheil'
       end
     end
 

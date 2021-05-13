@@ -34,7 +34,7 @@ describe Grouping do
     end
 
     it 'displays Empty Group since no students in the group' do
-      expect(grouping.get_all_students_in_group).to eq('Empty Group')
+      expect(grouping.get_all_students_in_group).to eq(I18n.t('groups.empty'))
     end
 
     it 'creates a subdirectory in the repo for the grouping\'s assignment' do
@@ -1189,6 +1189,22 @@ describe Grouping do
         it 'should not show output data' do
           expect(data[0]['test_data'][0]['test_results.output']).to be_nil
         end
+      end
+
+      it 'should include feedback files associated with the test run' do
+        feedback_file = create :feedback_file_with_test_run, test_group_result: test_run.test_group_results.first
+
+        expected = [
+          {
+            'id' => feedback_file.id,
+            'filename' => feedback_file.filename,
+            'test_runs.id' => test_run.id,
+            'test_groups.name' => test_run.test_group_results.first.test_group.name,
+            'type' => SubmissionFile.get_file_type(feedback_file.filename)
+          }
+        ]
+
+        expect(data[0]['test_data'][0]['feedback_files']).to eq expected
       end
     else
       it 'should not return data' do

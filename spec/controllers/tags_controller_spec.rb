@@ -69,35 +69,10 @@ describe TagsController do
 
     before :each do
       create(:admin, user_name: 'a')
-      # We need to mock the rack file to return its content when
-      # the '.read' method is called to simulate the behaviour of
-      # the http uploaded file
-      @file_good_csv = fixture_file_upload(
-        'files/tags/form_good.csv', 'text/csv'
-      )
-      allow(@file_good_csv).to receive(:read).and_return(
-        File.read(fixture_file_upload(
-                    'files/tags/form_good.csv',
-                    'text/csv'
-                  ))
-      )
 
-      @file_good_yml = fixture_file_upload(
-        'files/tags/form_good.yml', 'text/yaml'
-      )
-      allow(@file_good_yml).to receive(:read).and_return(
-        File.read(fixture_file_upload('files/tags/form_good.yml', 'text/yaml'))
-      )
-
-      @file_invalid_column = fixture_file_upload(
-        'files/tags/form_invalid_column.csv', 'text/csv'
-      )
-      allow(@file_invalid_column).to receive(:read).and_return(
-        File.read(fixture_file_upload(
-                    'files/tags/form_invalid_column.csv',
-                    'text/csv'
-                  ))
-      )
+      @file_good_csv = fixture_file_upload('tags/form_good.csv', 'text/csv')
+      @file_good_yml = fixture_file_upload('tags/form_good.yml', 'text/yaml')
+      @file_invalid_column = fixture_file_upload('tags/form_invalid_column.csv', 'text/csv')
     end
 
     it 'accepts a valid CSV file' do

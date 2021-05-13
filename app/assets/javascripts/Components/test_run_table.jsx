@@ -1,7 +1,9 @@
 import React from 'react';
 import {render} from 'react-dom';
 import ReactTable from 'react-table';
+import {lookup} from 'mime-types';
 import {dateSort} from './Helpers/table_helpers';
+import {FileViewer} from './Result/file_viewer';
 
 
 export class TestRunTable extends React.Component {
@@ -197,6 +199,13 @@ class TestGroupResultTable extends React.Component {
     } else {
       extraInfoDisplay = '';
     }
+    const feedbackFiles = this.props.data[0]['feedback_files'];
+    let feedbackFileDisplay;
+    if (feedbackFiles) {
+      feedbackFileDisplay = <TestGroupFeedbackFileTable data={feedbackFiles}/>;
+    } else {
+      feedbackFileDisplay = '';
+    }
 
     return (
       <div>
@@ -226,8 +235,38 @@ class TestGroupResultTable extends React.Component {
           }
         />
         {extraInfoDisplay}
+        {feedbackFileDisplay}
       </div>
     )
+  }
+}
+
+
+class TestGroupFeedbackFileTable extends React.Component {
+  render() {
+    const columns = [
+      {
+        Header: I18n.t('activerecord.attributes.submission.feedback_files'),
+        accessor: 'filename'
+      },
+    ];
+
+    return (
+      <ReactTable
+        className={'auto-overflow test-result-feedback-files'}
+        data={this.props.data}
+        columns={columns}
+        SubComponent={ row => (
+          <FileViewer
+            selectedFile={row.original.filename}
+            selectedFileURL={Routes.feedback_file_path(row.original.id)}
+            mime_type={lookup(row['filename'])}
+            selectedFileType={row.original.type}
+          />
+        )
+        }
+      />
+    );
   }
 }
 

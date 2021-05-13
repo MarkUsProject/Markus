@@ -1,0 +1,7 @@
+---
+en:
+  activerecord:
+    errors:
+      models:
+        student_membership:
+          memberships_not_unique: The student already belongs to a different group for the current assignment.

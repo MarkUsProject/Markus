@@ -222,7 +222,6 @@ Rails.application.routes.draw do
         post 'repo_browser'
         get 'downloads'
         get 'get_file'
-        get 'get_feedback_file'
       end
 
       resources :results do
@@ -441,6 +440,8 @@ Rails.application.routes.draw do
   end
 
   resources :extensions
+
+  resources :feedback_files, only: [:show]
 
   resources :job_messages, param: :job_id do
     member do

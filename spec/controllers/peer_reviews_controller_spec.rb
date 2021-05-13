@@ -1,5 +1,5 @@
 describe PeerReviewsController do
-  TEMP_CSV_FILE_PATH = 'files/_temp_peer_review.csv'
+  TEMP_CSV_FILE_PATH = '_temp_peer_review.csv'.freeze
 
   before :each do
     @assignment_with_pr = create(:assignment_with_peer_review_and_groupings_results)
@@ -86,8 +86,6 @@ describe PeerReviewsController do
             f.write(@downloaded_text)
           end
           csv_upload = fixture_file_upload(TEMP_CSV_FILE_PATH, 'text/csv')
-          fixture_upload = fixture_file_upload(TEMP_CSV_FILE_PATH, 'text/csv')
-          allow(csv_upload).to receive(:read).and_return(File.read(fixture_upload))
 
           post :upload, params: { assignment_id: @pr_id, upload_file: csv_upload, encoding: 'UTF-8' }
         end

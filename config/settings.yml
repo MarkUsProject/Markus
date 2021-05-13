@@ -7,6 +7,7 @@ rails:
   active_record:
     verbose_query_logs: false
   force_ssl: false
+  cache_store: redis_cache_store
   session_store:
     type: cookie_store
     args:

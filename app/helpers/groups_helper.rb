@@ -2,22 +2,22 @@ module GroupsHelper
   # Run several checks on the data from an uploaded file in order to determine whether to proceed with
   # creating groups based on that file or not. Returns true if any errors are found and displays flash
   # messages describing each error unless +suppress_flash+ is true.
+  # Assumes all entries in +data+ are non-empty.
   def validate_csv_upload_file(assignment, data, suppress_flash: false)
     errors = Hash.new { |h, k| h[k] = [] }
     group_names, students = Set.new, Set.new
     assignment_id = assignment.id
 
     data.each do |group_name, *members|
-      errors[:bad_cell].concat [group_name, *members].select(&:blank?)
       errors[:dup_groups] << group_name if group_names.member?(group_name)
       errors[:dup_members].concat students.intersection(members).to_a
       errors[:dup_members].concat members.group_by(&:itself).values.select { |v| v.size > 1 }.map(&:first)
       group_names << group_name
       students.merge members
     end
-    errors[:inconsistent_group_memberships] += find_bad_group_memberships(data).map(&:first)
-    errors[:bad_students] = find_bad_students(data)
-    errors[:membership_exists] += find_bad_grouping_memberships_query(data, assignment_id).pluck('users.user_name')
+    errors[:inconsistent_group_memberships] = find_bad_group_memberships(data).map(&:first)
+    errors[:unknown_students] = find_unknown_students(data)
+    errors[:membership_exists] = find_bad_grouping_memberships_query(data, assignment_id).pluck('users.user_name')
     flash_csv_upload_file_validation_errors(errors) unless suppress_flash
     errors.values.flatten.empty?
   end
@@ -26,24 +26,25 @@ module GroupsHelper
 
   # Display flash message based errors contained in the +errors+ hash
   def flash_csv_upload_file_validation_errors(errors)
-    unless errors[:bad_cell].empty?
-      flash_message :error, I18n.t('csv.bad_cell', bad_cells: errors[:bad_cell].map { |c| "'#{c}'" }.join(', '))
-    end
     unless errors[:dup_groups].empty?
-      flash_message :error, I18n.t('csv.duplicate_group_name', group_names: errors[:dup_groups].join(', '))
+      flash_message :error, I18n.t('groups.upload.errors.duplicate_group_name',
+                                   group_names: errors[:dup_groups].join(', '))
     end
     unless errors[:dup_members].empty?
-      flash_message :error, I18n.t('csv.duplicate_membership_name', member_names: errors[:dup_members].join(', '))
+      flash_message :error, I18n.t('groups.upload.errors.duplicate_membership_name',
+                                   member_names: errors[:dup_members].join(', '))
     end
     unless errors[:inconsistent_group_memberships].empty?
-      flash_message :error, I18n.t('csv.bad_membership_warning',
+      flash_message :error, I18n.t('groups.upload.errors.inconsistent_membership',
                                    group_names: errors[:inconsistent_group_memberships].join(', '))
     end
-    unless errors[:bad_students].empty?
-      flash_message :error, I18n.t('csv.bad_students', student_names: errors[:bad_students].join(', '))
+    unless errors[:unknown_students].empty?
+      flash_message :error, I18n.t('groups.upload.errors.unknown_students',
+                                   student_names: errors[:unknown_students].join(', '))
     end
     unless errors[:membership_exists].empty?
-      flash_message :error, I18n.t('csv.memberships_exist', student_names: errors[:membership_exists].join(', '))
+      flash_message :error, I18n.t('groups.upload.errors.memberships_exist',
+                                   student_names: errors[:membership_exists].join(', '))
     end
   end
 
@@ -83,7 +84,7 @@ module GroupsHelper
 
   # Return a list of student user_names from the memberships in +data+ where the
   # student in question does not exist
-  def find_bad_students(data)
+  def find_unknown_students(data)
     students = Set.new(Student.where(hidden: false).all.pluck(:user_name))
     data.map { |_, *memberships| memberships }.flatten.reject { |student| students.include?(student) }
   end

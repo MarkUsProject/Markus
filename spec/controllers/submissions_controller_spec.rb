@@ -92,10 +92,8 @@ describe SubmissionsController do
     end
 
     it 'should be able to add and access files' do
-      file_1 = fixture_file_upload(File.join('/files', 'Shapes.java'),
-                                   'text/java')
-      file_2 = fixture_file_upload(File.join('/files', 'TestShapes.java'),
-                                   'text/java')
+      file_1 = fixture_file_upload('Shapes.java', 'text/java')
+      file_2 = fixture_file_upload('TestShapes.java', 'text/java')
 
       expect(@student.has_accepted_grouping_for?(@assignment.id)).to be_truthy
       post_as @student, :update_files, params: { assignment_id: @assignment.id, new_files: [file_1, file_2] }
@@ -123,10 +121,8 @@ describe SubmissionsController do
     context 'when the grouping is invalid' do
       it 'should not be able to add files' do
         @assignment.update!(group_min: 2, group_max: 3)
-        file1 = fixture_file_upload(File.join('/files', 'Shapes.java'),
-                                    'text/java')
-        file2 = fixture_file_upload(File.join('/files', 'TestShapes.java'),
-                                    'text/java')
+        file1 = fixture_file_upload('Shapes.java', 'text/java')
+        file2 = fixture_file_upload('TestShapes.java', 'text/java')
 
         expect(@student.has_accepted_grouping_for?(@assignment.id)).to be_truthy
         post_as @student, :update_files, params: { assignment_id: @assignment.id, new_files: [file1, file2] }
@@ -152,8 +148,7 @@ describe SubmissionsController do
       end
 
       it 'should be able to add and access files when uploading only required files' do
-        file1 = fixture_file_upload(File.join('/files', 'Shapes.java'),
-                                    'text/java')
+        file1 = fixture_file_upload('Shapes.java', 'text/java')
 
         post_as @student, :update_files, params: { assignment_id: @assignment.id, new_files: [file1] }
 
@@ -168,10 +163,8 @@ describe SubmissionsController do
       end
 
       it 'should not be able to add and access files when uploading at least one non-required file' do
-        file1 = fixture_file_upload(File.join('/files', 'Shapes.java'),
-                                    'text/java')
-        file2 = fixture_file_upload(File.join('/files', 'TestShapes.java'),
-                                    'text/java')
+        file1 = fixture_file_upload('Shapes.java', 'text/java')
+        file2 = fixture_file_upload('TestShapes.java', 'text/java')
 
         post_as @student, :update_files, params: { assignment_id: @assignment.id, new_files: [file1, file2] }
 
@@ -190,7 +183,7 @@ describe SubmissionsController do
     context 'uploading a zip file' do
       let(:unzip) { 'true' }
       let(:tree) do
-        zip_file = fixture_file_upload(File.join('/files', 'test_zip.zip'), 'application/zip')
+        zip_file = fixture_file_upload('test_zip.zip', 'application/zip')
         post_as @student, :update_files, params: { assignment_id: @assignment.id, new_files: [zip_file], unzip: unzip }
         @grouping.group.access_repo do |repo|
           repo.get_latest_revision.tree_at_path(@assignment.repository_folder)
@@ -265,10 +258,8 @@ describe SubmissionsController do
         old_file_1 = old_files['Shapes.java']
         old_file_2 = old_files['TestShapes.java']
 
-        @file_1 = fixture_file_upload(File.join('/files', 'Shapes.java'),
-                                      'text/java')
-        @file_2 = fixture_file_upload(File.join('/files', 'TestShapes.java'),
-                                      'text/java')
+        @file_1 = fixture_file_upload('Shapes.java', 'text/java')
+        @file_2 = fixture_file_upload('TestShapes.java', 'text/java')
 
         post_as @student,
                 :update_files,
@@ -954,9 +945,9 @@ describe SubmissionsController do
     let(:assignment) { create(:assignment) }
     let(:admin) { create(:admin) }
     let(:grouping) { create(:grouping_with_inviter, assignment: assignment) }
-    let(:file1) { fixture_file_upload(File.join('/files', 'Shapes.java'), 'text/java') }
-    let(:file2) { fixture_file_upload(File.join('/files', 'test_zip.zip'), 'application/zip') }
-    let(:file3) { fixture_file_upload(File.join('/files', 'example.ipynb')) }
+    let(:file1) { fixture_file_upload('Shapes.java', 'text/java') }
+    let(:file2) { fixture_file_upload('test_zip.zip', 'application/zip') }
+    let(:file3) { fixture_file_upload('example.ipynb') }
     let!(:submission) do
       submit_file(assignment, grouping, file1.original_filename, file1.read)
       submit_file(assignment, grouping, file2.original_filename, file2.read)
@@ -1030,11 +1021,11 @@ describe SubmissionsController do
     let(:assignment) { create(:assignment) }
     let(:admin) { create(:admin) }
     let(:grouping) { create(:grouping_with_inviter, assignment: assignment) }
-    let(:file1) { fixture_file_upload(File.join('/files', 'Shapes.java'), 'text/java') }
-    let(:file2) { fixture_file_upload(File.join('/files', 'test_zip.zip'), 'application/zip', true) }
-    let(:file3) { fixture_file_upload(File.join('/files', 'example.ipynb')) }
-    let(:file4) { fixture_file_upload(File.join('/files', 'page_white_text.png')) }
-    let(:file5) { fixture_file_upload(File.join('/files', 'scanned_exams', 'midterm1-v2-test.pdf')) }
+    let(:file1) { fixture_file_upload('Shapes.java', 'text/java') }
+    let(:file2) { fixture_file_upload('test_zip.zip', 'application/zip', true) }
+    let(:file3) { fixture_file_upload('example.ipynb') }
+    let(:file4) { fixture_file_upload('page_white_text.png') }
+    let(:file5) { fixture_file_upload('scanned_exams/midterm1-v2-test.pdf') }
     let!(:submission) do
       files.map do |file|
         submit_file(assignment, grouping, file.original_filename, file.read)

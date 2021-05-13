@@ -86,5 +86,12 @@ pt:
       working_alone: Você pediu para trabalhar sozinho nesta tarefa. Se você mudar de idéia e quer formar ou participar de um grupo, primeiro exclua o seu grupo.
       your_group: Seu grupo
     unassigned_students: Não-atribuíd
+    upload:
+      errors:
+        duplicate_group_name: 'UPDATE ME: %{group_names}'
+        duplicate_membership_name: 'UPDATE ME: %{member_names}'
+        inconsistent_membership: 'UPDATE ME: %{group_names}'
+        memberships_exist: 'UPDATE ME: %{student_names}'
+        unknown_students: 'UPDATE ME: %{student_names}'
     valid: Válido?
     validate_confirm: Isso permitirá que o grupo envie sem o número exigido de alunos. Você tem certeza disso?

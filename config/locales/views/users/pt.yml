@@ -34,4 +34,7 @@ pt:
     api_key:
       reset: Gerar outra chave para a API
       unavailable: Indisponível
+    upload:
+      errors:
+        duplicate_users: 'Nome de usuário duplicado detectado: %{user_names}.'
     verify_settings_update: UPDATE ME

@@ -46,11 +46,7 @@ export class FeedbackFilePanel extends React.Component {
 
     let url, file_obj;
     if (this.state.selectedFile !== null) {
-      url = Routes.get_feedback_file_assignment_submission_path(
-        this.props.assignment_id,
-        this.props.submission_id,
-        {feedback_file_id: this.state.selectedFile}
-      );
+      url = Routes.feedback_file_path(this.state.selectedFile);
       file_obj = this.props.feedbackFiles.find(file => file.id === this.state.selectedFile);
     }
 

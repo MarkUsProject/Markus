@@ -24,14 +24,7 @@ describe MarksGradersController do
       end
       @ta = create(:ta, user_name: 'c6conley')
 
-      # We need to mock the rack file to return its content when
-      # the '.read' method is called to simulate the behaviour of
-      # the http uploaded file
-      @file_good = fixture_file_upload(
-        'files/marks_graders/form_good.csv', 'text/csv')
-      allow(@file_good).to receive(:read).and_return(
-        File.read(fixture_file_upload(
-          'files/marks_graders/form_good.csv', 'text/csv')))
+      @file_good = fixture_file_upload('marks_graders/form_good.csv', 'text/csv')
     end
 
     it 'accepts a valid file and can preserve existing TA mappings' do

@@ -19,7 +19,7 @@ shared_examples 'a controller supporting upload' do |formats: [:yml, :csv]|
   it 'does not accept an xls file' do
     post :upload, params: {
       **params,
-      upload_file: fixture_file_upload('files/wrong_csv_format.xls')
+      upload_file: fixture_file_upload('wrong_csv_format.xls')
     }
     expect(flash[:error]).to_not be_empty
     expect(model_count).to eq @initial_count
@@ -30,7 +30,7 @@ shared_examples 'a controller supporting upload' do |formats: [:yml, :csv]|
       it 'does not accept an empty file' do
         post :upload, params: {
           **params,
-          upload_file: fixture_file_upload("files/upload_shared_files/empty.#{format}")
+          upload_file: fixture_file_upload("upload_shared_files/empty.#{format}")
         }
 
         expect(flash[:error]).not_to be_empty
@@ -40,7 +40,7 @@ shared_examples 'a controller supporting upload' do |formats: [:yml, :csv]|
       it "does not accept an invalid file even with a .#{format} extension" do
         post :upload, params: {
           **params,
-          upload_file: fixture_file_upload("files/upload_shared_files/bad_#{format}.#{format}")
+          upload_file: fixture_file_upload("upload_shared_files/bad_#{format}.#{format}")
         }
 
         expect(flash[:error]).to_not be_empty

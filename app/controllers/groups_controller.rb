@@ -241,7 +241,10 @@ class GroupsController < ApplicationController
       assignment = Assignment.find(params[:assignment_id])
       group_rows = []
       result = MarkusCsv.parse(data[:file].read, encoding: params[:encoding]) do |row|
-        group_rows << row.take_while { |x| !x.blank? } unless row.blank?
+        next if row.blank?
+        raise CsvInvalidLineError if row[0].blank?
+
+        group_rows << row.reject(&:blank?)
       end
       if result[:invalid_lines].empty?
         if validate_csv_upload_file(assignment, group_rows)
