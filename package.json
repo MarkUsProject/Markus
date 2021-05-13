@@ -23,7 +23,7 @@
     "react-jsonschema-form": "^1.8.1",
     "react-keyed-file-browser": "^1.10.0",
     "react-modal": "^3.13.1",
-    "react-table": "^6.9.2",
+    "react-table": "^6.11.5",
     "react-tabs": "^3.2.2",
     "webpack": "^4.44.1"
   },
