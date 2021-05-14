@@ -12,7 +12,6 @@ if __name__ == '__main__':
         max_file_size = f.read().strip()
     hooks_dir = os.path.join(real_dir, '{}.d'.format(hook_type))
     env = {**os.environ, 'MAX_FILE_SIZE': max_file_size}
-    print(env)
     if os.path.exists(hooks_dir):
         scripts = sorted([os.path.join(hooks_dir, f) for f in os.listdir(hooks_dir)])
         for script in scripts:
