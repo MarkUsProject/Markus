@@ -1,5 +1,8 @@
 # Changelog
 
+## [v1.12.4]
+- Symlink git repo hooks (#5283)
+
 ## [v1.12.3]
 - Add workaround for content security policy to allow loading blobs in Safari (#5273)
 
