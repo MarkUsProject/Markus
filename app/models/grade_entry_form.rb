@@ -92,8 +92,8 @@ class GradeEntryForm < Assessment
       # grade_entry_students.build(user_id: student.id, released_to_student: false)
       [student.id, id, false]
     end
-    array_of_hashes = values.collect { |record| Hash[columns.zip record] } # create hash between column names and corresponding values
-    GradeEntryStudent.insert_all(array_of_hashes)  # use insert instead of upsert since we want to ignore duplicates, NOT replace them
+    array_of_hashes = values.collect{|record| Hash[columns.zip record]}
+    GradeEntryStudent.insert_all(array_of_hashes)
   end
 
   def export_as_csv
