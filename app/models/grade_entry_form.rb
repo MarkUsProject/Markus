@@ -92,8 +92,9 @@ class GradeEntryForm < Assessment
       # grade_entry_students.build(user_id: student.id, released_to_student: false)
       [student.id, id, false]
     end
-    array_of_hashes = values.collect{|record| Hash[columns.zip record]}
-    GradeEntryStudent.insert_all(array_of_hashes)
+    # GradeEntryStudent.import columns, values, validate: false, on_duplicate_key_ignore: true
+    array_of_hashes = values.collect{ |record| Hash[columns.zip record] }
+    GradeEntryStudent.insert_all(array_of_hashes, returning: false) unless columns.length == 0 || values.length == 0
   end
 
   def export_as_csv
