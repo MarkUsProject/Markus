@@ -89,11 +89,8 @@ class GradeEntryForm < Assessment
     # columns = [:user_id, :assessment_id, :released_to_student]
     new_data = []
     Student.all.each do |student|
-      # grade_entry_students.build(user_id: student.id, released_to_student: false)
       new_data << {:user_id => student.id, :assessment_id => id, :released_to_student => false}
     end
-    # GradeEntryStudent.import columns, values, validate: false, on_duplicate_key_ignore: true
-    # array_of_hashes = values.collect{ |record| Hash[columns.zip record] }
     GradeEntryStudent.insert_all(new_data, returning: false) unless new_data.length == 0
   end
 
