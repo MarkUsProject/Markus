@@ -7,7 +7,6 @@ rails:
   log_level: debug
   active_support:
     deprecation: stderr
-  cache_store: redis_cache_store
   active_record:
     verbose_query_logs: true
   action_mailer:
