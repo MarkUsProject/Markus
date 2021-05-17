@@ -86,15 +86,15 @@ class GradeEntryForm < Assessment
 
   # Create grade_entry_student for each student in the course
   def create_all_grade_entry_students
-    columns = [:user_id, :assessment_id, :released_to_student]
-
-    values = Student.all.map do |student|
+    # columns = [:user_id, :assessment_id, :released_to_student]
+    new_data = []
+    Student.all.each do |student|
       # grade_entry_students.build(user_id: student.id, released_to_student: false)
-      [student.id, id, false]
+      new_data << {:user_id => student.id, :assessment_id => id, :released_to_student => false}
     end
     # GradeEntryStudent.import columns, values, validate: false, on_duplicate_key_ignore: true
-    array_of_hashes = values.collect{ |record| Hash[columns.zip record] }
-    GradeEntryStudent.insert_all(array_of_hashes, returning: false) unless columns.length == 0 || values.length == 0
+    # array_of_hashes = values.collect{ |record| Hash[columns.zip record] }
+    GradeEntryStudent.insert_all(new_data, returning: false) unless new_data.length == 0
   end
 
   def export_as_csv
