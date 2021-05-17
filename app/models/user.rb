@@ -219,8 +219,8 @@ class User < ApplicationRecord
         end
       end
 
-      imported = user_class.upsert_all(array_of_hashes, unique_by: :user_name) unless user_columns.length == 0 ||
-        users.length == 0 || :user_name.nil?
+      imported = user_class.upsert_all(array_of_hashes, unique_by: :user_name) unless user_columns.empty? ||
+        users.empty? || :user_name.nil?
 
       User.where(id: imported.ids).each do |user|
         if user_class == Ta
