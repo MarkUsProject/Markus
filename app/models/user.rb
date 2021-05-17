@@ -214,13 +214,14 @@ class User < ApplicationRecord
           array_of_hashes.delete_at(i)
         else
           array_of_hashes[i].transform_values do |value|
-            value.nil? ? "-" : value
+            value.nil? ? '-' : value
           end
         end
       end
 
-      imported = user_class.upsert_all(array_of_hashes, unique_by: :user_name)
-      
+      imported = user_class.upsert_all(array_of_hashes, unique_by: :user_name) unless user_columns.length == 0 ||
+        users.length == 0 || :user_name.nil?
+
       User.where(id: imported.ids).each do |user|
         if user_class == Ta
           # This will only trigger before_create callback in ta model, not after_create callback
