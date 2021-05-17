@@ -208,7 +208,7 @@ class User < ApplicationRecord
     imported = nil
     parsed[:invalid_records] = ''
     User.transaction do
-      imported = user_class.import user_columns, users, on_duplicate_key_update: {
+      imported = user_class.upsert_all user_columns, users, on_duplicate_key_update: {
         conflict_target: [:user_name],
         columns: [:last_name, :first_name, :section_id, :email, :id_number, :display_name, :time_zone]
       }
