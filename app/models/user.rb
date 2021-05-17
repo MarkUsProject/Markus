@@ -208,10 +208,23 @@ class User < ApplicationRecord
     imported = nil
     parsed[:invalid_records] = ''
     User.transaction do
-      imported = user_class.upsert_all user_columns, users, on_duplicate_key_update: {
-        conflict_target: [:user_name],
-        columns: [:last_name, :first_name, :section_id, :email, :id_number, :display_name, :time_zone]
-      }
+      array_of_hashes = users.collect { |record| Hash[user_columns.zip record] }
+      array_of_hashes.length.times do |i|
+        if array_of_hashes[i].empty?
+          array_of_hashes.delete_at(i)
+        else
+          array_of_hashes[i].transform_values do |value|
+            value.nil? ? "-" : value
+          end
+        end
+        # array_of_hashes[i].each_key { |k| array_of_hashes[i][k].nil? ? "-" : array_of_hashes[i][k]}
+      end
+
+      imported = user_class.upsert_all(array_of_hashes, unique_by: :user_name)
+      # imported = user_class.import user_columns, users, on_duplicate_key_update: {
+      #   conflict_target: [:user_name],
+      #   columns: [:last_name, :first_name, :section_id, :email, :id_number, :display_name, :time_zone]
+      # }
       User.where(id: imported.ids).each do |user|
         if user_class == Ta
           # This will only trigger before_create callback in ta model, not after_create callback
