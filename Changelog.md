@@ -4,6 +4,8 @@
   having no extra marks (#5220)
 - Add copy to clipboard button for plaintext submission files in Results view (#5223)
 - Add ability to associate feedback files to test group results (#5209)
+
+## [v1.12.4]
 - Symlink git repo hooks (#5283)
 
 ## [v1.12.3]
