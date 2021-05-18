@@ -86,7 +86,6 @@ class GradeEntryForm < Assessment
 
   # Create grade_entry_student for each student in the course
   def create_all_grade_entry_students
-    # columns = [:user_id, :assessment_id, :released_to_student]
     new_data = []
     Student.all.each do |student|
       new_data << { user_id: student.id, assessment_id: id, released_to_student: false }
