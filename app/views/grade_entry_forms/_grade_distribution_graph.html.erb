@@ -16,15 +16,17 @@
     };
 
     var options = {
-      tooltips: {
-        callbacks: {
-          title: function (tooltipItems) {
-            var baseNum = parseInt(tooltipItems[0].xLabel);
-            if (baseNum === 0) {
-              return '0-5';
-            }
-            else {
-              return (baseNum + 1) + '-' + (baseNum + 5);
+      plugins: {
+        tooltip: {
+          callbacks: {
+            title: function (tooltipItems) {
+              var baseNum = parseInt(tooltipItems[0].label);
+              if (baseNum === 0) {
+                return '0-5';
+              }
+              else {
+                return (baseNum + 1) + '-' + (baseNum + 5);
+              }
             }
           }
         }

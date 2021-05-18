@@ -17,7 +17,7 @@ export class DataChart extends React.Component {
         display: this.props.legend
       },
       scales: {
-        yAxes: [{
+        y: {
           gridLines: {
             color: document.documentElement.style.getPropertyValue('--gridline')
           },
@@ -30,8 +30,8 @@ export class DataChart extends React.Component {
             display: true,
             labelString: this.props.yTitle
           }
-        }],
-        xAxes: [{
+        },
+        x: {
           gridLines: {
             offsetGridLines: true,
             color: document.documentElement.style.getPropertyValue('--gridline')
@@ -41,7 +41,7 @@ export class DataChart extends React.Component {
             labelString: this.props.xTitle
           },
           offset: true
-        }]
+        }
       }
     };
 
@@ -58,11 +58,11 @@ export class DataChart extends React.Component {
       yRange = yRange.concat(d.data);
     });
     this.chart.data = {labels: this.props.labels, datasets: this.props.datasets};
-    this.chart.options.scales.yAxes[0].ticks.max = Math.max(...yRange);
+    this.chart.options.scales.y.ticks.max = Math.max(...yRange);
     this.chart.options.legend.display = this.props.legend;
     this.chart.options.legend.fontColor = document.documentElement.style.getPropertyValue('--line');
-    this.chart.options.scales.yAxes[0].scaleLabel = {display: true, labelString: this.props.yTitle};
-    this.chart.options.scales.xAxes[0].scaleLabel = {display: true, labelString: this.props.xTitle};
+    this.chart.options.scales.y.scaleLabel = {display: true, labelString: this.props.yTitle};
+    this.chart.options.scales.x.scaleLabel = {display: true, labelString: this.props.xTitle};
     this.chart.update();
   }
 
