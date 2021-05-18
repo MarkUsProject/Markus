@@ -129,19 +129,22 @@ class Grouping < ApplicationRecord
     # Delegate the assign function to the caller-specified block and remove
     # values that already exist in the database.
     values = yield(grouping_ids, ta_ids) - existing_values
-    # TODO replace TaMembership.import with TaMembership.create when the PG
-    # driver supports bulk create, then remove the activerecord-import gem.
     values.map! do |value|
       value.push('TaMembership')
     end
     Repository.get_class.update_permissions_after do
-      Membership.import(columns, values, validate: false)
+      membership_hash = values.map{|value| columns.zip(value).to_h}
+
+      unless membership_hash.empty?
+        Membership.insert_all(membership_hash)
+      end
     end
     update_criteria_coverage_counts(assignment, grouping_ids)
     Criterion.update_assigned_groups_counts(assignment)
   end
 
-  # Unassigns TAs from groupings. +ta_membership_ids+ is a list of TA
+  # Unassigns TAs from groupings.
+  # +ta_membership_ids+ is a list of TA
   # membership IDs that specifies the unassignment to be done. +grouping_ids+
   # is a list of grouping IDs involved in the unassignment. The memberships
   # and groupings must belong to the given assignment +assignment+.

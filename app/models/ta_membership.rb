@@ -4,12 +4,12 @@ class TaMembership < Membership
   after_create   { Repository.get_class.update_permissions }
   after_destroy  { Repository.get_class.update_permissions }
 
- def must_be_a_ta
-   if user && !user.is_a?(Ta)
-     errors.add('base', 'User must be a ta')
-     false
-   end
- end
+  def must_be_a_ta
+    if user && !user.is_a?(Ta)
+      errors.add('base', 'User must be a ta')
+      false
+    end
+  end
 
   def self.from_csv(assignment, csv_data, remove_existing)
     if remove_existing
@@ -20,6 +20,7 @@ class TaMembership < Membership
       end
     end
     new_ta_memberships = []
+    new_ta_memberships_hash = []
     groupings = Hash[
       assignment.groupings.joins(:group).pluck('groups.group_name', :id)
     ]
@@ -30,22 +31,24 @@ class TaMembership < Membership
 
       row.drop(1).each do |grader_name|
         unless graders[grader_name].nil?
-          new_ta_memberships << TaMembership.new(
-            grouping_id: groupings[row[0]],
-            user_id: graders[grader_name]
-          )
+          new_ta_memberships_hash.push({user_id: graders[grader_name], grouping_id: groupings[row[0]],
+                                        type: "TaMembership"})
         end
       end
     end
+
     Repository.get_class.update_permissions_after do
-      TaMembership.import new_ta_memberships, validate: false, on_duplicate_key_ignore: true
+      unless new_ta_memberships_hash.empty?
+        TaMembership.insert_all(new_ta_memberships_hash)
+      end
     end
+
 
     # Recompute criteria associations
     if assignment.assign_graders_to_criteria
       Grouping.update_criteria_coverage_counts(
         assignment,
-        new_ta_memberships.map { |x| x[:grouping_id] }
+        new_ta_memberships_hash.map{|row| row[:grouping_id]}
       )
     end
 
