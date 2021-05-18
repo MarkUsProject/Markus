@@ -40,7 +40,8 @@ class CriterionTaAssociation < ApplicationRecord
       end
     end
 
-    CriterionTaAssociation.import new_ta_mappings, validate: false, on_duplicate_key_ignore: true
+    # CriterionTaAssociation.import new_ta_mappings, validate: false, on_duplicate_key_ignore: true
+    CriterionTaAssociation.insert_all(new_ta_mappings)
 
     Grouping.update_criteria_coverage_counts(assignment)
     Criterion.update_assigned_groups_counts(assignment)
