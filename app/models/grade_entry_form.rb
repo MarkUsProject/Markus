@@ -89,9 +89,9 @@ class GradeEntryForm < Assessment
     # columns = [:user_id, :assessment_id, :released_to_student]
     new_data = []
     Student.all.each do |student|
-      new_data << {:user_id => student.id, :assessment_id => id, :released_to_student => false}
+      new_data << { user_id: student.id, assessment_id: id, released_to_student: false }
     end
-    GradeEntryStudent.insert_all(new_data, returning: false) unless new_data.length == 0
+    GradeEntryStudent.insert_all(new_data, returning: false) unless new_data.empty?
   end
 
   def export_as_csv
