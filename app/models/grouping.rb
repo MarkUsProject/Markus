@@ -132,9 +132,16 @@ class Grouping < ApplicationRecord
     values.map! do |value|
       value.push('TaMembership')
     end
-    Repository.get_class.update_permissions_after do
-      membership_hash = values.map{|value| columns.zip(value).to_h}
 
+    membership_hash = values.map do |value|
+      {
+        grouping_id: value[0],
+        user_id: value[1],
+        type: value[2]
+      }
+    end
+
+    Repository.get_class.update_permissions_after do
       unless membership_hash.empty?
         Membership.insert_all(membership_hash)
       end
@@ -143,8 +150,7 @@ class Grouping < ApplicationRecord
     Criterion.update_assigned_groups_counts(assignment)
   end
 
-  # Unassigns TAs from groupings.
-  # +ta_membership_ids+ is a list of TA
+  # Unassigns TAs from groupings. +ta_membership_ids+ is a list of TA
   # membership IDs that specifies the unassignment to be done. +grouping_ids+
   # is a list of grouping IDs involved in the unassignment. The memberships
   # and groupings must belong to the given assignment +assignment+.

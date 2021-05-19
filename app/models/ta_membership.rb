@@ -20,7 +20,6 @@ class TaMembership < Membership
       end
     end
     new_ta_memberships = []
-    new_ta_memberships_hash = []
     groupings = Hash[
       assignment.groupings.joins(:group).pluck('groups.group_name', :id)
     ]
@@ -31,24 +30,25 @@ class TaMembership < Membership
 
       row.drop(1).each do |grader_name|
         unless graders[grader_name].nil?
-          new_ta_memberships_hash.push({user_id: graders[grader_name], grouping_id: groupings[row[0]],
-                                        type: "TaMembership"})
+          new_ta_memberships << {
+            user_id: graders[grader_name],
+            grouping_id: groupings[row[0]],
+            type: 'TaMembership' }
         end
       end
     end
 
     Repository.get_class.update_permissions_after do
-      unless new_ta_memberships_hash.empty?
-        TaMembership.insert_all(new_ta_memberships_hash)
+      unless new_ta_memberships.empty?
+        TaMembership.insert_all(new_ta_memberships)
       end
     end
-
 
     # Recompute criteria associations
     if assignment.assign_graders_to_criteria
       Grouping.update_criteria_coverage_counts(
         assignment,
-        new_ta_memberships_hash.map{|row| row[:grouping_id]}
+        new_ta_memberships.map{ |row| row[:grouping_id] }
       )
     end
 
