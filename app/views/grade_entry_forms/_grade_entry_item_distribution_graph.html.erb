@@ -21,33 +21,35 @@
       };
 
       var options = {
-        tooltips: {
-          callbacks: {
-            title: function (tooltipItems) {
-              var baseNum = parseInt(tooltipItems[0].xLabel);
-                if (baseNum === 0) {
-                  return '0-5';
-                } else {
-                  return (baseNum + 1) + '-' + (baseNum + 5);
-                }
-            }
-          }
-        },
-        legend: {
-          display: true,
-          onClick: function(e, legendItem) {
-            var index = legendItem.datasetIndex;
-            var chart = this.chart;
-
-            for (i = 0, ilen = (chart.data.datasets || []).length; i < ilen; ++i) {
-              meta = chart.getDatasetMeta(i);
-              if (i == index) {
-                meta.hidden = false;
-              } else {
-                meta.hidden = true;
+        plugins: {
+          tooltip: {
+            callbacks: {
+              title: function (tooltipItems) {
+                var baseNum = parseInt(tooltipItems[0].label);
+                  if (baseNum === 0) {
+                    return '0-5';
+                  } else {
+                    return (baseNum + 1) + '-' + (baseNum + 5);
+                  }
               }
             }
-            chart.update();
+          },
+          legend: {
+            display: true,
+            onClick: function(e, legendItem) {
+              var index = legendItem.datasetIndex;
+              var chart = this.chart;
+
+              for (i = 0, ilen = (chart.data.datasets || []).length; i < ilen; ++i) {
+                meta = chart.getDatasetMeta(i);
+                if (i == index) {
+                  meta.hidden = false;
+                } else {
+                  meta.hidden = true;
+                }
+              }
+              chart.update();
+            }
           }
         }
       };
