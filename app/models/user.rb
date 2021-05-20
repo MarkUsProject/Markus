@@ -215,58 +215,50 @@ class User < ApplicationRecord
           end
         end
       end
-      # if user_columns.
-      # user_hash = users.map do |user|
-      #   {
-      #     user_name: user[0],
-      #     last_name: user[1],
-      #     first_name: user[2],
-      #     section_id: user[3],
-      #     id_number: user[4],
-      #     email: user[5],
-      #     display_name: user[6],
-      #     time_zone: user[7]
-      #   }
-      # end
+
       user_hash = users.collect { |record| Hash[user_columns.zip record] }
-      byebug
       imported = user_class.upsert_all(user_hash, unique_by: :user_name) unless user_columns.empty? ||
-        users.empty? || :user_name.nil?
-      byebug
-      User.where(id: imported.rows.flatten).each do |user|
-        if user_class == Ta
-          # This will only trigger before_create callback in ta model, not after_create callback
-          user.run_callbacks(:create) { false }
+        users.empty? || :user_name.nil? || user_hash.empty?
+
+      unless imported.nil?
+        User.where(id: imported.rows.flatten).each do |user|
+          if user_class == Ta
+            # This will only trigger before_create callback in ta model, not after_create callback
+            user.run_callbacks(:create) { false }
+          end
+          user.validate!
+        rescue ActiveRecord::RecordInvalid
+          error_message = user.errors
+                              .messages
+                              .map { |k, v| "#{k} #{v.flatten.join ','}" }.flatten.join MarkusCsv::INVALID_LINE_SEP
+          parsed[:invalid_records] += "#{user.user_name}: #{error_message}"
         end
-        user.validate!
-      rescue ActiveRecord::RecordInvalid
-        error_message = user.errors
-                            .messages
-                            .map { |k, v| "#{k} #{v.flatten.join ','}" }.flatten.join MarkusCsv::INVALID_LINE_SEP
-        parsed[:invalid_records] += "#{user.user_name}: #{error_message}"
-      end
-      unless parsed[:invalid_records].empty?
-        raise ActiveRecord::Rollback
+        unless parsed[:invalid_records].empty?
+          raise ActiveRecord::Rollback
+        end
       end
     end
-    unless imported.failed_instances.empty?
+    unless imported.nil?
+      # unless imported.failed_instances.empty?
       if parsed[:invalid_lines].blank?
         parsed[:invalid_lines] = I18n.t('upload_errors.invalid_rows')
       else
         parsed[:invalid_lines] += MarkusCsv::INVALID_LINE_SEP # concat to invalid_lines from MarkusCsv#parse
       end
-      parsed[:invalid_lines] +=
-        imported.failed_instances.map { |f| f[:user_name].to_s }.join(MarkusCsv::INVALID_LINE_SEP)
+      # parsed[:invalid_lines] +=
+      # imported.failed_instances.map { |f| f[:user_name].to_s }.join(MarkusCsv::INVALID_LINE_SEP)
+      # end
+      if !imported.rows.flatten.empty? && parsed[:invalid_records].empty?
+        parsed[:valid_lines] = I18n.t('upload_success', count: imported.rows.flatten.size)
+      end
+      if user_class == Student
+        new_user_ids = (imported&.rows.flatten || []) - existing_user_ids
+        # call create callbacks to make sure grade_entry_students get created
+        user_class.where(id: new_user_ids).each(&:create_all_grade_entry_students)
+      end
+      parsed
     end
-    if !imported.ids.empty? && parsed[:invalid_records].empty?
-      parsed[:valid_lines] = I18n.t('upload_success', count: imported.ids.size)
-    end
-    if user_class == Student
-      new_user_ids = (imported&.ids || []) - existing_user_ids
-      # call create callbacks to make sure grade_entry_students get created
-      user_class.where(id: new_user_ids).each(&:create_all_grade_entry_students)
-    end
-    parsed
+
   end
 
   # Reset API key for user model. The key is a SHA2 512 bit long digest,
