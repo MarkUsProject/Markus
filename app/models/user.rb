@@ -215,22 +215,25 @@ class User < ApplicationRecord
           end
         end
       end
-      user_hash = users.map do |users|
-        {
-          user_name: users[0],
-          last_name: users[1],
-          first_name: users[2],
-          section_id: users[3],
-          id_number: users[4],
-          email: users[5],
-          display_name: users[6],
-          time_zone: users[7]
-        }
-      end
-
-      imported = user_class.upsert_all(user_hash, unique_by: :user_name) unless user_columns.empty? || users.empty?
-
-      User.where(id: imported.ids).each do |user|
+      # if user_columns.
+      # user_hash = users.map do |user|
+      #   {
+      #     user_name: user[0],
+      #     last_name: user[1],
+      #     first_name: user[2],
+      #     section_id: user[3],
+      #     id_number: user[4],
+      #     email: user[5],
+      #     display_name: user[6],
+      #     time_zone: user[7]
+      #   }
+      # end
+      user_hash = users.collect { |record| Hash[user_columns.zip record] }
+      byebug
+      imported = user_class.upsert_all(user_hash, unique_by: :user_name) unless user_columns.empty? ||
+        users.empty? || :user_name.nil?
+      byebug
+      User.where(id: imported.rows.flatten).each do |user|
         if user_class == Ta
           # This will only trigger before_create callback in ta model, not after_create callback
           user.run_callbacks(:create) { false }
