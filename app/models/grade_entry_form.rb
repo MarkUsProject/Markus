@@ -182,7 +182,8 @@ class GradeEntryForm < Assessment
       end
     end
 
-    Grade.upsert_all(updated_grades, unique_by: [:grade_entry_item_id, :grade_entry_student_id]) unless updated_grades.empty?
+    Grade.upsert_all(updated_grades,
+                     unique_by: [:grade_entry_item_id, :grade_entry_student_id]) unless updated_grades.empty?
     GradeEntryStudent.refresh_total_grades(updated_grades.map { |h| h[:grade_entry_student_id] })
     result
   end
