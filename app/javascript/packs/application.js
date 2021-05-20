@@ -44,7 +44,9 @@ import Jcrop from 'jcrop';
 window.Jcrop = Jcrop;
 
 // chart.js
-import { Chart } from 'chart.js';
+import { Chart, registerables } from 'chart.js';
+Chart.register(...registerables);
+window.Chart = Chart;
 import 'javascripts/chart_config';
 
 window.Routes = require('routes');
