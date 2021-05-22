@@ -169,9 +169,9 @@ class User < ApplicationRecord
     duplicate_user_names = Set.new
     parsed = MarkusCsv.parse(user_list, skip_blanks: true, row_sep: :auto, encoding: encoding) do |row|
       next if row.empty?
-      if user_names.blank?
-        raise CsvInvalidLineError
-      end
+      # if user_names.blank?
+      #   raise CsvInvalidLineError
+      # end
       if user_names.include?(row[user_name_i])
         duplicate_user_names.add row[user_name_i]
         raise CsvInvalidLineError
@@ -223,7 +223,7 @@ class User < ApplicationRecord
       imported = user_class.upsert_all(user_hash, returning: %w[id user_name]) unless user_hash.empty?
       byebug
       # unless imported.nil?
-        imported_ids = imported.rows.flatten[0]
+        imported_ids = imported.rows.map{|x|[ x[0]]}
       # end
       # byebug
       unless imported.nil?
