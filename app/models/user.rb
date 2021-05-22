@@ -169,6 +169,9 @@ class User < ApplicationRecord
     duplicate_user_names = Set.new
     parsed = MarkusCsv.parse(user_list, skip_blanks: true, row_sep: :auto, encoding: encoding) do |row|
       next if row.empty?
+      if user_names.blank?
+        raise CsvInvalidLineError
+      end
       if user_names.include?(row[user_name_i])
         duplicate_user_names.add row[user_name_i]
         raise CsvInvalidLineError
@@ -208,20 +211,23 @@ class User < ApplicationRecord
     imported = nil
     parsed[:invalid_records] = ''
     User.transaction do
-      users.each do |user|
-        user.length.times do |i|
-          if user[i].nil?
-            user[i] = '-'
-          end
-        end
-      end
+      # users.each do |user|
+      #   user.length.times do |i|
+      #     if user[i].nil?
+      #       user[i] = '-'
+      #     end
+      #   end
+      # end
 
       user_hash = users.collect { |record| Hash[user_columns.zip record] }
-      imported = user_class.upsert_all(user_hash, unique_by: :user_name) unless user_columns.empty? ||
-        users.empty? || :user_name.nil? || user_hash.empty?
-
+      imported = user_class.upsert_all(user_hash, returning: %w[id user_name]) unless user_hash.empty?
+      byebug
+      # unless imported.nil?
+        imported_ids = imported.rows.flatten[0]
+      # end
+      # byebug
       unless imported.nil?
-        User.where(id: imported.rows.flatten).each do |user|
+        User.where(id: imported_ids).each do |user|
           if user_class == Ta
             # This will only trigger before_create callback in ta model, not after_create callback
             user.run_callbacks(:create) { false }
@@ -248,8 +254,8 @@ class User < ApplicationRecord
       # parsed[:invalid_lines] +=
       # imported.failed_instances.map { |f| f[:user_name].to_s }.join(MarkusCsv::INVALID_LINE_SEP)
       # end
-      if !imported.rows.flatten.empty? && parsed[:invalid_records].empty?
-        parsed[:valid_lines] = I18n.t('upload_success', count: imported.rows.flatten.size)
+      if !imported_ids.empty? && parsed[:invalid_records].empty?
+        parsed[:valid_lines] = I18n.t('upload_success', count: imported_ids.size)
       end
       if user_class == Student
         new_user_ids = (imported&.rows.flatten || []) - existing_user_ids
@@ -258,7 +264,6 @@ class User < ApplicationRecord
       end
       parsed
     end
-
   end
 
   # Reset API key for user model. The key is a SHA2 512 bit long digest,
