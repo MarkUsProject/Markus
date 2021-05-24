@@ -94,7 +94,7 @@ class Criterion < ApplicationRecord
     # Add assessment_id column common to all rows. It is not included above so
     # that the set operation is faster.
 
-    mappings = values.map { |value| {criterion_id: value[0], ta_id: value[1], assessment_id: assignment.id}}
+    mappings = values.map { |value| { criterion_id: value[0], ta_id: value[1], assessment_id: assignment.id } }
     CriterionTaAssociation.insert_all(mappings) unless mappings.empty?
 
     Grouping.update_criteria_coverage_counts(assignment)
