@@ -1,0 +1,7 @@
+no_levels:
+  type: rubric
+  max_mark: 5.0
+empty_levels:
+  type: rubric
+  max_mark: 5.0
+  levels: []
