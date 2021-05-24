@@ -79,7 +79,6 @@ class Criterion < ApplicationRecord
 
     # Only use IDs that identify existing model instances.
     ta_ids = Ta.where(id: ta_ids).pluck(:id)
-    columns = [:criterion_id, :ta_id]
     # Get all existing criterion-TA associations to avoid violating the unique
     # constraint.
     existing_values = CriterionTaAssociation
@@ -94,8 +93,6 @@ class Criterion < ApplicationRecord
 
     # Add assessment_id column common to all rows. It is not included above so
     # that the set operation is faster.
-    columns << :assessment_id
-    values.map { |value| value << assignment.id }
 
     mappings = []
     values.each do |value|
