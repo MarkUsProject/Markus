@@ -129,15 +129,12 @@ class Grouping < ApplicationRecord
     # Delegate the assign function to the caller-specified block and remove
     # values that already exist in the database.
     values = yield(grouping_ids, ta_ids) - existing_values
-    values.map! do |value|
-      value.push('TaMembership')
-    end
 
     membership_hash = values.map do |value|
       {
         grouping_id: value[0],
         user_id: value[1],
-        type: value[2]
+        type: 'TaMembership'
       }
     end
 
