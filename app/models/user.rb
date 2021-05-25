@@ -220,10 +220,15 @@ class User < ApplicationRecord
       # end
 
       user_hash = users.collect { |record| Hash[user_columns.zip record] }
+      all_user_names = []
+      user_hash.each do |user|
+        all_user_names.push(user[:user_name])
       imported = user_class.upsert_all(user_hash, returning: %w[id user_name]) unless user_hash.empty?
-      byebug
+
       # unless imported.nil?
-        imported_ids = imported.rows.map{|x|[ x[0]]}
+
+
+      imported_ids = imported.rows.map { |x| [x[0]] }.flatten
       # end
       # byebug
       unless imported.nil?
@@ -245,23 +250,26 @@ class User < ApplicationRecord
       end
     end
     unless imported.nil?
-      # unless imported.failed_instances.empty?
-      if parsed[:invalid_lines].blank?
-        parsed[:invalid_lines] = I18n.t('upload_errors.invalid_rows')
-      else
-        parsed[:invalid_lines] += MarkusCsv::INVALID_LINE_SEP # concat to invalid_lines from MarkusCsv#parse
-      end
-      # parsed[:invalid_lines] +=
-      # imported.failed_instances.map { |f| f[:user_name].to_s }.join(MarkusCsv::INVALID_LINE_SEP)
-      # end
-      if !imported_ids.empty? && parsed[:invalid_records].empty?
-        parsed[:valid_lines] = I18n.t('upload_success', count: imported_ids.size)
-      end
-      if user_class == Student
-        new_user_ids = (imported&.rows.flatten || []) - existing_user_ids
-        # call create callbacks to make sure grade_entry_students get created
-        user_class.where(id: new_user_ids).each(&:create_all_grade_entry_students)
-      end
+      successful_imports = imported.rows.map{ |x| [x[1]] }.flatten
+      unsuccessful_imports = all_user_names - successful_imports
+      unless unsuccessful_imports.empty?
+        imported_ids = imported.rows.map { |x| [x[0]] }.flatten
+        if parsed[:invalid_lines].blank?
+          parsed[:invalid_lines] = I18n.t('upload_errors.invalid_rows')
+        else
+          parsed[:invalid_lines] += MarkusCsv::INVALID_LINE_SEP # concat to invalid_lines from MarkusCsv#parse
+        end
+        parsed[:invalid_lines] +=
+          unsuccessful_imports.map { |f| f[:user_name].to_s }.join(MarkusCsv::INVALID_LINE_SEP)
+        end
+        if !imported_ids.empty? && parsed[:invalid_records].empty?
+          parsed[:valid_lines] = I18n.t('upload_success', count: imported_ids.size)
+        end
+        if user_class == Student
+          new_user_ids = (imported&.rows.flatten || []) - existing_user_ids
+          # call create callbacks to make sure grade_entry_students get created
+          user_class.where(id: new_user_ids).each(&:create_all_grade_entry_students)
+        end
       parsed
     end
   end
