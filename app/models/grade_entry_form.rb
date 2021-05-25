@@ -181,9 +181,9 @@ class GradeEntryForm < Assessment
         end
       end
     end
-    Grade.import updated_grades,
-                 on_duplicate_key_update: { conflict_target: [:grade_entry_item_id, :grade_entry_student_id],
-                                            columns: [:grade] }
+    unless updated_grades.empty?
+      Grade.upsert_all(updated_grades, unique_by: [:grade_entry_item_id, :grade_entry_student_id])
+    end
     GradeEntryStudent.refresh_total_grades(updated_grades.map { |h| h[:grade_entry_student_id] })
     result
   end
