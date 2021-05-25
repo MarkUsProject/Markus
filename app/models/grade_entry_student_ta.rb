@@ -25,7 +25,12 @@ class GradeEntryStudentTa < ApplicationRecord
     # remove values that already exist in the database.
     values = yield(grade_entry_student_ids, ta_ids) - existing_values
 
-    student_ta_hash = values.map { |row| columns.zip(row).to_h }
+    student_ta_hash = values.map do |value|
+      {
+        grade_entry_student_id: value[0],
+        ta_id: value[1]
+      }
+    end
     unless student_ta_hash.empty?
       insert_all(student_ta_hash)
     end
