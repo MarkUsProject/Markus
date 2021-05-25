@@ -169,9 +169,9 @@ class User < ApplicationRecord
     duplicate_user_names = Set.new
     parsed = MarkusCsv.parse(user_list, skip_blanks: true, row_sep: :auto, encoding: encoding) do |row|
       next if row.empty?
-      # if user_names.blank?
-      #   raise CsvInvalidLineError
-      # end
+      if row[0].blank?
+        raise CsvInvalidLineError
+      end
       if user_names.include?(row[user_name_i])
         duplicate_user_names.add row[user_name_i]
         raise CsvInvalidLineError
@@ -209,20 +209,19 @@ class User < ApplicationRecord
 
     existing_user_ids = user_class.all.pluck(:id)
     imported = nil
+    imported_ids = nil
+    successful_imports = nil
+    all_user_names = []
     parsed[:invalid_records] = ''
     User.transaction do
-      # users.each do |user|
-      #   user.length.times do |i|
-      #     if user[i].nil?
-      #       user[i] = '-'
-      #     end
-      #   end
-      # end
-
       user_hash = users.collect { |record| Hash[user_columns.zip record] }
-      imported = user_class.upsert_all(user_hash, returning: %w[id user_name]) unless user_hash.empty?
-      imported_ids = imported.rows.map { |x| [x[0]] }.flatten
+      user_hash.each do |user|
+        all_user_names.push(user[:user_name])
+      end
+      imported = user_class.upsert_all(user_hash, unique_by: :user_name, returning: %w[id user_name]) unless user_hash.empty?
       unless imported.nil?
+        successful_imports = imported.rows.map { |x| [x[1]] }.flatten
+        imported_ids = imported.rows.map { |x| [x[0]] }.flatten
         User.where(id: imported_ids).each do |user|
           if user_class == Ta
             # This will only trigger before_create callback in ta model, not after_create callback
@@ -241,15 +240,8 @@ class User < ApplicationRecord
       end
     end
     unless imported.nil?
-      user_hash = users.collect { |record| Hash[user_columns.zip record] }
-      all_user_names = []
-      user_hash.each do |user|
-        all_user_names.push(user[:user_name])
-      end
-      successful_imports = imported.rows.map{ |x| [x[1]] }.flatten
       unsuccessful_imports = all_user_names - successful_imports
       unless unsuccessful_imports.empty?
-        imported_ids = imported.rows.map { |x| [x[0]] }.flatten
         if parsed[:invalid_lines].blank?
           parsed[:invalid_lines] = I18n.t('upload_errors.invalid_rows')
         else
@@ -258,11 +250,11 @@ class User < ApplicationRecord
         parsed[:invalid_lines] +=
           unsuccessful_imports.map { |f| f[:user_name].to_s }.join(MarkusCsv::INVALID_LINE_SEP)
       end
-      if !imported_ids.empty? && parsed[:invalid_records].empty?
-        parsed[:valid_lines] = I18n.t('upload_success', count: imported_ids.size)
-      end
-      if user_class == Student
-        new_user_ids = (imported&.rows.flatten || []) - existing_user_ids
+        if !imported_ids.empty? && parsed[:invalid_records].empty?
+          parsed[:valid_lines] = I18n.t('upload_success', count: imported_ids.size)
+        end
+        if user_class == Student
+          new_user_ids = (imported&.rows.flatten || []) - existing_user_ids
         # call create callbacks to make sure grade_entry_students get created
         user_class.where(id: new_user_ids).each(&:create_all_grade_entry_students)
       end
