@@ -24,9 +24,11 @@ class GradeEntryStudentTa < ApplicationRecord
     # Delegate the generation of records to the caller-specified block and
     # remove values that already exist in the database.
     values = yield(grade_entry_student_ids, ta_ids) - existing_values
-    # TODO replace import with create when the PG driver supports bulk create,
-    # then remove the activerecord-import gem.
-    import(columns, values, validate: false)
+
+    student_ta_hash = values.map { |row| columns.zip(row).to_h }
+    unless student_ta_hash.empty?
+      insert_all(student_ta_hash)
+    end
   end
 
   def self.from_csv(grade_entry_form, csv_data, remove_existing)
