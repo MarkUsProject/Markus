@@ -261,15 +261,14 @@ class User < ApplicationRecord
         end
         parsed[:invalid_lines] +=
           unsuccessful_imports.map { |f| f[:user_name].to_s }.join(MarkusCsv::INVALID_LINE_SEP)
-        end
-        if !imported_ids.empty? && parsed[:invalid_records].empty?
-          parsed[:valid_lines] = I18n.t('upload_success', count: imported_ids.size)
-        end
-        if user_class == Student
-          new_user_ids = (imported&.rows.flatten || []) - existing_user_ids
-          # call create callbacks to make sure grade_entry_students get created
-          user_class.where(id: new_user_ids).each(&:create_all_grade_entry_students)
-        end
+      end
+      if !imported_ids.empty? && parsed[:invalid_records].empty?
+        parsed[:valid_lines] = I18n.t('upload_success', count: imported_ids.size)
+      end
+      if user_class == Student
+        new_user_ids = (imported&.rows.flatten || []) - existing_user_ids
+        # call create callbacks to make sure grade_entry_students get created
+        user_class.where(id: new_user_ids).each(&:create_all_grade_entry_students)
       end
       parsed
     end
