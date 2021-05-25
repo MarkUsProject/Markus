@@ -200,7 +200,7 @@ class GradeEntryForm < Assessment
         out_of: totals[i],
         position: i + 1,
         assessment_id: self.id
-      } unless names[i] == "Total"
+      } unless names[i] == 'Total'
     end
 
     # Delete old questions if we want to overwrite them
@@ -215,7 +215,7 @@ class GradeEntryForm < Assessment
           out_of: item.out_of,
           position: i + 1,
           assessment_id: item.assessment_id
-        } unless item.name == "Total"
+        } unless item.name == 'Total'
         i += 1
       end
     end
