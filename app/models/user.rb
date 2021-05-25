@@ -270,6 +270,7 @@ class User < ApplicationRecord
           # call create callbacks to make sure grade_entry_students get created
           user_class.where(id: new_user_ids).each(&:create_all_grade_entry_students)
         end
+      end
       parsed
     end
   end
