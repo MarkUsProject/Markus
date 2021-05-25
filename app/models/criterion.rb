@@ -91,9 +91,6 @@ class Criterion < ApplicationRecord
     new_values = yield(criterion_ids, ta_ids)
     values = new_values - existing_values
 
-    # Add assessment_id column common to all rows. It is not included above so
-    # that the set operation is faster.
-
     mappings = values.map { |value| { criterion_id: value[0], ta_id: value[1], assessment_id: assignment.id } }
     CriterionTaAssociation.insert_all(mappings) unless mappings.empty?
 
