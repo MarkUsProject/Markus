@@ -30,26 +30,22 @@ class TaMembership < Membership
 
       row.drop(1).each do |grader_name|
         unless graders[grader_name].nil?
-          new_ta_memberships << {
-            user_id: graders[grader_name],
+          new_ta_memberships << TaMembership.new(
             grouping_id: groupings[row[0]],
-            type: 'TaMembership'
-          }
+            user_id: graders[grader_name]
+          )
         end
       end
     end
-
     Repository.get_class.update_permissions_after do
-      unless new_ta_memberships.empty?
-        TaMembership.insert_all(new_ta_memberships)
-      end
+      TaMembership.import new_ta_memberships, validate: false, on_duplicate_key_ignore: true
     end
 
     # Recompute criteria associations
     if assignment.assign_graders_to_criteria
       Grouping.update_criteria_coverage_counts(
         assignment,
-        new_ta_memberships.map{ |row| row[:grouping_id] }
+        new_ta_memberships.map { |x| x[:grouping_id] }
       )
     end
 

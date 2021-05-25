@@ -129,19 +129,13 @@ class Grouping < ApplicationRecord
     # Delegate the assign function to the caller-specified block and remove
     # values that already exist in the database.
     values = yield(grouping_ids, ta_ids) - existing_values
-
-    membership_hash = values.map do |value|
-      {
-        grouping_id: value[0],
-        user_id: value[1],
-        type: 'TaMembership'
-      }
+    # TODO replace TaMembership.import with TaMembership.create when the PG
+    # driver supports bulk create, then remove the activerecord-import gem.
+    values.map! do |value|
+      value.push('TaMembership')
     end
-
     Repository.get_class.update_permissions_after do
-      unless membership_hash.empty?
-        Membership.insert_all(membership_hash)
-      end
+      Membership.import(columns, values, validate: false)
     end
     update_criteria_coverage_counts(assignment, grouping_ids)
     Criterion.update_assigned_groups_counts(assignment)
