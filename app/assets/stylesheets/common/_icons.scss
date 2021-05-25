@@ -119,6 +119,11 @@
   font-weight: bolder;
 }
 
+.switch-role::before {
+  content: asset_url('icons/group_go.png');
+  padding-right: 5px;
+  vertical-align: text-top;
+}
 
 // Icons for react-json-schema-forms
 .btn-danger::after {
