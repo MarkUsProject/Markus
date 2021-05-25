@@ -223,14 +223,9 @@ class User < ApplicationRecord
       all_user_names = []
       user_hash.each do |user|
         all_user_names.push(user[:user_name])
+      end
       imported = user_class.upsert_all(user_hash, returning: %w[id user_name]) unless user_hash.empty?
-
-      # unless imported.nil?
-
-
       imported_ids = imported.rows.map { |x| [x[0]] }.flatten
-      # end
-      # byebug
       unless imported.nil?
         User.where(id: imported_ids).each do |user|
           if user_class == Ta
