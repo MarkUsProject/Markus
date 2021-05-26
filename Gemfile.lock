@@ -158,6 +158,8 @@ GEM
       dry-initializer (~> 3.0)
       dry-schema (~> 1.5, >= 1.5.2)
     erubi (1.10.0)
+    et-orbi (1.2.4)
+      tzinfo
     execjs (2.7.0)
     factory_bot (6.1.0)
       activesupport (>= 5.0.0)
@@ -167,6 +169,9 @@ GEM
     faker (2.17.0)
       i18n (>= 1.6, < 2)
     ffi (1.11.1)
+    fugit (1.4.5)
+      et-orbi (~> 1.1, >= 1.1.8)
+      raabro (~> 1.4)
     fuubar (2.5.1)
       rspec-core (~> 3.0)
       ruby-progressbar (~> 1.4)
@@ -232,6 +237,7 @@ GEM
       rqrcode (>= 1.0.0)
     puma (5.3.1)
       nio4r (~> 2.0)
+    raabro (1.4.0)
     racc (1.5.2)
     rack (2.2.3)
     rack-protection (2.0.4)
@@ -298,6 +304,11 @@ GEM
       sinatra (>= 0.9.2)
       vegas (~> 0.1.2)
     rexml (3.2.5)
+    resque-scheduler (4.4.0)
+      mono_logger (~> 1.0)
+      redis (>= 3.3)
+      resque (>= 1.26)
+      rufus-scheduler (~> 3.2)
     rmagick (2.16.0)
     rqrcode (1.1.2)
       chunky_png (~> 1.0)
@@ -342,6 +353,8 @@ GEM
     ruby-progressbar (1.11.0)
     ruby-rc4 (0.1.5)
     rubyzip (2.3.0)
+    rufus-scheduler (3.7.0)
+      fugit (~> 1.1, >= 1.1.6)
     rugged (1.1.0)
     sass-rails (6.0.0)
       sassc-rails (~> 2.1, >= 2.1.1)
@@ -466,6 +479,7 @@ DEPENDENCIES
   redcarpet
   responders
   resque
+  resque-scheduler
   rmagick
   rspec-rails (~> 5.0.1)
   rubocop

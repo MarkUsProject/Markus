@@ -158,9 +158,7 @@ Config.setup do |config|
     required(:autotest).hash do
       required(:enable).filled(:bool)
       required(:student_test_buffer_minutes).value(:integer, gt?: 0)
-      required(:server_host).filled(:string)
-      optional(:server_username).maybe(:string)
-      required(:server_command).filled(:string)
+      required(:url).filled(:string)
       required(:client_dir).filled(:string)
       required(:max_batch_size).value(:integer, gt?: 0)
     end

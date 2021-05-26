@@ -11,7 +11,6 @@
 # It's strongly recommended that you check this file into your version control system.
 
 ActiveRecord::Schema.define(version: 2021_05_05_032404) do
-
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -123,6 +122,7 @@ ActiveRecord::Schema.define(version: 2021_05_05_032404) do
     t.datetime "starter_file_updated_at"
     t.bigint "default_starter_file_group_id"
     t.boolean "starter_files_after_due", default: true, null: false
+    t.integer "autotest_settings_id"
     t.index ["assessment_id"], name: "index_assignment_properties_on_assessment_id", unique: true
     t.index ["default_starter_file_group_id"], name: "index_assignment_properties_on_default_starter_file_group_id"
   end
@@ -564,8 +564,6 @@ ActiveRecord::Schema.define(version: 2021_05_05_032404) do
   end
 
   create_table "test_runs", id: :serial, force: :cascade do |t|
-    t.bigint "time_to_service_estimate"
-    t.bigint "time_to_service"
     t.integer "test_batch_id"
     t.integer "grouping_id", null: false
     t.integer "user_id", null: false
@@ -574,6 +572,8 @@ ActiveRecord::Schema.define(version: 2021_05_05_032404) do
     t.integer "submission_id"
     t.text "revision_identifier"
     t.text "problems"
+    t.integer "autotest_test_id"
+    t.integer "status", null: false
     t.index ["grouping_id"], name: "index_test_runs_on_grouping_id"
     t.index ["submission_id"], name: "index_test_runs_on_submission_id"
     t.index ["test_batch_id"], name: "index_test_runs_on_test_batch_id"

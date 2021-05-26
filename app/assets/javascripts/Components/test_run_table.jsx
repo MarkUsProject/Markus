@@ -157,7 +157,7 @@ class TestGroupResultTable extends React.Component {
     {
       id: 'test_status',
       Header: I18n.t('activerecord.attributes.test_result.status'),
-      accessor: row => row['test_results.status'],
+      accessor: row => row['test_results_status'],
       width: 80,
       aggregate: _ => ''
     },

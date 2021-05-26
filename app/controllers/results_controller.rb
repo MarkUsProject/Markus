@@ -264,12 +264,10 @@ class ResultsController < ApplicationController
 
   def run_tests
     submission = Result.find(params[:id]).submission
-    assignment = submission.assignment
-    test_run = submission.create_test_run!(user: current_user)
     @current_job = AutotestRunJob.perform_later(request.protocol + request.host_with_port,
                                                 current_user.id,
-                                                assignment.id,
-                                                [{ id: test_run.id }])
+                                                submission.assignment.id,
+                                                [submission.grouping.group_id])
     session[:job_id] = @current_job.job_id
     flash_message(:notice, I18n.t('automated_tests.tests_running'))
     redirect_back(fallback_location: root_path)
@@ -278,7 +276,7 @@ class ResultsController < ApplicationController
   def stop_test
     test_id = params[:test_run_id].to_i
     assignment_id = params[:assignment_id]
-    @current_job = AutotestCancelJob.perform_later(request.protocol + request.host_with_port, assignment_id, [test_id])
+    @current_job = AutotestCancelJob.perform_later(assignment_id, [test_id])
     session[:job_id] = @current_job.job_id
     redirect_back(fallback_location: root_path)
   end

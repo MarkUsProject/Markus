@@ -4,7 +4,6 @@ en:
     attributes:
       test_run:
         status: Status
-        time_to_service_estimate: Estimated Remaining Time
         user: Run by
     models:
       test_run:

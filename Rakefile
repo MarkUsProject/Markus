@@ -5,5 +5,6 @@
 require File.expand_path('../config/application', __FILE__)
 require 'rake'
 require 'rdoc/task'
+require 'resque/scheduler/tasks'
 
 Markus::Application.load_tasks
