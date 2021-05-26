@@ -208,8 +208,7 @@ class User < ApplicationRecord
     users.each { |u| u.push(Time.zone.name) }
 
     existing_user_ids = user_class.all.pluck(:id)
-    imported = nil
-    imported_ids = nil
+    imported_ids = []
     successful_imports = []
     all_user_names = []
     parsed[:invalid_records] = ''
@@ -220,47 +219,47 @@ class User < ApplicationRecord
       end
       imported = user_class.upsert_all(user_hash, unique_by: :user_name, returning: %w[id user_name]) \
 unless user_hash.empty?
-      unless imported.nil?
-        successful_imports = imported.rows.map { |x| [x[1]] }.flatten
-        imported_ids = imported.rows.map { |x| [x[0]] }.flatten
-        User.where(id: imported_ids).each do |user|
-          if user_class == Ta
-            # This will only trigger before_create callback in ta model, not after_create callback
-            user.run_callbacks(:create) { false }
-          end
-          user.validate!
-        rescue ActiveRecord::RecordInvalid
-          error_message = user.errors
-                              .messages
-                              .map { |k, v| "#{k} #{v.flatten.join ','}" }.flatten.join MarkusCsv::INVALID_LINE_SEP
-          parsed[:invalid_records] += "#{user.user_name}: #{error_message}"
-        end
-        unless parsed[:invalid_records].empty?
-          raise ActiveRecord::Rollback
-        end
-      end
-    end
-    unless imported.nil?
+      successful_imports = imported.rows.map { |x| [x[1]] }.flatten
+      imported_ids = imported.rows.map { |x| [x[0]] }.flatten
       unsuccessful_imports = all_user_names - successful_imports
-      unless unsuccessful_imports.empty?
-        if parsed[:invalid_lines].blank?
-          parsed[:invalid_lines] = I18n.t('upload_errors.invalid_rows')
-        else
-          parsed[:invalid_lines] += MarkusCsv::INVALID_LINE_SEP # concat to invalid_lines from MarkusCsv#parse
+      User.where(id: imported_ids).each do |user|
+        if user_class == Ta
+          # This will only trigger before_create callback in ta model, not after_create callback
+          user.run_callbacks(:create) { false }
         end
-        parsed[:invalid_lines] +=
-          unsuccessful_imports.map { |f| f[:user_name].to_s }.join(MarkusCsv::INVALID_LINE_SEP)
+        if user_class == Student
+          user.type = Student
+        end
+        user.validate!
+      rescue ActiveRecord::RecordInvalid
+        error_message = user.errors
+                            .messages
+                            .map { |k, v| "#{k} #{v.flatten.join ','}" }.flatten.join MarkusCsv::INVALID_LINE_SEP
+        parsed[:invalid_records] += "#{user.user_name}: #{error_message}"
       end
-      if !imported_ids.empty? && parsed[:invalid_records].empty?
-        parsed[:valid_lines] = I18n.t('upload_success', count: imported_ids.size)
+      unless parsed[:invalid_records].empty?
+        raise ActiveRecord::Rollback
       end
-      if user_class == Student
-        new_user_ids = (imported_ids || []) - existing_user_ids
-        # call create callbacks to make sure grade_entry_students get created
-        user_class.where(id: new_user_ids).each(&:create_all_grade_entry_students)
-      end
-      parsed
     end
+    unsuccessful_imports = all_user_names - successful_imports
+    unless unsuccessful_imports.empty?
+      if parsed[:invalid_lines].blank?
+        parsed[:invalid_lines] = I18n.t('upload_errors.invalid_rows')
+      else
+        parsed[:invalid_lines] += MarkusCsv::INVALID_LINE_SEP # concat to invalid_lines from MarkusCsv#parse
+      end
+      parsed[:invalid_lines] +=
+        unsuccessful_imports.map { |f| f[:user_name].to_s }.join(MarkusCsv::INVALID_LINE_SEP)
+    end
+    if !imported_ids.empty? && parsed[:invalid_records].empty?
+      parsed[:valid_lines] = I18n.t('upload_success', count: imported_ids.size)
+    end
+    if user_class == Student
+      new_user_ids = (imported_ids || []) - existing_user_ids
+      # call create callbacks to make sure grade_entry_students get created
+      user_class.where(id: new_user_ids).each(&:create_all_grade_entry_students)
+    end
+    parsed
   end
 
   # Reset API key for user model. The key is a SHA2 512 bit long digest,
