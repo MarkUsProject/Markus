@@ -308,6 +308,8 @@ module AutomatedTestsHelper
     # Gets the feedback file data from the autotester for the TestRun with autotest_test_id = +test_id+
     # and adds it to the +results+ hash.
     def add_feedback_data(results, settings_id, test_id)
+      return if results['test_groups'].blank?
+
       results['test_groups'].each do |result|
         next if result['feedback'].nil?
 
