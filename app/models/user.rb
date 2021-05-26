@@ -210,7 +210,7 @@ class User < ApplicationRecord
     existing_user_ids = user_class.all.pluck(:id)
     imported = nil
     imported_ids = nil
-    successful_imports = nil
+    successful_imports = []
     all_user_names = []
     parsed[:invalid_records] = ''
     User.transaction do
@@ -255,7 +255,7 @@ unless user_hash.empty?
         parsed[:valid_lines] = I18n.t('upload_success', count: imported_ids.size)
       end
       if user_class == Student
-        new_user_ids = (imported&.rows.flatten || []) - existing_user_ids
+        new_user_ids = (imported_ids || []) - existing_user_ids
         # call create callbacks to make sure grade_entry_students get created
         user_class.where(id: new_user_ids).each(&:create_all_grade_entry_students)
       end
