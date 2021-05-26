@@ -32,16 +32,18 @@
       };
 
       var options = {
-        tooltips: {
-          callbacks: {
-            title: function (tooltipItems) {
-              var baseNum = tooltipItems[0].index;
-              return (baseNum * label_multiplier) + '-' + ((baseNum + 1) * label_multiplier);
+        plugins: {
+          tooltip: {
+            callbacks: {
+              title: function (tooltipItems) {
+                var baseNum = tooltipItems[0].dataIndex;
+                return (baseNum * label_multiplier) + '-' + ((baseNum + 1) * label_multiplier);
+              }
             }
+          },
+          legend: {
+            display: true
           }
-        },
-        legend: {
-          display: true
         }
       };
 
