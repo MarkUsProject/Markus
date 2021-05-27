@@ -56,6 +56,7 @@ class Grouping < ApplicationRecord
           class_name: 'StudentMembership'
 
   has_one :inviter, source: :user, through: :inviter_membership, class_name: 'Student'
+  has_one :section, through: :inviter
 
   # The following are chained
   # 'peer_reviews' is the peer reviews given for this group via some result
@@ -473,16 +474,6 @@ class Grouping < ApplicationRecord
     revision.tree_at_path(assignment.repository_folder, with_attrs: true).values.any? do |obj|
       self.starter_file_timestamp.nil? || self.starter_file_timestamp < obj.last_modified_date
     end
-  end
-
-  # Get the section for this group. If assignment restricts member of a groupe
-  # to a section, all students are in the same section. Therefore, return only
-  # the inviters section
-  def section
-    if !self.inviter.nil? and self.inviter.has_section?
-      return self.inviter.section.name
-    end
-    '-'
   end
 
   # Returns a list of missing assignment (required) files.
