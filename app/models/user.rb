@@ -220,9 +220,13 @@ class User < ApplicationRecord
       end
       imported = user_class.upsert_all(user_hash, unique_by: :user_name, returning: %w[id user_name]) \
 unless user_hash.empty?
-      byebug
-      successful_imports = imported.rows.map { |x| [x[1]] }.flatten
-      imported_ids = imported.rows.map { |x| [x[0]] }.flatten
+      unless imported.nil?
+        successful_imports = imported.rows.map { |x| [x[1]] }.flatten
+        imported_ids = imported.rows.map { |x| [x[0]] }.flatten
+      else
+        successful_imports = []
+        imported_ids = []
+      end
       User.where(id: imported_ids).each do |user|
         if user_class == Ta
           # This will only trigger before_create callback in ta model, not after_create callback
