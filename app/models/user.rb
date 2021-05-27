@@ -215,20 +215,18 @@ class User < ApplicationRecord
     User.transaction do
       user_hash = users.collect { |record| Hash[user_columns.zip record] }
       user_hash.each do |user|
+        user[:type] = user_class.name
         all_user_names.push(user[:user_name])
       end
       imported = user_class.upsert_all(user_hash, unique_by: :user_name, returning: %w[id user_name]) \
 unless user_hash.empty?
+      byebug
       successful_imports = imported.rows.map { |x| [x[1]] }.flatten
       imported_ids = imported.rows.map { |x| [x[0]] }.flatten
-      unsuccessful_imports = all_user_names - successful_imports
       User.where(id: imported_ids).each do |user|
         if user_class == Ta
           # This will only trigger before_create callback in ta model, not after_create callback
           user.run_callbacks(:create) { false }
-        end
-        if user_class == Student
-          user.type = Student
         end
         user.validate!
       rescue ActiveRecord::RecordInvalid
