@@ -769,7 +769,7 @@ class Assignment < Assessment
     groupings.select do |grouping|
       grouping.inviter.present? &&
       grouping.inviter.has_section? &&
-      grouping.inviter.section.id == section.id
+      grouping.section.id == section.id
     end
   end
 

@@ -56,6 +56,7 @@ class Grouping < ApplicationRecord
           class_name: 'StudentMembership'
 
   has_one :inviter, source: :user, through: :inviter_membership, class_name: 'Student'
+  has_one :section, through: :inviter
 
   # The following are chained
   # 'peer_reviews' is the peer reviews given for this group via some result
@@ -294,7 +295,7 @@ class Grouping < ApplicationRecord
       raise I18n.t('groups.invite_member.errors.extension_exists')
     elsif self.student_membership_number >= self.assignment.group_max
       raise I18n.t('groups.invite_member.errors.group_max_reached', user_name: user.user_name)
-    elsif self.assignment.section_groups_only && user.section != self.inviter.section
+    elsif self.assignment.section_groups_only && user.section != self.section
       raise I18n.t('groups.invite_member.errors.not_same_section', user_name: user.user_name)
     elsif user.has_accepted_grouping_for?(self.assignment.id)
       raise I18n.t('groups.invite_member.errors.already_grouped', user_name: user.user_name)
@@ -434,7 +435,7 @@ class Grouping < ApplicationRecord
     (!self.is_valid?) || (self.is_valid? &&
                           accepted_students.size == 1 &&
                           self.assignment.group_assignment? &&
-                          !assignment.past_collection_date?(self.inviter.section))
+                          !assignment.past_collection_date?(self.section))
   end
 
   def select_starter_file_entries
@@ -473,16 +474,6 @@ class Grouping < ApplicationRecord
     revision.tree_at_path(assignment.repository_folder, with_attrs: true).values.any? do |obj|
       self.starter_file_timestamp.nil? || self.starter_file_timestamp < obj.last_modified_date
     end
-  end
-
-  # Get the section for this group. If assignment restricts member of a groupe
-  # to a section, all students are in the same section. Therefore, return only
-  # the inviters section
-  def section
-    if !self.inviter.nil? and self.inviter.has_section?
-      return self.inviter.section.name
-    end
-    '-'
   end
 
   # Returns a list of missing assignment (required) files.
