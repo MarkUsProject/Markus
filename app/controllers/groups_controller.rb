@@ -47,21 +47,15 @@ class GroupsController < ApplicationController
         @removed_groupings.push(grouping)
       end
     end
-
+    
     unless @errors.empty?
       err_msg = 'The following groupings could not be deleted since they have submissions: ' +
         @errors.join(', ')
       flash_message(:error, err_msg)
       head :unprocessable_entity
     end
-    unless @removed_groupings.empty?
-      rem_count = @removed_groupings.length
-      suc_msg = 'Successfully deleted ' + rem_count.to_s + ' grouping'
-      if rem_count > 1
-        suc_msg += 's'
-      end
-      flash_message(:success, suc_msg)
-      head :ok if @errors.empty?
+    if @errors.empty?
+      head :ok
     end
   end
 
