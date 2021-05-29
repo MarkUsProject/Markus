@@ -38,7 +38,6 @@ class GroupsController < ApplicationController
         end
       end
     end
-
     groupings.each do |grouping|
       if grouping.has_submission?
         @errors.push(grouping.group.group_name)
@@ -47,7 +46,6 @@ class GroupsController < ApplicationController
         @removed_groupings.push(grouping)
       end
     end
-    
     unless @errors.empty?
       err_msg = 'The following groupings could not be deleted since they have submissions: ' +
         @errors.join(', ')
