@@ -29,7 +29,7 @@ class GroupsController < ApplicationController
   def remove_group
     # When a success div exists we can return successfully removed groups
     groupings = Grouping.where(id: params[:grouping_id])
-    @groups_with_errors = []
+    @errors = []
     @removed_groupings = []
     Repository.get_class.update_permissions_after(only_on_request: true) do
       groupings.each do |grouping|
@@ -38,7 +38,7 @@ class GroupsController < ApplicationController
         end
       end
     end
-    # TODO: return errors through request
+
     groupings.each do |grouping|
       if grouping.has_submission?
         @errors.push(grouping.group.group_name)
@@ -48,12 +48,18 @@ class GroupsController < ApplicationController
       end
     end
 
-    if @groups_with_errors.length > 0
-      error_message_text = "The following groupings could not be removed since they have submissions: "
-      groupings_error_message = error_message_text + @groups_with_errors.join(", ")
-      flash_message(:error, groupings_error_message)
+    if @errors.length > 0
+      err_msg = 'The following groupings could not be deleted since they have submissions: ' +
+        @errors.join(", ")
+      flash_message(:error, err_msg)
       head :unprocessable_entity
     else
+      rem_count = @removed_groupings.length
+      suc_msg = 'Successfully deleted ' + rem_count.to_s + ' grouping'
+      if rem_count > 1
+        suc_msg = suc_msg + 's'
+      end
+      flash_message(:success, suc_msg)
       head :ok
     end
   end
