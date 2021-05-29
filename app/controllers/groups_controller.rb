@@ -61,7 +61,7 @@ class GroupsController < ApplicationController
         suc_msg += 's'
       end
       flash_message(:success, suc_msg)
-      head :ok if @errors.length > 0
+      head :ok if @errors.empty?
     end
   end
 
