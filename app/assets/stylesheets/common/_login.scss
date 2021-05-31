@@ -9,11 +9,11 @@
   box-shadow: 0 3px 0 0 $primary-two;
   height: auto;
   left: 50%;
-  margin-left: -180px;
-  margin-top: -200px;
+  margin-left: -250px;
+  margin-top: -250px;
   position: absolute;
   top: 50%;
-  width: 360px;
+  width: 500px;
 
   /* Mobile friendly! */
   @include breakpoint(tiny) {

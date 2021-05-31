@@ -8,8 +8,8 @@
     <%= text_field_tag 'effective_user_login',
                        nil,
                        placeholder: t('main.role_switch.log_in_as'),
-                       autocorrect: 'off',
-                       tabindex: 10 %>
+                       'aria-label': t('main.role_switch.log_in_as'),
+                       autocorrect: 'off' %>
 
     <%
       # For REMOTE_USER we have no way to check a password, so don't
@@ -19,17 +19,15 @@
       <%= password_field_tag 'admin_password',
                              nil,
                              placeholder: t('main.role_switch.admin_password'),
-                             tabindex: 20,
+                             'aria-label': t('main.role_switch.admin_password'),
                              autocomplete: 'off' %>
     <% end %>
 
     <section class='dialog-actions'>
       <%= submit_tag t('main.log_in'),
-                     data: { disable_with: t('main.logging_in') },
-                     tabindex: 100 %>
+                     data: { disable_with: t('main.logging_in') } %>
       <%= button_tag t(:cancel),
-                     id: 'role-switch-modal-cancel',
-                     tabindex: 110 %>
+                     id: 'role-switch-modal-cancel' %>
     </section>
   <% end %>
 </div>

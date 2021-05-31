@@ -30,9 +30,6 @@ Rails.application.routes.draw do
           end
         end
         resources :feedback_files, except: [:new, :edit]
-        resources :test_group_results, except: [:new, :edit] do
-          resources :test_results, except: [:new, :edit]
-        end
         member do
           get 'annotations'
           post 'add_annotations'
