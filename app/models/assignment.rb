@@ -767,9 +767,7 @@ class Assignment < Assessment
   # Returns the groupings of this assignment associated with the given section
   def section_groupings(section)
     groupings.select do |grouping|
-      grouping.inviter.present? &&
-      grouping.inviter.has_section? &&
-      grouping.section.id == section.id
+      grouping.inviter&.section && grouping.section.id == section.id
     end
   end
 
