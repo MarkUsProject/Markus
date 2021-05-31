@@ -1,6 +1,6 @@
 # Class describing a group of starter files
 class StarterFileGroup < ApplicationRecord
-  include SubmissionsHelper
+  include FileHelper
   belongs_to :assignment, foreign_key: :assessment_id
   has_many :section_starter_file_groups, dependent: :destroy
   has_many :sections, through: :section_starter_file_groups
