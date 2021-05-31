@@ -121,7 +121,6 @@ class Grouping < ApplicationRecord
     # Only use IDs that identify existing model instances.
     ta_ids = Ta.where(id: ta_ids).pluck(:id)
     grouping_ids = Grouping.where(id: grouping_ids).pluck(:id)
-    columns = [:grouping_id, :user_id, :type]
     # Get all existing memberships to avoid violating the unique constraint.
     existing_values = TaMembership
                       .where(grouping_id: grouping_ids, user_id: ta_ids)
