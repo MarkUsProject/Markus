@@ -15,8 +15,6 @@ class GradeEntryStudentTa < ApplicationRecord
       GradeEntryStudent.where(id: Array(grade_entry_student_ids)).pluck(:id)
     ta_ids = Ta.where(id: Array(ta_ids)).pluck(:id)
 
-    # Create non-existing association between grade entry students and TAs.
-    columns = [:grade_entry_student_id, :ta_id]
     # Get all existing associations to avoid violating the unique constraint.
     existing_values = GradeEntryStudentTa
       .where(grade_entry_student_id: grade_entry_student_ids, ta_id: ta_ids)
