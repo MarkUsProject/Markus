@@ -33,7 +33,6 @@ describe FileHelper do
           expect(sanitize_file_name(orig)).to eq orig
         end
       end
-      
     end
   end
 end
