@@ -24,7 +24,8 @@ describe TestResult do
         grouping: @grouping,
         submission: @sub,
         user: @user,
-        revision_identifier: '1'
+        revision_identifier: '1',
+        status: :complete
       )
       @test_group_result = TestGroupResult.create(
         test_group: @test_group,

@@ -2,12 +2,12 @@
   <%= javascript_include_tag 'cookies_eu', nonce: true %>
 <% end %>
 
-<div class='login'>
+<main class='login'>
   <div class='login-image'></div>
 
-  <p class='login-course'>
+  <h1 class='login-course'>
     <%= Settings.course_name %>
-  </p>
+  </h1>
 
   <div class='login-error'>
     <%= render 'shared/flash_message' %>
@@ -20,25 +20,24 @@
          end %>
       <%= text_field_tag 'user_login',
                          nil,
-                         tabindex: 1,
                          placeholder: User.human_attribute_name(:user_name),
+                         'aria-label': User.human_attribute_name(:user_name),
                          autocorrect: 'off',
                          autocapitalize: 'off',
                          autofocus: user_login == '',
                          value: user_login %>
       <%= password_field_tag 'user_password',
                              nil,
-                             tabindex: 2,
                              placeholder: t('main.password'),
+                             'aria-label': t('main.password'),
                              autofocus: user_login != '',
                              autocomplete: 'off' %>
       <div class='submit'>
         <%= submit_tag t('main.log_in'),
-                       data: { disable_with: t('main.logging_in') },
-                       tabindex: 3 %>
+                       data: { disable_with: t('main.logging_in') } %>
       </div>
     <% end %>
   </div>
-</div>
+</main>
 
 <%= render 'cookies_eu/consent_banner' %>

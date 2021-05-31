@@ -26,8 +26,7 @@ class Tag < ApplicationRecord
         user_id: user_id
       }
     end
-    Tag.import tag_data, validate: false, on_duplicate_key_ignore: true
-
+    Tag.insert_all(tag_data) unless tag_data.empty?
     result
   end
 
@@ -46,7 +45,7 @@ class Tag < ApplicationRecord
           user_id: user_id
         }
       end
-      Tag.import tag_data, validate: false, on_duplicate_key_ignore: true
+      Tag.insert_all(tag_data) unless tag_data.empty?
     rescue ActiveRecord::ActiveRecordError, ArgumentError => e
       e
     end

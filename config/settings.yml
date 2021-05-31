@@ -77,9 +77,7 @@ logging:
 autotest:
   enable: true
   student_test_buffer_minutes: 60
-  server_host: localhost
-  server_username: ~
-  server_command: autotest_enqueuer
+  url: 'http://localhost:5000'
 
 scanned_exams:
   enable: true

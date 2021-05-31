@@ -1,4 +1,5 @@
 class TestRun < ApplicationRecord
+  enum status: { in_progress: 0, complete: 1, cancelled: 2, failed: 3 }
   has_many :test_group_results, dependent: :destroy
   has_many :feedback_files, through: :test_group_results
   belongs_to :test_batch, optional: true
@@ -6,49 +7,46 @@ class TestRun < ApplicationRecord
   belongs_to :grouping
   belongs_to :user
 
-  validates :time_to_service_estimate, numericality: { greater_than_or_equal_to: 0, only_integer: true,
-                                                       allow_nil: true }
-  validates :time_to_service, numericality: { greater_than_or_equal_to: -1, only_integer: true, allow_nil: true }
-
   ASSIGNMENTS_DIR = File.join(Settings.autotest.client_dir, 'assignments').freeze
   SPECS_FILE = 'specs.json'.freeze
   FILES_DIR = 'files'.freeze
-  STATUSES = {
-    complete: 'complete',
-    in_progress: 'in_progress',
-    cancelled: 'cancelled',
-    problems: 'problems'
-  }.freeze
 
-  def status
-    return STATUSES[:problems] unless self.problems.nil?
-    return STATUSES[:in_progress] if self.time_to_service.nil?
-    return STATUSES[:cancelled] if self.time_to_service.negative?
-    STATUSES[:complete]
+  def cancel
+    self.update(status: :cancelled) if self.in_progress?
   end
 
-  def self.statuses(test_run_ids)
-    status_hash = Hash.new
-    TestRun.left_outer_joins(test_group_results: :test_results)
-           .where(id: test_run_ids)
-           .pluck(:id, :problems, 'test_group_results.id', :time_to_service)
-           .map do |id, problems, test_group_results_id, time_to_service|
-      if !problems.nil?
-        status_hash[id] = STATUSES[:problems]
-      elsif time_to_service.nil?
-        status_hash[id] = STATUSES[:in_progress]
-      elsif time_to_service.negative?
-        status_hash[id] = STATUSES[:cancelled]
-      else
-        status_hash[id] = STATUSES[:complete]
+  def failure(problems)
+    self.update(status: :failed, problems: problems) if self.in_progress?
+  end
+
+  def update_results!(results)
+    if results['status'] == 'failed'
+      failure(results['error'])
+    else
+      self.update!(status: :complete, problems: results['error'])
+      results['test_groups'].each do |result|
+        error = nil
+        test_group_result = nil
+        ApplicationRecord.transaction do
+          test_group_result = create_test_group_result(result)
+          result['tests'].each do |test|
+            test_group_result.test_results.create(
+              name: test['name'],
+              status: test['status'],
+              marks_earned: test['marks_earned'],
+              output: test['output'].gsub("\x00", '\\u0000'),
+              marks_total: test['marks_total'],
+              time: test['time']
+            )
+          end
+        rescue StandardError => e
+          error = e
+          raise ActiveRecord::Rollback
+        end
+        test_group_result = create_test_group_result(result, error: error) unless error.nil?
+        create_annotations(result['annotations'])
+        create_feedback_file(result['feedback'], test_group_result)
       end
-    end
-    status_hash
-  end
-
-  STATUSES.each do |key, value|
-    define_method key.to_s.concat('?').to_sym do
-      return status == value
     end
   end
 
@@ -56,125 +54,79 @@ class TestRun < ApplicationRecord
     [Admin.name.downcase, Student.name.downcase]
   end
 
-  def create_test_group_result(test_group, time: 0, extra_info: nil)
-    unless test_group.respond_to?(:display_output) # the ActiveRecord object can be passed directly
-      test_group = TestGroup.find_by(assignment: grouping.assignment, id: test_group)
-      # test group can be nil if it's deleted while running
+  private
+
+  def extra_info_string(result)
+    return nil if result['stderr'].blank? && result['malformed'].blank?
+
+    extra = ''
+    extra += I18n.t('automated_tests.results.extra_stderr', extra: result['stderr']) unless result['stderr'].blank?
+    unless result['malformed'].blank?
+      extra += I18n.t('automated_tests.results.extra_malformed', extra: result['malformed'])
     end
-    test_group_results.create(
-      test_group: test_group,
-      marks_earned: 0.0,
-      marks_total: 0.0,
-      time: time,
-      extra_info: extra_info
+    extra
+  end
+
+  def error_type(result)
+    return nil unless result['tests'].blank?
+    return TestGroupResult::ERROR_TYPE[:timeout] if result['timeout']
+
+    TestGroupResult::ERROR_TYPE[:no_results]
+  end
+
+  def create_test_group_result(result, error: nil)
+    test_group_id = result.dig('extra_info', 'test_group_id')
+    test_group = TestGroup.find_by(id: test_group_id)
+    test_group.test_group_results.create(
+      test_run_id: self.id,
+      extra_info: error.nil? ? extra_info_string(result) : error.message,
+      marks_total: error.nil? ? result['tests']&.map { |t| t['marks_total'] }&.sum || 0 : 0,
+      marks_earned: error.nil? ? result['tests']&.map { |t| t['marks_earned'] }&.sum || 0 : 0,
+      time: result['time'] || 0,
+      error_type: error.nil? ? error_type(result) : TestGroupResult::ERROR_TYPE[:test_error]
     )
   end
 
-  def create_test_group_result_from_json(json_test_group, hooks_error_all: '')
-    # create test script result
-    test_group_id = json_test_group['extra_info']['test_group_id']
-    time = json_test_group.fetch('time', 0)
-    stderr = json_test_group['stderr']
-    malformed = json_test_group['malformed']
-    hooks_stderr = "#{hooks_error_all}#{json_test_group['hooks_stderr']}"
-    if stderr.blank? && malformed.blank? && hooks_stderr.blank?
-      extra = nil
-    else
-      extra = ''
-      unless stderr.blank?
-        extra += I18n.t('automated_tests.results.extra_stderr', extra: stderr)
-      end
-      unless malformed.blank?
-        extra += I18n.t('automated_tests.results.extra_malformed', extra: malformed)
-      end
-      unless hooks_stderr.blank?
-        extra += I18n.t('automated_tests.results.extra_hooks_stderr', extra: hooks_stderr)
-      end
-    end
-    new_test_group_result = create_test_group_result(test_group_id, time: time, extra_info: extra)
-    timeout = json_test_group['timeout']
-    json_tests = json_test_group['tests']
-    if json_tests.blank?
-      if timeout.nil?
-        message = I18n.t('automated_tests.results.no_tests')
-        new_test_group_result.error_type = TestGroupResult::ERROR_TYPE[:no_results]
-      else
-        message = I18n.t('automated_tests.results.timeout', seconds: timeout)
-        new_test_group_result.error_type = TestGroupResult::ERROR_TYPE[:timeout]
-      end
-      new_test_group_result.test_results.create(name: I18n.t('automated_tests.results.all_tests'), status: 'error',
-                                               output: message)
-      new_test_group_result.save
-      return new_test_group_result
-    end
+  def create_feedback_file(feedback_data, test_group_result)
+    return if feedback_data.nil? || test_group_result.nil?
 
-    # process tests
-    all_marks_earned = 0.0
-    all_marks_total = 0.0
-    json_tests.each do |json_test|
-      begin
-        marks_earned, marks_total = new_test_group_result.create_test_result_from_json(json_test)
-      rescue StandardError
-        # the tester can signal a critical failure that requires stopping and assigning zero marks
-        new_test_group_result.error_type = TestGroupResult::ERROR_TYPE[:test_error]
-        all_marks_earned = 0.0
-        break
-      end
-      all_marks_earned += marks_earned
-      all_marks_total += marks_total
-    end
-    # handle timeout
-    unless timeout.nil?
-      new_test_group_result.test_results.create(name: I18n.t('automated_tests.results.all_tests'), status: 'error',
-                                                output: I18n.t('automated_tests.results.timeout', seconds: timeout))
-      new_test_group_result.error_type = TestGroupResult::ERROR_TYPE[:timeout]
-      all_marks_earned = 0.0
-    end
-    # save marks
-    new_test_group_result.marks_earned = all_marks_earned
-    new_test_group_result.marks_total = all_marks_total
-    new_test_group_result.save
-
-    new_test_group_result
+    test_group_result.feedback_files.create(
+      filename: feedback_data['filename'],
+      mime_type: feedback_data['mime_type'],
+      file_content: unzip_file_data(feedback_data)
+    )
   end
 
-  def create_test_group_results_from_json(test_output)
-    # check that the output is well-formed
-    begin
-      json_root = JSON.parse(test_output)
-    rescue StandardError => e
-      self.problems = I18n.t('automated_tests.results.bad_results', error: e.message) +
-                      I18n.t('automated_tests.results.extra_raw_output', extra: test_output)
-      save
-      return
-    end
-    # save statistics
-    self.time_to_service = json_root['time_to_service']
-    save
-    # update estimated time to service for other runs in batch
-    if self.test_batch && self.time_to_service_estimate && self.time_to_service
-      time_delta = self.time_to_service_estimate - self.time_to_service
-      self.test_batch.adjust_time_to_service_estimate(time_delta)
-    end
-    # check for server errors
-    server_error = json_root['error']
-    hooks_error_all = json_root['hooks_error'] || ''
-    unless server_error.blank?
-      self.problems = I18n.t('automated_tests.results.bad_server',
-                             hostname: Settings.autotest.server_host, error: server_error) +
-                      I18n.t('automated_tests.results.extra_raw_output', extra: test_output)
-      save
-      return
-    end
+  def create_annotations(annotation_data)
+    return if annotation_data.nil? || self.submission.nil? # don't create annotations for student run tests
 
-    # process results
-    new_test_group_results = {}
-    json_root.fetch('test_groups', []).each do |json_test_group|
-      test_group_id = json_test_group['extra_info']['test_group_id']
-      new_test_group_result = create_test_group_result_from_json(json_test_group, hooks_error_all: hooks_error_all)
-      new_test_group_results[test_group_id] = new_test_group_result
+    count = self.submission.annotations.count + 1
+    annotation_data.each_with_index do |data, i|
+      annotation_text = AnnotationText.create(
+        content: data['content'],
+        annotation_category_id: nil,
+        creator_id: self.user.id,
+        last_editor_id: self.user.id
+      )
+      result = self.submission.current_result
+      TextAnnotation.create(
+        line_start: data['line_start'],
+        line_end: data['line_end'],
+        column_start: data['column_start'],
+        column_end: data['column_end'],
+        annotation_text_id: annotation_text.id,
+        submission_file_id: submission.submission_files.find_by(filename: data['filename']).id,
+        creator_id: self.user.id,
+        creator_type: self.user.type,
+        is_remark: !result.remark_request_submitted_at.nil?,
+        annotation_number: count + i,
+        result_id: result.id
+      )
     end
-    # set the marks assigned by the test run
-    self.submission&.set_autotest_marks
+  end
+
+  def unzip_file_data(file_data)
+    return ActiveSupport::Gzip.decompress(file_data['content']) if file_data['compression'] == 'gzip'
+    file_data['content']
   end
 end
