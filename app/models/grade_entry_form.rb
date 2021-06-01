@@ -154,7 +154,7 @@ class GradeEntryForm < Assessment
         next
       elsif totals.empty?
         totals = row.drop(1)
-        if self.show_total && names.last == GradeEntryForm.human_attribute_name(:total)
+        if !self.show_total && names.last == GradeEntryForm.human_attribute_name(:total)
           self.update_grade_entry_items(names[0...-1], totals[0...-1], overwrite)
         else
           self.update_grade_entry_items(names, totals, overwrite)
@@ -189,8 +189,6 @@ class GradeEntryForm < Assessment
   end
 
   def update_grade_entry_items(names, totals, overwrite)
-    print("\n"+ names.to_s)
-    print("\n"+ totals.to_s)
     if names.size != totals.size || names.empty? || totals.empty?
       raise "Invalid header rows: '#{names}' and '#{totals}'."
     end
@@ -221,13 +219,8 @@ class GradeEntryForm < Assessment
         i += 1
       end
     end
-    # print("\n\n items to update: " + updated_items.to_s)
-    # GradeEntryItem.upsert_all(updated_items, unique_by: [:assessment_id, :name])
-    GradeEntryItem.import updated_items,
-                          on_duplicate_key_update: { conflict_target: [:name, :assessment_id],
-                                                     columns: [:out_of, :position]}
+    GradeEntryItem.upsert_all(updated_items, unique_by: [:assessment_id, :name])
     self.grade_entry_items.reload
-    # print("\n items updated " + self.grade_entry_items.reload.inspect.to_s)
   end
 
   def display_median_to_students
