@@ -1,5 +1,4 @@
 module RepositoryHelper
-  include FileHelper
   # Add new files or overwrite existing files in this open +repo+. +f+ should be a
   # ActionDispatch::Http::UploadedFile object, +user+ is the user that is responsible for
   # the repository transaction, +path+ is the relative path from the root of the repository
@@ -45,7 +44,7 @@ module RepositoryHelper
       return false, messages
     end
     subdir_path, filename = File.split(filename)
-    filename = sanitize_file_name(filename)
+    filename = FileHelper.sanitize_file_name(filename)
     file_path = current_path.join(subdir_path).join(filename).to_s
     new_files << file_path
     # Sometimes the file pointer of file_object is at the end of the file.
@@ -105,7 +104,7 @@ module RepositoryHelper
 
     files.each do |file_path|
       subdir_path, basename = File.split(file_path)
-      basename = sanitize_file_name(basename)
+      basename = FileHelper.sanitize_file_name(basename)
       file_path = current_path.join(subdir_path).join(basename)
       file_path = file_path.to_s
       txn.remove(file_path, current_revision.to_s, keep_folder: keep_folder)

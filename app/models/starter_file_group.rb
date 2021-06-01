@@ -1,6 +1,5 @@
 # Class describing a group of starter files
 class StarterFileGroup < ApplicationRecord
-  include FileHelper
   belongs_to :assignment, foreign_key: :assessment_id
   has_many :section_starter_file_groups, dependent: :destroy
   has_many :sections, through: :section_starter_file_groups
@@ -83,7 +82,7 @@ class StarterFileGroup < ApplicationRecord
 
   def sanitize_rename_entry
     if entry_rename_changed?
-      self.entry_rename = sanitize_file_name(entry_rename).strip
+      self.entry_rename = FileHelper.sanitize_file_name(entry_rename).strip
     end
   end
 

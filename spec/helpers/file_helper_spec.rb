@@ -14,7 +14,7 @@ describe FileHelper do
 
       it 'have sanitized them properly' do
         @filenames_to_be_sanitized.each do |item|
-          expect(sanitize_file_name(item[:orig])).to eq item[:expected]
+          expect(FileHelper.sanitize_file_name(item[:orig])).to eq item[:expected]
         end
       end
     end
@@ -30,7 +30,7 @@ describe FileHelper do
 
       it 'NOT have sanitized away any of their characters' do
         @filenames_not_to_be_sanitized.each do |orig|
-          expect(sanitize_file_name(orig)).to eq orig
+          expect(FileHelper.sanitize_file_name(orig)).to eq orig
         end
       end
     end

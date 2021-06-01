@@ -1,5 +1,4 @@
 class ResultsController < ApplicationController
-  include FileHelper
   before_action { authorize! }
   after_action  :update_remark_request_count,
                 only: [:update_remark_request, :cancel_remark_request,

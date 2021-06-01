@@ -7,7 +7,7 @@ module FileHelper
   # matching the regular expression above
   SUBSTITUTION_CHAR = '_'.freeze
 
-  def sanitize_file_name(file_name)
+  def self.sanitize_file_name(file_name)
     # If file_name is blank, return the empty string
     return '' if file_name.nil?
     File.basename(file_name).gsub(
