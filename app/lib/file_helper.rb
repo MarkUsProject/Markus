@@ -53,4 +53,28 @@ module FileHelper
       'unknown'
     end
   end
+
+  def self.get_comment_syntax(filename)
+    # This is where you can add more languages that SubmissionFile will
+    # be able to insert comments into, for example when downloading annotations.
+    # It will return a list, with the first element being the syntax to start a
+    # comment and the second element being the syntax to end a comment.  Use
+    #the language's multiple line comment format.
+    case File.extname(filename)
+    when '.java', '.js', '.c', '.css', '.h', '.cpp'
+      %w(/* */)
+    when '.rb'
+      ["=begin\n", "\n=end"]
+    when '.py'
+      %w(""" """)
+    when '.scm', '.ss', '.rkt'
+      %w(#| |#)
+    when '.hs'
+      %w({- -})
+    when '.html'
+      %w(<!-- -->)
+    else
+      %w(## ##)
+    end
+  end
 end

@@ -11,30 +11,6 @@ class SubmissionFile < ApplicationRecord
 
   validates_inclusion_of :is_converted, in: [true, false]
 
-  def get_comment_syntax
-    # This is where you can add more languages that SubmissionFile will
-    # be able to insert comments into, for example when downloading annotations.
-    # It will return a list, with the first element being the syntax to start a
-    # comment and the second element being the syntax to end a comment.  Use
-    #the language's multiple line comment format.
-    case File.extname(filename)
-    when '.java', '.js', '.c', '.css', '.h', '.cpp'
-      %w(/* */)
-    when '.rb'
-      ["=begin\n", "\n=end"]
-    when '.py'
-      %w(""" """)
-    when '.scm', '.ss', '.rkt'
-      %w(#| |#)
-    when '.hs'
-      %w({- -})
-    when '.html'
-      %w(<!-- -->)
-    else
-      %w(## ##)
-    end
-  end
-
   def is_supported_image?
     #Here you can add more image types to support
     supported_formats = %w[.jpeg .jpg .gif .png .heic .heif]
@@ -112,7 +88,7 @@ class SubmissionFile < ApplicationRecord
   private
 
   def add_annotations(file_contents)
-    comment_syntax = get_comment_syntax
+    comment_syntax = FileHelper.get_comment_syntax(filename)
     result = ''
     file_contents.split("\n").each_with_index do |contents, index|
       annotations.each do |annot|
