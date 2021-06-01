@@ -189,6 +189,8 @@ class GradeEntryForm < Assessment
   end
 
   def update_grade_entry_items(names, totals, overwrite)
+    print("\n"+ names.to_s)
+    print("\n"+ totals.to_s)
     if names.size != totals.size || names.empty? || totals.empty?
       raise "Invalid header rows: '#{names}' and '#{totals}'."
     end
@@ -200,7 +202,7 @@ class GradeEntryForm < Assessment
         out_of: totals[i],
         position: i + 1,
         assessment_id: self.id
-      } unless names[i] == 'Total'
+      }
     end
 
     # Delete old questions if we want to overwrite them
@@ -215,13 +217,17 @@ class GradeEntryForm < Assessment
           out_of: item.out_of,
           position: i + 1,
           assessment_id: item.assessment_id
-        } unless item.name == 'Total'
+        }
         i += 1
       end
     end
-
-    GradeEntryItem.upsert_all(updated_items, unique_by: %i[assessment_id name])
+    print("\n\n items to update: " + updated_items.to_s)
+    # GradeEntryItem.upsert_all(updated_items, unique_by: [:assessment_id, :name])
+    GradeEntryItem.import updated_items,
+                          on_duplicate_key_update: { conflict_target: [:name, :assessment_id],
+                                                     columns: [:out_of, :position]}
     self.grade_entry_items.reload
+    print("\n items updated " + self.grade_entry_items.reload.inspect.to_s)
   end
 
   def display_median_to_students
