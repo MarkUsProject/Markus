@@ -221,13 +221,13 @@ class GradeEntryForm < Assessment
         i += 1
       end
     end
-    print("\n\n items to update: " + updated_items.to_s)
+    # print("\n\n items to update: " + updated_items.to_s)
     # GradeEntryItem.upsert_all(updated_items, unique_by: [:assessment_id, :name])
     GradeEntryItem.import updated_items,
                           on_duplicate_key_update: { conflict_target: [:name, :assessment_id],
                                                      columns: [:out_of, :position]}
     self.grade_entry_items.reload
-    print("\n items updated " + self.grade_entry_items.reload.inspect.to_s)
+    # print("\n items updated " + self.grade_entry_items.reload.inspect.to_s)
   end
 
   def display_median_to_students
