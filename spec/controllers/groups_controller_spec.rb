@@ -87,6 +87,16 @@ describe GroupsController do
           expect(Repository.get_class).to receive(:update_permissions_after)
           delete :remove_group, params: { grouping_id: [grouping.id], assignment_id: assignment }
         end
+
+        it 'should flash no error' do
+          delete :remove_group, params: { grouping_id: [grouping.id], assignment_id: assignment }
+          expect(flash[:error]).to be_nil
+        end
+
+        it 'should return the :ok status code' do
+          delete :remove_group, params: { grouping_id: [grouping.id], assignment_id: assignment }
+          expect(response).to have_http_status(:ok)
+        end
       end
 
       context 'when grouping has submissions' do
@@ -112,6 +122,15 @@ describe GroupsController do
         it 'should attempt to update permissions file' do
           expect(Repository.get_class).to receive(:update_permissions_after)
           delete :remove_group, params: { grouping_id: [grouping.id], assignment_id: assignment }
+        end
+
+        it 'should flash an error' do
+          expect(flash[:error]).to be_present
+        end
+
+        it 'should return the :unprocessable_entity status code' do
+          expect(flash[:error]).to be_present
+          expect(response).to have_https_status(:unprocessable_entity)
         end
       end
     end

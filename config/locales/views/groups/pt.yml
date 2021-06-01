@@ -14,6 +14,7 @@ pt:
       other: 'UPDATE ME ''%{group}'': %{error}'
     could_not_delete: Não foi possível deletar os seguintes grupos - grupos não podem ser deletados para este projeto se já existir algum envio.
     delete: Deletar este grupo
+    delete_group_has_submission: 'UPDATE_ME'
     delete_confirm: Isso vai remover todos os membros no grupo e deletar todas as informações associadas a este grupo. Continuar?
     delete_groups_linked: Isto irá deletar todos os grupos ligados ao projeto. Continuar?
     destroy:
