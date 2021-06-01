@@ -1,4 +1,5 @@
 module RepositoryHelper
+  include FileHelper
   # Add new files or overwrite existing files in this open +repo+. +f+ should be a
   # ActionDispatch::Http::UploadedFile object, +user+ is the user that is responsible for
   # the repository transaction, +path+ is the relative path from the root of the repository

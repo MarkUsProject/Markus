@@ -1200,7 +1200,7 @@ describe Grouping do
             'filename' => feedback_file.filename,
             'test_runs.id' => test_run.id,
             'test_groups.name' => test_run.test_group_results.first.test_group.name,
-            'type' => SubmissionFile.get_file_type(feedback_file.filename)
+            'type' => FileHelper.get_file_type(feedback_file.filename)
           }
         ]
 

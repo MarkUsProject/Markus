@@ -1,4 +1,5 @@
 class ResultsController < ApplicationController
+  include FileHelper
   before_action { authorize! }
   after_action  :update_remark_request_count,
                 only: [:update_remark_request, :cancel_remark_request,
@@ -66,7 +67,7 @@ class ResultsController < ApplicationController
           data[:feedback_files] = []
         else
           data[:feedback_files] = submission.feedback_files.where(test_group_result_id: nil).map do |f|
-            { id: f.id, filename: f.filename, type: SubmissionFile.get_file_type(f.filename) }
+            { id: f.id, filename: f.filename, type: FileHelper.get_file_type(f.filename) }
           end
         end
 

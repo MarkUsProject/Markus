@@ -11,44 +11,6 @@ class SubmissionFile < ApplicationRecord
 
   validates_inclusion_of :is_converted, in: [true, false]
 
-  def self.get_file_type(filename)
-    # This is where you can add more languages that SubmissionFile will
-    # recognize.  It will return the name of the language, which
-    # SyntaxHighlighter can work with.
-    case File.extname(filename).downcase
-    when '.sci'
-      'scilab'
-    when '.java'
-      'java'
-    when '.rb'
-      'ruby'
-    when '.py'
-      'python'
-    when '.js'
-      'javascript'
-    when '.html'
-      'html'
-    when '.css'
-      'css'
-    when '.c', '.h', '.cpp'
-      'c'
-    when '.hs'
-      'haskell'
-    when '.scm', '.ss', '.rkt'
-      'scheme'
-    when '.tex', '.latex'
-      'tex'
-    when '.jpeg', '.jpg', '.gif', '.png', '.heic', '.heif'
-      'image'
-    when '.pdf'
-      'pdf'
-    when '.ipynb'
-      'jupyter-notebook'
-    else
-      'unknown'
-    end
-  end
-
   def get_comment_syntax
     # This is where you can add more languages that SubmissionFile will
     # be able to insert comments into, for example when downloading annotations.
