@@ -63,9 +63,9 @@ describe GroupsController do
           allow(grouping).to receive(:has_submission?).and_return(false)
         end
 
-        it 'assigns empty array to @errors' do
+        it 'should not flash an error message' do
           delete :remove_group, params: { grouping_id: [grouping.id], assignment_id: assignment }
-          expect(assigns(:errors)).to match_array([])
+          expect(flash[:error]).to be_nil
         end
 
         it 'populates @removed_groupings with deleted groupings' do
@@ -88,11 +88,6 @@ describe GroupsController do
           delete :remove_group, params: { grouping_id: [grouping.id], assignment_id: assignment }
         end
 
-        it 'should flash no error' do
-          delete :remove_group, params: { grouping_id: [grouping.id], assignment_id: assignment }
-          expect(flash[:error]).to be_nil
-        end
-
         it 'should return the :ok status code' do
           delete :remove_group, params: { grouping_id: [grouping.id], assignment_id: assignment }
           expect(response).to have_http_status(:ok)
@@ -106,8 +101,8 @@ describe GroupsController do
           delete :remove_group, params: { grouping_id: [grouping.id], assignment_id: assignment }
         end
 
-        it 'populates @errors with group_name of grouping\'s group' do
-          expect(assigns(:errors)).to match_array([grouping.group.group_name])
+        it 'should have an error message in the flash queue' do
+          expect(flash[:error]).to be_present
         end
 
         it 'assigns empty array to @removed_groupings' do
@@ -124,13 +119,9 @@ describe GroupsController do
           delete :remove_group, params: { grouping_id: [grouping.id], assignment_id: assignment }
         end
 
-        it 'should flash an error' do
-          expect(flash[:error]).to be_present
-        end
-
         it 'should return the :unprocessable_entity status code' do
-          expect(flash[:error]).to be_present
-          expect(response).to have_https_status(:unprocessable_entity)
+          expect(response).to have_https_status(422)
+          # expect(response.status).to eq(422)  # status code 422: unprocessable_entity
         end
       end
     end
