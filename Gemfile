@@ -28,6 +28,7 @@ gem 'webpacker'
 # Background tasks
 gem 'activejob-status', git: 'https://github.com/inkstak/activejob-status.git'
 gem 'resque'
+gem 'resque-scheduler'
 
 # Authorization
 gem 'action_policy'

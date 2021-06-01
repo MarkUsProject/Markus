@@ -265,7 +265,7 @@ class AssignmentsController < ApplicationController
   def stop_test
     test_id = params[:test_run_id].to_i
     assignment_id = params[:id]
-    @current_job = AutotestCancelJob.perform_later(request.protocol + request.host_with_port, assignment_id, [test_id])
+    @current_job = AutotestCancelJob.perform_later(assignment_id, [test_id])
     session[:job_id] = @current_job.job_id
     redirect_back(fallback_location: root_path)
   end
@@ -273,7 +273,7 @@ class AssignmentsController < ApplicationController
   def stop_batch_tests
     test_runs = TestRun.where(test_batch_id: params[:test_batch_id]).pluck(:id)
     assignment_id = params[:id]
-    @current_job = AutotestCancelJob.perform_later(request.protocol + request.host_with_port, assignment_id, test_runs)
+    @current_job = AutotestCancelJob.perform_later(assignment_id, test_runs)
     session[:job_id] = @current_job.job_id
     redirect_back(fallback_location: root_path)
   end
@@ -290,22 +290,17 @@ class AssignmentsController < ApplicationController
                                   'groupings.assessment_id': @assignment.id)
                            .pluck_to_hash(:id,
                                           :test_batch_id,
-                                          :time_to_service,
                                           :grouping_id,
                                           :submission_id,
                                           'test_batches.created_at',
                                           'test_runs.created_at',
+                                          'test_runs.status',
                                           'groups.group_name',
                                           'results.id')
-        status_hash = TestRun.statuses(test_runs.map { |tr| tr[:id] })
-        test_batches = TestBatch.where(id: (test_runs.map { |tr| tr[:test_batch_id] }).compact.uniq)
-        time_to_completion_hashes = test_batches.map(&:time_to_completion_hash)
-        time_estimates = time_to_completion_hashes.empty? ? Hash.new : time_to_completion_hashes.inject(&:merge)
         test_runs.each do |test_run|
           created_at_raw = test_run.delete('test_batches.created_at') || test_run.delete('test_runs.created_at')
           test_run['created_at'] = I18n.l(created_at_raw)
-          test_run['status'] = status_hash[test_run['id']]
-          test_run['time_to_completion'] = time_estimates[test_run['id']] || ''
+          test_run['status'] = test_run['test_runs.status']
           test_run['group_name'] = test_run.delete('groups.group_name')
           test_run['result_id'] = test_run.delete('results.id')
         end

@@ -80,7 +80,7 @@ services:
 
   resque:
     <<: *rails
-    entrypoint: .dockerfiles/entrypoint-dev-wait-for-install.sh
+    entrypoint: .dockerfiles/entrypoint-dev-resque.sh
     command: bundle exec rails resque:work QUEUE=* TERM_CHILD=1
     depends_on:
       - redis

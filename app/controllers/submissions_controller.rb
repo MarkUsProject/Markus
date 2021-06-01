@@ -203,23 +203,23 @@ class SubmissionsController < ApplicationController
     assignment = Assignment.includes(groupings: :current_submission_used).find(params[:assignment_id])
     groupings = assignment.groupings.find(params[:groupings])
     # .where.not(current_submission_used: nil) potentially makes find fail with RecordNotFound
-    test_runs = groupings.select(&:has_non_empty_submission?).map do |g|
+    group_ids = groupings.select(&:has_non_empty_submission?).map do |g|
       submission = g.current_submission_used
       unless flash_allowance(:error, allowance_to(:run_tests?, current_user, context: { submission: submission })).value
         head 400
         return
       end
-      { grouping_id: g.id, submission_id: submission.id }
+      g.group_id
     end
     success = ''
     error = ''
     begin
-      if !test_runs.empty?
+      if !group_ids.empty?
         if flash_allowance(:error, allowance_to(:run_tests?, current_user, context: { assignment: assignment })).value
           @current_job = AutotestRunJob.perform_later(request.protocol + request.host_with_port,
                                                       current_user.id,
                                                       assignment.id,
-                                                      test_runs)
+                                                      group_ids)
           session[:job_id] = @current_job.job_id
           success = I18n.t('automated_tests.tests_running', assignment_identifier: assignment.short_identifier)
         end
@@ -663,7 +663,7 @@ class SubmissionsController < ApplicationController
   def flash_file_manager_messages
     if @assignment.is_timed
       flash_message(:notice, I18n.t('assignments.timed.time_until_due_warning', due_date: I18n.l(@grouping.due_date)))
-    elsif @assignment.submission_rule.can_collect_now?(@grouping.inviter.section)
+    elsif @assignment.submission_rule.can_collect_now?(@grouping.section)
       flash_message(:warning,
                     @assignment.submission_rule.class.human_attribute_name(:after_collection_message))
     elsif @assignment.grouping_past_due_date?(@grouping)

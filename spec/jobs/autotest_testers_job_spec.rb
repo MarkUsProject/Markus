@@ -1,40 +1,45 @@
-shared_examples 'run testers job' do
-  subject { described_class.perform_now }
-  let(:tmp_dir) { Dir.mktmpdir }
-  before :each do
-    allow(Settings.autotest).to receive(:client_dir).and_return(tmp_dir)
-  end
-  after :each do
-    FileUtils.rm_rf tmp_dir
-  end
-  context 'when the job is performed without errors' do
-    let(:data) { '{"good": [1, 2, 3]}' }
-    let(:exit_code) { 0 }
-    it 'should not raise an error' do
-      subject
-    end
-    it 'should write the output to the testers.json file' do
-      subject
-      expect(File.read(File.join(tmp_dir, 'testers.json'))).to eq data
-    end
-  end
-  context 'when the job is performed with errors' do
-    let(:data) { 'some problem happened' }
-    let(:exit_code) { 1 }
-    it 'should raise an error with the process output' do
-      expect { subject }.to raise_error(RuntimeError, data)
-    end
-    it 'should not write to the testers.json file' do
-      expect { subject }.to raise_error(RuntimeError)
-      expect(File.exist?(File.join(tmp_dir, 'testers.json'))).to be false
-    end
-  end
-end
-
 describe AutotestTestersJob do
+  let(:dummy_return) { OpenStruct.new(body: '{"a": 12}') }
+  before do
+    allow(File).to receive(:write)
+    allow(File).to receive(:read).and_return("123456789\n")
+  end
   context 'when running as a background job' do
     let(:job_args) { [] }
     include_examples 'background job'
   end
-  it_behaves_like 'shared autotest job tests', 'run testers job'
+  describe '#perform' do
+    subject { described_class.perform_now }
+    it 'should set headers' do
+      expect_any_instance_of(AutotestTestersJob).to receive(:send_request!) do |_job, net_obj|
+        expect(net_obj['Api-Key']).to eq '123456789'
+        expect(net_obj['Content-Type']).to eq 'application/json'
+        dummy_return
+      end
+      subject
+    end
+    it 'should send an api request to the autotester' do
+      expect_any_instance_of(AutotestTestersJob).to receive(:send_request!) do |_job, net_obj, uri|
+        expect(net_obj.instance_of?(Net::HTTP::Get)).to be true
+        expect(uri.to_s).to eq "#{Settings.autotest.url}/schema"
+        dummy_return
+      end
+      subject
+    end
+    context 'the return value is valid json' do
+      it 'should write the value to a file' do
+        allow_any_instance_of(AutotestTestersJob).to receive(:send_request!).and_return(dummy_return)
+        expect(File).to receive(:write).with(File.join(Settings.autotest.client_dir, 'testers.json'), '{"a":12}')
+        subject
+      end
+    end
+    context 'the return value is not valid json' do
+      let(:dummy_return) { OpenStruct.new(body: 'something else') }
+      it 'should raise an exception' do
+        allow_any_instance_of(AutotestTestersJob).to receive(:send_request!).and_return(dummy_return)
+        expect { subject }.to raise_error(JSON::ParserError)
+      end
+    end
+    include_examples 'autotest jobs'
+  end
 end

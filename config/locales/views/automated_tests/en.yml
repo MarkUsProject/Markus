@@ -14,20 +14,10 @@ en:
     need_submission: Submissions must be collected before tests are run. Not all selected groupings had tests run.
     no_results: No test results to display
     results:
-      all_tests: All tests
-      bad_marks_earned: Earned marks are missing
-      bad_marks_total: Total marks are missing
-      bad_results: 'Test results are malformed: %{error}'
-      bad_server: 'Server ''%{hostname}'' error: %{error}'
-      bad_status: Unrecognized test status '%{status}'
-      extra_hooks_stderr: "Hooks errors: \n%{extra}\n"
       extra_malformed: "Malformed results discarded by server: \n%{extra}\n"
-      extra_raw_output: "Raw test run output: \n%{extra}\n"
       extra_stderr: "Messages on stderr: \n%{extra}\n"
-      no_tests: Test results are empty
-      timeout: "%{seconds} seconds timeout expired (previous marks in this test script will not count)"
-      unknown_test: Unknown test
     run_tests: Run tests
+    settings_not_setup: 'Cannot find test script files: please upload some before running tests'
     specs_file_upload_message: File must be a valid json file
     stop_batch: Stop batch
     stop_test: Stop test
@@ -36,8 +26,8 @@ en:
     test_runs_statuses:
       cancelled: cancelled
       complete: complete
+      failed: error
       in_progress: in progress
-      problems: error
     testing_disabled: Automated testing is not enabled for this assignment.
     tests_running: Running tests. Please refresh this page in a bit to view the results.
     title: Automated Testing
