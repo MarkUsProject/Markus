@@ -1,5 +1,5 @@
 describe FileHelper do
-  # Replace unwanted and unconventional characters in a filename
+  # Replace unwanted and unconventional characters in a filename to make filename format's consistent
   context 'A new file when submitted' do
     context "containing characters outside what's allowed in a filename" do
       before :each do
