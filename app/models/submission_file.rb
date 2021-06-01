@@ -1,12 +1,5 @@
 class SubmissionFile < ApplicationRecord
 
-  # Only allow alphanumeric characters, '.', '-', and '_' as
-  # character set for submission files.
-  FILENAME_SANITIZATION_REGEXP = Regexp.new('[^0-9a-zA-Z\.\-_]')
-  # Character to be used as a replacement for all characters
-  # matching the regular expression above
-  SUBSTITUTION_CHAR = '_'
-
   belongs_to :submission
   validates_associated :submission
 
