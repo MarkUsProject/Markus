@@ -62,19 +62,19 @@ module FileHelper
     #the language's multiple line comment format.
     case File.extname(filename)
     when '.java', '.js', '.c', '.css', '.h', '.cpp'
-      %w(/* */)
+      %w[/* */]
     when '.rb'
-      ["=begin\n", "\n=end"]
+      %w[=begin\n \n=end]
     when '.py'
-      %w(""" """)
+      %w[""" """]
     when '.scm', '.ss', '.rkt'
-      %w(#| |#)
+      %w[#| |#]
     when '.hs'
-      %w({- -})
+      %w[{- -}]
     when '.html'
-      %w(<!-- -->)
+      %w[<!-- -->]
     else
-      %w(## ##)
+      %w[## ##]
     end
   end
 end

@@ -15,7 +15,7 @@ describe SubmissionFile do
       expect(FileHelper.get_file_type(@submission_file.filename)).to eq('java')
     end
     it 'return java comment' do
-      expect(FileHelper.get_comment_syntax(@submission_file.filename)).to eq(%w(/* */))
+      expect(FileHelper.get_comment_syntax(@submission_file.filename)).to eq(%w[/* */])
     end
   end
 
@@ -43,7 +43,7 @@ describe SubmissionFile do
       expect(FileHelper.get_file_type(@submission_file.filename)).to eq('python')
     end
     it 'return python comment' do
-      expect(FileHelper.get_comment_syntax(@submission_file.filename)).to eq(%w(""" """))
+      expect(FileHelper.get_comment_syntax(@submission_file.filename)).to eq(%w[""" """])
     end
   end
 
@@ -57,7 +57,7 @@ describe SubmissionFile do
       expect(FileHelper.get_file_type(@submission_file.filename)).to eq('javascript')
     end
     it 'return javascript comment' do
-      expect(FileHelper.get_comment_syntax(@submission_file.filename)).to eq(%w(/* */))
+      expect(FileHelper.get_comment_syntax(@submission_file.filename)).to eq(%w[/* */])
     end
   end
 
@@ -71,7 +71,7 @@ describe SubmissionFile do
       expect(FileHelper.get_file_type(@submission_file.filename)).to eq('html')
     end
     it 'return html comment' do
-      expect(FileHelper.get_comment_syntax(@submission_file.filename)).to eq(%w(<!-- -->))
+      expect(FileHelper.get_comment_syntax(@submission_file.filename)).to eq(%w[<!-- -->])
     end
   end
 
@@ -138,7 +138,7 @@ describe SubmissionFile do
       expect(FileHelper.get_file_type(@submission_file.filename)).to eq('unknown')
     end
     it 'return generic comment' do
-      expect(FileHelper.get_comment_syntax(@submission_file.filename)).to eq(%w(## ##))
+      expect(FileHelper.get_comment_syntax(@submission_file.filename)).to eq(%w[## ##])
     end
   end
 
