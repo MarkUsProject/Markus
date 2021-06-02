@@ -59,7 +59,7 @@ module FileHelper
     # be able to insert comments into, for example when downloading annotations.
     # It will return a list, with the first element being the syntax to start a
     # comment and the second element being the syntax to end a comment.  Use
-    #the language's multiple line comment format.
+    # the language's multiple line comment format.
     case File.extname(filename)
     when '.java', '.js', '.c', '.css', '.h', '.cpp'
       %w[/* */]

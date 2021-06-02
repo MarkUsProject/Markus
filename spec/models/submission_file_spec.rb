@@ -29,7 +29,7 @@ describe SubmissionFile do
       expect(FileHelper.get_file_type(@submission_file.filename)).to eq('ruby')
     end
     it 'return ruby comment' do
-      expect(FileHelper.get_comment_syntax(@submission_file.filename)).to eq(["=begin\n", "\n=end"])
+      expect(FileHelper.get_comment_syntax(@submission_file.filename)).to eq(%w["=begin\n", "\n=end"])
     end
   end
 
@@ -85,7 +85,7 @@ describe SubmissionFile do
       expect(FileHelper.get_file_type(@submission_file.filename)).to eq('css')
     end
     it 'return css comment' do
-      expect(FileHelper.get_comment_syntax(@submission_file.filename)).to eq(%w(/* */))
+      expect(FileHelper.get_comment_syntax(@submission_file.filename)).to eq(%w[/* */])
     end
   end
 
@@ -99,7 +99,7 @@ describe SubmissionFile do
       expect(FileHelper.get_file_type(@submission_file.filename)).to eq('c')
     end
     it 'return c comment' do
-      expect(FileHelper.get_comment_syntax(@submission_file.filename)).to eq(%w(/* */))
+      expect(FileHelper.get_comment_syntax(@submission_file.filename)).to eq(%w[/* */])
     end
   end
 
@@ -124,7 +124,7 @@ describe SubmissionFile do
       expect(FileHelper.get_file_type(@submission_file.filename)).to eq('unknown')
     end
     it 'return generic comment' do
-      expect(FileHelper.get_comment_syntax(@submission_file.filename)).to eq(%w(## ##))
+      expect(FileHelper.get_comment_syntax(@submission_file.filename)).to eq(%w[## ##])
     end
   end
 
