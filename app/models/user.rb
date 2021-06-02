@@ -219,8 +219,7 @@ class User < ApplicationRecord
         user[:type] = user_class.name
         all_user_names.push(user[:user_name])
       end
-      imported = user_class.upsert_all(user_hash, unique_by: :user_name, returning: %w[id user_name]) \
-unless user_hash.empty?
+      imported = user_class.upsert_all(user_hash, unique_by: :user_name, returning: %w[id user_name])
       successful_imports = imported.rows.map { |x| [x[1]] }.flatten
       imported_ids = imported.rows.map { |x| [x[0]] }.flatten
       User.where(id: imported_ids).each do |user|
