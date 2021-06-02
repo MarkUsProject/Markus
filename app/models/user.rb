@@ -206,12 +206,13 @@ class User < ApplicationRecord
     user_columns.push(:time_zone)
     users.each { |u| u.push("#{u[first_name_i]} #{u[last_name_i]}") }
     users.each { |u| u.push(Time.zone.name) }
-
+    parsed[:invalid_records] = ''
+    return parsed if users.empty?
     existing_user_ids = user_class.all.pluck(:id)
     imported_ids = []
     successful_imports = []
     all_user_names = []
-    parsed[:invalid_records] = ''
+
     User.transaction do
       user_hash = users.collect { |record| Hash[user_columns.zip record] }
       user_hash.each do |user|
@@ -220,13 +221,14 @@ class User < ApplicationRecord
       end
       imported = user_class.upsert_all(user_hash, unique_by: :user_name, returning: %w[id user_name]) \
 unless user_hash.empty?
-      if imported.nil?
-        successful_imports = []
-        imported_ids = []
-      else
-        successful_imports = imported.rows.map { |x| [x[1]] }.flatten
-        imported_ids = imported.rows.map { |x| [x[0]] }.flatten
-      end
+      # if imported.nil?
+      #   successful_imports = []
+      #   imported_ids = []
+      # else
+      #
+      # end
+      successful_imports = imported.rows.map { |x| [x[1]] }.flatten
+      imported_ids = imported.rows.map { |x| [x[0]] }.flatten
       User.where(id: imported_ids).each do |user|
         if user_class == Ta
           # This will only trigger before_create callback in ta model, not after_create callback
