@@ -123,8 +123,6 @@ describe GroupsController do
           expect(Repository.get_class).to receive(:update_permissions_after)
           delete :remove_group, params: { grouping_id: [grouping.id], assignment_id: assignment }
         end
-
-
       end
     end
 
