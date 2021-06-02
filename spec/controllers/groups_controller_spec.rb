@@ -114,15 +114,17 @@ describe GroupsController do
           delete :remove_group, params: { grouping_id: [grouping.id], assignment_id: assignment }
         end
 
+        it 'should return the :unprocessable_entity status code' do
+          # expect(response).to have_https_status(:unprocessable_entity)
+          expect(response.status).to eq(422)
+        end
+
         it 'should attempt to update permissions file' do
           expect(Repository.get_class).to receive(:update_permissions_after)
           delete :remove_group, params: { grouping_id: [grouping.id], assignment_id: assignment }
         end
 
-        it 'should return the :unprocessable_entity status code' do
-          expect(response).to have_https_status(422)
-          # expect(response.status).to eq(422)  # status code 422: unprocessable_entity
-        end
+
       end
     end
 

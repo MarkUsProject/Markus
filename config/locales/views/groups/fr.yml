@@ -14,8 +14,8 @@ fr:
       other: 'UPDATE ME ''%{group}'': %{error}'
     could_not_delete: Vous ne pouvez pas supprimer les groupes suivants — un groupe ne peut être supprimé si un envoi a déja été créé pour le groupe.
     delete: Supprimer ce groupe
-    delete_group_has_submission: 'UPDATE_ME'
     delete_confirm: Enlever tous les membres du groupe et supprimer toutes les informations associées à ce groupe ?
+    delete_group_has_submission: UPDATE_ME
     delete_groups_linked: Cela va supprimer tous les groupes liés à ce projet. Voulez-vous continuer ?
     destroy:
       errors:
