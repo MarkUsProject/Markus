@@ -64,7 +64,7 @@ module FileHelper
     when '.java', '.js', '.c', '.css', '.h', '.cpp'
       %w[/* */]
     when '.rb'
-      %w[=begin\n \n=end]
+      %W[=begin\n \n=end]
     when '.py'
       %w[""" """]
     when '.scm', '.ss', '.rkt'

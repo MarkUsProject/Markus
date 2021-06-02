@@ -29,7 +29,7 @@ describe SubmissionFile do
       expect(FileHelper.get_file_type(@submission_file.filename)).to eq('ruby')
     end
     it 'return ruby comment' do
-      expect(FileHelper.get_comment_syntax(@submission_file.filename)).to eq(%w["=begin\n", "\n=end"])
+      expect(FileHelper.get_comment_syntax(@submission_file.filename)).to eq(%W[=begin\n \n=end])
     end
   end
 
