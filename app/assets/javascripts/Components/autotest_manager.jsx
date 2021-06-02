@@ -1,7 +1,7 @@
 import React from "react";
 import { render } from 'react-dom';
 import FileManager from './markus_file_manager';
-import Form from 'react-jsonschema-form';
+import Form from '@rjsf/core';
 import Datepicker from './date_picker'
 import FileUploadModal from './Modals/file_upload_modal'
 import AutotestSpecsUploadModal from "./Modals/autotest_specs_upload_modal";
