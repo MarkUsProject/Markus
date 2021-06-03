@@ -5,7 +5,7 @@ describe TestResult do
   it { is_expected.to validate_presence_of(:status) }
   it { is_expected.to validate_presence_of(:marks_earned) }
   it { is_expected.to validate_presence_of(:marks_total) }
-  it { is_expected.to validate_inclusion_of(:status).in_array(%w[pass partial fail error]) }
+  it { is_expected.to validate_inclusion_of(:status).in_array(%w[pass partial fail error error_all]) }
   it { is_expected.to validate_numericality_of(:marks_earned) }
   it { is_expected.to validate_numericality_of(:marks_total) }
   it { is_expected.to validate_numericality_of(:time) }
