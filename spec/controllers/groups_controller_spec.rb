@@ -115,8 +115,9 @@ describe GroupsController do
         end
 
         it 'should return the :unprocessable_entity status code' do
-          # expect(response).to have_https_status(:unprocessable_entity)
-          expect(response.status).to eq(422)
+          delete :remove_group, params: { grouping_id: [grouping.id], assignment_id: assignment }
+          byebug
+          expect(response).to have_http_status(:unprocessable_entity)
         end
 
         it 'should attempt to update permissions file' do
