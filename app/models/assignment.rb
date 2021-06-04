@@ -958,7 +958,7 @@ class Assignment < Assessment
       groups[[group_id, group_name, count]] << ta unless ta.nil?
     end
     group_sections = {}
-    self.groupings.each do |g|
+    self.groupings.include(:section).each do |g|
       group_sections[g.id] = g.section.id
     end
     groups = groups.map do |k, v|
