@@ -154,7 +154,7 @@ class GradeEntryForm < Assessment
         next
       elsif totals.empty?
         totals = row.drop(1)
-        if !self.show_total && names.last == GradeEntryForm.human_attribute_name(:total)
+        if self.show_total && names.last == GradeEntryForm.human_attribute_name(:total)
           self.update_grade_entry_items(names[0...-1], totals[0...-1], overwrite)
         else
           self.update_grade_entry_items(names, totals, overwrite)
