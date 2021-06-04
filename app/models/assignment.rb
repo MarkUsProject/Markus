@@ -959,7 +959,7 @@ class Assignment < Assessment
     end
     group_sections = {}
     self.groupings.include(:section).each do |g|
-      group_sections[g.id] = g.section.id
+      group_sections[g.id] = g.section&.id
     end
     groups = groups.map do |k, v|
       {
