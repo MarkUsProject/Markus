@@ -148,14 +148,14 @@ describe GradeEntryFormsController do
       expect(grade_entry_form_with_data.grade_entry_items.first.out_of).to eq 101
     end
 
-    it 'ignores the total column if given in the csv file' do
-      # show_total needs to be on when uploading a csv file with the "Total" column included
+    it 'ignores the total column when uploading a csv file with a <Total> column, when show_total is set to true' do
       grade_entry_form_with_data.update(show_total: true)
       post :upload, params: { id: grade_entry_form_with_data.id, upload_file: @file_total_included, overwrite: true }
       expect(response.status).to eq(302)
       expect(flash[:error]).to be_nil
       expect(response).to redirect_to(grades_grade_entry_form_path(grade_entry_form_with_data))
-      # Check that the total column is the actual total and not the incorrect  v
+
+      # Check that the total column is the actual total and not the incorrect total given in the file
       expect(@student.grades.first.grade).to eq 22
       expect(@student.reload.total_grade).to eq 22
     end
