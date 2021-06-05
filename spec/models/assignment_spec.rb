@@ -2500,7 +2500,7 @@ describe Assignment do
 
     context 'groupings with inviters that do not belong to a section' do
       let!(:student) { create :student }
-      let!(:grouping) { create :grouping_with_inviter, inviter:student, assignment: assignment }
+      let!(:grouping) { create :grouping_with_inviter, inviter: student, assignment: assignment }
       it 'should not have sections' do
         expect(assignment.current_grader_data[:groups][0][:_id]).to eq(grouping.id)
         expect(assignment.current_grader_data[:groups][0][:section]).to be_nil
@@ -2510,7 +2510,7 @@ describe Assignment do
     context 'groupings that have inviters that do belong to sections' do
       let!(:section) { create :section }
       let!(:student) { create :student, section: section }
-      let!(:grouping) {create :grouping_with_inviter, inviter: student, assignment: assignment }
+      let!(:grouping) { create :grouping_with_inviter, inviter: student, assignment: assignment }
       it 'should have sections' do
         expect(assignment.current_grader_data[:groups][0][:_id]).to eq(grouping.id)
         expect(assignment.current_grader_data[:groups][0][:section]).to eq(section.id)
