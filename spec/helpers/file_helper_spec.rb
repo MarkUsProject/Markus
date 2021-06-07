@@ -47,10 +47,10 @@ describe FileHelper do
 
   context 'A .rb Submission file' do
     it 'return ruby' do
-      expect(FileHelper.get_file_type("filename.rb")).to eq('ruby')
+      expect(FileHelper.get_file_type('filename.rb')).to eq('ruby')
     end
     it 'return ruby comment' do
-      expect(FileHelper.get_comment_syntax("filename.rb")).to eq(%W[=begin\n \n=end])
+      expect(FileHelper.get_comment_syntax('filename.rb')).to eq(%W[=begin\n \n=end])
     end
   end
 
