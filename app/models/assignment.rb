@@ -767,9 +767,7 @@ class Assignment < Assessment
   # Returns the groupings of this assignment associated with the given section
   def section_groupings(section)
     groupings.select do |grouping|
-      grouping.inviter.present? &&
-      grouping.inviter.has_section? &&
-      grouping.inviter.section.id == section.id
+      grouping.section.id == section.id
     end
   end
 
@@ -959,12 +957,9 @@ class Assignment < Assessment
       groups[[group_id, group_name, count]]
       groups[[group_id, group_name, count]] << ta unless ta.nil?
     end
-    # TODO: improve the group_sections calculation.
-    # In particular, this should be unified with Grouping#section.
     group_sections = {}
-    self.groupings.includes(:accepted_students).find_each do |g|
-      s = g.accepted_students.first
-      group_sections[g.id] = s&.section_id
+    self.groupings.includes(:section).each do |g|
+      group_sections[g.id] = g.section&.id
     end
     groups = groups.map do |k, v|
       {

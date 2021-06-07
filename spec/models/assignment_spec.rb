@@ -2486,4 +2486,38 @@ describe Assignment do
       end
     end
   end
+
+  describe '#current_grader_data' do
+    let!(:assignment) { create :assignment }
+
+    context 'groupings with no members' do
+      let!(:grouping) { create :grouping, assignment: assignment }
+      it 'should not have sections' do
+        actual_grouping = assignment.current_grader_data[:groups][0]
+        expect(actual_grouping[:_id]).to eq(grouping.id)
+        expect(actual_grouping[:section]).to be_nil
+      end
+    end
+
+    context 'groupings with inviters that do not belong to a section' do
+      let!(:student) { create :student }
+      let!(:grouping) { create :grouping_with_inviter, inviter: student, assignment: assignment }
+      it 'should not have sections' do
+        actual_grouping = assignment.current_grader_data[:groups][0]
+        expect(actual_grouping[:_id]).to eq(grouping.id)
+        expect(actual_grouping[:section]).to be_nil
+      end
+    end
+
+    context 'groupings that have inviters that do belong to sections' do
+      let!(:section) { create :section }
+      let!(:student) { create :student, section: section }
+      let!(:grouping) { create :grouping_with_inviter, inviter: student, assignment: assignment }
+      it 'should have sections' do
+        actual_grouping = assignment.current_grader_data[:groups][0]
+        expect(actual_grouping[:_id]).to eq(grouping.id)
+        expect(actual_grouping[:section]).to eq(section.id)
+      end
+    end
+  end
 end
