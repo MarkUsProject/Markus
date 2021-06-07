@@ -219,10 +219,7 @@ class GradeEntryForm < Assessment
         i += 1
       end
     end
-
-    GradeEntryItem.import updated_items,
-                          on_duplicate_key_update: { conflict_target: [:name, :assessment_id],
-                                                     columns: [:out_of, :position] }
+    GradeEntryItem.upsert_all(updated_items, unique_by: [:assessment_id, :name])
     self.grade_entry_items.reload
   end
 
