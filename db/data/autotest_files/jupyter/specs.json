@@ -30,7 +30,8 @@
           "script_files": [
             {
               "student_file": "submission.ipynb",
-              "test_file": "test.ipynb"
+              "test_file": "test.ipynb",
+              "test_merge": true
             }
           ],
           "timeout": 30,
