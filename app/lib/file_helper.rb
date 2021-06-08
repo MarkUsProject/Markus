@@ -7,6 +7,44 @@ module FileHelper
   # matching the regular expression above
   SUBSTITUTION_CHAR = '_'.freeze
 
+  EXT_TO_TYPE = { '.sci' => 'scilab',
+                  '.java' => 'java',
+                  '.rb' => 'ruby',
+                  '.py' => 'python',
+                  '.js' => 'javascript',
+                  '.html' => 'html',
+                  '.css' => 'css',
+                  '.c' => 'c',
+                  '.h' => 'c',
+                  '.cpp' => 'c',
+                  '.hs' => 'haskell',
+                  '.scm' => 'scheme',
+                  '.ss' => 'scheme',
+                  '.rkt' => 'scheme',
+                  '.tex' => 'tex',
+                  '.jpeg' => 'image',
+                  '.jpg' => 'image',
+                  '.gif' => 'image',
+                  '.png' => 'image',
+                  '.heic' => 'image',
+                  '.heif' => 'image',
+                  '.latex' => 'tex',
+                  '.pdf' => 'pdf',
+                  '.ipynb' => 'jupyter-notebook' }
+
+  COMMENT_TO_SYNTAX = { '.java' => %w[/* */],
+                        '.js' => %w[/* */],
+                        '.c' => %w[/* */],
+                        '.css' => %w[/* */],
+                        '.h' => %w[/* */],
+                        '.cpp' => %w[/* */], '.rb' => %W[=begin\n \n=end],
+                        '.py' => %w[""" """],
+                        '.scm' => %w[#| |#],
+                        '.ss' => %w[#| |#],
+                        '.rkt' => %w[#| |#],
+                        '.hs' => %w[{- -}],
+                        '.html' => %w[<!-- -->] }
+
   def self.sanitize_file_name(file_name)
     # If file_name is blank, return the empty string
     return '' if file_name.nil?
@@ -20,35 +58,9 @@ module FileHelper
     # This is where you can add more languages that SubmissionFile will
     # recognize.  It will return the name of the language, which
     # SyntaxHighlighter can work with.
-    case File.extname(filename).downcase
-    when '.sci'
-      'scilab'
-    when '.java'
-      'java'
-    when '.rb'
-      'ruby'
-    when '.py'
-      'python'
-    when '.js'
-      'javascript'
-    when '.html'
-      'html'
-    when '.css'
-      'css'
-    when '.c', '.h', '.cpp'
-      'c'
-    when '.hs'
-      'haskell'
-    when '.scm', '.ss', '.rkt'
-      'scheme'
-    when '.tex', '.latex'
-      'tex'
-    when '.jpeg', '.jpg', '.gif', '.png', '.heic', '.heif'
-      'image'
-    when '.pdf'
-      'pdf'
-    when '.ipynb'
-      'jupyter-notebook'
+    extension = File.extname(filename).downcase
+    if EXT_TO_TYPE.key?(extension)
+      EXT_TO_TYPE[extension]
     else
       'unknown'
     end
@@ -60,19 +72,9 @@ module FileHelper
     # It will return a list, with the first element being the syntax to start a
     # comment and the second element being the syntax to end a comment.  Use
     # the language's multiple line comment format.
-    case File.extname(filename)
-    when '.java', '.js', '.c', '.css', '.h', '.cpp'
-      %w[/* */]
-    when '.rb'
-      %W[=begin\n \n=end]
-    when '.py'
-      %w[""" """]
-    when '.scm', '.ss', '.rkt'
-      %w[#| |#]
-    when '.hs'
-      %w[{- -}]
-    when '.html'
-      %w[<!-- -->]
+    extension = File.extname(filename).downcase
+    if COMMENT_TO_SYNTAX.key?(extension)
+      COMMENT_TO_SYNTAX[extension]
     else
       %w[## ##]
     end
