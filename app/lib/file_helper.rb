@@ -30,7 +30,7 @@ module FileHelper
                   '.heif' => 'image',
                   '.latex' => 'tex',
                   '.pdf' => 'pdf',
-                  '.ipynb' => 'jupyter-notebook' }
+                  '.ipynb' => 'jupyter-notebook' }.freeze
 
   COMMENT_TO_SYNTAX = { '.java' => %w[/* */],
                         '.js' => %w[/* */],
@@ -43,7 +43,7 @@ module FileHelper
                         '.ss' => %w[#| |#],
                         '.rkt' => %w[#| |#],
                         '.hs' => %w[{- -}],
-                        '.html' => %w[<!-- -->] }
+                        '.html' => %w[<!-- -->] }.freeze
 
   def self.sanitize_file_name(file_name)
     # If file_name is blank, return the empty string
