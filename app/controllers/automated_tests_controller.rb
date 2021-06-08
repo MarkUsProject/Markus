@@ -91,10 +91,17 @@ class AutomatedTestsController < ApplicationController
         { key: "#{file}/" }
       else
         file_keys << file
-        date = File.mtime(files_dir.join(file)).to_datetime
-        local_date = date.in_time_zone(current_user.time_zone).to_time
-        { key: file, size: 1, submitted_date: local_date.httpdate,
-          url: download_file_assignment_automated_tests_url(assignment_id: assignment.id, file_name: file) }
+
+        local_date = ''
+        if files_dir.join(file).exist?
+          date = File.mtime(files_dir.join(file)).to_datetime
+          local_date = date.in_time_zone(current_user.time_zone).to_time.httpdate
+          { key: file, size: 1, submitted_date: local_date,
+            url: download_file_assignment_automated_tests_url(assignment_id: assignment.id, file_name: file) }
+        else
+          { key: file, size: 1,
+            url: download_file_assignment_automated_tests_url(assignment_id: assignment.id, file_name: file) }
+        end
       end
     end
     if File.exist? testers_schema_path
