@@ -91,9 +91,6 @@ class AutomatedTestsController < ApplicationController
         { key: "#{file}/" }
       else
         file_keys << file
-        50.times do
-          print(current_user.time_zone + "\n")
-        end
         date = File.mtime(files_dir.join(file)).to_datetime
         local_date = date.in_time_zone(current_user.time_zone).to_time
         { key: file, size: 1, submitted_date: local_date.httpdate,
