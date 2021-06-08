@@ -92,7 +92,6 @@ class AutomatedTestsController < ApplicationController
       else
         file_keys << file
 
-        local_date = ''
         if files_dir.join(file).exist?
           date = File.mtime(files_dir.join(file)).to_datetime
           local_date = date.in_time_zone(current_user.time_zone).to_time.httpdate
