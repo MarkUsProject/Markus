@@ -397,7 +397,7 @@ class SubmissionsController < ApplicationController
       grouping.access_repo do |repo|
         revision = repo.get_revision(submission.revision_identifier)
         raw_file = revision.files_at_path(file.path)[file.filename]
-        file_type = SubmissionFile.get_file_type(file.filename)
+        file_type = FileHelper.get_file_type(file.filename)
         if raw_file.nil?
           file_contents = I18n.t('student.submission.missing_file', file_name: file.filename)
           file_type = 'unknown'

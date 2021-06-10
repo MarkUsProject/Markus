@@ -674,7 +674,7 @@ class Grouping < ApplicationRecord
     hash_list.each do |h|
       h['feedback_files'] = feedback_files[[h['test_runs.id'], h['test_groups.name']]] || []
       h['feedback_files'].each do |f|
-        f['type'] = SubmissionFile.get_file_type(f['filename'])
+        f['type'] = FileHelper.get_file_type(f['filename'])
       end
     end
 

@@ -77,15 +77,7 @@ module SubmissionsHelper
     f[:last_modified_revision] = revision_identifier
     f[:revision_by] = file.user_id
     f[:submitted_date] = I18n.l(file.submitted_date)
-    f[:type] = SubmissionFile.get_file_type(file_name)
+    f[:type] = FileHelper.get_file_type(file_name)
     f
-  end
-
-  def sanitize_file_name(file_name)
-    # If file_name is blank, return the empty string
-    return '' if file_name.nil?
-    File.basename(file_name).gsub(
-        SubmissionFile::FILENAME_SANITIZATION_REGEXP,
-        SubmissionFile::SUBSTITUTION_CHAR)
   end
 end
