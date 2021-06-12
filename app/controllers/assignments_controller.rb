@@ -570,7 +570,7 @@ class AssignmentsController < ApplicationController
       if (starter_file_group.path + file).directory?
         { key: "#{file}/" }
       else
-        { key: file, size: 1,
+        { key: file, size: 1, submitted_date: l(Time.current),
           url: download_file_assignment_starter_file_group_url(starter_file_group.assignment.id,
                                                                starter_file_group.id,
                                                                file_name: file) }
