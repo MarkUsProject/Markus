@@ -93,9 +93,10 @@ class AutomatedTestsController < ApplicationController
         file_keys << file
 
         if files_dir.join(file).exist?
-          date = File.mtime(files_dir.join(file)).to_datetime
-          local_date = date.in_time_zone(current_user.time_zone).to_time.httpdate
-          { key: file, size: 1, submitted_date: local_date,
+          date = File.mtime(files_dir.join(file))
+          local_date = date.in_time_zone(current_user.time_zone)
+          ""
+          { key: file, size: 1, submitted_date: local_date.strftime("%A, %B, %d, %Y, %I:%M:%S %p %Z"),
             url: download_file_assignment_automated_tests_url(assignment_id: assignment.id, file_name: file) }
         else
           { key: file, size: 1,
