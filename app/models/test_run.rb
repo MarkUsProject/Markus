@@ -30,7 +30,7 @@ class TestRun < ApplicationRecord
         ApplicationRecord.transaction do
           test_group_result = create_test_group_result(result)
           result['tests'].each do |test|
-            test_group_result.test_results.create(
+            test_group_result.test_results.create!(
               name: test['name'],
               status: test['status'],
               marks_earned: test['marks_earned'],

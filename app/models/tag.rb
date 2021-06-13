@@ -1,6 +1,7 @@
 class Tag < ApplicationRecord
   has_and_belongs_to_many :groupings
   belongs_to :user
+  belongs_to :assessment, optional: true
 
   # Constants
   NUM_CSV_FIELDS = 3

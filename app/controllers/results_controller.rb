@@ -66,7 +66,7 @@ class ResultsController < ApplicationController
           data[:feedback_files] = []
         else
           data[:feedback_files] = submission.feedback_files.where(test_group_result_id: nil).map do |f|
-            { id: f.id, filename: f.filename, type: SubmissionFile.get_file_type(f.filename) }
+            { id: f.id, filename: f.filename, type: FileHelper.get_file_type(f.filename) }
           end
         end
 
