@@ -242,7 +242,7 @@ GEM
     rack (2.2.3)
     rack-protection (2.0.4)
       rack
-    rack-proxy (0.6.5)
+    rack-proxy (0.7.0)
       rack
     rack-test (1.1.0)
       rack (>= 1.0, < 3)
@@ -415,7 +415,7 @@ GEM
     uniform_notifier (1.14.1)
     vegas (0.1.11)
       rack (>= 1.0.0)
-    webpacker (5.3.0)
+    webpacker (5.4.0)
       activesupport (>= 5.2)
       rack-proxy (>= 0.6.1)
       railties (>= 5.2)
