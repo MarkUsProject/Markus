@@ -91,14 +91,10 @@ class AutomatedTestsController < ApplicationController
         { key: "#{file}/" }
       else
         file_keys << file
-        if files_dir.join(file).exist?
-          date = I18n.l File.mtime(files_dir.join(file)).in_time_zone(current_user.time_zone)
-          { key: file, size: 1, submitted_date: date,
-            url: download_file_assignment_automated_tests_url(assignment_id: assignment.id, file_name: file) }
-        else
-          { key: file, size: 1,
-            url: download_file_assignment_automated_tests_url(assignment_id: assignment.id, file_name: file) }
-        end
+        time = files_dir.join(file).exist? ?
+                 I18n.l(File.mtime(files_dir.join(file)).in_time_zone(current_user.time_zone)) : ''
+        { key: file, size: 1, submitted_date: time,
+          url: download_file_assignment_automated_tests_url(assignment_id: assignment.id, file_name: file) }
       end
     end
     if File.exist? testers_schema_path
