@@ -1,9 +1,11 @@
-import notebook_importer
+from notebook_helper import importer
 import submission
 import numpy as np
+import pytest
 
-notebook_importer.run_cells(submission)
-
+@pytest.fixture(scope='module', autouse=True)
+def load_code():
+    importer.run_cells(submission)
 
 def test_shape():
     assert submission.a.shape == (100, 100)
