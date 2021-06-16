@@ -51,8 +51,8 @@ describe CourseSummariesController do
       end
 
       context 'tests the second csv row which contains out of values' do
-        def is_numbery(e)
-          return e.to_i.to_s == e || e.to_f.to_s == e
+        def is_numbery(str)
+          str.to_i.to_s == str || str.to_f.to_s == str
         end
 
         it 'ensures the row contains the right number of integer/floating point values' do
