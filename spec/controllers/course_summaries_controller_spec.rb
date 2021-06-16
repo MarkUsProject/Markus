@@ -24,7 +24,7 @@ describe CourseSummariesController do
         end
         expect(csv_rows.shift).to eq(header)
         csv_rows.each do |csv_row|
-          if csv_row[0] == 'Out Of'  # skip the second row since the student name is invalid
+          if csv_row[0] == 'Out Of'
             next
           end
           student_name = csv_row.shift
@@ -51,13 +51,17 @@ describe CourseSummariesController do
       end
 
       context 'tests the second csv row which contains out of values' do
+        def is_numbery(e)
+          return e.to_i.to_s == e || e.to_f.to_s == e
+        end
+
         it 'ensures the row contains the right number of integer/floating point values' do
           assignments = create_list(:assignment_with_criteria_and_results, 3)
           create(:grouping_with_inviter_and_submission, assignment: assignments[0])
           create(:grouping_with_inviter, assignment: assignments[0])
           csv_rows = get_as(@admin, :download_csv_grades_report, format: :csv).parsed_body
           out_of_row = csv_rows[1]
-          num_numbers = out_of_row.select { |e| e if e.to_i.to_s == e || e.to_f.to_s == e}.length
+          num_numbers = out_of_row.select { |e| e if is_numbery(e) }.length
           expect(num_numbers).to eq(3)
         end
 
@@ -67,7 +71,7 @@ describe CourseSummariesController do
           create(:grouping_with_inviter, assignment: assignments[0])
           csv_rows = get_as(@admin, :download_csv_grades_report, format: :csv).parsed_body
           out_of_row = csv_rows[1]
-          out_of_row_exp = ['Out Of', '', '', ''].concat(assignments.map { |ass| ass.max_mark.to_s})
+          out_of_row_exp = ['Out Of', '', '', ''].concat(assignments.map { |ass| ass.max_mark.to_s })
           expect(out_of_row).to eq(out_of_row_exp)
         end
       end

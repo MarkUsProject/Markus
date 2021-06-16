@@ -77,7 +77,7 @@ class CourseSummariesController < ApplicationController
     assessments = Assessment.all.order(id: :asc)
     marking_schemes = MarkingScheme.all
     out_of_row = ['Out Of', '', '', '']
-    out_of_row.concat(assessments.map { |ass| ass.max_mark})
+    out_of_row.concat(assessments.collect { |ass| ass.max_mark })
     out_of_row.concat([''] * marking_schemes.length)
 
     out_of_row
