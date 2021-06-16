@@ -493,5 +493,47 @@ describe Api::GroupsController do
         expect(response.status).to eq(200)
       end
     end
+
+    describe 'POST add_annotations' do
+      let(:assignment) { create :assignment }
+      let(:grouping) { create :grouping, assignment: assignment }
+      let(:submission) { create :version_used_submission, grouping: grouping }
+      let(:submission_file) { create :submission_file, submission: submission }
+      let(:response_type) { 'application/xml' }
+
+      it 'creates new annotations for a submission file that exists' do
+        annotation_data = [
+          {
+            annotation_category_name: nil,
+            filename: submission_file.filename,
+            content: 'Content 1',
+            line_start: 1,
+            line_end: 1,
+            column_start: 1,
+            column_end: 5
+          },
+          {
+            annotation_category_name: nil,
+            filename: submission_file.filename,
+            content: 'Content 2',
+            line_start: 2,
+            line_end: 2,
+            column_start: 10,
+            column_end: 15
+          }
+        ]
+        request.env['HTTP_ACCEPT'] = response_type
+        post :add_annotations, params: {
+          assignment_id: assignment.id,
+          id: grouping.group_id,
+          annotations: annotation_data
+        }
+
+        expect(response).to have_http_status :success
+
+        annotation_contents = submission.current_result.annotations.map { |a| a.annotation_text.content }
+        expect(annotation_contents).to contain_exactly('Content 1', 'Content 2')
+      end
+    end
   end
 end
