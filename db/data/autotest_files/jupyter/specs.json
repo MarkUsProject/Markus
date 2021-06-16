@@ -1,0 +1,45 @@
+{
+  "testers": [
+    {
+      "tester_type": "py",
+      "env_data": {
+        "pip_requirements": "matplotlib numpy git+https://github.com/MarkUsProject/autotest-helpers.git#subdirectory=notebook_importer",
+        "python_version": "3.9"
+      },
+      "test_data": [
+        {
+          "script_files": [
+            "test.py"
+          ],
+          "tester": "pytest",
+          "timeout": 30,
+          "category": [
+            "admin"
+          ]
+        }
+      ]
+    },
+    {
+      "tester_type": "jupyter",
+      "env_data": {
+        "python_version": "3.9",
+        "pip_requirements": "matplotlib numpy"
+      },
+      "test_data": [
+        {
+          "script_files": [
+            {
+              "student_file": "submission.ipynb",
+              "test_file": "test.ipynb",
+              "test_merge": true
+            }
+          ],
+          "timeout": 30,
+          "category": [
+            "admin"
+          ]
+        }
+      ]
+    }
+  ]
+}
