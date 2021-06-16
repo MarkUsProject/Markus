@@ -14,7 +14,6 @@ gem 'rails', '~> 6.1.3.1'
 gem 'sprockets'
 
 # Models and database interactions
-gem 'activerecord-import'
 gem 'pluck_to_hash'
 
 # CSS and JavaScript

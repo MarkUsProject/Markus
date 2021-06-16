@@ -61,8 +61,6 @@ GEM
     activerecord (6.1.3.1)
       activemodel (= 6.1.3.1)
       activesupport (= 6.1.3.1)
-    activerecord-import (1.0.7)
-      activerecord (>= 3.2)
     activerecord-session_store (2.0.0)
       actionpack (>= 5.2.4.1)
       activerecord (>= 5.2.4.1)
@@ -435,7 +433,6 @@ DEPENDENCIES
   action_policy
   activejob-status!
   activemodel-serializers-xml
-  activerecord-import
   activerecord-session_store
   autoprefixer-rails
   awesome_print
