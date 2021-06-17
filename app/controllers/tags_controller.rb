@@ -34,7 +34,7 @@ class TagsController < ApplicationController
 
   # Creates a new instance of the tag.
   def create
-    tag_params = params.require(:tag).permit(:name, :description)
+    tag_params = params.require(:tag).permit(:name, :description, :assignment_id)
     new_tag = Tag.new(tag_params.merge(user: @current_user))
 
     if new_tag.save
@@ -42,6 +42,7 @@ class TagsController < ApplicationController
         grouping = Grouping.find(params[:grouping_id])
         grouping.tags << new_tag
       end
+      new_tag.assessment = Assessment.find(params[:assignment_id])
     end
 
     respond_with new_tag, location: -> { request.headers['Referer'] || root_path }
