@@ -34,15 +34,13 @@ class TagsController < ApplicationController
 
   # Creates a new instance of the tag.
   def create
-    tag_params = params.require(:tag).permit(:name, :description, :assignment_id)
-    new_tag = Tag.new(tag_params.merge(user: @current_user))
-
+    tag_params = params.require(:tag).permit(:name, :description)
+    new_tag = Tag.new(tag_params.merge(user: @current_user, assessment: Assessment.find(params[:assignment_id])))
     if new_tag.save
       if params[:grouping_id]
         grouping = Grouping.find(params[:grouping_id])
         grouping.tags << new_tag
       end
-      new_tag.assessment = Assessment.find(params[:assignment_id])
     end
 
     respond_with new_tag, location: -> { request.headers['Referer'] || root_path }
@@ -65,7 +63,7 @@ class TagsController < ApplicationController
   def edit_tag_dialog
     @assignment = Assignment.find(params[:assignment_id])
     @tag = Tag.find(params[:id])
-
+    byebug
     render partial: 'tags/edit_dialog', handlers: [:erb]
   end
 
