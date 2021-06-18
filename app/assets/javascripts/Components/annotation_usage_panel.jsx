@@ -27,9 +27,6 @@ class AnnotationUsagePanel extends React.Component {
       id: 'user',
       minWidth: 200,
       PivotValue: ({value}) => value,
-      filterMethod: (filter, row) => {
-        return row[filter.id].toLowerCase().includes(filter.value.toLowerCase());
-      }
     },
     {
       Header: I18n.t('activerecord.models.submission.one'),

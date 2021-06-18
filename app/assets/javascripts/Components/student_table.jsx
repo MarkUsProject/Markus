@@ -2,7 +2,7 @@ import React from 'react';
 import {render} from 'react-dom';
 
 import {CheckboxTable, withSelection} from './markus_with_selection_hoc'
-import {stringFilter} from './Helpers/table_helpers';
+import {selectFilter} from './Helpers/table_helpers';
 
 
 class RawStudentTable extends React.Component {
@@ -111,16 +111,10 @@ class RawStudentTable extends React.Component {
                   return data.sections[row[filter.id]] === filter.value;
                 }
               },
-              Filter: ({ filter, onChange }) =>
-                <select
-                  onChange={event => onChange(event.target.value)}
-                  style={{ width: '100%' }}
-                  value={filter ? filter.value : 'all'}
-                >
-                  <option value='all'>{I18n.t('all')}</option>
-                  {Object.entries(data.sections).map(
-                    kv => <option key={kv[1]} value={kv[1]}>{kv[1]}</option>)}
-                </select>,
+              Filter: selectFilter,
+              filterOptions: Object.entries(data.sections).map(
+                  kv => ({value: kv[1], text: kv[1]})
+              )
             },
             {
               Header: I18n.t('activerecord.attributes.user.grace_credits'),
@@ -153,16 +147,12 @@ class RawStudentTable extends React.Component {
                   );
                 }
               },
-              Filter: ({ filter, onChange }) =>
-                <select
-                  onChange={event => onChange(event.target.value)}
-                  style={{ width: '100%' }}
-                  value={filter ? filter.value : 'all'}
-                >
-                  <option value='all'>{I18n.t('all')} ({this.state.data.counts.all})</option>
-                  <option value='active'>{I18n.t('students.active')} ({this.state.data.counts.active})</option>
-                  <option value='inactive'>{I18n.t('students.inactive')} ({this.state.data.counts.inactive})</option>
-                </select>,
+              Filter: selectFilter,
+              filterOptions: [
+                {value: 'active', text: `${I18n.t('students.active')} (${this.state.data.counts.active})`},
+                {value: 'inactive', text: `${I18n.t('students.inactive')} (${this.state.data.counts.inactive})`},
+              ],
+              filterAllOptionText: `${I18n.t('all')} (${this.state.data.counts.all})`
             },
             {
               Header: I18n.t('actions'),
@@ -184,7 +174,6 @@ class RawStudentTable extends React.Component {
             }
           ]}
           filterable
-          defaultFilterMethod={stringFilter}
           loading={loading}
 
           {...this.props.getCheckboxProps()}
