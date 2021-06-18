@@ -40,6 +40,12 @@ describe TagsController do
       expect(tags.first.name).to eq 'tag'
       expect(tags.first.description).to eq 'tag description'
     end
+
+    it 'associates the new tag with an assessment' do
+      post :create, params: { tag: { name: 'tag', description: 'tag description' },
+                              assignment_id: assignment.id }
+      expect(Tag.find_by(name: 'tag', description: 'tag description').assessment).to_not be_nil
+    end
   end
 
   describe '#update' do
