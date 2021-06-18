@@ -2,7 +2,7 @@ import React from 'react';
 import {render} from 'react-dom';
 
 import {CheckboxTable, withSelection} from './markus_with_selection_hoc'
-import {stringFilter, dateSort, markingStateColumn} from './Helpers/table_helpers';
+import {dateSort, markingStateColumn, selectFilter} from './Helpers/table_helpers';
 import CollectSubmissionsModal from "./Modals/collect_submissions_modal";
 
 
@@ -108,16 +108,10 @@ class RawSubmissionTable extends React.Component {
           return filter.value === row[filter.id];
         }
       },
-      Filter: ({ filter, onChange }) =>
-        <select
-          onChange={event => onChange(event.target.value)}
-          style={{ width: '100%' }}
-          value={filter ? filter.value : 'all'}
-        >
-          <option value='all'>{I18n.t('all')}</option>
-          {Object.entries(this.state.sections).map(
-            kv => <option key={kv[1]} value={kv[1]}>{kv[1]}</option>)}
-        </select>,
+      Filter: selectFilter,
+      filterOptions: Object.entries(this.state.sections).map(
+        kv => ({value: kv[1], text: kv[1]})
+      )
     },
     {
       show: this.props.is_timed,
@@ -276,7 +270,6 @@ class RawSubmissionTable extends React.Component {
             }
           ]}
           filterable
-          defaultFilterMethod={stringFilter}
           defaultFiltered={this.props.defaultFiltered}
           loading={loading}
 

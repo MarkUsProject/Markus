@@ -80,14 +80,6 @@ class OneTimeAnnotationsTable extends React.Component {
             </div>
           );
         }
-      },
-      filterMethod: (filter, row) => {
-        if (filter.value) {
-          // Check group name
-          return row._original.group_name.includes(filter.value);
-        } else {
-          return true;
-        }
       }
     },
     {
@@ -96,13 +88,6 @@ class OneTimeAnnotationsTable extends React.Component {
       id: 'creator',
       Cell: row => {
         return <span>{row.original.creator}</span>;
-      },
-      filterMethod: (filter, row) => {
-        if (filter.value) {
-          return row._original.creator.includes(filter.value);
-        } else {
-          return true;
-        }
       }
     },
     {
@@ -111,13 +96,6 @@ class OneTimeAnnotationsTable extends React.Component {
       id: 'last_editor',
       Cell: row => {
         return <span>{row.original.last_editor}</span>;
-      },
-      filterMethod: (filter, row) => {
-        if (filter.value) {
-          return row._original.last_editor.includes(filter.value);
-        } else {
-          return true;
-        }
       }
     },
     {
@@ -130,13 +108,6 @@ class OneTimeAnnotationsTable extends React.Component {
                   content={row.original.content}
                   id={row.original.id}
                   editAnnotation={this.editAnnotation}/>;
-      },
-      filterMethod: (filter, row) => {
-        if (filter.value) {
-          return row._original.content.includes(filter.value);
-        } else {
-          return true;
-        }
       }
     }
   ];

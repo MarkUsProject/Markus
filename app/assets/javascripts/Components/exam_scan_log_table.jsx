@@ -2,7 +2,7 @@ import React from 'react';
 import {render} from 'react-dom';
 
 import ReactTable from 'react-table';
-import {dateSort, stringFilter} from './Helpers/table_helpers';
+import {dateSort} from './Helpers/table_helpers';
 
 
 class ExamScanLogTable extends React.Component {
@@ -104,7 +104,6 @@ class ExamScanLogTable extends React.Component {
         data={data}
         columns={this.columns}
         filterable
-        defaultFilterMethod={stringFilter}
         defaultSorted={[{id: 'date', desc: true}]}
         SubComponent={(row) => (
           <ExamScanErrorsTable

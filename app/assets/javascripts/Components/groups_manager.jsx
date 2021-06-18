@@ -3,7 +3,7 @@ import {render} from 'react-dom';
 
 import {withSelection, CheckboxTable} from './markus_with_selection_hoc';
 import ExtensionModal from './Modals/extension_modal';
-import {durationSort} from "./Helpers/table_helpers";
+import {durationSort, selectFilter} from "./Helpers/table_helpers";
 
 class GroupsManager extends React.Component {
 
@@ -341,16 +341,11 @@ class RawGroupsTable extends React.Component {
           return isValid === val;
         }
       },
-      Filter: ({ filter, onChange }) =>
-        <select
-          onChange={event => onChange(event.target.value)}
-          style={{ width: '100%' }}
-          value={filter ? filter.value : 'all'}
-        >
-          <option value='all'>{I18n.t('all')}</option>
-          <option value='true'>{I18n.t('groups.is_valid')}</option>
-          <option value='false'>{I18n.t('groups.is_not_valid')}</option>
-        </select>,
+      Filter: selectFilter,
+      filterOptions: [
+        {value: 'true', text: I18n.t('groups.is_valid')},
+        {value: 'false', text: I18n.t('groups.is_not_valid')},
+      ],
       minWidth: 30,
       sortable: false
     },
@@ -472,16 +467,11 @@ class RawStudentsTable extends React.Component {
             return row._original.assigned === assigned;
           }
         },
-        Filter: ({ filter, onChange }) =>
-          <select
-            onChange={event => onChange(event.target.value)}
-            style={{ width: '100%' }}
-            value={filter ? filter.value : 'all'}
-          >
-            <option value='all'>{I18n.t('all')}</option>
-            <option value='true'>{I18n.t('groups.assigned_students')}</option>
-            <option value='false'>{I18n.t('groups.unassigned_students')}</option>
-          </select>,
+        Filter: selectFilter,
+        filterOptions: [
+          {value: 'true', text: I18n.t('groups.assigned_students')},
+          {value: 'false', text: I18n.t('groups.unassigned_students')}
+        ]
       }
     ];
   };
