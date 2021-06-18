@@ -18,13 +18,12 @@ describe CourseSummariesController do
                   User.human_attribute_name(:first_name),
                   User.human_attribute_name(:last_name),
                   User.human_attribute_name(:id_number)]
-
         assignments.each do |assignment|
           header.push(assignment.short_identifier)
         end
         expect(csv_rows.shift).to eq(header)
         csv_rows.each do |csv_row|
-          if csv_row[0] == 'Out Of'
+          if csv_row[0] == Assessment.human_attribute_name(:max_mark)
             next
           end
           student_name = csv_row.shift
@@ -51,28 +50,30 @@ describe CourseSummariesController do
       end
 
       context 'tests the second csv row which contains out of values' do
-        def is_numbery(str)
-          str.to_i.to_s == str || str.to_f.to_s == str
-        end
-
-        it 'ensures the row contains the right number of integer/floating point values' do
-          assignments = create_list(:assignment_with_criteria_and_results, 3)
+        it 'checks the out of row is numerically and sequentially correct' do
+          # this test checks that a) the actual out_of values are equal to the corresponding assessment max_marks
+          # & b) that given the assignments are sorted by id, the out of row is sorted accordingly as well. both
+          # of these are also tested on grade_entry_forms
+          # sort by ascending id to check value order
+          assignments = create_list(:assignment_with_criteria_and_results, 3).sort_by(&:id)
+          grade_forms = create_list(:grade_entry_form_with_data, 2).sort_by(&:id)
           create(:grouping_with_inviter_and_submission, assignment: assignments[0])
           create(:grouping_with_inviter, assignment: assignments[0])
           csv_rows = get_as(@admin, :download_csv_grades_report, format: :csv).parsed_body
+          header = csv_rows[0]
           out_of_row = csv_rows[1]
-          num_numbers = out_of_row.select { |e| e if is_numbery(e) }.length
-          expect(num_numbers).to eq(3)
-        end
-
-        it 'checks the out of row is correct' do
-          assignments = create_list(:assignment_with_criteria_and_results, 3)
-          create(:grouping_with_inviter_and_submission, assignment: assignments[0])
-          create(:grouping_with_inviter, assignment: assignments[0])
-          csv_rows = get_as(@admin, :download_csv_grades_report, format: :csv).parsed_body
-          out_of_row = csv_rows[1]
-          out_of_row_exp = ['Out Of', '', '', ''].concat(assignments.map { |ass| ass.max_mark.to_s })
-          expect(out_of_row).to eq(out_of_row_exp)
+          index = 4
+          # check each value is in the right place (i.e. sorted) and indeed correct
+          assignments.each do |ass|
+            expect(out_of_row[index]).to eq(ass.max_mark.to_s)
+            expect(out_of_row[index]).to eq(Assignment.find_by(short_identifier: header[index]).max_mark.to_s)
+            index += 1
+          end
+          grade_forms.each do |grf|
+            expect(out_of_row[index]).to eq(grf.max_mark.to_s)
+            expect(out_of_row[index]).to eq(GradeEntryForm.find_by(short_identifier: header[index]).max_mark.to_s)
+            index += 1
+          end
         end
       end
 

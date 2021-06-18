@@ -75,10 +75,10 @@ class CourseSummariesController < ApplicationController
     # This function creates the second row of the grades summary, containing an assignments max mark where
     # applicable
     assessments = Assessment.all.order(id: :asc)
-    marking_schemes = MarkingScheme.all
-    out_of_row = ['Out Of', '', '', '']
+    marking_schemes = MarkingScheme.all.order(id: :asc)
+    out_of_row = [Assessment.human_attribute_name(:max_mark), '', '', '']
     out_of_row.concat(assessments.collect(&:max_mark))
-    out_of_row.concat([''] * marking_schemes.length)
+    out_of_row.concat([''] * marking_schemes.size)
 
     out_of_row
   end
