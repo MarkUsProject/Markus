@@ -11,6 +11,12 @@ class SubmissionsController < ApplicationController
     p.img_src :self, :blob
   end
 
+  content_security_policy only: :jupyter_notebook_as_html do |p|
+    p.style_src :self, "'unsafe-inline'"
+    p.script_src :self, "'unsafe-eval'", :https
+    p.font_src :self, :https
+  end
+
   def index
     respond_to do |format|
       format.json do
@@ -393,6 +399,8 @@ class SubmissionsController < ApplicationController
       render json: { type: 'image' }
     elsif file.is_pdf?
       render json: { type: 'pdf' }
+    elsif file.is_pynb?
+      render json: { type: 'jupyter-notebook' }
     else
       grouping.access_repo do |repo|
         revision = repo.get_revision(submission.revision_identifier)
@@ -421,6 +429,17 @@ class SubmissionsController < ApplicationController
   end
 
   def download
+    preview = params[:preview] == 'true'
+
+    if File.extname(params[:file_name]).casecmp('.ipynb')&.zero? && preview
+      redirect_to action: :jupyter_notebook_as_html,
+                  assignment_id: params[:assignment_id],
+                  grouping_id: params[:grouping_id],
+                  revision_identifier: params[:revision_identifier],
+                  path: params[:path],
+                  file_name: params[:file_name]
+      return
+    end
     @assignment = Assignment.find(params[:assignment_id])
     # find_appropriate_grouping can be found in SubmissionsHelper
     @grouping = find_appropriate_grouping(@assignment.id, params)
@@ -439,15 +458,7 @@ class SubmissionsController < ApplicationController
         file = @revision.files_at_path(File.join(@assignment.repository_folder,
                                                  path))[params[:file_name]]
         file_contents = repo.download_as_string(file)
-        if params[:preview] == 'true'
-          if File.extname(params[:file_name]).casecmp('.ipynb')&.zero?
-            file_path = "#{@assignment.repository_folder}/#{path}/#{params[:file_name]}"
-            unique_path = "#{@grouping.group.repo_name}/#{file_path}.#{@revision.revision_identifier}"
-            file_contents = ipynb_to_html(file_contents, unique_path)
-          elsif SubmissionFile.is_binary?(file_contents)
-            file_contents = I18n.t('submissions.cannot_display')
-          end
-        end
+        file_contents = I18n.t('submissions.cannot_display') if preview
       rescue ArgumentError
         # Handle UTF8 encoding error
         if file_contents.nil?
@@ -464,6 +475,36 @@ class SubmissionsController < ApplicationController
 
       send_data_download file_contents, filename: params[:file_name]
     end
+  end
+
+  def jupyter_notebook_as_html
+    if params[:select_file_id]
+      file = SubmissionFile.find(params[:select_file_id])
+      file_contents = file.retrieve_file
+      grouping = file.submission.grouping
+      assignment = grouping.assignment
+      path = file.path
+      revision_identifier = file.submission.revision_identifier
+    else
+      assignment = Assignment.find(params[:assignment_id])
+      grouping = find_appropriate_grouping(assignment.id, params)
+      revision_identifier = params[:revision_identifier]
+
+      path = params[:path] || '/'
+      file_contents = grouping.access_repo do |repo|
+        if revision_identifier.nil?
+          revision = repo.get_latest_revision
+        else
+          revision = repo.get_revision(revision_identifier)
+        end
+        file = revision.files_at_path(File.join(assignment.repository_folder, path))[params[:file_name]]
+        repo.download_as_string(file)
+      end
+    end
+
+    file_path = "#{assignment.repository_folder}/#{path}/#{params[:file_name]}"
+    unique_path = "#{grouping.group.repo_name}/#{file_path}.#{revision_identifier}"
+    render html: ipynb_to_html(file_contents, unique_path).html_safe
   end
 
   ##

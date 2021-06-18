@@ -96,7 +96,7 @@ export class FileViewer extends React.Component {
             {credentials: 'include'})
             .then(res => res.json())
             .then(body => {
-              if (body.type === 'image' || body.type === 'pdf') {
+              if (body.type === 'image' || body.type === 'pdf' || body.type === 'jupyter-notebook') {
                 this.setState({type: body.type}, () => {this.setFileUrl(submission_file_id)})
               } else {
                 const content = JSON.parse(body.content).replace(/\r?\n/gm, '\n');
@@ -104,7 +104,9 @@ export class FileViewer extends React.Component {
               }
             })
       } else {
-        if (this.props.selectedFileType === 'image' || this.props.selectedFileType === 'pdf') {
+        if (this.props.selectedFileType === 'image' ||
+          this.props.selectedFileType === 'pdf' ||
+          this.props.selectedFileType === 'jupyter-notebook') {
           this.setState({type: this.props.selectedFileType}, () => {this.setFileUrl()});
         } else {
           $.ajax({
@@ -151,6 +153,7 @@ export class FileViewer extends React.Component {
       />;
     } else if (this.state.type === 'jupyter-notebook') {
       return <JupyterNotebookViewer
+        url={this.state.url}
         annotationFocus={this.props.annotationFocus}
         content={this.state.content}
         {...commonProps}

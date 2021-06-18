@@ -21,9 +21,7 @@ export class JupyterNotebookViewer extends React.Component {
   render() {
     return (
       <div>
-        {/*<button onClick={this.getSelection}>{'highlight'}</button>*/
-          /*TODO: enable annotations and link with existing annotations*/ }
-        <iframe className={'jupyter-notebook'} id={'jupyter-notebook'} srcDoc={this.props.content}/>
+        <iframe className={'jupyter-notebook'} id={'jupyter-notebook'} src={this.props.url + '&preview=true'}/>
       </div>
     )
   }
