@@ -51,28 +51,23 @@ describe CourseSummariesController do
 
       context 'tests the second csv row which contains out of values' do
         it 'checks the out of row is numerically and sequentially correct' do
-          # this test checks that a) the actual out_of values are equal to the corresponding assessment max_marks
-          # & b) that given the assignments are sorted by id, the out of row is sorted accordingly as well. both
-          # of these are also tested on grade_entry_forms
-          # sort by ascending id to check value order
-          assignments = create_list(:assignment_with_criteria_and_results, 3).sort_by(&:id)
-          grade_forms = create_list(:grade_entry_form_with_data, 2).sort_by(&:id)
+          # this test checks that the following
+          # 1) the out_row is the correct length (right amount of assessments included)
+          # 2) the order of each assessment in the header corresponds to the right value in the out_of row
+          # 3) the values in the out_of row correspond to the CORRECT values of the respective assessments
+          assignments = create_list(:assignment_with_criteria_and_results, 3)
+          grade_forms = create_list(:grade_entry_form_with_data, 2)
           create(:grouping_with_inviter_and_submission, assignment: assignments[0])
           create(:grouping_with_inviter, assignment: assignments[0])
           csv_rows = get_as(@admin, :download_csv_grades_report, format: :csv).parsed_body
           header = csv_rows[0]
           out_of_row = csv_rows[1]
-          index = 4
-          # check each value is in the right place (i.e. sorted) and indeed correct
-          assignments.each do |ass|
-            expect(out_of_row[index]).to eq(ass.max_mark.to_s)
-            expect(out_of_row[index]).to eq(Assignment.find_by(short_identifier: header[index]).max_mark.to_s)
-            index += 1
-          end
-          grade_forms.each do |grf|
-            expect(out_of_row[index]).to eq(grf.max_mark.to_s)
-            expect(out_of_row[index]).to eq(GradeEntryForm.find_by(short_identifier: header[index]).max_mark.to_s)
-            index += 1
+          expect(out_of_row.size).to eq(4 + assignments.size + grade_forms.size)
+          expect(out_of_row.size).to eq(header.size)
+          zipped_info = Assessment.all.order(:id).zip(out_of_row[4, out_of_row.size])
+          zipped_info.each do |tup|
+            model, out_of_element= tup[0], tup[1]
+            expect(out_of_element).to eq(model.max_mark.to_s)
           end
         end
       end
