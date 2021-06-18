@@ -63,7 +63,6 @@ class TagsController < ApplicationController
   def edit_tag_dialog
     @assignment = Assignment.find(params[:assignment_id])
     @tag = Tag.find(params[:id])
-    byebug
     render partial: 'tags/edit_dialog', handlers: [:erb]
   end
 
