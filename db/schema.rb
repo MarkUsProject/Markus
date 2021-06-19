@@ -241,6 +241,7 @@ ActiveRecord::Schema.define(version: 2021_06_17_201409) do
   create_table "grade_entry_students_tas", id: :serial, force: :cascade do |t|
     t.integer "grade_entry_student_id"
     t.integer "ta_id"
+    t.index ["grade_entry_student_id", "ta_id"], name: "index_grade_entry_students_tas", unique: true
   end
 
   create_table "grader_permissions", force: :cascade do |t|

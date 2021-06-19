@@ -3,6 +3,7 @@ import {render} from 'react-dom';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 
 import {withSelection, CheckboxTable} from './markus_with_selection_hoc';
+import {selectFilter} from './Helpers/table_helpers';
 
 
 class GradersManager extends React.Component {
@@ -377,16 +378,10 @@ class RawGroupsTable extends React.Component {
             return this.props.sections[row[filter.id]] === filter.value;
           }
         },
-        Filter: ({ filter, onChange }) =>
-          <select
-            onChange={event => onChange(event.target.value)}
-            style={{ width: '100%' }}
-            value={filter ? filter.value : 'all'}
-          >
-            <option value='all'>{I18n.t('all')}</option>
-            {Object.entries(this.props.sections).map(
-              kv => <option key={kv[1]} value={kv[1]}>{kv[1]}</option>)}
-          </select>,
+        Filter: selectFilter,
+        filterOptions: Object.entries(this.props.sections).map(
+          kv => ({value: kv[1], text: kv[1]})
+        ),
       },
       {
         Header: I18n.t('activerecord.models.group.one'),
