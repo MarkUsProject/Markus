@@ -47,13 +47,11 @@ export class TagsPanel extends React.Component {
       <div>
         <h4>{I18n.t('tags.results.current_tags')}</h4>
         <ul className='tag-list'>{this.renderTagList()}</ul>
-        {!this.props.remark_submitted &&
-         (<div>
+         <div>
            <h4>{I18n.t('tags.results.available_tags')}</h4>
            <ul className='tag-list'>{this.renderAvailableTags()}</ul>
-          </div>)
-        }
-        {!this.props.remark_submitted && this.props.role === 'Admin' &&
+         </div>
+        {this.props.role === 'Admin' &&
          <button className='inline-button' onClick={() => modal_create_new_tag.open()}>
            {I18n.t('helpers.submit.create', {model: I18n.t('activerecord.models.tag.one')})}
          </button>
