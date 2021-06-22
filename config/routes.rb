@@ -237,7 +237,7 @@ Rails.application.routes.draw do
           post 'add_extra_mark'
           delete 'delete_grace_period_deduction'
           get 'next_grouping'
-          post 'remove_extra_mark'
+          delete 'remove_extra_mark'
           patch 'revert_to_automatic_deductions'
           post 'set_released_to_students'
           post 'update_overall_comment'

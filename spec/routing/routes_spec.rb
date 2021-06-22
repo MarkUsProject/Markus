@@ -737,8 +737,8 @@ describe 'An Assignment' do
           )
         end
 
-        it 'routes POST remove_extra_mark properly' do
-          expect(post: res_path + '/1/remove_extra_mark').to route_to(
+        it 'routes DELETE remove_extra_mark properly' do
+          expect(delete: res_path + '/1/remove_extra_mark').to route_to(
             controller: res_ctrl,
             action: 'remove_extra_mark',
             id: '1',
