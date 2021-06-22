@@ -10,11 +10,10 @@ source 'https://rubygems.org'
 
 # Bundler requires these gems in all environments
 gem 'puma'
-gem 'rails', '~> 6.1.3.1'
+gem 'rails', '~> 6.1.3.2'
 gem 'sprockets'
 
 # Models and database interactions
-gem 'activerecord-import'
 gem 'pluck_to_hash'
 
 # CSS and JavaScript

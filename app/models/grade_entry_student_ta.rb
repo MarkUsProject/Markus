@@ -57,7 +57,9 @@ class GradeEntryStudentTa < ApplicationRecord
         new_mappings << { grade_entry_student_id: grade_entry_student_id, ta_id: ta_id }
       end
     end
-    GradeEntryStudentTa.import new_mappings, validate: false, on_duplicate_key_ignore: true
+    unless new_mappings.blank?
+      GradeEntryStudentTa.insert_all new_mappings, unique_by: %i[grade_entry_student_id ta_id]
+    end
     result
   end
 end
