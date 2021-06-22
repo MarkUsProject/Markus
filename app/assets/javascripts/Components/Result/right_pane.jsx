@@ -66,7 +66,7 @@ export class RightPane extends React.Component {
              newNote={this.props.newNote}
              role={this.props.role}
              assignment_id={this.props.assignment_id}
-             submission_id={this.props.grouping_id}
+             grouping_id={this.props.grouping_id}
            />
          </TabPanel>
         }

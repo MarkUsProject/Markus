@@ -64,7 +64,7 @@ export class TagsPanel extends React.Component {
           </a>
         </p>
         <h4>{I18n.t('submissions.repo_browser.repository')}</h4>
-        <a href={Routes.repo_browser_assignment_submission_path(this.props.assignment_id, this.props.submission_id)}> {I18n.t('groups.student_interface.url_group_repository')}</a>
+        <a href={Routes.repo_browser_assignment_submission_path(this.props.assignment_id, this.props.grouping_id)}> {I18n.t('groups.student_interface.url_group_repository')}</a>
       </div>
     );
   }
