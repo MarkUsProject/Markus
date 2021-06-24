@@ -17,7 +17,8 @@ describe TagsController do
         'name' => tag.name,
         'description' => tag.description,
         'creator' => "#{tag.user.first_name} #{tag.user.last_name}",
-        'use' => tag.groupings.size
+        'use' => tag.groupings.size,
+        'assessment' => tag.assessment
       }]
       expect(response.parsed_body).to eq expected
     end
@@ -44,7 +45,7 @@ describe TagsController do
     it 'associates the new tag with an assessment' do
       post :create, params: { tag: { name: 'tag', description: 'tag description' },
                               assignment_id: assignment.id }
-      expect(Tag.find_by(name: 'tag', description: 'tag description').assessment).to_not be_nil
+      expect(Tag.find_by(name: 'tag', description: 'tag description').assessment.id).to eq assignment.id
     end
   end
 

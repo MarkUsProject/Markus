@@ -6,11 +6,12 @@ class TagsController < ApplicationController
 
   def index
     @assignment = Assignment.find(params[:assignment_id])
+    @assessment = Assessment.find(params[:assignment_id])
 
     respond_to do |format|
       format.html
       format.json do
-        tags = Tag.includes(:user, :groupings).order(:name)
+        tags = @assessment.tags.includes(:user, :groupings).order(:name)
 
         tag_info = tags.map do |tag|
           {
@@ -18,7 +19,8 @@ class TagsController < ApplicationController
             name: tag.name,
             description: tag.description,
             creator: "#{tag.user.first_name} #{tag.user.last_name}",
-            use: tag.groupings.size
+            use: tag.groupings.size,
+            assessment: tag.assessment
           }
         end
 
@@ -36,6 +38,7 @@ class TagsController < ApplicationController
   def create
     tag_params = params.require(:tag).permit(:name, :description)
     new_tag = Tag.new(tag_params.merge(user: @current_user, assessment: Assessment.find(params[:assignment_id])))
+
     if new_tag.save
       if params[:grouping_id]
         grouping = Grouping.find(params[:grouping_id])
