@@ -65,8 +65,7 @@ describe CourseSummariesController do
           expect(out_of_row.size).to eq(4 + assignments.size + grade_forms.size)
           expect(out_of_row.size).to eq(header.size)
           zipped_info = Assessment.all.order(:id).zip(out_of_row[4, out_of_row.size])
-          zipped_info.each do |tup|
-            model, out_of_element = tup[0], tup[1]
+          zipped_info.each do |model, out_of_element|
             expect(out_of_element).to eq(model.max_mark.to_s)
           end
         end
