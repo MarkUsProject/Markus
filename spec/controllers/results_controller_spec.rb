@@ -365,8 +365,9 @@ describe ResultsController do
         extra_mark = create(:extra_mark_points, result: submission.get_latest_result)
         submission.get_latest_result.update_total_mark
         @old_mark = submission.get_latest_result.total_mark
-        post :remove_extra_mark, params: { assignment_id: assignment.id, submission_id: submission.id,
-                                           id: extra_mark.id }, xhr: true
+        delete :remove_extra_mark, params: { assignment_id: assignment.id, submission_id: submission.id,
+                                             id: submission.get_latest_result.id,
+                                             extra_mark_id: extra_mark.id }, xhr: true
       end
       test_no_flash
       it { expect(response).to have_http_status(:success) }
