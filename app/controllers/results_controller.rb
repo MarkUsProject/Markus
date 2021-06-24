@@ -654,7 +654,7 @@ class ResultsController < ApplicationController
 
   def remove_extra_mark
     result = Result.find(params[:id])
-    extra_mark = ExtraMark.find(params[:extra_mark_id])
+    extra_mark = result.extra_marks.find(params[:extra_mark_id])
 
     extra_mark.destroy
     result.update_total_mark
