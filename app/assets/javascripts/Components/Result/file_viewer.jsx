@@ -155,7 +155,6 @@ export class FileViewer extends React.Component {
       return <JupyterNotebookViewer
         url={this.state.url}
         annotationFocus={this.props.annotationFocus}
-        content={this.state.content}
         {...commonProps}
       />;
     } else if (this.state.type === 'binary') {

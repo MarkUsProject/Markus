@@ -969,7 +969,7 @@ describe SubmissionsController do
                                              file_name: 'example.ipynb',
                                              preview: true,
                                              grouping_id: grouping.id }
-          expect(response.body).to start_with('<!DOCTYPE html>')
+          expect(response.body).to start_with('<html>')
         end
       end
       describe 'When the file is a binary file' do
@@ -1043,13 +1043,12 @@ describe SubmissionsController do
     end
     describe 'When the file is a jupyter notebook file' do
       let(:files) { [file3] }
-      it 'should download the file as is' do
+      it 'should return the file type' do
         submission_file = submission.submission_files.find_by(filename: file3.original_filename)
         get_as admin, :get_file, params: { assignment_id: assignment.id,
                                            id: submission.id,
                                            submission_file_id: submission_file.id }
-        expected = ActiveSupport::JSON.encode('<!DOCTYPE html>')[0...-1]
-        expect(JSON.parse(response.body)['content']).to start_with(expected)
+        expect(JSON.parse(response.body)['type']).to eq 'jupyter-notebook'
       end
     end
     describe 'When the file is a binary file' do
