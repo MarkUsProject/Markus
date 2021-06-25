@@ -13,3 +13,9 @@ $('#grade_entry_form_<%= @grade_entry_form.id %>_grade_entry_items_graph').html(
 $('a[data-id]').removeClass('inactive');
 
 $('a[data-id="<%= @grade_entry_form.short_identifier %>"]').addClass('inactive');
+
+window.dashboard.setState({
+  assessment_id: <%= @grade_entry_form.id %>,
+  assessment_type: 'GradeEntryForm',
+  display_course_summary: false
+});

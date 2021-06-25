@@ -15,3 +15,9 @@ $('#assignment_<%= @assignment.id %>_graph').html(
 $('a[data-id]').removeClass('inactive');
 
 $('a[data-id="<%= @assignment.short_identifier %>"]').addClass('inactive');
+
+window.dashboard.setState({
+  assessment_id: <%= @assignment.id %>,
+  assessment_type: 'Assignment',
+  display_course_summary: false
+});

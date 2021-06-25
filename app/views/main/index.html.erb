@@ -1,4 +1,11 @@
 <% content_for :title, t('menu.dashboard') %>
+<% content_for :head do %>
+  <%= javascript_tag nonce: true do %>
+    document.addEventListener('DOMContentLoaded', () => {
+        window.dashboard = makeDashboard(document.getElementById('dashboard-react'));
+    })
+  <% end %>
+<% end %>
 
 <div class='pane-wrapper'>
   <div class='pane no-border assignment-list-wrapper'>
@@ -19,3 +26,5 @@
     <%= render partial: 'assignments/assignment_summary', locals: { assignment: @current_assignment, tas: @tas } %>
   </div>
 </div>
+
+<div id='dashboard-react'></div>

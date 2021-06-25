@@ -70,6 +70,8 @@ import { refreshOrLogout } from 'javascripts/refresh_or_logout';
 window.refreshOrLogout = refreshOrLogout;
 import { ModalMarkus } from 'javascripts/modals';
 window.ModalMarkus = ModalMarkus;
+import { makeDashboard } from 'javascripts/Components/dashboard';
+window.makeDashboard = makeDashboard;
 import { makeTATable } from 'javascripts/Components/ta_table';
 window.makeTATable = makeTATable;
 import { makeAdminTable } from 'javascripts/Components/admin_table';

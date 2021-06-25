@@ -7,3 +7,9 @@ $('#weighted_course_summary_graph').html(
                                 locals: { assessments: @assessments, marking_schemes: @marking_schemes }) %>");
 
 $('a[data-id]').removeClass('inactive');
+
+window.dashboard.setState({
+  assessment_id: null,
+  assessment_type: null,
+  display_course_summary: true
+});
