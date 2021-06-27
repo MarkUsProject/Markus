@@ -20,7 +20,6 @@ class TagsController < ApplicationController
             description: tag.description,
             creator: "#{tag.user.first_name} #{tag.user.last_name}",
             use: tag.groupings.size,
-            assessment: tag.assessment
           }
         end
 
