@@ -19,7 +19,7 @@ describe TagsController do
         'name' => tag.name,
         'description' => tag.description,
         'creator' => "#{tag.user.first_name} #{tag.user.last_name}",
-        'use' => tag.groupings.size,
+        'use' => tag.groupings.size
       }]
       expect(response.parsed_body).to eq expected
     end

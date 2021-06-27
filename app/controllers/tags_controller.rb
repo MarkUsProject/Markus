@@ -19,7 +19,7 @@ class TagsController < ApplicationController
             name: tag.name,
             description: tag.description,
             creator: "#{tag.user.first_name} #{tag.user.last_name}",
-            use: tag.groupings.size,
+            use: tag.groupings.size
           }
         end
 
@@ -65,6 +65,7 @@ class TagsController < ApplicationController
   def edit_tag_dialog
     @assignment = Assignment.find(params[:assignment_id])
     @tag = Tag.find(params[:id])
+
     render partial: 'tags/edit_dialog', handlers: [:erb]
   end
 
