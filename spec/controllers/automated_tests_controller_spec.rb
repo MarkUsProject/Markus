@@ -94,9 +94,10 @@ describe AutomatedTestsController do
           allow_any_instance_of(Assignment).to receive(:autotest_files).and_return ['file.txt']
           allow_any_instance_of(Pathname).to receive(:exist?).and_return true
           allow(File).to receive(:mtime).and_return expected_time
+          allow_any_instance_of(SessionHandler).to receive(:time_zone).and_return "Eastern Time (US & Canada)"
           subject
           url = download_file_assignment_automated_tests_url(assignment_id: assignment.id, file_name: 'file.txt')
-          data = [{ key: 'file.txt', submitted_date: I18n.l(expected_time), size: 1, url: url }.transform_keys(&:to_s)]
+          data = [{ key: 'file.txt', submitted_date: I18n.l(expected_time.in_time_zone("Eastern Time (US & Canada)")), size: 1, url: url }.transform_keys(&:to_s)]
           expect(JSON.parse(response.body)['files']).to eq(data)
         end
         it 'should include directories' do
