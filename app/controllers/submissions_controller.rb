@@ -631,7 +631,7 @@ class SubmissionsController < ApplicationController
     unless File.exist? cache_file
       FileUtils.mkdir_p(cache_file.dirname)
       args = [
-          File.join(Settings.python.bin, 'jupyter-nbconvert'), '--to', 'html', '--stdin', '--output', cache_file.to_s
+        File.join(Settings.python.bin, 'jupyter-nbconvert'), '--to', 'html', '--stdin', '--output', cache_file.to_s
       ]
       _stdout, stderr, status = Open3.capture3(*args, stdin_data: file_contents)
       unless status.exitstatus.zero?
