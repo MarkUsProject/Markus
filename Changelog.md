@@ -6,6 +6,7 @@
 - Add ability to associate feedback files to test group results (#5209)
 - Communicate with autotester over http to support new autotesting configuration (#5225)
 - Remove activerecord-import dependency (#5248)
+- Combine all python dependencies (#5358)
 
 ## [v1.12.4]
 - Symlink git repo hooks (#5283)
