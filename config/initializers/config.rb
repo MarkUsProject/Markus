@@ -147,10 +147,8 @@ Config.setup do |config|
     end
     required(:scanned_exams).hash do
       required(:enable).filled(:bool)
-      required(:python).filled(:string)
       required(:path).filled(:string)
     end
-    required(:nbconvert).filled(:string)
     required(:i18n).hash do
       required(:available_locales).array(:string)
       required(:default_locale).filled(:string)
@@ -164,6 +162,9 @@ Config.setup do |config|
     end
     required(:starter_file).hash do
       required(:storage).filled(:string)
+    end
+    required(:python).hash do
+      required(:bin).filled(:string)
     end
   end
 end

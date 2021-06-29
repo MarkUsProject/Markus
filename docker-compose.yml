@@ -13,7 +13,6 @@ services:
         NODE_MAJOR: '12'
         YARN_VERSION: '1.13.0'
         BUNDLER_VERSION: '1.17.3'
-        NBCONVERTVENV: '/app/nbconvertvenv'
         USER: 'markus'
     image: markus-dev:1.0.0
     tmpfs:
@@ -70,6 +69,7 @@ services:
       - packs_test:/app/public/packs-test
       - ssh_pub_key:/ssh_pub_key
       - log:/app/log
+      - python:/app/venv
       - .:/app:cached
     depends_on:
       - postgres
@@ -135,6 +135,7 @@ volumes:
   packs_test:
   tmp:
   log:
+  python:
   ssh_pub_key:
     name: ssh_pub_key
 
