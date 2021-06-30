@@ -165,5 +165,6 @@ Config.setup do |config|
     required(:starter_file).hash do
       required(:storage).filled(:string)
     end
+    required(:pandoc).filled(:string)
   end
 end

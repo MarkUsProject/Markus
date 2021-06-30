@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+  <html lang="<%= I18n.locale %>">
+  <head>
+    <% if @notebook_type == 'ipynb' %>
+      <%= stylesheet_link_tag('jupyter-notebook') %>
+    <% else %>
+      <%= stylesheet_link_tag('rmarkdown') %>
+    <% end %>
+  </head>
+  <body>
+    <%= yield :layout %>
+  </body>
+</html>

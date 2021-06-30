@@ -11,11 +11,7 @@ class SubmissionsController < ApplicationController
     p.img_src :self, :blob
   end
 
-  content_security_policy only: :jupyter_notebook_as_html do |p|
-    p.style_src :self, "'unsafe-inline'"
-    p.script_src :self, "'unsafe-eval'", :https
-    p.font_src :self, :https
-  end
+  content_security_policy_report_only only: :notebook_content
 
   def index
     respond_to do |format|
@@ -401,6 +397,8 @@ class SubmissionsController < ApplicationController
       render json: { type: 'pdf' }
     elsif file.is_pynb?
       render json: { type: 'jupyter-notebook' }
+    elsif file.is_rmd?
+      render json: { type: 'rmarkdown' }
     else
       grouping.access_repo do |repo|
         revision = repo.get_revision(submission.revision_identifier)
@@ -427,8 +425,8 @@ class SubmissionsController < ApplicationController
   def download
     preview = params[:preview] == 'true'
 
-    if File.extname(params[:file_name]).casecmp('.ipynb')&.zero? && preview
-      redirect_to action: :jupyter_notebook_as_html,
+    if %[jupyter-notebook rmarkdown].include?(FileHelper.get_file_type(params[:file_name])) && preview
+      redirect_to action: :notebook_content,
                   assignment_id: params[:assignment_id],
                   grouping_id: params[:grouping_id],
                   revision_identifier: params[:revision_identifier],
@@ -473,14 +471,15 @@ class SubmissionsController < ApplicationController
     end
   end
 
-  def jupyter_notebook_as_html
+  def notebook_content
     if params[:select_file_id]
       file = SubmissionFile.find(params[:select_file_id])
       file_contents = file.retrieve_file
       grouping = file.submission.grouping
       assignment = grouping.assignment
-      path = file.path
+      path = Pathname.new(file.path).relative_path_from(Pathname.new(assignment.repository_folder)).to_s
       revision_identifier = file.submission.revision_identifier
+      filename = file.filename
     else
       assignment = Assignment.find(params[:assignment_id])
       grouping = find_appropriate_grouping(assignment.id, params)
@@ -496,11 +495,14 @@ class SubmissionsController < ApplicationController
         file = revision.files_at_path(File.join(assignment.repository_folder, path))[params[:file_name]]
         repo.download_as_string(file)
       end
+      filename = params[:file_name]
     end
 
-    file_path = "#{assignment.repository_folder}/#{path}/#{params[:file_name]}"
+    file_path = "#{assignment.repository_folder}/#{path}/#{filename}"
     unique_path = "#{grouping.group.repo_name}/#{file_path}.#{revision_identifier}"
-    render html: ipynb_to_html(file_contents, unique_path).html_safe
+    @notebook_type = File.extname(filename).casecmp('.ipynb')&.zero? ? 'ipynb' : 'rmarkdown'
+    @notebook_content = notebook_to_html(file_contents, unique_path, @notebook_type)
+    render layout: 'notebook'
   end
 
   ##
@@ -663,11 +665,15 @@ class SubmissionsController < ApplicationController
 
   private
 
-  def ipynb_to_html(file_contents, unique_path)
-    cache_file = Pathname.new('tmp/ipynb_html_cache') + "#{unique_path}.html"
+  def notebook_to_html(file_contents, unique_path, type)
+    cache_file = Pathname.new('tmp/notebook_html_cache') + "#{unique_path}.html"
     unless File.exist? cache_file
       FileUtils.mkdir_p(cache_file.dirname)
-      args = [Settings.nbconvert, '--to', 'html', '--stdin', '--output', cache_file.to_s]
+      if type == 'ipynb'
+        args = [Settings.nbconvert, '--to', 'html', '--template', 'basic', '--stdin', '--output', cache_file.to_s]
+      else
+        args = [Settings.pandoc, '--from', 'markdown', '--to', 'html', '--output', cache_file.to_s]
+      end
       _stdout, stderr, status = Open3.capture3(*args, stdin_data: file_contents)
       unless status.exitstatus.zero?
         flash_message(:error, stderr)

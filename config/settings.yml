@@ -84,3 +84,5 @@ scanned_exams:
   python: <%= ::Rails.root %>/lib/scanner/venv/bin/python
 
 nbconvert: <%= ::Rails.root %>/nbconvertvenv/bin/jupyter-nbconvert
+
+pandoc: /usr/bin/pandoc

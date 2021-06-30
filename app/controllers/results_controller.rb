@@ -390,9 +390,9 @@ class ResultsController < ApplicationController
     end
 
     file = SubmissionFile.find(params[:select_file_id])
-    if params[:show_in_browser] == 'true' && file.is_pynb?
-      redirect_to jupyter_notebook_as_html_assignment_submissions_url(params[:assignment_id],
-                                                                      select_file_id: params[:select_file_id])
+    if params[:show_in_browser] == 'true' && (file.is_pynb? || file.is_rmd?)
+      redirect_to notebook_content_assignment_submissions_url(params[:assignment_id],
+                                                              select_file_id: params[:select_file_id])
       return
     end
 

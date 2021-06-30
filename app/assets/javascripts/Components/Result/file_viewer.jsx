@@ -4,7 +4,7 @@ import heic2any from 'heic2any';
 import {ImageViewer} from './image_viewer'
 import {TextViewer} from './text_viewer'
 import {PDFViewer} from './pdf_viewer';
-import {JupyterNotebookViewer} from "./jupyter_notebook_viewer";
+import {NotebookViewer} from "./notebook_viewer";
 import {BinaryViewer} from "./binary_viewer";
 
 
@@ -44,6 +44,10 @@ export class FileViewer extends React.Component {
     if (!this.props.result_id && prevProps.selectedFile !== this.props.selectedFile) {
       this.set_submission_file(null);
     }
+  }
+
+  isNotebook(type) {
+    return type === 'jupyter-notebook' || type === 'rmarkdown'
   }
 
   setFileUrl = (submission_file_id) => {
@@ -96,7 +100,7 @@ export class FileViewer extends React.Component {
             {credentials: 'include'})
             .then(res => res.json())
             .then(body => {
-              if (body.type === 'image' || body.type === 'pdf' || body.type === 'jupyter-notebook') {
+              if (body.type === 'image' || body.type === 'pdf' || this.isNotebook(body.type)) {
                 this.setState({type: body.type}, () => {this.setFileUrl(submission_file_id)})
               } else {
                 const content = JSON.parse(body.content).replace(/\r?\n/gm, '\n');
@@ -106,7 +110,7 @@ export class FileViewer extends React.Component {
       } else {
         if (this.props.selectedFileType === 'image' ||
           this.props.selectedFileType === 'pdf' ||
-          this.props.selectedFileType === 'jupyter-notebook') {
+          this.isNotebook(this.props.selectedFileType)) {
           this.setState({type: this.props.selectedFileType}, () => {this.setFileUrl()});
         } else {
           $.ajax({
@@ -151,8 +155,8 @@ export class FileViewer extends React.Component {
         annotationFocus={this.props.annotationFocus}
         {...commonProps}
       />;
-    } else if (this.state.type === 'jupyter-notebook') {
-      return <JupyterNotebookViewer
+    } else if (this.isNotebook(this.state.type)) {
+      return <NotebookViewer
         url={this.state.url}
         annotationFocus={this.props.annotationFocus}
         {...commonProps}

@@ -30,7 +30,8 @@ module FileHelper
                   '.heif' => 'image',
                   '.latex' => 'tex',
                   '.pdf' => 'pdf',
-                  '.ipynb' => 'jupyter-notebook' }.freeze
+                  '.ipynb' => 'jupyter-notebook',
+                  '.rmd' => 'rmarkdown'}.freeze
 
   COMMENT_TO_SYNTAX = { '.java' => %w[/* */],
                         '.js' => %w[/* */],

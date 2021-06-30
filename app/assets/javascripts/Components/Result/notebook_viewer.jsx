@@ -1,7 +1,7 @@
 import React from "react";
 import {markupTextInRange} from "../Helpers/range_selector";
 
-export class JupyterNotebookViewer extends React.Component {
+export class NotebookViewer extends React.Component {
 
   constructor() {
     super();
@@ -11,7 +11,7 @@ export class JupyterNotebookViewer extends React.Component {
   }
 
   getSelection = () => {
-    const iframe = document.getElementById("jupyter-notebook");
+    const iframe = document.getElementById("notebook");
     const target = (iframe.contentWindow || iframe.contentDocument);
     const range = target.getSelection().getRangeAt(0);
     this.setState(prevState => ({annotations: prevState.annotations.concat([range])}));
@@ -21,7 +21,7 @@ export class JupyterNotebookViewer extends React.Component {
   render() {
     return (
       <div>
-        <iframe className={'jupyter-notebook'} id={'jupyter-notebook'} src={this.props.url + '&preview=true'}/>
+        <iframe className={'notebook'} id={'notebook'} src={this.props.url + '&preview=true'}/>
       </div>
     )
   }
