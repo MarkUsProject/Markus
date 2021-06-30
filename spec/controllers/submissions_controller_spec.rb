@@ -947,7 +947,7 @@ describe SubmissionsController do
     let(:grouping) { create(:grouping_with_inviter, assignment: assignment) }
     let(:file1) { fixture_file_upload('Shapes.java', 'text/java') }
     let(:file2) { fixture_file_upload('test_zip.zip', 'application/zip') }
-    let(:file3) { fixture_file_upload(File.join('/files', 'example.ipynb')) }
+    let(:file3) { fixture_file_upload('example.ipynb') }
     let!(:submission) do
       submit_file(assignment, grouping, file1.original_filename, file1.read)
       submit_file(assignment, grouping, file2.original_filename, file2.read)
