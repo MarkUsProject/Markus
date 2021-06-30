@@ -94,6 +94,7 @@ describe AutomatedTestsController do
           allow_any_instance_of(Assignment).to receive(:autotest_files).and_return ['file.txt']
           allow_any_instance_of(Pathname).to receive(:exist?).and_return true
           allow(File).to receive(:mtime).and_return current_time
+          allow_any_instance_of(Time).to receive(:in_time_zone).and_return current_time
           subject
           url = download_file_assignment_automated_tests_url(assignment_id: assignment.id, file_name: 'file.txt')
           data = [{ key: 'file.txt', submitted_date: I18n.l(current_time),
@@ -110,6 +111,7 @@ describe AutomatedTestsController do
         it 'should include nested files' do
           current_time = Time.new(2021)
           allow(File).to receive(:mtime).and_return current_time
+          allow_any_instance_of(Time).to receive(:in_time_zone).and_return current_time
           allow_any_instance_of(Assignment).to receive(:autotest_files).and_return %w[some_dir some_dir/file.txt]
           allow_any_instance_of(Pathname).to receive(:exist?).and_return true
           allow_any_instance_of(Pathname).to receive(:directory?).and_wrap_original do |m, *_args|
