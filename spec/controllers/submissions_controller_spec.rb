@@ -947,9 +947,11 @@ describe SubmissionsController do
     let(:grouping) { create(:grouping_with_inviter, assignment: assignment) }
     let(:file1) { fixture_file_upload('Shapes.java', 'text/java') }
     let(:file2) { fixture_file_upload('test_zip.zip', 'application/zip') }
+    let(:file3) { fixture_file_upload(File.join('/files', 'example.ipynb')) }
     let!(:submission) do
       submit_file(assignment, grouping, file1.original_filename, file1.read)
       submit_file(assignment, grouping, file2.original_filename, file2.read)
+      submit_file(assignment, grouping, file3.original_filename, file3.read)
     end
     context 'When the file is in preview' do
       describe 'when the file is not a binary file' do
@@ -1086,6 +1088,7 @@ describe SubmissionsController do
     let(:file3) { fixture_file_upload('example.ipynb') }
     let(:file4) { fixture_file_upload('page_white_text.png') }
     let(:file5) { fixture_file_upload('scanned_exams/midterm1-v2-test.pdf') }
+    let(:file6) { fixture_file_upload('example.Rmd') }
     let!(:submission) do
       files.map do |file|
         submit_file(assignment, grouping, file.original_filename, file.read)
@@ -1108,7 +1111,17 @@ describe SubmissionsController do
         get_as admin, :get_file, params: { assignment_id: assignment.id,
                                            id: submission.id,
                                            submission_file_id: submission_file.id }
-        expect(JSON.parse(response.body)['type']).to eq 'notebook'
+        expect(JSON.parse(response.body)['type']).to eq 'jupyter-notebook'
+      end
+    end
+    describe 'When the file is an rmarkdown notebook file' do
+      let(:files) { [file6] }
+      it 'should return the file type' do
+        submission_file = submission.submission_files.find_by(filename: file6.original_filename)
+        get_as admin, :get_file, params: { assignment_id: assignment.id,
+                                           id: submission.id,
+                                           submission_file_id: submission_file.id }
+        expect(JSON.parse(response.body)['type']).to eq 'rmarkdown'
       end
     end
     describe 'When the file is a binary file' do
