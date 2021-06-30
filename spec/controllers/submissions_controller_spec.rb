@@ -1071,7 +1071,7 @@ describe SubmissionsController do
         get_as admin, :notebook_content, params: { assignment_id: assignment.id,
                                                    file_name: filename,
                                                    grouping_id: grouping.id,
-                                                   revision_identifier: submission.revision_identifier}
+                                                   revision_identifier: submission.revision_identifier }
       end
       it_behaves_like 'notebook types'
     end

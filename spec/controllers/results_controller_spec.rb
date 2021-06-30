@@ -131,13 +131,12 @@ describe ResultsController do
                 redirect_to(notebook_content_assignment_submissions_url(select_file_id: submission_file.id))
               )
             end
-
           end
           context 'file is a rmarkdown file' do
             let(:filename) { 'example.Rmd' }
             it 'should redirect to "notebook_content"' do
               expect(subject).to(
-                  redirect_to(notebook_content_assignment_submissions_url(select_file_id: submission_file.id))
+                redirect_to(notebook_content_assignment_submissions_url(select_file_id: submission_file.id))
               )
             end
           end

@@ -425,7 +425,7 @@ class SubmissionsController < ApplicationController
   def download
     preview = params[:preview] == 'true'
 
-    if %[jupyter-notebook rmarkdown].include?(FileHelper.get_file_type(params[:file_name])) && preview
+    if %(jupyter-notebook rmarkdown).include?(FileHelper.get_file_type(params[:file_name])) && preview
       redirect_to action: :notebook_content,
                   assignment_id: params[:assignment_id],
                   grouping_id: params[:grouping_id],
