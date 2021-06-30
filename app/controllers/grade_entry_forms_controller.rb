@@ -223,4 +223,9 @@ class GradeEntryFormsController < ApplicationController
     end
     redirect_to action: 'grades', id: @grade_entry_form.id
   end
+
+  def get_chart_data
+    grade_entry_form = GradeEntryForm.find[params[:id]]
+    render grade_entry_form.grade_distribution_array(grade_entry_form.intervals).as_json
+  end
 end

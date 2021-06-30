@@ -2,6 +2,7 @@ import React from 'react';
 import { render } from 'react-dom';
 
 import { Bar } from 'react-chartjs-2';
+import {get_chart_data_grade_entry_form_path} from "../../../javascript/routes";
 
 
 class Dashboard extends React.Component {
@@ -39,12 +40,16 @@ class Dashboard extends React.Component {
       if (this.state.display_course_summary) {
         // TODO
       } else if (this.state.assessment_type === 'GradeEntryForm') {
-        // TODO
+        $.ajax({
+          url: Routes.get_chart_data_grade_entry_form_path(this.state.grade_entry_form_id),
+          dataType: 'json',
+          }).then(res => {this.state.data.datasets = res})
       } else if (this.state.assessment_type === 'Assignment') {
         // TODO
       }
     }
   }
+
 
   render() {
     if (this.state.display_course_summary) {
