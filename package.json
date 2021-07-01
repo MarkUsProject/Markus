@@ -6,7 +6,7 @@
     "@rails/webpacker": "5.4",
     "@rjsf/core": "^2.5.1",
     "chart.js": "^3.3.2",
-    "dompurify": "^2.2.8",
+    "dompurify": "^2.2.9",
     "heic2any": "^0.0.3",
     "i18n-js": "^3.8.0",
     "jcrop": "^0.0.1",
