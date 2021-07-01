@@ -1,7 +1,7 @@
 import React from 'react';
-import { render } from 'react-dom';
+import {render} from 'react-dom';
 
-import { Bar } from 'react-chartjs-2';
+import {Bar} from 'react-chartjs-2';
 import {get_chart_data_grade_entry_form_path} from "../../../javascript/routes";
 
 
@@ -11,6 +11,7 @@ class Dashboard extends React.Component {
     this.state = {
       assessment_id: null,
       assessment_type: null,
+      temp_data: null,
       display_course_summary: false,
       data: { // Fake data, from react-chartjs-2/example/src/charts/GroupedBar.js
         labels: ['1', '2', '3', '4', '5', '6'],
@@ -40,10 +41,20 @@ class Dashboard extends React.Component {
       if (this.state.display_course_summary) {
         // TODO
       } else if (this.state.assessment_type === 'GradeEntryForm') {
-        $.ajax({
-          url: Routes.get_chart_data_grade_entry_form_path(this.state.grade_entry_form_id),
-          dataType: 'json',
-          }).then(res => {this.state.data.datasets = res})
+        $.get({url: Routes.get_chart_data_grade_entry_form_path(this.state.assessment_id)}).then(res => {
+
+          let new_labels = ['0 - 5']
+          for (let i = 1; i < 20; i++) {
+            let grade_range = (i * 5 + 1).toString() + " - " + (i * 5 + 5).toString()
+            new_labels.push(grade_range)
+          }
+
+          let new_datasets = [{data: res['grade_distribution']}]
+          let new_data = {labels: new_labels, datasets: new_datasets}
+
+          this.setState({data: new_data})
+
+        });
       } else if (this.state.assessment_type === 'Assignment') {
         // TODO
       }
