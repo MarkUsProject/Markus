@@ -59,7 +59,7 @@ class GradeEntryFormsController < ApplicationController
       return_datasets << item.grade_distribution_array(20)
     end
     respond_to do |format|
-      format.json { render json: [return_labels, return_datasets]}
+      format.json { render json: [return_labels, return_datasets] }
     end
   end
 

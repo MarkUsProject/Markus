@@ -988,10 +988,10 @@ context 'grade_entry_forms' do
     it 'routes GET column_breakdown properly' do
       expect(get: path + '/' + grade_entry_form.id.to_s + '/column_breakdown')
         .to route_to(
-              controller: ctrl,
-              action: 'column_breakdown',
-              id: grade_entry_form.id.to_s
-            )
+          controller: ctrl,
+          action: 'column_breakdown',
+          id: grade_entry_form.id.to_s
+        )
     end
 
     it 'routes GET grades properly' do
