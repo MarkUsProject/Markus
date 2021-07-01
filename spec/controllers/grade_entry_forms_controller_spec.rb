@@ -440,5 +440,13 @@ describe GradeEntryFormsController do
       before { get_as user, :student_interface, params: { id: grade_entry_form.id } }
       it('should respond with 403') { expect(response.status).to eq 403 }
     end
+    context 'GET column_breakdown' do
+      let(:user) { create(:admin) }
+      before { get_as user, :column_breakdown, params: { id: grade_entry_form.id } }
+      it('should respond with 200 (ok)') { expect(response.status).to eq 200 }
+      it 'should retrieve the correct data' do
+        expect(response.body).to eq '[[],[]]'
+      end
+    end
   end
 end
