@@ -12,7 +12,7 @@
     "jcrop": "^0.0.1",
     "jquery": "^3.6.0",
     "marked": "^2.0.6",
-    "mime-types": "^2.1.30",
+    "mime-types": "^2.1.31",
     "moment": "^2.29.1",
     "mousetrap": "^1.6.5",
     "pdfjs-dist": "^2.6.347",
