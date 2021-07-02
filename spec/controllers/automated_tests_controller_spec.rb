@@ -89,7 +89,6 @@ describe AutomatedTestsController do
         end
       end
       context 'files data' do
-
         before(:each) do
           allow(controller).to receive(:current_user).and_return(build(:admin))
         end
