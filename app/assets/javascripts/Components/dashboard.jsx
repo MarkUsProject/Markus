@@ -1,8 +1,8 @@
 import React from 'react';
-import {render} from 'react-dom';
+import { render } from 'react-dom';
 
-import {Bar} from 'react-chartjs-2';
-import {get_chart_data_grade_entry_form_path} from "../../../javascript/routes";
+import { Bar } from 'react-chartjs-2';
+import { get_chart_data_grade_entry_form_path } from "../../../javascript/routes";
 
 
 class Dashboard extends React.Component {
@@ -11,7 +11,6 @@ class Dashboard extends React.Component {
     this.state = {
       assessment_id: null,
       assessment_type: null,
-      temp_data: null,
       display_course_summary: false,
       data: { // Fake data, from react-chartjs-2/example/src/charts/GroupedBar.js
         labels: ['1', '2', '3', '4', '5', '6'],
