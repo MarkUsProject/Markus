@@ -15,4 +15,8 @@ class GradeEntryFormPolicy < ApplicationPolicy
   def student_interface?
     user.student?
   end
+
+  def get_chart_data?
+    user.student?
+  end
 end

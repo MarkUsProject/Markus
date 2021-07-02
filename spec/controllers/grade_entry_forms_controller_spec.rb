@@ -441,4 +441,11 @@ describe GradeEntryFormsController do
       it('should respond with 403') { expect(response.status).to eq 403 }
     end
   end
+
+  describe 'GET chart_data' do
+    let(:grade_entry_form) { create(:grade_entry_form) }
+    let(:user) { create(:student) }
+    before { get_as user, :get_chart_data, params: { id: grade_entry_form.id} }
+    it('should respond with 200') { expect(response.status).to eq 200 }
+  end
 end
