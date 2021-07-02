@@ -13,8 +13,7 @@ describe CourseSummariesController do
         create(:grouping_with_inviter_and_submission, assignment: assignments[0])
         create(:grouping_with_inviter, assignment: assignments[0])
         csv_rows = get_as(@admin, :download_csv_grades_report, format: :csv).parsed_body
-        expect(csv_rows.size).to eq(Student.count + 1) # one header row plus one row per student
-
+        expect(csv_rows.size).to eq(Student.count + 2) # one header row, one out of row, plus one row per student
         header = [User.human_attribute_name(:user_name),
                   User.human_attribute_name(:first_name),
                   User.human_attribute_name(:last_name),
@@ -24,6 +23,9 @@ describe CourseSummariesController do
         end
         expect(csv_rows.shift).to eq(header)
         csv_rows.each do |csv_row|
+          if csv_row[0] == Assessment.human_attribute_name(:max_mark)
+            next
+          end
           student_name = csv_row.shift
           # Skipping first/last name and id_number fields
           3.times { |_| csv_row.shift }
@@ -46,6 +48,29 @@ describe CourseSummariesController do
         end
         expect(response.status).to eq(200)
       end
+
+      context 'tests the second csv row which contains out of values' do
+        it 'checks the out of row is numerically and sequentially correct' do
+          # this test checks that the following
+          # 1) the out_row is the correct length (right amount of assessments included)
+          # 2) the order of each assessment in the header corresponds to the right value in the out_of row
+          # 3) the values in the out_of row correspond to the CORRECT values of the respective assessments
+          assignments = create_list(:assignment_with_criteria_and_results, 3)
+          grade_forms = create_list(:grade_entry_form_with_data, 2)
+          create(:grouping_with_inviter_and_submission, assignment: assignments[0])
+          create(:grouping_with_inviter, assignment: assignments[0])
+          csv_rows = get_as(@admin, :download_csv_grades_report, format: :csv).parsed_body
+          header = csv_rows[0]
+          out_of_row = csv_rows[1]
+          expect(out_of_row.size).to eq(4 + assignments.size + grade_forms.size)
+          expect(out_of_row.size).to eq(header.size)
+          zipped_info = Assessment.all.order(:id).zip(out_of_row[4, out_of_row.size])
+          zipped_info.each do |model, out_of_element|
+            expect(out_of_element).to eq(model.max_mark.to_s)
+          end
+        end
+      end
+
       context 'when at least one result is a remark result' do
         it do
           assignment = create(:assignment_with_criteria_and_results_with_remark)
