@@ -12,10 +12,13 @@ en:
   edit: Edit
   encoding: Encoding
   file: File
+  filter_by: Filter by %{name}
   help: Help
   markus: MarkUs
+  other_info: Other Info
   please_wait: Please wait…
   preview: Preview
   save: Save
+  search: Search
   skip: Skip
   working: Loading

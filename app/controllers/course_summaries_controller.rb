@@ -61,7 +61,7 @@ class CourseSummariesController < ApplicationController
     marking_schemes = MarkingScheme.all.pluck(:id)
     grades_data = get_table_json_data(current_user)
 
-    csv_string = MarkusCsv.generate(grades_data, [generate_csv_header]) do |student|
+    csv_string = MarkusCsv.generate(grades_data, [generate_csv_header, generate_out_of_row]) do |student|
       row = [student[:user_name], student[:first_name], student[:last_name], student[:id_number]]
       row.concat(assessments.map { |a_id| student[:assessment_marks][a_id]&.[](:mark) || nil })
       row.concat(marking_schemes.map { |ms_id| student[:weighted_marks][ms_id][:mark] })
@@ -71,6 +71,18 @@ class CourseSummariesController < ApplicationController
   end
 
   private
+
+  def generate_out_of_row
+    # This function creates the second row of the grades summary, containing the max mark of every assessment.
+    # Given that each assessment has a maximum possible mark achievable, this row represents this data.
+    assessments = Assessment.all.order(id: :asc)
+    marking_schemes = MarkingScheme.all.order(id: :asc)
+    out_of_row = [Assessment.human_attribute_name(:max_mark), '', '', '']
+    out_of_row.concat(assessments.collect(&:max_mark))
+    out_of_row.concat([''] * marking_schemes.size)
+
+    out_of_row
+  end
 
   def generate_csv_header
     assessments = Assessment.all.order(id: :asc)

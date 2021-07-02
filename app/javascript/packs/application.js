@@ -51,11 +51,6 @@ import 'javascripts/chart_config';
 
 window.Routes = require('routes');
 
-// Override react-table defaultSortMethod
-import { defaultSort } from 'javascripts/Components/Helpers/table_helpers';
-import { ReactTableDefaults } from 'react-table';
-Object.assign(ReactTableDefaults, { defaultSortMethod: defaultSort });
-
 // assets with side-effects only
 import 'javascripts/help-system';
 import 'javascripts/layouts';

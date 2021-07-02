@@ -2,7 +2,6 @@ import React from 'react';
 import {render} from 'react-dom';
 
 import ReactTable from 'react-table';
-import {stringFilter} from './Helpers/table_helpers';
 
 
 class TATable extends React.Component {
@@ -65,11 +64,11 @@ class TATable extends React.Component {
                 </a>
               </span>
             ),
+            filterable: false,
             sortable: false
           }
         ]}
         filterable
-        defaultFilterMethod={stringFilter}
         loading={this.state.loading}
       />
     );

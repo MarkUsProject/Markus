@@ -470,11 +470,10 @@ class Result extends React.Component {
 
     $.ajax({
       url: Routes.remove_extra_mark_assignment_submission_result_path(
-        this.state.assignment_id, this.state.submission_id,
-        // TODO: Fix this route so that the id refers to a Result rather than ExtraMark.
-        id
+        this.state.assignment_id, this.state.submission_id, this.state.result_id
       ),
-      method: 'POST',
+      method: 'DELETE',
+      data: {extra_mark_id: id}
     }).then(this.fetchData)
   };
 

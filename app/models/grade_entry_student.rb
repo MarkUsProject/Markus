@@ -27,15 +27,14 @@ class GradeEntryStudent < ApplicationRecord
     student_ids = Student.where(id: Array(student_ids)).pluck(:id)
     form_ids = GradeEntryForm.where(id: Array(form_ids)).pluck(:id)
 
-    columns = [:user_id, :assessment_id]
     existing_values = GradeEntryStudent.where(user_id: student_ids, assessment_id: form_ids)
                                        .pluck(:user_id, :assessment_id)
     # Delegate the generation of records to the caller-specified block and
     # remove values that already exist in the database.
     values = yield(student_ids, form_ids) - existing_values
-    # TODO replace import with create when the PG driver supports bulk create,
-    # then remove the activerecord-import gem.
-    import(columns, values, validate: false)
+
+    data = values.map { |sid, aid| { user_id: sid, assessment_id: aid } }
+    insert_all data unless data.blank?
   end
 
   # Assigns a random TA from a list of TAs specified by +ta_ids+ to each student

@@ -47,13 +47,9 @@ export class TagsPanel extends React.Component {
       <div>
         <h4>{I18n.t('tags.results.current_tags')}</h4>
         <ul className='tag-list'>{this.renderTagList()}</ul>
-        {!this.props.remark_submitted &&
-         (<div>
-           <h4>{I18n.t('tags.results.available_tags')}</h4>
-           <ul className='tag-list'>{this.renderAvailableTags()}</ul>
-          </div>)
-        }
-        {!this.props.remark_submitted && this.props.role === 'Admin' &&
+        <h4>{I18n.t('tags.results.available_tags')}</h4>
+        <ul className='tag-list'>{this.renderAvailableTags()}</ul>
+        {this.props.role === 'Admin' &&
          <button className='inline-button' onClick={() => modal_create_new_tag.open()}>
            {I18n.t('helpers.submit.create', {model: I18n.t('activerecord.models.tag.one')})}
          </button>
@@ -63,6 +59,8 @@ export class TagsPanel extends React.Component {
             {I18n.t('activerecord.models.note.other')} ({this.props.notes_count})
           </a>
         </p>
+        <h4>{I18n.t('other_info')}</h4>
+        <a href={Routes.repo_browser_assignment_submission_path(this.props.assignment_id, this.props.grouping_id)}> {I18n.t('results.view_group_repo')}</a>
       </div>
     );
   }
