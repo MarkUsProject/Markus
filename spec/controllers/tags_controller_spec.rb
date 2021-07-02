@@ -10,10 +10,8 @@ describe TagsController do
 
   describe '#index' do
     it 'returns correct JSON data' do
-      post :create, params: { tag: { name: 'tag', description: 'tag description' },
-                              assignment_id: assignment.id }
+      tag = create(:tag, assessment: assignment)
       get :index, params: { assignment_id: assignment.id, format: :json }
-      tag = Tag.find_by(name: 'tag', description: 'tag description')
       expected = [{
         'id' => tag.id,
         'name' => tag.name,

@@ -6,12 +6,11 @@ class TagsController < ApplicationController
 
   def index
     @assignment = Assignment.find(params[:assignment_id])
-    @assessment = Assessment.find(params[:assignment_id])
 
     respond_to do |format|
       format.html
       format.json do
-        tags = @assessment.tags.includes(:user, :groupings).order(:name)
+        tags = @assignment.tags.includes(:user, :groupings).order(:name)
 
         tag_info = tags.map do |tag|
           {
