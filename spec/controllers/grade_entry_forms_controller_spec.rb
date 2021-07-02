@@ -442,10 +442,10 @@ describe GradeEntryFormsController do
     end
   end
 
-  describe 'GET chart_data' do
+  describe 'GET grade_distribution_data' do
     let(:grade_entry_form) { create(:grade_entry_form) }
-    let(:user) { create(:student) }
-    before { get_as user, :get_chart_data, params: { id: grade_entry_form.id} }
+    let(:user) { create(:admin) }
+    before { get_as user, :grade_distribution_data, params: { id: grade_entry_form.id } }
     it('should respond with 200') { expect(response.status).to eq 200 }
   end
 end

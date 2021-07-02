@@ -2,7 +2,7 @@ import React from 'react';
 import { render } from 'react-dom';
 
 import { Bar } from 'react-chartjs-2';
-import { get_chart_data_grade_entry_form_path } from "../../../javascript/routes";
+import { grade_distribution_data_grade_entry_form_path } from "../../../javascript/routes";
 
 
 class Dashboard extends React.Component {
@@ -40,7 +40,7 @@ class Dashboard extends React.Component {
       if (this.state.display_course_summary) {
         // TODO
       } else if (this.state.assessment_type === 'GradeEntryForm') {
-        $.get({url: Routes.get_chart_data_grade_entry_form_path(this.state.assessment_id)}).then(res => {
+        $.get({url: Routes.grade_distribution_data_grade_entry_form_path(this.state.assessment_id)}).then(res => {
 
           let new_labels = ['0 - 5']
           for (let i = 1; i < 20; i++) {

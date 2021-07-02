@@ -16,7 +16,7 @@ class GradeEntryFormPolicy < ApplicationPolicy
     user.student?
   end
 
-  def get_chart_data?
-    user.student?
+  def grade_distribution_data?
+    user.admin?
   end
 end
