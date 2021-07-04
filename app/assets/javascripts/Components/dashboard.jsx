@@ -30,7 +30,8 @@ class Dashboard extends React.Component {
             backgroundColor: 'rgb(75, 192, 192)',
           },
         ],
-      }
+      },
+      options: {}
     };
   }
 
@@ -42,6 +43,10 @@ class Dashboard extends React.Component {
         // TODO
       } else if (this.state.assessment_type === 'Assignment') {
         // TODO
+        $.ajax({
+          url: Routes.grade_distribution_graph_data_assignment_path(this.state.assessment_id),
+          dataType: 'json',
+        }).then(res => this.setState({data: res.data, options: res.options}))
       }
     }
   }
@@ -50,7 +55,7 @@ class Dashboard extends React.Component {
     if (this.state.display_course_summary) {
       return <Bar data={this.state.data} />;
     } else if (this.state.assessment_type === 'Assignment') {
-      return <Bar data={this.state.data} />;
+      return <Bar data={this.state.data} options={this.state.options} />;
     } else if (this.state.assessment_type === 'GradeEntryForm') {
       return (
         <div>
