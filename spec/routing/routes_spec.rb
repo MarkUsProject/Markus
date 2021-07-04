@@ -126,6 +126,15 @@ describe 'An Assignment' do
                      action: 'start_timed_assignment',
                      id: assignment.id.to_s)
     end
+
+    it 'routes GET grade_distribution_graph_data properly' do
+      expect(get: path + '/' + assignment.id.to_s + '/grade_distribution_graph_data properly')
+        .to route_to(
+              controller: ctrl,
+              action: 'grade_distribution_graph_data',
+              id: assignment.id.to_s
+            )
+    end
   end
   # end Assignment member route tests
 
