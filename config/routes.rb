@@ -367,6 +367,7 @@ Rails.application.routes.draw do
       get 'get_marking_scheme_details'
       get 'download_csv_grades_report'
       get 'view_summary'
+      get 'grade_distribution'
     end
   end
 

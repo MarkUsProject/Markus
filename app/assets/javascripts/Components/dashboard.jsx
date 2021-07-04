@@ -3,7 +3,6 @@ import { render } from 'react-dom';
 
 import { Bar } from 'react-chartjs-2';
 
-
 class Dashboard extends React.Component {
   constructor(props) {
     super(props);
@@ -37,7 +36,13 @@ class Dashboard extends React.Component {
   componentDidUpdate(prevProps, prevState) {
     if (prevState.assessment_id !== this.state.assessment_id) {
       if (this.state.display_course_summary) {
-        // TODO
+        $.ajax({
+          url: Routes.grade_,
+          dataType: 'json'
+        }).then(res => {
+          let data = {labels: res['labels'], datasets: res['grade distribution']}
+          this.setState({data: data})
+        })
       } else if (this.state.assessment_type === 'GradeEntryForm') {
         // TODO
       } else if (this.state.assessment_type === 'Assignment') {
