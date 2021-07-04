@@ -317,29 +317,29 @@ class AssignmentsController < ApplicationController
     datasets = [
       {
         label: '2',
-        data: assignment.grade_distribution_array(),
+        data: assignment.grade_distribution_array,
         backgroundColor: [
-          'rgba(36, 81, 133, 1)',
+          'rgba(36, 81, 133, 1)'
         ],
         borderColor: [
-          'rgba(36, 81, 133, 1)',
+          'rgba(36, 81, 133, 1)'
         ],
-        borderWidth: 1,
-      },
+        borderWidth: 1
+      }
     ]
-    data = {labels: labels, datasets: datasets}
+    data = { labels: labels, datasets: datasets }
     options = {
       scales: {
         xAxes: [{
-              ticks: {
-                min: 0,
-                max: 100,
-                stepSize: 10,
-              }
-            }]
+                  ticks: {
+                    min: 0,
+                    max: 100,
+                    stepSize: 10
+                  }
+                }]
       }
     }
-    render json: {data: data, options: options}
+    render json: { data: data, options: options }
   end
 
   # Refreshes the grade distribution graph
