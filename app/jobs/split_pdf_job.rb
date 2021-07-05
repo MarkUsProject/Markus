@@ -253,7 +253,7 @@ class SplitPdfJob < ApplicationJob
         student_info_file = File.join(raw_dir, "#{grouping.id}_info.jpg")
         student_info.write(student_info_file)
 
-        python_exe = File.join(Settings.scanned_exams.bin, 'python')
+        python_exe = File.join(Settings.python.bin, 'python')
         read_chars_py_file = File.join(::Rails.root, 'lib', 'scanner', 'read_chars.py')
         stdout, _status = Open3.capture2(python_exe, read_chars_py_file, student_info_file)
         tokens = stdout.split("\n")

@@ -13,6 +13,7 @@ services:
         NODE_MAJOR: '12'
         YARN_VERSION: '1.13.0'
         BUNDLER_VERSION: '1.17.3'
+        PYTHON_VERSION: '3.9'
         USER: 'markus'
     image: markus-dev:1.0.0
     tmpfs:
