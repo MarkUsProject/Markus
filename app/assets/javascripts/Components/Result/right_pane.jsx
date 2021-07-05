@@ -18,7 +18,7 @@ export class RightPane extends React.Component {
           <Tab>{I18n.t('activerecord.models.mark.other')}</Tab>
           <Tab>{I18n.t('results.summary')}</Tab>
           {this.canShowTagsPanel() &&
-           <Tab>{I18n.t('activerecord.models.tag.other')}/{I18n.t('activerecord.models.note.other')}</Tab>
+           <Tab>{I18n.t('results.submission_info')}</Tab>
           }
         </TabList>
         <TabPanel>
@@ -67,6 +67,7 @@ export class RightPane extends React.Component {
              role={this.props.role}
              assignment_id={this.props.assignment_id}
              grouping_id={this.props.grouping_id}
+             members={this.props.members}
            />
          </TabPanel>
         }
