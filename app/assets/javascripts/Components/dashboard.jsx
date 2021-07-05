@@ -2,7 +2,6 @@ import React from 'react';
 import { render } from 'react-dom';
 
 import { Bar } from 'react-chartjs-2';
-import { grade_distribution_data_grade_entry_form_path } from "../../../javascript/routes";
 
 
 class Dashboard extends React.Component {
@@ -41,25 +40,14 @@ class Dashboard extends React.Component {
         // TODO
       } else if (this.state.assessment_type === 'GradeEntryForm') {
         $.get({url: Routes.grade_distribution_data_grade_entry_form_path(this.state.assessment_id)}).then(res => {
-
-          let new_labels = ['0 - 5']
-          for (let i = 1; i < 20; i++) {
-            let grade_range = (i * 5 + 1).toString() + " - " + (i * 5 + 5).toString()
-            new_labels.push(grade_range)
-          }
-
-          let new_datasets = [{data: res['grade_distribution']}]
-          let new_data = {labels: new_labels, datasets: new_datasets}
-
-          this.setState({data: new_data})
-
+          let new_data = {labels: res['labels'], datasets: [{data: res['grade_distribution']}]};
+          this.setState({data: new_data});
         });
       } else if (this.state.assessment_type === 'Assignment') {
         // TODO
       }
     }
   }
-
 
   render() {
     if (this.state.display_course_summary) {

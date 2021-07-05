@@ -225,7 +225,15 @@ class GradeEntryFormsController < ApplicationController
   end
 
   def grade_distribution_data
+
+    new_labels = ['0 - 5']
+
+    (1..19).each do |i|
+      grade_range = (i * 5 + 1).to_s + " - " + (i * 5 + 5).to_s
+      new_labels.push(grade_range)
+    end
+
     grade_entry_form = GradeEntryForm.find(params[:id])
-    render json: { grade_distribution: grade_entry_form.grade_distribution_array }
+    render json: { grade_distribution: grade_entry_form.grade_distribution_array, labels: new_labels }
   end
 end

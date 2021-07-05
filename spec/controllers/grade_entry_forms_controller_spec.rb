@@ -443,9 +443,22 @@ describe GradeEntryFormsController do
   end
 
   describe 'GET grade_distribution_data' do
-    let(:grade_entry_form) { create(:grade_entry_form) }
     let(:user) { create(:admin) }
-    before { get_as user, :grade_distribution_data, params: { id: grade_entry_form.id } }
+    before { get_as user, :grade_distribution_data, params: { id: grade_entry_form_with_data.id } }
     it('should respond with 200') { expect(response.status).to eq 200 }
+
+    it('should return grade distribution data') {
+      expected_items = grade_entry_form_with_data.grade_distribution_array
+      expect(JSON.parse(response.body)['grade_distribution']).to eq(expected_items)
+    }
+
+    it('should return expected labels') {
+      new_labels = ['0 - 5']
+      (1..19).each do |i|
+        new_labels.push((i * 5 + 1).to_s + " - " + (i * 5 + 5).to_s)
+      end
+      expect(JSON.parse(response.body)['labels']).to eq(new_labels)
+    }
   end
+
 end
