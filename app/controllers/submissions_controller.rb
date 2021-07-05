@@ -672,7 +672,7 @@ class SubmissionsController < ApplicationController
       if type == 'ipynb'
         args = [
           File.join(Settings.python.bin, 'jupyter-nbconvert'), '--to', 'html', '--stdin', '--output', cache_file.to_s
-        ]      
+        ]
       else
         args = [Settings.pandoc, '--from', 'markdown', '--to', 'html', '--output', cache_file.to_s]
       end
