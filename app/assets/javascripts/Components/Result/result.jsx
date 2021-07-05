@@ -685,6 +685,7 @@ class Result extends React.Component {
                 submission_id={this.state.submission_id}
                 result_id={this.state.result_id}
                 grouping_id={this.state.grouping_id}
+                members={this.state.members || []}
                 role={this.props.role}
                 annotations={this.state.annotations}
                 assigned_criteria={this.state.assigned_criteria}

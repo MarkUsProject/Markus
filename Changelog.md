@@ -6,6 +6,7 @@
 - Add ability to associate feedback files to test group results (#5209)
 - Communicate with autotester over http to support new autotesting configuration (#5225)
 - Remove activerecord-import dependency (#5248)
+- Rename "Tags/Notes" tab on grading page to "Submission Info", and move membership information to the tab (#5380)
 
 ## [v1.12.4]
 - Symlink git repo hooks (#5283)
