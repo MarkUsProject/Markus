@@ -964,12 +964,27 @@ describe SubmissionsController do
         end
       end
       describe 'When the file is a jupyter notebook file' do
-        it 'should display rendered html' do
+        subject do
           get_as admin, :download, params: { assignment_id: assignment.id,
                                              file_name: 'example.ipynb',
                                              preview: true,
                                              grouping_id: grouping.id }
-          expect(response.body).to start_with('<!DOCTYPE html>')
+        end
+        it 'should redirect to "notebook_content"' do
+          expect(subject).to redirect_to(notebook_content_assignment_submissions_url(file_name: 'example.ipynb',
+                                                                                     grouping_id: grouping.id))
+        end
+      end
+      describe 'When the file is an rmarkdown file' do
+        subject do
+          get_as admin, :download, params: { assignment_id: assignment.id,
+                                             file_name: 'example.Rmd',
+                                             preview: true,
+                                             grouping_id: grouping.id }
+        end
+        it 'should redirect to "notebook_content"' do
+          expect(subject).to redirect_to(notebook_content_assignment_submissions_url(file_name: 'example.Rmd',
+                                                                                     grouping_id: grouping.id))
         end
       end
       describe 'When the file is a binary file' do
@@ -1017,6 +1032,53 @@ describe SubmissionsController do
       end
     end
   end
+
+  describe '#notebook_content' do
+    let(:assignment) { create(:assignment) }
+    let(:admin) { create(:admin) }
+    let(:grouping) { create(:grouping_with_inviter, assignment: assignment) }
+    let(:notebook_file) { fixture_file_upload(filename) }
+    let(:submission) { submit_file(assignment, grouping, notebook_file.original_filename, notebook_file.read) }
+
+    shared_examples 'notebook types' do
+      shared_examples 'notebook content' do
+        it 'is successful' do
+          subject
+          expect(response.status).to eq(200)
+        end
+        it 'renders the correct template' do
+          expect(subject).to render_template('notebook')
+        end
+      end
+
+      context 'a jupyter-notebook file' do
+        let(:filename) { 'example.ipynb' }
+        it_behaves_like 'notebook content'
+      end
+      context 'an rmarkdown file' do
+        let(:filename) { 'example.Rmd' }
+        it_behaves_like 'notebook content'
+      end
+    end
+
+    context 'called with a collected submission' do
+      let(:submission_file) { create :submission_file, submission: submission, filename: filename }
+      subject do
+        get_as admin, :notebook_content, params: { assignment_id: assignment.id, select_file_id: submission_file.id }
+      end
+      it_behaves_like 'notebook types'
+    end
+    context 'called with a revision identifier' do
+      subject do
+        get_as admin, :notebook_content, params: { assignment_id: assignment.id,
+                                                   file_name: filename,
+                                                   grouping_id: grouping.id,
+                                                   revision_identifier: submission.revision_identifier }
+      end
+      it_behaves_like 'notebook types'
+    end
+  end
+
   describe '#get_file' do
     let(:assignment) { create(:assignment) }
     let(:admin) { create(:admin) }
@@ -1026,6 +1088,7 @@ describe SubmissionsController do
     let(:file3) { fixture_file_upload('example.ipynb') }
     let(:file4) { fixture_file_upload('page_white_text.png') }
     let(:file5) { fixture_file_upload('scanned_exams/midterm1-v2-test.pdf') }
+    let(:file6) { fixture_file_upload('example.Rmd') }
     let!(:submission) do
       files.map do |file|
         submit_file(assignment, grouping, file.original_filename, file.read)
@@ -1043,13 +1106,22 @@ describe SubmissionsController do
     end
     describe 'When the file is a jupyter notebook file' do
       let(:files) { [file3] }
-      it 'should download the file as is' do
+      it 'should return the file type' do
         submission_file = submission.submission_files.find_by(filename: file3.original_filename)
         get_as admin, :get_file, params: { assignment_id: assignment.id,
                                            id: submission.id,
                                            submission_file_id: submission_file.id }
-        expected = ActiveSupport::JSON.encode('<!DOCTYPE html>')[0...-1]
-        expect(JSON.parse(response.body)['content']).to start_with(expected)
+        expect(JSON.parse(response.body)['type']).to eq 'jupyter-notebook'
+      end
+    end
+    describe 'When the file is an rmarkdown notebook file' do
+      let(:files) { [file6] }
+      it 'should return the file type' do
+        submission_file = submission.submission_files.find_by(filename: file6.original_filename)
+        get_as admin, :get_file, params: { assignment_id: assignment.id,
+                                           id: submission.id,
+                                           submission_file_id: submission_file.id }
+        expect(JSON.parse(response.body)['type']).to eq 'rmarkdown'
       end
     end
     describe 'When the file is a binary file' do

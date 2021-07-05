@@ -84,3 +84,5 @@ scanned_exams:
 
 python:
   bin: <%= ::Rails.root %>/venv/bin
+
+pandoc: /usr/bin/pandoc

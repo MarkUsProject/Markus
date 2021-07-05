@@ -166,5 +166,6 @@ Config.setup do |config|
     required(:python).hash do
       required(:bin).filled(:string)
     end
+    required(:pandoc).filled(:string)
   end
 end
