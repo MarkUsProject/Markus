@@ -500,7 +500,7 @@ class SubmissionsController < ApplicationController
 
     file_path = "#{assignment.repository_folder}/#{path}/#{filename}"
     unique_path = "#{grouping.group.repo_name}/#{file_path}.#{revision_identifier}"
-    @notebook_type = File.extname(filename).casecmp('.ipynb')&.zero? ? 'ipynb' : 'rmarkdown'
+    @notebook_type = FileHelper.get_file_type(filename)
     @notebook_content = notebook_to_html(file_contents, unique_path, @notebook_type)
     render layout: 'notebook'
   end
