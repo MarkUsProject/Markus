@@ -25,6 +25,10 @@ class SubmissionFile < ApplicationRecord
     File.extname(filename).casecmp('.ipynb')&.zero?
   end
 
+  def is_rmd?
+    File.extname(filename).casecmp('.rmd')&.zero?
+  end
+
   # Taken from http://blade.nagaokaut.ac.jp/cgi-bin/scat.rb/ruby/ruby-talk/44936
   def self.is_binary?(file_contents)
     return file_contents.size == 0 ||

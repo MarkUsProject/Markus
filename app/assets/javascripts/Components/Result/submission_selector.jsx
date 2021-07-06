@@ -107,18 +107,14 @@ export class SubmissionSelector extends React.Component {
           <button
             className='button previous'
             onClick={this.props.previousSubmission}
-            title='Shift + Left'>
-            {I18n.t('results.previous_submission')}
-          </button>
-          <h2 className='group-name' title={this.props.group_name}>
+            title={`${I18n.t('results.previous_submission')} (Shift + ⇦)`} />
+          <h3 className='group-name'>
             {this.props.group_name}
-          </h2>
+          </h3>
           <button
             className='button next'
             onClick={this.props.nextSubmission}
-            title='Shift + Right'>
-            {I18n.t('results.next_submission')}
-          </button>
+            title={`${I18n.t('results.next_submission')} (Shift + ⇨)`} />
           <div className='progress'>
             <meter
               value={this.props.num_marked}

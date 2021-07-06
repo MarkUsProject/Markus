@@ -126,14 +126,17 @@ class ResultsController < ApplicationController
           data[:num_collected] = assignment.get_num_collected(current_user.admin? ? nil : current_user.id)
           if current_user.ta? && assignment.anonymize_groups
             data[:group_name] = "#{Group.model_name.human} #{submission.grouping.id}"
+            data[:members] = []
           else
-            data[:group_name] = submission.grouping.get_group_name
+            data[:group_name] = submission.grouping.group.group_name
+            data[:members] = submission.grouping.accepted_students.map(&:user_name)
           end
         elsif is_reviewer
           reviewer_group = current_user.grouping_for(assignment.pr_assignment.id)
           data[:num_marked] = PeerReview.get_num_marked(reviewer_group)
           data[:num_collected] = PeerReview.get_num_collected(reviewer_group)
           data[:group_name] = PeerReview.model_name.human
+          data[:members] = []
         end
 
         # Marks
@@ -390,6 +393,11 @@ class ResultsController < ApplicationController
     end
 
     file = SubmissionFile.find(params[:select_file_id])
+    if params[:show_in_browser] == 'true' && (file.is_pynb? || file.is_rmd?)
+      redirect_to notebook_content_assignment_submissions_url(params[:assignment_id],
+                                                              select_file_id: params[:select_file_id])
+      return
+    end
 
     begin
       if params[:include_annotations] == 'true' && !file.is_supported_image?

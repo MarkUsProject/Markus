@@ -11,10 +11,10 @@ addons:
 before_install:
   - sudo apt-get update
   - sudo apt-add-repository -y ppa:deadsnakes/ppa
-  - sudo apt-get install -y cmake libssh2-1-dev ghostscript python3.8 python3.8-venv
+  - sudo apt-get install -y cmake libssh2-1-dev ghostscript python3.8 python3.8-venv pandoc
   - sudo apt-get install imagemagick libmagickwand-dev
   - nvm install 12
-  - python3.8 -m venv nbconvertvenv && ./nbconvertvenv/bin/pip install wheel nbconvert
+  - python3.8 -m venv venv && ./venv/bin/pip install nbconvert==6.1.0 # install rest of requirements if needed
 
 install:
   - travis_wait bundle install --path=~/.bundle --jobs=3 --retry=3 --without development production console
