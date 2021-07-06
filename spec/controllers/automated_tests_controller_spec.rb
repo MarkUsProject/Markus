@@ -91,9 +91,9 @@ describe AutomatedTestsController do
       context 'files data' do
         before(:each) do
           @current_user = Admin.create(user_name: 'admin_user',
-                               last_name: 'doe',
-                               first_name: 'adam',
-                               time_zone: "UTC")
+                                       last_name: 'doe',
+                                       first_name: 'adam',
+                                       time_zone: 'UTC')
         end
         it 'should include assignment files' do
           current_time = Time.new(2021)
@@ -101,9 +101,9 @@ describe AutomatedTestsController do
           allow_any_instance_of(Pathname).to receive(:exist?).and_return true
           allow(File).to receive(:mtime).and_return current_time
 
-          get_as  @current_user, :populate_autotest_manager, params: params
+          get_as @current_user, :populate_autotest_manager, params: params
           url = download_file_assignment_automated_tests_url(assignment_id: assignment.id, file_name: 'file.txt')
-          data = [{ key: 'file.txt', submitted_date: I18n.l(current_time.in_time_zone("UTC")),
+          data = [{ key: 'file.txt', submitted_date: I18n.l(current_time.in_time_zone('UTC')),
                     size: 1, url: url }.transform_keys(&:to_s)]
           expect(JSON.parse(response.body)['files']).to eq(data)
         end
@@ -126,7 +126,7 @@ describe AutomatedTestsController do
           url = download_file_assignment_automated_tests_url(assignment_id: assignment.id,
                                                              file_name: 'some_dir/file.txt')
           data = [{ key: 'some_dir/' }, { key: 'some_dir/file.txt',
-                                          submitted_date: I18n.l(current_time.in_time_zone("UTC")),
+                                          submitted_date: I18n.l(current_time.in_time_zone('UTC')),
                                           size: 1, url: url }]
           expect(JSON.parse(response.body)['files']).to eq(data.map { |h| h.transform_keys(&:to_s) })
         end
