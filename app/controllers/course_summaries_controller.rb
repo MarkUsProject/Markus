@@ -51,7 +51,7 @@ class CourseSummariesController < ApplicationController
     marking_schemes = current_user.student? ? MarkingScheme.none : MarkingScheme
 
     marking_schemes.order(id: :asc).each do |m|
-      table_data << marking_schemes.students_weighted_grade_distribution_array(current_user).data
+      table_data << m.students_weighted_grade_distribution_array(current_user).data
     end
     labels = []
     (0..19).each do |i|

@@ -282,7 +282,7 @@ describe CourseSummariesController do
 
     describe 'GET grade distribution' do
       let(:user) { create(:admin) }
-      before { get_as user, :grade_distribution}
+      before { get_as user, :grade_distribution }
       it('should respond with 200 (ok)') { expect(response.status).to eq 200 }
       it 'returns correct labels' do
         expected = []
