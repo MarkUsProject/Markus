@@ -225,7 +225,6 @@ class GradeEntryFormsController < ApplicationController
   end
 
   def grade_distribution_data
-
     new_labels = ['0 - 5']
 
     (1..19).each do |i|

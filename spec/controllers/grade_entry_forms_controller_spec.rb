@@ -455,10 +455,9 @@ describe GradeEntryFormsController do
     it('should return expected labels') {
       new_labels = ['0 - 5']
       (1..19).each do |i|
-        new_labels.push((i * 5 + 1).to_s + " - " + (i * 5 + 5).to_s)
+        new_labels.push((i * 5 + 1).to_s + ' - ' + (i * 5 + 5).to_s)
       end
       expect(JSON.parse(response.body)['labels']).to eq(new_labels)
     }
   end
-
 end
