@@ -1,0 +1,16 @@
+---
+title: "example"
+author: "MarkUs"
+date: "March 15, 1266"
+output: html_document
+---
+
+## Example Rmarkdown file
+
+This is a sample file
+
+```{r}
+2 + 2
+```
+
+
