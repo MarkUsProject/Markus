@@ -10,7 +10,7 @@ describe TagsController do
 
   describe '#index' do
     it 'returns correct JSON data' do
-      tag = create(:tag)
+      tag = create(:tag, assessment: assignment)
       get :index, params: { assignment_id: assignment.id, format: :json }
       expected = [{
         'id' => tag.id,
@@ -39,6 +39,12 @@ describe TagsController do
       expect(tags.size).to eq 1
       expect(tags.first.name).to eq 'tag'
       expect(tags.first.description).to eq 'tag description'
+    end
+
+    it 'associates the new tag with an assessment' do
+      post :create, params: { tag: { name: 'tag', description: 'tag description' },
+                              assignment_id: assignment.id }
+      expect(Tag.find_by(name: 'tag', description: 'tag description').assessment.id).to eq assignment.id
     end
   end
 
