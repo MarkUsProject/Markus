@@ -2,10 +2,6 @@ import React from 'react';
 import { render } from 'react-dom';
 
 import { Bar } from 'react-chartjs-2';
-import {
-  column_breakdown_grade_entry_form_path,
-  populate_assignment_peer_reviews_path
-} from "../../../javascript/routes";
 
 
 class Dashboard extends React.Component {
@@ -35,48 +31,42 @@ class Dashboard extends React.Component {
           },
         ],
       },
-      gradeEntryFormChart2: {}
+      options: {},
     };
   }
 
-  GradeEntryFormColumnBreakdownUpdateData = (data) => {
-    // Helper function to update the chart state
-    let label_list = Array();
-    for(let i = 0; i < 105; i+=5) {
-      label_list.push(i)
-    }
-    let datasets = Array()
-    for(let j = 0; j < data[0].length; j++){
-      datasets.push({
-        label: data[0][j],
-        data: data[1][j],
-        backgroundColor: colours[j],
-      })
-    }
-
-    this.setState({
-      gradeEntryFormChart2: {
-        data: {
-          labels: label_list,
-          datasets: datasets,
-        },
-        options: {
-          plugins: {
-            tooltip: {
-              callbacks: {
-                title: function (tooltipItems) {
-                  var baseNum = parseInt(tooltipItems[0].label);
-                  if (baseNum === 0) {
-                    return '0-5';
-                  } else {
-                    return (baseNum + 1) + '-' + (baseNum + 5);
+  getGradeEntryFormColumnBreakdown = () => {
+    // Helper function to make the AJAX request, then use its response to set the chart state
+    $.ajax({
+      url: Routes.column_breakdown_grade_entry_form_path(
+        this.state.assessment_id
+      ),
+      method: 'GET',
+      success: (data) => {
+        // Load in background colours
+        for(let j = 0; j < data["datasets"].length; j++){
+          data["datasets"][j]["backgroundColor"] = colours[j]
+        }
+        this.setState({
+          data: data,
+          options: {
+            plugins: {
+              tooltip: {
+                callbacks: {
+                  title: function (tooltipItems) {
+                    let baseNum = parseInt(tooltipItems[0].label);
+                    if (baseNum === 0) {
+                      return '0-5';
+                    } else {
+                      return (baseNum + 1) + '-' + (baseNum + 5);
+                    }
                   }
                 }
-              }
-            },
-          }
-        }
-      }
+              },
+            }
+          },
+        })
+      },
     })
   }
 
@@ -85,15 +75,7 @@ class Dashboard extends React.Component {
       if (this.state.display_course_summary) {
         // TODO
       } else if (this.state.assessment_type === 'GradeEntryForm') {
-        // Make an AJAX request to retrieve chart data
-        $.ajax({
-          url: column_breakdown_grade_entry_form_path(
-            this.state.assessment_id
-          ),
-          method: 'GET',
-          success: this.GradeEntryFormColumnBreakdownUpdateData
-        })
-
+        this.getGradeEntryFormColumnBreakdown()
       } else if (this.state.assessment_type === 'Assignment') {
         // TODO
       }
@@ -106,11 +88,12 @@ class Dashboard extends React.Component {
     } else if (this.state.assessment_type === 'Assignment') {
       return <Bar data={this.state.data} />;
     } else if (this.state.assessment_type === 'GradeEntryForm') {
+      console.log(this.state.data)
       return (
         <div>
           <Bar data={this.state.data} />;
-          <Bar data={this.state.gradeEntryFormChart2.data}
-               options={this.state.gradeEntryFormChart2.options}/>;
+          <Bar data={this.state.data}
+               options={this.state.options}/>;
 
         </div>
       );
