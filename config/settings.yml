@@ -81,8 +81,8 @@ autotest:
 
 scanned_exams:
   enable: true
-  python: <%= ::Rails.root %>/lib/scanner/venv/bin/python
 
-nbconvert: <%= ::Rails.root %>/nbconvertvenv/bin/jupyter-nbconvert
+python:
+  bin: <%= ::Rails.root %>/venv/bin
 
 pandoc: /usr/bin/pandoc

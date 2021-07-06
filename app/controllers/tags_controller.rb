@@ -10,7 +10,7 @@ class TagsController < ApplicationController
     respond_to do |format|
       format.html
       format.json do
-        tags = Tag.includes(:user, :groupings).order(:name)
+        tags = @assignment.tags.includes(:user, :groupings).order(:name)
 
         tag_info = tags.map do |tag|
           {
@@ -35,7 +35,7 @@ class TagsController < ApplicationController
   # Creates a new instance of the tag.
   def create
     tag_params = params.require(:tag).permit(:name, :description)
-    new_tag = Tag.new(tag_params.merge(user: @current_user))
+    new_tag = Tag.new(tag_params.merge(user: @current_user, assessment: Assessment.find(params[:assignment_id])))
 
     if new_tag.save
       if params[:grouping_id]

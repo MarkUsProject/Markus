@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_06_16_012947) do
+ActiveRecord::Schema.define(version: 2021_06_17_201409) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -509,8 +509,8 @@ ActiveRecord::Schema.define(version: 2021_06_16_012947) do
     t.string "name", null: false
     t.string "description"
     t.integer "user_id"
-    t.bigint "assessments_id"
-    t.index ["assessments_id"], name: "index_tags_on_assessments_id"
+    t.bigint "assessment_id"
+    t.index ["assessment_id"], name: "index_tags_on_assessment_id"
     t.index ["user_id"], name: "index_tags_on_user_id"
   end
 
@@ -647,7 +647,7 @@ ActiveRecord::Schema.define(version: 2021_06_16_012947) do
   add_foreign_key "starter_file_entries", "starter_file_groups"
   add_foreign_key "starter_file_groups", "assessments"
   add_foreign_key "submission_files", "submissions", name: "fk_submission_files_submissions"
-  add_foreign_key "tags", "assessments", column: "assessments_id"
+  add_foreign_key "tags", "assessments"
   add_foreign_key "tags", "users"
   add_foreign_key "template_divisions", "assignment_files"
   add_foreign_key "template_divisions", "exam_templates"

@@ -83,12 +83,9 @@ coverage/
 # byebug gem
 .byebug_history
 
-# scanned exam python files
+# python files
 venv/
 __pycache__/
-
-# nbconvert python files
-nbconvertvenv/
 
 config/settings.local.yml
 config/settings/*.local.yml

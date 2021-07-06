@@ -200,17 +200,6 @@ class Grouping < ApplicationRecord
     not current_student_ids.intersect?(other_group_student_ids)
   end
 
-  def get_group_name
-    return group.group_name if assignment.group_max == 1 && !assignment.scanned_exam
-
-    name = group.group_name
-    student_names = accepted_students.map &:user_name
-    unless student_names == [name]
-      name += ' (' + student_names.join(', ') + ')'
-    end
-    name
-  end
-
   def group_name_with_student_user_names
     user_names = get_all_students_in_group
     return group.group_name if user_names == I18n.t('groups.empty')

@@ -669,8 +669,10 @@ class SubmissionsController < ApplicationController
     cache_file = Pathname.new('tmp/notebook_html_cache') + "#{unique_path}.html"
     unless File.exist? cache_file
       FileUtils.mkdir_p(cache_file.dirname)
-      if type == 'ipynb'
-        args = [Settings.nbconvert, '--to', 'html', '--template', 'basic', '--stdin', '--output', cache_file.to_s]
+      if type == 'jupyter-notebook'
+        args = [
+          File.join(Settings.python.bin, 'jupyter-nbconvert'), '--to', 'html', '--stdin', '--output', cache_file.to_s
+        ]
       else
         args = [Settings.pandoc, '--from', 'markdown', '--to', 'html', '--output', cache_file.to_s]
       end
