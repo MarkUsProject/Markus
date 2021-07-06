@@ -70,7 +70,7 @@ class CourseSummariesController < ApplicationController
         borderWidth: 1
       }
     ]
-    render json: {grade_distribution: datasets, labels: labels}
+    render json: { grade_distribution: datasets, labels: labels }
   end
 
   def view_summary
