@@ -741,6 +741,10 @@ describe ResultsController do
         expect(data['group_name']).to eq "#{Group.model_name.human} #{data['grouping_id']}"
       end
 
+      it 'should not include any group members' do
+        expect(data['members']).to eq []
+      end
+
       it 'should not report any grace token deductions' do
         expect(data['grace_token_deductions']).to eq []
       end
