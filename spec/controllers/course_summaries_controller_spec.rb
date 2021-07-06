@@ -279,5 +279,18 @@ describe CourseSummariesController do
         end
       end
     end
+
+    describe 'GET grade distribution' do
+      let(:user) { create(:admin) }
+      before { get_as user, :grade_distribution}
+      it('should respond with 200 (ok)') { expect(response.status).to eq 200 }
+      it 'returns correct labels' do
+        expected = []
+        (0..19).each do |i|
+          expected << i.to_s + '-' + (i + 1).to_s
+        end
+        expect(response.parsed_body['labels']).to eq expected
+      end
+    end
   end
 end
