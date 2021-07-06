@@ -13,7 +13,6 @@ services:
         NODE_MAJOR: '12'
         YARN_VERSION: '1.13.0'
         BUNDLER_VERSION: '1.17.3'
-        NBCONVERTVENV: '/app/nbconvertvenv'
         USER: 'markus'
     image: markus:1.0.0
     tmpfs:
@@ -53,7 +52,6 @@ services:
       - PGHOST=postgres
       - PGPASSWORD=docker # change this to something secure and/or use a secret to set this
       - TZ=America/Toronto
-      - NBCONVERT=/app/nbconvertvenv/bin/jupyter-nbconvert
     ports:
       - '3000:3000'
     volumes:
@@ -89,7 +87,6 @@ services:
       - PGHOST=postgres
       - PGPASSWORD=docker # change this to something secure and/or use a secret to set this
       - TZ=America/Toronto
-      - NBCONVERT=/app/nbconvertvenv/bin/jupyter-nbconvert
     ports:
       - '3001:3000'
     volumes:
