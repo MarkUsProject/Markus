@@ -228,7 +228,7 @@ class GradeEntryFormsController < ApplicationController
     new_labels = ['0 - 5']
 
     (1..19).each do |i|
-      grade_range = (i * 5 + 1).to_s + " - " + (i * 5 + 5).to_s
+      grade_range = (i * 5 + 1).to_s + ' - ' + (i * 5 + 5).to_s
       new_labels.push(grade_range)
     end
 
