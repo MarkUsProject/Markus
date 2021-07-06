@@ -56,7 +56,7 @@ class GradeEntryFormsController < ApplicationController
     axis_labels = (0..100).step(5).to_a
     dict_data = []
     grade_entry_items.each do |item|
-      dict_data << {label: item.name, dataset: item.grade_distribution_array(20), backgroundColor: ''}
+      dict_data << {label: item.name, data: item.grade_distribution_array(20), backgroundColor: ''}
     end
     return_data[:labels], return_data[:datasets] = axis_labels, dict_data
     respond_to do |format|

@@ -88,7 +88,6 @@ class Dashboard extends React.Component {
     } else if (this.state.assessment_type === 'Assignment') {
       return <Bar data={this.state.data} />;
     } else if (this.state.assessment_type === 'GradeEntryForm') {
-      console.log(this.state.data)
       return (
         <div>
           <Bar data={this.state.data} />;
