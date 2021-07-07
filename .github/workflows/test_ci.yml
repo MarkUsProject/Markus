@@ -36,7 +36,6 @@ jobs:
       RAILS_ENV: test
       NODE_ENV: test
       RSPEC_RENDER_VIEWS: true
-      MARKUS__REDIS__URL: redis://redis:6379/
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
@@ -68,7 +67,9 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pip-
       - name: Install python packages
-        run: pip install nbconvert==6.1.0 # install rest of requirements if needed for tests later
+        run: |
+          python3.9 -m venv venv
+          ./venv/bin/pip install nbconvert==6.1.0 # install rest of requirements if needed for tests later
       - name: Configure server
         run: |
           sudo rm -f /etc/localtime
