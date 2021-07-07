@@ -90,10 +90,15 @@ describe AutomatedTestsController do
       end
       context 'files data' do
         it 'should include assignment files' do
+          current_time = Time.new(2021)
           allow_any_instance_of(Assignment).to receive(:autotest_files).and_return ['file.txt']
+          allow_any_instance_of(Pathname).to receive(:exist?).and_return true
+          allow(File).to receive(:mtime).and_return current_time
+          user.update(time_zone: 'UTC')
           subject
           url = download_file_assignment_automated_tests_url(assignment_id: assignment.id, file_name: 'file.txt')
-          data = [{ key: 'file.txt', submitted_date: '', size: 1, url: url }.transform_keys(&:to_s)]
+          data = [{ key: 'file.txt', submitted_date: I18n.l(current_time.in_time_zone('UTC')),
+                    size: 1, url: url }.transform_keys(&:to_s)]
           expect(JSON.parse(response.body)['files']).to eq(data)
         end
         it 'should include directories' do
@@ -104,14 +109,20 @@ describe AutomatedTestsController do
           expect(JSON.parse(response.body)['files']).to eq(data)
         end
         it 'should include nested files' do
+          current_time = Time.new(2021)
+          allow(File).to receive(:mtime).and_return current_time
           allow_any_instance_of(Assignment).to receive(:autotest_files).and_return %w[some_dir some_dir/file.txt]
+          allow_any_instance_of(Pathname).to receive(:exist?).and_return true
           allow_any_instance_of(Pathname).to receive(:directory?).and_wrap_original do |m, *_args|
             m.receiver.basename.to_s == 'some_dir'
           end
+          user.update(time_zone: 'UTC')
           subject
           url = download_file_assignment_automated_tests_url(assignment_id: assignment.id,
                                                              file_name: 'some_dir/file.txt')
-          data = [{ key: 'some_dir/' }, { key: 'some_dir/file.txt', submitted_date: '', size: 1, url: url }]
+          data = [{ key: 'some_dir/' }, { key: 'some_dir/file.txt',
+                                          submitted_date: I18n.l(current_time.in_time_zone('UTC')),
+                                          size: 1, url: url }]
           expect(JSON.parse(response.body)['files']).to eq(data.map { |h| h.transform_keys(&:to_s) })
         end
       end
