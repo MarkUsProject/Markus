@@ -32,10 +32,11 @@ jobs:
           --health-retries 5
           --entrypoint redis-server
     env:
-      BUNDLE_WITHOUT: development:production:console
+      BUNDLE_WITHOUT: development:production:console:mysql:sqlite:unicorn
       RAILS_ENV: test
       NODE_ENV: test
       RSPEC_RENDER_VIEWS: true
+      MARKUS__REDIS__URL: redis://redis:6379/
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
