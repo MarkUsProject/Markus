@@ -12,7 +12,7 @@
 #  adapter: postgresql
 #  encoding: unicode
 #  database: markus_development
-#  username: vagrant 
+#  username: vagrant
 #  password: markus
 
 # Connect on a TCP socket. Omitted by default since the client uses a
@@ -37,7 +37,8 @@ test:
   adapter: postgresql
   encoding: unicode
   database: markus_test
-  username: postgres 
+  username: postgres
+  password: postgres
 #
 # Production database settings. Make sure the database name is unique for
 # each MarkUs instance.

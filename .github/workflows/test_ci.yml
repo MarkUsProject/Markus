@@ -1,0 +1,85 @@
+name: MarkUs Tests
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+  push:
+jobs:
+  test:
+    if: github.event.pull_request.draft == false
+    runs-on: ubuntu-18.04
+    services:
+      postgres:
+        image: postgres:10
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: markus_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      redis:
+        image: redis
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+          --entrypoint redis-server
+    env:
+      BUNDLE_WITHOUT: development:production:console
+      RAILS_ENV: test
+      NODE_ENV: test
+      RSPEC_RENDER_VIEWS: true
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+      - name: Install system dependencies
+        run: |
+          apt-get update
+          apt-get -yqq install libpq-dev cmake ghostscript pandoc imagemagick libmagickwand-dev git
+      - name: Set up ruby and cache gems
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ruby-2.5.3
+          bundler-cache: true
+      - name: Set up node/yarn and cache packages
+        uses: actions/setup-node@v2
+        with:
+          node-version: 12
+          cache: yarn
+      - name: Install yarn packages
+        run: yarn install
+      - name: Install python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+      - name: Cache pip
+        uses: actions/cache@v2
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+      - name: Install python packages
+        run: pip install nbconvert==6.1.0 # install rest of requirements if needed for tests later
+      - name: Configure server
+        run: |
+          sudo rm -f /etc/localtime
+          sudo ln -s /usr/share/zoneinfo/US/Eastern /etc/localtime
+          sudo sed -ri 's/(rights=")none("\s+pattern="PDF")/\1read\2/' /etc/ImageMagick-6/policy.xml
+          cp config/database.yml.ci config/database.yml
+      - name: Build assets
+        run: |
+          bundle exec rake i18n:js:export &&
+          chmod u+x bin/webpack &&
+          bundle exec rake webpacker:compile
+      - name: Set up database
+        run: bundle exec rails db:migrate
+      - name: Run rspec tests
+        run: bundle exec rspec
