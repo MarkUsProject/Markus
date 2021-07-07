@@ -30,8 +30,53 @@ class Dashboard extends React.Component {
             backgroundColor: 'rgb(75, 192, 192)',
           },
         ],
-      }
+      },
+      options: {},
     };
+  }
+
+  getGradeEntryFormColumnBreakdown = () => {
+    // Helper function to make the AJAX request, then use its response to set the chart state
+    $.ajax({
+      url: Routes.column_breakdown_grade_entry_form_path(
+        this.state.assessment_id
+      ),
+      method: 'GET',
+      success: (data) => {
+        // Load in background colours
+        for(let j = 0; j < data["datasets"].length; j++){
+          data["datasets"][j]["backgroundColor"] = colours[j]
+        }
+        this.setState({
+          data: data,
+          options: {
+            scales: {
+              xAxes: {
+                ticks: {
+                  color: 'rgb(182, 0, 255)'
+                }
+              }
+            }
+          },
+          // options: {
+          //   plugins: {
+          //     tooltip: {
+          //       callbacks: {
+          //         title: function (tooltipItems) {
+          //           let baseNum = parseInt(tooltipItems[0].label);
+          //           if (baseNum === 0) {
+          //             return '0-5';
+          //           } else {
+          //             return (baseNum + 1) + '-' + (baseNum + 5);
+          //           }
+          //         }
+          //       }
+          //     },
+          //   }
+          // },
+        })
+      },
+    })
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -39,7 +84,7 @@ class Dashboard extends React.Component {
       if (this.state.display_course_summary) {
         // TODO
       } else if (this.state.assessment_type === 'GradeEntryForm') {
-        // TODO
+        this.getGradeEntryFormColumnBreakdown()
       } else if (this.state.assessment_type === 'Assignment') {
         // TODO
       }
@@ -55,7 +100,9 @@ class Dashboard extends React.Component {
       return (
         <div>
           <Bar data={this.state.data} />;
-          <Bar data={this.state.data} />;
+          <Bar data={this.state.data}
+               options={this.state.options}/>;
+
         </div>
       );
     } else {

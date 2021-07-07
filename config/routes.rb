@@ -322,6 +322,7 @@ Rails.application.routes.draw do
       get 'populate_grades_table'
       get 'get_mark_columns'
       get 'view_summary'
+      get 'column_breakdown'
       get 'grades'
       get 'download'
       post 'upload'
