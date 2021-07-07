@@ -2,7 +2,6 @@ name: MarkUs Tests
 on:
   pull_request:
     types: [opened, synchronize, reopened, ready_for_review]
-  push:
 jobs:
   test:
     if: github.event.pull_request.draft == false
