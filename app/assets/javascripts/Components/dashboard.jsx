@@ -50,30 +50,21 @@ class Dashboard extends React.Component {
         this.setState({
           data: data,
           options: {
-            scales: {
-              xAxes: {
-                ticks: {
-                  color: 'rgb(182, 0, 255)'
+            plugins: {
+              tooltip: {
+                callbacks: {
+                  title: function (tooltipItems) {
+                    let baseNum = parseInt(tooltipItems[0].label);
+                    if (baseNum === 0) {
+                      return '0-5';
+                    } else {
+                      return (baseNum + 1) + '-' + (baseNum + 5);
+                    }
+                  }
                 }
-              }
+              },
             }
           },
-          // options: {
-          //   plugins: {
-          //     tooltip: {
-          //       callbacks: {
-          //         title: function (tooltipItems) {
-          //           let baseNum = parseInt(tooltipItems[0].label);
-          //           if (baseNum === 0) {
-          //             return '0-5';
-          //           } else {
-          //             return (baseNum + 1) + '-' + (baseNum + 5);
-          //           }
-          //         }
-          //       }
-          //     },
-          //   }
-          // },
         })
       },
     })
