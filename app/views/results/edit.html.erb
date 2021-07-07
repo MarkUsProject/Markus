@@ -95,19 +95,20 @@
 <% if @current_user.admin? %>
   <aside class='dialog no-display' id='create_new_tag'>
     <h1><%= t('helpers.submit.create', model: Tag.model_name.human) %></h1>
-    <p><%= Tag.human_attribute_name(:name) %></p>
     <%= form_for :tag,
                  url: assignment_tags_path(@assignment),
                  html: { multipart: true } do |f| %>
         <div>
+          <p><%= f.label :name, Tag.human_attribute_name(:name) %></p>
           <p><%= f.text_field :name,
+                              id: 'tag_name',
                               placeholder: Tag.human_attribute_name(:name) %></p>
         </div>
         <div>
-          <p class='alignleft'><%= Tag.human_attribute_name(:description) %></p>
+          <p class='alignleft'><%= f.label :description, Tag.human_attribute_name(:description) %></p>
           <p id='descript_amount' class='alignright'>0/120</p>
           <p class="clear-alignment"><%= f.text_area :description,
-                                                  id: 'description',
+                                                  id: 'tag_description',
                                                   cols: 30,
                                                   rows: 3,
                                                   maxlength: 120,

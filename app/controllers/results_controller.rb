@@ -222,7 +222,7 @@ class ResultsController < ApplicationController
         data[:old_total] = old_marks.values.sum
 
         # Tags
-        all_tags = Tag.pluck_to_hash(:id, :name)
+        all_tags = assignment.tags.pluck_to_hash(:id, :name)
         data[:current_tags] = submission.grouping.tags.pluck_to_hash(:id, :name)
         data[:available_tags] = all_tags - data[:current_tags]
 
