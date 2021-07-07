@@ -316,7 +316,6 @@ class AssignmentsController < ApplicationController
     (0..19).each { |i| labels.push((5 * i).to_s + '-' + (5 * i + 5).to_s) }
     datasets = [
       {
-        label: '2',
         data: assignment.grade_distribution_array,
         backgroundColor: [
           'rgba(36, 81, 133, 1)'
