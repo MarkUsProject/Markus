@@ -449,10 +449,10 @@ describe GradeEntryFormsController do
         response_data = JSON.parse(response.body)
         expect(response_data['labels']).to eq (0..100).step(5).to_a
         expect(response_data['datasets'].size).to eq 2
-        data1, data2 = Array.new(20) { |z| 0.0 }, Array.new(20) { |z| 0.0 }
+        data1, data2 = Array.new(20) { 0.0 }, Array.new(20) { 0.0 }
         data1[19], data2[1] = 1.0, 1.0
         expected_dataset = [{ 'label' => 'Q1', 'data' => data1, 'backgroundColor' => '' },
-                            { 'label'=>'Q2', 'data' => data2, 'backgroundColor' => '' }]
+                            { 'label' => 'Q2', 'data' => data2, 'backgroundColor' => '' }]
         expect(response_data['datasets']).to eq expected_dataset
       end
     end
