@@ -101,12 +101,12 @@ group :development do
 end
 
 group :test do
-  gem 'coveralls', '~>0.8.23',  require: false
   gem 'factory_bot_rails'
   gem 'fuubar'
   gem 'machinist', '< 3'
   gem 'shoulda'
   gem 'simplecov', require: false
+  gem 'simplecov-lcov', require: false
   gem 'time-warp'
   gem 'shoulda-callback-matchers', '~> 1.1.1'
   gem 'rails-controller-testing'
