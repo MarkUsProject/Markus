@@ -30,8 +30,7 @@ class Dashboard extends React.Component {
             backgroundColor: 'rgb(75, 192, 192)',
           },
         ],
-      },
-      options: {}
+      }
     };
   }
 
@@ -46,7 +45,7 @@ class Dashboard extends React.Component {
         $.ajax({
           url: Routes.grade_distribution_graph_data_assignment_path(this.state.assessment_id),
           dataType: 'json',
-        }).then(res => this.setState({data: res.data, options: res.options}))
+        }).then(res => this.setState({data: res}))
       }
     }
   }
