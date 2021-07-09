@@ -51,12 +51,10 @@ class GradeEntryFormsController < ApplicationController
   #   (see the second chart in the summary of a marks spreadsheet, accessed from the dashboard)
   def column_breakdown
     grade_entry_form = GradeEntryForm.find(params[:id])
-    grade_entry_items = grade_entry_form.grade_entry_items
     return_data = { labels: [], datasets: [] }
     axis_labels = (0..100).step(5).to_a
-    dict_data = []
-    grade_entry_items.each do |item|
-      dict_data << { label: item.name, data: item.grade_distribution_array(20), backgroundColor: '' }
+    dict_data = grade_entry_form.grade_entry_items.map do |item|
+      { label: item.name, data: item.grade_distribution_array(20), backgroundColor: '' }
     end
     return_data[:labels], return_data[:datasets] = axis_labels, dict_data
     respond_to do |format|

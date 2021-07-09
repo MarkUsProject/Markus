@@ -44,8 +44,8 @@ class Dashboard extends React.Component {
       method: 'GET',
       success: (data) => {
         // Load in background colours
-        for(let j = 0; j < data["datasets"].length; j++){
-          data["datasets"][j]["backgroundColor"] = colours[j]
+        for (const [index, element] of data["datasets"].entries()){
+          element["backgroundColor"] = colours[index]
         }
         this.setState({
           data: data,
@@ -75,7 +75,7 @@ class Dashboard extends React.Component {
       if (this.state.display_course_summary) {
         // TODO
       } else if (this.state.assessment_type === 'GradeEntryForm') {
-        this.getGradeEntryFormColumnBreakdown()
+        this.getGradeEntryFormColumnBreakdown();
       } else if (this.state.assessment_type === 'Assignment') {
         // TODO
       }
@@ -90,9 +90,9 @@ class Dashboard extends React.Component {
     } else if (this.state.assessment_type === 'GradeEntryForm') {
       return (
         <div>
-          <Bar data={this.state.data} />;
+          <Bar data={this.state.data} />
           <Bar data={this.state.data}
-               options={this.state.options}/>;
+               options={this.state.options}/>
 
         </div>
       );
