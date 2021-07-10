@@ -78,6 +78,10 @@ class Dashboard extends React.Component {
         this.getGradeEntryFormColumnBreakdown();
       } else if (this.state.assessment_type === 'Assignment') {
         // TODO
+        $.ajax({
+          url: Routes.grade_distribution_graph_data_assignment_path(this.state.assessment_id),
+          dataType: 'json',
+        }).then(res => this.setState({data: res}))
       }
     }
   }
