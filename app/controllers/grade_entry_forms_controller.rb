@@ -238,4 +238,11 @@ class GradeEntryFormsController < ApplicationController
     end
     redirect_to action: 'grades', id: @grade_entry_form.id
   end
+
+  def grade_distribution_data
+    new_labels = ['0 - 5']
+    new_labels += ((1..19).map { |i| (i * 5 + 1).to_s + ' - ' + (i * 5 + 5).to_s })
+    grade_entry_form = GradeEntryForm.find(params[:id])
+    render json: { grade_distribution: grade_entry_form.grade_distribution_array, labels: new_labels }
+  end
 end
