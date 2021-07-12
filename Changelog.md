@@ -1,5 +1,8 @@
 # Changelog
 
+## [v1.12.5]
+- Fix bugs in grading view when switching between submissions (#5400)
+
 ## [v1.12.4]
 - Symlink git repo hooks (#5283)
 

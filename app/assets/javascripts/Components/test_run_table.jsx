@@ -19,6 +19,14 @@ export class TestRunTable extends React.Component {
     this.fetchData();
   }
 
+  componentDidUpdate(prevProps) {
+    if (prevProps.result_id !== this.props.result_id ||
+        prevProps.instructor_run !== this.props.instructor_run ||
+        prevProps.instructor_view !== this.props.instructor_view) {
+      this.fetchData();
+    }
+  }
+
   fetchData = () => {
     let ajaxDetails = {};
     if (this.props.instructor_run) {
