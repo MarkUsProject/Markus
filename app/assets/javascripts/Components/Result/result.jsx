@@ -587,7 +587,7 @@ class Result extends React.Component {
   updateOverallComment = (value, remark) => {
     return $.post({
       url: Routes.update_overall_comment_assignment_submission_result_path(
-        this.props.assignment_id, this.props.submission_id, this.props.result_id,
+        this.state.assignment_id, this.state.submission_id, this.state.result_id,
       ),
       data: {result: {overall_comment: value}},
     }).then((result) => {
