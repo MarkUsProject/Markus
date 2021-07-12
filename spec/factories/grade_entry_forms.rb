@@ -36,4 +36,24 @@ FactoryBot.define do
       create(:grade_entry_item, grade_entry_form: grade_entry_form_with_data)
     end
   end
+
+  factory :grade_entry_form_with_lots_of_data, class: GradeEntryForm do
+    sequence(:short_identifier) { |i| "Spreadsheet_#{i}_with_lots_of_data" }
+    description { Faker::Lorem.sentence }
+    message { Faker::Lorem.sentence }
+    due_date { Time.current }
+    is_hidden { false }
+    show_total { false }
+    after(:create) do |grade_entry_form_with_lots_of_data|
+      grades = [97.8, 9.13]
+      (1..2).each do |ind|
+        item = create(:grade_entry_item, name: 'Q' + ind.to_s, grade_entry_form: grade_entry_form_with_lots_of_data)
+        Student.find_each do |student|
+          ges = grade_entry_form_with_lots_of_data.grade_entry_students.find_or_create_by(user: student)
+          ges.grades.create(grade: grades[ind - 1], grade_entry_item: item)
+          ges.save
+        end
+      end
+    end
+  end
 end
