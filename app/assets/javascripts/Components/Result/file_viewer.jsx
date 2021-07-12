@@ -80,8 +80,8 @@ export class FileViewer extends React.Component {
    * Update the contents being displayed with the given submission file id.
    */
   set_submission_file = (submission_file_id, force_text) => {
-    if (!this.props.result_id && this.props.selectedFile === null) {
-      this.setState({loading: false, type: null});
+    if ((!this.props.result_id && this.props.selectedFile === null) || submission_file_id === null) {
+      this.setState({loading: false, type: ''});
       return;
     }
     force_text = !!force_text;
