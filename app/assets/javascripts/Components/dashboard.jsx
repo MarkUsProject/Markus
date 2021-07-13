@@ -29,7 +29,8 @@ class Dashboard extends React.Component {
             backgroundColor: 'rgb(75, 192, 192)',
           },
         ],
-      }
+      },
+      options: {}
     };
   }
 
@@ -41,7 +42,21 @@ class Dashboard extends React.Component {
           type: 'GET',
           dataType: 'json'
         }).then(res => {
-          this.setState({data: res})
+          this.setState({
+            data: res,
+            options: {
+              plugins: {
+                tooltip: {
+                  callbacks: {
+                    title: function (tooltipItems) {
+                      baseNum = tooltipItems[0].dataIndex;
+                      return (baseNum) + '-' + ((baseNum + 1));
+                    }
+                  }
+                },
+              }
+            },
+          })
         })
       } else if (this.state.assessment_type === 'GradeEntryForm') {
         // TODO
