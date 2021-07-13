@@ -48,8 +48,8 @@ class CourseSummariesController < ApplicationController
 
   def grade_distribution
     marking_schemes = current_user.student? ? MarkingScheme.none : MarkingScheme
-    table_data = marking_schemes.order(id: :asc).map{ |m| m.students_weighted_grade_distribution_array(current_user)}
-    marking_schemes_id = marking_schemes.order(id: :asc).map{ |m| m.id}
+    table_data = marking_schemes.order(id: :asc).map { |m| m.students_weighted_grade_distribution_array(current_user) }
+    marking_schemes_id = marking_schemes.order(id: :asc).map { |m| m.id }
     labels = (0..20).to_a
     table_data[0][:backgroundColor] = 'rgb(231, 163, 183)'
     table_data[0][:label] = "Weighted Total Grades #{marking_schemes_id[0]}"
