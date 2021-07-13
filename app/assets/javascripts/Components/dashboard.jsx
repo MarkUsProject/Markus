@@ -3,8 +3,6 @@ import { render } from 'react-dom';
 
 import { Bar } from 'react-chartjs-2';
 
-import {grade_distribution_course_summaries_path} from "../../../javascript/routes";
-
 class Dashboard extends React.Component {
   constructor(props) {
     super(props);
@@ -37,14 +35,13 @@ class Dashboard extends React.Component {
 
   componentDidUpdate(prevProps, prevState) {
     if (prevState.assessment_id !== this.state.assessment_id) {
-      if (this.state.display_course_summary) {
+      if (this.state.display_course_summary === true) {
         $.ajax({
-          url: grade_distribution_course_summaries_path(),
+          url: Routes.grade_distribution_course_summaries_path(),
           type: 'GET',
-          dataType: 'json',
+          dataType: 'json'
         }).then(res => {
-          let data = {labels: res['labels'], datasets: res['grade distribution']}
-          this.setState({data: data})
+          this.setState({data: res})
         })
       } else if (this.state.assessment_type === 'GradeEntryForm') {
         // TODO
@@ -55,7 +52,8 @@ class Dashboard extends React.Component {
   }
 
   render() {
-    if (this.state.display_course_summary) {
+    if (this.state.display_course_summary === true) {
+      console.log(this.state)
       return <Bar data={this.state.data} />;
     } else if (this.state.assessment_type === 'Assignment') {
       return <Bar data={this.state.data} />;
