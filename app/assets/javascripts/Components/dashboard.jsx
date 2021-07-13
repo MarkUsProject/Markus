@@ -3,6 +3,7 @@ import { render } from 'react-dom';
 
 import { Bar } from 'react-chartjs-2';
 
+
 class Dashboard extends React.Component {
   constructor(props) {
     super(props);
