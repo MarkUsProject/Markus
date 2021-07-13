@@ -59,8 +59,6 @@ export class TagsPanel extends React.Component {
             {I18n.t('activerecord.models.note.other')} ({this.props.notes_count})
           </a>
         </p>
-        <h4>{I18n.t('other_info')}</h4>
-        <a href={Routes.repo_browser_assignment_submission_path(this.props.assignment_id, this.props.grouping_id)}> {I18n.t('results.view_group_repo')}</a>
       </div>
     );
   }
