@@ -53,7 +53,6 @@ class Dashboard extends React.Component {
 
   render() {
     if (this.state.display_course_summary) {
-      console.log(this.state)
       return <Bar data={this.state.data} />;
     } else if (this.state.assessment_type === 'Assignment') {
       return <Bar data={this.state.data} />;
