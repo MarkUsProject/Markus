@@ -35,7 +35,7 @@ class Dashboard extends React.Component {
 
   componentDidUpdate(prevProps, prevState) {
     if (prevState.assessment_id !== this.state.assessment_id) {
-      if (this.state.display_course_summary === true) {
+      if (this.state.display_course_summary) {
         $.ajax({
           url: Routes.grade_distribution_course_summaries_path(),
           type: 'GET',
@@ -52,7 +52,7 @@ class Dashboard extends React.Component {
   }
 
   render() {
-    if (this.state.display_course_summary === true) {
+    if (this.state.display_course_summary) {
       console.log(this.state)
       return <Bar data={this.state.data} />;
     } else if (this.state.assessment_type === 'Assignment') {
