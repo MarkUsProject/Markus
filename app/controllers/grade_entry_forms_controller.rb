@@ -226,10 +226,10 @@ class GradeEntryFormsController < ApplicationController
 
   def chart_data
     grade_entry_form = GradeEntryForm.find(params[:id])
-    column_breakdown_data = {labels: [], datasets: [] }
+    column_breakdown_data = { labels: [], datasets: [] }
     axis_labels = (0..100).step(5).to_a
     dict_data = grade_entry_form.grade_entry_items.map do |item|
-      { label: item.name, data: item.grade_distribution_array(20), backgroundColor: ''}
+      { label: item.name, data: item.grade_distribution_array(20), backgroundColor: '' }
     end
     column_breakdown_data[:labels], column_breakdown_data[:datasets] = axis_labels, dict_data
 
@@ -238,19 +238,22 @@ class GradeEntryFormsController < ApplicationController
     grade_dist_data = { labels: new_labels, datasets: [{ data: grade_entry_form.grade_distribution_array }] }
 
     num_entries = grade_entry_form.count_non_nil.to_s +
-      "/" + grade_entry_form.grade_entry_students.joins(:user).where('users.hidden': false).count.to_s
+      '/' + grade_entry_form.grade_entry_students.joins(:user).where('users.hidden': false).count.to_s
 
     name = grade_entry_form.short_identifier + ': ' + grade_entry_form.description
     info_summary = { name: name,
-                     average: ActiveSupport::NumberHelper.number_to_percentage(grade_entry_form.results_average || 0, precision: 1),
+                     average: ActiveSupport::NumberHelper.number_to_percentage(
+                       grade_entry_form.results_average || 0, precision: 1),
                      # median: (grade_entry_form.results_median),
-                     median: ActiveSupport::NumberHelper.number_to_percentage(grade_entry_form.results_median || 0, precision: 1),
+                     median: ActiveSupport::NumberHelper.number_to_percentage(
+                       grade_entry_form.results_median || 0, precision: 1),
                      num_entries: num_entries,
                      num_fails: grade_entry_form.results_fails, num_zeros: grade_entry_form.results_zeros }
 
     respond_to do |format|
-      format.json { render json: { grade_dist_data: grade_dist_data, column_breakdown_data: column_breakdown_data, info_summary: info_summary } }
+      format.json { render json: { grade_dist_data: grade_dist_data,
+                                   column_breakdown_data: column_breakdown_data,
+                                   info_summary: info_summary } }
     end
-
   end
 end
