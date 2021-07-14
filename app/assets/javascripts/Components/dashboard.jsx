@@ -2,7 +2,7 @@ import React from 'react';
 import { render } from 'react-dom';
 
 import { Bar } from 'react-chartjs-2';
-
+import { GradeEntryCharts } from './grade_entry_form_chart'
 
 class Dashboard extends React.Component {
   constructor(props) {
@@ -119,12 +119,7 @@ class Dashboard extends React.Component {
       return <Bar data={this.state.data} />;
     } else if (this.state.assessment_type === 'GradeEntryForm') {
       return (
-        <div>
-          <Bar data={this.state.data} />
-          <Bar data={this.state.data}
-               options={this.state.options}/>
-
-        </div>
+        <GradeEntryCharts assessment_id={this.state.assessment_id} />
       );
     } else {
       return '';

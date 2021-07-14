@@ -443,10 +443,10 @@ describe GradeEntryFormsController do
     end
     context 'GET column_breakdown' do
       let(:user) { create(:admin) }
-      before { get_as user, :column_breakdown, params: { id: grade_entry_form_with_lots_of_data.id } }
+      before { get_as user, :chart_data, params: { id: grade_entry_form_with_lots_of_data.id } }
       it('should respond with 200 (ok)') { expect(response.status).to eq 200 }
       it 'should retrieve the correct data' do
-        response_data = JSON.parse(response.body)
+        response_data = JSON.parse(response.body)['column_breakdown_data']
         expect(response_data['labels']).to eq (0..100).step(5).to_a
         expect(response_data['datasets'].size).to eq 2
         data1, data2 = Array.new(20) { 0.0 }, Array.new(20) { 0.0 }
@@ -458,22 +458,20 @@ describe GradeEntryFormsController do
     end
   end
 
-  describe 'GET grade_distribution_data' do
+  describe 'GET chart_data' do
     let(:user) { create(:admin) }
-    before { get_as user, :grade_distribution_data, params: { id: grade_entry_form_with_data.id } }
+    before { get_as user, :chart_data, params: { id: grade_entry_form_with_data.id } }
     it('should respond with 200') { expect(response.status).to eq 200 }
 
     it('should return grade distribution data') {
       expected_items = grade_entry_form_with_data.grade_distribution_array
-      expect(JSON.parse(response.body)['grade_distribution']).to eq(expected_items)
+      expect(JSON.parse(response.body)['grade_dist_data']['datasets'][0]['data']).to eq(expected_items)
     }
 
     it('should return expected labels') {
       new_labels = ['0 - 5']
-      (1..19).each do |i|
-        new_labels.push((i * 5 + 1).to_s + ' - ' + (i * 5 + 5).to_s)
-      end
-      expect(JSON.parse(response.body)['labels']).to eq(new_labels)
+      new_labels += ((1..19).map { |i| (i * 5 + 1).to_s + ' - ' + (i * 5 + 5).to_s })
+      expect(JSON.parse(response.body)['grade_dist_data']['labels']).to eq(new_labels)
     }
   end
 end
