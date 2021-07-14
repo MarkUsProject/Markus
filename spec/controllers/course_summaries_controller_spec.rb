@@ -279,5 +279,28 @@ describe CourseSummariesController do
         end
       end
     end
+
+    describe 'GET grade distribution' do
+      let(:user) { create(:admin) }
+      it('should respond with 200 (ok)') do
+        create :marking_scheme, assessments: Assessment.all
+        get_as user, :grade_distribution, format: :json
+        expect(response.status).to eq 200
+      end
+      it 'returns correct labels' do
+        create :marking_scheme, assessments: Assessment.all
+        expected = (0..20).to_a
+        get_as user, :grade_distribution, format: :json
+        expect(response.parsed_body['labels']).to eq expected
+      end
+      it 'returns correct grade distribution' do
+        marking_scheme = create :marking_scheme, assessments: Assessment.all
+        expected = marking_scheme.students_weighted_grade_distribution_array(user)
+        expected['label'] = "Weighted Total Grades #{marking_scheme.id}"
+        expected['backgroundColor'] = 'rgb(231, 163, 183)'
+        get_as user, :grade_distribution, format: :json
+        expect(response.parsed_body['datasets']).to eq [expected.as_json]
+      end
+    end
   end
 end
