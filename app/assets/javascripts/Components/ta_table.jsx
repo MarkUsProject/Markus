@@ -57,11 +57,6 @@ class TATable extends React.Component {
                 <a href={Routes.edit_ta_path(data.value)}>
                   {I18n.t('edit')}
                 </a>&nbsp;
-                <a href={Routes.ta_path(data.value)}
-                   data-method='delete'
-                   rel='nofollow'>
-                  {I18n.t('delete')}
-                </a>
               </span>
             ),
             filterable: false,

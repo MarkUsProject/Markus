@@ -11,6 +11,7 @@
 
 ## [v1.12.5]
 - Fix bugs in grading view when switching between submissions (#5400)
+- Remove delete link from TA table (#5407)
 
 ## [v1.12.4]
 - Symlink git repo hooks (#5283)
