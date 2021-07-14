@@ -1082,6 +1082,9 @@ describe AssignmentsController do
         expected = assignment_with_results.grade_distribution_array
         expect(data).to contain_exactly(*expected)
       end
+      it 'boob' do
+        byebug
+      end
     end
   end
 end
