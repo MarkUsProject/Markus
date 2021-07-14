@@ -331,6 +331,7 @@ Rails.application.routes.draw do
       post 'update_grade_entry_students'
       get 'student_interface'
       get 'grade_distribution_data'
+      get 'chart_data'
     end
 
     resources :marks_graders, only: [:index] do
