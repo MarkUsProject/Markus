@@ -47,6 +47,21 @@ class GradeEntryFormsController < ApplicationController
     @date = params[:date]
   end
 
+  # returns the column distribution/breakdown for each grade_entry_item in a grade_entry_form
+  #   (see the second chart in the summary of a marks spreadsheet, accessed from the dashboard)
+  def column_breakdown
+    grade_entry_form = GradeEntryForm.find(params[:id])
+    return_data = { labels: [], datasets: [] }
+    axis_labels = (0..100).step(5).to_a
+    dict_data = grade_entry_form.grade_entry_items.map do |item|
+      { label: item.name, data: item.grade_distribution_array(20), backgroundColor: '' }
+    end
+    return_data[:labels], return_data[:datasets] = axis_labels, dict_data
+    respond_to do |format|
+      format.json { render json: return_data }
+    end
+  end
+
   # Update a grade in the table
   def update_grade
     grade_entry_form = GradeEntryForm.find(params[:id])
@@ -222,5 +237,12 @@ class GradeEntryFormsController < ApplicationController
       end
     end
     redirect_to action: 'grades', id: @grade_entry_form.id
+  end
+
+  def grade_distribution_data
+    new_labels = ['0 - 5']
+    new_labels += ((1..19).map { |i| (i * 5 + 1).to_s + ' - ' + (i * 5 + 5).to_s })
+    grade_entry_form = GradeEntryForm.find(params[:id])
+    render json: { grade_distribution: grade_entry_form.grade_distribution_array, labels: new_labels }
   end
 end

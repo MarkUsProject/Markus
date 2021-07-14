@@ -126,6 +126,13 @@ describe 'An Assignment' do
                      action: 'start_timed_assignment',
                      id: assignment.id.to_s)
     end
+
+    it 'routes GET grade_distribution_graph_data properly' do
+      expect(get: path + '/' + assignment.id.to_s + '/grade_distribution_graph_data')
+        .to route_to(controller: ctrl,
+                     action: 'grade_distribution_graph_data',
+                     id: assignment.id.to_s)
+    end
   end
   # end Assignment member route tests
 
@@ -985,6 +992,14 @@ context 'grade_entry_forms' do
   # end grade_entry_forms collection route tests
 
   context 'member' do
+    it 'routes GET column_breakdown properly' do
+      expect(get: path + '/' + grade_entry_form.id.to_s + '/column_breakdown').to route_to(
+        controller: ctrl,
+        action: 'column_breakdown',
+        id: grade_entry_form.id.to_s
+      )
+    end
+
     it 'routes GET grades properly' do
       expect(get: path + '/' + grade_entry_form.id.to_s + '/grades')
         .to route_to(

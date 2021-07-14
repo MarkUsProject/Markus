@@ -309,6 +309,26 @@ class AssignmentsController < ApplicationController
     end
   end
 
+  # Return the chart data of assignment grade distributions
+  def grade_distribution_graph_data
+    assignment = Assignment.find(params[:id])
+    labels = (0..19).map { |i| (5 * i).to_s + '-' + (5 * i + 5).to_s }
+    datasets = [
+      {
+        data: assignment.grade_distribution_array,
+        backgroundColor: [
+          'rgba(36, 81, 133, 1)'
+        ],
+        borderColor: [
+          'rgba(36, 81, 133, 1)'
+        ],
+        borderWidth: 1
+      }
+    ]
+    data = { labels: labels, datasets: datasets }
+    render json: data
+  end
+
   # Refreshes the grade distribution graph
   def refresh_graph
     @assignment = Assignment.find(params[:id])

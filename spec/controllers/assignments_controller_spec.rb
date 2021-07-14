@@ -1056,4 +1056,32 @@ describe AssignmentsController do
       end
     end
   end
+  describe '#grade_distribution_graph_data' do
+    before { get_as user, :grade_distribution_graph_data, params: params }
+    let(:assignment) { create :assignment }
+    let(:params) { { id: assignment.id } }
+    let(:user) { create :admin }
+    let(:assignment_with_results) { create :assignment_with_criteria_and_results, assignment: assignment }
+    let(:params) { { id: assignment_with_results.id } }
+    context 'data' do
+      it 'should contain the right keys' do
+        data = JSON.parse(response.body).keys
+        expect(data).to contain_exactly('labels', 'datasets')
+      end
+    end
+    context 'labels' do
+      it 'should contain the right values' do
+        labels = JSON.parse(response.body)['labels']
+        expected = (0..19).map { |i| (5 * i).to_s + '-' + (5 * i + 5).to_s }
+        expect(labels).to eq(expected)
+      end
+    end
+    context 'datasets' do
+      it 'should contain the right data' do
+        data = JSON.parse(response.body)['datasets'].first['data']
+        expected = assignment_with_results.grade_distribution_array
+        expect(data).to contain_exactly(*expected)
+      end
+    end
+  end
 end

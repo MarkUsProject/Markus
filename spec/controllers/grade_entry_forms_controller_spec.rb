@@ -7,6 +7,7 @@ describe GradeEntryFormsController do
   let(:grade_entry_form) { create(:grade_entry_form) }
   let(:grade_entry_form_with_data) { create(:grade_entry_form_with_data) }
   let(:grade_entry_form_with_data_and_total) { create(:grade_entry_form_with_data_and_total) }
+  let(:grade_entry_form_with_lots_of_data) { create(:grade_entry_form_with_lots_of_data) }
 
   describe '#upload' do
     before :each do
@@ -440,5 +441,39 @@ describe GradeEntryFormsController do
       before { get_as user, :student_interface, params: { id: grade_entry_form.id } }
       it('should respond with 403') { expect(response.status).to eq 403 }
     end
+    context 'GET column_breakdown' do
+      let(:user) { create(:admin) }
+      before { get_as user, :column_breakdown, params: { id: grade_entry_form_with_lots_of_data.id } }
+      it('should respond with 200 (ok)') { expect(response.status).to eq 200 }
+      it 'should retrieve the correct data' do
+        response_data = JSON.parse(response.body)
+        expect(response_data['labels']).to eq (0..100).step(5).to_a
+        expect(response_data['datasets'].size).to eq 2
+        data1, data2 = Array.new(20) { 0.0 }, Array.new(20) { 0.0 }
+        data1[19], data2[1] = 1.0, 1.0
+        expected_dataset = [{ 'label' => 'Q1', 'data' => data1, 'backgroundColor' => '' },
+                            { 'label' => 'Q2', 'data' => data2, 'backgroundColor' => '' }]
+        expect(response_data['datasets']).to eq expected_dataset
+      end
+    end
+  end
+
+  describe 'GET grade_distribution_data' do
+    let(:user) { create(:admin) }
+    before { get_as user, :grade_distribution_data, params: { id: grade_entry_form_with_data.id } }
+    it('should respond with 200') { expect(response.status).to eq 200 }
+
+    it('should return grade distribution data') {
+      expected_items = grade_entry_form_with_data.grade_distribution_array
+      expect(JSON.parse(response.body)['grade_distribution']).to eq(expected_items)
+    }
+
+    it('should return expected labels') {
+      new_labels = ['0 - 5']
+      (1..19).each do |i|
+        new_labels.push((i * 5 + 1).to_s + ' - ' + (i * 5 + 5).to_s)
+      end
+      expect(JSON.parse(response.body)['labels']).to eq(new_labels)
+    }
   end
 end
