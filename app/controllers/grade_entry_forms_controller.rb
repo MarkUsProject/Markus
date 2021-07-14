@@ -243,17 +243,20 @@ class GradeEntryFormsController < ApplicationController
     name = grade_entry_form.short_identifier + ': ' + grade_entry_form.description
     info_summary = { name: name,
                      average: ActiveSupport::NumberHelper.number_to_percentage(
-                       grade_entry_form.results_average || 0, precision: 1),
-                     # median: (grade_entry_form.results_median),
+                       grade_entry_form.results_average || 0, precision: 1
+                     ),
                      median: ActiveSupport::NumberHelper.number_to_percentage(
-                       grade_entry_form.results_median || 0, precision: 1),
+                       grade_entry_form.results_median || 0, precision: 1
+                     ),
                      num_entries: num_entries,
                      num_fails: grade_entry_form.results_fails, num_zeros: grade_entry_form.results_zeros }
 
     respond_to do |format|
-      format.json { render json: { grade_dist_data: grade_dist_data,
-                                   column_breakdown_data: column_breakdown_data,
-                                   info_summary: info_summary } }
+      format.json do
+        render json: { grade_dist_data: grade_dist_data,
+                       column_breakdown_data: column_breakdown_data,
+                       info_summary: info_summary }
+      end
     end
   end
 end
