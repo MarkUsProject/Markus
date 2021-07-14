@@ -117,12 +117,12 @@ RUN mkdir -p /bundle /app /app/public && chown -R $USER /bundle /app
 
 USER $USER
 
-# install python packages
-RUN python${PYTHON_VERSION} -m venv /app/venv && \
-    /app/venv/bin/pip install -r /app/requirements.txt
-
 COPY --chown=${USER}:${USER} . /app
 COPY --chown=${USER}:${USER} .dockerfiles/database.yml.postgresql /app/config/database.yml
+
+# install python packages
+RUN python${PYTHON_VERSION} -m venv /app/venv && \
+    /app/venv/bin/pip install nbconvert==6.1.0
 
 ENV RAILS_ENV=production
 ENV NODE_ENV=production
@@ -130,6 +130,7 @@ ENV NODE_ENV=production
 # install bundler
 RUN gem$RUBY_VERSION install bundler -v $BUNDLER_VERSION
 
-RUN SECRET_KEY_BASE=1 bundle install --deployment --path $GEM_HOME --without development test offline mysql sqlite && \
-    SECRET_KEY_BASE=1 PGDATABASE=dummy bundle exec rails i18n:js:export && \
-    SECRET_KEY_BASE=1 PGDATABASE=dummy bundle exec rails assets:precompile
+RUN SECRET_KEY_BASE=1 bundle install --deployment --path $GEM_HOME --without development test offline mysql sqlite
+
+RUN SECRET_KEY_BASE=1 NO_SCHEMA_VALIDATE=true PGDATABASE=dummy bundle exec rails i18n:js:export && \
+    SECRET_KEY_BASE=1 NO_SCHEMA_VALIDATE=true PGDATABASE=dummy bundle exec rails assets:precompile
