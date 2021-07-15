@@ -1062,6 +1062,7 @@ describe AssignmentsController do
     let(:params) { { id: assignment.id } }
     let(:user) { create :admin }
     let(:assignment_with_results) { create :assignment_with_criteria_and_results, assignment: assignment }
+    let(:assignment_with_tas) { create :assignment_wit_criteria_and_results_and_tas, assignment: assignment}
     let(:params) { { id: assignment_with_results.id } }
     context 'data' do
       it 'should contain the right keys' do
@@ -1082,7 +1083,7 @@ describe AssignmentsController do
         expected = assignment_with_results.grade_distribution_array
         expect(data).to contain_exactly(*expected)
       end
-      it 'boob' do
+      it 'filler' do
         byebug
       end
     end
