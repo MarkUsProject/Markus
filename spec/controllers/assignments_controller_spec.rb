@@ -1066,8 +1066,8 @@ describe AssignmentsController do
     context 'response' do
       it 'should respond with 200' do expect(response.status).to eq(200) end
       it 'should contain the right data' do
-        JSON.parse(response.body)["datasets"].each_with_index do |data_response, index|
-          data = data_response["data"]
+        JSON.parse(response.body)['datasets'].each_with_index do |data_response, index|
+          data = data_response['data']
           ta  = assignment_with_tas.tas[index]
           expect(ta.grade_distribution_array(assignment_with_tas, 20)).to eq(data)
         end

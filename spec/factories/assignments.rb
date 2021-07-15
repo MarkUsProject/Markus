@@ -45,9 +45,9 @@ FactoryBot.define do
   factory :assignment_with_criteria_and_results_and_tas, parent: :assignment_with_criteria_and_results do
     after(:create) do |a|
       a.groupings.each do |grouping|
-        new_ta = Ta.create(id: 110382 + grouping.id, user_name: 'ta' + grouping.id.to_s,
+        newTa = Ta.create(id: 110382 + grouping.id, user_name: 'ta' + grouping.id.to_s,
                            last_name: 'smith' + grouping.id.to_s, first_name: 'bob' + grouping.id.to_s)
-        new_ta_mem = TaMembership.create(id: new_ta.id + 102111, user_id: new_ta.id, grouping_id: grouping.id)
+        TaMembership.create(id: newTa.id + 102111, user_id: newTa.id, grouping_id: grouping.id)
       end
     end
   end
