@@ -1056,13 +1056,30 @@ describe AssignmentsController do
       end
     end
   end
+  describe '#ta_grader_breakdown' do
+    before { get_as user, :ta_grader_breakdown, params: params }
+    let(:assignment) { create :assignment }
+    let(:params) { { id: assignment.id } }
+    let(:user) { create :admin }
+    let(:assignment_with_tas) { create :assignment_with_criteria_and_results_and_tas, assignment: assignment }
+    let(:params) { { id: assignment_with_tas.id } }
+    context 'response' do
+      it 'should respond with 200' do expect(response.status).to eq(200) end
+      it 'should contain the right data' do
+        JSON.parse(response.body)["datasets"].each_with_index do |data_response, index|
+          data = data_response["data"]
+          ta  = assignment_with_tas.tas[index]
+          expect(ta.grade_distribution_array(assignment_with_tas, 20)).to eq(data)
+        end
+      end
+    end
+  end
   describe '#grade_distribution_graph_data' do
     before { get_as user, :grade_distribution_graph_data, params: params }
     let(:assignment) { create :assignment }
     let(:params) { { id: assignment.id } }
     let(:user) { create :admin }
     let(:assignment_with_results) { create :assignment_with_criteria_and_results, assignment: assignment }
-    let(:assignment_with_tas) { create :assignment_wit_criteria_and_results_and_tas, assignment: assignment}
     let(:params) { { id: assignment_with_results.id } }
     context 'data' do
       it 'should contain the right keys' do
@@ -1082,9 +1099,6 @@ describe AssignmentsController do
         data = JSON.parse(response.body)['datasets'].first['data']
         expected = assignment_with_results.grade_distribution_array
         expect(data).to contain_exactly(*expected)
-      end
-      it 'filler' do
-        byebug
       end
     end
   end
