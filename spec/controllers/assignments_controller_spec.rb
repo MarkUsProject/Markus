@@ -1068,7 +1068,7 @@ describe AssignmentsController do
       it 'should contain the right data' do
         JSON.parse(response.body)['datasets'].each_with_index do |data_response, index|
           data = data_response['data']
-          ta  = assignment_with_tas.tas[index]
+          ta = assignment_with_tas.tas[index]
           expect(ta.grade_distribution_array(assignment_with_tas, 20)).to eq(data)
         end
       end
