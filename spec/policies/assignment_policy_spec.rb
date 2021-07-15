@@ -8,7 +8,7 @@ describe AssignmentPolicy do
     succeed
   end
 
-  describe_rule :switch_assignment? do
+  describe_rule :switch? do
     succeed
   end
 

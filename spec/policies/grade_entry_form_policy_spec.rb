@@ -38,4 +38,7 @@ describe GradeEntryFormPolicy do
       let(:user) { create(:student) }
     end
   end
+  describe_rule :switch? do
+    succeed
+  end
 end

@@ -83,7 +83,7 @@ Rails.application.routes.draw do
       post 'set_boolean_graders_options'
       get 'stop_test'
       get 'stop_batch_tests'
-      get 'switch_assignment'
+      get 'switch'
       put 'start_timed_assignment'
       get 'starter_file'
       put 'update_starter_file'
@@ -329,6 +329,7 @@ Rails.application.routes.draw do
       post 'update_grade'
       post 'update_grade_entry_students'
       get 'student_interface'
+      get 'switch'
     end
 
     resources :marks_graders, only: [:index] do
