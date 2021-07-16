@@ -310,7 +310,7 @@ class AssignmentsController < ApplicationController
   end
 
   # Return the chart data of assignment grade distributions
-  def grade_distribution_graph_data
+  def chart_data
     assignment = Assignment.find(params[:id])
     labels = (0..19).map { |i| (5 * i).to_s + '-' + (5 * i + 5).to_s }
     datasets = [
@@ -326,7 +326,16 @@ class AssignmentsController < ApplicationController
       }
     ]
     data = { labels: labels, datasets: datasets }
-    render json: data
+    summary = {
+      average: ActiveSupport::NumberHelper.number_to_percentage(assignment.results_average || 0, precision: 1),
+      median: ActiveSupport::NumberHelper.number_to_percentage(assignment.results_median || 0, precision: 1),
+      num_submissions_collected: assignment.current_submissions_used.size,
+      num_submissions_graded: assignment.current_submissions_used.size - assignment.ungraded_submission_results.size,
+      num_fails: assignment.results_fails,
+      num_zeros: assignment.results_zeros,
+      groupings_size: assignment.groupings.size
+    }
+    render json: {data: data, summary: summary}
   end
 
   # Refreshes the grade distribution graph
