@@ -8,8 +8,11 @@
 - Remove activerecord-import dependency (#5248)
 - Combine all python dependencies (#5358)
 - Rename "Tags/Notes" tab on grading page to "Submission Info", and move membership information to the tab (#5380)
-- Fix bugs in grading view when switching between submissions (#5400)
 - Respect referrer url when navigating between assignments (#5409)
+
+## [v1.12.5]
+- Fix bugs in grading view when switching between submissions (#5400)
+- Remove delete link from TA table (#5407)
 
 ## [v1.12.4]
 - Symlink git repo hooks (#5283)
