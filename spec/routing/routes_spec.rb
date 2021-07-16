@@ -127,10 +127,10 @@ describe 'An Assignment' do
                      id: assignment.id.to_s)
     end
 
-    it 'routes GET grade_distribution_graph_data properly' do
-      expect(get: path + '/' + assignment.id.to_s + '/grade_distribution_graph_data')
+    it 'routes GET chart_data properly' do
+      expect(get: path + '/' + assignment.id.to_s + '/chart_data')
         .to route_to(controller: ctrl,
-                     action: 'grade_distribution_graph_data',
+                     action: 'chart_data',
                      id: assignment.id.to_s)
     end
   end

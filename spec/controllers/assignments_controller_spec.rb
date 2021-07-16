@@ -1056,8 +1056,8 @@ describe AssignmentsController do
       end
     end
   end
-  describe '#grade_distribution_graph_data' do
-    before { get_as user, :grade_distribution_graph_data, params: params }
+  describe '#chart_data' do
+    before { get_as user, :chart_data, params: params }
     let(:assignment) { create :assignment }
     let(:params) { { id: assignment.id } }
     let(:user) { create :admin }
@@ -1065,22 +1065,40 @@ describe AssignmentsController do
     let(:params) { { id: assignment_with_results.id } }
     context 'data' do
       it 'should contain the right keys' do
-        data = JSON.parse(response.body).keys
-        expect(data).to contain_exactly('labels', 'datasets')
+        data = JSON.parse(response.body)['data']
+        expect(data.keys).to contain_exactly('labels', 'datasets')
       end
     end
-    context 'labels' do
+      context 'labels' do
+        it 'should contain the right values' do
+          labels = JSON.parse(response.body)['data']['labels']
+          expected = (0..19).map { |i| (5 * i).to_s + '-' + (5 * i + 5).to_s }
+          expect(labels).to eq(expected)
+        end
+      end
+      context 'datasets' do
+        it 'should contain the right data' do
+          data = JSON.parse(response.body)['data']['datasets'].first['data']
+          expected = assignment_with_results.grade_distribution_array
+          expect(data).to contain_exactly(*expected)
+        end
+      end
+    context 'summary' do
+      it 'should contain the right keys' do
+        keys = JSON.parse(response.body)['summary'].keys
+        expect(keys).to contain_exactly('average', 'median', 'num_submissions_collected',
+                                             'num_submissions_graded', 'num_fails', 'num_zeros', 'groupings_size')
+      end
       it 'should contain the right values' do
-        labels = JSON.parse(response.body)['labels']
-        expected = (0..19).map { |i| (5 * i).to_s + '-' + (5 * i + 5).to_s }
-        expect(labels).to eq(expected)
-      end
-    end
-    context 'datasets' do
-      it 'should contain the right data' do
-        data = JSON.parse(response.body)['datasets'].first['data']
-        expected = assignment_with_results.grade_distribution_array
-        expect(data).to contain_exactly(*expected)
+        summary = JSON.parse(response.body)['summary']
+        expected = { average: ActiveSupport::NumberHelper.number_to_percentage(assignment_with_results.results_average || 0, precision: 1),
+                     median: ActiveSupport::NumberHelper.number_to_percentage(assignment_with_results.results_median || 0, precision: 1),
+                     num_submissions_collected: assignment_with_results.current_submissions_used.size,
+                     num_submissions_graded: assignment_with_results.current_submissions_used.size - assignment_with_results.ungraded_submission_results.size,
+                     num_fails: assignment_with_results.results_fails,
+                     num_zeros: assignment_with_results.results_zeros,
+                     groupings_size: assignment_with_results.groupings.size }
+        expect(summary).to eq(expected.transform_keys(&:to_s))
       end
     end
   end
