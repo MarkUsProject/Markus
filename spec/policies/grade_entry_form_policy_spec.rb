@@ -39,6 +39,14 @@ describe GradeEntryFormPolicy do
     end
   end
   describe_rule :switch? do
-    succeed
+    succeed 'user is an admin' do
+      let(:user) { create(:admin) }
+    end
+    succeed 'that can manage assessments' do
+      let(:user) { create :ta }
+    end
+    succeed 'user is a student' do
+      let(:user) { create(:student) }
+    end
   end
 end
