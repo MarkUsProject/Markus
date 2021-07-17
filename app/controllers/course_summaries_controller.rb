@@ -50,10 +50,16 @@ class CourseSummariesController < ApplicationController
     marking_schemes = current_user.student? ? MarkingScheme.none : MarkingScheme
     table_data = marking_schemes.order(id: :asc).map { |m| m.students_weighted_grade_distribution_array(current_user) }
     marking_schemes_id = marking_schemes.order(id: :asc).map { |m| m.id }
-    labels = (0..20).to_a
-    table_data[0][:backgroundColor] = 'rgb(231, 163, 183)'
-    table_data[0][:label] = "Weighted Total Grades #{marking_schemes_id[0]}"
-    render json: { datasets: table_data, labels: labels }
+    if table_data.length != 0
+      table_data.each_with_index do |data, index|
+        data[:label] = "Weighted Total Grades #{marking_schemes_id[index]}"
+      end
+      labels = (0..20).to_a
+    else
+      table_data = []
+      labels = []
+    end
+    render json: { datasets: table_data, labels: labels, marking_schemes_id: marking_schemes_id }
   end
 
   def view_summary

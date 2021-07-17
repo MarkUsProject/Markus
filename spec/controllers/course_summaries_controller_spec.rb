@@ -297,9 +297,22 @@ describe CourseSummariesController do
         marking_scheme = create :marking_scheme, assessments: Assessment.all
         expected = marking_scheme.students_weighted_grade_distribution_array(user)
         expected['label'] = "Weighted Total Grades #{marking_scheme.id}"
-        expected['backgroundColor'] = 'rgb(231, 163, 183)'
         get_as user, :grade_distribution, format: :json
         expect(response.parsed_body['datasets']).to eq [expected.as_json]
+      end
+      it 'returns correct marking scheme ids' do
+        marking_scheme = create :marking_scheme, assessments: Assessment.all
+        expected = [marking_scheme.id]
+        get_as user, :grade_distribution, format: :json
+        expect(response.parsed_body['marking_schemes_id']).to eq expected.as_json
+      end
+      it 'still works with no marking schemes' do
+        get_as user, :grade_distribution, format: :json
+        expected = {}
+        expected[:datasets] = []
+        expected[:labels] = []
+        expected['marking_schemes_id'] = []
+        expect(response.parsed_body).to eq expected.as_json
       end
     end
   end

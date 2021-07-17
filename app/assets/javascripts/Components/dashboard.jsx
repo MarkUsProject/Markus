@@ -78,21 +78,13 @@ class Dashboard extends React.Component {
           type: 'GET',
           dataType: 'json'
         }).then(res => {
-          this.setState({
-            data: res,
-            options: {
-              plugins: {
-                tooltip: {
-                  callbacks: {
-                    title: function (tooltipItems) {
-                      baseNum = tooltipItems[0].dataIndex;
-                      return (baseNum) + '-' + ((baseNum + 1));
-                    }
-                  }
-                },
-              }
-            },
-          })
+          for (const [index, element] of res["datasets"].entries()){
+           /* MISSING TRANSLATION ERROR, TEMPORARILY BEING SET IN course_summaries_controller.rb
+           element["labels"] = I18n.t("Weighted Total Grades ") + res["marking_schemes_id"][index]
+           */
+            element["backgroundColor"] = colours[index]
+          }
+          this.setState({data: res})
         })
       } else if (this.state.assessment_type === 'GradeEntryForm') {
         // Note: these are two separate AJAX requests. Need to merge when you create the new component.
@@ -114,7 +106,17 @@ class Dashboard extends React.Component {
 
   render() {
     if (this.state.display_course_summary) {
-      return <Bar data={this.state.data} />;
+      if (this.state.data.datasets === []) {
+        return (
+          <div>
+            {/*DOESN'T SHOW UP*/}
+            <p>{I18n.t('Create a Marking Scheme to display course summary graph.')}</p>
+          </div>
+        );
+      }
+      else {
+        return <Bar data={this.state.data} />;
+      }
     } else if (this.state.assessment_type === 'Assignment') {
       return <Bar data={this.state.data} />;
     } else if (this.state.assessment_type === 'GradeEntryForm') {
