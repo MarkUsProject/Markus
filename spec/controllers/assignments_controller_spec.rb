@@ -1086,21 +1086,22 @@ describe AssignmentsController do
     context 'summary' do
       it 'should contain the right keys' do
         keys = JSON.parse(response.body)['summary'].keys
-        expect(keys).to contain_exactly(
-                          'average',
-                          'median',
-                          'num_submissions_collected',
-                          'num_submissions_graded',
-                          'num_fails',
-                          'num_zeros',
-                          'groupings_size')
+        expect(keys).to contain_exactly('average',
+                                        'median',
+                                        'num_submissions_collected',
+                                        'num_submissions_graded',
+                                        'num_fails',
+                                        'num_zeros',
+                                        'groupings_size')
       end
       it 'should contain the right values' do
         summary = JSON.parse(response.body)['summary']
         expected = { average: ActiveSupport::NumberHelper.number_to_percentage(
-          assignment_with_results.results_average || 0, precision: 1),
+          assignment_with_results.results_average || 0, precision: 1
+        ),
                      median: ActiveSupport::NumberHelper.number_to_percentage(
-                       assignment_with_results.results_median || 0, precision: 1),
+                       assignment_with_results.results_median || 0, precision: 1
+                     ),
                      num_submissions_collected: assignment_with_results.current_submissions_used.size,
                      num_submissions_graded: assignment_with_results.current_submissions_used.size -
                        assignment_with_results.ungraded_submission_results.size,
