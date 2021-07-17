@@ -106,11 +106,10 @@ class Dashboard extends React.Component {
 
   render() {
     if (this.state.display_course_summary) {
-      if (this.state.data.datasets === []) {
+      if (this.state.data.datasets.length === 0) {
         return (
           <div>
-            {/*DOESN'T SHOW UP*/}
-            <p>{I18n.t('Create a Marking Scheme to display course summary graph.')}</p>
+            <h1>{I18n.t('Create a Marking Scheme to display course summary graph.')}</h1>
           </div>
         );
       }
