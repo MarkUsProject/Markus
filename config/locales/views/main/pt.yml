@@ -2,6 +2,7 @@
 pt:
   main:
     account_disabled: Essa conta foi desativada.
+    create_marking_scheme: UPDATE ME
     external_authentication_not_supported: Autenticação externa não é suportada pela sua plataforma!
     log_in: Conectar
     log_out: Sair
@@ -20,3 +21,4 @@ pt:
     timeout_imminent: A sessão está prestes a expirar.
     username_and_password_not_blank: Seu nome e senha não podem ser vazios.
     username_not_blank: Seu nome de usuário não pode ser vazio.
+    weighted_total_grades: UPDATE ME

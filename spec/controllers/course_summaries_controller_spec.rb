@@ -296,7 +296,6 @@ describe CourseSummariesController do
       it 'returns correct grade distribution' do
         marking_scheme = create :marking_scheme, assessments: Assessment.all
         expected = marking_scheme.students_weighted_grade_distribution_array(user)
-        expected['label'] = "Weighted Total Grades #{marking_scheme.id}"
         get_as user, :grade_distribution, format: :json
         expect(response.parsed_body['datasets']).to eq [expected.as_json]
       end

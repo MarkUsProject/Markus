@@ -124,9 +124,7 @@ class Dashboard extends React.Component {
           dataType: 'json'
         }).then(res => {
           for (const [index, element] of res["datasets"].entries()){
-           /* MISSING TRANSLATION ERROR, TEMPORARILY BEING SET IN course_summaries_controller.rb
-           element["labels"] = I18n.t("Weighted Total Grades ") + res["marking_schemes_id"][index]
-           */
+            element["label"] = I18n.t("main.weighted_total_grades") + " " + res["marking_schemes_id"][index]
             element["backgroundColor"] = colours[index]
           }
           this.setState({data: res})
@@ -154,7 +152,7 @@ class Dashboard extends React.Component {
       if (this.state.data.datasets.length === 0) {
         return (
           <div>
-            <h1>{I18n.t('create_marking_scheme')}</h1>
+            <h1>{I18n.t('main.create_marking_scheme')}</h1>
           </div>
         );
       }

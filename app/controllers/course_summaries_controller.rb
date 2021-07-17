@@ -50,10 +50,7 @@ class CourseSummariesController < ApplicationController
     marking_schemes = current_user.student? ? MarkingScheme.none : MarkingScheme
     table_data = marking_schemes.order(id: :asc).map { |m| m.students_weighted_grade_distribution_array(current_user) }
     marking_schemes_id = marking_schemes.order(id: :asc).map { |m| m.id }
-    if table_data.length != 0
-      table_data.each_with_index do |data, index|
-        data[:label] = "Weighted Total Grades #{marking_schemes_id[index]}"
-      end
+    if !table_data.empty?
       labels = (0..20).to_a
     else
       table_data = []
