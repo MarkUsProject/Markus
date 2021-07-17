@@ -330,12 +330,13 @@ class AssignmentsController < ApplicationController
       average: ActiveSupport::NumberHelper.number_to_percentage(assignment.results_average || 0, precision: 1),
       median: ActiveSupport::NumberHelper.number_to_percentage(assignment.results_median || 0, precision: 1),
       num_submissions_collected: assignment.current_submissions_used.size,
-      num_submissions_graded: assignment.current_submissions_used.size - assignment.ungraded_submission_results.size,
+      num_submissions_graded: assignment.current_submissions_used.size -
+        assignment.ungraded_submission_results.size,
       num_fails: assignment.results_fails,
       num_zeros: assignment.results_zeros,
       groupings_size: assignment.groupings.size
     }
-    render json: {data: data, summary: summary}
+    render json: { data: data, summary: summary }
   end
 
   # Refreshes the grade distribution graph
