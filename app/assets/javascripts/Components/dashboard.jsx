@@ -115,7 +115,8 @@ class Dashboard extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (prevState.assessment_id !== this.state.assessment_id) {
+    if (prevState.assessment_id !== this.state.assessment_id ||
+        prevState.display_course_summary !== this.state.display_course_summary) {
       if (this.state.display_course_summary) {
         $.ajax({
           url: Routes.grade_distribution_course_summaries_path(),
