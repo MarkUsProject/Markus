@@ -343,6 +343,19 @@ class AssignmentsController < ApplicationController
     @tas = @assignment.tas unless @assignment.nil?
   end
 
+  def ta_grader_breakdown
+    assignment = Assignment.find(params[:id])
+    tas = assignment.tas
+    axis_labels = (0..100).step(5).to_a
+    dict_data = tas.map do |ta|
+      { label: ta.first_name + ' ' + ta.last_name + ' ' + t('submissions.how_many_marked',
+                                                            num_marked: assignment.get_num_marked(ta.id),
+                                                            num_assigned: assignment.get_num_assigned(ta.id)),
+        data: ta.grade_distribution_array(assignment, 20), backgroundColor: '' }
+    end
+    render json: { labels: axis_labels, datasets: dict_data }
+  end
+
   def download
     format = params[:format]
     case format
