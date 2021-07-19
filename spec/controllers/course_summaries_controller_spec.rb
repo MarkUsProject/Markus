@@ -311,7 +311,15 @@ describe CourseSummariesController do
         expected[:datasets] = []
         expected[:labels] = []
         expected['marking_schemes_id'] = []
+        expected['average'] = []
         expect(response.parsed_body).to eq expected.as_json
+      end
+      it 'returns correct average' do
+        marking_scheme = create :marking_scheme, assessments: Assessment.all
+        data = marking_scheme.students_weighted_grade_distribution_array(user)
+        average = ActiveSupport::NumberHelper.number_to_percentage(DescriptiveStatistics.mean(data[:data]))
+        get_as user, :grade_distribution, format: :json
+        expect(response.parsed_body['average']).to eq [average.as_json]
       end
     end
   end

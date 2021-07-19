@@ -56,7 +56,11 @@ class CourseSummariesController < ApplicationController
       table_data = []
       labels = []
     end
-    render json: { datasets: table_data, labels: labels, marking_schemes_id: marking_schemes_id }
+    average = []
+    table_data.each do |data|
+      average << ActiveSupport::NumberHelper.number_to_percentage(DescriptiveStatistics.mean(data[:data]) || 0, precision: 1)
+    end
+    render json: { datasets: table_data, labels: labels, marking_schemes_id: marking_schemes_id, average: average}
   end
 
   def view_summary
