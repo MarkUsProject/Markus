@@ -42,7 +42,7 @@ export class FileViewer extends React.Component {
 
   componentDidUpdate(prevProps) {
     if (!this.props.result_id && prevProps.selectedFile !== this.props.selectedFile) {
-      this.set_submission_file(null);
+      this.set_submission_file('');
     }
   }
 
