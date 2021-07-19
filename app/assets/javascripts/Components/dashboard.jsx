@@ -3,6 +3,7 @@ import { render } from 'react-dom';
 
 import { Bar } from 'react-chartjs-2';
 import {ta_grader_breakdown_assignment_path} from "../../../javascript/routes";
+import { CourseSummaryChart} from "./course_summary_chart";
 
 
 class Dashboard extends React.Component {
@@ -149,16 +150,19 @@ class Dashboard extends React.Component {
 
   render() {
     if (this.state.display_course_summary) {
-      if (this.state.data.datasets.length === 0) {
-        return (
-          <div>
-            <h1>{I18n.t('main.create_marking_scheme')}</h1>
-          </div>
-        );
-      }
-      else {
-        return <Bar data={this.state.data} />;
-      }
+      // if (this.state.data.datasets.length === 0) {
+      //   return (
+      //     <div>
+      //       <h1>{I18n.t('main.create_marking_scheme')}</h1>
+      //     </div>
+      //   );
+      // }
+      // else {
+      //   return <Bar data={this.state.data} />;
+      // }
+      return (
+        <CourseSummaryChart />
+      )
     } else if (this.state.assessment_type === 'Assignment') {
       return (
         <div>
