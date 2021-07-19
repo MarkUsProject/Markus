@@ -1056,6 +1056,24 @@ describe AssignmentsController do
       end
     end
   end
+  describe '#ta_grader_breakdown' do
+    before { get_as user, :ta_grader_breakdown, params: params }
+    let(:assignment) { create :assignment }
+    let(:params) { { id: assignment.id } }
+    let(:user) { create :admin }
+    let(:assignment_with_tas) { create :assignment_with_criteria_and_results_and_tas, assignment: assignment }
+    let(:params) { { id: assignment_with_tas.id } }
+    context 'response' do
+      it 'should respond with 200' do expect(response.status).to eq(200) end
+      it 'should contain the right data' do
+        JSON.parse(response.body)['datasets'].each_with_index do |data_response, index|
+          data = data_response['data']
+          ta = assignment_with_tas.tas[index]
+          expect(ta.grade_distribution_array(assignment_with_tas, 20)).to eq(data)
+        end
+      end
+    end
+  end
   describe '#chart_data' do
     before { get_as user, :chart_data, params: params }
     let(:assignment) { create :assignment }

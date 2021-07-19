@@ -17,9 +17,19 @@ class AssignmentChart extends React.Component {
         num_zeros: null,
         groupings_size: null
       },
-      data: { // Fake data, from react-chartjs-2/example/src/charts/GroupedBar.js
-        labels: [],
-        datasets: [],
+      assignment_chart_data: {
+        data: {
+          labels: [],
+          datasets: []
+        },
+        options: {}
+      },
+      ta_chart_data: {
+        data: {
+          labels: [],
+          datasets: []
+        },
+        options: {}
       }
     }
   }
@@ -29,7 +39,8 @@ class AssignmentChart extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (prevProps.assessment_id !== this.props.assessment_id) {
+    if (prevProps.assessment_id !== this.props.assessment_id ||
+      prevState.display_course_summary !== this.state.display_course_summary) {
       this.fetchData();
     }
   }
@@ -38,7 +49,41 @@ class AssignmentChart extends React.Component {
     $.ajax({
       url: Routes.chart_data_assignment_path(this.props.assessment_id),
       dataType: 'json',
-    }).then(res => this.setState({data: res.data, summary: res.summary}))
+    }).then(res => this.setState({summary: res.summary, assignment_chart_data: { data: res.data, options: {} }}))
+    $.ajax({
+      url: Routes.ta_grader_breakdown_assignment_path(this.props.assessment_id),
+      method: 'GET',
+      success: (data) => {
+        // Load in background colours
+        for (const [index, element] of data["datasets"].entries()){
+          element["backgroundColor"] = colours[index]
+        }
+        this.setState({
+          ta_chart_data: {
+            data: data,
+            options: {
+              plugins: {
+                tooltip: {
+                  callbacks: {
+                    title: function (tooltipItems) {
+                      let baseNum = parseInt(tooltipItems[0].label);
+                      if (baseNum === 0) {
+                        return '0-5';
+                      } else {
+                        return (baseNum + 1) + '-' + (baseNum + 5);
+                      }
+                    }
+                  }
+                },
+                legend: {
+                  display: true
+                }
+              }
+            },
+          }
+        })
+      },
+    })
   };
 
   render() {
@@ -46,7 +91,7 @@ class AssignmentChart extends React.Component {
       <div>
         <div className='flex-row'>
           <div id='assignment_<%= assignment.id %>_graph'>
-            <Bar data={this.state.data} />
+            <Bar data={this.state.assignment_chart_data.data} />
           </div>
           <div className='flex-row-expand'>
             <div className="grid-2-col">
@@ -70,6 +115,9 @@ class AssignmentChart extends React.Component {
             </div>
           </div>
         </div>
+
+        <Bar data={this.state.ta_chart_data.data} options={this.state.ta_chart_data.options} />
+
       </div>
     );
   }
@@ -186,9 +234,7 @@ class Dashboard extends React.Component {
       return (
         <div>
           <Bar data={this.state.data} />
-          <Bar data={this.state.data}
-               options={this.state.options}/>
-
+          <Bar data={this.state.data} options={this.state.options}/>
         </div>
       );
     } else {

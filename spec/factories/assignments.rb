@@ -42,6 +42,16 @@ FactoryBot.define do
     end
   end
 
+  factory :assignment_with_criteria_and_results_and_tas, parent: :assignment_with_criteria_and_results do
+    after(:create) do |a|
+      a.groupings.each do |grouping|
+        new_ta = Ta.create(id: 110_382 + grouping.id, user_name: 'ta' + grouping.id.to_s,
+                           last_name: 'smith' + grouping.id.to_s, first_name: 'bob' + grouping.id.to_s)
+        TaMembership.create(id: new_ta.id + 102_111, user_id: new_ta.id, grouping_id: grouping.id)
+      end
+    end
+  end
+
   factory :assignment_with_criteria_and_results_with_remark, parent: :assignment do
     after(:create) do |a|
       3.times { create(:flexible_criterion, assignment: a) }
