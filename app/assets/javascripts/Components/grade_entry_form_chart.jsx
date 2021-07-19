@@ -8,7 +8,6 @@ export class GradeEntryCharts extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      assessment_id: props.assessment_id,
       distribution_data: {},
       column_data: {},
       info_data: {},
@@ -21,7 +20,7 @@ export class GradeEntryCharts extends React.Component {
   }
 
   fetchData = () => {
-    $.get({url: Routes.chart_data_grade_entry_form_path(this.state.assessment_id)}).then(res => {
+    $.get({url: Routes.chart_data_grade_entry_form_path(this.props.assessment_id)}).then(res => {
 
       for (const [index, element] of res["column_breakdown_data"]["datasets"].entries()){
         element["backgroundColor"] = colours[index]
@@ -31,17 +30,30 @@ export class GradeEntryCharts extends React.Component {
     });
   };
 
+  componentDidUpdate(prevProps, prevState) {
+    if (prevProps.assessment_id !== this.props.assessment_id) {
+      this.fetchData();
+    }
+  }
+
+
+
   render() {
     return (
 
       <div>
-        <h2> <a href={Routes.edit_grade_entry_form_path(this.state.assessment_id)}>{this.state.info_data['name']} </a>  </h2>
+        <h2> <a href={Routes.edit_grade_entry_form_path(this.props.assessment_id)}>{this.state.info_data['name']} </a>  </h2>
 
         <div className='flex-row'>
           <Bar data={this.state.distribution_data}/>
 
           <div className='flex-row-expand'>
+            <p>
+              {this.state.info_data['date'] && (this.state.info_data['date_name'] + ' : ' + this.state.info_data['date'])}
+            </p>
+
             <div className="grid-2-col">
+
               <span> {I18n.t('average')} </span>
               <span> {this.state.info_data['average']} </span>
 
@@ -64,8 +76,6 @@ export class GradeEntryCharts extends React.Component {
         <h3> {I18n.t('grade_entry_forms.grade_entry_item_distribution')} </h3>
         <Bar data={this.state.column_data}/>
       </div>
-
-
     );
   }
 }

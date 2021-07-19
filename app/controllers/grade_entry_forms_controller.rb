@@ -242,6 +242,8 @@ class GradeEntryFormsController < ApplicationController
 
     name = grade_entry_form.short_identifier + ': ' + grade_entry_form.description
     info_summary = { name: name,
+                     date_name: GradeEntryForm.human_attribute_name(:date),
+                     date: I18n.l(grade_entry_form.due_date),
                      average: ActiveSupport::NumberHelper.number_to_percentage(
                        grade_entry_form.results_average || 0, precision: 1
                      ),
@@ -249,7 +251,8 @@ class GradeEntryFormsController < ApplicationController
                        grade_entry_form.results_median || 0, precision: 1
                      ),
                      num_entries: num_entries,
-                     num_fails: grade_entry_form.results_fails, num_zeros: grade_entry_form.results_zeros }
+                     num_fails: grade_entry_form.results_fails,
+                     num_zeros: grade_entry_form.results_zeros }
 
     respond_to do |format|
       format.json do
