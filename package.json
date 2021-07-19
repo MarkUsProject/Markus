@@ -1,7 +1,7 @@
 {
   "dependencies": {
     "@babel/core": "^7.14.6",
-    "@babel/preset-react": "^7.13.13",
+    "@babel/preset-react": "^7.14.5",
     "@rails/ujs": "^6.1.4",
     "@rails/webpacker": "5.4",
     "@rjsf/core": "^2.5.1",
