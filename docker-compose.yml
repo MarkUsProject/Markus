@@ -39,6 +39,7 @@ services:
       args:
         UBUNTU_VERSION: bionic
         SSH_USER: git
+    image: markus-ssh:1.0.0
     volumes:
       - log:/home/git/log
       - repos:/home/git/csc108
