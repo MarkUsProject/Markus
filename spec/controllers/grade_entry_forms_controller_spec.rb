@@ -459,12 +459,11 @@ describe GradeEntryFormsController do
       expect(JSON.parse(response.body)['grade_dist_data']['labels']).to eq(new_labels)
     }
 
-    it 'should retrieve the correct data' do
+    it 'should retrieve the correct column data' do
       response_data = JSON.parse(response.body)['column_breakdown_data']
-      expect(response_data['labels']).to eq (0..100).step(5).to_a
+      expect(response_data['labels']).to eq(0..100).step(5).to_a
       expect(response_data['datasets'].size).to eq 1
       expect(response_data['datasets'][0].size).to eq 3
-      data1, data2 = Array.new(20) { 0.0 }, Array.new(20) { 0.0 }
 
       gef_dataset = grade_entry_form_with_data.grade_entry_items.map do |item|
         { 'label' => item.name, 'data' => item.grade_distribution_array(20), 'backgroundColor' => '' }
