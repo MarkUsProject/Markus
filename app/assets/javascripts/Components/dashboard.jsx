@@ -119,17 +119,17 @@ class Dashboard extends React.Component {
     if (prevState.assessment_id !== this.state.assessment_id ||
         prevState.display_course_summary !== this.state.display_course_summary) {
       if (this.state.display_course_summary) {
-        $.ajax({
-          url: Routes.grade_distribution_course_summaries_path(),
-          type: 'GET',
-          dataType: 'json'
-        }).then(res => {
-          for (const [index, element] of res["datasets"].entries()){
-            element["label"] = I18n.t("main.weighted_total_grades") + " " + res["marking_schemes_id"][index]
-            element["backgroundColor"] = colours[index]
-          }
-          this.setState({data: res})
-        })
+        // $.ajax({
+        //   url: Routes.grade_distribution_course_summaries_path(),
+        //   type: 'GET',
+        //   dataType: 'json'
+        // }).then(res => {
+        //   for (const [index, element] of res["datasets"].entries()){
+        //     element["label"] = I18n.t("main.weighted_total_grades") + " " + res["marking_schemes_id"][index]
+        //     element["backgroundColor"] = colours[index]
+        //   }
+        //   this.setState({data: res})
+        // })
       } else if (this.state.assessment_type === 'GradeEntryForm') {
         // Note: these are two separate AJAX requests. Need to merge when you create the new component.
         $.get({url: Routes.grade_distribution_data_grade_entry_form_path(this.state.assessment_id)}).then(res => {
