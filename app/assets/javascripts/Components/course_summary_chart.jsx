@@ -8,16 +8,16 @@ export class CourseSummaryChart extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      // summary: {
-      //   average: null,
-      //   median: null
-      // },
-      summary: [],
+      summary: {
+        average: [],
+        median: []
+      },
       data: {
         labels: [],
         datasets: [],
       },
-      marking_scheme_ids: []
+      marking_scheme_ids: [],
+      options: {}
     };
   }
   componentDidMount() {
@@ -28,8 +28,6 @@ export class CourseSummaryChart extends React.Component {
     fetch(Routes.grade_distribution_course_summaries_path())
       .then(data => data.json())
       .then(res => {
-        var average;
-        var median;
         for (const [index, element] of res["datasets"].entries()){
           element["label"] = I18n.t("main.weighted_total_grades") + " " + res["marking_schemes_id"][index]
           element["backgroundColor"] = colours[index]
@@ -38,9 +36,25 @@ export class CourseSummaryChart extends React.Component {
           labels: res['labels'],
           datasets: res['datasets']
         }
+        let options = {
+          plugins: {
+            tooltip: {
+              callbacks: {
+                title: function (tooltipItems) {
+                  let baseNum = tooltipItems[0].dataIndex;
+                  return baseNum + '-' + (baseNum + 1);
+                }
+              }
+            },
+            legend: {
+              display: true
+            }
+          }
+        };
         this.setState({data: data})
-        this.setState({summary: res['average']})
+        this.setState({summary: res['summary']})
         this.setState({marking_scheme_ids: res["marking_schemes_id"]})
+        this.setState({options: options})
       })
   };
 
@@ -52,16 +66,16 @@ export class CourseSummaryChart extends React.Component {
         </h2>
 
         <div className='flex-row'>
-          <Bar data={this.state.data}/>
+          <Bar data={this.state.data} options={this.state.options}/>
         </div>
         <div className='flex-row-expand'>
           <div className="grid-2-col">
             <span> {I18n.t('activerecord.models.marking_scheme.one')}</span>
-            <span> {this.state.marking_scheme_ids[0]} </span>
+            <span> {this.state.marking_scheme_ids[1]} </span>
             <span> {I18n.t('average')} </span>
-            <span> {this.state.summary[0]} </span>
+            <span> {this.state.summary.average[1]} </span>
             <span> {I18n.t('median')} </span>
-            {/*<span> {this.state.info_data['median']} </span>*/}
+            <span> {this.state.summary.median[1]} </span>
           </div>
         </div>
       </div>

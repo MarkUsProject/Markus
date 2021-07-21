@@ -53,14 +53,18 @@ class CourseSummariesController < ApplicationController
     if !table_data.empty?
       labels = (0..20).to_a
     else
-      table_data = []
       labels = []
     end
-    average = []
+    average, median = [], []
     table_data.each do |data|
       average << ActiveSupport::NumberHelper.number_to_percentage(DescriptiveStatistics.mean(data[:data]) || 0, precision: 1)
+      median << ActiveSupport::NumberHelper.number_to_percentage(DescriptiveStatistics.median(data[:data]) || 0, precision: 1)
     end
-    render json: { datasets: table_data, labels: labels, marking_schemes_id: marking_schemes_id, average: average}
+    summary = {
+      average: average,
+      median: median
+    }
+    render json: { datasets: table_data, labels: labels, marking_schemes_id: marking_schemes_id, summary: summary}
   end
 
   def view_summary
