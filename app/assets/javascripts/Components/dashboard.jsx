@@ -46,21 +46,19 @@ class AssignmentChart extends React.Component {
   }
 
   fetchData = () => {
-    $.ajax({
-      url: Routes.chart_data_assignment_path(this.props.assessment_id),
-      dataType: 'json',
-    }).then(res => this.setState({summary: res.summary, assignment_chart_data: { data: res.data, options: {} }}))
-    $.ajax({
-      url: Routes.ta_grader_breakdown_assignment_path(this.props.assessment_id),
-      method: 'GET',
-      success: (data) => {
+    fetch(Routes.chart_data_assignment_path(this.props.assessment_id))
+      .then(data => data.json())
+      .then(res => this.setState({summary: res.summary, assignment_chart_data: { data: res.data, options: {} }}))
+    fetch(Routes.ta_grader_breakdown_assignment_path(this.props.assessment_id))
+      .then(data => data.json())
+      .then(res => {
         // Load in background colours
-        for (const [index, element] of data["datasets"].entries()){
+        for (const [index, element] of res["datasets"].entries()){
           element["backgroundColor"] = colours[index]
         }
         this.setState({
           ta_chart_data: {
-            data: data,
+            data: res,
             options: {
               plugins: {
                 tooltip: {
@@ -82,8 +80,7 @@ class AssignmentChart extends React.Component {
             },
           }
         })
-      },
-    })
+      })
   };
 
   render() {
