@@ -4,7 +4,7 @@ import { render } from 'react-dom';
 import { Bar } from 'react-chartjs-2';
 
 
-class AssignmentChart extends React.Component {
+export class AssignmentChart extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
