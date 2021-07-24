@@ -15,8 +15,4 @@ class GradeEntryFormPolicy < ApplicationPolicy
   def student_interface?
     user.student?
   end
-
-  def grade_distribution_data?
-    user.admin?
-  end
 end
