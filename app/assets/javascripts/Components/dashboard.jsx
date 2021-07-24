@@ -3,6 +3,7 @@ import { render } from 'react-dom';
 
 import { Bar } from 'react-chartjs-2';
 import { AssignmentChart } from './assignment_chart'
+import { GradeEntryCharts } from './grade_entry_form_chart'
 
 class Dashboard extends React.Component {
   constructor(props) {
@@ -35,43 +36,9 @@ class Dashboard extends React.Component {
     };
   }
 
-  getGradeEntryFormColumnBreakdown = () => {
-    // Helper function to make the AJAX request, then use its response to set the chart state
-    $.ajax({
-      url: Routes.column_breakdown_grade_entry_form_path(
-        this.state.assessment_id
-      ),
-      method: 'GET',
-      success: (data) => {
-        // Load in background colours
-        for (const [index, element] of data["datasets"].entries()){
-          element["backgroundColor"] = colours[index]
-        }
-        this.setState({
-          data: data,
-          options: {
-            plugins: {
-              tooltip: {
-                callbacks: {
-                  title: function (tooltipItems) {
-                    let baseNum = parseInt(tooltipItems[0].label);
-                    if (baseNum === 0) {
-                      return '0-5';
-                    } else {
-                      return (baseNum + 1) + '-' + (baseNum + 5);
-                    }
-                  }
-                }
-              },
-            }
-          },
-        })
-      },
-    })
-  }
-
   componentDidUpdate(prevProps, prevState) {
-    if (prevState.assessment_id !== this.state.assessment_id) {
+    if (prevState.assessment_id !== this.state.assessment_id ||
+        prevState.display_course_summary !== this.state.display_course_summary) {
       if (this.state.display_course_summary) {
         $.ajax({
           url: Routes.grade_distribution_course_summaries_path(),
@@ -95,13 +62,6 @@ class Dashboard extends React.Component {
           })
         })
       } else if (this.state.assessment_type === 'GradeEntryForm') {
-        // Note: these are two separate AJAX requests. Need to merge when you create the new component.
-        $.get({url: Routes.grade_distribution_data_grade_entry_form_path(this.state.assessment_id)}).then(res => {
-          let new_data = {labels: res['labels'], datasets: [{data: res['grade_distribution']}]};
-          this.setState({data: new_data});
-        });
-        // Commented this one out for now.
-        // this.getGradeEntryFormColumnBreakdown();
       }
     }
   }
@@ -113,10 +73,7 @@ class Dashboard extends React.Component {
       return <AssignmentChart assessment_id={this.state.assessment_id}/>;
     } else if (this.state.assessment_type === 'GradeEntryForm') {
       return (
-        <div>
-          <Bar data={this.state.data} />
-          <Bar data={this.state.data} options={this.state.options}/>
-        </div>
+        <GradeEntryCharts assessment_id={this.state.assessment_id} />
       );
     } else {
       return '';
