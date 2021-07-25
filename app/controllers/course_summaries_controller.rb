@@ -48,17 +48,14 @@ class CourseSummariesController < ApplicationController
 
   def grade_distribution
     marking_schemes = current_user.student? ? MarkingScheme.none : MarkingScheme
-    table_data = marking_schemes.order(id: :asc).map { |m| m.students_weighted_grade_distribution_array(current_user) }
+    table_data = marking_schemes.order(id: :asc).map { |m| m.students_weighted_grade_distribution_array_react(current_user) }
     grades = marking_schemes.order(id: :asc).map { |m| m.students_weighted_grades_array(current_user) }
     marking_schemes_id = marking_schemes.order(id: :asc).map { |m| m.id }
-    labels, average, median = [], [], []
-    intervals = 20
-    label_multiplier = []
+    average, median = [], [], []
+    temp_labels = Array.new(21)
+    labels = temp_labels.each_with_index.map { |_, i| i * 5 }
+
     unless table_data.empty?
-      table_data.each_with_index do |data, index|
-        label_multiplier << data[:max] / intervals
-        labels << Array.new(intervals + 1).each_with_index.map {|_, i| (i * label_multiplier[index]).round }
-      end
       grades.each do |grade|
         average << ActiveSupport::NumberHelper.number_to_percentage(DescriptiveStatistics.mean(grade) || 0, precision: 1)
         median << ActiveSupport::NumberHelper.number_to_percentage(DescriptiveStatistics.median(grade) || 0, precision: 1)
@@ -74,8 +71,8 @@ class CourseSummariesController < ApplicationController
       datasets: table_data,
       labels: labels,
       marking_schemes_id: marking_schemes_id,
-      summary: summary,
-      label_multiplier: label_multiplier}
+      summary: summary
+    }
   end
 
   def view_summary

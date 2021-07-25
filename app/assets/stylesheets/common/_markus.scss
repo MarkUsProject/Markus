@@ -1325,3 +1325,10 @@ nav {
   padding-bottom: 0;
   text-align: center;
 }
+
+// Styling for summary stats for course_summary_chart.jsx
+
+.summary-stats {
+  column-gap: 40px;
+  display: flex;
+}

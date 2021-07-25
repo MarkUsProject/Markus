@@ -138,16 +138,6 @@ class Dashboard extends React.Component {
 
   render() {
     if (this.state.display_course_summary) {
-      // if (this.state.data.datasets.length === 0) {
-      //   return (
-      //     <div>
-      //       <h1>{I18n.t('main.create_marking_scheme')}</h1>
-      //     </div>
-      //   );
-      // }
-      // else {
-      //   return <Bar data={this.state.data} />;
-      // }
       return (
         <CourseSummaryChart />
       )
