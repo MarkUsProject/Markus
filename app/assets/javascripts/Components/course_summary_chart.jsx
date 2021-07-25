@@ -12,13 +12,10 @@ export class CourseSummaryChart extends React.Component {
         average: [],
         median: []
       },
-      summary_chart_data: {
-        labels: [],
-        datasets: [],
-        options: {}
-      },
+      summary_chart_data: [],
       marking_scheme_ids: [],
-    };
+      options: []
+    }
   }
   componentDidMount() {
     this.fetchData();
@@ -32,17 +29,16 @@ export class CourseSummaryChart extends React.Component {
           element["label"] = I18n.t("main.weighted_total_grades") + " " + res["marking_schemes_id"][index]
           element["backgroundColor"] = colours[index]
         }
+        let options = []
 
-        let data = {
-          labels: res['labels'],
-          datasets: res['datasets'],
-          options : {
+        for (const [index, _ ] of res["label_multiplier"].entries()) {
+          options.push({
             plugins: {
               tooltip: {
                 callbacks: {
                   title: function (tooltipItems) {
                     let baseNum = tooltipItems[0].dataIndex;
-                    return baseNum + '-' + (baseNum + 1);
+                    return (baseNum * res["label_multiplier"][index]) + '-' + ((baseNum + 1) * res["label_multiplier"][index]);
                   }
                 }
               },
@@ -50,11 +46,21 @@ export class CourseSummaryChart extends React.Component {
                 display: true
               }
             }
-          }
+          })
         }
-        this.setState({data: data})
+
+        let data = []
+        for (let i = 0; i < res['datasets'].length; i++) {
+          data.push({
+            labels: res['labels'][i],
+            datasets: [res['datasets'][i]],
+            // options: options[i]
+          })
+        }
+
         this.setState({summary: res['summary']})
         this.setState({marking_scheme_ids: res["marking_schemes_id"]})
+        this.setState({summary_chart_data: data})
         this.setState({options: options})
       })
   };
@@ -67,15 +73,15 @@ export class CourseSummaryChart extends React.Component {
         </h2>
 
         <div className='flex-row'>
-          <Bar data={this.state.data} options={this.state.options}/>
+          <Bar data={this.state.summary_chart_data[0]} options={this.state.options[0]}/>
         </div>
         <div className="grid-2-col">
           <span> {I18n.t('activerecord.models.marking_scheme.one')}</span>
-          <span> {this.state.marking_scheme_ids[1]} </span>
+          <span> {this.state.marking_scheme_ids[0]} </span>
           <span> {I18n.t('average')} </span>
-          <span> {this.state.summary.average[1]} </span>
+          <span> {this.state.summary.average[0]} </span>
           <span> {I18n.t('median')} </span>
-          <span> {this.state.summary.median[1]} </span>
+          <span> {this.state.summary.median[0]} </span>
         </div>
       </div>
     )

@@ -51,26 +51,31 @@ class CourseSummariesController < ApplicationController
     table_data = marking_schemes.order(id: :asc).map { |m| m.students_weighted_grade_distribution_array(current_user) }
     grades = marking_schemes.order(id: :asc).map { |m| m.students_weighted_grades_array(current_user) }
     marking_schemes_id = marking_schemes.order(id: :asc).map { |m| m.id }
-    labels = []
-    average, median = [], []
+    labels, average, median = [], [], []
     intervals = 20
+    label_multiplier = []
     unless table_data.empty?
-      table_data.each do |data|
-        label_multiplier = data[:max] / intervals
-        labels << Array.new(intervals + 1).each_with_index.map {|_, i| (i * label_multiplier).round }
+      table_data.each_with_index do |data, index|
+        label_multiplier << data[:max] / intervals
+        labels << Array.new(intervals + 1).each_with_index.map {|_, i| (i * label_multiplier[index]).round }
       end
       grades.each do |grade|
         average << ActiveSupport::NumberHelper.number_to_percentage(DescriptiveStatistics.mean(grade) || 0, precision: 1)
         median << ActiveSupport::NumberHelper.number_to_percentage(DescriptiveStatistics.median(grade) || 0, precision: 1)
       end
     end
-    git
 
     summary = {
       average: average,
       median: median
     }
-    render json: { datasets: table_data, labels: labels, marking_schemes_id: marking_schemes_id, summary: summary}
+
+    render json: {
+      datasets: table_data,
+      labels: labels,
+      marking_schemes_id: marking_schemes_id,
+      summary: summary,
+      label_multiplier: label_multiplier}
   end
 
   def view_summary
