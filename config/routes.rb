@@ -75,7 +75,6 @@ Rails.application.routes.draw do
       get 'download_starter_file_mappings'
       get 'refresh_graph'
       get 'view_summary'
-      get 'ta_grader_breakdown'
       post 'update_starter_file'
       get 'peer_review'
       get 'populate_starter_file_manager'

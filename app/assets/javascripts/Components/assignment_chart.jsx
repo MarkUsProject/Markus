@@ -48,17 +48,16 @@ export class AssignmentChart extends React.Component {
   fetchData = () => {
     fetch(Routes.chart_data_assignment_path(this.props.assessment_id))
       .then(data => data.json())
-      .then(res => this.setState({summary: res.summary, assignment_chart_data: { data: res.data, options: {} }}))
-    fetch(Routes.ta_grader_breakdown_assignment_path(this.props.assessment_id))
-      .then(data => data.json())
       .then(res => {
         // Load in background colours
-        for (const [index, element] of res["datasets"].entries()){
+        for (const [index, element] of res.ta_data.datasets.entries()){
           element["backgroundColor"] = colours[index]
         }
         this.setState({
+          summary: res.summary,
+          assignment_chart_data: { data: res.assignment_data, options: {} },
           ta_chart_data: {
-            data: res,
+            data: res.ta_data,
             options: {
               plugins: {
                 tooltip: {

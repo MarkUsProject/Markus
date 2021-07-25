@@ -312,8 +312,18 @@ class AssignmentsController < ApplicationController
   # Return the chart data of assignment grade distributions
   def chart_data
     assignment = Assignment.find(params[:id])
-    labels = (0..19).map { |i| (5 * i).to_s + '-' + (5 * i + 5).to_s }
-    datasets = [
+    summary = {
+      average: ActiveSupport::NumberHelper.number_to_percentage(assignment.results_average || 0, precision: 1),
+      median: ActiveSupport::NumberHelper.number_to_percentage(assignment.results_median || 0, precision: 1),
+      num_submissions_collected: assignment.current_submissions_used.size,
+      num_submissions_graded: assignment.current_submissions_used.size -
+        assignment.ungraded_submission_results.size,
+      num_fails: assignment.results_fails,
+      num_zeros: assignment.results_zeros,
+      groupings_size: assignment.groupings.size
+    }
+    assignment_labels = (0..19).map { |i| (5 * i).to_s + '-' + (5 * i + 5).to_s }
+    assignment_datasets = [
       {
         data: assignment.grade_distribution_array,
         backgroundColor: [
@@ -325,18 +335,17 @@ class AssignmentsController < ApplicationController
         borderWidth: 1
       }
     ]
-    data = { labels: labels, datasets: datasets }
-    summary = {
-      average: ActiveSupport::NumberHelper.number_to_percentage(assignment.results_average || 0, precision: 1),
-      median: ActiveSupport::NumberHelper.number_to_percentage(assignment.results_median || 0, precision: 1),
-      num_submissions_collected: assignment.current_submissions_used.size,
-      num_submissions_graded: assignment.current_submissions_used.size -
-        assignment.ungraded_submission_results.size,
-      num_fails: assignment.results_fails,
-      num_zeros: assignment.results_zeros,
-      groupings_size: assignment.groupings.size
-    }
-    render json: { data: data, summary: summary }
+    assignment_data = { labels: assignment_labels, datasets: assignment_datasets }
+    tas = assignment.tas
+    ta_labels = (0..100).step(5).to_a
+    ta_datasets = tas.map do |ta|
+      { label: ta.first_name + ' ' + ta.last_name + ' ' + t('submissions.how_many_marked',
+                                                            num_marked: assignment.get_num_marked(ta.id),
+                                                            num_assigned: assignment.get_num_assigned(ta.id)),
+        data: ta.grade_distribution_array(assignment, 20), backgroundColor: '' }
+    end
+    ta_data = { labels: ta_labels, datasets: ta_datasets }
+    render json: { summary: summary, assignment_data: assignment_data, ta_data: ta_data }
   end
 
   # Refreshes the grade distribution graph
@@ -351,19 +360,6 @@ class AssignmentsController < ApplicationController
     @assignment = Assignment.find(params[:id])
     @current_ta = @assignment.tas.first
     @tas = @assignment.tas unless @assignment.nil?
-  end
-
-  def ta_grader_breakdown
-    assignment = Assignment.find(params[:id])
-    tas = assignment.tas
-    axis_labels = (0..100).step(5).to_a
-    dict_data = tas.map do |ta|
-      { label: ta.first_name + ' ' + ta.last_name + ' ' + t('submissions.how_many_marked',
-                                                            num_marked: assignment.get_num_marked(ta.id),
-                                                            num_assigned: assignment.get_num_assigned(ta.id)),
-        data: ta.grade_distribution_array(assignment, 20), backgroundColor: '' }
-    end
-    render json: { labels: axis_labels, datasets: dict_data }
   end
 
   def download
