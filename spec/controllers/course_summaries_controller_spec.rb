@@ -317,9 +317,10 @@ describe CourseSummariesController do
       it 'returns correct average' do
         marking_scheme = create :marking_scheme, assessments: Assessment.all
         data = marking_scheme.students_weighted_grade_distribution_array(user)
-        average = ActiveSupport::NumberHelper.number_to_percentage(DescriptiveStatistics.mean(data[:data]))
+        average = data[:data].inject{ |sum, el| sum + el }.to_f / data[:data].size
+        # average = ActiveSupport::NumberHelper.number_to_percentage(DescriptiveStatistics.mean(data))
         get_as user, :grade_distribution, format: :json
-        expect(response.parsed_body['average']).to eq [average.as_json]
+        expect(response.parsed_body['summary']).to eq [average.as_json]
       end
     end
   end

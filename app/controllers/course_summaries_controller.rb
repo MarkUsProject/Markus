@@ -49,17 +49,23 @@ class CourseSummariesController < ApplicationController
   def grade_distribution
     marking_schemes = current_user.student? ? MarkingScheme.none : MarkingScheme
     table_data = marking_schemes.order(id: :asc).map { |m| m.students_weighted_grade_distribution_array(current_user) }
+    grades = marking_schemes.order(id: :asc).map { |m| m.students_weighted_grades_array(current_user) }
     marking_schemes_id = marking_schemes.order(id: :asc).map { |m| m.id }
-    if !table_data.empty?
-      labels = (0..20).to_a
-    else
-      labels = []
-    end
+    labels = []
     average, median = [], []
-    table_data.each do |data|
-      average << ActiveSupport::NumberHelper.number_to_percentage(DescriptiveStatistics.mean(data[:data]) || 0, precision: 1)
-      median << ActiveSupport::NumberHelper.number_to_percentage(DescriptiveStatistics.median(data[:data]) || 0, precision: 1)
+    intervals = 20
+    unless table_data.empty?
+      table_data.each do |data|
+        label_multiplier = data[:max] / intervals
+        labels << Array.new(intervals + 1).each_with_index.map {|_, i| (i * label_multiplier).round }
+      end
+      grades.each do |grade|
+        average << ActiveSupport::NumberHelper.number_to_percentage(DescriptiveStatistics.mean(grade) || 0, precision: 1)
+        median << ActiveSupport::NumberHelper.number_to_percentage(DescriptiveStatistics.median(grade) || 0, precision: 1)
+      end
     end
+    git
+
     summary = {
       average: average,
       median: median

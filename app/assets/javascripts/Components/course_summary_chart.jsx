@@ -12,12 +12,12 @@ export class CourseSummaryChart extends React.Component {
         average: [],
         median: []
       },
-      data: {
+      summary_chart_data: {
         labels: [],
         datasets: [],
+        options: {}
       },
       marking_scheme_ids: [],
-      options: {}
     };
   }
   componentDidMount() {
@@ -32,25 +32,26 @@ export class CourseSummaryChart extends React.Component {
           element["label"] = I18n.t("main.weighted_total_grades") + " " + res["marking_schemes_id"][index]
           element["backgroundColor"] = colours[index]
         }
+
         let data = {
           labels: res['labels'],
-          datasets: res['datasets']
-        }
-        let options = {
-          plugins: {
-            tooltip: {
-              callbacks: {
-                title: function (tooltipItems) {
-                  let baseNum = tooltipItems[0].dataIndex;
-                  return baseNum + '-' + (baseNum + 1);
+          datasets: res['datasets'],
+          options : {
+            plugins: {
+              tooltip: {
+                callbacks: {
+                  title: function (tooltipItems) {
+                    let baseNum = tooltipItems[0].dataIndex;
+                    return baseNum + '-' + (baseNum + 1);
+                  }
                 }
+              },
+              legend: {
+                display: true
               }
-            },
-            legend: {
-              display: true
             }
           }
-        };
+        }
         this.setState({data: data})
         this.setState({summary: res['summary']})
         this.setState({marking_scheme_ids: res["marking_schemes_id"]})
@@ -68,15 +69,13 @@ export class CourseSummaryChart extends React.Component {
         <div className='flex-row'>
           <Bar data={this.state.data} options={this.state.options}/>
         </div>
-        <div className='flex-row-expand'>
-          <div className="grid-2-col">
-            <span> {I18n.t('activerecord.models.marking_scheme.one')}</span>
-            <span> {this.state.marking_scheme_ids[1]} </span>
-            <span> {I18n.t('average')} </span>
-            <span> {this.state.summary.average[1]} </span>
-            <span> {I18n.t('median')} </span>
-            <span> {this.state.summary.median[1]} </span>
-          </div>
+        <div className="grid-2-col">
+          <span> {I18n.t('activerecord.models.marking_scheme.one')}</span>
+          <span> {this.state.marking_scheme_ids[1]} </span>
+          <span> {I18n.t('average')} </span>
+          <span> {this.state.summary.average[1]} </span>
+          <span> {I18n.t('median')} </span>
+          <span> {this.state.summary.median[1]} </span>
         </div>
       </div>
     )
