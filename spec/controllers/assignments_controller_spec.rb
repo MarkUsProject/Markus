@@ -1061,8 +1061,9 @@ describe AssignmentsController do
     let(:assignment) { create :assignment }
     let(:params) { { id: assignment.id } }
     let(:user) { create :admin }
-    let(:assignment_with_results_and_tas) { create :assignment_with_criteria_and_results_and_tas,
-                                                   assignment: assignment }
+    let(:assignment_with_results_and_tas) {
+      create :assignment_with_criteria_and_results_and_tas, assignment: assignment
+    }
     let(:params) { { id: assignment_with_results_and_tas.id } }
     context 'response' do
       it 'should respond with 200' do
