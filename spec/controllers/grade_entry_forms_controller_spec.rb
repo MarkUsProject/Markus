@@ -471,7 +471,7 @@ describe GradeEntryFormsController do
     }
 
     it('should respond with 200') { expect(response.status).to eq 200 }
-
+    
     it 'should return the expected info summary' do
       name = grade_entry_form_with_data.short_identifier + ': ' + grade_entry_form_with_data.description
       total_students = grade_entry_form_with_data.grade_entry_students.joins(:user).where('users.hidden': false).count
