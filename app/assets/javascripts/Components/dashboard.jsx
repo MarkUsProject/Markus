@@ -2,6 +2,7 @@ import React from 'react';
 import { render } from 'react-dom';
 
 import { Bar } from 'react-chartjs-2';
+import { AssignmentChart } from './assignment_chart'
 import { GradeEntryCharts } from './grade_entry_form_chart'
 
 class Dashboard extends React.Component {
@@ -31,51 +32,8 @@ class Dashboard extends React.Component {
           },
         ],
       },
-      data2: {
-        data: {},
-        options: {},
-      },
+      options: {},
     };
-  }
-
-  getAssignmentTaGraderBreakdown = () => {
-    // Helper function to make the AJAX request, then use its response to set the chart state
-    $.ajax({
-      url: Routes.ta_grader_breakdown_assignment_path(
-        this.state.assessment_id
-      ),
-      method: 'GET',
-      success: (data) => {
-        // Load in background colours
-        for (const [index, element] of data["datasets"].entries()){
-          element["backgroundColor"] = colours[index]
-        }
-        this.setState({
-          data2: {
-            data: data,
-            options: {
-              plugins: {
-                tooltip: {
-                  callbacks: {
-                    title: function (tooltipItems) {
-                      let baseNum = parseInt(tooltipItems[0].label);
-                      if (baseNum === 0) {
-                        return '0-5';
-                      } else {
-                        return (baseNum + 1) + '-' + (baseNum + 5);
-                      }
-                    }
-                  }
-                },
-                legend: {
-                  display: true
-                }
-              }
-            },
-          }
-        })
-      },
-    })
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -104,12 +62,6 @@ class Dashboard extends React.Component {
           })
         })
       } else if (this.state.assessment_type === 'GradeEntryForm') {
-      } else if (this.state.assessment_type === 'Assignment') {
-        $.ajax({
-          url: Routes.grade_distribution_graph_data_assignment_path(this.state.assessment_id),
-          dataType: 'json',
-        }).then(res => this.setState({data: res}))
-        this.getAssignmentTaGraderBreakdown();
       }
     }
   }
@@ -118,12 +70,7 @@ class Dashboard extends React.Component {
     if (this.state.display_course_summary) {
       return <Bar data={this.state.data} />;
     } else if (this.state.assessment_type === 'Assignment') {
-      return (
-        <div>
-          <Bar data={this.state.data} />
-          <Bar data={this.state.data2.data} options={this.state.data2.options} />
-        </div>
-      );
+      return <AssignmentChart assessment_id={this.state.assessment_id}/>;
     } else if (this.state.assessment_type === 'GradeEntryForm') {
       return (
         <GradeEntryCharts assessment_id={this.state.assessment_id} />

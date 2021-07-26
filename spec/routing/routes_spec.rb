@@ -84,13 +84,6 @@ describe 'An Assignment' do
 
   # start Assignment collection route tests
   context 'collection' do
-    it 'routes GET ta_grader_breakdown properly' do
-      expect(get: path + '/' + assignment.id.to_s + '/ta_grader_breakdown').to route_to(
-        controller: ctrl,
-        action: 'ta_grader_breakdown',
-        id: assignment.id.to_s
-      )
-    end
     it 'routes GET delete_rejected properly' do
       expect(get: path + '/delete_rejected').to route_to(
         controller: ctrl,
@@ -134,10 +127,10 @@ describe 'An Assignment' do
                      id: assignment.id.to_s)
     end
 
-    it 'routes GET grade_distribution_graph_data properly' do
-      expect(get: path + '/' + assignment.id.to_s + '/grade_distribution_graph_data')
+    it 'routes GET chart_data properly' do
+      expect(get: path + '/' + assignment.id.to_s + '/chart_data')
         .to route_to(controller: ctrl,
-                     action: 'grade_distribution_graph_data',
+                     action: 'chart_data',
                      id: assignment.id.to_s)
     end
   end
