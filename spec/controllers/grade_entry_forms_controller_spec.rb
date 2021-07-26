@@ -446,17 +446,10 @@ describe GradeEntryFormsController do
   describe 'GET chart_data' do
     let(:user) { create(:admin) }
     before { get_as user, :chart_data, params: { id: grade_entry_form_with_data.id } }
-    it('should respond with 200') { expect(response.status).to eq 200 }
 
     it('should return grade distribution data') {
       expected_items = grade_entry_form_with_data.grade_distribution_array
       expect(JSON.parse(response.body)['grade_dist_data']['datasets'][0]['data']).to eq(expected_items)
-    }
-
-    it('should return expected labels') {
-      new_labels = ['0 - 5']
-      new_labels += ((1..19).map { |i| (i * 5 + 1).to_s + ' - ' + (i * 5 + 5).to_s })
-      expect(JSON.parse(response.body)['grade_dist_data']['labels']).to eq(new_labels)
     }
 
     it 'should retrieve the correct column data' do
@@ -470,6 +463,14 @@ describe GradeEntryFormsController do
       end
       expect(response_data['datasets']).to eq gef_dataset
     end
+
+    it('should return expected labels') {
+      new_labels = ['0 - 5']
+      new_labels += ((1..19).map { |i| (i * 5 + 1).to_s + ' - ' + (i * 5 + 5).to_s })
+      expect(JSON.parse(response.body)['grade_dist_data']['labels']).to eq(new_labels)
+    }
+
+    it('should respond with 200') { expect(response.status).to eq 200 }
 
     it 'should return the expected info summary' do
       name = grade_entry_form_with_data.short_identifier + ': ' + grade_entry_form_with_data.description
