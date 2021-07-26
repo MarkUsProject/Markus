@@ -454,49 +454,47 @@ describe GradeEntryFormsController do
 
     it 'should retrieve the correct column data' do
       response_data = JSON.parse(response.body)['column_breakdown_data']
-      expect(response_data['labels']).to eq(0..100).step(5).to_a
       expect(response_data['datasets'].size).to eq 1
       expect(response_data['datasets'][0].size).to eq 3
 
       gef_dataset = grade_entry_form_with_data.grade_entry_items.map do |item|
-        { 'label' => item.name, 'data' => item.grade_distribution_array(20), 'backgroundColor' => '' }
+        { label: item.name, data: item.grade_distribution_array(20), backgroundColor: '' }
       end
-      expect(response_data['datasets']).to eq gef_dataset
+      expect(response_data['datasets']).to eq gef_dataset.as_json
     end
 
-    it('should return expected labels') {
+    it('should return the correct grade distribution labels') {
       new_labels = ['0 - 5']
       new_labels += ((1..19).map { |i| (i * 5 + 1).to_s + ' - ' + (i * 5 + 5).to_s })
       expect(JSON.parse(response.body)['grade_dist_data']['labels']).to eq(new_labels)
     }
 
+    it('should return the correct column data labels') {
+      new_labels = (0..100).step(5).to_a
+      expect(JSON.parse(response.body)['column_breakdown_data']['labels']).to eq(new_labels)
+    }
+
     it('should respond with 200') { expect(response.status).to eq 200 }
-    
+
     it 'should return the expected info summary' do
       name = grade_entry_form_with_data.short_identifier + ': ' + grade_entry_form_with_data.description
       total_students = grade_entry_form_with_data.grade_entry_students.joins(:user).where('users.hidden': false).count
       date_name = GradeEntryForm.human_attribute_name(:date)
-      expected_summary = { 'name' => name,
-                           'date_name' => date_name,
-                           'date' => I18n.l(grade_entry_form.due_date),
-                           'average' => ActiveSupport::NumberHelper.number_to_percentage(
+      expected_summary = { name: name,
+                           date_name: date_name,
+                           date: I18n.l(grade_entry_form.due_date),
+                           average: ActiveSupport::NumberHelper.number_to_percentage(
                              grade_entry_form_with_data.results_average || 0, precision: 1
                            ),
-                           'median' => ActiveSupport::NumberHelper.number_to_percentage(
+                           median: ActiveSupport::NumberHelper.number_to_percentage(
                              grade_entry_form_with_data.results_median || 0, precision: 1
                            ),
-                           'num_entries' => grade_entry_form_with_data.count_non_nil.to_s +
+                           num_entries: grade_entry_form_with_data.count_non_nil.to_s +
                              '/' + total_students.to_s,
-                           'num_fails' => grade_entry_form_with_data.results_fails,
-                           'num_zeros' => grade_entry_form.results_zeros }
+                           num_fails: grade_entry_form_with_data.results_fails,
+                           num_zeros: grade_entry_form.results_zeros }
       expect(JSON.parse(response.body)['info_summary'].size).to eq(8)
-      expect(JSON.parse(response.body)['info_summary']).to eq(expected_summary)
+      expect(JSON.parse(response.body)['info_summary']).to eq(expected_summary.as_json)
     end
-
-    it('should return expected labels') {
-      new_labels = ['0 - 5']
-      new_labels += ((1..19).map { |i| (i * 5 + 1).to_s + ' - ' + (i * 5 + 5).to_s })
-      expect(JSON.parse(response.body)['grade_dist_data']['labels']).to eq(new_labels)
-    }
   end
 end
