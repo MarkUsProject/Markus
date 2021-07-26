@@ -457,13 +457,9 @@ class AssignmentsController < ApplicationController
   #   - summary for TAs
   #   - show for students
   def switch
-    redirect_options = referer_options
-    if redirect_options[:controller] == 'assignments'
-      redirect_options[:id] = params[:id]
-      redirect_to redirect_options
-    elsif redirect_options[:assignment_id]
-      redirect_options[:assignment_id] = params[:id]
-      redirect_to redirect_options
+    options = referer_options
+    if switch_to_same(options)
+      redirect_to options
     elsif current_user.admin?
       redirect_to edit_assignment_path(params[:id])
     elsif current_user.ta?
@@ -701,5 +697,19 @@ class AssignmentsController < ApplicationController
   def flash_interpolation_options
     { resource_name: @assignment.short_identifier.blank? ? @assignment.model_name.human : @assignment.short_identifier,
       errors: @assignment.errors.full_messages.join('; ') }
+  end
+
+  def switch_to_same(options)
+    return false if options[:controller] == 'submissions' and options[:action] == 'file_manager'
+    return false if %w[submissions results].include?(options[:controller]) && !options[:id].nil?
+
+    if options[:controller] == 'assignments'
+      options[:id] = params[:id]
+    elsif options[:assignment_id]
+      options[:assignment_id] = params[:id]
+    else
+      return false
+    end
+    true
   end
 end
