@@ -700,7 +700,7 @@ class AssignmentsController < ApplicationController
   end
 
   def switch_to_same(options)
-    return false if options[:controller] == 'submissions' and options[:action] == 'file_manager'
+    return false if options[:controller] == 'submissions' && options[:action] == 'file_manager'
     return false if %w[submissions results].include?(options[:controller]) && !options[:id].nil?
 
     if options[:controller] == 'assignments'
