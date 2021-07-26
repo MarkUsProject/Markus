@@ -227,7 +227,7 @@ class GradeEntryFormsController < ApplicationController
   def chart_data
     grade_entry_form = GradeEntryForm.find(params[:id])
 
-    column_breakdown_data = { labels: [], datasets: [] , options: {}}
+    column_breakdown_data = { labels: [], datasets: [], options: {} }
     axis_labels = (0..100).step(5).to_a
     dict_data = grade_entry_form.grade_entry_items.map do |item|
       { label: item.name, data: item.grade_distribution_array(20), backgroundColor: '' }
@@ -235,9 +235,9 @@ class GradeEntryFormsController < ApplicationController
     column_breakdown_data[:labels], column_breakdown_data[:datasets] = axis_labels, dict_data
 
     new_labels = ['0 - 5']
-    new_labels += ((1..19).map { |i| (i * 5 + 1).to_s + ' - ' + (i * 5 + 5).to_s })
+    new_labels += ((1..19).map { |i| (i * 5 + 1).to_s + ' - ' + (i * 5 + 5).to_s } )
 
-    grade_dist_data = { labels: [], datasets: [] , options: {} }
+    grade_dist_data = { labels: [], datasets: [], options: {} }
     grade_dist_data[:labels] = new_labels
     grade_dist_data[:datasets] = [{ data: grade_entry_form.grade_distribution_array }]
 
