@@ -27,7 +27,7 @@ class MarkingScheme < ApplicationRecord
     { 'data': distribution, 'max': max }
   end
 
-  def students_weighted_grade_distribution_array_react(current_user, intervals = 100)
+  def students_grade_distribution(current_user, intervals = 100)
     data = students_weighted_grades_array(current_user)
     max = [data.max, intervals].max
 
