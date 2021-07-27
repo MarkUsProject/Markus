@@ -48,9 +48,8 @@ class CourseSummariesController < ApplicationController
 
   def grade_distribution
     marking_schemes = current_user.student? ? MarkingScheme.none : MarkingScheme
-    table_data = marking_schemes.order(id: :asc).map {
-      |m| m.students_weighted_grade_distribution_array_react(current_user)
-    }
+    table_data = marking_schemes.order(
+      id: :asc).map { |m| m.students_weighted_grade_distribution_array_react(current_user) }
     grades = marking_schemes.order(id: :asc).map { |m| m.students_weighted_grades_array(current_user) }
     marking_schemes_id = marking_schemes.order(id: :asc).map { |m| m.id }
 
