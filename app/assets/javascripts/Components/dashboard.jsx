@@ -118,7 +118,7 @@ class Dashboard extends React.Component {
   componentDidUpdate(prevProps, prevState) {
     if (prevState.assessment_id !== this.state.assessment_id ||
         prevState.display_course_summary !== this.state.display_course_summary) {
-    if (this.state.assessment_type === 'GradeEntryForm') {
+      if (this.state.assessment_type === 'GradeEntryForm') {
         // Note: these are two separate AJAX requests. Need to merge when you create the new component.
         $.get({url: Routes.grade_distribution_data_grade_entry_form_path(this.state.assessment_id)}).then(res => {
           let new_data = {labels: res['labels'], datasets: [{data: res['grade_distribution']}]};
