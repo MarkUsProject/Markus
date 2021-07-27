@@ -323,7 +323,7 @@ describe CourseSummariesController do
         expected = {}
         expected[:datasets] = marking_schemes.map { |m| m.students_grade_distribution(user) }
         expected[:labels] = (0..100).step(5).to_a
-        expected[:marking_schemes_id] = marking_schemes.collect( &:id )
+        expected[:marking_schemes_id] = marking_schemes.collect(&:id)
         grades = marking_schemes.map { |m| m.students_weighted_grades_array(user) }
         average, median = [], []
         grades.each do |grade|
