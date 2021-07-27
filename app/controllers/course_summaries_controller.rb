@@ -52,7 +52,7 @@ class CourseSummariesController < ApplicationController
     grades = marking_schemes.order(id: :asc).map { |m| m.students_weighted_grades_array(current_user) }
     marking_schemes_id = marking_schemes.order(id: :asc).map { |m| m.id }
 
-    labels = Array.new(21).each_with_index.map { |_, i| i * 5 }
+    labels = (0..100).step(5).to_a
 
     average, median = [], [], []
     unless table_data.empty?
