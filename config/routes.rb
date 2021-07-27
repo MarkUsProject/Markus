@@ -75,7 +75,6 @@ Rails.application.routes.draw do
       get 'download_starter_file_mappings'
       get 'refresh_graph'
       get 'view_summary'
-      get 'ta_grader_breakdown'
       post 'update_starter_file'
       get 'peer_review'
       get 'populate_starter_file_manager'
@@ -88,7 +87,7 @@ Rails.application.routes.draw do
       put 'start_timed_assignment'
       get 'starter_file'
       put 'update_starter_file'
-      get 'grade_distribution_graph_data'
+      get 'chart_data'
     end
 
     resources :starter_file_groups do
@@ -324,14 +323,13 @@ Rails.application.routes.draw do
       get 'populate_grades_table'
       get 'get_mark_columns'
       get 'view_summary'
-      get 'column_breakdown'
       get 'grades'
       get 'download'
       post 'upload'
       post 'update_grade'
       post 'update_grade_entry_students'
       get 'student_interface'
-      get 'grade_distribution_data'
+      get 'chart_data'
     end
 
     resources :marks_graders, only: [:index] do

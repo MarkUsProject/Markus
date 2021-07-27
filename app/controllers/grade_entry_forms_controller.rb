@@ -47,21 +47,6 @@ class GradeEntryFormsController < ApplicationController
     @date = params[:date]
   end
 
-  # returns the column distribution/breakdown for each grade_entry_item in a grade_entry_form
-  #   (see the second chart in the summary of a marks spreadsheet, accessed from the dashboard)
-  def column_breakdown
-    grade_entry_form = GradeEntryForm.find(params[:id])
-    return_data = { labels: [], datasets: [] }
-    axis_labels = (0..100).step(5).to_a
-    dict_data = grade_entry_form.grade_entry_items.map do |item|
-      { label: item.name, data: item.grade_distribution_array(20), backgroundColor: '' }
-    end
-    return_data[:labels], return_data[:datasets] = axis_labels, dict_data
-    respond_to do |format|
-      format.json { render json: return_data }
-    end
-  end
-
   # Update a grade in the table
   def update_grade
     grade_entry_form = GradeEntryForm.find(params[:id])
@@ -239,10 +224,42 @@ class GradeEntryFormsController < ApplicationController
     redirect_to action: 'grades', id: @grade_entry_form.id
   end
 
-  def grade_distribution_data
+  def chart_data
+    grade_entry_form = GradeEntryForm.find(params[:id])
+    column_breakdown_data = { labels: [], datasets: [] }
+    axis_labels = (0..100).step(5).to_a
+    dict_data = grade_entry_form.grade_entry_items.map do |item|
+      { label: item.name, data: item.grade_distribution_array(20), backgroundColor: '' }
+    end
+    column_breakdown_data[:labels], column_breakdown_data[:datasets] = axis_labels, dict_data
+
     new_labels = ['0 - 5']
     new_labels += ((1..19).map { |i| (i * 5 + 1).to_s + ' - ' + (i * 5 + 5).to_s })
-    grade_entry_form = GradeEntryForm.find(params[:id])
-    render json: { grade_distribution: grade_entry_form.grade_distribution_array, labels: new_labels }
+    grade_dist_data = { labels: new_labels, datasets: [{ data: grade_entry_form.grade_distribution_array }] }
+
+    num_entries = grade_entry_form.count_non_nil.to_s +
+      '/' + grade_entry_form.grade_entry_students.joins(:user).where('users.hidden': false).count.to_s
+
+    name = grade_entry_form.short_identifier + ': ' + grade_entry_form.description
+    info_summary = { name: name,
+                     date_name: GradeEntryForm.human_attribute_name(:date),
+                     date: I18n.l(grade_entry_form.due_date),
+                     average: ActiveSupport::NumberHelper.number_to_percentage(
+                       grade_entry_form.results_average || 0, precision: 1
+                     ),
+                     median: ActiveSupport::NumberHelper.number_to_percentage(
+                       grade_entry_form.results_median || 0, precision: 1
+                     ),
+                     num_entries: num_entries,
+                     num_fails: grade_entry_form.results_fails,
+                     num_zeros: grade_entry_form.results_zeros }
+
+    respond_to do |format|
+      format.json do
+        render json: { grade_dist_data: grade_dist_data,
+                       column_breakdown_data: column_breakdown_data,
+                       info_summary: info_summary }
+      end
+    end
   end
 end
