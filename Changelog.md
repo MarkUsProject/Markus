@@ -10,6 +10,7 @@
 - Rename "Tags/Notes" tab on grading page to "Submission Info", and move membership information to the tab (#5380)
 - Respect referrer url when navigating between assignments (#5409)
 - Remove delete link from TA table (#5407)
+- Improve student UI for timed assessments (#5417) 
 
 ## [v1.12.5]
 - Fix bugs in grading view when switching between submissions (#5400)

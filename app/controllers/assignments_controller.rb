@@ -48,7 +48,11 @@ class AssignmentsController < ApplicationController
       flash_message(:warning, I18n.t('assignments.starter_file.changed_warning')) if @grouping.starter_file_changed
       if @assignment.is_timed && !@grouping.start_time.nil? && !@grouping.past_collection_date?
         flash_message(:note, I18n.t('assignments.timed.started_message_html'))
-        flash_message(:note, I18n.t('assignments.timed.starter_file_prompt'))
+        unless @assignment.starter_file_updated_at.nil?
+          flash_message(:note, I18n.t('assignments.timed.starter_file_prompt'))
+        end
+      elsif @assignment.is_timed && @grouping.start_time.nil? && @grouping.past_collection_date?
+        flash_message(:warning, I18n.t('assignments.timed.past_end_time'))
       end
       set_repo_vars(@assignment, @grouping)
     end
