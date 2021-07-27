@@ -1,5 +1,4 @@
 import React from 'react';
-import { render } from 'react-dom';
 
 import { Bar } from 'react-chartjs-2';
 
@@ -20,8 +19,7 @@ export class CourseSummaryChart extends React.Component {
           }
         ],
         options: {}
-      }
-      ,
+      },
       marking_scheme_ids: [],
     }
   }
@@ -41,7 +39,7 @@ export class CourseSummaryChart extends React.Component {
           plugins: {
             tooltip: {
               callbacks: {
-                title: function (tooltipItems) {g
+                title: function (tooltipItems) {
                   let baseNum = tooltipItems[0].dataIndex;
                   return (baseNum * 5) + '-' + (baseNum * 5 + 5)
                 }
@@ -59,9 +57,11 @@ export class CourseSummaryChart extends React.Component {
           options: options
         }
 
-        this.setState({summary: res['summary']})
-        this.setState({marking_scheme_ids: res["marking_schemes_id"]})
-        this.setState({summary_chart_data: data})
+        this.setState({
+          summary: res['summary'],
+          marking_scheme_ids: res["marking_schemes_id"],
+          summary_chart_data: data
+        })
       })
   };
 

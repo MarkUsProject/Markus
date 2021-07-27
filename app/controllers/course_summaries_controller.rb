@@ -51,17 +51,16 @@ class CourseSummariesController < ApplicationController
     table_data = marking_schemes.order(id: :asc).map { |m| m.students_weighted_grade_distribution_array_react(current_user) }
     grades = marking_schemes.order(id: :asc).map { |m| m.students_weighted_grades_array(current_user) }
     marking_schemes_id = marking_schemes.order(id: :asc).map { |m| m.id }
-    average, median = [], [], []
-    temp_labels = Array.new(21)
-    labels = temp_labels.each_with_index.map { |_, i| i * 5 }
 
+    labels = Array.new(21).each_with_index.map { |_, i| i * 5 }
+
+    average, median = [], [], []
     unless table_data.empty?
       grades.each do |grade|
         average << ActiveSupport::NumberHelper.number_to_percentage(DescriptiveStatistics.mean(grade) || 0, precision: 1)
         median << ActiveSupport::NumberHelper.number_to_percentage(DescriptiveStatistics.median(grade) || 0, precision: 1)
       end
     end
-
     summary = {
       average: average,
       median: median
