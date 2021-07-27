@@ -1095,7 +1095,7 @@ describe AssignmentsController do
                      num_fails: assignment_with_results_and_tas.results_fails,
                      num_zeros: assignment_with_results_and_tas.results_zeros,
                      groupings_size: assignment_with_results_and_tas.groupings.size }
-        expect(summary).to eq(expected.transform_keys(&:to_s))
+        expect(summary).to eq(expected.as_json)
       end
     end
     context 'assignment_data' do
