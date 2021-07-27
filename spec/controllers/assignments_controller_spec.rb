@@ -71,22 +71,22 @@ describe AssignmentsController do
         end
         context 'when the group_max is > 1' do
           let(:assignment) { create :timed_assignment, assignment_properties_attributes: { group_max: 2 } }
-          it 'should respond with 400' do
-            expect(response).to have_http_status 400
+          it 'should respond with 403' do
+            expect(response).to have_http_status 403
           end
         end
       end
     end
     context 'as an admin' do
       let(:user) { create :admin }
-      it 'should respond with 400' do
+      it 'should respond with 403' do
         put_as user, :start_timed_assignment, params: { id: assignment.id }
         expect(response).to have_http_status 403
       end
     end
     context 'as an grader' do
       let(:user) { create :ta }
-      it 'should respond with 400' do
+      it 'should respond with 403' do
         put_as user, :start_timed_assignment, params: { id: assignment.id }
         expect(response).to have_http_status 403
       end

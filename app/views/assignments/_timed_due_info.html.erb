@@ -1,13 +1,4 @@
 <% due_date = @assignment.section_due_date(@current_user&.section) %>
-<h3><%= I18n.t('activerecord.models.timed_assignment.one') %></h3>
-<p>
-  <strong><%= I18n.t('assignments.timed.start_time_instructions') %></strong>
-  <%= I18n.l @assignment.section_start_time(@current_user&.section) %>
-<p>
-  <strong><%= I18n.t('assignments.timed.end_time_instructions') %></strong>
-  <%= I18n.l due_date %>
-</p>
-<%= render partial: 'timed_due_message', locals: { assignment: @assignment, grouping: @grouping } %>
 <p>
   <% duration = @assignment.duration + (@grouping&.extension&.time_delta || 0)
      parts = AssignmentProperties.duration_parts(duration)
@@ -23,3 +14,12 @@
     <%= I18n.t('assignments.timed.duration_extension_info', extension_string: extension_string) %>
   <% end %>
 </p>
+<p>
+  <strong><%= I18n.t('assignments.timed.start_time_instructions') %></strong>
+  <%= I18n.l @assignment.section_start_time(@current_user&.section) %>
+<p>
+  <strong><%= I18n.t('assignments.timed.end_time_instructions') %></strong>
+  <%= I18n.l due_date %>
+</p>
+<h3><%= I18n.t('assignments.timed.details_heading') %></h3>
+<%= render partial: 'timed_due_message', locals: { assignment: @assignment, grouping: @grouping } %>

@@ -38,6 +38,7 @@ es:
 
       ¿Está seguro/a de querer proceder?
     no_files_available: No existen archivos disponibles
+    past_collection_time: Cualquier cambio realizado será guardado pero no calificado.
     release_marks: Publicar Notas
     repo_browser:
       client_time: 'commit:'
