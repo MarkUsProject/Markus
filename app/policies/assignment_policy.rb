@@ -10,7 +10,7 @@ class AssignmentPolicy < ApplicationPolicy
     true
   end
 
-  def switch_assignment?
+  def switch?
     true
   end
 

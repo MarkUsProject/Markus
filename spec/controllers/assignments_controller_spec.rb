@@ -1056,4 +1056,104 @@ describe AssignmentsController do
       end
     end
   end
+  describe '#switch' do
+    let(:assignment) { create :assignment }
+    let(:assignment2) { create :assignment }
+    let(:grouping) { create :grouping, assignment: assignment }
+    let(:submission) { create :submission, grouping: grouping }
+    let(:result) { create :incomplete_result, submission: submission }
+
+    shared_examples 'switch assignment tests' do
+      before { controller.request.headers.merge('HTTP_REFERER': referer) }
+      subject { expect get_as user, 'switch', params: { id: assignment2.id } }
+      context 'referred from an assignment url' do
+        let(:referer) { assignment_url(id: assignment.id) }
+        it 'should redirect to the equivalent assignment page' do
+          expect(subject).to redirect_to(assignment_url(id: assignment2.id))
+        end
+      end
+      context 'referred from a non assignment url' do
+        let(:referer) { non_assignment_url.call(assignment_id: assignment.id) }
+        it 'should redirect to the equivalent non assignment page' do
+          expect(subject).to redirect_to(non_assignment_url.call(assignment_id: assignment2.id))
+        end
+      end
+      context 'referred from a submission member url' do
+        let(:referer) { submission_member_url.call(assignment_id: assignment.id, id: submission.id) }
+        it 'should redirect to the fallback url' do
+          expect(subject).to redirect_to(fallback_url.call(id: assignment2.id))
+        end
+      end
+      context 'referred from a submission collection url' do
+        let(:referer) { submission_collection_url.call(assignment_id: assignment.id) }
+        it 'should redirect to the equivalent non assignment page (or to the fallback page if a student)' do
+          if user.student?
+            expect(subject).to redirect_to(fallback_url.call(id: assignment2.id))
+          else
+            expect(subject).to redirect_to(submission_collection_url.call(assignment_id: assignment2.id))
+          end
+        end
+      end
+      context 'referred from a result member url' do
+        let(:referer) do
+          result_member_url.call(assignment_id: assignment.id, submission_id: submission.id, id: result.id)
+        end
+        it 'should redirect to the fallback url' do
+          expect(subject).to redirect_to(fallback_url.call(id: assignment2.id))
+        end
+      end
+      context 'referer is nil' do
+        let(:referer) { nil }
+        it 'should redirect to the fallback url' do
+          expect(subject).to redirect_to(fallback_url.call(id: assignment2.id))
+        end
+      end
+      context 'referer is a url that does not include the assignment at all' do
+        let(:referer) { users_url }
+        it 'should redirect to the fallback url' do
+          expect(subject).to redirect_to(fallback_url.call(id: assignment2.id))
+        end
+      end
+      context 'the referer url is some other site entirely' do
+        let(:referer) { 'https://test.com' }
+        it 'should redirect to the fallback url' do
+          expect(subject).to redirect_to(fallback_url.call(id: assignment2.id))
+        end
+      end
+      context 'the referer url is not valid' do
+        let(:referer) { '1234567' }
+        it 'should redirect to the fallback url' do
+          expect(subject).to redirect_to(fallback_url.call(id: assignment2.id))
+        end
+      end
+    end
+
+    context 'an admin' do
+      let(:user) { create :admin }
+      let(:non_assignment_url) { ->(params) { assignment_graders_url(params) } }
+      let(:fallback_url) { ->(params) { edit_assignment_url(params) } }
+      let(:submission_collection_url) { ->(params) { browse_assignment_submissions_url(params) } }
+      let(:result_member_url) { ->(params) { assignment_submission_result_url(params) } }
+      let(:submission_member_url) { ->(params) { get_file_assignment_submission_url(params) } }
+      include_examples 'switch assignment tests'
+    end
+    context 'a grader' do
+      let(:user) { create :ta, manage_assessments: true }
+      let(:non_assignment_url) { ->(params) { assignment_graders_url(params) } }
+      let(:fallback_url) { ->(params) { summary_assignment_url(params) } }
+      let(:submission_collection_url) { ->(params) { browse_assignment_submissions_url(params) } }
+      let(:result_member_url) { ->(params) { assignment_submission_result_url(params) } }
+      let(:submission_member_url) { ->(params) { get_file_assignment_submission_url(params) } }
+      include_examples 'switch assignment tests'
+    end
+    context 'a student' do
+      let(:user) { create :student }
+      let(:non_assignment_url) { ->(params) { assignment_submissions_url(params) } }
+      let(:fallback_url) { ->(params) { assignment_url(params) } }
+      let(:submission_collection_url) { ->(params) { file_manager_assignment_submissions_url(params) } }
+      let(:result_member_url) { ->(params) { assignment_submission_result_url(params) } }
+      let(:submission_member_url) { ->(params) { get_file_assignment_submission_url(params) } }
+      include_examples 'switch assignment tests'
+    end
+  end
 end

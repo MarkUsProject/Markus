@@ -8,6 +8,7 @@
 - Remove activerecord-import dependency (#5248)
 - Combine all python dependencies (#5358)
 - Rename "Tags/Notes" tab on grading page to "Submission Info", and move membership information to the tab (#5380)
+- Respect referrer url when navigating between assignments (#5409)
 - Remove delete link from TA table (#5407)
 
 ## [v1.12.5]
