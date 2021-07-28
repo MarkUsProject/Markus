@@ -8,8 +8,8 @@ export class GradeEntryCharts extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      distribution_data: {},
-      column_data: {},
+      distribution_data: { labels: [], datasets: [], options: {} } ,
+      column_data: { labels: [], datasets: [], options: {} },
       info_data: {},
       options: {},
     };
@@ -23,8 +23,8 @@ export class GradeEntryCharts extends React.Component {
     fetch(Routes.chart_data_grade_entry_form_path(this.props.assessment_id))
       .then(data => data.json())
       .then(res => {
-      for (const [index, element] of res["column_breakdown_data"]["datasets"].entries()){
-        element["backgroundColor"] = colours[index]
+      for (const [index, element] of res['column_breakdown_data']['datasets'].entries()){
+        element['backgroundColor'] = colours[index]
       }
       this.setState({distribution_data: res['grade_dist_data'], column_data: res['column_breakdown_data'], info_data: res['info_summary']});
     });
@@ -35,8 +35,6 @@ export class GradeEntryCharts extends React.Component {
       this.fetchData();
     }
   }
-
-
 
   render() {
     return (

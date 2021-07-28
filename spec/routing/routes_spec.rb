@@ -992,10 +992,10 @@ context 'grade_entry_forms' do
   # end grade_entry_forms collection route tests
 
   context 'member' do
-    it 'routes GET column_breakdown properly' do
-      expect(get: path + '/' + grade_entry_form.id.to_s + '/column_breakdown').to route_to(
+    it 'routes GET chart data properly' do
+      expect(get: path + '/' + grade_entry_form.id.to_s + '/chart_data').to route_to(
         controller: ctrl,
-        action: 'column_breakdown',
+        action: 'chart_data',
         id: grade_entry_form.id.to_s
       )
     end
