@@ -2,8 +2,10 @@ import React from 'react';
 import { render } from 'react-dom';
 
 import { Bar } from 'react-chartjs-2';
+
 import { AssignmentChart } from './assignment_chart'
 import { GradeEntryCharts } from './grade_entry_form_chart'
+import { CourseSummaryChart} from "./course_summary_chart";
 
 class Dashboard extends React.Component {
   constructor(props) {
@@ -39,36 +41,29 @@ class Dashboard extends React.Component {
   componentDidUpdate(prevProps, prevState) {
     if (prevState.assessment_id !== this.state.assessment_id ||
         prevState.display_course_summary !== this.state.display_course_summary) {
-      if (this.state.display_course_summary) {
+      if (this.state.assessment_type === 'GradeEntryForm') {
+        // Note: these are two separate AJAX requests. Need to merge when you create the new component.
+        $.get({url: Routes.grade_distribution_data_grade_entry_form_path(this.state.assessment_id)}).then(res => {
+          let new_data = {labels: res['labels'], datasets: [{data: res['grade_distribution']}]};
+          this.setState({data: new_data});
+        });
+        // Commented this one out for now.
+        // this.getGradeEntryFormColumnBreakdown();
+      } else if (this.state.assessment_type === 'Assignment') {
         $.ajax({
-          url: Routes.grade_distribution_course_summaries_path(),
-          type: 'GET',
-          dataType: 'json'
-        }).then(res => {
-          this.setState({
-            data: res,
-            options: {
-              plugins: {
-                tooltip: {
-                  callbacks: {
-                    title: function (tooltipItems) {
-                      baseNum = tooltipItems[0].dataIndex;
-                      return (baseNum) + '-' + ((baseNum + 1));
-                    }
-                  }
-                },
-              }
-            },
-          })
-        })
-      } else if (this.state.assessment_type === 'GradeEntryForm') {
+          url: Routes.grade_distribution_graph_data_assignment_path(this.state.assessment_id),
+          dataType: 'json',
+        }).then(res => this.setState({data: res}))
+        this.getAssignmentTaGraderBreakdown();
       }
     }
   }
 
   render() {
     if (this.state.display_course_summary) {
-      return <Bar data={this.state.data} />;
+      return (
+        <CourseSummaryChart />
+      )
     } else if (this.state.assessment_type === 'Assignment') {
       return <AssignmentChart assessment_id={this.state.assessment_id}/>;
     } else if (this.state.assessment_type === 'GradeEntryForm') {

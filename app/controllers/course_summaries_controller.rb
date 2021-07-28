@@ -48,12 +48,34 @@ class CourseSummariesController < ApplicationController
 
   def grade_distribution
     marking_schemes = current_user.student? ? MarkingScheme.none : MarkingScheme
-    table_data = marking_schemes.order(id: :asc).map { |m| m.students_weighted_grade_distribution_array(current_user) }
+    table_data = marking_schemes.order(id: :asc).map { |m| m.students_grade_distribution(current_user) }
+    grades = marking_schemes.order(id: :asc).map { |m| m.students_weighted_grades_array(current_user) }
     marking_schemes_id = marking_schemes.order(id: :asc).map { |m| m.id }
-    labels = (0..20).to_a
-    table_data[0][:backgroundColor] = 'rgb(231, 163, 183)'
-    table_data[0][:label] = "Weighted Total Grades #{marking_schemes_id[0]}"
-    render json: { datasets: table_data, labels: labels }
+
+    labels = (0..100).step(5).to_a
+
+    average, median = [], [], []
+    unless table_data.empty?
+      grades.each do |grade|
+        average << ActiveSupport::NumberHelper.number_to_percentage(
+          DescriptiveStatistics.mean(grade) || 0, precision: 1
+        )
+        median << ActiveSupport::NumberHelper.number_to_percentage(
+          DescriptiveStatistics.median(grade) || 0, precision: 1
+        )
+      end
+    end
+    summary = {
+      average: average,
+      median: median
+    }
+
+    render json: {
+      datasets: table_data,
+      labels: labels,
+      marking_schemes_id: marking_schemes_id,
+      summary: summary
+    }
   end
 
   def view_summary

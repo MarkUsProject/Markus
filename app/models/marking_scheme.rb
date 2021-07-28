@@ -26,4 +26,17 @@ class MarkingScheme < ApplicationRecord
 
     { 'data': distribution, 'max': max }
   end
+
+  def students_grade_distribution(current_user, intervals = 100)
+    data = students_weighted_grades_array(current_user)
+    max = [data.max, intervals].max
+
+    data.extend(Histogram)
+    histogram = data.histogram(intervals, min: 0, max: max, bin_boundary: :min, bin_width: max / 20)
+    distribution = histogram.fetch(1)
+    distribution[0] = distribution.first + data.count { |x| x < 0 }
+    distribution[-1] = distribution.last + data.count { |x| x > max }
+
+    { 'data': distribution }
+  end
 end
