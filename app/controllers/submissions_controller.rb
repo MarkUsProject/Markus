@@ -471,6 +471,27 @@ class SubmissionsController < ApplicationController
     end
   end
 
+  # Download a csv file containing current submission data for all groupings visible
+  # to the current user.
+  def download_summary
+    assignment = Assignment.find(params[:assignment_id])
+    data = assignment.current_submission_data(current_user)
+    header = data.first&.keys&.reject { |h| h.start_with?('_') || h.end_with?('_id') }
+
+    if header.nil?
+      send_data_download '', filename: "#{assignment.short_identifier}_submissions.csv"
+      return
+    end
+
+    csv_data = MarkusCsv.generate(data, [header]) do |data_hash|
+      header.map do |h|
+        value = data_hash[h]
+        value.is_a?(Array) ? value.join(', ') : value
+      end
+    end
+    send_data_download csv_data, filename: "#{assignment.short_identifier}_submissions.csv"
+  end
+
   def notebook_content
     if params[:select_file_id]
       file = SubmissionFile.find(params[:select_file_id])
