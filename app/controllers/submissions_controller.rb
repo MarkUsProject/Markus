@@ -617,9 +617,6 @@ class SubmissionsController < ApplicationController
       end
 
       head :ok
-    rescue => e
-      flash_now(:error, e.message)
-      head 400
     end
   end
 
@@ -649,17 +646,15 @@ class SubmissionsController < ApplicationController
       return
     end
     results = Result.where(id: Grouping.joins(:current_result).where(id: params[:groupings]).select('results.id'))
-    Result.transaction do
-      results.each do |result|
-        result.marking_state = params[:marking_state]
-        unless result.save
-          raise result.errors.full_messages.first
-        end
+    errors = Hash.new { |h, k| h[k] = [] }
+    results.each do |result|
+      unless result.update(marking_state: params[:marking_state])
+        errors[result.errors.full_messages.first] << result.submission.grouping.group.group_name
       end
     end
-    head :ok
-  rescue StandardError => e
-    flash_now(:error, e.message)
+    errors.each do |message, groups|
+      flash_now(:error, "#{message}: #{groups.join(', ')}" )
+    end
     head :ok
   end
 

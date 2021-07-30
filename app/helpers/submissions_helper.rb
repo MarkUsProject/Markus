@@ -17,27 +17,29 @@ module SubmissionsHelper
 
   # Release or unrelease the submissions of a set of groupings.
   def set_release_on_results(groupings, release)
-    result = Result.transaction do
-      without_submissions = groupings.where.not(id: groupings.joins(:current_submission_used))
+    without_submissions = groupings.where.not(id: groupings.joins(:current_submission_used))
 
-      if without_submissions.present?
-        group_names = without_submissions.joins(:group).pluck(:group_name).join(', ')
-        raise I18n.t('submissions.errors.no_submission', group_name: group_names)
-      end
-
-      without_complete_result = groupings.joins(:current_result)
-                                         .where.not('results.marking_state': Result::MARKING_STATES[:complete])
-
-      if without_complete_result.present?
-        group_names = without_complete_result.joins(:group).pluck(:group_name).join(', ')
-        raise t('submissions.errors.not_complete', group_name: group_names) if release
-
-        raise t('submissions.errors.not_complete_unrelease', group_name: group_names)
-      end
-
-      Result.where(id: groupings.joins(:current_result).pluck('results.id'))
-            .update_all(released_to_students: release)
+    if without_submissions.present?
+      group_names = without_submissions.joins(:group).pluck(:group_name).join(', ')
+      flash_now(:error, I18n.t('submissions.errors.no_submission', group_name: group_names))
+      groupings = groupings.where.not(id: without_submissions.ids)
     end
+
+    without_complete_result = groupings.joins(:current_result)
+                                       .where.not('results.marking_state': Result::MARKING_STATES[:complete])
+
+    if without_complete_result.present?
+      group_names = without_complete_result.joins(:group).pluck(:group_name).join(', ')
+      if release
+        flash_now(:error, t('submissions.errors.not_complete', group_name: group_names))
+      else
+        flash_now(:error, t('submissions.errors.not_complete_unrelease', group_name: group_names))
+      end
+      groupings = groupings.where.not(id: without_complete_result.ids)
+    end
+
+    result = Result.where(id: groupings.joins(:current_result).pluck('results.id'))
+                   .update_all(released_to_students: release)
 
     if release
       groupings.includes(:accepted_students).each do |grouping|
