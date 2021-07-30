@@ -144,7 +144,7 @@ describe Api::AssignmentsController do
       end
       context 'requesting a non-existant assignment' do
         it 'should respond with 404' do
-          get :show, params: { id: 9999 }
+          get :show, params: { id: -1 }
           expect(response.status).to eq(404)
         end
       end
@@ -254,7 +254,7 @@ describe Api::AssignmentsController do
       end
       it 'should not update an assignment that does not exist' do
         new_desc = assignment.description + 'more!'
-        put :update, params: { id: 1, description: new_desc }
+        put :update, params: { id: -1, description: new_desc }
         expect(response.status).to eq(404)
       end
     end
@@ -300,7 +300,7 @@ describe Api::AssignmentsController do
         it('should be successful') { expect(response.status).to eq 200 }
       end
       it 'should fail if the assignment does not exist' do
-        get :test_specs, params: { id: 1 }
+        get :test_specs, params: { id: -1 }
         expect(response.status).to eq 404
       end
     end
@@ -342,7 +342,7 @@ describe Api::AssignmentsController do
         it('should not be successful') { expect(response.status).to eq 422 }
       end
       it 'should fail if the assignment does not exist' do
-        post :update_test_specs, params: { id: 1, specs: '123' }
+        post :update_test_specs, params: { id: -1, specs: '123' }
         expect(response.status).to eq 404
       end
     end
