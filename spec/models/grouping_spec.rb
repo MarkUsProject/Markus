@@ -1425,19 +1425,6 @@ describe Grouping do
       expect(grouping.reload.starter_file_entries.pluck(:path)).to contain_exactly('q2.txt', 'q1')
     end
   end
-  describe '#changed_starter_file_at?' do
-    let(:grouping) { create :grouping }
-    it 'should return false if no changes have been made' do
-      revision = grouping.group.access_repo(&:get_latest_revision)
-      expect(grouping.changed_starter_file_at?(revision)).to be false
-    end
-    it 'should return true if changes have been made' do
-      submit_time = 10.seconds.from_now
-      submit_file_at_time(grouping.assignment, grouping.group, 'test', submit_time.to_s, 'my_file', 'Hello, World!')
-      revision = grouping.group.access_repo(&:get_latest_revision)
-      expect(grouping.changed_starter_file_at?(revision)).to be true
-    end
-  end
   describe '#access_repo' do
     let(:grouping) { create :grouping }
     it 'should make sure the assignment folder exists' do
