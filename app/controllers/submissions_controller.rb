@@ -653,7 +653,7 @@ class SubmissionsController < ApplicationController
       end
     end
     errors.each do |message, groups|
-      flash_now(:error, "#{message}: #{groups.join(', ')}" )
+      flash_now(:error, "#{message}: #{groups.join(', ')}")
     end
     head :ok
   end

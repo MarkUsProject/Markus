@@ -11,6 +11,7 @@
 - Respect referrer url when navigating between assignments (#5409)
 - Remove delete link from TA table (#5407)
 - Improve student UI for timed assessments (#5417) 
+- When completing bulk actions, report errors instead of halting the whole process and rolling back (#5422)
 
 ## [v1.12.5]
 - Fix bugs in grading view when switching between submissions (#5400)
