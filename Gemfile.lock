@@ -227,7 +227,7 @@ GEM
     prawn-qrcode (0.5.2)
       prawn (>= 1)
       rqrcode (>= 1.0.0)
-    puma (5.3.2)
+    puma (5.4.0)
       nio4r (~> 2.0)
     raabro (1.4.0)
     racc (1.5.2)
