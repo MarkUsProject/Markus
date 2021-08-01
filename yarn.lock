@@ -6202,10 +6202,10 @@ react-is@^16.8.1:
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.8.6.tgz#5bbc1e2d29141c9fbdfed456343fe2bc430a6a16"
   integrity sha512-aUk3bHfZ2bRSVFFbbeVS4i+lNPZr3/WM5jT2J5omUVV1zzcs1nAaf3l51ctA5FFvCRbhrH0bdAsRRQddFJZPtA==
 
-react-keyed-file-browser@^1.11.0:
-  version "1.11.0"
-  resolved "https://registry.yarnpkg.com/react-keyed-file-browser/-/react-keyed-file-browser-1.11.0.tgz#1dfd2305701dabc450659e03fbbd038323f8cefd"
-  integrity sha512-Am83ZXMnUkkBd1o4s/+dcDFQ7Ql0alfx5u3IBPMtBDlyZ+QXLdKVyXMieJrmWhBcgZaLzqUpY3/1RFApCRduRQ==
+react-keyed-file-browser@^1.13.1:
+  version "1.13.1"
+  resolved "https://registry.yarnpkg.com/react-keyed-file-browser/-/react-keyed-file-browser-1.13.1.tgz#1f81bf167c5158ffcf81dc207d7899fcffe8f820"
+  integrity sha512-i3srclCxuhRk1+BsbItdibZx0/JpPcxtylySoIMY0migDuzfwnZ8WLhqkru9XqxeK1Mex9IxJTcF5RWdeUjihg==
   dependencies:
     classnames "^2.2.6"
     date-fns "^2.22.1"
