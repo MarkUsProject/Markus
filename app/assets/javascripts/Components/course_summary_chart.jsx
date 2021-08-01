@@ -48,6 +48,20 @@ export class CourseSummaryChart extends React.Component {
             legend: {
               display: true
             }
+          },
+          scales: {
+            yAxes: [{
+              scaleLabel: {
+                display: true,
+                labelString: I18n.t("main.weighted_total_grades")
+              }
+            }],
+            xAxes: [{
+              scaleLabel: {
+                display: true,
+                labelString: 'Percentage'
+              }
+            }],
           }
         };
 

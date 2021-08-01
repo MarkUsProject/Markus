@@ -54,7 +54,7 @@ class CourseSummariesController < ApplicationController
 
     labels = (0..100).step(5).to_a
 
-    average, median = [], [], []
+    average, median = [], []
     unless table_data.empty?
       grades.each do |grade|
         average << ActiveSupport::NumberHelper.number_to_percentage(
