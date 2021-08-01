@@ -238,7 +238,7 @@ GEM
       rack
     rack-test (1.1.0)
       rack (>= 1.0, < 3)
-    railroady (1.5.3)
+    railroady (1.6.0)
     rails (6.1.3.2)
       actioncable (= 6.1.3.2)
       actionmailbox (= 6.1.3.2)
