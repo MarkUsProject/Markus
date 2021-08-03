@@ -1,5 +1,4 @@
 import React from 'react';
-import { render } from 'react-dom';
 
 import { Bar } from 'react-chartjs-2';
 
