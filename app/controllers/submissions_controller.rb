@@ -481,7 +481,7 @@ class SubmissionsController < ApplicationController
     # Ensure that changes to what is displayed in that table are reflected here as well.
     header = {
       group_name: t('activerecord.models.group.one'),
-      section: t('activerecord.models.section', {count: 1}),
+      section: t('activerecord.models.section', count: 1),
       start_time: t('activerecord.attributes.assignment.start_time'),
       submission_time: t('submissions.commit_date'),
       grace_credits_used: t('submissions.grace_credits_used'),
