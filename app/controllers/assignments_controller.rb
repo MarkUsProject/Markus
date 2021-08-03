@@ -14,7 +14,13 @@ class AssignmentsController < ApplicationController
   def show
     assignment = Assignment.find(params[:id])
     @assignment = assignment.is_peer_review? ? assignment.parent_assignment : assignment
-    if @assignment.is_hidden
+    @section_hidden = SectionHidden.where(assessment: params[:id], section: current_user.section)
+    if @section_hidden.exists?
+      @section_hidden = SectionHidden.where(assessment: params[:id], section: current_user.section).first.is_hidden
+    else
+      @section_hidden = false
+    end
+    if @assignment.is_hidden || !@section_hidden
       render 'shared/http_status',
              formats: [:html],
              locals: {
@@ -57,7 +63,7 @@ class AssignmentsController < ApplicationController
   def peer_review
     assignment = Assignment.find(params[:id])
     @assignment = assignment.is_peer_review? ? assignment : assignment.pr_assignment
-    if @assignment.nil? || @assignment.is_hidden
+    if @assignment.nil? || @assignment.is_hidden || !@section_hidden
       render 'shared/http_status',
              formats: [:html],
              locals: {
@@ -117,7 +123,7 @@ class AssignmentsController < ApplicationController
       @a_id_results = {}
       accepted_groupings = current_user.accepted_groupings.includes(:assignment, { current_submission_used: :results })
       accepted_groupings.each do |grouping|
-        if !grouping.assignment.is_hidden && grouping.has_submission?
+        if !grouping.assignment.is_hidden && grouping.has_submission? && !@section_hidden
           submission = grouping.current_submission_used
           if submission.has_remark? && submission.remark_result.released_to_students
             @a_id_results[grouping.assignment.id] = submission.remark_result
@@ -129,7 +135,7 @@ class AssignmentsController < ApplicationController
 
       @g_id_entries = {}
       current_user.grade_entry_students.where(released_to_student: true).includes(:grade_entry_form).each do |g|
-        unless g.grade_entry_form.is_hidden
+        unless g.grade_entry_form.is_hidden || !@section_hidden
           @g_id_entries[g.assessment_id] = g
         end
       end

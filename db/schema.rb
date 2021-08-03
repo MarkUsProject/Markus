@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_06_17_201409) do
+ActiveRecord::Schema.define(version: 2021_07_30_195509) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -408,6 +408,16 @@ ActiveRecord::Schema.define(version: 2021_06_17_201409) do
     t.datetime "start_time"
   end
 
+  create_table "section_hiddens", force: :cascade do |t|
+    t.boolean "is_hidden"
+    t.bigint "section_id", null: false
+    t.bigint "assessment_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["assessment_id"], name: "index_section_hiddens_on_assessment_id"
+    t.index ["section_id"], name: "index_section_hiddens_on_section_id"
+  end
+
   create_table "section_starter_file_groups", force: :cascade do |t|
     t.bigint "section_id", null: false
     t.bigint "starter_file_group_id", null: false
@@ -638,6 +648,8 @@ ActiveRecord::Schema.define(version: 2021_06_17_201409) do
   add_foreign_key "peer_reviews", "results"
   add_foreign_key "results", "peer_reviews", on_delete: :cascade
   add_foreign_key "results", "submissions", name: "fk_results_submissions", on_delete: :cascade
+  add_foreign_key "section_hiddens", "assessments"
+  add_foreign_key "section_hiddens", "sections"
   add_foreign_key "section_starter_file_groups", "sections"
   add_foreign_key "section_starter_file_groups", "starter_file_groups"
   add_foreign_key "split_pages", "groups"
