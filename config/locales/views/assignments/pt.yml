@@ -1,6 +1,7 @@
 ---
 pt:
   assignments:
+    ta_grader_breakdown: UPDATE ME
     average_annotations: "%{average_annotations} anotaciones por presentación marcada"
     deadline_with_extension: UPDATE ME
     due_date:

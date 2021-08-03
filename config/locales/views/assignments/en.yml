@@ -1,6 +1,7 @@
 ---
 en:
   assignments:
+    ta_grader_breakdown: Ta Grader Breakdown
     average_annotations: "%{average_annotations} annotations per marked submission"
     deadline_with_extension: You have an extension until %{extension_deadline}.
     due_date:

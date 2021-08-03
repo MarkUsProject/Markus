@@ -1,6 +1,7 @@
 ---
 fr:
   assignments:
+    ta_grader_breakdown: UPDATE ME
     average_annotations: "%{average_annotations} annotations par soumission marquée"
     deadline_with_extension: Vous avez une extension jusqu'au %{extension_deadline}.
     due_date:
