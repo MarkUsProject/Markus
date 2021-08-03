@@ -1190,7 +1190,7 @@ describe SubmissionsController do
         if header.nil?
           header = line
         else
-          groups << header.zip(line).to_h['group_name']
+          groups << header.zip(line).to_h[I18n.t('activerecord.models.group.one')]
         end
       end
       groups
@@ -1219,9 +1219,9 @@ describe SubmissionsController do
         expect(response).to have_http_status(200)
       end
       context 'who has not been assigned any groupings' do
-        it 'should download an empty string' do
+        it 'should download an empty csv' do
           subject
-          expect(response.body).to eq ''
+          expect(returned_group_names).to be_empty
         end
       end
       context 'who has been assigned a single grouping' do
