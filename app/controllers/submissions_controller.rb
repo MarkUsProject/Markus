@@ -471,6 +471,40 @@ class SubmissionsController < ApplicationController
     end
   end
 
+  # Download a csv file containing current submission data for all groupings visible
+  # to the current user.
+  def download_summary
+    assignment = Assignment.find(params[:assignment_id])
+    data = assignment.current_submission_data(current_user)
+
+    # This hash matches what is displayed by the RawSubmissionTable react component.
+    # Ensure that changes to what is displayed in that table are reflected here as well.
+    header = {
+      group_name: t('activerecord.models.group.one'),
+      section: t('activerecord.models.section', count: 1),
+      start_time: t('activerecord.attributes.assignment.start_time'),
+      submission_time: t('submissions.commit_date'),
+      grace_credits_used: t('submissions.grace_credits_used'),
+      marking_state: t('activerecord.attributes.result.marking_state'),
+      final_grade: t('activerecord.attributes.result.total_mark'),
+      tags: t('activerecord.models.tag.other')
+    }
+    header.delete(:start_time) unless assignment.is_timed
+
+    if header.nil?
+      csv_data = ''
+    else
+      csv_data = MarkusCsv.generate(data, [header.values]) do |data_hash|
+        header.keys.map do |h|
+          value = data_hash[h]
+          value.is_a?(Array) ? value.join(', ') : value
+        end
+      end
+    end
+
+    send_data_download csv_data, filename: "#{assignment.short_identifier}_submissions.csv"
+  end
+
   def notebook_content
     if params[:select_file_id]
       file = SubmissionFile.find(params[:select_file_id])

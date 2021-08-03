@@ -211,6 +211,7 @@ Rails.application.routes.draw do
         post 'zip_groupings_files'
         get 'download_zipped_file'
         get 'notebook_content'
+        get 'download_summary'
       end
 
       member do
