@@ -344,7 +344,7 @@ GEM
     ruby-next-core (0.12.0)
     ruby-progressbar (1.11.0)
     ruby-rc4 (0.1.5)
-    rubyzip (2.3.0)
+    rubyzip (2.3.2)
     rufus-scheduler (3.7.0)
       fugit (~> 1.1, >= 1.1.6)
     rugged (1.1.1)
