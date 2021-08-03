@@ -1,5 +1,6 @@
 class AssignmentsController < ApplicationController
   include RepositoryHelper
+  include RoutingHelper
   responders :flash
   before_action { authorize! }
 
@@ -47,7 +48,11 @@ class AssignmentsController < ApplicationController
       flash_message(:warning, I18n.t('assignments.starter_file.changed_warning')) if @grouping.starter_file_changed
       if @assignment.is_timed && !@grouping.start_time.nil? && !@grouping.past_collection_date?
         flash_message(:note, I18n.t('assignments.timed.started_message_html'))
-        flash_message(:note, I18n.t('assignments.timed.starter_file_prompt'))
+        unless @assignment.starter_file_updated_at.nil?
+          flash_message(:note, I18n.t('assignments.timed.starter_file_prompt'))
+        end
+      elsif @assignment.is_timed && @grouping.start_time.nil? && @grouping.past_collection_date?
+        flash_message(:warning, I18n.t('assignments.timed.past_end_time'))
       end
       set_repo_vars(@assignment, @grouping)
     end
@@ -449,9 +454,17 @@ class AssignmentsController < ApplicationController
               disposition: 'inline')
   end
 
-  def switch_assignment
-    # TODO: Make this dependent on the referer URL.
-    if current_user.admin?
+  # Switch to the assignment with id +params[:id]+. Try to redirect to the same page
+  # as the referer url for the new assignment if possible. Otherwise redirect to a
+  # default action depending on the type of user:
+  #   - edit for admins
+  #   - summary for TAs
+  #   - show for students
+  def switch
+    options = referer_options
+    if switch_to_same(options)
+      redirect_to options
+    elsif current_user.admin?
       redirect_to edit_assignment_path(params[:id])
     elsif current_user.ta?
       redirect_to summary_assignment_path(params[:id])
@@ -688,5 +701,19 @@ class AssignmentsController < ApplicationController
   def flash_interpolation_options
     { resource_name: @assignment.short_identifier.blank? ? @assignment.model_name.human : @assignment.short_identifier,
       errors: @assignment.errors.full_messages.join('; ') }
+  end
+
+  def switch_to_same(options)
+    return false if options[:controller] == 'submissions' && options[:action] == 'file_manager'
+    return false if %w[submissions results].include?(options[:controller]) && !options[:id].nil?
+
+    if options[:controller] == 'assignments'
+      options[:id] = params[:id]
+    elsif options[:assignment_id]
+      options[:assignment_id] = params[:id]
+    else
+      return false
+    end
+    true
   end
 end

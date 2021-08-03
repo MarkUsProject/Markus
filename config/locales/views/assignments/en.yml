@@ -54,22 +54,22 @@ en:
       upload_confirmation: The starter files for this assignment have changed since you last downloaded them. Are you sure you want to continue?
       use_original_filename: Use original filename
     timed:
-      after_start_instructions_html: This assessment is due before <strong>%{due_date}</strong> without penalty.<br/><strong>(started %{start_time})</strong>.
-      before_start_instructions: Once this timed assessment has been started, you will have %{duration_string} to complete it without penalty.
-      before_start_instructions_extension: Once this timed assessment has been started, you will have %{duration_string} to complete it without penalty (this includes a duration extension of %{extension_string}).
-      before_start_time: This timed assessment is not available yet.
+      before_start_instructions: Once you start this timed assessment, you will have %{duration_string} to complete it without penalty.
+      before_start_instructions_extension: Once you start this timed assessment, you will have %{duration_string} to complete it without penalty (this includes a duration extension of %{extension_string}).
+      before_start_time: This timed assessment is not available to start yet.
+      details_heading: Start this assessment
       duration_extension_info: "(this includes a duration extension of %{extension_string})"
       end_time: Students may start this assessment before
       end_time_instructions: 'You must start this timed assessment before: '
       modal_current_duration: 'This will extend the current duration for this group. The current duration is: %{duration}.'
-      past_due_date: This timed assessment is now over.
-      past_end_time: This timed assessment is no longer available.
+      past_end_time: Unfortunately, you did not start this timed assessment within the allowed time window, and it is now over.
       start_button: Start
       start_confirmation: You are about to start a timed assessment. You cannot undo this action. Click OK to continue.
       start_end_time_instructions: You may start this timed assessment any time between %{start_time} and %{end_time}.
       start_time: Students may start this assessment after
       start_time_instructions: 'You may start this timed assessment after: '
       started_message_html: "<strong>You have started this assessment.</strong>"
+      started_on: 'You started on:'
       starter_file_prompt: Click below to download the starter files for this assessment.
       time_until_due_warning: This assessment is due before %{due_date} without penalty.
     upload_file_requirement: The list of uploaded files does not match the required files for this assignment.

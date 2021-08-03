@@ -37,6 +37,7 @@ pt:
 
       Tem certeza que deseja continuar?
     no_files_available: Nenhum arquivo disponível
+    past_collection_time: Quaisquer alterações serão gravadas, mas não classificados.
     release_marks: Mostrar notas
     repo_browser:
       client_time: 'commit:'

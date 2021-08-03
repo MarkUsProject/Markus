@@ -66,8 +66,6 @@ class Submission < ApplicationRecord
           # populate the submission with no files instead of raising an exception
           raise ActiveRecord::Rollback
         end
-        # if starter files exist, check if the student did not change the starter files
-        new_submission.is_empty = !grouping.changed_starter_file_at?(revision)
       end
       new_submission.save!
       new_submission

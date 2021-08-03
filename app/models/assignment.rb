@@ -528,8 +528,13 @@ class Assignment < Assessment
                .joins(:tags)
                .pluck_to_hash(:id, 'tags.name')
                .group_by { |h| h[:id] }
-    groupings_with_results = groupings.includes(current_result: :marks).includes(:submitted_remark, :extension)
-    result_ids = groupings_with_results.pluck('results.id').uniq.compact
+
+    collection_dates = all_grouping_collection_dates
+    all_results = current_results.where('groupings.id': groupings.ids).order(:id)
+    results_data = Hash[
+      all_results.pluck('groupings.id').zip(all_results.includes(:marks))
+    ]
+    result_ids = all_results.ids
     extra_marks_hash = Result.get_total_extra_marks(result_ids, max_mark: max_mark)
 
     hide_unassigned = user.ta? && hide_unassigned_criteria
@@ -553,9 +558,9 @@ class Assignment < Assessment
       }
     end.compact
 
-    final_data = groupings_with_results.map do |g|
-      result = g.current_result
-      has_remark = g.current_submission_used&.submitted_remark.present?
+    final_data = groupings.map do |g|
+      result = results_data[g.id]
+      has_remark = !result&.remark_request_submitted_at.nil?
       if user.ta? && anonymize_groups
         group_name = "#{Group.model_name.human} #{g.id}"
         section = ''
@@ -581,7 +586,7 @@ class Assignment < Assessment
         marking_state: marking_state(has_remark,
                                      result&.marking_state,
                                      result&.released_to_students,
-                                     g.collection_date),
+                                     collection_dates[g.id]),
         final_grade: [criteria.values.compact.sum + (extra_mark || 0), 0].max,
         criteria: criteria,
         max_mark: max_mark,

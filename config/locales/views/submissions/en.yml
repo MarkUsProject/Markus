@@ -39,6 +39,7 @@ en:
 
       Are you sure you want to proceed?
     no_files_available: No files available
+    past_collection_time: Any changes you make to your submitted files will be recorded, but not graded.
     release_marks: Release Marks
     repo_browser:
       client_time: 'commit:'

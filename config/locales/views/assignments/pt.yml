@@ -54,21 +54,21 @@ pt:
       upload_confirmation: UPDATE ME
       use_original_filename: UPDATE ME
     timed:
-      after_start_instructions_html: UPDATE ME %{start_time} %{due_date}
       before_start_instructions: UPDATE ME %{duration_string}
       before_start_instructions_extension: UPDATE ME %{duration_string} %{extension_string}
       before_start_time: UPDATE ME
+      details_heading: UPDATE ME
       duration_extension_info: UPDATE ME %{extension_string}
       end_time: UPDATE ME
       end_time_instructions: UPDATE ME
       modal_current_duration: UPDATE ME
-      past_due_date: UPDATE ME
       past_end_time: UPDATE ME
       start_button: UPDATE ME
       start_confirmation: UPDATE ME
       start_end_time_instructions: UPDATE ME
       start_time_instructions: UPDATE ME
       started_message_html: UPDATE ME
+      started_on: UPDATE ME
       starter_file_prompt: UPDATE ME
       time_until_due_warning: UPDATE ME %{due_date}
     upload_file_requirement: A lista de arquivos carregados não coincide com os arquivos de atribuição necessária
