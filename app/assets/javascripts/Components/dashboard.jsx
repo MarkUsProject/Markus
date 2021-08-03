@@ -1,8 +1,5 @@
 import React from 'react';
 import { render } from 'react-dom';
-
-import { Bar } from 'react-chartjs-2';
-
 import { AssignmentChart } from './assignment_chart'
 import { GradeEntryCharts } from './grade_entry_form_chart'
 import { CourseSummaryChart} from "./course_summary_chart";
