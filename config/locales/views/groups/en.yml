@@ -91,10 +91,6 @@ en:
     unassigned_students: Unassigned
     upload:
       errors:
-        duplicate_group_name: 'The following groups appear multiple times in the csv file: %{group_names}.'
-        duplicate_membership_name: 'The following students appear multiple times in the csv file: %{member_names}.'
-        inconsistent_membership: 'The following groups already exist with different members: %{group_names}.'
-        memberships_exist: 'The following students already belong to a different group for the current assignment: %{student_names}.'
         unknown_students: 'The following students could not be found: %{student_names}.'
     valid: Valid?
     validate_confirm: This will allow this group to submit without the required number of students. Are you sure?
