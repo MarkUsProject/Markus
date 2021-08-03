@@ -38,37 +38,13 @@ class Dashboard extends React.Component {
     };
   }
 
-  componentDidUpdate(prevProps, prevState) {
-    if (prevState.assessment_id !== this.state.assessment_id ||
-        prevState.display_course_summary !== this.state.display_course_summary) {
-      if (this.state.assessment_type === 'GradeEntryForm') {
-        // Note: these are two separate AJAX requests. Need to merge when you create the new component.
-        $.get({url: Routes.chart_data_grade_entry_form_path(this.state.assessment_id)}).then(res => {
-          let new_data = {labels: res['labels'], datasets: [{data: res['grade_distribution']}]};
-          this.setState({data: new_data});
-        });
-        // Commented this one out for now.
-        // this.getGradeEntryFormColumnBreakdown();
-      } else if (this.state.assessment_type === 'Assignment') {
-        $.ajax({
-          url: Routes.chart_data_assignment_path(this.state.assessment_id),
-          dataType: 'json',
-        }).then(res => this.setState({data: res}))
-      }
-    }
-  }
-
   render() {
     if (this.state.display_course_summary) {
-      return (
-        <CourseSummaryChart />
-      )
+      return <CourseSummaryChart />;
     } else if (this.state.assessment_type === 'Assignment') {
       return <AssignmentChart assessment_id={this.state.assessment_id}/>;
     } else if (this.state.assessment_type === 'GradeEntryForm') {
-      return (
-        <GradeEntryCharts assessment_id={this.state.assessment_id} />
-      );
+      return <GradeEntryCharts assessment_id={this.state.assessment_id} />;
     } else {
       return '';
     }
