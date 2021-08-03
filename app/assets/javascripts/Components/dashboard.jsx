@@ -43,7 +43,7 @@ class Dashboard extends React.Component {
         prevState.display_course_summary !== this.state.display_course_summary) {
       if (this.state.assessment_type === 'GradeEntryForm') {
         // Note: these are two separate AJAX requests. Need to merge when you create the new component.
-        $.get({url: Routes.grade_distribution_data_grade_entry_form_path(this.state.assessment_id)}).then(res => {
+        $.get({url: Routes.chart_data_grade_entry_form_path(this.state.assessment_id)}).then(res => {
           let new_data = {labels: res['labels'], datasets: [{data: res['grade_distribution']}]};
           this.setState({data: new_data});
         });
@@ -51,10 +51,9 @@ class Dashboard extends React.Component {
         // this.getGradeEntryFormColumnBreakdown();
       } else if (this.state.assessment_type === 'Assignment') {
         $.ajax({
-          url: Routes.grade_distribution_graph_data_assignment_path(this.state.assessment_id),
+          url: Routes.chart_data_assignment_path(this.state.assessment_id),
           dataType: 'json',
         }).then(res => this.setState({data: res}))
-        this.getAssignmentTaGraderBreakdown();
       }
     }
   }
