@@ -1,3 +1,11 @@
+<%= content_for :head do %>
+  <%= javascript_tag nonce: true do %>
+    document.addEventListener('DOMContentLoaded', () => {
+    makeNotesTable(document.getElementById('notes_table'));
+    })
+  <% end %>
+<% end %>
+
 <div class='title_bar'>
   <h1>
     <%= Note.model_name.human.pluralize %>
@@ -8,6 +16,9 @@
     </div>
   </h1>
 </div>
+
+<div id='notes_table'></div>
+
 
 <div class='wrapper'>
 
@@ -59,6 +70,7 @@
                             method: 'delete',
                             remote: true,
                             class: 'inline-button' %>
+
             <% else %>
               &nbsp;
             <% end %>

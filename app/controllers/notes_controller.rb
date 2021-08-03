@@ -46,6 +46,31 @@ class NotesController < ApplicationController
 		render 'index', formats: [:html]
   end
 
+  def all_notes
+    notes = Note.includes(:user, :noteable).order(created_at: :desc)
+    notes_data = notes.map do |note|
+      temp =  t('notes.note_on_html',
+                user_name: note.user.user_name,
+                display_for: note.noteable.display_for_note)
+      {
+        date: note.format_date,
+        user_name: note.user.user_name,
+        display_for: note.noteable.display_for_note,
+        message: note.notes_message,
+        id: note.id,
+        modifiable: allowed_to?(:modify?, note)
+      }
+
+    end
+
+    column_header = {
+      messages: Note.human_attribute_name(:notes_message),
+      human_name:  Note.model_name.human.pluralize,
+      actions: t(:actions)
+    }
+    render json: {notes_data: notes_data, column_headers: column_header}
+  end
+
   # gets the objects for groupings on first load.
   def new
     new_retrieve

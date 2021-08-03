@@ -118,3 +118,5 @@ import { makeDataChart } from 'javascripts/Components/Helpers/data_chart';
 window.makeDataChart = makeDataChart;
 import { makeStarterFileManager } from 'javascripts/Components/starter_file_manager';
 window.makeStarterFileManager = makeStarterFileManager;
+import { makeNotesTable } from "../../assets/javascripts/Components/notes_table";
+window.makeNotesTable = makeNotesTable;
