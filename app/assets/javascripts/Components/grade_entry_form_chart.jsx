@@ -41,9 +41,10 @@ export class GradeEntryCharts extends React.Component {
 
       <div>
         <h2> <a href={Routes.edit_grade_entry_form_path(this.props.assessment_id)}>{this.state.info_data['name']} </a>  </h2>
-
         <div className='flex-row'>
-          <Bar data={this.state.distribution_data}/>
+          <div>
+            <Bar data={this.state.distribution_data}/>
+          </div>
 
           <div className='flex-row-expand'>
             <p>

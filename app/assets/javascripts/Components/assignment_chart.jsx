@@ -86,7 +86,7 @@ export class AssignmentChart extends React.Component {
     return (
       <div>
         <div className='flex-row'>
-          <div id='assignment_<%= assignment.id %>_graph'>
+          <div>
             <Bar data={this.state.assignment_chart_data.data} />
           </div>
           <div className='flex-row-expand'>
