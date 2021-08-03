@@ -37,13 +37,6 @@ export class AssignmentChart extends React.Component {
     this.fetchData();
   }
 
-  componentDidUpdate(prevProps, prevState) {
-    if (prevProps.assessment_id !== this.props.assessment_id ||
-      prevState.display_course_summary !== this.state.display_course_summary) {
-      this.fetchData();
-    }
-  }
-
   fetchData = () => {
     fetch(Routes.chart_data_assignment_path(this.props.assessment_id))
       .then(data => data.json())
@@ -80,6 +73,13 @@ export class AssignmentChart extends React.Component {
         })
       })
   };
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevProps.assessment_id !== this.props.assessment_id ||
+      prevState.display_course_summary !== this.state.display_course_summary) {
+      this.fetchData();
+    }
+  }
 
   render() {
     return (
