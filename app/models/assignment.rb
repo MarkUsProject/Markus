@@ -1144,7 +1144,7 @@ class Assignment < Assessment
     zip_path = File.join('tmp', zip_name + '.zip')
     FileUtils.rm_rf zip_path
     files_dir = Pathname.new self.autotest_files_dir
-    Zip::File.open(zip_path, Zip::File::CREATE) do |zip_file|
+    Zip::File.open(zip_path, create: true) do |zip_file|
       self.autotest_files.map do |file|
         path = File.join zip_name, file
         abs_path = files_dir.join(file)
