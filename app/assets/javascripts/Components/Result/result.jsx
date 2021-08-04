@@ -314,6 +314,7 @@ class Result extends React.Component {
             annotationModal: INITIAL_ANNOTATION_MODAL_STATE
           })
           this.refreshAnnotations();
+          this.refreshAnnotationCategories();
         }
       );
     };
@@ -333,7 +334,7 @@ class Result extends React.Component {
         isNew: false,
         changeOneOption: annotation.annotation_category_id && !annotation.deduction,
         onSubmit,
-        title: I18n.t("helpers.submit.create", {
+        title: I18n.t("helpers.submit.update", {
           model: I18n.t("activerecord.models.annotation.one"),
         }),
       },
