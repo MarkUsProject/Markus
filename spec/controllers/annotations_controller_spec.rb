@@ -84,7 +84,8 @@ describe AnnotationsController do
       it 'successfully uses an existing one-time-only text annotation' do
         post_as user,
                 :create,
-                params: { annotation_text_id: annotation_text_oto.id, category_id: nil,
+                params: { content: annotation_text_oto.content,
+                          annotation_text_id: annotation_text_oto.id, category_id: nil,
                           submission_file_id: submission_file.id, line_start: 1, line_end: 1, column_start: 1,
                           column_end: 1, result_id: result.id, assignment_id: assignment.id },
                 format: :js
@@ -95,7 +96,8 @@ describe AnnotationsController do
 
         post_as user,
                 :create,
-                params: { annotation_text_id: annotation_text_oto.id, category_id: nil,
+                params: { content: annotation_text_oto.content,
+                          annotation_text_id: annotation_text_oto.id, category_id: nil,
                           submission_file_id: submission_file.id, line_start: 2, line_end: 2, column_start: 2,
                           column_end: 2, result_id: result.id, assignment_id: assignment.id },
                 format: :js
@@ -107,7 +109,8 @@ describe AnnotationsController do
       it 'successfully uses an existing text annotation from a category' do
         post_as user,
                 :create,
-                params: { annotation_text_id: annotation_text.id, category_id: annotation_category.id,
+                params: { content: annotation_text.content,
+                          annotation_text_id: annotation_text.id, category_id: annotation_category.id,
                           submission_file_id: submission_file.id, line_start: 1, line_end: 1, column_start: 1,
                           column_end: 1, result_id: result.id, assignment_id: assignment.id },
                 format: :js
@@ -118,7 +121,8 @@ describe AnnotationsController do
 
         post_as user,
                 :create,
-                params: { annotation_text_id: annotation_text.id, category_id: annotation_category.id,
+                params: { content: annotation_text.content,
+                          annotation_text_id: annotation_text.id, category_id: annotation_category.id,
                           submission_file_id: submission_file.id, line_start: 2, line_end: 2, column_start: 2,
                           column_end: 2, result_id: result.id, assignment_id: assignment.id },
                 format: :js
@@ -130,7 +134,8 @@ describe AnnotationsController do
       it 'successfully uses an existing one-time only text annotation and adds it to a category' do
         post_as user,
                 :create,
-                params: { annotation_text_id: annotation_text_oto.id, category_id: annotation_category.id,
+                params: { content: annotation_text_oto.content,
+                          annotation_text_id: annotation_text_oto.id, category_id: annotation_category.id,
                           submission_file_id: submission_file.id, line_start: 1, line_end: 1, column_start: 1,
                           column_end: 1, result_id: result.id, assignment_id: assignment.id },
                 format: :js
@@ -144,7 +149,8 @@ describe AnnotationsController do
         new_category = create(:annotation_category, assignment: assignment)
         post_as user,
                 :create,
-                params: { annotation_text_id: annotation_text.id, category_id: new_category.id,
+                params: { content: annotation_text.content,
+                          annotation_text_id: annotation_text.id, category_id: new_category.id,
                           submission_file_id: submission_file.id, line_start: 1, line_end: 1, column_start: 1,
                           column_end: 1, result_id: result.id, assignment_id: assignment.id },
                 format: :js
@@ -157,7 +163,8 @@ describe AnnotationsController do
       it 'successfully uses an existing text annotation to create a new one-time only annotation' do
         post_as user,
                 :create,
-                params: { annotation_text_id: annotation_text.id, category_id: nil,
+                params: { content: annotation_text.content,
+                          annotation_text_id: annotation_text.id, category_id: nil,
                           submission_file_id: submission_file.id, line_start: 1, line_end: 1, column_start: 1,
                           column_end: 1, result_id: result.id, assignment_id: assignment.id },
                 format: :js
