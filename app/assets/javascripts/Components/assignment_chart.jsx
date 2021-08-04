@@ -87,7 +87,7 @@ export class AssignmentChart extends React.Component {
         <h2> <a href={Routes.edit_assignment_path(this.props.assessment_id)}> {this.state.summary.name} </a> </h2>
         <div className='flex-row'>
           <div>
-            <Bar data={this.state.assignment_chart_data.data} />
+            <Bar data={this.state.assignment_chart_data.data} width='500' height='450'/>
           </div>
           <div className='flex-row-expand'>
             <div className="grid-2-col">
@@ -113,7 +113,7 @@ export class AssignmentChart extends React.Component {
         </div>
 
         <h3> {I18n.t('assignments.ta_grader_breakdown')} </h3>
-        <Bar data={this.state.ta_chart_data.data} options={this.state.ta_chart_data.options} />
+        <Bar data={this.state.ta_chart_data.data} options={this.state.ta_chart_data.options} width='400' height='350'/>
 
       </div>
     );

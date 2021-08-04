@@ -42,7 +42,7 @@ export class GradeEntryCharts extends React.Component {
         <h2> <a href={Routes.edit_grade_entry_form_path(this.props.assessment_id)}>{this.state.info_data['name']} </a>  </h2>
         <div className='flex-row'>
           <div>
-            <Bar data={this.state.distribution_data}/>
+            <Bar data={this.state.distribution_data} width='500' height='450'/>
           </div>
 
           <div className='flex-row-expand'>
@@ -72,7 +72,7 @@ export class GradeEntryCharts extends React.Component {
         </div>
 
         <h3> {I18n.t('grade_entry_forms.grade_entry_item_distribution')} </h3>
-        <Bar data={this.state.column_data}/>
+        <Bar data={this.state.column_data} width='400' height='350'/>
       </div>
     );
   }

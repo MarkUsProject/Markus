@@ -85,10 +85,10 @@ export class CourseSummaryChart extends React.Component {
 
           <div className='flex-row'>
             <div>
-              <Bar data={this.state.summary_chart_data} options={this.state.summary_chart_data.options}/>
+              <Bar data={this.state.summary_chart_data} options={this.state.summary_chart_data.options} width='500' height='450'/>
             </div>
 
-            <div className='summary-stats'>
+            <div className='flex-row-expand'>
               {this.state.marking_scheme_ids.map((_, i) =>
                 <div className='grid-2-col'>
                   <span> {I18n.t('activerecord.models.marking_scheme.one')}</span>
