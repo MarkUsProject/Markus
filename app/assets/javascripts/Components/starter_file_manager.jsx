@@ -420,10 +420,16 @@ class StarterFileManager extends React.Component {
           <legend>
             <span>{I18n.t('assignments.starter_file.starter_file_rule')}</span>
           </legend>
-          <div className={'download-button float-right'}>
-            <a href={Routes.download_starter_file_mappings_assignment_path(this.props.assignment_id)}>
-              {I18n.t('assignments.starter_file.download_mappings_csv')}
-            </a>
+          <div className={"title_bar"}>
+            <div className={"float-right"}>
+              <a href={Routes.download_starter_file_mappings_assignment_path(this.props.assignment_id)}>
+                {I18n.t('assignments.starter_file.download_mappings_csv')}
+              </a>
+              <span className={"menu_bar"}/>
+              <a href={Routes.download_sample_starter_files_assignment_path(this.props.assignment_id)}>
+                {I18n.t('assignments.starter_file.download_sample_starter_files')}
+              </a>
+            </div>
           </div>
           {this.renderStarterFileTypes()}
           {this.renderStarterFileAssigner()}

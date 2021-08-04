@@ -849,6 +849,25 @@ class Assignment < Assessment
                             'starter_file_entries.path as starter_file_entry_path')
   end
 
+  def sample_starter_file_entries
+    case self.starter_file_type
+    when 'simple'
+      default_starter_file_group&.starter_file_entries || []
+    when 'sections'
+      section = Section.find_by(id: Student.distinct.pluck(:section_id).sample)
+      sf_group = section&.starter_file_group_for(self) || default_starter_file_group
+      sf_group&.starter_file_entries || []
+    when 'shuffle'
+      self.starter_file_groups.includes(:starter_file_entries).map do |g|
+        StarterFileEntry.find_by(id: g.starter_file_entries.ids.sample)
+      end.compact
+    when 'group'
+      StarterFileGroup.find_by(id: self.starter_file_groups.ids.sample)&.starter_file_entries || []
+    else
+      raise "starter_file_type is invalid: #{self.starter_file_type}"
+    end
+  end
+
   # Yield an open repo for each grouping of this assignment, then yield again for each repo that raised an exception, to
   # try to mitigate concurrent accesses to those repos.
   def each_group_repo

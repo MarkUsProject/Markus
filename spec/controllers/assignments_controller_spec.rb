@@ -1156,4 +1156,50 @@ describe AssignmentsController do
       include_examples 'switch assignment tests'
     end
   end
+  describe '#download_sample_starter_files' do
+    let(:assignment) { create :assignment }
+    subject { get_as user, :download_sample_starter_files, params: { id: assignment.id } }
+    shared_examples 'download sample starter files' do
+      let(:structure) { { 'q1/': nil, 'q1/q1.txt': 'q1 content', 'q2.txt': 'q2 content' } }
+      # NOTE: other starter_file_type are not tested because they involve randomness and so are not deterministic
+      before { create :starter_file_group_with_entries, assignment: assignment, structure: structure }
+      it 'should send a zip file containing the correct content' do
+        expect(controller).to receive(:send_file) do |file_path|
+          Zip::File.open(Rails.root + file_path) do |zipfile|
+            expect(zipfile.entries.map(&:name)).to contain_exactly(*structure.stringify_keys.keys)
+            structure.each do |path, content|
+              next unless content
+
+              expect(zipfile.find_entry(path).get_input_stream.read.strip).to eq content
+            end
+          end
+        end
+        subject
+      end
+    end
+    context 'a student' do
+      let(:user) { create :student }
+      it 'should respond with 403' do
+        subject
+        expect(response).to have_http_status(403)
+      end
+    end
+    context 'a grader' do
+      context 'without assignment management permissions' do
+        let(:user) { create :ta }
+        it 'should respond with 403' do
+          subject
+          expect(response).to have_http_status(403)
+        end
+      end
+      context 'with assignment management permissions' do
+        let(:user) { create :ta, manage_assessments: true }
+        include_examples 'download sample starter files'
+      end
+    end
+    context 'an admin' do
+      let(:user) { create :admin }
+      include_examples 'download sample starter files'
+    end
+  end
 end
