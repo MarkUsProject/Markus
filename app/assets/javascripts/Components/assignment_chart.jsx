@@ -115,6 +115,8 @@ export class AssignmentChart extends React.Component {
 
                 <span> {I18n.t('num_zeros')} </span>
                 <span> {this.state.summary.num_zeros} </span>
+
+                <span><h4><a href={Routes.refresh_graph_assignment_path(this.props.assessment_id)}>{I18n.t('refresh_graph')}</a></h4></span>
               </div>
             </div>
           </div>
@@ -152,11 +154,14 @@ export class AssignmentChart extends React.Component {
 
                 <span> {I18n.t('num_zeros')} </span>
                 <span> {this.state.summary.num_zeros} </span>
+
+                <span><h4><a href={Routes.refresh_graph_assignment_path(this.props.assessment_id)}>{I18n.t('refresh_graph')}</a></h4></span>
               </div>
             </div>
           </div>
 
-          <h4><a href={Routes.assignment_graders_path(this.props.assessment_id)}> Assign Graders</a></h4>
+          <h3> {I18n.t('assignments.ta_grader_breakdown')} </h3>
+          <h4>(<a href={Routes.assignment_graders_path(this.props.assessment_id)}>{I18n.t('graders.actions.assign_grader')}</a>)</h4>
 
         </div>
       );
