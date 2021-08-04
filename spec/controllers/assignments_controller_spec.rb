@@ -1089,8 +1089,7 @@ describe AssignmentsController do
                      average: ActiveSupport::NumberHelper.number_to_percentage(
                        assignment_with_results_and_tas.results_average || 0, precision: 1),
                      median: ActiveSupport::NumberHelper.number_to_percentage(
-                       assignment_with_results_and_tas.results_median || 0, precision: 1
-                     ),
+                       assignment_with_results_and_tas.results_median || 0, precision: 1),
                      num_submissions_collected: assignment_with_results_and_tas.current_submissions_used.size,
                      num_submissions_graded: assignment_with_results_and_tas.current_submissions_used.size -
                        assignment_with_results_and_tas.ungraded_submission_results.size,
