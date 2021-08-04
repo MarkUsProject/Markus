@@ -29,8 +29,12 @@
 <li class='section'><%= Assignment.model_name.human.pluralize %></li>
 
 <% if @current_user.student? %>
-  <% assignments = Assignment.where(is_hidden: false) %>
-  <% grade_entry_forms = GradeEntryForm.where(is_hidden: false) %>
+  <% assignments = Assignment.joins(:section_due_dates).where(is_hidden: false,
+                                                          'section_due_dates.section_id': @current_user.section,
+                                                          'section_due_dates.is_hidden': [nil, false]) %>
+  <% grade_entry_forms = GradeEntryForm.joins(:section_due_dates).where(is_hidden: false,
+                                                                        'section_due_dates.section_id': @current_user.section,
+                                                                        'section_due_dates.is_hidden': [nil, false]) %>
 <% else %>
   <% assignments = Assignment.all %>
   <% grade_entry_forms = GradeEntryForm.all %>

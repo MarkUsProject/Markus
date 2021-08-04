@@ -7,6 +7,9 @@ class Assessment < ApplicationRecord
   has_many :marking_weights, dependent: :destroy
   has_many :tags
 
+  has_many :section_due_dates, inverse_of: :assessment, foreign_key: :assessment_id
+  accepts_nested_attributes_for :section_due_dates
+
   # Call custom validator in order to validate the :due_date attribute
   # date: true maps to DateValidator (custom_name: true maps to CustomNameValidator)
   # Look in lib/validators/* for more info

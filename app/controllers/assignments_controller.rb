@@ -14,13 +14,8 @@ class AssignmentsController < ApplicationController
   def show
     assignment = Assignment.find(params[:id])
     @assignment = assignment.is_peer_review? ? assignment.parent_assignment : assignment
-    @section_hidden = SectionHidden.where(assessment: params[:id], section: current_user.section)
-    if @section_hidden.exists?
-      @section_hidden = SectionHidden.where(assessment: params[:id], section: current_user.section).first.is_hidden
-    else
-      @section_hidden = false
-    end
-    if @assignment.is_hidden || !@section_hidden
+    @section_hidden = SectionDueDate.find_by(assessment: params[:id], section: current_user.section)&.is_hidden
+    if @assignment.is_hidden || @section_hidden
       render 'shared/http_status',
              formats: [:html],
              locals: {
@@ -63,7 +58,7 @@ class AssignmentsController < ApplicationController
   def peer_review
     assignment = Assignment.find(params[:id])
     @assignment = assignment.is_peer_review? ? assignment : assignment.pr_assignment
-    if @assignment.nil? || @assignment.is_hidden || !@section_hidden
+    if @assignment.nil? || @assignment.is_hidden || @section_hidden
       render 'shared/http_status',
              formats: [:html],
              locals: {
@@ -135,7 +130,7 @@ class AssignmentsController < ApplicationController
 
       @g_id_entries = {}
       current_user.grade_entry_students.where(released_to_student: true).includes(:grade_entry_form).each do |g|
-        unless g.grade_entry_form.is_hidden || !@section_hidden
+        unless g.grade_entry_form.is_hidden || @section_hidden
           @g_id_entries[g.assessment_id] = g
         end
       end

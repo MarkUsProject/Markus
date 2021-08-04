@@ -71,8 +71,7 @@ class Assignment < Assessment
 
   has_many :notes, as: :noteable, dependent: :destroy
 
-  has_many :section_due_dates, inverse_of: :assignment, foreign_key: :assessment_id
-  accepts_nested_attributes_for :section_due_dates
+
 
   has_many :exam_templates, dependent: :destroy, inverse_of: :assignment, foreign_key: :assessment_id
 
@@ -153,7 +152,7 @@ class Assignment < Assessment
       return due_date
     end
 
-    SectionDueDate.due_date_for(section, self)
+    SectionDueDate.due_date_for(section, self.assessment_id)
   end
 
   # Return the start_time for +section+ if it is not nil, otherwise return this
@@ -161,7 +160,7 @@ class Assignment < Assessment
   def section_start_time(section)
     return start_time unless section_due_dates_type
 
-    section&.section_due_dates&.find_by(assignment: self)&.start_time || start_time
+    section&.section_due_dates&.find_by(assessment: self.assessment_id)&.start_time || start_time
   end
 
   # Calculate the latest due date among all sections for the assignment.
