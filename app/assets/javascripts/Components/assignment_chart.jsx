@@ -1,6 +1,11 @@
 import React from 'react';
 
 import { Bar } from 'react-chartjs-2';
+import {
+  assignment_graders_path,
+  edit_assignment_grader_path,
+  global_actions_assignment_graders_path
+} from "../../../javascript/routes";
 
 
 export class AssignmentChart extends React.Component {
@@ -45,6 +50,7 @@ export class AssignmentChart extends React.Component {
         for (const [index, element] of res.ta_data.datasets.entries()){
           element["backgroundColor"] = colours[index]
         }
+
         this.setState({
           summary: res.summary,
           assignment_chart_data: { data: res.assignment_data, options: {} },
@@ -82,40 +88,78 @@ export class AssignmentChart extends React.Component {
   }
 
   render() {
-    return (
-      <div>
-        <h2> <a href={Routes.edit_assignment_path(this.props.assessment_id)}> {this.state.summary.name} </a> </h2>
-        <div className='flex-row'>
-          <div>
-            <Bar data={this.state.assignment_chart_data.data} width='500' height='450'/>
-          </div>
-          <div className='flex-row-expand'>
-            <div className="grid-2-col">
-              <span> {I18n.t('average')} </span>
-              <span> {this.state.summary.average} </span>
+    if (this.state.ta_chart_data['data']['datasets'].length !== 0) {
+      return (
+        <div>
+          <h2><a href={Routes.edit_assignment_path(this.props.assessment_id)}> {this.state.summary.name} </a></h2>
+          <div className='flex-row'>
+            <div>
+              <Bar data={this.state.assignment_chart_data.data} width='500' height='450'/>
+            </div>
+            <div className='flex-row-expand'>
+              <div className="grid-2-col">
+                <span> {I18n.t('average')} </span>
+                <span> {this.state.summary.average} </span>
 
-              <span> {I18n.t('median')} </span>
-              <span> {this.state.summary.median} </span>
+                <span> {I18n.t('median')} </span>
+                <span> {this.state.summary.median} </span>
 
-              <span> {I18n.t('assignments_submitted')} </span>
-              <span> {this.state.summary.num_submissions_collected} / {this.state.summary.groupings_size}</span>
+                <span> {I18n.t('assignments_submitted')} </span>
+                <span> {this.state.summary.num_submissions_collected} / {this.state.summary.groupings_size}</span>
 
-              <span> {I18n.t('assignments_graded')} </span>
-              <span> {this.state.summary.num_submissions_graded} / {this.state.summary.groupings_size}</span>
+                <span> {I18n.t('assignments_graded')} </span>
+                <span> {this.state.summary.num_submissions_graded} / {this.state.summary.groupings_size}</span>
 
-              <span> {I18n.t('num_failed')} </span>
-              <span> {this.state.summary.num_fails} </span>
+                <span> {I18n.t('num_failed')} </span>
+                <span> {this.state.summary.num_fails} </span>
 
-              <span> {I18n.t('num_zeros')} </span>
-              <span> {this.state.summary.num_zeros} </span>
+                <span> {I18n.t('num_zeros')} </span>
+                <span> {this.state.summary.num_zeros} </span>
+              </div>
             </div>
           </div>
+
+          <h3> {I18n.t('assignments.ta_grader_breakdown')} </h3>
+          <Bar data={this.state.ta_chart_data.data} options={this.state.ta_chart_data.options} width='400'
+               height='350'/>
+
         </div>
+      );
+    } else {
+      return (
+        <div>
+          <h2><a href={Routes.edit_assignment_path(this.props.assessment_id)}> {this.state.summary.name} </a></h2>
+          <div className='flex-row'>
+            <div>
+              <Bar data={this.state.assignment_chart_data.data} width='500' height='450'/>
+            </div>
+            <div className='flex-row-expand'>
+              <div className="grid-2-col">
+                <span> {I18n.t('average')} </span>
+                <span> {this.state.summary.average} </span>
 
-        <h3> {I18n.t('assignments.ta_grader_breakdown')} </h3>
-        <Bar data={this.state.ta_chart_data.data} options={this.state.ta_chart_data.options} width='400' height='350'/>
+                <span> {I18n.t('median')} </span>
+                <span> {this.state.summary.median} </span>
 
-      </div>
-    );
+                <span> {I18n.t('assignments_submitted')} </span>
+                <span> {this.state.summary.num_submissions_collected} / {this.state.summary.groupings_size}</span>
+
+                <span> {I18n.t('assignments_graded')} </span>
+                <span> {this.state.summary.num_submissions_graded} / {this.state.summary.groupings_size}</span>
+
+                <span> {I18n.t('num_failed')} </span>
+                <span> {this.state.summary.num_fails} </span>
+
+                <span> {I18n.t('num_zeros')} </span>
+                <span> {this.state.summary.num_zeros} </span>
+              </div>
+            </div>
+          </div>
+
+          <h4><a href={Routes.assignment_graders_path(this.props.assessment_id)}> Assign Graders</a></h4>
+
+        </div>
+      );
+    }
   }
 }
