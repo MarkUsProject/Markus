@@ -12,6 +12,7 @@
 - Remove delete link from TA table (#5407)
 - Improve student UI for timed assessments (#5417) 
 - Add ability to download data from submissions table as csv file (#5418)
+- Add route to download an example of the starter files that may be assigned to students (#5449)
 - Validate a user's locale to ensure that it is set to a valid value (#5450)
 
 ## [v1.12.5]

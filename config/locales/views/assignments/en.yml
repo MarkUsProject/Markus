@@ -40,6 +40,7 @@ en:
       default_starter_file_group: Default Starter File Group
       download_instructions: Click below to download a new copy of the starter files
       download_mappings_csv: Download assigned starter files csv
+      download_sample_starter_files: Download starter files example
       groupings_exist_warning_html: Groups already have been created for this assessment.<br/>If any changes are made, students will need to log in to MarkUs to download a new version of their starter files.
       new_starter_file_group: New Starter File Group
       provided: Starter files have been provided for this assignment

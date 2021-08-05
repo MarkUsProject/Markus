@@ -507,6 +507,21 @@ class AssignmentsController < ApplicationController
     redirect_to action: :show
   end
 
+  # Download a zip file containing an example of starter files that might be assigned to a grouping
+  def download_sample_starter_files
+    assignment = Assignment.find(params[:id])
+
+    zip_name = "#{assignment.short_identifier}-sample-starter-files.zip"
+    zip_path = File.join('tmp', zip_name)
+
+    FileUtils.rm_f(zip_path)
+
+    Zip::File.open(zip_path, create: true) do |zip_file|
+      assignment.sample_starter_file_entries.each { |entry| entry.add_files_to_zip_file(zip_file) }
+    end
+    send_file zip_path, filename: zip_name
+  end
+
   private
 
   def set_repo_vars(assignment, grouping)
