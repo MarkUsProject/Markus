@@ -3,7 +3,7 @@ import React from 'react';
 import { Bar } from 'react-chartjs-2';
 
 
-export class GradeEntryCharts extends React.Component {
+export class GradeEntryChart extends React.Component {
   constructor(props) {
     super(props);
     this.state = {

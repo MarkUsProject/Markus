@@ -1,11 +1,6 @@
 import React from 'react';
 
 import { Bar } from 'react-chartjs-2';
-import {
-  assignment_graders_path,
-  edit_assignment_grader_path,
-  global_actions_assignment_graders_path
-} from "../../../javascript/routes";
 
 
 export class AssignmentChart extends React.Component {
@@ -123,7 +118,7 @@ export class AssignmentChart extends React.Component {
             </div>
           </div>
 
-          <h3> {I18n.t('assignments.ta_grader_breakdown')} </h3>
+          <h3> {I18n.t('grader_distribution')} </h3>
           <Bar data={this.state.ta_chart_data.data} options={this.state.ta_chart_data.options} width='400'
                height='350'/>
 
@@ -164,7 +159,7 @@ export class AssignmentChart extends React.Component {
             </div>
           </div>
 
-          <h3> {I18n.t('assignments.ta_grader_breakdown')} </h3>
+          <h3> {I18n.t('grader_distribution')} </h3>
           <h4>(<a href={Routes.assignment_graders_path(this.props.assessment_id)}>{I18n.t('graders.actions.assign_grader')}</a>)</h4>
 
         </div>

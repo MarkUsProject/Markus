@@ -53,7 +53,6 @@ es:
       title: Código Inicial
       upload_confirmation: UPDATE ME
       use_original_filename: UPDATE ME
-    ta_grader_breakdown: UPDATE ME
     timed:
       after_start_instructions_html: UPDATE ME %{start_time} %{due_date}
       before_start_instructions: UPDATE ME %{duration_string}

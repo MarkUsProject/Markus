@@ -53,7 +53,6 @@ en:
       title: Starter Files
       upload_confirmation: The starter files for this assignment have changed since you last downloaded them. Are you sure you want to continue?
       use_original_filename: Use original filename
-    ta_grader_breakdown: Ta Grader Breakdown
     timed:
       after_start_instructions_html: This assessment is due before <strong>%{due_date}</strong> without penalty.<br/><strong>(started %{start_time})</strong>.
       before_start_instructions: Once this timed assessment has been started, you will have %{duration_string} to complete it without penalty.
