@@ -10,42 +10,15 @@ ARG YARN_VERSION
 ARG PYTHON_VERSION
 ARG USER
 
-RUN apt-get update -qq && DEBIAN_FRONTEND=noninteractive apt-get -yq dist-upgrade && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -yq --no-install-recommends curl \
-                                                                               ca-certificates \
-                                                                               gnupg2 \
-                                                                               software-properties-common
-
-# Add NodeJS to sources list
-RUN APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 \
-    curl -vsL https://deb.nodesource.com/setup_$NODE_MAJOR.x | bash -
-
-# Remove cmdtest which come pre-installed and has a package called yarn. This prevents us from installing
-# the yarn package we want otherwise.
-RUN DEBIAN_FRONTEND=noninteractive apt-get remove -yq cmdtest
-
-# Add Yarn to the sources list
-RUN APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 \
-  curl -vsL https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - \
-  && echo 'deb https://dl.yarnpkg.com/debian/ stable main' > /etc/apt/sources.list.d/yarn.list
-
-# Add ppa so that we can select different ruby versions
-RUN DEBIAN_FRONTEND=noninteractive apt-add-repository -y ppa:brightbox/ruby-ng
-
-# Add ppa so that we can get the right python version
-RUN DEBIAN_FRONTEND=noninteractive apt-add-repository -y ppa:deadsnakes/ppa
-
 # install packages
-RUN DEBIAN_FRONTEND=noninteractive apt-get install -yq --no-install-recommends \
+RUN apt-get update -qq && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -yq --no-install-recommends \
     build-essential \
+    software-properties-common \
     postgresql-client-$PG_MAJOR \
     tzdata \
     libpq-dev \
-    nodejs \
-    yarn \
     libv8-dev \
-    ruby$RUBY_VERSION \
-    ruby${RUBY_VERSION}-dev \
     ruby-svn \
     ghostscript \
     imagemagick \
@@ -57,14 +30,33 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install -yq --no-install-recommends \
     libssl-dev \
     swig \
     graphviz \
-    yarn \
     rsync \
     git \
-    python${PYTHON_VERSION} \
-    python${PYTHON_VERSION}-venv \
-    python${PYTHON_VERSION}-dev \
-    pandoc && \
-    apt-get clean && \
+    python3-venv \
+    python3-dev \
+    pandoc
+
+# Install node
+ADD https://deb.nodesource.com/setup_$NODE_MAJOR.x /tmp/setup_node.sh
+RUN bash /tmp/setup_node.sh && DEBIAN_FRONTEND=noninteractive apt-get install -yq nodejs && rm /tmp/setup_node.sh
+
+# Install yarn
+RUN npm install --global yarn@${YARN_VERSION}
+
+# Add ppa so that we can select different ruby versions and install ruby
+RUN apt-add-repository -y ppa:brightbox/ruby-ng && \
+    apt-get update -qq && \
+    apt-get install -yq ruby$RUBY_VERSION ruby${RUBY_VERSION}-dev rubygems-integration && \
+    apt-add-repository -y --remove ppa:brightbox/ruby-ng
+
+# Add ppa so that we can get the right python version and install python
+RUN apt-add-repository -y ppa:deadsnakes/ppa && \
+    apt-get update -qq && apt-get install -yq --no-install-recommends python${PYTHON_VERSION} \
+                                                python${PYTHON_VERSION}-venv \
+                                                python${PYTHON_VERSION}-dev && \
+    apt-add-repository -y --remove ppa:deadsnakes/ppa
+
+RUN apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && \
     truncate -s 0 /var/log/*log
 
