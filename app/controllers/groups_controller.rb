@@ -1,7 +1,6 @@
 # Manages actions relating to editing and modifying
 # groups.
 class GroupsController < ApplicationController
-  include GroupsHelper
   # Administrator
   before_action { authorize! }
   layout 'assignment_content'
@@ -49,10 +48,8 @@ class GroupsController < ApplicationController
     if errors.any?
       err_groups = errors.join(', ')
       flash_message(:error, I18n.t('groups.delete_group_has_submission') + err_groups)
-      head :unprocessable_entity
-    else
-      head :ok
     end
+    head :ok
   end
 
   def rename_group
@@ -252,10 +249,8 @@ class GroupsController < ApplicationController
         group_rows << row.reject(&:blank?)
       end
       if result[:invalid_lines].empty?
-        if validate_csv_upload_file(assignment, group_rows)
-          @current_job = CreateGroupsJob.perform_later assignment, group_rows
-          session[:job_id] = @current_job.job_id
-        end
+        @current_job = CreateGroupsJob.perform_later assignment, group_rows
+        session[:job_id] = @current_job.job_id
       else
         flash_message(:error, result[:invalid_lines])
       end

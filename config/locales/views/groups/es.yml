@@ -90,9 +90,5 @@ es:
     unassigned_students: No asignados
     upload:
       errors:
-        duplicate_group_name: 'UPDATE ME: %{group_names}'
-        duplicate_membership_name: 'UPDATE ME: %{member_names}'
-        inconsistent_membership: 'UPDATE ME: %{group_names}'
-        memberships_exist: 'UPDATE ME: %{student_names}'
         unknown_students: 'UPDATE ME: %{student_names}'
     validate_confirm: Esto le permitirá a este grupo realizar el envío sin el número requerido de estudiantes. ¿Está seguro/a de hacer esto?
