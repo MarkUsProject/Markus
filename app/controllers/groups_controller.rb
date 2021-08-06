@@ -522,7 +522,7 @@ class GroupsController < ApplicationController
     zip_name = "#{assignment.short_identifier}-starter-files-#{current_user.user_name}"
     zip_path = File.join('tmp', zip_name + '.zip')
     FileUtils.rm_rf zip_path
-    Zip::File.open(zip_path, Zip::File::CREATE) do |zip_file|
+    Zip::File.open(zip_path, create: true) do |zip_file|
       grouping.starter_file_entries.reload.each { |entry| entry.add_files_to_zip_file(zip_file) }
     end
     send_file zip_path, filename: File.basename(zip_path)

@@ -12,6 +12,9 @@
 - Remove delete link from TA table (#5407)
 - Improve student UI for timed assessments (#5417) 
 - When completing bulk actions, report errors instead of halting the whole process and rolling back (#5422)
+- Add ability to download data from submissions table as csv file (#5418)
+- Add route to download an example of the starter files that may be assigned to students (#5449)
+- Validate a user's locale to ensure that it is set to a valid value (#5450)
 
 ## [v1.12.5]
 - Fix bugs in grading view when switching between submissions (#5400)

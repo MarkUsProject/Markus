@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_06_17_201409) do
+ActiveRecord::Schema.define(version: 2021_07_30_132238) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -278,7 +278,6 @@ ActiveRecord::Schema.define(version: 2021_06_17_201409) do
     t.integer "test_tokens", default: 0, null: false
     t.bigint "assessment_id", null: false
     t.datetime "start_time"
-    t.datetime "starter_file_timestamp"
     t.boolean "starter_file_changed", default: false, null: false
     t.index ["assessment_id", "group_id"], name: "groupings_u1", unique: true
   end

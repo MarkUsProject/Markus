@@ -72,6 +72,7 @@ Rails.application.routes.draw do
     end
 
     member do
+      get 'download_sample_starter_files'
       get 'download_starter_file_mappings'
       get 'refresh_graph'
       get 'view_summary'
@@ -211,6 +212,7 @@ Rails.application.routes.draw do
         post 'zip_groupings_files'
         get 'download_zipped_file'
         get 'notebook_content'
+        get 'download_summary'
       end
 
       member do

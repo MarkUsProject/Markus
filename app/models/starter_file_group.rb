@@ -27,7 +27,7 @@ class StarterFileGroup < ApplicationRecord
     zip_name = "#{assignment.short_identifier}-#{name}-starter-files-#{user.user_name}"
     zip_path = File.join('tmp', zip_name + '.zip')
     FileUtils.rm_rf zip_path
-    Zip::File.open(zip_path, Zip::File::CREATE) do |zip_file|
+    Zip::File.open(zip_path, create: true) do |zip_file|
       self.files_and_dirs.map do |file|
         zip_entry_path = File.join file
         abs_path = path.join(file)
