@@ -7,9 +7,7 @@ export class ImageViewer extends React.Component {
     super();
     this.state = {
       rotation: window.start_image_rotation || 0,
-      zoom: window.start_image_zoom || 1,
-      heightChange: 0,
-      widthChange: 0
+      zoom: window.start_image_zoom || 1
     };
   }
 
