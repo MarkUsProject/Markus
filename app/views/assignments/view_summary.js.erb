@@ -1,17 +1,3 @@
-document.getElementById('assignment_summaries').innerHTML =
-  "<%= escape_javascript(render partial: 'assignment_summary',
-                                locals: { assignment: @assignment, tas: @tas}).html_safe %>";
-
-$('#assignment_<%= @assignment.id %>_graph').html(
-  "<%= escape_javascript(render partial: 'grade_distribution_graph',
-                                locals: { assignment: @assignment }) %>");
-
-<% if @tas.size > 0 %>
-  $('#assignment_<%= @assignment.id %>_ta_graph').html(
-    "<%= escape_javascript(render partial: 'graders/ta_grade_distribution_graph',
-                                  locals: { assignment: @assignment, tas: @tas }) %>");
-<% end %>
-
 $('a[data-id]').removeClass('inactive');
 
 $('a[data-id="<%= @assignment.short_identifier %>"]').addClass('inactive');

@@ -15,6 +15,11 @@
 
 /** Main */
 
+// for charts rendered in FireFox
+canvas {
+  image-rendering: crisp-edges;
+}
+
 body {
   background-color: $background-support;
   color: $sharp-line;

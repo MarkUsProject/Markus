@@ -1,11 +1,3 @@
-document.getElementById('assignment_summaries').innerHTML =
-  "<%= escape_javascript(render partial: 'course_summaries/course_summary',
-                                locals: { assessments: @assessments, marking_schemes: @marking_schemes }).html_safe %>";
-
-$('#weighted_course_summary_graph').html(
-    "<%= escape_javascript(render partial: 'course_summaries/weighted_course_summary_graph',
-                                locals: { assessments: @assessments, marking_schemes: @marking_schemes }) %>");
-
 $('a[data-id]').removeClass('inactive');
 
 window.dashboard.setState({

@@ -313,6 +313,7 @@ class AssignmentsController < ApplicationController
   def chart_data
     assignment = Assignment.find(params[:id])
     summary = {
+      name: assignment.short_identifier + ': ' + assignment.description,
       average: ActiveSupport::NumberHelper.number_to_percentage(assignment.results_average || 0, precision: 1),
       median: ActiveSupport::NumberHelper.number_to_percentage(assignment.results_median || 0, precision: 1),
       num_submissions_collected: assignment.current_submissions_used.size,

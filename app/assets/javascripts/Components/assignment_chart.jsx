@@ -1,5 +1,4 @@
 import React from 'react';
-import { render } from 'react-dom';
 
 import { Bar } from 'react-chartjs-2';
 
@@ -38,13 +37,6 @@ export class AssignmentChart extends React.Component {
     this.fetchData();
   }
 
-  componentDidUpdate(prevProps, prevState) {
-    if (prevProps.assessment_id !== this.props.assessment_id ||
-      prevState.display_course_summary !== this.state.display_course_summary) {
-      this.fetchData();
-    }
-  }
-
   fetchData = () => {
     fetch(Routes.chart_data_assignment_path(this.props.assessment_id))
       .then(data => data.json())
@@ -53,6 +45,7 @@ export class AssignmentChart extends React.Component {
         for (const [index, element] of res.ta_data.datasets.entries()){
           element["backgroundColor"] = colours[index]
         }
+
         this.setState({
           summary: res.summary,
           assignment_chart_data: { data: res.assignment_data, options: {} },
@@ -82,39 +75,95 @@ export class AssignmentChart extends React.Component {
       })
   };
 
+  componentDidUpdate(prevProps, prevState) {
+    if (prevProps.assessment_id !== this.props.assessment_id ||
+      prevState.display_course_summary !== this.state.display_course_summary) {
+      this.fetchData();
+    }
+  }
+
   render() {
-    return (
-      <div>
-        <div className='flex-row'>
-          <div id='assignment_<%= assignment.id %>_graph'>
-            <Bar data={this.state.assignment_chart_data.data} />
-          </div>
-          <div className='flex-row-expand'>
-            <div className="grid-2-col">
-              <span> {I18n.t('average')} </span>
-              <span> {this.state.summary.average} </span>
+    if (this.state.ta_chart_data['data']['datasets'].length !== 0) {
+      return (
+        <div>
+          <h2><a href={Routes.edit_assignment_path(this.props.assessment_id)}> {this.state.summary.name} </a></h2>
+          <div className='flex-row'>
+            <div>
+              <Bar data={this.state.assignment_chart_data.data} width='500' height='450'/>
+            </div>
+            <div className='flex-row-expand'>
+              <div className="grid-2-col">
+                <span> {I18n.t('average')} </span>
+                <span> {this.state.summary.average} </span>
 
-              <span> {I18n.t('median')} </span>
-              <span> {this.state.summary.median} </span>
+                <span> {I18n.t('median')} </span>
+                <span> {this.state.summary.median} </span>
 
-              <span> {I18n.t('assignments_submitted')} </span>
-              <span> {this.state.summary.num_submissions_collected} / {this.state.summary.groupings_size}</span>
+                <span> {I18n.t('assignments_submitted')} </span>
+                <span> {this.state.summary.num_submissions_collected} / {this.state.summary.groupings_size}</span>
 
-              <span> {I18n.t('assignments_graded')} </span>
-              <span> {this.state.summary.num_submissions_graded} / {this.state.summary.groupings_size}</span>
+                <span> {I18n.t('assignments_graded')} </span>
+                <span> {this.state.summary.num_submissions_graded} / {this.state.summary.groupings_size}</span>
 
-              <span> {I18n.t('num_failed')} </span>
-              <span> {this.state.summary.num_fails} </span>
+                <span> {I18n.t('num_failed')} </span>
+                <span> {this.state.summary.num_fails} </span>
 
-              <span> {I18n.t('num_zeros')} </span>
-              <span> {this.state.summary.num_zeros} </span>
+                <span> {I18n.t('num_zeros')} </span>
+                <span> {this.state.summary.num_zeros} </span>
+
+                <span><h4><a data-remote="true" href={Routes.view_summary_assignment_path(this.props.assessment_id)}>
+                  {I18n.t('refresh_graph')}
+                </a></h4></span>
+              </div>
             </div>
           </div>
+
+          <h3> {I18n.t('grader_distribution')} </h3>
+          <Bar data={this.state.ta_chart_data.data} options={this.state.ta_chart_data.options} width='400'
+               height='350'/>
+
         </div>
+      );
+    } else {
+      return (
+        <div>
+          <h2><a href={Routes.edit_assignment_path(this.props.assessment_id)}> {this.state.summary.name} </a></h2>
+          <div className='flex-row'>
+            <div>
+              <Bar data={this.state.assignment_chart_data.data} width='500' height='450'/>
+            </div>
+            <div className='flex-row-expand'>
+              <div className="grid-2-col">
+                <span> {I18n.t('average')} </span>
+                <span> {this.state.summary.average} </span>
 
-        <Bar data={this.state.ta_chart_data.data} options={this.state.ta_chart_data.options} />
+                <span> {I18n.t('median')} </span>
+                <span> {this.state.summary.median} </span>
 
-      </div>
-    );
+                <span> {I18n.t('assignments_submitted')} </span>
+                <span> {this.state.summary.num_submissions_collected} / {this.state.summary.groupings_size}</span>
+
+                <span> {I18n.t('assignments_graded')} </span>
+                <span> {this.state.summary.num_submissions_graded} / {this.state.summary.groupings_size}</span>
+
+                <span> {I18n.t('num_failed')} </span>
+                <span> {this.state.summary.num_fails} </span>
+
+                <span> {I18n.t('num_zeros')} </span>
+                <span> {this.state.summary.num_zeros} </span>
+
+                <span><h4><a data-remote="true" href={Routes.view_summary_assignment_path(this.props.assessment_id)}>
+                  {I18n.t('refresh_graph')}
+                </a></h4></span>
+              </div>
+            </div>
+          </div>
+
+          <h3> {I18n.t('grader_distribution')} </h3>
+          <h4>(<a href={Routes.assignment_graders_path(this.props.assessment_id)}>{I18n.t('graders.actions.assign_grader')}</a>)</h4>
+
+        </div>
+      );
+    }
   }
 }

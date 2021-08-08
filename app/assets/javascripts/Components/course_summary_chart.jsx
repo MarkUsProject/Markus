@@ -84,19 +84,22 @@ export class CourseSummaryChart extends React.Component {
           </h2>
 
           <div className='flex-row'>
-            <Bar data={this.state.summary_chart_data} options={this.state.summary_chart_data.options}/>
-          </div>
-          <div className='summary-stats'>
-            {this.state.marking_scheme_ids.map((_, i) =>
-              <div className='grid-2-col'>
-                <span> {I18n.t('activerecord.models.marking_scheme.one')}</span>
-                <span> {this.state.marking_scheme_ids[i]} </span>
-                <span> {I18n.t('average')} </span>
-                <span> {this.state.summary.average[i]} </span>
-                <span> {I18n.t('median')} </span>
-                <span> {this.state.summary.median[i]} </span>
-              </div>
-            )}
+            <div>
+              <Bar data={this.state.summary_chart_data} options={this.state.summary_chart_data.options} width='500' height='450'/>
+            </div>
+
+            <div className='flex-row-expand'>
+              {this.state.marking_scheme_ids.map((_, i) =>
+                <div className='grid-2-col'>
+                  <span> {I18n.t('activerecord.models.marking_scheme.one')}</span>
+                  <span> {this.state.marking_scheme_ids[i]} </span>
+                  <span> {I18n.t('average')} </span>
+                  <span> {this.state.summary.average[i]} </span>
+                  <span> {I18n.t('median')} </span>
+                  <span> {this.state.summary.median[i]} </span>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       )
