@@ -1056,7 +1056,7 @@ describe AssignmentsController do
       end
     end
   end
-<<<<<<< HEAD
+
   describe '#chart_data' do
     before { get_as user, :chart_data, params: params }
     let(:assignment) { create :assignment }
