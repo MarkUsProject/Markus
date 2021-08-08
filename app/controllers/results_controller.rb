@@ -126,14 +126,17 @@ class ResultsController < ApplicationController
           data[:num_collected] = assignment.get_num_collected(current_user.admin? ? nil : current_user.id)
           if current_user.ta? && assignment.anonymize_groups
             data[:group_name] = "#{Group.model_name.human} #{submission.grouping.id}"
+            data[:members] = []
           else
-            data[:group_name] = submission.grouping.get_group_name
+            data[:group_name] = submission.grouping.group.group_name
+            data[:members] = submission.grouping.accepted_students.map(&:user_name)
           end
         elsif is_reviewer
           reviewer_group = current_user.grouping_for(assignment.pr_assignment.id)
           data[:num_marked] = PeerReview.get_num_marked(reviewer_group)
           data[:num_collected] = PeerReview.get_num_collected(reviewer_group)
           data[:group_name] = PeerReview.model_name.human
+          data[:members] = []
         end
 
         # Marks
@@ -219,7 +222,7 @@ class ResultsController < ApplicationController
         data[:old_total] = old_marks.values.sum
 
         # Tags
-        all_tags = Tag.pluck_to_hash(:id, :name)
+        all_tags = assignment.tags.pluck_to_hash(:id, :name)
         data[:current_tags] = submission.grouping.tags.pluck_to_hash(:id, :name)
         data[:available_tags] = all_tags - data[:current_tags]
 
@@ -390,6 +393,11 @@ class ResultsController < ApplicationController
     end
 
     file = SubmissionFile.find(params[:select_file_id])
+    if params[:show_in_browser] == 'true' && (file.is_pynb? || file.is_rmd?)
+      redirect_to notebook_content_assignment_submissions_url(params[:assignment_id],
+                                                              select_file_id: params[:select_file_id])
+      return
+    end
 
     begin
       if params[:include_annotations] == 'true' && !file.is_supported_image?
@@ -452,7 +460,7 @@ class ResultsController < ApplicationController
                end
 
     files = submission.submission_files
-    Zip::File.open(zip_path, Zip::File::CREATE) do |zip_file|
+    Zip::File.open(zip_path, create: true) do |zip_file|
       grouping.access_repo do |repo|
         revision = repo.get_revision(revision_identifier)
         repo.send_tree_to_zip(assignment.repository_folder, zip_file, zip_name, revision) do |file|

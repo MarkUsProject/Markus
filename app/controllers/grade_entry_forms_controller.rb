@@ -2,6 +2,7 @@
 
 class GradeEntryFormsController < ApplicationController
   include GradeEntryFormsHelper
+  include RoutingHelper
   before_action { authorize! }
   layout 'assignment_content'
 
@@ -264,6 +265,24 @@ class GradeEntryFormsController < ApplicationController
                        column_breakdown_data: column_breakdown_data,
                        info_summary: info_summary }
       end
+    end
+  end
+
+  def switch
+    redirect_options = referer_options
+
+    if redirect_options[:controller] == 'grade_entry_forms'
+      redirect_options[:id] = params[:id]
+      redirect_to redirect_options
+    elsif redirect_options[:grade_entry_form_id]
+      redirect_options[:grade_entry_form_id] = params[:id]
+      redirect_to redirect_options
+    elsif current_user.admin?
+      redirect_to edit_grade_entry_form_path(params[:id])
+    elsif current_user.ta?
+      redirect_to grades_grade_entry_form_path(params[:id])
+    else # current_user.student?
+      redirect_to student_interface_grade_entry_form_path(params[:id])
     end
   end
 end

@@ -200,17 +200,6 @@ class Grouping < ApplicationRecord
     not current_student_ids.intersect?(other_group_student_ids)
   end
 
-  def get_group_name
-    return group.group_name if assignment.group_max == 1 && !assignment.scanned_exam
-
-    name = group.group_name
-    student_names = accepted_students.map &:user_name
-    unless student_names == [name]
-      name += ' (' + student_names.join(', ') + ')'
-    end
-    name
-  end
-
   def group_name_with_student_user_names
     user_names = get_all_students_in_group
     return group.group_name if user_names == I18n.t('groups.empty')
@@ -473,12 +462,6 @@ class Grouping < ApplicationRecord
     end
     self.grouping_starter_file_entries.where(id: old_grouping_entry_ids - new_grouping_entry_ids).destroy_all
     self.update!(starter_file_changed: false)
-  end
-
-  def changed_starter_file_at?(revision)
-    revision.tree_at_path(assignment.repository_folder, with_attrs: true).values.any? do |obj|
-      self.starter_file_timestamp.nil? || self.starter_file_timestamp < obj.last_modified_date
-    end
   end
 
   # Returns a list of missing assignment (required) files.
@@ -777,7 +760,6 @@ class Grouping < ApplicationRecord
         unless group_repo.commit(txn)
           raise I18n.t('repo.assignment_dir_creation_error', short_identifier: assignment.short_identifier)
         end
-        self.update!(starter_file_timestamp: group_repo.get_latest_revision.server_timestamp)
       end
     end
   end

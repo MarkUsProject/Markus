@@ -45,125 +45,129 @@ Config.setup do |config|
   config.env_parse_values = true
 
   # Validate presence and type of specific config values. Check https://github.com/dry-rb/dry-validation for details.
-  config.schema do
-    required(:rails).hash do
-      required(:time_zone).value(included_in?: ActiveSupport::TimeZone::MAPPING.keys)
-      required(:cache_classes).filled(:bool)
-      required(:eager_load).filled(:bool)
-      required(:consider_all_requests_local).filled(:bool)
-      optional(:hosts).array(:string)
-      required(:force_ssl).filled(:bool)
-      required(:log_level).filled(included_in?: %w[debug info warn error fatal unknown])
-      required(:active_support).hash do
-        required(:deprecation).filled(included_in?: ActiveSupport::Deprecation::DEFAULT_BEHAVIORS.keys.map(&:to_s))
-      end
-      optional(:action_controller).hash do
-        optional(:perform_caching).filled(:bool)
-      end
-      optional(:cache_store).filled(:string)
-      required(:active_record).hash do
-        required(:verbose_query_logs).filled(:bool)
-      end
-      required(:active_job).hash do
-        required(:queue_adapter).filled(:string)
-      end
-      required(:assets).hash do
-        required(:prefix).filled(:string)
-      end
-      required(:session_store).hash do
-        required(:type).filled(:string)
-        required(:args).hash do
-          optional(:key).filled(:string)
-          optional(:path).filled(:string)
-          optional(:expire_after).value(:integer, gt?: 0)
-          optional(:secure).filled(:bool)
-          optional(:same_site).filled(:string)
-          optional(:secret).filled(:string)
+  unless ENV.fetch('NO_SCHEMA_VALIDATE') { false }
+    config.schema do
+      required(:rails).hash do
+        required(:time_zone).value(included_in?: ActiveSupport::TimeZone::MAPPING.keys)
+        required(:cache_classes).filled(:bool)
+        required(:eager_load).filled(:bool)
+        required(:consider_all_requests_local).filled(:bool)
+        optional(:hosts).array(:string)
+        required(:force_ssl).filled(:bool)
+        required(:log_level).filled(included_in?: %w[debug info warn error fatal unknown])
+        required(:active_support).hash do
+          required(:deprecation).filled(included_in?: ActiveSupport::Deprecation::DEFAULT_BEHAVIORS.keys.map(&:to_s))
+        end
+        optional(:action_controller).hash do
+          optional(:perform_caching).filled(:bool)
+        end
+        optional(:cache_store).filled(:string)
+        required(:active_record).hash do
+          required(:verbose_query_logs).filled(:bool)
+        end
+        required(:active_job).hash do
+          required(:queue_adapter).filled(:string)
+        end
+        required(:assets).hash do
+          required(:prefix).filled(:string)
+        end
+        required(:session_store).hash do
+          required(:type).filled(:string)
+          required(:args).hash do
+            optional(:key).filled(:string)
+            optional(:path).filled(:string)
+            optional(:expire_after).value(:integer, gt?: 0)
+            optional(:secure).filled(:bool)
+            optional(:same_site).filled(:string)
+            optional(:secret).filled(:string)
+          end
+        end
+        required(:action_mailer).hash do
+          required(:delivery_method).filled(:string)
+          optional(:smtp_settings).hash
+          optional(:sendmail_settings).hash
+          optional(:file_settings).hash
+          required(:default_url_options).hash
+          required(:asset_host).filled(:string)
+          required(:perform_deliveries).filled(:bool)
+          required(:deliver_later_queue_name).maybe(:string)
         end
       end
-      required(:action_mailer).hash do
-        required(:delivery_method).filled(:string)
-        optional(:smtp_settings).hash
-        optional(:sendmail_settings).hash
-        optional(:file_settings).hash
-        required(:default_url_options).hash
-        required(:asset_host).filled(:string)
-        required(:perform_deliveries).filled(:bool)
-        required(:deliver_later_queue_name).maybe(:string)
+      required(:queues).hash do
+        required(:default).filled(:string)
+        optional(:autotest_cancel_job).filled(:string)
+        optional(:autotest_run_job).filled(:string)
+        optional(:autotest_specs_job).filled(:string)
+        optional(:autotest_testers_job).filled(:string)
+        optional(:create_groups_job).filled(:string)
+        optional(:download_submissions_job).filled(:string)
+        optional(:generate_job).filled(:string)
+        optional(:split_pdf_job).filled(:string)
+        optional(:submissions_job).filled(:string)
+        optional(:uncollect_submissions_job).filled(:string)
+        optional(:update_keys_job).filled(:string)
+        optional(:update_repo_required_files_job).filled(:string)
+        optional(:update_repo_permissions_job).filled(:string)
       end
-    end
-    required(:queues).hash do
-      required(:default).filled(:string)
-      optional(:autotest_cancel_job).filled(:string)
-      optional(:autotest_run_job).filled(:string)
-      optional(:autotest_specs_job).filled(:string)
-      optional(:autotest_testers_job).filled(:string)
-      optional(:create_groups_job).filled(:string)
-      optional(:download_submissions_job).filled(:string)
-      optional(:generate_job).filled(:string)
-      optional(:split_pdf_job).filled(:string)
-      optional(:submissions_job).filled(:string)
-      optional(:uncollect_submissions_job).filled(:string)
-      optional(:update_keys_job).filled(:string)
-      optional(:update_repo_required_files_job).filled(:string)
-      optional(:update_repo_permissions_job).filled(:string)
-    end
-    required(:redis).hash do
-      required(:url).filled(:string)
-    end
-    required(:course_name).filled(:string)
-    required(:validate_file).filled(:string)
-    required(:validate_ip).filled(:bool)
-    required(:validate_custom_status_message).hash
-    required(:validate_user_not_allowed_message).maybe(:string)
-    required(:incorrect_login_message).maybe(:string)
-    required(:remote_user_auth).filled(:bool)
-    required(:logout_redirect).filled(:string)
-    required(:repository).hash do
-      required(:storage).filled(:string)
-      required(:type).value(included_in?: %w[git svn mem])
-      required(:url).filled(:string)
-      optional(:markus_git_shell).filled(:string)
-      optional(:ssh_url).filled(:string)
-      required(:is_repository_admin).filled(:bool)
-    end
-    required(:max_file_size).value(:integer, gt?: 0)
-    required(:student_session_timeout).value(:integer, gt?: 0)
-    required(:ta_session_timeout).value(:integer, gt?: 0)
-    required(:admin_session_timeout).value(:integer, gt?: 0)
-    required(:enable_key_storage).filled(:bool)
-    required(:student_csv_upload_order).array(
-      included_in?: %w[user_name last_name first_name section_name id_number email]
-    )
-    required(:ta_csv_upload_order).array(included_in?: %w[user_name last_name first_name email])
-    required(:logging).hash do
-      required(:enabled).filled(:bool)
-      required(:rotate_by_interval).filled(:bool)
-      optional(:rotate_interval).filled(included_in?: %w[daily weekly monthly])
-      required(:size_threshold).filled(:integer, gt?: 0)
-      required(:old_files).filled(:integer, gt?: 0)
-      required(:log_file).filled(:string)
-      required(:error_file).filled(:string)
-    end
-    required(:scanned_exams).hash do
-      required(:enable).filled(:bool)
-      required(:python).filled(:string)
-      required(:path).filled(:string)
-    end
-    required(:nbconvert).filled(:string)
-    required(:i18n).hash do
-      required(:available_locales).array(:string)
-      required(:default_locale).filled(:string)
-    end
-    required(:autotest).hash do
-      required(:enable).filled(:bool)
-      required(:student_test_buffer_minutes).value(:integer, gt?: 0)
-      required(:url).filled(:string)
-      required(:client_dir).filled(:string)
-      required(:max_batch_size).value(:integer, gt?: 0)
-    end
-    required(:starter_file).hash do
-      required(:storage).filled(:string)
+      required(:redis).hash do
+        required(:url).filled(:string)
+      end
+      required(:course_name).filled(:string)
+      required(:validate_file).filled(:string)
+      required(:validate_ip).filled(:bool)
+      required(:validate_custom_status_message).hash
+      required(:validate_user_not_allowed_message).maybe(:string)
+      required(:incorrect_login_message).maybe(:string)
+      required(:remote_user_auth).filled(:bool)
+      required(:logout_redirect).filled(:string)
+      required(:repository).hash do
+        required(:storage).filled(:string)
+        required(:type).value(included_in?: %w[git svn mem])
+        required(:url).filled(:string)
+        optional(:markus_git_shell).filled(:string)
+        optional(:ssh_url).filled(:string)
+        required(:is_repository_admin).filled(:bool)
+      end
+      required(:max_file_size).value(:integer, gt?: 0)
+      required(:student_session_timeout).value(:integer, gt?: 0)
+      required(:ta_session_timeout).value(:integer, gt?: 0)
+      required(:admin_session_timeout).value(:integer, gt?: 0)
+      required(:enable_key_storage).filled(:bool)
+      required(:student_csv_upload_order).array(
+        included_in?: %w[user_name last_name first_name section_name id_number email]
+      )
+      required(:ta_csv_upload_order).array(included_in?: %w[user_name last_name first_name email])
+      required(:logging).hash do
+        required(:enabled).filled(:bool)
+        required(:rotate_by_interval).filled(:bool)
+        optional(:rotate_interval).filled(included_in?: %w[daily weekly monthly])
+        required(:size_threshold).filled(:integer, gt?: 0)
+        required(:old_files).filled(:integer, gt?: 0)
+        required(:log_file).filled(:string)
+        required(:error_file).filled(:string)
+      end
+      required(:scanned_exams).hash do
+        required(:enable).filled(:bool)
+        required(:path).filled(:string)
+      end
+      required(:i18n).hash do
+        required(:available_locales).array(:string)
+        required(:default_locale).filled(:string)
+      end
+      required(:autotest).hash do
+        required(:enable).filled(:bool)
+        required(:student_test_buffer_minutes).value(:integer, gt?: 0)
+        required(:url).filled(:string)
+        required(:client_dir).filled(:string)
+        required(:max_batch_size).value(:integer, gt?: 0)
+      end
+      required(:starter_file).hash do
+        required(:storage).filled(:string)
+      end
+      required(:python).hash do
+        required(:bin).filled(:string)
+      end
+      required(:pandoc).filled(:string)
     end
   end
 end

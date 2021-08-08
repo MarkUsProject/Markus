@@ -90,7 +90,7 @@ export class CourseSummaryChart extends React.Component {
 
             <div className='flex-row-expand'>
               {this.state.marking_scheme_ids.map((_, i) =>
-                <div className='grid-2-col'>
+                <div className='grid-2-col' key={`marking-scheme-${i}-statistics`}>
                   <span> {I18n.t('activerecord.models.marking_scheme.one')}</span>
                   <span> {this.state.marking_scheme_ids[i]} </span>
                   <span> {I18n.t('average')} </span>

@@ -6,6 +6,10 @@ bundle check 2>/dev/null || bundle install --without mysql sqlite unicorn
 # install yarn packages if not up to date with yarn.lock file
 yarn check --integrity 2>/dev/null || yarn install --check-files
 
+# install python packages
+python3 -m venv ./venv
+./venv/bin/pip install -r requirements.txt
+
 # setup the database (checks for db existence first)
 cp .dockerfiles/database.yml.postgresql config/database.yml
 until psql "postgres://${PGUSER}:${PGPASSWORD}@${PGHOST}:${PGPORT}/postgres" -lqt &>/dev/null; do

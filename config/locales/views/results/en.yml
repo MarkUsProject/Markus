@@ -44,12 +44,12 @@ en:
     late_submission_warning_html: This group <a href="%{url}">submitted work</a> after the due date.
     marks_chart: Marks Chart
     marks_released: The marks have been released. You cannot change the grades.
-    next_submission: Next
+    next_submission: Next Submission
     no_feedback_files: "[No feedback files available]"
     no_result: No marks are available yet.
     no_results_in_direction: There are no more results in this direction!
     overridden_deductions: Overridden
-    previous_submission: Previous
+    previous_submission: Previous Submission
     remark:
       about_remark_save: Please note that the instructor will be unaware of your saved request unless it has been submitted.
       about_remark_submission: Once a remark request has been submitted, you will not be able to see your original results until remark results are available. You will also not be able to edit the request.
@@ -68,6 +68,7 @@ en:
     rotate_image: Rotate 90°
     set_to_complete: Set to Complete
     set_to_incomplete: Set to Incomplete
+    submission_info: Submission Info
     subtotal: Subtotal
     summary: Summary
     total_extra_marks: Total Extra Marks

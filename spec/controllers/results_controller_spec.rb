@@ -115,6 +115,32 @@ describe ResultsController do
             expect(response.body).to eq SAMPLE_FILE_CONTENT
           end
         end
+        context 'show in browser is true' do
+          let(:submission_file) { create :submission_file, filename: filename, submission: submission }
+          subject do
+            get :download, params: { assignment_id: assignment.id,
+                                     submission_id: submission.id,
+                                     select_file_id: submission_file.id,
+                                     id: incomplete_result.id,
+                                     show_in_browser: true }
+          end
+          context 'file is a jupyter-notebook file' do
+            let(:filename) { 'example.ipynb' }
+            it 'should redirect to "notebook_content"' do
+              expect(subject).to(
+                redirect_to(notebook_content_assignment_submissions_url(select_file_id: submission_file.id))
+              )
+            end
+          end
+          context 'file is a rmarkdown file' do
+            let(:filename) { 'example.Rmd' }
+            it 'should redirect to "notebook_content"' do
+              expect(subject).to(
+                redirect_to(notebook_content_assignment_submissions_url(select_file_id: submission_file.id))
+              )
+            end
+          end
+        end
       end
     end
   end
@@ -713,6 +739,10 @@ describe ResultsController do
 
       it 'should anonymize the group names' do
         expect(data['group_name']).to eq "#{Group.model_name.human} #{data['grouping_id']}"
+      end
+
+      it 'should not include any group members' do
+        expect(data['members']).to eq []
       end
 
       it 'should not report any grace token deductions' do

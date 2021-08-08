@@ -7,7 +7,7 @@ ARG PG_MAJOR
 ARG NODE_MAJOR
 ARG BUNDLER_VERSION
 ARG YARN_VERSION
-ARG NBCONVERTVENV
+ARG PYTHON_VERSION
 ARG USER
 
 RUN apt-get update -qq && DEBIAN_FRONTEND=noninteractive apt-get -yq dist-upgrade && \
@@ -60,8 +60,9 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install -yq --no-install-recommends \
     yarn \
     rsync \
     git \
-    python3.8 \
-    python3.8-venv \
+    python${PYTHON_VERSION} \
+    python${PYTHON_VERSION}-venv \
+    python${PYTHON_VERSION}-dev \
     pandoc && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && \
@@ -72,8 +73,7 @@ RUN sed -ri 's/(rights=")none("\s+pattern="PDF")/\1read\2/' /etc/ImageMagick-6/p
 
 RUN useradd -m -s /bin/bash $USER
 
-# Install nbconvert for rendering .ipynb files
-RUN python3.8 -m venv $NBCONVERTVENV && $NBCONVERTVENV/bin/pip install wheel nbconvert
+RUN ln -fs $(which python${PYTHON_VERSION}) /usr/bin/python3
 
 ENV GEM_HOME="/bundle"
 ENV PATH="$GEM_HOME/bin:$GEM_HOME/gems/bin:$PATH"
@@ -94,7 +94,8 @@ RUN mkdir -p /bundle \
              /app/node_modules \
              /app/public/packs \
              /app/public/packs-test \
-             /app/log && \
+             /app/log \
+             /app/venv && \
              chown -R $USER /bundle /ssh_pub_key /app
 
 USER $USER
@@ -119,12 +120,17 @@ USER $USER
 COPY --chown=${USER}:${USER} . /app
 COPY --chown=${USER}:${USER} .dockerfiles/database.yml.postgresql /app/config/database.yml
 
+# install python packages
+RUN python${PYTHON_VERSION} -m venv /app/venv && \
+    /app/venv/bin/pip install nbconvert==6.1.0
+
 ENV RAILS_ENV=production
 ENV NODE_ENV=production
 
 # install bundler
 RUN gem$RUBY_VERSION install bundler -v $BUNDLER_VERSION
 
-RUN SECRET_KEY_BASE=1 bundle install --deployment --path $GEM_HOME --without development test offline mysql sqlite && \
-    SECRET_KEY_BASE=1 PGDATABASE=dummy bundle exec rails i18n:js:export && \
-    SECRET_KEY_BASE=1 PGDATABASE=dummy bundle exec rails assets:precompile
+RUN SECRET_KEY_BASE=1 bundle install --deployment --path $GEM_HOME --without development test offline mysql sqlite
+
+RUN SECRET_KEY_BASE=1 NO_SCHEMA_VALIDATE=true PGDATABASE=dummy bundle exec rails i18n:js:export && \
+    SECRET_KEY_BASE=1 NO_SCHEMA_VALIDATE=true PGDATABASE=dummy bundle exec rails assets:precompile

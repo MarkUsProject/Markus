@@ -1,5 +1,4 @@
 class PeerReviewsController < ApplicationController
-  include GroupsHelper
   include RandomAssignHelper
 
   before_action :set_peer_review, only: [:show, :edit, :update, :destroy]

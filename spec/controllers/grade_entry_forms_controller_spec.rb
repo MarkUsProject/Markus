@@ -497,4 +497,70 @@ describe GradeEntryFormsController do
       expect(JSON.parse(response.body)['info_summary']).to eq(expected_summary.as_json)
     end
   end
+
+  describe '#switch' do
+    let(:gef) { create :grade_entry_form }
+    let(:gef2) { create :grade_entry_form }
+
+    shared_examples 'switch assignment tests' do
+      before { controller.request.headers.merge('HTTP_REFERER': referer) }
+      subject { expect get_as user, 'switch', params: { id: gef2.id } }
+      context 'referred from a grade entry form url' do
+        let(:referer) { grade_entry_form_url(id: gef.id) }
+        it 'should redirect to the equivalent assignment page' do
+          expect(subject).to redirect_to(grade_entry_form_url(id: gef2.id))
+        end
+      end
+      context 'referred from a non grade entry form url' do
+        let(:referer) { non_grade_entry_form_url&.call(grade_entry_form_id: gef.id) }
+        it 'should redirect to the equivalent non assignment page' do
+          skip if non_grade_entry_form_url.nil?
+          expect(subject).to redirect_to(non_grade_entry_form_url.call(grade_entry_form_id: gef2.id))
+        end
+      end
+      context 'referer is nil' do
+        let(:referer) { nil }
+        it 'should redirect to the fallback url' do
+          expect(subject).to redirect_to(fallback_url.call(id: gef2.id))
+        end
+      end
+      context 'referer is a url that does not include the grade entry form at all' do
+        let(:referer) { users_url }
+        it 'should redirect to the fallback url' do
+          expect(subject).to redirect_to(fallback_url.call(id: gef2.id))
+        end
+      end
+      context 'the referer url is some other site entirely' do
+        let(:referer) { 'https://test.com' }
+        it 'should redirect to the fallback url' do
+          expect(subject).to redirect_to(fallback_url.call(id: gef2.id))
+        end
+      end
+      context 'the referer url is not valid' do
+        let(:referer) { '1234567' }
+        it 'should redirect to the fallback url' do
+          expect(subject).to redirect_to(fallback_url.call(id: gef2.id))
+        end
+      end
+    end
+
+    context 'an admin' do
+      let(:user) { create :admin }
+      let(:non_grade_entry_form_url) { ->(params) { grade_entry_form_marks_graders_url(params) } }
+      let(:fallback_url) { ->(params) { edit_grade_entry_form_path(params) } }
+      include_examples 'switch assignment tests'
+    end
+    context 'a grader' do
+      let(:user) { create :ta, manage_assessments: true }
+      let(:non_grade_entry_form_url) { ->(params) { grade_entry_form_marks_graders_url(params) } }
+      let(:fallback_url) { ->(params) { grades_grade_entry_form_path(params) } }
+      include_examples 'switch assignment tests'
+    end
+    context 'a student' do
+      let(:user) { create :student }
+      let(:non_grade_entry_form_url) { nil }
+      let(:fallback_url) { ->(params) { student_interface_grade_entry_form_url(params) } }
+      include_examples 'switch assignment tests'
+    end
+  end
 end

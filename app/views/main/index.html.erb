@@ -3,6 +3,9 @@
   <%= javascript_tag nonce: true do %>
     document.addEventListener('DOMContentLoaded', () => {
         window.dashboard = makeDashboard(document.getElementById('dashboard-react'));
+        <% unless @current_assignment.nil? %>
+          window.dashboard.setState({assessment_id: <%= @current_assignment.id %>, assessment_type: 'Assignment'});
+        <% end %>
     })
   <% end %>
 <% end %>

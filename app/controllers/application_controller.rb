@@ -76,7 +76,7 @@ class ApplicationController < ActionController::Base
   # requested, fall back to default locale.
   def set_locale
     if params[:locale].nil?
-      if current_user
+      if current_user && I18n.available_locales.include?(current_user.locale.to_sym)
         I18n.locale = current_user.locale
       else
         I18n.locale = I18n.default_locale

@@ -314,6 +314,7 @@ class Result extends React.Component {
             annotationModal: INITIAL_ANNOTATION_MODAL_STATE
           })
           this.refreshAnnotations();
+          this.refreshAnnotationCategories();
         }
       );
     };
@@ -333,7 +334,7 @@ class Result extends React.Component {
         isNew: false,
         changeOneOption: annotation.annotation_category_id && !annotation.deduction,
         onSubmit,
-        title: I18n.t("helpers.submit.create", {
+        title: I18n.t("helpers.submit.update", {
           model: I18n.t("activerecord.models.annotation.one"),
         }),
       },
@@ -587,7 +588,7 @@ class Result extends React.Component {
   updateOverallComment = (value, remark) => {
     return $.post({
       url: Routes.update_overall_comment_assignment_submission_result_path(
-        this.props.assignment_id, this.props.submission_id, this.props.result_id,
+        this.state.assignment_id, this.state.submission_id, this.state.result_id,
       ),
       data: {result: {overall_comment: value}},
     }).then((result) => {
@@ -685,6 +686,7 @@ class Result extends React.Component {
                 submission_id={this.state.submission_id}
                 result_id={this.state.result_id}
                 grouping_id={this.state.grouping_id}
+                members={this.state.members || []}
                 role={this.props.role}
                 annotations={this.state.annotations}
                 assigned_criteria={this.state.assigned_criteria}
