@@ -41,9 +41,9 @@ class CourseSummariesController < ApplicationController
       data: table_data,
       graph_data: { average: average, median: median, individual: individual },
       graph_labels: graph_labels,
-      react_2_chart_data: {labels: graph_labels, datasets: [ {label: I18n.t('class_average'), data: average},
-                                                         {label: I18n.t('class_median'), data: median},
-                                                         {label: I18n.t('results.your_mark'), data: individual} ]},
+      react_2_chart_data: { labels: graph_labels, datasets: [ { label: I18n.t('class_average'), data: average },
+                                                         { label: I18n.t('class_median'), data: median },
+                                                         { label: I18n.t('results.your_mark'), data: individual } ]},
       assessments: assessment_columns,
       marking_schemes: marking_scheme_columns
     }
