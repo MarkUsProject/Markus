@@ -1080,7 +1080,8 @@ describe AssignmentsController do
                                         'num_submissions_graded',
                                         'num_fails',
                                         'num_zeros',
-                                        'groupings_size')
+                                        'groupings_size',
+                                        'num_outstanding_remark_requests')
       end
 
       it 'should contain the right values' do
@@ -1094,7 +1095,8 @@ describe AssignmentsController do
                        assignment.ungraded_submission_results.size,
                      num_fails: assignment.results_fails,
                      num_zeros: assignment.results_zeros,
-                     groupings_size: assignment.groupings.size }
+                     groupings_size: assignment.groupings.size,
+                     num_outstanding_remark_requests: assignment.outstanding_remark_request_count }
         expect(summary).to eq expected.as_json
       end
     end

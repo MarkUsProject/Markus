@@ -83,14 +83,15 @@ export class CourseSummaryChart extends React.Component {
 
             <div className='flex-row-expand'>
               {this.state.summary.map((summary, i) =>
-                <div className='grid-2-col' key={`marking-scheme-${i}-statistics`}>
-                  <span>{I18n.t('activerecord.models.marking_scheme.one')}</span>
-                  <span>{summary.name}</span>
-                  <span>{I18n.t('average')}</span>
-                  <span>{summary.average.toFixed(2)}%</span>
-                  <span>{I18n.t('median')}</span>
-                  <span>{summary.median.toFixed(2)}%</span>
-                </div>
+                <React.Fragment>
+                  <p>{summary.name}</p>
+                  <div className='grid-2-col' key={`marking-scheme-${i}-statistics`}>
+                    <span>{I18n.t('average')}</span>
+                    <span>{summary.average.toFixed(2)}%</span>
+                    <span>{I18n.t('median')}</span>
+                    <span>{summary.median.toFixed(2)}%</span>
+                  </div>
+                </React.Fragment>
               )}
             </div>
           </div>

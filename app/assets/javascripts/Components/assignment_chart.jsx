@@ -78,10 +78,24 @@ export class AssignmentChart extends React.Component {
   }
 
   render() {
+    let outstanding_remark_request_link = '';
+    if (this.state.summary.num_outstanding_remark_requests > 0) {
+      outstanding_remark_request_link = (
+        <p>
+          <a href={Routes.browse_assignment_submissions_path(
+            this.props.assessment_id,
+            {filter_by: 'marking_state', filter_value: 'remark'}
+          )}>
+            {I18n.t('outstanding_remark_request', {count: this.state.summary.num_outstanding_remark_requests})}
+          </a>
+        </p>
+      );
+    }
+
     const assignment_graph = (
       <React.Fragment>
         <h2>
-          <a href={Routes.edit_assignment_path(this.props.assessment_id)}>{this.state.summary.name}</a>
+          <a href={Routes.browse_assignment_submissions_path(this.props.assessment_id)}>{this.state.summary.name}</a>
         </h2>
         <div className='flex-row'>
           <div>
@@ -101,13 +115,13 @@ export class AssignmentChart extends React.Component {
               <span>{this.state.summary.num_fails}</span>
               <span>{I18n.t('num_zeros')}</span>
               <span>{this.state.summary.num_zeros}</span>
-
-              <h4>
-                <a data-remote='true' href={Routes.view_summary_assignment_path(this.props.assessment_id)}>
-                  {I18n.t('refresh_graph')}
-                </a>
-              </h4>
             </div>
+            {outstanding_remark_request_link}
+            <p>
+              <a data-remote='true' href={Routes.view_summary_assignment_path(this.props.assessment_id)}>
+                {I18n.t('refresh')}
+              </a>
+            </p>
           </div>
         </div>
       </React.Fragment>
@@ -120,6 +134,11 @@ export class AssignmentChart extends React.Component {
           <h3>{I18n.t('grader_distribution')}</h3>
           <Bar data={this.state.ta_grade_distribution.data} options={this.state.ta_grade_distribution.options}
                width='400' height='350'/>
+          <p>
+            <a href={Routes.grader_summary_assignment_graders_path(this.props.assessment_id)}>
+              {I18n.t('activerecord.models.ta.other')}
+            </a>
+          </p>
         </React.Fragment>
       );
     } else {
