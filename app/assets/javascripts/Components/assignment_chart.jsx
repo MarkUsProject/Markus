@@ -1,5 +1,4 @@
 import React from 'react';
-
 import { Bar } from 'react-chartjs-2';
 
 
@@ -66,7 +65,7 @@ export class AssignmentChart extends React.Component {
 
         this.setState({
           summary: res.summary,
-          assignment_grade_distribution: { data: res.assignment_data, options: {} },
+          assignment_grade_distribution: { ...this.state.assignment_grade_distribution, data: res.assignment_data},
           ta_grade_distribution: {...this.state.ta_grade_distribution, data: res.ta_data}
         })
       })
@@ -81,34 +80,33 @@ export class AssignmentChart extends React.Component {
   render() {
     const assignment_graph = (
       <React.Fragment>
-        <h2><a href={Routes.edit_assignment_path(this.props.assessment_id)}> {this.state.summary.name} </a></h2>
+        <h2>
+          <a href={Routes.edit_assignment_path(this.props.assessment_id)}>{this.state.summary.name}</a>
+        </h2>
         <div className='flex-row'>
           <div>
             <Bar data={this.state.assignment_grade_distribution.data} width='500' height='450'/>
           </div>
           <div className='flex-row-expand'>
             <div className="grid-2-col">
-              <span> {I18n.t('average')} </span>
-              <span> {(this.state.summary.average || 0).toFixed(2)} </span>
+              <span>{I18n.t('average')}</span>
+              <span>{(this.state.summary.average || 0).toFixed(2)}%</span>
+              <span>{I18n.t('median')}</span>
+              <span>{(this.state.summary.median || 0).toFixed(2)}%</span>
+              <span>{I18n.t('assignments_submitted')}</span>
+              <span>{this.state.summary.num_submissions_collected} / {this.state.summary.groupings_size}</span>
+              <span>{I18n.t('assignments_graded')}</span>
+              <span>{this.state.summary.num_submissions_graded} / {this.state.summary.groupings_size}</span>
+              <span>{I18n.t('num_failed')}</span>
+              <span>{this.state.summary.num_fails}</span>
+              <span>{I18n.t('num_zeros')}</span>
+              <span>{this.state.summary.num_zeros}</span>
 
-              <span> {I18n.t('median')} </span>
-              <span> {(this.state.summary.median || 0).toFixed(2)} </span>
-
-              <span> {I18n.t('assignments_submitted')} </span>
-              <span> {this.state.summary.num_submissions_collected} / {this.state.summary.groupings_size}</span>
-
-              <span> {I18n.t('assignments_graded')} </span>
-              <span> {this.state.summary.num_submissions_graded} / {this.state.summary.groupings_size}</span>
-
-              <span> {I18n.t('num_failed')} </span>
-              <span> {this.state.summary.num_fails} </span>
-
-              <span> {I18n.t('num_zeros')} </span>
-              <span> {this.state.summary.num_zeros} </span>
-
-              <span><h4><a data-remote="true" href={Routes.view_summary_assignment_path(this.props.assessment_id)}>
-                      {I18n.t('refresh_graph')}
-                    </a></h4></span>
+              <h4>
+                <a data-remote='true' href={Routes.view_summary_assignment_path(this.props.assessment_id)}>
+                  {I18n.t('refresh_graph')}
+                </a>
+              </h4>
             </div>
           </div>
         </div>
@@ -128,7 +126,7 @@ export class AssignmentChart extends React.Component {
       return (
         <React.Fragment>
           {assignment_graph}
-          <h3> {I18n.t('grader_distribution')} </h3>
+          <h3>{I18n.t('grader_distribution')}</h3>
           <h4>(<a href={Routes.assignment_graders_path(this.props.assessment_id)}>{I18n.t('graders.actions.assign_grader')}</a>)</h4>
         </React.Fragment>
       );

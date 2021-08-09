@@ -1058,13 +1058,10 @@ describe AssignmentsController do
   end
 
   describe '#grade_distribution' do
-    let(:assignment) { create :assignment }
+    let(:assignment) { create :assignment_with_criteria_and_results_and_tas }
     let(:params) { { id: assignment.id } }
     let(:user) { create :admin }
-    let(:assignment_with_results_and_tas) do
-      create :assignment_with_criteria_and_results_and_tas, assignment: assignment
-    end
-    let(:params) { { id: assignment_with_results_and_tas.id } }
+    let(:params) { { id: assignment.id } }
 
     before { get_as user, :grade_distribution, params: params }
 
@@ -1088,16 +1085,16 @@ describe AssignmentsController do
 
       it 'should contain the right values' do
         summary = response.parsed_body['summary']
-        expected = { name: assignment_with_results_and_tas.short_identifier +
-          ': ' + assignment_with_results_and_tas.description,
-                     average: assignment_with_results_and_tas.results_average || 0,
-                     median: assignment_with_results_and_tas.results_median,
-                     num_submissions_collected: assignment_with_results_and_tas.current_submissions_used.size,
-                     num_submissions_graded: assignment_with_results_and_tas.current_submissions_used.size -
-                       assignment_with_results_and_tas.ungraded_submission_results.size,
-                     num_fails: assignment_with_results_and_tas.results_fails,
-                     num_zeros: assignment_with_results_and_tas.results_zeros,
-                     groupings_size: assignment_with_results_and_tas.groupings.size }
+        expected = { name: assignment.short_identifier +
+          ': ' + assignment.description,
+                     average: assignment.results_average || 0,
+                     median: assignment.results_median,
+                     num_submissions_collected: assignment.current_submissions_used.size,
+                     num_submissions_graded: assignment.current_submissions_used.size -
+                       assignment.ungraded_submission_results.size,
+                     num_fails: assignment.results_fails,
+                     num_zeros: assignment.results_zeros,
+                     groupings_size: assignment.groupings.size }
         expect(summary).to eq expected.as_json
       end
     end
@@ -1118,7 +1115,7 @@ describe AssignmentsController do
       context 'datasets' do
         it 'should contain the right data' do
           data = response.parsed_body['assignment_data']['datasets'].first['data']
-          expected = assignment_with_results_and_tas.grade_distribution_array
+          expected = assignment.grade_distribution_array
           expect(data).to contain_exactly(*expected)
         end
       end
@@ -1127,8 +1124,8 @@ describe AssignmentsController do
       it 'should contain the right data' do
         response.parsed_body['ta_data']['datasets'].each_with_index do |data_response, index|
           data = data_response['data']
-          ta = assignment_with_results_and_tas.tas[index]
-          expect(ta.grade_distribution_array(assignment_with_results_and_tas, 20)).to eq(data)
+          ta = assignment.tas[index]
+          expect(ta.grade_distribution_array(assignment, 20)).to eq(data)
         end
       end
     end

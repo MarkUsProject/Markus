@@ -7,7 +7,6 @@ describe GradeEntryFormsController do
   let(:grade_entry_form) { create(:grade_entry_form) }
   let(:grade_entry_form_with_data) { create(:grade_entry_form_with_data) }
   let(:grade_entry_form_with_data_and_total) { create(:grade_entry_form_with_data_and_total) }
-  let(:grade_entry_form_with_lots_of_data) { create(:grade_entry_form_with_lots_of_data) }
 
   describe '#upload' do
     before :each do

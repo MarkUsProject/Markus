@@ -49,7 +49,7 @@ class CourseSummariesController < ApplicationController
   def grade_distribution
     marking_schemes = current_user.student? ? MarkingScheme.none : MarkingScheme.order(id: :asc)
     intervals = 20
-    table_data = marking_schemes.map { |m| m.students_grade_distribution(current_user, intervals) }
+    table_data = marking_schemes.map { |m| { data: m.students_grade_distribution(current_user, intervals) } }
     labels = (0..intervals - 1).map { |i| "#{5 * i}-#{5 * i + 5}" }
 
     summary = marking_schemes.map do |m|
