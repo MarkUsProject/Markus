@@ -77,5 +77,6 @@ es:
       only_required_files: UPDATE ME
       select_file: UPDATE ME!
       version_control_warning: Entregar archivos aquí reescribe todos los cambios realizados usando version control. Asegúrese que haya trabajado en los archivos más recientes antes de realizar la entrega.
+    submission_summary: UPDATE ME
     successfully_changed: "%{changed} resultados han sido actualizados exitosamente"
     unrelease_marks: Ocultar Notas

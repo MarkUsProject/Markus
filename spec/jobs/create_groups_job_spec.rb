@@ -70,11 +70,11 @@ describe CreateGroupsJob do
   context 'when creating one good and one bad group' do
     context 'when the bad one is first' do
       before :each do
-        @data = [['group1', student1.user_name + 'bad_padding'],
-                 ['group2', student2.user_name]]
+        @data = [['group2', student1.user_name + 'bad_padding'],
+                 ['group1', student2.user_name]]
       end
 
-      include_examples 'create objects', 0, 0, 0
+      include_examples 'create objects', 1, 1, 1
     end
     context 'when the bad one is not first' do
       before :each do
@@ -82,7 +82,7 @@ describe CreateGroupsJob do
                  ['group2', student2.user_name + 'bad_padding']]
       end
 
-      include_examples 'create objects', 0, 0, 0
+      include_examples 'create objects', 1, 1, 1
     end
   end
 

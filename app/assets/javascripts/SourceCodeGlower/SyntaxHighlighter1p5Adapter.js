@@ -50,6 +50,7 @@ SyntaxHighlighter1p5Adapter.prototype.getFontSize = function() {
 
 SyntaxHighlighter1p5Adapter.prototype.setFontSize = function(font_size) {
   this.font_size = font_size;
+  document.getElementsByClassName('dp-highlighter')[0].style.fontSize = font_size + 'em';
 }
 
 SyntaxHighlighter1p5Adapter.prototype.applyMods = function() {
@@ -86,20 +87,16 @@ SyntaxHighlighter1p5Adapter.prototype.applyMods = function() {
   original_commands["BoostCode"] = {
     label: '+A',
     func: function(highlighter) {
-      var code = document.getElementsByClassName('dp-highlighter')[0];
       var font_size = me.getFontSize() + .25;
       me.setFontSize(font_size);
-      code.style.fontSize = font_size + 'em';
     }
   };
 
   original_commands["ShrinkCode"] = {
     label: '-A',
     func: function(highlighter) {
-      var code = document.getElementsByClassName('dp-highlighter')[0];
       var font_size = me.getFontSize() - .25;
       me.setFontSize(font_size);
-      code.style.fontSize = font_size + 'em';
     }
   };
 
