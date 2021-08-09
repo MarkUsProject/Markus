@@ -1,7 +1,8 @@
 import React from 'react';
 import {render} from 'react-dom';
+
+import { Bar } from 'react-chartjs-2';
 import { CourseSummaryTable } from './course_summaries_table';
-import { DataChart } from './Helpers/data_chart';
 
 class GradesSummaryDisplay extends React.Component {
 
@@ -38,7 +39,11 @@ class GradesSummaryDisplay extends React.Component {
       data: [],
       graph_labels: [],
       datasets: [],
-      loading: true
+      loading: true,
+      react_2_chart_data: {
+        labels: [],
+        datasets: [],
+      },
     }
   }
 
@@ -47,10 +52,14 @@ class GradesSummaryDisplay extends React.Component {
   }
 
   fetchData = () => {
-    $.ajax({
-      url: Routes.populate_course_summaries_path(),
-      dataType: 'json',
-    }).then(res => this.setState({...res, loading: false, datasets: this.compileDatasets(res.graph_data)}))
+    fetch(Routes.populate_course_summaries_path())
+      .then(data => data.json())
+      .then(res => {
+        res.react_2_chart_data.datasets[0] = Object.assign({}, this.averageDataSet, res.react_2_chart_data.datasets[0])
+        res.react_2_chart_data.datasets[1] = Object.assign({}, this.medianDataSet, res.react_2_chart_data.datasets[1])
+        res.react_2_chart_data.datasets[2] = Object.assign({}, this.individualDataSet, res.react_2_chart_data.datasets[2])
+        this.setState({...res, loading: false, datasets: this.compileDatasets(res.graph_data)})
+      })
   }
 
   compileDatasets = (data) => {
@@ -79,16 +88,9 @@ class GradesSummaryDisplay extends React.Component {
         loading={this.state.loading}
         student={this.props.student}
       />
-      <fieldset style={{display: 'flex', justifyContent: 'center'}}>
-        <DataChart
-          labels={this.state.graph_labels}
-          datasets={this.state.datasets}
-          xTitle={I18n.t('activerecord.models.assessment.one')}
-          yTitle={I18n.t('activerecord.models.mark.one') + ' (%)'}
-          width={'auto'}
-          legend={true}
-        />
-      </fieldset>
+      <Bar
+        data={this.state.react_2_chart_data}
+      />
     </div>);
   }
 }
