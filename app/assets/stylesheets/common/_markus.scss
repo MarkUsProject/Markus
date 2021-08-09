@@ -15,11 +15,6 @@
 
 /** Main */
 
-// for charts rendered in FireFox
-canvas {
-  image-rendering: crisp-edges;
-}
-
 body {
   background-color: $background-support;
   color: $sharp-line;
@@ -1333,8 +1328,13 @@ nav {
   text-align: center;
 }
 
-// Styling for summary stats for course_summary_chart.jsx
+// for charts rendered in FireFox
+canvas {
+  image-rendering: crisp-edges;
+}
 
+
+// Styling for summary stats for course_summary_chart.jsx
 .summary-stats {
   column-gap: 40px;
   display: flex;

@@ -314,13 +314,13 @@ class AssignmentsController < ApplicationController
     end
   end
 
-  # Return the chart data of assignment grade distributions
-  def chart_data
+  # Return assignment grade distributions
+  def grade_distribution
     assignment = Assignment.find(params[:id])
     summary = {
       name: assignment.short_identifier + ': ' + assignment.description,
-      average: ActiveSupport::NumberHelper.number_to_percentage(assignment.results_average || 0, precision: 1),
-      median: ActiveSupport::NumberHelper.number_to_percentage(assignment.results_median || 0, precision: 1),
+      average: assignment.results_average || 0,
+      median: assignment.results_median || 0,
       num_submissions_collected: assignment.current_submissions_used.size,
       num_submissions_graded: assignment.current_submissions_used.size -
         assignment.ungraded_submission_results.size,
@@ -328,30 +328,27 @@ class AssignmentsController < ApplicationController
       num_zeros: assignment.results_zeros,
       groupings_size: assignment.groupings.size
     }
-    assignment_labels = (0..19).map { |i| (5 * i).to_s + '-' + (5 * i + 5).to_s }
+    intervals = 20
+    assignment_labels = (0..intervals - 1).map { |i| "#{5 * i}-#{5 * i + 5}" }
     assignment_datasets = [
       {
-        data: assignment.grade_distribution_array,
-        backgroundColor: [
-          'rgba(36, 81, 133, 1)'
-        ],
-        borderColor: [
-          'rgba(36, 81, 133, 1)'
-        ],
-        borderWidth: 1
+        data: assignment.grade_distribution_array
       }
     ]
     assignment_data = { labels: assignment_labels, datasets: assignment_datasets }
-    tas = assignment.tas
-    ta_labels = (0..100).step(5).to_a
-    ta_datasets = tas.map do |ta|
-      { label: ta.first_name + ' ' + ta.last_name + ' ' + t('submissions.how_many_marked',
-                                                            num_marked: assignment.get_num_marked(ta.id),
-                                                            num_assigned: assignment.get_num_assigned(ta.id)),
-        data: ta.grade_distribution_array(assignment, 20), backgroundColor: '' }
+    ta_labels = (0..intervals - 1).map { |i| "#{5 * i}-#{5 * i + 5}" }
+    ta_datasets = assignment.tas.map do |ta|
+      num_marked_label = t('submissions.how_many_marked',
+                           num_marked: assignment.get_num_marked(ta.id),
+                           num_assigned: assignment.get_num_assigned(ta.id))
+      { label: "#{ta.first_name} #{ta.last_name} (#{num_marked_label})",
+        data: ta.grade_distribution_array(assignment, intervals) }
     end
-    ta_data = { labels: ta_labels, datasets: ta_datasets }
-    render json: { summary: summary, assignment_data: assignment_data, ta_data: ta_data }
+    render json: {
+      summary: summary,
+      assignment_data: assignment_data,
+      ta_data: { labels: ta_labels, datasets: ta_datasets }
+    }
   end
 
   # Refreshes the grade distribution graph

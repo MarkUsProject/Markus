@@ -225,47 +225,45 @@ class GradeEntryFormsController < ApplicationController
     redirect_to action: 'grades', id: @grade_entry_form.id
   end
 
-  def chart_data
+  def grade_distribution
     grade_entry_form = GradeEntryForm.find(params[:id])
 
-    column_breakdown_data = { labels: [], datasets: [], options: {} }
-    axis_labels = (0..100).step(5).to_a
+    intervals = 20
+    axis_labels = (0..intervals - 1).map { |i| "#{5 * i}-#{5 * i + 5}" }
     dict_data = grade_entry_form.grade_entry_items.map do |item|
-      { label: item.name, data: item.grade_distribution_array(20), backgroundColor: '' }
+      { label: item.name, data: item.grade_distribution_array(intervals) }
     end
-    column_breakdown_data[:labels], column_breakdown_data[:datasets] = axis_labels, dict_data
+    column_breakdown_data = {
+      labels: axis_labels,
+      datasets: dict_data,
+      options: {}
+    }
 
-    new_labels = ['0 - 5']
-    new_labels += ((1..19).map { |i| (i * 5 + 1).to_s + ' - ' + (i * 5 + 5).to_s })
-
-    grade_dist_data = { labels: [], datasets: [], options: {} }
-    grade_dist_data[:labels] = new_labels
-    grade_dist_data[:datasets] = [{ data: grade_entry_form.grade_distribution_array }]
+    grade_dist_data = {
+      labels: (0..intervals - 1).map { |i| "#{5 * i}-#{5 * i + 5}" },
+      datasets: [{ data: grade_entry_form.grade_distribution_array(intervals) }],
+      options: {}
+    }
 
     num_entries = grade_entry_form.count_non_nil.to_s +
       '/' + grade_entry_form.grade_entry_students.joins(:user).where('users.hidden': false).count.to_s
 
     name = grade_entry_form.short_identifier + ': ' + grade_entry_form.description
-    info_summary = { name: name,
-                     date_name: GradeEntryForm.human_attribute_name(:date),
-                     date: I18n.l(grade_entry_form.due_date),
-                     average: ActiveSupport::NumberHelper.number_to_percentage(
-                       grade_entry_form.results_average || 0, precision: 1
-                     ),
-                     median: ActiveSupport::NumberHelper.number_to_percentage(
-                       grade_entry_form.results_median || 0, precision: 1
-                     ),
-                     num_entries: num_entries,
-                     num_fails: grade_entry_form.results_fails,
-                     num_zeros: grade_entry_form.results_zeros }
+    info_summary = {
+      name: name,
+      date: I18n.l(grade_entry_form.due_date),
+      average: grade_entry_form.results_average || 0,
+      median: grade_entry_form.results_median || 0,
+      num_entries: num_entries,
+      num_fails: grade_entry_form.results_fails,
+      num_zeros: grade_entry_form.results_zeros
+    }
 
-    respond_to do |format|
-      format.json do
-        render json: { grade_dist_data: grade_dist_data,
-                       column_breakdown_data: column_breakdown_data,
-                       info_summary: info_summary }
-      end
-    end
+    render json: {
+      grade_dist_data: grade_dist_data,
+      column_breakdown_data: column_breakdown_data,
+      info_summary: info_summary
+    }
   end
 
   def switch

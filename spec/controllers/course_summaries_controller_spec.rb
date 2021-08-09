@@ -280,28 +280,24 @@ describe CourseSummariesController do
       end
     end
 
-    describe 'GET grade distribution' do
+    describe '#grade_distribution' do
       let(:user) { create(:admin) }
       it('should respond with 200 (ok)') do
         create :marking_scheme, assessments: Assessment.all
         get_as user, :grade_distribution, format: :json
-        expect(response.status).to eq 200
+        expect(response).to have_http_status 200
       end
       it 'returns correct data' do
         marking_scheme = create :marking_scheme, assessments: Assessment.all
         expected = {}
         expected[:datasets] = [marking_scheme.students_grade_distribution(user)]
-        expected[:labels] = (0..100).step(5).to_a
-        expected[:marking_schemes_id] = [marking_scheme.id]
+        expected[:labels] = (0..19).map { |i| "#{5 * i}-#{5 * i + 5}" }
         grades = marking_scheme.students_weighted_grades_array(user)
-        expected[:summary] = {
-          average:  [ActiveSupport::NumberHelper.number_to_percentage(
-            DescriptiveStatistics.mean(grades) || 0, precision: 1
-          )],
-          median: [ActiveSupport::NumberHelper.number_to_percentage(
-            DescriptiveStatistics.median(grades) || 0, precision: 1
-          )]
-        }
+        expected[:summary] = [{
+          average: DescriptiveStatistics.mean(grades),
+          median: DescriptiveStatistics.median(grades),
+          name: marking_scheme.name
+        }]
         get_as user, :grade_distribution, format: :json
         expect(response.parsed_body).to eq expected.as_json
       end
@@ -309,35 +305,23 @@ describe CourseSummariesController do
         get_as user, :grade_distribution, format: :json
         expected = {}
         expected[:datasets] = []
-        expected[:labels] = (0..100).step(5).to_a
-        expected[:marking_schemes_id] = []
-        expected[:summary] = {
-          average: [],
-          median: []
-        }
+        expected[:labels] = (0..19).map { |i| "#{5 * i}-#{5 * i + 5}" }
+        expected[:summary] = []
         expect(response.parsed_body).to eq expected.as_json
       end
       it 'returns correct data when there is multiple marking schemes' do
-        marking_schemes = Array.new(2)
-        marking_schemes.map! { |_| create :marking_scheme, assessments: Assessment.all }
+        marking_schemes = create_list :marking_scheme, 2, assessments: Assessment.all
         expected = {}
         expected[:datasets] = marking_schemes.map { |m| m.students_grade_distribution(user) }
-        expected[:labels] = (0..100).step(5).to_a
-        expected[:marking_schemes_id] = marking_schemes.collect(&:id)
+        expected[:labels] = (0..19).map { |i| "#{5 * i}-#{5 * i + 5}" }
         grades = marking_schemes.map { |m| m.students_weighted_grades_array(user) }
-        average, median = [], []
-        grades.each do |grade|
-          average << ActiveSupport::NumberHelper.number_to_percentage(
-            DescriptiveStatistics.mean(grade) || 0, precision: 1
-          )
-          median << ActiveSupport::NumberHelper.number_to_percentage(
-            DescriptiveStatistics.median(grade) || 0, precision: 1
-          )
+        expected[:summary] = marking_schemes.zip(grades).map do |marking_scheme, grade|
+          {
+            average: DescriptiveStatistics.mean(grade),
+            median: DescriptiveStatistics.median(grade),
+            name: marking_scheme.name
+          }
         end
-        expected[:summary] = {
-          average: average,
-          median: median
-        }
         get_as user, :grade_distribution, format: :json
         expect(response.parsed_body).to eq expected.as_json
       end

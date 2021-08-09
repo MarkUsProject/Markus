@@ -47,33 +47,23 @@ class CourseSummariesController < ApplicationController
   end
 
   def grade_distribution
-    marking_schemes = current_user.student? ? MarkingScheme.none : MarkingScheme
-    table_data = marking_schemes.order(id: :asc).map { |m| m.students_grade_distribution(current_user) }
-    grades = marking_schemes.order(id: :asc).map { |m| m.students_weighted_grades_array(current_user) }
-    marking_schemes_id = marking_schemes.order(id: :asc).map(&:id)
+    marking_schemes = current_user.student? ? MarkingScheme.none : MarkingScheme.order(id: :asc)
+    intervals = 20
+    table_data = marking_schemes.map { |m| m.students_grade_distribution(current_user, intervals) }
+    labels = (0..intervals - 1).map { |i| "#{5 * i}-#{5 * i + 5}" }
 
-    labels = (0..100).step(5).to_a
-
-    average, median = [], [], []
-    unless table_data.empty?
-      grades.each do |grade|
-        average << ActiveSupport::NumberHelper.number_to_percentage(
-          DescriptiveStatistics.mean(grade) || 0, precision: 1
-        )
-        median << ActiveSupport::NumberHelper.number_to_percentage(
-          DescriptiveStatistics.median(grade) || 0, precision: 1
-        )
-      end
+    summary = marking_schemes.map do |m|
+      grades = m.students_weighted_grades_array(current_user)
+      {
+        name: m.name,
+        average: DescriptiveStatistics.mean(grades) || 0,
+        median: DescriptiveStatistics.median(grades) || 0
+      }
     end
-    summary = {
-      average: average,
-      median: median
-    }
 
     render json: {
       datasets: table_data,
       labels: labels,
-      marking_schemes_id: marking_schemes_id,
       summary: summary
     }
   end

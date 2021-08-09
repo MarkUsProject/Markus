@@ -88,7 +88,7 @@ Rails.application.routes.draw do
       put 'start_timed_assignment'
       get 'starter_file'
       put 'update_starter_file'
-      get 'chart_data'
+      get 'grade_distribution'
     end
 
     resources :starter_file_groups do
@@ -332,7 +332,7 @@ Rails.application.routes.draw do
       post 'update_grade'
       post 'update_grade_entry_students'
       get 'student_interface'
-      get 'chart_data'
+      get 'grade_distribution'
       get 'switch'
     end
 

@@ -443,58 +443,48 @@ describe GradeEntryFormsController do
     end
   end
 
-  describe 'GET chart_data' do
+  describe '#grade_distribution' do
     let(:user) { create(:admin) }
-    before { get_as user, :chart_data, params: { id: grade_entry_form_with_data.id } }
+    before { get_as user, :grade_distribution, params: { id: grade_entry_form_with_data.id } }
 
     it('should return grade distribution data') {
       expected_items = grade_entry_form_with_data.grade_distribution_array
-      expect(JSON.parse(response.body)['grade_dist_data']['datasets'][0]['data']).to eq(expected_items)
+      expect(response.parsed_body['grade_dist_data']['datasets'][0]['data']).to eq expected_items
     }
 
     it 'should retrieve the correct column data' do
-      response_data = JSON.parse(response.body)['column_breakdown_data']
-      expect(response_data['datasets'].size).to eq 1
-      expect(response_data['datasets'][0].size).to eq 3
+      response_data = response.parsed_body['column_breakdown_data']
 
       gef_dataset = grade_entry_form_with_data.grade_entry_items.map do |item|
-        { label: item.name, data: item.grade_distribution_array(20), backgroundColor: '' }
+        { label: item.name, data: item.grade_distribution_array(20) }
       end
       expect(response_data['datasets']).to eq gef_dataset.as_json
     end
 
     it('should return the correct grade distribution labels') {
-      new_labels = ['0 - 5']
-      new_labels += ((1..19).map { |i| (i * 5 + 1).to_s + ' - ' + (i * 5 + 5).to_s })
-      expect(JSON.parse(response.body)['grade_dist_data']['labels']).to eq(new_labels)
+      new_labels = (0..19).map { |i| "#{5 * i}-#{5 * i + 5}" }
+      expect(response.parsed_body['grade_dist_data']['labels']).to eq new_labels
     }
 
     it('should return the correct column data labels') {
-      new_labels = (0..100).step(5).to_a
-      expect(JSON.parse(response.body)['column_breakdown_data']['labels']).to eq(new_labels)
+      new_labels = (0..19).map { |i| "#{5 * i}-#{5 * i + 5}" }
+      expect(response.parsed_body['column_breakdown_data']['labels']).to eq new_labels
     }
 
-    it('should respond with 200') { expect(response.status).to eq 200 }
+    it('should respond with 200') { expect(response).to have_http_status 200 }
 
     it 'should return the expected info summary' do
       name = grade_entry_form_with_data.short_identifier + ': ' + grade_entry_form_with_data.description
       total_students = grade_entry_form_with_data.grade_entry_students.joins(:user).where('users.hidden': false).count
-      date_name = GradeEntryForm.human_attribute_name(:date)
       expected_summary = { name: name,
-                           date_name: date_name,
                            date: I18n.l(grade_entry_form.due_date),
-                           average: ActiveSupport::NumberHelper.number_to_percentage(
-                             grade_entry_form_with_data.results_average || 0, precision: 1
-                           ),
-                           median: ActiveSupport::NumberHelper.number_to_percentage(
-                             grade_entry_form_with_data.results_median || 0, precision: 1
-                           ),
+                           average: grade_entry_form_with_data.results_average,
+                           median: grade_entry_form_with_data.results_median,
                            num_entries: grade_entry_form_with_data.count_non_nil.to_s +
                              '/' + total_students.to_s,
                            num_fails: grade_entry_form_with_data.results_fails,
                            num_zeros: grade_entry_form.results_zeros }
-      expect(JSON.parse(response.body)['info_summary'].size).to eq(8)
-      expect(JSON.parse(response.body)['info_summary']).to eq(expected_summary.as_json)
+      expect(response.parsed_body['info_summary']).to eq expected_summary.as_json
     end
   end
 

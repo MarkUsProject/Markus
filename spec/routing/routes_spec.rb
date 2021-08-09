@@ -127,10 +127,10 @@ describe 'An Assignment' do
                      id: assignment.id.to_s)
     end
 
-    it 'routes GET chart_data properly' do
-      expect(get: path + '/' + assignment.id.to_s + '/chart_data')
+    it 'routes GET grade_distribution properly' do
+      expect(get: path + '/' + assignment.id.to_s + '/grade_distribution')
         .to route_to(controller: ctrl,
-                     action: 'chart_data',
+                     action: 'grade_distribution',
                      id: assignment.id.to_s)
     end
   end
@@ -992,10 +992,10 @@ context 'grade_entry_forms' do
   # end grade_entry_forms collection route tests
 
   context 'member' do
-    it 'routes GET chart data properly' do
-      expect(get: path + '/' + grade_entry_form.id.to_s + '/chart_data').to route_to(
+    it 'routes GET grade_distribution properly' do
+      expect(get: path + '/' + grade_entry_form.id.to_s + '/grade_distribution').to route_to(
         controller: ctrl,
-        action: 'chart_data',
+        action: 'grade_distribution',
         id: grade_entry_form.id.to_s
       )
     end
