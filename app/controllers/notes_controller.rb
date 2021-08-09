@@ -57,7 +57,6 @@ class NotesController < ApplicationController
         id: note.id,
         modifiable: allowed_to?(:modify?, note)
       }
-
     end
 
     column_header = {
@@ -65,7 +64,7 @@ class NotesController < ApplicationController
       human_name:  Note.model_name.human.pluralize,
       actions: t(:actions)
     }
-    render json: {notes_data: notes_data, column_headers: column_header}
+    render json: { notes_data: notes_data, column_headers: column_header }
   end
 
   # gets the objects for groupings on first load.
