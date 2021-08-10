@@ -1076,6 +1076,13 @@ context 'notes' do
       )
     end
 
+    it 'routes GET notes_json_data_properly' do
+      expect(get: path + '/all_notes').to route_to(
+        controller: ctrl,
+        action: '/all_notes'
+      )
+    end
+
     it 'routes GET notes_dialog properly' do
       expect(get: path + '/notes_dialog').to route_to(
         controller: ctrl,

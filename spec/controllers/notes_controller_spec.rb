@@ -61,6 +61,11 @@ describe NotesController do
       delete_as @student, :destroy, params: { id: @note.id }
       expect(response.status).to eq 403
     end
+
+    it 'GET on :all_notes' do
+      get_as @student, :edit, params: { id: @note.id }
+      expect(response.status).to eq 403
+    end
   end # student context
 
   context 'An authenticated and authorized TA doing a ' do
@@ -107,6 +112,22 @@ describe NotesController do
       get_as @ta, :new
       expect(response).to have_http_status :success
     end
+
+    it 'get request for all notes' do
+      @note = @note = create(:note, creator_id: @ta.id )
+      get_as @ta, :all_notes
+      data = JSON.parse(response.body)
+      note_data = data['notes_data'][0]
+      column_data = data['column_headers']
+
+      expect(note_data['date']).to eq(@note.format_date)
+      expect(note_data['user_name']).to eq(@note.user.user_name)
+      expect(note_data['message']).to eq(@note.notes_message)
+      expect(note_data['display_for']).to eq(@note.noteable.display_for_note)
+      # Should be true, since TA created note
+      expect(note_data['modifiable']).to eq(true)
+    end
+
 
     context 'POST on :create' do
       it 'be able to create with empty note' do
@@ -303,6 +324,11 @@ describe NotesController do
                :notes_dialog,
                params: { assignment_id: @assignment.id, noteable_type: 'Grouping', noteable_id: @grouping.id,
                          controller_to: @controller_to, action_to: @action_to }
+        expect(response.status).to eq 200
+      end
+
+      it 'GET on :all_notes' do
+        get_as @admin, :all_notes
         expect(response.status).to eq 200
       end
 
