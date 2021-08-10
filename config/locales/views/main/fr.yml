@@ -4,6 +4,8 @@ fr:
     account_disabled: Ce compte a été désactivé.
     create_marking_scheme: UPDATE ME
     external_authentication_not_supported: L'authentification externe n'est pas supportée sur votre plateforme.
+    frequency: UPDATE ME
+    grade: UPDATE ME
     log_in: Se connecter
     log_out: Déconnexion
     logging_in: Connexion...
