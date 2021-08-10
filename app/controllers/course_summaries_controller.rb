@@ -46,10 +46,29 @@ class CourseSummariesController < ApplicationController
     }
   end
 
+  def grade_distribution
+    marking_schemes = current_user.student? ? MarkingScheme.none : MarkingScheme.order(id: :asc)
+    intervals = 20
+    table_data = marking_schemes.map { |m| { data: m.students_grade_distribution(current_user, intervals) } }
+    labels = (0..intervals - 1).map { |i| "#{5 * i}-#{5 * i + 5}" }
+
+    summary = marking_schemes.map do |m|
+      grades = m.students_weighted_grades_array(current_user)
+      {
+        name: m.name,
+        average: DescriptiveStatistics.mean(grades) || 0,
+        median: DescriptiveStatistics.median(grades) || 0
+      }
+    end
+
+    render json: {
+      datasets: table_data,
+      labels: labels,
+      summary: summary
+    }
+  end
+
   def view_summary
-    @marking_schemes = MarkingScheme.all
-    @marking_weights = MarkingWeight.all
-    @assessments = Assessment.all
   end
 
   def get_marking_scheme_details

@@ -1327,3 +1327,15 @@ nav {
   padding-bottom: 0;
   text-align: center;
 }
+
+// for charts rendered in FireFox
+canvas {
+  image-rendering: crisp-edges;
+}
+
+
+// Styling for summary stats for course_summary_chart.jsx
+.summary-stats {
+  column-gap: 40px;
+  display: flex;
+}

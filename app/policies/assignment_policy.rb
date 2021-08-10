@@ -3,7 +3,6 @@ class AssignmentPolicy < ApplicationPolicy
   default_rule :manage?
   alias_rule :summary?, to: :view?
   alias_rule :stop_batch_tests?, :batch_runs?, :stop_test?, to: :manage_tests?
-  alias_rule :refresh_graph?, :view_summary?, :download?, :upload?, to: :admin?
   alias_rule :show?, :peer_review?, to: :student?
 
   def index?

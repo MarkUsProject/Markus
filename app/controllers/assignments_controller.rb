@@ -314,18 +314,46 @@ class AssignmentsController < ApplicationController
     end
   end
 
-  # Refreshes the grade distribution graph
-  def refresh_graph
-    @assignment = Assignment.find(params[:id])
-    respond_to do |format|
-      format.js
+  # Return assignment grade distributions
+  def grade_distribution
+    assignment = Assignment.find(params[:id])
+    summary = {
+      name: assignment.short_identifier + ': ' + assignment.description,
+      average: assignment.results_average || 0,
+      median: assignment.results_median || 0,
+      num_submissions_collected: assignment.current_submissions_used.size,
+      num_submissions_graded: assignment.current_submissions_used.size -
+        assignment.ungraded_submission_results.size,
+      num_fails: assignment.results_fails,
+      num_zeros: assignment.results_zeros,
+      groupings_size: assignment.groupings.size,
+      num_outstanding_remark_requests: assignment.outstanding_remark_request_count
+    }
+    intervals = 20
+    assignment_labels = (0..intervals - 1).map { |i| "#{5 * i}-#{5 * i + 5}" }
+    assignment_datasets = [
+      {
+        data: assignment.grade_distribution_array
+      }
+    ]
+    assignment_data = { labels: assignment_labels, datasets: assignment_datasets }
+    ta_labels = (0..intervals - 1).map { |i| "#{5 * i}-#{5 * i + 5}" }
+    ta_datasets = assignment.tas.map do |ta|
+      num_marked_label = t('submissions.how_many_marked',
+                           num_marked: assignment.get_num_marked(ta.id),
+                           num_assigned: assignment.get_num_assigned(ta.id))
+      { label: "#{ta.first_name} #{ta.last_name} (#{num_marked_label})",
+        data: ta.grade_distribution_array(assignment, intervals) }
     end
+    render json: {
+      summary: summary,
+      assignment_data: assignment_data,
+      ta_data: { labels: ta_labels, datasets: ta_datasets }
+    }
   end
 
   def view_summary
     @assignment = Assignment.find(params[:id])
-    @current_ta = @assignment.tas.first
-    @tas = @assignment.tas unless @assignment.nil?
   end
 
   def download

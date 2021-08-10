@@ -1,15 +1,9 @@
-document.getElementById('assignment_summaries').innerHTML =
-  "<%= escape_javascript(render partial: 'grade_entry_forms/grade_entry_form_summary',
-                                locals: { grade_entry_form: @grade_entry_form, grade_entry_items: @grade_entry_items}).html_safe %>";
-
-$('#grade_entry_form_<%= @grade_entry_form.id %>_graph').html(
-  "<%= escape_javascript(render partial: 'grade_entry_forms/grade_distribution_graph',
-                                locals: { grade_entry_form: @grade_entry_form }) %>");
-
-$('#grade_entry_form_<%= @grade_entry_form.id %>_grade_entry_items_graph').html(
-  "<%= escape_javascript(render partial: 'grade_entry_forms/grade_entry_item_distribution_graph',
-                                locals: { grade_entry_form: @grade_entry_form, grade_entry_items: @grade_entry_items }) %>");
-
 $('a[data-id]').removeClass('inactive');
 
 $('a[data-id="<%= @grade_entry_form.short_identifier %>"]').addClass('inactive');
+
+window.dashboard.setState({
+  assessment_id: <%= @grade_entry_form.id %>,
+  assessment_type: 'GradeEntryForm',
+  display_course_summary: false
+});

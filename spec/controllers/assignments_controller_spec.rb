@@ -1056,6 +1056,83 @@ describe AssignmentsController do
       end
     end
   end
+
+  describe '#grade_distribution' do
+    let(:assignment) { create :assignment_with_criteria_and_results_and_tas }
+    let(:params) { { id: assignment.id } }
+    let(:user) { create :admin }
+    let(:params) { { id: assignment.id } }
+
+    before { get_as user, :grade_distribution, params: params }
+
+    context 'response' do
+      it 'should respond with 200' do
+        expect(response).to have_http_status 200
+      end
+    end
+    context 'summary' do
+      it 'should contain the right keys' do
+        keys = response.parsed_body['summary'].keys
+        expect(keys).to contain_exactly('name',
+                                        'average',
+                                        'median',
+                                        'num_submissions_collected',
+                                        'num_submissions_graded',
+                                        'num_fails',
+                                        'num_zeros',
+                                        'groupings_size',
+                                        'num_outstanding_remark_requests')
+      end
+
+      it 'should contain the right values' do
+        summary = response.parsed_body['summary']
+        expected = { name: assignment.short_identifier +
+          ': ' + assignment.description,
+                     average: assignment.results_average || 0,
+                     median: assignment.results_median,
+                     num_submissions_collected: assignment.current_submissions_used.size,
+                     num_submissions_graded: assignment.current_submissions_used.size -
+                       assignment.ungraded_submission_results.size,
+                     num_fails: assignment.results_fails,
+                     num_zeros: assignment.results_zeros,
+                     groupings_size: assignment.groupings.size,
+                     num_outstanding_remark_requests: assignment.outstanding_remark_request_count }
+        expect(summary).to eq expected.as_json
+      end
+    end
+    context 'assignment_data' do
+      context 'data' do
+        it 'should contain the right keys' do
+          data = response.parsed_body['assignment_data']
+          expect(data.keys).to contain_exactly('labels', 'datasets')
+        end
+      end
+      context 'labels' do
+        it 'should contain the right values' do
+          labels = response.parsed_body['assignment_data']['labels']
+          expected = (0..19).map { |i| "#{5 * i}-#{5 * i + 5}" }
+          expect(labels).to eq(expected)
+        end
+      end
+      context 'datasets' do
+        it 'should contain the right data' do
+          data = response.parsed_body['assignment_data']['datasets'].first['data']
+          expected = assignment.grade_distribution_array
+          expect(data).to contain_exactly(*expected)
+        end
+      end
+    end
+    context 'ta_data' do
+      it 'should contain the right data' do
+        response.parsed_body['ta_data']['datasets'].each_with_index do |data_response, index|
+          data = data_response['data']
+          ta = assignment.tas[index]
+          expect(ta.grade_distribution_array(assignment, 20)).to eq(data)
+        end
+      end
+    end
+  end
+
   describe '#switch' do
     let(:assignment) { create :assignment }
     let(:assignment2) { create :assignment }

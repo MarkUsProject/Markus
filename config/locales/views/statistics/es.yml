@@ -5,11 +5,9 @@ es:
   average: Promedio
   class_average: Promedio de la clase
   grader_distribution: Distribución de Evaluadores
-  marking_scheme_with_id: Esquema de puntuación %{marking_scheme_id}
   median: Media
   num_failed: Número de fallos
   num_zeros: Número de ceros
   outstanding_remark_request:
     one: "%{count} solicitud de recalificación pendiente"
     other: "%{count} solicitudes de recalificación pendientes"
-  refresh_graph: Volver a cargar el gráfico

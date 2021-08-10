@@ -279,5 +279,52 @@ describe CourseSummariesController do
         end
       end
     end
+
+    describe '#grade_distribution' do
+      let(:user) { create(:admin) }
+      it('should respond with 200 (ok)') do
+        create :marking_scheme, assessments: Assessment.all
+        get_as user, :grade_distribution, format: :json
+        expect(response).to have_http_status 200
+      end
+      it 'returns correct data' do
+        marking_scheme = create :marking_scheme, assessments: Assessment.all
+        expected = {}
+        expected[:datasets] = [{ data: marking_scheme.students_grade_distribution(user) }]
+        expected[:labels] = (0..19).map { |i| "#{5 * i}-#{5 * i + 5}" }
+        grades = marking_scheme.students_weighted_grades_array(user)
+        expected[:summary] = [{
+          average: DescriptiveStatistics.mean(grades),
+          median: DescriptiveStatistics.median(grades),
+          name: marking_scheme.name
+        }]
+        get_as user, :grade_distribution, format: :json
+        expect(response.parsed_body).to eq expected.as_json
+      end
+      it 'returns correct data with no marking schemes' do
+        get_as user, :grade_distribution, format: :json
+        expected = {}
+        expected[:datasets] = []
+        expected[:labels] = (0..19).map { |i| "#{5 * i}-#{5 * i + 5}" }
+        expected[:summary] = []
+        expect(response.parsed_body).to eq expected.as_json
+      end
+      it 'returns correct data when there is multiple marking schemes' do
+        marking_schemes = create_list :marking_scheme, 2, assessments: Assessment.all
+        expected = {}
+        expected[:datasets] = marking_schemes.map { |m| { data: m.students_grade_distribution(user) } }
+        expected[:labels] = (0..19).map { |i| "#{5 * i}-#{5 * i + 5}" }
+        grades = marking_schemes.map { |m| m.students_weighted_grades_array(user) }
+        expected[:summary] = marking_schemes.zip(grades).map do |marking_scheme, grade|
+          {
+            average: DescriptiveStatistics.mean(grade),
+            median: DescriptiveStatistics.median(grade),
+            name: marking_scheme.name
+          }
+        end
+        get_as user, :grade_distribution, format: :json
+        expect(response.parsed_body).to eq expected.as_json
+      end
+    end
   end
 end

@@ -44,8 +44,6 @@ class GradeEntryFormsController < ApplicationController
 
   def view_summary
     @grade_entry_form = GradeEntryForm.find(params[:id])
-    @grade_entry_items = @grade_entry_form.grade_entry_items unless @grade_entry_form.nil?
-    @date = params[:date]
   end
 
   # Update a grade in the table
@@ -223,6 +221,43 @@ class GradeEntryFormsController < ApplicationController
       end
     end
     redirect_to action: 'grades', id: @grade_entry_form.id
+  end
+
+  def grade_distribution
+    grade_entry_form = GradeEntryForm.find(params[:id])
+
+    intervals = 20
+    dict_data = grade_entry_form.grade_entry_items.map do |item|
+      { label: item.name, data: item.grade_distribution_array(intervals) }
+    end
+    column_breakdown_data = {
+      labels: (0..intervals - 1).map { |i| "#{5 * i}-#{5 * i + 5}" },
+      datasets: dict_data
+    }
+
+    grade_dist_data = {
+      labels: (0..intervals - 1).map { |i| "#{5 * i}-#{5 * i + 5}" },
+      datasets: [{ data: grade_entry_form.grade_distribution_array(intervals) }]
+    }
+
+    num_entries = grade_entry_form.count_non_nil.to_s +
+      '/' + grade_entry_form.grade_entry_students.joins(:user).where('users.hidden': false).count.to_s
+
+    info_summary = {
+      name: grade_entry_form.short_identifier + ': ' + grade_entry_form.description,
+      date: I18n.l(grade_entry_form.due_date),
+      average: grade_entry_form.results_average || 0,
+      median: grade_entry_form.results_median || 0,
+      num_entries: num_entries,
+      num_fails: grade_entry_form.results_fails,
+      num_zeros: grade_entry_form.results_zeros
+    }
+
+    render json: {
+      grade_dist_data: grade_dist_data,
+      column_breakdown_data: column_breakdown_data,
+      info_summary: info_summary
+    }
   end
 
   def switch
