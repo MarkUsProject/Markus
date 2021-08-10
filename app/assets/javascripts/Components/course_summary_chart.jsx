@@ -15,14 +15,6 @@ export class CourseSummaryChart extends React.Component {
       },
       options: {
         plugins: {
-          tooltip: {
-            callbacks: {
-              title: function (tooltipItems) {
-                let baseNum = tooltipItems[0].dataIndex;
-                return (baseNum * 5) + '-' + (baseNum * 5 + 5)
-              }
-            }
-          },
           legend: {
             display: true
           }
@@ -41,17 +33,17 @@ export class CourseSummaryChart extends React.Component {
     fetch(Routes.grade_distribution_course_summaries_path())
       .then(data => data.json())
       .then(res => {
-        for (const [index, element] of res['datasets'].entries()) {
-          element['label'] = `${I18n.t('main.weighted_total_grades')} (${res.summary[index].name})`;
-          element['backgroundColor'] = colours[index];
+        for (const [index, element] of res.datasets.entries()) {
+          element.label = res.summary[index].name;
+          element.backgroundColor = colours[index];
         }
         let data = {
-          labels: res['labels'],
-          datasets: res['datasets'],
+          labels: res.labels,
+          datasets: res.datasets,
         };
 
         this.setState({
-          summary: res['summary'],
+          summary: res.summary,
           data: data,
           loading: false
         });

@@ -5,7 +5,7 @@ export const chartScales = {
   x: {
     title: {
       display: true,
-      text: I18n.t("main.grade")
+      text: I18n.t('main.grade')
     },
     min: 0,
     max: 100,
@@ -14,7 +14,7 @@ export const chartScales = {
   y: {
     title: {
       display: true,
-      text: I18n.t("main.frequency")
+      text: I18n.t('main.frequency')
     }
   }
 };

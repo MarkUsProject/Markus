@@ -354,7 +354,6 @@ class AssignmentsController < ApplicationController
 
   def view_summary
     @assignment = Assignment.find(params[:id])
-    @tas = @assignment.tas unless @assignment.nil?
   end
 
   def download

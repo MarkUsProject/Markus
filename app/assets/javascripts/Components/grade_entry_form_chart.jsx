@@ -14,14 +14,6 @@ export class GradeEntryFormChart extends React.Component {
         datasets: [],
         options: {
           plugins: {
-            tooltip: {
-              callbacks: {
-                title: function (tooltipItems) {
-                  let baseNum = tooltipItems[0].dataIndex;
-                  return (baseNum * 5) + '-' + (baseNum * 5 + 5)
-                }
-              }
-            },
             legend: {
               display: true
             }
@@ -40,13 +32,13 @@ export class GradeEntryFormChart extends React.Component {
     fetch(Routes.grade_distribution_grade_entry_form_path(this.props.assessment_id))
       .then(data => data.json())
       .then(res => {
-      for (const [index, element] of res['column_breakdown_data']['datasets'].entries()) {
-        element['backgroundColor'] = colours[index];
+      for (const [index, element] of res.column_breakdown_data.datasets.entries()) {
+        element.backgroundColor = colours[index];
       }
       this.setState({
-        distribution_data: { ...res['grade_dist_data'], options: this.state.distribution_data.options },
-        column_data: { ...res['column_breakdown_data'], options: this.state.column_data.options },
-        info_data: res['info_summary']
+        distribution_data: { ...res.grade_dist_data, options: this.state.distribution_data.options },
+        column_data: { ...res.column_breakdown_data, options: this.state.column_data.options },
+        info_data: res.info_summary
       });
     });
   };
@@ -71,7 +63,7 @@ export class GradeEntryFormChart extends React.Component {
 
           <div className='flex-row-expand'>
             <p>
-              {this.state.info_data.date && (I18n.t('attributes.date') + ' : ' + this.state.info_data.date)}
+              {this.state.info_data.date && (I18n.t('attributes.date') + ': ' + this.state.info_data.date)}
             </p>
 
             <div className="grid-2-col">

@@ -33,18 +33,6 @@ export class AssignmentChart extends React.Component {
         },
         options: {
           plugins: {
-            tooltip: {
-              callbacks: {
-                title: function (tooltipItems) {
-                  let baseNum = parseInt(tooltipItems[0].label);
-                  if (baseNum === 0) {
-                    return '0-5';
-                  } else {
-                    return (baseNum + 1) + '-' + (baseNum + 5);
-                  }
-                }
-              }
-            },
             legend: {
               display: true
             }
@@ -65,7 +53,7 @@ export class AssignmentChart extends React.Component {
       .then(res => {
         // Load in background colours
         for (const [index, element] of res.ta_data.datasets.entries()) {
-          element["backgroundColor"] = colours[index];
+          element.backgroundColor = colours[index];
         }
 
         this.setState({
@@ -133,7 +121,7 @@ export class AssignmentChart extends React.Component {
       </React.Fragment>
     );
 
-    if (this.state.ta_grade_distribution['data']['datasets'].length !== 0) {
+    if (this.state.ta_grade_distribution.data.datasets.length !== 0) {
       return (
         <React.Fragment>
           {assignment_graph}

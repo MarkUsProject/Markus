@@ -69,9 +69,6 @@ class CourseSummariesController < ApplicationController
   end
 
   def view_summary
-    @marking_schemes = MarkingScheme.all
-    @marking_weights = MarkingWeight.all
-    @assessments = Assessment.all
   end
 
   def get_marking_scheme_details
