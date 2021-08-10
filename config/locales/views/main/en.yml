@@ -5,7 +5,7 @@ en:
     create_marking_scheme: Create a Marking Scheme to display course summary graph.
     external_authentication_not_supported: External authentication not supported on your platform!
     frequency: Frequency
-    grade: Grade
+    grade: Grade (%)
     log_in: Log in
     log_out: Log out
     logging_in: Logging in...

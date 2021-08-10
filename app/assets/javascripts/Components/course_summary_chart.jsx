@@ -1,6 +1,7 @@
 import React from 'react';
-
 import { Bar } from 'react-chartjs-2';
+
+import { chartScales } from './Helpers/chart_helpers';
 
 
 export class CourseSummaryChart extends React.Component {
@@ -8,10 +9,25 @@ export class CourseSummaryChart extends React.Component {
     super(props);
     this.state = {
       summary: [],
-      summary_grade_distribution: {
+      data: {
         labels: [],
         datasets: [],
-        options: {}
+      },
+      options: {
+        plugins: {
+          tooltip: {
+            callbacks: {
+              title: function (tooltipItems) {
+                let baseNum = tooltipItems[0].dataIndex;
+                return (baseNum * 5) + '-' + (baseNum * 5 + 5)
+              }
+            }
+          },
+          legend: {
+            display: true
+          }
+        },
+        scales: chartScales
       },
       loading: true
     }
@@ -25,49 +41,18 @@ export class CourseSummaryChart extends React.Component {
     fetch(Routes.grade_distribution_course_summaries_path())
       .then(data => data.json())
       .then(res => {
-        for (const [index, element] of res["datasets"].entries()) {
-          element["label"] = `${I18n.t("main.weighted_total_grades")} (${res.summary[index].name})`;
-          element["backgroundColor"] = colours[index];
+        for (const [index, element] of res['datasets'].entries()) {
+          element['label'] = `${I18n.t('main.weighted_total_grades')} (${res.summary[index].name})`;
+          element['backgroundColor'] = colours[index];
         }
-        let options = {
-          plugins: {
-            tooltip: {
-              callbacks: {
-                title: function (tooltipItems) {
-                  let baseNum = tooltipItems[0].dataIndex;
-                  return (baseNum * 5) + '-' + (baseNum * 5 + 5)
-                }
-              }
-            },
-            legend: {
-              display: true
-            }
-          },
-          scales: {
-            y: {
-              title: {
-                display: true,
-                text: I18n.t("main.frequency")
-              }
-            },
-            x: {
-              title: {
-                display: true,
-                text: I18n.t("main.grade")
-              }
-            }
-          }
-        };
-
         let data = {
           labels: res['labels'],
           datasets: res['datasets'],
-          options: options
         };
 
         this.setState({
           summary: res['summary'],
-          summary_grade_distribution: data,
+          data: data,
           loading: false
         });
       })
@@ -80,7 +65,7 @@ export class CourseSummaryChart extends React.Component {
       </h2>
     );
 
-    if (!this.state.loading && this.state.summary_grade_distribution.datasets.length === 0) {
+    if (!this.state.loading && this.state.data.datasets.length === 0) {
       return (
         <React.Fragment>
           {header}
@@ -96,20 +81,21 @@ export class CourseSummaryChart extends React.Component {
 
           <div className='flex-row'>
             <div>
-              <Bar data={this.state.summary_grade_distribution} options={this.state.summary_grade_distribution.options}
+              <Bar data={this.state.data} options={this.state.options}
                    width='500' height='450'/>
             </div>
 
             <div className='flex-row-expand'>
               {this.state.summary.map((summary, i) =>
-                <div className='grid-2-col' key={`marking-scheme-${i}-statistics`}>
-                  <span>{I18n.t('activerecord.models.marking_scheme.one')}</span>
-                  <span>{summary.name}</span>
-                  <span>{I18n.t('average')}</span>
-                  <span>{summary.average.toFixed(2)}%</span>
-                  <span>{I18n.t('median')}</span>
-                  <span>{summary.median.toFixed(2)}%</span>
-                </div>
+                <React.Fragment>
+                  <p>{summary.name}</p>
+                  <div className='grid-2-col' key={`marking-scheme-${i}-statistics`}>
+                    <span>{I18n.t('average')}</span>
+                    <span>{summary.average.toFixed(2)}%</span>
+                    <span>{I18n.t('median')}</span>
+                    <span>{summary.median.toFixed(2)}%</span>
+                  </div>
+                </React.Fragment>
               )}
             </div>
           </div>

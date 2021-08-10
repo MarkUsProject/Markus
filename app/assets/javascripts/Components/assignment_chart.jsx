@@ -1,6 +1,8 @@
 import React from 'react';
 import { Bar } from 'react-chartjs-2';
 
+import { chartScales } from './Helpers/chart_helpers';
+
 
 export class AssignmentChart extends React.Component {
   constructor(props) {
@@ -20,7 +22,9 @@ export class AssignmentChart extends React.Component {
           labels: [],
           datasets: []
         },
-        options: {}
+        options: {
+          scales: chartScales
+        }
       },
       ta_grade_distribution: {
         data: {
@@ -45,20 +49,7 @@ export class AssignmentChart extends React.Component {
               display: true
             }
           },
-          scales: {
-            y: {
-              title: {
-                display: true,
-                text: I18n.t("main.frequency")
-              }
-            },
-            x: {
-              title: {
-                display: true,
-                text: I18n.t("main.grade")
-              }
-            }
-          }
+          scales: chartScales
         }
       }
     }
@@ -79,25 +70,7 @@ export class AssignmentChart extends React.Component {
 
         this.setState({
           summary: res.summary,
-          assignment_grade_distribution: {
-            data: res.assignment_data,
-            options: {
-              scales: {
-                y: {
-                  title: {
-                    display: true,
-                    text: I18n.t("main.frequency")
-                  }
-                },
-                x: {
-                  title: {
-                    display: true,
-                    text: I18n.t("main.grade")
-                    }
-                  }
-                }
-              }
-            },
+          assignment_grade_distribution: {...this.state.assignment_grade_distribution, data: res.assignment_data},
           ta_grade_distribution: {...this.state.ta_grade_distribution, data: res.ta_data}
         })
       })

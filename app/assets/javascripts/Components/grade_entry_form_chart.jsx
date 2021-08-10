@@ -1,28 +1,13 @@
 import React from 'react';
 import { Bar } from 'react-chartjs-2';
 
+import { chartScales } from './Helpers/chart_helpers';
 
 export class GradeEntryFormChart extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      distribution_data: { labels: [], datasets: [], options: {} } ,
-      distribution_options: {
-        scales: {
-          y: {
-            title: {
-              display: true,
-              text: I18n.t("main.frequency")
-            }
-          },
-          x: {
-            title: {
-              display: true,
-              text: I18n.t("main.grade")
-            }
-          }
-        }
-      },
+      distribution_data: { labels: [], datasets: [], options: {scales: chartScales} },
       info_data: {},
       column_data: {
         labels: [],
@@ -40,22 +25,9 @@ export class GradeEntryFormChart extends React.Component {
             legend: {
               display: true
             }
-          }
-        },
-        scales: {
-          y: {
-            title: {
-              display: true,
-              text: I18n.t("main.frequency")
-            }
           },
-          x: {
-            title: {
-              display: true,
-              text: I18n.t("main.grade")
-            }
-          }
-        }
+          scales: chartScales
+        },
       }
     };
   }
@@ -72,8 +44,8 @@ export class GradeEntryFormChart extends React.Component {
         element['backgroundColor'] = colours[index];
       }
       this.setState({
-        distribution_data: res['grade_dist_data'],
-        column_data: { ...res['column_breakdown_data'], ...this.state.column_data.options },
+        distribution_data: { ...res['grade_dist_data'], options: this.state.distribution_data.options },
+        column_data: { ...res['column_breakdown_data'], options: this.state.column_data.options },
         info_data: res['info_summary']
       });
     });
@@ -93,7 +65,7 @@ export class GradeEntryFormChart extends React.Component {
         </h2>
         <div className='flex-row'>
           <div>
-            <Bar data={this.state.distribution_data} options={this.state.distribution_options}
+            <Bar data={this.state.distribution_data} options={this.state.distribution_data.options}
                  width='500' height='450'/>
           </div>
 
