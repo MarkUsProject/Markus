@@ -1079,7 +1079,7 @@ context 'notes' do
     it 'routes GET notes_json_data_properly' do
       expect(get: path + '/all_notes').to route_to(
         controller: ctrl,
-        action: '/all_notes'
+        action: 'all_notes'
       )
     end
 
