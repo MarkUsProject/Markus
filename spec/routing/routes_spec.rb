@@ -95,15 +95,6 @@ describe 'An Assignment' do
 
   # start Assignment member route tests
   context 'member' do
-    it 'routs GET refresh_graph properly' do
-      expect(get: path + '/' + assignment.id.to_s + '/refresh_graph')
-        .to route_to(
-          controller: ctrl,
-          action: 'refresh_graph',
-          id: assignment.id.to_s
-        )
-    end
-
     it 'routes POST set_boolean_graders_options properly' do
       expect(post: path + '/' + assignment.id.to_s + '/set_boolean_graders_options')
         .to route_to(controller: ctrl,

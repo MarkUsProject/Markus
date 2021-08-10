@@ -6,7 +6,6 @@ en:
   class_average: Class average
   class_median: Class median
   grader_distribution: Grader Distribution
-  marking_scheme_with_id: Marking Scheme %{marking_scheme_id}
   median: Median
   num_entries: Number of entries
   num_failed: Number of fails
@@ -14,4 +13,3 @@ en:
   outstanding_remark_request:
     one: "%{count} outstanding remark request"
     other: "%{count} outstanding remark requests"
-  refresh_graph: Refresh the graph

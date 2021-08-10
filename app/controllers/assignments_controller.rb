@@ -326,7 +326,8 @@ class AssignmentsController < ApplicationController
         assignment.ungraded_submission_results.size,
       num_fails: assignment.results_fails,
       num_zeros: assignment.results_zeros,
-      groupings_size: assignment.groupings.size
+      groupings_size: assignment.groupings.size,
+      num_outstanding_remark_requests: assignment.outstanding_remark_request_count
     }
     intervals = 20
     assignment_labels = (0..intervals - 1).map { |i| "#{5 * i}-#{5 * i + 5}" }
@@ -351,17 +352,8 @@ class AssignmentsController < ApplicationController
     }
   end
 
-  # Refreshes the grade distribution graph
-  def refresh_graph
-    @assignment = Assignment.find(params[:id])
-    respond_to do |format|
-      format.js
-    end
-  end
-
   def view_summary
     @assignment = Assignment.find(params[:id])
-    @current_ta = @assignment.tas.first
     @tas = @assignment.tas unless @assignment.nil?
   end
 

@@ -40,4 +40,6 @@ $(document).ready(function () {
 
   Chart.defaults.datasets.bar.barPercentage = 0.9;
   Chart.defaults.datasets.bar.categoryPercentage = 0.8;
+
+  Chart.defaults.animation.duration = 0;
 });

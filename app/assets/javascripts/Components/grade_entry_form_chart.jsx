@@ -1,5 +1,4 @@
 import React from 'react';
-
 import { Bar } from 'react-chartjs-2';
 
 
@@ -25,19 +24,22 @@ export class GradeEntryFormChart extends React.Component {
         }
       },
       info_data: {},
-      column_data: { labels: [], datasets: [], options: {} },
-      column_options: {
-        plugins: {
-          tooltip: {
-            callbacks: {
-              title: function (tooltipItems) {
-                let baseNum = tooltipItems[0].dataIndex;
-                return (baseNum * 5) + '-' + (baseNum * 5 + 5)
+      column_data: {
+        labels: [],
+        datasets: [],
+        options: {
+          plugins: {
+            tooltip: {
+              callbacks: {
+                title: function (tooltipItems) {
+                  let baseNum = tooltipItems[0].dataIndex;
+                  return (baseNum * 5) + '-' + (baseNum * 5 + 5)
+                }
               }
+            },
+            legend: {
+              display: true
             }
-          },
-          legend: {
-            display: true
           }
         },
         scales: {
@@ -71,7 +73,7 @@ export class GradeEntryFormChart extends React.Component {
       }
       this.setState({
         distribution_data: res['grade_dist_data'],
-        column_data: res['column_breakdown_data'],
+        column_data: { ...res['column_breakdown_data'], ...this.state.column_data.options },
         info_data: res['info_summary']
       });
     });
@@ -103,16 +105,12 @@ export class GradeEntryFormChart extends React.Component {
             <div className="grid-2-col">
               <span>{I18n.t('average')}</span>
               <span>{(this.state.info_data.average || 0).toFixed(2)}%</span>
-
               <span>{I18n.t('median')}</span>
               <span>{(this.state.info_data.median || 0).toFixed(2)}%</span>
-
               <span>{I18n.t('num_entries')}</span>
               <span>{this.state.info_data.num_entries}</span>
-
               <span>{I18n.t('num_failed')}</span>
               <span>{this.state.info_data.num_fails}</span>
-
               <span>{I18n.t('num_zeros')}</span>
               <span>{this.state.info_data.num_zeros}</span>
             </div>
@@ -120,7 +118,7 @@ export class GradeEntryFormChart extends React.Component {
         </div>
 
         <h3>{I18n.t('grade_entry_forms.grade_entry_item_distribution')}</h3>
-        <Bar data={this.state.column_data} options={this.state.column_options} width='400' height='350'/>
+        <Bar data={this.state.column_data} options={this.state.column_data.options} width='400' height='350'/>
       </React.Fragment>
     );
   }

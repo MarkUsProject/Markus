@@ -290,7 +290,7 @@ describe CourseSummariesController do
       it 'returns correct data' do
         marking_scheme = create :marking_scheme, assessments: Assessment.all
         expected = {}
-        expected[:datasets] = [marking_scheme.students_grade_distribution(user)]
+        expected[:datasets] = [{ data: marking_scheme.students_grade_distribution(user) }]
         expected[:labels] = (0..19).map { |i| "#{5 * i}-#{5 * i + 5}" }
         grades = marking_scheme.students_weighted_grades_array(user)
         expected[:summary] = [{
@@ -312,7 +312,7 @@ describe CourseSummariesController do
       it 'returns correct data when there is multiple marking schemes' do
         marking_schemes = create_list :marking_scheme, 2, assessments: Assessment.all
         expected = {}
-        expected[:datasets] = marking_schemes.map { |m| m.students_grade_distribution(user) }
+        expected[:datasets] = marking_schemes.map { |m| { data: m.students_grade_distribution(user) } }
         expected[:labels] = (0..19).map { |i| "#{5 * i}-#{5 * i + 5}" }
         grades = marking_schemes.map { |m| m.students_weighted_grades_array(user) }
         expected[:summary] = marking_schemes.zip(grades).map do |marking_scheme, grade|
