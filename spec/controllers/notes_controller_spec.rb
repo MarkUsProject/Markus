@@ -114,11 +114,10 @@ describe NotesController do
     end
 
     it 'get request for all notes' do
-      @note = @note = create(:note, creator_id: @ta.id )
+      @note = @note = create(:note, creator_id: @ta.id)
       get_as @ta, :all_notes
       data = JSON.parse(response.body)
       note_data = data['notes_data'][0]
-      column_data = data['column_headers']
 
       expect(note_data['date']).to eq(@note.format_date)
       expect(note_data['user_name']).to eq(@note.user.user_name)
@@ -127,7 +126,6 @@ describe NotesController do
       # Should be true, since TA created note
       expect(note_data['modifiable']).to eq(true)
     end
-
 
     context 'POST on :create' do
       it 'be able to create with empty note' do
