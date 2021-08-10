@@ -42,6 +42,20 @@ export class CourseSummaryChart extends React.Component {
             legend: {
               display: true
             }
+          },
+          scales: {
+            y: {
+              title: {
+                display: true,
+                text: I18n.t("main.frequency")
+              }
+            },
+            x: {
+              title: {
+                display: true,
+                text: I18n.t("main.grade")
+              }
+            }
           }
         };
 

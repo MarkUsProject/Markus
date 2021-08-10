@@ -8,6 +8,22 @@ export class GradeEntryFormChart extends React.Component {
     super(props);
     this.state = {
       distribution_data: { labels: [], datasets: [], options: {} } ,
+      distribution_options: {
+        scales: {
+          y: {
+            title: {
+              display: true,
+              text: I18n.t("main.frequency")
+            }
+          },
+          x: {
+            title: {
+              display: true,
+              text: I18n.t("main.grade")
+            }
+          }
+        }
+      },
       info_data: {},
       column_data: { labels: [], datasets: [], options: {} },
       column_options: {
@@ -22,6 +38,20 @@ export class GradeEntryFormChart extends React.Component {
           },
           legend: {
             display: true
+          }
+        },
+        scales: {
+          y: {
+            title: {
+              display: true,
+              text: I18n.t("main.frequency")
+            }
+          },
+          x: {
+            title: {
+              display: true,
+              text: I18n.t("main.grade")
+            }
           }
         }
       }
@@ -61,7 +91,8 @@ export class GradeEntryFormChart extends React.Component {
         </h2>
         <div className='flex-row'>
           <div>
-            <Bar data={this.state.distribution_data} width='500' height='450'/>
+            <Bar data={this.state.distribution_data} options={this.state.distribution_options}
+                 width='500' height='450'/>
           </div>
 
           <div className='flex-row-expand'>

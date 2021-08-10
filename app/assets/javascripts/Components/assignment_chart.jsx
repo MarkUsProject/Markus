@@ -45,6 +45,20 @@ export class AssignmentChart extends React.Component {
             legend: {
               display: true
             }
+          },
+          scales: {
+            y: {
+              title: {
+                display: true,
+                text: I18n.t("main.frequency")
+              }
+            },
+            x: {
+              title: {
+                display: true,
+                text: I18n.t("main.grade")
+              }
+            }
           }
         }
       }
@@ -66,7 +80,25 @@ export class AssignmentChart extends React.Component {
 
         this.setState({
           summary: res.summary,
-          assignment_grade_distribution: { data: res.assignment_data, options: {} },
+          assignment_grade_distribution: {
+            data: res.assignment_data,
+            options: {
+              scales: {
+                y: {
+                  title: {
+                    display: true,
+                    text: I18n.t("main.frequency")
+                  }
+                },
+                x: {
+                  title: {
+                    display: true,
+                    text: I18n.t("main.grade")
+                    }
+                  }
+                }
+              }
+            },
           ta_grade_distribution: {...this.state.ta_grade_distribution, data: res.ta_data}
         })
       })
@@ -84,7 +116,8 @@ export class AssignmentChart extends React.Component {
         <h2><a href={Routes.edit_assignment_path(this.props.assessment_id)}> {this.state.summary.name} </a></h2>
         <div className='flex-row'>
           <div>
-            <Bar data={this.state.assignment_grade_distribution.data} width='500' height='450'/>
+            <Bar data={this.state.assignment_grade_distribution.data}
+                 options={this.state.assignment_grade_distribution.options} width='500' height='450'/>
           </div>
           <div className='flex-row-expand'>
             <div className="grid-2-col">
