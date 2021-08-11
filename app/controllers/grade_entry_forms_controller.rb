@@ -89,7 +89,7 @@ class GradeEntryFormsController < ApplicationController
         @data << mark.grade
         @item_percentages << ((mark.grade * 100) / grade_entry_item.out_of).round(2)
       else
-        @data << t('grade_entry_forms.grades.no_mark')
+        @data << t(:not_applicable)
         @item_percentages << nil
       end
     end
@@ -101,7 +101,7 @@ class GradeEntryFormsController < ApplicationController
       if !total.nil?
         @data << total
       else
-        @data << t('grade_entry_forms.grades.no_mark')
+        @data << t(:not_applicable)
       end
     end
   end
@@ -157,7 +157,7 @@ class GradeEntryFormsController < ApplicationController
         s[grade_entry_item_id] = grade
       end
       if grade_entry_form.show_total && s[:total_marks].nil?
-        s[:total_marks] = t('grade_entry_forms.grades.no_mark')
+        s[:total_marks] = t(:not_applicable)
       end
       s
     end
