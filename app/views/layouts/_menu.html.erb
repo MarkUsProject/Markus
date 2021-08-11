@@ -1,8 +1,6 @@
-<ul class='main'>
-  <li id='logo'>
-    <a href='<%= root_path %>' id='logo-img' aria-label='<%= t('menu.dashboard') %>'></a>
-  </li>
-
+<div class='main'>
+<a href='<%= root_path %>' id='logo-img' aria-label='<%= t('menu.dashboard') %>'></a>
+<ul>
   <% if @current_user.admin? %>
     <li class='<%= "active" if controller.controller_name == 'main' %>'>
       <%= link_to t('menu.dashboard'), controller: 'main' %>
@@ -78,3 +76,4 @@
     <%= link_to t('menu.settings'), controller: 'users', action: 'settings' %>
   </li>
 </ul>
+</div>

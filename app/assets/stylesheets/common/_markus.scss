@@ -935,8 +935,8 @@ nav {
     }
   }
 
-  ul.main,
-  ul.sub_sub {
+  .main,
+  .sub_sub {
     border-bottom: 2px solid $sub-menu;
 
     li:hover,
