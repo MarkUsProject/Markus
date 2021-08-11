@@ -1,16 +1,10 @@
 import React from 'react';
 import {render} from 'react-dom';
+import { Bar } from 'react-chartjs-2'
 
 export class DataChart extends React.Component {
 
-  componentDidMount() {
-    let ctx = document.getElementById('term_marks').getContext('2d');
-
-    let data = {
-      labels: this.props.labels,
-      datasets: this.props.datasets
-    };
-
+  render() {
     let options = {
       responsive: false,
       legend: {
@@ -45,30 +39,8 @@ export class DataChart extends React.Component {
       }
     };
 
-    this.chart = new Chart(ctx, {
-      type: 'bar',
-      data: data,
-      options: options
-    });
-  }
-
-  componentDidUpdate() {
-    let yRange = [100];
-    this.props.datasets.forEach(d => {
-      yRange = yRange.concat(d.data);
-    });
-    this.chart.data = {labels: this.props.labels, datasets: this.props.datasets};
-    this.chart.options.scales.y.ticks.max = Math.max(...yRange);
-    this.chart.options.legend.display = this.props.legend;
-    this.chart.options.legend.fontColor = document.documentElement.style.getPropertyValue('--line');
-    this.chart.options.scales.y.scaleLabel = {display: true, labelString: this.props.yTitle};
-    this.chart.options.scales.x.scaleLabel = {display: true, labelString: this.props.xTitle};
-    this.chart.update();
-  }
-
-  render() {
     return (
-      <canvas id='term_marks' style={{display: 'inline-flex', width: this.props.width, height: 500, margin: '10px'}}></canvas>
+      <Bar data={this.props} options={options} width={1000} height={450}/>
     );
   }
 }
