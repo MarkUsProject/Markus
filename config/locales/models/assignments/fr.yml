@@ -7,6 +7,7 @@ fr:
         allow_remarks: Autoriser les révisions
         allow_web_submits: Envois via l'interface web
         assignment_files: Fichiers requis
+        collection_date: UPDATE ME
         description: Nom du projet
         display_grader_names_to_students: Afficher le nom du correcteur aux étudiants
         display_median_to_students: Display assignment median to students

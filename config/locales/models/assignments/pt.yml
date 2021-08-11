@@ -7,6 +7,7 @@ pt:
         allow_remarks: Permitir revisão
         allow_web_submits: Permitir envio pelo web
         assignment_files: Arquivos exigidos
+        collection_date: UPDATE ME
         description: Nome do projeto
         display_grader_names_to_students: Mostrar nome de avaliador para alunos
         display_median_to_students: Display assignment median to students

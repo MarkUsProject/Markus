@@ -147,8 +147,8 @@ class RawMarksSpreadsheet extends React.Component {
     },
     defaultSortDesc: true,
     sortMethod: (a, b, desc) => {
-      a = a === null || a === undefined || a === 'N/A' ? -Infinity : a;
-      b = b === null || a === undefined || b === 'N/A' ? -Infinity : b;
+      a = a === null || a === undefined || a === I18n.t('not_applicable') ? -Infinity : a;
+      b = b === null || a === undefined || b === I18n.t('not_applicable') ? -Infinity : b;
       if (a < b) {
         return -1;
       } else if (a > b) {
@@ -327,7 +327,7 @@ class GradeEntryCell extends React.Component {
           });
 
         if (total === '') {
-          total = I18n.t('grade_entry_forms.grades.no_mark');
+          total = I18n.t('not_applicable');
         } else {
           total = parseFloat(total);
         }

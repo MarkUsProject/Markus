@@ -7,7 +7,6 @@ en:
     grade_entry_item_distribution: Column Distribution
     grades:
       marking_state: State
-      no_mark: N/A
       select_a_student: You must select at least one student to update.
       successfully_changed: Successfully updated %{numGradeEntryStudentsChanged} students.
     message_placeholder: Please enter a message that you would like to have displayed to the students. Note it is displayed regardless of marks being released.
