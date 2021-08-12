@@ -19,6 +19,7 @@
 - Validate a user's locale to ensure that it is set to a valid value (#5450)
 - Display due date, collection date, and start time in repo browser view (#5462)
 - Create dark mode versions of logo and favicon (#5463)
+- Update UI for test results table (#5465)
 
 ## [v1.12.5]
 - Fix bugs in grading view when switching between submissions (#5400)

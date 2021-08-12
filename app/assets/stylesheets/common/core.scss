@@ -368,6 +368,15 @@ label.required::after, th.required::after {
       padding-right: 5px;
     }
   }
+
+  &.display-block {
+    display: block;
+
+    .rt-table,
+    .rt-tbody {
+      display: block;
+    }
+  }
 }
 
 .rt-th > select {
