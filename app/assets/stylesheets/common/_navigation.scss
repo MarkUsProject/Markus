@@ -8,7 +8,7 @@
 header#header {
   border-bottom: 1px solid $primary-three;
   display: table;
-  padding: 0.25em $dimen-horizontal;
+  padding: 0.25em $dimen-horizontal-nav;
   width: 100%;
 
   #course,
@@ -34,21 +34,13 @@ header#header {
 
 nav {
   .main {
-    padding: 0 $dimen-horizontal;
+    display: flex;
+    flex-direction: row;
+    padding: 0 $dimen-horizontal-nav;
 
     li,
     li a {
       border-radius: 0;
-    }
-
-    #logo {
-      img {
-        vertical-align: middle;
-      }
-
-      &:hover {
-        background: none;
-      }
     }
   }
 
@@ -72,11 +64,18 @@ nav {
 }
 
 #logo-img {
-  background: transparent asset-url('markus_logo_small.png') no-repeat center center / 90px 30px;
+  background: transparent asset-url('markus_logo.svg') no-repeat center center / 90px 30px;
+  margin-right: $dimen-horizontal-nav;
   width: 90px;
+}
 
-  @include hidpi {
-    background-image: asset-url('markus_logo_small@2x.png');
+.color-dark {
+  #logo-img {
+    background-image: asset-url('markus_logo_dark.svg');
+  }
+
+  #mobile_menu {
+    background-image: asset-url('markus_logo_dark.svg');
   }
 }
 
@@ -182,7 +181,7 @@ footer {
 }
 
 #mobile_menu {
-  background: $background-support asset-url('markus_logo_small.png') no-repeat center center / 90px 30px;
+  background: $background-support asset-url('markus_logo.svg') no-repeat center center / 90px 30px;
   border-bottom: 1px solid $primary-three;
   display: none;
   height: 3.5em;
@@ -193,10 +192,6 @@ footer {
 
   @include breakpoint(mobile) {
     display: block;
-  }
-
-  @include hidpi {
-    background-image: asset-url('markus_logo_small@2x.png');
   }
 
   #menu_icon {

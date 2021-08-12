@@ -7,11 +7,11 @@ services:
       dockerfile: ./.dockerfiles/Dockerfile
       target: dev
       args:
-        UBUNTU_VERSION: bionic
-        RUBY_VERSION: '2.5'
-        PG_MAJOR: '10'
+        UBUNTU_VERSION: focal
+        RUBY_VERSION: '2.7'
+        PG_MAJOR: '12'
         NODE_MAJOR: '12'
-        YARN_VERSION: '1.13.0'
+        YARN_VERSION: '1.22.5'
         BUNDLER_VERSION: '1.17.3'
         PYTHON_VERSION: '3.9'
         USER: 'markus'
@@ -37,7 +37,7 @@ services:
       context: .
       dockerfile: ./.dockerfiles/Dockerfile-ssh
       args:
-        UBUNTU_VERSION: bionic
+        UBUNTU_VERSION: focal
         SSH_USER: git
     image: markus-ssh:1.0.0
     volumes:

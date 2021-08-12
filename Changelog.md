@@ -17,6 +17,8 @@
 - Correctly update annotation category when creating annotation from "Did you mean" suggestion (#5448)
 - Add route to download an example of the starter files that may be assigned to students (#5449)
 - Validate a user's locale to ensure that it is set to a valid value (#5450)
+- Display due date, collection date, and start time in repo browser view (#5462)
+- Create dark mode versions of logo and favicon (#5463)
 
 ## [v1.12.5]
 - Fix bugs in grading view when switching between submissions (#5400)

@@ -58,14 +58,10 @@
   }
 
   .login-image {
-    background: transparent url(markus_logo_big.png) no-repeat center center / contain;
-    margin: 1em auto;
+    background: transparent asset-url('markus_logo.svg') no-repeat center center / contain;
+    margin: 0 auto;
     height: 115px;
     width: 220px;
-
-    @include hidpi {
-      background-image: url(markus_logo_big@2x.png);
-    }
   }
 
   .login-error .error {
