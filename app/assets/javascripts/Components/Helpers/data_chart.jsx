@@ -1,6 +1,6 @@
 import React from 'react';
 import {render} from 'react-dom';
-import { Bar } from 'react-chartjs-2'
+import { Bar } from 'react-chartjs-2';
 
 export class DataChart extends React.Component {
 
@@ -40,7 +40,7 @@ export class DataChart extends React.Component {
     };
 
     return (
-      <Bar data={this.props} options={options} width={1000} height={450}/>
+        <Bar data={this.props} options={options} width={this.props.width} height={500} margin={'10px'} display={'inline-flex'} id={'term_marks'}/>
     );
   }
 }
