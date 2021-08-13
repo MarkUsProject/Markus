@@ -32,14 +32,14 @@ class NotesTable extends React.Component {
     if(editable) {
       return(
         <div>
-          <div>
+          <div className='text-center'>
             <a href={Routes.edit_note_path(id)} className="inline-button button">
               {I18n.t('edit')}
             </a>
           </div>
 
-          <div>
-            <a href={Routes.note_path(id) + id} className="inline-button button" data-method="delete" data-confirm={I18n.t('notes.delete.link_confirm')}>
+          <div className='text-center'>
+            <a href={Routes.note_path(id)} className="inline-button button" data-method="delete" data-confirm={I18n.t('notes.delete.link_confirm')}>
               {I18n.t('delete')}
             </a>
           </div>
@@ -80,27 +80,20 @@ class NotesTable extends React.Component {
   }
 
   columns =  [
-
-  //   column_header = {
-  //     messages: Note.human_attribute_name(:notes_message),
-  // human_name:  Note.model_name.human.pluralize,
-  // actions: t(:actions)
-}
     {
-      Header: I18n.t('activerecord.models.group.one')
-,
+      Header: I18n.t('activerecord.models.note.other'),
       accessor: 'name',
       width: 400,
       style: { 'whiteSpace': 'unset' }
     },
     {
-      Header: 'Messages',
+      Header: I18n.t('activerecord.attributes.notes.notes_message'),
       accessor: 'message',
       style: { 'whiteSpace': 'unset' }
 
     },
     {
-      Header: 'Actions',
+      Header: I18n.t('actions'),
       accessor: 'action',
       width: 200,
       mid_width: 100

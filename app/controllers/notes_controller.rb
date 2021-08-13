@@ -66,22 +66,6 @@ class NotesController < ApplicationController
     end
   end
 
-  def all_notes
-    notes = Note.includes(:user, :noteable).order(created_at: :desc)
-    notes_data = notes.map do |note|
-      {
-        date: note.format_date,
-        user_name: note.user.user_name,
-        display_for: note.noteable.display_for_note,
-        message: note.notes_message,
-        id: note.id,
-        modifiable: allowed_to?(:modify?, note)
-      }
-    end
-
-    render json: notes_data
-  end
-
   # gets the objects for groupings on first load.
   def new
     new_retrieve

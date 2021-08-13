@@ -115,9 +115,8 @@ describe NotesController do
 
     it 'get request for all notes' do
       @note = @note = create(:note, creator_id: @ta.id)
-      get_as @ta, :all_notes
-      data = JSON.parse(response.body)
-      note_data = data['notes_data'][0]
+      get_as @ta, :index, params: {format: :json}
+      note_data = JSON.parse(response.body)[0]
 
       expect(note_data['date']).to eq(@note.format_date)
       expect(note_data['user_name']).to eq(@note.user.user_name)
