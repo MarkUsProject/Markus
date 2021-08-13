@@ -39,11 +39,31 @@ class NotesController < ApplicationController
   end
 
   def index
+
     @notes = Note.includes(:user, :noteable).order(created_at: :desc)
-    @current_user = current_user
-    # Notes are attached to noteables, if there are no noteables, we can't make notes.
-    @noteables_available = Note.noteables_exist?
-		render 'index', formats: [:html]
+    respond_to do |format|
+      format.html {
+        @current_user = current_user
+        # Notes are attached to noteables, if there are no noteables, we can't make notes.
+        @noteables_available = Note.noteables_exist?
+        render 'index', formats: [:html]
+      }
+
+      format.json {
+        notes_data = @notes.map do |note|
+          {
+            date: note.format_date,
+            user_name: note.user.user_name,
+            display_for: note.noteable.display_for_note,
+            message: note.notes_message,
+            id: note.id,
+            modifiable: allowed_to?(:modify?, note)
+          }
+        end
+
+        render json: notes_data
+      }
+    end
   end
 
   def all_notes
@@ -59,12 +79,7 @@ class NotesController < ApplicationController
       }
     end
 
-    column_header = {
-      messages: Note.human_attribute_name(:notes_message),
-      human_name:  Note.model_name.human.pluralize,
-      actions: t(:actions)
-    }
-    render json: { notes_data: notes_data, column_headers: column_header }
+    render json: notes_data
   end
 
   # gets the objects for groupings on first load.

@@ -1,7 +1,7 @@
 <%= content_for :head do %>
   <%= javascript_tag nonce: true do %>
     document.addEventListener('DOMContentLoaded', () => {
-    makeNotesTable(document.getElementById('notes_table'));
+        makeNotesTable(document.getElementById('notes_table'));
     })
   <% end %>
 <% end %>

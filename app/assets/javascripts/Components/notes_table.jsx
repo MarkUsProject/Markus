@@ -2,11 +2,10 @@ import React from 'react';
 import {render} from 'react-dom';
 
 import ReactTable from 'react-table';
-import {admins_path, all_notes_notes_path, edit_note_path} from "../../../javascript/routes";
 
 class NotesTable extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
       notes: [],
       columns: {},
@@ -20,42 +19,40 @@ class NotesTable extends React.Component {
 
   fetchData = () => {
     $.get({
-      url: Routes.all_notes_notes_path()
+      url: Routes.notes_path({format : 'json'})
     }).then(res => {
       this.setState({
-        notes: res['notes_data'],
+        notes: res,
         loading: false,
-        columns: res['column_headers']
       });
     });
   };
 
-  buttons(modifiable, id) {
-    if(modifiable) {
+  renderButtons(editable, id) {
+    if(editable) {
       return(
         <div>
           <div>
-            <a href={Routes.edit_note_path(id)}>
-              <button> {I18n.t('edit')} </button>
+            <a href={Routes.edit_note_path(id)} className="inline-button button">
+              {I18n.t('edit')}
             </a>
           </div>
 
           <div>
-            <a href={"notes/" + id} data-method="delete" data-confirm={I18n.t('notes.delete.link_confirm')}>
-              <button> {I18n.t('delete')} </button>
+            <a href={Routes.note_path(id) + id} className="inline-button button" data-method="delete" data-confirm={I18n.t('notes.delete.link_confirm')}>
+              {I18n.t('delete')}
             </a>
           </div>
         </div>
       );
     } else {
-      return(<></>);
+      return('');
     }
   }
 
-  note_author(index)
-  {
-    return(
-      <>
+  note_author(index) {
+    return (
+      <React.Fragment>
         <div>
           {I18n.t('notes.note_on_html',
             {user_name: this.state.notes[index]['user_name'],
@@ -65,40 +62,45 @@ class NotesTable extends React.Component {
         <div>
           {this.state.notes[index]['date']}
         </div>
-      </>
+      </React.Fragment>
     )
   }
 
 
   data() {
-    let note_data = []
-    for(let i = 0; i < this.state.notes.length; i++)
-    {
+    return this.state.notes.map((note, i) => {
       let row = {
-        'name' : this.note_author(i),
-        'message': this.state.notes[i]['message'],
-        'action' : this.buttons(this.state.notes[i]['modifiable'], this.state.notes[i]['id'])
+        'name': this.note_author(i),
+        'message': note['message'],
+        'action': this.renderButtons(note['modifiable'], note['id'])
       }
-      note_data.push(row)
-    }
-    return note_data
+
+      return row;
+    })
   }
 
-  columns = () => [
+  columns =  [
+
+  //   column_header = {
+  //     messages: Note.human_attribute_name(:notes_message),
+  // human_name:  Note.model_name.human.pluralize,
+  // actions: t(:actions)
+}
     {
-      Header: this.state.columns['human_name'],
+      Header: I18n.t('activerecord.models.group.one')
+,
       accessor: 'name',
       width: 400,
       style: { 'whiteSpace': 'unset' }
     },
     {
-      Header: this.state.columns['messages'],
+      Header: 'Messages',
       accessor: 'message',
       style: { 'whiteSpace': 'unset' }
 
     },
     {
-      Header: this.state.columns['actions'],
+      Header: 'Actions',
       accessor: 'action',
       width: 200,
       mid_width: 100
@@ -109,11 +111,9 @@ class NotesTable extends React.Component {
     return (
       <ReactTable
         data={this.data()}
-        columns={this.columns()}
-        // defaultSorted={[{id: 'name'}]}
+        columns={this.columns}
         sortable={false}
         loading={this.state.loading}
-        noDataText={I18n.t('peer_reviews.no_assigned_reviews')}
       />
     );
   }
