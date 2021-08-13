@@ -7,7 +7,7 @@ class Assessment < ApplicationRecord
   has_many :marking_weights, dependent: :destroy
   has_many :tags
 
-  has_many :section_due_dates, inverse_of: :assessment, foreign_key: :assessment_id
+  has_many :section_due_dates, inverse_of: :assessment
   accepts_nested_attributes_for :section_due_dates
 
   # Call custom validator in order to validate the :due_date attribute
@@ -96,3 +96,5 @@ class Assessment < ApplicationRecord
     self.completed_result_marks.count(&:zero?)
   end
 end
+
+

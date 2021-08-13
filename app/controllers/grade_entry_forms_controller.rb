@@ -64,8 +64,7 @@ class GradeEntryFormsController < ApplicationController
   # For students
   def student_interface
     @grade_entry_form = GradeEntryForm.find(params[:id])
-    @section_hidden = SectionDueDate.find_by(assignment: params[:id], section: current_user.section)&.is_hidden
-    if @grade_entry_form.is_hidden || @section_hidden
+    if current_user.visible_assessments(assessment_id: @grade_entry_form.id).exists?
       render 'shared/http_status',
              formats: [:html],
              locals: {

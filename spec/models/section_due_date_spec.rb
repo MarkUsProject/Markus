@@ -1,7 +1,7 @@
 describe SectionDueDate do
   describe 'ActiveRecord associations' do
     it { is_expected.to belong_to(:section) }
-    it { is_expected.to belong_to(:assignment) }
+    it { is_expected.to belong_to(:assessment) }
   end
 
   describe '.due_date_for(section, assignment)' do
@@ -10,6 +10,7 @@ describe SectionDueDate do
         @assignment = create(:assignment,
                              due_date: 2.days.from_now,
                              assignment_properties_attributes: { section_due_dates_type: false })
+
       end
 
       it 'returns the due date of the assignment' do
@@ -36,7 +37,7 @@ describe SectionDueDate do
         before :each do
           @section = create(:section)
           SectionDueDate.create(section: @section,
-                                assignment: @assignment,
+                                assessment: @assignment,
                                 due_date: 1.days.from_now)
         end
 

@@ -274,6 +274,24 @@ class User < ApplicationRecord
     self.update(api_key: Base64.encode64(md5.to_s).strip)
   end
 
+
+  def visible_assessments(type: nil, assessment_id: nil)
+    type ||= Assessment.type
+    if self.section_id
+      assessments = Assessment.left_outer_joins(:section_due_dates).where(is_hidden: false,
+                                                                          type: type,
+                                                                          'section_due_dates.section_id': [self.section_id, nil],
+                                                                          'section_due_dates.is_hidden': [false, nil])
+    else
+      assessments = Assessment.where(is_hidden: false, type: type)
+    end
+    if assessment_id
+      assessments = assessments.where(id: assessment_id)
+    end
+    return assessments
+  end
+
+
   private
   # Create some random, hard to guess SHA2 512 bit long
   # digest.
@@ -307,4 +325,8 @@ class User < ApplicationRecord
     self.email = nil if self.email.blank?
     self.id_number = nil if self.id_number.blank?
   end
+
+
 end
+
+

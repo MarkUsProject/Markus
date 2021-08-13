@@ -152,7 +152,7 @@ class Assignment < Assessment
       return due_date
     end
 
-    SectionDueDate.due_date_for(section, self.assessment_id)
+    SectionDueDate.due_date_for(section, self)
   end
 
   # Return the start_time for +section+ if it is not nil, otherwise return this
@@ -160,7 +160,7 @@ class Assignment < Assessment
   def section_start_time(section)
     return start_time unless section_due_dates_type
 
-    section&.section_due_dates&.find_by(assessment: self.assessment_id)&.start_time || start_time
+    section&.section_due_dates&.find_by(assessment: self)&.start_time || start_time
   end
 
   # Calculate the latest due date among all sections for the assignment.

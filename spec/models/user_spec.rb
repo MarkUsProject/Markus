@@ -1,3 +1,5 @@
+require "rails_helper"
+
 describe User do
   it { is_expected.to have_many :memberships }
   it { is_expected.to have_many(:groupings).through(:memberships) }
@@ -159,5 +161,99 @@ describe User do
         end
       end
     end
+  end
+
+  describe '#visible_assessments' do
+
+    context "when there are no assessments" do
+      let(:new_user) {create :user, user_name: 'testusername', first_name: 'testfname',
+                               last_name: "testlname", type: "Student"}
+      it "should return an empty list" do
+        expect(new_user.visible_assessments()).to match_array([])
+      end
+    end
+    context "when there are assessments" do
+      before :each do
+        @new_section = create(:section)
+        @assignment_visible = create(:assignment,
+                                    due_date: 2.days.from_now,
+                                    assignment_properties_attributes: { section_due_dates_type: true })
+        @section_due_date_visible = create(:section_due_date, assessment: @assignment_visible,
+                                           section: @new_section,
+                                           due_date: 2.days.from_now,
+                                           is_hidden: false)
+        @assignment_hidden = create(:assignment,
+                                     due_date: 2.days.from_now,
+                                     assignment_properties_attributes: { section_due_dates_type: true })
+        @section_due_date_hidden = create(:section_due_date, assessment: @assignment_hidden,
+                                           section: @new_section,
+                                           due_date: 2.days.from_now,
+                                           is_hidden: true)
+      end
+      context "when section_due_dates disabled" do
+        let(:new_user_2) {create :user, user_name: 'testusername', first_name: 'testfname',
+                                 last_name: "testlname", type: "Student"}
+        it 'does return all unhiddden assignments' do
+          expect(new_user_2.visible_assessments()).to match_array([@assignment_visible, @assignment_hidden])
+        end
+      end
+      context 'when user has one visible assignment' do
+        let (:new_user) {create :user, user_name: '2testusername', first_name: '2testfname',
+                                last_name: "2testlname", type: 'Student', section_id: @new_section.id}
+
+        it 'does return a list containing that assignment' do
+          expect(new_user.visible_assessments()).to match_array([@assignment_visible])
+        end
+      end
+      context 'when user has no section' do
+        let(:new_user_2) {create :user, user_name: 'testusername', first_name: 'testfname',
+                                 last_name: "testlname", type: "Student"}
+        it 'does return all section-hidden assignments' do
+          expect(new_user_2.visible_assessments()).to match_array([@assignment_visible, @assignment_hidden])
+        end
+
+      end
+      context "when a user is from a different section" do
+        let(:section2) {create :section}
+        let(:new_user_2) {create :user, user_name: 'testusername', first_name: 'testfname',
+                                 last_name: "testlname", type: "Student", section_id: section2}
+        it "does return all visible assignments" do
+          expect(new_user_2.visible_assessments()).to match_array([@assignment_visible, @assignment_hidden])
+        end
+      end
+      context "when an assignment is hidden" do
+        let (:hidden_assignment) {create :assignment,
+                                         due_date: 2.days.from_now,
+                                         is_hidden: true,
+                                         assignment_properties_attributes: { section_due_dates_type: true }}
+        let (:new_user) {create :user, user_name: '2testusername', first_name: '2testfname',
+                                last_name: "2testlname", type: 'Student'}
+       it "does not return the hidden assignment" do
+          expect(new_user.visible_assessments()).to match_array([@assignment_visible, @assignment_hidden])
+       end
+     end
+     context "when a visible assignment is given" do
+       let (:new_user) {create :student, user_name: '2testusername', first_name: '2testfname',
+                               last_name: "2testlname", section_id: @new_section.id}
+       it "does return an array with the assignment" do
+         #byebug
+         expect(new_user.visible_assessments(assessment_id: @assignment_visible.id)).to match_array([@assignment_visible])
+       end
+     end
+      context "when a hidden assignment is given" do
+        let (:new_user) {create :student, user_name: '2testusername', first_name: '2testfname',
+                              last_name: "2testlname", section_id: @new_section.id}
+        it "does return an empty array" do
+          expect(new_user.visible_assessments(assessment_id: @assignment_hidden.id)).to match_array([])
+        end
+      end
+    end
+    #   context 'when an assignment is visible' do
+    #     expect(@user.visible_assessments()). to eq [@assignment_visible]
+    #   end
+    # end
+
+
+
   end
 end

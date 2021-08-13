@@ -1,8 +1,9 @@
 <% content_for :title, t('menu.home') %>
 
-<% upcoming, past = Assessment.where(is_hidden: false)
+<% upcoming, past = @current_user.visible_assessments()
                               .order(:due_date, :id)
-                              .partition { |a| a.upcoming(@current_user) } %>
+                              .partition { |a| a.upcoming(@current_user) }
+%>
 <div class='section'>
   <h3><%= t('assignments.due_date.upcoming') %></h3>
   <%= render partial: 'assessments/list', locals: { assessments: upcoming, upcoming: true } %>
