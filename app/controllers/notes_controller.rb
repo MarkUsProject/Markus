@@ -39,7 +39,6 @@ class NotesController < ApplicationController
   end
 
   def index
-
     @notes = Note.includes(:user, :noteable).order(created_at: :desc)
     respond_to do |format|
       format.html {
@@ -49,7 +48,7 @@ class NotesController < ApplicationController
         render 'index', formats: [:html]
       }
 
-      format.json {
+      format.json do
         notes_data = @notes.map do |note|
           {
             date: note.format_date,
@@ -62,7 +61,7 @@ class NotesController < ApplicationController
         end
 
         render json: notes_data
-      }
+        end
     end
   end
 

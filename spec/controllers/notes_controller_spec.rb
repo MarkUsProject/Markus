@@ -113,9 +113,9 @@ describe NotesController do
       expect(response).to have_http_status :success
     end
 
-    it 'get request for all notes' do
+    it 'get request for all notes from index' do
       @note = @note = create(:note, creator_id: @ta.id)
-      get_as @ta, :index, params: {format: :json}
+      get_as @ta, :index, params: { format: :json }
       note_data = JSON.parse(response.body)[0]
 
       expect(note_data['date']).to eq(@note.format_date)
