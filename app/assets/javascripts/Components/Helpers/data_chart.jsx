@@ -40,7 +40,7 @@ export class DataChart extends React.Component {
     };
 
     return (
-        <Bar data={this.props} options={options} width={this.props.width} height={500} margin={'10px'} display={'inline-flex'} id={'term_marks'}/>
+        <Bar id={'term_marks'} data={this.props} options={options} width={this.props.width} height={500} display={'inline-flex'} margin={'10px'}/>
     );
   }
 }
