@@ -324,11 +324,6 @@ describe NotesController do
         expect(response.status).to eq 200
       end
 
-      it 'GET on :all_notes' do
-        get_as @admin, :all_notes
-        expect(response.status).to eq 200
-      end
-
       it 'with a valid note' do
         post_as @admin,
                 :add_note,

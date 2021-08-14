@@ -1,6 +1,5 @@
 import React from 'react';
 import {render} from 'react-dom';
-
 import ReactTable from 'react-table';
 
 class NotesTable extends React.Component {
