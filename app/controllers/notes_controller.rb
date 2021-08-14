@@ -41,15 +41,14 @@ class NotesController < ApplicationController
   def index
     @notes = Note.includes(:user, :noteable).order(created_at: :desc)
     respond_to do |format|
-      format.html {
+      format.html do
         @current_user = current_user
         # Notes are attached to noteables, if there are no noteables, we can't make notes.
         @noteables_available = Note.noteables_exist?
         render 'index', formats: [:html]
-      }
+      end
 
       format.json do
-
         notes_data = @notes.map do |note|
           {
             date: note.format_date,
