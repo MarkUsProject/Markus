@@ -49,6 +49,7 @@ class NotesController < ApplicationController
       }
 
       format.json do
+
         notes_data = @notes.map do |note|
           {
             date: note.format_date,
@@ -61,7 +62,7 @@ class NotesController < ApplicationController
         end
 
         render json: notes_data
-        end
+      end
     end
   end
 
