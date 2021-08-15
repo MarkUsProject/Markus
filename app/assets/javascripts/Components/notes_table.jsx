@@ -28,24 +28,20 @@ class NotesTable extends React.Component {
   };
 
   renderButtons(editable, id) {
-    if(editable) {
+    if (editable) {
       return(
         <div>
-          <div className='text-center'>
-            <a href={Routes.edit_note_path(id)} className="inline-button button">
-              {I18n.t('edit')}
-            </a>
-          </div>
+          <a href={Routes.edit_note_path(id)} className="inline-button button">
+            {I18n.t('edit')}
+          </a>
 
-          <div className='text-center'>
-            <a href={Routes.note_path(id)} className="inline-button button" data-method="delete" data-confirm={I18n.t('notes.delete.link_confirm')}>
-              {I18n.t('delete')}
-            </a>
-          </div>
+          <a href={Routes.note_path(id)} className="inline-button button" data-method="delete" data-confirm={I18n.t('notes.delete.link_confirm')}>
+            {I18n.t('delete')}
+          </a>
         </div>
       );
     } else {
-      return('');
+      return '';
     }
   }
 
@@ -68,13 +64,11 @@ class NotesTable extends React.Component {
 
   data() {
     return this.state.notes.map((note, i) => {
-      let row = {
+      return {
         'name': this.note_author(i),
         'message': note['message'],
         'action': this.renderButtons(note['modifiable'], note['id'])
       }
-
-      return row;
     })
   }
 

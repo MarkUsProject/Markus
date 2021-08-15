@@ -61,11 +61,6 @@ describe NotesController do
       delete_as @student, :destroy, params: { id: @note.id }
       expect(response.status).to eq 403
     end
-
-    it 'GET on :all_notes' do
-      get_as @student, :edit, params: { id: @note.id }
-      expect(response.status).to eq 403
-    end
   end # student context
 
   context 'An authenticated and authorized TA doing a ' do
@@ -116,7 +111,7 @@ describe NotesController do
     it 'get request for all notes from index' do
       @note = @note = create(:note, creator_id: @ta.id)
       get_as @ta, :index, params: { format: :json }
-      note_data = JSON.parse(response.body)[0]
+      note_data = response.parsed_body[0]
 
       expect(note_data['date']).to eq(@note.format_date)
       expect(note_data['user_name']).to eq(@note.user.user_name)

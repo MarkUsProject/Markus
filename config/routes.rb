@@ -355,7 +355,6 @@ Rails.application.routes.draw do
       get 'new_update_groupings'
       post 'new_update_groupings'
       get 'notes_dialog'
-      get 'all_notes'
     end
 
     member do
