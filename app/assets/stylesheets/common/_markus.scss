@@ -917,6 +917,7 @@ nav {
   ul {
     margin: 0;
     padding: 0;
+    text-align: center;
 
     li {
       border-radius: $radius $radius 0 0;
@@ -927,11 +928,10 @@ nav {
       a {
         border-radius: $radius $radius 0 0;
         display: block;
-        height: 3em;
-        line-height: 3em;
         min-width: 11em;
         padding: 0 1em;
       }
+      ul li:last-child {border-right:0;}
     }
   }
 

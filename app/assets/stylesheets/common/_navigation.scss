@@ -11,6 +11,17 @@ header#header {
   padding: 0.25em $dimen-horizontal-nav;
   width: 100%;
 
+  #logo {
+    float: left;
+  }
+
+  #logo a {
+    width: 270px;
+    height: 40px;
+    display: block;
+    background: transparent asset-url('markus_logo_big@2x.png') no-repeat center center / 90px 30px;
+  }
+
   #course,
   #user_info {
     display: table-cell;
@@ -22,6 +33,7 @@ header#header {
 
   #user-info {
     text-align: right;
+    height: 20px;
 
     @include breakpoint(mobile) {
       text-align: left;
@@ -34,15 +46,37 @@ header#header {
 
 nav {
   .main {
-    display: flex;
-    flex-direction: row;
-    padding: 0 $dimen-horizontal-nav;
+    position: relative;
 
     li,
     li a {
       border-radius: 0;
     }
   }
+
+  .one-nav li{
+    list-style-type: none;
+    float: left;
+    width: 16.667%;
+    text-align: center;
+    background-color: #89b1dd;
+    border-right: 1px solid white;
+    cursor: pointer;
+    height: 30px;
+    line-height: 30px;
+  }
+
+  .one-nav li:nth-last-child(1){border-right: none;}
+  .one-nav li:hover .two-nav{display: block;}
+  .one-nav li:hover{background-color: #32649b;}
+
+  .two-nav {display: none;}
+  .two-nav li{width: 100%;}
+  .two-nav li:hover .three-nav{display: block;position: relative;}
+
+
+  .three-nav{position: absolute;width:100%;left: 100%;bottom: 100%;}
+  .one-nav li:nth-last-child(1)  .two-nav li  .three-nav li{width: 100%;position:relative;right: 200%;}
 
   .sub,
   .sub_sub {
@@ -61,12 +95,6 @@ nav {
       margin-left: 0 !important;
     }
   }
-}
-
-#logo-img {
-  background: transparent asset-url('markus_logo.svg') no-repeat center center / 90px 30px;
-  margin-right: $dimen-horizontal-nav;
-  width: 90px;
 }
 
 .color-dark {

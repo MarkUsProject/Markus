@@ -1,79 +1,142 @@
-<div class='main'>
-<a href='<%= root_path %>' id='logo-img' aria-label='<%= t('menu.dashboard') %>'></a>
-<ul>
-  <% if @current_user.admin? %>
+<ul class='main'>
+  <ul class="one-nav">
     <li class='<%= "active" if controller.controller_name == 'main' %>'>
       <%= link_to t('menu.dashboard'), controller: 'main' %>
     </li>
 
     <li <% if controller.controller_name == 'assignments' ||
-              controller.controller_name == 'criteria' ||
-              controller.controller_name == 'ta_assignments' ||
-              controller.controller_name == 'tags' ||
-              controller.controller_name == 'submissions' ||
-              controller.controller_name == 'summaries' ||
-              controller.controller_name == 'groups' ||
-              controller.controller_name == 'graders' ||
-              controller.controller_name == 'marks_graders' ||
-              controller.controller_name == 'results' ||
-              controller.controller_name == 'annotation_categories' ||
-              controller.controller_name == 'grade_entry_forms' ||
-              controller.controller_name == 'automated_tests' %>
-          class='active'
+      controller.controller_name == 'criteria' ||
+      controller.controller_name == 'ta_assignments' ||
+      controller.controller_name == 'tags' ||
+      controller.controller_name == 'submissions' ||
+      controller.controller_name == 'summaries' ||
+      controller.controller_name == 'groups' ||
+      controller.controller_name == 'graders' ||
+      controller.controller_name == 'marks_graders' ||
+      controller.controller_name == 'results' ||
+      controller.controller_name == 'annotation_categories' ||
+      controller.controller_name == 'grade_entry_forms' ||
+      controller.controller_name == 'automated_tests' %>
+        class='active'
         <% end %>>
       <%= link_to Assignment.model_name.human.pluralize, controller: 'assignments'%>
+      <ul class="two-nav">
+        <li>
+          <% if allowed_to?(:manage?, with: AssignmentPolicy) %>
+            <a href="javascript:;">Create</a>
+            <ul class="three-nav">
+              <li>
+                <%= link_to t('helpers.submit.create', model: Assignment.model_name.human),
+                            controller: 'assignments',
+                            action: 'new' %>
+              </li>
+              <% if Settings.scanned_exams.enable %>
+                <li>
+                  <%= link_to t('helpers.submit.create', model: t('activerecord.models.scanned_assignment.one')),
+                              controller: 'assignments',
+                              action: 'new',
+                              scanned: true %>
+                </li>
+              <% end %>
+              <li>
+                <%= link_to t('helpers.submit.create', model: t('activerecord.models.timed_assignment.one')),
+                            controller: 'assignments',
+                            action: 'new',
+                            timed: true %>
+              </li>
+              <li>
+                <%= link_to t('helpers.submit.create', model: GradeEntryForm.model_name.human),
+                            controller: 'grade_entry_forms',
+                            action: 'new' %>
+              </li>
+            </ul>
+          <% end %>
+        </li>
+        <li>
+          <a href="javascript:;"><%= Assignment.model_name.human.pluralize %></a>
+          <ul class="three-nav">
+            <% if @current_user.student? %>
+              <% assignments = Assignment.where(is_hidden: false) %>
+              <% grade_entry_forms = GradeEntryForm.where(is_hidden: false) %>
+            <% else %>
+              <% assignments = Assignment.all %>
+              <% grade_entry_forms = GradeEntryForm.all %>
+            <% end %>
+            <%= render partial: 'shared/assignment_dropdown_link',
+                       collection: assignments,
+                       as: :assignment,
+                       locals: { active_id: @assignment&.id } %>
+          </ul>
+        </li>
+        <li>
+          <a href="javascript:;"><%= GradeEntryForm.model_name.human.pluralize %></a>
+          <ul class="three-nav">
+            <%= render partial: 'shared/grade_entry_form_dropdown_link',
+                       collection: grade_entry_forms,
+                       as: :grade_entry_form,
+                       locals: { active_id: @grade_entry_form&.id } %>
+          </ul>
+        </li>
+      </ul>
     </li>
 
+
     <li <% if controller.controller_name == 'admins' ||
-              controller.controller_name == 'students' ||
-              controller.controller_name == 'tas' ||
-              controller.controller_name == 'sections' %>
-          class='active'
+      controller.controller_name == 'students' ||
+      controller.controller_name == 'tas' ||
+      controller.controller_name == 'sections' %>
+        class='active'
         <% end %>>
       <%= link_to User.model_name.human.pluralize, controller: 'students' %>
+      <ul class="two-nav">
+        <li><%= link_to Student.model_name.human.pluralize, controller: 'students' %></li>
+        <li><%= link_to Section.model_name.human.pluralize, controller: 'sections' %></li>
+        <li><%= link_to Ta.model_name.human.pluralize, controller: 'tas' %></li>
+        <li><%= link_to Admin.model_name.human.pluralize, controller: 'admins' %></li>
+      </ul>
     </li>
-  <% else %>
-    <li <% if controller.controller_name == 'assignments' ||
-              controller.controller_name == 'criteria' ||
-              controller.controller_name == 'ta_assignments' ||
-              controller.controller_name == 'submissions' ||
-              controller.controller_name == 'summaries' ||
-              controller.controller_name == 'groups' ||
-              controller.controller_name == 'results' ||
-              controller.controller_name == 'grade_entry_forms' ||
-              controller.controller_name == 'automated_tests' %>
-          class='active'
-        <% end %>>
-      <%= link_to t('menu.home'), controller: 'assignments' %>
-    </li>
-    <% unless @current_user.admin? || @current_user.ta? %>
-      <li <% if controller.controller_name == 'course_summaries'%>
+
+    <% if @current_user.admin? || @current_user.ta? %>
+      <li class='<%= "active" if controller.controller_name == 'notes' %>'>
+        <%= link_to Note.model_name.human.pluralize, notes_path %>
+      </li>
+    <% end %>
+    <% if @current_user.admin? %>
+      <li <% if controller.controller_name == 'course_summaries' ||
+        controller.controller_name == 'marking_schemes' %>
           class='active'
           <% end %>>
         <%= link_to t('course_summary.title'), course_summaries_path %>
       </li>
     <% end %>
-  <% end %>
 
-  <% if @current_user.admin? || @current_user.ta? %>
-    <li class='<%= "active" if controller.controller_name == 'notes' %>'>
-      <%= link_to Note.model_name.human.pluralize, notes_path %>
-    </li>
-  <% end %>
-
-  <% if @current_user.admin? %>
-    <li <% if controller.controller_name == 'course_summaries' ||
-              controller.controller_name == 'marking_schemes' %>
-          class='active'
+    <li <% if controller.controller_name == 'users' %>
+        class='active'
         <% end %>>
-      <%= link_to t('course_summary.title'), course_summaries_path %>
+      <%= link_to t('menu.settings'), controller: 'users', action: 'settings' %>
+      <ul class="two-nav">
+        <li>
+          <% if @current_user.admin? || (session[:real_uid] &&
+            User.find_by_id(session[:real_uid]).admin?) %>
+            <%= link_to t('main.role_switch.switch_role'),
+                        role_switch_main_index_path,
+                        remote: true %>
+          <% end %>
+        </li>
+        <li>
+          <%= link_to(t('main.log_out'),
+                      logout_main_index_path,
+                      id: 'logout_link',
+                      method: :post) unless
+                Settings.logout_redirect == 'NONE' %>
+          <% if Settings.remote_user_auth &&
+            !session[:real_uid].nil? %>
+            <%= link_to t('main.role_switch.clear_role_switch_session'),
+                        controller: 'main',
+                        action: 'clear_role_switch_session' %>
+          <% end %>
+        </li>
+      </ul>
     </li>
-  <% end %>
-
-  <li <% if controller.controller_name == 'users' %>
-      class='active'
-      <% end %>>
-    <%= link_to t('menu.settings'), controller: 'users', action: 'settings' %>
-  </li>
+  </ul>
 </ul>
-</div>
