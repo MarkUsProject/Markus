@@ -13,13 +13,13 @@ header#header {
 
   #logo {
     float: left;
-  }
 
-  #logo a {
-    width: 270px;
-    height: 40px;
-    display: block;
-    background: transparent asset-url('markus_logo_big@2x.png') no-repeat center center / 90px 30px;
+    a {
+      background: transparent asset-url('markus_logo_big@2x.png') no-repeat center center / 90px 30px;
+      display: block;
+      height: 40px;
+      width: 270px;
+    }
   }
 
   #course,
@@ -54,29 +54,56 @@ nav {
     }
   }
 
-  .one-nav li{
-    list-style-type: none;
-    float: left;
-    width: 16.667%;
-    text-align: center;
-    background-color: #89b1dd;
-    border-right: 1px solid white;
+  .one-nav li {
+    background-color: $primary_three;
+    border-right: 1px solid $background_main;
     cursor: pointer;
+    float: left;
     height: 30px;
     line-height: 30px;
+    list-style-type: none;
+    text-align: center;
+    width: 16.667%;
   }
 
-  .one-nav li:nth-last-child(1){border-right: none;}
-  .one-nav li:hover .two-nav{display: block;}
-  .one-nav li:hover{background-color: #32649b;}
+  .one-nav li:nth-last-child(1){
+    border-right: none;
+  }
 
-  .two-nav {display: none;}
-  .two-nav li{width: 100%;}
-  .two-nav li:hover .three-nav{display: block;position: relative;}
+  .one-nav li:hover .two-nav{
+    display: block;
+  }
+
+  .one-nav li:hover{
+    background-color: $sub_menu;
+  }
+
+  .two-nav {
+    display: none;
+  }
+
+  .two-nav li{
+    width: 100%;
+  }
+
+  .two-nav li:hover .three-nav{
+    display: block;
+    position: relative;
+  }
 
 
-  .three-nav{position: absolute;width:100%;left: 100%;bottom: 100%;}
-  .one-nav li:nth-last-child(1)  .two-nav li  .three-nav li{width: 100%;position:relative;right: 200%;}
+  .three-nav{
+    position: absolute;
+    width:100%;
+    left: 100%;
+    bottom: 100%;
+  }
+
+  .one-nav li:nth-last-child(1)  .two-nav li  .three-nav li{
+    width: 100%;
+    position:relative;
+    right: 200%;
+  }
 
   .sub,
   .sub_sub {
