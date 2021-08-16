@@ -4,5 +4,5 @@
 <%= csrf_meta_tags %>
 <%= csp_meta_tag %>
 <%= stylesheet_link_tag 'application' %>
-<%= favicon_link_tag 'favicon.ico' %>
+<%= favicon_link_tag(@current_user&.theme == 'dark' ? 'favicon_dark.svg' : 'favicon.ico') %>
 <%= javascript_tag("const AUTH_TOKEN = document.querySelector('[name=\"csrf-token\"]').content;", nonce: true) if protect_against_forgery?%>

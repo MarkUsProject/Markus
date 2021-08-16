@@ -7,13 +7,13 @@ services:
       dockerfile: ./.dockerfiles/Dockerfile
       target: dev
       args:
-        UBUNTU_VERSION: bionic
-        RUBY_VERSION: '2.5'
-        PG_MAJOR: '10'
+        UBUNTU_VERSION: focal
+        RUBY_VERSION: '2.7'
+        PG_MAJOR: '12'
         NODE_MAJOR: '12'
-        YARN_VERSION: '1.13.0'
+        YARN_VERSION: '1.22.5'
         BUNDLER_VERSION: '1.17.3'
-        NBCONVERTVENV: '/app/nbconvertvenv'
+        PYTHON_VERSION: '3.9'
         USER: 'markus'
     image: markus-dev:1.0.0
     tmpfs:
@@ -37,8 +37,9 @@ services:
       context: .
       dockerfile: ./.dockerfiles/Dockerfile-ssh
       args:
-        UBUNTU_VERSION: bionic
+        UBUNTU_VERSION: focal
         SSH_USER: git
+    image: markus-ssh:1.0.0
     volumes:
       - log:/home/git/log
       - repos:/home/git/csc108
@@ -70,6 +71,7 @@ services:
       - packs_test:/app/public/packs-test
       - ssh_pub_key:/ssh_pub_key
       - log:/app/log
+      - python:/app/venv
       - .:/app:cached
     depends_on:
       - postgres
@@ -80,7 +82,7 @@ services:
 
   resque:
     <<: *rails
-    entrypoint: .dockerfiles/entrypoint-dev-wait-for-install.sh
+    entrypoint: .dockerfiles/entrypoint-dev-resque.sh
     command: bundle exec rails resque:work QUEUE=* TERM_CHILD=1
     depends_on:
       - redis
@@ -135,6 +137,7 @@ volumes:
   packs_test:
   tmp:
   log:
+  python:
   ssh_pub_key:
     name: ssh_pub_key
 

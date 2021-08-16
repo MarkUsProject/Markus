@@ -3,8 +3,8 @@
  */
 import React from 'react'
 import ClassNames from 'classnames'
-import HTML5Backend, { NativeTypes } from 'react-dnd-html5-backend'
-import { DragDropContext, DragSource, DropTarget } from 'react-dnd'
+import { HTML5Backend, NativeTypes } from 'react-dnd-html5-backend'
+import { DndProvider, DragSource, DropTarget } from 'react-dnd'
 
 import { RawFileBrowser, Headers, FileRenderers, BaseFileConnectors } from 'react-keyed-file-browser'
 
@@ -374,7 +374,16 @@ FileManagerFile = (
 );
 
 
-let FileManager = DragDropContext(HTML5Backend)(RawFileManager);
+class FileManager extends React.Component {
+  render() {
+    return (
+      <DndProvider backend={HTML5Backend}>
+        <RawFileManager {...this.props} />
+      </DndProvider>
+    );
+  }
+}
+
 
 FileManager.defaultProps = {
   headerRenderer: FileManagerHeader,

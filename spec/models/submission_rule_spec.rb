@@ -10,12 +10,6 @@ shared_examples 'due_date_calculations' do |assignment_past, section_past, secti
     section_due_date_str = assignment_due_date_str
   end
 
-  context '#can_collect_now?(section)' do
-    it "should return #{section_past}" do
-      expect(assignment.submission_rule.can_collect_now?(section)).to eq(section_past)
-    end
-  end
-
   context '#can_collect_all_now?' do
     it "should return #{assignment_past && section_past}" do
       expect(assignment.submission_rule.can_collect_all_now?).to eq(assignment_past && section_past)

@@ -1,12 +1,5 @@
 class SubmissionFile < ApplicationRecord
 
-  # Only allow alphanumeric characters, '.', '-', and '_' as
-  # character set for submission files.
-  FILENAME_SANITIZATION_REGEXP = Regexp.new('[^0-9a-zA-Z\.\-_]')
-  # Character to be used as a replacement for all characters
-  # matching the regular expression above
-  SUBSTITUTION_CHAR = '_'
-
   belongs_to :submission
   validates_associated :submission
 
@@ -17,68 +10,6 @@ class SubmissionFile < ApplicationRecord
   validates_presence_of :path
 
   validates_inclusion_of :is_converted, in: [true, false]
-
-  def self.get_file_type(filename)
-    # This is where you can add more languages that SubmissionFile will
-    # recognize.  It will return the name of the language, which
-    # SyntaxHighlighter can work with.
-    case File.extname(filename).downcase
-    when '.sci'
-      'scilab'
-    when '.java'
-      'java'
-    when '.rb'
-      'ruby'
-    when '.py'
-      'python'
-    when '.js'
-      'javascript'
-    when '.html'
-      'html'
-    when '.css'
-      'css'
-    when '.c', '.h', '.cpp'
-      'c'
-    when '.hs'
-      'haskell'
-    when '.scm', '.ss', '.rkt'
-      'scheme'
-    when '.tex', '.latex'
-      'tex'
-    when '.jpeg', '.jpg', '.gif', '.png', '.heic', '.heif'
-      'image'
-    when '.pdf'
-      'pdf'
-    when '.ipynb'
-      'jupyter-notebook'
-    else
-      'unknown'
-    end
-  end
-
-  def get_comment_syntax
-    # This is where you can add more languages that SubmissionFile will
-    # be able to insert comments into, for example when downloading annotations.
-    # It will return a list, with the first element being the syntax to start a
-    # comment and the second element being the syntax to end a comment.  Use
-    #the language's multiple line comment format.
-    case File.extname(filename)
-    when '.java', '.js', '.c', '.css', '.h', '.cpp'
-      %w(/* */)
-    when '.rb'
-      ["=begin\n", "\n=end"]
-    when '.py'
-      %w(""" """)
-    when '.scm', '.ss', '.rkt'
-      %w(#| |#)
-    when '.hs'
-      %w({- -})
-    when '.html'
-      %w(<!-- -->)
-    else
-      %w(## ##)
-    end
-  end
 
   def is_supported_image?
     #Here you can add more image types to support
@@ -92,6 +23,10 @@ class SubmissionFile < ApplicationRecord
 
   def is_pynb?
     File.extname(filename).casecmp('.ipynb')&.zero?
+  end
+
+  def is_rmd?
+    File.extname(filename).casecmp('.rmd')&.zero?
   end
 
   # Taken from http://blade.nagaokaut.ac.jp/cgi-bin/scat.rb/ruby/ruby-talk/44936
@@ -157,7 +92,7 @@ class SubmissionFile < ApplicationRecord
   private
 
   def add_annotations(file_contents)
-    comment_syntax = get_comment_syntax
+    comment_syntax = FileHelper.get_comment_syntax(filename)
     result = ''
     file_contents.split("\n").each_with_index do |contents, index|
       annotations.each do |annot|

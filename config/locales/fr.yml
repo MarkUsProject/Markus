@@ -1,16 +1,5 @@
 ---
 fr:
-  csv:
-    bad_cell: 'UPDATE ME: %{bad_cells}'
-    bad_membership_warning: 'UPDATE ME: %{group_names}'
-    bad_students: 'UPDATE ME: %{student_names}'
-    duplicate_group_name: 'UPDATE ME: %{group_names}'
-    duplicate_membership_name: 'UPDATE ME: %{member_names}'
-    member_does_not_exist: 'UPDATE ME: %{group_name} ''%{student_user_name}'''
-    memberships_exist: 'UPDATE ME: %{student_names}'
-    memberships_not_unique: 'UPDATE ME:'
-    repo_collision_warning: 'Attention : le répertoire ''%{repo_name}'' existe déjà. Le nom du groupe était ''%{group_name}''.'
-  csv_upload_user_duplicate: 'Nom d''utilisateur déjà inscrit (conflit) : %{user_name}'
   date_validator:
     invalid_date: n'est pas une date valide
   job_poller:

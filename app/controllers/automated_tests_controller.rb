@@ -7,7 +7,7 @@ class AutomatedTestsController < ApplicationController
     # required because jquery-ui-timepicker-addon inserts style
     # dynamically. TODO: remove this when possible
     p.style_src :self, "'unsafe-inline'"
-    # required because react-jsonschema-form uses ajv which calls
+    # required because @rjsf/core uses ajv which calls
     # eval (javascript) and creates an image as a blob.
     # TODO: remove this when possible
     p.script_src :self, "'strict-dynamic'", "'unsafe-eval'"
@@ -61,11 +61,11 @@ class AutomatedTestsController < ApplicationController
                                                    context: { assignment: assignment, grouping: grouping })).value
     if allowed
       grouping.decrease_test_tokens
-      test_run = grouping.create_test_run!(user: current_user)
       @current_job = AutotestRunJob.perform_later(request.protocol + request.host_with_port,
                                                   current_user.id,
                                                   assignment.id,
-                                                  [{ id: test_run.id }])
+                                                  [grouping.group_id],
+                                                  collected: false)
       session[:job_id] = @current_job.job_id
       flash_message(:notice, I18n.t('automated_tests.tests_running'))
     end
@@ -78,6 +78,9 @@ class AutomatedTestsController < ApplicationController
   def get_test_runs_students
     @grouping = current_user.accepted_grouping_for(params[:assignment_id])
     test_runs = @grouping.test_runs_students
+    test_runs.each do |test_run|
+      test_run['test_runs.created_at'] = I18n.l(test_run['test_runs.created_at'])
+    end
     render json: test_runs.group_by { |t| t['test_runs.id'] }
   end
 
@@ -91,7 +94,11 @@ class AutomatedTestsController < ApplicationController
         { key: "#{file}/" }
       else
         file_keys << file
-        { key: file, size: 1,
+        time = ''
+        if files_dir.join(file).exist?
+          time = I18n.l(File.mtime(files_dir.join(file)).in_time_zone(current_user.time_zone))
+        end
+        { key: file, size: 1, submitted_date: time,
           url: download_file_assignment_automated_tests_url(assignment_id: assignment.id, file_name: file) }
       end
     end

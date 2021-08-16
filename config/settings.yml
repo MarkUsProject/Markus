@@ -31,7 +31,6 @@ redis:
   url: 'redis://localhost:6379/1'
 
 course_name: 'CSC108 Fall 2009: Introduction to Computer Programming'
-validate_file: <%= "#{::Rails.root}/config/dummy_validate.sh" %>
 validate_ip: false
 validate_custom_status_message: {}
 
@@ -78,12 +77,12 @@ logging:
 autotest:
   enable: true
   student_test_buffer_minutes: 60
-  server_host: localhost
-  server_username: ~
-  server_command: autotest_enqueuer
+  url: 'http://localhost:5000'
 
 scanned_exams:
   enable: true
-  python: <%= ::Rails.root %>/lib/scanner/venv/bin/python
 
-nbconvert: <%= ::Rails.root %>/nbconvertvenv/bin/jupyter-nbconvert
+python:
+  bin: <%= ::Rails.root %>/venv/bin
+
+pandoc: /usr/bin/pandoc

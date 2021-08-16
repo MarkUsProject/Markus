@@ -2,7 +2,6 @@ import React from 'react';
 import {render} from 'react-dom';
 
 import ReactTable from 'react-table';
-import {stringFilter} from './Helpers/table_helpers';
 
 
 class TATable extends React.Component {
@@ -58,18 +57,13 @@ class TATable extends React.Component {
                 <a href={Routes.edit_ta_path(data.value)}>
                   {I18n.t('edit')}
                 </a>&nbsp;
-                <a href={Routes.ta_path(data.value)}
-                   data-method='delete'
-                   rel='nofollow'>
-                  {I18n.t('delete')}
-                </a>
               </span>
             ),
+            filterable: false,
             sortable: false
           }
         ]}
         filterable
-        defaultFilterMethod={stringFilter}
         loading={this.state.loading}
       />
     );

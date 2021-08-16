@@ -4,7 +4,6 @@ fr:
     attributes:
       test_run:
         status: UPDATE ME
-        time_to_service_estimate: UPDATE ME
         user: UPDATE ME
     models:
       test_run:

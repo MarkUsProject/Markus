@@ -65,8 +65,8 @@ class ResultsController < ApplicationController
         if is_reviewer
           data[:feedback_files] = []
         else
-          data[:feedback_files] = submission.feedback_files.map do |f|
-            { id: f.id, filename: f.filename, type: SubmissionFile.get_file_type(f.filename) }
+          data[:feedback_files] = submission.feedback_files.where(test_group_result_id: nil).map do |f|
+            { id: f.id, filename: f.filename, type: FileHelper.get_file_type(f.filename) }
           end
         end
 
@@ -126,14 +126,17 @@ class ResultsController < ApplicationController
           data[:num_collected] = assignment.get_num_collected(current_user.admin? ? nil : current_user.id)
           if current_user.ta? && assignment.anonymize_groups
             data[:group_name] = "#{Group.model_name.human} #{submission.grouping.id}"
+            data[:members] = []
           else
-            data[:group_name] = submission.grouping.get_group_name
+            data[:group_name] = submission.grouping.group.group_name
+            data[:members] = submission.grouping.accepted_students.map(&:user_name)
           end
         elsif is_reviewer
           reviewer_group = current_user.grouping_for(assignment.pr_assignment.id)
           data[:num_marked] = PeerReview.get_num_marked(reviewer_group)
           data[:num_collected] = PeerReview.get_num_collected(reviewer_group)
           data[:group_name] = PeerReview.model_name.human
+          data[:members] = []
         end
 
         # Marks
@@ -219,7 +222,7 @@ class ResultsController < ApplicationController
         data[:old_total] = old_marks.values.sum
 
         # Tags
-        all_tags = Tag.pluck_to_hash(:id, :name)
+        all_tags = assignment.tags.pluck_to_hash(:id, :name)
         data[:current_tags] = submission.grouping.tags.pluck_to_hash(:id, :name)
         data[:available_tags] = all_tags - data[:current_tags]
 
@@ -264,12 +267,10 @@ class ResultsController < ApplicationController
 
   def run_tests
     submission = Result.find(params[:id]).submission
-    assignment = submission.assignment
-    test_run = submission.create_test_run!(user: current_user)
     @current_job = AutotestRunJob.perform_later(request.protocol + request.host_with_port,
                                                 current_user.id,
-                                                assignment.id,
-                                                [{ id: test_run.id }])
+                                                submission.assignment.id,
+                                                [submission.grouping.group_id])
     session[:job_id] = @current_job.job_id
     flash_message(:notice, I18n.t('automated_tests.tests_running'))
     redirect_back(fallback_location: root_path)
@@ -278,7 +279,7 @@ class ResultsController < ApplicationController
   def stop_test
     test_id = params[:test_run_id].to_i
     assignment_id = params[:assignment_id]
-    @current_job = AutotestCancelJob.perform_later(request.protocol + request.host_with_port, assignment_id, [test_id])
+    @current_job = AutotestCancelJob.perform_later(assignment_id, [test_id])
     session[:job_id] = @current_job.job_id
     redirect_back(fallback_location: root_path)
   end
@@ -392,6 +393,11 @@ class ResultsController < ApplicationController
     end
 
     file = SubmissionFile.find(params[:select_file_id])
+    if params[:show_in_browser] == 'true' && (file.is_pynb? || file.is_rmd?)
+      redirect_to notebook_content_assignment_submissions_url(params[:assignment_id],
+                                                              select_file_id: params[:select_file_id])
+      return
+    end
 
     begin
       if params[:include_annotations] == 'true' && !file.is_supported_image?
@@ -454,7 +460,7 @@ class ResultsController < ApplicationController
                end
 
     files = submission.submission_files
-    Zip::File.open(zip_path, Zip::File::CREATE) do |zip_file|
+    Zip::File.open(zip_path, create: true) do |zip_file|
       grouping.access_repo do |repo|
         revision = repo.get_revision(revision_identifier)
         repo.send_tree_to_zip(assignment.repository_folder, zip_file, zip_name, revision) do |file|
@@ -655,8 +661,8 @@ class ResultsController < ApplicationController
   end
 
   def remove_extra_mark
-    extra_mark = ExtraMark.find(params[:id])
-    result = extra_mark.result
+    result = Result.find(params[:id])
+    extra_mark = result.extra_marks.find(params[:extra_mark_id])
 
     extra_mark.destroy
     result.update_total_mark
@@ -716,12 +722,18 @@ class ResultsController < ApplicationController
   def get_test_runs_instructors
     submission = Submission.find(params[:submission_id])
     test_runs = submission.grouping.test_runs_instructors(submission)
+    test_runs.each do |test_run|
+      test_run['test_runs.created_at'] = I18n.l(test_run['test_runs.created_at'])
+    end
     render json: test_runs.group_by { |t| t['test_runs.id'] }
   end
 
   def get_test_runs_instructors_released
     submission = Submission.find(params[:submission_id])
     test_runs = submission.grouping.test_runs_instructors_released(submission)
+    test_runs.each do |test_run|
+      test_run['test_runs.created_at'] = I18n.l(test_run['test_runs.created_at'])
+    end
     render json: test_runs.group_by { |t| t['test_runs.id'] }
   end
 

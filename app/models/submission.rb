@@ -66,8 +66,6 @@ class Submission < ApplicationRecord
           # populate the submission with no files instead of raising an exception
           raise ActiveRecord::Rollback
         end
-        # if starter files exist, check if the student did not change the starter files
-        new_submission.is_empty = !grouping.changed_starter_file_at?(revision)
       end
       new_submission.save!
       new_submission
@@ -314,12 +312,12 @@ class Submission < ApplicationRecord
   end
 
   # Create a test run for this submission, using the submission revision.
-  def create_test_run!(**attrs)
+  def create_test_run!(user_id, test_batch_id)
     self.test_runs.create!(
-      user_id: attrs[:user]&.id || attrs.fetch(:user_id) { raise ArgumentError(':user or :user_id is required') },
+      user_id: user_id,
       grouping_id: self.grouping_id,
       revision_identifier: self.revision_identifier,
-      test_batch_id: attrs[:test_batch]&.id || attrs[:test_batch_id]
+      test_batch_id: test_batch_id
     )
   end
 

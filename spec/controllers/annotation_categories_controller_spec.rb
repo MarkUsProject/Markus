@@ -500,7 +500,7 @@ describe AnnotationCategoriesController do
         let(:params) { { assignment_id: assignment.id } }
       end
       it 'accepts a valid csv file without deductive annotation info' do
-        file_good = fixture_file_upload('files/annotation_categories/form_good.csv', 'text/csv')
+        file_good = fixture_file_upload('annotation_categories/form_good.csv', 'text/csv')
         post_as user, :upload, params: { assignment_id: assignment.id, upload_file: file_good }
 
         expect(response.status).to eq(302)
@@ -524,7 +524,7 @@ describe AnnotationCategoriesController do
         expect(found_cat).to eq(true)
       end
       it 'accepts a valid csv file with deductive annotation info' do
-        file_good = fixture_file_upload('files/annotation_categories/form_good_with_deductive_info.csv',
+        file_good = fixture_file_upload('annotation_categories/form_good_with_deductive_info.csv',
                                         'text/csv')
         create(:flexible_criterion, name: 'hephaestus', assignment: assignment)
         post_as user, :upload, params: { assignment_id: assignment.id, upload_file: file_good }
@@ -547,7 +547,7 @@ describe AnnotationCategoriesController do
       end
 
       it 'does not accept files with invalid columns' do
-        @file_invalid_column = fixture_file_upload('files/annotation_categories/form_invalid_column.csv', 'text/csv')
+        @file_invalid_column = fixture_file_upload('annotation_categories/form_invalid_column.csv', 'text/csv')
 
         post_as user, :upload, params: { assignment_id: assignment.id, upload_file: @file_invalid_column }
 
@@ -559,7 +559,7 @@ describe AnnotationCategoriesController do
       end
 
       it 'accepts a valid yml file without deductive annotation info' do
-        @valid_yml_file = fixture_file_upload('files/annotation_categories/valid_yml.yml', 'text/yml')
+        @valid_yml_file = fixture_file_upload('annotation_categories/valid_yml.yml', 'text/yml')
         post_as user, :upload, params: { assignment_id: assignment.id, upload_file: @valid_yml_file }
         expect(flash[:success].size).to eq(1)
         expect(response.status).to eq(302)
@@ -575,7 +575,7 @@ describe AnnotationCategoriesController do
         expect(annotation_category_list.size).to eq(4)
       end
       it 'accepts a valid yml file with deductive annotation info' do
-        @valid_yml_file = fixture_file_upload('files/annotation_categories/valid_yml_with_deductive_info.yaml',
+        @valid_yml_file = fixture_file_upload('annotation_categories/valid_yml_with_deductive_info.yaml',
                                               'text/yml')
         create(:flexible_criterion, assignment: assignment, name: 'cafe')
         create(:flexible_criterion, assignment: assignment, name: 'finland')
@@ -599,7 +599,7 @@ describe AnnotationCategoriesController do
         expect(annotation_category_list.size).to eq(4)
       end
       it 'does not accept files with empty annotation category name' do
-        @yml_with_invalid_category = fixture_file_upload('files/annotation_categories/yml_with_invalid_category.yml')
+        @yml_with_invalid_category = fixture_file_upload('annotation_categories/yml_with_invalid_category.yml')
 
         post_as user, :upload, params: { assignment_id: assignment.id, upload_file: @yml_with_invalid_category }
         expect(response.status).to eq(302)
@@ -831,7 +831,7 @@ describe AnnotationCategoriesController do
       end
       context '#upload' do
         it 'should respond with 403' do
-          file_good = fixture_file_upload('files/annotation_categories/form_good.csv', 'text/csv')
+          file_good = fixture_file_upload('annotation_categories/form_good.csv', 'text/csv')
           post_as user, :upload, params: { assignment_id: assignment.id, upload_file: file_good }
           expect(response).to have_http_status(403)
         end

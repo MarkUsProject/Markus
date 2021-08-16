@@ -1,16 +1,5 @@
 ---
 en:
-  csv:
-    bad_cell: 'Error: the csv contains the following invalid cells: %{bad_cells}'
-    bad_membership_warning: 'Error: The following groups already exist with different members: %{group_names}'
-    bad_students: 'Error: The following students do not currently exist: %{student_names}'
-    duplicate_group_name: 'Error: The following groups appear multiple times in the csv file: %{group_names}'
-    duplicate_membership_name: 'Error: The following group members appear multiple times in the csv file: %{member_names}'
-    member_does_not_exist: 'Error: Group %{group_name} cannot be created since a student with username ''%{student_user_name}'' does not exist'
-    memberships_exist: 'Error: The following students already belong to a different group for the current assignment: %{student_names}'
-    memberships_not_unique: The student already belongs to a different group for the current assignment
-    repo_collision_warning: 'Warning: Repository ''%{repo_name}'' exists already. Group name was: ''%{group_name}''.'
-  csv_upload_user_duplicate: 'Detected duplicate user name: %{user_name}'
   date_validator:
     invalid_date: is not a valid date
   job_poller:

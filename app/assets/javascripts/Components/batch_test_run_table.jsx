@@ -118,12 +118,6 @@ class BatchTestRunTable extends React.Component {
               )
             },
             {
-              Header: I18n.t('activerecord.attributes.test_run.time_to_service_estimate'),
-              accessor: 'time_to_completion',
-              Aggregated: <span></span>,
-              sortable: false,
-            },
-            {
               Header: I18n.t('actions'),
               accessor: 'action',
               minWidth: 70,

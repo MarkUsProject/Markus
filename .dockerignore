@@ -9,6 +9,7 @@ public/
 
 config/database.yml
 config/local_environment_override.rb
+config/autotest.api_key
 
 # Files created by sass
 .sass-cache
@@ -70,9 +71,9 @@ coverage/
 # byebug gem
 .byebug_history
 
-# scanned exam python files
+# python files
 **/venv/
 **/__pycache__/
 
-# nbconvert python files
-**/nbconvertvenv/
+# If this file is pre-generated, for Windows and WSL 2 (see Wiki docker setup instructions)
+app/javascript/routes.js

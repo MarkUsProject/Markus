@@ -86,13 +86,11 @@ class GradeEntryForm < Assessment
 
   # Create grade_entry_student for each student in the course
   def create_all_grade_entry_students
-    columns = [:user_id, :assessment_id, :released_to_student]
-
-    values = Student.all.map do |student|
-      # grade_entry_students.build(user_id: student.id, released_to_student: false)
-      [student.id, id, false]
+    new_data = []
+    Student.all.each do |student|
+      new_data << { user_id: student.id, assessment_id: id, released_to_student: false }
     end
-    GradeEntryStudent.import columns, values, validate: false, on_duplicate_key_ignore: true
+    GradeEntryStudent.insert_all(new_data, returning: false) unless new_data.empty?
   end
 
   def export_as_csv
@@ -183,9 +181,9 @@ class GradeEntryForm < Assessment
         end
       end
     end
-    Grade.import updated_grades,
-                 on_duplicate_key_update: { conflict_target: [:grade_entry_item_id, :grade_entry_student_id],
-                                            columns: [:grade] }
+    unless updated_grades.empty?
+      Grade.upsert_all(updated_grades, unique_by: [:grade_entry_item_id, :grade_entry_student_id])
+    end
     GradeEntryStudent.refresh_total_grades(updated_grades.map { |h| h[:grade_entry_student_id] })
     result
   end
@@ -221,10 +219,7 @@ class GradeEntryForm < Assessment
         i += 1
       end
     end
-
-    GradeEntryItem.import updated_items,
-                          on_duplicate_key_update: { conflict_target: [:name, :assessment_id],
-                                                     columns: [:out_of, :position] }
+    GradeEntryItem.upsert_all(updated_items, unique_by: [:assessment_id, :name])
     self.grade_entry_items.reload
   end
 

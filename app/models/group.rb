@@ -112,9 +112,8 @@ class Group < ApplicationRecord
   def check_repo_uniqueness
     return true unless Repository.get_class.repository_exists? repo_path
 
-    msg = I18n.t 'csv.repo_collision_warning', repo_name: self.repo_name, group_name: group_name
-    errors.add(:base, msg)
-    self.errors.add(:repo_name, msg)
+    self.errors.add(:repo_name, :taken)
+    msg = I18n.t 'activerecord.errors.models.group.attributes.repo_name.taken', value: self.repo_name
     raise StandardError, msg
   end
 end

@@ -34,7 +34,7 @@ describe Grouping do
     end
 
     it 'displays Empty Group since no students in the group' do
-      expect(grouping.get_all_students_in_group).to eq('Empty Group')
+      expect(grouping.get_all_students_in_group).to eq(I18n.t('groups.empty'))
     end
 
     it 'creates a subdirectory in the repo for the grouping\'s assignment' do
@@ -1190,6 +1190,22 @@ describe Grouping do
           expect(data[0]['test_data'][0]['test_results.output']).to be_nil
         end
       end
+
+      it 'should include feedback files associated with the test run' do
+        feedback_file = create :feedback_file_with_test_run, test_group_result: test_run.test_group_results.first
+
+        expected = [
+          {
+            'id' => feedback_file.id,
+            'filename' => feedback_file.filename,
+            'test_runs.id' => test_run.id,
+            'test_groups.name' => test_run.test_group_results.first.test_group.name,
+            'type' => FileHelper.get_file_type(feedback_file.filename)
+          }
+        ]
+
+        expect(data[0]['test_data'][0]['feedback_files']).to eq expected
+      end
     else
       it 'should not return data' do
         expect(data).to be_empty
@@ -1407,19 +1423,6 @@ describe Grouping do
     end
     it 'should create grouping starter file entries' do
       expect(grouping.reload.starter_file_entries.pluck(:path)).to contain_exactly('q2.txt', 'q1')
-    end
-  end
-  describe '#changed_starter_file_at?' do
-    let(:grouping) { create :grouping }
-    it 'should return false if no changes have been made' do
-      revision = grouping.group.access_repo(&:get_latest_revision)
-      expect(grouping.changed_starter_file_at?(revision)).to be false
-    end
-    it 'should return true if changes have been made' do
-      submit_time = 10.seconds.from_now
-      submit_file_at_time(grouping.assignment, grouping.group, 'test', submit_time.to_s, 'my_file', 'Hello, World!')
-      revision = grouping.group.access_repo(&:get_latest_revision)
-      expect(grouping.changed_starter_file_at?(revision)).to be true
     end
   end
   describe '#access_repo' do

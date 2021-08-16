@@ -49,6 +49,8 @@ en:
         manage?: You do not have permissions to manage exam templates.
       extension:
         manage?: You do not have permission to manage extensions.
+      feedback_file:
+        show?: You do not have permission to view this feedback file.
       grade_entry_form:
         grade?: You do not have permission to grade.
         manage?: You do not have permissions to create or manage grade entry forms.
@@ -111,7 +113,6 @@ en:
       submission:
         before_release?: The results for this submission have not been released.
         file_manager?: You do not have permission to view the file manager.
-        get_feedback_file?: You do not have permission to view feedback files for this group.
         manage?: You do not have permission to manage submissions.
         manage_files?: You do not have permission to manage files for this group.
         manage_subdirectories?: You do not have permission to create subdirectories.

@@ -54,8 +54,14 @@ class AnnotationsController < ApplicationController
 
     d = result.grouping.assignment.annotation_categories.find_by(id: params[:category_id])&.flexible_criterion_id
 
-    if params[:annotation_text_id] && !params[:annotation_text_id].strip.empty? && !params[:category_id].empty?
+    if !params[:annotation_text_id].blank? && !params[:category_id].blank?
       text = AnnotationText.find(params[:annotation_text_id])
+      unless text.annotation_category_id == params[:category_id].to_i
+        text.update!(
+          annotation_category_id: params[:category_id],
+          last_editor_id: current_user.id
+        )
+      end
     else
       text = AnnotationText.create!(
         content: params[:content],

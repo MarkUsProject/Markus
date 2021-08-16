@@ -6,15 +6,28 @@ export class ImageViewer extends React.Component {
   constructor() {
     super();
     this.state = {
-      rotation: 0,
-      zoom: 1,
-      heightChange: 0,
-      widthChange: 0
+      rotation: window.start_image_rotation || 0,
+      zoom: window.start_image_zoom || 1
     };
   }
 
   componentDidUpdate(prevProps, prevState) {
     this.display_annotations();
+    this.adjustPictureSize();
+    this.rotateImage();
+  }
+
+  componentDidMount() {
+    document.getElementById('image_preview').onload = () => {
+      this.display_annotations();
+      this.adjustPictureSize();
+      this.rotateImage();
+    };
+  }
+
+  componentWillUnmount() {
+    window.start_image_zoom = this.state.zoom;
+    window.start_image_rotation = this.state.rotation;
   }
 
   display_annotations = () => {
@@ -140,38 +153,17 @@ export class ImageViewer extends React.Component {
     this.setState({rotation: this.state.rotation + 90 > 270 ? 0 : this.state.rotation + 90}, this.rotateImage);
   }
 
-  zoomIn = () => {
+  adjustPictureSize = () => {
     let picture = document.getElementById('image_preview');
-    if (this.state.heightChange === 0 && this.state.zoom === 1) {
-      let widthIncrease = Math.floor(picture.width * 0.1);
-      let heightIncrease = Math.floor(picture.height * 0.1);
-      picture.width = picture.width + widthIncrease;
-      this.setState({
-        widthChange: widthIncrease,
-        heightChange: heightIncrease,
-        zoom: 1.1
-      });
-    } else {
-      picture.width = picture.width + this.state.widthChange;
-      this.setState({zoom: this.state.zoom + 0.1});
-    }
+    picture.width = Math.floor(picture.naturalWidth * this.state.zoom);
+  }
+
+  zoomIn = () => {
+    this.setState((prevState) => { return { zoom: prevState.zoom + 0.1 } }, this.adjustPictureSize)
   }
 
   zoomOut = () => {
-    let picture = document.getElementById('image_preview');
-    if (this.state.heightChange === 0 && this.state.zoom === 1) {
-      let widthIncrease = Math.floor(picture.width * 0.1);
-      let heightIncrease = Math.floor(picture.height * 0.1);
-      picture.width = picture.width - widthIncrease;
-      this.setState({
-        widthChange: widthIncrease,
-        heightChange: heightIncrease,
-        zoom: 0.9
-      });
-    } else if (this.state.zoom > 0) {
-      picture.width = picture.width - this.state.widthChange;
-      this.setState({zoom: this.state.zoom - 0.1});
-    }
+    this.setState((prevState) => { return { zoom: prevState.zoom - 0.1 } }, this.adjustPictureSize)
   }
 
   rotateImage = () => {

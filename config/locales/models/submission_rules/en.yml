@@ -3,22 +3,22 @@ en:
   activerecord:
     attributes:
       grace_period_submission_rule:
-        after_collection_message: The maximum grace period has passed for this assignment. Any changes will be recorded, but not graded.
+        after_collection_message: The maximum grace period has passed for this assignment.
         commit_after_collection_message: The due date for this assignment, plus the maximum grace period, has passed. Your changes have been recorded, but will not be included in the grading.
         description: You may submit up to a set time past the due date, provided you have enough remaining grace credits to do so.
         form_description: Automatically deduct grace credits
       no_late_submission_rule:
-        after_collection_message: The due date for this assignment has passed. Only what was submitted before the due date will be graded.
+        after_collection_message: The due date for this assignment has passed.
         commit_after_collection_message: The due date for this assignment has passed. Your changes have been recorded, but will not be included in the grading.
         description: No late submissions are accepted.
         form_description: Accept no late submissions
       penalty_decay_period_submission_rule:
-        after_collection_message: The maximum late penalty period has passed for this assignment. Any changes will be recorded, but not graded.
+        after_collection_message: The maximum late penalty period has passed for this assignment.
         commit_after_collection_message: The due date for this assignment, plus the maximum late penalty period, has passed. Your changes have been recorded, but will not be included in the grading.
         description: You are able to submit up to a set time past the due date, but with the appropriate percentage deducted from your final grade.
         form_description: Use penalty decay formula
       penalty_period_submission_rule:
-        after_collection_message: The maximum late penalty period has passed for this assignment. Any changes will be recorded, but not graded.
+        after_collection_message: The maximum late penalty period has passed for this assignment.
         commit_after_collection_message: The due date for this assignment, plus the maximum late penalty period, has passed. Your changes have been recorded, but will not be included in the grading.
         description: You are able to submit up to a set time past the due date, but with the appropriate percentage deducted from your final grade.
         form_description: Set manual penalty periods

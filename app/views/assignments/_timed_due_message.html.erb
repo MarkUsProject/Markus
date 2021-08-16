@@ -31,22 +31,18 @@
                    duration_string: duration_string, extension_string: extension_string) %>
       <% end %>
     </p>
-    <% if grouping.nil? || allowed_to?(:start_timed_assignment?, grouping) %>
-      <%= form_with url: start_timed_assignment_assignment_path(assignment.id), method: 'put', local: true do |f| %>
-        <%= f.submit I18n.t('assignments.timed.start_button'),
-                     disabled: grouping.nil? && assignment.group_max != 1,
-                     data: { confirm: t('assignments.timed.start_confirmation') } %>
-      <% end %>
+  <% end %>
+  <% unless simple %>
+    <%= form_with url: start_timed_assignment_assignment_path(assignment.id), method: 'put', local: true do |f| %>
+      <%= f.submit I18n.t('assignments.timed.start_button'),
+                   disabled: !allowed_to?(:start_timed_assignment?, assignment),
+                   data: { confirm: t('assignments.timed.start_confirmation') } %>
     <% end %>
   <% end %>
 <% else %>
-  <% if Time.current < grouping.due_date %>
-    <p>
-      <%= t('assignments.timed.after_start_instructions_html',
-                 start_time: I18n.l(grouping.start_time),
-                 due_date: I18n.l(grouping.due_date)) %>
-    </p>
-  <% else %>
-    <p><%= I18n.t('assignments.timed.past_due_date') %></p>
-  <% end %>
+  <p><strong><%= I18n.t('assignments.timed.started_on') %></strong> <%= I18n.l(grouping.start_time) %></p>
+  <p>
+    <strong><%= Assignment.human_attribute_name(:due_date) %></strong>:
+    <%= I18n.l(grouping.due_date) %>
+  </p>
 <% end %>

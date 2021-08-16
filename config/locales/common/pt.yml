@@ -11,10 +11,15 @@ pt:
   delete: Apagar
   edit: Editar
   encoding: Codificação
+  filter_by: UPDATE ME
   help: Ajuda
   markus: MarkUs
+  not_applicable: N/A
+  other_info: UPDATE ME
   please_wait: Aguarde por favor…
   preview: Prever
+  refresh: Atualizar
   save: Salvar
+  search: UPDATE ME
   skip: Skip
   working: Carregando

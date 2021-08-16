@@ -785,15 +785,16 @@ describe CriteriaController do
              position: 3,
              name: 'Checkbox Criterion')
     end
-    let(:mixed_file) { fixture_file_upload('files/criteria/upload_yml_mixed.yaml', 'text/yaml') }
-    let(:invalid_mixed_file) { fixture_file_upload('files/criteria/upload_yml_mixed_invalid.yaml', 'text/yaml') }
-    let(:empty_file) { fixture_file_upload('files/empty_file', 'text/yaml') }
-    let(:test_upload_download_file) { fixture_file_upload('files/criteria/criteria_upload_download.yaml', 'text/yaml') }
-    let(:expected_download) { fixture_file_upload('files/criteria/download_yml_output.yaml', 'text/yaml') }
-    let(:round_max_mark_file) { fixture_file_upload('files/criteria/round_max_mark.yaml', 'text/yaml') }
-    let(:partially_valid_file) { fixture_file_upload('files/criteria/partially_valid_file.yaml', 'text/yaml') }
-    let(:uploaded_file) { fixture_file_upload('files/criteria/upload_yml_mixed.yaml', 'text/yaml') }
-    let(:no_type_file)  { fixture_file_upload('files/criteria/marking_criteria_no_type.yml', 'text/yaml') }
+    let(:mixed_file) { fixture_file_upload('criteria/upload_yml_mixed.yaml', 'text/yaml') }
+    let(:invalid_mixed_file) { fixture_file_upload('criteria/upload_yml_mixed_invalid.yaml', 'text/yaml') }
+    let(:missing_levels_file) { fixture_file_upload('criteria/upload_yml_missing_levels.yaml', 'text/yaml') }
+    let(:empty_file) { fixture_file_upload('empty_file', 'text/yaml') }
+    let(:test_upload_download_file) { fixture_file_upload('criteria/criteria_upload_download.yaml', 'text/yaml') }
+    let(:expected_download) { fixture_file_upload('criteria/download_yml_output.yaml', 'text/yaml') }
+    let(:round_max_mark_file) { fixture_file_upload('criteria/round_max_mark.yaml', 'text/yaml') }
+    let(:partially_valid_file) { fixture_file_upload('criteria/partially_valid_file.yaml', 'text/yaml') }
+    let(:uploaded_file) { fixture_file_upload('criteria/upload_yml_mixed.yaml', 'text/yaml') }
+    let(:no_type_file)  { fixture_file_upload('criteria/marking_criteria_no_type.yml', 'text/yaml') }
 
     context 'When a file containing a mixture of entries is uploaded' do
 
@@ -954,6 +955,14 @@ describe CriteriaController do
         post_as admin, :upload, params: { assignment_id: assignment.id, upload_file: invalid_mixed_file }
 
         expect(assignment.criteria.pluck(:name)).not_to include('cr40', 'cr50')
+      end
+
+      it 'does not create rubric criteria when levels are missing' do
+        post_as admin, :upload, params: { assignment_id: assignment.id, upload_file: missing_levels_file }
+
+        expect(assignment.criteria.where(name: %w[no_levels empty_levels])).to be_empty
+        expect(flash[:error].map { |f| extract_text f })
+          .to eq([I18n.t('criteria.errors.invalid_format') + ' no_levels, empty_levels'].map { |f| extract_text f })
       end
 
       it 'does not create criteria that have both visibility options set to false' do

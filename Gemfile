@@ -10,11 +10,10 @@ source 'https://rubygems.org'
 
 # Bundler requires these gems in all environments
 gem 'puma'
-gem 'rails', '~> 6.0.3'
+gem 'rails', '~> 6.1.3.2'
 gem 'sprockets'
 
 # Models and database interactions
-gem 'activerecord-import'
 gem 'pluck_to_hash'
 
 # CSS and JavaScript
@@ -28,6 +27,7 @@ gem 'webpacker'
 # Background tasks
 gem 'activejob-status', git: 'https://github.com/inkstak/activejob-status.git'
 gem 'resque'
+gem 'resque-scheduler'
 
 # Authorization
 gem 'action_policy'
@@ -101,12 +101,12 @@ group :development do
 end
 
 group :test do
-  gem 'coveralls', '~>0.8.23',  require: false
   gem 'factory_bot_rails'
   gem 'fuubar'
   gem 'machinist', '< 3'
   gem 'shoulda'
   gem 'simplecov', require: false
+  gem 'simplecov-lcov', require: false
   gem 'time-warp'
   gem 'shoulda-callback-matchers', '~> 1.1.1'
   gem 'rails-controller-testing'
@@ -117,7 +117,7 @@ end
 group :development, :test do
   gem 'byebug'
   gem 'i18n-tasks'
-  gem 'rspec-rails', '~> 4.0.2'
+  gem 'rspec-rails', '~> 5.0.1'
 end
 
 # Gems needed (wanted) for development, test and production_test

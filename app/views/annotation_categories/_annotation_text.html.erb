@@ -34,7 +34,7 @@
     <div class='annotation-text-details'>
       <%= AnnotationText.human_attribute_name(:creator) %>
       <% if annotation_text[:creator].nil? %>
-        <%= 'N/A' %>
+        <%= t('not_applicable') %>
       <% else %>
         <%= annotation_text[:creator] %>
       <% end %>
@@ -42,7 +42,7 @@
     <div class='annotation-text-details'>
       <%= t('annotations.last_edited_by') %>
       <% if annotation_text[:last_editor].nil? %>
-        <%= 'N/A' %>
+        <%= t('not_applicable') %>
       <% else %>
         <%= annotation_text[:last_editor] %>
       <% end %>

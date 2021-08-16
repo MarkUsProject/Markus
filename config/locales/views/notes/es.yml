@@ -9,4 +9,4 @@ es:
     new:
       invalid_selector: El seleccionador escogido es inválido.
       no_noteables: Las notas están vinculadas a grupos, proyectos o estudiantes, pero no existe niguno de estos todavía. Por favor cree uno primero.
-    note_on_html: "%{user_name} en <strong>%{display_for}</strong>"
+    note_on_html: "%{user_name} en %{display_for}"

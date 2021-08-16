@@ -184,7 +184,7 @@ class GradersController < ApplicationController
   # Returns array of grouping ids with non empty submissions
   def filter_empty_submissions(grouping_ids)
     grouping_ids.select do |grouping_id|
-      submission = Submission.find_by(grouping_id: grouping_id)
+      submission = Submission.find_by(grouping_id: grouping_id, submission_version_used: true)
       submission && !submission.is_empty
     end
   end

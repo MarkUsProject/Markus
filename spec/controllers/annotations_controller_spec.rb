@@ -30,6 +30,7 @@ describe AnnotationsController do
   let(:pdf_submission_file) { create(:pdf_submission_file, submission: submission) }
   let(:annotation_category) { create(:annotation_category, assignment: assignment) }
   let(:annotation_text) { create(:annotation_text, annotation_category: annotation_category) }
+  let(:annotation_text_oto) { create(:annotation_text, annotation_category: nil) }
 
   shared_examples 'an authenticated admin or TA' do
     describe '#add_existing_annotation' do
@@ -80,10 +81,36 @@ describe AnnotationsController do
         expect(result.annotations.reload.size).to eq 1
       end
 
-      it 'successfully uses an existing text annotation' do
+      it 'successfully uses an existing one-time-only text annotation' do
         post_as user,
                 :create,
-                params: { annotation_text_id: annotation_text.id, category_id: annotation_category.id,
+                params: { content: annotation_text_oto.content,
+                          annotation_text_id: annotation_text_oto.id, category_id: nil,
+                          submission_file_id: submission_file.id, line_start: 1, line_end: 1, column_start: 1,
+                          column_end: 1, result_id: result.id, assignment_id: assignment.id },
+                format: :js
+
+        assert_response :success
+        expect(result.annotations.reload.size).to eq 1
+        expect(AnnotationText.all.size).to eq 2
+
+        post_as user,
+                :create,
+                params: { content: annotation_text_oto.content,
+                          annotation_text_id: annotation_text_oto.id, category_id: nil,
+                          submission_file_id: submission_file.id, line_start: 2, line_end: 2, column_start: 2,
+                          column_end: 2, result_id: result.id, assignment_id: assignment.id },
+                format: :js
+        assert_response :success
+        expect(result.annotations.reload.size).to eq 2
+        expect(AnnotationText.all.size).to eq 3
+      end
+
+      it 'successfully uses an existing text annotation from a category' do
+        post_as user,
+                :create,
+                params: { content: annotation_text.content,
+                          annotation_text_id: annotation_text.id, category_id: annotation_category.id,
                           submission_file_id: submission_file.id, line_start: 1, line_end: 1, column_start: 1,
                           column_end: 1, result_id: result.id, assignment_id: assignment.id },
                 format: :js
@@ -94,13 +121,60 @@ describe AnnotationsController do
 
         post_as user,
                 :create,
-                params: { annotation_text_id: annotation_text.id, category_id: annotation_category.id,
+                params: { content: annotation_text.content,
+                          annotation_text_id: annotation_text.id, category_id: annotation_category.id,
                           submission_file_id: submission_file.id, line_start: 2, line_end: 2, column_start: 2,
                           column_end: 2, result_id: result.id, assignment_id: assignment.id },
                 format: :js
         assert_response :success
         expect(result.annotations.reload.size).to eq 2
         expect(AnnotationText.all.size).to eq 1
+      end
+
+      it 'successfully uses an existing one-time only text annotation and adds it to a category' do
+        post_as user,
+                :create,
+                params: { content: annotation_text_oto.content,
+                          annotation_text_id: annotation_text_oto.id, category_id: annotation_category.id,
+                          submission_file_id: submission_file.id, line_start: 1, line_end: 1, column_start: 1,
+                          column_end: 1, result_id: result.id, assignment_id: assignment.id },
+                format: :js
+
+        assert_response :success
+        expect(result.annotations.reload.size).to eq 1
+        expect(annotation_text_oto.reload.annotation_category_id).to eq annotation_category.id
+      end
+
+      it 'successfully uses an existing text annotation switches it to a different category' do
+        new_category = create(:annotation_category, assignment: assignment)
+        post_as user,
+                :create,
+                params: { content: annotation_text.content,
+                          annotation_text_id: annotation_text.id, category_id: new_category.id,
+                          submission_file_id: submission_file.id, line_start: 1, line_end: 1, column_start: 1,
+                          column_end: 1, result_id: result.id, assignment_id: assignment.id },
+                format: :js
+
+        assert_response :success
+        expect(result.annotations.reload.size).to eq 1
+        expect(annotation_text.reload.annotation_category_id).to eq new_category.id
+      end
+
+      it 'successfully uses an existing text annotation to create a new one-time only annotation' do
+        post_as user,
+                :create,
+                params: { content: annotation_text.content,
+                          annotation_text_id: annotation_text.id, category_id: nil,
+                          submission_file_id: submission_file.id, line_start: 1, line_end: 1, column_start: 1,
+                          column_end: 1, result_id: result.id, assignment_id: assignment.id },
+                format: :js
+
+        assert_response :success
+        expect(result.annotations.reload.size).to eq 1
+        expect(result.annotations.first.annotation_text.annotation_category_id).to be_nil
+
+        # Existing annotation text wasn't changed
+        expect(annotation_text.reload.annotation_category_id).to eq annotation_category.id
       end
 
       it 'successfully creates an image annotation' do

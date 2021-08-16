@@ -74,6 +74,8 @@ dump.rdb
 yarn-debug.log*
 .yarn-integrity
 yarn-error.log
+# If this file is pre-generated, for Windows and WSL 2 (see Wiki docker setup instructions)
+app/javascript/routes.js
 
 # simplecov gem
 coverage/
@@ -81,15 +83,13 @@ coverage/
 # byebug gem
 .byebug_history
 
-# scanned exam python files
+# python files
 venv/
 __pycache__/
-
-# nbconvert python files
-nbconvertvenv/
 
 config/settings.local.yml
 config/settings/*.local.yml
 config/environments/*.local.yml
+config/autotest.api_key
 
 lib/repo/git_hooks/max_file_size

@@ -50,6 +50,7 @@ SyntaxHighlighter1p5Adapter.prototype.getFontSize = function() {
 
 SyntaxHighlighter1p5Adapter.prototype.setFontSize = function(font_size) {
   this.font_size = font_size;
+  document.getElementsByClassName('dp-highlighter')[0].style.fontSize = font_size + 'em';
 }
 
 SyntaxHighlighter1p5Adapter.prototype.applyMods = function() {
@@ -63,27 +64,39 @@ SyntaxHighlighter1p5Adapter.prototype.applyMods = function() {
   var original_commands = dp.sh.Toolbar.Commands;
 
   // Get rid of some commands and add font size commands
-  delete original_commands['CopyToClipboard'];
+  delete original_commands['ViewSource'];
   delete original_commands['PrintSource'];
   delete original_commands['ExpandSource'];
+
+  original_commands.CopyToClipboard = {
+    label: I18n.t('results.copy_text'),
+    func: function() {
+      const code = document.getElementById('code');
+      navigator.clipboard.writeText(code.textContent).then(() => {
+        // update id attribute with new label
+        let copy_code = document.getElementById(original_commands.CopyToClipboard.label);
+        original_commands.CopyToClipboard.label = '✔ ' + I18n.t('results.copy_text');
+        let id = document.createAttribute('id');
+        id.value = original_commands.CopyToClipboard.label;
+        copy_code.setAttributeNode(id);
+        copy_code.innerText = original_commands.CopyToClipboard.label;
+      });
+    }
+  };
 
   original_commands["BoostCode"] = {
     label: '+A',
     func: function(highlighter) {
-      var code = document.getElementsByClassName('dp-highlighter')[0];
       var font_size = me.getFontSize() + .25;
       me.setFontSize(font_size);
-      code.style.fontSize = font_size + 'em';
     }
   };
 
   original_commands["ShrinkCode"] = {
     label: '-A',
     func: function(highlighter) {
-      var code = document.getElementsByClassName('dp-highlighter')[0];
       var font_size = me.getFontSize() - .25;
       me.setFontSize(font_size);
-      code.style.fontSize = font_size + 'em';
     }
   };
 
@@ -100,8 +113,11 @@ SyntaxHighlighter1p5Adapter.prototype.applyMods = function() {
       let [name, {label}] = entry;
       let tool = document.createElement('a');
       let href = document.createAttribute('href');
+      let id = document.createAttribute('id');
       href.value = '#';
+      id.value = label;
       tool.setAttributeNode(href);
+      tool.setAttributeNode(id);
       tool.addEventListener('click', (e) => {
         dp.sh.Toolbar.Command(name, e.target);
         e.preventDefault();

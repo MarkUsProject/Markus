@@ -16,22 +16,22 @@ describe GradeEntryFormsController do
       allow(controller).to receive(:current_user).and_return(build(:admin))
 
       @file_invalid_username =
-        fixture_file_upload('files/grade_entry_forms/invalid_username.csv',
+        fixture_file_upload('grade_entry_forms/invalid_username.csv',
                             'text/csv')
       @file_extra_column =
-        fixture_file_upload('files/grade_entry_forms/extra_column.csv',
+        fixture_file_upload('grade_entry_forms/extra_column.csv',
                             'text/csv')
       @file_different_total =
-        fixture_file_upload('files/grade_entry_forms/different_total.csv',
+        fixture_file_upload('grade_entry_forms/different_total.csv',
                             'text/csv')
       @file_good =
-        fixture_file_upload('files/grade_entry_forms/good.csv',
+        fixture_file_upload('grade_entry_forms/good.csv',
                             'text/csv')
       @file_good_overwrite =
-        fixture_file_upload('files/grade_entry_forms/good_overwrite.csv',
+        fixture_file_upload('grade_entry_forms/good_overwrite.csv',
                             'text/csv')
 
-      @file_total_included = fixture_file_upload('files/grade_entry_forms/total_column_included.csv', 'text/csv')
+      @file_total_included = fixture_file_upload('grade_entry_forms/total_column_included.csv', 'text/csv')
 
       @student = grade_entry_form_with_data.grade_entry_students.joins(:user).find_by('users.user_name': 'c8shosta')
       @original_item = grade_entry_form_with_data.grade_entry_items.first
@@ -148,7 +148,8 @@ describe GradeEntryFormsController do
       expect(grade_entry_form_with_data.grade_entry_items.first.out_of).to eq 101
     end
 
-    it 'ignores the total column if given in the csv file' do
+    it 'ignores the total column when uploading a csv file with a <Total> column, when show_total is set to true' do
+      grade_entry_form_with_data.update(show_total: true)
       post :upload, params: { id: grade_entry_form_with_data.id, upload_file: @file_total_included, overwrite: true }
       expect(response.status).to eq(302)
       expect(flash[:error]).to be_nil
@@ -438,6 +439,117 @@ describe GradeEntryFormsController do
     context 'GET student interface' do
       before { get_as user, :student_interface, params: { id: grade_entry_form.id } }
       it('should respond with 403') { expect(response.status).to eq 403 }
+    end
+  end
+
+  describe '#grade_distribution' do
+    let(:user) { create(:admin) }
+    before { get_as user, :grade_distribution, params: { id: grade_entry_form_with_data.id } }
+
+    it('should return grade distribution data') {
+      expected_items = grade_entry_form_with_data.grade_distribution_array
+      expect(response.parsed_body['grade_dist_data']['datasets'][0]['data']).to eq expected_items
+    }
+
+    it 'should retrieve the correct column data' do
+      response_data = response.parsed_body['column_breakdown_data']
+
+      gef_dataset = grade_entry_form_with_data.grade_entry_items.map do |item|
+        { label: item.name, data: item.grade_distribution_array(20) }
+      end
+      expect(response_data['datasets']).to eq gef_dataset.as_json
+    end
+
+    it('should return the correct grade distribution labels') {
+      new_labels = (0..19).map { |i| "#{5 * i}-#{5 * i + 5}" }
+      expect(response.parsed_body['grade_dist_data']['labels']).to eq new_labels
+    }
+
+    it('should return the correct column data labels') {
+      new_labels = (0..19).map { |i| "#{5 * i}-#{5 * i + 5}" }
+      expect(response.parsed_body['column_breakdown_data']['labels']).to eq new_labels
+    }
+
+    it('should respond with 200') { expect(response).to have_http_status 200 }
+
+    it 'should return the expected info summary' do
+      name = grade_entry_form_with_data.short_identifier + ': ' + grade_entry_form_with_data.description
+      total_students = grade_entry_form_with_data.grade_entry_students.joins(:user).where('users.hidden': false).count
+      expected_summary = { name: name,
+                           date: I18n.l(grade_entry_form.due_date),
+                           average: grade_entry_form_with_data.results_average,
+                           median: grade_entry_form_with_data.results_median,
+                           num_entries: grade_entry_form_with_data.count_non_nil.to_s +
+                             '/' + total_students.to_s,
+                           num_fails: grade_entry_form_with_data.results_fails,
+                           num_zeros: grade_entry_form.results_zeros }
+      expect(response.parsed_body['info_summary']).to eq expected_summary.as_json
+    end
+  end
+
+  describe '#switch' do
+    let(:gef) { create :grade_entry_form }
+    let(:gef2) { create :grade_entry_form }
+
+    shared_examples 'switch assignment tests' do
+      before { controller.request.headers.merge('HTTP_REFERER': referer) }
+      subject { expect get_as user, 'switch', params: { id: gef2.id } }
+      context 'referred from a grade entry form url' do
+        let(:referer) { grade_entry_form_url(id: gef.id) }
+        it 'should redirect to the equivalent assignment page' do
+          expect(subject).to redirect_to(grade_entry_form_url(id: gef2.id))
+        end
+      end
+      context 'referred from a non grade entry form url' do
+        let(:referer) { non_grade_entry_form_url&.call(grade_entry_form_id: gef.id) }
+        it 'should redirect to the equivalent non assignment page' do
+          skip if non_grade_entry_form_url.nil?
+          expect(subject).to redirect_to(non_grade_entry_form_url.call(grade_entry_form_id: gef2.id))
+        end
+      end
+      context 'referer is nil' do
+        let(:referer) { nil }
+        it 'should redirect to the fallback url' do
+          expect(subject).to redirect_to(fallback_url.call(id: gef2.id))
+        end
+      end
+      context 'referer is a url that does not include the grade entry form at all' do
+        let(:referer) { users_url }
+        it 'should redirect to the fallback url' do
+          expect(subject).to redirect_to(fallback_url.call(id: gef2.id))
+        end
+      end
+      context 'the referer url is some other site entirely' do
+        let(:referer) { 'https://test.com' }
+        it 'should redirect to the fallback url' do
+          expect(subject).to redirect_to(fallback_url.call(id: gef2.id))
+        end
+      end
+      context 'the referer url is not valid' do
+        let(:referer) { '1234567' }
+        it 'should redirect to the fallback url' do
+          expect(subject).to redirect_to(fallback_url.call(id: gef2.id))
+        end
+      end
+    end
+
+    context 'an admin' do
+      let(:user) { create :admin }
+      let(:non_grade_entry_form_url) { ->(params) { grade_entry_form_marks_graders_url(params) } }
+      let(:fallback_url) { ->(params) { edit_grade_entry_form_path(params) } }
+      include_examples 'switch assignment tests'
+    end
+    context 'a grader' do
+      let(:user) { create :ta, manage_assessments: true }
+      let(:non_grade_entry_form_url) { ->(params) { grade_entry_form_marks_graders_url(params) } }
+      let(:fallback_url) { ->(params) { grades_grade_entry_form_path(params) } }
+      include_examples 'switch assignment tests'
+    end
+    context 'a student' do
+      let(:user) { create :student }
+      let(:non_grade_entry_form_url) { nil }
+      let(:fallback_url) { ->(params) { student_interface_grade_entry_form_url(params) } }
+      include_examples 'switch assignment tests'
     end
   end
 end

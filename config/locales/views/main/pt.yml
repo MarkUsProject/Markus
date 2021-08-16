@@ -2,7 +2,10 @@
 pt:
   main:
     account_disabled: Essa conta foi desativada.
+    create_marking_scheme: UPDATE ME
     external_authentication_not_supported: Autenticação externa não é suportada pela sua plataforma!
+    frequency: UPDATE ME
+    grade: UPDATE ME
     log_in: Conectar
     log_out: Sair
     logging_in: Conectando...

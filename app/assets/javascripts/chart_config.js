@@ -5,40 +5,41 @@ $(document).ready(function () {
   let labelColor = document.documentElement.style.getPropertyValue('--line');
   let gridLineColor = document.documentElement.style.getPropertyValue('--gridline');
 
-  Chart.defaults.global.defaultColor = bars;
-  Chart.defaults.global.defaultFontColor = labelColor;
-  Chart.defaults.global.elements.rectangle.backgroundColor = bars;
-  Chart.defaults.global.elements.rectangle.borderColor = bars;
+  Chart.defaults.color = labelColor;
+  Chart.defaults.borderColor = bars;
+  Chart.defaults.backgroundColor = bars;
+  Chart.defaults.elements.bar.backgroundColor = bars;
+  Chart.defaults.elements.bar.borderColor = bars;
 
-  Chart.defaults.bar.scales.yAxes = [{
-    gridLines: {
+  Chart.overrides.bar.scales.y = {
+    grid: {
       color: gridLineColor
     },
+    beginAtZero: true,
     ticks: {
-      beginAtZero: true,
-      fontColor: ticksColor
+      color: ticksColor
     }
-  }];
+  };
 
-  Chart.defaults.global.type = 'bar';
+  Chart.defaults.type = 'bar';
 
-  Chart.defaults.bar.scales.xAxes = [{
+  Chart.overrides.bar.scales.x = {
     ticks: {
       type: 'linear',
-      fontColor: ticksColor,
+      color: ticksColor,
     },
-    gridLines: {
+    grid: {
       color: gridLineColor,
-      offsetGridLines: true
+      offset: true
     },
     offset: true
-  }];
+  };
 
-  Chart.defaults.global.legend.display = false;
-  Chart.defaults.global.legend.labels.fontColor = labelColor;
+  Chart.defaults.plugins.legend.display = false;
+  Chart.defaults.plugins.legend.labels.fontColor = labelColor;
 
-  Chart.defaults.datasets = [{
-    barPercentage: 0.9,
-    categoryPercentage: 0.8
-  }];
+  Chart.defaults.datasets.bar.barPercentage = 0.9;
+  Chart.defaults.datasets.bar.categoryPercentage = 0.8;
+
+  Chart.defaults.animation.duration = 0;
 });
