@@ -9,4 +9,4 @@ en:
     new:
       invalid_selector: Invalid selector chosen.
       no_noteables: Notes are attached to groups, assignments, or students, but there are none yet. Please create one first.
-    note_on_html: "%{user_name} on <strong>%{display_for}</strong>"
+    note_on_html: "%{user_name} on %{display_for}"

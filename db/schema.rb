@@ -2,15 +2,15 @@
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
 #
-# This file is the source Rails uses to define your schema when running `rails
-# db:schema:load`. When creating a new database, `rails db:schema:load` tends to
+# This file is the source Rails uses to define your schema when running `bin/rails
+# db:schema:load`. When creating a new database, `bin/rails db:schema:load` tends to
 # be faster and is potentially less error prone than running all of your
 # migrations from scratch. Old migrations may fail to apply correctly if those
 # migrations use external dependencies or application code.
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_04_27_120039) do
+ActiveRecord::Schema.define(version: 2021_07_30_132238) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -20,7 +20,6 @@ ActiveRecord::Schema.define(version: 2021_04_27_120039) do
     t.integer "position"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer "annotation_texts_count", default: 0
     t.bigint "assessment_id", null: false
     t.bigint "flexible_criterion_id"
     t.index ["assessment_id"], name: "index_annotation_categories_on_assessment_id"
@@ -117,13 +116,14 @@ ActiveRecord::Schema.define(version: 2021_04_27_120039) do
     t.boolean "hide_unassigned_criteria", default: false, null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.string "duration"
+    t.interval "duration"
     t.datetime "start_time"
     t.boolean "is_timed", default: false, null: false
     t.string "starter_file_type", default: "simple", null: false
     t.datetime "starter_file_updated_at"
     t.bigint "default_starter_file_group_id"
     t.boolean "starter_files_after_due", default: true, null: false
+    t.integer "autotest_settings_id"
     t.index ["assessment_id"], name: "index_assignment_properties_on_assessment_id", unique: true
     t.index ["default_starter_file_group_id"], name: "index_assignment_properties_on_default_starter_file_group_id"
   end
@@ -178,7 +178,7 @@ ActiveRecord::Schema.define(version: 2021_04_27_120039) do
   end
 
   create_table "extensions", force: :cascade do |t|
-    t.string "time_delta", null: false
+    t.interval "time_delta", null: false
     t.boolean "apply_penalty", default: false, null: false
     t.bigint "grouping_id", null: false
     t.string "note"
@@ -204,7 +204,9 @@ ActiveRecord::Schema.define(version: 2021_04_27_120039) do
     t.integer "submission_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "test_group_result_id"
     t.index ["submission_id"], name: "index_feedback_files_on_submission_id"
+    t.index ["test_group_result_id"], name: "index_feedback_files_on_test_group_result_id"
   end
 
   create_table "grace_period_deductions", id: :serial, force: :cascade do |t|
@@ -239,6 +241,7 @@ ActiveRecord::Schema.define(version: 2021_04_27_120039) do
   create_table "grade_entry_students_tas", id: :serial, force: :cascade do |t|
     t.integer "grade_entry_student_id"
     t.integer "ta_id"
+    t.index ["grade_entry_student_id", "ta_id"], name: "index_grade_entry_students_tas", unique: true
   end
 
   create_table "grader_permissions", force: :cascade do |t|
@@ -275,7 +278,6 @@ ActiveRecord::Schema.define(version: 2021_04_27_120039) do
     t.integer "test_tokens", default: 0, null: false
     t.bigint "assessment_id", null: false
     t.datetime "start_time"
-    t.datetime "starter_file_timestamp"
     t.boolean "starter_file_changed", default: false, null: false
     t.index ["assessment_id", "group_id"], name: "groupings_u1", unique: true
   end
@@ -506,6 +508,8 @@ ActiveRecord::Schema.define(version: 2021_04_27_120039) do
     t.string "name", null: false
     t.string "description"
     t.integer "user_id"
+    t.bigint "assessment_id"
+    t.index ["assessment_id"], name: "index_tags_on_assessment_id"
     t.index ["user_id"], name: "index_tags_on_user_id"
   end
 
@@ -563,8 +567,6 @@ ActiveRecord::Schema.define(version: 2021_04_27_120039) do
   end
 
   create_table "test_runs", id: :serial, force: :cascade do |t|
-    t.bigint "time_to_service_estimate"
-    t.bigint "time_to_service"
     t.integer "test_batch_id"
     t.integer "grouping_id", null: false
     t.integer "user_id", null: false
@@ -573,6 +575,8 @@ ActiveRecord::Schema.define(version: 2021_04_27_120039) do
     t.integer "submission_id"
     t.text "revision_identifier"
     t.text "problems"
+    t.integer "autotest_test_id"
+    t.integer "status", null: false
     t.index ["grouping_id"], name: "index_test_runs_on_grouping_id"
     t.index ["submission_id"], name: "index_test_runs_on_submission_id"
     t.index ["test_batch_id"], name: "index_test_runs_on_test_batch_id"
@@ -616,6 +620,7 @@ ActiveRecord::Schema.define(version: 2021_04_27_120039) do
   add_foreign_key "extensions", "groupings"
   add_foreign_key "extra_marks", "results", name: "fk_extra_marks_results", on_delete: :cascade
   add_foreign_key "feedback_files", "submissions"
+  add_foreign_key "feedback_files", "test_group_results"
   add_foreign_key "grader_permissions", "users"
   add_foreign_key "grouping_starter_file_entries", "groupings"
   add_foreign_key "grouping_starter_file_entries", "starter_file_entries"
@@ -641,6 +646,7 @@ ActiveRecord::Schema.define(version: 2021_04_27_120039) do
   add_foreign_key "starter_file_entries", "starter_file_groups"
   add_foreign_key "starter_file_groups", "assessments"
   add_foreign_key "submission_files", "submissions", name: "fk_submission_files_submissions"
+  add_foreign_key "tags", "assessments"
   add_foreign_key "tags", "users"
   add_foreign_key "template_divisions", "assignment_files"
   add_foreign_key "template_divisions", "exam_templates"

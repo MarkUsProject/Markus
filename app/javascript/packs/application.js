@@ -29,8 +29,8 @@ window.moment = moment;
 // mousetrap (keybindings)
 import 'mousetrap';
 
-// rails-ujs
-import Rails from 'rails-ujs';
+// rails/ujs
+import Rails from '@rails/ujs';
 Rails.start();
 window.Rails = Rails;
 
@@ -44,15 +44,12 @@ import Jcrop from 'jcrop';
 window.Jcrop = Jcrop;
 
 // chart.js
-import { Chart } from 'chart.js';
+import { Chart, registerables } from 'chart.js';
+Chart.register(...registerables);
+window.Chart = Chart;
 import 'javascripts/chart_config';
 
-window.Routes = require('routes.js.erb');
-
-// Override react-table defaultSortMethod
-import { defaultSort } from 'javascripts/Components/Helpers/table_helpers';
-import { ReactTableDefaults } from 'react-table';
-Object.assign(ReactTableDefaults, { defaultSortMethod: defaultSort });
+window.Routes = require('routes');
 
 // assets with side-effects only
 import 'javascripts/help-system';
@@ -73,6 +70,8 @@ import { refreshOrLogout } from 'javascripts/refresh_or_logout';
 window.refreshOrLogout = refreshOrLogout;
 import { ModalMarkus } from 'javascripts/modals';
 window.ModalMarkus = ModalMarkus;
+import { makeDashboard } from 'javascripts/Components/dashboard';
+window.makeDashboard = makeDashboard;
 import { makeTATable } from 'javascripts/Components/ta_table';
 window.makeTATable = makeTATable;
 import { makeAdminTable } from 'javascripts/Components/admin_table';
@@ -121,3 +120,5 @@ import { makeDataChart } from 'javascripts/Components/Helpers/data_chart';
 window.makeDataChart = makeDataChart;
 import { makeStarterFileManager } from 'javascripts/Components/starter_file_manager';
 window.makeStarterFileManager = makeStarterFileManager;
+import { makeNotesTable } from 'javascripts/Components/notes_table';
+window.makeNotesTable = makeNotesTable;

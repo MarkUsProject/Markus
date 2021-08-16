@@ -3,14 +3,13 @@ class AssignmentPolicy < ApplicationPolicy
   default_rule :manage?
   alias_rule :summary?, to: :view?
   alias_rule :stop_batch_tests?, :batch_runs?, :stop_test?, to: :manage_tests?
-  alias_rule :refresh_graph?, :view_summary?, :download?, :upload?, to: :admin?
-  alias_rule :show?, :peer_review?, :start_timed_assignment?, to: :student?
+  alias_rule :show?, :peer_review?, to: :student?
 
   def index?
     true
   end
 
-  def switch_assignment?
+  def switch?
     true
   end
 
@@ -73,5 +72,16 @@ class AssignmentPolicy < ApplicationPolicy
 
   def manage_tests?
     check?(:manage?, with: AutomatedTestPolicy)
+  end
+
+  def start_timed_assignment?
+    user.student? && (
+      (check?(:not_yet_in_group?) &&
+        record.section_start_time(user.section) < Time.current &&
+        record.section_due_date(user.section) > Time.current &&
+        record.group_max == 1) ||
+      (!check?(:not_yet_in_group?) &&
+        check?(:start_timed_assignment?, user.accepted_grouping_for(record.id), with: GroupingPolicy))
+    )
   end
 end

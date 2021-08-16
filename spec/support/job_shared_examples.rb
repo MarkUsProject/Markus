@@ -1,5 +1,9 @@
 shared_examples 'background job' do
-  after :each do
+  before do
+    clear_enqueued_jobs
+    clear_performed_jobs
+  end
+  after do
     clear_enqueued_jobs
     clear_performed_jobs
   end
@@ -21,57 +25,18 @@ shared_examples 'background job' do
   end
 end
 
-def fake_exit_status(exit_code)
-  fork { exit exit_code }
-  Process.wait
-  $CHILD_STATUS
-end
-
-shared_context 'autotest jobs' do
-  let(:relative_url_root) { '/csc108' }
-  let(:server_type) { 'local' }
-  let(:data) { '' }
-  let(:exit_code) { 0 }
-  before :each do
-    allow(Rails.application.config.action_controller).to receive(:relative_url_root).and_return(relative_url_root)
-    if server_type == 'local'
-      allow(Settings.autotest).to receive(:server_username).and_return(nil)
-      allow(Open3).to receive(:capture2e).and_return([data, fake_exit_status(exit_code)])
-      allow(Open3).to receive(:capture3).and_return(['', data, fake_exit_status(exit_code)])
-    else
-      allow(Settings.autotest).to receive(:server_username).and_return('autotst')
-      status = Net::SSH::Connection::Session::StringWithExitstatus.new(data, exit_code)
-      dummy_connection = instance_double('Net::SSH::Connection::Session')
-      allow(dummy_connection).to receive(:exec!).and_return(status)
-      allow(Net::SSH).to receive(:start) do |_, &block|
-        block.call(dummy_connection)
-      end
+shared_examples 'autotest jobs' do
+  xcontext 'and the rate limit has been hit' do
+    # TODO: callbacks are not called when calling perform_now. Figure out a better way to test this
+    before do
+      allow_any_instance_of(described_class).to receive(:send_request).and_raise(
+        AutomatedTestsHelper::AutotestApi::LimitExceededException
+      )
     end
-  end
-end
-
-shared_examples 'shared autotest job tests' do |autotest_job_tests|
-  include_context 'autotest jobs'
-  context 'using a local autotesting server' do
-    let(:server_type) { 'local' }
-    context 'with a relative url root' do
-      let(:relative_url_root) { '/csc108' }
-      it_behaves_like autotest_job_tests
-    end
-    context 'without a relative url root' do
-      let(:relative_url_root) { nil }
-      it_behaves_like autotest_job_tests
-    end
-  end
-  context 'using a remote autotesting server' do
-    let(:server_type) { 'remote' }
-    context 'with a relative url root' do
-      let(:relative_url_root) { '/csc108' }
-      it_behaves_like autotest_job_tests
-    end
-    context 'without a relative url root' do
-      let(:relative_url_root) { nil }
-      it_behaves_like autotest_job_tests
+    it 'reschedules the job one minute later' do
+      expect(described_class).to receive(:set).with(wait: 1.minute).once.and_call_original
+      expect_any_instance_of(ActiveJob::ConfiguredJob).to receive(:perform_later).once
+      subject
     end
   end
 end

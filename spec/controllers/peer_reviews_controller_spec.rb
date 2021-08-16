@@ -1,5 +1,5 @@
 describe PeerReviewsController do
-  TEMP_CSV_FILE_PATH = 'files/_temp_peer_review.csv'
+  TEMP_CSV_FILE_PATH = '_temp_peer_review.csv'.freeze
 
   before :each do
     @assignment_with_pr = create(:assignment_with_peer_review_and_groupings_results)
@@ -79,15 +79,13 @@ describe PeerReviewsController do
           get :peer_review_mapping, params: { assignment_id: @pr_id }
           @downloaded_text = response.body
           PeerReview.all.destroy_all
-          @path = File.join(self.class.fixture_path, TEMP_CSV_FILE_PATH)
+          @path = File.join(self.class.file_fixture_path, TEMP_CSV_FILE_PATH)
           # Now allow uploading by placing the data in a temporary file and reading
           # the data back through 'uploading' (requires a clean database)
           File.open(@path, 'w') do |f|
             f.write(@downloaded_text)
           end
           csv_upload = fixture_file_upload(TEMP_CSV_FILE_PATH, 'text/csv')
-          fixture_upload = fixture_file_upload(TEMP_CSV_FILE_PATH, 'text/csv')
-          allow(csv_upload).to receive(:read).and_return(File.read(fixture_upload))
 
           post :upload, params: { assignment_id: @pr_id, upload_file: csv_upload, encoding: 'UTF-8' }
         end

@@ -14,9 +14,6 @@ class GradeEntryStudentTa < ApplicationRecord
     grade_entry_student_ids =
       GradeEntryStudent.where(id: Array(grade_entry_student_ids)).pluck(:id)
     ta_ids = Ta.where(id: Array(ta_ids)).pluck(:id)
-
-    # Create non-existing association between grade entry students and TAs.
-    columns = [:grade_entry_student_id, :ta_id]
     # Get all existing associations to avoid violating the unique constraint.
     existing_values = GradeEntryStudentTa
       .where(grade_entry_student_id: grade_entry_student_ids, ta_id: ta_ids)
@@ -24,9 +21,16 @@ class GradeEntryStudentTa < ApplicationRecord
     # Delegate the generation of records to the caller-specified block and
     # remove values that already exist in the database.
     values = yield(grade_entry_student_ids, ta_ids) - existing_values
-    # TODO replace import with create when the PG driver supports bulk create,
-    # then remove the activerecord-import gem.
-    import(columns, values, validate: false)
+
+    student_ta_hash = values.map do |value|
+      {
+        grade_entry_student_id: value[0],
+        ta_id: value[1]
+      }
+    end
+    unless student_ta_hash.empty?
+      insert_all(student_ta_hash)
+    end
   end
 
   def self.from_csv(grade_entry_form, csv_data, remove_existing)
@@ -53,7 +57,9 @@ class GradeEntryStudentTa < ApplicationRecord
         new_mappings << { grade_entry_student_id: grade_entry_student_id, ta_id: ta_id }
       end
     end
-    GradeEntryStudentTa.import new_mappings, validate: false, on_duplicate_key_ignore: true
+    unless new_mappings.blank?
+      GradeEntryStudentTa.insert_all new_mappings, unique_by: %i[grade_entry_student_id ta_id]
+    end
     result
   end
 end

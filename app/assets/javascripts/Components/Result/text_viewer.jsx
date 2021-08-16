@@ -31,6 +31,12 @@ export class TextViewer extends React.Component {
     // Remove existing syntax highlighted code.
     $('.dp-highlighter').remove();
     dp.SyntaxHighlighter.HighlightAll(source_id);
+
+    let font_size = null;
+    if (!!window.syntax_highlighter_adapter) {
+      font_size = window.syntax_highlighter_adapter.getFontSize();
+    }
+
     window.syntax_highlighter_adapter = new SyntaxHighlighter1p5Adapter($('.dp-highlighter ol')[0]);
 
     // Apply modifications to Syntax Highlighter
@@ -46,6 +52,10 @@ export class TextViewer extends React.Component {
           new SourceCodeLineArray()),
         new AnnotationTextManager(),
         new AnnotationTextDisplayer());
+    }
+
+    if (font_size !== null) {
+      window.syntax_highlighter_adapter.setFontSize(font_size);
     }
   };
 

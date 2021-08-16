@@ -128,7 +128,7 @@ class RubricCriterion < Criterion
     attrs[:ta_visible] = criterion_yml[1]['ta_visible'] unless criterion_yml[1]['ta_visible'].nil?
     attrs[:peer_visible] = criterion_yml[1]['peer_visible'] unless criterion_yml[1]['peer_visible'].nil?
     attrs[:bonus] = criterion_yml[1]['bonus'] unless criterion_yml[1]['bonus'].nil?
-    criterion_yml[1]['levels'].each do |level_name, level_yml|
+    (criterion_yml[1]['levels'] || []).each do |level_name, level_yml|
       attrs[:levels_attributes] << {
         name: level_name,
         description: level_yml['description'],

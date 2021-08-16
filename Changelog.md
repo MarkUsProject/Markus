@@ -1,5 +1,27 @@
 # Changelog
 
+## [v1.13.0]
+- Modify Result.get_total_extra_marks to differentiate between having extra marks that sum to zero and
+  having no extra marks (#5220)
+- Add copy to clipboard button for plaintext submission files in Results view (#5223)
+- Add ability to associate feedback files to test group results (#5209)
+- Communicate with autotester over http to support new autotesting configuration (#5225)
+- Remove activerecord-import dependency (#5248)
+- Combine all python dependencies (#5358)
+- Rename "Tags/Notes" tab on grading page to "Submission Info", and move membership information to the tab (#5380)
+- Respect referrer url when navigating between assignments (#5409)
+- Remove delete link from TA table (#5407)
+- Persist file size and rotation when navigating between text and image files (#5413)
+- Improve student UI for timed assessments (#5417) 
+- When completing bulk actions, report errors instead of halting the whole process and rolling back (#5422)
+- Add ability to download data from submissions table as csv file (#5418)
+- Correctly update annotation category when creating annotation from "Did you mean" suggestion (#5448)
+- Add route to download an example of the starter files that may be assigned to students (#5449)
+- Validate a user's locale to ensure that it is set to a valid value (#5450)
+- Display due date, collection date, and start time in repo browser view (#5462)
+- Create dark mode versions of logo and favicon (#5463)
+- Update UI for test results table (#5465)
+
 ## [v1.12.5]
 - Fix bugs in grading view when switching between submissions (#5400)
 

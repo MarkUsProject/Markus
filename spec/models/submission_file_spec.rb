@@ -12,10 +12,10 @@ describe SubmissionFile do
                                                submission_id: 1)
     end
     it 'return java' do
-      expect(SubmissionFile.get_file_type(@submission_file.filename)).to eq('java')
+      expect(FileHelper.get_file_type(@submission_file.filename)).to eq('java')
     end
     it 'return java comment' do
-      expect(@submission_file.get_comment_syntax).to eq(%w(/* */))
+      expect(FileHelper.get_comment_syntax(@submission_file.filename)).to eq(%w[/* */])
     end
   end
 
@@ -26,10 +26,10 @@ describe SubmissionFile do
                                                submission_id: 1)
     end
     it 'return ruby' do
-      expect(SubmissionFile.get_file_type(@submission_file.filename)).to eq('ruby')
+      expect(FileHelper.get_file_type(@submission_file.filename)).to eq('ruby')
     end
     it 'return ruby comment' do
-      expect(@submission_file.get_comment_syntax).to eq(["=begin\n", "\n=end"])
+      expect(FileHelper.get_comment_syntax(@submission_file.filename)).to eq(%W[=begin\n \n=end])
     end
   end
 
@@ -40,10 +40,10 @@ describe SubmissionFile do
                                                submission_id: 1)
     end
     it 'return python' do
-      expect(SubmissionFile.get_file_type(@submission_file.filename)).to eq('python')
+      expect(FileHelper.get_file_type(@submission_file.filename)).to eq('python')
     end
     it 'return python comment' do
-      expect(@submission_file.get_comment_syntax).to eq(%w(""" """))
+      expect(FileHelper.get_comment_syntax(@submission_file.filename)).to eq(%w[""" """])
     end
   end
 
@@ -54,10 +54,10 @@ describe SubmissionFile do
                                                submission_id: 1)
     end
     it 'return javascript' do
-      expect(SubmissionFile.get_file_type(@submission_file.filename)).to eq('javascript')
+      expect(FileHelper.get_file_type(@submission_file.filename)).to eq('javascript')
     end
     it 'return javascript comment' do
-      expect(@submission_file.get_comment_syntax).to eq(%w(/* */))
+      expect(FileHelper.get_comment_syntax(@submission_file.filename)).to eq(%w[/* */])
     end
   end
 
@@ -68,10 +68,10 @@ describe SubmissionFile do
                                                submission_id: 1)
     end
     it 'return html' do
-      expect(SubmissionFile.get_file_type(@submission_file.filename)).to eq('html')
+      expect(FileHelper.get_file_type(@submission_file.filename)).to eq('html')
     end
     it 'return html comment' do
-      expect(@submission_file.get_comment_syntax).to eq(%w(<!-- -->))
+      expect(FileHelper.get_comment_syntax(@submission_file.filename)).to eq(%w[<!-- -->])
     end
   end
 
@@ -82,10 +82,10 @@ describe SubmissionFile do
                                                submission_id: 1)
     end
     it 'return css' do
-      expect(SubmissionFile.get_file_type(@submission_file.filename)).to eq('css')
+      expect(FileHelper.get_file_type(@submission_file.filename)).to eq('css')
     end
     it 'return css comment' do
-      expect(@submission_file.get_comment_syntax).to eq(%w(/* */))
+      expect(FileHelper.get_comment_syntax(@submission_file.filename)).to eq(%w[/* */])
     end
   end
 
@@ -96,10 +96,10 @@ describe SubmissionFile do
                                                submission_id: 1)
     end
     it 'return c' do
-      expect(SubmissionFile.get_file_type(@submission_file.filename)).to eq('c')
+      expect(FileHelper.get_file_type(@submission_file.filename)).to eq('c')
     end
     it 'return c comment' do
-      expect(@submission_file.get_comment_syntax).to eq(%w(/* */))
+      expect(FileHelper.get_comment_syntax(@submission_file.filename)).to eq(%w[/* */])
     end
   end
 
@@ -110,7 +110,7 @@ describe SubmissionFile do
                                                submission_id: 1)
     end
     it 'return tex' do
-      expect(SubmissionFile.get_file_type(@submission_file.filename)).to eq('tex')
+      expect(FileHelper.get_file_type(@submission_file.filename)).to eq('tex')
     end
   end
 
@@ -121,10 +121,10 @@ describe SubmissionFile do
                                                submission_id: 1)
     end
     it 'return a unknown file extension' do
-      expect(SubmissionFile.get_file_type(@submission_file.filename)).to eq('unknown')
+      expect(FileHelper.get_file_type(@submission_file.filename)).to eq('unknown')
     end
     it 'return generic comment' do
-      expect(@submission_file.get_comment_syntax).to eq(%w(## ##))
+      expect(FileHelper.get_comment_syntax(@submission_file.filename)).to eq(%w[## ##])
     end
   end
 
@@ -135,10 +135,10 @@ describe SubmissionFile do
                                                submission_id: 1)
     end
     it 'return a unknown file extension' do
-      expect(SubmissionFile.get_file_type(@submission_file.filename)).to eq('unknown')
+      expect(FileHelper.get_file_type(@submission_file.filename)).to eq('unknown')
     end
     it 'return generic comment' do
-      expect(@submission_file.get_comment_syntax).to eq(%w(## ##))
+      expect(FileHelper.get_comment_syntax(@submission_file.filename)).to eq(%w[## ##])
     end
   end
 
@@ -177,12 +177,12 @@ describe SubmissionFile do
       expect(@unsupported_file.is_supported_image?).to be false
     end
     it 'returns \'image\' when checking file type' do
-      expect(SubmissionFile.get_file_type(@jpeg_file.filename)).to eq 'image'
-      expect(SubmissionFile.get_file_type(@jpg_file.filename)).to eq 'image'
-      expect(SubmissionFile.get_file_type(@gif_file.filename)).to eq 'image'
-      expect(SubmissionFile.get_file_type(@png_file.filename)).to eq 'image'
-      expect(SubmissionFile.get_file_type(@heic_file.filename)).to eq 'image'
-      expect(SubmissionFile.get_file_type(@heif_file.filename)).to eq 'image'
+      expect(FileHelper.get_file_type(@jpeg_file.filename)).to eq 'image'
+      expect(FileHelper.get_file_type(@jpg_file.filename)).to eq 'image'
+      expect(FileHelper.get_file_type(@gif_file.filename)).to eq 'image'
+      expect(FileHelper.get_file_type(@png_file.filename)).to eq 'image'
+      expect(FileHelper.get_file_type(@heic_file.filename)).to eq 'image'
+      expect(FileHelper.get_file_type(@heif_file.filename)).to eq 'image'
     end
   end
 
@@ -269,7 +269,7 @@ describe SubmissionFile do
       end
       context 'when checking the file type' do
         it 'returns \'pdf\'' do
-          expect(SubmissionFile.get_file_type(@submission_file.filename)).to eq 'pdf'
+          expect(FileHelper.get_file_type(@submission_file.filename)).to eq 'pdf'
         end
       end
     end

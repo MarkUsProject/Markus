@@ -1,7 +1,6 @@
 # Manages actions relating to editing and modifying
 # groups.
 class GroupsController < ApplicationController
-  include GroupsHelper
   # Administrator
   before_action { authorize! }
   layout 'assignment_content'
@@ -29,7 +28,7 @@ class GroupsController < ApplicationController
   def remove_group
     # When a success div exists we can return successfully removed groups
     groupings = Grouping.where(id: params[:grouping_id])
-    @errors = []
+    errors = []
     @removed_groupings = []
     Repository.get_class.update_permissions_after(only_on_request: true) do
       groupings.each do |grouping|
@@ -38,14 +37,17 @@ class GroupsController < ApplicationController
         end
       end
     end
-    # TODO: return errors through request
     groupings.each do |grouping|
       if grouping.has_submission?
-        @errors.push(grouping.group.group_name)
+        errors.push(grouping.group.group_name)
       else
         grouping.delete_grouping
         @removed_groupings.push(grouping)
       end
+    end
+    if errors.any?
+      err_groups = errors.join(', ')
+      flash_message(:error, I18n.t('groups.delete_group_has_submission') + err_groups)
     end
     head :ok
   end
@@ -161,8 +163,10 @@ class GroupsController < ApplicationController
             .where('(lower(first_name) like ? OR lower(last_name) like ? OR lower(user_name) like ? OR id_number like ?) AND users.id NOT IN (?)',
                    "#{params[:term].downcase}%", "#{params[:term].downcase}%", "#{params[:term].downcase}%", "#{params[:term]}%",
                    Membership.select(:user_id).joins(:grouping).where('groupings.assessment_id = ?', params[:assignment]))
-            .pluck_to_hash(:id, :id_number, :user_name,
-                           "CONCAT(first_name,' ',last_name) AS label, CONCAT(first_name,' ',last_name) AS value")
+            .pluck_to_hash(:id, :id_number, :user_name, :first_name, :last_name)
+    names = names.map do |h|
+      { id: h[:id], id_number: h[:id_number], user_name: h[:user_name], value: "#{h[:first_name]} #{h[:last_name]}" }
+    end
     render json: names
   end
 
@@ -239,13 +243,14 @@ class GroupsController < ApplicationController
       assignment = Assignment.find(params[:assignment_id])
       group_rows = []
       result = MarkusCsv.parse(data[:file].read, encoding: params[:encoding]) do |row|
-        group_rows << row.take_while { |x| !x.blank? } unless row.blank?
+        next if row.blank?
+        raise CsvInvalidLineError if row[0].blank?
+
+        group_rows << row.reject(&:blank?)
       end
       if result[:invalid_lines].empty?
-        if validate_csv_upload_file(assignment, group_rows)
-          @current_job = CreateGroupsJob.perform_later assignment, group_rows
-          session[:job_id] = @current_job.job_id
-        end
+        @current_job = CreateGroupsJob.perform_later assignment, group_rows
+        session[:job_id] = @current_job.job_id
       else
         flash_message(:error, result[:invalid_lines])
       end
@@ -517,7 +522,7 @@ class GroupsController < ApplicationController
     zip_name = "#{assignment.short_identifier}-starter-files-#{current_user.user_name}"
     zip_path = File.join('tmp', zip_name + '.zip')
     FileUtils.rm_rf zip_path
-    Zip::File.open(zip_path, Zip::File::CREATE) do |zip_file|
+    Zip::File.open(zip_path, create: true) do |zip_file|
       grouping.starter_file_entries.reload.each { |entry| entry.add_files_to_zip_file(zip_file) }
     end
     send_file zip_path, filename: File.basename(zip_path)

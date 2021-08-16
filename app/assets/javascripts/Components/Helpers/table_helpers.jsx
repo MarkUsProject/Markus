@@ -1,8 +1,10 @@
 import React from "react";
+import * as I18n from 'i18n-js';
+import 'translations';
 
 /**
  * @file
- * Provides generic helper functions for react tables
+ * Provides generic helper functions and components for react-table tables.
 */
 
 export function defaultSort(a, b) {
@@ -32,10 +34,12 @@ export function defaultSort(a, b) {
   }
 }
 
-export function stringFilter(filter, row) {
-  /** Case insensitive, locale aware, string filter function */
-  return String(row[filter.id]).toLocaleLowerCase().includes(filter.value.toLocaleLowerCase());
-};
+/**
+ * Case insensitive, locale aware, string filter function
+ */
+export function stringFilterMethod(filter, row) {
+  return String(row[filter.id]).toLocaleLowerCase().includes(String(filter.value).toLocaleLowerCase());
+}
 
 export function dateSort(a, b) {
   /** Sort values as dates */
@@ -64,6 +68,46 @@ export function durationSort(a, b) {
     return 0;
   }
 };
+
+/**
+ * Text-based search filter. Based on react-table's default search filter,
+ * with an additional aria-label attribute.
+ */
+export function textFilter({ filter, onChange, column }) {
+  return <input
+    type="text"
+    style={{
+      width: '100%',
+    }}
+    placeholder={column.Placeholder}
+    value={filter ? filter.value : ''}
+    aria-label={`${I18n.t('search')} ${column.Header || ""}`}
+    onChange={event => onChange(event.target.value)}
+  />;
+}
+
+/**
+ * Select-based search filter. Options are generated from the custom column attribute
+ * filterOptions, which is a list of objects with keys "value" and "text".
+ * A default "all" option is prepended to the list of options; the text can be
+ * customized by setting the filterAllOptionText column attribute.
+ */
+export function selectFilter({ filter, onChange, column }) {
+  let options = (column.filterOptions || []).map(
+    ({ value, text }) => <option value={value} key={value}>{text}</option>
+  );
+  let allOptionText = column.filterAllOptionText || I18n.t('all')
+  options.unshift(<option value='all' key='all'>{allOptionText}</option>);
+
+  return <select
+    onChange={event => onChange(event.target.value)}
+    style={{ width: '100%' }}
+    value={filter ? filter.value : 'all'}
+    aria-label={I18n.t('filter_by', {name: column.Header})}
+  >
+    {options}
+  </select>;
+}
 
 export function markingStateColumn(...override_keys) {
   return ({
@@ -103,19 +147,14 @@ export function markingStateColumn(...override_keys) {
         return filter.value === row[filter.id];
       }
     },
-    Filter: ({ filter, onChange }) =>
-      <select
-        onChange={event => onChange(event.target.value)}
-        style={{ width: '100%' }}
-        value={filter ? filter.value : 'all'}
-      >
-        <option value='all'>{I18n.t('all')}</option>
-        <option value='before_due_date'>{I18n.t('submissions.state.before_due_date')}</option>
-        <option value='not_collected'>{I18n.t('submissions.state.not_collected')}</option>
-        <option value='incomplete'>{I18n.t('submissions.state.in_progress')}</option>
-        <option value='complete'>{I18n.t('submissions.state.complete')}</option>
-        <option value='released'>{I18n.t('submissions.state.released')}</option>
-        <option value='remark'>{I18n.t('submissions.state.remark_requested')}</option>
-      </select>,
+    filterOptions: [
+      {value: 'before_due_date', text: I18n.t('submissions.state.before_due_date')},
+      {value: 'not_collected', text: I18n.t('submissions.state.not_collected')},
+      {value: 'incomplete', text: I18n.t('submissions.state.in_progress')},
+      {value: 'complete', text: I18n.t('submissions.state.complete')},
+      {value: 'released', text: I18n.t('submissions.state.released')},
+      {value: 'remark', text: I18n.t('submissions.state.remark_requested')},
+    ],
+    Filter: selectFilter,
   ...override_keys})
 };

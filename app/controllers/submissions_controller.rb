@@ -11,6 +11,8 @@ class SubmissionsController < ApplicationController
     p.img_src :self, :blob
   end
 
+  content_security_policy_report_only only: :notebook_content
+
   def index
     respond_to do |format|
       format.json do
@@ -203,23 +205,23 @@ class SubmissionsController < ApplicationController
     assignment = Assignment.includes(groupings: :current_submission_used).find(params[:assignment_id])
     groupings = assignment.groupings.find(params[:groupings])
     # .where.not(current_submission_used: nil) potentially makes find fail with RecordNotFound
-    test_runs = groupings.select(&:has_non_empty_submission?).map do |g|
+    group_ids = groupings.select(&:has_non_empty_submission?).map do |g|
       submission = g.current_submission_used
       unless flash_allowance(:error, allowance_to(:run_tests?, current_user, context: { submission: submission })).value
         head 400
         return
       end
-      { grouping_id: g.id, submission_id: submission.id }
+      g.group_id
     end
     success = ''
     error = ''
     begin
-      if !test_runs.empty?
+      if !group_ids.empty?
         if flash_allowance(:error, allowance_to(:run_tests?, current_user, context: { assignment: assignment })).value
           @current_job = AutotestRunJob.perform_later(request.protocol + request.host_with_port,
                                                       current_user.id,
                                                       assignment.id,
-                                                      test_runs)
+                                                      group_ids)
           session[:job_id] = @current_job.job_id
           success = I18n.t('automated_tests.tests_running', assignment_identifier: assignment.short_identifier)
         end
@@ -393,11 +395,15 @@ class SubmissionsController < ApplicationController
       render json: { type: 'image' }
     elsif file.is_pdf?
       render json: { type: 'pdf' }
+    elsif file.is_pynb?
+      render json: { type: 'jupyter-notebook' }
+    elsif file.is_rmd?
+      render json: { type: 'rmarkdown' }
     else
       grouping.access_repo do |repo|
         revision = repo.get_revision(submission.revision_identifier)
         raw_file = revision.files_at_path(file.path)[file.filename]
-        file_type = SubmissionFile.get_file_type(file.filename)
+        file_type = FileHelper.get_file_type(file.filename)
         if raw_file.nil?
           file_contents = I18n.t('student.submission.missing_file', file_name: file.filename)
           file_type = 'unknown'
@@ -405,11 +411,7 @@ class SubmissionsController < ApplicationController
           file_contents = repo.download_as_string(raw_file)
           file_contents.encode!('UTF-8', invalid: :replace, undef: :replace, replace: '�')
 
-          if file.is_pynb?
-            unique_file = "#{raw_file.name}.#{submission.revision_identifier}"
-            unique_path = "#{grouping.group.repo_name}/#{raw_file.path}/#{unique_file}"
-            file_contents = ipynb_to_html(file_contents, unique_path)
-          elsif params[:force_text] != 'true' && SubmissionFile.is_binary?(file_contents)
+          if params[:force_text] != 'true' && SubmissionFile.is_binary?(file_contents)
             # If the file appears to be binary, display a warning
             file_contents = I18n.t('submissions.cannot_display')
             file_type = 'binary'
@@ -420,16 +422,18 @@ class SubmissionsController < ApplicationController
     end
   end
 
-  def get_feedback_file
-    assignment = Assignment.find(params[:assignment_id])
-    submission = assignment.submissions.find(params[:id])
-    authorize! submission
-
-    feedback_file = submission.feedback_files.find(params[:feedback_file_id])
-    send_data_download feedback_file.file_content, filename: feedback_file.filename
-  end
-
   def download
+    preview = params[:preview] == 'true'
+
+    if %(jupyter-notebook rmarkdown).include?(FileHelper.get_file_type(params[:file_name])) && preview
+      redirect_to action: :notebook_content,
+                  assignment_id: params[:assignment_id],
+                  grouping_id: params[:grouping_id],
+                  revision_identifier: params[:revision_identifier],
+                  path: params[:path],
+                  file_name: params[:file_name]
+      return
+    end
     @assignment = Assignment.find(params[:assignment_id])
     # find_appropriate_grouping can be found in SubmissionsHelper
     @grouping = find_appropriate_grouping(@assignment.id, params)
@@ -448,15 +452,7 @@ class SubmissionsController < ApplicationController
         file = @revision.files_at_path(File.join(@assignment.repository_folder,
                                                  path))[params[:file_name]]
         file_contents = repo.download_as_string(file)
-        if params[:preview] == 'true'
-          if File.extname(params[:file_name]).casecmp('.ipynb')&.zero?
-            file_path = "#{@assignment.repository_folder}/#{path}/#{params[:file_name]}"
-            unique_path = "#{@grouping.group.repo_name}/#{file_path}.#{@revision.revision_identifier}"
-            file_contents = ipynb_to_html(file_contents, unique_path)
-          elsif SubmissionFile.is_binary?(file_contents)
-            file_contents = I18n.t('submissions.cannot_display')
-          end
-        end
+        file_contents = I18n.t('submissions.cannot_display') if preview && SubmissionFile.is_binary?(file_contents)
       rescue ArgumentError
         # Handle UTF8 encoding error
         if file_contents.nil?
@@ -473,6 +469,74 @@ class SubmissionsController < ApplicationController
 
       send_data_download file_contents, filename: params[:file_name]
     end
+  end
+
+  # Download a csv file containing current submission data for all groupings visible
+  # to the current user.
+  def download_summary
+    assignment = Assignment.find(params[:assignment_id])
+    data = assignment.current_submission_data(current_user)
+
+    # This hash matches what is displayed by the RawSubmissionTable react component.
+    # Ensure that changes to what is displayed in that table are reflected here as well.
+    header = {
+      group_name: t('activerecord.models.group.one'),
+      section: t('activerecord.models.section', count: 1),
+      start_time: t('activerecord.attributes.assignment.start_time'),
+      submission_time: t('submissions.commit_date'),
+      grace_credits_used: t('submissions.grace_credits_used'),
+      marking_state: t('activerecord.attributes.result.marking_state'),
+      final_grade: t('activerecord.attributes.result.total_mark'),
+      tags: t('activerecord.models.tag.other')
+    }
+    header.delete(:start_time) unless assignment.is_timed
+
+    if header.nil?
+      csv_data = ''
+    else
+      csv_data = MarkusCsv.generate(data, [header.values]) do |data_hash|
+        header.keys.map do |h|
+          value = data_hash[h]
+          value.is_a?(Array) ? value.join(', ') : value
+        end
+      end
+    end
+
+    send_data_download csv_data, filename: "#{assignment.short_identifier}_submissions.csv"
+  end
+
+  def notebook_content
+    if params[:select_file_id]
+      file = SubmissionFile.find(params[:select_file_id])
+      file_contents = file.retrieve_file
+      grouping = file.submission.grouping
+      assignment = grouping.assignment
+      path = Pathname.new(file.path).relative_path_from(Pathname.new(assignment.repository_folder)).to_s
+      revision_identifier = file.submission.revision_identifier
+      filename = file.filename
+    else
+      assignment = Assignment.find(params[:assignment_id])
+      grouping = find_appropriate_grouping(assignment.id, params)
+      revision_identifier = params[:revision_identifier]
+
+      path = params[:path] || '/'
+      file_contents = grouping.access_repo do |repo|
+        if revision_identifier.nil?
+          revision = repo.get_latest_revision
+        else
+          revision = repo.get_revision(revision_identifier)
+        end
+        file = revision.files_at_path(File.join(assignment.repository_folder, path))[params[:file_name]]
+        repo.download_as_string(file)
+      end
+      filename = params[:file_name]
+    end
+
+    file_path = "#{assignment.repository_folder}/#{path}/#{filename}"
+    unique_path = "#{grouping.group.repo_name}/#{file_path}.#{revision_identifier}"
+    @notebook_type = FileHelper.get_file_type(filename)
+    @notebook_content = notebook_to_html(file_contents, unique_path, @notebook_type)
+    render layout: 'notebook'
   end
 
   ##
@@ -543,7 +607,7 @@ class SubmissionsController < ApplicationController
       zip_path = "tmp/#{assignment.short_identifier}_#{grouping.group.group_name}_"\
                  "#{revision.revision_identifier}.zip"
       # Open Zip file and fill it with all the files in the repo_folder
-      Zip::File.open(zip_path, Zip::File::CREATE) do |zip_file|
+      Zip::File.open(zip_path, create: true) do |zip_file|
         repo.send_tree_to_zip(assignment.repository_folder, zip_file, zip_name, revision)
       end
 
@@ -587,9 +651,6 @@ class SubmissionsController < ApplicationController
       end
 
       head :ok
-    rescue => e
-      flash_now(:error, e.message)
-      head 400
     end
   end
 
@@ -619,27 +680,31 @@ class SubmissionsController < ApplicationController
       return
     end
     results = Result.where(id: Grouping.joins(:current_result).where(id: params[:groupings]).select('results.id'))
-    Result.transaction do
-      results.each do |result|
-        result.marking_state = params[:marking_state]
-        unless result.save
-          raise result.errors.full_messages.first
-        end
+    errors = Hash.new { |h, k| h[k] = [] }
+    results.each do |result|
+      unless result.update(marking_state: params[:marking_state])
+        errors[result.errors.full_messages.first] << result.submission.grouping.group.group_name
       end
     end
-    head :ok
-  rescue StandardError => e
-    flash_now(:error, e.message)
+    errors.each do |message, groups|
+      flash_now(:error, "#{message}: #{groups.join(', ')}")
+    end
     head :ok
   end
 
   private
 
-  def ipynb_to_html(file_contents, unique_path)
-    cache_file = Pathname.new('tmp/ipynb_html_cache') + "#{unique_path}.html"
+  def notebook_to_html(file_contents, unique_path, type)
+    cache_file = Pathname.new('tmp/notebook_html_cache') + "#{unique_path}.html"
     unless File.exist? cache_file
       FileUtils.mkdir_p(cache_file.dirname)
-      args = [Settings.nbconvert, '--to', 'html', '--stdin', '--output', cache_file.to_s]
+      if type == 'jupyter-notebook'
+        args = [
+          File.join(Settings.python.bin, 'jupyter-nbconvert'), '--to', 'html', '--stdin', '--output', cache_file.to_s
+        ]
+      else
+        args = [Settings.pandoc, '--from', 'markdown', '--to', 'html', '--output', cache_file.to_s]
+      end
       _stdout, stderr, status = Open3.capture3(*args, stdin_data: file_contents)
       unless status.exitstatus.zero?
         flash_message(:error, stderr)
@@ -670,11 +735,15 @@ class SubmissionsController < ApplicationController
   # Used in update_files and file_manager actions.
   # Requires @grouping, @assignment, and @missing_assignment_files variables to be set.
   def flash_file_manager_messages
-    if @assignment.is_timed
-      flash_message(:notice, I18n.t('assignments.timed.time_until_due_warning', due_date: I18n.l(@grouping.due_date)))
-    elsif @assignment.submission_rule.can_collect_now?(@grouping.inviter.section)
+    if @assignment.is_timed && @grouping.start_time.nil? && @grouping.past_collection_date?
       flash_message(:warning,
-                    @assignment.submission_rule.class.human_attribute_name(:after_collection_message))
+                    I18n.t('assignments.timed.past_end_time') + ' ' + I18n.t('submissions.past_collection_time'))
+    elsif @assignment.is_timed && !@grouping.start_time.nil? && !@assignment.grouping_past_due_date?(@grouping)
+      flash_message(:notice, I18n.t('assignments.timed.time_until_due_warning', due_date: I18n.l(@grouping.due_date)))
+    elsif @grouping.past_collection_date?
+      flash_message(:warning,
+                    @assignment.submission_rule.class.human_attribute_name(:after_collection_message) + ' ' +
+                      I18n.t('submissions.past_collection_time'))
     elsif @assignment.grouping_past_due_date?(@grouping)
       flash_message(:warning, @assignment.submission_rule.overtime_message(@grouping))
     end

@@ -17,6 +17,7 @@ es:
     cancel_override: UPDATE ME!
     cant_display_image: La imagen no puede ser mostrada. Si usted trata de ver un archivo en formato pdf, por favor asegurese de habilitar el soporte para pdf. De click en el botón de descargas para descargar el archivo.
     collapse_all: Reducir todos
+    copy_text: UPDATE ME!
     criterion_incomplete_error: Usted no puede marcar el estado de calificación como completo. No todas las notas han sido insertadas. Revise los criterios de calificación y asegúrese que cada uno de ellos tenga su nota correspondiente.
     current_mark: UPDATE ME!
     current_rotation: UPDATE ME!
@@ -62,9 +63,11 @@ es:
     rotate_image: UPDATE ME!
     set_to_complete: Marcar como Completo
     set_to_incomplete: Marcar como Incompleto
+    submission_info: UPDATE ME!
     subtotal: Subtotal
     summary: Resumen
     total_extra_marks: Notas Adicionales Totales
+    view_group_repo: UPDATE ME!
     your_mark: Su Nota
     zoom_in_image: UPDATE ME!
     zoom_out_image: UPDATE ME!

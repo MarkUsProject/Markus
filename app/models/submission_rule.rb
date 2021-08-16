@@ -19,13 +19,6 @@ class SubmissionRule < ApplicationRecord
      GracePeriodSubmissionRule]
   end
 
-  def can_collect_now?(section = nil)
-    reset_collection_time if @can_collect_now.nil?
-    section_id = section.nil? ? 0 : section.id
-    return @can_collect_now[section_id] unless @can_collect_now[section_id].nil?
-    @can_collect_now[section_id] = Time.current >= get_collection_time(section)
-  end
-
   def can_collect_all_now?
     return @can_collect_all_now unless @can_collect_all_now.nil?
     @can_collect_all_now = Time.current >= assignment.latest_due_date
@@ -84,7 +77,6 @@ class SubmissionRule < ApplicationRecord
   def reset_collection_time
     @get_collection_time = Array.new
     @get_global_collection_time = nil
-    @can_collect_now = Array.new
     @can_collect_all_now = nil
   end
 

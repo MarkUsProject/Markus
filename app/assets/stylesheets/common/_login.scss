@@ -9,11 +9,11 @@
   box-shadow: 0 3px 0 0 $primary-two;
   height: auto;
   left: 50%;
-  margin-left: -180px;
-  margin-top: -200px;
+  margin-left: -250px;
+  margin-top: -250px;
   position: absolute;
   top: 50%;
-  width: 360px;
+  width: 500px;
 
   /* Mobile friendly! */
   @include breakpoint(tiny) {
@@ -58,14 +58,10 @@
   }
 
   .login-image {
-    background: transparent url(markus_logo_big.png) no-repeat center center / contain;
-    margin: 1em auto;
+    background: transparent asset-url('markus_logo.svg') no-repeat center center / contain;
+    margin: 0 auto;
     height: 115px;
     width: 220px;
-
-    @include hidpi {
-      background-image: url(markus_logo_big@2x.png);
-    }
   }
 
   .login-error .error {

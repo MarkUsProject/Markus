@@ -1,10 +1,16 @@
 # This file is copied to spec/ when you run 'rails generate rspec:install'
 require 'simplecov'
-require 'coveralls'
+require 'simplecov-lcov'
+
+SimpleCov::Formatter::LcovFormatter.config do |c|
+  c.report_with_single_file = true
+  c.output_directory = 'coverage'
+  c.lcov_file_name = 'lcov.info'
+end
 
 SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter.new([
   SimpleCov::Formatter::HTMLFormatter,
-  Coveralls::SimpleCov::Formatter
+  SimpleCov::Formatter::LcovFormatter
 ])
 SimpleCov.start do
   add_filter 'better_errors'
@@ -28,6 +34,14 @@ require 'time-warp'
 # in spec/support/ and its subdirectories.
 Dir[Rails.root.join('spec/support/**/*.rb')].each { |f| require f }
 
+# Checks for pending migrations and applies them before tests are run.
+begin
+  ActiveRecord::Migration.maintain_test_schema!
+rescue ActiveRecord::PendingMigrationError => e
+  puts e.to_s.strip
+  exit 1
+end
+
 RSpec.configure do |config|
   # ## Mock Framework
   #
@@ -45,6 +59,14 @@ RSpec.configure do |config|
 
   # Automatically infer an example group's spec type from the file location.
   config.infer_spec_type_from_file_location!
+
+  # Filter lines from Rails gems in backtraces.
+  config.filter_rails_from_backtrace!
+  # arbitrary gems may also be filtered via:
+  config.filter_gems_from_backtrace(
+    'actiontext',
+    'rails-controller-testing'
+  )
 
   # Include Factory Girl syntax to simplify calls to factory.
   config.include FactoryBot::Syntax::Methods
@@ -87,10 +109,6 @@ RSpec.configure do |config|
       e.to_i == a.to_i
     end
   end
-
-  # Get fixture_file_upload to work with RSPEC. See http://bit.ly/1yQfoS5
-  config.include ActionDispatch::TestProcess
-  config.fixture_path = "#{::Rails.root}/spec/fixtures"
 
   # Automatically decode CSV response bodies.
   ActionDispatch::IntegrationTest.register_encoder :csv,

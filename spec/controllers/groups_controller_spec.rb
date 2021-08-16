@@ -63,9 +63,9 @@ describe GroupsController do
           allow(grouping).to receive(:has_submission?).and_return(false)
         end
 
-        it 'assigns empty array to @errors' do
+        it 'should not flash an error message' do
           delete :remove_group, params: { grouping_id: [grouping.id], assignment_id: assignment }
-          expect(assigns(:errors)).to match_array([])
+          expect(flash[:error]).to be_nil
         end
 
         it 'populates @removed_groupings with deleted groupings' do
@@ -87,6 +87,11 @@ describe GroupsController do
           expect(Repository.get_class).to receive(:update_permissions_after)
           delete :remove_group, params: { grouping_id: [grouping.id], assignment_id: assignment }
         end
+
+        it 'should return the :ok status code' do
+          delete :remove_group, params: { grouping_id: [grouping.id], assignment_id: assignment }
+          expect(response).to have_http_status(:ok)
+        end
       end
 
       context 'when grouping has submissions' do
@@ -96,8 +101,8 @@ describe GroupsController do
           delete :remove_group, params: { grouping_id: [grouping.id], assignment_id: assignment }
         end
 
-        it 'populates @errors with group_name of grouping\'s group' do
-          expect(assigns(:errors)).to match_array([grouping.group.group_name])
+        it 'should have an error message in the flash queue' do
+          expect(flash[:error]).to be_present
         end
 
         it 'assigns empty array to @removed_groupings' do
@@ -107,6 +112,11 @@ describe GroupsController do
         it 'calls grouping.has_submission?' do
           expect(grouping).to receive(:has_submission?).and_return(true)
           delete :remove_group, params: { grouping_id: [grouping.id], assignment_id: assignment }
+        end
+
+        it 'should return the :ok status code' do
+          delete :remove_group, params: { grouping_id: [grouping.id], assignment_id: assignment }
+          expect(response).to have_http_status(:ok)
         end
 
         it 'should attempt to update permissions file' do
@@ -170,7 +180,7 @@ describe GroupsController do
         expect do
           post :upload, params: {
             assignment_id: @assignment.id,
-            upload_file: fixture_file_upload('files/groups/form_good.csv', 'text/csv')
+            upload_file: fixture_file_upload('groups/form_good.csv', 'text/csv')
           }
         end.to have_enqueued_job(CreateGroupsJob)
         expect(response.status).to eq(302)
@@ -181,7 +191,7 @@ describe GroupsController do
       it 'does not accept files with invalid columns' do
         post :upload, params: {
           assignment_id: @assignment.id,
-          upload_file: fixture_file_upload('files/groups/form_invalid_column.csv', 'text/csv')
+          upload_file: fixture_file_upload('groups/form_invalid_column.csv', 'text/csv')
         }
 
         expect(response.status).to eq(302)

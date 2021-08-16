@@ -533,6 +533,10 @@ kbd {
   background-color: $light-error;
 }
 
+.test-result-feedback-files {
+  padding: 10px;
+}
+
 // Panes
 .pane-wrapper {
   display: flex;
@@ -625,6 +629,10 @@ kbd {
   h4 {
     margin-bottom: 0.5em;
   }
+}
+
+.pane-body-padding {
+  padding: 0 5px 5px;
 }
 
 .display-inline {
@@ -927,8 +935,8 @@ nav {
     }
   }
 
-  ul.main,
-  ul.sub_sub {
+  .main,
+  .sub_sub {
     border-bottom: 2px solid $sub-menu;
 
     li:hover,
@@ -1161,12 +1169,10 @@ nav {
   width: 100%;
 
   .button {
-    display: inline-block;
     height: 3em;
-    line-height: 1.8em;
     margin: 0 5px;
-    min-width: 90px;
-    padding: 0.5em;
+    min-width: 40px;
+    padding: 0;
   }
 
   button {
@@ -1187,7 +1193,7 @@ nav {
 .group-name {
   display: inline-block;
   margin: 0 5px;
-  max-width: 200px;
+  max-width: 300px;
   overflow-x: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -1320,4 +1326,16 @@ nav {
 #gef_data_chart {
   padding-bottom: 0;
   text-align: center;
+}
+
+// for charts rendered in FireFox
+canvas {
+  image-rendering: crisp-edges;
+}
+
+
+// Styling for summary stats for course_summary_chart.jsx
+.summary-stats {
+  column-gap: 40px;
+  display: flex;
 }

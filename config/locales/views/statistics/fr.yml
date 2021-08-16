@@ -5,11 +5,9 @@ fr:
   average: Moyenne
   class_average: 'Classe moyenne '
   grader_distribution: Correcteurs assignés
-  marking_scheme_with_id: Barème %{marking_scheme_id}
   median: Médiane
   num_failed: Projets sous la moyenne
   num_zeros: Projets à 0
   outstanding_remark_request:
     one: "%{count} demande de remarque restante"
     other: "%{count} demandes de remarque restantes"
-  refresh_graph: Actualiser le graphique

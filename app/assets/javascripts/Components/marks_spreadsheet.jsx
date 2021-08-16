@@ -2,7 +2,7 @@ import React from 'react';
 import {render} from 'react-dom';
 
 import {CheckboxTable, withSelection} from './markus_with_selection_hoc'
-import {stringFilter} from './Helpers/table_helpers';
+import {selectFilter} from './Helpers/table_helpers';
 
 class RawMarksSpreadsheet extends React.Component {
   constructor(props) {
@@ -108,16 +108,10 @@ class RawMarksSpreadsheet extends React.Component {
           return this.state.sections[row[filter.id]] === filter.value;
         }
       },
-      Filter: ({ filter, onChange }) =>
-        <select
-          onChange={event => onChange(event.target.value)}
-          style={{ width: '100%' }}
-          value={filter ? filter.value : 'all'}
-        >
-          <option value='all'>{I18n.t('all')}</option>
-          {Object.entries(this.state.sections).map(
-            kv => <option key={kv[1]} value={kv[1]}>{kv[1]}</option>)}
-        </select>,
+      Filter: selectFilter,
+      filterOptions: Object.entries(this.state.sections).map(
+          kv => ({value: kv[1], text: kv[1]})
+      )
     },
     {
       Header: I18n.t('activerecord.attributes.user.first_name'),
@@ -153,8 +147,8 @@ class RawMarksSpreadsheet extends React.Component {
     },
     defaultSortDesc: true,
     sortMethod: (a, b, desc) => {
-      a = a === null || a === undefined || a === 'N/A' ? -Infinity : a;
-      b = b === null || a === undefined || b === 'N/A' ? -Infinity : b;
+      a = a === null || a === undefined || a === I18n.t('not_applicable') ? -Infinity : a;
+      b = b === null || a === undefined || b === I18n.t('not_applicable') ? -Infinity : b;
       if (a < b) {
         return -1;
       } else if (a > b) {
@@ -273,7 +267,6 @@ class RawMarksSpreadsheet extends React.Component {
           ]}
           filterable
           filtered={this.state.filtered}
-          defaultFilterMethod={stringFilter}
           onFilteredChange={this.onFilteredChange}
           onSortedChange={() => this.forceUpdate()}
           loading={loading}
@@ -334,7 +327,7 @@ class GradeEntryCell extends React.Component {
           });
 
         if (total === '') {
-          total = I18n.t('grade_entry_forms.grades.no_mark');
+          total = I18n.t('not_applicable');
         } else {
           total = parseFloat(total);
         }

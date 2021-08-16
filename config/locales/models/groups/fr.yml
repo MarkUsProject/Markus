@@ -5,6 +5,12 @@ fr:
       group:
         group_name: Nom du groupe
         student_memberships: Membres
+    errors:
+      models:
+        group:
+          attributes:
+            repo_name:
+              taken: Le répertoire ''%{value}'' existe déjà.
     models:
       group:
         one: Groupe

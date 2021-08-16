@@ -92,10 +92,8 @@ describe SubmissionsController do
     end
 
     it 'should be able to add and access files' do
-      file_1 = fixture_file_upload(File.join('/files', 'Shapes.java'),
-                                   'text/java')
-      file_2 = fixture_file_upload(File.join('/files', 'TestShapes.java'),
-                                   'text/java')
+      file_1 = fixture_file_upload('Shapes.java', 'text/java')
+      file_2 = fixture_file_upload('TestShapes.java', 'text/java')
 
       expect(@student.has_accepted_grouping_for?(@assignment.id)).to be_truthy
       post_as @student, :update_files, params: { assignment_id: @assignment.id, new_files: [file_1, file_2] }
@@ -123,10 +121,8 @@ describe SubmissionsController do
     context 'when the grouping is invalid' do
       it 'should not be able to add files' do
         @assignment.update!(group_min: 2, group_max: 3)
-        file1 = fixture_file_upload(File.join('/files', 'Shapes.java'),
-                                    'text/java')
-        file2 = fixture_file_upload(File.join('/files', 'TestShapes.java'),
-                                    'text/java')
+        file1 = fixture_file_upload('Shapes.java', 'text/java')
+        file2 = fixture_file_upload('TestShapes.java', 'text/java')
 
         expect(@student.has_accepted_grouping_for?(@assignment.id)).to be_truthy
         post_as @student, :update_files, params: { assignment_id: @assignment.id, new_files: [file1, file2] }
@@ -152,8 +148,7 @@ describe SubmissionsController do
       end
 
       it 'should be able to add and access files when uploading only required files' do
-        file1 = fixture_file_upload(File.join('/files', 'Shapes.java'),
-                                    'text/java')
+        file1 = fixture_file_upload('Shapes.java', 'text/java')
 
         post_as @student, :update_files, params: { assignment_id: @assignment.id, new_files: [file1] }
 
@@ -168,10 +163,8 @@ describe SubmissionsController do
       end
 
       it 'should not be able to add and access files when uploading at least one non-required file' do
-        file1 = fixture_file_upload(File.join('/files', 'Shapes.java'),
-                                    'text/java')
-        file2 = fixture_file_upload(File.join('/files', 'TestShapes.java'),
-                                    'text/java')
+        file1 = fixture_file_upload('Shapes.java', 'text/java')
+        file2 = fixture_file_upload('TestShapes.java', 'text/java')
 
         post_as @student, :update_files, params: { assignment_id: @assignment.id, new_files: [file1, file2] }
 
@@ -190,7 +183,7 @@ describe SubmissionsController do
     context 'uploading a zip file' do
       let(:unzip) { 'true' }
       let(:tree) do
-        zip_file = fixture_file_upload(File.join('/files', 'test_zip.zip'), 'application/zip')
+        zip_file = fixture_file_upload('test_zip.zip', 'application/zip')
         post_as @student, :update_files, params: { assignment_id: @assignment.id, new_files: [zip_file], unzip: unzip }
         @grouping.group.access_repo do |repo|
           repo.get_latest_revision.tree_at_path(@assignment.repository_folder)
@@ -265,10 +258,8 @@ describe SubmissionsController do
         old_file_1 = old_files['Shapes.java']
         old_file_2 = old_files['TestShapes.java']
 
-        @file_1 = fixture_file_upload(File.join('/files', 'Shapes.java'),
-                                      'text/java')
-        @file_2 = fixture_file_upload(File.join('/files', 'TestShapes.java'),
-                                      'text/java')
+        @file_1 = fixture_file_upload('Shapes.java', 'text/java')
+        @file_2 = fixture_file_upload('TestShapes.java', 'text/java')
 
         post_as @student,
                 :update_files,
@@ -954,9 +945,9 @@ describe SubmissionsController do
     let(:assignment) { create(:assignment) }
     let(:admin) { create(:admin) }
     let(:grouping) { create(:grouping_with_inviter, assignment: assignment) }
-    let(:file1) { fixture_file_upload(File.join('/files', 'Shapes.java'), 'text/java') }
-    let(:file2) { fixture_file_upload(File.join('/files', 'test_zip.zip'), 'application/zip') }
-    let(:file3) { fixture_file_upload(File.join('/files', 'example.ipynb')) }
+    let(:file1) { fixture_file_upload('Shapes.java', 'text/java') }
+    let(:file2) { fixture_file_upload('test_zip.zip', 'application/zip') }
+    let(:file3) { fixture_file_upload('example.ipynb') }
     let!(:submission) do
       submit_file(assignment, grouping, file1.original_filename, file1.read)
       submit_file(assignment, grouping, file2.original_filename, file2.read)
@@ -973,12 +964,27 @@ describe SubmissionsController do
         end
       end
       describe 'When the file is a jupyter notebook file' do
-        it 'should display rendered html' do
+        subject do
           get_as admin, :download, params: { assignment_id: assignment.id,
                                              file_name: 'example.ipynb',
                                              preview: true,
                                              grouping_id: grouping.id }
-          expect(response.body).to start_with('<!DOCTYPE html>')
+        end
+        it 'should redirect to "notebook_content"' do
+          expect(subject).to redirect_to(notebook_content_assignment_submissions_url(file_name: 'example.ipynb',
+                                                                                     grouping_id: grouping.id))
+        end
+      end
+      describe 'When the file is an rmarkdown file' do
+        subject do
+          get_as admin, :download, params: { assignment_id: assignment.id,
+                                             file_name: 'example.Rmd',
+                                             preview: true,
+                                             grouping_id: grouping.id }
+        end
+        it 'should redirect to "notebook_content"' do
+          expect(subject).to redirect_to(notebook_content_assignment_submissions_url(file_name: 'example.Rmd',
+                                                                                     grouping_id: grouping.id))
         end
       end
       describe 'When the file is a binary file' do
@@ -1026,15 +1032,63 @@ describe SubmissionsController do
       end
     end
   end
+
+  describe '#notebook_content' do
+    let(:assignment) { create(:assignment) }
+    let(:admin) { create(:admin) }
+    let(:grouping) { create(:grouping_with_inviter, assignment: assignment) }
+    let(:notebook_file) { fixture_file_upload(filename) }
+    let(:submission) { submit_file(assignment, grouping, notebook_file.original_filename, notebook_file.read) }
+
+    shared_examples 'notebook types' do
+      shared_examples 'notebook content' do
+        it 'is successful' do
+          subject
+          expect(response.status).to eq(200)
+        end
+        it 'renders the correct template' do
+          expect(subject).to render_template('notebook')
+        end
+      end
+
+      context 'a jupyter-notebook file' do
+        let(:filename) { 'example.ipynb' }
+        it_behaves_like 'notebook content'
+      end
+      context 'an rmarkdown file' do
+        let(:filename) { 'example.Rmd' }
+        it_behaves_like 'notebook content'
+      end
+    end
+
+    context 'called with a collected submission' do
+      let(:submission_file) { create :submission_file, submission: submission, filename: filename }
+      subject do
+        get_as admin, :notebook_content, params: { assignment_id: assignment.id, select_file_id: submission_file.id }
+      end
+      it_behaves_like 'notebook types'
+    end
+    context 'called with a revision identifier' do
+      subject do
+        get_as admin, :notebook_content, params: { assignment_id: assignment.id,
+                                                   file_name: filename,
+                                                   grouping_id: grouping.id,
+                                                   revision_identifier: submission.revision_identifier }
+      end
+      it_behaves_like 'notebook types'
+    end
+  end
+
   describe '#get_file' do
     let(:assignment) { create(:assignment) }
     let(:admin) { create(:admin) }
     let(:grouping) { create(:grouping_with_inviter, assignment: assignment) }
-    let(:file1) { fixture_file_upload(File.join('/files', 'Shapes.java'), 'text/java') }
-    let(:file2) { fixture_file_upload(File.join('/files', 'test_zip.zip'), 'application/zip', true) }
-    let(:file3) { fixture_file_upload(File.join('/files', 'example.ipynb')) }
-    let(:file4) { fixture_file_upload(File.join('/files', 'page_white_text.png')) }
-    let(:file5) { fixture_file_upload(File.join('/files', 'scanned_exams', 'midterm1-v2-test.pdf')) }
+    let(:file1) { fixture_file_upload('Shapes.java', 'text/java') }
+    let(:file2) { fixture_file_upload('test_zip.zip', 'application/zip', true) }
+    let(:file3) { fixture_file_upload('example.ipynb') }
+    let(:file4) { fixture_file_upload('page_white_text.png') }
+    let(:file5) { fixture_file_upload('scanned_exams/midterm1-v2-test.pdf') }
+    let(:file6) { fixture_file_upload('example.Rmd') }
     let!(:submission) do
       files.map do |file|
         submit_file(assignment, grouping, file.original_filename, file.read)
@@ -1052,13 +1106,22 @@ describe SubmissionsController do
     end
     describe 'When the file is a jupyter notebook file' do
       let(:files) { [file3] }
-      it 'should download the file as is' do
+      it 'should return the file type' do
         submission_file = submission.submission_files.find_by(filename: file3.original_filename)
         get_as admin, :get_file, params: { assignment_id: assignment.id,
                                            id: submission.id,
                                            submission_file_id: submission_file.id }
-        expected = ActiveSupport::JSON.encode('<!DOCTYPE html>')[0...-1]
-        expect(JSON.parse(response.body)['content']).to start_with(expected)
+        expect(JSON.parse(response.body)['type']).to eq 'jupyter-notebook'
+      end
+    end
+    describe 'When the file is an rmarkdown notebook file' do
+      let(:files) { [file6] }
+      it 'should return the file type' do
+        submission_file = submission.submission_files.find_by(filename: file6.original_filename)
+        get_as admin, :get_file, params: { assignment_id: assignment.id,
+                                           id: submission.id,
+                                           submission_file_id: submission_file.id }
+        expect(JSON.parse(response.body)['type']).to eq 'rmarkdown'
       end
     end
     describe 'When the file is a binary file' do
@@ -1114,6 +1177,80 @@ describe SubmissionsController do
                                            id: submission.id,
                                            submission_file_id: submission_file.id }
         expect(JSON.parse(response.body)['type']).to eq('unknown')
+      end
+    end
+  end
+  describe '#download_summary' do
+    let(:assignment) { create :assignment }
+    let!(:groupings) { create_list :grouping_with_inviter_and_submission, 2, assignment: assignment }
+    let(:returned_group_names) do
+      header = nil
+      groups = []
+      MarkusCsv.parse(response.body) do |line|
+        if header.nil?
+          header = line
+        else
+          groups << header.zip(line).to_h[I18n.t('activerecord.models.group.one')]
+        end
+      end
+      groups
+    end
+    subject { get_as user, 'download_summary', params: { assignment_id: assignment.id } }
+    context 'an admin' do
+      before { subject }
+      let(:user) { create :admin }
+      it 'should be allowed' do
+        expect(response).to have_http_status(200)
+      end
+      it 'should download submission info for all groupings' do
+        expect(returned_group_names).to contain_exactly(*groupings.map { |g| g.group.group_name })
+      end
+      it 'should not include hidden values' do
+        header = nil
+        MarkusCsv.parse(response.body) { |line| header ||= line }
+        hidden = header.select { |h| h.start_with?('_') || h.end_with?('_id') }
+        expect(hidden).to be_empty
+      end
+    end
+    context 'a grader' do
+      let(:user) { create :ta }
+      it 'should be allowed' do
+        subject
+        expect(response).to have_http_status(200)
+      end
+      context 'who has not been assigned any groupings' do
+        it 'should download an empty csv' do
+          subject
+          expect(returned_group_names).to be_empty
+        end
+      end
+      context 'who has been assigned a single grouping' do
+        before { create :ta_membership, user: user, grouping: groupings.first }
+        it 'should download the group info for the assigned group' do
+          subject
+          expect(returned_group_names).to contain_exactly(groupings.first.group.group_name)
+        end
+      end
+      context 'who has been assigned all groupings' do
+        before { groupings.each { |g| create :ta_membership, user: user, grouping: g } }
+        it 'should download the group info for the assigned group' do
+          subject
+          expect(returned_group_names).to contain_exactly(*groupings.map { |g| g.group.group_name })
+        end
+        it 'should not include hidden values' do
+          subject
+          header = nil
+          MarkusCsv.parse(response.body) { |line| header ||= line }
+          hidden = header.select { |h| h.start_with?('_') || h.end_with?('_id') }
+          expect(hidden).to be_empty
+        end
+      end
+    end
+    context 'a student' do
+      before { subject }
+      let(:user) { create :student }
+      it 'should be forbidden' do
+        expect(response).to have_http_status(403)
       end
     end
   end

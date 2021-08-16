@@ -49,6 +49,8 @@ pt:
         manage?: UPDATE ME.
       extension:
         manage?: UPDATE ME.
+      feedback_file:
+        show?: Não há accesso para resultado do teste.
       grade_entry_form:
         grade?: UPDATE ME.
         manage?: UPDATE ME.
@@ -111,7 +113,6 @@ pt:
       submission:
         before_release?: UPDATE ME.
         file_manager?: UPDATE ME.
-        get_feedback_file?: Não há accesso para resultado do teste.
         manage?: UPDATE ME.
         manage_files?: UPDATE ME.
         manage_subdirectories?: UPDATE ME.

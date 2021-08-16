@@ -35,6 +35,8 @@ class User < ApplicationRecord
   after_initialize :set_display_name, :set_time_zone
 
   validates_format_of       :type,          with: /\AStudent|Admin|Ta|TestServer\z/
+  validates_inclusion_of    :locale, in: I18n.available_locales.map(&:to_s)
+
   # role constants
   STUDENT = 'Student'
   ADMIN = 'Admin'
@@ -166,9 +168,16 @@ class User < ApplicationRecord
       user_columns[section_name_i] = :section_id # becomes foreign key
     end
 
+    duplicate_user_names = Set.new
     parsed = MarkusCsv.parse(user_list, skip_blanks: true, row_sep: :auto, encoding: encoding) do |row|
       next if row.empty?
-      raise CsvInvalidLineError if user_names.include?(row[user_name_i])
+      if row[0].blank?
+        raise CsvInvalidLineError
+      end
+      if user_names.include?(row[user_name_i])
+        duplicate_user_names.add row[user_name_i]
+        raise CsvInvalidLineError
+      end
       if row.size < user_columns.size
         row.fill(nil, row.size...user_columns.size)
       end
@@ -189,55 +198,63 @@ class User < ApplicationRecord
     else
       parsed[:valid_lines] = '' # reset the value from MarkusCsv#parse, use import's return instead
     end
+    unless duplicate_user_names.blank?
+      parsed[:invalid_lines] += MarkusCsv::INVALID_LINE_SEP
+      parsed[:invalid_lines] += I18n.t('users.upload.errors.duplicate_users',
+                                       user_names: duplicate_user_names.to_a.join(', '))
+    end
 
     user_columns.push(:display_name)
     user_columns.push(:time_zone)
     users.each { |u| u.push("#{u[first_name_i]} #{u[last_name_i]}") }
     users.each { |u| u.push(Time.zone.name) }
-
-    existing_user_ids = user_class.all.pluck(:id)
-    imported = nil
     parsed[:invalid_records] = ''
-    begin
-      User.transaction do
-        imported = user_class.import user_columns, users, on_duplicate_key_update: {
-          conflict_target: [:user_name],
-          columns: [:last_name, :first_name, :section_id, :email, :id_number, :display_name, :time_zone]
-        }
-        User.where(id: imported.ids).each do |user|
-          if user_class == Ta
-            # This will only trigger before_create callback in ta model, not after_create callback
-            user.run_callbacks(:create) { false }
-          end
-          user.validate!
-        rescue ActiveRecord::RecordInvalid
-          error_message = user.errors
-                              .messages
-                              .map { |k, v| "#{k} #{v.flatten.join ','}" }.flatten.join MarkusCsv::INVALID_LINE_SEP
-          parsed[:invalid_records] += "#{user.user_name}: #{error_message}"
-        end
-        unless parsed[:invalid_records].empty?
-          raise ActiveRecord::Rollback
-        end
+    return parsed if users.empty?
+    existing_user_ids = user_class.all.pluck(:id)
+    imported_ids = []
+    successful_imports = []
+    all_user_names = []
+
+    User.transaction do
+      user_hash = users.collect { |record| Hash[user_columns.zip record] }
+      user_hash.each do |user|
+        user[:type] = user_class.name
+        all_user_names.push(user[:user_name])
       end
-      unless imported.failed_instances.empty?
-        if parsed[:invalid_lines].blank?
-          parsed[:invalid_lines] = I18n.t('upload_errors.invalid_rows')
-        else
-          parsed[:invalid_lines] += MarkusCsv::INVALID_LINE_SEP # concat to invalid_lines from MarkusCsv#parse
+      imported = user_class.upsert_all(user_hash, unique_by: :user_name, returning: %w[id user_name])
+      successful_imports = imported.rows.map { |x| x[1] }
+      imported_ids = imported.rows.map { |x| x[0] }
+      User.where(id: imported_ids).each do |user|
+        if user_class == Ta
+          # This will only trigger before_create callback in ta model, not after_create callback
+          user.run_callbacks(:create) { false }
         end
-        parsed[:invalid_lines] +=
-          imported.failed_instances.map { |f| f[:user_name].to_s }.join(MarkusCsv::INVALID_LINE_SEP)
+        user.validate!
+      rescue ActiveRecord::RecordInvalid
+        error_message = user.errors
+                            .messages
+                            .map { |k, v| "#{k} #{v.flatten.join ','}" }.flatten.join MarkusCsv::INVALID_LINE_SEP
+        parsed[:invalid_records] += "#{user.user_name}: #{error_message}"
       end
-      if !imported.ids.empty? && parsed[:invalid_records].empty?
-        parsed[:valid_lines] = I18n.t('upload_success', count: imported.ids.size)
+      unless parsed[:invalid_records].empty?
+        raise ActiveRecord::Rollback
       end
-    rescue ActiveRecord::RecordNotUnique => e
-      # can trigger on uniqueness constraint validation for :user_name, will invalidate the entire import
-      parsed[:invalid_lines] = I18n.t('csv_upload_user_duplicate', user_name: e.message)
+    end
+    unsuccessful_imports = all_user_names - successful_imports
+    unless unsuccessful_imports.empty?
+      if parsed[:invalid_lines].blank?
+        parsed[:invalid_lines] = I18n.t('upload_errors.invalid_rows')
+      else
+        parsed[:invalid_lines] += MarkusCsv::INVALID_LINE_SEP # concat to invalid_lines from MarkusCsv#parse
+      end
+      parsed[:invalid_lines] +=
+        unsuccessful_imports.map { |f| f[:user_name].to_s }.join(MarkusCsv::INVALID_LINE_SEP)
+    end
+    if !imported_ids.empty? && parsed[:invalid_records].empty?
+      parsed[:valid_lines] = I18n.t('upload_success', count: imported_ids.size)
     end
     if user_class == Student
-      new_user_ids = (imported&.ids || []) - existing_user_ids
+      new_user_ids = (imported_ids || []) - existing_user_ids
       # call create callbacks to make sure grade_entry_students get created
       user_class.where(id: new_user_ids).each(&:create_all_grade_entry_students)
     end

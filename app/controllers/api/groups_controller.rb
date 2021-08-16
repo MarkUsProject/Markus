@@ -338,13 +338,13 @@ module Api
           submission_file = result.submission.submission_files.find_by(filename: annot_params[:filename])
         end
 
-        annotation_texts << AnnotationText.new(
+        annotation_texts << {
           content: annot_params[:content],
           annotation_category_id: annotation_category_id,
           creator_id: @current_user.id,
           last_editor_id: @current_user.id
-        )
-        annotations << TextAnnotation.new(
+        }
+        annotations << {
           line_start: annot_params[:line_start],
           line_end: annot_params[:line_end],
           column_start: annot_params[:column_start],
@@ -356,13 +356,13 @@ module Api
           is_remark: !result.remark_request_submitted_at.nil?,
           annotation_number: count + i,
           result_id: result.id
-        )
+        }
       end
-      AnnotationText.import annotation_texts, validate: false
-      annotation_texts.zip(annotations) do |t, a|
-        a.annotation_text_id = t.id
+      imported = AnnotationText.insert_all! annotation_texts
+      imported.rows.zip(annotations) do |t, a|
+        a[:annotation_text_id] = t[0]
       end
-      TextAnnotation.import annotations, validate: false
+      TextAnnotation.insert_all! annotations
       render 'shared/http_status', locals: { code: '200', message:
         HttpStatusHelper::ERROR_CODE['message']['200'] }, status: 200
     end

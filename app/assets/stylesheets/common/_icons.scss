@@ -64,16 +64,14 @@
   vertical-align: text-top;
 }
 
-.button.previous::before {
-  content: asset_url('icons/arrow_left.png');
-  padding-right: 5px;
-  vertical-align: sub;
+.button.previous {
+  background: asset_url('icons/arrow_left.png') no-repeat 0 0;
+  background-size: 100%;
 }
 
-.button.next::after {
-  content: asset_url('icons/arrow_right.png');
-  padding-left: 5px;
-  vertical-align: sub;
+.button.next {
+  background: asset_url('icons/arrow_right.png') no-repeat 0 0;
+  background-size: 100%;
 }
 
 .set-complete::before {
@@ -119,6 +117,11 @@
   font-weight: bolder;
 }
 
+.switch-role::before {
+  content: asset_url('icons/group_go.png');
+  padding-right: 5px;
+  vertical-align: text-top;
+}
 
 // Icons for react-json-schema-forms
 .btn-danger::after {

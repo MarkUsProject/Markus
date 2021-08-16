@@ -10,7 +10,7 @@ describe TagsController do
 
   describe '#index' do
     it 'returns correct JSON data' do
-      tag = create(:tag)
+      tag = create(:tag, assessment: assignment)
       get :index, params: { assignment_id: assignment.id, format: :json }
       expected = [{
         'id' => tag.id,
@@ -39,6 +39,12 @@ describe TagsController do
       expect(tags.size).to eq 1
       expect(tags.first.name).to eq 'tag'
       expect(tags.first.description).to eq 'tag description'
+    end
+
+    it 'associates the new tag with an assessment' do
+      post :create, params: { tag: { name: 'tag', description: 'tag description' },
+                              assignment_id: assignment.id }
+      expect(Tag.find_by(name: 'tag', description: 'tag description').assessment.id).to eq assignment.id
     end
   end
 
@@ -69,35 +75,10 @@ describe TagsController do
 
     before :each do
       create(:admin, user_name: 'a')
-      # We need to mock the rack file to return its content when
-      # the '.read' method is called to simulate the behaviour of
-      # the http uploaded file
-      @file_good_csv = fixture_file_upload(
-        'files/tags/form_good.csv', 'text/csv'
-      )
-      allow(@file_good_csv).to receive(:read).and_return(
-        File.read(fixture_file_upload(
-                    'files/tags/form_good.csv',
-                    'text/csv'
-                  ))
-      )
 
-      @file_good_yml = fixture_file_upload(
-        'files/tags/form_good.yml', 'text/yaml'
-      )
-      allow(@file_good_yml).to receive(:read).and_return(
-        File.read(fixture_file_upload('files/tags/form_good.yml', 'text/yaml'))
-      )
-
-      @file_invalid_column = fixture_file_upload(
-        'files/tags/form_invalid_column.csv', 'text/csv'
-      )
-      allow(@file_invalid_column).to receive(:read).and_return(
-        File.read(fixture_file_upload(
-                    'files/tags/form_invalid_column.csv',
-                    'text/csv'
-                  ))
-      )
+      @file_good_csv = fixture_file_upload('tags/form_good.csv', 'text/csv')
+      @file_good_yml = fixture_file_upload('tags/form_good.yml', 'text/yaml')
+      @file_invalid_column = fixture_file_upload('tags/form_invalid_column.csv', 'text/csv')
     end
 
     it 'accepts a valid CSV file' do

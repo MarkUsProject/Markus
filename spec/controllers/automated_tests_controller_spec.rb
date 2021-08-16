@@ -23,7 +23,7 @@ describe AutomatedTestsController do
       let(:settings_content) { '{}' }
       before do
         allow(AutotestTestersJob).to receive(:perform_later) { AutotestTestersJob.new }
-        file = fixture_file_upload('files/automated_tests/minimal_testers.json')
+        file = fixture_file_upload('automated_tests/minimal_testers.json')
         File.write(File.join(Settings.autotest.client_dir, 'testers.json'), file.read)
         File.write(assignment.autotest_settings_file, settings_content)
       end
@@ -53,7 +53,7 @@ describe AutomatedTestsController do
       context 'tests.json does exist' do
         before { allow_any_instance_of(AutomatedTestsHelper).to receive(:fill_in_schema_data!) }
         it 'should return the schema from the file' do
-          file_content = JSON.parse(fixture_file_upload('files/automated_tests/minimal_testers.json').read)
+          file_content = JSON.parse(fixture_file_upload('automated_tests/minimal_testers.json').read)
           subject
           expect(JSON.parse(response.body)['schema']).to eq(file_content)
         end
@@ -90,10 +90,15 @@ describe AutomatedTestsController do
       end
       context 'files data' do
         it 'should include assignment files' do
+          current_time = Time.new(2021)
           allow_any_instance_of(Assignment).to receive(:autotest_files).and_return ['file.txt']
+          allow_any_instance_of(Pathname).to receive(:exist?).and_return true
+          allow(File).to receive(:mtime).and_return current_time
+          user.update(time_zone: 'UTC')
           subject
           url = download_file_assignment_automated_tests_url(assignment_id: assignment.id, file_name: 'file.txt')
-          data = [{ key: 'file.txt', size: 1, url: url }.transform_keys(&:to_s)]
+          data = [{ key: 'file.txt', submitted_date: I18n.l(current_time.in_time_zone('UTC')),
+                    size: 1, url: url }.transform_keys(&:to_s)]
           expect(JSON.parse(response.body)['files']).to eq(data)
         end
         it 'should include directories' do
@@ -104,14 +109,20 @@ describe AutomatedTestsController do
           expect(JSON.parse(response.body)['files']).to eq(data)
         end
         it 'should include nested files' do
+          current_time = Time.new(2021)
+          allow(File).to receive(:mtime).and_return current_time
           allow_any_instance_of(Assignment).to receive(:autotest_files).and_return %w[some_dir some_dir/file.txt]
+          allow_any_instance_of(Pathname).to receive(:exist?).and_return true
           allow_any_instance_of(Pathname).to receive(:directory?).and_wrap_original do |m, *_args|
             m.receiver.basename.to_s == 'some_dir'
           end
+          user.update(time_zone: 'UTC')
           subject
           url = download_file_assignment_automated_tests_url(assignment_id: assignment.id,
                                                              file_name: 'some_dir/file.txt')
-          data = [{ key: 'some_dir/' }, { key: 'some_dir/file.txt', size: 1, url: url }]
+          data = [{ key: 'some_dir/' }, { key: 'some_dir/file.txt',
+                                          submitted_date: I18n.l(current_time.in_time_zone('UTC')),
+                                          size: 1, url: url }]
           expect(JSON.parse(response.body)['files']).to eq(data.map { |h| h.transform_keys(&:to_s) })
         end
       end
@@ -137,7 +148,7 @@ describe AutomatedTestsController do
         let(:tree) { assignment.autotest_files }
         context 'when unzip if false' do
           let(:unzip) { 'false' }
-          let(:zip_file) { fixture_file_upload(File.join('/files', 'test_zip.zip'), 'application/zip') }
+          let(:zip_file) { fixture_file_upload('test_zip.zip', 'application/zip') }
           it 'should just upload the zip file as is' do
             expect(tree).to include('test_zip.zip')
           end
@@ -149,7 +160,7 @@ describe AutomatedTestsController do
           let(:unzip) { 'true' }
           context 'when the zip file contains entries for all subdirectories and files' do
             let(:zip_file) do
-              fixture_file_upload(File.join('/files', 'zip_file_with_dirs_and_files.zip'), 'application/zip')
+              fixture_file_upload('zip_file_with_dirs_and_files.zip', 'application/zip')
             end
             it 'should not upload the zip file' do
               expect(tree).not_to include('zip_file_with_dirs_and_files.zip')
@@ -168,7 +179,7 @@ describe AutomatedTestsController do
             end
           end
           context 'when the zip file contains entries for files only' do
-            let(:zip_file) { fixture_file_upload(File.join('/files', 'zip_file_with_files.zip'), 'application/zip') }
+            let(:zip_file) { fixture_file_upload('zip_file_with_files.zip', 'application/zip') }
             it 'should upload the outer dir' do
               expect(tree).to include('zip_file_with_files')
             end
@@ -216,7 +227,7 @@ describe AutomatedTestsController do
         flash.now[:error] = nil
       end
       context 'a valid json file' do
-        let(:file) { fixture_file_upload 'files/automated_tests/valid_json.json' }
+        let(:file) { fixture_file_upload 'automated_tests/valid_json.json' }
         it 'should upload the file content' do
           expect(File.read(assignment.autotest_settings_file)).to eq file.read
         end
@@ -225,7 +236,7 @@ describe AutomatedTestsController do
         end
       end
       context 'an invalid json file' do
-        let(:file) { fixture_file_upload 'files/automated_tests/invalid_json.json' }
+        let(:file) { fixture_file_upload 'automated_tests/invalid_json.json' }
         it 'should not upload the file content' do
           expect(File.read(assignment.autotest_settings_file)).to eq ''
         end

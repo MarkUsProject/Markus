@@ -1,6 +1,0 @@
-opencv-python==4.0.0.21
-torch==1.0.1.post2
-torchvision==0.2.1
-Pillow==8.1.1
-numpy==1.16.1
-scipy==1.2.1

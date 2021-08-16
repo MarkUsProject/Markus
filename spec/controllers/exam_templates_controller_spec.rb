@@ -6,7 +6,7 @@ describe ExamTemplatesController do
       it('should respond with 200') { expect(response.status).to eq 200 }
     end
     describe '#create' do
-      let(:file_io) { fixture_file_upload('files/scanned_exams/midterm1-v2-test.pdf') }
+      let(:file_io) { fixture_file_upload('scanned_exams/midterm1-v2-test.pdf') }
       let(:params) do
         { create_template: { file_io: file_io, name: 'Template 1' },
           assignment_id: exam_template.assignment.id }
@@ -50,7 +50,7 @@ describe ExamTemplatesController do
         it('should respond with 403') { expect(response.status).to eq 403 }
       end
       describe '#create' do
-        let(:file_io) { fixture_file_upload('files/scanned_exams/midterm1-v2-test.pdf') }
+        let(:file_io) { fixture_file_upload('scanned_exams/midterm1-v2-test.pdf') }
         let(:params) do
           { create_template: { file_io: file_io, name: 'Template 1' },
             assignment_id: exam_template.assignment.id }

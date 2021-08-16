@@ -1,23 +1,25 @@
 import React from 'react';
 import {render} from 'react-dom';
+import { Bar } from 'react-chartjs-2';
 
 export class DataChart extends React.Component {
+  static defaultProps = {
+    legend: true,
+    width: 'auto',
+    height: 500
+  };
 
-  componentDidMount() {
-    let ctx = document.getElementById('term_marks').getContext('2d');
-
-    let data = {
-      labels: this.props.labels,
-      datasets: this.props.datasets
-    };
-
+  render() {
     let options = {
-      responsive: false,
-      legend: {
-        display: this.props.legend
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          display: this.props.legend
+        },
       },
       scales: {
-        yAxes: [{
+        y: {
           gridLines: {
             color: document.documentElement.style.getPropertyValue('--gridline')
           },
@@ -30,8 +32,8 @@ export class DataChart extends React.Component {
             display: true,
             labelString: this.props.yTitle
           }
-        }],
-        xAxes: [{
+        },
+        x: {
           gridLines: {
             offsetGridLines: true,
             color: document.documentElement.style.getPropertyValue('--gridline')
@@ -41,34 +43,18 @@ export class DataChart extends React.Component {
             labelString: this.props.xTitle
           },
           offset: true
-        }]
+        }
       }
     };
 
-    this.chart = new Chart(ctx, {
-      type: 'bar',
-      data: data,
-      options: options
-    });
-  }
-
-  componentDidUpdate() {
-    let yRange = [100];
-    this.props.datasets.forEach(d => {
-      yRange = yRange.concat(d.data);
-    });
-    this.chart.data = {labels: this.props.labels, datasets: this.props.datasets};
-    this.chart.options.scales.yAxes[0].ticks.max = Math.max(...yRange);
-    this.chart.options.legend.display = this.props.legend;
-    this.chart.options.legend.fontColor = document.documentElement.style.getPropertyValue('--line');
-    this.chart.options.scales.yAxes[0].scaleLabel = {display: true, labelString: this.props.yTitle};
-    this.chart.options.scales.xAxes[0].scaleLabel = {display: true, labelString: this.props.xTitle};
-    this.chart.update();
-  }
-
-  render() {
     return (
-      <canvas id='term_marks' style={{display: 'inline-flex', width: this.props.width, height: 500, margin: '10px'}}></canvas>
+        <Bar
+          id={'term_marks'}
+          data={this.props}
+          options={options}
+          width={this.props.width}
+          height={this.props.height}
+          style={{display: 'inline-flex', margin: '10px'}}/>
     );
   }
 }

@@ -56,6 +56,7 @@ class Grouping < ApplicationRecord
           class_name: 'StudentMembership'
 
   has_one :inviter, source: :user, through: :inviter_membership, class_name: 'Student'
+  has_one :section, through: :inviter
 
   # The following are chained
   # 'peer_reviews' is the peer reviews given for this group via some result
@@ -121,7 +122,6 @@ class Grouping < ApplicationRecord
     # Only use IDs that identify existing model instances.
     ta_ids = Ta.where(id: ta_ids).pluck(:id)
     grouping_ids = Grouping.where(id: grouping_ids).pluck(:id)
-    columns = [:grouping_id, :user_id, :type]
     # Get all existing memberships to avoid violating the unique constraint.
     existing_values = TaMembership
                       .where(grouping_id: grouping_ids, user_id: ta_ids)
@@ -129,13 +129,19 @@ class Grouping < ApplicationRecord
     # Delegate the assign function to the caller-specified block and remove
     # values that already exist in the database.
     values = yield(grouping_ids, ta_ids) - existing_values
-    # TODO replace TaMembership.import with TaMembership.create when the PG
-    # driver supports bulk create, then remove the activerecord-import gem.
-    values.map! do |value|
-      value.push('TaMembership')
+
+    membership_hash = values.map do |value|
+      {
+        grouping_id: value[0],
+        user_id: value[1],
+        type: 'TaMembership'
+      }
     end
+
     Repository.get_class.update_permissions_after do
-      Membership.import(columns, values, validate: false)
+      unless membership_hash.empty?
+        Membership.insert_all(membership_hash)
+      end
     end
     update_criteria_coverage_counts(assignment, grouping_ids)
     Criterion.update_assigned_groups_counts(assignment)
@@ -192,17 +198,6 @@ class Grouping < ApplicationRecord
     students.each { |student| current_student_ids.add(student.id) }
     grouping.students.each { |student| other_group_student_ids.add(student.id) }
     not current_student_ids.intersect?(other_group_student_ids)
-  end
-
-  def get_group_name
-    return group.group_name if assignment.group_max == 1 && !assignment.scanned_exam
-
-    name = group.group_name
-    student_names = accepted_students.map &:user_name
-    unless student_names == [name]
-      name += ' (' + student_names.join(', ') + ')'
-    end
-    name
   end
 
   def group_name_with_student_user_names
@@ -294,7 +289,7 @@ class Grouping < ApplicationRecord
       raise I18n.t('groups.invite_member.errors.extension_exists')
     elsif self.student_membership_number >= self.assignment.group_max
       raise I18n.t('groups.invite_member.errors.group_max_reached', user_name: user.user_name)
-    elsif self.assignment.section_groups_only && user.section != self.inviter.section
+    elsif self.assignment.section_groups_only && user.section != self.section
       raise I18n.t('groups.invite_member.errors.not_same_section', user_name: user.user_name)
     elsif user.has_accepted_grouping_for?(self.assignment.id)
       raise I18n.t('groups.invite_member.errors.already_grouped', user_name: user.user_name)
@@ -434,7 +429,7 @@ class Grouping < ApplicationRecord
     (!self.is_valid?) || (self.is_valid? &&
                           accepted_students.size == 1 &&
                           self.assignment.group_assignment? &&
-                          !assignment.past_collection_date?(self.inviter.section))
+                          !assignment.past_collection_date?(self.section))
   end
 
   def select_starter_file_entries
@@ -467,22 +462,6 @@ class Grouping < ApplicationRecord
     end
     self.grouping_starter_file_entries.where(id: old_grouping_entry_ids - new_grouping_entry_ids).destroy_all
     self.update!(starter_file_changed: false)
-  end
-
-  def changed_starter_file_at?(revision)
-    revision.tree_at_path(assignment.repository_folder, with_attrs: true).values.any? do |obj|
-      self.starter_file_timestamp.nil? || self.starter_file_timestamp < obj.last_modified_date
-    end
-  end
-
-  # Get the section for this group. If assignment restricts member of a groupe
-  # to a section, all students are in the same section. Therefore, return only
-  # the inviters section
-  def section
-    if !self.inviter.nil? and self.inviter.has_section?
-      return self.inviter.section.name
-    end
-    '-'
   end
 
   # Returns a list of missing assignment (required) files.
@@ -659,17 +638,36 @@ class Grouping < ApplicationRecord
   end
 
   def self.pluck_test_runs(assoc)
+    # Active record tries to convert the test_results.status values based on the test_run.status
+    # enum conversion. In order to prevent this, we have to rename test_results.status so that it
+    # doesn't trigger this conversion.
     fields = ['test_runs.id', 'test_runs.created_at', 'test_runs.problems', 'users.user_name', 'test_groups.name',
               'test_groups.display_output', 'test_group_results.extra_info', 'test_group_results.time',
-              'test_results.name', 'test_results.status', 'test_results.marks_earned', 'test_results.marks_total',
-              'test_results.output', 'test_results.time']
-    assoc.pluck_to_hash(*fields)
+              'test_results.name', 'test_results.status as test_results_status', 'test_results.marks_earned',
+              'test_results.marks_total', 'test_results.output', 'test_results.time', 'test_runs.status']
+    hash_list = assoc.pluck_to_hash(*fields)
+
+    # Add feedback files. This has to be done separately because there can be multiple feedback files
+    # per test_group_result.
+    feedback_files = FeedbackFile.joins(test_group_result: [:test_run, :test_group])
+                                 .where('test_runs.id': hash_list.map { |h| h['test_runs.id'] })
+                                 .pluck_to_hash(:id, :filename, 'test_runs.id', 'test_groups.name')
+                                 .group_by { |f| [f['test_runs.id'], f['test_groups.name']] }
+
+    hash_list.each do |h|
+      h['feedback_files'] = feedback_files[[h['test_runs.id'], h['test_groups.name']]] || []
+      h['feedback_files'].each do |f|
+        f['type'] = FileHelper.get_file_type(f['filename'])
+      end
+    end
+
+    hash_list
   end
 
   def self.group_hash_list(hash_list)
     new_hash_list = []
-    group_by_keys = ['test_runs.id', 'test_runs.created_at', 'test_runs.problems', 'users.user_name',
-                     'test_groups.name']
+    group_by_keys = %w[test_runs.id test_runs.created_at test_runs.problems
+                       users.user_name test_groups.name test_runs.status]
     hash_list.group_by { |g| g.values_at(*group_by_keys) }.values.each do |val|
       h = Hash.new
       group_by_keys.each do |key|
@@ -677,11 +675,6 @@ class Grouping < ApplicationRecord
       end
       h['test_data'] = val
       new_hash_list << h
-    end
-
-    status_hash = TestRun.statuses(new_hash_list.map { |h| h['test_runs.id'] })
-    new_hash_list.each do |h|
-      h['test_runs.status'] = status_hash[h['test_runs.id']]
     end
 
     new_hash_list
@@ -704,8 +697,7 @@ class Grouping < ApplicationRecord
                                         .compact
     plucked = Grouping.pluck_test_runs(filtered.where('test_group_results.id': latest_test_group_results))
     plucked.map! do |data|
-      if data['test_groups.display_output'] == TestGroup.display_outputs[:instructors_and_student_tests] ||
-         data['test_groups.display_output'] == TestGroup.display_outputs[:instructors]
+      if %w[instructors_and_student_tests instructors].include? data['test_groups.display_output']
         data.delete('test_results.output')
       end
       data.delete('test_group_results.extra_info')
@@ -718,7 +710,7 @@ class Grouping < ApplicationRecord
     filtered = filter_test_runs(filters: { 'test_runs.user': self.accepted_students })
     plucked = Grouping.pluck_test_runs(filtered)
     plucked.map! do |data|
-      if data['test_groups.display_output'] == TestGroup.display_outputs[:instructors]
+      if data['test_groups.display_output'] == 'instructors'
         data.delete('test_results.output')
       end
       data.delete('test_group_results.extra_info')
@@ -729,15 +721,6 @@ class Grouping < ApplicationRecord
 
   def test_runs_students_simple
     filter_test_runs(filters: { 'test_runs.user': self.accepted_students }, all_data: false)
-  end
-
-  # Create a test run for this grouping, using the latest repo revision.
-  def create_test_run!(**attrs)
-    self.test_runs.create!(
-      user_id: attrs[:user]&.id || attrs.fetch(:user_id) { raise ArgumentError(':user or :user_id is required') },
-      revision_identifier: access_repo { |repo| repo.get_latest_revision.revision_identifier },
-      test_batch_id: attrs[:test_batch]&.id || attrs[:test_batch_id]
-    )
   end
 
   # Checks whether a student test using tokens is currently being enqueued for execution
@@ -777,7 +760,6 @@ class Grouping < ApplicationRecord
         unless group_repo.commit(txn)
           raise I18n.t('repo.assignment_dir_creation_error', short_identifier: assignment.short_identifier)
         end
-        self.update!(starter_file_timestamp: group_repo.get_latest_revision.server_timestamp)
       end
     end
   end

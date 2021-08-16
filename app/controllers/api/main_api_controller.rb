@@ -14,6 +14,8 @@ module Api
     rescue_from ActionPolicy::Unauthorized, with: :user_not_authorized
     before_action { authorize! }
 
+    AUTHTYPE = 'MarkUsAuth'.freeze
+
     # Unless overridden by a subclass, all routes are 404's by default
     def index
       render 'shared/http_status', locals: {code: '404', message:
@@ -81,7 +83,7 @@ module Api
     # Helper method for parsing the authentication token
     def parse_auth_token(token)
       return nil if token.nil?
-      if token =~ /MarkUsAuth ([^\s,]+)/
+      if token =~ /#{AUTHTYPE} ([^\s,]+)/
         $1 # return matched part
       else
         nil

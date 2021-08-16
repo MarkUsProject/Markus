@@ -7,6 +7,7 @@ en:
         allow_remarks: Allow remark requests
         allow_web_submits: Allow students to submit through the web interface
         assignment_files: Required files
+        collection_date: Due date including maximum late penalty (if any)
         description: Assignment description
         display_grader_names_to_students: Display grader names to students
         display_median_to_students: Display assignment median to students

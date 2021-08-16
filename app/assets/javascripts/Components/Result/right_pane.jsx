@@ -3,11 +3,11 @@ import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 
 import { MarksPanel } from './marks_panel';
 import { SummaryPanel } from './summary_panel';
-import { TagsPanel } from './tags_panel';
+import { SubmissionInfoPanel } from './submission_info_panel';
 
 
 export class RightPane extends React.Component {
-  canShowTagsPanel = () => {
+  canShowSubmissionInfoPanel = () => {
     return this.props.role !== 'Student' && !this.props.is_reviewer;
   };
 
@@ -17,8 +17,8 @@ export class RightPane extends React.Component {
         <TabList>
           <Tab>{I18n.t('activerecord.models.mark.other')}</Tab>
           <Tab>{I18n.t('results.summary')}</Tab>
-          {this.canShowTagsPanel() &&
-           <Tab>{I18n.t('activerecord.models.tag.other')}/{I18n.t('activerecord.models.note.other')}</Tab>
+          {this.canShowSubmissionInfoPanel() &&
+           <Tab>{I18n.t('results.submission_info')}</Tab>
           }
         </TabList>
         <TabPanel>
@@ -54,9 +54,9 @@ export class RightPane extends React.Component {
             destroyExtraMark={this.props.destroyExtraMark}
           />
         </TabPanel>
-        {this.canShowTagsPanel() &&
+        {this.canShowSubmissionInfoPanel() &&
          <TabPanel>
-           <TagsPanel
+           <SubmissionInfoPanel
              currentTags={this.props.current_tags}
              availableTags={this.props.available_tags}
              notes_count={this.props.notes_count}
@@ -65,6 +65,9 @@ export class RightPane extends React.Component {
              removeTag={this.props.removeTag}
              newNote={this.props.newNote}
              role={this.props.role}
+             assignment_id={this.props.assignment_id}
+             grouping_id={this.props.grouping_id}
+             members={this.props.members}
            />
          </TabPanel>
         }

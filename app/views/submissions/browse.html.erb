@@ -50,6 +50,8 @@
           link_path: download_repo_checkout_commands_assignment_submissions_path(@assignment, url_type: :ssh)}
       ]
       end %>
+    <% @heading_buttons += [{ link_text: t('submissions.submission_summary'),
+                              link_path: download_summary_assignment_submissions_path(@assignment) }] %>
   <% end %>
 <% end %>
 

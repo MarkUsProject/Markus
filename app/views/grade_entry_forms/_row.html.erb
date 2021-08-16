@@ -17,7 +17,7 @@
           <strong>
             <%= t('grade_entry_forms.students.mark_message') %>
             <% if result.all_blank_grades? %>
-              <%= t('grade_entry_forms.grades.no_mark') %>
+              <%= t('not_applicable') %>
             <% else %>
               <%= number_to_percentage(grade_entry_form.calculate_total_percent(result), precision: 1) %>
             <% end %>

@@ -79,7 +79,6 @@ class Criterion < ApplicationRecord
 
     # Only use IDs that identify existing model instances.
     ta_ids = Ta.where(id: ta_ids).pluck(:id)
-    columns = [:criterion_id, :ta_id]
     # Get all existing criterion-TA associations to avoid violating the unique
     # constraint.
     existing_values = CriterionTaAssociation
@@ -92,14 +91,8 @@ class Criterion < ApplicationRecord
     new_values = yield(criterion_ids, ta_ids)
     values = new_values - existing_values
 
-    # Add assessment_id column common to all rows. It is not included above so
-    # that the set operation is faster.
-    columns << :assessment_id
-    values.map { |value| value << assignment.id }
-    # TODO replace CriterionTaAssociation.import with
-    # CriterionTaAssociation.create when the PG driver supports bulk create,
-    # then remove the activerecord-import gem.
-    CriterionTaAssociation.import(columns, values, validate: false)
+    mappings = values.map { |value| { criterion_id: value[0], ta_id: value[1], assessment_id: assignment.id } }
+    CriterionTaAssociation.insert_all(mappings) unless mappings.empty?
 
     Grouping.update_criteria_coverage_counts(assignment)
     update_assigned_groups_counts(assignment)

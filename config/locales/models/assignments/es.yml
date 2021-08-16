@@ -7,6 +7,7 @@ es:
         allow_remarks: Permitir solicitudes de recalificación
         allow_web_submits: Permitir entregas en línea
         assignment_files: Archivos requeridos
+        collection_date: UPDATE ME
         description: Nombre del proyecto
         display_grader_names_to_students: Mostrar a los estudiantes los nombres de los evaluadores
         display_median_to_students: UPDATE ME

@@ -37,6 +37,7 @@ pt:
 
       Tem certeza que deseja continuar?
     no_files_available: Nenhum arquivo disponível
+    past_collection_time: Quaisquer alterações serão gravadas, mas não classificados.
     release_marks: Mostrar notas
     repo_browser:
       client_time: 'commit:'
@@ -74,5 +75,6 @@ pt:
       only_required_files: UPDATE ME
       select_file: UPDATE ME!
       version_control_warning: Submetendo arquivos aqui substitui todas as mudanças feitas usando o controle de versão. Certifique-se de que você trabalhou nos arquivos mais recentes antes de enviar.
+    submission_summary: UPDATE ME
     successfully_changed: "%{changed} resultados atualizados."
     unrelease_marks: Esconder notas

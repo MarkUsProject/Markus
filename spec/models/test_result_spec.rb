@@ -5,7 +5,7 @@ describe TestResult do
   it { is_expected.to validate_presence_of(:status) }
   it { is_expected.to validate_presence_of(:marks_earned) }
   it { is_expected.to validate_presence_of(:marks_total) }
-  it { is_expected.to validate_inclusion_of(:status).in_array(%w[pass partial fail error]) }
+  it { is_expected.to validate_inclusion_of(:status).in_array(%w[pass partial fail error error_all]) }
   it { is_expected.to validate_numericality_of(:marks_earned) }
   it { is_expected.to validate_numericality_of(:marks_total) }
   it { is_expected.to validate_numericality_of(:time) }
@@ -24,7 +24,8 @@ describe TestResult do
         grouping: @grouping,
         submission: @sub,
         user: @user,
-        revision_identifier: '1'
+        revision_identifier: '1',
+        status: :complete
       )
       @test_group_result = TestGroupResult.create(
         test_group: @test_group,
