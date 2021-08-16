@@ -1,5 +1,8 @@
 # Changelog
+
 ## [unreleased]
+
+## [v1.13.0]
 - Modify Result.get_total_extra_marks to differentiate between having extra marks that sum to zero and
   having no extra marks (#5220)
 - Add copy to clipboard button for plaintext submission files in Results view (#5223)
