@@ -63,7 +63,7 @@ export class SummaryPanel extends React.Component {
       this.markDataSet.label = I18n.t('results.current_mark');
       this.setState({datasets: [this.oldMarkDataSet, this.markDataSet], labels: labels, chartLegend: true});
     } else {
-      this.setState({datasets: [this.markDataSet], labels: labels});
+      this.setState({datasets: [this.markDataSet], labels: labels, chartLegend: false});
     }
     this.marks_modal.open();
   };
@@ -287,6 +287,10 @@ export class SummaryPanel extends React.Component {
   };
 
   render() {
+    const style = {
+      width: window.innerWidth * 0.75 + 'px',
+      height: window.innerHeight * 0.6 + 'px',
+    }
     return (
       <div>
         <p style={{textAlign: 'center'}}>
@@ -294,13 +298,12 @@ export class SummaryPanel extends React.Component {
             {I18n.t('results.marks_chart')}
           </button>
         </p>
-        <aside className='dialog' id={'marks_chart'} style={{width: window.innerWidth * 0.8 + 'px'}}>
+        <aside className='dialog' id={'marks_chart'} style={style}>
           <DataChart
             labels={this.state.labels}
             datasets={this.state.datasets}
             xTitle={this.state.xTitle}
             yTitle={this.state.yTitle}
-            width={window.innerWidth * 0.7 + 'px'}
             legend={this.state.chartLegend}
           />
         </aside>

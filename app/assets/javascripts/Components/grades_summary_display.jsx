@@ -85,7 +85,6 @@ class GradesSummaryDisplay extends React.Component {
           datasets={this.state.datasets}
           xTitle={I18n.t('activerecord.models.assessment.one')}
           yTitle={I18n.t('activerecord.models.mark.one') + ' (%)'}
-          width={'auto'}
           legend={true}
         />
       </fieldset>
