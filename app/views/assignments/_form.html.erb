@@ -98,6 +98,7 @@
                          size: 35,
                          required: true,
                          placeholder: t('time.format_string.placeholder') %>
+
         <% unless @sections.empty? %>
           <%= ap_f.label :section_due_dates_type, Assignment.human_attribute_name(:section_due_dates_type) %>
           <span>
@@ -204,32 +205,6 @@
         <%= ap_f.check_box :has_peer_review %>
       </div>
       </fieldset>
-      <% unless @sections.empty? && !@assignment.is_hidden %>
-        <div class='section_hidden_form table'>
-          <table>
-            <thead>
-            <tr>
-              <th><%= Section.model_name.human %></th>
-            </tr>
-            </thead>
-            <tbody>
-            <%= f.fields_for :section_due_dates,
-                             @section_due_dates do |is_hidden_f| %>
-              <tr>
-                <% obj = is_hidden_f.object %>
-                <td><%= obj.section.name %></td>
-                <td>
-                  <%= ap_f.label :is_hidden,
-                                 SectionDueDate.human_attribute_name(:is_hidden) %>
-                  <%= ap_f.check_box :is_hidden %>
-                </td>
-              </tr>
-            <% end %>
-            </tbody>
-          </table>
-        </div>
-        <%end %>
-
     </fieldset>
 
     <% if !@assignment.scanned_exam %>

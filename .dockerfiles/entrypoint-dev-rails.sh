@@ -8,7 +8,7 @@ yarn check --integrity 2>/dev/null || yarn install --check-files
 
 # install python packages
 python3 -m venv ./venv
-./venv/bin/pip install -r requirements.txt
+#./venv/bin/pip install -r requirements.txt
 
 # setup the database (checks for db existence first)
 cp .dockerfiles/database.yml.postgresql config/database.yml

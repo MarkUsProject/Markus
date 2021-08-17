@@ -135,6 +135,16 @@ class AssignmentSummaryTable extends React.Component {
     defaultSortDesc: true,
   };
 
+  onFilteredChange(data){
+    if ( data ) {
+    console.log(data.length);
+    return(data.length);
+    }
+    else {
+      console.log("nothing");
+      return null;
+    }
+  };
   render() {
     const {data, criteriaColumns} = this.state;
     return (
@@ -170,6 +180,7 @@ class AssignmentSummaryTable extends React.Component {
           columns={this.fixedColumns.concat(criteriaColumns, [this.bonusColumn])}
           filterable
           defaultSorted={[{id: 'group_name'}]}
+          onFilteredChange = {this.onFilteredChange.bind(this, this.sortedData)}
           SubComponent={(row) => {
             return (
               <div>
