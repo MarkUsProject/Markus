@@ -10,7 +10,7 @@ class CourseSummariesController < ApplicationController
 
   def populate
     table_data = get_table_json_data(current_user)
-    assessments = current_user.student? ? current_user.visible_assessments() : Assessment
+    assessments = current_user.student? ? current_user.visible_assessments : Assessment
     marking_schemes = current_user.student? ? MarkingScheme.none : MarkingScheme
 
     average, median, individual, assessment_columns, marking_scheme_columns, graph_labels = [], [], [], [], [], []

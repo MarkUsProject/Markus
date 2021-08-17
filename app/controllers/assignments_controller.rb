@@ -57,7 +57,7 @@ class AssignmentsController < ApplicationController
   def peer_review
     assignment = Assignment.find(params[:id])
     @assignment = assignment.is_peer_review? ? assignment : assignment.pr_assignment
-    unless current_user.visible_assessments(assessment_id: assignment.id).exists?
+    unless @assignment.nil? || current_user.visible_assessments(assessment_id: assignment.id).exists?
       render 'shared/http_status',
              formats: [:html],
              locals: {
@@ -129,7 +129,7 @@ class AssignmentsController < ApplicationController
 
       @g_id_entries = {}
       current_user.grade_entry_students.where(released_to_student: true).includes(:grade_entry_form).each do |g|
-        unless !current_user.visible_assessments(assessment_id: g.grade_entry_form.id).exists?
+        if current_user.visible_assessments(assessment_id: g.grade_entry_form.id).exists?
           @g_id_entries[g.assessment_id] = g
         end
       end

@@ -10,7 +10,6 @@ describe SectionDueDate do
         @assignment = create(:assignment,
                              due_date: 2.days.from_now,
                              assignment_properties_attributes: { section_due_dates_type: false })
-
       end
 
       it 'returns the due date of the assignment' do

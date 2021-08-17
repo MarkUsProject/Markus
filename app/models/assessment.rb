@@ -96,5 +96,3 @@ class Assessment < ApplicationRecord
     self.completed_result_marks.count(&:zero?)
   end
 end
-
-
