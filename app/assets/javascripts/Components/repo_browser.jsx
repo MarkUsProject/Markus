@@ -83,6 +83,20 @@ class RepoBrowser extends React.Component {
             {this.state.revisions.map(this.revisionToOption)}
           </select>
         </h3>
+        {this.props.is_timed &&
+          <p>
+            <strong>{I18n.t('activerecord.attributes.assignment.start_time')}: </strong>
+            {this.props.start_time || I18n.t('not_applicable')}
+          </p>
+        }
+        <p>
+          <strong>{I18n.t('activerecord.attributes.assignment.due_date')}: </strong>
+          {this.props.due_date}
+        </p>
+        <p>
+          <strong>{I18n.t('activerecord.attributes.assignment.collection_date')}: </strong>
+          {this.props.collection_date}
+        </p>
         <SubmissionFileManager
           assignment_id={this.props.assignment_id}
           grouping_id={this.props.grouping_id}

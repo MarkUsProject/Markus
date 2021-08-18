@@ -464,12 +464,6 @@ class Grouping < ApplicationRecord
     self.update!(starter_file_changed: false)
   end
 
-  def changed_starter_file_at?(revision)
-    revision.tree_at_path(assignment.repository_folder, with_attrs: true).values.any? do |obj|
-      self.starter_file_timestamp.nil? || self.starter_file_timestamp < obj.last_modified_date
-    end
-  end
-
   # Returns a list of missing assignment (required) files.
   # A repo revision can be passed directly if the caller already opened the repo.
   def missing_assignment_files(revision = nil)
@@ -766,7 +760,6 @@ class Grouping < ApplicationRecord
         unless group_repo.commit(txn)
           raise I18n.t('repo.assignment_dir_creation_error', short_identifier: assignment.short_identifier)
         end
-        self.update!(starter_file_timestamp: group_repo.get_latest_revision.server_timestamp)
       end
     end
   end

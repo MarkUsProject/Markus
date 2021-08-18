@@ -72,8 +72,8 @@ Rails.application.routes.draw do
     end
 
     member do
+      get 'download_sample_starter_files'
       get 'download_starter_file_mappings'
-      get 'refresh_graph'
       get 'view_summary'
       post 'update_starter_file'
       get 'peer_review'
@@ -83,10 +83,11 @@ Rails.application.routes.draw do
       post 'set_boolean_graders_options'
       get 'stop_test'
       get 'stop_batch_tests'
-      get 'switch_assignment'
+      get 'switch'
       put 'start_timed_assignment'
       get 'starter_file'
       put 'update_starter_file'
+      get 'grade_distribution'
     end
 
     resources :starter_file_groups do
@@ -211,6 +212,7 @@ Rails.application.routes.draw do
         post 'zip_groupings_files'
         get 'download_zipped_file'
         get 'notebook_content'
+        get 'download_summary'
       end
 
       member do
@@ -329,6 +331,8 @@ Rails.application.routes.draw do
       post 'update_grade'
       post 'update_grade_entry_students'
       get 'student_interface'
+      get 'grade_distribution'
+      get 'switch'
     end
 
     resources :marks_graders, only: [:index] do
@@ -368,6 +372,7 @@ Rails.application.routes.draw do
       get 'get_marking_scheme_details'
       get 'download_csv_grades_report'
       get 'view_summary'
+      get 'grade_distribution'
     end
   end
 
@@ -412,9 +417,6 @@ Rails.application.routes.draw do
     collection do
       get 'download'
       post 'upload'
-    end
-    member do
-      get 'refresh_graph'
     end
   end
 

@@ -18,6 +18,7 @@ describe User do
   it { is_expected.not_to allow_value('A!a.sa').for(:user_name) }
   it { is_expected.to allow_value('Ads_-hb').for(:user_name) }
   it { is_expected.to allow_value('-22125-k1lj42_').for(:user_name) }
+  it { is_expected.to validate_inclusion_of(:locale).in_array(I18n.available_locales.map(&:to_s)) }
 
   describe 'TestServer' do
     subject { create :test_server }

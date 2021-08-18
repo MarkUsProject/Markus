@@ -527,8 +527,13 @@ class Assignment < Assessment
                .joins(:tags)
                .pluck_to_hash(:id, 'tags.name')
                .group_by { |h| h[:id] }
-    groupings_with_results = groupings.includes(current_result: :marks).includes(:submitted_remark, :extension)
-    result_ids = groupings_with_results.pluck('results.id').uniq.compact
+
+    collection_dates = all_grouping_collection_dates
+    all_results = current_results.where('groupings.id': groupings.ids).order(:id)
+    results_data = Hash[
+      all_results.pluck('groupings.id').zip(all_results.includes(:marks))
+    ]
+    result_ids = all_results.ids
     extra_marks_hash = Result.get_total_extra_marks(result_ids, max_mark: max_mark)
 
     hide_unassigned = user.ta? && hide_unassigned_criteria
@@ -552,9 +557,9 @@ class Assignment < Assessment
       }
     end.compact
 
-    final_data = groupings_with_results.map do |g|
-      result = g.current_result
-      has_remark = g.current_submission_used&.submitted_remark.present?
+    final_data = groupings.map do |g|
+      result = results_data[g.id]
+      has_remark = !result&.remark_request_submitted_at.nil?
       if user.ta? && anonymize_groups
         group_name = "#{Group.model_name.human} #{g.id}"
         section = ''
@@ -580,7 +585,7 @@ class Assignment < Assessment
         marking_state: marking_state(has_remark,
                                      result&.marking_state,
                                      result&.released_to_students,
-                                     g.collection_date),
+                                     collection_dates[g.id]),
         final_grade: [criteria.values.compact.sum + (extra_mark || 0), 0].max,
         criteria: criteria,
         max_mark: max_mark,
@@ -841,6 +846,25 @@ class Assignment < Assessment
              .pluck_to_hash('groups.group_name as group_name',
                             'starter_file_groups.name as starter_file_group_name',
                             'starter_file_entries.path as starter_file_entry_path')
+  end
+
+  def sample_starter_file_entries
+    case self.starter_file_type
+    when 'simple'
+      default_starter_file_group&.starter_file_entries || []
+    when 'sections'
+      section = Section.find_by(id: Student.distinct.pluck(:section_id).sample)
+      sf_group = section&.starter_file_group_for(self) || default_starter_file_group
+      sf_group&.starter_file_entries || []
+    when 'shuffle'
+      self.starter_file_groups.includes(:starter_file_entries).map do |g|
+        StarterFileEntry.find_by(id: g.starter_file_entries.ids.sample)
+      end.compact
+    when 'group'
+      StarterFileGroup.find_by(id: self.starter_file_groups.ids.sample)&.starter_file_entries || []
+    else
+      raise "starter_file_type is invalid: #{self.starter_file_type}"
+    end
   end
 
   # Yield an open repo for each grouping of this assignment, then yield again for each repo that raised an exception, to
@@ -1138,7 +1162,7 @@ class Assignment < Assessment
     zip_path = File.join('tmp', zip_name + '.zip')
     FileUtils.rm_rf zip_path
     files_dir = Pathname.new self.autotest_files_dir
-    Zip::File.open(zip_path, Zip::File::CREATE) do |zip_file|
+    Zip::File.open(zip_path, create: true) do |zip_file|
       self.autotest_files.map do |file|
         path = File.join zip_name, file
         abs_path = files_dir.join(file)

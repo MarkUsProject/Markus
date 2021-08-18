@@ -2,6 +2,7 @@ FactoryBot.define do
   factory :grouping do
     association :group
     association :assignment
+    start_time { nil }
 
     factory :grouping_with_inviter do
       transient do

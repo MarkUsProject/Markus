@@ -122,8 +122,8 @@ ActiveRecord::Schema.define(version: 2021_08_05_154450) do
     t.string "starter_file_type", default: "simple", null: false
     t.datetime "starter_file_updated_at"
     t.bigint "default_starter_file_group_id"
-    t.boolean "starter_files_after_due", default: true, null: false
     t.integer "autotest_settings_id"
+    t.boolean "starter_files_after_due", default: true, null: false
     t.index ["assessment_id"], name: "index_assignment_properties_on_assessment_id", unique: true
     t.index ["default_starter_file_group_id"], name: "index_assignment_properties_on_default_starter_file_group_id"
   end
@@ -278,7 +278,6 @@ ActiveRecord::Schema.define(version: 2021_08_05_154450) do
     t.integer "test_tokens", default: 0, null: false
     t.bigint "assessment_id", null: false
     t.datetime "start_time"
-    t.datetime "starter_file_timestamp"
     t.boolean "starter_file_changed", default: false, null: false
     t.index ["assessment_id", "group_id"], name: "groupings_u1", unique: true
   end

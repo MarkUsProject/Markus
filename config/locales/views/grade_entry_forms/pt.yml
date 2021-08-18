@@ -7,7 +7,6 @@ pt:
     grade_entry_item_distribution: UPDATE ME
     grades:
       marking_state: Estado
-      no_mark: N/A
       select_a_student: Você deve selecionar pelo menos um aluno para atualizar.
       successfully_changed: "%{numGradeEntryStudentsChanged} alunos atualizados com sucesso."
     none: Atualmente não há notas nas planilhas.

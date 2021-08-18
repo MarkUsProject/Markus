@@ -7,7 +7,6 @@ es:
     grade_entry_item_distribution: UPDATE ME
     grades:
       marking_state: Estado
-      no_mark: N/A
       select_a_student: Usted debe seleccionar al menos un estudiante para lanzar la actualización.
       successfully_changed: Se han actualizado %{numGradeEntryStudentsChanged} estudiantes exitosamente.
     none: No existen hojas de notas por el momento.

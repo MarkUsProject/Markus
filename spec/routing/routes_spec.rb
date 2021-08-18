@@ -95,15 +95,6 @@ describe 'An Assignment' do
 
   # start Assignment member route tests
   context 'member' do
-    it 'routs GET refresh_graph properly' do
-      expect(get: path + '/' + assignment.id.to_s + '/refresh_graph')
-        .to route_to(
-          controller: ctrl,
-          action: 'refresh_graph',
-          id: assignment.id.to_s
-        )
-    end
-
     it 'routes POST set_boolean_graders_options properly' do
       expect(post: path + '/' + assignment.id.to_s + '/set_boolean_graders_options')
         .to route_to(controller: ctrl,
@@ -124,6 +115,13 @@ describe 'An Assignment' do
       expect(put: path + '/' + assignment.id.to_s + '/start_timed_assignment')
         .to route_to(controller: ctrl,
                      action: 'start_timed_assignment',
+                     id: assignment.id.to_s)
+    end
+
+    it 'routes GET grade_distribution properly' do
+      expect(get: path + '/' + assignment.id.to_s + '/grade_distribution')
+        .to route_to(controller: ctrl,
+                     action: 'grade_distribution',
                      id: assignment.id.to_s)
     end
   end
@@ -985,6 +983,14 @@ context 'grade_entry_forms' do
   # end grade_entry_forms collection route tests
 
   context 'member' do
+    it 'routes GET grade_distribution properly' do
+      expect(get: path + '/' + grade_entry_form.id.to_s + '/grade_distribution').to route_to(
+        controller: ctrl,
+        action: 'grade_distribution',
+        id: grade_entry_form.id.to_s
+      )
+    end
+
     it 'routes GET grades properly' do
       expect(get: path + '/' + grade_entry_form.id.to_s + '/grades')
         .to route_to(
@@ -1248,3 +1254,16 @@ context 'main' do
   end
 end
 # end main route tests
+
+# start course summary route tests
+describe 'course summary' do
+  let(:path) { '/course_summaries' }
+  let(:ctrl) { 'course_summaries' }
+
+  it 'routes GET grade_distribution properly' do
+    expect(get: path + '/grade_distribution')
+      .to route_to(controller: ctrl,
+                   action: 'grade_distribution')
+  end
+end
+# end course summary route tests

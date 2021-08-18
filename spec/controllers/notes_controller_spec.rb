@@ -108,6 +108,19 @@ describe NotesController do
       expect(response).to have_http_status :success
     end
 
+    it 'get request for all notes from index' do
+      @note = @note = create(:note, creator_id: @ta.id)
+      get_as @ta, :index, params: { format: :json }
+      note_data = response.parsed_body[0]
+
+      expect(note_data['date']).to eq(@note.format_date)
+      expect(note_data['user_name']).to eq(@note.user.user_name)
+      expect(note_data['message']).to eq(@note.notes_message)
+      expect(note_data['display_for']).to eq(@note.noteable.display_for_note)
+      # Should be true, since TA created note
+      expect(note_data['modifiable']).to eq(true)
+    end
+
     context 'POST on :create' do
       it 'be able to create with empty note' do
         post_as @ta,

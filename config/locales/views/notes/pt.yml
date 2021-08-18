@@ -9,4 +9,4 @@ pt:
     new:
       invalid_selector: Seletor escolhido inválido.
       no_noteables: Anotações foram anexadas para grupos, projetos, ou estudantes, mas não há nenhum ainda. Por favor crie um primeiro.
-    note_on_html: "%{user_name} em <strong>%{display_for}</strong>"
+    note_on_html: "%{user_name} em %{display_for}"

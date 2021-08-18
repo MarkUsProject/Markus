@@ -2,7 +2,7 @@ import React from 'react';
 import {render} from 'react-dom';
 import ReactTable from 'react-table';
 import {lookup} from 'mime-types';
-import {dateSort} from './Helpers/table_helpers';
+import {dateSort, selectFilter} from './Helpers/table_helpers';
 import {FileViewer} from './Result/file_viewer';
 
 
@@ -82,6 +82,14 @@ export class TestRunTable extends React.Component {
   onExpandedChange = (newExpanded) => this.setState({expanded: newExpanded});
 
   render() {
+    let height;
+    if (this.props.instructor_view) {
+      // 3.5em is the vertical space for the action bar (and run tests button)
+      height = 'calc(599px - 3.5em)';
+    } else {
+      height = '599px';
+    }
+
     return (
       <div>
         <ReactTable
@@ -91,26 +99,29 @@ export class TestRunTable extends React.Component {
             {
               id: 'created_at',
               accessor: row => row['test_runs.created_at'],
-              Cell: ({value}) => I18n.l('time.formats.default', value),
               sortMethod: dateSort,
+              minWidth: 300,
             },
             {
               id: 'user_name',
               accessor: row => row['users.user_name'],
               Cell: ({value}) => I18n.t('activerecord.attributes.test_run.user') + ' ' + value,
+              show: !this.props.instructor_run || this.props.instructor_view,
+              width: 120,
             },
             {
               id: 'status',
-              accessor: row => I18n.t(`automated_tests.test_runs_statuses.${row['test_runs.status']}`)
+              accessor: row => I18n.t(`automated_tests.test_runs_statuses.${row['test_runs.status']}`),
+              width: 120,
             }
           ]}
           SubComponent={ row => (
             row.original['test_runs.problems'] ?
               row.original['test_runs.problems'] :
-              <TestGroupResultTable data={row.original['test_results']}/>
+              <TestGroupResultTable key={row.original.id_} data={row.original['test_results']}/>
           )}
           noDataText={I18n.t('automated_tests.no_results')}
-          getTheadThProps={ () => {
+          getTheadProps={ () => {
             return {
               style: {display: 'none'}
             }
@@ -119,6 +130,7 @@ export class TestRunTable extends React.Component {
           expanded={this.state.expanded}
           onExpandedChange={this.onExpandedChange}
           loading={this.state.loading}
+          style={{maxHeight: height}}
         />
       </div>
     );
@@ -130,8 +142,29 @@ class TestGroupResultTable extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      show_output: this.showOutput(props.data)
+      show_output: this.showOutput(props.data),
+      expanded: this.computeExpanded(props.data),
+      filtered: [],
+      filteredData: props.data
     };
+  }
+
+  computeExpanded = (data) => {
+    let expanded = {};
+    let i = 0;
+    let groups = new Set();
+    data.forEach((row) => {
+      if (!groups.has(row['test_groups.name'])) {
+        expanded[i] = {};
+        i++;
+        groups.add(row['test_groups.name']);
+      }
+    });
+    return expanded;
+  }
+
+  onExpandedChange = (newExpanded) => {
+    this.setState({expanded: newExpanded});
   }
 
   showOutput = (data) => {
@@ -165,9 +198,16 @@ class TestGroupResultTable extends React.Component {
     {
       id: 'test_status',
       Header: I18n.t('activerecord.attributes.test_result.status'),
-      accessor: row => row['test_results_status'],
+      accessor: 'test_results_status',
       width: 80,
-      aggregate: _ => ''
+      aggregate: _ => '',
+      filterable: true,
+      Filter: selectFilter,
+      filterOptions: ['pass', 'partial', 'fail', 'error', 'error_all'].map(
+        status => ({value: status, text: status})
+      ),
+      // Disable the default filter method because this is a controlled component
+      filterMethod: () => true
     },
     {
       id: 'marks_earned',
@@ -195,6 +235,24 @@ class TestGroupResultTable extends React.Component {
     },
   ];
 
+  filterByStatus = (filtered) => {
+    let status;
+    for (const filter of filtered) {
+      if (filter.id === 'test_status') {
+        status = filter.value;
+      }
+    }
+
+    let filteredData;
+    if (!!status && status !== 'all') {
+      filteredData = this.props.data.filter(row => row.test_results_status === status);
+    } else {
+      filteredData = this.props.data;
+    }
+
+    this.setState({filtered, filteredData, expanded: this.computeExpanded(filteredData)});
+  }
+
   render() {
     const extraInfo = this.props.data[0]['test_group_results.extra_info'];
     let extraInfoDisplay;
@@ -209,7 +267,7 @@ class TestGroupResultTable extends React.Component {
     }
     const feedbackFiles = this.props.data[0]['feedback_files'];
     let feedbackFileDisplay;
-    if (feedbackFiles) {
+    if (feedbackFiles.length) {
       feedbackFileDisplay = <TestGroupFeedbackFileTable data={feedbackFiles}/>;
     } else {
       feedbackFileDisplay = '';
@@ -218,8 +276,8 @@ class TestGroupResultTable extends React.Component {
     return (
       <div>
         <ReactTable
-          className={'auto-overflow'}
-          data={this.props.data}
+          className={this.state.loading ? 'auto-overflow' : 'auto-overflow display-block'}
+          data={this.state.filteredData}
           columns={this.columns()}
           pivotBy={['test_group_name']}
           getTdProps={ (state, rowInfo) => {
@@ -235,12 +293,19 @@ class TestGroupResultTable extends React.Component {
             }
           }}
           PivotValueComponent={() => ''}
+          expanded={this.state.expanded}
+          filtered={this.state.filtered}
+          onFilteredChange={this.filterByStatus}
+          onExpandedChange={this.onExpandedChange}
+          collapseOnDataChange={false}
+          collapseOnSortingChange={false}
           SubComponent={ row => (
             <pre className={`test-results-output test-result-${row.row['test_status']}`}>
               {row.original['test_results.output']}
             </pre>
             )
           }
+          style={{maxHeight: 'initial'}}
         />
         {extraInfoDisplay}
         {feedbackFileDisplay}

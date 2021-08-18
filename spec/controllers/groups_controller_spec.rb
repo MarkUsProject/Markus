@@ -114,9 +114,9 @@ describe GroupsController do
           delete :remove_group, params: { grouping_id: [grouping.id], assignment_id: assignment }
         end
 
-        it 'should return the :unprocessable_entity status code' do
+        it 'should return the :ok status code' do
           delete :remove_group, params: { grouping_id: [grouping.id], assignment_id: assignment }
-          expect(response).to have_http_status(:unprocessable_entity)
+          expect(response).to have_http_status(:ok)
         end
 
         it 'should attempt to update permissions file' do

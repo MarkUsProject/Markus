@@ -7,7 +7,6 @@ fr:
     grade_entry_item_distribution: UPDATE ME
     grades:
       marking_state: Affichage de la note aux étudiants
-      no_mark: NC
       select_a_student: Vous devez sélectionner au moins un(e) étudiant(e).
       successfully_changed: Mise à jour de %{numGradeEntryStudentsChanged} étudiant(s).
     none: Il n'y a pas de feuille de notes pour le moment.

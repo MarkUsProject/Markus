@@ -460,7 +460,7 @@ class ResultsController < ApplicationController
                end
 
     files = submission.submission_files
-    Zip::File.open(zip_path, Zip::File::CREATE) do |zip_file|
+    Zip::File.open(zip_path, create: true) do |zip_file|
       grouping.access_repo do |repo|
         revision = repo.get_revision(revision_identifier)
         repo.send_tree_to_zip(assignment.repository_folder, zip_file, zip_name, revision) do |file|
@@ -722,12 +722,18 @@ class ResultsController < ApplicationController
   def get_test_runs_instructors
     submission = Submission.find(params[:submission_id])
     test_runs = submission.grouping.test_runs_instructors(submission)
+    test_runs.each do |test_run|
+      test_run['test_runs.created_at'] = I18n.l(test_run['test_runs.created_at'])
+    end
     render json: test_runs.group_by { |t| t['test_runs.id'] }
   end
 
   def get_test_runs_instructors_released
     submission = Submission.find(params[:submission_id])
     test_runs = submission.grouping.test_runs_instructors_released(submission)
+    test_runs.each do |test_run|
+      test_run['test_runs.created_at'] = I18n.l(test_run['test_runs.created_at'])
+    end
     render json: test_runs.group_by { |t| t['test_runs.id'] }
   end
 

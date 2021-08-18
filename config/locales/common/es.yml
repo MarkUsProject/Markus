@@ -14,9 +14,11 @@ es:
   filter_by: UPDATE ME
   help: Ayuda
   markus: MarkUs
+  not_applicable: N/A
   other_info: UPDATE ME
   please_wait: Por favor espere…
   preview: Vista previa
+  refresh: Volver a cargar
   save: Guardar
   search: UPDATE ME
   skip: Skip

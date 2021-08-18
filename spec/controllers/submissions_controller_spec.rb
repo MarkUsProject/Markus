@@ -1180,4 +1180,78 @@ describe SubmissionsController do
       end
     end
   end
+  describe '#download_summary' do
+    let(:assignment) { create :assignment }
+    let!(:groupings) { create_list :grouping_with_inviter_and_submission, 2, assignment: assignment }
+    let(:returned_group_names) do
+      header = nil
+      groups = []
+      MarkusCsv.parse(response.body) do |line|
+        if header.nil?
+          header = line
+        else
+          groups << header.zip(line).to_h[I18n.t('activerecord.models.group.one')]
+        end
+      end
+      groups
+    end
+    subject { get_as user, 'download_summary', params: { assignment_id: assignment.id } }
+    context 'an admin' do
+      before { subject }
+      let(:user) { create :admin }
+      it 'should be allowed' do
+        expect(response).to have_http_status(200)
+      end
+      it 'should download submission info for all groupings' do
+        expect(returned_group_names).to contain_exactly(*groupings.map { |g| g.group.group_name })
+      end
+      it 'should not include hidden values' do
+        header = nil
+        MarkusCsv.parse(response.body) { |line| header ||= line }
+        hidden = header.select { |h| h.start_with?('_') || h.end_with?('_id') }
+        expect(hidden).to be_empty
+      end
+    end
+    context 'a grader' do
+      let(:user) { create :ta }
+      it 'should be allowed' do
+        subject
+        expect(response).to have_http_status(200)
+      end
+      context 'who has not been assigned any groupings' do
+        it 'should download an empty csv' do
+          subject
+          expect(returned_group_names).to be_empty
+        end
+      end
+      context 'who has been assigned a single grouping' do
+        before { create :ta_membership, user: user, grouping: groupings.first }
+        it 'should download the group info for the assigned group' do
+          subject
+          expect(returned_group_names).to contain_exactly(groupings.first.group.group_name)
+        end
+      end
+      context 'who has been assigned all groupings' do
+        before { groupings.each { |g| create :ta_membership, user: user, grouping: g } }
+        it 'should download the group info for the assigned group' do
+          subject
+          expect(returned_group_names).to contain_exactly(*groupings.map { |g| g.group.group_name })
+        end
+        it 'should not include hidden values' do
+          subject
+          header = nil
+          MarkusCsv.parse(response.body) { |line| header ||= line }
+          hidden = header.select { |h| h.start_with?('_') || h.end_with?('_id') }
+          expect(hidden).to be_empty
+        end
+      end
+    end
+    context 'a student' do
+      before { subject }
+      let(:user) { create :student }
+      it 'should be forbidden' do
+        expect(response).to have_http_status(403)
+      end
+    end
+  end
 end

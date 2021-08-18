@@ -71,22 +71,22 @@ describe AssignmentsController do
         end
         context 'when the group_max is > 1' do
           let(:assignment) { create :timed_assignment, assignment_properties_attributes: { group_max: 2 } }
-          it 'should respond with 400' do
-            expect(response).to have_http_status 400
+          it 'should respond with 403' do
+            expect(response).to have_http_status 403
           end
         end
       end
     end
     context 'as an admin' do
       let(:user) { create :admin }
-      it 'should respond with 400' do
+      it 'should respond with 403' do
         put_as user, :start_timed_assignment, params: { id: assignment.id }
         expect(response).to have_http_status 403
       end
     end
     context 'as an grader' do
       let(:user) { create :ta }
-      it 'should respond with 400' do
+      it 'should respond with 403' do
         put_as user, :start_timed_assignment, params: { id: assignment.id }
         expect(response).to have_http_status 403
       end
@@ -1054,6 +1054,229 @@ describe AssignmentsController do
         subject
         expect(response).to have_http_status(403)
       end
+    end
+  end
+
+  describe '#grade_distribution' do
+    let(:assignment) { create :assignment_with_criteria_and_results_and_tas }
+    let(:params) { { id: assignment.id } }
+    let(:user) { create :admin }
+    let(:params) { { id: assignment.id } }
+
+    before { get_as user, :grade_distribution, params: params }
+
+    context 'response' do
+      it 'should respond with 200' do
+        expect(response).to have_http_status 200
+      end
+    end
+    context 'summary' do
+      it 'should contain the right keys' do
+        keys = response.parsed_body['summary'].keys
+        expect(keys).to contain_exactly('name',
+                                        'average',
+                                        'median',
+                                        'num_submissions_collected',
+                                        'num_submissions_graded',
+                                        'num_fails',
+                                        'num_zeros',
+                                        'groupings_size',
+                                        'num_outstanding_remark_requests')
+      end
+
+      it 'should contain the right values' do
+        summary = response.parsed_body['summary']
+        expected = { name: assignment.short_identifier +
+          ': ' + assignment.description,
+                     average: assignment.results_average || 0,
+                     median: assignment.results_median,
+                     num_submissions_collected: assignment.current_submissions_used.size,
+                     num_submissions_graded: assignment.current_submissions_used.size -
+                       assignment.ungraded_submission_results.size,
+                     num_fails: assignment.results_fails,
+                     num_zeros: assignment.results_zeros,
+                     groupings_size: assignment.groupings.size,
+                     num_outstanding_remark_requests: assignment.outstanding_remark_request_count }
+        expect(summary).to eq expected.as_json
+      end
+    end
+    context 'assignment_data' do
+      context 'data' do
+        it 'should contain the right keys' do
+          data = response.parsed_body['assignment_data']
+          expect(data.keys).to contain_exactly('labels', 'datasets')
+        end
+      end
+      context 'labels' do
+        it 'should contain the right values' do
+          labels = response.parsed_body['assignment_data']['labels']
+          expected = (0..19).map { |i| "#{5 * i}-#{5 * i + 5}" }
+          expect(labels).to eq(expected)
+        end
+      end
+      context 'datasets' do
+        it 'should contain the right data' do
+          data = response.parsed_body['assignment_data']['datasets'].first['data']
+          expected = assignment.grade_distribution_array
+          expect(data).to contain_exactly(*expected)
+        end
+      end
+    end
+    context 'ta_data' do
+      it 'should contain the right data' do
+        response.parsed_body['ta_data']['datasets'].each_with_index do |data_response, index|
+          data = data_response['data']
+          ta = assignment.tas[index]
+          expect(ta.grade_distribution_array(assignment, 20)).to eq(data)
+        end
+      end
+    end
+  end
+
+  describe '#switch' do
+    let(:assignment) { create :assignment }
+    let(:assignment2) { create :assignment }
+    let(:grouping) { create :grouping, assignment: assignment }
+    let(:submission) { create :submission, grouping: grouping }
+    let(:result) { create :incomplete_result, submission: submission }
+
+    shared_examples 'switch assignment tests' do
+      before { controller.request.headers.merge('HTTP_REFERER': referer) }
+      subject { expect get_as user, 'switch', params: { id: assignment2.id } }
+      context 'referred from an assignment url' do
+        let(:referer) { assignment_url(id: assignment.id) }
+        it 'should redirect to the equivalent assignment page' do
+          expect(subject).to redirect_to(assignment_url(id: assignment2.id))
+        end
+      end
+      context 'referred from a non assignment url' do
+        let(:referer) { non_assignment_url.call(assignment_id: assignment.id) }
+        it 'should redirect to the equivalent non assignment page' do
+          expect(subject).to redirect_to(non_assignment_url.call(assignment_id: assignment2.id))
+        end
+      end
+      context 'referred from a submission member url' do
+        let(:referer) { submission_member_url.call(assignment_id: assignment.id, id: submission.id) }
+        it 'should redirect to the fallback url' do
+          expect(subject).to redirect_to(fallback_url.call(id: assignment2.id))
+        end
+      end
+      context 'referred from a submission collection url' do
+        let(:referer) { submission_collection_url.call(assignment_id: assignment.id) }
+        it 'should redirect to the equivalent non assignment page (or to the fallback page if a student)' do
+          if user.student?
+            expect(subject).to redirect_to(fallback_url.call(id: assignment2.id))
+          else
+            expect(subject).to redirect_to(submission_collection_url.call(assignment_id: assignment2.id))
+          end
+        end
+      end
+      context 'referred from a result member url' do
+        let(:referer) do
+          result_member_url.call(assignment_id: assignment.id, submission_id: submission.id, id: result.id)
+        end
+        it 'should redirect to the fallback url' do
+          expect(subject).to redirect_to(fallback_url.call(id: assignment2.id))
+        end
+      end
+      context 'referer is nil' do
+        let(:referer) { nil }
+        it 'should redirect to the fallback url' do
+          expect(subject).to redirect_to(fallback_url.call(id: assignment2.id))
+        end
+      end
+      context 'referer is a url that does not include the assignment at all' do
+        let(:referer) { users_url }
+        it 'should redirect to the fallback url' do
+          expect(subject).to redirect_to(fallback_url.call(id: assignment2.id))
+        end
+      end
+      context 'the referer url is some other site entirely' do
+        let(:referer) { 'https://test.com' }
+        it 'should redirect to the fallback url' do
+          expect(subject).to redirect_to(fallback_url.call(id: assignment2.id))
+        end
+      end
+      context 'the referer url is not valid' do
+        let(:referer) { '1234567' }
+        it 'should redirect to the fallback url' do
+          expect(subject).to redirect_to(fallback_url.call(id: assignment2.id))
+        end
+      end
+    end
+
+    context 'an admin' do
+      let(:user) { create :admin }
+      let(:non_assignment_url) { ->(params) { assignment_graders_url(params) } }
+      let(:fallback_url) { ->(params) { edit_assignment_url(params) } }
+      let(:submission_collection_url) { ->(params) { browse_assignment_submissions_url(params) } }
+      let(:result_member_url) { ->(params) { assignment_submission_result_url(params) } }
+      let(:submission_member_url) { ->(params) { get_file_assignment_submission_url(params) } }
+      include_examples 'switch assignment tests'
+    end
+    context 'a grader' do
+      let(:user) { create :ta, manage_assessments: true }
+      let(:non_assignment_url) { ->(params) { assignment_graders_url(params) } }
+      let(:fallback_url) { ->(params) { summary_assignment_url(params) } }
+      let(:submission_collection_url) { ->(params) { browse_assignment_submissions_url(params) } }
+      let(:result_member_url) { ->(params) { assignment_submission_result_url(params) } }
+      let(:submission_member_url) { ->(params) { get_file_assignment_submission_url(params) } }
+      include_examples 'switch assignment tests'
+    end
+    context 'a student' do
+      let(:user) { create :student }
+      let(:non_assignment_url) { ->(params) { assignment_submissions_url(params) } }
+      let(:fallback_url) { ->(params) { assignment_url(params) } }
+      let(:submission_collection_url) { ->(params) { file_manager_assignment_submissions_url(params) } }
+      let(:result_member_url) { ->(params) { assignment_submission_result_url(params) } }
+      let(:submission_member_url) { ->(params) { get_file_assignment_submission_url(params) } }
+      include_examples 'switch assignment tests'
+    end
+  end
+  describe '#download_sample_starter_files' do
+    let(:assignment) { create :assignment }
+    subject { get_as user, :download_sample_starter_files, params: { id: assignment.id } }
+    shared_examples 'download sample starter files' do
+      let(:structure) { { 'q1/': nil, 'q1/q1.txt': 'q1 content', 'q2.txt': 'q2 content' } }
+      # NOTE: other starter_file_type are not tested because they involve randomness and so are not deterministic
+      before { create :starter_file_group_with_entries, assignment: assignment, structure: structure }
+      it 'should send a zip file containing the correct content' do
+        expect(controller).to receive(:send_file) do |file_path|
+          Zip::File.open(Rails.root + file_path) do |zipfile|
+            expect(zipfile.entries.map(&:name)).to contain_exactly(*structure.stringify_keys.keys)
+            structure.each do |path, content|
+              next unless content
+
+              expect(zipfile.find_entry(path).get_input_stream.read.strip).to eq content
+            end
+          end
+        end
+        subject
+      end
+    end
+    context 'a student' do
+      let(:user) { create :student }
+      it 'should respond with 403' do
+        subject
+        expect(response).to have_http_status(403)
+      end
+    end
+    context 'a grader' do
+      context 'without assignment management permissions' do
+        let(:user) { create :ta }
+        it 'should respond with 403' do
+          subject
+          expect(response).to have_http_status(403)
+        end
+      end
+      context 'with assignment management permissions' do
+        let(:user) { create :ta, manage_assessments: true }
+        include_examples 'download sample starter files'
+      end
+    end
+    context 'an admin' do
+      let(:user) { create :admin }
+      include_examples 'download sample starter files'
     end
   end
 end

@@ -8,7 +8,7 @@ describe AssignmentPolicy do
     succeed
   end
 
-  describe_rule :switch_assignment? do
+  describe_rule :switch? do
     succeed
   end
 
@@ -212,6 +212,54 @@ describe AssignmentPolicy do
     end
     failed 'user is a student' do
       let(:user) { create(:student) }
+    end
+  end
+
+  describe_rule :start_timed_assignment? do
+    let(:user) { create :student }
+    let(:due_date) { 2.hours.from_now }
+    let(:start_time) { 2.hours.ago }
+    let(:assignment) do
+      create :timed_assignment,
+             due_date: due_date,
+             assignment_properties_attributes: { start_time: start_time }
+    end
+
+    context 'when the student is not in a group yet' do
+      failed 'when before the start time' do
+        let(:start_time) { 1.hour.from_now }
+      end
+      succeed 'when between the start and end time'
+      failed 'when between the start and end time, but the student must work in a group' do
+        before { assignment.assignment_properties.update(group_max: 2) }
+      end
+      failed 'when after the end time' do
+        let(:due_date) { 1.hour.ago }
+      end
+      failed 'when after the end time but within a penalty period' do
+        let(:due_date) { 1.hour.ago }
+        before do
+          rule = create :penalty_period_submission_rule, assignment: assignment
+          create :period, hours: 2, submission_rule: rule
+        end
+      end
+    end
+    context 'when the student is in a group' do
+      let(:grouping_start_time) { nil }
+      let!(:grouping) do
+        create :grouping_with_inviter, inviter: user, assignment: assignment, start_time: grouping_start_time
+      end
+
+      failed 'when before the start time' do
+        let(:start_time) { 1.hour.from_now }
+      end
+      succeed 'when between the start and end time and the group has not started'
+      failed 'when between the start and end time and the group has already started' do
+        let(:grouping_start_time) { Time.current }
+      end
+      failed 'when after the end time' do
+        let(:due_date) { 1.hour.ago }
+      end
     end
   end
 end

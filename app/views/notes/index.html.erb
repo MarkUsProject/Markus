@@ -1,3 +1,11 @@
+<%= content_for :head do %>
+  <%= javascript_tag nonce: true do %>
+    document.addEventListener('DOMContentLoaded', () => {
+        makeNotesTable(document.getElementById('notes_table'));
+    })
+  <% end %>
+<% end %>
+
 <div class='title_bar'>
   <h1>
     <%= Note.model_name.human.pluralize %>
@@ -23,48 +31,5 @@
   <% else %>
     <p><%= t('notes.new.no_noteables') %></p>
   <% end %>
-
-  <div class='table'>
-    <table id='notes'>
-      <thead>
-        <tr>
-          <th><%= Note.model_name.human.pluralize %></th>
-          <th><%= Note.human_attribute_name(:notes_message) %></th>
-          <th><%= t(:actions) %></th>
-        </tr>
-      </thead>
-      <% for note in @notes %>
-        <tr>
-          <td>
-            <%= t('notes.note_on_html',
-                  user_name: note.user.user_name,
-                  display_for: note.noteable.display_for_note) %>
-            <br>
-            <%= note.format_date %>
-          </td>
-          <td><%= note.notes_message %></td>
-          <td>
-            <% if allowed_to?(:modify?, note) %>
-              <%= button_to t('edit'),
-                            edit_note_path(note.id),
-                            method: 'get',
-                            html: { class: 'edit' },
-                            class: 'inline-button' %>
-              <%= button_to t('delete'),
-                            { action: 'destroy',
-                              id: note.id },
-                            html: { class: 'delete',
-                                    title: t('notes.delete.link_title') },
-                            data: { confirm: t('notes.delete.link_confirm') },
-                            method: 'delete',
-                            remote: true,
-                            class: 'inline-button' %>
-            <% else %>
-              &nbsp;
-            <% end %>
-          </td>
-        </tr>
-      <% end %>
-    </table>
-  </div>
+  <div id='notes_table'></div>
 </div>

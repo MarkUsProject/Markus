@@ -5,10 +5,10 @@ on:
 jobs:
   test:
     if: github.event.pull_request.draft == false
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
     services:
       postgres:
-        image: postgres:10
+        image: postgres:12
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
@@ -45,7 +45,7 @@ jobs:
       - name: Set up ruby and cache gems
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: ruby-2.5.3
+          ruby-version: ruby-2.7
           bundler-cache: true
       - name: Set up node/yarn and cache packages
         uses: actions/setup-node@v2

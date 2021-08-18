@@ -35,6 +35,8 @@ class User < ApplicationRecord
   after_initialize :set_display_name, :set_time_zone
 
   validates_format_of       :type,          with: /\AStudent|Admin|Ta|TestServer\z/
+  validates_inclusion_of    :locale, in: I18n.available_locales.map(&:to_s)
+
   # role constants
   STUDENT = 'Student'
   ADMIN = 'Admin'

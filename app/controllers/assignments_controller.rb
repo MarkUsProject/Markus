@@ -1,5 +1,6 @@
 class AssignmentsController < ApplicationController
   include RepositoryHelper
+  include RoutingHelper
   responders :flash
   before_action { authorize! }
 
@@ -47,7 +48,11 @@ class AssignmentsController < ApplicationController
       flash_message(:warning, I18n.t('assignments.starter_file.changed_warning')) if @grouping.starter_file_changed
       if @assignment.is_timed && !@grouping.start_time.nil? && !@grouping.past_collection_date?
         flash_message(:note, I18n.t('assignments.timed.started_message_html'))
-        flash_message(:note, I18n.t('assignments.timed.starter_file_prompt'))
+        unless @assignment.starter_file_updated_at.nil?
+          flash_message(:note, I18n.t('assignments.timed.starter_file_prompt'))
+        end
+      elsif @assignment.is_timed && @grouping.start_time.nil? && @grouping.past_collection_date?
+        flash_message(:warning, I18n.t('assignments.timed.past_end_time'))
       end
       set_repo_vars(@assignment, @grouping)
     end
@@ -309,18 +314,46 @@ class AssignmentsController < ApplicationController
     end
   end
 
-  # Refreshes the grade distribution graph
-  def refresh_graph
-    @assignment = Assignment.find(params[:id])
-    respond_to do |format|
-      format.js
+  # Return assignment grade distributions
+  def grade_distribution
+    assignment = Assignment.find(params[:id])
+    summary = {
+      name: assignment.short_identifier + ': ' + assignment.description,
+      average: assignment.results_average || 0,
+      median: assignment.results_median || 0,
+      num_submissions_collected: assignment.current_submissions_used.size,
+      num_submissions_graded: assignment.current_submissions_used.size -
+        assignment.ungraded_submission_results.size,
+      num_fails: assignment.results_fails,
+      num_zeros: assignment.results_zeros,
+      groupings_size: assignment.groupings.size,
+      num_outstanding_remark_requests: assignment.outstanding_remark_request_count
+    }
+    intervals = 20
+    assignment_labels = (0..intervals - 1).map { |i| "#{5 * i}-#{5 * i + 5}" }
+    assignment_datasets = [
+      {
+        data: assignment.grade_distribution_array
+      }
+    ]
+    assignment_data = { labels: assignment_labels, datasets: assignment_datasets }
+    ta_labels = (0..intervals - 1).map { |i| "#{5 * i}-#{5 * i + 5}" }
+    ta_datasets = assignment.tas.map do |ta|
+      num_marked_label = t('submissions.how_many_marked',
+                           num_marked: assignment.get_num_marked(ta.id),
+                           num_assigned: assignment.get_num_assigned(ta.id))
+      { label: "#{ta.first_name} #{ta.last_name} (#{num_marked_label})",
+        data: ta.grade_distribution_array(assignment, intervals) }
     end
+    render json: {
+      summary: summary,
+      assignment_data: assignment_data,
+      ta_data: { labels: ta_labels, datasets: ta_datasets }
+    }
   end
 
   def view_summary
     @assignment = Assignment.find(params[:id])
-    @current_ta = @assignment.tas.first
-    @tas = @assignment.tas unless @assignment.nil?
   end
 
   def download
@@ -449,9 +482,17 @@ class AssignmentsController < ApplicationController
               disposition: 'inline')
   end
 
-  def switch_assignment
-    # TODO: Make this dependent on the referer URL.
-    if current_user.admin?
+  # Switch to the assignment with id +params[:id]+. Try to redirect to the same page
+  # as the referer url for the new assignment if possible. Otherwise redirect to a
+  # default action depending on the type of user:
+  #   - edit for admins
+  #   - summary for TAs
+  #   - show for students
+  def switch
+    options = referer_options
+    if switch_to_same(options)
+      redirect_to options
+    elsif current_user.admin?
       redirect_to edit_assignment_path(params[:id])
     elsif current_user.ta?
       redirect_to summary_assignment_path(params[:id])
@@ -492,6 +533,21 @@ class AssignmentsController < ApplicationController
       flash_message(:error, grouping.errors.full_messages.join(' '))
     end
     redirect_to action: :show
+  end
+
+  # Download a zip file containing an example of starter files that might be assigned to a grouping
+  def download_sample_starter_files
+    assignment = Assignment.find(params[:id])
+
+    zip_name = "#{assignment.short_identifier}-sample-starter-files.zip"
+    zip_path = File.join('tmp', zip_name)
+
+    FileUtils.rm_f(zip_path)
+
+    Zip::File.open(zip_path, create: true) do |zip_file|
+      assignment.sample_starter_file_entries.each { |entry| entry.add_files_to_zip_file(zip_file) }
+    end
+    send_file zip_path, filename: zip_name
   end
 
   private
@@ -688,5 +744,19 @@ class AssignmentsController < ApplicationController
   def flash_interpolation_options
     { resource_name: @assignment.short_identifier.blank? ? @assignment.model_name.human : @assignment.short_identifier,
       errors: @assignment.errors.full_messages.join('; ') }
+  end
+
+  def switch_to_same(options)
+    return false if options[:controller] == 'submissions' && options[:action] == 'file_manager'
+    return false if %w[submissions results].include?(options[:controller]) && !options[:id].nil?
+
+    if options[:controller] == 'assignments'
+      options[:id] = params[:id]
+    elsif options[:assignment_id]
+      options[:assignment_id] = params[:id]
+    else
+      return false
+    end
+    true
   end
 end
