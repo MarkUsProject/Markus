@@ -11,7 +11,7 @@ header#header {
   padding: 0.25em $dimen-horizontal-nav;
   width: 100%;
 
-  #logo {
+  .logo {
     float: left;
 
     a {
@@ -102,7 +102,7 @@ nav {
     left: 100%;
     position: absolute;
     width: 100%;
-    z-index:9999;
+    z-index: 9999;
   }
 
   .sub,
