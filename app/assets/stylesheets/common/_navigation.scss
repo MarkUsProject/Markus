@@ -47,6 +47,7 @@ header#header {
 nav {
   .main {
     position: relative;
+    z-index: 999;
 
     li,
     li a {
@@ -102,7 +103,6 @@ nav {
     left: 100%;
     position: absolute;
     width: 100%;
-    z-index: 9999;
   }
 
   .sub,
