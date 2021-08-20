@@ -188,6 +188,19 @@ describe User do
                                 due_date: 2.days.from_now,
                                 is_hidden: true)
     end
+    let(:assignment_hidden_section_visible) do
+      create(:assignment,
+             due_date: 2.days.from_now,
+             assignment_properties_attributes: { section_due_dates_type: true },
+             is_hidden: true)
+    end
+
+    let(:section_due_date_visible_assignment_hidden) do
+      create(:section_due_date, assessment: assignment_hidden_section_visible,
+                                section: new_section,
+                                due_date: 2.days.from_now,
+                                is_hidden: false)
+    end
     context 'when there are no assessments' do
       let(:new_user) { create :student }
       it 'should return an empty list' do
@@ -249,6 +262,51 @@ describe User do
         it 'does return an empty array' do
           expect(new_user.visible_assessments(assessment_id: assignment_hidden.id)).to be_empty
         end
+      end
+    end
+    context 'when assignment is hidden but section is not' do
+      let(:new_user) { create :student, section_id: new_section.id }
+      it 'does return the assignment' do
+        section_due_date_visible_assignment_hidden
+        expect(new_user.visible_assessments(assessment_id: assignment_hidden_section_visible.id))
+          .to contain_exactly(assignment_hidden_section_visible)
+      end
+    end
+    context 'when assignment and section are hidden' do
+      let(:new_user) { create :student, section_id: new_section.id }
+      let(:new_hidden_assignment) do
+        create :assignment,
+               is_hidden: true,
+               assignment_properties_attributes: { section_due_dates_type: true }
+      end
+      let(:new_hidden_section_due_date) do
+        create :section_due_date,
+               assessment: new_hidden_assignment,
+               section: new_section,
+               is_hidden: true
+      end
+      it 'should return an empty array' do
+        new_hidden_section_due_date
+        expect(new_user.visible_assessments(assessment_id: new_hidden_assignment.id))
+          .to be_empty
+      end
+    end
+    context 'when getting a list of assignments with some overridden is_hiddens' do
+      let(:new_user) { create :student, section_id: new_section.id }
+      let(:new_hidden_assignment) do
+        create :assignment,
+               is_hidden: true,
+               assignment_properties_attributes: { section_due_dates_type: true }
+      end
+      let(:new_visible_section_due_date) do
+        create :section_due_date,
+               assessment: new_hidden_assignment,
+               section: new_section,
+               is_hidden: false
+      end
+      it 'does return the list of visible assignments for the section' do
+        new_visible_section_due_date
+        expect(new_user.visible_assessments).to contain_exactly(new_hidden_assignment, assignment_visible)
       end
     end
 

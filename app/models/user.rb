@@ -286,7 +286,13 @@ class User < ApplicationRecord
     if self.section_id
       assessments = Assessment.left_outer_joins(:section_due_dates)
                               .where('section_due_dates.section_id': [self.section_id, nil],
-                                     'section_due_dates.is_hidden': [false, nil])
+                                     'section_due_dates.is_hidden': [false, nil],
+                                     is_hidden: false)
+                              .or(Assessment.left_outer_joins(:section_due_dates)
+                                            .where(is_hidden: true,
+                                                   'section_due_dates.section_id': self.section_id,
+                                                   'section_due_dates.is_hidden': false))
+
     end
     return assessments.where(id: assessment_id) if assessment_id
 
