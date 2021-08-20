@@ -11,17 +11,6 @@ header#header {
   padding: 0.25em $dimen-horizontal-nav;
   width: 100%;
 
-  .logo {
-    float: left;
-
-    a {
-      background: transparent asset-url('markus_logo_big@2x.png') no-repeat center center / 90px 30px;
-      display: block;
-      height: 40px;
-      width: 270px;
-    }
-  }
-
   #course,
   #user_info {
     display: table-cell;
@@ -41,6 +30,16 @@ header#header {
   }
 }
 
+.logo {
+  float: left;
+
+  a {
+    background: transparent asset-url('markus_logo_big@2x.png') no-repeat center center / 90px 30px;
+    display: block;
+    height: 40px;
+    width: 270px;
+  }
+}
 
 /* Menus */
 
