@@ -203,8 +203,8 @@ describe AutomatedTestsController do
         it 'should respond with a success' do
           expect(response.status).to eq 200
         end
-        context "when there is a test_group_id specified" do
-          let(:content) { { testers: [{ test_data: [{ extra_info:{ test_group_id:10 } }] }] }.to_json }
+        context 'when there is a test_group_id specified' do
+          let(:content) { { testers: [{ test_data: [{ extra_info: { test_group_id: 10 } }] }] }.to_json }
           it 'should remove the test_group_id' do
             expect(JSON.parse(response.body)['testers'].first['test_data'].first['extra_info']).to eq({})
           end
