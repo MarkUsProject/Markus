@@ -203,6 +203,12 @@ describe AutomatedTestsController do
         it 'should respond with a success' do
           expect(response.status).to eq 200
         end
+        context "when there is a test_group_id specified" do
+          let(:content) { { testers: [{ test_data: [{ extra_info:{ test_group_id:10 } }] }] }.to_json }
+          it 'should remove the test_group_id' do
+            expect(JSON.parse(response.body)['testers'].first['test_data'].first['extra_info']).to eq({})
+          end
+        end
       end
       context 'when the file does not exist' do
         before :each do
@@ -229,7 +235,7 @@ describe AutomatedTestsController do
       context 'a valid json file' do
         let(:file) { fixture_file_upload 'automated_tests/valid_json.json' }
         it 'should upload the file content' do
-          expect(File.read(assignment.autotest_settings_file)).to eq file.read
+          expect(File.read(assignment.autotest_settings_file)).to eq file.read.strip
         end
         it 'should return a success http status' do
           expect(response.status).to eq 200

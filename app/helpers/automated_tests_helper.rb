@@ -1,7 +1,7 @@
 module AutomatedTestsHelper
   def extra_test_group_schema(assignment)
-    criterion_names, criterion_ids = assignment.ta_criteria.map do |c|
-      [c.name, c.id]
+    criterion_names, criterion_identifiers = assignment.ta_criteria.map do |c|
+      [c.name, "#{c.type}:#{c.name}"]
     end.transpose
     { type: :object,
       properties: {
@@ -19,7 +19,7 @@ module AutomatedTestsHelper
         },
         criterion: {
           type: :string,
-          enum: criterion_ids || [],
+          enum: criterion_identifiers || [],
           enumNames: criterion_names || [],
           title: Criterion.model_name.human
         }
@@ -38,10 +38,13 @@ module AutomatedTestsHelper
     test_specs_path = assignment.autotest_settings_file
     # create/modify test groups based on the autotest specs
     test_group_ids = []
-    test_specs['testers'].each do |tester_specs|
+    criteria_map = assignment.ta_criteria.pluck(:type, :name, :id).map do |type, name, id_|
+      ["#{type}:#{name}", id_]
+    end.to_h
+    test_specs['testers']&.each do |tester_specs|
       next if tester_specs['test_data'].nil?
 
-      tester_specs['test_data'].each do |test_group_specs|
+      tester_specs['test_data']&.each do |test_group_specs|
         test_group_specs['extra_info'] ||= {}
         extra_data_specs = test_group_specs['extra_info']
         test_group_id = extra_data_specs['test_group_id']
@@ -49,7 +52,7 @@ module AutomatedTestsHelper
         test_group_name = extra_data_specs['name'] || TestGroup.model_name.human
         criterion_id = nil
         unless extra_data_specs['criterion'].nil?
-          criterion_id = extra_data_specs['criterion']
+          criterion_id = criteria_map[extra_data_specs['criterion']]
         end
         fields = { assignment: assignment, name: test_group_name, display_output: display_output,
                    criterion_id: criterion_id }
