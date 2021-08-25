@@ -3,9 +3,6 @@
   <%= javascript_include_tag 'Results/main', nonce: true %>
   <%= stylesheet_link_tag 'result_main' %>
   <%= stylesheet_pack_tag 'result' %>
-  <%= render partial: 'shared/navigation_warning',
-             formats: [:js],
-             handlers: [:erb] %>
 
   <%= javascript_tag nonce: true do %>
     pdfjs.GlobalWorkerOptions.workerSrc = '<%= asset_pack_path('pdf.js') %>';
