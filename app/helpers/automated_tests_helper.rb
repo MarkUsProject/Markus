@@ -53,6 +53,10 @@ module AutomatedTestsHelper
         criterion_id = nil
         unless extra_data_specs['criterion'].nil?
           criterion_id = criteria_map[extra_data_specs['criterion']]
+          if criterion_id.nil?
+            type, name = extra_data_specs['criterion'].split(':')
+            flash_message(:warning, I18n.t('automated_tests.no_criteria', type: type, name: name))
+          end
         end
         fields = { assignment: assignment, name: test_group_name, display_output: display_output,
                    criterion_id: criterion_id }
