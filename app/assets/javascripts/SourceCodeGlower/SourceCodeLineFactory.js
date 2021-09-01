@@ -8,6 +8,6 @@
 
 function SourceCodeLineFactory() {}
 
-SourceCodeLineFactory.prototype.build = function(node) {
+SourceCodeLineFactory.prototype.build = function (node) {
   return new SyntaxHighlighter1p5Line(node);
-}
+};

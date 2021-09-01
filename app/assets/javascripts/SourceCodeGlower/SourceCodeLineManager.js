@@ -24,11 +24,11 @@ function SourceCodeLineManager(adapter, line_factory, empty_collection) {
 
 // Given a DOM node, see if it's one of the DOM nodes representing the source code,
 // and if so, return it's line number. If not, return -1.
-SourceCodeLineManager.prototype.getLineNumber = function(line_node) {
+SourceCodeLineManager.prototype.getLineNumber = function (line_node) {
   return this.collection.getLineNumOfNode(line_node) + 1;
-}
+};
 
 // Return the Source Code Line at line_num
-SourceCodeLineManager.prototype.getLine = function(line_num) {
+SourceCodeLineManager.prototype.getLine = function (line_num) {
   return this.collection.get(line_num);
-}
+};

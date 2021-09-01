@@ -1,27 +1,26 @@
-import React from 'react';
-import Modal from 'react-modal';
+import React from "react";
+import Modal from "react-modal";
 
 class SubmissionFileUploadModal extends React.Component {
-
   constructor(props) {
     super(props);
     this.state = {
       newFiles: [],
-      unzip: false
+      unzip: false,
     };
   }
 
   componentDidMount() {
-    Modal.setAppElement('body');
+    Modal.setAppElement("body");
   }
 
-  onSubmit = (event) => {
+  onSubmit = event => {
     event.preventDefault();
     this.props.onSubmit(this.state.newFiles, this.state.unzip);
   };
 
-  handleFileUpload = (event) => {
-    this.setState({newFiles: event.target.files})
+  handleFileUpload = event => {
+    this.setState({newFiles: event.target.files});
   };
 
   toggleUnzip = () => {
@@ -35,30 +34,36 @@ class SubmissionFileUploadModal extends React.Component {
         isOpen={this.props.isOpen}
         onRequestClose={this.props.onRequestClose}
       >
-        <h2>{I18n.t('upload')}</h2>
+        <h2>{I18n.t("upload")}</h2>
         <form onSubmit={this.onSubmit}>
-          <div className={'modal-container-vertical'}>
+          <div className={"modal-container-vertical"}>
             <div>
-              <label htmlFor='unzip'>
+              <label htmlFor="unzip">
                 <input
-                  type={'checkbox'}
-                  id={'unzip'}
-                  name={'unzip'}
+                  type={"checkbox"}
+                  id={"unzip"}
+                  name={"unzip"}
                   checked={this.state.unzip}
                   onChange={this.toggleUnzip}
-                /> {I18n.t('modals.file_upload.unzip')}
+                />{" "}
+                {I18n.t("modals.file_upload.unzip")}
               </label>
             </div>
-            <div className={'modal-container'}>
-              <input type={'file'} name={'new_files'} multiple={true} onChange={this.handleFileUpload}/>
+            <div className={"modal-container"}>
+              <input
+                type={"file"}
+                name={"new_files"}
+                multiple={true}
+                onChange={this.handleFileUpload}
+              />
             </div>
-            <div className={'modal-container'}>
-              <input type='submit' value={I18n.t('save')} />
+            <div className={"modal-container"}>
+              <input type="submit" value={I18n.t("save")} />
             </div>
           </div>
         </form>
       </Modal>
-    )
+    );
   }
 }
 

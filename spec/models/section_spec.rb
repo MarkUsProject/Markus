@@ -103,4 +103,3 @@ describe Section do
     end
   end
 end
-

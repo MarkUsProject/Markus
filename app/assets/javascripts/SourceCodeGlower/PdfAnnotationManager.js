@@ -1,12 +1,12 @@
 // Class: PdfAnnotationManager
-(function(window) {
-  'use strict';
+(function (window) {
+  "use strict";
 
-  var $ = jQuery;         // Rebind
-  var MOUSE_OFFSET = 10;  // The offset from the mouse cursor point
+  var $ = jQuery; // Rebind
+  var MOUSE_OFFSET = 10; // The offset from the mouse cursor point
 
   // CONSTANTS
-  var HIDE_BOX_THRESHOLD = 5;   // Threshold for not displaying selection box in pixels
+  var HIDE_BOX_THRESHOLD = 5; // Threshold for not displaying selection box in pixels
   var COORDINATE_PRECISION = 5; // Keep 5 decimal places (used when converting back from ints)
   var COORDINATE_MULTIPLIER = Math.pow(10, COORDINATE_PRECISION);
 
@@ -26,10 +26,10 @@
     this.angle = 0; //current orientation of the PDF
 
     /** @type {<page> : {[id]: {annotation: AnnotationText, coords: Object}} */
-    this.annotationsByPageNumber = {};       // Lookup of annotations by page number
-    this.annotationsById = {};               // Lookup of annotations by annotation id
+    this.annotationsByPageNumber = {}; // Lookup of annotations by page number
+    this.annotationsById = {}; // Lookup of annotations by annotation id
     this.annotationsByAnnotationTextId = {}; // Lookup of annotations by annotation text id
-    this.annotationControls = {};            // DOM elements added for annotations
+    this.annotationControls = {}; // DOM elements added for annotations
 
     /** @type {{page: int, $control: jQuery}} */
     this.selectionBox = {};
@@ -56,7 +56,7 @@
    * @return {{x: number, y:number}}  The relative point in the element the event occurred in.
    */
   function getRelativePointForMouseEvent(ev, relativeTo, mouseOffset) {
-    var $elem = (relativeTo ? $(relativeTo) : $(ev.delegateTarget));
+    var $elem = relativeTo ? $(relativeTo) : $(ev.delegateTarget);
     var offset = $elem.offset();
 
     var width = $elem.width();
@@ -66,8 +66,8 @@
     var y = ev.pageY - offset.top - (mouseOffset || MOUSE_OFFSET);
 
     return {
-      x: 1 - ((width - x)/width),
-      y: 1 - ((height - y)/height)
+      x: 1 - (width - x) / width,
+      y: 1 - (height - y) / height,
     };
   }
 
@@ -76,14 +76,12 @@
    * @param  {number} pageNumber The page number to get the annotations for
    * @return {{annotation: AnnotationText, coords: Object}[]} Annotation data.
    */
-  PdfAnnotationManager.prototype.getPageAnnotations = function(pageNumber) {
+  PdfAnnotationManager.prototype.getPageAnnotations = function (pageNumber) {
     var pageData = this.annotationsByPageNumber[pageNumber];
     if (!pageData) {
       return []; // No annotations on page
     } else {
-      return $.map(pageData, function(value, key) {
-        return value;
-      });
+      return $.map(pageData, value => value);
     }
   };
 
@@ -94,7 +92,7 @@
    * @param  {PDFView Page} page       The page being rendered.
    * @param  {number}       pageNumber The page number being rendered.
    */
-  PdfAnnotationManager.prototype.onPageRendered = function(page, pageNumber) {
+  PdfAnnotationManager.prototype.onPageRendered = function (page, pageNumber) {
     var annotations = this.getPageAnnotations(pageNumber);
 
     for (var i = 0; i < annotations.length; i++) {
@@ -107,23 +105,26 @@
    * Get a selection for a specific page.
    * @return {{page: {int}, $control: {jQuery}}}
    */
-  PdfAnnotationManager.prototype.getSelectionBox = function($page) {
-    let pageNumber = $page.data('page-number');
+  PdfAnnotationManager.prototype.getSelectionBox = function ($page) {
+    let pageNumber = $page.data("page-number");
 
-    if (this.selectionBox.page === pageNumber && this.selectionBox.$control !== null &&
-        $.contains(document, this.selectionBox.$control[0])) {
+    if (
+      this.selectionBox.page === pageNumber &&
+      this.selectionBox.$control !== null &&
+      $.contains(document, this.selectionBox.$control[0])
+    ) {
       return this.selectionBox;
     } else if (this.selectionBox.$control != null) {
       this.selectionBox.$control.remove(); // Remove old control
     }
 
-    let $control = $('<div />').attr('id', 'sel_box');
-    $control.addClass('annotation-holder-active');
+    let $control = $("<div />").attr("id", "sel_box");
+    $control.addClass("annotation-holder-active");
     $control.hide();
 
     // append $control before the first annotation_holder but after the annotationLayer
     // or else you will be prevented from deleting/editing old annotations
-    let $first_anno = $page.find('.annotation_holder:first');
+    let $first_anno = $page.find(".annotation_holder:first");
 
     if ($first_anno.length) {
       $control.insertBefore($first_anno);
@@ -133,11 +134,11 @@
 
     this.selectionBox = {
       page: pageNumber,
-      $control: $control
+      $control: $control,
     };
 
     return this.selectionBox;
-  }
+  };
 
   /**
    * Update and redraw the selection box.
@@ -145,17 +146,17 @@
    * @param {jQuery}                $page   The page the control is for.
    * @param {{x, y, width, height, visible}} params  Values to update
    */
-  PdfAnnotationManager.prototype.setSelectionBox = function($page, params) {
+  PdfAnnotationManager.prototype.setSelectionBox = function ($page, params) {
     if (params) {
       $.extend(this.currentSelection, params);
 
       var $selectionBox = this.getSelectionBox($page).$control;
 
       $selectionBox.css({
-        top: (this.currentSelection.y * 100) + "%",
-        left: (this.currentSelection.x * 100) + "%",
-        width: (this.currentSelection.width * 100) + "%",
-        height: (this.currentSelection.height * 100) + "%"
+        top: this.currentSelection.y * 100 + "%",
+        left: this.currentSelection.x * 100 + "%",
+        width: this.currentSelection.width * 100 + "%",
+        height: this.currentSelection.height * 100 + "%",
       });
 
       $selectionBox.toggle(this.currentSelection.visible);
@@ -168,7 +169,7 @@
    *
    * @return {{x1, y1, x2, y2}} Bounding box (points are in percentages)
    */
-  PdfAnnotationManager.prototype.selectionRectangleAsInts = function() {
+  PdfAnnotationManager.prototype.selectionRectangleAsInts = function () {
     if (!this.currentSelection.visible) {
       return null;
     }
@@ -176,10 +177,16 @@
     return {
       x1: parseInt(this.currentSelection.x * COORDINATE_MULTIPLIER, 10),
       y1: parseInt(this.currentSelection.y * COORDINATE_MULTIPLIER, 10),
-      x2: parseInt((this.currentSelection.x + this.currentSelection.width) * COORDINATE_MULTIPLIER, 10),
-      y2: parseInt((this.currentSelection.y + this.currentSelection.height) * COORDINATE_MULTIPLIER, 10),
-      page: this.selectionBox.page
-    }
+      x2: parseInt(
+        (this.currentSelection.x + this.currentSelection.width) * COORDINATE_MULTIPLIER,
+        10
+      ),
+      y2: parseInt(
+        (this.currentSelection.y + this.currentSelection.height) * COORDINATE_MULTIPLIER,
+        10
+      ),
+      page: this.selectionBox.page,
+    };
   };
 
   /**
@@ -188,13 +195,13 @@
    *
    * @return {{width: {int}, height: {int}}} The selection box size in pixels
    */
-  PdfAnnotationManager.prototype.selectionBoxSize = function() {
+  PdfAnnotationManager.prototype.selectionBoxSize = function () {
     var $box = this.selectionBox.$control;
 
-    return ($box ? {width: $box.width(), height: $box.height()} : {width: 0, height: 0});
-  }
+    return $box ? {width: $box.width(), height: $box.height()} : {width: 0, height: 0};
+  };
 
-  PdfAnnotationManager.prototype.bindPageEvents = function() {
+  PdfAnnotationManager.prototype.bindPageEvents = function () {
     var self = this;
     var $pages = this.getPages();
     var selectionBoxActive = false; // Is the selection box in use
@@ -205,34 +212,31 @@
       onBottom: true,
       threshold: {
         x: 0,
-        y: 0
-      }
-    }
+        y: 0,
+      },
+    };
 
     // Press down, activate the selection box
-    $pages.mousedown(function(ev) {
-      if (ev.which !== 1 && ev.target.id === 'sel_box') return;
+    $pages.mousedown(function (ev) {
+      if (ev.which !== 1 && ev.target.id === "sel_box") {
+        return;
+      }
 
       var point = getRelativePointForMouseEvent(ev);
 
-      if (navigator.userAgent.toLowerCase().indexOf('firefox') > -1) {
+      if (navigator.userAgent.toLowerCase().indexOf("firefox") > -1) {
         if (ev.ctrlKey || ev.metaKey) {
           self.setSelectionBox($(ev.delegateTarget), {
             x: point.x,
             y: point.y,
             width: 0.03,
             height: 0.03,
-            visible: true
+            visible: true,
           });
           var data = get_pdf_annotation_data_with_ids();
-          data['content'] = 'Good!';
-          data['category_id'] = '';
-          $.post(
-            Routes.annotations_path(),
-            data,
-            undefined,
-            'script'
-          );
+          data.content = "Good!";
+          data.category_id = "";
+          $.post(Routes.annotations_path(), data, undefined, "script");
           return;
         }
       }
@@ -241,7 +245,7 @@
         y: point.y,
         width: 0,
         height: 0,
-        visible: true
+        visible: true,
       });
 
       location.threshold = point;
@@ -250,57 +254,59 @@
     });
 
     // Change the selection area
-    $pages.mousemove(function(ev) {
-      if(!selectionBoxActive) { return; }
+    $pages.mousemove(function (ev) {
+      if (!selectionBoxActive) {
+        return;
+      }
 
-      var point = getRelativePointForMouseEvent(ev);  // Mouse position
+      var point = getRelativePointForMouseEvent(ev); // Mouse position
 
       // Cross X Threshold
-      if(location.onRight && point.x < location.threshold.x) {
+      if (location.onRight && point.x < location.threshold.x) {
         location.onRight = false;
         location.threshold.x = self.currentSelection.x;
-      } else if(!location.onRight && point.x > location.threshold.x) {
+      } else if (!location.onRight && point.x > location.threshold.x) {
         location.onRight = true;
         location.threshold.x = point.x;
       }
 
       // Cross Y Threshold
-      if(location.onBottom && point.y < location.threshold.y) {
+      if (location.onBottom && point.y < location.threshold.y) {
         location.onBottom = false;
         location.threshold.y = self.currentSelection.y;
-      } else if(!location.onBottom && point.y > location.threshold.y) {
+      } else if (!location.onBottom && point.y > location.threshold.y) {
         location.onBottom = true;
-        location.threshold.y = point.y
+        location.threshold.y = point.y;
       }
 
       var box = {
-        x1: (location.onRight ? location.threshold.x : point.x),
-        y1: (location.onBottom ? location.threshold.y : point.y),
-        x2: (location.onRight ? point.x : location.threshold.x),
-        y2: (location.onBottom ? point.y : location.threshold.y)
-      }
+        x1: location.onRight ? location.threshold.x : point.x,
+        y1: location.onBottom ? location.threshold.y : point.y,
+        x2: location.onRight ? point.x : location.threshold.x,
+        y2: location.onBottom ? point.y : location.threshold.y,
+      };
 
       self.setSelectionBox($(ev.delegateTarget), {
         x: box.x1,
         y: box.y1,
-        width: (box.x2 - box.x1),
-        height: (box.y2 - box.y1)
+        width: box.x2 - box.x1,
+        height: box.y2 - box.y1,
       });
     });
 
     // Hide the selection box
-    $pages.mouseup(function(ev) {
+    $pages.mouseup(function () {
       var size = self.selectionBoxSize();
 
       // If the box is REALLY small then hide it
-      if(size.width < HIDE_BOX_THRESHOLD && size.height < HIDE_BOX_THRESHOLD) {
+      if (size.width < HIDE_BOX_THRESHOLD && size.height < HIDE_BOX_THRESHOLD) {
         self.hideSelectionBox();
       }
 
       selectionBoxActive = false;
-    })
+    });
 
-    if (navigator.userAgent.toLowerCase().indexOf('firefox') <= -1) {
+    if (navigator.userAgent.toLowerCase().indexOf("firefox") <= -1) {
       $pages.click(function (ev) {
         if (ev.ctrlKey || ev.metaKey) {
           var point = getRelativePointForMouseEvent(ev);
@@ -309,69 +315,63 @@
             y: point.y,
             width: 0.03,
             height: 0.03,
-            visible: true
+            visible: true,
           });
           var data = get_pdf_annotation_data_with_ids();
-          data['content'] = 'Good!';
-          data['category_id'] = '';
+          data.content = "Good!";
+          data.category_id = "";
 
-          $.post(
-            Routes.annotations_path(),
-            data,
-            undefined,
-            'script'
-          );
+          $.post(Routes.annotations_path(), data, undefined, "script");
         }
-      })
+      });
     }
-  }
+  };
 
-  PdfAnnotationManager.prototype.hideSelectionBox = function() {
-    if(this.selectionBox.$control) {
+  PdfAnnotationManager.prototype.hideSelectionBox = function () {
+    if (this.selectionBox.$control) {
       this.selectionBox.$control.hide();
     }
-  }
+  };
 
   /**
    * Get all the div elements for the pages.
    *
    * @return {jQuery} The jQuery object of pages.
    */
-  PdfAnnotationManager.prototype.getPages = function() {
-    return $('.page');
-  }
+  PdfAnnotationManager.prototype.getPages = function () {
+    return $(".page");
+  };
 
   /**
    * Returns the annotation text manager.
    *
    * @return {AnnotationTextManager} Return the annotation text manager.
    */
-  PdfAnnotationManager.prototype.getAnnotationTextManager = function() {
+  PdfAnnotationManager.prototype.getAnnotationTextManager = function () {
     return this.annotationTextManager;
-  }
+  };
 
-  PdfAnnotationManager.prototype.getPageContainer = function(pageNum) {
+  PdfAnnotationManager.prototype.getPageContainer = function (pageNum) {
     return $(`.page[data-page-number=${pageNum}]`);
-  }
+  };
 
   /**
    * The following four functions are used to keep track of the orientation of
    * the PDF so we know how to render the annotations.
    */
 
-  PdfAnnotationManager.prototype.rotateClockwise90 = function() {
+  PdfAnnotationManager.prototype.rotateClockwise90 = function () {
     this.angle += 90;
     if (this.angle == 360) this.angle = 0;
-  }
+  };
 
-  PdfAnnotationManager.prototype.resetAngle = function() {
+  PdfAnnotationManager.prototype.resetAngle = function () {
     this.angle = 0;
-  }
+  };
 
-  PdfAnnotationManager.prototype.getAngle = function() {
+  PdfAnnotationManager.prototype.getAngle = function () {
     return this.angle;
-  }
-
+  };
 
   /**
    * Returns the rotated coordinates of the annotation after applying
@@ -380,8 +380,7 @@
    * @param {{x1: int, y1: int, x2: int, y2: int, page: int}}} coords
    * @param {num_rotations} in
    */
-  PdfAnnotationManager.prototype.getRotatedCoords = function(coords, num_rotations) {
-
+  PdfAnnotationManager.prototype.getRotatedCoords = function (coords, num_rotations) {
     var newCoords = {};
     newCoords.x1 = coords.x1;
     newCoords.x2 = coords.x2;
@@ -410,7 +409,7 @@
         break;
     }
     return newCoords;
-  }
+  };
 
   /**
    * Draw the annotation on the screen.
@@ -418,7 +417,7 @@
    * @param {AnnotationText} annotation
    * @param {{x1: int, y1: int, x2: int, y2: int, page: int, annot_id: int}}} coords
    */
-  PdfAnnotationManager.prototype.renderAnnotation = function(annotation, coords) {
+  PdfAnnotationManager.prototype.renderAnnotation = function (annotation, coords) {
     if (this.annotationControls[coords.annot_id]) {
       this.annotationControls[coords.annot_id].remove(); // Remove old controls
     }
@@ -441,13 +440,15 @@
         break;
     }
 
-    var $control = $("<div />").addClass("annotation_holder").css({
-      top: ((newCoords.y1 / COORDINATE_MULTIPLIER) * 100) + "%",
-      left: ((newCoords.x1 / COORDINATE_MULTIPLIER) * 100) + "%",
-      width: (((newCoords.x2 - newCoords.x1) / COORDINATE_MULTIPLIER) * 100) + "%",
-      height: (((newCoords.y2 - newCoords.y1) / COORDINATE_MULTIPLIER) * 100) + "%"
-    });
-    $control.attr('id', 'annotation_holder_' + coords.annot_id);
+    var $control = $("<div />")
+      .addClass("annotation_holder")
+      .css({
+        top: (newCoords.y1 / COORDINATE_MULTIPLIER) * 100 + "%",
+        left: (newCoords.x1 / COORDINATE_MULTIPLIER) * 100 + "%",
+        width: ((newCoords.x2 - newCoords.x1) / COORDINATE_MULTIPLIER) * 100 + "%",
+        height: ((newCoords.y2 - newCoords.y1) / COORDINATE_MULTIPLIER) * 100 + "%",
+      });
+    $control.attr("id", "annotation_holder_" + coords.annot_id);
 
     var $page = this.getPageContainer(coords.page);
 
@@ -457,28 +458,27 @@
     function createTextNode() {
       var text = safe_marked(annotation.getContent());
 
-      return $('<div />').addClass('annotation_text_display')
-                         .html(text);
+      return $("<div />").addClass("annotation_text_display").html(text);
     }
 
-    $control.mousemove(function(ev) {
-      if($textSpan == null) {
+    $control.mousemove(function (ev) {
+      if ($textSpan == null) {
         $textSpan = createTextNode();
         $page.append($textSpan);
-        MathJax.Hub.Queue(['Typeset', MathJax.Hub, $textSpan[0]]);
+        MathJax.Hub.Queue(["Typeset", MathJax.Hub, $textSpan[0]]);
       }
 
       var point = getRelativePointForMouseEvent(ev, $page, -1);
 
       $textSpan.css({
         position: "absolute",
-        left: (point.x * 100) + "%",
-        top: (point.y * 100) + "%"
+        left: point.x * 100 + "%",
+        top: point.y * 100 + "%",
       });
     });
 
-    $control.mouseleave(function(ev) {
-      if($textSpan != null) {
+    $control.mouseleave(function () {
+      if ($textSpan != null) {
         $textSpan.remove();
         $textSpan = null;
       }
@@ -487,7 +487,7 @@
     this.annotationControls[coords.annot_id] = $control;
 
     $page.append($control);
-  }
+  };
 
   /**
    * Add an annotation to the PDF.
@@ -496,7 +496,7 @@
    * @param {string} content            [description]
    * @param {{x1: int, y1: int, x2: int, y2: int, page: int}} coords
    */
-  PdfAnnotationManager.prototype.addAnnotation = function(annotation_text_id, content, coords) {
+  PdfAnnotationManager.prototype.addAnnotation = function (annotation_text_id, content, coords) {
     var annotation_text;
     if (this.getAnnotationTextManager().annotationTextExists(annotation_text_id)) {
       annotation_text = this.getAnnotationTextManager().getAnnotationText(annotation_text_id);
@@ -510,7 +510,7 @@
     // Save annotation location information
     var annotationData = {
       annotation: annotation_text,
-      coords: coords
+      coords: coords,
     };
 
     // Stored using multiple lookups so that there is fast rendering
@@ -518,11 +518,12 @@
     this.annotationsByPageNumber[coords.page] = this.annotationsByPageNumber[coords.page] || {};
     this.annotationsByPageNumber[coords.page][coords.annot_id] = annotationData;
     this.annotationsById[coords.annot_id] = annotationData;
-    this.annotationsByAnnotationTextId[annotation_text.getId()] = this.annotationsByAnnotationTextId[annotation_text.getId()] || {};
+    this.annotationsByAnnotationTextId[annotation_text.getId()] =
+      this.annotationsByAnnotationTextId[annotation_text.getId()] || {};
     this.annotationsByAnnotationTextId[annotation_text.getId()][coords.annot_id] = annotationData;
 
     this.hideSelectionBox();
-  }
+  };
 
   /**
    * Remove an annotation
@@ -530,32 +531,36 @@
    * @param  {Object} range              Ignored
    * @param  {string} annotation_text_id Annotation text id.
    */
-  PdfAnnotationManager.prototype.remove_annotation = function(annotation_id, range, annotation_text_id) {
+  PdfAnnotationManager.prototype.remove_annotation = function (
+    annotation_id,
+    range,
+    annotation_text_id
+  ) {
     var annotationData = this.annotationsById[annotation_id];
 
     // Remove from rendering lookups
-    if (annotationData!=undefined) {
+    if (annotationData != undefined) {
       delete this.annotationsByPageNumber[annotationData.coords.page][annotation_id];
       delete this.annotationsById[annotation_id];
       delete this.annotationsByAnnotationTextId[annotation_text_id][annotation_id];
       this.annotationControls[annotation_id].remove(); // Delete DOM node
     }
 
-
-    if (this.isObjectEmpty(this.annotationsByAnnotationTextId[annotation_text_id])
-        && this.getAnnotationTextManager().annotationTextExists(annotation_text_id)) {
+    if (
+      this.isObjectEmpty(this.annotationsByAnnotationTextId[annotation_text_id]) &&
+      this.getAnnotationTextManager().annotationTextExists(annotation_text_id)
+    ) {
       this.getAnnotationTextManager().removeAnnotationText(annotation_text_id);
     }
-  }
+  };
 
-  PdfAnnotationManager.prototype.isObjectEmpty = function(obj) {
+  PdfAnnotationManager.prototype.isObjectEmpty = function (obj) {
     for (var prop in obj) {
       return false;
     }
     return true;
-  }
+  };
 
   // Exports
   window.PdfAnnotationManager = PdfAnnotationManager;
-
 })(window);
