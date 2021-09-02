@@ -694,7 +694,7 @@ describe SubmissionsController do
         context 'with a section' do
           before(:each) do
             @section = create(:section, name: 's1')
-            @section_due_date = create(:section_due_date, section: @section, assignment: @assignment)
+            @section_due_date = create(:section_due_date, section: @section, assessment: @assignment)
             @student.section = @section
             @student.save
           end

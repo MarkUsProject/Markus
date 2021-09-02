@@ -919,7 +919,7 @@ describe Grouping do
       context 'and a section due date' do
         let(:section) { create :section }
         let!(:section_due_date) do
-          create :section_due_date, assignment: assignment, section: section, due_date: 2.minutes.ago
+          create :section_due_date, assessment: assignment, section: section, due_date: 2.minutes.ago
         end
 
         before :each do
@@ -1002,7 +1002,7 @@ describe Grouping do
     end
     context 'when a section exists' do
       let(:section) { create :section }
-      let(:section_due_date) { create :section_due_date, assignment: assignment, section: section }
+      let(:section_due_date) { create :section_due_date, assessment: assignment, section: section }
       let(:grouping) { create :grouping_with_inviter, assignment: assignment }
       before do
         grouping.inviter.update!(section_id: section.id)
@@ -1064,7 +1064,7 @@ describe Grouping do
         it 'returns false when before section due date' do
           SectionDueDate.create(
             section: @section,
-            assignment: @assignment,
+            assessment: @assignment,
             due_date: Time.zone.parse('July 24 2009 5:00PM')
           )
           submit_file_at_time(@assignment, @group, 'test', 'July 20 2009 5:00PM', 'my_file', 'Hello, World!')
@@ -1074,7 +1074,7 @@ describe Grouping do
         it 'returns false when after section duedate' do
           SectionDueDate.create(
             section: @section,
-            assignment: @assignment,
+            assessment: @assignment,
             due_date: Time.zone.parse('July 18 2009 5:00PM')
           )
           submit_file_at_time(@assignment, @group, 'test', 'July 20 2009 5:00PM', 'my_file', 'Hello, World!')
@@ -1111,7 +1111,7 @@ describe Grouping do
         it 'returns false when before section due_date' do
           SectionDueDate.create(
             section: @section,
-            assignment: @assignment,
+            assessment: @assignment,
             due_date: Time.zone.parse('July 30 2009 5:00PM')
           )
           submit_file_at_time(@assignment, @group, 'test', 'July 28 2009 1:00PM', 'my_file', 'Hello, World!')
@@ -1121,7 +1121,7 @@ describe Grouping do
         it 'returns true when after section due_date' do
           SectionDueDate.create(
             section: @section,
-            assignment: @assignment,
+            assessment: @assignment,
             due_date: Time.zone.parse('July 20 2009 5:00PM')
           )
           submit_file_at_time(@assignment, @group, 'test', 'July 28 2009 1:00PM', 'my_file', 'Hello, World!')

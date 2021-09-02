@@ -53,7 +53,7 @@ describe Section do
           assignment = create(:assignment,
                               due_date: 2.days.from_now,
                               assignment_properties_attributes: { section_due_dates_type: false })
-          section_due_date = SectionDueDate.create!(section: section_5, assignment: assignment)
+          section_due_date = SectionDueDate.create!(section: section_5, assessment: assignment)
 
           expect(section_due_date).to eq(section_5.section_due_date_for(assignment))
         end
