@@ -272,12 +272,10 @@ describe AssignmentPolicy do
     end
     let(:section_due_date) do
       create(:section_due_date, assessment: assignment,
-             section: new_section,
-             due_date: 2.days.from_now,
-             is_hidden: false)
+                                section: new_section,
+                                due_date: 2.days.from_now,
+                                is_hidden: false)
     end
-
-
     context 'when the user is an admin' do
       let(:admin_user) { create(:admin) }
 
@@ -308,7 +306,7 @@ describe AssignmentPolicy do
       succeed 'when visible with section due date and assignment' do
       end
       succeed 'when assignment hidden but section do date ' do
-        before {assignment.update(is_hidden: true)}
+        before { assignment.update(is_hidden: true) }
       end
       failed 'when section due date hidden' do
         before { section_due_date.update(is_hidden: true) }

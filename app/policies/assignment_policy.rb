@@ -18,7 +18,6 @@ class AssignmentPolicy < ApplicationPolicy
     check?(:manage_assessments?, user)
   end
 
-
   def see_hidden?
     user.admin? || user.ta? || user.visible_assessments(assessment_id: record.id).exists?
   end

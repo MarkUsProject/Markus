@@ -331,10 +331,9 @@ describe User do
           new_visible_section_due_date
           expect(new_user.visible_assessments).to contain_exactly(new_hidden_assignment, assignment_visible)
         end
-        end
+      end
       context 'when getting multiple unhidden assignments' do
         let(:new_user) { create :student, section_id: new_section.id }
-
       end
     end
 
