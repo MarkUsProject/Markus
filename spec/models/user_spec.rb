@@ -286,6 +286,8 @@ describe User do
                is_hidden: true
       end
       it 'should return an empty array' do
+        section_due_date_hidden
+        section_due_date_visible
         new_hidden_section_due_date
         expect(new_user.visible_assessments(assessment_id: new_hidden_assignment.id))
           .to be_empty
@@ -305,8 +307,34 @@ describe User do
                is_hidden: false
       end
       it 'does return the list of visible assignments for the section' do
+        section_due_date_hidden
+        section_due_date_visible
         new_visible_section_due_date
         expect(new_user.visible_assessments).to contain_exactly(new_hidden_assignment, assignment_visible)
+      end
+
+      context 'when getting a list of assignments with some nil is_hiddens' do
+        let(:new_user) { create :student, section_id: new_section.id }
+        let(:new_hidden_assignment) do
+          create :assignment,
+                 is_hidden: true,
+                 assignment_properties_attributes: { section_due_dates_type: true }
+        end
+        let(:new_visible_section_due_date) do
+          create :section_due_date,
+                 assessment: new_hidden_assignment,
+                 section: new_section
+        end
+        it 'does return the list of visible assignments for the section' do
+          section_due_date_hidden
+          section_due_date_visible
+          new_visible_section_due_date
+          expect(new_user.visible_assessments).to contain_exactly(new_hidden_assignment, assignment_visible)
+        end
+        end
+      context 'when getting multiple unhidden assignments' do
+        let(:new_user) { create :student, section_id: new_section.id }
+
       end
     end
 

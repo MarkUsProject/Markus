@@ -262,4 +262,57 @@ describe AssignmentPolicy do
       end
     end
   end
+
+  describe_rule :see_hidden? do
+    let(:new_section) { create :section }
+    let(:user) { create :student, section: new_section }
+    let(:assignment) do
+      create(:assignment,
+             assignment_properties_attributes: { section_due_dates_type: false })
+    end
+    let(:section_due_date) do
+      create(:section_due_date, assessment: assignment,
+             section: new_section,
+             due_date: 2.days.from_now,
+             is_hidden: false)
+    end
+
+
+    context 'when the user is an admin' do
+      let(:admin_user) { create(:admin) }
+
+      succeed 'user is an admin' do
+        before { assignment.update(is_hidden: true) }
+        let(:context) { { user: admin_user } }
+      end
+    end
+    context 'when the user is a TA' do
+      let(:ta_user) { create(:ta) }
+      succeed 'user is an admin' do
+        before { assignment.update(is_hidden: true) }
+        let(:context) { { user: ta_user } }
+      end
+    end
+    context 'when there are no section due dates' do
+      succeed 'when the assignment is not hidden' do
+      end
+      failed 'when the assignment is hidden' do
+        before { assignment.update(is_hidden: true) }
+      end
+    end
+    context 'when there are section due dates' do
+      before do
+        assignment.assignment_properties.update(section_due_dates_type: true)
+        section_due_date
+      end
+      succeed 'when visible with section due date and assignment' do
+      end
+      succeed 'when assignment hidden but section do date ' do
+        before {assignment.update(is_hidden: true)}
+      end
+      failed 'when section due date hidden' do
+        before { section_due_date.update(is_hidden: true) }
+      end
+    end
+  end
 end

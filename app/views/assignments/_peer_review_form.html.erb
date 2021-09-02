@@ -69,6 +69,14 @@
             &nbsp; (<%= t('assignments.form.section_due_dates_option') %>)
           </span>
         <% end %>
+        <%= f.label :is_hidden, Assignment.human_attribute_name(:is_hidden) %>
+        <span>
+          <%= f.label :is_hidden, I18n.t('assignments.section_hidden.hidden') %>
+          <%= f.radio_button :is_hidden, true, checked: true %>
+          <%= f.label :is_hidden, I18n.t('assignments.section_hidden.visible') %>
+          <%= f.radio_button :is_hidden, false %>
+          (<%= I18n.t('assignments.section_hidden.hidden_option') %>)
+        </span>
       </div>
       <% unless @sections.empty? %>
         <div id='section_due_dates_information'
@@ -82,6 +90,7 @@
               <tr>
                 <th><%= Section.model_name.human %></th>
                 <th><%= Assignment.human_attribute_name(:due_date) %></th>
+                <th><%= I18n.t('assignments.section_hidden.hidden') %></th>
               </tr>
               </thead>
               <tbody>
@@ -98,6 +107,14 @@
                                                 obj.due_date.strftime(
                                                   '%Y-%m-%d %l:%M %p') %>
                   </td>
+                  <td>
+                    <%= due_date_f.label :is_hidden, I18n.t('assignments.section_hidden.default') %>
+                    <%= due_date_f.radio_button :is_hidden, '', checked: true %>
+                    <%= due_date_f.label :is_hidden, I18n.t('assignments.section_hidden.visible') %>
+                    <%= due_date_f.radio_button :is_hidden, false %>
+                    <%= due_date_f.label :is_hidden, I18n.t('assignments.section_hidden.hidden') %>
+                    <%= due_date_f.radio_button :is_hidden, true %>
+                  </td>
                 </tr>
               <% end %>
               </tbody>
@@ -106,13 +123,6 @@
         </div>
       <% end %>
 
-      <fieldset class='no-legend'>
-        <div class='inline-labels'>
-          <%= f.label :is_hidden, Assignment.human_attribute_name(:is_hidden) %>
-          <%= f.check_box :is_hidden %>
-        </div>
-      </fieldset>
-    </fieldset>
 
     <%# Group properties %>
     <fieldset>

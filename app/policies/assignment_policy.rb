@@ -4,6 +4,7 @@ class AssignmentPolicy < ApplicationPolicy
   alias_rule :summary?, to: :view?
   alias_rule :stop_batch_tests?, :batch_runs?, :stop_test?, to: :manage_tests?
   alias_rule :show?, :peer_review?, to: :student?
+  authorize :assessment, optional: true
 
   def index?
     true
@@ -15,6 +16,11 @@ class AssignmentPolicy < ApplicationPolicy
 
   def manage?
     check?(:manage_assessments?, user)
+  end
+
+
+  def see_hidden?
+    user.admin? || user.ta? || user.visible_assessments(assessment_id: record.id).exists?
   end
 
   # helper policies

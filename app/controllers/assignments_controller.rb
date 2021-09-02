@@ -15,7 +15,7 @@ class AssignmentsController < ApplicationController
   def show
     assignment = Assignment.find(params[:id])
     @assignment = assignment.is_peer_review? ? assignment.parent_assignment : assignment
-    unless current_user.visible_assessments(assessment_id: assignment.id).exists?
+    unless allowed_to?(:see_hidden?)
       render 'shared/http_status',
              formats: [:html],
              locals: {
@@ -62,7 +62,7 @@ class AssignmentsController < ApplicationController
   def peer_review
     assignment = Assignment.find(params[:id])
     @assignment = assignment.is_peer_review? ? assignment : assignment.pr_assignment
-    unless @assignment.nil? || current_user.visible_assessments(assessment_id: assignment.id).exists?
+    unless @assignment.nil? || allowed_to?(:see_hidden?)
       render 'shared/http_status',
              formats: [:html],
              locals: {
@@ -122,7 +122,7 @@ class AssignmentsController < ApplicationController
       @a_id_results = {}
       accepted_groupings = current_user.accepted_groupings.includes(:assignment, { current_submission_used: :results })
       accepted_groupings.each do |grouping|
-        if current_user.visible_assessments(assessment_id: grouping.assignment.id).exists? && grouping.has_submission?
+        if allowed_to?(:see_hidden?, grouping.assignment) && grouping.has_submission?
           submission = grouping.current_submission_used
           if submission.has_remark? && submission.remark_result.released_to_students
             @a_id_results[grouping.assignment.id] = submission.remark_result
@@ -134,7 +134,7 @@ class AssignmentsController < ApplicationController
 
       @g_id_entries = {}
       current_user.grade_entry_students.where(released_to_student: true).includes(:grade_entry_form).each do |g|
-        if current_user.visible_assessments(assessment_id: g.grade_entry_form.id).exists?
+        if allowed_to?(:see_hidden?, g.grade_entry_form)
           @g_id_entries[g.assessment_id] = g
         end
       end
@@ -683,7 +683,8 @@ class AssignmentsController < ApplicationController
         :id,
         :section_id,
         :due_date,
-        :start_time
+        :start_time,
+        :is_hidden
       ],
       assignment_files_attributes:  [
         :_destroy,

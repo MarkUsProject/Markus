@@ -26,6 +26,12 @@ pt:
         required_files: UPDATE ME
         submission_rules: UPDATE ME
     hidden: "%{assignment_text} (oculto)"
+    section_hidden:
+      hidden: UPDATE ME
+      default: UPDATE ME
+      visible: UPDATE ME
+      hidden: UPDATE ME
+      hidden_option: UPDATE ME
     manage_course_work: Gerenciar trabalho do curso
     marking_scheme: 'Esquema de avalição: %{identifier}'
     no_required_files: Não há arquivos exigidos para esse projeto.

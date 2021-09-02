@@ -26,6 +26,12 @@ fr:
         required_files: UPDATE ME
         submission_rules: UPDATE ME
     hidden: "%{assignment_text} (masqué)"
+    section_hidden:
+      hidden: UPDATE ME
+      default: UPDATE ME
+      visible: UPDATE ME
+      hidden: UPDATE ME
+      hidden_option: UPDATE ME
     manage_course_work: Gestion du cours
     marking_scheme: 'Barème: %{identifier}'
     no_required_files: Aucun fichier n'est requis pour ce projet.
