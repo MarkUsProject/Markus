@@ -1,30 +1,29 @@
-import React from 'react';
-import Modal from 'react-modal';
+import React from "react";
+import Modal from "react-modal";
 
 class CollectSubmissionsModal extends React.Component {
-
   static defaultProps = {
-    override: false
+    override: false,
   };
 
   constructor(props) {
     super(props);
     this.state = {
-      override: this.props.override
+      override: this.props.override,
     };
   }
 
   componentDidMount() {
-    Modal.setAppElement('body');
+    Modal.setAppElement("body");
   }
 
-  onSubmit = (event) => {
+  onSubmit = event => {
     event.preventDefault();
     this.props.onSubmit(this.state.override);
   };
 
-  handleOverrideChange = (event) => {
-    this.setState({override: event.target.checked})
+  handleOverrideChange = event => {
+    this.setState({override: event.target.checked});
   };
 
   render() {
@@ -34,28 +33,28 @@ class CollectSubmissionsModal extends React.Component {
         isOpen={this.props.isOpen}
         onRequestClose={this.props.onRequestClose}
       >
-        <h2>
-          {I18n.t('submissions.collect.submit')}
-        </h2>
+        <h2>{I18n.t("submissions.collect.submit")}</h2>
         <form onSubmit={this.onSubmit}>
-          <div className={'modal-container-vertical'}>
-            <p>
-              {I18n.t('submissions.collect.results_loss_warning')}
-            </p>
+          <div className={"modal-container-vertical"}>
+            <p>{I18n.t("submissions.collect.results_loss_warning")}</p>
             <p>
               <label>
-                <input type="checkbox" name="override" onChange={this.handleOverrideChange}/>
+                <input type="checkbox" name="override" onChange={this.handleOverrideChange} />
                 &nbsp;
-                <span dangerouslySetInnerHTML={{__html: I18n.t('submissions.collect.override_existing_html')}} />
+                <span
+                  dangerouslySetInnerHTML={{
+                    __html: I18n.t("submissions.collect.override_existing_html"),
+                  }}
+                />
               </label>
             </p>
-            <section className={'modal-container dialog-actions'}>
-              <input type='submit' value={I18n.t('submissions.collect.submit')} />
+            <section className={"modal-container dialog-actions"}>
+              <input type="submit" value={I18n.t("submissions.collect.submit")} />
             </section>
           </div>
         </form>
       </Modal>
-    )
+    );
   }
 }
 

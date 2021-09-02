@@ -8,23 +8,29 @@
 
 /** Helper functions for managing DOM elements' classes via pure JavaScript. */
 
-Element.prototype.addClass = function(className) {
-  if (this.classList)
+Element.prototype.addClass = function (className) {
+  if (this.classList) {
     this.classList.add(className);
-  else
-    this.className += ' ' + className;
-}
+  } else {
+    this.className += " " + className;
+  }
+};
 
-Element.prototype.removeClass = function(className) {
-  if (this.classList)
+Element.prototype.removeClass = function (className) {
+  if (this.classList) {
     this.classList.remove(className);
-  else
-    this.className = this.className.replace(new RegExp('(^|\\b)' + className.split(' ').join('|') + '(\\b|$)', 'gi'), ' ');
-}
+  } else {
+    this.className = this.className.replace(
+      new RegExp("(^|\\b)" + className.split(" ").join("|") + "(\\b|$)", "gi"),
+      " "
+    );
+  }
+};
 
-Element.prototype.hasClass = function(className) {
-  if (this.classList)
+Element.prototype.hasClass = function (className) {
+  if (this.classList) {
     return this.classList.contains(className);
-  else
-    return new RegExp('(^| )' + className + '( |$)', 'gi').test(this.className);
-}
+  } else {
+    return new RegExp("(^| )" + className + "( |$)", "gi").test(this.className);
+  }
+};

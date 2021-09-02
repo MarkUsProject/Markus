@@ -13,5 +13,3 @@ class SectionDueDate < ApplicationRecord
   end
 
 end
-
-

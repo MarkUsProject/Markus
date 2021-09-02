@@ -4,8 +4,8 @@
 
 #peer_reviews {
   display: block;
-  width: 100%;
   padding-bottom: 10px;
+  width: 100%;
 }
 
 #peer_review_selector_label {
@@ -15,13 +15,13 @@
 }
 
 #peer_review_selector {
-  margin-top: 7px;
   margin-left: 20px;
+  margin-top: 7px;
 }
 
 #original_result_link {
-  margin-left: 20px;
   font-size: 14px;
+  margin-left: 20px;
 }
 
 /* Panes content (for controlling the heights) */
@@ -57,9 +57,9 @@
 
   li {
     border-bottom: 1px solid $background-support;
+    display: inline-block;
     padding: 5px;
     width: 100%;
-    display: inline-block;
   }
 
   .unassigned {
@@ -156,7 +156,7 @@
   padding-right: 10px;
   text-align: right;
 
-  input[type=text] {
+  input[type='text'] {
     font-weight: bold;
     padding-right: 0.5em;
     text-align: right;
@@ -181,7 +181,7 @@
     padding-right: 0.5em;
   }
 
-  input[type=radio] {
+  input[type='radio'] {
     max-width: 20px;
     min-width: 20px;
   }
@@ -193,7 +193,6 @@
   padding-top: 2px;
   text-align: right;
 }
-
 
 /* Resizable column panes */
 
@@ -241,8 +240,8 @@
   }
 
   #left-pane {
-    width: 70%;
     margin-right: 3px;
+    width: 70%;
 
     @include breakpoint(small) {
       margin-bottom: 1em;
@@ -251,8 +250,8 @@
   }
 
   #right-pane {
-    width: 29.5%;
     margin-left: 3px;
+    width: 29.5%;
 
     @include breakpoint(small) {
       padding-left: 0;

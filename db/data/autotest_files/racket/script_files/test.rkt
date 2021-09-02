@@ -28,7 +28,7 @@
        (do-maybe
         (Just 1)))
       (Just 1))
-     
+
      (test-equal?
       "Simple do expression (sample test)"
       (phase1-eval
@@ -37,8 +37,8 @@
         (x2 <- (parse-num "8"))
         (return (+ x1 x2))))
       (Just 12))
-     
-     
+
+
      (test-equal?
       "Simple do expression with Nothing (sample test)"
       (phase1-eval
@@ -101,7 +101,7 @@
                     (x2 <- (Just 10))
                     (Just (+ x1 x2))))
       (Just 12))
-     
+
      (test-equal?
       "Using let to bind a pure value (sample test)"
       (phase1-eval (do-maybe

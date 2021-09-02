@@ -1,63 +1,72 @@
-import React from 'react';
-import {render} from 'react-dom';
+import React from "react";
+import {render} from "react-dom";
 
-import ReactTable from 'react-table';
+import ReactTable from "react-table";
 
 class OneTimeAnnotationsTable extends React.Component {
   constructor() {
     super();
     this.state = {
       data: [],
-      loading: true
+      loading: true,
     };
   }
 
-  componentDidMount()  {
+  componentDidMount() {
     this.fetchData();
   }
 
   fetchData = () => {
     $.ajax({
-      url: Routes.uncategorized_annotations_assignment_annotation_categories_path(this.props.assignment_id),
-      dataType: 'json',
+      url: Routes.uncategorized_annotations_assignment_annotation_categories_path(
+        this.props.assignment_id
+      ),
+      dataType: "json",
     }).then(res => {
       this.setState({
         data: res,
-        loading: false
+        loading: false,
       });
     });
   };
 
   editAnnotation = (annot_id, content) => {
     $.ajax({
-      url: Routes.update_annotation_text_assignment_annotation_categories_path(this.props.assignment_id),
-      data:{ content: content, id: annot_id },
+      url: Routes.update_annotation_text_assignment_annotation_categories_path(
+        this.props.assignment_id
+      ),
+      data: {content: content, id: annot_id},
       method: "PUT",
       remote: true,
       dataType: "script",
     }).always(this.fetchData);
   };
 
-  removeAnnotation = (annot_id) => {
+  removeAnnotation = annot_id => {
     $.ajax({
-      url: Routes.destroy_annotation_text_assignment_annotation_categories_path(this.props.assignment_id),
-      data: { id: annot_id },
-      method: 'delete',
+      url: Routes.destroy_annotation_text_assignment_annotation_categories_path(
+        this.props.assignment_id
+      ),
+      data: {id: annot_id},
+      method: "delete",
       remote: true,
-      dataType: 'script'
+      dataType: "script",
     }).then(this.fetchData);
   };
 
   columns = [
     {
-      Header: I18n.t('activerecord.models.group.one'),
-      accessor: 'group_name',
-      id: 'group_name',
+      Header: I18n.t("activerecord.models.group.one"),
+      accessor: "group_name",
+      id: "group_name",
       Cell: row => {
-        let remove_button = <a
-          className="remove-icon"
-          title={I18n.t('delete')}
-          onClick={() => this.removeAnnotation(row.original.id, row.original.result_id)}/>;
+        let remove_button = (
+          <a
+            className="remove-icon"
+            title={I18n.t("delete")}
+            onClick={() => this.removeAnnotation(row.original.id, row.original.result_id)}
+          />
+        );
         if (row.original.result_id) {
           const path = Routes.edit_assignment_submission_result_path(
             this.props.assignment_id,
@@ -67,49 +76,52 @@ class OneTimeAnnotationsTable extends React.Component {
           return (
             <div>
               {remove_button}
-              <a className="alignright" href={path}>{row.original.group_name}</a>
+              <a className="alignright" href={path}>
+                {row.original.group_name}
+              </a>
             </div>
           );
         } else {
           return (
             <div>
               {remove_button}
-              <span className="alignright">
-                {row.original.group_name}
-              </span>
+              <span className="alignright">{row.original.group_name}</span>
             </div>
           );
         }
-      }
+      },
     },
     {
-      Header:  I18n.t('activerecord.attributes.annotation_text.creator'),
-      accessor: 'creator',
-      id: 'creator',
+      Header: I18n.t("activerecord.attributes.annotation_text.creator"),
+      accessor: "creator",
+      id: "creator",
       Cell: row => {
         return <span>{row.original.creator}</span>;
-      }
+      },
     },
     {
-      Header: I18n.t('annotations.last_edited_by'),
-      accessor: 'last_editor',
-      id: 'last_editor',
+      Header: I18n.t("annotations.last_edited_by"),
+      accessor: "last_editor",
+      id: "last_editor",
       Cell: row => {
         return <span>{row.original.last_editor}</span>;
-      }
+      },
     },
     {
-      Header: I18n.t('activerecord.models.annotation_text.one'),
-      accessor: 'content',
-      id: 'content',
+      Header: I18n.t("activerecord.models.annotation_text.one"),
+      accessor: "content",
+      id: "content",
       width: 600,
       Cell: row => {
-        return <AnnotationTextCell
-                  content={row.original.content}
-                  id={row.original.id}
-                  editAnnotation={this.editAnnotation}/>;
-      }
-    }
+        return (
+          <AnnotationTextCell
+            content={row.original.content}
+            id={row.original.id}
+            editAnnotation={this.editAnnotation}
+          />
+        );
+      },
+    },
   ];
 
   render() {
@@ -119,21 +131,20 @@ class OneTimeAnnotationsTable extends React.Component {
         data={this.state.data}
         columns={this.columns}
         filterable
-        defaultSorted={[{id: 'group_name'}]}
+        defaultSorted={[{id: "group_name"}]}
         loading={this.state.loading}
-        noDataText={I18n. t('annotations.empty_uncategorized')}
+        noDataText={I18n.t("annotations.empty_uncategorized")}
       />
     );
   }
 }
-
 
 class AnnotationTextCell extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       editMode: false,
-      content: props.content
+      content: props.content,
     };
   }
 
@@ -148,46 +159,57 @@ class AnnotationTextCell extends React.Component {
     if (this.state.editMode) {
       let save_button = (
         <a
-          className='button inline-button'
+          className="button inline-button"
           onClick={() => {
             if (this.props.content !== this.state.content) {
               this.props.editAnnotation(this.props.id, this.state.content);
             }
             this.setState({editMode: false});
-          }}>
-          {I18n.t('save')}
+          }}
+        >
+          {I18n.t("save")}
         </a>
       );
       let cancel_button = (
         <a
-          className='button inline-button'
-          onClick={() => this.setState({
-            editMode: false,
-            content: this.props.content
-          })
-        }>
-          {I18n.t('cancel')}
+          className="button inline-button"
+          onClick={() =>
+            this.setState({
+              editMode: false,
+              content: this.props.content,
+            })
+          }
+        >
+          {I18n.t("cancel")}
         </a>
       );
       return (
         <div>
-          <input type="textarea"
-                 className="rt-cell-textarea"
-                 defaultValue={this.state.content}
-                 onChange={e => this.setState({content: e.target.value})}/>
+          <input
+            type="textarea"
+            className="rt-cell-textarea"
+            defaultValue={this.state.content}
+            onChange={e => this.setState({content: e.target.value})}
+          />
           <div className={"alignright"}>{save_button}</div>
           <div className={"alignright"}>{cancel_button}</div>
         </div>
       );
     } else {
       let edit_button = (
-        <a className="edit-icon"
-           title={I18n.t('edit')}
-           onClick={() => this.setState({editMode: true})}/>
+        <a
+          className="edit-icon"
+          title={I18n.t("edit")}
+          onClick={() => this.setState({editMode: true})}
+        />
       );
-      return(
+      return (
         <div>
-          <div dangerouslySetInnerHTML={{__html: safe_marked(this.state.content)}}/>
+          <div
+            dangerouslySetInnerHTML={{
+              __html: safe_marked(this.state.content),
+            }}
+          />
           <div className={"alignright"}>{edit_button}</div>
         </div>
       );
@@ -196,5 +218,5 @@ class AnnotationTextCell extends React.Component {
 }
 
 export function makeOneTimeAnnotationsTable(elem, props) {
-    render(<OneTimeAnnotationsTable {...props} />, elem);
-  }
+  render(<OneTimeAnnotationsTable {...props} />, elem);
+}

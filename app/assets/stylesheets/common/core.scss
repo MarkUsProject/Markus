@@ -2,10 +2,9 @@
 @import 'constants';
 @import 'navigation';
 
-
 #about_dialog {
-  width: 50%;
   max-height: 75%;
+  width: 50%;
 
   #about_text {
     max-height: 200px;
@@ -14,8 +13,8 @@
 }
 
 #timeout_imminent_dialog {
-  width: 50%;
   max-height: 75%;
+  width: 50%;
 
   #about_text {
     max-height: 200px;
@@ -24,8 +23,8 @@
 }
 
 #session_expired_dialog {
-  width: 50%;
   max-height: 75%;
+  width: 50%;
 
   #about_text {
     max-height: 200px;
@@ -44,7 +43,7 @@
 
 .image_input {
   background: none;
-  border: none;
+  border: 0;
 }
 
 .ui-datepicker-current {
@@ -59,17 +58,18 @@ textarea {
 }
 
 input[type='radio'] {
-  min-width: 30px;
   max-width: 30px;
+  min-width: 30px;
 }
 
 .required_field {
   color: $severe-error;
 }
 
-label.required::after, th.required::after {
-  content: "*";
+label.required::after,
+th.required::after {
   color: $severe-error;
+  content: '*';
 }
 
 .hidden {
@@ -84,7 +84,6 @@ label.required::after, th.required::after {
   margin: 1.5em 0 1em;
   padding: 0.5em 0.1em;
 }
-
 
 /* Main content */
 
@@ -111,7 +110,6 @@ label.required::after, th.required::after {
   min-height: 90%;
 }
 
-
 /* Title Bar */
 
 .title_bar {
@@ -121,19 +119,19 @@ label.required::after, th.required::after {
 
   span.menu_bar {
     background: none;
-    border: none;
+    border: 0;
     font-size: 1rem;
     font-weight: normal;
 
     &::before {
-      content: "|";
+      content: '|';
     }
   }
 
   input:hover,
   a:hover {
     background: none;
-    border: none;
+    border: 0;
   }
 
   h1,
@@ -154,7 +152,6 @@ label.required::after, th.required::after {
     }
   }
 }
-
 
 /* Help messages */
 
@@ -226,8 +223,8 @@ label.required::after, th.required::after {
 
 .table-filters a,
 .table-filters span {
-  padding-right: 10px;
   font-size: 110%;
+  padding-right: 10px;
 }
 
 /* Text Alignment */
@@ -261,7 +258,6 @@ label.required::after, th.required::after {
 
 // Customize react-table styling
 .ReactTable {
-
   .rt-noData {
     background: $background-support;
     color: $sharp-line;
@@ -429,46 +425,46 @@ label.required::after, th.required::after {
 
 // Styling patches for react-keyed-file-browser
 .fa-trash-o::before {
-  content: asset_url('icons/bin_closed.png');
+  content: asset-url('icons/bin_closed.png');
   vertical-align: middle;
 }
 
 .fa-folder-open-o::before {
-  content: asset_url('icons/folder_page_white.png');
+  content: asset-url('icons/folder_page_white.png');
   vertical-align: middle;
 }
 
 .fa-folder-o::before {
-  content: asset_url('icons/folder.png');
+  content: asset-url('icons/folder.png');
   vertical-align: middle;
 }
 
 .fa-add-file-o::before {
-  content: asset_url('icons/page_white_add.png');
+  content: asset-url('icons/page_white_add.png');
   vertical-align: middle;
 }
 
 .fa-download-file-o::before {
-  content: asset_url('icons/disk.png');
+  content: asset-url('icons/disk.png');
   vertical-align: middle;
 }
 
 .fa-file-o::before {
-  content: asset_url('icons/page_white_text.png');
+  content: asset-url('icons/page_white_text.png');
   vertical-align: middle;
 }
 
 .fa-file-image-o::before {
-  content: asset_url('icons/picture.png');
+  content: asset-url('icons/picture.png');
   vertical-align: middle;
 }
 
 .fa-file-pdf-o::before {
-  content: asset_url('icons/page_white_acrobat.png');
+  content: asset-url('icons/page_white_acrobat.png');
   vertical-align: middle;
 }
 
-div.rendered-react-keyed-file-browser div.action-bar input[type="search"] {
+div.rendered-react-keyed-file-browser div.action-bar input[type='search'] {
   width: 100%;
 }
 

@@ -23,7 +23,7 @@ class CreateModifyAnnotationPanel extends React.Component {
     });
 
     if (value.length < 2) {
-      this.setState({ show_autocomplete: false });
+      this.setState({show_autocomplete: false});
       return;
     }
 
@@ -37,20 +37,21 @@ class CreateModifyAnnotationPanel extends React.Component {
         string: value,
       },
     })
-      .then((res) => {
+      .then(res => {
         if (res.length === 0) {
-          this.setState({ show_autocomplete: false });
+          this.setState({show_autocomplete: false});
           return;
         }
 
-        this.setState({ show_autocomplete: true });
+        this.setState({show_autocomplete: true});
         annotationTextList.innerHTML = "";
-        document.getElementById(
-          "annotation_completion_text"
-        ).innerText = I18n.t("results.annotation.similar_annotations_found", {
-          count: res.length,
-        });
-        res.forEach((elem) => {
+        document.getElementById("annotation_completion_text").innerText = I18n.t(
+          "results.annotation.similar_annotations_found",
+          {
+            count: res.length,
+          }
+        );
+        res.forEach(elem => {
           const annotation = document.createElement("li");
           annotation.setAttribute("key", 1);
           annotation.setAttribute("id", elem.id);
@@ -66,7 +67,7 @@ class CreateModifyAnnotationPanel extends React.Component {
           annotationTextList.appendChild(annotation);
         });
       })
-      .catch((e) => console.error(e));
+      .catch(e => console.error(e));
   };
 
   onModalOpen = () => {
@@ -80,26 +81,22 @@ class CreateModifyAnnotationPanel extends React.Component {
         e.preventDefault();
         var start = this.selectionStart;
         var end = this.selectionEnd;
-        this.value =
-          this.value.substring(0, start) + "  " + this.value.substring(end);
+        this.value = this.value.substring(0, start) + "  " + this.value.substring(end);
         this.selectionStart = this.selectionEnd = start + 2;
       }
     });
 
-    textArea.keyup((e) => {
+    textArea.keyup(e => {
       if (typing_timer) {
         clearTimeout(typing_timer);
       }
       typing_timer = setTimeout(() => this.updateAnnotationCompletion(), 300);
     });
 
-    Mousetrap(document.getElementById("annotation-modal")).bind(
-      "mod+enter",
-      function (e) {
-        e.preventDefault();
-        submitBtn.click();
-      }
-    );
+    Mousetrap(document.getElementById("annotation-modal")).bind("mod+enter", function (e) {
+      e.preventDefault();
+      submitBtn.click();
+    });
 
     updatePreview("new_annotation_content", "annotation_preview");
   };
@@ -127,61 +124,67 @@ class CreateModifyAnnotationPanel extends React.Component {
     MathJax.Hub.Queue(["Typeset", MathJax.Hub, target_id]);
   };
 
-  onSubmit = (event) => {
+  onSubmit = event => {
     event.preventDefault();
-    const { content, category_id, annotation_text_id, change_all } = this.state;
-    this.props.onSubmit({
-      content,
-      category_id,
-      annotation_text_id,
-      annotation_text: {
-        change_all: change_all ? 1 : 0,
-      },
-    }).then(() => {
-      // reset defaults
-      this.setState({
-        content: this.props.content,
-        category_id: this.props.category_id,
-        show_autocomplete: false,
-        annotation_text_id: "",
-        change_all: false
+    const {content, category_id, annotation_text_id, change_all} = this.state;
+    this.props
+      .onSubmit({
+        content,
+        category_id,
+        annotation_text_id,
+        annotation_text: {
+          change_all: change_all ? 1 : 0,
+        },
       })
-    })
+      .then(() => {
+        // reset defaults
+        this.setState({
+          content: this.props.content,
+          category_id: this.props.category_id,
+          show_autocomplete: false,
+          annotation_text_id: "",
+          change_all: false,
+        });
+      });
   };
 
-  handleChange = (event) => {
+  handleChange = event => {
     let name = event.target.name;
     let val = event.target.value;
-    this.setState({ [name]: val });
+    this.setState({[name]: val});
   };
 
-  handleCheckbox = (event) => {
+  handleCheckbox = event => {
     let name = event.target.name;
-    this.setState({ [name]: !this.state[name] });
+    this.setState({[name]: !this.state[name]});
   };
 
-  checkCriterion = (event) => {
+  checkCriterion = event => {
     event.preventDefault();
     this.handleChange(event);
     let val = event.target.value;
     let categories_with_criteria = this.props.categories
-      .filter((category) => category.flexible_criterion_id !== null)
-      .map((category) => category.id);
+      .filter(category => category.flexible_criterion_id !== null)
+      .map(category => category.id);
 
     if (categories_with_criteria.includes(parseInt(val, 10))) {
-      this.setState({ show_deduction_disclaimer: true });
+      this.setState({show_deduction_disclaimer: true});
     } else {
-      this.setState({ show_deduction_disclaimer: false });
+      this.setState({show_deduction_disclaimer: false});
     }
   };
 
   render() {
     let options = [
-      <option key="one_time_annotation" value="">{I18n.t("annotation_categories.one_time_only")}</option>,
+      <option key="one_time_annotation" value="">
+        {I18n.t("annotation_categories.one_time_only")}
+      </option>,
     ];
-    this.props.categories.forEach((category) => {
+    this.props.categories.forEach(category => {
       options.push(
-        <option key={category.id} value={category.id}>{category.annotation_category_name}</option>
+        <option key={category.id} value={category.id}>
+          {category.annotation_category_name}
+        </option>
       );
     });
 
@@ -191,7 +194,7 @@ class CreateModifyAnnotationPanel extends React.Component {
         isOpen={this.props.show}
         onAfterOpen={this.onModalOpen}
         onRequestClose={this.props.onRequestClose}
-        parentSelector={() => document.querySelector('#content')}
+        parentSelector={() => document.querySelector("#content")}
       >
         <div
           id="annotation-modal"
@@ -218,15 +221,8 @@ class CreateModifyAnnotationPanel extends React.Component {
                 </label>
 
                 <div className={this.state.show_autocomplete ? "" : "hidden"}>
-                  <ul
-                    className="tags"
-                    key="annotation_completion"
-                    id="annotation_completion"
-                  >
-                    <li
-                      className="annotation_category"
-                      id="annotation_completion_li"
-                    >
+                  <ul className="tags" key="annotation_completion" id="annotation_completion">
+                    <li className="annotation_category" id="annotation_completion_li">
                       <p id="annotation_completion_text"></p>
                       <div>
                         <ul id="annotation_text_list"></ul>
@@ -270,9 +266,7 @@ class CreateModifyAnnotationPanel extends React.Component {
 
                     <p
                       id="deduction_disclaimer"
-                      className={
-                        this.state.show_deduction_disclaimer ? "" : "hidden"
-                      }
+                      className={this.state.show_deduction_disclaimer ? "" : "hidden"}
                     >
                       {I18n.t("annotations.default_deduction")}
                     </p>
@@ -288,10 +282,7 @@ class CreateModifyAnnotationPanel extends React.Component {
                       checked={this.state.change_all}
                       onChange={this.handleCheckbox}
                     />
-                    <label htmlFor="change_all">
-                      {" "}
-                      {I18n.t("annotations.update_all")}
-                    </label>{" "}
+                    <label htmlFor="change_all"> {I18n.t("annotations.update_all")}</label>{" "}
                   </p>
                 )}
 

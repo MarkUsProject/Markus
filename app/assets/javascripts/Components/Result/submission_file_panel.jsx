@@ -1,11 +1,10 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
+import React from "react";
+import ReactDOM from "react-dom";
 
-import { AnnotationManager } from './annotation_manager';
-import { FileViewer } from './file_viewer';
-import { DownloadSubmissionModal } from './download_submission_modal';
-import { lookup } from 'mime-types';
-
+import {AnnotationManager} from "./annotation_manager";
+import {FileViewer} from "./file_viewer";
+import {DownloadSubmissionModal} from "./download_submission_modal";
+import {lookup} from "mime-types";
 
 export class SubmissionFilePanel extends React.Component {
   constructor(props) {
@@ -13,7 +12,7 @@ export class SubmissionFilePanel extends React.Component {
     this.state = {
       selectedFile: null,
       focusLine: null,
-      annotationFocus: undefined
+      annotationFocus: undefined,
     };
     this.submissionFileViewer = React.createRef();
   }
@@ -22,33 +21,39 @@ export class SubmissionFilePanel extends React.Component {
     // TODO: remove this binding.
     window.submissionFilePanel = this;
 
-    this.modalDownload = new ModalMarkus('#download_dialog');
+    this.modalDownload = new ModalMarkus("#download_dialog");
     this.refreshSelectedFile();
   }
 
   componentDidUpdate(prevProps) {
-    if (prevProps.result_id !== this.props.result_id || (prevProps.loading && !this.props.loading)) {
+    if (
+      prevProps.result_id !== this.props.result_id ||
+      (prevProps.loading && !this.props.loading)
+    ) {
       this.refreshSelectedFile();
     }
   }
 
   refreshSelectedFile = () => {
-    if (localStorage.getItem('assignment_id') !== String(this.props.assignment_id)) {
-      localStorage.removeItem('file');
+    if (localStorage.getItem("assignment_id") !== String(this.props.assignment_id)) {
+      localStorage.removeItem("file");
     }
-    localStorage.setItem('assignment_id', this.props.assignment_id);
+    localStorage.setItem("assignment_id", this.props.assignment_id);
 
     let selectedFile = [];
-    const stored_file = localStorage.getItem('file');
+    const stored_file = localStorage.getItem("file");
     if (!this.state.student_view && stored_file) {
-      let filepath = stored_file.split('/');
+      let filepath = stored_file.split("/");
       let filename = filepath.pop();
       selectedFile = [stored_file, this.getNamedFileId(this.props.fileData, filepath, filename)];
     }
     if (!selectedFile[1]) {
-      if (this.props.fileData.files.length > 0 || Object.keys(this.props.fileData.directories).length > 0) {
+      if (
+        this.props.fileData.files.length > 0 ||
+        Object.keys(this.props.fileData.directories).length > 0
+      ) {
         // Remove invalid storage entry if this.props.fileData has data and the file was not found.
-        localStorage.removeItem('file');
+        localStorage.removeItem("file");
       }
       selectedFile = this.getFirstFile(this.props.fileData);
     }
@@ -61,18 +66,21 @@ export class SubmissionFilePanel extends React.Component {
           fileData={this.props.fileData}
           initialFile={selectedFile}
           downloadURL={Routes.download_assignment_submission_result_url(
-            this.props.assignment_id, this.props.submission_id, this.props.result_id)}
+            this.props.assignment_id,
+            this.props.submission_id,
+            this.props.result_id
+          )}
         />,
-        document.getElementById('download_dialog_body')
+        document.getElementById("download_dialog_body")
       );
     }
-  }
+  };
 
   getNamedFileId = (fileData, path, filename) => {
     if (!!path.length) {
       let dir = path.shift();
       if (fileData.directories.hasOwnProperty(dir)) {
-        return this.getNamedFileId(fileData.directories[dir], path, filename)
+        return this.getNamedFileId(fileData.directories[dir], path, filename);
       }
     } else {
       for (let file_data of fileData.files) {
@@ -84,9 +92,9 @@ export class SubmissionFilePanel extends React.Component {
     return null;
   };
 
-  getFirstFile = (fileData) => {
+  getFirstFile = fileData => {
     if (fileData.files.length > 0) {
-        return fileData.files[0];
+      return fileData.files[0];
     }
     for (let dir in fileData.directories) {
       if (fileData.directories.hasOwnProperty(dir)) {
@@ -101,8 +109,12 @@ export class SubmissionFilePanel extends React.Component {
   };
 
   selectFile = (file, id, focusLine, annotationFocus) => {
-    this.setState({selectedFile: [file, id], focusLine: focusLine, annotationFocus: annotationFocus});
-    localStorage.setItem('file', file);
+    this.setState({
+      selectedFile: [file, id],
+      focusLine: focusLine,
+      annotationFocus: annotationFocus,
+    });
+    localStorage.setItem("file", file);
   };
 
   // Download the currently-selected file.
@@ -119,53 +131,53 @@ export class SubmissionFilePanel extends React.Component {
     } else {
       submission_file_id = this.state.selectedFile[1];
       submission_file_mime_type = lookup(this.state.selectedFile[0]);
-      visibleAnnotations = this.props.annotations.filter(a => a.submission_file_id === submission_file_id);
+      visibleAnnotations = this.props.annotations.filter(
+        a => a.submission_file_id === submission_file_id
+      );
     }
     return [
-        <div key='annotation_menu' className='react-tabs-panel-action-bar'>
-          <FileSelector
-            fileData={this.props.fileData}
-            onSelectFile={this.selectFile}
-            selectedFile={this.state.selectedFile}
+      <div key="annotation_menu" className="react-tabs-panel-action-bar">
+        <FileSelector
+          fileData={this.props.fileData}
+          onSelectFile={this.selectFile}
+          selectedFile={this.state.selectedFile}
+        />
+        {this.props.canDownload && (
+          <button onClick={() => this.modalDownload.open()}>{I18n.t("download")}</button>
+        )}
+        {this.props.show_annotation_manager && (
+          <AnnotationManager
+            categories={this.props.annotation_categories}
+            newAnnotation={this.props.newAnnotation}
+            addExistingAnnotation={this.props.addExistingAnnotation}
           />
-          {this.props.canDownload &&
-            <button onClick={() => this.modalDownload.open()}>
-              {I18n.t('download')}
-            </button>}
-          {this.props.show_annotation_manager &&
-           <AnnotationManager
-             categories={this.props.annotation_categories}
-             newAnnotation={this.props.newAnnotation}
-             addExistingAnnotation={this.props.addExistingAnnotation}
-           />
-          }
-        </div>,
-        <div key='codeviewer' id='codeviewer'>
-          <FileViewer
-            ref={this.submissionFileViewer}
-            assignment_id={this.props.assignment_id}
-            submission_id={this.props.submission_id}
-            mime_type={submission_file_mime_type}
-            result_id={this.props.result_id}
-            selectedFile={submission_file_id}
-            annotations={visibleAnnotations}
-            focusLine={this.state.focusLine}
-            annotationFocus={this.state.annotationFocus}
-            released_to_students={this.props.released_to_students}
-          />
-        </div>
+        )}
+      </div>,
+      <div key="codeviewer" id="codeviewer">
+        <FileViewer
+          ref={this.submissionFileViewer}
+          assignment_id={this.props.assignment_id}
+          submission_id={this.props.submission_id}
+          mime_type={submission_file_mime_type}
+          result_id={this.props.result_id}
+          selectedFile={submission_file_id}
+          annotations={visibleAnnotations}
+          focusLine={this.state.focusLine}
+          annotationFocus={this.state.annotationFocus}
+          released_to_students={this.props.released_to_students}
+        />
+      </div>,
     ];
   }
 }
-
 
 // Component for the file selector.
 export class FileSelector extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      expanded: null
-    }
+      expanded: null,
+    };
   }
 
   // Convert a nested hash into a nested <ul>.
@@ -174,24 +186,25 @@ export class FileSelector extends React.Component {
     let newExpanded, displayStyle;
     if (expanded === null) {
       newExpanded = null;
-      displayStyle = 'none';
-    } else if (hash['name'] === '') {
+      displayStyle = "none";
+    } else if (hash["name"] === "") {
       newExpanded = expanded;
-      displayStyle = 'block'
+      displayStyle = "block";
     } else {
       newExpanded = expanded.slice(1);
-      displayStyle = hash['name'] === expanded[0] ? 'block' : 'none';
+      displayStyle = hash["name"] === expanded[0] ? "block" : "none";
     }
 
-    for (let d in hash['directories']) {
-      if (hash['directories'].hasOwnProperty(d)) {
-        let dir = hash['directories'][d];
+    for (let d in hash["directories"]) {
+      if (hash["directories"].hasOwnProperty(d)) {
+        let dir = hash["directories"][d];
         dirs.push(
-          <li className='nested-submenu' key={dir.path.join('/')}
-              onClick={(e) => this.selectDirectory(e, dir.path)}>
-            <a key={`${dir.path.join('/')}-a`}>
-              {dir.name}
-            </a>
+          <li
+            className="nested-submenu"
+            key={dir.path.join("/")}
+            onClick={e => this.selectDirectory(e, dir.path)}
+          >
+            <a key={`${dir.path.join("/")}-a`}>{dir.name}</a>
             {this.hashToHTMLList(dir, newExpanded)}
           </li>
         );
@@ -199,16 +212,20 @@ export class FileSelector extends React.Component {
     }
 
     return (
-      <ul className='nested-folder' style={{display: displayStyle}}>
+      <ul className="nested-folder" style={{display: displayStyle}}>
         {dirs}
-        {hash['files'].map(f => {
+        {hash["files"].map(f => {
           const [name, id] = f;
-          const fullPath = hash.path.concat([name]).join('/');
-          return (<li className='file_item' key={fullPath} onClick={(e) => this.selectFile(e, fullPath, id)}>
-            <a key={`${fullPath}-a`}>
-              {f[0]}
-            </a>
-          </li>)
+          const fullPath = hash.path.concat([name]).join("/");
+          return (
+            <li
+              className="file_item"
+              key={fullPath}
+              onClick={e => this.selectFile(e, fullPath, id)}
+            >
+              <a key={`${fullPath}-a`}>{f[0]}</a>
+            </li>
+          );
         })}
       </ul>
     );
@@ -225,7 +242,7 @@ export class FileSelector extends React.Component {
     this.setState({expanded: path});
   };
 
-  expandFileSelector = (path) => {
+  expandFileSelector = path => {
     this.setState({expanded: path});
   };
 
@@ -233,25 +250,25 @@ export class FileSelector extends React.Component {
     const fileSelector = this.hashToHTMLList(this.props.fileData, this.state.expanded);
     let arrow, expand;
     if (this.state.expanded !== null) {
-      arrow = <span className='arrow-up' />;
+      arrow = <span className="arrow-up" />;
       expand = null;
     } else {
-      arrow = <span className='arrow-down' />;
+      arrow = <span className="arrow-down" />;
       expand = [];
     }
     let selectorLabel;
     if (!this.props.fileData.files.length && !Object.keys(this.props.fileData.directories).length) {
-      selectorLabel = I18n.t('submissions.no_files_available');
+      selectorLabel = I18n.t("submissions.no_files_available");
     } else if (this.props.selectedFile !== null) {
       selectorLabel = this.props.selectedFile[0];
     } else {
-      selectorLabel = '';
+      selectorLabel = "";
     }
 
     return (
       <div
-        className='dropdown'
-        onClick={(e) => {
+        className="dropdown"
+        onClick={e => {
           e.stopPropagation();
           this.expandFileSelector(expand);
         }}
@@ -260,10 +277,7 @@ export class FileSelector extends React.Component {
       >
         <a>{selectorLabel}</a>
         {arrow}
-        {this.state.expanded &&
-         <div>
-           {fileSelector}
-         </div>}
+        {this.state.expanded && <div>{fileSelector}</div>}
       </div>
     );
   }

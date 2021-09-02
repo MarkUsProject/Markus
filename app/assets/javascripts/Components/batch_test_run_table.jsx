@@ -1,15 +1,14 @@
-import React from 'react';
-import {render} from 'react-dom';
-import ReactTable from 'react-table';
-import {dateSort} from './Helpers/table_helpers';
+import React from "react";
+import {render} from "react-dom";
+import ReactTable from "react-table";
+import {dateSort} from "./Helpers/table_helpers";
 
 const makeDefaultState = () => ({
   data: [],
-  sorted: [{id: 'created_at', desc: true}],
+  sorted: [{id: "created_at", desc: true}],
   statuses: {},
-  loading: true
+  loading: true,
 });
-
 
 class BatchTestRunTable extends React.Component {
   constructor(props) {
@@ -26,7 +25,7 @@ class BatchTestRunTable extends React.Component {
   fetchData() {
     $.ajax({
       url: Routes.batch_runs_assignment_path(this.props.assignment_id),
-      dataType: 'json',
+      dataType: "json",
     }).then(res => {
       this.processData(res);
     });
@@ -45,26 +44,26 @@ class BatchTestRunTable extends React.Component {
       );
       row.group_name = <a href={result_url}>{row.group_name}</a>;
 
-      if (row.status === "in_progress"){
+      if (row.status === "in_progress") {
         const stop_tests_url = Routes.stop_test_assignment_path(this.props.assignment_id);
         row.action = (
-          <a href={stop_tests_url  + "?test_run_id=" + row.id}>
-            {I18n.t('automated_tests.stop_test')}
+          <a href={stop_tests_url + "?test_run_id=" + row.id}>
+            {I18n.t("automated_tests.stop_test")}
           </a>
         );
         // increment in_progress number for this batch_id
         status[row.test_batch_id].in_progress += 1;
-        row.status = I18n.t('automated_tests.test_runs_statuses.in_progress');
+        row.status = I18n.t("automated_tests.test_runs_statuses.in_progress");
       } else {
-        row.time_to_completion = '';
-        row.action = '';
+        row.time_to_completion = "";
+        row.action = "";
       }
       status[row.test_batch_id].total += 1;
     });
     this.setState({
       data: data,
       statuses: status,
-      loading: false
+      loading: false,
     });
   }
 
@@ -76,29 +75,29 @@ class BatchTestRunTable extends React.Component {
           data={this.state.data}
           columns={[
             {
-              Header: I18n.t('activerecord.attributes.test_batch.created_at'),
-              accessor: 'created_at',
+              Header: I18n.t("activerecord.attributes.test_batch.created_at"),
+              accessor: "created_at",
               minWidth: 120,
               sortMethod: dateSort,
-              PivotValue: ({value}) => value
+              PivotValue: ({value}) => value,
             },
             {
-              Header: I18n.t('activerecord.attributes.group.group_name'),
-              accessor: 'group_name',
+              Header: I18n.t("activerecord.attributes.group.group_name"),
+              accessor: "group_name",
               // If more than one value, show the total number of groups under this pivot
               aggregate: vals => {
-                if (typeof vals[1] === 'undefined') {
+                if (typeof vals[1] === "undefined") {
                   return vals[0];
                 } else {
                   const numGroups = Object.keys(vals).length;
-                  return numGroups + ' ' + I18n.t('activerecord.models.group', {count: numGroups})
+                  return numGroups + " " + I18n.t("activerecord.models.group", {count: numGroups});
                 }
               },
               sortable: true,
             },
             {
-              Header: I18n.t('activerecord.attributes.test_run.status'),
-              accessor: 'status',
+              Header: I18n.t("activerecord.attributes.test_run.status"),
+              accessor: "status",
               minWidth: 70,
               aggregate: (vals, pivots) => {
                 const batch = this.state.statuses[pivots[0].test_batch_id];
@@ -107,54 +106,62 @@ class BatchTestRunTable extends React.Component {
                 } else {
                   const total = batch.total;
                   const complete = total - batch.in_progress;
-                  return `${complete} / ${total} ${I18n.t('poll_job.completed')}`;
+                  return `${complete} / ${total} ${I18n.t("poll_job.completed")}`;
                 }
               },
               sortable: false,
-              Aggregated: row => (
-                <span>
-                  {row.value}
-                </span>
-              )
+              Aggregated: row => <span>{row.value}</span>,
             },
             {
-              Header: I18n.t('actions'),
-              accessor: 'action',
+              Header: I18n.t("actions"),
+              accessor: "action",
               minWidth: 70,
               sortable: false,
               aggregate: (vals, pivots) => {
-                return [pivots[0].test_batch_id, this.state.statuses[pivots[0].test_batch_id], pivots[0].action];
+                return [
+                  pivots[0].test_batch_id,
+                  this.state.statuses[pivots[0].test_batch_id],
+                  pivots[0].action,
+                ];
               },
               Aggregated: row => {
                 if (row.value[1].in_progress > 0) {
                   if (row.value[0] === null) {
                     return row.value[2];
                   } else {
-                    const stop_tests_url = Routes.stop_batch_tests_assignment_path(this.props.assignment_id);
-                    return <span><a href={stop_tests_url + "?test_batch_id=" + row.value[0]}>{I18n.t('automated_tests.stop_batch')}</a></span>;
+                    const stop_tests_url = Routes.stop_batch_tests_assignment_path(
+                      this.props.assignment_id
+                    );
+                    return (
+                      <span>
+                        <a href={stop_tests_url + "?test_batch_id=" + row.value[0]}>
+                          {I18n.t("automated_tests.stop_batch")}
+                        </a>
+                      </span>
+                    );
                   }
                 } else {
-                  return '';
+                  return "";
                 }
-              }
+              },
             },
             {
               // Kept but hidden because status is using it
-              Header: '',
-              accessor: 'test_batch_id',
-              show: false
-            }
+              Header: "",
+              accessor: "test_batch_id",
+              show: false,
+            },
           ]}
-          pivotBy={['created_at']}
+          pivotBy={["created_at"]}
           // Controlled props
           sorted={this.state.sorted}
           // Callbacks
-          onSortedChange={sorted => this.setState({ sorted })}
+          onSortedChange={sorted => this.setState({sorted})}
           // Custom Sort Method to sort by latest batch run
-          defaultSortMethod={ (a, b) => {
+          defaultSortMethod={(a, b) => {
             // sorting for created_at_user_name to ensure it's sorted by date
-            if (this.state.sorted[0].id === 'created_at') {
-              if (typeof a === 'string' && typeof b === 'string') {
+            if (this.state.sorted[0].id === "created_at") {
+              if (typeof a === "string" && typeof b === "string") {
                 let a_date = Date.parse(a);
                 let b_date = Date.parse(b);
                 return a_date > b_date ? 1 : -1;
@@ -171,5 +178,5 @@ class BatchTestRunTable extends React.Component {
 }
 
 export function makeBatchTestRunTable(elem, props) {
-  render(<BatchTestRunTable {...props}/>, elem);
+  render(<BatchTestRunTable {...props} />, elem);
 }

@@ -42,7 +42,6 @@ body {
   margin-left: 10px;
 }
 
-
 /** Code */
 pre,
 .code {
@@ -82,13 +81,11 @@ h4 {
   margin: 0;
 }
 
-
 /** Paragraphs */
 
 p + p {
   margin-bottom: 1.125em;
 }
-
 
 /** Links */
 
@@ -107,7 +104,6 @@ a {
 strong a {
   font-weight: 600;
 }
-
 
 /** Alert messages */
 
@@ -152,7 +148,6 @@ strong a {
   background: $background-main asset-url('icons/information.png') no-repeat 5px center;
   border: 1px solid $line;
 }
-
 
 .hide-flash {
   background: transparent asset-url('icons/cross.png') no-repeat 5px center;
@@ -236,7 +231,6 @@ select {
   padding-left: 5px;
 }
 
-
 /** Buttons */
 
 input[type='button'],
@@ -294,7 +288,6 @@ button,
   }
 }
 
-
 /** Fieldset */
 
 fieldset {
@@ -309,9 +302,9 @@ fieldset {
   }
 
   legend {
-    border: none;
+    border: 0;
 
-    & > span {
+    > span {
       @extend h3;
       padding: 0 0.25em;
     }
@@ -319,14 +312,14 @@ fieldset {
 
   // Fieldsets within fieldsets
   fieldset {
-    border: none;
+    border: 0;
     border-radius: 0;
     border-top: 1px solid $primary-two;
 
     legend {
       width: 100%;
 
-      & > span {
+      > span {
         display: block;
         padding-top: 0.5em;
         position: relative;
@@ -374,7 +367,7 @@ fieldset {
     line-height: 1.8em;
   }
 
-  > input[type=checkbox] {
+  > input[type='checkbox'] {
     margin-top: 0.2em;
   }
 }
@@ -402,23 +395,6 @@ fieldset {
       font-weight: 600;
       text-align: left;
       text-transform: uppercase;
-
-      .sortable-col {
-        background: url(sort_both.png) no-repeat center right;
-      }
-
-      .asc,
-      .desc {
-        cursor: pointer;
-      }
-
-      .asc {
-        background: url(sort_asc.png) no-repeat center right;
-      }
-
-      .desc {
-        background: url(sort_desc.png) no-repeat center right;
-      }
     }
 
     thead {
@@ -440,7 +416,7 @@ fieldset {
         vertical-align: middle;
 
         &:last-child {
-          border-right: none;
+          border-right: 0;
         }
       }
     }
@@ -671,20 +647,20 @@ kbd {
   }
 
   .right {
+    min-height: 33%;
     min-width: 16%;
-    min-height: 33%;
   }
 
-  .left{
+  .left {
     float: left;
-    min-width: 55%;
     min-height: 33%;
+    min-width: 55%;
   }
 
-  .center{
+  .center {
     display: inline-block;
-    min-width: 27%;
     min-height: 33%;
+    min-width: 27%;
   }
 
   ul {
@@ -692,7 +668,7 @@ kbd {
     padding: 0;
 
     li {
-      background: url(handle@2x.png) 0.5em center no-repeat;
+      background: url('handle@2x.png') 0.5em center no-repeat;
       background-size: 12px 20px;
       border-top: 1px solid $line;
       list-style: none;
@@ -750,7 +726,7 @@ ul.tags {
   margin: 0;
   padding: 4px 0 0;
 
-  & > li {
+  > li {
     background-color: $background-main;
     border: 1px solid $primary-one;
     border-radius: $radius;
@@ -853,7 +829,6 @@ ul.tags {
   }
 }
 
-
 /** Dialog modal windows */
 
 .ReactModal__Content {
@@ -878,8 +853,8 @@ ul.tags {
   z-index: 10000 !important;
 
   .dialog-actions {
-    text-align: center;
     margin-top: 1.5em;
+    text-align: center;
 
     button {
       margin: 0.5em;
@@ -909,7 +884,6 @@ ul.tags {
     max-height: 10em;
   }
 }
-
 
 /** Menus */
 
@@ -977,7 +951,6 @@ nav {
   }
 }
 
-
 /** Dropdown menu */
 .arrow-down {
   border-left: 7.5px solid transparent;
@@ -1039,15 +1012,13 @@ nav {
       &:last-child {
         border-radius: 0 0 $radius $radius;
       }
-    }
 
-    li.section {
-      padding: 0.25em;
+      &.section {
+        padding: 0.25em;
+      }
     }
 
     li:not(.section) {
-      transition: all $time-quick;
-
       &:hover,
       &.active {
         background: $sub-menu;
@@ -1127,11 +1098,11 @@ nav {
 }
 
 #image_container {
-  position: relative;  // For image annotations
+  position: relative; // For image annotations
 }
 
 #crop-target {
-  border: 1px solid black;
+  border: 1px solid $gridline;
   max-width: 400px;
 }
 
@@ -1284,9 +1255,8 @@ nav {
 
 // Styling for grade entry form inputs
 .grade-input {
-  > input[type="number"] {
-    -moz-appearance: textfield;
-    -webkit-appearance: textfield;
+  > input[type='number'] {
+    appearance: textfield;
     border-width: 0;
     height: calc(100% + 2px);
     padding-right: 0.75em;
@@ -1332,7 +1302,6 @@ nav {
 canvas {
   image-rendering: crisp-edges;
 }
-
 
 // Styling for summary stats for course_summary_chart.jsx
 .summary-stats {

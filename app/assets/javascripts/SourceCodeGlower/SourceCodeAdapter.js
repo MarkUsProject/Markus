@@ -8,16 +8,16 @@
 function SourceCodeAdapter() {}
 
 // Sets a particular source code line at a line number
-SourceCodeAdapter.prototype.getSourceNodes = function() {
-  throw("SourceCodeAdapter: getSourceNodes not implemented");
-}
+SourceCodeAdapter.prototype.getSourceNodes = function () {
+  throw "SourceCodeAdapter: getSourceNodes not implemented";
+};
 
 // Given some node, trace up the tree until the node that is associated with Source Code Lines is found.
 // This is a workaround for dealing with window.getSelection().anchorNode/focusNode.
-SourceCodeAdapter.prototype.getRootFromSelection = function(some_node) {
-  throw("SourceCodeAdapter: getRootFromSelection not implemented");
-}
+SourceCodeAdapter.prototype.getRootFromSelection = function (some_node) {
+  throw "SourceCodeAdapter: getRootFromSelection not implemented";
+};
 
-SourceCodeAdapter.prototype.applyMods = function() {
-  throw("SourceCodeAdapter: applyMods not implemented");
-}
+SourceCodeAdapter.prototype.applyMods = function () {
+  throw "SourceCodeAdapter: applyMods not implemented";
+};

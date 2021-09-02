@@ -1,6 +1,6 @@
-import React from 'react';
-import {render} from 'react-dom';
-import ReactTable from 'react-table';
+import React from "react";
+import {render} from "react-dom";
+import ReactTable from "react-table";
 
 class NotesTable extends React.Component {
   constructor(props) {
@@ -8,7 +8,7 @@ class NotesTable extends React.Component {
     this.state = {
       notes: [],
       columns: {},
-      loading: true
+      loading: true,
     };
   }
 
@@ -18,7 +18,7 @@ class NotesTable extends React.Component {
 
   fetchData = () => {
     $.get({
-      url: Routes.notes_path({format : 'json'})
+      url: Routes.notes_path({format: "json"}),
     }).then(res => {
       this.setState({
         notes: res,
@@ -29,19 +29,24 @@ class NotesTable extends React.Component {
 
   renderButtons(editable, id) {
     if (editable) {
-      return(
+      return (
         <div>
           <a href={Routes.edit_note_path(id)} className="inline-button button">
-            {I18n.t('edit')}
+            {I18n.t("edit")}
           </a>
 
-          <a href={Routes.note_path(id)} className="inline-button button" data-method="delete" data-confirm={I18n.t('notes.delete.link_confirm')}>
-            {I18n.t('delete')}
+          <a
+            href={Routes.note_path(id)}
+            className="inline-button button"
+            data-method="delete"
+            data-confirm={I18n.t("notes.delete.link_confirm")}
+          >
+            {I18n.t("delete")}
           </a>
         </div>
       );
     } else {
-      return '';
+      return "";
     }
   }
 
@@ -49,48 +54,45 @@ class NotesTable extends React.Component {
     return (
       <React.Fragment>
         <div>
-          {I18n.t('notes.note_on_html',
-            {user_name: this.state.notes[index]['user_name'],
-              display_for: this.state.notes[index]['display_for']})}
+          {I18n.t("notes.note_on_html", {
+            user_name: this.state.notes[index]["user_name"],
+            display_for: this.state.notes[index]["display_for"],
+          })}
         </div>
 
-        <div>
-          {this.state.notes[index]['date']}
-        </div>
+        <div>{this.state.notes[index]["date"]}</div>
       </React.Fragment>
-    )
+    );
   }
-
 
   data() {
     return this.state.notes.map((note, i) => {
       return {
-        'name': this.note_author(i),
-        'message': note['message'],
-        'action': this.renderButtons(note['modifiable'], note['id'])
-      }
-    })
+        name: this.note_author(i),
+        message: note["message"],
+        action: this.renderButtons(note["modifiable"], note["id"]),
+      };
+    });
   }
 
-  columns =  [
+  columns = [
     {
-      Header: I18n.t('activerecord.models.note.other'),
-      accessor: 'name',
+      Header: I18n.t("activerecord.models.note.other"),
+      accessor: "name",
       width: 400,
-      style: { 'whiteSpace': 'unset' }
+      style: {whiteSpace: "unset"},
     },
     {
-      Header: I18n.t('activerecord.attributes.notes.notes_message'),
-      accessor: 'message',
-      style: { 'whiteSpace': 'unset' }
-
+      Header: I18n.t("activerecord.attributes.notes.notes_message"),
+      accessor: "message",
+      style: {whiteSpace: "unset"},
     },
     {
-      Header: I18n.t('actions'),
-      accessor: 'action',
+      Header: I18n.t("actions"),
+      accessor: "action",
       width: 200,
-      mid_width: 100
-    }
+      mid_width: 100,
+    },
   ];
 
   render() {

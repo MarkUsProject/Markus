@@ -1,9 +1,7 @@
-import React from 'react';
-import {render} from 'react-dom';
+import React from "react";
+import {render} from "react-dom";
 
-
-const RAW_TEXT_DIV_ID = 'code';
-
+const RAW_TEXT_DIV_ID = "code";
 
 export class TextViewer extends React.Component {
   constructor() {
@@ -27,9 +25,9 @@ export class TextViewer extends React.Component {
   }
 
   // Generate text view with syntax highlighting and annotations.
-  ready_annotations = (source_id) => {
+  ready_annotations = source_id => {
     // Remove existing syntax highlighted code.
-    $('.dp-highlighter').remove();
+    $(".dp-highlighter").remove();
     dp.SyntaxHighlighter.HighlightAll(source_id);
 
     let font_size = null;
@@ -37,7 +35,7 @@ export class TextViewer extends React.Component {
       font_size = window.syntax_highlighter_adapter.getFontSize();
     }
 
-    window.syntax_highlighter_adapter = new SyntaxHighlighter1p5Adapter($('.dp-highlighter ol')[0]);
+    window.syntax_highlighter_adapter = new SyntaxHighlighter1p5Adapter($(".dp-highlighter ol")[0]);
 
     // Apply modifications to Syntax Highlighter
     window.syntax_highlighter_adapter.applyMods();
@@ -49,9 +47,11 @@ export class TextViewer extends React.Component {
         new SourceCodeLineManager(
           window.syntax_highlighter_adapter,
           new SourceCodeLineFactory(),
-          new SourceCodeLineArray()),
+          new SourceCodeLineArray()
+        ),
         new AnnotationTextManager(),
-        new AnnotationTextDisplayer());
+        new AnnotationTextDisplayer()
+      );
     }
 
     if (font_size !== null) {
@@ -59,12 +59,13 @@ export class TextViewer extends React.Component {
     }
   };
 
-  display_annotation = (annotation) => {
-    let content = '';
+  display_annotation = annotation => {
+    let content = "";
     if (!annotation.deduction) {
       content += annotation.content;
     } else {
-      content += annotation.content + ' [' + annotation.criterion_name + ': -' + annotation.deduction + ']';
+      content +=
+        annotation.content + " [" + annotation.criterion_name + ": -" + annotation.deduction + "]";
     }
     add_annotation_text(annotation.annotation_text_id, content);
     annotation_manager.annotateRange(
@@ -73,14 +74,14 @@ export class TextViewer extends React.Component {
         start: annotation.line_start,
         end: annotation.line_end,
         column_start: annotation.column_start,
-        column_end: annotation.column_end
+        column_end: annotation.column_end,
       },
       annotation.annotation_text_id
     );
   };
 
   componentWillUnmount() {
-    $('.dp-highlighter').remove();
+    $(".dp-highlighter").remove();
   }
 
   render() {
@@ -91,7 +92,6 @@ export class TextViewer extends React.Component {
     );
   }
 }
-
 
 // Scroll to display the given line.
 function scrollToLine(lineNumber) {
