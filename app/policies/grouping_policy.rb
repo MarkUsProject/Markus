@@ -73,10 +73,9 @@ class GroupingPolicy < ApplicationPolicy
   def download_starter_file?
     return false unless user.student?
     return false if record.assignment.is_hidden?
-    #byebug
-    return false if !user.visible_assessments(assessment_id: Assessment.find(record.assessment_id)).exists?
     return false if !record.assignment.starter_files_after_due && record.past_collection_date?
     return true unless record.assignment.is_timed?
+    return true unless !user.visible_assessments(assessment_id: Assessment.find(record.assessment_id)).exists?
 
     !record.start_time.nil? || record.past_collection_date?
   end
