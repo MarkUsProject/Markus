@@ -232,7 +232,8 @@ describe SubmissionRule do
       # ... but the section due date is in the past
       @section = create(:section)
       create(:section_due_date, section: @section,
-             assessment: @assignment, due_date: 2.days.ago)
+                                assessment: @assignment,
+                                due_date: 2.days.ago)
 
       # create a group of one student from this section, for this assignment
       @student = create(:student, section: @section)
