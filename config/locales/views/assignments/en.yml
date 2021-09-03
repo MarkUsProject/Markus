@@ -27,7 +27,6 @@ en:
         submission_rules: Several different late submission policies are available. If Accept no late submissions is selected then students will be warned that their submission will not be graded if they attempt to submit after the deadline.  You may choose to give students some number of Grace credits in the Users view, and you can choose the grace period times here.  The Penalty Decay formula allows you to deduct X marks for every Y time period.  The Penalty Formula allows you to specify both the value of the penalty and the time period. If students are working in a group, grace credits will be deducted from every group member.
     hidden: "%{assignment_text} (hidden)"
     section_hidden:
-      hidden: Hidden for Section
       default: Default
       visible: Visible
       hidden: Hidden

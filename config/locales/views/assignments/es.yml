@@ -27,7 +27,6 @@ es:
         submission_rules: Varias normas de entrega tardía diferentes. Si la opción No se Aceptan Entregas Tardías es seleccionada, los estudiantes serán advertidos de que las entregas no serán calificadas si ellos intentan entregar el proyecto después de la fecha límite. Usted tiene la libertad de dar a sus estudiantes créditos de gracia y los respectivos plazos de tiempo en la página de usuarios. La fórmula de penalidad le permite deducir la relación entre el número X de puntos a ser descontados por cada período de tiempo Y. La fórmula de penalidad le permite especificar el valor de la penalidad y el período de tiempo. Si los estudiantes trabajan en grupo, todos los integrantes del grupo verán sus créditos de gracia reducidos.
     hidden: "%{assignment_text} (oculto)"
     section_hidden:
-      hidden: UPDATE ME
       default: UPDATE ME
       visible: UPDATE ME
       hidden: UPDATE ME

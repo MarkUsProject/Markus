@@ -27,7 +27,6 @@ pt:
         submission_rules: UPDATE ME
     hidden: "%{assignment_text} (oculto)"
     section_hidden:
-      hidden: UPDATE ME
       default: UPDATE ME
       visible: UPDATE ME
       hidden: UPDATE ME
