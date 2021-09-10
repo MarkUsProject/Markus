@@ -74,6 +74,7 @@ Rails.application.routes.draw do
     member do
       get 'download_sample_starter_files'
       get 'download_starter_file_mappings'
+      get 'download_config_file'
       get 'view_summary'
       post 'update_starter_file'
       get 'peer_review'

@@ -550,6 +550,16 @@ class AssignmentsController < ApplicationController
     send_file zip_path, filename: zip_name
   end
 
+  # Downloads a csv file containing all the information and settings about an assignment
+  def download_config_file
+    assignment = Assignment.find(params[:id])
+    config_out = MarkusCsv.generate([])
+    send_data(config_out,
+              type: 'text/csv',
+              filename: "#{assignment.short_identifier}-settings-config.csv",
+              disposition: 'attachment')
+  end
+
   private
 
   def set_repo_vars(assignment, grouping)
