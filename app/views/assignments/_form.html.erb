@@ -115,12 +115,12 @@
         </span>
       </div>
       <% unless @sections.empty? %>
-        <div id='section_due_dates_information'
+        <div id='assessment_section_properties_information'
              class='<%= 'no-display' unless @assignment.section_due_dates_type %>'>
           <p class='information'>
             <%= t('assignments.form.section_due_dates_info_html') %>
           </p>
-          <div class='section_due_date_form table'>
+          <div class='assessment_section_properties_form table'>
             <table>
               <thead>
                 <tr>
@@ -135,15 +135,15 @@
                 </tr>
               </thead>
               <tbody>
-              <%= f.fields_for :section_due_dates,
-                               @section_due_dates do |due_date_f| %>
+              <%= f.fields_for :assessment_section_properties,
+                               @assessment_section_properties do |due_date_f| %>
                 <tr>
                   <% obj = due_date_f.object %>
                   <td><%= obj.section.name %></td>
                   <% if @assignment.is_timed %>
                     <td>
                       <%= due_date_f.text_field :start_time,
-                                                class: 'section_due_date_input',
+                                                class: 'assessment_section_properties_input',
                                                 value: obj.start_time.nil? ? '' :
                                                          obj.start_time.strftime(
                                                            '%Y-%m-%d %l:%M %p') %>
@@ -152,7 +152,7 @@
                   <td>
                     <%= due_date_f.text_field :section_id, class: 'hidden' %>
                     <%= due_date_f.text_field :due_date,
-                                              class: 'section_due_date_input',
+                                              class: 'assessment_section_properties_input',
                                               value: obj.due_date.nil? ? '' :
                                                 obj.due_date.strftime(
                                                   '%Y-%m-%d %l:%M %p') %>

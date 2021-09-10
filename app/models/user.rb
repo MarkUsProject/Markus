@@ -281,13 +281,18 @@ class User < ApplicationRecord
     self.update(api_key: Base64.encode64(md5.to_s).strip)
   end
 
+  # Determine what assessments are visible to the user.
+  # By default, returns all assessments visible to the user.
+  # Optional parameter assessment_type takes values "Assignment" or "GradeEntryForm". "Defaults to Assessment"
+  # Optional parameter assessment_id: if passed an assessment, will return whether the particular assessment
+  # is visible to the user.
   def visible_assessments(assessment_type: nil, assessment_id: nil)
     assessments = Assessment.where(is_hidden: false, type: assessment_type || Assessment.type)
     if self.section_id
-      assessments = Assessment.left_outer_joins(:section_due_dates)
-                              .where('section_due_dates.section_id': [self.section_id, nil])
-      assessments = assessments.where('section_due_dates.is_hidden': false)
-                               .or(assessments.where('section_due_dates.is_hidden': nil,
+      assessments = Assessment.left_outer_joins(:assessment_section_properties)
+                              .where('assessment_section_properties.section_id': [self.section_id, nil])
+      assessments = assessments.where('assessment_section_properties.is_hidden': false)
+                               .or(assessments.where('assessment_section_properties.is_hidden': nil,
                                                      'assessments.is_hidden': false))
     end
     return assessments.where(id: assessment_id) if assessment_id

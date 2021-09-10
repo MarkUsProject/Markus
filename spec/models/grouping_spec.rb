@@ -918,8 +918,8 @@ describe Grouping do
 
       context 'and a section due date' do
         let(:section) { create :section }
-        let!(:section_due_date) do
-          create :section_due_date, assessment: assignment, section: section, due_date: 2.minutes.ago
+        let!(:assessment_section_properties) do
+          create :assessment_section_properties, assessment: assignment, section: section, due_date: 2.minutes.ago
         end
 
         before :each do
@@ -957,12 +957,12 @@ describe Grouping do
 
           context 'with a timed assignment' do
             let(:addition) { 0.seconds }
-            let(:due_date_obj) { section_due_date }
+            let(:due_date_obj) { assessment_section_properties }
             it_behaves_like 'timed assignment due date'
           end
 
           it 'should return the section due date' do
-            expected_due_date = section_due_date.due_date
+            expected_due_date = assessment_section_properties.due_date
             expect(grouping.due_date).to be_within(1.second).of(expected_due_date)
           end
 
@@ -972,12 +972,12 @@ describe Grouping do
             context 'with a timed assignment' do
               let(:extension) { create :extension, grouping: grouping, time_delta: 1.hour }
               let(:addition) { extension.time_delta }
-              let(:due_date_obj) { section_due_date }
+              let(:due_date_obj) { assessment_section_properties }
               it_behaves_like 'timed assignment due date'
             end
 
             it 'should return the section due date plus the extension' do
-              expected_due_date = section_due_date.due_date + extension.time_delta
+              expected_due_date = assessment_section_properties.due_date + extension.time_delta
               expect(grouping.due_date).to be_within(1.second).of(expected_due_date)
             end
           end
@@ -1002,20 +1002,22 @@ describe Grouping do
     end
     context 'when a section exists' do
       let(:section) { create :section }
-      let(:section_due_date) { create :section_due_date, assessment: assignment, section: section }
+      let(:assessment_section_properties) do
+        create :assessment_section_properties, assessment: assignment, section: section
+      end
       let(:grouping) { create :grouping_with_inviter, assignment: assignment }
       before do
         grouping.inviter.update!(section_id: section.id)
         assignment.update!(section_due_dates_type: true)
       end
       context 'when section start time has passed' do
-        before { section_due_date.update! start_time: 1.minute.ago }
+        before { assessment_section_properties.update! start_time: 1.minute.ago }
         it 'should return true' do
           expect(grouping.past_assessment_start_time?).to eq true
         end
       end
       context 'when section start time has not passed' do
-        before { section_due_date.update! start_time: 1.minute.from_now }
+        before { assessment_section_properties.update! start_time: 1.minute.from_now }
         it 'should return false' do
           expect(grouping.past_assessment_start_time?).to eq false
         end
@@ -1062,7 +1064,7 @@ describe Grouping do
         end
 
         it 'returns false when before section due date' do
-          SectionDueDate.create(
+          AssessmentSectionProperties.create(
             section: @section,
             assessment: @assignment,
             due_date: Time.zone.parse('July 24 2009 5:00PM')
@@ -1072,7 +1074,7 @@ describe Grouping do
         end
 
         it 'returns false when after section duedate' do
-          SectionDueDate.create(
+          AssessmentSectionProperties.create(
             section: @section,
             assessment: @assignment,
             due_date: Time.zone.parse('July 18 2009 5:00PM')
@@ -1109,7 +1111,7 @@ describe Grouping do
         end
 
         it 'returns false when before section due_date' do
-          SectionDueDate.create(
+          AssessmentSectionProperties.create(
             section: @section,
             assessment: @assignment,
             due_date: Time.zone.parse('July 30 2009 5:00PM')
@@ -1119,7 +1121,7 @@ describe Grouping do
         end
 
         it 'returns true when after section due_date' do
-          SectionDueDate.create(
+          AssessmentSectionProperties.create(
             section: @section,
             assessment: @assignment,
             due_date: Time.zone.parse('July 20 2009 5:00PM')

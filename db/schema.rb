@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_08_04_184031) do
+ActiveRecord::Schema.define(version: 2021_09_07_163338) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -57,6 +57,14 @@ ActiveRecord::Schema.define(version: 2021_08_04_184031) do
     t.integer "result_id"
     t.index ["creator_type", "creator_id"], name: "index_annotations_on_creator_type_and_creator_id"
     t.index ["submission_file_id"], name: "index_annotations_on_submission_file_id"
+  end
+
+  create_table "assessment_section_properties", id: :serial, force: :cascade do |t|
+    t.datetime "due_date"
+    t.integer "section_id"
+    t.bigint "assessment_id"
+    t.datetime "start_time"
+    t.boolean "is_hidden"
   end
 
   create_table "assessments", id: :serial, force: :cascade do |t|
@@ -398,14 +406,6 @@ ActiveRecord::Schema.define(version: 2021_08_04_184031) do
     t.datetime "remark_request_submitted_at"
     t.integer "peer_review_id"
     t.index ["peer_review_id"], name: "index_results_on_peer_review_id"
-  end
-
-  create_table "section_due_dates", id: :serial, force: :cascade do |t|
-    t.datetime "due_date"
-    t.integer "section_id"
-    t.bigint "assessment_id"
-    t.datetime "start_time"
-    t.boolean "is_hidden"
   end
 
   create_table "section_starter_file_groups", force: :cascade do |t|

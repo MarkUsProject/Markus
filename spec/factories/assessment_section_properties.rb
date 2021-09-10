@@ -1,6 +1,6 @@
 FactoryBot.define do
 
-  factory :section_due_date do
+  factory :assessment_section_properties do
     association :assessment
     association :section
     due_date { 1.minute.from_now }

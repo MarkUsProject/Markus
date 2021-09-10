@@ -62,7 +62,7 @@ class AssignmentsController < ApplicationController
   def peer_review
     assignment = Assignment.find(params[:id])
     @assignment = assignment.is_peer_review? ? assignment : assignment.pr_assignment
-    unless @assignment.nil? || allowed_to?(:see_hidden?)
+    unless @assignment.nil? || !allowed_to?(:see_hidden?)
       render 'shared/http_status',
              formats: [:html],
              locals: {
@@ -162,12 +162,12 @@ class AssignmentsController < ApplicationController
 
     # build section_due_dates for each section that doesn't already have a due date
     Section.all.each do |s|
-      unless SectionDueDate.find_by(assessment_id: @assignment.id, section_id: s.id)
-        @assignment.section_due_dates.build(section: s)
+      unless AssessmentSectionProperties.find_by(assessment_id: @assignment.id, section_id: s.id)
+        @assignment.assessment_section_properties.build(section: s)
       end
     end
-    @section_due_dates = @assignment.section_due_dates
-                                    .sort_by { |s| [SectionDueDate.due_date_for(s.section, @assignment), s.section.name] }
+    @assessment_section_properties = @assignment.assessment_section_properties
+                                    .sort_by { |s| [AssessmentSectionProperties.due_date_for(s.section, @assignment), s.section.name] }
   end
 
   # Called when editing assignments form is submitted (PUT).
@@ -209,8 +209,8 @@ class AssignmentsController < ApplicationController
     @sections = Section.all
 
     # build section_due_dates for each section
-    Section.all.each { |s| @assignment.section_due_dates.build(section: s)}
-    @section_due_dates = @assignment.section_due_dates
+    Section.all.each { |s| @assignment.assessment_section_properties.build(section: s)}
+    @assessment_section_properties = @assignment.assessment_section_properties
                                     .sort_by { |s| s.section.name }
     render :new
   end
@@ -587,7 +587,7 @@ class AssignmentsController < ApplicationController
                          num_files_before != assignment.assignment_files.length
     # if there are no section due dates, destroy the objects that were created
     if ['0', nil].include? params[:assignment][:assignment_properties_attributes][:section_due_dates_type]
-      assignment.section_due_dates.each(&:destroy)
+      assignment.assessment_section_properties.each(&:destroy)
       assignment.section_due_dates_type = false
       assignment.section_groups_only = false
     else
@@ -678,7 +678,7 @@ class AssignmentsController < ApplicationController
         :is_timed,
         :start_time
       ],
-      section_due_dates_attributes: [
+      assessment_section_properties_attributes: [
         :_destroy,
         :id,
         :section_id,

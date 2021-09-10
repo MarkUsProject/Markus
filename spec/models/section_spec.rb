@@ -2,7 +2,7 @@ describe Section do
   it { is_expected.to validate_presence_of(:name) }
   it { is_expected.to validate_uniqueness_of(:name) }
   it { is_expected.to have_many(:students) }
-  it { is_expected.to have_many(:section_due_dates) }
+  it { is_expected.to have_many(:assessment_section_properties) }
 
   it { is_expected.not_to allow_value('A!a.sa').for(:name) }
   it { is_expected.not_to allow_value('<abc').for(:name) }
@@ -53,7 +53,7 @@ describe Section do
           assignment = create(:assignment,
                               due_date: 2.days.from_now,
                               assignment_properties_attributes: { section_due_dates_type: false })
-          section_due_date = SectionDueDate.create!(section: section_5, assessment: assignment)
+          section_due_date = AssessmentSectionProperties.create!(section: section_5, assessment: assignment)
 
           expect(section_due_date).to eq(section_5.section_due_date_for(assignment))
         end

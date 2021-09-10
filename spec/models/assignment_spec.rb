@@ -9,8 +9,8 @@ describe Assignment do
     it { is_expected.to have_many(:submissions).through(:groupings) }
     it { is_expected.to have_many(:groups).through(:groupings) }
     it { is_expected.to have_many(:notes).dependent(:destroy) }
-    it { is_expected.to have_many(:section_due_dates) }
-    it { is_expected.to accept_nested_attributes_for(:section_due_dates) }
+    it { is_expected.to have_many(:assessment_section_properties) }
+    it { is_expected.to accept_nested_attributes_for(:assessment_section_properties) }
     it { is_expected.to have_many(:criteria).dependent(:destroy).order(:position) }
     it { is_expected.to have_many(:peer_criteria).order(:position) }
     it { is_expected.to have_many(:ta_criteria).order(:position) }
@@ -536,27 +536,27 @@ describe Assignment do
                              due_date: 2.days.ago,
                              assignment_properties_attributes: { section_due_dates_type: true })
         @section = create(:section, name: 'section_name')
-        create(:section_due_date, section: @section, assessment: @assignment, due_date: 1.day.from_now)
+        create(:assessment_section_properties, section: @section, assessment: @assignment, due_date: 1.day.from_now)
       end
 
       it 'returns the correct due date for the section' do
         expect(@assignment.section_due_date(@section)).to eq(
-          @section.section_due_dates.find_by(assessment_id: @assignment.id).due_date
+          @section.assessment_section_properties.find_by(assessment_id: @assignment.id).due_date
         )
       end
 
       context 'and with another section' do
         before(:each) do
           @section2 = create(:section, name: 'section_name2')
-          create(:section_due_date, section: @section2, assessment: @assignment, due_date: 2.days.from_now)
+          create(:assessment_section_properties, section: @section2, assessment: @assignment, due_date: 2.days.from_now)
         end
 
         it 'returns the correct due date for each section' do
           expect(@assignment.section_due_date(@section)).to eq(
-            @section.section_due_dates.find_by(assessment_id: @assignment.id).due_date
+            @section.assessment_section_properties.find_by(assessment_id: @assignment.id).due_date
           )
           expect(@assignment.section_due_date(@section2)).to eq(
-            @section2.section_due_dates.find_by(assessment_id: @assignment.id).due_date
+            @section2.assessment_section_properties.find_by(assessment_id: @assignment.id).due_date
           )
         end
       end
@@ -983,7 +983,7 @@ describe Assignment do
   end
 
   describe '#section_start_time' do
-    context 'with SectionDueDates disabled' do
+    context 'with AssessmentSectionProperties disabled' do
       let(:assignment) { create :timed_assignment }
 
       context 'when no section is specified' do
@@ -1000,7 +1000,7 @@ describe Assignment do
       end
     end
 
-    context 'with SectionDueDates enabled' do
+    context 'with AssessmentSectionProperties enabled' do
       let(:assignment) { create :timed_assignment, assignment_properties_attributes: { section_due_dates_type: true } }
 
       context 'when no section is specified' do
@@ -1012,27 +1012,28 @@ describe Assignment do
       context 'when a section is specified' do
         let(:section) { create :section }
 
-        context 'that does not have a SectionDueDate' do
+        context 'that does not have AssessmentSectionProperties' do
           it 'returns the start time of the assignment' do
             expect(assignment.section_start_time(section)).to be_within(1.second).of(assignment.start_time)
           end
         end
 
-        context 'that has a SectionDueDate for another assignment' do
+        context 'that has AssessmentSectionProperties for another assignment' do
           let(:another_assignment) { create(:assignment) }
           it 'returns the start time of the assignment' do
-            create(:section_due_date, assessment: another_assignment)
+            create(:assessment_section_properties, assessment: another_assignment)
             expect(assignment.section_start_time(section)).to be_within(1.second).of(assignment.start_time)
           end
         end
 
-        context 'that has a SectionDueDate for this assignment' do
+        context 'that has AssessmentSectionProperties for this assignment' do
           it 'returns the start time of the section' do
-            section_due_date = create(:section_due_date,
-                                      assessment: assignment,
-                                      section: section,
-                                      start_time: 10.minutes.ago)
-            expect(assignment.section_start_time(section)).to be_within(1.second).of(section_due_date.start_time)
+            assessment_section_properties = create(:assessment_section_properties,
+                                                   assessment: assignment,
+                                                   section: section,
+                                                   start_time: 10.minutes.ago)
+            expect(assignment.section_start_time(section)).to be_within(1.second)
+              .of(assessment_section_properties.start_time)
           end
         end
       end
@@ -1040,7 +1041,7 @@ describe Assignment do
   end
 
   describe '#section_due_date' do
-    context 'with SectionDueDates disabled' do
+    context 'with AssessmentSectionProperties disabled' do
       before :each do
         @assignment = create(:assignment, due_date: Time.current) # Default 'section_due_dates_type' is false
       end
@@ -1059,7 +1060,7 @@ describe Assignment do
       end
     end
 
-    context 'with SectionDueDates enabled' do
+    context 'with AssessmentSectionProperties enabled' do
       before :each do
         @assignment = create(:assignment,
                              due_date: 1.days.ago,
@@ -1077,32 +1078,32 @@ describe Assignment do
           @section = create(:section)
         end
 
-        context 'that does not have a SectionDueDate' do
+        context 'that does not have a AssessmentSectionProperties' do
           it 'returns the due date of the assignment' do
-            section_due_date = @assignment.section_due_date(@section)
-            expect(section_due_date.day).to eq 1.days.ago.day
+            assessment_section_properties = @assignment.section_due_date(@section)
+            expect(assessment_section_properties.day).to eq 1.days.ago.day
           end
         end
 
-        context 'that has a SectionDueDate for another assignment' do
+        context 'that has AssessmentSectionProperties for another assignment' do
           before :each do
-            SectionDueDate.create(section: @section, assessment: create(:assignment), due_date: 2.days.ago)
+            AssessmentSectionProperties.create(section: @section, assessment: create(:assignment), due_date: 2.days.ago)
           end
 
           it 'returns the due date of the assignment' do
-            section_due_date = @assignment.section_due_date(@section)
-            expect(section_due_date.day).to eq 1.days.ago.day
+            assessment_section_properties = @assignment.section_due_date(@section)
+            expect(assessment_section_properties.day).to eq 1.days.ago.day
           end
         end
 
-        context 'that has a SectionDueDate for this assignment' do
+        context 'that has AssessmentSectionProperties for this assignment' do
           before :each do
-            SectionDueDate.create(section: @section, assessment: @assignment, due_date: 2.days.ago)
+            AssessmentSectionProperties.create(section: @section, assessment: @assignment, due_date: 2.days.ago)
           end
 
           it 'returns the due date of the section' do
-            section_due_date = @assignment.section_due_date(@section)
-            expect(section_due_date.day).to eq 2.days.ago.day
+            assessment_section_properties = @assignment.section_due_date(@section)
+            expect(assessment_section_properties.day).to eq 2.days.ago.day
           end
         end
       end
@@ -1110,7 +1111,7 @@ describe Assignment do
   end
 
   describe '#latest_due_date' do
-    context 'when SectionDueDates are disabled' do
+    context 'when AssessmentSectionProperties are disabled' do
       before :each do
         @assignment = create(:assignment, due_date: Time.current) # Default 'section_due_dates_type' is false
       end
@@ -1120,38 +1121,38 @@ describe Assignment do
       end
     end
 
-    context 'when SectionDueDates are enabled' do
+    context 'when AssessmentSectionProperties are enabled' do
       before :each do
         @assignment = create(:assignment,
                              due_date: Time.current,
                              assignment_properties_attributes: { section_due_dates_type: true })
       end
 
-      context 'and there are no SectionDueDates' do
+      context 'and there are no AssessmentSectionProperties' do
         it 'returns the due date of the assignment' do
           expect(@assignment.latest_due_date).to eq @assignment.due_date
         end
       end
 
-      context 'and a SectionDueDate has the latest due date' do
+      context 'and AssessmentSectionProperties has the latest due date' do
         before :each do
-          @section_due_date = SectionDueDate.create(section: create(:section),
-                                                    assessment: @assignment,
-                                                    due_date: 1.days.from_now)
+          @assessment_section_properties = AssessmentSectionProperties.create(section: create(:section),
+                                                                              assessment: @assignment,
+                                                                              due_date: 1.days.from_now)
         end
 
-        it 'returns the due date of that SectionDueDate' do
+        it 'returns the due date of that AssessmentSectionProperties' do
           due_date1 = @assignment.latest_due_date
-          due_date2 = @section_due_date.due_date
+          due_date2 = @assessment_section_properties.due_date
           expect(due_date1).to same_time_within_ms due_date2
         end
       end
 
       context 'and the assignment has the latest due date' do
         before :each do
-          @section_due_date = SectionDueDate.create(section: create(:section),
-                                                    assessment: @assignment,
-                                                    due_date: 1.days.ago)
+          @assessment_section_properties = AssessmentSectionProperties.create(section: create(:section),
+                                                                              assessment: @assignment,
+                                                                              due_date: 1.days.ago)
         end
 
         it 'returns the due date of the assignment' do
@@ -1167,7 +1168,7 @@ describe Assignment do
         @assignment = create(:assignment, due_date: 1.days.from_now)
       end
 
-      context 'and SectionDueDates are disabled' do
+      context 'and AssessmentSectionProperties are disabled' do
         before :each do
           @assignment.assignment_properties.update(section_due_dates_type: false)
         end
@@ -1177,12 +1178,12 @@ describe Assignment do
         end
       end
 
-      context 'and there are SectionDueDates past due' do
+      context 'and there are AssessmentSectionProperties past due' do
         before :each do
           @assignment.assignment_properties.update(section_due_dates_type: true)
-          @section_due_date = SectionDueDate.create(section: create(:section),
-                                                    assessment: @assignment,
-                                                    due_date: 1.days.ago)
+          @assessment_section_properties = AssessmentSectionProperties.create(section: create(:section),
+                                                                             assessment: @assignment,
+                                                                             due_date: 1.days.ago)
         end
 
         it 'returns false' do
@@ -1196,7 +1197,7 @@ describe Assignment do
         @assignment = create(:assignment, due_date: 1.days.ago)
       end
 
-      context 'and SectionDueDates are disabled' do
+      context 'and AssessmentSectionProperties are disabled' do
         before :each do
           @assignment.assignment_properties.update(section_due_dates_type: false)
         end
@@ -1206,10 +1207,11 @@ describe Assignment do
         end
       end
 
-      context 'and there is a SectionDueDate not past due' do
+      context 'and there is a AssessmentSectionProperties not past due' do
         before :each do
           @assignment.assignment_properties.update(section_due_dates_type: true)
-          SectionDueDate.create(section: create(:section), assessment: @assignment, due_date: 1.days.from_now)
+          AssessmentSectionProperties.create(section: create(:section), assessment: @assignment,
+                                             due_date: 1.days.from_now)
         end
 
         it 'returns false' do
@@ -1220,7 +1222,7 @@ describe Assignment do
   end
 
   describe '#grouping_past_due_date?' do
-    context 'with SectionDueDates disabled' do
+    context 'with AssessmentSectionProperties disabled' do
       before :each do
         @due_assignment = create(:assignment, due_date: 1.days.ago)
         @not_due_assignment = create(:assignment, due_date: 1.days.from_now)
@@ -1244,7 +1246,7 @@ describe Assignment do
       end
     end
 
-    context 'with SectionDueDates enabled' do
+    context 'with AssessmentSectionProperties enabled' do
       before :each do
         @assignment = create(:assignment, assignment_properties_attributes: { section_due_dates_type: true })
       end
@@ -1266,7 +1268,7 @@ describe Assignment do
           create(:inviter_student_membership, user: student, grouping: @grouping)
         end
 
-        context 'that does not have an associated SectionDueDate' do
+        context 'that does not have an associated AssessmentSectionProperties' do
           it 'returns based on due date of the assignment' do
             @assignment.update(due_date: 1.days.ago)
             expect(@assignment.grouping_past_due_date?(@grouping.reload)).to be true
@@ -1275,17 +1277,17 @@ describe Assignment do
           end
         end
 
-        context 'that has an associated SectionDueDate' do
+        context 'that has an associated AssessmentSectionProperties' do
           before :each do
-            @section_due_date = SectionDueDate.create(section: @section,
-                                                      assessment: @assignment)
+            @assessment_section_properties = AssessmentSectionProperties.create(section: @section,
+                                                                                assessment: @assignment)
           end
-          it 'returns based on the SectionDueDate of the grouping' do
-            @section_due_date.update(due_date: 1.days.from_now)
+          it 'returns based on the AssessmentSectionProperties of the grouping' do
+            @assessment_section_properties.update(due_date: 1.days.from_now)
             @assignment.update(due_date: 1.days.ago)
             expect(@assignment.grouping_past_due_date?(@grouping)).to be false
 
-            @section_due_date.update(due_date: 1.days.ago)
+            @assessment_section_properties.update(due_date: 1.days.ago)
             @assignment.update(due_date: 1.days.from_now)
             expect(@assignment.grouping_past_due_date?(@grouping)).to be true
           end
@@ -1295,7 +1297,7 @@ describe Assignment do
   end
 
   describe '#section_names_past_due_date' do
-    context 'with SectionDueDates disabled' do
+    context 'with AssessmentSectionProperties disabled' do
       before :each do
         @assignment = create(:assignment) # Default 'section_due_dates_type' is false
       end
@@ -1317,21 +1319,21 @@ describe Assignment do
       end
     end
 
-    context 'with SectionDueDates enabled' do
+    context 'with AssessmentSectionProperties enabled' do
       before :each do
         @assignment = create(:assignment, assignment_properties_attributes: { section_due_dates_type: true })
       end
 
-      describe 'one SectionDueDate' do
+      describe 'one AssessmentSectionProperties' do
         before :each do
           @section = create(:section)
-          @section_due_date =
-            SectionDueDate.create(section: @section, assessment: @assignment)
+          @assessment_section_properties =
+            AssessmentSectionProperties.create(section: @section, assessment: @assignment)
         end
 
         context 'that is past due' do
           it 'returns an array with the name of the section' do
-            @section_due_date.update(due_date: 1.days.ago)
+            @assessment_section_properties.update(due_date: 1.days.ago)
 
             expect(@assignment.section_names_past_due_date)
               .to eq [@section.name]
@@ -1340,25 +1342,25 @@ describe Assignment do
 
         context 'that is not past due' do
           it 'returns an empty array' do
-            @section_due_date.update(due_date: 1.days.from_now)
+            @assessment_section_properties.update(due_date: 1.days.from_now)
 
             expect(@assignment.section_names_past_due_date).to eq []
           end
         end
       end
 
-      describe 'two SectionDueDates' do
+      describe 'two AssessmentSectionProperties' do
         before :each do
           @sections = Array.new(2) { create(:section) }
-          @section_due_dates = @sections.map do |section|
-            SectionDueDate.create(section: section, assessment: @assignment)
+          @assessment_section_properties = @sections.map do |section|
+            AssessmentSectionProperties.create(section: section, assessment: @assignment)
           end
           @section_names = @sections.map { |section| section.name }
         end
 
         context 'where both are past due' do
           it 'returns an array with both section names' do
-            @section_due_dates.each do |section_due_date|
+            @assessment_section_properties.each do |section_due_date|
               section_due_date.update(due_date: 1.days.ago)
             end
 
@@ -1369,8 +1371,8 @@ describe Assignment do
 
         context 'where one is past due' do
           it 'returns an array with the name of that section' do
-            @section_due_dates.first.update(due_date: 1.days.ago)
-            @section_due_dates.last.update(due_date: 1.days.from_now)
+            @assessment_section_properties.first.update(due_date: 1.days.ago)
+            @assessment_section_properties.last.update(due_date: 1.days.from_now)
 
             expect(@assignment.section_names_past_due_date)
               .to eq [@section_names.first]
@@ -1379,7 +1381,7 @@ describe Assignment do
 
         context 'where neither is past due' do
           it 'returns an empty array' do
-            @section_due_dates.each do |section_due_date|
+            @assessment_section_properties.each do |section_due_date|
               section_due_date.update(due_date: 1.days.from_now)
             end
 
@@ -1474,7 +1476,7 @@ describe Assignment do
                                due_date: 2.days.ago,
                                assignment_properties_attributes: { section_due_dates_type: true })
           @section = create(:section, name: 'section_name')
-          SectionDueDate.create(section: @section, assessment: @assignment, due_date: 1.day.ago)
+          AssessmentSectionProperties.create(section: @section, assessment: @assignment, due_date: 1.day.ago)
           student = create(:student, section: @section)
           @grouping = create(:grouping, assignment: @assignment)
           create(:accepted_student_membership,
@@ -1519,7 +1521,7 @@ describe Assignment do
                                assignment_properties_attributes: { section_due_dates_type: true })
           @section1 = create(:section, name: 'section_1')
           @section2 = create(:section, name: 'section_2')
-          SectionDueDate.create(section: @section1, assessment: @assignment, due_date: 1.day.ago)
+          AssessmentSectionProperties.create(section: @section1, assessment: @assignment, due_date: 1.day.ago)
           student = create(:student, section: @section1)
           @grouping1 = create(:grouping, assignment: @assignment)
           create(:accepted_student_membership,
@@ -1530,7 +1532,7 @@ describe Assignment do
 
         context 'when both sections past due' do
           before :each do
-            SectionDueDate.create(section: @section2, assessment: @assignment, due_date: 1.day.ago)
+            AssessmentSectionProperties.create(section: @section2, assessment: @assignment, due_date: 1.day.ago)
             student = create(:student, section: @section2)
             @grouping2 = create(:grouping, assignment: @assignment)
             create(:accepted_student_membership,
@@ -1546,7 +1548,7 @@ describe Assignment do
 
         context 'when one section due' do
           before :each do
-            SectionDueDate.create(section: @section2, assessment: @assignment, due_date: 1.day.from_now)
+            AssessmentSectionProperties.create(section: @section2, assessment: @assignment, due_date: 1.day.from_now)
             student = create(:student, section: @section2)
             @grouping2 = create(:grouping, assignment: @assignment)
             create(:accepted_student_membership,

@@ -3,7 +3,7 @@ class Section < ApplicationRecord
                    format: { with: /\A[a-zA-Z0-9\-_ ]+\z/,
                              message: 'user_name must be alphanumeric, hyphen, whitespace, or underscore' }
   has_many :students
-  has_many :section_due_dates
+  has_many :assessment_section_properties, class_name: 'AssessmentSectionProperties'
   has_many :section_starter_file_groups
   has_many :starter_file_groups, through: :section_starter_file_groups
 
@@ -18,7 +18,7 @@ class Section < ApplicationRecord
   end
 
   def section_due_date_for(aid)
-    SectionDueDate.where(assessment_id: aid, section_id: id).first
+    AssessmentSectionProperties.where(assessment_id: aid, section_id: id).first
   end
 
   def starter_file_group_for(assessment)

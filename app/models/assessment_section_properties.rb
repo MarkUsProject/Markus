@@ -1,6 +1,6 @@
-class SectionDueDate < ApplicationRecord
+class AssessmentSectionProperties < ApplicationRecord
   belongs_to :section
-  belongs_to :assessment, inverse_of: :section_due_dates
+  belongs_to :assessment, inverse_of: :assessment_section_properties
   # Returns the dute date for a section of an assignment. Defaults to the global
   # due date of the assignment.
   def self.due_date_for(section, assignment)

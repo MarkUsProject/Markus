@@ -240,7 +240,7 @@ class Student < User
   def due_date_for_assignment(assignment)
     grouping = accepted_grouping_for(assignment)
     grouping&.due_date ||
-      section&.section_due_date_for(assignment)&.due_date ||
+      section&.assessment_section_properties_for(assignment)&.due_date ||
       assignment&.due_date
   end
 
