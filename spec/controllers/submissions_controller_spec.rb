@@ -694,7 +694,8 @@ describe SubmissionsController do
         context 'with a section' do
           before(:each) do
             @section = create(:section, name: 's1')
-            @assessment_section_properties = create(:assessment_section_properties, section: @section, assessment: @assignment)
+            @assessment_section_properties = create(:assessment_section_properties, section: @section,
+                                                                                    assessment: @assignment)
             @student.section = @section
             @student.save
           end

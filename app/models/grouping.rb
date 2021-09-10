@@ -489,7 +489,8 @@ class Grouping < ApplicationRecord
   # is this grouping's start time plus the duration plus any extension.
   def due_date
     if assignment.section_due_dates_type
-      a_due_date = assignment.assessment_section_properties.find_by(section_id: inviter&.section)&.due_date || assignment.due_date
+      a_due_date = assignment.assessment_section_properties
+                             .find_by(section_id: inviter&.section)&.due_date || assignment.due_date
     else
       a_due_date = assignment.due_date
     end

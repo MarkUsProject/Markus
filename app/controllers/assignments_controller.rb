@@ -167,7 +167,7 @@ class AssignmentsController < ApplicationController
       end
     end
     @assessment_section_properties = @assignment.assessment_section_properties
-                                    .sort_by { |s| [AssessmentSectionProperties.due_date_for(s.section, @assignment), s.section.name] }
+                                                .sort_by { |s| [AssessmentSectionProperties.due_date_for(s.section, @assignment), s.section.name] }
   end
 
   # Called when editing assignments form is submitted (PUT).
@@ -209,9 +209,9 @@ class AssignmentsController < ApplicationController
     @sections = Section.all
 
     # build section_due_dates for each section
-    Section.all.each { |s| @assignment.assessment_section_properties.build(section: s)}
+    Section.all.each { |s| @assignment.assessment_section_properties.build(section: s) }
     @assessment_section_properties = @assignment.assessment_section_properties
-                                    .sort_by { |s| s.section.name }
+                                                .sort_by { |s| s.section.name }
     render :new
   end
 

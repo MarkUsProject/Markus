@@ -72,7 +72,6 @@ class Assignment < Assessment
   has_many :notes, as: :noteable, dependent: :destroy
 
 
-
   has_many :exam_templates, dependent: :destroy, inverse_of: :assignment, foreign_key: :assessment_id
 
   has_many :starter_file_groups, dependent: :destroy, inverse_of: :assignment, foreign_key: :assessment_id

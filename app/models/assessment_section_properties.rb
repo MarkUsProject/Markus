@@ -1,3 +1,4 @@
+# Represents properties of an assessment specific to a given section.
 class AssessmentSectionProperties < ApplicationRecord
   belongs_to :section
   belongs_to :assessment, inverse_of: :assessment_section_properties

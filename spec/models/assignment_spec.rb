@@ -1182,8 +1182,8 @@ describe Assignment do
         before :each do
           @assignment.assignment_properties.update(section_due_dates_type: true)
           @assessment_section_properties = AssessmentSectionProperties.create(section: create(:section),
-                                                                             assessment: @assignment,
-                                                                             due_date: 1.days.ago)
+                                                                              assessment: @assignment,
+                                                                              due_date: 1.days.ago)
         end
 
         it 'returns false' do

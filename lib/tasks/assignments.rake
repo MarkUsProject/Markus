@@ -119,7 +119,8 @@ namespace :db do
               .where(assignment_properties: { section_due_dates_type: true })
               .find_each do |assignment|
       Section.all.find_each.with_index do |section, i|
-        AssessmentSectionProperties.create(assessment: assignment, section: section, due_date: assignment.due_date + (i + 1).days)
+        AssessmentSectionProperties.create(assessment: assignment,
+                                           section: section, due_date: assignment.due_date + (i + 1).days)
       end
     end
   end

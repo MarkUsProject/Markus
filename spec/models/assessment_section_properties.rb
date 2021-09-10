@@ -36,8 +36,8 @@ describe AssessmentSectionProperties do
         before :each do
           @section = create(:section)
           AssessmentSectionProperties.create(section: @section,
-                                assessment: @assignment,
-                                due_date: 1.days.from_now)
+                                             assessment: @assignment,
+                                             due_date: 1.days.from_now)
         end
 
         it 'returns the due date for the section of the assignment' do

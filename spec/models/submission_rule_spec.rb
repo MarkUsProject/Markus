@@ -232,15 +232,15 @@ describe SubmissionRule do
       # ... but the section due date is in the past
       @section = create(:section)
       create(:assessment_section_properties, section: @section,
-                                assessment: @assignment,
-                                due_date: 2.days.ago)
+                                             assessment: @assignment,
+                                             due_date: 2.days.ago)
 
       # create a group of one student from this section, for this assignment
       @student = create(:student, section: @section)
       @grouping = create(:grouping, assignment: @assignment)
       @studentMembership = create(:student_membership, user: @student, grouping: @grouping,
-                                                  membership_status:  StudentMembership::STATUSES[:inviter])
-      end
+                                                       membership_status: StudentMembership::STATUSES[:inviter])
+    end
 
     it 'will be able to collect the submissions from groups of this section' do
       expect(@assignment.submission_rule.can_collect_grouping_now?(@grouping)).to be true
