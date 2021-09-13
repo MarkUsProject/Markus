@@ -1,14 +1,13 @@
-import React from 'react'
-import { render } from 'react-dom'
-import { SubmissionFileManager } from './submission_file_manager'
-
+import React from "react";
+import {render} from "react-dom";
+import {SubmissionFileManager} from "./submission_file_manager";
 
 class RepoBrowser extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       revision_identifier: undefined,
-      revisions: []
+      revisions: [],
     };
   }
 
@@ -21,16 +20,17 @@ class RepoBrowser extends React.Component {
     fetch(
       Routes.revisions_assignment_submissions_path({
         assignment_id: this.props.assignment_id,
-        grouping_id: this.props.grouping_id
+        grouping_id: this.props.grouping_id,
       }),
       {
-        credentials: 'same-origin',
+        credentials: "same-origin",
         headers: {
-          'content-type': 'application/json'
-        }
+          "content-type": "application/json",
+        },
       }
-    ).then(data => data.json())
-     .then(data => this.setState({revisions: data, revision_identifier: data[0].id}));
+    )
+      .then(data => data.json())
+      .then(data => this.setState({revisions: data, revision_identifier: data[0].id}));
   };
 
   selectRevision = event => {
@@ -40,41 +40,46 @@ class RepoBrowser extends React.Component {
   revisionToOption = rev => {
     let text = `${rev.id_ui} `;
     if (rev.timestamp !== rev.server_timestamp) {
-      text += `(${I18n.t('submissions.repo_browser.client_time')} ${rev.timestamp}, ` +
-              `${I18n.t('submissions.repo_browser.server_time')} ${rev.server_timestamp})`;
+      text +=
+        `(${I18n.t("submissions.repo_browser.client_time")} ${rev.timestamp}, ` +
+        `${I18n.t("submissions.repo_browser.server_time")} ${rev.server_timestamp})`;
     } else {
       text += `(${rev.timestamp})`;
     }
 
     // Highlight the collected revision
-    let className = '';
+    let className = "";
     if (rev.id === this.props.collected_revision_id) {
-      className = 'collected';
-      text += ` — ${I18n.t('submissions.repo_browser.collected')}`;
+      className = "collected";
+      text += ` — ${I18n.t("submissions.repo_browser.collected")}`;
     } else {
-      className = 'uncollected';
+      className = "uncollected";
     }
 
-    return <option className={className} key={rev.id} value={rev.id}>{text}</option>;
+    return (
+      <option className={className} key={rev.id} value={rev.id}>
+        {text}
+      </option>
+    );
   };
 
   isReadOnly = () => {
     if (!!this.state.revisions.length) {
-      return this.state.revision_identifier !== this.state.revisions[0].id
+      return this.state.revision_identifier !== this.state.revisions[0].id;
     } else {
-      return false
+      return false;
     }
   };
 
   render() {
-    let className = '';
+    let className = "";
     if (this.state.revision_identifier === this.props.collected_revision_id) {
-      className = 'collected-checked';
+      className = "collected-checked";
     }
     return (
       <div>
         <h3>
-          <label>{I18n.t('submissions.repo_browser.viewing_revision')}</label>
+          <label>{I18n.t("submissions.repo_browser.viewing_revision")}</label>
           <select
             value={this.state.revision_identifier}
             onChange={this.selectRevision}
@@ -83,18 +88,18 @@ class RepoBrowser extends React.Component {
             {this.state.revisions.map(this.revisionToOption)}
           </select>
         </h3>
-        {this.props.is_timed &&
+        {this.props.is_timed && (
           <p>
-            <strong>{I18n.t('activerecord.attributes.assignment.start_time')}: </strong>
-            {this.props.start_time || I18n.t('not_applicable')}
+            <strong>{I18n.t("activerecord.attributes.assignment.start_time")}: </strong>
+            {this.props.start_time || I18n.t("not_applicable")}
           </p>
-        }
+        )}
         <p>
-          <strong>{I18n.t('activerecord.attributes.assignment.due_date')}: </strong>
+          <strong>{I18n.t("activerecord.attributes.assignment.due_date")}: </strong>
           {this.props.due_date}
         </p>
         <p>
-          <strong>{I18n.t('activerecord.attributes.assignment.collection_date')}: </strong>
+          <strong>{I18n.t("activerecord.attributes.assignment.collection_date")}: </strong>
           {this.props.collection_date}
         </p>
         <SubmissionFileManager
@@ -113,15 +118,13 @@ class RepoBrowser extends React.Component {
           revision_identifier={this.state.revision_identifier}
         />
       </div>
-    )
+    );
   }
 }
 
-
 class ManualCollectionForm extends React.Component {
-
   static defaultProps = {
-    revision_identifier: '' //set initial value so that the input (in render) remains controlled
+    revision_identifier: "", //set initial value so that the input (in render) remains controlled
   };
 
   render() {
@@ -132,37 +135,42 @@ class ManualCollectionForm extends React.Component {
 
     return (
       <fieldset>
-        <legend><span>{I18n.t('submissions.collect.manual_collection')}</span></legend>
-      <form
-        method="POST"
-        action={action}
-      >
-        <input type="hidden"
-               name="current_revision_identifier"
-               value={this.props.revision_identifier} />
-        <input type="hidden"
-               name="authenticity_token"
-               value={AUTH_TOKEN} />
-        <p className='inline-labels'>
-          <input hidden={!this.props.late_penalty} type="checkbox" name="apply_late_penalty" id="apply_late_penalty" />
-          <label hidden={!this.props.late_penalty} htmlFor="apply_late_penalty">
-            {I18n.t('submissions.collect.apply_late_penalty')}
-          </label>
-        </p>
-        <input type="submit"
-               name="commit"
-               value={I18n.t('submissions.collect.this_revision')}
-               onClick={(event) => {
-                 if (!confirm(I18n.t('submissions.collect.overwrite_warning'))) {
-                   event.preventDefault();
-                 }
-               }} />
-      </form>
+        <legend>
+          <span>{I18n.t("submissions.collect.manual_collection")}</span>
+        </legend>
+        <form method="POST" action={action}>
+          <input
+            type="hidden"
+            name="current_revision_identifier"
+            value={this.props.revision_identifier}
+          />
+          <input type="hidden" name="authenticity_token" value={AUTH_TOKEN} />
+          <p className="inline-labels">
+            <input
+              hidden={!this.props.late_penalty}
+              type="checkbox"
+              name="apply_late_penalty"
+              id="apply_late_penalty"
+            />
+            <label hidden={!this.props.late_penalty} htmlFor="apply_late_penalty">
+              {I18n.t("submissions.collect.apply_late_penalty")}
+            </label>
+          </p>
+          <input
+            type="submit"
+            name="commit"
+            value={I18n.t("submissions.collect.this_revision")}
+            onClick={event => {
+              if (!confirm(I18n.t("submissions.collect.overwrite_warning"))) {
+                event.preventDefault();
+              }
+            }}
+          />
+        </form>
       </fieldset>
     );
   }
 }
-
 
 export function makeRepoBrowser(elem, props) {
   render(<RepoBrowser {...props} />, elem);

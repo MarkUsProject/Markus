@@ -69,12 +69,12 @@
     text-align: right;
   }
 
-  label[for*=tester_type] {
+  label[for*='tester_type'] {
     font-size: 1.4em;
     min-width: max-content;
   }
 
-  select[id*=tester_type] {
+  select[id*='tester_type'] {
     font-size: 1.4em;
   }
 
@@ -83,7 +83,7 @@
     margin: 5px;
   }
 
-  input[type="checkbox"] {
+  input[type='checkbox'] {
     float: right;
   }
 
@@ -94,19 +94,21 @@
   .form-control {
     min-width: 75pt;
 
-    &[multiple=""] {
+    &[multiple=''] {
       vertical-align: middle;
     }
   }
 
-  input[type="number"]::-webkit-outer-spin-button,
-  input[type="number"]::-webkit-inner-spin-button {
+  /* stylelint-disable property-no-vendor-prefix */
+  input[type='number']::-webkit-outer-spin-button,
+  input[type='number']::-webkit-inner-spin-button {
     -webkit-appearance: none;
     margin: 0;
   }
+  /* stylelint-enable property-no-vendor-prefix */
 
-  input[type="number"] {
-    -moz-appearance: textfield;
+  input[type='number'] {
+    appearance: textfield;
   }
 
   // Hide specific legends

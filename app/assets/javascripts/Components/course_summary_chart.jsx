@@ -1,8 +1,7 @@
-import React from 'react';
-import { Bar } from 'react-chartjs-2';
+import React from "react";
+import {Bar} from "react-chartjs-2";
 
-import { chartScales } from './Helpers/chart_helpers';
-
+import {chartScales} from "./Helpers/chart_helpers";
 
 export class CourseSummaryChart extends React.Component {
   constructor(props) {
@@ -16,13 +15,13 @@ export class CourseSummaryChart extends React.Component {
       options: {
         plugins: {
           legend: {
-            display: true
-          }
+            display: true,
+          },
         },
-        scales: chartScales
+        scales: chartScales,
       },
-      loading: true
-    }
+      loading: true,
+    };
   }
 
   componentDidMount() {
@@ -45,15 +44,15 @@ export class CourseSummaryChart extends React.Component {
         this.setState({
           summary: res.summary,
           data: data,
-          loading: false
+          loading: false,
         });
-      })
+      });
   };
 
   render() {
     const header = (
       <h2>
-        <a href={Routes.course_summaries_path()}>{I18n.t('course_summary.title')}</a>
+        <a href={Routes.course_summaries_path()}>{I18n.t("course_summary.title")}</a>
       </h2>
     );
 
@@ -62,7 +61,7 @@ export class CourseSummaryChart extends React.Component {
         <React.Fragment>
           {header}
           <div>
-            <h3>{I18n.t('main.create_marking_scheme')}</h3>
+            <h3>{I18n.t("main.create_marking_scheme")}</h3>
           </div>
         </React.Fragment>
       );
@@ -71,24 +70,23 @@ export class CourseSummaryChart extends React.Component {
         <React.Fragment>
           {header}
 
-          <div className='flex-row'>
+          <div className="flex-row">
             <div>
-              <Bar data={this.state.data} options={this.state.options}
-                   width='500' height='450'/>
+              <Bar data={this.state.data} options={this.state.options} width="500" height="450" />
             </div>
 
-            <div className='flex-row-expand'>
-              {this.state.summary.map((summary, i) =>
+            <div className="flex-row-expand">
+              {this.state.summary.map((summary, i) => (
                 <React.Fragment>
                   <p>{summary.name}</p>
-                  <div className='grid-2-col' key={`marking-scheme-${i}-statistics`}>
-                    <span>{I18n.t('average')}</span>
+                  <div className="grid-2-col" key={`marking-scheme-${i}-statistics`}>
+                    <span>{I18n.t("average")}</span>
                     <span>{summary.average.toFixed(2)}%</span>
-                    <span>{I18n.t('median')}</span>
+                    <span>{I18n.t("median")}</span>
                     <span>{summary.median.toFixed(2)}%</span>
                   </div>
                 </React.Fragment>
-              )}
+              ))}
             </div>
           </div>
         </React.Fragment>

@@ -144,4 +144,3 @@ volumes:
 networks:
   markus_dev:
     name: markus_dev
-

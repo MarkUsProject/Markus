@@ -29,7 +29,6 @@ header#header {
   }
 }
 
-
 /* Menus */
 
 nav {
@@ -79,7 +78,6 @@ nav {
   }
 }
 
-
 /* Footer */
 
 footer {
@@ -106,7 +104,7 @@ footer {
     margin: 0 0 0 1em;
 
     select {
-      border: none;
+      border: 0;
       color: $line;
       font-family: $fonts;
       margin: 0;
@@ -123,14 +121,13 @@ footer {
     padding-left: 1em;
 
     @include breakpoint(mobile) {
-      border: none;
+      border: 0;
       display: block;
-      margin: 1em 1em 0 1em;
+      margin: 1em 1em 0;
       padding: 0;
     }
   }
 }
-
 
 /* Working indicator */
 
@@ -158,7 +155,7 @@ footer {
 
     &::after {
       animation: ellipsis $time-quick infinite;
-      content: "\2026";
+      content: '\2026';
       display: inline-block;
       overflow: hidden;
       vertical-align: bottom;
@@ -167,10 +164,13 @@ footer {
 }
 
 @keyframes ellipsis {
-  from { width: 2px; }
-  to   { width: 1em; }
+  from {
+    width: 2px;
+  }
+  to {
+    width: 1em;
+  }
 }
-
 
 /* Mobile friendly menu */
 
@@ -203,7 +203,7 @@ footer {
 
     &::before,
     &::after {
-      content: "";
+      content: '';
       left: 1em;
       position: absolute;
       transition: all $time-quick;
@@ -303,7 +303,7 @@ footer {
     border-bottom: 1px solid $primary-three;
     border-top: 1px solid $primary-three;
     display: block;
-    margin: 0 0 1em 0;
+    margin: 0 0 1em;
     padding: 0 !important;
     width: 100%;
   }
@@ -345,7 +345,6 @@ footer {
     }
   }
 }
-
 
 /* Header */
 
@@ -400,29 +399,8 @@ li#dropdown {
 }
 
 .dropdown {
-  ul {
-    li {
-      border-radius: 0;
-
-      a {
-        line-height: inherit;
-        height: auto;
-      }
-
-      &.section {
-        color: $line;
-        cursor: default;
-        margin-top: 0;
-
-        &:hover {
-          color: $line;
-        }
-      }
-    }
-  }
-
   @include breakpoint(mobile) {
-    border: none;
+    border: 0;
     border-radius: 0;
     display: block;
     min-width: 0;
@@ -436,10 +414,10 @@ li#dropdown {
 
     ul {
       background: $background-main;
-      border-left: none;
+      border-left: 0;
       border-radius: 0;
-      border-right: none;
-      border-top: none;
+      border-right: 0;
+      border-top: 0;
       color: $primary-one;
       display: block;
       left: 0;
@@ -464,6 +442,27 @@ li#dropdown {
 
       li.section:hover {
         background: none !important;
+      }
+    }
+  }
+
+  ul {
+    li {
+      border-radius: 0;
+
+      a {
+        height: auto;
+        line-height: inherit;
+      }
+
+      &.section {
+        color: $line;
+        cursor: default;
+        margin-top: 0;
+
+        &:hover {
+          color: $line;
+        }
       }
     }
   }

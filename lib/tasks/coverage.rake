@@ -23,7 +23,7 @@ namespace :coverage do
 
   desc 'All test coverage'
   task all: :clean do
-    Rake::Task['test'].execute 
+    Rake::Task['test'].execute
   end
 
 end

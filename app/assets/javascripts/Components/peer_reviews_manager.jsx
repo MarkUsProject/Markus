@@ -1,10 +1,9 @@
-import React from 'react';
-import {render} from 'react-dom';
-import * as I18n from 'i18n-js';
+import React from "react";
+import {render} from "react-dom";
+import * as I18n from "i18n-js";
 
-import {withSelection, CheckboxTable} from './markus_with_selection_hoc';
-import {selectFilter} from './Helpers/table_helpers';
-
+import {withSelection, CheckboxTable} from "./markus_with_selection_hoc";
+import {selectFilter} from "./Helpers/table_helpers";
 
 class PeerReviewsManager extends React.Component {
   constructor(props) {
@@ -15,11 +14,11 @@ class PeerReviewsManager extends React.Component {
       revieweeToReviewers: {},
       groupIdToName: {},
       reviewerToNumReviews: {},
-      selectedReviewerInRevieweeGroups: {},  // Dict of [reviewee][reviewer]
+      selectedReviewerInRevieweeGroups: {}, // Dict of [reviewee][reviewer]
       sections: {},
       numReviewers: 1,
-      loading: true
-    }
+      loading: true,
+    };
   }
 
   componentDidMount() {
@@ -29,7 +28,7 @@ class PeerReviewsManager extends React.Component {
   fetchData = () => {
     $.get({
       url: Routes.populate_assignment_peer_reviews_path(this.props.assignment_id),
-      dataType: 'json',
+      dataType: "json",
     }).then(res => {
       this.studentsTable.resetSelection();
       this.reviewersTable.resetSelection();
@@ -45,7 +44,7 @@ class PeerReviewsManager extends React.Component {
     });
   };
 
-  updateNumReviewers = (num) => {
+  updateNumReviewers = num => {
     this.setState({numReviewers: num});
   };
 
@@ -70,20 +69,22 @@ class PeerReviewsManager extends React.Component {
 
     // While this is technically pointless, some kind of command is needed
     // to get react to re-issue a re-rendering of its components.
-    this.setState({selectedReviewerInRevieweeGroups: this.state.selectedReviewerInRevieweeGroups});
+    this.setState({
+      selectedReviewerInRevieweeGroups: this.state.selectedReviewerInRevieweeGroups,
+    });
   };
 
-  performButtonAction = (action) => {
+  performButtonAction = action => {
     let reviewees = this.studentsTable ? this.studentsTable.state.selection : [];
     let reviewers = this.reviewersTable ? this.reviewersTable.state.selection : [];
 
-    if ((action == 'assign' || action == 'random_assign') && reviewers.length === 0) {
-      alert('No reviewers selected.');
+    if ((action == "assign" || action == "random_assign") && reviewers.length === 0) {
+      alert("No reviewers selected.");
       return;
     }
 
-    if ((action == 'assign' || action == 'random_assign') && reviewees.length === 0) {
-      alert('No reviewees selected.');
+    if ((action == "assign" || action == "random_assign") && reviewees.length === 0) {
+      alert("No reviewees selected.");
       return;
     }
 
@@ -95,22 +96,22 @@ class PeerReviewsManager extends React.Component {
         selectedReviewerGroupIds: reviewers,
         selectedRevieweeGroupIds: reviewees,
         selectedReviewerInRevieweeGroups: this.state.selectedReviewerInRevieweeGroups,
-        numGroupsToAssign: this.state.numReviewers
-      }
+        numGroupsToAssign: this.state.numReviewers,
+      },
     }).then(this.fetchData);
   };
 
-  render(){
+  render() {
     return (
       <div>
         <GradersActionBox
           performAction={this.performButtonAction}
           updateNumReviewers={this.updateNumReviewers}
         />
-        <div className='mapping-tables'>
-          <div className='mapping-table'>
+        <div className="mapping-tables">
+          <div className="mapping-table">
             <ReviewersTable
-              ref={(r) => this.reviewersTable = r}
+              ref={r => (this.reviewersTable = r)}
               groups={this.state.reviewerGroups}
               reviewerToNumReviews={this.state.reviewerToNumReviews}
               loading={this.state.loading}
@@ -118,9 +119,9 @@ class PeerReviewsManager extends React.Component {
               sections={this.state.sections}
             />
           </div>
-          <div className='mapping-table'>
+          <div className="mapping-table">
             <RevieweesTable
-              ref={(r) => this.studentsTable = r}
+              ref={r => (this.studentsTable = r)}
               groups={this.state.revieweeGroups}
               revieweeToReviewers={this.state.revieweeToReviewers}
               groupIdToName={this.state.groupIdToName}
@@ -138,7 +139,7 @@ class PeerReviewsManager extends React.Component {
 }
 
 PeerReviewsManager.defaultProps = {
-  showSections: false
+  showSections: false,
 };
 
 class RawReviewersTable extends React.Component {
@@ -146,57 +147,58 @@ class RawReviewersTable extends React.Component {
     return [
       {
         show: false,
-        accessor: '_id',
-        id: '_id'
+        accessor: "_id",
+        id: "_id",
       },
       {
-        Header: I18n.t('activerecord.models.section', {count: 1}),
-        accessor: 'section',
-        id: 'section',
+        Header: I18n.t("activerecord.models.section", {count: 1}),
+        accessor: "section",
+        id: "section",
         show: this.props.showSections,
         minWidth: 70,
         Cell: ({value}) => {
-          return value === '-' ? '' : value;
+          return value === "-" ? "" : value;
         },
         filterMethod: (filter, row) => {
-          if (filter.value === 'all') {
+          if (filter.value === "all") {
             return true;
           } else {
             return row.section === filter.value;
           }
         },
         Filter: selectFilter,
-        filterOptions: Object.entries(this.props.sections).map(
-          kv => ({value: kv[1], text: kv[1]})
-        ),
+        filterOptions: Object.entries(this.props.sections).map(kv => ({
+          value: kv[1],
+          text: kv[1],
+        })),
       },
       {
-        Header: I18n.t('activerecord.attributes.peer_review.reviewer'),
-        accessor: 'name',
-        id: 'name'
+        Header: I18n.t("activerecord.attributes.peer_review.reviewer"),
+        accessor: "name",
+        id: "name",
       },
       {
-        Header: I18n.t('activerecord.models.group.other'),
-        accessor: 'groups',
-        className: 'groups number',
-        filterable: false
-      }
-    ]
+        Header: I18n.t("activerecord.models.group.other"),
+        accessor: "groups",
+        className: "groups number",
+        filterable: false,
+      },
+    ];
   };
 
   clearCheckboxes = () => {
     this.refs.table.clearCheckboxes();
   };
 
-  changeSection = (event) => {
+  changeSection = event => {
     this.clearCheckboxes();
-    this.setState({ sectionName: event.target.value });
+    this.setState({sectionName: event.target.value});
     this.props.refresh();
   };
 
   render() {
     const hashmap = this.props.reviewerToNumReviews;
-    const groups_data = this.props.groups.map((group) => {
+    const groups_data = this.props.groups.map(group => {
       let numReviews = 0;
       if (hashmap.hasOwnProperty(group._id)) {
         numReviews = hashmap[group._id];
@@ -205,85 +207,89 @@ class RawReviewersTable extends React.Component {
         _id: group._id,
         name: group.group_name,
         groups: numReviews,
-        section: group.section
-      }
+        section: group.section,
+      };
     });
 
     return (
       <CheckboxTable
-        ref={(r) => this.checkboxTable = r}
-
+        ref={r => (this.checkboxTable = r)}
         data={groups_data}
         columns={this.getColumns()}
         defaultSorted={[
           {
-            id: 'name'
-          }
+            id: "name",
+          },
         ]}
         loading={this.props.loading}
         filterable
-
         {...this.props.getCheckboxProps()}
       />
     );
   }
 }
 
-
 class RawRevieweesTable extends React.Component {
   getColumns = () => {
     return [
       {
         show: false,
-        accessor: '_id',
-        id: '_id'
+        accessor: "_id",
+        id: "_id",
       },
       {
-        Header: I18n.t('activerecord.models.section', {count: 1}),
-        accessor: 'section',
-        id: 'section',
+        Header: I18n.t("activerecord.models.section", {count: 1}),
+        accessor: "section",
+        id: "section",
         show: this.props.showSections,
         minWidth: 70,
         Cell: ({value}) => {
-          return value === '-' ? '' : value;
+          return value === "-" ? "" : value;
         },
         filterMethod: (filter, row) => {
-          if (filter.value === 'all') {
+          if (filter.value === "all") {
             return true;
           } else {
             return row.section === filter.value;
           }
         },
         Filter: selectFilter,
-        filterOptions: Object.entries(this.props.sections).map(
-          kv => ({value: kv[1], text: kv[1]})
-        ),
+        filterOptions: Object.entries(this.props.sections).map(kv => ({
+          value: kv[1],
+          text: kv[1],
+        })),
       },
       {
-        Header: I18n.t('activerecord.models.group.one'),
-        accessor: 'name',
-        id: 'name',
-        filterable: true
+        Header: I18n.t("activerecord.models.group.one"),
+        accessor: "name",
+        id: "name",
+        filterable: true,
       },
       {
-        Header: I18n.t('peer_reviews.assigned_reviewers_header'),
-        accessor: 'members',
-        id: 'members'
+        Header: I18n.t("peer_reviews.assigned_reviewers_header"),
+        accessor: "members",
+        id: "members",
       },
       {
-        Header: I18n.t('peer_reviews.number_assigned_reviewers'),
-        accessor: 'count',
-        id: 'count',
-        className: 'number'
+        Header: I18n.t("peer_reviews.number_assigned_reviewers"),
+        accessor: "count",
+        id: "count",
+        className: "number",
       },
-    ]
+    ];
   };
 
-  reviewerInRevieweeChange = (event) => {
-    const { onReviewerChangeInRevieweeTable } = this.props;
+  reviewerInRevieweeChange = event => {
+    const {onReviewerChangeInRevieweeTable} = this.props;
     const isChecked = event.currentTarget.checked;
-    const reviewerGroupId = parseInt(event.currentTarget.getAttribute('data-reviewer-group-id'), 10);
-    const revieweeGroupId = parseInt(event.currentTarget.getAttribute('data-reviewee-group-id'), 10);
+    const reviewerGroupId = parseInt(
+      event.currentTarget.getAttribute("data-reviewer-group-id"),
+      10
+    );
+    const revieweeGroupId = parseInt(
+      event.currentTarget.getAttribute("data-reviewee-group-id"),
+      10
+    );
     onReviewerChangeInRevieweeTable(reviewerGroupId, revieweeGroupId, isChecked);
   };
 
@@ -296,90 +302,96 @@ class RawRevieweesTable extends React.Component {
   };
 
   render() {
-    const groups_data = this.props.groups.map( (group) => {
+    const groups_data = this.props.groups.map(group => {
       let reviewerGroups = [];
       const reviewee_group_id = group._id;
       const reviewer_ids = this.props.revieweeToReviewers[reviewee_group_id] || [];
-      reviewer_ids.forEach( (reviewer_group_id) => {
+      reviewer_ids.forEach(reviewer_group_id => {
         const reviewer_group_name = this.props.groupIdToName[reviewer_group_id];
-        reviewerGroups.push(<div key={reviewer_group_id}>
-          <input id={reviewer_group_id}
-                 type='checkbox'
-                 data-reviewer-group-id={reviewer_group_id}
-                 data-reviewee-group-id={reviewee_group_id}
-                 checked={this.checkboxShouldBeChecked(reviewee_group_id, reviewer_group_id)}
-                 onChange={this.reviewerInRevieweeChange}
-          /> {reviewer_group_name}</div>);
+        reviewerGroups.push(
+          <div key={reviewer_group_id}>
+            <input
+              id={reviewer_group_id}
+              type="checkbox"
+              data-reviewer-group-id={reviewer_group_id}
+              data-reviewee-group-id={reviewee_group_id}
+              checked={this.checkboxShouldBeChecked(reviewee_group_id, reviewer_group_id)}
+              onChange={this.reviewerInRevieweeChange}
+            />{" "}
+            {reviewer_group_name}
+          </div>
+        );
       });
       return {
         _id: group._id,
         name: group.group_name,
         members: reviewerGroups,
         section: group.section,
-        count: reviewer_ids.length
+        count: reviewer_ids.length,
       };
     });
 
     return (
       <CheckboxTable
-        ref={(r) => this.checkboxTable = r}
-
+        ref={r => (this.checkboxTable = r)}
         data={groups_data}
         columns={this.getColumns()}
         defaultSorted={[
           {
-            id: 'name'
-          }
+            id: "name",
+          },
         ]}
         loading={this.props.loading}
         filterable
-
         {...this.props.getCheckboxProps()}
       />
     );
   }
 }
 
-
 const ReviewersTable = withSelection(RawReviewersTable);
 const RevieweesTable = withSelection(RawRevieweesTable);
 
-
 class GradersActionBox extends React.Component {
   render = () => {
-    const { performAction } = this.props;
+    const {performAction} = this.props;
 
     return (
-      <div className='rt-action-box'>
+      <div className="rt-action-box">
         <div className="peer-review-amount-spinner">
-          <span>{I18n.t('peer_reviews.number_per_group')}</span>
-          <input type="number" id="peer-review-spinner" min={1} defaultValue={1}
-                 onChange={evt => this.props.updateNumReviewers(evt.target.value)} />
+          <span>{I18n.t("peer_reviews.number_per_group")}</span>
+          <input
+            type="number"
+            id="peer-review-spinner"
+            min={1}
+            defaultValue={1}
+            onChange={evt => this.props.updateNumReviewers(evt.target.value)}
+          />
           <button
-            id='random_assign'
-            className='assign-randomly-button'
-            onClick={evt => performAction(evt.currentTarget.getAttribute('id'))}
+            id="random_assign"
+            className="assign-randomly-button"
+            onClick={evt => performAction(evt.currentTarget.getAttribute("id"))}
           >
-            {I18n.t('peer_reviews.action.random_assign')}
+            {I18n.t("peer_reviews.action.random_assign")}
           </button>
         </div>
         <button
-          id='assign'
-          className='assign-all-button'
-          onClick={evt => performAction(evt.currentTarget.getAttribute('id'))}
+          id="assign"
+          className="assign-all-button"
+          onClick={evt => performAction(evt.currentTarget.getAttribute("id"))}
         >
-          {I18n.t('peer_reviews.action.assign')}
+          {I18n.t("peer_reviews.action.assign")}
         </button>
 
         <button
-          id='unassign'
-          className='unassign-all-button'
-          onClick={evt => performAction(evt.currentTarget.getAttribute('id'))}
+          id="unassign"
+          className="unassign-all-button"
+          onClick={evt => performAction(evt.currentTarget.getAttribute("id"))}
         >
-          {I18n.t('peer_reviews.action.unassign')}
+          {I18n.t("peer_reviews.action.unassign")}
         </button>
       </div>
-    )
+    );
   };
 }
 

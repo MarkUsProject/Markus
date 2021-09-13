@@ -13,5 +13,3 @@ class AssessmentSectionProperties < ApplicationRecord
   end
 
 end
-
-

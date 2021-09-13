@@ -1,5 +1,5 @@
 import React from "react";
-import { render } from "react-dom";
+import {render} from "react-dom";
 
 // We attempt to autosave once [saveAfterMs] has elapsed from the last user action
 const saveAfterMs = 1500;
@@ -26,7 +26,7 @@ function debounce(func, wait, immediate) {
   };
 }
 
-const SaveMessage = ({ unSaved }) => (
+const SaveMessage = ({unSaved}) => (
   <div className="autosave-text">
     {unSaved ? (
       <p className="invalid-icon">{I18n.t("results.autosave.unsaved")}</p>
@@ -51,7 +51,7 @@ export class TextForm extends React.Component {
 
   componentDidUpdate(prevProps, prevState) {
     if (prevProps.initialValue !== this.props.initialValue) {
-      this.setState({ value: this.props.initialValue });
+      this.setState({value: this.props.initialValue});
     } else if (prevState.initialValue !== this.state.value) {
       this.updatePreview();
     }
@@ -60,16 +60,16 @@ export class TextForm extends React.Component {
   handlePersist = debounce(
     () => {
       this.props.persistChanges(this.state.value).then(() => {
-        this.setState({ unsavedChanges: false });
+        this.setState({unsavedChanges: false});
       });
     },
     saveAfterMs,
     false
   );
 
-  updateValue = (event) => {
+  updateValue = event => {
     const value = event.target.value;
-    this.setState({ value, unsavedChanges: true }, this.updatePreview);
+    this.setState({value, unsavedChanges: true}, this.updatePreview);
     this.handlePersist();
   };
 
@@ -84,11 +84,7 @@ export class TextForm extends React.Component {
     return (
       <div className={this.props.className || ""}>
         <form onSubmit={this.onSubmit}>
-          <textarea
-            value={this.state.value}
-            onChange={this.updateValue}
-            rows={5}
-          />
+          <textarea value={this.state.value} onChange={this.updateValue} rows={5} />
           <SaveMessage unSaved={this.state.unsavedChanges} />
         </form>
         {this.props.previewId && (

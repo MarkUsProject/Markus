@@ -1,8 +1,7 @@
-import React from 'react';
-import {render} from 'react-dom';
+import React from "react";
+import {render} from "react-dom";
 
-import ReactTable from 'react-table';
-
+import ReactTable from "react-table";
 
 class MarkingSchemeTable extends React.Component {
   constructor() {
@@ -22,7 +21,7 @@ class MarkingSchemeTable extends React.Component {
   fetchData() {
     $.ajax({
       url: Routes.populate_marking_schemes_path(),
-      dataType: 'json',
+      dataType: "json",
     }).then(res => {
       this.setState({
         data: res.data,
@@ -34,31 +33,27 @@ class MarkingSchemeTable extends React.Component {
 
   nameColumns = [
     {
-      Header: I18n.t('activerecord.attributes.marking_schemes.name'),
-      accessor: 'name',
+      Header: I18n.t("activerecord.attributes.marking_schemes.name"),
+      accessor: "name",
       filterable: true,
-    }
+    },
   ];
 
   modifyColumn = [
     {
-      Header: I18n.t('actions'),
+      Header: I18n.t("actions"),
       Cell: ({original}) => (
         <span>
-          <a
-            href={original.edit_link}
-            data-remote='true'>
-            {I18n.t('edit')}
+          <a href={original.edit_link} data-remote="true">
+            {I18n.t("edit")}
           </a>
           &nbsp;|&nbsp;
-          <a
-            href={original.delete_link}
-            data-method='delete'>
-            {I18n.t('delete')}
+          <a href={original.delete_link} data-method="delete">
+            {I18n.t("delete")}
           </a>
         </span>
       ),
-      sortable: false
+      sortable: false,
     },
   ];
 
@@ -67,10 +62,10 @@ class MarkingSchemeTable extends React.Component {
       <ReactTable
         data={this.state.data}
         columns={this.nameColumns.concat(this.state.columns).concat(this.modifyColumn)}
-        defaultSorted = {[
+        defaultSorted={[
           {
-            id: 'name'
-          }
+            id: "name",
+          },
         ]}
         loading={this.state.loading}
       />
@@ -79,5 +74,5 @@ class MarkingSchemeTable extends React.Component {
 }
 
 export function makeMarkingSchemeTable(elem) {
-  render(<MarkingSchemeTable/>, elem);
+  render(<MarkingSchemeTable />, elem);
 }

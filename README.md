@@ -40,4 +40,4 @@ working code, which you can see in our [Contributors list](doc/markus-contributo
 
 **Supervisors:** Karen Reid, David Liu
 
-**Former supervisors:** Morgan Magnin, Benjamin Vialle 
+**Former supervisors:** Morgan Magnin, Benjamin Vialle

@@ -1,11 +1,11 @@
 import React from "react";
-import * as I18n from 'i18n-js';
-import 'translations';
+import * as I18n from "i18n-js";
+import "translations";
 
 /**
  * @file
  * Provides generic helper functions and components for react-table tables.
-*/
+ */
 
 export function defaultSort(a, b) {
   // Sort values, putting undefined/nulls below all other values.
@@ -19,8 +19,8 @@ export function defaultSort(a, b) {
     return 1;
   } else {
     // force any string values to lowercase
-    a = typeof a === 'string' ? a.toLowerCase() : a
-    b = typeof b === 'string' ? b.toLowerCase() : b
+    a = typeof a === "string" ? a.toLowerCase() : a;
+    b = typeof b === "string" ? b.toLowerCase() : b;
     // Return either 1 or -1 to indicate a sort priority
     if (a > b) {
       return 1;
@@ -38,7 +38,9 @@ export function defaultSort(a, b) {
  * Case insensitive, locale aware, string filter function
  */
 export function stringFilterMethod(filter, row) {
-  return String(row[filter.id]).toLocaleLowerCase().includes(String(filter.value).toLocaleLowerCase());
+  return String(row[filter.id])
+    .toLocaleLowerCase()
+    .includes(String(filter.value).toLocaleLowerCase());
 }
 
 export function dateSort(a, b) {
@@ -54,7 +56,7 @@ export function dateSort(a, b) {
     let b_date = new Date(b);
     return (a_date || 0) > (b_date || 0);
   }
-};
+}
 
 export function durationSort(a, b) {
   /** Sort values as a duration in weeks, days, hours, etc. */
@@ -67,23 +69,25 @@ export function durationSort(a, b) {
   } else {
     return 0;
   }
-};
+}
 
 /**
  * Text-based search filter. Based on react-table's default search filter,
  * with an additional aria-label attribute.
  */
-export function textFilter({ filter, onChange, column }) {
-  return <input
-    type="text"
-    style={{
-      width: '100%',
-    }}
-    placeholder={column.Placeholder}
-    value={filter ? filter.value : ''}
-    aria-label={`${I18n.t('search')} ${column.Header || ""}`}
-    onChange={event => onChange(event.target.value)}
-  />;
+export function textFilter({filter, onChange, column}) {
+  return (
+    <input
+      type="text"
+      style={{
+        width: "100%",
+      }}
+      placeholder={column.Placeholder}
+      value={filter ? filter.value : ""}
+      aria-label={`${I18n.t("search")} ${column.Header || ""}`}
+      onChange={event => onChange(event.target.value)}
+    />
+  );
 }
 
 /**
@@ -92,69 +96,84 @@ export function textFilter({ filter, onChange, column }) {
  * A default "all" option is prepended to the list of options; the text can be
  * customized by setting the filterAllOptionText column attribute.
  */
-export function selectFilter({ filter, onChange, column }) {
-  let options = (column.filterOptions || []).map(
-    ({ value, text }) => <option value={value} key={value}>{text}</option>
+export function selectFilter({filter, onChange, column}) {
+  let options = (column.filterOptions || []).map(({value, text}) => (
+    <option value={value} key={value}>
+      {text}
+    </option>
+  ));
+  let allOptionText = column.filterAllOptionText || I18n.t("all");
+  options.unshift(
+    <option value="all" key="all">
+      {allOptionText}
+    </option>
   );
-  let allOptionText = column.filterAllOptionText || I18n.t('all')
-  options.unshift(<option value='all' key='all'>{allOptionText}</option>);
 
-  return <select
-    onChange={event => onChange(event.target.value)}
-    style={{ width: '100%' }}
-    value={filter ? filter.value : 'all'}
-    aria-label={I18n.t('filter_by', {name: column.Header})}
-  >
-    {options}
-  </select>;
+  return (
+    <select
+      onChange={event => onChange(event.target.value)}
+      style={{width: "100%"}}
+      value={filter ? filter.value : "all"}
+      aria-label={I18n.t("filter_by", {name: column.Header})}
+    >
+      {options}
+    </select>
+  );
 }
 
 export function markingStateColumn(...override_keys) {
-  return ({
-    Header: I18n.t('activerecord.attributes.result.marking_state'),
-    accessor: 'marking_state',
+  return {
+    Header: I18n.t("activerecord.attributes.result.marking_state"),
+    accessor: "marking_state",
     Cell: row => {
-      let marking_state = '';
+      let marking_state = "";
       switch (row.original.marking_state) {
-        case 'not_collected':
-          marking_state = I18n.t('submissions.state.not_collected');
+        case "not_collected":
+          marking_state = I18n.t("submissions.state.not_collected");
           break;
-        case 'incomplete':
-          marking_state = I18n.t('submissions.state.in_progress');
+        case "incomplete":
+          marking_state = I18n.t("submissions.state.in_progress");
           break;
-        case 'complete':
-          marking_state = I18n.t('submissions.state.complete');
+        case "complete":
+          marking_state = I18n.t("submissions.state.complete");
           break;
-        case 'released':
-          marking_state = I18n.t('submissions.state.released');
+        case "released":
+          marking_state = I18n.t("submissions.state.released");
           break;
-        case 'remark':
-          marking_state = I18n.t('submissions.state.remark_requested');
+        case "remark":
+          marking_state = I18n.t("submissions.state.remark_requested");
           break;
-        case 'before_due_date':
-          marking_state = I18n.t('submissions.state.before_due_date');
+        case "before_due_date":
+          marking_state = I18n.t("submissions.state.before_due_date");
           break;
         default:
           // should not get here
-          marking_state = row.original.marking_state
+          marking_state = row.original.marking_state;
       }
-      return ( marking_state );
+      return marking_state;
     },
     filterMethod: (filter, row) => {
-      if (filter.value === 'all') {
+      if (filter.value === "all") {
         return true;
       } else {
         return filter.value === row[filter.id];
       }
     },
     filterOptions: [
-      {value: 'before_due_date', text: I18n.t('submissions.state.before_due_date')},
-      {value: 'not_collected', text: I18n.t('submissions.state.not_collected')},
-      {value: 'incomplete', text: I18n.t('submissions.state.in_progress')},
-      {value: 'complete', text: I18n.t('submissions.state.complete')},
-      {value: 'released', text: I18n.t('submissions.state.released')},
-      {value: 'remark', text: I18n.t('submissions.state.remark_requested')},
+      {
+        value: "before_due_date",
+        text: I18n.t("submissions.state.before_due_date"),
+      },
+      {
+        value: "not_collected",
+        text: I18n.t("submissions.state.not_collected"),
+      },
+      {value: "incomplete", text: I18n.t("submissions.state.in_progress")},
+      {value: "complete", text: I18n.t("submissions.state.complete")},
+      {value: "released", text: I18n.t("submissions.state.released")},
+      {value: "remark", text: I18n.t("submissions.state.remark_requested")},
     ],
     Filter: selectFilter,
-  ...override_keys})
-};
+    ...override_keys,
+  };
+}

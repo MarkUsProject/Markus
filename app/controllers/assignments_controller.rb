@@ -167,7 +167,9 @@ class AssignmentsController < ApplicationController
       end
     end
     @assessment_section_properties = @assignment.assessment_section_properties
-                                                .sort_by { |s| [AssessmentSectionProperties.due_date_for(s.section, @assignment), s.section.name] }
+    @assessment_section_properties.sort_by do |s|
+      [AssessmentSectionProperties.due_date_for(s.section, @assignment), s.section.name]
+    end
   end
 
   # Called when editing assignments form is submitted (PUT).

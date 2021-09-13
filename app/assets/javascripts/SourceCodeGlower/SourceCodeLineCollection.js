@@ -7,14 +7,14 @@
 function SourceCodeLineCollection() {}
 
 // Sets a particular source code line at a line number
-SourceCodeLineCollection.prototype.set = function(line_num, source_code_line) {
-  throw('SourceCodeCollection: set not implemented');
-}
+SourceCodeLineCollection.prototype.set = function (line_num, source_code_line) {
+  throw "SourceCodeCollection: set not implemented";
+};
 
-SourceCodeLineCollection.prototype.get = function(line_num) {
-  throw('SourceCodeCollection: get not implemented');
-}
+SourceCodeLineCollection.prototype.get = function (line_num) {
+  throw "SourceCodeCollection: get not implemented";
+};
 
-SourceCodeLineCollection.prototype.getLineNumOfNode = function(line_node) {
-  throw('SourceCodeCollection: getLineNumOfNode not implemented');
-}
+SourceCodeLineCollection.prototype.getLineNumOfNode = function (line_node) {
+  throw "SourceCodeCollection: getLineNumOfNode not implemented";
+};
