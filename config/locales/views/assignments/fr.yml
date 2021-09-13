@@ -26,17 +26,17 @@ fr:
         required_files: UPDATE ME
         submission_rules: UPDATE ME
     hidden: "%{assignment_text} (masqué)"
-    section_hidden:
-      default: UPDATE ME
-      visible: UPDATE ME
-      hidden: UPDATE ME
-      hidden_option: UPDATE ME
     manage_course_work: Gestion du cours
     marking_scheme: 'Barème: %{identifier}'
     no_required_files: Aucun fichier n'est requis pour ce projet.
     none: Aucun devoir pour le moment.
     scanned_exam:
       under_review: Cet examen est marqué
+    section_hidden:
+      default: UPDATE ME
+      hidden: UPDATE ME
+      hidden_option: UPDATE ME
+      visible: UPDATE ME
     starter_file:
       available_after_due: UPDATE ME
       available_after_due_help: UPDATE ME

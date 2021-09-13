@@ -26,17 +26,17 @@ es:
         required_files: Los estudiantes verán un mensaje de advertencia si los nombres de los archivos subidos y los nombres de los archivos requeridos no coinciden. Sin embargo, esto no les impedirá subir archivos que no tengan los nombres requeridos.
         submission_rules: Varias normas de entrega tardía diferentes. Si la opción No se Aceptan Entregas Tardías es seleccionada, los estudiantes serán advertidos de que las entregas no serán calificadas si ellos intentan entregar el proyecto después de la fecha límite. Usted tiene la libertad de dar a sus estudiantes créditos de gracia y los respectivos plazos de tiempo en la página de usuarios. La fórmula de penalidad le permite deducir la relación entre el número X de puntos a ser descontados por cada período de tiempo Y. La fórmula de penalidad le permite especificar el valor de la penalidad y el período de tiempo. Si los estudiantes trabajan en grupo, todos los integrantes del grupo verán sus créditos de gracia reducidos.
     hidden: "%{assignment_text} (oculto)"
-    section_hidden:
-      default: UPDATE ME
-      visible: UPDATE ME
-      hidden: UPDATE ME
-      hidden_option: UPDATE ME
     manage_course_work: Administrar trabajos del curso
     marking_scheme: 'Esquema de Calificación: %{identifier}'
     no_required_files: No hay archivos requeridos para este proyecto.
     none: No existen proyectos por el momento.
     scanned_exam:
       under_review: Este examen todavía está en revisión
+    section_hidden:
+      default: UPDATE ME
+      hidden: UPDATE ME
+      hidden_option: UPDATE ME
+      visible: UPDATE ME
     starter_file:
       available_after_due: UPDATE ME
       available_after_due_help: UPDATE ME
