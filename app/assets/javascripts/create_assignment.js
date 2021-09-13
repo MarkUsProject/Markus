@@ -5,15 +5,15 @@ $(document).ready(function () {
     update_due_date($("#assignment_due_date").val());
   });
 
-
   $("#assignment_assignment_properties_attributes_section_due_dates_type").change(function () {
     toggle_assessment_section_properties(this.checked);
   });
   toggle_assessment_section_properties(
-    $("#assignment_assignment_properties_attributes_section_due_dates_type").is(':checked'));
+    $("#assignment_assignment_properties_attributes_section_due_dates_type").is(":checked")
+  );
 
   $(".assessment_section_properties_input").change(function () {
-    if ($("#assignment_due_date").val() === '') {
+    if ($("#assignment_due_date").val() === "") {
       $("#assignment_due_date").val($(this).val());
     }
   });
@@ -134,7 +134,6 @@ function update_due_date(new_due_date) {
   penalty_decay_periods.refresh();
   penalty_periods.refresh();
 }
-
 
 function toggle_assessment_section_properties(section_due_dates_type) {
   $("#assessment_section_properties_information").toggle(section_due_dates_type);
