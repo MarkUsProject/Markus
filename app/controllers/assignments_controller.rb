@@ -550,14 +550,19 @@ class AssignmentsController < ApplicationController
     send_file zip_path, filename: zip_name
   end
 
-  # Downloads a csv file containing all the information and settings about an assignment
-  def download_config_file
+  # Downloads a zip file containing all the information and settings about an assignment
+  def download_config_files
     assignment = Assignment.find(params[:id])
-    config_out = MarkusCsv.generate([])
-    send_data(config_out,
-              type: 'text/csv',
-              filename: "#{assignment.short_identifier}-settings-config.csv",
-              disposition: 'attachment')
+
+    zip_name = "#{assignment.short_identifier}-config-files.zip"
+    zip_path = File.join('tmp', zip_name)
+
+    FileUtils.rm_f(zip_path)
+
+    Zip::File.open(zip_path, create: true) do |zip_file|
+      assignment.sample_starter_file_entries.each { |entry| entry.add_files_to_zip_file(zip_file) }
+    end
+    send_file zip_path, filename: zip_name
   end
 
   private
