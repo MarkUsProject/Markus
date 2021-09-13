@@ -868,6 +868,9 @@ class Assignment < Assessment
     end
   end
 
+  def configuration_file_entries
+    []
+  end
   # Yield an open repo for each grouping of this assignment, then yield again for each repo that raised an exception, to
   # try to mitigate concurrent accesses to those repos.
   def each_group_repo

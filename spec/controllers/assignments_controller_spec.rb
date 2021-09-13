@@ -1280,17 +1280,17 @@ describe AssignmentsController do
     end
   end
 
-  describe '#download_config_file' do
+  describe '#download_config_files' do
     let(:assignment) { create :assignment }
-    subject { get_as user, :download_config_file, params: { id: assignment.id } }
+    subject { get_as user, :download_config_files, params: { id: assignment.id } }
 
     # Check file content
-    shared_examples 'download sample config file' do
+    shared_examples 'download sample config files' do
       # To be modified. For now, this just checks to make sure a file is sent
       let(:structure) { {} }
       before { create :starter_file_group_with_entries, assignment: assignment, structure: structure }
-      it 'should send a csv file' do
-        expect(controller).to receive(:send_data)
+      it 'should send a zip file' do
+        expect(controller).to receive(:send_file)
         subject
       end
     end
@@ -1313,12 +1313,12 @@ describe AssignmentsController do
       end
       context 'with assignment management permissions' do
         let(:user) { create :ta, manage_assessments: true }
-        include_examples 'download sample config file'
+        include_examples 'download sample config files'
       end
     end
     context 'an admin' do
       let(:user) { create :admin }
-      include_examples 'download sample config file'
+      include_examples 'download sample config files'
     end
   end
 end
