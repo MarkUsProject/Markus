@@ -62,7 +62,7 @@ class AssignmentsController < ApplicationController
   def peer_review
     assignment = Assignment.find(params[:id])
     @assignment = assignment.is_peer_review? ? assignment : assignment.pr_assignment
-    unless @assignment.nil? || !allowed_to?(:see_hidden?)
+    if @assignment.nil? || !allowed_to?(:see_hidden?)
       render 'shared/http_status',
              formats: [:html],
              locals: {
