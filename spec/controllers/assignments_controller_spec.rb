@@ -1286,9 +1286,6 @@ describe AssignmentsController do
 
     # Check file content
     shared_examples 'download sample config files' do
-      # To be modified. For now, this just checks to make sure a file is sent
-      let(:structure) { {} }
-      before { create :starter_file_group_with_entries, assignment: assignment, structure: structure }
       it 'should send a zip file' do
         expect(controller).to receive(:send_file)
         subject
@@ -1320,5 +1317,9 @@ describe AssignmentsController do
       let(:user) { create :admin }
       include_examples 'download sample config files'
     end
+  end
+  
+  describe '#upload_config_files' do
+
   end
 end
