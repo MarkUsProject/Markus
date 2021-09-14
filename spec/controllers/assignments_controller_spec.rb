@@ -1318,7 +1318,7 @@ describe AssignmentsController do
       include_examples 'download sample config files'
     end
   end
-  
+
   describe '#upload_config_files' do
 
   end
