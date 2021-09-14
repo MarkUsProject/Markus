@@ -560,7 +560,7 @@ class AssignmentsController < ApplicationController
     FileUtils.rm_f(zip_path)
 
     Zip::File.open(zip_path, create: true) do |zipfile|
-      zipfile.get_output_stream("sample file") { |f| f.write "Just a file" }
+      zipfile.get_output_stream('sample file') { |f| f.write 'Just a file' }
     end
     send_file zip_path, filename: zip_name
   end
@@ -568,7 +568,6 @@ class AssignmentsController < ApplicationController
   # Uploads a zip file containing all the files specified in download_config_files
   # and modifies the assignment settings according to those files.
   def upload_config_files
-
   end
 
   private

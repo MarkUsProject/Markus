@@ -1320,6 +1320,5 @@ describe AssignmentsController do
   end
 
   describe '#upload_config_files' do
-
   end
 end
