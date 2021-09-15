@@ -7,13 +7,10 @@
   <% end %>
 <% end %>
 
-<div class='title_bar'>
-  <h1>
-    <%= @assignment.is_peer_review? ?
-          "#{@assignment.parent_assignment.short_identifier}: #{PeerReview.model_name.human.pluralize}" :
-          "#{@assignment.short_identifier}: #{PeerReview.model_name.human.pluralize}" %>
-  </h1>
-</div>
+<% content_for :title,
+               @assignment.is_peer_review? ?
+                 "#{@assignment.parent_assignment.short_identifier}: #{PeerReview.model_name.human.pluralize}" :
+                 "#{@assignment.short_identifier}: #{PeerReview.model_name.human.pluralize}" %>
 
 <div class='pane-wrapper'>
   <div class='pane block'>
