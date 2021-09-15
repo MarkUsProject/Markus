@@ -550,6 +550,26 @@ class AssignmentsController < ApplicationController
     send_file zip_path, filename: zip_name
   end
 
+  # Downloads a zip file containing all the information and settings about an assignment
+  def download_config_files
+    assignment = Assignment.find(params[:id])
+
+    zip_name = "#{assignment.short_identifier}-config-files.zip"
+    zip_path = File.join('tmp', zip_name)
+
+    FileUtils.rm_f(zip_path)
+
+    Zip::File.open(zip_path, create: true) do |zipfile|
+      zipfile.get_output_stream('sample file') { |f| f.write 'Just a file' }
+    end
+    send_file zip_path, filename: zip_name
+  end
+
+  # Uploads a zip file containing all the files specified in download_config_files
+  # and modifies the assignment settings according to those files.
+  def upload_config_files
+  end
+
   private
 
   def set_repo_vars(assignment, grouping)

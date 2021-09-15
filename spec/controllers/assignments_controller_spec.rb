@@ -1279,4 +1279,46 @@ describe AssignmentsController do
       include_examples 'download sample starter files'
     end
   end
+
+  describe '#download_config_files' do
+    let(:assignment) { create :assignment }
+    subject { get_as user, :download_config_files, params: { id: assignment.id } }
+
+    # Check file content
+    shared_examples 'download sample config files' do
+      it 'should send a zip file' do
+        expect(controller).to receive(:send_file)
+        subject
+      end
+    end
+
+    # Check to ensure appropriate access is given
+    context 'a student' do
+      let(:user) { create :student }
+      it 'should respond with 403' do
+        subject
+        expect(response).to have_http_status(403)
+      end
+    end
+    context 'a grader' do
+      context 'without assignment management permissions' do
+        let(:user) { create :ta }
+        it 'should respond with 403' do
+          subject
+          expect(response).to have_http_status(403)
+        end
+      end
+      context 'with assignment management permissions' do
+        let(:user) { create :ta, manage_assessments: true }
+        include_examples 'download sample config files'
+      end
+    end
+    context 'an admin' do
+      let(:user) { create :admin }
+      include_examples 'download sample config files'
+    end
+  end
+
+  describe '#upload_config_files' do
+  end
 end
