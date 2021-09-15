@@ -1,13 +1,16 @@
-<div class='title_bar'>
-  <h1><%=
-    if @assignment.scanned_exam
-      t('helpers.submit.create', model: t('activerecord.models.scanned_assignment.one'))
-    elsif @assignment.is_timed
-      t('helpers.submit.create', model: t('activerecord.models.timed_assignment.one'))
-    else
-      t('helpers.submit.create', model: Assignment.model_name.human)
-    end
-  %></h1>
-</div>
+<% content_for :title,
+               if @assignment.scanned_exam
+                 t('helpers.submit.create', model: t('activerecord.models.scanned_assignment.one'))
+               elsif @assignment.is_timed
+                 t('helpers.submit.create', model: t('activerecord.models.timed_assignment.one'))
+               else
+                 t('helpers.submit.create', model: Assignment.model_name.human)
+               end %>
+
+<% @heading_buttons = [
+  { link_text: t('upload'),
+    link_path: '#',
+    html_options: { id: 'uploadModal' } }
+] %>
 
 <%= render partial: 'form', formats: [:html], handlers: [:erb] %>
