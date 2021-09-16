@@ -6,23 +6,23 @@ describe AutomatedTestsHelper do
     let(:criterion) { build :flexible_criterion, assignment: assignment }
     let(:criterion_key) { "#{criterion.type}:#{criterion.name}" }
     let(:specs) do
-      { 'testers' =>  [
-          {
-              'test_data' => [{
-                                  'extra_info' => {
-                                      'test_group_id' => test_group.id,
-                                      'criterion' => criterion_key
-                                  }
-                              }]
+      { 'testers' => [
+        {
+          'test_data' => [{
+            'extra_info' => {
+              'test_group_id' => test_group.id,
+              'criterion' => criterion_key
+            }
           }]
-      }
+        }
+      ] }
     end
     subject { update_test_groups_from_specs assignment, specs }
     before { allow(AutomatedTestsHelper).to receive(:flash_message) }
     context 'when the test group exists' do
       before { test_group.save }
       it 'should not create a new test group' do
-        expect { subject }.not_to change { TestGroup.count }
+        expect { subject }.not_to(change { TestGroup.count })
       end
       it 'should use the test group id' do
         subject
