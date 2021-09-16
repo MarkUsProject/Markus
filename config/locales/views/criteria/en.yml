@@ -5,7 +5,7 @@ en:
     answer_yes: 'Yes'
   criteria:
     checkbox: Checkbox
-    description_hint: You may use simple HTML tags in this field. Save changes to see a preview.
+    description_hint: You may use Markdown in this field. Save changes to see a preview.
     editing_criteria: Editing criteria
     errors:
       invalid_format: 'The following criteria had invalid format:'

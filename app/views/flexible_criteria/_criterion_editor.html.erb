@@ -57,6 +57,6 @@
 <% unless criterion.description.blank? %>
   <h3><%= t(:preview) %></h3>
   <div>
-    <%= sanitize(criterion.description) %>
+    <%= markdown(criterion.description) %>
   </div>
 <% end %>
