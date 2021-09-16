@@ -1,6 +1,7 @@
 # Changelog
 
 ## [unreleased]
+- Support rendering of Markdown in criterion descriptions (#5500)
 
 ## [v1.13.0]
 - Modify Result.get_total_extra_marks to differentiate between having extra marks that sum to zero and
