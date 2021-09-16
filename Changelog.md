@@ -1,6 +1,7 @@
 # Changelog
 
 ## [v1.13.1]
+- Support rendering of Markdown in criterion descriptions (#5500)
 - Ensure that downloadable test specs file is portable between assignments and instances (#5469)
 
 ## [v1.13.0]
