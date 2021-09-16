@@ -2,6 +2,7 @@
 
 ## [unreleased]
 - Support rendering of Markdown in criterion descriptions (#5500)
+- Ensure that downloadable test specs file is portable between assignments and instances (#5469)
 
 ## [v1.13.0]
 - Modify Result.get_total_extra_marks to differentiate between having extra marks that sum to zero and
