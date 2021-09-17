@@ -5,7 +5,7 @@ es:
     answer_yes: Sí
   criteria:
     checkbox: Caja de Selección
-    description_hint: Usted puede usar etiquetas HTML simples en este campo. Guarde los cambios para ver una vista preliminar.
+    description_hint: Usted puede usar Markdown en este campo. Guarde los cambios para ver una vista preliminar.
     editing_criteria: Editando los criterios de calificación
     errors:
       invalid_format: 'Los siguientes criterios de calificación tenían un formato inválido:'
