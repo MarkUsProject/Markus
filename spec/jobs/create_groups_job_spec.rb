@@ -2,6 +2,7 @@ describe CreateGroupsJob do
   let(:assignment) { create :assignment }
   let(:student1) { create :student }
   let(:student2) { create :student }
+  let(:group_name) { 'group1' }
 
   after :each do
     destroy_repos
@@ -28,7 +29,7 @@ describe CreateGroupsJob do
     if groups_diff.positive?
       it 'should create a new repo' do
         CreateGroupsJob.perform_now(assignment, @data)
-        Group.find_by_group_name('group1').access_repo do |repo|
+        Group.find_by_group_name(group_name).access_repo do |repo|
           expect(repo).to be_an_instance_of(MemoryRepository)
         end
       end
@@ -42,11 +43,27 @@ describe CreateGroupsJob do
 
   context 'when creating one group from scratch' do
     context 'and group limit is set to 1' do
-      before :each do
-        @data = [['group1', student1.user_name, student2.user_name]]
+      context 'and there are two students specified for the group' do
+        before :each do
+          @data = [['group1', student1.user_name, student2.user_name]]
+        end
+
+        include_examples 'create objects', 0, 0, 0
       end
 
-      include_examples 'create objects', 0, 0, 0
+      context 'and there is one student specified for the group' do
+        let(:group_name) { student1.user_name }
+        before :each do
+          @data = [[student1.user_name, student1.user_name]]
+        end
+
+        include_examples 'create objects', 1, 1, 1
+
+        it 'creates an individual repository for the student' do
+          CreateGroupsJob.perform_now(assignment, @data)
+          expect(Group.find_by(group_name: student1.user_name, repo_name: student1.user_name)).to_not be_nil
+        end
+      end
     end
     context 'and group limit is set to 2' do
       let(:assignment) { create :assignment, assignment_properties_attributes: { group_min: 1, group_max: 2 } }

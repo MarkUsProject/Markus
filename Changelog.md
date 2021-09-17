@@ -1,6 +1,7 @@
 # Changelog
 
 ## [v1.13.1]
+- Ensure "Create all groups" button creates repositories for students usering their user name (#5499)
 - Support rendering of Markdown in criterion descriptions (#5500)
 - Ensure that downloadable test specs file is portable between assignments and instances (#5469)
 
