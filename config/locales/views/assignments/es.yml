@@ -73,3 +73,4 @@ es:
       starter_file_prompt: UPDATE ME
       time_until_due_warning: UPDATE ME %{due_date}
     upload_file_requirement: La lista de archivos entregados no coincide con los archivos necesarios para este proyecto.
+    upload_config_help_html: UPDATE ME

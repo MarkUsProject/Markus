@@ -73,3 +73,4 @@ fr:
       starter_file_prompt: UPDATE ME
       time_until_due_warning: UPDATE ME %{due_date}
     upload_file_requirement: La liste des fichiers téléchargés ne correspond pas aux fichiers d'affectation nécessaire
+    upload_config_help_html: UPDATE ME

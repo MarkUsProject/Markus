@@ -1,8 +1,11 @@
 <%= content_for :modal_id, 'upload_dialog_config' %>
-<%= content_for :modal_title, t('upload_assignment_zip') %>
+<%= content_for :modal_title, t('upload_the', item: 'Configuration Zip') %>
 <%= content_for :modal_open_link, '#uploadModalConfig' %>
 
 <%= content_for :modal_content do %>
+
+  <!-- Insert section_id once documentation has been created -->
+  <%= t('assignments.upload_config_help_html') %>
 
   <!-- Script for disabling upload buttons. -->
   <%= javascript_include_tag 'upload_button_control.js',
@@ -11,19 +14,15 @@
                              button_id: 'submit_upload_for_config',
                              nonce: true %>
 
-  <%= form_tag upload_config_files_assignment_path(:id), { multipart: true, size: 1 } do %>
+  <%= form_tag upload_config_files_assignment_path(:id),
+               { multipart: true, size: 1 } do %>
 
-    <!-- To be replaced when feature is finished and properly documented (and a helper page can be made) -->
-    <p>
-      Upload the zip file that was obtained from an assignment to copy it over
-    </p>
-
-    <%= file_field_tag :upload_file, required: true, :accept => '.zip' %>
+    <%= file_field_tag 'upload_file', required: true, accept: '.zip' %>
 
     <section class='dialog-actions'>
       <%= submit_tag t(:upload),
-                     data: { disable_with: t(:uploading_please_wait) },
                      disabled: true,
+                     data: { disable_with: t(:uploading_please_wait) },
                      id: 'submit_upload' %>
       <input type='reset' value='<%= t(:cancel) %>'/>
     </section>

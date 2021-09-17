@@ -1,5 +1,5 @@
 <%= content_for :modal_id, 'download_dialog' %>
-<%= content_for :modal_title, t('download_assignment_configuration') %>
+<%= content_for :modal_title, t('download_the', item: 'Configuration Zip') %>
 <%= content_for :modal_open_link, '#downloadModalConfig' %>
 
 <%= content_for :modal_content do %>
@@ -7,7 +7,7 @@
   <div class='clickable_links'>
     <div class='clickable_text'>
       <img class='clickable_image' src='<%= image_path('icons/download-file.png') %>'>
-      <%= t('download_zip') %>
+      <%= t('download_the', item: 'zip file') %>
     </div>
     <%= link_to '',
                 download_config_files_assignment_path(format: 'zip'),
