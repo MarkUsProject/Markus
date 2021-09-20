@@ -168,6 +168,7 @@ class AssignmentsController < ApplicationController
     end
     @section_due_dates = @assignment.section_due_dates
                                     .sort_by { |s| [SectionDueDate.due_date_for(s.section, @assignment), s.section.name] }
+    render :edit, layout: 'assignment_content'
   end
 
   # Called when editing assignments form is submitted (PUT).
@@ -212,7 +213,7 @@ class AssignmentsController < ApplicationController
     Section.all.each { |s| @assignment.section_due_dates.build(section: s)}
     @section_due_dates = @assignment.section_due_dates
                                     .sort_by { |s| s.section.name }
-    render :new
+    render :new, layout: 'assignment_content'
   end
 
   # Called after a new assignment form is submitted.

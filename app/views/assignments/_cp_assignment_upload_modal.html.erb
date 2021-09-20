@@ -1,0 +1,29 @@
+<%= content_for :modal_id, 'upload_dialog_config' %>
+<%= content_for :modal_title, t('upload_the', item: 'Configuration Zip') %>
+<%= content_for :modal_open_link, '#uploadModalConfig' %>
+
+<%= content_for :modal_content do %>
+
+  <%= t('assignments.upload_config_help_html', section_id: 'assignment-configuration') %>
+
+  <!-- Script for disabling upload buttons. -->
+  <%= javascript_include_tag 'upload_button_control.js',
+                             id: 'upload_script_for_config',
+                             upload_id: 'upload_config_files',
+                             button_id: 'submit_upload_for_config',
+                             nonce: true %>
+
+  <%= form_tag upload_config_files_assignment_path(:id),
+               { multipart: true, size: 1 } do %>
+
+    <%= file_field_tag 'upload_file', required: true, accept: '.zip' %>
+
+    <section class='dialog-actions'>
+      <%= submit_tag t(:upload),
+                     disabled: true,
+                     data: { disable_with: t(:uploading_please_wait) },
+                     id: 'submit_upload' %>
+      <input type='reset' value='<%= t(:cancel) %>'/>
+    </section>
+  <% end %>
+<% end %>
