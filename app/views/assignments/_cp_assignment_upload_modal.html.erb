@@ -4,8 +4,8 @@
 
 <%= content_for :modal_content do %>
 
-  <!-- Insert section_id once documentation has been created -->
-  <%= t('assignments.upload_config_help_html') %>
+  <!-- Insert assignment-configuration section_id once documentation has been created -->
+  <%= t('assignments.upload_config_help_html', section_id: '') %>
 
   <!-- Script for disabling upload buttons. -->
   <%= javascript_include_tag 'upload_button_control.js',
