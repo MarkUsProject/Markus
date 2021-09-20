@@ -6,11 +6,8 @@
 
 <% @heading_buttons = [
   { link_text: t('download'),
-    link_path: '#',
-    html_options: { id: 'downloadModalConfig' } }
+    link_path: download_config_files_assignment_path(format: 'zip') }
 ] %>
-
-<%= render partial: 'cp_assignment_download_modal', layout: 'layouts/modal_dialog'  %>
 
 <% if @assignment.is_peer_review? %>
   <%= render partial: 'peer_review_form' %>
