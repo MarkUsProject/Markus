@@ -12,6 +12,7 @@ fr:
     need_group_for_test: UPDATE ME
     need_one_file: Vous devez avoir au moins un fichier envoyé pour exécuter un test.
     need_submission: Les soumissions doivent être recueillies avant que les tests sont exécutés. Tous les tests n'ont pas été exécuté.
+    no_criteria: UPDATE ME "%{type}" "%{name}".
     no_results: Aucun résultats
     results:
       extra_malformed: "Resultats mal formés: \n%{extra}\n"

@@ -55,7 +55,7 @@
   padding: 0;
   width: 100%;
 
-  li {
+  > li {
     border-bottom: 1px solid $background-support;
     padding: 5px;
     width: 100%;
