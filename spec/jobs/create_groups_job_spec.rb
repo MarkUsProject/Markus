@@ -142,7 +142,7 @@ describe CreateGroupsJob do
             let(:group_name) { student1.user_name }
             it 'should create a new grouping' do
               data = [[group.group_name, student1.user_name]]
-              expect { CreateGroupsJob.perform_now(create(:assignment), data) }.to(change { Grouping.count }.by 1)
+              expect { CreateGroupsJob.perform_now(create(:assignment), data) }.to(change { Grouping.count }.by(1))
             end
             it 'should use the old repo name' do
               data = [[group.group_name, student1.user_name]]
