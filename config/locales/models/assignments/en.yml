@@ -25,7 +25,7 @@ en:
         remark_due_date: Remark Due Date
         remark_message: Remark Request Instructions
         repository_folder: Repository Folder
-        section_due_dates_type: Enable section specific settings
+        section_due_dates_type: Enable section-specific settings
         short_identifier: Short Identifier
         start_time: Start time
         student_form_groups: Students may form their own groups

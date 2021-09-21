@@ -160,7 +160,7 @@ class AssignmentsController < ApplicationController
       end
     end
 
-    # build section_due_dates for each section that doesn't already have a due date
+    # build assessment_section_properties for each section that doesn't already have a due date
     Section.all.each do |s|
       unless AssessmentSectionProperties.find_by(assessment_id: @assignment.id, section_id: s.id)
         @assignment.assessment_section_properties.build(section: s)
@@ -210,7 +210,7 @@ class AssignmentsController < ApplicationController
                                    .order(:id)
     @sections = Section.all
 
-    # build section_due_dates for each section
+    # build assessment_section_properties for each section
     Section.all.each { |s| @assignment.assessment_section_properties.build(section: s) }
     @assessment_section_properties = @assignment.assessment_section_properties
                                                 .sort_by { |s| s.section.name }
@@ -587,7 +587,7 @@ class AssignmentsController < ApplicationController
                          assignment.saved_change_to_is_hidden? ||
                          assignment.assignment_files.any?(&:saved_changes?) ||
                          num_files_before != assignment.assignment_files.length
-    # if there are no section due dates, destroy the objects that were created
+    # if there are no assessment section properties, destroy the objects that were created
     if ['0', nil].include? params[:assignment][:assignment_properties_attributes][:section_due_dates_type]
       assignment.assessment_section_properties.each(&:destroy)
       assignment.section_due_dates_type = false
