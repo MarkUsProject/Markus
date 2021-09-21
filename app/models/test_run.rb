@@ -39,6 +39,7 @@ class TestRun < ApplicationRecord
               time: test['time']
             )
           end
+          self.submission&.set_autotest_marks
         rescue StandardError => e
           error = e
           raise ActiveRecord::Rollback
