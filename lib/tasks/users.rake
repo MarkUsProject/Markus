@@ -26,7 +26,11 @@ namespace :db do
   desc 'Add a local TestServer account'
   # this task depends on :environment and :seed
   task(:test_servers => :environment) do
-    puts 'Populate database with TestServers'
+    puts 'Populate database with TestServer user'
+
+    # Remove old autotest API key file
+    FileUtils.rm_f(AutomatedTestsHelper::AutotestApi::AUTOTEST_KEY_FILE)
+
     [[Settings.autotest.server_host, 'Test', 'Server1']]
         .each do |server|
       TestServer.create(user_name: server[0], first_name: server[1], last_name: server[2], hidden: true)
