@@ -17,10 +17,6 @@ class Section < ApplicationRecord
     students.size
   end
 
-  def section_due_date_for(aid)
-    AssessmentSectionProperties.where(assessment_id: aid, section_id: id).first
-  end
-
   def starter_file_group_for(assessment)
     starter_file_groups.where(assessment_id: assessment.id).first || assessment.default_starter_file_group
   end

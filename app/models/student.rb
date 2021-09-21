@@ -236,14 +236,6 @@ class Student < User
     end
   end
 
-  # Return the due date for this student for +assignment+.
-  def due_date_for_assignment(assignment)
-    grouping = accepted_grouping_for(assignment)
-    grouping&.due_date ||
-      section&.assessment_section_properties_for(assignment)&.due_date ||
-      assignment&.due_date
-  end
-
   def released_result_for?(assessment)
     if assessment.is_a? GradeEntryForm
       grade_entry_students.find_by(assessment_id: assessment.id)&.released_to_student

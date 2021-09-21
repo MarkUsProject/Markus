@@ -44,22 +44,6 @@ describe Section do
       end
     end
   end
-
-  describe '.section_due_date_for' do
-    context 'A section with students associated to' do
-      context 'With a section due date for an assignment' do
-        it 'return the section due date for an assignment' do
-          section_5 = Section.create!(name: "Shrek")
-          assignment = create(:assignment,
-                              due_date: 2.days.from_now,
-                              assignment_properties_attributes: { section_due_dates_type: false })
-          section_due_date = AssessmentSectionProperties.create!(section: section_5, assessment: assignment)
-
-          expect(section_due_date).to eq(section_5.section_due_date_for(assignment))
-        end
-      end
-    end
-  end
   describe '#starter_file_group_for' do
     let(:assignment) { create :assignment }
     let(:sections) { create_list :section, 2 }
