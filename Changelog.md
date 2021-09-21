@@ -1,7 +1,7 @@
 # Changelog
 
 ## [unreleased]
-- Rename SectionDueDates to AssessmentSectionProperties, and add the ability to hide assignments from individual sections. Note this setting overrides the assignment's default hidden status.
+- Add the ability to hide assignments from individual sections (#5445)
 ## [v1.13.0]
 - Modify Result.get_total_extra_marks to differentiate between having extra marks that sum to zero and
   having no extra marks (#5220)
