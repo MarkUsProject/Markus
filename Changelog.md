@@ -1,6 +1,7 @@
 # Changelog
 
 ## [unreleased]
+- Set criteria marks after autotest run (#5508)
 
 ## [v1.13.1]
 - Ensure that downloadable test specs file is portable between assignments and instances (#5469)
