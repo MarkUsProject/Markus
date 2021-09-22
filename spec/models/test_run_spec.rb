@@ -79,7 +79,7 @@ describe TestRun do
         expect { test_run.update_results!(results) }.to change { test_run.status }.to('failed')
       end
       it 'should not update criteria marks' do
-        expect { test_run.update_results!(results) }.not_to change { criterion.reload.marks.count }
+        expect { test_run.update_results!(results) }.not_to(change { criterion.reload.marks.count })
       end
     end
     context 'there is a success reported' do
@@ -243,7 +243,7 @@ describe TestRun do
         let(:submission) { create :version_used_submission, grouping: grouping }
         let(:test_run) { create :test_run, status: :in_progress, submission: submission }
         it 'should create now criteria marks' do
-          expect { test_run.update_results!(results) }.to change { criterion.reload.marks }
+          expect { test_run.update_results!(results) }.to(change { criterion.reload.marks })
         end
         it 'should set criteria marks' do
           test_run.update_results!(results)
@@ -252,7 +252,7 @@ describe TestRun do
       end
       context 'when it is associated with a grouping' do
         it 'should not update criteria marks' do
-          expect { test_run.update_results!(results) }.not_to change { criterion.reload.marks.count }
+          expect { test_run.update_results!(results) }.not_to(change { criterion.reload.marks.count })
         end
       end
     end
