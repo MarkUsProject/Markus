@@ -708,7 +708,7 @@ class SubmissionsController < ApplicationController
       _stdout, stderr, status = Open3.capture3(*args, stdin_data: file_contents)
       unless status.exitstatus.zero?
         # Only display last line to avoid a cookie overflow error
-        flash_message(:error, "#{stderr.lines.last}")
+        flash_message(:error, stderr.lines.last)
         return I18n.t('submissions.cannot_display') unless status.exitstatus.zero?
       end
     end
