@@ -354,6 +354,11 @@ th.required::after {
     padding-right: 22px;
   }
 
+  .rt-td.-wrap,
+  .rt-th.-wrap {
+    white-space: initial;
+  }
+
   &.auto-overflow {
     .rt-thead,
     .rt-tbody {

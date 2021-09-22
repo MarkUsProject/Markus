@@ -2,6 +2,7 @@
 
 ## [unreleased]
 - Ensure "Create all groups" button uses existing repos if they already exist (#5504)
+- Set criteria marks after autotest run (#5508)
 
 ## [v1.13.1]
 - Ensure that downloadable test specs file is portable between assignments and instances (#5469)

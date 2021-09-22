@@ -301,7 +301,7 @@ class TestGroupResultTable extends React.Component {
           pivotBy={["test_group_name"]}
           getTdProps={(state, rowInfo) => {
             if (rowInfo) {
-              let className = `test-result-${rowInfo.row["test_status"]}`;
+              let className = `-wrap test-result-${rowInfo.row["test_status"]}`;
               if (
                 !rowInfo.aggregated &&
                 (!this.state.show_output || !rowInfo.original["test_results.output"])
