@@ -48,6 +48,6 @@ class AutotestResultsJob < AutotestJob
     if redis.get('autotest_results') == self.job_id
       redis.del('autotest_results')
     end
-    outstanding_results
+    return outstanding_results
   end
 end
