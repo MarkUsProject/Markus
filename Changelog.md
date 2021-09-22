@@ -1,6 +1,7 @@
 # Changelog
 
 ## [unreleased]
+- Display smaller error message when nbconvert fails to avoid a cookie overflow (#5510)
 
 ## [v1.13.1]
 - Ensure that downloadable test specs file is portable between assignments and instances (#5469)
