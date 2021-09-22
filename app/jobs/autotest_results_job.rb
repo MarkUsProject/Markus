@@ -43,11 +43,11 @@ class AutotestResultsJob < AutotestJob
         end
       end
     end
+    outstanding_results
   ensure
     redis = Redis::Namespace.new(Rails.root.to_s)
     if redis.get('autotest_results') == self.job_id
       redis.del('autotest_results')
     end
-    return outstanding_results
   end
 end
