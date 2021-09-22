@@ -1,5 +1,10 @@
 # Changelog
 
+## [unreleased]
+
+## [v1.13.2]
+- Set criteria marks after autotest run (#5508)
+
 ## [v1.13.1]
 - Ensure "Create all groups" button creates repositories for students usering their user name (#5499)
 - Support rendering of Markdown in criterion descriptions (#5500)

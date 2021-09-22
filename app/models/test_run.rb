@@ -47,6 +47,7 @@ class TestRun < ApplicationRecord
         create_annotations(result['annotations'])
         create_feedback_file(result['feedback'], test_group_result)
       end
+      self.submission&.set_autotest_marks
     end
   end
 
