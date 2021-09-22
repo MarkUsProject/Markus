@@ -13,7 +13,7 @@
                              button_id: 'submit_upload_for_config',
                              nonce: true %>
 
-  <%= form_tag upload_config_files_assignment_path(:id),
+  <%= form_tag upload_config_files_assignments_path,
                { multipart: true, size: 1 } do %>
 
     <%= file_field_tag 'upload_file', required: true, accept: '.zip' %>
