@@ -39,7 +39,6 @@ class TestRun < ApplicationRecord
               time: test['time']
             )
           end
-          self.submission&.set_autotest_marks
         rescue StandardError => e
           error = e
           raise ActiveRecord::Rollback
@@ -48,6 +47,7 @@ class TestRun < ApplicationRecord
         create_annotations(result['annotations'])
         create_feedback_file(result['feedback'], test_group_result)
       end
+      self.submission&.set_autotest_marks
     end
   end
 
