@@ -1159,7 +1159,7 @@ class Assignment < Assessment
   # Returns an assignment's relevant properties for uploading/downloading an assignment's configuration
   def get_assignment_properties
     properties = {}
-    
+
     # Insert DEFAULT_FIELDS first to make file more readable
     DEFAULT_FIELDS.each do |f|
       properties[f] = self.assignment.send(f)
