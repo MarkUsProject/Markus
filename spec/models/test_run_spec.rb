@@ -42,8 +42,11 @@ describe TestRun do
     end
   end
   describe '#update_results!' do
-    let(:test_run) { create :test_run, status: :in_progress }
-    let(:test_group) { create(:test_group) }
+    let(:assignment) { create :assignment }
+    let(:grouping) { create :grouping, assignment: assignment }
+    let(:test_run) { create :test_run, status: :in_progress, grouping: grouping }
+    let(:criterion) { create :flexible_criterion, max_mark: 2, assignment: assignment }
+    let(:test_group) { create :test_group, criterion: criterion, assignment: assignment }
     let(:results) do
       JSON.parse({ status: :finished,
                    error: nil,
@@ -74,6 +77,9 @@ describe TestRun do
       before { results['status'] = 'failed' }
       it 'should change the status to failure' do
         expect { test_run.update_results!(results) }.to change { test_run.status }.to('failed')
+      end
+      it 'should not update criteria marks' do
+        expect { test_run.update_results!(results) }.not_to(change { criterion.reload.marks.count })
       end
     end
     context 'there is a success reported' do
@@ -231,6 +237,22 @@ describe TestRun do
           results['test_groups'].first['tests'].first['output'] = "abc\x00de"
           test_run.update_results!(results)
           expect(TestResult.where(output: 'abc\u0000de')).not_to be_nil
+        end
+      end
+      context 'when it is associated with a submission' do
+        let(:submission) { create :version_used_submission, grouping: grouping }
+        let(:test_run) { create :test_run, status: :in_progress, submission: submission }
+        it 'should create now criteria marks' do
+          expect { test_run.update_results!(results) }.to(change { criterion.reload.marks })
+        end
+        it 'should set criteria marks' do
+          test_run.update_results!(results)
+          expect(submission.results.first.total_mark).to eq 1
+        end
+      end
+      context 'when it is associated with a grouping' do
+        it 'should not update criteria marks' do
+          expect { test_run.update_results!(results) }.not_to(change { criterion.reload.marks.count })
         end
       end
     end
