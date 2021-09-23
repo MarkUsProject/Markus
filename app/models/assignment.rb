@@ -1156,10 +1156,9 @@ class Assignment < Assessment
     self.assignment_properties.attributes.merge(self.attributes).symbolize_keys.to_json(options)
   end
 
-  # Returns an assignment's relevant properties for uploading/downloading an assignment's configuration
-  def get_assignment_properties
+  # Returns an assignment's relevant properties for uploading/downloading an assignment's configuration as a hash
+  def assignment_properties_config
     properties = {}
-
     # Insert DEFAULT_FIELDS first to make file more readable
     DEFAULT_FIELDS.each do |f|
       properties[f] = self.assignment.send(f)
@@ -1171,7 +1170,7 @@ class Assignment < Assessment
     DEFAULT_FIELDS.each do |f|
       all_properties.delete(f)
     end
-    properties.merge(all_properties).to_yaml
+    properties.merge(all_properties)
   end
 
   # zip all files in the folder at +self.autotest_files_dir+ and return the

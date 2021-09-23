@@ -562,7 +562,7 @@ class AssignmentsController < ApplicationController
 
     Zip::File.open(zip_path, create: true) do |zipfile|
       zipfile.get_output_stream("#{assignment.short_identifier}-properties.yml") { |f|
-        f.write assignment.get_assignment_properties
+        f.write assignment.get_assignment_properties.to_yaml
       }
     end
     send_file zip_path, filename: zip_name
