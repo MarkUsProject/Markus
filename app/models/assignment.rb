@@ -1156,6 +1156,24 @@ class Assignment < Assessment
     self.assignment_properties.attributes.merge(self.attributes).symbolize_keys.to_json(options)
   end
 
+  # Returns an assignment's relevant properties for uploading/downloading an assignment's configuration
+  def get_assignment_properties
+    properties = {}
+    
+    # Insert DEFAULT_FIELDS first to make file more readable
+    DEFAULT_FIELDS.each do |f|
+      properties[f] = self.assignment.send(f)
+    end
+    all_properties = self.assignment_properties.attributes.merge(self.attributes).symbolize_keys
+    # Delete irrelevant/included keys
+    all_properties.delete(:id)
+    all_properties.delete(:assessment_id)
+    DEFAULT_FIELDS.each do |f|
+      all_properties.delete(f)
+    end
+    properties.merge(all_properties).to_yaml
+  end
+
   # zip all files in the folder at +self.autotest_files_dir+ and return the
   # path to the zip file
   def zip_automated_test_files(user)
