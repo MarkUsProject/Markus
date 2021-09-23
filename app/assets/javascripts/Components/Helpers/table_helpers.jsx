@@ -121,7 +121,7 @@ export function selectFilter({filter, onChange, column}) {
   );
 }
 
-export function markingStateColumn(...override_keys) {
+export function markingStateColumn(marking_states, ...override_keys) {
   return {
     Header: I18n.t("activerecord.attributes.result.marking_state"),
     accessor: "marking_state",
@@ -162,16 +162,34 @@ export function markingStateColumn(...override_keys) {
     filterOptions: [
       {
         value: "before_due_date",
-        text: I18n.t("submissions.state.before_due_date"),
+        text: I18n.t("submissions.state_filter.before_due_date", {
+          count: marking_states["before_due_date"],
+        }),
       },
       {
         value: "not_collected",
-        text: I18n.t("submissions.state.not_collected"),
+        text: I18n.t("submissions.state_filter.not_collected", {
+          count: marking_states["not_collected"],
+        }),
       },
-      {value: "incomplete", text: I18n.t("submissions.state.in_progress")},
-      {value: "complete", text: I18n.t("submissions.state.complete")},
-      {value: "released", text: I18n.t("submissions.state.released")},
-      {value: "remark", text: I18n.t("submissions.state.remark_requested")},
+      {
+        value: "incomplete",
+        text: I18n.t("submissions.state_filter.in_progress", {count: marking_states["incomplete"]}),
+      },
+      {
+        value: "complete",
+        text: I18n.t("submissions.state_filter.complete", {count: marking_states["complete"]}),
+      },
+      {
+        value: "released",
+        text: I18n.t("submissions.state_filter.released", {count: marking_states["released"]}),
+      },
+      {
+        value: "remark",
+        text: I18n.t("submissions.state_filter.remark_requested", {
+          count: marking_states["remark"],
+        }),
+      },
     ],
     Filter: selectFilter,
     ...override_keys,

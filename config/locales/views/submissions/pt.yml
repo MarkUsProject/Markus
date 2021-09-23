@@ -57,6 +57,13 @@ pt:
       not_collected: Não coletado
       released: Liberado
       remark_requested: Pedido de revisão
+    state_filter:
+      before_due_date: UPDATE ME (%{count})
+      complete: Completado (%{count})
+      in_progress: Em progresso (%{count})
+      not_collected: Não coletado (%{count})
+      released: Liberado (%{count})
+      remark_requested: Pedido de revisão (%{count})
     status: Status
     student:
       file_manager: "%{short_identifier}: Gerenciador de Arquivos"

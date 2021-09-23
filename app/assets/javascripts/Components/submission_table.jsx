@@ -8,11 +8,20 @@ import CollectSubmissionsModal from "./Modals/collect_submissions_modal";
 class RawSubmissionTable extends React.Component {
   constructor() {
     super();
+    const markingStates = {
+      not_collected: 0,
+      incomplete: 0,
+      complete: 0,
+      released: 0,
+      remark: 0,
+      before_due_date: 0,
+    };
     this.state = {
       groupings: [],
       sections: {},
       loading: true,
       showModal: false,
+      marking_states: markingStates,
     };
   }
 
@@ -26,12 +35,35 @@ class RawSubmissionTable extends React.Component {
       dataType: "json",
     }).then(res => {
       this.props.resetSelection();
+      const markingStates = this.getMarkingStates(res.groupings);
       this.setState({
         groupings: res.groupings,
         sections: res.sections,
         loading: false,
+        marking_states: markingStates,
       });
     });
+  };
+
+  getMarkingStates(data) {
+    const markingStates = {
+      not_collected: 0,
+      incomplete: 0,
+      complete: 0,
+      released: 0,
+      remark: 0,
+      before_due_date: 0,
+    };
+    data.forEach(row => {
+      markingStates[row["marking_state"]] += 1;
+    });
+    return markingStates;
+  }
+
+  onFilteredChange = () => {
+    const summaryTable = this.checkboxTable.getWrappedInstance();
+    const markingStates = this.getMarkingStates(summaryTable.state.sortedData);
+    this.setState({marking_states: markingStates});
   };
 
   columns = () => [
@@ -139,7 +171,7 @@ class RawSubmissionTable extends React.Component {
       minWidth: 100,
       style: {textAlign: "right"},
     },
-    markingStateColumn({minWidth: 70}),
+    markingStateColumn(this.state.marking_states, {minWidth: 70}),
     {
       Header: I18n.t("activerecord.attributes.result.total_mark"),
       accessor: "final_grade",
@@ -287,6 +319,7 @@ class RawSubmissionTable extends React.Component {
           ]}
           filterable
           defaultFiltered={this.props.defaultFiltered}
+          onFilteredChange={this.onFilteredChange}
           loading={loading}
           getTrProps={this.getTrProps}
           {...this.props.getCheckboxProps()}

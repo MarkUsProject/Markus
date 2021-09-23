@@ -59,6 +59,13 @@ es:
       not_collected: No ha sido recolectado
       released: Publicado
       remark_requested: Recalificación solicitada
+    state_filter:
+      before_due_date: UPDATE ME (%{count})
+      complete: Completado (%{count})
+      in_progress: En progreso (%{count})
+      not_collected: No ha sido recolectado (%{count})
+      released: Publicado (%{count})
+      remark_requested: Recalificación solicitada (%{count})
     status: Estado
     student:
       file_manager: "%{short_identifier}: Administrador de Archivos"

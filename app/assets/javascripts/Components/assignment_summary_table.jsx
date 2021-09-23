@@ -7,12 +7,21 @@ import ReactTable from "react-table";
 class AssignmentSummaryTable extends React.Component {
   constructor() {
     super();
+    const markingStates = {
+      not_collected: 0,
+      incomplete: 0,
+      complete: 0,
+      released: 0,
+      remark: 0,
+      before_due_date: 0,
+    };
     this.state = {
       data: [],
       criteriaColumns: [],
       loading: true,
       num_assigned: 0,
       num_marked: 0,
+      marking_states: markingStates,
     };
   }
 
@@ -29,96 +38,127 @@ class AssignmentSummaryTable extends React.Component {
         col["filterable"] = false;
         col["defaultSortDesc"] = true;
       });
+      const markingStates = this.getMarkingStates(res.data);
       this.setState({
         data: res.data,
         criteriaColumns: res.criteriaColumns,
         num_assigned: res.numAssigned,
         num_marked: res.numMarked,
         loading: false,
+        marking_states: markingStates,
       });
     });
   };
 
-  fixedColumns = [
-    {
-      Header: I18n.t("activerecord.models.group.one"),
-      id: "group_name",
-      accessor: "group_name",
-      Cell: row => {
-        if (row.original.result_id) {
-          const path = Routes.edit_assignment_submission_result_path(
-            this.props.assignment_id,
-            row.original.submission_id,
-            row.original.result_id
-          );
-          return <a href={path}>{row.original.group_name}</a>;
-        } else {
-          return <span>{row.original.group_name}</span>;
-        }
-      },
-      filterMethod: (filter, row) => {
-        if (filter.value) {
-          // Check group name
-          if (row._original.group_name.includes(filter.value)) {
+  onFilteredChange = () => {
+    const summaryTable = this.getWrappedInstance();
+    const markingStates = this.getMarkingStates(summaryTable.state.sortedData);
+    this.setState({marking_states: markingStates});
+  };
+
+  getMarkingStates(data) {
+    const markingStates = {
+      not_collected: 0,
+      incomplete: 0,
+      complete: 0,
+      released: 0,
+      remark: 0,
+      before_due_date: 0,
+    };
+    data.forEach(row => {
+      markingStates[row["marking_state"]] += 1;
+    });
+    return markingStates;
+  }
+
+  getWrappedInstance() {
+    if (!this.wrappedInstance) console.warn("<component name here> - No wrapped instance");
+    if (this.wrappedInstance.getWrappedInstance) return this.wrappedInstance.getWrappedInstance();
+    else return this.wrappedInstance;
+  }
+
+  fixedColumns = () => {
+    return [
+      {
+        Header: I18n.t("activerecord.models.group.one"),
+        id: "group_name",
+        accessor: "group_name",
+        Cell: row => {
+          if (row.original.result_id) {
+            const path = Routes.edit_assignment_submission_result_path(
+              this.props.assignment_id,
+              row.original.submission_id,
+              row.original.result_id
+            );
+            return <a href={path}>{row.original.group_name}</a>;
+          } else {
+            return <span>{row.original.group_name}</span>;
+          }
+        },
+        filterMethod: (filter, row) => {
+          if (filter.value) {
+            // Check group name
+            if (row._original.group_name.includes(filter.value)) {
+              return true;
+            }
+
+            // Check member names
+            const member_matches = row._original.members.some(member =>
+              member.some(name => name.includes(filter.value))
+            );
+
+            if (member_matches) {
+              return true;
+            }
+
+            // Check grader user names
+            return row._original.graders.some(grader => grader.includes(filter.value));
+          } else {
             return true;
           }
-
-          // Check member names
-          const member_matches = row._original.members.some(member =>
-            member.some(name => name.includes(filter.value))
-          );
-
-          if (member_matches) {
+        },
+      },
+      markingStateColumn(this.state.marking_states),
+      {
+        Header: I18n.t("activerecord.models.tag.other"),
+        accessor: "tags",
+        Cell: row => (
+          <ul className="tag-list">
+            {row.original.tags.map(tag => (
+              <li key={`${row.original._id}-${tag}`} className="tag-element">
+                {tag}
+              </li>
+            ))}
+          </ul>
+        ),
+        minWidth: 80,
+        sortable: false,
+        filterMethod: (filter, row) => {
+          if (filter.value) {
+            // Check tag names
+            return row._original.tags.some(tag => tag.includes(filter.value));
+          } else {
             return true;
           }
-
-          // Check grader user names
-          return row._original.graders.some(grader => grader.includes(filter.value));
-        } else {
-          return true;
-        }
+        },
       },
-    },
-    markingStateColumn(),
-    {
-      Header: I18n.t("activerecord.models.tag.other"),
-      accessor: "tags",
-      Cell: row => (
-        <ul className="tag-list">
-          {row.original.tags.map(tag => (
-            <li key={`${row.original._id}-${tag}`} className="tag-element">
-              {tag}
-            </li>
-          ))}
-        </ul>
-      ),
-      minWidth: 80,
-      sortable: false,
-      filterMethod: (filter, row) => {
-        if (filter.value) {
-          // Check tag names
-          return row._original.tags.some(tag => tag.includes(filter.value));
-        } else {
-          return true;
-        }
+      {
+        Header: I18n.t("activerecord.attributes.result.total_mark"),
+        accessor: "final_grade",
+        Cell: row => {
+          if (row.original.final_grade || row.original.final_grade === 0) {
+            const max_mark = Math.round(row.original.max_mark * 100) / 100;
+            return row.original.final_grade + " / " + max_mark;
+          } else {
+            return "";
+          }
+        },
+        className: "number",
+        filterable: false,
+        defaultSortDesc: true,
       },
-    },
-    {
-      Header: I18n.t("activerecord.attributes.result.total_mark"),
-      accessor: "final_grade",
-      Cell: row => {
-        if (row.original.final_grade || row.original.final_grade === 0) {
-          const max_mark = Math.round(row.original.max_mark * 100) / 100;
-          return row.original.final_grade + " / " + max_mark;
-        } else {
-          return "";
-        }
-      },
-      className: "number",
-      filterable: false,
-      defaultSortDesc: true,
-    },
-  ];
+    ];
+  };
 
   bonusColumn = {
     Header: I18n.t("activerecord.models.extra_mark.other"),
@@ -166,9 +206,11 @@ class AssignmentSummaryTable extends React.Component {
         )}
         <ReactTable
           data={data}
-          columns={this.fixedColumns.concat(criteriaColumns, [this.bonusColumn])}
+          columns={this.fixedColumns().concat(criteriaColumns, [this.bonusColumn])}
           filterable
+          onFilteredChange={this.onFilteredChange}
           defaultSorted={[{id: "group_name"}]}
+          ref={r => (this.wrappedInstance = r)}
           SubComponent={row => {
             return (
               <div>

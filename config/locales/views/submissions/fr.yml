@@ -53,6 +53,13 @@ fr:
       not_collected: Pas récupéré
       released: Affiché
       remark_requested: Réévaluation demandée
+    state_filter:
+      before_due_date: Avant la date d'échéance (%{count})
+      complete: Terminé (%{count})
+      in_progress: En cours (%{count})
+      not_collected: Pas récupéré (%{count})
+      released: Affiché (%{count})
+      remark_requested: Réévaluation demandée (%{count})
     status: Statut
     student:
       file_manager: "%{short_identifier} : Gestionnaire de fichiers"

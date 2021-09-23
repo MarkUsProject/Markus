@@ -61,6 +61,13 @@ en:
       not_collected: Not Collected
       released: Released
       remark_requested: Remark Requested
+    state_filter:
+      before_due_date: Before Due Date (%{count})
+      complete: Complete (%{count})
+      in_progress: In Progress (%{count})
+      not_collected: Not Collected (%{count})
+      released: Released (%{count})
+      remark_requested: Remark Requested (%{count})
     status: Status
     student:
       file_manager: "%{short_identifier}: Submissions"
