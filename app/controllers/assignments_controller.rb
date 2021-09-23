@@ -562,7 +562,7 @@ class AssignmentsController < ApplicationController
 
     Zip::File.open(zip_path, create: true) do |zipfile|
       zipfile.get_output_stream("#{assignment.short_identifier}-properties.yml") { |f|
-        f.write assignment.get_assignment_properties.to_yaml
+        f.write assignment.assignment_properties_config.to_yaml
       }
     end
     send_file zip_path, filename: zip_name
@@ -571,6 +571,19 @@ class AssignmentsController < ApplicationController
   # Uploads a zip file containing all the files specified in download_config_files
   # and modifies the assignment settings according to those files.
   def upload_config_files
+    begin
+      data = process_file_upload
+    rescue Psych::SyntaxError => e
+      flash_message(:error, t('upload_errors.syntax_error', error: e.to_s))
+    rescue StandardError => e
+      flash_message(:error, e.message)
+    else
+      if data[:type] == '.zip'
+        flash_message(:error, result[:invalid_lines]) unless result[:invalid_lines].empty?
+        flash_message(:success, result[:valid_lines]) unless result[:valid_lines].empty?
+      end
+    end
+    redirect_to action: 'create'
   end
 
   private
