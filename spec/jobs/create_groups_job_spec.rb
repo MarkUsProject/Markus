@@ -130,6 +130,28 @@ describe CreateGroupsJob do
           expect { CreateGroupsJob.perform_now(create(:assignment), data) }.not_to(change { Grouping.count })
         end
       end
+
+      context 'and the assignment does not allow students to work in groups > 1' do
+        let(:assignment) { create :assignment, assignment_properties_attributes: { group_min: 1, group_max: 1 } }
+        context 'and the repo name is different and the group is named after the inviter' do
+          let(:group) { create :group, group_name: group_name, repo_name: 'some_other_repo' }
+          before do
+            create :grouping_with_inviter, group: group, assignment: assignment, inviter: student1
+          end
+          context 'and the group name is the same as the inviter user' do
+            let(:group_name) { student1.user_name }
+            it 'should create a new grouping' do
+              data = [[group.group_name, student1.user_name]]
+              expect { CreateGroupsJob.perform_now(create(:assignment), data) }.to(change { Grouping.count }.by(1))
+            end
+            it 'should use the old repo name' do
+              data = [[group.group_name, student1.user_name]]
+              CreateGroupsJob.perform_now(create(:assignment), data)
+              expect(Grouping.joins(:group).pluck(:repo_name)).to contain_exactly('some_other_repo', 'some_other_repo')
+            end
+          end
+        end
+      end
     end
   end
 end
