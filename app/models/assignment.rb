@@ -1163,14 +1163,13 @@ class Assignment < Assessment
     DEFAULT_FIELDS.each do |f|
       properties[f] = self.assignment.send(f)
     end
-    all_properties = self.assignment_properties.attributes.merge(self.attributes).symbolize_keys
-    # Delete irrelevant/included keys
-    all_properties.delete(:id)
-    all_properties.delete(:assessment_id)
-    DEFAULT_FIELDS.each do |f|
-      all_properties.delete(f)
-    end
-    properties.merge(all_properties)
+    other_properties = self.assignment_properties.attributes.merge(self.attributes).symbolize_keys
+    section_dates = SectionDueDate.where(assessment_id: self.id).all
+    other_properties.delete(:id)
+    other_properties.delete(:assessment_id)
+    properties = properties.merge(other_properties)
+    properties.merge({'section_due_dates' => section_dates.as_json(only: [:due_date,
+                                                                           :section_id, :start_time])})
   end
 
   # zip all files in the folder at +self.autotest_files_dir+ and return the
