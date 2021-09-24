@@ -36,7 +36,7 @@
   function check_required_fields() {
     var invalid = false;
     $('input[required]:not([disabled])').each(function() {
-      if (this.value === '') {
+      if (this.value === '' && this.id !== 'upload_files_for_config') {
         invalid = true;
       }
     });
@@ -51,7 +51,11 @@
       }
     });
 
-    $('input[type="submit"]').prop('disabled', invalid);
+    $('input[type="submit"]').prop('disabled', function() {
+      if (this.id !== "submit_upload_for_config") {
+        return invalid
+      }
+    });
   }
 
   function add_assignment_file() {
