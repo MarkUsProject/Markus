@@ -571,18 +571,23 @@ class AssignmentsController < ApplicationController
   # and modifies the assignment settings according to those files.
   def upload_config_files
     begin
-      data = process_file_upload
+      upload_file = params.require(:upload_files_for_config)
+
+      if upload_file.size == 0
+        raise StandardError, I18n.t('upload_errors.blank')
+      end
+
+      filetype = File.extname(upload_file.original_filename)
     rescue Psych::SyntaxError => e
       flash_message(:error, t('upload_errors.syntax_error', error: e.to_s))
     rescue StandardError => e
       flash_message(:error, e.message)
     else
-      if data[:type] == '.zip'
-        flash_message(:error, result[:invalid_lines]) unless result[:invalid_lines].empty?
-        flash_message(:success, result[:valid_lines]) unless result[:valid_lines].empty?
+      if filetype == '.zip'
+
       end
     end
-    redirect_to action: 'create'
+    redirect_to action: 'index'
   end
 
   private

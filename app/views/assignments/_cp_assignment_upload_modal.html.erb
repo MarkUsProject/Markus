@@ -9,20 +9,20 @@
   <!-- Script for disabling upload buttons. -->
   <%= javascript_include_tag 'upload_button_control.js',
                              id: 'upload_script_for_config',
-                             upload_id: 'upload_config_files',
+                             upload_id: 'upload_files_for_config',
                              button_id: 'submit_upload_for_config',
                              nonce: true %>
 
   <%= form_tag upload_config_files_assignments_path,
-               { multipart: true, size: 1 } do %>
+               { multipart: true } do %>
 
-    <%= file_field_tag 'upload_file', required: true, accept: '.zip' %>
+    <%= file_field_tag 'upload_files_for_config', required: true, accept: '.zip' %>
 
     <section class='dialog-actions'>
       <%= submit_tag t(:upload),
                      disabled: true,
                      data: { disable_with: t(:uploading_please_wait) },
-                     id: 'submit_upload' %>
+                     id: 'submit_upload_for_config' %>
       <input type='reset' value='<%= t(:cancel) %>'/>
     </section>
   <% end %>
