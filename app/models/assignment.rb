@@ -1164,24 +1164,20 @@ class Assignment < Assessment
                                :only_required_files, :token_start_date, :token_period,
                                :non_regenerating_tokens, :scanned_exam, :anonymize_groups,
                                :hide_unassigned_criteria, :duration, :start_time, :is_timed,
-                               :starter_file_type, :starter_file_updated_at, :default_starter_file_group_id,
-                               :starter_files_after_due, :autotest_settings_id, :type,
-                               :show_total, :outstanding_remark_request_count, :parent_assessment_id]
+                               :starter_file_type, :starter_files_after_due, :type,
+                               :show_total, :outstanding_remark_request_count]
     fields.each do |f|
       properties[f] = self.assignment.send(f)
     end
     # Get all other assignment properties
-    section_dates = self.section_due_dates.pluck_to_hash(:due_date, :section_id, :start_time)
+    properties[:submission_rule] = self.submission_rule.type
+    late_periods = self.submission_rule.periods.pluck_to_hash(:deduction, :hours, :interval)
+    section_dates = self.section_due_dates.pluck_to_hash(:due_date, :start_time)
     required_files = self.assignment_files.pluck_to_hash(:filename)
-    late_policy = self.submission_rule.joins('submission_rules LEFT JOIN periods
-                                        ON periods.submission_rule_id = submission_rules.id')
-                                      .pluck_to_hash(:type, :submission_rule_id, 'periods.id',
-                                               :deduction, :hours, :interval, :submission_rule_type)
     # Merge all properties together
-    properties.merge(other_properties)
+    properties.merge('submission_rule_periods': late_periods)
               .merge('section_due_dates': section_dates)
               .merge('assignment_files': required_files)
-              .merge('submission_rules': late_policy)
   end
 
   # zip all files in the folder at +self.autotest_files_dir+ and return the
