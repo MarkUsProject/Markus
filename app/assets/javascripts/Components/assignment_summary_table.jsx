@@ -128,7 +128,6 @@ class AssignmentSummaryTable extends React.Component {
     filterable: false,
     defaultSortDesc: true,
   };
-
   render() {
     const {data, criteriaColumns} = this.state;
     return (
