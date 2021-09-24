@@ -160,7 +160,7 @@ class AssignmentsController < ApplicationController
       end
     end
 
-    # build assessment_section_properties for each section that doesn't already have a due date
+    # build assessment_section_properties for each section that doesn't already have one
     Section.all.each do |s|
       unless AssessmentSectionProperties.find_by(assessment_id: @assignment.id, section_id: s.id)
         @assignment.assessment_section_properties.build(section: s)

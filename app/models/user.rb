@@ -286,7 +286,8 @@ class User < ApplicationRecord
   # Optional parameter assessment_type takes values "Assignment" or "GradeEntryForm". If passed one of these options,
   # only returns assessments of that type. Otherwise returns all assessment types.
   # Optional parameter assessment_id: if passed an assessment id, returns a collection containing
-  # only the assessment with the given id, if it is visible to the current user. If it is not visible, returns an empty collection.
+  # only the assessment with the given id, if it is visible to the current user.
+  # If it is not visible, returns an empty collection.
   def visible_assessments(assessment_type: nil, assessment_id: nil)
     assessments = Assessment.where(is_hidden: false, type: assessment_type || Assessment.type)
     if self.section_id

@@ -71,9 +71,9 @@
         <% end %>
         <%= f.label :is_hidden, Assignment.human_attribute_name(:is_hidden) %>
         <span>
-          <%= f.label :is_hidden, I18n.t('assignments.section_hidden.hidden') %>
-          <%= f.radio_button :is_hidden, true, checked: true %>
-          <%= f.label :is_hidden, I18n.t('assignments.section_hidden.visible') %>
+          <%= f.label :is_hidden, I18n.t('assignments.section_hidden.hidden'), value: 'true' %>
+          <%= f.radio_button :is_hidden, true %>
+          <%= f.label :is_hidden, I18n.t('assignments.section_hidden.visible'), value: 'false' %>
           <%= f.radio_button :is_hidden, false %>
           (<%= I18n.t('assignments.section_hidden.hidden_option') %>)
         </span>
@@ -108,11 +108,11 @@
                                                   '%Y-%m-%d %l:%M %p') %>
                   </td>
                   <td>
-                    <%= due_date_f.label :is_hidden, I18n.t('assignments.section_hidden.default') %>
-                    <%= due_date_f.radio_button :is_hidden, '', checked: true %>
-                    <%= due_date_f.label :is_hidden, I18n.t('assignments.section_hidden.visible') %>
+                    <%= due_date_f.label :is_hidden, I18n.t('assignments.section_hidden.default'), value: '' %>
+                    <%= due_date_f.radio_button :is_hidden, '' %>
+                    <%= due_date_f.label :is_hidden, I18n.t('assignments.section_hidden.visible'), value: 'false' %>
                     <%= due_date_f.radio_button :is_hidden, false %>
-                    <%= due_date_f.label :is_hidden, I18n.t('assignments.section_hidden.hidden') %>
+                    <%= due_date_f.label :is_hidden, I18n.t('assignments.section_hidden.hidden'), value: 'true' %>
                     <%= due_date_f.radio_button :is_hidden, true %>
                   </td>
                 </tr>
