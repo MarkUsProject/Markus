@@ -1159,26 +1159,29 @@ class Assignment < Assessment
   # Returns an assignment's relevant properties for uploading/downloading an assignment's configuration as a hash
   def assignment_properties_config
     properties = {}
-    # Insert DEFAULT_FIELDS first to make file more familiar
-    DEFAULT_FIELDS.each do |f|
+    fields = DEFAULT_FIELDS + [:group_name_displayed, :repository_folder, :invalid_override,
+                               :section_groups_only, :section_due_dates_type, :unlimited_tokens,
+                               :only_required_files, :token_start_date, :token_period,
+                               :non_regenerating_tokens, :scanned_exam, :anonymize_groups,
+                               :hide_unassigned_criteria, :duration, :start_time, :is_timed,
+                               :starter_file_type, :starter_file_updated_at, :default_starter_file_group_id,
+                               :starter_files_after_due, :autotest_settings_id, :type,
+                               :show_total, :outstanding_remark_request_count, :parent_assessment_id]
+    fields.each do |f|
       properties[f] = self.assignment.send(f)
     end
     # Get all other assignment properties
-    other_properties = self.assignment_properties.attributes.merge(self.attributes).symbolize_keys
-    section_dates = SectionDueDate.where(assessment_id: self.id).pluck_to_hash(:due_date, :section_id, :start_time)
-    required_files = AssignmentFile.where(assessment_id: self.id).pluck_to_hash(:filename)
-    late_policy = SubmissionRule.where(assessment_id: self.id)
-                                .joins('submission_rules LEFT JOIN periods
+    section_dates = self.section_due_dates.pluck_to_hash(:due_date, :section_id, :start_time)
+    required_files = self.assignment_files.pluck_to_hash(:filename)
+    late_policy = self.submission_rule.joins('submission_rules LEFT JOIN periods
                                         ON periods.submission_rule_id = submission_rules.id')
-                                .pluck_to_hash(:type, :submission_rule_id, 'periods.id',
+                                      .pluck_to_hash(:type, :submission_rule_id, 'periods.id',
                                                :deduction, :hours, :interval, :submission_rule_type)
-    # Remove unneeded attributes and merge all properties together
-    other_properties.delete(:id)
-    other_properties.delete(:assessment_id)
+    # Merge all properties together
     properties.merge(other_properties)
-              .merge('section_due_dates' => section_dates)
-              .merge('assignment_files' => required_files)
-              .merge('submission_rules' => late_policy)
+              .merge('section_due_dates': section_dates)
+              .merge('assignment_files': required_files)
+              .merge('submission_rules': late_policy)
   end
 
   # zip all files in the folder at +self.autotest_files_dir+ and return the

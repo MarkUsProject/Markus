@@ -573,7 +573,7 @@ class AssignmentsController < ApplicationController
     begin
       upload_file = params.require(:upload_files_for_config)
 
-      if upload_file.size == 0
+      if upload_file.empty?
         raise StandardError, I18n.t('upload_errors.blank')
       end
 
