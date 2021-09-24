@@ -1,6 +1,6 @@
 import React from "react";
 import {render} from "react-dom";
-import {markingStateColumn} from "./Helpers/table_helpers";
+import {markingStateColumn, getMarkingStates} from "./Helpers/table_helpers";
 
 import ReactTable from "react-table";
 
@@ -38,7 +38,7 @@ class AssignmentSummaryTable extends React.Component {
         col["filterable"] = false;
         col["defaultSortDesc"] = true;
       });
-      const markingStates = this.getMarkingStates(res.data);
+      const markingStates = getMarkingStates(res.data);
       this.setState({
         data: res.data,
         criteriaColumns: res.criteriaColumns,
@@ -51,31 +51,10 @@ class AssignmentSummaryTable extends React.Component {
   };
 
   onFilteredChange = () => {
-    const summaryTable = this.getWrappedInstance();
-    const markingStates = this.getMarkingStates(summaryTable.state.sortedData);
+    const summaryTable = this.wrappedInstance;
+    const markingStates = getMarkingStates(summaryTable.state.sortedData);
     this.setState({marking_states: markingStates});
   };
-
-  getMarkingStates(data) {
-    const markingStates = {
-      not_collected: 0,
-      incomplete: 0,
-      complete: 0,
-      released: 0,
-      remark: 0,
-      before_due_date: 0,
-    };
-    data.forEach(row => {
-      markingStates[row["marking_state"]] += 1;
-    });
-    return markingStates;
-  }
-
-  getWrappedInstance() {
-    if (!this.wrappedInstance) console.warn("<component name here> - No wrapped instance");
-    if (this.wrappedInstance.getWrappedInstance) return this.wrappedInstance.getWrappedInstance();
-    else return this.wrappedInstance;
-  }
 
   fixedColumns = () => {
     return [

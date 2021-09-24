@@ -2,7 +2,12 @@ import React from "react";
 import {render} from "react-dom";
 
 import {CheckboxTable, withSelection} from "./markus_with_selection_hoc";
-import {dateSort, markingStateColumn, selectFilter} from "./Helpers/table_helpers";
+import {
+  dateSort,
+  markingStateColumn,
+  selectFilter,
+  getMarkingStates,
+} from "./Helpers/table_helpers";
 import CollectSubmissionsModal from "./Modals/collect_submissions_modal";
 
 class RawSubmissionTable extends React.Component {
@@ -35,7 +40,7 @@ class RawSubmissionTable extends React.Component {
       dataType: "json",
     }).then(res => {
       this.props.resetSelection();
-      const markingStates = this.getMarkingStates(res.groupings);
+      const markingStates = getMarkingStates(res.groupings);
       this.setState({
         groupings: res.groupings,
         sections: res.sections,
@@ -45,24 +50,9 @@ class RawSubmissionTable extends React.Component {
     });
   };
 
-  getMarkingStates(data) {
-    const markingStates = {
-      not_collected: 0,
-      incomplete: 0,
-      complete: 0,
-      released: 0,
-      remark: 0,
-      before_due_date: 0,
-    };
-    data.forEach(row => {
-      markingStates[row["marking_state"]] += 1;
-    });
-    return markingStates;
-  }
-
   onFilteredChange = () => {
     const summaryTable = this.checkboxTable.getWrappedInstance();
-    const markingStates = this.getMarkingStates(summaryTable.state.sortedData);
+    const markingStates = getMarkingStates(summaryTable.state.sortedData);
     this.setState({marking_states: markingStates});
   };
 

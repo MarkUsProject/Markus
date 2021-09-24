@@ -159,39 +159,51 @@ export function markingStateColumn(marking_states, ...override_keys) {
         return filter.value === row[filter.id];
       }
     },
+    filterAllOptionText:
+      I18n.t("all") + ` (${Object.values(marking_states).reduce((a, b) => a + b)})`,
     filterOptions: [
       {
         value: "before_due_date",
-        text: I18n.t("submissions.state_filter.before_due_date", {
-          count: marking_states["before_due_date"],
-        }),
+        text:
+          I18n.t("submissions.state.before_due_date") + ` (${marking_states["before_due_date"]})`,
       },
       {
         value: "not_collected",
-        text: I18n.t("submissions.state_filter.not_collected", {
-          count: marking_states["not_collected"],
-        }),
+        text: I18n.t("submissions.state.not_collected") + ` (${marking_states["not_collected"]})`,
       },
       {
         value: "incomplete",
-        text: I18n.t("submissions.state_filter.in_progress", {count: marking_states["incomplete"]}),
+        text: I18n.t("submissions.state.in_progress") + ` (${marking_states["incomplete"]})`,
       },
       {
         value: "complete",
-        text: I18n.t("submissions.state_filter.complete", {count: marking_states["complete"]}),
+        text: I18n.t("submissions.state.complete") + ` (${marking_states["complete"]})`,
       },
       {
         value: "released",
-        text: I18n.t("submissions.state_filter.released", {count: marking_states["released"]}),
+        text: I18n.t("submissions.state.released") + ` (${marking_states["released"]})`,
       },
       {
         value: "remark",
-        text: I18n.t("submissions.state_filter.remark_requested", {
-          count: marking_states["remark"],
-        }),
+        text: I18n.t("submissions.state.remark_requested") + ` (${marking_states["remark"]})`,
       },
     ],
     Filter: selectFilter,
     ...override_keys,
   };
+}
+
+export function getMarkingStates(data) {
+  const markingStates = {
+    not_collected: 0,
+    incomplete: 0,
+    complete: 0,
+    released: 0,
+    remark: 0,
+    before_due_date: 0,
+  };
+  data.forEach(row => {
+    markingStates[row["marking_state"]] += 1;
+  });
+  return markingStates;
 }
