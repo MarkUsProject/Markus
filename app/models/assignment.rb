@@ -1163,17 +1163,22 @@ class Assignment < Assessment
     DEFAULT_FIELDS.each do |f|
       properties[f] = self.assignment.send(f)
     end
+    # Get all other assignment properties
     other_properties = self.assignment_properties.attributes.merge(self.attributes).symbolize_keys
-    section_dates = SectionDueDate.where(assessment_id: self.id).all
-    required_files = AssignmentFile.where(assessment_id: self.id).all
+    section_dates = SectionDueDate.where(assessment_id: self.id).pluck_to_hash(:due_date, :section_id, :start_time)
+    required_files = AssignmentFile.where(assessment_id: self.id).pluck_to_hash(:filename)
+    late_policy = SubmissionRule.where(assessment_id: self.id)
+                                .joins('submission_rules LEFT JOIN periods
+                                        ON periods.submission_rule_id = submission_rules.id')
+                                .pluck_to_hash(:type, :submission_rule_id, 'periods.id',
+                                               :deduction, :hours, :interval, :submission_rule_type)
+    # Remove unneeded attributes and merge all properties together
     other_properties.delete(:id)
     other_properties.delete(:assessment_id)
-    properties = properties.merge(other_properties)
-    properties = properties.merge('section_due_dates' => section_dates
-                                                           .as_json(only: [:due_date, :section_id, :start_time]))
-    properties = properties.merge('assignment_files' => required_files
-                                             .as_json(only: [:filename, :created_at, :updated_at]))
-    properties
+    properties.merge(other_properties)
+              .merge('section_due_dates' => section_dates)
+              .merge('assignment_files' => required_files)
+              .merge('submission_rules' => late_policy)
   end
 
   # zip all files in the folder at +self.autotest_files_dir+ and return the

@@ -561,9 +561,8 @@ class AssignmentsController < ApplicationController
     FileUtils.rm_f(zip_path)
 
     Zip::File.open(zip_path, create: true) do |zipfile|
-      zipfile.get_output_stream("#{assignment.short_identifier}-properties.yml") { |f|
-        f.write assignment.assignment_properties_config.to_yaml
-      }
+      zipfile.get_output_stream("#{assignment.short_identifier}-properties.yml") { |f| 
+        f.write assignment.assignment_properties_config.to_yaml }
     end
     send_file zip_path, filename: zip_name
   end
