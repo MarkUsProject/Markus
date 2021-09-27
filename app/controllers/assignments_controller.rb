@@ -561,8 +561,9 @@ class AssignmentsController < ApplicationController
     FileUtils.rm_f(zip_path)
 
     Zip::File.open(zip_path, create: true) do |zipfile|
-      zipfile.get_output_stream("#{assignment.short_identifier}-properties.yml") { |f|
-        f.write assignment.assignment_properties_config.to_yaml }
+      zipfile.get_output_stream("#{assignment.short_identifier}-properties.yml") {
+        |f| f.write assignment.assignment_properties_config.to_yaml
+      }
     end
     send_file zip_path, filename: zip_name
   end
@@ -572,25 +573,46 @@ class AssignmentsController < ApplicationController
   def upload_config_files
     begin
       upload_file = params.require(:upload_files_for_config)
-
-      if upload_file.empty?
+      if upload_file.size == 0
         raise StandardError, I18n.t('upload_errors.blank')
       end
-
-      filetype = File.extname(upload_file.original_filename)
     rescue Psych::SyntaxError => e
       flash_message(:error, t('upload_errors.syntax_error', error: e.to_s))
     rescue StandardError => e
       flash_message(:error, e.message)
     else
-      if filetype == '.zip'
-
+      if File.extname(upload_file.path).casecmp?('.zip')
+        Zip::File.open(upload_file.path) do |zipfile|
+          zipfile.each do |item|
+            if item.file?
+              mime = Rack::Mime.mime_type(File.extname(item.name))
+              tempfile = Tempfile.new.binmode
+              tempfile.write(item.get_input_stream.read)
+              tempfile.rewind
+              if item.name[-15..-1] == "-properties.yml"
+                build_from_properties(ActionDispatch::Http::UploadedFile.new(filename: item.name,
+                                                                             tempfile: tempfile,
+                                                                             type: mime))
+              end
+            end
+          end
+        end
       end
     end
     redirect_to action: 'index'
   end
 
   private
+
+  def build_from_properties(properties_file)
+    contents = YAML.safe_load(
+      properties_file.read.encode(Encoding::UTF_8, 'UTF-8'),
+      [Date, Time, Symbol, ActiveSupport::TimeWithZone, ActiveSupport::TimeZone,
+       ActiveSupport::HashWithIndifferentAccess],
+      [],
+      true
+    )
+  end
 
   def set_repo_vars(assignment, grouping)
     grouping.access_repo do |repo|
