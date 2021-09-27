@@ -561,9 +561,8 @@ class AssignmentsController < ApplicationController
     FileUtils.rm_f(zip_path)
 
     Zip::File.open(zip_path, create: true) do |zipfile|
-      zipfile.get_output_stream("#{assignment.short_identifier}-properties.yml") {
-        |f| f.write assignment.assignment_properties_config.to_yaml
-      }
+      zipfile.get_output_stream("#{assignment.short_identifier}-
+                                properties.yml") { |f| f.write assignment.assignment_properties_config.to_yaml }
     end
     send_file zip_path, filename: zip_name
   end
@@ -589,30 +588,20 @@ class AssignmentsController < ApplicationController
               tempfile = Tempfile.new.binmode
               tempfile.write(item.get_input_stream.read)
               tempfile.rewind
-              if item.name[-15..-1] == "-properties.yml"
-                build_from_properties(ActionDispatch::Http::UploadedFile.new(filename: item.name,
+              if item.name[-15..-1] == '-properties.yml'
+                a = Assignment.build_from_file(ActionDispatch::Http::UploadedFile.new(filename: item.name,
                                                                              tempfile: tempfile,
                                                                              type: mime))
+                redirect_to edit_assignment_path(a.id)
               end
             end
           end
         end
       end
     end
-    redirect_to action: 'index'
   end
 
   private
-
-  def build_from_properties(properties_file)
-    contents = YAML.safe_load(
-      properties_file.read.encode(Encoding::UTF_8, 'UTF-8'),
-      [Date, Time, Symbol, ActiveSupport::TimeWithZone, ActiveSupport::TimeZone,
-       ActiveSupport::HashWithIndifferentAccess],
-      [],
-      true
-    )
-  end
 
   def set_repo_vars(assignment, grouping)
     grouping.access_repo do |repo|

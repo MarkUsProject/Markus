@@ -1311,4 +1311,61 @@ class Assignment < Assessment
     self.assignment_properties ||= AssignmentProperties.new
     self.submission_rule ||= NoLateSubmissionRule.new
   end
+
+  # Creates a new assignment with the settings specified in the <properties_file>
+  def self.build_from_file(properties_file)
+    contents = YAML.safe_load(
+      properties_file.read.encode(Encoding::UTF_8, 'UTF-8'),
+      [Date, Time, Symbol, ActiveSupport::TimeWithZone, ActiveSupport::TimeZone,
+       ActiveSupport::HashWithIndifferentAccess],
+      [],
+      true
+    )
+    begin
+      assignment_record = contents.deep_symbolize_keys
+      assignment = Assignment.find_or_create_by(short_identifier: assignment_record[:short_identifier])
+
+      # Stash required files, periods, and section due dates for later use and remove them
+      # since they are not part of the standard attributes for an assignment
+      req_files = assignment_record[:assignment_files]
+      sub_periods = assignment_record[:submission_rule_periods]
+      sec_due_dates = assignment_record[:section_due_dates]
+      assignment_record.delete(:assignment_files)
+      assignment_record.delete(:submission_rule_periods)
+      assignment_record.delete(:section_due_dates)
+
+      # Set submission rule
+      submission_rule = assignment_record[:submission_rule]
+      case submission_rule
+      when 'PenaltyPeriodSubmissionRule'
+        assignment_record[:submission_rule] = PenaltyPeriodSubmissionRule.new
+      when 'PenaltyDecayPeriodSubmissionRule'
+        assignment_record[:submission_rule] = PenaltyDecayPeriodSubmissionRule.new
+      when 'GracePeriodSubmissionRule'
+        assignment_record[:submission_rule] = GracePeriodSubmissionRule.new
+      else
+        assignment_record[:submission_rule] = NoLateSubmissionRule.new
+      end
+
+      # Create/update assignment
+      assignment.update(assignment_record)
+
+      # Create new required files, periods, and section due dates for new assignment
+      req_files.map do |req_file_row|
+        assignment.assignment_files.create(:filename => req_file_row[:filename])
+      end
+      sub_periods.map do |periods_row|
+        assignment.submission_rule.periods.create(:deduction => periods_row[:deduction],
+                                                  :hours => periods_row[:hours],
+                                                  :interval => periods_row[:interval])
+      end
+      sec_due_dates.map do |section|
+        assignment.section_due_dates.create(:due_date => section[:due_date],
+                                            :start_time => section[:start_time])
+      end
+      return assignment
+    rescue ActiveRecord::ActiveRecordError, ArgumentError => e
+      e
+    end
+  end
 end
