@@ -590,8 +590,8 @@ class AssignmentsController < ApplicationController
               tempfile.rewind
               if item.name[-15..-1] == '-properties.yml'
                 a = Assignment.build_from_file(ActionDispatch::Http::UploadedFile.new(filename: item.name,
-                                                                             tempfile: tempfile,
-                                                                             type: mime))
+                                                                                      tempfile: tempfile,
+                                                                                      type: mime))
                 redirect_to edit_assignment_path(a.id)
               end
             end
