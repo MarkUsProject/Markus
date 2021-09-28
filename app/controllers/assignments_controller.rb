@@ -561,8 +561,8 @@ class AssignmentsController < ApplicationController
     FileUtils.rm_f(zip_path)
 
     Zip::File.open(zip_path, create: true) do |zipfile|
-      zipfile.get_output_stream("#{assignment.short_identifier}-
-                                properties.yml") { |f| f.write assignment.assignment_properties_config.to_yaml }
+      zipfile.get_output_stream("#{assignment.short_identifier}-"\
+                                "properties.yml") { |f| f.write assignment.assignment_properties_config.to_yaml }
     end
     send_file zip_path, filename: zip_name
   end
@@ -609,7 +609,7 @@ class AssignmentsController < ApplicationController
       assignment_record = YAML.safe_load(
         properties_file.read.encode(Encoding::UTF_8, 'UTF-8'),
         [Date, Time, Symbol, ActiveSupport::TimeWithZone, ActiveSupport::TimeZone,
-         ActiveSupport::HashWithIndifferentAccess],
+         ActiveSupport::HashWithIndifferentAccess, ActiveSupport::Duration],
         [],
         true
       ).deep_symbolize_keys
