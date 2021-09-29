@@ -1179,13 +1179,11 @@ class Assignment < Assessment
     end
     # Get all other assignment properties
     late_periods = self.submission_rule.periods.pluck_to_hash(:deduction, :hours, :interval)
-    section_dates = self.section_due_dates.pluck_to_hash(:section_id, :due_date, :start_time)
     required_files = self.assignment_files.pluck_to_hash(:filename)
     # Merge all properties together
     properties.merge('assignment_properties_attributes': assignment_properties,
                      'submission_rule_attributes': {'type': self.submission_rule.type,
                                                     'periods_attributes': late_periods},
-                     'section_due_dates_attributes': section_dates,
                      'assignment_files_attributes': required_files)
   end
 
