@@ -1159,32 +1159,22 @@ class Assignment < Assessment
   # Returns an assignment's relevant properties for uploading/downloading an assignment's configuration as a hash
   def assignment_properties_config
     properties = {}
-    assignment_properties = {}
     fields = DEFAULT_FIELDS + [:group_name_displayed, :invalid_override, :section_groups_only,
                                :section_due_dates_type, :unlimited_tokens, :only_required_files,
                                :token_start_date, :token_period, :non_regenerating_tokens,
                                :scanned_exam, :anonymize_groups, :hide_unassigned_criteria,
                                :duration, :start_time, :is_timed, :starter_file_type,
                                :starter_files_after_due, :type, :show_total]
-
-    base = [:short_identifier, :description, :message, :due_date, :is_hidden, :show_total, :type]
-    base.each do |f|
-      properties[f] = self.assignment.send(f)
-    end
-
     fields.each do |f|
-      unless base.include? f
-        assignment_properties[f] = self.assignment.send(f)
-      end
+      properties[f] = self.assignment.send(f)
     end
     # Get all other assignment properties
     late_periods = self.submission_rule.periods.pluck_to_hash(:deduction, :hours, :interval)
     required_files = self.assignment_files.pluck_to_hash(:filename)
     # Merge all properties together
-    properties.merge('assignment_properties_attributes': assignment_properties,
-                     'submission_rule_attributes': {'type': self.submission_rule.type,
-                                                    'periods_attributes': late_periods},
-                     'assignment_files_attributes': required_files)
+    properties.merge('submission_rule': { 'type': self.submission_rule.type,
+                                          'periods': late_periods },
+                     'required_files': required_files)
   end
 
   # zip all files in the folder at +self.autotest_files_dir+ and return the

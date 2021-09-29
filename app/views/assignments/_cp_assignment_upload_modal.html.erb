@@ -16,6 +16,8 @@
   <%= form_tag upload_config_files_assignments_path,
                { multipart: true } do %>
 
+    <%= hidden_field_tag 'is_scanned', @assignment.scanned_exam %>
+    <%= hidden_field_tag 'is_timed',  @assignment.is_timed %>
     <%= file_field_tag 'upload_files_for_config', required: true, accept: '.zip' %>
 
     <section class='dialog-actions'>

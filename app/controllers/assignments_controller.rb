@@ -579,17 +579,16 @@ class AssignmentsController < ApplicationController
         properties_file = zipfile.glob('properties.yml').first
         if properties_file.nil?
           flash_message(:error, 'Cannot find properties file')
-          redirect_to action: 'new'
+          go_back_to_new(params[:is_scanned], params[:is_timed])
         else
           properties_content = YAML.safe_load(
             properties_file.get_input_stream.read.encode(Encoding::UTF_8, 'UTF-8'),
             [Date, Time, Symbol, ActiveSupport::TimeWithZone, ActiveSupport::TimeZone,
-             ActiveSupport::HashWithIndifferentAccess, ActiveSupport::Duration],
-            [], true).deep_symbolize_keys
+             ActiveSupport::HashWithIndifferentAccess, ActiveSupport::Duration], [], true
+          ).deep_symbolize_keys
           assignment = build_from_file(properties_content)
           if assignment.nil?
-            flash_message(:error, 'Cannot upload assignment since it already exists')
-            redirect_to action: 'new'
+            go_back_to_new(params[:is_scanned], params[:is_timed])
           else
             redirect_to edit_assignment_path(assignment.id)
           end
@@ -604,8 +603,43 @@ class AssignmentsController < ApplicationController
   def build_from_file(assignment_record)
     short_id = assignment_record[:short_identifier]
     if Assignment.find_by(short_identifier: short_id).nil?
-      assignment_record[:assignment_properties_attributes][:repository_folder] = short_id
-      Assignment.create(assignment_record)
+      # Build attributes hash to match structure of assignment
+      assignment_attributes = {}
+      assignment_properties = {}
+      base_attr = [:short_identifier, :description, :message,
+                   :due_date, :is_hidden, :show_total, :type]
+      assignment_record.each do |attribute_pair|
+        attribute, value = attribute_pair
+        case attribute
+        when *base_attr
+          assignment_attributes[attribute] = value
+        when :submission_rule
+          submission_rules = {}
+          submission_rules[:type] = value[:type]
+          submission_rules[:periods_attributes] = value[:periods]
+          assignment_attributes[:submission_rule_attributes] = submission_rules
+        when :required_files
+          assignment_attributes[:assignment_files_attributes] = value
+        else
+          assignment_properties[attribute] = value
+        end
+      end
+      assignment_properties[:repository_folder] = short_id
+      assignment_attributes[:assignment_properties_attributes] = assignment_properties
+      # Create assignment
+      return Assignment.create(assignment_attributes)
+    end
+    flash_message(:error, 'Cannot upload assignment since it already exists')
+    nil
+  end
+
+  def go_back_to_new(is_scanned, is_timed)
+    if is_scanned == 'true'
+      redirect_to new_assignment_path(scanned: true)
+    elsif is_timed == 'true'
+      redirect_to new_assignment_path(timed: true)
+    else
+      redirect_to new_assignment_path
     end
   end
 
