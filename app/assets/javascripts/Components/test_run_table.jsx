@@ -284,7 +284,14 @@ class TestGroupResultTable extends React.Component {
     } else {
       extraInfoDisplay = "";
     }
-    const feedbackFiles = this.props.data[0]["feedback_files"];
+    const feedbackFiles = [];
+    this.props.data.forEach(data => {
+      data.feedback_files.forEach(feedbackFile => {
+        if (!feedbackFiles.some(f => f.id === feedbackFile.id)) {
+          feedbackFiles.push(feedbackFile);
+        }
+      });
+    });
     let feedbackFileDisplay;
     if (feedbackFiles.length) {
       feedbackFileDisplay = <TestGroupFeedbackFileTable data={feedbackFiles} />;
