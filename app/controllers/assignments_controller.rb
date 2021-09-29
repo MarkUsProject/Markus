@@ -561,8 +561,7 @@ class AssignmentsController < ApplicationController
     FileUtils.rm_f(zip_path)
 
     Zip::File.open(zip_path, create: true) do |zipfile|
-      zipfile.get_output_stream("#{assignment.short_identifier}-"\
-                                "properties.yml") { |f| f.write assignment.assignment_properties_config.to_yaml }
+      zipfile.get_output_stream('properties.yml') { |f| f.write assignment.assignment_properties_config.to_yaml }
     end
     send_file zip_path, filename: zip_name
   end
@@ -576,12 +575,24 @@ class AssignmentsController < ApplicationController
     end
     if File.extname(upload_file.path).casecmp?('.zip')
       Zip::File.open(upload_file.path) do |zipfile|
-        assignment_id = configure_properties(zipfile)
-        if assignment_id
-          redirect_to edit_assignment_path(assignment_id)
-        else
-          flash_message(:error, 'Assignment could not be created')
+        # Read properties file first to initialize assignment
+        properties_file = zipfile.glob('properties.yml').first
+        if properties_file.nil?
+          flash_message(:error, 'Cannot find properties file')
           redirect_to action: 'new'
+        else
+          properties_content = YAML.safe_load(
+            properties_file.get_input_stream.read.encode(Encoding::UTF_8, 'UTF-8'),
+            [Date, Time, Symbol, ActiveSupport::TimeWithZone, ActiveSupport::TimeZone,
+             ActiveSupport::HashWithIndifferentAccess, ActiveSupport::Duration],
+            [], true).deep_symbolize_keys
+          assignment = build_from_file(properties_content)
+          if assignment.nil?
+            flash_message(:error, 'Cannot upload assignment since it already exists')
+            redirect_to action: 'new'
+          else
+            redirect_to edit_assignment_path(assignment.id)
+          end
         end
       end
     end
@@ -589,75 +600,12 @@ class AssignmentsController < ApplicationController
 
   private
 
-  def configure_properties(zipfile)
-    properties_file = zipfile.find { |item| item.file? && /(.*)-properties\.yml$/ =~ item.name }
-    if properties_file
-      mime = Rack::Mime.mime_type(File.extname(properties_file.name))
-      tempfile = Tempfile.new.binmode
-      tempfile.write(properties_file.get_input_stream.read)
-      tempfile.rewind
-      a = self.build_from_file(ActionDispatch::Http::UploadedFile.new(filename: properties_file.name,
-                                                                      tempfile: tempfile,
-                                                                      type: mime))
-      a.id
-    end
-  end
-
-  # Creates a new assignment with the settings specified in the <properties_file>
-  def build_from_file(properties_file)
-    begin
-      assignment_record = YAML.safe_load(
-        properties_file.read.encode(Encoding::UTF_8, 'UTF-8'),
-        [Date, Time, Symbol, ActiveSupport::TimeWithZone, ActiveSupport::TimeZone,
-         ActiveSupport::HashWithIndifferentAccess, ActiveSupport::Duration],
-        [],
-        true
-      ).deep_symbolize_keys
-      assignment = Assignment.find_or_create_by(short_identifier: assignment_record[:short_identifier])
-
-      # Stash required files, periods, and section due dates for later use and remove them
-      # since they are not part of the standard attributes for an assignment
-      req_files = assignment_record[:assignment_files]
-      sub_periods = assignment_record[:submission_rule_periods]
-      sec_due_dates = assignment_record[:section_due_dates]
-      assignment_record.delete(:assignment_files)
-      assignment_record.delete(:submission_rule_periods)
-      assignment_record.delete(:section_due_dates)
-
-      # Set submission rule
-      submission_rule = assignment_record[:submission_rule]
-      case submission_rule
-      when 'PenaltyPeriodSubmissionRule'
-        assignment_record[:submission_rule] = PenaltyPeriodSubmissionRule.new
-      when 'PenaltyDecayPeriodSubmissionRule'
-        assignment_record[:submission_rule] = PenaltyDecayPeriodSubmissionRule.new
-      when 'GracePeriodSubmissionRule'
-        assignment_record[:submission_rule] = GracePeriodSubmissionRule.new
-      else
-        assignment_record[:submission_rule] = NoLateSubmissionRule.new
-      end
-
-      # Create/update assignment
-      assignment.update(assignment_record)
-
-      # Create new required files, periods, and section due dates for new assignment
-      req_files.map do |req_file_row|
-        assignment.assignment_files.create(filename: req_file_row[:filename])
-      end
-      sub_periods.map do |periods_row|
-        assignment.submission_rule.periods.create(deduction: periods_row[:deduction],
-                                                  hours: periods_row[:hours],
-                                                  interval: periods_row[:interval])
-      end
-      sec_due_dates.map do |section|
-        assignment.section_due_dates.create(due_date: section[:due_date],
-                                            start_time: section[:start_time])
-      end
-      assignment
-    rescue ActiveRecord::ActiveRecordError, ArgumentError => e
-      e
-    rescue NoMethodError => no_method
-      no_method
+  # Creates a new assignment with the settings specified in <assignment_record>.
+  def build_from_file(assignment_record)
+    short_id = assignment_record[:short_identifier]
+    if Assignment.find_by(short_identifier: short_id).nil?
+      assignment_record[:assignment_properties_attributes][:repository_folder] = short_id
+      Assignment.create(assignment_record)
     end
   end
 
