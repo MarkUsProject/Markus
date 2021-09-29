@@ -449,6 +449,8 @@ Rails.application.routes.draw do
     end
   end
 
+  resources :courses
+
   match 'main', controller: 'main', action: 'index', via: :post
   match 'main/about', controller: 'main', action: 'about', via: :post
   match 'main/logout', controller: 'main', action: 'logout', via: :post
