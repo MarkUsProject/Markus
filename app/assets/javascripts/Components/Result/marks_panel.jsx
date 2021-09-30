@@ -209,7 +209,10 @@ class CheckboxCriterionInput extends React.Component {
               this.props.oldMark
             })`}</div>
           )}
-          <div className="criterion-description">{this.props.description}</div>
+          <div
+            className="criterion-description"
+            dangerouslySetInnerHTML={{__html: safe_marked(this.props.description)}}
+          />
         </div>
       </li>
     );
@@ -369,7 +372,10 @@ class FlexibleCriterionInput extends React.Component {
             {this.props.bonus && ` (${I18n.t("activerecord.attributes.criterion.bonus")})`}
             {this.deleteManualMarkLink()}
           </div>
-          <div className="criterion-description">{this.props.description}</div>
+          <div
+            className="criterion-description"
+            dangerouslySetInnerHTML={{__html: safe_marked(this.props.description)}}
+          />
           <span className="mark">
             {markElement}
             &nbsp;/&nbsp;
@@ -424,8 +430,8 @@ class RubricCriterionInput extends React.Component {
         className={`rubric-level ${selectedClass} ${oldMarkClass}`}
       >
         <td className="level-description">
-          <strong>{level.name}</strong>&nbsp;
-          {level.description}
+          <strong>{level.name}</strong>
+          <span dangerouslySetInnerHTML={{__html: safe_marked(level.description)}} />
         </td>
         <td className={"mark"}>
           {levelMark}

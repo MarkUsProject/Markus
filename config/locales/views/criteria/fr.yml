@@ -5,7 +5,7 @@ fr:
     answer_yes: Oui
   criteria:
     checkbox: Checkbox
-    description_hint: Vous avez la possibilité d'utiliser des tags HTML simples dans ce champ. Pour un aperçu, sauvegardez.
+    description_hint: Vous avez la possibilité d'utiliser Markdown dans ce champ. Pour un aperçu, sauvegardez.
     editing_criteria: Édition des critères
     errors:
       invalid_format: 'Les critères suivants a un format non valide:'

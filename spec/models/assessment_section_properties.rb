@@ -1,7 +1,7 @@
-describe SectionDueDate do
+describe AssessmentSectionProperties do
   describe 'ActiveRecord associations' do
     it { is_expected.to belong_to(:section) }
-    it { is_expected.to belong_to(:assignment) }
+    it { is_expected.to belong_to(:assessment) }
   end
 
   describe '.due_date_for(section, assignment)' do
@@ -13,7 +13,7 @@ describe SectionDueDate do
       end
 
       it 'returns the due date of the assignment' do
-        due_date = SectionDueDate.due_date_for(create(:section), @assignment)
+        due_date = AssessmentSectionProperties.due_date_for(create(:section), @assignment)
         expect(due_date.day).to eq 2.days.from_now.day
       end
     end
@@ -27,7 +27,7 @@ describe SectionDueDate do
 
       context 'and the section does not have a due date set' do
         it 'returns the due date of the assignment' do
-          due_date = SectionDueDate.due_date_for(create(:section), @assignment)
+          due_date = AssessmentSectionProperties.due_date_for(create(:section), @assignment)
           expect(due_date.day).to eq 2.days.from_now.day
         end
       end
@@ -35,13 +35,13 @@ describe SectionDueDate do
       context 'and the section has a due date set' do
         before :each do
           @section = create(:section)
-          SectionDueDate.create(section: @section,
-                                assignment: @assignment,
-                                due_date: 1.days.from_now)
+          AssessmentSectionProperties.create(section: @section,
+                                             assessment: @assignment,
+                                             due_date: 1.days.from_now)
         end
 
         it 'returns the due date for the section of the assignment' do
-          due_date = SectionDueDate.due_date_for(@section, @assignment)
+          due_date = AssessmentSectionProperties.due_date_for(@section, @assignment)
           expect(due_date.day).to eq 1.days.from_now.day
         end
       end

@@ -71,8 +71,6 @@ class Assignment < Assessment
 
   has_many :notes, as: :noteable, dependent: :destroy
 
-  has_many :section_due_dates, inverse_of: :assignment, foreign_key: :assessment_id
-  accepts_nested_attributes_for :section_due_dates
 
   has_many :exam_templates, dependent: :destroy, inverse_of: :assignment, foreign_key: :assessment_id
 
@@ -112,7 +110,7 @@ class Assignment < Assessment
   def past_all_due_dates?
     # If no section due dates /!\ do not check empty? it could be wrong
     return false if !due_date.nil? && Time.current < due_date
-    return false if section_due_dates.any? { |sec| !sec.due_date.nil? && Time.current < sec.due_date }
+    return false if assessment_section_properties.any? { |sec| !sec.due_date.nil? && Time.current < sec.due_date }
 
     true
   end
@@ -124,7 +122,7 @@ class Assignment < Assessment
     end
 
     sections_past = []
-    self.section_due_dates.each do |d|
+    self.assessment_section_properties.each do |d|
       if !d.due_date.nil? && Time.current > d.due_date
         sections_past << d.section.name
       end
@@ -153,7 +151,7 @@ class Assignment < Assessment
       return due_date
     end
 
-    SectionDueDate.due_date_for(section, self)
+    AssessmentSectionProperties.due_date_for(section, self)
   end
 
   # Return the start_time for +section+ if it is not nil, otherwise return this
@@ -161,13 +159,13 @@ class Assignment < Assessment
   def section_start_time(section)
     return start_time unless section_due_dates_type
 
-    section&.section_due_dates&.find_by(assignment: self)&.start_time || start_time
+    section&.assessment_section_properties&.find_by(assessment: self)&.start_time || start_time
   end
 
   # Calculate the latest due date among all sections for the assignment.
   def latest_due_date
     return due_date unless section_due_dates_type
-    due_dates = section_due_dates.map(&:due_date) << due_date
+    due_dates = assessment_section_properties.map(&:due_date) << due_date
     due_dates.compact.max
   end
 
@@ -188,9 +186,9 @@ class Assignment < Assessment
 
   # Return due date for all groupings as a hash mapping grouping_id to due date.
   def all_grouping_due_dates
-    section_due_dates = groupings.joins(inviter: [section: :section_due_dates])
-                                 .where('section_due_dates.assessment_id': id)
-                                 .pluck('groupings.id', 'section_due_dates.due_date')
+    section_due_dates = groupings.joins(inviter: [section: :assessment_section_properties])
+                                 .where('assessment_section_properties.assessment_id': id)
+                                 .pluck('groupings.id', 'assessment_section_properties.due_date')
 
     grouping_extensions = groupings.joins(:extension)
                                    .pluck(:id, :time_delta)

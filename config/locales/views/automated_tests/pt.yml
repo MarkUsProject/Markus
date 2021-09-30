@@ -12,6 +12,7 @@ pt:
     need_group_for_test: Você precisa possuir um grupo para executar os testes.
     need_one_file: Você precisa de pelo menos um arquivo enviado para executar os testes.
     need_submission: As inscrições devem ser recolhidos antes dos testes são executados. Nem todos os agrupamentos seleccionados tiveram testes executados.
+    no_criteria: UPDATE ME "%{type}" "%{name}".
     no_results: UPDATE ME
     results:
       extra_malformed: "UPDATE ME \n%{extra}\n"

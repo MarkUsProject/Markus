@@ -12,6 +12,7 @@ es:
     need_group_for_test: Usted debe tener un grupo para lanzar la prueba
     need_one_file: Usted necesita al menos un archivo en la entrega para poder ejecutar las pruebas.
     need_submission: Las entregas deben ser recolectadas antes de ejecutar las pruebas. No todas las agrupaciones seleccionadas tuvieron sus pruebas respectivas ejecutadas.
+    no_criteria: UPDATE ME "%{type}" "%{name}".
     no_results: UPDATE ME
     results:
       extra_malformed: "UPDATE ME \n%{extra}\n"
