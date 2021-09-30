@@ -18,11 +18,11 @@ export class LeftPane extends React.Component {
 
   disableRunTestButton = () => {
     if (this.props.released_to_students) {
-      console.log(this.props.released_to_students)
+      console.log(this.props.released_to_students);
       return true;
     }
     return !this.props.can_run_tests;
-  }
+  };
 
   disableRemarkPanel = () => {
     if (this.props.is_reviewer || !this.props.allow_remarks) {
