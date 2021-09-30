@@ -16,6 +16,14 @@ export class LeftPane extends React.Component {
     this.submissionFilePanel = React.createRef();
   }
 
+  disableRunTestButton = () => {
+    if (this.props.released_to_students) {
+      console.log(this.props.released_to_students)
+      return true;
+    }
+    return !this.props.can_run_tests;
+  }
+
   disableRemarkPanel = () => {
     if (this.props.is_reviewer || !this.props.allow_remarks) {
       return true;
@@ -112,7 +120,7 @@ export class LeftPane extends React.Component {
                   <input
                     type="submit"
                     value={I18n.t("automated_tests.run_tests")}
-                    disabled={!this.props.can_run_tests}
+                    disabled={this.disableRunTestButton()}
                   />
                   <input type="hidden" name="authenticity_token" value={AUTH_TOKEN} />
                 </form>
