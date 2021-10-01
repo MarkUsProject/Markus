@@ -10,6 +10,7 @@ fr:
   rename: Renommer
   upload: Envoyer
   upload_errors:
+    cannot_find_file: UPDATE ME
     invalid_csv_row_format: Invalid format de ligne
     invalid_rows: 'Les lignes suivantes du fichier CSV sont invalides : '
     malformed_csv: Le fichier sélectionné a été mal formé. Se il vous plaît vérifier que le fichier est conforme aux spécifications Markus.

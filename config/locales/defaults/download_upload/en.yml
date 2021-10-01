@@ -11,6 +11,7 @@ en:
   upload: Upload
   upload_errors:
     blank: Uploaded file is blank.
+    cannot_find_file: Cannot find %{item} file
     invalid_csv_row_format: Invalid row format
     invalid_rows: 'The following CSV rows were invalid: '
     malformed_csv: The selected file was improperly formed. Please ensure the file meets MarkUs specifications.

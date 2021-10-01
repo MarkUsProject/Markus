@@ -10,6 +10,7 @@ pt:
   rename: UPDATE ME
   upload: Carregar
   upload_errors:
+    cannot_find_file: UPDATE ME
     invalid_csv_row_format: Formato de linha inválida
     invalid_rows: 'As seguintes linhas do arquivo CSV são inválidas: '
     malformed_csv: O arquivo selecionado foi deformados. Por favor, verifique se o arquivo atende às especificações Markus.

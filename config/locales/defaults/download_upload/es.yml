@@ -10,6 +10,7 @@ es:
   rename: UPDATE ME
   upload: Subir
   upload_errors:
+    cannot_find_file: UPDATE ME
     invalid_csv_row_format: El formato de la fila es inválido
     invalid_rows: 'Las siguientes líneas en formato CSV fueron inválidas: '
     malformed_csv: El archivo seleccionado fue formado inapropiadamente. Por favor asegúrese de que el archivo siga las especificaciones de MarkUs.

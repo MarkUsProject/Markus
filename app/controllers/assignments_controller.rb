@@ -562,12 +562,12 @@ class AssignmentsController < ApplicationController
     FileUtils.rm_f(zip_path)
 
     Zip::File.open(zip_path, create: true) do |zipfile|
-      zipfile.get_output_stream('properties.yml') \
-      { |f| f.write assignment.assignment_properties_config.to_yaml }
-      zipfile.mkdir("#{child_assignment.short_identifier}-config-files")
-      zipfile.get_output_stream("#{child_assignment.short_identifier}config-files/properties.yml") \
-      { |f| f.write child_assignment.assignment_properties_config.to_yaml }
-
+      zipfile.get_output_stream('properties.yml') { |f| \
+        f.write(assignment.assignment_properties_config.to_yaml) }
+      unless child_assignment.nil?
+        zipfile.get_output_stream("#{child_assignment.short_identifier}-config-files/properties.yml") { |f| \
+          f.write(child_assignment.assignment_properties_config.to_yaml) }
+      end
     end
     send_file zip_path, filename: zip_name
   end
@@ -584,17 +584,18 @@ class AssignmentsController < ApplicationController
         # Read properties file first to initialize assignment
         properties_file = zipfile.glob('properties.yml').first
         if properties_file.nil?
-          flash_message(:error, 'Cannot find properties file')
+          flash_message(:error, I18n.t('upload_errors.cannot_find_file', item: 'properties'))
           go_back_to_new(params[:is_scanned], params[:is_timed])
           return
         end
         properties_content = read_yaml_properties_file(properties_file)
-        unless Assignment.find_by(short_identifier: short_id).nil?
-          flash_message(:error, 'Cannot upload assignment since it already exists')
+        unless Assignment.find_by(short_identifier: properties_content[:short_identifier]).nil?
+          flash_message(:error, I18n.t('assignments.upload_file_exists',
+                                            item: properties_content[:short_identifier]))
           go_back_to_new(params[:is_scanned], params[:is_timed])
           return
         end
-        properties_content[:assignment_properties_attributes][:repository_folder] = assignment_record[:short_identifier]
+        properties_content[:assignment_properties_attributes][:repository_folder] = properties_content[:short_identifier]
         assignment = Assignment.create(properties_content)
         # Read other files to add additional settings to created assignment
         zipfile.each do |entry|
@@ -602,6 +603,7 @@ class AssignmentsController < ApplicationController
             child_prop = zipfile.glob("#{entry.name}properties.yml").first
             child_assignment = Assignment.find_by(parent_assessment_id: assignment.id)
             child_assignment.update(read_yaml_properties_file(child_prop))
+            child_assignment.save!
           end
         end
         redirect_to edit_assignment_path(assignment.id)
