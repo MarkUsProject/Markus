@@ -694,13 +694,14 @@ describe SubmissionsController do
         context 'with a section' do
           before(:each) do
             @section = create(:section, name: 's1')
-            @section_due_date = create(:section_due_date, section: @section, assignment: @assignment)
+            @assessment_section_properties = create(:assessment_section_properties, section: @section,
+                                                                                    assessment: @assignment)
             @student.section = @section
             @student.save
           end
 
           it 'should get an error if it is before the section due date' do
-            @section_due_date.update!(due_date: Time.current + 1.week)
+            @assessment_section_properties.update!(due_date: Time.current + 1.week)
             allow(Assignment).to receive_message_chain(
               :includes, :find) { @assignment }
             expect_any_instance_of(SubmissionsController).to receive(:flash_now).with(:error, anything)
@@ -715,7 +716,7 @@ describe SubmissionsController do
           end
 
           it 'should succeed if it is after the section due date' do
-            @section_due_date.update!(due_date: Time.current - 1.week)
+            @assessment_section_properties.update!(due_date: Time.current - 1.week)
             allow(Assignment).to receive_message_chain(
               :includes, :find) { @assignment }
             expect_any_instance_of(SubmissionsController).not_to receive(:flash_now).with(:error, anything)
