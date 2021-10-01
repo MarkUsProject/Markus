@@ -554,6 +554,7 @@ class AssignmentsController < ApplicationController
   # Downloads a zip file containing all the information and settings about an assignment
   def download_config_files
     assignment = Assignment.find(params[:id])
+    child_assignment = Assignment.find_by(parent_assessment_id: params[:id])
 
     zip_name = "#{assignment.short_identifier}-config-files.zip"
     zip_path = File.join('tmp', zip_name)
@@ -561,7 +562,12 @@ class AssignmentsController < ApplicationController
     FileUtils.rm_f(zip_path)
 
     Zip::File.open(zip_path, create: true) do |zipfile|
-      zipfile.get_output_stream('properties.yml') { |f| f.write assignment.assignment_properties_config.to_yaml }
+      zipfile.get_output_stream('properties.yml') \
+      { |f| f.write assignment.assignment_properties_config.to_yaml }
+      zipfile.mkdir("#{child_assignment.short_identifier}-config-files")
+      zipfile.get_output_stream("#{child_assignment.short_identifier}config-files/properties.yml") \
+      { |f| f.write child_assignment.assignment_properties_config.to_yaml }
+
     end
     send_file zip_path, filename: zip_name
   end
@@ -580,59 +586,33 @@ class AssignmentsController < ApplicationController
         if properties_file.nil?
           flash_message(:error, 'Cannot find properties file')
           go_back_to_new(params[:is_scanned], params[:is_timed])
-        else
-          properties_content = YAML.safe_load(
-            properties_file.get_input_stream.read.encode(Encoding::UTF_8, 'UTF-8'),
-            [Date, Time, Symbol, ActiveSupport::TimeWithZone, ActiveSupport::TimeZone,
-             ActiveSupport::HashWithIndifferentAccess, ActiveSupport::Duration], [], true
-          ).deep_symbolize_keys
-          assignment = build_from_file(properties_content)
-          if assignment.nil?
-            go_back_to_new(params[:is_scanned], params[:is_timed])
-          else
-            redirect_to edit_assignment_path(assignment.id)
+          return
+        end
+        properties_content = read_yaml_properties_file(properties_file)
+        unless Assignment.find_by(short_identifier: short_id).nil?
+          flash_message(:error, 'Cannot upload assignment since it already exists')
+          go_back_to_new(params[:is_scanned], params[:is_timed])
+          return
+        end
+        properties_content[:assignment_properties_attributes][:repository_folder] = assignment_record[:short_identifier]
+        assignment = Assignment.create(properties_content)
+        # Read other files to add additional settings to created assignment
+        zipfile.each do |entry|
+          if entry.directory? && entry.name =~ /(.*)-config-files/
+            child_prop = zipfile.glob("#{entry.name}properties.yml").first
+            child_assignment = Assignment.find_by(parent_assessment_id: assignment.id)
+            child_assignment.update(read_yaml_properties_file(child_prop))
           end
         end
+        redirect_to edit_assignment_path(assignment.id)
       end
     end
   end
 
   private
 
-  # Creates a new assignment with the settings specified in <assignment_record>.
-  def build_from_file(assignment_record)
-    short_id = assignment_record[:short_identifier]
-    if Assignment.find_by(short_identifier: short_id).nil?
-      # Build attributes hash to match structure of assignment
-      assignment_attributes = {}
-      assignment_properties = {}
-      base_attr = [:short_identifier, :description, :message,
-                   :due_date, :is_hidden, :show_total, :type]
-      assignment_record.each do |attribute_pair|
-        attribute, value = attribute_pair
-        case attribute
-        when *base_attr
-          assignment_attributes[attribute] = value
-        when :submission_rule
-          submission_rules = {}
-          submission_rules[:type] = value[:type]
-          submission_rules[:periods_attributes] = value[:periods]
-          assignment_attributes[:submission_rule_attributes] = submission_rules
-        when :required_files
-          assignment_attributes[:assignment_files_attributes] = value
-        else
-          assignment_properties[attribute] = value
-        end
-      end
-      assignment_properties[:repository_folder] = short_id
-      assignment_attributes[:assignment_properties_attributes] = assignment_properties
-      # Create assignment
-      return Assignment.create(assignment_attributes)
-    end
-    flash_message(:error, 'Cannot upload assignment since it already exists')
-    nil
-  end
-
+  # Helper for <upload_config_files> that redirects the user to the type of
+  # create assignment page they were viewing before uploading an assignment
   def go_back_to_new(is_scanned, is_timed)
     if is_scanned == 'true'
       redirect_to new_assignment_path(scanned: true)
@@ -641,6 +621,39 @@ class AssignmentsController < ApplicationController
     else
       redirect_to new_assignment_path
     end
+  end
+
+  # Reads the yaml file meant for assignment properties and outputs a hash
+  # in the same structure as an assignment
+  def read_yaml_properties_file(file)
+    assignment_attributes = {}
+    assignment_properties = {}
+    base_attr = [:short_identifier, :description, :message,
+                 :due_date, :is_hidden, :show_total, :type]
+    YAML.safe_load(
+      file.get_input_stream.read.encode(Encoding::UTF_8, 'UTF-8'),
+      [Date, Time, Symbol, ActiveSupport::TimeWithZone, ActiveSupport::TimeZone,
+       ActiveSupport::HashWithIndifferentAccess, ActiveSupport::Duration],
+      [],
+      true
+    ).deep_symbolize_keys.each do |attribute_pair|
+      attribute, value = attribute_pair
+      case attribute
+      when :submission_rule
+        submission_rules = {}
+        submission_rules[:type] = value[:type]
+        submission_rules[:periods_attributes] = value[:periods]
+        assignment_attributes[:submission_rule_attributes] = submission_rules
+      when :required_files
+        assignment_attributes[:assignment_files_attributes] = value
+      when *base_attr
+        assignment_attributes[attribute] = value
+      else
+        assignment_properties[attribute] = value
+      end
+    end
+    assignment_attributes[:assignment_properties_attributes] = assignment_properties
+    assignment_attributes
   end
 
   def set_repo_vars(assignment, grouping)
