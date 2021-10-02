@@ -1,6 +1,7 @@
 # Changelog
 
-## [unreleased]
+## [v1.13.3]
+- Add workaround for CSP rules in Safari (#5526)
 
 ## [v1.13.2]
 - Ensure "Create all groups" button uses existing repos if they already exist (#5504)
