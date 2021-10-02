@@ -3,6 +3,9 @@
 ## [unreleased]
 - Add the ability to hide assignments from individual sections (#5445)
 - Add workaround for CSP rules in Safari (#5526)
+- Display smaller error message when nbconvert fails to avoid a cookie overflow (#5510)
+
+## [v1.13.2]
 - Ensure "Create all groups" button uses existing repos if they already exist (#5504)
 - Set criteria marks after autotest run (#5508)
 
