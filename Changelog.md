@@ -2,6 +2,7 @@
 
 ## [unreleased]
 - Add the ability to hide assignments from individual sections (#5445)
+- Display multiple feedback files returned by the autotester (#5524)
 - Add workaround for CSP rules in Safari (#5526)
 - Display smaller error message when nbconvert fails to avoid a cookie overflow (#5510)
 
