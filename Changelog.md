@@ -1,6 +1,7 @@
 # Changelog
 
 ## [v1.13.3]
+- Display multiple feedback files returned by the autotester (#5524)
 - Add workaround for CSP rules in Safari (#5526)
 
 ## [v1.13.2]
