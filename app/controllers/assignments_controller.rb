@@ -583,29 +583,31 @@ class AssignmentsController < ApplicationController
     end
     if File.extname(upload_file.path).casecmp?('.zip')
       Zip::File.open(upload_file.path) do |zipfile|
-        assignment = create_assignment_from_zip(zipfile, 'properties.yml')
-        # Go back to previous page if assignment failed to build
-        if assignment.nil? && params[:is_scanned] == 'true'
-          redirect_to new_assignment_path(scanned: true)
-          return nil
-        elsif assignment.nil? && params[:is_timed] == 'true'
-          redirect_to new_assignment_path(timed: true)
-          return nil
-        elsif assignment.nil?
-          redirect_to new_assignment_path
-          return nil
+        Assignment.transaction do
+          assignment = create_assignment_from_zip(zipfile, 'properties.yml')
+          # Go back to previous page if assignment failed to build
+          if assignment.nil? && params[:is_scanned] == 'true'
+            redirect_to new_assignment_path(scanned: true)
+            return nil
+          elsif assignment.nil? && params[:is_timed] == 'true'
+            redirect_to new_assignment_path(timed: true)
+            return nil
+          elsif assignment.nil?
+            redirect_to new_assignment_path
+            return nil
+          end
+          assignment.repository_folder = assignment.short_identifier
+          Assignment.transaction do
+            child_assignment = create_assignment_from_zip(zipfile, 'pr-config-files/properties.yml')
+            unless child_assignment.nil?
+              child_assignment.parent_assignment = assignment
+              child_assignment.repository_folder = assignment.repository_folder
+              raise ActiveRecord::Rollback unless child_assignment.save
+            end
+          end
+          raise ActiveRecord::Rollback unless assignment.save
+          redirect_to edit_assignment_path(assignment.id)
         end
-        assignment.repository_folder = assignment.short_identifier
-        child_assignment = create_assignment_from_zip(zipfile, 'pr-config-files/properties.yml')
-        unless child_assignment.nil?
-          child_assignment.parent_assignment = assignment
-          child_assignment.repository_folder = assignment.repository_folder
-          ActiveRecord::Rollback unless child_assignment.save
-        end
-        unless assignment.save
-          raise ActiveRecord::Rollback
-        end
-        redirect_to edit_assignment_path(assignment.id)
       end
     end
   end
