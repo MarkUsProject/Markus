@@ -79,7 +79,7 @@ class Assignment < Assessment
   after_create :create_autotest_dirs
 
   before_save :reset_collection_time
-  after_save :update_permissions_if_vcs_changed
+  after_save :update_repo_permissions
 
   after_save :update_assigned_tokens
   after_save :create_peer_review_assignment_if_not_exist
@@ -891,6 +891,8 @@ class Assignment < Assessment
     end
   end
 
+  # Returns the assignments for which students have repository access.
+  #
   # Repository authentication subtleties:
   # 1) a repository is associated with a Group, but..
   # 2) ..students are associated with a Grouping (an "instance" of Group for a specific Assignment)
@@ -904,7 +906,7 @@ class Assignment < Assessment
   def self.get_repo_auth_records
     records = Assignment.joins(:assignment_properties)
                         .includes(groupings: [:group, { accepted_student_memberships: :user }])
-                        .where(assignment_properties: { vcs_submit: true })
+                        .where(is_hidden: false, assignment_properties: { vcs_submit: true })
                         .order(due_date: :desc)
     records.where(assignment_properties: { is_timed: false })
            .or(records.where.not(groupings: { start_time: nil }))
@@ -1284,5 +1286,18 @@ class Assignment < Assessment
     return unless self.new_record?
     self.assignment_properties ||= AssignmentProperties.new
     self.submission_rule ||= NoLateSubmissionRule.new
+  end
+
+  # Update the repository permissions file if one of the following attributes was changed after a save:
+  # - vcs_submit
+  # - is_hidden
+  # - anonymize_groups
+  def update_repo_permissions
+    return unless
+      saved_change_to_vcs_submit? ||
+        saved_change_to_is_hidden? ||
+        saved_change_to_anonymize_groups?
+
+    Repository.get_class.update_permissions
   end
 end

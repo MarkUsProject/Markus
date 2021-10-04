@@ -254,7 +254,9 @@ module Repository
       end
       # NOTE: this will allow graders to access the files in the entire repository
       # even if they are the grader for only a single assignment
-      graders_info = TaMembership.joins(:user, grouping: :group).pluck(:repo_name, :user_name)
+      graders_info = TaMembership.joins(:user, grouping: [:group, assignment: :assignment_properties])
+                                 .where('assignment_properties.anonymize_groups': false)
+                                 .pluck(:repo_name, :user_name)
       graders_info.each do |repo_name, user_name|
         permissions[repo_name] << user_name
       end

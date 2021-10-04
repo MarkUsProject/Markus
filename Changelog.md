@@ -5,6 +5,8 @@
 - Display multiple feedback files returned by the autotester (#5524)
 - Add workaround for CSP rules in Safari (#5526)
 - Display smaller error message when nbconvert fails to avoid a cookie overflow (#5510)
+- Update repository access permissions to take into account the Assignment
+  is_hidden and anonymize_groups attributes (#5547)
 
 ## [v1.13.2]
 - Ensure "Create all groups" button uses existing repos if they already exist (#5504)

@@ -11,8 +11,9 @@ describe TaMembership do
 
   context 'should update permissions' do
     it 'when created' do
+      grouping = create(:grouping)
       expect(UpdateRepoPermissionsJob).to receive(:perform_later)
-      create(:ta_membership)
+      create(:ta_membership, grouping: grouping)
     end
     it 'when destroyed' do
       membership = create(:ta_membership)
