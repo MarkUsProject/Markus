@@ -562,10 +562,13 @@ class AssignmentsController < ApplicationController
     FileUtils.rm_f(zip_path)
 
     Zip::File.open(zip_path, create: true) do |zipfile|
-      zipfile.get_output_stream('properties.yml') { |f| f.write(assignment.assignment_properties_config.to_yaml) }
+      zipfile.get_output_stream('properties.yml') do |f|
+        f.write(assignment.assignment_properties_config.to_yaml)
+      end
       unless child_assignment.nil?
-        zipfile.get_output_stream('pr-config-files/properties.yml') { |f| f.write(
-          child_assignment.assignment_properties_config.to_yaml) }
+        zipfile.get_output_stream('pr-config-files/properties.yml') do |f|
+          f.write(child_assignment.assignment_properties_config.to_yaml)
+        end
       end
     end
     send_file zip_path, filename: zip_name
