@@ -28,6 +28,7 @@ es:
     hidden: "%{assignment_text} (oculto)"
     manage_course_work: Administrar trabajos del curso
     marking_scheme: 'Esquema de Calificación: %{identifier}'
+    no_attribute_in_file: UPDATE ME
     no_required_files: No hay archivos requeridos para este proyecto.
     none: No existen proyectos por el momento.
     scanned_exam:

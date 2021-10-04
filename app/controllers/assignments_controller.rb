@@ -562,11 +562,10 @@ class AssignmentsController < ApplicationController
     FileUtils.rm_f(zip_path)
 
     Zip::File.open(zip_path, create: true) do |zipfile|
-      zipfile.get_output_stream('properties.yml') { |f| \
-        f.write(assignment.assignment_properties_config.to_yaml) }
+      zipfile.get_output_stream('properties.yml') { |f| f.write(assignment.assignment_properties_config.to_yaml) }
       unless child_assignment.nil?
-        zipfile.get_output_stream("#{child_assignment.short_identifier}-config-files/properties.yml") { |f| \
-          f.write(child_assignment.assignment_properties_config.to_yaml) }
+        zipfile.get_output_stream('pr-config-files/properties.yml') { |f| f.write(
+          child_assignment.assignment_properties_config.to_yaml) }
       end
     end
     send_file zip_path, filename: zip_name
@@ -581,30 +580,27 @@ class AssignmentsController < ApplicationController
     end
     if File.extname(upload_file.path).casecmp?('.zip')
       Zip::File.open(upload_file.path) do |zipfile|
-        # Read properties file first to initialize assignment
-        properties_file = zipfile.glob('properties.yml').first
-        if properties_file.nil?
-          flash_message(:error, I18n.t('upload_errors.cannot_find_file', item: 'properties'))
-          go_back_to_new(params[:is_scanned], params[:is_timed])
-          return
+        assignment = create_assignment_from_zip(zipfile, 'properties.yml')
+        # Go back to previous page if assignment failed to build
+        if assignment.nil? && params[:is_scanned] == 'true'
+          redirect_to new_assignment_path(scanned: true)
+          return nil
+        elsif assignment.nil? && params[:is_timed] == 'true'
+          redirect_to new_assignment_path(timed: true)
+          return nil
+        elsif assignment.nil?
+          redirect_to new_assignment_path
+          return nil
         end
-        properties_content = read_yaml_properties_file(properties_file)
-        unless Assignment.find_by(short_identifier: properties_content[:short_identifier]).nil?
-          flash_message(:error, I18n.t('assignments.upload_file_exists',
-                                            item: properties_content[:short_identifier]))
-          go_back_to_new(params[:is_scanned], params[:is_timed])
-          return
+        assignment.repository_folder = assignment.short_identifier
+        child_assignment = create_assignment_from_zip(zipfile, 'pr-config-files/properties.yml')
+        unless child_assignment.nil?
+          child_assignment.parent_assignment = assignment
+          child_assignment.repository_folder = assignment.repository_folder
+          ActiveRecord::Rollback unless child_assignment.save
         end
-        properties_content[:assignment_properties_attributes][:repository_folder] = properties_content[:short_identifier]
-        assignment = Assignment.create(properties_content)
-        # Read other files to add additional settings to created assignment
-        zipfile.each do |entry|
-          if entry.directory? && entry.name =~ /(.*)-config-files/
-            child_prop = zipfile.glob("#{entry.name}properties.yml").first
-            child_assignment = Assignment.find_by(parent_assessment_id: assignment.id)
-            child_assignment.update(read_yaml_properties_file(child_prop))
-            child_assignment.save!
-          end
+        unless assignment.save
+          raise ActiveRecord::Rollback
         end
         redirect_to edit_assignment_path(assignment.id)
       end
@@ -613,16 +609,40 @@ class AssignmentsController < ApplicationController
 
   private
 
-  # Helper for <upload_config_files> that redirects the user to the type of
-  # create assignment page they were viewing before uploading an assignment
-  def go_back_to_new(is_scanned, is_timed)
-    if is_scanned == 'true'
-      redirect_to new_assignment_path(scanned: true)
-    elsif is_timed == 'true'
-      redirect_to new_assignment_path(timed: true)
-    else
-      redirect_to new_assignment_path
+  # Helper for <upload_config_files> that searches for the <file_name> in <zipfile> that
+  # contains the settings needed to initialize an assignment and uses it to make a new
+  # unsaved assignment
+  def create_assignment_from_zip(zipfile, file_name)
+    # Read properties file first to initialize assignment
+    prop_file = zipfile.glob(file_name).first
+    if prop_file.nil?
+      # Send error message if cannot find properties file of main assignment
+      # Peer review assignments will fail silently
+      if file_name == 'properties.yml'
+        flash_message(:error, I18n.t('upload_errors.cannot_find_file', item: 'properties'))
+      end
+      return nil
     end
+    prop_content = read_yaml_properties_file(prop_file)
+    # Validate presence of required keys
+    req_keys = [:short_identifier, :due_date, :description]
+    req_keys.each do |key|
+      unless prop_content.key?(key)
+        if file_name == 'properties.yml'
+          flash_message(:error, I18n.t('assignments.no_attribute_in_file', type: '', item: key))
+        else
+          flash_message(:error, I18n.t('assignments.no_attribute_in_file', type: 'peer review', item: key))
+        end
+        return nil
+      end
+    end
+    # Check for uniqueness
+    unless Assignment.find_by(short_identifier: prop_content[:short_identifier]).nil?
+      flash_message(:error, I18n.t('assignments.upload_file_exists',
+                                   item: prop_content[:short_identifier]))
+      return nil
+    end
+    Assignment.new(prop_content)
   end
 
   # Reads the yaml file meant for assignment properties and outputs a hash

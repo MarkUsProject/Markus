@@ -28,6 +28,7 @@ en:
     hidden: "%{assignment_text} (hidden)"
     manage_course_work: Manage Course Work
     marking_scheme: 'Marking Scheme: %{identifier}'
+    no_attribute_in_file: The %{type} assignment you uploaded cannot be created since it has no %{item}
     no_required_files: There are no required files for this assignment.
     none: There are currently no assignments.
     scanned_exam:

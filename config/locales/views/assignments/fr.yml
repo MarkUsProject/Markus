@@ -28,6 +28,7 @@ fr:
     hidden: "%{assignment_text} (masqué)"
     manage_course_work: Gestion du cours
     marking_scheme: 'Barème: %{identifier}'
+    no_attribute_in_file: UPDATE ME
     no_required_files: Aucun fichier n'est requis pour ce projet.
     none: Aucun devoir pour le moment.
     scanned_exam:

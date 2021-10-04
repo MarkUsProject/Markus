@@ -28,6 +28,7 @@ pt:
     hidden: "%{assignment_text} (oculto)"
     manage_course_work: Gerenciar trabalho do curso
     marking_scheme: 'Esquema de avalição: %{identifier}'
+    no_attribute_in_file: UPDATE ME
     no_required_files: Não há arquivos exigidos para esse projeto.
     none: Não existem projetos atualmente.
     scanned_exam:
