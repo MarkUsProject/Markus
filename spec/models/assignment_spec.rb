@@ -2204,6 +2204,115 @@ describe Assignment do
     end
   end
 
+  describe '#visibility_hash' do
+    let(:assessment_section_property) do
+      create :assessment_section_properties,
+             is_hidden: true,
+             assessment: assignments.first,
+             section: sections.first
+    end
+    let(:assessment_section_property2) do
+      create :assessment_section_properties,
+             is_hidden: false,
+             assessment: assignments.first,
+             section: sections.second
+    end
+    let(:assessment_section_property3) do
+      create :assessment_section_properties,
+             is_hidden: nil,
+             assessment: assignments.second,
+             section: sections.first
+    end
+    let(:assessment_section_property4) do
+      create :assessment_section_properties,
+             is_hidden: nil,
+             assessment: assignments.second,
+             section: sections.second
+    end
+    context 'when all assignments are hidden' do
+      let!(:assignments) { create_list :assignment, 2, is_hidden: true }
+      let!(:sections) { create_list :section, 2 }
+      shared_examples 'default tests' do
+        it 'should return false for all sections' do
+          assignments.each do |assignment|
+            sections.each do |section|
+              expect(Assignment.visibility_hash[assignment.id][section.id]).to be false
+            end
+          end
+        end
+        it 'should return false for no section' do
+          assignments.each do |assignment|
+            expect(Assignment.visibility_hash[assignment.id][nil]).to be false
+          end
+        end
+      end
+
+      include_examples 'default tests'
+      context 'when assignment properties are set with nil is_hidden value' do
+        let!(:assessment_section_properties) { [assessment_section_property3, assessment_section_property4] }
+        include_examples 'default tests'
+      end
+      context 'when assignment properties are set with true is_hidden value' do
+        let!(:assessment_section_properties) { [assessment_section_property] }
+        include_examples 'default tests'
+      end
+      context 'when assignment properties are set with false is_hidden value' do
+        let!(:assessment_section_properties) { [assessment_section_property2] }
+        it 'should return true for section 2' do
+          expect(Assignment.visibility_hash[assignments.first.id][sections.second.id]).to be true
+        end
+      end
+    end
+    context 'when no assignments are hidden' do
+      let!(:assignments) { create_list :assignment, 2, is_hidden: false }
+      let!(:sections) { create_list :section, 2 }
+      shared_examples 'default tests' do
+        it 'should return false for all sections' do
+          assignments.each do |assignment|
+            sections.each do |section|
+              expect(Assignment.visibility_hash[assignment.id][section.id]).to be true
+            end
+          end
+        end
+        it 'should return true for no section' do
+          assignments.each do |assignment|
+            expect(Assignment.visibility_hash[assignment.id][nil]).to be true
+          end
+        end
+      end
+      include_examples 'default tests'
+      context 'when assignment properties are set with nil is_hidden value' do
+        let!(:assessment_section_properties) { [assessment_section_property3, assessment_section_property4] }
+        include_examples 'default tests'
+      end
+      context 'when assignment properties are set with true is_hidden value' do
+        let!(:assessment_section_properties) { [assessment_section_property2] }
+        include_examples 'default tests'
+      end
+      context 'when assignment properties are set with false is_hidden value' do
+        let!(:assessment_section_properties) { [assessment_section_property] }
+        it 'should return false for section 1' do
+          expect(Assignment.visibility_hash[assignments.first.id][sections.first.id]).to be false
+        end
+      end
+    end
+    context 'when one assignment is hidden' do
+      let!(:hidden_assignment) { create :assignment, is_hidden: true }
+      let!(:shown_assignment) { create :assignment, is_hidden: false }
+      let!(:sections) { create_list :section, 2 }
+      it 'should return false for all sections' do
+        sections.each do |section|
+          expect(Assignment.visibility_hash[shown_assignment.id][section.id]).to be true
+          expect(Assignment.visibility_hash[hidden_assignment.id][section.id]).to be false
+        end
+      end
+      it 'should indicate which assignment is hidden' do
+        expect(Assignment.visibility_hash[shown_assignment.id][nil]).to be true
+        expect(Assignment.visibility_hash[hidden_assignment.id][nil]).to be false
+      end
+    end
+  end
+
   describe '#upcoming' do
     # the upcoming method is only called in cases where the user is a student
     context 'a student with a grouping' do

@@ -79,6 +79,7 @@ class Assignment < Assessment
   after_create :create_autotest_dirs
 
   before_save :reset_collection_time
+  before_save -> { @prev_assessment_section_property_ids = assessment_section_properties.ids }
   after_save :update_repo_permissions
 
   after_save :update_assigned_tokens
@@ -905,12 +906,31 @@ class Assignment < Assessment
   # we may want to add or [more frequently] remove some students from it)
   def self.get_repo_auth_records
     records = Assignment.joins(:assignment_properties)
-                        .includes(groupings: [:group, { accepted_student_memberships: :user }])
-                        .where(is_hidden: false, assignment_properties: { vcs_submit: true })
+                        .includes(groupings: [:group, accepted_students: :section])
+                        .where(assignment_properties: { vcs_submit: true })
                         .order(due_date: :desc)
     records.where(assignment_properties: { is_timed: false })
            .or(records.where.not(groupings: { start_time: nil }))
            .or(records.where(groupings: { start_time: nil }, due_date: Time.new(0)..Time.current))
+  end
+
+  # Return a nested hash of the form { assignment_id => { section_id => visibility } } where visibility
+  # is a boolean indicating whether the given assignment is visible to the given section.
+  def self.visibility_hash
+    records = Assignment.left_outer_joins(:assessment_section_properties)
+                        .pluck_to_hash('assessments.id',
+                                       'section_id',
+                                       'assessments.is_hidden',
+                                       'assessment_section_properties.is_hidden')
+    visibilities = records.uniq { |r| r['assessments.id'] }
+                          .map { |r| [r['assessments.id'], Hash.new { !r['assessments.is_hidden'] }] }
+                          .to_h
+    records.each do |r|
+      unless r['assessment_section_properties.is_hidden'].nil?
+        visibilities[r['assessments.id']][r['section_id']] = !r['assessment_section_properties.is_hidden']
+      end
+    end
+    visibilities
   end
 
   ### /REPO ###
@@ -1296,8 +1316,9 @@ class Assignment < Assessment
     return unless
       saved_change_to_vcs_submit? ||
         saved_change_to_is_hidden? ||
-        saved_change_to_anonymize_groups?
-
+        saved_change_to_anonymize_groups? ||
+        @prev_assessment_section_property_ids != self.reload.assessment_section_properties.ids ||
+        assessment_section_properties.map(&:is_hidden_previously_changed?).any?
     Repository.get_class.update_permissions
   end
 end

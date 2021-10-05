@@ -244,9 +244,11 @@ module Repository
 
     # Builds a hash of all repositories and users allowed to access them (assumes all permissions are rw)
     def self.get_all_permissions
+      visibility = Assignment.visibility_hash
       permissions = Hash.new { |h,k| h[k]=[] }
       Assignment.get_repo_auth_records.each do |assignment|
         assignment.valid_groupings.each do |valid_grouping|
+          next unless visibility[assignment.id][valid_grouping&.inviter&.section&.id]
           repo_name = valid_grouping.group.repo_name
           accepted_students = valid_grouping.accepted_students.map(&:user_name)
           permissions[repo_name] = accepted_students
