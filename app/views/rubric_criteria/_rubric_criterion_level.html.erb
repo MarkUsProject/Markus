@@ -15,7 +15,7 @@
     <%= level_form.label :name, Level.human_attribute_name(:name), class: 'required' %>
     <%= level_form.text_field :name, required: true %>
     <%= level_form.label :mark, class: 'required' %>
-    <%= level_form.number_field :mark, step: 0.1, required: true %>
+    <%= level_form.number_field :mark, step: 0.01, required: true %>
     <%= level_form.label :description, Level.human_attribute_name(:description),
                          class: 'description' %>
     <%= level_form.text_area :description, cols: 50, rows: 5 %>
