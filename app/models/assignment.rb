@@ -80,7 +80,7 @@ class Assignment < Assessment
 
   before_save :reset_collection_time
   before_save -> { @prev_assessment_section_property_ids = assessment_section_properties.ids }
-  after_save :update_repo_permissions
+  after_save_commit :update_repo_permissions
 
   after_save :update_assigned_tokens
   after_save :create_peer_review_assignment_if_not_exist

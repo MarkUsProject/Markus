@@ -2195,13 +2195,6 @@ describe Assignment do
         end
       end
     end
-    context 'all assignments with vcs_submit == true and is_hidden == true' do
-      let(:assignment1) { create :assignment, is_hidden: true, assignment_properties_attributes: { vcs_submit: true } }
-      let(:assignment2) { create :assignment, is_hidden: true, assignment_properties_attributes: { vcs_submit: true } }
-      it 'should be empty' do
-        expect(Assignment.get_repo_auth_records).to be_empty
-      end
-    end
   end
 
   describe '#visibility_hash' do
