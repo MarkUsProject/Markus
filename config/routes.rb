@@ -449,7 +449,7 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :courses
+  resources :courses, only: [:show, :index]
 
   match 'main', controller: 'main', action: 'index', via: :post
   match 'main/about', controller: 'main', action: 'about', via: :post

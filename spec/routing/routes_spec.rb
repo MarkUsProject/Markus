@@ -1267,3 +1267,32 @@ describe 'course summary' do
   end
 end
 # end course summary route tests
+
+# Start course route tests
+describe 'courses' do
+  let(:path) { '/courses' }
+  let(:ctrl) { 'courses' }
+  let(:course) { create :course }
+  it 'routes GET course properly' do
+    expect(get: path << '/' << course.id.to_s)
+      .to route_to(controller: ctrl,
+                   action: 'show',
+                   id: course.id.to_s)
+  end
+  it 'routes GET courses properly' do
+    expect(get: path << '/index')
+      .to route_to(controller: ctrl,
+                   action: 'show',
+                   id: 'index')
+  end
+  it 'does not route edit' do
+    expect(get: path << '/' << course.id.to_s << '/edit')
+      .not_to be_routable
+  end
+  it 'does not route create' do
+    expect(get: path << '/create')
+      .to route_to(controller: ctrl,
+                   action: 'show',
+                   id: 'create')
+  end
+end

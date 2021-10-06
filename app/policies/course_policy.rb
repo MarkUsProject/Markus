@@ -9,8 +9,4 @@ class CoursePolicy < ApplicationPolicy
   def index?
     true
   end
-
-  def manage?
-    false
-  end
 end

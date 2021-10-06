@@ -130,7 +130,8 @@ ActiveRecord::Schema.define(version: 2021_09_27_150608) do
 
   create_table "courses", force: :cascade do |t|
     t.string "name", null: false
-    t.boolean "is_hidden", null: false
+    t.boolean "is_hidden", default: true, null: false
+    t.string "display_name", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
