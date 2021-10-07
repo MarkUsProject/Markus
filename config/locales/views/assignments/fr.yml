@@ -74,6 +74,5 @@ fr:
       time_until_due_warning: UPDATE ME %{due_date}
     unexpected_file_found: UPDATE ME
     upload_config_help_html: UPDATE ME
-    upload_file_exists: UPDATE ME
     upload_file_requirement: La liste des fichiers téléchargés ne correspond pas aux fichiers d'affectation nécessaire
     wrong_assignment_type: UPDATE ME

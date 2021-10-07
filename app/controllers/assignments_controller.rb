@@ -598,7 +598,7 @@ class AssignmentsController < ApplicationController
           # Build peer review assignment if it exists
           child_prop_file = zipfile.find_entry('peer-review-config-files/properties.yml')
           unless child_prop_file.nil?
-            child_attr = read_properties_file(child_prop_file)
+            child_attr = read_yaml_file(child_prop_file)
             if child_attr.nil?
               error = true
               break
@@ -639,7 +639,7 @@ class AssignmentsController < ApplicationController
       flash_message(:error, I18n.t('upload_errors.cannot_find_file', item: 'properties.yml'))
       return
     end
-    attributes = read_properties_file(prop_file)
+    attributes = read_yaml_file(prop_file)
     return if attributes.nil?
     assignment = Assignment.new(attributes)
     unless assignment.is_timed.to_s == params[:is_timed] && assignment.scanned_exam.to_s == params[:is_scanned]
@@ -686,35 +686,6 @@ class AssignmentsController < ApplicationController
         nil
       end
     end
-  end
-
-  # Reads the yaml file meant for assignment properties and outputs a hash
-  # in the same structure as an assignment
-  def read_properties_file(file)
-    assignment_attributes = {}
-    assignment_properties = {}
-    base_attr = [:short_identifier, :description, :message,
-                 :due_date, :is_hidden, :show_total, :type]
-    contents = read_yaml_file(file)
-    return if contents.nil?
-    contents.each do |attribute_pair|
-      attribute, value = attribute_pair
-      case attribute
-      when :submission_rule
-        submission_rules = {}
-        submission_rules[:type] = value[:type]
-        submission_rules[:periods_attributes] = value[:periods]
-        assignment_attributes[:submission_rule_attributes] = submission_rules
-      when :required_files
-        assignment_attributes[:assignment_files_attributes] = value
-      when *base_attr
-        assignment_attributes[attribute] = value
-      else
-        assignment_properties[attribute] = value
-      end
-    end
-    assignment_attributes[:assignment_properties_attributes] = assignment_properties
-    assignment_attributes
   end
 
   def set_repo_vars(assignment, grouping)
