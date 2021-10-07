@@ -591,20 +591,25 @@ class AssignmentsController < ApplicationController
           assignment = build_uploaded_assignment(prop_file)
           unless !assignment.nil? && assignment.save
             flash_message(:error, assignment.errors.full_messages.join("\n")) unless assignment.nil?
-            error = true; break
+            error = true
+            break
           end
           zipfile.remove(prop_file)
           # Build peer review assignment if it exists
           child_prop_file = zipfile.find_entry('peer-review-config-files/properties.yml')
           unless child_prop_file.nil?
             child_attr = read_properties_file(child_prop_file)
-            (error = true; break) if child_attr.nil?
+            if child_attr.nil?
+              error = true
+              break
+            end
             child_assignment = Assignment.new(child_attr)
             child_assignment.parent_assignment = assignment
             child_assignment.repository_folder = assignment.repository_folder
             unless child_assignment.save
               flash_message(:error, child_assignment.errors.full_messages.join("\n"))
-              error = true; break
+              error = true
+              break
             end
             zipfile.remove(child_prop_file)
           end
