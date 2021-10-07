@@ -589,8 +589,7 @@ class AssignmentsController < ApplicationController
           # Build assignment from properties
           prop_file = zipfile.find_entry('properties.yml')
           assignment = build_uploaded_assignment(prop_file)
-          unless !assignment.nil? && assignment.save
-            flash_message(:error, assignment.errors.full_messages.join("\n")) unless assignment.nil?
+          if assignment.nil?
             error = true
             break
           end
@@ -615,6 +614,11 @@ class AssignmentsController < ApplicationController
           end
           zipfile.each do |entry|
             flash_message(:warning, I18n.t('assignments.unexpected_file_found', item: entry.name))
+          end
+          unless assignment.save
+            flash_message(:error, assignment.errors.full_messages.join("\n"))
+            error = true
+            break
           end
           redirect_to edit_assignment_path(assignment.id)
         end
