@@ -1274,23 +1274,23 @@ describe 'courses' do
   let(:ctrl) { 'courses' }
   let(:course) { create :course }
   it 'routes GET course properly' do
-    expect(get: path << '/' << course.id.to_s)
+    expect(get: "#{path}/#{course.id}")
       .to route_to(controller: ctrl,
                    action: 'show',
                    id: course.id.to_s)
   end
   it 'routes GET courses properly' do
-    expect(get: path << '/index')
+    expect(get: "#{path}/index")
       .to route_to(controller: ctrl,
                    action: 'show',
                    id: 'index')
   end
   it 'does not route edit' do
-    expect(get: path << '/' << course.id.to_s << '/edit')
+    expect(get: "#{path}/#{course.id}/edit")
       .not_to be_routable
   end
   it 'does not route create' do
-    expect(get: path << '/create')
+    expect(get: "#{path}/create")
       .to route_to(controller: ctrl,
                    action: 'show',
                    id: 'create')
