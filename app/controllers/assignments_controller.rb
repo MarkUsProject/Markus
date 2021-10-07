@@ -587,7 +587,7 @@ class AssignmentsController < ApplicationController
       Zip::File.open(upload_file.path) do |zipfile|
         Assignment.transaction do
           # Build assignment from properties
-          prop_file = zipfile.glob('properties.yml').first
+          prop_file = zipfile.find_entry('properties.yml')
           assignment = build_uploaded_assignment(prop_file)
           unless !assignment.nil? && assignment.save
             flash_message(:error, assignment.errors.full_messages.join("\n")) unless assignment.nil?
@@ -595,27 +595,28 @@ class AssignmentsController < ApplicationController
           end
           zipfile.remove(prop_file)
           # Build peer review assignment if it exists
-          child_prop_file = zipfile.glob('peer-review-config-files/properties.yml').first
+          child_prop_file = zipfile.find_entry('peer-review-config-files/properties.yml')
           unless child_prop_file.nil?
-            child_assignment = Assignment.new(read_properties_file(child_prop_file))
+            child_attr = read_properties_file(child_prop_file)
+            (error = true; break) if child_attr.nil?
+            child_assignment = Assignment.new(child_attr)
             child_assignment.parent_assignment = assignment
             child_assignment.repository_folder = assignment.repository_folder
             unless child_assignment.save
-              flash_message(:error, assignment.errors.full_messages.join("\n"))
+              flash_message(:error, child_assignment.errors.full_messages.join("\n"))
               error = true; break
             end
             zipfile.remove(child_prop_file)
           end
           zipfile.each do |entry|
-            flash_message(:warning, I18n.t('Unknown File found'))
+            flash_message(:warning, I18n.t('assignments.unexpected_file_found', item: entry.name))
           end
-
           redirect_to edit_assignment_path(assignment.id)
         end
       end
     elsif !error
       error = true
-      flash_message(:error, I18n.t('File must be a zip file'))
+      flash_message(:error, I18n.t('upload_errors.invalid_file_type', type: 'zip'))
     end
     if error && params[:is_scanned] == 'true'
       redirect_to new_assignment_path(scanned: true)
@@ -633,7 +634,9 @@ class AssignmentsController < ApplicationController
       flash_message(:error, I18n.t('upload_errors.cannot_find_file', item: 'properties.yml'))
       return
     end
-    assignment = Assignment.new(read_properties_file(prop_file))
+    attributes = read_properties_file(prop_file)
+    return if attributes.nil?
+    assignment = Assignment.new(attributes)
     unless assignment.is_timed.to_s == params[:is_timed] && assignment.scanned_exam.to_s == params[:is_scanned]
       form_type, upload_type = 'assignment'
       if assignment.is_timed
@@ -646,7 +649,9 @@ class AssignmentsController < ApplicationController
       elsif params[:is_scanned] == 'true'
         form_type = 'scanned assignment'
       end
-      flash_message(:error, I18n.t('Cannot create a <> from the uploaded file. This file contains data to create a <>.'))
+      flash_message(:error, I18n.t('assignments.wrong_assignment_type',
+                                   form_type: form_type,
+                                   upload_type: upload_type))
       return
     end
     assignment.repository_folder = assignment.short_identifier
@@ -654,18 +659,27 @@ class AssignmentsController < ApplicationController
   end
 
   def read_yaml_file(file)
-    contents = YAML.safe_load(
-      file.get_input_stream.read.encode(Encoding::UTF_8, 'UTF-8'),
-      [Date, Time, Symbol, ActiveSupport::TimeWithZone, ActiveSupport::TimeZone,
-       ActiveSupport::HashWithIndifferentAccess, ActiveSupport::Duration],
-      [],
-      true
-    )
-    if contents.is_a?(Hash)
-      contents.deep_symbolize_keys
+    begin
+      contents = YAML.safe_load(
+        file.get_input_stream.read.encode(Encoding::UTF_8, 'UTF-8'),
+        [Date, Time, Symbol, ActiveSupport::TimeWithZone, ActiveSupport::TimeZone,
+         ActiveSupport::HashWithIndifferentAccess, ActiveSupport::Duration],
+        [],
+        true
+      )
+    rescue Psych::SyntaxError => e
+      flash_message(:error, t('upload_errors.syntax_error', error: e.to_s))
+      nil
+    rescue StandardError => e
+      flash_message(:error, e.message)
+      nil
     else
-      flash_message(:error, I18n.t('File has been incorrectly formatted'))
-      {}
+      if contents.is_a?(Hash)
+        contents.deep_symbolize_keys
+      else
+        flash_message(:error, I18n.t('upload_errors.malformed_yaml', item: file.name))
+        nil
+      end
     end
   end
 
@@ -676,7 +690,9 @@ class AssignmentsController < ApplicationController
     assignment_properties = {}
     base_attr = [:short_identifier, :description, :message,
                  :due_date, :is_hidden, :show_total, :type]
-    read_yaml_file(file).each do |attribute_pair|
+    contents = read_yaml_file(file)
+    return if contents.nil?
+    contents.each do |attribute_pair|
       attribute, value = attribute_pair
       case attribute
       when :submission_rule

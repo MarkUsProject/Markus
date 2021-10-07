@@ -12,8 +12,10 @@ pt:
   upload_errors:
     cannot_find_file: UPDATE ME
     invalid_csv_row_format: Formato de linha inválida
+    invalid_file_type: UPDATE ME
     invalid_rows: 'As seguintes linhas do arquivo CSV são inválidas: '
     malformed_csv: O arquivo selecionado foi deformados. Por favor, verifique se o arquivo atende às especificações Markus.
+    malformed_yaml: UPDATE ME
     syntax_error: 'Existe um erro no arquivo carregado: %{error}'
     unparseable_csv: O arquivo selecionado não é um arquivo CSV (mesmo que possa ter uma extensão CSV).
   upload_success:

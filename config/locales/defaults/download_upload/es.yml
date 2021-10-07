@@ -12,8 +12,10 @@ es:
   upload_errors:
     cannot_find_file: UPDATE ME
     invalid_csv_row_format: El formato de la fila es inválido
+    invalid_file_type: UPDATE ME
     invalid_rows: 'Las siguientes líneas en formato CSV fueron inválidas: '
     malformed_csv: El archivo seleccionado fue formado inapropiadamente. Por favor asegúrese de que el archivo siga las especificaciones de MarkUs.
+    malformed_yaml: UPDATE ME
     syntax_error: 'Existe un error en el archivo que usted subió: %{error}'
     unparseable_csv: El archivo seleccionado no es un archivo con formato CSV (a pesar de que pueda tener csv como extensión).
   upload_success:
