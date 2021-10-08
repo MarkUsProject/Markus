@@ -603,7 +603,7 @@ class AssignmentsController < ApplicationController
             end
             assignment.save!
             redirect_to edit_assignment_path(assignment.id)
-          rescue StandardError => e
+          rescue Exception => e
             error = true
             flash_message(:error, e.message)
             raise ActiveRecord::Rollback
