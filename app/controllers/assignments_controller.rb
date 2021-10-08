@@ -179,15 +179,9 @@ class AssignmentsController < ApplicationController
     @sections = Section.all
 
     begin
-      new_required_files = false
       @assignment.transaction do
-        @assignment, new_required_files = process_assignment_form(@assignment)
+        @assignment = process_assignment_form(@assignment)
         @assignment.save!
-      end
-      if new_required_files && Settings.repository.type == 'git'
-        # update list of required files in all repos only if there is a hook that will use that list
-        @current_job = UpdateRepoRequiredFilesJob.perform_later(@assignment.id, current_user.user_name)
-        session[:job_id] = @current_job.job_id
       end
     rescue
     end
@@ -222,12 +216,11 @@ class AssignmentsController < ApplicationController
     @assignment = Assignment.new
     @assignment.transaction do
       begin
-        @assignment, new_required_files = process_assignment_form(@assignment)
+        @assignment = process_assignment_form(@assignment)
         @assignment.token_start_date = @assignment.due_date
         @assignment.token_period = 1
       rescue Exception, RuntimeError => e
         @assignment.errors.add(:base, e.message)
-        new_required_files = false
       end
       unless @assignment.save
         @assignments = Assignment.all
@@ -243,11 +236,6 @@ class AssignmentsController < ApplicationController
         unless clone_warnings.empty?
           clone_warnings.each { |w| flash_message(:warning, w) }
         end
-      end
-      if new_required_files && Settings.repository.type == 'git'
-        # update list of required files in all repos only if there is a hook that will use that list
-        @current_job = UpdateRepoRequiredFilesJob.perform_later(@assignment.id, current_user.user_name)
-        session[:job_id] = @current_job.job_id
       end
     end
     respond_with @assignment, location: -> { edit_assignment_path(@assignment) }
@@ -582,11 +570,7 @@ class AssignmentsController < ApplicationController
     SubmissionRule.where(assignment: assignment).where.not(id: assignment.submission_rule.id).each(&:destroy)
     process_timed_duration(assignment) if assignment.is_timed
     assignment.repository_folder = short_identifier unless assignment.is_peer_review?
-    assignment.save!
-    new_required_files = assignment.saved_change_to_only_required_files? ||
-                         assignment.saved_change_to_is_hidden? ||
-                         assignment.assignment_files.any?(&:saved_changes?) ||
-                         num_files_before != assignment.assignment_files.length
+
     # if there are no assessment section properties, destroy the objects that were created
     if ['0', nil].include? params[:assignment][:assignment_properties_attributes][:section_due_dates_type]
       assignment.assessment_section_properties.each(&:destroy)
@@ -613,7 +597,7 @@ class AssignmentsController < ApplicationController
       assignment.group_max = 1
     end
 
-    return assignment, new_required_files
+    assignment
   end
 
   # Convert the hours and minutes value given in the params to a duration value

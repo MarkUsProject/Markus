@@ -79,8 +79,12 @@ class Assignment < Assessment
   after_create :create_autotest_dirs
 
   before_save :reset_collection_time
-  before_save -> { @prev_assessment_section_property_ids = assessment_section_properties.ids }
+  before_save do
+    @prev_assessment_section_property_ids = assessment_section_properties.ids
+    @prev_assignment_file_ids = assignment_files.ids
+  end
   after_save_commit :update_repo_permissions
+  after_save_commit :update_repo_required_files
 
   after_save :update_assigned_tokens
   after_save :create_peer_review_assignment_if_not_exist
@@ -1310,15 +1314,37 @@ class Assignment < Assessment
 
   # Update the repository permissions file if one of the following attributes was changed after a save:
   # - vcs_submit
-  # - is_hidden
+  # - is_hidden or section-specific is_hidden
   # - anonymize_groups
   def update_repo_permissions
     return unless
       saved_change_to_vcs_submit? ||
-        saved_change_to_is_hidden? ||
         saved_change_to_anonymize_groups? ||
-        @prev_assessment_section_property_ids != self.reload.assessment_section_properties.ids ||
-        assessment_section_properties.map(&:is_hidden_previously_changed?).any?
+        visibility_changed?
+
     Repository.get_class.update_permissions
+  end
+
+  # Update list of required files in student repositories. Used for git hooks to prevent submitting
+  # non-required files. Updated when one of the following attributes was changed after a save:
+  # - only_required_files
+  # - is_hidden or section-specific is_hidden
+  # - any assignment files
+  def update_repo_required_files
+    return unless Settings.repository.type == 'git'
+    return unless
+      saved_change_to_only_required_files? ||
+        assignment_files.any?(&:saved_changes?) ||
+        visibility_changed? ||
+        @prev_assessment_section_property_ids != self.assessment_section_properties.ids
+
+    UpdateRepoRequiredFilesJob.perform_later(self.id)
+  end
+
+  # Returns whether the visibility for this assignment changed after a save.
+  def visibility_changed?
+    saved_change_to_is_hidden? ||
+      assessment_section_properties.any?(&:is_hidden_previously_changed?) ||
+      @prev_assessment_section_property_ids != self.reload.assessment_section_properties.ids
   end
 end
