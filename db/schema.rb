@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_07_30_132238) do
+ActiveRecord::Schema.define(version: 2021_09_27_150608) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -122,10 +122,18 @@ ActiveRecord::Schema.define(version: 2021_07_30_132238) do
     t.string "starter_file_type", default: "simple", null: false
     t.datetime "starter_file_updated_at"
     t.bigint "default_starter_file_group_id"
-    t.boolean "starter_files_after_due", default: true, null: false
     t.integer "autotest_settings_id"
+    t.boolean "starter_files_after_due", default: true, null: false
     t.index ["assessment_id"], name: "index_assignment_properties_on_assessment_id", unique: true
     t.index ["default_starter_file_group_id"], name: "index_assignment_properties_on_default_starter_file_group_id"
+  end
+
+  create_table "courses", force: :cascade do |t|
+    t.string "name", null: false
+    t.boolean "is_hidden", default: true, null: false
+    t.string "display_name", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "criteria", force: :cascade do |t|
