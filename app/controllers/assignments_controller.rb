@@ -630,7 +630,7 @@ class AssignmentsController < ApplicationController
   #               If building a peer review assignment, prop_file must not be null.
   def build_uploaded_assignment(prop_file, parent_assignment=nil)
     if prop_file.nil?
-      raise StandardError.new(I18n.t('upload_errors.cannot_find_file', item: 'properties.yml'))
+      raise IOError, I18n.t('upload_errors.cannot_find_file', item: 'properties.yml')
     end
     properties = read_yaml_file(prop_file)
     if parent_assignment.nil?
@@ -648,9 +648,9 @@ class AssignmentsController < ApplicationController
         elsif params[:is_scanned] == 'true'
           form_type = 'scanned assignment'
         end
-        raise StandardError.new(I18n.t('assignments.wrong_assignment_type',
-                                       form_type: form_type,
-                                       upload_type: upload_type))
+        raise IOError, I18n.t('assignments.wrong_assignment_type',
+                              form_type: form_type,
+                              upload_type: upload_type)
       end
       assignment.repository_folder = assignment.short_identifier
     else
@@ -676,12 +676,12 @@ class AssignmentsController < ApplicationController
         true
       )
     rescue Psych::SyntaxError => e
-      raise StandardError.new(I18n.t('upload_errors.syntax_error', error: e.to_s))
+      raise SyntaxError, I18n.t('upload_errors.syntax_error', error: e.to_s)
     else
       if contents.is_a?(Hash)
         contents.deep_symbolize_keys
       else
-        raise StandardError.new(I18n.t('upload_errors.malformed_yaml', item: file.name))
+        raise SyntaxError, I18n.t('upload_errors.malformed_yaml', item: file.name)
       end
     end
   end
