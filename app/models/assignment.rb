@@ -1171,10 +1171,10 @@ class Assignment < Assessment
                          :scanned_exam, :anonymize_groups, :hide_unassigned_criteria, :duration,
                          :start_time, :is_timed, :starter_file_type, :starter_files_after_due]
     fields.each do |f|
-      properties[f] = self.assignment.send(f)
+      properties[f] = self.send(f)
     end
     assignment_fields.each do |f|
-      other_properties[f] = self.assignment.send(f)
+      other_properties[f] = self.send(f)
     end
     # Get all other assignment properties
     late_periods = self.submission_rule.periods.pluck_to_hash(:deduction, :hours, :interval)

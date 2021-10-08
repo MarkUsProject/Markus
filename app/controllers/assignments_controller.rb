@@ -586,41 +586,28 @@ class AssignmentsController < ApplicationController
     if File.extname(upload_file.path).casecmp?('.zip') && !error
       Zip::File.open(upload_file.path) do |zipfile|
         Assignment.transaction do
-          # Build assignment from properties
-          prop_file = zipfile.find_entry('properties.yml')
-          assignment = build_uploaded_assignment(prop_file)
-          if assignment.nil?
-            error = true
-            break
-          end
-          zipfile.remove(prop_file)
-          # Build peer review assignment if it exists
-          child_prop_file = zipfile.find_entry('peer-review-config-files/properties.yml')
-          unless child_prop_file.nil?
-            child_attr = read_yaml_file(child_prop_file)
-            if child_attr.nil?
-              error = true
-              break
+          begin
+            # Build assignment from properties
+            prop_file = zipfile.find_entry('properties.yml')
+            assignment = build_uploaded_assignment(prop_file)
+            zipfile.remove(prop_file)
+            # Build peer review assignment if it exists
+            child_prop_file = zipfile.find_entry('peer-review-config-files/properties.yml')
+            unless child_prop_file.nil?
+              child_assignment = build_uploaded_assignment(child_prop_file, assignment)
+              child_assignment.save!
+              zipfile.remove(child_prop_file)
             end
-            child_assignment = Assignment.new(child_attr)
-            child_assignment.parent_assignment = assignment
-            child_assignment.repository_folder = assignment.repository_folder
-            unless child_assignment.save
-              flash_message(:error, child_assignment.errors.full_messages.join("\n"))
-              error = true
-              break
+            zipfile.each do |entry|
+              flash_message(:warning, I18n.t('assignments.unexpected_file_found', item: entry.name))
             end
-            zipfile.remove(child_prop_file)
-          end
-          zipfile.each do |entry|
-            flash_message(:warning, I18n.t('assignments.unexpected_file_found', item: entry.name))
-          end
-          unless assignment.save
-            flash_message(:error, assignment.errors.full_messages.join("\n"))
+            assignment.save!
+            redirect_to edit_assignment_path(assignment.id)
+          rescue StandardError => e
             error = true
-            break
+            flash_message(:error, e.message)
+            raise ActiveRecord::Rollback
           end
-          redirect_to edit_assignment_path(assignment.id)
         end
       end
     elsif !error
@@ -638,35 +625,47 @@ class AssignmentsController < ApplicationController
 
   private
 
-  def build_uploaded_assignment(prop_file)
+  # Builds an uploaded assignment/peer review assignment from it's properties file
+  # Precondition: If <parent_assignment> is not null, this is a peer review assignment.
+  #               If building a peer review assignment, prop_file must not be null.
+  def build_uploaded_assignment(prop_file, parent_assignment=nil)
     if prop_file.nil?
-      flash_message(:error, I18n.t('upload_errors.cannot_find_file', item: 'properties.yml'))
-      return
+      raise StandardError.new(I18n.t('upload_errors.cannot_find_file', item: 'properties.yml'))
     end
-    attributes = read_yaml_file(prop_file)
-    return if attributes.nil?
-    assignment = Assignment.new(attributes)
-    unless assignment.is_timed.to_s == params[:is_timed] && assignment.scanned_exam.to_s == params[:is_scanned]
-      form_type, upload_type = 'assignment'
-      if assignment.is_timed
-        upload_type = 'timed assessment'
-      elsif assignment.scanned_exam
-        upload_type = 'scanned assignment'
+    properties = read_yaml_file(prop_file)
+    if parent_assignment.nil?
+      assignment = Assignment.new(properties)
+      unless assignment.is_timed.to_s == params[:is_timed] && assignment.scanned_exam.to_s == params[:is_scanned]
+        form_type = 'assignment'
+        upload_type = 'assignment'
+        if assignment.is_timed
+          upload_type = 'timed assessment'
+        elsif assignment.scanned_exam
+          upload_type = 'scanned assignment'
+        end
+        if params[:is_timed] == 'true'
+          form_type = 'timed assessment'
+        elsif params[:is_scanned] == 'true'
+          form_type = 'scanned assignment'
+        end
+        raise StandardError.new(I18n.t('assignments.wrong_assignment_type',
+                                       form_type: form_type,
+                                       upload_type: upload_type))
       end
-      if params[:is_timed] == 'true'
-        form_type = 'timed assessment'
-      elsif params[:is_scanned] == 'true'
-        form_type = 'scanned assignment'
-      end
-      flash_message(:error, I18n.t('assignments.wrong_assignment_type',
-                                   form_type: form_type,
-                                   upload_type: upload_type))
-      return
+      assignment.repository_folder = assignment.short_identifier
+    else
+      # Filter properties not supported by peer review assignments, then build assignment
+      peer_review_properties = properties.except(:submission_rule_attributes, :assignment_files_attributes)
+      assignment = Assignment.new(peer_review_properties)
+      parent_assignment.has_peer_review = true
+      assignment.has_peer_review = false
+      assignment.parent_assignment = parent_assignment
+      assignment.repository_folder = parent_assignment.repository_folder
     end
-    assignment.repository_folder = assignment.short_identifier
     assignment
   end
 
+  # Reads the yaml <file> and turns the data into a hash
   def read_yaml_file(file)
     begin
       contents = YAML.safe_load(
@@ -677,17 +676,12 @@ class AssignmentsController < ApplicationController
         true
       )
     rescue Psych::SyntaxError => e
-      flash_message(:error, t('upload_errors.syntax_error', error: e.to_s))
-      nil
-    rescue StandardError => e
-      flash_message(:error, e.message)
-      nil
+      raise StandardError.new(I18n.t('upload_errors.syntax_error', error: e.to_s))
     else
       if contents.is_a?(Hash)
         contents.deep_symbolize_keys
       else
-        flash_message(:error, I18n.t('upload_errors.malformed_yaml', item: file.name))
-        nil
+        raise StandardError.new(I18n.t('upload_errors.malformed_yaml', item: file.name))
       end
     end
   end
