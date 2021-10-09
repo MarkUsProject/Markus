@@ -46,8 +46,8 @@ class AutomatedTestsController < ApplicationController
       @authorized = flash_allowance(:notice,
                                     allowance_to(:run_tests?,
                                                  current_user,
-                                                 context: { assignment: @assignment, 
-                                                            grouping: @grouping, 
+                                                 context: { assignment: @assignment,
+                                                            grouping: @grouping,
                                                             submission: @grouping.current_submission_used })).value
     end
 
