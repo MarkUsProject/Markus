@@ -15,7 +15,10 @@
           "timeout": 30,
           "category": [
             "admin"
-          ]
+          ],
+          "extra_info": {
+            "name": "Python Test Group"
+          }
         }
       ]
     },
@@ -37,7 +40,10 @@
           "timeout": 30,
           "category": [
             "admin"
-          ]
+          ],
+          "extra_info": {
+            "name": "Jupyter Test Group"
+          }
         }
       ]
     }

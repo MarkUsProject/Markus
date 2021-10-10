@@ -12,7 +12,10 @@
           ],
           "timeout": 30,
           "test_timeout": 10,
-          "test_cases": 100
+          "test_cases": 100,
+          "extra_info": {
+            "name": "Haskell Test Group"
+          }
         }
       ]
     }
