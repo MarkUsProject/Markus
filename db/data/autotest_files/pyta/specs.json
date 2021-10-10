@@ -13,7 +13,10 @@
           "category": [
             "admin"
           ],
-          "timeout": 30
+          "timeout": 30,
+          "extra_info": {
+            "name": "PyTA Test Group"
+          }
         }
       ],
       "env_data": {
