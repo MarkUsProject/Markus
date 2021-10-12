@@ -1336,7 +1336,7 @@ class Assignment < Assessment
       saved_change_to_only_required_files? ||
         assignment_files.any?(&:saved_changes?) ||
         visibility_changed? ||
-        @prev_assessment_section_property_ids != self.assessment_section_properties.ids
+        @prev_assignment_file_ids != self.reload.assignment_files.ids
 
     UpdateRepoRequiredFilesJob.perform_later(self.id)
   end
