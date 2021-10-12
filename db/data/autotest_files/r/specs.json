@@ -1,0 +1,29 @@
+{
+  "testers":
+  [
+    {
+      "env_data":
+      {},
+      "test_data":
+      [
+        {
+          "category":
+          [
+            "admin"
+          ],
+          "extra_info":
+          {
+            "name": "R Test Group",
+            "display_output": "instructors"
+          },
+          "script_files":
+          [
+            "test.R"
+          ],
+          "timeout": 30
+        }
+      ],
+      "tester_type": "r"
+    }
+  ]
+}
