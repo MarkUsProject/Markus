@@ -12,14 +12,20 @@
           "category": ["admin"],
           "timeout": 30,
           "tester": "unittest",
-          "output_verbosity": 2
+          "output_verbosity": 2,
+          "extra_info": {
+            "criterion": "FlexibleCriterion:criterion"
+          }
         },
         {
           "script_files": ["test2.py"],
           "category": ["admin"],
           "timeout": 30,
           "tester": "pytest",
-          "output_verbosity": "short"
+          "output_verbosity": "short",
+          "extra_info": {
+            "criterion": "FlexibleCriterion:criterion"
+          }
         }
       ]
     }

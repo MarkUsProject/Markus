@@ -35,11 +35,10 @@ module AutomatedTestsHelper
   end
 
   def update_test_groups_from_specs(assignment, test_specs)
-    criterion = Criterion.find_by assessment_id: assignment.id
     test_specs_path = assignment.autotest_settings_file
     # create/modify test groups based on the autotest specs
     test_group_ids = []
-    criteria_map = assignment.ta_criteria.pluck(:type, :name, :id).map do |type, name, id_|
+    criteria_map = assignment.reload.ta_criteria.pluck(:type, :name, :id).map do |type, name, id_|
       ["#{type}:#{name}", id_]
     end.to_h
     ApplicationRecord.transaction do
@@ -50,7 +49,7 @@ module AutomatedTestsHelper
           test_group_id = extra_data_specs['test_group_id']
           display_output = extra_data_specs['display_output'] || TestGroup.display_outputs.keys.first
           test_group_name = extra_data_specs['name'] || TestGroup.model_name.human
-          criterion_id = criterion.id
+          criterion_id = nil
           unless extra_data_specs['criterion'].nil?
             criterion_id = criteria_map[extra_data_specs['criterion']]
             if criterion_id.nil?
