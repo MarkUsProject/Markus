@@ -1,10 +1,19 @@
+<%= content_for :head do %>
+  <%= javascript_tag nonce: true do %>
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('automatic_parsing').addEventListener('change', () => {
+        toggle_cover_page(<%= exam_template.id %>, <%= exam_template.cover_fields.split(',') %>);
+      })
+    })
+  <% end %>
+<% end %>
+
 <%= form_for [@assignment, exam_template],
              url: add_fields_assignment_exam_template_path(id: exam_template.id) do |f| %>
 
   <p>
     <%= check_box_tag :automatic_parsing, true,
-                      exam_template.automatic_parsing,
-                      onchange: "toggle_cover_page(#{exam_template.id}, #{exam_template.cover_fields.split(',')}); return true;" %>
+                      exam_template.automatic_parsing %>
     <%= t('exam_templates.parsing.general') %><br>
   </p>
 
