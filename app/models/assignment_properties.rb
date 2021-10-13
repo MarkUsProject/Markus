@@ -63,13 +63,6 @@ class AssignmentProperties < ApplicationRecord
 
   DURATION_PARTS = [:hours, :minutes].freeze
 
-  # Update the repository permissions file if the vcs_submit
-  # attribute was changed after a save.
-  def update_permissions_if_vcs_changed
-    return unless saved_change_to_vcs_submit?
-    Repository.get_class.update_permissions
-  end
-
   # Return the duration attribute for this assignment as a hash
   # with keys from +DURATION_PARTS+.
   #

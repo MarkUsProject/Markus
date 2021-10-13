@@ -12,21 +12,21 @@ describe UpdateRepoRequiredFilesJob do
     it 'should update every repo' do
       count = 0
       allow_any_instance_of(Repository::Transaction).to receive(:replace) { count += 1 }
-      UpdateRepoRequiredFilesJob.perform_now(assignment.id, user.user_name)
+      UpdateRepoRequiredFilesJob.perform_now(assignment.id)
       expect(count).to eq groupings.length
     end
     it 'should update the .required.json file' do
       allow_any_instance_of(Repository::Transaction).to receive(:replace) do |_txn, *args|
         expect(args[0]).to eq '.required.json'
       end
-      UpdateRepoRequiredFilesJob.perform_now(assignment.id, user.user_name)
+      UpdateRepoRequiredFilesJob.perform_now(assignment.id)
     end
     it 'should send the correct file content' do
       required_files = Assignment.get_required_files.stringify_keys.transform_values(&:stringify_keys)
       allow_any_instance_of(Repository::Transaction).to receive(:replace) do |_txn, *args|
         expect(JSON.parse(args[1])).to eq required_files
       end
-      UpdateRepoRequiredFilesJob.perform_now(assignment.id, user.user_name)
+      UpdateRepoRequiredFilesJob.perform_now(assignment.id)
     end
   end
 end

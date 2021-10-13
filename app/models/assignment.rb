@@ -71,8 +71,6 @@ class Assignment < Assessment
 
   has_many :notes, as: :noteable, dependent: :destroy
 
-  has_many :section_due_dates, inverse_of: :assignment, foreign_key: :assessment_id
-  accepts_nested_attributes_for :section_due_dates
 
   has_many :exam_templates, dependent: :destroy, inverse_of: :assignment, foreign_key: :assessment_id
 
@@ -81,7 +79,12 @@ class Assignment < Assessment
   after_create :create_autotest_dirs
 
   before_save :reset_collection_time
-  after_save :update_permissions_if_vcs_changed
+  before_save do
+    @prev_assessment_section_property_ids = assessment_section_properties.ids
+    @prev_assignment_file_ids = assignment_files.ids
+  end
+  after_save_commit :update_repo_permissions
+  after_save_commit :update_repo_required_files
 
   after_save :update_assigned_tokens
   after_save :create_peer_review_assignment_if_not_exist
@@ -112,7 +115,7 @@ class Assignment < Assessment
   def past_all_due_dates?
     # If no section due dates /!\ do not check empty? it could be wrong
     return false if !due_date.nil? && Time.current < due_date
-    return false if section_due_dates.any? { |sec| !sec.due_date.nil? && Time.current < sec.due_date }
+    return false if assessment_section_properties.any? { |sec| !sec.due_date.nil? && Time.current < sec.due_date }
 
     true
   end
@@ -124,7 +127,7 @@ class Assignment < Assessment
     end
 
     sections_past = []
-    self.section_due_dates.each do |d|
+    self.assessment_section_properties.each do |d|
       if !d.due_date.nil? && Time.current > d.due_date
         sections_past << d.section.name
       end
@@ -153,7 +156,7 @@ class Assignment < Assessment
       return due_date
     end
 
-    SectionDueDate.due_date_for(section, self)
+    AssessmentSectionProperties.due_date_for(section, self)
   end
 
   # Return the start_time for +section+ if it is not nil, otherwise return this
@@ -161,13 +164,13 @@ class Assignment < Assessment
   def section_start_time(section)
     return start_time unless section_due_dates_type
 
-    section&.section_due_dates&.find_by(assignment: self)&.start_time || start_time
+    section&.assessment_section_properties&.find_by(assessment: self)&.start_time || start_time
   end
 
   # Calculate the latest due date among all sections for the assignment.
   def latest_due_date
     return due_date unless section_due_dates_type
-    due_dates = section_due_dates.map(&:due_date) << due_date
+    due_dates = assessment_section_properties.map(&:due_date) << due_date
     due_dates.compact.max
   end
 
@@ -188,9 +191,9 @@ class Assignment < Assessment
 
   # Return due date for all groupings as a hash mapping grouping_id to due date.
   def all_grouping_due_dates
-    section_due_dates = groupings.joins(inviter: [section: :section_due_dates])
-                                 .where('section_due_dates.assessment_id': id)
-                                 .pluck('groupings.id', 'section_due_dates.due_date')
+    section_due_dates = groupings.joins(inviter: [section: :assessment_section_properties])
+                                 .where('assessment_section_properties.assessment_id': id)
+                                 .pluck('groupings.id', 'assessment_section_properties.due_date')
 
     grouping_extensions = groupings.joins(:extension)
                                    .pluck(:id, :time_delta)
@@ -893,6 +896,8 @@ class Assignment < Assessment
     end
   end
 
+  # Returns the assignments for which students have repository access.
+  #
   # Repository authentication subtleties:
   # 1) a repository is associated with a Group, but..
   # 2) ..students are associated with a Grouping (an "instance" of Group for a specific Assignment)
@@ -905,12 +910,31 @@ class Assignment < Assessment
   # we may want to add or [more frequently] remove some students from it)
   def self.get_repo_auth_records
     records = Assignment.joins(:assignment_properties)
-                        .includes(groupings: [:group, { accepted_student_memberships: :user }])
+                        .includes(groupings: [:group, accepted_students: :section])
                         .where(assignment_properties: { vcs_submit: true })
                         .order(due_date: :desc)
     records.where(assignment_properties: { is_timed: false })
            .or(records.where.not(groupings: { start_time: nil }))
            .or(records.where(groupings: { start_time: nil }, due_date: Time.new(0)..Time.current))
+  end
+
+  # Return a nested hash of the form { assignment_id => { section_id => visibility } } where visibility
+  # is a boolean indicating whether the given assignment is visible to the given section.
+  def self.visibility_hash
+    records = Assignment.left_outer_joins(:assessment_section_properties)
+                        .pluck_to_hash('assessments.id',
+                                       'section_id',
+                                       'assessments.is_hidden',
+                                       'assessment_section_properties.is_hidden')
+    visibilities = records.uniq { |r| r['assessments.id'] }
+                          .map { |r| [r['assessments.id'], Hash.new { !r['assessments.is_hidden'] }] }
+                          .to_h
+    records.each do |r|
+      unless r['assessment_section_properties.is_hidden'].nil?
+        visibilities[r['assessments.id']][r['section_id']] = !r['assessment_section_properties.is_hidden']
+      end
+    end
+    visibilities
   end
 
   ### /REPO ###
@@ -1286,5 +1310,41 @@ class Assignment < Assessment
     return unless self.new_record?
     self.assignment_properties ||= AssignmentProperties.new
     self.submission_rule ||= NoLateSubmissionRule.new
+  end
+
+  # Update the repository permissions file if one of the following attributes was changed after a save:
+  # - vcs_submit
+  # - is_hidden or section-specific is_hidden
+  # - anonymize_groups
+  def update_repo_permissions
+    return unless
+      saved_change_to_vcs_submit? ||
+        saved_change_to_anonymize_groups? ||
+        visibility_changed?
+
+    Repository.get_class.update_permissions
+  end
+
+  # Update list of required files in student repositories. Used for git hooks to prevent submitting
+  # non-required files. Updated when one of the following attributes was changed after a save:
+  # - only_required_files
+  # - is_hidden or section-specific is_hidden
+  # - any assignment files
+  def update_repo_required_files
+    return unless Settings.repository.type == 'git'
+    return unless
+      saved_change_to_only_required_files? ||
+        assignment_files.any?(&:saved_changes?) ||
+        visibility_changed? ||
+        @prev_assignment_file_ids != self.reload.assignment_files.ids
+
+    UpdateRepoRequiredFilesJob.perform_later(self.id)
+  end
+
+  # Returns whether the visibility for this assignment changed after a save.
+  def visibility_changed?
+    saved_change_to_is_hidden? ||
+      assessment_section_properties.any?(&:is_hidden_previously_changed?) ||
+      @prev_assessment_section_property_ids != self.reload.assessment_section_properties.ids
   end
 end

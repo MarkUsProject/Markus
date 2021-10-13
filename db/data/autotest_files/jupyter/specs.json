@@ -3,7 +3,7 @@
     {
       "tester_type": "py",
       "env_data": {
-        "pip_requirements": "matplotlib numpy git+https://github.com/MarkUsProject/autotest-helpers.git#subdirectory=notebook_importer",
+        "pip_requirements": "matplotlib numpy git+https://github.com/MarkUsProject/autotest-helpers.git#subdirectory=notebook_helper",
         "python_version": "3.9"
       },
       "test_data": [
@@ -15,7 +15,10 @@
           "timeout": 30,
           "category": [
             "admin"
-          ]
+          ],
+          "extra_info": {
+            "name": "Python Test Group"
+          }
         }
       ]
     },
@@ -37,7 +40,10 @@
           "timeout": 30,
           "category": [
             "admin"
-          ]
+          ],
+          "extra_info": {
+            "name": "Jupyter Test Group"
+          }
         }
       ]
     }

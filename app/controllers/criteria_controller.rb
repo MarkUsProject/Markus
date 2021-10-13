@@ -119,6 +119,7 @@ class CriteriaController < ApplicationController
         Criterion.update(id, position: index + 1) unless id.blank?
       end
     end
+    head :ok
   end
 
   def download
