@@ -1,4 +1,4 @@
-class Student < User
+class Student < Role
 
   scope :active, -> { where(hidden: false) }
   scope :inactive, -> { where(hidden: true) }

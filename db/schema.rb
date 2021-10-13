@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_09_07_163338) do
+ActiveRecord::Schema.define(version: 2021_10_13_190449) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -416,6 +416,17 @@ ActiveRecord::Schema.define(version: 2021_09_07_163338) do
     t.index ["peer_review_id"], name: "index_results_on_peer_review_id"
   end
 
+  create_table "roles", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "course_id", null: false
+    t.string "type"
+    t.boolean "hidden"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["course_id"], name: "index_roles_on_course_id"
+    t.index ["user_id"], name: "index_roles_on_user_id"
+  end
+
   create_table "section_starter_file_groups", force: :cascade do |t|
     t.bigint "section_id", null: false
     t.bigint "starter_file_group_id", null: false
@@ -646,6 +657,8 @@ ActiveRecord::Schema.define(version: 2021_09_07_163338) do
   add_foreign_key "peer_reviews", "results"
   add_foreign_key "results", "peer_reviews", on_delete: :cascade
   add_foreign_key "results", "submissions", name: "fk_results_submissions", on_delete: :cascade
+  add_foreign_key "roles", "courses"
+  add_foreign_key "roles", "users"
   add_foreign_key "section_starter_file_groups", "sections"
   add_foreign_key "section_starter_file_groups", "starter_file_groups"
   add_foreign_key "split_pages", "groups"

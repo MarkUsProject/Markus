@@ -1,4 +1,4 @@
-class Ta < User
+class Ta < Role
 
   CSV_UPLOAD_ORDER = Settings.ta_csv_upload_order.map(&:to_sym).freeze
   SESSION_TIMEOUT = Settings.ta_session_timeout
