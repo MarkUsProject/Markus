@@ -1,5 +1,7 @@
 # Class describing a course
 class Course < ApplicationRecord
+  has_many :assessments, inverse_of: :course, dependent: :destroy
+
   validates_presence_of :name
   validates_uniqueness_of :name
   validates :name, format: { with: /\A[a-zA-Z0-9\-_]+\z/,

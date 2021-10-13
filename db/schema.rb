@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_09_07_163338) do
+ActiveRecord::Schema.define(version: 2021_10_13_132235) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -79,6 +79,8 @@ ActiveRecord::Schema.define(version: 2021_09_07_163338) do
     t.integer "parent_assessment_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.bigint "course_id"
+    t.index ["course_id"], name: "index_assessments_on_course_id"
     t.index ["type", "short_identifier"], name: "index_assessments_on_type_and_short_identifier"
   end
 
@@ -620,6 +622,7 @@ ActiveRecord::Schema.define(version: 2021_09_07_163338) do
   add_foreign_key "annotation_texts", "annotation_categories", name: "fk_annotation_labels_annotation_categories", on_delete: :cascade
   add_foreign_key "annotations", "annotation_texts", name: "fk_annotations_annotation_texts"
   add_foreign_key "annotations", "submission_files", name: "fk_annotations_submission_files"
+  add_foreign_key "assessments", "courses"
   add_foreign_key "assignment_files", "assessments", name: "fk_assignment_files_assignments", on_delete: :cascade
   add_foreign_key "assignment_properties", "assessments", on_delete: :cascade
   add_foreign_key "assignment_properties", "starter_file_groups", column: "default_starter_file_group_id"
