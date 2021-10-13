@@ -629,10 +629,7 @@ class AssignmentsController < ApplicationController
   # Precondition: If <parent_assignment> is not null, this is a peer review assignment.
   #               If building a peer review assignment, prop_file must not be null.
   def build_uploaded_assignment(prop_file, parent_assignment=nil)
-    if prop_file.nil?
-      raise IOError, I18n.t('upload_errors.cannot_find_file', item: 'properties.yml')
-    end
-    properties = read_yaml_file(prop_file)
+    properties = read_yaml_file(prop_file, 'properties.yml')
     if parent_assignment.nil?
       assignment = Assignment.new(properties)
       unless assignment.is_timed.to_s == params[:is_timed] && assignment.scanned_exam.to_s == params[:is_scanned]
@@ -648,9 +645,7 @@ class AssignmentsController < ApplicationController
         elsif params[:is_scanned] == 'true'
           form_type = 'scanned assignment'
         end
-        raise IOError, I18n.t('assignments.wrong_assignment_type',
-                              form_type: form_type,
-                              upload_type: upload_type)
+        raise I18n.t('assignments.wrong_assignment_type', form_type: form_type, upload_type: upload_type)
       end
       assignment.repository_folder = assignment.short_identifier
     else
@@ -665,8 +660,10 @@ class AssignmentsController < ApplicationController
     assignment
   end
 
-  # Reads the yaml <file> and turns the data into a hash
-  def read_yaml_file(file)
+  # Reads the yaml <file> with the given <filename> and turns the data into a hash.
+  # <file> is not guaranteed to exist.
+  def read_yaml_file(file, filename)
+    raise I18n.t('upload_errors.cannot_find_file', item: filename) if file.nil?
     begin
       contents = YAML.safe_load(
         file.get_input_stream.read.encode(Encoding::UTF_8, 'UTF-8'),
@@ -676,12 +673,12 @@ class AssignmentsController < ApplicationController
         true
       )
     rescue Psych::SyntaxError => e
-      raise SyntaxError, I18n.t('upload_errors.syntax_error', error: e.to_s)
+      raise I18n.t('upload_errors.syntax_error', error: e.to_s)
     else
       if contents.is_a?(Hash)
         contents.deep_symbolize_keys
       else
-        raise SyntaxError, I18n.t('upload_errors.malformed_yaml', item: file.name)
+        raise I18n.t('upload_errors.malformed_yaml', item: file.name)
       end
     end
   end
