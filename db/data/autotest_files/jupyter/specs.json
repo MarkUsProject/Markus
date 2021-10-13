@@ -13,7 +13,7 @@
           "timeout": 30,
           "category": ["admin"],
           "extra_info": {
-            "criterion": "FlexibleCriterion:Python Test Group",
+            "criterion": "FlexibleCriterion:criterion",
             "name": "Python Test Group"
           }
         }
@@ -37,7 +37,7 @@
           "timeout": 30,
           "category": ["admin"],
           "extra_info": {
-            "criterion": "FlexibleCriterion:Jupyter Test Group",
+            "criterion": "FlexibleCriterion:criterion",
             "name": "Jupyter Test Group"
           }
         }

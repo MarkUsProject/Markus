@@ -13,7 +13,7 @@
           "category": ["admin"],
           "timeout": 30,
           "extra_info": {
-            "criterion": "FlexibleCriterion:PyTA Test Group",
+            "criterion": "FlexibleCriterion:criterion",
             "name": "PyTA Test Group"
           }
         }

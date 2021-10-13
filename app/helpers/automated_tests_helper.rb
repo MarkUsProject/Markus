@@ -1,6 +1,6 @@
 module AutomatedTestsHelper
   def extra_test_group_schema(assignment)
-    criterion_names, criterion_identifiers = assignment.ta_criteria.map do |c|
+    criterion_names, criterion_identifiers = assignment.reload.ta_criteria.map do |c|
       [c.name, "#{c.type}:#{c.name}"]
     end.transpose
     { type: :object,
