@@ -586,28 +586,26 @@ class AssignmentsController < ApplicationController
     if File.extname(upload_file.path).casecmp?('.zip') && !error
       Zip::File.open(upload_file.path) do |zipfile|
         Assignment.transaction do
-          begin
-            # Build assignment from properties
-            prop_file = zipfile.find_entry('properties.yml')
-            assignment = build_uploaded_assignment(prop_file)
-            zipfile.remove(prop_file)
-            # Build peer review assignment if it exists
-            child_prop_file = zipfile.find_entry('peer-review-config-files/properties.yml')
-            unless child_prop_file.nil?
-              child_assignment = build_uploaded_assignment(child_prop_file, assignment)
-              child_assignment.save!
-              zipfile.remove(child_prop_file)
-            end
-            zipfile.each do |entry|
-              flash_message(:warning, I18n.t('assignments.unexpected_file_found', item: entry.name))
-            end
-            assignment.save!
-            redirect_to edit_assignment_path(assignment.id)
-          rescue StandardError, SyntaxError => e
-            error = true
-            flash_message(:error, e.message)
-            raise ActiveRecord::Rollback
+          # Build assignment from properties
+          prop_file = zipfile.find_entry('properties.yml')
+          assignment = build_uploaded_assignment(prop_file)
+          zipfile.remove(prop_file)
+          # Build peer review assignment if it exists
+          child_prop_file = zipfile.find_entry('peer-review-config-files/properties.yml')
+          unless child_prop_file.nil?
+            child_assignment = build_uploaded_assignment(child_prop_file, assignment)
+            child_assignment.save!
+            zipfile.remove(child_prop_file)
           end
+          zipfile.each do |entry|
+            flash_message(:warning, I18n.t('assignments.unexpected_file_found', item: entry.name))
+          end
+          assignment.save!
+          redirect_to edit_assignment_path(assignment.id)
+        rescue StandardError => e
+          error = true
+          flash_message(:error, e.message)
+          raise ActiveRecord::Rollback
         end
       end
     elsif !error
@@ -628,7 +626,7 @@ class AssignmentsController < ApplicationController
   # Builds an uploaded assignment/peer review assignment from it's properties file
   # Precondition: If <parent_assignment> is not null, this is a peer review assignment.
   #               If building a peer review assignment, prop_file must not be null.
-  def build_uploaded_assignment(prop_file, parent_assignment=nil)
+  def build_uploaded_assignment(prop_file, parent_assignment = nil)
     properties = read_yaml_file(prop_file, 'properties.yml')
     if parent_assignment.nil?
       assignment = Assignment.new(properties)
@@ -664,23 +662,20 @@ class AssignmentsController < ApplicationController
   # <file> is not guaranteed to exist.
   def read_yaml_file(file, filename)
     raise I18n.t('upload_errors.cannot_find_file', item: filename) if file.nil?
-    begin
-      contents = YAML.safe_load(
-        file.get_input_stream.read.encode(Encoding::UTF_8, 'UTF-8'),
-        [Date, Time, Symbol, ActiveSupport::TimeWithZone, ActiveSupport::TimeZone,
-         ActiveSupport::HashWithIndifferentAccess, ActiveSupport::Duration],
-        [],
-        true
-      )
-    rescue Psych::SyntaxError => e
-      raise I18n.t('upload_errors.syntax_error', error: e.to_s)
+    contents = YAML.safe_load(
+      file.get_input_stream.read.encode(Encoding::UTF_8, 'UTF-8'),
+      [Date, Time, Symbol, ActiveSupport::TimeWithZone, ActiveSupport::TimeZone,
+       ActiveSupport::HashWithIndifferentAccess, ActiveSupport::Duration],
+      [],
+      true
+    )
+    if contents.is_a?(Hash)
+      contents.deep_symbolize_keys
     else
-      if contents.is_a?(Hash)
-        contents.deep_symbolize_keys
-      else
-        raise I18n.t('upload_errors.malformed_yaml', item: file.name)
-      end
+      raise I18n.t('upload_errors.malformed_yaml', item: file.name)
     end
+  rescue Psych::SyntaxError => e
+    raise I18n.t('upload_errors.syntax_error', error: e.to_s)
   end
 
   def set_repo_vars(assignment, grouping)
