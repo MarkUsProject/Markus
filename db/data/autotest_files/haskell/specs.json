@@ -10,7 +10,8 @@
           "test_timeout": 10,
           "test_cases": 100,
           "extra_info": {
-            "criterion": "FlexibleCriterion:criterion"
+            "criterion": "FlexibleCriterion:Haskell Test Group",
+            "name": "Haskell Test Group"
           }
         }
       ]

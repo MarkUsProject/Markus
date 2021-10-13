@@ -13,7 +13,8 @@
           "category": ["admin"],
           "timeout": 30,
           "extra_info": {
-            "criterion": "FlexibleCriterion:criterion"
+            "criterion": "FlexibleCriterion:Racket Test Group",
+            "name": "Racket Test Group"
           }
         }
       ]
