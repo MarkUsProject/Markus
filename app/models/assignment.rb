@@ -817,6 +817,7 @@ class Assignment < Assessment
     return unless has_peer_review && Assignment.where(parent_assessment_id: id).empty?
     peerreview_assignment = Assignment.new
     peerreview_assignment.parent_assignment = self
+    peerreview_assignment.course = self.course
     peerreview_assignment.token_period = 1
     peerreview_assignment.non_regenerating_tokens = false
     peerreview_assignment.unlimited_tokens = false

@@ -47,6 +47,7 @@ class AutotestSetup
   def create_new_assignment
     puts "Creating sample autotesting assignment #{@assg_short_id}"
     Assignment.create(
+      course: Course.first,
       short_identifier: @assg_short_id,
       description: 'Assignment for testing the autotester',
       message: '',

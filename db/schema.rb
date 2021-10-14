@@ -79,7 +79,7 @@ ActiveRecord::Schema.define(version: 2021_10_13_132235) do
     t.integer "parent_assessment_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.bigint "course_id"
+    t.bigint "course_id", null: false
     t.index ["course_id"], name: "index_assessments_on_course_id"
     t.index ["type", "short_identifier"], name: "index_assessments_on_type_and_short_identifier"
   end

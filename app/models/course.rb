@@ -7,7 +7,7 @@ class Course < ApplicationRecord
   validates :name, format: { with: /\A[a-zA-Z0-9\-_]+\z/,
                              message: 'name must only contain alphanumeric, hyphen, or '\
                                       'underscore' }
-  validates_presence_of :is_hidden
+  validates_inclusion_of :is_hidden, in: [true, false]
   validates :display_name, format: { with: /\A[a-zA-Z0-9\-_ ]+\z/,
                                      message: 'display_name must only contain alphanumeric, hyphen, '\
                                               'space, or underscore' }
