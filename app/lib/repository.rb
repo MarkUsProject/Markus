@@ -249,32 +249,32 @@ module Repository
     # 2) ..students are associated with a Grouping (an "instance" of Group for a specific Assignment)
     # That creates a problem since authentication in svn/git is at the repository level, while Markus handles it at
     # the assignment level, allowing the same Group repo to have different students according to the assignment.
-    # The two extremes to implement it are using the union of all students (permissive) or the intersection (restrictive).
-    # Instead, we are going to take a last-deadline approach, where we assume that the valid students at any point in time
-    # are the ones valid for the last assignment due.
-    # (Basically, it's nice for a group to share a repo among assignments, but at a certain point during the course
-    # we may want to add or [more frequently] remove some students from it)
+    # The two extremes to implement it are using the union of all students (permissive) or the intersection
+    # (restrictive). Instead, we are going to take a last-deadline approach, where we assume that the valid students at
+    # any point in time are the ones valid for the last assignment due. (Basically, it's nice for a group to share a
+    # repo among assignments, but at a certain point during the course we may want to add or [more frequently] remove
+    # some students from it)
     def self.get_repo_auth_records
       records = Assignment.joins(:assignment_properties)
-                    .includes(groupings: [:group, accepted_students: :section])
-                    .where(assignment_properties: { vcs_submit: true })
-                    .order(due_date: :desc)
+                          .includes(groupings: [:group, accepted_students: :section])
+                          .where(assignment_properties: { vcs_submit: true })
+                          .order(due_date: :desc)
       records.where(assignment_properties: { is_timed: false })
-          .or(records.where.not(groupings: { start_time: nil }))
-          .or(records.where(groupings: { start_time: nil }, due_date: Time.new(0)..Time.current))
+             .or(records.where.not(groupings: { start_time: nil }))
+             .or(records.where(groupings: { start_time: nil }, due_date: Time.new(0)..Time.current))
     end
 
     # Return a nested hash of the form { assignment_id => { section_id => visibility } } where visibility
     # is a boolean indicating whether the given assignment is visible to the given section.
     def self.visibility_hash
       records = Assignment.left_outer_joins(:assessment_section_properties)
-                    .pluck_to_hash('assessments.id',
-                                   'section_id',
-                                   'assessments.is_hidden',
-                                   'assessment_section_properties.is_hidden')
+                          .pluck_to_hash('assessments.id',
+                                         'section_id',
+                                         'assessments.is_hidden',
+                                         'assessment_section_properties.is_hidden')
       visibilities = records.uniq { |r| r['assessments.id'] }
-                         .map { |r| [r['assessments.id'], Hash.new { !r['assessments.is_hidden'] }] }
-                         .to_h
+                            .map { |r| [r['assessments.id'], Hash.new { !r['assessments.is_hidden'] }] }
+                            .to_h
       records.each do |r|
         unless r['assessment_section_properties.is_hidden'].nil?
           visibilities[r['assessments.id']][r['section_id']] = !r['assessment_section_properties.is_hidden']

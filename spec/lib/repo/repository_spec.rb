@@ -13,7 +13,9 @@ describe Repository::AbstractRepository do
         end
         it 'at the end of a batch update only if requested' do
           expect(UpdateRepoPermissionsJob).to receive(:perform_later).once
-          Repository.get_class.update_permissions_after(only_on_request: true) { Repository.get_class.update_permissions }
+          Repository.get_class.update_permissions_after(only_on_request: true) do
+            Repository.get_class.update_permissions
+          end
         end
         it 'at the end of the most outer nested batch update' do
           expect(UpdateRepoPermissionsJob).to receive(:perform_later).once
