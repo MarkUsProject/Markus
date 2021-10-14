@@ -286,7 +286,6 @@ describe GradeEntryForm do
   end
 
   def make_grade_entry_form_with_multiple_grade_entry_items
-
     grade_entry_form = create :grade_entry_form
     grade_entry_items = []
     (1..3).each do |i|
