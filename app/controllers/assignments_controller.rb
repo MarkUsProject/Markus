@@ -254,6 +254,7 @@ class AssignmentsController < ApplicationController
   end
 
   def summary
+    puts "TEstss"
     @assignment = Assignment.find(params[:id])
     respond_to do |format|
       format.html { render layout: 'assignment_content' }
@@ -359,6 +360,7 @@ class AssignmentsController < ApplicationController
   end
 
   def download
+    puts "giraffe"
     format = params[:format]
     case format
     when 'csv'
