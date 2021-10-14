@@ -346,7 +346,7 @@ class AssignmentsController < ApplicationController
     @assignment = Assignment.find(params[:id])
   end
 
-  def download
+  def download # TODO: move this to the CoursesController
     format = params[:format]
     case format
     when 'csv'
@@ -367,7 +367,7 @@ class AssignmentsController < ApplicationController
     end
   end
 
-  def upload
+  def upload # TODO: move this to the CoursesController
     begin
       data = process_file_upload
     rescue Psych::SyntaxError => e
