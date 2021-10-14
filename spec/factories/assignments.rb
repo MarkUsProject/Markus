@@ -2,6 +2,7 @@ require 'faker'
 
 FactoryBot.define do
   factory :assignment do
+    association :course
     sequence(:short_identifier) { |i| "A#{i}" }
     description { Faker::Lorem.sentence }
     message { Faker::Lorem.sentence }

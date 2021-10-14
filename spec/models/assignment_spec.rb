@@ -16,6 +16,7 @@ describe Assignment do
     it { is_expected.to have_many(:ta_criteria).order(:position) }
     it { is_expected.to have_many(:assignment_files).dependent(:destroy) }
     it { is_expected.to have_many(:test_groups).dependent(:destroy) }
+    it { is_expected.to belong_to(:course) }
 
     it do
       is_expected.to accept_nested_attributes_for(:assignment_files).allow_destroy(true)
@@ -98,7 +99,9 @@ describe Assignment do
 
   describe 'nested attributes' do
     it 'accepts nested attributes for required files (assignment_files)' do
+      course = create :course
       attrs = {
+        course_id: course.id,
         short_identifier: 't',
         description: 't',
         due_date: Time.current + 1.hour,
