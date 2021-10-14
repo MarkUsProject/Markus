@@ -12,5 +12,6 @@ describe Course do
     it { is_expected.not_to allow_value('CSC108, 2021 Fall').for(:display_name) }
     it { is_expected.not_to allow_value('CSC108!.2021 Fall').for(:display_name) }
     it { is_expected.to allow_value('CSC108-2021-Fall').for(:display_name) }
+    it { is_expected.to have_many(:sections) }
   end
 end
