@@ -9,13 +9,8 @@ FactoryBot.define do
     show_total { false }
   end
 
-  factory :grade_entry_form_with_data, class: GradeEntryForm do
+  factory :grade_entry_form_with_data, parent: :grade_entry_form do
     sequence(:short_identifier) { |i| "Spreadsheet_#{i}_with_data" }
-    description { Faker::Lorem.sentence }
-    message { Faker::Lorem.sentence }
-    due_date { Time.current }
-    is_hidden { false }
-    show_total { false }
     after(:create) do |grade_entry_form_with_data|
       item = create(:grade_entry_item, name: 'Test1', grade_entry_form: grade_entry_form_with_data)
       Student.find_each do |student|
@@ -26,12 +21,8 @@ FactoryBot.define do
     end
   end
 
-  factory :grade_entry_form_with_data_and_total, class: GradeEntryForm do
+  factory :grade_entry_form_with_data_and_total, parent: :grade_entry_form do
     sequence(:short_identifier) { |i| "Spreadsheet_#{i}_with_data_and_total" }
-    description { Faker::Lorem.sentence }
-    message { Faker::Lorem.sentence }
-    due_date { Time.current }
-    is_hidden { false }
     show_total { true }
     after(:create) do |grade_entry_form_with_data|
       create(:grade_entry_item, grade_entry_form: grade_entry_form_with_data)
