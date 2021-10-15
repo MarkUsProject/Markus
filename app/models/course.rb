@@ -3,6 +3,7 @@ class Course < ApplicationRecord
   has_many :assessments, inverse_of: :course, dependent: :destroy
   has_many :assignments
   has_many :grade_entry_forms
+  has_many :sections, inverse_of: :course
 
   validates_presence_of :name
   validates_uniqueness_of :name

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_10_13_132235) do
+ActiveRecord::Schema.define(version: 2021_10_14_190400) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -429,6 +429,8 @@ ActiveRecord::Schema.define(version: 2021_10_13_132235) do
     t.string "name"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.bigint "course_id", null: false
+    t.index ["course_id"], name: "index_sections_on_course_id"
   end
 
   create_table "sessions", id: :serial, force: :cascade do |t|
@@ -651,6 +653,7 @@ ActiveRecord::Schema.define(version: 2021_10_13_132235) do
   add_foreign_key "results", "submissions", name: "fk_results_submissions", on_delete: :cascade
   add_foreign_key "section_starter_file_groups", "sections"
   add_foreign_key "section_starter_file_groups", "starter_file_groups"
+  add_foreign_key "sections", "courses"
   add_foreign_key "split_pages", "groups"
   add_foreign_key "split_pages", "split_pdf_logs"
   add_foreign_key "split_pdf_logs", "exam_templates"

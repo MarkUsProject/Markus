@@ -13,6 +13,7 @@ describe Course do
     it { is_expected.to allow_value('CSC108-2021-Fall').for(:display_name) }
     it { is_expected.to have_many(:assignments) }
     it { is_expected.to have_many(:grade_entry_forms) }
+    it { is_expected.to have_many(:sections) }
   end
 
   describe '#get_assignment_list' # TODO
