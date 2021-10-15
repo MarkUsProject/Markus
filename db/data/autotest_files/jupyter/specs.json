@@ -8,10 +8,14 @@
       },
       "test_data": [
         {
-          "script_files": ["test.py"],
+          "script_files": [
+            "test.py"
+          ],
           "tester": "pytest",
           "timeout": 30,
-          "category": ["admin"],
+          "category": [
+            "admin"
+          ],
           "extra_info": {
             "criterion": "FlexibleCriterion:criterion",
             "name": "Python Test Group"
@@ -35,7 +39,9 @@
             }
           ],
           "timeout": 30,
-          "category": ["admin"],
+          "category": [
+            "admin"
+          ],
           "extra_info": {
             "criterion": "FlexibleCriterion:criterion",
             "name": "Jupyter Test Group"

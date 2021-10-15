@@ -4,8 +4,12 @@
       "tester_type": "haskell",
       "test_data": [
         {
-          "script_files": ["Test.hs"],
-          "category": ["admin"],
+          "script_files": [
+            "Test.hs"
+          ],
+          "category": [
+            "admin"
+          ],
           "timeout": 30,
           "test_timeout": 10,
           "test_cases": 100,

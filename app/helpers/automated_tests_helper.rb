@@ -1,6 +1,6 @@
 module AutomatedTestsHelper
   def extra_test_group_schema(assignment)
-    criterion_names, criterion_identifiers = assignment.reload.ta_criteria.map do |c|
+    criterion_names, criterion_identifiers = assignment.ta_criteria.map do |c|
       [c.name, "#{c.type}:#{c.name}"]
     end.transpose
     { type: :object,
@@ -38,7 +38,7 @@ module AutomatedTestsHelper
     test_specs_path = assignment.autotest_settings_file
     # create/modify test groups based on the autotest specs
     test_group_ids = []
-    criteria_map = assignment.reload.ta_criteria.pluck(:type, :name, :id).map do |type, name, id_|
+    criteria_map = assignment.ta_criteria.pluck(:type, :name, :id).map do |type, name, id_|
       ["#{type}:#{name}", id_]
     end.to_h
     ApplicationRecord.transaction do

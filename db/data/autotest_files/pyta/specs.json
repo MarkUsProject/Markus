@@ -10,7 +10,9 @@
               "file_path": "submission.py"
             }
           ],
-          "category": ["admin"],
+          "category": [
+            "admin"
+          ],
           "timeout": 30,
           "extra_info": {
             "criterion": "FlexibleCriterion:criterion",
