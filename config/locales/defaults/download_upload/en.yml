@@ -11,9 +11,12 @@ en:
   upload: Upload
   upload_errors:
     blank: Uploaded file is blank.
+    cannot_find_file: Cannot find %{item} file
     invalid_csv_row_format: Invalid row format
+    invalid_file_type: Wrong file type uploaded. File must be a %{type} file
     invalid_rows: 'The following CSV rows were invalid: '
     malformed_csv: The selected file was improperly formed. Please ensure the file meets MarkUs specifications.
+    malformed_yaml: The file %{item} was improperly formatted. Please ensure the file is as described on Markus
     syntax_error: 'There is an error in the file you uploaded: %{error}'
     unparseable_csv: The selected file is not a CSV file (even though it may have a .csv extension).
   upload_help_html: ' For information about the file format(s) supported, please visit <a href="https://github.com/MarkUsProject/Markus/wiki/Instructor-Guide--Importing-and-Exporting-Data#%{section_id}">this page</a>.'

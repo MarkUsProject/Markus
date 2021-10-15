@@ -73,5 +73,7 @@ en:
       started_on: 'You started on:'
       starter_file_prompt: Click below to download the starter files for this assessment.
       time_until_due_warning: This assessment is due before %{due_date} without penalty.
+    unexpected_file_found: Found unexpected file %{item}. Please remove unnecessary files and ensure that none of the files have been renamed.
     upload_config_help_html: This zip file will configure and create this assignment.<br>For more information please visit <a href="https://github.com/MarkUsProject/Markus/wiki/Instructor-Guide--Importing-and-Exporting-Data#%{section_id}">this page</a>.
     upload_file_requirement: The list of uploaded files does not match the required files for this assignment.
+    wrong_assignment_type: Cannot create a %{form_type} from the uploaded file. This file contains data to create a %{upload_type}.

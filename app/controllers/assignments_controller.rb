@@ -554,6 +554,7 @@ class AssignmentsController < ApplicationController
   # Downloads a zip file containing all the information and settings about an assignment
   def download_config_files
     assignment = Assignment.find(params[:id])
+    child_assignment = Assignment.find_by(parent_assessment_id: params[:id])
 
     zip_name = "#{assignment.short_identifier}-config-files.zip"
     zip_path = File.join('tmp', zip_name)
@@ -561,7 +562,14 @@ class AssignmentsController < ApplicationController
     FileUtils.rm_f(zip_path)
 
     Zip::File.open(zip_path, create: true) do |zipfile|
-      zipfile.get_output_stream('sample file') { |f| f.write 'Just a file' }
+      zipfile.get_output_stream('properties.yml') do |f|
+        f.write(assignment.assignment_properties_config.to_yaml)
+      end
+      unless child_assignment.nil?
+        zipfile.get_output_stream('peer-review-config-files/properties.yml') do |f|
+          f.write(child_assignment.assignment_properties_config.to_yaml)
+        end
+      end
     end
     send_file zip_path, filename: zip_name
   end
@@ -569,9 +577,106 @@ class AssignmentsController < ApplicationController
   # Uploads a zip file containing all the files specified in download_config_files
   # and modifies the assignment settings according to those files.
   def upload_config_files
+    error = false
+    upload_file = params.require(:upload_files_for_config)
+    if upload_file.size == 0
+      error = true
+      flash_message(:error, I18n.t('upload_errors.blank'))
+    end
+    if File.extname(upload_file.path).casecmp?('.zip') && !error
+      Zip::File.open(upload_file.path) do |zipfile|
+        Assignment.transaction do
+          # Build assignment from properties
+          prop_file = zipfile.find_entry('properties.yml')
+          assignment = build_uploaded_assignment(prop_file)
+          zipfile.remove(prop_file)
+          # Build peer review assignment if it exists
+          child_prop_file = zipfile.find_entry('peer-review-config-files/properties.yml')
+          unless child_prop_file.nil?
+            child_assignment = build_uploaded_assignment(child_prop_file, assignment)
+            child_assignment.save!
+            zipfile.remove(child_prop_file)
+          end
+          zipfile.each do |entry|
+            flash_message(:warning, I18n.t('assignments.unexpected_file_found', item: entry.name))
+          end
+          assignment.save!
+          redirect_to edit_assignment_path(assignment.id)
+        rescue StandardError => e
+          error = true
+          flash_message(:error, e.message)
+          raise ActiveRecord::Rollback
+        end
+      end
+    elsif !error
+      error = true
+      flash_message(:error, I18n.t('upload_errors.invalid_file_type', type: 'zip'))
+    end
+    if error && params[:is_scanned] == 'true'
+      redirect_to new_assignment_path(scanned: true)
+    elsif error && params[:is_timed] == 'true'
+      redirect_to new_assignment_path(timed: true)
+    elsif error
+      redirect_to new_assignment_path
+    end
   end
 
   private
+
+  # Builds an uploaded assignment/peer review assignment from it's properties file
+  # Precondition: If <parent_assignment> is not null, this is a peer review assignment.
+  #               If building a peer review assignment, prop_file must not be null.
+  def build_uploaded_assignment(prop_file, parent_assignment = nil)
+    properties = read_yaml_file(prop_file, 'properties.yml')
+    if parent_assignment.nil?
+      assignment = Assignment.new(properties)
+      unless assignment.is_timed.to_s == params[:is_timed] && assignment.scanned_exam.to_s == params[:is_scanned]
+        form_type = 'assignment'
+        upload_type = 'assignment'
+        if assignment.is_timed
+          upload_type = 'timed assessment'
+        elsif assignment.scanned_exam
+          upload_type = 'scanned assignment'
+        end
+        if params[:is_timed] == 'true'
+          form_type = 'timed assessment'
+        elsif params[:is_scanned] == 'true'
+          form_type = 'scanned assignment'
+        end
+        raise I18n.t('assignments.wrong_assignment_type', form_type: form_type, upload_type: upload_type)
+      end
+      assignment.repository_folder = assignment.short_identifier
+    else
+      # Filter properties not supported by peer review assignments, then build assignment
+      peer_review_properties = properties.except(:submission_rule_attributes, :assignment_files_attributes)
+      assignment = Assignment.new(peer_review_properties)
+      parent_assignment.has_peer_review = true
+      assignment.has_peer_review = false
+      assignment.parent_assignment = parent_assignment
+      assignment.repository_folder = parent_assignment.repository_folder
+    end
+    assignment
+  end
+
+  # Reads the yaml <file> with the given <filename> and turns the data into a hash.
+  # <file> is not guaranteed to exist.
+  def read_yaml_file(file, filename)
+    raise I18n.t('upload_errors.cannot_find_file', item: filename) if file.nil?
+    contents = YAML.safe_load(
+      file.get_input_stream.read.encode(Encoding::UTF_8, 'UTF-8'),
+      [Date, Time, Symbol, ActiveSupport::TimeWithZone, ActiveSupport::TimeZone,
+       ActiveSupport::HashWithIndifferentAccess, ActiveSupport::Duration],
+      [],
+      true
+    )
+    if contents.is_a?(Hash)
+      contents.deep_symbolize_keys
+    else
+      raise I18n.t('upload_errors.malformed_yaml', item: file.name)
+    end
+  rescue Psych::SyntaxError => e
+    raise I18n.t('upload_errors.syntax_error', error: e.to_s)
+  end
 
   def set_repo_vars(assignment, grouping)
     grouping.access_repo do |repo|

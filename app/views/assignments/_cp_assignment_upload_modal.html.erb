@@ -1,4 +1,4 @@
-<%= content_for :modal_id, 'upload_dialog_config' %>
+<%= content_for :modal_id, 'upload_config_dialog' %>
 <%= content_for :modal_title, t('upload_the', item: 'Configuration Zip') %>
 <%= content_for :modal_open_link, '#uploadModalConfig' %>
 
@@ -8,21 +8,23 @@
 
   <!-- Script for disabling upload buttons. -->
   <%= javascript_include_tag 'upload_button_control.js',
-                             id: 'upload_script_for_config',
-                             upload_id: 'upload_config_files',
+                             id: 'upload_script',
+                             upload_id: 'upload_files_for_config',
                              button_id: 'submit_upload_for_config',
                              nonce: true %>
 
-  <%= form_tag upload_config_files_assignment_path(:id),
-               { multipart: true, size: 1 } do %>
+  <%= form_tag upload_config_files_assignments_path,
+               { multipart: true } do %>
 
-    <%= file_field_tag 'upload_file', required: true, accept: '.zip' %>
+    <%= hidden_field_tag 'is_scanned', @assignment.scanned_exam %>
+    <%= hidden_field_tag 'is_timed',  @assignment.is_timed %>
+    <%= file_field_tag 'upload_files_for_config', required: true, accept: '.zip' %>
 
     <section class='dialog-actions'>
       <%= submit_tag t(:upload),
                      disabled: true,
                      data: { disable_with: t(:uploading_please_wait) },
-                     id: 'submit_upload' %>
+                     id: 'submit_upload_for_config' %>
       <input type='reset' value='<%= t(:cancel) %>'/>
     </section>
   <% end %>
