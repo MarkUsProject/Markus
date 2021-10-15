@@ -6,6 +6,7 @@ class Assessment < ApplicationRecord
 
   has_many :marking_weights, dependent: :destroy
   has_many :tags
+  belongs_to :course, inverse_of: :assessments
 
   has_many :assessment_section_properties, inverse_of: :assessment, class_name: 'AssessmentSectionProperties'
   accepts_nested_attributes_for :assessment_section_properties

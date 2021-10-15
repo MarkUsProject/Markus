@@ -5,6 +5,7 @@ describe GradeEntryForm do
   it { is_expected.to have_many(:grade_entry_students) }
   it { is_expected.to have_many(:grades) }
   it { is_expected.to validate_presence_of(:short_identifier) }
+  it { is_expected.to belong_to(:course) }
 
   # Dates in the past should also be allowed
   it { is_expected.to allow_value(1.day.ago).for(:due_date) }
@@ -285,17 +286,10 @@ describe GradeEntryForm do
   end
 
   def make_grade_entry_form_with_multiple_grade_entry_items
-    grade_entry_form = GradeEntryForm.create(short_identifier: 'T1',
-                                             description: 'Test 1',
-                                             message: 'Test 1',
-                                             due_date: 1.day.ago,
-                                             is_hidden: false)
+    grade_entry_form = create :grade_entry_form
     grade_entry_items = []
     (1..3).each do |i|
-      grade_entry_items << GradeEntryItem.create(grade_entry_form: @grade_entry_form,
-                                                 out_of: 10,
-                                                 name: 'Q' + i.to_s,
-                                                 position: i)
+      grade_entry_items << create(:grade_entry_item, grade_entry_form: grade_entry_form, out_of: 10, position: i)
     end
     grade_entry_form.grade_entry_items = grade_entry_items
     return grade_entry_form

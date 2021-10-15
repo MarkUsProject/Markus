@@ -289,19 +289,6 @@ class Assignment < Assessment
                                   .pluck(:total_mark)
   end
 
-  def self.get_current_assignment
-    # start showing (or "featuring") the assignment 3 days before it's due
-    # query uses Date.current + 4 because results from db seems to be off by 1
-    current_assignment = Assignment.where('due_date <= ?', Date.current + 4)
-                                   .reorder('due_date DESC').first
-
-    if current_assignment.nil?
-      current_assignment = Assignment.reorder('due_date ASC').first
-    end
-
-    current_assignment
-  end
-
   def update_remark_request_count
     self.outstanding_remark_request_count = groupings.joins(current_submission_used: :submitted_remark)
                                                      .where('results.marking_state': :incomplete)
@@ -817,6 +804,7 @@ class Assignment < Assessment
     return unless has_peer_review && Assignment.where(parent_assessment_id: id).empty?
     peerreview_assignment = Assignment.new
     peerreview_assignment.parent_assignment = self
+    peerreview_assignment.course = self.course
     peerreview_assignment.token_period = 1
     peerreview_assignment.non_regenerating_tokens = false
     peerreview_assignment.unlimited_tokens = false
@@ -896,64 +884,7 @@ class Assignment < Assessment
     end
   end
 
-  # Returns the assignments for which students have repository access.
-  #
-  # Repository authentication subtleties:
-  # 1) a repository is associated with a Group, but..
-  # 2) ..students are associated with a Grouping (an "instance" of Group for a specific Assignment)
-  # That creates a problem since authentication in svn/git is at the repository level, while Markus handles it at
-  # the assignment level, allowing the same Group repo to have different students according to the assignment.
-  # The two extremes to implement it are using the union of all students (permissive) or the intersection (restrictive).
-  # Instead, we are going to take a last-deadline approach, where we assume that the valid students at any point in time
-  # are the ones valid for the last assignment due.
-  # (Basically, it's nice for a group to share a repo among assignments, but at a certain point during the course
-  # we may want to add or [more frequently] remove some students from it)
-  def self.get_repo_auth_records
-    records = Assignment.joins(:assignment_properties)
-                        .includes(groupings: [:group, accepted_students: :section])
-                        .where(assignment_properties: { vcs_submit: true })
-                        .order(due_date: :desc)
-    records.where(assignment_properties: { is_timed: false })
-           .or(records.where.not(groupings: { start_time: nil }))
-           .or(records.where(groupings: { start_time: nil }, due_date: Time.new(0)..Time.current))
-  end
-
-  # Return a nested hash of the form { assignment_id => { section_id => visibility } } where visibility
-  # is a boolean indicating whether the given assignment is visible to the given section.
-  def self.visibility_hash
-    records = Assignment.left_outer_joins(:assessment_section_properties)
-                        .pluck_to_hash('assessments.id',
-                                       'section_id',
-                                       'assessments.is_hidden',
-                                       'assessment_section_properties.is_hidden')
-    visibilities = records.uniq { |r| r['assessments.id'] }
-                          .map { |r| [r['assessments.id'], Hash.new { !r['assessments.is_hidden'] }] }
-                          .to_h
-    records.each do |r|
-      unless r['assessment_section_properties.is_hidden'].nil?
-        visibilities[r['assessments.id']][r['section_id']] = !r['assessment_section_properties.is_hidden']
-      end
-    end
-    visibilities
-  end
-
   ### /REPO ###
-
-  def self.get_required_files
-    assignments = Assignment.includes(:assignment_files, :assignment_properties)
-                            .where(assignment_properties: { scanned_exam: false }, is_hidden: false)
-    required = {}
-    assignments.each do |assignment|
-      files = assignment.assignment_files.map(&:filename)
-      if assignment.only_required_files.nil?
-        required_only = false
-      else
-        required_only = assignment.only_required_files
-      end
-      required[assignment.repository_folder] = { required: files, required_only: required_only }
-    end
-    required
-  end
 
   def autotest_path
     File.join(TestRun::ASSIGNMENTS_DIR, self.repository_folder)
@@ -1239,69 +1170,6 @@ class Assignment < Assessment
       groupings.each do |g|
         g.test_tokens = [[g.test_tokens + difference, 0].max, max_tokens].min
         g.save
-      end
-    end
-  end
-
-  # Returns an output file for controller to handle.
-  def self.get_assignment_list(file_format)
-    assignments = self.all
-    case file_format
-    when 'yml'
-      map = {}
-      map[:assignments] = assignments.map do |assignment|
-        m = {}
-        DEFAULT_FIELDS.each do |f|
-          m[f] = assignment.send(f)
-        end
-        m
-      end
-      map.to_yaml
-    when 'csv'
-      MarkusCsv.generate(assignments) do |assignment|
-        DEFAULT_FIELDS.map do |f|
-          assignment.send(f)
-        end
-      end
-    end
-  end
-
-  def self.upload_assignment_list(file_format, assignment_data)
-    case file_format
-    when 'csv'
-      result = MarkusCsv.parse(assignment_data) do |row|
-        assignment = self.find_or_create_by(short_identifier: row[0])
-        attrs = Hash[DEFAULT_FIELDS.zip(row)]
-        attrs.delete_if { |_, v| v.nil? }
-        if assignment.new_record?
-          assignment.assignment_properties.repository_folder = row[0]
-          assignment.assignment_properties.token_period = 1
-          assignment.assignment_properties.unlimited_tokens = false
-        end
-        assignment.update(attrs)
-        raise CsvInvalidLineError unless assignment.valid?
-      end
-      result
-    when 'yml'
-      begin
-        map = assignment_data.deep_symbolize_keys
-        map[:assignments].map do |row|
-          assignment = self.find_or_create_by(short_identifier: row[:short_identifier])
-          if assignment.new_record?
-            row[:assignment_properties_attributes] = {}
-            row[:assignment_properties_attributes][:repository_folder] = row[:short_identifier]
-            row[:assignment_properties_attributes][:token_period] = 1
-            row[:assignment_properties_attributes][:unlimited_tokens] = false
-            row[:submission_rule] = NoLateSubmissionRule.new
-          end
-          assignment.update(row)
-          unless assignment.id
-            assignment[:display_median_to_students] = false
-            assignment[:display_grader_names_to_students] = false
-          end
-        end
-      rescue ActiveRecord::ActiveRecordError, ArgumentError => e
-        e
       end
     end
   end

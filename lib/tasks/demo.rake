@@ -183,6 +183,7 @@ namespace :markus do
 
     puts '1: No Late Submissions'
     a = Assignment.create(
+      course: Course.first,
       short_identifier: 'A1NoLate',
       description: 'No Late Submissions',
       message: '',
@@ -201,6 +202,7 @@ namespace :markus do
 
     puts '2: Grace Period Submissions'
     a = Assignment.create(
+      course: Course.first,
       short_identifier: 'A2Grace',
       description: 'Grace Period Submissions',
       message: '',
@@ -221,6 +223,7 @@ namespace :markus do
 
     puts '3: Penalty Decay Submissions'
     a = Assignment.create(
+      course: Course.first,
       short_identifier: 'A3Penalty',
       description: 'Penalty Decay Submissions',
       message: '',
@@ -246,6 +249,7 @@ namespace :markus do
 
     puts '4: Students work in groups'
     a = Assignment.create(
+      course: Course.first,
       short_identifier: 'A4Groups',
       description: 'Students work in groups',
       message: '',
@@ -268,6 +272,7 @@ namespace :markus do
 
     puts '5: Nothing collected'
     a = Assignment.create(
+      course: Course.first,
       short_identifier: 'A5Collect',
       description: 'Nothing Collected',
       message: '',
@@ -293,6 +298,7 @@ namespace :markus do
 
     puts '6: Marking State examples'
     a = Assignment.create(
+      course: Course.first,
       short_identifier: 'A6MarkingState',
       description: 'Marking State examples',
       message: '',
