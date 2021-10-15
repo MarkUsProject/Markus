@@ -95,7 +95,7 @@ class AutotestSetup
   def create_criteria
     @assignment.criteria.find_or_create_by(
       name: 'criterion',
-      type: "FlexibleCriterion",
+      type: 'FlexibleCriterion',
       assessment_id: @assignment.id,
       position: 1,
       max_mark: 5,
