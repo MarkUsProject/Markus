@@ -12,6 +12,7 @@ en:
   upload_errors:
     blank: Uploaded file is blank.
     invalid_csv_row_format: Invalid row format
+    invalid_file_type: Wrong file type uploaded. File must be a %{type} file
     invalid_rows: 'The following CSV rows were invalid: '
     malformed_csv: The selected file was improperly formed. Please ensure the file meets MarkUs specifications.
     syntax_error: 'There is an error in the file you uploaded: %{error}'
