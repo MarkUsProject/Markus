@@ -601,7 +601,7 @@ class AssignmentsController < ApplicationController
         assignment = build_uploaded_assignment(prop_file)
         zipfile.remove(prop_file)
         tag_prop = build_property_hash(zipfile, :tags)
-        tag_prop[:tags].each {|row| row[:user] = @current_user.user_name}
+        tag_prop[:tags].each { |row| row[:user] = @current_user.user_name }
         # Build peer review assignment if it exists
         child_prop_file = zipfile.find_entry(CONFIG_FILES[:peer_review_properties])
         unless child_prop_file.nil?
@@ -609,8 +609,8 @@ class AssignmentsController < ApplicationController
           child_assignment.save!
           zipfile.remove(child_prop_file)
           child_tag_prop = build_property_hash(zipfile, :peer_review_tags)
-          child_tag_prop[:tags].each {|row| row[:user] = @current_user.user_name}
-          if Tag.from_yml(child_tag_prop[:tags], assignment.id).is_a?(StandardError)
+          child_tag_prop[:tags].each { |row| row[:user] = @current_user.user_name }
+          if Tag.from_yml(child_tag_prop[:tags], child_assignment.id).is_a?(StandardError)
             flash_message(:error, result.message)
           end
         end
