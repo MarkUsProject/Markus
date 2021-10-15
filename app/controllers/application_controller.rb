@@ -191,5 +191,4 @@ class ApplicationController < ActionController::Base
       result.update_total_mark
     end
   end
-
 end

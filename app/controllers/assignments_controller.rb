@@ -12,7 +12,9 @@ class AssignmentsController < ApplicationController
 
   CONFIG_FILES = {
     properties: 'properties.yml',
-    peer_review_properties: File.join('peer-review-config-files', 'properties.yml')
+    criteria: 'criteria.yml',
+    peer_review_properties: File.join('peer-review-config-files', 'properties.yml'),
+    peer_review_criteria: File.join('peer-review-config-files', 'criteria.yml')
   }.freeze
 
   # Publicly accessible actions ---------------------------------------
@@ -569,6 +571,10 @@ class AssignmentsController < ApplicationController
     Zip::File.open(zip_path, create: true) do |zipfile|
       zipfile.get_output_stream(CONFIG_FILES[:properties]) do |f|
         f.write(assignment.assignment_properties_config.to_yaml)
+      end
+      zipfile.get_output_stream('criteria.yml') do |f|
+        yml_criteria = assignment.criteria.reduce({}) { |a, b| a.merge b.to_yml }
+        f.write yml_criteria.to_yaml
       end
       unless child_assignment.nil?
         zipfile.get_output_stream(CONFIG_FILES[:peer_review_properties]) do |f|
