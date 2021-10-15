@@ -8,6 +8,7 @@ class SectionStarterFileGroup < ApplicationRecord
   validates_presence_of :section
   validates_presence_of :starter_file_group
   validate :only_one_per_assessment
+  # TODO: add validation to check if self.section.course == self.starter_file_group.assignment.course
 
   private
 

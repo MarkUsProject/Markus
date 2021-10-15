@@ -9,4 +9,5 @@ class Course < ApplicationRecord
   validates :display_name, format: { with: /\A[a-zA-Z0-9\-_ ]+\z/,
                                      message: 'display_name must only contain alphanumeric, hyphen, '\
                                               'space, or underscore' }
+  has_many :sections, inverse_of: :course
 end
