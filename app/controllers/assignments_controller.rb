@@ -581,7 +581,7 @@ class AssignmentsController < ApplicationController
           f.write(child_assignment.assignment_properties_config.to_yaml)
         end
         zipfile.get_output_stream(CONFIG_FILES[:peer_review_criteria]) do |f|
-          yml_criteria = assignment.criteria.reduce({}) { |a, b| a.merge b.to_yml }
+          yml_criteria = child_assignment.criteria.reduce({}) { |a, b| a.merge b.to_yml }
           f.write yml_criteria.to_yaml
         end
       end
@@ -602,14 +602,14 @@ class AssignmentsController < ApplicationController
         prop_file = zipfile.get_entry(CONFIG_FILES[:properties])
         assignment = build_uploaded_assignment(prop_file)
         zipfile.remove(prop_file)
-        criteria_prop = get_property_hash(zipfile, :criteria)
+        criteria_prop = build_property_hash(zipfile, :criteria)
         # Build peer review assignment if it exists
         child_prop_file = zipfile.find_entry(CONFIG_FILES[:peer_review_properties])
         unless child_prop_file.nil?
           child_assignment = build_uploaded_assignment(child_prop_file, assignment)
           child_assignment.save!
           zipfile.remove(child_prop_file)
-          child_criteria_prop = get_property_hash(zipfile, :peer_review_criteria)
+          child_criteria_prop = build_property_hash(zipfile, :peer_review_criteria)
           upload_criteria(child_assignment, child_criteria_prop)
         end
         assignment.save!
