@@ -608,7 +608,7 @@ class Assignment < Assessment
         {
           group_name: submission.grouping.group.group_name,
           submission_date: submission.created_at,
-          test_results: [*submission.test_group_results.order("created_at").last]
+          test_results: [*submission.test_group_results.order('created_at').last]
         }
       end
     }
