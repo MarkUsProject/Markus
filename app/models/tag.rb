@@ -38,7 +38,7 @@ class Tag < ApplicationRecord
       tag_data = data.map do |row|
         name, description, user_id = row[:name], row[:description], admins[row[:user]]
         if name.nil? || name.strip.blank? || user_id.nil?
-          raise ArgumentError.new("Invalid tag data #{row}.")
+          raise ArgumentError, I18n.t('invalid_tag_data', item: row)
         end
 
         {
