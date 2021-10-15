@@ -12,7 +12,9 @@ class AssignmentsController < ApplicationController
 
   CONFIG_FILES = {
     properties: 'properties.yml',
-    peer_review_properties: File.join('peer-review-config-files', 'properties.yml')
+    tags: 'tags.yml',
+    peer_review_properties: File.join('peer-review-config-files', 'properties.yml'),
+    peer_review_tags: File.join('peer-review-config-files', 'tags.yml')
   }.freeze
 
   # Publicly accessible actions ---------------------------------------
@@ -570,9 +572,15 @@ class AssignmentsController < ApplicationController
       zipfile.get_output_stream(CONFIG_FILES[:properties]) do |f|
         f.write(assignment.assignment_properties_config.to_yaml)
       end
+      zipfile.get_output_stream(CONFIG_FILES[:tags]) do |f|
+        f.write({tags: assignment.tags.pluck_to_hash(:name, :description)}.to_yaml)
+      end
       unless child_assignment.nil?
         zipfile.get_output_stream(CONFIG_FILES[:peer_review_properties]) do |f|
           f.write(child_assignment.assignment_properties_config.to_yaml)
+        end
+        zipfile.get_output_stream(CONFIG_FILES[:peer_review_tags]) do |f|
+          f.write({tags: child_assignment.tags.pluck_to_hash(:name, :description)}.to_yaml)
         end
       end
     end
