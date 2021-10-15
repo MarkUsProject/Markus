@@ -254,7 +254,6 @@ class AssignmentsController < ApplicationController
   end
 
   def summary
-    puts "TEstss"
     @assignment = Assignment.find(params[:id])
     respond_to do |format|
       format.html { render layout: 'assignment_content' }
@@ -265,6 +264,20 @@ class AssignmentsController < ApplicationController
         send_data data,
                   disposition: 'attachment',
                   type: 'text/csv',
+                  filename: filename
+      end
+    end
+  end
+
+  def download_test_results
+    @assignment = Assignment.find(params[:id])
+    respond_to do |format|
+      format.json do
+        data = @assignment.summary_test_result_json(@current_user).to_json
+        filename = "#{@assignment.short_identifier}_test_results.json"
+        send_data data,
+                  disposition: 'attachment',
+                  type: 'application/json',
                   filename: filename
       end
     end
@@ -360,7 +373,6 @@ class AssignmentsController < ApplicationController
   end
 
   def download
-    puts "giraffe"
     format = params[:format]
     case format
     when 'csv'

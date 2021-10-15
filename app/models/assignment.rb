@@ -600,6 +600,20 @@ class Assignment < Assessment
       numMarked: self.get_num_marked(user.admin? ? nil : user.id) }
   end
 
+  # Generate a JSON summary of the test results associated with an assignment
+  def summary_test_result_json(user)
+    return {} unless user.admin? || user.ta?
+    {
+      submission_test_results: self.submissions.map do |submission|
+        {
+          group_name: submission.grouping.group.group_name,
+          submission_date: submission.created_at,
+          test_results: [*submission.test_group_results.order("created_at").last]
+        }
+      end
+    }
+  end
+
   # Generate CSV summary of grades for this assignment
   # for the current user. The user should be an admin or TA.
   def summary_csv(user)

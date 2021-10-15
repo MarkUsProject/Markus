@@ -10,10 +10,6 @@ class DownloadTestResultsModal extends React.Component {
     Modal.setAppElement("body");
   }
 
-  onSubmit = event => {
-    event.preventDefault();
-  };
-
   render() {
     return (
       <Modal
@@ -22,40 +18,37 @@ class DownloadTestResultsModal extends React.Component {
         onRequestClose={this.props.onRequestClose}
       >
         <h2>{I18n.t("download_tests")}</h2>
-        <form onSubmit={this.onSubmit}>
-          <div className={"modal-container-vertical"}>
-            <button onClick={() => console.log("test json")}>
+        <div className={"modal-container-vertical"} style={{alignItems: "center"}}>
+          <a
+            href={Routes.download_test_results_assignment_path({
+              id: this.props.assignment_id,
+              format: "json",
+              _options: true,
+            })}
+          >
+            <button
+              type="submit"
+              name="download-test-results-json"
+              onClick={this.props.onRequestClose}
+            >
               <i className="fa fa-download-file-o" aria-hidden="true" />
               &nbsp;{I18n.t("download_json")}
             </button>
-            <button onClick={() => console.log("test csv")}>
-              <i className="fa fa-download-file-o" aria-hidden="true" />
-              &nbsp;{I18n.t("download_csv")}
-            </button>
-            {/* <%= link_to '',
-                { action: 'download',
-                  format: 'csv' },
-                class: 'make_div_clickable' %> */}
-            {/* <div class='clickable_links'>
-    <div class='clickable_text'>
-      <img class='clickable_image' src='<%= image_path('icons/download-file.png') %>'>
-      <%= t(:download_yml) %>
-    </div>
-    <%= link_to '',
-                { action: 'download',
-                  format: 'yml' },
-                class: 'make_div_clickable' %>
-  </div> */}
-            <section className="dialog-actions">
-              <input
-                onClick={this.props.onRequestClose}
-                type="reset"
-                id="cancel"
-                value={I18n.t("cancel")}
-              />
-            </section>
-          </div>
-        </form>
+          </a>
+
+          <button type="submit" name="download-test-results-csv">
+            <i className="fa fa-download-file-o" aria-hidden="true" />
+            &nbsp;{I18n.t("download_csv")}
+          </button>
+          <section className="dialog-actions">
+            <input
+              onClick={this.props.onRequestClose}
+              type="reset"
+              id="cancel"
+              value={I18n.t("cancel")}
+            />
+          </section>
+        </div>
       </Modal>
     );
   }

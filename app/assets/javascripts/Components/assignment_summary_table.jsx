@@ -209,6 +209,7 @@ class AssignmentSummaryTable extends React.Component {
           loading={this.state.loading}
         />
         <DownloadTestResultsModal
+          assignment_id={this.props.assignment_id}
           isOpen={this.state.showDownloadTestsModal}
           onRequestClose={() => this.setState({showDownloadTestsModal: false})}
           onSubmit={() => {}}
