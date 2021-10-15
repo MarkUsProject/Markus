@@ -572,13 +572,17 @@ class AssignmentsController < ApplicationController
       zipfile.get_output_stream(CONFIG_FILES[:properties]) do |f|
         f.write(assignment.assignment_properties_config.to_yaml)
       end
-      zipfile.get_output_stream('criteria.yml') do |f|
+      zipfile.get_output_stream(CONFIG_FILES[:criteria]) do |f|
         yml_criteria = assignment.criteria.reduce({}) { |a, b| a.merge b.to_yml }
         f.write yml_criteria.to_yaml
       end
       unless child_assignment.nil?
         zipfile.get_output_stream(CONFIG_FILES[:peer_review_properties]) do |f|
           f.write(child_assignment.assignment_properties_config.to_yaml)
+        end
+        zipfile.get_output_stream(CONFIG_FILES[:peer_review_criteria]) do |f|
+          yml_criteria = assignment.criteria.reduce({}) { |a, b| a.merge b.to_yml }
+          f.write yml_criteria.to_yaml
         end
       end
     end
@@ -598,14 +602,18 @@ class AssignmentsController < ApplicationController
         prop_file = zipfile.get_entry(CONFIG_FILES[:properties])
         assignment = build_uploaded_assignment(prop_file)
         zipfile.remove(prop_file)
+        criteria_prop = get_property_hash(zipfile, :criteria)
         # Build peer review assignment if it exists
         child_prop_file = zipfile.find_entry(CONFIG_FILES[:peer_review_properties])
         unless child_prop_file.nil?
           child_assignment = build_uploaded_assignment(child_prop_file, assignment)
           child_assignment.save!
           zipfile.remove(child_prop_file)
+          child_criteria_prop = get_property_hash(zipfile, :peer_review_criteria)
+          upload_criteria(child_assignment, child_criteria_prop)
         end
         assignment.save!
+        upload_criteria(assignment, criteria_prop)
         zipfile.each do |entry|
           flash_message(:warning, I18n.t('assignments.unexpected_file_found', item: entry.name))
         end
@@ -624,6 +632,15 @@ class AssignmentsController < ApplicationController
   end
 
   private
+
+  # Build the tag/criteria file specified by +hash_to_build+ found in +zip_file+
+  # Delete the file after loading in the content.
+  def build_property_hash(zip_file, hash_to_build)
+    yaml_file = zip_file.get_entry(CONFIG_FILES[hash_to_build])
+    yaml_content = yaml_file.get_input_stream.read.encode(Encoding::UTF_8, 'UTF-8')
+    zip_file.remove(yaml_file)
+    parse_yaml_content(yaml_content)
+  end
 
   # Ensure that the +assignment+ type (scanned, timed, neither) matches the params
   # If it does not match, raise an error
