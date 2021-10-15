@@ -134,8 +134,6 @@ class ApplicationController < ActionController::Base
     params.permit(:id)
   end
 
-  protected
-
   def upload_criteria(assignment, data)
     ApplicationRecord.transaction do
       assignment.criteria.destroy_all
