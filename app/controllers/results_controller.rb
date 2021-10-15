@@ -273,9 +273,6 @@ class ResultsController < ApplicationController
                                                 [submission.grouping.group_id])
     session[:job_id] = @current_job.job_id
     flash_message(:success, I18n.t('automated_tests.tests_running'))
-    respond_to do |format|
-      format.js
-    end
   end
 
   def stop_test
