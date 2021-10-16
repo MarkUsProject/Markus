@@ -4,6 +4,7 @@ fr:
   download: Télécharger
   download_csv: Télécharger au format CSV
   download_json: Télécharger au format JSON
+  download_tests: UPDATE ME
   download_errors:
     unrecognized_format: Le format %{format} que vous voulez télécharger n'a pas été reconnu.
   download_the: Télécharger %{item}
