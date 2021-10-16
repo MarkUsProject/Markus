@@ -3,10 +3,10 @@ pt:
   add_folder: UPDATE ME
   download: Baixar
   download_csv: Baixar em formato CSV
-  download_json: Baixar em formato JSON
-  download_tests: UPDATE ME
   download_errors:
     unrecognized_format: Não foi possível reconhecer o formato %{format}
+  download_json: Baixar em formato JSON
+  download_tests: UPDATE ME
   download_the: Baixar %{item}
   download_yml: Baixar em formato YML
   rename: UPDATE ME

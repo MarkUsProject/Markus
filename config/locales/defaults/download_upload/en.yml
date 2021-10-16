@@ -3,10 +3,10 @@ en:
   add_folder: Add Folder
   download: Download
   download_csv: Download in CSV Format
-  download_json: Download in JSON Format
-  download_tests: Download Test Results
   download_errors:
     unrecognized_format: Could not recognize %{format} format to download with
+  download_json: Download in JSON Format
+  download_tests: Download Test Results
   download_the: Download %{item}
   download_yml: Download in YML Format
   rename: Rename
