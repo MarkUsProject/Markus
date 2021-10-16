@@ -5,7 +5,6 @@ en:
   download_csv: Download in CSV Format
   download_json: Download in JSON Format
   download_tests: Download Test Results
-  download_test_results_description: Select the file type you'd like to download your test results as
   download_errors:
     unrecognized_format: Could not recognize %{format} format to download with
   download_the: Download %{item}
