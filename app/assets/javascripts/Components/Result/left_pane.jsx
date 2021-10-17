@@ -103,6 +103,7 @@ export class LeftPane extends React.Component {
               <div className="rt-action-box">
                 <form
                   method="post"
+                  data-remote="true"
                   action={Routes.run_tests_assignment_submission_result_path(
                     this.props.assignment_id,
                     this.props.submission_id,
