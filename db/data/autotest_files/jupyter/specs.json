@@ -17,6 +17,7 @@
             "admin"
           ],
           "extra_info": {
+            "criterion": "FlexibleCriterion:criterion",
             "name": "Python Test Group"
           }
         }
@@ -42,6 +43,7 @@
             "admin"
           ],
           "extra_info": {
+            "criterion": "FlexibleCriterion:criterion",
             "name": "Jupyter Test Group"
           }
         }

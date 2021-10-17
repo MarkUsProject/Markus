@@ -13,6 +13,7 @@
           ],
           "extra_info":
           {
+            "criterion": "FlexibleCriterion:criterion",
             "name": "R Test Group",
             "display_output": "instructors"
           },
