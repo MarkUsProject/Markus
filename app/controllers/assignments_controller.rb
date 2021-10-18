@@ -573,14 +573,14 @@ class AssignmentsController < ApplicationController
         f.write(assignment.assignment_properties_config.to_yaml)
       end
       zipfile.get_output_stream(CONFIG_FILES[:tags]) do |f|
-        f.write({ tags: assignment.tags.pluck_to_hash(:name, :description) }.to_yaml)
+        f.write(assignment.tags.pluck_to_hash(:name, :description).to_yaml)
       end
       unless child_assignment.nil?
         zipfile.get_output_stream(CONFIG_FILES[:peer_review_properties]) do |f|
           f.write(child_assignment.assignment_properties_config.to_yaml)
         end
         zipfile.get_output_stream(CONFIG_FILES[:peer_review_tags]) do |f|
-          f.write({ tags: child_assignment.tags.pluck_to_hash(:name, :description) }.to_yaml)
+          f.write(child_assignment.tags.pluck_to_hash(:name, :description).to_yaml)
         end
       end
     end
@@ -601,7 +601,7 @@ class AssignmentsController < ApplicationController
         assignment = build_uploaded_assignment(prop_file)
         zipfile.remove(prop_file)
         tag_prop = build_property_hash(zipfile, :tags)
-        tag_prop[:tags].each { |row| row[:user] = @current_user.user_name }
+        tag_prop.each { |row| row[:user] = @current_user.user_name }
         # Build peer review assignment if it exists
         child_prop_file = zipfile.find_entry(CONFIG_FILES[:peer_review_properties])
         unless child_prop_file.nil?
@@ -609,15 +609,11 @@ class AssignmentsController < ApplicationController
           child_assignment.save!
           zipfile.remove(child_prop_file)
           child_tag_prop = build_property_hash(zipfile, :peer_review_tags)
-          child_tag_prop[:tags].each { |row| row[:user] = @current_user.user_name }
-          if Tag.from_yml(child_tag_prop[:tags], child_assignment.id).is_a?(StandardError)
-            flash_message(:error, result.message)
-          end
+          child_tag_prop.each { |row| row[:user] = @current_user.user_name }
+          Tag.from_yml(child_tag_prop, child_assignment.id)
         end
         assignment.save!
-        if Tag.from_yml(tag_prop[:tags], assignment.id).is_a?(StandardError)
-          flash_message(:error, result.message)
-        end
+        Tag.from_yml(tag_prop, assignment.id)
         zipfile.each do |entry|
           flash_message(:warning, I18n.t('assignments.unexpected_file_found', item: entry.name))
         end
