@@ -19,15 +19,13 @@
     <h3><%= Assignment.human_attribute_name(:remark_message) %></h3>
     <%= markdown @assignment.remark_message %>
     <h3><%= Submission.human_attribute_name(:submitted_remark) %></h3>
-    <% if @assignment.remark_due_date.nil? == false %>
-      <p>
+    <p>
+      <% if !@assignment.remark_due_date.nil? %>
         <%= t('activerecord.attributes.assignment.remark_due_date') %>: <%= l(@assignment.remark_due_date) %>
-      </p>
-    <% else %>
-      <p>
+      <% else %>
         <%= t('results.remark.no_remark_due_date') %>
-      </p>
-    <% end %>
+      <% end %>
+    </p>
     <div id="remark_request_text">
       <%= markdown(@submission.remark_request) %>
     </div>
