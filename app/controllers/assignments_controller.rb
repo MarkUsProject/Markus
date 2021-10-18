@@ -638,7 +638,7 @@ class AssignmentsController < ApplicationController
     yaml_content = yaml_file.get_input_stream.read.encode(Encoding::UTF_8, 'UTF-8')
     zip_file.remove(yaml_file)
     properties = parse_yaml_content(yaml_content)
-    if hash_to_build == :tags || hash_to_build == :peer_review_tags
+    if [:tags, :peer_review_tags].include?(hash_to_build)
       properties.each { |row| row[:user] = @current_user.user_name }
     end
     properties
