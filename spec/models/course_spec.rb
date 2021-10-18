@@ -14,6 +14,7 @@ describe Course do
     it { is_expected.to have_many(:assignments) }
     it { is_expected.to have_many(:grade_entry_forms) }
     it { is_expected.to have_many(:sections) }
+    it { is_expected.to have_many(:groups) }
   end
 
   describe '#get_assignment_list' # TODO

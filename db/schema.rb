@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_10_14_190400) do
+ActiveRecord::Schema.define(version: 2021_10_18_123836) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -309,7 +309,9 @@ ActiveRecord::Schema.define(version: 2021_10_14_190400) do
   create_table "groups", id: :serial, force: :cascade do |t|
     t.string "group_name", limit: 30
     t.string "repo_name"
-    t.index ["group_name"], name: "groups_name_unique", unique: true
+    t.bigint "course_id", null: false
+    t.index ["course_id"], name: "index_groups_on_course_id"
+    t.index ["group_name", "course_id"], name: "index_groups_on_group_name_and_course_id", unique: true
   end
 
   create_table "job_messengers", id: :serial, force: :cascade do |t|
@@ -640,6 +642,7 @@ ActiveRecord::Schema.define(version: 2021_10_14_190400) do
   add_foreign_key "grouping_starter_file_entries", "starter_file_entries"
   add_foreign_key "groupings", "assessments", name: "fk_groupings_assignments"
   add_foreign_key "groupings", "groups", name: "fk_groupings_groups"
+  add_foreign_key "groups", "courses"
   add_foreign_key "key_pairs", "users"
   add_foreign_key "levels", "criteria"
   add_foreign_key "marking_weights", "assessments"

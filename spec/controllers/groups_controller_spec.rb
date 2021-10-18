@@ -212,7 +212,7 @@ describe GroupsController do
       before :each do
         @assignment = FactoryBot.create(:assignment)
 
-        @group = FactoryBot.create(:group)
+        @group = FactoryBot.create(:group, course: @assignment.course)
 
         @student1 = create(:student, user_name: 'c8shosta')
         @student2 = create(:student, user_name: 'c5bennet')
