@@ -6,7 +6,8 @@ namespace :db do
     [['a',    'admin', 'admin'], # Standard admin
      ['reid', 'Karen', 'Reid']]  # Reid
     .each do |admin|
-      Admin.create!(course: Course.first, user_attributes: { user_name: admin[0], first_name: admin[1], last_name: admin[2] })
+      Admin.create!(course: Course.first, user_attributes: { user_name: admin[0],
+                                                             first_name: admin[1], last_name: admin[2] })
     end
   end
 
@@ -48,8 +49,9 @@ namespace :db do
       i += rand(10 ** 7)
       first_name = student.user.first_name.downcase.gsub(/\s+/, '')
       last_name = student.user.last_name.downcase.gsub(/\s+/, '')
-      student.update(grace_credits: 5, user_attributes:
-        { id: student.user_id, id_number: sprintf('%010d', i), email: "#{first_name}.#{last_name}@example.com"} )
+      student.update(grace_credits: 5, user_attributes: { id: student.user_id,
+                                                          id_number: format('%010d', i),
+                                                          email: "#{first_name}.#{last_name}@example.com" })
     end
   end
 end

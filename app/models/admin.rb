@@ -1,3 +1,4 @@
+# Admin user for a given course.
 class Admin < Role
   SESSION_TIMEOUT = Settings.admin_session_timeout
 

@@ -1,3 +1,4 @@
+# TA user for a given course.
 class Ta < Role
 
   CSV_UPLOAD_ORDER = Settings.ta_csv_upload_order.map(&:to_sym).freeze

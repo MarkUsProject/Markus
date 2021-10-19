@@ -22,7 +22,7 @@ class User < ApplicationRecord
   has_many :test_runs, dependent: :destroy
   has_many :split_pdf_logs
   has_many :key_pairs, dependent: :destroy
-  validates_format_of       :type,          with: /\AStandard|TestServer\z/
+  validates_format_of :type, with: /\AStandard|TestServer|\z/
 
   validates_presence_of     :user_name, :last_name, :first_name, :time_zone, :display_name
   validates_uniqueness_of   :user_name
@@ -38,8 +38,8 @@ class User < ApplicationRecord
   validates_inclusion_of    :locale, in: I18n.available_locales.map(&:to_s)
 
   # role constants
-  STANDARD = 'Standard'
-  TEST_SERVER = 'TestServer'
+  STANDARD = 'Standard'.freeze
+  TEST_SERVER = 'TestServer'.freeze
 
   # Authentication constants to be used as return values
   # see self.authenticated? and main_controller for details

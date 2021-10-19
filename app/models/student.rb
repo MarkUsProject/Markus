@@ -1,3 +1,4 @@
+# Student user for a given course.
 class Student < Role
 
   scope :active, -> { where(hidden: false) }
