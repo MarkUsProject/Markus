@@ -1,6 +1,7 @@
 class AssignmentsController < ApplicationController
   include RepositoryHelper
   include RoutingHelper
+  include AssignmentConfigHelper
   responders :flash
   before_action { authorize! }
 
