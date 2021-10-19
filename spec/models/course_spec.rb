@@ -3,7 +3,6 @@ describe Course do
   context 'validations' do
     it { is_expected.to validate_presence_of(:name) }
     it { expect(course).to validate_uniqueness_of(:name) }
-    it { is_expected.to validate_presence_of(:is_hidden) }
     it { is_expected.not_to allow_value('Mike Ooh').for(:name) }
     it { is_expected.not_to allow_value('A!a.sa').for(:name) }
     it { is_expected.to allow_value('Ads_-hb').for(:name) }

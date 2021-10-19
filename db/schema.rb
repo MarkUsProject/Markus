@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_10_13_190449) do
+ActiveRecord::Schema.define(version: 2021_10_18_204729) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -265,6 +265,8 @@ ActiveRecord::Schema.define(version: 2021_10_13_190449) do
     t.boolean "manage_submissions", default: false, null: false
     t.boolean "manage_assessments", default: false, null: false
     t.boolean "run_tests", default: false, null: false
+    t.bigint "roles_id"
+    t.index ["roles_id"], name: "index_grader_permissions_on_roles_id"
     t.index ["user_id"], name: "index_grader_permissions_on_user_id", unique: true
   end
 
@@ -419,11 +421,16 @@ ActiveRecord::Schema.define(version: 2021_10_13_190449) do
   create_table "roles", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.bigint "course_id", null: false
+    t.bigint "section_id"
     t.string "type"
     t.boolean "hidden"
+    t.integer "grace_credits", default: 0
+    t.boolean "receives_results_emails", default: false, null: false
+    t.boolean "receives_invite_emails", default: false, null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["course_id"], name: "index_roles_on_course_id"
+    t.index ["section_id"], name: "index_roles_on_section_id"
     t.index ["user_id"], name: "index_roles_on_user_id"
   end
 
@@ -607,21 +614,16 @@ ActiveRecord::Schema.define(version: 2021_10_13_190449) do
     t.string "user_name", null: false
     t.string "last_name"
     t.string "first_name"
-    t.integer "grace_credits", default: 0, null: false
-    t.string "type"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean "hidden", default: false, null: false
     t.string "api_key"
-    t.integer "section_id"
     t.string "email"
     t.string "id_number"
-    t.boolean "receives_results_emails", default: false, null: false
-    t.boolean "receives_invite_emails", default: false, null: false
     t.string "display_name", null: false
     t.string "locale", default: "en", null: false
     t.integer "theme", default: 1, null: false
     t.string "time_zone", null: false
+    t.string "type"
     t.index ["api_key"], name: "index_users_on_api_key", unique: true
     t.index ["user_name"], name: "index_users_on_user_name", unique: true
   end
@@ -641,7 +643,7 @@ ActiveRecord::Schema.define(version: 2021_10_13_190449) do
   add_foreign_key "extra_marks", "results", name: "fk_extra_marks_results", on_delete: :cascade
   add_foreign_key "feedback_files", "submissions"
   add_foreign_key "feedback_files", "test_group_results"
-  add_foreign_key "grader_permissions", "users"
+  add_foreign_key "grader_permissions", "roles", column: "roles_id"
   add_foreign_key "grouping_starter_file_entries", "groupings"
   add_foreign_key "grouping_starter_file_entries", "starter_file_entries"
   add_foreign_key "groupings", "assessments", name: "fk_groupings_assignments"
@@ -658,6 +660,7 @@ ActiveRecord::Schema.define(version: 2021_10_13_190449) do
   add_foreign_key "results", "peer_reviews", on_delete: :cascade
   add_foreign_key "results", "submissions", name: "fk_results_submissions", on_delete: :cascade
   add_foreign_key "roles", "courses"
+  add_foreign_key "roles", "sections"
   add_foreign_key "roles", "users"
   add_foreign_key "section_starter_file_groups", "sections"
   add_foreign_key "section_starter_file_groups", "starter_file_groups"
@@ -679,5 +682,4 @@ ActiveRecord::Schema.define(version: 2021_10_13_190449) do
   add_foreign_key "test_runs", "submissions"
   add_foreign_key "test_runs", "test_batches"
   add_foreign_key "test_runs", "users"
-  add_foreign_key "users", "sections"
 end

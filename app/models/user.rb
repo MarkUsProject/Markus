@@ -22,6 +22,7 @@ class User < ApplicationRecord
   has_many :test_runs, dependent: :destroy
   has_many :split_pdf_logs
   has_many :key_pairs, dependent: :destroy
+  validates_format_of       :type,          with: /\AStandard|TestServer\z/
 
   validates_presence_of     :user_name, :last_name, :first_name, :time_zone, :display_name
   validates_uniqueness_of   :user_name
@@ -34,13 +35,10 @@ class User < ApplicationRecord
                             unless: ->(u) { u.test_server? }
   after_initialize :set_display_name, :set_time_zone
 
-  validates_format_of       :type,          with: /\AStudent|Admin|Ta|TestServer\z/
   validates_inclusion_of    :locale, in: I18n.available_locales.map(&:to_s)
 
   # role constants
-  STUDENT = 'Student'
-  ADMIN = 'Admin'
-  TA = 'Ta'
+  STANDARD = 'Standard'
   TEST_SERVER = 'TestServer'
 
   # Authentication constants to be used as return values
@@ -101,19 +99,6 @@ class User < ApplicationRecord
   end
 
   # Helper methods -----------------------------------------------------
-
-  def admin?
-    self.class == Admin
-  end
-
-  def ta?
-    self.class == Ta
-  end
-
-  def student?
-    self.class == Student
-  end
-
   def test_server?
     self.class == TestServer
   end
@@ -159,112 +144,6 @@ class User < ApplicationRecord
     is_a?(Student) && !pr.nil?
   end
 
-  def self.upload_user_list(user_class, user_list, encoding)
-    user_columns = user_class::CSV_UPLOAD_ORDER.dup
-    users = []
-    user_names = Set.new
-    user_name_i = user_columns.find_index(:user_name)
-    section_name_i = user_columns.find_index(:section_name)
-    first_name_i = user_columns.find_index(:first_name)
-    last_name_i = user_columns.find_index(:last_name)
-    unless section_name_i.nil?
-      user_columns[section_name_i] = :section_id # becomes foreign key
-    end
-
-    duplicate_user_names = Set.new
-    parsed = MarkusCsv.parse(user_list, skip_blanks: true, row_sep: :auto, encoding: encoding) do |row|
-      next if row.empty?
-      if row[0].blank?
-        raise CsvInvalidLineError
-      end
-
-      if user_names.include?(row[user_name_i])
-        duplicate_user_names.add row[user_name_i]
-        raise CsvInvalidLineError
-      end
-      if row.size < user_columns.size
-        row.fill(nil, row.size...user_columns.size)
-      end
-      if row.size > user_columns.size
-        row = row[0...user_columns.size]
-      end
-      unless section_name_i.nil?
-        section = Section.find_or_create_by(name: row[section_name_i])
-        row[section_name_i] = if section.nil? then nil else section.id end
-      end
-      user_names << row[user_name_i]
-      users << row
-    end
-    if parsed[:valid_lines].blank?
-      # the csv was malformed (or empty, which is ok)
-      # we should not trust the rows processed before finding it was malformed
-      users.clear
-    else
-      parsed[:valid_lines] = '' # reset the value from MarkusCsv#parse, use import's return instead
-    end
-    unless duplicate_user_names.blank?
-      parsed[:invalid_lines] += MarkusCsv::INVALID_LINE_SEP
-      parsed[:invalid_lines] += I18n.t('users.upload.errors.duplicate_users',
-                                       user_names: duplicate_user_names.to_a.join(', '))
-    end
-
-    user_columns.push(:display_name)
-    user_columns.push(:time_zone)
-    users.each { |u| u.push("#{u[first_name_i]} #{u[last_name_i]}") }
-    users.each { |u| u.push(Time.zone.name) }
-    parsed[:invalid_records] = ''
-    return parsed if users.empty?
-
-    existing_user_ids = user_class.all.pluck(:id)
-    imported_ids = []
-    successful_imports = []
-    all_user_names = []
-
-    User.transaction do
-      user_hash = users.collect { |record| Hash[user_columns.zip record] }
-      user_hash.each do |user|
-        user[:type] = user_class.name
-        all_user_names.push(user[:user_name])
-      end
-      imported = user_class.upsert_all(user_hash, unique_by: :user_name, returning: %w[id user_name])
-      successful_imports = imported.rows.map { |x| x[1] }
-      imported_ids = imported.rows.map { |x| x[0] }
-      User.where(id: imported_ids).each do |user|
-        if user_class == Ta
-          # This will only trigger before_create callback in ta model, not after_create callback
-          user.run_callbacks(:create) { false }
-        end
-        user.validate!
-      rescue ActiveRecord::RecordInvalid
-        error_message = user.errors
-                            .messages
-                            .map { |k, v| "#{k} #{v.flatten.join ','}" }.flatten.join MarkusCsv::INVALID_LINE_SEP
-        parsed[:invalid_records] += "#{user.user_name}: #{error_message}"
-      end
-      unless parsed[:invalid_records].empty?
-        raise ActiveRecord::Rollback
-      end
-    end
-    unsuccessful_imports = all_user_names - successful_imports
-    unless unsuccessful_imports.empty?
-      if parsed[:invalid_lines].blank?
-        parsed[:invalid_lines] = I18n.t('upload_errors.invalid_rows')
-      else
-        parsed[:invalid_lines] += MarkusCsv::INVALID_LINE_SEP # concat to invalid_lines from MarkusCsv#parse
-      end
-      parsed[:invalid_lines] +=
-        unsuccessful_imports.map { |f| f[:user_name].to_s }.join(MarkusCsv::INVALID_LINE_SEP)
-    end
-    if !imported_ids.empty? && parsed[:invalid_records].empty?
-      parsed[:valid_lines] = I18n.t('upload_success', count: imported_ids.size)
-    end
-    if user_class == Student
-      new_user_ids = (imported_ids || []) - existing_user_ids
-      # call create callbacks to make sure grade_entry_students get created
-      user_class.where(id: new_user_ids).each(&:create_all_grade_entry_students)
-    end
-    parsed
-  end
 
   # Reset API key for user model. The key is a SHA2 512 bit long digest,
   # which is in turn MD5 digested and Base64 encoded so that it doesn't

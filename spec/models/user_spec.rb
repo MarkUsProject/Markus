@@ -10,10 +10,8 @@ describe User do
   it { is_expected.to validate_presence_of :last_name }
   it { is_expected.to validate_presence_of :first_name }
   it { is_expected.to validate_presence_of :display_name }
-  it { is_expected.to allow_value('Student').for(:type) }
-  it { is_expected.to allow_value('Admin').for(:type) }
-  it { is_expected.to allow_value('Ta').for(:type) }
   it { is_expected.to allow_value('TestServer').for(:type) }
+  it { is_expected.to allow_value('Standard').for(:type) }
   it { is_expected.not_to allow_value('OtherTypeOfUser').for(:type) }
   it { is_expected.not_to allow_value('A!a.sa').for(:user_name) }
   it { is_expected.to allow_value('Ads_-hb').for(:user_name) }
@@ -32,14 +30,8 @@ describe User do
   end
 
   context 'A good User model' do
-    it 'should be able to create a student' do
-      create(:student)
-    end
-    it 'should be able to create an admin' do
-      create(:admin)
-    end
-    it 'should be able to create a grader' do
-      create(:ta)
+    it 'should be able to create a standard user' do
+      create(:user, type: Standard)
     end
   end
 
@@ -48,8 +40,8 @@ describe User do
       new_user = { user_name: '   ausername   ',
                    first_name: '   afirstname ',
                    last_name: '   alastname  ' }
-      @user = Student.new(new_user)
-      @user.type = 'Student'
+      @user = User.new(new_user)
+      @user.type = 'Standard'
     end
 
     it 'should strip all strings with white space from user name' do
@@ -65,39 +57,6 @@ describe User do
     end
   end
 
-  context 'The repository permissions file' do
-    context 'should be upated' do
-      it 'when creating an admin' do
-        expect(UpdateRepoPermissionsJob).to receive(:perform_later).once
-        create(:admin)
-      end
-      it 'when destroying an admin' do
-        admin = create(:admin)
-        expect(UpdateRepoPermissionsJob).to receive(:perform_later).once
-        admin.destroy
-      end
-    end
-    context 'should not be updated' do
-      it 'when creating a ta' do
-        expect(UpdateRepoPermissionsJob).not_to receive(:perform_later)
-        create(:ta)
-      end
-      it 'when destroying a ta without memberships' do
-        ta = create(:ta)
-        expect(UpdateRepoPermissionsJob).not_to receive(:perform_later)
-        ta.destroy
-      end
-      it 'when creating a student' do
-        expect(UpdateRepoPermissionsJob).not_to receive(:perform_later)
-        create(:student)
-      end
-      it 'when destroying a student without memberships' do
-        student = create(:student)
-        expect(UpdateRepoPermissionsJob).not_to receive(:perform_later)
-        student.destroy
-      end
-    end
-  end
   describe '.authenticate' do
     context 'bad character' do
       it 'should not allow a null char in the username' do

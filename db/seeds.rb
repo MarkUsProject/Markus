@@ -9,6 +9,7 @@ FileUtils.mkdir_p('tmp')
 
 
 # run tasks
+Rake::Task['db:courses'].invoke
 Rake::Task['db:admin'].invoke
 Rake::Task['db:tas'].invoke
 Rake::Task['db:test_servers'].invoke
