@@ -56,7 +56,7 @@ module UploadHelper
     YAML.safe_load(
         yaml_string,
         [Date, Time, Symbol, ActiveSupport::TimeWithZone, ActiveSupport::TimeZone,
-         ActiveSupport::Duration, ActiveSupport::HashWithIndifferentAccess, ActiveSupport::Duration],
+         ActiveSupport::Duration, ActiveSupport::HashWithIndifferentAccess],
         [],
         true
     )
