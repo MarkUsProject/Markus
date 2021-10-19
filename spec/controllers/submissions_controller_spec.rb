@@ -59,7 +59,7 @@ describe SubmissionsController do
   describe 'A student working alone' do
     before(:each) do
       @group = create(:group)
-      @assignment = create(:assignment)
+      @assignment = create(:assignment, course: @group.course)
       @grouping = create(:grouping,
                          group: @group,
                          assignment: @assignment)
@@ -358,7 +358,7 @@ describe SubmissionsController do
     let(:grader_permission) { grader.grader_permission }
     before(:each) do
       @group = create(:group)
-      @assignment = create(:assignment)
+      @assignment = create(:assignment, course: @group.course)
       @grouping = create(:grouping,
                          group: @group,
                          assignment: @assignment)
@@ -489,7 +489,7 @@ describe SubmissionsController do
   describe 'An administrator' do
     before(:each) do
       @group = create(:group)
-      @assignment = create(:assignment)
+      @assignment = create(:assignment, course: @group.course)
       @grouping = create(:grouping,
                          group: @group,
                          assignment: @assignment)

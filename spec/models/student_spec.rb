@@ -263,8 +263,7 @@ describe Student do
 
         context 'working alone but has an existing group' do
           before(:each) do
-            @group = create(:group)
-            @grouping = create(:grouping, group: @group, assignment: @assignment)
+            @grouping = create(:grouping, assignment: @assignment)
             @membership2 = create(:student_membership, user: @student,
                                   membership_status: StudentMembership::STATUSES[:inviter], grouping: @grouping)
           end

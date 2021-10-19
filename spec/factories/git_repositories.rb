@@ -1,8 +1,11 @@
 FactoryBot.define do
   factory :git_repository, class: GitRepository do
     initialize_with do
-      # Open the repo that was cloned in git_revision_spec.rb
-      GitRepository.open("#{::Rails.root}/data/test/repos/test_repo_workdir")
+      group = build(:group)
+      group.repo_name = 'test_repo_workdir'
+      repo_path = group.repo_path
+      GitRepository.create(repo_path) unless GitRepository.repository_exists?(repo_path)
+      GitRepository.open(repo_path)
     end
   end
 end
