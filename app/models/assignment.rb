@@ -369,7 +369,7 @@ class Assignment < Assessment
       group.save
     else
       return if new_group_name.nil?
-      if group = self.course.groups.where(group_name: new_group_name).first
+      if (group = self.course.groups.where(group_name: new_group_name).first)
         unless groupings.where(group_id: group.id).first.nil?
           raise "Group #{new_group_name} already exists"
         end

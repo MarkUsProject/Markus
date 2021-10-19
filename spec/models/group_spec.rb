@@ -92,7 +92,7 @@ describe Group do
     end
 
     it 'should contain the course name in the path' do
-      expect(group.repository_external_access_url).to match(/\/#{group.course.name}\//)
+      expect(group.repository_external_access_url).to match("#{File::SEPARATOR}#{group.course.name}#{File::SEPARATOR}")
     end
   end
 
