@@ -146,7 +146,13 @@ class CriteriaController < ApplicationController
       flash_message(:error, e.message)
     else
       if data[:type] == '.yml'
-        upload_criteria(assignment, data[:contents])
+        ApplicationRecord.transaction do
+          successes = config_criteria(assignment, data[:contents])
+          flash_message(:success, I18n.t('upload_success', count: successes)) if successes > 0
+        rescue StandardError => e
+          flash_message(:error, e.message)
+          raise ActiveRecord::Rollback
+        end
       end
     end
     redirect_to action: 'index', assignment_id: assignment.id

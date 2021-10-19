@@ -610,10 +610,10 @@ class AssignmentsController < ApplicationController
           child_assignment.save!
           zipfile.remove(child_prop_file)
           child_criteria_prop = build_hash_from_zip(zipfile, :peer_review_criteria)
-          upload_criteria(child_assignment, child_criteria_prop)
+          config_criteria(child_assignment, child_criteria_prop)
         end
         assignment.save!
-        upload_criteria(assignment, criteria_prop)
+        config_criteria(assignment, criteria_prop)
         zipfile.each do |entry|
           flash_message(:warning, I18n.t('assignments.unexpected_file_found', item: entry.name))
         end
