@@ -261,13 +261,11 @@ ActiveRecord::Schema.define(version: 2021_10_18_204729) do
   end
 
   create_table "grader_permissions", force: :cascade do |t|
-    t.bigint "user_id", null: false
     t.boolean "manage_submissions", default: false, null: false
     t.boolean "manage_assessments", default: false, null: false
     t.boolean "run_tests", default: false, null: false
-    t.bigint "roles_id"
-    t.index ["roles_id"], name: "index_grader_permissions_on_roles_id"
-    t.index ["user_id"], name: "index_grader_permissions_on_user_id", unique: true
+    t.bigint "role_id"
+    t.index ["role_id"], name: "index_grader_permissions_on_role_id"
   end
 
   create_table "grades", id: :serial, force: :cascade do |t|
@@ -643,7 +641,7 @@ ActiveRecord::Schema.define(version: 2021_10_18_204729) do
   add_foreign_key "extra_marks", "results", name: "fk_extra_marks_results", on_delete: :cascade
   add_foreign_key "feedback_files", "submissions"
   add_foreign_key "feedback_files", "test_group_results"
-  add_foreign_key "grader_permissions", "roles", column: "roles_id"
+  add_foreign_key "grader_permissions", "roles"
   add_foreign_key "grouping_starter_file_entries", "groupings"
   add_foreign_key "grouping_starter_file_entries", "starter_file_entries"
   add_foreign_key "groupings", "assessments", name: "fk_groupings_assignments"
