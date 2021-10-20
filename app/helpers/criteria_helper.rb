@@ -1,6 +1,5 @@
-# Helpers for configuring the attributes of an assignment in various controllers
-module AssignmentConfigHelper
-
+# Helpers for handling criteria in various controllers
+module CriteriaHelper
   # Configures +assignment+ with the provided criteria +data+
   # Returns the number of successful criteria uploaded
   def config_criteria(assignment, data)

@@ -1,5 +1,5 @@
 class CriteriaController < ApplicationController
-  include AssignmentConfigHelper
+  include CriteriaHelper
   before_action { authorize! }
 
   layout 'assignment_content'
