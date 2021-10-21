@@ -602,9 +602,8 @@ class Assignment < Assessment
 
   # Generate a JSON summary of the test results associated with an assignment
   def summary_test_result_json(user)
-    return {} unless user.admin? || user.ta?
     {
-      submission_test_results: self.submissions.map do |submission|
+      self.current_submissions_used.map do |submission|
         {
           group_name: submission.grouping.group.group_name,
           submission_date: submission.created_at,
