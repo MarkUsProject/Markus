@@ -602,15 +602,13 @@ class Assignment < Assessment
 
   # Generate a JSON summary of the test results associated with an assignment
   def summary_test_result_json(user)
-    {
-      self.current_submissions_used.map do |submission|
-        {
-          group_name: submission.grouping.group.group_name,
-          submission_date: submission.created_at,
-          test_results: [*submission.test_group_results.order('created_at').last]
-        }
-      end
-    }
+    self.current_submissions_used.map do |submission|
+      {
+        group_name: submission.grouping.group.group_name,
+        submission_date: submission.created_at,
+        test_results: [*submission.test_group_results.order('created_at').last]
+      }
+    end
   end
 
   # Generate CSV summary of grades for this assignment
