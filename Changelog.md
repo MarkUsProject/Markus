@@ -8,6 +8,7 @@
 - Update repository access permissions to take into account the Assignment
   is_hidden and anonymize_groups attributes (#5547)
 - Change level mark input field to accept change increments of 0.01 (#5546)
+- Ensure in progress remark requests display the remark request due date for students (#5562)
 
 ## [v1.13.2]
 - Ensure "Create all groups" button uses existing repos if they already exist (#5504)
