@@ -10,3 +10,4 @@ en:
       tag:
         one: Tag
         other: Tags
+  invalid_tag_data: Invalid tag data %{item}.

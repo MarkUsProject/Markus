@@ -71,7 +71,10 @@ class TagsController < ApplicationController
   ###  Upload/Download Methods  ###
 
   def download
-    tags = Tag.includes(:user).order(:name).pluck(:name, :description, 'users.user_name')
+    tags = Tag.includes(:user)
+              .order(:name)
+              .where(assessment_id: params[:assignment_id])
+              .pluck(:name, :description, 'users.user_name')
 
     case params[:format]
     when 'csv'
@@ -105,12 +108,13 @@ class TagsController < ApplicationController
     rescue StandardError => e
       flash_message(:error, e.message)
     else
+      assignment = Assignment.find(params[:assignment_id])
       if data[:type] == '.csv'
-        result = Tag.from_csv(data[:file].read)
+        result = Tag.from_csv(data[:file].read, assignment.id)
         flash_message(:error, result[:invalid_lines]) unless result[:invalid_lines].empty?
         flash_message(:success, result[:valid_lines]) unless result[:valid_lines].empty?
       elsif data[:type] == '.yml'
-        result = Tag.from_yml(data[:contents])
+        result = Tag.from_yml(data[:contents], assignment.id)
         if result.is_a?(StandardError)
           flash_message(:error, result.message)
         end
