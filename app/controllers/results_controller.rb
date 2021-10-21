@@ -272,8 +272,7 @@ class ResultsController < ApplicationController
                                                 submission.assignment.id,
                                                 [submission.grouping.group_id])
     session[:job_id] = @current_job.job_id
-    flash_message(:notice, I18n.t('automated_tests.tests_running'))
-    redirect_back(fallback_location: root_path)
+    flash_message(:success, I18n.t('automated_tests.tests_running'))
   end
 
   def stop_test

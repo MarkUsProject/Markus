@@ -8,6 +8,8 @@
 - Update repository access permissions to take into account the Assignment
   is_hidden and anonymize_groups attributes (#5547)
 - Change level mark input field to accept change increments of 0.01 (#5546)
+- Support syntax highlighting for R (#5558)
+- Fix bug in annotation upload when updating categories not associated with a criterion (#5564)
 - Ensure in progress remark requests display the remark request due date for students (#5562)
 
 ## [v1.13.2]
