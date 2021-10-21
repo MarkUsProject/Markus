@@ -5,7 +5,7 @@ class TestRun < ApplicationRecord
   belongs_to :test_batch, optional: true
   belongs_to :submission, optional: true
   belongs_to :grouping
-  belongs_to :user
+  belongs_to :role
 
   ASSIGNMENTS_DIR = File.join(Settings.autotest.client_dir, 'assignments').freeze
   SPECS_FILE = 'specs.json'.freeze
@@ -106,8 +106,8 @@ class TestRun < ApplicationRecord
       annotation_text = AnnotationText.create(
         content: data['content'],
         annotation_category_id: nil,
-        creator_id: self.user.id,
-        last_editor_id: self.user.id
+        creator_id: self.role.id,
+        last_editor_id: self.role.id
       )
       result = self.submission.current_result
       TextAnnotation.create(
@@ -117,8 +117,8 @@ class TestRun < ApplicationRecord
         column_end: data['column_end'],
         annotation_text_id: annotation_text.id,
         submission_file_id: submission.submission_files.find_by(filename: data['filename']).id,
-        creator_id: self.user.id,
-        creator_type: self.user.type,
+        creator_id: self.role.id,
+        creator_type: self.role.type,
         is_remark: !result.remark_request_submitted_at.nil?,
         annotation_number: count + i,
         result_id: result.id

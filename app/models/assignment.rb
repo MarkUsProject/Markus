@@ -252,7 +252,7 @@ class Assignment < Assessment
     # groupings.first(include: :memberships, conditions: [condition, uid]) #FIXME: needs schema update
 
     #FIXME: needs to be rewritten using a proper query...
-    User.find(uid.id).accepted_grouping_for(id)
+    Role.find(uid.id).accepted_grouping_for(id)
   end
 
   def display_for_note
@@ -410,12 +410,12 @@ class Assignment < Assessment
       self.save
       self.reload
       original_assignment.groupings.each do |g|
-        active_student_memberships = g.accepted_student_memberships.select { |m| !m.user.hidden }
+        active_student_memberships = g.accepted_student_memberships.select { |m| !m.role.hidden }
         if active_student_memberships.empty?
           warnings << I18n.t('groups.clone_warning.no_active_students', group: g.group.group_name)
           next
         end
-        active_ta_memberships = g.ta_memberships.select { |m| !m.user.hidden }
+        active_ta_memberships = g.ta_memberships.select { |m| !m.role.hidden }
         grouping = Grouping.new
         grouping.group_id = g.group_id
         grouping.assessment_id = self.id
@@ -435,7 +435,7 @@ class Assignment < Assessment
             unless grouping.memberships << membership # this saves the membership as a side effect, i.e. can return false
               grouping.memberships.delete(membership)
               warnings << I18n.t('groups.clone_warning.no_member',
-                                 member: m.user.user_name, group: g.group.group_name, error: membership.errors.messages)
+                                 member: m.role.user.user_name, group: g.group.group_name, error: membership.errors.messages)
             end
           end
         end
@@ -446,7 +446,7 @@ class Assignment < Assessment
   end
 
   def grouped_students
-    student_memberships.map(&:user)
+    student_memberships.map(&:role)
   end
 
   def ungrouped_students
@@ -454,7 +454,7 @@ class Assignment < Assessment
   end
 
   def valid_groupings
-    groupings.includes(student_memberships: :user).select do |grouping|
+    groupings.includes(student_memberships: :role).select do |grouping|
       grouping.is_valid?
     end
   end
@@ -464,7 +464,7 @@ class Assignment < Assessment
   end
 
   def assigned_groupings
-    groupings.joins(:ta_memberships).includes(ta_memberships: :user).uniq
+    groupings.joins(:ta_memberships).includes(ta_memberships: :role).uniq
   end
 
   def unassigned_groupings
@@ -642,7 +642,7 @@ class Assignment < Assessment
         result = g.current_result
         marks = result.nil? ? {} : result.mark_hash
         g.accepted_students.each do |s|
-          row = [s.user_name, g.group.group_name]
+          row = [s.user.user_name, g.group.group_name]
           if result.nil?
             row += Array.new(2 + self.ta_criteria.count, nil)
           else
@@ -673,7 +673,7 @@ class Assignment < Assessment
 
   # Returns all the TAs associated with the assignment
   def tas
-    Ta.find(ta_memberships.map(&:user_id))
+    Ta.find(ta_memberships.map(&:role_id))
   end
 
   # Returns all the submissions that have not been graded (completed).
@@ -982,7 +982,7 @@ class Assignment < Assessment
   def current_grader_data
     ta_counts = self.criterion_ta_associations.group(:ta_id).count
     grader_data = self.groupings
-                      .joins(:tas)
+                      .joins(tas: users)
                       .group('users.user_name')
                       .count
     graders = Ta.pluck(:user_name, :first_name, :last_name, :id).map do |user_name, first_name, last_name, id|
@@ -1183,7 +1183,7 @@ class Assignment < Assessment
   # zip all files in the folder at +self.autotest_files_dir+ and return the
   # path to the zip file
   def zip_automated_test_files(user)
-    zip_name = "#{self.short_identifier}-testfiles-#{user.user_name}"
+    zip_name = "#{self.short_identifier}-testfiles-#{user.user.user_name}"
     zip_path = File.join('tmp', zip_name + '.zip')
     FileUtils.rm_rf zip_path
     files_dir = Pathname.new self.autotest_files_dir

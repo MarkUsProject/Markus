@@ -4,6 +4,18 @@ class Role < ApplicationRecord
   belongs_to :course
   accepts_nested_attributes_for :user
 
+  # Group relationships
+  has_many :memberships, dependent: :delete_all
+  has_many :grade_entry_students
+  has_many :groupings, through: :memberships
+  has_many :notes, as: :noteable, dependent: :destroy
+  has_many :accepted_memberships,
+           -> { where membership_status: [StudentMembership::STATUSES[:accepted], StudentMembership::STATUSES[:inviter]] },
+           class_name: 'Membership'
+  has_many :annotations, as: :creator
+  has_many :test_runs, dependent: :destroy
+  has_many :split_pdf_logs
+
   validates_format_of :type, with: /\AStudent|Admin|Ta\z/
 
   # role constants

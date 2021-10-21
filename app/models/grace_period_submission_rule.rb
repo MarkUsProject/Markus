@@ -79,7 +79,7 @@ class GracePeriodSubmissionRule < SubmissionRule
     student_memberships = grouping.accepted_student_memberships
 
     student_memberships.each do |student_membership|
-      deductions = student_membership.user.grace_period_deductions
+      deductions = student_membership.role.grace_period_deductions
       deductions.each do |deduction|
         if deduction.membership.grouping.assignment.id == assignment.id
           student_membership.grace_period_deductions.delete(deduction)

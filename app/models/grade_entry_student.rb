@@ -1,8 +1,8 @@
 # GradeEntryStudent represents a row (i.e. a student's grades for each question)
 # in a grade entry form.
 class GradeEntryStudent < ApplicationRecord
-  belongs_to :user
-  validates_associated :user, on: :create
+  belongs_to :role
+  validates_associated :role, on: :create
 
   belongs_to :grade_entry_form, foreign_key: :assessment_id
   validates_associated :grade_entry_form, on: :create
@@ -27,13 +27,13 @@ class GradeEntryStudent < ApplicationRecord
     student_ids = Student.where(id: Array(student_ids)).pluck(:id)
     form_ids = GradeEntryForm.where(id: Array(form_ids)).pluck(:id)
 
-    existing_values = GradeEntryStudent.where(user_id: student_ids, assessment_id: form_ids)
-                                       .pluck(:user_id, :assessment_id)
+    existing_values = GradeEntryStudent.where(role_id: student_ids, assessment_id: form_ids)
+                                       .pluck(:role_id, :assessment_id)
     # Delegate the generation of records to the caller-specified block and
     # remove values that already exist in the database.
     values = yield(student_ids, form_ids) - existing_values
 
-    data = values.map { |sid, aid| { user_id: sid, assessment_id: aid } }
+    data = values.map { |sid, aid| { role_id: sid, assessment_id: aid } }
     insert_all data unless data.blank?
   end
 
@@ -82,13 +82,13 @@ class GradeEntryStudent < ApplicationRecord
     end
 
     # Create non-existing grade entry student TA associations.
-    ges_ids = form.grade_entry_students.where(user_id: student_ids).pluck(:id)
+    ges_ids = form.grade_entry_students.where(role_id: student_ids).pluck(:id)
     GradeEntryStudentTa.merge_non_existing(ges_ids, ta_ids, &block)
   end
 
   def self.unassign_tas(student_ids, grader_ids, form)
     GradeEntryStudentTa.joins(:grade_entry_student)
-                       .where('grade_entry_students.user_id': student_ids,
+                       .where('grade_entry_students.role_id': student_ids,
                               'grade_entry_students_tas.ta_id': grader_ids,
                               'grade_entry_students.assessment_id': form.id)
                        .delete_all
@@ -104,13 +104,13 @@ class GradeEntryStudent < ApplicationRecord
     user_name = working_row.shift
 
     # Attempt to find the student
-    student = Student.where(user_name: user_name).first
+    student = Student.joins(:user).where('user.user_name': user_name).first
     if student.nil?
       raise CsvInvalidLineError
     end
 
     # Create the GradeEntryStudent if it doesn't already exist
-    grade_entry_student = grade_entry_form.grade_entry_students.find_or_create_by(user_id: student.id)
+    grade_entry_student = grade_entry_form.grade_entry_students.find_or_create_by(role_id: student.id)
 
     # Create or update the student's grade for each question
     names.each do |grade_entry_name|

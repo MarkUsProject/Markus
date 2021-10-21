@@ -41,8 +41,8 @@ class GradeEntryForm < Assessment
     return @completed_result_marks if defined? @completed_result_marks
 
     @completed_result_marks = self.grade_entry_students
-                                  .joins(:user)
-                                  .where(users: { hidden: false })
+                                  .joins(:role)
+                                  .where(roles: { hidden: false })
                                   .where.not(total_grade: nil)
                                   .order(:total_grade)
                                   .pluck(:total_grade)
@@ -88,7 +88,7 @@ class GradeEntryForm < Assessment
   def create_all_grade_entry_students
     new_data = []
     Student.all.each do |student|
-      new_data << { user_id: student.id, assessment_id: id, released_to_student: false }
+      new_data << { role_id: student.id, assessment_id: id, released_to_student: false }
     end
     GradeEntryStudent.insert_all(new_data, returning: false) unless new_data.empty?
   end

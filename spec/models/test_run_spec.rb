@@ -3,7 +3,7 @@ describe TestRun do
   it { is_expected.to belong_to(:test_batch).optional }
   it { is_expected.to belong_to(:submission).optional }
   it { is_expected.to belong_to(:grouping) }
-  it { is_expected.to belong_to(:user) }
+  it { is_expected.to belong_to(:role) }
 
   describe '#cancel' do
     before { test_run.cancel }

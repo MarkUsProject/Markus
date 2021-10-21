@@ -38,7 +38,7 @@ class Ta < Role
   def percentage_grades_array(assignment)
     groupings = assignment.groupings
                           .joins(:tas)
-                          .where(memberships: { user_id: id })
+                          .where(memberships: { role_id: id })
     grades = []
 
     if assignment.assign_graders_to_criteria

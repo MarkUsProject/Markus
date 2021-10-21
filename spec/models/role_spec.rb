@@ -7,6 +7,10 @@ describe Role do
   it { is_expected.to allow_value('Admin').for(:type) }
   it { is_expected.to allow_value('Ta').for(:type) }
   it { is_expected.not_to allow_value('OtherTypeOfUser').for(:type) }
+  it { is_expected.to have_many :memberships }
+  it { is_expected.to have_many(:groupings).through(:memberships) }
+  it { is_expected.to have_many(:notes).dependent(:destroy) }
+  it { is_expected.to have_many :accepted_memberships }
 
   context 'A good Role model' do
     it 'should be able to create a student' do

@@ -22,7 +22,7 @@ class Student < Role
            through: :memberships,
            source: :grouping
 
-  has_many :student_memberships, foreign_key: 'user_id'
+  has_many :student_memberships, foreign_key: 'role_id'
 
   has_many :grace_period_deductions, through: :memberships
 
@@ -76,7 +76,7 @@ class Student < Role
   end
 
   def display_for_note
-    user_name + ': ' + last_name + ', ' + first_name
+    user.user_name + ': ' + user.last_name + ', ' + user.first_name
   end
 
   # invites a student
@@ -85,7 +85,7 @@ class Student < Role
       membership = StudentMembership.new
       membership.grouping_id = gid
       membership.membership_status = StudentMembership::STATUSES[:pending]
-      membership.user_id = self.id
+      membership.role_id = self.id
       membership.save
     end
   end
@@ -94,7 +94,7 @@ class Student < Role
     # NOTE: no repository permission updates needed since users with
     #       pending status don't have access to repos anyway
     self.pending_groupings_for(aid).each do |grouping|
-      membership = grouping.student_memberships.where(user_id: id).first
+      membership = grouping.student_memberships.where(role_id: id).first
       membership.destroy
     end
   end
@@ -114,12 +114,12 @@ class Student < Role
       else
         # If an individual repo has already been created for this user
         # then just use that one.
-        @group = Group.find_by(group_name: user_name)
+        @group = Group.find_by(group_name: user.user_name)
         if @group.nil?
-          @group = Group.new(group_name: user_name)
+          @group = Group.new(group_name: user.user_name)
           # We want to have the user_name as repository name,
           # so we have to set the repo_name before we save the group.
-          @group.repo_name = user_name
+          @group.repo_name = user.user_name
         end
       end
       unless @group.save
@@ -148,7 +148,7 @@ class Student < Role
 
       # Create the membership
       @member = StudentMembership.create!(grouping_id: @grouping.id,
-                                          membership_status: StudentMembership::STATUSES[:inviter], user_id: self.id)
+                                          membership_status: StudentMembership::STATUSES[:inviter], role_id: self.id)
       # Destroy all the other memberships for this assignment
       self.destroy_all_pending_memberships(aid)
     end
@@ -162,7 +162,7 @@ class Student < Role
       group.save
       grouping = Grouping.create(assessment_id: aid, group_id: group.id)
       StudentMembership.create(grouping_id: grouping.id, membership_status: StudentMembership::STATUSES[:inviter],
-                               user_id: self.id)
+                               role_id: self.id)
       self.destroy_all_pending_memberships(aid)
       grouping
     end

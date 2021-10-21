@@ -1,12 +1,9 @@
 # upload users job
 class UploadUsersJob < ApplicationJob
-  def self.on_complete_js(_status)
-    '() => {window.groupsManager && window.groupsManager.fetchData()}'
-  end
 
   def perform(user_class, course, data, encoding)
     user_columns = user_class::CSV_UPLOAD_ORDER.dup
-    progress.total = data.length
+    progress.total = data.lines.count
     User.transaction do
       MarkusCsv.parse(data, skip_blanks: true, row_sep: :auto, encoding: encoding) do |row|
         next if row.empty?

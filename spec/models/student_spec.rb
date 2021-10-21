@@ -63,8 +63,8 @@ describe Student do
       @grouping = @membership1.grouping
       @membership2 = create(:student_membership, grouping: @grouping,
                                              membership_status: StudentMembership::STATUSES[:accepted])
-      @student1 = @membership1.user
-      @student2 = @membership2.user
+      @student1 = @membership1.role
+      @student2 = @membership2.role
       @student_id_list = [@student1.id, @student2.id]
     end
 
@@ -106,10 +106,10 @@ describe Student do
       @student2 = create(:student, hidden: true)
 
       @membership1 = create(:student_membership, membership_status: StudentMembership::STATUSES[:inviter],
-                            user: @student1)
+                            role: @student1)
       @grouping = @membership1.grouping
       @membership2 = create(:student_membership, grouping: @grouping,
-                            membership_status: StudentMembership::STATUSES[:accepted], user: @student2)
+                            membership_status: StudentMembership::STATUSES[:accepted], role: @student2)
       @student_id_list = [@student1.id, @student2.id]
     end
 
@@ -181,7 +181,7 @@ describe Student do
 
     context 'with a pending membership' do
       before(:each) do
-        @membership = create(:student_membership, user: @student)
+        @membership = create(:student_membership, role: @student)
       end
 
       context 'on an assignment' do
@@ -199,11 +199,11 @@ describe Student do
         it 'rejects all other pending memberships upon joining a group' do
           grouping = @membership.grouping
           grouping2 = create(:grouping, assignment: @assignment)
-          membership2 = create(:student_membership, grouping: grouping2, user: @student)
+          membership2 = create(:student_membership, grouping: grouping2, role: @student)
 
           expect(@student.join(grouping))
 
-          membership = StudentMembership.find_by_grouping_id_and_user_id(grouping.id, @student.id)
+          membership = StudentMembership.find_by_grouping_id_and_role_id(grouping.id, @student.id)
           expect(StudentMembership::STATUSES[:accepted]).to eq(membership.membership_status)
 
           other_membership = Membership.find(membership2.id)
@@ -212,7 +212,7 @@ describe Student do
 
         it 'should have pending memberships after their creation.' do
           grouping2 = create(:grouping, assignment: @assignment)
-          membership2 = create(:student_membership, grouping: grouping2, user: @student)
+          membership2 = create(:student_membership, grouping: grouping2, role: @student)
 
           expect(@student.student_memberships
                          .pluck(:grouping_id).sort).to eq [@membership.grouping_id, grouping2.id].sort
@@ -221,7 +221,7 @@ describe Student do
         context 'working alone' do
           before(:each) do
             expect(@student.create_group_for_working_alone_student(@assignment.id))
-            @group = Group.find_by(group_name: @student.user_name)
+            @group = Group.find_by(group_name: @student.user.user_name)
           end
 
           it 'should create the group' do
@@ -229,7 +229,7 @@ describe Student do
           end
 
           it 'have their repo name equal their user name' do
-            expect(@group.repo_name).to eq(@student.user_name)
+            expect(@group.repo_name).to eq(@student.user.user_name)
           end
 
           it 'not have any pending memberships' do
@@ -257,7 +257,7 @@ describe Student do
           before(:each) do
             @group = create(:group)
             @grouping = create(:grouping, group: @group, assignment: @assignment)
-            @membership2 = create(:student_membership, user: @student,
+            @membership2 = create(:student_membership, role: @student,
                                   membership_status: StudentMembership::STATUSES[:inviter], grouping: @grouping)
           end
 
@@ -277,7 +277,7 @@ describe Student do
 
       #FAILING
       it 'return normally when over deducted' do
-        membership = create(:student_membership, user: @student)
+        membership = create(:student_membership, role: @student)
         create(:grace_period_deduction, membership: membership, deduction: 10)
         create(:grace_period_deduction, membership: membership, deduction: 20)
         expect(@student.remaining_grace_credits).to eq -25

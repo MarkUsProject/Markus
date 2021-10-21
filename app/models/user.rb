@@ -11,18 +11,8 @@ class User < ApplicationRecord
   enum theme: { light: 1, dark: 2 }
 
   # Group relationships
-  has_many :memberships, dependent: :delete_all
-  has_many :grade_entry_students
-  has_many :groupings, through: :memberships
-  has_many :notes, as: :noteable, dependent: :destroy
-  has_many :accepted_memberships,
-           -> { where membership_status: [StudentMembership::STATUSES[:accepted], StudentMembership::STATUSES[:inviter]] },
-           class_name: 'Membership'
-  has_many :annotations, as: :creator
-  has_many :test_runs, dependent: :destroy
-  has_many :split_pdf_logs
   has_many :key_pairs, dependent: :destroy
-  validates_format_of :type, with: /\AStandard|TestServer|\z/
+  validates_format_of :type, with: /\AHuman|TestServer|\z/
 
   validates_presence_of     :user_name, :last_name, :first_name, :time_zone, :display_name
   validates_uniqueness_of   :user_name
@@ -38,7 +28,7 @@ class User < ApplicationRecord
   validates_inclusion_of    :locale, in: I18n.available_locales.map(&:to_s)
 
   # role constants
-  STANDARD = 'Standard'.freeze
+  STANDARD = 'Human'.freeze
   TEST_SERVER = 'TestServer'.freeze
 
   # Authentication constants to be used as return values

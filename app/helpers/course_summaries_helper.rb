@@ -12,23 +12,23 @@ module CourseSummariesHelper
       released = [true, false]
     end
 
+    students.joins(:user)
     student_data = Hash[students.map do |student|
-      [student.id,
+      [student.user.id,
        {
-         id: student.id,
-         id_number: student.id_number,
-         user_name: student.user_name,
-         first_name: student.first_name,
-         last_name: student.last_name,
+         id: student.user.id,
+         id_number: student.user.id_number,
+         user_name: student.user.user_name,
+         first_name: student.user.first_name,
+         last_name: student.user.last_name,
          hidden: student.hidden,
          assessment_marks: {}
        }]
     end]
-
     assignment_grades = students.joins(accepted_groupings: :current_result)
                                 .where('results.released_to_students': released)
                                 .order(:'results.created_at')
-                                .pluck('users.id', 'groupings.assessment_id', 'results.total_mark')
+                                .pluck('user_id', 'groupings.assessment_id', 'results.total_mark')
     assignment_grades.each do |student_id, assessment_id, mark|
       max_mark = @max_marks[assessment_id]
       student_data[student_id][:assessment_marks][assessment_id] = {
@@ -39,7 +39,7 @@ module CourseSummariesHelper
 
     gef_grades = students.joins(:grade_entry_students)
                          .where('grade_entry_students.released_to_student': released)
-                         .pluck('users.id',
+                         .pluck('user_id',
                                 'grade_entry_students.assessment_id',
                                 'grade_entry_students.total_grade')
 

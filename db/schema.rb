@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_10_18_204729) do
+ActiveRecord::Schema.define(version: 2021_10_19_225808) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -245,13 +245,15 @@ ActiveRecord::Schema.define(version: 2021_10_18_204729) do
   end
 
   create_table "grade_entry_students", id: :serial, force: :cascade do |t|
-    t.integer "user_id"
     t.boolean "released_to_student", default: false, null: false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.float "total_grade"
     t.bigint "assessment_id"
-    t.index ["user_id", "assessment_id"], name: "index_grade_entry_students_on_user_id_and_assessment_id", unique: true
+    t.integer "user_id"
+    t.bigint "role_id"
+    t.index ["role_id"], name: "index_grade_entry_students_on_role_id"
+    t.index ["user_id"], name: "index_grade_entry_students_on_user_id"
   end
 
   create_table "grade_entry_students_tas", id: :serial, force: :cascade do |t|
@@ -363,13 +365,15 @@ ActiveRecord::Schema.define(version: 2021_10_18_204729) do
   end
 
   create_table "memberships", id: :serial, force: :cascade do |t|
-    t.integer "user_id"
     t.string "membership_status"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer "grouping_id", null: false
     t.string "type"
-    t.index ["grouping_id", "user_id"], name: "memberships_u1", unique: true
+    t.bigint "user_id"
+    t.bigint "role_id"
+    t.index ["role_id"], name: "index_memberships_on_role_id"
+    t.index ["user_id"], name: "index_memberships_on_user_id"
   end
 
   create_table "notes", id: :serial, force: :cascade do |t|
@@ -421,7 +425,7 @@ ActiveRecord::Schema.define(version: 2021_10_18_204729) do
     t.bigint "course_id", null: false
     t.bigint "section_id"
     t.string "type"
-    t.boolean "hidden"
+    t.boolean "hidden", default: false, null: false
     t.integer "grace_credits", default: 0
     t.boolean "receives_results_emails", default: false, null: false
     t.boolean "receives_invite_emails", default: false, null: false
@@ -594,7 +598,6 @@ ActiveRecord::Schema.define(version: 2021_10_18_204729) do
   create_table "test_runs", id: :serial, force: :cascade do |t|
     t.integer "test_batch_id"
     t.integer "grouping_id", null: false
-    t.integer "user_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "submission_id"
@@ -602,7 +605,10 @@ ActiveRecord::Schema.define(version: 2021_10_18_204729) do
     t.text "problems"
     t.integer "autotest_test_id"
     t.integer "status", null: false
+    t.bigint "user_id"
+    t.bigint "role_id"
     t.index ["grouping_id"], name: "index_test_runs_on_grouping_id"
+    t.index ["role_id"], name: "index_test_runs_on_role_id"
     t.index ["submission_id"], name: "index_test_runs_on_submission_id"
     t.index ["test_batch_id"], name: "index_test_runs_on_test_batch_id"
     t.index ["user_id"], name: "index_test_runs_on_user_id"
@@ -641,6 +647,7 @@ ActiveRecord::Schema.define(version: 2021_10_18_204729) do
   add_foreign_key "extra_marks", "results", name: "fk_extra_marks_results", on_delete: :cascade
   add_foreign_key "feedback_files", "submissions"
   add_foreign_key "feedback_files", "test_group_results"
+  add_foreign_key "grade_entry_students", "roles"
   add_foreign_key "grader_permissions", "roles"
   add_foreign_key "grouping_starter_file_entries", "groupings"
   add_foreign_key "grouping_starter_file_entries", "starter_file_entries"
@@ -652,7 +659,8 @@ ActiveRecord::Schema.define(version: 2021_10_18_204729) do
   add_foreign_key "marks", "criteria"
   add_foreign_key "marks", "results", name: "fk_marks_results", on_delete: :cascade
   add_foreign_key "memberships", "groupings", name: "fk_memberships_groupings"
-  add_foreign_key "memberships", "users", name: "fk_memberships_users"
+  add_foreign_key "memberships", "roles"
+  add_foreign_key "memberships", "users"
   add_foreign_key "peer_reviews", "groupings", column: "reviewer_id"
   add_foreign_key "peer_reviews", "results"
   add_foreign_key "results", "peer_reviews", on_delete: :cascade
@@ -677,6 +685,7 @@ ActiveRecord::Schema.define(version: 2021_10_18_204729) do
   add_foreign_key "test_groups", "assessments"
   add_foreign_key "test_results", "test_group_results"
   add_foreign_key "test_runs", "groupings"
+  add_foreign_key "test_runs", "roles"
   add_foreign_key "test_runs", "submissions"
   add_foreign_key "test_runs", "test_batches"
   add_foreign_key "test_runs", "users"
