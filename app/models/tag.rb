@@ -36,7 +36,7 @@ class Tag < ApplicationRecord
     admins = Hash[Admin.pluck(:user_name, :id)]
     begin
       tag_data = data.map do |row|
-        row.symbolize_keys!
+        row = row.symbolize_keys
         name, description, user_id = row[:name], row[:description], admins[row[:user]]
         if name.nil? || name.strip.blank? || user_id.nil?
           raise ArgumentError, I18n.t('invalid_tag_data', item: row)
