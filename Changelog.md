@@ -10,7 +10,7 @@
 - Change level mark input field to accept change increments of 0.01 (#5546)
 - Support syntax highlighting for R (#5558)
 - Fix bug in annotation upload when updating categories not associated with a criterion (#5564)
-- Ensure in progress remark requests display the remark request due date for students (#5562)
+- Fixes in progress remark requests display the remark request due date for students (#5562)
 
 ## [v1.13.2]
 - Ensure "Create all groups" button uses existing repos if they already exist (#5504)
