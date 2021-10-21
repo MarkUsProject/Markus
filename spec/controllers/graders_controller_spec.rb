@@ -60,10 +60,18 @@ describe GradersController do
         @ta1 = create(:ta, user_name: 'g9browni')
         @ta2 = create(:ta, user_name: 'g9younas')
         @ta3 = create(:ta, user_name: 'c7benjam')
-        @grouping1 = create(:grouping, assignment: @assignment, group: create(:group, group_name: 'test_group'))
-        @grouping2 = create(:grouping, assignment: @assignment, group: create(:group, group_name: 'second_test_group'))
-        @grouping3 = create(:grouping, assignment: @assignment, group: create(:group, group_name: 'Group 3'))
-        @grouping4 = create(:grouping, assignment: @assignment, group: create(:group, group_name: 'Group 4'))
+        @grouping1 = create(:grouping,
+                            assignment: @assignment,
+                            group: create(:group, course: @assignment.course, group_name: 'test_group'))
+        @grouping2 = create(:grouping,
+                            assignment: @assignment,
+                            group: create(:group, course: @assignment.course, group_name: 'second_test_group'))
+        @grouping3 = create(:grouping,
+                            assignment: @assignment,
+                            group: create(:group, course: @assignment.course, group_name: 'Group 3'))
+        @grouping4 = create(:grouping,
+                            assignment: @assignment,
+                            group: create(:group, course: @assignment.course, group_name: 'Group 4'))
         @grouping4.tas << @ta1
         post_as @admin,
                 :upload,
@@ -91,9 +99,15 @@ describe GradersController do
         @ta1 = create(:ta, user_name: 'g9browni')
         @ta2 = create(:ta, user_name: 'g9younas')
         @ta3 = create(:ta, user_name: 'c0curtis')
-        @grouping1 = create(:grouping, assignment: @assignment, group: create(:group, group_name: 'test_group'))
-        @grouping2 = create(:grouping, assignment: @assignment, group: create(:group, group_name: 'second_test_group'))
-        @grouping3 = create(:grouping, assignment: @assignment, group: create(:group, group_name: 'Group 3'))
+        @grouping1 = create(:grouping,
+                            assignment: @assignment,
+                            group: create(:group, course: @assignment.course, group_name: 'test_group'))
+        @grouping2 = create(:grouping,
+                            assignment: @assignment,
+                            group: create(:group, course: @assignment.course, group_name: 'second_test_group'))
+        @grouping3 = create(:grouping,
+                            assignment: @assignment,
+                            group: create(:group, course: @assignment.course, group_name: 'Group 3'))
         post_as @admin,
                 :upload,
                 params: { assignment_id: @assignment.id, upload_file: @group_grader_map_file, groupings: true }
@@ -111,9 +125,15 @@ describe GradersController do
         @ta1 = create(:ta, user_name: 'g9browni')
         @ta2 = create(:ta, user_name: 'g9younas')
         @ta3 = create(:ta, user_name: 'c7benjam')
-        @grouping1 = create(:grouping, assignment: @assignment, group: create(:group, group_name: 'Group of 7'))
-        @grouping2 = create(:grouping, assignment: @assignment, group: create(:group, group_name: 'second_test_group'))
-        @grouping3 = create(:grouping, assignment: @assignment, group: create(:group, group_name: 'Group 3'))
+        @grouping1 = create(:grouping,
+                            assignment: @assignment,
+                            group: create(:group, course: @assignment.course, group_name: 'Group of 7'))
+        @grouping2 = create(:grouping,
+                            assignment: @assignment,
+                            group: create(:group, course: @assignment.course, group_name: 'second_test_group'))
+        @grouping3 = create(:grouping,
+                            assignment: @assignment,
+                            group: create(:group, course: @assignment.course, group_name: 'Group 3'))
         post_as @admin,
                 :upload,
                 params: { assignment_id: @assignment.id, upload_file: @group_grader_map_file, groupings: true }
@@ -130,10 +150,18 @@ describe GradersController do
         @ta1 = create(:ta, user_name: 'g9browni')
         @ta2 = create(:ta, user_name: 'g9younas')
         @ta3 = create(:ta, user_name: 'c7benjam')
-        @grouping1 = create(:grouping, assignment: @assignment, group: create(:group, group_name: 'test_group'))
-        @grouping2 = create(:grouping, assignment: @assignment, group: create(:group, group_name: 'second_test_group'))
-        @grouping3 = create(:grouping, assignment: @assignment, group: create(:group, group_name: 'Group 3'))
-        @grouping4 = create(:grouping, assignment: @assignment, group: create(:group, group_name: 'Group 4'))
+        @grouping1 = create(:grouping,
+                            assignment: @assignment,
+                            group: create(:group, course: @assignment.course, group_name: 'test_group'))
+        @grouping2 = create(:grouping,
+                            assignment: @assignment,
+                            group: create(:group, course: @assignment.course, group_name: 'second_test_group'))
+        @grouping3 = create(:grouping,
+                            assignment: @assignment,
+                            group: create(:group, course: @assignment.course, group_name: 'Group 3'))
+        @grouping4 = create(:grouping,
+                            assignment: @assignment,
+                            group: create(:group, course: @assignment.course, group_name: 'Group 4'))
         @grouping4.tas << @ta1
         post_as @admin,
                 :upload,

@@ -27,7 +27,8 @@ namespace :markus do
       Group.find_by group_name: students[0].user_name
     else
       group = Group.create(
-        group_name: "#{ students[0].user_name } #{ a.short_identifier }"
+        group_name: "#{students[0].user_name} #{a.short_identifier}",
+        course: a.course
       )
       grouping = Grouping.create(
         group: group,

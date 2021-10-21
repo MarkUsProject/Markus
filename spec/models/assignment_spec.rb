@@ -120,7 +120,7 @@ describe Assignment do
   describe '#clone_groupings_from' do
     it 'makes an attempt to update repository permissions when cloning groupings' do
       a1 = create(:assignment, assignment_properties_attributes: { vcs_submit: true })
-      a2 = create(:assignment, assignment_properties_attributes: { vcs_submit: true })
+      a2 = create(:assignment, course: a1.course, assignment_properties_attributes: { vcs_submit: true })
       create :grouping_with_inviter, assignment: a2
       expect(Repository.get_class).to receive(:update_permissions_after)
       a1.clone_groupings_from(a2.id)
@@ -294,7 +294,7 @@ describe Assignment do
 
       context 'and a group with the same name exists' do
         before :each do
-          @group = create(:group, group_name: @group_name)
+          @group = create(:group, group_name: @group_name, course: @assignment.course)
         end
 
         context 'for this assignment' do
@@ -309,8 +309,7 @@ describe Assignment do
 
         context 'for another assignment' do
           before :each do
-            assignment = create(:assignment)
-            create(:grouping, assignment: assignment, group: @group)
+            create(:grouping, group: @group)
           end
 
           it 'adds the group and returns the new grouping' do
@@ -656,7 +655,7 @@ describe Assignment do
       end
 
       it "be able to have it's groupings cloned correctly" do
-        clone = create(:assignment)
+        clone = create(:assignment, course: @assignment.course)
         number = StudentMembership.all.size + TaMembership.all.size
         clone.clone_groupings_from(@assignment.id)
         clone.groupings.reload  # clone.groupings needs to be "reloaded" to obtain the updated value (5 groups created)
@@ -681,7 +680,7 @@ describe Assignment do
       end
       context 'with another fresh assignment' do
         before :each do
-          @target = create(:assignment)
+          @target = create(:assignment, course: @source.course)
         end
 
         it 'clone all three members if none are hidden' do
@@ -748,7 +747,7 @@ describe Assignment do
 
       context 'with an assignment with other groupings' do
         before :each do
-          @target = create(:assignment)
+          @target = create(:assignment, course: @source.course)
           3.times do
             target_grouping = create(:grouping, assignment: @target)
             create(:student_membership,

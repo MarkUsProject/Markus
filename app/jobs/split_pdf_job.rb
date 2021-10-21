@@ -80,7 +80,8 @@ class SplitPdfJob < ApplicationJob
         else
           group = Group.find_or_create_by(
             group_name: group_name_for(exam_template, m[:exam_num].to_i),
-            repo_name: group_name_for(exam_template, m[:exam_num].to_i)
+            repo_name: group_name_for(exam_template, m[:exam_num].to_i),
+            course: exam_template.assignment.course
           )
           if m[:short_id] == exam_template.name # if QR code contains corresponding exam template
             partial_exams[m[:exam_num]] << [m[:page_num].to_i, page, i + 1]
