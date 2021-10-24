@@ -17,8 +17,8 @@
   </p>
   <div id="remark_request">
     <h3><%= Assignment.human_attribute_name(:remark_message) %></h3>
+    <%= markdown @assignment.remark_message %>
     <p>
-      <%= markdown @assignment.remark_message %>
       <% if !@assignment.remark_due_date.nil? %>
         <%= t('activerecord.attributes.assignment.remark_due_date') %>: <%= l(@assignment.remark_due_date) %>
       <% else %>
