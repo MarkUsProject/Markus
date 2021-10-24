@@ -273,7 +273,7 @@ class AssignmentsController < ApplicationController
     @assignment = Assignment.find(params[:id])
     respond_to do |format|
       format.json do
-        data = @assignment.summary_test_result_json()
+        data = @assignment.summary_test_result_json
         filename = "#{@assignment.short_identifier}_test_results.json"
         send_data data,
                   disposition: 'attachment',
