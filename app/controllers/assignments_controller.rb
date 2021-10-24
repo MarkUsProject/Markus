@@ -273,11 +273,19 @@ class AssignmentsController < ApplicationController
     @assignment = Assignment.find(params[:id])
     respond_to do |format|
       format.json do
-        data = @assignment.summary_test_result_json(@current_user).to_json
+        data = @assignment.summary_test_result_json()
         filename = "#{@assignment.short_identifier}_test_results.json"
         send_data data,
                   disposition: 'attachment',
                   type: 'application/json',
+                  filename: filename
+      end
+      format.csv do
+        data = @assignment.summary_test_result_csv()
+        filename = "#{@assignment.short_identifier}_test_results.csv"
+        send_data data,
+                  disposition: 'attachment',
+                  type: 'text/csv',
                   filename: filename
       end
     end
