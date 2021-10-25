@@ -1,5 +1,5 @@
 class SplitPdfLog < ApplicationRecord
-  belongs_to :user
+  belongs_to :role
   belongs_to :exam_template
   has_many :split_pages, dependent: :destroy
   after_initialize :set_defaults_for_uploaded_when, unless: :persisted? # will only work if the object is new

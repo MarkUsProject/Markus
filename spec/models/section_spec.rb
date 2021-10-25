@@ -17,7 +17,8 @@ describe Section do
     context 'A section with students associated to' do
       it 'return true to has_students?' do
         section_1 = Section.create!(name: "Shrek")
-        section_1.students.create!(course: course, user_attributes: { user_name: 'exist_student', first_name: 'Nelle', last_name: 'Varoquaux' })
+        section_1.students.create!(course: course, user_attributes: { user_name: 'exist_student',
+                                                                      first_name: 'Nelle', last_name: 'Varoquaux' })
         expect(section_1.has_students?).to be true
       end
     end
@@ -34,7 +35,8 @@ describe Section do
     context 'A section with students associated to' do
       it 'return 1 to students associated to' do
         section_3 = Section.create!(name: "Shrek")
-        section_3.students.create!(course: course, user_attributes: { user_name: 'exist_student', first_name: 'Shrek', last_name: 'Varoquaux'} )
+        section_3.students.create!(course: course, user_attributes: { user_name: 'exist_student',
+                                                                      first_name: 'Shrek', last_name: 'Varoquaux' })
         expect(section_3.count_students).to eq(1)
       end
     end

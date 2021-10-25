@@ -12,7 +12,8 @@ class User < ApplicationRecord
 
   # Group relationships
   has_many :key_pairs, dependent: :destroy
-  validates_format_of :type, with: /\AHuman|TestServer|\z/
+  attribute :type, default: 'Human'
+  validates_format_of :type, with: /\AHuman|TestServer\z/
 
   validates_presence_of     :user_name, :last_name, :first_name, :time_zone, :display_name
   validates_uniqueness_of   :user_name
@@ -28,7 +29,7 @@ class User < ApplicationRecord
   validates_inclusion_of    :locale, in: I18n.available_locales.map(&:to_s)
 
   # role constants
-  STANDARD = 'Human'.freeze
+  HUMAN = 'Human'.freeze
   TEST_SERVER = 'TestServer'.freeze
 
   # Authentication constants to be used as return values
@@ -150,25 +151,6 @@ class User < ApplicationRecord
     self.update(api_key: Base64.encode64(md5.to_s).strip)
   end
 
-  # Determine what assessments are visible to the user.
-  # By default, returns all assessments visible to the user.
-  # Optional parameter assessment_type takes values "Assignment" or "GradeEntryForm". If passed one of these options,
-  # only returns assessments of that type. Otherwise returns all assessment types.
-  # Optional parameter assessment_id: if passed an assessment id, returns a collection containing
-  # only the assessment with the given id, if it is visible to the current user.
-  # If it is not visible, returns an empty collection.
-  def visible_assessments(assessment_type: nil, assessment_id: nil)
-    assessments = Assessment.where(is_hidden: false, type: assessment_type || Assessment.type)
-    if self.section_id
-      assessments = Assessment.left_outer_joins(:assessment_section_properties)
-                              .where('assessment_section_properties.section_id': [self.section_id, nil])
-      assessments = assessments.where('assessment_section_properties.is_hidden': false)
-                               .or(assessments.where('assessment_section_properties.is_hidden': nil,
-                                                     'assessments.is_hidden': false))
-    end
-    return assessments.where(id: assessment_id) if assessment_id
-    assessments
-  end
 
   private
   # Create some random, hard to guess SHA2 512 bit long

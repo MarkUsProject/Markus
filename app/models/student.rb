@@ -3,7 +3,7 @@ class Student < Role
 
   scope :active, -> { where(hidden: false) }
   scope :inactive, -> { where(hidden: true) }
-
+  has_many :grade_entry_students, foreign_key: 'role_id'
   has_many :accepted_groupings,
            -> { where 'memberships.membership_status' => [StudentMembership::STATUSES[:accepted], StudentMembership::STATUSES[:inviter]] },
            class_name: 'Grouping',
@@ -231,8 +231,8 @@ class Student < Role
   # Creates grade_entry_student for every marks spreadsheet
   def create_all_grade_entry_students
     GradeEntryForm.all.each do |form|
-      unless form.grade_entry_students.exists?(user_id: id)
-        form.grade_entry_students.create(user_id: id, released_to_student: false)
+      unless form.grade_entry_students.exists?(role_id: id)
+        form.grade_entry_students.create(role_id: id, released_to_student: false)
       end
     end
   end

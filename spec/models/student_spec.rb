@@ -62,7 +62,7 @@ describe Student do
       @membership1 = create(:student_membership, membership_status: StudentMembership::STATUSES[:inviter])
       @grouping = @membership1.grouping
       @membership2 = create(:student_membership, grouping: @grouping,
-                                             membership_status: StudentMembership::STATUSES[:accepted])
+                            membership_status: StudentMembership::STATUSES[:accepted])
       @student1 = @membership1.role
       @student2 = @membership2.role
       @student_id_list = [@student1.id, @student2.id]
@@ -212,7 +212,6 @@ describe Student do
 
         it 'should have pending memberships after their creation.' do
           grouping2 = create(:grouping, assignment: @assignment)
-          membership2 = create(:student_membership, grouping: grouping2, role: @student)
 
           expect(@student.student_memberships
                          .pluck(:grouping_id).sort).to eq [@membership.grouping_id, grouping2.id].sort

@@ -48,7 +48,8 @@ class Grouping < ApplicationRecord
 
   has_many :test_runs, -> { order(created_at: :desc) }, dependent: :destroy
   has_many :test_runs_all_data,
-           -> { left_outer_joins(role: :user, test_group_results: [:test_group, :test_results]).order(created_at: :desc) },
+           -> { left_outer_joins(role: :user,
+                                 test_group_results: [:test_group, :test_results]).order(created_at: :desc) },
            class_name: 'TestRun'
 
   has_one :inviter_membership,
@@ -187,7 +188,7 @@ class Grouping < ApplicationRecord
   end
 
   def get_all_students_in_group
-    student_user_names = student_memberships.includes(role: [:user]).collect {|m| m.user.user_name }
+    student_user_names = student_memberships.includes(role: :user).collect { |m| m.user.user_name }
     return I18n.t('groups.empty') if student_user_names.empty?
 	  student_user_names.join(', ')
   end
@@ -244,7 +245,7 @@ class Grouping < ApplicationRecord
     all_errors = []
     members.each do |m|
       m = m.strip
-      user = Student.joins(:user).where(hidden: false).find_by('user.user_name': m)
+      user = Student.joins(:user).where(hidden: false).find_by('users.user_name': m)
       begin
         if user.nil?
           raise I18n.t('groups.invite_member.errors.not_found', user_name: m)
@@ -260,11 +261,11 @@ class Grouping < ApplicationRecord
   end
 
   # Add a new member to base
-  def add_member(user, set_membership_status = StudentMembership::STATUSES[:accepted])
-    if user.has_accepted_grouping_for?(self.assessment_id) || user.hidden
+  def add_member(role, set_membership_status = StudentMembership::STATUSES[:accepted])
+    if role.has_accepted_grouping_for?(self.assessment_id) || role.hidden
       nil
     else
-      member = StudentMembership.new(role: user, membership_status:
+      member = StudentMembership.new(role: role, membership_status:
       set_membership_status, grouping: self)
       member.save
 
@@ -282,26 +283,26 @@ class Grouping < ApplicationRecord
   end
 
   # define whether user can be invited in this grouping
-  def can_invite?(user)
-    if self.inviter == user
+  def can_invite?(role)
+    if self.inviter == role
       raise I18n.t('groups.invite_member.errors.inviting_self')
     elsif !extension.nil?
       raise I18n.t('groups.invite_member.errors.extension_exists')
     elsif self.student_membership_number >= self.assignment.group_max
-      raise I18n.t('groups.invite_member.errors.group_max_reached', user_name: user.user.user_name)
-    elsif self.assignment.section_groups_only && user.section != self.section
-      raise I18n.t('groups.invite_member.errors.not_same_section', user_name: user.user.user_name)
-    elsif user.has_accepted_grouping_for?(self.assignment.id)
-      raise I18n.t('groups.invite_member.errors.already_grouped', user_name: user.user.user_name)
-    elsif self.pending?(user)
-      raise I18n.t('groups.invite_member.errors.already_pending', user_name: user.user.user_name)
+      raise I18n.t('groups.invite_member.errors.group_max_reached', user_name: role.user_name)
+    elsif self.assignment.section_groups_only && role.section != self.section
+      raise I18n.t('groups.invite_member.errors.not_same_section', user_name: role.user_name)
+    elsif role.has_accepted_grouping_for?(self.assignment.id)
+      raise I18n.t('groups.invite_member.errors.already_grouped', user_name: role.user_name)
+    elsif self.pending?(role)
+      raise I18n.t('groups.invite_member.errors.already_pending', user_name: role.user_name)
     end
     true
   end
 
   # Returns the status of this user, or nil if user is not a member
-  def membership_status(user)
-    member = student_memberships.where(role_id: user.id).first
+  def membership_status(role)
+    member = student_memberships.where(role_id: role.id).first
     member ? member.membership_status : nil  # return nil if user is not a member
   end
 

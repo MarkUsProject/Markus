@@ -12,11 +12,10 @@ module CourseSummariesHelper
       released = [true, false]
     end
 
-    students.joins(:user)
     student_data = Hash[students.map do |student|
-      [student.user.id,
+      [student.id,
        {
-         id: student.user.id,
+         id: student.id,
          id_number: student.user.id_number,
          user_name: student.user.user_name,
          first_name: student.user.first_name,
@@ -28,24 +27,23 @@ module CourseSummariesHelper
     assignment_grades = students.joins(accepted_groupings: :current_result)
                                 .where('results.released_to_students': released)
                                 .order(:'results.created_at')
-                                .pluck('user_id', 'groupings.assessment_id', 'results.total_mark')
-    assignment_grades.each do |student_id, assessment_id, mark|
+                                .pluck('role_id', 'groupings.assessment_id', 'results.total_mark')
+    assignment_grades.each do |role_id, assessment_id, mark|
       max_mark = @max_marks[assessment_id]
-      student_data[student_id][:assessment_marks][assessment_id] = {
+      student_data[role_id][:assessment_marks][assessment_id] = {
         mark: mark,
         percentage: mark.nil? || max_mark.nil? ? nil : (mark * 100 / max_mark).round(2)
       }
     end
-
     gef_grades = students.joins(:grade_entry_students)
                          .where('grade_entry_students.released_to_student': released)
-                         .pluck('user_id',
+                         .pluck('role_id',
                                 'grade_entry_students.assessment_id',
                                 'grade_entry_students.total_grade')
 
-    gef_grades.each do |student_id, assessment_id, mark|
+    gef_grades.each do |role_id, assessment_id, mark|
       max_mark = @gef_max_marks[assessment_id]
-      student_data[student_id][:assessment_marks][assessment_id] = {
+      student_data[role_id][:assessment_marks][assessment_id] = {
         mark: mark,
         percentage: mark.nil? || max_mark.nil? ? nil : (mark * 100 / max_mark).round(2)
       }

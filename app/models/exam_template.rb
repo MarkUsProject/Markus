@@ -89,7 +89,7 @@ class ExamTemplate < ApplicationRecord
   end
 
   # Split up PDF file based on this exam template.
-  def split_pdf(path, original_filename=nil, current_user=nil)
+  def split_pdf(path, original_filename=nil, current_role=nil)
     basename = File.basename path, '.pdf'
     filename = original_filename.nil? ? basename : File.basename(original_filename)
     pdf = CombinePDF.load path
@@ -103,7 +103,7 @@ class ExamTemplate < ApplicationRecord
       num_groups_in_complete: 0,
       num_groups_in_incomplete: 0,
       num_pages_qr_scan_error: 0,
-      user: current_user
+      role: current_role
     )
 
     raw_dir = File.join(self.base_path, 'raw')

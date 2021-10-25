@@ -37,10 +37,11 @@ module RandomAssignHelper
 
     # A dictionary mapping grouping id to a set of student ids.
     @group_to_students = Hash.new { |h, k| h[k] = Set.new }
-    groupings = Grouping.joins(:memberships)
+    #byebug
+    groupings = Grouping.joins(:memberships).joins(memberships: :role)
                   .where(id: reviewer_ids + reviewee_ids,
                          memberships: { type: 'StudentMembership' })
-                  .pluck(:id, :user_id)
+                  .pluck(:id, 'memberships.role_id')
     groupings.each do |grouping_id, student_id|
       @group_to_students[grouping_id].add(student_id)
     end

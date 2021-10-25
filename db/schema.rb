@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_10_19_225808) do
+ActiveRecord::Schema.define(version: 2021_10_13_190449) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -250,10 +250,8 @@ ActiveRecord::Schema.define(version: 2021_10_19_225808) do
     t.datetime "updated_at"
     t.float "total_grade"
     t.bigint "assessment_id"
-    t.integer "user_id"
     t.bigint "role_id"
     t.index ["role_id"], name: "index_grade_entry_students_on_role_id"
-    t.index ["user_id"], name: "index_grade_entry_students_on_user_id"
   end
 
   create_table "grade_entry_students_tas", id: :serial, force: :cascade do |t|
@@ -370,10 +368,8 @@ ActiveRecord::Schema.define(version: 2021_10_19_225808) do
     t.datetime "updated_at"
     t.integer "grouping_id", null: false
     t.string "type"
-    t.bigint "user_id"
     t.bigint "role_id"
     t.index ["role_id"], name: "index_memberships_on_role_id"
-    t.index ["user_id"], name: "index_memberships_on_user_id"
   end
 
   create_table "notes", id: :serial, force: :cascade do |t|
@@ -475,7 +471,6 @@ ActiveRecord::Schema.define(version: 2021_10_19_225808) do
     t.datetime "uploaded_when"
     t.string "error_description"
     t.string "filename"
-    t.integer "user_id"
     t.integer "num_groups_in_complete"
     t.integer "num_groups_in_incomplete"
     t.integer "num_pages_qr_scan_error"
@@ -484,8 +479,9 @@ ActiveRecord::Schema.define(version: 2021_10_19_225808) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "exam_template_id"
+    t.bigint "role_id"
     t.index ["exam_template_id"], name: "index_split_pdf_logs_on_exam_template_id"
-    t.index ["user_id"], name: "index_split_pdf_logs_on_user_id"
+    t.index ["role_id"], name: "index_split_pdf_logs_on_role_id"
   end
 
   create_table "starter_file_entries", force: :cascade do |t|
@@ -536,10 +532,10 @@ ActiveRecord::Schema.define(version: 2021_10_19_225808) do
   create_table "tags", id: :serial, force: :cascade do |t|
     t.string "name", null: false
     t.string "description"
-    t.integer "user_id"
     t.bigint "assessment_id"
+    t.bigint "role_id"
     t.index ["assessment_id"], name: "index_tags_on_assessment_id"
-    t.index ["user_id"], name: "index_tags_on_user_id"
+    t.index ["role_id"], name: "index_tags_on_role_id"
   end
 
   create_table "template_divisions", id: :serial, force: :cascade do |t|
@@ -605,19 +601,18 @@ ActiveRecord::Schema.define(version: 2021_10_19_225808) do
     t.text "problems"
     t.integer "autotest_test_id"
     t.integer "status", null: false
-    t.bigint "user_id"
     t.bigint "role_id"
     t.index ["grouping_id"], name: "index_test_runs_on_grouping_id"
     t.index ["role_id"], name: "index_test_runs_on_role_id"
     t.index ["submission_id"], name: "index_test_runs_on_submission_id"
     t.index ["test_batch_id"], name: "index_test_runs_on_test_batch_id"
-    t.index ["user_id"], name: "index_test_runs_on_user_id"
   end
 
   create_table "users", id: :serial, force: :cascade do |t|
     t.string "user_name", null: false
     t.string "last_name"
     t.string "first_name"
+    t.string "type"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string "api_key"
@@ -627,7 +622,6 @@ ActiveRecord::Schema.define(version: 2021_10_19_225808) do
     t.string "locale", default: "en", null: false
     t.integer "theme", default: 1, null: false
     t.string "time_zone", null: false
-    t.string "type"
     t.index ["api_key"], name: "index_users_on_api_key", unique: true
     t.index ["user_name"], name: "index_users_on_user_name", unique: true
   end
@@ -660,7 +654,6 @@ ActiveRecord::Schema.define(version: 2021_10_19_225808) do
   add_foreign_key "marks", "results", name: "fk_marks_results", on_delete: :cascade
   add_foreign_key "memberships", "groupings", name: "fk_memberships_groupings"
   add_foreign_key "memberships", "roles"
-  add_foreign_key "memberships", "users"
   add_foreign_key "peer_reviews", "groupings", column: "reviewer_id"
   add_foreign_key "peer_reviews", "results"
   add_foreign_key "results", "peer_reviews", on_delete: :cascade
@@ -673,12 +666,12 @@ ActiveRecord::Schema.define(version: 2021_10_19_225808) do
   add_foreign_key "split_pages", "groups"
   add_foreign_key "split_pages", "split_pdf_logs"
   add_foreign_key "split_pdf_logs", "exam_templates"
-  add_foreign_key "split_pdf_logs", "users"
+  add_foreign_key "split_pdf_logs", "roles"
   add_foreign_key "starter_file_entries", "starter_file_groups"
   add_foreign_key "starter_file_groups", "assessments"
   add_foreign_key "submission_files", "submissions", name: "fk_submission_files_submissions"
   add_foreign_key "tags", "assessments"
-  add_foreign_key "tags", "users"
+  add_foreign_key "tags", "roles"
   add_foreign_key "template_divisions", "assignment_files"
   add_foreign_key "template_divisions", "exam_templates"
   add_foreign_key "test_group_results", "test_runs"
@@ -688,5 +681,4 @@ ActiveRecord::Schema.define(version: 2021_10_19_225808) do
   add_foreign_key "test_runs", "roles"
   add_foreign_key "test_runs", "submissions"
   add_foreign_key "test_runs", "test_batches"
-  add_foreign_key "test_runs", "users"
 end

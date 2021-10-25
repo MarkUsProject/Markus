@@ -1920,7 +1920,7 @@ describe Assignment do
         end
 
         it 'should include member information for groups with members' do
-          members = groupings.map { |g| g.accepted_students.joins(:user).pluck('user.user_name') }
+          members = groupings.map { |g| g.accepted_students.joins(:user).pluck('user_name') }
           expect(data.map { |h| h[:members] }.compact).to contain_exactly(*members)
         end
       end
@@ -2159,13 +2159,13 @@ describe Assignment do
       let(:assignment1) { create :assignment, assignment_properties_attributes: { vcs_submit: true } }
       it 'should only contain valid memberships' do
         ids = groupings1.map { |g| g.inviter.id }
-        expect(Assignment.get_repo_auth_records.pluck('users.id')).to contain_exactly(*ids)
+        expect(Assignment.get_repo_auth_records.pluck('roles.id')).to contain_exactly(*ids)
       end
       context 'when there is a pending membership' do
         let!(:membership) { create :student_membership, grouping: groupings1.first }
         it 'should not contain the pending membership' do
           ids = groupings1.map { |g| g.inviter.id }
-          expect(Assignment.get_repo_auth_records.pluck('users.id')).to contain_exactly(*ids)
+          expect(Assignment.get_repo_auth_records.pluck('roles.id')).to contain_exactly(*ids)
         end
       end
     end
@@ -2182,7 +2182,7 @@ describe Assignment do
           g.reload
         end
         it 'should contain only the members of that group' do
-          expect(Assignment.get_repo_auth_records.pluck('users.id')).to contain_exactly(grouping.inviter.id)
+          expect(Assignment.get_repo_auth_records.pluck('roles.id')).to contain_exactly(grouping.inviter.id)
         end
         context 'when the timed assessment due date has ended' do
           let(:assignment1) do
@@ -2190,7 +2190,7 @@ describe Assignment do
           end
           it 'should contain all members of all groups' do
             inviter_ids = groupings1.map(&:inviter).map(&:id)
-            expect(Assignment.get_repo_auth_records.pluck('users.id')).to contain_exactly(*inviter_ids)
+            expect(Assignment.get_repo_auth_records.pluck('roles.id')).to contain_exactly(*inviter_ids)
           end
         end
       end
