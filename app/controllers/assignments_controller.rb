@@ -658,15 +658,15 @@ class AssignmentsController < ApplicationController
     properties
   end
 
-  # Ensure that the +assignment+ type (scanned, timed, neither) matches the params
+  # Ensure that the assignment type (+is_scanned+, +is_timed+, neither) matches the params
   # If it does not match, raise an error
-  def check_assignment_type_match!(assignment)
+  def check_assignment_type_match!(is_scanned, is_timed)
     timed = params[:is_timed] == 'true'
     scanned = params[:is_scanned] == 'true'
-    unless assignment.is_timed == timed && assignment.scanned_exam == scanned
-      if assignment.is_timed
+    unless is_timed == timed && is_scanned == scanned
+      if is_timed
         upload_type = I18n.t("activerecord.models.timed_assignment.one")
-      elsif assignment.scanned_exam
+      elsif is_scanned
         upload_type = I18n.t("activerecord.models.scanned_assignment.one")
       else
         upload_type = Assignment.model_name.human
@@ -688,20 +688,35 @@ class AssignmentsController < ApplicationController
   def build_uploaded_assignment(prop_file, parent_assignment = nil)
     yaml_content = prop_file.get_input_stream.read.encode(Encoding::UTF_8, 'UTF-8')
     properties = parse_yaml_content(yaml_content)
+    puts(properties)
     if parent_assignment.nil?
+      validate_assignment_properties(properties)
       assignment = Assignment.new(properties)
-      check_assignment_type_match!(assignment)
       assignment.repository_folder = assignment.short_identifier
     else
       # Filter properties not supported by peer review assignments, then build assignment
-      peer_review_properties = properties.except(:submission_rule_attributes, :assignment_files_attributes)
+      validate_assignment_properties(properties, true)
       assignment = Assignment.new(peer_review_properties)
       parent_assignment.has_peer_review = true
       assignment.has_peer_review = false
       assignment.parent_assignment = parent_assignment
       assignment.repository_folder = parent_assignment.repository_folder
     end
-    assignment
+  end
+
+  def validate_assignment_properties(properties, is_peer_review = false)
+    is_scanned = false
+    is_timed = false
+    if properties.key?(:assignment_properties_attributes)
+      a_prop = properties[:assignment_properties_attributes]
+      if a_prop.key?(:scanned_exam) && a_prop[:scanned_exam] == true
+        is_scanned = true
+      elsif a_prop.key?(:is_timed) && a_prop[:is_timed] == true
+        is_timed = true
+      end
+    end
+    check_assignment_type_match!(is_scanned, is_timed) unless is_peer_review
+    unused_properties = []
   end
 
   def set_repo_vars(assignment, grouping)
