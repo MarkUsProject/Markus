@@ -110,7 +110,7 @@ class ExamTemplate < ApplicationRecord
     FileUtils.mkdir_p raw_dir
     FileUtils.cp path, File.join(raw_dir, "raw_upload_#{split_pdf_log.id}.pdf")
 
-    SplitPdfJob.perform_later(self, path, split_pdf_log, original_filename, current_user)
+    SplitPdfJob.perform_later(self, path, split_pdf_log, original_filename, current_role)
   end
 
   def fix_error(filename, exam_num, page_num, upside_down)

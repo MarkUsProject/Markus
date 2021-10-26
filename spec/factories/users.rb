@@ -5,6 +5,5 @@ FactoryBot.define do
     last_name { Faker::Name.last_name }
     email { Faker::Internet.email }
     display_name { "#{first_name} #{last_name}" }
-    type { 'Human' }
   end
 end

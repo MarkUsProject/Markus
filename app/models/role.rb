@@ -1,9 +1,9 @@
 # Model representing a user's role in a given course.
 class Role < ApplicationRecord
-  belongs_to :user
+  belongs_to :human, foreign_key: 'user_id'
   belongs_to :course
-  accepts_nested_attributes_for :user
-  delegate_missing_to :user
+  accepts_nested_attributes_for :human
+  delegate_missing_to :human
 
   # Group relationships
   has_many :memberships, dependent: :delete_all

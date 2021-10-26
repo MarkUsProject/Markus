@@ -9,11 +9,11 @@ class UploadUsersJob < ApplicationJob
 
         user_hash = Hash[user_columns.zip row]
         section = Section.find_or_create_by(name: user_hash[:section_name]) unless section.nil?
-        user = User.find_or_initialize_by(user_hash.slice(:user_name)) do |u|
+        user = Human.find_or_initialize_by(user_hash.slice(:user_name)) do |u|
           u.assign_attributes(user_hash.slice(:first_name, :last_name))
         end
         user.update!(user_hash.except(:section_name))
-        role = user_class.find_or_initialize_by(user: user, course: course)
+        role = user_class.find_or_initialize_by(human: user, course: course)
         role.section = section unless section.nil?
         role.save!
         progress.increment

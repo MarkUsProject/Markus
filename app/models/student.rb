@@ -76,7 +76,7 @@ class Student < Role
   end
 
   def display_for_note
-    user.user_name + ': ' + user.last_name + ', ' + user.first_name
+    human.user_name + ': ' + human.last_name + ', ' + human.first_name
   end
 
   # invites a student
@@ -114,12 +114,12 @@ class Student < Role
       else
         # If an individual repo has already been created for this user
         # then just use that one.
-        @group = Group.find_by(group_name: user.user_name)
+        @group = Group.find_by(group_name: human.user_name)
         if @group.nil?
-          @group = Group.new(group_name: user.user_name)
+          @group = Group.new(group_name: human.user_name)
           # We want to have the user_name as repository name,
           # so we have to set the repo_name before we save the group.
-          @group.repo_name = user.user_name
+          @group.repo_name = human.user_name
         end
       end
       unless @group.save

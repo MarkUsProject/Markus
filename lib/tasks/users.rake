@@ -6,7 +6,7 @@ namespace :db do
     [['a',    'admin', 'admin'], # Standard admin
      ['reid', 'Karen', 'Reid']]  # Reid
     .each do |admin|
-      Admin.create!(course: Course.first, user_attributes: { user_name: admin[0],
+      Admin.create!(course: Course.first, human_attributes: { user_name: admin[0],
                                                              first_name: admin[1], last_name: admin[2] })
     end
   end
@@ -20,7 +20,7 @@ namespace :db do
      ['c9varoqu', 'Nelle',   'Varoquaux'],
      ['c9rada',   'Mark',    'Rada']]
         .each do |ta|
-      Ta.create!(course: Course.first, user_attributes: { user_name: ta[0], first_name: ta[1], last_name: ta[2] })
+      Ta.create!(course: Course.first, human_attributes: { user_name: ta[0], first_name: ta[1], last_name: ta[2] })
     end
   end
 
@@ -28,10 +28,7 @@ namespace :db do
   # this task depends on :environment and :seed
   task(:test_servers => :environment) do
     puts 'Populate database with TestServers'
-    [[Settings.autotest.server_host, 'Test', 'Server1']]
-        .each do |server|
-      TestServer.create(user_name: server[0], first_name: server[1], last_name: server[2])
-    end
+    TestServer.find_or_create
   end
 
   desc 'Add student users to the database'
@@ -47,9 +44,9 @@ namespace :db do
     i = 0
     Student.find_each do |student|
       i += rand(10 ** 7)
-      first_name = student.user.first_name.downcase.gsub(/\s+/, '')
-      last_name = student.user.last_name.downcase.gsub(/\s+/, '')
-      student.update(grace_credits: 5, user_attributes: { id: student.user_id,
+      first_name = student.human.first_name.downcase.gsub(/\s+/, '')
+      last_name = student.human.last_name.downcase.gsub(/\s+/, '')
+      student.update(grace_credits: 5, human_attributes: { id: student.user_id,
                                                           id_number: format('%010d', i),
                                                           email: "#{first_name}.#{last_name}@example.com" })
     end

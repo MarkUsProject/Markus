@@ -503,8 +503,8 @@ class Assignment < Assessment
 
     if user.admin?
       groupings = self.groupings
-      graders = groupings.joins(tas: :user)
-                         .pluck_to_hash(:id, 'users.user_name', 'users.first_name', 'users.last_name')
+      graders = groupings.joins(tas: :human)
+                         .pluck_to_hash(:id, 'humans.user_name', 'humans.first_name', 'humans.last_name')
                          .group_by { |x| x[:id] }
       assigned_criteria = nil
     else
@@ -520,13 +520,12 @@ class Assignment < Assessment
         assigned_criteria = nil
       end
     end
-
     grouping_data = groupings.joins(:group)
                              .left_outer_joins(inviter: :section)
                              .pluck_to_hash(:id, 'groups.group_name', 'sections.name')
                              .group_by { |x| x[:id] }
-    members = groupings.joins(accepted_students: :user)
-                       .pluck_to_hash(:id, 'users.user_name', 'users.first_name', 'users.last_name')
+    members = groupings.joins(accepted_students: :human)
+                       .pluck_to_hash(:id, 'humans.user_name', 'humans.first_name', 'humans.last_name')
                        .group_by { |x| x[:id] }
     tag_data = groupings
                .joins(:tags)
@@ -573,7 +572,7 @@ class Assignment < Assessment
         group_name = grouping_data[g.id][0]['groups.group_name']
         section = grouping_data[g.id][0]['sections.name']
         group_members = members.fetch(g.id, [])
-                               .map { |s| [s['users.user_name'], s['users.first_name'], s['users.last_name']] }
+                               .map { |s| [s['humans.user_name'], s['humans.first_name'], s['humans.last_name']] }
       end
 
       tag_info = tag_data.fetch(g.id, [])
@@ -586,7 +585,7 @@ class Assignment < Assessment
         members: group_members,
         tags: tag_info,
         graders: graders.fetch(g.id, [])
-                        .map { |s| [s['users.user_name'], s['users.first_name'], s['users.last_name']] },
+                        .map { |s| [s['humans.user_name'], s['humans.first_name'], s['humans.last_name']] },
         marking_state: marking_state(has_remark,
                                      result&.marking_state,
                                      result&.released_to_students,
@@ -983,10 +982,10 @@ class Assignment < Assessment
   def current_grader_data
     ta_counts = self.criterion_ta_associations.group(:ta_id).count
     grader_data = self.groupings
-                      .joins(tas: :user)
+                      .joins(tas: :human)
                       .group('user_name')
                       .count
-    graders = Ta.joins(:user).pluck(:user_name, :first_name, :last_name, :id).map do |user_name, first_name, last_name, id|
+    graders = Ta.joins(:human).pluck(:user_name, :first_name, :last_name, :id).map do |user_name, first_name, last_name, id|
       {
         user_name: user_name,
         first_name: first_name,
@@ -998,7 +997,7 @@ class Assignment < Assessment
     end
 
     group_data = self.groupings
-                     .left_outer_joins(:group, tas: :user)
+                     .left_outer_joins(:group, tas: :human)
                      .pluck('groupings.id', 'groups.group_name', 'users.user_name',
                             'groupings.criteria_coverage_count')
     groups = Hash.new { |h, k| h[k] = [] }
@@ -1021,7 +1020,7 @@ class Assignment < Assessment
     end
 
     criterion_data =
-      self.criteria.left_outer_joins(tas: :user)
+      self.criteria.left_outer_joins(tas: :human)
           .pluck('criteria.name', 'criteria.position',
                  'criteria.assigned_groups_count', 'users.user_name')
     criteria = Hash.new { |h, k| h[k] = [] }
@@ -1098,7 +1097,7 @@ class Assignment < Assessment
       member_data = {}
       section_data = {}
     else
-      member_data = groupings.joins(accepted_students: :user)
+      member_data = groupings.joins(accepted_students: :human)
                              .pluck_to_hash('groupings.id', 'users.user_name')
                              .group_by { |h| h['groupings.id'] }
 
@@ -1164,7 +1163,7 @@ class Assignment < Assessment
         base[:final_grade] = [0, (total_marks[result_info['results.id']] || 0.0) + extra_mark].max
       end
 
-      base[:members] = member_info.map { |h| h['users.user_name'] } unless member_info.nil?
+      base[:members] = member_info.map { |h| h['humans.user_name'] } unless member_info.nil?
       base[:section] = section_info unless section_info.nil?
       base[:grace_credits_used] = deductions[grouping_id] if self.submission_rule.is_a? GracePeriodSubmissionRule
 
@@ -1184,7 +1183,7 @@ class Assignment < Assessment
   # zip all files in the folder at +self.autotest_files_dir+ and return the
   # path to the zip file
   def zip_automated_test_files(role)
-    zip_name = "#{self.short_identifier}-testfiles-#{role.user.user_name}"
+    zip_name = "#{self.short_identifier}-testfiles-#{role.human.user_name}"
     zip_path = File.join('tmp', zip_name + '.zip')
     FileUtils.rm_rf zip_path
     files_dir = Pathname.new self.autotest_files_dir
