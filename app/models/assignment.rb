@@ -599,16 +599,16 @@ class Assignment < Assessment
 
     if user.admin?
       groupings = self.groupings
-                    .includes(:group,
-                              :accepted_students,
-                              current_result: :marks)
+                      .includes(:group,
+                                :accepted_students,
+                                current_result: :marks)
     else
       groupings = self.groupings
-                    .includes(:group,
-                              :accepted_students,
-                              current_result: :marks)
-                    .joins(:memberships).joins(:humans)
-                    .where('memberships.humans.user_id': user.id)
+                      .includes(:group,
+                                :accepted_students,
+                                current_result: :marks)
+                      .joins(:memberships).joins(:humans)
+                      .where('memberships.humans.user_id': user.id)
     end
 
     headers = [['User name', 'Group', 'Final grade'], ['', 'Out of', self.max_mark]]

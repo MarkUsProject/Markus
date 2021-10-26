@@ -9,7 +9,10 @@ describe CriterionTaAssociation do
 
   describe '#self.from_csv' do
     let!(:grader) { create :ta, human_attributes: { user_name: 'beaker', last_name: 'beaker', first_name: 'beaker' } }
-    let(:grader2) { create :ta, human_attributes: { user_name: 'drteeth', last_name: 'drteeth', first_name: 'drteeth' } }
+    let(:grader2) do
+      create :ta, human_attributes: { user_name: 'drteeth',
+                                      last_name: 'drteeth', first_name: 'drteeth' }
+    end
     let(:criterion) { create :flexible_criterion, name: 'criteria1' }
     let!(:cta) { create :criterion_ta_association, criterion: criterion, ta: grader2 }
     it 'should remove existing criterion ta associations' do

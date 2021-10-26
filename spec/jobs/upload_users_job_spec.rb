@@ -7,8 +7,8 @@ describe UploadUsersJob do
     include_examples 'background job'
   end
   context 'when run with a correctly formatted file' do
-      let(:file) { fixture_file_upload 'students/students.csv' }
-      let(:uploaded) { UploadUsersJob.perform_now(Student, course, File.read(file), nil) }
+    let(:file) { fixture_file_upload 'students/students.csv' }
+    let(:uploaded) { UploadUsersJob.perform_now(Student, course, File.read(file), nil) }
     it 'should not return any error' do
       expect(uploaded[:invalid_lines]).to be_empty
     end
