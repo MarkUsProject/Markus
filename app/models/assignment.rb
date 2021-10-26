@@ -491,7 +491,7 @@ class Assignment < Assessment
     if user.admin?
       groupings = self.groupings
       graders = groupings.joins(tas: :human)
-                         .pluck_to_hash(:id, 'humans.user_name', 'humans.first_name', 'humans.last_name')
+                         .pluck_to_hash(:id, 'users.user_name', 'users.first_name', 'users.last_name')
                          .group_by { |x| x[:id] }
       assigned_criteria = nil
     else
@@ -512,7 +512,7 @@ class Assignment < Assessment
                              .pluck_to_hash(:id, 'groups.group_name', 'sections.name')
                              .group_by { |x| x[:id] }
     members = groupings.joins(accepted_students: :human)
-                       .pluck_to_hash(:id, 'humans.user_name', 'humans.first_name', 'humans.last_name')
+                       .pluck_to_hash(:id, 'users.user_name', 'users.first_name', 'users.last_name')
                        .group_by { |x| x[:id] }
     tag_data = groupings
                .joins(:tags)
@@ -607,8 +607,8 @@ class Assignment < Assessment
                     .includes(:group,
                               :accepted_students,
                               current_result: :marks)
-                    .joins(:memberships)
-                    .where('memberships.user_id': user.id)
+                    .joins(:memberships).joins(:humans)
+                    .where('memberships.humans.user_id': user.id)
     end
 
     headers = [['User name', 'Group', 'Final grade'], ['', 'Out of', self.max_mark]]
@@ -629,7 +629,7 @@ class Assignment < Assessment
         result = g.current_result
         marks = result.nil? ? {} : result.mark_hash
         g.accepted_students.each do |s|
-          row = [s.user.user_name, g.group.group_name]
+          row = [s.human.user_name, g.group.group_name]
           if result.nil?
             row += Array.new(2 + self.ta_criteria.count, nil)
           else
@@ -916,7 +916,8 @@ class Assignment < Assessment
                       .joins(tas: :human)
                       .group('user_name')
                       .count
-    graders = Ta.joins(:human).pluck(:user_name, :first_name, :last_name, :id).map do |user_name, first_name, last_name, id|
+    graders = Ta.joins(:human)
+                .pluck(:user_name, :first_name, :last_name, :id).map do |user_name, first_name, last_name, id|
       {
         user_name: user_name,
         first_name: first_name,
@@ -1094,7 +1095,7 @@ class Assignment < Assessment
         base[:final_grade] = [0, (total_marks[result_info['results.id']] || 0.0) + extra_mark].max
       end
 
-      base[:members] = member_info.map { |h| h['humans.user_name'] } unless member_info.nil?
+      base[:members] = member_info.map { |h| h['users.user_name'] } unless member_info.nil?
       base[:section] = section_info unless section_info.nil?
       base[:grace_credits_used] = deductions[grouping_id] if self.submission_rule.is_a? GracePeriodSubmissionRule
 

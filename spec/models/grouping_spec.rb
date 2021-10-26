@@ -27,7 +27,7 @@ describe Grouping do
       let(:hidden) { create(:student, hidden: true) }
 
       it 'cannot be invited' do
-        grouping.invite(hidden.user.user_name)
+        grouping.invite(hidden.human.user_name)
         expect(grouping.memberships.count).to eq(0)
       end
 
@@ -725,7 +725,7 @@ describe Grouping do
 
       describe '#invite' do
         it 'adds students in any scenario possible when invoked by admin' do
-          members = [@student01.user.user_name, @student02.user.user_name]
+          members = [@student01.human.user_name, @student02.human.user_name]
           @grouping.invite(members, StudentMembership::STATUSES[:accepted], true)
           expect(@grouping.accepted_student_memberships.count).to eq(2)
         end
@@ -744,7 +744,7 @@ describe Grouping do
 
       describe '#invite' do
         it 'adds students to groups without checking their sections' do
-          members = [@student01.user.user_name, @student02.user.user_name]
+          members = [@student01.human.user_name, @student02.human.user_name]
           @grouping.invite(members, StudentMembership::STATUSES[:accepted], true)
           expect(@grouping.accepted_student_memberships.count).to eq(2)
         end

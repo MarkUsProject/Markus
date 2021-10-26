@@ -8,7 +8,9 @@ class UploadUsersJob < ApplicationJob
         next if row.empty?
 
         user_hash = Hash[user_columns.zip row]
-        section = Section.find_or_create_by(name: user_hash[:section_name]) unless section.nil?
+        unless user_hash[:section_name].nil?
+          section = Section.find_or_create_by(name: user_hash[:section_name], course: course)
+        end
         user = Human.find_or_initialize_by(user_hash.slice(:user_name)) do |u|
           u.assign_attributes(user_hash.slice(:first_name, :last_name))
         end

@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 describe Role do
-  let!(:course) { create(:course) }
+  let(:course) { create(:course) }
 
   it { is_expected.to allow_value('Student').for(:type) }
   it { is_expected.to allow_value('Admin').for(:type) }
@@ -67,9 +67,9 @@ describe Role do
     end
     let(:assessment_section_properties_visible) do
       create(:assessment_section_properties, assessment: assignment_visible,
-             section: new_section,
-             due_date: 2.days.from_now,
-             is_hidden: false)
+                                             section: new_section,
+                                             due_date: 2.days.from_now,
+                                             is_hidden: false)
     end
     let(:assignment_hidden) do
       create(:assignment,
@@ -78,9 +78,9 @@ describe Role do
     end
     let(:assessment_section_properties_hidden) do
       create(:assessment_section_properties, assessment: assignment_hidden,
-             section: new_section,
-             due_date: 2.days.from_now,
-             is_hidden: true)
+                                             section: new_section,
+                                             due_date: 2.days.from_now,
+                                             is_hidden: true)
     end
     let(:assignment_hidden_section_visible) do
       create(:assignment,
@@ -91,9 +91,9 @@ describe Role do
 
     let(:assessment_section_properties_visible_assignment_hidden) do
       create(:assessment_section_properties, assessment: assignment_hidden_section_visible,
-             section: new_section,
-             due_date: 2.days.from_now,
-             is_hidden: false)
+                                             section: new_section,
+                                             due_date: 2.days.from_now,
+                                             is_hidden: false)
     end
     context 'when there are no assessments' do
       let(:new_user) { create :student }
@@ -262,13 +262,13 @@ describe Role do
       let(:grade_entry_form_visible) { create :grade_entry_form }
       let(:grade_entry_section_visible) do
         create :assessment_section_properties, assessment: grade_entry_form_visible,
-               section: new_section, is_hidden: false
+                                               section: new_section, is_hidden: false
       end
 
       let(:grade_entry_form_hidden) { create :grade_entry_form }
       let(:grade_entry_section_hidden) do
         create :assessment_section_properties, assessment: grade_entry_form_hidden,
-               section: new_section, is_hidden: true
+                                               section: new_section, is_hidden: true
       end
 
       context 'when there are assessments' do

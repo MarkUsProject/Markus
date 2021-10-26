@@ -16,10 +16,10 @@ module CourseSummariesHelper
       [student.id,
        {
          id: student.id,
-         id_number: student.user.id_number,
-         user_name: student.user.user_name,
-         first_name: student.user.first_name,
-         last_name: student.user.last_name,
+         id_number: student.human.id_number,
+         user_name: student.human.user_name,
+         first_name: student.human.first_name,
+         last_name: student.human.last_name,
          hidden: student.hidden,
          assessment_marks: {}
        }]

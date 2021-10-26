@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :role do
-    association :human, factory: :human
+    association :human
     association :course
   end
 end

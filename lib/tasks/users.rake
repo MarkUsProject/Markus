@@ -7,7 +7,7 @@ namespace :db do
      ['reid', 'Karen', 'Reid']]  # Reid
     .each do |admin|
       Admin.create!(course: Course.first, human_attributes: { user_name: admin[0],
-                                                             first_name: admin[1], last_name: admin[2] })
+                                                              first_name: admin[1], last_name: admin[2] })
     end
   end
 
@@ -47,8 +47,8 @@ namespace :db do
       first_name = student.human.first_name.downcase.gsub(/\s+/, '')
       last_name = student.human.last_name.downcase.gsub(/\s+/, '')
       student.update(grace_credits: 5, human_attributes: { id: student.user_id,
-                                                          id_number: format('%010d', i),
-                                                          email: "#{first_name}.#{last_name}@example.com" })
+                                                           id_number: format('%010d', i),
+                                                           email: "#{first_name}.#{last_name}@example.com" })
     end
   end
 end

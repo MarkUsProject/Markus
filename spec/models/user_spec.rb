@@ -37,7 +37,6 @@ describe User do
                    first_name: '   afirstname ',
                    last_name: '   alastname  ' }
       @user = User.new(new_user)
-      @user.type = 'Standard'
     end
 
     it 'should strip all strings with white space from user name' do
