@@ -6,6 +6,10 @@ describe Grouping do
     it { is_expected.to have_many(:submissions) }
     it { is_expected.to have_many(:notes) }
     it { is_expected.to have_one(:extension).dependent(:destroy) }
+
+    it 'fails when its group and assignment belong to different courses' do
+      expect(build(:grouping, assignment: build(:assignment), group: build(:group))).not_to be_valid
+    end
   end
 
   describe 'a default grouping' do
@@ -413,8 +417,7 @@ describe Grouping do
         before do
           @assignment = FactoryBot.create(:assignment, assignment_properties_attributes: { token_start_date: 1.day.ago,
                                                                                            tokens_per_period: 10 })
-          @group = FactoryBot.create(:group)
-          @grouping = Grouping.create(group: @group, assignment: @assignment)
+          @grouping = create(:grouping, assignment: @assignment)
           @student1 = FactoryBot.create(:student)
           @student2 = FactoryBot.create(:student)
           @grouping.test_tokens = 0
@@ -1035,7 +1038,7 @@ describe Grouping do
     context 'with an assignment' do
       before :each do
         @assignment = create(:assignment, due_date: Time.zone.parse('July 22 2009 5:00PM'))
-        @group = create(:group)
+        @group = create(:group, course: @assignment.course)
         pretend_now_is(Time.zone.parse('July 21 2009 5:00PM')) do
           @grouping = create(:grouping, assignment: @assignment, group: @group)
         end
@@ -1056,7 +1059,7 @@ describe Grouping do
         before :each do
           @assignment.section_due_dates_type = true
           @assignment.save
-          @section = create(:section)
+          @section = create(:section, course: @assignment.course)
           create(:inviter_student_membership,
                  role: create(:student, section: @section),
                  grouping: @grouping,
@@ -1087,7 +1090,7 @@ describe Grouping do
       context 'without sections after due date' do
         before :each do
           @assignment = create(:assignment, due_date: Time.zone.parse('July 22 2009 5:00PM'))
-          @group = create(:group)
+          @group = create(:group, course: @assignment.course)
           pretend_now_is(Time.zone.parse('July 28 2009 5:00PM')) do
             @grouping = create(:grouping, assignment: @assignment, group: @group)
           end

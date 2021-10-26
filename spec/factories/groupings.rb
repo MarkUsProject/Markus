@@ -1,8 +1,13 @@
 FactoryBot.define do
   factory :grouping do
-    association :group
-    association :assignment
+    association :group, strategy: :build
+    association :assignment, strategy: :build
     start_time { nil }
+
+    before(:create) do |grouping|
+      grouping.group.course = grouping.assignment.course if grouping.group.new_record?
+      grouping.assignment.course = grouping.group.course if grouping.assignment.new_record?
+    end
 
     factory :grouping_with_inviter do
       transient do

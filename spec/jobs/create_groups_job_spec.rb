@@ -33,6 +33,10 @@ describe CreateGroupsJob do
           expect(repo).to be_an_instance_of(MemoryRepository)
         end
       end
+      it 'should create new groups associated to the same course as the assignment' do
+        CreateGroupsJob.perform_now(assignment, @data)
+        expect(Group.find_by_group_name(group_name).course_id).to eq assignment.course_id
+      end
     end
   end
 
@@ -104,7 +108,7 @@ describe CreateGroupsJob do
   end
 
   context 'where the group already exists' do
-    let(:group) { create :group }
+    let(:group) { create :group, course: assignment.course }
 
     context 'and the grouping already exists for that assignment' do
       it 'should not create a new grouping' do
@@ -116,37 +120,62 @@ describe CreateGroupsJob do
 
     context 'and the grouping already exists for another assignment' do
       context 'and the repo name and membership is the same' do
-        it 'should create a new grouping' do
-          create :grouping_with_inviter, group: group, assignment: assignment, inviter: student1
-          data = [[group.group_name, student1.user_name]]
-          expect { CreateGroupsJob.perform_now(create(:assignment), data) }.to change { Grouping.count }.by 1
+        let!(:grouping) { create :grouping_with_inviter, group: group, assignment: assignment, inviter: student1 }
+        context 'and the assignment is in the same course' do
+          let(:assignment2) { create :assignment, course: assignment.course }
+          it 'should create a new grouping' do
+            data = [[group.group_name, student1.user_name]]
+            expect { CreateGroupsJob.perform_now(assignment2, data) }.to change { Grouping.count }.by 1
+          end
+        end
+        context 'and the assignment is in a different course' do
+          skip 'enable this when there is a validation checking if students are in the same course' do
+            let(:assignment2) { create :assignment }
+            it 'should raise a validation error' do
+              data = [[group.group_name, student1.user_name]]
+              expect { CreateGroupsJob.perform_now(assignment2, data) }.to raise_exception(ActiveRecord::RecordInvalid)
+            end
+          end
         end
       end
 
       context 'and the membership is different' do
-        it 'should not create a new grouping' do
-          create :grouping_with_inviter, group: group, assignment: assignment, inviter: student1
-          data = [[group.group_name, student1.user_name, student2.user_name]]
-          expect { CreateGroupsJob.perform_now(create(:assignment), data) }.not_to(change { Grouping.count })
+        let!(:grouping) { create :grouping_with_inviter, group: group, assignment: assignment, inviter: student1 }
+        context 'and the assignment is in the same course' do
+          let(:assignment2) { create :assignment, course: assignment.course }
+          it 'should not create a new grouping' do
+            data = [[group.group_name, student1.user_name, student2.user_name]]
+            expect { CreateGroupsJob.perform_now(assignment2, data) }.not_to(change { Grouping.count })
+          end
+        end
+        context 'and the assignment is in a different course' do
+          skip 'enable this when there is a validation checking if students are in the same course' do
+            let(:assignment2) { create :assignment }
+            it 'should raise a validation error' do
+              data = [[group.group_name, student1.user_name, student2.user_name]]
+              expect { CreateGroupsJob.perform_now(assignment2, data) }.to raise_exception(ActiveRecord::RecordInvalid)
+            end
+          end
         end
       end
 
       context 'and the assignment does not allow students to work in groups > 1' do
         let(:assignment) { create :assignment, assignment_properties_attributes: { group_min: 1, group_max: 1 } }
         context 'and the repo name is different and the group is named after the inviter' do
-          let(:group) { create :group, group_name: group_name, repo_name: 'some_other_repo' }
+          let(:group) { create :group, group_name: group_name, repo_name: 'some_other_repo', course: assignment.course }
           before do
             create :grouping_with_inviter, group: group, assignment: assignment, inviter: student1
           end
           context 'and the group name is the same as the inviter user' do
             let(:group_name) { student1.user_name }
+            let(:assignment2) { create :assignment, course: assignment.course }
             it 'should create a new grouping' do
               data = [[group.group_name, student1.user_name]]
-              expect { CreateGroupsJob.perform_now(create(:assignment), data) }.to(change { Grouping.count }.by(1))
+              expect { CreateGroupsJob.perform_now(assignment2, data) }.to(change { Grouping.count }.by(1))
             end
             it 'should use the old repo name' do
               data = [[group.group_name, student1.user_name]]
-              CreateGroupsJob.perform_now(create(:assignment), data)
+              CreateGroupsJob.perform_now(assignment2, data)
               expect(Grouping.joins(:group).pluck(:repo_name)).to contain_exactly('some_other_repo', 'some_other_repo')
             end
           end

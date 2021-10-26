@@ -76,6 +76,9 @@ class Grouping < ApplicationRecord
 
   belongs_to :group
   validates_associated :group
+  validate :assignment_group_course_match
+
+  has_one :course, through: :assignment
 
   validates_inclusion_of :is_collected, in: [true, false]
 
@@ -771,5 +774,10 @@ class Grouping < ApplicationRecord
       inviter.present? &&
       inviter.section.present? &&
       assignment.section_due_dates.present?
+  end
+
+  def assignment_group_course_match
+    return if self.assignment.nil? || self.group.nil?
+    errors.add(:base, 'Assignment and Group must be in same course') unless self.assignment.course == self.group.course
   end
 end

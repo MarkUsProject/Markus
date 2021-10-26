@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_10_13_190449) do
+ActiveRecord::Schema.define(version: 2021_10_18_123836) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -79,6 +79,8 @@ ActiveRecord::Schema.define(version: 2021_10_13_190449) do
     t.integer "parent_assessment_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.bigint "course_id", null: false
+    t.index ["course_id"], name: "index_assessments_on_course_id"
     t.index ["type", "short_identifier"], name: "index_assessments_on_type_and_short_identifier"
   end
 
@@ -307,7 +309,9 @@ ActiveRecord::Schema.define(version: 2021_10_13_190449) do
   create_table "groups", id: :serial, force: :cascade do |t|
     t.string "group_name", limit: 30
     t.string "repo_name"
-    t.index ["group_name"], name: "groups_name_unique", unique: true
+    t.bigint "course_id", null: false
+    t.index ["course_id"], name: "index_groups_on_course_id"
+    t.index ["group_name", "course_id"], name: "index_groups_on_group_name_and_course_id", unique: true
   end
 
   create_table "job_messengers", id: :serial, force: :cascade do |t|
@@ -443,6 +447,8 @@ ActiveRecord::Schema.define(version: 2021_10_13_190449) do
     t.string "name"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.bigint "course_id", null: false
+    t.index ["course_id"], name: "index_sections_on_course_id"
   end
 
   create_table "sessions", id: :serial, force: :cascade do |t|
@@ -631,6 +637,7 @@ ActiveRecord::Schema.define(version: 2021_10_13_190449) do
   add_foreign_key "annotation_texts", "annotation_categories", name: "fk_annotation_labels_annotation_categories", on_delete: :cascade
   add_foreign_key "annotations", "annotation_texts", name: "fk_annotations_annotation_texts"
   add_foreign_key "annotations", "submission_files", name: "fk_annotations_submission_files"
+  add_foreign_key "assessments", "courses"
   add_foreign_key "assignment_files", "assessments", name: "fk_assignment_files_assignments", on_delete: :cascade
   add_foreign_key "assignment_properties", "assessments", on_delete: :cascade
   add_foreign_key "assignment_properties", "starter_file_groups", column: "default_starter_file_group_id"
@@ -647,6 +654,7 @@ ActiveRecord::Schema.define(version: 2021_10_13_190449) do
   add_foreign_key "grouping_starter_file_entries", "starter_file_entries"
   add_foreign_key "groupings", "assessments", name: "fk_groupings_assignments"
   add_foreign_key "groupings", "groups", name: "fk_groupings_groups"
+  add_foreign_key "groups", "courses"
   add_foreign_key "key_pairs", "users"
   add_foreign_key "levels", "criteria"
   add_foreign_key "marking_weights", "assessments"
@@ -663,6 +671,7 @@ ActiveRecord::Schema.define(version: 2021_10_13_190449) do
   add_foreign_key "roles", "users"
   add_foreign_key "section_starter_file_groups", "sections"
   add_foreign_key "section_starter_file_groups", "starter_file_groups"
+  add_foreign_key "sections", "courses"
   add_foreign_key "split_pages", "groups"
   add_foreign_key "split_pages", "split_pdf_logs"
   add_foreign_key "split_pdf_logs", "exam_templates"

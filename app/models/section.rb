@@ -7,6 +7,8 @@ class Section < ApplicationRecord
   has_many :section_starter_file_groups
   has_many :starter_file_groups, through: :section_starter_file_groups
 
+  belongs_to :course, inverse_of: :sections
+
   # Returns true when students are part of this section
   def has_students?
     !students.empty?

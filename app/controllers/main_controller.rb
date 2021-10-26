@@ -139,7 +139,7 @@ class MainController < ApplicationController
       :grade_entry_items
     ]).order('id ASC')
 
-    @current_assignment = Assignment.get_current_assignment
+    @current_assignment = Assignment.get_current_assignment # TODO: change to @course.get_current_assignment
 
     render :index, layout: 'assignment_content'
   end

@@ -1,12 +1,6 @@
 describe GitRevision do
   context 'with a git repo' do
-    before(:context) do
-      repo_path = "#{::Rails.root}/data/test/repos/test_repo_workdir"
-      unless GitRepository.repository_exists?(repo_path)
-        GitRepository.create(repo_path)
-      end
-    end
-    let!(:repo) { build(:git_repository) }
+    let(:repo) { build(:git_repository) }
     describe '#files_at_path' do
       # Commit a file named test in the workdir
       before(:each) do

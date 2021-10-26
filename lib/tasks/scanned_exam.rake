@@ -7,6 +7,7 @@ namespace :db do
     FileUtils.rm_rf(Dir.glob('data/dev/exam_templates/*'))
 
     a = Assignment.create(
+      course: Course.first,
       short_identifier: 'midterm',
       description: 'The first midterm',
       message: 'Illustrates the use of scanned exams.',
