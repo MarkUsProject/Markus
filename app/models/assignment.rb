@@ -442,9 +442,7 @@ class Assignment < Assessment
   end
 
   def valid_groupings
-    groupings.includes(student_memberships: :role).select do |grouping|
-      grouping.is_valid?
-    end
+    groupings.includes(student_memberships: :role).select(&:is_valid?)
   end
 
   def invalid_groupings
