@@ -753,11 +753,11 @@ class AssignmentsController < ApplicationController
   def display_rejected_properties(is_timed, is_scanned, is_peer_review, denied)
     unless denied.empty?
       if is_scanned
-        type = I18n.t("activerecord.models.scanned_assignment.one")
+        type = I18n.t('activerecord.models.scanned_assignment.one')
       elsif is_timed
-        type = I18n.t("activerecord.models.timed_assignment.one")
+        type = I18n.t('activerecord.models.timed_assignment.one')
       elsif is_peer_review
-        type = I18n.t("activerecord.models.peer_review_assignment.one")
+        type = I18n.t('activerecord.models.peer_review_assignment.one')
       else
         type = Assignment.model_name.human
       end
