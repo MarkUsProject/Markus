@@ -616,14 +616,14 @@ class AssignmentsController < ApplicationController
         child_prop_file = zipfile.find_entry(CONFIG_FILES[:peer_review_properties])
         unless child_prop_file.nil?
           child_assignment = build_uploaded_assignment(child_prop_file, assignment)
-          #child_assignment.save!
+          child_assignment.save!
           zipfile.remove(child_prop_file)
           child_tag_prop = build_hash_from_zip(zipfile, :peer_review_tags)
           Tag.from_yml(child_tag_prop, child_assignment.id)
           child_criteria_prop = build_hash_from_zip(zipfile, :peer_review_criteria)
           config_criteria(child_assignment, child_criteria_prop)
         end
-        #assignment.save!
+        assignment.save!
         Tag.from_yml(tag_prop, assignment.id)
         config_criteria(assignment, criteria_prop)
         zipfile.each do |entry|
@@ -689,8 +689,7 @@ class AssignmentsController < ApplicationController
     yaml_content = prop_file.get_input_stream.read.encode(Encoding::UTF_8, 'UTF-8')
     properties = parse_yaml_content(yaml_content)
     cleaned_properties = filter_assignment_properties(properties, !parent_assignment.nil?)
-    puts(cleaned_properties)
-    assignment = Assignment.new(properties)
+    assignment = Assignment.new(cleaned_properties)
     if parent_assignment.nil?
       assignment.repository_folder = assignment.short_identifier
     else
@@ -702,8 +701,8 @@ class AssignmentsController < ApplicationController
     assignment
   end
 
-  # Filters out all keys that are not +accepted_keys+ from the +hash+ and returns
-  # an array of rejected keys.
+  # Filters out all keys that are not +accepted_keys+ from the +hash+ and returns tuple list
+  # first containing an array of rejected keys and an array of rejected keys after.
   def filter_hash(hash, *accepted_keys)
     accepted_keys.flatten!
     rejected = []
@@ -714,12 +713,11 @@ class AssignmentsController < ApplicationController
     [new, rejected]
   end
 
-  # Filters out an array +arr+ of hashes such that each hash
-  # only has the +accepted_keys+. Modifies +arr+ in place and returns an
-  # array of rejected keys.
+  # Filters out an array +arr+ of hashes such that each hash only has the +accepted_keys+.
+  # Modifies +arr+ in place and returns an array of rejected keys.
   def filter_array_hash!(arr, *accepted_keys)
     rejected_keys = []
-    arr.select! do |record|
+    arr.map! do |record|
       if record.is_a?(Hash)
         clean_record, denied = filter_hash(record, accepted_keys)
         rejected_keys.concat(denied)
@@ -730,6 +728,8 @@ class AssignmentsController < ApplicationController
     rejected_keys
   end
 
+  # Filters out any invalid and/or unneeded assignment +properties+ for a given assignment
+  # type (+is_peer_review+, scanned, timed, neither).
   def filter_assignment_properties(properties, is_peer_review)
     is_scanned = false
     is_timed = false
@@ -774,7 +774,7 @@ class AssignmentsController < ApplicationController
       denied.concat(denied_attr)
     end
 
-    if !is_scanned && !is_timed
+    if !is_scanned && !is_peer_review
       # Ensure submission rule attributes are valid
       if properties.key?(:submission_rule_attributes)
         sub_attr = properties[:submission_rule_attributes]
@@ -792,6 +792,7 @@ class AssignmentsController < ApplicationController
         denied.concat(denied_file_attr)
       end
     end
+    flash_message(:warning, "The following properties have been ignored: #{denied.join(', ')}") unless denied.empty?
     properties
   end
 
