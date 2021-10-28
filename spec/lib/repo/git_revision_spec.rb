@@ -1,6 +1,7 @@
 describe GitRevision do
   context 'with a git repo' do
     let(:repo) { build(:git_repository) }
+    before(:each) { FileUtils.rm_r(Dir.glob(File.join(Settings.repository.storage, '*'))) }
     describe '#files_at_path' do
       # Commit a file named test in the workdir
       before(:each) do

@@ -1,3 +1,5 @@
+require 'csv'
+
 # Implements AbstractRepository for Git repositories
 # It implements the following paradigm:
 #   1. Repositories are created by using ???
