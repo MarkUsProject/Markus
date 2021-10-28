@@ -45,6 +45,8 @@ es:
     models:
       assignment:
         one: Proyect
+      peer_review_assignment:
+        one: UPDATE ME
       scanned_assignment:
         one: Proyecto Escaneado
       timed_assignment:

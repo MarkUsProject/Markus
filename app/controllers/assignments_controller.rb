@@ -687,7 +687,7 @@ class AssignmentsController < ApplicationController
   #               If building a peer review assignment, prop_file must not be null.
   def build_uploaded_assignment(prop_file, parent_assignment = nil)
     yaml_content = prop_file.get_input_stream.read.encode(Encoding::UTF_8, 'UTF-8')
-    properties = parse_yaml_content(yaml_content)
+    properties = parse_yaml_content(yaml_content).deep_symbolize_keys
     cleaned_properties = filter_assignment_properties(properties, !parent_assignment.nil?)
     assignment = Assignment.new(cleaned_properties)
     if parent_assignment.nil?
@@ -728,21 +728,47 @@ class AssignmentsController < ApplicationController
     rejected_keys
   end
 
-  # Filters out any invalid and/or unneeded assignment +properties+ for a given assignment
-  # type (+is_peer_review+, scanned, timed, neither).
-  def filter_assignment_properties(properties, is_peer_review)
+  # Helper for filter_assignment_properties. Returns a list based on an assignment's +properties+
+  # first containing if the assignment is scanned and next if it is timed. This function also checks
+  # to ensure the assignment type matches the params unless this assignment +is_peer_review+
+  def obtain_assignment_type(properties, is_peer_review)
     is_scanned = false
     is_timed = false
-    properties.deep_symbolize_keys!
     if properties.key?(:assignment_properties_attributes)
       a_prop = properties[:assignment_properties_attributes]
       if a_prop.key?(:scanned_exam) && a_prop[:scanned_exam].to_s == 'true'
         is_scanned = true
-      elsif a_prop.key?(:is_timed) && a_prop[:is_timed].to_s == 'true'
+      end
+      if a_prop.key?(:is_timed) && a_prop[:is_timed].to_s == 'true'
         is_timed = true
       end
     end
+    raise I18n.t('assignments.cannot_be_timed_and_scanned') if is_scanned && is_timed && !is_peer_review
     check_assignment_type_match!(is_scanned, is_timed) unless is_peer_review
+    [is_scanned, is_timed]
+  end
+
+  # Helper for filter_assignment_properties that displays a warning showing all properties being ignored
+  # due to the assignment type. Displays nothing if there are no properties being ignored.
+  def display_rejected_properties(is_timed, is_scanned, is_peer_review, denied)
+    unless denied.empty?
+      if is_scanned
+        type = I18n.t("activerecord.models.scanned_assignment.one")
+      elsif is_timed
+        type = I18n.t("activerecord.models.timed_assignment.one")
+      elsif is_peer_review
+        type = I18n.t("activerecord.models.peer_review_assignment.one")
+      else
+        type = Assignment.model_name.human
+      end
+      flash_message(:warning, "#{I18n.t('assignments.ignoring_properties', assignment_type: type)}#{denied.join(', ')}")
+    end
+  end
+
+  # Filters out any invalid and/or unneeded assignment +properties+ for a given assignment
+  # type (+is_peer_review+, scanned, timed, neither).
+  def filter_assignment_properties(properties, is_peer_review)
+    is_scanned, is_timed = obtain_assignment_type(properties, is_peer_review)
 
     # Ensure base property keys are valid
     base_properties = [:short_identifier, :description, :due_date, :message, :is_hidden,
@@ -773,12 +799,10 @@ class AssignmentsController < ApplicationController
       properties[:assignment_properties_attributes], denied_attr = filter_hash(attr, attr_properties)
       denied.concat(denied_attr)
     end
-
     if !is_scanned && !is_peer_review
       # Ensure submission rule attributes are valid
       if properties.key?(:submission_rule_attributes)
-        sub_attr = properties[:submission_rule_attributes]
-        sub_attr, denied_sub = filter_hash(sub_attr, :type, :periods_attributes)
+        sub_attr, denied_sub = filter_hash(properties[:submission_rule_attributes], :type, :periods_attributes)
         if sub_attr.key?(:periods_attributes) && sub_attr[:periods_attributes].is_a?(Array)
           denied_periods = filter_array_hash!(sub_attr[:periods_attributes], :deduction, :hours, :interval)
           denied_sub.concat(denied_periods)
@@ -792,7 +816,7 @@ class AssignmentsController < ApplicationController
         denied.concat(denied_file_attr)
       end
     end
-    flash_message(:warning, "The following properties have been ignored: #{denied.join(', ')}") unless denied.empty?
+    display_rejected_properties(is_timed, is_scanned, is_peer_review, denied)
     properties
   end
 

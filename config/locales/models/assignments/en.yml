@@ -45,6 +45,8 @@ en:
     models:
       assignment:
         one: Assignment
+      peer_review_assignment:
+        one: Peer Review Assignment
       scanned_assignment:
         one: Scanned Assignment
       timed_assignment:
