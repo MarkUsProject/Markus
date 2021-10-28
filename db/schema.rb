@@ -424,9 +424,9 @@ ActiveRecord::Schema.define(version: 2021_10_18_123836) do
     t.bigint "user_id", null: false
     t.bigint "course_id", null: false
     t.bigint "section_id"
-    t.string "type"
+    t.string "type", null: false
     t.boolean "hidden", default: false, null: false
-    t.integer "grace_credits", default: 0
+    t.integer "grace_credits", default: 0, null: false
     t.boolean "receives_results_emails", default: false, null: false
     t.boolean "receives_invite_emails", default: false, null: false
     t.datetime "created_at", precision: 6, null: false

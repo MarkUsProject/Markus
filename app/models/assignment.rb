@@ -422,7 +422,7 @@ class Assignment < Assessment
             unless grouping.memberships << membership # this saves the membership as a side effect, i.e. can return false
               grouping.memberships.delete(membership)
               warnings << I18n.t('groups.clone_warning.no_member',
-                                 member: m.role.user.user_name,
+                                 member: m.role.user_name,
                                  group: g.group.group_name, error: membership.errors.messages)
             end
           end
@@ -557,7 +557,7 @@ class Assignment < Assessment
         group_name = grouping_data[g.id][0]['groups.group_name']
         section = grouping_data[g.id][0]['sections.name']
         group_members = members.fetch(g.id, [])
-                               .map { |s| [s['humans.user_name'], s['humans.first_name'], s['humans.last_name']] }
+                               .map { |s| [s['users.user_name'], s['users.first_name'], s['users.last_name']] }
       end
 
       tag_info = tag_data.fetch(g.id, [])
@@ -570,7 +570,7 @@ class Assignment < Assessment
         members: group_members,
         tags: tag_info,
         graders: graders.fetch(g.id, [])
-                        .map { |s| [s['humans.user_name'], s['humans.first_name'], s['humans.last_name']] },
+                        .map { |s| [s['users.user_name'], s['users.first_name'], s['users.last_name']] },
         marking_state: marking_state(has_remark,
                                      result&.marking_state,
                                      result&.released_to_students,
@@ -606,7 +606,7 @@ class Assignment < Assessment
                                 :accepted_students,
                                 current_result: :marks)
                       .joins(:memberships).joins(:humans)
-                      .where('memberships.humans.user_id': user.id)
+                      .where('memberships.users.user_id': user.id)
     end
 
     headers = [['User name', 'Group', 'Final grade'], ['', 'Out of', self.max_mark]]
@@ -627,7 +627,7 @@ class Assignment < Assessment
         result = g.current_result
         marks = result.nil? ? {} : result.mark_hash
         g.accepted_students.each do |s|
-          row = [s.human.user_name, g.group.group_name]
+          row = [s.user_name, g.group.group_name]
           if result.nil?
             row += Array.new(2 + self.ta_criteria.count, nil)
           else
@@ -915,7 +915,7 @@ class Assignment < Assessment
                       .group('user_name')
                       .count
     graders = Ta.joins(:human)
-                .pluck(:user_name, :first_name, :last_name, :id).map do |user_name, first_name, last_name, id|
+                .pluck(:user_name, :first_name, :last_name, 'roles.id').map do |user_name, first_name, last_name, id|
       {
         user_name: user_name,
         first_name: first_name,
@@ -1113,7 +1113,7 @@ class Assignment < Assessment
   # zip all files in the folder at +self.autotest_files_dir+ and return the
   # path to the zip file
   def zip_automated_test_files(role)
-    zip_name = "#{self.short_identifier}-testfiles-#{role.human.user_name}"
+    zip_name = "#{self.short_identifier}-testfiles-#{role.user_name}"
     zip_path = File.join('tmp', zip_name + '.zip')
     FileUtils.rm_rf zip_path
     files_dir = Pathname.new self.autotest_files_dir

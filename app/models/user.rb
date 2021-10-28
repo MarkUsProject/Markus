@@ -12,7 +12,6 @@ class User < ApplicationRecord
 
   # Group relationships
   has_many :key_pairs, dependent: :destroy
-  attribute :type, default: 'Human'
   validates_format_of :type, with: /\AHuman|TestServer\z/
 
   validates_presence_of     :user_name, :last_name, :first_name, :time_zone, :display_name
@@ -101,38 +100,6 @@ class User < ApplicationRecord
 
   def set_time_zone
     self.time_zone ||= Time.zone.name
-  end
-
-  # Submission helper methods -------------------------------------------------
-
-  def grouping_for(aid)
-    groupings.find { |g| g.assessment_id == aid }
-  end
-
-  def is_a_reviewer?(assignment)
-    is_a?(Student) && !assignment.nil? && assignment.is_peer_review?
-  end
-
-  def is_reviewer_for?(assignment, result)
-    # aid is the peer review assignment id, and result_id
-    # is the peer review result
-    if assignment.nil?
-      return false
-    end
-
-    group =  grouping_for(Integer(assignment.id))
-    if group.nil?
-      return false
-    end
-
-    prs = PeerReview.where(reviewer_id: group.id)
-    if prs.first.nil?
-      return false
-    end
-
-    pr = prs.find {|p| p.result_id == Integer(result.id)}
-
-    is_a?(Student) && !pr.nil?
   end
 
 

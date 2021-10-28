@@ -12,7 +12,7 @@ class Tag < ApplicationRecord
   end
 
   def self.from_csv(data)
-    admins = Hash[Admin.joins(:user).pluck(:user_name, :id)]
+    admins = Hash[Admin.joins(:human).pluck(:user_name, 'roles.id')]
     tag_data = []
     result = MarkusCsv.parse(data) do |row|
       raise CsvInvalidLineError if row.length < NUM_CSV_FIELDS
@@ -32,7 +32,7 @@ class Tag < ApplicationRecord
   end
 
   def self.from_yml(data)
-    admins = Hash[Admin.joins(:user).pluck(:user_name, :id)]
+    admins = Hash[Admin.joins(:human).pluck(:user_name, 'roles.id')]
     begin
       tag_data = data.map do |row|
         name, description, user_id = row['name'], row['description'], admins[row['user']]

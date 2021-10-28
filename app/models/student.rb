@@ -114,8 +114,8 @@ class Student < Role
       else
         # If an individual repo has already been created for this user
         # then just use that one.
-        @group = Group.find_or_initialize_by(group_name: human.user_name, course: @assignment.course) do |group|
-          group.repo_name = human.user_name
+        @group = Group.find_or_initialize_by(group_name: self.user_name, course: @assignment.course) do |group|
+          group.repo_name = self.user_name
         end
       end
       unless @group.save

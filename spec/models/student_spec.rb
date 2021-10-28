@@ -225,7 +225,7 @@ describe Student do
         context 'working alone' do
           before(:each) do
             expect(@student.create_group_for_working_alone_student(@assignment.id))
-            @group = Group.find_by(group_name: @student.human.user_name)
+            @group = Group.find_by(group_name: @student.user_name)
           end
 
           it 'should create the group' do
@@ -237,7 +237,7 @@ describe Student do
           end
 
           it 'have their repo name equal their user name' do
-            expect(@group.repo_name).to eq(@student.human.user_name)
+            expect(@group.repo_name).to eq(@student.user_name)
           end
 
           it 'not have any pending memberships' do

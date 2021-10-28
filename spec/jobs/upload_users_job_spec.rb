@@ -20,6 +20,10 @@ describe UploadUsersJob do
       uploaded
       expect(Role.count).to eq(File.read(file).lines.count)
     end
+    it 'should create sections' do
+      uploaded
+      expect(Section.pluck(:name)).to contain_exactly('LEC0101', 'LEC0201')
+    end
   end
 
   context 'when getting a malformed csv' do

@@ -14,6 +14,7 @@ describe Role do
 
   context 'A good Role model' do
     it 'should be able to create a student' do
+      byebug
       create(:student, course_id: course.id)
     end
     it 'should be able to create an admin' do

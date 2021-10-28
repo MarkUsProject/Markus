@@ -50,7 +50,7 @@ class Annotation < ApplicationRecord
     }
 
     if include_creator
-      data[:creator] = "#{creator.human.first_name} #{creator.human.last_name}"
+      data[:creator] = "#{creator.first_name} #{creator.last_name}"
     end
 
     data

@@ -1938,7 +1938,7 @@ describe Assignment do
       let!(:groupings) { create_list :grouping_with_inviter, 3, assignment: assignment_tag }
 
       before :each do
-        @assignment = create(:assignment_with_criteria_and_results)
+        @assignment = create(:assignment_with_criteria_and_results_and_tas)
       end
 
       context 'with assigned students' do
@@ -1983,6 +1983,12 @@ describe Assignment do
         it 'has group with members' do
           data = @assignment.summary_json(admin)[:data]
           expect(data[0][:members]).not_to be_empty
+          expect(data[0][:members][0]).not_to include(nil)
+        end
+
+        it 'has graders' do
+          data = @assignment.summary_json(admin)[:data]
+          expect(data[0][:graders][0]).not_to include(nil)
         end
 
         context 'with an extra mark' do
@@ -2389,6 +2395,17 @@ describe Assignment do
         actual_grouping = assignment.current_grader_data[:groups][0]
         expect(actual_grouping[:_id]).to eq(grouping.id)
         expect(actual_grouping[:section]).to eq(section.id)
+      end
+    end
+
+    context 'groupings that have graders' do
+      let(:section) { create :section }
+      let(:student) { create :student, section: section }
+      let(:grouping) { create :grouping_with_inviter, inviter: student, assignment: assignment }
+      let(:ta) { create :ta }
+      it 'returns correct graders' do
+        Grouping.assign_all_tas([grouping], [ta.id], assignment)
+        expect(assignment.current_grader_data[:graders][0][:_id]). to eq(ta.id)
       end
     end
   end

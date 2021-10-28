@@ -21,13 +21,13 @@ describe User do
   end
 
   describe 'uniqueness validation' do
-    subject { create :user }
+    subject { create :human }
     it { is_expected.to validate_uniqueness_of :user_name }
   end
 
   context 'A good User model' do
     it 'should be able to create a human user' do
-      create(:user, type: 'Human')
+      create(:human)
     end
   end
 
@@ -36,7 +36,7 @@ describe User do
       new_user = { user_name: '   ausername   ',
                    first_name: '   afirstname ',
                    last_name: '   alastname  ' }
-      @user = User.new(new_user)
+      @user = Human.new(new_user)
     end
 
     it 'should strip all strings with white space from user name' do
