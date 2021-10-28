@@ -57,7 +57,7 @@ class Role < ApplicationRecord
       return false
     end
 
-    group =  grouping_for(Integer(assignment.id))
+    group = grouping_for(Integer(assignment.id))
     if group.nil?
       return false
     end
@@ -67,7 +67,7 @@ class Role < ApplicationRecord
       return false
     end
 
-    pr = prs.find {|p| p.result_id == Integer(result.id)}
+    pr = prs.find { |p| p.result_id == Integer(result.id) }
 
     is_a?(Student) && !pr.nil?
   end
@@ -89,6 +89,7 @@ class Role < ApplicationRecord
                                                      'assessments.is_hidden': false))
     end
     return assessments.where(id: assessment_id) if assessment_id
+
     assessments
   end
 end

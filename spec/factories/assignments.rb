@@ -112,7 +112,7 @@ FactoryBot.define do
         groupings = 3.times.map { create(:grouping, assignment: assign) }
         pr_groupings = 3.times.map { create(:grouping, assignment: assign.pr_assignment) }
         3.times.each { |i| create(:accepted_student_membership, role: students[i], grouping: groupings[i]) }
-        3.times.each { |i| create(:accepted_student_membership, role: students[i+3], grouping: pr_groupings[i]) }
+        3.times.each { |i| create(:accepted_student_membership, role: students[i + 3], grouping: pr_groupings[i]) }
         submissions = 3.times.map { |i| create(:version_used_submission, grouping: groupings[i]) }
         3.times.each { |i| create(:result, submission: submissions[i], marking_state: Result::MARKING_STATES[:complete]) }
     end
