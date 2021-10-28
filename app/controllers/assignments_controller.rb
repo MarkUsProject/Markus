@@ -616,14 +616,14 @@ class AssignmentsController < ApplicationController
         child_prop_file = zipfile.find_entry(CONFIG_FILES[:peer_review_properties])
         unless child_prop_file.nil?
           child_assignment = build_uploaded_assignment(child_prop_file, assignment)
-          child_assignment.save!
+          #child_assignment.save!
           zipfile.remove(child_prop_file)
           child_tag_prop = build_hash_from_zip(zipfile, :peer_review_tags)
           Tag.from_yml(child_tag_prop, child_assignment.id)
           child_criteria_prop = build_hash_from_zip(zipfile, :peer_review_criteria)
           config_criteria(child_assignment, child_criteria_prop)
         end
-        assignment.save!
+        #assignment.save!
         Tag.from_yml(tag_prop, assignment.id)
         config_criteria(assignment, criteria_prop)
         zipfile.each do |entry|
@@ -688,88 +688,111 @@ class AssignmentsController < ApplicationController
   def build_uploaded_assignment(prop_file, parent_assignment = nil)
     yaml_content = prop_file.get_input_stream.read.encode(Encoding::UTF_8, 'UTF-8')
     properties = parse_yaml_content(yaml_content)
-    puts(properties)
+    cleaned_properties = filter_assignment_properties(properties, !parent_assignment.nil?)
+    puts(cleaned_properties)
+    assignment = Assignment.new(properties)
     if parent_assignment.nil?
-      validate_assignment_properties(properties)
-      assignment = Assignment.new(properties)
       assignment.repository_folder = assignment.short_identifier
     else
-      # Filter properties not supported by peer review assignments, then build assignment
-      validate_assignment_properties(properties, true)
-      assignment = Assignment.new(peer_review_properties)
       parent_assignment.has_peer_review = true
       assignment.has_peer_review = false
       assignment.parent_assignment = parent_assignment
       assignment.repository_folder = parent_assignment.repository_folder
     end
-    nil
+    assignment
   end
 
   # Filters out all keys that are not +accepted_keys+ from the +hash+ and returns
   # an array of rejected keys.
-  def filter_hash!(accepted_keys, hash)
+  def filter_hash(hash, *accepted_keys)
+    accepted_keys.flatten!
     rejected = []
-    hash.select! do |key|
-      if accepted_keys.include?(key)
-        true
-      else
-        rejected << key
-        false
-      end
+    new = {}
+    hash.each_key do |key|
+      accepted_keys.include?(key) ? new[key] = hash[key] : rejected << key
     end
-    rejected
+    [new, rejected]
   end
 
-  def validate_assignment_properties(properties, is_peer_review = false)
+  # Filters out an array +arr+ of hashes such that each hash
+  # only has the +accepted_keys+. Modifies +arr+ in place and returns an
+  # array of rejected keys.
+  def filter_array_hash!(arr, *accepted_keys)
+    rejected_keys = []
+    arr.select! do |record|
+      if record.is_a?(Hash)
+        clean_record, denied = filter_hash(record, accepted_keys)
+        rejected_keys.concat(denied)
+        clean_record
+      end
+    end
+    arr.compact!
+    rejected_keys
+  end
+
+  def filter_assignment_properties(properties, is_peer_review)
     is_scanned = false
     is_timed = false
+    properties.deep_symbolize_keys!
     if properties.key?(:assignment_properties_attributes)
       a_prop = properties[:assignment_properties_attributes]
-      if a_prop.key?(:scanned_exam) && a_prop[:scanned_exam] == true
+      if a_prop.key?(:scanned_exam) && a_prop[:scanned_exam].to_s == 'true'
         is_scanned = true
-      elsif a_prop.key?(:is_timed) && a_prop[:is_timed] == true
+      elsif a_prop.key?(:is_timed) && a_prop[:is_timed].to_s == 'true'
         is_timed = true
       end
     end
     check_assignment_type_match!(is_scanned, is_timed) unless is_peer_review
 
-    # Ensure main property keys are accepted
-    unused_properties = []
-    main_prop = [:short_identifier, :description, :due_date, :message,
-                 :is_hidden, :show_total, :assignment_properties_attributes]
-    main_prop.push(:submission_rule_attributes,
-                   :assignment_files_attributes) unless is_scanned || is_peer_review
-    unused_properties << filter_hash!(main_prop, properties)
+    # Ensure base property keys are valid
+    base_properties = [:short_identifier, :description, :due_date, :message, :is_hidden,
+                       :show_total, :assignment_properties_attributes]
+    base_properties.push(:submission_rule_attributes, :assignment_files_attributes) unless is_scanned || is_peer_review
+    properties, denied = filter_hash(properties, base_properties)
 
     # Ensure assignment_properties_attributes keys are accepted
     if properties.key?(:assignment_properties_attributes)
+      attr_properties = [:assign_graders_to_criteria, :section_groups_only, :section_due_dates_type,
+                         :hide_unassigned_criteria, :starter_file_type, :starter_files_after_due]
       if is_scanned
-        unused_properties << filter_hash!([:remark_due_date, :remark_message, :assign_graders_to_criteria,
-                                           :allow_remarks, :display_grader_names_to_students,
-                                           :display_median_to_students, :has_peer_review, :section_groups_only,
-                                           :section_due_dates_type, :scanned_exam, :hide_unassigned_criteria,
-                                           :starter_file_type, :starter_files_after_due],
-                                          properties[:assignment_properties_attributes])
+        attr_properties.push(:remark_due_date, :remark_message, :allow_remarks, :display_grader_names_to_students,
+                             :display_median_to_students, :has_peer_review)
       elsif is_peer_review
-        unused_properties << filter_hash!([:group_min, :group_max, :student_form_groups, :assign_graders_to_criteria,
-                                           :group_name_autogenerated, :group_name_displayed, :invalid_override,
-                                           :section_groups_only, :section_due_dates_type, :anonymize_groups,
-                                           :hide_unassigned_criteria, :starter_file_type, :starter_files_after_due],
-                                          properties[:assignment_properties_attributes])
+        attr_properties.push(:group_min, :group_max, :student_form_groups, :group_name_autogenerated,
+                             :group_name_displayed, :invalid_override, :anonymize_groups)
       else
-        assigment_properties = [:group_min, :group_max, :tokens_per_period, :allow_web_submits, :student_form_groups,
-                                :remark_due_date, :remark_message, :assign_graders_to_criteria, :enable_test,
-                                :enable_student_tests, :allow_remarks, :display_grader_names_to_students,
-                                :display_median_to_students, :group_name_autogenerated, :vcs_submit, :has_peer_review,
-                                :group_name_displayed, :invalid_override, :section_groups_only,
-                                :section_due_dates_type, :unlimited_tokens, :only_required_files, :token_start_date,
-                                :token_period, :non_regenerating_tokens, :anonymize_groups, :hide_unassigned_criteria,
-                                :starter_file_type, :starter_files_after_due]
-        assigment_properties.push(:is_timed, :start_time, :duration) if is_timed
-        unused_properties << filter_hash!(assigment_properties, properties)
+        attr_properties.push(:group_min, :group_max, :tokens_per_period, :allow_web_submits, :student_form_groups,
+                             :remark_due_date, :remark_message, :enable_test, :enable_student_tests, :allow_remarks,
+                             :display_grader_names_to_students, :display_median_to_students, :group_name_autogenerated,
+                             :vcs_submit, :has_peer_review, :group_name_displayed, :invalid_override,
+                             :unlimited_tokens, :only_required_files, :token_start_date, :token_period,
+                             :non_regenerating_tokens, :anonymize_groups)
+        attr_properties.push(:is_timed, :start_time, :duration) if is_timed
       end
+      attr = properties[:assignment_properties_attributes]
+      properties[:assignment_properties_attributes], denied_attr = filter_hash(attr, attr_properties)
+      denied.concat(denied_attr)
     end
 
+    if !is_scanned && !is_timed
+      # Ensure submission rule attributes are valid
+      if properties.key?(:submission_rule_attributes)
+        sub_attr = properties[:submission_rule_attributes]
+        sub_attr, denied_sub = filter_hash(sub_attr, :type, :periods_attributes)
+        if sub_attr.key?(:periods_attributes) && sub_attr[:periods_attributes].is_a?(Array)
+          denied_periods = filter_array_hash!(sub_attr[:periods_attributes], :deduction, :hours, :interval)
+          denied_sub.concat(denied_periods)
+        end
+        properties[:submission_rule_attributes] = sub_attr
+        denied.concat(denied_sub)
+      end
+      # Ensure assignment file attributes are valid
+      if properties.key?(:assignment_files_attributes) && properties[:assignment_files_attributes].is_a?(Array)
+        denied_file_attr = filter_array_hash!(properties[:assignment_files_attributes], :filename)
+        denied.concat(denied_file_attr)
+      end
+    end
+    properties
   end
 
   def set_repo_vars(assignment, grouping)
