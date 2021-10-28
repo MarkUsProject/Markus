@@ -66,7 +66,7 @@ class Group < ApplicationRecord
     # See 'self.create' of lib/repo/subversion_repository.rb.
 
     begin
-      Repository.get_class.create(repo_path)
+      Repository.get_class.create(repo_path, self.course)
     rescue StandardError => e
       # log the collision
       errors.add(:base, self.repo_name)
