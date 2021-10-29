@@ -1,3 +1,5 @@
+require 'csv'
+
 # Implements AbstractRepository for Git repositories
 # It implements the following paradigm:
 #   1. Repositories are created by using ???
@@ -43,7 +45,7 @@ class GitRepository < Repository::AbstractRepository
 
   # Static method: Creates a new Git repository at
   # location 'connect_string'
-  def self.create(connect_string)
+  def self.create(connect_string, course)
     if GitRepository.repository_exists?(connect_string)
       raise RepositoryCollision.new("There is already a repository at #{connect_string}")
     end
@@ -63,7 +65,7 @@ class GitRepository < Repository::AbstractRepository
       repo = Rugged::Repository.clone_at(barepath, tmp_repo_path)
 
       # Do an initial commit with the .required_files.json
-      required = Assignment.get_required_files # TODO: change this to course.get_required_files
+      required = course.get_required_files
       required_path = File.join(tmp_repo_path, '.required.json')
       File.open(required_path, 'w') do |req|
         req.write(required.to_json)

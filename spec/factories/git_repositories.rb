@@ -1,10 +1,9 @@
 FactoryBot.define do
   factory :git_repository, class: GitRepository do
     initialize_with do
-      group = build(:group)
-      group.repo_name = 'test_repo_workdir'
-      repo_path = group.repo_path
-      GitRepository.create(repo_path) unless GitRepository.repository_exists?(repo_path)
+      course = build(:course)
+      repo_path = File.join Settings.repository.storage, course.name, 'test_repo_workdir'
+      GitRepository.create(repo_path, course) unless GitRepository.repository_exists?(repo_path)
       GitRepository.open(repo_path)
     end
   end
