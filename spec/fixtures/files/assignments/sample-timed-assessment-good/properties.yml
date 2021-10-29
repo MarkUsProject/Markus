@@ -49,5 +49,3 @@ submission_rule_attributes:
 assignment_files_attributes:
   - filename: short_answer.txt
   - filename: mc.txt
-  - filename: Q7.c
-  - filename: Q8.c
