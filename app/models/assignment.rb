@@ -252,7 +252,7 @@ class Assignment < Assessment
     # groupings.first(include: :memberships, conditions: [condition, uid]) #FIXME: needs schema update
 
     #FIXME: needs to be rewritten using a proper query...
-    User.find(uid.id).accepted_grouping_for(id)
+    Role.find(uid.id).accepted_grouping_for(id)
   end
 
   def display_for_note
@@ -397,12 +397,12 @@ class Assignment < Assessment
       self.save
       self.reload
       original_assignment.groupings.each do |g|
-        active_student_memberships = g.accepted_student_memberships.select { |m| !m.user.hidden }
+        active_student_memberships = g.accepted_student_memberships.reject { |m| m.role.hidden }
         if active_student_memberships.empty?
           warnings << I18n.t('groups.clone_warning.no_active_students', group: g.group.group_name)
           next
         end
-        active_ta_memberships = g.ta_memberships.select { |m| !m.user.hidden }
+        active_ta_memberships = g.ta_memberships.reject { |m| m.role.hidden }
         grouping = Grouping.new
         grouping.group_id = g.group_id
         grouping.assessment_id = self.id
@@ -416,13 +416,14 @@ class Assignment < Assessment
         Repository.get_class.update_permissions_after(only_on_request: true) do
           all_memberships.each do |m|
             membership = Membership.new
-            membership.user_id = m.user_id
+            membership.role_id = m.role_id
             membership.type = m.type
             membership.membership_status = m.membership_status
             unless grouping.memberships << membership # this saves the membership as a side effect, i.e. can return false
               grouping.memberships.delete(membership)
               warnings << I18n.t('groups.clone_warning.no_member',
-                                 member: m.user.user_name, group: g.group.group_name, error: membership.errors.messages)
+                                 member: m.role.user_name,
+                                 group: g.group.group_name, error: membership.errors.messages)
             end
           end
         end
@@ -433,7 +434,7 @@ class Assignment < Assessment
   end
 
   def grouped_students
-    student_memberships.map(&:user)
+    student_memberships.map(&:role)
   end
 
   def ungrouped_students
@@ -441,9 +442,7 @@ class Assignment < Assessment
   end
 
   def valid_groupings
-    groupings.includes(student_memberships: :user).select do |grouping|
-      grouping.is_valid?
-    end
+    groupings.includes(student_memberships: :role).select(&:is_valid?)
   end
 
   def invalid_groupings
@@ -451,7 +450,7 @@ class Assignment < Assessment
   end
 
   def assigned_groupings
-    groupings.joins(:ta_memberships).includes(ta_memberships: :user).uniq
+    groupings.joins(:ta_memberships).includes(ta_memberships: :role).uniq
   end
 
   def unassigned_groupings
@@ -489,14 +488,14 @@ class Assignment < Assessment
 
     if user.admin?
       groupings = self.groupings
-      graders = groupings.joins(:tas)
+      graders = groupings.joins(tas: :human)
                          .pluck_to_hash(:id, 'users.user_name', 'users.first_name', 'users.last_name')
                          .group_by { |x| x[:id] }
       assigned_criteria = nil
     else
       groupings = self.groupings
                       .joins(:memberships)
-                      .where('memberships.user_id': user.id)
+                      .where('memberships.role_id': user.id)
       graders = {}
       if self.assign_graders_to_criteria
         assigned_criteria = user.criterion_ta_associations
@@ -506,12 +505,11 @@ class Assignment < Assessment
         assigned_criteria = nil
       end
     end
-
     grouping_data = groupings.joins(:group)
                              .left_outer_joins(inviter: :section)
                              .pluck_to_hash(:id, 'groups.group_name', 'sections.name')
                              .group_by { |x| x[:id] }
-    members = groupings.joins(:accepted_students)
+    members = groupings.joins(accepted_students: :human)
                        .pluck_to_hash(:id, 'users.user_name', 'users.first_name', 'users.last_name')
                        .group_by { |x| x[:id] }
     tag_data = groupings
@@ -594,21 +592,21 @@ class Assignment < Assessment
 
   # Generate CSV summary of grades for this assignment
   # for the current user. The user should be an admin or TA.
-  def summary_csv(user)
-    return '' unless user.admin?
+  def summary_csv(role)
+    return '' unless role.admin?
 
-    if user.admin?
+    if role.admin?
       groupings = self.groupings
-                    .includes(:group,
-                              :accepted_students,
-                              current_result: :marks)
+                      .includes(:group,
+                                :accepted_students,
+                                current_result: :marks)
     else
       groupings = self.groupings
-                    .includes(:group,
-                              :accepted_students,
-                              current_result: :marks)
-                    .joins(:memberships)
-                    .where('memberships.user_id': user.id)
+                      .includes(:group,
+                                :accepted_students,
+                                current_result: :marks)
+                      .joins(:memberships).joins(:humans)
+                      .where('memberships.role_id': user.id)
     end
 
     headers = [['User name', 'Group', 'Final grade'], ['', 'Out of', self.max_mark]]
@@ -660,7 +658,7 @@ class Assignment < Assessment
 
   # Returns all the TAs associated with the assignment
   def tas
-    Ta.find(ta_memberships.map(&:user_id))
+    Ta.find(ta_memberships.map(&:role_id))
   end
 
   # Returns all the submissions that have not been graded (completed).
@@ -678,7 +676,7 @@ class Assignment < Assessment
     if ta_id.nil?
       groupings.size
     else
-      ta_memberships.where(user_id: ta_id).size
+      ta_memberships.where(role_id: ta_id).size
     end
   end
 
@@ -688,7 +686,7 @@ class Assignment < Assessment
     else
       groupings.joins(:ta_memberships)
                .where('groupings.is_collected': true)
-               .where('memberships.user_id': ta_id).count
+               .where('memberships.role_id': ta_id).count
     end
   end
 
@@ -707,14 +705,14 @@ class Assignment < Assessment
                                 .where(criterion_ta_associations: { ta_id: ta_id })
 
         self.current_results.joins(:marks, grouping: :ta_memberships)
-            .where('memberships.user_id': ta_id, 'marks.criterion_id': assigned_criteria.ids)
+            .where('memberships.role_id': ta_id, 'marks.criterion_id': assigned_criteria.ids)
             .where.not('marks.mark': nil)
             .group('results.id')
             .having('count(*) = ?', assigned_criteria.count)
             .length
       else
         self.current_results.joins(grouping: :ta_memberships)
-            .where('memberships.user_id': ta_id, 'results.marking_state': 'complete')
+            .where('memberships.role_id': ta_id, 'results.marking_state': 'complete')
             .count
       end
     end
@@ -727,7 +725,7 @@ class Assignment < Assessment
       # uniq is required since entries are doubled if there is a remark request
       Submission.joins(:annotations, :current_result, grouping: :ta_memberships)
                 .where(submissions: { submission_version_used: true },
-                       memberships: { user_id: ta_id },
+                       memberships: { role_id: ta_id },
                        results: { marking_state: Result::MARKING_STATES[:complete] },
                        groupings: { assessment_id: self.id })
                 .select('annotations.id').uniq.size
@@ -913,10 +911,11 @@ class Assignment < Assessment
   def current_grader_data
     ta_counts = self.criterion_ta_associations.group(:ta_id).count
     grader_data = self.groupings
-                      .joins(:tas)
-                      .group('users.user_name')
+                      .joins(tas: :human)
+                      .group('user_name')
                       .count
-    graders = Ta.pluck(:user_name, :first_name, :last_name, :id).map do |user_name, first_name, last_name, id|
+    graders = Ta.joins(:human)
+                .pluck(:user_name, :first_name, :last_name, 'roles.id').map do |user_name, first_name, last_name, id|
       {
         user_name: user_name,
         first_name: first_name,
@@ -928,7 +927,7 @@ class Assignment < Assessment
     end
 
     group_data = self.groupings
-                     .left_outer_joins(:tas, :group)
+                     .left_outer_joins(:group, tas: :human)
                      .pluck('groupings.id', 'groups.group_name', 'users.user_name',
                             'groupings.criteria_coverage_count')
     groups = Hash.new { |h, k| h[k] = [] }
@@ -951,7 +950,7 @@ class Assignment < Assessment
     end
 
     criterion_data =
-      self.criteria.left_outer_joins(:tas)
+      self.criteria.left_outer_joins(tas: :human)
           .pluck('criteria.name', 'criteria.position',
                  'criteria.assigned_groups_count', 'users.user_name')
     criteria = Hash.new { |h, k| h[k] = [] }
@@ -986,7 +985,7 @@ class Assignment < Assessment
       groupings = self.groupings
     elsif current_user.ta?
       groupings = self.groupings.where(id: self.groupings.joins(:ta_memberships)
-                                                         .where('memberships.user_id': current_user.id)
+                                                         .where('memberships.role_id': current_user.id)
                                                          .select(:'groupings.id'))
     else
       return []
@@ -1028,7 +1027,7 @@ class Assignment < Assessment
       member_data = {}
       section_data = {}
     else
-      member_data = groupings.joins(:accepted_students)
+      member_data = groupings.joins(accepted_students: :human)
                              .pluck_to_hash('groupings.id', 'users.user_name')
                              .group_by { |h| h['groupings.id'] }
 
@@ -1113,8 +1112,8 @@ class Assignment < Assessment
 
   # zip all files in the folder at +self.autotest_files_dir+ and return the
   # path to the zip file
-  def zip_automated_test_files(user)
-    zip_name = "#{self.short_identifier}-testfiles-#{user.user_name}"
+  def zip_automated_test_files(role)
+    zip_name = "#{self.short_identifier}-testfiles-#{role.user_name}"
     zip_path = File.join('tmp', zip_name + '.zip')
     FileUtils.rm_rf zip_path
     files_dir = Pathname.new self.autotest_files_dir

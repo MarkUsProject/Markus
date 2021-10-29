@@ -12,8 +12,8 @@ describe Ta do
 
     context 'when the TA is assigned some groupings' do
       let!(:ta_associations) do
-        [create(:ta_membership, user: ta, grouping: assignment.groupings.first),
-         create(:ta_membership, user: ta, grouping: assignment.groupings.second)]
+        [create(:ta_membership, role: ta, grouping: assignment.groupings.first),
+         create(:ta_membership, role: ta, grouping: assignment.groupings.second)]
       end
 
       context 'when TAs are not assigned criteria' do

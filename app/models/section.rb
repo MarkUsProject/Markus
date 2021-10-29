@@ -35,7 +35,7 @@ class Section < ApplicationRecord
 
     # mark all groupings with starter file that was changed as changed
     Grouping.joins(:inviter)
-            .where('users.section_id': self.id)
+            .where('roles.section_id': self.id)
             .where(assessment_id: assessment_id)
             .update_all(starter_file_changed: true)
   end

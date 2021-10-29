@@ -15,7 +15,7 @@ describe TestResult do
       @asst = create(:assignment)
       @grouping = create(:grouping, assignment: @asst)
       @sub = create(:submission, grouping: @grouping)
-      @user = create(:admin)
+      @role = create(:admin)
       @test_group = TestGroup.create(
         assessment_id: @asst.id,
         name: 'test_group'
@@ -23,7 +23,7 @@ describe TestResult do
       @test_run = TestRun.create(
         grouping: @grouping,
         submission: @sub,
-        user: @user,
+        role: @role,
         revision_identifier: '1',
         status: :complete
       )

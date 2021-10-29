@@ -23,8 +23,8 @@ class StarterFileGroup < ApplicationRecord
     starter_file_entries.map(&:files_and_dirs).flatten.map { |f| f.relative_path_from(path).to_s }
   end
 
-  def zip_starter_file_files(user)
-    zip_name = "#{assignment.short_identifier}-#{name}-starter-files-#{user.user_name}"
+  def zip_starter_file_files(role)
+    zip_name = "#{assignment.short_identifier}-#{name}-starter-files-#{role.user_name}"
     zip_path = File.join('tmp', zip_name + '.zip')
     FileUtils.rm_rf zip_path
     Zip::File.open(zip_path, create: true) do |zip_file|

@@ -1,8 +1,16 @@
-class Student < User
+# Student user for a given course.
+class Student < Role
 
   scope :active, -> { where(hidden: false) }
   scope :inactive, -> { where(hidden: true) }
-
+  has_many :grade_entry_students, foreign_key: :role_id
+  has_many :accepted_memberships,
+           -> {
+             where membership_status: [StudentMembership::STATUSES[:accepted],
+                                       StudentMembership::STATUSES[:inviter]]
+           },
+           class_name: 'Membership',
+           foreign_key: :role_id
   has_many :accepted_groupings,
            -> { where 'memberships.membership_status' => [StudentMembership::STATUSES[:accepted], StudentMembership::STATUSES[:inviter]] },
            class_name: 'Grouping',
@@ -21,7 +29,7 @@ class Student < User
            through: :memberships,
            source: :grouping
 
-  has_many :student_memberships, foreign_key: 'user_id'
+  has_many :student_memberships, foreign_key: 'role_id'
 
   has_many :grace_period_deductions, through: :memberships
 
@@ -75,7 +83,7 @@ class Student < User
   end
 
   def display_for_note
-    user_name + ': ' + last_name + ', ' + first_name
+    human.user_name + ': ' + human.last_name + ', ' + human.first_name
   end
 
   # invites a student
@@ -84,7 +92,7 @@ class Student < User
       membership = StudentMembership.new
       membership.grouping_id = gid
       membership.membership_status = StudentMembership::STATUSES[:pending]
-      membership.user_id = self.id
+      membership.role_id = self.id
       membership.save
     end
   end
@@ -93,7 +101,7 @@ class Student < User
     # NOTE: no repository permission updates needed since users with
     #       pending status don't have access to repos anyway
     self.pending_groupings_for(aid).each do |grouping|
-      membership = grouping.student_memberships.where(user_id: id).first
+      membership = grouping.student_memberships.where(role_id: id).first
       membership.destroy
     end
   end
@@ -113,8 +121,8 @@ class Student < User
       else
         # If an individual repo has already been created for this user
         # then just use that one.
-        @group = Group.find_or_initialize_by(group_name: user_name, course: @assignment.course) do |group|
-          group.repo_name = user_name
+        @group = Group.find_or_initialize_by(group_name: self.user_name, course: @assignment.course) do |group|
+          group.repo_name = self.user_name
         end
       end
       unless @group.save
@@ -143,7 +151,7 @@ class Student < User
 
       # Create the membership
       @member = StudentMembership.create!(grouping_id: @grouping.id,
-                                          membership_status: StudentMembership::STATUSES[:inviter], user_id: self.id)
+                                          membership_status: StudentMembership::STATUSES[:inviter], role_id: self.id)
       # Destroy all the other memberships for this assignment
       self.destroy_all_pending_memberships(aid)
     end
@@ -157,7 +165,7 @@ class Student < User
       group.save
       grouping = Grouping.create(assignment: assignment, group_id: group.id)
       StudentMembership.create(grouping_id: grouping.id, membership_status: StudentMembership::STATUSES[:inviter],
-                               user_id: self.id)
+                               role_id: self.id)
       self.destroy_all_pending_memberships(assignment.id)
       grouping
     end
@@ -226,8 +234,8 @@ class Student < User
   # Creates grade_entry_student for every marks spreadsheet
   def create_all_grade_entry_students
     GradeEntryForm.all.each do |form|
-      unless form.grade_entry_students.exists?(user_id: id)
-        form.grade_entry_students.create(user_id: id, released_to_student: false)
+      unless form.grade_entry_students.exists?(role_id: id)
+        form.grade_entry_students.create(role_id: id, released_to_student: false)
       end
     end
   end

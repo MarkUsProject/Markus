@@ -240,7 +240,7 @@ describe SubmissionRule do
       # create a group of one student from this section, for this assignment
       @student = create(:student, section: @section)
       @grouping = create(:grouping, assignment: @assignment)
-      @studentMembership = create(:student_membership, user: @student, grouping: @grouping,
+      @student_membership = create(:student_membership, role: @student, grouping: @grouping,
                                                        membership_status: StudentMembership::STATUSES[:inviter])
     end
 

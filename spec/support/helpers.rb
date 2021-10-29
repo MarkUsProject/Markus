@@ -6,7 +6,7 @@ module Helpers
   def create_ta_memberships(groupings, tas)
     Array(groupings).each do |grouping|
       Array(tas).each do |ta|
-        create(:ta_membership, grouping: grouping, user: ta)
+        create(:ta_membership, grouping: grouping, role: ta)
       end
     end
   end

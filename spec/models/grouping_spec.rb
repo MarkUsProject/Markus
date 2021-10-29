@@ -27,7 +27,7 @@ describe Grouping do
       let(:hidden) { create(:student, hidden: true) }
 
       it 'cannot be invited' do
-        grouping.invite(hidden.user_name)
+        grouping.invite(hidden.human.user_name)
         expect(grouping.memberships.count).to eq(0)
       end
 
@@ -229,7 +229,7 @@ describe Grouping do
       end
 
       it 'returns true when there is an assigned ta' do
-        create(:ta_membership, user: tas[0], grouping: grouping)
+        create(:ta_membership, role: tas[0], grouping: grouping)
         expect(grouping.has_ta_for_marking?).to be true
       end
     end
@@ -422,11 +422,11 @@ describe Grouping do
           @student2 = FactoryBot.create(:student)
           @grouping.test_tokens = 0
           create(:inviter_student_membership,
-                 user: @student1,
+                 role: @student1,
                  grouping: @grouping,
                  membership_status: StudentMembership::STATUSES[:inviter])
           create(:accepted_student_membership,
-                 user: @student2,
+                 role: @student2,
                  grouping: @grouping,
                  membership_status: StudentMembership::STATUSES[:accepted])
         end
@@ -481,7 +481,7 @@ describe Grouping do
       let(:reject_membership) do
         create(:student_membership, grouping: @grouping, membership_status: StudentMembership::STATUSES[:rejected])
       end
-      let(:inviter) { inviter_membership.user }
+      let(:inviter) { inviter_membership.role }
 
       describe '#membership_status' do
         let(:student) { create(:student) }
@@ -490,15 +490,15 @@ describe Grouping do
         end
 
         it 'shows correct status for student who accepted membership' do
-          expect(@grouping.membership_status(membership.user)).to eq('accepted')
+          expect(@grouping.membership_status(membership.role)).to eq('accepted')
         end
 
         it 'shows correct status for student who has a pending membership' do
-          expect(@grouping.membership_status(pending_membership.user)).to eq('pending')
+          expect(@grouping.membership_status(pending_membership.role)).to eq('pending')
         end
 
         it 'shows correct status for student who has rejected the membership' do
-          expect(@grouping.membership_status(reject_membership.user)).to eq('rejected')
+          expect(@grouping.membership_status(reject_membership.role)).to eq('rejected')
         end
 
         it 'shows correct status for the inviter' do
@@ -524,13 +524,13 @@ describe Grouping do
         end
 
         it 'detects pending members' do
-          expect(@grouping.pending?(pending_membership.user)).to be true
+          expect(@grouping.pending?(pending_membership.role)).to be true
         end
       end
 
       describe '#is_inviter?' do
         it 'detects a non-inviter' do
-          expect(@grouping.is_inviter?(membership.user)).to be false
+          expect(@grouping.is_inviter?(membership.role)).to be false
         end
         it 'detects the inviter' do
           expect(@grouping.is_inviter?(inviter)).to be true
@@ -540,7 +540,7 @@ describe Grouping do
       describe '#remove_member' do
         it 'is able to remove a member' do
           @grouping.remove_member(membership.id)
-          expect(@grouping.membership_status(membership.user)).to be_nil
+          expect(@grouping.membership_status(membership.role)).to be_nil
         end
 
         it 'is able to remove the inviter' do
@@ -555,21 +555,21 @@ describe Grouping do
         end
 
         it 'does not allow allow non-inviter to delete grouping' do
-          expect(@grouping.deletable_by?(membership.user)).to be false
+          expect(@grouping.deletable_by?(membership.role)).to be false
         end
       end
 
       describe '#decline_invitation' do
         it 'is able to decline invitation' do
-          @grouping.decline_invitation(pending_membership.user)
-          expect(@grouping.pending?(pending_membership.user)).to be false
+          @grouping.decline_invitation(pending_membership.role)
+          expect(@grouping.pending?(pending_membership.role)).to be false
         end
       end
 
       describe '#remove_rejected' do
         it 'is able to delete rejected memberships' do
           @grouping.remove_rejected(reject_membership.id)
-          expect(@grouping.membership_status(reject_membership.user)).to be_nil
+          expect(@grouping.membership_status(reject_membership.role)).to be_nil
         end
       end
     end
@@ -725,7 +725,7 @@ describe Grouping do
 
       describe '#invite' do
         it 'adds students in any scenario possible when invoked by admin' do
-          members = [@student01.user_name, @student02.user_name]
+          members = [@student01.human.user_name, @student02.human.user_name]
           @grouping.invite(members, StudentMembership::STATUSES[:accepted], true)
           expect(@grouping.accepted_student_memberships.count).to eq(2)
         end
@@ -744,7 +744,7 @@ describe Grouping do
 
       describe '#invite' do
         it 'adds students to groups without checking their sections' do
-          members = [@student01.user_name, @student02.user_name]
+          members = [@student01.human.user_name, @student02.human.user_name]
           @grouping.invite(members, StudentMembership::STATUSES[:accepted], true)
           expect(@grouping.accepted_student_memberships.count).to eq(2)
         end
@@ -763,7 +763,7 @@ describe Grouping do
                             assignment_properties_attributes: { group_max: 2, section_groups_only: true })
         @grouping = create(:grouping, assignment: assignment)
         create(:inviter_student_membership,
-               user: student,
+               role: student,
                grouping: @grouping,
                membership_status: StudentMembership::STATUSES[:inviter])
       end
@@ -1061,7 +1061,7 @@ describe Grouping do
           @assignment.save
           @section = create(:section, course: @assignment.course)
           create(:inviter_student_membership,
-                 user: create(:student, section: @section),
+                 role: create(:student, section: @section),
                  grouping: @grouping,
                  membership_status: StudentMembership::STATUSES[:inviter])
         end
@@ -1108,7 +1108,7 @@ describe Grouping do
           @assignment.save
           @section = create(:section)
           create(:inviter_student_membership,
-                 user: create(:student, section: @section),
+                 role: create(:student, section: @section),
                  grouping: @grouping,
                  membership_status: StudentMembership::STATUSES[:inviter])
         end
@@ -1220,7 +1220,7 @@ describe Grouping do
 
   context 'getting test run data' do
     let(:grouping) { create :grouping_with_inviter }
-    let(:test_run) { create :test_run, grouping: grouping, user: test_runner, submission: submission }
+    let(:test_run) { create :test_run, grouping: grouping, role: test_runner, submission: submission }
     let(:display_output) { 'instructors' }
     let(:test_group) { create :test_group, assignment: grouping.assignment, display_output: display_output }
     let(:test_group_result) { create :test_group_result, test_run: test_run, test_group: test_group, extra_info: 'AAA' }
@@ -1238,7 +1238,7 @@ describe Grouping do
         context 'when display_output is instructors' do
           it_behaves_like 'test run data', true, false
           context 'when there are multiple test group_results' do
-            let(:test_run2) { create :test_run, grouping: grouping, user: test_runner, submission: submission }
+            let(:test_run2) { create :test_run, grouping: grouping, role: test_runner, submission: submission }
             let(:test_group_result2) do
               create :test_group_result, test_run: test_run2, test_group: test_group, extra_info: 'AAA'
             end
