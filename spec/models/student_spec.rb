@@ -32,6 +32,10 @@ describe Student do
       is_expected.to have_many :student_memberships
     end
 
+    it 'will have many accepted memberships' do
+      is_expected.to have_many :accepted_memberships
+    end
+
     it 'will have many grace period deductions available' do
       is_expected.to have_many :grace_period_deductions
     end

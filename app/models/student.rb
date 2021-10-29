@@ -3,7 +3,14 @@ class Student < Role
 
   scope :active, -> { where(hidden: false) }
   scope :inactive, -> { where(hidden: true) }
-  has_many :grade_entry_students, foreign_key: 'role_id'
+  has_many :grade_entry_students, foreign_key: :role_id
+  has_many :accepted_memberships,
+           -> {
+             where membership_status: [StudentMembership::STATUSES[:accepted],
+                                       StudentMembership::STATUSES[:inviter]]
+           },
+           class_name: 'Membership',
+           foreign_key: :role_id
   has_many :accepted_groupings,
            -> { where 'memberships.membership_status' => [StudentMembership::STATUSES[:accepted], StudentMembership::STATUSES[:inviter]] },
            class_name: 'Grouping',

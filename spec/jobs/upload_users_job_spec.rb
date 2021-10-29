@@ -1,4 +1,4 @@
-describe UploadUsersJob do
+describe UploadRolesJob do
   let(:course) { create :course }
 
   context 'when running as a background job' do
@@ -8,7 +8,7 @@ describe UploadUsersJob do
   end
   context 'when run with a correctly formatted file' do
     let(:file) { fixture_file_upload 'students/students.csv' }
-    let(:uploaded) { UploadUsersJob.perform_now(Student, course, File.read(file), nil) }
+    let(:uploaded) { UploadRolesJob.perform_now(Student, course, File.read(file), nil) }
     it 'should not return any error' do
       expect(uploaded[:invalid_lines]).to be_empty
     end
@@ -28,7 +28,7 @@ describe UploadUsersJob do
 
   context 'when getting a malformed csv' do
     let(:file) { fixture_file_upload 'bad_csv.csv' }
-    let(:uploaded) { UploadUsersJob.perform_now(Student, course, File.read(file), nil) }
+    let(:uploaded) { UploadRolesJob.perform_now(Student, course, File.read(file), nil) }
     it 'returns an error' do
       expect(uploaded[:invalid_lines]).to include('The selected file was improperly formed')
     end

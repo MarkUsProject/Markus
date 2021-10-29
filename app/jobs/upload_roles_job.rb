@@ -1,13 +1,12 @@
 # upload users job
-class UploadUsersJob < ApplicationJob
+class UploadRolesJob < ApplicationJob
   def perform(role_class, course, data, encoding)
-    human_columns = role_class::CSV_UPLOAD_ORDER.dup
     progress.total = data.lines.count
     User.transaction do
       MarkusCsv.parse(data, skip_blanks: true, row_sep: :auto, encoding: encoding) do |row|
         next if row.empty?
 
-        human_hash = Hash[human_columns.zip row]
+        human_hash = Hash[role_class::CSV_UPLOAD_ORDER.zip row]
         human = Human.find_or_initialize_by(human_hash.slice(:user_name)) do |h|
           h.assign_attributes(human_hash.slice(:first_name, :last_name))
         end

@@ -10,7 +10,6 @@ describe Role do
   it { is_expected.to have_many :memberships }
   it { is_expected.to have_many(:groupings).through(:memberships) }
   it { is_expected.to have_many(:notes).dependent(:destroy) }
-  it { is_expected.to have_many :accepted_memberships }
 
   context 'A good Role model' do
     it 'should be able to create a student' do

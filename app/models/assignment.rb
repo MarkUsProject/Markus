@@ -592,10 +592,10 @@ class Assignment < Assessment
 
   # Generate CSV summary of grades for this assignment
   # for the current user. The user should be an admin or TA.
-  def summary_csv(user)
-    return '' unless user.admin?
+  def summary_csv(role)
+    return '' unless role.admin?
 
-    if user.admin?
+    if role.admin?
       groupings = self.groupings
                       .includes(:group,
                                 :accepted_students,
@@ -606,7 +606,7 @@ class Assignment < Assessment
                                 :accepted_students,
                                 current_result: :marks)
                       .joins(:memberships).joins(:humans)
-                      .where('memberships.users.user_id': user.id)
+                      .where('memberships.role_id': user.id)
     end
 
     headers = [['User name', 'Group', 'Final grade'], ['', 'Out of', self.max_mark]]

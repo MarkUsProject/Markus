@@ -38,7 +38,7 @@ namespace :db do
     STUDENT_CSV = 'db/data/students.csv'
     if File.readable?(STUDENT_CSV)
       File.open(STUDENT_CSV) do |csv_students|
-        UploadUsersJob.perform_now(Student, Course.first, csv_students.read, nil)
+        UploadRolesJob.perform_now(Student, Course.first, csv_students.read, nil)
       end
     end
     i = 0

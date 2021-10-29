@@ -9,12 +9,6 @@ class Role < ApplicationRecord
   has_many :memberships, dependent: :delete_all
   has_many :groupings, through: :memberships
   has_many :notes, as: :noteable, dependent: :destroy
-  has_many :accepted_memberships,
-           -> {
-             where membership_status: [StudentMembership::STATUSES[:accepted],
-                                       StudentMembership::STATUSES[:inviter]]
-           },
-           class_name: 'Membership'
   has_many :annotations, as: :creator
   has_many :test_runs, dependent: :destroy
   has_many :split_pdf_logs
