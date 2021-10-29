@@ -1,7 +1,7 @@
 module Api
+  # API controller for Courses
   class CoursesController < MainApiController
-
-    DEFAULT_FIELDS = [:name, :is_hidden, :display_name]
+    DEFAULT_FIELDS = [:name, :is_hidden, :display_name].freeze
 
     def index
       users = get_collection(Course) || return
