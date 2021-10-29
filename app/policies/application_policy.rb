@@ -1,5 +1,7 @@
 # Application policy class
 class ApplicationPolicy < ActionPolicy::Base
+  authorize :role, optional: true
+
   alias_rule :index?, :create?, :new?, to: :manage?
 
   # unless overridden, do not allow access by default
