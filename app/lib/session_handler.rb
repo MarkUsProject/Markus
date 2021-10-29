@@ -19,6 +19,22 @@ module SessionHandler
     @real_user ||= User.find_by_id(session[:real_uid])
   end
 
+  def current_role
+    @current_role = Role.find_by(human: current_user, course: current_course)
+  end
+
+  def current_real_role
+    @real_role = Role.find_by(human: real_user, course: current_course)
+  end
+
+  def current_course
+    if controller_name == 'courses'
+      @current_course = Course.find_by(params.permit(:id))
+    else
+      @current_course = Course.find_by(id: params[:course_id])
+    end
+  end
+
   # Check if there's any user associated with this session
   def logged_in?
     session[:uid] != nil

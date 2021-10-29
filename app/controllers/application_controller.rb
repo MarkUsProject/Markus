@@ -5,6 +5,7 @@ class ApplicationController < ActionController::Base
   include UploadHelper
   include DownloadHelper
 
+  authorize :role, through: :current_role
   verify_authorized
   rescue_from ActionPolicy::Unauthorized, with: :user_not_authorized
 
