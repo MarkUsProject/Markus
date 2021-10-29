@@ -14,6 +14,7 @@ class Role < ApplicationRecord
   has_many :split_pdf_logs
 
   validates_format_of :type, with: /\AStudent|Admin|Ta\z/
+  validates_uniqueness_of :user_id, scope: :course_id
 
   # role constants
   STUDENT = 'Student'.freeze
