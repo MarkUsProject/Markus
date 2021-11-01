@@ -36,29 +36,39 @@ function add_template_division(target) {
 }
 
 function toggle_cover_page(id) {
-  if ($("#automatic_parsing").is(":checked")) {
+  const form = document.getElementById(`add_fields_exam_template_form_${id}`);
+  const parsing_input = form && form.elements.automatic_parsing;
+  if (parsing_input === null || parsing_input === undefined) {
+    return;
+  }
+
+  if (parsing_input.checked) {
     $("#exam-cover-display-" + id).css("display", "flex");
-    attach_crop_box();
+    attach_crop_box(id);
   } else {
     $("#exam-cover-display-" + id).css("display", "none");
   }
 }
 
-function attach_crop_box() {
+function attach_crop_box(id) {
   var jcrop_api;
 
-  $("#crop-target").Jcrop(
+  const form = document.getElementById(`add_fields_exam_template_form_${id}`);
+  const crop_target = form.getElementsByClassName("crop-target")[0];
+
+  $(crop_target).Jcrop(
     {
       onChange: pos => {
-        const stageHeight = $("#crop-target").height();
-        const stageWidth = $("#crop-target").width();
+        const stageHeight = parseFloat(
+          getComputedStyle(crop_target, null).height.replace("px", "")
+        );
+        const stageWidth = parseFloat(getComputedStyle(crop_target, null).width.replace("px", ""));
         const {x, y, w, h} = pos;
-        // find the input element for width
-        // set the width value for that form element
-        $("#x").val(x / stageWidth);
-        $("#y").val(y / stageHeight);
-        $("#width").val(w / stageWidth);
-        $("#height").val(h / stageHeight);
+
+        form.elements.x.value = x / stageWidth;
+        form.elements.y.value = y / stageHeight;
+        form.elements.width.value = w / stageWidth;
+        form.elements.height.value = h / stageHeight;
       },
     },
     function () {
@@ -67,13 +77,19 @@ function attach_crop_box() {
   );
 
   // Set crop selection if values exist.
-  if ($("#x").val() && $("#y").val() && $("#width").val() && $("#height").val()) {
-    const stageHeight = $("#crop-target").height();
-    const stageWidth = $("#crop-target").width();
-    const x = parseFloat($("#x").val()) * stageWidth;
-    const y = parseFloat($("#y").val()) * stageHeight;
-    const width = parseFloat($("#width").val()) * stageWidth;
-    const height = parseFloat($("#height").val()) * stageHeight;
+  if (
+    form.elements.x.value &&
+    form.elements.y.value &&
+    form.elements.width.value &&
+    form.elements.height.value
+  ) {
+    const stageHeight = parseFloat(getComputedStyle(crop_target, null).height.replace("px", ""));
+    const stageWidth = parseFloat(getComputedStyle(crop_target, null).width.replace("px", ""));
+    const x = parseFloat(form.elements.x.value) * stageWidth;
+    const y = parseFloat(form.elements.y.value) * stageHeight;
+    const width = parseFloat(form.elements.width.value) * stageWidth;
+    const height = parseFloat(form.elements.height.value) * stageHeight;
+
     jcrop_api.setSelect([x, y, x + width, y + height]);
   }
 }

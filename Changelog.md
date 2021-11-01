@@ -10,6 +10,7 @@
 - Fix bugs in automatic parsing Python module (#5592)
 - Fix exam template automatic parsing to only accept one crop box, and parse either
   ID number or user name (#5592)
+- Fix scanned exams when using automatic parsing with multiple exam templates (#5592)
 
 ## [v1.13.3]
 - Display multiple feedback files returned by the autotester (#5524)

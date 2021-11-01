@@ -1,15 +1,20 @@
 <%= content_for :head do %>
   <%= javascript_tag nonce: true do %>
     document.addEventListener('DOMContentLoaded', () => {
-      document.getElementById('automatic_parsing').addEventListener('change', () => {
-        toggle_cover_page(<%= exam_template.id %>);
-      })
+      const form = document.getElementById("add_fields_exam_template_form_<%= exam_template.id %>");
+      const parsing_input = form && form.elements["automatic_parsing"];
+
+      parsing_input.addEventListener('change', () => toggle_cover_page(<%= exam_template.id %>));
+
+      const crop_target = form.getElementsByClassName("crop-target")[0];
+      crop_target.onload = () => toggle_cover_page(<%= exam_template.id %>);
     })
   <% end %>
 <% end %>
 
 <%= form_for [@assignment, exam_template],
-             url: add_fields_assignment_exam_template_path(id: exam_template.id) do |f| %>
+             url: add_fields_assignment_exam_template_path(id: exam_template.id),
+             html: { id: "add_fields_exam_template_form_#{exam_template.id}" } do |f| %>
 
   <p>
     <%= check_box_tag :automatic_parsing, true,
@@ -19,14 +24,8 @@
 
   <div id="exam-cover-display-<%= exam_template.id %>" class="<%= exam_template.automatic_parsing ? 'flex-display' : 'no-display' %>">
     <div id="exam_cover-<%= exam_template.id %>">
-      <img src=<%= show_cover_assignment_exam_template_path(id: exam_template.id) %> id="crop-target" >
+      <img src="<%= show_cover_assignment_exam_template_path(id: exam_template.id) %>" class="crop-target">
     </div>
-
-    <% if exam_template.automatic_parsing %>
-      <%= javascript_tag nonce: true do %>
-        window.onload = () => attach_crop_box()
-      <% end %>
-    <% end %>
 
     <div class="table-with-add">
       <%= label_tag :cover_fields, t('activerecord.attributes.exam_template.cover_fields') %>
