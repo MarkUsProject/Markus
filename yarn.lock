@@ -1154,10 +1154,10 @@
   resolved "https://registry.yarnpkg.com/@react-dnd/shallowequal/-/shallowequal-2.0.0.tgz#a3031eb54129f2c66b2753f8404266ec7bf67f0a"
   integrity sha512-Pc/AFTdwZwEKJxFJvlxrSmGe/di+aAOBn60sremrpLo6VI/6cmiUYNNwlI5KNYttg7uypzA3ILPMPgxB2GYZEg==
 
-"@rjsf/core@^3.1.0":
-  version "3.1.0"
-  resolved "https://registry.yarnpkg.com/@rjsf/core/-/core-3.1.0.tgz#7667364a4532e25c164abbc2adabe39157ffec4c"
-  integrity sha512-EwM2juiQxEdXzFy9rIIsDr6/e+FYeR1cKx0/no8ASEuXZ1p+/nf/CxKGobzD6UhpRip7JK9PhhuHFEFBIjHFJA==
+"@rjsf/core@^3.2.0":
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/@rjsf/core/-/core-3.2.0.tgz#189ff7fb132cb223463792d75fb1e04e9dd5d9f9"
+  integrity sha512-Cgonq9bBWlpE0yeeIv7rAIDuJvO1wAvp9G7tT/UvhODAyb4tDb1q8J/8ubWuRRiEyzYUkuxN0W8uPIzQsJgtTQ==
   dependencies:
     "@types/json-schema" "^7.0.7"
     ajv "^6.7.0"
