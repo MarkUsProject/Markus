@@ -595,7 +595,7 @@ class AssignmentsController < ApplicationController
         end
       end
     end
-    send_file zip_path, filename: zip_name
+    send_file zip_path, filename: zip_name, type: 'application/zip', disposition: 'attachment'
   end
   # Uploads a zip file containing all the files specified in download_config_files
   # and modifies the assignment settings according to those files.

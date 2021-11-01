@@ -1286,8 +1286,19 @@ describe AssignmentsController do
 
     # Check file content
     shared_examples 'download sample config files' do
-      it 'should send a zip file' do
-        expect(controller).to receive(:send_file)
+      it 'should have an ok status' do
+        subject
+        expect(response).to have_http_status(200)
+      end
+
+      it 'should receive a zip file' do
+        expected_file_name = "#{assignment.short_identifier}-config-files.zip"
+        file_options = { filename: expected_file_name, type: 'application/zip', disposition: 'attachment' }
+        expected_file_path = File.join('tmp', expected_file_name)
+        expect(controller).to receive(:send_file).with(expected_file_path, file_options) {
+          # to prevent a 'missing template' error
+          @controller.head :ok
+        }
         subject
       end
     end
