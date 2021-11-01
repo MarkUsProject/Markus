@@ -35,13 +35,9 @@ function add_template_division(target) {
   });
 }
 
-function toggle_cover_page(id, fields) {
+function toggle_cover_page(id) {
   if ($("#automatic_parsing").is(":checked")) {
     $("#exam-cover-display-" + id).css("display", "flex");
-    var i;
-    for (i = 0; i < fields.length; i++) {
-      $(".field" + (i + 1)).val(fields[i]);
-    }
     attach_crop_box();
   } else {
     $("#exam-cover-display-" + id).css("display", "none");

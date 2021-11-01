@@ -120,19 +120,11 @@ class ExamTemplatesController < ApplicationController
     exam_template = assignment.exam_templates.find(params[:id])
     if params[:automatic_parsing] == 'true'
       exam_template.automatic_parsing = true
-      cover_field1 = params[:field1]
-      cover_field2 = params[:field2]
-      cover_field3 = params[:field3]
-      cover_field4 = params[:field4]
+      exam_template.cover_fields = params[:cover_fields]
       exam_template.crop_x = params[:x].to_f
       exam_template.crop_y = params[:y].to_f
       exam_template.crop_width = params[:width].to_f
       exam_template.crop_height = params[:height].to_f
-
-      exam_template.cover_fields = cover_field1 != ' ' ? cover_field1 + ',' : ''
-      exam_template.cover_fields += cover_field2 != ' ' ? cover_field2 + ',' : ''
-      exam_template.cover_fields += cover_field3 != ' ' ? cover_field3 + ',' : ''
-      exam_template.cover_fields += cover_field4 != ' ' ? cover_field4 + ',' : ''
     else
       exam_template.automatic_parsing = false
       exam_template.cover_fields = ''
