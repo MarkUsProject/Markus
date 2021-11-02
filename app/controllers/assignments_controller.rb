@@ -15,7 +15,6 @@ class AssignmentsController < ApplicationController
     properties: 'properties.yml',
     tags: 'tags.yml',
     criteria: 'criteria.yml',
-    peer_review_folder: 'peer-review-config-files',
     peer_review_properties: File.join('peer-review-config-files', 'properties.yml'),
     peer_review_tags: File.join('peer-review-config-files', 'tags.yml'),
     peer_review_criteria: File.join('peer-review-config-files', 'criteria.yml')

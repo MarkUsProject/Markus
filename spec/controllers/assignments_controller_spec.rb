@@ -1281,7 +1281,7 @@ describe AssignmentsController do
   end
 
   describe '#download_config_files' do
-    let(:assignment) { create :assignment }
+    let!(:assignment) { create :assignment, due_date: Time.zone.parse('2022-02-10 15:30:45'), has_peer_review: true}
     subject { get_as user, :download_config_files, params: { id: assignment.id } }
 
     # Check file content
@@ -1366,7 +1366,9 @@ describe AssignmentsController do
           end
         end
 
+        it 'should have a valid child properties file' do
 
+        end
       end
     end
 
