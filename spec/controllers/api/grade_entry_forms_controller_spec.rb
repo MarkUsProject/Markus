@@ -186,10 +186,9 @@ describe Api::GradeEntryFormsController do
         { short_identifier: 'A0', course_id: course.id, description: 'Test',
           due_date: '2012-03-26 18:04:39', is_hidden: false,
           grade_entry_items: [
-              { name: 'col1', out_of: 10, bonus: false },
-              { name: 'col2', out_of: 2, bonus: true }
-          ]
-        }
+            { name: 'col1', out_of: 10, bonus: false },
+            { name: 'col2', out_of: 2, bonus: true }
+          ] }
       end
       context 'with minimal required params' do
         it 'should respond with 201' do
@@ -243,8 +242,8 @@ describe Api::GradeEntryFormsController do
       end
       context 'where short_identifier is already taken' do
         it 'should respond with 409' do
-          post :create, params: { **params,
-                                  short_identifier: (create :grade_entry_form, course: course).short_identifier }
+          grade_entry_form = create :grade_entry_form, course: course
+          post :create, params: { **params, short_identifier: grade_entry_form.short_identifier }
           expect(response.status).to eq(409)
         end
       end
