@@ -7,6 +7,7 @@
   is_hidden and anonymize_groups attributes (#5547)
 - Support syntax highlighting for R (#5558)
 - Fixes in progress remark requests to display the remark request due date for students (#5562)
+- Fix bugs in automatic parsing Python module (#5592)
 
 ## [v1.13.3]
 - Display multiple feedback files returned by the autotester (#5524)

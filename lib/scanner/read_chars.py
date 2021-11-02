@@ -12,6 +12,9 @@ from cnn import get_num, get_name
 
 BUF = 5
 
+# Maximum number of filled points at which a character box is considered empty
+EMPTY_SPACE_TOLERANCE = 10
+
 
 def gap_left(hist, x, th, K=10):
     """
@@ -266,7 +269,7 @@ def extract_char(img, crop_dir, num=True):
 
             # check if this is an empty box (space)
             pts = cv2.findNonZero(resized)
-            if pts is None or len(pts) < 40:
+            if pts is None or len(pts) < EMPTY_SPACE_TOLERANCE:
                 spaces.append(box_num)
                 continue
 
@@ -293,7 +296,10 @@ if __name__ == '__main__':
     threshed = cv2.erode(threshed, kernel, iterations=3)
 
     # deskew image
-    rotated = straighten(threshed)
+    # TODO: review the straighten function, which currently (sometimes?) rotates to vertical
+    # instead of horizontal
+    # rotated = straighten(threshed)
+    rotated = threshed
 
     # find and draw the upper and lower boundary of each lines
     hist = cv2.reduce(rotated, 1, cv2.REDUCE_AVG).reshape(-1)
