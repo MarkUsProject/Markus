@@ -1305,58 +1305,59 @@ describe AssignmentsController do
       describe 'downloaded zip file' do
         it 'should have a valid properties file' do
           subject
-          Zip::InputStream.open(StringIO.new(response.body)) do |io|
-            properties_file = nil
-            while (entry = io.get_next_entry)
-              properties_file = entry if entry.name == 'properties.yml'
-            end
-            expect(properties_file.nil?).to eq false
-            properties_content = properties_file.get_input_stream.read.encode(Encoding::UTF_8, 'UTF-8')
-            properties = YAML.safe_load(
-              properties_content,
-              [Date, Time, Symbol, ActiveSupport::TimeWithZone, ActiveSupport::TimeZone,
-               ActiveSupport::Duration, ActiveSupport::HashWithIndifferentAccess],
-              [],
-              true
-            )
-            expect(properties).to include(short_identifier: assignment.short_identifier,
-                                          description: assignment.description,
-                                          due_date: assignment.due_date,
-                                          message: assignment.message,
-                                          is_hidden: assignment.is_hidden,
-                                          show_total: assignment.show_total)
-            expect(properties).to include(:assignment_properties_attributes,
-                                          :submission_rule_attributes,
-                                          :assignment_files_attributes)
-            expect(properties[:assignment_properties_attributes]).to be_kind_of(Hash)
-          end
+          properties = read_yaml_file(response.body, 'properties.yml')
+          expect(properties).to include(short_identifier: assignment.short_identifier,
+                                        description: assignment.description,
+                                        due_date: assignment.due_date,
+                                        message: assignment.message,
+                                        is_hidden: assignment.is_hidden,
+                                        show_total: assignment.show_total)
+          expect(properties).to include(:assignment_properties_attributes,
+                                        :submission_rule_attributes,
+                                        :assignment_files_attributes)
+          expect(properties[:assignment_properties_attributes]).to be_kind_of(Hash)
         end
 
         it 'should have a valid child properties file' do
           subject
-          Zip::InputStream.open(StringIO.new(response.body)) do |io|
-            properties_file = nil
+          properties = read_yaml_file(response.body, File.join('peer-review-config-files', 'properties.yml'))
+          @peer_review_assignment = Assignment.find_by(parent_assessment_id: assignment.id)
+          expect(properties).to include(short_identifier: @peer_review_assignment.short_identifier,
+                                        description: @peer_review_assignment.description,
+                                        due_date: @peer_review_assignment.due_date,
+                                        message: @peer_review_assignment.message,
+                                        is_hidden: @peer_review_assignment.is_hidden,
+                                        show_total: @peer_review_assignment.show_total)
+          expect(properties).to include(:assignment_properties_attributes)
+          expect(properties[:assignment_properties_attributes]).to be_kind_of(Hash)
+        end
+
+        it 'should have a valid tags file' do
+          @tag1 = Tag.find_or_create_by(name: 'tag1', description: 'tag1_description',
+                                        user: user, assessment_id: assignment.id)
+          @tag2 = Tag.find_or_create_by(name: 'tag2', description: 'tag2_description',
+                                        user: user, assessment_id: assignment.id)
+          subject
+          tags = read_yaml_file(response.body, 'tags.yml')
+          tags = tags.map { |record| record.symbolize_keys }
+          expect(tags).to eq([{ name: 'tag1', description: 'tag1_description' },
+                              { name: 'tag2', description: 'tag2_description' }])
+        end
+
+        def read_yaml_file(content, filename)
+          Zip::InputStream.open(StringIO.new(content)) do |io|
+            yaml_file = nil
             while (entry = io.get_next_entry)
-              properties_file = entry if entry.name == File.join('peer-review-config-files', 'properties.yml')
+              yaml_file = entry if entry.name == filename
             end
-            expect(properties_file.nil?).to eq false
-            properties_content = properties_file.get_input_stream.read.encode(Encoding::UTF_8, 'UTF-8')
-            properties = YAML.safe_load(
-              properties_content,
+            expect(yaml_file.nil?).to eq false
+            YAML.safe_load(
+              yaml_file.get_input_stream.read.encode(Encoding::UTF_8, 'UTF-8'),
               [Date, Time, Symbol, ActiveSupport::TimeWithZone, ActiveSupport::TimeZone,
                ActiveSupport::Duration, ActiveSupport::HashWithIndifferentAccess],
               [],
               true
             )
-            @peer_review_assignment = Assignment.find_by(parent_assessment_id: assignment.id)
-            expect(properties).to include(short_identifier: @peer_review_assignment.short_identifier,
-                                          description: @peer_review_assignment.description,
-                                          due_date: @peer_review_assignment.due_date,
-                                          message: @peer_review_assignment.message,
-                                          is_hidden: @peer_review_assignment.is_hidden,
-                                          show_total: @peer_review_assignment.show_total)
-            expect(properties).to include(:assignment_properties_attributes)
-            expect(properties[:assignment_properties_attributes]).to be_kind_of(Hash)
           end
         end
       end
