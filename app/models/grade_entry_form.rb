@@ -94,7 +94,7 @@ class GradeEntryForm < Assessment
   end
 
   def export_as_csv
-    students = Student.left_outer_joins(:grade_entry_students)
+    students = Student.left_outer_joins(:grade_entry_students, :human)
                       .where(hidden: false, 'grade_entry_students.assessment_id': self.id)
                       .order(:user_name)
                       .pluck(:user_name, 'grade_entry_students.total_grade')
@@ -110,7 +110,7 @@ class GradeEntryForm < Assessment
     headers << totals
 
     grade_data = self.grades
-                     .joins(:grade_entry_item, grade_entry_student: :user)
+                     .joins(:grade_entry_item, grade_entry_student: [role: :human])
                      .pluck('users.user_name', 'grade_entry_items.position', :grade)
                      .group_by { |x| x[0] }
     num_items = self.grade_entry_items.count

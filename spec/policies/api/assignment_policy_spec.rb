@@ -1,12 +1,12 @@
-describe Api::MainApiPolicy do
+describe Api::AssignmentPolicy do
   let(:user) { role.human }
   let(:context) { { role: role, user: user } }
 
-  describe_rule :manage? do
+  describe_rule :test_files? do
     succeed 'role is an admin' do
       let(:role) { build :admin }
     end
-    failed 'user is a test server' do
+    succeed 'user is a test server' do
       let(:user) { build :test_server }
       let(:role) { nil }
     end

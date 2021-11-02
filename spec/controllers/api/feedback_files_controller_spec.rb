@@ -1,6 +1,8 @@
 describe Api::FeedbackFilesController do
-  let(:admin) { create :admin }
-  let(:grouping) { create :grouping_with_inviter_and_submission }
+  let(:course) { create :course }
+  let(:admin) { create :admin, course: course }
+  let(:assignment) { create :assignment, course: course }
+  let(:grouping) { create :grouping_with_inviter_and_submission, assignment: assignment }
   let(:feedback_files) { create_list :feedback_file, 3, submission: grouping.submissions.first }
   let(:test_run) { create :test_run, grouping: grouping, user: admin }
   let(:feedback_files_with_test_run) { create_list :feedback_file_with_test_run, 3, test_run: test_run }
@@ -12,27 +14,30 @@ describe Api::FeedbackFilesController do
     end
 
     it 'should fail to authenticate a GET index request' do
-      get :index, params: { assignment_id: grouping.assignment.id, group_id: grouping.group.id }
+      get :index, params: { assignment_id: grouping.assignment.id, group_id: grouping.group.id, course_id: course.id }
       expect(response).to have_http_status :forbidden
     end
 
     it 'should fail to authenticate a GET show request' do
-      get :show, params: { id: 1, assignment_id: grouping.assignment.id, group_id: grouping.group.id }
+      get :show, params: { id: 1, assignment_id: grouping.assignment.id,
+                           group_id: grouping.group.id, course_id: course.id }
       expect(response).to have_http_status :forbidden
     end
 
     it 'should fail to authenticate a POST create request' do
-      post :create, params: { assignment_id: grouping.assignment.id, group_id: grouping.group.id }
+      post :create, params: { assignment_id: grouping.assignment.id, group_id: grouping.group.id, course_id: course.id }
       expect(response).to have_http_status :forbidden
     end
 
     it 'should fail to authenticate a PUT update request' do
-      put :create, params: { id: 1, assignment_id: grouping.assignment.id, group_id: grouping.group.id }
+      put :create, params: { id: 1, assignment_id: grouping.assignment.id,
+                             group_id: grouping.group.id, course_id: course.id }
       expect(response).to have_http_status :forbidden
     end
 
     it 'should fail to authenticate a DELETE destroy request' do
-      delete :destroy, params: { id: 1, assignment_id: grouping.assignment.id, group_id: grouping.group.id }
+      delete :destroy, params: { id: 1, assignment_id: grouping.assignment.id,
+                                 group_id: grouping.group.id, course_id: course.id }
       expect(response).to have_http_status :forbidden
     end
   end
@@ -52,14 +57,16 @@ describe Api::FeedbackFilesController do
         it 'should be successful if required parameters are present' do
           get :index, params: {
             group_id: grouping.group.id,
-            assignment_id: grouping.assignment.id
+            assignment_id: grouping.assignment.id,
+            course_id: course.id
           }
           expect(response).to have_http_status :success
         end
         it 'should return info about feedback files if grouping_id and assignment_id are specified' do
           get :index, params: {
             group_id: grouping.group.id,
-            assignment_id: grouping.assignment.id
+            assignment_id: grouping.assignment.id,
+            course_id: course.id
           }
           ids = Hash.from_xml(response.body).dig('feedback_files', 'feedback_file').map { |h| h['id'].to_i }
           expect(ids).to contain_exactly(*feedback_files.pluck(:id))
@@ -73,14 +80,16 @@ describe Api::FeedbackFilesController do
         it 'should be successful if required parameters are present' do
           get :index, params: {
             group_id: grouping.group.id,
-            assignment_id: grouping.assignment.id
+            assignment_id: grouping.assignment.id,
+            course_id: course.id
           }
           expect(response).to have_http_status :success
         end
         it 'should return info about feedback files if grouping_id and assignment_id are specified' do
           get :index, params: {
             group_id: grouping.group.id,
-            assignment_id: grouping.assignment.id
+            assignment_id: grouping.assignment.id,
+            course_id: course.id
           }
           expect(JSON.parse(response.body).map { |h| h['id'] }).to contain_exactly(*feedback_files.pluck(:id))
         end
@@ -96,7 +105,8 @@ describe Api::FeedbackFilesController do
           get :show, params: {
             id: feedback_files.first.id,
             group_id: grouping.group.id,
-            assignment_id: grouping.assignment.id
+            assignment_id: grouping.assignment.id,
+            course_id: course.id
           }
           expect(response).to have_http_status :success
         end
@@ -104,7 +114,8 @@ describe Api::FeedbackFilesController do
           get :show, params: {
             id: feedback_files.first.id,
             group_id: grouping.group.id,
-            assignment_id: grouping.assignment.id
+            assignment_id: grouping.assignment.id,
+            course_id: course.id
           }
           expect(response.body).to eq(feedback_files.first.file_content)
         end
@@ -117,7 +128,8 @@ describe Api::FeedbackFilesController do
           get :show, params: {
             id: feedback_files.first.id,
             group_id: grouping.group.id,
-            assignment_id: grouping.assignment.id
+            assignment_id: grouping.assignment.id,
+            course_id: course.id
           }
           expect(response).to have_http_status :success
         end
@@ -125,7 +137,8 @@ describe Api::FeedbackFilesController do
           get :show, params: {
             id: feedback_files.first.id,
             group_id: grouping.group.id,
-            assignment_id: grouping.assignment.id
+            assignment_id: grouping.assignment.id,
+            course_id: course.id
           }
           expect(response.body).to eq(feedback_files.first.file_content)
         end
@@ -137,19 +150,22 @@ describe Api::FeedbackFilesController do
       context 'when creating a new feedback_file' do
         it 'should be successful' do
           post :create, params: { group_id: grouping.group.id, assignment_id: grouping.assignment.id,
-                                  filename: filename, mime_type: 'text/plain', file_content: 'abcd' }
+                                  filename: filename, mime_type: 'text/plain', file_content: 'abcd',
+                                  course_id: course.id }
           expect(response).to have_http_status :created
         end
         it 'should create a new feedback_file' do
           post :create, params: { group_id: grouping.group.id, assignment_id: grouping.assignment.id,
-                                  filename: filename, mime_type: 'text/plain', file_content: 'abcd' }
+                                  filename: filename, mime_type: 'text/plain', file_content: 'abcd',
+                                  course_id: course.id }
           expect(FeedbackFile.find_by_filename(filename)).not_to be_nil
         end
       end
       context 'when trying to create a feedback_file with a name that already exists' do
         it 'should raise a 409 error' do
           post :create, params: { group_id: grouping.group.id, assignment_id: grouping.assignment.id,
-                                  filename: feedback_files.first.filename, mime_type: 'text/plain', file_content: 'a' }
+                                  filename: feedback_files.first.filename, mime_type: 'text/plain',
+                                  file_content: 'a', course_id: course.id }
           expect(response).to have_http_status :conflict
         end
       end
@@ -160,14 +176,15 @@ describe Api::FeedbackFilesController do
       context 'when updating an existing feedback_file' do
         it 'should update a filename' do
           put :update, params: { group_id: grouping.group.id, assignment_id: grouping.assignment.id,
-                                 id: feedback_file.id, filename: 'abc.txt', file_content: 'def main(): pass' }
+                                 id: feedback_file.id, filename: 'abc.txt', file_content: 'def main(): pass',
+                                 course_id: course.id }
           expect(response).to have_http_status :success
           feedback_file.reload
           expect(feedback_file.filename).to eq('abc.txt')
         end
         it 'should update file content' do
           put :update, params: { group_id: grouping.group.id, assignment_id: grouping.assignment.id,
-                                 id: feedback_file.id, file_content: 'def main(): pass' }
+                                 id: feedback_file.id, file_content: 'def main(): pass', course_id: course.id }
           expect(response).to have_http_status :success
           feedback_file.reload
           expect(feedback_file.file_content).to eq('def main(): pass')
@@ -176,7 +193,7 @@ describe Api::FeedbackFilesController do
       context 'when updating a user that does not exist' do
         it 'should raise a 404 error' do
           put :update, params: { group_id: grouping.group.id, assignment_id: grouping.assignment.id,
-                                 id: feedback_file.id + 100, filename: 'abc.txt' }
+                                 id: feedback_file.id + 100, filename: 'abc.txt', course_id: course.id }
           expect(response).to have_http_status :not_found
         end
       end

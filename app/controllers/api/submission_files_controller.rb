@@ -226,5 +226,11 @@ module Api
         render 'shared/http_status', locals: { code: '500', message: message }, status: 500
       end
     end
+
+    protected
+
+    def implicit_authorization_target
+      SubmissionFile
+    end
   end
 end

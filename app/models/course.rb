@@ -5,6 +5,7 @@ class Course < ApplicationRecord
   has_many :grade_entry_forms
   has_many :sections, inverse_of: :course
   has_many :groups, inverse_of: :course
+  has_many :roles
 
   validates_presence_of :name
   validates_uniqueness_of :name
