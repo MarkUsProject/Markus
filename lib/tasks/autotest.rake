@@ -94,9 +94,9 @@ class AutotestSetup
   end
 
   def create_criteria
-    FlexibleCriterion.find_or_create_by(
+    @assignment.criteria.find_or_create_by(
       name: 'criterion',
-      assessment_id: @assignment.id,
+      type: 'FlexibleCriterion',
       position: 1,
       max_mark: 5,
       assigned_groups_count: nil
@@ -128,6 +128,8 @@ class AutotestSetup
   end
 
   def process_schema_data
+    # Reload the data so the in memory collection proxy is updated.
+    @assignment.reload
     Assignment.transaction do
       update_test_groups_from_specs(@assignment, @specs_data)
     end

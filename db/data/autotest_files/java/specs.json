@@ -8,6 +8,7 @@
           "category": ["admin"],
           "timeout": 30,
           "extra_info": {
+            "criterion": "FlexibleCriterion:criterion",
             "name": "Java Test Group 1"
           }
         },
@@ -16,6 +17,7 @@
           "category": ["admin"],
           "timeout": 30,
           "extra_info": {
+            "criterion": "FlexibleCriterion:criterion",
             "name": "Java Test Group 2"
           }
         }
