@@ -2,7 +2,7 @@ module Api
 
   class GradeEntryFormsController < MainApiController
 
-    DEFAULT_FIELDS = [:id, :short_identifier, :description, :date, :is_hidden, :show_total].freeze
+    DEFAULT_FIELDS = [:id, :short_identifier, :description, :due_date, :is_hidden, :show_total].freeze
 
     # Sends the contents of the specified grade entry form
     # Requires: id
@@ -18,7 +18,7 @@ module Api
     end
 
     def index
-      grade_entry_forms = get_collection(GradeEntryForm.includes(:grade_entry_items)) || return
+      grade_entry_forms = get_collection(current_course.grade_entry_forms) || return
 
       include_args = { only: DEFAULT_FIELDS, include: { grade_entry_items: { only: [:id, :name, :out_of] } } }
 
@@ -33,9 +33,9 @@ module Api
 
     # create a new grade entry form
     # Requires:
-    #   :short_identifier
+    #   :short_identifier, :description
     # Optional:
-    #   :description, :date, :is_hidden
+    #   :description, :due_date, :is_hidden
     #   grade_entry_items:
     #     :name, :out_of, :bonus
     def create
@@ -47,7 +47,7 @@ module Api
       end
 
       # check if there is an existing assignment
-      form = GradeEntryForm.find_by_short_identifier(params[:short_identifier])
+      form = GradeEntryForm.find_by(short_identifier: params[:short_identifier], course_id: params[:course_id])
       unless form.nil?
         render 'shared/http_status', locals: { code: '409', message:
           'Grade Entry Form already exists' }, status: 409
@@ -58,10 +58,11 @@ module Api
         create_params = params.permit(*DEFAULT_FIELDS)
         create_params[:is_hidden] ||= false
         create_params[:description] ||= ''
+        create_params[:course_id] = params[:course_id]
         new_form = GradeEntryForm.new(create_params)
         unless new_form.save
-          render 'shared/http_status', locals: { code: '500', message:
-            new_form.errors.full_messages.first }, status: 500
+          render 'shared/http_status', locals: { code: '422', message:
+            new_form.errors.full_messages.first }, status: 422
           raise ActiveRecord::Rollback
         end
 
@@ -69,13 +70,13 @@ module Api
           column_params = column_params.permit(:name, :out_of, :bonus).to_h.symbolize_keys
           grade_item = new_form.grade_entry_items.build(**column_params, position: i + 1)
           unless grade_item.save
-            render 'shared/http_status', locals: { code: '500', message:
-              grade_item.errors.full_messages.first }, status: 500
+            render 'shared/http_status', locals: { code: '422', message:
+              grade_item.errors.full_messages.first }, status: 422
             raise ActiveRecord::Rollback
           end
         end
-        render 'shared/http_status', locals: { code: '200', message:
-          HttpStatusHelper::ERROR_CODE['message']['200'] }, status: 200
+        render 'shared/http_status', locals: { code: '201', message:
+          HttpStatusHelper::ERROR_CODE['message']['201'] }, status: 201
       end
     end
 

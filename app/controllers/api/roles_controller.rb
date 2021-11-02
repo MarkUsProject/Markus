@@ -95,9 +95,7 @@ module Api
         render 'shared/http_status', locals: { code: '201', message:
             HttpStatusHelper::ERROR_CODE['message']['201'] }, status: 201
       end
-    rescue ActiveRecord::RecordInvalid => e
-      render 'shared/http_status', locals: { code: '409', message: e.to_s }, status: 409
-    rescue ActiveRecord::SubclassNotFound => e
+    rescue ActiveRecord::SubclassNotFound, ActiveRecord::RecordInvalid => e
       render 'shared/http_status', locals: { code: '422', message: e.to_s }, status: 422
     rescue StandardError
       render 'shared/http_status', locals: { code: '500', message:
@@ -113,9 +111,7 @@ module Api
       end
       render 'shared/http_status', locals: { code: '200', message:
           HttpStatusHelper::ERROR_CODE['message']['200'] }, status: 200
-    rescue ActiveRecord::RecordInvalid => e
-      render 'shared/http_status', locals: { code: '409', message: e.to_s }, status: 409
-    rescue ActiveRecord::SubclassNotFound => e
+    rescue ActiveRecord::SubclassNotFound, ActiveRecord::RecordInvalid => e
       render 'shared/http_status', locals: { code: '422', message: e.to_s }, status: 422
     rescue StandardError
       render 'shared/http_status', locals: { code: '500', message:

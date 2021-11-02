@@ -4,7 +4,7 @@ module Api
     default_rule :manage?
 
     def manage?
-      user.test_server? || role&.admin?
+      role&.admin? || false
     end
   end
 end

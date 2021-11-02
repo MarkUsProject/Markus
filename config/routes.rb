@@ -5,7 +5,7 @@ Rails.application.routes.draw do
   # optional path scope (denoted by the parentheses)
   # API routes
   namespace :api do
-    resources :courses, only: [:index] do
+    resources :courses, only: [:index, :show] do
       resources :roles, except: [:new, :edit, :destroy] do
         collection do
           post 'create_or_unhide'
@@ -18,12 +18,12 @@ Rails.application.routes.draw do
         end
       end
       resources :assignments, except: [:new, :edit] do
-        resources :groups, except: [:new, :edit] do
+        resources :groups, except: [:new, :edit, :create, :destroy] do
           collection do
             get 'annotations'
             get 'group_ids_by_name'
           end
-          resources :submission_files, except: [:new, :edit] do
+          resources :submission_files, except: [:new, :edit, :show] do
             collection do
               delete 'remove_file'
               delete 'remove_folder'

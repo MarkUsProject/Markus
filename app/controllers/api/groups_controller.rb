@@ -63,7 +63,7 @@ module Api
 
     # Include student_memberships and user info
     def include_memberships(groups)
-      groups.joins(groupings: [:assignment, student_memberships: :user])
+      groups.joins(groupings: [:assignment, student_memberships: [role: :human]])
             .where('assessments.id': params[:assignment_id])
             .pluck_to_hash(*DEFAULT_FIELDS, :membership_status, :user_id)
             .group_by { |h| h.slice(*DEFAULT_FIELDS) }
@@ -92,7 +92,7 @@ module Api
         return
       end
 
-      students = Student.where(user_name: params[:members])
+      students = Student.joins(:human).where('users.user_name': params[:members])
       students.each do |student|
         set_membership_status = grouping.student_memberships.empty? ?
           StudentMembership::STATUSES[:inviter] :

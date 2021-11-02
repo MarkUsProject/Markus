@@ -16,7 +16,7 @@ module Api
     # Returns a list of assignments and their attributes
     # Optional: filter, fields
     def index
-      assignments = get_collection(Assignment) || return
+      assignments = get_collection(current_course.assessments) || return
 
       respond_to do |format|
         json_response = '[' + assignments.map { |assignment| assignment.to_json(only: DEFAULT_FIELDS) }.join(',') + ']'
@@ -68,7 +68,7 @@ module Api
       end
 
       # No assignment found so create new one
-      attributes = { short_identifier: params[:short_identifier] }
+      attributes = { short_identifier: params[:short_identifier], course_id: params[:course_id] }
       attributes = process_attributes(params, attributes)
 
       new_assignment = Assignment.new(attributes)
@@ -268,6 +268,12 @@ module Api
       send_file zip_path, filename: File.basename(zip_path)
     rescue ActiveRecord::RecordNotFound => e
       render 'shared/http_status', locals: { code: '404', message: e }, status: 404
+    end
+
+    protected
+
+    def implicit_authorization_target
+      Assignment
     end
   end # end AssignmentsController
 end
