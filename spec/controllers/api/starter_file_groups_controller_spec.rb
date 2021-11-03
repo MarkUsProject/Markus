@@ -1,6 +1,7 @@
 describe Api::StarterFileGroupsController do
-  let(:admin) { create :admin }
-  let(:assignment) { create :assignment }
+  let(:course) { create :course }
+  let(:admin) { create :admin, course: course }
+  let(:assignment) { create :assignment, course: course }
   let(:http_accept) { 'application/xml' }
 
   before :each do
@@ -20,7 +21,7 @@ describe Api::StarterFileGroupsController do
   describe '#create' do
     subject { post :create, params: params }
     let(:params) do
-      { assignment_id: assignment.id, name: 'b', entry_rename: 'b', use_rename: true }
+      { assignment_id: assignment.id, name: 'b', entry_rename: 'b', use_rename: true, course_id: course.id }
     end
     include_examples 'unauthenticated request'
 
@@ -51,7 +52,7 @@ describe Api::StarterFileGroupsController do
   describe '#update' do
     subject { post :update, params: params }
     let(:starter_file_group) { build :starter_file_group }
-    let(:params) { { assignment_id: assignment.id, id: starter_file_group.id || -1 } }
+    let(:params) { { assignment_id: assignment.id, course_id: course.id, id: starter_file_group.id || -1 } }
     include_examples 'unauthenticated request'
 
     context 'when the starter code group exists' do
@@ -60,7 +61,8 @@ describe Api::StarterFileGroupsController do
           create :starter_file_group, assignment: assignment, name: 'a', entry_rename: 'a', use_rename: false
         end
         let(:params) do
-          { assignment_id: assignment.id, id: starter_file_group.id, name: 'b', entry_rename: 'b', use_rename: true }
+          { assignment_id: assignment.id, course_id: course.id,
+            id: starter_file_group.id, name: 'b', entry_rename: 'b', use_rename: true }
         end
         it 'should update the name' do
           subject
@@ -95,7 +97,9 @@ describe Api::StarterFileGroupsController do
     end
   end
   describe '#destroy' do
-    subject { delete :destroy, params: { assignment_id: assignment.id, id: starter_file_group.id || -1 } }
+    subject do
+      delete :destroy, params: { assignment_id: assignment.id, course_id: course.id, id: starter_file_group.id || -1 }
+    end
     let(:starter_file_group) { build :starter_file_group }
     include_examples 'unauthenticated request'
 
@@ -127,7 +131,7 @@ describe Api::StarterFileGroupsController do
     end
   end
   describe '#index' do
-    subject { get :index, params: { assignment_id: assignment.id } }
+    subject { get :index, params: { assignment_id: assignment.id, course_id: course.id } }
     include_examples 'unauthenticated request'
     context 'when there are starter file groups for this assignment' do
       let!(:starter_file_groups) { create_list :starter_file_group, 3, assignment: assignment }
@@ -166,7 +170,9 @@ describe Api::StarterFileGroupsController do
     end
   end
   describe '#show' do
-    subject { get :show, params: { assignment_id: assignment.id, id: starter_file_group.id || 1 } }
+    subject do
+      get :show, params: { assignment_id: assignment.id, course_id: course.id, id: starter_file_group.id || 1 }
+    end
     let(:starter_file_group) { build :starter_file_group }
     include_examples 'unauthenticated request'
     context 'when there are starter file groups for this assignment' do
@@ -227,6 +233,7 @@ describe Api::StarterFileGroupsController do
     subject do
       post :create_file, params: { filename: 'a',
                                    file_content: 'a',
+                                   course_id: course.id,
                                    assignment_id: assignment.id,
                                    id: starter_file_group.id || -1 }
     end
@@ -262,7 +269,8 @@ describe Api::StarterFileGroupsController do
   end
   describe '#create_folder' do
     subject do
-      post :create_folder, params: { folder_path: 'a', assignment_id: assignment.id, id: starter_file_group.id || -1 }
+      post :create_folder, params: { folder_path: 'a', assignment_id: assignment.id,
+                                     course_id: course.id, id: starter_file_group.id || -1 }
     end
     let(:starter_file_group) { build :starter_file_group }
     include_examples 'unauthenticated request'
@@ -296,7 +304,8 @@ describe Api::StarterFileGroupsController do
   end
   describe '#remove_file' do
     subject do
-      delete :remove_file, params: { filename: 'q2.txt', assignment_id: assignment.id, id: starter_file_group.id || -1 }
+      delete :remove_file, params: { filename: 'q2.txt', assignment_id: assignment.id,
+                                     course_id: course.id, id: starter_file_group.id || -1 }
     end
     let(:starter_file_group) { build :starter_file_group }
     include_examples 'unauthenticated request'
@@ -332,6 +341,7 @@ describe Api::StarterFileGroupsController do
     subject do
       delete :remove_folder, params: { folder_path: 'q1',
                                        assignment_id: assignment.id,
+                                       course_id: course.id,
                                        id: starter_file_group.id || -1 }
     end
     let(:starter_file_group) { build :starter_file_group }
@@ -366,7 +376,9 @@ describe Api::StarterFileGroupsController do
     end
   end
   describe '#entries' do
-    subject { get :entries, params: { assignment_id: assignment.id, id: starter_file_group.id || -1 } }
+    subject do
+      get :entries, params: { assignment_id: assignment.id, course_id: course.id, id: starter_file_group.id || -1 }
+    end
     let(:starter_file_group) { build :starter_file_group }
     include_examples 'unauthenticated request'
     context 'when the starter file exists' do
@@ -401,7 +413,10 @@ describe Api::StarterFileGroupsController do
     end
   end
   describe '#download_entries' do
-    subject { get :download_entries, params: { assignment_id: assignment.id, id: starter_file_group.id || -1 } }
+    subject do
+      get :download_entries, params: { assignment_id: assignment.id,
+                                       course_id: course.id, id: starter_file_group.id || -1 }
+    end
     let(:starter_file_group) { build :starter_file_group }
     include_examples 'unauthenticated request'
     context 'when the starter file exists' do

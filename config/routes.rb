@@ -60,9 +60,7 @@ Rails.application.routes.draw do
       end
     end
     # Return a 404 when no route is match
-    unless Rails.env.test?
-      match '*path', controller: 'main_api', action: 'page_not_found', via: :all
-    end
+    match '*path', controller: 'main_api', action: 'page_not_found', via: :all
   end
 
   resources :courses, only: [:show, :index] do
@@ -460,8 +458,5 @@ Rails.application.routes.draw do
   match 'main/about', controller: 'main', action: 'about', via: :post
   match 'main/logout', controller: 'main', action: 'logout', via: :post
 
-  # Return a 404 when no route is match
-  unless Rails.env.test?
-    match '*path', controller: 'main', action: 'page_not_found', via: :all
-  end
+  match '*path', controller: 'main', action: 'page_not_found', via: :all
 end
