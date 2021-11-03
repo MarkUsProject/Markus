@@ -406,7 +406,7 @@ GEM
     uniform_notifier (1.14.2)
     vegas (0.1.11)
       rack (>= 1.0.0)
-    webpacker (5.4.2)
+    webpacker (5.4.3)
       activesupport (>= 5.2)
       rack-proxy (>= 0.6.1)
       railties (>= 5.2)
