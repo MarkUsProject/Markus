@@ -221,7 +221,16 @@ class AnnotationCategoriesController < ApplicationController
             raise ActiveRecord::Rollback
           end
         elsif data[:type] == '.yml'
-          upload_annotations_from_yaml(data[:contents])
+          begin
+            successes = upload_annotations_from_yaml(data[:contents], @assignment)
+            if successes > 0
+              flash_message(:success, t('annotation_categories.upload.success',
+                                        annotation_category_number: successes))
+            end
+          rescue CsvInvalidLineError => e
+            flash_message(:error, e.message)
+            raise ActiveRecord::Rollback
+          end
         end
       end
     end
