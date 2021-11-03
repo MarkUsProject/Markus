@@ -1340,7 +1340,7 @@ describe AssignmentsController do
                                         user: user, assessment_id: assignment.id)
           subject
           tags = read_yaml_file(response.body, 'tags.yml')
-          tags = tags.map { |record| record.symbolize_keys }
+          tags = tags.map(&:symbolize_keys)
           expect(tags).to eq([{ name: 'tag1', description: 'tag1_description' },
                               { name: 'tag2', description: 'tag2_description' }])
         end

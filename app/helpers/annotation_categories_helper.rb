@@ -41,8 +41,6 @@ module AnnotationCategoriesHelper
         AnnotationCategory.add_by_row(row, assignment, current_user)
         successes += 1
       end
-    rescue CsvInvalidLineError => e
-      e
     end
     successes
   end

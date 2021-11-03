@@ -621,6 +621,7 @@ class AssignmentsController < ApplicationController
         zipfile.remove(prop_file)
         tag_prop = build_hash_from_zip(zipfile, :tags)
         criteria_prop = build_hash_from_zip(zipfile, :criteria)
+        annotations_prop = build_hash_from_zip(zipfile, :annotations)
         # Build peer review assignment if it exists
         child_prop_file = zipfile.find_entry(CONFIG_FILES[:peer_review_properties])
         unless child_prop_file.nil?
@@ -631,10 +632,13 @@ class AssignmentsController < ApplicationController
           Tag.from_yml(child_tag_prop, child_assignment.id)
           child_criteria_prop = build_hash_from_zip(zipfile, :peer_review_criteria)
           config_criteria(child_assignment, child_criteria_prop)
+          child_annotations_prop = build_hash_from_zip(zipfile, :peer_review_annotations)
+          upload_annotations_from_yaml(child_annotations_prop, child_assignment)
         end
         assignment.save!
         Tag.from_yml(tag_prop, assignment.id)
         config_criteria(assignment, criteria_prop)
+        upload_annotations_from_yaml(annotations_prop, assignment)
         zipfile.each do |entry|
           flash_message(:warning, I18n.t('assignments.unexpected_file_found', item: entry.name)) unless entry.directory?
         end
