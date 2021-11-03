@@ -2,7 +2,6 @@
 pt:
   assignments:
     average_annotations: "%{average_annotations} anotaciones por presentación marcada"
-    cannot_be_timed_and_scanned: UPDATE ME
     deadline_with_extension: UPDATE ME
     due_date:
       final_due_date_passed: O período de tolerância para este projeto já passou
@@ -27,7 +26,6 @@ pt:
         required_files: UPDATE ME
         submission_rules: UPDATE ME
     hidden: "%{assignment_text} (oculto)"
-    ignoring_properties: UPDATE ME
     manage_course_work: Gerenciar trabalho do curso
     marking_scheme: 'Esquema de avalição: %{identifier}'
     no_required_files: Não há arquivos exigidos para esse projeto.

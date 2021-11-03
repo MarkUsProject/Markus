@@ -2,7 +2,6 @@
 fr:
   assignments:
     average_annotations: "%{average_annotations} annotations par soumission marquée"
-    cannot_be_timed_and_scanned: UPDATE ME
     deadline_with_extension: Vous avez une extension jusqu'au %{extension_deadline}.
     due_date:
       final_due_date_passed: La période de grâce pour ce projet est terminée
@@ -27,7 +26,6 @@ fr:
         required_files: UPDATE ME
         submission_rules: UPDATE ME
     hidden: "%{assignment_text} (masqué)"
-    ignoring_properties: UPDATE ME
     manage_course_work: Gestion du cours
     marking_scheme: 'Barème: %{identifier}'
     no_required_files: Aucun fichier n'est requis pour ce projet.

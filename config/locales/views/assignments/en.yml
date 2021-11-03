@@ -2,7 +2,6 @@
 en:
   assignments:
     average_annotations: "%{average_annotations} annotations per marked submission"
-    cannot_be_timed_and_scanned: An assignment cannot both be timed and scanned. Please set one or both of scanned_exam or is_timed to false in the uploaded file.
     deadline_with_extension: You have an extension until %{extension_deadline}.
     due_date:
       final_due_date_passed: The deadline, including late or grace periods, has passed.
@@ -27,7 +26,6 @@ en:
         required_files: Students will see a warning message if they have not submitted files with the exact names of the required files. However, they will be permitted to submit files that do not match the required file names.
         submission_rules: Several different late submission policies are available. If Accept no late submissions is selected then students will be warned that their submission will not be graded if they attempt to submit after the deadline.  You may choose to give students some number of Grace credits in the Users view, and you can choose the grace period times here.  The Penalty Decay formula allows you to deduct X marks for every Y time period.  The Penalty Formula allows you to specify both the value of the penalty and the time period. If students are working in a group, grace credits will be deducted from every group member.
     hidden: "%{assignment_text} (hidden)"
-    ignoring_properties: 'The following properties are invalid and/or not needed to create this %{assignment_type} and will therefore be ignored: '
     manage_course_work: Manage Course Work
     marking_scheme: 'Marking Scheme: %{identifier}'
     no_required_files: There are no required files for this assignment.
