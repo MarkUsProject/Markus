@@ -42,6 +42,24 @@ FactoryBot.define do
     end
   end
 
+  factory :assignment_with_criteria_and_test_results, parent: :assignment do
+    after(:create) do |a|
+      3.times { create(:flexible_criterion, assignment: a) }
+      3.times { create(:grouping_with_inviter_and_submission, assignment: a) }
+      3.times { create(:test_group, assignment: a) }
+
+      a.groupings.each do |grouping|
+        a.test_groups.each do |test_group|
+          5.times do
+            test_run = create(:test_run, grouping: grouping)
+            test_group_result = create(:test_group_result, test_run: test_run, test_group: test_group)
+            create(:test_result, id: test_run.id,test_group_result: test_group_result)
+          end
+        end
+      end
+    end
+  end
+
   factory :assignment_with_criteria_and_results_and_tas, parent: :assignment_with_criteria_and_results do
     after(:create) do |a|
       a.groupings.each do |grouping|

@@ -167,6 +167,43 @@ describe AssignmentsController do
     end
   end
 
+  context 'Download the most recent test results as JSON' do
+    let(:user) { create(:admin) }
+    let(:assignment) { create(:assignment_with_criteria_and_test_results) }
+
+    it 'responds with the appropriate status' do
+      get_as user, :download_test_results, params: { id: assignment.id }, format: 'json'
+      expect(response.status).to eq(200)
+    end
+
+    it 'responds with the appropriate header' do
+      get_as user, :download_test_results, params: { id: assignment.id }, format: 'json'
+      expect(response.header['Content-Type']).to eq('application/json')
+    end
+
+    it 'sets disposition as attachment' do
+      get_as user, :download_test_results, params: { id: assignment.id }, format: 'json'
+      d = response.header['Content-Disposition'].split.first
+      expect(d).to eq 'attachment;'
+    end
+
+    it 'responds with the appropriate filename' do
+      get_as user, :download_test_results, params: { id: assignment.id }, format: 'json'
+      filename = response.header['Content-Disposition'].split[1].split('"').second
+      expect(filename).to eq( "#{assignment.short_identifier}_test_results.json")
+    end
+
+    it 'returns application/json type' do
+      get_as user, :download_test_results, params: { id: assignment.id }, format: 'json'
+      expect(response.media_type).to eq 'application/json'
+    end
+
+    it 'returns the most recent test results' do
+      data = JSON.parse(assignment.summary_test_result_json)
+      expect(data.length).to eq(3)
+    end
+  end
+
   context 'CSV_Downloads' do
     before :each do
       # Authenticate user is not timed out, and has administrator rights.
