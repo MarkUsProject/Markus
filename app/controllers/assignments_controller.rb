@@ -2,6 +2,7 @@ class AssignmentsController < ApplicationController
   include RepositoryHelper
   include RoutingHelper
   include CriteriaHelper
+  include AnnotationCategoriesHelper
   responders :flash
   before_action { authorize! }
 
@@ -15,9 +16,11 @@ class AssignmentsController < ApplicationController
     properties: 'properties.yml',
     tags: 'tags.yml',
     criteria: 'criteria.yml',
+    annotations: 'annotations.yml',
     peer_review_properties: File.join('peer-review-config-files', 'properties.yml'),
     peer_review_tags: File.join('peer-review-config-files', 'tags.yml'),
-    peer_review_criteria: File.join('peer-review-config-files', 'criteria.yml')
+    peer_review_criteria: File.join('peer-review-config-files', 'criteria.yml'),
+    peer_review_annotations: File.join('peer-review-config-files', 'annotations.yml')
   }.freeze
 
   # Publicly accessible actions ---------------------------------------
@@ -582,6 +585,9 @@ class AssignmentsController < ApplicationController
         yml_criteria = assignment.criteria.reduce({}) { |a, b| a.merge b.to_yml }
         f.write yml_criteria.to_yaml
       end
+      zipfile.get_output_stream(CONFIG_FILES[:annotations]) do |f|
+        f.write convert_to_yml(assignment.annotation_categories)
+      end
       unless child_assignment.nil?
         zipfile.get_output_stream(CONFIG_FILES[:peer_review_properties]) do |f|
           f.write(child_assignment.assignment_properties_config.to_yaml)
@@ -592,6 +598,9 @@ class AssignmentsController < ApplicationController
         zipfile.get_output_stream(CONFIG_FILES[:peer_review_criteria]) do |f|
           yml_criteria = child_assignment.criteria.reduce({}) { |a, b| a.merge b.to_yml }
           f.write yml_criteria.to_yaml
+        end
+        zipfile.get_output_stream(CONFIG_FILES[:peer_review_annotations]) do |f|
+          f.write convert_to_yml(child_assignment.annotation_categories)
         end
       end
     end
