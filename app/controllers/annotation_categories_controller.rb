@@ -221,24 +221,7 @@ class AnnotationCategoriesController < ApplicationController
             raise ActiveRecord::Rollback
           end
         elsif data[:type] == '.yml'
-          successes = 0
-          data[:contents].each do |category, category_data|
-            if category_data.is_a?(Array)
-              AnnotationCategory.add_by_row([category, nil] + category_data, @assignment, current_user)
-              successes += 1
-            elsif category_data.is_a?(Hash)
-              row = [category, category_data['criterion']] + category_data['texts'].flatten
-              AnnotationCategory.add_by_row(row, @assignment, current_user)
-              successes += 1
-            end
-          rescue CsvInvalidLineError => e
-            flash_message(:error, e.message)
-            raise ActiveRecord::Rollback
-          end
-          if successes > 0
-            flash_message(:success, t('annotation_categories.upload.success',
-                                      annotation_category_number: successes))
-          end
+          upload_annotations_from_yaml(data[:contents])
         end
       end
     end
