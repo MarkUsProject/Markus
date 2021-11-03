@@ -7,14 +7,7 @@ import ReactTable from "react-table";
 class AssignmentSummaryTable extends React.Component {
   constructor() {
     super();
-    const markingStates = {
-      not_collected: 0,
-      incomplete: 0,
-      complete: 0,
-      released: 0,
-      remark: 0,
-      before_due_date: 0,
-    };
+    const markingStates = getMarkingStates([]);
     this.state = {
       data: [],
       criteriaColumns: [],
@@ -52,8 +45,11 @@ class AssignmentSummaryTable extends React.Component {
 
   onFilteredChange = () => {
     const summaryTable = this.wrappedInstance;
+    const markingStateFilter = summaryTable.state.filtered.find(
+      filter => filter.id == "marking_state"
+    )?.value;
     const markingStates = getMarkingStates(summaryTable.state.sortedData);
-    this.setState({marking_states: markingStates});
+    this.setState({marking_states: markingStates, markingStateFilter: markingStateFilter});
   };
 
   fixedColumns = () => {
@@ -97,7 +93,7 @@ class AssignmentSummaryTable extends React.Component {
           }
         },
       },
-      markingStateColumn(this.state.marking_states),
+      markingStateColumn(this.state.marking_states, this.state.markingStateFilter),
       {
         Header: I18n.t("activerecord.models.tag.other"),
         accessor: "tags",
