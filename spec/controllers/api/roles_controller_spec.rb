@@ -182,14 +182,14 @@ describe Api::RolesController do
         end
         context 'when trying to create a user who already exists' do
           let(:student) { create :student, course: course }
-          it 'should raise a 409 error' do
-            expect(response.status).to eq(409)
+          it 'should raise a 422 error' do
+            expect(response.status).to eq(422)
           end
         end
         context 'when creating a student with an invalid user_name' do
           let(:user_name) { students[0].user_name }
-          it 'should raise a 409 error' do
-            expect(response.status).to eq(409)
+          it 'should raise a 422 error' do
+            expect(response.status).to eq(422)
           end
         end
         context 'when creating a student with an invalid type' do
@@ -237,7 +237,7 @@ describe Api::RolesController do
         it 'should not update an a user name if another user with that name exists' do
           tmp_student.save
           put :update, params: { id: student.id, user_name: tmp_student.user_name, course_id: course.id }
-          expect(response.status).to eq(409)
+          expect(response.status).to eq(422)
           student.reload
           expect(student.user_name).to eq(student.user_name)
         end

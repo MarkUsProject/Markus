@@ -19,6 +19,12 @@ module Api
       end
     end
 
+    private
+
+    def check_course
+      super unless action_name == 'index'
+    end
+
     protected
 
     def implicit_authorization_target
