@@ -190,7 +190,7 @@ describe AssignmentsController do
     it 'responds with the appropriate filename' do
       get_as user, :download_test_results, params: { id: assignment.id }, format: 'json'
       filename = response.header['Content-Disposition'].split[1].split('"').second
-      expect(filename).to eq( "#{assignment.short_identifier}_test_results.json")
+      expect(filename).to eq("#{assignment.short_identifier}_test_results.json")
     end
 
     it 'returns application/json type' do
