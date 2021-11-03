@@ -1281,7 +1281,7 @@ describe AssignmentsController do
   end
 
   describe '#download_config_files' do
-    let!(:assignment) { create :assignment_with_peer_review, due_date: Time.zone.parse('2022-02-10 15:30:45') }
+    let!(:assignment) { create :assignment_with_peer_review, due_date: Time.zone.parse('2042-02-10 15:30:45') }
     subject { get_as user, :download_config_files, params: { id: assignment.id } }
 
     shared_examples 'download sample config files' do
@@ -1303,6 +1303,7 @@ describe AssignmentsController do
 
       # Check file content
       describe 'downloaded zip file' do
+        let!(:criteria) { create :checkbox_criterion, assignment: assignment }
         it 'should have a valid properties file' do
           subject
           properties = read_yaml_file(response.body, 'properties.yml')
@@ -1342,6 +1343,16 @@ describe AssignmentsController do
           tags = tags.map { |record| record.symbolize_keys }
           expect(tags).to eq([{ name: 'tag1', description: 'tag1_description' },
                               { name: 'tag2', description: 'tag2_description' }])
+        end
+
+        it 'should have a valid criteria file' do
+          subject
+          criteria_download = read_yaml_file(response.body, 'criteria.yml')
+          expect(criteria_download).to be_kind_of(Hash)
+          criteria_download = criteria_download.deep_symbolize_keys
+          criteria_download.each_key do |key|
+            expect(criteria_download[key]).to include(:type, :max_mark, :description)
+          end
         end
 
         def read_yaml_file(content, filename)
