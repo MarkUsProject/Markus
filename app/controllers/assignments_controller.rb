@@ -281,7 +281,7 @@ class AssignmentsController < ApplicationController
                   filename: filename
       end
       format.csv do
-        data = @assignment.summary_test_result_csv()
+        data = @assignment.summary_test_result_csv
         filename = "#{@assignment.short_identifier}_test_results.csv"
         send_data data,
                   disposition: 'attachment',

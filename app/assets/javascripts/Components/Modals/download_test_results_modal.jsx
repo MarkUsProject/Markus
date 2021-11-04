@@ -35,11 +35,22 @@ class DownloadTestResultsModal extends React.Component {
               &nbsp;{I18n.t("download_json")}
             </button>
           </a>
-
-          <button type="submit" name="download-test-results-csv">
-            <i className="fa fa-download-file-o" aria-hidden="true" />
-            &nbsp;{I18n.t("download_csv")}
-          </button>
+          <a
+            href={Routes.download_test_results_assignment_path({
+              id: this.props.assignment_id,
+              format: "csv",
+              _options: true,
+            })}
+          >
+            <button
+              type="submit"
+              name="download-test-results-csv"
+              onClick={this.props.onRequestClose}
+            >
+              <i className="fa fa-download-file-o" aria-hidden="true" />
+              &nbsp;{I18n.t("download_csv")}
+            </button>
+          </a>
           <section className="dialog-actions">
             <input
               onClick={this.props.onRequestClose}

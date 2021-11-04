@@ -620,6 +620,7 @@ class Assignment < Assessment
                       'test_results.output',
                       'test_results.marks_earned as test_result_marks_earned',
                       'test_results.marks_total as test_result_marks_total',
+                      'test_results.id as id',
                       :status, :marks_earned, :marks_total, :extra_info, :error_type)
   end
 
@@ -630,14 +631,27 @@ class Assignment < Assessment
 
   # Generate a CSV summary of the most recent test results associated with an assignment.
   def summary_test_result_csv
-    headers = %w[test_result_name output test_result_marks_earned test_result_marks_total test_result_marks_total
-                 status marks_earned marks_total extra_info error_type]
+    summary_test_result = self.summary_test_results
     CSV.generate do |csv|
-      csv << headers
+      submissions = {}
+      summary_test_result.map do |test_result|
+        if !submissions.key?(test_result.test_result_name)
+          submissions[test_result.test_result_name] = [test_result.status]
+        else
+          submissions[test_result.test_result_name] << test_result.status
+        end
+      end
 
-      summary_test_result = self.summary_test_results
-      summary_test_result.map do |tr|
-        csv << tr.as_json.values
+      csv << submissions.keys
+      submissions.first.each_index do |i|
+        row = []
+        submissions.keys.map do |key|
+          row << submissions[key][i]
+        end
+
+        if row.length > 0
+          csv << row
+        end
       end
     end
   end

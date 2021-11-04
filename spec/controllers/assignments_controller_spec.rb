@@ -167,7 +167,7 @@ describe AssignmentsController do
     end
   end
 
-  context 'Download the most recent test results as JSON' do
+  context 'download the most recent test results as JSON' do
     let(:user) { create(:admin) }
     let(:assignment) { create(:assignment_with_criteria_and_test_results) }
 
@@ -201,6 +201,38 @@ describe AssignmentsController do
     it 'returns the most recent test results' do
       data = JSON.parse(assignment.summary_test_result_json)
       expect(data.length).to eq(3)
+    end
+  end
+
+  context 'download the most recent test results as CSV' do
+    let(:user) { create(:admin) }
+    let(:assignment) { create(:assignment_with_criteria_and_test_results) }
+
+    it 'responds with the appropriate status' do
+      get_as user, :download_test_results, params: { id: assignment.id }, format: 'csv'
+      expect(response.status).to eq(200)
+    end
+
+    it 'sets disposition as attachment' do
+      get_as user, :download_test_results, params: { id: assignment.id }, format: 'csv'
+      d = response.header['Content-Disposition'].split.first
+      expect(d).to eq 'attachment;'
+    end
+
+    it 'responds with the appropriate filename' do
+      get_as user, :download_test_results, params: { id: assignment.id }, format: 'csv'
+      filename = response.header['Content-Disposition'].split[1].split('"').second
+      expect(filename).to eq("#{assignment.short_identifier}_test_results.csv")
+    end
+
+    it 'returns text/csv type' do
+      get_as user, :download_test_results, params: { id: assignment.id }, format: 'csv'
+      expect(response.media_type).to eq 'text/csv'
+    end
+
+    it 'returns the most recent test results' do
+      data = CSV.parse(assignment.summary_test_result_csv, headers: true)
+      expect(data[1].length).to eq(3)
     end
   end
 
