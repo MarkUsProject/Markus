@@ -648,10 +648,7 @@ class Assignment < Assessment
         submissions.keys.map do |key|
           row << submissions[key][i]
         end
-
-        if row.length > 0
-          csv << row
-        end
+        csv << row
       end
     end
   end
