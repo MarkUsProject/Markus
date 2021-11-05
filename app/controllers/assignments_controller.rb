@@ -588,6 +588,7 @@ class AssignmentsController < ApplicationController
       zipfile.get_output_stream(CONFIG_FILES[:annotations]) do |f|
         f.write convert_to_yml(assignment.annotation_categories)
       end
+      assignment.starter_file_config_to_zip(zipfile, 'starter-file-config-files', 'starter-file-rules.yml')
       unless child_assignment.nil?
         zipfile.get_output_stream(CONFIG_FILES[:peer_review_properties]) do |f|
           f.write(child_assignment.assignment_properties_config.to_yaml)

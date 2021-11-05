@@ -1199,6 +1199,28 @@ class Assignment < Assessment
     end
   end
 
+  # Writes this assignment's starter files and settings to the +dir_name+ located in the +zip_file+.
+  # The settings for this assignment's starter files will be stored in a file called +settings_filename+
+  def starter_file_config_to_zip(zip_file, dir_name, settings_filename)
+    default_starter_group = nil
+    download_count = 1
+    assignment.starter_file_groups.find_each do |starter_file_group|
+      group_name = "#{download_count}: #{starter_file_group.name}"
+      starter_file_group.write_starter_files_to_zip(zip_file, File.join(dir_name, group_name))
+      if starter_file_group.id == self.default_starter_file_group_id
+        default_starter_group = group_name
+      end
+      download_count += 1
+    end
+    starter_file_settings = {
+      starter_file_type: self.starter_file_type,
+      allow_starter_files_after_due: self.starter_files_after_due,
+      default_starter_group: default_starter_group,
+      group_information: self.starter_file_groups.pluck_to_hash(:name, :use_rename, :entry_rename)
+    }.to_yaml
+    zip_file.get_output_stream(File.join(dir_name, settings_filename)) { |f| f.write starter_file_settings }
+  end
+
   # zip all files in the folder at +self.autotest_files_dir+ and return the
   # path to the zip file
   def zip_automated_test_files(user)

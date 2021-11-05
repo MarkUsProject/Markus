@@ -28,17 +28,21 @@ class StarterFileGroup < ApplicationRecord
     zip_path = File.join('tmp', zip_name + '.zip')
     FileUtils.rm_rf zip_path
     Zip::File.open(zip_path, create: true) do |zip_file|
-      self.files_and_dirs.map do |file|
-        zip_entry_path = File.join file
-        abs_path = path.join(file)
-        if abs_path.directory?
-          zip_file.mkdir(zip_entry_path)
-        else
-          zip_file.get_output_stream(zip_entry_path) { |f| f.print File.read(abs_path.to_s, mode: 'rb') }
-        end
-      end
+      write_starter_files_to_zip(zip_file)
     end
     zip_path
+  end
+
+  def write_starter_files_to_zip(zip_file, dir = '')
+    self.files_and_dirs.map do |file|
+      zip_entry_path = File.join(dir, file)
+      abs_path = path.join(file)
+      if abs_path.directory?
+        zip_file.mkdir(zip_entry_path)
+      else
+        zip_file.get_output_stream(zip_entry_path) { |f| f.print File.read(abs_path.to_s, mode: 'rb') }
+      end
+    end
   end
 
   def update_entries
