@@ -15,19 +15,19 @@ class ApplicationPolicy < ActionPolicy::Base
   # policies used to render menu bars (visible everywhere)
 
   def view_admin_subtabs?
-    check?(:manage_assessments?, user)
+    check?(:manage_assessments?, role)
   end
 
   def view_ta_subtabs?
-    user.ta?
+    role.ta?
   end
 
   def view_student_subtabs?
-    user.student?
+    role.student?
   end
 
   def view_sub_sub_tabs?
-    user.admin? || user.ta?
+    role.admin? || role.ta?
   end
 
   # checks usable for all policies
@@ -45,6 +45,6 @@ class ApplicationPolicy < ActionPolicy::Base
   end
 
   def role_is_switched?
-    real_user && real_user != user
+    real_user != user
   end
 end

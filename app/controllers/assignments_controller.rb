@@ -118,9 +118,9 @@ class AssignmentsController < ApplicationController
   # Displays "Manage Assignments" page for creating and editing assignment information.
   # Acts as dashboard for students and TAs.
   def index
-    if current_user.student?
+    if current_role.student?
       @a_id_results = {}
-      accepted_groupings = current_user.accepted_groupings.includes(:assignment, { current_submission_used: :results })
+      accepted_groupings = current_role.accepted_groupings.includes(:assignment, { current_submission_used: :results })
       accepted_groupings.each do |grouping|
         if allowed_to?(:see_hidden?, grouping.assignment) && grouping.has_submission?
           submission = grouping.current_submission_used
@@ -133,7 +133,7 @@ class AssignmentsController < ApplicationController
       end
 
       @g_id_entries = {}
-      current_user.grade_entry_students.where(released_to_student: true).includes(:grade_entry_form).each do |g|
+      current_role.grade_entry_students.where(released_to_student: true).includes(:grade_entry_form).each do |g|
         if allowed_to?(:see_hidden?, g.grade_entry_form)
           @g_id_entries[g.assessment_id] = g
         end

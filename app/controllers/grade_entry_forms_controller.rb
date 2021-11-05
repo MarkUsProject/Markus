@@ -240,7 +240,7 @@ class GradeEntryFormsController < ApplicationController
     }
 
     num_entries = grade_entry_form.count_non_nil.to_s +
-      '/' + grade_entry_form.grade_entry_students.joins(:user).where('users.hidden': false).count.to_s
+      '/' + grade_entry_form.grade_entry_students.joins(:role).where('roles.hidden': false).count.to_s
 
     info_summary = {
       name: grade_entry_form.short_identifier + ': ' + grade_entry_form.description,

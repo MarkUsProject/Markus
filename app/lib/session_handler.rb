@@ -4,6 +4,15 @@ module SessionHandler
 
   protected
 
+  # Sets current user for this session
+  def current_user=(user)
+    session[:user_name] = user&.is_a?(User) ? user.user_name : nil
+  end
+
+  def real_user=(user)
+    session[:real_user_name] = user&.is_a?(User) ? user.user_name : nil
+  end
+
   # Retrieve current user for this session, or nil if none exists
   def current_user
     # retrieve from database on every request instead of
@@ -26,7 +35,7 @@ module SessionHandler
 
   def current_course
     if controller_name == 'courses'
-      @current_course ||= Course.find_by(params.permit(:id))
+      @current_course ||= Course.find_by(id: params[:id])
     else
       @current_course ||= Course.find_by(id: params[:course_id])
     end

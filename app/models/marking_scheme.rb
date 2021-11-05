@@ -27,8 +27,8 @@ class MarkingScheme < ApplicationRecord
     { 'data': distribution, 'max': max }
   end
 
-  def students_grade_distribution(current_user, intervals = 20)
-    data = students_weighted_grades_array(current_user)
+  def students_grade_distribution(current_role, intervals = 20)
+    data = students_weighted_grades_array(current_role)
     max = [data.max, 100].max
 
     data.extend(Histogram)

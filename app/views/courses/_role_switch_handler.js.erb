@@ -1,5 +1,5 @@
 if (<%= error.nil? %>) {
-  window.location.replace("<%= assignments_path() %>");
+  window.location.replace("<%= course_assignments_path(@current_course) %>");
 } else {
   document.getElementById("role_switch_error").innerHTML =
       "<%= escape_javascript(render(partial: 'role_switch_error',

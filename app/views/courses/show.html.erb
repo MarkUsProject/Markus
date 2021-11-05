@@ -1,0 +1,32 @@
+<% content_for :title, t('menu.dashboard') %>
+<% content_for :head do %>
+  <%= javascript_tag nonce: true do %>
+    document.addEventListener('DOMContentLoaded', () => {
+    window.dashboard = makeDashboard(document.getElementById('dashboard-react'),
+                                     { course_id: <%= @current_course.id %> });
+    <% unless @current_assignment.nil? %>
+      window.dashboard.setState({assessment_id: <%= @current_assignment.id %>, assessment_type: 'Assignment'});
+    <% end %>
+    })
+  <% end %>
+<% end %>
+
+<div class='pane-wrapper'>
+  <div class='pane no-border assignment-list-wrapper'>
+    <section id='assignment_list'>
+      <h3><%= Assignment.model_name.human.pluralize %></h3>
+      <%= render partial: 'dashboard_list' %>
+    </section>
+    <section id='spreadsheet_list'>
+      <h3><%= GradeEntryForm.model_name.human.pluralize %></h3>
+      <%= render partial: 'spreadsheet_list' %>
+    </section>
+    <section id='summary'>
+      <h3><%= t('course_summary.title') %></h3>
+      <%= render partial: 'summary' %>
+    </section>
+  </div>
+  <div id='assignment_summaries' class='pane highlight'>
+    <div id='dashboard-react'></div>
+  </div>
+</div>

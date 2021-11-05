@@ -1,17 +1,17 @@
 <div class="date">
-  <% grouping = @current_user.accepted_grouping_for(assignment.id) %>
+  <% grouping = @current_role.accepted_grouping_for(assignment.id) %>
   <% due_date = grouping&.due_date %>
   <% if assignment.is_timed %>
     <%= render partial: 'timed_due_message', locals: { assignment: assignment, grouping: grouping, simple: true } %>
   <% else %>
     <% if due_date.nil? %>
-      <% due_date = assignment.section_due_date(@current_user.section) %>
+      <% due_date = assignment.section_due_date(@current_role.section) %>
       <%= l(due_date) %>
     <% elsif grouping.extension.nil? %>
       <%= l(due_date) %>
     <% else %>
       <%= I18n.t('assignments.deadline_with_extension',
-                 deadline: I18n.l(assignment.section_due_date(@current_user.section)),
+                 deadline: I18n.l(assignment.section_due_date(@current_role.section)),
                  extension_deadline: l(due_date)) %>
     <% end %>
     <% if due_date > Time.current %>

@@ -1,5 +1,5 @@
 <% gef_text = "#{h(grade_entry_form.short_identifier)}: #{h(grade_entry_form.description)}" %>
-<% route = student_interface_grade_entry_form_path(grade_entry_form.id) %>
+<% route = student_interface_course_grade_entry_form_path(@current_course, grade_entry_form.id) %>
 <tr>
   <td>
     <%= link_to gef_text, route %>
@@ -26,7 +26,8 @@
           <%= "(#{t(:class_average)}: "\
                         "#{number_to_percentage(grade_entry_form.results_average, precision: 1)})" %>
         <% else %>
-          <%= link_to Result.model_name.human.pluralize, student_interface_grade_entry_form_path(grade_entry_form.id) %>
+          <%= link_to Result.model_name.human.pluralize,
+                      student_interface_course_grade_entry_form_path(@current_course, grade_entry_form.id) %>
         <% end %>
       <% elsif grade_entry_form.due_date.nil? ||
         grade_entry_form.due_date < Time.current.to_date %>

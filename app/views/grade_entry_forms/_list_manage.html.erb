@@ -1,5 +1,5 @@
 <% grade_entry_forms = GradeEntryForm.order(:id) %>
-<% action = @current_user.admin? ? 'edit' : 'grades' %>
+<% action = @current_role.admin? ? 'edit' : 'grades' %>
 
 <% if grade_entry_forms.empty? %>
   <p><%= t('grade_entry_forms.none') %></p>
