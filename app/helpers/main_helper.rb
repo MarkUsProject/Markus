@@ -4,11 +4,11 @@ module MainHelper
 
   # Sets current user for this session
   def current_user=(user)
-    session[:user_name] = (user.blank? || !user.kind_of?(User)) ? nil : user.user_name
+    session[:user_name] = user&.is_a?(User) ? user.user_name : nil
   end
 
   def real_user=(user)
-    session[:real_user_name] = (user.blank? || !user.kind_of?(User)) ? nil : user.user_name
+    session[:real_user_name] = user&.is_a?(User) ? user.user_name : nil
   end
 
   def get_blank_message(login, password)

@@ -34,24 +34,24 @@ module SessionHandler
 
   # Check if there's any user associated with this session
   def logged_in?
-    session[:uid] != nil
+    !session[:real_user_name].nil?
   end
 
   def remote_user_name
     @remote_user_name ||= if request.env['HTTP_X_FORWARDED_USER'].present?
-      request.env['HTTP_X_FORWARDED_USER']
-    elsif Settings.remote_user_auth && !Rails.env.production?
-      # This is only used in non-production modes to test Markus behaviours specific to
-      # external authentication. This should not be used in the place of any real
-      # authentication (basic or otherwise)!
-      authenticate_or_request_with_http_basic { |username, _| username }
-    end
+                            request.env['HTTP_X_FORWARDED_USER']
+                          elsif Settings.remote_user_auth && !Rails.env.production?
+                            # This is only used in non-production modes to test Markus behaviours specific to
+                            # external authentication. This should not be used in the place of any real
+                            # authentication (basic or otherwise)!
+                            authenticate_or_request_with_http_basic { |username, _| username }
+                          end
   end
 
   def redirect_to_last_page
     uri = session[:redirect_uri]
     session[:redirect_uri] = nil
-    redirect_to( uri || { action: 'index' } )
+    redirect_to(uri || { action: 'index' })
   end
 
   # Checks user satisfies the following conditions:
@@ -67,22 +67,20 @@ module SessionHandler
         refresh_timeout
         session[:real_user_name] = remote_user_name
       end
-    else
-      if real_user.nil? || session_expired?
-        # cleanup expired session stuff
-        clear_session
-        if request.xhr? # is this an XMLHttpRequest?
-          # Redirect users back to referer, or else
-          # they might be redirected to an rjs page.
-          session[:redirect_uri] = request.referer
-          head :forbidden # 403
-        else
-          session[:redirect_uri] = request.fullpath
-          redirect_to controller: 'main', action: 'login'
-        end
+    elsif real_user.nil? || session_expired?
+      # cleanup expired session stuff
+      clear_session
+      if request.xhr? # is this an XMLHttpRequest?
+        # Redirect users back to referer, or else
+        # they might be redirected to an rjs page.
+        session[:redirect_uri] = request.referer
+        head :forbidden # 403
       else
-        refresh_timeout
+        session[:redirect_uri] = request.fullpath
+        redirect_to controller: 'main', action: 'login'
       end
+    else
+      refresh_timeout
     end
   end
 
