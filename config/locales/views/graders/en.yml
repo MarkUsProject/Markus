@@ -5,7 +5,7 @@ en:
       assign_grader: Assign grader(s)
       randomly_assign_graders: Randomly assign grader(s)
       unassign_grader: Unassign grader(s)
-    anonymize_groups: Do not show group information to graders
+    anonymize_groups: Hide group membership information from graders
     assign_to_criteria: Assign graders to individual criteria (if unselected, all graders will be able to edit all criteria)
     assigned_graders: Assigned Graders
     coverage: Coverage
@@ -17,9 +17,10 @@ en:
     group_submission_no_files: One or more of the groups selected has no files submitted. Grader not assigned.
     help: Assign graders to specific student groups and criteria. By default, graders will be assigned to all criteria.
     hide_unassigned_criteria: Only show assigned criteria to graders (if unselected, all graders will be able to see all criteria)
-    no_grader_assigned: 'Default grader: course instructor(s)'
+    no_grader_assigned: "Default grader: course instructor(s)"
     select_a_criterion: Select at least one criterion
     select_a_grader: Select at least one grader to assign.
-    skip_empty_submissions: Do not assign graders to groups with empty submissions (requires that submissions are collected)
+    skip_empty_submissions: Assign graders to groups with empty submissions
+    skip_empty_submissions_tooltip: Requires that submissions are collected
     upload:
       remove_existing_mappings: Remove existing grader assignments

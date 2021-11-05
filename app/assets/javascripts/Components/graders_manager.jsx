@@ -261,6 +261,9 @@ class GradersManager extends React.Component {
                     />
                     {I18n.t("graders.skip_empty_submissions")}
                   </label>
+                  <div className="inline-help">
+                    <p>{I18n.t("graders.skip_empty_submissions_tooltip")}</p>
+                  </div>
                 </div>
                 <div style={{marginBottom: "1em"}}>
                   <label>
