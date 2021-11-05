@@ -9,12 +9,12 @@ class CourseSummariesController < ApplicationController
   end
 
   def populate
-    table_data = get_table_json_data(current_user)
-    assessments = current_user.student? ? current_user.visible_assessments : Assessment
-    marking_schemes = current_user.student? ? MarkingScheme.none : MarkingScheme
+    table_data = get_table_json_data(current_role)
+    assessments = current_role.student? ? current_role.visible_assessments : Assessment
+    marking_schemes = current_role.student? ? MarkingScheme.none : MarkingScheme
 
     average, median, individual, assessment_columns, marking_scheme_columns, graph_labels = [], [], [], [], [], []
-    single = current_user.student? ? Hash[table_data.first[:assessment_marks].map { |k, v| [k, v[:percentage]] }] : {}
+    single = current_role.student? ? Hash[table_data.first[:assessment_marks].map { |k, v| [k, v[:percentage]] }] : {}
 
     assessments.order(id: :asc).each do |a|
       info = assessment_overview(a)
@@ -47,13 +47,13 @@ class CourseSummariesController < ApplicationController
   end
 
   def grade_distribution
-    marking_schemes = current_user.student? ? MarkingScheme.none : MarkingScheme.order(id: :asc)
+    marking_schemes = current_role.student? ? MarkingScheme.none : MarkingScheme.order(id: :asc)
     intervals = 20
-    table_data = marking_schemes.map { |m| { data: m.students_grade_distribution(current_user, intervals) } }
+    table_data = marking_schemes.map { |m| { data: m.students_grade_distribution(current_role, intervals) } }
     labels = (0..intervals - 1).map { |i| "#{5 * i}-#{5 * i + 5}" }
 
     summary = marking_schemes.map do |m|
-      grades = m.students_weighted_grades_array(current_user)
+      grades = m.students_weighted_grades_array(current_role)
       {
         name: m.name,
         average: DescriptiveStatistics.mean(grades) || 0,
@@ -78,7 +78,7 @@ class CourseSummariesController < ApplicationController
   def download_csv_grades_report
     assessments = Assessment.all.order(id: :asc).pluck(:id)
     marking_schemes = MarkingScheme.all.pluck(:id)
-    grades_data = get_table_json_data(current_user)
+    grades_data = get_table_json_data(current_role)
 
     csv_string = MarkusCsv.generate(grades_data, [generate_csv_header, generate_out_of_row]) do |student|
       row = [student[:user_name], student[:first_name], student[:last_name], student[:id_number]]
@@ -144,9 +144,9 @@ class CourseSummariesController < ApplicationController
       average: nil,
       median: nil
     }
-    if current_user.admin? || (current_user.student? && current_user.released_result_for?(assessment))
+    if current_role.admin? || (current_role.student? && current_role.released_result_for?(assessment))
       data[:average] = get_assessment_data(assessment, :average)
-      if current_user.admin? || assessment.display_median_to_students
+      if current_role.admin? || assessment.display_median_to_students
         data[:median] = get_assessment_data(assessment, :median)
       end
     end

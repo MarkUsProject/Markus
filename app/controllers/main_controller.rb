@@ -3,7 +3,7 @@
 # as well as displaying main page
 class MainController < ApplicationController
 
-  include ApplicationHelper, MainHelper
+  include ApplicationHelper
 
   protect_from_forgery with: :exception, except: [:login, :page_not_found]
 
@@ -89,22 +89,6 @@ class MainController < ApplicationController
 
   private
 
-  def log_role_switch(found_user)
-    # Log the date that the role switch occurred
-    m_logger = MarkusLogger.instance
-    if current_user != real_user
-      # Log that the admin dropped role of another user
-      m_logger.log("Admin '#{real_user.user_name}' logged out from " +
-                       "'#{current_user.user_name}'.")
-    end
-
-    if found_user != real_user
-      # Log that the admin assumed role of another user
-      m_logger.log("Admin '#{real_user.user_name}' logged in as " +
-                       "'#{found_user.user_name}'.")
-    end
-  end
-
   # Returns the user with user name "effective_user" from the database given that the user
   # with user name "real_user" is authenticated. Effective and real users might be the
   # same for regular logins and are different on an assume role call.
@@ -131,6 +115,16 @@ class MainController < ApplicationController
       flash_now(:error, Settings.incorrect_login_message || I18n.t('main.login_failed'))
     end
     false
+  end
+
+  def get_blank_message(login, password)
+    if login.blank? && password.blank?
+      I18n.t('main.username_and_password_not_blank')
+    elsif login.blank?
+      I18n.t('main.username_not_blank')
+    elsif password.blank?
+      I18n.t('main.password_not_blank')
+    end
   end
 
   protected

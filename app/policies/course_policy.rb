@@ -1,17 +1,14 @@
 # Policy for courses controller.
 class CoursePolicy < ApplicationPolicy
   default_rule :manage?
+  alias_rule :clear_role_switch_session?, to: :role_is_switched?
 
   def show?
-    true
+    role.admin?
   end
 
   def index?
     true
-  end
-
-  def clear_role_switch_session?
-    real_role.admin? && check?(:role_is_switched?)
   end
 
   def role_switch?

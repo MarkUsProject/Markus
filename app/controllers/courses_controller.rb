@@ -1,7 +1,6 @@
 # Manages actions relating to editing and modifying
 # courses.
 class CoursesController < ApplicationController
-  before_action :set_course, only: [:show]
   before_action { authorize! }
 
   respond_to :html
@@ -12,7 +11,10 @@ class CoursesController < ApplicationController
   end
 
   def show
-    respond_with(@course)
+    @assignments = @current_course.assignments
+    @grade_entry_forms = @current_course.grade_entry_forms
+    @current_assignment = @current_course.get_current_assignment
+    respond_with(@current_course)
   end
 
   # Sets current_user to nil, allowing an admin who had previously
@@ -75,8 +77,20 @@ class CoursesController < ApplicationController
 
   private
 
-  def set_course
-    @course = Course.find(params[:id])
+  def log_role_switch(found_user)
+    # Log the date that the role switch occurred
+    m_logger = MarkusLogger.instance
+    if current_user != real_user
+      # Log that the admin dropped role of another user
+      m_logger.log("Admin '#{real_user.user_name}' logged out from " +
+                       "'#{current_user.user_name}'.")
+    end
+
+    if found_user != real_user
+      # Log that the admin assumed role of another user
+      m_logger.log("Admin '#{real_user.user_name}' logged in as " +
+                       "'#{found_user.user_name}'.")
+    end
   end
 
   def course_params

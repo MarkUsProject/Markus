@@ -5,6 +5,6 @@
   <% end %>
 
   <%= link_to link_text,
-              switch_grade_entry_form_path(grade_entry_form.id),
+              switch_course_grade_entry_form_path(@current_course, grade_entry_form.id),
               title: grade_entry_form.description %>
 </li>

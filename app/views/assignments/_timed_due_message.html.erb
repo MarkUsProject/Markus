@@ -1,5 +1,5 @@
-<% due_date = assignment.section_due_date(@current_user&.section)
-   start_time = assignment.section_start_time(@current_user&.section)
+<% due_date = assignment.section_due_date(@current_role&.section)
+   start_time = assignment.section_start_time(@current_role&.section)
    simple ||= false %>
 <% if grouping&.start_time.nil? %>
   <% if simple %>

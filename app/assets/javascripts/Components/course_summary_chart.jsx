@@ -29,7 +29,7 @@ export class CourseSummaryChart extends React.Component {
   }
 
   fetchData = () => {
-    fetch(Routes.grade_distribution_course_summaries_path())
+    fetch(Routes.grade_distribution_course_course_summaries_path(this.props.course_id))
       .then(data => data.json())
       .then(res => {
         for (const [index, element] of res.datasets.entries()) {
@@ -52,7 +52,9 @@ export class CourseSummaryChart extends React.Component {
   render() {
     const header = (
       <h2>
-        <a href={Routes.course_summaries_path()}>{I18n.t("course_summary.title")}</a>
+        <a href={Routes.course_course_summaries_path(this.props.course_id)}>
+          {I18n.t("course_summary.title")}
+        </a>
       </h2>
     );
 
