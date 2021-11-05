@@ -120,7 +120,7 @@ class AssignmentsController < ApplicationController
   def index
     if current_role.student?
       @a_id_results = {}
-      accepted_groupings = current_role.accepted_groupings.includes(:assignment, { current_submission_used: :results })
+      accepted_groupings = current_role.accepted_groupings.includes(:assignment, current_submission_used: :results)
       accepted_groupings.each do |grouping|
         if allowed_to?(:see_hidden?, grouping.assignment) && grouping.has_submission?
           submission = grouping.current_submission_used

@@ -82,14 +82,12 @@ class CoursesController < ApplicationController
     m_logger = MarkusLogger.instance
     if current_user != real_user
       # Log that the admin dropped role of another user
-      m_logger.log("Admin '#{real_user.user_name}' logged out from " +
-                       "'#{current_user.user_name}'.")
+      m_logger.log("Admin '#{real_user.user_name}' logged out from '#{current_user.user_name}'.")
     end
 
     if found_user != real_user
       # Log that the admin assumed role of another user
-      m_logger.log("Admin '#{real_user.user_name}' logged in as " +
-                       "'#{found_user.user_name}'.")
+      m_logger.log("Admin '#{real_user.user_name}' logged in as '#{found_user.user_name}'.")
     end
   end
 
