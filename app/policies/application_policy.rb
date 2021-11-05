@@ -1,6 +1,9 @@
 # Application policy class
 class ApplicationPolicy < ActionPolicy::Base
+  authorize :user, optional: true
   authorize :role, optional: true
+  authorize :real_user
+  authorize :real_role, optional: true
 
   alias_rule :index?, :create?, :new?, to: :manage?
 
@@ -39,5 +42,9 @@ class ApplicationPolicy < ActionPolicy::Base
 
   def student?
     user.student?
+  end
+
+  def role_is_switched?
+    real_user && real_user != user
   end
 end

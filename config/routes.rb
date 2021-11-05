@@ -64,6 +64,12 @@ Rails.application.routes.draw do
   end
 
   resources :courses, only: [:show, :index] do
+    member do
+      get 'clear_role_switch_session'
+      get 'role_switch'
+      post 'switch_role'
+    end
+
     resources :admins
 
     resources :assignments do
@@ -436,13 +442,10 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :main do
+  resources :main, only: [] do
     collection do
       post 'logout'
       get 'about'
-      post 'login_as'
-      get 'role_switch'
-      get 'clear_role_switch_session'
       get 'check_timeout'
       post 'refresh_session'
     end
@@ -454,7 +457,7 @@ Rails.application.routes.draw do
     end
   end
 
-  match 'main', controller: 'main', action: 'index', via: :post
+  match 'main', controller: 'courses', action: 'index', via: :post
   match 'main/about', controller: 'main', action: 'about', via: :post
   match 'main/logout', controller: 'main', action: 'logout', via: :post
 

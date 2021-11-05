@@ -10,13 +10,12 @@
         <% end %>
       </span>
       <span id='user-id'>
-        <%= @current_user.display_name %>
-        ( <strong><%= @current_user.user_name %></strong> )
+        <%= @current_role.display_name %>
+        ( <strong><%= @current_role.user_name %></strong> )
       </span>
-      <% if @current_user.admin? || (session[:real_uid] &&
-              User.find_by_id(session[:real_uid]).admin?) %>
+      <% if allowed_to?(:role_switch?) %>
         <%= link_to t('main.role_switch.switch_role'),
-                    role_switch_main_index_path,
+                    role_switch_course_path(@current_course.id),
                     remote: true,
                     class: 'button inline-button switch-role' %>
       <% end %>
@@ -28,10 +27,9 @@
                   class: 'button inline-button') unless
             Settings.logout_redirect == 'NONE' %>
 
-      <% if Settings.remote_user_auth &&
-            !session[:real_uid].nil? %>
+      <% if allowed_to?(:clear_role_switch_session?) %>
         <%= link_to t('main.role_switch.clear_role_switch_session'),
-                    controller: 'main',
+                    controller: 'courses',
                     action: 'clear_role_switch_session' %>
       <% end %>
     </span>

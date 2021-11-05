@@ -47,9 +47,7 @@ repository:
 
 max_file_size: 5000000
 
-student_session_timeout: 1800
-ta_session_timeout: 1800
-admin_session_timeout: 1800
+session_timeout: 1800
 
 enable_key_storage: true
 
