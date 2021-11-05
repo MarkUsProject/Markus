@@ -35,7 +35,6 @@ class MainController < ApplicationController
       return
     end
 
-
     found_user = User.find_by_user_name(params[:user_login])
     if found_user.nil?
       flash_now(:error, Settings.validate_user_not_allowed_message || I18n.t('main.login_failed'))
@@ -48,7 +47,7 @@ class MainController < ApplicationController
     session[:redirect_uri] = nil
     refresh_timeout
     # redirect to last visited page or to main page
-    redirect_to( uri || { controller: 'courses', action: 'index' } )
+    redirect_to(uri || { controller: 'courses', action: 'index' })
   end
 
 
