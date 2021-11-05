@@ -2,10 +2,6 @@ import React from "react";
 import Modal from "react-modal";
 
 class DownloadTestResultsModal extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-
   componentDidMount() {
     Modal.setAppElement("body");
   }
@@ -17,7 +13,11 @@ class DownloadTestResultsModal extends React.Component {
         isOpen={this.props.isOpen}
         onRequestClose={this.props.onRequestClose}
       >
-        <h2>{I18n.t("download_tests")}</h2>
+        <h2>
+          {I18n.t("download_the", {
+            item: I18n.t("activerecord.models.test_result.other"),
+          })}
+        </h2>
         <div className={"modal-container-vertical"} style={{alignItems: "center"}}>
           <a
             href={Routes.download_test_results_assignment_path({

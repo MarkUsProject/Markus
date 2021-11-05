@@ -171,7 +171,9 @@ class AssignmentSummaryTable extends React.Component {
               </button>
             </form>
             <button type="submit" name="download_tests" onClick={this.onDownloadTestsModal}>
-              {I18n.t("download_tests")}
+              {I18n.t("download_the", {
+                item: I18n.t("activerecord.models.test_result.other"),
+              })}
             </button>
           </div>
         )}

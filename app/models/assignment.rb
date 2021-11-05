@@ -604,29 +604,29 @@ class Assignment < Assessment
   def summary_test_results
     test_groups_query = self.test_groups
                             .joins(:test_group_results)
-                            .group(:id)
+                            .joins(test_group_results: { test_run: :grouping })
+                            .group('test_groups.id', 'groupings.id')
                             .select('test_groups.id AS test_groups_id',
                                     'MAX(test_group_results.created_at) AS test_group_results_created_at')
+                            .where('test_runs.submission_id IS NOT NULL')
                             .to_sql
-    test_group_query = TestGroupResult.joins(:test_group)
-                                      .joins("INNER JOIN (#{test_groups_query}) sub \
-                                              ON test_groups.id = sub.test_groups_id \
-                                              AND test_group_results.created_at = sub.test_group_results_created_at")
-                                      .select('test_groups.name AS test_group_name', 'test_group_results.*')
-                                      .to_sql
 
-    TestResult.joins("INNER JOIN (#{test_group_query}) sub ON test_results.id = sub.test_run_id")
-              .select('test_results.name as test_result_name',
-                      'test_results.output',
-                      'test_results.marks_earned as test_result_marks_earned',
-                      'test_results.marks_total as test_result_marks_total',
-                      'test_results.id as id',
-                      :status, :marks_earned, :marks_total, :extra_info, :error_type)
+    TestGroup.joins(test_group_results: :test_results)
+             .joins("INNER JOIN (#{test_groups_query}) sub \
+                     ON test_groups.id = sub.test_groups_id \
+                     AND test_group_results_test_groups.created_at = sub.test_group_results_created_at")
+             .select('test_results.marks_earned as marks_earned',
+                     'test_results.marks_total as marks_total',
+                     'test_results.output',
+                     'test_groups.name',
+                     'test_results.name as test_result_name',
+                     'test_groups_id',
+                     :status, :extra_info, :error_type)
   end
 
   # Generate a JSON summary of the most recent test results associated with an assignment.
   def summary_test_result_json
-    self.summary_test_results.to_json
+    self.summary_test_results.group_by(&:test_groups_id).to_json
   end
 
   # Generate a CSV summary of the most recent test results associated with an assignment.
