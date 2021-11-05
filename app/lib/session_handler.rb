@@ -4,34 +4,31 @@ module SessionHandler
 
   protected
 
-  # Note: setter method for current_user is defined in login controller
-  # since other controllers do not need ability to set this
-
   # Retrieve current user for this session, or nil if none exists
   def current_user
     # retrieve from database on every request instead of
     # storing it as global variable when current_user=
     # is called to prevent user information becoming stale.
-    @current_user ||= (session[:uid] && User.find_by_id(session[:uid])) || nil
+    @current_user ||= (session[:user_name] && User.find_by_user_name(session[:user_name])) || real_user
   end
 
   def real_user
-    @real_user ||= User.find_by_id(session[:real_uid])
+    @real_user ||= session[:real_user_name] && User.find_by_user_name(session[:real_user_name])
   end
 
   def current_role
-    @current_role = Role.find_by(human: current_user, course: current_course)
+    @current_role ||= Role.find_by(human: current_user, course: current_course)
   end
 
-  def current_real_role
-    @real_role = Role.find_by(human: real_user, course: current_course)
+  def real_role
+    @real_role ||= Role.find_by(human: real_user, course: current_course)
   end
 
   def current_course
     if controller_name == 'courses'
-      @current_course = Course.find_by(params.permit(:id))
+      @current_course ||= Course.find_by(params.permit(:id))
     else
-      @current_course = Course.find_by(id: params[:course_id])
+      @current_course ||= Course.find_by(id: params[:course_id])
     end
   end
 
@@ -40,13 +37,21 @@ module SessionHandler
     session[:uid] != nil
   end
 
-  # Check if current user matches given role.
-  def authorized?(type=Admin)
-    user = current_user
-    if user.nil?
-      return false
+  def remote_user_name
+    @remote_user_name ||= if request.env['HTTP_X_FORWARDED_USER'].present?
+      request.env['HTTP_X_FORWARDED_USER']
+    elsif Settings.remote_user_auth && !Rails.env.production?
+      # This is only used in non-production modes to test Markus behaviours specific to
+      # external authentication. This should not be used in the place of any real
+      # authentication (basic or otherwise)!
+      authenticate_or_request_with_http_basic { |username, _| username }
     end
-    return user.is_a?(type)
+  end
+
+  def redirect_to_last_page
+    uri = session[:redirect_uri]
+    session[:redirect_uri] = nil
+    redirect_to( uri || { action: 'index' } )
   end
 
   # Checks user satisfies the following conditions:
@@ -54,34 +59,29 @@ module SessionHandler
   # => User has privilege to view the page/perform action
   # If not, then user is redirected to login page for authentication.
   def authenticate
-    # Note: testing depends on the fact that 'authenticated' means having the
-    # session['uid'] and session['timeout'] set appropriately.  Make sure to
-    # change AuthenticatedControllerTest if this is changed.
-    if !session_expired? && logged_in?
-      refresh_timeout  # renew timeout for this session
-      @current_user = current_user
-    else
-      # cleanup expired session stuff
-      clear_session
-      cookies.delete :auth_token
-      reset_session
-
-      session[:redirect_uri] = request.fullpath  # save current uri
-
-      # figure out how we want to explain this to users
-      if session_expired?
-        flash[:login_notice] = I18n.t('main.session_expired')
+    if Settings.remote_user_auth
+      if remote_user_name.nil?
+        msg = Settings.validate_user_not_allowed_message || I18n.t('main.login_failed')
+        render :remote_user_auth_login_fail, status: 403, locals: { login_error: msg }
       else
-        flash[:login_notice] = I18n.t('main.please_log_in')
+        refresh_timeout
+        session[:real_user_name] = remote_user_name
       end
-
-      if request.xhr? # is this an XMLHttpRequest?
-        # Redirect users back to referer, or else
-        # they might be redirected to an rjs page.
-        session[:redirect_uri] = request.referer
-        head :forbidden # 403
+    else
+      if real_user.nil? || session_expired?
+        # cleanup expired session stuff
+        clear_session
+        if request.xhr? # is this an XMLHttpRequest?
+          # Redirect users back to referer, or else
+          # they might be redirected to an rjs page.
+          session[:redirect_uri] = request.referer
+          head :forbidden # 403
+        else
+          session[:redirect_uri] = request.fullpath
+          redirect_to controller: 'main', action: 'login'
+        end
       else
-        redirect_to controller: 'main', action: 'login'
+        refresh_timeout
       end
     end
   end
@@ -92,38 +92,14 @@ module SessionHandler
   def refresh_timeout
     # a json session cookie will serialize time as strings, make the conversion explicit so that tests too see strings
     # (see config.action_dispatch.cookies_serializer)
-    session[:timeout] = current_user.class::SESSION_TIMEOUT.seconds.from_now.to_s
+    session[:timeout] = Settings.session_timeout.seconds.from_now.to_s
     session[:has_warned] = false
   end
 
   # Check if this current user's session has not yet expired.
   def session_expired?
     return true if session[:timeout].nil?
-    if Settings.remote_user_auth
-      # expire session if there is not REMOTE_USER anymore.
-      return true if @markus_auth_remote_user.nil?
-      # If somebody switched role this state should be recorded
-      # in the session. Expire only if session timed out.
-      unless session[:real_uid].nil?
-        # Roles have been switched, make sure that
-        # real_user.user_name == @markus_auth_remote_user and
-        # that the real user is in fact an admin.
-        real_user = User.find_by_id(session[:real_uid])
-        if real_user.user_name != @markus_auth_remote_user ||
-           !real_user.admin?
-          return true
-        end
-        # Otherwise, expire only if the session timed out.
-        return Time.zone.parse(session[:timeout]) < Time.current
-      end
-      # Expire session if remote user does not match the session's uid.
-      # We cannot have switched roles at this point.
-      current_user = User.find_by_id(session[:uid])
-      unless current_user.nil?
-        return true if current_user.user_name != @markus_auth_remote_user
-      end
-    end
-    # No REMOTE_USER is involed.
+
     Time.zone.parse(session[:timeout]) < Time.current
   end
 
@@ -134,7 +110,11 @@ module SessionHandler
   # Clear this current user's session set by this app
   def clear_session
     session[:timeout] = nil
-    session[:uid] = nil
+    session[:user_name] = nil
+    session[:real_user_name] = nil
+    session[:job_id] = nil
+    cookies.delete :auth_token
+    reset_session
   end
 
 end

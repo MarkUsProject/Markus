@@ -4,19 +4,20 @@ module MainHelper
 
   # Sets current user for this session
   def current_user=(user)
-    session[:uid] = (user.blank? || !user.kind_of?(User)) ? nil : user.id
+    session[:user_name] = (user.blank? || !user.kind_of?(User)) ? nil : user.user_name
   end
 
-  def get_blank_message(blank_login, blank_password)
-    return '' unless blank_login || blank_password
+  def real_user=(user)
+    session[:real_user_name] = (user.blank? || !user.kind_of?(User)) ? nil : user.user_name
+  end
 
-    if blank_login && blank_password
+  def get_blank_message(login, password)
+    if login.blank? && password.blank?
       I18n.t('main.username_and_password_not_blank')
-    elsif blank_login
+    elsif login.blank?
       I18n.t('main.username_not_blank')
-    elsif blank_password
+    elsif password.blank?
       I18n.t('main.password_not_blank')
     end
-
   end
 end

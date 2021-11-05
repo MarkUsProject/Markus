@@ -9,8 +9,8 @@ module Api
     before_action :check_format, :check_course, :authenticate
     skip_before_action :verify_authenticity_token
 
-    authorize :user, through: :current_user
-    authorize :role, through: :current_role
+    authorize :user, through: :real_user # No role switch available for Api routes
+    authorize :role, through: :real_role
     verify_authorized
     rescue_from ActionPolicy::Unauthorized, with: :user_not_authorized
     before_action { authorize! }
@@ -30,8 +30,8 @@ module Api
     # HTTP header comes a Base 64 encoded MD5 digest of the user's private key.
     # Note that remote authentication is not supported. API key must be used.
     def authenticate
-      @current_user = User.find_by_api_key(parse_auth_token(request.headers['HTTP_AUTHORIZATION']))
-      user_not_authorized if @current_user.nil?
+      @real_user = User.find_by_api_key(parse_auth_token(request.headers['HTTP_AUTHORIZATION']))
+      user_not_authorized if @real_user.nil?
     end
 
     # Make sure that the passed format is either xml or json
