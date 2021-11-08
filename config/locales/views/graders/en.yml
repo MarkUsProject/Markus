@@ -21,6 +21,6 @@ en:
     select_a_criterion: Select at least one criterion
     select_a_grader: Select at least one grader to assign.
     skip_empty_submissions: Assign graders to groups with no files submitted
-    skip_empty_submissions_tooltip: If unchecked, groups with no files submitted are skipped if submissions have already been collected. This option has no effect if submissions are not yet collected.
+    skip_empty_submissions_tooltip: When unchecked, groups are skipped if their submissions have been collected and no files were submitted.
     upload:
       remove_existing_mappings: Remove existing grader assignments
