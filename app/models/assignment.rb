@@ -626,7 +626,9 @@ class Assignment < Assessment
 
   # Generate a JSON summary of the most recent test results associated with an assignment.
   def summary_test_result_json
-    self.summary_test_results.group_by(&:test_groups_id).to_json
+    self.summary_test_results.group_by(&:test_groups_id).transform_values do |grouping|
+      grouping.group_by(&:name)
+    end.to_json
   end
 
   # Generate a CSV summary of the most recent test results associated with an assignment.
