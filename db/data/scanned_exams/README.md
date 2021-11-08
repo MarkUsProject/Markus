@@ -10,3 +10,7 @@
 - `midterm_scan_102.pdf` contains a single test paper with pages 2, 5, and 6 having an unparseable QR code.
 - `midterm_scan_103.pdf` contains a single test paper with page 1 (the cover page) having an unparseable QR code.
 - `midterm_scan_104.pdf` contains a single test paper with pages 1-5 having an unparseable QR code.
+- `test-auto-parse-scan-blank.pdf` contains a single test paper with a blank student number field on the cover page
+  (used to test automated parsing)
+- `test-auto-parse-scan-success.pdf` contains a single test paper with a filled in student number field on the cover page
+  (used to test automated parsing)

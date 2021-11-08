@@ -8,6 +8,10 @@
 - Support syntax highlighting for R (#5558)
 - Fixes in progress remark requests to display the remark request due date for students (#5562)
 - Preserve exam template paper size and orientation when stamping with QR codes (#5573)
+- Fix bugs in automatic parsing Python module (#5592)
+- Fix exam template automatic parsing to only accept one crop box, and parse either
+  ID number or user name (#5592)
+- Fix scanned exams when using automatic parsing with multiple exam templates (#5592)
 - Fixes assignment graders checkbox settings text to avoid double negatives (#5600)
 
 ## [v1.13.3]
