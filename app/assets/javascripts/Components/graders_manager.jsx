@@ -269,7 +269,7 @@ class GradersManager extends React.Component {
                   <label>
                     <input
                       type="checkbox"
-                      checked={!this.state.anonymize_groups}
+                      checked={this.state.anonymize_groups}
                       onChange={this.toggleAnonymizeGroups}
                       style={{marginRight: "5px"}}
                     />
