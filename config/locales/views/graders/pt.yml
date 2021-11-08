@@ -21,5 +21,6 @@ pt:
     select_a_criterion: Selecione pelo menos um critério.
     select_a_grader: Selecione um avaliador.
     skip_empty_submissions: Não atribua Graders a grupos com apresentações vazias (requer que as candidaturas são recolhidas)
+    skip_empty_submissions_tooltip: UPDATE ME
     upload:
       remove_existing_mappings: Remover mapeamentos existentes
