@@ -21,5 +21,6 @@ fr:
     select_a_criterion: Sélectionnez au moins un critère.
     select_a_grader: Sélectionner un correcteur.
     skip_empty_submissions: Ne pas attribuer trieurs à des groupes dont les demandes sont vides (exige que les soumissions sont collectées)
+    skip_empty_submissions_tooltip: UPDATE ME
     upload:
       remove_existing_mappings: Supprimer les attributions existants
