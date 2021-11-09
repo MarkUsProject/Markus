@@ -17,6 +17,7 @@ class AssignmentsController < ApplicationController
     tags: 'tags.yml',
     criteria: 'criteria.yml',
     annotations: 'annotations.yml',
+    starter_files: File.join('starter-file-config-files', 'starter-file-rules.yml'),
     peer_review_properties: File.join('peer-review-config-files', 'properties.yml'),
     peer_review_tags: File.join('peer-review-config-files', 'tags.yml'),
     peer_review_criteria: File.join('peer-review-config-files', 'criteria.yml'),
@@ -588,7 +589,7 @@ class AssignmentsController < ApplicationController
       zipfile.get_output_stream(CONFIG_FILES[:annotations]) do |f|
         f.write convert_to_yml(assignment.annotation_categories)
       end
-      assignment.starter_file_config_to_zip(zipfile, 'starter-file-config-files', 'starter-file-rules.yml')
+      assignment.starter_file_config_to_zip(zipfile, 'starter-file-config-files', CONFIG_FILES[:starter_files])
       unless child_assignment.nil?
         zipfile.get_output_stream(CONFIG_FILES[:peer_review_properties]) do |f|
           f.write(child_assignment.assignment_properties_config.to_yaml)
@@ -640,9 +641,7 @@ class AssignmentsController < ApplicationController
         Tag.from_yml(tag_prop, assignment.id)
         config_criteria(assignment, criteria_prop)
         upload_annotations_from_yaml(annotations_prop, assignment)
-        zipfile.each do |entry|
-          flash_message(:warning, I18n.t('assignments.unexpected_file_found', item: entry.name)) unless entry.directory?
-        end
+        config_starter_files(assignment, zipfile)
         redirect_to edit_assignment_path(assignment.id)
       end
     end
@@ -659,7 +658,27 @@ class AssignmentsController < ApplicationController
 
   private
 
-  # Build the tag/criteria file specified by +hash_to_build+ found in +zip_file+
+  # Configures the starter files for an +assignment+ provided in the +zip_file+
+  def config_starter_files(assignment, zip_file)
+    starter_file_settings = build_hash_from_zip(zip_file, :starter_files)
+    assignment.starter_file_type = starter_file_settings[:starter_file_type]
+    assignment.starter_files_after_due = starter_file_settings[:allow_starter_files_after_due]
+    starter_group_mappings = {}
+    starter_file_settings[:group_information].each do |group|
+      file_group = StarterFileGroup.new(name: group[:name],
+                                        use_rename: group[:use_rename],
+                                        entry_rename: group[:entry_rename],
+                                        assignment: assignment)
+      file_group.save!
+      starter_group_mappings[group[:directory_name]] = file_group
+    end
+    default_name = starter_file_settings[:default_starter_group]
+    unless default_name.nil? || !starter_group_mappings.has_key?(default_name)
+      assignment.assignment_properties.default_starter_file_group_id = starter_group_mappings[default_name].id
+    end
+  end
+
+  # Build the tag/criteria/starter file settings file specified by +hash_to_build+ found in +zip_file+
   # Delete the file from the +zip_file+ after loading in the content.
   def build_hash_from_zip(zip_file, hash_to_build)
     yaml_file = zip_file.get_entry(CONFIG_FILES[hash_to_build])
