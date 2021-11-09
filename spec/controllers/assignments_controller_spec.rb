@@ -173,7 +173,7 @@ describe AssignmentsController do
 
     it 'responds with the appropriate status' do
       get_as user, :download_test_results, params: { id: assignment.id }, format: 'json'
-      expect(response.status).to eq(200)
+      expect(response).to have_http_status :success
     end
 
     it 'responds with the appropriate header' do
@@ -199,8 +199,19 @@ describe AssignmentsController do
     end
 
     it 'returns the most recent test results' do
-      data = JSON.parse(assignment.summary_test_result_json)
-      expect(data.length).to eq(3)
+      get_as user, :download_test_results, params: { id: assignment.id }, format: 'json'
+      body = response.parsed_body
+
+      # We want to ensure that the test result's group name, test name and status exists
+      body.map do |group_name, group|
+        group.map do |test_group_name, test_group|
+          test_group.each do |test_result|
+            expect(test_result.fetch('name')).to eq test_group_name
+            expect(test_result.fetch('group_name')).to eq group_name
+            expect(test_result.key?('status')).to eq true
+          end
+        end
+      end
     end
   end
 
@@ -210,7 +221,7 @@ describe AssignmentsController do
 
     it 'responds with the appropriate status' do
       get_as user, :download_test_results, params: { id: assignment.id }, format: 'csv'
-      expect(response.status).to eq(200)
+      expect(response).to have_http_status :success
     end
 
     it 'sets disposition as attachment' do
@@ -230,9 +241,14 @@ describe AssignmentsController do
       expect(response.media_type).to eq 'text/csv'
     end
 
-    it 'returns the most recent test results' do
-      data = CSV.parse(assignment.summary_test_result_csv, headers: true)
-      expect(data[1].length).to eq(3)
+    it 'returns the most recent test results of the correct size' do
+      get_as user, :download_test_results, params: { id: assignment.id }, format: 'csv'
+
+      test_results = CSV.parse(response.body, headers: true)
+      headers = test_results.headers
+
+      expect(test_results.to_a.size).to eq 10
+      expect(headers.length).to eq 9
     end
   end
 

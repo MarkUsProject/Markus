@@ -615,42 +615,43 @@ class Assignment < Assessment
              .joins("INNER JOIN (#{test_groups_query}) sub \
                      ON test_groups.id = sub.test_groups_id \
                      AND test_group_results_test_groups.created_at = sub.test_group_results_created_at")
+             .joins(test_group_results: { test_run: { grouping: :group } })
              .select('test_results.marks_earned as marks_earned',
                      'test_results.marks_total as marks_total',
                      'test_results.output',
                      'test_groups.name',
                      'test_results.name as test_result_name',
                      'test_groups_id',
-                     :status, :extra_info, :error_type)
+                     'groups.group_name',
+                     'test_results.status', :extra_info, :error_type)
   end
 
   # Generate a JSON summary of the most recent test results associated with an assignment.
   def summary_test_result_json
-    self.summary_test_results.group_by(&:test_groups_id).transform_values do |grouping|
+    self.summary_test_results.group_by(&:group_name).transform_values do |grouping|
       grouping.group_by(&:name)
     end.to_json
   end
 
   # Generate a CSV summary of the most recent test results associated with an assignment.
   def summary_test_result_csv
-    summary_test_result = self.summary_test_results
+    summary_test_results = self.summary_test_results
+    results = summary_test_results.group_by(&:group_name)
+    cols = summary_test_results.group_by(&:test_result_name).keys
     CSV.generate do |csv|
-      submissions = {}
-      summary_test_result.map do |test_result|
-        if !submissions.key?(test_result.test_result_name)
-          submissions[test_result.test_result_name] = [test_result.status]
-        else
-          submissions[test_result.test_result_name] << test_result.status
+      csv << cols
+      results.each do |_name, group|
+        group.each do |test_result|
+          row = []
+          cols.each do |col|
+            if col == test_result['test_result_name']
+              row << test_result['status']
+            else
+              row << nil
+            end
+          end
+          csv << row
         end
-      end
-
-      csv << submissions.keys
-      submissions.first.each_index do |i|
-        row = []
-        submissions.keys.map do |key|
-          row << submissions[key][i]
-        end
-        csv << row
       end
     end
   end

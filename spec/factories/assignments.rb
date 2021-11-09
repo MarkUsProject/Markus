@@ -51,7 +51,7 @@ FactoryBot.define do
       a.groupings.each do |grouping|
         a.test_groups.each do |test_group|
           5.times do
-            test_run = create(:test_run, grouping: grouping)
+            test_run = create(:test_run, grouping: grouping, submission_id: grouping.current_result.submission.id)
             test_group_result = create(:test_group_result, test_run: test_run, test_group: test_group)
             create(:test_result, test_group_result: test_group_result)
           end
