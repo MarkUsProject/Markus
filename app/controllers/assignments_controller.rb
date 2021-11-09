@@ -2,6 +2,7 @@ class AssignmentsController < ApplicationController
   include RepositoryHelper
   include RoutingHelper
   include CriteriaHelper
+  include AnnotationCategoriesHelper
   responders :flash
   before_action { authorize! }
 
@@ -15,9 +16,11 @@ class AssignmentsController < ApplicationController
     properties: 'properties.yml',
     tags: 'tags.yml',
     criteria: 'criteria.yml',
+    annotations: 'annotations.yml',
     peer_review_properties: File.join('peer-review-config-files', 'properties.yml'),
     peer_review_tags: File.join('peer-review-config-files', 'tags.yml'),
-    peer_review_criteria: File.join('peer-review-config-files', 'criteria.yml')
+    peer_review_criteria: File.join('peer-review-config-files', 'criteria.yml'),
+    peer_review_annotations: File.join('peer-review-config-files', 'annotations.yml')
   }.freeze
 
   # Publicly accessible actions ---------------------------------------
@@ -582,6 +585,9 @@ class AssignmentsController < ApplicationController
         yml_criteria = assignment.criteria.reduce({}) { |a, b| a.merge b.to_yml }
         f.write yml_criteria.to_yaml
       end
+      zipfile.get_output_stream(CONFIG_FILES[:annotations]) do |f|
+        f.write convert_to_yml(assignment.annotation_categories)
+      end
       unless child_assignment.nil?
         zipfile.get_output_stream(CONFIG_FILES[:peer_review_properties]) do |f|
           f.write(child_assignment.assignment_properties_config.to_yaml)
@@ -593,9 +599,12 @@ class AssignmentsController < ApplicationController
           yml_criteria = child_assignment.criteria.reduce({}) { |a, b| a.merge b.to_yml }
           f.write yml_criteria.to_yaml
         end
+        zipfile.get_output_stream(CONFIG_FILES[:peer_review_annotations]) do |f|
+          f.write convert_to_yml(child_assignment.annotation_categories)
+        end
       end
     end
-    send_file zip_path, filename: zip_name
+    send_file zip_path, filename: zip_name, type: 'application/zip', disposition: 'attachment'
   end
   # Uploads a zip file containing all the files specified in download_config_files
   # and modifies the assignment settings according to those files.
@@ -612,6 +621,7 @@ class AssignmentsController < ApplicationController
         zipfile.remove(prop_file)
         tag_prop = build_hash_from_zip(zipfile, :tags)
         criteria_prop = build_hash_from_zip(zipfile, :criteria)
+        annotations_prop = build_hash_from_zip(zipfile, :annotations)
         # Build peer review assignment if it exists
         child_prop_file = zipfile.find_entry(CONFIG_FILES[:peer_review_properties])
         unless child_prop_file.nil?
@@ -622,12 +632,15 @@ class AssignmentsController < ApplicationController
           Tag.from_yml(child_tag_prop, child_assignment.id)
           child_criteria_prop = build_hash_from_zip(zipfile, :peer_review_criteria)
           config_criteria(child_assignment, child_criteria_prop)
+          child_annotations_prop = build_hash_from_zip(zipfile, :peer_review_annotations)
+          upload_annotations_from_yaml(child_annotations_prop, child_assignment)
         end
         assignment.save!
         Tag.from_yml(tag_prop, assignment.id)
         config_criteria(assignment, criteria_prop)
+        upload_annotations_from_yaml(annotations_prop, assignment)
         zipfile.each do |entry|
-          flash_message(:warning, I18n.t('assignments.unexpected_file_found', item: entry.name))
+          flash_message(:warning, I18n.t('assignments.unexpected_file_found', item: entry.name)) unless entry.directory?
         end
         redirect_to edit_assignment_path(assignment.id)
       end

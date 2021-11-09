@@ -1281,14 +1281,96 @@ describe AssignmentsController do
   end
 
   describe '#download_config_files' do
-    let(:assignment) { create :assignment }
+    let!(:assignment) { create :assignment_with_peer_review, due_date: Time.zone.parse('2042-02-10 15:30:45') }
     subject { get_as user, :download_config_files, params: { id: assignment.id } }
 
-    # Check file content
     shared_examples 'download sample config files' do
-      it 'should send a zip file' do
-        expect(controller).to receive(:send_file)
+      it 'should have an ok status' do
         subject
+        expect(response).to have_http_status(200)
+      end
+
+      it 'should receive a zip file' do
+        expected_file_name = "#{assignment.short_identifier}-config-files.zip"
+        file_options = { filename: expected_file_name, type: 'application/zip', disposition: 'attachment' }
+        expected_file_path = File.join('tmp', expected_file_name)
+        expect(controller).to receive(:send_file).with(expected_file_path, file_options) {
+          # to prevent a 'missing template' error
+          @controller.head :ok
+        }
+        subject
+      end
+
+      # Check file content
+      describe 'downloaded zip file' do
+        let!(:criteria) { create :checkbox_criterion, assignment: assignment }
+        it 'should have a valid properties file' do
+          subject
+          properties = read_yaml_file(response.body, 'properties.yml')
+          expect(properties).to include(short_identifier: assignment.short_identifier,
+                                        description: assignment.description,
+                                        due_date: assignment.due_date,
+                                        message: assignment.message,
+                                        is_hidden: assignment.is_hidden,
+                                        show_total: assignment.show_total)
+          expect(properties).to include(:assignment_properties_attributes,
+                                        :submission_rule_attributes,
+                                        :assignment_files_attributes)
+          expect(properties[:assignment_properties_attributes]).to be_kind_of(Hash)
+        end
+
+        it 'should have a valid child properties file' do
+          subject
+          properties = read_yaml_file(response.body, File.join('peer-review-config-files', 'properties.yml'))
+          @peer_review_assignment = Assignment.find_by(parent_assessment_id: assignment.id)
+          expect(properties).to include(short_identifier: @peer_review_assignment.short_identifier,
+                                        description: @peer_review_assignment.description,
+                                        due_date: @peer_review_assignment.due_date,
+                                        message: @peer_review_assignment.message,
+                                        is_hidden: @peer_review_assignment.is_hidden,
+                                        show_total: @peer_review_assignment.show_total)
+          expect(properties).to include(:assignment_properties_attributes)
+          expect(properties[:assignment_properties_attributes]).to be_kind_of(Hash)
+        end
+
+        it 'should have a valid tags file' do
+          @tag1 = Tag.find_or_create_by(name: 'tag1', description: 'tag1_description',
+                                        user: user, assessment_id: assignment.id)
+          @tag2 = Tag.find_or_create_by(name: 'tag2', description: 'tag2_description',
+                                        user: user, assessment_id: assignment.id)
+          subject
+          tags = read_yaml_file(response.body, 'tags.yml')
+          tags = tags.map(&:symbolize_keys)
+          expect(tags).to eq([{ name: 'tag1', description: 'tag1_description' },
+                              { name: 'tag2', description: 'tag2_description' }])
+        end
+
+        it 'should have a valid criteria file' do
+          subject
+          criteria_download = read_yaml_file(response.body, 'criteria.yml')
+          expect(criteria_download).to be_kind_of(Hash)
+          criteria_download = criteria_download.deep_symbolize_keys
+          criteria_download.each_key do |key|
+            expect(criteria_download[key]).to include(:type, :max_mark, :description)
+          end
+        end
+
+        def read_yaml_file(content, filename)
+          Zip::InputStream.open(StringIO.new(content)) do |io|
+            yaml_file = nil
+            while (entry = io.get_next_entry)
+              yaml_file = entry if entry.name == filename
+            end
+            expect(yaml_file.nil?).to eq false
+            YAML.safe_load(
+              yaml_file.get_input_stream.read.encode(Encoding::UTF_8, 'UTF-8'),
+              [Date, Time, Symbol, ActiveSupport::TimeWithZone, ActiveSupport::TimeZone,
+               ActiveSupport::Duration, ActiveSupport::HashWithIndifferentAccess],
+              [],
+              true
+            )
+          end
+        end
       end
     end
 
@@ -1320,5 +1402,8 @@ describe AssignmentsController do
   end
 
   describe '#upload_config_files' do
+  end
+
+  describe 'download_and_upload_config_file' do
   end
 end
