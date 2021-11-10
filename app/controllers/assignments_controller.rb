@@ -637,10 +637,10 @@ class AssignmentsController < ApplicationController
           child_annotations_prop = build_hash_from_zip(zipfile, :peer_review_annotations)
           upload_annotations_from_yaml(child_annotations_prop, child_assignment)
         end
-        #assignment.save!
-        #Tag.from_yml(tag_prop, assignment.id)
-        #config_criteria(assignment, criteria_prop)
-        #upload_annotations_from_yaml(annotations_prop, assignment)
+        assignment.save!
+        Tag.from_yml(tag_prop, assignment.id)
+        config_criteria(assignment, criteria_prop)
+        upload_annotations_from_yaml(annotations_prop, assignment)
         config_starter_files(assignment, zipfile)
         redirect_to edit_assignment_path(assignment.id)
       end
