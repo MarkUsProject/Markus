@@ -507,9 +507,9 @@ class ResultsController < ApplicationController
 
     if result_mark.update(mark: mark_value, override: !(mark_value.nil? && result_mark.deductive_annotations_absent?))
 
-      m_logger.log("User '#{current_role.user_name}' updated mark for " +
-                   "submission (id: #{submission.id}) of " +
-                   "assignment #{assignment.short_identifier} for " +
+      m_logger.log("User '#{current_role.user_name}' updated mark for " \
+                   "submission (id: #{submission.id}) of " \
+                   "assignment #{assignment.short_identifier} for " \
                    "group #{group.group_name}.",
                    MarkusLogger::INFO)
       if current_role.ta?
@@ -525,7 +525,7 @@ class ResultsController < ApplicationController
         total: result.get_total_mark
       }
     else
-      m_logger.log("Error while trying to update mark of submission. " \
+      m_logger.log('Error while trying to update mark of submission. ' \
                    "User: #{current_role.user_name}, " \
                    "Submission id: #{submission.id}, " \
                    "Assignment: #{assignment.short_identifier}, " \
