@@ -14,7 +14,7 @@
           submission_id: <%= @result.submission_id %>,
           grouping_id: <%= @result.submission.grouping_id %>,
           assignment_id: <%= @result.submission.grouping.assessment_id %>,
-          role: '<%= @current_user.class.name %>',
+          role: '<%= @current_role.class.name %>',
         }
       );
 
@@ -92,7 +92,7 @@
     </tr>
   </table>
 </aside>
-<% if @current_user.admin? %>
+<% if @current_role.admin? %>
   <aside class='dialog no-display' id='create_new_tag'>
     <h1><%= t('helpers.submit.create', model: Tag.model_name.human) %></h1>
     <%= form_for :tag,

@@ -341,8 +341,8 @@ module Api
         annotation_texts << {
           content: annot_params[:content],
           annotation_category_id: annotation_category_id,
-          creator_id: @current_user.id,
-          last_editor_id: @current_user.id
+          creator_id: current_role.id,
+          last_editor_id: current_role.id
         }
         annotations << {
           line_start: annot_params[:line_start],
@@ -351,8 +351,8 @@ module Api
           column_end: annot_params[:column_end],
           annotation_text_id: nil,
           submission_file_id: submission_file.id,
-          creator_id: @current_user.id,
-          creator_type: @current_user.type,
+          creator_id: current_role.id,
+          creator_type: current_role.type,
           is_remark: !result.remark_request_submitted_at.nil?,
           annotation_number: count + i,
           result_id: result.id

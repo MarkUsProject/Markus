@@ -55,10 +55,10 @@ class PeerReviewsController < ApplicationController
   # Get data for all reviews for a given reviewer.
   def list_reviews
     assignment = Assignment.find(params[:assignment_id]).pr_assignment
-    if current_user.is_a_reviewer?(assignment)
+    if current_role.is_a_reviewer?(assignment)
       # grab only the groupings of reviewees that this reviewer
       # is responsible for
-      grouping = current_user.grouping_for(assignment.id)
+      grouping = current_role.grouping_for(assignment.id)
       groupings = grouping.peer_reviews_to_others
                           .joins(result: { grouping: :group })
                           .pluck('results.id', 'groups.group_name', 'results.marking_state')
@@ -73,7 +73,7 @@ class PeerReviewsController < ApplicationController
   def show_reviews
     assignment = Assignment.find(params[:assignment_id])
     # grab the first peer review of the reviewee group
-    pr = @current_user.grouping_for(assignment.id).peer_reviews.first
+    pr = current_role.grouping_for(assignment.id).peer_reviews.first
 
     if !pr.nil?
       redirect_to show_result_assignment_peer_review_path(assignment.id, id: pr.id)

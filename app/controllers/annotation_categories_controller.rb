@@ -17,7 +17,7 @@ class AnnotationCategoriesController < ApplicationController
 
   def index
     @assignment = Assignment.find(params[:assignment_id])
-    @annotation_categories = AnnotationCategory.visible_categories(@assignment, current_user)
+    @annotation_categories = AnnotationCategory.visible_categories(@assignment, current_role)
                                                .includes(:assignment, :annotation_texts)
     respond_to do |format|
       format.html
@@ -97,8 +97,8 @@ class AnnotationCategoriesController < ApplicationController
   def create_annotation_text
     @annotation_text = AnnotationText.new(
       **annotation_text_params.to_h.symbolize_keys,
-      creator_id: current_user.id,
-      last_editor_id: current_user.id
+      creator_id: current_role.id,
+      last_editor_id: current_role.id
     )
 
     if @annotation_text.save
@@ -127,7 +127,7 @@ class AnnotationCategoriesController < ApplicationController
 
   def update_annotation_text
     @annotation_text = AnnotationText.find(params[:id])
-    if @annotation_text.update(**annotation_text_params.to_h.symbolize_keys, last_editor_id: current_user.id)
+    if @annotation_text.update(**annotation_text_params.to_h.symbolize_keys, last_editor_id: current_role.id)
       flash_now(:success, t('annotation_categories.update.success'))
       @text = annotation_text_data(@annotation_text.annotation_category_id).find do |text|
         text[:id] == @annotation_text.id
@@ -145,7 +145,7 @@ class AnnotationCategoriesController < ApplicationController
                                                  .where('annotation_categories.assessment_id': params[:assignment_id])
     one_time_texts = AnnotationText.joins(annotations: { result: { grouping: :group } })
                                    .where(
-                                     creator_id: current_user.id,
+                                     creator_id: current_role.id,
                                      'groupings.assessment_id': params[:assignment_id],
                                      annotation_category_id: nil
                                    )
@@ -212,7 +212,7 @@ class AnnotationCategoriesController < ApplicationController
         if data[:type] == '.csv'
           result = MarkusCsv.parse(data[:file].read, encoding: data[:encoding]) do |row|
             next if CSV.generate_line(row).strip.empty?
-            AnnotationCategory.add_by_row(row, @assignment, current_user)
+            AnnotationCategory.add_by_row(row, @assignment, current_role)
           end
           if result[:invalid_lines].empty?
             flash_message(:success, result[:valid_lines]) unless result[:valid_lines].empty?
@@ -224,11 +224,11 @@ class AnnotationCategoriesController < ApplicationController
           successes = 0
           data[:contents].each do |category, category_data|
             if category_data.is_a?(Array)
-              AnnotationCategory.add_by_row([category, nil] + category_data, @assignment, current_user)
+              AnnotationCategory.add_by_row([category, nil] + category_data, @assignment, current_role)
               successes += 1
             elsif category_data.is_a?(Hash)
               row = [category, category_data['criterion']] + category_data['texts'].flatten
-              AnnotationCategory.add_by_row(row, @assignment, current_user)
+              AnnotationCategory.add_by_row(row, @assignment, current_role)
               successes += 1
             end
           rescue CsvInvalidLineError => e

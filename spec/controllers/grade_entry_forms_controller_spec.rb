@@ -13,7 +13,7 @@ describe GradeEntryFormsController do
       # Authenticate user is not timed out, and has administrator rights.
       allow(controller).to receive(:session_expired?).and_return(false)
       allow(controller).to receive(:logged_in?).and_return(true)
-      allow(controller).to receive(:current_user).and_return(build(:admin))
+      allow(controller).to receive(:current_role).and_return(build(:admin))
 
       @file_invalid_username =
         fixture_file_upload('grade_entry_forms/invalid_username.csv',
@@ -173,7 +173,7 @@ describe GradeEntryFormsController do
       # Authenticate user is not timed out, and has administrator rights.
       allow(controller).to receive(:session_expired?).and_return(false)
       allow(controller).to receive(:logged_in?).and_return(true)
-      allow(controller).to receive(:current_user).and_return(build(:admin))
+      allow(controller).to receive(:current_role).and_return(build(:admin))
       @user = User.where(user_name: 'c8shosta').first
     end
 
@@ -325,7 +325,7 @@ describe GradeEntryFormsController do
 
   describe '#student_interface' do
     before :each do
-      allow(controller).to receive(:current_user).and_return(@student)
+      allow(controller).to receive(:current_role).and_return(@student)
     end
 
     it 'does not allow students to see hidden grade entry forms' do

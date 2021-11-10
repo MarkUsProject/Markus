@@ -151,7 +151,7 @@ module Api
 
     def download_entries
       starter_file_group = find_starter_file_group || return
-      zip_path = starter_file_group.zip_starter_file_files(current_user)
+      zip_path = starter_file_group.zip_starter_file_files(current_role)
       send_file zip_path, filename: File.basename(zip_path)
     end
 

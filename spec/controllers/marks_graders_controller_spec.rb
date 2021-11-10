@@ -3,7 +3,7 @@ describe MarksGradersController do
     # Authenticate user is not timed out, and has administrator rights.
     allow(controller).to receive(:session_expired?).and_return(false)
     allow(controller).to receive(:logged_in?).and_return(true)
-    allow(controller).to receive(:current_user).and_return(build(:admin))
+    allow(controller).to receive(:current_role).and_return(build(:admin))
   end
 
   let(:grade_entry_form) { create(:grade_entry_form) }

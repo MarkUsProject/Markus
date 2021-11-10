@@ -14,7 +14,7 @@ class SplitPdfJob < ApplicationJob
     status.update(exam_name: "#{job.arguments[0].name} (#{job.arguments[3]})")
   end
 
-  def perform(exam_template, _path, split_pdf_log, _original_filename = nil, _current_user = nil)
+  def perform(exam_template, _path, split_pdf_log, _original_filename = nil, _current_role = nil)
     m_logger = MarkusLogger.instance
     begin
       # Create directory for files whose QR code couldn't be parsed

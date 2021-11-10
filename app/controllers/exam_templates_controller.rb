@@ -154,7 +154,7 @@ class ExamTemplatesController < ApplicationController
         flash_message(:error, t('exam_templates.split.invalid'))
         redirect_to action: 'index'
       else
-        current_job = exam_template.split_pdf(split_exam.path, split_exam.original_filename, @current_user)
+        current_job = exam_template.split_pdf(split_exam.path, split_exam.original_filename, current_role)
         session[:job_id] = current_job.job_id
         redirect_to view_logs_assignment_exam_templates_path
       end

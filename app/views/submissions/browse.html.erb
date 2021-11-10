@@ -24,7 +24,7 @@
   <% end %>
   <div class='title-help'>
     <p>
-      <% if @current_user.ta? %>
+      <% if @current_role.ta? %>
         <%= t('submissions.help.browse.tas') %>
       <% else %>
         <%= t('submissions.help.browse.admins') %>
@@ -37,7 +37,7 @@
 <% @heading_buttons = [] %>
 
 <% unless @assignment.is_peer_review? %>
-  <% if @current_user.admin? %>
+  <% if @current_role.admin? %>
     <% @heading_buttons += [
       { link_text: t('submissions.repo_list'),
         link_path: download_repo_list_assignment_submissions_path(@assignment)},
@@ -56,11 +56,11 @@
 <% end %>
 
 <% content_for :additional_headings do %>
-  <% if @current_user.ta? %>
+  <% if @current_role.ta? %>
     <span class='menu_bar'></span>
     <%= t('submissions.how_many_marked_in_collected',
-          num_marked: @assignment.get_num_marked(@current_user.id),
-          num_collected: @assignment.get_num_collected(@current_user.id)) %>
+          num_marked: @assignment.get_num_marked(@current_role.id),
+          num_collected: @assignment.get_num_collected(@current_role.id)) %>
   <% end %>
 <% end %>
 

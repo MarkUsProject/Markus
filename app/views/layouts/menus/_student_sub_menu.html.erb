@@ -29,20 +29,20 @@
     <% end %>
 
     <% if !@assignment.nil? &&
-      @current_user.has_accepted_grouping_for?(@assignment) %>
+      @current_role.has_accepted_grouping_for?(@assignment) %>
       <li class='<%= "active" if controller.controller_name == 'assignments' && controller.action_name != 'peer_review' %>'>
         <%= link_to Assignment.model_name.human.pluralize,
                     assignment_path(@assignment.id) %>
       </li>
 
-      <% @grouping = @current_user.accepted_grouping_for(@assignment.id) %>
+      <% @grouping = @current_role.accepted_grouping_for(@assignment.id) %>
       <% if !@grouping.nil? && allowed_to?(:view_file_manager?, @grouping) %>
         <li class='<%= "active" if controller.controller_name == 'submissions' %>'>
           <%= link_to Submission.model_name.human.pluralize,
                       file_manager_assignment_submissions_path(@assignment) %>
         </li>
       <% end %>
-      <% if allowed_to?(:run_tests?, @current_user, context: { assignment: @assignment }) %>
+      <% if allowed_to?(:run_tests?, @current_role, context: { assignment: @assignment }) %>
         <li class='<%= "active" if controller.controller_name == 'automated_tests' %>'>
           <%= link_to t('automated_tests.title'),
                       controller: 'automated_tests',

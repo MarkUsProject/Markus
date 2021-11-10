@@ -38,14 +38,14 @@ class AutomatedTestsController < ApplicationController
 
   def student_interface
     @assignment = Assignment.find(params[:id])
-    @student = current_user
+    @student = current_role
     @grouping = @student.accepted_grouping_for(@assignment.id)
 
     unless @grouping.nil?
       @grouping.refresh_test_tokens
       @authorized = flash_allowance(:notice,
                                     allowance_to(:run_tests?,
-                                                 current_user,
+                                                 current_role,
                                                  context: { assignment: @assignment, grouping: @grouping })).value
     end
 
@@ -54,15 +54,15 @@ class AutomatedTestsController < ApplicationController
 
   def execute_test_run
     assignment = Assignment.find(params[:id])
-    grouping = current_user.accepted_grouping_for(assignment.id)
+    grouping = current_role.accepted_grouping_for(assignment.id)
     grouping.refresh_test_tokens
     allowed = flash_allowance(:error, allowance_to(:run_tests?,
-                                                   current_user,
+                                                   current_role,
                                                    context: { assignment: assignment, grouping: grouping })).value
     if allowed
       grouping.decrease_test_tokens
       @current_job = AutotestRunJob.perform_later(request.protocol + request.host_with_port,
-                                                  current_user.id,
+                                                  current_role.id,
                                                   assignment.id,
                                                   [grouping.group_id],
                                                   collected: false)
@@ -74,7 +74,7 @@ class AutomatedTestsController < ApplicationController
   end
 
   def get_test_runs_students
-    @grouping = current_user.accepted_grouping_for(params[:assignment_id])
+    @grouping = current_role.accepted_grouping_for(params[:assignment_id])
     test_runs = @grouping.test_runs_students
     test_runs.each do |test_run|
       test_run['test_runs.created_at'] = I18n.l(test_run['test_runs.created_at'])
@@ -134,7 +134,7 @@ class AutomatedTestsController < ApplicationController
   ##
   def download_files
     assignment = Assignment.find(params[:assignment_id])
-    zip_path = assignment.zip_automated_test_files(current_user)
+    zip_path = assignment.zip_automated_test_files(current_role)
     send_file zip_path, filename: File.basename(zip_path)
   end
 

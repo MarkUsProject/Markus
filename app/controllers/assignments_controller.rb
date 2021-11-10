@@ -27,21 +27,21 @@ class AssignmentsController < ApplicationController
       return
     end
 
-    @grouping = current_user.accepted_grouping_for(@assignment.id)
+    @grouping = current_role.accepted_grouping_for(@assignment.id)
 
     if @grouping.nil?
       if @assignment.scanned_exam
         flash_now(:notice, t('assignments.scanned_exam.under_review'))
       elsif @assignment.group_max == 1 && (!@assignment.is_timed ||
-                                           Time.current > assignment.section_due_date(@current_user&.section))
+                                           Time.current > assignment.section_due_date(current_role&.section))
         begin
-          current_user.create_group_for_working_alone_student(@assignment.id)
+          current_role.create_group_for_working_alone_student(@assignment.id)
         rescue StandardError => e
           flash_message(:error, e.message)
           redirect_to controller: :assignments
           return
         end
-        @grouping = @current_user.accepted_grouping_for(@assignment.id)
+        @grouping = current_role.accepted_grouping_for(@assignment.id)
       end
     end
     unless @grouping.nil?
@@ -74,9 +74,9 @@ class AssignmentsController < ApplicationController
       return
     end
 
-    @student = current_user
-    @grouping = current_user.accepted_grouping_for(@assignment.id)
-    @prs = current_user.grouping_for(@assignment.parent_assignment.id)&.
+    @student = current_role
+    @grouping = current_role.accepted_grouping_for(@assignment.id)
+    @prs = current_role.grouping_for(@assignment.parent_assignment.id)&.
         peer_reviews&.where(results: { released_to_students: true })
     if @prs.nil?
       @prs = []
@@ -245,9 +245,9 @@ class AssignmentsController < ApplicationController
     @assignment = Assignment.find(params[:id])
     respond_to do |format|
       format.html { render layout: 'assignment_content' }
-      format.json { render json: @assignment.summary_json(@current_user) }
+      format.json { render json: @assignment.summary_json(current_role) }
       format.csv do
-        data = @assignment.summary_csv(@current_user)
+        data = @assignment.summary_csv(current_role)
         filename = "#{@assignment.short_identifier}_summary.csv"
         send_data data,
                   disposition: 'attachment',
@@ -279,7 +279,7 @@ class AssignmentsController < ApplicationController
     respond_to do |format|
       format.html
       format.json do
-        user_ids = current_user.admin? ? Admin.pluck(:id) : current_user.id
+        user_ids = current_role.admin? ? Admin.pluck(:id) : current_role.id
         test_runs = TestRun.left_outer_joins(:test_batch, grouping: [:group, :current_result])
                            .where(test_runs: {user_id: user_ids},
                                   'groupings.assessment_id': @assignment.id)
@@ -482,11 +482,11 @@ class AssignmentsController < ApplicationController
     options = referer_options
     if switch_to_same(options)
       redirect_to options
-    elsif current_user.admin?
+    elsif current_role.admin?
       redirect_to edit_assignment_path(params[:id])
-    elsif current_user.ta?
+    elsif current_role.ta?
       redirect_to summary_assignment_path(params[:id])
-    else # current_user.student?
+    else # current_role.student?
       redirect_to assignment_path(params[:id])
     end
   end
@@ -507,11 +507,11 @@ class AssignmentsController < ApplicationController
   # Start timed assignment for the current user's grouping for this assignment
   def start_timed_assignment
     assignment = Assignment.find(params[:id])
-    grouping = current_user.accepted_grouping_for(assignment.id)
+    grouping = current_role.accepted_grouping_for(assignment.id)
     if grouping.nil? && assignment.group_max == 1
       begin
-        current_user.create_group_for_working_alone_student(assignment.id)
-        grouping = current_user.accepted_grouping_for(assignment.id)
+        current_role.create_group_for_working_alone_student(assignment.id)
+        grouping = current_role.accepted_grouping_for(assignment.id)
         set_repo_vars(assignment, grouping)
       rescue StandardError => e
         flash_message(:error, e.message)
@@ -612,7 +612,7 @@ class AssignmentsController < ApplicationController
       if (starter_file_group.path + file).directory?
         { key: "#{file}/" }
       else
-        submitted_date = l(File.mtime(starter_file_group.path + file).in_time_zone(current_user.time_zone))
+        submitted_date = l(File.mtime(starter_file_group.path + file).in_time_zone(current_role.time_zone))
         { key: file, size: 1, submitted_date: submitted_date,
           url: download_file_assignment_starter_file_group_url(starter_file_group.assignment.id,
                                                                starter_file_group.id,

@@ -64,7 +64,7 @@ module Api
         ## create the zip name with the user name to have less chance to delete
         ## a currently downloading file
         version = params[:collected].present? ? 'collected' : 'latest'
-        zip_name = "#{assignment.short_identifier}_#{group.group_name}_#{current_user.user_name}_#{version}.zip"
+        zip_name = "#{assignment.short_identifier}_#{group.group_name}_#{current_role.user_name}_#{version}.zip"
         zip_path = Pathname.new('tmp') + zip_name
 
         ## delete the old file if it exists
@@ -116,7 +116,7 @@ module Api
                                                       type: params[:mime_type])
         success, messages = grouping.access_repo do |repo|
           path = Pathname.new(grouping.assignment.repository_folder)
-          add_file(file, @current_user, repo, path: path)
+          add_file(file, current_role, repo, path: path)
         end
       ensure
         tmpfile.close!
@@ -150,7 +150,7 @@ module Api
       success, messages = grouping.access_repo do |repo|
         new_folder = Pathname.new(params[:folder_path])
         path = Pathname.new(grouping.assignment.repository_folder)
-        add_folder(new_folder, @current_user, repo, path: path)
+        add_folder(new_folder, current_role, repo, path: path)
       end
       message_string = messages.map { |type, *msg| "#{type}: #{msg}" }.join("\n")
       if success
@@ -181,7 +181,7 @@ module Api
 
       success, messages = grouping.access_repo do |repo|
         path = Pathname.new(grouping.assignment.repository_folder)
-        remove_files([params[:filename]], @current_user, repo, path: path)
+        remove_files([params[:filename]], current_role, repo, path: path)
       end
 
       message_string = messages.map { |type, *msg| "#{type}: #{msg}" }.join("\n")
@@ -213,7 +213,7 @@ module Api
       success, messages = grouping.access_repo do |repo|
         folder = params[:folder_path]
         path = Pathname.new(grouping.assignment.repository_folder)
-        remove_folders([folder], @current_user, repo, path: path)
+        remove_folders([folder], current_role, repo, path: path)
       end
       message_string = messages.map { |type, *msg| "#{type}: #{msg}" }.join("\n")
       if success

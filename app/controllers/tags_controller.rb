@@ -35,7 +35,7 @@ class TagsController < ApplicationController
   # Creates a new instance of the tag.
   def create
     tag_params = params.require(:tag).permit(:name, :description)
-    new_tag = Tag.new(tag_params.merge(user: @current_user, assessment: Assessment.find(params[:assignment_id])))
+    new_tag = Tag.new(tag_params.merge(role: current_role, assessment: Assessment.find(params[:assignment_id])))
 
     if new_tag.save
       if params[:grouping_id]

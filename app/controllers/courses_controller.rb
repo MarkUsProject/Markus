@@ -17,8 +17,7 @@ class CoursesController < ApplicationController
     respond_with(@current_course)
   end
 
-  # Sets current_user to nil, allowing an admin who had previously
-  # switched roles to view the course from the perspective of another user
+  # Sets current_user to nil, which clears a role switch session (see role_switch)
   def clear_role_switch_session
     MarkusLogger.instance.log("Admin '#{session[:real_user_name]}' logged out from '#{session[:user_name]}'.")
     session[:user_name] = nil
