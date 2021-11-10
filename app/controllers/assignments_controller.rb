@@ -12,16 +12,21 @@ class AssignmentsController < ApplicationController
     p.style_src :self, "'unsafe-inline'"
   end
 
+  CONFIG_DIRS = {
+    peer_review: 'peer-review-config-files',
+    starter_files: 'starter-file-config-files'
+  }.freeze
+
   CONFIG_FILES = {
     properties: 'properties.yml',
     tags: 'tags.yml',
     criteria: 'criteria.yml',
     annotations: 'annotations.yml',
-    starter_files: File.join('starter-file-config-files', 'starter-file-rules.yml'),
-    peer_review_properties: File.join('peer-review-config-files', 'properties.yml'),
-    peer_review_tags: File.join('peer-review-config-files', 'tags.yml'),
-    peer_review_criteria: File.join('peer-review-config-files', 'criteria.yml'),
-    peer_review_annotations: File.join('peer-review-config-files', 'annotations.yml')
+    starter_files: File.join(CONFIG_DIRS[:starter_files], 'starter-file-rules.yml'),
+    peer_review_properties: File.join(CONFIG_DIRS[:peer_review], 'properties.yml'),
+    peer_review_tags: File.join(CONFIG_DIRS[:peer_review], 'tags.yml'),
+    peer_review_criteria: File.join(CONFIG_DIRS[:peer_review], 'criteria.yml'),
+    peer_review_annotations: File.join(CONFIG_DIRS[:peer_review], 'annotations.yml')
   }.freeze
 
   # Publicly accessible actions ---------------------------------------
@@ -587,9 +592,9 @@ class AssignmentsController < ApplicationController
         f.write yml_criteria.to_yaml
       end
       zipfile.get_output_stream(CONFIG_FILES[:annotations]) do |f|
-        f.write convert_to_yml(assignment.annotation_categories)
+        f.write annotation_categories_to_yml(assignment.annotation_categories)
       end
-      assignment.starter_file_config_to_zip(zipfile, 'starter-file-config-files', CONFIG_FILES[:starter_files])
+      assignment.starter_file_config_to_zip(zipfile, CONFIG_DIRS[:starter_files], CONFIG_FILES[:starter_files])
       unless child_assignment.nil?
         zipfile.get_output_stream(CONFIG_FILES[:peer_review_properties]) do |f|
           f.write(child_assignment.assignment_properties_config.to_yaml)
@@ -672,13 +677,13 @@ class AssignmentsController < ApplicationController
       starter_group_mappings[group[:directory_name]] = file_group
     end
     default_name = starter_file_settings[:default_starter_group]
-    unless default_name.nil? || !starter_group_mappings.has_key?(default_name)
+    unless default_name.nil? || !starter_group_mappings.key?(default_name)
       assignment.assignment_properties.default_starter_file_group_id = starter_group_mappings[default_name].id
     end
     zip_file.each do |entry|
       unless entry.directory?
         path_list = entry.name.split(File::SEPARATOR)
-        if path_list[0] == 'starter-file-config-files'
+        if path_list[0] == CONFIG_DIRS[:starter_files]
           group_dir_name = path_list[1]
           starter_file_group = starter_group_mappings[group_dir_name]
           starter_file_path = File.join(starter_file_group.path, path_list[2..-1])
@@ -688,7 +693,7 @@ class AssignmentsController < ApplicationController
         end
       end
     end
-    assignment.starter_file_groups.find_each { |starter_file_group| starter_file_group.update_entries }
+    assignment.starter_file_groups.find_each(&:update_entries)
   end
 
   # Build the tag/criteria/starter file settings file specified by +hash_to_build+ found in +zip_file+

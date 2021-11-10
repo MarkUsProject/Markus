@@ -33,9 +33,9 @@ class StarterFileGroup < ApplicationRecord
     zip_path
   end
 
-  def write_starter_files_to_zip(zip_file, dir = '')
+  def write_starter_files_to_zip(zip_file, dir = nil)
     self.files_and_dirs.map do |file|
-      if dir.empty?
+      if dir.nil?
         zip_entry_path = File.join file
       else
         zip_entry_path = File.join(dir, file)
