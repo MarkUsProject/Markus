@@ -24,10 +24,10 @@ class ResultsController < ApplicationController
         remark_submitted = submission.remark_submitted?
         original_result = remark_submitted ? submission.get_original_result : nil
         is_review = result.is_a_review?
-        is_reviewer = current_user.student? && current_user.is_reviewer_for?(assignment.pr_assignment, result)
+        is_reviewer = current_role.student? && current_role.is_reviewer_for?(assignment.pr_assignment, result)
 
-        if current_user.student? && !@current_user.is_reviewer_for?(assignment.pr_assignment, result)
-          grouping = current_user.accepted_grouping_for(assignment.id)
+        if current_role.student? && !current_role.is_reviewer_for?(assignment.pr_assignment, result)
+          grouping = current_role.accepted_grouping_for(assignment.id)
           if submission.grouping_id != grouping&.id ||
               !result.released_to_students?
             head :forbidden
@@ -41,8 +41,7 @@ class ResultsController < ApplicationController
           grouping_id: is_reviewer ? nil : submission.grouping_id,
           marking_state: result.marking_state,
           released_to_students: result.released_to_students,
-          detailed_annotations:
-            @current_user.admin? || @current_user.ta? || is_reviewer,
+          detailed_annotations: current_role.admin? || current_role.ta? || is_reviewer,
           revision_identifier: submission.revision_identifier,
           instructor_run: true,
           allow_remarks: assignment.allow_remarks,
@@ -53,7 +52,7 @@ class ResultsController < ApplicationController
           remark_due_date: assignment.remark_due_date,
           past_remark_due_date: assignment.past_remark_due_date?,
           is_reviewer: is_reviewer,
-          student_view: @current_user.student? && !is_reviewer
+          student_view: current_role.student? && !is_reviewer
         }
         if original_result.nil?
           data[:overall_comment] = result.overall_comment
@@ -71,7 +70,7 @@ class ResultsController < ApplicationController
         end
 
         if assignment.enable_test
-          authorized = allowance_to(:run_tests?, current_user, context: { assignment: assignment,
+          authorized = allowance_to(:run_tests?, current_role, context: { assignment: assignment,
                                                                           grouping: grouping,
                                                                           submission: submission })
           data[:enable_test] = true
@@ -81,7 +80,7 @@ class ResultsController < ApplicationController
           data[:can_run_tests] = false
         end
 
-        data[:can_release] = allowance_to(:manage_assessments?, current_user)
+        data[:can_release] = allowance_to(:manage_assessments?, current_role)
 
         # Submission files
         file_data = submission.submission_files.order(:path, :filename).pluck_to_hash(:id, :filename, :path)
@@ -99,12 +98,12 @@ class ResultsController < ApplicationController
         end
 
         data[:annotations] = all_annotations.map do |annotation|
-          annotation.get_data(@current_user.admin? || @current_user.ta?)
+          annotation.get_data(current_role.admin? || current_role.ta?)
         end
 
         # Annotation categories
-        if current_user.admin? || current_user.ta?
-          annotation_categories = AnnotationCategory.visible_categories(assignment, current_user)
+        if current_role.admin? || current_role.ta?
+          annotation_categories = AnnotationCategory.visible_categories(assignment, current_role)
                                                     .includes(:annotation_texts)
           data[:annotation_categories] = annotation_categories.map do |category|
             name_extension = category.flexible_criterion_id.nil? ? '' : " [#{category.flexible_criterion.name}]"
@@ -122,9 +121,9 @@ class ResultsController < ApplicationController
             }
           end
           data[:notes_count] = submission.grouping.notes.count
-          data[:num_marked] = assignment.get_num_marked(current_user.admin? ? nil : current_user.id)
-          data[:num_collected] = assignment.get_num_collected(current_user.admin? ? nil : current_user.id)
-          if current_user.ta? && assignment.anonymize_groups
+          data[:num_marked] = assignment.get_num_marked(current_role.admin? ? nil : current_role.id)
+          data[:num_collected] = assignment.get_num_collected(current_role.admin? ? nil : current_role.id)
+          if current_role.ta? && assignment.anonymize_groups
             data[:group_name] = "#{Group.model_name.human} #{submission.grouping.id}"
             data[:members] = []
           else
@@ -132,7 +131,7 @@ class ResultsController < ApplicationController
             data[:members] = submission.grouping.accepted_students.map(&:user_name)
           end
         elsif is_reviewer
-          reviewer_group = current_user.grouping_for(assignment.pr_assignment.id)
+          reviewer_group = current_role.grouping_for(assignment.pr_assignment.id)
           data[:num_marked] = PeerReview.get_num_marked(reviewer_group)
           data[:num_collected] = PeerReview.get_num_collected(reviewer_group)
           data[:group_name] = PeerReview.model_name.human
@@ -174,8 +173,8 @@ class ResultsController < ApplicationController
           old_marks = original_result.mark_hash
         end
 
-        if assignment.assign_graders_to_criteria && current_user.ta?
-          assigned_criteria = current_user.criterion_ta_associations
+        if assignment.assign_graders_to_criteria && current_role.ta?
+          assigned_criteria = current_role.criterion_ta_associations
                                           .where(assessment_id: assignment.id)
                                           .pluck(:criterion_id)
           if assignment.hide_unassigned_criteria
@@ -201,7 +200,7 @@ class ResultsController < ApplicationController
         # Grace token deductions
         if is_reviewer
           data[:grace_token_deductions] = []
-        elsif current_user.ta? && assignment.anonymize_groups
+        elsif current_role.ta? && assignment.anonymize_groups
           data[:grace_token_deductions] = []
 
         else
@@ -239,14 +238,14 @@ class ResultsController < ApplicationController
     @assignment = @grouping.assignment
 
     # authorization
-    allowed = allowance_to(:run_tests?, current_user, context: { assignment: @assignment,
+    allowed = allowance_to(:run_tests?, current_role, context: { assignment: @assignment,
                                                                  grouping: @grouping,
                                                                  submission: @submission })
     flash_allowance(:notice, allowed) if @assignment.enable_test
     @authorized = allowed.value
 
     m_logger = MarkusLogger.instance
-    m_logger.log("User '#{current_user.user_name}' viewed submission (id: #{@submission.id})" +
+    m_logger.log("User '#{current_role.user_name}' viewed submission (id: #{@submission.id})" +
                  "of assignment '#{@assignment.short_identifier}' for group '" +
                  "#{@grouping.group.group_name}'")
 
@@ -268,7 +267,7 @@ class ResultsController < ApplicationController
   def run_tests
     submission = Result.find(params[:id]).submission
     @current_job = AutotestRunJob.perform_later(request.protocol + request.host_with_port,
-                                                current_user.id,
+                                                current_role.id,
                                                 submission.assignment.id,
                                                 [submission.grouping.group_id])
     session[:job_id] = @current_job.job_id
@@ -303,8 +302,8 @@ class ResultsController < ApplicationController
     result = Result.find(params[:id])
     grouping = result.submission.grouping
 
-    if current_user.ta?
-      groupings = current_user.groupings
+    if current_role.ta?
+      groupings = current_role.groupings
                               .where(assignment: assignment)
                               .joins(:group)
                               .order('group_name')
@@ -314,8 +313,8 @@ class ResultsController < ApplicationController
         next_grouping = groupings.where('group_name < ?', grouping.group.group_name).last
       end
       next_result = next_grouping&.current_result
-    elsif result.is_a_review? && current_user.is_reviewer_for?(assignment.pr_assignment, result)
-      assigned_prs = current_user.grouping_for(assignment.pr_assignment.id).peer_reviews_to_others
+    elsif result.is_a_review? && current_role.is_reviewer_for?(assignment.pr_assignment, result)
+      assigned_prs = current_role.grouping_for(assignment.pr_assignment.id).peer_reviews_to_others
       if params[:direction] == '1'
         next_grouping = assigned_prs.where('peer_reviews.id > ?', result.peer_review_id).first
       else
@@ -482,7 +481,7 @@ class ResultsController < ApplicationController
     end
 
     annotation_data = all_annots.map do |annotation|
-      annotation.get_data(@current_user.admin? || @current_user.ta?)
+      annotation.get_data(current_role.admin? || current_role.ta?)
     end
 
     render json: annotation_data
@@ -508,13 +507,13 @@ class ResultsController < ApplicationController
 
     if result_mark.update(mark: mark_value, override: !(mark_value.nil? && result_mark.deductive_annotations_absent?))
 
-      m_logger.log("User '#{current_user.user_name}' updated mark for " +
+      m_logger.log("User '#{current_role.user_name}' updated mark for " +
                    "submission (id: #{submission.id}) of " +
                    "assignment #{assignment.short_identifier} for " +
                    "group #{group.group_name}.",
                    MarkusLogger::INFO)
-      if @current_user.ta?
-        num_marked = assignment.get_num_marked(@current_user.id)
+      if current_role.ta?
+        num_marked = assignment.get_num_marked(current_role.id)
       else
         num_marked = assignment.get_num_marked(nil)
       end
@@ -527,7 +526,7 @@ class ResultsController < ApplicationController
       }
     else
       m_logger.log("Error while trying to update mark of submission. " +
-                   "User: #{current_user.user_name}, " +
+                   "User: #{current_role.user_name}, " +
                    "Submission id: #{submission.id}, " +
                    "Assignment: #{assignment.short_identifier}, " +
                    "Group: #{group.group_name}.",
@@ -543,8 +542,8 @@ class ResultsController < ApplicationController
 
     result_mark.update!(override: false)
 
-    if @current_user.ta?
-      num_marked = result.submission.grouping.assignment.get_num_marked(@current_user.id)
+    if current_role.ta?
+      num_marked = result.submission.grouping.assignment.get_num_marked(current_role.id)
     else
       num_marked = result.submission.grouping.assignment.get_num_marked(nil)
     end
@@ -559,10 +558,10 @@ class ResultsController < ApplicationController
   def view_marks
     @assignment = Assignment.find(params[:assignment_id])
     result_from_id = Result.find(params[:id])
-    is_review = result_from_id.is_a_review? || result_from_id.is_review_for?(@current_user, @assignment)
+    is_review = result_from_id.is_a_review? || result_from_id.is_review_for?(current_role, @assignment)
 
-    if current_user.student?
-      @grouping = current_user.accepted_grouping_for(@assignment.id)
+    if current_role.student?
+      @grouping = current_role.accepted_grouping_for(@assignment.id)
       if @grouping.nil?
         redirect_to assignment_path(params[:id])
         return
@@ -606,7 +605,7 @@ class ResultsController < ApplicationController
     end
 
     if is_review
-      if @current_user.student?
+      if current_role.student?
         @prs = @grouping.peer_reviews.where(results: { released_to_students: true })
       else
         @reviewer = Grouping.find(params[:reviewer_grouping_id])
@@ -643,7 +642,7 @@ class ResultsController < ApplicationController
     @host = Rails.application.config.action_controller.relative_url_root
 
     m_logger = MarkusLogger.instance
-    m_logger.log("Student '#{current_user.user_name}' viewed results for assignment " +
+    m_logger.log("Student '#{current_role.user_name}' viewed results for assignment " +
                  "'#{@assignment.short_identifier}'.")
   end
 
@@ -739,18 +738,18 @@ class ResultsController < ApplicationController
   private
 
   #Return true if submission_id or file_id matches between accepted_student and
-  #current_user. This is to prevent students from downloading files that they
+  #current_role. This is to prevent students from downloading files that they
   #or their group have not submitted. Return false otherwise.
   def authorized_to_download?(map)
     #If the user is a ta or admin, return true as they are authorized.
-    if current_user.admin? || current_user.ta?
+    if current_role.admin? || current_role.ta?
       return true
     end
 
     assignment = Assignment.find(map[:assignment_id])
     result = Result.find(map[:result_id])
 
-    if current_user.is_reviewer_for?(assignment.pr_assignment, result) &&
+    if current_role.is_reviewer_for?(assignment.pr_assignment, result) &&
         map[:from_codeviewer] != nil
       return true
     end
@@ -762,10 +761,8 @@ class ResultsController < ApplicationController
                    Submission.find(map[:submission_id])
                  end
     if submission
-      #Check that current_user is in fact in grouping that sub_file belongs to
-      !submission.grouping.accepted_students.find { |user|
-        user == current_user
-      }.nil?
+      #Check that current_role is in fact in grouping that sub_file belongs to
+      !submission.grouping.accepted_students.find { |role| role == current_role }.nil?
     else
       false
     end

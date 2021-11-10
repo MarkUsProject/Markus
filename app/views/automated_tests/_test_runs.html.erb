@@ -7,7 +7,7 @@
         assignment_id: <%= @assignment.id %>,
         grouping_id: <%= @grouping.id %>,
         instructor_run: <%= ran_by == 'instructor' %>,
-        instructor_view: <%= !@current_user.student? %>
+        instructor_view: <%= !@current_role.student? %>
       });
     })
   <% end %>
@@ -18,8 +18,8 @@
 </h2>
 
 <%# student results page (with instructor tests released) does not need the button %>
-<% unless @current_user.student? && ran_by == 'instructor' %>
-  <% route = @current_user.admin? ?
+<% unless @current_role.student? && ran_by == 'instructor' %>
+  <% route = @current_role.admin? ?
     run_tests_assignment_submission_result_path :
     execute_test_run_automated_test_path(id: @assignment.id, grouping_id: @grouping.id) %>
   <div class="rt-action-box">

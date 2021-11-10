@@ -12,7 +12,7 @@
     <%= link_to '',
                 { action: 'grader_mapping',
                   id: @grade_entry_form.id },
-                class: 'make_div_clickable' if @current_user.admin? %>
+                class: 'make_div_clickable' if @current_role.admin? %>
   </div>
   <section class='dialog-actions'>
     <input type='reset' id='download' value='<%= t(:cancel) %>'/>

@@ -75,7 +75,7 @@ class GradeEntryFormsController < ApplicationController
     end
 
     # Getting the student's marks for each grade entry item
-    @grade_entry_student = @grade_entry_form.grade_entry_students.find_by(user_id: current_user.id)
+    @grade_entry_student = @grade_entry_form.grade_entry_students.find_by(role_id: current_role.id)
     @columns = []
     @data = []
     @item_percentages = []
@@ -131,7 +131,7 @@ class GradeEntryFormsController < ApplicationController
       student_pluck_attrs << Arel.sql('grade_entry_students.total_grade as total_marks')
     end
 
-    if current_user.admin?
+    if current_role.admin?
       students = grade_entry_form.grade_entry_students
                                  .joins(:user)
                                  .pluck_to_hash(*student_pluck_attrs)
@@ -139,12 +139,12 @@ class GradeEntryFormsController < ApplicationController
                                .joins(:grades)
                                .pluck(:id, 'grades.grade_entry_item_id', 'grades.grade')
                                .group_by { |x| x[0] }
-    elsif current_user.ta?
-      students = current_user.grade_entry_students
+    elsif current_role.ta?
+      students = current_role.grade_entry_students
                              .where(grade_entry_form: grade_entry_form)
                              .joins(:user)
                              .pluck_to_hash(*student_pluck_attrs)
-      grades = current_user.grade_entry_students
+      grades = current_role.grade_entry_students
                            .where(grade_entry_form: grade_entry_form)
                            .joins(:grades)
                            .pluck(:id, 'grades.grade_entry_item_id', 'grades.grade')
@@ -268,11 +268,11 @@ class GradeEntryFormsController < ApplicationController
     elsif redirect_options[:grade_entry_form_id]
       redirect_options[:grade_entry_form_id] = params[:id]
       redirect_to redirect_options
-    elsif current_user.admin?
+    elsif current_role.admin?
       redirect_to edit_grade_entry_form_path(params[:id])
-    elsif current_user.ta?
+    elsif current_role.ta?
       redirect_to grades_grade_entry_form_path(params[:id])
-    else # current_user.student?
+    else # current_role.student?
       redirect_to student_interface_grade_entry_form_path(params[:id])
     end
   end

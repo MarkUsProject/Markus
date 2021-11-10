@@ -21,7 +21,7 @@ class NotesController < ApplicationController
   def add_note
     return unless request.post?
     @note = Note.new
-    @note.creator_id = @current_user.id
+    @note.creator_id = current_role.id
     @note.notes_message = params[:new_notes]
     @note.noteable_id = params[:noteable_id]
     @note.noteable_type = params[:noteable_type]
@@ -42,7 +42,6 @@ class NotesController < ApplicationController
     @notes = Note.includes(:user, :noteable).order(created_at: :desc)
     respond_to do |format|
       format.html do
-        @current_user = current_user
         # Notes are attached to noteables, if there are no noteables, we can't make notes.
         @noteables_available = Note.noteables_exist?
         render 'index', formats: [:html]
@@ -75,7 +74,7 @@ class NotesController < ApplicationController
   def create
     @note = Note.new(notes_params)
     @note.noteable_type = params[:noteable_type]
-    @note.creator_id = @current_user.id
+    @note.creator_id = current_role.id
 
     if @note.save
       respond_with @note

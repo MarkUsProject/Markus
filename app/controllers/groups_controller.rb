@@ -323,7 +323,7 @@ class GroupsController < ApplicationController
     @assignment = Assignment.find(params[:assignment_id])
     @grouping = @assignment.groupings.find(params[:grouping_id])
     begin
-      current_user.join(@grouping)
+      current_role.join(@grouping)
     rescue ActiveRecord::RecordInvalid => e
       flash_message(:error, e.message)
       status = :unprocessable_entity
@@ -332,7 +332,7 @@ class GroupsController < ApplicationController
       status = :unprocessable_entity
     else
       m_logger = MarkusLogger.instance
-      m_logger.log("Student '#{current_user.user_name}' joined group "\
+      m_logger.log("Student '#{current_role.user_name}' joined group "\
                    "'#{@grouping.group.group_name}'(accepted invitation).")
       status = :found
     end
@@ -343,13 +343,13 @@ class GroupsController < ApplicationController
     @assignment = Assignment.find(params[:assignment_id])
     @grouping = @assignment.groupings.find(params[:grouping_id])
     begin
-      @grouping.decline_invitation(current_user)
+      @grouping.decline_invitation(current_role)
     rescue RuntimeError => e
       flash_message(:error, e.message)
       status = :unprocessable_entity
     else
       m_logger = MarkusLogger.instance
-      m_logger.log("Student '#{current_user.user_name}' declined invitation for group '#{@grouping.group.group_name}'.")
+      m_logger.log("Student '#{current_role.user_name}' declined invitation for group '#{@grouping.group.group_name}'.")
       status = :found
     end
     redirect_to assignment_path(params[:assignment_id]), status: status
@@ -357,7 +357,7 @@ class GroupsController < ApplicationController
 
   def create
     @assignment = Assignment.find(params[:assignment_id])
-    @student = @current_user
+    @student = current_role
     m_logger = MarkusLogger.instance
     begin
       return unless flash_allowance(:error, allowance_to(:create_group?, @assignment)).value
@@ -379,11 +379,11 @@ class GroupsController < ApplicationController
 
   def destroy
     @assignment = Assignment.find(params[:assignment_id])
-    @grouping = @current_user.accepted_grouping_for(@assignment.id)
+    @grouping = current_role.accepted_grouping_for(@assignment.id)
     m_logger = MarkusLogger.instance
     if @grouping.nil?
       m_logger.log('Failed to delete group, since no accepted group for this user existed.'\
-            "User: '#{current_user.user_name}'.", MarkusLogger::ERROR)
+            "User: '#{current_role.user_name}'.", MarkusLogger::ERROR)
       flash_message(:error, I18n.t('groups.destroy.errors.do_not_have_a_group'))
       redirect_to assignment_path(params[:assignment_id])
       return
@@ -397,11 +397,11 @@ class GroupsController < ApplicationController
         end
         @grouping.destroy
         flash_message(:success, I18n.t('flash.actions.destroy.success', resource_name: Group.model_name.human))
-        m_logger.log("Student '#{current_user.user_name}' deleted group '"\
+        m_logger.log("Student '#{current_role.user_name}' deleted group '"\
                      "#{@grouping.group.group_name}'.", MarkusLogger::INFO)
       rescue RuntimeError => e
         m_logger.log("Failed to delete group '#{@grouping.group.group_name}'. User: '"\
-                       "#{current_user.user_name}', Error: '#{e.message}'.", MarkusLogger::ERROR)
+                       "#{current_role.user_name}', Error: '#{e.message}'.", MarkusLogger::ERROR)
       end
     end
     redirect_to assignment_path(params[:assignment_id])
@@ -410,7 +410,7 @@ class GroupsController < ApplicationController
   def invite_member
     @assignment = Assignment.find(params[:assignment_id])
 
-    @grouping = current_user.accepted_grouping_for(@assignment.id)
+    @grouping = current_role.accepted_grouping_for(@assignment.id)
     if @grouping.nil?
       flash_message(:error,
                     I18n.t('groups.invite_member.errors.need_to_create_group'))
@@ -425,7 +425,7 @@ class GroupsController < ApplicationController
           i = i.strip
           invited_user = Student.where(hidden: false).find_by(user_name: i)
           if invited_user.receives_invite_emails?
-            NotificationMailer.with(inviter: current_user,
+            NotificationMailer.with(inviter: current_role,
                                     invited: invited_user,
                                     grouping: @grouping).grouping_invite_email.deliver_later
           end
@@ -449,7 +449,7 @@ class GroupsController < ApplicationController
       disinvited_student = membership.user
       membership.destroy
       m_logger = MarkusLogger.instance
-      m_logger.log("Student '#{current_user.user_name}' cancelled invitation for '#{disinvited_student.user_name}'.")
+      m_logger.log("Student '#{current_role.user_name}' cancelled invitation for '#{disinvited_student.user_name}'.")
       flash_message(:success, I18n.t('groups.members.member_disinvited'))
     end
     status = authorized ? :found : :forbidden
@@ -513,13 +513,13 @@ class GroupsController < ApplicationController
 
   def download_starter_file
     assignment = Assignment.find(params[:assignment_id])
-    grouping = current_user.accepted_grouping_for(assignment.id)
+    grouping = current_role.accepted_grouping_for(assignment.id)
 
     authorize! grouping, with: GroupingPolicy
 
     grouping.reset_starter_file_entries if grouping.starter_file_changed
 
-    zip_name = "#{assignment.short_identifier}-starter-files-#{current_user.user_name}"
+    zip_name = "#{assignment.short_identifier}-starter-files-#{current_role.user_name}"
     zip_path = File.join('tmp', zip_name + '.zip')
     FileUtils.rm_rf zip_path
     Zip::File.open(zip_path, create: true) do |zip_file|

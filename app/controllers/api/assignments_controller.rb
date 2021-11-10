@@ -254,7 +254,7 @@ module Api
 
     def grades_summary
       assignment = Assignment.find(params[:id])
-      send_data assignment.summary_csv(@current_user),
+      send_data assignment.summary_csv(current_role),
                 type: 'text/csv',
                 filename: "#{assignment.short_identifier}_grades_summary.csv",
                 disposition: 'inline'
@@ -264,7 +264,7 @@ module Api
 
     def test_files
       assignment = Assignment.find(params[:id])
-      zip_path = assignment.zip_automated_test_files(current_user)
+      zip_path = assignment.zip_automated_test_files(current_role)
       send_file zip_path, filename: File.basename(zip_path)
     rescue ActiveRecord::RecordNotFound => e
       render 'shared/http_status', locals: { code: '404', message: e }, status: 404

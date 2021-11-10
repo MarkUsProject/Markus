@@ -13,7 +13,7 @@
     <em>
       <%= "#{member.user.display_name} (#{t('groups.members.statuses.pending')})" %>
     </em>
-     <% if grouping.is_inviter?(@current_user) %>
+     <% if grouping.is_inviter?(@current_role) %>
        <%= link_to t('groups.members.cancel_invitation'),
                    disinvite_member_assignment_groups_path(assignment_id: @assignment.id, membership: member.id),
                    method: 'PATCH',
@@ -23,7 +23,7 @@
      <% end %>
   </li>
 <% elsif member.membership_status == StudentMembership::STATUSES[:rejected] %>
-  <% if grouping.is_inviter?(@current_user) %>
+  <% if grouping.is_inviter?(@current_role) %>
     <li>
       <em>
         <%= "#{member.user.display_name} (#{t('groups.members.statuses.rejected')})" %>

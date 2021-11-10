@@ -157,8 +157,7 @@ class GradersController < ApplicationController
   end
 
   def grader_summary
-    @current_user = current_user
-    if @current_user.student? || @current_user.ta?
+    if current_role.student? || current_role.ta?
       redirect_to controller: 'assignments', action: 'index'
       return
     end
