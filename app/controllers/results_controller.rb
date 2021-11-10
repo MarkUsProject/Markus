@@ -245,8 +245,8 @@ class ResultsController < ApplicationController
     @authorized = allowed.value
 
     m_logger = MarkusLogger.instance
-    m_logger.log("User '#{current_role.user_name}' viewed submission (id: #{@submission.id})" +
-                 "of assignment '#{@assignment.short_identifier}' for group '" +
+    m_logger.log("User '#{current_role.user_name}' viewed submission (id: #{@submission.id})" \
+                 "of assignment '#{@assignment.short_identifier}' for group '" \
                  "#{@grouping.group.group_name}'")
 
     # Check whether this group made a submission after the final deadline.
@@ -525,10 +525,10 @@ class ResultsController < ApplicationController
         total: result.get_total_mark
       }
     else
-      m_logger.log("Error while trying to update mark of submission. " +
-                   "User: #{current_role.user_name}, " +
-                   "Submission id: #{submission.id}, " +
-                   "Assignment: #{assignment.short_identifier}, " +
+      m_logger.log("Error while trying to update mark of submission. " \
+                   "User: #{current_role.user_name}, " \
+                   "Submission id: #{submission.id}, " \
+                   "Assignment: #{assignment.short_identifier}, " \
                    "Group: #{group.group_name}.",
                    MarkusLogger::ERROR)
       render json: result_mark.errors.full_messages.join, status: :bad_request
@@ -642,8 +642,7 @@ class ResultsController < ApplicationController
     @host = Rails.application.config.action_controller.relative_url_root
 
     m_logger = MarkusLogger.instance
-    m_logger.log("Student '#{current_role.user_name}' viewed results for assignment " +
-                 "'#{@assignment.short_identifier}'.")
+    m_logger.log("Student '#{current_role.user_name}' viewed results for assignment '#{@assignment.short_identifier}'.")
   end
 
   def add_extra_mark
@@ -737,9 +736,9 @@ class ResultsController < ApplicationController
 
   private
 
-  #Return true if submission_id or file_id matches between accepted_student and
-  #current_role. This is to prevent students from downloading files that they
-  #or their group have not submitted. Return false otherwise.
+  # Return true if submission_id or file_id matches between accepted_student and
+  # current_role. This is to prevent students from downloading files that they
+  # or their group have not submitted. Return false otherwise.
   def authorized_to_download?(map)
     #If the user is a ta or admin, return true as they are authorized.
     if current_role.admin? || current_role.ta?
@@ -761,7 +760,7 @@ class ResultsController < ApplicationController
                    Submission.find(map[:submission_id])
                  end
     if submission
-      #Check that current_role is in fact in grouping that sub_file belongs to
+      # Check that current_role is in fact in grouping that sub_file belongs to
       !submission.grouping.accepted_students.find { |role| role == current_role }.nil?
     else
       false
