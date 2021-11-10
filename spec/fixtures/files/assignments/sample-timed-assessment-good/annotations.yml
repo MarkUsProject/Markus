@@ -1,0 +1,27 @@
+---
+quod laboriosam:
+- Sunt optio.
+- Quibusdam ut ipsa.
+- Earum voluptate.
+- Saepe.
+- Non eum.
+- Aperiam voluptas.
+- Voluptas.
+- Aperiam nesciunt rerum.
+- Expedita dignissimos est.
+- Eligendi explicabo.
+- Voluptates qui.
+- Ullam.
+est:
+  criterion: ShortAnswer
+  texts:
+  - - Dolore.
+    - 1.0
+  - - Rem.
+    - 1.0
+  - - Sint dolor.
+    - 1.0
+  - - Quibusdam.
+    - 1.0
+  - - Consequatur rerum.
+    - 1.0

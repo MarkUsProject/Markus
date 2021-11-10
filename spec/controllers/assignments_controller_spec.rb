@@ -1402,6 +1402,66 @@ describe AssignmentsController do
   end
 
   describe '#upload_config_files' do
+    let(:admin) { create :admin }
+
+    context 'assignment files are valid' do
+      before :each do
+        allow(controller).to receive(:session_expired?).and_return(false)
+        allow(controller).to receive(:logged_in?).and_return(true)
+        allow(controller).to receive(:current_user).and_return(build(:admin))
+
+        main_dir = File.join( 'spec', 'fixtures', 'files', 'assignments', 'sample-timed-assessment-good')
+        pr_dir = File.join(main_dir, 'peer-review-config-files')
+        zip_name = 'mtt_ex_1-config-files.zip'
+        zip_path = File.join('tmp', zip_name)
+        FileUtils.rm_f(zip_path)
+        Zip::File.open(zip_path, create: true) do |zip_file|
+          zip_file.add('properties.yml', File.join(main_dir, 'properties.yml'))
+          zip_file.add('tags.yml', File.join(main_dir, 'tags.yml'))
+          zip_file.add('criteria.yml', File.join(main_dir, 'criteria.yml'))
+          zip_file.add('annotations.yml', File.join(main_dir, 'annotations.yml'))
+          zip_file.add('peer-review-config-files/properties.yml', File.join(pr_dir, 'properties.yml'))
+          zip_file.add('peer-review-config-files/tags.yml', File.join(pr_dir, 'tags.yml'))
+          zip_file.add('peer-review-config-files/criteria.yml', File.join(pr_dir, 'criteria.yml'))
+          zip_file.add('peer-review-config-files/annotations.yml', File.join(pr_dir, 'annotations.yml'))
+        end
+        @assignment_good_zip = fixture_file_upload(zip_path, 'application/zip')
+
+        post_as admin, :upload_config_files, params: { upload_files_for_config: @assignment_good_zip,
+                                                       is_timed: true,
+                                                       is_scanned: false }
+      end
+
+      it 'gives the correct response' do
+        expect(response.status).to eq(302)
+        expect(flash[:error]).to be_nil
+      end
+
+      it "properly configures an assignment's properties" do
+        @uploaded_assignment = Assignment.find_by(short_identifier: 'mtt_ex_1')
+        expect(@uploaded_assignment).to be_a(Assignment)
+        expect(@uploaded_assignment.message).to eq('Sample midterm to help you practice for our second midterm')
+        expect(@uploaded_assignment.is_timed).to eq(true)
+        expect(@uploaded_assignment.scanned_exam).to eq(false)
+        expect(@uploaded_assignment.has_peer_review).to eq(true)
+        expect(@uploaded_assignment.assignment_files.count).to eq(2)
+        expect(@uploaded_assignment.submission_rule.type).to eq('PenaltyDecayPeriodSubmissionRule')
+      end
+
+      it 'properly configures the tags for an assignment' do
+        @uploaded_assignment = Assignment.find_by(short_identifier: 'mtt_ex_1')
+        expect(@uploaded_assignment).to be_a(Assignment)
+        expect(@uploaded_assignment.tags.count).to eq(2)
+        expect(@uploaded_assignment.tags.find_by(name: 'Late').description).to eq('Not Handed in on time')
+        expect(@uploaded_assignment.tags.find_by(name: 'Plagiarized').description).to eq('Cheating')
+      end
+
+      it 'properly configures the criteria for an assignment' do
+        @uploaded_assignment = Assignment.find_by(short_identifier: 'mtt_ex_1')
+        expect(@uploaded_assignment).to be_a(Assignment)
+        expect(@uploaded_assignment.criteria.count).to eq(2)
+      end
+    end
   end
 
   describe 'download_and_upload_config_file' do
