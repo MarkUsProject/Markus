@@ -18,4 +18,12 @@ class CoursePolicy < ApplicationPolicy
   def switch_role?
     real_role.admin? && !check?(:role_is_switched?)
   end
+
+  def download_assignments?
+    check?(:manage_assessments?, role)
+  end
+
+  def upload_assignments?
+    check?(:manage_assessments?, role)
+  end
 end

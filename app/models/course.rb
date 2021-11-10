@@ -24,7 +24,7 @@ class Course < ApplicationRecord
       map = {}
       map[:assignments] = assignments.map do |assignment|
         m = {}
-        DEFAULT_FIELDS.each do |f|
+        Assignment::DEFAULT_FIELDS.each do |f|
           m[f] = assignment.send(f)
         end
         m
@@ -32,7 +32,7 @@ class Course < ApplicationRecord
       map.to_yaml
     when 'csv'
       MarkusCsv.generate(assignments) do |assignment|
-        DEFAULT_FIELDS.map do |f|
+        Assignment::DEFAULT_FIELDS.map do |f|
           assignment.send(f)
         end
       end
@@ -44,7 +44,7 @@ class Course < ApplicationRecord
     when 'csv'
       result = MarkusCsv.parse(assignment_data) do |row|
         assignment = self.assignments.find_or_create_by(short_identifier: row[0])
-        attrs = Hash[DEFAULT_FIELDS.zip(row)]
+        attrs = Hash[Assignment::DEFAULT_FIELDS.zip(row)]
         attrs.delete_if { |_, v| v.nil? }
         if assignment.new_record?
           assignment.assignment_properties.repository_folder = row[0]
