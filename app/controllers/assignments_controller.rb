@@ -637,10 +637,10 @@ class AssignmentsController < ApplicationController
           child_annotations_prop = build_hash_from_zip(zipfile, :peer_review_annotations)
           upload_annotations_from_yaml(child_annotations_prop, child_assignment)
         end
-        assignment.save!
-        Tag.from_yml(tag_prop, assignment.id)
-        config_criteria(assignment, criteria_prop)
-        upload_annotations_from_yaml(annotations_prop, assignment)
+        #assignment.save!
+        #Tag.from_yml(tag_prop, assignment.id)
+        #config_criteria(assignment, criteria_prop)
+        #upload_annotations_from_yaml(annotations_prop, assignment)
         config_starter_files(assignment, zipfile)
         redirect_to edit_assignment_path(assignment.id)
       end
@@ -665,17 +665,30 @@ class AssignmentsController < ApplicationController
     assignment.starter_files_after_due = starter_file_settings[:allow_starter_files_after_due]
     starter_group_mappings = {}
     starter_file_settings[:group_information].each do |group|
-      file_group = StarterFileGroup.new(name: group[:name],
-                                        use_rename: group[:use_rename],
-                                        entry_rename: group[:entry_rename],
-                                        assignment: assignment)
-      file_group.save!
+      file_group = StarterFileGroup.create!(name: group[:name],
+                                            use_rename: group[:use_rename],
+                                            entry_rename: group[:entry_rename],
+                                            assignment: assignment)
       starter_group_mappings[group[:directory_name]] = file_group
     end
     default_name = starter_file_settings[:default_starter_group]
     unless default_name.nil? || !starter_group_mappings.has_key?(default_name)
       assignment.assignment_properties.default_starter_file_group_id = starter_group_mappings[default_name].id
     end
+    zip_file.each do |entry|
+      unless entry.directory?
+        path_list = entry.name.split(File::SEPARATOR)
+        if path_list[0] == 'starter-file-config-files'
+          group_dir_name = path_list[1]
+          starter_file_group = starter_group_mappings[group_dir_name]
+          starter_file_path = File.join(starter_file_group.path, path_list[2..-1])
+          starter_file_content = entry.get_input_stream.read
+          puts starter_file_path
+          File.write(starter_file_path, starter_file_content, mode: 'wb')
+        end
+      end
+    end
+    assignment.starter_file_groups.find_each { |starter_file_group| starter_file_group.update_entries }
   end
 
   # Build the tag/criteria/starter file settings file specified by +hash_to_build+ found in +zip_file+
