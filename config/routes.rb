@@ -68,6 +68,8 @@ Rails.application.routes.draw do
       get 'clear_role_switch_session'
       get 'role_switch'
       post 'switch_role'
+      get 'download_assignments'
+      post 'upload_assignments'
     end
 
     resources :admins
@@ -76,8 +78,6 @@ Rails.application.routes.draw do
 
       collection do
         get 'delete_rejected'
-        get 'download'
-        post 'upload'
         get 'batch_runs'
       end
 

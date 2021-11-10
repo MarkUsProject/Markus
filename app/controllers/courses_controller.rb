@@ -74,6 +74,49 @@ class CoursesController < ApplicationController
     # please keep.
   end
 
+  def download_assignments
+    format = params[:format]
+    case format
+    when 'csv'
+      output = current_course.get_assignment_list(format)
+      send_data(output,
+                filename: 'assignments.csv',
+                type: 'text/csv',
+                disposition: 'attachment')
+    when 'yml'
+      output = current_course.get_assignment_list(format)
+      send_data(output,
+                filename: 'assignments.yml',
+                type: 'text/yml',
+                disposition: 'attachment')
+    else
+      flash[:error] = t('download_errors.unrecognized_format', format: format)
+      redirect_back(fallback_location: course_assignments_path(current_course))
+    end
+  end
+
+  def upload_assignments
+    begin
+      data = process_file_upload
+    rescue Psych::SyntaxError => e
+      flash_message(:error, t('upload_errors.syntax_error', error: e.to_s))
+    rescue StandardError => e
+      flash_message(:error, e.message)
+    else
+      if data[:type] == '.csv'
+        result = current_course.upload_assignment_list('csv', data[:file].read)
+        flash_message(:error, result[:invalid_lines]) unless result[:invalid_lines].empty?
+        flash_message(:success, result[:valid_lines]) unless result[:valid_lines].empty?
+      elsif data[:type] == '.yml'
+        result = current_course.upload_assignment_list('yml', data[:contents])
+        if result.is_a?(StandardError)
+          flash_message(:error, result.message)
+        end
+      end
+    end
+    redirect_back(fallback_location: course_assignments_path(current_course))
+  end
+
   private
 
   def log_role_switch(found_user)
