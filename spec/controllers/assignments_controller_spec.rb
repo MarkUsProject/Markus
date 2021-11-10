@@ -1406,11 +1406,7 @@ describe AssignmentsController do
 
     context 'assignment files are valid' do
       before :each do
-        allow(controller).to receive(:session_expired?).and_return(false)
-        allow(controller).to receive(:logged_in?).and_return(true)
-        allow(controller).to receive(:current_user).and_return(build(:admin))
-
-        main_dir = File.join( 'spec', 'fixtures', 'files', 'assignments', 'sample-timed-assessment-good')
+        main_dir = File.join('spec', 'fixtures', 'files', 'assignments', 'sample-timed-assessment-good')
         pr_dir = File.join(main_dir, 'peer-review-config-files')
         zip_name = 'mtt_ex_1-config-files.zip'
         zip_path = File.join('tmp', zip_name)
