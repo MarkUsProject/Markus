@@ -635,23 +635,37 @@ class Assignment < Assessment
 
   # Generate a CSV summary of the most recent test results associated with an assignment.
   def summary_test_result_csv
-    summary_test_results = self.summary_test_results
-    results = summary_test_results.group_by(&:group_name)
-    cols = summary_test_results.group_by(&:test_result_name).keys
+    summary_test_results = self.summary_test_results.as_json
+
+    headers = Set.new
+    groups = Set.new
+    summary_test_results.each do |test_result|
+      groups << test_result['group_name']
+      headers << "#{test_result['group_name']}:#{test_result['test_result_name']}"
+    end
+
     CSV.generate do |csv|
-      csv << cols
-      results.each do |_name, group|
-        group.each do |test_result|
-          row = []
-          cols.each do |col|
-            if col == test_result['test_result_name']
-              row << test_result['status']
-            else
-              row << nil
-            end
+      csv << headers
+      groups.each do |group|
+        row = []
+        test_data = {}
+
+        # Create lookup for test results
+        summary_test_results.each do |test_result|
+          if test_result['group_name'] == group
+            test_data["#{test_result['group_name']}:#{test_result['test_result_name']}"] = test_result['status']
           end
-          csv << row
         end
+
+        # Create ordered row
+        headers.each do |header|
+          if test_data.key?(header)
+            row << test_data[header]
+          else
+            row << nil
+          end
+        end
+        csv << row
       end
     end
   end
