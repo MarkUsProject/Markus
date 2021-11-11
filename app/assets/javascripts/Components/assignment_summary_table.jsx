@@ -15,6 +15,7 @@ class AssignmentSummaryTable extends React.Component {
       num_assigned: 0,
       num_marked: 0,
       marking_states: markingStates,
+      markingStateFilter: "all",
     };
   }
 
@@ -43,13 +44,15 @@ class AssignmentSummaryTable extends React.Component {
     });
   };
 
-  onFilteredChange = () => {
+  onFilteredChange = (filtered, column) => {
     const summaryTable = this.wrappedInstance;
-    const markingStateFilter = summaryTable.state.filtered.find(
-      filter => filter.id == "marking_state"
-    )?.value;
-    const markingStates = getMarkingStates(summaryTable.state.sortedData);
-    this.setState({marking_states: markingStates, markingStateFilter: markingStateFilter});
+    if (column.id != "marking_state") {
+      const markingStates = getMarkingStates(summaryTable.state.sortedData);
+      this.setState({marking_states: markingStates});
+    } else {
+      const markingStateFilter = filtered.find(filter => filter.id == "marking_state").value;
+      this.setState({markingStateFilter: markingStateFilter});
+    }
   };
 
   fixedColumns = () => {

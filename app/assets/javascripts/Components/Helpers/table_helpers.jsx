@@ -161,7 +161,7 @@ export function markingStateColumn(marking_states, markingStateFilter, ...overri
     },
     filterAllOptionText:
       I18n.t("all") +
-      (markingStateFilter === "all" || markingStateFilter === undefined
+      (markingStateFilter === "all"
         ? ` (${Object.values(marking_states).reduce((a, b) => a + b)})`
         : ""),
     filterOptions: [
@@ -169,7 +169,7 @@ export function markingStateColumn(marking_states, markingStateFilter, ...overri
         value: "before_due_date",
         text:
           I18n.t("submissions.state.before_due_date") +
-          (["before_due_date", undefined, "all"].includes(markingStateFilter)
+          (["before_due_date", "all"].includes(markingStateFilter)
             ? ` (${marking_states["before_due_date"]})`
             : ""),
       },
@@ -177,7 +177,7 @@ export function markingStateColumn(marking_states, markingStateFilter, ...overri
         value: "not_collected",
         text:
           I18n.t("submissions.state.not_collected") +
-          (["not_collected", undefined, "all"].includes(markingStateFilter)
+          (["not_collected", "all"].includes(markingStateFilter)
             ? ` (${marking_states["not_collected"]})`
             : ""),
       },
@@ -185,7 +185,7 @@ export function markingStateColumn(marking_states, markingStateFilter, ...overri
         value: "incomplete",
         text:
           I18n.t("submissions.state.in_progress") +
-          (["in_progress", undefined, "all"].includes(markingStateFilter)
+          (["in_progress", "all"].includes(markingStateFilter)
             ? ` (${marking_states["incomplete"]})`
             : ""),
       },
@@ -193,7 +193,7 @@ export function markingStateColumn(marking_states, markingStateFilter, ...overri
         value: "complete",
         text:
           I18n.t("submissions.state.complete") +
-          (["complete", undefined, "all"].includes(markingStateFilter)
+          (["complete", "all"].includes(markingStateFilter)
             ? ` (${marking_states["complete"]})`
             : ""),
       },
@@ -201,7 +201,7 @@ export function markingStateColumn(marking_states, markingStateFilter, ...overri
         value: "released",
         text:
           I18n.t("submissions.state.released") +
-          (["released", undefined, "all"].includes(markingStateFilter)
+          (["released", "all"].includes(markingStateFilter)
             ? ` (${marking_states["released"]})`
             : ""),
       },
@@ -209,9 +209,7 @@ export function markingStateColumn(marking_states, markingStateFilter, ...overri
         value: "remark",
         text:
           I18n.t("submissions.state.remark_requested") +
-          (["remark", undefined, "all"].includes(markingStateFilter)
-            ? ` (${marking_states["remark"]})`
-            : ""),
+          (["remark", "all"].includes(markingStateFilter) ? ` (${marking_states["remark"]})` : ""),
       },
     ],
     Filter: selectFilter,
