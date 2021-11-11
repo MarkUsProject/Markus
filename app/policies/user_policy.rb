@@ -1,8 +1,11 @@
 # User policy class
 class UserPolicy < ApplicationPolicy
-  # Default rule: only admins can manage users.
   def manage?
-    user.admin?
+    false
+  end
+
+  def edit?
+
   end
 
   # No one can delete users.
@@ -20,6 +23,6 @@ class UserPolicy < ApplicationPolicy
 
   # Students and TAs shouldn't be able to change their API key
   def reset_api_key?
-    user.admin?
+    true
   end
 end

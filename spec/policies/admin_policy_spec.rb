@@ -1,11 +1,11 @@
 describe AdminPolicy do
-  let(:user) { build(:admin) }
-  let(:context) { { user: user } }
+  let(:role) { build(:admin) }
+  let(:context) { { real_user: role.human } }
 
   describe_rule :run_tests? do
     succeed 'with no additional context'
     context 'authorized with an assignment' do
-      let(:context) { { user: user, assignment: assignment } }
+      let(:context) { { real_user: user, assignment: assignment } }
       failed 'without tests enabled' do
         let(:assignment) { create :assignment, assignment_properties_attributes: { enable_test: false } }
       end
@@ -18,7 +18,7 @@ describe AdminPolicy do
       end
     end
     context 'authorized with a submission' do
-      let(:context) { { user: user, submission: result.submission } }
+      let(:context) { { real_user: user, submission: result.submission } }
       failed 'with a released result' do
         let!(:result) { create :released_result }
       end

@@ -1,6 +1,6 @@
 describe Api::AssignmentPolicy do
   let(:user) { role.human }
-  let(:context) { { role: role, user: user } }
+  let(:context) { { role: role, real_user: user } }
 
   describe_rule :test_files? do
     succeed 'role is an admin' do

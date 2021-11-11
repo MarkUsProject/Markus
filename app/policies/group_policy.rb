@@ -4,10 +4,10 @@ class GroupPolicy < ApplicationPolicy
   alias_rule :create?, :destroy?, :delete_rejected?, :disinvite_member?, :invite_member?, :accept_invitation?,
              :decline_invitation?, :download_starter_file?, to: :student_manage?
   def student_manage?
-    user.student?
+    role.student?
   end
 
   def manage?
-    check?(:manage_assessments?, user)
+    check?(:manage_assessments?, role)
   end
 end

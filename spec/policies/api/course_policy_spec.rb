@@ -1,6 +1,6 @@
 describe Api::CoursePolicy do
   let(:user) { role.human }
-  let(:context) { { role: role, user: user } }
+  let(:context) { { role: role, real_user: user } }
 
   describe_rule :index? do
     failed 'user is a test server' do

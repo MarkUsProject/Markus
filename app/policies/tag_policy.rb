@@ -3,6 +3,6 @@ class TagPolicy < ApplicationPolicy
   default_rule :manage?
 
   def manage?
-    user.admin?
+    role.admin?
   end
 end

@@ -4,7 +4,7 @@ class AnnotationCategoryPolicy < ApplicationPolicy
   alias_rule :find_annotation_text?, :index?, to: :read?
 
   def manage?
-    check?(:manage_assessments?, user)
+    check?(:manage_assessments?, role)
   end
 
   def read?

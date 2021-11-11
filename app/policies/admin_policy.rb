@@ -1,5 +1,5 @@
 # Admin policy class
-class AdminPolicy < UserPolicy
+class AdminPolicy < RolePolicy
   authorize :assignment, :submission, optional: true
 
   def run_tests?

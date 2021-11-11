@@ -15,28 +15,28 @@ class ResultPolicy < ApplicationPolicy
     submission = record.submission
     grouping = submission.grouping
     assignment = grouping.assignment
-    check?(:run_tests?, user, context: { user: user,
+    check?(:run_tests?, role, context: { role: role,
                                          assignment: assignment,
                                          grouping: grouping,
                                          submission: submission })
   end
 
   def grade?
-    user.admin? || user.ta?
+    role.admin? || role.ta?
   end
 
   def review?
-    user.admin? || user.ta? || (
+    role.admin? || role.ta? || (
       record&.submission&.assignment&.has_peer_review &&
-        user.is_reviewer_for?(record&.submission&.assignment&.pr_assignment, record)
+          role.is_reviewer_for?(record&.submission&.assignment&.pr_assignment, record)
     )
   end
 
   def set_released_to_students?
-    check?(:review?) && check?(:manage_submissions?, user)
+    check?(:review?) && check?(:manage_submissions?, role)
   end
 
   def manage?
-    user.admin?
+    role.admin?
   end
 end

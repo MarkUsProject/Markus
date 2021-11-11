@@ -33,15 +33,15 @@ class ApplicationPolicy < ActionPolicy::Base
   # checks usable for all policies
 
   def admin?
-    user.admin?
+    role.admin?
   end
 
   def ta?
-    user.ta?
+    role.ta?
   end
 
   def student?
-    user.student?
+    role.student?
   end
 
   def role_is_switched?

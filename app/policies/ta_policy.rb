@@ -1,5 +1,5 @@
 # Ta policy class
-class TaPolicy < UserPolicy
+class TaPolicy < RolePolicy
   authorize :assignment, :submission, optional: true
 
   def run_tests?

@@ -440,11 +440,11 @@ class AssignmentsController < ApplicationController
     if switch_to_same(options)
       redirect_to options
     elsif current_role.admin?
-      redirect_to edit_assignment_path(params[:id])
+      redirect_to edit_course_assignment_path(current_course, params[:id])
     elsif current_role.ta?
-      redirect_to summary_assignment_path(params[:id])
+      redirect_to summary_course_assignment_path(current_course, params[:id])
     else # current_role.student?
-      redirect_to assignment_path(params[:id])
+      redirect_to course_assignment_path(current_course, params[:id])
     end
   end
 
