@@ -2,17 +2,25 @@ import React from "react";
 import {render} from "react-dom";
 
 import {CheckboxTable, withSelection} from "./markus_with_selection_hoc";
-import {dateSort, markingStateColumn, selectFilter} from "./Helpers/table_helpers";
+import {
+  dateSort,
+  markingStateColumn,
+  selectFilter,
+  getMarkingStates,
+} from "./Helpers/table_helpers";
 import CollectSubmissionsModal from "./Modals/collect_submissions_modal";
 
 class RawSubmissionTable extends React.Component {
   constructor() {
     super();
+    const markingStates = getMarkingStates([]);
     this.state = {
       groupings: [],
       sections: {},
       loading: true,
       showModal: false,
+      marking_states: markingStates,
+      markingStateFilter: "all",
     };
   }
 
@@ -26,12 +34,25 @@ class RawSubmissionTable extends React.Component {
       dataType: "json",
     }).then(res => {
       this.props.resetSelection();
+      const markingStates = getMarkingStates(res.groupings);
       this.setState({
         groupings: res.groupings,
         sections: res.sections,
         loading: false,
+        marking_states: markingStates,
       });
     });
+  };
+
+  onFilteredChange = (filtered, column) => {
+    const summaryTable = this.checkboxTable.getWrappedInstance();
+    if (column.id != "marking_state") {
+      const markingStates = getMarkingStates(summaryTable.state.sortedData);
+      this.setState({marking_states: markingStates});
+    } else {
+      const markingStateFilter = filtered.find(filter => filter.id == "marking_state").value;
+      this.setState({markingStateFilter: markingStateFilter});
+    }
   };
 
   columns = () => [
@@ -139,7 +160,7 @@ class RawSubmissionTable extends React.Component {
       minWidth: 100,
       style: {textAlign: "right"},
     },
-    markingStateColumn({minWidth: 70}),
+    markingStateColumn(this.state.marking_states, this.state.markingStateFilter, {minWidth: 70}),
     {
       Header: I18n.t("activerecord.attributes.result.total_mark"),
       accessor: "final_grade",
@@ -287,6 +308,7 @@ class RawSubmissionTable extends React.Component {
           ]}
           filterable
           defaultFiltered={this.props.defaultFiltered}
+          onFilteredChange={this.onFilteredChange}
           loading={loading}
           getTrProps={this.getTrProps}
           {...this.props.getCheckboxProps()}
