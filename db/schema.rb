@@ -561,6 +561,8 @@ ActiveRecord::Schema.define(version: 2021_11_12_202607) do
   create_table "test_batches", id: :serial, force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "course_id", null: false
+    t.index ["course_id"], name: "index_test_batches_on_course_id"
   end
 
   create_table "test_group_results", id: :serial, force: :cascade do |t|
@@ -687,6 +689,7 @@ ActiveRecord::Schema.define(version: 2021_11_12_202607) do
   add_foreign_key "tags", "roles"
   add_foreign_key "template_divisions", "assignment_files"
   add_foreign_key "template_divisions", "exam_templates"
+  add_foreign_key "test_batches", "courses"
   add_foreign_key "test_group_results", "test_runs"
   add_foreign_key "test_groups", "assessments"
   add_foreign_key "test_results", "test_group_results"
