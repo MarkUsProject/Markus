@@ -1,0 +1,14 @@
+---
+title: "Example"
+author: A Student
+date: 22/Oct/2022
+output: html_document
+---
+
+This is a submission containing a sum function
+
+```{r}
+sum <- function(x, y) 12 - 2
+```
+
+The sum function is not very good

@@ -128,20 +128,18 @@ describe AnnotationCategory do
     end
 
     context 'when the annotation category already exists' do
-      before do
-        @row = []
-        @row.push('annotation category name 2')
-        @row.push(nil)
-        @row.push('annotation text 2 1')
-        @row.push('annotation text 2 2')
+      let(:category) { create(:annotation_category) }
 
-        @initial_size = AnnotationCategory.all.size
+      it 'adds annotation texts to that category when the criterion column is nil' do
+        row = [category.annotation_category_name, nil, 'new text 1', 'new text 2']
+        AnnotationCategory.add_by_row(row, category.assignment, admin)
+        expect(category.reload.annotation_texts.size).to eq 2
       end
 
-      # an annotation category has been created.
-      it 'creates an annotation' do
-        AnnotationCategory.add_by_row(@row, assignment, admin)
-        expect(@initial_size + 1).to eq(AnnotationCategory.all.size)
+      it 'adds annotation texts to that category when the criterion column is an empty string' do
+        row = [category.annotation_category_name, '', 'new text 1', 'new text 2']
+        AnnotationCategory.add_by_row(row, category.assignment, admin)
+        expect(category.reload.annotation_texts.size).to eq 2
       end
 
       context 'and the assignment has deductive annotations' do
