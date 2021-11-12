@@ -609,6 +609,7 @@ class AssignmentsController < ApplicationController
         zipfile.get_output_stream(CONFIG_FILES[:peer_review_annotations]) do |f|
           f.write convert_to_yml(child_assignment.annotation_categories)
         end
+        child_assignment.starter_file_config_to_zip(zipfile, CONFIG_DIRS[:starter_files], CONFIG_FILES[:starter_files])
       end
     end
     send_file zip_path, filename: zip_name, type: 'application/zip', disposition: 'attachment'
@@ -641,6 +642,8 @@ class AssignmentsController < ApplicationController
           config_criteria(child_assignment, child_criteria_prop)
           child_annotations_prop = build_hash_from_zip(zipfile, :peer_review_annotations)
           upload_annotations_from_yaml(child_annotations_prop, child_assignment)
+          config_starter_files(child_assignment, zipfile)
+          child_assignment.save!
         end
         assignment.save!
         Tag.from_yml(tag_prop, assignment.id)
@@ -675,23 +678,32 @@ class AssignmentsController < ApplicationController
                                             use_rename: group[:use_rename],
                                             entry_rename: group[:entry_rename],
                                             assignment: assignment)
-      FileUtils.rm_rf(file_group.path)
-      FileUtils.mkdir_p(file_group.path)
       starter_group_mappings[group[:directory_name]] = file_group
     end
     default_name = starter_file_settings[:default_starter_group]
     if !default_name.nil? && starter_group_mappings.key?(default_name)
       assignment.default_starter_file_group_id = starter_group_mappings[default_name].id
     end
+    if assignment.is_peer_review?
+      zip_starter_path = File.join(CONFIG_DIRS[:peer_review], CONFIG_DIRS[:starter_files], '')
+    else
+      zip_starter_path = File.join(CONFIG_DIRS[:starter_files], '')
+    end
     zip_file.each do |entry|
-      unless entry.directory?
-        path_list = entry.name.split(File::SEPARATOR)
-        if path_list[0] == CONFIG_DIRS[:starter_files]
-          group_dir_name = path_list[1]
-          starter_file_group = starter_group_mappings[group_dir_name]
-          starter_file_path = File.join(starter_file_group.path, path_list[2..-1])
+      if /^#{zip_starter_path}/ =~ entry.name
+        # Set working directory to the location of all the starter file content, then find
+        # directory for a starter group and add the file found in that directory to group
+        starter_base_dir = entry.name[zip_starter_path.length..-1]
+        path_list = starter_base_dir.split(File::SEPARATOR)
+        starter_file_group = starter_group_mappings[path_list[0]]
+        starter_file_dir_path = File.join(starter_file_group.path, path_list[1..-2])
+        starter_file_name = path_list[-1]
+        if entry.directory?
+          FileUtils.mkdir_p(File.join(starter_file_dir_path, starter_file_name))
+        else
+          FileUtils.mkdir_p(starter_file_dir_path)
           starter_file_content = entry.get_input_stream.read
-          File.write(starter_file_path, starter_file_content, mode: 'wb')
+          File.write(File.join(starter_file_dir_path, starter_file_name), starter_file_content, mode: 'wb')
         end
       end
     end
