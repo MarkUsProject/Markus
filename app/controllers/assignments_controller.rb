@@ -647,6 +647,7 @@ class AssignmentsController < ApplicationController
         config_criteria(assignment, criteria_prop)
         upload_annotations_from_yaml(annotations_prop, assignment)
         config_starter_files(assignment, zipfile)
+        assignment.save!
         redirect_to edit_assignment_path(assignment.id)
       end
     end
@@ -674,11 +675,13 @@ class AssignmentsController < ApplicationController
                                             use_rename: group[:use_rename],
                                             entry_rename: group[:entry_rename],
                                             assignment: assignment)
+      FileUtils.rm_rf(file_group.path)
+      FileUtils.mkdir_p(file_group.path)
       starter_group_mappings[group[:directory_name]] = file_group
     end
     default_name = starter_file_settings[:default_starter_group]
-    unless default_name.nil? || !starter_group_mappings.key?(default_name)
-      assignment.assignment_properties.default_starter_file_group_id = starter_group_mappings[default_name].id
+    if !default_name.nil? && starter_group_mappings.key?(default_name)
+      assignment.default_starter_file_group_id = starter_group_mappings[default_name].id
     end
     zip_file.each do |entry|
       unless entry.directory?
@@ -688,7 +691,6 @@ class AssignmentsController < ApplicationController
           starter_file_group = starter_group_mappings[group_dir_name]
           starter_file_path = File.join(starter_file_group.path, path_list[2..-1])
           starter_file_content = entry.get_input_stream.read
-          puts starter_file_path
           File.write(starter_file_path, starter_file_content, mode: 'wb')
         end
       end
