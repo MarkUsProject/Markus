@@ -603,27 +603,25 @@ class Assignment < Assessment
   # Generates the summary of the most test results associated with an assignment.
   def summary_test_results
     test_groups_query = self.test_groups
-                            .joins(:test_group_results)
                             .joins(test_group_results: { test_run: :grouping })
                             .group('test_groups.id', 'groupings.id')
                             .select('test_groups.id AS test_groups_id',
                                     'MAX(test_group_results.created_at) AS test_group_results_created_at')
-                            .where('test_runs.submission_id IS NOT NULL')
+                            .where.not('test_runs.submission_id': nil)
                             .to_sql
 
-    TestGroup.joins(test_group_results: :test_results)
+    TestGroup.joins(test_group_results: [:test_results, { test_run: { grouping: :group } }])
              .joins("INNER JOIN (#{test_groups_query}) sub \
                      ON test_groups.id = sub.test_groups_id \
                      AND test_group_results_test_groups.created_at = sub.test_group_results_created_at")
-             .joins(test_group_results: { test_run: { grouping: :group } })
-             .select('test_results.marks_earned as marks_earned',
-                     'test_results.marks_total as marks_total',
-                     'test_results.output',
-                     'test_groups.name',
-                     'test_results.name as test_result_name',
+             .select('test_groups.name',
                      'test_groups_id',
                      'groups.group_name',
-                     'test_results.status', :extra_info, :error_type)
+                     'test_results.name as test_result_name',
+                     'test_results.status',
+                     'test_results.marks_earned',
+                     'test_results.marks_total',
+                     :output, :extra_info, :error_type)
   end
 
   # Generate a JSON summary of the most recent test results associated with an assignment.
@@ -635,32 +633,23 @@ class Assignment < Assessment
 
   # Generate a CSV summary of the most recent test results associated with an assignment.
   def summary_test_result_csv
-    summary_test_results = self.summary_test_results.as_json
+    summary_test_results = self.summary_test_results
+    results = summary_test_results.map do |result|
+      ["#{result['group_name']}:#{result['test_result_name']}", result['status']]
+    end.to_h
 
-    headers = Set.new
-    groups = Set.new
-    summary_test_results.each do |test_result|
-      groups << test_result['group_name']
-      headers << "#{test_result['group_name']}:#{test_result['test_result_name']}"
-    end
+    group_names = summary_test_results.group_by(&:group_name).keys
 
     CSV.generate do |csv|
-      csv << headers
-      groups.each do |group|
-        row = []
-        test_data = {}
+      headers = SortedSet.new(results.keys)
+      csv << [nil, *headers]
+      group_names.each do |name|
+        row = [name]
 
-        # Create lookup for test results
-        summary_test_results.each do |test_result|
-          if test_result['group_name'] == group
-            test_data["#{test_result['group_name']}:#{test_result['test_result_name']}"] = test_result['status']
-          end
-        end
-
-        # Create ordered row
         headers.each do |header|
-          if test_data.key?(header)
-            row << test_data[header]
+          _, test_result_name = header.split(':')
+          if header == "#{name}:#{test_result_name}"
+            row << results["#{name}:#{test_result_name}"]
           else
             row << nil
           end

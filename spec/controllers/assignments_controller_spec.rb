@@ -248,7 +248,7 @@ describe AssignmentsController do
       headers = test_results.headers
 
       expect(test_results.to_a.size).to eq 4
-      expect(headers.length).to eq 9
+      expect(headers.length).to eq 10
     end
   end
 
