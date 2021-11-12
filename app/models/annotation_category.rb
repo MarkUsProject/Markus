@@ -10,6 +10,8 @@ class AnnotationCategory < ApplicationRecord
 
   belongs_to :assignment, foreign_key: :assessment_id
 
+  has_one :course, through: :assignment
+
   belongs_to :flexible_criterion, required: false
   validates :flexible_criterion_id,
             inclusion: { in: :assignment_criteria, message: '%<value>s is an invalid criterion for this assignment.' }

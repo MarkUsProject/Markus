@@ -10,6 +10,8 @@ class CriterionTaAssociation < ApplicationRecord
 
   before_validation       :add_assignment_reference, on: :create
 
+  has_one :course, through: :assignment
+
   def self.from_csv(assignment, csv_data, remove_existing)
     criteria = assignment.ta_criteria.includes(:criterion_ta_associations)
     if remove_existing

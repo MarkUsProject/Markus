@@ -3,6 +3,8 @@ class Tag < ApplicationRecord
   belongs_to :role
   belongs_to :assessment, optional: true
 
+  has_one :course, through: :role
+
   # Constants
   NUM_CSV_FIELDS = 3
 

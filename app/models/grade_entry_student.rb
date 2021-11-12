@@ -7,6 +7,8 @@ class GradeEntryStudent < ApplicationRecord
   belongs_to :grade_entry_form, foreign_key: :assessment_id
   validates_associated :grade_entry_form, on: :create
 
+  has_one :course, through: :grade_entry_form
+
   has_many :grades, dependent: :destroy
 
   has_many :grade_entry_items, through: :grades

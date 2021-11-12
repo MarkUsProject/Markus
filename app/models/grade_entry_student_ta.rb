@@ -5,6 +5,8 @@ class GradeEntryStudentTa < ApplicationRecord
   belongs_to :grade_entry_student
   belongs_to :ta
 
+  has_one :course, through: :grade_entry_student
+
   # Merges records of GradeEntryStudentTa that do not exist yet using a caller-
   # specified block. The block is given the passed-in grade entry student IDs
   # and TA IDs and must return a list of (grade entry student ID, TA ID) pair

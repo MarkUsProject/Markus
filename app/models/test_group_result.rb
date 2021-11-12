@@ -4,6 +4,7 @@ class TestGroupResult < ApplicationRecord
   belongs_to :test_run
 
   has_many :feedback_files, dependent: :destroy
+  has_one :course, through: :test_run
 
   validates :marks_earned, :marks_total, presence: true, numericality: { greater_than_or_equal_to: 0 }
   validates :time, presence: true, numericality: { greater_than_or_equal_to: 0, only_integer: true }

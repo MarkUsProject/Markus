@@ -2,6 +2,8 @@
 class Level < ApplicationRecord
   belongs_to :criterion
 
+  has_one :course, through: :criterion
+
   validates :name, presence: true
   validates_uniqueness_of :name, scope: :criterion_id
 

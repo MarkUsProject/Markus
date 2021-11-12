@@ -20,6 +20,8 @@ class Mark < ApplicationRecord
 
   validates_inclusion_of :override, in: [true, false]
 
+  has_one :course, through: :criterion
+
   def calculate_deduction
     return 0 if self.override? || self.criterion.type != 'FlexibleCriterion'
 

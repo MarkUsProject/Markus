@@ -12,6 +12,8 @@ class Result < ApplicationRecord
   has_many :annotations, dependent: :destroy
   has_many :peer_reviews, dependent: :destroy
 
+  has_one :course, through: :submission
+
   after_create :create_marks
   validates_presence_of :marking_state
   validates_inclusion_of :marking_state, in: MARKING_STATES.values

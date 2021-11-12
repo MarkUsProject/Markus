@@ -3,6 +3,8 @@ class AnnotationText < ApplicationRecord
   belongs_to :creator, class_name: 'Role', foreign_key: :creator_id
   belongs_to :last_editor, class_name: 'Role', foreign_key: :last_editor_id, optional: true
 
+  has_one :course, through: :creator
+
   after_update :update_mark_deductions,
                unless: ->(t) {
                          t.annotation_category.nil? ||

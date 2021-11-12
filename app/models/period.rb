@@ -1,6 +1,8 @@
 class Period < ApplicationRecord
   belongs_to :submission_rule, polymorphic: true
 
+  has_one :course, through: :submission_rule
+
   validates_numericality_of :hours, greater_than: 0
   validates_numericality_of :deduction, greater_than_or_equal_to: 0, if: :check_deduction
   validates_numericality_of :interval, greater_than: 0, if: :check_interval

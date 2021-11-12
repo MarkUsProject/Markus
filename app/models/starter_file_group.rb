@@ -4,6 +4,7 @@ class StarterFileGroup < ApplicationRecord
   has_many :section_starter_file_groups, dependent: :destroy
   has_many :sections, through: :section_starter_file_groups
   has_many :starter_file_entries, dependent: :destroy
+  has_one :course, through: :assignment
 
   after_destroy_commit :delete_files
   after_create_commit :create_dir

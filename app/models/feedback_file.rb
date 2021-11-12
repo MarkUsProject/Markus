@@ -26,4 +26,8 @@ class FeedbackFile < ApplicationRecord
       submission.grouping
     end
   end
+
+  def course
+    self.submission&.course || self.test_group_result&.course
+  end
 end

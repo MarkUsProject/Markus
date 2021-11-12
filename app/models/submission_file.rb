@@ -5,6 +5,8 @@ class SubmissionFile < ApplicationRecord
 
   has_many :annotations
 
+  has_one :course, through: :submission
+
   validates_presence_of :filename
 
   validates_presence_of :path

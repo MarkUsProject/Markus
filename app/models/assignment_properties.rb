@@ -3,6 +3,8 @@ class AssignmentProperties < ApplicationRecord
   belongs_to :assignment, inverse_of: :assignment_properties, dependent: :destroy, foreign_key: :assessment_id
   validates_presence_of :assignment
 
+  has_one :course, through: :assignment
+
   validates_numericality_of :group_min, only_integer: true, greater_than: 0
   validates_numericality_of :group_max, only_integer: true, greater_than: 0
 

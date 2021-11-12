@@ -7,6 +7,7 @@ class PeerReview < ApplicationRecord
   validates_associated :reviewer
   validates_associated :result
   validate :no_students_should_be_reviewer_and_reviewee
+  has_one :course, through: :result
 
   def no_students_should_be_reviewer_and_reviewee
     if result and reviewer

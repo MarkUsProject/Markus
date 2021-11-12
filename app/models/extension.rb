@@ -1,6 +1,8 @@
 class Extension < ApplicationRecord
   belongs_to :grouping
 
+  has_one :course, through: :grouping
+
   attribute :time_delta, :interval
 
   validates :time_delta, numericality: { greater_than: 0 }

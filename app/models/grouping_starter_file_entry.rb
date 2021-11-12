@@ -4,6 +4,8 @@ class GroupingStarterFileEntry < ApplicationRecord
   belongs_to :starter_file_entry
   belongs_to :grouping
 
+  has_one :course, through: :grouping
+
   validates_presence_of :grouping
   validates_presence_of :starter_file_entry
   validates_uniqueness_of :starter_file_entry_id, scope: :grouping_id
