@@ -3,7 +3,6 @@ import {render} from "react-dom";
 import {markingStateColumn} from "./Helpers/table_helpers";
 
 import ReactTable from "react-table";
-import I18n from "i18n-js";
 import DownloadTestResultsModal from "./Modals/download_test_results_modal";
 
 class AssignmentSummaryTable extends React.Component {
