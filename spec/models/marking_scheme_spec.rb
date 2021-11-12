@@ -1,5 +1,6 @@
 describe MarkingScheme do
   it { is_expected.to have_many :marking_weights }
+  it { is_expected.to belong_to :course }
 
   describe 'students_weighted_grade_distribution_array' do
     let!(:assignment) { create(:assignment_with_criteria_and_results) }

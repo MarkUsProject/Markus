@@ -3,6 +3,8 @@ class MarkingScheme < ApplicationRecord
   has_many :marking_weights, dependent: :destroy
   accepts_nested_attributes_for :marking_weights
 
+  belongs_to :course
+
   default_scope { order('id ASC') }
 
   # Returns an array of all students' weighted grades that are not nil
