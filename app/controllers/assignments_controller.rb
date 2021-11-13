@@ -12,15 +12,20 @@ class AssignmentsController < ApplicationController
     p.style_src :self, "'unsafe-inline'"
   end
 
+  CONFIG_DIRS = {
+    peer_review: 'peer-review-config-files',
+    automated_tests: 'automated-test-files'
+  }.freeze
+
   CONFIG_FILES = {
     properties: 'properties.yml',
     tags: 'tags.yml',
     criteria: 'criteria.yml',
     annotations: 'annotations.yml',
-    peer_review_properties: File.join('peer-review-config-files', 'properties.yml'),
-    peer_review_tags: File.join('peer-review-config-files', 'tags.yml'),
-    peer_review_criteria: File.join('peer-review-config-files', 'criteria.yml'),
-    peer_review_annotations: File.join('peer-review-config-files', 'annotations.yml')
+    peer_review_properties: File.join(CONFIG_DIRS[:peer_review], 'properties.yml'),
+    peer_review_tags: File.join(CONFIG_DIRS[:peer_review], 'tags.yml'),
+    peer_review_criteria: File.join(CONFIG_DIRS[:peer_review], 'criteria.yml'),
+    peer_review_annotations: File.join(CONFIG_DIRS[:peer_review], 'annotations.yml')
   }.freeze
 
   # Publicly accessible actions ---------------------------------------
