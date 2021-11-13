@@ -678,6 +678,8 @@ class AssignmentsController < ApplicationController
                                             use_rename: group[:use_rename],
                                             entry_rename: group[:entry_rename],
                                             assignment: assignment)
+      FileUtils.rm_rf(file_group.path)
+      FileUtils.mkdir_p(file_group.path)
       starter_group_mappings[group[:directory_name]] = file_group
     end
     default_name = starter_file_settings[:default_starter_group]
@@ -690,7 +692,7 @@ class AssignmentsController < ApplicationController
       zip_starter_path = File.join(CONFIG_DIRS[:starter_files], '')
     end
     zip_file.each do |entry|
-      if /^#{zip_starter_path}/ =~ entry.name
+      if entry.name.match?(/^#{zip_starter_path}/)
         # Set working directory to the location of all the starter file content, then find
         # directory for a starter group and add the file found in that directory to group
         starter_base_dir = entry.name[zip_starter_path.length..-1]
