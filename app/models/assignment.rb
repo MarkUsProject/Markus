@@ -638,27 +638,31 @@ class Assignment < Assessment
 
   # Generate a CSV summary of the most recent test results associated with an assignment.
   def summary_test_result_csv
-    summary_test_results = self.summary_test_results
-    results = summary_test_results.map do |result|
-      ["#{result['group_name']}:#{result['test_result_name']}", result['status']]
-    end.to_h
+    results = {}
+    headers = SortedSet.new
+    summary_test_results = self.summary_test_results.as_json
 
-    group_names = summary_test_results.group_by(&:group_name).keys
+    summary_test_results.each do |test_result|
+      header = "#{test_result['name']}:#{test_result['test_result_name']}"
+
+      results[test_result['name']] = Hash[header, test_result['status']]
+      headers << header
+    end
 
     CSV.generate do |csv|
-      headers = SortedSet.new(results.keys)
       csv << [nil, *headers]
-      group_names.each do |name|
-        row = [name]
+
+      results.each do |test_group_name, _test_group|
+        row = [test_group_name]
 
         headers.each do |header|
-          _, test_result_name = header.split(':')
-          if header == "#{name}:#{test_result_name}"
-            row << results["#{name}:#{test_result_name}"]
+          if results[test_group_name].key?(header)
+            row << results[test_group_name][header]
           else
             row << nil
           end
         end
+
         csv << row
       end
     end
