@@ -662,7 +662,6 @@ class Assignment < Assessment
             row << nil
           end
         end
-
         csv << row
       end
     end
