@@ -645,19 +645,19 @@ class Assignment < Assessment
     summary_test_results.each do |test_result|
       header = "#{test_result['name']}:#{test_result['test_result_name']}"
 
-      results[test_result['name']] = Hash[header, test_result['status']]
+      results[test_result['group_name']] = Hash[header, test_result['status']]
       headers << header
     end
 
     CSV.generate do |csv|
       csv << [nil, *headers]
 
-      results.each do |test_group_name, _test_group|
-        row = [test_group_name]
+      results.each do |group_name, _test_group|
+        row = [group_name]
 
         headers.each do |header|
-          if results[test_group_name].key?(header)
-            row << results[test_group_name][header]
+          if results[group_name].key?(header)
+            row << results[group_name][header]
           else
             row << nil
           end
