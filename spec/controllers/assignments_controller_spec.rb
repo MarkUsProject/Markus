@@ -245,10 +245,9 @@ describe AssignmentsController do
       get_as user, :download_test_results, params: { id: assignment.id }, format: 'csv'
 
       test_results = CSV.parse(response.body, headers: true)
-      headers = test_results.headers
 
       expect(test_results.to_a.size).to eq 4
-      expect(headers.length).to eq 10
+      expect(test_results.headers.length).to eq 10
     end
   end
 
