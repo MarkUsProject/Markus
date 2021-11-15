@@ -22,7 +22,8 @@ class AssignmentsController < ApplicationController
     tags: 'tags.yml',
     criteria: 'criteria.yml',
     annotations: 'annotations.yml',
-    automated_test: File.join(CONFIG_DIRS[:automated_tests], 'automated-tests-settings.yml'),
+    automated_test_specs: File.join(CONFIG_DIRS[:automated_tests], 'automated-tests-specs.json'),
+    automated_tests: File.join(CONFIG_DIRS[:automated_tests], 'automated-tests-settings.yml'),
     peer_review_properties: File.join(CONFIG_DIRS[:peer_review], 'properties.yml'),
     peer_review_tags: File.join(CONFIG_DIRS[:peer_review], 'tags.yml'),
     peer_review_criteria: File.join(CONFIG_DIRS[:peer_review], 'criteria.yml'),
@@ -594,7 +595,10 @@ class AssignmentsController < ApplicationController
       zipfile.get_output_stream(CONFIG_FILES[:annotations]) do |f|
         f.write convert_to_yml(assignment.annotation_categories)
       end
-      assignment.automated_test_config_to_zip(zipfile, CONFIG_DIRS[:automated_tests])
+      unless assignment.scanned_exam
+        assignment.automated_test_config_to_zip(zipfile, CONFIG_DIRS[:automated_tests], 
+                                                CONFIG_FILES[:automated_test_specs], CONFIG_FILES[:automated_tests])
+      end
       unless child_assignment.nil?
         zipfile.get_output_stream(CONFIG_FILES[:peer_review_properties]) do |f|
           f.write(child_assignment.assignment_properties_config.to_yaml)
