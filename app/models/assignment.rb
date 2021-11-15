@@ -1205,6 +1205,7 @@ class Assignment < Assessment
     group_data = []
     self.starter_file_groups.find_each do |starter_file_group|
       group_name = "#{download_count}: #{starter_file_group.name}"
+      group_name = group_name.gsub(File::SEPARATOR, '')
       starter_file_group.write_starter_files_to_zip(zip_file, File.join(dir_name, group_name))
       if starter_file_group.id == self.default_starter_file_group_id
         default_starter_group = group_name
