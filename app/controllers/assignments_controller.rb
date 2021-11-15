@@ -607,7 +607,7 @@ class AssignmentsController < ApplicationController
           f.write yml_criteria.to_yaml
         end
         zipfile.get_output_stream(CONFIG_FILES[:peer_review_annotations]) do |f|
-          f.write convert_to_yml(child_assignment.annotation_categories)
+          f.write annotation_categories_to_yml(child_assignment.annotation_categories)
         end
         child_assignment.starter_file_config_to_zip(zipfile, CONFIG_DIRS[:starter_files], CONFIG_FILES[:starter_files])
       end
