@@ -597,7 +597,7 @@ class AssignmentsController < ApplicationController
         f.write convert_to_yml(assignment.annotation_categories)
       end
       unless assignment.scanned_exam
-        assignment.automated_test_config_to_zip(zipfile, CONFIG_DIRS[:automated_test_files], 
+        assignment.automated_test_config_to_zip(zipfile, CONFIG_DIRS[:automated_test_files],
                                                 CONFIG_FILES[:automated_test_specs], CONFIG_FILES[:automated_tests])
       end
       unless child_assignment.nil?
@@ -667,7 +667,7 @@ class AssignmentsController < ApplicationController
   end
 
   private
-  
+
   def config_automated_tests(zip_file, assignment)
     automated_test_settings = build_hash_from_zip(zip_file, :automated_tests)
     assignment.update!(automated_test_settings)
