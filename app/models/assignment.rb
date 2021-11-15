@@ -1205,22 +1205,32 @@ class Assignment < Assessment
     zip_name = "#{self.short_identifier}-testfiles-#{user.user_name}"
     zip_path = File.join('tmp', zip_name + '.zip')
     FileUtils.rm_rf zip_path
-    files_dir = Pathname.new self.autotest_files_dir
     Zip::File.open(zip_path, create: true) do |zip_file|
-      self.autotest_files.map do |file|
-        path = File.join zip_name, file
-        abs_path = files_dir.join(file)
-        if abs_path.directory?
-          zip_file.mkdir(path)
-        else
-          zip_file.get_output_stream(path) { |f| f.print File.read(abs_path.to_s, mode: 'rb') }
-        end
-      end
+      add_test_files_to_zip(zip_file, zip_name)
     end
     zip_path
   end
+  
+  def automated_test_config_to_zip(zip_file, zip_dir)
+    self.add_test_files_to_zip(zip_file, zip_dir)
+    settings_file_path = File.join(zip_dir, 'automated_test_specs.json')
+    zip_file.get_output_stream(settings_file_path) { |f| f.print File.read(self.autotest_settings_file, mode: 'rb') }
+  end
 
   private
+
+  def add_test_files_to_zip(zip_file, zip_name)
+    files_dir = Pathname.new self.autotest_files_dir
+    self.autotest_files.map do |file|
+      path = File.join zip_name, file
+      abs_path = files_dir.join(file)
+      if abs_path.directory?
+        zip_file.mkdir(path)
+      else
+        zip_file.get_output_stream(path) { |f| f.print File.read(abs_path.to_s, mode: 'rb') }
+      end
+    end
+  end
 
   def create_autotest_dirs
     FileUtils.mkdir_p self.autotest_path
