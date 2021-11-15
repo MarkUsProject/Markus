@@ -14,7 +14,8 @@ class AssignmentsController < ApplicationController
 
   CONFIG_DIRS = {
     peer_review: 'peer-review-config-files',
-    automated_tests: 'automated-test-files'
+    automated_tests: 'automated-test-config-files',
+    automated_test_files: File.join('automated-test-config-files', 'automated-test-files')
   }.freeze
 
   CONFIG_FILES = {
@@ -596,7 +597,7 @@ class AssignmentsController < ApplicationController
         f.write convert_to_yml(assignment.annotation_categories)
       end
       unless assignment.scanned_exam
-        assignment.automated_test_config_to_zip(zipfile, CONFIG_DIRS[:automated_tests], 
+        assignment.automated_test_config_to_zip(zipfile, CONFIG_DIRS[:automated_test_files], 
                                                 CONFIG_FILES[:automated_test_specs], CONFIG_FILES[:automated_tests])
       end
       unless child_assignment.nil?
@@ -650,9 +651,7 @@ class AssignmentsController < ApplicationController
         Tag.from_yml(tag_prop, assignment.id)
         config_criteria(assignment, criteria_prop)
         upload_annotations_from_yaml(annotations_prop, assignment)
-        zipfile.each do |entry|
-          flash_message(:warning, I18n.t('assignments.unexpected_file_found', item: entry.name)) unless entry.directory?
-        end
+        config_automated_tests(zip_file, assignment)
         redirect_to edit_assignment_path(assignment.id)
       end
     end
@@ -668,6 +667,37 @@ class AssignmentsController < ApplicationController
   end
 
   private
+  
+  def config_automated_tests(zip_file, assignment)
+    automated_test_settings = build_hash_from_zip(zip_file, :automated_tests)
+    assignment.update!(automated_test_settings)
+    spec_file = zip_file.get_entry(CONFIG_FILES[:automated_test_specs])
+    spec_content = spec_file.get_input_stream.read.encode(Encoding::UTF_8, 'UTF-8')
+    zip_file.remove(spec_file)
+    begin
+      JSON.parse spec_content
+    rescue JSON::ParserError
+      raise I18n.t('automated_tests.invalid_specs_file')
+    else
+      File.write(assignment.autotest_settings_file, file_content, mode: 'wb')
+      @current_job = AutotestSpecsJob.perform_later(request.protocol + request.host_with_port, assignment)
+      session[:job_id] = @current_job.job_id
+    end
+    test_file_dir_path = File.join(CONFIG_DIRS[:automated_test_files], '')
+    zip_file.each do |entry|
+      if entry.name.match?(/^#{test_file_dir_path}/)
+        filename = entry.name.gsub(/^#{test_file_dir_path}/, '')
+        file_path = File.join(assignment.autotest_files_dir, filename)
+        if entry.directory?
+          FileUtils.mkdir_p(file_path)
+        else
+          FileUtils.mkdir_p(File.dirname(file_path))
+          test_file_content = entry.get_input_stream.read
+          File.write(file_path, test_file_content, mode: 'wb')
+        end
+      end
+    end
+  end
 
   # Build the tag/criteria file specified by +hash_to_build+ found in +zip_file+
   # Delete the file from the +zip_file+ after loading in the content.

@@ -1222,7 +1222,7 @@ class Assignment < Assessment
     misc_settings_attr = [:enable_test, :enable_student_tests, :tokens_per_period, :unlimited_tokens, 
                           :token_start_date, :token_period, :non_regenerating_tokens]
     misc_settings_attr.each { |f| misc_settings[f] = self.send(f) }
-    zip_file.get_output_stream(settings_file_path) { |f| f.write misc_settings }
+    zip_file.get_output_stream(settings_file_path) { |f| f.write misc_settings.to_yaml }
   end
 
   private
