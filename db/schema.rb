@@ -345,6 +345,7 @@ ActiveRecord::Schema.define(version: 2021_11_12_202607) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.bigint "course_id", null: false
+    t.index ["course_id", "name"], name: "index_marking_schemes_on_course_id_and_name", unique: true
     t.index ["course_id"], name: "index_marking_schemes_on_course_id"
   end
 
