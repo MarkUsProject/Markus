@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="<%= I18n.locale %>">
+<head>
+  <title><%= t(:markus) %> - <%= controller.action_name.titleize %></title>
+  <%= javascript_pack_tag 'application', nonce: true %>
+  <%= javascript_include_tag 'application', nonce: true %>
+  <% unless Settings.remote_user_auth %>
+    <%= javascript_include_tag 'check_timeout', nonce: true %>
+  <% end %>
+  <%= render partial: 'layouts/jsroutes_config' %>
+  <%= render partial: 'layouts/i18n_config' %>
+  <%= yield :head %>
+</head>
+<body>
+<section id='content'>
+  <%= render partial: 'layouts/noscript'%>
+  <%= content_for?(:content) ? yield(:content) : yield %>
+</section>
+</body>
