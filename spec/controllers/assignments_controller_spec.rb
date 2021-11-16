@@ -1382,7 +1382,7 @@ describe AssignmentsController do
       context 'with assignment management permissions' do
         let(:user) { create :ta, manage_assessments: true }
         include_examples 'download sample config files'
-        
+
         it 'should not have a tags file' do
           subject
           tags = read_yaml_file(response.body, 'tags.yml')
@@ -1399,7 +1399,7 @@ describe AssignmentsController do
     context 'an admin' do
       let(:user) { create :admin }
       include_examples 'download sample config files'
-      
+
       it 'should have a valid tags file' do
         Tag.create(name: 'tag1', description: 'tag1_description', user: user, assessment_id: assignment.id)
         Tag.create(name: 'tag2', description: 'tag2_description', user: user, assessment_id: assignment.id)
@@ -1421,7 +1421,7 @@ describe AssignmentsController do
   describe '#upload_config_files' do
     subject { post_as user, :upload_config_files, params: { upload_files_for_config: @assignment_good_zip,
                                                             is_timed: true,
-                                                            is_scanned: false } 
+                                                            is_scanned: false }
     }
     before :each do
       # Build sample assignment zip file
@@ -1503,7 +1503,7 @@ describe AssignmentsController do
                              { name: 'Optimal', description: 'Solution is most optimal', type: 'CheckboxCriterion' }]
         expect(uploaded_criteria).to eq(expected_criteria)
       end
-      
+
       it 'properly uploads a peer review assignment' do
         subject
         uploaded_child_assignment = Assignment.find_by(short_identifier: 'mtt_ex_1_peer_review')
@@ -1559,13 +1559,13 @@ describe AssignmentsController do
           subject
           uploaded_child_assignment = Assignment.find_by(short_identifier: 'mtt_ex_1_peer_review')
           expect(uploaded_child_assignment.tags.count).to eq(0)
-        end 
+        end
       end
     end
     context 'an admin' do
       let(:user) { create :admin }
       include_examples 'check valid assignment config files'
-      
+
       it 'uploads all the tags for an assignment' do
         subject
         uploaded_assignment = Assignment.find_by(short_identifier: 'mtt_ex_1')
