@@ -1320,16 +1320,6 @@ describe AssignmentsController do
                                         assignment_files_attributes: a_kind_of(Array))
         end
 
-        it 'should have a valid tags file' do
-          Tag.create(name: 'tag1', description: 'tag1_description', user: user, assessment_id: assignment.id)
-          Tag.create(name: 'tag2', description: 'tag2_description', user: user, assessment_id: assignment.id)
-          subject
-          tags = read_yaml_file(response.body, 'tags.yml')
-          tags = tags.map(&:symbolize_keys)
-          expect(tags).to eq([{ name: 'tag1', description: 'tag1_description' },
-                              { name: 'tag2', description: 'tag2_description' }])
-        end
-
         it 'should have a valid criteria file' do
           subject
           criteria_download = read_yaml_file(response.body, 'criteria.yml')
@@ -1357,12 +1347,6 @@ describe AssignmentsController do
                                         is_hidden: peer_review_assignment.is_hidden,
                                         show_total: peer_review_assignment.show_total,
                                         assignment_properties_attributes: a_kind_of(Hash))
-        end
-
-        it 'should contain a peer review tags file' do
-          subject
-          tags = read_yaml_file(response.body, File.join('peer-review-config-files', 'tags.yml'))
-          expect(tags).to be_a(Array)
         end
 
         it 'should contain a peer review criteria file' do
@@ -1398,144 +1382,206 @@ describe AssignmentsController do
       context 'with assignment management permissions' do
         let(:user) { create :ta, manage_assessments: true }
         include_examples 'download sample config files'
+        
+        it 'should not have a tags file' do
+          subject
+          tags = read_yaml_file(response.body, 'tags.yml')
+          expect(tags).to be_nil
+        end
+
+        it 'should not have a peer review tags file' do
+          subject
+          tags = read_yaml_file(response.body, File.join('peer-review-config-files', 'tags.yml'))
+          expect(tags).to be_nil
+        end
       end
     end
     context 'an admin' do
       let(:user) { create :admin }
       include_examples 'download sample config files'
+      
+      it 'should have a valid tags file' do
+        Tag.create(name: 'tag1', description: 'tag1_description', user: user, assessment_id: assignment.id)
+        Tag.create(name: 'tag2', description: 'tag2_description', user: user, assessment_id: assignment.id)
+        subject
+        tags = read_yaml_file(response.body, 'tags.yml')
+        tags = tags.map(&:symbolize_keys)
+        expect(tags).to eq([{ name: 'tag1', description: 'tag1_description' },
+                            { name: 'tag2', description: 'tag2_description' }])
+      end
+
+      it 'should contain a peer review tags file' do
+        subject
+        tags = read_yaml_file(response.body, File.join('peer-review-config-files', 'tags.yml'))
+        expect(tags).to be_a(Array)
+      end
     end
   end
 
   describe '#upload_config_files' do
-    describe 'valid config files' do
-      subject { post_as user, :upload_config_files, params: { upload_files_for_config: @assignment_good_zip,
-                                                              is_timed: true,
-                                                              is_scanned: false } }
-      before :each do
-        # Build sample assignment zip file
-        base_dir = File.join('assignments', 'sample-timed-assessment-good')
-        properties_good = fixture_file_upload(File.join(base_dir, 'properties.yml'), 'text/yaml')
-        tags_good = fixture_file_upload(File.join(base_dir, 'tags.yml'), 'text/yaml')
-        criteria_good = fixture_file_upload(File.join(base_dir, 'criteria.yml'), 'text/yaml')
-        annotations_good = fixture_file_upload(File.join(base_dir, 'annotations.yml'), 'text/yaml')
+    subject { post_as user, :upload_config_files, params: { upload_files_for_config: @assignment_good_zip,
+                                                            is_timed: true,
+                                                            is_scanned: false } 
+    }
+    before :each do
+      # Build sample assignment zip file
+      base_dir = File.join('assignments', 'sample-timed-assessment-good')
+      properties_good = fixture_file_upload(File.join(base_dir, 'properties.yml'), 'text/yaml')
+      tags_good = fixture_file_upload(File.join(base_dir, 'tags.yml'), 'text/yaml')
+      criteria_good = fixture_file_upload(File.join(base_dir, 'criteria.yml'), 'text/yaml')
+      annotations_good = fixture_file_upload(File.join(base_dir, 'annotations.yml'), 'text/yaml')
 
-        peer_review_dir = File.join('assignments', 'sample-timed-assessment-good', 'peer-review-config-files')
-        pr_properties_good = fixture_file_upload(File.join(peer_review_dir, 'properties.yml'), 'text/yaml')
-        pr_tags_good = fixture_file_upload(File.join(peer_review_dir, 'tags.yml'), 'text/yaml')
-        pr_criteria_good = fixture_file_upload(File.join(peer_review_dir, 'criteria.yml'), 'text/yaml')
-        pr_annotations_good = fixture_file_upload(File.join(peer_review_dir, 'annotations.yml'), 'text/yaml')
+      peer_review_dir = File.join('assignments', 'sample-timed-assessment-good', 'peer-review-config-files')
+      pr_properties_good = fixture_file_upload(File.join(peer_review_dir, 'properties.yml'), 'text/yaml')
+      pr_tags_good = fixture_file_upload(File.join(peer_review_dir, 'tags.yml'), 'text/yaml')
+      pr_criteria_good = fixture_file_upload(File.join(peer_review_dir, 'criteria.yml'), 'text/yaml')
+      pr_annotations_good = fixture_file_upload(File.join(peer_review_dir, 'annotations.yml'), 'text/yaml')
 
-        zip_name = 'mtt_ex_1-config-files.zip'
-        zip_path = File.join('tmp', zip_name)
-        FileUtils.rm_f(zip_path)
-        Zip::File.open(zip_path, create: true) do |zip_file|
-          zip_file.add('properties.yml', properties_good.path)
-          zip_file.add('tags.yml', tags_good.path)
-          zip_file.add('criteria.yml', criteria_good.path)
-          zip_file.add('annotations.yml', annotations_good.path)
-          zip_file.add('peer-review-config-files/properties.yml', pr_properties_good.path)
-          zip_file.add('peer-review-config-files/tags.yml', pr_tags_good.path)
-          zip_file.add('peer-review-config-files/criteria.yml', pr_criteria_good.path)
-          zip_file.add('peer-review-config-files/annotations.yml', pr_annotations_good.path)
-        end
-        @assignment_good_zip = fixture_file_upload(zip_path, 'application/zip')
+      zip_name = 'mtt_ex_1-config-files.zip'
+      zip_path = File.join('tmp', zip_name)
+      FileUtils.rm_f(zip_path)
+      Zip::File.open(zip_path, create: true) do |zip_file|
+        zip_file.add('properties.yml', properties_good.path)
+        zip_file.add('tags.yml', tags_good.path)
+        zip_file.add('criteria.yml', criteria_good.path)
+        zip_file.add('annotations.yml', annotations_good.path)
+        zip_file.add('peer-review-config-files/properties.yml', pr_properties_good.path)
+        zip_file.add('peer-review-config-files/tags.yml', pr_tags_good.path)
+        zip_file.add('peer-review-config-files/criteria.yml', pr_criteria_good.path)
+        zip_file.add('peer-review-config-files/annotations.yml', pr_annotations_good.path)
+      end
+      @assignment_good_zip = fixture_file_upload(zip_path, 'application/zip')
+    end
+
+    shared_examples 'check valid assignment config files' do
+      it 'gives the appropriate response status' do
+        subject
+        expect(response.status).to eq(302)
       end
 
-      shared_examples 'check valid assignment config files' do
-        it 'gives the appropriate response status' do
-          subject
-          expect(response.status).to eq(302)
-        end
-
-        it 'uploads with no errors' do
-          subject
-          expect(flash[:error]).to be_nil
-        end
-
-        it "properly configures an assignment's properties" do
-          subject
-          uploaded_assignment = Assignment.find_by(short_identifier: 'mtt_ex_1')
-          uploaded_sample_attributes = {
-            message: uploaded_assignment.message,
-            is_timed: uploaded_assignment.is_timed,
-            scanned_exam: uploaded_assignment.scanned_exam,
-            has_peer_review: uploaded_assignment.has_peer_review,
-            assignment_file_count: uploaded_assignment.assignment_files.count,
-            submission_rule_type: uploaded_assignment.submission_rule.type
-          }
-          expected_sample_attributes = {
-            message: 'Sample midterm to help you practice for our second midterm',
-            is_timed: true,
-            scanned_exam: false,
-            has_peer_review: true,
-            assignment_file_count: 2,
-            submission_rule_type: 'PenaltyDecayPeriodSubmissionRule'
-          }
-          expect(uploaded_sample_attributes).to eq(expected_sample_attributes)
-        end
-
-        it 'uploads all the tags for an assignment' do
-          subject
-          uploaded_assignment = Assignment.find_by(short_identifier: 'mtt_ex_1')
-          expect(uploaded_assignment.tags.count).to eq(2)
-        end
-
-        it 'properly configures the tags for an assignment' do
-          subject
-          uploaded_assignment = Assignment.find_by(short_identifier: 'mtt_ex_1')
-          tag1 = uploaded_assignment.tags.find_by(name: 'Late')
-          tag2 = uploaded_assignment.tags.find_by(name: 'Plagiarized')
-          uploaded_tags = [{ name: tag1.name, description: tag1.description },
-                           { name: tag2.name, description: tag2.description }]
-          expected_tags = [{ name: 'Late', description: 'Not Handed in on time' },
-                           { name: 'Plagiarized', description: 'Cheating' }]
-          expect(uploaded_tags).to eq(expected_tags)
-        end
-
-        it 'uploads all the criteria for an assignment' do
-          subject
-          uploaded_assignment = Assignment.find_by(short_identifier: 'mtt_ex_1')
-          expect(uploaded_assignment.criteria.count).to eq(2)
-        end
-
-        it 'properly configures the criteria for an assignment' do
-          subject
-          uploaded_assignment = Assignment.find_by(short_identifier: 'mtt_ex_1')
-          criteria1 = uploaded_assignment.criteria.find_by(name: 'Bonus Question')
-          criteria2 = uploaded_assignment.criteria.find_by(name: 'Optimal')
-          uploaded_criteria = [{ name: criteria1.name, description: criteria1.description, type: criteria1.type },
-                               { name: criteria2.name, description: criteria2.description, type: criteria2.type }]
-          expected_criteria = [{ name: 'Bonus Question', description: 'Extra bonus question', type: 'checkbox' },
-                               { name: 'Optimal', description: 'Solution is most optimal', type: 'checkbox' }]
-          expect(uploaded_criteria).to eq(expected_criteria)
-        end
-
+      it 'uploads with no errors' do
+        subject
+        expect(flash[:error]).to be_nil
       end
 
-      # Check to ensure appropriate access is given
-      context 'a student' do
-        let(:user) { create :student }
+      it "properly configures an assignment's properties" do
+        subject
+        uploaded_assignment = Assignment.find_by(short_identifier: 'mtt_ex_1')
+        uploaded_sample_attributes = {
+          message: uploaded_assignment.message,
+          is_timed: uploaded_assignment.is_timed,
+          scanned_exam: uploaded_assignment.scanned_exam,
+          has_peer_review: uploaded_assignment.has_peer_review,
+          assignment_file_count: uploaded_assignment.assignment_files.count,
+          submission_rule_type: uploaded_assignment.submission_rule.type
+        }
+        expected_sample_attributes = {
+          message: 'Sample midterm to help you practice for our second midterm',
+          is_timed: true,
+          scanned_exam: false,
+          has_peer_review: true,
+          assignment_file_count: 2,
+          submission_rule_type: 'PenaltyDecayPeriodSubmissionRule'
+        }
+        expect(uploaded_sample_attributes).to eq(expected_sample_attributes)
+      end
+
+      it 'uploads all the criteria for an assignment' do
+        subject
+        uploaded_assignment = Assignment.find_by(short_identifier: 'mtt_ex_1')
+        expect(uploaded_assignment.criteria.count).to eq(2)
+      end
+
+      it 'properly configures the criteria for an assignment' do
+        subject
+        uploaded_assignment = Assignment.find_by(short_identifier: 'mtt_ex_1')
+        criteria1 = uploaded_assignment.criteria.find_by(name: 'Bonus Question')
+        criteria2 = uploaded_assignment.criteria.find_by(name: 'Optimal')
+        uploaded_criteria = [{ name: criteria1.name, description: criteria1.description, type: criteria1.type },
+                             { name: criteria2.name, description: criteria2.description, type: criteria2.type }]
+        expected_criteria = [{ name: 'Bonus Question', description: 'Extra bonus question', type: 'CheckboxCriterion' },
+                             { name: 'Optimal', description: 'Solution is most optimal', type: 'CheckboxCriterion' }]
+        expect(uploaded_criteria).to eq(expected_criteria)
+      end
+      
+      it 'properly uploads a peer review assignment' do
+        subject
+        uploaded_child_assignment = Assignment.find_by(short_identifier: 'mtt_ex_1_peer_review')
+        parent_assignment = Assignment.find(uploaded_child_assignment.parent_assessment_id)
+        uploaded_pr_assessment_data = {
+          message: uploaded_child_assignment.message,
+          is_timed: uploaded_child_assignment.is_timed,
+          scanned_exam: uploaded_child_assignment.scanned_exam,
+          parent_short_id: parent_assignment.short_identifier,
+          num_criteria: uploaded_child_assignment.criteria.count,
+          num_annotations: uploaded_child_assignment.annotation_categories.count
+        }
+        expected_pr_assessment_data = {
+          message: 'Review the sample midterm of your peers to help you practice for our second midterm',
+          is_timed: false,
+          scanned_exam: false,
+          parent_short_id: 'mtt_ex_1',
+          num_criteria: 1,
+          num_annotations: 2
+        }
+        expect(uploaded_pr_assessment_data).to eq(expected_pr_assessment_data)
+      end
+
+    end
+
+    # Check to ensure appropriate access is given
+    context 'a student' do
+      let(:user) { create :student }
+      it 'should respond with 403' do
+        subject
+        expect(response).to have_http_status(403)
+      end
+    end
+    context 'a grader' do
+      context 'without assignment management permissions' do
+        let(:user) { create :ta }
         it 'should respond with 403' do
           subject
           expect(response).to have_http_status(403)
         end
       end
-      context 'a grader' do
-        context 'without assignment management permissions' do
-          let(:user) { create :ta }
-          it 'should respond with 403' do
-            subject
-            expect(response).to have_http_status(403)
-          end
-        end
-        context 'with assignment management permissions' do
-          let(:user) { create :ta, manage_assessments: true }
-          include_examples 'check valid assignment config files'
-        end
-      end
-      context 'an admin' do
-        let(:user) { create :admin }
+      context 'with assignment management permissions' do
+        let(:user) { create :ta, manage_assessments: true }
         include_examples 'check valid assignment config files'
+
+        it 'should have no tags' do
+          subject
+          uploaded_assignment = Assignment.find_by(short_identifier: 'mtt_ex_1')
+          expect(uploaded_assignment.tags.count).to eq(0)
+        end
+
+        it 'should not have peer review tags' do
+          subject
+          uploaded_child_assignment = Assignment.find_by(short_identifier: 'mtt_ex_1_peer_review')
+          expect(uploaded_child_assignment.tags.count).to eq(0)
+        end 
+      end
+    end
+    context 'an admin' do
+      let(:user) { create :admin }
+      include_examples 'check valid assignment config files'
+      
+      it 'uploads all the tags for an assignment' do
+        subject
+        uploaded_assignment = Assignment.find_by(short_identifier: 'mtt_ex_1')
+        expect(uploaded_assignment.tags.count).to eq(2)
+      end
+
+      it 'properly configures the tags for an assignment' do
+        subject
+        uploaded_assignment = Assignment.find_by(short_identifier: 'mtt_ex_1')
+        tag1 = uploaded_assignment.tags.find_by(name: 'Late')
+        tag2 = uploaded_assignment.tags.find_by(name: 'Plagiarized')
+        uploaded_tags = [{ name: tag1.name, description: tag1.description },
+                         { name: tag2.name, description: tag2.description }]
+        expected_tags = [{ name: 'Late', description: 'Not Handed in on time' },
+                         { name: 'Plagiarized', description: 'Cheating' }]
+        expect(uploaded_tags).to eq(expected_tags)
       end
     end
   end
