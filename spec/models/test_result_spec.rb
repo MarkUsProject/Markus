@@ -9,6 +9,7 @@ describe TestResult do
   it { is_expected.to validate_numericality_of(:marks_earned) }
   it { is_expected.to validate_numericality_of(:marks_total) }
   it { is_expected.to validate_numericality_of(:time) }
+  it { is_expected.to have_one(:course) }
 
   context 'test result' do
     before(:each) do

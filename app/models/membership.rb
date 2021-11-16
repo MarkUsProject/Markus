@@ -10,4 +10,5 @@ class Membership < ApplicationRecord
   validates_associated :grouping
 
   has_one :course, through: :grouping
+  validate :courses_should_match
 end

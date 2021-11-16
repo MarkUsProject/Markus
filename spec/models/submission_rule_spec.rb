@@ -59,6 +59,7 @@ shared_examples 'due_date_calculations' do |assignment_past, section_past, secti
 end
 
 describe SubmissionRule do
+  it { is_expected.to have_one(:course) }
   context 'A newly initialized submission rule' do
     it 'belongs to an assignment' do
       is_expected.to belong_to(:assignment)

@@ -4,6 +4,7 @@ describe GradeEntryItem do
     it { is_expected.to belong_to(:grade_entry_form) }
     it { is_expected.to have_many(:grades).dependent(:delete_all) }
     it { is_expected.to have_many(:grade_entry_students).through(:grades) }
+    it { is_expected.to have_one(:course) }
 
     it { is_expected.to validate_presence_of(:name) }
 

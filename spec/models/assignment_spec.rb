@@ -97,6 +97,14 @@ describe Assignment do
     end
   end
 
+  describe 'peer review assignment' do
+    it 'should not allow the parent and pr assignments to be from different courses' do
+      courses = create_list :course, 2
+      a = build(:assignment, course: courses.first, parent_assignment: build(:assignment, course: courses.second))
+      expect(a).not_to be_valid
+    end
+  end
+
   describe 'nested attributes' do
     it 'accepts nested attributes for required files (assignment_files)' do
       course = create :course
@@ -821,7 +829,7 @@ describe Assignment do
               s = create(:version_used_submission, grouping: g)
               r = s.current_result
               2.times do
-                create(:rubric_mark, result: r)  # this is create marks under rubric criterion
+                create(:rubric_mark, result: r, assignment: @assignment)  # this is create marks under rubric criterion
                 # if we create(:flexible_mark, groping: g)
                 # or create(:checkbox_mark, grouping: g)
                 # they should work as well
@@ -856,7 +864,7 @@ describe Assignment do
                 s = create(:submission, grouping: g)
                 r = s.get_latest_result
                 2.times do
-                  create(:rubric_mark, result: r)
+                  create(:rubric_mark, result: r, assignment: @assignment)
                 end
                 r.reload
                 r.marking_state = Result::MARKING_STATES[:complete]

@@ -6,6 +6,7 @@ class TemplateDivision < ApplicationRecord
 
   accepts_nested_attributes_for :assignment_file, allow_destroy: true
 
+  validate :courses_should_match
   validates :start, numericality: { greater_than_or_equal_to: 1,
                                     less_than_or_equal_to: :end,
                                     only_integer: true }

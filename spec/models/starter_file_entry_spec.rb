@@ -2,6 +2,7 @@ describe StarterFileEntry do
   it { is_expected.to belong_to(:starter_file_group) }
   it { is_expected.to have_many(:grouping_starter_file_entries) }
   it { is_expected.to have_many(:groupings).through(:grouping_starter_file_entries) }
+  it { is_expected.to have_one(:course) }
 
   let(:starter_file_entry) { create :starter_file_entry }
   context 'more validations' do

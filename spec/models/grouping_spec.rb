@@ -1,15 +1,14 @@
 describe Grouping do
   describe 'associations' do
+    subject { create :grouping }
     it { is_expected.to belong_to(:group) }
     it { is_expected.to belong_to(:assignment) }
     it { is_expected.to have_many(:memberships) }
     it { is_expected.to have_many(:submissions) }
     it { is_expected.to have_many(:notes) }
     it { is_expected.to have_one(:extension).dependent(:destroy) }
-
-    it 'fails when its group and assignment belong to different courses' do
-      expect(build(:grouping, assignment: build(:assignment), group: build(:group))).not_to be_valid
-    end
+    it { is_expected.to have_one(:course) }
+    include_examples 'course associations'
   end
 
   describe 'a default grouping' do

@@ -1,6 +1,11 @@
 FactoryBot.define do
   factory :peer_review do
-    association :result, factory: :result, marking_state: 'incomplete'
-    association :reviewer, factory: :grouping
+    result { association :result, marking_state: 'incomplete', grouping: result_grouping }
+    reviewer { create :grouping, assignment: assignment }
+
+    transient do
+      assignment { create(:assignment) }
+      result_grouping { create(:grouping, assignment: assignment) }
+    end
   end
 end

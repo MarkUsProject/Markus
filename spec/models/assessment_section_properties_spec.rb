@@ -1,7 +1,10 @@
 describe AssessmentSectionProperties do
   describe 'ActiveRecord associations' do
+    subject { create :assessment_section_properties }
     it { is_expected.to belong_to(:section) }
     it { is_expected.to belong_to(:assessment) }
+    it { is_expected.to have_one(:course) }
+    include_examples 'course associations'
   end
 
   describe '.due_date_for(section, assignment)' do

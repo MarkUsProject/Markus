@@ -13,6 +13,8 @@ class AnnotationCategory < ApplicationRecord
   has_one :course, through: :assignment
 
   belongs_to :flexible_criterion, required: false
+  # Note that there is no need to validate that courses match through courses_should_match
+  # because the flexible_criterion_id must be associated to the same assignment.
   validates :flexible_criterion_id,
             inclusion: { in: :assignment_criteria, message: '%<value>s is an invalid criterion for this assignment.' }
 

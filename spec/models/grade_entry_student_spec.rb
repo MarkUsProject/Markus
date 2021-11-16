@@ -1,4 +1,10 @@
 describe GradeEntryStudent do
+  describe 'validations' do
+    subject { create :grade_entry_student }
+    it { is_expected.to have_one(:course) }
+    include_examples 'course associations'
+  end
+
   describe 'assigning and unassigning TAs' do
     let(:form) { create(:grade_entry_form) }
     let(:students) { Array.new(2) { create(:student) } }

@@ -7,6 +7,7 @@ class Note < ApplicationRecord
   validates_associated :role
 
   has_one :course, through: :role
+  validate :courses_should_match
 
   NOTEABLES = %w(Grouping Student Assignment)
 

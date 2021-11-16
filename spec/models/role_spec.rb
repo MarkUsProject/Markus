@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe Role do
   let(:course) { create(:course) }
 
@@ -10,7 +8,6 @@ describe Role do
   it { is_expected.to have_many :memberships }
   it { is_expected.to have_many(:groupings).through(:memberships) }
   it { is_expected.to have_many(:notes).dependent(:destroy) }
-  it { is_expected.to validate_uniqueness_of(:user_id).scoped_to(:course_id) }
 
   context 'A good Role model' do
     it 'should be able to create a student' do

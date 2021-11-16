@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :grade_entry_form do
-    association :course
+    course { Course.first || association(:course) }
     sequence(:short_identifier) { |i| "Spreadsheet_#{i}" }
     description { Faker::Lorem.sentence }
     message { Faker::Lorem.sentence }

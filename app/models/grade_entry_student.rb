@@ -20,6 +20,8 @@ class GradeEntryStudent < ApplicationRecord
 
   before_save :refresh_total_grade
 
+  validate :courses_should_match
+
   # Merges records of GradeEntryStudent that do not exist yet using a caller-
   # specified block. The block is given the passed-in student IDs and grade
   # entry form IDs and must return a list of (student ID, grade entry form IDs)

@@ -80,6 +80,8 @@ class Grouping < ApplicationRecord
   validates_associated :group
   validate :assignment_group_course_match
 
+  validate :courses_should_match
+
   has_one :course, through: :assignment
 
   validates_inclusion_of :is_collected, in: [true, false]

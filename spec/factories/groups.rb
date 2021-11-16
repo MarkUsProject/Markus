@@ -2,7 +2,7 @@ require 'faker'
 
 FactoryBot.define do
   factory :group do
-    association :course
+    course { Course.first || association(:course) }
     sequence(:group_name) { |n| "group#{n}" }
 
     after(:create) do |group|

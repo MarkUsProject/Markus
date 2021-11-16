@@ -9,5 +9,5 @@ class TestGroup < ApplicationRecord
 
   validates :name, presence: true
   validates :display_output, presence: true
-
+  validate :courses_should_match
 end

@@ -1,10 +1,12 @@
 describe CriterionTaAssociation do
   context 'validations and associations' do
-    subject { build_stubbed :criterion_ta_association }
+    subject { create :criterion_ta_association }
     it { is_expected.to belong_to :ta }
     it { is_expected.to belong_to :criterion }
     it { is_expected.to belong_to :assignment }
     it { is_expected.to allow_values(subject.criterion.assignment.id).for :assessment_id }
+    it { is_expected.to have_one(:course) }
+    include_examples 'course associations'
   end
 
   describe '#self.from_csv' do

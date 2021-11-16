@@ -1,5 +1,5 @@
 describe Grade do
-
+  subject { create :grade }
   it { is_expected.to validate_numericality_of(:grade) }
 
   it { is_expected.to allow_value(0.0).for(:grade) }
@@ -11,4 +11,6 @@ describe Grade do
 
   it { is_expected.to belong_to(:grade_entry_item) }
   it { is_expected.to belong_to(:grade_entry_student) }
+  it { is_expected.to have_one(:course) }
+  include_examples 'course associations'
 end

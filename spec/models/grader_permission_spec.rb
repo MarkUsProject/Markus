@@ -1,6 +1,7 @@
 describe GraderPermission do
   context 'checks relationships' do
     it { is_expected.to belong_to(:ta) }
+    it { is_expected.to have_one(:course) }
   end
   describe 'Validating the user' do
     context 'When the user is admin' do

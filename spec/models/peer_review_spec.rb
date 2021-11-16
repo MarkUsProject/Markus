@@ -1,6 +1,7 @@
 describe PeerReview do
   it { is_expected.to belong_to(:result) }
   it { is_expected.to belong_to(:reviewer) }
+  it { is_expected.to have_one(:course) }
   let!(:peer_review) { create(:peer_review) }
 
   describe 'reviewee integrity' do
@@ -13,6 +14,11 @@ describe PeerReview do
     end
   end
 
+  it 'should not allow associations to belong to different assignments' do
+    result = create :complete_result
+    reviewer = create(:grouping, assignment: create(:assignment))
+    expect(build(:peer_review, result: result, reviewer: reviewer)).not_to be_valid
+  end
 
   describe 'with a single student reviewee' do
     before :each do
@@ -21,12 +27,7 @@ describe PeerReview do
       @grouping1.add_member(@student)
       @submission = create(:submission, submission_version_used: true, grouping: @grouping1)
       @grouping1.reload
-      @grouping2 = create(:grouping)
-    end
-
-    it 'cannot have the same student be a reviewer' do
-      @grouping2.add_member(@student)
-      expect(PeerReview.can_assign_peer_review_to?(@grouping2, @grouping1)).to be false
+      @grouping2 = create(:grouping, assignment: @grouping1.assignment)
     end
 
     it 'can be assigned a reviewer' do

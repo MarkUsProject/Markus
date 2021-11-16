@@ -1,6 +1,8 @@
 describe GracePeriodSubmissionRule do
   let(:rule_type) { :grace_period_submission_rule }
 
+  it { is_expected.to have_one(:course) }
+
   context 'when the group submitted on time' do
     include_context 'submission_rule_on_time'
     context 'when the student submitted some files' do

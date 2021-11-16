@@ -4,6 +4,7 @@ class Tag < ApplicationRecord
   belongs_to :assessment, optional: true
 
   has_one :course, through: :role
+  validate :courses_should_match
 
   # Constants
   NUM_CSV_FIELDS = 3

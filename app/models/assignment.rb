@@ -93,6 +93,7 @@ class Assignment < Assessment
   accepts_nested_attributes_for :submission_rule, allow_destroy: true
   validates_associated :submission_rule
   validates_presence_of :submission_rule
+  validate :courses_should_match
 
   BLANK_MARK = ''
 

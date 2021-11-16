@@ -12,6 +12,7 @@ class Role < ApplicationRecord
   has_many :annotations, as: :creator
   has_many :test_runs, dependent: :destroy
   has_many :split_pdf_logs
+  has_many :assessments, through: :course
 
   validates_format_of :type, with: /\AStudent|Admin|Ta\z/
   validates_uniqueness_of :user_id, scope: :course_id
@@ -75,16 +76,16 @@ class Role < ApplicationRecord
   # only the assessment with the given id, if it is visible to the current user.
   # If it is not visible, returns an empty collection.
   def visible_assessments(assessment_type: nil, assessment_id: nil)
-    assessments = Assessment.where(is_hidden: false, course: self.course, type: assessment_type || Assessment.type)
+    visible = self.assessments.where(is_hidden: false, type: assessment_type || Assessment.type)
     if self.section_id
-      assessments = Assessment.left_outer_joins(:assessment_section_properties)
-                              .where('assessment_section_properties.section_id': [self.section_id, nil])
-      assessments = assessments.where('assessment_section_properties.is_hidden': false)
-                               .or(assessments.where('assessment_section_properties.is_hidden': nil,
-                                                     'assessments.is_hidden': false))
+      visible = self.assessments.left_outer_joins(:assessment_section_properties)
+                                .where('assessment_section_properties.section_id': [self.section_id, nil])
+      visible = visible.where('assessment_section_properties.is_hidden': false)
+                       .or(visible.where('assessment_section_properties.is_hidden': nil,
+                                         'assessments.is_hidden': false))
     end
-    return assessments.where(id: assessment_id) if assessment_id
+    return visible.where(id: assessment_id) if assessment_id
 
-    assessments
+    visible
   end
 end

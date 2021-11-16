@@ -7,6 +7,8 @@ class GradeEntryStudentTa < ApplicationRecord
 
   has_one :course, through: :grade_entry_student
 
+  validate :courses_should_match
+
   # Merges records of GradeEntryStudentTa that do not exist yet using a caller-
   # specified block. The block is given the passed-in grade entry student IDs
   # and TA IDs and must return a list of (grade entry student ID, TA ID) pair

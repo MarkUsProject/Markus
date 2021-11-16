@@ -8,6 +8,7 @@ class TestGroupResult < ApplicationRecord
 
   validates :marks_earned, :marks_total, presence: true, numericality: { greater_than_or_equal_to: 0 }
   validates :time, presence: true, numericality: { greater_than_or_equal_to: 0, only_integer: true }
+  validate :courses_should_match
 
   ERROR_TYPE = {
     no_results: :no_results,
