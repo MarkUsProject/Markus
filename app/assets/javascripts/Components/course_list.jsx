@@ -29,7 +29,6 @@ class CourseList extends React.Component {
   makeCourseCards() {}
 
   render() {
-    console.log(this.state);
     if (this.state.courses.length == 0) {
       return <div className="no course"></div>;
     }
