@@ -122,3 +122,7 @@ import {makeStarterFileManager} from "javascripts/Components/starter_file_manage
 window.makeStarterFileManager = makeStarterFileManager;
 import {makeNotesTable} from "javascripts/Components/notes_table";
 window.makeNotesTable = makeNotesTable;
+import {makeCourseCard} from "javascripts/Components/course_cards";
+window.makeCourseCard = makeCourseCard;
+import {makeCourseList} from "javascripts/Components/course_list";
+window.makeCourseList = makeCourseList;
