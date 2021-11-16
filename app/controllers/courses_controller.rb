@@ -11,7 +11,7 @@ class CoursesController < ApplicationController
                                             'courses.display_name', 'roles.type')
     respond_to do |format|
       format.html { render :index, layout: 'courses'}
-      format.json { render json: { 'data': @course_info } }
+      format.json { render json: { 'data': @courses } }
     end
   end
 
