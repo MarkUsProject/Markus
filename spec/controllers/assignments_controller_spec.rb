@@ -1498,7 +1498,7 @@ describe AssignmentsController do
           expect(uploaded_assignment.criteria.count).to eq(2)
         end
 
-        it 'properly configures the criteria for an assignment' do 
+        it 'properly configures the criteria for an assignment' do
           subject
           uploaded_assignment = Assignment.find_by(short_identifier: 'mtt_ex_1')
           criteria1 = uploaded_assignment.criteria.find_by(name: 'Bonus Question')
