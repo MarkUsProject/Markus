@@ -2,7 +2,7 @@
   <%= javascript_tag nonce: true do %>
     document.addEventListener('DOMContentLoaded', () => {
       const form = document.getElementById("add_fields_exam_template_form_<%= exam_template.id %>");
-      const parsing_input = form && form.elements["automatic_parsing"];
+      const parsing_input = form && form.elements["<%= exam_template.id %>_exam_template_automatic_parsing"];
 
       parsing_input.addEventListener('change', () => toggle_cover_page(<%= exam_template.id %>));
 
@@ -14,29 +14,32 @@
 
 <%= form_for [@assignment, exam_template],
              url: add_fields_assignment_exam_template_path(id: exam_template.id),
+             namespace: exam_template.id,
              html: { id: "add_fields_exam_template_form_#{exam_template.id}" } do |f| %>
 
   <p>
-    <%= check_box_tag :automatic_parsing, true,
-                      exam_template.automatic_parsing %>
-    <%= t('exam_templates.parsing.general') %><br>
+    <%= f.check_box :automatic_parsing, value: exam_template.automatic_parsing %>
+    <%= f.label :automatic_parsing, t('exam_templates.parsing.general') %>
   </p>
 
   <div id="exam-cover-display-<%= exam_template.id %>" class="<%= exam_template.automatic_parsing ? 'flex-display' : 'no-display' %>">
     <div id="exam_cover-<%= exam_template.id %>">
-      <img src="<%= show_cover_assignment_exam_template_path(id: exam_template.id) %>" class="crop-target">
+      <img src="<%= show_cover_assignment_exam_template_path(id: exam_template.id) %>" class="crop-target"
+           alt="<%= t(:'exam_templates.parsing.cover_page_for', id: exam_template.id) %>"
+           style="display: none"
+           loading="lazy">
     </div>
 
     <div class="table-with-add">
-      <%= label_tag :cover_fields, t('activerecord.attributes.exam_template.cover_fields') %>
-      <%= select_tag :cover_fields,
-                     options_for_select([[t('activerecord.attributes.user.id_number'), "id_number"],
-                                         [t('activerecord.attributes.user.user_name'), "user_name"]]),
-                     selected: exam_template.cover_fields || "student_id" %>
-      <%= hidden_field_tag 'x', exam_template.crop_x %>
-      <%= hidden_field_tag 'y', exam_template.crop_y %>
-      <%= hidden_field_tag 'width', exam_template.crop_width %>
-      <%= hidden_field_tag 'height', exam_template.crop_height %>
+      <%= f.label :cover_fields, t('activerecord.attributes.exam_template.cover_fields') %>
+      <%= f.select :cover_fields,
+                   options_for_select([[t('activerecord.attributes.user.id_number'), "id_number"],
+                                       [t('activerecord.attributes.user.user_name'), "user_name"]],
+                                      selected: exam_template.cover_fields || "id_number") %>
+      <%= f.hidden_field :crop_x, value: exam_template.crop_x %>
+      <%= f.hidden_field :crop_y, value: exam_template.crop_y %>
+      <%= f.hidden_field :crop_width, value: exam_template.crop_width %>
+      <%= f.hidden_field :crop_height, value: exam_template.crop_height %>
     </div>
   </div>
 

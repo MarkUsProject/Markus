@@ -33,6 +33,7 @@ pt:
       success: "%{copies} cópias de exame geradas com sucesso"
       title: Gerar cópias de exame
     parsing:
+      cover_page_for: UPDATE ME %{id}
       general: Analise automaticamente as informações do aluno
       save: Salve
       title: Seleção automática de análise
