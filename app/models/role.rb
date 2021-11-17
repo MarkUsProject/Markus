@@ -78,8 +78,9 @@ class Role < ApplicationRecord
   def visible_assessments(assessment_type: nil, assessment_id: nil)
     visible = self.assessments.where(is_hidden: false, type: assessment_type || Assessment.type)
     if self.section_id
-      visible = self.assessments.left_outer_joins(:assessment_section_properties)
-                                .where('assessment_section_properties.section_id': [self.section_id, nil])
+      visible = self.assessments
+                    .left_outer_joins(:assessment_section_properties)
+                    .where('assessment_section_properties.section_id': [self.section_id, nil])
       visible = visible.where('assessment_section_properties.is_hidden': false)
                        .or(visible.where('assessment_section_properties.is_hidden': nil,
                                          'assessments.is_hidden': false))

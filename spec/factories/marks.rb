@@ -1,6 +1,8 @@
 FactoryBot.define do
   factory :mark do
-    result { create :complete_result, submission: create(:submission, grouping: create(:grouping, assignment: assignment)) }
+    result do
+      create :complete_result, submission: create(:submission, grouping: create(:grouping, assignment: assignment))
+    end
 
     transient do
       assignment { build :assignment }

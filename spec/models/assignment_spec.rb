@@ -829,7 +829,7 @@ describe Assignment do
               s = create(:version_used_submission, grouping: g)
               r = s.current_result
               2.times do
-                create(:rubric_mark, result: r, assignment: @assignment)  # this is create marks under rubric criterion
+                create(:rubric_mark, result: r, assignment: @assignment) # this is create marks under rubric criterion
                 # if we create(:flexible_mark, groping: g)
                 # or create(:checkbox_mark, grouping: g)
                 # they should work as well

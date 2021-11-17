@@ -4,10 +4,6 @@ class UserPolicy < ApplicationPolicy
     false
   end
 
-  def edit?
-
-  end
-
   # No one can delete users.
   def destroy?
     false
