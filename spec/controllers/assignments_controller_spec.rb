@@ -1522,11 +1522,11 @@ describe AssignmentsController do
         uploaded_annotation_text = AnnotationText.where(annotation_category_id: category.id)
                                                  .pluck_to_hash(:content)
                                                  .map(&:symbolize_keys)
-        expected_annotation_text = [{ content: 'Sunt optio.' }, { content: 'Quibusdam ut ipsa.' }, 
+        expected_annotation_text = [{ content: 'Sunt optio.' }, { content: 'Quibusdam ut ipsa.' },
                                     { content: 'Earum voluptate.' }, { content: 'Saepe.' }, { content: 'Non eum.' }]
         expect(uploaded_annotation_text).to eq(expected_annotation_text)
       end
-      
+
       it 'properly uploads a peer review assignment' do
         subject
         uploaded_child_assignment = Assignment.find_by(short_identifier: 'mtt_ex_1_peer_review')

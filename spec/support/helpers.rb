@@ -60,10 +60,10 @@ module Helpers
         yaml_file = entry if entry.name == filename
       end
       unless yaml_file.nil?
-        YAML.safe_load(yaml_file.get_input_stream.read.encode(Encoding::UTF_8, 'UTF-8'), 
-                       [Date, Time, Symbol, ActiveSupport::TimeWithZone, ActiveSupport::TimeZone, 
-                        ActiveSupport::Duration, ActiveSupport::HashWithIndifferentAccess], 
-                       [], 
+        YAML.safe_load(yaml_file.get_input_stream.read.encode(Encoding::UTF_8, 'UTF-8'),
+                       [Date, Time, Symbol, ActiveSupport::TimeWithZone, ActiveSupport::TimeZone,
+                        ActiveSupport::Duration, ActiveSupport::HashWithIndifferentAccess],
+                       [],
                        true)
       end
     end
