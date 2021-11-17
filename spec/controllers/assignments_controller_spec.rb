@@ -1503,6 +1503,29 @@ describe AssignmentsController do
                              { name: 'Optimal', description: 'Solution is most optimal', type: 'CheckboxCriterion' }]
         expect(uploaded_criteria).to eq(expected_criteria)
       end
+
+      it 'uploads all the annotation categories for an assignment' do
+        subject
+        uploaded_assignment = Assignment.find_by(short_identifier: 'mtt_ex_1')
+        category = AnnotationCategory.find_by(annotation_category_name: 'quod laboriosam')
+        uploaded_category_checks = {
+          annotation_category_count: uploaded_assignment.annotation_categories.count,
+          belongs_to_uploaded_assignment: category.assessment_id == uploaded_assignment.id
+        }
+        expected_category_checks = { annotation_category_count: 1, belongs_to_uploaded_assignment: true }
+        expect(uploaded_category_checks).to eq(expected_category_checks)
+      end
+
+      it 'properly configures all the annotation text for an assignment' do
+        subject
+        category = AnnotationCategory.find_by(annotation_category_name: 'quod laboriosam')
+        uploaded_annotation_text = AnnotationText.where(annotation_category_id: category.id)
+                                                 .pluck_to_hash(:content)
+                                                 .map(&:symbolize_keys)
+        expected_annotation_text = [{ content: 'Sunt optio.' }, { content: 'Quibusdam ut ipsa.' }, 
+                                    { content: 'Earum voluptate.' }, { content: 'Saepe.' }, { content: 'Non eum.' }]
+        expect(uploaded_annotation_text).to eq(expected_annotation_text)
+      end
       
       it 'properly uploads a peer review assignment' do
         subject
@@ -1526,7 +1549,6 @@ describe AssignmentsController do
         }
         expect(uploaded_pr_assessment_data).to eq(expected_pr_assessment_data)
       end
-
     end
 
     # Check to ensure appropriate access is given
