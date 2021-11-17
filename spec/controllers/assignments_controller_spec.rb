@@ -1419,10 +1419,11 @@ describe AssignmentsController do
   end
 
   describe '#upload_config_files' do
-    subject { post_as user, :upload_config_files, params: { upload_files_for_config: @assignment_good_zip,
-                                                            is_timed: true,
-                                                            is_scanned: false }
-    }
+    subject do
+      post_as user, :upload_config_files, params: { upload_files_for_config: @assignment_good_zip,
+                                                    is_timed: true,
+                                                    is_scanned: false }
+    end
     before :each do
       # Build sample assignment zip file
       base_dir = File.join('assignments', 'sample-timed-assessment-good')
@@ -1609,5 +1610,30 @@ describe AssignmentsController do
   end
 
   describe 'download_and_upload_config_file' do
+    let(:user) { create :admin }
+
+    context 'Normal assignment with peer review' do
+      let!(:assignment) { create :assignment_with_peer_review, due_date: Time.zone.parse('2042-02-10 15:30:45') }
+      let!(:criteria) { create :checkbox_criterion, assignment: assignment }
+      let!(:annotation) { create :annotation_category, assignment: assignment }
+
+      it 'copies over all assignment content correctly' do
+        t1 = Tag.create(name: 'tag1', description: 'tag1_desc', user: user, assessment_id: assignment.id)
+        t2 = Tag.create(name: 'tag2', description: 'tag2_desc', user: user, assessment_id: assignment.id)
+        get_as user, :download_config_files, params: { id: assignment.id }
+        zip_name = 'assignment-copy-test-config-files.zip'
+        zip_path = File.join('tmp', zip_name)
+        FileUtils.rm_f(zip_path)
+        File.write(zip_path, response.body, mode: 'wb')
+        assignment_zip = fixture_file_upload(zip_path, 'application/zip')
+        Tag.destroy(t1.id)
+        Tag.destroy(t2.id)
+        Assignment.destroy(assignment.id)
+        destroy_repos
+        post_as user, :upload_config_files, params: { upload_files_for_config: assignment_zip,
+                                                      is_timed: false, is_scanned: false }
+        expect(flash[:error]).to be_nil
+      end
+    end
   end
 end
