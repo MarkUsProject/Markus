@@ -286,6 +286,22 @@ describe AssignmentsController do
         expect(count).to eq 3
       end
     end
+
+    context 'most recent test results with static names' do
+      let(:assignment) { create(:static_assignment_with_criteria_and_test_results) }
+
+      it 'returns the correct tests passed per group' do
+        get_as user, :download_test_results, params: { id: assignment.id }, format: 'csv'
+
+        test_results = CSV.parse(response.body, headers: true)
+        test_results_fixture = fixture_file_upload('assignments/most_recent_test_results.csv', 'text/csv')
+        test_results_static = CSV.parse(test_results_fixture, headers: true)
+
+        test_results.each_with_index do |line, i|
+          expect(line).to eq test_results_static[i]
+        end
+      end
+    end
   end
 
   context 'CSV_Downloads' do
