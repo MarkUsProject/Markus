@@ -1304,6 +1304,8 @@ describe AssignmentsController do
       # Check file content
       describe 'downloaded zip file' do
         let!(:criteria) { create :checkbox_criterion, assignment: assignment }
+        let!(:annotation) { create :annotation_category, assignment: assignment }
+
         it 'should have a valid properties file' do
           subject
           properties = read_yaml_file(response.body, 'properties.yml')
@@ -1312,64 +1314,51 @@ describe AssignmentsController do
                                         due_date: assignment.due_date,
                                         message: assignment.message,
                                         is_hidden: assignment.is_hidden,
-                                        show_total: assignment.show_total)
-          expect(properties).to include(:assignment_properties_attributes,
-                                        :submission_rule_attributes,
-                                        :assignment_files_attributes)
-          expect(properties[:assignment_properties_attributes]).to be_kind_of(Hash)
-        end
-
-        it 'should have a valid child properties file' do
-          subject
-          properties = read_yaml_file(response.body, File.join('peer-review-config-files', 'properties.yml'))
-          @peer_review_assignment = Assignment.find_by(parent_assessment_id: assignment.id)
-          expect(properties).to include(short_identifier: @peer_review_assignment.short_identifier,
-                                        description: @peer_review_assignment.description,
-                                        due_date: @peer_review_assignment.due_date,
-                                        message: @peer_review_assignment.message,
-                                        is_hidden: @peer_review_assignment.is_hidden,
-                                        show_total: @peer_review_assignment.show_total)
-          expect(properties).to include(:assignment_properties_attributes)
-          expect(properties[:assignment_properties_attributes]).to be_kind_of(Hash)
-        end
-
-        it 'should have a valid tags file' do
-          @tag1 = Tag.find_or_create_by(name: 'tag1', description: 'tag1_description',
-                                        user: user, assessment_id: assignment.id)
-          @tag2 = Tag.find_or_create_by(name: 'tag2', description: 'tag2_description',
-                                        user: user, assessment_id: assignment.id)
-          subject
-          tags = read_yaml_file(response.body, 'tags.yml')
-          tags = tags.map(&:symbolize_keys)
-          expect(tags).to eq([{ name: 'tag1', description: 'tag1_description' },
-                              { name: 'tag2', description: 'tag2_description' }])
+                                        show_total: assignment.show_total,
+                                        assignment_properties_attributes: a_kind_of(Hash),
+                                        submission_rule_attributes: a_kind_of(Hash),
+                                        assignment_files_attributes: a_kind_of(Array))
         end
 
         it 'should have a valid criteria file' do
           subject
           criteria_download = read_yaml_file(response.body, 'criteria.yml')
-          expect(criteria_download).to be_kind_of(Hash)
           criteria_download = criteria_download.deep_symbolize_keys
           criteria_download.each_key do |key|
             expect(criteria_download[key]).to include(:type, :max_mark, :description)
           end
         end
 
-        def read_yaml_file(content, filename)
-          Zip::InputStream.open(StringIO.new(content)) do |io|
-            yaml_file = nil
-            while (entry = io.get_next_entry)
-              yaml_file = entry if entry.name == filename
-            end
-            expect(yaml_file.nil?).to eq false
-            YAML.safe_load(
-              yaml_file.get_input_stream.read.encode(Encoding::UTF_8, 'UTF-8'),
-              [Date, Time, Symbol, ActiveSupport::TimeWithZone, ActiveSupport::TimeZone,
-               ActiveSupport::Duration, ActiveSupport::HashWithIndifferentAccess],
-              [],
-              true
-            )
-          end
+        it 'should have a valid annotations file' do
+          subject
+          annotation_download = read_yaml_file(response.body, 'annotations.yml')
+          annotation_download = annotation_download.deep_symbolize_keys
+          expect(annotation_download).to be_a(Hash)
+        end
+
+        it 'should have a valid peer review properties file' do
+          subject
+          properties = read_yaml_file(response.body, File.join('peer-review-config-files', 'properties.yml'))
+          peer_review_assignment = Assignment.find_by(parent_assessment_id: assignment.id)
+          expect(properties).to include(short_identifier: peer_review_assignment.short_identifier,
+                                        description: peer_review_assignment.description,
+                                        due_date: peer_review_assignment.due_date,
+                                        message: peer_review_assignment.message,
+                                        is_hidden: peer_review_assignment.is_hidden,
+                                        show_total: peer_review_assignment.show_total,
+                                        assignment_properties_attributes: a_kind_of(Hash))
+        end
+
+        it 'should contain a peer review criteria file' do
+          subject
+          tags = read_yaml_file(response.body, File.join('peer-review-config-files', 'criteria.yml'))
+          expect(tags).to be_a(Hash)
+        end
+
+        it 'should contain a peer review annotations file' do
+          subject
+          tags = read_yaml_file(response.body, File.join('peer-review-config-files', 'annotations.yml'))
+          expect(tags).to be_a(Hash)
         end
       end
     end
@@ -1393,17 +1382,359 @@ describe AssignmentsController do
       context 'with assignment management permissions' do
         let(:user) { create :ta, manage_assessments: true }
         include_examples 'download sample config files'
+
+        it 'should not have a tags file' do
+          subject
+          tags = read_yaml_file(response.body, 'tags.yml')
+          expect(tags).to be_nil
+        end
+
+        it 'should not have a peer review tags file' do
+          subject
+          tags = read_yaml_file(response.body, File.join('peer-review-config-files', 'tags.yml'))
+          expect(tags).to be_nil
+        end
       end
     end
     context 'an admin' do
       let(:user) { create :admin }
       include_examples 'download sample config files'
+
+      it 'should have a valid tags file' do
+        tag1 = create :tag, assessment_id: assignment.id
+        tag2 = create :tag, assessment_id: assignment.id
+        subject
+        tags = read_yaml_file(response.body, 'tags.yml')
+        tags = tags.map(&:symbolize_keys)
+        expect(tags).to eq([{ name: tag1.name, description: tag1.description },
+                            { name: tag2.name, description: tag2.description }])
+      end
+
+      it 'should contain a peer review tags file' do
+        subject
+        tags = read_yaml_file(response.body, File.join('peer-review-config-files', 'tags.yml'))
+        expect(tags).to be_a(Array)
+      end
     end
   end
 
   describe '#upload_config_files' do
+    subject do
+      post_as user, :upload_config_files, params: { upload_files_for_config: @assignment_good_zip,
+                                                    is_timed: true,
+                                                    is_scanned: false }
+    end
+    before :each do
+      # Build sample assignment zip file
+      base_dir = File.join('assignments', 'sample-timed-assessment-good')
+      properties_good = fixture_file_upload(File.join(base_dir, 'properties.yml'), 'text/yaml')
+      tags_good = fixture_file_upload(File.join(base_dir, 'tags.yml'), 'text/yaml')
+      criteria_good = fixture_file_upload(File.join(base_dir, 'criteria.yml'), 'text/yaml')
+      annotations_good = fixture_file_upload(File.join(base_dir, 'annotations.yml'), 'text/yaml')
+
+      peer_review_dir = File.join('assignments', 'sample-timed-assessment-good', 'peer-review-config-files')
+      pr_properties_good = fixture_file_upload(File.join(peer_review_dir, 'properties.yml'), 'text/yaml')
+      pr_tags_good = fixture_file_upload(File.join(peer_review_dir, 'tags.yml'), 'text/yaml')
+      pr_criteria_good = fixture_file_upload(File.join(peer_review_dir, 'criteria.yml'), 'text/yaml')
+      pr_annotations_good = fixture_file_upload(File.join(peer_review_dir, 'annotations.yml'), 'text/yaml')
+
+      zip_name = 'mtt_ex_1-config-files.zip'
+      zip_path = File.join('tmp', zip_name)
+      FileUtils.rm_f(zip_path)
+      Zip::File.open(zip_path, create: true) do |zip_file|
+        zip_file.add('properties.yml', properties_good.path)
+        zip_file.add('tags.yml', tags_good.path)
+        zip_file.add('criteria.yml', criteria_good.path)
+        zip_file.add('annotations.yml', annotations_good.path)
+        zip_file.add('peer-review-config-files/properties.yml', pr_properties_good.path)
+        zip_file.add('peer-review-config-files/tags.yml', pr_tags_good.path)
+        zip_file.add('peer-review-config-files/criteria.yml', pr_criteria_good.path)
+        zip_file.add('peer-review-config-files/annotations.yml', pr_annotations_good.path)
+      end
+      @assignment_good_zip = fixture_file_upload(zip_path, 'application/zip')
+    end
+
+    shared_examples 'check valid assignment config files' do
+      it 'will not post if on the wrong page' do
+        post_as user, :upload_config_files, params: { upload_files_for_config: @assignment_good_zip,
+                                                      is_timed: false,
+                                                      is_scanned: false }
+        expect(flash[:error].map { |f| extract_text f })
+          .to eq([I18n.t('assignments.wrong_assignment_type',
+                         form_type: Assignment.model_name.human,
+                         upload_type: I18n.t('activerecord.models.timed_assignment.one'))].map { |f| extract_text f })
+      end
+
+      it 'gives the appropriate response status' do
+        subject
+        expect(response.status).to eq(302)
+      end
+
+      it 'uploads with no errors' do
+        subject
+        expect(flash[:error]).to be_nil
+      end
+
+      it "properly configures an assignment's properties" do
+        subject
+        uploaded_assignment = Assignment.find_by(short_identifier: 'mtt_ex_1')
+        uploaded_sample_attributes = {
+          message: uploaded_assignment.message,
+          is_timed: uploaded_assignment.is_timed,
+          scanned_exam: uploaded_assignment.scanned_exam,
+          has_peer_review: uploaded_assignment.has_peer_review,
+          assignment_file_count: uploaded_assignment.assignment_files.count,
+          submission_rule_type: uploaded_assignment.submission_rule.type
+        }
+        expected_sample_attributes = {
+          message: 'Sample midterm to help you practice for our second midterm',
+          is_timed: true,
+          scanned_exam: false,
+          has_peer_review: true,
+          assignment_file_count: 2,
+          submission_rule_type: 'PenaltyDecayPeriodSubmissionRule'
+        }
+        expect(uploaded_sample_attributes).to eq(expected_sample_attributes)
+      end
+
+      it 'uploads all the criteria for an assignment' do
+        subject
+        uploaded_assignment = Assignment.find_by(short_identifier: 'mtt_ex_1')
+        expect(uploaded_assignment.criteria.count).to eq(2)
+      end
+
+      it 'uploads all the annotation categories for an assignment' do
+        subject
+        uploaded_assignment = Assignment.find_by(short_identifier: 'mtt_ex_1')
+        category = AnnotationCategory.find_by(annotation_category_name: 'quod laboriosam')
+        uploaded_category_checks = {
+          annotation_category_count: uploaded_assignment.annotation_categories.count,
+          belongs_to_uploaded_assignment: category.assessment_id == uploaded_assignment.id
+        }
+        expected_category_checks = { annotation_category_count: 1, belongs_to_uploaded_assignment: true }
+        expect(uploaded_category_checks).to eq(expected_category_checks)
+      end
+
+      it 'properly configures all the annotation text for an assignment' do
+        subject
+        category = AnnotationCategory.find_by(annotation_category_name: 'quod laboriosam')
+        uploaded_annotation_text = AnnotationText.where(annotation_category_id: category.id)
+                                                 .pluck_to_hash(:content)
+                                                 .map(&:symbolize_keys)
+        expected_annotation_text = [{ content: 'Sunt optio.' }, { content: 'Quibusdam ut ipsa.' },
+                                    { content: 'Earum voluptate.' }, { content: 'Saepe.' }, { content: 'Non eum.' }]
+        expect(uploaded_annotation_text).to eq(expected_annotation_text)
+      end
+
+      it 'properly uploads a peer review assignment' do
+        subject
+        uploaded_child_assignment = Assignment.find_by(short_identifier: 'mtt_ex_1_peer_review')
+        parent_assignment = Assignment.find(uploaded_child_assignment.parent_assessment_id)
+        uploaded_pr_assessment_data = {
+          message: uploaded_child_assignment.message,
+          is_timed: uploaded_child_assignment.is_timed,
+          scanned_exam: uploaded_child_assignment.scanned_exam,
+          parent_short_id: parent_assignment.short_identifier,
+          num_criteria: uploaded_child_assignment.criteria.count,
+          num_annotations: uploaded_child_assignment.annotation_categories.count
+        }
+        expected_pr_assessment_data = {
+          message: 'Review the sample midterm of your peers to help you practice for our second midterm',
+          is_timed: false,
+          scanned_exam: false,
+          parent_short_id: 'mtt_ex_1',
+          num_criteria: 1,
+          num_annotations: 2
+        }
+        expect(uploaded_pr_assessment_data).to eq(expected_pr_assessment_data)
+      end
+    end
+
+    # Check to ensure appropriate access is given
+    context 'a student' do
+      let(:user) { create :student }
+      it 'should respond with 403' do
+        subject
+        expect(response).to have_http_status(403)
+      end
+    end
+    context 'a grader' do
+      context 'without assignment management permissions' do
+        let(:user) { create :ta }
+        it 'should respond with 403' do
+          subject
+          expect(response).to have_http_status(403)
+        end
+      end
+      context 'with assignment management permissions' do
+        let(:user) { create :ta, manage_assessments: true }
+        include_examples 'check valid assignment config files'
+
+        it 'should have no tags' do
+          subject
+          uploaded_assignment = Assignment.find_by(short_identifier: 'mtt_ex_1')
+          expect(uploaded_assignment.tags.count).to eq(0)
+        end
+
+        it 'should not have peer review tags' do
+          subject
+          uploaded_child_assignment = Assignment.find_by(short_identifier: 'mtt_ex_1_peer_review')
+          expect(uploaded_child_assignment.tags.count).to eq(0)
+        end
+      end
+    end
+    context 'an admin' do
+      let(:user) { create :admin }
+      include_examples 'check valid assignment config files'
+
+      it 'uploads all the tags for an assignment' do
+        subject
+        uploaded_assignment = Assignment.find_by(short_identifier: 'mtt_ex_1')
+        expect(uploaded_assignment.tags.count).to eq(2)
+      end
+    end
   end
 
   describe 'download_and_upload_config_file' do
+    let(:user) { create :admin }
+
+    shared_examples 'assignment content is copied over' do
+      it 'copies over the main assignment attributes' do
+        uploaded_assignment = Assignment.find_by(short_identifier: assignment.short_identifier)
+        received = uploaded_assignment.attributes.except('created_at', 'updated_at', 'id', 'parent_assessment_id')
+        expected = assignment.attributes.except('created_at', 'updated_at', 'id', 'parent_assessment_id')
+        expect(received).to eq(expected)
+      end
+
+      it 'copies over additional assignment properties' do
+        uploaded_assignment = Assignment.find_by(short_identifier: assignment.short_identifier)
+        uploaded_properties = uploaded_assignment.assignment_properties
+        received = uploaded_properties.attributes.except('created_at', 'updated_at', 'id', 'assessment_id')
+        expected = assignment_properties.attributes.except('created_at', 'updated_at', 'id', 'assessment_id')
+        if uploaded_assignment.is_peer_review?
+          # override default token settings from factory
+          expect(expected['token_period']).to eq(1)
+          expected['token_period'] = nil
+        end
+        expect(received).to eq(expected)
+      end
+
+      it 'copies over tags' do
+        uploaded_assignment = Assignment.find_by(short_identifier: assignment.short_identifier)
+        uploaded_tags = uploaded_assignment.tags.pluck_to_hash(:name, :description)
+        uploaded_tags = uploaded_tags.map(&:symbolize_keys)
+        expected_tags = [{ name: tag1.name, description: tag1.description },
+                         { name: tag2.name, description: tag2.description },
+                         { name: tag3.name, description: tag3.description }]
+        expect(uploaded_tags).to eq(expected_tags)
+      end
+
+      it 'copies over annotations' do
+        uploaded_assignment = Assignment.find_by(short_identifier: assignment.short_identifier)
+        uploaded_annotation = uploaded_assignment.annotation_categories
+                                                 .first
+                                                 .attributes
+                                                 .except('created_at', 'updated_at', 'id', 'assessment_id')
+        expected_annotation = annotation.attributes.except('created_at', 'updated_at', 'id', 'assessment_id')
+        expect(uploaded_annotation).to eq(expected_annotation)
+      end
+
+      it 'copies over criteria' do
+        uploaded_assignment = Assignment.find_by(short_identifier: assignment.short_identifier)
+        uploaded_criteria = uploaded_assignment.criteria
+                                               .first
+                                               .attributes
+                                               .except('created_at', 'updated_at', 'id', 'assessment_id')
+        expected_criteria = criteria.attributes.except('created_at', 'updated_at', 'id', 'assessment_id')
+        expect(uploaded_criteria).to eq(expected_criteria)
+      end
+    end
+
+    context 'Normal assignment with everything' do
+      let!(:assignment) { create :assignment, due_date: Time.zone.parse('2042-02-10 15:30:45') }
+      let!(:assignment_properties) { assignment.assignment_properties }
+      let!(:criteria) { create :flexible_criterion, assignment: assignment }
+      let!(:annotation) { create :annotation_category, assignment: assignment }
+      let!(:submission_rule) { create :grace_period_submission_rule, assignment: assignment }
+      let!(:assignment_file1) { create :assignment_file, assignment: assignment }
+      let!(:assignment_file2) { create :assignment_file, filename: 'sample.txt', assignment: assignment }
+      let!(:tag1) { create :tag, assessment_id: assignment.id }
+      let!(:tag2) { create :tag, assessment_id: assignment.id }
+      let!(:tag3) { create :tag, assessment_id: assignment.id }
+
+      before :each do
+        get_as user, :download_config_files, params: { id: assignment.id }
+        zip_name = 'assignment-copy-test-config-files.zip'
+        zip_path = File.join('tmp', zip_name)
+        FileUtils.rm_f(zip_path)
+        File.write(zip_path, response.body, mode: 'wb')
+        assignment_zip = fixture_file_upload(zip_path, 'application/zip')
+        Tag.all.destroy_all
+        Assignment.all.destroy_all
+        post_as user, :upload_config_files, params: { upload_files_for_config: assignment_zip,
+                                                      is_timed: false, is_scanned: false }
+        expect(flash[:error]).to be_nil
+      end
+
+      include_examples 'assignment content is copied over'
+
+      it 'copies over submission rules' do
+        uploaded_assignment = Assignment.find_by(short_identifier: assignment.short_identifier)
+        received_rule = {
+          'type': uploaded_assignment.submission_rule.type,
+          'periods': uploaded_assignment.submission_rule.periods.pluck_to_hash(:deduction, :hours, :interval)
+        }
+        expected_rule = {
+          'type': assignment.submission_rule.type,
+          'periods': assignment.submission_rule.periods.pluck_to_hash(:deduction, :hours, :interval)
+        }
+        expect(received_rule).to eq(expected_rule)
+      end
+
+      it 'copies over required assignments' do
+        uploaded_assignment = Assignment.find_by(short_identifier: assignment.short_identifier)
+        received = uploaded_assignment.assignment_files
+                                      .pluck_to_hash(:filename)
+                                      .map(&:symbolize_keys)
+        expected = [{ filename: assignment_file1.filename },
+                    { filename: assignment_file2.filename }]
+        expect(received).to eq(expected)
+      end
+    end
+
+    context 'Peer review assignment with everything' do
+      let!(:parent_assignment) { create :assignment_with_peer_review, due_date: Time.zone.parse('2042-02-10 15:30:45') }
+      let!(:assignment) { Assignment.find_by(parent_assessment_id: parent_assignment.id) }
+      let!(:assignment_properties) { assignment.assignment_properties }
+      let!(:criteria) { create :flexible_criterion, assignment: assignment }
+      let!(:annotation) { create :annotation_category, assignment: assignment }
+      let!(:tag1) { create :tag, assessment_id: assignment.id }
+      let!(:tag2) { create :tag, assessment_id: assignment.id }
+      let!(:tag3) { create :tag, assessment_id: assignment.id }
+      let!(:tag4) { create :tag, assessment_id: parent_assignment.id }
+
+      before :each do
+        get_as user, :download_config_files, params: { id: parent_assignment.id }
+        zip_name = 'assignment-copy-test-config-files.zip'
+        zip_path = File.join('tmp', zip_name)
+        FileUtils.rm_f(zip_path)
+        File.write(zip_path, response.body, mode: 'wb')
+        assignment_zip = fixture_file_upload(zip_path, 'application/zip')
+        Tag.all.destroy_all
+        Assignment.all.destroy_all
+        post_as user, :upload_config_files, params: { upload_files_for_config: assignment_zip,
+                                                      is_timed: false, is_scanned: false }
+        expect(flash[:error]).to be_nil
+      end
+
+      it 'has a peer review assignment copied' do
+        uploaded_parent_assignment = Assignment.find_by(short_identifier: parent_assignment.short_identifier)
+        uploaded_peer_assignment = Assignment.find_by(short_identifier: assignment.short_identifier)
+        expect(uploaded_parent_assignment.has_peer_review).to eq(true)
+        expect(uploaded_peer_assignment.is_peer_review?).to eq(true)
+      end
+
+      include_examples 'assignment content is copied over'
+    end
   end
 end
