@@ -1,4 +1,5 @@
 ---
 es:
   courses:
-    manage_courses: UPDATE ME
+    view_courses: UPDATE ME
+    no_courses: UPDATE ME

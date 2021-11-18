@@ -1,27 +1,25 @@
 import React from "react";
-import {render} from "react-dom";
 
-export class CourseCard extends React.Component {
-  constructor(props) {
-    super(props);
-  }
+class CourseCard extends React.Component {
+  onClick = () => {
+    window.location += this.props.course_id;
+  };
+
   render() {
     return (
-      <div className="course_card">
-        {/*<a href={Routes.browse_courses(this.props.course_id)}></a>*/}
-        <div className="course_code" id="course_code">
-          <span>{this.props.course_name}</span>
-          <span>{this.props.role_type}</span>
+      <div className="course-card">
+        <div className="course-info" onClick={this.onClick}>
+          <div className="course-role" align="right">
+            {this.props.role_type}
+          </div>
+          <div className="course-code">{this.props.course_name}</div>
         </div>
-        <div id="course_name">
-          <span>{this.props.course_display_name}</span>
+        <div className="course-name">
+          <a href={window.location + this.props.course_id}>{this.props.course_display_name}</a>
         </div>
       </div>
     );
   }
 }
 
-export function makeCourseCard(elem, props) {
-  return render(<CourseCard {...props} />, elem);
-}
 export default CourseCard;
