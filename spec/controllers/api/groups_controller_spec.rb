@@ -1,5 +1,7 @@
 describe Api::GroupsController do
-  let(:course) { create :course }
+  let!(:course) { create :course }
+  let(:assignment) { create :assignment }
+  let(:group) { create :group }
   context 'An unauthenticated request' do
     before :each do
       request.env['HTTP_AUTHORIZATION'] = 'garbage http_header'
@@ -7,31 +9,30 @@ describe Api::GroupsController do
     end
 
     it 'should fail to authenticate a GET index request' do
-      get :index, params: { assignment_id: 1, course_id: course.id }
+      get :index, params: { assignment_id: assignment.id, course_id: course.id }
       expect(response).to have_http_status(403)
     end
 
     it 'should fail to authenticate a GET show request' do
-      get :show, params: { id: 1, assignment_id: 1, course_id: course.id }
+      get :show, params: { assignment_id: assignment.id, id: group.id, course_id: course.id }
       expect(response).to have_http_status(403)
     end
 
     it 'should fail to authenticate a GET annotations request' do
-      get :annotations, params: { id: 1, assignment_id: 1, course_id: course.id }
+      get :annotations, params: { assignment_id: assignment.id, id: group.id, course_id: course.id }
       expect(response).to have_http_status(403)
     end
   end
   context 'An authenticated request requesting' do
-    let(:assignment) { create :assignment, course: course }
     let(:grouping) { create :grouping_with_inviter, assignment: assignment }
-    let(:admin) { create :admin, course: course }
+    let(:admin) { create :admin }
     before :each do
       admin.reset_api_key
       request.env['HTTP_AUTHORIZATION'] = "MarkUsAuth #{admin.api_key.strip}"
     end
     shared_examples 'for a different course' do
       context 'an admin for a different course' do
-        let(:admin) { create :admin }
+        let(:admin) { create :admin, course: create(:course) }
         it 'should return a 403 error' do
           expect(response).to have_http_status(403)
         end
@@ -508,7 +509,6 @@ describe Api::GroupsController do
       end
     end
     describe 'GET annotations' do
-      let(:assignment) { create :assignment }
       let(:grouping) { create :grouping, assignment: assignment }
       let(:submission) { create :version_used_submission, grouping: grouping }
       let(:submission_file) { create :submission_file, submission: submission }
@@ -516,7 +516,7 @@ describe Api::GroupsController do
       let(:response_type) { 'application/xml' }
       before do
         request.env['HTTP_ACCEPT'] = response_type
-        get :annotations, params: { assignment_id: assignment.id, id: grouping.id, course_id: course.id }
+        get :annotations, params: { assignment_id: assignment.id, id: group.id, course_id: course.id }
       end
       include_examples 'for a different course'
       it 'should get annotations for the given group' do

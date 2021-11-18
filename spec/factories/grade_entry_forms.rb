@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :grade_entry_form do
-    course { Course.first || association(:course) }
+    course { request.env['HTTP_AUTHORIZATION'] || association(:course) }
     sequence(:short_identifier) { |i| "Spreadsheet_#{i}" }
     description { Faker::Lorem.sentence }
     message { Faker::Lorem.sentence }

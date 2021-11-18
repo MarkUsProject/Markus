@@ -23,14 +23,14 @@ Rails.application.routes.draw do
             get 'annotations'
             get 'group_ids_by_name'
           end
-          resources :submission_files, except: [:new, :edit, :show] do
+          resources :submission_files, only: [:index, :create] do
             collection do
               delete 'remove_file'
               delete 'remove_folder'
               post 'create_folders'
             end
           end
-          resources :feedback_files, except: [:new, :edit]
+          resources :feedback_files, only: [:index, :create]
           member do
             get 'annotations'
             post 'add_annotations'
@@ -41,21 +41,24 @@ Rails.application.routes.draw do
             delete 'remove_extra_marks'
           end
         end
-        resources :starter_file_groups do
-          member do
-            get 'entries'
-            post 'create_file'
-            post 'create_folder'
-            delete 'remove_file'
-            delete 'remove_folder'
-            get 'download_entries'
-          end
-        end
+        resources :starter_file_groups, only: [:index, :create]
         member do
           get 'test_files'
           get 'grades_summary'
           get 'test_specs'
           post 'update_test_specs'
+        end
+      end
+      resources :feedback_files, only: [:show, :update, :destroy]
+      resources :submission_files, only: [:update, :destroy]
+      resources :starter_file_groups, only: [:show, :update, :destroy] do
+        member do
+          get 'entries'
+          post 'create_file'
+          post 'create_folder'
+          delete 'remove_file'
+          delete 'remove_folder'
+          get 'download_entries'
         end
       end
     end

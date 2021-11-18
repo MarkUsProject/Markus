@@ -12,13 +12,6 @@ module Api
     #  - file_name: Name of the file, if absent all files will be downloaded
     def index
       assignment = Assignment.find_by_id(params[:assignment_id])
-      if assignment.nil?
-        # No assignment with that id
-        render 'shared/http_status', locals: {code: '404', message:
-          'No assignment exists with that id'}, status: 404
-        return
-      end
-
       group = Group.find_by_id(params[:group_id])
       grouping = group&.grouping_for_assignment(assignment.id)
       if group.nil? || grouping.nil?
@@ -30,12 +23,7 @@ module Api
 
       if params[:collected].present?
         submission = grouping&.current_submission_used
-        if submission.nil?
-          # No assignment submission by that group
-          render 'shared/http_status', locals: { code: '404', message:
-            'Submission was not found' }, status: 404
-          return
-        end
+        return page_not_found('Submission was not found') if submission.nil?
       end
 
       if params[:filename].present?
@@ -88,11 +76,7 @@ module Api
 
     def create
       grouping = Grouping.find_by(group_id: params[:group_id], assessment_id: params[:assignment_id])
-      if grouping.nil?
-        render 'shared/http_status', locals: { code: '404', message:
-          'No group with that id exists for the given assignment' }, status: 404
-        return
-      end
+      return page_not_found('No group with that id exists for the given assignment') if grouping.nil?
 
       if has_missing_params?([:filename, :mime_type, :file_content])
         # incomplete/invalid HTTP params
@@ -135,11 +119,7 @@ module Api
 
     def create_folders
       grouping = Grouping.find_by(group_id: params[:group_id], assessment_id: params[:assignment_id])
-      if grouping.nil?
-        render 'shared/http_status', locals: { code: '404', message:
-            'No group with that id exists for the given assignment' }, status: 404
-        return
-      end
+      return page_not_found('No group with that id exists for the given assignment') if grouping.nil?
 
       if has_missing_params?([:folder_path])
         # incomplete/invalid HTTP params
@@ -166,11 +146,7 @@ module Api
 
     def remove_file
       grouping = Grouping.find_by(group_id: params[:group_id], assessment_id: params[:assignment_id])
-      if grouping.nil?
-        render 'shared/http_status', locals: { code: '404', message:
-          'No group with that id exists for the given assignment' }, status: 404
-        return
-      end
+      return page_not_found('No group with that id exists for the given assignment') if grouping.nil?
 
       if has_missing_params?([:filename])
         # incomplete/invalid HTTP params
@@ -198,11 +174,7 @@ module Api
 
     def remove_folder
       grouping = Grouping.find_by(group_id: params[:group_id], assessment_id: params[:assignment_id])
-      if grouping.nil?
-        render 'shared/http_status', locals: { code: '404', message:
-            'No group with that id exists for the given assignment' }, status: 404
-        return
-      end
+      return page_not_found('No group with that id exists for the given assignment') if grouping.nil?
 
       if has_missing_params?([:folder_path])
         # incomplete/invalid HTTP params

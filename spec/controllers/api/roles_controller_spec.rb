@@ -1,5 +1,6 @@
 describe Api::RolesController do
   let(:course) { create :course }
+  let(:admin) { create :admin, course: course }
   context 'An unauthenticated request' do
     before :each do
       request.env['HTTP_AUTHORIZATION'] = 'garbage http_header'
@@ -12,7 +13,7 @@ describe Api::RolesController do
     end
 
     it 'should fail to authenticate a GET show request' do
-      get :show, params: { id: 1, course_id: course.id }
+      get :show, params: { id: admin.id, course_id: course.id }
       expect(response).to have_http_status(403)
     end
 
@@ -23,13 +24,12 @@ describe Api::RolesController do
     end
 
     it 'should fail to authenticate a PUT update request' do
-      put :create, params: { id: 1, course_id: course.id }
+      put :update, params: { id: admin.id, course_id: course.id }
       expect(response).to have_http_status(403)
     end
   end
   context 'An authenticated request' do
     let(:students) { create_list :student, 3, course: course }
-    let(:admin) { create :admin, course: course }
     before :each do
       admin.reset_api_key
       request.env['HTTP_AUTHORIZATION'] = "MarkUsAuth #{admin.api_key.strip}"
@@ -98,8 +98,9 @@ describe Api::RolesController do
     end
     context 'GET show' do
       context 'for a different course' do
+        let(:student) { create :student, course: create(:course) }
         it 'should return a 403 error' do
-          get :index, params: { id: students[0].id, course_id: create(:course).id }
+          get :index, params: { course_id: student.course_id }
           expect(response.status).to eq(403)
         end
       end
@@ -204,8 +205,9 @@ describe Api::RolesController do
       let(:student) { create :student, course: course }
       let(:tmp_student) { build :student, course: course }
       context 'for a different course' do
+        let(:student) { create :student, course: create(:course) }
         it 'should return a 403 error' do
-          put :update, params: { id: student.id, course_id: create(:course).id }
+          put :update, params: { id: student.id, course_id: student.course_id }
           expect(response.status).to eq(403)
         end
       end

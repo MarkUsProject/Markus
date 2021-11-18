@@ -1,5 +1,6 @@
 describe Api::AssignmentsController do
   let(:course) { create :course }
+  let(:assignment) { create :assignment, course: course }
   context 'An unauthenticated request' do
     before :each do
       request.env['HTTP_AUTHORIZATION'] = 'garbage http_header'
@@ -12,7 +13,7 @@ describe Api::AssignmentsController do
     end
 
     it 'should fail to authenticate a GET show request' do
-      get :show, params: { id: 1, course_id: course.id }
+      get :show, params: { id: assignment.id, course_id: course.id }
       expect(response).to have_http_status(403)
     end
 
@@ -23,12 +24,11 @@ describe Api::AssignmentsController do
     end
 
     it 'should fail to authenticate a PUT update request' do
-      put :create, params: { id: 1, course_id: course.id }
+      put :update, params: { id: assignment.id, course_id: course.id }
       expect(response).to have_http_status(403)
     end
   end
   context 'An authenticated request requesting' do
-    let(:assignment) { create :assignment, course: course }
     before :each do
       admin = create :admin, course: course
       admin.reset_api_key
@@ -58,7 +58,7 @@ describe Api::AssignmentsController do
         end
         context 'with a single assignment in a different course' do
           before do
-            create :assignment
+            create :assignment, course: create(:course)
             get :index, params: { course_id: course.id }
           end
           it 'should be successful' do
@@ -83,7 +83,7 @@ describe Api::AssignmentsController do
         end
         context 'with multiple assignments in a different course' do
           before :each do
-            create_list :assignment, 5
+            create_list :assignment, 5, course: create(:course)
             get :index, params: { course_id: course.id }
           end
           it 'should be successful' do
@@ -116,7 +116,7 @@ describe Api::AssignmentsController do
         end
         context 'with a single assignment in a different course' do
           before do
-            create :assignment
+            create :assignment, course: create(:course)
             get :index, params: { course_id: course.id }
           end
           it 'should be successful' do
@@ -141,7 +141,7 @@ describe Api::AssignmentsController do
         end
         context 'with a multiple assignments in a different course' do
           before do
-            create_list :assignment, 5
+            create_list :assignment, 5, course: create(:course)
             get :index, params: { course_id: course.id }
           end
           it 'should be successful' do
@@ -193,9 +193,9 @@ describe Api::AssignmentsController do
         end
       end
       context 'requesting an assignment in a different course' do
+        let(:assignment) { create :assignment, course: create(:course) }
         it 'should response with 403' do
-          assignment = create :assignment
-          get :show, params: { id: assignment.id, course_id: assignment.course_id }
+          get :show, params: { id: assignment.id, course_id: assignment.course.id }
           expect(response.status).to eq(403)
         end
       end
@@ -303,24 +303,24 @@ describe Api::AssignmentsController do
     context 'PUT update' do
       it 'should update an existing assignment' do
         new_desc = assignment.description + 'more!'
-        put :update, params: { id: assignment.id, description: new_desc, course_id: course.id }
+        put :update, params: { id: assignment.id, course_id: course.id, description: new_desc }
         expect(response.status).to eq(200)
       end
       it 'should not update a short identifier' do
         new_short_id = assignment.short_identifier + 'more!'
-        put :update, params: { id: assignment.id, short_identifier: new_short_id, course_id: course.id }
+        put :update, params: { id: assignment.id, course_id: course.id, short_identifier: new_short_id }
         expect(response.status).to eq(500)
       end
       it 'should not update an assignment that does not exist' do
         new_desc = assignment.description + 'more!'
-        put :update, params: { id: -1, description: new_desc, course_id: course.id }
+        put :update, params: { id: -1, course_id: course.id, description: new_desc }
         expect(response.status).to eq(404)
       end
       context 'for a different course' do
-        let(:assignment) { create :assignment }
+        let(:assignment) { create :assignment, course: create(:course) }
         it 'should response with 403' do
           new_desc = assignment.description + 'more!'
-          put :update, params: { id: assignment.id, description: new_desc, course_id: assignment.course.id }
+          put :update, params: { id: assignment.id, course_id: assignment.course.id, description: new_desc }
           expect(response.status).to eq(403)
         end
       end
@@ -334,7 +334,7 @@ describe Api::AssignmentsController do
         expect(response.status).to eq(200)
       end
       context 'for a different course' do
-        let(:assignment) { create :assignment }
+        let(:assignment) { create :assignment, course: create(:course) }
         it 'should response with 403' do
           get :test_files, params: { id: assignment.id, course_id: assignment.course.id }
           expect(response.status).to eq(403)
@@ -372,7 +372,7 @@ describe Api::AssignmentsController do
         expect(response.status).to eq 404
       end
       context 'for a different course' do
-        let(:assignment) { create :assignment }
+        let(:assignment) { create :assignment, course: create(:course) }
         it 'should response with 403' do
           get :test_specs, params: { id: assignment.id, course_id: assignment.course.id }
           expect(response.status).to eq(403)
@@ -388,7 +388,7 @@ describe Api::AssignmentsController do
         let(:content) { { a: { tester: 'python' }.stringify_keys }.stringify_keys }
         before :each do
           allow_any_instance_of(AutotestSpecsJob).to receive(:perform_now)
-          post :update_test_specs, params: { id: assignment.id, specs: content, course_id: course.id }
+          post :update_test_specs, params: { id: assignment.id, course_id: course.id, specs: content }
         end
         it 'should write the content to the specs file' do
           expect(JSON.parse(File.read(assignment.autotest_settings_file))).to eq content
@@ -399,7 +399,7 @@ describe Api::AssignmentsController do
         let(:content) { { a: { tester: 'python' }.stringify_keys }.stringify_keys }
         before :each do
           allow_any_instance_of(AutotestSpecsJob).to receive(:perform_now)
-          post :update_test_specs, params: { id: assignment.id, specs: JSON.dump(content), course_id: course.id }
+          post :update_test_specs, params: { id: assignment.id, course_id: course.id, specs: JSON.dump(content) }
         end
         it 'should write the content to the specs file' do
           expect(JSON.parse(File.read(assignment.autotest_settings_file))).to eq content
@@ -409,7 +409,7 @@ describe Api::AssignmentsController do
       context 'when the content is not a json string' do
         let(:content) { 'abcd' }
         before :each do
-          post :update_test_specs, params: { id: assignment.id, specs: content, course_id: course.id }
+          post :update_test_specs, params: { id: assignment.id, course_id: course.id, specs: content }
         end
         it 'should write the content to the specs file' do
           expect(File.read(assignment.autotest_settings_file)).to eq ''
@@ -417,13 +417,13 @@ describe Api::AssignmentsController do
         it('should not be successful') { expect(response.status).to eq 422 }
       end
       it 'should fail if the assignment does not exist' do
-        post :update_test_specs, params: { id: -1, specs: '123', course_id: course.id }
+        post :update_test_specs, params: { id: -1, course_id: course.id, specs: '123' }
         expect(response.status).to eq 404
       end
       context 'for a different course' do
-        let(:assignment) { create :assignment }
+        let(:assignment) { create :assignment, course: create(:course) }
         it 'should response with 403' do
-          post :update_test_specs, params: { id: assignment.id, specs: '{}', course_id: assignment.course.id }
+          post :update_test_specs, params: { id: assignment.id, course_id: assignment.course.id, specs: '{}' }
           expect(response.status).to eq(403)
         end
       end

@@ -7,7 +7,7 @@ module Api
     # Sends the contents of the specified grade entry form
     # Requires: id
     def show
-      grade_entry_form = GradeEntryForm.find(params[:id])
+      grade_entry_form = record
       send_data grade_entry_form.export_as_csv,
                 type: 'text/csv',
                 filename: "#{grade_entry_form.short_identifier}_grades_report.csv",
@@ -47,7 +47,7 @@ module Api
       end
 
       # check if there is an existing assignment
-      form = GradeEntryForm.find_by(short_identifier: params[:short_identifier], course_id: params[:course_id])
+      form = current_course.grade_entry_forms.find_by(short_identifier: params[:short_identifier])
       unless form.nil?
         render 'shared/http_status', locals: { code: '409', message:
           'Grade Entry Form already exists' }, status: 409
@@ -90,7 +90,7 @@ module Api
     # updated, otherwise a new grade_entry_item will be created
     def update
       # check if there is an existing assignment
-      form = GradeEntryForm.find_by_id(params[:id])
+      form = record
       if form.nil?
         render 'shared/http_status', locals: { code: '404', message:
           'Grade Entry Form not found' }, status: 404
@@ -143,13 +143,7 @@ module Api
         return
       end
 
-      begin
-        grade_entry_form = GradeEntryForm.find(params[:id])
-      rescue ActiveRecord::RecordNotFound => e
-        # could not find grade entry form
-        render 'shared/http_status', locals: { code: '404', message: e }, status: 404
-        return
-      end
+      grade_entry_form = record
 
       grade_entry_student = grade_entry_form.grade_entry_students
                                             .joins(:user)

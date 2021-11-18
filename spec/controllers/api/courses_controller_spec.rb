@@ -24,7 +24,7 @@ describe Api::CoursesController do
     end
     context 'with multiple courses as admin' do
       before :each do
-        create_list :admin, 4, human: human
+        build_list(:admin, 4, human: human) { |admin| admin.update(course_id: create(:course).id) }
         get :index
       end
       it 'should be successful' do

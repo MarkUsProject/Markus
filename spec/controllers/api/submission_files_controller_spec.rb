@@ -1,9 +1,15 @@
 describe Api::SubmissionFilesController do
   let(:course) { create :course }
+  let(:assignment) { create :assignment, course: course }
+  let(:grouping) { create :grouping_with_inviter, assignment: assignment }
+  let(:group) { grouping.group }
+  let(:file_content) { Array.new(2) { Faker::TvShows::HeyArnold.quote } }
+  let(:file_names) { Array.new(2) { Faker::File.file_name(dir: '') } }
+  let(:admin) { create :admin, course: course }
 
   shared_examples 'for a different course' do
     context 'admin in a different course' do
-      let(:admin) { create :admin }
+      let(:admin) { create :admin, course: create(:course) }
       it 'should return a 403 error' do
         expect(response).to have_http_status(403)
       end
@@ -17,28 +23,22 @@ describe Api::SubmissionFilesController do
     end
 
     it 'should fail to authenticate a GET index request' do
-      get :index, params: { assignment_id: 1, group_id: 1, course_id: course.id }
+      get :index, params: { assignment_id: assignment.id, group_id: group.id, course_id: course.id }
       expect(response).to have_http_status(403)
     end
 
     it 'should fail to authenticate a POST create request' do
-      post :create, params: { assignment_id: 1, group_id: 1, course_id: course.id }
+      post :create, params: { assignment_id: assignment.id, group_id: group.id, course_id: course.id }
 
       expect(response).to have_http_status(403)
     end
 
     it 'should fail to authenticate a PUT update request' do
-      put :create, params: { id: 1, assignment_id: 1, group_id: 1, course_id: course.id }
+      put :create, params: { assignment_id: assignment.id, group_id: group.id, course_id: course.id }
       expect(response).to have_http_status(403)
     end
   end
   context 'An authenticated request' do
-    let(:assignment) { create :assignment, course: course }
-    let(:grouping) { create :grouping_with_inviter, assignment: assignment }
-    let(:group) { grouping.group }
-    let(:file_content) { Array.new(2) { Faker::TvShows::HeyArnold.quote } }
-    let(:file_names) { Array.new(2) { Faker::File.file_name(dir: '') } }
-    let(:admin) { create :admin, course: course }
     before :each do
       admin.reset_api_key
       request.env['HTTP_AUTHORIZATION'] = "MarkUsAuth #{admin.api_key.strip}"

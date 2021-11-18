@@ -1,5 +1,6 @@
 describe Api::GradeEntryFormsController do
   let(:course) { create :course }
+  let(:grade_entry_form) { create :grade_entry_form, course: course }
   context 'An unauthenticated request' do
     before :each do
       request.env['HTTP_AUTHORIZATION'] = 'garbage http_header'
@@ -12,7 +13,7 @@ describe Api::GradeEntryFormsController do
     end
 
     it 'should fail to authenticate a GET show request' do
-      get :show, params: { id: 1, course_id: course.id }
+      get :show, params: { id: grade_entry_form.id, course_id: course.id }
       expect(response).to have_http_status(403)
     end
 
@@ -23,12 +24,11 @@ describe Api::GradeEntryFormsController do
     end
 
     it 'should fail to authenticate a PUT update request' do
-      put :create, params: { id: 1, course_id: course.id }
+      put :update, params: { id: grade_entry_form.id, course_id: course.id }
       expect(response).to have_http_status(403)
     end
   end
   context 'An authenticated request requesting' do
-    let(:grade_entry_form) { create :grade_entry_form, course: course }
     before :each do
       admin = create :admin, course: course
       admin.reset_api_key
@@ -59,7 +59,7 @@ describe Api::GradeEntryFormsController do
         end
         context 'with a single grade entry form in a different course' do
           before do
-            create :grade_entry_form
+            create :grade_entry_form, course: create(:course)
             get :index, params: { course_id: course.id }
           end
           it 'should be successful' do
@@ -86,7 +86,7 @@ describe Api::GradeEntryFormsController do
         end
         context 'with multiple grade entry forms in a different course' do
           before :each do
-            create_list :grade_entry_form, 5
+            create_list :grade_entry_form, 5, course: create(:course)
             get :index, params: { course_id: course.id }
           end
           it 'should be successful' do
@@ -119,7 +119,7 @@ describe Api::GradeEntryFormsController do
         end
         context 'with a single grade entry form in a different course' do
           before do
-            create :grade_entry_form
+            create :grade_entry_form, course: create(:course)
             get :index, params: { course_id: course.id }
           end
           it 'should be successful' do
@@ -144,7 +144,7 @@ describe Api::GradeEntryFormsController do
         end
         context 'with a multiple grade entry forms in a different course' do
           before do
-            create_list :grade_entry_form, 5
+            create_list :grade_entry_form, 5, course: create(:course)
             get :index, params: { course_id: course.id }
           end
           it 'should be successful' do
@@ -172,7 +172,7 @@ describe Api::GradeEntryFormsController do
       end
       context 'requesting a grade entry form in a different course' do
         it 'should response with 403' do
-          grade_entry_form = create :grade_entry_form
+          grade_entry_form = create :grade_entry_form, course: create(:course)
           get :show, params: { id: grade_entry_form.id, course_id: grade_entry_form.course_id }
           expect(response.status).to eq(403)
         end
@@ -271,7 +271,7 @@ describe Api::GradeEntryFormsController do
         expect(response.status).to eq(404)
       end
       context 'for a different course' do
-        let(:grade_entry_form) { create :grade_entry_form }
+        let(:grade_entry_form) { create :grade_entry_form, course: create(:course) }
         it 'should response with 403' do
           new_desc = grade_entry_form.description + 'more!'
           put :update, params: { id: grade_entry_form.id, description: new_desc, course_id: grade_entry_form.course.id }

@@ -52,8 +52,7 @@ describe Api::StarterFileGroupsController do
   describe '#update' do
     subject { post :update, params: params }
     let(:starter_file_group) { build :starter_file_group }
-    let(:params) { { assignment_id: assignment.id, course_id: course.id, id: starter_file_group.id || -1 } }
-    include_examples 'unauthenticated request'
+    let(:params) { { course_id: course.id, id: starter_file_group.id || -1 } }
 
     context 'when the starter code group exists' do
       context 'for the given assignment' do
@@ -61,9 +60,9 @@ describe Api::StarterFileGroupsController do
           create :starter_file_group, assignment: assignment, name: 'a', entry_rename: 'a', use_rename: false
         end
         let(:params) do
-          { assignment_id: assignment.id, course_id: course.id,
-            id: starter_file_group.id, name: 'b', entry_rename: 'b', use_rename: true }
+          { course_id: course.id, id: starter_file_group.id, name: 'b', entry_rename: 'b', use_rename: true }
         end
+        include_examples 'unauthenticated request'
         it 'should update the name' do
           subject
           expect(starter_file_group.reload.name).to eq 'b'
@@ -82,7 +81,9 @@ describe Api::StarterFileGroupsController do
         end
       end
       context 'for a different assignment' do
-        let(:starter_file_group) { create :starter_file_group }
+        let(:starter_file_group) do
+          create :starter_file_group, assignment: create(:assignment, course: create(:course))
+        end
         it 'should return a 404 error' do
           subject
           expect(response.status).to eq(404)
@@ -98,10 +99,9 @@ describe Api::StarterFileGroupsController do
   end
   describe '#destroy' do
     subject do
-      delete :destroy, params: { assignment_id: assignment.id, course_id: course.id, id: starter_file_group.id || -1 }
+      delete :destroy, params: { course_id: course.id, id: starter_file_group.id || -1 }
     end
     let(:starter_file_group) { build :starter_file_group }
-    include_examples 'unauthenticated request'
 
     context 'when the starter file gorup exists' do
       context 'for this assignment' do
@@ -110,9 +110,12 @@ describe Api::StarterFileGroupsController do
           subject
           expect { starter_file_group.reload }.to raise_error(ActiveRecord::RecordNotFound)
         end
+        include_examples 'unauthenticated request'
       end
       context 'for a different assignment' do
-        let(:starter_file_group) { create :starter_file_group }
+        let(:starter_file_group) do
+          create :starter_file_group, assignment: create(:assignment, course: create(:course))
+        end
         it 'should return a 404 error' do
           subject
           expect(response.status).to eq(404)
@@ -171,10 +174,9 @@ describe Api::StarterFileGroupsController do
   end
   describe '#show' do
     subject do
-      get :show, params: { assignment_id: assignment.id, course_id: course.id, id: starter_file_group.id || 1 }
+      get :show, params: { course_id: course.id, id: starter_file_group.id || 1 }
     end
     let(:starter_file_group) { build :starter_file_group }
-    include_examples 'unauthenticated request'
     context 'when there are starter file groups for this assignment' do
       let(:starter_file_group) { create :starter_file_group, assignment: assignment }
       let(:data) do
@@ -182,9 +184,10 @@ describe Api::StarterFileGroupsController do
                   .pluck_to_hash(:id, :assessment_id, :entry_rename, :use_rename, :name)
                   .first
       end
-      before { subject }
+      it_behaves_like 'unauthenticated request'
       context 'expecting xml' do
         it 'should contain the correct data' do
+          subject
           stringed_data = data.transform_values(&:to_s)
           expect(Hash.from_xml(response.body)['starter_file_group']).to eq stringed_data
         end
@@ -192,6 +195,7 @@ describe Api::StarterFileGroupsController do
       context 'expecting json' do
         let(:http_accept) { 'application/json' }
         it 'should contain the correct data' do
+          subject
           expect(JSON.parse(response.body)).to eq data
         end
       end
@@ -234,14 +238,13 @@ describe Api::StarterFileGroupsController do
       post :create_file, params: { filename: 'a',
                                    file_content: 'a',
                                    course_id: course.id,
-                                   assignment_id: assignment.id,
                                    id: starter_file_group.id || -1 }
     end
     let(:starter_file_group) { build :starter_file_group }
-    include_examples 'unauthenticated request'
     context 'when the starter file exists' do
       context 'for this assignment' do
         let(:starter_file_group) { create :starter_file_group_with_entries, assignment: assignment }
+        include_examples 'unauthenticated request'
         it 'should add a file to the group' do
           subject
           expect(starter_file_group.files_and_dirs).to include 'a'
@@ -253,7 +256,9 @@ describe Api::StarterFileGroupsController do
         include_examples 'updates starter_file_changed'
       end
       context 'for a different assignment' do
-        let(:starter_file_group) { create :starter_file_group }
+        let(:starter_file_group) do
+          create :starter_file_group, assignment: create(:assignment, course: create(:course))
+        end
         it 'should return a 404 error' do
           subject
           expect(response.status).to eq(404)
@@ -269,14 +274,13 @@ describe Api::StarterFileGroupsController do
   end
   describe '#create_folder' do
     subject do
-      post :create_folder, params: { folder_path: 'a', assignment_id: assignment.id,
-                                     course_id: course.id, id: starter_file_group.id || -1 }
+      post :create_folder, params: { folder_path: 'a', course_id: course.id, id: starter_file_group.id || -1 }
     end
     let(:starter_file_group) { build :starter_file_group }
-    include_examples 'unauthenticated request'
     context 'when the starter file exists' do
       context 'for this assignment' do
         let(:starter_file_group) { create :starter_file_group_with_entries, assignment: assignment }
+        include_examples 'unauthenticated request'
         it 'should add a folder to the group' do
           subject
           expect(starter_file_group.files_and_dirs).to include 'a'
@@ -288,7 +292,9 @@ describe Api::StarterFileGroupsController do
         include_examples 'updates starter_file_changed'
       end
       context 'for a different assignment' do
-        let(:starter_file_group) { create :starter_file_group }
+        let(:starter_file_group) do
+          create :starter_file_group, assignment: create(:assignment, course: create(:course))
+        end
         it 'should return a 404 error' do
           subject
           expect(response.status).to eq(404)
@@ -304,14 +310,13 @@ describe Api::StarterFileGroupsController do
   end
   describe '#remove_file' do
     subject do
-      delete :remove_file, params: { filename: 'q2.txt', assignment_id: assignment.id,
-                                     course_id: course.id, id: starter_file_group.id || -1 }
+      delete :remove_file, params: { filename: 'q2.txt', course_id: course.id, id: starter_file_group.id || -1 }
     end
     let(:starter_file_group) { build :starter_file_group }
-    include_examples 'unauthenticated request'
     context 'when the starter file exists' do
       context 'for this assignment' do
         let(:starter_file_group) { create :starter_file_group_with_entries, assignment: assignment }
+        include_examples 'unauthenticated request'
         it 'should remove a file from the group' do
           subject
           expect(starter_file_group.files_and_dirs).not_to include 'q2.txt'
@@ -323,7 +328,9 @@ describe Api::StarterFileGroupsController do
         include_examples 'updates starter_file_changed'
       end
       context 'for a different assignment' do
-        let(:starter_file_group) { create :starter_file_group }
+        let(:starter_file_group) do
+          create :starter_file_group, assignment: create(:assignment, course: create(:course))
+        end
         it 'should return a 404 error' do
           subject
           expect(response.status).to eq(404)
@@ -340,15 +347,14 @@ describe Api::StarterFileGroupsController do
   describe '#remove_folder' do
     subject do
       delete :remove_folder, params: { folder_path: 'q1',
-                                       assignment_id: assignment.id,
                                        course_id: course.id,
                                        id: starter_file_group.id || -1 }
     end
     let(:starter_file_group) { build :starter_file_group }
-    include_examples 'unauthenticated request'
     context 'when the starter file exists' do
       context 'for this assignment' do
         let(:starter_file_group) { create :starter_file_group_with_entries, assignment: assignment }
+        include_examples 'unauthenticated request'
         it 'should remove a folder and all its descendants from the group' do
           subject
           expect(starter_file_group.files_and_dirs).not_to include 'q1'
@@ -361,7 +367,9 @@ describe Api::StarterFileGroupsController do
         include_examples 'updates starter_file_changed'
       end
       context 'for a different assignment' do
-        let(:starter_file_group) { create :starter_file_group }
+        let(:starter_file_group) do
+          create :starter_file_group, assignment: create(:assignment, course: create(:course))
+        end
         it 'should return a 404 error' do
           subject
           expect(response.status).to eq(404)
@@ -377,28 +385,31 @@ describe Api::StarterFileGroupsController do
   end
   describe '#entries' do
     subject do
-      get :entries, params: { assignment_id: assignment.id, course_id: course.id, id: starter_file_group.id || -1 }
+      get :entries, params: { course_id: course.id, id: starter_file_group.id || -1 }
     end
     let(:starter_file_group) { build :starter_file_group }
-    include_examples 'unauthenticated request'
     context 'when the starter file exists' do
       context 'for this assignment' do
         let(:starter_file_group) { create :starter_file_group_with_entries, assignment: assignment }
-        before { subject }
+        include_examples 'unauthenticated request'
         context 'expecting xml' do
           it 'should contain the correct data' do
+            subject
             expect(Hash.from_xml(response.body)['paths']['path']).to contain_exactly('q1', 'q1/q1.txt', 'q2.txt')
           end
         end
         context 'expecting json' do
           let(:http_accept) { 'application/json' }
           it 'should contain the correct data' do
+            subject
             expect(JSON.parse(response.body)).to contain_exactly('q1', 'q1/q1.txt', 'q2.txt')
           end
         end
       end
       context 'for a different assignment' do
-        let(:starter_file_group) { create :starter_file_group }
+        let(:starter_file_group) do
+          create :starter_file_group, assignment: create(:assignment, course: create(:course))
+        end
         it 'should return a 404 error' do
           subject
           expect(response.status).to eq(404)
@@ -414,14 +425,13 @@ describe Api::StarterFileGroupsController do
   end
   describe '#download_entries' do
     subject do
-      get :download_entries, params: { assignment_id: assignment.id,
-                                       course_id: course.id, id: starter_file_group.id || -1 }
+      get :download_entries, params: { course_id: course.id, id: starter_file_group.id || -1 }
     end
     let(:starter_file_group) { build :starter_file_group }
-    include_examples 'unauthenticated request'
     context 'when the starter file exists' do
       context 'for this assignment' do
         let(:starter_file_group) { create :starter_file_group_with_entries, assignment: assignment }
+        include_examples 'unauthenticated request'
         it 'should send a zip file containing the correct content' do
           expect(controller).to receive(:send_file) do |file_path|
             Zip::File.open(Rails.root + file_path) do |zipfile|
@@ -434,7 +444,9 @@ describe Api::StarterFileGroupsController do
         end
       end
       context 'for a different assignment' do
-        let(:starter_file_group) { create :starter_file_group }
+        let(:starter_file_group) do
+          create :starter_file_group, assignment: create(:assignment, course: create(:course))
+        end
         it 'should return a 404 error' do
           subject
           expect(response.status).to eq(404)

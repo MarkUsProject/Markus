@@ -26,7 +26,7 @@ class ApplicationController < ActionController::Base
   # activate i18n for renaming constants in views
   before_action :set_locale, :set_markus_version, :get_file_encodings
   # check for active session on every page
-  before_action :authenticate, :check_course_switch, except: [:login, :page_not_found, :check_timeout]
+  before_action :authenticate, :check_course_switch, :check_record, except: [:login, :page_not_found, :check_timeout]
   # check for AJAX requests
   after_action :flash_to_headers
 

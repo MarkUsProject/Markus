@@ -6,20 +6,21 @@ module Api
   class MainApiController < ActionController::Base
     include ActionPolicy::Controller, SessionHandler
 
-    before_action :check_format, :check_course, :authenticate
+    before_action :check_format, :check_record, :authenticate
     skip_before_action :verify_authenticity_token
 
-    authorize :user, through: :real_user # No role switch available for Api routes
-    authorize :role, through: :real_role
+    authorize :real_user, through: :real_user
+    authorize :real_role, through: :real_role
+    authorize :role, through: :current_role
     verify_authorized
     rescue_from ActionPolicy::Unauthorized, with: :user_not_authorized
     before_action { authorize! }
 
     AUTHTYPE = 'MarkUsAuth'.freeze
 
-    def page_not_found
+    def page_not_found(message = HttpStatusHelper::ERROR_CODE['message']['404'])
       render 'shared/http_status',
-             locals: { code: '404', message: HttpStatusHelper::ERROR_CODE['message']['404'] },
+             locals: { code: '404', message: message },
              status: 404,
              formats: request.format.symbol
     end
@@ -30,6 +31,8 @@ module Api
     # HTTP header comes a Base 64 encoded MD5 digest of the user's private key.
     # Note that remote authentication is not supported. API key must be used.
     def authenticate
+      api_key = parse_auth_token(request.headers['HTTP_AUTHORIZATION'])
+      return user_not_authorized if api_key.nil?
       @real_user = User.find_by_api_key(parse_auth_token(request.headers['HTTP_AUTHORIZATION']))
       user_not_authorized if @real_user.nil?
     end
@@ -47,10 +50,6 @@ module Api
         # 406 is the default status code when the format is not support
         head :not_acceptable
       end
-    end
-
-    def check_course
-      page_not_found if current_course.nil?
     end
 
     # Helper method for parsing the authentication token

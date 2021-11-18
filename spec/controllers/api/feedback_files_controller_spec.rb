@@ -19,8 +19,7 @@ describe Api::FeedbackFilesController do
     end
 
     it 'should fail to authenticate a GET show request' do
-      get :show, params: { id: 1, assignment_id: grouping.assignment.id,
-                           group_id: grouping.group.id, course_id: course.id }
+      get :show, params: { id: feedback_files.first.id, course_id: course.id }
       expect(response).to have_http_status :forbidden
     end
 
@@ -30,14 +29,12 @@ describe Api::FeedbackFilesController do
     end
 
     it 'should fail to authenticate a PUT update request' do
-      put :create, params: { id: 1, assignment_id: grouping.assignment.id,
-                             group_id: grouping.group.id, course_id: course.id }
+      put :update, params: { id: feedback_files.first.id, course_id: course.id }
       expect(response).to have_http_status :forbidden
     end
 
     it 'should fail to authenticate a DELETE destroy request' do
-      delete :destroy, params: { id: 1, assignment_id: grouping.assignment.id,
-                                 group_id: grouping.group.id, course_id: course.id }
+      delete :destroy, params: { id: feedback_files.first.id, course_id: course.id }
       expect(response).to have_http_status :forbidden
     end
   end
@@ -100,46 +97,24 @@ describe Api::FeedbackFilesController do
       context 'expecting an xml response' do
         before :each do
           request.env['HTTP_ACCEPT'] = 'application/xml'
+          get :show, params: { id: feedback_files.first.id, course_id: course.id }
         end
         it 'should be successful' do
-          get :show, params: {
-            id: feedback_files.first.id,
-            group_id: grouping.group.id,
-            assignment_id: grouping.assignment.id,
-            course_id: course.id
-          }
           expect(response).to have_http_status :success
         end
         it 'should return the file content' do
-          get :show, params: {
-            id: feedback_files.first.id,
-            group_id: grouping.group.id,
-            assignment_id: grouping.assignment.id,
-            course_id: course.id
-          }
           expect(response.body).to eq(feedback_files.first.file_content)
         end
       end
       context 'expecting an json response' do
         before :each do
           request.env['HTTP_ACCEPT'] = 'application/json'
+          get :show, params: { id: feedback_files.first.id, course_id: course.id }
         end
         it 'should be successful' do
-          get :show, params: {
-            id: feedback_files.first.id,
-            group_id: grouping.group.id,
-            assignment_id: grouping.assignment.id,
-            course_id: course.id
-          }
           expect(response).to have_http_status :success
         end
         it 'should return the file content' do
-          get :show, params: {
-            id: feedback_files.first.id,
-            group_id: grouping.group.id,
-            assignment_id: grouping.assignment.id,
-            course_id: course.id
-          }
           expect(response.body).to eq(feedback_files.first.file_content)
         end
       end

@@ -34,11 +34,41 @@ module SessionHandler
   end
 
   def current_course
-    if controller_name == 'courses'
-      @current_course ||= Course.find_by(id: params[:id])
-    else
-      @current_course ||= Course.find_by(id: params[:course_id])
+    @current_course ||= if controller_name == 'courses'
+                          record
+                        else
+                          parent_records.select { |r| r.is_a? Course }.first
+                        end
+  end
+
+  # Returns the record specified by params[:id]
+  def record
+    @record ||= controller_name.classify
+                               .constantize
+                               .find_by(id: request.path_parameters[:id]) if request.path_parameters[:id]
+  end
+
+  # When the current route is a nested route, get the parameters whose name matches *_id.
+  def parent_params
+    request.path_parameters.keys.select { |k| k.end_with?('_id') }
+  end
+
+  def parent_records
+    @parent_records ||= parent_params.map do |key|
+      key.to_s.split('_').first.classify.constantize.find_by(id: params[key])
     end
+  end
+
+  # Render a 404 error if a record or parent_records are expected to exist but does not because a non-existant id was
+  # passed as a parameter. Also renders a 404 if any of the records is not associated with the current course
+  #
+  # Note: his does not check if the record and parent_records are actually associated to each other when a parent record
+  # is not a Course. Because of this, non-shallow routes should check those associations themselves and render a 404
+  # error if needed.
+  def check_record
+    return page_not_found if params[:id] && record.nil? || parent_params.length != parent_records.compact.length
+    page_not_found if [record, *parent_records].compact
+                                               .reject { |r| r.is_a? Course }.any? { |r| r&.course != current_course }
   end
 
   # Check if there's any user associated with this session
