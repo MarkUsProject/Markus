@@ -1197,16 +1197,17 @@ class Assignment < Assessment
     end
   end
 
-  # Writes this assignment's starter files and settings to the +dir_name+ located in the +zip_file+.
-  # The settings for this assignment's starter files will be stored in a file located at +settings_filepath+
-  def starter_file_config_to_zip(zip_file, dir_name, settings_filepath)
+  # Writes this assignment's starter file settings to the file located at +settings_filepath+ located in 
+  # the +zip_file+. Also writes the starter files for this assignment in the same directory as +settings_filepath+.
+  def starter_file_config_to_zip(zip_file, settings_filepath)
     default_starter_group = nil
     download_count = 1
     group_data = []
+    directory_path = File.dirname(settings_filepath)
     self.starter_file_groups.find_each do |starter_file_group|
       group_name = "#{download_count}: #{starter_file_group.name}"
       group_name = group_name.gsub(File::SEPARATOR, '')
-      starter_file_group.write_starter_files_to_zip(zip_file, File.join(dir_name, group_name))
+      starter_file_group.write_starter_files_to_zip(zip_file, File.join(directory_path, group_name))
       if starter_file_group.id == self.default_starter_file_group_id
         default_starter_group = group_name
       end

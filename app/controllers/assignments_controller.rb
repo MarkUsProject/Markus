@@ -12,21 +12,17 @@ class AssignmentsController < ApplicationController
     p.style_src :self, "'unsafe-inline'"
   end
 
-  CONFIG_DIRS = {
-    peer_review: 'peer-review-config-files',
-    starter_files: 'starter-file-config-files'
-  }.freeze
-
   CONFIG_FILES = {
     properties: 'properties.yml',
     tags: 'tags.yml',
     criteria: 'criteria.yml',
     annotations: 'annotations.yml',
-    starter_files: File.join(CONFIG_DIRS[:starter_files], 'starter-file-rules.yml'),
-    peer_review_properties: File.join(CONFIG_DIRS[:peer_review], 'properties.yml'),
-    peer_review_tags: File.join(CONFIG_DIRS[:peer_review], 'tags.yml'),
-    peer_review_criteria: File.join(CONFIG_DIRS[:peer_review], 'criteria.yml'),
-    peer_review_annotations: File.join(CONFIG_DIRS[:peer_review], 'annotations.yml')
+    starter_files: File.join('starter-file-config-files', 'starter-file-rules.yml'),
+    peer_review_properties: File.join('peer-review-config-files', 'properties.yml'),
+    peer_review_tags: File.join('peer-review-config-files', 'tags.yml'),
+    peer_review_criteria: File.join('peer-review-config-files', 'criteria.yml'),
+    peer_review_annotations: File.join('peer-review-config-files', 'annotations.yml'),
+    peer_review_starter_files: File.join('peer-review-config-files', 'starter-file-config-files', 'starter-file-rules.yml')
   }.freeze
 
   # Publicly accessible actions ---------------------------------------
@@ -591,7 +587,7 @@ class AssignmentsController < ApplicationController
       zipfile.get_output_stream(CONFIG_FILES[:annotations]) do |f|
         f.write annotation_categories_to_yml(assignment.annotation_categories)
       end
-      assignment.starter_file_config_to_zip(zipfile, CONFIG_DIRS[:starter_files], CONFIG_FILES[:starter_files])
+      assignment.starter_file_config_to_zip(zipfile, CONFIG_FILES[:starter_files])
       if @current_user.admin?
         zipfile.get_output_stream(CONFIG_FILES[:tags]) do |f|
           f.write(assignment.tags.pluck_to_hash(:name, :description).to_yaml)
@@ -608,7 +604,7 @@ class AssignmentsController < ApplicationController
         zipfile.get_output_stream(CONFIG_FILES[:peer_review_annotations]) do |f|
           f.write annotation_categories_to_yml(child_assignment.annotation_categories)
         end
-        child_assignment.starter_file_config_to_zip(zipfile, CONFIG_DIRS[:starter_files], CONFIG_FILES[:starter_files])
+        child_assignment.starter_file_config_to_zip(zipfile, CONFIG_FILES[:peer_review_starter_files])
         if @current_user.admin?
           zipfile.get_output_stream(CONFIG_FILES[:peer_review_tags]) do |f|
             f.write(child_assignment.tags.pluck_to_hash(:name, :description).to_yaml)
@@ -673,7 +669,13 @@ class AssignmentsController < ApplicationController
 
   # Configures the starter files for an +assignment+ provided in the +zip_file+
   def config_starter_files(assignment, zip_file)
-    starter_file_settings = build_hash_from_zip(zip_file, :starter_files)
+    if assignment.is_peer_review?
+      zip_starter_directory = File.join(File.dirname(CONFIG_FILES[:peer_review_starter_files]), '')
+      starter_file_settings = build_hash_from_zip(zip_file, :peer_review_starter_files)
+    else
+      zip_starter_directory = File.join(File.dirname(CONFIG_FILES[:starter_files]), '')
+      starter_file_settings = build_hash_from_zip(zip_file, :starter_files)
+    end
     assignment.starter_file_type = starter_file_settings[:starter_file_type]
     assignment.starter_files_after_due = starter_file_settings[:allow_starter_files_after_due]
     starter_group_mappings = {}
@@ -682,24 +684,17 @@ class AssignmentsController < ApplicationController
                                             use_rename: group[:use_rename],
                                             entry_rename: group[:entry_rename],
                                             assignment: assignment)
-      FileUtils.rm_rf(file_group.path)
-      FileUtils.mkdir_p(file_group.path)
       starter_group_mappings[group[:directory_name]] = file_group
     end
     default_name = starter_file_settings[:default_starter_group]
     if !default_name.nil? && starter_group_mappings.key?(default_name)
       assignment.default_starter_file_group_id = starter_group_mappings[default_name].id
     end
-    if assignment.is_peer_review?
-      zip_starter_path = File.join(CONFIG_DIRS[:peer_review], CONFIG_DIRS[:starter_files], '')
-    else
-      zip_starter_path = File.join(CONFIG_DIRS[:starter_files], '')
-    end
     zip_file.each do |entry|
-      if entry.name.match?(/^#{zip_starter_path}/)
+      if entry.name.match?(/^#{zip_starter_directory}/)
         # Set working directory to the location of all the starter file content, then find
         # directory for a starter group and add the file found in that directory to group
-        starter_base_dir = entry.name[zip_starter_path.length..-1]
+        starter_base_dir = entry.name[zip_starter_directory.length..-1]
         path_list = starter_base_dir.split(File::SEPARATOR)
         starter_file_group = starter_group_mappings[path_list[0]]
         starter_file_dir_path = File.join(starter_file_group.path, path_list[1..-2])
