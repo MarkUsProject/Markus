@@ -155,17 +155,17 @@ describe AssignmentsController do
       expect(response).to redirect_to(action: 'index', controller: 'assignments')
     end
 
-  #   it 'does not accept files with invalid columns' do
-  #     post :upload, params: { upload_file: @file_invalid_column }
+    it 'does not accept files with invalid columns' do
+      post :upload, params: { upload_file: @file_invalid_column }
 
-  #     expect(response.status).to eq(302)
-  #     expect(flash[:error]).to_not be_empty
-  #     test = Assignment.find_by_short_identifier(@test_asn2)
-  #     expect(test).to be_nil
-  #     expect(response).to redirect_to(action: 'index',
-  #                                     controller: 'assignments')
-  #   end
-  # end
+      expect(response.status).to eq(302)
+      expect(flash[:error]).to_not be_empty
+      test = Assignment.find_by_short_identifier(@test_asn2)
+      expect(test).to be_nil
+      expect(response).to redirect_to(action: 'index',
+                                      controller: 'assignments')
+    end
+  end
 
   context 'download the most recent test results as JSON' do
     let(:user) { create(:admin) }
