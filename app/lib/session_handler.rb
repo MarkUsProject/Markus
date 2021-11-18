@@ -43,9 +43,9 @@ module SessionHandler
 
   # Returns the record specified by params[:id]
   def record
-    @record ||= controller_name.classify
-                               .constantize
-                               .find_by(id: request.path_parameters[:id]) if request.path_parameters[:id]
+    @record ||= if request.path_parameters[:id]
+                  controller_name.classify.constantize.find_by(id: request.path_parameters[:id])
+                end
   end
 
   # When the current route is a nested route, get the parameters whose name matches *_id.
