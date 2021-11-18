@@ -669,13 +669,8 @@ class AssignmentsController < ApplicationController
 
   # Configures the starter files for an +assignment+ provided in the +zip_file+
   def config_starter_files(assignment, zip_file)
-    if assignment.is_peer_review?
-      zip_starter_directory = File.join(File.dirname(CONFIG_FILES[:peer_review_starter_files]), '')
-      starter_file_settings = build_hash_from_zip(zip_file, :peer_review_starter_files)
-    else
-      zip_starter_directory = File.join(File.dirname(CONFIG_FILES[:starter_files]), '')
-      starter_file_settings = build_hash_from_zip(zip_file, :starter_files)
-    end
+    assignment.is_peer_review? ? starter_config_file = :peer_review_starter_files : starter_config_file = :starter_files
+    starter_file_settings = build_hash_from_zip(zip_file, starter_config_file)
     assignment.starter_file_type = starter_file_settings[:starter_file_type]
     assignment.starter_files_after_due = starter_file_settings[:allow_starter_files_after_due]
     starter_group_mappings = {}
@@ -690,11 +685,13 @@ class AssignmentsController < ApplicationController
     if !default_name.nil? && starter_group_mappings.key?(default_name)
       assignment.default_starter_file_group_id = starter_group_mappings[default_name].id
     end
+    zip_starter_dir = File.dirname(CONFIG_FILES[starter_config_file])
+    zip_starter_dir = File.join(zip_starter_dir, '') unless zip_starter_dir[-1] == File::SEPARATOR
     zip_file.each do |entry|
-      if entry.name.match?(/^#{zip_starter_directory}/)
+      if entry.name.match?(/^#{zip_starter_dir}/)
         # Set working directory to the location of all the starter file content, then find
         # directory for a starter group and add the file found in that directory to group
-        starter_base_dir = entry.name[zip_starter_directory.length..-1]
+        starter_base_dir = entry.name[zip_starter_dir.length..-1]
         path_list = starter_base_dir.split(File::SEPARATOR)
         starter_file_group = starter_group_mappings[path_list[0]]
         starter_file_dir_path = File.join(starter_file_group.path, path_list[1..-2])
