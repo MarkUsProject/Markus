@@ -645,7 +645,12 @@ class Assignment < Assessment
     summary_test_results.each do |test_result|
       header = "#{test_result['name']}:#{test_result['test_result_name']}"
 
-      results[test_result['group_name']] = Hash[header, test_result['status']]
+      if results.key?(test_result['group_name'])
+        results[test_result['group_name']][header] = test_result['status']
+      else
+        results[test_result['group_name']] = Hash[header, test_result['status']]
+      end
+
       headers << header
     end
 
