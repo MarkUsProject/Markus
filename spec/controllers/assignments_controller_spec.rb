@@ -1462,7 +1462,7 @@ describe AssignmentsController do
         expect(flash[:error].map { |f| extract_text f })
           .to eq([I18n.t('assignments.wrong_assignment_type',
                          form_type: Assignment.model_name.human,
-                         upload_type: I18n.t("activerecord.models.timed_assignment.one"))].map { |f| extract_text f })
+                         upload_type: I18n.t('activerecord.models.timed_assignment.one'))].map { |f| extract_text f })
       end
 
       it 'gives the appropriate response status' do
@@ -1601,20 +1601,20 @@ describe AssignmentsController do
     shared_examples 'assignment content is copied over' do
       it 'copies over the main assignment attributes' do
         uploaded_assignment = Assignment.find_by(short_identifier: assignment.short_identifier)
-        received = uploaded_assignment.attributes.except("created_at", "updated_at", "id", "parent_assessment_id")
-        expected = assignment.attributes.except("created_at", "updated_at", "id", "parent_assessment_id")
+        received = uploaded_assignment.attributes.except('created_at', 'updated_at', 'id', 'parent_assessment_id')
+        expected = assignment.attributes.except('created_at', 'updated_at', 'id', 'parent_assessment_id')
         expect(received).to eq(expected)
       end
 
       it 'copies over additional assignment properties' do
         uploaded_assignment = Assignment.find_by(short_identifier: assignment.short_identifier)
         uploaded_properties = uploaded_assignment.assignment_properties
-        received = uploaded_properties.attributes.except("created_at", "updated_at", "id", "assessment_id")
-        expected = assignment_properties.attributes.except("created_at", "updated_at", "id", "assessment_id")
+        received = uploaded_properties.attributes.except('created_at', 'updated_at', 'id', 'assessment_id')
+        expected = assignment_properties.attributes.except('created_at', 'updated_at', 'id', 'assessment_id')
         if uploaded_assignment.is_peer_review?
           # override default token settings from factory
-          expect(expected["token_period"]).to eq(1)
-          expected["token_period"] = nil
+          expect(expected['token_period']).to eq(1)
+          expected['token_period'] = nil
         end
         expect(received).to eq(expected)
       end
@@ -1634,8 +1634,8 @@ describe AssignmentsController do
         uploaded_annotation = uploaded_assignment.annotation_categories
                                                  .first
                                                  .attributes
-                                                 .except("created_at", "updated_at", "id", "assessment_id")
-        expected_annotation = annotation.attributes.except("created_at", "updated_at", "id", "assessment_id")
+                                                 .except('created_at', 'updated_at', 'id', 'assessment_id')
+        expected_annotation = annotation.attributes.except('created_at', 'updated_at', 'id', 'assessment_id')
         expect(uploaded_annotation).to eq(expected_annotation)
       end
 
@@ -1644,8 +1644,8 @@ describe AssignmentsController do
         uploaded_criteria = uploaded_assignment.criteria
                                                .first
                                                .attributes
-                                               .except("created_at", "updated_at", "id", "assessment_id")
-        expected_criteria = criteria.attributes.except("created_at", "updated_at", "id", "assessment_id")
+                                               .except('created_at', 'updated_at', 'id', 'assessment_id')
+        expected_criteria = criteria.attributes.except('created_at', 'updated_at', 'id', 'assessment_id')
         expect(uploaded_criteria).to eq(expected_criteria)
       end
     end
