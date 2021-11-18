@@ -1401,13 +1401,13 @@ describe AssignmentsController do
       include_examples 'download sample config files'
 
       it 'should have a valid tags file' do
-        Tag.create(name: 'tag1', description: 'tag1_description', user: user, assessment_id: assignment.id)
-        Tag.create(name: 'tag2', description: 'tag2_description', user: user, assessment_id: assignment.id)
+        tag1 = create :tag, assessment_id: assignment.id
+        tag2 = create :tag, assessment_id: assignment.id
         subject
         tags = read_yaml_file(response.body, 'tags.yml')
         tags = tags.map(&:symbolize_keys)
-        expect(tags).to eq([{ name: 'tag1', description: 'tag1_description' },
-                            { name: 'tag2', description: 'tag2_description' }])
+        expect(tags).to eq([{ name: tag1.name, description: tag1.description },
+                            { name: tag2.name, description: tag2.description }])
       end
 
       it 'should contain a peer review tags file' do
@@ -1455,6 +1455,16 @@ describe AssignmentsController do
     end
 
     shared_examples 'check valid assignment config files' do
+      it 'will not post if on the wrong page' do
+        post_as user, :upload_config_files, params: { upload_files_for_config: @assignment_good_zip,
+                                                      is_timed: false,
+                                                      is_scanned: false }
+        expect(flash[:error].map { |f| extract_text f })
+          .to eq([I18n.t('assignments.wrong_assignment_type',
+                         form_type: Assignment.model_name.human,
+                         upload_type: I18n.t("activerecord.models.timed_assignment.one"))].map { |f| extract_text f })
+      end
+
       it 'gives the appropriate response status' do
         subject
         expect(response.status).to eq(302)
@@ -1491,18 +1501,6 @@ describe AssignmentsController do
         subject
         uploaded_assignment = Assignment.find_by(short_identifier: 'mtt_ex_1')
         expect(uploaded_assignment.criteria.count).to eq(2)
-      end
-
-      it 'properly configures the criteria for an assignment' do
-        subject
-        uploaded_assignment = Assignment.find_by(short_identifier: 'mtt_ex_1')
-        criteria1 = uploaded_assignment.criteria.find_by(name: 'Bonus Question')
-        criteria2 = uploaded_assignment.criteria.find_by(name: 'Optimal')
-        uploaded_criteria = [{ name: criteria1.name, description: criteria1.description, type: criteria1.type },
-                             { name: criteria2.name, description: criteria2.description, type: criteria2.type }]
-        expected_criteria = [{ name: 'Bonus Question', description: 'Extra bonus question', type: 'CheckboxCriterion' },
-                             { name: 'Optimal', description: 'Solution is most optimal', type: 'CheckboxCriterion' }]
-        expect(uploaded_criteria).to eq(expected_criteria)
       end
 
       it 'uploads all the annotation categories for an assignment' do
@@ -1594,18 +1592,6 @@ describe AssignmentsController do
         uploaded_assignment = Assignment.find_by(short_identifier: 'mtt_ex_1')
         expect(uploaded_assignment.tags.count).to eq(2)
       end
-
-      it 'properly configures the tags for an assignment' do
-        subject
-        uploaded_assignment = Assignment.find_by(short_identifier: 'mtt_ex_1')
-        tag1 = uploaded_assignment.tags.find_by(name: 'Late')
-        tag2 = uploaded_assignment.tags.find_by(name: 'Plagiarized')
-        uploaded_tags = [{ name: tag1.name, description: tag1.description },
-                         { name: tag2.name, description: tag2.description }]
-        expected_tags = [{ name: 'Late', description: 'Not Handed in on time' },
-                         { name: 'Plagiarized', description: 'Cheating' }]
-        expect(uploaded_tags).to eq(expected_tags)
-      end
     end
   end
 
@@ -1615,37 +1601,21 @@ describe AssignmentsController do
     shared_examples 'assignment content is copied over' do
       it 'copies over the main assignment attributes' do
         uploaded_assignment = Assignment.find_by(short_identifier: assignment.short_identifier)
-        received = uploaded_assignment.attributes.except("created_at", "updated_at", "id")
-        expected = assignment.attributes.except("created_at", "updated_at", "id")
+        received = uploaded_assignment.attributes.except("created_at", "updated_at", "id", "parent_assessment_id")
+        expected = assignment.attributes.except("created_at", "updated_at", "id", "parent_assessment_id")
         expect(received).to eq(expected)
       end
 
       it 'copies over additional assignment properties' do
         uploaded_assignment = Assignment.find_by(short_identifier: assignment.short_identifier)
-        received = uploaded_assignment.assignment_properties.attributes.except("created_at", "updated_at",
-                                                                               "id", "assessment_id")
-        expected = assignment.assignment_properties.attributes.except("created_at", "updated_at",
-                                                                      "id", "assessment_id")
-        expect(received).to eq(expected)
-      end
-
-      it 'copies over submission rules' do
-        uploaded_assignment = Assignment.find_by(short_identifier: assignment.short_identifier)
-        received_rule = {
-          'type': uploaded_assignment.submission_rule.type,
-          'periods': uploaded_assignment.submission_rule.periods.pluck_to_hash(:deduction, :hours, :interval)
-        }
-        expected_rule = {
-          'type': assignment.submission_rule.type,
-          'periods': assignment.submission_rule.periods.pluck_to_hash(:deduction, :hours, :interval)
-        }
-        expect(received_rule).to eq(expected_rule)
-      end
-
-      it 'copies over required assignments' do
-        uploaded_assignment = Assignment.find_by(short_identifier: assignment.short_identifier)
-        received = assignment.assignment_files.pluck_to_hash(:filename)
-        expected = uploaded_assignment.assignment_files.pluck_to_hash(:filename)
+        uploaded_properties = uploaded_assignment.assignment_properties
+        received = uploaded_properties.attributes.except("created_at", "updated_at", "id", "assessment_id")
+        expected = assignment_properties.attributes.except("created_at", "updated_at", "id", "assessment_id")
+        if uploaded_assignment.is_peer_review?
+          # override default token settings from factory
+          expect(expected["token_period"]).to eq(1)
+          expected["token_period"] = nil
+        end
         expect(received).to eq(expected)
       end
 
@@ -1682,12 +1652,15 @@ describe AssignmentsController do
 
     context 'Normal assignment with everything' do
       let!(:assignment) { create :assignment, due_date: Time.zone.parse('2042-02-10 15:30:45') }
+      let!(:assignment_properties) { assignment.assignment_properties }
       let!(:criteria) { create :flexible_criterion, assignment: assignment }
       let!(:annotation) { create :annotation_category, assignment: assignment }
       let!(:submission_rule) { create :grace_period_submission_rule, assignment: assignment }
-      let!(:tag1) { Tag.create(name: 'tag1', description: 'tag1_desc', user: user, assessment_id: assignment.id) }
-      let!(:tag2) { Tag.create(name: 'tag2', description: 'desc_tag2', user: user, assessment_id: assignment.id) }
-      let!(:tag3) { Tag.create(name: 't3g', description: 'anotherTag', user: user, assessment_id: assignment.id) }
+      let!(:assignment_file1) { create :assignment_file, assignment: assignment }
+      let!(:assignment_file2) { create :assignment_file, filename: 'sample.txt', assignment: assignment }
+      let!(:tag1) { create :tag, assessment_id: assignment.id }
+      let!(:tag2) { create :tag, assessment_id: assignment.id }
+      let!(:tag3) { create :tag, assessment_id: assignment.id }
 
       before :each do
         get_as user, :download_config_files, params: { id: assignment.id }
@@ -1704,10 +1677,64 @@ describe AssignmentsController do
       end
 
       include_examples 'assignment content is copied over'
+
+      it 'copies over submission rules' do
+        uploaded_assignment = Assignment.find_by(short_identifier: assignment.short_identifier)
+        received_rule = {
+          'type': uploaded_assignment.submission_rule.type,
+          'periods': uploaded_assignment.submission_rule.periods.pluck_to_hash(:deduction, :hours, :interval)
+        }
+        expected_rule = {
+          'type': assignment.submission_rule.type,
+          'periods': assignment.submission_rule.periods.pluck_to_hash(:deduction, :hours, :interval)
+        }
+        expect(received_rule).to eq(expected_rule)
+      end
+
+      it 'copies over required assignments' do
+        uploaded_assignment = Assignment.find_by(short_identifier: assignment.short_identifier)
+        received = uploaded_assignment.assignment_files
+                                      .pluck_to_hash(:filename)
+                                      .map(&:symbolize_keys)
+        expected = [{ filename: assignment_file1.filename },
+                    { filename: assignment_file2.filename }]
+        expect(received).to eq(expected)
+      end
     end
 
     context 'Peer review assignment with everything' do
+      let!(:parent_assignment) { create :assignment_with_peer_review, due_date: Time.zone.parse('2042-02-10 15:30:45') }
+      let!(:assignment) { Assignment.find_by(parent_assessment_id: parent_assignment.id) }
+      let!(:assignment_properties) { assignment.assignment_properties }
+      let!(:criteria) { create :flexible_criterion, assignment: assignment }
+      let!(:annotation) { create :annotation_category, assignment: assignment }
+      let!(:tag1) { create :tag, assessment_id: assignment.id }
+      let!(:tag2) { create :tag, assessment_id: assignment.id }
+      let!(:tag3) { create :tag, assessment_id: assignment.id }
+      let!(:tag4) { create :tag, assessment_id: parent_assignment.id }
 
+      before :each do
+        get_as user, :download_config_files, params: { id: parent_assignment.id }
+        zip_name = 'assignment-copy-test-config-files.zip'
+        zip_path = File.join('tmp', zip_name)
+        FileUtils.rm_f(zip_path)
+        File.write(zip_path, response.body, mode: 'wb')
+        assignment_zip = fixture_file_upload(zip_path, 'application/zip')
+        Tag.all.destroy_all
+        Assignment.all.destroy_all
+        post_as user, :upload_config_files, params: { upload_files_for_config: assignment_zip,
+                                                      is_timed: false, is_scanned: false }
+        expect(flash[:error]).to be_nil
+      end
+
+      it 'has a peer review assignment copied' do
+        uploaded_parent_assignment = Assignment.find_by(short_identifier: parent_assignment.short_identifier)
+        uploaded_peer_assignment = Assignment.find_by(short_identifier: assignment.short_identifier)
+        expect(uploaded_parent_assignment.has_peer_review).to eq(true)
+        expect(uploaded_peer_assignment.is_peer_review?).to eq(true)
+      end
+
+      include_examples 'assignment content is copied over'
     end
   end
 end
