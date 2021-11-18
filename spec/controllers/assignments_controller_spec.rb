@@ -1612,28 +1612,102 @@ describe AssignmentsController do
   describe 'download_and_upload_config_file' do
     let(:user) { create :admin }
 
-    context 'Normal assignment with peer review' do
-      let!(:assignment) { create :assignment_with_peer_review, due_date: Time.zone.parse('2042-02-10 15:30:45') }
-      let!(:criteria) { create :checkbox_criterion, assignment: assignment }
-      let!(:annotation) { create :annotation_category, assignment: assignment }
+    shared_examples 'assignment content is copied over' do
+      it 'copies over the main assignment attributes' do
+        uploaded_assignment = Assignment.find_by(short_identifier: assignment.short_identifier)
+        received = uploaded_assignment.attributes.except("created_at", "updated_at", "id")
+        expected = assignment.attributes.except("created_at", "updated_at", "id")
+        expect(received).to eq(expected)
+      end
 
-      it 'copies over all assignment content correctly' do
-        t1 = Tag.create(name: 'tag1', description: 'tag1_desc', user: user, assessment_id: assignment.id)
-        t2 = Tag.create(name: 'tag2', description: 'tag2_desc', user: user, assessment_id: assignment.id)
+      it 'copies over additional assignment properties' do
+        uploaded_assignment = Assignment.find_by(short_identifier: assignment.short_identifier)
+        received = uploaded_assignment.assignment_properties.attributes.except("created_at", "updated_at",
+                                                                               "id", "assessment_id")
+        expected = assignment.assignment_properties.attributes.except("created_at", "updated_at",
+                                                                      "id", "assessment_id")
+        expect(received).to eq(expected)
+      end
+
+      it 'copies over submission rules' do
+        uploaded_assignment = Assignment.find_by(short_identifier: assignment.short_identifier)
+        received_rule = {
+          'type': uploaded_assignment.submission_rule.type,
+          'periods': uploaded_assignment.submission_rule.periods.pluck_to_hash(:deduction, :hours, :interval)
+        }
+        expected_rule = {
+          'type': assignment.submission_rule.type,
+          'periods': assignment.submission_rule.periods.pluck_to_hash(:deduction, :hours, :interval)
+        }
+        expect(received_rule).to eq(expected_rule)
+      end
+
+      it 'copies over required assignments' do
+        uploaded_assignment = Assignment.find_by(short_identifier: assignment.short_identifier)
+        received = assignment.assignment_files.pluck_to_hash(:filename)
+        expected = uploaded_assignment.assignment_files.pluck_to_hash(:filename)
+        expect(received).to eq(expected)
+      end
+
+      it 'copies over tags' do
+        uploaded_assignment = Assignment.find_by(short_identifier: assignment.short_identifier)
+        uploaded_tags = uploaded_assignment.tags.pluck_to_hash(:name, :description)
+        uploaded_tags = uploaded_tags.map(&:symbolize_keys)
+        expected_tags = [{ name: tag1.name, description: tag1.description },
+                         { name: tag2.name, description: tag2.description },
+                         { name: tag3.name, description: tag3.description }]
+        expect(uploaded_tags).to eq(expected_tags)
+      end
+
+      it 'copies over annotations' do
+        uploaded_assignment = Assignment.find_by(short_identifier: assignment.short_identifier)
+        uploaded_annotation = uploaded_assignment.annotation_categories
+                                                 .first
+                                                 .attributes
+                                                 .except("created_at", "updated_at", "id", "assessment_id")
+        expected_annotation = annotation.attributes.except("created_at", "updated_at", "id", "assessment_id")
+        expect(uploaded_annotation).to eq(expected_annotation)
+      end
+
+      it 'copies over criteria' do
+        uploaded_assignment = Assignment.find_by(short_identifier: assignment.short_identifier)
+        uploaded_criteria = uploaded_assignment.criteria
+                                               .first
+                                               .attributes
+                                               .except("created_at", "updated_at", "id", "assessment_id")
+        expected_criteria = criteria.attributes.except("created_at", "updated_at", "id", "assessment_id")
+        expect(uploaded_criteria).to eq(expected_criteria)
+      end
+    end
+
+    context 'Normal assignment with everything' do
+      let!(:assignment) { create :assignment, due_date: Time.zone.parse('2042-02-10 15:30:45') }
+      let!(:criteria) { create :flexible_criterion, assignment: assignment }
+      let!(:annotation) { create :annotation_category, assignment: assignment }
+      let!(:submission_rule) { create :grace_period_submission_rule, assignment: assignment }
+      let!(:tag1) { Tag.create(name: 'tag1', description: 'tag1_desc', user: user, assessment_id: assignment.id) }
+      let!(:tag2) { Tag.create(name: 'tag2', description: 'desc_tag2', user: user, assessment_id: assignment.id) }
+      let!(:tag3) { Tag.create(name: 't3g', description: 'anotherTag', user: user, assessment_id: assignment.id) }
+
+      before :each do
         get_as user, :download_config_files, params: { id: assignment.id }
         zip_name = 'assignment-copy-test-config-files.zip'
         zip_path = File.join('tmp', zip_name)
         FileUtils.rm_f(zip_path)
         File.write(zip_path, response.body, mode: 'wb')
         assignment_zip = fixture_file_upload(zip_path, 'application/zip')
-        Tag.destroy(t1.id)
-        Tag.destroy(t2.id)
-        Assignment.destroy(assignment.id)
-        destroy_repos
+        Tag.all.destroy_all
+        Assignment.all.destroy_all
         post_as user, :upload_config_files, params: { upload_files_for_config: assignment_zip,
                                                       is_timed: false, is_scanned: false }
         expect(flash[:error]).to be_nil
       end
+
+      include_examples 'assignment content is copied over'
+    end
+
+    context 'Peer review assignment with everything' do
+
     end
   end
 end
