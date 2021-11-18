@@ -1,0 +1,61 @@
+.course-list {
+  display: flex;
+  flex-flow: row wrap;
+  height: 100%;
+  width: 100%;
+}
+
+.course-card {
+  border: 2px solid $sub-menu;
+  border-radius: 5px;
+  box-shadow: 0 0 10px $primary-two;
+  box-sizing: border-box;
+  font-size: 16px;
+  height: 200px;
+  margin: 10px;
+  text-align: center;
+  width: 200px;
+}
+
+.course-info {
+  background-color: $background-support;
+  border-bottom: 2px solid $sub-menu;
+  color: $primary-one;
+  height: 80%;
+  position: relative;
+
+  &:hover {
+    background: $primary-one;
+    color: $active-menu-item;
+    cursor: pointer;
+  }
+}
+
+.course-code {
+  font-size: 24px;
+  left: 50%;
+  position: absolute;
+  text-align: center;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.course-role {
+  font-size: 12px;
+  position: relative;
+  right: 16px;
+  top: 8px;
+}
+
+.course-name {
+  height: 20%;
+  overflow: hidden;
+  padding: 10px;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}

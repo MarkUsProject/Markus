@@ -6,12 +6,14 @@ class CoursesController < ApplicationController
   respond_to :html
 
   def index
-    @courses = @current_user.visible_courses
-                            .pluck_to_hash('courses.id', 'courses.name',
-                                           'courses.display_name', 'roles.type')
     respond_to do |format|
       format.html { render :index, layout: 'courses' }
-      format.json { render json: { 'data': @courses } }
+      format.json do
+        courses = current_user.visible_courses
+                                .pluck_to_hash('courses.id', 'courses.name',
+                                               'courses.display_name', 'roles.type')
+        render json: { 'data': courses }
+      end
     end
   end
 

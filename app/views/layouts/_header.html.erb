@@ -10,8 +10,8 @@
         <% end %>
       </span>
       <span id='user-id'>
-        <%= @current_role.display_name %>
-        ( <strong><%= @current_role.user_name %></strong> )
+        <%= @current_user.display_name %>
+        ( <strong><%= @current_user.user_name %></strong> )
       </span>
       <% if allowed_to?(:role_switch?, @current_course) %>
         <%= link_to t('main.role_switch.switch_role'),

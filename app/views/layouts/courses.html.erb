@@ -2,6 +2,7 @@
 <html lang="<%= I18n.locale %>">
 <head>
   <title><%= t(:markus) %> - <%= controller.action_name.titleize %></title>
+  <%= render partial: 'layouts/head' %>
   <%= javascript_pack_tag 'application', nonce: true %>
   <%= javascript_include_tag 'application', nonce: true %>
   <% unless Settings.remote_user_auth %>
@@ -12,8 +13,45 @@
   <%= yield :head %>
 </head>
 <body>
-<section id='content'>
-  <%= render partial: 'layouts/noscript'%>
-  <%= content_for?(:content) ? yield(:content) : yield %>
-</section>
+<div id='<%= controller.action_name == "login" ? "loggedOut" : "loggedIn" %>'>
+  <div id='mobile_menu'>
+    <a id='menu_icon'></a>
+  </div>
+  <div id='wrapper'>
+    <nav id='menus'>
+      <div id='menus_child'>
+        <%= render partial: 'layouts/header' %>
+        <%= render partial: 'layouts/menu' %>
+        <%= render partial: 'layouts/sub_menu' %>
+        <%= render partial: 'layouts/sub_sub_menu' %>
+        <%= render partial: 'layouts/footer' %>
+      </div>
+    </nav>
+
+    <%= render partial: 'layouts/modals' %>
+
+    <section id='content'>
+      <div class='title_bar'>
+        <h1>
+          <%= yield(:title) %>
+        </h1>
+        <div class='heading_buttons'>
+          <%= render partial: "layouts/heading_buttons",
+                     collection: @heading_buttons,
+                     as: :heading_button,
+                     spacer_template: "layouts/heading_buttons_spacer" %>
+          <%= yield(:additional_headings) %>
+        </div>
+      </div>
+      <%= render partial: 'shared/flash_message' %>
+      <%= render partial: 'layouts/noscript'%>
+      <%= content_for?(:content) ? yield(:content) : yield %>
+
+      <div class='wrapLeft'>
+        <%= yield(:wrap_left_content) %>
+      </div>
+    </section>
+  </div>
+  <%= render partial: 'layouts/footer' %>
+</div>
 </body>

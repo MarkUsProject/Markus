@@ -7,6 +7,7 @@ class CourseList extends React.Component {
     super(props);
     this.state = {
       courses: [],
+      loading: true,
     };
   }
 
@@ -15,27 +16,26 @@ class CourseList extends React.Component {
   }
 
   fetchData = () => {
-    $.ajax({
-      method: "get",
+    $.get({
       url: Routes.courses_path(),
       dataType: "json",
     }).then(res =>
       this.setState({
         courses: res.data,
+        loading: false,
       })
     );
   };
 
-  makeCourseCards() {}
-
   render() {
-    if (this.state.courses.length == 0) {
-      return <div className="no course"></div>;
+    if (this.state.loading == true) {
+      return <div></div>;
+    } else if (this.state.courses.length == 0) {
+      return <div className="no-courses">{I18n.t("courses.no_courses")}</div>;
     }
     return (
-      <div>
+      <div className="course-list">
         {this.state.courses.map(course => {
-          console.log(course);
           return (
             <CourseCard
               key={course["courses.id"]}
