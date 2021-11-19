@@ -7,6 +7,5 @@ pt:
       create: Criar %{model}
       delete: Apagar esse %{model}
       update: Edit %{model}
-  optional: opcional
   required_fields: Campos exigidos
   uncommitted_changes_warning: Suas alterações ainda não foram salvas, tem certeza que deseja sair?

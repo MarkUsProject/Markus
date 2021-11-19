@@ -33,6 +33,7 @@ fr:
       success: Exemples de copies de %{copies} examens réalisés avec succès
       title: Générer des copies d'examen
     parsing:
+      cover_page_for: UPDATE ME %{id}
       general: Analyser automatiquement les informations sur les étudiants
       save: sauvegarder
       title: Sélection automatique d'analyse
