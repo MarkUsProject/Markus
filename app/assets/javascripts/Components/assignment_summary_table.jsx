@@ -3,6 +3,7 @@ import {render} from "react-dom";
 import {markingStateColumn, getMarkingStates} from "./Helpers/table_helpers";
 
 import ReactTable from "react-table";
+import DownloadTestResultsModal from "./Modals/download_test_results_modal";
 
 class AssignmentSummaryTable extends React.Component {
   constructor() {
@@ -16,6 +17,7 @@ class AssignmentSummaryTable extends React.Component {
       num_marked: 0,
       marking_states: markingStates,
       markingStateFilter: "all",
+      showDownloadTestsModal: false,
     };
   }
 
@@ -146,6 +148,11 @@ class AssignmentSummaryTable extends React.Component {
     filterable: false,
     defaultSortDesc: true,
   };
+
+  onDownloadTestsModal = () => {
+    this.setState({showDownloadTestsModal: true});
+  };
+
   render() {
     const {data, criteriaColumns} = this.state;
     return (
@@ -167,19 +174,25 @@ class AssignmentSummaryTable extends React.Component {
           </div>
         </div>
         {this.props.is_admin && (
-          <form
-            className="rt-action-box"
-            action={Routes.summary_assignment_path({
-              id: this.props.assignment_id,
-              format: "csv",
-              _options: true,
-            })}
-            method="get"
-          >
-            <button type="submit" name="download">
-              {I18n.t("download")}
+          <div className="rt-action-box">
+            <form
+              action={Routes.summary_assignment_path({
+                id: this.props.assignment_id,
+                format: "csv",
+                _options: true,
+              })}
+              method="get"
+            >
+              <button type="submit" name="download">
+                {I18n.t("download")}
+              </button>
+            </form>
+            <button type="submit" name="download_tests" onClick={this.onDownloadTestsModal}>
+              {I18n.t("download_the", {
+                item: I18n.t("activerecord.models.test_result.other"),
+              })}
             </button>
-          </form>
+          </div>
         )}
         <ReactTable
           data={data}
@@ -215,6 +228,12 @@ class AssignmentSummaryTable extends React.Component {
             );
           }}
           loading={this.state.loading}
+        />
+        <DownloadTestResultsModal
+          assignment_id={this.props.assignment_id}
+          isOpen={this.state.showDownloadTestsModal}
+          onRequestClose={() => this.setState({showDownloadTestsModal: false})}
+          onSubmit={() => {}}
         />
       </div>
     );

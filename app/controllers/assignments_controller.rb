@@ -257,6 +257,28 @@ class AssignmentsController < ApplicationController
     end
   end
 
+  def download_test_results
+    @assignment = Assignment.find(params[:id])
+    respond_to do |format|
+      format.json do
+        data = @assignment.summary_test_result_json
+        filename = "#{@assignment.short_identifier}_test_results.json"
+        send_data data,
+                  disposition: 'attachment',
+                  type: 'application/json',
+                  filename: filename
+      end
+      format.csv do
+        data = @assignment.summary_test_result_csv
+        filename = "#{@assignment.short_identifier}_test_results.csv"
+        send_data data,
+                  disposition: 'attachment',
+                  type: 'text/csv',
+                  filename: filename
+      end
+    end
+  end
+
   def stop_test
     test_id = params[:test_run_id].to_i
     assignment_id = params[:id]
