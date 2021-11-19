@@ -1674,8 +1674,10 @@ describe AssignmentsController do
       it 'copies over additional assignment properties' do
         uploaded_assignment = Assignment.find_by(short_identifier: assignment.short_identifier)
         uploaded_properties = uploaded_assignment.assignment_properties
-        received = uploaded_properties.attributes.except('created_at', 'updated_at', 'id', 'assessment_id')
-        expected = assignment_properties.attributes.except('created_at', 'updated_at', 'id', 'assessment_id')
+        received = uploaded_properties.attributes.except('created_at', 'updated_at', 'id', 
+                                                         'assessment_id', 'starter_file_updated_at')
+        expected = assignment_properties.attributes.except('created_at', 'updated_at', 'id', 
+                                                           'assessment_id', 'starter_file_updated_at')
         if uploaded_assignment.is_peer_review?
           # override default token settings from factory
           expect(expected['token_period']).to eq(1)
@@ -1713,6 +1715,31 @@ describe AssignmentsController do
         expected_criteria = criteria.attributes.except('created_at', 'updated_at', 'id', 'assessment_id')
         expect(uploaded_criteria).to eq(expected_criteria)
       end
+      
+      it 'copies over starter files' do
+        uploaded_assignment = Assignment.find_by(short_identifier: assignment.short_identifier)
+        uploaded_starter_files = []
+        uploaded_assignment.starter_file_groups.each do |group|
+          uploaded_starter_files << {
+            name: group.name,
+            use_rename: group.use_rename,
+            entry_rename: group.entry_rename,
+            files_and_dirs: group.files_and_dirs
+          }
+        end
+        expected_starter_files = [{
+            name: starter_group1.name,
+            use_rename: starter_group1.use_rename,
+            entry_rename: starter_group1.entry_rename,
+            files_and_dirs: starter_group1_files
+          }, {
+            name: starter_group2.name,
+            use_rename: starter_group2.use_rename,
+            entry_rename: starter_group2.entry_rename,
+            files_and_dirs: starter_group2_files
+          }]
+        expect(uploaded_starter_files).to eq(expected_starter_files)
+      end
     end
 
     context 'Normal assignment with everything' do
@@ -1726,6 +1753,10 @@ describe AssignmentsController do
       let!(:tag1) { create :tag, assessment_id: assignment.id }
       let!(:tag2) { create :tag, assessment_id: assignment.id }
       let!(:tag3) { create :tag, assessment_id: assignment.id }
+      let!(:starter_group1) { create :starter_file_group_with_entries, assignment: assignment }
+      let!(:starter_group1_files) { starter_group1.files_and_dirs }
+      let!(:starter_group2) { create :starter_file_group_with_entries, assignment: assignment }
+      let!(:starter_group2_files) { starter_group2.files_and_dirs }
 
       before :each do
         get_as user, :download_config_files, params: { id: assignment.id }
@@ -1777,6 +1808,10 @@ describe AssignmentsController do
       let!(:tag2) { create :tag, assessment_id: assignment.id }
       let!(:tag3) { create :tag, assessment_id: assignment.id }
       let!(:tag4) { create :tag, assessment_id: parent_assignment.id }
+      let!(:starter_group1) { create :starter_file_group_with_entries, assignment: assignment }
+      let!(:starter_group1_files) { starter_group1.files_and_dirs }
+      let!(:starter_group2) { create :starter_file_group_with_entries, assignment: assignment }
+      let!(:starter_group2_files) { starter_group2.files_and_dirs }
 
       before :each do
         get_as user, :download_config_files, params: { id: parent_assignment.id }
