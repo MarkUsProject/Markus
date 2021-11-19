@@ -22,8 +22,8 @@ class AssignmentsController < ApplicationController
     peer_review_tags: File.join('peer-review-config-files', 'tags.yml'),
     peer_review_criteria: File.join('peer-review-config-files', 'criteria.yml'),
     peer_review_annotations: File.join('peer-review-config-files', 'annotations.yml'),
-    peer_review_starter_files: File.join('peer-review-config-files', 
-                                         'starter-file-config-files', 
+    peer_review_starter_files: File.join('peer-review-config-files',
+                                         'starter-file-config-files',
                                          'starter-file-rules.yml')
   }.freeze
 

@@ -1674,9 +1674,9 @@ describe AssignmentsController do
       it 'copies over additional assignment properties' do
         uploaded_assignment = Assignment.find_by(short_identifier: assignment.short_identifier)
         uploaded_properties = uploaded_assignment.assignment_properties
-        received = uploaded_properties.attributes.except('created_at', 'updated_at', 'id', 
+        received = uploaded_properties.attributes.except('created_at', 'updated_at', 'id',
                                                          'assessment_id', 'starter_file_updated_at')
-        expected = assignment_properties.attributes.except('created_at', 'updated_at', 'id', 
+        expected = assignment_properties.attributes.except('created_at', 'updated_at', 'id',
                                                            'assessment_id', 'starter_file_updated_at')
         if uploaded_assignment.is_peer_review?
           # override default token settings from factory
@@ -1715,7 +1715,7 @@ describe AssignmentsController do
         expected_criteria = criteria.attributes.except('created_at', 'updated_at', 'id', 'assessment_id')
         expect(uploaded_criteria).to eq(expected_criteria)
       end
-      
+
       it 'copies over starter files' do
         uploaded_assignment = Assignment.find_by(short_identifier: assignment.short_identifier)
         uploaded_starter_files = []
