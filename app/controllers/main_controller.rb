@@ -75,7 +75,7 @@ class MainController < ApplicationController
   # Render 404 error (page not found) if no other route matches.
   # See config/routes.rb
   def page_not_found
-    render 'shared/http_status', formats: [:html], locals: { code: '404', message: HttpStatusHelper::ERROR_CODE['message']['404'] }, status: 404, layout: false
+    super
   end
 
   def check_timeout

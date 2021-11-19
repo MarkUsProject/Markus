@@ -18,4 +18,12 @@ class TaPolicy < RolePolicy
   def manage_assessments?
     role.grader_permission.manage_assessments
   end
+
+  def download?
+    role.admin?
+  end
+
+  def upload?
+    role.admin?
+  end
 end

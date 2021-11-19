@@ -1,5 +1,7 @@
 # User policy class
 class UserPolicy < ApplicationPolicy
+  skip_pre_check :role_exists?
+
   def manage?
     false
   end

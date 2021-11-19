@@ -6,6 +6,9 @@ class Course < ApplicationRecord
   has_many :sections, inverse_of: :course
   has_many :groups, inverse_of: :course
   has_many :roles
+  has_many :admins
+  has_many :tas
+  has_many :students
 
   validates_presence_of :name
   validates_uniqueness_of :name

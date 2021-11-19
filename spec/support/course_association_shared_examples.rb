@@ -8,3 +8,11 @@ shared_examples 'course associations' do
     expect(subject.reload).not_to be_valid
   end
 end
+
+shared_examples 'role is from a different course' do
+  let(:new_role) { create(role.type.downcase, course: create(:course)) }
+  it 'should respond with 403' do
+    subject
+    expect(response).to have_http_status(403)
+  end
+end

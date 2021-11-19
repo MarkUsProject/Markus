@@ -111,8 +111,8 @@ class AnnotationsController < ApplicationController
   end
 
   def destroy
-    result = Result.find(params[:result_id])
-    @annotation = result.annotations.find(params[:id])
+    @annotation = record
+    result = @annotation.result
     unless @annotation.annotation_text.deduction.nil? || !current_role.ta?
       assignment = result.grouping.assignment
       if assignment.assign_graders_to_criteria &&
@@ -135,7 +135,7 @@ class AnnotationsController < ApplicationController
   end
 
   def update
-    @annotation = Annotation.find(params[:id])
+    @annotation = record
     @annotation_text = @annotation.annotation_text
     unless @annotation_text.deduction.nil?
       if current_role.ta? || @annotation_text.annotations.joins(:result)

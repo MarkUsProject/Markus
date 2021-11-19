@@ -38,3 +38,4 @@ fr:
       errors:
         duplicate_users: 'Nom d''utilisateur déjà inscrit (conflit) : %{user_names}.'
     verify_settings_update: UPDATE ME
+    not_found: 'UPDATE ME: %{user_names}'

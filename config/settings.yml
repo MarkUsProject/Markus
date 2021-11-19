@@ -51,20 +51,6 @@ session_timeout: 1800
 
 enable_key_storage: true
 
-student_csv_upload_order:
-  - user_name
-  - last_name
-  - first_name
-  - section_name
-  - id_number
-  - email
-
-ta_csv_upload_order:
-  - user_name
-  - last_name
-  - first_name
-  - email
-
 logging:
   enabled: true
   rotate_by_interval: false

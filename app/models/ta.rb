@@ -1,8 +1,6 @@
 # TA user for a given course.
 class Ta < Role
 
-  CSV_UPLOAD_ORDER = Settings.ta_csv_upload_order.map(&:to_sym).freeze
-
   has_one :grader_permission, dependent: :destroy, foreign_key: :role_id, inverse_of: :ta
   before_create :create_grader_permission
   validates_presence_of :grader_permission, unless: -> { self.new_record? }

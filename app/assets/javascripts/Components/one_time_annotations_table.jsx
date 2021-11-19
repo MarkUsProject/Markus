@@ -35,7 +35,7 @@ class OneTimeAnnotationsTable extends React.Component {
       url: Routes.update_annotation_text_assignment_annotation_categories_path(
         this.props.assignment_id
       ),
-      data: {content: content, id: annot_id},
+      data: {content: content, annotation_text_id: annot_id},
       method: "PUT",
       remote: true,
       dataType: "script",
@@ -47,7 +47,7 @@ class OneTimeAnnotationsTable extends React.Component {
       url: Routes.destroy_annotation_text_assignment_annotation_categories_path(
         this.props.assignment_id
       ),
-      data: {id: annot_id},
+      data: {annotation_text_id: annot_id},
       method: "delete",
       remote: true,
       dataType: "script",

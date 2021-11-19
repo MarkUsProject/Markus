@@ -9,53 +9,31 @@ class TasController < ApplicationController
     respond_to do |format|
       format.html
       format.json {
-        render json: Ta.pluck_to_hash(:id, :user_name, :first_name, :last_name, :email)
+        render json: current_course.tas.joins(:human).pluck_to_hash(:id, :user_name, :first_name, :last_name, :email)
       }
     end
   end
 
   def new
-    @user = Ta.new
-    @user.build_grader_permission
-  end
-
-  def edit
-    @user = Ta.find_by_id(params[:id])
-  end
-
-  def destroy
-    @user = Ta.find(params[:id])
-    @user.destroy
-    respond_with(@user)
-  end
-
-  def update
-    @user = Ta.find(params[:id])
-    @user.update(user_params)
-    respond_with(@user)
+    @role = current_course.tas.new
+    @role.build_grader_permission
   end
 
   def create
-    @user = Ta.create(user_params)
-    respond_with(@user)
+    human = Human.find_by_user_name(params[:user_name])
+    @role = current_course.tas.create(human: human, **permission_params)
+    respond_with @role, location: course_tas_path(current_course)
   end
 
   def download
-    tas = Ta.order(:user_name)
+    keys = [:user_name, :last_name, :first_name, :email]
+    tas = current_course.tas.joins(:human).pluck_to_hash(*keys)
     case params[:format]
     when 'csv'
-      output = MarkusCsv.generate(tas) do |ta|
-        Ta::CSV_UPLOAD_ORDER.map do |field|
-          ta.send(field)
-        end
-      end
+      output = MarkusCsv.generate(tas) { |ta| ta.values }
       format = 'text/csv'
     else
-      output = []
-      tas.all.each do |ta|
-        output.push(user_name: ta.user_name, last_name: ta.last_name, first_name: ta.first_name, email: ta.email)
-      end
-      output = output.to_yaml
+      output = tas.to_yaml
       format = 'text/yaml'
     end
     send_data(output,
@@ -73,10 +51,8 @@ class TasController < ApplicationController
       flash_message(:error, e.message)
     else
       if data[:type] == '.csv'
-        result = User.upload_user_list(Ta, params[:upload_file].read, params[:encoding])
-        flash_message(:error, result[:invalid_lines]) unless result[:invalid_lines].empty?
-        flash_message(:success, result[:valid_lines]) unless result[:valid_lines].empty?
-        flash_message(:error, result[:invalid_records]) unless result[:invalid_records].empty?
+        @current_job = UploadRolesJob.perform_later(Ta, current_course, params[:upload_file].read, params[:encoding])
+        session[:job_id] = @current_job.job_id
       end
     end
     redirect_to action: 'index'
@@ -84,13 +60,12 @@ class TasController < ApplicationController
 
   private
 
-  def user_params
-    params.require(:user).permit(:user_name, :last_name, :first_name, :email,
-                                 grader_permission_attributes: [:manage_assessments, :manage_submissions, :run_tests])
+  def permission_params
+    params.permit(grader_permission_attributes: [:manage_assessments, :manage_submissions, :run_tests])
   end
 
   def flash_interpolation_options
-    { resource_name: @user.user_name.blank? ? @user.model_name.human : @user.user_name,
-      errors: @user.errors.full_messages.join('; ')}
+    { resource_name: @role.human&.user_name.blank? ? @role.model_name.human : @role.user_name,
+      errors: @role.errors.full_messages.join('; ')}
   end
 end

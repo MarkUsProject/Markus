@@ -39,3 +39,4 @@ es:
       errors:
         duplicate_users: 'Se ha detectado un nombre de usuario duplicado: %{user_names}.'
     verify_settings_update: UPDATE ME
+    not_found: 'UPDATE ME: %{user_names}'

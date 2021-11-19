@@ -24,7 +24,7 @@
                   key: annotation_text[:id],
                   class: 'button inline-button' %>
       <%= button_to t(:delete),
-                    destroy_annotation_text_assignment_annotation_categories_path(id: annotation_text[:id]),
+                    destroy_annotation_text_assignment_annotation_categories_path(annotation_text_id: annotation_text[:id]),
                     method: 'delete',
                     data: { confirm: t('annotation_categories.destroy_annotation_text.confirm') },
                     remote: true,
@@ -67,7 +67,7 @@
   </div>
 
   <div id='annotation_text_<%= annotation_text[:id] %>_edit' class="no-display">
-    <%= form_with url: update_annotation_text_assignment_annotation_categories_path(id: annotation_text[:id]),
+    <%= form_with url: update_annotation_text_assignment_annotation_categories_path(annotation_text_id: annotation_text[:id]),
                   method: 'put',
                   id: "annotation-text-edit-#{annotation_text[:id]}",
                   remote: true do |f| %>

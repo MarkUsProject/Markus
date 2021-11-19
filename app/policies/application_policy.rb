@@ -7,9 +7,17 @@ class ApplicationPolicy < ActionPolicy::Base
 
   alias_rule :index?, :create?, :new?, to: :manage?
 
+  pre_check :role_exists?
+
   # unless overridden, do not allow access by default
   def manage?
     false
+  end
+
+  # pre checks
+
+  def role_exists?
+    deny! if role.nil?
   end
 
   # policies used to render menu bars (visible everywhere)

@@ -2,20 +2,14 @@
 class UploadRolesJob < ApplicationJob
   def perform(role_class, course, data, encoding)
     progress.total = data.lines.count
-    User.transaction do
-      MarkusCsv.parse(data, skip_blanks: true, row_sep: :auto, encoding: encoding) do |row|
-        next if row.empty?
-
-        human_hash = Hash[role_class::CSV_UPLOAD_ORDER.zip row]
-        human = Human.find_or_initialize_by(human_hash.slice(:user_name)) do |h|
-          h.assign_attributes(human_hash.slice(:first_name, :last_name))
-        end
-        human.update!(human_hash.except(:section_name))
-        role = role_class.find_or_initialize_by(human: human, course: course)
-        unless human_hash[:section_name].nil?
-          role.section = Section.find_or_create_by(name: human_hash[:section_name], course: course)
-        end
-        role.save!
+    role_class.transaction do
+      MarkusCsv.parse(data, encoding: encoding, skip_blanks: true, row_sep: :auto) do |row|
+        user_name = row.first.strip
+        next if user_name.blank?
+        human = Human.find_by_user_name(user_name)
+        raise I18n.t('users.not_found', user_names: user_name) if human.nil?
+        role = role_class.new(human: human, course: course)
+        raise "#{user_name}: #{role.errors.full_messages.join('; ')}" unless role.save
         progress.increment
       end
     end

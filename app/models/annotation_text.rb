@@ -72,7 +72,8 @@ class AnnotationText < ApplicationRecord
     # TODO: simplify second join once creator is no longer polymoprhic
     self.annotations
         .joins(result: { grouping: :group })
-        .joins('INNER JOIN users ON annotations.creator_id = users.id')
+        .joins('INNER JOIN roles ON annotations.creator_id = roles.id')
+        .joins('INNER JOIN users ON roles.user_id = users.id')
         .order('groups.group_name')
         .group('results.id',
                'groupings.assessment_id',

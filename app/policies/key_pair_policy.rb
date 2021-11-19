@@ -1,5 +1,7 @@
 # Policy for managing KeyPairs
 class KeyPairPolicy < ApplicationPolicy
+  skip_pre_check :role_exists?
+
   default_rule :manage?
 
   def manage?

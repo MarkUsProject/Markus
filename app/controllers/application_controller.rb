@@ -39,6 +39,14 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  def page_not_found
+    render 'shared/http_status',
+           formats: [:html],
+           locals: { code: '404', message: HttpStatusHelper::ERROR_CODE['message']['404'] },
+           status: 404,
+           layout: false
+  end
+
   protected
 
   def use_time_zone(&block)
