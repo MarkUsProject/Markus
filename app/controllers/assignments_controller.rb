@@ -585,7 +585,7 @@ class AssignmentsController < ApplicationController
       zipfile.get_output_stream(CONFIG_FILES[:annotations]) do |f|
         f.write convert_to_yml(assignment.annotation_categories)
       end
-      if @current_user.admin?
+      if allowed_to?(:manage?, Tag)
         zipfile.get_output_stream(CONFIG_FILES[:tags]) do |f|
           f.write(assignment.tags.pluck_to_hash(:name, :description).to_yaml)
         end
@@ -601,7 +601,7 @@ class AssignmentsController < ApplicationController
         zipfile.get_output_stream(CONFIG_FILES[:peer_review_annotations]) do |f|
           f.write convert_to_yml(child_assignment.annotation_categories)
         end
-        if @current_user.admin?
+        if allowed_to?(:manage?, Tag)
           zipfile.get_output_stream(CONFIG_FILES[:peer_review_tags]) do |f|
             f.write(child_assignment.tags.pluck_to_hash(:name, :description).to_yaml)
           end
@@ -633,14 +633,14 @@ class AssignmentsController < ApplicationController
           child_assignment.save!
           zipfile.remove(child_prop_file)
           child_tag_prop = build_hash_from_zip(zipfile, :peer_review_tags)
-          Tag.from_yml(child_tag_prop, child_assignment.id) if @current_user.admin?
+          Tag.from_yml(child_tag_prop, child_assignment.id) if allowed_to?(:manage?, Tag)
           child_criteria_prop = build_hash_from_zip(zipfile, :peer_review_criteria)
           config_criteria(child_assignment, child_criteria_prop)
           child_annotations_prop = build_hash_from_zip(zipfile, :peer_review_annotations)
           upload_annotations_from_yaml(child_annotations_prop, child_assignment)
         end
         assignment.save!
-        Tag.from_yml(tag_prop, assignment.id) if @current_user.admin?
+        Tag.from_yml(tag_prop, assignment.id) if allowed_to?(:manage?, Tag)
         config_criteria(assignment, criteria_prop)
         upload_annotations_from_yaml(annotations_prop, assignment)
         redirect_to edit_assignment_path(assignment.id)
