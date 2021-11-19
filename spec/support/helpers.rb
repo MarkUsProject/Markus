@@ -50,4 +50,22 @@ module Helpers
       Submission.generate_new_submission(grouping, repo.get_latest_revision)
     end
   end
+
+  # Reads a byte string of a zip file +content+ and gets the content
+  # of the yaml file with the name +filename+
+  def read_yaml_file(content, filename)
+    Zip::InputStream.open(StringIO.new(content)) do |io|
+      yaml_file = nil
+      while (entry = io.get_next_entry)
+        yaml_file = entry if entry.name == filename
+      end
+      unless yaml_file.nil?
+        YAML.safe_load(yaml_file.get_input_stream.read.encode(Encoding::UTF_8, 'UTF-8'),
+                       [Date, Time, Symbol, ActiveSupport::TimeWithZone, ActiveSupport::TimeZone,
+                        ActiveSupport::Duration, ActiveSupport::HashWithIndifferentAccess],
+                       [],
+                       true)
+      end
+    end
+  end
 end

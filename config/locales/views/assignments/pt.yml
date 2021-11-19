@@ -72,7 +72,6 @@ pt:
       started_on: UPDATE ME
       starter_file_prompt: UPDATE ME
       time_until_due_warning: UPDATE ME %{due_date}
-    unexpected_file_found: UPDATE ME
     upload_config_help_html: UPDATE ME
     upload_file_requirement: A lista de arquivos carregados não coincide com os arquivos de atribuição necessária
     wrong_assignment_type: UPDATE ME
