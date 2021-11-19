@@ -651,7 +651,7 @@ class AssignmentsController < ApplicationController
         Tag.from_yml(tag_prop, assignment.id)
         config_criteria(assignment, criteria_prop)
         upload_annotations_from_yaml(annotations_prop, assignment)
-        config_automated_tests(zip_file, assignment)
+        config_automated_tests(zip_file, assignment) unless assignment.scanned_exam
         redirect_to edit_assignment_path(assignment.id)
       end
     end
