@@ -75,10 +75,104 @@ Rails.application.routes.draw do
       post 'upload_assignments'
     end
 
-    resources :admins
+    resources :admins, only: [:index, :new, :create]
 
-    resources :assignments do
+    resources :starter_file_groups, only: [:destroy, :update] do
+      member do
+        get 'download_file'
+        get 'download_files'
+        post 'update_files'
+      end
+    end
 
+    resources :tags, only: [:edit, :update, :destroy] do
+      member do
+        get 'edit_tag_dialog'
+      end
+    end
+
+    resources :criteria, only: [:edit, :destroy, :update]
+
+    resources :exam_templates, only: [:edit, :update, :destroy] do
+      member do
+        get 'download'
+        get 'download_generate'
+        get 'show_cover'
+        get 'assign_errors'
+        get 'download_raw_split_file'
+        get 'download_error_file'
+        get 'error_pages'
+        patch 'add_fields'
+        patch 'generate'
+        patch 'split'
+        post 'fix_error'
+      end
+    end
+
+    resources :groups, only: [:destroy] do
+      member do
+        post 'rename_group'
+      end
+    end
+
+    resources :submissions, only: [] do
+      member do
+        get 'collect_and_begin_grading'
+        post 'manually_collect_and_begin_grading'
+        get 'repo_browser'
+        post 'repo_browser'
+        get 'downloads'
+        get 'get_file'
+      end
+
+      resources :results, only: [:edit]
+    end
+
+    resources :results, only: [:show, :edit] do
+      member do
+        get 'get_annotations'
+        get 'add_extra_marks'
+        get 'download'
+        post 'download'
+        get 'download_zip'
+        delete 'cancel_remark_request'
+        post 'add_extra_mark'
+        delete 'delete_grace_period_deduction'
+        get 'next_grouping'
+        delete 'remove_extra_mark'
+        patch 'revert_to_automatic_deductions'
+        post 'set_released_to_students'
+        post 'update_overall_comment'
+        post 'toggle_marking_state'
+        patch 'update_remark_request'
+        get 'update_positions'
+        patch 'update_mark'
+        get 'view_marks'
+        post 'add_tag'
+        post 'remove_tag'
+        post 'run_tests'
+        get 'stop_test'
+        get 'get_test_runs_instructors'
+        get 'get_test_runs_instructors_released'
+      end
+    end
+
+    resources :peer_reviews, only: [] do
+      member do
+        get 'show_result'
+      end
+    end
+
+    resources :annotation_categories, only: [:show, :destroy, :update]
+
+    resources :automated_tests do
+      member do
+        get 'student_interface'
+        post 'execute_test_run'
+      end
+    end
+
+    resources :assignments, except: [:destroy] do
       collection do
         get 'delete_rejected'
         get 'batch_runs'
@@ -103,26 +197,16 @@ Rails.application.routes.draw do
         get 'grade_distribution'
       end
 
-      resources :starter_file_groups do
-        member do
-          get 'download_file'
-          get 'download_files'
-          post 'update_files'
-        end
-      end
+      resources :starter_file_groups, only: [:create]
 
-      resources :tags do
+      resources :tags, only: [:create, :index] do
         collection do
           get 'download'
           post 'upload'
         end
-
-        member do
-          get 'edit_tag_dialog'
-        end
       end
 
-      resources :criteria do
+      resources :criteria, only: [:create, :index, :new] do
         collection do
           post 'update_positions'
           post 'upload'
@@ -130,7 +214,7 @@ Rails.application.routes.draw do
         end
       end
 
-      resources :automated_tests do
+      resources :automated_tests, only: [] do
         collection do
           get 'manage'
           post 'update' # because of collection
@@ -148,27 +232,13 @@ Rails.application.routes.draw do
         end
       end
 
-      resources :exam_templates do
-        member do
-          get 'download'
-          get 'download_generate'
-          get 'show_cover'
-          get 'assign_errors'
-          get 'download_raw_split_file'
-          get 'download_error_file'
-          get 'error_pages'
-          patch 'add_fields'
-          patch 'generate'
-          patch 'split'
-          post 'fix_error'
-        end
-
+      resources :exam_templates, only: [:index, :create] do
         collection do
           get 'view_logs'
         end
       end
 
-      resources :groups do
+      resources :groups, only: [:index, :create, :new] do
         collection do
           get 'add_group'
           post 'use_another_assignment_groups'
@@ -195,10 +265,6 @@ Rails.application.routes.draw do
           delete 'delete_rejected'
           post 'invite_member'
           patch 'disinvite_member'
-        end
-
-        member do
-          post 'rename_group'
         end
       end
 
@@ -227,67 +293,9 @@ Rails.application.routes.draw do
           get 'notebook_content'
           get 'download_summary'
         end
-
-        member do
-          get 'collect_and_begin_grading'
-          post 'manually_collect_and_begin_grading'
-          get 'repo_browser'
-          post 'repo_browser'
-          get 'downloads'
-          get 'get_file'
-        end
-
-        resources :results do
-          collection do
-            get 'edit'
-            get 'download'
-          end
-
-          member do
-            get 'get_annotations'
-            get 'add_extra_marks'
-            get 'download'
-            post 'download'
-            get 'download_zip'
-            delete 'cancel_remark_request'
-            post 'add_extra_mark'
-            delete 'delete_grace_period_deduction'
-            get 'next_grouping'
-            delete 'remove_extra_mark'
-            patch 'revert_to_automatic_deductions'
-            post 'set_released_to_students'
-            post 'update_overall_comment'
-            post 'toggle_marking_state'
-            patch 'update_remark_request'
-            get 'update_positions'
-            patch 'update_mark'
-            get 'view_marks'
-            post 'add_tag'
-            post 'remove_tag'
-            post 'run_tests'
-            get 'stop_test'
-            get 'get_test_runs_instructors'
-            get 'get_test_runs_instructors_released'
-          end
-        end
       end
 
-      resources :results, only: [:edit], path: '/peer_reviews' do
-        collection do
-          get 'download'
-        end
-
-        member do
-          get 'view_marks'
-          get 'next_grouping'
-          post 'toggle_marking_state'
-          patch 'update_mark'
-          post 'update_overall_comment'
-          patch 'update_remark_request'
-        end
-      end
-
-      resources :peer_reviews, only: :index do
+      resources :peer_reviews, only: [:index] do
         collection do
           get 'populate'
           post 'assign_groups'
@@ -296,13 +304,9 @@ Rails.application.routes.draw do
           get 'list_reviews'
           get 'show_reviews'
         end
-
-        member do
-          get 'show_result'
-        end
       end
 
-      resources :graders do
+      resources :graders, only: [:index] do
         collection do
           post 'upload'
           get 'grader_groupings_mapping'
@@ -313,7 +317,7 @@ Rails.application.routes.draw do
         end
       end
 
-      resources :annotation_categories do
+      resources :annotation_categories, only: [:index, :new, :create] do
         collection do
           post 'update_positions'
           post 'upload'
@@ -358,11 +362,9 @@ Rails.application.routes.draw do
           post 'randomly_assign'
         end
       end
-
     end
 
-    resources :notes do
-
+    resources :notes, except: [:show] do
       collection do
         post 'add_note'
         post 'noteable_object_selector'
@@ -377,7 +379,7 @@ Rails.application.routes.draw do
       end
     end
 
-    resources :course_summaries do
+    resources :course_summaries, only: [:index] do
       collection do
         get 'populate'
         get 'get_marking_scheme_details'
@@ -387,21 +389,21 @@ Rails.application.routes.draw do
       end
     end
 
-    resources :marking_schemes do
+    resources :marking_schemes, except: [:show] do
       collection do
         get 'populate'
       end
     end
 
-    resources :sections
+    resources :sections, except: [:show]
 
-    resources :annotations do
+    resources :annotations, only: [:create, :destroy, :update] do
       collection do
         post 'add_existing_annotation'
       end
     end
 
-    resources :students do
+    resources :students, only: [:create, :new, :index, :edit, :update] do
       collection do
         patch 'bulk_modify'
         get 'manage'
@@ -415,28 +417,21 @@ Rails.application.routes.draw do
       end
     end
 
-    resources :tas  do
+    resources :tas, only: [:create, :new, :index]  do
       collection do
         get 'download'
         post 'upload'
       end
     end
 
-    resources :automated_tests do
-      member do
-        get 'student_interface'
-        post 'execute_test_run'
-      end
-    end
-
-    resources :extensions
+    resources :extensions, only: [:create, :update, :destroy]
 
     resources :feedback_files, only: [:show]
   end
 
-  resources :key_pairs
+  resources :key_pairs, only: [:new, :create, :destroy]
 
-  resources :users do
+  resources :users, only: [] do
     collection do
       post 'reset_api_key'
       get 'settings'
@@ -454,7 +449,7 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :job_messages, param: :job_id do
+  resources :job_messages, only: [], param: :job_id do
     member do
       get 'get'
     end
