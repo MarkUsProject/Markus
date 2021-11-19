@@ -1197,8 +1197,8 @@ class Assignment < Assessment
     end
   end
 
-  # Writes this assignment's starter file settings to the file located at +settings_filepath+ located in 
-  # the +zip_file+. Also writes the starter files for this assignment in the same directory as +settings_filepath+.
+  # Writes this assignment's starter file settings to the file located at +settings_filepath+ located in the
+  # +zip_file+. Also writes the starter files for this assignment in the same directory as +settings_filepath+.
   def starter_file_config_to_zip(zip_file, settings_filepath)
     default_starter_group = nil
     download_count = 1

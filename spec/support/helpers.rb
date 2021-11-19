@@ -56,7 +56,7 @@ module Helpers
   def read_yaml_file(content, filename)
     Zip::InputStream.open(StringIO.new(content)) do |io|
       yaml_file = nil
-      while (entry = io.get_next_entry)
+      while (entry = io.get_next_entry) && yaml_file.nil?
         yaml_file = entry if entry.name == filename
       end
       unless yaml_file.nil?

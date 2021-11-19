@@ -22,7 +22,9 @@ class AssignmentsController < ApplicationController
     peer_review_tags: File.join('peer-review-config-files', 'tags.yml'),
     peer_review_criteria: File.join('peer-review-config-files', 'criteria.yml'),
     peer_review_annotations: File.join('peer-review-config-files', 'annotations.yml'),
-    peer_review_starter_files: File.join('peer-review-config-files', 'starter-file-config-files', 'starter-file-rules.yml')
+    peer_review_starter_files: File.join('peer-review-config-files', 
+                                         'starter-file-config-files', 
+                                         'starter-file-rules.yml')
   }.freeze
 
   # Publicly accessible actions ---------------------------------------
@@ -670,11 +672,12 @@ class AssignmentsController < ApplicationController
   # Configures the starter files for an +assignment+ provided in the +zip_file+
   def config_starter_files(assignment, zip_file)
     assignment.is_peer_review? ? starter_config_file = :peer_review_starter_files : starter_config_file = :starter_files
-    starter_file_settings = build_hash_from_zip(zip_file, starter_config_file)
+    starter_file_settings = build_hash_from_zip(zip_file, starter_config_file).symbolize_keys
     assignment.starter_file_type = starter_file_settings[:starter_file_type]
     assignment.starter_files_after_due = starter_file_settings[:allow_starter_files_after_due]
     starter_group_mappings = {}
     starter_file_settings[:group_information].each do |group|
+      group = group.symbolize_keys
       file_group = StarterFileGroup.create!(name: group[:name],
                                             use_rename: group[:use_rename],
                                             entry_rename: group[:entry_rename],
