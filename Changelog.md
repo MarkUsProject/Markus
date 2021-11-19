@@ -13,6 +13,7 @@
   ID number or user name (#5592)
 - Fix scanned exams when using automatic parsing with multiple exam templates (#5592)
 - Fixes assignment graders checkbox settings text to avoid double negatives (#5600)
+- Add test results download modal for assignment summary (#5561)
 - Improve accessibility of exam templates page (#5607)
 
 ## [v1.13.3]

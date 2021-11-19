@@ -605,6 +605,73 @@ class Assignment < Assessment
       numMarked: self.get_num_marked(user.admin? ? nil : user.id) }
   end
 
+  # Generates the summary of the most test results associated with an assignment.
+  def summary_test_results
+    test_groups_query = self.test_groups
+                            .joins(test_group_results: { test_run: :grouping })
+                            .group('test_groups.id', 'groupings.id')
+                            .select('test_groups.id AS test_groups_id',
+                                    'MAX(test_group_results.created_at) AS test_group_results_created_at')
+                            .where.not('test_runs.submission_id': nil)
+                            .to_sql
+
+    TestGroup.joins(test_group_results: [:test_results, { test_run: { grouping: :group } }])
+             .joins("INNER JOIN (#{test_groups_query}) sub \
+                     ON test_groups.id = sub.test_groups_id \
+                     AND test_group_results_test_groups.created_at = sub.test_group_results_created_at")
+             .select('test_groups.name',
+                     'test_groups_id',
+                     'groups.group_name',
+                     'test_results.name as test_result_name',
+                     'test_results.status',
+                     'test_results.marks_earned',
+                     'test_results.marks_total',
+                     :output, :extra_info, :error_type)
+  end
+
+  # Generate a JSON summary of the most recent test results associated with an assignment.
+  def summary_test_result_json
+    self.summary_test_results.group_by(&:group_name).transform_values do |grouping|
+      grouping.group_by(&:name)
+    end.to_json
+  end
+
+  # Generate a CSV summary of the most recent test results associated with an assignment.
+  def summary_test_result_csv
+    results = {}
+    headers = SortedSet.new
+    summary_test_results = self.summary_test_results.as_json
+
+    summary_test_results.each do |test_result|
+      header = "#{test_result['name']}:#{test_result['test_result_name']}"
+
+      if results.key?(test_result['group_name'])
+        results[test_result['group_name']][header] = test_result['status']
+      else
+        results[test_result['group_name']] = Hash[header, test_result['status']]
+      end
+
+      headers << header
+    end
+
+    CSV.generate do |csv|
+      csv << [nil, *headers]
+
+      results.each do |group_name, _test_group|
+        row = [group_name]
+
+        headers.each do |header|
+          if results[group_name].key?(header)
+            row << results[group_name][header]
+          else
+            row << nil
+          end
+        end
+        csv << row
+      end
+    end
+  end
+
   # Generate CSV summary of grades for this assignment
   # for the current user. The user should be an admin or TA.
   def summary_csv(user)

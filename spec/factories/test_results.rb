@@ -7,5 +7,11 @@ FactoryBot.define do
     marks_total { 1 }
     association :test_group_result
     time { Faker::Number.number(digits: 4) }
+
+    factory :test_result_with_ordered_name do
+      sequence :name do |n|
+        "Test Result #{n}"
+      end
+    end
   end
 end

@@ -5,6 +5,7 @@ es:
   download_csv: Descargar en formato CSV
   download_errors:
     unrecognized_format: No se pudo reconocer el formato %{format} para descargar
+  download_json: Descargar en formato JSON
   download_the: Descargar %{item}
   download_yml: Descargar en formato YML
   rename: UPDATE ME
