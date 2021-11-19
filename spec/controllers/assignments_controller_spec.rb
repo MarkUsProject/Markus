@@ -1733,7 +1733,7 @@ describe AssignmentsController do
             use_rename: starter_group1.use_rename,
             entry_rename: starter_group1.entry_rename,
             files_and_dirs: starter_group1_files
-          }, 
+          },
           {
             name: starter_group2.name,
             use_rename: starter_group2.use_rename,
