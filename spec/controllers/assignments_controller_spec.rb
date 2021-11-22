@@ -1305,6 +1305,10 @@ describe AssignmentsController do
       describe 'downloaded zip file' do
         let!(:criteria) { create :checkbox_criterion, assignment: assignment }
         let!(:annotation) { create :annotation_category, assignment: assignment }
+        
+        before :each do
+          
+        end
 
         it 'should have a valid properties file' do
           subject
