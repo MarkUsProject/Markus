@@ -686,18 +686,18 @@ class AssignmentsController < ApplicationController
       File.write(assignment.autotest_settings_file, file_content, mode: 'wb')
       @current_job = AutotestSpecsJob.perform_later(request.protocol + request.host_with_port, assignment)
       session[:job_id] = @current_job.job_id
-    end
-    test_file_dir_path = File.join(CONFIG_DIRS[:automated_test_files], '')
-    zip_file.each do |entry|
-      if entry.name.match?(/^#{test_file_dir_path}/)
-        filename = entry.name.gsub(/^#{test_file_dir_path}/, '')
-        file_path = File.join(assignment.autotest_files_dir, filename)
-        if entry.directory?
-          FileUtils.mkdir_p(file_path)
-        else
-          FileUtils.mkdir_p(File.dirname(file_path))
-          test_file_content = entry.get_input_stream.read
-          File.write(file_path, test_file_content, mode: 'wb')
+      test_file_dir_path = File.join(CONFIG_DIRS[:automated_test_files], '')
+      zip_file.each do |entry|
+        if entry.name.match?(/^#{test_file_dir_path}/)
+          filename = entry.name.gsub(/^#{test_file_dir_path}/, '')
+          file_path = File.join(assignment.autotest_files_dir, filename)
+          if entry.directory?
+            FileUtils.mkdir_p(file_path)
+          else
+            FileUtils.mkdir_p(File.dirname(file_path))
+            test_file_content = entry.get_input_stream.read
+            File.write(file_path, test_file_content, mode: 'wb')
+          end
         end
       end
     end

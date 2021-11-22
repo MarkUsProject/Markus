@@ -1307,7 +1307,19 @@ describe AssignmentsController do
         let!(:annotation) { create :annotation_category, assignment: assignment }
         
         before :each do
-          
+          # Initialize Automated Tests
+          FileUtils.mkdir_p(assignment.autotest_files_dir)
+          File.write(File.join(assignment.autotest_files_dir, 'tests.py'), 
+                     "def sample_test()\n\tassert True == True")
+          FileUtils.mkdir_p File.join(assignment.autotest_files_dir, 'Helpers')
+          File.write(File.join(assignment.autotest_files_dir, 'Helpers', 'test_helpers.py'), 
+                     "def initialize_tests()\n\treturn True")
+          assignment.update!(enable_test: true,
+                             enable_student_tests: true,
+                             tokens_per_period: 10,
+                             token_period: 24,
+                             non_regenerating_tokens: false,
+                             unlimited_tokens: false)
         end
 
         it 'should have a valid properties file' do
@@ -1435,6 +1447,12 @@ describe AssignmentsController do
       tags_good = fixture_file_upload(File.join(base_dir, 'tags.yml'), 'text/yaml')
       criteria_good = fixture_file_upload(File.join(base_dir, 'criteria.yml'), 'text/yaml')
       annotations_good = fixture_file_upload(File.join(base_dir, 'annotations.yml'), 'text/yaml')
+      test_file_path = File.join('assignments', 'sample-timed-assessment-good',
+                                 'automated-test-config-files')
+      test_settings_good = fixture_file_upload(File.join(test_file_path, 'automated-tests-settings.yml'), 'text/yaml')
+      test_specs_good = fixture_file_upload(File.join(test_file_path, 'automated-tests-specs.json'), 'text/json')
+      test_file1_good = fixture_file_upload(File.join(test_file_path, 'automated-test-files', 'tests.py'), 'text/py')
+      test_file2_good = fixture_file_upload(File.join(test_file_path, 'automated-test-files', 'Helpers', 'test_helpers.py'), 'text/py')
 
       peer_review_dir = File.join('assignments', 'sample-timed-assessment-good', 'peer-review-config-files')
       pr_properties_good = fixture_file_upload(File.join(peer_review_dir, 'properties.yml'), 'text/yaml')
@@ -1454,6 +1472,10 @@ describe AssignmentsController do
         zip_file.add('peer-review-config-files/tags.yml', pr_tags_good.path)
         zip_file.add('peer-review-config-files/criteria.yml', pr_criteria_good.path)
         zip_file.add('peer-review-config-files/annotations.yml', pr_annotations_good.path)
+        zip_file.add('automated-test-config-files/automated-tests-settings.yml', test_settings_good.path)
+        zip_file.add('automated-test-config-files/automated-tests-specs.json', test_specs_good.path)
+        zip_file.add('automated-test-config-files/automated-test-files/tests.py', test_file1_good.path)
+        zip_file.add('automated-test-config-files/automated-test-files/Helpers/test_helpers.py', test_file2_good.path)
       end
       @assignment_good_zip = fixture_file_upload(zip_path, 'application/zip')
     end
@@ -1667,6 +1689,21 @@ describe AssignmentsController do
       let!(:tag3) { create :tag, assessment_id: assignment.id }
 
       before :each do
+        # Initialize Automated Tests
+        FileUtils.mkdir_p(assignment.autotest_files_dir)
+        File.write(File.join(assignment.autotest_files_dir, 'tests.py'),
+                   "def sample_test()\n\tassert True == True")
+        FileUtils.mkdir_p File.join(assignment.autotest_files_dir, 'Helpers')
+        File.write(File.join(assignment.autotest_files_dir, 'Helpers', 'test_helpers.py'),
+                   "def initialize_tests()\n\treturn True")
+        assignment.update!(enable_test: true,
+                           enable_student_tests: true,
+                           tokens_per_period: 10,
+                           token_period: 24,
+                           non_regenerating_tokens: false,
+                           unlimited_tokens: false)
+        File.write(assignment.autotest_settings_file, '{"a":1}', mode: 'wb')
+        # Download and upload assignment
         get_as user, :download_config_files, params: { id: assignment.id }
         zip_name = 'assignment-copy-test-config-files.zip'
         zip_path = File.join('tmp', zip_name)
