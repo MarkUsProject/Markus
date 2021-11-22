@@ -671,7 +671,7 @@ class AssignmentsController < ApplicationController
 
   # Configures the starter files for an +assignment+ provided in the +zip_file+
   def config_starter_files(assignment, zip_file)
-    assignment.is_peer_review? ? starter_config_file = :peer_review_starter_files : starter_config_file = :starter_files
+    starter_config_file = assignment.is_peer_review? ? :peer_review_starter_files : :starter_files
     starter_file_settings = build_hash_from_zip(zip_file, starter_config_file).symbolize_keys
     assignment.starter_file_type = starter_file_settings[:starter_file_type]
     assignment.starter_files_after_due = starter_file_settings[:allow_starter_files_after_due]

@@ -1201,10 +1201,9 @@ class Assignment < Assessment
   # +zip_file+. Also writes the starter files for this assignment in the same directory as +settings_filepath+.
   def starter_file_config_to_zip(zip_file, settings_filepath)
     default_starter_group = nil
-    download_count = 1
     group_data = []
     directory_path = File.dirname(settings_filepath)
-    self.starter_file_groups.find_each do |starter_file_group|
+    self.starter_file_groups.each.with_index(1) do |starter_file_group, download_count|
       group_name = "#{download_count}: #{starter_file_group.name}"
       group_name = group_name.gsub(File::SEPARATOR, '')
       starter_file_group.write_starter_files_to_zip(zip_file, File.join(directory_path, group_name))
@@ -1217,7 +1216,6 @@ class Assignment < Assessment
         use_rename: starter_file_group.use_rename,
         entry_rename: starter_file_group.entry_rename
       }
-      download_count += 1
     end
     starter_file_settings = {
       starter_file_type: self.starter_file_type,
