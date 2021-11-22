@@ -13,7 +13,7 @@ class AssignmentsController < ApplicationController
   # Publicly accessible actions ---------------------------------------
 
   def show
-    assignment = Assignment.find(params[:id])
+    assignment = record
     @assignment = assignment.is_peer_review? ? assignment.parent_assignment : assignment
     unless allowed_to?(:see_hidden?)
       render 'shared/http_status',
@@ -60,7 +60,7 @@ class AssignmentsController < ApplicationController
   end
 
   def peer_review
-    assignment = Assignment.find(params[:id])
+    assignment = record
     @assignment = assignment.is_peer_review? ? assignment : assignment.pr_assignment
     if @assignment.nil? || !allowed_to?(:see_hidden?)
       render 'shared/http_status',
@@ -147,10 +147,10 @@ class AssignmentsController < ApplicationController
 
   # Called on editing assignments (GET)
   def edit
-    @assignment = Assignment.find_by_id(params[:id])
+    @assignment = record
     past_date = @assignment.section_names_past_due_date
-    @assignments = Assignment.all
-    @sections = Section.all
+    @assignments = current_course.assignments
+    @sections = current_course.sections
 
     unless @assignment.scanned_exam
       if @assignment.past_collection_date?
@@ -174,10 +174,9 @@ class AssignmentsController < ApplicationController
 
   # Called when editing assignments form is submitted (PUT).
   def update
-    @assignment = Assignment.find_by_id(params[:id])
-    @assignments = Assignment.all
-    @sections = Section.all
-
+    @assignment = record
+    @assignments = current_course.assignments
+    @sections = current_course.sections
     begin
       @assignment.transaction do
         @assignment = process_assignment_form(@assignment)
@@ -185,27 +184,27 @@ class AssignmentsController < ApplicationController
       end
     rescue
     end
-    respond_with @assignment, location: -> { edit_assignment_path(@assignment) }
+    respond_with @assignment, location: -> { edit_course_assignment_path(current_course, @assignment) }
   end
 
   # Called in order to generate a form for creating a new assignment.
   # i.e. GET request on assignments/new
   def new
-    @assignments = Assignment.all
-    @assignment = Assignment.new
+    @assignments = current_course.assignments
+    @assignment = @assignments.new
     if params[:scanned].present?
       @assignment.scanned_exam = true
     end
     if params[:timed].present?
       @assignment.is_timed = true
     end
-    @clone_assignments = Assignment.joins(:assignment_properties)
-                                   .where(assignment_properties: { vcs_submit: true })
-                                   .order(:id)
-    @sections = Section.all
+    @clone_assignments = @assignments.joins(:assignment_properties)
+                                     .where(assignment_properties: { vcs_submit: true })
+                                     .order(:id)
+    @sections = current_course.sections
 
     # build assessment_section_properties for each section
-    Section.all.each { |s| @assignment.assessment_section_properties.build(section: s) }
+    @sections.each { |s| @assignment.assessment_section_properties.build(section: s) }
     @assessment_section_properties = @assignment.assessment_section_properties
                                                 .sort_by { |s| s.section.name }
     render :new
@@ -213,7 +212,7 @@ class AssignmentsController < ApplicationController
 
   # Called after a new assignment form is submitted.
   def create
-    @assignment = Assignment.new
+    @assignment = current_course.assignments.new
     @assignment.transaction do
       begin
         @assignment = process_assignment_form(@assignment)
@@ -223,12 +222,12 @@ class AssignmentsController < ApplicationController
         @assignment.errors.add(:base, e.message)
       end
       unless @assignment.save
-        @assignments = Assignment.all
-        @sections = Section.all
-        @clone_assignments = Assignment.joins(:assignment_properties)
-                                       .where(assignment_properties: { vcs_submit: true })
-                                       .order(:id)
-        respond_with @assignment, location: -> { new_assignment_path(@assignment) }
+        @assignments = current_course.assignments
+        @sections = current_course.sections
+        @clone_assignments = @assignments.joins(:assignment_properties)
+                                         .where(assignment_properties: { vcs_submit: true })
+                                         .order(:id)
+        respond_with @assignment, location: -> { new_course_assignment_path(current_course, @assignment) }
         return
       end
       if params[:persist_groups_assignment]
@@ -238,11 +237,11 @@ class AssignmentsController < ApplicationController
         end
       end
     end
-    respond_with @assignment, location: -> { edit_assignment_path(@assignment) }
+    respond_with @assignment, location: -> { edit_course_assignment_path(current_course, @assignment) }
   end
 
   def summary
-    @assignment = Assignment.find(params[:id])
+    @assignment = record
     respond_to do |format|
       format.html { render layout: 'assignment_content' }
       format.json { render json: @assignment.summary_json(current_role) }
@@ -274,7 +273,7 @@ class AssignmentsController < ApplicationController
   end
 
   def batch_runs
-    @assignment = Assignment.find(params[:id])
+    @assignment = record
 
     respond_to do |format|
       format.html
@@ -306,7 +305,7 @@ class AssignmentsController < ApplicationController
 
   # Return assignment grade distributions
   def grade_distribution
-    assignment = Assignment.find(params[:id])
+    assignment = record
     summary = {
       name: assignment.short_identifier + ': ' + assignment.description,
       average: assignment.results_average || 0,
@@ -343,11 +342,11 @@ class AssignmentsController < ApplicationController
   end
 
   def view_summary
-    @assignment = Assignment.find(params[:id])
+    @assignment = record
   end
 
   def starter_file
-    @assignment = Assignment.find_by_id(params[:id])
+    @assignment = record
     if @assignment.nil?
       render 'shared/http_status',
              locals: { code: '404', message: HttpStatusHelper::ERROR_CODE['message']['404'] },
@@ -358,7 +357,7 @@ class AssignmentsController < ApplicationController
   end
 
   def populate_starter_file_manager
-    assignment = Assignment.find(params[:id])
+    assignment = record
     if assignment.groupings.exists?
       flash_message(:warning,
                     I18n.t('assignments.starter_file.groupings_exist_warning_html'))
@@ -386,7 +385,7 @@ class AssignmentsController < ApplicationController
   end
 
   def update_starter_file
-    assignment = Assignment.find(params[:id])
+    assignment = record
     all_changed = false
     success = true
     ApplicationRecord.transaction do
@@ -420,7 +419,7 @@ class AssignmentsController < ApplicationController
   end
 
   def download_starter_file_mappings
-    assignment = Assignment.find(params[:id])
+    assignment = record
     mappings = assignment.starter_file_mappings
     file_out = MarkusCsv.generate(mappings, [mappings.first&.keys].compact, &:values)
     send_data(file_out,
@@ -449,7 +448,7 @@ class AssignmentsController < ApplicationController
   end
 
   def set_boolean_graders_options
-    assignment = Assignment.find(params[:id])
+    assignment = record
     attributes = graders_options_params
     return head 400 if attributes.empty? || attributes[:assignment_properties_attributes].empty?
 
@@ -463,7 +462,7 @@ class AssignmentsController < ApplicationController
 
   # Start timed assignment for the current user's grouping for this assignment
   def start_timed_assignment
-    assignment = Assignment.find(params[:id])
+    assignment = record
     grouping = current_role.accepted_grouping_for(assignment.id)
     if grouping.nil? && assignment.group_max == 1
       begin
@@ -484,7 +483,7 @@ class AssignmentsController < ApplicationController
 
   # Download a zip file containing an example of starter files that might be assigned to a grouping
   def download_sample_starter_files
-    assignment = Assignment.find(params[:id])
+    assignment = record
 
     zip_name = "#{assignment.short_identifier}-sample-starter-files.zip"
     zip_path = File.join('tmp', zip_name)
@@ -571,9 +570,9 @@ class AssignmentsController < ApplicationController
       else
         submitted_date = l(File.mtime(starter_file_group.path + file).in_time_zone(current_role.time_zone))
         { key: file, size: 1, submitted_date: submitted_date,
-          url: download_file_assignment_starter_file_group_url(starter_file_group.assignment.id,
-                                                               starter_file_group.id,
-                                                               file_name: file) }
+          url: download_file_course_starter_file_group_url(starter_file_group.assignment.course,
+                                                           starter_file_group,
+                                                           file_name: file) }
       end
     end
   end
