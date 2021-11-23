@@ -11,20 +11,15 @@ class AssignmentsController < ApplicationController
     # dynamically. TODO: remove this when possible
     p.style_src :self, "'unsafe-inline'"
   end
-
-  CONFIG_DIRS = {
-    peer_review: 'peer-review-config-files',
-    automated_tests: 'automated-test-config-files',
-    automated_test_files: File.join('automated-test-config-files', 'automated-test-files')
-  }.freeze
-
+  
   CONFIG_FILES = {
     properties: 'properties.yml',
     tags: 'tags.yml',
     criteria: 'criteria.yml',
     annotations: 'annotations.yml',
-    automated_test_specs: File.join(CONFIG_DIRS[:automated_tests], 'automated-tests-specs.json'),
-    automated_tests: File.join(CONFIG_DIRS[:automated_tests], 'automated-tests-settings.yml'),
+    automated_tests_spec: File.join('automated-test-config-files', 'automated-tests-specs.json'),
+    automated_tests_dir_entry: File.join('automated-test-config-files', 'automated-test-files'),
+    automated_tests: File.join('automated-test-config-files', 'automated-tests-settings.yml'),
     peer_review_properties: File.join(CONFIG_DIRS[:peer_review], 'properties.yml'),
     peer_review_tags: File.join(CONFIG_DIRS[:peer_review], 'tags.yml'),
     peer_review_criteria: File.join(CONFIG_DIRS[:peer_review], 'criteria.yml'),
@@ -594,7 +589,7 @@ class AssignmentsController < ApplicationController
         f.write convert_to_yml(assignment.annotation_categories)
       end
       unless assignment.scanned_exam
-        assignment.automated_test_config_to_zip(zipfile, CONFIG_DIRS[:automated_test_files],
+        assignment.automated_test_config_to_zip(zipfile, CONFIG_FILES[:automated_tests_dir_entry],
                                                 CONFIG_FILES[:automated_test_specs], CONFIG_FILES[:automated_tests])
       end
       if allowed_to?(:manage?, Tag)
@@ -655,7 +650,7 @@ class AssignmentsController < ApplicationController
         Tag.from_yml(tag_prop, assignment.id) if allowed_to?(:manage?, Tag)
         config_criteria(assignment, criteria_prop)
         upload_annotations_from_yaml(annotations_prop, assignment)
-        config_automated_tests(zip_file, assignment) unless assignment.scanned_exam
+        config_automated_tests(assignment, zipfile) unless assignment.scanned_exam
         redirect_to edit_assignment_path(assignment.id)
       end
     end
@@ -672,7 +667,7 @@ class AssignmentsController < ApplicationController
 
   private
 
-  def config_automated_tests(zip_file, assignment)
+  def config_automated_tests(assignment, zip_file)
     automated_test_settings = build_hash_from_zip(zip_file, :automated_tests)
     assignment.update!(automated_test_settings)
     spec_file = zip_file.get_entry(CONFIG_FILES[:automated_test_specs])
@@ -683,10 +678,10 @@ class AssignmentsController < ApplicationController
     rescue JSON::ParserError
       raise I18n.t('automated_tests.invalid_specs_file')
     else
-      File.write(assignment.autotest_settings_file, file_content, mode: 'wb')
+      File.write(assignment.autotest_settings_file, spec_content, mode: 'wb')
       @current_job = AutotestSpecsJob.perform_later(request.protocol + request.host_with_port, assignment)
       session[:job_id] = @current_job.job_id
-      test_file_dir_path = File.join(CONFIG_DIRS[:automated_test_files], '')
+      test_file_dir_path = File.join(CONFIG_FILES[:automated_tests_dir_entry], '')
       zip_file.each do |entry|
         if entry.name.match?(/^#{test_file_dir_path}/)
           filename = entry.name.gsub(/^#{test_file_dir_path}/, '')

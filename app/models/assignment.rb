@@ -1216,7 +1216,7 @@ class Assignment < Assessment
   def automated_test_config_to_zip(zip_file, zip_dir, spec_file_path, settings_file_path)
     self.add_test_files_to_zip(zip_file, zip_dir)
     test_specs_path = self.autotest_settings_file
-    test_specs = File.exist?(test_specs_path) ? JSON.parse(File.open(test_specs_path, &:read)) : {}
+    test_specs = File.exist?(test_specs_path) ? File.open(test_specs_path, &:read) : {}
     zip_file.get_output_stream(spec_file_path) { |f| f.write test_specs }
     misc_settings = {}
     misc_settings_attr = [:enable_test, :enable_student_tests, :tokens_per_period, :unlimited_tokens,
