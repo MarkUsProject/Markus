@@ -165,13 +165,6 @@ Rails.application.routes.draw do
 
     resources :annotation_categories, only: [:show, :destroy, :update]
 
-    resources :automated_tests do
-      member do
-        get 'student_interface'
-        post 'execute_test_run'
-      end
-    end
-
     resources :assignments, except: [:destroy] do
       collection do
         get 'delete_rejected'
@@ -229,6 +222,8 @@ Rails.application.routes.draw do
           post 'upload_files'
           get 'download_specs'
           post 'upload_specs'
+          get 'student_interface'
+          post 'execute_test_run'
         end
       end
 

@@ -1,17 +1,17 @@
 describe AutomatedTestsController do
   let(:assignment) { create :assignment }
-  let(:params) { { assignment_id: assignment.id } }
+  let(:params) { { course_id: assignment.course.id, assignment_id: assignment.id } }
   shared_examples 'An authorized admin and grader managing automated testing' do
-    include_examples 'An unauthorized user accessing student interface'
+    include_examples 'An unauthorized role accessing student interface'
     context 'PUT update' do
-      before { put_as user, :update, params: params }
+      before { put_as role, :update, params: params }
       # TODO: write tests
     end
     context 'GET manage' do
       before :each do
-        get_as user, :manage, params: params
+        get_as role, :manage, params: params
       end
-      it 'User should be able to view the Automated Testing manage page' do
+      it 'role should be able to view the Automated Testing manage page' do
         expect(response.status).to eq(200)
       end
       it 'should render the assignment_content layout' do
@@ -19,7 +19,7 @@ describe AutomatedTestsController do
       end
     end
     context 'GET populate_autotest_manager' do
-      subject { get_as user, :populate_autotest_manager, params: params }
+      subject { get_as role, :populate_autotest_manager, params: params }
       let(:settings_content) { '{}' }
       before do
         allow(AutotestTestersJob).to receive(:perform_later) { AutotestTestersJob.new }
@@ -94,9 +94,11 @@ describe AutomatedTestsController do
           allow_any_instance_of(Assignment).to receive(:autotest_files).and_return ['file.txt']
           allow_any_instance_of(Pathname).to receive(:exist?).and_return true
           allow(File).to receive(:mtime).and_return current_time
-          user.update(time_zone: 'UTC')
+          role.update(time_zone: 'UTC')
           subject
-          url = download_file_assignment_automated_tests_url(assignment_id: assignment.id, file_name: 'file.txt')
+          url = download_file_course_assignment_automated_tests_url(assignment.course,
+                                                                    assignment,
+                                                                    file_name: 'file.txt')
           data = [{ key: 'file.txt', submitted_date: I18n.l(current_time.in_time_zone('UTC')),
                     size: 1, url: url }.transform_keys(&:to_s)]
           expect(JSON.parse(response.body)['files']).to eq(data)
@@ -116,10 +118,11 @@ describe AutomatedTestsController do
           allow_any_instance_of(Pathname).to receive(:directory?).and_wrap_original do |m, *_args|
             m.receiver.basename.to_s == 'some_dir'
           end
-          user.update(time_zone: 'UTC')
+          role.update(time_zone: 'UTC')
           subject
-          url = download_file_assignment_automated_tests_url(assignment_id: assignment.id,
-                                                             file_name: 'some_dir/file.txt')
+          url = download_file_course_assignment_automated_tests_url(assignment.course,
+                                                                    assignment,
+                                                                    file_name: 'some_dir/file.txt')
           data = [{ key: 'some_dir/' }, { key: 'some_dir/file.txt',
                                           submitted_date: I18n.l(current_time.in_time_zone('UTC')),
                                           size: 1, url: url }]
@@ -128,11 +131,11 @@ describe AutomatedTestsController do
       end
     end
     context 'GET download_file' do
-      before { get_as user, :download_file, params: params }
+      before { get_as role, :download_file, params: params }
       # TODO: write tests
     end
     context 'GET download_files' do
-      subject { get_as user, :download_files, params: params }
+      subject { get_as role, :download_files, params: params }
       let(:content) { response.body }
       it_behaves_like 'zip file download'
       it 'should be successful' do
@@ -141,10 +144,13 @@ describe AutomatedTestsController do
       end
     end
     context 'POST upload_files' do
-      before { post_as user, :upload_files, params: params }
+      before { post_as role, :upload_files, params: params }
       after { FileUtils.rm_r assignment.autotest_files_dir }
       context 'uploading a zip file' do
-        let(:params) { { assignment_id: assignment.id, unzip: unzip, new_files: [zip_file], path: '' } }
+        let(:params) do
+          { course_id: assignment.course.id, assignment_id: assignment.id,
+            unzip: unzip, new_files: [zip_file], path: '' }
+        end
         let(:tree) { assignment.autotest_files }
         context 'when unzip if false' do
           let(:unzip) { 'false' }
@@ -195,7 +201,7 @@ describe AutomatedTestsController do
         let(:content) { '{"a":1}' }
         before :each do
           File.write(assignment.autotest_settings_file, content)
-          get_as user, :download_specs, params: params
+          get_as role, :download_specs, params: params
         end
         it 'should download a file containing the content' do
           expect(response.body).to eq content
@@ -213,7 +219,7 @@ describe AutomatedTestsController do
       context 'when the file does not exist' do
         before :each do
           FileUtils.rm_f(assignment.autotest_settings_file)
-          get_as user, :download_specs, params: params
+          get_as role, :download_specs, params: params
         end
         it 'should download a file with an empty hash' do
           expect(response.body).to eq '{}'
@@ -226,7 +232,9 @@ describe AutomatedTestsController do
     context 'POST upload_specs' do
       before :each do
         File.write(assignment.autotest_settings_file, '')
-        post_as user, :upload_specs, params: { assignment_id: assignment.id, specs_file: file }
+        post_as role, :upload_specs, params: { course_id: assignment.course.id,
+                                               assignment_id: assignment.id,
+                                               specs_file: file }
         file&.rewind
       end
       after :each do
@@ -267,86 +275,90 @@ describe AutomatedTestsController do
       end
     end
   end
-  shared_examples 'An unauthorized user managing automated testing' do
+  shared_examples 'An unauthorized role managing automated testing' do
     context 'PUT update' do
-      before { put_as user, :update, params: params }
+      before { put_as role, :update, params: params }
       it('should respond with 403') { expect(response.status).to eq 403 }
     end
     context 'GET manage' do
-      before { get_as user, :manage, params: params }
+      before { get_as role, :manage, params: params }
       it('should respond with 403') { expect(response.status).to eq 403 }
     end
     context 'GET populate_autotest_manager' do
-      before { get_as user, :populate_autotest_manager, params: params }
+      before { get_as role, :populate_autotest_manager, params: params }
       it('should respond with 403') { expect(response.status).to eq 403 }
     end
     context 'GET download_file' do
-      before { get_as user, :download_file, params: params }
+      before { get_as role, :download_file, params: params }
       it('should respond with 403') { expect(response.status).to eq 403 }
     end
     context 'GET download_files' do
-      before { get_as user, :download_files, params: params }
+      before { get_as role, :download_files, params: params }
       it('should respond with 403') { expect(response.status).to eq 403 }
     end
     context 'POST upload_files' do
-      before { post_as user, :upload_files, params: params }
+      before { post_as role, :upload_files, params: params }
       it('should respond with 403') { expect(response.status).to eq 403 }
     end
     context 'GET download_specs' do
-      before { get_as user, :download_specs, params: params }
+      before { get_as role, :download_specs, params: params }
       it('should respond with 403') { expect(response.status).to eq 403 }
     end
     context 'POST upload_specs' do
-      before { post_as user, :upload_specs, params: params }
+      before { post_as role, :upload_specs, params: params }
       it('should respond with 403') { expect(response.status).to eq 403 }
     end
   end
-  shared_examples 'An unauthorized user accessing student interface' do
+  shared_examples 'An unauthorized role accessing student interface' do
     context 'GET student_interface' do
-      before { get_as user, :student_interface, params: { id: assignment.id } }
+      before do
+        get_as role, :student_interface, params: { course_id: assignment.course.id, assignment_id: assignment.id }
+      end
       it('should respond with 403') { expect(response.status).to eq 403 }
     end
     context 'POST execute_test_run' do
-      before { post_as user, :execute_test_run, params: { id: assignment.id } }
+      before do
+        post_as role, :execute_test_run, params: { course_id: assignment.course.id, assignment_id: assignment.id }
+      end
       it('should respond with 403') { expect(response.status).to eq 403 }
     end
     context 'GET get_test_runs_students' do
-      before { post_as user, :get_test_runs_students, params: params }
+      before { post_as role, :get_test_runs_students, params: params }
       it('should respond with 403') { expect(response.status).to eq 403 }
     end
   end
   context 'as a student' do
-    let(:user) { create :student }
+    let(:role) { create :student }
     context 'GET student_interface' do
-      before { get_as user, :student_interface, params: params }
+      before { get_as role, :student_interface, params: params }
       # TODO: write tests
     end
     context 'POST execute_test_run' do
-      before { post_as user, :execute_test_run, params: params }
+      before { post_as role, :execute_test_run, params: params }
       # TODO: write tests
     end
     context 'GET get_test_runs_students' do
-      before { post_as user, :get_test_runs_students, params: params }
+      before { post_as role, :get_test_runs_students, params: params }
       # TODO: write tests
     end
     context 'When student trying to manage automated testing' do
-      include_examples 'An unauthorized user managing automated testing'
+      include_examples 'An unauthorized role managing automated testing'
     end
   end
   describe 'an authenticated admin' do
-    let(:user) { create(:admin) }
+    let(:role) { create(:admin) }
     include_examples 'An authorized admin and grader managing automated testing'
   end
 
   describe 'When the grader is allowed to manage automated testing' do
-    let(:user) { create(:ta, manage_assessments: true) }
+    let(:role) { create(:ta, manage_assessments: true) }
     include_examples 'An authorized admin and grader managing automated testing'
   end
 
   describe 'When the grader is not allowed to manage automated testing' do
     # By default all the permissions are set to false for a grader
-    let(:user) { create(:ta) }
-    include_examples 'An unauthorized user managing automated testing'
-    include_examples 'An unauthorized user accessing student interface'
+    let(:role) { create(:ta) }
+    include_examples 'An unauthorized role managing automated testing'
+    include_examples 'An unauthorized role accessing student interface'
   end
 end

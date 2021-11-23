@@ -37,7 +37,7 @@ class AutomatedTestsController < ApplicationController
   end
 
   def student_interface
-    @assignment = Assignment.find(params[:id])
+    @assignment = Assignment.find(params[:assignment_id])
     @student = current_role
     @grouping = @student.accepted_grouping_for(@assignment.id)
 
@@ -53,7 +53,7 @@ class AutomatedTestsController < ApplicationController
   end
 
   def execute_test_run
-    assignment = Assignment.find(params[:id])
+    assignment = Assignment.find(params[:assignment_id])
     grouping = current_role.accepted_grouping_for(assignment.id)
     grouping.refresh_test_tokens
     allowed = flash_allowance(:error, allowance_to(:run_tests?,
@@ -97,7 +97,7 @@ class AutomatedTestsController < ApplicationController
           time = I18n.l(File.mtime(files_dir.join(file)).in_time_zone(current_user.time_zone))
         end
         { key: file, size: 1, submitted_date: time,
-          url: download_file_assignment_automated_tests_url(assignment_id: assignment.id, file_name: file) }
+          url: download_file_course_assignment_automated_tests_url(assignment.course, assignment, file_name: file) }
       end
     end
     if File.exist? testers_schema_path
