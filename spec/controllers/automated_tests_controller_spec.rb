@@ -1,4 +1,5 @@
 describe AutomatedTestsController do
+  # TODO: add 'role is from a different course' shared tests to each route test below
   let(:assignment) { create :assignment }
   let(:params) { { course_id: assignment.course.id, assignment_id: assignment.id } }
   shared_examples 'An authorized admin and grader managing automated testing' do

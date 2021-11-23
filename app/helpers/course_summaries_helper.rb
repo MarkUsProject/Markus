@@ -8,7 +8,7 @@ module CourseSummariesHelper
       students = Student.where(id: current_role.id)
       released = [true]
     else
-      students = Student.all
+      students = current_role.course.students.all
       released = [true, false]
     end
 
