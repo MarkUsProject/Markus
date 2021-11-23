@@ -15,7 +15,7 @@ module AnnotationCategoriesHelper
     result
   end
 
-  def convert_to_yml(annotation_categories)
+  def annotation_categories_to_yml(annotation_categories)
     categories_data = {}
     annotation_categories.each do |category|
       if category.flexible_criterion_id.nil?
