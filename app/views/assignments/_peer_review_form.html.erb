@@ -32,10 +32,11 @@
                     Assignment.human_attribute_name(:short_identifier),
                     class: 'required' %>
         <%= f.text_field :short_identifier,
+                         pattern: '[a-zA-Z0-9\-_]+',
                          size: 35,
                          maxlength: 30,
                          required: true,
-                         readonly: true %>
+                         readonly: !@assignment.new_record? %>
 
         <%= f.label :description,
                     Assignment.human_attribute_name(:description),

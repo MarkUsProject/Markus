@@ -32,6 +32,7 @@
 - Added background job to clean tmp folder (#5963)
 - Removed consideration of due date from scanned exam (#5964)
 - Added Exception Notification Gem (#5965)
+- Bug fixes for peer reviews (#5968)
 - Added Rails Performance to Admin Dashboard (#5967)
 
 ## [v2.0.10]

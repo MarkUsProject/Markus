@@ -592,6 +592,77 @@ class Assignment < Assessment
       numMarked: self.get_num_marked(user.instructor? ? nil : user.id) }
   end
 
+  def summary_peer_review_json
+    peer_review_data = assignment.pr_peer_reviews
+                                 .joins(reviewer: :group,
+                                        result: { grouping: :group })
+
+    if user.admin?
+      groupings = self.groupings
+    else
+      groupings = self.groupings
+                      .joins(:memberships)
+                      .where('memberships.user_id': user.id)
+    end
+
+    grouping_data = groupings.joins(:group)
+                             .left_outer_joins(inviter: :section)
+                             .pluck_to_hash(:id, 'groups.group_name', 'sections.name')
+                             .group_by { |x| x[:id] }
+    members = groupings.joins(:accepted_students)
+                       .pluck_to_hash(:id, 'users.user_name', 'users.first_name', 'users.last_name')
+                       .group_by { |x| x[:id] }
+
+
+    all_results = current_results.where('groupings.id': groupings.ids).order(:id)
+    results_data = Hash[
+      all_results.pluck('groupings.id').zip(all_results.includes(:marks))
+    ]
+    result_ids = all_results.ids
+
+    criteria_shown = Set.new
+    max_mark = 0
+
+    criteria_columns = self.peer_criteria.map do |crit|
+      max_mark += crit.max_mark unless crit.bonus?
+      accessor = crit.id
+      criteria_shown << accessor
+      {
+        Header: crit.bonus? ? "#{crit.name} (#{Criterion.human_attribute_name(:bonus)})" : crit.name,
+        accessor: "criteria.#{accessor}",
+        className: 'number ' + (unassigned ? 'unassigned' : ''),
+        headerClassName: unassigned ? 'unassigned' : ''
+      }
+    end.compact
+
+    final_data = groupings.map do |g|
+      result = results_data[g.id]
+      if user.ta? && anonymize_groups
+        group_name = "#{Group.model_name.human} #{g.id}"
+      else
+        group_name = grouping_data[g.id][0]['groups.group_name']
+      end
+
+      criteria = result.nil? ? {} : result.mark_hash.select { |key, _| criteria_shown.include?(key) }
+      {
+        group_name: group_name,
+        graders: graders.fetch(g.id, [])
+                        .map { |s| [s['users.user_name'], s['users.first_name'], s['users.last_name']] },
+        marking_state: result&.released_to_students ? 'released' : result &.marking_state,
+        final_grade: [criteria.values.compact.sum, 0].max,
+        criteria: criteria,
+        max_mark: max_mark,
+        result_id: result&.id,
+        submission_id: result&.submission_id
+      }
+    end
+
+    { data: final_data,
+      criteriaColumns: criteria_columns,
+      numAssigned: self.get_num_assigned(user.admin? ? nil : user.id),
+      numMarked: self.get_num_marked(user.admin? ? nil : user.id) }
+  end
+
   # Generates the summary of the most test results associated with an assignment.
   def summary_test_results
     test_groups_query = self.test_groups
