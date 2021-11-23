@@ -80,7 +80,7 @@ describe AssignmentsController do
     context 'as an grader' do
       let(:role) { create :ta }
       it 'should respond with 403' do
-        put_as role, :start_timed_assignment, params: { course_id: course.id,id: assignment.id }
+        put_as role, :start_timed_assignment, params: { course_id: course.id, id: assignment.id }
         expect(response).to have_http_status 403
       end
     end
@@ -460,7 +460,7 @@ describe AssignmentsController do
       end
       context 'when the assignment is a regular assignment' do
         before do
-          get_as role, :new, params: {course_id: course.id, }
+          get_as role, :new, params: { course_id: course.id }
         end
         it_behaves_like 'assignment_new_success'
         it 'does not assign @assignment as a timed assignment' do
@@ -652,7 +652,9 @@ describe AssignmentsController do
         it('should respond with 403') { expect(response.status).to eq 403 }
       end
       context '#stop_test' do
-        before { get_as role, :stop_test, params: { course_id: course.id, id: assignment.id, test_run_id: test_run.id } }
+        before do
+          get_as role, :stop_test, params: { course_id: course.id, id: assignment.id, test_run_id: test_run.id }
+        end
         it('should respond with 403') { expect(response.status).to eq 403 }
       end
     end

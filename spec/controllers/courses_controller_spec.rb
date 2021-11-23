@@ -22,16 +22,16 @@ describe CoursesController do
       # the http uploaded file
       @file_good = fixture_file_upload('assignments/form_good.csv', 'text/csv')
       allow(@file_good).to receive(:read).and_return(
-          File.read(fixture_file_upload('assignments/form_good.csv', 'text/csv'))
+        File.read(fixture_file_upload('assignments/form_good.csv', 'text/csv'))
       )
       @file_good_yml = fixture_file_upload('assignments/form_good.yml', 'text/yaml')
       allow(@file_good_yml).to receive(:read).and_return(
-          File.read(fixture_file_upload('assignments/form_good.yml', 'text/yaml'))
+        File.read(fixture_file_upload('assignments/form_good.yml', 'text/yaml'))
       )
 
       @file_invalid_column = fixture_file_upload('assignments/form_invalid_column.csv', 'text/csv')
       allow(@file_invalid_column).to receive(:read).and_return(
-          File.read(fixture_file_upload('assignments/form_invalid_column.csv', 'text/csv'))
+        File.read(fixture_file_upload('assignments/form_invalid_column.csv', 'text/csv'))
       )
 
       # This must line up with the second entry in the file_good

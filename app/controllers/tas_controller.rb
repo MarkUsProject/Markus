@@ -30,7 +30,7 @@ class TasController < ApplicationController
     tas = current_course.tas.joins(:human).pluck_to_hash(*keys)
     case params[:format]
     when 'csv'
-      output = MarkusCsv.generate(tas) { |ta| ta.values }
+      output = MarkusCsv.generate(tas, &:values)
       format = 'text/csv'
     else
       output = tas.to_yaml
@@ -66,6 +66,6 @@ class TasController < ApplicationController
 
   def flash_interpolation_options
     { resource_name: @role.human&.user_name.blank? ? @role.model_name.human : @role.user_name,
-      errors: @role.errors.full_messages.join('; ')}
+      errors: @role.errors.full_messages.join('; ') }
   end
 end

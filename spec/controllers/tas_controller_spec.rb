@@ -132,12 +132,7 @@ describe TasController do
         end
 
         context 'when no permissions are selected' do
-          let(:params) do
-            {
-                user_name: human.user_name,
-                course_id: course.id
-            }
-          end
+          let(:params) { { user_name: human.user_name, course_id: course.id } }
           it 'default value for all permissions should be false' do
             ta = course.tas.where(human: human).first
             expect(ta.grader_permission.manage_assessments).to be false

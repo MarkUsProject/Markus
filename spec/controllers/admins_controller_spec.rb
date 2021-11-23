@@ -41,7 +41,7 @@ describe AdminsController do
         subject { post_as admin, :create, params: { course_id: course.id, user_name: human.user_name } }
         it 'should not create a Ta' do
           admin
-          expect { subject }.not_to change { Admin.count }
+          expect { subject }.not_to(change { Admin.count })
         end
       end
     end

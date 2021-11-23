@@ -35,7 +35,7 @@ describe StudentsController do
         let(:role) { admin }
         subject do
           post_as new_role, :upload, params: { course_id: course.id,
-                                            upload_file: fixture_file_upload('students/form_good.csv', 'text/csv') }
+                                               upload_file: fixture_file_upload('students/form_good.csv', 'text/csv') }
         end
       end
     end

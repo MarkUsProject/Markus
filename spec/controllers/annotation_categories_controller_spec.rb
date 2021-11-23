@@ -31,8 +31,10 @@ describe AnnotationCategoriesController do
         expect(response.parsed_body[0]['content']).to eq(@annotation_text_one.content)
       end
       it_behaves_like 'role is from a different course' do
-        subject { get_as new_role, :find_annotation_text,
-                         params: { course_id: course.id, assignment_id: assignment.id, string: '' }, format: :js }
+        subject do
+          get_as new_role, :find_annotation_text,
+                 params: { course_id: course.id, assignment_id: assignment.id, string: '' }, format: :js
+        end
       end
       it 'should render an empty string if string does not match first part of any annotation text' do
         string = 'Hello'
@@ -553,7 +555,7 @@ describe AnnotationCategoriesController do
       it 'is not empty when responding to json format and uncategorized annotations exist' do
         create(:text_annotation, annotation_text: text, result: assignment_result)
         get_as role, :uncategorized_annotations, format: 'json',
-               params: { course_id: course.id, assignment_id: assignment.id }
+                                                 params: { course_id: course.id, assignment_id: assignment.id }
         expect(JSON.parse(response.body)).not_to be_empty
       end
 
@@ -962,7 +964,7 @@ describe AnnotationCategoriesController do
     end
     context '#new' do
       it 'should respond with 403' do
-        get_as role, :new, params: { course_id: course.id,assignment_id: assignment.id }
+        get_as role, :new, params: { course_id: course.id, assignment_id: assignment.id }
         expect(response).to have_http_status(403)
       end
     end
