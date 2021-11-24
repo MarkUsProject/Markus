@@ -11,7 +11,7 @@ class AssignmentsController < ApplicationController
     # dynamically. TODO: remove this when possible
     p.style_src :self, "'unsafe-inline'"
   end
-  
+
   CONFIG_FILES = {
     properties: 'properties.yml',
     tags: 'tags.yml',
@@ -19,11 +19,11 @@ class AssignmentsController < ApplicationController
     annotations: 'annotations.yml',
     automated_tests_spec: File.join('automated-test-config-files', 'automated-tests-specs.json'),
     automated_tests_dir_entry: File.join('automated-test-config-files', 'automated-test-files'),
-    automated_tests: File.join('automated-test-config-files', 'automated-tests-settings.yml'),
-    peer_review_properties: File.join(CONFIG_DIRS[:peer_review], 'properties.yml'),
-    peer_review_tags: File.join(CONFIG_DIRS[:peer_review], 'tags.yml'),
-    peer_review_criteria: File.join(CONFIG_DIRS[:peer_review], 'criteria.yml'),
-    peer_review_annotations: File.join(CONFIG_DIRS[:peer_review], 'annotations.yml')
+    automated_tests: File.join('automated-test-config-files', 'automated-test-settings.json'),
+    peer_review_properties: File.join('peer-review-config-files', 'properties.yml'),
+    peer_review_tags: File.join('peer-review-config-files', 'tags.yml'),
+    peer_review_criteria: File.join('peer-review-config-files', 'criteria.yml'),
+    peer_review_annotations: File.join('peer-review-config-files', 'annotations.yml')
   }.freeze
 
   # Publicly accessible actions ---------------------------------------
@@ -590,7 +590,7 @@ class AssignmentsController < ApplicationController
       end
       unless assignment.scanned_exam
         assignment.automated_test_config_to_zip(zipfile, CONFIG_FILES[:automated_tests_dir_entry],
-                                                CONFIG_FILES[:automated_test_specs], CONFIG_FILES[:automated_tests])
+                                                CONFIG_FILES[:automated_tests])
       end
       if allowed_to?(:manage?, Tag)
         zipfile.get_output_stream(CONFIG_FILES[:tags]) do |f|
@@ -668,17 +668,16 @@ class AssignmentsController < ApplicationController
   private
 
   def config_automated_tests(assignment, zip_file)
-    automated_test_settings = build_hash_from_zip(zip_file, :automated_tests)
-    assignment.update!(automated_test_settings)
-    spec_file = zip_file.get_entry(CONFIG_FILES[:automated_test_specs])
+    spec_file = zip_file.get_entry(CONFIG_FILES[:automated_tests])
     spec_content = spec_file.get_input_stream.read.encode(Encoding::UTF_8, 'UTF-8')
     zip_file.remove(spec_file)
     begin
-      JSON.parse spec_content
+      test_settings = JSON.parse spec_content
     rescue JSON::ParserError
       raise I18n.t('automated_tests.invalid_specs_file')
     else
-      File.write(assignment.autotest_settings_file, spec_content, mode: 'wb')
+      assignment.update!(test_settings['settings'].symbolize_keys)
+      assignment.update_test_spec_from_upload(test_settings['spec_data'])
       @current_job = AutotestSpecsJob.perform_later(request.protocol + request.host_with_port, assignment)
       session[:job_id] = @current_job.job_id
       test_file_dir_path = File.join(CONFIG_FILES[:automated_tests_dir_entry], '')

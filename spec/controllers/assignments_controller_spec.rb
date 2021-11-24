@@ -1305,14 +1305,14 @@ describe AssignmentsController do
       describe 'downloaded zip file' do
         let!(:criteria) { create :checkbox_criterion, assignment: assignment }
         let!(:annotation) { create :annotation_category, assignment: assignment }
-        
+
         before :each do
           # Initialize Automated Tests
           FileUtils.mkdir_p(assignment.autotest_files_dir)
-          File.write(File.join(assignment.autotest_files_dir, 'tests.py'), 
+          File.write(File.join(assignment.autotest_files_dir, 'tests.py'),
                      "def sample_test()\n\tassert True == True")
           FileUtils.mkdir_p File.join(assignment.autotest_files_dir, 'Helpers')
-          File.write(File.join(assignment.autotest_files_dir, 'Helpers', 'test_helpers.py'), 
+          File.write(File.join(assignment.autotest_files_dir, 'Helpers', 'test_helpers.py'),
                      "def initialize_tests()\n\treturn True")
           assignment.update!(enable_test: true,
                              enable_student_tests: true,
@@ -1350,6 +1350,10 @@ describe AssignmentsController do
           annotation_download = read_yaml_file(response.body, 'annotations.yml')
           annotation_download = annotation_download.deep_symbolize_keys
           expect(annotation_download).to be_a(Hash)
+        end
+        
+        it 'should have a automated test settings file' do
+          subject
         end
 
         it 'should have a valid peer review properties file' do
@@ -1449,10 +1453,10 @@ describe AssignmentsController do
       annotations_good = fixture_file_upload(File.join(base_dir, 'annotations.yml'), 'text/yaml')
       test_file_path = File.join('assignments', 'sample-timed-assessment-good',
                                  'automated-test-config-files')
-      test_settings_good = fixture_file_upload(File.join(test_file_path, 'automated-tests-settings.yml'), 'text/yaml')
-      test_specs_good = fixture_file_upload(File.join(test_file_path, 'automated-tests-specs.json'), 'text/json')
+      test_specs_good = fixture_file_upload(File.join(test_file_path, 'automated-test-settings.json'), 'text/json')
       test_file1_good = fixture_file_upload(File.join(test_file_path, 'automated-test-files', 'tests.py'), 'text/py')
-      test_file2_good = fixture_file_upload(File.join(test_file_path, 'automated-test-files', 'Helpers', 'test_helpers.py'), 'text/py')
+      test_file2_good = fixture_file_upload(File.join(test_file_path, 'automated-test-files', 'Helpers', 'test_helpers.py'),
+                                            'text/py')
 
       peer_review_dir = File.join('assignments', 'sample-timed-assessment-good', 'peer-review-config-files')
       pr_properties_good = fixture_file_upload(File.join(peer_review_dir, 'properties.yml'), 'text/yaml')
@@ -1472,8 +1476,7 @@ describe AssignmentsController do
         zip_file.add('peer-review-config-files/tags.yml', pr_tags_good.path)
         zip_file.add('peer-review-config-files/criteria.yml', pr_criteria_good.path)
         zip_file.add('peer-review-config-files/annotations.yml', pr_annotations_good.path)
-        zip_file.add('automated-test-config-files/automated-tests-settings.yml', test_settings_good.path)
-        zip_file.add('automated-test-config-files/automated-tests-specs.json', test_specs_good.path)
+        zip_file.add('automated-test-config-files/automated-test-settings.json', test_specs_good.path)
         zip_file.add('automated-test-config-files/automated-test-files/tests.py', test_file1_good.path)
         zip_file.add('automated-test-config-files/automated-test-files/Helpers/test_helpers.py', test_file2_good.path)
       end
@@ -1550,6 +1553,11 @@ describe AssignmentsController do
         expected_annotation_text = [{ content: 'Sunt optio.' }, { content: 'Quibusdam ut ipsa.' },
                                     { content: 'Earum voluptate.' }, { content: 'Saepe.' }, { content: 'Non eum.' }]
         expect(uploaded_annotation_text).to eq(expected_annotation_text)
+      end
+      
+      it 'properly uploads all the automated test files for an assignment' do
+        subject
+        
       end
 
       it 'properly uploads a peer review assignment' do

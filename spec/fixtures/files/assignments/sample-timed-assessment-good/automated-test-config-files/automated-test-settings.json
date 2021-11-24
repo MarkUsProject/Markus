@@ -1,0 +1,27 @@
+{
+  "settings": {
+    "enable_test" : true,
+    "enable_student_tests" : true,
+    "tokens_per_period" : 0,
+    "unlimited_tokens" : true,
+    "token_start_date" : "2021-11-01 16:00:00",
+    "token_period" : 1.0,
+    "non_regenerating_tokens" : false
+  },
+  "spec_data": {
+    "testers" : [{
+      "test_data": [
+        {
+          "extra_info": {
+            "name" : "Test group",
+            "display_output" : "instructors",
+            "criterion_name" : "Optimal"
+          },
+          "script_files" : [],
+          "timeout" : 30
+        }
+      ],
+      "tester_type" : "custom"
+    }]
+  }
+}
