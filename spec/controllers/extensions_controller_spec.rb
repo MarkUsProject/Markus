@@ -1,14 +1,16 @@
 describe ExtensionsController do
+  # TODO: add 'role is from a different course' shared tests to each route test below
   describe 'as an admin' do
     let(:admin) { create :admin }
     let(:grouping) { create :grouping }
+    let(:course) { admin.course }
     describe '#update' do
       let(:extension) { create :extension, grouping: grouping }
       let(:params) do
         parts = extension.to_parts
         {
           id: extension.id,
-          grouping_id: grouping.id,
+          course_id: course.id,
           weeks: parts[:weeks] + 1,
           days: parts[:days] + 1,
           hours: parts[:hours] + 1,
@@ -26,7 +28,9 @@ describe ExtensionsController do
       end
       it 'should flash a message on error' do
         expect_any_instance_of(ExtensionsController).to receive(:flash_now).with(:error, anything)
-        params[:grouping_id] = nil
+        params[:weeks] = 0
+        params[:days] = 0
+        params[:hours] = 0
         put_as admin, :update, params: params
       end
       describe 'it should update the attibute:' do
@@ -51,6 +55,7 @@ describe ExtensionsController do
       let(:params) do
         {
           grouping_id: grouping.id,
+          course_id: course.id,
           weeks: rand(1..10),
           days: rand(1..10),
           hours: rand(1..10),
@@ -93,18 +98,18 @@ describe ExtensionsController do
         it 'should delete the extension' do
           extension # make sure the object is created before the call
           expect do
-            delete_as admin, :destroy, params: { id: extension.id }
+            delete_as admin, :destroy, params: { course_id: course.id, id: extension.id }
           end.to change { Extension.count }.by(-1)
         end
         it 'should flash an success on success' do
           extension # make sure the object is created before the call
           expect_any_instance_of(ExtensionsController).to receive(:flash_now).with(:success, anything)
-          delete_as admin, :destroy, params: { id: extension.id }
+          delete_as admin, :destroy, params: { course_id: course.id, id: extension.id }
         end
         it 'should flash an error on error' do
           expect_any_instance_of(ExtensionsController).to receive(:flash_now).with(:error, anything)
           allow_any_instance_of(Extension).to receive(:destroy).and_return(extension)
-          delete_as admin, :destroy, params: { id: extension.id }
+          delete_as admin, :destroy, params: { course_id: course.id, id: extension.id }
         end
       end
     end
