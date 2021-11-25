@@ -6,7 +6,7 @@ FactoryBot.define do
     status { :complete }
     factory :student_test_run do
       association :grouping, factory: :grouping_with_inviter
-      user { grouping.inviter }
+      role { grouping.inviter }
     end
   end
 end
