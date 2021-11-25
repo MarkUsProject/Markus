@@ -85,7 +85,7 @@ class GradesSummaryDisplay extends React.Component {
           loading={this.state.loading}
           student={this.props.student}
         />
-        <fieldset style={{display: "flex", justifyContent: "center"}}>
+        <fieldset className="data-chart-container">
           <DataChart
             labels={this.state.graph_labels}
             datasets={this.state.datasets}
