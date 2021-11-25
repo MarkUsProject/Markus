@@ -134,7 +134,7 @@ class GradeEntryForm < Assessment
 
   def from_csv(grades_data, overwrite)
     grade_entry_students = Hash[
-      self.grade_entry_students.joins(:user).pluck('users.user_name', :id)
+      self.grade_entry_students.joins(role: :human).pluck('users.user_name', :id)
     ]
     all_grades = Set.new(
       self.grades.where.not(grade: nil).pluck(:grade_entry_student_id, :grade_entry_item_id)

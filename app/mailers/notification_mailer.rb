@@ -11,7 +11,8 @@ class NotificationMailer < ApplicationMailer
   def release_spreadsheet_email
     @form = params[:form]
     @student = params[:student]
-    mail(to: @student.user.email, subject: default_i18n_subject(course: Settings.course_name,
+    @course = params[:course]
+    mail(to: @student.role.email, subject: default_i18n_subject(course: @course.name,
                                                                 form: @form.short_identifier))
   end
 

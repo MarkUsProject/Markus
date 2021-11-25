@@ -10,44 +10,46 @@ class GradeEntryFormsController < ApplicationController
 
   # Create a new grade entry form
   def new
-    @grade_entry_form = GradeEntryForm.new
+    @grade_entry_form = current_course.grade_entry_forms.new
   end
 
   def create
     # Edit params before updating model
     new_params = update_grade_entry_form_params(params)
 
-    @grade_entry_form = GradeEntryForm.create(new_params)
-    respond_with(@grade_entry_form, location: -> { edit_grade_entry_form_path(@grade_entry_form) })
+    @grade_entry_form = current_course.grade_entry_forms.create(new_params)
+    respond_with(@grade_entry_form,
+                 location: -> { edit_course_grade_entry_form_path(current_course, @grade_entry_form) })
   end
 
   # Edit the properties of a grade entry form
   def edit
-    @grade_entry_form = GradeEntryForm.find(params[:id])
+    @grade_entry_form = record
   end
 
   def update
-    @grade_entry_form = GradeEntryForm.find(params[:id])
+    @grade_entry_form = record
     # Process changes to input properties
     new_params = update_grade_entry_form_params(params)
 
     @grade_entry_form.update(new_params)
-    respond_with(@grade_entry_form, location: -> { edit_grade_entry_form_path @grade_entry_form })
+    respond_with(@grade_entry_form,
+                 location: -> { edit_course_grade_entry_form_path current_course, @grade_entry_form })
     GradeEntryStudent.refresh_total_grades(@grade_entry_form.grade_entry_students.ids)
   end
 
   # View/modify the grades for this grade entry form
   def grades
-    @grade_entry_form = GradeEntryForm.find(params[:id])
+    @grade_entry_form = record
   end
 
   def view_summary
-    @grade_entry_form = GradeEntryForm.find(params[:id])
+    @grade_entry_form = record
   end
 
   # Update a grade in the table
   def update_grade
-    grade_entry_form = GradeEntryForm.find(params[:id])
+    grade_entry_form = record
     grade_entry_student =
       grade_entry_form.grade_entry_students.find(params[:student_id])
     grade =
@@ -61,7 +63,7 @@ class GradeEntryFormsController < ApplicationController
 
   # For students
   def student_interface
-    @grade_entry_form = GradeEntryForm.find(params[:id])
+    @grade_entry_form = record
     unless allowed_to?(:see_hidden?)
       render 'shared/http_status',
              formats: [:html],
@@ -106,7 +108,7 @@ class GradeEntryFormsController < ApplicationController
   end
 
   def get_mark_columns
-    grade_entry_form = GradeEntryForm.find(params[:id])
+    grade_entry_form = record
     data = grade_entry_form.grade_entry_items.map do |column|
       {
         accessor: column.id.to_s,
@@ -117,15 +119,15 @@ class GradeEntryFormsController < ApplicationController
   end
 
   def populate_grades_table
-    grade_entry_form = GradeEntryForm.find(params[:id])
+    grade_entry_form = record
     student_pluck_attrs = [
       Arel.sql('grade_entry_students.id as _id'),
       :released_to_student,
       Arel.sql('users.user_name as user_name'),
       Arel.sql('users.first_name as first_name'),
       Arel.sql('users.last_name as last_name'),
-      Arel.sql('users.hidden as hidden'),
-      Arel.sql('users.section_id as section_id')
+      Arel.sql('roles.hidden as hidden'),
+      Arel.sql('roles.section_id as section_id')
     ]
     if grade_entry_form.show_total
       student_pluck_attrs << Arel.sql('grade_entry_students.total_grade as total_marks')
@@ -133,7 +135,7 @@ class GradeEntryFormsController < ApplicationController
 
     if current_role.admin?
       students = grade_entry_form.grade_entry_students
-                                 .joins(:user)
+                                 .joins(roles: :human)
                                  .pluck_to_hash(*student_pluck_attrs)
       grades = grade_entry_form.grade_entry_students
                                .joins(:grades)
@@ -142,11 +144,11 @@ class GradeEntryFormsController < ApplicationController
     elsif current_role.ta?
       students = current_role.grade_entry_students
                              .where(grade_entry_form: grade_entry_form)
-                             .joins(:user)
+                             .joins(roles: :human)
                              .pluck_to_hash(*student_pluck_attrs)
       grades = current_role.grade_entry_students
                            .where(grade_entry_form: grade_entry_form)
-                           .joins(:grades)
+                           .joins(roles: :human)
                            .pluck(:id, 'grades.grade_entry_item_id', 'grades.grade')
                            .group_by { |x| x[0] }
     end
@@ -169,7 +171,7 @@ class GradeEntryFormsController < ApplicationController
     if params[:students].blank?
       flash_message(:warning, I18n.t('grade_entry_forms.grades.select_a_student'))
     else
-      grade_entry_form = GradeEntryForm.find_by_id(params[:id])
+      grade_entry_form = record
       release = params[:release_results] == 'true'
       GradeEntryStudent.transaction do
         GradeEntryStudent.upsert_all(params[:students].map { |id| { id: id, released_to_student: release } })
@@ -183,9 +185,9 @@ class GradeEntryFormsController < ApplicationController
         flash_message(:error, e.message)
         raise ActiveRecord::Rollback
       end
-      GradeEntryStudent.where(id: params[:students]).includes(:user).each do |current_student|
-        if current_student.user.receives_results_emails?
-          NotificationMailer.with(student: current_student, form: grade_entry_form)
+      GradeEntryStudent.where(id: params[:students]).includes(:role).each do |current_student|
+        if current_student.role.receives_results_emails?
+          NotificationMailer.with(student: current_student, form: grade_entry_form, course: current_course)
                             .release_spreadsheet_email.deliver_later
         end
       end
@@ -194,7 +196,7 @@ class GradeEntryFormsController < ApplicationController
 
   # Download the grades for this grade entry form as a CSV file
   def download
-    grade_entry_form = GradeEntryForm.find(params[:id])
+    grade_entry_form = record
     send_data grade_entry_form.export_as_csv,
               disposition: 'attachment',
               type: 'text/csv',
@@ -203,7 +205,7 @@ class GradeEntryFormsController < ApplicationController
 
   # Upload the grades for this grade entry form using a CSV file
   def upload
-    @grade_entry_form = GradeEntryForm.find(params[:id])
+    @grade_entry_form = record
     begin
       data = process_file_upload
     rescue Psych::SyntaxError => e
@@ -223,7 +225,7 @@ class GradeEntryFormsController < ApplicationController
   end
 
   def grade_distribution
-    grade_entry_form = GradeEntryForm.find(params[:id])
+    grade_entry_form = record
 
     intervals = 20
     dict_data = grade_entry_form.grade_entry_items.map do |item|
@@ -269,11 +271,11 @@ class GradeEntryFormsController < ApplicationController
       redirect_options[:grade_entry_form_id] = params[:id]
       redirect_to redirect_options
     elsif current_role.admin?
-      redirect_to edit_grade_entry_form_path(params[:id])
+      redirect_to edit_course_grade_entry_form_path(current_course, params[:id])
     elsif current_role.ta?
-      redirect_to grades_grade_entry_form_path(params[:id])
+      redirect_to grades_course_grade_entry_form_path(current_course, params[:id])
     else # current_role.student?
-      redirect_to student_interface_grade_entry_form_path(params[:id])
+      redirect_to student_interface_course_grade_entry_form_path(current_course, params[:id])
     end
   end
 end
