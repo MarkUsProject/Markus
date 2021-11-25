@@ -1,4 +1,5 @@
 describe CriteriaController do
+  # TODO: add 'role is from a different course' shared tests to each route test below
   let(:admin) { create :admin }
   let(:course) { admin.course }
   let(:assignment) { create :assignment }
