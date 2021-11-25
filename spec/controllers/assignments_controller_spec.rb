@@ -1307,23 +1307,11 @@ describe AssignmentsController do
         let!(:annotation) { create :annotation_category, assignment: assignment }
 
         before :each do
-          # Initialize Automated Tests
-          FileUtils.mkdir_p(assignment.autotest_files_dir)
-          File.write(File.join(assignment.autotest_files_dir, 'tests.py'),
-                     "def sample_test()\n\tassert True == True")
-          FileUtils.mkdir_p File.join(assignment.autotest_files_dir, 'Helpers')
-          File.write(File.join(assignment.autotest_files_dir, 'Helpers', 'test_helpers.py'),
-                     "def initialize_tests()\n\treturn True")
-          assignment.update!(enable_test: true,
-                             enable_student_tests: true,
-                             tokens_per_period: 10,
-                             token_period: 24,
-                             non_regenerating_tokens: false,
-                             unlimited_tokens: false)
+          create_automated_test(assignment)
+          subject
         end
 
         it 'should have a valid properties file' do
-          subject
           properties = read_yaml_file(response.body, 'properties.yml')
           expect(properties).to include(short_identifier: assignment.short_identifier,
                                         description: assignment.description,
@@ -1337,7 +1325,6 @@ describe AssignmentsController do
         end
 
         it 'should have a valid criteria file' do
-          subject
           criteria_download = read_yaml_file(response.body, 'criteria.yml')
           criteria_download = criteria_download.deep_symbolize_keys
           criteria_download.each_key do |key|
@@ -1346,18 +1333,32 @@ describe AssignmentsController do
         end
 
         it 'should have a valid annotations file' do
-          subject
           annotation_download = read_yaml_file(response.body, 'annotations.yml')
           annotation_download = annotation_download.deep_symbolize_keys
           expect(annotation_download).to be_a(Hash)
         end
-        
-        it 'should have a automated test settings file' do
-          subject
+
+        it 'should have a valid automated test settings file' do
+          test_settings_download = read_file_from_zip(response.body, filename)
+          spec_data = test_settings_download['spec_data']
+          received_settings = {
+            is_a_hash: test_settings_download.is_a?(Hash),
+            has_spec_data: !spec_data.nil?,
+            has_settings_data: !test_settings_download['settings'].nil?, 
+            has_no_group_id: spec_data['testers'][0]['test_data'][0]['extra_info']['test_group_id'].nil?,
+            criterion_name: spec_data['testers'][0]['test_data'][0]['extra_info']['criterion_name']
+          }
+          expected_settings = {
+            is_a_hash: true,
+            has_spec_data: true,
+            has_settings_data: true,
+            has_no_group_id: true,
+            criterion_name: criteria.name
+          }
+          expect(received_settings).to eq(expected_settings)
         end
 
         it 'should have a valid peer review properties file' do
-          subject
           properties = read_yaml_file(response.body, File.join('peer-review-config-files', 'properties.yml'))
           peer_review_assignment = Assignment.find_by(parent_assessment_id: assignment.id)
           expect(properties).to include(short_identifier: peer_review_assignment.short_identifier,
@@ -1370,13 +1371,11 @@ describe AssignmentsController do
         end
 
         it 'should contain a peer review criteria file' do
-          subject
           tags = read_yaml_file(response.body, File.join('peer-review-config-files', 'criteria.yml'))
           expect(tags).to be_a(Hash)
         end
 
         it 'should contain a peer review annotations file' do
-          subject
           tags = read_yaml_file(response.body, File.join('peer-review-config-files', 'annotations.yml'))
           expect(tags).to be_a(Hash)
         end
@@ -1453,8 +1452,10 @@ describe AssignmentsController do
       annotations_good = fixture_file_upload(File.join(base_dir, 'annotations.yml'), 'text/yaml')
       test_file_path = File.join('assignments', 'sample-timed-assessment-good',
                                  'automated-test-config-files')
-      test_specs_good = fixture_file_upload(File.join(test_file_path, 'automated-test-settings.json'), 'text/json')
-      test_file1_good = fixture_file_upload(File.join(test_file_path, 'automated-test-files', 'tests.py'), 'text/py')
+      test_specs_good = fixture_file_upload(File.join(test_file_path, 'automated-test-settings.json'),
+                                            'text/json')
+      test_file1_good = fixture_file_upload(File.join(test_file_path, 'automated-test-files', 'tests.py'),
+                                            'text/py')
       test_file2_good = fixture_file_upload(File.join(test_file_path, 'automated-test-files', 'Helpers', 'test_helpers.py'),
                                             'text/py')
 
@@ -1554,10 +1555,24 @@ describe AssignmentsController do
                                     { content: 'Earum voluptate.' }, { content: 'Saepe.' }, { content: 'Non eum.' }]
         expect(uploaded_annotation_text).to eq(expected_annotation_text)
       end
-      
+
       it 'properly uploads all the automated test files for an assignment' do
         subject
-        
+        uploaded_assignment = Assignment.find_by(short_identifier: 'mtt_ex_1')
+        spec_data = JSON.parse File.open(uploaded_assignment.autotest_settings_file, &:read)
+        received_automated_test_data = {
+          num_test_groups: spec_data['testers'].length,
+          num_test_data: spec_data['testers'][0]['test_data'].length,
+          tester_type: 'custom',
+          num_automated_test_files: uploaded_assignment.autotest_files.length
+        }
+        expected_automated_test_data = {
+          num_test_groups: 1,
+          num_test_data: 1,
+          tester_type: 'custom',
+          num_automated_test_files: 3
+        }
+        expect(received_automated_test_data).to eq(expected_automated_test_data)
       end
 
       it 'properly uploads a peer review assignment' do
@@ -1695,22 +1710,11 @@ describe AssignmentsController do
       let!(:tag1) { create :tag, assessment_id: assignment.id }
       let!(:tag2) { create :tag, assessment_id: assignment.id }
       let!(:tag3) { create :tag, assessment_id: assignment.id }
+      let!(:test_group) { create :test_group, assignment: assignment }
 
       before :each do
         # Initialize Automated Tests
-        FileUtils.mkdir_p(assignment.autotest_files_dir)
-        File.write(File.join(assignment.autotest_files_dir, 'tests.py'),
-                   "def sample_test()\n\tassert True == True")
-        FileUtils.mkdir_p File.join(assignment.autotest_files_dir, 'Helpers')
-        File.write(File.join(assignment.autotest_files_dir, 'Helpers', 'test_helpers.py'),
-                   "def initialize_tests()\n\treturn True")
-        assignment.update!(enable_test: true,
-                           enable_student_tests: true,
-                           tokens_per_period: 10,
-                           token_period: 24,
-                           non_regenerating_tokens: false,
-                           unlimited_tokens: false)
-        File.write(assignment.autotest_settings_file, '{"a":1}', mode: 'wb')
+        create_automated_test(assignment)
         # Download and upload assignment
         get_as user, :download_config_files, params: { id: assignment.id }
         zip_name = 'assignment-copy-test-config-files.zip'
@@ -1748,6 +1752,19 @@ describe AssignmentsController do
         expected = [{ filename: assignment_file1.filename },
                     { filename: assignment_file2.filename }]
         expect(received).to eq(expected)
+      end
+
+      it 'copies over automated tests' do
+        uploaded_assignment = Assignment.find_by(short_identifier: assignment.short_identifier)
+        received_automated_test_data = {
+          spec_file: JSON.parse(File.open(uploaded_assignment.autotest_settings_file, &:read)),
+          autotest_files: uploaded_assignment.autotest_files
+        }
+        expected_automated_test_data = {
+          spec_file: create_sample_spec_file(test_group, criteria),
+          autotest_files: assignment.autotest_files
+        }
+        expect(received_automated_test_data).to eq(expected_automated_test_data)
       end
     end
 

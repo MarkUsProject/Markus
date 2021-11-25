@@ -1222,11 +1222,11 @@ class Assignment < Assessment
     misc_settings_attr = [:enable_test, :enable_student_tests, :tokens_per_period, :unlimited_tokens,
                           :token_start_date, :token_period, :non_regenerating_tokens]
     misc_settings_attr.each { |f| misc_settings[f] = self.send(f) }
-    zip_file.get_output_stream(settings_file_path) do |f| 
+    zip_file.get_output_stream(settings_file_path) do |f|
       f.write({ settings: misc_settings, spec_data: test_spec_content }.to_json)
     end
   end
-  
+
   def update_test_spec_from_upload(test_spec)
     test_spec['testers'].each_with_index do |tester_specs, i|
       next if tester_specs['test_data'].nil?
@@ -1244,7 +1244,7 @@ class Assignment < Assessment
   end
 
   private
-  
+
   def strip_ids_from_spec(test_specs)
     test_specs['testers'].each_with_index do |tester_specs, i|
       next if tester_specs['test_data'].nil?

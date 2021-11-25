@@ -68,4 +68,87 @@ module Helpers
       end
     end
   end
+
+  # Reads a byte string of a zip file +content+, gets the content of the file with
+  # the name +filename+. It then uses the file type from the given +filename+ to parse
+  # the content accordingly. Otherwise, this function return nil.
+  # Only JSON and YAML files are currently supported. 
+  def read_file_from_zip(content, filename)
+    Zip::InputStream.open(StringIO.new(content)) do |io|
+      file = nil
+      while (entry = io.get_next_entry) && file.nil?
+        file = entry if entry.name == filename
+      end
+      unless file.nil?
+        file_content = file.get_input_stream.read.encode(Encoding::UTF_8, 'UTF-8')
+        filetype = File.extname(filename)
+        case filetype
+        when '.yml', '.yaml'
+          YAML.safe_load(file_content,
+                         [Date, Time, Symbol, ActiveSupport::TimeWithZone, ActiveSupport::TimeZone,
+                          ActiveSupport::Duration, ActiveSupport::HashWithIndifferentAccess],
+                         [],
+                         true)
+        when '.json'
+          JSON.parse(file_content)
+        else
+          nil
+        end
+      end
+    end
+  end
+  
+  def create_automated_test(assignment)
+    FileUtils.mkdir_p(assignment.autotest_files_dir)
+    File.write(File.join(assignment.autotest_files_dir, 'tests.py'),
+               "def sample_test()\n\tassert True == True")
+    FileUtils.mkdir_p File.join(assignment.autotest_files_dir, 'Helpers')
+    File.write(File.join(assignment.autotest_files_dir, 'Helpers', 'test_helpers.py'),
+               "def initialize_tests()\n\treturn True")
+    assignment.update!(enable_test: true,
+                       enable_student_tests: true,
+                       tokens_per_period: 10,
+                       token_period: 24,
+                       non_regenerating_tokens: false,
+                       unlimited_tokens: false)
+    if assignment.test_groups.empty?
+      test_group = create(:test_group, assignment: assignment)
+    else
+      test_group = assignment.test_groups.first
+    end
+    criteria = assignment.criteria.empty? ? nil : assignment.criteria.first 
+    File.write(assignment.autotest_settings_file,
+               create_sample_spec_file(test_group, criteria).to_json, 
+               mode: 'wb')
+  end
+  
+  def create_sample_spec_file(test_group, criteria = nil)
+    assoc_criteria = criteria.nil? ? nil : criteria.id
+    {
+      testers: [
+        {
+          test_data: [
+            {
+              category: [
+                'student'
+              ],
+              extra_info: {
+                name: test_group.name,
+                display_output: test_group.display_output,
+                test_group_id: test_group.id,
+                criterion: assoc_criteria
+              },
+              script_files: [
+                'runner_helper.py'
+              ],
+              timeout: 30,
+              upload_feedback_file: false,
+              feedback_file_name: 'feedback.txt'
+            }
+          ],
+          tester_type: 'custom'
+        }
+      ]
+    }
+  end
 end
