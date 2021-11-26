@@ -106,10 +106,11 @@ class GroupsController < ApplicationController
 
   def index
     @assignment = Assignment.find(params[:assignment_id])
-    @clone_assignments = current_course.assignments.joins(:assignment_properties)
-                                                   .where(assignment_properties: { vcs_submit: true })
-                                                   .where.not(id: @assignment.id)
-                                                   .order(:id)
+    @clone_assignments = current_course.assignments
+                                       .joins(:assignment_properties)
+                                       .where(assignment_properties: { vcs_submit: true })
+                                       .where.not(id: @assignment.id)
+                                       .order(:id)
 
     respond_to do |format|
       format.html
@@ -162,11 +163,20 @@ class GroupsController < ApplicationController
 
   def get_names
     names = current_course.students
-            .joins(:human)
-            .where('(lower(first_name) like ? OR lower(last_name) like ? OR lower(user_name) like ? OR id_number like ?) AND users.id NOT IN (?)',
-                   "#{params[:term].downcase}%", "#{params[:term].downcase}%", "#{params[:term].downcase}%", "#{params[:term]}%",
-                   Membership.select(:user_id).joins(:grouping).where('groupings.assessment_id = ?', params[:assignment_id]))
-            .pluck_to_hash(:id, 'users.id_number', 'users.user_name', 'users.first_name', 'users.last_name')
+                          .joins(:human)
+                          .where('(lower(first_name) like ? OR
+                                   lower(last_name) like ? OR
+                                   lower(user_name) like ? OR
+                                   id_number like ?) AND users.id NOT IN (?)',
+                                 "#{params[:term].downcase}%",
+                                 "#{params[:term].downcase}%",
+                                 "#{params[:term].downcase}%",
+                                 "#{params[:term]}%",
+                                 Membership.select(:user_id)
+                                           .joins(:grouping)
+                                           .where('groupings.assessment_id = ?', params[:assignment_id]))
+                          .pluck_to_hash(:id, 'users.id_number', 'users.user_name',
+                                         'users.first_name', 'users.last_name')
     names = names.map do |h|
       { id: h[:id],
         id_number: h['users.id_number'],
@@ -188,8 +198,8 @@ class GroupsController < ApplicationController
       # if the user has typed in the whole name without select, or if they typed a name different from the select s_id
       if student.nil? || (student.first_name + ' ' + student.last_name) != params[:names]
         student = current_course.students.where(
-            'lower(CONCAT(first_name, \' \', last_name)) like ? OR lower(CONCAT(last_name, \' \', first_name)) like ?',
-            params[:names].downcase, params[:names].downcase
+          'lower(CONCAT(first_name, \' \', last_name)) like ? OR lower(CONCAT(last_name, \' \', first_name)) like ?',
+          params[:names].downcase, params[:names].downcase
         ).first
       end
       StudentMembership
@@ -229,9 +239,9 @@ class GroupsController < ApplicationController
       }
       next_file = next_grouping.current_submission_used.submission_files.find_by(filename: 'COVER.pdf')
       unless next_file.nil?
-          data[:filelink] = download_course_assignment_groups_path(current_course, @assignment,
-          select_file_id: next_grouping.current_submission_used.submission_files.find_by(filename: 'COVER.pdf').id,
-          show_in_browser: true )
+        data[:filelink] = download_course_assignment_groups_path(current_course, @assignment,
+        select_file_id: next_grouping.current_submission_used.submission_files.find_by(filename: 'COVER.pdf').id,
+        show_in_browser: true )
       end
       render json: data
     end
@@ -491,12 +501,8 @@ class GroupsController < ApplicationController
 
   # These actions act on all currently selected students & groups
   def global_actions
-    assignment = Assignment.includes([{
-                                      groupings: [{
-                                          student_memberships: :role,
-                                          ta_memberships: :role},
-                                        :group]}])
-                            .find(params[:assignment_id])
+    assignment = Assignment.includes([{ groupings: [{ student_memberships: :role, ta_memberships: :role }, :group] }])
+                           .find(params[:assignment_id])
     grouping_ids = params[:groupings]
     student_ids = params[:students]
     students_to_remove = params[:students_to_remove]

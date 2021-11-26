@@ -667,24 +667,21 @@ describe GroupsController do
         it 'cancels a rejected invitation' do
           invitation = create(:rejected_student_membership, grouping: grouping)
           post_as @current_student, :delete_rejected,
-               params: { course_id: course.id, assignment_id: grouping.assessment_id,
-                         membership: invitation.id }
+                  params: { course_id: course.id, assignment_id: grouping.assessment_id, membership: invitation.id }
           expect(grouping.student_memberships.size).to eq 1
         end
 
         it 'fails to delete a pending invitation' do
           invitation = create(:student_membership, grouping: grouping)
           post_as @current_student, :delete_rejected,
-               params: { course_id: course.id, assignment_id: grouping.assessment_id,
-                         membership: invitation.id }
+                  params: { course_id: course.id, assignment_id: grouping.assessment_id, membership: invitation.id }
           assert_response :forbidden
         end
 
         it 'fails to delete an accepted invitation' do
           invitation = create(:accepted_student_membership, grouping: grouping)
           post_as @current_student, :delete_rejected,
-               params: { course_id: course.id, assignment_id: grouping.assessment_id,
-                         membership: invitation.id }
+                  params: { course_id: course.id, assignment_id: grouping.assessment_id, membership: invitation.id }
           assert_response :forbidden
         end
 
@@ -692,8 +689,7 @@ describe GroupsController do
           grouping2 = create(:grouping_with_inviter, assignment: grouping.assignment)
           invitation = create(:rejected_student_membership, grouping: grouping2)
           post_as @current_student, :delete_rejected,
-               params: { course_id: course.id, assignment_id: grouping.assessment_id,
-                         membership: invitation.id }
+                  params: { course_id: course.id, assignment_id: grouping.assessment_id, membership: invitation.id }
           assert_response :forbidden
         end
       end
@@ -705,8 +701,7 @@ describe GroupsController do
           create(:rejected_student_membership, grouping: grouping, role: @current_student)
           invitation = create(:student_membership, grouping: grouping)
           post_as @current_student, :delete_rejected,
-               params: { course_id: course.id, assignment_id: grouping.assessment_id,
-                         membership: invitation.id }
+                  params: { course_id: course.id, assignment_id: grouping.assessment_id, membership: invitation.id }
           assert_response :forbidden
         end
       end
