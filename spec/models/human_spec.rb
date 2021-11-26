@@ -15,7 +15,7 @@ describe Human do
       end
     end
     context 'when there is a hidden course' do
-      let(:course) { create :course}
+      let(:course) { create :course }
       it 'does not return the course' do
         expect(student.visible_courses).to be_empty
       end
@@ -28,9 +28,9 @@ describe Human do
     end
     context 'when there are multiple courses' do
       let(:human2) { create :human }
-      let(:course2) { create :course}
+      let(:course2) { create :course }
       let!(:student2) { create :student, human: human2, course: course2 }
-      let!(:student2c1) { create :student, human: human2, course: course}
+      let!(:student2c1) { create :student, human: human2, course: course }
       let(:course3) { create :course, is_hidden: false }
       let(:human3) { create :human }
       let!(:student3) { create :student, human: human3, course: course, hidden: true }
