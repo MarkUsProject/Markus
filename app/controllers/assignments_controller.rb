@@ -690,10 +690,8 @@ class AssignmentsController < ApplicationController
       assignment.update!(test_settings['settings'].symbolize_keys)
       spec_data = test_settings['spec_data']
       update_test_groups_from_specs(assignment, spec_data) unless spec_data.empty?
-      if assignment.enable_test
-        @current_job = AutotestSpecsJob.perform_later(request.protocol + request.host_with_port, assignment)
-        session[:job_id] = @current_job.job_id
-      end
+      @current_job = AutotestSpecsJob.perform_later(request.protocol + request.host_with_port, assignment)
+      session[:job_id] = @current_job.job_id
       test_file_dir_path = File.join(CONFIG_FILES[:automated_tests_dir_entry], '')
       zip_file.each do |entry|
         if entry.name.match?(/^#{test_file_dir_path}/)
