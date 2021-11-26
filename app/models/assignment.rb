@@ -1237,8 +1237,8 @@ class Assignment < Assessment
   end
 
   # Writes all of this assignment's automated test files to the +zip_dir+ in +zip_file+. Also writes
-  # the tester settings and other automated test settings to +spec_file_path+ and +settings_file_path+
-  # respectively (both paths also found in the +zip_file+).
+  # the tester settings specified in this assignment's properties and spec file to the json file at
+  # +settings_file_path+ in the +zip_file+.
   def automated_test_config_to_zip(zip_file, zip_dir, settings_file_path)
     self.add_test_files_to_zip(zip_file, zip_dir)
     test_specs_path = self.autotest_settings_file

@@ -677,6 +677,7 @@ class AssignmentsController < ApplicationController
 
   private
 
+  # Configures the automated test files and settings for an +assignment+ provided in the +zip_file+
   def config_automated_tests(assignment, zip_file)
     spec_file = zip_file.get_entry(CONFIG_FILES[:automated_tests])
     spec_content = spec_file.get_input_stream.read.encode(Encoding::UTF_8, 'UTF-8')
