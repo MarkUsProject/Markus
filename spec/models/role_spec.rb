@@ -246,7 +246,7 @@ describe Role do
         end
         let(:peer_review_section) do
           create :assessment_section_properties, section: new_section,
-                 assessment: peer_review, is_hidden: true
+                                                 assessment: peer_review, is_hidden: true
         end
         it 'does appear hidden' do
           assessment_section_properties_hidden
