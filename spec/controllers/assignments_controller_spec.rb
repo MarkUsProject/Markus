@@ -1347,7 +1347,7 @@ describe AssignmentsController do
         end
 
         it 'should have a valid automated test settings file' do
-          test_settings_download = read_file_from_zip(response.body, 
+          test_settings_download = read_file_from_zip(response.body,
                                                       'automated-test-config-files/automated-test-settings.json')
           spec_data = test_settings_download['spec_data']
           received_settings = {
@@ -1369,7 +1369,7 @@ describe AssignmentsController do
 
         it 'should have a valid starter file settings file' do
           subject
-          starter_file_settings = read_file_from_zip(response.body, File.join('starter-file-config-files', 
+          starter_file_settings = read_file_from_zip(response.body, File.join('starter-file-config-files',
                                                                               'starter-file-rules.yml'))
           starter_file_settings = starter_file_settings.deep_symbolize_keys
           expect(starter_file_settings).to include(:starter_file_type, :allow_starter_files_after_due,
@@ -1413,7 +1413,7 @@ describe AssignmentsController do
         it 'should contain a peer review starter file settings file' do
           subject
           starter_file_settings = read_file_from_zip(response.body, File.join('peer-review-config-files',
-                                                                              'starter-file-config-files', 
+                                                                              'starter-file-config-files',
                                                                               'starter-file-rules.yml'))
           starter_file_settings = starter_file_settings.deep_symbolize_keys
           expect(starter_file_settings).to include(:starter_file_type, :allow_starter_files_after_due,
