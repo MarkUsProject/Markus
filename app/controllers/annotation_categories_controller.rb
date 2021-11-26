@@ -188,7 +188,7 @@ class AnnotationCategoriesController < ApplicationController
                   filename: "#{@assignment.short_identifier}_annotations.csv",
                   disposition: 'attachment'
       when 'yml'
-        send_data convert_to_yml(@annotation_categories),
+        send_data annotation_categories_to_yml(@annotation_categories),
                   filename: "#{@assignment.short_identifier}_annotations.yml",
                   disposition: 'attachment'
       else

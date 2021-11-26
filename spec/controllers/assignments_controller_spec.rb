@@ -1284,6 +1284,7 @@ describe AssignmentsController do
     let!(:assignment) { create :assignment_with_peer_review, due_date: Time.zone.parse('2042-02-10 15:30:45') }
     let!(:criteria) { create :checkbox_criterion, assignment: assignment }
     let!(:annotation) { create :annotation_category, assignment: assignment }
+    let!(:starter_files) { create :starter_file_group_with_entries, assignment: assignment }
     subject { get_as user, :download_config_files, params: { id: assignment.id } }
 
     before :each do
@@ -1342,7 +1343,6 @@ describe AssignmentsController do
 
         it 'should have a valid annotations file' do
           annotation_download = read_yaml_file(response.body, 'annotations.yml')
-          annotation_download = annotation_download.deep_symbolize_keys
           expect(annotation_download).to be_a(Hash)
         end
 
@@ -1366,6 +1366,27 @@ describe AssignmentsController do
           }
           expect(received_settings).to eq(expected_settings)
         end
+          
+        it 'should have a valid starter file settings file' do
+          subject
+          starter_file_settings = read_yaml_file(response.body, File.join('starter-file-config-files',
+                                                                          'starter-file-rules.yml'))
+          starter_file_settings = starter_file_settings.deep_symbolize_keys
+          expect(starter_file_settings).to include(:starter_file_type, :allow_starter_files_after_due,
+                                                   :default_starter_group, :group_information)
+        end
+
+        it 'should have a starter file group with the right number of files' do
+          subject
+          starter_file_count = 0
+          starter_file_group_dir = "starter-file-config-files/1: #{starter_files.name}"
+          Zip::InputStream.open(StringIO.new(response.body)) do |io|
+            while (entry = io.get_next_entry)
+              starter_file_count += 1 if entry.name.match?(/^#{starter_file_group_dir}/)
+            end
+          end
+          expect(starter_file_count).to eq(starter_files.files_and_dirs.length)
+        end
 
         it 'should have a valid peer review properties file' do
           properties = read_yaml_file(response.body, File.join('peer-review-config-files', 'properties.yml'))
@@ -1387,6 +1408,16 @@ describe AssignmentsController do
         it 'should contain a peer review annotations file' do
           tags = read_yaml_file(response.body, File.join('peer-review-config-files', 'annotations.yml'))
           expect(tags).to be_a(Hash)
+        end
+
+        it 'should contain a peer review starter file settings file' do
+          subject
+          starter_file_settings = read_yaml_file(response.body, File.join('peer-review-config-files',
+                                                                          'starter-file-config-files',
+                                                                          'starter-file-rules.yml'))
+          starter_file_settings = starter_file_settings.deep_symbolize_keys
+          expect(starter_file_settings).to include(:starter_file_type, :allow_starter_files_after_due,
+                                                   :default_starter_group, :group_information)
         end
       end
     end
@@ -1475,14 +1506,23 @@ describe AssignmentsController do
                                             'text/json')
       test_file1_good = fixture_file_upload(File.join(test_file_path, 'automated-test-files', 'tests.py'),
                                             'text/py')
-      test_file2_good = fixture_file_upload(File.join(test_file_path, 'automated-test-files', 'Helpers', 'test_helpers.py'),
-                                            'text/py')
+      test_file2_good = fixture_file_upload(File.join(test_file_path, 'automated-test-files', 'Helpers', 
+                                                      'test_helpers.py') ,'text/py')
+      starter_settings_good = fixture_file_upload(File.join(base_dir,
+                                                            'starter-file-config-files',
+                                                            'starter-file-rules.yml'), 'text/yaml')
+      starter_file_dir = File.join(base_dir, 'starter-file-config-files', '1: sample_starter_group')
+      starter_file1 = fixture_file_upload(File.join(starter_file_dir, 'c_file.c'), 'text/c')
+      starter_file2 = fixture_file_upload(File.join(starter_file_dir, 'Helpers', 'template.tex'), 'text/tex')
 
       peer_review_dir = File.join('assignments', 'sample-timed-assessment-good', 'peer-review-config-files')
       pr_properties_good = fixture_file_upload(File.join(peer_review_dir, 'properties.yml'), 'text/yaml')
       pr_tags_good = fixture_file_upload(File.join(peer_review_dir, 'tags.yml'), 'text/yaml')
       pr_criteria_good = fixture_file_upload(File.join(peer_review_dir, 'criteria.yml'), 'text/yaml')
       pr_annotations_good = fixture_file_upload(File.join(peer_review_dir, 'annotations.yml'), 'text/yaml')
+      pr_starter_settings_good = fixture_file_upload(File.join(peer_review_dir,
+                                                               'starter-file-config-files',
+                                                               'starter-file-rules.yml'), 'text/yaml')
 
       zip_name = 'mtt_ex_1-config-files.zip'
       zip_path = File.join('tmp', zip_name)
@@ -1492,6 +1532,10 @@ describe AssignmentsController do
         zip_file.add('tags.yml', tags_good.path)
         zip_file.add('criteria.yml', criteria_good.path)
         zip_file.add('annotations.yml', annotations_good.path)
+        zip_file.add('starter-file-config-files/starter-file-rules.yml', starter_settings_good.path)
+        zip_file.add('starter-file-config-files/1: sample_starter_group/c_file.c', starter_file1.path)
+        zip_file.mkdir(File.join(starter_file_dir, 'Helpers'))
+        zip_file.add('starter-file-config-files/1: sample_starter_group/Helpers/template.tex', starter_file2.path)
         zip_file.add('peer-review-config-files/properties.yml', pr_properties_good.path)
         zip_file.add('peer-review-config-files/tags.yml', pr_tags_good.path)
         zip_file.add('peer-review-config-files/criteria.yml', pr_criteria_good.path)
@@ -1499,6 +1543,8 @@ describe AssignmentsController do
         zip_file.add('automated-test-config-files/automated-test-settings.json', test_specs_good.path)
         zip_file.add('automated-test-config-files/automated-test-files/tests.py', test_file1_good.path)
         zip_file.add('automated-test-config-files/automated-test-files/Helpers/test_helpers.py', test_file2_good.path)
+        zip_file.add('peer-review-config-files/starter-file-config-files/starter-file-rules.yml',
+                     pr_starter_settings_good.path)
       end
       @assignment_good_zip = fixture_file_upload(zip_path, 'application/zip')
     end
@@ -1593,6 +1639,23 @@ describe AssignmentsController do
         }
         expect(received_automated_test_data).to eq(expected_automated_test_data)
       end
+        
+      it 'properly configures the starter files for an assignment' do
+        subject
+        uploaded_assignment = Assignment.find_by(short_identifier: 'mtt_ex_1')
+        starter_file_group = uploaded_assignment.starter_file_groups
+        uploaded_starter_file_checks = {
+          starter_file_group_count: starter_file_group.count,
+          starter_file_group_name: starter_file_group.first.name,
+          starter_file_entry_count: starter_file_group.first.files_and_dirs.length
+        }
+        expected_starter_file_checks = {
+          starter_file_group_count: 1,
+          starter_file_group_name: 'sample_starter_group',
+          starter_file_entry_count: 3
+        }
+        expect(uploaded_starter_file_checks).to eq(expected_starter_file_checks)
+      end
 
       it 'properly uploads a peer review assignment' do
         subject
@@ -1604,7 +1667,8 @@ describe AssignmentsController do
           scanned_exam: uploaded_child_assignment.scanned_exam,
           parent_short_id: parent_assignment.short_identifier,
           num_criteria: uploaded_child_assignment.criteria.count,
-          num_annotations: uploaded_child_assignment.annotation_categories.count
+          num_annotations: uploaded_child_assignment.annotation_categories.count,
+          has_no_starter_files: uploaded_child_assignment.starter_file_groups.count == 0
         }
         expected_pr_assessment_data = {
           message: 'Review the sample midterm of your peers to help you practice for our second midterm',
@@ -1612,7 +1676,8 @@ describe AssignmentsController do
           scanned_exam: false,
           parent_short_id: 'mtt_ex_1',
           num_criteria: 1,
-          num_annotations: 2
+          num_annotations: 2,
+          has_no_starter_files: true
         }
         expect(uploaded_pr_assessment_data).to eq(expected_pr_assessment_data)
       end
@@ -1677,10 +1742,10 @@ describe AssignmentsController do
       it 'copies over additional assignment properties' do
         uploaded_assignment = Assignment.find_by(short_identifier: assignment.short_identifier)
         uploaded_properties = uploaded_assignment.assignment_properties
-        received = uploaded_properties.attributes.except('created_at', 'updated_at', 'id',
-                                                         'assessment_id', 'autotest_settings_id')
-        expected = assignment_properties.attributes.except('created_at', 'updated_at', 'id',
-                                                           'assessment_id', 'autotest_settings_id')
+        received = uploaded_properties.attributes.except('created_at', 'updated_at', 'id', 'assessment_id', 
+                                                         'autotest_settings_id', 'starter_file_updated_at')
+        expected = assignment_properties.attributes.except('created_at', 'updated_at', 'id', 'assessment_id', 
+                                                           'autotest_settings_id', 'starter_file_updated_at')
         if uploaded_assignment.is_peer_review?
           # override default token settings from factory
           expect(expected['token_period']).to eq(1)
@@ -1718,6 +1783,34 @@ describe AssignmentsController do
         expected_criteria = criteria.attributes.except('created_at', 'updated_at', 'id', 'assessment_id')
         expect(uploaded_criteria).to eq(expected_criteria)
       end
+
+      it 'copies over starter files' do
+        uploaded_assignment = Assignment.find_by(short_identifier: assignment.short_identifier)
+        uploaded_starter_files = []
+        uploaded_assignment.starter_file_groups.each do |group|
+          uploaded_starter_files << {
+            name: group.name,
+            use_rename: group.use_rename,
+            entry_rename: group.entry_rename,
+            files_and_dirs: group.files_and_dirs
+          }
+        end
+        expected_starter_files = [
+          {
+            name: starter_group1.name,
+            use_rename: starter_group1.use_rename,
+            entry_rename: starter_group1.entry_rename,
+            files_and_dirs: starter_group1_files
+          },
+          {
+            name: starter_group2.name,
+            use_rename: starter_group2.use_rename,
+            entry_rename: starter_group2.entry_rename,
+            files_and_dirs: starter_group2_files
+          }
+        ]
+        expect(uploaded_starter_files).to eq(expected_starter_files)
+      end
     end
 
     context 'Normal assignment with everything' do
@@ -1732,6 +1825,10 @@ describe AssignmentsController do
       let!(:tag2) { create :tag, assessment_id: assignment.id }
       let!(:tag3) { create :tag, assessment_id: assignment.id }
       let!(:test_group) { create :test_group, assignment: assignment }
+      let!(:starter_group1) { create :starter_file_group_with_entries, assignment: assignment }
+      let!(:starter_group1_files) { starter_group1.files_and_dirs }
+      let!(:starter_group2) { create :starter_file_group_with_entries, assignment: assignment }
+      let!(:starter_group2_files) { starter_group2.files_and_dirs }
 
       before :each do
         create_automated_test(assignment)
@@ -1809,6 +1906,10 @@ describe AssignmentsController do
       let!(:tag2) { create :tag, assessment_id: assignment.id }
       let!(:tag3) { create :tag, assessment_id: assignment.id }
       let!(:tag4) { create :tag, assessment_id: parent_assignment.id }
+      let!(:starter_group1) { create :starter_file_group_with_entries, assignment: assignment }
+      let!(:starter_group1_files) { starter_group1.files_and_dirs }
+      let!(:starter_group2) { create :starter_file_group_with_entries, assignment: assignment }
+      let!(:starter_group2_files) { starter_group2.files_and_dirs }
 
       before :each do
         get_as user, :download_config_files, params: { id: parent_assignment.id }

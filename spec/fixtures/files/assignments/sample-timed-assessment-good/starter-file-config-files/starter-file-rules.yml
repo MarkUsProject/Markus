@@ -1,0 +1,9 @@
+---
+starter_file_type: simple
+allow_starter_files_after_due: true
+default_starter_group: '1: sample_starter_group'
+group_information:
+  - directory_name: '1: sample_starter_group'
+    name: sample_starter_group
+    use_rename: false
+    entry_rename: ''
