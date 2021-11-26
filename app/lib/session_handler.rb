@@ -68,7 +68,8 @@ module SessionHandler
   def check_record
     return page_not_found if params[:id] && record.nil? || parent_params.length != parent_records.compact.length
     page_not_found if [record, *parent_records].compact
-                                               .reject { |r| r.is_a? Course }.any? { |r| r&.course != current_course }
+                                               .reject { |r| r.is_a? Course }
+                                               .any? { |r| r.try(:course) != current_course }
   end
 
   # Check if there's any user associated with this session

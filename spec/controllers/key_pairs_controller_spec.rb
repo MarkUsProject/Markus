@@ -58,7 +58,7 @@ describe KeyPairsController do
     before { delete_as admin, :destroy, params: { id: key_pair_id } }
     context 'a key_pair exists' do
       context 'owned by the current user' do
-        let(:key_pair_id) { create(:key_pair, user: admin).id }
+        let(:key_pair_id) { create(:key_pair, user: admin.human).id }
         it 'should delete the key_pair' do
           expect(KeyPair.where(id: key_pair_id)).to be_empty
         end
@@ -85,7 +85,7 @@ describe KeyPairsController do
     context 'a key_pair does not exist' do
       let(:key_pair_id) { -1 }
       it 'should respond with redirect' do
-        is_expected.to respond_with(:redirect)
+        is_expected.to respond_with(:not_found)
       end
       it 'should not flash a success message' do
         expect(flash[:success]).to be_nil
