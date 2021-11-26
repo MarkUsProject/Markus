@@ -1,6 +1,8 @@
 <header id='header'>
   <div id='course'>
-    <strong><%= Settings.course_name %></strong>
+    <% if @current_course %>
+      <strong><%= @current_course.display_name %></strong>
+      <% end %>
   </div>
   <div id='user-info'>
     <span id='logout_area'>
@@ -13,14 +15,14 @@
         <%= @current_user.display_name %>
         ( <strong><%= @current_user.user_name %></strong> )
       </span>
-      <% if allowed_to?(:role_switch?, @current_course) %>
+      <% if @current_course && allowed_to?(:role_switch?, @current_course) %>
         <%= link_to t('main.role_switch.switch_role'),
                     role_switch_course_path(@current_course.id),
                     remote: true,
                     class: 'button inline-button switch-role' %>
       <% end %>
 
-      <% if allowed_to?(:clear_role_switch_session?, @current_course) %>
+      <% if @current_course && allowed_to?(:clear_role_switch_session?, @current_course) %>
         <%= link_to t('main.role_switch.clear_role_switch_session'),
                     clear_role_switch_session_course_path(@current_course),
                     class: 'button inline-button switch-role' %>

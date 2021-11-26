@@ -2,7 +2,7 @@ import React from "react";
 
 class CourseCard extends React.Component {
   onClick = () => {
-    window.location += this.props.course_id;
+    window.location += "/" + this.props.course_id;
   };
 
   render() {
@@ -15,7 +15,9 @@ class CourseCard extends React.Component {
           <div className="course-code">{this.props.course_name}</div>
         </div>
         <div className="course-name">
-          <a href={window.location + this.props.course_id}>{this.props.course_display_name}</a>
+          <a href={window.location + "/" + this.props.course_id}>
+            {this.props.course_display_name}
+          </a>
         </div>
       </div>
     );

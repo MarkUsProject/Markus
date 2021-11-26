@@ -10,11 +10,18 @@
   border-radius: 5px;
   box-shadow: 0 0 10px $primary-two;
   box-sizing: border-box;
+  flex-basis: 300px;
+  flex-grow: 1;
   font-size: 16px;
   height: 200px;
-  margin: 10px;
+  margin: 15px;
+  max-width: 300px;
   text-align: center;
-  width: 200px;
+
+  @include breakpoint(mobile) {
+    max-width: 100%;
+    min-width: 300px;
+  }
 }
 
 .course-info {
@@ -38,6 +45,7 @@
   text-align: center;
   top: 50%;
   transform: translate(-50%, -50%);
+  width: 100%;
 }
 
 .course-role {
