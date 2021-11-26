@@ -55,7 +55,7 @@ module SessionHandler
 
   def parent_records
     @parent_records ||= parent_params.map do |key|
-      key.to_s.split('_').first.classify.constantize.find_by(id: params[key])
+      key.to_s.delete_suffix('_id').classify.constantize.find_by(id: params[key])
     end
   end
 

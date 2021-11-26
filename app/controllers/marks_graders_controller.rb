@@ -80,17 +80,17 @@ class MarksGradersController < ApplicationController
         flash_message(:success, result[:valid_lines])
       end
     end
-    redirect_to action: 'index', grade_entry_form_id: params[:grade_entry_form_id]
+    redirect_to course_grade_entry_form_marks_graders_path(current_course, params[:grade_entry_form_id])
   end
 
   # Download grader/student mappings in CSV format.
   def grader_mapping
     grade_entry_form = GradeEntryForm.find(params[:grade_entry_form_id])
 
-    students = Student.left_outer_joins(grade_entry_students: :tas)
+    students = Student.left_outer_joins(:human, grade_entry_students: [tas: :human])
                       .where('grade_entry_students.assessment_id': grade_entry_form.id)
-                      .order('users.user_name', 'tas_grade_entry_students.user_name')
-                      .pluck('users.user_name', 'tas_grade_entry_students.user_name')
+                      .order('users.user_name', 'humen_roles.user_name') # Note: Rails pluralizes human as humen here
+                      .pluck('users.user_name', 'humen_roles.user_name')
                       .group_by { |x| x[0] }
                       .to_a
 
