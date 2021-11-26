@@ -644,7 +644,7 @@ describe GradersController do
           ta_memberships = [
             create(:ta_membership, role: @ta3, grouping: @grouping1),
             create(:ta_membership, role: @ta3, grouping: @grouping2),
-            create(:ta_membership, role: @ta3, grouping: @grouping3),
+            create(:ta_membership, role: @ta3, grouping: @grouping3)
           ]
           post_as @admin,
                   :global_actions,
@@ -739,8 +739,8 @@ describe GradersController do
           it 'and no criteria selected, at least one grader' do
             post_as @admin,
                     :global_actions,
-                    params: { course_id: course.id, assignment_id: @assignment.id, global_actions: 'random_assign', graders: [@ta1],
-                              current_table: 'criteria_table' }
+                    params: { course_id: course.id, assignment_id: @assignment.id,
+                              global_actions: 'random_assign', graders: [@ta1], current_table: 'criteria_table' }
             expect(response.status).to eq(400)
             @assignment.criteria.each do |criterion|
               expect(criterion.tas).to eq []
