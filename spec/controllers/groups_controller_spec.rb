@@ -495,8 +495,7 @@ describe GroupsController do
       it 'should send an email to a single student if invited to a grouping' do
         expect do
           post_as @current_student, :invite_member,
-               params: { course_id: course.id, invite_member: @student.user_name,
-                         assignment_id: @assignment.id }
+                  params: { course_id: course.id, invite_member: @student.user_name, assignment_id: @assignment.id }
         end.to change { ActionMailer::Base.deliveries.count }.by(1)
       end
 
@@ -504,8 +503,8 @@ describe GroupsController do
         @another_student = create(:student, human: create(:human, user_name: 'c9test3'))
         expect do
           post_as @current_student, :invite_member,
-               params: { course_id: course.id, invite_member: "#{@student.user_name},#{@another_student.user_name}",
-                         assignment_id: @assignment.id }
+                  params: { course_id: course.id, invite_member: "#{@student.user_name},#{@another_student.user_name}",
+                            assignment_id: @assignment.id }
         end.to change { ActionMailer::Base.deliveries.count }.by(2)
       end
       it 'should not send an email to every student invited to a grouping if some have emails disabled' do
@@ -520,8 +519,7 @@ describe GroupsController do
         @student.update!(receives_invite_emails: false)
         expect do
           post_as @current_student, :invite_member,
-               params: { course_id: course.id, invite_member: @student.user_name,
-                         assignment_id: @assignment.id }
+                  params: { course_id: course.id, invite_member: @student.user_name, assignment_id: @assignment.id }
         end.to change { ActionMailer::Base.deliveries.count }.by(0)
       end
     end
@@ -531,31 +529,27 @@ describe GroupsController do
       it 'accepts a pending invitation' do
         invitation = create(:student_membership, role: @current_student, grouping: grouping)
         post_as @current_student, :accept_invitation,
-             params: { course_id: course.id, assignment_id: grouping.assessment_id,
-                       grouping_id: grouping.id }
+                params: { course_id: course.id, assignment_id: grouping.assessment_id, grouping_id: grouping.id }
         expect(invitation.reload.membership_status).to eq StudentMembership::STATUSES[:accepted]
       end
 
       it 'accepts a rejected invitation' do
         invitation = create(:rejected_student_membership, role: @current_student, grouping: grouping)
         post_as @current_student, :accept_invitation,
-             params: { course_id: course.id, assignment_id: grouping.assessment_id,
-                       grouping_id: grouping.id }
+                params: { course_id: course.id, assignment_id: grouping.assessment_id, grouping_id: grouping.id }
         expect(invitation.reload.membership_status).to eq StudentMembership::STATUSES[:accepted]
       end
 
       it 'fails to accept when there is no invitation' do
         post_as @current_student, :accept_invitation,
-             params: { course_id: course.id, assignment_id: grouping.assessment_id,
-                       grouping_id: grouping.id }
+                params: { course_id: course.id, assignment_id: grouping.assessment_id, grouping_id: grouping.id }
         assert_response :unprocessable_entity
       end
 
       it 'fails to accept when the invitation has already been accepted' do
         create(:accepted_student_membership, role: @current_student, grouping: grouping)
         post_as @current_student, :accept_invitation,
-             params: { course_id: course.id, assignment_id: grouping.assessment_id,
-                       grouping_id: grouping.id }
+                params: { course_id: course.id, assignment_id: grouping.assessment_id, grouping_id: grouping.id }
         assert_response :unprocessable_entity
       end
 
@@ -564,8 +558,7 @@ describe GroupsController do
         create(:student_membership, role: @current_student, grouping: grouping)
         create(:accepted_student_membership, role: @current_student, grouping: grouping2)
         post_as @current_student, :accept_invitation,
-             params: { course_id: course.id, assignment_id: grouping.assessment_id,
-                       grouping_id: grouping.id }
+                params: { course_id: course.id, assignment_id: grouping.assessment_id, grouping_id: grouping.id }
         assert_response :unprocessable_entity
       end
 
@@ -576,8 +569,7 @@ describe GroupsController do
           create(:student_membership, role: @current_student, grouping: new_grouping)
         end
         post_as @current_student, :accept_invitation,
-             params: { course_id: course.id, assignment_id: grouping.assessment_id,
-                       grouping_id: grouping.id }
+                params: { course_id: course.id, assignment_id: grouping.assessment_id, grouping_id: grouping.id }
         expect(@current_student.student_memberships.size).to eq 4
         @current_student.student_memberships.each do |membership|
           if membership.grouping_id == grouping.id
@@ -595,23 +587,20 @@ describe GroupsController do
       it 'rejects a pending invitation' do
         invitation = create(:student_membership, role: @current_student, grouping: grouping)
         post_as @current_student, :decline_invitation,
-             params: { course_id: course.id, assignment_id: grouping.assessment_id,
-                       grouping_id: grouping.id }
+                params: { course_id: course.id, assignment_id: grouping.assessment_id, grouping_id: grouping.id }
         expect(invitation.reload.membership_status).to eq StudentMembership::STATUSES[:rejected]
       end
 
       it 'fails to reject when the invitation has already been accepted' do
         create(:accepted_student_membership, role: @current_student, grouping: grouping)
         post_as @current_student, :decline_invitation,
-             params: { course_id: course.id, assignment_id: grouping.assessment_id,
-                       grouping_id: grouping.id }
+                params: { course_id: course.id, assignment_id: grouping.assessment_id, grouping_id: grouping.id }
         assert_response :unprocessable_entity
       end
 
       it 'fails to reject when there is no invitation' do
         post_as @current_student, :decline_invitation,
-             params: { course_id: course.id, assignment_id: grouping.assessment_id,
-                       grouping_id: grouping.id }
+                params: { course_id: course.id, assignment_id: grouping.assessment_id, grouping_id: grouping.id }
         assert_response :unprocessable_entity
       end
     end
@@ -623,16 +612,14 @@ describe GroupsController do
         it 'cancels a pending invitation' do
           invitation = create(:student_membership, grouping: grouping)
           post_as @current_student, :disinvite_member,
-               params: { course_id: course.id, assignment_id: grouping.assessment_id,
-                         membership: invitation.id }
+                  params: { course_id: course.id, assignment_id: grouping.assessment_id, membership: invitation.id }
           expect(grouping.student_memberships.size).to eq 1
         end
 
         it 'fails to cancel an accepted invitation' do
           invitation = create(:accepted_student_membership, grouping: grouping)
           post_as @current_student, :disinvite_member,
-               params: { course_id: course.id, assignment_id: grouping.assessment_id,
-                         membership: invitation.id }
+                  params: { course_id: course.id, assignment_id: grouping.assessment_id, membership: invitation.id }
           assert_response :forbidden
         end
 
@@ -640,8 +627,7 @@ describe GroupsController do
           grouping2 = create(:grouping_with_inviter, assignment: grouping.assignment)
           invitation = create(:accepted_student_membership, grouping: grouping2)
           post_as @current_student, :disinvite_member,
-               params: { course_id: course.id, assignment_id: grouping.assessment_id,
-                         membership: invitation.id }
+                  params: { course_id: course.id, assignment_id: grouping.assessment_id, membership: invitation.id }
           assert_response :forbidden
         end
       end
@@ -653,8 +639,7 @@ describe GroupsController do
           create(:accepted_student_membership, grouping: grouping, role: @current_student)
           invitation = create(:student_membership, grouping: grouping)
           post_as @current_student, :disinvite_member,
-               params: { course_id: course.id, assignment_id: grouping.assessment_id,
-                         membership: invitation.id }
+                  params: { course_id: course.id, assignment_id: grouping.assessment_id, membership: invitation.id }
           assert_response :forbidden
         end
       end

@@ -239,9 +239,12 @@ class GroupsController < ApplicationController
       }
       next_file = next_grouping.current_submission_used.submission_files.find_by(filename: 'COVER.pdf')
       unless next_file.nil?
-        data[:filelink] = download_course_assignment_groups_path(current_course, @assignment,
-        select_file_id: next_grouping.current_submission_used.submission_files.find_by(filename: 'COVER.pdf').id,
-        show_in_browser: true )
+        data[:filelink] = download_course_assignment_groups_path(
+          current_course,
+          @assignment,
+          select_file_id: next_grouping.current_submission_used.submission_files.find_by(filename: 'COVER.pdf').id,
+          show_in_browser: true
+        )
       end
       render json: data
     end
