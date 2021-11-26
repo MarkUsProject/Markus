@@ -1321,7 +1321,7 @@ describe AssignmentsController do
         end
 
         it 'should have a valid properties file' do
-          properties = read_yaml_file(response.body, 'properties.yml')
+          properties = read_file_from_zip(response.body, 'properties.yml')
           expect(properties).to include(short_identifier: assignment.short_identifier,
                                         description: assignment.description,
                                         due_date: assignment.due_date,
@@ -1334,7 +1334,7 @@ describe AssignmentsController do
         end
 
         it 'should have a valid criteria file' do
-          criteria_download = read_yaml_file(response.body, 'criteria.yml')
+          criteria_download = read_file_from_zip(response.body, 'criteria.yml')
           criteria_download = criteria_download.deep_symbolize_keys
           criteria_download.each_key do |key|
             expect(criteria_download[key]).to include(:type, :max_mark, :description)
@@ -1342,12 +1342,12 @@ describe AssignmentsController do
         end
 
         it 'should have a valid annotations file' do
-          annotation_download = read_yaml_file(response.body, 'annotations.yml')
+          annotation_download = read_file_from_zip(response.body, 'annotations.yml')
           expect(annotation_download).to be_a(Hash)
         end
 
         it 'should have a valid automated test settings file' do
-          test_settings_download = read_file_from_zip(response.body,
+          test_settings_download = read_file_from_zip(response.body, 
                                                       'automated-test-config-files/automated-test-settings.json')
           spec_data = test_settings_download['spec_data']
           received_settings = {
@@ -1369,8 +1369,8 @@ describe AssignmentsController do
 
         it 'should have a valid starter file settings file' do
           subject
-          starter_file_settings = read_yaml_file(response.body, File.join('starter-file-config-files',
-                                                                          'starter-file-rules.yml'))
+          starter_file_settings = read_file_from_zip(response.body, File.join('starter-file-config-files', 
+                                                                              'starter-file-rules.yml'))
           starter_file_settings = starter_file_settings.deep_symbolize_keys
           expect(starter_file_settings).to include(:starter_file_type, :allow_starter_files_after_due,
                                                    :default_starter_group, :group_information)
@@ -1389,7 +1389,7 @@ describe AssignmentsController do
         end
 
         it 'should have a valid peer review properties file' do
-          properties = read_yaml_file(response.body, File.join('peer-review-config-files', 'properties.yml'))
+          properties = read_file_from_zip(response.body, File.join('peer-review-config-files', 'properties.yml'))
           peer_review_assignment = Assignment.find_by(parent_assessment_id: assignment.id)
           expect(properties).to include(short_identifier: peer_review_assignment.short_identifier,
                                         description: peer_review_assignment.description,
@@ -1401,20 +1401,20 @@ describe AssignmentsController do
         end
 
         it 'should contain a peer review criteria file' do
-          tags = read_yaml_file(response.body, File.join('peer-review-config-files', 'criteria.yml'))
+          tags = read_file_from_zip(response.body, File.join('peer-review-config-files', 'criteria.yml'))
           expect(tags).to be_a(Hash)
         end
 
         it 'should contain a peer review annotations file' do
-          tags = read_yaml_file(response.body, File.join('peer-review-config-files', 'annotations.yml'))
+          tags = read_file_from_zip(response.body, File.join('peer-review-config-files', 'annotations.yml'))
           expect(tags).to be_a(Hash)
         end
 
         it 'should contain a peer review starter file settings file' do
           subject
-          starter_file_settings = read_yaml_file(response.body, File.join('peer-review-config-files',
-                                                                          'starter-file-config-files',
-                                                                          'starter-file-rules.yml'))
+          starter_file_settings = read_file_from_zip(response.body, File.join('peer-review-config-files',
+                                                                              'starter-file-config-files', 
+                                                                              'starter-file-rules.yml'))
           starter_file_settings = starter_file_settings.deep_symbolize_keys
           expect(starter_file_settings).to include(:starter_file_type, :allow_starter_files_after_due,
                                                    :default_starter_group, :group_information)
@@ -1444,13 +1444,13 @@ describe AssignmentsController do
 
         it 'should not have a tags file' do
           subject
-          tags = read_yaml_file(response.body, 'tags.yml')
+          tags = read_file_from_zip(response.body, 'tags.yml')
           expect(tags).to be_nil
         end
 
         it 'should not have a peer review tags file' do
           subject
-          tags = read_yaml_file(response.body, File.join('peer-review-config-files', 'tags.yml'))
+          tags = read_file_from_zip(response.body, File.join('peer-review-config-files', 'tags.yml'))
           expect(tags).to be_nil
         end
       end
@@ -1463,7 +1463,7 @@ describe AssignmentsController do
         tag1 = create :tag, assessment_id: assignment.id
         tag2 = create :tag, assessment_id: assignment.id
         subject
-        tags = read_yaml_file(response.body, 'tags.yml')
+        tags = read_file_from_zip(response.body, 'tags.yml')
         tags = tags.map(&:symbolize_keys)
         expect(tags).to eq([{ name: tag1.name, description: tag1.description },
                             { name: tag2.name, description: tag2.description }])
@@ -1471,7 +1471,7 @@ describe AssignmentsController do
 
       it 'should contain a peer review tags file' do
         subject
-        tags = read_yaml_file(response.body, File.join('peer-review-config-files', 'tags.yml'))
+        tags = read_file_from_zip(response.body, File.join('peer-review-config-files', 'tags.yml'))
         expect(tags).to be_a(Array)
       end
     end
