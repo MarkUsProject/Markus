@@ -79,7 +79,7 @@ class GradersController < ApplicationController
     @assignment = Assignment.find(params[:assignment_id])
     grader_ids = params[:graders]
     if grader_ids.blank?
-      grader_ids = Ta.where(user_name: params[:grader_user_names]).pluck(:id)
+      grader_ids = Ta.joins(:human).where('users.user_name': params[:grader_user_names]).pluck(:id)
       if grader_ids.blank?
         flash_now(:error, I18n.t('graders.select_a_grader'))
         head :bad_request
@@ -176,7 +176,7 @@ class GradersController < ApplicationController
   end
 
   def unassign_graders(grouping_ids, grader_ids)
-    grader_membership_ids = TaMembership.where(grouping_id: grouping_ids, user_id: grader_ids).pluck(:id)
+    grader_membership_ids = TaMembership.where(grouping_id: grouping_ids, role_id: grader_ids).pluck(:id)
     Grouping.unassign_tas(grader_membership_ids, grouping_ids, @assignment)
   end
 
