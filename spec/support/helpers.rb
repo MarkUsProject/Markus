@@ -72,7 +72,7 @@ module Helpers
   # Reads a byte string of a zip file +content+, gets the content of the file with
   # the name +filename+. It then uses the file type from the given +filename+ to parse
   # the content accordingly. Otherwise, this function return nil.
-  # Only JSON and YAML files are currently supported. 
+  # Only JSON and YAML files are currently supported.
   def read_file_from_zip(content, filename)
     Zip::InputStream.open(StringIO.new(content)) do |io|
       file = nil
@@ -95,7 +95,7 @@ module Helpers
       end
     end
   end
-  
+
   def create_automated_test(assignment)
     FileUtils.mkdir_p(assignment.autotest_files_dir)
     File.write(File.join(assignment.autotest_files_dir, 'tests.py'),
@@ -117,10 +117,10 @@ module Helpers
     end
     criteria_id = assignment.criteria.empty? ? nil : assignment.criteria.first.id
     File.write(assignment.autotest_settings_file,
-               create_sample_spec_file(test_group, criteria_id).to_json, 
+               create_sample_spec_file(test_group, criteria_id).to_json,
                mode: 'wb')
   end
-  
+
   def create_sample_spec_file(test_group, criteria_id = nil)
     {
       testers: [

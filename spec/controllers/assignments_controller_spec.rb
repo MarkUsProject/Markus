@@ -1366,7 +1366,7 @@ describe AssignmentsController do
           }
           expect(received_settings).to eq(expected_settings)
         end
-          
+
         it 'should have a valid starter file settings file' do
           subject
           starter_file_settings = read_yaml_file(response.body, File.join('starter-file-config-files',
@@ -1490,7 +1490,7 @@ describe AssignmentsController do
       unless uploaded_assignment.nil?
         FileUtils.rm_rf(uploaded_assignment.autotest_files_dir)
         FileUtils.rm_f(uploaded_assignment.autotest_settings_file)
-      end  
+      end
     end
 
     before :each do
@@ -1506,7 +1506,7 @@ describe AssignmentsController do
                                             'text/json')
       test_file1_good = fixture_file_upload(File.join(test_file_path, 'automated-test-files', 'tests.py'),
                                             'text/py')
-      test_file2_good = fixture_file_upload(File.join(test_file_path, 'automated-test-files', 'Helpers', 
+      test_file2_good = fixture_file_upload(File.join(test_file_path, 'automated-test-files', 'Helpers',
                                                       'test_helpers.py') ,'text/py')
       starter_settings_good = fixture_file_upload(File.join(base_dir,
                                                             'starter-file-config-files',
@@ -1639,7 +1639,7 @@ describe AssignmentsController do
         }
         expect(received_automated_test_data).to eq(expected_automated_test_data)
       end
-        
+
       it 'properly configures the starter files for an assignment' do
         subject
         uploaded_assignment = Assignment.find_by(short_identifier: 'mtt_ex_1')
@@ -1742,9 +1742,9 @@ describe AssignmentsController do
       it 'copies over additional assignment properties' do
         uploaded_assignment = Assignment.find_by(short_identifier: assignment.short_identifier)
         uploaded_properties = uploaded_assignment.assignment_properties
-        received = uploaded_properties.attributes.except('created_at', 'updated_at', 'id', 'assessment_id', 
+        received = uploaded_properties.attributes.except('created_at', 'updated_at', 'id', 'assessment_id',
                                                          'autotest_settings_id', 'starter_file_updated_at')
-        expected = assignment_properties.attributes.except('created_at', 'updated_at', 'id', 'assessment_id', 
+        expected = assignment_properties.attributes.except('created_at', 'updated_at', 'id', 'assessment_id',
                                                            'autotest_settings_id', 'starter_file_updated_at')
         if uploaded_assignment.is_peer_review?
           # override default token settings from factory
