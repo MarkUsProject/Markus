@@ -16,7 +16,7 @@ describe GradeEntryForm do
 
   describe 'uniqueness validation' do
     subject { create :grade_entry_form }
-    it { is_expected.to validate_uniqueness_of(:short_identifier) }
+    it { is_expected.to validate_uniqueness_of(:short_identifier).scoped_to(:course_id) }
   end
 
   describe '#max_mark' do

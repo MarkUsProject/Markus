@@ -2,6 +2,7 @@ require 'rails_helper'
 
 describe Role do
   let(:course) { create(:course) }
+  let(:student) { create(:student, course: course) }
 
   it { is_expected.to allow_value('Student').for(:type) }
   it { is_expected.to allow_value('Admin').for(:type) }
@@ -10,7 +11,7 @@ describe Role do
   it { is_expected.to have_many :memberships }
   it { is_expected.to have_many(:groupings).through(:memberships) }
   it { is_expected.to have_many(:notes).dependent(:destroy) }
-  it { is_expected.to validate_uniqueness_of(:user_id).scoped_to(:course_id) }
+  it { expect(student).to validate_uniqueness_of(:user_id).scoped_to(:course_id) }
 
   context 'A good Role model' do
     it 'should be able to create a student' do
@@ -59,11 +60,12 @@ describe Role do
   end
 
   describe '#visible_assessments' do
-    let(:new_section) { create(:section) }
+    let(:new_section) { create(:section, course: course) }
     let(:assignment_visible) do
       create(:assignment,
              due_date: 2.days.from_now,
-             assignment_properties_attributes: { section_due_dates_type: true })
+             assignment_properties_attributes: { section_due_dates_type: true },
+             course: course)
     end
     let(:assessment_section_properties_visible) do
       create(:assessment_section_properties, assessment: assignment_visible,
@@ -74,7 +76,8 @@ describe Role do
     let(:assignment_hidden) do
       create(:assignment,
              due_date: 2.days.from_now,
-             assignment_properties_attributes: { section_due_dates_type: true })
+             assignment_properties_attributes: { section_due_dates_type: true },
+             course: course)
     end
     let(:assessment_section_properties_hidden) do
       create(:assessment_section_properties, assessment: assignment_hidden,
@@ -86,7 +89,8 @@ describe Role do
       create(:assignment,
              due_date: 2.days.from_now,
              assignment_properties_attributes: { section_due_dates_type: true },
-             is_hidden: true)
+             is_hidden: true,
+             course: course)
     end
 
     let(:assessment_section_properties_visible_assignment_hidden) do
@@ -96,7 +100,7 @@ describe Role do
                                              is_hidden: false)
     end
     context 'when there are no assessments' do
-      let(:new_user) { create :student }
+      let(:new_user) { create :student, course: course }
       it 'should return an empty list' do
         expect(new_user.visible_assessments).to be_empty
       end
@@ -107,27 +111,27 @@ describe Role do
         assessment_section_properties_visible
       end
       context 'when section_due_dates_type disabled' do
-        let(:new_user_2) { create :student }
+        let(:new_user_2) { create :student, course: course }
         it 'does return all unhiddden assignments' do
           expect(new_user_2.visible_assessments).to contain_exactly(assignment_visible, assignment_hidden)
         end
       end
       context 'when user has one visible assignment' do
-        let(:new_user) { create :student, section_id: new_section.id }
+        let(:new_user) { create :student, section_id: new_section.id, course: course }
 
         it 'does return a list containing that assignment' do
           expect(new_user.visible_assessments).to contain_exactly(assignment_visible)
         end
       end
       context 'when user has no section' do
-        let(:new_user_2) { create :student }
+        let(:new_user_2) { create :student, course: course }
         it 'does return all section-hidden assignments' do
           expect(new_user_2.visible_assessments).to contain_exactly(assignment_visible, assignment_hidden)
         end
       end
       context 'when a user is from a different section' do
         let(:section2) { create :section }
-        let(:new_user_2) { create :student, section_id: section2 }
+        let(:new_user_2) { create :student, section_id: section2, course: course }
         it 'does return all visible assignments' do
           expect(new_user_2.visible_assessments).to contain_exactly(assignment_visible, assignment_hidden)
         end
@@ -137,29 +141,30 @@ describe Role do
           create :assignment,
                  due_date: 2.days.from_now,
                  is_hidden: true,
-                 assignment_properties_attributes: { section_due_dates_type: true }
+                 assignment_properties_attributes: { section_due_dates_type: true },
+                 course: course
         end
-        let(:new_user) { create :student }
+        let(:new_user) { create :student, course: course }
         it 'does not return the hidden assignment' do
           expect(new_user.visible_assessments).to contain_exactly(assignment_visible, assignment_hidden)
         end
       end
       context 'when a visible assignment is given' do
-        let(:new_user) { create :student, section_id: new_section.id }
+        let(:new_user) { create :student, section_id: new_section.id, course: course }
         it 'does return an array with the assignment' do
           expect(new_user.visible_assessments(assessment_id: assignment_visible.id))
             .to contain_exactly(assignment_visible)
         end
       end
       context 'when a hidden assignment is given' do
-        let(:new_user) { create :student, section_id: new_section.id }
+        let(:new_user) { create :student, section_id: new_section.id, course: course }
         it 'does return an empty array' do
           expect(new_user.visible_assessments(assessment_id: assignment_hidden.id)).to be_empty
         end
       end
     end
     context 'when assignment is hidden but section is not' do
-      let(:new_user) { create :student, section_id: new_section.id }
+      let(:new_user) { create :student, section_id: new_section.id, course: course }
       it 'does return the assignment' do
         assessment_section_properties_visible_assignment_hidden
         expect(new_user.visible_assessments(assessment_id: assignment_hidden_section_visible.id))
@@ -167,11 +172,12 @@ describe Role do
       end
     end
     context 'when assignment and section are hidden' do
-      let(:new_user) { create :student, section_id: new_section.id }
+      let(:new_user) { create :student, section_id: new_section.id, course: course }
       let(:new_hidden_assignment) do
         create :assignment,
                is_hidden: true,
-               assignment_properties_attributes: { section_due_dates_type: true }
+               assignment_properties_attributes: { section_due_dates_type: true },
+               course: course
       end
       let(:new_visible_assessment_section_properties) do
         create :assessment_section_properties,
@@ -188,11 +194,12 @@ describe Role do
       end
     end
     context 'when getting a list of assignments with some overridden is_hiddens' do
-      let(:new_user) { create :student, section_id: new_section.id }
+      let(:new_user) { create :student, section_id: new_section.id, course: course }
       let(:new_hidden_assignment) do
         create :assignment,
                is_hidden: true,
-               assignment_properties_attributes: { section_due_dates_type: true }
+               assignment_properties_attributes: { section_due_dates_type: true },
+               course: course
       end
       let(:new_visible_assessment_section_properties) do
         create :assessment_section_properties,
@@ -208,11 +215,12 @@ describe Role do
       end
 
       context 'when getting a list of assignments with some nil is_hiddens' do
-        let(:new_user) { create :student, section_id: new_section.id }
+        let(:new_user) { create :student, section_id: new_section.id, course: course }
         let(:new_hidden_assignment) do
           create :assignment,
                  is_hidden: true,
-                 assignment_properties_attributes: { section_due_dates_type: true }
+                 assignment_properties_attributes: { section_due_dates_type: true },
+                 course: course
         end
         let(:new_visible_assessment_section_properties) do
           create :assessment_section_properties,
@@ -227,16 +235,18 @@ describe Role do
         end
       end
       context 'when there is a peer review assignment' do
-        let(:new_user) { create :student, section: new_section }
+        let(:new_user) { create :student, section: new_section, course: course }
         let(:peer_review) do
           create :assignment,
                  is_hidden: true,
                  parent_assignment: assignment_hidden,
                  assignment_properties_attributes: { section_due_dates_type: true,
-                                                     has_peer_review: true }
+                                                     has_peer_review: true },
+                 course: course
         end
         let(:peer_review_section) do
-          create :assessment_section_properties, section: new_section, assessment: peer_review, is_hidden: true
+          create :assessment_section_properties, section: new_section,
+                 assessment: peer_review, is_hidden: true
         end
         it 'does appear hidden' do
           assessment_section_properties_hidden
@@ -254,18 +264,18 @@ describe Role do
         end
       end
       context 'when getting multiple unhidden assignments' do
-        let(:new_user) { create :student, section_id: new_section.id }
+        let(:new_user) { create :student, section_id: new_section.id, course: course }
       end
     end
 
     context 'when using grade entry forms' do
-      let(:grade_entry_form_visible) { create :grade_entry_form }
+      let(:grade_entry_form_visible) { create :grade_entry_form, course: course }
       let(:grade_entry_section_visible) do
         create :assessment_section_properties, assessment: grade_entry_form_visible,
                                                section: new_section, is_hidden: false
       end
 
-      let(:grade_entry_form_hidden) { create :grade_entry_form }
+      let(:grade_entry_form_hidden) { create :grade_entry_form, course: course }
       let(:grade_entry_section_hidden) do
         create :assessment_section_properties, assessment: grade_entry_form_hidden,
                                                section: new_section, is_hidden: true
@@ -277,27 +287,27 @@ describe Role do
           grade_entry_section_hidden
         end
         context 'when section_due_date_type disabled' do
-          let(:new_user_2) { create :student }
+          let(:new_user_2) { create :student, course: course }
           it 'does return all unhiddden assignments' do
             expect(new_user_2.visible_assessments).to contain_exactly(grade_entry_form_visible, grade_entry_form_hidden)
           end
         end
         context 'when user has one visible assignment' do
-          let(:new_user) { create :student, section_id: new_section.id }
+          let(:new_user) { create :student, section_id: new_section.id, course: course }
 
           it 'does return a list containing that assignment' do
             expect(new_user.visible_assessments).to contain_exactly(grade_entry_form_visible)
           end
         end
         context 'when user has no section' do
-          let(:new_user_2) { create :student }
+          let(:new_user_2) { create :student, course: course }
           it 'does return all section-hidden assignments' do
             expect(new_user_2.visible_assessments).to contain_exactly(grade_entry_form_visible, grade_entry_form_hidden)
           end
         end
         context 'when a user is from a different section' do
-          let(:section2) { create :section }
-          let(:new_user_2) { create :student, section_id: section2 }
+          let(:section2) { create :section, course: course }
+          let(:new_user_2) { create :student, section_id: section2, course: course }
           it 'does return all visible assignments' do
             expect(new_user_2.visible_assessments).to contain_exactly(grade_entry_form_visible, grade_entry_form_hidden)
           end
@@ -306,22 +316,23 @@ describe Role do
           let(:hidden_grade_entry_form) do
             create :grade_entry_form,
                    due_date: 2.days.from_now,
-                   is_hidden: true
+                   is_hidden: true,
+                   course: course
           end
-          let(:new_user) { create :student }
+          let(:new_user) { create :student, course: course }
           it 'does not return the hidden assignment' do
             expect(new_user.visible_assessments).to contain_exactly(grade_entry_form_visible, grade_entry_form_hidden)
           end
         end
         context 'when a visible assignment is given' do
-          let(:new_user) { create :student, section_id: new_section.id }
+          let(:new_user) { create :student, section_id: new_section.id, course: course }
           it 'does return an array with the assignment' do
             expect(new_user.visible_assessments(assessment_id: grade_entry_form_visible.id))
               .to contain_exactly(grade_entry_form_visible)
           end
         end
         context 'when a hidden assignment is given' do
-          let(:new_user) { create :student, section_id: new_section.id }
+          let(:new_user) { create :student, section_id: new_section.id, course: course }
           it 'does return an empty array' do
             expect(new_user.visible_assessments(assessment_id: grade_entry_form_hidden.id)).to be_empty
           end
