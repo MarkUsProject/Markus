@@ -508,11 +508,11 @@ describe GroupsController do
         end.to change { ActionMailer::Base.deliveries.count }.by(2)
       end
       it 'should not send an email to every student invited to a grouping if some have emails disabled' do
-        @another_student = create(:student, human: create(:human,  user_name: 'c9test3'), receives_invite_emails: false)
+        @another_student = create(:student, human: create(:human, user_name: 'c9test3'), receives_invite_emails: false)
         expect do
           post_as @current_student, :invite_member,
-               params: { course_id: course.id, invite_member: "#{@student.user_name},#{@another_student.user_name}",
-                         assignment_id: @assignment.id }
+                  params: { course_id: course.id, invite_member: "#{@student.user_name},#{@another_student.user_name}",
+                            assignment_id: @assignment.id }
         end.to change { ActionMailer::Base.deliveries.count }.by(1)
       end
       it 'should not send an email to a single student if invited to a grouping and they have emails disabled' do
