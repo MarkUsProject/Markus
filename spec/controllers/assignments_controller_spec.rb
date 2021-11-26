@@ -1315,7 +1315,6 @@ describe AssignmentsController do
 
       # Check file content
       describe 'downloaded zip file' do
-
         before :each do
           subject
         end
@@ -1749,7 +1748,7 @@ describe AssignmentsController do
                                                       is_timed: false, is_scanned: false }
         expect(flash[:error]).to be_nil
       end
-      
+
       after :each do
         # Clear uploaded autotest files to prepare for next test
         FileUtils.rm_rf(assignment.autotest_files_dir)
