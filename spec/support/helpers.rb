@@ -91,8 +91,6 @@ module Helpers
                          true)
         when '.json'
           JSON.parse(file_content)
-        else
-          nil
         end
       end
     end
@@ -107,6 +105,7 @@ module Helpers
                "def initialize_tests()\n\treturn True")
     assignment.update!(enable_test: true,
                        enable_student_tests: true,
+                       token_start_date: Time.zone.parse('2022-02-10 15:30:45'),
                        tokens_per_period: 10,
                        token_period: 24,
                        non_regenerating_tokens: false,
@@ -116,14 +115,13 @@ module Helpers
     else
       test_group = assignment.test_groups.first
     end
-    criteria = assignment.criteria.empty? ? nil : assignment.criteria.first 
+    criteria_id = assignment.criteria.empty? ? nil : assignment.criteria.first.id
     File.write(assignment.autotest_settings_file,
-               create_sample_spec_file(test_group, criteria).to_json, 
+               create_sample_spec_file(test_group, criteria_id).to_json, 
                mode: 'wb')
   end
   
-  def create_sample_spec_file(test_group, criteria = nil)
-    assoc_criteria = criteria.nil? ? nil : criteria.id
+  def create_sample_spec_file(test_group, criteria_id = nil)
     {
       testers: [
         {
@@ -136,10 +134,10 @@ module Helpers
                 name: test_group.name,
                 display_output: test_group.display_output,
                 test_group_id: test_group.id,
-                criterion: assoc_criteria
+                criterion: criteria_id
               },
               script_files: [
-                'runner_helper.py'
+                'tests.py'
               ],
               timeout: 30,
               upload_feedback_file: false,

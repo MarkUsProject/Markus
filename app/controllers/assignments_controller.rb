@@ -3,6 +3,7 @@ class AssignmentsController < ApplicationController
   include RoutingHelper
   include CriteriaHelper
   include AnnotationCategoriesHelper
+  include AutomatedTestsHelper
   responders :flash
   before_action { authorize! }
 
@@ -677,9 +678,12 @@ class AssignmentsController < ApplicationController
       raise I18n.t('automated_tests.invalid_specs_file')
     else
       assignment.update!(test_settings['settings'].symbolize_keys)
-      assignment.update_test_spec_from_upload(test_settings['spec_data'])
-      @current_job = AutotestSpecsJob.perform_later(request.protocol + request.host_with_port, assignment)
-      session[:job_id] = @current_job.job_id
+      spec_data = test_settings['spec_data']
+      update_test_groups_from_specs(assignment, spec_data) unless spec_data.empty?
+      if assignment.enable_test
+        @current_job = AutotestSpecsJob.perform_later(request.protocol + request.host_with_port, assignment)
+        session[:job_id] = @current_job.job_id
+      end
       test_file_dir_path = File.join(CONFIG_FILES[:automated_tests_dir_entry], '')
       zip_file.each do |entry|
         if entry.name.match?(/^#{test_file_dir_path}/)

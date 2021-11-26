@@ -1282,7 +1282,19 @@ describe AssignmentsController do
 
   describe '#download_config_files' do
     let!(:assignment) { create :assignment_with_peer_review, due_date: Time.zone.parse('2042-02-10 15:30:45') }
+    let!(:criteria) { create :checkbox_criterion, assignment: assignment }
+    let!(:annotation) { create :annotation_category, assignment: assignment }
     subject { get_as user, :download_config_files, params: { id: assignment.id } }
+
+    before :each do
+      create_automated_test(assignment)
+    end
+
+    after :each do
+      # Clear uploaded autotest files to prepare for next test
+      FileUtils.rm_rf(assignment.autotest_files_dir)
+      FileUtils.rm_f(assignment.autotest_settings_file)
+    end
 
     shared_examples 'download sample config files' do
       it 'should have an ok status' do
@@ -1303,11 +1315,8 @@ describe AssignmentsController do
 
       # Check file content
       describe 'downloaded zip file' do
-        let!(:criteria) { create :checkbox_criterion, assignment: assignment }
-        let!(:annotation) { create :annotation_category, assignment: assignment }
 
         before :each do
-          create_automated_test(assignment)
           subject
         end
 
@@ -1339,12 +1348,13 @@ describe AssignmentsController do
         end
 
         it 'should have a valid automated test settings file' do
-          test_settings_download = read_file_from_zip(response.body, filename)
+          test_settings_download = read_file_from_zip(response.body,
+                                                      'automated-test-config-files/automated-test-settings.json')
           spec_data = test_settings_download['spec_data']
           received_settings = {
             is_a_hash: test_settings_download.is_a?(Hash),
             has_spec_data: !spec_data.nil?,
-            has_settings_data: !test_settings_download['settings'].nil?, 
+            has_settings_data: !test_settings_download['settings'].nil?,
             has_no_group_id: spec_data['testers'][0]['test_data'][0]['extra_info']['test_group_id'].nil?,
             criterion_name: spec_data['testers'][0]['test_data'][0]['extra_info']['criterion_name']
           }
@@ -1443,6 +1453,16 @@ describe AssignmentsController do
                                                     is_timed: true,
                                                     is_scanned: false }
     end
+
+    after :each do
+      uploaded_assignment = Assignment.find_by(short_identifier: 'mtt_ex_1')
+      # Clear uploaded autotest files to prepare for next test
+      unless uploaded_assignment.nil?
+        FileUtils.rm_rf(uploaded_assignment.autotest_files_dir)
+        FileUtils.rm_f(uploaded_assignment.autotest_settings_file)
+      end  
+    end
+
     before :each do
       # Build sample assignment zip file
       base_dir = File.join('assignments', 'sample-timed-assessment-good')
@@ -1658,8 +1678,10 @@ describe AssignmentsController do
       it 'copies over additional assignment properties' do
         uploaded_assignment = Assignment.find_by(short_identifier: assignment.short_identifier)
         uploaded_properties = uploaded_assignment.assignment_properties
-        received = uploaded_properties.attributes.except('created_at', 'updated_at', 'id', 'assessment_id')
-        expected = assignment_properties.attributes.except('created_at', 'updated_at', 'id', 'assessment_id')
+        received = uploaded_properties.attributes.except('created_at', 'updated_at', 'id',
+                                                         'assessment_id', 'autotest_settings_id')
+        expected = assignment_properties.attributes.except('created_at', 'updated_at', 'id',
+                                                           'assessment_id', 'autotest_settings_id')
         if uploaded_assignment.is_peer_review?
           # override default token settings from factory
           expect(expected['token_period']).to eq(1)
@@ -1713,7 +1735,6 @@ describe AssignmentsController do
       let!(:test_group) { create :test_group, assignment: assignment }
 
       before :each do
-        # Initialize Automated Tests
         create_automated_test(assignment)
         # Download and upload assignment
         get_as user, :download_config_files, params: { id: assignment.id }
@@ -1727,6 +1748,12 @@ describe AssignmentsController do
         post_as user, :upload_config_files, params: { upload_files_for_config: assignment_zip,
                                                       is_timed: false, is_scanned: false }
         expect(flash[:error]).to be_nil
+      end
+      
+      after :each do
+        # Clear uploaded autotest files to prepare for next test
+        FileUtils.rm_rf(assignment.autotest_files_dir)
+        FileUtils.rm_f(assignment.autotest_settings_file)
       end
 
       include_examples 'assignment content is copied over'
@@ -1756,12 +1783,17 @@ describe AssignmentsController do
 
       it 'copies over automated tests' do
         uploaded_assignment = Assignment.find_by(short_identifier: assignment.short_identifier)
+        uploaded_criteria = uploaded_assignment.criteria.find_by(name: criteria.name)
+        uploaded_test_group = uploaded_assignment.test_groups.find_by(name: test_group.name,
+                                                                      display_output: test_group.display_output)
         received_automated_test_data = {
+          uploaded_a_test_group: !uploaded_test_group.nil?,
           spec_file: JSON.parse(File.open(uploaded_assignment.autotest_settings_file, &:read)),
           autotest_files: uploaded_assignment.autotest_files
         }
         expected_automated_test_data = {
-          spec_file: create_sample_spec_file(test_group, criteria),
+          uploaded_a_test_group: true,
+          spec_file: create_sample_spec_file(uploaded_test_group, uploaded_criteria.id).deep_stringify_keys,
           autotest_files: assignment.autotest_files
         }
         expect(received_automated_test_data).to eq(expected_automated_test_data)
@@ -1791,6 +1823,14 @@ describe AssignmentsController do
         post_as user, :upload_config_files, params: { upload_files_for_config: assignment_zip,
                                                       is_timed: false, is_scanned: false }
         expect(flash[:error]).to be_nil
+      end
+
+      after :each do
+        # Clear uploaded autotest files to prepare for next test
+        FileUtils.rm_rf(parent_assignment.autotest_files_dir)
+        FileUtils.rm_f(parent_assignment.autotest_settings_file)
+        FileUtils.rm_rf(assignment.autotest_files_dir)
+        FileUtils.rm_f(assignment.autotest_settings_file)
       end
 
       it 'has a peer review assignment copied' do

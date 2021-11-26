@@ -48,15 +48,21 @@ module AutomatedTestsHelper
         display_output = extra_data_specs['display_output'] || TestGroup.display_outputs.keys.first
         test_group_name = extra_data_specs['name'] || TestGroup.model_name.human
         criterion_id = nil
-        unless extra_data_specs['criterion'].nil?
-          criterion_id = extra_data_specs['criterion']
+        unless extra_data_specs['criterion_name'].nil?
+          associated_criterion = assignment.criteria.find_by(name: extra_data_specs['criterion_name'])
+          unless associated_criterion.nil?
+            extra_data_specs['criterion'] = associated_criterion.id
+            test_group_specs['extra_info'] = test_group_specs['extra_info'].except('criterion_name')
+            test_group_specs['extra_info']['criterion'] = associated_criterion.id
+          end
         end
+        criterion_id = extra_data_specs['criterion'] unless extra_data_specs['criterion'].nil?
         fields = { assignment: assignment, name: test_group_name, display_output: display_output,
                    criterion_id: criterion_id }
         if test_group_id.nil?
           test_group = TestGroup.create!(fields)
           test_group_id = test_group.id
-          extra_data_specs['test_group_id'] = test_group_id # update specs to contain new id
+          test_group_specs['extra_info']['test_group_id'] = test_group_id # update specs to contain new id
         else
           test_group = TestGroup.find(test_group_id)
           test_group.update!(fields)

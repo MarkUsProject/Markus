@@ -1216,8 +1216,8 @@ class Assignment < Assessment
   def automated_test_config_to_zip(zip_file, zip_dir, settings_file_path)
     self.add_test_files_to_zip(zip_file, zip_dir)
     test_specs_path = self.autotest_settings_file
-    test_specs = File.exist?(test_specs_path) ? File.open(test_specs_path, &:read) : {}
-    test_spec_content = strip_ids_from_spec(JSON.parse(test_specs))
+    test_specs = File.exist?(test_specs_path) ? JSON.parse(File.open(test_specs_path, &:read)) : {}
+    test_spec_content = strip_ids_from_spec(test_specs)
     misc_settings = {}
     misc_settings_attr = [:enable_test, :enable_student_tests, :tokens_per_period, :unlimited_tokens,
                           :token_start_date, :token_period, :non_regenerating_tokens]
@@ -1227,35 +1227,20 @@ class Assignment < Assessment
     end
   end
 
-  def update_test_spec_from_upload(test_spec)
-    test_spec['testers'].each_with_index do |tester_specs, i|
-      next if tester_specs['test_data'].nil?
-      tester_specs['test_data'].each_with_index do |test_group_specs, j|
-        next if test_group_specs['extra_info'].nil?
-        extra_data_specs = test_group_specs['extra_info'].except('criterion_name')
-        unless test_group_specs['extra_info']['criterion_name'].nil?
-          assoc_criteria = self.criteria.find_by(name: test_group_specs['extra_info']['criterion_name'])
-          extra_data_specs['criterion'] = assoc_criteria.id unless assoc_criteria.nil?
-        end
-        test_spec['testers'][i]['test_data'][j]['extra_info'] = extra_data_specs
-      end
-    end
-    File.write(self.autotest_settings_file, test_spec.to_json, mode: 'wb')
-  end
-
   private
 
   def strip_ids_from_spec(test_specs)
-    test_specs['testers'].each_with_index do |tester_specs, i|
+    return test_specs if test_specs['testers'].nil?
+    test_specs['testers'].each do |tester_specs|
       next if tester_specs['test_data'].nil?
-      tester_specs['test_data'].each_with_index do |test_group_specs, j|
+      tester_specs['test_data'].each do |test_group_specs|
         next if test_group_specs['extra_info'].nil?
         extra_data_specs = test_group_specs['extra_info'].except('test_group_id', 'criterion')
         unless test_group_specs['extra_info']['criterion'].nil?
           assoc_criteria = self.criteria.find(test_group_specs['extra_info']['criterion'])
-          extra_data_specs['criterion_name'] = assoc_criteria.name unless assoc_criteria.nil?
+          extra_data_specs['criterion_name'] = assoc_criteria.name
         end
-        test_specs['testers'][i]['test_data'][j]['extra_info'] = extra_data_specs
+        test_group_specs['extra_info'] = extra_data_specs
       end
     end
     test_specs
