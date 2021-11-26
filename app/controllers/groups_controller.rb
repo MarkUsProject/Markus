@@ -53,13 +53,12 @@ class GroupsController < ApplicationController
   end
 
   def rename_group
-    @assignment = Assignment.find(params[:assignment_id])
-    # group_id is really the grouping_id, this is due to rails routing
-    @grouping = Grouping.find(params[:id])
+    @grouping = record
+    @assignment = record.assignment
     @group = @grouping.group
 
     # Checking if a group with this name already exists
-    if (@groups = Group.where(group_name: params[:new_groupname]).first)
+    if (@groups = current_course.groups.where(group_name: params[:new_groupname]).first)
        existing = true
        groupexist_id = @groups.id
     end
@@ -90,25 +89,27 @@ class GroupsController < ApplicationController
   end
 
   def valid_grouping
+    # TODO: make this a member route in a new GroupingsController
     assignment = Assignment.find(params[:assignment_id])
-    grouping = Grouping.find(params[:grouping_id])
+    grouping = assignment.groupings.find(params[:grouping_id])
     grouping.validate_grouping
     head :ok
   end
 
   def invalid_grouping
+    # TODO: make this a member route in a new GroupingsController
     assignment = Assignment.find(params[:assignment_id])
-    grouping = Grouping.find(params[:grouping_id])
+    grouping = assignment.groupings.find(params[:grouping_id])
     grouping.invalidate_grouping
     head :ok
   end
 
   def index
     @assignment = Assignment.find(params[:assignment_id])
-    @clone_assignments = Assignment.joins(:assignment_properties)
-                                   .where(assignment_properties: { vcs_submit: true })
-                                   .where.not(id: @assignment.id)
-                                   .order(:id)
+    @clone_assignments = current_course.assignments.joins(:assignment_properties)
+                                                   .where(assignment_properties: { vcs_submit: true })
+                                                   .where.not(id: @assignment.id)
+                                                   .order(:id)
 
     respond_to do |format|
       format.html
@@ -119,9 +120,10 @@ class GroupsController < ApplicationController
   end
 
   def assign_scans
+    # TODO: make this a member route in a new GroupingsController
     @assignment = Assignment.find(params[:assignment_id])
     if params.key?(:grouping_id)
-      next_grouping = Grouping.find(params[:grouping_id])
+      next_grouping = @assignment.groupings.find(params[:grouping_id])
     else
       next_grouping = Grouping.get_assign_scans_grouping(@assignment)
     end
@@ -129,7 +131,7 @@ class GroupsController < ApplicationController
       if @assignment.groupings.left_outer_joins(:current_submission_used).where('submissions.id': nil).any?
         flash_message(:warning, I18n.t('exam_templates.assign_scans.not_all_submissions_collected'))
       end
-      redirect_back(fallback_location: assignment_groups_path(@assignment.id))
+      redirect_back(fallback_location: course_assignment_groups_path(current_course, @assignment))
       return
     end
     names = next_grouping.non_rejected_student_memberships.map do |u|
@@ -151,7 +153,7 @@ class GroupsController < ApplicationController
     if next_file.nil?
       flash_message(:warning, I18n.t('exam_templates.assign_scans.no_cover_page'))
     else
-      @data[:filelink] = download_assignment_groups_path(
+      @data[:filelink] = download_course_assignment_groups_path(current_course, @assignment,
         select_file_id: next_grouping.current_submission_used.submission_files.find_by(filename: 'COVER.pdf').id,
         show_in_browser: true
       )
@@ -159,29 +161,36 @@ class GroupsController < ApplicationController
   end
 
   def get_names
-    names = Student
+    names = current_course.students
+            .joins(:human)
             .where('(lower(first_name) like ? OR lower(last_name) like ? OR lower(user_name) like ? OR id_number like ?) AND users.id NOT IN (?)',
                    "#{params[:term].downcase}%", "#{params[:term].downcase}%", "#{params[:term].downcase}%", "#{params[:term]}%",
-                   Membership.select(:user_id).joins(:grouping).where('groupings.assessment_id = ?', params[:assignment]))
-            .pluck_to_hash(:id, :id_number, :user_name, :first_name, :last_name)
+                   Membership.select(:user_id).joins(:grouping).where('groupings.assessment_id = ?', params[:assignment_id]))
+            .pluck_to_hash(:id, 'users.id_number', 'users.user_name', 'users.first_name', 'users.last_name')
     names = names.map do |h|
-      { id: h[:id], id_number: h[:id_number], user_name: h[:user_name], value: "#{h[:first_name]} #{h[:last_name]}" }
+      { id: h[:id],
+        id_number: h['users.id_number'],
+        user_name: h['users.user_name'],
+        value: "#{h['users.first_name']} #{h['users.last_name']}" }
     end
     render json: names
   end
 
   def assign_student_and_next
-    @grouping = Grouping.find(params[:g_id])
+    # TODO: make this a member route in a new GroupingsController
+    @grouping = Grouping.joins(:assignment).where('assessments.course_id': current_course.id).find(params[:g_id])
     @assignment = @grouping.assignment
     unless params[:skip]
       # if the user has selected a name from the dropdown, s_id is set
       if params[:s_id].present?
-        student = Student.find(params[:s_id])
+        student = current_course.students.find(params[:s_id])
       end
       # if the user has typed in the whole name without select, or if they typed a name different from the select s_id
       if student.nil? || (student.first_name + ' ' + student.last_name) != params[:names]
-        student = Student.where('lower(CONCAT(first_name, \' \', last_name)) like ? OR lower(CONCAT(last_name, \' \', first_name)) like ?',
-                                 params[:names].downcase, params[:names].downcase).first
+        student = current_course.students.where(
+            'lower(CONCAT(first_name, \' \', last_name)) like ? OR lower(CONCAT(last_name, \' \', first_name)) like ?',
+            params[:names].downcase, params[:names].downcase
+        ).first
       end
       StudentMembership
         .find_or_create_by(user: student, grouping: @grouping, membership_status: StudentMembership::STATUSES[:inviter])
@@ -190,6 +199,7 @@ class GroupsController < ApplicationController
   end
 
   def next_grouping
+    # TODO: is this actually a route that is called from anywhere or just a helper method?
     if params[:a_id].present?
       @assignment = Assignment.find(params[:a_id])
     end
@@ -219,7 +229,7 @@ class GroupsController < ApplicationController
       }
       next_file = next_grouping.current_submission_used.submission_files.find_by(filename: 'COVER.pdf')
       unless next_file.nil?
-          data[:filelink] = download_assignment_groups_path(
+          data[:filelink] = download_course_assignment_groups_path(current_course, @assignment,
           select_file_id: next_grouping.current_submission_used.submission_files.find_by(filename: 'COVER.pdf').id,
           show_in_browser: true )
       end
@@ -233,6 +243,7 @@ class GroupsController < ApplicationController
   # repository name. If MarkUs is not repository admin, the repository name as
   # specified by the second field will be used instead.
   def upload
+    assignment = Assignment.find(params[:assignment_id])
     begin
       data = process_file_upload
     rescue Psych::SyntaxError => e
@@ -240,7 +251,6 @@ class GroupsController < ApplicationController
     rescue StandardError => e
       flash_message(:error, e.message)
     else
-      assignment = Assignment.find(params[:assignment_id])
       group_rows = []
       result = MarkusCsv.parse(data[:file].read, encoding: params[:encoding]) do |row|
         next if row.blank?
@@ -255,14 +265,18 @@ class GroupsController < ApplicationController
         flash_message(:error, result[:invalid_lines])
       end
     end
-    redirect_to action: 'index'
+    redirect_to course_assignment_groups_path(current_course, assignment)
   end
 
   def create_groups_when_students_work_alone
     @assignment = Assignment.find(params[:assignment_id])
     if @assignment.group_max == 1
       # data is a list of lists containing: [[group_name, group_member], ...]
-      data = Student.where(hidden: false).pluck(:user_name).map { |user_name| [user_name, user_name] }
+      data = current_course.students
+                           .joins(:human)
+                           .where(hidden: false)
+                           .pluck('users.user_name')
+                           .map { |user_name| [user_name, user_name] }
       @current_job = CreateGroupsJob.perform_later @assignment, data
       session[:job_id] = @current_job.job_id
     end
@@ -273,7 +287,11 @@ class GroupsController < ApplicationController
   end
 
   def download
+    # TODO: make this a member route in a new SubmissionFileController
     file = SubmissionFile.find(params[:select_file_id])
+    # TODO: remove this check once this is moved to a new SubmissionFileController
+    return page_not_found unless file.course == current_course
+
     file_contents = file.retrieve_file
 
     filename = file.filename
@@ -282,14 +300,13 @@ class GroupsController < ApplicationController
 
   def download_grouplist
     assignment = Assignment.find(params[:assignment_id])
-    groupings = assignment.groupings.includes(:group,
-                                              student_memberships: [:user])
+    groupings = assignment.groupings.includes(:group, student_memberships: :role)
 
     file_out = MarkusCsv.generate(groupings) do |grouping|
       # csv format is group_name, repo_name, user1_name, user2_name, ... etc
       [grouping.group.group_name].concat(
         grouping.student_memberships.map do |member|
-          member.user.user_name
+          member.role.user_name
         end
       )
     end
@@ -303,6 +320,8 @@ class GroupsController < ApplicationController
   def use_another_assignment_groups
     target_assignment = Assignment.find(params[:assignment_id])
     source_assignment = Assignment.find(params[:clone_assignment_id])
+
+    return head :unprocessable_entity if target_assignment.course != source_assignment.course
 
     if source_assignment.nil?
       flash_message(:warning, t('groups.clone_warning.could_not_find_source'))
@@ -320,6 +339,7 @@ class GroupsController < ApplicationController
   end
 
   def accept_invitation
+    # TODO: make this a member route in a new GroupingsController
     @assignment = Assignment.find(params[:assignment_id])
     @grouping = @assignment.groupings.find(params[:grouping_id])
     begin
@@ -336,10 +356,11 @@ class GroupsController < ApplicationController
                    "'#{@grouping.group.group_name}'(accepted invitation).")
       status = :found
     end
-    redirect_to assignment_path(params[:assignment_id]), status: status
+    redirect_to course_assignment_path(current_course, @assignment), status: status
   end
 
   def decline_invitation
+    # TODO: make this a member route in a new GroupingsController
     @assignment = Assignment.find(params[:assignment_id])
     @grouping = @assignment.groupings.find(params[:grouping_id])
     begin
@@ -352,7 +373,7 @@ class GroupsController < ApplicationController
       m_logger.log("Student '#{current_role.user_name}' declined invitation for group '#{@grouping.group.group_name}'.")
       status = :found
     end
-    redirect_to assignment_path(params[:assignment_id]), status: status
+    redirect_to course_assignment_path(current_course, @assignment), status: status
   end
 
   def create
@@ -374,7 +395,7 @@ class GroupsController < ApplicationController
       m_logger.log("Failed to create group. User: '#{@student.user_name}', Error: '#{e.message}'.", MarkusLogger::ERROR)
     end
   ensure
-    redirect_to assignment_path(@assignment.id)
+    redirect_to course_assignment_path(current_course, @assignment)
   end
 
   def destroy
@@ -385,7 +406,7 @@ class GroupsController < ApplicationController
       m_logger.log('Failed to delete group, since no accepted group for this user existed.'\
             "User: '#{current_role.user_name}'.", MarkusLogger::ERROR)
       flash_message(:error, I18n.t('groups.destroy.errors.do_not_have_a_group'))
-      redirect_to assignment_path(params[:assignment_id])
+      redirect_to course_assignment_path(current_course, @assignment)
       return
     end
     if flash_allowance(:error, allowance_to(:destroy?, @grouping)).value
@@ -404,7 +425,7 @@ class GroupsController < ApplicationController
                        "#{current_role.user_name}', Error: '#{e.message}'.", MarkusLogger::ERROR)
       end
     end
-    redirect_to assignment_path(params[:assignment_id])
+    redirect_to course_assignment_path(current_course, @assignment)
   end
 
   def invite_member
@@ -414,7 +435,7 @@ class GroupsController < ApplicationController
     if @grouping.nil?
       flash_message(:error,
                     I18n.t('groups.invite_member.errors.need_to_create_group'))
-      redirect_to assignment_path(@assignment.id)
+      redirect_to course_assignment_path(@course, @assignment)
       return
     end
     if flash_allowance(:error, allowance_to(:invite_member?, @grouping)).value
@@ -423,7 +444,7 @@ class GroupsController < ApplicationController
       if errors.blank?
         to_invite.each do |i|
           i = i.strip
-          invited_user = Student.where(hidden: false).find_by(user_name: i)
+          invited_user = current_course.students.joins(:human).where(hidden: false).find_by('users.user_name': i)
           if invited_user.receives_invite_emails?
             NotificationMailer.with(inviter: current_role,
                                     invited: invited_user,
@@ -435,7 +456,7 @@ class GroupsController < ApplicationController
         flash_message(:error, errors.join(' '))
       end
     end
-    redirect_to assignment_path(@assignment.id)
+    redirect_to course_assignment_path(current_course, @assignment.id)
   end
 
   # Deletes pending invitations
@@ -446,14 +467,14 @@ class GroupsController < ApplicationController
                                                       membership.grouping,
                                                       context: { membership: membership })).value
     if authorized
-      disinvited_student = membership.user
+      disinvited_student = membership.role
       membership.destroy
       m_logger = MarkusLogger.instance
       m_logger.log("Student '#{current_role.user_name}' cancelled invitation for '#{disinvited_student.user_name}'.")
       flash_message(:success, I18n.t('groups.members.member_disinvited'))
     end
     status = authorized ? :found : :forbidden
-    redirect_to assignment_path(assignment.id), status: status
+    redirect_to course_assignment_path(current_course, assignment.id), status: status
   end
 
   # Deletes memberships which have been declined by students
@@ -465,15 +486,15 @@ class GroupsController < ApplicationController
                                  allowance_to(:delete_rejected?, grouping, context: { membership: membership })).value
     membership.destroy if authorized
     status = authorized ? :found : :forbidden
-    redirect_to assignment_path(params[:assignment_id]), status: status
+    redirect_to course_assignment_path(current_course, @assignment), status: status
   end
 
   # These actions act on all currently selected students & groups
   def global_actions
     assignment = Assignment.includes([{
                                       groupings: [{
-                                          student_memberships: :user,
-                                          ta_memberships: :user},
+                                          student_memberships: :role,
+                                          ta_memberships: :role},
                                         :group]}])
                             .find(params[:assignment_id])
     grouping_ids = params[:groupings]
@@ -637,11 +658,11 @@ class GroupsController < ApplicationController
   #
   # This is meant to be called with the params from global_actions
   def remove_members(member_names, groupings, assignment)
-    members_to_remove = Student.where(user_name: member_names)
+    members_to_remove = current_course.students.joins(:human).where('users.user_name': member_names)
     Repository.get_class.update_permissions_after(only_on_request: true) do
       members_to_remove.each do |member|
         groupings.each do |grouping|
-          membership = grouping.student_memberships.find_by_user_id(member.id)
+          membership = grouping.student_memberships.find_by_role_id(member.id)
           remove_member(membership, grouping, assignment)
         end
       end
@@ -652,5 +673,13 @@ class GroupsController < ApplicationController
   def remove_member(membership, grouping, assignment)
     grouping.remove_member(membership.id)
     grouping.reload
+  end
+
+  # This override is necessary because this controller is acting as a controller
+  # for both groups and groupings.
+  #
+  # TODO: move all grouping methods into their own controller and remove this
+  def record
+    @record ||= Grouping.find_by(id: request.path_parameters[:id]) if request.path_parameters[:id]
   end
 end
