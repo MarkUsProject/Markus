@@ -4,6 +4,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torchvision import datasets, transforms
 import os
+import os.path
 
 
 TRANSFORM = transforms.Compose([
@@ -37,13 +38,13 @@ class Net(nn.Module):
 
 def numeric_model():
     model = Net(10)
-    model.load_state_dict(torch.load('/home/vagrant/Markus/lib/scanner/mnist_cnn.pt'))
+    model.load_state_dict(torch.load(os.path.join(os.path.dirname(__file__), 'mnist_cnn.pt')))
     return model
 
 
 def char_model():
     model = Net(26)
-    model.load_state_dict(torch.load('/home/vagrant/Markus/lib/scanner/emnist_cnn.pt'))
+    model.load_state_dict(torch.load(os.path.join(os.path.dirname(__file__), 'emnist_cnn.pt')))
     return model
 
 

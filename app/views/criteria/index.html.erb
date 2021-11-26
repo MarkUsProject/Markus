@@ -2,21 +2,6 @@
   <%= render partial: 'boot',
              formats: [:js],
              handlers: [:erb] %>
-  <%= javascript_tag nonce: true do %>
-    $(function() {
-      $('#add-new-criterion').click(function (e) {
-        if(document.getElementById('new_criterion') != null) {
-          document.getElementById('new_criterion_prompt').focus();
-        } else {
-          $.ajax({
-            url: '<%= new_assignment_criterion_path(@assignment) %>',
-            type: 'GET'
-          });
-        }
-        e.preventDefault();
-      })
-    })
-  <% end %>
 <% end %>
 
 <% content_for :title,
@@ -26,8 +11,8 @@
 
 <% @heading_buttons = [
   { link_text: t('criteria.new.button'),
-    link_path: '#',
-    html_options: { id: 'add-new-criterion'} },
+    link_path: new_assignment_criterion_path(@assignment),
+    html_options: { id: 'add-new-criterion', 'data-remote': 'true' } },
   { link_text: t('download'),
     link_path: '#',
     html_options: { id: 'downloadModal' } },

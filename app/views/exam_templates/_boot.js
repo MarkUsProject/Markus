@@ -35,35 +35,42 @@ function add_template_division(target) {
   });
 }
 
-function toggle_cover_page(id, fields) {
-  if ($("#automatic_parsing").is(":checked")) {
+function toggle_cover_page(id) {
+  const form = document.getElementById(`add_fields_exam_template_form_${id}`);
+  const parsing_input = form && form.elements[`${id}_exam_template_automatic_parsing`];
+  if (parsing_input === null || parsing_input === undefined) {
+    return;
+  }
+
+  if (parsing_input.checked) {
     $("#exam-cover-display-" + id).css("display", "flex");
-    var i;
-    for (i = 0; i < fields.length; i++) {
-      $(".field" + (i + 1)).val(fields[i]);
-    }
-    attach_crop_box();
+    attach_crop_box(id);
   } else {
     $("#exam-cover-display-" + id).css("display", "none");
   }
 }
 
-function attach_crop_box() {
+function attach_crop_box(id) {
   var jcrop_api;
 
-  $("#crop-target").Jcrop(
+  const form = document.getElementById(`add_fields_exam_template_form_${id}`);
+  const crop_target = form.getElementsByClassName("crop-target")[0];
+
+  $(crop_target).Jcrop(
     {
       onChange: pos => {
-        const stageHeight = $("#crop-target").height();
-        const stageWidth = $("#crop-target").width();
+        const stageHeight = parseFloat(
+          getComputedStyle(crop_target, null).height.replace("px", "")
+        );
+        const stageWidth = parseFloat(getComputedStyle(crop_target, null).width.replace("px", ""));
         const {x, y, w, h} = pos;
-        // find the input element for width
-        // set the width value for that form element
-        $("#x").val(x / stageWidth);
-        $("#y").val(y / stageHeight);
-        $("#width").val(w / stageWidth);
-        $("#height").val(h / stageHeight);
+
+        form.elements[`${id}_exam_template_crop_x`].value = x / stageWidth;
+        form.elements[`${id}_exam_template_crop_y`].value = y / stageHeight;
+        form.elements[`${id}_exam_template_crop_width`].value = w / stageWidth;
+        form.elements[`${id}_exam_template_crop_height`].value = h / stageHeight;
       },
+      keySupport: false,
     },
     function () {
       jcrop_api = this;
@@ -71,13 +78,19 @@ function attach_crop_box() {
   );
 
   // Set crop selection if values exist.
-  if ($("#x").val() && $("#y").val() && $("#width").val() && $("#height").val()) {
-    const stageHeight = $("#crop-target").height();
-    const stageWidth = $("#crop-target").width();
-    const x = parseFloat($("#x").val()) * stageWidth;
-    const y = parseFloat($("#y").val()) * stageHeight;
-    const width = parseFloat($("#width").val()) * stageWidth;
-    const height = parseFloat($("#height").val()) * stageHeight;
+  if (
+    form.elements[`${id}_exam_template_crop_x`].value &&
+    form.elements[`${id}_exam_template_crop_y`].value &&
+    form.elements[`${id}_exam_template_crop_width`].value &&
+    form.elements[`${id}_exam_template_crop_height`].value
+  ) {
+    const stageHeight = parseFloat(getComputedStyle(crop_target, null).height.replace("px", ""));
+    const stageWidth = parseFloat(getComputedStyle(crop_target, null).width.replace("px", ""));
+    const x = parseFloat(form.elements[`${id}_exam_template_crop_x`].value) * stageWidth;
+    const y = parseFloat(form.elements[`${id}_exam_template_crop_y`].value) * stageHeight;
+    const width = parseFloat(form.elements[`${id}_exam_template_crop_width`].value) * stageWidth;
+    const height = parseFloat(form.elements[`${id}_exam_template_crop_height`].value) * stageHeight;
+
     jcrop_api.setSelect([x, y, x + width, y + height]);
   }
 }

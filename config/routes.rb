@@ -90,6 +90,7 @@ Rails.application.routes.draw do
       get 'starter_file'
       put 'update_starter_file'
       get 'grade_distribution'
+      get 'download_test_results'
     end
 
     resources :starter_file_groups do

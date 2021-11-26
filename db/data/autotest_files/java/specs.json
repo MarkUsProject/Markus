@@ -6,12 +6,20 @@
         {
           "script_files": ["Test1.java"],
           "category": ["admin"],
-          "timeout": 30
+          "timeout": 30,
+          "extra_info": {
+            "criterion": "FlexibleCriterion:criterion",
+            "name": "Java Test Group 1"
+          }
         },
         {
           "script_files": ["Test2.java"],
           "category": ["admin"],
-          "timeout": 30
+          "timeout": 30,
+          "extra_info": {
+            "criterion": "FlexibleCriterion:criterion",
+            "name": "Java Test Group 2"
+          }
         }
       ]
     }

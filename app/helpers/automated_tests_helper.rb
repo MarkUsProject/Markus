@@ -1,7 +1,7 @@
 module AutomatedTestsHelper
   def extra_test_group_schema(assignment)
-    criterion_names, criterion_ids = assignment.ta_criteria.map do |c|
-      [c.name, c.id]
+    criterion_names, criterion_identifiers = assignment.ta_criteria.map do |c|
+      [c.name, "#{c.type}:#{c.name}"]
     end.transpose
     { type: :object,
       properties: {
@@ -19,7 +19,7 @@ module AutomatedTestsHelper
         },
         criterion: {
           type: :string,
-          enum: criterion_ids || [],
+          enum: criterion_identifiers || [],
           enumNames: criterion_names || [],
           title: Criterion.model_name.human
         }
@@ -38,44 +38,45 @@ module AutomatedTestsHelper
     test_specs_path = assignment.autotest_settings_file
     # create/modify test groups based on the autotest specs
     test_group_ids = []
-    test_specs['testers'].each do |tester_specs|
-      next if tester_specs['test_data'].nil?
-
-      tester_specs['test_data'].each do |test_group_specs|
-        test_group_specs['extra_info'] ||= {}
-        extra_data_specs = test_group_specs['extra_info']
-        test_group_id = extra_data_specs['test_group_id']
-        display_output = extra_data_specs['display_output'] || TestGroup.display_outputs.keys.first
-        test_group_name = extra_data_specs['name'] || TestGroup.model_name.human
-        criterion_id = nil
-        unless extra_data_specs['criterion_name'].nil?
-          associated_criterion = assignment.criteria.find_by(name: extra_data_specs['criterion_name'])
-          unless associated_criterion.nil?
-            extra_data_specs['criterion'] = associated_criterion.id
-            test_group_specs['extra_info'] = test_group_specs['extra_info'].except('criterion_name')
-            test_group_specs['extra_info']['criterion'] = associated_criterion.id
+    criteria_map = assignment.ta_criteria.pluck(:type, :name, :id).map do |type, name, id_|
+      ["#{type}:#{name}", id_]
+    end.to_h
+    ApplicationRecord.transaction do
+      test_specs['testers']&.each do |tester_specs|
+        tester_specs['test_data']&.each do |test_group_specs|
+          test_group_specs['extra_info'] ||= {}
+          extra_data_specs = test_group_specs['extra_info']
+          test_group_id = extra_data_specs['test_group_id']
+          display_output = extra_data_specs['display_output'] || TestGroup.display_outputs.keys.first
+          test_group_name = extra_data_specs['name'] || TestGroup.model_name.human
+          criterion_id = nil
+          unless extra_data_specs['criterion'].nil?
+            criterion_id = criteria_map[extra_data_specs['criterion']]
+            if criterion_id.nil?
+              type, name = extra_data_specs['criterion'].split(':')
+              flash_message(:warning, I18n.t('automated_tests.no_criteria', type: type, name: name))
+            end
           end
+          fields = { assignment: assignment, name: test_group_name, display_output: display_output,
+                     criterion_id: criterion_id }
+          if test_group_id.nil?
+            test_group = TestGroup.create!(fields)
+            test_group_id = test_group.id
+            extra_data_specs['test_group_id'] = test_group_id # update specs to contain new id
+          else
+            test_group = TestGroup.find(test_group_id)
+            test_group.update!(fields)
+          end
+          test_group_ids << test_group_id
         end
-        criterion_id = extra_data_specs['criterion'] unless extra_data_specs['criterion'].nil?
-        fields = { assignment: assignment, name: test_group_name, display_output: display_output,
-                   criterion_id: criterion_id }
-        if test_group_id.nil?
-          test_group = TestGroup.create!(fields)
-          test_group_id = test_group.id
-          test_group_specs['extra_info']['test_group_id'] = test_group_id # update specs to contain new id
-        else
-          test_group = TestGroup.find(test_group_id)
-          test_group.update!(fields)
-        end
-        test_group_ids << test_group_id
       end
+      # delete test groups that are not in the autotest specs
+      deleted_test_groups = TestGroup.where(assignment: assignment)
+      unless test_group_ids.empty?
+        deleted_test_groups = deleted_test_groups.where.not(id: test_group_ids)
+      end
+      deleted_test_groups.delete_all
     end
-    # delete test groups that are not in the autotest specs
-    deleted_test_groups = TestGroup.where(assignment: assignment)
-    unless test_group_ids.empty?
-      deleted_test_groups = deleted_test_groups.where.not(id: test_group_ids)
-    end
-    deleted_test_groups.delete_all
   ensure
     # save modified specs
     File.open(test_specs_path, 'w') { |f| f.write test_specs.to_json }

@@ -7,6 +7,5 @@ es:
       create: Crear %{model}
       delete: Eliminar este %{model}
       update: Edit %{model}
-  optional: Opcional
   required_fields: Campos requeridos
   uncommitted_changes_warning: Sus cambios no han sido guardados todavía, ¿Está seguro/a de querer salir de esta página?

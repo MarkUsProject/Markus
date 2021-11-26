@@ -29,8 +29,8 @@
 <li class='section'><%= Assignment.model_name.human.pluralize %></li>
 
 <% if @current_user.student? %>
-  <% assignments = Assignment.where(is_hidden: false) %>
-  <% grade_entry_forms = GradeEntryForm.where(is_hidden: false) %>
+  <% assignments = @current_user.visible_assessments(assessment_type: 'Assignment') %>
+  <% grade_entry_forms = @current_user.visible_assessments(assessment_type: 'GradeEntryForm') %>
 <% else %>
   <% assignments = Assignment.all %>
   <% grade_entry_forms = GradeEntryForm.all %>

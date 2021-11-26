@@ -5,7 +5,7 @@ pt:
     answer_yes: Sim
   criteria:
     checkbox: Caixa de seleção
-    description_hint: Você pode usar tags simples de HTML no campo. Salve as alterações para vizualizar.
+    description_hint: Você pode usar Markdown no campo. Salve as alterações para vizualizar.
     editing_criteria: Editando critério
     errors:
       invalid_format: 'Os seguintes critérios deveriam formato inválido:'

@@ -167,6 +167,143 @@ describe AssignmentsController do
     end
   end
 
+  context 'download the most recent test results as JSON' do
+    let(:user) { create(:admin) }
+    let(:assignment) { create(:assignment_with_criteria_and_test_results) }
+
+    it 'responds with the appropriate status' do
+      get_as user, :download_test_results, params: { id: assignment.id }, format: 'json'
+      expect(response).to have_http_status :success
+    end
+
+    it 'responds with the appropriate header' do
+      get_as user, :download_test_results, params: { id: assignment.id }, format: 'json'
+      expect(response.header['Content-Type']).to eq('application/json')
+    end
+
+    it 'sets disposition as attachment' do
+      get_as user, :download_test_results, params: { id: assignment.id }, format: 'json'
+      d = response.header['Content-Disposition'].split.first
+      expect(d).to eq 'attachment;'
+    end
+
+    it 'responds with the appropriate filename' do
+      get_as user, :download_test_results, params: { id: assignment.id }, format: 'json'
+      filename = response.header['Content-Disposition'].split[1].split('"').second
+      expect(filename).to eq("#{assignment.short_identifier}_test_results.json")
+    end
+
+    it 'returns application/json type' do
+      get_as user, :download_test_results, params: { id: assignment.id }, format: 'json'
+      expect(response.media_type).to eq 'application/json'
+    end
+
+    it 'returns the most recent test results' do
+      get_as user, :download_test_results, params: { id: assignment.id }, format: 'json'
+      body = response.parsed_body
+
+      # We want to ensure that the test result's group name, test name and status exists
+      body.map do |group_name, group|
+        group.map do |test_group_name, test_group|
+          test_group.each do |test_result|
+            expect(test_result.fetch('name')).to eq test_group_name
+            expect(test_result.fetch('group_name')).to eq group_name
+            expect(test_result.key?('status')).to eq true
+          end
+        end
+      end
+    end
+  end
+
+  context 'download the most recent test results as CSV' do
+    let(:user) { create(:admin) }
+    let(:assignment) { create(:assignment_with_criteria_and_test_results) }
+
+    it 'responds with the appropriate status' do
+      get_as user, :download_test_results, params: { id: assignment.id }, format: 'csv'
+      expect(response).to have_http_status :success
+    end
+
+    it 'sets disposition as attachment' do
+      get_as user, :download_test_results, params: { id: assignment.id }, format: 'csv'
+      d = response.header['Content-Disposition'].split.first
+      expect(d).to eq 'attachment;'
+    end
+
+    it 'responds with the appropriate filename' do
+      get_as user, :download_test_results, params: { id: assignment.id }, format: 'csv'
+      filename = response.header['Content-Disposition'].split[1].split('"').second
+      expect(filename).to eq("#{assignment.short_identifier}_test_results.csv")
+    end
+
+    it 'returns text/csv type' do
+      get_as user, :download_test_results, params: { id: assignment.id }, format: 'csv'
+      expect(response.media_type).to eq 'text/csv'
+    end
+
+    it 'returns the most recent test results of the correct size' do
+      get_as user, :download_test_results, params: { id: assignment.id }, format: 'csv'
+
+      test_results = CSV.parse(response.body, headers: true)
+
+      expect(test_results.to_a.size).to eq 4
+      expect(test_results.headers.length).to eq 10
+    end
+
+    it 'returns the correct csv headers' do
+      get_as user, :download_test_results, params: { id: assignment.id }, format: 'csv'
+      test_results = CSV.parse(response.body, headers: true)
+
+      assignment_results = assignment.summary_test_results
+
+      headers = SortedSet.new(test_results.headers)
+      assignment_results.each do |result|
+        expect(headers.include?("#{result['name']}:#{result['test_result_name']}")).to eq true
+      end
+    end
+
+    it 'returns the correct csv headers in the correct order' do
+      get_as user, :download_test_results, params: { id: assignment.id }, format: 'csv'
+      test_results = CSV.parse(response.body, headers: true)
+
+      headers = test_results.headers.drop(1)
+      sorted_headers = SortedSet.new(headers)
+      sorted_headers.each_with_index do |header, i|
+        expect(header).to eq headers[i]
+      end
+    end
+
+    it 'returns the correct amount of passed tests per group' do
+      get_as user, :download_test_results, params: { id: assignment.id }, format: 'csv'
+      test_results = CSV.parse(response.body, headers: true).to_a.drop(1)
+      test_results.to_a.each do |row|
+        count = 0
+        row.each do |cell|
+          if cell == 'pass'
+            count += 1
+          end
+        end
+        expect(count).to eq 3
+      end
+    end
+
+    context 'most recent test results with static names' do
+      let(:assignment) { create(:static_assignment_with_criteria_and_test_results) }
+
+      it 'returns the correct tests passed per group' do
+        get_as user, :download_test_results, params: { id: assignment.id }, format: 'csv'
+
+        test_results = CSV.parse(response.body, headers: true)
+        test_results_fixture = fixture_file_upload('assignments/most_recent_test_results.csv', 'text/csv')
+        test_results_static = CSV.parse(test_results_fixture, headers: true)
+
+        test_results.each_with_index do |line, i|
+          expect(line).to eq test_results_static[i]
+        end
+      end
+    end
+  end
+
   context 'CSV_Downloads' do
     before :each do
       # Authenticate user is not timed out, and has administrator rights.
