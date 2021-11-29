@@ -22,6 +22,10 @@
     max-width: 100%;
     min-width: 300px;
   }
+
+  &:hover {
+    cursor: pointer;
+  }
 }
 
 .course-info {
@@ -34,7 +38,6 @@
   &:hover {
     background: $primary-one;
     color: $active-menu-item;
-    cursor: pointer;
   }
 }
 
@@ -56,6 +59,7 @@
 }
 
 .course-name {
+  color: $link;
   height: 20%;
   overflow: hidden;
   padding: 10px;
