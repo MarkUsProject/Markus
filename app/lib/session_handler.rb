@@ -66,7 +66,8 @@ module SessionHandler
   # is not a Course. Because of this, non-shallow routes should check those associations themselves and render a 404
   # error if needed.
   def check_record
-    return page_not_found if params[:id] && record.nil? || parent_params.length != parent_records.compact.length
+    return page_not_found if request.path_parameters[:id] && record.nil?
+    return page_not_found if parent_params.length != parent_records.compact.length
     page_not_found if [record, *parent_records].compact
                                                .reject { |r| r.is_a? Course }
                                                .any? { |r| r.try(:course) != current_course }

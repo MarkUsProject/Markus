@@ -367,11 +367,6 @@ Rails.application.routes.draw do
         post 'new_update_groupings'
         get 'notes_dialog'
       end
-
-      member do
-        get 'student_interface'
-        post 'grades'
-      end
     end
 
     resources :course_summaries, only: [:index] do
