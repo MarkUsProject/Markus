@@ -8,7 +8,7 @@ describe Human do
   end
   describe '#visible_courses' do
     let(:course) { create :course, is_hidden: false }
-    let(:human) { create :human}
+    let(:human) { create :human }
     let!(:student) { create :student, course: course, human: human }
     context 'when there is a visible course' do
       it 'returns the course' do
