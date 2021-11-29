@@ -34,9 +34,7 @@ module SessionHandler
   end
 
   def current_course
-    if controller_name == 'courses' && action_name == 'index'
-      @current_course = nil
-    elsif controller_name == 'courses'
+    if controller_name == 'courses'
       @current_course ||= Course.find_by(id: params[:id])
     else
       @current_course ||= Course.find_by(id: params[:course_id])
