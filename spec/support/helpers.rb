@@ -106,7 +106,7 @@ module Helpers
           env_data: {
             python_version: '3.8',
             pip_requirements: 'hypothesis pytest-timeout'
-          }, 
+          },
           test_data: [
             {
               script_files: [
