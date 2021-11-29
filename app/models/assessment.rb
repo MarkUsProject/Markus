@@ -16,7 +16,7 @@ class Assessment < ApplicationRecord
   # Look in lib/validators/* for more info
   validates :due_date, date: true
 
-  validates_uniqueness_of :short_identifier, case_sensitive: true, scope: :course_id
+  validates_uniqueness_of :short_identifier, scope: :course_id
   validates_presence_of :short_identifier
   validate :short_identifier_unchanged, on: :update
   validates_presence_of :description
