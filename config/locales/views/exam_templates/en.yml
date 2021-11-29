@@ -36,6 +36,7 @@ en:
       success: Successfully generated %{copies} exam copies
       title: Generate Exam Copies
     parsing:
+      cover_page_for: Cover page for exam template %{id}
       general: Automatically parse student information
       save: Save
       title: Automatic Parsing Selection

@@ -32,7 +32,7 @@ class AssignmentsController < ApplicationController
   def show
     assignment = Assignment.find(params[:id])
     @assignment = assignment.is_peer_review? ? assignment.parent_assignment : assignment
-    if @assignment.is_hidden
+    unless allowed_to?(:see_hidden?)
       render 'shared/http_status',
              formats: [:html],
              locals: {
@@ -79,7 +79,7 @@ class AssignmentsController < ApplicationController
   def peer_review
     assignment = Assignment.find(params[:id])
     @assignment = assignment.is_peer_review? ? assignment : assignment.pr_assignment
-    if @assignment.nil? || @assignment.is_hidden
+    if @assignment.nil? || !allowed_to?(:see_hidden?)
       render 'shared/http_status',
              formats: [:html],
              locals: {
@@ -139,7 +139,7 @@ class AssignmentsController < ApplicationController
       @a_id_results = {}
       accepted_groupings = current_user.accepted_groupings.includes(:assignment, { current_submission_used: :results })
       accepted_groupings.each do |grouping|
-        if !grouping.assignment.is_hidden && grouping.has_submission?
+        if allowed_to?(:see_hidden?, grouping.assignment) && grouping.has_submission?
           submission = grouping.current_submission_used
           if submission.has_remark? && submission.remark_result.released_to_students
             @a_id_results[grouping.assignment.id] = submission.remark_result
@@ -151,7 +151,7 @@ class AssignmentsController < ApplicationController
 
       @g_id_entries = {}
       current_user.grade_entry_students.where(released_to_student: true).includes(:grade_entry_form).each do |g|
-        unless g.grade_entry_form.is_hidden
+        if allowed_to?(:see_hidden?, g.grade_entry_form)
           @g_id_entries[g.assessment_id] = g
         end
       end
@@ -177,14 +177,16 @@ class AssignmentsController < ApplicationController
       end
     end
 
-    # build section_due_dates for each section that doesn't already have a due date
+    # build assessment_section_properties for each section that doesn't already have one
     Section.all.each do |s|
-      unless SectionDueDate.find_by(assessment_id: @assignment.id, section_id: s.id)
-        @assignment.section_due_dates.build(section: s)
+      unless AssessmentSectionProperties.find_by(assessment_id: @assignment.id, section_id: s.id)
+        @assignment.assessment_section_properties.build(section: s)
       end
     end
-    @section_due_dates = @assignment.section_due_dates
-                                    .sort_by { |s| [SectionDueDate.due_date_for(s.section, @assignment), s.section.name] }
+    @assessment_section_properties = @assignment.assessment_section_properties
+    @assessment_section_properties.sort_by do |s|
+      [AssessmentSectionProperties.due_date_for(s.section, @assignment), s.section.name]
+    end
     render :edit, layout: 'assignment_content'
   end
 
@@ -195,15 +197,9 @@ class AssignmentsController < ApplicationController
     @sections = Section.all
 
     begin
-      new_required_files = false
       @assignment.transaction do
-        @assignment, new_required_files = process_assignment_form(@assignment)
+        @assignment = process_assignment_form(@assignment)
         @assignment.save!
-      end
-      if new_required_files && Settings.repository.type == 'git'
-        # update list of required files in all repos only if there is a hook that will use that list
-        @current_job = UpdateRepoRequiredFilesJob.perform_later(@assignment.id, current_user.user_name)
-        session[:job_id] = @current_job.job_id
       end
     rescue
     end
@@ -226,10 +222,6 @@ class AssignmentsController < ApplicationController
                                    .order(:id)
     @sections = Section.all
 
-    # build section_due_dates for each section
-    Section.all.each { |s| @assignment.section_due_dates.build(section: s)}
-    @section_due_dates = @assignment.section_due_dates
-                                    .sort_by { |s| s.section.name }
     render :new, layout: 'assignment_content'
   end
 
@@ -238,12 +230,11 @@ class AssignmentsController < ApplicationController
     @assignment = Assignment.new
     @assignment.transaction do
       begin
-        @assignment, new_required_files = process_assignment_form(@assignment)
+        @assignment = process_assignment_form(@assignment)
         @assignment.token_start_date = @assignment.due_date
         @assignment.token_period = 1
       rescue Exception, RuntimeError => e
         @assignment.errors.add(:base, e.message)
-        new_required_files = false
       end
       unless @assignment.save
         @assignments = Assignment.all
@@ -260,11 +251,6 @@ class AssignmentsController < ApplicationController
           clone_warnings.each { |w| flash_message(:warning, w) }
         end
       end
-      if new_required_files && Settings.repository.type == 'git'
-        # update list of required files in all repos only if there is a hook that will use that list
-        @current_job = UpdateRepoRequiredFilesJob.perform_later(@assignment.id, current_user.user_name)
-        session[:job_id] = @current_job.job_id
-      end
     end
     respond_with @assignment, location: -> { edit_assignment_path(@assignment) }
   end
@@ -277,6 +263,28 @@ class AssignmentsController < ApplicationController
       format.csv do
         data = @assignment.summary_csv(@current_user)
         filename = "#{@assignment.short_identifier}_summary.csv"
+        send_data data,
+                  disposition: 'attachment',
+                  type: 'text/csv',
+                  filename: filename
+      end
+    end
+  end
+
+  def download_test_results
+    @assignment = Assignment.find(params[:id])
+    respond_to do |format|
+      format.json do
+        data = @assignment.summary_test_result_json
+        filename = "#{@assignment.short_identifier}_test_results.json"
+        send_data data,
+                  disposition: 'attachment',
+                  type: 'application/json',
+                  filename: filename
+      end
+      format.csv do
+        data = @assignment.summary_test_result_csv
+        filename = "#{@assignment.short_identifier}_test_results.csv"
         send_data data,
                   disposition: 'attachment',
                   type: 'text/csv',
@@ -798,14 +806,10 @@ class AssignmentsController < ApplicationController
     SubmissionRule.where(assignment: assignment).where.not(id: assignment.submission_rule.id).each(&:destroy)
     process_timed_duration(assignment) if assignment.is_timed
     assignment.repository_folder = short_identifier unless assignment.is_peer_review?
-    assignment.save!
-    new_required_files = assignment.saved_change_to_only_required_files? ||
-                         assignment.saved_change_to_is_hidden? ||
-                         assignment.assignment_files.any?(&:saved_changes?) ||
-                         num_files_before != assignment.assignment_files.length
-    # if there are no section due dates, destroy the objects that were created
+
+    # if there are no assessment section properties, destroy the objects that were created
     if ['0', nil].include? params[:assignment][:assignment_properties_attributes][:section_due_dates_type]
-      assignment.section_due_dates.each(&:destroy)
+      assignment.assessment_section_properties.each(&:destroy)
       assignment.section_due_dates_type = false
       assignment.section_groups_only = false
     else
@@ -829,7 +833,7 @@ class AssignmentsController < ApplicationController
       assignment.group_max = 1
     end
 
-    return assignment, new_required_files
+    assignment
   end
 
   # Convert the hours and minutes value given in the params to a duration value
@@ -896,12 +900,13 @@ class AssignmentsController < ApplicationController
         :is_timed,
         :start_time
       ],
-      section_due_dates_attributes: [
+      assessment_section_properties_attributes: [
         :_destroy,
         :id,
         :section_id,
         :due_date,
-        :start_time
+        :start_time,
+        :is_hidden
       ],
       assignment_files_attributes:  [
         :_destroy,

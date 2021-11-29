@@ -385,7 +385,7 @@ describe CriteriaController do
                 params: { criterion: [flexible_criterion2.id, flexible_criterion.id],
                           assignment_id: assignment.id },
                 format: :js
-        is_expected.to render_template('criteria/update_positions')
+        is_expected.to render_template
         is_expected.to respond_with(:success)
 
         c1 = FlexibleCriterion.find(flexible_criterion.id)
@@ -740,7 +740,7 @@ describe CriteriaController do
                 params: { criterion: [rubric_criterion2.id, rubric_criterion.id],
                           assignment_id: assignment.id },
                 format: :js
-        is_expected.to render_template('criteria/update_positions')
+        is_expected.to render_template
         is_expected.to respond_with(:success)
 
         c1 = RubricCriterion.find(rubric_criterion.id)

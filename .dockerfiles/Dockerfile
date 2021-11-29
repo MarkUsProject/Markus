@@ -34,7 +34,8 @@ RUN apt-get update -qq && \
     git \
     python3-venv \
     python3-dev \
-    pandoc
+    pandoc \
+    libgl1
 
 # Install node
 ADD https://deb.nodesource.com/setup_$NODE_MAJOR.x /tmp/setup_node.sh

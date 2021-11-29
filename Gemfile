@@ -10,7 +10,7 @@ source 'https://rubygems.org'
 
 # Bundler requires these gems in all environments
 gem 'puma'
-gem 'rails', '~> 6.1.3.2'
+gem 'rails', '~> 6.1.4.1'
 gem 'sprockets'
 
 # Models and database interactions
@@ -117,7 +117,7 @@ end
 group :development, :test do
   gem 'byebug'
   gem 'i18n-tasks'
-  gem 'rspec-rails', '~> 5.0.1'
+  gem 'rspec-rails', '~> 5.0.2'
 end
 
 # Gems needed (wanted) for development, test and production_test

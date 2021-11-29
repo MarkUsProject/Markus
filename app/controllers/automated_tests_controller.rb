@@ -67,12 +67,10 @@ class AutomatedTestsController < ApplicationController
                                                   [grouping.group_id],
                                                   collected: false)
       session[:job_id] = @current_job.job_id
-      flash_message(:notice, I18n.t('automated_tests.tests_running'))
+      flash_message(:success, I18n.t('automated_tests.tests_running'))
     end
   rescue StandardError => e
     flash_message(:error, e.message)
-  ensure
-    redirect_to action: :student_interface, id: params[:id]
   end
 
   def get_test_runs_students
@@ -182,9 +180,15 @@ class AutomatedTestsController < ApplicationController
     assignment = Assignment.find(params[:assignment_id])
     file_path = assignment.autotest_settings_file
     if File.exist?(file_path)
-      send_file file_path, filename: params[:file_name]
+      specs = JSON.parse File.read(file_path)
+      specs['testers']&.each do |tester_info|
+        tester_info['test_data']&.each do |test_info|
+          test_info['extra_info']&.delete('test_group_id')
+        end
+      end
+      send_data specs.to_json, filename: TestRun::SPECS_FILE
     else
-      send_data '{}', filename: file_path
+      send_data '{}', filename: TestRun::SPECS_FILE
     end
   end
 
@@ -193,12 +197,15 @@ class AutomatedTestsController < ApplicationController
     if params[:specs_file].respond_to? :read
       file_content = params[:specs_file].read
       begin
-        JSON.parse file_content
+        test_specs = JSON.parse file_content
+        update_test_groups_from_specs(assignment, test_specs)
       rescue JSON::ParserError
         flash_now(:error, I18n.t('automated_tests.invalid_specs_file'))
         head :unprocessable_entity
+      rescue StandardError => e
+        flash_now(:error, e.message)
+        head :unprocessable_entity
       else
-        File.write(assignment.autotest_settings_file, file_content, mode: 'wb')
         @current_job = AutotestSpecsJob.perform_later(request.protocol + request.host_with_port, assignment)
         session[:job_id] = @current_job.job_id
         render 'shared/_poll_job.js.erb'

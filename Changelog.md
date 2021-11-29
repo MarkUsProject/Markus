@@ -1,6 +1,35 @@
 # Changelog
 
 ## [unreleased]
+- Add the ability to hide assignments from individual sections (#5445)
+- Display smaller error message when nbconvert fails to avoid a cookie overflow (#5510)
+- Update repository access permissions to take into account the Assignment
+  is_hidden and anonymize_groups attributes (#5547)
+- Support syntax highlighting for R (#5558)
+- Fixes in progress remark requests to display the remark request due date for students (#5562)
+- Preserve exam template paper size and orientation when stamping with QR codes (#5573)
+- Fix bugs in automatic parsing Python module (#5592)
+- Fix exam template automatic parsing to only accept one crop box, and parse either
+  ID number or user name (#5592)
+- Fix scanned exams when using automatic parsing with multiple exam templates (#5592)
+- Fixes assignment graders checkbox settings text to avoid double negatives (#5600)
+- Add test results download modal for assignment summary (#5561)
+- Improve accessibility of exam templates page (#5607)
+
+## [v1.13.3]
+- Display multiple feedback files returned by the autotester (#5524)
+- Add workaround for CSP rules in Safari (#5526)
+- Change level mark input field to accept change increments of 0.01 (#5546)
+- Fix bug in annotation upload when updating categories not associated with a criterion (#5564)
+
+## [v1.13.2]
+- Ensure "Create all groups" button uses existing repos if they already exist (#5504)
+- Set criteria marks after autotest run (#5508)
+
+## [v1.13.1]
+- Ensure that downloadable test specs file is portable between assignments and instances (#5469)
+- Support rendering of Markdown in criterion descriptions (#5500)
+- Ensure "Create all groups" button creates repositories for students usering their user name (#5499)
 
 ## [v1.13.0]
 - Modify Result.get_total_extra_marks to differentiate between having extra marks that sum to zero and
