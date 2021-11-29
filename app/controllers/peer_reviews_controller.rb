@@ -14,7 +14,7 @@ class PeerReviewsController < ApplicationController
     end
 
     @section_column = ''
-    if current_course.sections.all.size > 0
+    if current_course.sections.exists?
       @section_column = "{
         id: 'section',
         content: '#{Section.model_name.human}',
