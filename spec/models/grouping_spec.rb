@@ -9,6 +9,18 @@ describe Grouping do
     it { is_expected.to have_one(:extension).dependent(:destroy) }
     it { is_expected.to have_one(:course) }
     include_examples 'course associations'
+    it 'should ensure that tags belong to the same course' do
+      subject.tags << create(:tag, assessment: create(:assignment))
+      expect(subject).not_to be_valid
+    end
+    it 'should allow tags that do belong to the same course' do
+      subject.tags << create(:tag, assessment: subject.assignment)
+      expect(subject).to be_valid
+    end
+    it 'should allow tags that do not belong to any course' do
+      subject.tags << create(:tag)
+      expect(subject).to be_valid
+    end
   end
 
   describe 'a default grouping' do
