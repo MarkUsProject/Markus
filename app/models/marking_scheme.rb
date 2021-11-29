@@ -2,6 +2,9 @@ class MarkingScheme < ApplicationRecord
   include CourseSummariesHelper
   has_many :marking_weights, dependent: :destroy
   accepts_nested_attributes_for :marking_weights
+  validates_uniqueness_of :name, scope: :course_id
+
+  belongs_to :course
 
   default_scope { order('id ASC') }
 

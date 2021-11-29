@@ -345,6 +345,9 @@ ActiveRecord::Schema.define(version: 2021_11_26_223421) do
     t.string "name"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.bigint "course_id", null: false
+    t.index ["course_id", "name"], name: "index_marking_schemes_on_course_id_and_name", unique: true
+    t.index ["course_id"], name: "index_marking_schemes_on_course_id"
   end
 
   create_table "marking_weights", id: :serial, force: :cascade do |t|
@@ -561,6 +564,8 @@ ActiveRecord::Schema.define(version: 2021_11_26_223421) do
   create_table "test_batches", id: :serial, force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "course_id", null: false
+    t.index ["course_id"], name: "index_test_batches_on_course_id"
   end
 
   create_table "test_group_results", id: :serial, force: :cascade do |t|
@@ -660,6 +665,7 @@ ActiveRecord::Schema.define(version: 2021_11_26_223421) do
   add_foreign_key "groups", "courses"
   add_foreign_key "key_pairs", "users"
   add_foreign_key "levels", "criteria"
+  add_foreign_key "marking_schemes", "courses"
   add_foreign_key "marking_weights", "assessments"
   add_foreign_key "marks", "criteria"
   add_foreign_key "marks", "results", name: "fk_marks_results", on_delete: :cascade
@@ -686,6 +692,7 @@ ActiveRecord::Schema.define(version: 2021_11_26_223421) do
   add_foreign_key "tags", "roles"
   add_foreign_key "template_divisions", "assignment_files"
   add_foreign_key "template_divisions", "exam_templates"
+  add_foreign_key "test_batches", "courses"
   add_foreign_key "test_group_results", "test_runs"
   add_foreign_key "test_groups", "assessments"
   add_foreign_key "test_results", "test_group_results"
