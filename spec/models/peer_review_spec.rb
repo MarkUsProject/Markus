@@ -21,13 +21,14 @@ describe PeerReview do
   end
 
   describe 'with a single student reviewee' do
+    let(:assignment) { create :assignment_with_peer_review }
     before :each do
-      @grouping1 = create(:grouping)
+      @grouping1 = create(:grouping, assignment: assignment)
       @student = create(:student)
       @grouping1.add_member(@student)
       @submission = create(:submission, submission_version_used: true, grouping: @grouping1)
       @grouping1.reload
-      @grouping2 = create(:grouping, assignment: @grouping1.assignment)
+      @grouping2 = create(:grouping, assignment: @grouping1.assignment.pr_assignment)
     end
 
     it 'can be assigned a reviewer' do
@@ -52,10 +53,11 @@ describe PeerReview do
   end
 
   describe '#get_num_collected & #get_num_marked' do
-    let(:assignment) { create(:assignment) }
+    let(:assignment) { create(:assignment_with_peer_review) }
     let(:student) { create(:student) }
     let(:grouping1) do
-      create(:grouping_with_inviter_and_submission, inviter: student, assignment: assignment, is_collected: true)
+      create(:grouping_with_inviter_and_submission,
+             inviter: student, assignment: assignment.pr_assignment, is_collected: true)
     end
     let(:grouping2) { create(:grouping_with_inviter_and_submission, assignment: assignment, is_collected: true) }
     let(:grouping3) { create(:grouping_with_inviter_and_submission, assignment: assignment, is_collected: true) }

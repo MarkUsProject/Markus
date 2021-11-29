@@ -1,6 +1,7 @@
 describe PeerReviewsController do
+  # TODO: add 'role is from a different course' shared tests to each route test below
   TEMP_CSV_FILE_PATH = '_temp_peer_review.csv'.freeze
-
+  let(:course) { @assignment_with_pr.course }
   before :each do
     @assignment_with_pr = create(:assignment_with_peer_review_and_groupings_results)
     @pr_id = @assignment_with_pr.pr_assignment.id
@@ -8,11 +9,7 @@ describe PeerReviewsController do
     @selected_reviewee_group_ids = @assignment_with_pr.groupings.pluck(:id)
   end
   context '#peer_review_mapping & #upload' do
-    before :each do
-      allow(controller).to receive(:session_expired?).and_return(false)
-      allow(controller).to receive(:logged_in?).and_return(true)
-      allow(controller).to receive(:current_user).and_return(build(:admin))
-    end
+    let(:admin) { create :admin }
 
     describe '#peer_review_mapping' do
       before :each do
@@ -31,7 +28,7 @@ describe PeerReviewsController do
         end
 
         # Perform peer_review_mapping via GET
-        get :peer_review_mapping, params: { assignment_id: @pr_id }
+        get_as admin, :peer_review_mapping, params: { course_id: course.id, assignment_id: @pr_id }
         @downloaded_text = response.body
         @found_filename =
           response.header['Content-Disposition']
@@ -65,18 +62,20 @@ describe PeerReviewsController do
 
     describe '#upload' do
       include_examples 'a controller supporting upload' do
-        let(:params) { { assignment_id: @pr_id, model: PeerReview } }
+        let(:params) { { course_id: course.id, assignment_id: @pr_id, model: PeerReview } }
       end
 
       context 'with a valid upload file' do
         before :each do
-          post :assign_groups,
-               params: { actionString: 'random_assign',
-                         selectedReviewerGroupIds: @selected_reviewer_group_ids,
-                         selectedRevieweeGroupIds: @selected_reviewee_group_ids,
-                         assignment_id: @pr_id,
-                         numGroupsToAssign: 1 }
-          get :peer_review_mapping, params: { assignment_id: @pr_id }
+          post_as admin,
+                  :assign_groups,
+                  params: { actionString: 'random_assign',
+                            selectedReviewerGroupIds: @selected_reviewer_group_ids,
+                            selectedRevieweeGroupIds: @selected_reviewee_group_ids,
+                            assignment_id: @pr_id,
+                            course_id: course.id,
+                            numGroupsToAssign: 1 }
+          get_as admin, :peer_review_mapping, params: { course_id: course.id, assignment_id: @pr_id }
           @downloaded_text = response.body
           PeerReview.all.destroy_all
           @path = File.join(self.class.file_fixture_path, TEMP_CSV_FILE_PATH)
@@ -87,7 +86,8 @@ describe PeerReviewsController do
           end
           csv_upload = fixture_file_upload(TEMP_CSV_FILE_PATH, 'text/csv')
 
-          post :upload, params: { assignment_id: @pr_id, upload_file: csv_upload, encoding: 'UTF-8' }
+          post_as admin, :upload,
+                  params: { course_id: course.id, assignment_id: @pr_id, upload_file: csv_upload, encoding: 'UTF-8' }
         end
 
         after :each do
@@ -102,7 +102,7 @@ describe PeerReviewsController do
   end
   shared_examples 'An authorized admin or grader' do
     describe '#index' do
-      before { get_as user, :index, params: { assignment_id: @pr_id } }
+      before { get_as role, :index, params: { course_id: course.id, assignment_id: @pr_id } }
       it('should respond with 200') { expect(response.status).to eq 200 }
     end
     describe '#populate' do
@@ -121,7 +121,7 @@ describe PeerReviewsController do
           @pr_expected_lines.add("#{pr.reviewee.group.group_name},#{pr.reviewer.group.group_name}")
         end
 
-        get_as user, :populate, params: { assignment_id: @pr_id }
+        get_as role, :populate, params: { course_id: course.id, assignment_id: @pr_id }
         @response = JSON.parse(response.body)
       end
 
@@ -149,11 +149,12 @@ describe PeerReviewsController do
 
     context 'random assign' do
       before :each do
-        post_as user, :assign_groups,
+        post_as role, :assign_groups,
                 params: { actionString: 'random_assign',
                           selectedReviewerGroupIds: @selected_reviewer_group_ids,
                           selectedRevieweeGroupIds: @selected_reviewee_group_ids,
                           assignment_id: @pr_id,
+                          course_id: course.id,
                           numGroupsToAssign: 1 }
       end
 
@@ -180,8 +181,9 @@ describe PeerReviewsController do
 
     context 'assign' do
       before :each do
-        post_as user, :assign_groups,
+        post_as role, :assign_groups,
                 params: { actionString: 'assign',
+                          course_id: course.id,
                           selectedReviewerGroupIds: @selected_reviewer_group_ids,
                           selectedRevieweeGroupIds: @selected_reviewee_group_ids,
                           assignment_id: @pr_id }
@@ -207,20 +209,22 @@ describe PeerReviewsController do
 
     context 'unassign' do
       before :each do
-        post_as user, :assign_groups,
+        post_as role, :assign_groups,
                 params: { actionString: 'assign',
                           selectedReviewerGroupIds: @selected_reviewer_group_ids,
                           selectedRevieweeGroupIds: @selected_reviewee_group_ids,
-                          assignment_id: @pr_id }
+                          assignment_id: @pr_id,
+                          course_id: course.id }
         @num_peer_reviews = @assignment_with_pr.peer_reviews.count
       end
 
       context 'all reviewers for selected reviewees' do
         before :each do
-          post_as user, :assign_groups,
+          post_as role, :assign_groups,
                   params: { actionString: 'unassign',
                             selectedRevieweeGroupIds: @selected_reviewee_group_ids[0],
-                            assignment_id: @pr_id }
+                            assignment_id: @pr_id,
+                            course_id: course.id }
         end
         it 'deletes the correct number of peer reviews' do
           expect(@assignment_with_pr.peer_reviews.count).to eq @num_peer_reviews - @selected_reviewer_group_ids.size
@@ -235,10 +239,11 @@ describe PeerReviewsController do
           selected_group[@reviewer.id] = true
           selected = {}
           selected[@reviewee.id] = selected_group
-          post_as user, :assign_groups,
+          post_as role, :assign_groups,
                   params: { actionString: 'unassign',
                             selectedReviewerInRevieweeGroups: selected,
-                            assignment_id: @pr_id }
+                            assignment_id: @pr_id,
+                            course_id: course.id }
         end
 
         it 'deletes the correct number of peer reviews' do
@@ -251,15 +256,15 @@ describe PeerReviewsController do
       end
     end
   end
-  describe 'When user is an authenticated admin' do
-    let(:user) { create(:admin) }
+  describe 'When role is an authenticated admin' do
+    let(:role) { create(:admin) }
     include_examples 'An authorized admin or grader'
   end
-  describe 'When user is grader and allowed to manage reviewers' do
-    let(:user) { create(:ta, manage_assessments: true) }
+  describe 'When role is grader and allowed to manage reviewers' do
+    let(:role) { create(:ta, manage_assessments: true) }
     include_examples 'An authorized admin or grader'
   end
-  describe 'When the user is grader and not allowed to manage reviewers' do
+  describe 'When the role is grader and not allowed to manage reviewers' do
     # By default all the grader permissions are set to false
     let(:grader) { create(:ta) }
     describe '#random assign' do
@@ -268,16 +273,17 @@ describe PeerReviewsController do
                 params: { actionString: 'assign',
                           selectedReviewerGroupIds: @selected_reviewer_group_ids,
                           selectedRevieweeGroupIds: @selected_reviewee_group_ids,
-                          assignment_id: @pr_id }
+                          assignment_id: @pr_id,
+                          course_id: course.id }
         expect(response).to have_http_status(403)
       end
     end
     describe '#index' do
-      before { get_as grader, :index, params: { assignment_id: @pr_id } }
+      before { get_as grader, :index, params: { course_id: course.id, assignment_id: @pr_id } }
       it('should respond with 403') { expect(response.status).to eq 403 }
     end
     describe '#populate' do
-      before { get_as grader, :populate, params: { assignment_id: @pr_id } }
+      before { get_as grader, :populate, params: { course_id: course.id, assignment_id: @pr_id } }
       it('should respond with 403') { expect(response.status).to eq 403 }
     end
   end

@@ -298,17 +298,16 @@ class Assignment < Assessment
   end
 
   def all_grouping_data
-    student_data = Student.all.pluck_to_hash(:id, :user_name, :first_name, :last_name, :hidden)
+    student_data = self.course.students.joins(:human).pluck_to_hash(:id, :user_name, :first_name, :last_name, :hidden)
     students = Hash[student_data.map do |s|
       [s[:user_name], s.merge(_id: s[:id], assigned: false)]
     end
     ]
-
     grouping_data = self
                     .groupings
                     .joins(:group)
                     .left_outer_joins(:extension)
-                    .left_outer_joins(non_rejected_student_memberships: :user)
+                    .left_outer_joins(non_rejected_student_memberships: [role: :human])
                     .left_outer_joins(inviter: :section)
                     .pluck_to_hash('groupings.id',
                                    'groupings.admin_approved',
