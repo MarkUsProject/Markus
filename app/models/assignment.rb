@@ -1334,34 +1334,21 @@ class Assignment < Assessment
     self.add_test_files_to_zip(zip_file, zip_dir)
     test_specs_path = self.autotest_settings_file
     test_specs = File.exist?(test_specs_path) ? JSON.parse(File.open(test_specs_path, &:read)) : {}
-    test_spec_content = strip_ids_from_spec(test_specs)
+    test_specs['testers']&.each do |tester_info|
+      tester_info['test_data']&.each do |test_info| 
+        test_info['extra_info']&.delete('test_group_id')
+      end
+    end
     misc_settings = {}
     misc_settings_attr = [:enable_test, :enable_student_tests, :tokens_per_period, :unlimited_tokens,
                           :token_start_date, :token_period, :non_regenerating_tokens]
     misc_settings_attr.each { |f| misc_settings[f] = self.send(f) }
     zip_file.get_output_stream(settings_file_path) do |f|
-      f.write({ settings: misc_settings, spec_data: test_spec_content }.to_json)
+      f.write({ settings: misc_settings, spec_data: test_specs }.to_json)
     end
   end
 
   private
-
-  def strip_ids_from_spec(test_specs)
-    return test_specs if test_specs['testers'].nil?
-    test_specs['testers'].each do |tester_specs|
-      next if tester_specs['test_data'].nil?
-      tester_specs['test_data'].each do |test_group_specs|
-        next if test_group_specs['extra_info'].nil?
-        extra_data_specs = test_group_specs['extra_info'].except('test_group_id', 'criterion')
-        unless test_group_specs['extra_info']['criterion'].nil?
-          assoc_criteria = self.criteria.find(test_group_specs['extra_info']['criterion'])
-          extra_data_specs['criterion_name'] = assoc_criteria.name
-        end
-        test_group_specs['extra_info'] = extra_data_specs
-      end
-    end
-    test_specs
-  end
 
   def add_test_files_to_zip(zip_file, zip_name)
     files_dir = Pathname.new self.autotest_files_dir

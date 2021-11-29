@@ -1491,15 +1491,13 @@ describe AssignmentsController do
             is_a_hash: test_settings_download.is_a?(Hash),
             has_spec_data: !spec_data.nil?,
             has_settings_data: !test_settings_download['settings'].nil?,
-            has_no_group_id: spec_data['testers'][0]['test_data'][0]['extra_info']['test_group_id'].nil?,
-            criterion_name: spec_data['testers'][0]['test_data'][0]['extra_info']['criterion_name']
+            assoc_criterion: spec_data['testers'][0]['test_data'][0]['extra_info']['criterion']
           }
           expected_settings = {
             is_a_hash: true,
             has_spec_data: true,
             has_settings_data: true,
-            has_no_group_id: true,
-            criterion_name: criteria.name
+            assoc_criterion: "#{criteria.type}:#{criteria.name}"
           }
           expect(received_settings).to eq(expected_settings)
         end
@@ -1952,7 +1950,6 @@ describe AssignmentsController do
 
     context 'Normal assignment with everything' do
       let!(:assignment) { create :assignment, due_date: Time.zone.parse('2042-02-10 15:30:45') }
-      let!(:assignment_properties) { assignment.assignment_properties }
       let!(:criteria) { create :flexible_criterion, assignment: assignment }
       let!(:annotation) { create :annotation_category, assignment: assignment }
       let!(:submission_rule) { create :grace_period_submission_rule, assignment: assignment }
@@ -1961,14 +1958,13 @@ describe AssignmentsController do
       let!(:tag1) { create :tag, assessment_id: assignment.id }
       let!(:tag2) { create :tag, assessment_id: assignment.id }
       let!(:tag3) { create :tag, assessment_id: assignment.id }
-      let!(:test_group) { create :test_group, assignment: assignment }
       let!(:starter_group1) { create :starter_file_group_with_entries, assignment: assignment }
       let!(:starter_group1_files) { starter_group1.files_and_dirs }
       let!(:starter_group2) { create :starter_file_group_with_entries, assignment: assignment }
       let!(:starter_group2_files) { starter_group2.files_and_dirs }
+      let!(:assignment_properties) { create_automated_test(assignment); assignment.assignment_properties }
 
       before :each do
-        create_automated_test(assignment)
         # Download and upload assignment
         get_as user, :download_config_files, params: { id: assignment.id }
         zip_name = 'assignment-copy-test-config-files.zip'
@@ -1998,8 +1994,8 @@ describe AssignmentsController do
           'periods': uploaded_assignment.submission_rule.periods.pluck_to_hash(:deduction, :hours, :interval)
         }
         expected_rule = {
-          'type': assignment.submission_rule.type,
-          'periods': assignment.submission_rule.periods.pluck_to_hash(:deduction, :hours, :interval)
+          'type': submission_rule.type,
+          'periods': submission_rule.periods.pluck_to_hash(:deduction, :hours, :interval)
         }
         expect(received_rule).to eq(expected_rule)
       end
@@ -2017,17 +2013,18 @@ describe AssignmentsController do
       it 'copies over automated tests' do
         uploaded_assignment = Assignment.find_by(short_identifier: assignment.short_identifier)
         uploaded_criteria = uploaded_assignment.criteria.find_by(name: criteria.name)
-        uploaded_test_group = uploaded_assignment.test_groups.find_by(name: test_group.name,
-                                                                      display_output: test_group.display_output)
+        uploaded_test_groups = uploaded_assignment.test_groups
         received_automated_test_data = {
-          uploaded_a_test_group: !uploaded_test_group.nil?,
+          uploaded_a_test_group: uploaded_test_groups.count == 1,
           spec_file: JSON.parse(File.open(uploaded_assignment.autotest_settings_file, &:read)),
           autotest_files: uploaded_assignment.autotest_files
         }
+        sample_spec_file = create_sample_spec_file(uploaded_criteria)
+        sample_spec_file['testers'][0]['test_data'][0]['extra_info']['test_group_id'] = uploaded_test_groups.first.id
         expected_automated_test_data = {
           uploaded_a_test_group: true,
-          spec_file: create_sample_spec_file(uploaded_test_group, uploaded_criteria.id).deep_stringify_keys,
-          autotest_files: assignment.autotest_files
+          spec_file: sample_spec_file,
+          autotest_files: ['tests.py', 'Helpers', File.join('Helpers', 'test_helpers.py')]
         }
         expect(received_automated_test_data).to eq(expected_automated_test_data)
       end
@@ -2036,7 +2033,6 @@ describe AssignmentsController do
     context 'Peer review assignment with everything' do
       let!(:parent_assignment) { create :assignment_with_peer_review, due_date: Time.zone.parse('2042-02-10 15:30:45') }
       let!(:assignment) { Assignment.find_by(parent_assessment_id: parent_assignment.id) }
-      let!(:assignment_properties) { assignment.assignment_properties }
       let!(:criteria) { create :flexible_criterion, assignment: assignment }
       let!(:annotation) { create :annotation_category, assignment: assignment }
       let!(:tag1) { create :tag, assessment_id: assignment.id }
@@ -2047,6 +2043,7 @@ describe AssignmentsController do
       let!(:starter_group1_files) { starter_group1.files_and_dirs }
       let!(:starter_group2) { create :starter_file_group_with_entries, assignment: assignment }
       let!(:starter_group2_files) { starter_group2.files_and_dirs }
+      let!(:assignment_properties) { assignment.assignment_properties }
 
       before :each do
         get_as user, :download_config_files, params: { id: parent_assignment.id }

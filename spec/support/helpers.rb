@@ -92,43 +92,44 @@ module Helpers
                        token_period: 24,
                        non_regenerating_tokens: false,
                        unlimited_tokens: false)
-    if assignment.test_groups.empty?
-      test_group = create(:test_group, assignment: assignment)
-    else
-      test_group = assignment.test_groups.first
-    end
-    criteria_id = assignment.criteria.empty? ? nil : assignment.criteria.first.id
+    criteria = assignment.criteria.empty? ? nil : assignment.criteria.first
     File.write(assignment.autotest_settings_file,
-               create_sample_spec_file(test_group, criteria_id).to_json,
+               create_sample_spec_file(criteria).to_json,
                mode: 'wb')
   end
 
-  def create_sample_spec_file(test_group, criteria_id = nil)
-    {
+  def create_sample_spec_file(criteria = nil)
+    spec_data = {
       testers: [
         {
+          tester_type: 'py',
+          env_data: {
+            python_version: '3.8',
+            pip_requirements: 'hypothesis pytest-timeout'
+          }, 
           test_data: [
             {
-              category: [
-                'student'
-              ],
-              extra_info: {
-                name: test_group.name,
-                display_output: test_group.display_output,
-                test_group_id: test_group.id,
-                criterion: criteria_id
-              },
               script_files: [
                 'tests.py'
               ],
+              category: [
+                'admin'
+              ],
               timeout: 30,
-              upload_feedback_file: false,
-              feedback_file_name: 'feedback.txt'
+              tester: 'unittest',
+              output_verbosity: 2,
+              extra_info: {
+                name: 'Python Test Group 1'
+              }
             }
-          ],
-          tester_type: 'custom'
+          ]
         }
       ]
     }
+    unless criteria.nil?
+      criterion = "#{criteria.type}:#{criteria.name}"
+      spec_data[:testers][0][:test_data][0][:extra_info][:criterion] = criterion
+    end
+    spec_data.deep_stringify_keys
   end
 end
