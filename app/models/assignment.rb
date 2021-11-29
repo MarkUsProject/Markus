@@ -1335,7 +1335,7 @@ class Assignment < Assessment
     test_specs_path = self.autotest_settings_file
     test_specs = File.exist?(test_specs_path) ? JSON.parse(File.open(test_specs_path, &:read)) : {}
     test_specs['testers']&.each do |tester_info|
-      tester_info['test_data']&.each do |test_info| 
+      tester_info['test_data']&.each do |test_info|
         test_info['extra_info']&.delete('test_group_id')
       end
     end
