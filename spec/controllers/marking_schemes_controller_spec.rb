@@ -1,4 +1,5 @@
 describe MarkingSchemesController do
+  # TODO: add 'role is from a different course' shared tests to each route test below
   let(:grade_entry_form) { create(:grade_entry_form) }
   let(:grade_entry_form_with_data) { create(:grade_entry_form_with_data) }
   let(:assignment) { create(:assignment) }

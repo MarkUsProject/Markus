@@ -1,4 +1,5 @@
 describe GroupsController do
+  # TODO: add 'role is from a different course' shared tests to each route test below
   let(:grouping) { create(:grouping) }
   let(:assignment) { grouping.assignment }
   let(:course) { assignment.course }

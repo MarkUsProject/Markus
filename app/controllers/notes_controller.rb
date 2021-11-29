@@ -163,7 +163,7 @@ class NotesController < ApplicationController
     noteable_id = params[:noteable_id] || params[:note]&.[](:noteable_id)
     return super unless noteable_id
     noteable_key = "#{params[:noteable_type].downcase}_id"
-    params.merge!(noteable_key => noteable_id)
+    params[noteable_key] = noteable_id
     [noteable_key, *super]
   end
 end

@@ -172,6 +172,18 @@ describe NotesController do
         expect(response).to redirect_to(controller: 'notes')
         expect(Note.count).to eq @notes + 1
       end
+
+      it 'with a noteable from a different course' do
+        create(:course)
+        assignment = create(:assignment, course: create(:course))
+        @notes = Note.count
+        post_as @ta,
+                :create,
+                params: { course_id: course.id, noteable_type: 'Assignment',
+                          note: { noteable_id: assignment.id, notes_message: @message } }
+        expect(response).to have_http_status(:not_found)
+        expect(Note.count).to eq @notes
+      end
     end
 
     it 'be able to update new groupings' do
