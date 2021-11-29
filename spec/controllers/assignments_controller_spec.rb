@@ -1962,7 +1962,8 @@ describe AssignmentsController do
       let!(:starter_group1_files) { starter_group1.files_and_dirs }
       let!(:starter_group2) { create :starter_file_group_with_entries, assignment: assignment }
       let!(:starter_group2_files) { starter_group2.files_and_dirs }
-      let!(:assignment_properties) { create_automated_test(assignment); assignment.assignment_properties }
+      let!(:assignment_properties) { create_automated_test(assignment)
+                                          assignment.assignment_properties }
 
       before :each do
         # Download and upload assignment
