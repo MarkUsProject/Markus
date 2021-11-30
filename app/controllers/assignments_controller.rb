@@ -3,6 +3,7 @@ class AssignmentsController < ApplicationController
   include RoutingHelper
   include CriteriaHelper
   include AnnotationCategoriesHelper
+  include AutomatedTestsHelper
   responders :flash
   before_action { authorize! }
 
@@ -17,6 +18,8 @@ class AssignmentsController < ApplicationController
     tags: 'tags.yml',
     criteria: 'criteria.yml',
     annotations: 'annotations.yml',
+    automated_tests_dir_entry: File.join('automated-test-config-files', 'automated-test-files'),
+    automated_tests: File.join('automated-test-config-files', 'automated-test-settings.json'),
     starter_files: File.join('starter-file-config-files', 'starter-file-rules.yml'),
     peer_review_properties: File.join('peer-review-config-files', 'properties.yml'),
     peer_review_tags: File.join('peer-review-config-files', 'tags.yml'),
@@ -222,6 +225,10 @@ class AssignmentsController < ApplicationController
                                    .order(:id)
     @sections = Section.all
 
+    # build assessment_section_properties for each section
+    Section.all.each { |s| @assignment.assessment_section_properties.build(section: s) }
+    @assessment_section_properties = @assignment.assessment_section_properties
+                                                .sort_by { |s| s.section.name }
     render :new, layout: 'assignment_content'
   end
 
@@ -597,6 +604,10 @@ class AssignmentsController < ApplicationController
       zipfile.get_output_stream(CONFIG_FILES[:annotations]) do |f|
         f.write annotation_categories_to_yml(assignment.annotation_categories)
       end
+      unless assignment.scanned_exam
+        assignment.automated_test_config_to_zip(zipfile, CONFIG_FILES[:automated_tests_dir_entry],
+                                                CONFIG_FILES[:automated_tests])
+      end
       assignment.starter_file_config_to_zip(zipfile, CONFIG_FILES[:starter_files])
       if allowed_to?(:manage?, Tag)
         zipfile.get_output_stream(CONFIG_FILES[:tags]) do |f|
@@ -659,6 +670,7 @@ class AssignmentsController < ApplicationController
         Tag.from_yml(tag_prop, assignment.id) if allowed_to?(:manage?, Tag)
         config_criteria(assignment, criteria_prop)
         upload_annotations_from_yaml(annotations_prop, assignment)
+        config_automated_tests(assignment, zipfile) unless assignment.scanned_exam
         config_starter_files(assignment, zipfile)
         assignment.save!
         redirect_to edit_assignment_path(assignment.id)
@@ -676,6 +688,38 @@ class AssignmentsController < ApplicationController
   end
 
   private
+
+  # Configures the automated test files and settings for an +assignment+ provided in the +zip_file+
+  def config_automated_tests(assignment, zip_file)
+    spec_file = zip_file.get_entry(CONFIG_FILES[:automated_tests])
+    spec_content = spec_file.get_input_stream.read.encode(Encoding::UTF_8, 'UTF-8')
+    zip_file.remove(spec_file)
+    begin
+      test_settings = JSON.parse spec_content
+    rescue JSON::ParserError
+      raise I18n.t('automated_tests.invalid_specs_file')
+    else
+      assignment.update!(test_settings['settings'].symbolize_keys)
+      spec_data = test_settings['spec_data']
+      update_test_groups_from_specs(assignment, spec_data) unless spec_data.empty?
+      @current_job = AutotestSpecsJob.perform_later(request.protocol + request.host_with_port, assignment)
+      session[:job_id] = @current_job.job_id
+      test_file_dir_path = File.join(CONFIG_FILES[:automated_tests_dir_entry], '')
+      zip_file.each do |entry|
+        if entry.name.match?(/^#{test_file_dir_path}/)
+          filename = entry.name.gsub(/^#{test_file_dir_path}/, '')
+          file_path = File.join(assignment.autotest_files_dir, filename)
+          if entry.directory?
+            FileUtils.mkdir_p(file_path)
+          else
+            FileUtils.mkdir_p(File.dirname(file_path))
+            test_file_content = entry.get_input_stream.read
+            File.write(file_path, test_file_content, mode: 'wb')
+          end
+        end
+      end
+    end
+  end
 
   # Configures the starter files for an +assignment+ provided in the +zip_file+
   def config_starter_files(assignment, zip_file)
