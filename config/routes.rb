@@ -125,7 +125,11 @@ Rails.application.routes.draw do
         get 'get_file'
       end
 
-      resources :results, only: [:edit]
+      resources :results, only: [:edit] do
+        collection do
+          patch 'update_remark_request'
+        end
+      end
     end
 
     resources :results, only: [:show, :edit] do
@@ -144,7 +148,6 @@ Rails.application.routes.draw do
         post 'set_released_to_students'
         post 'update_overall_comment'
         post 'toggle_marking_state'
-        patch 'update_remark_request'
         get 'update_positions'
         patch 'update_mark'
         get 'view_marks'

@@ -4,6 +4,9 @@ class ResultsController < ApplicationController
                 only: [:update_remark_request, :cancel_remark_request,
                        :set_released_to_students]
 
+  authorize :from_codeviewer, through: :from_codeviewer_param
+  authorize :select_file, through: :select_file
+
   content_security_policy only: [:edit, :view_marks] do |p|
     # required because heic2any uses libheif which calls
     # eval (javascript) and creates an image as a blob.
@@ -18,7 +21,7 @@ class ResultsController < ApplicationController
   def show
     respond_to do |format|
       format.json do
-        result = Result.find(params[:id])
+        result = record
         submission = result.submission
         assignment = submission.assignment
         remark_submitted = submission.remark_submitted?
@@ -80,7 +83,7 @@ class ResultsController < ApplicationController
           data[:can_run_tests] = false
         end
 
-        data[:can_release] = allowance_to(:manage_assessments?, current_role)
+        data[:can_release] = allowed_to?(:manage_assessments?, current_role)
 
         # Submission files
         file_data = submission.submission_files.order(:path, :filename).pluck_to_hash(:id, :filename, :path)
@@ -207,7 +210,7 @@ class ResultsController < ApplicationController
           data[:grace_token_deductions] =
             submission.grouping
               .grace_period_deductions
-              .joins(membership: :user)
+              .joins(membership: [role: :human])
               .pluck_to_hash(:id, :deduction, 'users.user_name', 'users.first_name', 'users.last_name')
         end
 
@@ -232,7 +235,7 @@ class ResultsController < ApplicationController
 
   def edit
     @host = Rails.application.config.action_controller.relative_url_root
-    @result = Result.find(params[:id])
+    @result = record
     @submission = @result.submission
     @grouping = @submission.grouping
     @assignment = @grouping.assignment
@@ -265,7 +268,7 @@ class ResultsController < ApplicationController
   end
 
   def run_tests
-    submission = Result.find(params[:id]).submission
+    submission = record.submission
     @current_job = AutotestRunJob.perform_later(request.protocol + request.host_with_port,
                                                 current_role.id,
                                                 submission.assignment.id,
@@ -274,33 +277,27 @@ class ResultsController < ApplicationController
     flash_message(:success, I18n.t('automated_tests.tests_running'))
   end
 
-  def stop_test
-    test_id = params[:test_run_id].to_i
-    assignment_id = params[:assignment_id]
-    @current_job = AutotestCancelJob.perform_later(assignment_id, [test_id])
-    session[:job_id] = @current_job.job_id
-    redirect_back(fallback_location: root_path)
-  end
-
   ##  Tag Methods  ##
   def add_tag
-    result = Result.find(params[:id])
+    # TODO: this should be in the grouping or tag controller
+    result = record
     tag = Tag.find(params[:tag_id])
     result.submission.grouping.tags << tag
     head :ok
   end
 
   def remove_tag
-    result = Result.find(params[:id])
+    # TODO: this should be in the grouping or tag controller
+    result = record
     tag = Tag.find(params[:tag_id])
     result.submission.grouping.tags.destroy(tag)
     head :ok
   end
 
   def next_grouping
-    assignment = Assignment.find(params[:assignment_id])
-    result = Result.find(params[:id])
+    result = record
     grouping = result.submission.grouping
+    assignment = grouping.assignment
 
     if current_role.ta?
       groupings = current_role.groupings
@@ -335,7 +332,7 @@ class ResultsController < ApplicationController
   end
 
   def set_released_to_students
-    @result = Result.find(params[:id])
+    @result = record
     released_to_students = !@result.released_to_students
     @result.released_to_students = released_to_students
     if @result.save
@@ -354,7 +351,7 @@ class ResultsController < ApplicationController
 
   # Toggles the marking state
   def toggle_marking_state
-    @result = Result.find(params[:id])
+    @result = record
     @old_marking_state = @result.marking_state
 
     if @result.marking_state == Result::MARKING_STATES[:complete]
@@ -372,28 +369,17 @@ class ResultsController < ApplicationController
   end
 
   def download
+    # TODO: move this to the submissions controller
     if params[:download_zip_button]
       download_zip
       return
     end
-    #Ensure student doesn't download a file not submitted by his own grouping
 
-    unless authorized_to_download?(file_id: params[:select_file_id],
-                                   assignment_id: params[:assignment_id],
-                                   result_id: params[:id],
-                                   from_codeviewer: params[:from_codeviewer])
-      render 'shared/http_status', formats: [:html],
-             locals: { code: '404',
-                          message: HttpStatusHelper::ERROR_CODE[
-                              'message']['404'] }, status: 404,
-             layout: false
-      return
-    end
-
-    file = SubmissionFile.find(params[:select_file_id])
+    file = select_file
     if params[:show_in_browser] == 'true' && (file.is_pynb? || file.is_rmd?)
-      redirect_to notebook_content_assignment_submissions_url(params[:assignment_id],
-                                                              select_file_id: params[:select_file_id])
+      redirect_to notebook_content_course_assignment_submissions_url(current_course,
+                                                                     record.submission.grouping.assignment,
+                                                                     select_file_id: params[:select_file_id])
       return
     end
 
@@ -405,10 +391,7 @@ class ResultsController < ApplicationController
       end
     rescue Exception => e
       flash_message(:error, e.message)
-      redirect_to action: 'edit',
-                  assignment_id: params[:assignment_id],
-                  submission_id: file.submission,
-                  id: file.submission.get_latest_result.id
+      redirect_to edit_course_result_path(current_course, record)
       return
     end
     filename = file.filename
@@ -423,28 +406,15 @@ class ResultsController < ApplicationController
   end
 
   def download_zip
-
-    #Ensure student doesn't download files not submitted by his own grouping
-    unless authorized_to_download?(submission_id: params[:submission_id],
-                                   assignment_id: params[:assignment_id],
-                                   result_id: params[:id],
-                                   from_codeviewer: params[:from_codeviewer])
-      render 'shared/http_status', formats: [:html],
-             locals: { code: '404',
-                          message: HttpStatusHelper::ERROR_CODE[
-                              'message']['404'] }, status: 404,
-             layout: false
-      return
-    end
-
-    submission = Submission.find(params[:submission_id])
+    # TODO: move this to the submissions controller
+    submission = record.submission
     if submission.revision_identifier.nil?
       render plain: t('submissions.no_files_available')
       return
     end
 
-    assignment = Assignment.find(params[:assignment_id])
-    grouping = Grouping.find(submission.grouping_id)
+    grouping = submission.grouping
+    assignment = grouping.assignment
     revision_identifier = submission.revision_identifier
     repo_folder = assignment.repository_folder
     zip_name = "#{repo_folder}-#{grouping.group.repo_name}"
@@ -473,7 +443,7 @@ class ResultsController < ApplicationController
   end
 
   def get_annotations
-    result = Result.find(params[:id])
+    result = record
     all_annots = result.annotations.includes(:submission_file, :creator,
                                              { annotation_text: :annotation_category })
     if result.submission.remark_submitted?
@@ -488,14 +458,14 @@ class ResultsController < ApplicationController
   end
 
   def update_mark
-    result = Result.find(params[:id])
+    result = record
     submission = result.submission
     group = submission.grouping.group
     assignment = submission.grouping.assignment
     mark_value = params[:mark].blank? ? nil : params[:mark].to_f
 
     # make this operation atomic (more or less) so that concurrent requests won't make duplicate values
-    result_mark = Mark.transaction { result.marks.find_or_create_by(criterion_id: params[:criterion_id]) }
+    result_mark = Mark.transaction { result.marks.order(:id).find_or_create_by(criterion_id: params[:criterion_id]) }
     unless result_mark.valid?
       # In case the transaction above doesn't do its job, this will clean up any duplicate marks in the database
       marks = result.marks.where(criterion_id: params[:criterion_id])
@@ -536,7 +506,7 @@ class ResultsController < ApplicationController
   end
 
   def revert_to_automatic_deductions
-    result = Result.find(params[:id])
+    result = record
     criterion = Criterion.find_by!(id: params[:criterion_id], type: 'FlexibleCriterion')
     result_mark = result.marks.find_or_create_by(criterion: criterion)
 
@@ -556,14 +526,14 @@ class ResultsController < ApplicationController
   end
 
   def view_marks
-    @assignment = Assignment.find(params[:assignment_id])
-    result_from_id = Result.find(params[:id])
+    result_from_id = record
+    @assignment = result_from_id.submission.grouping.assignment
     is_review = result_from_id.is_a_review? || result_from_id.is_review_for?(current_role, @assignment)
 
     if current_role.student?
       @grouping = current_role.accepted_grouping_for(@assignment.id)
       if @grouping.nil?
-        redirect_to assignment_path(params[:id])
+        redirect_to course_assignment_path(current_course, @assignment)
         return
       end
       unless is_review || @grouping.has_submission?
@@ -592,7 +562,7 @@ class ResultsController < ApplicationController
 
     # TODO Review the various code flows, the duplicate checks are a temporary stop-gap
     if @grouping.nil?
-      redirect_to assignment_path(params[:id])
+      redirect_to course_assignment_path(current_course, @assignment)
       return
     end
     unless is_review || @grouping.has_submission?
@@ -646,7 +616,7 @@ class ResultsController < ApplicationController
   end
 
   def add_extra_mark
-    @result = Result.find(params[:id])
+    @result = record
     @extra_mark = @result.extra_marks.build(extra_mark_params.merge(unit: ExtraMark::POINTS))
     if @extra_mark.save
       # need to re-calculate total mark
@@ -658,7 +628,7 @@ class ResultsController < ApplicationController
   end
 
   def remove_extra_mark
-    result = Result.find(params[:id])
+    result = record
     extra_mark = result.extra_marks.find(params[:extra_mark_id])
 
     extra_mark.destroy
@@ -667,16 +637,16 @@ class ResultsController < ApplicationController
   end
 
   def update_overall_comment
-    Result.find(params[:id]).update(overall_comment: params[:result][:overall_comment])
+    record.update(overall_comment: params[:result][:overall_comment])
     head :ok
   end
 
   def update_remark_request
-    @assignment = Assignment.find(params[:assignment_id])
+    @submission = Submission.find(params[:submission_id])
+    @assignment = submission.grouping.assignment
     if @assignment.past_remark_due_date?
       head :bad_request
     else
-      @submission = Submission.find(params[:id])
       @submission.update(
         remark_request: params[:submission][:remark_request],
         remark_request_timestamp: Time.current
@@ -710,7 +680,7 @@ class ResultsController < ApplicationController
   end
 
   def delete_grace_period_deduction
-    result = Result.find(params[:id])
+    result = record
     grace_deduction = result.submission.grouping.grace_period_deductions.find(params[:deduction_id])
     grace_deduction.destroy
     head :ok
@@ -736,42 +706,23 @@ class ResultsController < ApplicationController
 
   private
 
-  # Return true if submission_id or file_id matches between accepted_student and
-  # current_role. This is to prevent students from downloading files that they
-  # or their group have not submitted. Return false otherwise.
-  def authorized_to_download?(map)
-    #If the user is a ta or admin, return true as they are authorized.
-    if current_role.admin? || current_role.ta?
-      return true
-    end
-
-    assignment = Assignment.find(map[:assignment_id])
-    result = Result.find(map[:result_id])
-
-    if current_role.is_reviewer_for?(assignment.pr_assignment, result) &&
-        map[:from_codeviewer] != nil
-      return true
-    end
-
-    submission = if map[:file_id]
-                   sub_file = SubmissionFile.find_by(id: map[:file_id])
-                   sub_file.submission unless sub_file.nil?
-                 elsif map[:submission_id]
-                   Submission.find(map[:submission_id])
-                 end
-    if submission
-      # Check that current_role is in fact in grouping that sub_file belongs to
-      !submission.grouping.accepted_students.find { |role| role == current_role }.nil?
-    else
-      false
-    end
-  end
-
   def update_remark_request_count
-    Assignment.find(params[:assignment_id]).update_remark_request_count
+    if record
+      record.submission.grouping.assignment.update_remark_request_count
+    else
+      Submission.find(params[:submission_id]).grouping.assignment.update_remark_request_count
+    end
   end
 
   private
+
+  def from_codeviewer_param
+    params[:from_codeviewer] == 'true'
+  end
+
+  def select_file
+    params[:select_file_id] && SubmissionFile.find_by(id: params[:select_file_id])
+  end
 
   def extra_mark_params
     params.require(:extra_mark).permit(:result,
