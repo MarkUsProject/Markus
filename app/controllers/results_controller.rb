@@ -209,9 +209,9 @@ class ResultsController < ApplicationController
         else
           data[:grace_token_deductions] =
             submission.grouping
-              .grace_period_deductions
-              .joins(membership: [role: :human])
-              .pluck_to_hash(:id, :deduction, 'users.user_name', 'users.first_name', 'users.last_name')
+                      .grace_period_deductions
+                      .joins(membership: [role: :human])
+                      .pluck_to_hash(:id, :deduction, 'users.user_name', 'users.first_name', 'users.last_name')
         end
 
         # Totals
@@ -713,8 +713,6 @@ class ResultsController < ApplicationController
       Submission.find(params[:submission_id]).grouping.assignment.update_remark_request_count
     end
   end
-
-  private
 
   def from_codeviewer_param
     params[:from_codeviewer] == 'true'
