@@ -153,7 +153,7 @@ class ExamTemplate < ApplicationRecord
         group = Group.find_or_create_by(
           group_name: "#{self.name}_paper_#{exam_num}",
           repo_name: "#{self.name}_paper_#{exam_num}",
-          course: self.assignment
+          course: self.assignment.course
         )
         split_page.update(status: 'FIXED', exam_page_number: page_num, group: group)
         # This creates both a new grouping and a new folder in the group repository
