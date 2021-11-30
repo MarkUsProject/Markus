@@ -49,7 +49,7 @@ describe Assignment do
       end
 
       it 'should require case sensitive unique value for short_identifier' do
-        expect(@assignment).to validate_uniqueness_of(:short_identifier)
+        expect(@assignment).to validate_uniqueness_of(:short_identifier).scoped_to(:course_id)
       end
       it 'should have a nil parent_assignment by default' do
         expect(@assignment.parent_assignment).to be_nil

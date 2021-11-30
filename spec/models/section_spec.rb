@@ -2,7 +2,7 @@ describe Section do
   context 'validations' do
     subject { build :section }
     it { is_expected.to validate_presence_of(:name) }
-    it { is_expected.to validate_uniqueness_of(:name) }
+    it { is_expected.to validate_uniqueness_of(:name).scoped_to(:course_id) }
     it { is_expected.to have_many(:students) }
     it { is_expected.to have_many(:assessment_section_properties) }
 

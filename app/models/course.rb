@@ -16,9 +16,9 @@ class Course < ApplicationRecord
   validates :name, format: { with: /\A[a-zA-Z0-9\-_]+\z/,
                              message: 'name must only contain alphanumeric, hyphen, or '\
                                       'underscore' }
-  validates :display_name, format: { with: /\A[a-zA-Z0-9\-_ ]+\z/,
-                                     message: 'display_name must only contain alphanumeric, hyphen, '\
-                                              'space, or underscore' }
+
+  # Note rails provides built-in sanitization via active record.
+  validates_presence_of :display_name
 
   # Returns an output file for controller to handle.
   def get_assignment_list(file_format)
