@@ -4,10 +4,11 @@ class CoursesController < ApplicationController
   before_action { authorize! }
 
   respond_to :html
+  layout 'assignment_content'
 
   def index
     respond_to do |format|
-      format.html { render :index, layout: 'courses' }
+      format.html { render :index }
       format.json do
         courses = current_user.visible_courses
                               .pluck_to_hash('courses.id', 'courses.name',
