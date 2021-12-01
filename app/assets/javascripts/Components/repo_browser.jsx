@@ -129,8 +129,7 @@ class ManualCollectionForm extends React.Component {
 
   render() {
     const action = Routes.manually_collect_and_begin_grading_assignment_submission_path(
-      this.props.assignment_id,
-      this.props.grouping_id
+      this.props.assignment_id
     );
 
     return (
@@ -144,6 +143,7 @@ class ManualCollectionForm extends React.Component {
             name="current_revision_identifier"
             value={this.props.revision_identifier}
           />
+          <input type="hidden" name="grouping_id" value={this.props.grouping_id} />
           <input type="hidden" name="authenticity_token" value={AUTH_TOKEN} />
           <p className="inline-labels">
             <input

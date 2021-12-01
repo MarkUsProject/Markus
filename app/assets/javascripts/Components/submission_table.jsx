@@ -89,10 +89,9 @@ class RawSubmissionTable extends React.Component {
       Cell: row => {
         return (
           <a
-            href={Routes.repo_browser_assignment_submission_path(
-              this.props.assignment_id,
-              row.original._id
-            )}
+            href={Routes.repo_browser_assignment_submission_path(this.props.assignment_id, {
+              grouping_id: row.original._id,
+            })}
           >
             {row.original.group_name}
           </a>

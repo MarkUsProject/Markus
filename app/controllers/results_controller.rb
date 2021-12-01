@@ -256,7 +256,7 @@ class ResultsController < ApplicationController
     if @grouping.submitted_after_collection_date?
       flash_message(:warning,
                     t('results.late_submission_warning_html',
-                      url: repo_browser_assignment_submission_path(@assignment, @grouping)))
+                      url: repo_browser_assignment_submission_path(@assignment, grouping_id: @grouping.id)))
     end
 
     # Check whether marks have been released.

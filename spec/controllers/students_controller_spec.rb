@@ -1,4 +1,5 @@
 describe StudentsController do
+  # TODO: add 'role is from a different course' shared tests to each route test below
   let(:course) { admin.course }
   describe 'User is an admin' do
     let(:admin) { create :admin }

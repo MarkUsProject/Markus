@@ -118,10 +118,6 @@ Rails.application.routes.draw do
     resources :submissions, only: [] do
       member do
         get 'collect_and_begin_grading'
-        post 'manually_collect_and_begin_grading'
-        get 'repo_browser'
-        post 'repo_browser'
-        get 'downloads'
         get 'get_file'
       end
 
@@ -290,6 +286,10 @@ Rails.application.routes.draw do
           get 'download_zipped_file'
           get 'notebook_content'
           get 'download_summary'
+          get 'repo_browser'
+          post 'repo_browser'
+          post 'manually_collect_and_begin_grading'
+          get 'downloads'
         end
       end
 
