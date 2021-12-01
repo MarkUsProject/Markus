@@ -1014,7 +1014,8 @@ describe SubmissionsController do
             notebook_content_course_assignment_submissions_url(course_id: course.id,
                                                                assignment_id: assignment.id,
                                                                file_name: 'example.ipynb',
-                                                               grouping_id: grouping.id))
+                                                               grouping_id: grouping.id)
+          )
         end
       end
       describe 'When the file is an rmarkdown file' do
@@ -1029,7 +1030,8 @@ describe SubmissionsController do
           expect(subject).to redirect_to(
             notebook_content_course_assignment_submissions_url(file_name: 'example.Rmd',
                                                                assignment_id: assignment.id,
-                                                               grouping_id: grouping.id))
+                                                               grouping_id: grouping.id)
+          )
         end
       end
       describe 'When the file is a binary file' do
