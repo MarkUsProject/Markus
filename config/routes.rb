@@ -85,9 +85,13 @@ Rails.application.routes.draw do
       end
     end
 
-    resources :tags, only: [:edit, :update, :destroy] do
+    resources :tags, only: [:edit, :update, :destroy, :create, :index] do
       member do
         get 'edit_tag_dialog'
+      end
+      collection do
+        get 'download'
+        post 'upload'
       end
     end
 
@@ -190,13 +194,6 @@ Rails.application.routes.draw do
       end
 
       resources :starter_file_groups, only: [:create]
-
-      resources :tags, only: [:create, :index] do
-        collection do
-          get 'download'
-          post 'upload'
-        end
-      end
 
       resources :criteria, only: [:create, :index, :new] do
         collection do

@@ -13,6 +13,7 @@ class Role < ApplicationRecord
   has_many :test_runs, dependent: :destroy
   has_many :split_pdf_logs
   has_many :assessments, through: :course
+  has_many :tags
 
   validates_format_of :type, with: /\AStudent|Admin|Ta\z/
   validates_uniqueness_of :user_id, scope: :course_id

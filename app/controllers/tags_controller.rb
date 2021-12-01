@@ -5,19 +5,20 @@ class TagsController < ApplicationController
   layout 'assignment_content'
 
   def index
-    @assignment = Assignment.find(params[:assignment_id])
+    @assignment = Assignment.find_by(id: params[:assignment_id])
 
     respond_to do |format|
       format.html
       format.json do
-        tags = @assignment.tags.includes(:user, :groupings).order(:name)
+        parent = @assignment || current_course
+        tags = parent.tags.includes(:role, :groupings).order(:name)
 
         tag_info = tags.map do |tag|
           {
             id: tag.id,
             name: tag.name,
             description: tag.description,
-            creator: "#{tag.user.first_name} #{tag.user.last_name}",
+            creator: "#{tag.role.first_name} #{tag.role.last_name}",
             use: tag.groupings.size
           }
         end
@@ -28,14 +29,13 @@ class TagsController < ApplicationController
   end
 
   def edit
-    @tag = Tag.find(params[:id])
-    @assignment = Assignment.find(params[:assignment_id])
+    @tag = record
   end
 
   # Creates a new instance of the tag.
   def create
     tag_params = params.require(:tag).permit(:name, :description)
-    new_tag = Tag.new(tag_params.merge(role: current_role, assessment: Assessment.find(params[:assignment_id])))
+    new_tag = Tag.new(tag_params.merge(role: current_role, assessment: Assessment.find_by(id: params[:assignment_id])))
 
     if new_tag.save
       if params[:grouping_id]
@@ -48,22 +48,20 @@ class TagsController < ApplicationController
   end
 
   def update
-    tag = Tag.find(params[:id])
+    tag = record
     tag.update(params.require(:tag).permit(:name, :description))
 
     respond_with tag, location: -> { request.headers['Referer'] || root_path }
   end
 
   def destroy
-    tag = Tag.find(params[:id])
-    tag.destroy
+    record.destroy
     head :ok
   end
 
   # Dialog to edit a tag.
   def edit_tag_dialog
-    @assignment = Assignment.find(params[:assignment_id])
-    @tag = Tag.find(params[:id])
+    @tag = record
 
     render partial: 'tags/edit_dialog', handlers: [:erb]
   end
@@ -71,7 +69,8 @@ class TagsController < ApplicationController
   ###  Upload/Download Methods  ###
 
   def download
-    tags = Tag.includes(:user).order(:name).pluck(:name, :description, 'users.user_name')
+    parent = Assignment.find_by(id: params[:assignment_id]) || current_course
+    tags = parent.tags.includes(role: :human).order(:name).pluck(:name, :description, 'users.user_name')
 
     case params[:format]
     when 'csv'
@@ -98,6 +97,7 @@ class TagsController < ApplicationController
   end
 
   def upload
+    assignment = Assignment.find_by(id: params[:assignment_id])
     begin
       data = process_file_upload
     rescue Psych::SyntaxError => e
@@ -106,16 +106,24 @@ class TagsController < ApplicationController
       flash_message(:error, e.message)
     else
       if data[:type] == '.csv'
-        result = Tag.from_csv(data[:file].read)
+        result = Tag.from_csv(data[:file].read, current_course, assignment)
         flash_message(:error, result[:invalid_lines]) unless result[:invalid_lines].empty?
         flash_message(:success, result[:valid_lines]) unless result[:valid_lines].empty?
       elsif data[:type] == '.yml'
-        result = Tag.from_yml(data[:contents])
+        result = Tag.from_yml(data[:contents], current_course, assignment)
         if result.is_a?(StandardError)
           flash_message(:error, result.message)
         end
       end
     end
     redirect_to action: 'index'
+  end
+
+  private
+
+  # Include assignment_id param in parent_params so that check_record can ensure that
+  # the assignment is in the same course as the current course
+  def parent_params
+    params[:assignment_id].nil? ? super : [*super, :assignment_id]
   end
 end

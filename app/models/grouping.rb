@@ -783,7 +783,7 @@ class Grouping < ApplicationRecord
   def assignments_should_match
     return if assessment_id.nil?
     unless self.tags.pluck(:assessment_id).compact.all? { |aid| aid == self.assessment_id }
-      errors.add(:base, 'result and reviewer must all belong to the same assignment')
+      errors.add(:base, 'tags must belong to the same assignment as this grouping')
     end
   end
 end

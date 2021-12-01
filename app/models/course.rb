@@ -10,6 +10,7 @@ class Course < ApplicationRecord
   has_many :tas
   has_many :students
   has_many :marking_schemes
+  has_many :tags, through: :roles
 
   validates_presence_of :name
   validates_uniqueness_of :name
