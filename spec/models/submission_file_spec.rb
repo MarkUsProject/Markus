@@ -4,6 +4,7 @@ describe SubmissionFile do
   it { is_expected.to have_many(:annotations) }
   it { is_expected.to validate_presence_of :filename }
   it { is_expected.to validate_presence_of :path }
+  it { is_expected.to have_one(:course) }
 
   context 'A .java Submission file' do
     before(:each) do

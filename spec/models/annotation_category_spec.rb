@@ -8,6 +8,7 @@ describe AnnotationCategory do
     it { is_expected.to validate_presence_of(:annotation_category_name) }
     it { is_expected.to have_many(:annotation_texts) }
     it { is_expected.to belong_to(:assignment) }
+    it { is_expected.to have_one(:course) }
 
     it { is_expected.to allow_value(nil).for(:flexible_criterion_id) }
 

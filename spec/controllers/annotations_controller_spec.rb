@@ -1,23 +1,24 @@
 describe AnnotationsController do
-
+  # TODO: add 'role is from a different course' shared tests to each route test below
   context 'An unauthenticated user' do
+    let(:annotation) { create(:text_annotation, result: result) }
     it 'on :add_existing_annotation' do
-      post :add_existing_annotation, params: { submission_file_id: 1 }
+      post :add_existing_annotation, params: { course_id: course.id, submission_file_id: 1 }
       assert_response :redirect
     end
 
     it 'on :create' do
-      post :create, params: { id: 1 }
+      post :create, params: { course_id: course.id, result_id: result.id }
       assert_response :redirect
     end
 
     it 'on :destroy' do
-      delete :destroy, params: { id: 1 }
+      delete :destroy, params: { course_id: course.id, id: annotation.id }
       assert_response :redirect
     end
 
     it 'on :update' do
-      put :update, params: { id: 1 }
+      put :update, params: { course_id: course.id, id: annotation.id }
       assert_response :redirect
     end
   end
@@ -25,6 +26,7 @@ describe AnnotationsController do
   let(:result) { create(:result, marking_state: Result::MARKING_STATES[:incomplete]) }
   let(:submission) { result.submission }
   let(:assignment) { submission.assignment }
+  let(:course) { assignment.course }
   let(:submission_file) { create(:submission_file, submission: submission) }
   let(:image_submission_file) { create(:image_submission_file, submission: submission) }
   let(:pdf_submission_file) { create(:pdf_submission_file, submission: submission) }
@@ -38,7 +40,7 @@ describe AnnotationsController do
         post_as user,
                 :add_existing_annotation,
                 params: { annotation_text_id: annotation_text.id, submission_file_id: submission_file.id, line_start: 1,
-                          line_end: 1, column_start: 1, column_end: 1, result_id: result.id },
+                          line_end: 1, column_start: 1, column_end: 1, result_id: result.id, course_id: course.id },
                 format: :js
 
         assert_response :success
@@ -49,7 +51,7 @@ describe AnnotationsController do
         post_as user,
                 :add_existing_annotation,
                 params: { annotation_text_id: annotation_text.id, submission_file_id: image_submission_file.id,
-                          x1: 0, x2: 1, y1: 0, y2: 1, result_id: result.id },
+                          x1: 0, x2: 1, y1: 0, y2: 1, result_id: result.id, course_id: course.id },
                 format: :js
 
         assert_response :success
@@ -60,7 +62,7 @@ describe AnnotationsController do
         post_as user,
                 :add_existing_annotation,
                 params: { annotation_text_id: annotation_text.id, submission_file_id: pdf_submission_file.id,
-                          x1: 0, x2: 1, y1: 0, y2: 1, page: 1, result_id: result.id },
+                          x1: 0, x2: 1, y1: 0, y2: 1, page: 1, result_id: result.id, course_id: course.id },
                 format: :js
 
         assert_response :success
@@ -74,7 +76,7 @@ describe AnnotationsController do
                 :create,
                 params: { content: annotation_text.content, category_id: annotation_category.id,
                           submission_file_id: submission_file.id, line_start: 1, line_end: 1, column_start: 1,
-                          column_end: 1, result_id: result.id, assignment_id: assignment.id },
+                          column_end: 1, result_id: result.id, assignment_id: assignment.id, course_id: course.id },
                 format: :js
 
         assert_response :success
@@ -87,7 +89,7 @@ describe AnnotationsController do
                 params: { content: annotation_text_oto.content,
                           annotation_text_id: annotation_text_oto.id, category_id: nil,
                           submission_file_id: submission_file.id, line_start: 1, line_end: 1, column_start: 1,
-                          column_end: 1, result_id: result.id, assignment_id: assignment.id },
+                          column_end: 1, result_id: result.id, assignment_id: assignment.id, course_id: course.id },
                 format: :js
 
         assert_response :success
@@ -99,7 +101,7 @@ describe AnnotationsController do
                 params: { content: annotation_text_oto.content,
                           annotation_text_id: annotation_text_oto.id, category_id: nil,
                           submission_file_id: submission_file.id, line_start: 2, line_end: 2, column_start: 2,
-                          column_end: 2, result_id: result.id, assignment_id: assignment.id },
+                          column_end: 2, result_id: result.id, assignment_id: assignment.id, course_id: course.id },
                 format: :js
         assert_response :success
         expect(result.annotations.reload.size).to eq 2
@@ -112,7 +114,7 @@ describe AnnotationsController do
                 params: { content: annotation_text.content,
                           annotation_text_id: annotation_text.id, category_id: annotation_category.id,
                           submission_file_id: submission_file.id, line_start: 1, line_end: 1, column_start: 1,
-                          column_end: 1, result_id: result.id, assignment_id: assignment.id },
+                          column_end: 1, result_id: result.id, assignment_id: assignment.id, course_id: course.id },
                 format: :js
 
         assert_response :success
@@ -124,7 +126,7 @@ describe AnnotationsController do
                 params: { content: annotation_text.content,
                           annotation_text_id: annotation_text.id, category_id: annotation_category.id,
                           submission_file_id: submission_file.id, line_start: 2, line_end: 2, column_start: 2,
-                          column_end: 2, result_id: result.id, assignment_id: assignment.id },
+                          column_end: 2, result_id: result.id, assignment_id: assignment.id, course_id: course.id },
                 format: :js
         assert_response :success
         expect(result.annotations.reload.size).to eq 2
@@ -137,7 +139,7 @@ describe AnnotationsController do
                 params: { content: annotation_text_oto.content,
                           annotation_text_id: annotation_text_oto.id, category_id: annotation_category.id,
                           submission_file_id: submission_file.id, line_start: 1, line_end: 1, column_start: 1,
-                          column_end: 1, result_id: result.id, assignment_id: assignment.id },
+                          column_end: 1, result_id: result.id, assignment_id: assignment.id, course_id: course.id },
                 format: :js
 
         assert_response :success
@@ -152,7 +154,7 @@ describe AnnotationsController do
                 params: { content: annotation_text.content,
                           annotation_text_id: annotation_text.id, category_id: new_category.id,
                           submission_file_id: submission_file.id, line_start: 1, line_end: 1, column_start: 1,
-                          column_end: 1, result_id: result.id, assignment_id: assignment.id },
+                          column_end: 1, result_id: result.id, assignment_id: assignment.id, course_id: course.id },
                 format: :js
 
         assert_response :success
@@ -166,7 +168,7 @@ describe AnnotationsController do
                 params: { content: annotation_text.content,
                           annotation_text_id: annotation_text.id, category_id: nil,
                           submission_file_id: submission_file.id, line_start: 1, line_end: 1, column_start: 1,
-                          column_end: 1, result_id: result.id, assignment_id: assignment.id },
+                          column_end: 1, result_id: result.id, assignment_id: assignment.id, course_id: course.id },
                 format: :js
 
         assert_response :success
@@ -182,7 +184,7 @@ describe AnnotationsController do
                 :create,
                 params: { content: annotation_text.content, category_id: annotation_category.id,
                           submission_file_id: image_submission_file.id, x1: 0, x2: 1, y1: 0, y2: 1,
-                          result_id: result.id, assignment_id: assignment.id },
+                          result_id: result.id, assignment_id: assignment.id, course_id: course.id },
                 format: :js
 
         expect(response.status).to eq(200)
@@ -194,7 +196,7 @@ describe AnnotationsController do
                 :create,
                 params: { content: annotation_text.content, category_id: annotation_category.id,
                           submission_file_id: pdf_submission_file.id, x1: 0, x2: 1, y1: 0, y2: 1, page: 1,
-                          result_id: result.id, assignment_id: assignment.id },
+                          result_id: result.id, assignment_id: assignment.id, course_id: course.id },
                 format: :js
 
         expect(response.status).to eq(200)
@@ -210,7 +212,7 @@ describe AnnotationsController do
                 :create,
                 params: { content: 'I like icecream!', category_id: category.id,
                           submission_file_id: submission_file.id, line_start: 1, line_end: 1, column_start: 1,
-                          column_end: 1, result_id: result.id, assignment_id: assignment.id },
+                          column_end: 1, result_id: result.id, assignment_id: assignment.id, course_id: course.id },
                 format: :js
 
         assert_response :success
@@ -231,7 +233,7 @@ describe AnnotationsController do
         delete_as user,
                   :destroy,
                   params: { id: anno.id, submission_file_id: submission_file.id, assignment_id: assignment.id,
-                            result_id: result.id },
+                            result_id: result.id, course_id: course.id },
                   format: :js
 
         assert_response :success
@@ -253,7 +255,7 @@ describe AnnotationsController do
         delete_as user,
                   :destroy,
                   params: { id: annotations[1].id, submission_file_id: submission_file.id, assignment_id: assignment.id,
-                            result_id: result.id },
+                            result_id: result.id, course_id: course.id },
                   format: :js
 
         assert_response :success
@@ -276,7 +278,7 @@ describe AnnotationsController do
         delete_as user,
                   :destroy,
                   params: { id: anno.id, submission_file_id: submission_file.id, assignment_id: assignment.id,
-                            result_id: result.id },
+                            result_id: result.id, course_id: course.id },
                   format: :js
 
         expect(AnnotationText.exists?(annotation_text.id)).to be true
@@ -294,7 +296,7 @@ describe AnnotationsController do
         delete_as user,
                   :destroy,
                   params: { id: anno.id, submission_file_id: submission_file.id, assignment_id: assignment.id,
-                            result_id: result.id },
+                            result_id: result.id, course_id: course.id },
                   format: :js
 
         expect(AnnotationText.exists?(new_text.id)).to be false
@@ -312,7 +314,7 @@ describe AnnotationsController do
         put_as user,
                :update,
                params: { id: anno.id, assignment_id: assignment.id, submission_file_id: submission_file.id,
-                         result_id: result.id, content: 'new content' },
+                         result_id: result.id, content: 'new content', course_id: course.id },
                format: :js
         assert_response :success
         expect(anno.annotation_text.reload.content).to eq 'new content'
@@ -337,7 +339,8 @@ describe AnnotationsController do
         put_as user,
                :update,
                params: { id: anno1.id, assignment_id: assignment.id, submission_file_id: submission_file.id,
-                         result_id: result.id, content: 'new content', annotation_text: { change_all: '0' } },
+                         result_id: result.id, content: 'new content', annotation_text: { change_all: '0' },
+                         course_id: course.id },
                format: :js
         assert_response :success
         expect(anno1.reload.annotation_text.reload.content).to eq 'new content'
@@ -360,6 +363,7 @@ describe AnnotationsController do
                 params: { content: 'New content!',
                           id: annotation.id,
                           result_id: result.id,
+                          course_id: course.id,
                           assignment_id: assignment.id },
                 format: :js
         expect(annotation.reload.annotation_text.content).to eq 'New content!'
@@ -373,6 +377,7 @@ describe AnnotationsController do
                 :update,
                 params: { content: 'New content!',
                           id: annotation.id,
+                          course_id: course.id,
                           result_id: other_grouping.current_result.id,
                           assignment_id: assignment.id },
                 format: :js
@@ -385,6 +390,7 @@ describe AnnotationsController do
                 :destroy,
                 params: { id: annotation.id,
                           result_id: result.id,
+                          course_id: course.id,
                           assignment_id: assignment.id },
                 format: :js
         expect(result.reload.annotations.size).to eq 0
@@ -396,6 +402,7 @@ describe AnnotationsController do
                 :destroy,
                 params: { id: annotation.id,
                           result_id: result.id,
+                          course_id: course.id,
                           assignment_id: assignment.id },
                 format: :js
         expect(result.reload.annotations.size).to eq 0
@@ -417,6 +424,7 @@ describe AnnotationsController do
                 params: { content: 'New content!',
                           id: annotation.id,
                           result_id: result.id,
+                          course_id: course.id,
                           assignment_id: assignment.id },
                 format: :js
         assert_response :bad_request
@@ -433,6 +441,7 @@ describe AnnotationsController do
                 params: { content: 'New content!',
                           id: annotation.id,
                           result_id: result.id,
+                          course_id: course.id,
                           assignment_id: assignment.id },
                 format: :js
         assert_response :bad_request
@@ -447,6 +456,7 @@ describe AnnotationsController do
                 :destroy,
                 params: { id: annotation.id,
                           result_id: result.id,
+                          course_id: course.id,
                           assignment_id: assignment.id },
                 format: :js
         assert_response :bad_request
@@ -461,6 +471,7 @@ describe AnnotationsController do
                 :destroy,
                 params: { id: annotation.id,
                           result_id: result.id,
+                          course_id: course.id,
                           assignment_id: assignment.id },
                 format: :js
         expect(result.reload.annotations.size).to eq 0
@@ -472,6 +483,7 @@ describe AnnotationsController do
                 :destroy,
                 params: { id: annotation.id,
                           result_id: result.id,
+                          course_id: course.id,
                           assignment_id: assignment.id },
                 format: :js
         assert_response :bad_request
@@ -483,6 +495,7 @@ describe AnnotationsController do
                 :destroy,
                 params: { id: annotation.id,
                           result_id: result.id,
+                          course_id: course.id,
                           assignment_id: assignment.id },
                 format: :js
         expect(result.reload.annotations.size).to eq 0
@@ -498,7 +511,7 @@ describe AnnotationsController do
         post_as user,
                 :add_existing_annotation,
                 params: { annotation_text_id: annotation_text.id, submission_file_id: submission_file.id, line_start: 1,
-                          line_end: 1, column_start: 1, column_end: 1, result_id: result.id },
+                          line_end: 1, column_start: 1, column_end: 1, result_id: result.id, course_id: course.id },
                 format: :js
 
         is_expected.to respond_with(:forbidden)
@@ -512,7 +525,7 @@ describe AnnotationsController do
                 :create,
                 params: { content: annotation_text.content, category_id: annotation_category.id,
                           submission_file_id: submission_file.id, line_start: 1, line_end: 1, column_start: 1,
-                          column_end: 1, result_id: result.id, assignment_id: assignment.id },
+                          column_end: 1, result_id: result.id, assignment_id: assignment.id, course_id: course.id },
                 format: :js
 
         is_expected.to respond_with(:forbidden)
@@ -531,7 +544,7 @@ describe AnnotationsController do
         delete_as user,
                   :destroy,
                   params: { id: anno.id, submission_file_id: submission_file.id, assignment_id: assignment.id,
-                            result_id: result.id },
+                            result_id: result.id, course_id: course.id },
                   format: :js
 
         is_expected.to respond_with(:forbidden)
@@ -550,7 +563,7 @@ describe AnnotationsController do
         put_as user,
                :update,
                params: { id: anno.id, assignment_id: assignment.id, submission_file_id: submission_file.id,
-                         result_id: result.id, content: 'new content' },
+                         result_id: result.id, content: 'new content', course_id: course.id },
                format: :js
         is_expected.to respond_with(:forbidden)
         expect(anno.annotation_text.reload.content).to_not eq 'new content'

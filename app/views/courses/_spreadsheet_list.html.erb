@@ -18,7 +18,7 @@
                 <% link_text = t('assignments.hidden', assignment_text: link_text) %>
               <% end %>
               <%= link_to link_text,
-                          view_summary_grade_entry_form_path(grade_entry_form.id),
+                          view_summary_course_grade_entry_form_path(@current_course, grade_entry_form.id),
                           data: { remote: true, id: grade_entry_form.short_identifier } %>
             </td>
           </tr>

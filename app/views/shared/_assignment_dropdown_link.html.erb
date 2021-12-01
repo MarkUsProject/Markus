@@ -5,6 +5,6 @@
   <% end %>
 
   <%= link_to link_text,
-              switch_assignment_path(assignment.id),
+              switch_course_assignment_path(@current_course, assignment.id),
               title: assignment.description %>
 </li>

@@ -7,6 +7,10 @@ class TestRun < ApplicationRecord
   belongs_to :grouping
   belongs_to :role
 
+  has_one :course, through: :role
+
+  validate :courses_should_match
+
   ASSIGNMENTS_DIR = File.join(Settings.autotest.client_dir, 'assignments').freeze
   SPECS_FILE = 'specs.json'.freeze
   FILES_DIR = 'files'.freeze

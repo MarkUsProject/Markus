@@ -1,47 +1,49 @@
 describe AdminsController do
-
-  before :each do
-    # Authenticate user is not timed out, and has administrator rights.
-    allow(controller).to receive(:session_expired?).and_return(false)
-    allow(controller).to receive(:logged_in?).and_return(true)
-    allow(controller).to receive(:current_user).and_return(build(:admin))
-  end
+  let(:course) { admin.course }
+  let(:admin) { create :admin }
+  let(:role) { admin }
+  let(:human) { create :human }
 
   context 'An Admin should' do
-    it 'be able to get :new' do
-      get :new
-      expect(response.status).to eq(200)
-    end
-
-    it 'respond with success on index' do
-      get :index
-      expect(response.status).to eq(200)
-    end
-
-    it 'be able to create Admin' do
-      post :create, params: { user: { user_name: 'jdoe', last_name: 'Doe', first_name: 'Jane' } }
-      Admin.find_by_user_name('jdoe')
-      expect(response).to redirect_to action: 'index'
-    end
-
-    context 'with a second user' do
-      before do
-        @a2 = Admin.create(user_name: 'admin2',
-                         last_name: 'admin2',
-                         first_name: 'admin2')
+    context '#new' do
+      it_behaves_like 'role is from a different course' do
+        subject { get_as new_role, :new, params: { course_id: course.id } }
       end
+      it 'be able to get :new' do
+        get_as admin, :new, params: { course_id: course.id }
+        expect(response.status).to eq(200)
+      end
+    end
 
-      it 'be able to update' do
-        put :update, params: { id: @a2.id, user: { last_name: 'John', first_name: 'Doe' } }
+    context '#index' do
+      it_behaves_like 'role is from a different course' do
+        subject { get_as new_role, :index, params: { course_id: course.id } }
+      end
+      it 'respond with success on index' do
+        get_as admin, :index, params: { course_id: course.id }
+        expect(response.status).to eq(200)
+      end
+    end
+
+    context '#create' do
+      it_behaves_like 'role is from a different course' do
+        subject { post_as new_role, :create, params: { course_id: course.id, user_name: human.user_name } }
+      end
+      it 'be able to create Admin' do
+        post_as admin,
+                :create,
+                params: { course_id: course.id, user_name: human.user_name }
+        expect(course.admins.joins(:human).where('users.user_name': human.user_name)).to exist
         expect(response).to redirect_to action: 'index'
       end
-
-      it 'be able to edit' do
-        get :edit, params: { id: @a2.id }
-        expect(response.status).to eq(200)
-        expect(assigns(:user)).to be_truthy
+      context 'when a human does not exist' do
+        let(:human) { build :human }
+        subject { post_as admin, :create, params: { course_id: course.id, user_name: human.user_name } }
+        it 'should not create a Ta' do
+          admin
+          expect { subject }.not_to(change { Admin.count })
+        end
       end
     end
   end
-
 end

@@ -42,6 +42,7 @@ class Grouping < ApplicationRecord
   has_one :submitted_remark, through: :current_submission_used
 
   has_and_belongs_to_many :tags
+  validate :assignments_should_match
 
   has_many :grace_period_deductions,
            through: :non_rejected_student_memberships
@@ -78,7 +79,8 @@ class Grouping < ApplicationRecord
 
   belongs_to :group
   validates_associated :group
-  validate :assignment_group_course_match
+
+  validate :courses_should_match
 
   has_one :course, through: :assignment
 
@@ -778,8 +780,10 @@ class Grouping < ApplicationRecord
       assignment.section_due_dates.present?
   end
 
-  def assignment_group_course_match
-    return if self.assignment.nil? || self.group.nil?
-    errors.add(:base, 'Assignment and Group must be in same course') unless self.assignment.course == self.group.course
+  def assignments_should_match
+    return if assessment_id.nil?
+    unless self.tags.pluck(:assessment_id).compact.all? { |aid| aid == self.assessment_id }
+      errors.add(:base, 'tags must belong to the same assignment as this grouping')
+    end
   end
 end

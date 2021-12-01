@@ -1,5 +1,5 @@
 describe AnnotationCategoryPolicy do
-  let(:context) { { user: user } }
+  let(:context) { { real_user: user } }
   describe_rule :manage? do
     succeed 'when the user is an admin' do
       let(:user) { build(:admin) }

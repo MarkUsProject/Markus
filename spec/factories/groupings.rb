@@ -11,11 +11,13 @@ FactoryBot.define do
 
     factory :grouping_with_inviter do
       transient do
-        inviter { create(:student) }
+        inviter { build(:student) }
       end
 
       after(:create) do |grouping, evaluator|
+        evaluator.inviter.course = grouping.course unless evaluator.inviter.persisted?
         create :inviter_student_membership, grouping: grouping, role: evaluator.inviter
+        evaluator.inviter.save!
         grouping.reload
       end
     end

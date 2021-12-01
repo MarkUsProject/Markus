@@ -1,6 +1,7 @@
 describe PenaltyPeriodSubmissionRule do
   let(:rule_type) { :penalty_period_submission_rule }
   let(:result) { submission.get_latest_result }
+  it { is_expected.to have_one(:course) }
 
   context 'when the group submitted on time' do
     include_context 'submission_rule_on_time'

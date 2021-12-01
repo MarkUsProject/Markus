@@ -7,6 +7,8 @@ class PeerReview < ApplicationRecord
   validates_associated :reviewer
   validates_associated :result
   validate :no_students_should_be_reviewer_and_reviewee
+  has_one :course, through: :result
+  validate :assignments_should_match
 
   def no_students_should_be_reviewer_and_reviewee
     if result and reviewer
@@ -121,6 +123,15 @@ class PeerReview < ApplicationRecord
         next if reviewer.nil?
         PeerReview.create_peer_review_between(reviewer, reviewee)
       end
+    end
+  end
+
+  private
+
+  def assignments_should_match
+    return if result.nil? || reviewer.nil?
+    unless result.submission.grouping.assignment == reviewer.assignment.parent_assignment
+      errors.add(:base, 'result and reviewer must all belong to the same assignment')
     end
   end
 end

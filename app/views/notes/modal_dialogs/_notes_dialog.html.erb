@@ -32,7 +32,7 @@
     <%= form_tag(
         add_note_notes_path(noteable_id: @noteable,
                             noteable_type: @cls,
-                            user: @current_user,
+                            user: @current_role,
                             action_to: @action,
                             controller_to: @cont,
                             highlight_field: @highlight_field,

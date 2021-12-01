@@ -1,15 +1,11 @@
 describe GroupsController do
+  # TODO: add 'role is from a different course' shared tests to each route test below
   let(:grouping) { create(:grouping) }
   let(:assignment) { grouping.assignment }
+  let(:course) { assignment.course }
 
   describe 'administrator access' do
-    before :each do
-      # Authenticate user is not timed out, and has administrator rights.
-      allow(controller).to receive(:session_expired?).and_return(false)
-      allow(controller).to receive(:logged_in?).and_return(true)
-      allow(controller).to receive(:current_user).and_return(build(:admin))
-    end
-
+    let(:admin) { create :admin }
     describe 'GET #new' do
       before :each do
         allow(Assignment).to receive(:find).and_return(assignment)
@@ -20,7 +16,7 @@ describe GroupsController do
           expect(assignment).to receive(:add_group)
                                   .with(nil)
                                   .and_return(grouping)
-          get :new, params: { assignment_id: assignment }
+          get_as admin, :new, params: { course_id: course.id, assignment_id: assignment }
         end
       end
 
@@ -32,7 +28,7 @@ describe GroupsController do
             expect(assignment).to receive(:add_group)
                                     .with(group_name)
                                     .and_return(grouping)
-            get :new, params: { assignment_id: assignment, new_group_name: group_name }
+            get_as admin, :new, params: { course_id: course.id, assignment_id: assignment, new_group_name: group_name }
           end
         end
 
@@ -42,7 +38,7 @@ describe GroupsController do
                                    .with(group_name)
                                    .and_raise('Group #{group_name} already exists')
 
-            get :new, params: { assignment_id: assignment, new_group_name: group_name }
+            get_as admin, :new, params: { course_id: course.id, assignment_id: assignment, new_group_name: group_name }
           end
 
           it 'assigns the error message to flash[:error]' do
@@ -64,32 +60,38 @@ describe GroupsController do
         end
 
         it 'should not flash an error message' do
-          delete :remove_group, params: { grouping_id: [grouping.id], assignment_id: assignment }
+          delete_as admin, :remove_group,
+                    params: { course_id: course.id, grouping_id: [grouping.id], assignment_id: assignment }
           expect(flash[:error]).to be_nil
         end
 
         it 'populates @removed_groupings with deleted groupings' do
-          delete :remove_group, params: { grouping_id: [grouping.id], assignment_id: assignment }
+          delete_as admin, :remove_group,
+                    params: { course_id: course.id, grouping_id: [grouping.id], assignment_id: assignment }
           expect(assigns(:removed_groupings)).to match_array([grouping])
         end
 
         it 'calls grouping.has_submission?' do
           expect(grouping).to receive(:has_submission?).and_return(false)
-          delete :remove_group, params: { grouping_id: [grouping.id], assignment_id: assignment }
+          delete_as admin, :remove_group,
+                    params: { course_id: course.id, grouping_id: [grouping.id], assignment_id: assignment }
         end
 
         it 'calls grouping.delete_groupings' do
           expect(grouping).to receive(:delete_grouping)
-          delete :remove_group, params: { grouping_id: [grouping.id], assignment_id: assignment }
+          delete_as admin, :remove_group,
+                    params: { course_id: course.id, grouping_id: [grouping.id], assignment_id: assignment }
         end
 
         it 'should attempt to update permissions file' do
           expect(Repository.get_class).to receive(:update_permissions_after)
-          delete :remove_group, params: { grouping_id: [grouping.id], assignment_id: assignment }
+          delete_as admin, :remove_group,
+                    params: { course_id: course.id, grouping_id: [grouping.id], assignment_id: assignment }
         end
 
         it 'should return the :ok status code' do
-          delete :remove_group, params: { grouping_id: [grouping.id], assignment_id: assignment }
+          delete_as admin, :remove_group,
+                    params: { course_id: course.id, grouping_id: [grouping.id], assignment_id: assignment }
           expect(response).to have_http_status(:ok)
         end
       end
@@ -98,7 +100,8 @@ describe GroupsController do
         before :each do
           allow(grouping).to receive(:has_submission?).and_return(true)
 
-          delete :remove_group, params: { grouping_id: [grouping.id], assignment_id: assignment }
+          delete_as admin, :remove_group,
+                    params: { course_id: course.id, grouping_id: [grouping.id], assignment_id: assignment }
         end
 
         it 'should have an error message in the flash queue' do
@@ -111,17 +114,20 @@ describe GroupsController do
 
         it 'calls grouping.has_submission?' do
           expect(grouping).to receive(:has_submission?).and_return(true)
-          delete :remove_group, params: { grouping_id: [grouping.id], assignment_id: assignment }
+          delete_as admin, :remove_group,
+                    params: { course_id: course.id, grouping_id: [grouping.id], assignment_id: assignment }
         end
 
         it 'should return the :ok status code' do
-          delete :remove_group, params: { grouping_id: [grouping.id], assignment_id: assignment }
+          delete_as admin, :remove_group,
+                    params: { course_id: course.id, grouping_id: [grouping.id], assignment_id: assignment }
           expect(response).to have_http_status(:ok)
         end
 
         it 'should attempt to update permissions file' do
           expect(Repository.get_class).to receive(:update_permissions_after)
-          delete :remove_group, params: { grouping_id: [grouping.id], assignment_id: assignment }
+          delete_as admin, :remove_group,
+                    params: { course_id: course.id, grouping_id: [grouping.id], assignment_id: assignment }
         end
       end
     end
@@ -135,7 +141,7 @@ describe GroupsController do
     describe 'GET #index' do
       before :each do
         allow(Assignment).to receive(:find).and_return(assignment)
-        get :index, params: { assignment_id: assignment }
+        get_as admin, :index, params: { course_id: course.id, assignment_id: assignment }
       end
 
       it 'assigns the requested assignment to @assignment' do
@@ -167,18 +173,18 @@ describe GroupsController do
         # Create students corresponding to the file_good
         @student_user_names = %w(c8shosta c5bennet)
         @student_user_names.each do |name|
-          create(:user, user_name: name, type: 'Student')
+          create(:student, human: create(:human, user_name: name))
         end
       end
 
       include_examples 'a controller supporting upload' do
-        let(:params) { { assignment_id: @assignment.id } }
+        let(:params) { { course_id: course.id, assignment_id: @assignment.id } }
       end
 
       it 'accepts a valid file' do
         ActiveJob::Base.queue_adapter = :test
         expect do
-          post :upload, params: {
+          post_as admin, :upload, params: { course_id: course.id,
             assignment_id: @assignment.id,
             upload_file: fixture_file_upload('groups/form_good.csv', 'text/csv')
           }
@@ -189,7 +195,7 @@ describe GroupsController do
       end
 
       it 'does not accept files with invalid columns' do
-        post :upload, params: {
+        post_as admin, :upload, params: { course_id: course.id,
           assignment_id: @assignment.id,
           upload_file: fixture_file_upload('groups/form_invalid_column.csv', 'text/csv')
         }
@@ -214,8 +220,8 @@ describe GroupsController do
 
         @group = FactoryBot.create(:group, course: @assignment.course)
 
-        @student1 = create(:student, user_name: 'c8shosta')
-        @student2 = create(:student, user_name: 'c5bennet')
+        @student1 = create(:student, human: create(:human, user_name: 'c8shosta'))
+        @student2 = create(:student, human: create(:human,  user_name: 'c5bennet'))
 
         grouping = Grouping.new(assignment: @assignment, group: @group)
         grouping.save
@@ -225,13 +231,15 @@ describe GroupsController do
       end
 
       it 'responds with appropriate status' do
-        get :download_grouplist, params: { assignment_id: @assignment.id }, format: 'csv'
+        get_as admin, :download_grouplist,
+               params: { course_id: course.id, assignment_id: @assignment.id }, format: 'csv'
         expect(response.status).to eq(200)
       end
 
       # parse header object to check for the right disposition
       it 'sets disposition as attachment' do
-        get :download_grouplist, params: { assignment_id: @assignment.id }, format: 'csv'
+        get_as admin, :download_grouplist,
+               params: { course_id: course.id, assignment_id: @assignment.id }, format: 'csv'
         d = response.header['Content-Disposition'].split.first
         expect(d).to eq 'attachment;'
       end
@@ -242,18 +250,21 @@ describe GroupsController do
           # to prevent a 'missing template' error
           @controller.head :ok
         }
-        get :download_grouplist, params: { assignment_id: @assignment.id }, format: 'csv'
+        get_as admin, :download_grouplist,
+               params: { course_id: course.id, assignment_id: @assignment.id }, format: 'csv'
       end
 
       # parse header object to check for the right content type
       it 'returns text/csv type' do
-        get :download_grouplist, params: { assignment_id: @assignment.id }, format: 'csv'
+        get_as admin, :download_grouplist,
+               params: { course_id: course.id, assignment_id: @assignment.id }, format: 'csv'
         expect(response.media_type).to eq 'text/csv'
       end
 
       # parse header object to check for the right file naming convention
       it 'filename passes naming conventions' do
-        get :download_grouplist, params: { assignment_id: @assignment.id }, format: 'csv'
+        get_as admin, :download_grouplist,
+               params: { course_id: course.id, assignment_id: @assignment.id }, format: 'csv'
         filename = response.header['Content-Disposition']
                            .split[1].split('"').second
         expect(filename).to eq "#{@assignment.short_identifier}_group_list.csv"
@@ -268,12 +279,12 @@ describe GroupsController do
         let(:accepted_student) { create :student }
 
         before :each do
-          create :student_membership, user: pending_student, grouping: grouping
-          create :accepted_student_membership, user: accepted_student, grouping: grouping
+          create :student_membership, role: pending_student, grouping: grouping
+          create :accepted_student_membership, role: accepted_student, grouping: grouping
         end
 
         it 'should remove an accepted membership' do
-          post :global_actions, params: { assignment_id: grouping.assignment.id,
+          post_as admin, :global_actions, params: { course_id: course.id, assignment_id: grouping.assignment.id,
                                           groupings: [grouping.id],
                                           students_to_remove: [accepted_student.id],
                                           global_actions: 'unassign' }
@@ -281,7 +292,7 @@ describe GroupsController do
         end
 
         it 'should remove a pending membership' do
-          post :global_actions, params: { assignment_id: grouping.assignment.id,
+          post_as admin, :global_actions, params: { course_id: course.id, assignment_id: grouping.assignment.id,
                                           groupings: [grouping.id],
                                           students_to_remove: [pending_student.id],
                                           global_actions: 'unassign' }
@@ -294,7 +305,7 @@ describe GroupsController do
       let(:grouping) { create :grouping_with_inviter }
 
       it 'should validate groupings' do
-        post :global_actions, params: {
+        post_as admin, :global_actions, params: { course_id: course.id,
           assignment_id: grouping.assignment.id,
           groupings: [grouping.id],
           global_actions: 'valid'
@@ -307,7 +318,7 @@ describe GroupsController do
       let(:grouping) { create :grouping_with_inviter, admin_approved: true }
 
       it 'should invalidate groupings' do
-        post :global_actions, params: {
+        post_as admin, :global_actions, params: { course_id: course.id,
           assignment_id: grouping.assignment.id,
           groupings: [grouping.id],
           global_actions: 'invalid'
@@ -322,7 +333,7 @@ describe GroupsController do
       let!(:grouping_with_submission) { create :grouping_with_inviter_and_submission }
 
       it 'should delete groupings without submissions' do
-        post :global_actions, params: {
+        post_as admin, :global_actions, params: { course_id: course.id,
           assignment_id: grouping.assignment.id,
           groupings: [grouping.id],
           global_actions: 'delete'
@@ -332,7 +343,7 @@ describe GroupsController do
       end
 
       it 'should not delete groupings with submissions' do
-        post :global_actions, params: {
+        post_as admin, :global_actions, params: { course_id: course.id,
           assignment_id: grouping_with_submission.assignment.id,
           groupings: [grouping_with_submission.id],
           global_actions: 'delete'
@@ -348,7 +359,7 @@ describe GroupsController do
       let(:student2) { create :student }
 
       it 'adds multiple students to group' do
-        post :global_actions, params: {
+        post_as admin, :global_actions, params: { course_id: course.id,
           assignment_id: grouping.assignment.id,
           groupings: [grouping],
           students: [student1.id, student2.id],
@@ -365,31 +376,32 @@ describe GroupsController do
       let(:student2) { create :student }
 
       it 'should remove multiple students from group' do
-        post :global_actions, params: {
+        post_as admin, :global_actions, params: { course_id: course.id,
           assignment_id: grouping.assignment.id,
           groupings: [grouping],
           students: [student1.id, student2.id],
           global_actions: 'assign'
         }
 
-        post :global_actions, params: {
+        post_as admin, :global_actions, params: { course_id: course.id,
           assignment_id: grouping.assignment.id,
           groupings: [grouping],
           students_to_remove: [student1.user_name, student2.user_name],
           global_actions: 'unassign'
         }
 
-        expect(grouping.students.size).to eq 1
+        expect(grouping.reload.students.size).to eq 1
       end
     end
 
     describe 'GET #get_names' do
       let!(:assignment) { create(:assignment_for_scanned_exam) }
       let!(:student1) do
-        create(:student, user_name: 'c9test1', first_name: 'first', last_name: 'last', id_number: '12345')
+        create(:student,
+               human: create(:human, user_name: 'c9test1', first_name: 'first', last_name: 'last', id_number: '12345'))
       end
       let!(:student2) do
-        create(:student, user_name: 'zzz', first_name: 'zzz', last_name: 'zzz', id_number: '789')
+        create(:student, human: create(:human, user_name: 'zzz', first_name: 'zzz', last_name: 'zzz', id_number: '789'))
       end
       let(:expected) do
         [{ 'id' => student1.id,
@@ -399,7 +411,7 @@ describe GroupsController do
       end
 
       it 'returns matches for user_name' do
-        post :get_names, params: {
+        post_as admin, :get_names, params: { course_id: course.id,
           assignment_id: assignment.id,
           assignment: assignment.id,
           term: 'c9',
@@ -410,7 +422,7 @@ describe GroupsController do
       end
 
       it 'returns matches for first_name' do
-        post :get_names, params: {
+        post_as admin, :get_names, params: { course_id: course.id,
           assignment_id: assignment.id,
           assignment: assignment.id,
           term: 'fir',
@@ -421,7 +433,7 @@ describe GroupsController do
       end
 
       it 'returns matches for last_name' do
-        post :get_names, params: {
+        post_as admin, :get_names, params: { course_id: course.id,
           assignment_id: assignment.id,
           assignment: assignment.id,
           term: 'la',
@@ -432,7 +444,7 @@ describe GroupsController do
       end
 
       it 'returns matches for id_number' do
-        post :get_names, params: {
+        post_as admin, :get_names, params: { course_id: course.id,
           assignment_id: assignment.id,
           assignment: assignment.id,
           term: '123',
@@ -446,12 +458,8 @@ describe GroupsController do
 
   describe 'student access' do
     before :each do
-      # Authenticate user is not timed out, and has administrator rights.
-      @current_student = create(:student, user_name: 'c9test2')
-      allow(controller).to receive(:session_expired?).and_return(false)
-      allow(controller).to receive(:logged_in?).and_return(true)
-      allow(controller).to receive(:current_user).and_return(@current_student)
-      @student = create(:student, user_name: 'c9test1')
+      @current_student = create(:student, human: create(:human, user_name: 'c9test2'))
+      @student = create(:student, human: create(:human, user_name: 'c9test1'))
       @assignment = create(:assignment,
                            due_date: 1.day.from_now,
                            assignment_properties_attributes: { student_form_groups: true, group_max: 4 })
@@ -459,7 +467,7 @@ describe GroupsController do
 
     describe 'POST #create' do
       before :each do
-        post_as @student, :create, params: { assignment_id: assignment }
+        post_as @student, :create, params: { course_id: course.id, assignment_id: assignment }
       end
 
       it 'should respond with redirect' do
@@ -468,8 +476,9 @@ describe GroupsController do
     end
 
     describe 'DELETE #destroy' do
+      let(:grouping) { create :grouping }
       before :each do
-        delete_as @student, :destroy, params: { assignment_id: assignment, id: 1 }
+        delete_as @student, :destroy, params: { course_id: course.id, assignment_id: assignment.id, id: grouping.id }
       end
 
       it 'should respond with success' do
@@ -486,34 +495,32 @@ describe GroupsController do
 
       it 'should send an email to a single student if invited to a grouping' do
         expect do
-          post :invite_member,
-               params: { invite_member: @student.user_name,
-                         assignment_id: @assignment.id }
+          post_as @current_student, :invite_member,
+                  params: { course_id: course.id, invite_member: @student.user_name, assignment_id: @assignment.id }
         end.to change { ActionMailer::Base.deliveries.count }.by(1)
       end
 
       it 'should send an email to every student invited to a grouping if more than one are' do
-        @another_student = create(:student, user_name: 'c9test3')
+        @another_student = create(:student, human: create(:human, user_name: 'c9test3'))
         expect do
-          post :invite_member,
-               params: { invite_member: "#{@student.user_name},#{@another_student.user_name}",
-                         assignment_id: @assignment.id }
+          post_as @current_student, :invite_member,
+                  params: { course_id: course.id, invite_member: "#{@student.user_name},#{@another_student.user_name}",
+                            assignment_id: @assignment.id }
         end.to change { ActionMailer::Base.deliveries.count }.by(2)
       end
       it 'should not send an email to every student invited to a grouping if some have emails disabled' do
-        @another_student = create(:student, user_name: 'c9test3', receives_invite_emails: false)
+        @another_student = create(:student, human: create(:human, user_name: 'c9test3'), receives_invite_emails: false)
         expect do
-          post :invite_member,
-               params: { invite_member: "#{@student.user_name},#{@another_student.user_name}",
-                         assignment_id: @assignment.id }
+          post_as @current_student, :invite_member,
+                  params: { course_id: course.id, invite_member: "#{@student.user_name},#{@another_student.user_name}",
+                            assignment_id: @assignment.id }
         end.to change { ActionMailer::Base.deliveries.count }.by(1)
       end
       it 'should not send an email to a single student if invited to a grouping and they have emails disabled' do
         @student.update!(receives_invite_emails: false)
         expect do
-          post :invite_member,
-               params: { invite_member: @student.user_name,
-                         assignment_id: @assignment.id }
+          post_as @current_student, :invite_member,
+                  params: { course_id: course.id, invite_member: @student.user_name, assignment_id: @assignment.id }
         end.to change { ActionMailer::Base.deliveries.count }.by(0)
       end
     end
@@ -521,55 +528,49 @@ describe GroupsController do
     describe '#accept_invitation' do
       let!(:grouping) { create(:grouping_with_inviter) }
       it 'accepts a pending invitation' do
-        invitation = create(:student_membership, user: @current_student, grouping: grouping)
-        post :accept_invitation,
-             params: { assignment_id: grouping.assessment_id,
-                       grouping_id: grouping.id }
+        invitation = create(:student_membership, role: @current_student, grouping: grouping)
+        post_as @current_student, :accept_invitation,
+                params: { course_id: course.id, assignment_id: grouping.assessment_id, grouping_id: grouping.id }
         expect(invitation.reload.membership_status).to eq StudentMembership::STATUSES[:accepted]
       end
 
       it 'accepts a rejected invitation' do
-        invitation = create(:rejected_student_membership, user: @current_student, grouping: grouping)
-        post :accept_invitation,
-             params: { assignment_id: grouping.assessment_id,
-                       grouping_id: grouping.id }
+        invitation = create(:rejected_student_membership, role: @current_student, grouping: grouping)
+        post_as @current_student, :accept_invitation,
+                params: { course_id: course.id, assignment_id: grouping.assessment_id, grouping_id: grouping.id }
         expect(invitation.reload.membership_status).to eq StudentMembership::STATUSES[:accepted]
       end
 
       it 'fails to accept when there is no invitation' do
-        post :accept_invitation,
-             params: { assignment_id: grouping.assessment_id,
-                       grouping_id: grouping.id }
+        post_as @current_student, :accept_invitation,
+                params: { course_id: course.id, assignment_id: grouping.assessment_id, grouping_id: grouping.id }
         assert_response :unprocessable_entity
       end
 
       it 'fails to accept when the invitation has already been accepted' do
-        create(:accepted_student_membership, user: @current_student, grouping: grouping)
-        post :accept_invitation,
-             params: { assignment_id: grouping.assessment_id,
-                       grouping_id: grouping.id }
+        create(:accepted_student_membership, role: @current_student, grouping: grouping)
+        post_as @current_student, :accept_invitation,
+                params: { course_id: course.id, assignment_id: grouping.assessment_id, grouping_id: grouping.id }
         assert_response :unprocessable_entity
       end
 
       it 'fails to accept when another invitation has already been accepted' do
         grouping2 = create(:grouping_with_inviter, assignment: grouping.assignment)
-        create(:student_membership, user: @current_student, grouping: grouping)
-        create(:accepted_student_membership, user: @current_student, grouping: grouping2)
-        post :accept_invitation,
-             params: { assignment_id: grouping.assessment_id,
-                       grouping_id: grouping.id }
+        create(:student_membership, role: @current_student, grouping: grouping)
+        create(:accepted_student_membership, role: @current_student, grouping: grouping2)
+        post_as @current_student, :accept_invitation,
+                params: { course_id: course.id, assignment_id: grouping.assessment_id, grouping_id: grouping.id }
         assert_response :unprocessable_entity
       end
 
       it 'rejects other pending invitations' do
-        create(:student_membership, user: @current_student, grouping: grouping)
+        create(:student_membership, role: @current_student, grouping: grouping)
         3.times do |_|
           new_grouping = create(:grouping_with_inviter, assignment: grouping.assignment)
-          create(:student_membership, user: @current_student, grouping: new_grouping)
+          create(:student_membership, role: @current_student, grouping: new_grouping)
         end
-        post :accept_invitation,
-             params: { assignment_id: grouping.assessment_id,
-                       grouping_id: grouping.id }
+        post_as @current_student, :accept_invitation,
+                params: { course_id: course.id, assignment_id: grouping.assessment_id, grouping_id: grouping.id }
         expect(@current_student.student_memberships.size).to eq 4
         @current_student.student_memberships.each do |membership|
           if membership.grouping_id == grouping.id
@@ -585,25 +586,22 @@ describe GroupsController do
       let!(:grouping) { create(:grouping_with_inviter) }
 
       it 'rejects a pending invitation' do
-        invitation = create(:student_membership, user: @current_student, grouping: grouping)
-        post :decline_invitation,
-             params: { assignment_id: grouping.assessment_id,
-                       grouping_id: grouping.id }
+        invitation = create(:student_membership, role: @current_student, grouping: grouping)
+        post_as @current_student, :decline_invitation,
+                params: { course_id: course.id, assignment_id: grouping.assessment_id, grouping_id: grouping.id }
         expect(invitation.reload.membership_status).to eq StudentMembership::STATUSES[:rejected]
       end
 
       it 'fails to reject when the invitation has already been accepted' do
-        create(:accepted_student_membership, user: @current_student, grouping: grouping)
-        post :decline_invitation,
-             params: { assignment_id: grouping.assessment_id,
-                       grouping_id: grouping.id }
+        create(:accepted_student_membership, role: @current_student, grouping: grouping)
+        post_as @current_student, :decline_invitation,
+                params: { course_id: course.id, assignment_id: grouping.assessment_id, grouping_id: grouping.id }
         assert_response :unprocessable_entity
       end
 
       it 'fails to reject when there is no invitation' do
-        post :decline_invitation,
-             params: { assignment_id: grouping.assessment_id,
-                       grouping_id: grouping.id }
+        post_as @current_student, :decline_invitation,
+                params: { course_id: course.id, assignment_id: grouping.assessment_id, grouping_id: grouping.id }
         assert_response :unprocessable_entity
       end
     end
@@ -614,26 +612,23 @@ describe GroupsController do
 
         it 'cancels a pending invitation' do
           invitation = create(:student_membership, grouping: grouping)
-          post :disinvite_member,
-               params: { assignment_id: grouping.assessment_id,
-                         membership: invitation.id }
+          post_as @current_student, :disinvite_member,
+                  params: { course_id: course.id, assignment_id: grouping.assessment_id, membership: invitation.id }
           expect(grouping.student_memberships.size).to eq 1
         end
 
         it 'fails to cancel an accepted invitation' do
           invitation = create(:accepted_student_membership, grouping: grouping)
-          post :disinvite_member,
-               params: { assignment_id: grouping.assessment_id,
-                         membership: invitation.id }
+          post_as @current_student, :disinvite_member,
+                  params: { course_id: course.id, assignment_id: grouping.assessment_id, membership: invitation.id }
           assert_response :forbidden
         end
 
         it 'fails to cancel a pending invitation for a different grouping' do
           grouping2 = create(:grouping_with_inviter, assignment: grouping.assignment)
           invitation = create(:accepted_student_membership, grouping: grouping2)
-          post :disinvite_member,
-               params: { assignment_id: grouping.assessment_id,
-                         membership: invitation.id }
+          post_as @current_student, :disinvite_member,
+                  params: { course_id: course.id, assignment_id: grouping.assessment_id, membership: invitation.id }
           assert_response :forbidden
         end
       end
@@ -642,11 +637,10 @@ describe GroupsController do
         let(:grouping) { create(:grouping_with_inviter) }
 
         it 'fails to cancel a pending invitation' do
-          create(:accepted_student_membership, grouping: grouping, user: @current_student)
+          create(:accepted_student_membership, grouping: grouping, role: @current_student)
           invitation = create(:student_membership, grouping: grouping)
-          post :disinvite_member,
-               params: { assignment_id: grouping.assessment_id,
-                         membership: invitation.id }
+          post_as @current_student, :disinvite_member,
+                  params: { course_id: course.id, assignment_id: grouping.assessment_id, membership: invitation.id }
           assert_response :forbidden
         end
       end
@@ -658,34 +652,30 @@ describe GroupsController do
 
         it 'cancels a rejected invitation' do
           invitation = create(:rejected_student_membership, grouping: grouping)
-          post :delete_rejected,
-               params: { assignment_id: grouping.assessment_id,
-                         membership: invitation.id }
+          post_as @current_student, :delete_rejected,
+                  params: { course_id: course.id, assignment_id: grouping.assessment_id, membership: invitation.id }
           expect(grouping.student_memberships.size).to eq 1
         end
 
         it 'fails to delete a pending invitation' do
           invitation = create(:student_membership, grouping: grouping)
-          post :delete_rejected,
-               params: { assignment_id: grouping.assessment_id,
-                         membership: invitation.id }
+          post_as @current_student, :delete_rejected,
+                  params: { course_id: course.id, assignment_id: grouping.assessment_id, membership: invitation.id }
           assert_response :forbidden
         end
 
         it 'fails to delete an accepted invitation' do
           invitation = create(:accepted_student_membership, grouping: grouping)
-          post :delete_rejected,
-               params: { assignment_id: grouping.assessment_id,
-                         membership: invitation.id }
+          post_as @current_student, :delete_rejected,
+                  params: { course_id: course.id, assignment_id: grouping.assessment_id, membership: invitation.id }
           assert_response :forbidden
         end
 
         it 'fails to cancel a rejected invitation for a different grouping' do
           grouping2 = create(:grouping_with_inviter, assignment: grouping.assignment)
           invitation = create(:rejected_student_membership, grouping: grouping2)
-          post :delete_rejected,
-               params: { assignment_id: grouping.assessment_id,
-                         membership: invitation.id }
+          post_as @current_student, :delete_rejected,
+                  params: { course_id: course.id, assignment_id: grouping.assessment_id, membership: invitation.id }
           assert_response :forbidden
         end
       end
@@ -694,37 +684,36 @@ describe GroupsController do
         let(:grouping) { create(:grouping_with_inviter) }
 
         it 'fails to cancel a rejected invitation' do
-          create(:rejected_student_membership, grouping: grouping, user: @current_student)
+          create(:rejected_student_membership, grouping: grouping, role: @current_student)
           invitation = create(:student_membership, grouping: grouping)
-          post :delete_rejected,
-               params: { assignment_id: grouping.assessment_id,
-                         membership: invitation.id }
+          post_as @current_student, :delete_rejected,
+                  params: { course_id: course.id, assignment_id: grouping.assessment_id, membership: invitation.id }
           assert_response :forbidden
         end
       end
     end
   end
   describe '#download_starter_file' do
-    subject { get_as user, :download_starter_file, params: { assignment_id: assignment.id } }
+    subject { get_as role, :download_starter_file, params: { course_id: course.id, assignment_id: assignment.id } }
     context 'an admin' do
-      let(:user) { create :admin }
+      let(:role) { create :admin }
       it 'should respond with 403' do
         subject
         expect(response).to have_http_status(403)
       end
     end
     context 'a grader' do
-      let(:user) { create :ta }
+      let(:role) { create :ta }
       it 'should respond with 403' do
         subject
         expect(response).to have_http_status(403)
       end
     end
     context 'a student' do
-      let(:user) { create :student }
+      let(:role) { create :student }
       let(:assignment) { create :assignment }
       let(:starter_file_group) { create :starter_file_group_with_entries, assignment: assignment }
-      let(:grouping) { create :grouping_with_inviter, assignment: assignment, inviter: user }
+      let(:grouping) { create :grouping_with_inviter, assignment: assignment, inviter: role }
 
       shared_examples 'download starter files properly' do
         it 'should send a zip file containing the correct content' do

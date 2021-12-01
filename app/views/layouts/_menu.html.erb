@@ -1,9 +1,9 @@
 <div class='main'>
 <a href='<%= root_path %>' id='logo-img' aria-label='<%= t('menu.dashboard') %>'></a>
 <ul>
-  <% if @current_user.admin? %>
-    <li class='<%= "active" if controller.controller_name == 'main' %>'>
-      <%= link_to t('menu.dashboard'), controller: 'main' %>
+  <% if @current_role.admin? %>
+    <li class='<%= "active" if controller.controller_name == 'courses' %>'>
+      <%= link_to t('menu.dashboard'), controller: 'courses' %>
     </li>
 
     <li <% if controller.controller_name == 'assignments' ||
@@ -21,7 +21,7 @@
               controller.controller_name == 'automated_tests' %>
           class='active'
         <% end %>>
-      <%= link_to Assignment.model_name.human.pluralize, controller: 'assignments'%>
+      <%= link_to Assignment.model_name.human.pluralize, course_assignments_path(@current_course) %>
     </li>
 
     <li <% if controller.controller_name == 'admins' ||
@@ -30,7 +30,7 @@
               controller.controller_name == 'sections' %>
           class='active'
         <% end %>>
-      <%= link_to User.model_name.human.pluralize, controller: 'students' %>
+      <%= link_to User.model_name.human.pluralize, course_students_path(@current_course) %>
     </li>
   <% else %>
     <li <% if controller.controller_name == 'assignments' ||
@@ -44,29 +44,29 @@
               controller.controller_name == 'automated_tests' %>
           class='active'
         <% end %>>
-      <%= link_to t('menu.home'), controller: 'assignments' %>
+      <%= link_to t('menu.home'), course_assignments_path(@current_course) %>
     </li>
-    <% unless @current_user.admin? || @current_user.ta? %>
+    <% unless @current_role.admin? || @current_role.ta? %>
       <li <% if controller.controller_name == 'course_summaries'%>
           class='active'
           <% end %>>
-        <%= link_to t('course_summary.title'), course_summaries_path %>
+        <%= link_to t('course_summary.title'), course_course_summaries_path(@current_course) %>
       </li>
     <% end %>
   <% end %>
 
-  <% if @current_user.admin? || @current_user.ta? %>
+  <% if @current_role.admin? || @current_role.ta? %>
     <li class='<%= "active" if controller.controller_name == 'notes' %>'>
-      <%= link_to Note.model_name.human.pluralize, notes_path %>
+      <%= link_to Note.model_name.human.pluralize, course_notes_path(@current_course) %>
     </li>
   <% end %>
 
-  <% if @current_user.admin? %>
+  <% if @current_role.admin? %>
     <li <% if controller.controller_name == 'course_summaries' ||
               controller.controller_name == 'marking_schemes' %>
           class='active'
         <% end %>>
-      <%= link_to t('course_summary.title'), course_summaries_path %>
+      <%= link_to t('course_summary.title'), course_course_summaries_path(@current_course) %>
     </li>
   <% end %>
 

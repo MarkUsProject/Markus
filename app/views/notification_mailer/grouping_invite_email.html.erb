@@ -14,12 +14,12 @@
   </p>
   <div class="button_enclosure">
     <%= link_to t('.button_text'),
-                assignment_url(id: @grouping.assignment.id),
+                course_assignment_url(@grouping.assignment.course, @grouping.assignment),
                 class: 'redirectbutton' %>
   </div>
   <p class="alert_text dark-scheme">
     <%= t('.explicit_link',
-          link: assignment_url(id: @grouping.assignment.id)) %>
+          link: course_assignment_url(@grouping.assignment.course, @grouping.assignment)) %>
   </p>
   <p class="alert_text dark-scheme">
     <%= t('.disclaimer') %>

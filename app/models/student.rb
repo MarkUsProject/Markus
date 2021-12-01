@@ -48,9 +48,6 @@ class Student < Role
 
   after_create :create_all_grade_entry_students
 
-  CSV_UPLOAD_ORDER = Settings.student_csv_upload_order.map(&:to_sym)
-  SESSION_TIMEOUT = Settings.student_session_timeout
-
   # Returns true if this student has a Membership in a Grouping for an
   # Assignment with id 'aid', where that Membership.membership_status is either
   # 'accepted' or 'inviter'

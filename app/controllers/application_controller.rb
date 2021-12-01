@@ -5,6 +5,9 @@ class ApplicationController < ActionController::Base
   include UploadHelper
   include DownloadHelper
 
+  authorize :role, through: :current_role
+  authorize :real_user, through: :real_user
+  authorize :real_role, through: :real_role
   verify_authorized
   rescue_from ActionPolicy::Unauthorized, with: :user_not_authorized
 
@@ -21,9 +24,9 @@ class ApplicationController < ActionController::Base
   # set user time zone based on their settings
   around_action :use_time_zone, if: :current_user
   # activate i18n for renaming constants in views
-  before_action :set_locale, :set_markus_version, :set_remote_user, :get_file_encodings
+  before_action :set_locale, :set_markus_version, :get_file_encodings
   # check for active session on every page
-  before_action :authenticate, except: [:login, :page_not_found, :check_timeout]
+  before_action :authenticate, :check_course_switch, :check_record, except: [:login, :page_not_found, :check_timeout]
   # check for AJAX requests
   after_action :flash_to_headers
 
@@ -34,6 +37,14 @@ class ApplicationController < ActionController::Base
     else
       { locale: I18n.locale }
     end
+  end
+
+  def page_not_found
+    render 'shared/http_status',
+           formats: [:html],
+           locals: { code: '404', message: HttpStatusHelper::ERROR_CODE['message']['404'] },
+           status: 404,
+           layout: false
   end
 
   protected
@@ -57,19 +68,6 @@ class ApplicationController < ActionController::Base
       version_info[k.downcase] = v
     end
     @markus_version = "#{version_info['version']}.#{version_info['patch_level']}"
-  end
-
-  def set_remote_user
-    if request.env['HTTP_X_FORWARDED_USER'].present?
-      @markus_auth_remote_user = request.env['HTTP_X_FORWARDED_USER']
-    elsif Settings.remote_user_auth && !Rails.env.production?
-      # This is only used in non-production modes to test Markus behaviours specific to
-      # external authentication. This should not be used in the place of any real
-      # authentication (basic or otherwise)!
-      authenticate_or_request_with_http_basic do |username, _|
-        @markus_auth_remote_user = username
-      end
-    end
   end
 
   # Set locale according to URL parameter. If unknown parameter is
@@ -124,6 +122,11 @@ class ApplicationController < ActionController::Base
     render 'shared/http_status',
            formats: [:html], locals: { code: '403', message: HttpStatusHelper::ERROR_CODE['message']['403'] },
            status: 403, layout: false
+  end
+
+  # Render 403 if the current user is switching roles and they try to view a route for a different course
+  def check_course_switch
+    user_not_authorized if session[:role_switch_course_id] && current_course&.id != session[:role_switch_course_id]
   end
 
   def implicit_authorization_target

@@ -1,5 +1,5 @@
 <% assignments = Assignment.includes(:submission_rule, :assessment_section_properties, :pr_assignment).order(:id) %>
-<% action = @current_user.admin? ? 'edit' : 'summary' %>
+<% action = @current_role.admin? ? 'edit' : 'summary' %>
 
 <% if assignments.empty? %>
   <p><%= t('assignments.none') %></p>
@@ -43,12 +43,12 @@
             </td>
 
             <td>
-              <% if @current_user.admin? && assignment.submission_rule.can_collect_all_now? %>
+              <% if @current_role.admin? && assignment.submission_rule.can_collect_all_now? %>
                 <span>
                   <%= link_to t('submissions.collect.progress',
                                 count: assignment.current_submissions_used.size,
                                 size: assignment.groupings.size),
-                              browse_assignment_submissions_path(assignment_id: assignment.id) %>
+                              browse_course_assignment_submissions_path(@current_course, assignment) %>
                 </span>
               <% end %>
               <% unless assignment.results_average.nil? %>
@@ -64,7 +64,7 @@
                 </span>
               <% end %>
               <% if assignment.submission_rule.can_collect_all_now? %>
-                <% ta_id = @current_user.admin? ? nil : @current_user.id %>
+                <% ta_id = @current_role.admin? ? nil : @current_role.id %>
                 <br>
                 <span>
                   <%= t('submissions.how_many_marked',

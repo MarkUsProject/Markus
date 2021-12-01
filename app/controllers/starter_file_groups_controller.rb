@@ -10,13 +10,11 @@ class StarterFileGroupsController < ApplicationController
   end
 
   def destroy
-    assignment = Assignment.find_by(id: params[:assignment_id])
-    assignment.starter_file_groups.find_by(id: params[:id]).destroy
+    record.destroy
   end
 
   def download_file
-    assignment = Assignment.find_by(id: params[:assignment_id])
-    starter_file_group = assignment.starter_file_groups.find_by(id: params[:id])
+    starter_file_group = record
     file_path = File.join starter_file_group.path, params[:file_name]
     filename = File.basename params[:file_name]
     if File.exist?(file_path)
@@ -27,23 +25,21 @@ class StarterFileGroupsController < ApplicationController
   end
 
   def update
-    assignment = Assignment.find_by(id: params[:assignment_id])
-    starter_file_group = assignment.starter_file_groups.find_by(id: params[:id])
+    starter_file_group = record
     starter_file_group.update!(update_params)
   rescue ActiveRecord::RecordInvalid => e
     flash_message(:error, e.message)
   end
 
   def download_files
-    assignment = Assignment.find(params[:assignment_id])
-    starter_file_group = assignment.starter_file_groups.find_by(id: params[:id])
+    starter_file_group = record
     zip_path = starter_file_group.zip_starter_file_files(current_user)
     send_file zip_path, filename: File.basename(zip_path)
   end
 
   def update_files
-    assignment = Assignment.find(params[:assignment_id])
-    starter_file_group = assignment.starter_file_groups.find_by(id: params[:id])
+    starter_file_group = record
+    assignment = starter_file_group.assignment
     unzip = params[:unzip] == 'true'
     new_folders = params[:new_folders] || []
     delete_folders = params[:delete_folders] || []

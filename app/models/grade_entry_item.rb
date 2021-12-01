@@ -4,6 +4,8 @@ class GradeEntryItem < ApplicationRecord
 
   belongs_to :grade_entry_form, inverse_of: :grade_entry_items, foreign_key: :assessment_id
 
+  has_one :course, through: :grade_entry_form
+
   has_many :grades, dependent: :delete_all
 
   has_many :grade_entry_students, through: :grades

@@ -3,6 +3,9 @@ class Tag < ApplicationRecord
   belongs_to :role
   belongs_to :assessment, optional: true
 
+  has_one :course, through: :role
+  validate :courses_should_match
+
   # Constants
   NUM_CSV_FIELDS = 3
 
@@ -11,39 +14,41 @@ class Tag < ApplicationRecord
         name == another_tag.name
   end
 
-  def self.from_csv(data)
-    admins = Hash[Admin.joins(:human).pluck(:user_name, 'roles.id')]
+  def self.from_csv(data, course, assignment = nil)
+    admins = Hash[course.admins.joins(:human).pluck(:user_name, 'roles.id')]
     tag_data = []
     result = MarkusCsv.parse(data) do |row|
       raise CsvInvalidLineError if row.length < NUM_CSV_FIELDS
-      name, description, user_id = row[0], row[1], admins[row[2]]
-      if name.nil? || name.strip.blank? || user_id.nil?
+      name, description, role_id = row[0], row[1], admins[row[2]]
+      if name.nil? || name.strip.blank? || role_id.nil?
         raise CsvInvalidLineError
       end
 
       tag_data << {
         name: name,
         description: description,
-        user_id: user_id
+        role_id: role_id,
+        assessment_id: assignment&.id
       }
     end
     Tag.insert_all(tag_data) unless tag_data.empty?
     result
   end
 
-  def self.from_yml(data)
-    admins = Hash[Admin.joins(:human).pluck(:user_name, 'roles.id')]
+  def self.from_yml(data, course, assignment = nil)
+    admins = Hash[course.admins.joins(:human).pluck(:user_name, 'roles.id')]
     begin
       tag_data = data.map do |row|
-        name, description, user_id = row['name'], row['description'], admins[row['user']]
-        if name.nil? || name.strip.blank? || user_id.nil?
+        name, description, role_id = row['name'], row['description'], admins[row['user']]
+        if name.nil? || name.strip.blank? || role_id.nil?
           raise ArgumentError("Invalid tag data #{row}.")
         end
 
         {
           name: name.strip,
           description: description,
-          user_id: user_id
+          role_id: role_id,
+          assessment_id: assignment&.id
         }
       end
       Tag.insert_all(tag_data) unless tag_data.empty?

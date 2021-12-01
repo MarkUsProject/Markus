@@ -1,4 +1,4 @@
-<% route = assignment_path(assignment.id) %>
+<% route = course_assignment_path(@current_course, assignment.id) %>
 <% assignment_text = "#{h(assignment.short_identifier)}: #{h(assignment.description)}" %>
 <tr>
   <td>
@@ -24,7 +24,8 @@
         <% if assignment.max_mark > 0 && !assignment.results_average.nil? %>
           <p>
             <%= link_to Result.model_name.human.pluralize,
-                        view_marks_assignment_submission_result_path(
+                        view_marks_course_assignment_submission_result_path(
+                          course_id: @current_course,
                           assignment_id: assignment.id,
                           submission_id: result.submission_id,
                           id: result.id) %>

@@ -9,16 +9,16 @@ class MarkingScheme < ApplicationRecord
   default_scope { order('id ASC') }
 
   # Returns an array of all students' weighted grades that are not nil
-  def students_weighted_grades_array(current_user)
+  def students_weighted_grades_array(current_role)
     return @grades_array unless @grades_array.nil?
 
-    all_grades = get_table_json_data(current_user)
+    all_grades = get_table_json_data(current_role)
     @grades_array = all_grades.map { |s| s[:weighted_marks][self.id][:mark] } # Note: this returns the assigned value
   end
 
   # Returns a weighted grade distribution for all students' total weighted grades
-  def students_weighted_grade_distribution_array(current_user, intervals = 20)
-    data = students_weighted_grades_array(current_user)
+  def students_weighted_grade_distribution_array(current_role, intervals = 20)
+    data = students_weighted_grades_array(current_role)
     max = [data.max, intervals].max
 
     data.extend(Histogram)
@@ -30,8 +30,8 @@ class MarkingScheme < ApplicationRecord
     { 'data': distribution, 'max': max }
   end
 
-  def students_grade_distribution(current_user, intervals = 20)
-    data = students_weighted_grades_array(current_user)
+  def students_grade_distribution(current_role, intervals = 20)
+    data = students_weighted_grades_array(current_role)
     max = [data.max, 100].max
 
     data.extend(Histogram)

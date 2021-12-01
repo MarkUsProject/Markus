@@ -1,14 +1,25 @@
 describe Grouping do
   describe 'associations' do
+    subject { create :grouping }
     it { is_expected.to belong_to(:group) }
     it { is_expected.to belong_to(:assignment) }
     it { is_expected.to have_many(:memberships) }
     it { is_expected.to have_many(:submissions) }
     it { is_expected.to have_many(:notes) }
     it { is_expected.to have_one(:extension).dependent(:destroy) }
-
-    it 'fails when its group and assignment belong to different courses' do
-      expect(build(:grouping, assignment: build(:assignment), group: build(:group))).not_to be_valid
+    it { is_expected.to have_one(:course) }
+    include_examples 'course associations'
+    it 'should ensure that tags belong to the same course' do
+      subject.tags << create(:tag, assessment: create(:assignment))
+      expect(subject).not_to be_valid
+    end
+    it 'should allow tags that do belong to the same course' do
+      subject.tags << create(:tag, assessment: subject.assignment)
+      expect(subject).to be_valid
+    end
+    it 'should allow tags that do not belong to any course' do
+      subject.tags << create(:tag)
+      expect(subject).to be_valid
     end
   end
 

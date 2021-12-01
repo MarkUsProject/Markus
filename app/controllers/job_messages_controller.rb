@@ -38,4 +38,8 @@ class JobMessagesController < ApplicationController
   def implicit_authorization_target
     OpenStruct.new policy_class: JobMessagePolicy
   end
+
+  def parent_params
+    []
+  end
 end

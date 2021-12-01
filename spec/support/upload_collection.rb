@@ -1,23 +1,18 @@
-shared_examples 'a controller supporting upload' do |formats: [:yml, :csv]|
+shared_examples 'a controller supporting upload' do |formats: [:yml, :csv], background: false, route_name: :upload|
   before :each do
-    # Authenticate user is not timed out, and has administrator rights.
-    # controller = described_class.new
-    allow(controller).to receive(:session_expired?).and_return(false)
-    allow(controller).to receive(:logged_in?).and_return(true)
-    allow(controller).to receive(:current_user).and_return(FactoryBot.create(:admin))
-
     @initial_count = model_count
   end
+  let(:admin) { create :admin }
 
   it 'does not accept request without an uploaded file' do
-    post :upload, params: params
+    post_as admin, route_name, params: params
 
     expect(flash[:error]).not_to be_empty
     expect(model_count).to eq @initial_count
   end
 
   it 'does not accept an xls file' do
-    post :upload, params: {
+    post_as admin, route_name, params: {
       **params,
       upload_file: fixture_file_upload('wrong_csv_format.xls')
     }
@@ -28,7 +23,7 @@ shared_examples 'a controller supporting upload' do |formats: [:yml, :csv]|
   formats.each do |format|
     context "in #{format}" do
       it 'does not accept an empty file' do
-        post :upload, params: {
+        post_as admin, route_name, params: {
           **params,
           upload_file: fixture_file_upload("upload_shared_files/empty.#{format}")
         }
@@ -37,14 +32,17 @@ shared_examples 'a controller supporting upload' do |formats: [:yml, :csv]|
         expect(model_count).to eq @initial_count
       end
 
-      it "does not accept an invalid file even with a .#{format} extension" do
-        post :upload, params: {
-          **params,
-          upload_file: fixture_file_upload("upload_shared_files/bad_#{format}.#{format}")
-        }
+      unless background
+        # This is not checked right away if the file content is sent to a background job for later processing
+        it "does not accept an invalid file even with a .#{format} extension" do
+          post_as admin, route_name, params: {
+            **params,
+            upload_file: fixture_file_upload("upload_shared_files/bad_#{format}.#{format}")
+          }
 
-        expect(flash[:error]).to_not be_empty
-        expect(model_count).to eq @initial_count
+          expect(flash[:error]).to_not be_empty
+          expect(model_count).to eq @initial_count
+        end
       end
     end
   end

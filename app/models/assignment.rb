@@ -93,6 +93,7 @@ class Assignment < Assessment
   accepts_nested_attributes_for :submission_rule, allow_destroy: true
   validates_associated :submission_rule
   validates_presence_of :submission_rule
+  validate :courses_should_match
 
   BLANK_MARK = ''
 
@@ -136,10 +137,10 @@ class Assignment < Assessment
     sections_past
   end
 
-  def upcoming(current_user)
-    grouping = current_user.accepted_grouping_for(self.id)
+  def upcoming(current_role)
+    grouping = current_role.accepted_grouping_for(self.id)
     due_date = grouping&.collection_date
-    return !past_collection_date?(current_user.section) if due_date.nil?
+    return !past_collection_date?(current_role.section) if due_date.nil?
     due_date > Time.current
   end
 
@@ -297,17 +298,16 @@ class Assignment < Assessment
   end
 
   def all_grouping_data
-    student_data = Student.all.pluck_to_hash(:id, :user_name, :first_name, :last_name, :hidden)
+    student_data = self.course.students.joins(:human).pluck_to_hash(:id, :user_name, :first_name, :last_name, :hidden)
     students = Hash[student_data.map do |s|
       [s[:user_name], s.merge(_id: s[:id], assigned: false)]
     end
     ]
-
     grouping_data = self
                     .groupings
                     .joins(:group)
                     .left_outer_joins(:extension)
-                    .left_outer_joins(non_rejected_student_memberships: :user)
+                    .left_outer_joins(non_rejected_student_memberships: [role: :human])
                     .left_outer_joins(inviter: :section)
                     .pluck_to_hash('groupings.id',
                                    'groupings.admin_approved',
@@ -980,12 +980,12 @@ class Assignment < Assessment
 
   # Retrieve data for submissions table.
   # Uses joins and pluck rather than includes to improve query speed.
-  def current_submission_data(current_user)
-    if current_user.admin?
+  def current_submission_data(current_role)
+    if current_role.admin?
       groupings = self.groupings
-    elsif current_user.ta?
+    elsif current_role.ta?
       groupings = self.groupings.where(id: self.groupings.joins(:ta_memberships)
-                                                         .where('memberships.role_id': current_user.id)
+                                                         .where('memberships.role_id': current_role.id)
                                                          .select(:'groupings.id'))
     else
       return []
@@ -1023,7 +1023,7 @@ class Assignment < Assessment
                                  'results.released_to_students')
                   .group_by { |h| h['groupings.id'] }
 
-    if current_user.ta? && anonymize_groups
+    if current_role.ta? && anonymize_groups
       member_data = {}
       section_data = {}
     else
@@ -1036,15 +1036,15 @@ class Assignment < Assessment
                               .to_h
     end
 
-    if current_user.ta? && hide_unassigned_criteria
-      assigned_criteria = current_user.criterion_ta_associations
+    if current_role.ta? && hide_unassigned_criteria
+      assigned_criteria = current_role.criterion_ta_associations
                                       .where(assessment_id: self.id)
                                       .pluck(:criterion_id)
     else
       assigned_criteria = nil
     end
 
-    visible_criteria = current_user.admin? ? self.criteria : self.ta_criteria
+    visible_criteria = current_role.admin? ? self.criteria : self.ta_criteria
     criteria = visible_criteria.reject do |crit|
       !assigned_criteria.nil? && !assigned_criteria.include?(crit.id)
     end
@@ -1072,7 +1072,7 @@ class Assignment < Assessment
       base = {
         _id: grouping_id, # Needed for checkbox version of react-table
         max_mark: max_mark,
-        group_name: current_user.ta? && anonymize_groups ? "#{Group.model_name.human} #{grouping_id}" : group_name,
+        group_name: current_role.ta? && anonymize_groups ? "#{Group.model_name.human} #{grouping_id}" : group_name,
         tags: (tag_info.nil? ? [] : tag_info.map { |h| h['tags.name'] }),
         marking_state: marking_state(has_remark,
                                      result_info['results.marking_state'],

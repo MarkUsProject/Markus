@@ -1,5 +1,3 @@
-require 'rails_helper'
-
 describe Role do
   let(:course) { create(:course) }
   let(:student) { create(:student, course: course) }

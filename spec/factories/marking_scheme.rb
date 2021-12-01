@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :marking_scheme do
-    association :course
+    course { Course.order(:id).first || association(:course) }
     transient do
       assessments { [] }
     end

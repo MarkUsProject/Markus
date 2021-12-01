@@ -1,37 +1,23 @@
 describe UserPolicy do
-  let(:context) { { user: user } }
+  let(:context) { { real_user: user, user: user } }
+  let(:user) { create :human }
   describe_rule :manage? do
-    succeed 'user is an admin' do
-      let(:user) { create(:admin) }
-    end
-    failed 'user is a ta' do
-      let(:user) { create(:ta) }
-    end
-    failed 'user is a student' do
-      let(:user) { create(:student) }
-    end
+    failed
   end
   describe_rule :destroy? do
-    failed 'user is an admin' do
-      let(:user) { create(:admin) }
-    end
-    failed 'user is a ta' do
-      let(:user) { create(:ta) }
-    end
-    failed 'user is a student' do
-      let(:user) { create(:student) }
-    end
+    failed
   end
 
   describe_rule :reset_api_key? do
-    succeed 'user is an admin' do
-      let(:user) { create(:admin) }
+    failed
+    succeed 'user is an admin in at least one course' do
+      let(:user) { create(:admin).human }
     end
-    failed 'user is a ta' do
-      let(:user) { create(:ta) }
-    end
-    failed 'user is a student' do
-      let(:user) { create(:student) }
-    end
+  end
+  describe_rule :settings? do
+    succeed
+  end
+  describe_rule :update_settings? do
+    succeed
   end
 end

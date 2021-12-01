@@ -5,6 +5,6 @@ class AutomatedTestPolicy < ApplicationPolicy
 
   # Only admin and authorized grader can setup the automated testing.
   def manage?
-    check?(:manage_assessments?, user)
+    check?(:manage_assessments?, role)
   end
 end

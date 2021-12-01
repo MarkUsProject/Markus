@@ -1,14 +1,14 @@
 module CourseSummariesHelper
 
   # Get JSON data for the table
-  def get_table_json_data(current_user)
+  def get_table_json_data(current_role)
     course_information
 
-    if current_user.student?
-      students = Student.where(id: current_user.id)
+    if current_role.student?
+      students = Student.where(id: current_role.id)
       released = [true]
     else
-      students = Student.all
+      students = current_role.course.students.all
       released = [true, false]
     end
 
@@ -49,7 +49,7 @@ module CourseSummariesHelper
       }
     end
 
-    unless current_user.student?
+    unless current_role.student?
       calculate_course_grades(student_data)
     end
     student_data.values.sort_by { |x| x[:user_name] }

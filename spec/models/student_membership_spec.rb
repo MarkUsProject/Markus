@@ -73,8 +73,11 @@ end
 
 describe StudentMembership do
   context 'does validation' do
+    subject { create :student_membership }
     it { is_expected.to validate_presence_of(:membership_status) }
     it { is_expected.to_not allow_value('blah').for :membership_status }
+    it { is_expected.to have_one(:course) }
+    include_examples 'course associations'
     it 'should belong to a student' do
       expect(create(:student_membership, role: create(:student))).to be_valid
     end

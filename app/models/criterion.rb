@@ -5,6 +5,8 @@ class Criterion < ApplicationRecord
   after_update :update_results_with_change
   after_destroy :update_results
 
+  has_one :course, through: :assignment
+
   has_many :marks, dependent: :destroy
   accepts_nested_attributes_for :marks
 

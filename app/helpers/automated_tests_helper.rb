@@ -197,7 +197,7 @@ module AutomatedTestsHelper
     end
 
     # Send tests to the autotester to be run.
-    def run_tests(assignment, host_with_port, group_ids, user, collected: true, batch: nil)
+    def run_tests(assignment, host_with_port, group_ids, role, collected: true, batch: nil)
       raise I18n.t('automated_tests.settings_not_setup') unless assignment.autotest_settings_id
 
       uri = URI("#{Settings.autotest.url}/settings/#{assignment.autotest_settings_id}/test")
@@ -210,7 +210,7 @@ module AutomatedTestsHelper
       end
       req.body = {
         file_urls: file_urls,
-        categories: user.student? ? ['student'] : ['admin'],
+        categories: role.student? ? ['student'] : ['admin'],
         request_high_priority: batch.nil? && user.student?
       }.to_json
       res = send_request!(req, uri)
@@ -220,7 +220,7 @@ module AutomatedTestsHelper
       groupings.each do |grouping|
         revision_id = collected ? nil : grouping.access_repo { |repo| repo.get_latest_revision.revision_identifier }
         TestRun.create!(
-          user_id: user.id,
+          role_id: role.id,
           test_batch_id: batch&.id,
           grouping_id: grouping.id,
           submission_id: collected ? grouping.current_submission_used.id : nil,

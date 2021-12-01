@@ -1,5 +1,5 @@
 # Ta policy class
-class TaPolicy < UserPolicy
+class TaPolicy < RolePolicy
   authorize :assignment, :submission, optional: true
 
   def run_tests?
@@ -12,10 +12,18 @@ class TaPolicy < UserPolicy
   end
 
   def manage_submissions?
-    user.grader_permission.manage_submissions
+    role.grader_permission.manage_submissions
   end
 
   def manage_assessments?
-    user.grader_permission.manage_assessments
+    role.grader_permission.manage_assessments
+  end
+
+  def download?
+    role.admin?
+  end
+
+  def upload?
+    role.admin?
   end
 end

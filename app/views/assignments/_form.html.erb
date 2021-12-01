@@ -34,7 +34,7 @@
 
 <%= render 'shared/flash_message' %>
 
-<%= form_for @assignment do |f| %>
+<%= form_for [@current_course, @assignment] do |f| %>
   <%= f.fields_for :assignment_properties do |ap_f| %>
 
     <%= ap_f.hidden_field :scanned_exam, value: @assignment.scanned_exam  %>

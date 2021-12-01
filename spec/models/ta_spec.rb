@@ -1,5 +1,7 @@
 describe Ta do
+  subject { create :ta }
   it { is_expected.to have_one(:grader_permission).dependent(:destroy) }
+  it { is_expected.to validate_uniqueness_of(:user_id).scoped_to(:course_id) }
   describe '#percentage_grades_array' do
     let(:assignment) { create(:assignment_with_criteria_and_results) }
     let(:ta) { create(:ta) }

@@ -11,7 +11,7 @@ class AnnotationsController < ApplicationController
       is_remark: submission.has_remark?,
       annotation_text_id: params[:annotation_text_id],
       annotation_number: result.annotations.size + 1,
-      creator: current_user,
+      creator: current_role,
       result_id: params[:result_id]
     }
 
@@ -59,15 +59,15 @@ class AnnotationsController < ApplicationController
       unless text.annotation_category_id == params[:category_id].to_i
         text.update!(
           annotation_category_id: params[:category_id],
-          last_editor_id: current_user.id
+          last_editor_id: current_role.id
         )
       end
     else
       text = AnnotationText.create!(
         content: params[:content],
         annotation_category_id: params[:category_id],
-        creator_id: current_user.id,
-        last_editor_id: current_user.id,
+        creator_id: current_role.id,
+        last_editor_id: current_role.id,
         deduction: d.nil? ? nil : 0.0
       )
     end
@@ -75,7 +75,7 @@ class AnnotationsController < ApplicationController
     base_attributes = {
       annotation_number: result.annotations.size + 1,
       annotation_text_id: text.id,
-      creator: current_user,
+      creator: current_role,
       is_remark: !result.remark_request_submitted_at.nil?,
       submission_file_id: submission_file.id
     }
@@ -111,12 +111,12 @@ class AnnotationsController < ApplicationController
   end
 
   def destroy
-    result = Result.find(params[:result_id])
-    @annotation = result.annotations.find(params[:id])
-    unless @annotation.annotation_text.deduction.nil? || !current_user.ta?
+    @annotation = record
+    result = @annotation.result
+    unless @annotation.annotation_text.deduction.nil? || !current_role.ta?
       assignment = result.grouping.assignment
       if assignment.assign_graders_to_criteria &&
-          !current_user.criterion_ta_associations
+          !current_role.criterion_ta_associations
                        .pluck(:criterion_id)
                        .include?(@annotation.annotation_text.annotation_category.flexible_criterion_id)
         flash_message(:error, t('annotations.prevent_ta_delete'))
@@ -135,10 +135,10 @@ class AnnotationsController < ApplicationController
   end
 
   def update
-    @annotation = Annotation.find(params[:id])
+    @annotation = record
     @annotation_text = @annotation.annotation_text
     unless @annotation_text.deduction.nil?
-      if current_user.ta? || @annotation_text.annotations.joins(:result)
+      if current_role.ta? || @annotation_text.annotations.joins(:result)
                                              .where('results.released_to_students' => true).exists?
         flash_message(:error, t('annotations.prevent_update'))
         head :bad_request
@@ -156,8 +156,8 @@ class AnnotationsController < ApplicationController
           content: params[:content],
           annotation_category_id: nil,
           deduction: nil,
-          creator_id: current_user.id,
-          last_editor_id: current_user.id
+          creator_id: current_role.id,
+          last_editor_id: current_role.id
         )
         @annotation.update(annotation_text: new_text)
       end

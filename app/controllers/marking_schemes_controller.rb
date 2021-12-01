@@ -7,12 +7,12 @@ class MarkingSchemesController < ApplicationController
   layout 'assignment_content'
 
   def index
-    @assignments = Assignment.all
-    @grade_entry_forms = GradeEntryForm.all
+    @assignments = current_course.assignments.all
+    @grade_entry_forms = current_course.grade_entry_forms.all
   end
 
   def populate
-    columns = Assessment.order(:type, :id).pluck(:id, :short_identifier).map do |id, short_identifier|
+    columns = current_course.assessments.order(:type, :id).pluck(:id, :short_identifier).map do |id, short_identifier|
       {
         accessor: "assessment_weights.#{id}",
         Header: short_identifier,
@@ -31,8 +31,7 @@ class MarkingSchemesController < ApplicationController
     ApplicationRecord.transaction do
       begin
         # save marking scheme
-        marking_scheme =
-          MarkingScheme.new(name: params['marking_scheme']['name'])
+        marking_scheme = current_course.marking_schemes.new(name: params['marking_scheme']['name'])
         marking_scheme.save!
 
         # save marking weights
@@ -50,14 +49,14 @@ class MarkingSchemesController < ApplicationController
       end
     end
 
-    redirect_to marking_schemes_path
+    redirect_to course_marking_schemes_path(current_course)
   end
 
   def update
     ApplicationRecord.transaction do
       begin
         # save marking scheme
-        marking_scheme = MarkingScheme.find(params['id'])
+        marking_scheme = record
         marking_scheme.name = params['marking_scheme']['name']
         marking_scheme.save!
 
@@ -76,13 +75,13 @@ class MarkingSchemesController < ApplicationController
       end
     end
 
-    redirect_to marking_schemes_path
+    redirect_to course_marking_schemes_path(current_course)
   end
 
   def new
-    @marking_scheme = MarkingScheme.new
-    @assignments = Assignment.all
-    @grade_entry_forms = GradeEntryForm.all
+    @marking_scheme = current_course.marking_schemes.new
+    @assignments = current_course.assignments.all
+    @grade_entry_forms = current_course.grade_entry_forms.all
 
     @all_gradable_items = @assignments + @grade_entry_forms
     @all_gradable_items.count.times do
@@ -91,7 +90,7 @@ class MarkingSchemesController < ApplicationController
   end
 
   def edit
-    @marking_scheme = MarkingScheme.find(params['id'])
+    @marking_scheme = record
 
     @all_gradable_items = []
 
@@ -101,7 +100,7 @@ class MarkingSchemesController < ApplicationController
   end
 
   def destroy
-    MarkingScheme.find(params['id']).destroy
+    record.destroy
     @assignments = Assignment.all
     @grade_entry_forms = GradeEntryForm.all
     render :index

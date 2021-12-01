@@ -1,14 +1,18 @@
 describe AnnotationCategoriesController do
   include AnnotationCategoriesHelper
-  let(:assignment) { FactoryBot.create(:assignment) }
+  let(:course) { assignment.course }
+  let(:assignment) { create(:assignment) }
   let(:annotation_category) { FactoryBot.create(:annotation_category, assignment: assignment) }
 
   shared_examples 'A grader or admin accessing the index or find_annotation_text routes' do
     describe '#index' do
       before { create(:annotation_category, assignment: assignment) }
       it 'should respond with 200' do
-        get_as user, :index, params: { assignment_id: assignment.id }
+        get_as role, :index, params: { course_id: course.id, assignment_id: assignment.id }
         expect(response.status).to eq(200)
+      end
+      it_behaves_like 'role is from a different course' do
+        subject { get_as new_role, :index, params: { course_id: course.id, assignment_id: assignment.id } }
       end
     end
     context 'When searching for an annotation text' do
@@ -21,20 +25,32 @@ describe AnnotationCategoriesController do
       it 'should render an annotation context, where first part of its content matches given string' do
         string = 'This is an'
 
-        get_as user, :find_annotation_text, params: { assignment_id: assignment.id, string: string }, format: :js
+        get_as role,
+               :find_annotation_text,
+               params: { course_id: course.id, assignment_id: assignment.id, string: string }, format: :js
         expect(response.parsed_body[0]['content']).to eq(@annotation_text_one.content)
+      end
+      it_behaves_like 'role is from a different course' do
+        subject do
+          get_as new_role, :find_annotation_text,
+                 params: { course_id: course.id, assignment_id: assignment.id, string: '' }, format: :js
+        end
       end
       it 'should render an empty string if string does not match first part of any annotation text' do
         string = 'Hello'
 
-        get_as user, :find_annotation_text, params: { assignment_id: assignment.id, string: string }, format: :js
+        get_as role,
+               :find_annotation_text,
+               params: { course_id: course.id, assignment_id: assignment.id, string: string }, format: :js
         expect(response.parsed_body).to eq([])
       end
       it 'should render multiple matches if string matches first part of more than one annotation text' do
         create(:annotation_text, annotation_category: annotation_category, content: 'This is another annotation text.')
         string = 'This is an'
 
-        get_as user, :find_annotation_text, params: { assignment_id: assignment.id, string: string }, format: :js
+        get_as role,
+               :find_annotation_text,
+               params: { course_id: course.id, assignment_id: assignment.id, string: string }, format: :js
         expect(response.parsed_body.size).to eq(2)
       end
     end
@@ -44,38 +60,68 @@ describe AnnotationCategoriesController do
     include_examples 'A grader or admin accessing the index or find_annotation_text routes'
     describe '#show' do
       it 'should respond with 200' do
-        get_as user, :show, params: { assignment_id: assignment.id, id: annotation_category.id }
+        get_as role, :show, params: { course_id: course.id, assignment_id: assignment.id, id: annotation_category.id }
         expect(response.status).to eq(200)
+      end
+      it_behaves_like 'role is from a different course' do
+        subject do
+          get_as new_role, :show,
+                 params: { course_id: course.id, assignment_id: assignment.id, id: annotation_category.id }
+        end
       end
     end
 
     describe '#new' do
       it 'should respond with 200' do
-        get_as user, :new, params: { assignment_id: assignment.id }
+        get_as role, :new, params: { course_id: course.id, assignment_id: assignment.id }
         expect(response.status).to eq(200)
+      end
+      it_behaves_like 'role is from a different course' do
+        subject do
+          get_as new_role, :new, params: { course_id: course.id, assignment_id: assignment.id }
+        end
       end
     end
 
     describe '#new_annotation_text' do
       it 'should respond with 200' do
-        get_as user, :new_annotation_text,
-               params: { assignment_id: assignment.id, annotation_category_id: annotation_category.id }
+        get_as role, :new_annotation_text,
+               params: { course_id: course.id, assignment_id: assignment.id,
+                         annotation_category_id: annotation_category.id }
         expect(response.status).to eq(200)
+      end
+      it_behaves_like 'role is from a different course' do
+        subject do
+          get_as new_role, :new_annotation_text,
+                 params: { course_id: course.id, assignment_id: assignment.id,
+                           annotation_category_id: annotation_category.id }
+        end
       end
     end
 
     describe '#create' do
+      it_behaves_like 'role is from a different course' do
+        subject do
+          post_as new_role, :create,
+                  params: { assignment_id: assignment.id,
+                            course_id: course.id,
+                            annotation_category: { annotation_category_name: 'Category 1' },
+                            format: :js }
+        end
+      end
       it 'successfully creates annotation_category with nil flexible_criterion' do
-        post_as user, :create,
+        post_as role, :create,
                 params: { assignment_id: assignment.id,
+                          course_id: course.id,
                           annotation_category: { annotation_category_name: 'Category 1' },
                           format: :js }
         expect(assignment.annotation_categories.find_by(annotation_category_name: 'Category 1')
                    .flexible_criterion).to eq nil
       end
       it 'successfully creates a new annotation category when given a unique name' do
-        post_as user, :create,
+        post_as role, :create,
                 params: { assignment_id: assignment.id,
+                          course_id: course.id,
                           annotation_category: { annotation_category_name: 'New Category' },
                           format: :js }
 
@@ -85,8 +131,9 @@ describe AnnotationCategoriesController do
 
       it 'fails when the annotation category name is already used' do
         category = create(:annotation_category, assignment: assignment)
-        post_as user, :create,
+        post_as role, :create,
                 params: { assignment_id: assignment.id,
+                          course_id: course.id,
                           annotation_category: { annotation_category_name: category.annotation_category_name },
                           format: :js }
         expect(assignment.annotation_categories.count).to eq 1
@@ -94,9 +141,20 @@ describe AnnotationCategoriesController do
     end
 
     describe '#update' do
+      it_behaves_like 'role is from a different course' do
+        subject do
+          patch_as new_role, :update,
+                   params: { assignment_id: assignment.id,
+                             course_id: course.id,
+                             id: annotation_category.id,
+                             annotation_category: { annotation_category_name: 'Updated category' },
+                             format: :js }
+        end
+      end
       it 'successfully updates an annotation category name' do
-        patch_as user, :update,
+        patch_as role, :update,
                  params: { assignment_id: assignment.id,
+                           course_id: course.id,
                            id: annotation_category.id,
                            annotation_category: { annotation_category_name: 'Updated category' },
                            format: :js }
@@ -107,8 +165,9 @@ describe AnnotationCategoriesController do
         original_name = annotation_category.annotation_category_name
         category2 = create(:annotation_category, assignment: assignment)
 
-        patch_as user, :update,
+        patch_as role, :update,
                  params: { assignment_id: assignment.id,
+                           course_id: course.id,
                            id: annotation_category.id,
                            annotation_category: { annotation_category_name: category2.annotation_category_name } }
 
@@ -119,8 +178,9 @@ describe AnnotationCategoriesController do
         assignment = annotation_category.assignment
         flexible_criterion = create(:flexible_criterion, assignment: assignment)
 
-        patch_as user, :update,
+        patch_as role, :update,
                  params: { assignment_id: assignment.id,
+                           course_id: course.id,
                            id: annotation_category.id,
                            annotation_category: { flexible_criterion_id: flexible_criterion.id },
                            format: :js }
@@ -132,8 +192,9 @@ describe AnnotationCategoriesController do
         assignment = create(:assignment_with_deductive_annotations)
         category = assignment.annotation_categories.where.not(flexible_criterion_id: nil).first
 
-        patch_as user, :update,
+        patch_as role, :update,
                  params: { assignment_id: assignment.id,
+                           course_id: course.id,
                            id: category.id,
                            annotation_category: { flexible_criterion_id: '' },
                            format: :js }
@@ -146,8 +207,9 @@ describe AnnotationCategoriesController do
         assignment = annotation_category.assignment
         flexible_criterion = create(:flexible_criterion)
 
-        patch_as user, :update,
+        patch_as role, :update,
                  params: { assignment_id: assignment.id,
+                           course_id: course.id,
                            id: annotation_category.id,
                            annotation_category: { flexible_criterion_id: flexible_criterion.id },
                            format: :js }
@@ -161,8 +223,9 @@ describe AnnotationCategoriesController do
         flexible_criterion = create(:flexible_criterion, assignment: assignment)
         assignment.groupings.first.current_result.update!(released_to_students: true)
         previous_criterion_id = category.flexible_criterion_id
-        patch_as user, :update,
+        patch_as role, :update,
                  params: { assignment_id: assignment.id,
+                           course_id: course.id,
                            id: category.id,
                            annotation_category: { flexible_criterion_id: flexible_criterion.id },
                            format: :js }
@@ -175,14 +238,26 @@ describe AnnotationCategoriesController do
       let(:category) { create(:annotation_category, assignment: assignment) }
       let(:annotation_text) { create(:annotation_text, annotation_category: annotation_category) }
 
+      it_behaves_like 'role is from a different course' do
+        subject do
+          get_as new_role,
+                 :annotation_text_uses,
+                 params: { assignment_id: assignment.id,
+                           course_id: course.id,
+                           annotation_text_id: annotation_text.id },
+                 format: :json
+        end
+      end
+
       it 'returns the correct data if the annotation_text was used once' do
         create(:text_annotation,
                annotation_text: annotation_text,
-               creator: user,
+               creator: role,
                result: assignment.groupings.first.current_result)
-        get_as user,
+        get_as role,
                :annotation_text_uses,
                params: { assignment_id: assignment.id,
+                         course_id: course.id,
                          annotation_text_id: annotation_text.id },
                format: :json
         assert_response 200
@@ -190,7 +265,7 @@ describe AnnotationCategoriesController do
         uses = response.parsed_body.first
         expect(uses['result_id']).to eq assignment.groupings.first.current_result.id
         expect(uses['assignment_id']).to eq assignment.id
-        expect(uses['user_name']).to eq user.user_name
+        expect(uses['user_name']).to eq role.user_name
         expect(uses['submission_id']).to eq assignment.groupings.first.current_result.submission_id
       end
 
@@ -199,15 +274,16 @@ describe AnnotationCategoriesController do
         another_grouping = assignment.groupings.second
         create(:text_annotation,
                annotation_text: annotation_text,
-               creator: user,
+               creator: role,
                result: one_grouping.current_result)
         create(:text_annotation,
                annotation_text: annotation_text,
-               creator: user,
+               creator: role,
                result: another_grouping.current_result)
-        get_as user,
+        get_as role,
                :annotation_text_uses,
                params: { assignment_id: assignment.id,
+                         course_id: course.id,
                          annotation_text_id: annotation_text.id },
                format: :json
         assert_response 200
@@ -215,14 +291,15 @@ describe AnnotationCategoriesController do
         expect(res.size).to eq 2
         results = [res.first['result_id'], res.second['result_id']].sort!
         expect(results).to eq [one_grouping.current_result.id, another_grouping.current_result.id].sort!
-        expect([res.first['user_name'], res.second['user_name']]).to eq [user.user_name, user.user_name]
+        expect([res.first['user_name'], res.second['user_name']]).to eq [role.user_name, role.user_name]
         expect([res.first['assignment_id'], res.second['assignment_id']]).to eq [assignment.id, assignment.id]
       end
 
       it 'returns the correct data if the annotation_text was never used' do
-        get_as user,
+        get_as role,
                :annotation_text_uses,
                params: { assignment_id: assignment.id,
+                         course_id: course.id,
                          annotation_text_id: annotation_text.id },
                format: :json
         assert_response 200
@@ -236,28 +313,59 @@ describe AnnotationCategoriesController do
         cat2 = create(:annotation_category, assignment: assignment)
         cat3 = create(:annotation_category, assignment: assignment)
 
-        post_as user, :update_positions,
+        post_as role, :update_positions,
                 params: { assignment_id: assignment.id,
+                          course_id: course.id,
                           annotation_category: [cat3.id, cat1.id, cat2.id] }
 
         expect(cat3.reload.position).to eq 0
         expect(cat1.reload.position).to eq 1
         expect(cat2.reload.position).to eq 2
       end
+      it_behaves_like 'role is from a different course' do
+        subject do
+          post_as new_role, :update_positions,
+                  params: { assignment_id: assignment.id,
+                            course_id: course.id,
+                            annotation_category: [] }
+        end
+      end
     end
 
     describe '#destroy' do
       it 'successfully deletes an annotation category' do
-        delete_as user, :destroy, format: :js, params: { assignment_id: assignment.id, id: annotation_category.id }
+        delete_as role,
+                  :destroy,
+                  format: :js,
+                  params: { course_id: course.id, assignment_id: assignment.id, id: annotation_category.id }
 
         expect(assignment.annotation_categories.count).to eq 0
+      end
+      it_behaves_like 'role is from a different course' do
+        subject do
+          delete_as new_role,
+                    :destroy,
+                    format: :js,
+                    params: { course_id: course.id, assignment_id: assignment.id, id: annotation_category.id }
+        end
       end
     end
 
     describe '#create_annotation_text' do
+      it_behaves_like 'role is from a different course' do
+        subject do
+          post_as new_role, :create_annotation_text,
+                  params: { assignment_id: annotation_category.assessment_id,
+                            course_id: course.id,
+                            content: 'New content',
+                            annotation_category_id: annotation_category.id,
+                            format: :js }
+        end
+      end
       it 'successfully creates an annotation text associated with an annotation category' do
-        post_as user, :create_annotation_text,
+        post_as role, :create_annotation_text,
                 params: { assignment_id: annotation_category.assessment_id,
+                          course_id: course.id,
                           content: 'New content',
                           annotation_category_id: annotation_category.id,
                           format: :js }
@@ -271,8 +379,9 @@ describe AnnotationCategoriesController do
         category = assignment_w_deductions.annotation_categories.where.not(flexible_criterion_id: nil).first
         category.annotation_texts.destroy_all
         category.reload
-        post_as user, :create_annotation_text,
+        post_as role, :create_annotation_text,
                 params: { assignment_id: category.assessment_id,
+                          course_id: course.id,
                           content: 'New content',
                           annotation_category_id: category.id,
                           deduction: 0.5,
@@ -285,8 +394,9 @@ describe AnnotationCategoriesController do
         assignment_w_deductions = create(:assignment_with_deductive_annotations)
         category = assignment_w_deductions.annotation_categories.where.not(flexible_criterion_id: nil).first
         category.annotation_texts.destroy_all
-        post_as user, :create_annotation_text,
+        post_as role, :create_annotation_text,
                 params: { assignment_id: category.assessment_id,
+                          course_id: course.id,
                           content: 'New content',
                           annotation_category_id: category.id,
                           deduction: nil,
@@ -299,12 +409,25 @@ describe AnnotationCategoriesController do
       let(:assignment) { create(:assignment_with_criteria_and_results) }
       let(:assignment_result) { assignment.groupings.first.current_result }
       let(:uncategorized_text) { create(:annotation_text, annotation_category: nil) }
+      it_behaves_like 'role is from a different course' do
+        subject do
+          text = create(:annotation_text)
+          category = text.annotation_category
+          put_as new_role, :update_annotation_text,
+                 params: { assignment_id: category.assessment_id,
+                           course_id: course.id,
+                           annotation_text_id: text.id,
+                           content: 'updated content',
+                           format: :js }
+        end
+      end
       it 'successfully updates an annotation text\'s (associated with an annotation category) content' do
         text = create(:annotation_text)
         category = text.annotation_category
-        put_as user, :update_annotation_text,
+        put_as role, :update_annotation_text,
                params: { assignment_id: category.assessment_id,
-                         id: text.id,
+                         course_id: course.id,
+                         annotation_text_id: text.id,
                          content: 'updated content',
                          format: :js }
 
@@ -315,9 +438,10 @@ describe AnnotationCategoriesController do
         assignment_w_deductions = create(:assignment_with_deductive_annotations)
         category = assignment_w_deductions.annotation_categories.where.not(flexible_criterion_id: nil).first
         text = category.annotation_texts.first
-        put_as user, :update_annotation_text,
+        put_as role, :update_annotation_text,
                params: { assignment_id: category.assessment_id,
-                         id: text.id,
+                         course_id: course.id,
+                         annotation_text_id: text.id,
                          content: 'more updated content',
                          deduction: 0.1,
                          format: :js }
@@ -330,9 +454,10 @@ describe AnnotationCategoriesController do
         assignment_w_deductions = create(:assignment_with_deductive_annotations)
         category = assignment_w_deductions.annotation_categories.where.not(flexible_criterion_id: nil).first
         text = category.annotation_texts.first
-        put_as user, :update_annotation_text,
+        put_as role, :update_annotation_text,
                params: { assignment_id: category.assessment_id,
-                         id: text.id,
+                         course_id: course.id,
+                         annotation_text_id: text.id,
                          content: 'more updated content',
                          deduction: nil,
                          format: :js }
@@ -348,9 +473,10 @@ describe AnnotationCategoriesController do
         text = category.annotation_texts.first
         prev_content = text.content
         assignment_w_deductions.groupings.first.current_result.update!(released_to_students: true)
-        put_as user, :update_annotation_text,
+        put_as role, :update_annotation_text,
                params: { assignment_id: category.assessment_id,
-                         id: text.id,
+                         course_id: course.id,
+                         annotation_text_id: text.id,
                          annotation_text: { content: 'more updated content', deduction: nil },
                          format: :js }
 
@@ -359,9 +485,10 @@ describe AnnotationCategoriesController do
       end
       it 'successfully updates an annotation text\'s (not associated with an annotation category) content' do
         create(:text_annotation, annotation_text: uncategorized_text, result: assignment_result)
-        put_as user, :update_annotation_text,
+        put_as role, :update_annotation_text,
                params: { assignment_id: assignment.id,
-                         id: uncategorized_text.id,
+                         course_id: course.id,
+                         annotation_text_id: uncategorized_text.id,
                          content: 'updated_content',
                          format: :js }
 
@@ -377,35 +504,39 @@ describe AnnotationCategoriesController do
       let(:last_editor) { create(:admin) }
       let(:text2) { create(:annotation_text, annotation_category: nil, last_editor: last_editor) }
       it 'finds no instance of uncategorized annotations when there are no annotation texts' do
-        get_as user, :uncategorized_annotations, params: { assignment_id: assignment.id }
+        get_as role, :uncategorized_annotations, params: { course_id: course.id, assignment_id: assignment.id }
         expect(assigns['texts']).to eq []
       end
-
+      it_behaves_like 'role is from a different course' do
+        subject do
+          get_as new_role, :uncategorized_annotations, params: { course_id: course.id, assignment_id: assignment.id }
+        end
+      end
       it 'finds no instance of uncategorized annotations when only categorized annotation texts exists' do
         category = create(:annotation_category, assignment: assignment)
         categorized_text = create(:annotation_text, annotation_category: category)
         create(:text_annotation, annotation_text: categorized_text, result: assignment_result)
-        get_as user, :uncategorized_annotations, params: { assignment_id: assignment.id }
+        get_as role, :uncategorized_annotations, params: { course_id: course.id, assignment_id: assignment.id }
         expect(assigns['texts']).to eq []
       end
 
       it 'does not find uncategorized annotations from other assignments' do
         other_assignment = create(:assignment_with_criteria_and_results)
         create(:text_annotation, annotation_text: text, result: other_assignment.groupings.first.current_result)
-        get_as user, :uncategorized_annotations, params: { assignment_id: assignment.id }
+        get_as role, :uncategorized_annotations, params: { course_id: course.id, assignment_id: assignment.id }
         expect(assigns['texts']).to eq []
       end
 
       it 'finds one uncategorized annotation if only one exists' do
         create(:text_annotation, annotation_text: text, result: assignment_result)
-        get_as user, :uncategorized_annotations, params: { assignment_id: assignment.id }
+        get_as role, :uncategorized_annotations, params: { course_id: course.id, assignment_id: assignment.id }
         expect(assigns['texts'].first['id']).to eq text.id
       end
 
       it 'finds multiple uncategorized annotations if many exist' do
         create(:text_annotation, annotation_text: text, result: assignment_result)
         create(:text_annotation, annotation_text: different_text, result: assignment_result)
-        get_as user, :uncategorized_annotations, params: { assignment_id: assignment.id }
+        get_as role, :uncategorized_annotations, params: { course_id: course.id, assignment_id: assignment.id }
         expect(assigns['texts'].size).to eq 2
         expect([assigns['texts'].first['id'], assigns['texts'].second['id']].sort!).to eq [text.id,
                                                                                            different_text.id].sort!
@@ -415,7 +546,7 @@ describe AnnotationCategoriesController do
         create(:text_annotation, annotation_text: text, result: assignment_result)
         other_grouping = assignment.groupings.where.not(id: assignment_result.grouping.id).first
         create(:text_annotation, annotation_text: different_text, result: other_grouping.current_result)
-        get_as user, :uncategorized_annotations, params: { assignment_id: assignment.id }
+        get_as role, :uncategorized_annotations, params: { course_id: course.id, assignment_id: assignment.id }
         expect(assigns['texts'].size).to eq 2
         expect([assigns['texts'].first['id'], assigns['texts'].second['id']].sort!).to eq [text.id,
                                                                                            different_text.id].sort!
@@ -423,7 +554,8 @@ describe AnnotationCategoriesController do
 
       it 'is not empty when responding to json format and uncategorized annotations exist' do
         create(:text_annotation, annotation_text: text, result: assignment_result)
-        get_as user, :uncategorized_annotations, format: 'json', params: { assignment_id: assignment.id }
+        get_as role, :uncategorized_annotations, format: 'json',
+                                                 params: { course_id: course.id, assignment_id: assignment.id }
         expect(JSON.parse(response.body)).not_to be_empty
       end
 
@@ -432,7 +564,10 @@ describe AnnotationCategoriesController do
         other_grouping = assignment.groupings.where.not(id: assignment_result.grouping.id).first
         create(:text_annotation, annotation_text: different_text, result: other_grouping.current_result)
         expected_keys = %w[group_name creator last_editor content assignment_id result_id submission_id id]
-        get_as user, :uncategorized_annotations, format: 'json', params: { assignment_id: assignment.id }
+        get_as role,
+               :uncategorized_annotations,
+               format: 'json',
+               params: { course_id: course.id, assignment_id: assignment.id }
         data = JSON.parse(response.body)
         expect(data.first.keys).to match_array expected_keys
         expect(data.second.keys).to match_array expected_keys
@@ -440,7 +575,10 @@ describe AnnotationCategoriesController do
 
       it 'has correct data when responding to json format and uncategorized annotation exists' do
         create(:text_annotation, annotation_text: text2, result: assignment_result)
-        get_as user, :uncategorized_annotations, format: 'json', params: { assignment_id: assignment.id }
+        get_as role,
+               :uncategorized_annotations,
+               format: 'json',
+               params: { course_id: course.id, assignment_id: assignment.id }
         data = JSON.parse(response.body)
         expect(data.first['group_name']).to eq(assignment.groupings.first.group.group_name)
         expect(data.first['creator']).to eq(text2.creator.user_name)
@@ -460,23 +598,36 @@ describe AnnotationCategoriesController do
       it 'successfully destroys an annotation text associated with an annotation category' do
         text = create(:annotation_text)
         category = text.annotation_category
-        delete_as user, :destroy_annotation_text,
+        delete_as role, :destroy_annotation_text,
                   params: { assignment_id: category.assessment_id,
-                            id: text.id,
+                            course_id: course.id,
+                            annotation_text_id: text.id,
                             format: :js }
 
         expect(category.annotation_texts.count).to eq 0
       end
+      it_behaves_like 'role is from a different course' do
+        subject do
+          text = create(:annotation_text)
+          category = text.annotation_category
+          delete_as new_role, :destroy_annotation_text,
+                    params: { assignment_id: category.assessment_id,
+                              course_id: course.id,
+                              annotation_text_id: text.id,
+                              format: :js }
+        end
+      end
       it 'successfully destroys an annotation text not associated with an annotation category' do
         create(:text_annotation, annotation_text: uncategorized_text, result: assignment_result)
-        get_as user, :uncategorized_annotations, params: { assignment_id: assignment.id }
+        get_as role, :uncategorized_annotations, params: { course_id: course.id, assignment_id: assignment.id }
         expect(assigns['texts'].first['id']).to eq uncategorized_text.id
-        delete_as user, :destroy_annotation_text,
+        delete_as role, :destroy_annotation_text,
                   params: { assignment_id: assignment.id,
-                            id: uncategorized_text.id,
+                            course_id: course.id,
+                            annotation_text_id: uncategorized_text.id,
                             format: :js }
 
-        get_as user, :uncategorized_annotations, params: { assignment_id: assignment.id }
+        get_as role, :uncategorized_annotations, params: { course_id: course.id, assignment_id: assignment.id }
         expect(assigns['texts']).to eq []
       end
     end
@@ -485,23 +636,41 @@ describe AnnotationCategoriesController do
       it 'successfully updates an annotation text associated with an annotation category' do
         text = create(:annotation_text)
         category = text.annotation_category
-        put_as user, :update_annotation_text,
+        put_as role, :update_annotation_text,
                params: { assignment_id: category.assessment_id,
-                         id: text.id,
+                         course_id: course.id,
+                         annotation_text_id: text.id,
                          content: 'updated content',
                          format: :js }
 
         expect(text.reload.content).to eq 'updated content'
       end
+      it_behaves_like 'role is from a different course' do
+        subject do
+          text = create(:annotation_text)
+          category = text.annotation_category
+          put_as new_role, :update_annotation_text,
+                 params: { assignment_id: category.assessment_id,
+                           course_id: course.id,
+                           annotation_text_id: text.id,
+                           content: 'updated content',
+                           format: :js }
+        end
+      end
     end
 
     context '#upload' do
       include_examples 'a controller supporting upload' do
-        let(:params) { { assignment_id: assignment.id } }
+        let(:params) { { course_id: course.id, assignment_id: assignment.id } }
+      end
+      it_behaves_like 'role is from a different course' do
+        subject do
+          post_as new_role, :upload, params: { course_id: course.id, assignment_id: assignment.id, upload_file: '' }
+        end
       end
       it 'accepts a valid csv file without deductive annotation info' do
         file_good = fixture_file_upload('annotation_categories/form_good.csv', 'text/csv')
-        post_as user, :upload, params: { assignment_id: assignment.id, upload_file: file_good }
+        post_as role, :upload, params: { course_id: course.id, assignment_id: assignment.id, upload_file: file_good }
 
         expect(response.status).to eq(302)
         expect(flash[:error]).to be_nil
@@ -527,7 +696,7 @@ describe AnnotationCategoriesController do
         file_good = fixture_file_upload('annotation_categories/form_good_with_deductive_info.csv',
                                         'text/csv')
         create(:flexible_criterion, name: 'hephaestus', assignment: assignment)
-        post_as user, :upload, params: { assignment_id: assignment.id, upload_file: file_good }
+        post_as role, :upload, params: { course_id: course.id, assignment_id: assignment.id, upload_file: file_good }
 
         expect(response.status).to eq 302
         expect(flash[:error]).to be_nil
@@ -549,7 +718,9 @@ describe AnnotationCategoriesController do
       it 'does not accept files with invalid columns' do
         @file_invalid_column = fixture_file_upload('annotation_categories/form_invalid_column.csv', 'text/csv')
 
-        post_as user, :upload, params: { assignment_id: assignment.id, upload_file: @file_invalid_column }
+        post_as role,
+                :upload,
+                params: { course_id: course.id, assignment_id: assignment.id, upload_file: @file_invalid_column }
 
         expect(response.status).to eq(302)
         # One annotation category was created, and one has an error.
@@ -560,7 +731,9 @@ describe AnnotationCategoriesController do
 
       it 'accepts a valid yml file without deductive annotation info' do
         @valid_yml_file = fixture_file_upload('annotation_categories/valid_yml.yml', 'text/yml')
-        post_as user, :upload, params: { assignment_id: assignment.id, upload_file: @valid_yml_file }
+        post_as role,
+                :upload,
+                params: { course_id: course.id, assignment_id: assignment.id, upload_file: @valid_yml_file }
         expect(flash[:success].size).to eq(1)
         expect(response.status).to eq(302)
 
@@ -580,7 +753,9 @@ describe AnnotationCategoriesController do
         create(:flexible_criterion, assignment: assignment, name: 'cafe')
         create(:flexible_criterion, assignment: assignment, name: 'finland')
         create(:flexible_criterion, assignment: assignment, name: 'artist')
-        post_as user, :upload, params: { assignment_id: assignment.id, upload_file: @valid_yml_file }
+        post_as role,
+                :upload,
+                params: { course_id: course.id, assignment_id: assignment.id, upload_file: @valid_yml_file }
 
         expect(flash[:success].size).to eq 1
         expect(response.status).to eq 302
@@ -601,7 +776,9 @@ describe AnnotationCategoriesController do
       it 'does not accept files with empty annotation category name' do
         @yml_with_invalid_category = fixture_file_upload('annotation_categories/yml_with_invalid_category.yml')
 
-        post_as user, :upload, params: { assignment_id: assignment.id, upload_file: @yml_with_invalid_category }
+        post_as role,
+                :upload,
+                params: { course_id: course.id, assignment_id: assignment.id, upload_file: @yml_with_invalid_category }
         expect(response.status).to eq(302)
         expect(flash[:error].size).to eq(1)
         expect(AnnotationCategory.all.size).to eq(0)
@@ -620,6 +797,14 @@ describe AnnotationCategoriesController do
           disposition: 'attachment',
           type: 'text/csv' }
       end
+      it_behaves_like 'role is from a different course' do
+        subject do
+          get_as new_role,
+                 :uncategorized_annotations,
+                 params: { course_id: course.id, assignment_id: assignment.id },
+                 format: 'csv'
+        end
+      end
       it 'expects a call to send_data with editor' do
         text_annotation = create(:text_annotation, annotation_text: text, result: assignment_result)
         csv_data = "#{assignment.groupings.first.group.group_name}," \
@@ -631,7 +816,10 @@ describe AnnotationCategoriesController do
           # to prevent a 'missing template' error
           @controller.head :ok
         }
-        get_as user, :uncategorized_annotations, params: { assignment_id: assignment.id }, format: 'csv'
+        get_as role,
+               :uncategorized_annotations,
+               params: { course_id: course.id, assignment_id: assignment.id },
+               format: 'csv'
       end
       it 'expects a call to send_data without editor' do
         text_annotation = create(:text_annotation, annotation_text: different_text, result: assignment_result)
@@ -643,26 +831,31 @@ describe AnnotationCategoriesController do
           # to prevent a 'missing template' error
           @controller.head :ok
         }
-        get_as user, :uncategorized_annotations, params: { assignment_id: assignment.id }, format: 'csv'
+        get_as role, :uncategorized_annotations,
+               params: { course_id: course.id, assignment_id: assignment.id }, format: 'csv'
       end
       it 'responds with appropriate status' do
-        get_as user, :uncategorized_annotations, params: { assignment_id: assignment.id }, format: 'csv'
+        get_as role, :uncategorized_annotations,
+               params: { course_id: course.id, assignment_id: assignment.id }, format: 'csv'
         expect(response.status).to eq(200)
       end
       # parse header object to check for the right disposition
       it 'sets disposition as attachment' do
-        get_as user, :uncategorized_annotations, params: { assignment_id: assignment.id }, format: 'csv'
+        get_as role, :uncategorized_annotations,
+               params: { course_id: course.id, assignment_id: assignment.id }, format: 'csv'
         d = response.header['Content-Disposition'].split.first
         expect(d).to eq 'attachment;'
       end
       # parse header object to check for the right content type
       it 'returns text/csv type' do
-        get_as user, :uncategorized_annotations, params: { assignment_id: assignment.id }, format: 'csv'
+        get_as role, :uncategorized_annotations,
+               params: { course_id: course.id, assignment_id: assignment.id }, format: 'csv'
         expect(response.media_type).to eq 'text/csv'
       end
       # parse header object to check for the right file naming convention
       it 'filename passes naming conventions' do
-        get_as user, :uncategorized_annotations, params: { assignment_id: assignment.id }, format: 'csv'
+        get_as role, :uncategorized_annotations,
+               params: { course_id: course.id, assignment_id: assignment.id }, format: 'csv'
         filename = response.header['Content-Disposition']
                            .split[1].split('"').second
         expect(filename).to eq "#{assignment.short_identifier}_one_time_annotations.csv"
@@ -682,13 +875,21 @@ describe AnnotationCategoriesController do
         { filename: "#{assignment.short_identifier}_annotations.csv",
           disposition: 'attachment' }
       end
+      it_behaves_like 'role is from a different course' do
+        subject do
+          get_as new_role, :download,
+                 params: { course_id: course.id, assignment_id: assignment.id }, format: 'csv'
+        end
+      end
       it 'responds with appropriate status' do
-        get_as user, :download, params: { assignment_id: assignment.id }, format: 'csv'
+        get_as role, :download,
+               params: { course_id: course.id, assignment_id: assignment.id }, format: 'csv'
         expect(response.status).to eq(200)
       end
       # parse header object to check for the right disposition
       it 'sets disposition as attachment' do
-        get_as user, :download, params: { assignment_id: assignment.id }, format: 'csv'
+        get_as role, :download,
+               params: { course_id: course.id, assignment_id: assignment.id }, format: 'csv'
         d = response.header['Content-Disposition'].split.first
         expect(d).to eq 'attachment;'
       end
@@ -697,16 +898,19 @@ describe AnnotationCategoriesController do
           # to prevent a 'missing template' error
           @controller.head :ok
         }
-        get_as user, :download, params: { assignment_id: assignment.id }, format: 'csv'
+        get_as role, :download,
+               params: { course_id: course.id, assignment_id: assignment.id }, format: 'csv'
       end
       # parse header object to check for the right content type
       it 'returns text/csv type' do
-        get_as user, :download, params: { assignment_id: assignment.id }, format: 'csv'
+        get_as role, :download,
+               params: { course_id: course.id, assignment_id: assignment.id }, format: 'csv'
         expect(response.media_type).to eq 'text/csv'
       end
       # parse header object to check for the right file naming convention
       it 'filename passes naming conventions' do
-        get_as user, :download, params: { assignment_id: assignment.id }, format: 'csv'
+        get_as role, :download,
+               params: { course_id: course.id, assignment_id: assignment.id }, format: 'csv'
         filename = response.header['Content-Disposition']
                            .split[1].split('"').second
         expect(filename).to eq "#{assignment.short_identifier}_annotations.csv"
@@ -724,7 +928,8 @@ describe AnnotationCategoriesController do
           # to prevent a 'missing template' error
           @controller.head :ok
         }
-        get_as user, :download, params: { assignment_id: assignment.id }, format: 'csv'
+        get_as role, :download,
+               params: { course_id: course.id, assignment_id: assignment.id }, format: 'csv'
       end
     end
 
@@ -738,7 +943,14 @@ describe AnnotationCategoriesController do
           # to prevent a 'missing template' error
           @controller.head :ok
         }
-        get_as user, :download, params: { assignment_id: assignment.id }, format: 'yml'
+        get_as role, :download,
+               params: { course_id: course.id, assignment_id: assignment.id }, format: 'yml'
+      end
+      it_behaves_like 'role is from a different course' do
+        subject do
+          get_as new_role, :download,
+                 params: { course_id: course.id, assignment_id: assignment.id }, format: 'yml'
+        end
       end
     end
   end
@@ -746,35 +958,39 @@ describe AnnotationCategoriesController do
   shared_examples 'An unauthorized user managing annotation categories' do
     context '#show' do
       it 'should respond with 403' do
-        get_as user, :show, params: { assignment_id: assignment.id, id: annotation_category.id }
+        get_as role, :show, params: { course_id: course.id, assignment_id: assignment.id, id: annotation_category.id }
         expect(response).to have_http_status(403)
       end
     end
     context '#new' do
       it 'should respond with 403' do
-        get_as user, :new, params: { assignment_id: assignment.id }
+        get_as role, :new, params: { course_id: course.id, assignment_id: assignment.id }
         expect(response).to have_http_status(403)
       end
     end
     context '#new_annotation_text' do
       it 'should respond with 403' do
-        get_as user, :new_annotation_text,
-               params: { assignment_id: assignment.id, annotation_category_id: annotation_category.id }
+        get_as role, :new_annotation_text,
+               params: { course_id: course.id,
+                         assignment_id: assignment.id,
+                         annotation_category_id: annotation_category.id }
         expect(response).to have_http_status(403)
       end
     end
     context '#create' do
       it 'should respond with 403' do
-        post_as user, :create,
-                params: { assignment_id: assignment.id,
+        post_as role, :create,
+                params: { course_id: course.id,
+                          assignment_id: assignment.id,
                           annotation_category: { annotation_category_name: 'New Category' } }
         expect(response).to have_http_status(403)
       end
     end
     context '#update' do
       it 'should respond with 403' do
-        patch_as user, :update,
+        patch_as role, :update,
                  params: { assignment_id: assignment.id,
+                           course_id: course.id,
                            id: annotation_category.id,
                            annotation_category: { annotation_category_name: 'Updated category' } }
         expect(response).to have_http_status(403)
@@ -784,22 +1000,26 @@ describe AnnotationCategoriesController do
       it 'should respond with 403' do
         cat1 = create(:annotation_category, assignment: assignment)
         cat2 = create(:annotation_category, assignment: assignment)
-        post_as user, :update_positions,
-                params: { assignment_id: assignment.id, annotation_category: [cat2.id, cat1.id] }
+        post_as role, :update_positions,
+                params: { course_id: course.id, assignment_id: assignment.id, annotation_category: [cat2.id, cat1.id] }
         expect(response).to have_http_status(403)
       end
     end
 
     context '#destroy' do
       it 'should respond with 403' do
-        delete_as user, :destroy, format: :js, params: { assignment_id: assignment.id, id: annotation_category.id }
+        delete_as role,
+                  :destroy,
+                  format: :js,
+                  params: { course_id: course.id, assignment_id: assignment.id, id: annotation_category.id }
         expect(response).to have_http_status(403)
       end
     end
     context '#create_annotation_text' do
       it 'should respond with 403' do
-        post_as user, :create_annotation_text,
+        post_as role, :create_annotation_text,
                 params: { assignment_id: assignment.id,
+                          course_id: course.id,
                           annotation_text: { content: 'New content', annotation_category_id: annotation_category.id },
                           format: :js }
         expect(response).to have_http_status(403)
@@ -810,9 +1030,10 @@ describe AnnotationCategoriesController do
         it 'should respond with 403' do
           text = create(:annotation_text)
           category = text.annotation_category
-          delete_as user, :destroy_annotation_text,
+          delete_as role, :destroy_annotation_text,
                     params: { assignment_id: category.assessment_id,
-                              id: text.id,
+                              course_id: course.id,
+                              annotation_text_id: text.id,
                               format: :js }
           expect(response).to have_http_status(403)
         end
@@ -821,9 +1042,10 @@ describe AnnotationCategoriesController do
         it 'should respond with 403' do
           text = create(:annotation_text)
           category = text.annotation_category
-          put_as user, :update_annotation_text,
+          put_as role, :update_annotation_text,
                  params: { assignment_id: category.assessment_id,
-                           id: text.id,
+                           course_id: course.id,
+                           annotation_text_id: text.id,
                            annotation_text: { content: 'updated content' },
                            format: :js }
           expect(response).to have_http_status(403)
@@ -832,13 +1054,13 @@ describe AnnotationCategoriesController do
       context '#upload' do
         it 'should respond with 403' do
           file_good = fixture_file_upload('annotation_categories/form_good.csv', 'text/csv')
-          post_as user, :upload, params: { assignment_id: assignment.id, upload_file: file_good }
+          post_as role, :upload, params: { course_id: course.id, assignment_id: assignment.id, upload_file: file_good }
           expect(response).to have_http_status(403)
         end
       end
       context '#download' do
         it 'should respond with 403' do
-          get_as user, :download, params: { assignment_id: assignment.id }, format: 'csv'
+          get_as role, :download, params: { course_id: course.id, assignment_id: assignment.id }, format: 'csv'
           expect(response).to have_http_status(403)
         end
       end
@@ -846,18 +1068,18 @@ describe AnnotationCategoriesController do
   end
 
   describe 'When the user is admin' do
-    let(:user) { create(:admin) }
+    let(:role) { create(:admin) }
     include_examples 'An authorized user managing annotation categories'
   end
 
   describe 'When the user is grader' do
     context 'When the grader is allowed to manage annotations' do
-      let(:user) { create(:ta, manage_assessments: true) }
+      let(:role) { create(:ta, manage_assessments: true) }
       include_examples 'An authorized user managing annotation categories'
     end
     context 'When the grader is not allowed to manage annotations' do
       # By default all the grader permissions are set to false
-      let(:user) { create(:ta) }
+      let(:role) { create(:ta) }
       include_examples 'An unauthorized user managing annotation categories'
       include_examples 'A grader or admin accessing the index or find_annotation_text routes'
     end

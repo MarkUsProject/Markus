@@ -1,7 +1,8 @@
 # Student policy class
-class StudentPolicy < UserPolicy
+class StudentPolicy < RolePolicy
   default_rule :admin?
   alias_rule :update_mailer_settings?, to: :student?
+  alias_rule :update_settings?, to: :settings?
   authorize :assignment, :grouping, :submission, optional: true
 
   def run_tests?
@@ -25,5 +26,9 @@ class StudentPolicy < UserPolicy
 
   def manage_assessments?
     false
+  end
+
+  def settings?
+    role.student? && role == record
   end
 end

@@ -38,3 +38,4 @@ pt:
       errors:
         duplicate_users: 'Nome de usuário duplicado detectado: %{user_names}.'
     verify_settings_update: UPDATE ME
+    not_found: 'UPDATE ME: %{user_names}'

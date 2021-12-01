@@ -9,38 +9,25 @@ class AdminsController < ApplicationController
     respond_to do |format|
       format.html
       format.json {
-        render json: Admin.pluck_to_hash(:id, :user_name, :first_name, :last_name, :email)
+        render json: current_course.admins.joins(:human).pluck_to_hash(:id, :user_name, :first_name, :last_name, :email)
       }
     end
   end
 
-  def edit
-    @user = Admin.find_by_id(params[:id])
-  end
-
   def new
-    @user = Admin.new
-  end
-
-  def update
-    @user = Admin.find(params[:id])
-    @user.update(user_params)
-    respond_with(@user)
+    @role = current_course.admins.new
   end
 
   def create
-    @user = Admin.create(user_params)
-    respond_with(@user)
+    human = Human.find_by_user_name(params[:user_name])
+    @role = current_course.admins.create(human: human)
+    respond_with @role, location: course_admins_path(current_course)
   end
 
   private
 
-  def user_params
-    params.require(:user).permit(:user_name, :first_name, :last_name, :email)
-  end
-
   def flash_interpolation_options
-    { resource_name: @user.user_name.blank? ? @user.model_name.human : @user.user_name,
-      errors: @user.errors.full_messages.join('; ')}
+    { resource_name: @role.human&.user_name.blank? ? @role.model_name.human : @role.user_name,
+      errors: @role.errors.full_messages.join('; ') }
   end
 end

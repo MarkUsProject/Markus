@@ -14,6 +14,7 @@ describe RubricCriterion do
     it { is_expected.to validate_presence_of(:max_mark) }
     it { is_expected.to validate_presence_of(:name) }
     it { is_expected.to validate_presence_of(:levels) }
+    it { is_expected.to have_one(:course) }
 
     it 'rounds weights that have more than 1 significant digits' do
       expect(RubricCriterion.count).to be > 0
@@ -283,9 +284,10 @@ describe RubricCriterion do
 
     context 'editing levels edits marks' do
       before(:each) do
-        create(:rubric_mark, mark: 0, criterion: @criterion)
-        create(:rubric_mark, mark: 1, criterion: @criterion)
-        create(:rubric_mark, mark: 1, criterion: @criterion)
+        3.times { create(:submission, grouping: create(:grouping, assignment: @criterion.assignment)) }
+        @criterion.marks.first.update(mark: 0)
+        @criterion.marks.second.update(mark: 1)
+        @criterion.marks.third.update(mark: 1)
       end
 
       context 'updating level updates respective mark' do
@@ -327,7 +329,8 @@ describe RubricCriterion do
           @marks = @criterion.marks
           results = []
           3.times do
-            results << create(:complete_result, released_to_students: false)
+            submission = create(:submission, grouping: create(:grouping, assignment: @criterion.assignment))
+            results << submission.current_result
           end
           @marks.create(mark: 0, result: results[0])
           @marks.create(mark: 1, result: results[1])

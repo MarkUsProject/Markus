@@ -7,19 +7,19 @@ class SubmissionPolicy < ApplicationPolicy
              :update_files?, to: :view_files?
 
   def manage?
-    check?(:manage_submissions?, user)
+    check?(:manage_submissions?, role)
   end
 
   def file_manager?
-    user.student?
+    role.student?
   end
 
   def manage_files?
-    user.admin? || user.ta?
+    role.admin? || role.ta?
   end
 
   def manage_subdirectories?
-    user.admin? || user.ta?
+    role.admin? || role.ta?
   end
 
   def view_files?

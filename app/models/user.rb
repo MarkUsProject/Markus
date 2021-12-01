@@ -38,13 +38,6 @@ class User < ApplicationRecord
   AUTHENTICATE_BAD_PLATFORM = 'bad_platform'.freeze
   AUTHENTICATE_BAD_CHAR = 'bad_char'.freeze
 
-  # Verifies if user is allowed to enter MarkUs
-  # Returns user object representing the user with the given login.
-  def self.authorize(login)
-    # fetch login in database to see if it is registered.
-    where(user_name: login).first
-  end
-
   # Authenticates login against its password
   # through a script specified by Settings.validate_file
   def self.authenticate(login, password, ip: nil)

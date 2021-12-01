@@ -1,18 +1,17 @@
 describe CourseSummariesController do
+  # TODO: add 'role is from a different course' shared tests to each route test below
   include CourseSummariesHelper
   context 'An admin' do
-    before do
-      @admin = Admin.create(user_name: 'adoe',
-                            last_name: 'doe',
-                            first_name: 'adam')
-    end
+    let(:admin) { create :admin }
+    let(:course) { admin.course }
 
     describe '#download_csv_grades_report' do
       it 'be able to get a csv grade report' do
         assignments = create_list(:assignment_with_criteria_and_results, 3)
         create(:grouping_with_inviter_and_submission, assignment: assignments[0])
         create(:grouping_with_inviter, assignment: assignments[0])
-        csv_rows = get_as(@admin, :download_csv_grades_report, format: :csv).parsed_body
+        csv_rows = get_as(admin, :download_csv_grades_report,
+                          params: { course_id: course.id }, format: :csv).parsed_body
         expect(csv_rows.size).to eq(Student.count + 2) # one header row, one out of row, plus one row per student
         header = [User.human_attribute_name(:user_name),
                   User.human_attribute_name(:first_name),
@@ -29,7 +28,7 @@ describe CourseSummariesController do
           student_name = csv_row.shift
           # Skipping first/last name and id_number fields
           3.times { |_| csv_row.shift }
-          student = Student.find_by_user_name(student_name)
+          student = Student.joins(:human).where('users.user_name': student_name).first
           expect(student).to be_truthy
           expect(assignments.size).to eq(csv_row.size)
 
@@ -59,7 +58,8 @@ describe CourseSummariesController do
           grade_forms = create_list(:grade_entry_form_with_data, 2)
           create(:grouping_with_inviter_and_submission, assignment: assignments[0])
           create(:grouping_with_inviter, assignment: assignments[0])
-          csv_rows = get_as(@admin, :download_csv_grades_report, format: :csv).parsed_body
+          csv_rows = get_as(admin, :download_csv_grades_report,
+                            params: { course_id: course.id }, format: :csv).parsed_body
           header = csv_rows[0]
           out_of_row = csv_rows[1]
           expect(out_of_row.size).to eq(4 + assignments.size + grade_forms.size)
@@ -77,7 +77,8 @@ describe CourseSummariesController do
           remark_results = assignment.groupings.map(&:results).group_by(&:count)[2].first
           grouping = remark_results.first.grouping
           user_name = grouping.students.first.user_name
-          csv_rows = get_as(@admin, :download_csv_grades_report, format: :csv).parsed_body
+          csv_rows = get_as(admin, :download_csv_grades_report,
+                            params: { course_id: course.id }, format: :csv).parsed_body
           csv_rows.select { |r| r.first == user_name }
                   .map { |r| expect(r.last).to eq(grouping.current_result.total_mark.to_s) }
         end
@@ -93,7 +94,7 @@ describe CourseSummariesController do
           create(:grade_entry_form)
           create :marking_scheme, assessments: Assessment.all
 
-          get_as @admin, :populate, format: :json
+          get_as admin, :populate, params: { course_id: course.id }, format: :json
           @response_data = response.parsed_body.deep_symbolize_keys
           @data = @response_data[:data]
         end
@@ -113,7 +114,7 @@ describe CourseSummariesController do
               last_name: student.last_name,
               hidden: student.hidden,
               assessment_marks: Hash[GradeEntryForm.all.map do |ges|
-                total_grade = ges.grade_entry_students.find_by(user: student).total_grade
+                total_grade = ges.grade_entry_students.find_by(role: student).total_grade
                 out_of = ges.grade_entry_items.sum(:out_of)
                 percent = total_grade.nil? || out_of.nil? ? nil : (total_grade * 100 / out_of).round(2)
                 [ges.id.to_s.to_sym, {
@@ -144,7 +145,7 @@ describe CourseSummariesController do
           end
           MarkingScheme.all.each do |m|
             total = m.marking_weights.pluck(:weight).compact.sum
-            grades = m.students_weighted_grades_array(@admin)
+            grades = m.students_weighted_grades_array(admin)
             averages << (DescriptiveStatistics.mean(grades) * 100 / total).round(2).to_f
             medians << (DescriptiveStatistics.median(grades) * 100 / total).round(2).to_f
           end
@@ -158,7 +159,7 @@ describe CourseSummariesController do
           remark_results = assignment.groupings.map(&:results).group_by(&:count)[2].first
           grouping = remark_results.first.grouping
           user_name = grouping.students.first.user_name
-          get_as @admin, :populate, format: :json
+          get_as admin, :populate, params: { course_id: course.id }, format: :json
           data = response.parsed_body.deep_symbolize_keys[:data]
           data.select { |d| d[:user_name] == user_name }.map do |d|
             expect(d[:assessment_marks][assignment.id.to_s.to_sym][:mark]).to eq(grouping.current_result.total_mark)
@@ -169,27 +170,18 @@ describe CourseSummariesController do
   end
 
   context 'A grader' do
-    before do
-      @grader = Ta.create(user_name: 'adoe',
-                          last_name: 'doe',
-                          first_name: 'adam')
-    end
-
+    let(:grader) { create :ta }
     it 'not be able to CSV graders report' do
-      get_as @grader, :download_csv_grades_report
+      get_as grader, :download_csv_grades_report, params: { course_id: grader.course.id }
       expect(response).to have_http_status(403)
     end
   end
 
   context 'A student' do
-    before do
-      @student = Student.create(user_name: 'adoe',
-                                last_name: 'doe',
-                                first_name: 'adam')
-    end
-
+    let(:student) { create :student }
+    let(:course) { student.course }
     it 'not be able to access grades report' do
-      get_as @student, :download_csv_grades_report
+      get_as student, :download_csv_grades_report, params: { course_id: course.id }
       expect(response).to have_http_status(403)
     end
 
@@ -208,7 +200,7 @@ describe CourseSummariesController do
         end
 
         it 'displays no information if all assessments are hidden' do
-          get_as @student2, :populate, format: :json
+          get_as @student2, :populate, params: { course_id: course.id }, format: :json
           r = response.parsed_body
           expect(r['data'][0]['assessment_marks']).to eq({})
           expect(r['data'][0]['user_name']).to eq @student2.user_name
@@ -228,14 +220,14 @@ describe CourseSummariesController do
             'mark' => grouping.current_result.total_mark,
             'percentage' => (grouping.current_result.total_mark * 100 / grouping.assignment.max_mark).round(2).to_s
           }
-          get_as student, :populate, format: :json
+          get_as student, :populate, params: { course_id: course.id }, format: :json
           r = response.parsed_body
           expect(r['data'][0]['assessment_marks']).to eq(expected_assessment_marks)
           expect(r['data'][0]['user_name']).to eq student.user_name
         end
       end
       context 'when no marks are released' do
-        let(:populate) { get_as @student2, :populate, format: :json }
+        let(:populate) { get_as @student2, :populate, params: { course_id: course.id }, format: :json }
         let(:response_data) { response.parsed_body.deep_symbolize_keys }
         let(:data) { response_data[:data] }
 
@@ -281,28 +273,30 @@ describe CourseSummariesController do
     end
 
     describe '#grade_distribution' do
-      let(:user) { create(:admin) }
+      let(:role) { create(:admin) }
+      let(:course) { role.course }
+      before { create :student, course: course }
       it('should respond with 200 (ok)') do
         create :marking_scheme, assessments: Assessment.all
-        get_as user, :grade_distribution, format: :json
+        get_as role, :grade_distribution, params: { course_id: course.id }, format: :json
         expect(response).to have_http_status 200
       end
       it 'returns correct data' do
         marking_scheme = create :marking_scheme, assessments: Assessment.all
         expected = {}
-        expected[:datasets] = [{ data: marking_scheme.students_grade_distribution(user) }]
+        expected[:datasets] = [{ data: marking_scheme.students_grade_distribution(role) }]
         expected[:labels] = (0..19).map { |i| "#{5 * i}-#{5 * i + 5}" }
-        grades = marking_scheme.students_weighted_grades_array(user)
+        grades = marking_scheme.students_weighted_grades_array(role)
         expected[:summary] = [{
           average: DescriptiveStatistics.mean(grades),
           median: DescriptiveStatistics.median(grades),
           name: marking_scheme.name
         }]
-        get_as user, :grade_distribution, format: :json
+        get_as role, :grade_distribution, params: { course_id: course.id }, format: :json
         expect(response.parsed_body).to eq expected.as_json
       end
       it 'returns correct data with no marking schemes' do
-        get_as user, :grade_distribution, format: :json
+        get_as role, :grade_distribution, params: { course_id: course.id }, format: :json
         expected = {}
         expected[:datasets] = []
         expected[:labels] = (0..19).map { |i| "#{5 * i}-#{5 * i + 5}" }
@@ -312,9 +306,9 @@ describe CourseSummariesController do
       it 'returns correct data when there is multiple marking schemes' do
         marking_schemes = create_list :marking_scheme, 2, assessments: Assessment.all
         expected = {}
-        expected[:datasets] = marking_schemes.map { |m| { data: m.students_grade_distribution(user) } }
+        expected[:datasets] = marking_schemes.map { |m| { data: m.students_grade_distribution(role) } }
         expected[:labels] = (0..19).map { |i| "#{5 * i}-#{5 * i + 5}" }
-        grades = marking_schemes.map { |m| m.students_weighted_grades_array(user) }
+        grades = marking_schemes.map { |m| m.students_weighted_grades_array(role) }
         expected[:summary] = marking_schemes.zip(grades).map do |marking_scheme, grade|
           {
             average: DescriptiveStatistics.mean(grade),
@@ -322,7 +316,7 @@ describe CourseSummariesController do
             name: marking_scheme.name
           }
         end
-        get_as user, :grade_distribution, format: :json
+        get_as role, :grade_distribution, params: { course_id: course.id }, format: :json
         expect(response.parsed_body).to eq expected.as_json
       end
     end

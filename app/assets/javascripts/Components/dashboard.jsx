@@ -16,17 +16,27 @@ class Dashboard extends React.Component {
 
   render() {
     if (this.state.display_course_summary) {
-      return <CourseSummaryChart />;
+      return <CourseSummaryChart course_id={this.props.course_id} />;
     } else if (this.state.assessment_type === "Assignment") {
-      return <AssignmentChart assessment_id={this.state.assessment_id} />;
+      return (
+        <AssignmentChart
+          course_id={this.props.course_id}
+          assessment_id={this.state.assessment_id}
+        />
+      );
     } else if (this.state.assessment_type === "GradeEntryForm") {
-      return <GradeEntryFormChart assessment_id={this.state.assessment_id} />;
+      return (
+        <GradeEntryFormChart
+          course_id={this.props.course_id}
+          assessment_id={this.state.assessment_id}
+        />
+      );
     } else {
       return "";
     }
   }
 }
 
-export function makeDashboard(elem) {
-  return render(<Dashboard />, elem);
+export function makeDashboard(elem, props) {
+  return render(<Dashboard {...props} />, elem);
 }

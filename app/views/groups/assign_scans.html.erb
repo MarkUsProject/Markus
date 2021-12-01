@@ -12,7 +12,7 @@
       source: function (request, response) {
         $.getJSON("get_names",
           {
-            assignment: <%= @assignment.id %>,
+            assignment_id: <%= @assignment.id %>,
             term: $("#names").val()
           },
           response);

@@ -12,6 +12,7 @@ describe AssignmentProperties do
     it { should allow_value(false).for(:allow_web_submits) }
     it { should allow_value(true).for(:display_grader_names_to_students) }
     it { should allow_value(false).for(:display_grader_names_to_students) }
+    it { is_expected.to have_one(:course) }
 
     it 'should not be valid with a negative duration' do
       extension = build(:timed_assignment, assignment_properties_attributes: { duration: -10.hours })

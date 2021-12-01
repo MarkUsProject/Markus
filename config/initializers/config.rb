@@ -129,14 +129,8 @@ Config.setup do |config|
         required(:is_repository_admin).filled(:bool)
       end
       required(:max_file_size).value(:integer, gt?: 0)
-      required(:student_session_timeout).value(:integer, gt?: 0)
-      required(:ta_session_timeout).value(:integer, gt?: 0)
-      required(:admin_session_timeout).value(:integer, gt?: 0)
+      required(:session_timeout).value(:integer, gt?: 0)
       required(:enable_key_storage).filled(:bool)
-      required(:student_csv_upload_order).array(
-        included_in?: %w[user_name last_name first_name section_name id_number email]
-      )
-      required(:ta_csv_upload_order).array(included_in?: %w[user_name last_name first_name email])
       required(:logging).hash do
         required(:enabled).filled(:bool)
         required(:rotate_by_interval).filled(:bool)

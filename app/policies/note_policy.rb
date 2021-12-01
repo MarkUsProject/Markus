@@ -4,10 +4,10 @@ class NotePolicy < ApplicationPolicy
   alias_rule :edit?, :update?, to: :modify?
 
   def manage?
-    user.ta? || user.admin?
+    role.ta? || role.admin?
   end
 
   def modify?
-    user.admin? || user.id == record.creator_id
+    role.admin? || role.id == record.creator_id
   end
 end

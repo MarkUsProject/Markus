@@ -5,6 +5,10 @@ class GradeEntryStudentTa < ApplicationRecord
   belongs_to :grade_entry_student
   belongs_to :ta
 
+  has_one :course, through: :grade_entry_student
+
+  validate :courses_should_match
+
   # Merges records of GradeEntryStudentTa that do not exist yet using a caller-
   # specified block. The block is given the passed-in grade entry student IDs
   # and TA IDs and must return a list of (grade entry student ID, TA ID) pair
@@ -41,9 +45,9 @@ class GradeEntryStudentTa < ApplicationRecord
     end
 
     new_mappings = []
-    tas = Hash[Ta.pluck(:user_name, :id)]
+    tas = Hash[Ta.joins(:human).pluck('users.user_name', :id)]
     grade_entry_students = Hash[
-      grade_entry_form.grade_entry_students.joins(:user).pluck('users.user_name', :id)
+      grade_entry_form.grade_entry_students.joins(role: :human).pluck('users.user_name', :id)
     ]
 
     result = MarkusCsv.parse(csv_data.read) do |row|

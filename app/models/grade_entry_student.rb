@@ -7,6 +7,8 @@ class GradeEntryStudent < ApplicationRecord
   belongs_to :grade_entry_form, foreign_key: :assessment_id
   validates_associated :grade_entry_form, on: :create
 
+  has_one :course, through: :grade_entry_form
+
   has_many :grades, dependent: :destroy
 
   has_many :grade_entry_items, through: :grades
@@ -17,6 +19,8 @@ class GradeEntryStudent < ApplicationRecord
   validates_inclusion_of :released_to_student, in: [true, false]
 
   before_save :refresh_total_grade
+
+  validate :courses_should_match
 
   # Merges records of GradeEntryStudent that do not exist yet using a caller-
   # specified block. The block is given the passed-in student IDs and grade

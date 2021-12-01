@@ -15,7 +15,8 @@
 describe Student do
 
   context 'A good Student model' do
-
+    subject { create :student }
+    it { is_expected.to validate_uniqueness_of(:user_id).scoped_to(:course_id) }
     it 'will have many accepted groupings' do
       is_expected.to have_many(:accepted_groupings).through(:memberships)
     end

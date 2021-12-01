@@ -1,9 +1,11 @@
 describe TextAnnotation do
   context 'A valid TextAnnotation model' do
+    subject { create :text_annotation }
     it { is_expected.to validate_presence_of(:line_start) }
     it { is_expected.to validate_presence_of(:line_end) }
     it { is_expected.to allow_value(10).for(:line_start) }
     it { is_expected.to allow_value(10).for(:line_end) }
+    include_examples 'course associations'
 
     describe '#get_data' do
       let(:annotation) { create :text_annotation }

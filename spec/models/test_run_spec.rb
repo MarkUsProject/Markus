@@ -1,9 +1,12 @@
 describe TestRun do
+  subject { create :test_run }
   it { is_expected.to have_many(:test_group_results) }
   it { is_expected.to belong_to(:test_batch).optional }
   it { is_expected.to belong_to(:submission).optional }
   it { is_expected.to belong_to(:grouping) }
   it { is_expected.to belong_to(:role) }
+  it { is_expected.to have_one(:course) }
+  include_examples 'course associations'
 
   describe '#cancel' do
     before { test_run.cancel }

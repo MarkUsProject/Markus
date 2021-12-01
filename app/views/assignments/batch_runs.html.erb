@@ -3,8 +3,8 @@
     document.addEventListener('DOMContentLoaded', () => {
       window.BatchTestRunTable = makeBatchTestRunTable(document.getElementById('batch_test_run_table'), {
         assignment_id: <%= @assignment.id %>,
-        detailed: <%= @current_user.admin? || @current_user.ta? ||
-                      @current_user.is_reviewer_for?(@assignment.pr_assignment, @result) %>
+        detailed: <%= @current_role.admin? || @current_role.ta? ||
+                      @current_role.is_reviewer_for?(@assignment.pr_assignment, @result) %>
       });
     })
   <% end %>

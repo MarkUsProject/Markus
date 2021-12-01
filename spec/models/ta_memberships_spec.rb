@@ -1,4 +1,7 @@
 describe TaMembership do
+  subject { create :ta_membership }
+  it { is_expected.to have_one(:course) }
+  include_examples 'course associations'
   it 'should belong to a ta' do
     expect(create(:ta_membership, role: create(:ta))).to be_valid
   end
