@@ -253,7 +253,7 @@ export class SummaryPanel extends React.Component {
     } else {
       let rows = this.props.graceTokenDeductions.flatMap(d => {
         return [
-          <tr key={d["users.user_name"]}>
+          <tr key={d["users.user_name"]} align="left">
             <th colSpan={2}>
               {`${d["users.user_name"]} - (${d["users.display_name"]})`}
             </th>
