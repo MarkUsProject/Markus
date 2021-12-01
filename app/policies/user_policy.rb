@@ -19,8 +19,8 @@ class UserPolicy < ApplicationPolicy
     true
   end
 
-  # Students and TAs shouldn't be able to change their API key
+  # Only users that are admins in at least one course
   def reset_api_key?
-    true
+    user.roles.pluck(:type).include?('Admin')
   end
 end

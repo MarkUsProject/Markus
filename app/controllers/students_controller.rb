@@ -151,10 +151,23 @@ class StudentsController < ApplicationController
     @grace_period_deductions = student.grace_period_deductions
   end
 
+  def settings; end
+
+  def update_settings
+    role = current_role
+    role.update!(settings_params)
+    flash_message(:success, t('users.verify_settings_update'))
+    redirect_to action: 'settings'
+  end
+
   private
 
   def role_params
     params.permit(:user_name, :grace_credits, :section_id)
+  end
+
+  def settings_params
+    params.require(:role).permit(:receives_invite_emails, :receives_results_emails)
   end
 
   def flash_interpolation_options

@@ -404,6 +404,8 @@ Rails.application.routes.draw do
 
       member do
         delete 'delete_grace_period_deduction'
+        get 'settings'
+        patch 'update_settings'
       end
     end
 

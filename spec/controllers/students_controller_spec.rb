@@ -86,4 +86,49 @@ describe StudentsController do
       end
     end
   end
+  describe 'role is a student' do
+    let(:role) { create :student }
+    shared_examples 'changing particular mailer settings' do
+      it 'can be enabled in settings' do
+        role.update!(setting => false)
+        patch_as role,
+                 'update_settings',
+                 params: { course_id: role.course.id, id: role.id, role: { setting => true, other_setting => true } }
+        role.reload
+        expect(role[setting]).to be true
+      end
+
+      it 'can be disabled in settings' do
+        role.update!(setting => true)
+        patch_as role,
+                 'update_settings',
+                 params: { course_id: role.course.id, id: role.id, role: { setting => false, other_setting => true } }
+        role.reload
+        expect(role[setting]).to be false
+      end
+
+      it 'redirects back to settings' do
+        patch_as role,
+                 'update_settings',
+                 params: { course_id: role.course.id, id: role.id, role: { setting => true, other_setting => true } }
+        expect(response).to redirect_to(settings_course_student_path(role.course, role))
+      end
+    end
+
+    describe 'results released notifications' do
+      # Authenticate role is not timed out, and is a student.
+      let(:setting) { 'receives_results_emails' }
+      let(:other_setting) { 'receives_invite_emails' }
+
+      include_examples 'changing particular mailer settings'
+    end
+
+    describe 'group invite notifications' do
+      # Authenticate role is not timed out, and is a student.
+      let(:setting) { 'receives_invite_emails' }
+      let(:other_setting) { 'receives_results_emails' }
+
+      include_examples 'changing particular mailer settings'
+    end
+  end
 end
