@@ -7,6 +7,7 @@ class CoursesController < ApplicationController
   layout 'assignment_content'
 
   def index
+    response.set_header('Cache-Control', 'no-store')
     respond_to do |format|
       format.html { render :index }
       format.json do
