@@ -207,9 +207,9 @@ class ResultsController < ApplicationController
         else
           data[:grace_token_deductions] =
             submission.grouping
-              .grace_period_deductions
-              .joins(membership: :user)
-              .pluck_to_hash(:id, :deduction, 'users.user_name', 'users.first_name', 'users.last_name')
+                      .grace_period_deductions
+                      .joins(membership: :user)
+                      .pluck_to_hash(:id, :deduction, 'users.user_name', 'users.display_name')
         end
 
         # Totals

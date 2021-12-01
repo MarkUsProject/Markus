@@ -255,7 +255,7 @@ export class SummaryPanel extends React.Component {
         return [
           <tr key={d["users.user_name"]}>
             <th colSpan={2}>
-              {`${d["users.user_name"]} - (${d["users.first_name"]} ${d["users.last_name"]})`}
+              {`${d["users.user_name"]} - (${d["users.display_name"]})`}
             </th>
           </tr>,
           <tr key={d["users.user_name"] + "-deduction"}>
