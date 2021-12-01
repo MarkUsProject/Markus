@@ -12,13 +12,9 @@ describe TagsController do
     context 'only getting the tags for the specified assignment' do
       it 'returns correct JSON data' do
         get_as admin, :index, params: { course_id: course.id, assignment_id: assignment.id, format: :json }
-        expected = [{
-                      'id' => assignment_tag.id,
-                      'name' => assignment_tag.name,
-                      'description' => assignment_tag.description,
-                      'creator' => "#{assignment_tag.role.first_name} #{assignment_tag.role.last_name}",
-                      'use' => assignment_tag.groupings.size
-                    }]
+        expected = [{ id: assignment_tag.id, name: assignment_tag.name, description: assignment_tag.description,
+                      creator: "#{assignment_tag.role.first_name} #{assignment_tag.role.last_name}",
+                      use: assignment_tag.groupings.size }.stringify_keys]
         expect(response.parsed_body).to contain_exactly(*expected)
       end
     end
@@ -26,8 +22,8 @@ describe TagsController do
       it 'returns correct JSON data' do
         get_as admin, :index, params: { course_id: course.id, format: :json }
         expected = tags.map do |t|
-          {id: t.id, name: t.name, description: t.description,
-           creator: "#{t.role.first_name} #{t.role.last_name}", use: t.groupings.size}.stringify_keys
+          { id: t.id, name: t.name, description: t.description,
+            creator: "#{t.role.first_name} #{t.role.last_name}", use: t.groupings.size }.stringify_keys
         end
 
         expect(response.parsed_body).to contain_exactly(*expected)
