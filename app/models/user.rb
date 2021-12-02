@@ -289,15 +289,19 @@ class User < ApplicationRecord
   # only the assessment with the given id, if it is visible to the current user.
   # If it is not visible, returns an empty collection.
   def visible_assessments(assessment_type: nil, assessment_id: nil)
-    assessments = Assessment.where(is_hidden: false, type: assessment_type || Assessment.type)
+    assessments = Assessment.where(type: assessment_type || Assessment.type)
+    assessments = assessments.where(id: assessment_id) if assessment_id
     if self.section_id
-      assessments = Assessment.left_outer_joins(:assessment_section_properties)
-                              .where('assessment_section_properties.section_id': [self.section_id, nil])
+      assessments = assessments.left_outer_joins(:assessment_section_properties)
+                               .where(
+                                 'assessment_section_properties.section_id': [self.section_id, nil]
+                               )
       assessments = assessments.where('assessment_section_properties.is_hidden': false)
                                .or(assessments.where('assessment_section_properties.is_hidden': nil,
                                                      'assessments.is_hidden': false))
+    else
+      assessments = assessments.where(is_hidden: false)
     end
-    return assessments.where(id: assessment_id) if assessment_id
     assessments
   end
 
