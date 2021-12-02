@@ -7,7 +7,10 @@ class CoursesController < ApplicationController
   layout 'assignment_content'
 
   def index
-    response.set_header('Cache-Control', 'no-store')
+    # Force browsers not to cache the index page
+    # to prevent attempting to render course_list
+    # with cached HTML instead of requesting the json
+    response.set_header('Cache-Control', 'no-store, must-revalidate')
     respond_to do |format|
       format.html { render :index }
       format.json do
