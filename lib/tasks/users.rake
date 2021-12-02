@@ -31,9 +31,31 @@ namespace :db do
     TestServer.find_or_create
   end
 
+  task student_users: :environment do
+    puts 'Populate database with users'
+    STUDENT_CSV = 'db/data/students.csv'
+    if File.readable?(STUDENT_CSV)
+      i = 0
+      File.open(STUDENT_CSV) do |data|
+        MarkusCsv.parse(data.read, skip_blanks: true, row_sep: :auto) do |row|
+          user_name, first_name, last_name = row
+          next if user_name.blank? || first_name.blank? || last_name.blank?
+          first_name_email = first_name.downcase.gsub(/\s+/, '')
+          last_name_email = last_name.downcase.gsub(/\s+/, '')
+          i += rand(10 ** 7)
+          Human.create!(user_name: user_name,
+                        first_name: first_name,
+                        last_name: last_name,
+                        id_number: format('%010d', i),
+                        email: "#{first_name_email}.#{last_name_email}@example.com")
+        end
+      end
+    end
+  end
+
   desc 'Add student users to the database'
   # this task depends on :environment and :seed
-  task(:users => :environment) do
+  task students: :environment do
     puts 'Populate database with Students'
     STUDENT_CSV = 'db/data/students.csv'
     if File.readable?(STUDENT_CSV)
@@ -41,14 +63,8 @@ namespace :db do
         UploadRolesJob.perform_now(Student, Course.first, csv_students.read, nil)
       end
     end
-    i = 0
     Student.find_each do |student|
-      i += rand(10 ** 7)
-      first_name = student.human.first_name.downcase.gsub(/\s+/, '')
-      last_name = student.human.last_name.downcase.gsub(/\s+/, '')
-      student.update(grace_credits: 5, human_attributes: { id: student.user_id,
-                                                           id_number: format('%010d', i),
-                                                           email: "#{first_name}.#{last_name}@example.com" })
+      student.update(grace_credits: 5)
     end
   end
 end
