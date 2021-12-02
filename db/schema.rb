@@ -253,7 +253,7 @@ ActiveRecord::Schema.define(version: 2021_11_26_223421) do
     t.datetime "updated_at"
     t.float "total_grade"
     t.bigint "assessment_id"
-    t.bigint "role_id"
+    t.bigint "role_id", null: false
     t.index ["role_id"], name: "index_grade_entry_students_on_role_id"
   end
 
@@ -267,7 +267,7 @@ ActiveRecord::Schema.define(version: 2021_11_26_223421) do
     t.boolean "manage_submissions", default: false, null: false
     t.boolean "manage_assessments", default: false, null: false
     t.boolean "run_tests", default: false, null: false
-    t.bigint "role_id"
+    t.bigint "role_id", null: false
     t.index ["role_id"], name: "index_grader_permissions_on_role_id"
   end
 
@@ -376,7 +376,7 @@ ActiveRecord::Schema.define(version: 2021_11_26_223421) do
     t.datetime "updated_at"
     t.integer "grouping_id", null: false
     t.string "type"
-    t.bigint "role_id"
+    t.bigint "role_id", null: false
     t.index ["role_id"], name: "index_memberships_on_role_id"
   end
 
@@ -491,7 +491,7 @@ ActiveRecord::Schema.define(version: 2021_11_26_223421) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "exam_template_id"
-    t.bigint "role_id"
+    t.bigint "role_id", null: false
     t.index ["exam_template_id"], name: "index_split_pdf_logs_on_exam_template_id"
     t.index ["role_id"], name: "index_split_pdf_logs_on_role_id"
   end
@@ -545,7 +545,7 @@ ActiveRecord::Schema.define(version: 2021_11_26_223421) do
     t.string "name", null: false
     t.string "description"
     t.bigint "assessment_id"
-    t.bigint "role_id"
+    t.bigint "role_id", null: false
     t.index ["assessment_id"], name: "index_tags_on_assessment_id"
     t.index ["role_id"], name: "index_tags_on_role_id"
   end
@@ -615,7 +615,7 @@ ActiveRecord::Schema.define(version: 2021_11_26_223421) do
     t.text "problems"
     t.integer "autotest_test_id"
     t.integer "status", null: false
-    t.bigint "role_id"
+    t.bigint "role_id", null: false
     t.index ["grouping_id"], name: "index_test_runs_on_grouping_id"
     t.index ["role_id"], name: "index_test_runs_on_role_id"
     t.index ["submission_id"], name: "index_test_runs_on_submission_id"
