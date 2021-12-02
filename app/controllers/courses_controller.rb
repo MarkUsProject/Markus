@@ -4,10 +4,22 @@ class CoursesController < ApplicationController
   before_action { authorize! }
 
   respond_to :html
+  layout 'assignment_content'
 
   def index
-    @courses = Course.all
-    respond_with(@courses, layout: false)
+    # Force browsers not to cache the index page
+    # to prevent attempting to render course_list
+    # with cached HTML instead of requesting the json
+    response.set_header('Cache-Control', 'no-store, must-revalidate')
+    respond_to do |format|
+      format.html { render :index }
+      format.json do
+        courses = current_user.visible_courses
+                              .pluck_to_hash('courses.id', 'courses.name',
+                                             'courses.display_name', 'roles.type')
+        render json: { 'data': courses }
+      end
+    end
   end
 
   def show

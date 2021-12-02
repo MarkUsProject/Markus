@@ -23,19 +23,19 @@ class ApplicationPolicy < ActionPolicy::Base
   # policies used to render menu bars (visible everywhere)
 
   def view_admin_subtabs?
-    check?(:manage_assessments?, role)
+    role && check?(:manage_assessments?, role)
   end
 
   def view_ta_subtabs?
-    role.ta?
+    role&.ta?
   end
 
   def view_student_subtabs?
-    role.student?
+    role&.student?
   end
 
   def view_sub_sub_tabs?
-    role.admin? || role.ta?
+    role&.admin? || role&.ta?
   end
 
   # checks usable for all policies
