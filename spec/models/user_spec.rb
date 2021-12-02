@@ -201,6 +201,22 @@ describe User do
                                              due_date: 2.days.from_now,
                                              is_hidden: false)
     end
+    let(:grade_entry_form_visible) { create :grade_entry_form }
+    let(:grade_entry_section_visible) do
+      create :assessment_section_properties,
+             assessment: grade_entry_form_visible,
+             section: new_section,
+             is_hidden: false
+    end
+
+    let(:grade_entry_form_hidden) { create :grade_entry_form }
+    let(:grade_entry_section_hidden) do
+      create :assessment_section_properties,
+             assessment: grade_entry_form_hidden,
+             section: new_section,
+             is_hidden: true
+    end
+
     context 'when there are no assessments' do
       let(:new_user) { create :student }
       it 'should return an empty list' do
@@ -365,18 +381,6 @@ describe User do
     end
 
     context 'when using grade entry forms' do
-      let(:grade_entry_form_visible) { create :grade_entry_form }
-      let(:grade_entry_section_visible) do
-        create :assessment_section_properties, assessment: grade_entry_form_visible,
-                                               section: new_section, is_hidden: false
-      end
-
-      let(:grade_entry_form_hidden) { create :grade_entry_form }
-      let(:grade_entry_section_hidden) do
-        create :assessment_section_properties, assessment: grade_entry_form_hidden,
-                                               section: new_section, is_hidden: true
-      end
-
       context 'when there are assessments' do
         before(:each) do
           grade_entry_section_visible
@@ -431,6 +435,37 @@ describe User do
           it 'does return an empty array' do
             expect(new_user.visible_assessments(assessment_id: grade_entry_form_hidden.id)).to be_empty
           end
+        end
+      end
+    end
+
+    context 'when there are both assignments and grade entry forms' do
+      before do
+        assignment_visible
+        grade_entry_form_visible
+      end
+
+      context 'when the student is not in a section' do
+        let(:new_user) { create :student }
+        it 'returns all assessments when assessment_type is nil' do
+          expect(new_user.visible_assessments).to contain_exactly(assignment_visible, grade_entry_form_visible)
+        end
+
+        it 'returns only assessments of the correct type when assessment_type is specified' do
+          assessments = new_user.visible_assessments(assessment_type: 'Assignment')
+          expect(assessments).to contain_exactly(assignment_visible)
+        end
+      end
+
+      context 'when the student is in a section' do
+        let(:new_user) { create :student, section_id: new_section.id }
+        it 'returns all assessments when assessment_type is nil' do
+          expect(new_user.visible_assessments).to contain_exactly(assignment_visible, grade_entry_form_visible)
+        end
+
+        it 'returns only assessments of the correct type when assessment_type is specified' do
+          assessments = new_user.visible_assessments(assessment_type: 'Assignment')
+          expect(assessments).to contain_exactly(assignment_visible)
         end
       end
     end
