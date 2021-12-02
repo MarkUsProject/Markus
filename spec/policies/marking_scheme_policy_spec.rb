@@ -1,14 +1,14 @@
 describe MarkingSchemePolicy do
-  let(:context) { { user: user } }
+  let(:context) { { role: role, real_user: role.human } }
   describe_rule :manage? do
-    succeed 'user is admin' do
-      let(:user) { create :admin }
+    succeed 'role is admin' do
+      let(:role) { create :admin }
     end
-    failed 'user is ta' do
-      let(:user) { create :ta }
+    failed 'role is ta' do
+      let(:role) { create :ta }
     end
-    failed 'user is student' do
-      let(:user) { create :student }
+    failed 'role is student' do
+      let(:role) { create :student }
     end
   end
 end

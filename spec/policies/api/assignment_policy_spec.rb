@@ -7,8 +7,8 @@ describe Api::AssignmentPolicy do
       let(:role) { build :admin }
     end
     succeed 'user is a test server' do
-      let(:user) { build :test_server }
       let(:role) { nil }
+      let(:user) { create :test_server }
     end
     failed 'role is a ta' do
       let(:role) { build :ta }

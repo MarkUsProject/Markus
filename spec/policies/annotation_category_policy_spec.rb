@@ -1,28 +1,28 @@
 describe AnnotationCategoryPolicy do
-  let(:context) { { real_user: user } }
+  let(:context) { { role: role, real_user: role.human } }
   describe_rule :manage? do
-    succeed 'when the user is an admin' do
-      let(:user) { build(:admin) }
+    succeed 'when the role is an admin' do
+      let(:role) { build(:admin) }
     end
-    failed 'when the user is a ta' do
-      let(:user) { create(:ta) }
+    failed 'when the role is a ta' do
+      let(:role) { create(:ta) }
       succeed 'that can manage annotations' do
-        let(:user) { create(:ta, manage_assessments: true) }
+        let(:role) { create(:ta, manage_assessments: true) }
       end
     end
-    failed 'when the user is a student' do
-      let(:user) { create(:student) }
+    failed 'when the role is a student' do
+      let(:role) { create(:student) }
     end
   end
   describe_rule :read? do
-    succeed 'when the user is an admin' do
-      let(:user) { build(:admin) }
+    succeed 'when the role is an admin' do
+      let(:role) { build(:admin) }
     end
-    succeed 'when the user is a ta' do
-      let(:user) { build(:ta) }
+    succeed 'when the role is a ta' do
+      let(:role) { build(:ta) }
     end
-    failed 'when the user is a student' do
-      let(:user) { build(:student) }
+    failed 'when the role is a student' do
+      let(:role) { build(:student) }
     end
   end
 end
