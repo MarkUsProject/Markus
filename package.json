@@ -20,7 +20,7 @@
     "prop-types": "^15.7.2",
     "rails-erb-loader": "^5.5.2",
     "react": "^16.14.0",
-    "react-chartjs-2": "^3.0.5",
+    "react-chartjs-2": "^4.0.0",
     "react-dom": "^16.14.0",
     "react-keyed-file-browser": "^1.13.1",
     "react-modal": "^3.14.4",
