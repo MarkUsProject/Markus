@@ -22,7 +22,7 @@
     "react": "^16.14.0",
     "react-chartjs-2": "^4.0.0",
     "react-dom": "^16.14.0",
-    "react-keyed-file-browser": "^1.13.1",
+    "react-keyed-file-browser": "^1.14.0",
     "react-modal": "^3.14.4",
     "react-table": "^6.11.5",
     "react-tabs": "^3.2.3",

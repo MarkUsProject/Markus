@@ -6178,10 +6178,10 @@ react-is@^16.7.0, react-is@^16.8.1, react-is@^16.9.0:
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.13.1.tgz#789729a4dc36de2999dc156dd6c1d9c18cea56a4"
   integrity sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==
 
-react-keyed-file-browser@^1.13.1:
-  version "1.13.1"
-  resolved "https://registry.yarnpkg.com/react-keyed-file-browser/-/react-keyed-file-browser-1.13.1.tgz#1f81bf167c5158ffcf81dc207d7899fcffe8f820"
-  integrity sha512-i3srclCxuhRk1+BsbItdibZx0/JpPcxtylySoIMY0migDuzfwnZ8WLhqkru9XqxeK1Mex9IxJTcF5RWdeUjihg==
+react-keyed-file-browser@^1.14.0:
+  version "1.14.0"
+  resolved "https://registry.yarnpkg.com/react-keyed-file-browser/-/react-keyed-file-browser-1.14.0.tgz#0d55d9932e43c75ff60b849d92ea181184e1f211"
+  integrity sha512-1VWetrfla8/xHW5dmVPUW7vXLaS9vAbuqtaNeKTgPtevwQxAwMvHpsUyivtcKgB2PU5J2HUWr82g+3kDAjZifw==
   dependencies:
     classnames "^2.2.6"
     date-fns "^2.22.1"
