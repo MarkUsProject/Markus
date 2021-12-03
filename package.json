@@ -4,7 +4,7 @@
     "@babel/preset-react": "^7.16.0",
     "@rails/ujs": "^6.1.4",
     "@rails/webpacker": "5.4",
-    "@rjsf/core": "^3.1.0",
+    "@rjsf/core": "^3.2.1",
     "chart.js": "^3.6.1",
     "dompurify": "^2.3.3",
     "heic2any": "^0.0.3",
