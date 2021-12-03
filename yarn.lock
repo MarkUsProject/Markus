@@ -1161,16 +1161,16 @@
   resolved "https://registry.yarnpkg.com/@react-dnd/shallowequal/-/shallowequal-2.0.0.tgz#a3031eb54129f2c66b2753f8404266ec7bf67f0a"
   integrity sha512-Pc/AFTdwZwEKJxFJvlxrSmGe/di+aAOBn60sremrpLo6VI/6cmiUYNNwlI5KNYttg7uypzA3ILPMPgxB2GYZEg==
 
-"@rjsf/core@^3.1.0":
-  version "3.1.0"
-  resolved "https://registry.yarnpkg.com/@rjsf/core/-/core-3.1.0.tgz#7667364a4532e25c164abbc2adabe39157ffec4c"
-  integrity sha512-EwM2juiQxEdXzFy9rIIsDr6/e+FYeR1cKx0/no8ASEuXZ1p+/nf/CxKGobzD6UhpRip7JK9PhhuHFEFBIjHFJA==
+"@rjsf/core@^3.2.1":
+  version "3.2.1"
+  resolved "https://registry.yarnpkg.com/@rjsf/core/-/core-3.2.1.tgz#8a7b24c9a6f01f0ecb093fdfc777172c12b1b009"
+  integrity sha512-dk8ihvxFbcuIwU7G+HiJbFgwyIvaumPt5g5zfnuC26mwTUPlaDGFXKK2yITp8tJ3+hcwS5zEXtAN9wUkfuM4jA==
   dependencies:
     "@types/json-schema" "^7.0.7"
     ajv "^6.7.0"
     core-js-pure "^3.6.5"
     json-schema-merge-allof "^0.6.0"
-    jsonpointer "^4.0.1"
+    jsonpointer "^5.0.0"
     lodash "^4.17.15"
     nanoid "^3.1.23"
     prop-types "^15.7.2"
@@ -4245,10 +4245,10 @@ json5@^2.1.2:
   dependencies:
     minimist "^1.2.5"
 
-jsonpointer@^4.0.1:
-  version "4.1.0"
-  resolved "https://registry.yarnpkg.com/jsonpointer/-/jsonpointer-4.1.0.tgz#501fb89986a2389765ba09e6053299ceb4f2c2cc"
-  integrity sha512-CXcRvMyTlnR53xMcKnuMzfCA5i/nfblTnnr74CZb6C4vG39eu6w51t7nKmU5MfLfbTgGItliNyjO/ciNPDqClg==
+jsonpointer@^5.0.0:
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/jsonpointer/-/jsonpointer-5.0.0.tgz#f802669a524ec4805fa7389eadbc9921d5dc8072"
+  integrity sha512-PNYZIdMjVIvVgDSYKTT63Y+KZ6IZvGRNNWcxwD+GNnUz1MKPfv30J8ueCjdwcN0nDx2SlshgyB7Oy0epAzVRRg==
 
 killable@^1.0.1:
   version "1.0.1"
