@@ -1,0 +1,48 @@
+{
+  "testers":
+  [
+    {
+      "env_data":
+      {
+        "requirements": "knitr"
+      },
+      "test_data":
+      [
+        {
+          "category":
+          [
+            "admin"
+          ],
+          "extra_info":
+          {
+            "criterion": "FlexibleCriterion:criterion",
+            "name": "R Test Group",
+            "display_output": "instructors"
+          },
+          "script_files":
+          [
+            "test.R"
+          ],
+          "timeout": 30
+        },
+        {
+          "category":
+          [
+            "admin"
+          ],
+          "extra_info":
+          {
+            "name": "R Test Group for Rmarkdown",
+            "display_output": "instructors"
+          },
+          "script_files":
+          [
+            "test_rmd.R"
+          ],
+          "timeout": 30
+        }
+      ],
+      "tester_type": "r"
+    }
+  ]
+}

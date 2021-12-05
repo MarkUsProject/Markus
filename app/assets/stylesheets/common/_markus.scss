@@ -354,7 +354,8 @@ fieldset {
     padding-bottom: 0.75em;
   }
 
-  label {
+  label,
+  .label {
     text-align: right;
   }
 
@@ -1101,7 +1102,7 @@ nav {
   position: relative; // For image annotations
 }
 
-#crop-target {
+.crop-target {
   border: 1px solid $gridline;
   max-width: 400px;
 }
@@ -1287,15 +1288,14 @@ nav {
 }
 
 // Styling for graphs
+.data-chart-container {
+  display: flex;
+  justify-content: center;
+}
 
 .ta-grade-distribution-graph-wrapper {
   display: inline-block;
   width: 400px;
-}
-
-#gef_data_chart {
-  padding-bottom: 0;
-  text-align: center;
 }
 
 // for charts rendered in FireFox

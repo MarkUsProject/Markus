@@ -69,12 +69,10 @@ class AutomatedTestsController < ApplicationController
                                                   [grouping.group_id],
                                                   collected: false)
       session[:job_id] = @current_job.job_id
-      flash_message(:notice, I18n.t('automated_tests.tests_running'))
+      flash_message(:success, I18n.t('automated_tests.tests_running'))
     end
   rescue StandardError => e
     flash_message(:error, e.message)
-  ensure
-    redirect_to action: :student_interface, id: params[:id]
   end
 
   def get_test_runs_students

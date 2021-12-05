@@ -31,6 +31,7 @@ module FileHelper
                   '.latex' => 'tex',
                   '.pdf' => 'pdf',
                   '.ipynb' => 'jupyter-notebook',
+                  '.r' => 'r',
                   '.rmd' => 'rmarkdown' }.freeze
 
   COMMENT_TO_SYNTAX = { '.java' => %w[/* */],

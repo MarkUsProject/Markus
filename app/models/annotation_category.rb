@@ -31,13 +31,13 @@ class AnnotationCategory < ApplicationRecord
     annotation_category = assignment.annotation_categories.find_by(annotation_category_name: name)
     # The second column is the optional flexible criterion name.
     criterion_name = row.shift
+    criterion_name = nil if criterion_name.blank?
     if annotation_category.nil?
       annotation_category = assignment.annotation_categories.create(annotation_category_name: name)
       unless annotation_category.valid?
         raise CsvInvalidLineError, I18n.t('annotation_categories.upload.empty_category_name')
       end
-    elsif (annotation_category.flexible_criterion_id.nil? && !criterion_name.nil?) ||
-          (annotation_category.flexible_criterion.name != criterion_name)
+    elsif annotation_category.flexible_criterion&.name != criterion_name
       raise CsvInvalidLineError, I18n.t('annotation_categories.upload.invalid_criterion',
                                         annotation_category: name)
     end

@@ -51,7 +51,7 @@ describe Grouping do
   end
 
   describe 'assigning and unassigning TAs' do
-    let(:assignment) { create(:assignment) }
+    let!(:assignment) { create(:assignment) }
     let(:grouping) { create(:grouping) }
     let(:groupings) do
       Array.new(2) { create(:grouping, assignment: assignment) }

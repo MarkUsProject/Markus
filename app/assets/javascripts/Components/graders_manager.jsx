@@ -255,12 +255,15 @@ class GradersManager extends React.Component {
                   <label>
                     <input
                       type="checkbox"
-                      checked={this.state.skip_empty_submissions}
+                      checked={!this.state.skip_empty_submissions}
                       onChange={this.toggleSkipEmptySubmissions}
                       style={{marginRight: "5px"}}
                     />
                     {I18n.t("graders.skip_empty_submissions")}
                   </label>
+                  <div className="inline-help">
+                    <p>{I18n.t("graders.skip_empty_submissions_tooltip")}</p>
+                  </div>
                 </div>
                 <div style={{marginBottom: "1em"}}>
                   <label>

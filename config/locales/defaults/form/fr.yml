@@ -7,6 +7,5 @@ fr:
       create: Créer %{model}
       delete: Supprimer ce %{model}
       update: Update %{model}
-  optional: optionnel
   required_fields: Champs obligatoires
   uncommitted_changes_warning: Les changements n'ont pas encore été enregistrés. Êtes-vous sûr de vouloir continuer ?
