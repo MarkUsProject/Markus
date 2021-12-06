@@ -38,7 +38,7 @@ describe UploadRolesJob do
           context 'when the user_name index does not match the uploaded file' do
             before { stub_const('Student::CSV_ORDER', [:section_id, :first_name, :last_name, :user_name]) }
             it 'does not create roles' do
-              expect { subject }.not_to change { role_type.count }
+              expect { subject }.not_to(change { role_type.count })
             end
           end
         end
