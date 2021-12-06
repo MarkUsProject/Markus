@@ -75,7 +75,7 @@ class ResultsController < ApplicationController
                                                                           grouping: grouping,
                                                                           submission: submission })
           data[:enable_test] = true
-          data[:can_run_tests] = authorized
+          data[:can_run_tests] = authorized.value
         else
           data[:enable_test] = false
           data[:can_run_tests] = false

@@ -3,6 +3,7 @@
 ## [unreleased]
 - Add the ability to hide assignments from individual sections (#5445)
 - Display smaller error message when nbconvert fails to avoid a cookie overflow (#5510)
+- Fix bug with run test button in grading view when marks are released (#5527)
 - Update repository access permissions to take into account the Assignment
   is_hidden and anonymize_groups attributes (#5547)
 - Support syntax highlighting for R (#5558)
