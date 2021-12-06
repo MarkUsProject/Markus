@@ -479,10 +479,10 @@ describe ResultsController do
     end
 
     context 'showing json data' do
-      let(:student2) do 
+      let(:student2) do
         partner = create(:student, grace_credits: 2)
-        StudentMembership.create(user: partner, 
-                                 membership_status: StudentMembership::STATUSES[:accepted], 
+        StudentMembership.create(user: partner,
+                                 membership_status: StudentMembership::STATUSES[:accepted],
                                  grouping: grouping)
         partner
       end
