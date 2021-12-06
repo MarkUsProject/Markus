@@ -19,3 +19,4 @@ es:
     update:
       error: No se pudo actualizar la sección.
       success: La sección %{name} fue actualizada exitosamente.
+    not_found: UPDATE ME %{name}.

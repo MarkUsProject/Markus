@@ -7,40 +7,82 @@ describe UploadRolesJob do
     include_examples 'background job'
   end
   context '#perform' do
-    subject { UploadRolesJob.perform_now(Ta, course, data, nil) }
-    let(:data) { fixture_file_upload('tas/form_good.csv', 'text/csv').read }
-    context 'when users exist' do
-      before do
-        create :human, user_name: :c6conley
-        create :human, user_name: :c8rada
-      end
-      context 'and there are duplicates in the file' do
-        let(:data) { fixture_file_upload('tas/form_invalid_record.csv', 'text/csv').read }
-        it 'does not create tas' do
-          expect { subject }.to raise_exception(RuntimeError)
-          expect(Ta.count).to eq 0
-        end
-      end
-      context 'and a user already has a role in the course' do
+    shared_examples 'uploading roles' do
+      subject { UploadRolesJob.perform_now(role_type, course, data, nil) }
+      let(:data) { fixture_file_upload('tas/form_good.csv', 'text/csv').read }
+      context 'when users exist' do
         before do
-          create :student, human: Human.find_by_user_name(:c6conley), course: course
+          create :human, user_name: :c6conley
+          create :human, user_name: :c8rada
         end
-        it 'does not create tas' do
-          expect { subject }.to raise_exception(RuntimeError)
-          expect(Ta.count).to eq 0
+        context 'and there are duplicates in the file' do
+          let(:data) { fixture_file_upload('tas/form_invalid_record.csv', 'text/csv').read }
+          it 'does not create roles' do
+            expect { subject }.to raise_exception(RuntimeError)
+            expect(role_type.count).to eq 0
+          end
+        end
+        context 'and a user already has a role in the course' do
+          before do
+            create :admin, human: Human.find_by_user_name(:c6conley), course: course
+          end
+          it 'does not create roles' do
+            expect { subject }.to raise_exception(RuntimeError)
+            expect(role_type.count).to eq 0
+          end
+        end
+        context 'and neither user has a role in the course' do
+          it 'creates roles' do
+            expect { subject }.to change { role_type.count }.to 2
+          end
+          context 'when the user_name index does not match the uploaded file' do
+            before { stub_const('Student::CSV_ORDER', [:section_id, :first_name, :last_name, :user_name]) }
+            it 'does not create roles' do
+              expect { subject }.not_to change { role_type.count }
+            end
+          end
         end
       end
-      context 'and neither user has a role in the course' do
-        it 'creates tas' do
-          expect { subject }.to change { Ta.count }.to 2
+      context 'when a user does not exist' do
+        before { create :human, user_name: :c6conley }
+        it 'does not create tas' do
+          expect { subject }.to raise_exception(RuntimeError)
+          expect(role_type.count).to eq 0
         end
       end
     end
-    context 'when a user does not exist' do
-      before { create :human, user_name: :c6conley }
-      it 'does not create tas' do
-        expect { subject }.to raise_exception(RuntimeError)
-        expect(Ta.count).to eq 0
+
+    context 'uploading TAs' do
+      let(:role_type) { Ta }
+      include_examples 'uploading roles'
+    end
+    context 'uploading Students' do
+      let(:role_type) { Student }
+      include_examples 'uploading roles'
+      context 'should add students to sections' do
+        let(:data) { fixture_file_upload('tas/form_good.csv', 'text/csv').read }
+        subject { UploadRolesJob.perform_now(role_type, course, data, nil) }
+        let(:csv_order) { %w[user_name section_name].map(&:to_sym) }
+        before do
+          stub_const('Student::CSV_ORDER', csv_order)
+          create :human, user_name: :c6conley
+          create :human, user_name: :c8rada
+        end
+        context 'when the section exists' do
+          let!(:section) { create(:section, name: 'abc', course: course) }
+          it 'should succeed if the section exists' do
+            expect { subject }.to change { course.students.count }.to 2
+          end
+          it 'should assign students to sections' do
+            expect { subject }.to change { section.students.count }.to 1
+          end
+        end
+        context 'when the section does not exist' do
+          it 'should not assign students to sections' do
+            expect { subject }.to raise_exception(RuntimeError)
+            expect(course.students.count).to eq(0)
+          end
+        end
       end
     end
   end

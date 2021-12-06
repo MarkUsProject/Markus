@@ -19,15 +19,24 @@ class AdminsController < ApplicationController
   end
 
   def create
-    human = Human.find_by_user_name(params[:user_name])
+    human = Human.find_by_user_name(human_params[:user_name])
     @role = current_course.admins.create(human: human)
+    respond_with @role, location: course_admins_path(current_course)
+  end
+
+  def edit
+    @role = record
+  end
+
+  def update
+    @role = record
+    @role.update(human: Human.find_by_user_name(human_params[:user_name]))
     respond_with @role, location: course_admins_path(current_course)
   end
 
   private
 
-  def flash_interpolation_options
-    { resource_name: @role.human&.user_name.blank? ? @role.model_name.human : @role.user_name,
-      errors: @role.errors.full_messages.join('; ') }
+  def human_params
+    params.require(:role).require(:human).permit(:user_name)
   end
 end

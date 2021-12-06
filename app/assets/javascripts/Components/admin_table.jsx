@@ -19,7 +19,7 @@ class AdminTable extends React.Component {
 
   fetchData() {
     $.ajax({
-      url: Routes.admins_path(),
+      url: Routes.course_admins_path(this.props.course_id),
       dataType: "json",
     }).then(res => {
       this.setState({data: res, loading: false});
@@ -53,7 +53,9 @@ class AdminTable extends React.Component {
             accessor: "id",
             Cell: data => (
               <span>
-                <a href={Routes.edit_admin_path(data.value)}>{I18n.t("edit")}</a>
+                <a href={Routes.edit_course_admin_path(this.props.course_id, data.value)}>
+                  {I18n.t("edit")}
+                </a>
               </span>
             ),
             sortable: false,
@@ -66,6 +68,6 @@ class AdminTable extends React.Component {
   }
 }
 
-export function makeAdminTable(elem) {
-  render(<AdminTable />, elem);
+export function makeAdminTable(elem, props) {
+  render(<AdminTable {...props} />, elem);
 }

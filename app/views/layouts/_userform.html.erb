@@ -1,17 +1,10 @@
-<%= form_for @user, as: :user do |f| %>
-  <div class='inline-labels'>
-    <%= f.label :user_name, User.human_attribute_name(:user_name) %>
-    <%= f.text_field :user_name, required: true, pattern: '[a-zA-Z0-9\-_]+' %>
-
-    <%= f.label :last_name, User.human_attribute_name(:last_name) %>
-    <%= f.text_field :last_name, required: true %>
-
-    <%= f.label :first_name, User.human_attribute_name(:first_name) %>
-    <%= f.text_field :first_name, required: true %>
-
-    <%= f.label :email, User.human_attribute_name(:email) %>
-    <%= f.text_field :email %>
-  </div>
+<%= form_for [@current_course, @role], as: :role do |f| %>
+  <%= f.fields_for(@role.human || Human.new) do |u_f| %>
+    <div class='inline-labels'>
+      <%= u_f.label :user_name, User.human_attribute_name(:user_name) %>
+      <%= u_f.text_field :user_name, required: true, pattern: '[a-zA-Z0-9\-_]+' %>
+    </div>
+  <% end %>
 
   <%= f.hidden_field :id %>
 

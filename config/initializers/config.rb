@@ -120,6 +120,9 @@ Config.setup do |config|
       required(:incorrect_login_message).maybe(:string)
       required(:remote_user_auth).filled(:bool)
       required(:logout_redirect).filled(:string)
+      optional(:student_csv_order).array(
+        included_in?: %w[user_name last_name first_name section_name id_number email]
+      )
       required(:repository).hash do
         required(:storage).filled(:string)
         required(:type).value(included_in?: %w[git svn mem])

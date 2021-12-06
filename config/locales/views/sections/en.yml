@@ -19,3 +19,4 @@ en:
     update:
       error: Failed to update section.
       success: Successfully updated section %{name}.
+    not_found: No section exists with name %{name}.

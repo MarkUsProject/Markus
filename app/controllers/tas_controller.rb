@@ -25,6 +25,16 @@ class TasController < ApplicationController
     respond_with @role, location: course_tas_path(current_course)
   end
 
+  def edit
+    @role = record
+  end
+
+  def update
+    @role = record
+    @role.update(human: Human.find_by_user_name(human_params[:user_name]), **permission_params)
+    respond_with @role, location: course_tas_path(current_course)
+  end
+
   def download
     keys = [:user_name, :last_name, :first_name, :email]
     tas = current_course.tas.joins(:human).pluck_to_hash(*keys)
@@ -61,7 +71,11 @@ class TasController < ApplicationController
   private
 
   def permission_params
-    params.permit(grader_permission_attributes: [:manage_assessments, :manage_submissions, :run_tests])
+    params.require(:role).permit(grader_permission_attributes: [:manage_assessments, :manage_submissions, :run_tests])
+  end
+
+  def human_params
+    params.require(:role).require(:human).permit(:user_name)
   end
 
   def flash_interpolation_options

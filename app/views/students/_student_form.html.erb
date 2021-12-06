@@ -1,21 +1,11 @@
 <aside class='dialog' id='add_new_section_dialog'></aside>
 
-<%= form_for @user, as: :user do |f| %>
+<%= form_for [@current_course, @role], as: :role do |f| %>
   <div class='inline-labels'>
-    <%= f.label :user_name, User.human_attribute_name(:user_name) %>
-    <%= f.text_field :user_name %>
-
-    <%= f.label :last_name, User.human_attribute_name(:last_name) %>
-    <%= f.text_field :last_name %>
-
-    <%= f.label :first_name, User.human_attribute_name(:first_name) %>
-    <%= f.text_field :first_name %>
-
-    <%= f.label :email, User.human_attribute_name(:email) %>
-    <%= f.text_field :email %>
-
-    <%= f.label :id_number, User.human_attribute_name(:id_number) %>
-    <%= f.text_field :id_number %>
+    <%= f.fields_for(@role.human || Human.new) do |u_f| %>
+      <%= u_f.label :user_name, User.human_attribute_name(:user_name) %>
+      <%= u_f.text_field :user_name %>
+    <% end %>
 
     <%= f.label :grace_credits, User.human_attribute_name(:grace_credits) %>
     <%= f.text_field :grace_credits %>
@@ -23,7 +13,7 @@
     <%= f.label :section_id, Section.model_name.human %>
     <span id='select_sections'>
       <%= render partial: 'sections/select_sections',
-                 locals: { user: @user, new_student: true } %>
+                 locals: { user: @role, new_student: true } %>
     </span>
   </div>
 
@@ -34,6 +24,6 @@
                  name: 'submit',
                  data: { disable_with: t('working') },
                  class: 'button' %>
-    <%= link_to t(:cancel), students_path, class: 'button' %>
+    <%= link_to t(:cancel), course_students_path(@current_course), class: 'button' %>
   </p>
 <% end %>
