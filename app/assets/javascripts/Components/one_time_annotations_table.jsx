@@ -18,7 +18,8 @@ class OneTimeAnnotationsTable extends React.Component {
 
   fetchData = () => {
     $.ajax({
-      url: Routes.uncategorized_annotations_assignment_annotation_categories_path(
+      url: Routes.uncategorized_annotations_course_assignment_annotation_categories_path(
+        this.props.course_id,
         this.props.assignment_id
       ),
       dataType: "json",
@@ -32,7 +33,8 @@ class OneTimeAnnotationsTable extends React.Component {
 
   editAnnotation = (annot_id, content) => {
     $.ajax({
-      url: Routes.update_annotation_text_assignment_annotation_categories_path(
+      url: Routes.update_annotation_text_course_assignment_annotation_categories_path(
+        this.props.course_id,
         this.props.assignment_id
       ),
       data: {content: content, annotation_text_id: annot_id},
@@ -44,7 +46,8 @@ class OneTimeAnnotationsTable extends React.Component {
 
   removeAnnotation = annot_id => {
     $.ajax({
-      url: Routes.destroy_annotation_text_assignment_annotation_categories_path(
+      url: Routes.destroy_annotation_text_course_assignment_annotation_categories_path(
+        this.props.course_id,
         this.props.assignment_id
       ),
       data: {annotation_text_id: annot_id},
@@ -68,11 +71,7 @@ class OneTimeAnnotationsTable extends React.Component {
           />
         );
         if (row.original.result_id) {
-          const path = Routes.edit_assignment_submission_result_path(
-            this.props.assignment_id,
-            row.original.submission_id,
-            row.original.result_id
-          );
+          const path = Routes.edit_course_result_path(this.props.course_id, row.original.result_id);
           return (
             <div>
               {remove_button}

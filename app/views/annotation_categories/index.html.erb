@@ -8,7 +8,7 @@
   <%= javascript_tag nonce: true do %>
     $(function() {
       $('#add-annotation-category').click(function(e) {
-        add_annotation_category('<%= new_assignment_annotation_category_path %>');
+        add_annotation_category('<%= new_course_assignment_annotation_category_path(@current_course, @assignment) %>');
         e.preventDefault();
       })
     })
