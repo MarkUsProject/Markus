@@ -477,97 +477,91 @@ describe ResultsController do
         expect(response.parsed_body.keys.sort!).to eq(expected_keys.sort!)
       end
     end
+  end
 
-    context 'showing json data' do
-      let(:student2) do
-        partner = create(:student, grace_credits: 2)
-        StudentMembership.create(user: partner,
-                                 membership_status: StudentMembership::STATUSES[:accepted],
-                                 grouping: grouping)
-        partner
+  shared_examples 'showing json data' do |is_student|
+    let(:student2) do
+      partner = create(:student, grace_credits: 2)
+      StudentMembership.create(user: partner,
+                               membership_status: StudentMembership::STATUSES[:accepted],
+                               grouping: grouping)
+      partner
+    end
+    subject do
+      allow_any_instance_of(Result).to receive(:released_to_students?).and_return true
+      get :show, params: { assignment_id: assignment.id,
+                           submission_id: submission.id,
+                           id: complete_result.id,
+                           format: :json }
+    end
+
+    it 'contains important basic data' do
+      subject
+      expect(response.status).to eq(200)
+      data = JSON.parse(response.body)
+      received_data = {
+        instructor_run: data['instructor_run'],
+        is_reviewer: data['is_reviewer'],
+        student_view: data['student_view'],
+        can_run_tests: data['can_run_tests']
+      }
+      expected_data = {
+        instructor_run: true,
+        is_reviewer: false,
+        student_view: is_student,
+        can_run_tests: false
+      }
+      expect(received_data).to eq(expected_data)
+    end
+
+    it 'has submission file data' do
+      subject
+      data = JSON.parse(response.body)
+      file_data = submission.submission_files.order(:path, :filename).pluck_to_hash(:id, :filename, :path)
+      file_data.reject! { |f| Repository.get_class.internal_file_names.include? f[:filename] }
+      expect(data['submission_files']).to eq(file_data)
+    end
+
+    it 'has no annotation categories data' do
+      subject
+      data = JSON.parse(response.body)
+      expected_data = is_student ? be_nil : eq([])
+      expect(data['annotation_categories']).to expected_data
+    end
+
+    it 'has no grace token deduction data' do
+      subject
+      data = JSON.parse(response.body)
+      expect(data['grace_token_deductions']).to eq([])
+    end
+
+    context 'with grace token deductions' do
+      let!(:grace_period_deduction1) do
+        create :grace_period_deduction, membership: grouping.memberships.find_by(user: student)
       end
-
-      shared_examples 'common json data' do
-        it 'contains important basic data' do
-          expect(response.status).to eq(200)
-          data = JSON.parse(response.body)
-          received_data = {
-            instructor_run: data['instructor_run'],
-            is_reviewer: data['is_reviewer'],
-            student_view: data['student_view'],
-            can_run_tests: data['can_run_tests']
-          }
-          expected_data = {
-            instructor_run: true,
-            is_reviewer: false,
-            student_view: false,
-            can_run_tests: false
-          }
-          expect(received_data).to eq(expected_data)
-        end
-
-        it 'has submission file data' do
-          data = JSON.parse(response.body)
-          file_data = submission.submission_files.order(:path, :filename).pluck_to_hash(:id, :filename, :path)
-          file_data.reject! { |f| Repository.get_class.internal_file_names.include? f[:filename] }
-          expect(data['submission_files']).to eq(file_data)
-        end
-
-        it 'has no annotation categories data' do
-          data = JSON.parse(response.body)
-          expect(data['annotation_categories']).to eq([])
-        end
+      let!(:grace_period_deduction2) do
+        create :grace_period_deduction, membership: grouping.memberships.find_by(user: student2)
       end
-
-      context 'for on time submission' do
-        before :each do
-          allow_any_instance_of(Result).to receive(:released_to_students?).and_return true
-          get :show, params: { assignment_id: assignment.id,
-                               submission_id: submission.id,
-                               id: complete_result.id,
-                               format: :json }
+      it 'sends grace token deduction data' do
+        subject
+        data = JSON.parse(response.body)
+        expected_deduction_data = [
+          {
+            id: grace_period_deduction1.id,
+            deduction: grace_period_deduction1.deduction,
+            'users.user_name': student.user_name,
+            'users.display_name': student.display_name
+          }.stringify_keys
+        ]
+        unless is_student
+          expected_deduction_data << {
+            id: grace_period_deduction2.id,
+            deduction: grace_period_deduction2.deduction,
+            'users.user_name': student2.user_name,
+            'users.display_name': student2.display_name
+          }.stringify_keys
         end
-
-        include_examples 'common json data'
-
-        it 'has no grace token deduction data' do
-          data = JSON.parse(response.body)
-          expect(data['grace_token_deductions']).to eq([])
-        end
-      end
-
-      context 'for late submission' do
-        let(:submission) { create :version_used_submission,
-                                  grouping: grouping,
-                                  revision_timestamp: assignment.latest_due_date + 1.minute }
-        let!(:grace_period_deduction1) { create :grace_period_deduction,
-                                               membership: grouping.memberships.find_by(user: student) }
-        let!(:grace_period_deduction2) { create :grace_period_deduction,
-                                               membership: grouping.memberships.find_by(user: student2) }
-        before :each do
-          allow_any_instance_of(Result).to receive(:released_to_students?).and_return true
-          get :show, params: { assignment_id: assignment.id,
-                               submission_id: submission.id,
-                               id: complete_result.id,
-                               format: :json }
-        end
-
-        include_examples 'common json data'
-
-        it 'has grace token deduction data' do
-          data = JSON.parse(response.body)
-          expect(data['grace_token_deductions']).to eq([{
-                                                          id: grace_period_deduction1.id,
-                                                          deduction: grace_period_deduction1.deduction,
-                                                          'users.user_name': student.user_name,
-                                                          'users.display_name': student.display_name
-                                                        }.stringify_keys, {
-                                                          id: grace_period_deduction2.id,
-                                                          deduction: grace_period_deduction2.deduction,
-                                                          'users.user_name': student2.user_name,
-                                                          'users.display_name': student2.display_name
-                                                        }.stringify_keys])
-        end
+        expect(data['grace_token_deductions']).to eq(expected_deduction_data)
       end
     end
   end
@@ -622,6 +616,7 @@ describe ResultsController do
      :add_extra_mark,
      :remove_extra_mark].each { |route_name| test_unauthorized(route_name) }
     include_examples 'download files'
+    include_examples 'showing json data', true
     context 'viewing a file' do
       context 'for a grouping with no submission' do
         before :each do
@@ -681,89 +676,6 @@ describe ResultsController do
         test_assigns_not_nil :files
       end
     end
-    context 'showing json data' do
-      let(:student2) { create :student, grace_credits: 2 }
-
-      shared_examples 'common json data' do
-        it 'contains important basic data' do
-          expect(response.status).to eq(200)
-          data = JSON.parse(response.body)
-          received_data = {
-            instructor_run: data['instructor_run'],
-            is_reviewer: data['is_reviewer'],
-            student_view: data['student_view'],
-            can_run_tests: data['can_run_tests']
-          }
-          expected_data = {
-            instructor_run: true,
-            is_reviewer: false,
-            student_view: true,
-            can_run_tests: false
-          }
-          expect(received_data).to eq(expected_data)
-        end
-
-        it 'has submission file data' do
-          data = JSON.parse(response.body)
-          file_data = submission.submission_files.order(:path, :filename).pluck_to_hash(:id, :filename, :path)
-          file_data.reject! { |f| Repository.get_class.internal_file_names.include? f[:filename] }
-          expect(data['submission_files']).to eq(file_data)
-        end
-
-        it 'has no annotation categories data' do
-          data = JSON.parse(response.body)
-          expect(data['annotation_categories']).to be_nil
-        end
-      end
-
-      context 'for on time submission' do
-        before :each do
-          grouping.add_member(student2)
-          allow_any_instance_of(Result).to receive(:released_to_students?).and_return true
-          get :show, params: { assignment_id: assignment.id,
-                               submission_id: submission.id,
-                               id: complete_result.id,
-                               format: :json }
-        end
-
-        include_examples 'common json data'
-
-        it 'has no grace token deduction data' do
-          data = JSON.parse(response.body)
-          expect(data['grace_token_deductions']).to eq([])
-        end
-      end
-
-      context 'for late submission' do
-        let(:submission) { create :version_used_submission,
-                                  grouping: grouping,
-                                  revision_timestamp: assignment.latest_due_date + 1.minute }
-        let!(:grace_period_deduction1) { create :grace_period_deduction,
-                                                membership: grouping.memberships.find_by(user: student) }
-        let!(:grace_period_deduction2) { create :grace_period_deduction,
-                                                membership: grouping.memberships.find_by(user: student2) }
-        before :each do
-          grouping.add_member(student2)
-          allow_any_instance_of(Result).to receive(:released_to_students?).and_return true
-          get :show, params: { assignment_id: assignment.id,
-                               submission_id: submission.id,
-                               id: complete_result.id,
-                               format: :json }
-        end
-
-        include_examples 'common json data'
-
-        it 'has grace token deduction data' do
-          data = JSON.parse(response.body)
-          expect(data['grace_token_deductions']).to eq([{
-                                                          id: grace_period_deduction1.id,
-                                                          deduction: grace_period_deduction1.deduction,
-                                                          'users.user_name': student.user_name,
-                                                          'users.display_name': student.display_name
-                                                        }.stringify_keys])
-        end
-      end
-    end
   end
   context 'An admin' do
     before(:each) { sign_in admin }
@@ -777,6 +689,7 @@ describe ResultsController do
       test_assigns_not_nil :result
     end
     include_examples 'shared ta and admin tests'
+    include_examples 'showing json data', false
 
     describe '#delete_grace_period_deduction' do
       it 'deletes an existing grace period deduction' do
@@ -901,6 +814,7 @@ describe ResultsController do
       it { expect(response).to have_http_status(:success) }
     end
     include_examples 'shared ta and admin tests'
+    include_examples 'showing json data', false
 
     context 'when groups information is anonymized' do
       let(:data) { JSON.parse(response.body) }
