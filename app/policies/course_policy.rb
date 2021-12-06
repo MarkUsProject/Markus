@@ -6,7 +6,7 @@ class CoursePolicy < ApplicationPolicy
   alias_rule :clear_role_switch_session?, to: :role_is_switched?
 
   def show?
-    role.admin? || (!role.course.is_hidden? && !role.hidden?)
+    role.admin?
   end
 
   def index?
