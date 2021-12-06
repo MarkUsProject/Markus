@@ -69,25 +69,9 @@ class Role < ApplicationRecord
     is_a?(Student) && !pr.nil?
   end
 
-  # Determine what assessments are visible to the role.
-  # By default, returns all assessments visible to the role for the current course.
-  # Optional parameter assessment_type takes values "Assignment" or "GradeEntryForm". If passed one of these options,
-  # only returns assessments of that type. Otherwise returns all assessment types.
-  # Optional parameter assessment_id: if passed an assessment id, returns a collection containing
-  # only the assessment with the given id, if it is visible to the current user.
-  # If it is not visible, returns an empty collection.
   def visible_assessments(assessment_type: nil, assessment_id: nil)
-    visible = self.assessments.where(is_hidden: false, type: assessment_type || Assessment.type)
-    if self.section_id
-      visible = self.assessments
-                    .left_outer_joins(:assessment_section_properties)
-                    .where('assessment_section_properties.section_id': [self.section_id, nil])
-      visible = visible.where('assessment_section_properties.is_hidden': false)
-                       .or(visible.where('assessment_section_properties.is_hidden': nil,
-                                         'assessments.is_hidden': false))
-    end
+    visible = self.assessments.where(type: assessment_type || Assessment.type)
     return visible.where(id: assessment_id) if assessment_id
-
     visible
   end
 end
