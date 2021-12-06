@@ -19,18 +19,21 @@ describe Api::CoursePolicy do
     context 'user has multiple roles' do
       let(:user) { create :human }
       let(:role) { nil }
+      let(:course1) { create :course }
+      let(:course2) { create :course }
+      let(:course3) { create :course }
       succeed 'and at least one is an admin role' do
         before do
-          create :admin, human: user
-          create :ta, human: user
-          create :student, human: user
+          create :admin, human: user, course: course1
+          create :ta, human: user, course: course2
+          create :student, human: user, course: course3
         end
       end
       failed 'and none are admin roles' do
         before do
-          create :ta, human: user
-          create :ta, human: user
-          create :student, human: user
+          create :ta, human: user, course: course1
+          create :ta, human: user, course: course2
+          create :student, human: user, course: course3
         end
       end
     end
