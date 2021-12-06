@@ -477,6 +477,99 @@ describe ResultsController do
         expect(response.parsed_body.keys.sort!).to eq(expected_keys.sort!)
       end
     end
+
+    context 'showing json data' do
+      let(:student2) do 
+        partner = create(:student, grace_credits: 2)
+        StudentMembership.create(user: partner, 
+                                 membership_status: StudentMembership::STATUSES[:accepted], 
+                                 grouping: grouping)
+        partner
+      end
+
+      shared_examples 'common json data' do
+        it 'contains important basic data' do
+          expect(response.status).to eq(200)
+          data = JSON.parse(response.body)
+          received_data = {
+            instructor_run: data['instructor_run'],
+            is_reviewer: data['is_reviewer'],
+            student_view: data['student_view'],
+            can_run_tests: data['can_run_tests']
+          }
+          expected_data = {
+            instructor_run: true,
+            is_reviewer: false,
+            student_view: false,
+            can_run_tests: false
+          }
+          expect(received_data).to eq(expected_data)
+        end
+
+        it 'has submission file data' do
+          data = JSON.parse(response.body)
+          file_data = submission.submission_files.order(:path, :filename).pluck_to_hash(:id, :filename, :path)
+          file_data.reject! { |f| Repository.get_class.internal_file_names.include? f[:filename] }
+          expect(data['submission_files']).to eq(file_data)
+        end
+
+        it 'has no annotation categories data' do
+          data = JSON.parse(response.body)
+          expect(data['annotation_categories']).to eq([])
+        end
+      end
+
+      context 'for on time submission' do
+        before :each do
+          allow_any_instance_of(Result).to receive(:released_to_students?).and_return true
+          get :show, params: { assignment_id: assignment.id,
+                               submission_id: submission.id,
+                               id: complete_result.id,
+                               format: :json }
+        end
+
+        include_examples 'common json data'
+
+        it 'has no grace token deduction data' do
+          data = JSON.parse(response.body)
+          expect(data['grace_token_deductions']).to eq([])
+        end
+      end
+
+      context 'for late submission' do
+        let(:submission) { create :version_used_submission,
+                                  grouping: grouping,
+                                  revision_timestamp: assignment.latest_due_date + 1.minute }
+        let!(:grace_period_deduction1) { create :grace_period_deduction,
+                                               membership: grouping.memberships.find_by(user: student) }
+        let!(:grace_period_deduction2) { create :grace_period_deduction,
+                                               membership: grouping.memberships.find_by(user: student2) }
+        before :each do
+          allow_any_instance_of(Result).to receive(:released_to_students?).and_return true
+          get :show, params: { assignment_id: assignment.id,
+                               submission_id: submission.id,
+                               id: complete_result.id,
+                               format: :json }
+        end
+
+        include_examples 'common json data'
+
+        it 'has grace token deduction data' do
+          data = JSON.parse(response.body)
+          expect(data['grace_token_deductions']).to eq([{
+                                                          id: grace_period_deduction1.id,
+                                                          deduction: grace_period_deduction1.deduction,
+                                                          'users.user_name': student.user_name,
+                                                          'users.display_name': student.display_name
+                                                        }.stringify_keys, {
+                                                          id: grace_period_deduction2.id,
+                                                          deduction: grace_period_deduction2.deduction,
+                                                          'users.user_name': student2.user_name,
+                                                          'users.display_name': student2.display_name
+                                                        }.stringify_keys])
+        end
+      end
+    end
   end
 
   ROUTES = { update_mark: :patch,
@@ -586,6 +679,89 @@ describe ResultsController do
         test_assigns_not_nil :annotation_categories
         test_assigns_not_nil :group
         test_assigns_not_nil :files
+      end
+    end
+    context 'showing json data' do
+      let(:student2) { create :student, grace_credits: 2 }
+
+      shared_examples 'common json data' do
+        it 'contains important basic data' do
+          expect(response.status).to eq(200)
+          data = JSON.parse(response.body)
+          received_data = {
+            instructor_run: data['instructor_run'],
+            is_reviewer: data['is_reviewer'],
+            student_view: data['student_view'],
+            can_run_tests: data['can_run_tests']
+          }
+          expected_data = {
+            instructor_run: true,
+            is_reviewer: false,
+            student_view: true,
+            can_run_tests: false
+          }
+          expect(received_data).to eq(expected_data)
+        end
+
+        it 'has submission file data' do
+          data = JSON.parse(response.body)
+          file_data = submission.submission_files.order(:path, :filename).pluck_to_hash(:id, :filename, :path)
+          file_data.reject! { |f| Repository.get_class.internal_file_names.include? f[:filename] }
+          expect(data['submission_files']).to eq(file_data)
+        end
+
+        it 'has no annotation categories data' do
+          data = JSON.parse(response.body)
+          expect(data['annotation_categories']).to be_nil
+        end
+      end
+
+      context 'for on time submission' do
+        before :each do
+          grouping.add_member(student2)
+          allow_any_instance_of(Result).to receive(:released_to_students?).and_return true
+          get :show, params: { assignment_id: assignment.id,
+                               submission_id: submission.id,
+                               id: complete_result.id,
+                               format: :json }
+        end
+
+        include_examples 'common json data'
+
+        it 'has no grace token deduction data' do
+          data = JSON.parse(response.body)
+          expect(data['grace_token_deductions']).to eq([])
+        end
+      end
+
+      context 'for late submission' do
+        let(:submission) { create :version_used_submission,
+                                  grouping: grouping,
+                                  revision_timestamp: assignment.latest_due_date + 1.minute }
+        let!(:grace_period_deduction1) { create :grace_period_deduction,
+                                                membership: grouping.memberships.find_by(user: student) }
+        let!(:grace_period_deduction2) { create :grace_period_deduction,
+                                                membership: grouping.memberships.find_by(user: student2) }
+        before :each do
+          grouping.add_member(student2)
+          allow_any_instance_of(Result).to receive(:released_to_students?).and_return true
+          get :show, params: { assignment_id: assignment.id,
+                               submission_id: submission.id,
+                               id: complete_result.id,
+                               format: :json }
+        end
+
+        include_examples 'common json data'
+
+        it 'has grace token deduction data' do
+          data = JSON.parse(response.body)
+          expect(data['grace_token_deductions']).to eq([{
+                                                          id: grace_period_deduction1.id,
+                                                          deduction: grace_period_deduction1.deduction,
+                                                          'users.user_name': student.user_name,
+                                                          'users.display_name': student.display_name
+                                                        }.stringify_keys])
+        end
       end
     end
   end
