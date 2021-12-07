@@ -528,6 +528,7 @@ class ResultsController < ApplicationController
   def view_marks
     result_from_id = record
     @assignment = result_from_id.submission.grouping.assignment
+    @assignment = @assignment.is_peer_review? ? @assignment.parent_assignment : @assignment
     is_review = result_from_id.is_a_review? || result_from_id.is_review_for?(current_role, @assignment)
 
     if current_role.student?
