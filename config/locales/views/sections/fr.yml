@@ -18,3 +18,4 @@ fr:
     update:
       error: Échec des modifications de la section.
       success: Section mise à jour.
+    not_found: UPDATE ME %{name}.

@@ -1,7 +1,7 @@
 describe AssignmentPolicy do
-  let(:context) { { user: user } }
+  let(:context) { { role: role, real_user: role.human } }
   let(:record) { assignment }
-  let(:user) { create :admin }
+  let(:role) { create :admin }
   let(:assignment) { create :assignment }
 
   describe_rule :index? do
@@ -13,25 +13,25 @@ describe AssignmentPolicy do
   end
 
   describe_rule :manage? do
-    succeed 'user is an admin' do
-      let(:user) { create(:admin) }
+    succeed 'role is an admin' do
+      let(:role) { create(:admin) }
     end
-    context 'user is a ta' do
+    context 'role is a ta' do
       succeed 'that can manage assessments' do
-        let(:user) { create :ta, manage_assessments: true }
+        let(:role) { create :ta, manage_assessments: true }
       end
       failed 'that cannot manage assessments' do
-        let(:user) { create :ta, manage_assessments: false }
+        let(:role) { create :ta, manage_assessments: false }
       end
     end
-    failed 'user is a student' do
-      let(:user) { create(:student) }
+    failed 'role is a student' do
+      let(:role) { create(:student) }
     end
   end
 
   describe_rule :view_test_options? do
-    context 'user is an admin' do
-      let(:user) { create(:admin) }
+    context 'role is an admin' do
+      let(:role) { create(:admin) }
       succeed 'when tests enabled' do
         let(:assignment) { create :assignment, assignment_properties_attributes: { enable_test: true } }
       end
@@ -39,9 +39,9 @@ describe AssignmentPolicy do
         let(:assignment) { create :assignment, assignment_properties_attributes: { enable_test: false } }
       end
     end
-    context 'user is a ta' do
+    context 'role is a ta' do
       context 'that can run tests' do
-        let(:user) { create :ta, run_tests: true }
+        let(:role) { create :ta, run_tests: true }
         succeed 'when tests enabled' do
           let(:assignment) { create :assignment, assignment_properties_attributes: { enable_test: true } }
         end
@@ -50,11 +50,11 @@ describe AssignmentPolicy do
         end
       end
       failed 'that cannot run tests' do
-        let(:user) { create :ta, run_tests: false }
+        let(:role) { create :ta, run_tests: false }
       end
     end
-    context 'user is a student' do
-      let(:user) { create(:student) }
+    context 'role is a student' do
+      let(:role) { create(:student) }
       failed 'when student tests disabled' do
         let(:assignment) { build :assignment, assignment_properties_attributes: { enable_student_tests: false } }
       end
@@ -118,14 +118,14 @@ describe AssignmentPolicy do
   end
 
   describe_rule :create_group? do
-    let(:user) { create :student }
+    let(:role) { create :student }
     let(:assignment) { create :assignment, assignment_properties_attributes: properties }
     let(:properties) { { student_form_groups: true, invalid_override: false } }
     let(:past_collection_date?) { false }
     let(:has_accepted_grouping_for?) { false }
     before do
       allow(record).to receive(:past_collection_date?).and_return past_collection_date?
-      allow(user).to receive(:has_accepted_grouping_for?).and_return has_accepted_grouping_for?
+      allow(role).to receive(:has_accepted_grouping_for?).and_return has_accepted_grouping_for?
     end
     succeed 'when collection date has not passed and students can form groups and the user is not in a group yet'
     failed 'when collection date has passed' do
@@ -149,7 +149,7 @@ describe AssignmentPolicy do
   end
 
   describe_rule :collection_date_passed? do
-    let(:user) { create :student }
+    let(:role) { create :student }
     succeed 'when the collection date has passed' do
       before { allow(record).to receive(:past_collection_date?).and_return true }
     end
@@ -170,10 +170,10 @@ describe AssignmentPolicy do
 
   describe_rule :not_yet_in_group? do
     succeed 'when the user is not in a group' do
-      before { allow(user).to receive(:has_accepted_grouping_for?).and_return false }
+      before { allow(role).to receive(:has_accepted_grouping_for?).and_return false }
     end
     failed 'when the user is in a group' do
-      before { allow(user).to receive(:has_accepted_grouping_for?).and_return true }
+      before { allow(role).to receive(:has_accepted_grouping_for?).and_return true }
     end
   end
 
@@ -187,36 +187,36 @@ describe AssignmentPolicy do
   end
 
   describe_rule :view? do
-    succeed 'user is an admin' do
-      let(:user) { create(:admin) }
+    succeed 'role is an admin' do
+      let(:role) { create(:admin) }
     end
-    succeed 'user is a ta' do
-      let(:user) { create :ta }
+    succeed 'role is a ta' do
+      let(:role) { create :ta }
     end
-    failed 'user is a student' do
-      let(:user) { create(:student) }
+    failed 'role is a student' do
+      let(:role) { create(:student) }
     end
   end
 
   describe_rule :manage_tests? do
-    succeed 'user is an admin' do
-      let(:user) { create(:admin) }
+    succeed 'role is an admin' do
+      let(:role) { create(:admin) }
     end
-    context 'user is a ta' do
+    context 'role is a ta' do
       succeed 'that can manage assessments' do
-        let(:user) { create :ta, manage_assessments: true }
+        let(:role) { create :ta, manage_assessments: true }
       end
       failed 'that cannot manage assessments' do
-        let(:user) { create :ta, manage_assessments: false }
+        let(:role) { create :ta, manage_assessments: false }
       end
     end
-    failed 'user is a student' do
-      let(:user) { create(:student) }
+    failed 'role is a student' do
+      let(:role) { create(:student) }
     end
   end
 
   describe_rule :start_timed_assignment? do
-    let(:user) { create :student }
+    let(:role) { create :student }
     let(:due_date) { 2.hours.from_now }
     let(:start_time) { 2.hours.ago }
     let(:assignment) do
@@ -247,7 +247,7 @@ describe AssignmentPolicy do
     context 'when the student is in a group' do
       let(:grouping_start_time) { nil }
       let!(:grouping) do
-        create :grouping_with_inviter, inviter: user, assignment: assignment, start_time: grouping_start_time
+        create :grouping_with_inviter, inviter: role, assignment: assignment, start_time: grouping_start_time
       end
 
       failed 'when before the start time' do
@@ -265,7 +265,7 @@ describe AssignmentPolicy do
 
   describe_rule :see_hidden? do
     let(:new_section) { create :section }
-    let(:user) { create :student, section: new_section }
+    let(:role) { create :student, section: new_section }
     let(:assignment) do
       create(:assignment,
              assignment_properties_attributes: { section_due_dates_type: false })
@@ -276,19 +276,19 @@ describe AssignmentPolicy do
                                              due_date: 2.days.from_now,
                                              is_hidden: false)
     end
-    context 'when the user is an admin' do
-      let(:admin_user) { create(:admin) }
+    context 'when the role is an admin' do
+      let(:admin_role) { create(:admin) }
 
-      succeed 'user is an admin' do
+      succeed 'role is an admin' do
         before { assignment.update(is_hidden: true) }
-        let(:context) { { user: admin_user } }
+        let(:context) { { role: admin_role, real_user: admin_role.human } }
       end
     end
-    context 'when the user is a TA' do
-      let(:ta_user) { create(:ta) }
+    context 'when the role is a TA' do
+      let(:ta_role) { create(:ta) }
       succeed 'user is an admin' do
         before { assignment.update(is_hidden: true) }
-        let(:context) { { user: ta_user } }
+        let(:context) { { role: ta_role, real_user: ta_role.human } }
       end
     end
     context 'when there are no section due dates' do

@@ -5,6 +5,7 @@ reloadDOM();
 makeOneTimeAnnotationsTable(
   document.getElementById('one_time_annotations_table'),
   {
+    course_id: <%= @current_course.id %>,
     assignment_id: <%= @assignment.id %>
   }
 );

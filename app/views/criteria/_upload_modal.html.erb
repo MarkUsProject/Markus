@@ -16,7 +16,7 @@
     </div>
   <% end %>
   <%= t('upload_help_html', section_id: Criterion.name.pluralize.underscore.dasherize) %>
-  <%= form_tag upload_assignment_criteria_path(@assignment),
+  <%= form_tag upload_course_assignment_criteria_path(@current_course, @assignment),
                multipart: true, size: 1 do %>
     <p><%= file_field_tag :upload_file, required: true %></p>
     <div>

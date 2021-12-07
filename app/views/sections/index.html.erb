@@ -9,7 +9,7 @@
 
 <p>
   <%= link_to t('sections.new.title'),
-              new_section_path,
+              new_course_section_path(@current_course),
               class: 'button' %>
 </p>
 
@@ -27,7 +27,7 @@
       <% @sections.each do |section| %>
         <tr>
           <td>
-            <%= link_to section.name, edit_section_path(section) %>
+            <%= link_to section.name, edit_course_section_path(@current_course, section) %>
             <span class='info'>(<%= section.students.count %>)</span>
           </td>
           <td>

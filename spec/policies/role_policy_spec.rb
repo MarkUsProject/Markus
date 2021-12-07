@@ -1,4 +1,4 @@
-describe MarkingSchemePolicy do
+describe RolePolicy do
   let(:context) { { role: role, real_user: role.human } }
   describe_rule :manage? do
     succeed 'role is admin' do

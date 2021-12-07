@@ -11,7 +11,7 @@
 
 <% @heading_buttons = [
   { link_text: t('criteria.new.button'),
-    link_path: new_assignment_criterion_path(@assignment),
+    link_path: new_course_assignment_criterion_path(@current_course, @assignment),
     html_options: { id: 'add-new-criterion', 'data-remote': 'true' } },
   { link_text: t('download'),
     link_path: '#',

@@ -2,6 +2,7 @@
   <%= javascript_tag nonce: true do %>
     document.addEventListener('DOMContentLoaded', () => {
       makeTestRunTable(document.getElementById('test_run_table'), {
+        course_id: <%= @current_course.id %>,
         result_id: <%= @result&.id || 'null' %>,
         submission_id: <%= @result&.submission_id || 'null' %>,
         assignment_id: <%= @assignment.id %>,
@@ -20,8 +21,8 @@
 <%# student results page (with instructor tests released) does not need the button %>
 <% unless @current_role.student? && ran_by == 'instructor' %>
   <% route = @current_role.admin? ?
-    run_tests_assignment_submission_result_path :
-    execute_test_run_automated_test_path(id: @assignment.id, grouping_id: @grouping.id) %>
+    run_tests_course_result_path(@current_course, @result) :
+    execute_test_run_course_assignment_automated_tests_path(@current_course, @assignment) %>
   <div class="rt-action-box">
     <%= button_to t('automated_tests.run_tests'), route, disabled: !@authorized, remote: true %>
   </div>

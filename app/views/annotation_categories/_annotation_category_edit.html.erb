@@ -1,6 +1,6 @@
 <div id='current_annotation_category'>
   <div class='float-right'>
-    <%= form_tag assignment_annotation_category_path(annotation_category.assignment, annotation_category),
+    <%= form_tag course_annotation_category_path(@current_course, annotation_category),
                  method: 'delete',
                  id: 'delete_annotation_category',
                  remote: true do |f| %>
@@ -13,7 +13,7 @@
   <h2><%= annotation_category.annotation_category_name %></h2>
   <% released = annotation_category.marks_released? %>
 
-  <%= form_for [annotation_category.assignment, annotation_category],
+  <%= form_for [@current_course, annotation_category],
                remote: true do |f| %>
     <div class='inline-labels'>
       <%= f.label :annotation_category_name,

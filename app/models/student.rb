@@ -48,6 +48,10 @@ class Student < Role
 
   after_create :create_all_grade_entry_students
 
+  CSV_ORDER = (
+    Settings.student_csv_order || %w[user_name section_name last_name first_name id_number email]
+  ).map(&:to_sym).freeze
+
   # Returns true if this student has a Membership in a Grouping for an
   # Assignment with id 'aid', where that Membership.membership_status is either
   # 'accepted' or 'inviter'
@@ -243,5 +247,27 @@ class Student < Role
     else
       accepted_groupings.find_by(assessment_id: assessment.id)&.current_result&.released_to_students
     end
+  end
+
+  # Determine what assessments are visible to the role.
+  # By default, returns all assessments visible to the role for the current course.
+  # Optional parameter assessment_type takes values "Assignment" or "GradeEntryForm". If passed one of these options,
+  # only returns assessments of that type. Otherwise returns all assessment types.
+  # Optional parameter assessment_id: if passed an assessment id, returns a collection containing
+  # only the assessment with the given id, if it is visible to the current user.
+  # If it is not visible, returns an empty collection.
+  def visible_assessments(assessment_type: nil, assessment_id: nil)
+    visible = self.assessments.where(type: assessment_type || Assessment.type)
+    visible = visible.where(id: assessment_id) if assessment_id
+    if self.section_id
+      visible = visible.left_outer_joins(:assessment_section_properties)
+                       .where('assessment_section_properties.section_id': [self.section_id, nil])
+      visible = visible.where('assessment_section_properties.is_hidden': false)
+                       .or(visible.where('assessment_section_properties.is_hidden': nil,
+                                         'assessments.is_hidden': false))
+    else
+      visible.where(is_hidden: false)
+    end
+    visible
   end
 end

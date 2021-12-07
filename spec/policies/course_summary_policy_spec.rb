@@ -1,7 +1,7 @@
 describe CourseSummaryPolicy do
-  let(:context) { { user: user } }
-  context 'user is an admin' do
-    let(:user) { create :admin }
+  let(:context) { { role: role, real_user: role.human } }
+  context 'role is an admin' do
+    let(:role) { create :admin }
     describe_rule :manage? do
       succeed
     end
@@ -12,8 +12,8 @@ describe CourseSummaryPolicy do
       succeed
     end
   end
-  context 'user is a ta' do
-    let(:user) { create :ta }
+  context 'role is a ta' do
+    let(:role) { create :ta }
     describe_rule :manage? do
       failed
     end
@@ -24,8 +24,8 @@ describe CourseSummaryPolicy do
       succeed
     end
   end
-  context 'user is a student' do
-    let(:user) { create :student }
+  context 'role is a student' do
+    let(:role) { create :student }
     describe_rule :manage? do
       failed
     end

@@ -51,6 +51,14 @@ session_timeout: 1800
 
 enable_key_storage: true
 
+student_csv_order:
+  - user_name
+  - last_name
+  - first_name
+  - section_name
+  - id_number
+  - email
+
 logging:
   enabled: true
   rotate_by_interval: false

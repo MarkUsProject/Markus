@@ -46,7 +46,10 @@ class AutotestManager extends React.Component {
 
   fetchData = () => {
     fetch(
-      Routes.populate_autotest_manager_assignment_automated_tests_path(this.props.assignment_id)
+      Routes.populate_autotest_manager_course_assignment_automated_tests_path(
+        this.props.course_id,
+        this.props.assignment_id
+      )
     )
       .then(data => data.json())
       .then(data => this.setState({...data, loading: false}));
@@ -54,7 +57,10 @@ class AutotestManager extends React.Component {
 
   fetchFileDataOnly = () => {
     fetch(
-      Routes.populate_autotest_manager_assignment_automated_tests_path(this.props.assignment_id)
+      Routes.populate_autotest_manager_course_assignment_automated_tests_path(
+        this.props.course_id,
+        this.props.assignment_id
+      )
     )
       .then(data => data.json())
       .then(data =>
@@ -78,7 +84,10 @@ class AutotestManager extends React.Component {
     data.append("path", prefix);
     data.append("unzip", unzip);
     $.post({
-      url: Routes.upload_files_assignment_automated_tests_path(this.props.assignment_id),
+      url: Routes.upload_files_course_assignment_automated_tests_path(
+        this.props.course_id,
+        this.props.assignment_id
+      ),
       data: data,
       processData: false, // tell jQuery not to process the data
       contentType: false, // tell jQuery not to set contentType
@@ -93,7 +102,10 @@ class AutotestManager extends React.Component {
       return;
     }
     $.post({
-      url: Routes.upload_files_assignment_automated_tests_path(this.props.assignment_id),
+      url: Routes.upload_files_course_assignment_automated_tests_path(
+        this.props.course_id,
+        this.props.assignment_id
+      ),
       data: {delete_files: fileKeys},
     })
       .then(this.fetchFileDataOnly)
@@ -103,7 +115,10 @@ class AutotestManager extends React.Component {
 
   handleCreateFolder = folderKey => {
     $.post({
-      url: Routes.upload_files_assignment_automated_tests_path(this.props.assignment_id),
+      url: Routes.upload_files_course_assignment_automated_tests_path(
+        this.props.course_id,
+        this.props.assignment_id
+      ),
       data: {new_folders: [folderKey], path: this.state.uploadTarget || ""},
     })
       .then(this.fetchFileDataOnly)
@@ -113,7 +128,10 @@ class AutotestManager extends React.Component {
 
   handleDeleteFolder = folderKeys => {
     $.post({
-      url: Routes.upload_files_assignment_automated_tests_path(this.props.assignment_id),
+      url: Routes.upload_files_course_assignment_automated_tests_path(
+        this.props.course_id,
+        this.props.assignment_id
+      ),
       data: {delete_folders: folderKeys},
     })
       .then(this.fetchFileDataOnly)
@@ -177,7 +195,10 @@ class AutotestManager extends React.Component {
       schema_form_data: this.state.formData,
     };
     $.post({
-      url: Routes.assignment_automated_tests_path(this.props.assignment_id),
+      url: Routes.course_assignment_automated_tests_path(
+        this.props.course_id,
+        this.props.assignment_id
+      ),
       data: JSON.stringify(data),
       processData: false,
       contentType: "application/json",
@@ -188,11 +209,17 @@ class AutotestManager extends React.Component {
   };
 
   getDownloadAllURL = () => {
-    return Routes.download_files_assignment_automated_tests_path(this.props.assignment_id);
+    return Routes.download_files_course_assignment_automated_tests_path(
+      this.props.course_id,
+      this.props.assignment_id
+    );
   };
 
   specsDownloadURL = () => {
-    return Routes.download_specs_assignment_automated_tests_path(this.props.assignment_id);
+    return Routes.download_specs_course_assignment_automated_tests_path(
+      this.props.course_id,
+      this.props.assignment_id
+    );
   };
 
   onSpecUploadModal = () => {
@@ -204,7 +231,10 @@ class AutotestManager extends React.Component {
     let data = new FormData();
     data.append("specs_file", file);
     $.post({
-      url: Routes.upload_specs_assignment_automated_tests_path(this.props.assignment_id),
+      url: Routes.upload_specs_course_assignment_automated_tests_path(
+        this.props.course_id,
+        this.props.assignment_id
+      ),
       data: data,
       processData: false, // tell jQuery not to process the data
       contentType: false, // tell jQuery not to set contentType

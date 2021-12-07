@@ -223,7 +223,7 @@ namespace :db do
           grade: random_grade
         }
       end
-      students << { id: student.id, total_grade: total_grade, released_to_student: true }
+      students << { id: student.id, role_id: student.role.id, total_grade: total_grade, released_to_student: true }
     end
 
     Grade.insert_all grades

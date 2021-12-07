@@ -5,7 +5,7 @@
     <%= link_to assignment_text, route %>
     <% if assignment.has_peer_review? && allowed_to?(:see_hidden?, assignment.pr_assignment) %>
       <%= link_to "#{assignment.short_identifier} #{PeerReview.model_name.human}",
-                  peer_review_assignment_path(id: assignment.pr_assignment.id) %>
+                  peer_review_course_assignment_path(@current_course, assignment.pr_assignment) %>
     <% end %>
   </td>
   <td>
@@ -24,11 +24,7 @@
         <% if assignment.max_mark > 0 && !assignment.results_average.nil? %>
           <p>
             <%= link_to Result.model_name.human.pluralize,
-                        view_marks_course_assignment_submission_result_path(
-                          course_id: @current_course,
-                          assignment_id: assignment.id,
-                          submission_id: result.submission_id,
-                          id: result.id) %>
+                        view_marks_course_result_path(@current_course, result) %>
           </p>
         <% end %>
       <% elsif assignment.due_date < Time.current %>

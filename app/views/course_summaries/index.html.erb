@@ -2,7 +2,7 @@
   <%= javascript_tag nonce: true do %>
     document.addEventListener('DOMContentLoaded', () => {
       makeGradesSummaryDisplay(document.getElementById('grades_summary_display'),
-                               { student: <%= @current_role.student? %> });
+                               { course_id: <%= @current_course.id %>, student: <%= @current_role.student? %> });
     });
   <% end %>
 <% end %>
@@ -14,12 +14,12 @@
   <%
     @heading_buttons = [
       { link_text: MarkingScheme.model_name.human.pluralize,
-        link_path: marking_schemes_path }
+        link_path: course_marking_schemes_path(@current_course) }
     ]
     if @current_role.admin?
       @heading_buttons += [
         { link_text: t('download_the', item: t('course_summary.grade_report')),
-          link_path: download_csv_grades_report_course_summaries_path }
+          link_path: download_csv_grades_report_course_course_summaries_path(@current_course) }
       ]
     end
   %>

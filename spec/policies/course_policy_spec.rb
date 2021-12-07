@@ -1,8 +1,14 @@
 describe CoursePolicy do
-  let(:context) { { user: user } }
-  let(:user) { create :student }
+  let(:context) { { role: role, real_user: role.human } }
+  let(:role) { create :admin }
   describe_rule :show? do
-    succeed
+    succeed 'role is an admin'
+    failed 'role is a ta' do
+      let(:role) { create :ta }
+    end
+    failed 'role is a student' do
+      let(:role) { create :student }
+    end
   end
   describe_rule :index? do
     succeed

@@ -1,5 +1,6 @@
 describe JobMessagePolicy do
-  let(:context) { { user: create(:admin) } }
+  let(:role) { create :admin }
+  let(:context) { { role: role, real_user: role.human } }
   describe_rule :manage? do
     succeed
   end
