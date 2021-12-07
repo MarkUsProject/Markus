@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_11_26_223421) do
+ActiveRecord::Schema.define(version: 2021_12_07_164034) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -254,7 +254,7 @@ ActiveRecord::Schema.define(version: 2021_11_26_223421) do
     t.float "total_grade"
     t.bigint "assessment_id"
     t.bigint "role_id", null: false
-    t.index ["role_id"], name: "index_grade_entry_students_on_role_id"
+    t.index ["role_id", "assessment_id"], name: "index_grade_entry_students_on_role_id_and_assessment_id", unique: true
   end
 
   create_table "grade_entry_students_tas", id: :serial, force: :cascade do |t|

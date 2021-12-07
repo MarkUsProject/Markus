@@ -1,6 +1,10 @@
 describe GradeEntryStudent do
   describe 'validations' do
-    subject { create :grade_entry_student }
+    subject do
+      student = create :student
+      create :grade_entry_form
+      student.grade_entry_students.first
+    end
     it { is_expected.to have_one(:course) }
     include_examples 'course associations'
   end
