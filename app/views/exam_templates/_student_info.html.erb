@@ -8,8 +8,8 @@
   <% end %>
 <% end %>
 
-<%= form_for [@assignment, exam_template],
-             url: add_fields_assignment_exam_template_path(id: exam_template.id) do |f| %>
+<%= form_for [@current_course, exam_template],
+             url: add_fields_course_exam_template_path(@current_course, exam_template) do |f| %>
 
   <p>
     <%= check_box_tag :automatic_parsing, true,
@@ -19,7 +19,7 @@
 
   <div id="exam-cover-display-<%= exam_template.id %>" class="<%= exam_template.automatic_parsing ? 'flex-display' : 'no-display' %>">
     <div id="exam_cover-<%= exam_template.id %>">
-      <img src=<%= show_cover_assignment_exam_template_path(id: exam_template.id) %> id="crop-target" >
+      <img src=<%= show_cover_course_exam_template_path(@current_course, exam_template) %> id="crop-target" >
     </div>
 
     <% if exam_template.automatic_parsing %>

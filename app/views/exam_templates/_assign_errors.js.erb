@@ -10,8 +10,8 @@ function getFile(filename, pdfViewer) {
   $('#upside_down')[0].checked = false;
   $('#info_form input[type=submit]').prop('disabled', false);
   $('#split_page_id').val(filename.split('.')[0])
-  var path = Routes.download_error_file_assignment_exam_template_path(
-    <%= @assignment.id %>,
+  var path = Routes.download_error_file_course_exam_template_path(
+    <%= @current_course.id %>,
     <%= @exam_template.id %>,
     { file_name: filename, show_in_browser: true }
   );
@@ -73,7 +73,7 @@ $(document).ready(function () {
     if (filename) {
       getFile(filename, pdfViewer);
     } else {
-      window.location = '<%= view_logs_assignment_exam_templates_path(assignment_id: @assignment.id) %>';
+      window.location = '<%= view_logs_course_assignment_exam_templates_path(@current_course, @assignment) %>';
     }
   });
 

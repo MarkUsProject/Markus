@@ -1,4 +1,4 @@
-<%= form_for [@assignment, exam_template], url: split_assignment_exam_template_path(id: exam_template.id),
+<%= form_for [@current_course, exam_template], url: split_course_exam_template_path(@current_course, exam_template),
              html: { multipart: true },
              authenticity_token: true do |f| %>
   <div class="inline-labels">

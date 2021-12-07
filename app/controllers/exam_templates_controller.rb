@@ -178,7 +178,7 @@ class ExamTemplatesController < ApplicationController
         split_pdf_logs = SplitPdfLog.joins(exam_template: :assignment)
                                     .where(assessments: { id: @assignment.id })
                                     .includes(:exam_template)
-                                    .includes(:user)
+                                    .includes(:role)
                                     .includes(split_pages: :group)
 
         data = split_pdf_logs.map do |log|
