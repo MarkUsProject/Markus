@@ -16,7 +16,10 @@ class MarksGradersController < ApplicationController
                    .group('roles.id')
                    .count
 
-        graders = current_course.tas.joins(:human).pluck('roles.id', :user_name, :first_name, :last_name).map do |ta_data|
+        graders = current_course.tas
+                                .joins(:human)
+                                .pluck('roles.id', :user_name, :first_name, :last_name)
+                                .map do |ta_data|
           {
             _id: ta_data[0],
             user_name: ta_data[1],
