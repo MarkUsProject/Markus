@@ -180,10 +180,11 @@ class GradeEntryStudent < ApplicationRecord
   # as an upsert/import operation since refresh_total_grade will not
   # be run as an after_save callback in that case.
   def self.refresh_total_grades(grade_entry_student_ids)
-    grades = Grade.where(grade_entry_student_id: grade_entry_student_ids)
-                  .pluck(:grade_entry_student_id, :grade)
+    grades = Grade.joins(:grade_entry_student)
+                  .where(grade_entry_student_id: grade_entry_student_ids)
+                  .pluck(:grade_entry_student_id, :role_id, :grade)
                   .group_by(&:first)
-                  .map { |k, v| { id: k, total_grade: v.map(&:last) } }
+                  .map { |k, v| { id: k, role_id: v.first.second, total_grade: v.map(&:last) } }
     total_grades = grades.map do |h|
       if h[:total_grade].all?(&:nil?)
         h[:total_grade] = nil

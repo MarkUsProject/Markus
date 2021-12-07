@@ -135,7 +135,7 @@ class GradeEntryFormsController < ApplicationController
 
     if current_role.admin?
       students = grade_entry_form.grade_entry_students
-                                 .joins(roles: :human)
+                                 .joins(role: :human)
                                  .pluck_to_hash(*student_pluck_attrs)
       grades = grade_entry_form.grade_entry_students
                                .joins(:grades)
@@ -144,11 +144,11 @@ class GradeEntryFormsController < ApplicationController
     elsif current_role.ta?
       students = current_role.grade_entry_students
                              .where(grade_entry_form: grade_entry_form)
-                             .joins(roles: :human)
+                             .joins(role: :human)
                              .pluck_to_hash(*student_pluck_attrs)
       grades = current_role.grade_entry_students
                            .where(grade_entry_form: grade_entry_form)
-                           .joins(roles: :human)
+                           .joins(role: :human)
                            .pluck(:id, 'grades.grade_entry_item_id', 'grades.grade')
                            .group_by { |x| x[0] }
     end
@@ -174,8 +174,15 @@ class GradeEntryFormsController < ApplicationController
       grade_entry_form = record
       release = params[:release_results] == 'true'
       GradeEntryStudent.transaction do
-        GradeEntryStudent.upsert_all(params[:students].map { |id| { id: id, released_to_student: release } })
-        num_changed = params[:students].length
+        data = record.course
+                     .students
+                     .joins(:grade_entry_students)
+                     .where('grade_entry_students.assessment_id': grade_entry_form.id,
+                            'grade_entry_students.id': params[:students])
+                     .pluck('grade_entry_students.id', 'roles.id')
+                     .map { |ges_id, r_id| { id: ges_id, role_id: r_id, released_to_student: release } }
+        GradeEntryStudent.upsert_all(data)
+        num_changed = data.length
         flash_message(:success, I18n.t('grade_entry_forms.grades.successfully_changed',
                                        numGradeEntryStudentsChanged: num_changed))
         action = release ? 'released' : 'unreleased'

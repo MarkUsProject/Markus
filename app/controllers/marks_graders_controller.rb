@@ -13,10 +13,10 @@ class MarksGradersController < ApplicationController
         # Grader information
         counts = Ta.joins(:grade_entry_students)
                    .where('grade_entry_students.assessment_id': gef.id)
-                   .group('users.id')
+                   .group('roles.id')
                    .count
 
-        graders = Ta.pluck(:id, :user_name, :first_name, :last_name).map do |ta_data|
+        graders = current_course.tas.joins(:human).pluck('roles.id', :user_name, :first_name, :last_name).map do |ta_data|
           {
             _id: ta_data[0],
             user_name: ta_data[1],
@@ -28,12 +28,12 @@ class MarksGradersController < ApplicationController
 
         # Student information
         student_data = gef.grade_entry_students
-                          .left_outer_joins(:user, :tas)
-                          .pluck('users.id',
+                          .left_outer_joins(role: :human, tas: :human)
+                          .pluck('roles.id',
                                  'users.user_name',
                                  'users.first_name',
                                  'users.last_name',
-                                 'tas_grade_entry_students.user_name')
+                                 'humen_roles.user_name') # Note: Rails pluralizes human as humen here
 
         students = Hash.new { |h, k| h[k] = [] }
         student_data.each do |s0, s1, s2, s3, ta|
@@ -42,7 +42,7 @@ class MarksGradersController < ApplicationController
             students[[s0, s1, s2, s3]] << ta
           end
         end
-        section_data = Student.joins(:section).pluck('users.id', 'sections.name').to_h
+        section_data = current_course.students.joins(:section).pluck('roles.id', 'sections.name').to_h
         students = students.map do |k, v|
           {
             _id: k[0],

@@ -1,4 +1,4 @@
-<% grade_entry_forms = GradeEntryForm.order(:id) %>
+<% grade_entry_forms = @current_course.grade_entry_forms.order(:id) %>
 <% action = @current_role.admin? ? 'edit' : 'grades' %>
 
 <% if grade_entry_forms.empty? %>

@@ -3,6 +3,7 @@
     document.addEventListener('DOMContentLoaded', () => {
       makeMarksGradersManager(document.getElementById('marks-graders-manager'),
         {
+          course_id: <%= @current_course.id %>,
           grade_entry_form_id: <%= @grade_entry_form.id %>,
           showSections: <%= Section.exists? %>
         }
