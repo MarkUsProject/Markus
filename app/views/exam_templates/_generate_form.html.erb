@@ -1,5 +1,5 @@
-<%= form_for [@assignment, exam_template],
-             url: generate_assignment_exam_template_path(id: exam_template.id),
+<%= form_for [@current_course, exam_template],
+             url: generate_course_exam_template_path(@current_course, exam_template),
              remote: true do |f| %>
   <div class="inline-labels">
     <%= f.label t('exam_templates.generate.copies_label') %>
