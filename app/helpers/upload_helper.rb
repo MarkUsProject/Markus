@@ -53,12 +53,10 @@ module UploadHelper
 
   # Parse the +yaml_string+ and return the data as a hash.
   def parse_yaml_content(yaml_string)
-    YAML.safe_load(
-        yaml_string,
-        [Date, Time, Symbol, ActiveSupport::TimeWithZone, ActiveSupport::TimeZone,
-         ActiveSupport::Duration, ActiveSupport::HashWithIndifferentAccess],
-        [],
-        true
-    )
+    YAML.safe_load(yaml_string, 
+                   [Date, Time, Symbol, ActiveSupport::TimeWithZone, ActiveSupport::TimeZone, 
+                    ActiveSupport::Duration, ActiveSupport::HashWithIndifferentAccess], 
+                   [], 
+                   true)
   end
 end

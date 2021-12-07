@@ -783,16 +783,16 @@ class AssignmentsController < ApplicationController
     scanned = params[:is_scanned] == 'true'
     unless assignment.is_timed == timed && assignment.scanned_exam == scanned
       if assignment.is_timed
-        upload_type = I18n.t("activerecord.models.timed_assignment.one")
+        upload_type = I18n.t('activerecord.models.timed_assignment.one')
       elsif assignment.scanned_exam
-        upload_type = I18n.t("activerecord.models.scanned_assignment.one")
+        upload_type = I18n.t('activerecord.models.scanned_assignment.one')
       else
         upload_type = Assignment.model_name.human
       end
       if timed
-        form_type = I18n.t("activerecord.models.timed_assignment.one")
+        form_type = I18n.t('activerecord.models.timed_assignment.one')
       elsif scanned
-        form_type = I18n.t("activerecord.models.scanned_assignment.one")
+        form_type = I18n.t('activerecord.models.scanned_assignment.one')
       else
         form_type = Assignment.model_name.human
       end
