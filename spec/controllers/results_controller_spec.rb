@@ -482,9 +482,7 @@ describe ResultsController do
   shared_examples 'showing json data' do |is_student|
     let(:student2) do
       partner = create(:student, grace_credits: 2)
-      StudentMembership.create(user: partner,
-                               membership_status: StudentMembership::STATUSES[:accepted],
-                               grouping: grouping)
+      create(:accepted_student_membership, user: partner, grouping: grouping)
       partner
     end
     subject do
