@@ -25,7 +25,7 @@
           <% if allowed_to?(:manage?, with: TagPolicy) %>
             <li class='<%= "active" if controller.controller_name == 'tags' %>'>
               <%= link_to Tag.model_name.human.pluralize,
-                          course_assignment_tags_path(@current_course, @assignment) %>
+                          course_tags_path(@current_course) %>
             </li>
           <% end %>
           <% if allowed_to?(:manage?, with: CriterionPolicy) %>
