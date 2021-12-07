@@ -5,7 +5,9 @@ class TagsController < ApplicationController
   layout 'assignment_content'
 
   def index
-    @assignment = Assignment.find_by(id: params[:assignment_id])
+    if params[:assignment_id]
+      @assignment = Assignment.find_by(id: params[:assignment_id])
+    end
 
     respond_to do |format|
       format.html

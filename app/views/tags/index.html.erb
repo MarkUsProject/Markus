@@ -4,7 +4,7 @@
                handlers: [:erb] %>
   <%= javascript_tag nonce: true do %>
     document.addEventListener('DOMContentLoaded', () => {
-      makeTagTable(document.getElementById('tags_table'), {assignment_id: <%= @assignment.id %>});
+      makeTagTable(document.getElementById('tags_table'), {course_id: <%= @current_course.id %>});
     });
     $(function() {
       $('#add-tag').click(function(e) {
@@ -15,11 +15,7 @@
   <% end %>
 <% end %>
 
-<% content_for :title,
-               Tag.model_name.human.pluralize + ': ' +
-                 (@assignment.is_peer_review? ?
-                  @assignment.parent_assignment.short_identifier + ' ' + PeerReview.model_name.human :
-                  @assignment.short_identifier) %>
+<% content_for :title, Tag.model_name.human.pluralize  %>
 
 <% @heading_buttons = [
   { link_text: t('helpers.submit.create', model: Tag.model_name.human),
