@@ -32,3 +32,6 @@ repos:
             )$
 
 exclude: vendor
+
+ci:
+  autoupdate_schedule: monthly
