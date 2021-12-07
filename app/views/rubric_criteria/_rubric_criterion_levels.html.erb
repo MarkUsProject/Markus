@@ -1,5 +1,5 @@
 <div id="rubric_form">
-  <%= form_for criterion, url: assignment_criterion_path(id: criterion.id),
+  <%= form_for criterion, url: course_criterion_path(@current_course, criterion),
                method: :patch, remote: true do |criterion_form| %>
     <%= criterion_form.fields_for :levels, criterion_form.object.levels.order(:mark) do |level_form| %>
       <%= render partial: 'rubric_criteria/rubric_criterion_level',

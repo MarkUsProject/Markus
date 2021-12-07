@@ -14,7 +14,7 @@
           }
 
           ajaxRequest = $.ajax({
-            url:  '<%= update_positions_assignment_criteria_path(@assignment) %>',
+            url:  '<%= update_positions_course_assignment_criteria_path(@current_course, @assignment) %>',
             type: 'POST',
             data: $('.sortable ul').sortable('serialize'),
             dataType: 'script',
