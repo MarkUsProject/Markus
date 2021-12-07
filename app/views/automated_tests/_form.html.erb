@@ -7,7 +7,7 @@
   <%= javascript_tag nonce: true do %>
     document.addEventListener('DOMContentLoaded', () => {
       window.autotestManagerComponent = makeAutotestManager(document.getElementById('autotest-manager'),
-        { assignment_id: <%= @assignment.id %>});
+        { course_id: <%= @current_course.id %>, assignment_id: <%= @assignment.id %>});
     });
   <% end %>
   <%= render partial: 'shared/navigation_warning',
