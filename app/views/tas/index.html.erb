@@ -1,7 +1,7 @@
 <%= content_for :head do %>
   <%= javascript_tag nonce: true do %>
     document.addEventListener('DOMContentLoaded', () => {
-      makeTATable(document.getElementById('tas_table'));
+      makeTATable(document.getElementById('tas_table'), {course_id: <%= @current_course.id %> });
     })
   <% end %>
 <% end %>
@@ -16,7 +16,7 @@
 
 <% @heading_buttons = [
   { link_text: t('tas.new'),
-    link_path: new_ta_path },
+    link_path: new_course_ta_path(@current_course) },
   { link_text: t('download'),
     link_path: '#',
     html_options: { id: 'downloadModal' } },

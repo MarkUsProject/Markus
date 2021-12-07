@@ -1,7 +1,7 @@
 <% content_for :head do %>
   <%= javascript_tag nonce: true do %>
     document.addEventListener('DOMContentLoaded', () => {
-      makeAdminTable(document.getElementById('admins_table'));
+      makeAdminTable(document.getElementById('admins_table'), {course_id: <%= @current_course.id %>});
     })
   <% end %>
 <% end %>
@@ -16,7 +16,7 @@
 
 <% @heading_buttons = [
   { link_text: t('admins.new'),
-    link_path: new_admin_path }
+    link_path: new_course_admin_path(@current_course) }
 ] %>
 
 <div id='admins_table'></div>

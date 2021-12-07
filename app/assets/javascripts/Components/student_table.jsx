@@ -24,7 +24,7 @@ class RawStudentTable extends React.Component {
   fetchData = () => {
     $.ajax({
       method: "get",
-      url: Routes.students_path(),
+      url: Routes.course_students_path(this.props.course_id),
       dataType: "json",
     }).then(res => {
       this.setState({
@@ -50,7 +50,7 @@ class RawStudentTable extends React.Component {
     this.setState({loading: true});
     $.ajax({
       method: "patch",
-      url: Routes.bulk_modify_students_path(),
+      url: Routes.bulk_modify_course_students_path(this.props.course_id),
       data: data,
     }).then(this.fetchData);
   };
@@ -172,7 +172,9 @@ class RawStudentTable extends React.Component {
               accessor: "_id",
               Cell: data => (
                 <span>
-                  <a href={Routes.edit_student_path(data.value)}>{I18n.t("edit")}</a>
+                  <a href={Routes.edit_course_student_path(this.props.course_id, data.value)}>
+                    {I18n.t("edit")}
+                  </a>
                   &nbsp;
                 </span>
               ),

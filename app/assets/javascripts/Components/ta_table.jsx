@@ -19,7 +19,7 @@ class TATable extends React.Component {
 
   fetchData() {
     $.ajax({
-      url: Routes.tas_path(),
+      url: Routes.course_tas_path(this.props.course_id),
       dataType: "json",
     }).then(res => {
       this.setState({data: res, loading: false});
@@ -53,7 +53,9 @@ class TATable extends React.Component {
             accessor: "id",
             Cell: data => (
               <span>
-                <a href={Routes.edit_ta_path(data.value)}>{I18n.t("edit")}</a>
+                <a href={Routes.edit_course_ta_path(this.props.course_id, data.value)}>
+                  {I18n.t("edit")}
+                </a>
                 &nbsp;
               </span>
             ),
@@ -68,6 +70,6 @@ class TATable extends React.Component {
   }
 }
 
-export function makeTATable(elem) {
-  render(<TATable />, elem);
+export function makeTATable(elem, props) {
+  render(<TATable {...props} />, elem);
 }

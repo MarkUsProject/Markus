@@ -44,13 +44,13 @@ class StudentsController < ApplicationController
 
   def update
     @role = record
-    @user.update(role_params)
+    @role.update(role_params)
     @sections = current_course.sections.order(:name)
-    respond_with(@user)
+    respond_with @role, location: course_students_path(@current_course)
   end
 
   def bulk_modify
-    student_ids = params[:student_ids]&.intersection(current_course.students.ids)
+    student_ids = params[:student_ids].map(&:to_i)&.intersection(current_course.students.ids)
     begin
       if student_ids.nil? || student_ids.empty?
         raise I18n.t('students.no_students_selected')
@@ -79,8 +79,8 @@ class StudentsController < ApplicationController
   end
 
   def create
-    human = Human.find_by_user_name(params[:user_name])
-    @role = current_course.students.create(human: human, **permission_params)
+    human = Human.find_by_user_name(params[:role][:human][:user_name])
+    @role = current_course.students.create(human: human, **role_params)
     @sections = current_course.sections.order(:name)
     respond_with @role, location: course_students_path(current_course)
   end
@@ -93,11 +93,11 @@ class StudentsController < ApplicationController
   end
 
   def download
-    students = Student.order(:user_name).includes(:section)
+    students = current_course.students.joins(:human).order('users.user_name').includes(:section)
     case params[:format]
       when 'csv'
         output = MarkusCsv.generate(students) do |student|
-          Student::CSV_UPLOAD_ORDER.map do |field|
+          Student::CSV_ORDER.map do |field|
             if field == :section_name
               student.section&.name
             else
@@ -163,7 +163,7 @@ class StudentsController < ApplicationController
   private
 
   def role_params
-    params.permit(:user_name, :grace_credits, :section_id)
+    params.permit(:grace_credits, :section_id)
   end
 
   def settings_params

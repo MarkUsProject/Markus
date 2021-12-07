@@ -238,8 +238,7 @@ class ExamTemplate < ApplicationRecord
   end
 
   def base_path
-    File.join Settings.scanned_exams.path,
-              assignment.short_identifier, self.name
+    File.join Settings.scanned_exams.path, self.course.name, assignment.short_identifier, self.name
   end
 
   def num_cover_fields

@@ -75,7 +75,7 @@ Rails.application.routes.draw do
       post 'upload_assignments'
     end
 
-    resources :admins, only: [:index, :new, :create]
+    resources :admins, only: [:index, :new, :create, :edit, :update]
 
     resources :starter_file_groups, only: [:destroy, :update] do
       member do
@@ -409,7 +409,7 @@ Rails.application.routes.draw do
       end
     end
 
-    resources :tas, only: [:create, :new, :index]  do
+    resources :tas, only: [:create, :new, :index, :edit, :update]  do
       collection do
         get 'download'
         post 'upload'
