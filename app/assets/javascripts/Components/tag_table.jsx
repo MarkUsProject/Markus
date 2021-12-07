@@ -19,6 +19,7 @@ class TagTable extends React.Component {
   fetchData = () => {
     $.get({
       url: Routes.course_tags_path(this.props.course_id),
+      data: {assignment_id: this.props.assignment_id},
       dataType: "json",
     }).then(res => {
       this.setState({
