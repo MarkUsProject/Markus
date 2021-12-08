@@ -18,7 +18,8 @@ class RepoBrowser extends React.Component {
   // Update the list of revisions and set the currently-viewed revision to the most recent one.
   fetchRevisions = () => {
     fetch(
-      Routes.revisions_assignment_submissions_path({
+      Routes.revisions_course_assignment_submissions_path({
+        course_id: this.props.course_id,
         assignment_id: this.props.assignment_id,
         grouping_id: this.props.grouping_id,
       }),
@@ -128,7 +129,8 @@ class ManualCollectionForm extends React.Component {
   };
 
   render() {
-    const action = Routes.manually_collect_and_begin_grading_assignment_submission_path(
+    const action = Routes.manually_collect_and_begin_grading_course_assignment_submission_path(
+      this.props.course_id,
       this.props.assignment_id
     );
 

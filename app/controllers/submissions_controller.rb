@@ -245,7 +245,7 @@ class SubmissionsController < ApplicationController
     @assignment = Assignment.find(params[:assignment_id])
     self.class.layout 'assignment_content'
 
-    return if current_user.ta?
+    return if current_role.ta?
     return if @assignment.scanned_exam
 
     if @assignment.past_all_collection_dates?
@@ -546,6 +546,8 @@ class SubmissionsController < ApplicationController
   def zip_groupings_files
     assignment = Assignment.find(params[:assignment_id])
 
+    course = Course.find(params[:course_id])
+
     groupings = assignment.groupings.where(id: params[:groupings]&.map(&:to_i))
 
     zip_path = zipped_grouping_file_name(assignment)
@@ -554,7 +556,7 @@ class SubmissionsController < ApplicationController
       groupings = groupings.joins(:ta_memberships).where('memberships.role_id': current_role.id)
     end
 
-    @current_job = DownloadSubmissionsJob.perform_later(groupings.ids, zip_path.to_s, assignment.id)
+    @current_job = DownloadSubmissionsJob.perform_later(groupings.ids, zip_path.to_s, assignment.id, course.id)
     session[:job_id] = @current_job.job_id
 
     render 'shared/_poll_job.js.erb'

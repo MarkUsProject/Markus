@@ -58,7 +58,7 @@ module SubmissionsHelper
     return if Repository.get_class.internal_file_names.include? file_name
     f = {}
     f[:id] = file.object_id
-    f[:url] = download_assignment_submissions_url(
+    f[:url] = download_course_assignment_submissions_url(
       assignment_id: assignment_id,
       revision_identifier: revision_identifier,
       file_name: file_name,
@@ -68,7 +68,7 @@ module SubmissionsHelper
     f[:filename] =
       helpers.image_tag('icons/page_white_text.png') +
       helpers.link_to(" #{file_name}",
-                      download_assignment_submissions_path(
+                      download_course_assignment_submissions_path(
                         assignment_id: assignment_id,
                         revision_identifier: revision_identifier,
                         file_name: file_name,
