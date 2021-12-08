@@ -254,9 +254,7 @@ export class SummaryPanel extends React.Component {
       let rows = this.props.graceTokenDeductions.flatMap(d => {
         return [
           <tr key={d["users.user_name"]}>
-            <th colSpan={2}>
-              {`${d["users.user_name"]} - (${d["users.first_name"]} ${d["users.last_name"]})`}
-            </th>
+            <th colSpan={2}>{`${d["users.user_name"]} - (${d["users.display_name"]})`}</th>
           </tr>,
           <tr key={d["users.user_name"] + "-deduction"}>
             <td>
