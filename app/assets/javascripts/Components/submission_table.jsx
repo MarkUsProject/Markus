@@ -59,7 +59,7 @@ class RawSubmissionTable extends React.Component {
         }
         if (row.original.result_id) {
           const result_url = Routes.edit_course_submission_result_path(
-            this.props.assignment_id,
+            this.props.course_id,
             row.original.result_id,
             row.original.result_id
           );
@@ -201,7 +201,10 @@ class RawSubmissionTable extends React.Component {
   collectSubmissions = override => {
     this.setState({showModal: false});
     $.post({
-      url: Routes.collect_submissions_assignment_submissions_path(this.props.assignment_id),
+      url: Routes.collect_submissions_course_assignment_submissions_path(
+        this.props.course_id,
+        this.props.assignment_id
+      ),
       data: {groupings: this.props.selection, override: override},
     });
   };

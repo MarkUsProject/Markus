@@ -195,7 +195,7 @@ class Grouping < ApplicationRecord
   end
 
   def get_all_students_in_group
-    student_user_names = student_memberships.includes(role: :human).collect { |m| m.human.user_name }
+    student_user_names = student_memberships.includes(role: :human).collect { |m| m.role.human.user_name }
     return I18n.t('groups.empty') if student_user_names.empty?
 	  student_user_names.join(', ')
   end

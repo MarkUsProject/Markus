@@ -104,6 +104,7 @@ class RepoBrowser extends React.Component {
           {this.props.collection_date}
         </p>
         <SubmissionFileManager
+          course_id={this.props.assignment_id}
           assignment_id={this.props.assignment_id}
           grouping_id={this.props.grouping_id}
           revision_identifier={this.state.revision_identifier}
@@ -113,6 +114,7 @@ class RepoBrowser extends React.Component {
           readOnly={this.isReadOnly()}
         />
         <ManualCollectionForm
+          course_id={this.props.assignment_id}
           assignment_id={this.props.assignment_id}
           late_penalty={this.props.late_penalty}
           grouping_id={this.props.grouping_id}
@@ -129,7 +131,7 @@ class ManualCollectionForm extends React.Component {
   };
 
   render() {
-    const action = Routes.manually_collect_and_begin_grading_course_assignment_submission_path(
+    const action = Routes.manually_collect_and_begin_grading_course_assignment_submissions_path(
       this.props.course_id,
       this.props.assignment_id
     );
