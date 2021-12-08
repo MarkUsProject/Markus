@@ -64,7 +64,8 @@ class ExamTemplatesController < ApplicationController
                                             old_filename: old_template_filename,
                                             new_filename: new_template_filename)
         old_exam_template.update(exam_template_params)
-        respond_with(old_exam_template, location: assignment_exam_templates_url)
+        respond_with(old_exam_template,
+                     location: course_assignment_exam_templates_url(assignment.course, assignment, old_exam_template))
         return
       end
     else
@@ -87,7 +88,7 @@ class ExamTemplatesController < ApplicationController
     current_job = exam_template.generate_copies(copies, index)
     current_job.status.update(file_name: "#{exam_template.name}-#{index}-#{index + copies - 1}.pdf")
     current_job.status.update(exam_id: exam_template.id)
-    current_job.status.update(id: assignment.id)
+    current_job.status.update(course_id: assignment.course.id)
     session[:job_id] = current_job.job_id
 
     respond_to do |format|
@@ -138,7 +139,7 @@ class ExamTemplatesController < ApplicationController
       exam_template.crop_height = nil
     end
     exam_template.save
-    redirect_to course_assignment_path(current_course, exam_template.assignment)
+    redirect_to course_assignment_exam_templates_path(current_course, exam_template.assignment, exam_template)
   end
 
   def split
