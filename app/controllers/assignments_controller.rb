@@ -704,18 +704,16 @@ class AssignmentsController < ApplicationController
       update_test_groups_from_specs(assignment, spec_data) unless spec_data.empty?
       @current_job = AutotestSpecsJob.perform_later(request.protocol + request.host_with_port, assignment)
       session[:job_id] = @current_job.job_id
-      test_file_dir_path = File.join(CONFIG_FILES[:automated_tests_dir_entry], '')
-      zip_file.each do |entry|
-        if entry.name.match?(/^#{test_file_dir_path}/)
-          filename = entry.name.gsub(/^#{test_file_dir_path}/, '')
-          file_path = File.join(assignment.autotest_files_dir, filename)
-          if entry.directory?
-            FileUtils.mkdir_p(file_path)
-          else
-            FileUtils.mkdir_p(File.dirname(file_path))
-            test_file_content = entry.get_input_stream.read
-            File.write(file_path, test_file_content, mode: 'wb')
-          end
+      test_file_glob_pattern = File.join(CONFIG_FILES[:automated_tests_dir_entry], '**', '*')
+      zip_file.glob(test_file_glob_pattern) do |entry|
+        filename = Pathname.new(entry.name).relative_path_from(CONFIG_FILES[:automated_tests_dir_entry])
+        file_path = File.join(assignment.autotest_files_dir, filename.to_s)
+        if entry.directory?
+          FileUtils.mkdir_p(file_path)
+        else
+          FileUtils.mkdir_p(File.dirname(file_path))
+          test_file_content = entry.get_input_stream.read
+          File.write(file_path, test_file_content, mode: 'wb')
         end
       end
     end
@@ -741,23 +739,23 @@ class AssignmentsController < ApplicationController
       assignment.default_starter_file_group_id = starter_group_mappings[default_name].id
     end
     zip_starter_dir = File.dirname(CONFIG_FILES[starter_config_file])
-    zip_starter_dir = File.join(zip_starter_dir, '') unless zip_starter_dir[-1] == File::SEPARATOR
-    zip_file.each do |entry|
-      if entry.name.match?(/^#{zip_starter_dir}/)
-        # Set working directory to the location of all the starter file content, then find
-        # directory for a starter group and add the file found in that directory to group
-        starter_base_dir = entry.name[zip_starter_dir.length..-1]
-        path_list = starter_base_dir.split(File::SEPARATOR)
-        starter_file_group = starter_group_mappings[path_list[0]]
-        starter_file_dir_path = File.join(starter_file_group.path, path_list[1..-2])
-        starter_file_name = path_list[-1]
-        if entry.directory?
-          FileUtils.mkdir_p(File.join(starter_file_dir_path, starter_file_name))
-        else
-          FileUtils.mkdir_p(starter_file_dir_path)
-          starter_file_content = entry.get_input_stream.read
-          File.write(File.join(starter_file_dir_path, starter_file_name), starter_file_content, mode: 'wb')
-        end
+    starter_file_glob_pattern = File.join(zip_starter_dir, '**', '*')
+    zip_file.glob(starter_file_glob_pattern) do |entry|
+      next if entry.name == CONFIG_FILES[starter_config_file]
+      # Set working directory to the location of all the starter file content, then find
+      # directory for a starter group and add the file found in that directory to group
+      starter_base_dir = Pathname.new(entry.name).relative_path_from(zip_starter_dir)
+      grouping_dir = starter_base_dir.descend.first.to_s
+      starter_file_group = starter_group_mappings[grouping_dir]
+      sub_dir, filename = starter_base_dir.relative_path_from(grouping_dir).split
+      starter_file_dir_path = File.join(starter_file_group.path, sub_dir.to_s)
+      starter_file_name = filename.to_s
+      if entry.directory?
+        FileUtils.mkdir_p(File.join(starter_file_dir_path, starter_file_name))
+      else
+        FileUtils.mkdir_p(starter_file_dir_path)
+        starter_file_content = entry.get_input_stream.read
+        File.write(File.join(starter_file_dir_path, starter_file_name), starter_file_content, mode: 'wb')
       end
     end
     assignment.starter_file_groups.find_each(&:update_entries)
