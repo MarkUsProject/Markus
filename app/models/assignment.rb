@@ -1314,7 +1314,7 @@ class Assignment < Assessment
       end
     end
     zip_file.get_output_stream(specs_file_path) do |f|
-      f.write({ spec_data: test_specs }.to_json)
+      f.write(test_specs.to_json)
     end
   end
 

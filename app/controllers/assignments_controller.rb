@@ -19,7 +19,7 @@ class AssignmentsController < ApplicationController
     criteria: 'criteria.yml',
     annotations: 'annotations.yml',
     automated_tests_dir_entry: File.join('automated-test-config-files', 'automated-test-files'),
-    automated_tests: File.join('automated-test-config-files', 'automated-test-settings.json'),
+    automated_tests: File.join('automated-test-config-files', 'automated-test-specs.json'),
     starter_files: File.join('starter-file-config-files', 'starter-file-rules.yml'),
     peer_review_properties: File.join('peer-review-config-files', 'properties.yml'),
     peer_review_tags: File.join('peer-review-config-files', 'tags.yml'),
@@ -693,20 +693,18 @@ class AssignmentsController < ApplicationController
   def config_automated_tests(assignment, zip_file)
     spec_file = zip_file.get_entry(CONFIG_FILES[:automated_tests])
     spec_content = spec_file.get_input_stream.read.encode(Encoding::UTF_8, 'UTF-8')
-    zip_file.remove(spec_file)
     begin
-      test_settings = JSON.parse spec_content
+      spec_data = JSON.parse(spec_content)
     rescue JSON::ParserError
       raise I18n.t('automated_tests.invalid_specs_file')
     else
-      assignment.update!(test_settings['settings'].symbolize_keys)
-      spec_data = test_settings['spec_data']
       update_test_groups_from_specs(assignment, spec_data) unless spec_data.empty?
       @current_job = AutotestSpecsJob.perform_later(request.protocol + request.host_with_port, assignment)
       session[:job_id] = @current_job.job_id
       test_file_glob_pattern = File.join(CONFIG_FILES[:automated_tests_dir_entry], '**', '*')
       zip_file.glob(test_file_glob_pattern) do |entry|
-        filename = Pathname.new(entry.name).relative_path_from(CONFIG_FILES[:automated_tests_dir_entry])
+        zip_file_path = Pathname.new(entry.name)
+        filename = zip_file_path.relative_path_from(CONFIG_FILES[:automated_tests_dir_entry])
         file_path = File.join(assignment.autotest_files_dir, filename.to_s)
         if entry.directory?
           FileUtils.mkdir_p(file_path)
@@ -744,7 +742,8 @@ class AssignmentsController < ApplicationController
       next if entry.name == CONFIG_FILES[starter_config_file]
       # Set working directory to the location of all the starter file content, then find
       # directory for a starter group and add the file found in that directory to group
-      starter_base_dir = Pathname.new(entry.name).relative_path_from(zip_starter_dir)
+      zip_file_path = Pathname.new(entry.name)
+      starter_base_dir = zip_file_path.relative_path_from(zip_starter_dir)
       grouping_dir = starter_base_dir.descend.first.to_s
       starter_file_group = starter_group_mappings[grouping_dir]
       sub_dir, filename = starter_base_dir.relative_path_from(grouping_dir).split
@@ -766,7 +765,6 @@ class AssignmentsController < ApplicationController
   def build_hash_from_zip(zip_file, hash_to_build)
     yaml_file = zip_file.get_entry(CONFIG_FILES[hash_to_build])
     yaml_content = yaml_file.get_input_stream.read.encode(Encoding::UTF_8, 'UTF-8')
-    zip_file.remove(yaml_file)
     properties = parse_yaml_content(yaml_content)
     if [:tags, :peer_review_tags].include?(hash_to_build)
       properties.each { |row| row[:user] = @current_user.user_name }
