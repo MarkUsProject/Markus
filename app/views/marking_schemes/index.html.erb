@@ -1,7 +1,7 @@
 <%= content_for :head do %>
   <%= javascript_tag nonce: true do %>
     document.addEventListener('DOMContentLoaded', () => {
-      makeMarkingSchemeTable(document.getElementById('marking_schemes_table'));
+      makeMarkingSchemeTable(document.getElementById('marking_schemes_table'), { course_id: <%= @current_course.id %> });
     });
   <% end %>
 <% end %>
@@ -10,10 +10,10 @@
 
 <% @heading_buttons = [
     { link_text: t('helpers.submit.create', model: MarkingScheme.model_name.human),
-      link_path: new_marking_scheme_path,
+      link_path: new_course_marking_scheme_path(@current_course),
       html_options: { remote: true } },
     { link_text: t('course_summary.title'),
-      link_path: course_summaries_path }
+      link_path: course_course_summaries_path(@current_course) }
 ] %>
 
 <div id='marking_schemes_table'></div>
