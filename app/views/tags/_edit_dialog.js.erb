@@ -1,7 +1,7 @@
 $('#edit_tags_dialog').html("<%= escape_javascript(render('tags/edit')) %>");
 modal_edit.open();
 $(function() {
-  $('#edit_tags_dialog').click(function(e) {
+  $('#edit_tags_dialog :reset').click(function(e) {
     modal_edit.close();
     e.preventDefault();
   })
