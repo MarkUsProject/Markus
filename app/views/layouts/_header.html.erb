@@ -15,6 +15,11 @@
         <%= @current_user.display_name %>
         ( <strong><%= @current_user.user_name %></strong> )
       </span>
+      <% unless allowed_to?(:role_is_switched?) %>
+        <%= link_to t('menu.settings'),
+                    settings_users_path,
+                    class: 'button inline-button settings' %>
+      <% end %>
       <% if @current_course && allowed_to?(:role_switch?, @current_course) %>
         <%= link_to t('main.role_switch.switch_role'),
                     role_switch_course_path(@current_course.id),

@@ -400,12 +400,12 @@ Rails.application.routes.draw do
         get 'add_new_section'
         get 'download'
         post 'upload'
+        get 'settings'
+        patch 'update_settings'
       end
 
       member do
         delete 'delete_grace_period_deduction'
-        get 'settings'
-        patch 'update_settings'
       end
     end
 

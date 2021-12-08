@@ -1,11 +1,11 @@
 <div class='main'>
-<a href='<%= root_path %>' id='logo-img' aria-label='<%= t('menu.dashboard') %>'></a>
+<a href='<%= root_path %>' id='logo-img' aria-label='<%= t('menu.home') %>'></a>
 <ul>
   <% if @current_course %>
 
     <% if @current_role.admin? %>
       <li class='<%= "active" if controller.controller_name == 'courses' %>'>
-        <%= link_to t('menu.dashboard'), controller: 'courses' %>
+        <%= link_to t('menu.dashboard'), course_path(@current_course) %>
       </li>
 
       <li <% if controller.controller_name == 'assignments' ||
@@ -54,6 +54,13 @@
             <% end %>>
           <%= link_to t('course_summary.title'), course_course_summaries_path(@current_course) %>
         </li>
+        <% if Settings.rails.action_mailer.perform_deliveries %>
+          <li <% if controller.controller_name == 'students' %>
+              class='active'
+              <% end %>>
+            <%= link_to t('menu.email_settings'), settings_course_students_path(@current_course) %>
+          </li>
+        <% end %>
       <% end %>
     <% end %>
 
@@ -72,10 +79,5 @@
       </li>
     <% end %>
   <% end %>
-  <li <% if controller.controller_name == 'users' %>
-      class='active'
-      <% end %>>
-    <%= link_to t('menu.settings'), controller: 'users', action: 'settings' %>
-  </li>
 </ul>
 </div>
