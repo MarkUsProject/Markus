@@ -111,7 +111,7 @@ describe StudentsController do
         patch_as role,
                  'update_settings',
                  params: { course_id: role.course.id, id: role.id, role: { setting => true, other_setting => true } }
-        expect(response).to redirect_to(settings_course_student_path(role.course, role))
+        expect(response).to redirect_to(settings_course_students_path(role.course))
       end
     end
 
