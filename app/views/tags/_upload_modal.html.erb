@@ -13,7 +13,7 @@
 
   <%= t('upload_help_html', section_id: 'tags') %>
 
-  <%= form_tag upload_assignment_tags_path(@assignment), { multipart: true, size: 1 } do %>
+  <%= form_tag upload_course_tags_path(@current_course), { multipart: true, size: 1 } do %>
     <p>
       <%= label_tag t('encoding') %>
       <%= select_tag(:encoding, options_for_select(@encodings)) %>
