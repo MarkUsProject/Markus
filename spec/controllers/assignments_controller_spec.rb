@@ -1637,7 +1637,7 @@ describe AssignmentsController do
       annotations_good = fixture_file_upload(File.join(base_dir, 'annotations.yml'), 'text/yaml')
       test_file_path = File.join('assignments', 'sample-timed-assessment-good',
                                  'automated-test-config-files')
-      test_specs_good = fixture_file_upload(File.join(test_file_path, 'automated-test-settings.json'),
+      test_specs_good = fixture_file_upload(File.join(test_file_path, 'automated-test-specs.json'),
                                             'text/json')
       test_file1_good = fixture_file_upload(File.join(test_file_path,
                                                       'automated-test-files', 'tests.py'), 'text/py')
@@ -1675,7 +1675,7 @@ describe AssignmentsController do
         zip_file.add('peer-review-config-files/tags.yml', pr_tags_good.path)
         zip_file.add('peer-review-config-files/criteria.yml', pr_criteria_good.path)
         zip_file.add('peer-review-config-files/annotations.yml', pr_annotations_good.path)
-        zip_file.add('automated-test-config-files/automated-test-settings.json', test_specs_good.path)
+        zip_file.add('automated-test-config-files/automated-test-specs.json', test_specs_good.path)
         zip_file.add('automated-test-config-files/automated-test-files/tests.py', test_file1_good.path)
         zip_file.add('automated-test-config-files/automated-test-files/Helpers/test_helpers.py', test_file2_good.path)
         zip_file.add('peer-review-config-files/starter-file-config-files/starter-file-rules.yml',

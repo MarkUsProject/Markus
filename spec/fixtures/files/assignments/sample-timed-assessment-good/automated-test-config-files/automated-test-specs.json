@@ -1,0 +1,28 @@
+{
+  "testers": [
+    {
+      "tester_type": "py",
+      "env_data": {
+        "python_version": "3.8",
+        "pip_requirements": "hypothesis pytest-timeout"
+      },
+      "test_data": [
+        {
+          "script_files": [
+            "tests.py"
+          ],
+          "category": [
+            "admin"
+          ],
+          "timeout": 30,
+          "tester": "unittest",
+          "output_verbosity": 2,
+          "extra_info": {
+            "criterion": "CheckboxCriterion:Optimal",
+            "name": "Python Test Group 1"
+          }
+        }
+      ]
+    }
+  ]
+}
