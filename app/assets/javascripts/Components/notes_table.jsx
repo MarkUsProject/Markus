@@ -18,7 +18,7 @@ class NotesTable extends React.Component {
 
   fetchData = () => {
     $.get({
-      url: Routes.notes_path({format: "json"}),
+      url: Routes.course_notes_path(this.props.course_id, {format: "json"}),
     }).then(res => {
       this.setState({
         notes: res,
@@ -31,12 +31,15 @@ class NotesTable extends React.Component {
     if (editable) {
       return (
         <div>
-          <a href={Routes.edit_note_path(id)} className="inline-button button">
+          <a
+            href={Routes.edit_course_note_path(this.props.course_id, id)}
+            className="inline-button button"
+          >
             {I18n.t("edit")}
           </a>
 
           <a
-            href={Routes.note_path(id)}
+            href={Routes.course_note_path(this.props.course_id, id)}
             className="inline-button button"
             data-method="delete"
             data-confirm={I18n.t("notes.delete.link_confirm")}
