@@ -266,7 +266,7 @@ class Student < Role
                        .or(visible.where('assessment_section_properties.is_hidden': nil,
                                          'assessments.is_hidden': false))
     else
-      visible.where(is_hidden: false)
+      visible = visible.where(is_hidden: false)
     end
     visible
   end

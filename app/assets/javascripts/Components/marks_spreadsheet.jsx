@@ -24,7 +24,10 @@ class RawMarksSpreadsheet extends React.Component {
   fetchData = () => {
     // Getting additional grade entry item columns
     $.ajax({
-      url: Routes.get_mark_columns_grade_entry_form_path(this.props.grade_entry_form_id),
+      url: Routes.get_mark_columns_course_grade_entry_form_path(
+        this.props.course_id,
+        this.props.grade_entry_form_id
+      ),
       method: "GET",
       dataType: "json",
     }).then(data => {
@@ -46,7 +49,10 @@ class RawMarksSpreadsheet extends React.Component {
 
     // Getting row data
     $.ajax({
-      url: Routes.populate_grades_table_grade_entry_form_path(this.props.grade_entry_form_id),
+      url: Routes.populate_grades_table_course_grade_entry_form_path(
+        this.props.course_id,
+        this.props.grade_entry_form_id
+      ),
       method: "GET",
       dataType: "json",
     }).then(response => {
@@ -76,7 +82,7 @@ class RawMarksSpreadsheet extends React.Component {
 
     $.ajax({
       method: "patch",
-      url: Routes.bulk_modify_students_path(),
+      url: Routes.bulk_modify_course_students_path(this.props.course_id),
       data: data,
     }).then(this.fetchData);
   };
@@ -136,6 +142,7 @@ class RawMarksSpreadsheet extends React.Component {
   inputCell = row => {
     return (
       <GradeEntryCell
+        course_id={this.props.course_id}
         grade_entry_form_id={this.props.grade_entry_form_id}
         grade_id={"grade_" + row.original._id + "_" + row.column.id}
         grade_entry_column={row.column.id}
@@ -243,7 +250,8 @@ class RawMarksSpreadsheet extends React.Component {
     this.setState({loading: true}, () => {
       $.ajax({
         method: "POST",
-        url: Routes.update_grade_entry_students_grade_entry_form_path(
+        url: Routes.update_grade_entry_students_course_grade_entry_form_path(
+          this.props.course_id,
           this.props.grade_entry_form_id
         ),
         data: dataLoad,
@@ -342,7 +350,10 @@ class GradeEntryCell extends React.Component {
 
     this.typing_timer = setTimeout(() => {
       $.ajax({
-        url: Routes.update_grade_grade_entry_form_path(this.props.grade_entry_form_id),
+        url: Routes.update_grade_course_grade_entry_form_path(
+          this.props.course_id,
+          this.props.grade_entry_form_id
+        ),
         data: params,
         type: "POST",
         dataType: "text",

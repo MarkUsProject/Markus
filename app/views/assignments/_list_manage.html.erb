@@ -1,4 +1,6 @@
-<% assignments = Assignment.includes(:submission_rule, :assessment_section_properties, :pr_assignment).order(:id) %>
+<% assignments = @current_course.assignments
+                                .includes(:submission_rule, :assessment_section_properties, :pr_assignment)
+                                .order(:id) %>
 <% action = @current_role.admin? ? 'edit' : 'summary' %>
 
 <% if assignments.empty? %>

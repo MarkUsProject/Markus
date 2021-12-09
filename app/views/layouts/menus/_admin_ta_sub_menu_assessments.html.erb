@@ -26,17 +26,17 @@
     <% if allowed_to?(:manage?, with: GradeEntryFormPolicy) %>
       <li class='<%= "active" if controller.action_name == 'edit' %>'>
         <%= link_to t('menu.properties'),
-                    edit_grade_entry_form_path(assessment) %>
+                    edit_course_grade_entry_form_path(@current_course, assessment) %>
       </li>
     <% end %>
     <li class='<%= "active" if controller.action_name == 'grades' %>'>
       <%= link_to GradeEntryForm.human_attribute_name(:grades),
-                  grades_grade_entry_form_path(assessment) %>
+                  grades_course_grade_entry_form_path(@current_course, assessment) %>
     </li>
     <% if allowed_to?(:manage?, with: GraderPolicy) %>
       <li class='<%= "active" if controller.controller_name == 'marks_graders' %>'>
         <%= link_to Ta.model_name.human.pluralize,
-                    grade_entry_form_marks_graders_path(assessment) %>
+                    course_grade_entry_form_marks_graders_path(@current_course, assessment) %>
       </li>
     <% end %>
   <% elsif assessment.is_a?(Assignment) && !assessment.new_record? %>
