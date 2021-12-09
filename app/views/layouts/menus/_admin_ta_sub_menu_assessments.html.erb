@@ -68,7 +68,7 @@
       <% if allowed_to?(:manage_reviewers?, assessment, with: PeerReviewPolicy) %>
         <li class='<%= 'active' if controller.controller_name == 'peer_reviews' %>'>
           <%= link_to t('peer_reviews.assign'),
-                      assignment_peer_reviews_path(target_id) %>
+                      course_assignment_peer_reviews_path(@current_course, target_id) %>
         </li>
       <% end %>
     <% end %>
