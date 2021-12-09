@@ -1251,10 +1251,10 @@ class Assignment < Assessment
   def assignment_properties_config
     # Data to avoid including
     exclude = %w[id created_at updated_at outstanding_remark_request_count repository_folder]
-    should_reject = ->(attr) { attr.end_with?('_id') || attr.end_with?('_created_at') || attr.end_with?('_updated_at') }
+    should_reject = ->(attr) { attr.end_with?('_id', '_created_at', '_updated_at') }
     # Helper lambda functions for filtering attributes
-    filter_attr = -> (attributes) { attributes.except(*exclude).reject { |attr| should_reject.call(attr) }}
-    filter_table = -> (data, model) do
+    filter_attr = ->(attributes) { attributes.except(*exclude).reject { |attr| should_reject.call(attr) } }
+    filter_table = ->(data, model) do
       data.pluck_to_hash(*(model.column_names - exclude).reject { |attr| should_reject.call(attr) })
     end
     # Build properties
