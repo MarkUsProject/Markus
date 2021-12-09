@@ -173,7 +173,7 @@ describe GroupsController do
         # Create students corresponding to the file_good
         @student_user_names = %w(c8shosta c5bennet)
         @student_user_names.each do |name|
-          create(:student, human: create(:human, user_name: name))
+          create(:student, end_user: create(:end_user, user_name: name))
         end
       end
 
@@ -220,8 +220,8 @@ describe GroupsController do
 
         @group = FactoryBot.create(:group, course: @assignment.course)
 
-        @student1 = create(:student, human: create(:human, user_name: 'c8shosta'))
-        @student2 = create(:student, human: create(:human,  user_name: 'c5bennet'))
+        @student1 = create(:student, end_user: create(:end_user, user_name: 'c8shosta'))
+        @student2 = create(:student, end_user: create(:end_user,  user_name: 'c5bennet'))
 
         grouping = Grouping.new(assignment: @assignment, group: @group)
         grouping.save
@@ -398,10 +398,12 @@ describe GroupsController do
       let!(:assignment) { create(:assignment_for_scanned_exam) }
       let!(:student1) do
         create(:student,
-               human: create(:human, user_name: 'c9test1', first_name: 'first', last_name: 'last', id_number: '12345'))
+               end_user: create(:end_user, user_name: 'c9test1', first_name: 'first',
+                                last_name: 'last', id_number: '12345'))
       end
       let!(:student2) do
-        create(:student, human: create(:human, user_name: 'zzz', first_name: 'zzz', last_name: 'zzz', id_number: '789'))
+        create(:student,
+               end_user: create(:end_user, user_name: 'zzz', first_name: 'zzz', last_name: 'zzz', id_number: '789'))
       end
       let(:expected) do
         [{ 'id' => student1.id,
@@ -458,8 +460,8 @@ describe GroupsController do
 
   describe 'student access' do
     before :each do
-      @current_student = create(:student, human: create(:human, user_name: 'c9test2'))
-      @student = create(:student, human: create(:human, user_name: 'c9test1'))
+      @current_student = create(:student, end_user: create(:end_user, user_name: 'c9test2'))
+      @student = create(:student, end_user: create(:end_user, user_name: 'c9test1'))
       @assignment = create(:assignment,
                            due_date: 1.day.from_now,
                            assignment_properties_attributes: { student_form_groups: true, group_max: 4 })
@@ -501,7 +503,7 @@ describe GroupsController do
       end
 
       it 'should send an email to every student invited to a grouping if more than one are' do
-        @another_student = create(:student, human: create(:human, user_name: 'c9test3'))
+        @another_student = create(:student, end_user: create(:end_user, user_name: 'c9test3'))
         expect do
           post_as @current_student, :invite_member,
                   params: { course_id: course.id, invite_member: "#{@student.user_name},#{@another_student.user_name}",
@@ -509,7 +511,8 @@ describe GroupsController do
         end.to change { ActionMailer::Base.deliveries.count }.by(2)
       end
       it 'should not send an email to every student invited to a grouping if some have emails disabled' do
-        @another_student = create(:student, human: create(:human, user_name: 'c9test3'), receives_invite_emails: false)
+        @another_student = create(:student,
+                                  end_user: create(:end_user, user_name: 'c9test3'), receives_invite_emails: false)
         expect do
           post_as @current_student, :invite_member,
                   params: { course_id: course.id, invite_member: "#{@student.user_name},#{@another_student.user_name}",

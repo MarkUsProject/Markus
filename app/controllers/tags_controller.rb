@@ -70,7 +70,7 @@ class TagsController < ApplicationController
 
   def download
     parent = Assignment.find_by(id: params[:assignment_id]) || current_course
-    tags = parent.tags.includes(role: :human).order(:name).pluck(:name, :description, 'users.user_name')
+    tags = parent.tags.includes(role: :end_user).order(:name).pluck(:name, :description, 'users.user_name')
 
     case params[:format]
     when 'csv'

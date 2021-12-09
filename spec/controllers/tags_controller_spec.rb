@@ -82,7 +82,7 @@ describe TagsController do
     end
 
     before :each do
-      create(:admin, human: create(:human, user_name: 'a'))
+      create(:admin, end_user: create(:humaend_usern, user_name: 'a'))
 
       @file_good_csv = fixture_file_upload('tags/form_good.csv', 'text/csv')
       @file_good_yml = fixture_file_upload('tags/form_good.yml', 'text/yaml')

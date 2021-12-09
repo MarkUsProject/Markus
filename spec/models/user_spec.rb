@@ -6,28 +6,28 @@ describe User do
   it { is_expected.to validate_presence_of :last_name }
   it { is_expected.to validate_presence_of :first_name }
   it { is_expected.to validate_presence_of :display_name }
-  it { is_expected.to allow_value('TestServer').for(:type) }
-  it { is_expected.to allow_value('Human').for(:type) }
+  it { is_expected.to allow_value('AutotestUser').for(:type) }
+  it { is_expected.to allow_value('EndUser').for(:type) }
   it { is_expected.not_to allow_value('OtherTypeOfUser').for(:type) }
   it { is_expected.not_to allow_value('A!a.sa').for(:user_name) }
   it { is_expected.to allow_value('Ads_-hb').for(:user_name) }
   it { is_expected.to allow_value('-22125-k1lj42_').for(:user_name) }
   it { is_expected.to validate_inclusion_of(:locale).in_array(I18n.available_locales.map(&:to_s)) }
 
-  describe 'TestServer' do
-    subject { create :test_server }
+  describe 'AutotestUser' do
+    subject { create :autotest_user }
     it { is_expected.to allow_value('A!a.sa').for(:user_name) }
     it { is_expected.to allow_value('.autotest').for(:user_name) }
   end
 
   describe 'uniqueness validation' do
-    subject { create :human }
+    subject { create :end_user }
     it { is_expected.to validate_uniqueness_of :user_name }
   end
 
   context 'A good User model' do
-    it 'should be able to create a human user' do
-      create(:human)
+    it 'should be able to create an end_user user' do
+      create(:end_user)
     end
   end
 
@@ -36,7 +36,7 @@ describe User do
       new_user = { user_name: '   ausername   ',
                    first_name: '   afirstname ',
                    last_name: '   alastname  ' }
-      @user = Human.new(new_user)
+      @user = EndUser.new(new_user)
     end
 
     it 'should strip all strings with white space from user name' do

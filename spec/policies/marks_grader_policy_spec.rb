@@ -1,5 +1,5 @@
 describe MarksGraderPolicy do
-  let(:context) { { role: role, real_user: role.human } }
+  let(:context) { { role: role, real_user: role.end_user } }
   describe_rule :manage? do
     succeed 'role is an admin' do
       let(:role) { create(:admin) }

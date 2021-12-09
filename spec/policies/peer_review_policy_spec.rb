@@ -1,5 +1,5 @@
 describe PeerReviewPolicy do
-  let(:context) { { role: role, real_user: role.human } }
+  let(:context) { { role: role, real_user: role.end_user } }
 
   describe_rule :view? do
     succeed 'role is an admin' do

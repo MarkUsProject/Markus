@@ -12,7 +12,6 @@ FileUtils.mkdir_p('tmp')
 Rake::Task['db:courses'].invoke
 Rake::Task['db:admin'].invoke
 Rake::Task['db:tas'].invoke
-Rake::Task['db:test_servers'].invoke
 Rake::Task['db:student_users'].invoke
 Rake::Task['db:students'].invoke
 Rake::Task['db:assignments'].invoke

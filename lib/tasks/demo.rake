@@ -176,10 +176,6 @@ namespace :markus do
       Ta.create(user_name: ta[0], first_name: ta[1], last_name: ta[2])
     end
 
-    puts 'Server User'
-    TestServer.create(user_name: Settings.autotest.server_host,
-                      first_name: 'Test', last_name: 'Server', hidden: true)
-
     puts 'CREATE ASSIGNMENTS'
 
     puts '1: No Late Submissions'

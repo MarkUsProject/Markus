@@ -178,7 +178,7 @@ describe Api::RolesController do
             expect(response.status).to eq(201)
           end
           it 'should create a new user' do
-            expect(Student.joins(:human).where('users.user_name': student.user_name).first).not_to be_nil
+            expect(Student.joins(:end_user).where('users.user_name': student.user_name).first).not_to be_nil
           end
         end
         context 'when trying to create a user who already exists' do

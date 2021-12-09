@@ -1,5 +1,5 @@
 describe Api::SubmissionFilePolicy do
-  let(:user) { role.human }
+  let(:user) { role.end_user }
   let(:context) { { role: role, real_user: user } }
 
   describe_rule :index? do
@@ -7,7 +7,7 @@ describe Api::SubmissionFilePolicy do
       let(:role) { build :admin }
     end
     succeed 'user is a test server' do
-      let(:user) { build :test_server }
+      let(:user) { build :autotest_user }
       let(:role) { nil }
     end
     failed 'role is a ta' do

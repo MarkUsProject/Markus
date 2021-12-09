@@ -1,5 +1,5 @@
 describe AssignmentPolicy do
-  let(:context) { { role: role, real_user: role.human } }
+  let(:context) { { role: role, real_user: role.end_user } }
   let(:record) { assignment }
   let(:role) { create :admin }
   let(:assignment) { create :assignment }
@@ -281,14 +281,14 @@ describe AssignmentPolicy do
 
       succeed 'role is an admin' do
         before { assignment.update(is_hidden: true) }
-        let(:context) { { role: admin_role, real_user: admin_role.human } }
+        let(:context) { { role: admin_role, real_user: admin_role.end_user } }
       end
     end
     context 'when the role is a TA' do
       let(:ta_role) { create(:ta) }
       succeed 'user is an admin' do
         before { assignment.update(is_hidden: true) }
-        let(:context) { { role: ta_role, real_user: ta_role.human } }
+        let(:context) { { role: ta_role, real_user: ta_role.end_user } }
       end
     end
     context 'when there are no section due dates' do

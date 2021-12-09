@@ -250,8 +250,8 @@ class AnnotationCategoriesController < ApplicationController
                      'users.user_name AS creator',
                      'annotation_texts.content AS content']
     course ||= category&.course
-    base_query = AnnotationText.joins(creator: :human)
-                               .left_outer_joins(last_editor: :human)
+    base_query = AnnotationText.joins(creator: :end_user)
+                               .left_outer_joins(last_editor: :end_user)
                                .where('annotation_texts.annotation_category_id': category)
                                .where('roles.course_id': course)
                                .order('users.user_name')

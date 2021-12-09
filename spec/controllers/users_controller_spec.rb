@@ -1,6 +1,6 @@
 describe UsersController do
   let(:role) { create(:admin) }
-  let(:user) { role.human }
+  let(:user) { role.end_user }
 
   shared_examples 'settings' do
     describe '#update_settings' do

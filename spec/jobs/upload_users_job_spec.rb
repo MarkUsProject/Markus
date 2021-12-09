@@ -12,8 +12,8 @@ describe UploadRolesJob do
       let(:data) { fixture_file_upload('tas/form_good.csv', 'text/csv').read }
       context 'when users exist' do
         before do
-          create :human, user_name: :c6conley
-          create :human, user_name: :c8rada
+          create :end_user, user_name: :c6conley
+          create :end_user, user_name: :c8rada
         end
         context 'and there are duplicates in the file' do
           let(:data) { fixture_file_upload('tas/form_invalid_record.csv', 'text/csv').read }
@@ -24,7 +24,7 @@ describe UploadRolesJob do
         end
         context 'and a user already has a role in the course' do
           before do
-            create :admin, human: Human.find_by_user_name(:c6conley), course: course
+            create :admin, end_user: EndUser.find_by_user_name(:c6conley), course: course
           end
           it 'does not create roles' do
             expect { subject }.to raise_exception(RuntimeError)
@@ -44,7 +44,7 @@ describe UploadRolesJob do
         end
       end
       context 'when a user does not exist' do
-        before { create :human, user_name: :c6conley }
+        before { create :end_user, user_name: :c6conley }
         it 'does not create tas' do
           expect { subject }.to raise_exception(RuntimeError)
           expect(role_type.count).to eq 0
@@ -65,8 +65,8 @@ describe UploadRolesJob do
         let(:csv_order) { %w[user_name section_name].map(&:to_sym) }
         before do
           stub_const('Student::CSV_ORDER', csv_order)
-          create :human, user_name: :c6conley
-          create :human, user_name: :c8rada
+          create :end_user, user_name: :c6conley
+          create :end_user, user_name: :c8rada
         end
         context 'when the section exists' do
           let!(:section) { create(:section, name: 'abc', course: course) }

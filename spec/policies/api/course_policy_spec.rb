@@ -1,10 +1,10 @@
 describe Api::CoursePolicy do
-  let(:user) { role.human }
+  let(:user) { role.end_user }
   let(:context) { { role: role, real_user: user } }
 
   describe_rule :index? do
     failed 'user is a test server' do
-      let(:user) { create :test_server }
+      let(:user) { create :autotest_user }
       let(:role) { nil }
     end
     succeed 'role is an admin' do
@@ -17,23 +17,23 @@ describe Api::CoursePolicy do
       let(:role) { create :student }
     end
     context 'user has multiple roles' do
-      let(:user) { create :human }
+      let(:user) { create :end_user }
       let(:role) { nil }
       let(:course1) { create :course }
       let(:course2) { create :course }
       let(:course3) { create :course }
       succeed 'and at least one is an admin role' do
         before do
-          create :admin, human: user, course: course1
-          create :ta, human: user, course: course2
-          create :student, human: user, course: course3
+          create :admin, end_user: user, course: course1
+          create :ta, end_user: user, course: course2
+          create :student, end_user: user, course: course3
         end
       end
       failed 'and none are admin roles' do
         before do
-          create :ta, human: user, course: course1
-          create :ta, human: user, course: course2
-          create :student, human: user, course: course3
+          create :ta, end_user: user, course: course1
+          create :ta, end_user: user, course: course2
+          create :student, end_user: user, course: course3
         end
       end
     end

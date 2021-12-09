@@ -1,5 +1,5 @@
 describe ApplicationPolicy do
-  let(:context) { { role: role, real_user: role.human } }
+  let(:context) { { role: role, real_user: role.end_user } }
   let(:role) { create :admin }
   let(:policy) { ApplicationPolicy.new(**context) }
 

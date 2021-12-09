@@ -1,5 +1,5 @@
 describe Api::AssignmentPolicy do
-  let(:user) { role.human }
+  let(:user) { role.end_user }
   let(:context) { { role: role, real_user: user } }
 
   describe_rule :test_files? do
@@ -8,7 +8,7 @@ describe Api::AssignmentPolicy do
     end
     succeed 'user is a test server' do
       let(:role) { nil }
-      let(:user) { create :test_server }
+      let(:user) { create :autotest_user }
     end
     failed 'role is a ta' do
       let(:role) { build :ta }

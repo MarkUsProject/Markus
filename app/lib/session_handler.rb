@@ -26,11 +26,11 @@ module SessionHandler
   end
 
   def current_role
-    @current_role ||= Role.find_by(human: current_user, course: current_course)
+    @current_role ||= Role.find_by(end_user: current_user, course: current_course)
   end
 
   def real_role
-    @real_role ||= Role.find_by(human: real_user, course: current_course)
+    @real_role ||= Role.find_by(end_user: real_user, course: current_course)
   end
 
   def current_course

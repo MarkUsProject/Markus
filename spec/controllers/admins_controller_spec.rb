@@ -2,7 +2,7 @@ describe AdminsController do
   let(:course) { admin.course }
   let(:admin) { create :admin }
   let(:role) { admin }
-  let(:human) { create :human }
+  let(:end_user) { create :end_user }
 
   context 'An Admin should' do
     context '#new' do
@@ -28,20 +28,22 @@ describe AdminsController do
     context '#create' do
       it_behaves_like 'role is from a different course' do
         subject do
-          post_as new_role, :create, params: { course_id: course.id, role: { human: { user_name: human.user_name } } }
+          post_as new_role, :create,
+                  params: { course_id: course.id, role: { end_user: { user_name: end_user.user_name } } }
         end
       end
       it 'be able to create Admin' do
         post_as admin,
                 :create,
-                params: { course_id: course.id, role: { human: { user_name: human.user_name } } }
-        expect(course.admins.joins(:human).where('users.user_name': human.user_name)).to exist
+                params: { course_id: course.id, role: { end_user: { user_name: end_user.user_name } } }
+        expect(course.admins.joins(:end_user).where('users.user_name': end_user.user_name)).to exist
         expect(response).to redirect_to action: 'index'
       end
-      context 'when a human does not exist' do
-        let(:human) { build :human }
+      context 'when a end_user does not exist' do
+        let(:end_user) { build :end_user }
         subject do
-          post_as admin, :create, params: { course_id: course.id, role: { human: { user_name: human.user_name } } }
+          post_as admin, :create,
+                  params: { course_id: course.id, role: { end_user: { user_name: end_user.user_name } } }
         end
         it 'should not create a Ta' do
           admin
@@ -53,26 +55,26 @@ describe AdminsController do
       it_behaves_like 'role is from a different course' do
         subject do
           post_as new_role, :update,
-                  params: { course_id: course.id, id: role, role: { human: { user_name: human.user_name } } }
+                  params: { course_id: course.id, id: role, role: { end_user: { user_name: end_user.user_name } } }
         end
       end
       subject do
         post_as admin, :update,
-                params: { course_id: course.id, id: role, role: { human: { user_name: new_human.user_name } } }
+                params: { course_id: course.id, id: role, role: { end_user: { user_name: new_end_user.user_name } } }
       end
       context 'when the new user exists' do
-        let(:new_human) { create :human }
+        let(:new_end_user) { create :end_user }
         it 'should change the user' do
           subject
-          expect(role.reload.human).to eq(new_human)
+          expect(role.reload.end_user).to eq(new_end_user)
         end
       end
       context 'when the user does not exist' do
-        let(:new_human) { build :human }
+        let(:new_end_user) { build :end_user }
         it 'should not change the user' do
-          old_user = role.human
+          old_user = role.end_user
           subject
-          expect(role.reload.human).to eq(old_user)
+          expect(role.reload.end_user).to eq(old_user)
         end
       end
     end

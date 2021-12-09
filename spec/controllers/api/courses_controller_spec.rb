@@ -17,14 +17,14 @@ describe Api::CoursesController do
     end
   end
   context 'An admin user in the course' do
-    let(:human) { build :human }
+    let(:end_user) { build :end_user }
     before :each do
-      human.reset_api_key
-      request.env['HTTP_AUTHORIZATION'] = "MarkUsAuth #{human.api_key.strip}"
+      end_user.reset_api_key
+      request.env['HTTP_AUTHORIZATION'] = "MarkUsAuth #{end_user.api_key.strip}"
     end
     context 'with multiple courses as admin' do
       before :each do
-        build_list(:admin, 4, human: human) { |admin| admin.update(course_id: create(:course).id) }
+        build_list(:admin, 4, end_user: end_user) { |admin| admin.update(course_id: create(:course).id) }
         get :index
       end
       it 'should be successful' do

@@ -28,7 +28,7 @@ describe CourseSummariesController do
           student_name = csv_row.shift
           # Skipping first/last name and id_number fields
           3.times { |_| csv_row.shift }
-          student = Student.joins(:human).where('users.user_name': student_name).first
+          student = Student.joins(:end_user).where('users.user_name': student_name).first
           expect(student).to be_truthy
           expect(assignments.size).to eq(csv_row.size)
 

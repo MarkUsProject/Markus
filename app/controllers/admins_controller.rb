@@ -9,7 +9,9 @@ class AdminsController < ApplicationController
     respond_to do |format|
       format.html
       format.json {
-        render json: current_course.admins.joins(:human).pluck_to_hash(:id, :user_name, :first_name, :last_name, :email)
+        render json: current_course.admins
+                                   .joins(:end_user)
+                                   .pluck_to_hash(:id, :user_name, :first_name, :last_name, :email)
       }
     end
   end
@@ -19,8 +21,8 @@ class AdminsController < ApplicationController
   end
 
   def create
-    human = Human.find_by_user_name(human_params[:user_name])
-    @role = current_course.admins.create(human: human)
+    end_user = EndUser.find_by_user_name(end_user_params[:user_name])
+    @role = current_course.admins.create(end_user: end_user)
     respond_with @role, location: course_admins_path(current_course)
   end
 
@@ -30,13 +32,13 @@ class AdminsController < ApplicationController
 
   def update
     @role = record
-    @role.update(human: Human.find_by_user_name(human_params[:user_name]))
+    @role.update(end_user: EndUser.find_by_user_name(end_user_params[:user_name]))
     respond_with @role, location: course_admins_path(current_course)
   end
 
   private
 
-  def human_params
-    params.require(:role).require(:human).permit(:user_name)
+  def end_user_params
+    params.require(:role).require(:end_user).permit(:user_name)
   end
 end

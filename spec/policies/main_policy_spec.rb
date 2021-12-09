@@ -1,5 +1,5 @@
 describe MainPolicy do
-  let(:context) { { real_user: user.human } }
+  let(:context) { { real_user: user.end_user } }
 
   describe_rule :manage? do
     succeed 'user is admin' do

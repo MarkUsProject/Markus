@@ -23,7 +23,7 @@ class TaMembership < Membership
     groupings = Hash[
       assignment.groupings.joins(:group).pluck('groups.group_name', :id)
     ]
-    graders = Hash[Ta.joins(:human).pluck('users.user_name', :id)]
+    graders = Hash[Ta.joins(:end_user).pluck('users.user_name', :id)]
     result = MarkusCsv.parse(csv_data.read) do |row|
       raise CsvInvalidLineError if row.empty?
       raise CsvInvalidLineError if groupings[row[0]].nil?

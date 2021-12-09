@@ -298,7 +298,10 @@ class Assignment < Assessment
   end
 
   def all_grouping_data
-    student_data = self.course.students.joins(:human).pluck_to_hash(:id, :user_name, :first_name, :last_name, :hidden)
+    student_data = self.course
+                       .students
+                       .joins(:end_user)
+                       .pluck_to_hash(:id, :user_name, :first_name, :last_name, :hidden)
     students = Hash[student_data.map do |s|
       [s[:user_name], s.merge(_id: s[:id], assigned: false)]
     end
@@ -307,7 +310,7 @@ class Assignment < Assessment
                     .groupings
                     .joins(:group)
                     .left_outer_joins(:extension)
-                    .left_outer_joins(non_rejected_student_memberships: [role: :human])
+                    .left_outer_joins(non_rejected_student_memberships: [role: :end_user])
                     .left_outer_joins(inviter: :section)
                     .pluck_to_hash('groupings.id',
                                    'groupings.admin_approved',
@@ -488,7 +491,7 @@ class Assignment < Assessment
 
     if user.admin?
       groupings = self.groupings
-      graders = groupings.joins(tas: :human)
+      graders = groupings.joins(tas: :end_user)
                          .pluck_to_hash(:id, 'users.user_name', 'users.first_name', 'users.last_name')
                          .group_by { |x| x[:id] }
       assigned_criteria = nil
@@ -509,7 +512,7 @@ class Assignment < Assessment
                              .left_outer_joins(inviter: :section)
                              .pluck_to_hash(:id, 'groups.group_name', 'sections.name')
                              .group_by { |x| x[:id] }
-    members = groupings.joins(accepted_students: :human)
+    members = groupings.joins(accepted_students: :end_user)
                        .pluck_to_hash(:id, 'users.user_name', 'users.first_name', 'users.last_name')
                        .group_by { |x| x[:id] }
     tag_data = groupings
@@ -605,8 +608,8 @@ class Assignment < Assessment
                       .includes(:group,
                                 :accepted_students,
                                 current_result: :marks)
-                      .joins(:memberships).joins(:humans)
-                      .where('memberships.role_id': user.id)
+                      .joins(:memberships)
+                      .where('memberships.role_id': role.id)
     end
 
     headers = [['User name', 'Group', 'Final grade'], ['', 'Out of', self.max_mark]]
@@ -911,10 +914,10 @@ class Assignment < Assessment
   def current_grader_data
     ta_counts = self.criterion_ta_associations.group(:ta_id).count
     grader_data = self.groupings
-                      .joins(tas: :human)
+                      .joins(tas: :end_user)
                       .group('user_name')
                       .count
-    graders = Ta.joins(:human)
+    graders = Ta.joins(:end_user)
                 .pluck(:user_name, :first_name, :last_name, 'roles.id').map do |user_name, first_name, last_name, id|
       {
         user_name: user_name,
@@ -927,7 +930,7 @@ class Assignment < Assessment
     end
 
     group_data = self.groupings
-                     .left_outer_joins(:group, tas: :human)
+                     .left_outer_joins(:group, tas: :end_user)
                      .pluck('groupings.id', 'groups.group_name', 'users.user_name',
                             'groupings.criteria_coverage_count')
     groups = Hash.new { |h, k| h[k] = [] }
@@ -950,7 +953,7 @@ class Assignment < Assessment
     end
 
     criterion_data =
-      self.criteria.left_outer_joins(tas: :human)
+      self.criteria.left_outer_joins(tas: :end_user)
           .pluck('criteria.name', 'criteria.position',
                  'criteria.assigned_groups_count', 'users.user_name')
     criteria = Hash.new { |h, k| h[k] = [] }
@@ -1027,7 +1030,7 @@ class Assignment < Assessment
       member_data = {}
       section_data = {}
     else
-      member_data = groupings.joins(accepted_students: :human)
+      member_data = groupings.joins(accepted_students: :end_user)
                              .pluck_to_hash('groupings.id', 'users.user_name')
                              .group_by { |h| h['groupings.id'] }
 

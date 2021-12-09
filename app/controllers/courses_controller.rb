@@ -48,7 +48,7 @@ class CoursesController < ApplicationController
     end
 
     found_user = User.find_by_user_name(params[:effective_user_login])
-    found_role = Role.find_by(human: found_user, course: current_course)
+    found_role = Role.find_by(end_user: found_user, course: current_course)
 
     if found_role.nil? || found_role.admin?
       render partial: 'role_switch_handler',
