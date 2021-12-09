@@ -4,6 +4,7 @@
       window.submissionTable = makeSubmissionTable(document.getElementById('submission-table'),
         {
           assignment_id: <%= @assignment.id %>,
+          course_id: <%= @current_course.id %>,
           show_grace_tokens: <%= @assignment.submission_rule.type == 'GracePeriodSubmissionRule' %>,
           show_sections: <%= Section.exists? %>,
           is_timed: <%= @assignment.is_timed %>,
@@ -40,18 +41,18 @@
   <% if @current_role.admin? %>
     <% @heading_buttons += [
       { link_text: t('submissions.repo_list'),
-        link_path: download_repo_list_assignment_submissions_path(@assignment)},
+        link_path: download_repo_list_course_assignment_submissions_path(@current_course, @assignment)},
       { link_text: t('submissions.repo_checkout_file', type: 'HTTPS'),
-        link_path: download_repo_checkout_commands_assignment_submissions_path(@assignment, url_type: :https)}
+        link_path: download_repo_checkout_commands_course_assignment_submissions_path(@current_course, @assignment, url_type: :https)}
     ] %>
     <% if allowed_to?(:view?, with: KeyPairPolicy)
       @heading_buttons += [
         { link_text: t('submissions.repo_checkout_file', type: 'SSH'),
-          link_path: download_repo_checkout_commands_assignment_submissions_path(@assignment, url_type: :ssh)}
+          link_path: download_repo_checkout_commands_course_assignment_submissions_path(@current_course, @assignment, url_type: :ssh)}
       ]
       end %>
     <% @heading_buttons += [{ link_text: t('submissions.submission_summary'),
-                              link_path: download_summary_assignment_submissions_path(@assignment) }] %>
+                              link_path: download_summary_course_assignment_submissions_path(@current_course, @assignment) }] %>
   <% end %>
 <% end %>
 

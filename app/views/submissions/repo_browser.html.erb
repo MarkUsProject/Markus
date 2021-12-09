@@ -10,6 +10,7 @@
     document.addEventListener('DOMContentLoaded', () => {
       makeRepoBrowser(document.getElementById('file_manager'),
         {
+          course_id: <%= @current_course.id %>,
           assignment_id: <%= @grouping.assessment_id %>,
           late_penalty: <%= !@grouping.assignment.submission_rule.is_a? NoLateSubmissionRule %>,
           grouping_id: <%= @grouping.id %>,
