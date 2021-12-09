@@ -685,7 +685,6 @@ class AssignmentsController < ApplicationController
     else
       redirect_to new_assignment_path
     end
-    raise e
   end
 
   private
@@ -801,8 +800,6 @@ class AssignmentsController < ApplicationController
   def build_uploaded_assignment(prop_file, parent_assignment = nil)
     yaml_content = prop_file.get_input_stream.read.encode(Encoding::UTF_8, 'UTF-8')
     properties = parse_yaml_content(yaml_content).deep_symbolize_keys
-    puts "Uploading: #{properties[:short_identifier]}"
-    puts properties
     if parent_assignment.nil?
       assignment = Assignment.new(properties)
       check_assignment_type_match!(assignment)

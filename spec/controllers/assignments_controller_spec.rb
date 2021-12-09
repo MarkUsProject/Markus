@@ -1459,6 +1459,7 @@ describe AssignmentsController do
 
         it 'should have a valid properties file' do
           properties = read_file_from_zip(response.body, 'properties.yml')
+          properties = properties.deep_symbolize_keys
           expect(properties).to include(short_identifier: assignment.short_identifier,
                                         description: assignment.description,
                                         due_date: assignment.due_date,
@@ -1484,7 +1485,7 @@ describe AssignmentsController do
         end
 
         it 'should have a valid automated test settings file' do
-          spec_data = read_file_from_zip(response.body, 'automated-test-config-files/automated-test-settings.json')
+          spec_data = read_file_from_zip(response.body, 'automated-test-config-files/automated-test-specs.json')
           received_settings = {
             is_a_hash: spec_data.is_a?(Hash),
             tester_type: spec_data['testers'][0]['tester_type'],
@@ -1520,6 +1521,7 @@ describe AssignmentsController do
 
         it 'should have a valid peer review properties file' do
           properties = read_file_from_zip(response.body, File.join('peer-review-config-files', 'properties.yml'))
+          properties = properties.deep_symbolize_keys
           peer_review_assignment = Assignment.find_by(parent_assessment_id: assignment.id)
           expect(properties).to include(short_identifier: peer_review_assignment.short_identifier,
                                         description: peer_review_assignment.description,
@@ -1875,11 +1877,6 @@ describe AssignmentsController do
                                                          'autotest_settings_id', 'starter_file_updated_at')
         expected = assignment_properties.attributes.except('created_at', 'updated_at', 'id', 'assessment_id',
                                                            'autotest_settings_id', 'starter_file_updated_at')
-        if uploaded_assignment.is_peer_review?
-          # override default token settings from factory
-          expect(expected['token_period']).to eq(1)
-          expected['token_period'] = nil
-        end
         expect(received).to eq(expected)
       end
 
