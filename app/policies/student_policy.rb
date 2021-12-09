@@ -29,6 +29,6 @@ class StudentPolicy < RolePolicy
   end
 
   def settings?
-    role.student? && role == record
+    role.student?
   end
 end

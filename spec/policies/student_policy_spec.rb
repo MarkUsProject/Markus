@@ -69,13 +69,8 @@ describe StudentPolicy do
     failed 'role is a ta' do
       let(:role) { create :ta }
     end
-    context 'role is a student' do
-      succeed 'record is the current role' do
-        let(:record) { role }
-      end
-      failed 'record is a different role' do
-        let(:record) { create(:student) }
-      end
+    succeed 'role is a student' do
+      let(:record) { create(:student) }
     end
   end
 end

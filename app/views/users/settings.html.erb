@@ -13,23 +13,12 @@
     <%= f.label :theme, User.human_attribute_name(:theme) %>
     <%= f.select(:theme, [%w[dark dark], %w[light light]]) %>
   </div>
-  <% if @current_user.student? && Settings.rails.action_mailer.perform_deliveries %>
-    <p>
-      <%= f.check_box :receives_results_emails %>
-      <%= f.label :receives_results_emails, Student.human_attribute_name(:receives_results_emails) %>
-    </p>
-
-    <p>
-      <%= f.check_box :receives_invite_emails %>
-      <%= f.label :receives_invite_emails, Student.human_attribute_name(:receives_invite_emails) %>
-    </p>
-  <% end %>
   <p>
     <%= f.submit t('save') %>
   </p>
 <% end %>
 
-<% if allowed_to?(:reset_api_key) %>
+<% if allowed_to?(:reset_api_key?) %>
   <div class='pane-wrapper'>
     <%= render partial: 'key_display', locals: { user: @current_user } %>
   </div>
