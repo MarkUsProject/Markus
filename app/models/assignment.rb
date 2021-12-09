@@ -1262,7 +1262,7 @@ class Assignment < Assessment
     properties['assignment_properties_attributes'] = filter_attr.call(self.assignment_properties.attributes)
     properties['assignment_files_attributes'] = filter_table.call(self.assignment_files, AssignmentFile)
     properties['submission_rule_attributes'] = filter_attr.call(self.submission_rule.attributes)
-    properties['submission_rule_attributes']['periods_attributes'] = filter_table.call(self.submission_rule.periods, 
+    properties['submission_rule_attributes']['periods_attributes'] = filter_table.call(self.submission_rule.periods,
                                                                                        Period)
     properties
   end
