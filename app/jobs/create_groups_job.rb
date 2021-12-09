@@ -14,10 +14,10 @@ class CreateGroupsJob < ApplicationJob
     Repository.get_class.update_permissions_after(only_on_request: true) do
       data.each do |group_name, *members|
         ApplicationRecord.transaction do
-          students = Student.where(user_name: members)
+          students = assignment.course.students.joins(:human).where('users.user_name': members)
           if students.length != members.length
             # A member in the members list is not a User in the database
-            all_users = Set.new students.pluck(:user_name)
+            all_users = Set.new students.pluck('users.user_name')
             bad_names = (Set.new(members) - all_users).to_a.join(', ')
             msg = I18n.t('groups.upload.errors.unknown_students', student_names: bad_names)
             status.update(warning_message: [status[:warning_message], msg].compact.join("\n"))
