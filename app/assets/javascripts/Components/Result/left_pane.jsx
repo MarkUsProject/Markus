@@ -76,6 +76,7 @@ export class LeftPane extends React.Component {
             addExistingAnnotation={this.props.addExistingAnnotation}
             released_to_students={this.props.released_to_students}
             loading={this.props.loading}
+            course_id={this.props.course_id}
           />
         </TabPanel>
         <TabPanel forceRender={true}>
@@ -93,6 +94,7 @@ export class LeftPane extends React.Component {
               editAnnotation={this.props.editAnnotation}
               removeAnnotation={this.props.removeAnnotation}
               selectFile={this.selectFile}
+              course_id={this.props.course_id}
             />
           </div>
         </TabPanel>
@@ -104,9 +106,8 @@ export class LeftPane extends React.Component {
                 <form
                   method="post"
                   data-remote="true"
-                  action={Routes.run_tests_assignment_submission_result_path(
-                    this.props.assignment_id,
-                    this.props.submission_id,
+                  action={Routes.run_tests_course_result_path(
+                    this.props.course_id,
                     this.props.result_id
                   )}
                 >
@@ -127,6 +128,7 @@ export class LeftPane extends React.Component {
               grouping_id={this.props.grouping_id}
               instructor_run={this.props.instructor_run}
               instructor_view={!this.props.student_view}
+              course_id={this.props.course_id}
             />
           </div>
         </TabPanel>
@@ -135,6 +137,7 @@ export class LeftPane extends React.Component {
             assignment_id={this.props.assignment_id}
             feedbackFiles={this.props.feedback_files}
             submission_id={this.props.submission_id}
+            course_id={this.props.course_id}
           />
         </TabPanel>
         <TabPanel>
@@ -153,6 +156,7 @@ export class LeftPane extends React.Component {
               remarkSubmitted={this.props.remark_submitted}
               overallComment={this.props.remark_overall_comment || ""}
               studentView={this.props.student_view}
+              course_id={this.props.course_id}
             />
           </div>
         </TabPanel>

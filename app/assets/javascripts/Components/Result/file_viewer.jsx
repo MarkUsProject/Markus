@@ -54,16 +54,11 @@ export class FileViewer extends React.Component {
     if (!!this.props.selectedFileURL) {
       url = this.props.selectedFileURL;
     } else {
-      url = Routes.download_assignment_submission_result_path(
-        this.props.assignment_id,
-        this.props.submission_id,
-        this.props.result_id,
-        {
-          select_file_id: submission_file_id,
-          show_in_browser: true,
-          from_codeviewer: true,
-        }
-      );
+      url = Routes.download_course_result_path(this.props.course_id, this.props.result_id, {
+        select_file_id: submission_file_id,
+        show_in_browser: true,
+        from_codeviewer: true,
+      });
     }
     if (["image/heic", "image/heif"].includes(this.props.mime_type)) {
       fetch(url)
@@ -101,14 +96,10 @@ export class FileViewer extends React.Component {
     this.setState({loading: true, url: null}, () => {
       if (!this.props.selectedFileURL) {
         fetch(
-          Routes.get_file_assignment_submission_path(
-            this.props.assignment_id,
-            this.props.submission_id,
-            {
-              submission_file_id: submission_file_id,
-              force_text: force_text,
-            }
-          ),
+          Routes.get_file_course_submission_path(this.props.course_id, this.props.submission_id, {
+            submission_file_id: submission_file_id,
+            force_text: force_text,
+          }),
           {credentials: "include"}
         )
           .then(res => res.json())

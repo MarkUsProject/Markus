@@ -10,6 +10,7 @@
     document.addEventListener('DOMContentLoaded', () => {
       window.resultComponent = makeResult(document.getElementById('result-main'),
         {
+          course_id: <%= @current_course.id %>,
           result_id: <%= @result.id %>,
           submission_id: <%= @result.submission_id %>,
           grouping_id: <%= @result.submission.grouping_id %>,
@@ -96,7 +97,7 @@
   <aside class='dialog no-display' id='create_new_tag'>
     <h1><%= t('helpers.submit.create', model: Tag.model_name.human) %></h1>
     <%= form_for :tag,
-                 url: assignment_tags_path(@assignment),
+                 url: course_tags_path(@current_course, assignment_id: @assignment),
                  html: { multipart: true } do |f| %>
         <div>
           <p><%= f.label :name, Tag.human_attribute_name(:name) %></p>

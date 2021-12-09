@@ -56,11 +56,7 @@ class Result extends React.Component {
 
   fetchData = () => {
     $.get({
-      url: Routes.assignment_submission_result_path(
-        this.state.assignment_id,
-        this.state.submission_id,
-        this.state.result_id
-      ),
+      url: Routes.course_result_path(this.props.course_id, this.state.result_id),
       dataType: "json",
     }).then(res => {
       if (res.submission_files) {
@@ -143,11 +139,12 @@ class Result extends React.Component {
       return;
 
     window.annotation_context_menu.setup(
-      Routes.annotations_path,
+      Routes.course_annotations_path,
+      this.props.course_id,
       this.state.result_id,
       this.state.assignment_id,
-      Routes.download_assignment_submission_result_path(
-        this.state.assignment_id,
+      Routes.download_course_result_path(
+        this.props.course_id,
         this.state.submission_id,
         this.state.result_id
       )
@@ -219,7 +216,7 @@ class Result extends React.Component {
     let onSubmit = formData => {
       let data = {...formData, ...metadata};
       return $.post({
-        url: Routes.annotations_path(),
+        url: Routes.course_annotations_path(this.props.course_id),
         data,
       }).then(() => {
         this.setState({
@@ -300,13 +297,16 @@ class Result extends React.Component {
 
     data = this.extend_with_selection_data(data);
     if (data) {
-      $.post(Routes.add_existing_annotation_annotations_path(), data);
+      $.post(Routes.add_existing_annotation_course_annotations_path(this.props.course_id), data);
     }
   };
 
   refreshAnnotationCategories = () => {
     $.get({
-      url: Routes.assignment_annotation_categories_path(this.state.assignment_id),
+      url: Routes.course_assignment_annotation_categories_path(
+        this.props.course_id,
+        this.state.assignment_id
+      ),
       dataType: "json",
     }).then(res => {
       this.setState({annotation_categories: res});
@@ -315,11 +315,7 @@ class Result extends React.Component {
 
   refreshAnnotations = () => {
     $.ajax({
-      url: Routes.get_annotations_assignment_submission_result_path(
-        this.state.assignment_id,
-        this.state.submission_id,
-        this.state.result_id
-      ),
+      url: Routes.get_annotations_course_result_path(this.props.course_id, this.state.result_id),
       dataType: "json",
     }).then(res => {
       this.setState({annotations: res});
@@ -335,7 +331,7 @@ class Result extends React.Component {
     let onSubmit = formData => {
       let data = {...formData, ...metadata};
       $.ajax({
-        url: Routes.annotation_path(annot_id),
+        url: Routes.course_annotation_path(this.props.course_id, annot_id),
         data,
         method: "PUT",
         dataType: "json",
@@ -402,7 +398,7 @@ class Result extends React.Component {
 
   removeAnnotation = annot_id => {
     $.ajax({
-      url: Routes.annotation_path(annot_id),
+      url: Routes.course_annotation_path(this.props.course_id, annot_id),
       method: "DELETE",
       data: {
         result_id: this.state.result_id,
@@ -423,11 +419,7 @@ class Result extends React.Component {
     }
 
     return $.ajax({
-      url: Routes.update_mark_assignment_submission_result_path(
-        this.state.assignment_id,
-        this.state.submission_id,
-        this.state.result_id
-      ),
+      url: Routes.update_mark_course_result_path(this.props.course_id, this.state.result_id),
       method: "PATCH",
       data: {
         criterion_id: criterion_id,
@@ -467,9 +459,8 @@ class Result extends React.Component {
 
   revertToAutomaticDeductions = criterion_id => {
     $.ajax({
-      url: Routes.revert_to_automatic_deductions_assignment_submission_result_path(
-        this.state.assignment_id,
-        this.state.submission_id,
+      url: Routes.revert_to_automatic_deductions_course_result_path(
+        this.props.course_id,
         this.state.result_id
       ),
       method: "PATCH",
@@ -496,11 +487,7 @@ class Result extends React.Component {
 
   createExtraMark = (description, extra_mark) => {
     return $.ajax({
-      url: Routes.add_extra_mark_assignment_submission_result_path(
-        this.state.assignment_id,
-        this.state.submission_id,
-        this.state.result_id
-      ),
+      url: Routes.add_extra_mark_course_result_path(this.props.course_id, this.state.result_id),
       method: "POST",
       data: {
         extra_mark: {
@@ -517,11 +504,7 @@ class Result extends React.Component {
     }
 
     $.ajax({
-      url: Routes.remove_extra_mark_assignment_submission_result_path(
-        this.state.assignment_id,
-        this.state.submission_id,
-        this.state.result_id
-      ),
+      url: Routes.remove_extra_mark_course_result_path(this.props.course_id, this.state.result_id),
       method: "DELETE",
       data: {extra_mark_id: id},
     }).then(this.fetchData);
@@ -533,9 +516,8 @@ class Result extends React.Component {
     }
 
     $.ajax({
-      url: Routes.delete_grace_period_deduction_assignment_submission_result_path(
-        this.state.assignment_id,
-        this.state.submission_id,
+      url: Routes.delete_grace_period_deduction_course_result_path(
+        this.props.course_id,
         this.state.result_id
       ),
       method: "DELETE",
@@ -545,30 +527,22 @@ class Result extends React.Component {
 
   addTag = tag_id => {
     $.post({
-      url: Routes.add_tag_assignment_submission_result_path(
-        this.state.assignment_id,
-        this.state.submission_id,
-        this.state.result_id
-      ),
+      url: Routes.add_tag_course_result_path(this.props.course_id, this.state.result_id),
       data: {tag_id: tag_id},
     }).then(this.fetchData);
   };
 
   removeTag = tag_id => {
     $.post({
-      url: Routes.remove_tag_assignment_submission_result_path(
-        this.state.assignment_id,
-        this.state.submission_id,
-        this.state.result_id
-      ),
+      url: Routes.remove_tag_course_result_path(this.props.course_id, this.state.result_id),
       data: {tag_id: tag_id},
     }).then(this.fetchData);
   };
 
   newNote = () => {
     $.ajax({
-      url: Routes.notes_dialog_notes_path({
-        assignment_id: this.state.assignment_id,
+      url: Routes.notes_dialog_course_notes_path({
+        course_id: this.props.course_id,
       }),
       data: {
         noteable_id: this.state.grouping_id,
@@ -590,9 +564,8 @@ class Result extends React.Component {
   /* Callbacks for SubmissionSelector */
   toggleMarkingState = () => {
     $.ajax({
-      url: Routes.toggle_marking_state_assignment_submission_result_path(
-        this.state.assignment_id,
-        this.state.submission_id,
+      url: Routes.toggle_marking_state_course_result_path(
+        this.props.course_id,
         this.state.result_id
       ),
       method: "POST",
@@ -601,9 +574,8 @@ class Result extends React.Component {
 
   setReleasedToStudents = () => {
     $.ajax({
-      url: Routes.set_released_to_students_assignment_submission_result_path(
-        this.state.assignment_id,
-        this.state.submission_id,
+      url: Routes.set_released_to_students_course_result_path(
+        this.props.course_id,
         this.state.result_id
       ),
       method: "POST",
@@ -615,9 +587,8 @@ class Result extends React.Component {
 
   nextSubmission = direction => {
     return () => {
-      const url = Routes.next_grouping_assignment_submission_result_path(
-        this.state.assignment_id,
-        this.state.submission_id,
+      const url = Routes.next_grouping_course_result_path(
+        this.props.course_id,
         this.state.result_id
       );
 
@@ -639,11 +610,7 @@ class Result extends React.Component {
             grouping_id: result.next_grouping.id,
           };
           this.setState(prevState => ({...prevState, ...result_obj}));
-          let new_url = Routes.edit_assignment_submission_result_url(
-            this.state.assignment_id,
-            this.state.submission_id,
-            this.state.result_id
-          );
+          let new_url = Routes.edit_course_result_url(this.props.course_id, this.state.result_id);
           history.pushState({}, document.title, new_url);
         });
       });
@@ -652,9 +619,8 @@ class Result extends React.Component {
 
   updateOverallComment = (value, remark) => {
     return $.post({
-      url: Routes.update_overall_comment_assignment_submission_result_path(
-        this.state.assignment_id,
-        this.state.submission_id,
+      url: Routes.update_overall_comment_course_result_path(
+        this.props.course_id,
         this.state.result_id
       ),
       data: {result: {overall_comment: value}},
@@ -679,6 +645,7 @@ class Result extends React.Component {
         }
         is_reviewer={this.state.is_reviewer}
         assignment_id={this.state.assignment_id}
+        course_id={this.props.course_id}
         {...this.state.annotationModal}
       />,
       <SubmissionSelector
@@ -704,6 +671,7 @@ class Result extends React.Component {
         setReleasedToStudents={this.setReleasedToStudents}
         nextSubmission={this.nextSubmission(1)}
         previousSubmission={this.nextSubmission(-1)}
+        course_id={this.props.course_id}
       />,
       <div key="panes-content" id="panes-content">
         <div id="panes">
@@ -744,6 +712,7 @@ class Result extends React.Component {
               updateAnnotation={this.updateAnnotation}
               removeAnnotation={this.removeAnnotation}
               destroyAnnotation={this.destroyAnnotation}
+              course_id={this.props.course_id}
             />
           </div>
           <div id="drag" />
@@ -783,6 +752,7 @@ class Result extends React.Component {
               removeTag={this.removeTag}
               newNote={this.newNote}
               findDeductiveAnnotation={this.findDeductiveAnnotation}
+              course_id={this.props.course_id}
             />
           </div>
         </div>
