@@ -685,6 +685,7 @@ class AssignmentsController < ApplicationController
     else
       redirect_to new_assignment_path
     end
+    raise e
   end
 
   private
@@ -721,8 +722,6 @@ class AssignmentsController < ApplicationController
   def config_starter_files(assignment, zip_file)
     starter_config_file = assignment.is_peer_review? ? :peer_review_starter_files : :starter_files
     starter_file_settings = build_hash_from_zip(zip_file, starter_config_file).symbolize_keys
-    assignment.starter_file_type = starter_file_settings[:starter_file_type]
-    assignment.starter_files_after_due = starter_file_settings[:allow_starter_files_after_due]
     starter_group_mappings = {}
     starter_file_settings[:group_information].each do |group|
       group = group.symbolize_keys
@@ -801,7 +800,9 @@ class AssignmentsController < ApplicationController
   #               If building a peer review assignment, prop_file must not be null.
   def build_uploaded_assignment(prop_file, parent_assignment = nil)
     yaml_content = prop_file.get_input_stream.read.encode(Encoding::UTF_8, 'UTF-8')
-    properties = parse_yaml_content(yaml_content)
+    properties = parse_yaml_content(yaml_content).deep_symbolize_keys
+    puts "Uploading: #{properties[:short_identifier]}"
+    puts properties
     if parent_assignment.nil?
       assignment = Assignment.new(properties)
       check_assignment_type_match!(assignment)

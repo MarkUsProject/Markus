@@ -1484,19 +1484,15 @@ describe AssignmentsController do
         end
 
         it 'should have a valid automated test settings file' do
-          test_settings_download = read_file_from_zip(response.body,
-                                                      'automated-test-config-files/automated-test-settings.json')
-          spec_data = test_settings_download['spec_data']
+          spec_data = read_file_from_zip(response.body, 'automated-test-config-files/automated-test-settings.json')
           received_settings = {
-            is_a_hash: test_settings_download.is_a?(Hash),
-            has_spec_data: !spec_data.nil?,
-            has_settings_data: !test_settings_download['settings'].nil?,
+            is_a_hash: spec_data.is_a?(Hash),
+            tester_type: spec_data['testers'][0]['tester_type'],
             assoc_criterion: spec_data['testers'][0]['test_data'][0]['extra_info']['criterion']
           }
           expected_settings = {
             is_a_hash: true,
-            has_spec_data: true,
-            has_settings_data: true,
+            tester_type: 'py',
             assoc_criterion: "#{criteria.type}:#{criteria.name}"
           }
           expect(received_settings).to eq(expected_settings)
@@ -1507,8 +1503,7 @@ describe AssignmentsController do
           starter_file_settings = read_file_from_zip(response.body, File.join('starter-file-config-files',
                                                                               'starter-file-rules.yml'))
           starter_file_settings = starter_file_settings.deep_symbolize_keys
-          expect(starter_file_settings).to include(:starter_file_type, :allow_starter_files_after_due,
-                                                   :default_starter_group, :group_information)
+          expect(starter_file_settings).to include(:default_starter_group, :group_information)
         end
 
         it 'should have a starter file group with the right number of files' do
@@ -1551,8 +1546,7 @@ describe AssignmentsController do
                                                                               'starter-file-config-files',
                                                                               'starter-file-rules.yml'))
           starter_file_settings = starter_file_settings.deep_symbolize_keys
-          expect(starter_file_settings).to include(:starter_file_type, :allow_starter_files_after_due,
-                                                   :default_starter_group, :group_information)
+          expect(starter_file_settings).to include(:default_starter_group, :group_information)
         end
       end
     end
