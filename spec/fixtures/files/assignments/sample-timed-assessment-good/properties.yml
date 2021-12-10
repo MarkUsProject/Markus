@@ -35,6 +35,7 @@ assignment_properties_attributes:
   duration: 10800
   start_time: 2021-11-01 01:00:00
   is_timed: true
+  scanned_exam: false
   starter_file_type: simple
   starter_files_after_due: true
 submission_rule_attributes:

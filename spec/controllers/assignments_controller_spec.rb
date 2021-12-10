@@ -1799,7 +1799,11 @@ describe AssignmentsController do
           parent_short_id: parent_assignment.short_identifier,
           num_criteria: uploaded_child_assignment.criteria.count,
           num_annotations: uploaded_child_assignment.annotation_categories.count,
-          has_no_starter_files: uploaded_child_assignment.starter_file_groups.count == 0
+          has_no_starter_files: uploaded_child_assignment.starter_file_groups.count == 0,
+          has_peer_review_assignment: uploaded_child_assignment.has_peer_review_assignment?,
+          automated_tests_enabled: uploaded_child_assignment.enable_test,
+          has_no_required_files: uploaded_child_assignment.assignment_files.count == 0,
+          submission_rule_type: uploaded_child_assignment.submission_rule.type
         }
         expected_pr_assessment_data = {
           message: 'Review the sample midterm of your peers to help you practice for our second midterm',
@@ -1808,7 +1812,11 @@ describe AssignmentsController do
           parent_short_id: 'mtt_ex_1',
           num_criteria: 1,
           num_annotations: 2,
-          has_no_starter_files: true
+          has_no_starter_files: true,
+          has_peer_review_assignment: false,
+          automated_tests_enabled: false,
+          has_no_required_files: true,
+          submission_rule_type: 'NoLateSubmissionRule'
         }
         expect(uploaded_pr_assessment_data).to eq(expected_pr_assessment_data)
       end

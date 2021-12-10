@@ -810,6 +810,7 @@ class AssignmentsController < ApplicationController
       assignment = Assignment.new(peer_review_properties)
       parent_assignment.has_peer_review = true
       assignment.has_peer_review = false
+      assignment.enable_test = false
       assignment.parent_assignment = parent_assignment
       assignment.repository_folder = parent_assignment.repository_folder
     end
