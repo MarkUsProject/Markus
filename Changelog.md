@@ -19,6 +19,7 @@
 - Fix display bug with infinitely expanding chart in student results view for grade entry form (#5612)
 - Fix bug in User#visible_assessments for students in a section (#5634)
 - Fixed bug where tag edit modal closed whenever it is clicked (#5652)
+- Fix bug where the datetime selector wasn't being shown for peer review assessments (#5659)
 
 ## [v1.13.3]
 - Display multiple feedback files returned by the autotester (#5524)
