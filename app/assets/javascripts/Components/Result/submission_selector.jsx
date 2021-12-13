@@ -79,11 +79,7 @@ export class SubmissionSelector extends React.Component {
       return "";
     }
 
-    const url = Routes.next_grouping_assignment_submission_result_path(
-      this.props.assignment_id,
-      this.props.submission_id,
-      this.props.result_id
-    );
+    const url = Routes.next_grouping_course_result_path(this.props.course_id, this.props.result_id);
 
     const progressBarWidth =
       this.props.num_collected > 0 ? this.props.num_marked / this.props.num_collected : 1;
