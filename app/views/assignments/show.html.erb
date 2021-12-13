@@ -145,7 +145,7 @@
 
         <%# For each member of this group, display name and status %>
         <ul>
-          <% @grouping.student_memberships.includes(:user).each do |member|%>
+          <% @grouping.student_memberships.includes(:role).each do |member|%>
             <%= render partial: 'assignments/member',
                        locals: { member: member,
                                  grouping: @grouping } %>
@@ -235,7 +235,7 @@
 <% # HTML for the invite dialog
    if !@grouping.nil? && @grouping.inviter == @current_role && !@assignment.invalid_override %>
   <aside class='dialog' id='invite_dialog'>
-    <%= form_tag(invite_member_assignment_groups_path(assignment_id: @assignment.id, grouping_id: @grouping.id),
+    <%= form_tag(invite_member_course_assignment_groups_path(course_id: @current_course.id, assignment_id: @assignment.id, grouping_id: @grouping.id),
                  { id: 'invite-student-form' }) do %>
       <h2><%= t('groups.members.invite') %></h2>
       <p><%= t('groups.members.invite_instructions') %></p>
