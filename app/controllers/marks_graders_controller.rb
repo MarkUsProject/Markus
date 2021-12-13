@@ -36,7 +36,7 @@ class MarksGradersController < ApplicationController
                                  'users.user_name',
                                  'users.first_name',
                                  'users.last_name',
-                                 'humen_roles.user_name') # Note: Rails pluralizes human as humen here
+                                 'end_users_roles.user_name')
 
         students = Hash.new { |h, k| h[k] = [] }
         student_data.each do |s0, s1, s2, s3, ta|
@@ -92,8 +92,8 @@ class MarksGradersController < ApplicationController
 
     students = Student.left_outer_joins(:end_user, grade_entry_students: [tas: :end_user])
                       .where('grade_entry_students.assessment_id': grade_entry_form.id)
-                      .order('users.user_name', 'humen_roles.user_name') # Note: Rails pluralizes human as humen here
-                      .pluck('users.user_name', 'humen_roles.user_name')
+                      .order('users.user_name', 'end_users_roles.user_name')
+                      .pluck('users.user_name', 'end_users_roles.user_name')
                       .group_by { |x| x[0] }
                       .to_a
 

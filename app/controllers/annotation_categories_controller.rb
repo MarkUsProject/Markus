@@ -246,7 +246,7 @@ class AnnotationCategoriesController < ApplicationController
 
   def annotation_text_data(category, course: nil)
     shared_values = ['annotation_texts.id AS id',
-                     'humen_roles.user_name AS last_editor', # Note: Rails pluralizes human as humen here
+                     'end_users_roles.user_name AS last_editor',
                      'users.user_name AS creator',
                      'annotation_texts.content AS content']
     course ||= category&.course
