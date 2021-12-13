@@ -12,7 +12,7 @@
 
 <%= render 'shared/flash_message' %>
 
-<%= form_for @assignment do |f| %>
+<%= form_for [@current_course, @assignment] do |f| %>
   <%= f.fields_for :assignment_properties do |ap_f| %>
 
     <label class='required'><%= t('required_fields') %></label>
@@ -122,7 +122,7 @@
           </div>
         </div>
       <% end %>
-
+    </fieldset>
 
     <%# Group properties %>
     <fieldset>
