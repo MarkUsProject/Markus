@@ -2019,14 +2019,14 @@ describe AssignmentsController do
         received_automated_test_data = {
           uploaded_a_test_group: uploaded_test_groups.count == 1,
           spec_file: JSON.parse(File.open(uploaded_assignment.autotest_settings_file, &:read)),
-          autotest_files: uploaded_assignment.autotest_files
+          autotest_files: uploaded_assignment.autotest_files.to_set
         }
         sample_spec_file = create_sample_spec_file(uploaded_criteria)
         sample_spec_file['testers'][0]['test_data'][0]['extra_info']['test_group_id'] = uploaded_test_groups.first.id
         expected_automated_test_data = {
           uploaded_a_test_group: true,
           spec_file: sample_spec_file,
-          autotest_files: ['tests.py', 'Helpers', File.join('Helpers', 'test_helpers.py')]
+          autotest_files: ['tests.py', 'Helpers', File.join('Helpers', 'test_helpers.py')].to_set
         }
         expect(received_automated_test_data).to eq(expected_automated_test_data)
       end
