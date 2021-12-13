@@ -1459,6 +1459,7 @@ describe AssignmentsController do
 
         it 'should have a valid properties file' do
           properties = read_file_from_zip(response.body, 'properties.yml')
+          properties = properties.deep_symbolize_keys
           expect(properties).to include(short_identifier: assignment.short_identifier,
                                         description: assignment.description,
                                         due_date: assignment.due_date,
@@ -1484,19 +1485,15 @@ describe AssignmentsController do
         end
 
         it 'should have a valid automated test settings file' do
-          test_settings_download = read_file_from_zip(response.body,
-                                                      'automated-test-config-files/automated-test-settings.json')
-          spec_data = test_settings_download['spec_data']
+          spec_data = read_file_from_zip(response.body, 'automated-test-config-files/automated-test-specs.json')
           received_settings = {
-            is_a_hash: test_settings_download.is_a?(Hash),
-            has_spec_data: !spec_data.nil?,
-            has_settings_data: !test_settings_download['settings'].nil?,
+            is_a_hash: spec_data.is_a?(Hash),
+            tester_type: spec_data['testers'][0]['tester_type'],
             assoc_criterion: spec_data['testers'][0]['test_data'][0]['extra_info']['criterion']
           }
           expected_settings = {
             is_a_hash: true,
-            has_spec_data: true,
-            has_settings_data: true,
+            tester_type: 'py',
             assoc_criterion: "#{criteria.type}:#{criteria.name}"
           }
           expect(received_settings).to eq(expected_settings)
@@ -1507,8 +1504,7 @@ describe AssignmentsController do
           starter_file_settings = read_file_from_zip(response.body, File.join('starter-file-config-files',
                                                                               'starter-file-rules.yml'))
           starter_file_settings = starter_file_settings.deep_symbolize_keys
-          expect(starter_file_settings).to include(:starter_file_type, :allow_starter_files_after_due,
-                                                   :default_starter_group, :group_information)
+          expect(starter_file_settings).to include(:default_starter_group, :group_information)
         end
 
         it 'should have a starter file group with the right number of files' do
@@ -1525,6 +1521,7 @@ describe AssignmentsController do
 
         it 'should have a valid peer review properties file' do
           properties = read_file_from_zip(response.body, File.join('peer-review-config-files', 'properties.yml'))
+          properties = properties.deep_symbolize_keys
           peer_review_assignment = Assignment.find_by(parent_assessment_id: assignment.id)
           expect(properties).to include(short_identifier: peer_review_assignment.short_identifier,
                                         description: peer_review_assignment.description,
@@ -1551,8 +1548,7 @@ describe AssignmentsController do
                                                                               'starter-file-config-files',
                                                                               'starter-file-rules.yml'))
           starter_file_settings = starter_file_settings.deep_symbolize_keys
-          expect(starter_file_settings).to include(:starter_file_type, :allow_starter_files_after_due,
-                                                   :default_starter_group, :group_information)
+          expect(starter_file_settings).to include(:default_starter_group, :group_information)
         end
       end
     end
@@ -1637,7 +1633,7 @@ describe AssignmentsController do
       annotations_good = fixture_file_upload(File.join(base_dir, 'annotations.yml'), 'text/yaml')
       test_file_path = File.join('assignments', 'sample-timed-assessment-good',
                                  'automated-test-config-files')
-      test_specs_good = fixture_file_upload(File.join(test_file_path, 'automated-test-settings.json'),
+      test_specs_good = fixture_file_upload(File.join(test_file_path, 'automated-test-specs.json'),
                                             'text/json')
       test_file1_good = fixture_file_upload(File.join(test_file_path,
                                                       'automated-test-files', 'tests.py'), 'text/py')
@@ -1675,7 +1671,7 @@ describe AssignmentsController do
         zip_file.add('peer-review-config-files/tags.yml', pr_tags_good.path)
         zip_file.add('peer-review-config-files/criteria.yml', pr_criteria_good.path)
         zip_file.add('peer-review-config-files/annotations.yml', pr_annotations_good.path)
-        zip_file.add('automated-test-config-files/automated-test-settings.json', test_specs_good.path)
+        zip_file.add('automated-test-config-files/automated-test-specs.json', test_specs_good.path)
         zip_file.add('automated-test-config-files/automated-test-files/tests.py', test_file1_good.path)
         zip_file.add('automated-test-config-files/automated-test-files/Helpers/test_helpers.py', test_file2_good.path)
         zip_file.add('peer-review-config-files/starter-file-config-files/starter-file-rules.yml',
@@ -1803,7 +1799,11 @@ describe AssignmentsController do
           parent_short_id: parent_assignment.short_identifier,
           num_criteria: uploaded_child_assignment.criteria.count,
           num_annotations: uploaded_child_assignment.annotation_categories.count,
-          has_no_starter_files: uploaded_child_assignment.starter_file_groups.count == 0
+          has_no_starter_files: uploaded_child_assignment.starter_file_groups.count == 0,
+          has_peer_review_assignment: uploaded_child_assignment.has_peer_review_assignment?,
+          automated_tests_enabled: uploaded_child_assignment.enable_test,
+          has_no_required_files: uploaded_child_assignment.assignment_files.count == 0,
+          submission_rule_type: uploaded_child_assignment.submission_rule.type
         }
         expected_pr_assessment_data = {
           message: 'Review the sample midterm of your peers to help you practice for our second midterm',
@@ -1812,7 +1812,11 @@ describe AssignmentsController do
           parent_short_id: 'mtt_ex_1',
           num_criteria: 1,
           num_annotations: 2,
-          has_no_starter_files: true
+          has_no_starter_files: true,
+          has_peer_review_assignment: false,
+          automated_tests_enabled: false,
+          has_no_required_files: true,
+          submission_rule_type: 'NoLateSubmissionRule'
         }
         expect(uploaded_pr_assessment_data).to eq(expected_pr_assessment_data)
       end
@@ -1881,11 +1885,6 @@ describe AssignmentsController do
                                                          'autotest_settings_id', 'starter_file_updated_at')
         expected = assignment_properties.attributes.except('created_at', 'updated_at', 'id', 'assessment_id',
                                                            'autotest_settings_id', 'starter_file_updated_at')
-        if uploaded_assignment.is_peer_review?
-          # override default token settings from factory
-          expect(expected['token_period']).to eq(1)
-          expected['token_period'] = nil
-        end
         expect(received).to eq(expected)
       end
 
@@ -2020,14 +2019,14 @@ describe AssignmentsController do
         received_automated_test_data = {
           uploaded_a_test_group: uploaded_test_groups.count == 1,
           spec_file: JSON.parse(File.open(uploaded_assignment.autotest_settings_file, &:read)),
-          autotest_files: uploaded_assignment.autotest_files
+          autotest_files: uploaded_assignment.autotest_files.to_set
         }
         sample_spec_file = create_sample_spec_file(uploaded_criteria)
         sample_spec_file['testers'][0]['test_data'][0]['extra_info']['test_group_id'] = uploaded_test_groups.first.id
         expected_automated_test_data = {
           uploaded_a_test_group: true,
           spec_file: sample_spec_file,
-          autotest_files: ['tests.py', 'Helpers', File.join('Helpers', 'test_helpers.py')]
+          autotest_files: ['tests.py', 'Helpers', File.join('Helpers', 'test_helpers.py')].to_set
         }
         expect(received_automated_test_data).to eq(expected_automated_test_data)
       end

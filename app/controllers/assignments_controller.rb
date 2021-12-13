@@ -19,7 +19,7 @@ class AssignmentsController < ApplicationController
     criteria: 'criteria.yml',
     annotations: 'annotations.yml',
     automated_tests_dir_entry: File.join('automated-test-config-files', 'automated-test-files'),
-    automated_tests: File.join('automated-test-config-files', 'automated-test-settings.json'),
+    automated_tests: File.join('automated-test-config-files', 'automated-test-specs.json'),
     starter_files: File.join('starter-file-config-files', 'starter-file-rules.yml'),
     peer_review_properties: File.join('peer-review-config-files', 'properties.yml'),
     peer_review_tags: File.join('peer-review-config-files', 'tags.yml'),
@@ -693,29 +693,25 @@ class AssignmentsController < ApplicationController
   def config_automated_tests(assignment, zip_file)
     spec_file = zip_file.get_entry(CONFIG_FILES[:automated_tests])
     spec_content = spec_file.get_input_stream.read.encode(Encoding::UTF_8, 'UTF-8')
-    zip_file.remove(spec_file)
     begin
-      test_settings = JSON.parse spec_content
+      spec_data = JSON.parse(spec_content)
     rescue JSON::ParserError
       raise I18n.t('automated_tests.invalid_specs_file')
     else
-      assignment.update!(test_settings['settings'].symbolize_keys)
-      spec_data = test_settings['spec_data']
       update_test_groups_from_specs(assignment, spec_data) unless spec_data.empty?
       @current_job = AutotestSpecsJob.perform_later(request.protocol + request.host_with_port, assignment)
       session[:job_id] = @current_job.job_id
-      test_file_dir_path = File.join(CONFIG_FILES[:automated_tests_dir_entry], '')
-      zip_file.each do |entry|
-        if entry.name.match?(/^#{test_file_dir_path}/)
-          filename = entry.name.gsub(/^#{test_file_dir_path}/, '')
-          file_path = File.join(assignment.autotest_files_dir, filename)
-          if entry.directory?
-            FileUtils.mkdir_p(file_path)
-          else
-            FileUtils.mkdir_p(File.dirname(file_path))
-            test_file_content = entry.get_input_stream.read
-            File.write(file_path, test_file_content, mode: 'wb')
-          end
+      test_file_glob_pattern = File.join(CONFIG_FILES[:automated_tests_dir_entry], '**', '*')
+      zip_file.glob(test_file_glob_pattern) do |entry|
+        zip_file_path = Pathname.new(entry.name)
+        filename = zip_file_path.relative_path_from(CONFIG_FILES[:automated_tests_dir_entry])
+        file_path = File.join(assignment.autotest_files_dir, filename.to_s)
+        if entry.directory?
+          FileUtils.mkdir_p(file_path)
+        else
+          FileUtils.mkdir_p(File.dirname(file_path))
+          test_file_content = entry.get_input_stream.read
+          File.write(file_path, test_file_content, mode: 'wb')
         end
       end
     end
@@ -725,8 +721,6 @@ class AssignmentsController < ApplicationController
   def config_starter_files(assignment, zip_file)
     starter_config_file = assignment.is_peer_review? ? :peer_review_starter_files : :starter_files
     starter_file_settings = build_hash_from_zip(zip_file, starter_config_file).symbolize_keys
-    assignment.starter_file_type = starter_file_settings[:starter_file_type]
-    assignment.starter_files_after_due = starter_file_settings[:allow_starter_files_after_due]
     starter_group_mappings = {}
     starter_file_settings[:group_information].each do |group|
       group = group.symbolize_keys
@@ -741,23 +735,24 @@ class AssignmentsController < ApplicationController
       assignment.default_starter_file_group_id = starter_group_mappings[default_name].id
     end
     zip_starter_dir = File.dirname(CONFIG_FILES[starter_config_file])
-    zip_starter_dir = File.join(zip_starter_dir, '') unless zip_starter_dir[-1] == File::SEPARATOR
-    zip_file.each do |entry|
-      if entry.name.match?(/^#{zip_starter_dir}/)
-        # Set working directory to the location of all the starter file content, then find
-        # directory for a starter group and add the file found in that directory to group
-        starter_base_dir = entry.name[zip_starter_dir.length..-1]
-        path_list = starter_base_dir.split(File::SEPARATOR)
-        starter_file_group = starter_group_mappings[path_list[0]]
-        starter_file_dir_path = File.join(starter_file_group.path, path_list[1..-2])
-        starter_file_name = path_list[-1]
-        if entry.directory?
-          FileUtils.mkdir_p(File.join(starter_file_dir_path, starter_file_name))
-        else
-          FileUtils.mkdir_p(starter_file_dir_path)
-          starter_file_content = entry.get_input_stream.read
-          File.write(File.join(starter_file_dir_path, starter_file_name), starter_file_content, mode: 'wb')
-        end
+    starter_file_glob_pattern = File.join(zip_starter_dir, '**', '*')
+    zip_file.glob(starter_file_glob_pattern) do |entry|
+      next if entry.name == CONFIG_FILES[starter_config_file]
+      # Set working directory to the location of all the starter file content, then find
+      # directory for a starter group and add the file found in that directory to group
+      zip_file_path = Pathname.new(entry.name)
+      starter_base_dir = zip_file_path.relative_path_from(zip_starter_dir)
+      grouping_dir = starter_base_dir.descend.first.to_s
+      starter_file_group = starter_group_mappings[grouping_dir]
+      sub_dir, filename = starter_base_dir.relative_path_from(grouping_dir).split
+      starter_file_dir_path = File.join(starter_file_group.path, sub_dir.to_s)
+      starter_file_name = filename.to_s
+      if entry.directory?
+        FileUtils.mkdir_p(File.join(starter_file_dir_path, starter_file_name))
+      else
+        FileUtils.mkdir_p(starter_file_dir_path)
+        starter_file_content = entry.get_input_stream.read
+        File.write(File.join(starter_file_dir_path, starter_file_name), starter_file_content, mode: 'wb')
       end
     end
     assignment.starter_file_groups.find_each(&:update_entries)
@@ -768,7 +763,6 @@ class AssignmentsController < ApplicationController
   def build_hash_from_zip(zip_file, hash_to_build)
     yaml_file = zip_file.get_entry(CONFIG_FILES[hash_to_build])
     yaml_content = yaml_file.get_input_stream.read.encode(Encoding::UTF_8, 'UTF-8')
-    zip_file.remove(yaml_file)
     properties = parse_yaml_content(yaml_content)
     if [:tags, :peer_review_tags].include?(hash_to_build)
       properties.each { |row| row[:user] = @current_user.user_name }
@@ -783,16 +777,16 @@ class AssignmentsController < ApplicationController
     scanned = params[:is_scanned] == 'true'
     unless assignment.is_timed == timed && assignment.scanned_exam == scanned
       if assignment.is_timed
-        upload_type = I18n.t("activerecord.models.timed_assignment.one")
+        upload_type = I18n.t('activerecord.models.timed_assignment.one')
       elsif assignment.scanned_exam
-        upload_type = I18n.t("activerecord.models.scanned_assignment.one")
+        upload_type = I18n.t('activerecord.models.scanned_assignment.one')
       else
         upload_type = Assignment.model_name.human
       end
       if timed
-        form_type = I18n.t("activerecord.models.timed_assignment.one")
+        form_type = I18n.t('activerecord.models.timed_assignment.one')
       elsif scanned
-        form_type = I18n.t("activerecord.models.scanned_assignment.one")
+        form_type = I18n.t('activerecord.models.scanned_assignment.one')
       else
         form_type = Assignment.model_name.human
       end
@@ -805,7 +799,7 @@ class AssignmentsController < ApplicationController
   #               If building a peer review assignment, prop_file must not be null.
   def build_uploaded_assignment(prop_file, parent_assignment = nil)
     yaml_content = prop_file.get_input_stream.read.encode(Encoding::UTF_8, 'UTF-8')
-    properties = parse_yaml_content(yaml_content)
+    properties = parse_yaml_content(yaml_content).deep_symbolize_keys
     if parent_assignment.nil?
       assignment = Assignment.new(properties)
       check_assignment_type_match!(assignment)
@@ -816,6 +810,7 @@ class AssignmentsController < ApplicationController
       assignment = Assignment.new(peer_review_properties)
       parent_assignment.has_peer_review = true
       assignment.has_peer_review = false
+      assignment.enable_test = false
       assignment.parent_assignment = parent_assignment
       assignment.repository_folder = parent_assignment.repository_folder
     end
