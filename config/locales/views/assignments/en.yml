@@ -78,6 +78,6 @@ en:
       started_on: 'You started on:'
       starter_file_prompt: Click below to download the starter files for this assessment.
       time_until_due_warning: This assessment is due before %{due_date} without penalty.
-    upload_config_help_html: "<p>This zip file will configure and create this assignment.</p><p>NOTE: This does not configure data specific to a<br>particular assignment instance.<br>For more information please visit <a href=https://github.com/MarkUsProject/Markus/wiki/Instructor-Guide--Importing-and-Exporting-Data#%{section_id}>this page</a>.</p>"
+    upload_config_help_html: "<p>This zip file will configure and create this assignment.</p><p>This does not configure student or grader settings.<br>For more information please visit <a href=https://github.com/MarkUsProject/Markus/wiki/Instructor-Guide--Importing-and-Exporting-Data#%{section_id}>this page</a>.</p>"
     upload_file_requirement: The list of uploaded files does not match the required files for this assignment.
     wrong_assignment_type: Cannot create a %{form_type} from the uploaded file. This file contains data to create a %{upload_type}.
