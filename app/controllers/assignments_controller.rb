@@ -280,7 +280,7 @@ class AssignmentsController < ApplicationController
       format.json do
         role_ids = current_role.admin? ? Admin.pluck(:id) : current_role.id
         test_runs = TestRun.left_outer_joins(:test_batch, grouping: [:group, :current_result])
-                           .where(test_runs: {role_id: role_ids},
+                           .where(test_runs: { role_id: role_ids },
                                   'groupings.assessment_id': @assignment.id)
                            .pluck_to_hash(:id,
                                           :test_batch_id,
