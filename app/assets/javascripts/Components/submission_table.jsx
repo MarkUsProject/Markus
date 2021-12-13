@@ -58,9 +58,8 @@ class RawSubmissionTable extends React.Component {
           members = ` (${row.original.members.join(", ")})`;
         }
         if (row.original.result_id) {
-          const result_url = Routes.edit_course_submission_result_path(
+          const result_url = Routes.edit_course_result_path(
             this.props.course_id,
-            row.original.result_id,
             row.original.result_id
           );
           return <a href={result_url}>{row.value + members}</a>;
