@@ -52,7 +52,7 @@ module Api
         ## create the zip name with the user name to have less chance to delete
         ## a currently downloading file
         version = params[:collected].present? ? 'collected' : 'latest'
-        zip_name = "#{assignment.short_identifier}_#{group.group_name}_#{current_role.user_name}_#{version}.zip"
+        zip_name = "#{assignment.short_identifier}_#{group.group_name}_#{current_user.user_name}_#{version}.zip"
         zip_path = Pathname.new('tmp') + zip_name
 
         ## delete the old file if it exists

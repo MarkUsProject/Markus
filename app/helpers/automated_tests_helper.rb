@@ -90,13 +90,13 @@ module AutomatedTestsHelper
   end
 
   def test_data(test_run_ids)
-    TestRun.joins(:grouping, :user)
+    TestRun.joins(:grouping, :role)
            .where(id: test_run_ids)
            .pluck_to_hash('groupings.group_id as group_id',
                           'test_runs.id as run_id',
-                          'users.type as user_type')
-           .each { |h| h[:user_type] = 'Admin' if h[:user_type] == 'Ta' }
-           .each { |h| h[:test_categories] = [h['user_type'].downcase] }
+                          'roles.type as role_type')
+           .each { |h| h[:role_type] = 'Admin' if h[:role_type] == 'Ta' }
+           .each { |h| h[:test_categories] = [h['role_type'].downcase] }
   end
 
   def get_markus_address(host_with_port)
@@ -188,7 +188,7 @@ module AutomatedTestsHelper
       markus_address = get_markus_address(host_with_port)
       req.body = {
         settings: JSON.parse(File.read(assignment.autotest_settings_file)),
-        file_url: "#{markus_address}/api/assignments/#{assignment.id}/test_files",
+        file_url: "#{markus_address}/api/courses/#{assignment.course.id}/assignments/#{assignment.id}/test_files",
         files: assignment.autotest_files
       }.to_json
       res = send_request!(req, uri)
@@ -206,12 +206,12 @@ module AutomatedTestsHelper
       markus_address = get_markus_address(host_with_port)
       file_urls = group_ids.map do |id_|
         param = collected ? 'collected=true' : ''
-        "#{markus_address}/api/assignments/#{assignment.id}/groups/#{id_}/submission_files?#{param}"
+        "#{markus_address}/api/courses/#{assignment.course.id}/assignments/#{assignment.id}/groups/#{id_}/submission_files?#{param}"
       end
       req.body = {
         file_urls: file_urls,
         categories: role.student? ? ['student'] : ['admin'],
-        request_high_priority: batch.nil? && user.student?
+        request_high_priority: batch.nil? && role.student?
       }.to_json
       res = send_request!(req, uri)
       autotest_test_ids = JSON.parse(res.body)['test_ids']

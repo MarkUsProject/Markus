@@ -1112,8 +1112,8 @@ class Assignment < Assessment
 
   # zip all files in the folder at +self.autotest_files_dir+ and return the
   # path to the zip file
-  def zip_automated_test_files(role)
-    zip_name = "#{self.short_identifier}-testfiles-#{role.user_name}"
+  def zip_automated_test_files(user)
+    zip_name = "#{self.short_identifier}-testfiles-#{user.user_name}"
     zip_path = File.join('tmp', zip_name + '.zip')
     FileUtils.rm_rf zip_path
     files_dir = Pathname.new self.autotest_files_dir

@@ -278,9 +278,9 @@ class AssignmentsController < ApplicationController
     respond_to do |format|
       format.html
       format.json do
-        user_ids = current_role.admin? ? Admin.pluck(:id) : current_role.id
+        role_ids = current_role.admin? ? Admin.pluck(:id) : current_role.id
         test_runs = TestRun.left_outer_joins(:test_batch, grouping: [:group, :current_result])
-                           .where(test_runs: {user_id: user_ids},
+                           .where(test_runs: {role_id: role_ids},
                                   'groupings.assessment_id': @assignment.id)
                            .pluck_to_hash(:id,
                                           :test_batch_id,
@@ -690,7 +690,7 @@ class AssignmentsController < ApplicationController
   end
 
   def switch_to_same(options)
-    return false if options[:controller] == 'submissions' && options[:action] == 'file_manager'
+    return false if options[:controller] == 'submissions' && %w[file_manager repo_browser].include?(options[:action])
     return false if %w[submissions results].include?(options[:controller]) && !options[:id].nil?
 
     if options[:controller] == 'assignments'
