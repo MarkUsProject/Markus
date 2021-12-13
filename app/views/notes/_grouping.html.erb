@@ -14,7 +14,7 @@
         document.getElementById('working').style.display = '';
         document.getElementById('new-note-save').disabled = true;
       $.ajax({
-        url:  Routes.new_update_groupings_notes_path(evt.target.value),
+        url:  Routes.new_update_groupings_course_notes_path(<%= @current_course.id %>, evt.target.value),
         type: 'POST',
         data: $(evt.target).serialize() + '&authenticity_token=' + AUTH_TOKEN
       }).done(function() {

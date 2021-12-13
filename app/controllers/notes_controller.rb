@@ -35,7 +35,7 @@ class NotesController < ApplicationController
   end
 
   def index
-    @notes = Note.includes(:role, :noteable).order(created_at: :desc)
+    @notes = Note.joins(:role).where('roles.course_id': current_course.id).order(created_at: :desc)
     respond_to do |format|
       format.html do
         # Notes are attached to noteables, if there are no noteables, we can't make notes.
@@ -135,7 +135,7 @@ class NotesController < ApplicationController
         @groupings = Array.new
         return
       end
-      @groupings = assignment.groupings.includes(:group, student_memberships: :user)
+      @groupings = assignment.groupings.includes(:group, student_memberships: :role)
     end
 
     def new_retrieve

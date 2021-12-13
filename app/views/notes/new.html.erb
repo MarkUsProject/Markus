@@ -11,7 +11,7 @@
 </div>
 
 <div class='wrapper'>
-  <%= form_for @note, as: :note, url: notes_path do |f| %>
+  <%= form_for @note, as: :note, url: course_notes_path(@current_course) do |f| %>
     <%= render partial: 'shared/error_explanation',
                locals: { model: @note } %>
 
@@ -35,7 +35,7 @@
       <%= f.submit t('save'),
                    id: 'new-note-save',
                    data: { disable_with: t('working') } %>
-      <%= link_to t('cancel'), notes_path, class: 'button' %>
+      <%= link_to t('cancel'), course_notes_path(@current_course), class: 'button' %>
     </p>
   <% end %>
 </div>
