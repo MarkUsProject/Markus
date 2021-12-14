@@ -9,9 +9,10 @@ class InstructorsController < ApplicationController
     respond_to do |format|
       format.html
       format.json {
-        render json: current_course.instructors
-                                   .joins(:end_user)
-                                   .pluck_to_hash(:id, :user_name, :first_name, :last_name, :email)
+        data = current_course.instructors
+                             .joins(:end_user)
+                             .pluck_to_hash(:id, :user_name, :first_name, :last_name, :email)
+        render json: data
       }
     end
   end
