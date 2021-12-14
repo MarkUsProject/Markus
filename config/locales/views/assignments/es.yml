@@ -80,4 +80,3 @@ es:
       time_until_due_warning: UPDATE ME %{due_date}
     upload_config_help_html: UPDATE ME %{section_id}
     upload_file_requirement: La lista de archivos entregados no coincide con los archivos necesarios para este proyecto.
-    wrong_assignment_type: UPDATE ME %{form_type} %{upload_type}

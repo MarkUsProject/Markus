@@ -80,4 +80,3 @@ fr:
       time_until_due_warning: UPDATE ME %{due_date}
     upload_config_help_html: UPDATE ME %{section_id}
     upload_file_requirement: La liste des fichiers téléchargés ne correspond pas aux fichiers d'affectation nécessaire
-    wrong_assignment_type: UPDATE ME %{form_type} %{upload_type}
