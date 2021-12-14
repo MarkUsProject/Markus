@@ -32,12 +32,18 @@ class Tag < ApplicationRecord
     result
   end
 
-  def self.from_yml(data, assignment_id)
+  def self.from_yml(data, assignment_id, allow_ta_upload = false)
     admins = Hash[Admin.pluck(:user_name, :id)]
     begin
       tag_data = data.map do |row|
         row = row.symbolize_keys
-        name, description, user_id = row[:name], row[:description], admins[row[:user]]
+        author = admins[row[:user]]
+        # Allow TAs with proper permissions to upload yml tag data
+        if allow_ta_upload && author.nil? && !row[:user].nil?
+          ta_author = Ta.find_by(user_name: row[:user])
+          author = ta_author.id unless ta_author.nil? || !ta_author.grader_permission.manage_assessments
+        end
+        name, description, user_id = row[:name], row[:description], author
         if name.nil? || name.strip.blank? || user_id.nil?
           raise ArgumentError, I18n.t('tags.invalid_tag_data', item: row)
         end

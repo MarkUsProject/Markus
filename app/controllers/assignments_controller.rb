@@ -609,10 +609,8 @@ class AssignmentsController < ApplicationController
                                                 CONFIG_FILES[:automated_tests])
       end
       assignment.starter_file_config_to_zip(zipfile, CONFIG_FILES[:starter_files])
-      if allowed_to?(:manage?, Tag)
-        zipfile.get_output_stream(CONFIG_FILES[:tags]) do |f|
-          f.write(assignment.tags.pluck_to_hash(:name, :description).to_yaml)
-        end
+      zipfile.get_output_stream(CONFIG_FILES[:tags]) do |f|
+        f.write(assignment.tags.pluck_to_hash(:name, :description).to_yaml)
       end
       unless child_assignment.nil?
         zipfile.get_output_stream(CONFIG_FILES[:peer_review_properties]) do |f|
@@ -626,16 +624,14 @@ class AssignmentsController < ApplicationController
           f.write annotation_categories_to_yml(child_assignment.annotation_categories)
         end
         child_assignment.starter_file_config_to_zip(zipfile, CONFIG_FILES[:peer_review_starter_files])
-        if allowed_to?(:manage?, Tag)
-          zipfile.get_output_stream(CONFIG_FILES[:peer_review_tags]) do |f|
-            f.write(child_assignment.tags.pluck_to_hash(:name, :description).to_yaml)
-          end
+        zipfile.get_output_stream(CONFIG_FILES[:peer_review_tags]) do |f|
+          f.write(child_assignment.tags.pluck_to_hash(:name, :description).to_yaml)
         end
       end
     end
     send_file zip_path, filename: zip_name, type: 'application/zip', disposition: 'attachment'
   end
-  
+
   # Uploads a zip file containing all the files specified in download_config_files
   # and modifies the assignment settings according to those files.
   def upload_config_files
@@ -658,7 +654,7 @@ class AssignmentsController < ApplicationController
           child_assignment.save!
           zipfile.remove(child_prop_file)
           child_tag_prop = build_hash_from_zip(zipfile, :peer_review_tags)
-          Tag.from_yml(child_tag_prop, child_assignment.id) if allowed_to?(:manage?, Tag)
+          Tag.from_yml(child_tag_prop, child_assignment.id, true)
           child_criteria_prop = build_hash_from_zip(zipfile, :peer_review_criteria)
           upload_criteria_from_yaml(child_assignment, child_criteria_prop)
           child_annotations_prop = build_hash_from_zip(zipfile, :peer_review_annotations)
@@ -667,7 +663,7 @@ class AssignmentsController < ApplicationController
           child_assignment.save!
         end
         assignment.save!
-        Tag.from_yml(tag_prop, assignment.id) if allowed_to?(:manage?, Tag)
+        Tag.from_yml(tag_prop, assignment.id, true)
         upload_criteria_from_yaml(assignment, criteria_prop)
         upload_annotations_from_yaml(annotations_prop, assignment)
         config_automated_tests(assignment, zipfile) unless assignment.scanned_exam
