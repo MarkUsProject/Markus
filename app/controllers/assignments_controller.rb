@@ -647,7 +647,6 @@ class AssignmentsController < ApplicationController
         # Build assignment from properties
         prop_file = zipfile.get_entry(CONFIG_FILES[:properties])
         assignment = build_uploaded_assignment(prop_file)
-        zipfile.remove(prop_file)
         tag_prop = build_hash_from_zip(zipfile, :tags)
         criteria_prop = build_hash_from_zip(zipfile, :criteria)
         annotations_prop = build_hash_from_zip(zipfile, :annotations)
