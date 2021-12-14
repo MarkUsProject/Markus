@@ -2,6 +2,7 @@
 es:
   assignments:
     average_annotations: "%{average_annotations} anotaciones por entrega calificada"
+    configuration_zip_file: UPDATE ME
     deadline_with_extension: UPDATE ME
     due_date:
       final_due_date_passed: El plazo de aplazamiento de gracia para este proyecto ha pasado

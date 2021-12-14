@@ -2,6 +2,7 @@
 en:
   assignments:
     average_annotations: "%{average_annotations} annotations per marked submission"
+    configuration_zip_file: Configuration Zip File
     deadline_with_extension: You have an extension until %{extension_deadline}.
     due_date:
       final_due_date_passed: The deadline, including late or grace periods, has passed.
