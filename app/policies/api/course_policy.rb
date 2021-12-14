@@ -1,7 +1,6 @@
 module Api
   # Policies for Api::CoursesController
   class CoursePolicy < MainApiPolicy
-    skip_pre_check :role_exists?
 
     def index?
       # has at least one instructor role

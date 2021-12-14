@@ -1,8 +1,12 @@
 describe Api::CoursePolicy do
   let(:user) { role.end_user }
+  let(:role) { nil }
   let(:context) { { role: role, real_user: user } }
 
   describe_rule :index? do
+    succeed 'user is an admin user' do
+      let(:user) { build :admin_user }
+    end
     failed 'user is a test server' do
       let(:user) { create :autotest_user }
       let(:role) { nil }

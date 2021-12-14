@@ -1,8 +1,12 @@
 describe Api::AssignmentPolicy do
   let(:user) { role.end_user }
+  let(:role) { nil }
   let(:context) { { role: role, real_user: user } }
 
   describe_rule :test_files? do
+    succeed 'user is an admin user' do
+      let(:user) { build :admin_user }
+    end
     succeed 'role is an instructor' do
       let(:role) { build :instructor }
     end

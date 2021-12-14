@@ -149,29 +149,27 @@ describe Api::RolesController do
       end
     end
     context 'POST create' do
-      let(:student) { build :student, course: course }
+      let(:end_user) { create :end_user }
+      let(:student) { build :student, end_user: end_user, course: course }
       let(:user_name) { student.user_name }
       let(:type) { student.type }
       let(:first_name) { student.first_name }
       let(:last_name) { student.last_name }
       context 'for a different course' do
         it 'should return a 403 error' do
-          post :create, params: { user_name: user_name, type: type, first_name: first_name,
-                                  last_name: last_name, course_id: create(:course).id }
+          post :create, params: { user_name: user_name, type: type, course_id: create(:course).id }
           expect(response.status).to eq(403)
         end
       end
       context 'for a non-existant course' do
         it 'should return a 404 error' do
-          post :create, params: { user_name: user_name, type: type, first_name: first_name,
-                                  last_name: last_name, course_id: Course.ids.max + 1 }
+          post :create, params: { user_name: user_name, type: type, course_id: Course.ids.max + 1 }
           expect(response.status).to eq(404)
         end
       end
       context 'for the same course' do
         before :each do
-          post :create, params: { user_name: user_name, type: type, first_name: first_name,
-                                  last_name: last_name, course_id: course.id }
+          post :create, params: { user_name: user_name, type: type, course_id: course.id }
         end
         context 'when creating a new user' do
           it 'should be successful' do
@@ -218,30 +216,23 @@ describe Api::RolesController do
         end
       end
       context 'when updating an existing user' do
-        it 'should update a user name' do
+        it 'should not update a user name' do
           put :update, params: { id: student.id, user_name: tmp_student.user_name, course_id: course.id }
           expect(response.status).to eq(200)
           student.reload
-          expect(student.user_name).to eq(tmp_student.user_name)
+          expect(student.user_name).not_to eq(tmp_student.user_name)
         end
-        it 'should update a first name' do
+        it 'should not update a first name' do
           put :update, params: { id: student.id, first_name: tmp_student.first_name, course_id: course.id }
           expect(response.status).to eq(200)
           student.reload
-          expect(student.first_name).to eq(tmp_student.first_name)
+          expect(student.first_name).not_to eq(tmp_student.first_name)
         end
-        it 'should update a last name' do
+        it 'should not update a last name' do
           put :update, params: { id: student.id, last_name: tmp_student.last_name, course_id: course.id }
           expect(response.status).to eq(200)
           student.reload
-          expect(student.last_name).to eq(tmp_student.last_name)
-        end
-        it 'should not update an a user name if another user with that name exists' do
-          tmp_student.save
-          put :update, params: { id: student.id, user_name: tmp_student.user_name, course_id: course.id }
-          expect(response.status).to eq(422)
-          student.reload
-          expect(student.user_name).to eq(student.user_name)
+          expect(student.last_name).not_to eq(tmp_student.last_name)
         end
       end
       context 'when updating a user that does not exist' do

@@ -86,9 +86,7 @@ module Api
 
     def create_role
       ApplicationRecord.transaction do
-        end_user = EndUser.find_or_create_by!(end_user_params.permit(:user_name)) do |h|
-          h.assign_attributes(end_user_params)
-        end
+        end_user = EndUser.find_by(user_name: params[:user_name])
         role = Role.new(**role_params, end_user: end_user, course: @current_course)
         role.section = Section.find_by(name: params[:section_name]) if params[:section_name]
         role.save!
@@ -104,7 +102,6 @@ module Api
 
     def update_role(role)
       ApplicationRecord.transaction do
-        role.end_user.update!(params.permit(:first_name, :last_name, :user_name)) # TODO: don't do this here: update this in users controller
         role.section = Section.find_by(name: params[:section_name]) if params[:section_name]
         role.grace_credits = params[:grace_credits] if params[:grace_credits]
         role.save!
@@ -151,10 +148,6 @@ module Api
         end
       end
       collection
-    end
-
-    def end_user_params
-      params.permit(:user_name, :first_name, :last_name)
     end
 
     def role_params

@@ -5,6 +5,11 @@ Rails.application.routes.draw do
   # optional path scope (denoted by the parentheses)
   # API routes
   namespace :api do
+    resources :users, only: [:index, :create, :show, :update] do
+      collection do
+        put 'update_by_username'
+      end
+    end
     resources :courses, only: [:index, :show] do
       resources :roles, except: [:new, :edit, :destroy] do
         collection do
