@@ -659,7 +659,7 @@ class AssignmentsController < ApplicationController
           child_tag_prop = build_hash_from_zip(zipfile, :peer_review_tags)
           Tag.from_yml(child_tag_prop, child_assignment.id) if allowed_to?(:manage?, Tag)
           child_criteria_prop = build_hash_from_zip(zipfile, :peer_review_criteria)
-          config_criteria(child_assignment, child_criteria_prop)
+          upload_criteria_from_yaml(child_assignment, child_criteria_prop)
           child_annotations_prop = build_hash_from_zip(zipfile, :peer_review_annotations)
           upload_annotations_from_yaml(child_annotations_prop, child_assignment)
           config_starter_files(child_assignment, zipfile)
@@ -667,7 +667,7 @@ class AssignmentsController < ApplicationController
         end
         assignment.save!
         Tag.from_yml(tag_prop, assignment.id) if allowed_to?(:manage?, Tag)
-        config_criteria(assignment, criteria_prop)
+        upload_criteria_from_yaml(assignment, criteria_prop)
         upload_annotations_from_yaml(annotations_prop, assignment)
         config_automated_tests(assignment, zipfile) unless assignment.scanned_exam
         config_starter_files(assignment, zipfile)
