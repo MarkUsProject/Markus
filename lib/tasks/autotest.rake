@@ -8,7 +8,7 @@ namespace :db do
 
     # Create dummy student for autotest submissions.
     user = Human.find_or_create_by(user_name: 'aaaautotest', first_name: 'Test', last_name: 'Otto')
-    Course.first.students.find_or_create_by!(hume: user)
+    Course.first.students.find_or_create_by!(human: user)
 
     autotest_files_dirs = Dir.glob(File.join('db', 'data', 'autotest_files', '*'))
     autotest_files_dirs.each do |dir_path|
