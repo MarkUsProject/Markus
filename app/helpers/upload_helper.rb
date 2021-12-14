@@ -18,7 +18,7 @@ module UploadHelper
     elsif %w[.yml .yaml].include? filetype
       {
         type: '.yml',
-        contents: parse_yaml_content(upload_file.read.encode(encoding, 'UTF-8'))
+        contents: parse_yaml_content(upload_file.read.encode(Encoding::UTF_8, encoding))
       }
     else
       raise StandardError, I18n.t('upload_errors.malformed_csv')
