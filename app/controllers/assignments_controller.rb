@@ -652,7 +652,6 @@ class AssignmentsController < ApplicationController
         unless child_prop_file.nil?
           child_assignment = build_uploaded_assignment(child_prop_file, assignment)
           child_assignment.save!
-          zipfile.remove(child_prop_file)
           child_tag_prop = build_hash_from_zip(zipfile, :peer_review_tags)
           Tag.from_yml(child_tag_prop, child_assignment.id, true)
           child_criteria_prop = build_hash_from_zip(zipfile, :peer_review_criteria)
