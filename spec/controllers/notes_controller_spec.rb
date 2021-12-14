@@ -491,5 +491,5 @@ describe NotesController do
         expect(response).to have_http_status :success
       end
     end
-  end # instructor context
+  end
 end

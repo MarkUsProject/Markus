@@ -14,7 +14,7 @@ namespace :db do
   desc 'Add TA users to the database'
   # this task depends on :environment and :seed
   task tas: :environment do
-        puts 'Populate database with TAs'
+    puts 'Populate database with TAs'
     [%w[c6conley Mike Conley],
      %w[c6gehwol Severin Gehwolf],
      %w[c9varoqu Nelle Varoquaux],

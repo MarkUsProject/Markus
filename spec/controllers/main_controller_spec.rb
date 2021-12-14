@@ -57,7 +57,7 @@ describe MainController do
     end
     context 'after logging in with a bad username' do
       it 'should not be able to login with an incorrect username' do
-        post :login, params: { user_login: instructor.user_name+'BAD', user_password: 'a' }
+        post :login, params: { user_login: instructor.user_name + 'BAD', user_password: 'a' }
         expect(ActionController::Base.helpers.strip_tags(flash[:error][0])).to eq(I18n.t('main.login_failed'))
       end
     end

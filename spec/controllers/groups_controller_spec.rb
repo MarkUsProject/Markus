@@ -223,7 +223,7 @@ describe GroupsController do
         @group = FactoryBot.create(:group, course: @assignment.course)
 
         @student1 = create(:student, end_user: create(:end_user, user_name: 'c8shosta'))
-        @student2 = create(:student, end_user: create(:end_user,  user_name: 'c5bennet'))
+        @student2 = create(:student, end_user: create(:end_user, user_name: 'c5bennet'))
 
         grouping = Grouping.new(assignment: @assignment, group: @group)
         grouping.save
@@ -400,8 +400,8 @@ describe GroupsController do
       let!(:assignment) { create(:assignment_for_scanned_exam) }
       let!(:student1) do
         create(:student,
-               end_user: create(:end_user, user_name: 'c9test1', first_name: 'first',
-                                last_name: 'last', id_number: '12345'))
+               end_user: create(:end_user,
+                                user_name: 'c9test1', first_name: 'first', last_name: 'last', id_number: '12345'))
       end
       let!(:student2) do
         create(:student,

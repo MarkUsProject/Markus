@@ -1513,5 +1513,5 @@ describe GradersController do
       end #flexible scheme
     end #criteria table
 
-  end #instructor context
+  end # instructor context
 end
