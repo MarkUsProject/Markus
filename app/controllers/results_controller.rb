@@ -73,9 +73,9 @@ class ResultsController < ApplicationController
         end
 
         if assignment.enable_test
-          authorized = allowance_to(:run_tests?, current_role, context: { assignment: assignment,
-                                                                          grouping: grouping,
-                                                                          submission: submission })
+          authorized = allowed_to?(:run_tests?, current_role, context: { assignment: assignment,
+                                                                         grouping: grouping,
+                                                                         submission: submission })
           data[:enable_test] = true
           data[:can_run_tests] = authorized
         else
@@ -689,7 +689,7 @@ class ResultsController < ApplicationController
   end
 
   def get_test_runs_instructors
-    submission = Submission.find(params[:submission_id])
+    submission = record.submission
     test_runs = submission.grouping.test_runs_instructors(submission)
     test_runs.each do |test_run|
       test_run['test_runs.created_at'] = I18n.l(test_run['test_runs.created_at'])
@@ -698,7 +698,7 @@ class ResultsController < ApplicationController
   end
 
   def get_test_runs_instructors_released
-    submission = Submission.find(params[:submission_id])
+    submission = record.submission
     test_runs = submission.grouping.test_runs_instructors_released(submission)
     test_runs.each do |test_run|
       test_run['test_runs.created_at'] = I18n.l(test_run['test_runs.created_at'])

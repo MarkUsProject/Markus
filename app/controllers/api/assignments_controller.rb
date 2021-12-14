@@ -264,7 +264,7 @@ module Api
 
     def test_files
       assignment = record
-      zip_path = assignment.zip_automated_test_files(current_role)
+      zip_path = assignment.zip_automated_test_files(current_user)
       send_file zip_path, filename: File.basename(zip_path)
     rescue ActiveRecord::RecordNotFound => e
       render 'shared/http_status', locals: { code: '404', message: e }, status: 404

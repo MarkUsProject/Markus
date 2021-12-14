@@ -9,7 +9,7 @@
     <div class='notes_existing_list'>
       <% @notes.each do |note| %>
         <div class='note'>
-          <p><strong><%= note.role.human.user_name %>: </strong></p>
+          <p><strong><%= note.role.user_name %>: </strong></p>
           <p><small><%=note.format_date%></small></p>
           <p><%= note.notes_message %></p>
           <% if allowed_to?(:modify?, note) %>

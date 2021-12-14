@@ -2,6 +2,7 @@
   <%= javascript_tag nonce: true do %>
     document.addEventListener('DOMContentLoaded', () => {
       window.BatchTestRunTable = makeBatchTestRunTable(document.getElementById('batch_test_run_table'), {
+        course_id: <%= @current_course.id %>,
         assignment_id: <%= @assignment.id %>,
         detailed: <%= @current_role.admin? || @current_role.ta? ||
                       @current_role.is_reviewer_for?(@assignment.pr_assignment, @result) %>
