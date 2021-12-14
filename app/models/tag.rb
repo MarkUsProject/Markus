@@ -39,7 +39,7 @@ class Tag < ApplicationRecord
         row = row.symbolize_keys
         name, description, user_id = row[:name], row[:description], admins[row[:user]]
         if name.nil? || name.strip.blank? || user_id.nil?
-          raise ArgumentError, I18n.t('invalid_tag_data', item: row)
+          raise ArgumentError, I18n.t('tags.invalid_tag_data', item: row)
         end
 
         {

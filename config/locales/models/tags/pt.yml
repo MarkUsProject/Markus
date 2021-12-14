@@ -10,4 +10,3 @@ pt:
       tag:
         one: Tag
         other: Tags
-  invalid_tag_data: UPDATE ME %{item}
