@@ -21,7 +21,7 @@ describe 'Subversion Repository' do
       let(:file_contents) { File.read(Repository::PERMISSION_FILE) }
 
       it 'give instructors access to all repos' do
-        expect(file_contents).to match(/\[\/\]\s*\n\s*instructor1\s*=\s*rw/)
+        expect(file_contents).to match(%r{\[\/\]\s*\n\s*instructor1\s*=\s*rw})
       end
 
       it 'gives other users access to specific repos' do

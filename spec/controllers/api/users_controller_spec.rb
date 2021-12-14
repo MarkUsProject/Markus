@@ -140,7 +140,7 @@ describe Api::UsersController do
       context 'a non-admin user' do
         let(:user) { create :end_user }
         it 'should render 403' do
-          get :show, params: { id: end_users[0].id },  format: :json
+          get :show, params: { id: end_users[0].id }, format: :json
           expect(response).to have_http_status(:forbidden)
         end
       end
@@ -214,7 +214,7 @@ describe Api::UsersController do
             expect(end_user.first_name).to eq(tmp_user.first_name)
           end
           it 'should update a last name' do
-            put :update, params: { id: end_user.id, last_name: tmp_user.last_name}
+            put :update, params: { id: end_user.id, last_name: tmp_user.last_name }
             expect(response.status).to eq(200)
             end_user.reload
             expect(end_user.last_name).to eq(tmp_user.last_name)
@@ -241,7 +241,7 @@ describe Api::UsersController do
             expect(end_user.first_name).to eq(tmp_user.first_name)
           end
           it 'should update a last name' do
-            put :update_by_username, params: { user_name: end_user.user_name, last_name: tmp_user.last_name}
+            put :update_by_username, params: { user_name: end_user.user_name, last_name: tmp_user.last_name }
             expect(response.status).to eq(200)
             end_user.reload
             expect(end_user.last_name).to eq(tmp_user.last_name)

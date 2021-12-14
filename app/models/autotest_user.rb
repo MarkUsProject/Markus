@@ -1,3 +1,4 @@
+# Model for Autotest user
 class AutotestUser < User
   USERNAME = '.autotestuser'.freeze
 

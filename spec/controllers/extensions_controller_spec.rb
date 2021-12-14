@@ -20,7 +20,7 @@ describe ExtensionsController do
       end
       it 'should not create a new extension' do
         extension # make sure the object is created before the call
-        expect { put_as instructor, :update, params: params }.to_not change { Extension.count }
+        expect { put_as instructor, :update, params: params }.to_not(change { Extension.count })
       end
       it 'should flash a message on success' do
         expect_any_instance_of(ExtensionsController).to receive(:flash_now).with(:success, anything)

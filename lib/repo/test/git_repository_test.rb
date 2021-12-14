@@ -662,9 +662,9 @@ class GitRepositoryTest < ActiveSupport::TestCase
       end
 
       repositories = []
-      conf_instructor = Hash.new
+      conf_instructor = {}
       conf_instructor['is_repository_admin'] = true
-      conf_instructor["REPOSITORY_PERMISSION_FILE"] = new_git_auth
+      conf_instructor['REPOSITORY_PERMISSION_FILE'] = new_git_auth
 
       repository_names.each do |repo_name|
         GitRepository.create(repo_name)
@@ -715,9 +715,9 @@ class GitRepositoryTest < ActiveSupport::TestCase
         FileUtils.mkdir_p(new_git_auth)
       end
 
-      @conf_instructor = Hash.new
+      @conf_instructor = {}
       @conf_instructor['is_repository_admin'] = true
-      @conf_instructor["REPOSITORY_PERMISSION_FILE"] = new_git_auth
+      @conf_instructor['REPOSITORY_PERMISSION_FILE'] = new_git_auth
       # create some repositories, add some users
       repo_base_name = "Group_"
       @repository_names = []

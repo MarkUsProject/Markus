@@ -237,15 +237,15 @@ class Grouping < ApplicationRecord
 
   # returns whether the user is the inviter of this group or not.
   def is_inviter?(user)
-    membership_status(user) ==  StudentMembership::STATUSES[:inviter]
+    membership_status(user) == StudentMembership::STATUSES[:inviter]
   end
 
   # invites each user in 'members' by its user name, to this group
   # If the method is invoked by an instructor, checks on whether the students can
   # be part of the group are skipped.
   def invite(members,
-             set_membership_status=StudentMembership::STATUSES[:pending],
-             invoked_by_instructor=false)
+             set_membership_status = StudentMembership::STATUSES[:pending],
+             invoked_by_instructor = false)
     # overloading invite() to accept members arg as both a string and a array
     members = [members] if !members.instance_of?(Array) # put a string in an
                                                  # array

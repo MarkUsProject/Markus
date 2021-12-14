@@ -235,16 +235,15 @@ namespace :markus do
         curr_assignment_num_for_name += 1
       end # end of the assignment while loop
 
-    # Create s standard instructor; if it does not already exist.
-    if (!Instructor.find_by_user_name("a"))
-      Instructor.create(user_name: 'a', first_name: 'instructor', last_name: 'instructor')
-    end
+      # Create s standard instructor; if it does not already exist.
+      unless Instructor.find_by_user_name('a')
+        Instructor.create(user_name: 'a', first_name: 'instructor', last_name: 'instructor')
+      end
 
-    # Create Reid; if it does not already exist.
-    if (!Instructor.find_by_user_name("reid"))
-      Instructor.create(user_name: 'reid', first_name: 'Karen', last_name: 'Reid')
-    end
-
+      # Create Reid; if it does not already exist.
+      unless Instructor.find_by_user_name('reid')
+        Instructor.create(user_name: 'reid', first_name: 'Karen', last_name: 'Reid')
+      end
     end
   end
 end

@@ -992,7 +992,7 @@ describe CriteriaController do
       it 'does not create criteria that have unmatched keys / more keys than required' do
         expect(assignment.criteria.where(type: 'RubricCriterion').length).to eq(1)
         post_as instructor, :upload, params: { course_id: course.id, assignment_id: assignment.id,
-                                              upload_file: partially_valid_file }
+                                               upload_file: partially_valid_file }
         expect(assignment.criteria.where(type: 'RubricCriterion').length).to eq(1)
         expect(flash[:error]).not_to be_nil
       end
