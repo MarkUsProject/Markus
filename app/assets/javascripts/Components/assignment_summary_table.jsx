@@ -47,7 +47,7 @@ class AssignmentSummaryTable extends React.Component {
       Cell: row => {
         if (row.original.result_id) {
           const path = Routes.edit_course_submission_result_path(
-            this.props.assignment_id,
+            this.props.course_id,
             row.original.submission_id,
             row.original.result_id
           );
