@@ -674,13 +674,7 @@ class AssignmentsController < ApplicationController
     end
   rescue StandardError => e
     flash_message(:error, e.message)
-    if params[:is_scanned] == 'true'
-      redirect_to new_assignment_path(scanned: true)
-    elsif params[:is_timed] == 'true'
-      redirect_to new_assignment_path(timed: true)
-    else
-      redirect_to new_assignment_path
-    end
+    redirect_to assignments_path
   end
 
   private
@@ -766,30 +760,6 @@ class AssignmentsController < ApplicationController
     properties
   end
 
-  # Ensure that the +assignment+ type (scanned, timed, neither) matches the params
-  # If it does not match, raise an error
-  def check_assignment_type_match!(assignment)
-    timed = params[:is_timed] == 'true'
-    scanned = params[:is_scanned] == 'true'
-    unless assignment.is_timed == timed && assignment.scanned_exam == scanned
-      if assignment.is_timed
-        upload_type = I18n.t('activerecord.models.timed_assignment.one')
-      elsif assignment.scanned_exam
-        upload_type = I18n.t('activerecord.models.scanned_assignment.one')
-      else
-        upload_type = Assignment.model_name.human
-      end
-      if timed
-        form_type = I18n.t('activerecord.models.timed_assignment.one')
-      elsif scanned
-        form_type = I18n.t('activerecord.models.scanned_assignment.one')
-      else
-        form_type = Assignment.model_name.human
-      end
-      raise I18n.t('assignments.wrong_assignment_type', form_type: form_type, upload_type: upload_type)
-    end
-  end
-
   # Builds an uploaded assignment/peer review assignment from its properties file
   # Precondition: prop_file must be a Zip::Entry object
   #               If +parent_assignment+ is not nil, this is a peer review assignment.
@@ -798,7 +768,6 @@ class AssignmentsController < ApplicationController
     properties = parse_yaml_content(yaml_content).deep_symbolize_keys
     if parent_assignment.nil?
       assignment = Assignment.new(properties)
-      check_assignment_type_match!(assignment)
       assignment.repository_folder = assignment.short_identifier
     else
       # Filter properties not supported by peer review assignments, then build assignment

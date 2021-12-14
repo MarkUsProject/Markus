@@ -7,12 +7,4 @@
                  t('helpers.submit.create', model: Assignment.model_name.human)
                end %>
 
-<% @heading_buttons = [
-  { link_text: t('upload'),
-    link_path: '#',
-    html_options: { id: 'uploadModalConfig' } }
-] %>
-
-<%= render partial: 'cp_assignment_upload_modal', layout: 'layouts/modal_dialog'  %>
-
 <%= render partial: 'form', formats: [:html], handlers: [:erb] %>

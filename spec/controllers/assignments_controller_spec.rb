@@ -1558,7 +1558,7 @@ describe AssignmentsController do
 
         it 'should contain a peer review annotations file' do
           subject
-          annotations = read_file_from_zip(response.body, File.join('peer-review-config-files', 
+          annotations = read_file_from_zip(response.body, File.join('peer-review-config-files',
                                                                     'annotations.yml'))
           expect(annotations).to be_a(Hash)
         end
@@ -1674,16 +1674,6 @@ describe AssignmentsController do
     end
 
     shared_examples 'check valid assignment config files' do
-      it 'will not post if on the wrong page' do
-        post_as user, :upload_config_files, params: { upload_files_for_config: @assignment_good_zip,
-                                                      is_timed: false,
-                                                      is_scanned: false }
-        expect(flash[:error].map { |f| extract_text f })
-          .to eq([I18n.t('assignments.wrong_assignment_type',
-                         form_type: Assignment.model_name.human,
-                         upload_type: I18n.t('activerecord.models.timed_assignment.one'))].map { |f| extract_text f })
-      end
-
       it 'gives the appropriate response status' do
         subject
         expect(response.status).to eq(302)
