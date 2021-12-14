@@ -1,11 +1,10 @@
 namespace :db do
 
   desc 'Create a single Instructor'
-  task :instructor => :environment do
+  task instructor: :environment do
     puts 'Populate database with Instructors'
-    [['a',    'instructor', 'instructor'], # Standard instructor
-     ['reid', 'Karen', 'Reid']]  # Reid
-    .each do |instructor|
+    [%w[a instructor instructor],
+     %w[reid Karen Reid]].each do |instructor|
       Instructor.create!(course: Course.first, end_user_attributes: { user_name: instructor[0],
                                                                       first_name: instructor[1],
                                                                       last_name: instructor[2] })
@@ -14,13 +13,12 @@ namespace :db do
 
   desc 'Add TA users to the database'
   # this task depends on :environment and :seed
-  task(:tas => :environment) do
+  task tas: :environment do
         puts 'Populate database with TAs'
-    [['c6conley', 'Mike',    'Conley'],
-     ['c6gehwol', 'Severin', 'Gehwolf'],
-     ['c9varoqu', 'Nelle',   'Varoquaux'],
-     ['c9rada',   'Mark',    'Rada']]
-        .each do |ta|
+    [%w[c6conley Mike Conley],
+     %w[c6gehwol Severin Gehwolf],
+     %w[c9varoqu Nelle Varoquaux],
+     %w[c9rada Mark Rada]].each do |ta|
       Ta.create!(course: Course.first, end_user_attributes: { user_name: ta[0], first_name: ta[1], last_name: ta[2] })
     end
   end

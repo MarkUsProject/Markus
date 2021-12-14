@@ -619,9 +619,9 @@ class SubversionRepositoryTest < ActiveSupport::TestCase
       end
 
       repositories = []
-      conf_instructor = Hash.new
+      conf_instructor = {}
       conf_instructor['is_repository_admin'] = true
-      conf_instructor["REPOSITORY_PERMISSION_FILE"] = SVN_AUTHZ_FILE
+      conf_instructor['REPOSITORY_PERMISSION_FILE'] = SVN_AUTHZ_FILE
       repository_names.each do |repo_name|
         SubversionRepository.create(repo_name)
         repo = SubversionRepository.open(repo_name)
