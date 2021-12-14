@@ -1,17 +1,17 @@
 <% if member.membership_status == StudentMembership::STATUSES[:inviter] %>
   <li>
     <strong>
-      <%= "#{member.user.display_name} (#{t('groups.members.statuses.inviter')})" %>
+      <%= "#{member.role.human.display_name} (#{t('groups.members.statuses.inviter')})" %>
     </strong>
   </li>
 <% elsif member.membership_status == StudentMembership::STATUSES[:accepted] %>
   <li>
-    <%= member.user.display_name %>
+    <%= member.role.human.display_name %>
   </li>
 <% elsif member.membership_status == StudentMembership::STATUSES[:pending] %>
   <li>
     <em>
-      <%= "#{member.user.display_name} (#{t('groups.members.statuses.pending')})" %>
+      <%= "#{member.role.human.display_name} (#{t('groups.members.statuses.pending')})" %>
     </em>
      <% if grouping.is_inviter?(@current_role) %>
        <%= link_to t('groups.members.cancel_invitation'),
@@ -26,7 +26,7 @@
   <% if grouping.is_inviter?(@current_role) %>
     <li>
       <em>
-        <%= "#{member.user.display_name} (#{t('groups.members.statuses.rejected')})" %>
+        <%= "#{member.role.human.display_name} (#{t('groups.members.statuses.rejected')})" %>
       </em>
       <%= link_to t(:delete),
                   delete_rejected_assignment_groups_path(assignment_id: @assignment.id, membership: member.id),

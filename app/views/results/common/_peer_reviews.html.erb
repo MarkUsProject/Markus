@@ -12,15 +12,12 @@
       <% prs.each_with_index do |pr, i| %>
         <% if @current_role.student? %>
           <li> <%= link_to("#{PeerReview.model_name.human} #{i + 1}",
-                        view_marks_assignment_result_path(assignment.id, pr.result_id)) %> </li>
+                        view_marks_course_result_path(@current_course.id, pr.result_id)) %> </li>
         <% else %>
             <% pr_result = pr.result %>
             <% group_name = pr_result.submission.grouping.group.group_name %>
             <li> <%= link_to(group_name,
-                             view_marks_assignment_submission_result_path(assignment_id: assignment.id,
-                                                                          submission_id: submission.id,
-                                                                          id: pr.result_id,
-                                                                          reviewer_grouping_id: reviewer.id)) %> </li>
+                             view_marks_course_result_path(@current_course.id, pr.result_id)) %> </li>
         <% end %>
       <% end %>
     </ul>
@@ -29,8 +26,7 @@
 
   <% if @current_role.student? %>
     <%= link_to t('peer_reviews.view_ta_result'),
-                view_marks_assignment_submission_result_path(assignment.id, submission.id,
-                                                             submission.get_latest_result.id),
+                view_marks_course_result_path(@current_course.id, submission.get_latest_result.id),
                 id: 'original_result_link' %>
   <% end %>
 </div>

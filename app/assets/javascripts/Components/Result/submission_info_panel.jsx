@@ -64,9 +64,13 @@ export class SubmissionInfoPanel extends React.Component {
         </p>
         <p>
           <a
-            href={Routes.repo_browser_assignment_submission_path(this.props.assignment_id, {
-              grouping_id: this.props.grouping_id,
-            })}
+            href={Routes.repo_browser_course_assignment_submissions_path(
+              this.props.course_id,
+              this.props.assignment_id,
+              {
+                grouping_id: this.props.grouping_id,
+              }
+            )}
           >
             {I18n.t("results.view_group_repo")}
           </a>
