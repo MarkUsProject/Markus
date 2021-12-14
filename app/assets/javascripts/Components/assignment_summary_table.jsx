@@ -22,7 +22,7 @@ class AssignmentSummaryTable extends React.Component {
 
   fetchData = () => {
     $.ajax({
-      url: Routes.summary_assignment_path(this.props.assignment_id),
+      url: Routes.summary_course_assignment_path(this.props.course_id, this.props.assignment_id),
       dataType: "json",
     }).then(res => {
       res.criteriaColumns.forEach(col => {
@@ -46,7 +46,7 @@ class AssignmentSummaryTable extends React.Component {
       accessor: "group_name",
       Cell: row => {
         if (row.original.result_id) {
-          const path = Routes.edit_assignment_submission_result_path(
+          const path = Routes.edit_course_submission_result_path(
             this.props.assignment_id,
             row.original.submission_id,
             row.original.result_id
@@ -151,7 +151,8 @@ class AssignmentSummaryTable extends React.Component {
         {this.props.is_admin && (
           <form
             className="rt-action-box"
-            action={Routes.summary_assignment_path({
+            action={Routes.summary_course_assignment_path({
+              course_id: this.props.course_id,
               id: this.props.assignment_id,
               format: "csv",
               _options: true,
