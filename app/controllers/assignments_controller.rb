@@ -794,9 +794,9 @@ class AssignmentsController < ApplicationController
     end
   end
 
-  # Builds an uploaded assignment/peer review assignment from it's properties file
-  # Precondition: If +parent_assignment+ is not null, this is a peer review assignment.
-  #               If building a peer review assignment, prop_file must not be null.
+  # Builds an uploaded assignment/peer review assignment from its properties file
+  # Precondition: prop_file must be a Zip::Entry object
+  #               If +parent_assignment+ is not nil, this is a peer review assignment.
   def build_uploaded_assignment(prop_file, parent_assignment = nil)
     yaml_content = prop_file.get_input_stream.read.encode(Encoding::UTF_8, 'UTF-8')
     properties = parse_yaml_content(yaml_content).deep_symbolize_keys
