@@ -1273,9 +1273,8 @@ class Assignment < Assessment
     default_starter_group = nil
     group_data = []
     directory_path = File.dirname(settings_filepath)
-    self.starter_file_groups.each.with_index(1) do |starter_file_group, download_count|
-      group_name = "#{download_count}: #{starter_file_group.name}"
-      group_name = group_name.gsub(File::SEPARATOR, '')
+    self.starter_file_groups.each do |starter_file_group|
+      group_name = ActiveStorage::Filename.new(starter_file_group.name).sanitized
       starter_file_group.write_starter_files_to_zip(zip_file, File.join(directory_path, group_name))
       if starter_file_group.id == self.default_starter_file_group_id
         default_starter_group = group_name
@@ -1288,8 +1287,8 @@ class Assignment < Assessment
       }
     end
     starter_file_settings = {
-      default_starter_group: default_starter_group,
-      group_information: group_data
+      default_starter_file_group: default_starter_group,
+      starter_file_groups: group_data
     }.to_yaml
     zip_file.get_output_stream(settings_filepath) { |f| f.write starter_file_settings }
   end

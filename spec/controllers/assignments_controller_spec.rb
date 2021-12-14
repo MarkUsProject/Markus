@@ -1504,13 +1504,14 @@ describe AssignmentsController do
           starter_file_settings = read_file_from_zip(response.body, File.join('starter-file-config-files',
                                                                               'starter-file-rules.yml'))
           starter_file_settings = starter_file_settings.deep_symbolize_keys
-          expect(starter_file_settings).to include(:default_starter_group, :group_information)
+          expect(starter_file_settings).to include(:default_starter_file_group, :starter_file_groups)
         end
 
         it 'should have a starter file group with the right number of files' do
           subject
           starter_file_count = 0
-          starter_file_group_dir = "starter-file-config-files/1: #{starter_files.name}"
+          starter_file_group_dir_name = ActiveStorage::Filename.new(starter_files.name).sanitized
+          starter_file_group_dir = File.join('starter-file-config-files', starter_file_group_dir_name)
           Zip::InputStream.open(StringIO.new(response.body)) do |io|
             while (entry = io.get_next_entry)
               starter_file_count += 1 if entry.name.match?(/^#{starter_file_group_dir}/)
@@ -1548,7 +1549,7 @@ describe AssignmentsController do
                                                                               'starter-file-config-files',
                                                                               'starter-file-rules.yml'))
           starter_file_settings = starter_file_settings.deep_symbolize_keys
-          expect(starter_file_settings).to include(:default_starter_group, :group_information)
+          expect(starter_file_settings).to include(:default_starter_file_group, :starter_file_groups)
         end
       end
     end
@@ -1642,7 +1643,7 @@ describe AssignmentsController do
       starter_settings_good = fixture_file_upload(File.join(base_dir,
                                                             'starter-file-config-files',
                                                             'starter-file-rules.yml'), 'text/yaml')
-      starter_file_dir = File.join(base_dir, 'starter-file-config-files', '1: sample_starter_group')
+      starter_file_dir = File.join(base_dir, 'starter-file-config-files', 'sample_starter_group')
       starter_file1 = fixture_file_upload(File.join(starter_file_dir, 'c_file.c'), 'text/c')
       starter_file2 = fixture_file_upload(File.join(starter_file_dir, 'Helpers', 'template.tex'), 'text/tex')
 
@@ -1664,9 +1665,9 @@ describe AssignmentsController do
         zip_file.add('criteria.yml', criteria_good.path)
         zip_file.add('annotations.yml', annotations_good.path)
         zip_file.add('starter-file-config-files/starter-file-rules.yml', starter_settings_good.path)
-        zip_file.add('starter-file-config-files/1: sample_starter_group/c_file.c', starter_file1.path)
+        zip_file.add('starter-file-config-files/sample_starter_group/c_file.c', starter_file1.path)
         zip_file.mkdir(File.join(starter_file_dir, 'Helpers'))
-        zip_file.add('starter-file-config-files/1: sample_starter_group/Helpers/template.tex', starter_file2.path)
+        zip_file.add('starter-file-config-files/sample_starter_group/Helpers/template.tex', starter_file2.path)
         zip_file.add('peer-review-config-files/properties.yml', pr_properties_good.path)
         zip_file.add('peer-review-config-files/tags.yml', pr_tags_good.path)
         zip_file.add('peer-review-config-files/criteria.yml', pr_criteria_good.path)

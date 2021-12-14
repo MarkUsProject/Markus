@@ -722,7 +722,7 @@ class AssignmentsController < ApplicationController
     starter_config_file = assignment.is_peer_review? ? :peer_review_starter_files : :starter_files
     starter_file_settings = build_hash_from_zip(zip_file, starter_config_file).symbolize_keys
     starter_group_mappings = {}
-    starter_file_settings[:group_information].each do |group|
+    starter_file_settings[:starter_file_groups].each do |group|
       group = group.symbolize_keys
       file_group = StarterFileGroup.create!(name: group[:name],
                                             use_rename: group[:use_rename],
@@ -730,7 +730,7 @@ class AssignmentsController < ApplicationController
                                             assignment: assignment)
       starter_group_mappings[group[:directory_name]] = file_group
     end
-    default_name = starter_file_settings[:default_starter_group]
+    default_name = starter_file_settings[:default_starter_file_group]
     if !default_name.nil? && starter_group_mappings.key?(default_name)
       assignment.default_starter_file_group_id = starter_group_mappings[default_name].id
     end
