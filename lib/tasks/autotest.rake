@@ -105,13 +105,8 @@ class AutotestSetup
   end
 
   def create_submission
-<<<<<<< HEAD
-    user = Human.find_by(user_name: 'aaaautotest')
-    student = Course.first.students.find_by(human: user)
-=======
     user = EndUser.find_by(user_name: 'aaaautotest')
     student = Course.first.students.find_by(end_user: user)
->>>>>>> 41e981c2c (users: update rake task and update multiple join sql requests)
     student.create_group_for_working_alone_student(@assignment.id)
     group = Group.find_by group_name: student.user_name
     grouping = Grouping.find_by(group_id: group, assessment_id: @assignment.id)

@@ -75,7 +75,7 @@
           <ul>
             <% @grouping.student_memberships.includes(:role).each do |member|%>
                 <li>
-                    <%= member.role.human.display_name %>
+                    <%= member.role.display_name %>
                 </li>
             <% end %>
           </ul>
